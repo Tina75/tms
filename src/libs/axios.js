@@ -1,0 +1,73 @@
+import axios from 'axios'
+import {LoadingBar, Message} from 'iview'
+
+let instance = axios.create({
+  baseURL: '/',
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json'
+    // 'Authorization': 'Bearer eyJsb2dpblRpbWUiOiIyMDE4LTA4LTIxIDExOjE3OjMxIiwidXNlcklkIjoxMn0='
+  },
+  withCredentials: true,
+  loading: false,
+  ignoreCode: false
+})
+
+switch (process.env.NODE_ENV) {
+  case 'development':
+    instance.defaults.baseURL = 'http://dev-boss.yundada56.com/bluewhale-boss/'; break
+  case 'quality':
+    instance.defaults.baseURL = 'https://hn.algolia.com/api/v1/'; break
+  case 'production':
+    instance.defaults.baseURL = '//www.yundada56.com/bluewhale-boss/'; break
+}
+
+// POST传参序列化
+instance.interceptors.request.use((config) => {
+  // Loading判断
+  LoadingBar.start()
+  if (config.loading) {
+    // Vue.({type: 'loading', message: '加载中...', mask: false, duration: 0})
+  }
+  if (config.method === 'post') {
+    config.data = JSON.stringify(config.data)
+  }
+  if (config.method === 'get' && config.data) {
+    config.params = config.data
+  }
+  return config
+}, (error) => {
+  return Promise.reject(error)
+})
+
+// code状态码200判断
+instance.interceptors.response.use((res) => {
+  LoadingBar.finish()
+  var code = Number(res.data.code)
+  if (res.config.ignoreCode || code === 10000) {
+    return res
+  } else {
+    switch (code) {
+      case 280102:// token失效或不存在
+      case 280103:// 账号在其他设备登录
+      case 280104:// 认证校验不通过
+      case 280105:// 客户端头信息缺失
+      case 280106:// 用户不存在
+        Message.error(`${res.data.msg}`)
+        localStorage.removeItem('tms_is_login')
+        window.location.reload()
+        break
+      default:
+        Message.error(res.data.msg)
+        break
+    }
+    return Promise.reject(res)
+  }
+}, (error) => {
+  if (error.message.indexOf('timeout') !== -1) {
+    Message.error('接口超时')
+  }
+  return Promise.reject(error)
+})
+
+export default instance
