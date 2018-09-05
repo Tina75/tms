@@ -2,7 +2,7 @@
   <div id="app">
     <Layout class="container">
       <Sider v-model="collapsed" :collapsed-width="64" hide-trigger collapsible >
-        <sideBar/>
+        <side-bar  @on-select="turnToPage"/>
       </Sider>
       <Layout>
         <Header class="header-con">
@@ -29,6 +29,7 @@ import HeaderBar from '@/components/HeaderBar'
 import SideBar from '@/components/SideBar'
 import TabNav from '@/components/TabNav'
 import {mapGetters} from 'vuex'
+
 export default {
   components: {HeaderBar, SideBar, TabNav},
   data () {
@@ -55,15 +56,16 @@ export default {
       let { path, params, query } = {}
       if (typeof route === 'string') path = route
       else {
-        path = route.path
+        path = route.href
         params = route.params
         query = route.query
       }
-      console.log(route.path)
-      if (path.indexOf('isTurnByHref_') > -1) {
-        window.open(path.split('_')[1])
-        return
-      }
+      console.log(route)
+      // if (path.indexOf('isTurnByHref_') > -1) {
+      //   window.open(path.split('_')[1])
+      //   return
+      // }
+      this.$store.commit('changeTag')
       this.$router.push({
         path,
         params,

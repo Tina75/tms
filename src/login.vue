@@ -31,7 +31,7 @@
               <i-button type="primary" long @click="login">登录</i-button>
             </FormItem>
           </i-form>
-          <p class="login-tip">运达达大后台登录系统</p>
+          <p class="login-tip">运达达运输管理系统</p>
         </div>
       </Card>
     </div>

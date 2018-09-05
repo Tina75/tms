@@ -1,3 +1,4 @@
+import store from '.'
 
 export const initMenuData = (state, data) => {
   state.app.menuData = data
@@ -12,10 +13,19 @@ export const changeActiveIndex = (state, data) => {
 }
 // tab 相关
 export const changeTab = (state, data) => {
+  let list = state.tabNav.tabList
   if (typeof data === 'string') {
-    state.tabNav.currTab = {path: data}
+    state.tabNav.currTab = {href: data}
+    if (!list.some(item => { return item.path === data })) {
+      list.push({path: data})
+      store.commit('updateTabList', list)
+    }
   } else {
     state.tabNav.currTab = data
+    if (!list.some(item => { return item.href === data.href })) {
+      list.push(data)
+      store.commit('updateTabList', list)
+    }
   }
 }
 export const updateTabList = (state, data) => {

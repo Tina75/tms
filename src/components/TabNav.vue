@@ -21,12 +21,12 @@
       <div ref="scrollBody" :style="{left: tagBodyLeft + 'px'}" class="scroll-body">
         <transition-group name="taglist-moving-animation">
           <Tag
-            v-for="item in list"
+            v-for="(item,index) in list"
             ref="tagsPageOpened"
-            :key="`tag-nav-${item.name}`"
+            :key="`tag-nav-${index}`"
             :name="item.name"
             :closable="item.name !== 'home'"
-            :color="item.path === currentValue.path ? 'success' : 'default'"
+            :color="item.href === currentValue.href ? 'success' : 'default'"
             type="dot"
             @on-close="handleClose"
             @click.native="handleClick(item)"
@@ -93,17 +93,20 @@ export default {
     handleTagsOption (type) {
       if (type === 'close-all') {
         // 关闭所有，除了home
-        let res = this.list.filter(item => item.name === 'home')
-        this.$emit('on-close', res, 'all')
+        let res = this.list.filter(item => item.href === '/home')
+        // this.$emit('on-close', res, 'all')
+        this.$store.commit('updateTabList', res)
       } else {
         // 关闭除当前页和home页的其他页
-        let res = this.list.filter(item => item.name === this.value.name || item.name === 'home')
-        this.$emit('on-close', res, 'others')
+        let res = this.list.filter(item => item.href === this.value.href || item.name === '/home')
+        // this.$emit('on-close', res, 'others')
+        this.$store.commit('updateTabList', res)
       }
     },
     handleClose (e, name) {
       let res = this.list.filter(item => item.name !== name)
-      this.$emit('on-close', res, undefined, name)
+      // this.$emit('on-close', res, undefined, name)
+      this.$store.commit('updateTabList', res)
     },
     handleClick (item) {
       this.currentValue = item

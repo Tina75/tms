@@ -47,7 +47,7 @@ export default {
             methods: data.methods || {}
           })
           keyIndex++
-          Vue.component(`${pagePrex}${path}-${keyIndex}`, tempModule)
+          Vue.component(`${pagePrex}${path.replace('/', '-')}-${keyIndex}`, tempModule)
           this.current = tempModule
         })
         .catch(() => {
@@ -65,4 +65,5 @@ export default {
     }
   }
   // eslint-disable-next-line
-  }</script>
+  }
+</script>

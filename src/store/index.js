@@ -9,11 +9,7 @@ Vue.use(Vuex)
 const state = {
   breadlist: [],
   tabNav: {
-    tabList: [ {path: '/home', name: '首页'},
-      {path: '/example/page1', name: 'page1'},
-      {path: '/error-page/403', name: '403'},
-      {path: '/error-page/404', name: '404'},
-      {path: '/error-page/500', name: '500'}],
+    tabList: [],
     currTab: {}
   }
 }
