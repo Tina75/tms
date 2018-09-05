@@ -28,7 +28,7 @@
               </Row>
             </FormItem>
             <FormItem>
-              <i-button type="primary" long @click="handleSubmit">登录</i-button>
+              <i-button type="primary" long @click="login">登录</i-button>
             </FormItem>
           </i-form>
           <p class="login-tip">运达达大后台登录系统</p>

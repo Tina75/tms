@@ -3,7 +3,7 @@
     <div class="close-con">
       <Dropdown transfer style="margin-top:7px;" @on-click="handleTagsOption">
         <i-button size="small" type="text">
-          <Icon :size="18" type="ios-close-outline"/>
+          <Icon :size="18" type="ios-close-circle-outline"/>
         </i-button>
         <DropdownMenu slot="list">
           <DropdownItem name="close-all">关闭所有</DropdownItem>
@@ -12,10 +12,10 @@
       </Dropdown>
     </div>
     <div class="btn-con left-btn">
-      <i-button icon="chevron-left" type="text" @click="handleScroll(240)"/>
+      <i-button icon="ios-arrow-back" type="text" @click="handleScroll(240)"/>
     </div>
     <div class="btn-con right-btn">
-      <i-button icon="chevron-right" type="text" @click="handleScroll(-240)"/>
+      <i-button icon="ios-arrow-forward" type="text" @click="handleScroll(-240)"/>
     </div>
     <div ref="scrollOuter" class="scroll-outer" @DOMMouseScroll="handlescroll" @mousewheel="handlescroll">
       <div ref="scrollBody" :style="{left: tagBodyLeft + 'px'}" class="scroll-body">
@@ -26,7 +26,7 @@
             :key="`tag-nav-${item.name}`"
             :name="item.name"
             :closable="item.name !== 'home'"
-            :color="item.name === currentValue.name ? 'success' : 'default'"
+            :color="item.path === currentValue.path ? 'success' : 'default'"
             type="dot"
             @on-close="handleClose"
             @click.native="handleClick(item)"
@@ -59,6 +59,11 @@ export default {
     return {
       tagBodyLeft: 0,
       currentValue: this.value
+    }
+  },
+  watch: {
+    value: function (val) {
+      this.currentValue = val
     }
   },
   methods: {
@@ -124,6 +129,7 @@ export default {
   position relative
   border-top 1px solid #F0F0F0
   border-bottom 1px solid #F0F0F0
+  height 100%
   .no-select
   .size
   .close-con
@@ -137,13 +143,16 @@ export default {
     z-index 10
   .btn-con
     position absolute
-    top 0px
+    top 0
+    bottom 0
     height 100%
     background #fff
     padding-top 3px
     z-index 10
+    display inline-block
     button
-      padding 6px 10px
+      padding 6px 4px
+      line-height 14px
       text-align center
     &.left-btn
       left 0px

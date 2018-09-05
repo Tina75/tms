@@ -11,7 +11,7 @@
         <Content>
           <Layout>
             <div class="tag-nav-wrapper">
-              <tabs :list="tabList" @on-close="handleCloseTag" @input="handleClick"/>
+              <tab-nav :list="tabList" :value="currTab" @on-close="handleCloseTag" @input="handleClick"/>
             </div>
             <Content>
               <keep-alive>
@@ -25,22 +25,23 @@
   </div>
 </template>
 <script>
-import headerBar from '@/components/header'
-import sideBar from '@/components/side-bar'
-import tabs from '@/components/tabs'
+import HeaderBar from '@/components/HeaderBar'
+import SideBar from '@/components/SideBar'
+import TabNav from '@/components/TabNav'
+import {mapGetters} from 'vuex'
 export default {
-  components: {headerBar, sideBar, tabs},
+  components: {HeaderBar, SideBar, TabNav},
   data () {
     return {
       collapsed: false,
-      name: 'test',
-      tabList: [
-        {path: '/home', name: '首页'},
-        {path: '/example/page1', name: 'page1'},
-        {path: '/error-page/403', name: '403'},
-        {path: '/error-page/404', name: '404'},
-        {path: '/error-page/500', name: '500'}]
+      name: 'test'
     }
+  },
+  computed: {
+    ...mapGetters({
+      tabList: 'getTabList',
+      currTab: 'currTab'
+    })
   },
   methods: {
     handleCollapsedChange (state) {
