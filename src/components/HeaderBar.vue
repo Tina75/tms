@@ -49,8 +49,7 @@ export default {
     handleClick (name) {
       switch (name) {
         case 'logout':
-          localStorage.clear()
-          window.location.reload()
+          window.EMA.fire('logout')
           break
       }
     }
@@ -64,7 +63,7 @@ export default {
   display inline-block
   text-align center
   color #5c6b77
-  margin-top 12px
+  margin-top 13px
   float left
   i
     transition transform .2s ease
@@ -77,6 +76,7 @@ export default {
   height 100%
   position relative
   text-align left
+  // background #252A2F
   border-bottom 1px solid rgba(238,238,238,1)
   &-bread-crumb
     padding-left 60px

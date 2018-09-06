@@ -6,7 +6,7 @@
 import BasePage from '@/basic/BasePage'
 export default {
   name: 'home',
-  meteInfo: {title: '组织架构'},
+  meteInfo: {title: '首页'},
   mixins: [BasePage],
   data () {
     return {

@@ -1,7 +1,7 @@
 <template>
   <div class="tags-nav">
     <div class="close-con">
-      <Dropdown transfer style="margin-top:7px;" @on-click="handleTagsOption">
+      <Dropdown transfer  @on-click="handleTagsOption">
         <i-button size="small" type="text">
           <Icon :size="18" type="ios-close-circle-outline"/>
         </i-button>
@@ -25,7 +25,7 @@
             ref="tagsPageOpened"
             :key="`tag-nav-${index}`"
             :name="item.name"
-            :closable="item.name !== 'home'"
+            :closable="item.href !== '/home'"
             :color="item.href === currentValue.href ? 'success' : 'default'"
             type="dot"
             @on-close="handleClose"
@@ -104,6 +104,7 @@ export default {
       }
     },
     handleClose (e, name) {
+      // TODO:
       let res = this.list.filter(item => item.name !== name)
       // this.$emit('on-close', res, undefined, name)
       this.$store.commit('updateTabList', res)
@@ -150,7 +151,6 @@ export default {
     bottom 0
     height 100%
     background #fff
-    padding-top 3px
     z-index 10
     display inline-block
     button
@@ -164,11 +164,12 @@ export default {
       border-right 1px solid #F0F0F0
   .scroll-outer
     position absolute
-    left 28px
-    right 61px
+    left 23px
+    right 56px
     top 0
     bottom 0
-    box-shadow 0px 0 3px 2px rgba(100,100,100,.1) inset
+    background white
+    // box-shadow 0px 0 3px 2px rgba(100,100,100,.1) inset
     .scroll-body
       height calc(100% - 1px)
       display inline-block

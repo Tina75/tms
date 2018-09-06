@@ -63,7 +63,7 @@ export default {
         Vue.component(name.replace(/\//g, '-'), tempModule)
         fn()
       }).catch(() => {
-        console.log('Chunk loading failed', name.replace(/\//g, '-'))
+        console.error('Chunk loading failed', name.replace(/\//g, '-'))
       })
     },
     close: function () {

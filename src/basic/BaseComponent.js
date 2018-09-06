@@ -1,6 +1,3 @@
-/**
- * Created by stone on 2016/6/23.
- */
 export default {
   replace: true,
   data: function () {

@@ -1,5 +1,5 @@
 // import * as types from './mutationTypes'
-import axios from '@/libs/axios'
+import axios from '@/libs/js/server'
 
 /** 获取文章信息 */
 export const getUserInfo = ({ rootState, commit, state, dispatch }) => {

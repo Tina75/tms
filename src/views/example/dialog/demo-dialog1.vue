@@ -1,10 +1,9 @@
-<!--  -->
 <template>
-  <div>
+  <div class="dialog">
     <Modal v-model="visibale" :mask-closable="false" width="360">
       <p slot="header" style="color:#f60;text-align:center">
         <Icon type="ios-information-circle"></Icon>
-        <span>修改员工信息</span>
+        <span>当前id：{{id}}</span>
       </p>
       <Form ref="info" :model="info" :rules="rules" :label-width="80">
         <FormItem label="姓名" prop="name">
@@ -22,14 +21,14 @@
 </template>
 
 <script>
-import axios from '@/libs/axios'
+import Server from '@/libs/js/server'
+import BaseDialog from '@/basic/BaseDialog'
 export default {
-  name: 'newUser',
+  name: 'editUser',
+  mixins: [BaseDialog],
   data () {
     return {
       info: {name: '', phone: ''},
-      searchDepts: [],
-      searchDeptNames: [],
       rules: {
         name: {required: true, message: '请填写姓名', trigger: 'blur'},
         phone: {required: true, message: '请填写手机号', trigger: 'blur'}
@@ -38,15 +37,22 @@ export default {
     }
   },
   watch: {
+    visibale: function (val) {
+      !val && this.close()
+    }
   },
+
+  mounted: function () {
+  },
+
   methods: {
     save () {
       this.$refs['info'].validate((valid) => {
         if (valid) {
-          axios({
-            url: 'user/add',
+          Server({
+            url: 'user/update',
             method: 'post',
-            data: Object.assign({departId: this.id}, this.info)
+            data: this.info
           }).then(() => {
             this.ok()
             this.visibale = false
@@ -60,4 +66,7 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
+.dialog
+  p
+    text-align center
 </style>

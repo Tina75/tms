@@ -7,12 +7,12 @@
       <Layout>
         <Header class="header-con">
           <header-bar :collapsed.sync="collapsed" :name="name" @on-coll-change="handleCollapsedChange"/>
+          <div class="tag-nav-wrapper">
+            <tab-nav :list="tabList" :value="currTab" @on-close="handleCloseTag" @input="handleClick"/>
+          </div>
         </Header>
         <Content>
           <Layout>
-            <div class="tag-nav-wrapper">
-              <tab-nav :list="tabList" :value="currTab" @on-close="handleCloseTag" @input="handleClick"/>
-            </div>
             <Content>
               <keep-alive>
                 <router-view/>
@@ -22,16 +22,18 @@
         </Content>
       </Layout>
     </Layout>
+    <dialogs></dialogs>
   </div>
 </template>
 <script>
 import HeaderBar from '@/components/HeaderBar'
 import SideBar from '@/components/SideBar'
 import TabNav from '@/components/TabNav'
+import Dialogs from '@/components/Dialogs'
 import {mapGetters} from 'vuex'
 
 export default {
-  components: {HeaderBar, SideBar, TabNav},
+  components: {HeaderBar, SideBar, TabNav, Dialogs},
   data () {
     return {
       collapsed: false,
@@ -44,7 +46,16 @@ export default {
       currTab: 'currTab'
     })
   },
+  mounted () {
+    window.EMA.bind('logout', () => {
+      this.logout()
+    })
+  },
   methods: {
+    logout () {
+      localStorage.removeItem('tms_is_login')
+      window.location.reload()
+    },
     handleCollapsedChange (state) {
       this.collapsed = state
     },
@@ -111,11 +122,17 @@ html, body
         margin 0 auto
     .header-con
       background #fff
-    .tag-nav-wrapper
-      padding 0
-      height 40px
-      background #F0F0F0
-      overflow hidden
+      position relative
+      .tag-nav-wrapper
+        width auto
+        top 0
+        left 30px
+        right 100px
+        position absolute
+        padding 0
+        height 100%
+        background #F0F0F0
+        overflow hidden
 .ivu-menu-dark.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu), .ivu-menu-dark.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu):hover, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title-active:not(.ivu-menu-submenu), .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title-active:not(.ivu-menu-submenu):hover
   background #00A4BD
 .ivu-menu-dark.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu), .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title-active:not(.ivu-menu-submenu)
@@ -124,8 +141,7 @@ html, body
   background #00A4BD!important
 .ivu-menu-dark.ivu-menu-vertical .ivu-menu-opened
   background none
-.ivu-menu-dark.ivu-menu-vertical .ivu-menu-opened .ivu-menu-submenu-title
-  background #00C1DE
+
 .ivu-menu-dark.ivu-menu-vertical .ivu-menu-item, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title
   color rgba(255,255,255,1)
   font-family:PingFangSC-Regular;

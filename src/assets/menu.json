@@ -2,6 +2,7 @@
   {
     "name":"首页",
     "href":"/home",
+    "icon":"md-home",
     "powerCode":0
   },
   {
@@ -12,12 +13,12 @@
     "children":[
       {
         "name":"手动下单",
-        "href":"",
+        "href":"/1",
         "powerCode":0
       },
       {
         "name":"批量导入",
-        "href":"",
+        "href":"/2",
         "powerCode":0
       }
     ]
@@ -34,7 +35,7 @@
       },
       {
         "name":"回单管理",
-        "href":"",
+        "href":"/3",
         "powerCode":0
       }
     ]
