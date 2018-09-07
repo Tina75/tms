@@ -15,19 +15,18 @@ let instance = axios.create({
 
 switch (process.env.NODE_ENV) {
   case 'development':
-    instance.defaults.baseURL = 'http://dev-boss.yundada56.com/bluewhale-boss/'; break
+    instance.defaults.baseURL = 'http://yapi.yundada56.com/mock/154'; break
   case 'quality':
     instance.defaults.baseURL = 'https://hn.algolia.com/api/v1/'; break
   case 'production':
-    instance.defaults.baseURL = '//www.yundada56.com/bluewhale-boss/'; break
+    instance.defaults.baseURL = '//dev-boss.yundada56.com/bluewhale-boss/'; break
 }
 
 // POST传参序列化
 instance.interceptors.request.use((config) => {
   // Loading判断
-  LoadingBar.start()
   if (config.loading) {
-    // Vue.({type: 'loading', message: '加载中...', mask: false, duration: 0})
+    LoadingBar.start()
   }
   if (config.method === 'post') {
     config.data = JSON.stringify(config.data)
@@ -54,8 +53,7 @@ instance.interceptors.response.use((res) => {
       case 280105:// 客户端头信息缺失
       case 280106:// 用户不存在
         Message.error(`${res.data.msg}`)
-        localStorage.removeItem('tms_is_login')
-        window.location.reload()
+        window.EMA.fire('logout')
         break
       default:
         Message.error(res.data.msg)

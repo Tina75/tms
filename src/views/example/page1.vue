@@ -1,5 +1,8 @@
 <template>
-  <div>I'm page1</div>
+  <div>
+    <p>I'm page1</p>
+    <p><a @click="openDialog1">打开dialog</a></p>
+  </div>
 </template>
 
 <script>
@@ -9,7 +12,7 @@ export default {
   components: {},
   mixins: [ BasePage ],
   metaInfo: {
-    title: 'page1'
+    title: '页面1'
   },
   data () {
     return {
@@ -20,7 +23,23 @@ export default {
 
   mounted: function () {},
 
-  methods: {}
+  methods: {
+    openDialog1 () {
+      const _this = this
+      this.openDialog({
+        name: 'example/dialog/demo-dialog1',
+        data: {id: 1},
+        methods: {
+          ok (node) {
+            _this.onAddUserSuccess(node)
+          }
+        }
+      })
+    },
+    onAddUserSuccess () {
+      this.$Message.success('This is a success tip')
+    }
+  }
 }
 
 </script>

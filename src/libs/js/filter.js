@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import City from './js/City'
+import City from './City'
 Vue.filter('imgType', function (value) {
   let name = ''
   switch (value) {

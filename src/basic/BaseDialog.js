@@ -1,8 +1,3 @@
-/**
- * Created by stone on 2016/6/23.
- */
-// import {modulePowers} from '../store/metadata'
-
 export default {
   replace: true,
   data: function () {
@@ -61,7 +56,6 @@ export default {
       this.ema.fire('Dialogs.push', data)
     },
     close: function () {
-      console.log('close')
       this.ema.fire('Dialogs.close', this.$options.name)
     }
     // 权限控制

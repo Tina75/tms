@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import axios from './libs/axios'
+import Server from './libs/js/server.js'
 export default {
   name: 'Login',
   metaInfo: {
@@ -96,7 +96,7 @@ export default {
       if (!this.form.telephone || this.form.telephone.length !== 11) {
         return this.$Message.error('手机号码格式有误')
       }
-      axios({
+      Server({
         url: 'loginsmscaptcha',
         method: 'post',
         data: {phone: this.form.telephone}
