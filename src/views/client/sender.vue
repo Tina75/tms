@@ -11,10 +11,10 @@
           </Select>
         </template>
         <template v-if="selectStatus==0">
-          <Input v-model="name" placeholder="请输入发货方名称" search on-click="searchList"  style="width: 200px" />
+          <Input v-model="name" placeholder="请输入发货方名称" search style="width: 200px"  @on-click="searchList" />
         </template>
         <template v-else>
-          <Input v-model="contact" placeholder="请输入发货方联系人" search on-click="searchList"  style="width: 200px" />
+          <Input v-model="contact" placeholder="请输入发货方联系人" search style="width: 200px"  @on-click="searchList" />
         </template>
       </div>
     </div>
