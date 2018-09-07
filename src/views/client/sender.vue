@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div>
     <div class="header">
       <div class="left">
         <Button type="primary">新增</Button>
@@ -18,7 +18,7 @@
         </template>
       </div>
     </div>
-    <div class="content">
+    <div>
       <template>
         <Table :columns="columns1" :data="data1"></Table>
       </template>
@@ -44,11 +44,11 @@ export default {
       selectList: [
         {
           value: 0,
-          label: '发货方'
+          label: '发货方名称'
         },
         {
           value: 1,
-          label: '发货联系人'
+          label: '发货联系人名称'
         }
       ],
       name: '',
