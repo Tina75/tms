@@ -3,17 +3,21 @@
     <a :class="['sider-trigger-a', collapsed ? 'collapsed' : '']"  type="text" @click="handleChange">
       <Icon type="ios-menu" size="26"/>
     </a>
-    <div class="header-bar-bread-crumb">
-      <Breadcrumb>
-        <BreadcrumbItem v-for="item in breadcrumbList" :key="item.name" @click.native="$route.push({name: item.name})">
-          {{item.title}}
-        </BreadcrumbItem>
-      </Breadcrumb>
-    </div>
     <div class="header-bar-avator-dropdown">
+      <Dropdown>
+        <Badge :count="100" type="primary">
+          <Icon type="ios-notifications" size="26" color="#fff"></Icon>
+        </Badge>
+        <DropdownMenu slot="list">
+          <DropdownItem name="1" >通知</DropdownItem>
+          <DropdownItem name="2" >订单</DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
+      &nbsp;&nbsp;&nbsp;&nbsp;
       <Dropdown @on-click="handleClick">
-        <span style="color: #2d8cf0">{{name}}  </span>
-        <Icon style="color: #2d8cf0" type="arrow-down-b" size="12"/>
+        <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" size="small"></avatar>
+        <span style="color: #2d8cf0;min-width:50px;display:inline-block;text-align:right;">{{name}}  </span>
+        <Icon type="md-arrow-dropdown" size="12"/>
         <DropdownMenu slot="list">
           <DropdownItem name="logout" >退出登录</DropdownItem>
         </DropdownMenu>
@@ -43,7 +47,6 @@ export default {
   },
   methods: {
     handleChange () {
-      console.log('sss')
       this.$emit('on-coll-change', !this.collapsed)
     },
     handleClick (name) {
@@ -76,8 +79,8 @@ export default {
   height 100%
   position relative
   text-align left
-  // background #252A2F
-  border-bottom 1px solid rgba(238,238,238,1)
+  background #252A2F
+  border-bottom 1px solid #f5f7f9
   &-bread-crumb
     padding-left 60px
     width 350px
@@ -94,7 +97,7 @@ export default {
     float right
     display inline-block
     height 32px
-    margin-top 20px
+    margin-top 15px
     vertical-align middle
     line-height 10px
     padding 0 15px 0

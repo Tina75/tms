@@ -1,6 +1,6 @@
 <template>
   <div class="tags-nav">
-    <div class="close-con">
+    <!-- <div class="close-con">
       <Dropdown transfer  @on-click="handleTagsOption">
         <i-button size="small" type="text">
           <Icon :size="18" type="ios-close-circle-outline"/>
@@ -10,7 +10,7 @@
           <DropdownItem name="close-others">关闭其他</DropdownItem>
         </DropdownMenu>
       </Dropdown>
-    </div>
+    </div> -->
     <div class="btn-con left-btn">
       <i-button icon="ios-arrow-back" type="text" @click="handleScroll(240)"/>
     </div>
@@ -27,6 +27,7 @@
             :name="item.name"
             :closable="item.href !== '/home'"
             :color="item.href === currentValue.href ? 'success' : 'default'"
+            style="color:red!important"
             type="dot"
             @on-close="handleClose"
             @click.native="handleClick(item)"
@@ -122,6 +123,8 @@ export default {
 </script>
 
 <style lang="stylus">
+.test
+  color red!important
 .no-select
   -webkit-touch-callout none
   -webkit-user-select none
@@ -131,8 +134,8 @@ export default {
   user-select none
 .tags-nav
   position relative
-  border-top 1px solid #F0F0F0
-  border-bottom 1px solid #F0F0F0
+  // border-top 1px solid #F0F0F0
+  // border-bottom 1px solid #F0F0F0
   height 100%
   .no-select
   .size
@@ -150,7 +153,6 @@ export default {
     top 0
     bottom 0
     height 100%
-    background #fff
     z-index 10
     display inline-block
     button
@@ -160,15 +162,16 @@ export default {
     &.left-btn
       left 0px
     &.right-btn
-      right 32px
-      border-right 1px solid #F0F0F0
+      // right 32px
+      right 0px
+      border-right 1px solid #3A424B
   .scroll-outer
     position absolute
     left 23px
-    right 56px
-    top 0
+    // right 56px
+    right 24px
+    top 5px
     bottom 0
-    background white
     // box-shadow 0px 0 3px 2px rgba(100,100,100,.1) inset
     .scroll-body
       height calc(100% - 1px)

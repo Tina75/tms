@@ -1,9 +1,9 @@
 <template>
   <div class="dialog">
     <Modal v-model="visibale" :mask-closable="false" width="360">
-      <p slot="header" style="color:#f60;text-align:center">
-        <Icon type="ios-information-circle"></Icon>
-        <span>当前id：{{id}}</span>
+      <p slot="header" style="text-align:center">
+        <!-- <Icon type="ios-information-circle"></Icon> -->
+        <span>参数id={{id}}</span>
       </p>
       <Form ref="info" :model="info" :rules="rules" :label-width="80">
         <FormItem label="姓名" prop="name">
@@ -14,7 +14,8 @@
         </FormItem>
       </Form>
       <div slot="footer">
-        <Button  type="error" size="large" long @click="save">确定</Button>
+        <Button  type="primary"  @click="save">确定</Button>
+        <Button  type="default"  @click="close">取消</Button>
       </div>
     </Modal>
   </div>

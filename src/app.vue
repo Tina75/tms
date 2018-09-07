@@ -11,9 +11,9 @@
             <tab-nav :list="tabList" :value="currTab" @on-close="handleCloseTag" @input="handleClick"/>
           </div>
         </Header>
-        <Content>
+        <Content >
           <Layout>
-            <Content>
+            <Content class="content">
               <keep-alive>
                 <router-view/>
               </keep-alive>
@@ -37,7 +37,7 @@ export default {
   data () {
     return {
       collapsed: false,
-      name: 'test'
+      name: '端木和地'
     }
   },
   computed: {
@@ -104,6 +104,7 @@ html, body
   height 100%
   .container
     height 100vh
+    background #EFEFEF
     .ivu-layout-sider
       background-color #252A2F
       .ivu-menu-dark
@@ -121,18 +122,29 @@ html, body
         display block
         margin 0 auto
     .header-con
-      background #fff
       position relative
       .tag-nav-wrapper
         width auto
-        top 0
+        top 3px
         left 30px
-        right 100px
+        right 165px
         position absolute
         padding 0
-        height 100%
-        background #F0F0F0
+        height 46px
+        // background #F0F0F0
         overflow hidden
+        .ivu-tag-dot
+          border-bottom none!important
+          border-radius 8px 8px 0 0
+          background #3A424B!important
+          border none !important
+          .ivu-tag-text
+            color #fff
+    .content
+      margin 15px
+      padding 15px
+      background white
+      min-height 88vh
 .ivu-menu-dark.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu), .ivu-menu-dark.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu):hover, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title-active:not(.ivu-menu-submenu), .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title-active:not(.ivu-menu-submenu):hover
   background #00A4BD
 .ivu-menu-dark.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu), .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title-active:not(.ivu-menu-submenu)
@@ -146,4 +158,9 @@ html, body
   color rgba(255,255,255,1)
   font-family:PingFangSC-Regular;
   font-weight:400;
+.ivu-modal-footer
+  border-top none
+  text-align center
+  .ivu-btn
+    min-width 85px
 </style>

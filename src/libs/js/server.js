@@ -15,7 +15,7 @@ let instance = axios.create({
 
 switch (process.env.NODE_ENV) {
   case 'development':
-    instance.defaults.baseURL = 'http://dev-boss.yundada56.com/bluewhale-boss/'; break
+    instance.defaults.baseURL = 'http://yapi.yundada56.com/mock/154'; break
   case 'quality':
     instance.defaults.baseURL = 'https://hn.algolia.com/api/v1/'; break
   case 'production':
