@@ -28,7 +28,7 @@ export default {
       const _this = this
       this.openDialog({
         name: 'example/dialog/demo-dialog1',
-        data: {id: 1},
+        data: { id: 1 },
         methods: {
           ok (node) {
             _this.onAddUserSuccess(node)

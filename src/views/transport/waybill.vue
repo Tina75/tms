@@ -10,7 +10,7 @@ export default {
 
   components: {},
   mixins: [ BasePage ],
-  metaInfo: {title: '运单管理'},
+  metaInfo: { title: '运单管理' },
   data () {
     return {
     }

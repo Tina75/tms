@@ -56,8 +56,8 @@ export default {
       },
       rules: {
         telephone: [
-          {required: true, message: '用户名不能为空', trigger: 'blur'},
-          {max: 11, min: 11, trigger: 'blur', message: '手机格式有误'}
+          { required: true, message: '用户名不能为空', trigger: 'blur' },
+          { max: 11, min: 11, trigger: 'blur', message: '手机格式有误' }
         ],
         captcha: [
           { required: true, message: '验证码不能为空', trigger: 'blur' },
@@ -99,8 +99,8 @@ export default {
       Server({
         url: 'loginsmscaptcha',
         method: 'post',
-        data: {phone: this.form.telephone}
-      }).then(({data}) => {
+        data: { phone: this.form.telephone }
+      }).then(({ data }) => {
         this.captchaEnable = false
       }).catch(error => {
         console.log(error)

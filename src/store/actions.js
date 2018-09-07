@@ -22,6 +22,6 @@ export const getUserInfo = ({ rootState, commit, state, dispatch }) => {
 }
 
 /** 文章数据清空 */
-export const clearNews = ({commit}) => {
+export const clearNews = ({ commit }) => {
   // commit(types.NEWS_CLEAR)
 }
