@@ -87,9 +87,19 @@
   },
   {
     "name":"公司管理",
-    "href":"/company",
     "icon":"md-briefcase",
-    "powerCode":0
+    "children":[
+      {
+        "name":"员工管理",
+        "href":"/company-manage/staff-manage",
+        "powerCode":0
+      },
+      {
+        "name":"角色管理",
+        "href":"/company-manage/employee-manage",
+        "powerCode":0
+      }
+    ]
   },
   {
     "name":"设置",
