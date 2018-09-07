@@ -39,14 +39,8 @@
 </template>
 
 <script>
-import BasePage from '@/basic/BasePage'
 export default {
   name: 'staff-manage',
-  components: {},
-  mixins: [ BasePage ],
-  metaInfo: {
-    title: 'staff-manage'
-  },
   data () {
     return {
       formSearch: {
@@ -177,11 +171,7 @@ export default {
       }
       ] }
   },
-
-  computed: {},
-
   mounted: function () {},
-
   methods: {
     removeTableRow (e) {
       console.log(e)

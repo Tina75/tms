@@ -119,13 +119,13 @@
   },
   {
     "name":"设置",
-    "href":"/settings",
+    "href":"/set-up/set-up",
     "icon":"md-settings",
     "powerCode":0
   },
   {
     "name":"帮助",
-    "href":"/helper",
+    "href":"/helper/help",
     "icon":"md-help-circle",
     "powerCode":0
   },

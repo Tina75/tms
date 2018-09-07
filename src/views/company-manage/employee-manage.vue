@@ -72,14 +72,8 @@
 </template>
 
 <script>
-import BasePage from '@/basic/BasePage'
 export default {
   name: 'employee-manage',
-  components: {},
-  mixins: [ BasePage ],
-  metaInfo: {
-    title: 'employee-manage'
-  },
   data () {
     return {
       theme: 'light',
@@ -159,7 +153,6 @@ export default {
         ] }]
     }
   },
-  computed: {},
   mounted: function () {
     this.listInit = Object.assign([], this.list1)
   },
