@@ -20,7 +20,7 @@
                 </Input>
               </Col>
               <Col :span="9" :offset="1">
-              <Button  :disabled="!captchaEnable" @click="getCaptcha">{{captchaEnable?`&nbsp;&nbsp;&nbsp;获取验证码&nbsp;&nbsp;&nbsp;`:intervalSeconds+'秒后可重试'}}</Button>
+              <Button  :disabled="!captchaEnable">{{captchaEnable?`&nbsp;&nbsp;&nbsp;获取验证码&nbsp;&nbsp;&nbsp;`:intervalSeconds+'秒后可重试'}}</Button>
                 <!-- <Button :size="buttonSize" >90s后重新获取</Button> -->
               </Col>
             </Row>
