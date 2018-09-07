@@ -80,9 +80,25 @@
   },
   {
     "name":"客户",
-    "href":"/client",
     "icon":"md-person",
-    "powerCode":0
+    "powerCode":0,
+    "children":[
+      {
+        "name":"发货方管理",
+        "href":"/client/sender",
+        "powerCode":0
+      },
+      {
+        "name":"承运商管理",
+        "href":"/client/carrier",
+        "powerCode":0
+      },
+      {
+        "name":"外转方管理",
+        "href":"/client/transfer",
+        "powerCode":0
+      }
+    ]
   },
   {
     "name":"公司管理",
