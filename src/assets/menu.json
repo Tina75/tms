@@ -30,12 +30,12 @@
     "children":[
       {
         "name":"订单管理",
-        "href":"/order",
+        "href":"/order-management/order",
         "powerCode":0
       },
       {
         "name":"回单管理",
-        "href":"/3",
+        "href":"/order-management/receipt",
         "powerCode":0
       }
     ]
