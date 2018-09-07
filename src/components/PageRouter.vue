@@ -36,6 +36,7 @@ export default {
   methods: {
     loadPage: function (data) {
       var path = this.getPath()
+
       import('../views/' + path + '')
         .then(module => {
           // eslint-disable-next-line
@@ -60,7 +61,7 @@ export default {
       for (var k in params) {
         arr.push(params[k])
       }
-      if (arr.length === 0) arr.push('home')
+      if (arr.length === 0) arr.push(localStorage.getItem('tms_is_login') ? 'home' : 'login')
       return arr.join('/')
     }
   }
