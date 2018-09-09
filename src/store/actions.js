@@ -1,10 +1,10 @@
 // import * as types from './mutationTypes'
-import axios from '@/libs/js/server'
+import Server from '@/libs/js/server'
 
 /** 获取文章信息 */
 export const getUserInfo = ({ rootState, commit, state, dispatch }) => {
   return new Promise((resolve, reject) => {
-    axios({
+    Server({
       method: 'get',
       url: 'search_by_date',
       params: {
