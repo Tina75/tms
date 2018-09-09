@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <Layout class="container">
-      <Sider v-model="collapsed" :collapsed-width="64" hide-trigger collapsible >
-        <side-bar  @on-select="turnToPage"/>
+      <Sider v-model="collapsed" :collapsed-width="56" hide-trigger collapsible >
+        <side-bar  :collapsed="collapsed" @on-select="turnToPage"/>
       </Sider>
       <Layout>
         <Header class="header-con">
