@@ -17,14 +17,14 @@
     <div v-show="collapsed" class="menu-collapsed">
       <template v-for="item in menuList" >
         <div :key="item.name" >
-          <a v-if="item.children" class="drop-menu-a"><Icon :type="item.icon" color="#fff" size="22"/></a>
-          <Poptip v-else trigger="hover"  placement="left-start">
+          <Poptip v-if="item.children" trigger="hover"  placement="left-start">
             <div v-for="child in item.children" slot="content" :key="child.href" @click="handleSelect(child.href)">
               <!-- <p><a :href="child.href" @click="handleSelect(child.href)">{{child.name}}</a></p> -->
               <menu-item :name="child.href" :to="child.href" :key="child.href" >{{child.name}}</menu-item>
             </div>
             <a class="drop-menu-a" href=""><Icon :type="item.icon" color="#fff" size="22"/></a>
           </Poptip>
+          <a v-else class="drop-menu-a"><Icon :type="item.icon" color="#fff" size="22"/></a>
         </div>
       </template>
     </div>
