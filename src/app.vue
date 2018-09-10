@@ -30,10 +30,10 @@ import HeaderBar from '@/components/HeaderBar'
 import SideBar from '@/components/SideBar'
 import TabNav from '@/components/TabNav'
 import Dialogs from '@/components/Dialogs'
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
-  components: {HeaderBar, SideBar, TabNav, Dialogs},
+  components: { HeaderBar, SideBar, TabNav, Dialogs },
   data () {
     return {
       collapsed: false,

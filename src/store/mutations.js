@@ -15,9 +15,9 @@ export const changeActiveIndex = (state, data) => {
 export const changeTab = (state, data) => {
   let list = state.tabNav.tabList
   if (typeof data === 'string') {
-    state.tabNav.currTab = {href: data}
+    state.tabNav.currTab = { href: data }
     if (!list.some(item => { return item.path === data })) {
-      list.push({path: data})
+      list.push({ path: data })
       store.commit('updateTabList', list)
     }
   } else {
@@ -47,6 +47,6 @@ export const powerControl = (state, data) => {
   state.powerControl = data
 }
 
-export const POWER_UPDATE = (state, {path, data}) => {
+export const POWER_UPDATE = (state, { path, data }) => {
   // eval(`state.powerControl.${path} = data`)
 }

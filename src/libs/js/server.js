@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {LoadingBar, Message} from 'iview'
+import { LoadingBar, Message } from 'iview'
 
 let instance = axios.create({
   baseURL: '/',

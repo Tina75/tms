@@ -18,7 +18,7 @@ Vue.use(VueMeta)
 Vue.use(iView)
 
 window.EMA = new EmaProxy()
-var appData = {router, store}
+var appData = { router, store }
 var islogin = localStorage.getItem('tms_is_login')
 if (islogin) {
   appData.render = h => h(App)
