@@ -4,10 +4,7 @@ import { LoadingBar, Message } from 'iview'
 let instance = axios.create({
   baseURL: '/',
   timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json'
-    // 'Authorization': 'Bearer eyJsb2dpblRpbWUiOiIyMDE4LTA4LTIxIDExOjE3OjMxIiwidXNlcklkIjoxMn0='
-  },
+  headers: {'Content-Type': 'application/json'},
   withCredentials: true,
   loading: false,
   ignoreCode: false
@@ -25,9 +22,7 @@ switch (process.env.NODE_ENV) {
 // POST传参序列化
 instance.interceptors.request.use((config) => {
   // Loading判断
-  if (config.loading) {
-    LoadingBar.start()
-  }
+  config.loading && LoadingBar.start()
   if (config.method === 'post') {
     config.data = JSON.stringify(config.data)
   }
