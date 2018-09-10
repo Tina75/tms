@@ -1,13 +1,12 @@
 [
   {
     "name":"首页",
-    "href":"/home/index",
+    "href":"#/home/index",
     "icon":"md-home",
     "powerCode":0
   },
   {
     "name":"受理开单",
-    "href":"/",
     "icon":"md-paper",
     "powerCode":0,
     "children":[
@@ -69,13 +68,13 @@
   },
   {
     "name":"财务",
-    "href":"/finance",
+    "href":"#/finance",
     "icon":"md-options",
     "powerCode":0
   },
   {
     "name":"报表",
-    "href":"/stats",
+    "href":"#/stats",
     "icon":"md-stats",
     "powerCode":0
   },
@@ -119,19 +118,19 @@
   },
   {
     "name":"设置",
-    "href":"/set-up/set-up",
+    "href":"#/set-up/set-up",
     "icon":"md-settings",
     "powerCode":0
   },
   {
     "name":"帮助",
-    "href":"/helper/help",
+    "href":"#/helper/help",
     "icon":"md-help-circle",
     "powerCode":0
   },
   {
     "name":"example",
-    "href":"/example/page1",
+    "href":"#/example/page1",
     "icon":"md-alert"
   }
 

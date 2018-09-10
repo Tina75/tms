@@ -74,6 +74,9 @@
 <script>
 export default {
   name: 'employee-manage',
+  metaInfo: {
+    title: '用户管理'
+  },
   data () {
     return {
       theme: 'light',

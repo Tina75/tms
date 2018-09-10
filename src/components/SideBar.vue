@@ -24,7 +24,7 @@
             </div>
             <a class="drop-menu-a" href=""><Icon :type="item.icon" color="#fff" size="22"/></a>
           </Poptip>
-          <a v-else class="drop-menu-a"><Icon :type="item.icon" color="#fff" size="22"/></a>
+          <a v-else :href="item.href" class="drop-menu-a"><Icon :type="item.icon" color="#fff" size="22"/></a>
         </div>
       </template>
     </div>
