@@ -25,10 +25,10 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
-      info: {name: '', phone: ''},
+      info: { name: '', phone: '' },
       rules: {
-        name: {required: true, message: '请填写姓名', trigger: 'blur'},
-        phone: {required: true, message: '请填写手机号', trigger: 'blur'}
+        name: { required: true, message: '请填写姓名', trigger: 'blur' },
+        phone: { required: true, message: '请填写手机号', trigger: 'blur' }
       },
       visibale: true
     }

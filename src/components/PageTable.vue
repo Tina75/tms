@@ -37,6 +37,9 @@
           :current="pagination.pageNo"
           :page-size="pagination.pageSize"
           :page-size-opts="[10,20,50]"
+          show-sizer
+          show-elevator
+          show-total
           @on-change="handleChangePage"
           @on-page-size-change="handlePageSizeChange"></Page>
       </div>
@@ -46,246 +49,253 @@
 
 <script>
 /**
- * iview的table和page的组件是分开的
- * 其实实际的场景中，大多数页面都是需要结合table和page，
- * 以及包含自动发请求，管理数据的table
- */
-
+   * iview的table和page的组件是分开的
+   * 其实实际的场景中，大多数页面都是需要结合table和page，
+   * 以及包含自动发请求，管理数据的table
+  */
+/*eslint-disable */
 export default {
-	props: {
-		//请求的地址
-		url: String,
-		keywords: {
-			type: Object,
-			default: () => ({})
-		},
-		width: {
-			type: [String, Number]
-		},
-		height: {
-			type: [String, Number]
-		},
-		showFilter: {
-			type: Boolean,
-			default: true
-		},
-		//列
-		columns: {
-			type: Array,
-			default: () => [],
-			required: true
-		},
-		//斑马纹
-		stripe: {
-			type: Boolean,
-			default: false
-		},
-		//显示表头
-		showHeader: {
-			type: Boolean,
-			default: true
-		},
-		border: {
-			type: Boolean,
-			default: false
-		},
-		size: {
-			type: String,
-			validator(value) {
-				return ['small', 'large', 'default'].indexOf(value) > -1
-			},
-			default: 'default'
-		},
-		noDateText: {
-			type: String,
-			default: '暂无数据'
-		},
-		highlightRow: {
-			type: Boolean,
-			default: false
-		},
-		onCurrentChange: Function,
-		onSelect: Function,
-		onSelectCancel: Function,
-		onSelectAll: Function,
-		onSelectionChange: Function,
-		onSortChange: Function,
-		onFilterChange: Function,
-		onRowClick: Function,
-		onRowDbclick: Function,
-		onExpand: Function,
-		onChange: Function,
-		onPageSizeChange: Function
-	},
-	data() {
-		return {
-			//请求时候的加载状态
-			loading: false,
-			pagination: {
-				pageSize: 10,
-				pageNo: 1,
-				totalCount: 0
-			},
-			//源数据
-      data: [],
+  props: {
+    // 请求的地址
+    url: String,
+    keywords: {
+      type: Object,
+      default: () => ({})
+    },
+    width: {
+      type: [String, Number]
+    },
+    height: {
+      type: [String, Number]
+    },
+    showFilter: {
+      type: Boolean,
+      default: true
+    },
+    // 列
+    columns: {
+      type: Array,
+      default: () => [],
+      required: true
+    },
+    // 表数据
+    data: {
+      type: Array,
+      default: () => [],
+      required: true
+    },
+    // 斑马纹
+    stripe: {
+      type: Boolean,
+      default: false
+    },
+    // 显示表头
+    showHeader: {
+      type: Boolean,
+      default: true
+    },
+    border: {
+      type: Boolean,
+      default: false
+    },
+    size: {
+      type: String,
+      validator (value) {
+        return ['small', 'large', 'default'].indexOf(value) > -1
+      },
+      default: 'default'
+    },
+    noDateText: {
+      type: String,
+      default: '暂无数据'
+    },
+    highlightRow: {
+      type: Boolean,
+      default: false
+    },
+    onCurrentChange: Function,
+    onSelect: Function,
+    onSelectCancel: Function,
+    onSelectAll: Function,
+    onSelectionChange: Function,
+    onSortChange: Function,
+    onFilterChange: Function,
+    onRowClick: Function,
+    onRowDbclick: Function,
+    onExpand: Function,
+    onChange: Function,
+    onPageSizeChange: Function
+  },
+  data () {
+    return {
+          // 请求时候的加载状态
+      loading: false,
+      pagination: {
+        pageSize: 10,
+        pageNo: 1,
+        totalCount: 0
+      },
+      // 源数据
+      // data: [],
       visible: false
-		}
+    }
   },
   computed: {
-		//根据显示|隐藏列选择框
-		filterColumns() {
-      const _this = this;
-			if (_this.showFilter) {
-				return this.columns.concat({
-					title: 'icon',
-					width: 48,
-					renderHeader(h, params) {
-						return h('Icon', {
-							props: {
-								type: 'ios-list'
-							},
-							class: 'ios-list-icon',
-							on: {
-								//点击图标，弹出筛选列的框
-								click: _this.showSlider
-							}
-						})
-					},
-					key: 'filter-columns'
-				})
-			} else {
-				return this.columns
-			}
-		}
+    // 根据显示|隐藏列选择框
+    filterColumns () {
+      const _this = this
+      if (_this.showFilter) {
+        return this.columns.concat({
+          title: 'icon',
+          width: 48,
+          renderHeader (h, params) {
+            return h('Icon', {
+
+              props: {
+                type: 'ios-list'
+              },
+              class: 'ios-list-icon',
+              on: {
+                // 点击图标，弹出筛选列的框
+                click: _this.showSlider
+              }
+            })
+          },
+          key: 'filter-columns'
+        })
+      } else {
+        return this.columns
+      }
+    }
   },
   watch: {
-		//搜索关键字变化后,重置分页参数，重新发送请求
-		keywords() {
-			this.pagination.pageNo = 1
-			this.fetch()
-		}
-	},
-	created() {
-		this.fetch()
-	},
-	methods: {
-		//全选
-		selectAll() {
-			this.refs.table.selectAll(true)
-		},
-		//全不选
-		unSelectAll() {
-			this.refs.table.selectAll(false)
+    // 搜索关键字变化后,重置分页参数，重新发送请求
+    keywords () {
+      this.pagination.pageNo = 1
+          this.fetch()
+    }
+  },
+  created () {
+    this.fetch()
+  },
+  methods: {
+    // 全选
+    selectAll () {
+      this.refs.table.selectAll(true)
     },
-    showSlider(){
-      this.visible = true;
+    // 全不选
+    unSelectAll () {
+      this.refs.table.selectAll(false)
     },
-    hideSlider(){
-      this.visible = false;
+    showSlider () {
+      this.visible = true
     },
-		//请求后端地址
-		fetch() {
-			if (!this.url) {
-				return
-			}
-			//发送请求，填充data
-			this.loading = true
-			let request = { ...this.pagination, ...this.keywords }
-		},
-		/**
+    hideSlider () {
+      this.visible = false
+    },
+    // 请求后端地址
+    fetch () {
+      if (!this.url) {
+        return
+      }
+      // 发送请求，填充data
+      this.loading = true
+      let request = { ...this.pagination, ...this.keywords }
+    },
+    /**
 		 * 开启highlight-row后，当前 选中行变化后回调
 		 * @param {object} currentRow
 		 * @param {object} oldCurrentRow
 		 */
-		handleCurrentChange(curretRow, oldCurrentRow) {
-			this.$emit('on-current-change', curretRow, oldCurrentRow)
-		},
-		/**
+    handleCurrentChange (curretRow, oldCurrentRow) {
+      this.$emit('on-current-change', curretRow, oldCurrentRow)
+    },
+    /**
 		 * 选中一项后回调
 		 * @param {array} selection 已选择的数据集合
 		 * @param {object} row 选中的行
 		 */
-		handleSelect(selection, row) {
-			this.$emit('on-select', selection, row)
-		},
-		/**
+    handleSelect (selection, row) {
+      this.$emit('on-select', selection, row)
+    },
+    /**
 		 * 取消选中一项后回调
 		 * @param {array} selection
 		 * @param {object} row 未选中的行
 		 */
-		handleSelectCancel(selection, row) {
-			this.$emit('on-select-cancel')
-		},
-		/**
+    handleSelectCancel (selection, row) {
+      this.$emit('on-select-cancel')
+    },
+    /**
 		 * 选中所有
 		 * @param {array} selection
 		 */
-		handleSelectAll(selection) {
-			this.$emit('on-select-all', selection)
-		},
-		/**
+    handleSelectAll (selection) {
+      this.$emit('on-select-all', selection)
+    },
+    /**
 		 * 选中项发送变化后回调
 		 * @param {array} selection
 		 */
-		handleSelectionChange(selection) {
-			this.$emit('on-selection-change', selection)
-		},
-		/**
+    handleSelectionChange (selection) {
+      this.$emit('on-selection-change', selection)
+    },
+    /**
 		 * 排序时候有效，排序时回调
 		 * @param {object} column 当前列数据
 		 * @param {string} key 列名称,对应columns的key
 		 * @param {string} order ,值：asc|desc
 		 */
-		handleSortChange(sorter) {
-			this.$emit('on-sort-change', sorter)
-		},
-		/**
+    handleSortChange (sorter) {
+      this.$emit('on-sort-change', sorter)
+    },
+    /**
 		 * 筛选回调
 		 * @param {object} column 当前列数据
 		 */
-		handleFilterChange(column) {
-			this.$emit('on-filter-change')
-		},
-		/**
+    handleFilterChange (column) {
+      this.$emit('on-filter-change')
+    },
+    /**
 		 * 单击行
 		 * @param {object} row
 		 * @param {number} index
 		 */
-		handleRowClick(row, index) {
-			this.$emit('on-row-click', row, index)
-		},
-		/**
+    handleRowClick (row, index) {
+      this.$emit('on-row-click', row, index)
+    },
+    /**
 		 * 双击行
 		 * @param {object} row
 		 * @param {number} index
 		 */
-		handleRowDbclick(row, index) {
-			this.$emit('on-row-dbclick', row, index)
-		},
-		/**
+    handleRowDbclick (row, index) {
+      this.$emit('on-row-dbclick', row, index)
+    },
+    /**
 		 * 展开或收起行时回调
 		 * @param {object} row 行数据
 		 * @param {boolean} status 展开或收起
 		 */
-		handleExpand(row, status) {
-			this.$emit('handleExpand', row, status)
-		},
-		//页码变动
-		handleChangePage(pageNo) {
-			//重新组装数据，生成查询参数
-			this.pagination.pageNo = pageNo
-			this.fetch()
-			this.$emit('on-change', pageNo)
-		},
-		//pagesize变化
-		handlePageSizeChange(pageSize) {
-      //重新组装数据，生成查询参数
-      this.pagination.pageNo = 1;
-			this.pagination.pageSize = pageSize
-			this.fetch()
-			this.$emit('on-page-size-change', pageSize)
-		}
-	}
+    handleExpand (row, status) {
+      this.$emit('handleExpand', row, status)
+    },
+    // 页码变动
+    handleChangePage (pageNo) {
+      // 重新组装数据，生成查询参数
+      this.pagination.pageNo = pageNo
+      this.fetch()
+      this.$emit('on-change', pageNo)
+    },
+    // pagesize变化
+    handlePageSizeChange (pageSize) {
+      // 重新组装数据，生成查询参数
+      this.pagination.pageNo = 1
+      this.pagination.pageSize = pageSize
+      this.fetch()
+      this.$emit('on-page-size-change', pageSize)
+    }
+  }
 }
 </script>
 

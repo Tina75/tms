@@ -17,7 +17,7 @@ module.exports = {
     'vue/require-prop-types': 'error',
     'vue/attributes-order': 'error',
     'vue/order-in-components': 'error',
-    "vue/no-parsing-error": [2, { "x-invalid-end-tag": false }],
+    'vue/no-parsing-error': [2, { 'x-invalid-end-tag': false }],
     'vue/attribute-hyphenation': [
       'error',
       'always'

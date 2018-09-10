@@ -1,16 +1,15 @@
-<!--  -->
 <template>
-  <div>外转单管理</div>
+  <div>回单管理</div>
 </template>
 
 <script>
 import BasePage from '@/basic/BasePage'
 export default {
-  name: 'outerOrder',
+  name: 'receipt',
 
   components: {},
   mixins: [ BasePage ],
-  metaInfo: { title: '外转单管理' },
+  metaInfo: { title: '回单管理' },
   data () {
     return {
     }

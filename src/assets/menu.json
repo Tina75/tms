@@ -30,12 +30,12 @@
     "children":[
       {
         "name":"订单管理",
-        "href":"/order",
+        "href":"/order-management/order",
         "powerCode":0
       },
       {
         "name":"回单管理",
-        "href":"/3",
+        "href":"/order-management/receipt",
         "powerCode":0
       }
     ]
@@ -81,9 +81,25 @@
   },
   {
     "name":"客户",
-    "href":"/client",
     "icon":"md-person",
-    "powerCode":0
+    "powerCode":0,
+    "children":[
+      {
+        "name":"发货方管理",
+        "href":"/client/sender",
+        "powerCode":0
+      },
+      {
+        "name":"承运商管理",
+        "href":"/client/carrier",
+        "powerCode":0
+      },
+      {
+        "name":"外转方管理",
+        "href":"/client/transfer",
+        "powerCode":0
+      }
+    ]
   },
   {
     "name":"公司管理",
@@ -103,13 +119,13 @@
   },
   {
     "name":"设置",
-    "href":"/settings",
+    "href":"/set-up/set-up",
     "icon":"md-settings",
     "powerCode":0
   },
   {
     "name":"帮助",
-    "href":"/helper",
+    "href":"/helper/help",
     "icon":"md-help-circle",
     "powerCode":0
   },
