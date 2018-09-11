@@ -80,7 +80,7 @@
       </Col>
     </Row>
     <Title>货物信息</Title>
-    <Table :columns="goodsColumn" :data="cargoes" :disabled-hover="true" :highlight-row="false" stripe>
+    <Table :columns="goodsColumn" :data="consignerCargoes" :disabled-hover="true" :highlight-row="false" stripe>
       <div slot="footer">
         <tr class="ivu-table-row">
           <td>
@@ -192,6 +192,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import Title from './Title.vue'
 import SelectInput from './SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
@@ -200,8 +201,7 @@ import area from '@/libs/js/area'
 import BaseComponent from '@/basic/BaseComponent'
 export default {
   components: {
-    Title,
-    SelectInput
+    Title
   },
   mixin: [BaseComponent],
   data () {
@@ -221,10 +221,8 @@ export default {
         {
           title: ' ',
           key: 'index',
+          width: 90,
           render: (h, params) => {
-            // if (params.row.key === 'sum') {
-            //   return h('span', params.row.title)
-            // }
             return h('a', { props: { href: 'javascript:;' } }, [
               h('Icon', {
                 props: {
@@ -264,20 +262,21 @@ export default {
         {
           title: '货物名称',
           key: 'cargoName',
+          width: 170,
           render (h, params) {
-            // if (params.row.key === 'sum') {
-            //   return h('span', '')
-            // }
-            return h('Input', {
+            return h('SelectInput', {
               props: {
-                value: params.row[params.column.key] || ''
+                value: params.row[params.column.key] || '',
+                remote: false,
+                localOptions: _this.cargoOptions,
+                transfer: true
               },
               on: {
-                'on-blur': (e) => {
-                  // setValue(params, e.target.value)
-                  // _this.updateCargo({index: params.index, name: params.column.key, value: e.target.value})
-                  _this.updateLocalCargo(setObject(params, e.target.value))
-                  // _this.updateCargo({index: params.index, cargo: {[params.column.key]: e.target.value}})
+                'on-blur': (value) => {
+                  _this.updateLocalCargo(setObject(params, value))
+                },
+                'on-select': (name, cargoItem) => {
+                  _this.selectCargo(params, cargoItem)
                 }
               }
             })
@@ -309,9 +308,6 @@ export default {
             ])
           },
           render (h, params) {
-            // if (params.row.key === 'sum') {
-            //   return h('span', params.row.weight)
-            // }
             return h('InputNumber', {
               props: {
                 value: params.row[params.column.key] || null,
@@ -325,11 +321,7 @@ export default {
                 },
                 'on-blur': () => {
                   if ('value' in params) {
-                    // setValue(params, float.floor(params.value))
-                    // setValue({index: params.index, name: params.column.key, value: float.floor(params.value)})
-                    // _this.updateCargo({index: params.index, name: params.column.key, value: float.floor(params.value)})
                     _this.updateLocalCargo(setObject(params, float.floor(params.value)))
-                    // _this.updateCargo({index: params.index, cargo: {[params.column.key]: float.floor(params.value)}})
                   }
                 }
               }
@@ -340,9 +332,6 @@ export default {
           title: '体积(方)',
           key: 'volume',
           render (h, params) {
-            // if (params.row.key === 'sum') {
-            //   return h('span', params.row.volume)
-            // }
             return h('InputNumber', {
               props: {
                 value: params.row[params.column.key] || null,
@@ -356,9 +345,7 @@ export default {
                 },
                 'on-blur': () => {
                   if ('value' in params) {
-                    // setValue({index: params.index, name: params.column.key, value: float.floor(params.value, 1)})
                     _this.updateLocalCargo(setObject(params, float.floor(params.value, 1)))
-                    // _this.updateCargo({index: params.index, cargo: {[params.column.key]: float.floor(params.value, 1)}})
                   }
                 }
               }
@@ -369,9 +356,6 @@ export default {
           title: '货值(元)',
           key: 'cargoCost',
           render (h, params) {
-            // if (params.row.key === 'sum') {
-            //   return h('span', params.row.cargoCost)
-            // }
             return h('InputNumber', {
               props: {
                 value: params.row[params.column.key] || null,
@@ -385,9 +369,7 @@ export default {
                 },
                 'on-blur': () => {
                   if ('value' in params) {
-                    // setValue({index: params.index, name: params.column.key, value: parseInt(params.value || 0)})
                     _this.updateLocalCargo(setObject(params, parseInt(params.value || 0)))
-                    // _this.updateCargo({index: params.index, cargo: {[params.column.key]: parseInt(params.value || 0)}})
                   }
                 }
               }
@@ -398,9 +380,6 @@ export default {
           title: '数量',
           key: 'quantity',
           render (h, params) {
-            // if (params.row.key === 'sum') {
-            //   return h('span', params.row.quantity)
-            // }
             return h('InputNumber', {
               props: {
                 value: params.row[params.column.key] || null,
@@ -412,9 +391,7 @@ export default {
                 },
                 'on-blur': () => {
                   if ('value' in params) {
-                    // setValue({index: params.index, name: params.column.key, value: parseInt(params.value || 1)})
                     _this.updateLocalCargo(setObject(params, parseInt(params.value || 1)))
-                    // _this.updateCargo({index: params.index, cargo: {[params.column.key]: parseInt(params.value || 1)}})
                   }
                 }
               }
@@ -425,9 +402,6 @@ export default {
           title: '包装',
           key: 'unit',
           render (h, params) {
-            // if (params.row.key === 'sum') {
-            //   return h('span', '')
-            // }
             return h('Input', {
               props: {
                 value: params.row[params.column.key] || '',
@@ -435,10 +409,7 @@ export default {
               },
               on: {
                 'on-blur': (e) => {
-                  // setValue({index: params.index, name: params.column.key, value: e.target.value})
                   _this.updateLocalCargo(setObject(params, e.target.value))
-                  // _this.updateCargo({index: params.index, cargo: {[params.column.key]: e.target.value}})
-                  // _this.updateCargo({index: params.index, name: params.column.key, value: e.target.value})
                 }
               }
             })
@@ -448,9 +419,6 @@ export default {
           title: '备注',
           key: 'remark',
           render (h, params) {
-            // if (params.row.key === 'sum') {
-            //   return h('span', '')
-            // }
             return h('Input', {
               props: {
                 value: params.row[params.column.key] || '',
@@ -458,10 +426,7 @@ export default {
               },
               on: {
                 'on-blur': (e) => {
-                  // setValue({index: params.index, name: params.column.key, value: e.target.value})
                   _this.updateLocalCargo(setObject(params, e.target.value))
-                  // _this.updateCargo({index: params.index, cargo: {[params.column.key]: e.target.value}})
-                  // _this.updateCargo({index: params.index, name: params.column.key, value: e.target.value})
                 }
               }
             })
@@ -580,13 +545,18 @@ export default {
       'consigneePhones',
       'consigneeAddresses',
       'cargoes',
+      'cargoOptions',
+      'consignerCargoes',
       'sumRow'
     ])
   },
   watch: {
-    cargoes (newCargoes) {
+    consignerCargoes (newCargoes) {
       this.statics = Object.assign({}, this.sumRow)
     }
+  },
+  created () {
+    Vue.component('SelectInput', SelectInput)
   },
   mounted () {
     this.statics = Object.assign({}, this.sumRow)
@@ -595,7 +565,14 @@ export default {
     this.clearCargoes()
   },
   methods: {
-    ...mapActions(['getClients', 'getConsignerDetail', 'appendCargo', 'removeCargo', 'updateCargo', 'clearCargoes']),
+    ...mapActions(['getClients', 'getConsignerDetail', 'appendCargo', 'removeCargo', 'updateCargo', 'fullUpdateCargo', 'clearCargoes']),
+    selectCargo (params, cargoItem) {
+      const cargo = this.cargoes.find(cg => cg.id === cargoItem.id)
+      if (cargo) {
+        this.syncStoreCargoes()
+        this.fullUpdateCargo({index: params.index, cargo})
+      }
+    },
     /**
      * 先将表格里的更改，存储在当前组件的临时数据里
      * 1. 添加操作时，需同步
@@ -611,7 +588,7 @@ export default {
         if (!this.tempCargoes[item.index]) {
           this.tempCargoes[item.index] = {[item.name]: item.value}
           if (sumFields.indexOf(item.name) !== -1) {
-            this.statics[item.name] = float.round(this.statics[item.name] - (this.cargoes[item.index][item.name] || 0) + item.value)
+            this.statics[item.name] = float.round(this.statics[item.name] - (this.consignerCargoes[item.index][item.name] || 0) + item.value)
           }
         } else {
           if (sumFields.indexOf(item.name) !== -1) {
@@ -679,4 +656,7 @@ export default {
     line-height 32px
   &__input-w100
     width 100%
+  &__cell-no-padding
+    padding-left 0
+    padding-right 0
 </style>

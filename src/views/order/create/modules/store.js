@@ -22,8 +22,10 @@ const state = {
     consigners: [], // 发货方信息
     addresses: [], // 发货方地址
     consignees: [], // 收货方列表
-    // 常用货物
-    cargoes: [
+    // 常用货物，数据不变
+    cargoes: [],
+    // 客户实际需要的货物，基于上面的cargoes
+    consignerCargoes: [
       new Cargo(defaultCargo)
     ]
   }
@@ -45,17 +47,23 @@ const mutations = {
   [types.RECEIVE_CARGO_LIST] ({order}, list) {
     order.cargoes = list
   },
-  [types.APPEND_CARGO] ({order}, index) {
-    order.cargoes.splice(index, -1, new Cargo(defaultCargo))
+  [types.RECEIVE_CONSIGNER_CARGO_LIST] ({order}, list) {
+    order.consignerCargoes = list
   },
-  [types.REMOVE_CARGO] ({order}, index) {
-    order.cargoes.splice(index, 1)
+  [types.APPEND_CONSIGNER_CARGO] ({order}, index) {
+    order.consignerCargoes.splice(index, -1, new Cargo(defaultCargo))
   },
-  [types.UPDATE_CARGO] ({order}, item) {
-    order.cargoes[item.index] = Object.assign({}, order.cargoes[item.index], item.cargo)
+  [types.REMOVE_CONSIGNER_CARGO] ({order}, index) {
+    order.consignerCargoes.splice(index, 1)
   },
-  [types.CLEAR_CARGO_LIST] ({order}) {
-    order.cargoes = [new Cargo()]
+  [types.UPDATE_CONSIGNER_CARGO] ({order}, item) {
+    order.consignerCargoes[item.index] = Object.assign({}, order.consignerCargoes[item.index], item.cargo)
+  },
+  [types.UPDATE_FULL_CONSIGNER_CARGO] ({order}, item) {
+    order.consignerCargoes.splice(item.index, 1, item.cargo)
+  },
+  [types.CLEAR_CONSIGNER_CARGO_LIST] ({order}) {
+    order.consignerCargoes = [new Cargo()]
   }
 }
 export default {

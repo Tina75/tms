@@ -1,5 +1,5 @@
 <template>
-  <Dropdown :visible="visible" class="order-create__input-select" trigger="custom" @on-click="handleSelect">
+  <Dropdown :visible="visible" :transfer="transfer" class="order-create__input-select" trigger="custom" @on-click="handleSelect">
     <Input
       v-model="currentValue"
       :maxlength="maxlength"
@@ -22,6 +22,10 @@ export default {
   props: {
     maxlength: Number,
     value: String,
+    transfer: {
+      type: Boolean,
+      default: false
+    },
     localOptions: {
       type: Array,
       default: () => []
@@ -108,6 +112,7 @@ export default {
       this.isFocus = false
       // 设置输入框的值，不选择下拉框的选项
       this.$emit('input', this.currentValue)
+      this.$emit('on-blur', this.currentValue)
     },
     /**
      * 更改关键字，input onChange事件

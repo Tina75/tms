@@ -30,8 +30,19 @@ export const consigneeAddresses = (state, getters) => getters.consignees.map((us
 }))
 export const cargoes = ({order}) => order.cargoes
 
+export const consignerCargoes = ({order}) => order.consignerCargoes
+// 下拉框选择货物
+export const cargoOptions = (state, getters) => {
+  return getters.cargoes.map(cargo => {
+    return {
+      name: `${cargo.cargoName}，${cargo.weight}吨，${cargo.volume}方，${cargo.cargoCost}元`,
+      value: cargo.cargoName,
+      id: cargo.id
+    }
+  })
+}
 export const sumRow = (state, getters) => {
-  return getters.cargoes.reduce((sum, cargo) => {
+  return getters.consignerCargoes.reduce((sum, cargo) => {
     // 读取临时数据
 
     sum.weight = (cargo.weight || 0) + sum.weight

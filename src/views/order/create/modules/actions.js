@@ -39,6 +39,10 @@ export default {
         commit(types.RECEIVE_ADDRESS_LIST, addressList)
         // 货物信息
         commit(types.RECEIVE_CARGO_LIST, cargoList)
+        commit(types.RECEIVE_CONSIGNER_CARGO_LIST, cargoList.map((cargo) => {
+          cargo.quantity = 1
+          return cargo
+        }))
         // 收货方地址
         commit(types.RECEIVE_CONSIGNEES_LIST, consigneeList)
         resolve(response.data)
@@ -48,18 +52,21 @@ export default {
     })
   },
   appendCargo ({commit}, index) {
-    commit(types.APPEND_CARGO, index + 1)
+    commit(types.APPEND_CONSIGNER_CARGO, index + 1)
   },
   removeCargo ({state, commit}, index) {
     if (state.order.cargoes.length === 1) {
       return
     }
-    commit(types.REMOVE_CARGO, index)
+    commit(types.REMOVE_CONSIGNER_CARGO, index)
   },
   updateCargo ({state, commit}, item) {
-    commit(types.UPDATE_CARGO, item)
+    commit(types.UPDATE_CONSIGNER_CARGO, item)
+  },
+  fullUpdateCargo ({commit}, item) {
+    commit(types.UPDATE_FULL_CONSIGNER_CARGO, item)
   },
   clearCargoes (store) {
-    store.commit(types.CLEAR_CARGO_LIST)
+    store.commit(types.CLEAR_CONSIGNER_CARGO_LIST)
   }
 }
