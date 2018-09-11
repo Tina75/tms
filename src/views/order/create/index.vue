@@ -253,7 +253,6 @@ export default {
                 },
                 on: {
                   click: () => {
-                    console.log('add', params.index)
                     // 先同步本地，再添加新的
                     _this.syncStoreCargoes()
                     _this.appendCargo(params.index)
@@ -268,7 +267,6 @@ export default {
                 },
                 on: {
                   click: () => {
-                    console.log('remove', params.index)
                     // 先删除状态数据
                     _this.updateLocalCargo(params, 'remove')
                     // 再把剩余的同步给vuex

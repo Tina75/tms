@@ -12,6 +12,7 @@
       :loading="loading"
       :highlight-row="highlightRow"
       :size="size"
+      :no-data-text="noDataText"
       @on-current-change="handleCurrentChange"
       @on-select="handleSelect"
       @on-select-cancel="handleSelectCancel"
@@ -20,7 +21,14 @@
       @on-filter-change="handleFilterChange"
       @on-row-click="handleRowClick"
       @on-row-dbclick="handleRowDbclick"
-      @on-expand="handleExpand"></Table>
+      @on-expand="handleExpand">
+      <div v-if="showSlotFooter" slot="footer">
+        <slot name="footer"></slot>
+      </div>
+      <div v-if="showSlotHeader" slot="header">
+        <slot name="header"></slot>
+      </div>
+    </Table>
     <Drawer v-model="visible" :closable="false" title="选择显示字段" placement="right">
       <CheckboxGroup>
         <Checkbox v-for="item in columns" :key="item.key" :label="item.title" class="page-table__checkbox-list"></Checkbox>
@@ -37,6 +45,7 @@
           :current="pagination.pageNo"
           :page-size="pagination.pageSize"
           :page-size-opts="[10,20,50]"
+          size="small"
           show-sizer
           show-elevator
           show-total
@@ -83,6 +92,10 @@ export default {
       type: Array,
       default: () => [],
       required: true
+    },
+    noDataText: {
+      type: String,
+      default: '暂无数据'
     },
     // 斑马纹
     stripe: {
@@ -135,6 +148,8 @@ export default {
         pageNo: 1,
         totalCount: 0
       },
+      showSlotHeader: false,
+      showSlotFooter: false,
       // 源数据
       // data: [],
       visible: false
@@ -176,7 +191,12 @@ export default {
     }
   },
   created () {
+    this.showSlotFooter = this.$slots.footer !== undefined
+    this.showSlotHeader = this.$slots.header !== undefined
+  },
+  mounted () {
     this.fetch()
+
   },
   methods: {
     // 全选
