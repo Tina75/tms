@@ -4,7 +4,7 @@ import { LoadingBar, Message } from 'iview'
 let instance = axios.create({
   baseURL: '/',
   timeout: 10000,
-  headers: {'Content-Type': 'application/json'},
+  headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
   loading: false,
   ignoreCode: false
@@ -12,7 +12,7 @@ let instance = axios.create({
 
 switch (process.env.NODE_ENV) {
   case 'development':
-    instance.defaults.baseURL = 'http://yapi.yundada56.com/mock/154'; break
+    instance.defaults.baseURL = 'http://yapi.yundada56.com/mock/214'; break
   case 'quality':
     instance.defaults.baseURL = 'https://hn.algolia.com/api/v1/'; break
   case 'production':

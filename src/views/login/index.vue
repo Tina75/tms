@@ -1,115 +1,161 @@
-
 <template>
-  <div class="login-con" @keydown.enter="handleSubmit">
+  <div class="form-body" @keydown.enter="login">
     <Card :bordered="false">
-      <p slot="title">
-        <Icon type="log-in"/>
-        欢迎登录
-      </p>
-      <div class="form-con">
-        <Form ref="loginForm" :model="form" :rules="rules">
-          <FormItem prop="telephone">
-            <Input v-model="form.telephone" placeholder="请输入用户手机号">
-            <Icon slot="prefix" type="ios-contact" />
+      <div class="form-title">智加云账号登录</div>
+      <div class="form-content">
+        <Form ref="loginForm" :model="form">
+
+          <FormItem prop="phone">
+            <Input v-model="form.phone" :maxlength="11" placeholder="登录账号/手机号"
+                   @on-focus="inputFocus('phone')"
+                   @on-blur="inputBlur('phone')">
+            <Icon slot="prefix" :color="inputIconColor('phone')" type="ios-contact" />
             </Input>
           </FormItem>
-          <FormItem prop="captcha">
-            <Row>
-              <Col :span="13">
-              <Input v-model="form.captcha" type="text" placeholder="请输入验证码">
-              <Icon slot="prefix" type="ios-chatbubbles" />
-                </Input>
-              </Col>
-              <Col :span="9" :offset="1">
-              <Button  :disabled="!captchaEnable" @click="getCaptcha">{{captchaEnable?`&nbsp;&nbsp;&nbsp;获取验证码&nbsp;&nbsp;&nbsp;`:intervalSeconds+'秒后可重试'}}</Button>
-                <!-- <Button :size="buttonSize" >90s后重新获取</Button> -->
-              </Col>
-            </Row>
+
+          <FormItem prop="password">
+            <Input v-model="form.password" type="password" placeholder="输入密码"
+                   @on-focus="inputFocus('password')"
+                   @on-blur="inputBlur('password')">
+            <Icon slot="prefix" :color="inputIconColor('password')" type="ios-contact" />
+            </Input>
           </FormItem>
+
+          <FormItem prop="captchaCode">
+            <Input v-model="form.captchaCode" class="form-captcha-input" type="text" placeholder="输入验证码"
+                   @on-focus="inputFocus('captchaCode')"
+                   @on-blur="inputBlur('captchaCode')">
+            <Icon slot="prefix" :color="inputIconColor('captchaCode')" type="ios-contact" />
+            </Input>
+            <div class="form-captcha">
+              <img :src="captchaImage" class="form-captcha-img" >
+            </div>
+          </FormItem>
+
           <FormItem>
-            <i-button type="primary" long @click="login">登录</i-button>
-          </FormItem>
-          <FormItem style="text-align: right;">
-            <router-link to="/login/sign-up" style="margin-right: 20px;">用户注册</router-link>
-            <router-link to="/login/find-back">忘记密码</router-link>
+            <Button class="form-button" type="primary" long @click="login">登录</Button>
+
+            <ul class="form-action">
+              <li class="form-action-item">
+                <Checkbox v-model="rememberPW">记住密码</Checkbox>
+              </li>
+              <li class="form-action-item" style="text-align: center;">
+                <router-link to="/login/sign-up">立即注册</router-link>
+              </li>
+              <li class="form-action-item" style="text-align: right;">
+                <router-link to="/login/find-back" style="color: inherit;">忘记密码？</router-link>
+              </li>
+            </ul>
           </FormItem>
         </Form>
-        <p class="login-tip">运达达运输管理系统</p>
       </div>
     </Card>
   </div>
 </template>
 
 <script>
-import Server from '@/libs/js/server.js'
+import Server from '@/libs/js/server'
+import mixin from './mixin'
+
 export default {
   name: 'SignIn',
+  mixins: [ mixin ],
   metaInfo: {
-    title: '登录'
+    title: '智加云账号登录'
   },
   data () {
     return {
-      captchaEnable: true,
-      timer: null,
-      intervalSeconds: 90,
+      // 表单数据
       form: {
-        telephone: '',
-        captcha: ''
+        phone: '',
+        password: '',
+        captchaCode: ''
       },
-      rules: {
-        telephone: [
-          { required: true, message: '用户名不能为空', trigger: 'blur' },
-          { max: 11, min: 11, trigger: 'blur', message: '手机格式有误' }
-        ],
-        captcha: [
-          { required: true, message: '验证码不能为空', trigger: 'blur' },
-          { max: 6, min: 6, trigger: 'blur', message: '验证码格式有误' }
-        ]
-      }
+
+      currentFocus: '', // 当前聚焦的输入框类型
+      rememberPW: false // 记住密码
     }
   },
-  watch: {
-    captchaEnable: function (value) {
-      if (!value) {
-        this.timer = setInterval(() => {
-          this.intervalSeconds--
-          if (!this.intervalSeconds) {
-            this.captchaEnable = true
-            this.intervalSeconds = 90
-            clearInterval(this.timer)
-          }
-        }, 1000)
-      }
-    }
+  created () {
+    this.localPwParser()
+    this.getCaptcha()
   },
   methods: {
-    handleSubmit () {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.login()
-        }
-      })
+    // 输入框聚焦改变图标颜色
+    inputIconColor (type) {
+      return this.currentFocus === type ? '#00A4BD' : '#9DA1B0'
     },
-    login () {
-      window.localStorage.setItem('tms_is_login', true)
-      location.reload()
+
+    // 输入框聚焦
+    inputFocus (type) {
+      this.currentFocus = type
     },
-    getCaptcha () {
-      if (!this.form.telephone || this.form.telephone.length !== 11) {
-        return this.$Message.error('手机号码格式有误')
+
+    // 记住密码-解析密码
+    localPwParser () {
+      const encodePW = window.localStorage.local_rememberd_pw
+      if (!encodePW) return
+      const storeTime = 60 * 24 * 60 * 60 * 1000 // 记住密码的时长
+      const decodePW = window.atob(encodePW).split('/')
+      if ((new Date().getTime()) > Number(decodePW[2]) + storeTime) {
+        window.localStorage.removeItem('local_rememberd_pw')
+        return
       }
+      this.form.phone = decodePW[0]
+      this.form.password = decodePW[1]
+      this.rememberPW = true
+    },
+
+    // 记住密码-保存密码
+    // 密码保存加密规则：手机号/密码/时间戳 组成的字符串base64加密
+    localPwSave () {
+      const localPW = [this.form.phone, this.form.password, new Date().getTime()].join('/')
+      const encodePW = window.btoa(localPW)
+      window.localStorage.setItem('local_rememberd_pw', encodePW)
+    },
+
+    // 登录处理
+    login () {
+      for (let key in this.form) {
+        if (!this.validate(key)) return
+      }
+
       Server({
-        url: 'loginsmscaptcha',
+        url: '/user/login',
         method: 'post',
-        data: { phone: this.form.telephone }
-      })
-        .then(({ data }) => {
-          this.captchaEnable = false
-        })
-        .catch(error => {
-          console.log(error)
-        })
+        data: this.form
+      }).then(res => {
+        if (this.rememberPW) this.localPwSave()
+        else window.localStorage.removeItem('local_rememberd_pw')
+        window.localStorage.setItem('tms_is_login', true)
+        location.reload()
+      }).catch(err => console.error(err))
     }
   }
 }
 </script>
+
+<style lang="stylus" scoped>
+  .form-body
+    width 380px
+    right 160px
+    top 50%
+    transform translateY(-50%)
+
+    .form-content
+      margin-bottom 0
+
+    .form-prepend-icon
+        width 32px
+        height 32px
+        line-height 32px
+        margin -5px -7px
+        font-size 16px
+
+    .form-action
+      display flex
+      align-items space-between
+
+      &-item
+        flex 1
+</style>
