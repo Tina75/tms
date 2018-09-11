@@ -52,7 +52,7 @@
       </Col>
       <Col span="6">
       <FormItem label="手机号" prop="consignerPhone">
-        <Input v-model="orderForm.consignerPhone" type="mobile"></Input>
+        <Input v-model="orderForm.consignerPhone" :maxlength="11" type="text"></Input>
       </FormItem>
       </Col>
       <Col span="6">
@@ -63,7 +63,7 @@
       </Col>
       <Col span="6">
       <FormItem label="手机号" prop="consigneePhone">
-        <SelectInput v-model="orderForm.consigneePhone" :local-options="consigneePhones" :remote="false"></SelectInput>
+        <SelectInput v-model="orderForm.consigneePhone" :maxlength="11" :local-options="consigneePhones" :remote="false"></SelectInput>
       </FormItem>
       </Col>
     </Row>
@@ -116,9 +116,18 @@
       </Col>
       <Col span="6">
       <FormItem label="运输费用" prop="freightFee">
-        <TagNumberInput :min="0" v-model="orderForm.freightFee" :parser="handleParseFloat">
-          <span slot="suffix" class="order-create__input-suffix">元</span>
-        </TagNumberInput>
+        <Row>
+          <Col span="16">
+          <TagNumberInput :min="0" v-model="orderForm.freightFee" :parser="handleParseFloat">
+            <span slot="suffix" class="order-create__input-suffix">元</span>
+          </TagNumberInput>
+          </Col>
+          <Col span="8">
+          <span @click="showCounter">
+            <Icon type="ios-calculator" size="26" color="#00a4bd"></Icon>
+          </span>
+          </Col>
+        </Row>
       </FormItem>
       </Col>
       <Col span="6">
@@ -199,12 +208,16 @@ import { mapGetters, mapActions } from 'vuex'
 import float from '@/libs/js/float'
 import area from '@/libs/js/area'
 import BaseComponent from '@/basic/BaseComponent'
+import BasePage from '@/basic/BasePage'
 export default {
+  metaInfo: {
+    title: '手动下单'
+  },
   components: {
     Title,
     TagNumberInput
   },
-  mixin: [BaseComponent],
+  mixins: [BaseComponent, BasePage],
   data () {
     const _this = this
     const validateArriveTime = (rule, value, callback) => {
@@ -216,6 +229,13 @@ export default {
     }
     const setObject = (params, value) => {
       return { index: params.index, name: params.column.key, value }
+    }
+    const validatePhone = (rule, value, callback) => {
+      if (/(13[0-9]|15[0-9]|166|17[0-9]|18[0-9]|14[57])[0-9]{8}$/.test(value)) {
+        callback()
+      } else {
+        callback(new Error('请输入正确的手机号码'))
+      }
     }
     return {
       goodsColumn: [
@@ -496,7 +516,8 @@ export default {
           { required: true, message: '请输入发货人名称' }
         ],
         consignerPhone: [
-          { required: true, message: '请输入发货人手机号' }
+          { required: true, message: '请输入发货人手机号' },
+          { validator: validatePhone, trigger: 'blur' }
         ],
         consignerAddress: [
           { required: true, message: '请输入发货地址' }
@@ -505,7 +526,8 @@ export default {
           { required: true, message: '请输入收货人名称' }
         ],
         consigneePhone: [
-          { required: true, message: '请输入收货人手机号' }
+          { required: true, message: '请输入收货人手机号' },
+          { validator: validatePhone, trigger: 'blur' }
         ],
         consigneeAddress: [
           { required: true, message: '请输入收货地址' }
@@ -653,6 +675,22 @@ export default {
         _this.orderForm.consigneeAddress = consignees[0].address
       })
     },
+    // 显示计费规则
+    showCounter () {
+      const vm = this
+      this.openDialog({
+        name: 'order/create/CounterDialog.vue',
+        data: {
+          value: 0
+        },
+        methods: {
+          ok (value) {
+            vm.orderForm.freightFee = value || 0
+          }
+        }
+      })
+    },
+    // 提交表单
     handleSubmit () {
       console.log('orderForm', this.orderForm)
       const vm = this
