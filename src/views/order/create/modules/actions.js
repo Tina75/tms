@@ -1,10 +1,10 @@
-import axios from '@/libs/js/server'
+import server from '@/libs/js/server'
 import * as types from './mutationTypes'
 export default {
   getClients ({state, commit}, name) {
     return new Promise((resolve, reject) => {
       const { pageNo, pageSize } = state.order.pagination
-      axios({
+      server({
         method: 'get',
         url: 'consigner/list',
         params: {
@@ -26,7 +26,7 @@ export default {
   },
   getConsignerDetail ({state, commit}, consignerId) {
     return new Promise((resolve, reject) => {
-      axios({
+      server({
         method: 'get',
         url: 'consigner/detail',
         params: {
@@ -68,5 +68,19 @@ export default {
   },
   clearCargoes (store) {
     store.commit(types.CLEAR_CONSIGNER_CARGO_LIST)
+  },
+  // 提交表单
+  submitOrder ({state}, form) {
+    return new Promise((resolve, reject) => {
+      server({
+        method: 'post',
+        url: 'order/create',
+        data: {
+          ...form
+        }
+      })
+        .then((response) => resolve(response))
+        .catch((err) => reject(err))
+    })
   }
 }

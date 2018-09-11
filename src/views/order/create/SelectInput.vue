@@ -111,7 +111,7 @@ export default {
     handleBlur () {
       this.isFocus = false
       // 设置输入框的值，不选择下拉框的选项
-      this.$emit('input', this.currentValue)
+      // this.$emit('input', this.currentValue)
       this.$emit('on-blur', this.currentValue)
     },
     /**
@@ -121,6 +121,7 @@ export default {
       if (this.remote) {
         this.remoteCall(e.target.value)
       }
+      this.$emit('input', this.currentValue)
     },
     // 远程请求
     remoteCall (query) {

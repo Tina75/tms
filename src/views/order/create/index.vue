@@ -52,7 +52,7 @@
       </Col>
       <Col span="6">
       <FormItem label="手机号" prop="consignerPhone">
-        <Input v-model="orderForm.consignerPhone" type="text"></Input>
+        <Input v-model="orderForm.consignerPhone" type="mobile"></Input>
       </FormItem>
       </Col>
       <Col span="6">
@@ -70,12 +70,12 @@
     <Row :gutter="16">
       <Col span="12">
       <FormItem label="发货地址" prop="consignerAddress">
-        <SelectInput v-model="orderForm.consignerAddress" :maxlength="200" :local-options="consignerAddresses" :remote="false"></SelectInput>
+        <SelectInput v-model="orderForm.consignerAddress" :maxlength="60" :local-options="consignerAddresses" :remote="false"></SelectInput>
       </FormItem>
       </Col>
       <Col span="12">
       <FormItem label="收货地址" prop="consigneeAddress">
-        <SelectInput v-model="orderForm.consigneeAddress" :maxlength="200" :local-options="consigneeAddresses" :remote="false"></SelectInput>
+        <SelectInput v-model="orderForm.consigneeAddress" :maxlength="60" :local-options="consigneeAddresses" :remote="false"></SelectInput>
       </FormItem>
       </Col>
     </Row>
@@ -108,55 +108,54 @@
       <Col span="6">
       <FormItem label="付款方式" prop="payType">
         <Select v-model="orderForm.payType">
-          <Option>预付</Option>
-          <Option>到付</Option>
-          <Option>回付</Option>
-          <Option>月结</Option>
+          <Option value="1">月结</Option>
+          <Option value="2">回付</Option>
+          <Option value="3">到付</Option>
         </Select>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="运输费用" prop="freightFee">
-        <Input v-model="orderForm.freightFee" type="number">
-        <span slot="suffix" class="order-create__input-suffix">元</span>
-        </Input>
+        <TagNumberInput :min="0" v-model="orderForm.freightFee" :parser="handleParseFloat">
+          <span slot="suffix" class="order-create__input-suffix">元</span>
+        </TagNumberInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="装货费用" prop="loadFee">
-        <Input v-model="orderForm.loadFee" type="number">
-        <span slot="suffix" class="order-create__input-suffix">元</span>
-          </Input>
+        <TagNumberInput :min="0" v-model="orderForm.loadFee" :parser="handleParseFloat">
+          <span slot="suffix" class="order-create__input-suffix">元</span>
+        </TagNumberInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="卸货费用" prop="unloadFee">
-        <Input v-model="orderForm.unloadFee" type="number">
-        <span slot="suffix" class="order-create__input-suffix">元</span>
-          </Input>
+        <TagNumberInput :min="0" v-model="orderForm.unloadFee" :parser="handleParseFloat">
+          <span slot="suffix" class="order-create__input-suffix">元</span>
+        </TagNumberInput>
       </FormItem>
       </Col>
     </Row>
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="保险费用" prop="insuranceFee">
-        <Input v-model="orderForm.insuranceFee" type="number">
-        <span slot="suffix" class="order-create__input-suffix">元</span>
-          </Input>
+        <TagNumberInput :min="0" v-model="orderForm.insuranceFee" :parser="handleParseFloat">
+          <span slot="suffix" class="order-create__input-suffix">元</span>
+        </TagNumberInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="其他费用" prop="otherFee">
-        <Input v-model="orderForm.otherFee" type="number">
-        <span slot="suffix" class="order-create__input-suffix">元</span>
-          </Input>
+        <TagNumberInput :min="0" v-model="orderForm.otherFee" :parser="handleParseFloat">
+          <span slot="suffix" class="order-create__input-suffix">元</span>
+        </TagNumberInput>
       </FormItem>
       </Col>
     </Row>
     <Row :gutter="16">
       <Col span="10">
       <FormItem label="费用合计">
-        1232.23元
+        <span class="order-create__font-total">{{totalFee}}</span>元
       </FormItem>
       </Col>
     </Row>
@@ -165,8 +164,8 @@
       <Col span="6">
       <FormItem label="提货方式" prop="pickup">
         <Select v-model="orderForm.pickup">
-          <Option>上门送货</Option>
-          <Option>直接送货</Option>
+          <Option value="1">上门提货</Option>
+          <Option value="2">直接送货</Option>
         </Select>
       </FormItem>
       </Col>
@@ -195,13 +194,15 @@
 import Vue from 'vue'
 import Title from './Title.vue'
 import SelectInput from './SelectInput.vue'
+import TagNumberInput from './TagNumberInput'
 import { mapGetters, mapActions } from 'vuex'
 import float from '@/libs/js/float'
 import area from '@/libs/js/area'
 import BaseComponent from '@/basic/BaseComponent'
 export default {
   components: {
-    Title
+    Title,
+    TagNumberInput
   },
   mixin: [BaseComponent],
   data () {
@@ -269,7 +270,8 @@ export default {
                 value: params.row[params.column.key] || '',
                 remote: false,
                 localOptions: _this.cargoOptions,
-                transfer: true
+                transfer: true,
+                maxlength: 20
               },
               on: {
                 'on-blur': (value) => {
@@ -458,7 +460,7 @@ export default {
         // 货品信息
         cargoList: [],
         // 付款方式
-        payType: '',
+        payType: '1', // 默认月结，2：回付 ，3：到付
         // 运输费用
         freightFee: null,
         // 装货费
@@ -470,7 +472,7 @@ export default {
         // 其他费用
         otherFee: null,
         // 提货方式
-        pickup: '',
+        pickup: '1', // 默认上门提货，2：直接送货
         // 回单数量
         receiptCount: null,
         // 备注
@@ -482,10 +484,10 @@ export default {
           { required: true, message: '请输入客户名称' }
         ],
         start: [
-          { required: true, message: '请选择始发城市' }
+          { required: true, type: 'array', message: '请选择始发城市' }
         ],
         end: [
-          { required: true, message: '请选择目的城市' }
+          { required: true, type: 'array', message: '请选择目的城市' }
         ],
         arriveTime: [
           { validator: validateArriveTime, trigger: 'blur' }
@@ -512,13 +514,13 @@ export default {
           { required: true, message: '请选择付款方式' }
         ],
         freightFee: [
-          { required: true, message: '请输入运输费用' }
+          { required: true, type: 'number', message: '请输入运输费用' }
         ],
         pickup: [
           { required: true, message: '请输入提货方式' }
         ],
         receiptCount: [
-          { required: true, message: '请输入回单数量' }
+          { required: true, type: 'number', message: '请输入回单数量' }
         ]
 
       },
@@ -548,7 +550,18 @@ export default {
       'cargoOptions',
       'consignerCargoes',
       'sumRow'
-    ])
+    ]),
+    totalFee () {
+      const feeList = ['freightFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
+      const orderForm = this.orderForm
+      let totalFee = 0
+      for (let fee of feeList) {
+        if (orderForm[fee]) {
+          totalFee = float.round(totalFee + parseFloat(orderForm[fee]))
+        }
+      }
+      return totalFee
+    }
   },
   watch: {
     consignerCargoes (newCargoes) {
@@ -565,7 +578,23 @@ export default {
     this.clearCargoes()
   },
   methods: {
-    ...mapActions(['getClients', 'getConsignerDetail', 'appendCargo', 'removeCargo', 'updateCargo', 'fullUpdateCargo', 'clearCargoes']),
+    ...mapActions([
+      'getClients',
+      'getConsignerDetail',
+      'appendCargo',
+      'removeCargo',
+      'updateCargo',
+      'fullUpdateCargo',
+      'clearCargoes',
+      'submitOrder'
+    ]),
+    // 保留2位小数
+    handleParseFloat (value) {
+      return float.floor(value)
+    },
+    /**
+     * 货物名称选择下拉项目时触发
+     */
     selectCargo (params, cargoItem) {
       const cargo = this.cargoes.find(cg => cg.id === cargoItem.id)
       if (cargo) {
@@ -626,9 +655,26 @@ export default {
     },
     handleSubmit () {
       console.log('orderForm', this.orderForm)
+      const vm = this
       this.$refs.orderForm.validate((valid) => {
         if (valid) {
-          // TODO:s提交表单
+          const orderForm = this.orderForm
+          // 始发城市，目的城市，到达时间等需要额外处理
+          let form = Object.assign({}, orderForm, {
+            start: orderForm.start[orderForm.start.length - 1],
+            end: orderForm.end[orderForm.end.length - 1],
+            arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.format('YYYY-MM-DD HH:mm'),
+            deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.format('YYYY-MM-DD HH:mm'),
+            cargoList: this.consignerCargoes
+          })
+          vm.submitOrder(form)
+            .then((response) => {
+              vm.resetForm()
+              this.$Message.success('创建订单成功')
+            })
+            .catch((er) => {
+              this.$Message.error(er.msg || '创建订单失败')
+            })
         } else {
           this.$Message.error('valid', valid)
         }
@@ -637,12 +683,14 @@ export default {
     // 清空重置表单
     resetForm () {
       this.$refs.orderForm.resetFields()
+      this.clearCargoes()
     },
     fetchClients (query) {
       return this.getClients(query).then((reponse) => {
         return reponse
       })
     },
+    // 格式化省市区
     formatArea (labels, selectedData) {
       return Object.values(labels).join('')
     }
@@ -659,4 +707,9 @@ export default {
   &__cell-no-padding
     padding-left 0
     padding-right 0
+  &__font-total
+    font-size 20px
+    color #00A4BD
+    font-weight bold
+    padding-right 13px
 </style>
