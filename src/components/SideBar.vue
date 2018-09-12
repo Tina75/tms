@@ -1,7 +1,7 @@
 <template>
   <div>
-    <p class="title">TMS</p>
     <Menu v-show="!collapsed" ref="menu"  :active-name="currTab.href" :open-names="openedNames"  accordion width="200" theme="dark" @on-select="handleSelect">
+      <p class="title"><i class="icon font_family icon-logo-zjy" ></i></p>
       <template v-for="item in menuList">
         <template v-if="item.children">
           <Submenu :name="item.name" :key="item.href">
@@ -15,6 +15,7 @@
       </template>
     </Menu>
     <div v-show="collapsed" class="menu-collapsed">
+      <p class="title"><i class="icon font_family icon-logo-1"></i></p>
       <template v-for="item in menuList" >
         <div :key="item.name" >
           <Poptip v-if="item.children" trigger="hover"  placement="left-start">
@@ -55,12 +56,16 @@ export default {
   },
   methods: {
     getopenedNames (activeName) {
-      let openItem = getParent(this.menuList)
-      this.openedNames = []
-      this.openedNames.push(openItem.name)
-      this.$nextTick(() => {
-        this.$refs.menu.updateOpened()
-      })
+      if (activeName) {
+        let openItem = getParent(this.menuList)
+        if (openItem && openItem.name) {
+          this.openedNames = []
+          this.openedNames.push(openItem.name)
+        }
+        this.$nextTick(() => {
+          this.$refs.menu.updateOpened()
+        })
+      }
       function getParent (element = []) {
         return element.find(item => {
           return item.name === activeName || getParent(item.children)
@@ -106,4 +111,8 @@ export default {
   .drop-menu-a
     padding 6px 15px
     display inline-block
+.icon-logo-zjy
+  font-size 21px
+.icon-logo-1
+  font-size 32px
 </style>

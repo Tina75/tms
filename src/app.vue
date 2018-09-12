@@ -2,7 +2,7 @@
   <div id="app">
     <Layout class="container">
       <Sider v-model="collapsed" :collapsed-width="56" hide-trigger collapsible >
-        <side-bar  :collapsed="collapsed" @on-select="turnToPage"/>
+        <side-bar :collapsed="collapsed" @on-select="turnToPage"/>
       </Sider>
       <Layout>
         <Header class="header-con">
@@ -79,7 +79,7 @@ export default {
       //   window.open(path.split('_')[1])
       //   return
       // }
-      this.$store.commit('changeTag')
+      // this.$store.commit('changeTag')
       this.$router.push({
         path,
         params,
@@ -128,9 +128,9 @@ html, body
       position relative
       .tag-nav-wrapper
         width auto
-        top 3px
+        top 4px
         left 30px
-        right 165px
+        right 185px
         position absolute
         padding 0
         height 46px

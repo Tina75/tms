@@ -58,6 +58,19 @@ export default {
       this.ema.fire('Dialogs.push', data)
     },
     /**
+     * 打开一个tab页
+     * @param data
+     *  {
+     *    name:'', //tab应该显示的名称
+     *    data:{}, //传给弹出框的基础数据 data能包含数据
+     *  }
+     */
+    openTab: function (data) {
+      data.name = this.$options.metaInfo.title
+      console.log(data.name)
+      this.ema.fire('TabNav.open', data)
+    },
+    /**
      * 添加一个页面到当前页面，必要参数
      * {
      *  name: 页面名称

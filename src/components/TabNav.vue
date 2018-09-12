@@ -42,7 +42,7 @@
 import BaseComponent from '@/basic/BaseComponent'
 import TabNavItem from '@/components/TabNavItem'
 export default {
-  name: 'tagsNav',
+  name: 'TabNav',
   components: {TabNavItem},
   mixins: [BaseComponent],
   props: {
@@ -70,6 +70,25 @@ export default {
       this.currentValue = val
     }
   },
+  mounted () {
+    this.bindEvent('open', (route) => {
+      console.log('open')
+      let tag = {
+        href: route.path,
+        name: route.query.id ? route.query.id : route.name
+      }
+      this.$store.commit('changeTab', tag)
+      // let { path, params, query, name } = {}
+      // path = route.href
+      // params = route.params
+      // query = route.query
+      // name = route.name
+      console.log(route)
+
+      // this.$store.commit('changeTag')
+      this.$router.push(route)
+    })
+  },
   methods: {
     handlescroll (e) {
       var type = e.type
@@ -94,27 +113,29 @@ export default {
         }
       }
     },
-    handleTagsOption (type) {
-      if (type === 'close-all') {
-        // 关闭所有，除了home
-        let res = this.list.filter(item => item.href === '/home')
-        // this.$emit('on-close', res, 'all')
-        this.$store.commit('updateTabList', res)
-      } else {
-        // 关闭除当前页和home页的其他页
-        let res = this.list.filter(item => item.href === this.value.href || item.name === '/home')
-        // this.$emit('on-close', res, 'others')
-        this.$store.commit('updateTabList', res)
-      }
-    },
+    // handleTagsOption (type) {
+    //   if (type === 'close-all') {
+    //     // 关闭所有，除了home
+    //     let res = this.list.filter(item => item.href === '/home')
+    //     // this.$emit('on-close', res, 'all')
+    //     this.$store.commit('updateTabList', res)
+    //   } else {
+    //     // 关闭除当前页和home页的其他页
+    //     let res = this.list.filter(item => item.href === this.value.href || item.name === '/home')
+    //     // this.$emit('on-close', res, 'others')
+    //     this.$store.commit('updateTabList', res)
+    //   }
+    // },
     handleClose (name) {
       // TODO:
-      let res = this.list.filter(item => item.name !== name)
+      this.$Message.info(`${name}已删除`)
+      // let res = this.list.filter(item => item.name !== name)
+      // console.log(JSON.stringify(res))
       // this.$emit('on-close', res, undefined, name)
-      this.$store.commit('updateTabList', res)
+      this.$store.commit('closeTab', name)
     },
     handleRefresh (item) {
-      this.$Message.info(item)
+      this.$Message.info(`${item}已刷新`)
       // this.ema.fire('refresh')
       // this.$router.push({path: '/company-manage/staff-manage'})
     },
@@ -132,8 +153,6 @@ export default {
 </script>
 
 <style lang="stylus">
-.test
-  color red!important
 .no-select
   -webkit-touch-callout none
   -webkit-user-select none
@@ -170,9 +189,11 @@ export default {
       text-align center
     &.left-btn
       left 0px
+      background #252A2F
     &.right-btn
       // right 32px
       right 0px
+      background #252A2F
       border-right 1px solid #3A424B
   .scroll-outer
     position absolute
