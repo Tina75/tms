@@ -4,7 +4,7 @@
       ref="table"
       :width="width"
       :height="height"
-      :data="data"
+      :data="dataList"
       :columns="filterColumns"
       :stripe="stripe"
       :border="border"
@@ -15,6 +15,7 @@
       :no-data-text="noDataText"
       @on-current-change="handleCurrentChange"
       @on-select="handleSelect"
+      @on-select-all="handleSelectAll"
       @on-select-cancel="handleSelectCancel"
       @on-selection-change="handleSelectionChange"
       @on-sort-change="handleSortChange"
@@ -38,7 +39,7 @@
         <Button type="primary" @click="hideSlider">确定</Button>
       </div>
     </Drawer>
-    <div class="page-table__footer-pagination">
+    <div v-if="showPagination" class="page-table__footer-pagination">
       <div class="page-table__footer-pagination-fr">
         <Page
           :total="pagination.totalCount"
@@ -57,16 +58,23 @@
 </template>
 
 <script>
+
+import server from '@/libs/js/server'
 /**
    * iview的table和page的组件是分开的
    * 其实实际的场景中，大多数页面都是需要结合table和page，
    * 以及包含自动发请求，管理数据的table
   */
-/*eslint-disable */
 export default {
   props: {
     // 请求的地址
     url: String,
+    // 读取列表的字段，有的名叫orderList, 有的叫billList
+    listField: {
+      type: String,
+      default: 'list'
+    },
+    // 搜索关键字
     keywords: {
       type: Object,
       default: () => ({})
@@ -77,9 +85,10 @@ export default {
     height: {
       type: [String, Number]
     },
+    // 显示筛选列
     showFilter: {
       type: Boolean,
-      default: true
+      default: false
     },
     // 列
     columns: {
@@ -87,7 +96,7 @@ export default {
       default: () => [],
       required: true
     },
-    // 表数据
+    // 表数据,可能需要自己做分页
     data: {
       type: Array,
       default: () => [],
@@ -118,13 +127,14 @@ export default {
       },
       default: 'default'
     },
-    noDateText: {
-      type: String,
-      default: '暂无数据'
-    },
     highlightRow: {
       type: Boolean,
       default: false
+    },
+    // 是否显示分页
+    showPagination: {
+      type: Boolean,
+      default: true
     },
     onCurrentChange: Function,
     onSelect: Function,
@@ -141,7 +151,8 @@ export default {
   },
   data () {
     return {
-          // 请求时候的加载状态
+      isRemote: false,
+      // 请求时候的加载状态
       loading: false,
       pagination: {
         pageSize: 10,
@@ -151,7 +162,7 @@ export default {
       showSlotHeader: false,
       showSlotFooter: false,
       // 源数据
-      // data: [],
+      dataSource: [],
       visible: false
     }
   },
@@ -181,24 +192,44 @@ export default {
       } else {
         return this.columns
       }
+    },
+    dataList () {
+      if (this.isRemote) {
+        return this.dataSource
+      } else {
+        const { pageSize, pageNo } = this.pagination
+        return this.dataSource.slice((pageNo - 1) * pageSize, pageNo * pageSize)
+      }
     }
   },
   watch: {
     // 搜索关键字变化后,重置分页参数，重新发送请求
     keywords () {
       this.pagination.pageNo = 1
-          this.fetch()
+      this.fetch()
+    },
+    data (newData) {
+      // this.dataSource = newData.slice()
+      this.setLocalDataSource(newData)
     }
   },
   created () {
+    this.isRemote = !!this.url
     this.showSlotFooter = this.$slots.footer !== undefined
     this.showSlotHeader = this.$slots.header !== undefined
   },
   mounted () {
+    if (!this.isRemote) {
+      this.setLocalDataSource(this.data)
+    }
     this.fetch()
-
   },
   methods: {
+
+    setLocalDataSource (data) {
+      this.dataSource = this.data.slice()
+      this.pagination.totalCount = this.data.length
+    },
     // 全选
     selectAll () {
       this.refs.table.selectAll(true)
@@ -215,88 +246,108 @@ export default {
     },
     // 请求后端地址
     fetch () {
-      if (!this.url) {
+      const vm = this
+      if (!this.isRemote) {
         return
       }
       // 发送请求，填充data
       this.loading = true
-      let request = { ...this.pagination, ...this.keywords }
+      server({
+        method: 'get',
+        url: this.url,
+        data: {
+          ...this.pagination,
+          ...this.keywords
+        }
+      })
+        .then((response) => {
+          vm.loading = false
+          // const { list, ...pagination } = response.data
+          vm.dataSource = response.data[vm.listField]
+          if (this.showPagination) {
+            vm.pagination.totalCount = response.data.total || response.data.totalCount
+          }
+        })
+        .catch((errorInfo) => {
+          vm.loading = false
+          vm.$Message.error(errorInfo.msg)
+        })
     },
     /**
-		 * 开启highlight-row后，当前 选中行变化后回调
-		 * @param {object} currentRow
-		 * @param {object} oldCurrentRow
-		 */
+     * 开启highlight-row后，当前 选中行变化后回调
+     * @param {object} currentRow
+     * @param {object} oldCurrentRow
+     */
     handleCurrentChange (curretRow, oldCurrentRow) {
       this.$emit('on-current-change', curretRow, oldCurrentRow)
     },
     /**
-		 * 选中一项后回调
-		 * @param {array} selection 已选择的数据集合
-		 * @param {object} row 选中的行
-		 */
+     * 选中一项后回调
+     * @param {array} selection 已选择的数据集合
+     * @param {object} row 选中的行
+     */
     handleSelect (selection, row) {
       this.$emit('on-select', selection, row)
     },
     /**
-		 * 取消选中一项后回调
-		 * @param {array} selection
-		 * @param {object} row 未选中的行
-		 */
+     * 取消选中一项后回调
+     * @param {array} selection
+     * @param {object} row 未选中的行
+     */
     handleSelectCancel (selection, row) {
-      this.$emit('on-select-cancel')
+      this.$emit('on-select-cancel', selection, row)
     },
     /**
-		 * 选中所有
-		 * @param {array} selection
-		 */
+     * 选中所有
+     * @param {array} selection
+     */
     handleSelectAll (selection) {
       this.$emit('on-select-all', selection)
     },
     /**
-		 * 选中项发送变化后回调
-		 * @param {array} selection
-		 */
+     * 选中项发送变化后回调
+     * @param {array} selection
+     */
     handleSelectionChange (selection) {
       this.$emit('on-selection-change', selection)
     },
     /**
-		 * 排序时候有效，排序时回调
-		 * @param {object} column 当前列数据
-		 * @param {string} key 列名称,对应columns的key
-		 * @param {string} order ,值：asc|desc
-		 */
+     * 排序时候有效，排序时回调
+     * @param {object} column 当前列数据
+     * @param {string} key 列名称,对应columns的key
+     * @param {string} order ,值：asc|desc
+     */
     handleSortChange (sorter) {
       this.$emit('on-sort-change', sorter)
     },
     /**
-		 * 筛选回调
-		 * @param {object} column 当前列数据
-		 */
+     * 筛选回调
+     * @param {object} column 当前列数据
+     */
     handleFilterChange (column) {
       this.$emit('on-filter-change')
     },
     /**
-		 * 单击行
-		 * @param {object} row
-		 * @param {number} index
-		 */
+     * 单击行
+     * @param {object} row
+     * @param {number} index
+     */
     handleRowClick (row, index) {
       this.$emit('on-row-click', row, index)
     },
     /**
-		 * 双击行
-		 * @param {object} row
-		 * @param {number} index
-		 */
+     * 双击行
+     * @param {object} row
+     * @param {number} index
+     */
     handleRowDbclick (row, index) {
       this.$emit('on-row-dbclick', row, index)
     },
     /**
-		 * 展开或收起行时回调
-		 * @param {object} row 行数据
-		 * @param {boolean} status 展开或收起
-		 */
+     * 展开或收起行时回调
+     * @param {object} row 行数据
+     * @param {boolean} status 展开或收起
+     */
     handleExpand (row, status) {
       this.$emit('handleExpand', row, status)
     },

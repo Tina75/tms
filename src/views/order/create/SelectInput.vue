@@ -84,7 +84,7 @@ export default {
     heightlightText (text) {
       if (this.currentValue) {
         let reg = new RegExp('(' + this.currentValue + ')', 'g')
-        return text.replace(reg, '<b>$1</b>')
+        return text.replace(reg, '<b style="color:#ec4e4e">$1</b>')
       }
       return text
     },

@@ -14,7 +14,7 @@ export default {
         }
       }).then((response) => {
         // 客户列表
-        const clientList = response.data.data.consignerList.map((user) => ({name: user.name, value: user.name, id: user.id}))
+        const clientList = response.data.data.list.map((user) => ({name: user.name, value: user.name, id: user.id}))
         // 收货人信息，包含客户信息
         const clients = response.data.data.consignerList
         commit(types.RECEIVE_CLIENT_LIST, clients)

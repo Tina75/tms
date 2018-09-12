@@ -19,7 +19,7 @@
       </Col>
       <Col span="6">
       <FormItem label="目的城市" prop="end">
-        <Cascader v-model="orderForm.end" :data="areaData" :render-format="formatArea" filterable></Cascader>
+        <Cascader ref="cascaderEnd" v-model="orderForm.end" :data="areaData" :render-format="formatArea" change-on-select filterable  @on-change="handleChangeEnd"></Cascader>
       </FormItem>
       </Col>
     </Row>
@@ -106,11 +106,12 @@
     <Title class="i-mb-15 i-mt-15">应收费用</Title>
     <Row :gutter="16">
       <Col span="6">
-      <FormItem label="付款方式" prop="payType">
-        <Select v-model="orderForm.payType">
-          <Option value="1">月结</Option>
-          <Option value="2">回付</Option>
-          <Option value="3">到付</Option>
+      <FormItem label="结算方式" prop="settlementType">
+        <Select v-model="orderForm.settlementType">
+          <Option value="1">现付</Option>
+          <Option value="2">到付</Option>
+          <Option value="3">回付</Option>
+          <Option value="4">月结</Option>
         </Select>
       </FormItem>
       </Col>
@@ -478,7 +479,7 @@ export default {
         // 货品信息
         cargoList: [],
         // 付款方式
-        payType: '1', // 默认月结，2：回付 ，3：到付
+        settlementType: '4', // 默认月结，1:现付，2：到付 ，3：回付 4月结
         // 运输费用
         freightFee: null,
         // 装货费
@@ -530,7 +531,7 @@ export default {
         consigneeAddress: [
           { required: true, message: '请输入收货地址' }
         ],
-        payType: [
+        settlementType: [
           { required: true, message: '请选择付款方式' }
         ],
         freightFee: [
@@ -608,6 +609,11 @@ export default {
       'clearCargoes',
       'submitOrder'
     ]),
+    // 边缘位置，下拉框会导致出界看不见，所以目的城市在选择时要随时更新坐标值
+    handleChangeEnd (value, selectedData) {
+      // console.log('end', value)
+      this.$refs.cascaderEnd.$refs.drop.update()
+    },
     // 保留2位小数
     handleParseFloat (value) {
       return float.floor(value)
