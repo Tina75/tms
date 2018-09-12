@@ -68,7 +68,7 @@ export default {
     openTab: function (data) {
       data.name = this.$options.metaInfo.title
       console.log(data.name)
-      this.ema.fire('TabNav.open', data)
+      this.ema.fire('openTab1', data)
     },
     /**
      * 添加一个页面到当前页面，必要参数

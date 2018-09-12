@@ -8,10 +8,11 @@ Vue.use(Vuex)
 
 const state = {
   breadlist: [],
-  tabNav: {
-    tabList: [{ name: '首页', href: '/home/index' }],
-    currTab: { name: '首页', href: '/home/index' }
-  },
+  tabNavList: [{ name: '首页', path: '/home/index' }],
+  // tabNav: {
+  //   tabList: [{ name: '首页', path: '/home/index' }],
+  //   currTab: { name: '首页', path: '/home/index' }
+  // },
   userInfo: {}
 }
 

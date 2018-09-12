@@ -25,11 +25,11 @@
             ref="tagsPageOpened"
             :key="`tag-nav-${index}`"
             :name="item.name"
-            :checked="item.href === currentValue.href"
-            @on-close="handleClose"
+            :checked="item.path === value.path"
+            @on-close="handleClose(item)"
             @on-refresh="handleRefresh"
             @click.native="handleClick(item)"
-          >{{ showTitleInside(item) }}
+          >
           </tab-nav-item>
         </transition-group>
       </div>
@@ -38,7 +38,6 @@
 </template>
 
 <script>
-// import { showTitle } from '@/libs/util'
 import BaseComponent from '@/basic/BaseComponent'
 import TabNavItem from '@/components/TabNavItem'
 export default {
@@ -61,33 +60,11 @@ export default {
   },
   data () {
     return {
-      tagBodyLeft: 0,
-      currentValue: this.value
-    }
-  },
-  watch: {
-    value: function (val) {
-      this.currentValue = val
+      tagBodyLeft: 0
     }
   },
   mounted () {
-    this.bindEvent('open', (route) => {
-      console.log('open')
-      let tag = {
-        href: route.path,
-        name: route.query.id ? route.query.id : route.name
-      }
-      this.$store.commit('changeTab', tag)
-      // let { path, params, query, name } = {}
-      // path = route.href
-      // params = route.params
-      // query = route.query
-      // name = route.name
-      console.log(route)
 
-      // this.$store.commit('changeTag')
-      this.$router.push(route)
-    })
   },
   methods: {
     handlescroll (e) {
@@ -116,23 +93,20 @@ export default {
     // handleTagsOption (type) {
     //   if (type === 'close-all') {
     //     // 关闭所有，除了home
-    //     let res = this.list.filter(item => item.href === '/home')
+    //     let res = this.list.filter(item => item.path === '/home')
     //     // this.$emit('on-close', res, 'all')
     //     this.$store.commit('updateTabList', res)
     //   } else {
     //     // 关闭除当前页和home页的其他页
-    //     let res = this.list.filter(item => item.href === this.value.href || item.name === '/home')
+    //     let res = this.list.filter(item => item.path === this.value.path || item.name === '/home')
     //     // this.$emit('on-close', res, 'others')
     //     this.$store.commit('updateTabList', res)
     //   }
     // },
-    handleClose (name) {
-      // TODO:
-      this.$Message.info(`${name}已删除`)
-      // let res = this.list.filter(item => item.name !== name)
-      // console.log(JSON.stringify(res))
-      // this.$emit('on-close', res, undefined, name)
-      this.$store.commit('closeTab', name)
+    handleClose (item) {
+      this.$Message.info(`${item.path}已删除`)
+      let res = this.list.filter(item => item.name !== name)
+      this.$emit('on-close', res, item)
     },
     handleRefresh (item) {
       this.$Message.info(`${item}已刷新`)
@@ -140,13 +114,7 @@ export default {
       // this.$router.push({path: '/company-manage/staff-manage'})
     },
     handleClick (item) {
-      this.currentValue = item
-      this.$store.commit('changeTab', item)
-      this.$emit('input', item)
-    },
-    showTitleInside (item) {
-      // return showTitle(item, this)
-      return item.name
+      this.$emit('on-select', item)
     }
   }
 }

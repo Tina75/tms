@@ -2,13 +2,13 @@
   <div id="app">
     <Layout class="container">
       <Sider v-model="collapsed" :collapsed-width="56" hide-trigger collapsible >
-        <side-bar :collapsed="collapsed" @on-select="turnToPage"/>
+        <side-bar :collapsed="collapsed" :active-name="$route.path" :menu-list="menuList" @on-select="onMenuSelect"/>
       </Sider>
       <Layout>
         <Header class="header-con">
           <header-bar :collapsed.sync="collapsed" :name="name" @on-coll-change="handleCollapsedChange"/>
           <div class="tag-nav-wrapper">
-            <tab-nav :list="tabList" :value="currTab" @on-close="handleCloseTag" @input="handleClick"/>
+            <tab-nav :list="tabNavList" :value="$route" @on-close="handleCloseTab" @on-select="onTabSelect"/>
           </div>
         </Header>
         <Content >
@@ -30,28 +30,37 @@ import HeaderBar from '@/components/HeaderBar'
 import SideBar from '@/components/SideBar'
 import TabNav from '@/components/TabNav'
 import Dialogs from '@/components/Dialogs'
-import { mapGetters } from 'vuex'
+import menuJson from '@/assets/menu.json'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   components: { HeaderBar, SideBar, TabNav, Dialogs },
   data () {
     return {
       collapsed: false,
-      name: '端木和地'
+      name: '端木和天',
+      menuList: menuJson
     }
   },
   computed: {
-    ...mapGetters({
-      tabList: 'getTabList',
-      currTab: 'currTab'
-    })
+    ...mapGetters(['tabNavList']),
+    ...mapMutations(['setTabNavList'])
   },
+
   mounted () {
     window.EMA.bind('logout', () => {
       this.logout()
     })
     window.EMA.bind('refresh', () => {
       window.location.reload()
+    })
+    window.EMA.bind('openTab1', (route) => {
+      console.log('open')
+      let tag = {...route}
+      tag.name = route.query.id ? route.query.id : route.name
+      this.setTabNavList(this.getNewTagList(this.tabNavList, tag))
+      this.turnToPage(tag)
+      // this.$router.push(route)
     })
   },
   methods: {
@@ -62,19 +71,30 @@ export default {
     handleCollapsedChange (state) {
       this.collapsed = state
     },
-    handleCloseTag () {},
-    handleClick (item) {
+    handleCloseTab (list, route) {
+      // 选中前一个tab
+      const nextRoute = this.getNextRoute(this.tabNavList, route)
+      this.$router.push(nextRoute)
+      // this.$store.commit('setTabNavList', list)
+      this.setTabNavList(list) // 更新store
+    },
+    onTabSelect (item) {
       this.turnToPage(item)
+    },
+    onMenuSelect (menuItem) {
+      console.log('onMenuSelect', menuItem)
+      this.turnToPage(menuItem)
+      // this.$store.commit('setTabNavList', this.getNewTagList(this.tabNavList, this.$route))
+      this.setTabNavList(this.getNewTagList(this.tabNavList, menuItem))
     },
     turnToPage (route) {
       let { path, params, query } = {}
       if (typeof route === 'string') path = route
       else {
-        path = route.href
+        path = route.path
         params = route.params
         query = route.query
       }
-      console.log(route)
       // if (path.indexOf('isTurnByHref_') > -1) {
       //   window.open(path.split('_')[1])
       //   return
@@ -85,6 +105,50 @@ export default {
         params,
         query
       })
+    },
+    getNextRoute (list, route) {
+      let res = {}
+      const index = list.findIndex(item => this.routeEqual(item, route))
+      if (index === list.length - 1) res = list[list.length - 2]
+      else res = list[index + 1]
+      return res
+    },
+    /**
+     * @description 根据name/params/query判断两个路由对象是否相等
+     * @param {*} route1 路由对象
+     * @param {*} route2 路由对象
+     */
+    routeEqual (route1, route2) {
+      const params1 = route1.params || {}
+      const params2 = route2.params || {}
+      const query1 = route1.query || {}
+      const query2 = route2.query || {}
+      return (route1.name === route2.name) && this.objEqual(params1, params2) && this.objEqual(query1, query2)
+    },
+    /**
+     * @param {*} obj1 对象
+     * @param {*} obj2 对象
+     * @description 判断两个对象是否相等，这两个对象的值只能是数字或字符串
+     */
+    objEqual (obj1, obj2) {
+      const keysArr1 = Object.keys(obj1)
+      const keysArr2 = Object.keys(obj2)
+      if (keysArr1.length !== keysArr2.length) return false
+      else if (keysArr1.length === 0 && keysArr2.length === 0) return true
+      /* eslint-disable-next-line */
+      else return !keysArr1.some(key => obj1[key] != obj2[key])
+    },
+    /**
+ * @param {*} list 现有标签导航列表
+ * @param {*} newRoute 新添加的路由原信息对象
+ * @description 如果该newRoute已经存在则不再添加
+ */
+    getNewTagList  (list, newRoute) {
+      const { name, path, meta, query } = newRoute
+      let newList = [...list]
+      if (newList.findIndex(item => item.path === path) >= 0) return newList
+      else newList.push({ name, path, meta, query })
+      return newList
     }
   }
 }
