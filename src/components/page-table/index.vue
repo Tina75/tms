@@ -59,8 +59,10 @@
 </template>
 
 <script>
-
+import Vue from 'vue'
 import server from '@/libs/js/server'
+import SliderIcon from './SliderIcon.vue'
+import _ from 'lodash'
 /**
    * iview的table和page的组件是分开的
    * 其实实际的场景中，大多数页面都是需要结合table和page，
@@ -96,6 +98,11 @@ export default {
       type: Array,
       default: () => [],
       required: true
+    },
+    // 显示或隐藏的属性
+    extraColumns: {
+      type: Array,
+      default: () => []
     },
     // 表数据,可能需要自己做分页
     data: {
@@ -148,7 +155,8 @@ export default {
     onRowDbclick: Function,
     onExpand: Function,
     onChange: Function,
-    onPageSizeChange: Function
+    onPageSizeChange: Function,
+    onColumnChange: Function
   },
   data () {
     return {
@@ -170,26 +178,34 @@ export default {
   computed: {
     // 根据显示|隐藏列选择框
     filterColumns () {
-      const _this = this
-      if (_this.showFilter) {
-        return this.columns.concat({
-          title: 'icon',
-          width: 48,
-          renderHeader (h, params) {
-            return h('Icon', {
-
-              props: {
-                type: 'ios-list'
-              },
-              class: 'ios-list-icon',
-              on: {
-                // 点击图标，弹出筛选列的框
-                click: _this.showSlider
-              }
-            })
-          },
-          key: 'filter-columns'
-        })
+      const vm = this
+      if (vm.showFilter) {
+        return vm.columns
+          .filter((col) => {
+            if (vm.extraColumns.length > 0) {
+              let columnGroup = _.groupBy(vm.extraColumns, (cl) => cl.key)
+              return columnGroup[col.key][0].visible
+            }
+            return true
+          })
+          .concat({
+            title: 'icon',
+            width: 48,
+            renderHeader (h, params) {
+              return h('SliderIcon', {
+                props: {
+                  list: vm.extraColumns
+                },
+                on: {
+                  'on-change': (columns) => {
+                    vm.$emit('on-column-change', columns)
+                    // vm.extraColumns = columns
+                  }
+                }
+              })
+            },
+            key: 'filter-columns'
+          })
       } else {
         return this.columns
       }
@@ -215,6 +231,7 @@ export default {
     }
   },
   created () {
+    Vue.component('SliderIcon', SliderIcon)
     this.isRemote = !!this.url
     this.showSlotFooter = this.$slots.footer !== undefined
     this.showSlotHeader = this.$slots.header !== undefined
@@ -380,31 +397,6 @@ export default {
     overflow: hidden;
     &-fr {
       float: right;
-    }
-  }
-  &__checkbox-list{
-    display: block
-    margin: 8px 0
-  }
-  &__drawer-footer{
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    border-top: 1px solid #e8e8e8;
-    padding: 10px 16px;
-    text-align: right;
-    background: #fff;
-    .ivu-btn:first-child{
-      margin-right: 8px
-    }
-  }
-  .ios-list-icon {
-    font-size: 18px;
-    cursor: pointer;
-
-    &:hover {
-      color: #2d8cf0;
     }
   }
 }
