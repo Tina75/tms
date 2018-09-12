@@ -16,14 +16,19 @@
       </Upload>
       <Button class="i-ml-10" to="/order/template/download" target="_blank">下载模板</Button>
     </div>
-    <PageTable ref="pageTable" :columns="columns" :data="data" :no-data-text="emptyContent" :show-filter="false">
-      <div v-if="data.length === 0" slot="footer">
-        <div class="order-import__empty-content van-center">
-          <Button type="primary" @click="handleClick">导入文件</Button>
+    <PageTable ref="pageTable" :columns="columns" :data="data" :show-filter="false" no-data-text=" ">
+      <div v-if="data.length === 0" ref="footer" slot="footer" class="order-import__empty-content van-center">
+        <div class="order-import__empty-content-wrap">
+          <div>
+            <img src="../assets/empty-order.png" />
+            <div>您还没有导入订单，去下载模板导入订单吧！</div>
+          </div>
+          <div class="i-mt-10">
+            <Button type="primary" @click="handleClick">导入文件</Button>
+          </div>
         </div>
       </div>
     </PageTable>
-
   </div>
 </template>
 
@@ -46,18 +51,15 @@ export default {
   mixins: [BaseComponent, BasePage],
   data () {
     return {
-      emptyContent: `<div>
-                      <img />
-                      <p>您还没有导入订单，去下载模板导入订单吧！</p>
-                    </div>`,
+      emptyContent: '',
       data: [
-        {
-          createDate: '2018-9-10',
-          importFile: 'test.txt',
-          result: '导入成功',
-          orderQuantity: 2,
-          operator: '离散'
-        }
+        // {
+        //   createDate: '2018-9-10',
+        //   importFile: 'test.txt',
+        //   result: '导入成功',
+        //   orderQuantity: 2,
+        //   operator: '离散'
+        // }
       ],
       columns: [
         {
@@ -98,8 +100,13 @@ export default {
       ]
     }
   },
+  beforeMount () {
+  },
   mounted () {
-
+    if (this.$refs.footer) {
+      this.$refs.footer.parentElement.parentElement.style['min-height'] = '180px'
+    }
+    // this.$refs.footer.$parent.style['height'] = '200px'
   },
   methods: {
     // 主动触发上传
@@ -137,13 +144,13 @@ export default {
 .order-import
   &__empty-content
     margin 0
+    min-height 120px
     position relative
-    &::after
+    &-wrap
       display block
-      position absolute
       width 100%
-      height 3px
+      position absolute
       background-color #fff
-      content ''
-      top -1px
+      line-height 28px
+      top -20px
 </style>
