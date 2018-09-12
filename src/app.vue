@@ -166,4 +166,6 @@ html, body
   text-align center
   .ivu-btn
     min-width 85px
+.ivu-layout
+  background #efefef
 </style>

@@ -29,12 +29,12 @@
     "children":[
       {
         "name":"订单管理",
-        "href":"/order-management/order",
+        "href":"#/order-management/order",
         "powerCode":0
       },
       {
         "name":"回单管理",
-        "href":"/order-management/receipt",
+        "href":"#/order-management/receipt",
         "powerCode":0
       }
     ]
@@ -47,22 +47,22 @@
     "children":[
       {
         "name":"调度工作台",
-        "href":"/transport/dispatch",
+        "href":"#/transport/dispatch",
         "powerCode":0
       },
       {
         "name":"运单管理",
-        "href":"/transport/waybill",
+        "href":"#/transport/waybill",
         "powerCode":0
       },
       {
         "name":"提货管理",
-        "href":"/transport/receiveOrder",
+        "href":"#/transport/receiveOrder",
         "powerCode":0
       },
       {
         "name":"外转单管理",
-        "href":"/transport/outerOrder",
+        "href":"#/transport/outerOrder",
         "powerCode":0
       }
     ]
@@ -80,23 +80,23 @@
     "powerCode":0
   },
   {
-    "name":"客户",
+    "name":"客户管理",
     "icon":"md-person",
     "powerCode":0,
     "children":[
       {
         "name":"发货方管理",
-        "href":"/client/sender",
+        "href":"#/client/sender",
         "powerCode":0
       },
       {
         "name":"承运商管理",
-        "href":"/client/carrier",
+        "href":"#/client/carrier",
         "powerCode":0
       },
       {
         "name":"外转方管理",
-        "href":"/client/transfer",
+        "href":"#/client/transfer",
         "powerCode":0
       }
     ]
@@ -107,12 +107,12 @@
     "children":[
       {
         "name":"员工管理",
-        "href":"/company-manage/staff-manage",
+        "href":"#/company-manage/staff-manage",
         "powerCode":0
       },
       {
         "name":"角色管理",
-        "href":"/company-manage/employee-manage",
+        "href":"#/company-manage/employee-manage",
         "powerCode":0
       }
     ]
