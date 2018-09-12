@@ -18,6 +18,16 @@ var ftpConfig = {
       type: 'sftp'
     },
     path: '/data/jikang/devstatic/tms'
+  },
+  beta: {
+    server: {
+      host: '192.168.1.39',
+      username: 'root',
+      password: 'ymm12345',
+      port: 22,
+      type: 'sftp'
+    },
+    path: '/data/jikang/qastatic/tms'
   }
 }
 
