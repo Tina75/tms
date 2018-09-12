@@ -1,7 +1,7 @@
 [
   {
     "name":"首页",
-    "href":"#/home/index",
+    "href":"/home/index",
     "icon":"md-home",
     "powerCode":0
   },
@@ -29,12 +29,12 @@
     "children":[
       {
         "name":"订单管理",
-        "href":"#/order-management/order",
+        "href":"/order-management/order",
         "powerCode":0
       },
       {
         "name":"回单管理",
-        "href":"#/order-management/receipt",
+        "href":"/order-management/receipt",
         "powerCode":0
       }
     ]
@@ -47,35 +47,35 @@
     "children":[
       {
         "name":"调度工作台",
-        "href":"#/transport/dispatch",
+        "href":"/transport/dispatch",
         "powerCode":0
       },
       {
         "name":"运单管理",
-        "href":"#/transport/waybill",
+        "href":"/transport/waybill",
         "powerCode":0
       },
       {
         "name":"提货管理",
-        "href":"#/transport/receiveOrder",
+        "href":"/transport/receiveOrder",
         "powerCode":0
       },
       {
         "name":"外转单管理",
-        "href":"#/transport/outerOrder",
+        "href":"/transport/outerOrder",
         "powerCode":0
       }
     ]
   },
   {
     "name":"财务",
-    "href":"#/finance",
+    "href":"/finance",
     "icon":"md-options",
     "powerCode":0
   },
   {
     "name":"报表",
-    "href":"#/stats",
+    "href":"/stats",
     "icon":"md-stats",
     "powerCode":0
   },
@@ -86,17 +86,17 @@
     "children":[
       {
         "name":"发货方管理",
-        "href":"#/client/sender",
+        "href":"/client/sender",
         "powerCode":0
       },
       {
         "name":"承运商管理",
-        "href":"#/client/carrier",
+        "href":"/client/carrier",
         "powerCode":0
       },
       {
         "name":"外转方管理",
-        "href":"#/client/transfer",
+        "href":"/client/transfer",
         "powerCode":0
       }
     ]
@@ -107,31 +107,31 @@
     "children":[
       {
         "name":"员工管理",
-        "href":"#/company-manage/staff-manage",
+        "href":"/company-manage/staff-manage",
         "powerCode":0
       },
       {
         "name":"角色管理",
-        "href":"#/company-manage/employee-manage",
+        "href":"/company-manage/employee-manage",
         "powerCode":0
       }
     ]
   },
   {
     "name":"设置",
-    "href":"#/set-up/set-up",
+    "href":"/set-up/set-up",
     "icon":"md-settings",
     "powerCode":0
   },
   {
     "name":"帮助",
-    "href":"#/helper/help",
+    "href":"/helper/help",
     "icon":"md-help-circle",
     "powerCode":0
   },
   {
     "name":"example",
-    "href":"#/example/page1",
+    "href":"/example/page1",
     "icon":"md-alert"
   }
 
