@@ -7,11 +7,9 @@
     <br>
     <h3>iconfont</h3>
     <div>
-      <svg class="icon" aria-hidden="true">
-        <use xlink:href="#icon-shoulikaidan"></use>
-      </svg>
-      <div class="name">受理开单</div>
-      <div class="fontclass">#icon-shoulikaidan</div>
+      <i class="icon font_family icon-dingdanguanli"></i>
+      <div class="name">订单管理</div>
+      <div class="fontclass">.icon-dingdanguanli</div>
     </div>
   </div>
 </template>
