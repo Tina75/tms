@@ -124,6 +124,12 @@
     "powerCode":0
   },
   {
+    "name":"消息",
+    "href":"#/info/info",
+    "icon":"md-chatbubbles",
+    "powerCode":0
+  },
+  {
     "name":"帮助",
     "href":"#/helper/help",
     "icon":"md-help-circle",
