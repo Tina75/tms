@@ -36,8 +36,7 @@
                        @on-blur="inputBlur('smsCode')" />
                 </Col>
                 <Col :span="9" :offset="1">
-                <Button :disabled="!captchaEnable"
-                        long
+                <Button :disabled="!captchaEnable" long
                         @click="sendSMS('/user/sms')">{{captchaEnable?`&nbsp;&nbsp;&nbsp;获取验证码&nbsp;&nbsp;&nbsp;`:intervalSeconds+'秒后可重试'}}</Button>
                 </Col>
               </Row>
@@ -54,9 +53,10 @@
               <Input v-model="form.name" :maxlength="25" placeholder="输入公司名称"
                      @on-blur="inputBlur('name')" />
             </FormItem>
-            <FormItem prop="cityId">
-              <Cascader :data="[]" v-model="form.cityId" placeholder="选择省/市/区"
-                        @on-blur="inputBlur('cityId')"></Cascader>
+            <FormItem prop="location">
+              <Cascader :data="cities" v-model="location" placeholder="选择省/市/区"
+                        @on-change="locationChange"
+                        @on-visible-change="locationBlur"></Cascader>
             </FormItem>
             <FormItem prop="address">
               <Input v-model="form.address" :maxlength="40" placeholder="输入公司详细地址"
@@ -89,6 +89,7 @@
 
 <script>
 import Server from '@/libs/js/server'
+import City from '@/libs/js/City'
 import mixin from './mixin'
 
 export default {
@@ -111,23 +112,31 @@ export default {
         name: '', // 公司名称
         userName: '', // 联系人姓名
         address: '', // 公司地址
-        location: [], // 所在省市区
-        cityId: ''
-      }
+        cityId: []
+      },
+      location: [], // 所在省市区
+
+      cities: []
     }
   },
+  created () {
+    this.getCaptcha()
+    this.getCities()
+  },
   methods: {
+    // 下一步校验
     nextStep () {
       let validParams
       if (this.step === 0) {
         validParams = ['phone', 'captchaCode', 'smsCode']
       } else if (this.step === 1) {
-        validParams = ['name', 'userName', 'cityId', 'address']
+        validParams = ['userName', 'name', 'cityId', 'address']
       } else {
         validParams = this.form
       }
 
-      for (let key in validParams) {
+      for (let index in validParams) {
+        const key = validParams[index]
         if (key !== 'password') {
           if (!this.validate(key)) return
         } else {
@@ -149,6 +158,31 @@ export default {
           this.$router.push('/')
         }, 2000)
       }).catch(err => console.error(err))
+    },
+
+    // 省市区选择改变
+    locationChange (value, data) {
+      this.cityId = value[value.length - 1]
+    },
+
+    // 省市区选择失焦
+    locationBlur (open) {
+      if (!open && !this.cityId) this.inputBlur('cityId')
+    },
+
+    // 查询城市列表
+    getCities () {
+      this.cities = walk()
+      function walk (code) {
+        return City.getAllChild(code).map(item => {
+          let temp = {
+            value: item.code,
+            label: item.name
+          }
+          if (item.hasChild) temp.children = walk(item.code)
+          return temp
+        })
+      }
     }
   }
 }
