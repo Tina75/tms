@@ -51,7 +51,8 @@
             </FormItem>
             <FormItem prop="name">
               <Input v-model="form.name" :maxlength="25" placeholder="输入公司名称"
-                     @on-blur="inputBlur('name')" />
+                     @on-blur="inputBlur('name')"
+                     @on-keydown="companyNameRuleToast" />
             </FormItem>
             <FormItem prop="location">
               <Cascader :data="cities" v-model="location" placeholder="选择省/市/区"
@@ -158,6 +159,11 @@ export default {
           this.$router.push('/')
         }, 2000)
       }).catch(err => console.error(err))
+    },
+
+    companyNameRuleToast (e) {
+      if (e.keyCode === 8 || e.keyCode === 46) return // backspace & delete
+      if (this.form.name.length === 25) this.$Message.warning('公司名不能超过25个字')
     },
 
     // 省市区选择改变
