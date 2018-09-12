@@ -180,10 +180,10 @@ export default {
     filterColumns () {
       const vm = this
       if (vm.showFilter) {
+        const columnGroup = _.groupBy(vm.extraColumns, (cl) => cl.key)
         return vm.columns
           .filter((col) => {
-            if (vm.extraColumns.length > 0) {
-              let columnGroup = _.groupBy(vm.extraColumns, (cl) => cl.key)
+            if (vm.extraColumns.length > 0 && col.key && !col.extra) {
               return columnGroup[col.key][0].visible
             }
             return true
