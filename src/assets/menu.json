@@ -43,6 +43,7 @@
     "name":"运输管理",
     "powerCode":0,
     "icon":"md-bus",
+    "href":"/transport",
     "children":[
       {
         "name":"调度工作台",

@@ -50,6 +50,9 @@ export default {
     window.EMA.bind('logout', () => {
       this.logout()
     })
+    window.EMA.bind('refresh', () => {
+      window.location.reload()
+    })
   },
   methods: {
     logout () {
