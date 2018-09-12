@@ -104,12 +104,12 @@
             </FormItem>
             <FormItem label="公司LOGO：">
               <!--图片相关-->
-              <div v-for="item in uploadList" :key="item.index" class="demo-upload-list">
+              <div v-for="item in uploadListCompany" :key="item.index" class="demo-upload-list">
                 <template v-if="item.status === 'finished'">
                   <img :src="item.url">
                   <div class="demo-upload-list-cover">
-                    <Icon type="ios-eye-outline" @click.native="handleView(item.name)"></Icon>
-                    <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
+                    <Icon type="ios-eye-outline" @click.native="handleViewCompany(item.name)"></Icon>
+                    <Icon type="ios-trash-outline" @click.native="handleRemoveCompany(item)"></Icon>
                   </div>
                 </template>
                 <template v-else>
@@ -117,15 +117,15 @@
                 </template>
               </div>
               <Upload
-                ref="upload"
+                ref="uploadCompany"
                 :show-upload-list="false"
-                :default-file-list="defaultList"
-                :on-success="handleSuccess"
+                :default-file-list="defaultListCompany"
+                :on-success="handleSuccessCompany"
                 :format="['jpg','jpeg','png']"
                 :max-size="2048"
-                :on-format-error="handleFormatError"
-                :on-exceeded-size="handleMaxSize"
-                :before-upload="handleBeforeUpload"
+                :on-format-error="handleFormatErrorCompany"
+                :on-exceeded-size="handleMaxSizeCompany"
+                :before-upload="handleBeforeUploadCompany"
                 multiple
                 type="drag"
                 action="//jsonplaceholder.typicode.com/posts/"
@@ -134,8 +134,8 @@
                   <Icon type="ios-camera" size="20"></Icon>
                 </div>
               </Upload>
-              <Modal v-model="visible" title="View Image">
-                <img v-if="visible" :src="'https://o5wwk8baw.qnssl.com/' + imgName + '/large'" style="width: 100%">
+              <Modal v-model="visibleCompany" title="View Image">
+                <img v-if="visibleCompany" :src="'https://o5wwk8baw.qnssl.com/' + imgNameCompany + '/large'" style="width: 100%">
               </Modal>
               <!--图片相关-->
             </FormItem>
@@ -167,31 +167,31 @@
             <Checkbox label="苹果"></Checkbox>
             <Checkbox label="西瓜"></Checkbox>
           </CheckboxGroup>
-                </Col>
+            </Col>
         </Card>
-          </Col>
+        </Col>
       </TabPane>
-      <TabPane label="提示设置">
+      <!-- <TabPane label="提示设置">
         <Col span="14" class="setConf">
-        <Card style="height:250px;">
-          <Col span="16" class="setConf">
-          <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:6px;margin-bottom:6px;">
-            <Checkbox
-              :indeterminate="tipsIndeterminate"
-              :value="tipsCheckAll"
-              @click.prevent.native="tipsHandleCheckAll">
-              全选
-            </Checkbox>
-          </div>
-          <CheckboxGroup v-model="tipsCheckAllGroup" @on-change="tipsCheckAllGroupChange">
-            <Checkbox label="香蕉x"></Checkbox>
-            <Checkbox label="苹果x"></Checkbox>
-            <Checkbox label="西瓜x"></Checkbox>
-          </CheckboxGroup>
-                </Col>
-        </Card>
-          </Col>
-      </TabPane>
+          <Card style="height:250px;">
+            <Col span="16" class="setConf">
+              <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:6px;margin-bottom:6px;">
+                <Checkbox
+                  :indeterminate="tipsIndeterminate"
+                  :value="tipsCheckAll"
+                  @click.prevent.native="tipsHandleCheckAll">
+                  全选
+                </Checkbox>
+              </div>
+              <CheckboxGroup v-model="tipsCheckAllGroup" @on-change="tipsCheckAllGroupChange">
+                <Checkbox label="香蕉x"></Checkbox>
+                <Checkbox label="苹果x"></Checkbox>
+                <Checkbox label="西瓜x"></Checkbox>
+              </CheckboxGroup>
+            </Col>
+          </Card>
+        </Col>
+      </TabPane> -->
     </Tabs>
   </div>
 </template>
@@ -266,19 +266,29 @@ export default {
           { required: true, message: 'Mailbox cannot be empty', trigger: 'blur' }
         ]
       },
-      // 图片相关
+      // 图片相关-个人
       defaultList: [
+        {
+          'name': 'bc7521e033abdd1e92222d733590f104',
+          'url': 'https://o5wwk8baw.qnssl.com/bc7521e033abdd1e92222d733590f104/avatar'
+        }],
+      imgName: '',
+      visible: false,
+      uploadList: [],
+      // 图片相关-公司
+      defaultListCompany: [
         {
           'name': 'a42bdcc1178e62b4694c830f028db5c0',
           'url': 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'
         }],
-      imgName: '',
-      visible: false,
-      uploadList: []
+      imgNameCompany: '',
+      visibleCompany: false,
+      uploadListCompany: []
     }
   },
   mounted: function () {
     this.uploadList = this.$refs.upload.fileList
+    this.uploadListCompany = this.$refs.uploadCompany.fileList
   },
   methods: {
     // 密码
@@ -365,8 +375,9 @@ export default {
         this.tipsCheckAll = false
       }
     },
-    // 图片相关
+    // 图片相关 -个人
     handleView (name) {
+      debugger
       this.imgName = name
       this.visible = true
     },
@@ -375,8 +386,8 @@ export default {
       this.$refs.upload.fileList.splice(fileList.indexOf(file), 1)
     },
     handleSuccess (res, file) {
-      file.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar'
-      file.name = '7eb99afb9d5f317c912f08b5212fd69a'
+      file.url = 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'
+      file.name = 'a42bdcc1178e62b4694c830f028db5c0'
     },
     handleFormatError (file) {
       this.$Notice.warning({
@@ -390,8 +401,42 @@ export default {
         desc: 'File  ' + file.name + ' is too large, no more than 2M.'
       })
     },
-    handleBeforeUpload () {
+    handleBeforeUpload (file) {
       const check = this.uploadList.length < 5
+      if (!check) {
+        this.$Notice.warning({
+          title: 'Up to five pictures can be uploaded.'
+        })
+      }
+      return check
+    },
+    // 图片相关 -公司
+    handleViewCompany (name) {
+      this.imgNameCompany = name
+      this.visibleCompany = true
+    },
+    handleRemoveCompany (file) {
+      const fileList = this.$refs.uploadCompany.fileList
+      this.$refs.uploadCompany.fileList.splice(fileList.indexOf(file), 1)
+    },
+    handleSuccessCompany (res, file) {
+      file.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar'
+      file.name = '7eb99afb9d5f317c912f08b5212fd69a'
+    },
+    handleFormatErrorCompany (file) {
+      this.$Notice.warning({
+        title: 'The file format is incorrect',
+        desc: 'File format of ' + file.name + ' is incorrect, please select jpg or png.'
+      })
+    },
+    handleMaxSizeCompany (file) {
+      this.$Notice.warning({
+        title: 'Exceeding file size limit',
+        desc: 'File  ' + file.name + ' is too large, no more than 2M.'
+      })
+    },
+    handleBeforeUploadCompany () {
+      const check = this.uploadListCompany.length < 5
       if (!check) {
         this.$Notice.warning({
           title: 'Up to five pictures can be uploaded.'

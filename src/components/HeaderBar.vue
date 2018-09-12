@@ -80,7 +80,7 @@ export default {
   position relative
   text-align left
   background #252A2F
-  border-bottom 1px solid #f5f7f9
+  border-bottom 1px solid #efefef
   &-bread-crumb
     padding-left 60px
     width 350px

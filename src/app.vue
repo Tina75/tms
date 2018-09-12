@@ -50,6 +50,9 @@ export default {
     window.EMA.bind('logout', () => {
       this.logout()
     })
+    window.EMA.bind('refresh', () => {
+      window.location.reload()
+    })
   },
   methods: {
     logout () {
@@ -163,4 +166,6 @@ html, body
   text-align center
   .ivu-btn
     min-width 85px
+.ivu-layout
+  background #efefef
 </style>
