@@ -30,15 +30,6 @@
         <slot name="header"></slot>
       </div>
     </Table>
-    <Drawer v-model="visible" :closable="false" title="选择显示字段" placement="right">
-      <CheckboxGroup>
-        <Checkbox v-for="item in columns" :key="item.key" :label="item.title" class="page-table__checkbox-list"></Checkbox>
-      </CheckboxGroup>
-      <div class="page-table__drawer-footer">
-        <Button @click="hideSlider">取消</Button>
-        <Button type="primary" @click="hideSlider">确定</Button>
-      </div>
-    </Drawer>
     <div v-if="showPagination" class="page-table__footer-pagination">
       <div class="page-table__footer-pagination-fr">
         <Page
