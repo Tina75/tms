@@ -4,6 +4,15 @@
     <br>
     <p><a @click="open">demo-dialog1</a></p>
     <Alert closable>An info prompt</Alert>
+    <br>
+    <h3>iconfont</h3>
+    <div>
+      <svg class="icon" aria-hidden="true">
+        <use xlink:href="#icon-shoulikaidan"></use>
+      </svg>
+      <div class="name">受理开单</div>
+      <div class="fontclass">#icon-shoulikaidan</div>
+    </div>
   </div>
 </template>
 

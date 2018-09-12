@@ -6,7 +6,8 @@
     "dev": "vue-cli-service serve --open",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "deploy_dev": "vue-cli-service build && node upload -e dev"
+    "deploy_dev": "vue-cli-service build && node upload -e dev",
+    "deploy_qa": "vue-cli-service build && node upload -e beta"
   },
   "dependencies": {
     "axios": "^0.18.0",

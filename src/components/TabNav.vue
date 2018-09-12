@@ -20,18 +20,17 @@
     <div ref="scrollOuter" class="scroll-outer" @DOMMouseScroll="handlescroll" @mousewheel="handlescroll">
       <div ref="scrollBody" :style="{left: tagBodyLeft + 'px'}" class="scroll-body">
         <transition-group name="taglist-moving-animation">
-          <Tag
+          <tab-nav-item
             v-for="(item,index) in list"
             ref="tagsPageOpened"
             :key="`tag-nav-${index}`"
             :name="item.name"
-            :closable="item.href !== '/home'"
-            :color="item.href === currentValue.href ? 'success' : 'default'"
-            style="color:red!important"
-            type="dot"
+            :checked="item.href === currentValue.href"
             @on-close="handleClose"
+            @on-refresh="handleRefresh"
             @click.native="handleClick(item)"
-          >{{ showTitleInside(item) }}</Tag>
+          >{{ showTitleInside(item) }}
+          </tab-nav-item>
         </transition-group>
       </div>
     </div>
@@ -40,8 +39,12 @@
 
 <script>
 // import { showTitle } from '@/libs/util'
+import BaseComponent from '@/basic/BaseComponent'
+import TabNavItem from '@/components/TabNavItem'
 export default {
   name: 'tagsNav',
+  components: { TabNavItem },
+  mixins: [BaseComponent],
   props: {
     value: {
       type: Object,
@@ -104,14 +107,20 @@ export default {
         this.$store.commit('updateTabList', res)
       }
     },
-    handleClose (e, name) {
+    handleClose (name) {
       // TODO:
       let res = this.list.filter(item => item.name !== name)
       // this.$emit('on-close', res, undefined, name)
       this.$store.commit('updateTabList', res)
     },
+    handleRefresh (item) {
+      this.$Message.info(item)
+      // this.ema.fire('refresh')
+      // this.$router.push({path: '/company-manage/staff-manage'})
+    },
     handleClick (item) {
       this.currentValue = item
+      this.$store.commit('changeTab', item)
       this.$emit('input', item)
     },
     showTitleInside (item) {
@@ -170,7 +179,7 @@ export default {
     left 23px
     // right 56px
     right 24px
-    top 5px
+    top 6px
     bottom 0
     // box-shadow 0px 0 3px 2px rgba(100,100,100,.1) inset
     .scroll-body
