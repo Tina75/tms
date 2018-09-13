@@ -36,24 +36,23 @@ export default {
   methods: {
     loadPage: function (data) {
       var path = this.getPath()
-
-      import('../views/' + path + '')
-        .then(module => {
-          // eslint-disable-next-line
-          var tempModule = Vue.extend(module.default);
-          tempModule = tempModule.extend({
-            data: function () {
-              return data.data || {}
-            },
-            methods: data.methods || {}
-          })
-          keyIndex++
-          Vue.component(`${pagePrex}${path.replace('/', '-')}-${keyIndex}`, tempModule)
-          this.current = tempModule
+      let start = (new Date()).getTime()
+      import('../views/' + path + '').then(module => {
+        var tempModule = Vue.extend(module.default)
+        tempModule = tempModule.extend({
+          data: function () {
+            return data.data || {}
+          },
+          methods: data.methods || {}
         })
-        .catch(() => {
-          // console.error("不存在该页面", path);
-        })
+        keyIndex++
+        Vue.component(`${pagePrex}${path.replace('/', '-')}-${keyIndex}`, tempModule)
+        this.current = tempModule
+        let end = (new Date()).getTime()
+        console.log('耗时' + (end - start) + 'ms')
+      }).catch(() => {
+        console.error('不存在该页面', path)
+      })
     },
     getPath () {
       var params = this.$route.params

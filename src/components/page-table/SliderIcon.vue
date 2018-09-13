@@ -87,7 +87,7 @@ export default {
       ]
     },
     saveList (list) {
-      this.sortData = _.sortBy(list, (st) => st.sort).map((item, index) => ({...item, sort: index}))
+      this.sortData = _.sortBy(list, (st) => st.sort).map((item, index) => ({ ...item, sort: index }))
       this.oldSortData = this.sortData.slice()
       this.checkList = this.sortData.filter(item => item.visible).map(item => item.title)
       this.oldCheckList = this.checkList.slice()
