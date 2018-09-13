@@ -194,9 +194,11 @@
     </Row>
     <FormItem class="van-center">
       <Button @click="resetForm">清空</Button>
-      <Button class="i-ml-10">保存并打印</Button>
+      <Button class="i-ml-10" @click="print">保存并打印</Button>
       <Button class="i-ml-10" type="primary" @click="handleSubmit">保存</Button>
     </FormItem>
+    <OrderPrint ref="printer" :data="orderForm">
+    </OrderPrint>
   </Form>
 </template>
 
@@ -210,13 +212,15 @@ import float from '@/libs/js/float'
 import area from '@/libs/js/area'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
+import OrderPrint from './OrderPrint'
 export default {
   metaInfo: {
     title: '手动下单'
   },
   components: {
     Title,
-    TagNumberInput
+    TagNumberInput,
+    OrderPrint
   },
   mixins: [BaseComponent, BasePage],
   data () {
@@ -545,7 +549,6 @@ export default {
         ]
 
       },
-      consignerLoading: false,
       tempCargoes: {},
       areaData: area,
       statics: {
@@ -554,8 +557,6 @@ export default {
         cargoCost: 0,
         quantity: 0
       }
-      // cargoes: [new Cargo()]
-      // consigners: []
     }
   },
   computed: {
@@ -596,7 +597,7 @@ export default {
     this.statics = Object.assign({}, this.sumRow)
   },
   destroyed () {
-    this.clearCargoes()
+    this.resetForm()
   },
   methods: {
     ...mapActions([
@@ -735,6 +736,9 @@ export default {
     // 格式化省市区
     formatArea (labels, selectedData) {
       return Object.values(labels).join('')
+    },
+    print () {
+      this.$refs.printer.print()
     }
   }
 }
