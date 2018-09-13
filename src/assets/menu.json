@@ -1,23 +1,24 @@
 [
   {
     "name":"首页",
-    "href":"#/home/index",
+    "path":"/home/index",
     "icon":"md-home",
     "powerCode":0
   },
   {
     "name":"受理开单",
     "icon":"md-paper",
+    "path":"/",
     "powerCode":0,
     "children":[
       {
         "name":"手动下单",
-        "href":"/1",
+        "path":"/1",
         "powerCode":0
       },
       {
         "name":"批量导入",
-        "href":"/2",
+        "path":"/2",
         "powerCode":0
       }
     ]
@@ -25,16 +26,17 @@
   {
     "name":"订单管理",
     "icon":"md-list-box",
+    "path":"/order-management",
     "powerCode":0,
     "children":[
       {
         "name":"订单管理",
-        "href":"#/order-management/order",
+        "path":"/order-management/order",
         "powerCode":0
       },
       {
         "name":"回单管理",
-        "href":"#/order-management/receipt",
+        "path":"/order-management/receipt",
         "powerCode":0
       }
     ]
@@ -43,60 +45,61 @@
     "name":"运输管理",
     "powerCode":0,
     "icon":"md-bus",
-    "href":"/transport",
+    "path":"/transport",
     "children":[
       {
         "name":"调度工作台",
-        "href":"#/transport/dispatch",
+        "path":"/transport/dispatch",
         "powerCode":0
       },
       {
         "name":"运单管理",
-        "href":"#/transport/waybill",
+        "path":"/transport/waybill",
         "powerCode":0
       },
       {
         "name":"提货管理",
-        "href":"#/transport/receiveOrder",
+        "path":"/transport/receiveOrder",
         "powerCode":0
       },
       {
         "name":"外转单管理",
-        "href":"#/transport/outerOrder",
+        "path":"/transport/outerOrder",
         "powerCode":0
       }
     ]
   },
   {
     "name":"财务",
-    "href":"#/finance",
+    "path":"/finance",
     "icon":"md-options",
     "powerCode":0
   },
   {
     "name":"报表",
-    "href":"#/stats",
+    "path":"/stats",
     "icon":"md-stats",
     "powerCode":0
   },
   {
     "name":"客户管理",
     "icon":"md-person",
+    "path":"/client",
     "powerCode":0,
     "children":[
       {
         "name":"发货方管理",
-        "href":"#/client/sender",
+        "path":"/client/sender",
         "powerCode":0
       },
       {
         "name":"承运商管理",
-        "href":"#/client/carrier",
+        "path":"/client/carrier",
         "powerCode":0
       },
       {
         "name":"外转方管理",
-        "href":"#/client/transfer",
+        "path":"/client/transfer",
         "powerCode":0
       }
     ]
@@ -104,22 +107,23 @@
   {
     "name":"公司管理",
     "icon":"md-briefcase",
+    "path":"/company-manage",
     "children":[
       {
         "name":"员工管理",
-        "href":"#/company-manage/staff-manage",
+        "path":"/company-manage/staff-manage",
         "powerCode":0
       },
       {
         "name":"角色管理",
-        "href":"#/company-manage/employee-manage",
+        "path":"/company-manage/employee-manage",
         "powerCode":0
       }
     ]
   },
   {
     "name":"设置",
-    "href":"#/set-up/set-up",
+    "path":"/set-up/set-up",
     "icon":"md-settings",
     "powerCode":0
   },
@@ -131,13 +135,13 @@
   },
   {
     "name":"帮助",
-    "href":"#/helper/help",
+    "path":"/helper/help",
     "icon":"md-help-circle",
     "powerCode":0
   },
   {
     "name":"example",
-    "href":"#/example/page1",
+    "path":"/example/page1",
     "icon":"md-alert"
   }
 

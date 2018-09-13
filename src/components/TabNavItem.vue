@@ -1,8 +1,8 @@
 <template>
   <div :class="['tab-item',checked?'tab-item__checked':'']">
-    <Icon v-show="checked" class="tab-item__icon" type="ios-refresh" size="16" @click="refresh"/>
+    <Icon v-show="checked" class="tab-item__icon" type="ios-refresh" size="16" @click.stop="refresh"/>
     <span class="tab-item__name">{{name}}</span>
-    <Icon v-show="checked" class="tab-item__icon" type="ios-close" size="18" @click="close"/>
+    <Icon v-show="closeable" class="tab-item__icon" type="ios-close" size="18" @click.stop="close"/>
   </div>
 </template>
 
@@ -23,6 +23,11 @@ export default {
   },
   data () {
     return {
+    }
+  },
+  computed: {
+    closeable: function () {
+      return this.checked && this.name !== '首页'
     }
   },
   mounted () {},
