@@ -58,11 +58,33 @@ import _ from 'lodash'
    * iview的table和page的组件是分开的
    * 其实实际的场景中，大多数页面都是需要结合table和page，
    * 以及包含自动发请求，管理数据的table
+   * 本组件大多数接口和iview table保持一致
+   * 新增props如下：
+   * 1.url，会根据此url主动发请求，不传此字段，默认本地数据，需要传data属性
+   * 2.keywrods， 传入url时生效，会根据keywords改变，主动发请求
+   * 3.listField ，部分接口传回的列表字段标识不够统一，如果遇到特殊的名称如：orderlist，billList,请传入此字段
+   * 4.showFilter，订单相关表列的字段过多，此时需要支持自主扩展隐藏、显示、排序列等功能
+   * 5.extraColumns，showFilter为true时，此字段必传，代表需要操作隐藏显示和排序的字段列表，
+   *    格式：{
+   *          title:'订单号',// 名称
+   *          key:'orderNo',// 标识符
+   *          visible:true, //是否显示或隐藏
+   *          fixed:true, // 固定列，不参与排序和隐藏显示
+   *    }
+   * 6.onColumnChange 函数，当显示隐藏排序排序发生变化时候回调，参数返回新的extraColumns
   */
 export default {
   props: {
     // 请求的地址
     url: String,
+    // 部分接口查询方法可能是post
+    method: {
+      type: String,
+      validator (value) {
+        return ['post', 'get', 'delete', 'put'].indexOf(value.toLowerCase()) > -1
+      },
+      default: 'get'
+    },
     // 读取列表的字段，有的名叫orderList, 有的叫billList
     listField: {
       type: String,
@@ -172,31 +194,43 @@ export default {
       const vm = this
       if (vm.showFilter) {
         const columnGroup = _.groupBy(vm.extraColumns, (cl) => cl.key)
-        return vm.columns
-          .filter((col) => {
+        const fixedCols = []
+        const normalCols = []
+        vm.columns
+          .filter(col => {
             if (vm.extraColumns.length > 0 && col.key && !col.extra) {
               return columnGroup[col.key][0].visible
             }
             return true
           })
-          .concat({
-            title: 'icon',
-            width: 48,
-            renderHeader (h, params) {
-              return h('SliderIcon', {
-                props: {
-                  list: vm.extraColumns
-                },
-                on: {
-                  'on-change': (columns) => {
-                    vm.$emit('on-column-change', columns)
-                    // vm.extraColumns = columns
-                  }
-                }
-              })
-            },
-            key: 'filter-columns'
+          .forEach((col) => {
+            if (!col.key || col.extra) {
+              fixedCols.push(col)
+            } else {
+              normalCols.push(col)
+            }
           })
+
+        return fixedCols.concat(
+          _.sortBy(normalCols, (col) => columnGroup[col.key][0].sort)
+        ).concat({
+          title: 'icon',
+          width: 48,
+          renderHeader (h, params) {
+            return h('SliderIcon', {
+              props: {
+                list: vm.extraColumns
+              },
+              on: {
+                'on-change': (columns) => {
+                  vm.$emit('on-column-change', columns)
+                  // vm.extraColumns = columns
+                }
+              }
+            })
+          },
+          key: 'filter-columns'
+        })
       } else {
         return this.columns
       }
@@ -262,7 +296,7 @@ export default {
       // 发送请求，填充data
       this.loading = true
       server({
-        method: 'get',
+        method: this.method,
         url: this.url,
         data: {
           ...this.pagination,

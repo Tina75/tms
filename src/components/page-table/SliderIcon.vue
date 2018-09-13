@@ -4,7 +4,9 @@
     <div slot="title"><span>选择要显示的字段</span></div>
     <div slot="content">
       <CheckboxGroup v-model="checkList">
-        <Checkbox v-for="item in list" :disabled="item.fixed" :key="item.key" :label="item.title" class="slider-icon__checkbox-list"></Checkbox>
+        <draggable v-model="sortArray" :options="options" :move="checkMove">
+          <Checkbox v-for="item in sortArray" :disabled="item.fixed" :data-key="item.key" :key="item.key" :label="item.title" :class="itemClass(item)"></Checkbox>
+        </draggable>
       </CheckboxGroup>
       <div class="slider-icon__drawer-footer">
         <Button @click="cancel">取消</Button>
@@ -15,7 +17,12 @@
 </template>
 
 <script>
+import draggable from 'vuedraggable'
+import _ from 'lodash'
 export default {
+  components: {
+    draggable
+  },
   props: {
     list: {
       type: Array,
@@ -27,24 +34,66 @@ export default {
     return {
       visible: false,
       checkList: [],
-      oldList: []
+      oldCheckList: [],
+      sortData: [],
+      oldSortData: [],
+      options: {
+        dragClass: '.slider-icon__draggable-item'
+      }
+    }
+  },
+  computed: {
+    sortArray: {
+      get () {
+        return _.sortBy(this.sortData, (dt) => dt.sort)
+      },
+      set (value) {
+        this.sortData = value.map((item, index) => {
+          item.sort = index
+          return item
+        })
+      }
     }
   },
   watch: {
-    // list (newList) {
-    //   this.saveList(newList)
-    // }
+    list (newList) {
+      this.saveList(newList)
+    }
   },
   mounted () {
+    // 重置sort,默认从0开始
     this.saveList(this.list)
   },
   methods: {
+    /**
+     * 固定列，不允许拖动，也不允许被其他项干扰排序位置
+     */
+    checkMove (evt) {
+      const srckey = evt.dragged.dataset.key
+      const srcItem = this.sortData.find(dt => dt.key === srckey)
+      const targetKey = evt.related.dataset.key
+      const targetItem = this.sortData.find(dt => dt.key === targetKey)
+      if (srcItem.fixed || targetItem.fixed) {
+        return false
+      }
+      return true
+    },
+    itemClass (item) {
+      return [
+        'slider-icon__checkbox-list',
+        {
+          'slider-icon__draggable-item': !item.fixed
+        }
+      ]
+    },
     saveList (list) {
-      this.checkList = this.list.filter(item => item.visible).map(item => item.title)
-      this.oldList = this.checkList.slice()
+      this.sortData = _.sortBy(list, (st) => st.sort).map((item, index) => ({...item, sort: index}))
+      this.oldSortData = this.sortData.slice()
+      this.checkList = this.sortData.filter(item => item.visible).map(item => item.title)
+      this.oldCheckList = this.checkList.slice()
     },
     ok () {
-      this.oldList = this.checkList.slice()
+      this.oldCheckList = this.checkList.slice()
       const changedList = this.getChangedList(this.checkList)
       this.$emit('on-change', changedList)
       this.visible = false
@@ -52,20 +101,34 @@ export default {
     cancel () {
       this.visible = false
       // 还原
-      this.checkList = this.oldList.slice()
+      this.checkList = this.oldCheckList.slice()
+      this.sortData = this.oldSortData
+        .slice()
+        .map((item, index) => {
+          item.sort = index
+          return item
+        })
     },
     getChangedList (list) {
-      let newList = []
-      this.list.forEach(item => {
-        let _item = {}
+      return this.sortData.map((item) => {
         if (list.indexOf(item.title) !== -1) {
-          Object.assign(_item, item, {visible: true})
+          item.visible = true
         } else {
-          Object.assign(_item, item, {visible: false})
+          item.visible = false
         }
-        newList.push(_item)
+        return item
       })
-      return newList
+      // let newList = []
+      // this.list.forEach(item => {
+      //   let _item = {}
+      //   if (list.indexOf(item.title) !== -1) {
+      //     Object.assign(_item, item, {visible: true})
+      //   } else {
+      //     Object.assign(_item, item, {visible: false})
+      //   }
+      //   newList.push(_item)
+      // })
+      // return newList
     }
   }
 }
@@ -75,7 +138,10 @@ export default {
 .slider-icon
   &__checkbox-list{
     display: block
-    margin: 12px 0
+  }
+  &__draggable-item{
+    margin: 0
+    padding: 8px 0
   }
   &__drawer-footer{
     width: 100%;
