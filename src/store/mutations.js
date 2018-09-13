@@ -33,7 +33,17 @@ export const changeActiveIndex = (state, data) => {
  *  更新tabNav列表
  */
 export const setTabNavList = (state, list) => {
+  console.log('setTabNavList->', list)
+  // if (list) {
   state.tabNavList = [...list]
+  localStorage.tabNavCache = JSON.stringify([...list])
+  // } else {
+  // state.tabNavList = localStorage.tabNavCache ? JSON.parse(localStorage.tabNavCache) : []
+  // }
+}
+export const initTabNav = (state) => {
+  state.tabNavList = localStorage.tabNavCache ? JSON.parse(localStorage.tabNavCache) : []
+  // setTagNavListInLocalstorage([...state.tagNavList])
 }
 
 // /**

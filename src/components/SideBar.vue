@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Menu v-show="!collapsed" ref="menu"  :active-name="$route.path" :open-names="openedNames"  accordion width="200" theme="dark" @on-select="handleSelect">
+    <Menu v-show="!collapsed" ref="menu"  :active-name="$route.path === '/'?'/home/index':$route.path" :open-names="openedNames"  accordion width="200" theme="dark" @on-select="handleSelect">
       <p class="title"><i class="icon font_family icon-logo-zjy" ></i></p>
       <template v-for="item in menuList">
         <template v-if="item.children">

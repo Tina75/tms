@@ -8,7 +8,7 @@ Vue.use(Vuex)
 
 const state = {
   breadlist: [],
-  tabNavList: [{ name: '首页', path: '/home/index' }],
+  tabNavList: [],
   // tabNav: {
   //   tabList: [{ name: '首页', path: '/home/index' }],
   //   currTab: { name: '首页', path: '/home/index' }

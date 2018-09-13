@@ -8,17 +8,17 @@
   {
     "name":"受理开单",
     "icon":"md-paper",
-    "path":"/",
+    "path":"/1",
     "powerCode":0,
     "children":[
       {
         "name":"手动下单",
-        "path":"/1",
+        "path":"/1/1",
         "powerCode":0
       },
       {
         "name":"批量导入",
-        "path":"/2",
+        "path":"/1/2",
         "powerCode":0
       }
     ]

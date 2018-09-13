@@ -6,7 +6,7 @@
       </Sider>
       <Layout>
         <Header class="header-con">
-          <header-bar :collapsed.sync="collapsed" :name="name" @on-coll-change="handleCollapsedChange"/>
+          <header-bar :collapsed.sync="collapsed" :name="name"/>
           <div class="tag-nav-wrapper">
             <tab-nav :list="tabNavList" :value="$route" @on-close="handleCloseTab" @on-select="onTabSelect"/>
           </div>
@@ -63,14 +63,17 @@ export default {
       this.turnToPage(tag)
       // this.$router.push(route)
     })
+    this.$store.commit('initTabNav')
+    if (this.$route.path === '/') {
+      setTimeout(() => {
+        this.onMenuSelect({name: '首页', path: '/home/index'})
+      }, 200)
+    }
   },
   methods: {
     logout () {
       localStorage.removeItem('tms_is_login')
       window.location.reload()
-    },
-    handleCollapsedChange (state) {
-      this.collapsed = state
     },
     handleCloseTab (list, route) {
       // 选中前一个tab
@@ -84,8 +87,8 @@ export default {
     },
     onMenuSelect (menuItem) {
       console.log('onMenuSelect', menuItem)
-      this.turnToPage(menuItem)
       this.$store.commit('setTabNavList', this.getNewTagList(this.tabNavList, menuItem))
+      this.turnToPage(menuItem)
       // this.setTabNavList(this.getNewTagList(this.tabNavList, menuItem))
     },
     turnToPage (route) {
@@ -145,11 +148,14 @@ export default {
  * @description 如果该newRoute已经存在则不再添加
  */
     getNewTagList  (list, newRoute) {
-      console.log('list')
-      const { name, path, meta, query } = newRoute
+      const { name, path, query } = newRoute
       let newList = [...list]
       if (newList.findIndex(item => item.path === path) >= 0) return newList
-      else newList.push({ name, path, meta, query })
+      else {
+        // find当前tab位置并在其后面添加新tab
+        const idx = newList.findIndex(item => item.path === this.$route.path)
+        newList.splice(idx + 1, 0, { name, path, query })
+      }
       return newList
     }
   }
