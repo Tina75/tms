@@ -14,12 +14,14 @@
       </Col>
       <Col span="6">
       <FormItem label="始发城市" prop="start">
-        <Cascader v-model="orderForm.start" :data="areaData" :render-format="formatArea" filterable></Cascader>
+        <!-- <Cascader v-model="orderForm.start" :data="areaData" :render-format="formatArea" filterable></Cascader> -->
+        <AreaSelect v-model="orderForm.start"></AreaSelect>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="目的城市" prop="end">
-        <Cascader ref="cascaderEnd" v-model="orderForm.end" :data="areaData" :render-format="formatArea" change-on-select filterable  @on-change="handleChangeEnd"></Cascader>
+        <AreaSelect v-model="orderForm.end" :adjustment="true"></AreaSelect>
+        <!-- <Cascader ref="cascaderEnd" v-model="orderForm.end" :data="areaData" :render-format="formatArea" change-on-select filterable  @on-change="handleChangeEnd"></Cascader> -->
       </FormItem>
       </Col>
     </Row>
@@ -209,10 +211,10 @@ import SelectInput from './SelectInput.vue'
 import TagNumberInput from './TagNumberInput'
 import { mapGetters, mapActions } from 'vuex'
 import float from '@/libs/js/float'
-import area from '@/libs/js/area'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import OrderPrint from './OrderPrint'
+import AreaSelect from '@/components/AreaSelect'
 export default {
   metaInfo: {
     title: '手动下单'
@@ -220,7 +222,8 @@ export default {
   components: {
     Title,
     TagNumberInput,
-    OrderPrint
+    OrderPrint,
+    AreaSelect
   },
   mixins: [BaseComponent, BasePage],
   data () {
@@ -550,7 +553,6 @@ export default {
 
       },
       tempCargoes: {},
-      areaData: area,
       statics: {
         weight: 0,
         volume: 0,
@@ -610,11 +612,6 @@ export default {
       'clearCargoes',
       'submitOrder'
     ]),
-    // 边缘位置，下拉框会导致出界看不见，所以目的城市在选择时要随时更新坐标值
-    handleChangeEnd (value, selectedData) {
-      // console.log('end', value)
-      this.$refs.cascaderEnd.$refs.drop.update()
-    },
     // 保留2位小数
     handleParseFloat (value) {
       return float.floor(value)
@@ -732,10 +729,6 @@ export default {
       return this.getClients(query).then((reponse) => {
         return reponse
       })
-    },
-    // 格式化省市区
-    formatArea (labels, selectedData) {
-      return Object.values(labels).join('')
     },
     print () {
       this.$refs.printer.print()
