@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <Layout class="container">
-      <Sider v-model="collapsed" :collapsed-width="64" hide-trigger collapsible >
-        <side-bar  @on-select="turnToPage"/>
+      <Sider v-model="collapsed" :collapsed-width="56" hide-trigger collapsible >
+        <side-bar  :collapsed="collapsed" @on-select="turnToPage"/>
       </Sider>
       <Layout>
         <Header class="header-con">
@@ -49,6 +49,9 @@ export default {
   mounted () {
     window.EMA.bind('logout', () => {
       this.logout()
+    })
+    window.EMA.bind('refresh', () => {
+      window.location.reload()
     })
   },
   methods: {
@@ -163,4 +166,6 @@ html, body
   text-align center
   .ivu-btn
     min-width 85px
+.ivu-layout
+  background #efefef
 </style>

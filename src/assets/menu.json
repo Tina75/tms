@@ -7,7 +7,6 @@
   },
   {
     "name":"受理开单",
-    "href":"/",
     "icon":"md-paper",
     "powerCode":0,
     "children":[
@@ -44,6 +43,7 @@
     "name":"运输管理",
     "powerCode":0,
     "icon":"md-bus",
+    "href":"/transport",
     "children":[
       {
         "name":"调度工作台",
@@ -80,7 +80,7 @@
     "powerCode":0
   },
   {
-    "name":"客户",
+    "name":"客户管理",
     "icon":"md-person",
     "powerCode":0,
     "children":[

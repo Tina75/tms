@@ -56,6 +56,7 @@ export default {
       this.ema.fire('Dialogs.push', data)
     },
     close: function () {
+      console.log('close ' + this.$options.name)
       this.ema.fire('Dialogs.close', this.$options.name)
     }
     // 权限控制

@@ -4,10 +4,7 @@ import { LoadingBar, Message } from 'iview'
 let instance = axios.create({
   baseURL: '/',
   timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json'
-    // 'Authorization': 'Bearer eyJsb2dpblRpbWUiOiIyMDE4LTA4LTIxIDExOjE3OjMxIiwidXNlcklkIjoxMn0='
-  },
+  headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
   loading: false,
   ignoreCode: false
@@ -16,8 +13,6 @@ let instance = axios.create({
 switch (process.env.NODE_ENV) {
   case 'development':
     instance.defaults.baseURL = 'http://yapi.yundada56.com/mock/214'; break
-  case 'quality':
-    instance.defaults.baseURL = 'https://hn.algolia.com/api/v1/'; break
   case 'production':
     instance.defaults.baseURL = '//dev-boss.yundada56.com/bluewhale-boss/'; break
 }
@@ -25,9 +20,7 @@ switch (process.env.NODE_ENV) {
 // POST传参序列化
 instance.interceptors.request.use((config) => {
   // Loading判断
-  if (config.loading) {
-    LoadingBar.start()
-  }
+  config.loading && LoadingBar.start()
   if (config.method === 'post') {
     config.data = JSON.stringify(config.data)
   }
@@ -43,7 +36,7 @@ instance.interceptors.request.use((config) => {
 instance.interceptors.response.use((res) => {
   LoadingBar.finish()
   var code = Number(res.data.code)
-  if (res.config.ignoreCode || code === 10000) {
+  if (!res.config.ignoreCode || code === 10000) {
     return res
   } else {
     switch (code) {

@@ -32,21 +32,6 @@ export const updateTabList = (state, data) => {
   state.tabNav.tabList = data || []
 }
 
-export const changeNavTwoIndex = (state, data) => {
-  state.app.navTwoIndex = data || 0
-}
-
-export const updataTheme = (state, data) => {
-  if (data.theme) {
-    window.localStorage.setItem('theme', data.theme)
-  }
-  Object.assign(state.app.theme, data)
-}
-
-export const powerControl = (state, data) => {
-  state.powerControl = data
-}
-
-export const POWER_UPDATE = (state, { path, data }) => {
-  // eval(`state.powerControl.${path} = data`)
-}
+// export const powerControl = (state, data) => {
+//   state.powerControl = data
+// }

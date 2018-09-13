@@ -1,5 +1,5 @@
 <template>
-  <div class="dialogs">
+  <div v-if="dialogs.length>0" class="dialogs">
     <component v-for="item in dialogs" :is="item.name" :key="item.name"></component>
   </div>
 </template>
@@ -12,8 +12,12 @@ export default {
   name: 'Dialogs',
   data: function () {
     return {
-      dialogs: [],
-      currentDialog: ''
+      dialogs: []
+    }
+  },
+  watch: {
+    dialogs: function (val) {
+      console.log(JSON.stringify(val))
     }
   },
   mounted: function () {
