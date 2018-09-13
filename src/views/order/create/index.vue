@@ -563,6 +563,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'orderDetail',
       'clients',
       'consignerContacts',
       'consignerPhones',
@@ -593,13 +594,25 @@ export default {
     }
   },
   created () {
+    const vm = this
     Vue.component('SelectInput', SelectInput)
+    const orderId = this.$route.query.id || undefined
+    if (orderId) {
+      this.getOrderDetail(orderId)
+        .then((orderDetail) => {
+          for (let key in vm.orderForm) {
+            vm.orderForm[key] = orderDetail[key] || vm.orderForm[key]
+          }
+          // Todo:到货时间，发货时间转换，结算方式
+        })
+    }
   },
   mounted () {
     this.statics = Object.assign({}, this.sumRow)
   },
   destroyed () {
     this.resetForm()
+    this.clearOrderDetail()
   },
   methods: {
     ...mapActions([
@@ -610,6 +623,8 @@ export default {
       'updateCargo',
       'fullUpdateCargo',
       'clearCargoes',
+      'clearOrderDetail',
+      'getOrderDetail',
       'submitOrder'
     ]),
     // 保留2位小数

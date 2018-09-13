@@ -18,6 +18,7 @@ const state = {
       pageSize: 10,
       total: 0
     },
+    detail: {}, // 订单详情
     clients: [], // 客户信息
     consigners: [], // 发货方信息
     addresses: [], // 发货方地址
@@ -49,6 +50,9 @@ const mutations = {
   },
   [types.RECEIVE_CONSIGNER_CARGO_LIST] ({order}, list) {
     order.consignerCargoes = list
+  },
+  [types.RECEIVE_ORDER_DETAIL] ({order}, detail) {
+    order.detail = detail
   },
   [types.APPEND_CONSIGNER_CARGO] ({order}, index) {
     order.consignerCargoes.splice(index, -1, new Cargo(defaultCargo))

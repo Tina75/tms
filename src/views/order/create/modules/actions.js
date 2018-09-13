@@ -68,13 +68,41 @@ export default {
   },
   clearCargoes (store) {
     store.commit(types.CLEAR_CONSIGNER_CARGO_LIST)
+    store.commit(types.RECEIVE_CARGO_LIST, [])
+  },
+  clearOrderDetail ({commit}) {
+    commit(types.RECEIVE_ORDER_DETAIL, {})
+  },
+  getOrderDetail ({state, commit}, id) {
+    return new Promise((resolve, reject) => {
+      server({
+        method: 'get',
+        url: 'order/detail',
+        data: {
+          id
+        }
+      })
+        .then((response) => {
+          const {orderCargoList, ...order} = response.data.data
+          commit(types.RECEIVE_CONSIGNER_CARGO_LIST, orderCargoList)
+          commit(types.RECEIVE_ORDER_DETAIL, order)
+          resolve(order)
+        })
+        .catch((err) => reject(err))
+    })
   },
   // 提交表单
   submitOrder ({state}, form) {
+    let url = 'order/create'
+    if (state.order.detail.id) {
+      url = 'order/update'
+      form.id = state.order.detail.id
+    }
+
     return new Promise((resolve, reject) => {
       server({
         method: 'post',
-        url: 'order/create',
+        url,
         data: {
           ...form
         }

@@ -42,6 +42,7 @@ export const cargoOptions = (state, getters) => {
   })
 }
 export const sumRow = (state, getters) => {
+  console.log(getters.consignerCargoes)
   return getters.consignerCargoes.reduce((sum, cargo) => {
     // 读取临时数据
 
