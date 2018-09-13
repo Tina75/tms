@@ -102,6 +102,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+  @import "./login.styl"
+
   .form-body
     width 800px
     height 520px
