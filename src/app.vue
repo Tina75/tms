@@ -58,7 +58,8 @@ export default {
       console.log('open')
       let tag = {...route}
       tag.name = route.query.id ? route.query.id : route.name
-      this.setTabNavList(this.getNewTagList(this.tabNavList, tag))
+      // this.setTabNavList(this.getNewTagList(this.tabNavList, tag))
+      this.$store.commit('setTabNavList', this.getNewTagList(this.tabNavList, tag))
       this.turnToPage(tag)
       // this.$router.push(route)
     })
@@ -75,8 +76,8 @@ export default {
       // 选中前一个tab
       const nextRoute = this.getNextRoute(this.tabNavList, route)
       this.$router.push(nextRoute)
-      // this.$store.commit('setTabNavList', list)
-      this.setTabNavList(list) // 更新store
+      this.$store.commit('setTabNavList', list)
+      // this.setTabNavList(list) // 更新store
     },
     onTabSelect (item) {
       this.turnToPage(item)
@@ -84,8 +85,8 @@ export default {
     onMenuSelect (menuItem) {
       console.log('onMenuSelect', menuItem)
       this.turnToPage(menuItem)
-      // this.$store.commit('setTabNavList', this.getNewTagList(this.tabNavList, this.$route))
-      this.setTabNavList(this.getNewTagList(this.tabNavList, menuItem))
+      this.$store.commit('setTabNavList', this.getNewTagList(this.tabNavList, menuItem))
+      // this.setTabNavList(this.getNewTagList(this.tabNavList, menuItem))
     },
     turnToPage (route) {
       let { path, params, query } = {}
@@ -144,6 +145,7 @@ export default {
  * @description 如果该newRoute已经存在则不再添加
  */
     getNewTagList  (list, newRoute) {
+      console.log('list')
       const { name, path, meta, query } = newRoute
       let newList = [...list]
       if (newList.findIndex(item => item.path === path) >= 0) return newList
