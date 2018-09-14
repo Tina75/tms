@@ -120,8 +120,7 @@ export default {
     // 表数据,可能需要自己做分页
     data: {
       type: Array,
-      default: () => [],
-      required: true
+      default: () => []
     },
     noDataText: {
       type: String,
@@ -306,7 +305,7 @@ export default {
         .then((response) => {
           vm.loading = false
           // const { list, ...pagination } = response.data
-          vm.dataSource = response.data[vm.listField]
+          vm.dataSource = response.data.data[vm.listField]
           if (this.showPagination) {
             vm.pagination.totalCount = response.data.pageTotals
           }
