@@ -13,12 +13,12 @@
     "children":[
       {
         "name":"手动下单",
-        "path":"/1",
+        "path":"/order/create",
         "powerCode":0
       },
       {
         "name":"批量导入",
-        "path":"/2",
+        "path":"/order/import",
         "powerCode":0
       }
     ]
