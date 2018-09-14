@@ -1,5 +1,6 @@
 import server from '@/libs/js/server'
 import * as types from './mutationTypes'
+import Cargo from '../libs/cargo'
 export default {
   /**
    * 根据客户名，查询客户列表
@@ -18,10 +19,11 @@ export default {
           name
         }
       }).then((response) => {
-        // 客户列表
-        const clientList = response.data.data.list.map((user) => ({name: user.name, value: user.name, id: user.id}))
         // 收货人信息，包含客户信息
-        const clients = response.data.data.consignerList
+        const clients = response.data.data.list
+        // 客户列表
+        const clientList = clients.map((user) => ({name: user.name, value: user.name, id: user.id}))
+
         commit(types.RECEIVE_CLIENT_LIST, clients)
         resolve(clientList)
       }).catch((error) => {
@@ -50,8 +52,7 @@ export default {
         // 货物信息
         commit(types.RECEIVE_CARGO_LIST, cargoList.list)
         commit(types.RECEIVE_CONSIGNER_CARGO_LIST, cargoList.list.map((cargo) => {
-          cargo.quantity = 1
-          return cargo
+          return new Cargo(cargo)
         }))
         // 收货方地址
         commit(types.RECEIVE_CONSIGNEES_LIST, consigneeList.list)
@@ -94,6 +95,7 @@ export default {
    * @param {*} item
    */
   fullUpdateCargo ({commit}, item) {
+    item.cargo = new Cargo(item.cargo)
     commit(types.UPDATE_FULL_CONSIGNER_CARGO, item)
   },
   clearCargoes (store) {
@@ -119,7 +121,7 @@ export default {
       })
         .then((response) => {
           const {orderCargoList, ...order} = response.data.data
-          commit(types.RECEIVE_CONSIGNER_CARGO_LIST, orderCargoList)
+          commit(types.RECEIVE_CONSIGNER_CARGO_LIST, orderCargoList.map((item) => new Cargo(item)))
           commit(types.RECEIVE_ORDER_DETAIL, order)
           resolve(order)
         })

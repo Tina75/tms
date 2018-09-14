@@ -290,6 +290,12 @@ export default {
           title: '货物名称',
           key: 'cargoName',
           width: 170,
+          renderHeader: (h, params) => {
+            return h('span', [
+              h('span', {class: 'van-c-red'}, '*'),
+              h('span', params.column.title)
+            ])
+          },
           render (h, params) {
             return h('SelectInput', {
               props: {
@@ -315,6 +321,7 @@ export default {
           key: 'weight',
           renderHeader: (h, params) => {
             return h('span', [
+              h('span', {class: 'van-c-red'}, '*'),
               h('span', params.column.title),
               h('Tooltip', {
                 props: {
@@ -359,6 +366,12 @@ export default {
         {
           title: '体积(方)',
           key: 'volume',
+          renderHeader (h, params) {
+            return h('span', [
+              h('span', {class: 'van-c-red'}, '*'),
+              h('span', params.column.title)
+            ])
+          },
           render (h, params) {
             return h('InputNumber', {
               props: {
@@ -711,27 +724,40 @@ export default {
     handleSubmit () {
       console.log('orderForm', this.orderForm)
       const vm = this
+      this.syncStoreCargoes()
       this.$refs.orderForm.validate((valid) => {
         if (valid) {
-          const orderForm = this.orderForm
+          const cargoList = vm.consignerCargoes
+          const orderForm = vm.orderForm
+          let findError = null
+          // 校验货物信息
+          for (let index in cargoList) {
+            let cargo = cargoList[index]
+            let info = cargo.validate()
+            if (!info.success) {
+              findError = info.message
+              break
+            }
+          }
+          if (findError) {
+            vm.$Message.error(findError)
+            return
+          }
           // 始发城市，目的城市，到达时间等需要额外处理
           let form = Object.assign({}, orderForm, {
             start: orderForm.start[orderForm.start.length - 1],
             end: orderForm.end[orderForm.end.length - 1],
-            arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.format('YYYY-MM-DD HH:mm'),
-            deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.format('YYYY-MM-DD HH:mm'),
-            cargoList: this.consignerCargoes
+            arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime,
+            deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime,
+            cargoList
           })
           vm.submitOrder(form)
             .then((response) => {
               vm.resetForm()
               this.$Message.success('创建订单成功')
             })
-            .catch((er) => {
-              this.$Message.error(er.msg || '创建订单失败')
-            })
         } else {
-          this.$Message.error('valid', valid)
+          this.$Message.error('请检查表单数据')
         }
       })
     },
