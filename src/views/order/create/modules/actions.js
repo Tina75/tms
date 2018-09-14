@@ -1,6 +1,11 @@
 import server from '@/libs/js/server'
 import * as types from './mutationTypes'
 export default {
+  /**
+   * 根据客户名，查询客户列表
+   * @param {*} store
+   * @param {*} name
+   */
   getClients ({state, commit}, name) {
     return new Promise((resolve, reject) => {
       const { pageNo, pageSize } = state.order.pagination
@@ -24,6 +29,11 @@ export default {
       })
     })
   },
+  /**
+   * 根据发货方id查询详情
+   * @param {*} store
+   * @param {*} consignerId
+   */
   getConsignerDetail ({state, commit}, consignerId) {
     return new Promise((resolve, reject) => {
       server({
@@ -51,18 +61,38 @@ export default {
       })
     })
   },
+  /**
+   * 添加一行货物信息
+   * @param {*} store
+   * @param {*} index
+   */
   appendCargo ({commit}, index) {
     commit(types.APPEND_CONSIGNER_CARGO, index + 1)
   },
+  /**
+   * 删除一行
+   * @param {*} store
+   * @param {*} index
+   */
   removeCargo ({state, commit}, index) {
     if (state.order.cargoes.length === 1) {
       return
     }
     commit(types.REMOVE_CONSIGNER_CARGO, index)
   },
+  /**
+   * 修改一行货物信息（部分信息修改）
+   * @param {*} store
+   * @param {*} item
+   */
   updateCargo ({state, commit}, item) {
     commit(types.UPDATE_CONSIGNER_CARGO, item)
   },
+  /**
+   * 修改一行数据，完全修改
+   * @param {*} store
+   * @param {*} item
+   */
   fullUpdateCargo ({commit}, item) {
     commit(types.UPDATE_FULL_CONSIGNER_CARGO, item)
   },
@@ -73,6 +103,11 @@ export default {
   clearOrderDetail ({commit}) {
     commit(types.RECEIVE_ORDER_DETAIL, {})
   },
+  /**
+   * 查询订单详情
+   * @param {*} store
+   * @param {*} id
+   */
   getOrderDetail ({state, commit}, id) {
     return new Promise((resolve, reject) => {
       server({
