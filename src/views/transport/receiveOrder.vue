@@ -1,27 +1,395 @@
-<!--  -->
 <template>
-  <div>提货管理</div>
+  <div>
+    <TabHeader :tabs="tabList" @tabChange="tabChanged"></TabHeader>
+
+    <div style="margin-top: 30px;display: flex;justify-content: space-between;">
+
+      <!-- 按钮组 -->
+      <div>
+        <Button v-for="(item, key) in currentBtns" :key="key"
+                :type="key === 0 ? 'primary' : 'default'"
+                @click="item.func">{{ item.name }}</Button>
+      </div>
+
+      <!-- 简易搜索 -->
+      <div v-if="isEasySearch" class="right">
+        <Select v-model="easySelectMode"
+                style="width:120px; margin-right: 11px"
+                @0n-change="resetEasySearch">
+          <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+        </Select>
+
+        <Input v-if="easySelectMode === 1"
+               v-model="easySearchKeyword"
+               :icon="easySearchKeyword ? 'ios-close-circle' : ''"
+               placeholder="请输入提货单号"
+               style="width: 200px"
+               @on-click="resetEasySearch" />
+
+        <Input v-if="easySelectMode === 2"
+               v-model="easySearchKeyword"
+               :icon="easySearchKeyword ? 'ios-close-circle' : ''"
+               placeholder="请输入承运商"
+               style="width: 200px"
+               @on-click="resetEasySearch" />
+
+        <Input v-if="easySelectMode === 3"
+               v-model="easySearchKeyword"
+               :icon="easySearchKeyword ? 'ios-close-circle' : ''"
+               placeholder="请输入车牌号"
+               style="width: 200px"
+               @on-click="resetEasySearch" />
+
+        <Button icon="ios-search"
+                style="width: 40px; margin-left: -2px;" @click="startSearch"></Button>
+
+        <Button class="senior-search"
+                type="text" size="small"
+                @click="changeSearchType">高级搜索</Button>
+      </div>
+    </div>
+
+    <!-- 高级搜索 -->
+    <div v-if="!isEasySearch" class="operate-box">
+
+      <div style="margin-bottom: 10px;">
+        <Input v-model="seniorSearchFields.pickupNo" placeholder="请输入提货单号" style="width: 200px" />
+        <Input v-model="seniorSearchFields.carrierName" placeholder="请选择承运商" style="width: 200px" />
+        <Input v-model="seniorSearchFields.driverName" placeholder="请输入司机" style="width: 200px" />
+        <Input v-model="seniorSearchFields.carNo" placeholder="请输入车牌号" style="width: 200px" />
+      </div>
+
+      <div style="display: flex;justify-content: space-between;">
+        <div>
+          <DatePicker type="daterange" split-panels placeholder="开始日期-结束日期" style="width: 200px"></DatePicker>
+        </div>
+        <div>
+          <Button type="primary"
+                  @click="startSearch">搜索</Button>
+          <Button type="default"
+                  @click="resetSeniorSearch()">清除条件</Button>
+          <Button type="default"
+                  style="margin-right: 0;"
+                  @click="changeSearchType">简易搜索</Button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 表格 -->
+    <PageTable :columns="tableColumns"
+               :extra-columns="extraColumns"
+               :data="tableData"
+               :show-filter="true"
+               :show-pagination="false"
+               style="margin-top: 15px"
+               @on-column-change="tableColumnsChanged"
+               @on-selection-change="selectionChanged"></PageTable>
+
+    <Page :total="page.total"
+          :current="page.current"
+          :page-size="page.size"
+          :page-size-opts="[10,20,50]"
+          class="table-pagination"
+          size="small"
+          show-sizer
+          show-elevator
+          show-total
+          @on-change="pageChange"
+          @on-page-size-change="pageSizeChange"></Page>
+
+  </div>
 </template>
 
 <script>
 import BasePage from '@/basic/BasePage'
-export default {
-  name: 'receiveOrder',
+import TabHeader from '@/components/TabHeader'
+import PageTable from '@/components/page-table'
+import TransportTableMixin from './transportTableMixin'
+import Server from '@/libs/js/server'
 
-  components: {},
-  mixins: [ BasePage ],
+export default {
+  name: 'ReceiveManager',
+  components: { TabHeader, PageTable },
+  mixins: [ BasePage, TransportTableMixin ],
   metaInfo: { title: '提货管理' },
   data () {
     return {
+      // 标签栏
+      tabList: [
+        { name: '全部', count: '' },
+        { name: '待提货', count: '' },
+        { name: '提货中', count: '' },
+        { name: '已提货', count: '' }
+      ],
+
+      // 所有按钮组
+      btnList: [
+        {
+          tab: '全部',
+          btns: [{
+            name: '发运',
+            func: () => console.log(Math.random())
+          }, {
+            name: '打印',
+            func: () => console.log(Math.random())
+          }, {
+            name: '删除',
+            func: () => console.log(Math.random())
+          }, {
+            name: '位置',
+            func: () => console.log(Math.random())
+          }, {
+            name: '导出',
+            func: () => console.log(Math.random())
+          }]
+        },
+        {
+          tab: '待提货',
+          btns: [{
+            name: '打印',
+            func: () => console.log(Math.random())
+          }, {
+            name: '删除',
+            func: () => console.log(Math.random())
+          }, {
+            name: '导出',
+            func: () => console.log(Math.random())
+          }]
+        },
+        {
+          tab: '提货中',
+          btns: [{
+            name: '到货',
+            func: () => console.log(Math.random())
+          }, {
+            name: '打印',
+            func: () => console.log(Math.random())
+          }, {
+            name: '位置',
+            func: () => console.log(Math.random())
+          }, {
+            name: '导出',
+            func: () => console.log(Math.random())
+          }]
+        },
+        {
+          tab: '已提货',
+          btns: [{
+            name: '导出',
+            func: () => console.log(Math.random())
+          }]
+        }
+      ],
+
+      // 简易搜索类型
+      selectList: [
+        { value: 1, label: '提货单号' },
+        { value: 2, label: '承运商' },
+        { value: 3, label: '车牌号' }
+      ],
+
+      // 高级搜索字段
+      seniorSearchFields: {
+        pickupNo: '', // 提货单号
+        carrierName: '', // 承运商
+        driverName: '', // 司机
+        carNo: '', // 车牌号
+        startTime: '', // 开始时间
+        endTime: '' // 结束时间
+      },
+
+      tableColumns: [
+        {
+          type: 'selection',
+          width: 50,
+          align: 'center'
+        },
+        {
+          title: '操作',
+          key: 'do',
+          width: 60,
+          extra: true,
+          render: (h, params) => {
+            return h('a', {
+              on: {
+                click: () => {
+
+                }
+              }
+            }, '提货')
+          }
+        },
+        {
+          title: '提货单号',
+          key: 'pickupNo',
+          width: 160,
+          fixed: true,
+          visible: true,
+          render: (h, p) => {
+            return h('a', {
+              style: {
+                color: '#418DF9'
+              }
+            }, p.row.pickupNo)
+          }
+        },
+        {
+          title: '承运商',
+          key: 'carrierName'
+        },
+        {
+          title: '司机',
+          key: 'driverName'
+        },
+        {
+          title: '车牌号',
+          key: 'carNo'
+        },
+        {
+          title: '合计运费（元）',
+          key: 'totalFee'
+        },
+        {
+          title: '体积（方）',
+          key: 'volume'
+        },
+        {
+          title: '重量（吨）',
+          key: 'weight'
+        },
+        {
+          title: '创建时间',
+          key: 'createTimeLong'
+        }
+      ],
+      extraColumns: [
+        {
+          title: '提货单号',
+          key: 'pickupNo',
+          fixed: true,
+          visible: true
+        },
+        {
+          title: '承运商',
+          key: 'carrierName',
+          fixed: false,
+          visible: true
+        },
+        {
+          title: '司机',
+          key: 'driverName',
+          fixed: false,
+          visible: true
+        },
+        {
+          title: '车牌号',
+          key: 'carNo',
+          fixed: false,
+          visible: true
+        },
+        {
+          title: '合计运费（元）',
+          key: 'totalFee',
+          fixed: false,
+          visible: true
+        },
+        {
+          title: '体积（方）',
+          key: 'volume',
+          fixed: false,
+          visible: true
+        },
+        {
+          title: '重量（吨）',
+          key: 'weight',
+          fixed: false,
+          visible: true
+        },
+        {
+          title: '创建时间',
+          key: 'createTimeLong',
+          fixed: false,
+          visible: true
+        },
+        {
+          title: '制单人',
+          key: 'createOperator',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '货值',
+          key: 'cargoCost',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '付款方式',
+          key: 'settlementType',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '司机手机号码',
+          key: 'driverPhone',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '车型',
+          key: 'carType',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '订单数',
+          key: 'orderCnt',
+          fixed: false,
+          visible: false
+        }
+      ]
     }
   },
 
-  computed: {},
+  methods: {
+    // 设置标签状态
+    setTabStatus (tab) {
+      switch (tab) {
+        case '全部':
+          return
+        case '待提货':
+          return 1
+        case '提货中':
+          return 2
+        case '已提货':
+          return 3
+        default:
+      }
+    },
 
-  mounted () {},
-
-  methods: {}
+    // 数据查询
+    fetchData () {
+      Server({
+        url: '/load/bill/list',
+        method: 'post',
+        data: this.setFetchParams()
+      }).then(res => {
+        const data = res.data.data
+        this.tableData = data.loadbillList
+        this.page.total = data.totalCount
+        this.tabList = [
+          { name: '全部', count: '' },
+          { name: '待提货', count: data.statusCntInfo.waitLoadCnt },
+          { name: '提货中', count: data.statusCntInfo.loaddingCnt },
+          { name: '已提货', count: data.statusCntInfo.loadedCnt }
+        ]
+      }).catch(err => console.error(err))
+    }
+  }
 }
 </script>
+
 <style lang='stylus' scoped>
+  @import './transport.styl'
 </style>

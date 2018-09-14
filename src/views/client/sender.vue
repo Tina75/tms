@@ -106,8 +106,13 @@
 
 <script>
 // import { senderList } from './client'
+import BasePage from '@/basic/BasePage'
 export default {
   name: 'sender',
+  mixins: [BasePage],
+  metaInfo: {
+    title: '发货方管理'
+  },
   data () {
     return {
       selectStatus: 0,
@@ -180,7 +185,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.$router.push({ path: '/client/sender-info' })
+                    this.openTab({ path: '/client/sender-info', query: {id: '111111'} })
                   }
                 }
               }, params.row.name)

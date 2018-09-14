@@ -13,8 +13,8 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import DispatchFreight from './views/dispatchFreight'
-import DispatchPickup from './views/dispatchPickup'
+import DispatchFreight from './dispatch/dispatchFreight'
+import DispatchPickup from './dispatch/dispatchPickup'
 
 export default {
   name: 'dispatch',
@@ -35,6 +35,7 @@ export default {
   methods: {}
 }
 </script>
+
 <style lang='stylus' scoped>
 
 </style>
