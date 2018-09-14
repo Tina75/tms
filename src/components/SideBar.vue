@@ -6,7 +6,7 @@
         <template v-if="item.children">
           <Submenu v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path">
             <template slot="title"><Icon :type="item.icon" size="18"/>{{item.name}}</template>
-            <menu-item v-for="child in item.children" v-if="hasPower(item.powerCode)" :name="child.path" :key="child.name" >{{child.name}}</menu-item>
+            <menu-item v-for="child in item.children" v-if="hasPower(child.powerCode)" :name="child.path" :key="child.name" >{{child.name}}</menu-item>
           </Submenu>
         </template>
         <template v-else>
@@ -17,10 +17,10 @@
     <div v-show="collapsed" class="menu-collapsed">
       <p class="title"><i class="icon font_family icon-logo-1"></i></p>
       <template v-for="item in menuList" >
-        <div :key="item.path" >
+        <div v-if="hasPower(item.powerCode)"  :key="item.path">
           <Poptip v-if="item.children" trigger="hover"  placement="left-start">
             <div v-for="child in item.children" slot="content" :key="child.path" @click="handleSelect(child.path)">
-              <menu-item :name="child.path" :to="child.path" :key="child.path" >{{child.name}}</menu-item>
+              <menu-item  v-if="hasPower(child.powerCode)" :name="child.path" :to="child.path" :key="child.path" >{{child.name}}</menu-item>
             </div>
             <a class="drop-menu-a" href=""><Icon :type="item.icon" color="#fff" size="22"/></a>
           </Poptip>
