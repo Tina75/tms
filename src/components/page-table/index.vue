@@ -211,7 +211,7 @@ export default {
           })
 
         return fixedCols.concat(
-          _.sortBy(normalCols, (col) => columnGroup[col.key][0].sort)
+          _.sortBy(normalCols, (col) => columnGroup[col.key] ? columnGroup[col.key][0].sort : 0)
         ).concat({
           title: 'icon',
           width: 48,
