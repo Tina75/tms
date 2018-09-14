@@ -308,7 +308,7 @@ export default {
           // const { list, ...pagination } = response.data
           vm.dataSource = response.data[vm.listField]
           if (this.showPagination) {
-            vm.pagination.totalCount = response.data.total || response.data.totalCount
+            vm.pagination.totalCount = response.data.pageTotals
           }
         })
         .catch((errorInfo) => {
