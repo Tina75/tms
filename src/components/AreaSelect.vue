@@ -19,6 +19,11 @@ export default {
     value: [String, Array],
     // 部分组件位置偏，弹出窗容易遮盖，设置true时，可实时调整位置
     adjustment: false,
+    // 深度搜索，默认第一次只加载省的数据。市区的数据不加载，deep为true时，再加载市数据，一般搜索的时候有用
+    deep: {
+      type: Boolean,
+      deep: false
+    },
     onChange: Function
   },
   data () {
@@ -37,7 +42,8 @@ export default {
     }
   },
   created () {
-    this.areaData = areas.getAllRoots().map((item) => {
+    const vm = this
+    const data = areas.getAllRoots().map((item) => {
       return {
         value: item.code,
         label: item.name,
@@ -46,6 +52,15 @@ export default {
         hasChild: true
       }
     })
+    if (this.deep) {
+      data.forEach(province => {
+        let children = vm.loadNext(province.value, true)
+        if (children.length > 0) {
+          province.children = children
+        }
+      })
+    }
+    this.areaData = data
   },
   mounted () {
     if (this.value && typeof this.value === 'string') {
@@ -55,25 +70,31 @@ export default {
   methods: {
     loadData (item, callback) {
       item.loading = true
-      const children = areas.getAllChild(item.value)
+      const children = this.loadNext(item.value)
       if (children.length > 0) {
-        item.children = children.map(item => {
-          let data = {
-            value: item.code,
-            label: item.name,
-            parent: item.parent
-          }
-          if (item.hasChild) {
-            data.children = []
-            data.loading = false
-            data.hasChild = true
-          }
-          return data
-        })
+        item.children = children
       }
-
       item.loading = false
       callback()
+    },
+    loadNext (value, deep = false) {
+      const vm = this
+      return areas.getAllChild(value).map(item => {
+        let data = {
+          value: item.code,
+          label: item.name,
+          parent: item.parent
+        }
+        if (item.hasChild) {
+          data.children = []
+          data.loading = false
+          data.hasChild = true
+        }
+        if (item.hasChild && deep) {
+          data.children = vm.loadNext(item.code)
+        }
+        return data
+      })
     },
     handleChange (value, selectedData) {
       if (this.adjustment) {

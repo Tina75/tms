@@ -15,12 +15,12 @@
       <Col span="6">
       <FormItem label="始发城市" prop="start">
         <!-- <Cascader v-model="orderForm.start" :data="areaData" :render-format="formatArea" filterable></Cascader> -->
-        <AreaSelect v-model="orderForm.start"></AreaSelect>
+        <AreaSelect v-model="orderForm.start" :deep="true"></AreaSelect>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="目的城市" prop="end">
-        <AreaSelect v-model="orderForm.end" :adjustment="true"></AreaSelect>
+        <AreaSelect v-model="orderForm.end" :deep="true" :adjustment="true"></AreaSelect>
         <!-- <Cascader ref="cascaderEnd" v-model="orderForm.end" :data="areaData" :render-format="formatArea" change-on-select filterable  @on-change="handleChangeEnd"></Cascader> -->
       </FormItem>
       </Col>
