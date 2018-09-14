@@ -1,195 +1,250 @@
 <template>
   <div>
-    <TabHeader :tabs="status" @tabChange="handleTabChange"></TabHeader>
+    <TabHeader :tabs="tabList" @tabChange="tabChanged"></TabHeader>
+
     <div style="margin-top: 30px;display: flex;justify-content: space-between;">
+
+      <!-- 按钮组 -->
       <div>
-        <Button v-for="(btn, index) in btnGroup" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
+        <Button v-for="(item, key) in currentBtns" :key="key"
+                :type="key === 0 ? 'primary' : 'default'"
+                @click="item.func">{{ item.name }}</Button>
       </div>
-      <div v-if="simpleSearch" class="right">
-        <Select v-model="selectStatus"  style="width:120px;margin-right: 11px">
+
+      <!-- 简易搜索 -->
+      <div v-if="isEasySearch" class="right">
+        <Select v-model="easySelectMode"
+                style="width:120px; margin-right: 11px"
+                @0n-change="resetEasySearch">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
-        <!-- <Input
-          v-if="selectStatus === 0"
-          v-model="customerName"
-          placeholder="请输入客户名称"
-          search
-          style="width: 200px"
-          @on-click="searchList" /> -->
-        <AutoComplete
-          v-if="selectStatus === 0"
-          v-model="customerName"
-          :data="customerData"
-          clearable
-          placeholder="请选择或输入客户名称"
-          style="width:200px"
-          @on-search="searchList">
-        </AutoComplete>
-        <Input v-else-if="selectStatus === 1" v-model="orderNum" placeholder="请输入订单号" style="width: 200px" clearable />
-        <Input v-else v-model="waybillNum" placeholder="请输入运单号" style="width: 200px" clearable />
-        <Button type="primary" icon="ios-search" style="width: 40px;margin-right: 0;" @on-click="searchList"></Button>
-        <Button type="text" class="high-search" size="small" @click="handleSwitchSearch">高级搜索</Button>
+
+        <Input v-if="easySelectMode === 1"
+               v-model="easySearchKeyword"
+               :icon="easySearchKeyword ? 'ios-close-circle' : ''"
+               placeholder="请输入运单号"
+               style="width: 200px"
+               @on-click="resetEasySearch" />
+
+        <Input v-if="easySelectMode === 2"
+               v-model="easySearchKeyword"
+               :icon="easySearchKeyword ? 'ios-close-circle' : ''"
+               placeholder="请输入承运商"
+               style="width: 200px"
+               @on-click="resetEasySearch" />
+
+        <Input v-if="easySelectMode === 3"
+               v-model="easySearchKeyword"
+               :icon="easySearchKeyword ? 'ios-close-circle' : ''"
+               placeholder="请输入车牌号"
+               style="width: 200px"
+               @on-click="resetEasySearch" />
+
+        <Button icon="ios-search"
+                style="width: 40px; margin-left: -2px;" @click="startSearch"></Button>
+
+        <Button class="senior-search"
+                type="text" size="small"
+                @click="changeSearchType">高级搜索</Button>
       </div>
     </div>
-    <div v-if="!simpleSearch" class="operate-box">
+
+    <!-- 高级搜索 -->
+    <div v-if="!isEasySearch" class="operate-box">
+
       <div style="margin-bottom: 10px;">
-        <AutoComplete
-          v-model="customerName"
-          :data="customerData"
-          placeholder="请选择或输入客户名称"
-          style="width:200px">
-        </AutoComplete>
-        <Input v-model="orderNum" placeholder="请输入订单号" style="width: 200px" />
-        <Input v-model="customerOrderNum" placeholder="请输入客户订单号" style="width: 200px" />
-        <Input v-model="waybillNum" placeholder="请输入运单号" style="width: 200px" />
+        <Input v-model="seniorSearchFields.waybillNo" placeholder="请输入运单号" style="width: 200px" />
+        <Input v-model="seniorSearchFields.carrierName" placeholder="请选择承运商" style="width: 200px" />
+        <Input v-model="seniorSearchFields.driverName" placeholder="请输入司机" style="width: 200px" />
+        <Input v-model="seniorSearchFields.carNo" placeholder="请输入车牌号" style="width: 200px" />
       </div>
+
       <div style="display: flex;justify-content: space-between;">
         <div>
-          <Input v-model="customerOrderNum" placeholder="请输入始发地" style="width: 200px" />
-          <Input v-model="waybillNum" placeholder="请输入目的地" style="width: 200px" />
+          <Input v-model="seniorSearchFields.start" placeholder="请输入始发地" style="width: 200px" />
+          <Input v-model="seniorSearchFields.end" placeholder="请输入目的地" style="width: 200px" />
           <DatePicker type="daterange" split-panels placeholder="开始日期-结束日期" style="width: 200px"></DatePicker>
         </div>
         <div>
-          <Button type="primary">搜索</Button>
-          <Button type="default">清除条件</Button>
-          <Button type="default" style="margin-right: 0;" @click="handleSwitchSearch">简易搜索</Button>
+          <Button type="primary"
+                  @click="startSearch">搜索</Button>
+          <Button type="default"
+                  @click="resetSeniorSearch()">清除条件</Button>
+          <Button type="default"
+                  style="margin-right: 0;"
+                  @click="changeSearchType">简易搜索</Button>
         </div>
       </div>
+
     </div>
-    <PageTable :columns="tableColumns" :extra-columns="extraColumns" :data="tableData" :show-filter="true" style="margin-top: 15px" @on-column-change="handleColumnChange"></PageTable>
+
+    <!-- 表格 -->
+    <PageTable :columns="tableColumns"
+               :extra-columns="extraColumns"
+               :data="tableData"
+               :show-filter="true"
+               :show-pagination="false"
+               style="margin-top: 15px"
+               @on-column-change="tableColumnsChanged"
+               @on-selection-change="selectionChanged"></PageTable>
+
+    <Page :total="page.total"
+          :current="page.current"
+          :page-size="page.size"
+          :page-size-opts="[10,20,50]"
+          class="table-pagination"
+          size="small"
+          show-sizer
+          show-elevator
+          show-total
+          @on-change="pageChange"
+          @on-page-size-change="pageSizeChange"></Page>
+
   </div>
 </template>
 
 <script>
 import BasePage from '@/basic/BasePage'
 import TabHeader from '@/components/TabHeader'
-import PageTable from '@/components/page-table/'
+import PageTable from '@/components/page-table'
+import TransportTableMixin from './transportTableMixin'
+import Server from '@/libs/js/server'
+
 export default {
   name: 'WaybillManager',
   components: { TabHeader, PageTable },
-  mixins: [ BasePage ],
+  mixins: [ BasePage, TransportTableMixin ],
   metaInfo: { title: '运单管理' },
   data () {
     return {
-      status: [
+      // 标签栏
+      tabList: [
         { name: '全部', count: '' },
-        { name: '待派车', count: '123' },
-        { name: '待发运', count: '123' },
-        { name: '在途', count: '23' },
-        { name: '已到货', count: '12' }
+        { name: '待派车', count: '' },
+        { name: '待发运', count: '' },
+        { name: '在途', count: '' },
+        { name: '已到货', count: '' }
       ],
-      btnGroup: [
-        { name: '发运', value: 1 },
-        { name: '打印', value: 2 },
-        { name: '到货', value: 3 },
-        { name: '删除', value: 4 },
-        { name: '位置', value: 4 },
-        { name: '导出', value: 5 }
-      ],
-      operateValue: 1,
-      selectStatus: 0,
-      selectList: [
+
+      // 所有按钮组
+      btnList: [
         {
-          value: 0,
-          label: '客户名称'
+          tab: '全部',
+          btns: [{
+            name: '发运',
+            func: () => console.log(Math.random())
+          }, {
+            name: '打印',
+            func: () => console.log(Math.random())
+          }, {
+            name: '到货',
+            func: () => console.log(Math.random())
+          }, {
+            name: '删除',
+            func: () => console.log(Math.random())
+          }, {
+            name: '位置',
+            func: () => console.log(Math.random())
+          }, {
+            name: '导出',
+            func: () => console.log(Math.random())
+          }]
         },
         {
-          value: 1,
-          label: '订单号'
+          tab: '待派车',
+          btns: [{
+            name: '删除',
+            func: () => console.log(Math.random())
+          }, {
+            name: '导出',
+            func: () => console.log(Math.random())
+          }]
         },
         {
-          value: 2,
-          label: '运单号'
+          tab: '待发运',
+          btns: [{
+            name: '发运',
+            func: () => console.log(Math.random())
+          }, {
+            name: '打印',
+            func: () => console.log(Math.random())
+          }, {
+            name: '导出',
+            func: () => console.log(Math.random())
+          }]
+        },
+        {
+          tab: '在途',
+          btns: [{
+            name: '到货',
+            func: () => console.log(Math.random())
+          }, {
+            name: '导出',
+            func: () => console.log(Math.random())
+          }]
+        },
+        {
+          tab: '已到货',
+          btns: [{
+            name: '导出',
+            func: () => console.log(Math.random())
+          }]
         }
       ],
-      customerName: '',
-      orderNum: '',
-      customerOrderNum: '',
-      waybillNum: '',
-      customerData: ['Steve Jobs', 'Stephen Gary Wozniak', 'Jonathan Paul Ive'],
-      simpleSearch: true,
+
+      // 简易搜索类型
+      selectList: [
+        { value: 1, label: '运单号' },
+        { value: 2, label: '承运商' },
+        { value: 3, label: '车牌号' }
+      ],
+
+      // 高级搜索字段
+      seniorSearchFields: {
+        waybillNo: '', // 运单号
+        carrierName: '', // 承运商
+        driverName: '', // 司机
+        carNo: '', // 车牌号
+        start: '', // 始发地
+        end: '', // 目的地
+        startTime: '', // 开始时间
+        endTime: '' // 结束时间
+      },
+
       tableColumns: [
         {
           type: 'selection',
-          width: 60,
+          width: 50,
           align: 'center'
         },
         {
           title: '操作',
           key: 'do',
-          width: 180,
+          width: 60,
           extra: true,
           render: (h, params) => {
-            if (params.row.orderNo === 'D111111') {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text'
-                  },
-                  style: {
-                    marginRight: '5px',
-                    color: '#00a4bd'
-                  },
-                  on: {
-                    click: () => {
-                      this.openSeparateDialog(params)
-                    }
-                  }
-                }, '拆单')
-              ])
-            } else {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text'
-                  },
-                  style: {
-                    marginRight: '5px',
-                    color: '#00a4bd'
-                  },
-                  on: {
-                    click: () => {
-                      this.openSeparateDialog(params)
-                    }
-                  }
-                }, '拆单'),
-                h('Button', {
-                  props: {
-                    type: 'text'
-                  },
-                  style: {
-                    marginRight: '5px',
-                    color: '#00a4bd'
-                  },
-                  on: {
-                    click: () => {
-                      this.openOuterDialog(params)
-                    }
-                  }
-                }, '外转')
-              ])
-            }
+            return h('a', {
+              on: {
+                click: () => {
+
+                }
+              }
+            }, '派车')
           }
         },
         {
-          title: '订单号',
-          key: 'orderNo',
+          title: '运单号',
+          key: 'waybillNo',
           width: 160,
           fixed: true,
-          visible: true
-        },
-        {
-          title: '客户订单号',
-          key: 'customerOrderNo'
-        },
-        {
-          title: '运单号',
-          key: 'waybillNo'
-        },
-        {
-          title: '客户名称',
-          key: 'consignerName',
-          width: 180
+          visible: true,
+          render: (h, p) => {
+            return h('a', {
+              style: {
+                color: '#418DF9'
+              }
+            }, p.row.waybillNo)
+          }
         },
         {
           title: '始发地',
@@ -200,48 +255,35 @@ export default {
           key: 'end'
         },
         {
-          title: '里程数（公里）',
-          key: 'kilometres'
+          title: '承运商',
+          key: 'carrierName'
+        },
+        {
+          title: '车牌号',
+          key: 'carNo'
+        },
+        {
+          title: '合计运费（元）',
+          key: 'totalFee'
         },
         {
           title: '体积（方）',
-          key: 'volume',
-          width: 100
+          key: 'volume'
         },
         {
           title: '重量（吨）',
-          key: 'weight',
-          width: 100
+          key: 'weight'
         },
         {
-          title: '下单时间',
-          key: 'create_time',
-          width: 150
+          title: '创建时间',
+          key: 'createTimeLong'
         }
       ],
       extraColumns: [
         {
-          title: '订单号',
-          key: 'orderNo',
-          fixed: true,
-          visible: true
-        },
-        {
-          title: '客户订单号',
-          key: 'customerOrderNo',
-          fixed: false,
-          visible: true
-        },
-        {
           title: '运单号',
           key: 'waybillNo',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '客户名称',
-          key: 'consignerName',
-          fixed: false,
+          fixed: true,
           visible: true
         },
         {
@@ -257,10 +299,22 @@ export default {
           visible: true
         },
         {
-          title: '里程数（公里）',
-          key: 'kilometres',
+          title: '承运商',
+          key: 'carrierName',
           fixed: false,
-          visible: true
+          visible: false
+        },
+        {
+          title: '车牌号',
+          key: 'carNo',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '合计运费',
+          key: 'totalFee',
+          fixed: false,
+          visible: false
         },
         {
           title: '体积（方）',
@@ -275,167 +329,104 @@ export default {
           visible: true
         },
         {
-          title: '下单时间',
-          key: 'create_time',
+          title: '创建时间',
+          key: 'createTimeLong',
           fixed: false,
           visible: true
-        }
-      ],
-      tableData: [
-        {
-          orderNo: 'D21234734637647',
-          customerOrderNo: 'D2123473',
-          waybillNo: 'D2123473',
-          consignerName: '南京可口可乐有限公司',
-          start: '江苏省南京市',
-          end: '新疆乌鲁木齐',
-          kilometres: 45,
-          volume: 45,
-          weight: 78,
-          create_time: '2018-08-09 12:00:23'
         },
         {
-          orderNo: 'D111111',
-          customerOrderNo: 'D2123473',
-          waybillNo: 'D2123473',
-          consignerName: '南京可口可乐有限公司',
-          start: '江苏省南京市',
-          end: '新疆乌鲁木齐',
-          kilometres: 45,
-          volume: 45,
-          weight: 78,
-          create_time: '2018-08-09 12:00:23'
+          title: '制单人',
+          key: 'createOperator',
+          fixed: false,
+          visible: false
         },
         {
-          orderNo: 'D111111',
-          customerOrderNo: 'D2123473',
-          waybillNo: 'D2123473',
-          consignerName: '南京可口可乐有限公司',
-          start: '江苏省南京市',
-          end: '新疆乌鲁木齐',
-          kilometres: 45,
-          volume: 45,
-          weight: 78,
-          create_time: '2018-08-09 12:00:23'
+          title: '货值',
+          key: 'cargoCost',
+          fixed: false,
+          visible: false
         },
         {
-          orderNo: 'D21234734637647',
-          customerOrderNo: 'D2123473',
-          waybillNo: 'D2123473',
-          consignerName: '南京可口可乐有限公司',
-          start: '江苏省南京市',
-          end: '新疆乌鲁木齐',
-          kilometres: 45,
-          volume: 45,
-          weight: 78,
-          create_time: '2018-08-09 12:00:23'
+          title: '付款方式',
+          key: 'settlementType',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '司机',
+          key: 'driverName',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '司机手机号码',
+          key: 'driverPhone',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '车型',
+          key: 'carType',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '订单数',
+          key: 'orderCnt',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '回单数',
+          key: 'backbillCnt',
+          fixed: false,
+          visible: false
         }
       ]
     }
   },
 
-  computed: {},
-
-  mounted () {},
-
   methods: {
-    searchList () {
-      console.log('触发')
-    },
-    handleSwitchSearch () {
-      this.simpleSearch = !this.simpleSearch
-    },
-    handleTabChange (val) {
-      console.log(val)
-      if (val === '全部') {
-        this.operateValue = 1
-        this.btnGroup = [
-          { name: '送货调度', value: 1 },
-          { name: '提货调度', value: 2 },
-          { name: '订单还原', value: 3 },
-          { name: '删除', value: 4 },
-          { name: '导出', value: 5 }
-        ]
-      } else if (val === '待提货') {
-        this.operateValue = 1
-        this.btnGroup = [
-          { name: '提货调度', value: 1 },
-          { name: '订单还原', value: 2 },
-          { name: '删除', value: 3 },
-          { name: '导出', value: 4 }
-        ]
-      } else if (val === '待调度') {
-        this.operateValue = 1
-        this.btnGroup = [
-          { name: '送货调度', value: 1 },
-          { name: '提货调度', value: 2 },
-          { name: '订单还原', value: 3 },
-          { name: '删除', value: 4 },
-          { name: '导出', value: 5 }
-        ]
-      } else {
-        this.operateValue = 1
-        this.btnGroup = [
-          { name: '导出', value: 1 }
-        ]
+    // 设置标签状态
+    setTabStatus (tab) {
+      switch (tab) {
+        case '全部':
+          return
+        case '待派车':
+          return 1
+        case '待发运':
+          return 2
+        case '在途':
+          return 3
+        case '已到货':
+          return 4
+        default:
       }
     },
-    handleOperateClick (btn) {
-      this.operateValue = btn.value
-    },
-    showTableRow (e) {
-      console.log(e)
-    },
-    openOuterDialog (params) {
-      const _this = this
-      this.openDialog({
-        name: 'order-management/dialog/outer',
-        data: { id: params.row.orderNo },
-        methods: {
-          ok (node) {
-            _this.onAddUserSuccess(node)
-          }
-        }
-      })
-    },
-    openSeparateDialog (params) {
-      const _this = this
-      this.openDialog({
-        name: 'order-management/dialog/separate',
-        data: { id: params.row.orderNo },
-        methods: {
-          ok (node) {
-            _this.onAddUserSuccess(node)
-          }
-        }
-      })
-    },
-    onAddUserSuccess () {
-      this.$Message.success('This is a success tip')
-    },
-    handleColumnChange (val) {
-      console.log(val)
-      this.extraColumns = val
+
+    // 数据查询
+    fetchData () {
+      Server({
+        url: '/waybill/list',
+        method: 'post',
+        data: this.setFetchParams()
+      }).then(res => {
+        const data = res.data.data
+        this.tableData = data.waybillList
+        this.page.total = data.totalCount
+        this.tabList = [
+          { name: '全部', count: '' },
+          { name: '待派车', count: data.statusCntInfo.waitAssignCarCnt },
+          { name: '待发运', count: data.statusCntInfo.waitSendCarCnt },
+          { name: '在途', count: data.statusCntInfo.inTransportCnt },
+          { name: '已到货', count: data.statusCntInfo.arrivedCnt }
+        ]
+      }).catch(err => console.error(err))
     }
   }
 }
 </script>
+
 <style lang='stylus' scoped>
-.ivu-btn
-  margin-right 15px
-  width 80px
-.high-search
-  width 36px
-  height 30px
-  line-height 1.1
-  padding 0
-  white-space normal
-  margin-right 0
-  margin-left 8px
-.operate-box
-  background: rgba(249,249,249,1)
-  margin: 15px 0
-  padding: 10px
-  .ivu-input-wrapper,.ivu-auto-complete
-    margin-right 20px
+  @import './transport.styl'
 </style>
