@@ -7,7 +7,7 @@
 </style>
 <script>
 import Vue from 'vue'
-// import Home from '../views/home'
+// import Home from '../views/home/index'
 // import noPage from '../pages/noPage'
 // import noPowerPage from '../pages/noPowerPage'
 var pagePrex = 'page-'
@@ -22,7 +22,8 @@ export default {
   watch: {
     $route (to, from) {
       // 对路由变化作出响应...
-      // console.log(to, from);
+      console.log('对路由变化作出响应')
+      console.log(to, from)
       if (to.path !== from.path) {
         // 如果页面改变。load新页面加入
         this.loadPage(to.params)
@@ -36,7 +37,7 @@ export default {
   methods: {
     loadPage: function (data) {
       var path = this.getPath()
-      let start = (new Date()).getTime()
+      console.log('path->' + path)
       import('../views/' + path + '').then(module => {
         var tempModule = Vue.extend(module.default)
         tempModule = tempModule.extend({
@@ -48,8 +49,6 @@ export default {
         keyIndex++
         Vue.component(`${pagePrex}${path.replace('/', '-')}-${keyIndex}`, tempModule)
         this.current = tempModule
-        let end = (new Date()).getTime()
-        console.log('耗时' + (end - start) + 'ms')
       }).catch(() => {
         console.error('不存在该页面', path)
       })
@@ -60,7 +59,7 @@ export default {
       for (var k in params) {
         arr.push(params[k])
       }
-      if (arr.length === 0) arr.push(localStorage.getItem('tms_is_login') ? 'home' : 'login')
+      if (arr.length === 0) arr.push(localStorage.getItem('tms_is_login') ? 'home/index' : 'login')
       return arr.join('/')
     }
   }
