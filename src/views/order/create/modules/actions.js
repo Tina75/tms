@@ -36,15 +36,15 @@ export default {
         const { addressList, cargoList, consigneeList, consigner } = response.data.data
         commit(types.RECEIVE_CONSIGNERS_LIST, [consigner])
         // 发货地址
-        commit(types.RECEIVE_ADDRESS_LIST, addressList)
+        commit(types.RECEIVE_ADDRESS_LIST, addressList.list)
         // 货物信息
-        commit(types.RECEIVE_CARGO_LIST, cargoList)
-        commit(types.RECEIVE_CONSIGNER_CARGO_LIST, cargoList.map((cargo) => {
+        commit(types.RECEIVE_CARGO_LIST, cargoList.list)
+        commit(types.RECEIVE_CONSIGNER_CARGO_LIST, cargoList.list.map((cargo) => {
           cargo.quantity = 1
           return cargo
         }))
         // 收货方地址
-        commit(types.RECEIVE_CONSIGNEES_LIST, consigneeList)
+        commit(types.RECEIVE_CONSIGNEES_LIST, consigneeList.list)
         resolve(response.data)
       }).catch((error) => {
         reject(error)
