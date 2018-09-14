@@ -86,7 +86,8 @@ export default {
 
     // 格式化省市区
     formatArea (labels, selectedData) {
-      return Object.values(labels).join('')
+      let set = new Set(labels)
+      return Array.from(set).join('')
     }
   }
 }
