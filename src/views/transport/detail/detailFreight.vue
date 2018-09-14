@@ -66,8 +66,8 @@
         </div>
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
-          <span class="table-footer-title">合计</span>
-          <span>总货值：{{ total.cost }}</span>
+          <span class="table-footer-title">总计</span>
+          <span>总货值：{{ total.cargoCost }}</span>
           <span>总数量：{{ total.quantity }}</span>
           <span>总体积：{{ total.weight }}</span>
           <span>总重量：{{ total.volume }}</span>
@@ -278,12 +278,19 @@ export default {
     },
 
     total () {
-      return {
-        cost: 100,
-        quantity: 101,
-        weight: 102,
-        volume: 103
-      }
+      return this.detail.reduce((last, item) => {
+        return {
+          cargoCost: last.cargoCost + item.cargoCost,
+          quantity: last.quantity + item.quantity,
+          weight: last.weight + item.weight,
+          volume: last.volume + item.volume
+        }
+      }, {
+        cargoCost: 0,
+        quantity: 0,
+        weight: 0,
+        volume: 0
+      })
     }
   },
   created () {
