@@ -1,79 +1,94 @@
 <template>
-  <Menu  width="200"  theme="dark" active-name="1-1" @on-select="handleSelect">
-    <p class="title">TMS</p>
-    <template v-for="item in menuList">
-      <template v-if="item.children">
-        <Submenu :name="item.name" :key="item.href">
-          <template slot="title">
-            <Icon :type="item.icon" size="18"/>{{item.name}}
-          </template>
-          <menu-item v-for="child in item.children" :name="child.href" :key="child.name" :to="child.href">{{child.name}}</menu-item>
-        </Submenu>
+  <div>
+    <Menu v-show="!collapsed" ref="menu"  :active-name="$route.path" :open-names="openedNames"  accordion width="200" theme="dark" @on-select="handleSelect">
+      <p class="title"><i class="icon font_family icon-logo-zjy" ></i></p>
+      <template v-for="item in menuList">
+        <template v-if="item.children">
+          <Submenu :name="item.path" :key="item.path">
+            <template slot="title"><Icon :type="item.icon" size="18"/>{{item.name}}</template>
+            <menu-item v-for="child in item.children" :name="child.path" :key="child.name" >{{child.name}}</menu-item>
+          </Submenu>
+        </template>
+        <template v-else>
+          <menu-item :name="item.path"  :key="item.path"><Icon :type="item.icon" size="18"/>{{item.name}}</menu-item>
+        </template>
       </template>
-      <template v-else>
-        <menu-item :name="item.href" :to="item.href" :key="item.href"><Icon :type="item.icon" size="18"/>{{item.name}}</menu-item>
+    </Menu>
+    <div v-show="collapsed" class="menu-collapsed">
+      <p class="title"><i class="icon font_family icon-logo-1"></i></p>
+      <template v-for="item in menuList" >
+        <div :key="item.path" >
+          <Poptip v-if="item.children" trigger="hover"  placement="left-start">
+            <div v-for="child in item.children" slot="content" :key="child.path" @click="handleSelect(child.path)">
+              <menu-item :name="child.path" :to="child.path" :key="child.path" >{{child.name}}</menu-item>
+            </div>
+            <a class="drop-menu-a" href=""><Icon :type="item.icon" color="#fff" size="22"/></a>
+          </Poptip>
+          <a v-else :href="item.path" class="drop-menu-a"><Icon :type="item.icon" color="#fff" size="22"/></a>
+        </div>
       </template>
-    </template>
-    <!-- <MenuItem name="/home"  to="/home"><Icon type="md-home"  size="18"/>首页</MenuItem>
-    <Submenu name="2">
-      <template slot="title">
-        <Icon type="md-paper" size="18"/>
-        受理开单
-      </template>
-      <MenuItem name="2-1" to="/">手动下单</MenuItem>
-      <MenuItem name="2-2" to="/">批量导入</MenuItem>
-    </Submenu>
-    <Submenu name="3">
-      <template slot="title">
-        <Icon type="md-list-box" size="18"/>
-        订单管理
-      </template>
-      <MenuItem name="3-1" to="/"><span>订单管理</span></MenuItem>
-      <MenuItem name="3-2" to="/">回单管理</MenuItem>
-    </Submenu>
-    <Submenu name="4">
-      <template slot="title">
-        <Icon type="md-bus" size="18"/>
-        运输管理
-      </template>
-      <MenuItem name="/transport/dispatch" to="/transport/dispatch">调度工作台</MenuItem>
-      <MenuItem name="/transport/waybill" to="/transport/waybill">运单管理</MenuItem>
-      <MenuItem name="/transport/receiveOrder" to="/transport/receiveOrder">提货管理</MenuItem>
-      <MenuItem name="/transport/outerOrder" to="/transport/outerOrder">外转单管理</MenuItem>
-    </Submenu>
-    <MenuItem name="5-1"><Icon type="md-options" size="18"/>财务</MenuItem>
-    <MenuItem name="6-1"><Icon type="md-stats" size="18"/>报表</MenuItem>
-    <MenuItem name="7-1"><Icon type="md-person" size="18"/>客户</MenuItem>
-    <MenuItem name="8-1"><Icon type="md-briefcase" size="18"/>公司管理</MenuItem>
-    <MenuItem name="9-1"><Icon type="md-settings" size="18"/>设置</MenuItem>
-    <MenuItem name="10-1"><Icon type="md-help-circle" size="18"/>帮助</MenuItem> -->
-  </Menu>
+    </div>
+  </div>
 </template>
 
 <script>
-import menu from '@/assets/menu.json'
 export default {
+  props: {
+    collapsed: Boolean,
+    activeName: String,
+    menuList: Array
+  },
   data () {
     return {
-      menuList: menu
+      openedNames: []
     }
   },
+  watch: {
+    activeName (val) {
+      this.openedNames = this.getopenedNames(val)
+    },
+    openedNames (val) {
+      console.log('opennames', val)
+      this.$nextTick(() => {
+        this.$refs.menu.updateOpened()
+      })
+    }
+  },
+  mounted () {
+    this.openedNames = this.getopenedNames(this.activeName)
+  },
   methods: {
+    getopenedNames (activeName) {
+      const matchs = activeName.split('/')
+      return ['/' + matchs[1]]
+      // if (activeName) {
+      //   let openItem = getParent(this.menuList)
+      //   if (openItem && openItem.name) {
+      //     this.openedNames = []
+      //     this.openedNames.push(openItem.name)
+      //   }
+      //   this.$nextTick(() => {
+      //     this.$refs.menu.updateOpened()
+      //   })
+      // }
+      // function getParent (element = []) {
+      //   return element.find(item => {
+      //     return item.name === activeName || getParent(item.children)
+      //   })
+      // }
+    },
     handleSelect (name) {
       let target = ''
       for (let i = 0; i < this.menuList.length; i++) {
         const element = this.menuList[i]
         target = walk(element)
-        console.log('item->' + JSON.stringify(target))
         if (target) {
-          this.$store.commit('changeTab', target)
+          this.$emit('on-select', target)
           return
         }
       }
-
       function walk (element) {
-        // console.log('walk->' + element.href)
-        if (element.href === name) {
+        if (element.path === name) {
           return element
         } else if (element.children) {
           return element.children.find(item => {
@@ -83,9 +98,6 @@ export default {
           return ''
         }
       }
-      // console.log('item->' + JSON.stringify(x))
-      this.$emit('on-select', name)
-      // this.$store.commit('changeTab', name)
     }
   }
 }
@@ -99,4 +111,12 @@ export default {
   line-height 49px
   padding 0
   margin 0
+.menu-collapsed
+  .drop-menu-a
+    padding 6px 15px
+    display inline-block
+.icon-logo-zjy
+  font-size 21px
+.icon-logo-1
+  font-size 32px
 </style>

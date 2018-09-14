@@ -1,7 +1,16 @@
 <template>
   <div>
-    <p>I'm page1</p>
-    <p><a @click="openDialog1">打开dialog</a></p>
+    <h3>通用组件Dialog</h3>
+    <br>
+    <p><a @click="open">demo-dialog1</a></p>
+    <Alert closable>An info prompt</Alert>
+    <br>
+    <h3>iconfont</h3>
+    <div>
+      <i class="icon font_family icon-dingdanguanli"></i>
+      <div class="name">订单管理</div>
+      <div class="fontclass">.icon-dingdanguanli</div>
+    </div>
   </div>
 </template>
 
@@ -12,32 +21,26 @@ export default {
   components: {},
   mixins: [ BasePage ],
   metaInfo: {
-    title: '页面1'
+    title: 'demo页面'
   },
   data () {
     return {
     }
   },
-
-  computed: {},
-
-  mounted: function () {},
-
   methods: {
-    openDialog1 () {
-      const _this = this
+    open () {
       this.openDialog({
         name: 'example/dialog/demo-dialog1',
-        data: { id: 1 },
+        data: {
+          title: 'title',
+          other: 'something'
+        },
         methods: {
-          ok (node) {
-            _this.onAddUserSuccess(node)
+          ok () {
+            console.log('ok!')
           }
         }
       })
-    },
-    onAddUserSuccess () {
-      this.$Message.success('This is a success tip')
     }
   }
 }

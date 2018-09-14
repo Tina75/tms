@@ -1,19 +1,19 @@
 <template>
   <div class="temAll">
     <Col span="23">
-    <Card style="height:70px;">
-      <Form :model="formSearch" :label-width="80">
-        <Col span="7">
+    <Card class="searchCard" dis-hover>
+      <Form :model="formSearch" :label-width="80" style="padding-left:-20px;">
+        <Col span="6">
         <FormItem label="姓名：">
-          <Input v-model="formSearch.username" placeholder="Enter something..."></Input>
+          <Input v-model="formSearch.username" placeholder="请输入姓名"></Input>
         </FormItem>
-          </Col>
-        <Col span="7">
+        </Col>
+        <Col span="6">
         <FormItem label="账号：">
-          <Input v-model="formSearch.account" placeholder="Enter something..."></Input>
+          <Input v-model="formSearch.phone" placeholder="请输入账号"></Input>
         </FormItem>
-          </Col>
-        <Col span="7">
+        </Col>
+        <Col span="6">
         <FormItem label="角色：">
           <Select v-model="formSearch.select" clearable>
             <Option
@@ -24,29 +24,83 @@
             </Option>
           </Select>
         </FormItem>
-          </Col>
+        </Col>
+        <Col span="3">
+        <FormItem>
+          <Button type="primary">搜索</Button>
+        </FormItem>
+        </Col>
       </Form>
     </Card>
     </Col>
     <Col span="23">
-    <Button style="margin-top:6px;">添加员工</Button>
+    <Button type="primary" style="margin-top:6px;" @click="eaditStaff('add')">添加员工</Button>
     </Col>
     <Col span="23">
     <Table :columns="columns1" :data="data1" style="margin-top:10px;">
     </Table>
     </Col>
+    <div class="classPage">
+      <Page :total="100" show-elevator show-sizer show-total/>
+    </div>
+    <Modal v-model="visibaleTransfer" width="360">
+      <p slot="header" style="text-align:center">
+        <span>转移权限</span>
+      </p>
+      <Form ref="transferformModal" :model="transferformModal" :rules="rulesTransfer" :label-width="100" style="height: 50px;">
+        <FormItem label="角色账号：" prop="select">
+          <Select v-model="transferformModal.select" clearable>
+            <Option
+              v-for="item in selectList"
+              :value="item.name"
+              :key="item.id">
+              {{ item.name }}
+            </Option>
+          </Select>
+        </FormItem>
+        <FormItem>
+          <p style="color:red; margin-top:-10px;">角色转移之后，您的角色将变成"管理员"</p>
+        </FormItem>
+      </Form>
+      <div slot="footer" style="margin-top:40px;">
+        <Button type="primary" @click="transferFormSub('transferformModal')">确定</Button>
+        <Button  @click="transferCancelForm">取消</Button>
+      </div>
+    </Modal>
+    <Modal v-model="visibaleRemove" type="warning" width="360">
+      <p slot="header" style="text-align:center">
+        <span>提示</span>
+      </p>
+      <p>确定要删除用户{{this.roleRowInit.name}}吗?</P>
+      <div slot="footer">
+        <Button type="primary" @click="removeSubForm">确定</Button>
+        <Button  @click="removeCancelForm">取消</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 
 <script>
+import BasePage from '@/basic/BasePage'
 export default {
   name: 'staff-manage',
+  mixins: [ BasePage ],
+  metaInfo: {
+    title: '员工管理'
+  },
   data () {
     return {
+      visibaleTransfer: false,
+      visibaleRemove: false,
+      visibaleMoadlTitle: '',
+      roleRowInit: {},
+      transferformModal: {
+        select: ''
+      },
       formSearch: {
         username: '',
-        account: '',
-        select: ''
+        phone: '',
+        select: '全部'
       },
       selectList: [{
         name: '全部',
@@ -61,7 +115,7 @@ export default {
       columns1: [{
         title: '操作',
         key: 'do',
-        width: 300,
+        width: 200,
         render: (h, params) => {
           if (params.row.name === '超级管理员') {
             return h('div', [
@@ -70,14 +124,15 @@ export default {
                   type: 'text'
                 },
                 style: {
-                  marginLeft: '110px'
+                  color: '#00A4BD',
+                  marginLeft: '-20px'
                 },
                 on: {
                   click: () => {
-                    this.showTableRow(params)
+                    this.transferAuthority(params)
                   }
                 }
-              }, '转移')
+              }, '转移权限')
             ])
           } else {
             return h('div', [
@@ -86,25 +141,12 @@ export default {
                   type: 'text'
                 },
                 style: {
-                  marginRight: '5px'
+                  color: '#00A4BD',
+                  marginLeft: '-20px'
                 },
                 on: {
                   click: () => {
-                    this.showTableRow(params)
-                  }
-                }
-              }, '获取初始密码'),
-              h('Button', {
-                props: {
-                  type: 'text'
-                },
-                style: {
-                  marginRight: '5px',
-                  color: '#2b85e4'
-                },
-                on: {
-                  click: () => {
-                    this.showTableRow(params)
+                    this.eaditStaff(params)
                   }
                 }
               }, '修改'),
@@ -113,11 +155,11 @@ export default {
                   type: 'text'
                 },
                 style: {
-                  color: 'red'
+                  color: '#00A4BD'
                 },
                 on: {
                   click: () => {
-                    this.removeTableRow(params)
+                    this.removeStaff(params)
                   }
                 }
               }, '删除')
@@ -169,15 +211,59 @@ export default {
         address: 'Ottawa No. 2 Lake Park',
         date: '2016-10-04'
       }
-      ] }
+      ],
+      rulesTransfer: {
+        select: [
+          { required: true, message: '请选择角色账号', trigger: 'blur' }
+        ]
+      }
+    }
   },
   mounted: function () {},
   methods: {
-    removeTableRow (e) {
-      console.log(e)
+    eaditStaff (params) {
+      if (params !== 'add') {
+        this.visibaleMoadlTitle = '修改员工信息'
+      } else {
+        this.visibaleMoadlTitle = '添加员工'
+      }
+      const _this = this
+      this.openDialog({
+        name: 'company-manage/edited-staff-dialog',
+        data: { title: this.visibaleMoadlTitle,
+          formData: params.row },
+        methods: {
+          ok (node) {
+            _this.onAddUserSuccess(node)
+          }
+        }
+      })
     },
-    showTableRow (e) {
-      console.log(e)
+    transferFormSub (name) {
+      this.$refs[name].validate((valid) => {
+        if (valid) {
+          this.$Message.success('Success!')
+          this.visibaleTransfer = false
+        } else {
+          this.$Message.error('Fail!')
+        }
+      })
+    },
+    transferCancelForm () {
+      this.visibaleTransfer = false
+    },
+    removeStaff (params) {
+      this.visibaleRemove = true
+      this.roleRowInit = Object.assign({}, params.row)
+    },
+    transferAuthority () {
+      this.visibaleTransfer = true
+    },
+    removeSubForm () {
+      this.visibaleRemove = false
+    },
+    removeCancelForm () {
+      this.visibaleRemove = false
     }
   }
 }
@@ -186,4 +272,14 @@ export default {
 <style lang='stylus' scoped>
 .temAll
   margin-left 20px;
+.classPage
+  clear: both;
+  float: right;
+  margin: 50px;
+.searchCard
+  height:70px;
+  background:rgba(249,249,249,1);
+.dialog
+  p
+  text-align center
 </style>

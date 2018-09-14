@@ -20,18 +20,17 @@
     <div ref="scrollOuter" class="scroll-outer" @DOMMouseScroll="handlescroll" @mousewheel="handlescroll">
       <div ref="scrollBody" :style="{left: tagBodyLeft + 'px'}" class="scroll-body">
         <transition-group name="taglist-moving-animation">
-          <Tag
+          <tab-nav-item
             v-for="(item,index) in list"
             ref="tagsPageOpened"
             :key="`tag-nav-${index}`"
             :name="item.name"
-            :closable="item.href !== '/home'"
-            :color="item.href === currentValue.href ? 'success' : 'default'"
-            style="color:red!important"
-            type="dot"
-            @on-close="handleClose"
+            :checked="item.path === value.path"
+            @on-close="handleClose(item)"
+            @on-refresh="handleRefresh"
             @click.native="handleClick(item)"
-          >{{ showTitleInside(item) }}</Tag>
+          >
+          </tab-nav-item>
         </transition-group>
       </div>
     </div>
@@ -39,9 +38,12 @@
 </template>
 
 <script>
-// import { showTitle } from '@/libs/util'
+import BaseComponent from '@/basic/BaseComponent'
+import TabNavItem from '@/components/TabNavItem'
 export default {
-  name: 'tagsNav',
+  name: 'TabNav',
+  components: {TabNavItem},
+  mixins: [BaseComponent],
   props: {
     value: {
       type: Object,
@@ -58,14 +60,11 @@ export default {
   },
   data () {
     return {
-      tagBodyLeft: 0,
-      currentValue: this.value
+      tagBodyLeft: 0
     }
   },
-  watch: {
-    value: function (val) {
-      this.currentValue = val
-    }
+  mounted () {
+
   },
   methods: {
     handlescroll (e) {
@@ -91,40 +90,37 @@ export default {
         }
       }
     },
-    handleTagsOption (type) {
-      if (type === 'close-all') {
-        // 关闭所有，除了home
-        let res = this.list.filter(item => item.href === '/home')
-        // this.$emit('on-close', res, 'all')
-        this.$store.commit('updateTabList', res)
-      } else {
-        // 关闭除当前页和home页的其他页
-        let res = this.list.filter(item => item.href === this.value.href || item.name === '/home')
-        // this.$emit('on-close', res, 'others')
-        this.$store.commit('updateTabList', res)
-      }
-    },
-    handleClose (e, name) {
-      // TODO:
+    // handleTagsOption (type) {
+    //   if (type === 'close-all') {
+    //     // 关闭所有，除了home
+    //     let res = this.list.filter(item => item.path === '/home')
+    //     // this.$emit('on-close', res, 'all')
+    //     this.$store.commit('updateTabList', res)
+    //   } else {
+    //     // 关闭除当前页和home页的其他页
+    //     let res = this.list.filter(item => item.path === this.value.path || item.name === '/home')
+    //     // this.$emit('on-close', res, 'others')
+    //     this.$store.commit('updateTabList', res)
+    //   }
+    // },
+    handleClose (item) {
+      this.$Message.info(`${item.path}已删除`)
       let res = this.list.filter(item => item.name !== name)
-      // this.$emit('on-close', res, undefined, name)
-      this.$store.commit('updateTabList', res)
+      this.$emit('on-close', res, item)
+    },
+    handleRefresh (item) {
+      this.$Message.info(`${item}已刷新`)
+      // this.ema.fire('refresh')
+      // this.$router.push({path: '/company-manage/staff-manage'})
     },
     handleClick (item) {
-      this.currentValue = item
-      this.$emit('input', item)
-    },
-    showTitleInside (item) {
-      // return showTitle(item, this)
-      return item.name
+      this.$emit('on-select', item)
     }
   }
 }
 </script>
 
 <style lang="stylus">
-.test
-  color red!important
 .no-select
   -webkit-touch-callout none
   -webkit-user-select none
@@ -161,16 +157,18 @@ export default {
       text-align center
     &.left-btn
       left 0px
+      background #252A2F
     &.right-btn
       // right 32px
       right 0px
+      background #252A2F
       border-right 1px solid #3A424B
   .scroll-outer
     position absolute
     left 23px
     // right 56px
     right 24px
-    top 5px
+    top 6px
     bottom 0
     // box-shadow 0px 0 3px 2px rgba(100,100,100,.1) inset
     .scroll-body
