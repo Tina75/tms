@@ -1,0 +1,120 @@
+.detail-header
+  height 60px
+  padding-left 24px
+  line-height  60px
+  background #E9FCFF
+
+  &-list
+    &-item
+      display inline-block
+      margin-right 28px
+
+.detail-btn-group
+  text-align right
+  margin 28px
+
+.detail-btn-item
+  margin-left 15px
+  width 80px
+
+.detail-field-group
+  font-size 13px
+  line-height 3
+
+.detail-field-title
+  color #777
+  display inline-block
+  width 100px
+
+.detail-part-title
+  margin-top 60px
+
+  span
+    height 34px
+    font-size 24px
+    font-weight bolder
+    line-height 34px
+    margin-left 18px
+    vertical-align text-bottom
+
+  &:before
+    content ' '
+    display inline-block
+    width 5px
+    height 25px
+    background rgba(0,164,189,1)
+    border-radius 3px
+
+  &:after
+    content ' '
+    display block
+    margin 25px 0
+    border-bottom 1px dashed rgba(203,206,211,1)
+
+.table-footer
+  height 48px
+  border 1px solid #dcdee2
+  border-top none
+  line-height 48px
+  font-weight: bolder
+
+  &-title
+    font-weight normal
+    padding-right 5px
+    box-sizing border-box
+
+  span
+    display inline-block
+    min-width 111px
+    text-align center
+
+.detail-log
+  display flex
+  justify-content flex-start
+  height 300px
+
+  &-icon
+    width 26px
+    height 26px
+    background rgba(0,164,189,1)
+    border-radius 5px
+    margin 0 60px 0 30px
+    text-align center
+    cursor pointer
+
+    span
+      display block
+      color #fff
+      margin-top 2px
+
+  &-timeline
+    height 15px
+    margin-top 7px
+    overflow hidden
+    transition height 0.3s linear
+
+    &-item
+      i
+        display inline-block
+        width 12px
+        height 12px
+        background-color #C9CED9
+        border-radius 50%
+        vertical-align middle
+      &:first-child
+        i
+          background-color #00A4BD
+
+  &-show
+    transform rotate(-90deg) translate(-5px, 0)
+    transition all 0.3s linear
+
+  &-hide
+    transform rotate(90deg)
+    transition all 0.3s linear
+
+
+
+
+
+
