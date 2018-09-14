@@ -1,6 +1,5 @@
 <template>
-  <div>
-
+  <div v-if="!inEditing">
     <!-- 运单号及状态 -->
     <section class="detail-header">
       <ul class="detail-header-list">
@@ -26,35 +25,35 @@
         </div>
         <Row class="detail-field-group">
           <i-col span="7">
-            <span class="detial-field-title">始发地：</span>
+            <span class="detail-field-title">始发地：</span>
             <span>{{ info.start }}</span>
           </i-col>
           <i-col span="7">
-            <span class="detial-field-title">目的地：</span>
+            <span class="detail-field-title">目的地：</span>
             <span>{{ info.end }}</span>
           </i-col>
           <i-col span="10">
-            <span class="detial-field-title">承运商：</span>
+            <span class="detail-field-title">承运商：</span>
             <span>{{ info.carrierName }}</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="7">
-            <span class="detial-field-title">车牌号：</span>
+            <span class="detail-field-title">车牌号：</span>
             <span>{{ info.carNo }}</span>
           </i-col>
           <i-col span="7">
-            <span class="detial-field-title">车型：</span>
+            <span class="detail-field-title">车型：</span>
             <span>{{ info.carType + ' ' + info.carLength }}</span>
           </i-col>
           <i-col span="10">
-            <span class="detial-field-title">司机：</span>
+            <span class="detail-field-title">司机：</span>
             <span>{{ info.driverName + ' ' + info.driverPhone }}</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="14">
-            <span class="detial-field-title">备注：</span>
+            <span class="detail-field-title">备注：</span>
             <span>{{ info.remark }}</span>
           </i-col>
         </Row>
@@ -80,35 +79,35 @@
         </div>
         <Row class="detail-field-group">
           <i-col span="4">
-            <span class="detial-field-title">运输费：</span>
+            <span class="detail-field-title">运输费：</span>
             <span>{{ payment.freightFee }}元</span>
           </i-col>
           <i-col span="4">
-            <span class="detial-field-title">装货费：</span>
+            <span class="detail-field-title">装货费：</span>
             <span>{{ payment.loadFee }}元</span>
           </i-col>
           <i-col span="4">
-            <span class="detial-field-title">卸货费：</span>
+            <span class="detail-field-title">卸货费：</span>
             <span>{{ payment.unloadFee }}元</span>
           </i-col>
           <i-col span="4">
-            <span class="detial-field-title">保险费：</span>
+            <span class="detail-field-title">保险费：</span>
             <span>{{ payment.insuranceFee }}元</span>
           </i-col>
           <i-col span="4">
-            <span class="detial-field-title">其他：</span>
+            <span class="detail-field-title">其他：</span>
             <span>{{ payment.otherFee }}元</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="24">
-            <span class="detial-field-title">费用合计：</span>
+            <span class="detail-field-title">费用合计：</span>
             <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{ payment.totalFee }}</span>元
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="24">
-            <span class="detial-field-title">结算方式：</span>
+            <span class="detail-field-title">结算方式：</span>
             <span>月结</span>
           </i-col>
         </Row>
@@ -141,6 +140,137 @@
       </div>
     </section>
   </div>
+
+  <div v-else>
+    <!-- 运单号及状态 -->
+    <section class="detail-header">
+      <ul class="detail-header-list">
+        <li class="detail-header-list-item">运单号：{{ info.waybillNo }}</li>
+        <li class="detail-header-list-item">订单状态：
+          <span style="font-weight: bold;">{{ info.status }}</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="detail-info">
+      <!-- 运单信息 -->
+      <div>
+        <div class="detail-part-title">
+          <span>运单信息</span>
+        </div>
+        <Row class="detail-field-group">
+          <i-col span="7">
+            <span class="detail-field-title">始发地：</span>
+            <span>{{ info.start }}</span>
+          </i-col>
+          <i-col span="7">
+            <span class="detail-field-title">目的地：</span>
+            <span>{{ info.end }}</span>
+          </i-col>
+          <i-col span="10">
+            <span class="detail-field-title">承运商：</span>
+            <span>{{ info.carrierName }}</span>
+          </i-col>
+        </Row>
+        <Row class="detail-field-group">
+          <i-col span="7">
+            <span class="detail-field-title">车牌号：</span>
+            <span>{{ info.carNo }}</span>
+          </i-col>
+          <i-col span="7">
+            <span class="detail-field-title">车型：</span>
+            <span>{{ info.carType + ' ' + info.carLength }}</span>
+          </i-col>
+          <i-col span="10">
+            <span class="detail-field-title">司机：</span>
+            <span>{{ info.driverName + ' ' + info.driverPhone }}</span>
+          </i-col>
+        </Row>
+        <Row class="detail-field-group">
+          <i-col span="14">
+            <span class="detail-field-title">备注：</span>
+            <span>{{ info.remark }}</span>
+          </i-col>
+        </Row>
+      </div>
+      <!-- 货物明细 -->
+      <div>
+        <div class="detail-part-title">
+          <span>货物明细</span>
+        </div>
+        <Button type="primary" style="margin-bottom: 22px;">添加订单</Button>
+        <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
+        <div class="table-footer">
+          <span class="table-footer-title">总计</span>
+          <span>总货值：{{ total.cargoCost }}</span>
+          <span>总数量：{{ total.quantity }}</span>
+          <span>总体积：{{ total.weight }}</span>
+          <span>总重量：{{ total.volume }}</span>
+        </div>
+      </div>
+      <!-- 应付费用 -->
+      <div>
+        <div class="detail-part-title">
+          <span>应付费用</span>
+        </div>
+        <Row class="detail-field-group">
+          <i-col span="4">
+            <span class="detail-field-title">运输费：</span>
+            <Input v-model="payment.freightFee"
+                   class="detail-payment-input">
+            <span slot="suffix">元</span>
+            </Input>
+          </i-col>
+          <i-col span="4">
+            <span class="detail-field-title">装货费：</span>
+            <Input v-model="payment.loadFee"
+                   class="detail-payment-input">
+            <span slot="suffix">元</span>
+            </Input>
+          </i-col>
+          <i-col span="4">
+            <span class="detail-field-title">卸货费：</span>
+            <Input v-model="payment.unloadFee"
+                   class="detail-payment-input">
+            <span slot="suffix">元</span>
+            </Input>
+          </i-col>
+          <i-col span="4">
+            <span class="detail-field-title">保险费：</span>
+            <Input v-model="payment.insuranceFee"
+                   class="detail-payment-input">
+            <span slot="suffix">元</span>
+            </Input>
+          </i-col>
+          <i-col span="4">
+            <span class="detail-field-title">其他：</span>
+            <Input v-model="payment.otherFee"
+                   class="detail-payment-input">
+            <span slot="suffix">元</span>
+            </Input>
+          </i-col>
+        </Row>
+        <Row class="detail-field-group">
+          <i-col span="24">
+            <span class="detail-field-title">费用合计：</span>
+            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{ payment.totalFee }}</span>元
+          </i-col>
+        </Row>
+        <Row class="detail-field-group">
+          <i-col span="24">
+            <span class="detail-field-title">结算方式：</span>
+            <span>月结</span>
+          </i-col>
+        </Row>
+      </div>
+    </section>
+
+    <section class="detail-edit-footer">
+      <Button class="detail-edit-footer-btn" type="primary">保存</Button>
+      <Button class="detail-edit-footer-btn" type="default" @click="cancelEdit">取消</Button>
+    </section>
+
+  </div>
 </template>
 
 <script>
@@ -154,6 +284,7 @@ export default {
   data () {
     return {
       loading: false,
+      inEditing: false,
       // 信息
       info: {
         waybillId: '',
@@ -195,7 +326,9 @@ export default {
             func: () => console.log(Math.random())
           }, {
             name: '编辑',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.inEditing = true
+            }
           }]
         },
         {
@@ -219,7 +352,12 @@ export default {
       tableColumns: [
         {
           title: '订单号',
-          key: 'orderNo'
+          key: 'orderNo',
+          render: (h, p) => {
+            return h('span', {
+              style: { color: '#3A7EDE' }
+            }, p.row.orderNo)
+          }
         },
         {
           title: '客户订单号',
@@ -293,6 +431,26 @@ export default {
       })
     }
   },
+  watch: {
+    inEditing (val) {
+      if (val) {
+        this.tableColumns.unshift({
+          title: '操作',
+          key: 'action',
+          width: 60,
+          render: (h, p) => {
+            return h('a', {
+              on: {
+                click: () => {}
+              }
+            }, '移出')
+          }
+        })
+      } else {
+        this.tableColumns.shift()
+      }
+    }
+  },
   created () {
     this.fetchData()
   },
@@ -351,6 +509,12 @@ export default {
           return
         }
       }
+    },
+
+    // 取消编辑
+    cancelEdit () {
+      this.inEditing = false
+      this.fetchData()
     },
 
     fetchData () {
