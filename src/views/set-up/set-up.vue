@@ -36,13 +36,13 @@
       <Col span="10" class="setConf">
       <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="90">
         <FormItem label="账号：">
-          <span>{{formPersonal.account}}</span>
+          <span>{{formPersonal.phone}}</span>
         </FormItem>
         <FormItem label="姓名：" prop="name">
           <Input v-model="formPersonal.name" placeholder="请输入姓名"></Input>
         </FormItem>
         <FormItem label="角色：">
-          <span>{{formPersonal.role}}</span>
+          <span>{{formPersonal.roleName}}</span>
         </FormItem>
         <FormItem label="头像：">
           <!--个人设置-图片相关-->
@@ -79,27 +79,27 @@
     <!--短信设置-->
     <div v-if="'3' === this.rightKey">
       <Col span="18" class="setConf">
-        <Card dis-hover>
-          <div solt="title" class="msgCardTitle">
-            开启短信提醒
-            <i-switch v-model="switchMsg" @on-change="changeCheckBoxGroup" />
-          </div>
-          <div v-for="msg in this.messageList" :key="msg.title" class="mesDiv">
-            <p style="font-weight: bold">{{msg.title}}</p>
-            <p>{{msg.message}}</p>
-            <p>接收人：
-              <Checkbox
-                v-for="checkBtn in msg.checkBox"
-                :key="checkBtn.index"
-                v-model="checkBtn.model"
-                style="margin-left:15px;"
-                @on-change="checkBtnBox(checkBtn.model)">
-                {{checkBtn.label}}
-              </Checkbox>
-            </p>
-          </div>
-        </Card>
-        <Button type="primary" class="msgSaveBtn" @click="msgSaveBtn">保存</Button>
+      <Card dis-hover>
+        <div solt="title" class="msgCardTitle">
+          开启短信提醒
+          <i-switch v-model="switchMsg" @on-change="changeCheckBoxGroup" />
+        </div>
+        <div v-for="msg in this.messageList" :key="msg.title" class="mesDiv">
+          <p style="font-weight: bold">{{msg.title}}</p>
+          <p>{{msg.message}}</p>
+          <p>接收人：
+            <Checkbox
+              v-for="checkBtn in msg.checkBox"
+              :key="checkBtn.index"
+              v-model="checkBtn.model"
+              style="margin-left:15px;"
+              @on-change="checkBtnBox(checkBtn.model)">
+              {{checkBtn.label}}
+            </Checkbox>
+          </p>
+        </div>
+      </Card>
+      <Button type="primary" class="msgSaveBtn" @click="msgSaveBtn">保存</Button>
       </Col>
     </div>
     <!--公司设置-->
@@ -158,6 +158,7 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
+import Server from '@/libs/js/server'
 export default {
   name: 'set-up',
   mixins: [ BasePage ],
@@ -188,21 +189,12 @@ export default {
         confirmPassword: ''
       },
       // 个人
-      formPersonal: {
-        account: '1513165411813354',
-        name: '士大夫似',
-        role: '管理员'
-      },
+      formPersonal: {},
       // 公司
-      formCompany: {
-        name: '士大夫似',
-        contact: '管理员',
-        contactPhone: '156131351513',
-        cityId: '江苏',
-        address: '江苏南京雨花台区'
-      },
+      formCompany: {},
       // 短信
       switchMsg: false,
+      checkNum: 0,
       messageList: [{
         title: '发运提醒',
         message: '提醒内容： 【智加云TMS公司】XX公司，您的货物已装车，由车牌号XXXX司机姓名XXXX司机电话XXXX派送。',
@@ -281,10 +273,36 @@ export default {
     }
   },
   mounted: function () {
-    // this.uploadList = this.$refs.upload.fileList
-    // this.uploadListCompany = this.$refs.uploadCompany.fileList
+    this.getUserInfo()
+    this.getCompanyInof()
+    this.smsInfo()
   },
   methods: {
+    getCompanyInof () {
+      Server({
+        url: 'set/companyInfo',
+        method: 'get'
+      }).then(({ data }) => {
+        this.formCompany = data
+      })
+    },
+    getUserInfo () {
+      Server({
+        url: 'set/userInfo',
+        method: 'get'
+      }).then(({ data }) => {
+        this.formPersonal = data.data
+      })
+    },
+    smsInfo () {
+      Server({
+        url: 'set/smsInfo',
+        method: 'get'
+      }).then(({ data }) => {
+        console.log(data.data)
+        // this.messageList = data.data.smsCode
+      })
+    },
     clickLeftMenu (id, menuName) {
       this.rightTitle = menuName
       this.rightKey = id
@@ -293,7 +311,14 @@ export default {
     pwdSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          this.$Message.success('Success!')
+          // this.$Message.success('Success!')
+          Server({
+            url: 'set/updatePsw',
+            method: 'post',
+            data: this.formPwd
+          }).then(({ data }) => {
+            console.log(data.data)
+          })
         } else {
           this.$Message.error('Fail!')
         }
@@ -303,7 +328,17 @@ export default {
     personalSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          this.$Message.success('Success!')
+          // this.$Message.success('Success!')
+          let param = {}
+          param.name = this.formPersonal.name
+          param.avatarPic = this.formPersonal.roleName
+          Server({
+            url: 'set/person',
+            method: 'post',
+            data: param
+          }).then(({ data }) => {
+            console.log(data.data)
+          })
         } else {
           this.$Message.error('Fail!')
         }
@@ -313,7 +348,14 @@ export default {
     companySubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          this.$Message.success('Success!')
+          // this.$Message.success('Success!')
+          Server({
+            url: 'set/company',
+            method: 'post',
+            data: this.formCompany
+          }).then(({ data }) => {
+            console.log(data.data)
+          })
         } else {
           this.$Message.error('Fail!')
         }
@@ -329,10 +371,10 @@ export default {
     },
     checkBtnBox (model) {
       let statusList = []
-      let checkNum = 0
+      this.checkNum = 0
       for (const checkList of this.messageList) {
         checkList.checkBox.forEach(element => {
-          checkNum++
+          this.checkNum++
           if (element.model) {
             statusList.push(element.model)
           }
@@ -341,7 +383,13 @@ export default {
       }
     },
     msgSaveBtn () {
-      console.dir(this.messageList);
+      Server({
+        url: 'set/sms',
+        method: 'post',
+        data: this.messageList
+      }).then(({ data }) => {
+        console.log(data.data)
+      })
     },
     // 图片相关 -个人
     handleSuccess (res, file) {

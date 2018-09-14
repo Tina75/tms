@@ -27,7 +27,7 @@
         </Col>
         <Col span="3">
         <FormItem>
-          <Button type="primary">搜索</Button>
+          <Button type="primary" @click="searchBtn">搜索</Button>
         </FormItem>
         </Col>
       </Form>
@@ -37,13 +37,9 @@
     <Button type="primary" style="margin-top:6px;" @click="eaditStaff('add')">添加员工</Button>
     </Col>
     <Col span="23">
-    <!-- <Table :columns="columns1" :data="data1" style="margin-top:10px;"> -->
-    <page-table :columns="columns1" :data="data1"></page-table>
+    <page-table :columns="menuColumns" url="employee/list" list-field="users" style="margin-top: 20px;"></page-table>
     </Table>
     </Col>
-    <!-- <div class="classPage">
-      <Page :total="100" show-elevator show-sizer show-total/>
-    </div> -->
     <Modal v-model="visibaleTransfer" width="360">
       <p slot="header" style="text-align:center">
         <span>转移权限</span>
@@ -84,6 +80,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import pageTable from '@/components/page-table'
+import Server from '@/libs/js/server'
 export default {
   name: 'staff-manage',
   components: {
@@ -105,7 +102,9 @@ export default {
       formSearch: {
         name: '',
         phone: '',
-        roleId: '全部'
+        roleId: '全部',
+        pageNo: 1,
+        pageSize: 20
       },
       selectList: [{
         name: '全部',
@@ -117,7 +116,7 @@ export default {
         name: '录入员',
         id: '3'
       }],
-      columns1: [{
+      menuColumns: [{
         title: '操作',
         key: 'do',
         width: 200,
@@ -178,45 +177,16 @@ export default {
       },
       {
         title: '账号',
-        key: 'age'
+        key: 'phone'
       },
       {
         title: '角色',
-        key: 'address'
+        key: 'roleId'
       },
       {
         title: '创建时间',
-        key: 'date'
+        key: 'create_time'
       }],
-      data1: [{
-        do: '',
-        name: '超级管理员',
-        age: 18,
-        address: 'New York No. 1 Lake Park',
-        date: '2016-10-03'
-      },
-      {
-        do: '',
-        name: 'Jim Green',
-        age: 24,
-        address: 'London No. 1 Lake Park',
-        date: '2016-10-01'
-      },
-      {
-        do: '',
-        name: 'Joe Black',
-        age: 30,
-        address: 'Sydney No. 1 Lake Park',
-        date: '2016-10-02'
-      },
-      {
-        do: '',
-        name: 'Jon Snow',
-        age: 26,
-        address: 'Ottawa No. 2 Lake Park',
-        date: '2016-10-04'
-      }
-      ],
       rulesTransfer: {
         roleId: [
           { required: true, message: '请选择角色账号', trigger: 'blur' }
@@ -226,6 +196,15 @@ export default {
   },
   mounted: function () {},
   methods: {
+    searchBtn () {
+      Server({
+        url: 'employee/list',
+        method: 'get',
+        data: this.formSearch
+      }).then(({ data }) => {
+        // this.data1 = data.data;
+      })
+    },
     eaditStaff (params) {
       if (params !== 'add') {
         this.visibaleMoadlTitle = '修改员工信息'
@@ -235,8 +214,10 @@ export default {
       const _this = this
       this.openDialog({
         name: 'company-manage/edited-staff-dialog',
-        data: { title: this.visibaleMoadlTitle,
-          formData: params.row },
+        data: {
+          title: this.visibaleMoadlTitle,
+          formData: params.row
+        },
         methods: {
           ok (node) {
             _this.onAddUserSuccess(node)
@@ -247,6 +228,13 @@ export default {
     transferFormSub (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          Server({
+            url: 'employee/role',
+            method: 'post',
+            data: this.roleRowInit.phone
+          }).then(({ data }) => {
+            // this.data1 = data.data;
+          })
           this.$Message.success('Success!')
           this.visibaleTransfer = false
         } else {
@@ -258,13 +246,21 @@ export default {
       this.visibaleTransfer = false
     },
     removeStaff (params) {
-      this.visibaleRemove = true
       this.roleRowInit = Object.assign({}, params.row)
+      this.visibaleRemove = true
     },
-    transferAuthority () {
+    transferAuthority (params) {
+      this.roleRowInit = Object.assign({}, params.row)
       this.visibaleTransfer = true
     },
     removeSubForm () {
+      Server({
+        url: 'employee/del',
+        method: 'post',
+        data: this.roleRowInit.id
+      }).then(({ data }) => {
+        console.log(data)
+      })
       this.visibaleRemove = false
     },
     removeCancelForm () {
