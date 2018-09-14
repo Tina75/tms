@@ -4,13 +4,13 @@
       <p class="title"><i class="icon font_family icon-logo-zjy" ></i></p>
       <template v-for="item in menuList">
         <template v-if="item.children">
-          <Submenu :name="item.path" :key="item.path">
+          <Submenu v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path">
             <template slot="title"><Icon :type="item.icon" size="18"/>{{item.name}}</template>
-            <menu-item v-for="child in item.children" :name="child.path" :key="child.name" >{{child.name}}</menu-item>
+            <menu-item v-for="child in item.children" v-if="hasPower(item.powerCode)" :name="child.path" :key="child.name" >{{child.name}}</menu-item>
           </Submenu>
         </template>
         <template v-else>
-          <menu-item :name="item.path"  :key="item.path"><Icon :type="item.icon" size="18"/>{{item.name}}</menu-item>
+          <menu-item v-if="hasPower(item.powerCode)" :name="item.path"  :key="item.path"><Icon :type="item.icon" size="18"/>{{item.name}}</menu-item>
         </template>
       </template>
     </Menu>
@@ -48,7 +48,6 @@ export default {
       this.openedNames = this.getopenedNames(val)
     },
     openedNames (val) {
-      console.log('opennames', val)
       this.$nextTick(() => {
         this.$refs.menu.updateOpened()
       })
@@ -61,21 +60,6 @@ export default {
     getopenedNames (activeName) {
       const matchs = activeName.split('/')
       return ['/' + matchs[1]]
-      // if (activeName) {
-      //   let openItem = getParent(this.menuList)
-      //   if (openItem && openItem.name) {
-      //     this.openedNames = []
-      //     this.openedNames.push(openItem.name)
-      //   }
-      //   this.$nextTick(() => {
-      //     this.$refs.menu.updateOpened()
-      //   })
-      // }
-      // function getParent (element = []) {
-      //   return element.find(item => {
-      //     return item.name === activeName || getParent(item.children)
-      //   })
-      // }
     },
     handleSelect (name) {
       let target = ''
@@ -98,6 +82,21 @@ export default {
           return ''
         }
       }
+    },
+    // 权限控制
+    hasPower: function (power) {
+      if (!power) { return true }
+      return this.$store.state.permissions.includes(power)
+    //   var flag = false
+    //   var powerArr = (power || '').split(',') || []
+    //   var list = window.powerList
+    //   list.forEach((value) => {
+    //     if (powerArr.indexOf(value.toString()) !== -1) {
+    //       flag = true
+    //       return false
+    //     }
+    //   })
+    //   return flag
     }
   }
 }

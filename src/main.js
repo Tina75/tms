@@ -6,10 +6,10 @@ import router from './router'
 import store from './store'
 import VueMeta from 'vue-meta'
 import EmaProxy from 'ema-proxy'
-// import 'iview/dist/styles/iview.css'
 
 require('./libs/js/filter')
 require('./libs/js/date')
+require('./libs/css/iview.css')
 
 Vue.config.productionTip = false
 
