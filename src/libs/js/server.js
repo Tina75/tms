@@ -7,7 +7,7 @@ let instance = axios.create({
   headers: {'Content-Type': 'application/json'},
   withCredentials: true,
   loading: false,
-  ignoreCode: false
+  ignoreCode: process.env.NODE_ENV === 'development'
 })
 
 switch (process.env.NODE_ENV) {

@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import mutations from './mutations'
 import * as actions from './actions'
 import * as getters from './getters'
-
+import order from '@/views/order/create/modules/store'
 Vue.use(Vuex)
 
 const state = {
@@ -17,5 +17,8 @@ export default new Vuex.Store({
   state,
   actions,
   getters,
-  mutations
+  mutations,
+  modules: {
+    order
+  }
 })
