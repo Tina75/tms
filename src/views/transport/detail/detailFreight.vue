@@ -53,7 +53,7 @@
           </i-col>
         </Row>
         <Row class="detail-field-group">
-          <i-col span="24">
+          <i-col span="14">
             <span class="detial-field-title">备注：</span>
             <span>{{ info.remark }}</span>
           </i-col>
