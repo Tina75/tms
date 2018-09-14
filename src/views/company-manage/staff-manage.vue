@@ -38,7 +38,7 @@
     </Col>
     <Col span="23">
     <!-- <Table :columns="columns1" :data="data1" style="margin-top:10px;"> -->
-      <page-table :data="data1"></page-table>
+    <page-table :columns="columns1" :data="data1"></page-table>
     </Table>
     </Col>
     <!-- <div class="classPage">
@@ -83,9 +83,12 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import pageTable from '@/components/PageTable'
+import pageTable from '@/components/page-table'
 export default {
   name: 'staff-manage',
+  components: {
+    pageTable
+  },
   mixins: [ BasePage ],
   metaInfo: {
     title: '员工管理'
@@ -267,9 +270,6 @@ export default {
     removeCancelForm () {
       this.visibaleRemove = false
     }
-  },
-  components: {
-    pageTable
   }
 }
 
