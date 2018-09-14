@@ -4,7 +4,10 @@ import { LoadingBar, Message } from 'iview'
 let instance = axios.create({
   baseURL: '/',
   timeout: 10000,
-  headers: {'Content-Type': 'application/json'},
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'xxxx'
+  },
   withCredentials: true,
   loading: false,
   ignoreCode: process.env.NODE_ENV === 'development'
