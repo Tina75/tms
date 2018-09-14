@@ -129,7 +129,7 @@
   },
   {
     "name":"消息",
-    "href":"#/info/info",
+    "path":"/info/info",
     "icon":"md-chatbubbles",
     "powerCode":0
   },

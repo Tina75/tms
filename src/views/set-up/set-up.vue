@@ -16,14 +16,14 @@
     <div v-if="'1' === this.rightKey" style="height:250px;">
       <Col span="10" class="setConf">
       <Form ref="formPwd" :model="formPwd" :rules="rulePwd" :label-width="90">
-        <FormItem label="原始密码：" prop="originalPwd">
-          <Input v-model="formPwd.originalPwd" type="password" placeholder="请输入原始密码"></Input>
+        <FormItem label="原始密码：" prop="oldPassword">
+          <Input v-model="formPwd.oldPassword" type="password" placeholder="请输入原始密码"></Input>
         </FormItem>
         <FormItem label="新密码：" prop="password">
           <Input v-model="formPwd.password" type="password" placeholder="请输入新密码"></Input>
         </FormItem>
-        <FormItem label="确认密码：" prop="passwordConfirm">
-          <Input v-model="formPwd.passwordConfirm" type="password" placeholder="请再次输入新密码"></Input>
+        <FormItem label="确认密码：" prop="confirmPassword">
+          <Input v-model="formPwd.confirmPassword" type="password" placeholder="请再次输入新密码"></Input>
         </FormItem>
         <FormItem>
           <Button type="primary" @click="pwdSubmit('formPwd')">保存</Button>
@@ -79,28 +79,28 @@
     <!--短信设置-->
     <div v-if="'3' === this.rightKey">
       <Col span="18" class="setConf">
-      <Card dis-hover>
-        <div solt="title" class="msgCardTitle">
-          开启短信提醒
-          <i-switch v-model="switchMsg" @on-change="changeCheckBoxGroup" />
-        </div>
-        <div v-for="msg in this.messageList" :key="msg.title" class="mesDiv">
-          <p style="font-weight: bold">{{msg.title}}</p>
-          <p>{{msg.message}}</p>
-          <p>接收人：
-            <Checkbox
-              v-for="checkBtn in msg.checkBox"
-              :key="checkBtn.index"
-              v-model="checkBtn.model"
-              style="margin-left:15px;"
-              @on-change="checkBtnBox(checkBtn.model)">
-              {{checkBtn.label}}
-            </Checkbox>
-          </p>
-        </div>
-      </Card>
-      <Button type="primary" class="msgSaveBtn">保存</Button>
-        </Col>
+        <Card dis-hover>
+          <div solt="title" class="msgCardTitle">
+            开启短信提醒
+            <i-switch v-model="switchMsg" @on-change="changeCheckBoxGroup" />
+          </div>
+          <div v-for="msg in this.messageList" :key="msg.title" class="mesDiv">
+            <p style="font-weight: bold">{{msg.title}}</p>
+            <p>{{msg.message}}</p>
+            <p>接收人：
+              <Checkbox
+                v-for="checkBtn in msg.checkBox"
+                :key="checkBtn.index"
+                v-model="checkBtn.model"
+                style="margin-left:15px;"
+                @on-change="checkBtnBox(checkBtn.model)">
+                {{checkBtn.label}}
+              </Checkbox>
+            </p>
+          </div>
+        </Card>
+        <Button type="primary" class="msgSaveBtn" @click="msgSaveBtn">保存</Button>
+      </Col>
     </div>
     <!--公司设置-->
     <div v-if="'4' === this.rightKey" style="height:530px;">
@@ -109,14 +109,14 @@
         <FormItem label="公司名称：" prop="name">
           <Input v-model="formCompany.name" placeholder="请输入公司名称"></Input>
         </FormItem>
-        <FormItem label="公司联系人：" prop="contacts">
-          <Input v-model="formCompany.contacts" placeholder="请输入公司联系人"></Input>
+        <FormItem label="公司联系人：" prop="contact">
+          <Input v-model="formCompany.contact" placeholder="请输入公司联系人"></Input>
         </FormItem>
-        <FormItem label="联系方式：" prop="contactsType">
-          <Input v-model="formCompany.contactsType" placeholder="请输入联系方式"></Input>
+        <FormItem label="联系方式：" prop="contactPhone">
+          <Input v-model="formCompany.contactPhone" placeholder="请输入联系方式"></Input>
         </FormItem>
-        <FormItem label="所在省市：" prop="province">
-          <Input v-model="formCompany.province" placeholder="请选择所在省市"></Input>
+        <FormItem label="所在省市：" prop="cityId">
+          <Input v-model="formCompany.cityId" placeholder="请选择所在省市"></Input>
         </FormItem>
         <FormItem label="公司地址：" prop="address">
           <Input v-model="formCompany.address" placeholder="请输入公司地址"></Input>
@@ -183,9 +183,9 @@ export default {
       rightKey: '1',
       // 密码
       formPwd: {
-        originalPwd: '',
+        oldPassword: '',
         password: '',
-        passwordConfirm: ''
+        confirmPassword: ''
       },
       // 个人
       formPersonal: {
@@ -196,9 +196,9 @@ export default {
       // 公司
       formCompany: {
         name: '士大夫似',
-        contacts: '管理员',
-        contactsType: '156131351513',
-        province: '江苏',
+        contact: '管理员',
+        contactPhone: '156131351513',
+        cityId: '江苏',
         address: '江苏南京雨花台区'
       },
       // 短信
@@ -234,13 +234,13 @@ export default {
       // 校验相关
       // 密码
       rulePwd: {
-        originalPwd: [
+        oldPassword: [
           { required: true, message: '请输入原始密码', trigger: 'blur' }
         ],
         password: [
           { required: true, message: '请输入新密码', trigger: 'blur' }
         ],
-        passwordConfirm: [
+        confirmPassword: [
           { required: true, message: '请再次输入新密码', trigger: 'blur' }
         ]
       },
@@ -255,13 +255,13 @@ export default {
         name: [
           { required: true, message: '请输入公司名称', trigger: 'blur' }
         ],
-        contacts: [
+        contact: [
           { required: true, message: '请输入公司联系人', trigger: 'blur' }
         ],
-        contactsType: [
+        contactPhone: [
           { required: true, message: '请输入联系方式', trigger: 'blur' }
         ],
-        province: [
+        cityId: [
           { required: true, message: '请选择所在省市', trigger: 'blur' }
         ],
         address: [
@@ -337,8 +337,11 @@ export default {
             statusList.push(element.model)
           }
         })
-        this.switchMsg = (statusList.length === checkNum)
+        this.switchMsg = (statusList.length > 0)
       }
+    },
+    msgSaveBtn () {
+      console.dir(this.messageList);
     },
     // 图片相关 -个人
     handleSuccess (res, file) {

@@ -5,7 +5,7 @@
       <Form :model="formSearch" :label-width="80" style="padding-left:-20px;">
         <Col span="6">
         <FormItem label="姓名：">
-          <Input v-model="formSearch.username" placeholder="请输入姓名"></Input>
+          <Input v-model="formSearch.name" placeholder="请输入姓名"></Input>
         </FormItem>
         </Col>
         <Col span="6">
@@ -15,7 +15,7 @@
         </Col>
         <Col span="6">
         <FormItem label="角色：">
-          <Select v-model="formSearch.select" clearable>
+          <Select v-model="formSearch.roleId" clearable>
             <Option
               v-for="item in selectList"
               :value="item.name"
@@ -37,19 +37,20 @@
     <Button type="primary" style="margin-top:6px;" @click="eaditStaff('add')">添加员工</Button>
     </Col>
     <Col span="23">
-    <Table :columns="columns1" :data="data1" style="margin-top:10px;">
+    <!-- <Table :columns="columns1" :data="data1" style="margin-top:10px;"> -->
+      <page-table :data="data1"></page-table>
     </Table>
     </Col>
-    <div class="classPage">
+    <!-- <div class="classPage">
       <Page :total="100" show-elevator show-sizer show-total/>
-    </div>
+    </div> -->
     <Modal v-model="visibaleTransfer" width="360">
       <p slot="header" style="text-align:center">
         <span>转移权限</span>
       </p>
       <Form ref="transferformModal" :model="transferformModal" :rules="rulesTransfer" :label-width="100" style="height: 50px;">
         <FormItem label="角色账号：" prop="select">
-          <Select v-model="transferformModal.select" clearable>
+          <Select v-model="transferformModal.roleId" clearable>
             <Option
               v-for="item in selectList"
               :value="item.name"
@@ -82,6 +83,7 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
+import pageTable from '@/components/PageTable'
 export default {
   name: 'staff-manage',
   mixins: [ BasePage ],
@@ -95,12 +97,12 @@ export default {
       visibaleMoadlTitle: '',
       roleRowInit: {},
       transferformModal: {
-        select: ''
+        roleId: ''
       },
       formSearch: {
-        username: '',
+        name: '',
         phone: '',
-        select: '全部'
+        roleId: '全部'
       },
       selectList: [{
         name: '全部',
@@ -213,7 +215,7 @@ export default {
       }
       ],
       rulesTransfer: {
-        select: [
+        roleId: [
           { required: true, message: '请选择角色账号', trigger: 'blur' }
         ]
       }
@@ -265,6 +267,9 @@ export default {
     removeCancelForm () {
       this.visibaleRemove = false
     }
+  },
+  components: {
+    pageTable
   }
 }
 

@@ -4,7 +4,7 @@
     <Menu :open-names="['1']">
       <Submenu name="1">
         <template slot="title">
-          <Icon type="ios-image" />
+          <i class="icon font_family icon-tupian" style="background: white; color: #FFBB44;"></i>
           图文介绍
         </template>
         <MenuItem name="1-1" @click.native="clickLeftMenu('1-1', '什么是订单管理')">什么是订单管理？</MenuItem>
@@ -15,7 +15,7 @@
       </Submenu>
       <Submenu name="2">
         <template slot="title">
-          <Icon type="ios-paper" />
+          <i class="icon font_family icon-shipin" style="background: white; color: #418DF9;"></i>
           视频介绍
         </template>
         <MenuItem name="2-1" @click.native="clickLeftMenu('2-1', '什么是订单管理')">什么是订单管理</MenuItem>
