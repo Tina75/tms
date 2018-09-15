@@ -1,85 +1,98 @@
 <template>
   <div class="temAll">
     <Col span="3">
-      <Menu active-name="系统消息" class="leftMenu" style="width: 150px;  background: rgba(248,248,248,1);">
-        <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
-          <p class="menuTitle">{{menu.name}}</p>
+    <Menu active-name="系统消息" class="leftMenu" style="width: 150px;  background: rgba(248,248,248,1);">
+      <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
+      <p class="menuTitle">{{menu.name}}</p>
+      <Badge :text="menu.infoNum" style="float:right;margin-top:-20px;"></Badge>
         </MenuItem>
-      </Menu>
+    </Menu>
     </Col>
     <Col span="18">
-      <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;">
-        <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute;"></span>
-        <span style="margin-left:25px; font-size: 16px;">{{rightTitle}}</span>
-      </div>
+    <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;">
+      <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute;"></span>
+      <span style="margin-left:25px; font-size: 16px;">{{rightTitle}}</span>
+    </div>
+    <div style="min-height:520px;">
       <!--系统消息-->
-      <div style="height:250px;" v-if="'1' === this.rightKey">
+      <div v-if="'0' === this.searchData.type" style="height:250px;">
         <Col span="24">
-          <div class="mesDivAll">
-            <div class="megDiv" v-for="msg in this.messageList" :key="msg.id">
-              <div class="msgImg">
-                <i class="icon font_family icon-xitongxiaoxi" style="font-size:28px; background: white; color: #FFBB44;"></i>
-              </div>
-              <div class="msgContent">
-                <p class="msgContentTitle">{{msg.title}}</p>
-                <p class="msgContentText">{{msg.message}}</p>
-              </div>
-              <div class="msgConfigDiv">
-                <p>{{msg.dataTime}}</p>
-                <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
-              </div>
+        <div class="mesDivAll">
+          <div v-for="msg in this.sysMessageList" :key="msg.id" class="megDiv">
+            <div class="msgImg">
+              <i class="icon font_family icon-xitongxiaoxi" style="font-size:28px; background: white; color: #FFBB44;"></i>
+            </div>
+            <div class="msgContent">
+              <p class="msgContentTitle">{{msg.title}}</p>
+              <p class="msgContentText">{{msg.content}}</p>
+            </div>
+            <div class="msgConfigDiv">
+              <p>{{msg.createTime}}</p>
+              <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
             </div>
           </div>
-        </Col>
+        </div>
+          </Col>
       </div>
       <!--订单消息-->
-      <div style="height:250px;" v-if="'2' === this.rightKey">
+      <div v-if="'1' === this.searchData.type" style="height:250px;">
         <Col span="24">
-          <div class="mesDivAll">
-            <div class="megDiv" v-for="msg in this.messageList" :key="msg.id">
-              <div class="msgImg">
-                <i class="icon font_family icon-dingdanxiaoxi" style="font-size:28px; background: white; color: #418DF9;"></i>
-                <!-- <img src="@/assets/info-sys.png"> -->
-              </div>
-              <div class="msgContent">
-                <p class="msgContentTitle">{{msg.title}}</p>
-                <p class="msgContentText">{{msg.message}}</p>
-              </div>
-              <div class="msgConfigDiv">
-                <p>{{msg.dataTime}}</p>
-                <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
-              </div>
+        <div class="mesDivAll">
+          <div v-for="msg in this.orderMessageList" :key="msg.id" class="megDiv">
+            <div class="msgImg">
+              <i class="icon font_family icon-dingdanxiaoxi" style="font-size:28px; background: white; color: #418DF9;"></i>
+              <!-- <img src="@/assets/info-sys.png"> -->
+            </div>
+            <div class="msgContent">
+              <p class="msgContentTitle">{{msg.title}}</p>
+              <p class="msgContentText">{{msg.content}}</p>
+            </div>
+            <div class="msgConfigDiv">
+              <p>{{msg.createTime}}</p>
+              <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
             </div>
           </div>
-        </Col>
+        </div>
+          </Col>
       </div>
       <!--运输消息-->
-      <div style="height:250px;" v-if="'3' === this.rightKey">
+      <div v-if="'2' === this.searchData.type" style="height:250px;">
         <Col span="24">
-          <div class="mesDivAll">
-            <div class="megDiv" v-for="msg in this.messageList" :key="msg.id">
-              <div class="msgImg">
-                <i class="icon font_family icon-yunshuxiaoxi" style="font-size:28px; background: white; color: #00A4BD;"></i>
-                <!-- <img src="@/assets/info-sys.png"> -->
-              </div>
-              <div class="msgContent">
-                <p class="msgContentTitle">{{msg.title}}</p>
-                <p class="msgContentText">{{msg.message}}</p>
-              </div>
-              <div class="msgConfigDiv">
-                <p>{{msg.dataTime}}</p>
-                <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
-              </div>
+        <div class="mesDivAll">
+          <div v-for="msg in this.transportMessageList" :key="msg.id" class="megDiv">
+            <div class="msgImg">
+              <i class="icon font_family icon-yunshuxiaoxi" style="font-size:28px; background: white; color: #00A4BD;"></i>
+            </div>
+            <div class="msgContent">
+              <p class="msgContentTitle">{{msg.title}}</p>
+              <p class="msgContentText">{{msg.content}}</p>
+            </div>
+            <div class="msgConfigDiv">
+              <p>{{msg.createTime}}</p>
+              <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
             </div>
           </div>
-        </Col>
+        </div>
+          </Col>
       </div>
+    </div>
+    <Page
+      :total="40"
+      :current="searchData.page"
+      :page-size="searchData.pageSize"
+      size="small"
+      show-elevator
+      show-sizer
+      style="float:right"
+      @on-change="searchInfoData"
+      @on-page-size-change="chagePageSize"/>
     </Col>
   </div>
 </template>
 
 <script>
 import BasePage from '@/basic/BasePage'
+import Server from '@/libs/js/server'
 export default {
   name: 'info',
   components: {},
@@ -90,52 +103,85 @@ export default {
   data () {
     return {
       rightTitle: '系统消息',
-      rightKey: '1',
       menuList: [{
         name: '系统消息',
-        id: '1'
+        id: '0',
+        infoNum: ''
       }, {
         name: '订单消息',
-        id: '2'
+        id: '1',
+        infoNum: ''
       }, {
         name: '运输消息',
-        id: '3'
-      }],
-      messageList: [{
-        title: '系统升级通知',
-        message: '尊敬的客户您好。。撒娇傅雷家书链接发的垃圾受到法律的框架‘大法官书链接发的垃圾受到法律的框架‘大法官书链接发的垃圾受到法律的框架‘大法官垃圾的逻辑啊师傅阿斯顿激发距离首府',
-        id: '1',
-        dataTime: '2018-05-08 11:30:08'
-      }, {
-        title: '运大大活动邀请',
-        message: '尊敬的客户您好。。撒娇傅雷家书链接发的垃圾受到法律的框架‘大法官垃圾的逻辑啊师傅阿斯顿激发距离首府',
         id: '2',
-        dataTime: '2018-05-08 11:30:08'
-      }, {
-        title: '系统升级通知',
-        message: '尊敬的客户您好。。撒娇傅雷家书链接发的垃圾受到法律的框架‘大法官垃圾的逻辑啊师傅阿斯顿激发距离首府',
-        id: '3',
-        dataTime: '2018-05-08 11:30:08'
-      }, {
-        title: '运大大活动邀请',
-        message: '尊敬的客户您好。。撒娇傅雷家书链接发的垃圾受到法律的框架‘大法官垃圾的逻辑啊师傅阿斯顿激发距离首府',
-        id: '4',
-        dataTime: '2018-05-08 11:30:08'
-      }, {
-        title: '系统升级通知',
-        message: '尊敬的客户您好。。撒娇傅雷家书链接发的垃圾受到法律的框架‘大法官垃圾的逻辑啊师傅阿斯顿激发距离首府',
-        id: '5',
-        dataTime: '2018-05-08 11:30:08'
-      }]
+        infoNum: ''
+      }],
+      searchData: {
+        type: '0',
+        page: 1,
+        pageSize: 10
+      },
+      pageTotal: 40,
+      sysMessageList: [],
+      orderMessageList: [],
+      transportMessageList: []
     }
   },
+  mounted: function () {
+    this.getMenuList(this.searchData)
+    this.getMenuInfoNum()
+  },
   methods: {
+    getMenuInfoNum () {
+      Server({
+        url: 'message/num',
+        method: 'get'
+      }).then(({ data }) => {
+        data.data.sysNum = '25'
+        data.data.orderNum = '135'
+        data.data.carrierNum = '8'
+        this.menuList[0].infoNum = Number(data.data.sysNum) > 99 ? '99+' : data.data.sysNum
+        this.menuList[1].infoNum = Number(data.data.orderNum) > 99 ? '99+' : data.data.orderNum
+        this.menuList[2].infoNum = Number(data.data.carrierNum) > 99 ? '99+' : data.data.carrierNum
+      })
+    },
+    getMenuList (params) {
+      Server({
+        url: 'message/listPage',
+        method: 'get',
+        data: params
+      }).then(({ data }) => {
+        if (params.type === '1') {
+          this.orderMessageList = data.data.list
+        } else if (params.type === '2') {
+          this.transportMessageList = data.data.list
+        } else {
+          this.sysMessageList = data.data.list
+        }
+      })
+    },
     clickLeftMenu (id, menuName) {
-      this.rightTitle = menuName;
-      this.rightKey = id;
+      this.rightTitle = menuName
+      this.searchData.type = id
+      this.searchData.page = 1
+      this.getMenuList(this.searchData)
     },
     msgRemoveBtn (message) {
-      console.log(message);
+      console.log(message)
+      Server({
+        url: 'message/del',
+        method: 'post',
+        data: {id: message.id, type: message.type}
+      }).then(({ data }) => {
+      })
+    },
+    searchInfoData (page) {
+      console.log(page)
+      this.searchData.page = page
+    },
+    chagePageSize (pagenum) {
+      this.searchData.pageSize = pagenum
+      console.log(this.pageSize)
     }
   }
 }

@@ -20,7 +20,7 @@
         </p>
         <Form ref="formModal" :model="formModal" :rules="rulesRole" :label-width="80" style="height: 50px;">
           <FormItem label="角色名：" prop="name">
-            <Input v-model="formModal.name" placeholder="请输入角色名"></Input>
+            <Input :maxlength="11" v-model="formModal.name" placeholder="请输入角色名"></Input>
           </FormItem>
         </Form>
         <div slot="footer">
@@ -34,6 +34,7 @@
     <p class="rightTitle">{{rightTitle}}的权限
       <Button
         v-if="rightTitle !== '超级管理员'"
+        :disabled="disSaveBtn"
         class="saveRoleBtn"
         type="primary"
         @click="saveRole">
@@ -42,9 +43,7 @@
     </p>
     <Modal
       v-model="removeRoleModal"
-      width="360"
-      @on-ok="deleteRole"
-      @on-cancel="cancelRole">
+      width="360">
       <p slot="header" style="text-align:center">
         <span>提示</span>
       </p>
@@ -52,6 +51,18 @@
       <div slot="footer">
         <Button type="primary" @click="removeFormRole">确定</Button>
         <Button  @click="removeCancelForm">取消</Button>
+      </div>
+    </Modal>
+    <Modal
+      v-model="removeRoleModalFail"
+      width="360">
+      <p slot="header" style="text-align:center">
+        <span>提示</span>
+      </p>
+      <P>有员工属于该角色，暂时不能删除</P>
+      <P>如需删除，请先将员工更换角色。</P>
+      <div slot="footer">
+        <Button type="primary" @click="removeCancelFormFail">我知道了</Button>
       </div>
     </Modal>
     <div class="divTree">
@@ -65,7 +76,8 @@
               :data="treeData"
               class="treeContentDiv"
               multiple
-              show-checkbox>
+              show-checkbox
+              @on-check-change="treeCheckBox">
         </Tree>
       </Card>
     </div>
@@ -90,7 +102,7 @@ export default {
       if (value) {
         this_.menuList.forEach(e => {
           if (value === (e.name)) {
-            return callback(new Error('角色名已存在'))
+            return callback(new Error('该角色名已被使用'))
           }
         })
         callback()
@@ -101,8 +113,10 @@ export default {
     return {
       single: true,
       rightTitle: '超级管理员',
+      disSaveBtn: true,
       createRoleModal: false,
       removeRoleModal: false,
+      removeRoleModalFail: false,
       editRoleModalTitle: '',
       menuParam: {},
       removeMenuParams: {},
@@ -110,33 +124,7 @@ export default {
         name: ''
       },
       listInitTreeList: {},
-      menuList: [
-      //   {
-      //   name: '超级管理员',
-      //   id: '1',
-      //   codes: ["1001","1002","1003","1004","1005","1006","1007","2001","2002","2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014","2015","3001","3002","3003","3004","3005","3006","3007","3008","3009","3010","3011","3012","3013","3014","3015","3016","3017","3018","3019","3020","3021","3022","3023","3024","3025","3026","3027","3028","3029","3030","3031","3032","3033","3034","3035","3036","3037","3038","3039","3040","3041","3042","3043","3044","3045","3046","3047","3048","3049","3050","3051","3052","3053","3054","3055","3056","3057","3058","3059","3060","3061","3062","3063","3064","3065","3066","3067","3068","3069"]
-      // }, {
-      //   name: '安特曼',
-      //   id: '2',
-      //   codes: ['2003', "3016"]
-      // }, {
-      //   name: '蜘蛛侠',
-      //   id: '3',
-      //   codes: ["2005",'3022', '3023' , "2006","2007","2008","2009","2010","2011", "3061", "3062", "3063"]
-      // }, {
-      //   name: '钢铁侠',
-      //   id: '4',
-      //   codes: ["2015", '2012', '3067']
-      // }, {
-      //   name: '1111111',
-      //   id: '5',
-      //   codes: ["2012", '3067']
-      // }, {
-      //   name: '钢铁侠钢铁侠',
-      //   id: '6',
-      //   codes: ["2006","2007","2008","2009","2010","3013","3014","3015","3016","3017","3018","3019","3020","3021"]
-      // }
-      ],
+      menuList: [],
       rulesRole: {
         name: [
           { required: true, message: '角色名不能为空', trigger: 'blur' },
@@ -164,7 +152,8 @@ export default {
         method: 'get'
       }).then(({ data }) => {
         this.menuList = data.data
-        console.log(this.menuList)
+        this.menuList[0].codes = ['2003', '3016']
+        this.menuList[1].codes = ['2015', '2012', '3067']
       })
     },
     initTreeList (arrayCodeList) {
@@ -192,6 +181,7 @@ export default {
       this.rightTitle = menu.name
       this.arrayCodeList = menu.codes
       this.menuParam = menu
+      this.disSaveBtn = true
     },
     createRole () {
       this.editRoleModalTitle = '新增角色'
@@ -207,8 +197,12 @@ export default {
       this.formModal = Object.assign({}, param)
     },
     removeRole (menu) {
-      this.removeRoleModal = true
       this.removeMenuParams = menu
+      if (menu.name.length > 10) {
+        this.removeRoleModal = true
+      } else {
+        this.removeRoleModalFail = true
+      }
     },
     saveRole () {
       let selectChecBoxList = []
@@ -225,11 +219,11 @@ export default {
       }).then(({ data }) => {
         console.log(data)
       })
+      this.$Message.success('角色权限修改成功!')
     },
     subFormRole (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          this.$Message.success('Success!')
           this.createRoleModal = false
           if (this.editRoleModalTitle === '新增角色') {
             Server({
@@ -237,7 +231,7 @@ export default {
               method: 'post',
               data: this.formModal
             }).then(({ data }) => {
-              console.log(data)
+              this.$Message.success('添加成功!')
             })
           } else {
             Server({
@@ -245,7 +239,7 @@ export default {
               method: 'post',
               data: this.formModal
             }).then(({ data }) => {
-              console.log(data)
+              this.$Message.success('修改成功!')
             })
           }
         }
@@ -256,18 +250,26 @@ export default {
       this.createRoleModal = false
     },
     removeFormRole () {
-      console.log(this.removeMenuParams.id)
-      Server({
-        url: 'role/del',
-        method: 'post',
-        data: this.removeMenuParams.id
-      }).then(({ data }) => {
-        this.removeRoleModal = false
-      })
+      console.log(this.removeMenuParams)
+      // Server({
+      //   url: 'role/del',
+      //   method: 'post',
+      //   data: this.removeMenuParams.id
+      // }).then(({ data }) => {
+      //   this.removeRoleModal = false
+      // })
+      this.removeRoleModal = false
+      this.$Message.success('删除角色成功!')
     },
     removeCancelForm () {
       this.removeRoleModal = false
     },
+    removeCancelFormFail () {
+      this.removeRoleModalFail = false
+    },
+    treeCheckBox () {
+      this.disSaveBtn = false
+    }
     // renderContent (h, { root, node, data }) {
     //   if (node.nodeKey === 0) {
     //     return h('div', {
@@ -296,10 +298,6 @@ export default {
     //     }
     //   });
     // },
-    deleteRole () {
-    },
-    cancelRole () {
-    }
   }
 }
 

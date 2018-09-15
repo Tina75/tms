@@ -56,7 +56,7 @@
           </Select>
         </FormItem>
         <FormItem>
-          <p style="color:red; margin-top:-10px;">角色转移之后，您的角色将变成"管理员"</p>
+          <p style="color:red; margin-top:-10px;">提示：确认操作后，您将于接收该角色的人员互换角色</p>
         </FormItem>
       </Form>
       <div slot="footer" style="margin-top:40px;">
@@ -235,10 +235,9 @@ export default {
           }).then(({ data }) => {
             // this.data1 = data.data;
           })
-          this.$Message.success('Success!')
+          this.$Message.success('转移成功!')
           this.visibaleTransfer = false
         } else {
-          this.$Message.error('Fail!')
         }
       })
     },

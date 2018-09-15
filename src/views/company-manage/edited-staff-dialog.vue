@@ -27,6 +27,18 @@
         <Button  type="default"  @click="close">取消</Button>
       </div>
     </Modal>
+    <Modal
+      v-model="successModal"
+      width="360">
+      <p slot="header" style="text-align:center">
+        <span>提示</span>
+      </p>
+      <P>添加员工成功，员工的登录账号为手机号</P>
+      <P>初始登录密码已发送至员工手机</P>
+      <div slot="footer">
+        <Button type="primary" @click="close">我知道了</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -37,7 +49,25 @@ export default {
   name: 'editUser',
   mixins: [BaseDialog],
   data () {
+    var checkName = function (rule, value, callback) {
+      if (value.length < 2 || value.length > 10) {
+        return callback(new Error('姓名不能小于2个字且不能多于10个字'))
+      } else {
+        callback()
+      }
+    }
+    var checkPhone = function (rule, value, callback) {
+      if (value) {
+        if (!(/^1\d{10}$/.test(value))) {
+          return callback(new Error('手机号格式不正确'))
+        }
+        callback()
+      } else {
+        callback()
+      }
+    }
     return {
+      successModal: false,
       formModal: {
         name: '',
         phone: '',
@@ -55,10 +85,12 @@ export default {
       }],
       rulesModal: {
         name: [
-          { required: true, message: '请输入员工姓名', trigger: 'blur' }
+          { required: true, message: '请输入员工姓名', trigger: 'blur' },
+          { validator: checkName, trigger: 'blur' }
         ],
         phone: [
-          { required: true, message: '请输入手机号', trigger: 'blur' }
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { validator: checkPhone, trigger: 'blur' }
         ],
         roleId: [
           { required: true, message: '请选择角色', trigger: 'blur' }
@@ -87,6 +119,7 @@ export default {
             }).then(({ data }) => {
               console.log(data)
             })
+            this.successModal = true
           } else {
             Server({
               url: 'employee/update',
@@ -95,6 +128,7 @@ export default {
             }).then(({ data }) => {
               console.log(data)
             })
+            this.$Message.success('修改成功!')
           }
         }
       })

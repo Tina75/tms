@@ -182,21 +182,15 @@ export default {
       }
     }
     var checkPwd = function (rule, value, callback) {
-      if (value) {
-        if (/^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,16}$/.test(value)) {
-          return callback(new Error('只支持数字、大小写字母的组合，不支持特殊字符'))
-        }
-        callback()
+      if (!(/^[0-9A-Za-z].{5,16}$/.test(value))) {
+        return callback(new Error('只支持数字、大小写字母的组合，不支持特殊字符'))
       } else {
         callback()
       }
     }
     var checkPwdSame = function (rule, value, callback) {
-      if (value) {
-        if (value !== this_.formPwd.password) {
-          return callback(new Error('两次密码不一致，请重输'))
-        }
-        callback()
+      if (value !== this_.formPwd.password) {
+        return callback(new Error('两次密码不一致，请重输'))
       } else {
         callback()
       }
