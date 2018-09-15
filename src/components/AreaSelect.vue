@@ -31,6 +31,8 @@ export default {
     value (newValue) {
       if (newValue.join('') !== this.selected.join('') && newValue && typeof newValue === 'string') {
         this.selected = areas.getPathByCode(this.value).map((item) => item.code)
+      } else if (!newValue || newValue.length === 0) {
+        this.selected = []
       }
     }
   },
@@ -84,7 +86,8 @@ export default {
 
     // 格式化省市区
     formatArea (labels, selectedData) {
-      return Object.values(labels).join('')
+      let set = new Set(labels)
+      return Array.from(set).join('')
     }
   }
 }
