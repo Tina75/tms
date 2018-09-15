@@ -139,10 +139,13 @@ export default {
     getNewTagList  (list, newRoute) {
       const { name, path, query } = newRoute
       let newList = [...list]
-      if (newList.findIndex(item => item.path === path) >= 0) return newList
-      else {
+      // if (newList.findIndex(item => item.path === path) >= 0) {
+      if (newList.findIndex(item => this.routeEqual(item, newRoute)) >= 0) {
+        return newList
+      } else {
         // find当前tab位置并在其后面添加新tab
         const idx = newList.findIndex(item => item.path === this.$route.path)
+        // const idx = newList.findIndex(item => this.routeEqual(item, this.$route))
         newList.splice(idx + 1, 0, { name, path, query })
       }
       return newList

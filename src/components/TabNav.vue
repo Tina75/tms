@@ -25,7 +25,7 @@
             ref="tagsPageOpened"
             :key="`tag-nav-${index}`"
             :name="item.name"
-            :checked="item.path === value.path"
+            :checked="item.query?item.query.id===value.query.id:item.path === value.path"
             @on-close="handleClose(item)"
             @on-refresh="handleRefresh(item)"
             @click.native="handleClick(item)">
@@ -54,7 +54,22 @@ export default {
   },
   data () {
     return {
-      tagBodyLeft: 0
+      tagBodyLeft: 0,
+      currItem: {}
+    }
+  },
+  computed: {
+    isTabChecked: {
+      set (item) {
+        this.currItem = item
+      },
+      get () {
+        if (this.currItem.query) {
+          return this.currItem.path === this.value.path && this.currItem.query.id === this.value.query.id
+        } else {
+          return this.currItem.path === this.value.path
+        }
+      }
     }
   },
   methods: {

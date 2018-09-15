@@ -1,79 +1,117 @@
 <template>
-  <div class="login-con" @keydown.enter="handleSubmit">
-    <Card :bordered="false">
-      <p slot="title">
-        <Icon type="log-in"/>
-        忘记密码
-      </p>
-      <div class="form-con">
-        <Form ref="loginForm" :model="form" :rules="rules">
-          <FormItem prop="telephone">
-            <Input v-model="form.telephone" placeholder="请输入用户手机号">
-            <Icon slot="prefix" type="ios-contact" />
-            </Input>
+  <div class="form-body" @keydown.enter="handleSubmit">
+    <Card :bordered="false" style="height: 100%;">
+      <div class="form-title">忘记密码</div>
+      <div class="form-content">
+        <Form ref="loginForm" :model="form">
+
+          <FormItem prop="phone">
+            <Input v-model="form.phone" :maxlength="11" placeholder="请输入用户手机号"
+                   @on-blur="inputBlur('phone')" />
           </FormItem>
-          <FormItem prop="captcha">
+
+          <FormItem prop="captchaCode">
+            <Input v-model="form.captchaCode" class="form-captcha-input" type="text" placeholder="输入验证码"
+                   @on-blur="inputBlur('captchaCode')" />
+            <div class="form-captcha">
+              <img :src="captchaImage" class="form-captcha-img" >
+            </div>
+          </FormItem>
+
+          <FormItem prop="smsCode">
             <Row>
-              <Col :span="13">
-              <Input v-model="form.captcha" type="text" placeholder="请输入验证码">
-              <Icon slot="prefix" type="ios-chatbubbles" />
-                </Input>
-              </Col>
-              <Col :span="9" :offset="1">
-              <Button  :disabled="!captchaEnable">{{captchaEnable?`&nbsp;&nbsp;&nbsp;获取验证码&nbsp;&nbsp;&nbsp;`:intervalSeconds+'秒后可重试'}}</Button>
-                <!-- <Button :size="buttonSize" >90s后重新获取</Button> -->
-              </Col>
+              <i-col :span="14">
+                <Input v-model="form.smsCode" type="text" placeholder="请输入验证码"
+                       @on-blur="inputBlur('smsCode')" />
+              </i-col>
+              <i-col :span="9" :offset="1">
+                <Button :disabled="!captchaEnable"
+                        long
+                        @click="sendSMS('/user/forpswsms')">{{captchaEnable?`&nbsp;&nbsp;&nbsp;获取验证码&nbsp;&nbsp;&nbsp;`:intervalSeconds+'秒后可重试'}}</Button>
+              </i-col>
             </Row>
           </FormItem>
-          <FormItem>
-            <i-button type="primary" long>确定</i-button>
+
+          <FormItem prop="password">
+            <Input v-model="form.password" :maxlength="16" type="password" placeholder="密码"
+                   @on-blur="inputBlurWithPw" />
           </FormItem>
-          <FormItem style="text-align: right;">
-            <router-link to="/" style="margin-right: 20px;">用户登录</router-link>
-            <router-link to="/login/sign-up">用户注册</router-link>
+
+          <FormItem prop="confirmPassword">
+            <Input v-model="form.confirmPassword" :maxlength="16" type="password" placeholder="确认密码"
+                   @on-blur="inputBlur('confirmPassword')" />
+          </FormItem>
+
+          <FormItem>
+            <Button class="form-button" type="primary" long @click="handleSubmit">确定</Button>
           </FormItem>
         </Form>
-        <p class="login-tip">运达达运输管理系统</p>
       </div>
     </Card>
   </div>
 </template>
 
 <script>
+import Server from '@/libs/js/server'
+import mixin from './mixin'
+
 export default {
   name: 'FindBack',
+  mixins: [ mixin ],
   metaInfo: {
     title: '忘记密码'
   },
   data () {
     return {
-      captchaEnable: true,
-      timer: null,
-      intervalSeconds: 90,
       form: {
-        telephone: '',
-        captcha: ''
-      },
-      rules: {
-        telephone: [
-          { required: true, message: '用户名不能为空', trigger: 'blur' },
-          { max: 11, min: 11, trigger: 'blur', message: '手机格式有误' }
-        ],
-        captcha: [
-          { required: true, message: '验证码不能为空', trigger: 'blur' },
-          { max: 6, min: 6, trigger: 'blur', message: '验证码格式有误' }
-        ]
+        phone: '',
+        captchaCode: '',
+        smsCode: '',
+        password: '',
+        confirmPassword: ''
       }
     }
   },
+  created () {
+    this.getCaptcha()
+  },
   methods: {
+    // 提交
     handleSubmit () {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.login()
+      for (let key in this.form) {
+        if (key !== 'password') {
+          if (!this.validate(key)) return
+        } else {
+          if (!this.inputBlurWithPw(key)) return
         }
-      })
+      }
+
+      Server({
+        url: '/user/forgetpsw',
+        method: 'post',
+        data: this.form
+      }).then(res => {
+        this.$Message.success('密码设置成功')
+        setTimeout(() => {
+          this.$router.push('/')
+        }, 2000)
+      }).catch(err => console.error(err))
     }
   }
 }
 </script>
+
+<style lang="stylus" scoped>
+  @import "./login.styl"
+
+  .form-body
+    width 800px
+    height 520px
+    left 50%
+    top 50%
+    transform translate(-50%, -50%)
+
+    .form-content
+      width 300px
+      margin 24px auto
+</style>

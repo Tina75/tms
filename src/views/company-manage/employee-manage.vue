@@ -1,26 +1,26 @@
 <template>
   <div>
     <Col span="5">
-    <Menu :theme="theme" class="leftMenu">
+    <Menu active-name="超级管理员" class="leftMenu">
       <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:50px;">
         <Button type="primary" class="centerBtn" @click="createRole">新增角色</Button>
       </div>
       <div style="height:500px; overflow-y:auto; padding-top: 20px;">
-        <MenuItem v-for="menu in list1" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.name)">
+        <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" class="menu" @click.native="clickLeftMenu(menu)">
         <p class="menuTitle">{{menu.name}}</p>
         <span v-if="menu.name !== '超级管理员'" class="configBtnItem">
-          <span class="configBtn" @click="editRole(menu.name)">修改</span>
-          <span type="text" class="configBtn" @click="removeRole(menu.name)">删除</span>
+          <span class="configBtn" @click="editRole(menu)">修改</span>
+          <span type="text" class="configBtn" @click="removeRole(menu)">删除</span>
         </span>
-          </MenuItem>
+        </MenuItem>
       </div>
       <Modal v-model="createRoleModal" width="360">
         <p slot="header" style="text-align:center">
           <span>{{editRoleModalTitle}}</span>
         </p>
         <Form ref="formModal" :model="formModal" :rules="rulesRole" :label-width="80" style="height: 50px;">
-          <FormItem label="角色名：" prop="roleName">
-            <Input v-model="formModal.roleName" placeholder="请输入角色名"></Input>
+          <FormItem label="角色名：" prop="name">
+            <Input v-model="formModal.name" placeholder="请输入角色名"></Input>
           </FormItem>
         </Form>
         <div slot="footer">
@@ -33,6 +33,7 @@
     <Col span="18">
     <p class="rightTitle">{{rightTitle}}的权限
       <Button
+        v-if="rightTitle !== '超级管理员'"
         class="saveRoleBtn"
         type="primary"
         @click="saveRole">
@@ -48,14 +49,23 @@
         <span>提示</span>
       </p>
       <P>确定删除'{{rightTitle}}'?</P>
+      <div slot="footer">
+        <Button type="primary" @click="removeFormRole">确定</Button>
+        <Button  @click="removeCancelForm">取消</Button>
+      </div>
     </Modal>
     <div class="divTree">
       <Card v-for="treeData in listInitTreeList" :key="treeData.index" dis-hover class="cardTreeItem">
-        <p slot="title">{{treeData[0].title}}</p>
-        <Tree
-          ref="roleTree"
-          :data="treeData"
-          show-checkbox>
+        <p slot="title">
+          <!-- <Checkbox v-model="treeData[0].checked" @on-change="checkTitleBox(treeData[0].key)" style="margin-top: -5px;"></Checkbox> -->
+          <span>{{treeData[0].title}}</span>
+        </p>
+        <Tree :ref="treeData[0].key"
+              :expand="false"
+              :data="treeData"
+              class="treeContentDiv"
+              multiple
+              show-checkbox>
         </Tree>
       </Card>
     </div>
@@ -66,6 +76,8 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import roleTreeList from './roleTreeList.js'
+import Server from '@/libs/js/server'
+import _ from 'lodash'
 export default {
   name: 'employee-manage',
   mixins: [ BasePage ],
@@ -76,90 +88,214 @@ export default {
     let this_ = this
     var hasRoleName = function (rule, value, callback) {
       if (value) {
-        this_.list1.forEach(e => {
+        this_.menuList.forEach(e => {
           if (value === (e.name)) {
             return callback(new Error('角色名已存在'))
           }
         })
+        callback()
       } else {
         callback()
       }
     }
     return {
-      theme: 'light',
+      single: true,
       rightTitle: '超级管理员',
       createRoleModal: false,
       removeRoleModal: false,
       editRoleModalTitle: '',
+      menuParam: {},
+      removeMenuParams: {},
       formModal: {
-        roleName: ''
+        name: ''
       },
       listInitTreeList: {},
-      list1: [{
-        name: '超级管理员',
-        id: '1'
-      }, {
-        name: '安特曼',
-        id: '2'
-      }, {
-        name: '蜘蛛侠',
-        id: '3'
-      }, {
-        name: '钢铁侠',
-        id: '4'
-      }, {
-        name: '1111111',
-        id: '5'
-      }, {
-        name: '钢铁侠钢铁侠钢铁侠钢铁侠',
-        id: '6'
-      }],
+      menuList: [
+      //   {
+      //   name: '超级管理员',
+      //   id: '1',
+      //   codes: ["1001","1002","1003","1004","1005","1006","1007","2001","2002","2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014","2015","3001","3002","3003","3004","3005","3006","3007","3008","3009","3010","3011","3012","3013","3014","3015","3016","3017","3018","3019","3020","3021","3022","3023","3024","3025","3026","3027","3028","3029","3030","3031","3032","3033","3034","3035","3036","3037","3038","3039","3040","3041","3042","3043","3044","3045","3046","3047","3048","3049","3050","3051","3052","3053","3054","3055","3056","3057","3058","3059","3060","3061","3062","3063","3064","3065","3066","3067","3068","3069"]
+      // }, {
+      //   name: '安特曼',
+      //   id: '2',
+      //   codes: ['2003', "3016"]
+      // }, {
+      //   name: '蜘蛛侠',
+      //   id: '3',
+      //   codes: ["2005",'3022', '3023' , "2006","2007","2008","2009","2010","2011", "3061", "3062", "3063"]
+      // }, {
+      //   name: '钢铁侠',
+      //   id: '4',
+      //   codes: ["2015", '2012', '3067']
+      // }, {
+      //   name: '1111111',
+      //   id: '5',
+      //   codes: ["2012", '3067']
+      // }, {
+      //   name: '钢铁侠钢铁侠',
+      //   id: '6',
+      //   codes: ["2006","2007","2008","2009","2010","3013","3014","3015","3016","3017","3018","3019","3020","3021"]
+      // }
+      ],
       rulesRole: {
-        roleName: [
+        name: [
           { required: true, message: '角色名不能为空', trigger: 'blur' },
           { validator: hasRoleName, trigger: 'blur' },
           { type: 'string', max: 10, message: '角色名不能超过10个字', trigger: 'change' }
         ]
-      }
+      },
+      arrayCodeList: []
     }
   },
-  mounted: function () {
-    this.listInitTreeList = Object.assign({}, roleTreeList)
+  watch: {
+    arrayCodeList (newList) {
+      this.initTreeList(newList)
+    }
+  },
+  created () {
+    this.arrayCodeList = ['1001', '1002', '1003', '1004', '1005', '1006', '1007', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '3001', '3002', '3003', '3004', '3005', '3006', '3007', '3008', '3009', '3010', '3011', '3012', '3013', '3014', '3015', '3016', '3017', '3018', '3019', '3020', '3021', '3022', '3023', '3024', '3025', '3026', '3027', '3028', '3029', '3030', '3031', '3032', '3033', '3034', '3035', '3036', '3037', '3038', '3039', '3040', '3041', '3042', '3043', '3044', '3045', '3046', '3047', '3048', '3049', '3050', '3051', '3052', '3053', '3054', '3055', '3056', '3057', '3058', '3059', '3060', '3061', '3062', '3063', '3064', '3065', '3066', '3067', '3068', '3069']
+    this.initTreeList(this.arrayCodeList)
+    this.getMenuList()
   },
   methods: {
+    getMenuList () {
+      Server({
+        url: 'role/list',
+        method: 'get'
+      }).then(({ data }) => {
+        this.menuList = data.data
+        console.log(this.menuList)
+      })
+    },
+    initTreeList (arrayCodeList) {
+      const treeList = _.cloneDeep(roleTreeList)
+      for (let key in treeList) {
+        this.getTreeList(arrayCodeList, treeList[key][0].children)
+      }
+      this.listInitTreeList = treeList
+    },
+    getTreeList (arrayCodeList, treeData) {
+      const vm = this
+      treeData.forEach(element => {
+        for (let index = 0; index < arrayCodeList.length; index++) {
+          if (arrayCodeList.includes(element.code)) {
+            if (element.children) {
+              vm.getTreeList(arrayCodeList, element.children)
+            } else {
+              element.checked = true
+            }
+          }
+        }
+      })
+    },
     clickLeftMenu (menu) {
-      this.rightTitle = menu
+      this.rightTitle = menu.name
+      this.arrayCodeList = menu.codes
+      this.menuParam = menu
     },
     createRole () {
       this.editRoleModalTitle = '新增角色'
       this.createRoleModal = true
-      this.formModal.roleName = ''
+      this.formModal = {}
     },
-    editRole (name) {
+    editRole (menu) {
       this.editRoleModalTitle = '修改角色'
       this.createRoleModal = true
-      this.formModal.roleName = name
+      let param = {}
+      param.id = menu.id
+      param.name = menu.name
+      this.formModal = Object.assign({}, param)
     },
-    removeRole () {
+    removeRole (menu) {
       this.removeRoleModal = true
+      this.removeMenuParams = menu
     },
     saveRole () {
-      console.log(this.$refs.roleTree.getCheckedNodes())
+      let selectChecBoxList = []
+      for (let key in this.listInitTreeList) {
+        this.$refs[key][0].getCheckedNodes().forEach(node => {
+          selectChecBoxList.push(node.code)
+        })
+      }
+      this.menuParam.codes = selectChecBoxList
+      Server({
+        url: 'role/update',
+        method: 'post',
+        data: this.menuParam
+      }).then(({ data }) => {
+        console.log(data)
+      })
     },
     subFormRole (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.$Message.success('Success!')
           this.createRoleModal = false
-        } else {
-          this.$Message.error('Fail!')
+          if (this.editRoleModalTitle === '新增角色') {
+            Server({
+              url: 'role/add',
+              method: 'post',
+              data: this.formModal
+            }).then(({ data }) => {
+              console.log(data)
+            })
+          } else {
+            Server({
+              url: 'role/updateName',
+              method: 'post',
+              data: this.formModal
+            }).then(({ data }) => {
+              console.log(data)
+            })
+          }
         }
       })
     },
     cancelFormRole () {
-      this.roleName = ''
+      this.name = ''
       this.createRoleModal = false
     },
+    removeFormRole () {
+      console.log(this.removeMenuParams.id)
+      Server({
+        url: 'role/del',
+        method: 'post',
+        data: this.removeMenuParams.id
+      }).then(({ data }) => {
+        this.removeRoleModal = false
+      })
+    },
+    removeCancelForm () {
+      this.removeRoleModal = false
+    },
+    // renderContent (h, { root, node, data }) {
+    //   if (node.nodeKey === 0) {
+    //     return h('div', {
+    //       style: {
+    //         position: 'absolute',
+    //         left: '60px',
+    //         top: '10px'
+    //       }
+    //     }, data.title)
+    //   } else {
+    //     return h('span', [
+    //       h('span', data.title),
+    //     ]);
+    //   }
+    // },
+    // checkTitleBox (treeName) {
+    //   let flag = this.$refs[treeName][0].data[0].checked;
+    //   this.checkTreeAllBox(this.$refs[treeName][0].data, flag)
+    // },
+    // checkTreeAllBox (node, flag) {
+    //   const vm = this
+    //   node.forEach(element => {
+    //     element.checked = !flag;
+    //     if (element.children) {
+    //       vm.checkTreeAllBox(element.children, flag)
+    //     }
+    //   });
+    // },
     deleteRole () {
     },
     cancelRole () {
@@ -171,6 +307,9 @@ export default {
 <style lang='stylus' scoped>
 .leftMenu
   min-height: 600px;
+.menu:hover
+  .configBtnItem
+    display: block
   .menuTitle
     white-space: nowrap;
     overflow: hidden;
@@ -188,8 +327,12 @@ export default {
     height: 400px;
     float: left;
     margin: 5px;
-    overflow-y:auto;
-    overflow-x:auto;
+    .treeContentDiv
+      width: 282px;
+      height: 330px;
+      margin-top: -15px;
+      overflow-y:auto;
+      overflow-x:auto;
 .saveRoleBtn
   float: right;
 .centerBtn
@@ -203,10 +346,9 @@ export default {
 .configBtnItem
     float: right;
     margin-top: -20px;
+    display: none;
   .configBtn
     color: #00A4BD;
     font-size: 12px;
     margin-left: 10px;
->>> .ivu-card-head
-  background: rgba(248,248,248,1);
 </style>

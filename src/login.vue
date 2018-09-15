@@ -1,6 +1,16 @@
 <template>
   <div id="app" class="login">
-    <router-view />
+    <header class="login-header">
+
+    </header>
+
+    <div class="login-body">
+      <router-view />
+    </div>
+
+    <footer class="login-footer">
+      版权所有·智加云 Copyright &#169; 2018 5566.com All Rights Reserved
+    </footer>
   </div>
 </template>
 
@@ -10,30 +20,26 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
   .login
+    position relative
     width 100%
     height 100%
-    background-image url('https://file.iviewui.com/iview-admin/login_bg.jpg')
-    background-size cover
-    background-position center
-    position relative
-    &-con
-      position absolute
-      right 160px
-      top 50%
-      transform translateY(-60%)
-      width 300px
-      &-header
-        font-size 16px
-        font-weight 300
-        text-align center
-        padding 30px 0
-      .form-con
-        padding 10px 0 0
-      .login-tip
-        font-size 10px
-        text-align center
-        color #c3c3c3
+    background #252A2F
 
+    &-header
+      height 88px
+      border-bottom 1px solid #3A424B
+
+    &-footer
+      height 128px
+      line-height 128px
+      color #FFFFFF
+      text-align center
+      background #2E3338
+
+    &-body
+      position relative
+      min-height 550px
+      height calc( 100% - 216px )
 </style>

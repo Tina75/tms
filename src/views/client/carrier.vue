@@ -1,15 +1,353 @@
 <template>
-  <div class="container">
-    承运商管理
+  <div>
+    <div class="header">
+      <div class="left">
+        <Button type="primary" @click="modaladd">新增</Button>
+      </div>
+      <div class="right">
+        <template>
+          <Select v-model="selectStatus"  style="width:120px;margin-right: 11px">
+            <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          </Select>
+        </template>
+        <Input v-model="keyword" :maxlength="15" placeholder="请输入" search style="width: 200px"  @on-search="searchList" />
+      </div>
+    </div>
+    <div>
+      <template>
+        <Table :columns="columns1" :data="data1"></Table>
+      </template>
+    </div>
+    <div class="footer">
+      <template>
+        <Page :total="totalCount"
+              :current.sync="pageNo" :page-size-opts="pageArray"
+              size="small"
+              show-sizer
+              show-elevator show-total @on-change="handleChangePage"/>
+      </template>
+    </div>
   </div>
 </template>
 
 <script>
+import { carrierList, carrierDelete, CODE, carrierDetailsForDriver, carrierDetailsForCompany } from './client'
+import BasePage from '@/basic/BasePage'
 export default {
-  name: 'carrier'
+  name: 'carrier',
+  mixins: [ BasePage ],
+  data () {
+    return {
+      selectStatus: 1,
+      selectList: [
+        {
+          value: 1,
+          label: '承运商名称'
+        },
+        {
+          value: 2,
+          label: '承运商联系人'
+        }
+      ],
+      keyword: '',
+      totalCount: 0, // 总条数
+      pageArray: [10, 20, 50, 100],
+      pageNo: 1,
+      pageSize: 10,
+      columns1: [
+        {
+          title: '操作',
+          key: 'id',
+          // width: 150,
+          // align: 'left',
+          render: (h, params) => {
+            return h('div', [
+              h('span', {
+                style: {
+                  marginRight: '12px',
+                  color: '#00A4BD',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    let _this = this
+                    if (params.row.carrierType === 1) {
+                      // debugger
+                      this._carrierDetailsForDriver(params.row.carrierId, () => {
+                        _this.openDialog({
+                          name: 'client/dialog/carrier',
+                          data: {
+                            title: '修改承运商',
+                            flag: 2, // 编辑
+                            id: params.row.carrierId,
+                            validate: {
+                              type: {
+                                selectStatus: params.row.carrierType
+                              },
+                              driver: { // 1 个体司机
+                                driverName: _this.driver.driverName,
+                                driverPhone: _this.driver.driverName,
+                                carNO: _this.driver.carNO,
+                                carType: _this.driver.carType,
+                                carLength: _this.driver.carLength,
+                                shippingWeight: _this.driver.shippingWeight,
+                                shippingVolume: _this.driver.shippingVolume,
+                                remark: _this.driver.remark,
+                                payType: _this.driver.payType
+                              }
+                            }
+                          },
+                          methods: {
+                            ok () {
+                              _this.searchList()
+                            }
+                          }
+                        })
+                      })
+                    } else {
+                      this._carrierDetailsForCompany(params.row.carrierId, () => {
+                        _this.openDialog({
+                          name: 'client/dialog/carrier',
+                          data: {
+                            title: '修改承运商',
+                            flag: 2, // 编辑
+                            id: params.row.carrierId,
+                            validate: {
+                              type: {
+                                selectStatus: params.row.carrierType
+                              },
+                              company: {
+                                carrierName: _this.company.carrierName,
+                                carrierPrincipal: _this.company.carrierPrincipal,
+                                carrierPhone: _this.company.carrierPhone,
+                                payType: _this.company.payType,
+                                remark: _this.company.remark
+                              }
+                            }
+                          },
+                          methods: {
+                            ok () {
+                              _this.searchList()
+                            }
+                          }
+                        })
+                      })
+                    }
+                  }
+                }
+              }, '修改'),
+              h('span', {
+                style: {
+                  color: '#00A4BD',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    carrierDelete({
+                      carrierId: params.row.carrierId
+                    }).then(res => {
+                      if (res.data.code === CODE) {
+                        this.$Message.success(res.data.msg)
+                        this.searchList() // 刷新页面
+                      } else {
+                        this.$Message.error(res.data.msg)
+                      }
+                    })
+                  }
+                }
+              }, '删除')
+            ])
+          }
+        },
+        {
+          title: '承运商名称',
+          // key: 'name',
+          render: (h, params) => {
+            return h('div', [
+              h('span', {
+                style: {
+                  color: '#418DF9',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    this.$router.push({ path: '/client/carrier-info', query: { id: params.row.carrierId, carrierType: params.row.carrierType }
+                    })
+                  }
+                }
+              }, params.row.carrierName)
+            ])
+          }
+        },
+        {
+          title: '类型',
+          key: 'carrierType',
+          render: (h, params) => {
+            let text = ''
+            if (params.row.carrierType === 1) {
+              text = '个体司机'
+            } else {
+              text = '运输公司'
+            }
+            return h('div', {}, text)
+          }
+        },
+        {
+          title: '负责人',
+          key: 'carrierPrincipal'
+        },
+        {
+          title: '联系电话',
+          key: 'carrierPhone'
+        },
+        {
+          title: '司机数',
+          key: 'driverCnt'
+        },
+        {
+          title: '车辆数',
+          key: 'carCnt'
+        },
+        {
+          title: '结算方式',
+          key: 'payType',
+          render: (h, params) => {
+            let text = ''
+            if (params.row.payType === 1) {
+              text = '现付'
+            } else if (params.row.payType === 2) {
+              text = '到付'
+            } else if (params.row.payType === 3) {
+              text = '回单付'
+            } else if (params.row.payType === 4) {
+              text = '月结'
+            } else if (params.row.payType === 5) {
+              text = '预付+到付'
+            } else if (params.row.payType === 6) {
+              text = ' 预付+回付'
+            } else if (params.row.payType === 7) {
+              text = '到付+回付'
+            } else if (params.row.payType === 8) {
+              text = '三段付'
+            }
+            return h('div', {}, text)
+          }
+        },
+        {
+          title: '创建时间',
+          key: 'createTimeLong',
+          sortable: true
+        }
+      ],
+      data1: [],
+      driver: { // 1 个体司机
+        driverName: '',
+        driverPhone: '',
+        carNO: '',
+        carType: '',
+        carLength: '',
+        shippingWeight: '',
+        shippingVolume: '',
+        remark: '',
+        payType: ''
+      },
+      company: {
+        carrierName: '',
+        carrierPrincipal: '',
+        carrierPhone: '',
+        payType: '',
+        remark: ''
+      }
+    }
+  },
+  methods: {
+    searchList () {
+      let data = {
+        pageNo: this.pageNo,
+        pageSize: this.pageSize,
+        type: this.selectStatus,
+        keyword: this.keyword
+      }
+      carrierList(data).then(res => {
+        if (res.data.code === CODE) {
+          console.log(res)
+          this.data1 = res.data.data.carrierList
+          this.totalCount = res.data.data.total
+        } else {
+          this.$Message.error(res.data.msg)
+        }
+      })
+    },
+    modaladd () {
+      var _this = this
+      this.openDialog({
+        name: 'client/dialog/carrier',
+        data: {
+          title: '新增承运商',
+          flag: 1 // 新增
+        },
+        methods: {
+          ok () {
+            _this.searchList() // 刷新页面
+          }
+        }
+      })
+    },
+    handleChangePage (pageNo) {
+      // 重新组装数据，生成查询参数
+      this.pageNo = pageNo
+      this.searchList()
+    },
+    _carrierDetailsForCompany (carrierId, fn) {
+      let data = {
+        carrierId: carrierId
+      }
+      carrierDetailsForCompany(data).then(res => {
+        console.log(res)
+        if (res.data.code === CODE) {
+          this.company = {
+            carrierName: res.data.data.carrierInfo.carrierName,
+            carrierPrincipal: res.data.data.carrierInfo.carrierPrincipal,
+            carrierPhone: res.data.data.carrierInfo.carrierPhone,
+            payType: res.data.data.carrierInfo.payType,
+            remark: res.data.data.carrierInfo.remark
+          }
+          fn()
+        }
+      })
+    },
+    _carrierDetailsForDriver (carrierId, fn) {
+      let data = {
+        carrierId: carrierId
+      }
+      carrierDetailsForDriver(data).then(res => {
+        if (res.data.code === CODE) {
+          this.driver = {
+            driverName: res.data.data.driverName,
+            driverPhone: res.data.data.driverPhone,
+            carNO: res.data.data.carNO,
+            carType: res.data.data.carType,
+            carLength: res.data.data.carLength,
+            shippingWeight: res.data.data.shippingWeight,
+            shippingVolume: res.data.data.shippingVolume,
+            remark: res.data.data.remark,
+            payType: res.data.data.payType
+          }
+          fn()
+        }
+      })
+    }
+  }
 }
 </script>
 
 <style scoped lang="stylus">
-  @import "../../libs/css/client.styl"
+  .header
+    display flex
+    justify-content space-between
+    margin-bottom 14px
+  .footer
+    margin-top 22px
+    display flex
+    justify-content flex-end
 </style>
