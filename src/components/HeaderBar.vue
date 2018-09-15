@@ -5,13 +5,16 @@
     </a>
     <div class="header-bar-avator-dropdown">
       <Dropdown class="header-bar-avator-dropdown-notify">
-        <Badge :count="100" type="primary">
-          <Icon type="ios-notifications" size="30" color="#fff"></Icon>
-        </Badge>
-        <DropdownMenu slot="list">
+        <Poptip trigger="hover" title="消息中心" content="暂无系统消息">
+          <Badge :count="0" type="primary">
+            <Icon type="ios-notifications" size="30" color="#fff"></Icon>
+          </Badge>
+
+        </Poptip>
+        <!-- <DropdownMenu slot="list">
           <DropdownItem name="1" >通知</DropdownItem>
           <DropdownItem name="2" >订单</DropdownItem>
-        </DropdownMenu>
+        </DropdownMenu> -->
       </Dropdown>
       <Dropdown  @on-click="handleClick">
         <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" size="small"></avatar>
@@ -21,7 +24,7 @@
           <DropdownItem name="logout" >退出登录</DropdownItem>
         </DropdownMenu>
       </Dropdown>
-    </div>
+    </row></div>
   </div>
 </template>
 
