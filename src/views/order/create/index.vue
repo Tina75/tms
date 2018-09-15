@@ -33,12 +33,12 @@
       </Col>
       <Col span="6" prop="deliveryTime">
       <FormItem label="发货时间">
-        <DatePicker v-model="orderForm.deliveryTime" :time-picker-options="{steps: [1, 60]}" format="yyyy-MM-dd HH:mm" type="datetime"></DatePicker>
+        <DatePicker v-model="orderForm.deliveryTime" :time-picker-options="{steps: [1, 60, 60]}" format="yyyy-MM-dd HH:mm前" type="datetime"></DatePicker>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="到货时间" prop="arriveTime">
-        <DatePicker v-model="orderForm.arriveTime" :time-picker-options="{steps: [1, 60]}" format="yyyy-MM-dd HH:mm" type="datetime"></DatePicker>
+        <DatePicker v-model="orderForm.arriveTime" :time-picker-options="{steps: [1, 60, 60]}" format="yyyy-MM-dd HH:mm前" type="datetime"></DatePicker>
       </FormItem>
       </Col>
     </Row>
