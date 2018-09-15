@@ -20,15 +20,15 @@
 
           <FormItem prop="smsCode">
             <Row>
-              <Col :span="14">
-              <Input v-model="form.smsCode" type="text" placeholder="请输入验证码"
-                     @on-blur="inputBlur('smsCode')" />
-              </Col>
-              <Col :span="9" :offset="1">
-              <Button :disabled="!captchaEnable"
-                      long
-                      @click="sendSMS('/user/forpswsms')">{{captchaEnable?`&nbsp;&nbsp;&nbsp;获取验证码&nbsp;&nbsp;&nbsp;`:intervalSeconds+'秒后可重试'}}</Button>
-              </Col>
+              <i-col :span="14">
+                <Input v-model="form.smsCode" type="text" placeholder="请输入验证码"
+                       @on-blur="inputBlur('smsCode')" />
+              </i-col>
+              <i-col :span="9" :offset="1">
+                <Button :disabled="!captchaEnable"
+                        long
+                        @click="sendSMS('/user/forpswsms')">{{captchaEnable?`&nbsp;&nbsp;&nbsp;获取验证码&nbsp;&nbsp;&nbsp;`:intervalSeconds+'秒后可重试'}}</Button>
+              </i-col>
             </Row>
           </FormItem>
 
