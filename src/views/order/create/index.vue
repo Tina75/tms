@@ -34,12 +34,12 @@
       </Col>
       <Col span="6" prop="deliveryTime">
       <FormItem label="发货时间">
-        <DatePicker v-model="orderForm.deliveryTime" :time-picker-options="{steps: [1, 60, 60]}" format="yyyy-MM-dd HH:mm前" type="datetime"></DatePicker>
+        <DatePicker v-model="orderForm.deliveryTime" :time-picker-options="{steps: [1, 60, 60]}" format="yyyy-MM-dd HH:mm前" type="datetime" style="width:100%"></DatePicker>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="到货时间" prop="arriveTime">
-        <DatePicker v-model="orderForm.arriveTime" :time-picker-options="{steps: [1, 60, 60]}" format="yyyy-MM-dd HH:mm前" type="datetime"></DatePicker>
+        <DatePicker v-model="orderForm.arriveTime" :time-picker-options="{steps: [1, 60, 60]}" format="yyyy-MM-dd HH:mm前" type="datetime" style="width:100%"></DatePicker>
       </FormItem>
       </Col>
     </Row>
@@ -121,12 +121,12 @@
       <Col span="6">
       <FormItem label="运输费用" prop="freightFee">
         <Row>
-          <Col span="16">
+          <Col span="18">
           <TagNumberInput :min="0" v-model="orderForm.freightFee" :parser="handleParseFloat">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           </Col>
-          <Col span="8">
+          <Col span="6">
           <span @click="showCounter">
             <Icon type="ios-calculator" size="26" color="#00a4bd"></Icon>
           </span>

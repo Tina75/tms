@@ -13,6 +13,7 @@
     >
       <Input
         v-model="currentValue"
+        :placeholder="placeholder"
         :maxlength="maxlength"
         icon="ios-arrow-down"
         @on-change="handleChange"
