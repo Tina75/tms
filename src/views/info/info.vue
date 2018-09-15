@@ -1,79 +1,79 @@
 <template>
   <div class="temAll">
     <Col span="3">
-      <Menu active-name="系统消息" class="leftMenu" style="width: 150px;  background: rgba(248,248,248,1);">
-        <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
-          <p class="menuTitle">{{menu.name}}</p>
+    <Menu active-name="系统消息" class="leftMenu" style="width: 150px;  background: rgba(248,248,248,1);">
+      <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
+      <p class="menuTitle">{{menu.name}}</p>
         </MenuItem>
-      </Menu>
+    </Menu>
     </Col>
     <Col span="18">
-      <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;">
-        <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute;"></span>
-        <span style="margin-left:25px; font-size: 16px;">{{rightTitle}}</span>
-      </div>
-      <!--系统消息-->
-      <div style="height:250px;" v-if="'1' === this.rightKey">
-        <Col span="24">
-          <div class="mesDivAll">
-            <div class="megDiv" v-for="msg in this.messageList" :key="msg.id">
-              <div class="msgImg">
-                <i class="icon font_family icon-xitongxiaoxi" style="font-size:28px; background: white; color: #FFBB44;"></i>
-              </div>
-              <div class="msgContent">
-                <p class="msgContentTitle">{{msg.title}}</p>
-                <p class="msgContentText">{{msg.message}}</p>
-              </div>
-              <div class="msgConfigDiv">
-                <p>{{msg.dataTime}}</p>
-                <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
-              </div>
-            </div>
+    <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;">
+      <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute;"></span>
+      <span style="margin-left:25px; font-size: 16px;">{{rightTitle}}</span>
+    </div>
+    <!--系统消息-->
+    <div v-if="'1' === this.rightKey" style="height:250px;">
+      <Col span="24">
+      <div class="mesDivAll">
+        <div v-for="msg in this.messageList" :key="msg.id" class="megDiv">
+          <div class="msgImg">
+            <i class="icon font_family icon-xitongxiaoxi" style="font-size:28px; background: white; color: #FFBB44;"></i>
           </div>
-        </Col>
-      </div>
-      <!--订单消息-->
-      <div style="height:250px;" v-if="'2' === this.rightKey">
-        <Col span="24">
-          <div class="mesDivAll">
-            <div class="megDiv" v-for="msg in this.messageList" :key="msg.id">
-              <div class="msgImg">
-                <i class="icon font_family icon-dingdanxiaoxi" style="font-size:28px; background: white; color: #418DF9;"></i>
-                <!-- <img src="@/assets/info-sys.png"> -->
-              </div>
-              <div class="msgContent">
-                <p class="msgContentTitle">{{msg.title}}</p>
-                <p class="msgContentText">{{msg.message}}</p>
-              </div>
-              <div class="msgConfigDiv">
-                <p>{{msg.dataTime}}</p>
-                <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
-              </div>
-            </div>
+          <div class="msgContent">
+            <p class="msgContentTitle">{{msg.title}}</p>
+            <p class="msgContentText">{{msg.message}}</p>
           </div>
-        </Col>
-      </div>
-      <!--运输消息-->
-      <div style="height:250px;" v-if="'3' === this.rightKey">
-        <Col span="24">
-          <div class="mesDivAll">
-            <div class="megDiv" v-for="msg in this.messageList" :key="msg.id">
-              <div class="msgImg">
-                <i class="icon font_family icon-yunshuxiaoxi" style="font-size:28px; background: white; color: #00A4BD;"></i>
-                <!-- <img src="@/assets/info-sys.png"> -->
-              </div>
-              <div class="msgContent">
-                <p class="msgContentTitle">{{msg.title}}</p>
-                <p class="msgContentText">{{msg.message}}</p>
-              </div>
-              <div class="msgConfigDiv">
-                <p>{{msg.dataTime}}</p>
-                <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
-              </div>
-            </div>
+          <div class="msgConfigDiv">
+            <p>{{msg.dataTime}}</p>
+            <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
           </div>
-        </Col>
+        </div>
       </div>
+        </Col>
+    </div>
+    <!--订单消息-->
+    <div v-if="'2' === this.rightKey" style="height:250px;">
+      <Col span="24">
+      <div class="mesDivAll">
+        <div v-for="msg in this.messageList" :key="msg.id" class="megDiv">
+          <div class="msgImg">
+            <i class="icon font_family icon-dingdanxiaoxi" style="font-size:28px; background: white; color: #418DF9;"></i>
+            <!-- <img src="@/assets/info-sys.png"> -->
+          </div>
+          <div class="msgContent">
+            <p class="msgContentTitle">{{msg.title}}</p>
+            <p class="msgContentText">{{msg.message}}</p>
+          </div>
+          <div class="msgConfigDiv">
+            <p>{{msg.dataTime}}</p>
+            <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
+          </div>
+        </div>
+      </div>
+        </Col>
+    </div>
+    <!--运输消息-->
+    <div v-if="'3' === this.rightKey" style="height:250px;">
+      <Col span="24">
+      <div class="mesDivAll">
+        <div v-for="msg in this.messageList" :key="msg.id" class="megDiv">
+          <div class="msgImg">
+            <i class="icon font_family icon-yunshuxiaoxi" style="font-size:28px; background: white; color: #00A4BD;"></i>
+            <!-- <img src="@/assets/info-sys.png"> -->
+          </div>
+          <div class="msgContent">
+            <p class="msgContentTitle">{{msg.title}}</p>
+            <p class="msgContentText">{{msg.message}}</p>
+          </div>
+          <div class="msgConfigDiv">
+            <p>{{msg.dataTime}}</p>
+            <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
+          </div>
+        </div>
+      </div>
+        </Col>
+    </div>
     </Col>
   </div>
 </template>
@@ -131,11 +131,11 @@ export default {
   },
   methods: {
     clickLeftMenu (id, menuName) {
-      this.rightTitle = menuName;
-      this.rightKey = id;
+      this.rightTitle = menuName
+      this.rightKey = id
     },
     msgRemoveBtn (message) {
-      console.log(message);
+      console.log(message)
     }
   }
 }
