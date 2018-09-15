@@ -25,11 +25,10 @@
             ref="tagsPageOpened"
             :key="`tag-nav-${index}`"
             :name="item.name"
-            :checked="item.path === value.path"
+            :checked="item.query?item.query.id===value.query.id:item.path === value.path"
             @on-close="handleClose(item)"
-            @on-refresh="handleRefresh"
-            @click.native="handleClick(item)"
-          >
+            @on-refresh="handleRefresh(item)"
+            @click.native="handleClick(item)">
           </tab-nav-item>
         </transition-group>
       </div>
@@ -45,12 +44,7 @@ export default {
   components: {TabNavItem},
   mixins: [BaseComponent],
   props: {
-    value: {
-      type: Object,
-      default () {
-        return {}
-      }
-    },
+    value: Object,
     list: {
       type: Array,
       default () {
@@ -60,11 +54,23 @@ export default {
   },
   data () {
     return {
-      tagBodyLeft: 0
+      tagBodyLeft: 0,
+      currItem: {}
     }
   },
-  mounted () {
-
+  computed: {
+    isTabChecked: {
+      set (item) {
+        this.currItem = item
+      },
+      get () {
+        if (this.currItem.query) {
+          return this.currItem.path === this.value.path && this.currItem.query.id === this.value.query.id
+        } else {
+          return this.currItem.path === this.value.path
+        }
+      }
+    }
   },
   methods: {
     handlescroll (e) {
@@ -104,14 +110,12 @@ export default {
     //   }
     // },
     handleClose (item) {
-      this.$Message.info(`${item.path}已删除`)
-      let res = this.list.filter(item => item.name !== name)
+      let res = this.list.filter(element => element.name !== item.name)
       this.$emit('on-close', res, item)
     },
     handleRefresh (item) {
-      this.$Message.info(`${item}已刷新`)
-      // this.ema.fire('refresh')
-      // this.$router.push({path: '/company-manage/staff-manage'})
+      this.$Message.info(`${item.name}已刷新`)
+      window.location.reload()
     },
     handleClick (item) {
       this.$emit('on-select', item)
@@ -155,6 +159,7 @@ export default {
       padding 6px 4px
       line-height 14px
       text-align center
+      font-size 14px
     &.left-btn
       left 0px
       background #252A2F
@@ -174,7 +179,7 @@ export default {
     .scroll-body
       height calc(100% - 1px)
       display inline-block
-      padding 1px 4px 0
+      // padding 1px 4px 0
       position absolute
       overflow visible
       white-space nowrap

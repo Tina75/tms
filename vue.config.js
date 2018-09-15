@@ -22,6 +22,7 @@ module.exports = {
     }
   },
   configureWebpack: {
+    devtool: 'source-map',
     externals: {
       'area-data': 'AreaData',
       'vue': 'Vue',

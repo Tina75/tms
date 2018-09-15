@@ -1,7 +1,7 @@
 <template>
   <div class="order-import">
-    <div class="i-mb-10">
-      <Upload
+    <div class="i-mb-10 ivu-upload">
+      <!-- <Upload
         ref="uploader"
         :format="['xlsx','xls']"
         :show-upload-list="false"
@@ -13,7 +13,16 @@
         accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         style="display:inline-block">
         <Button type="primary">导入文件</Button>
-      </Upload>
+      </Upload> -->
+      <Button type="primary" @click="handleClick">导入文件</Button>
+      <input
+        ref="fileInput"
+        name="file"
+        type="file"
+        class="ivu-upload-input"
+        accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        @change="handleChange"
+      />
       <Button class="i-ml-10" to="/order/template/download" target="_blank">下载模板</Button>
     </div>
     <PageTable ref="pageTable" :columns="columns" :data="data" :show-filter="false" no-data-text=" ">
@@ -29,13 +38,28 @@
         </div>
       </div>
     </PageTable>
+    <Modal
+      :value="visible"
+      :closable="false"
+      :mask-closable="false"
+      title="文件正在努力上传.."
+    >
+      <div class="van-center">
+        <i-circle :percent="progress">
+          <span style="font-size:24px">{{progress}}%</span>
+        </i-circle>
+      </div>
+      <div slot="footer"></div>
+    </Modal>
   </div>
 </template>
 
 <script>
+import OssClient from 'ali-oss'
 import PageTable from '@/components/page-table/index'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
+import server from '@/libs/js/server'
 /**
  * 批量导入
  * 1.文件类型
@@ -52,6 +76,7 @@ export default {
   data () {
     return {
       emptyContent: '',
+      visible: false,
       data: [
         // {
         //   createDate: '2018-9-10',
@@ -61,6 +86,8 @@ export default {
         //   operator: '离散'
         // }
       ],
+      progress: 0,
+      ossClient: null,
       columns: [
         {
           title: '导入日期',
@@ -100,7 +127,21 @@ export default {
       ]
     }
   },
-  beforeMount () {
+  initOssInstance () {
+    const vm = this
+    // 后端获取阿里云access token, region
+    server({
+      method: 'get',
+      url: ''
+    })
+      .then((response) => {
+        vm.ossClient = new OssClient({
+          region: response.data.region,
+          accessKeyId: response.data.accessKeyId,
+          accessKeySecret: response.data.accessKeySecret,
+          bucket: response.data.bucket
+        })
+      })
   },
   mounted () {
     if (this.$refs.footer) {
@@ -111,7 +152,56 @@ export default {
   methods: {
     // 主动触发上传
     handleClick (e) {
-      this.$refs.uploader.handleClick()
+      this.$refs.fileInput.click()
+    },
+    /**
+     * 文件上传后，回调
+     */
+    handleChange (e) {
+      const files = e.target.files
+
+      if (!files || files.length === 0) {
+        return false
+      }
+      this.uploadFile(files[0])
+      this.$refs.fileInput.value = null
+    },
+    async uploadFile (file) {
+      if (this.ossClient) {
+        try {
+          this.visible = true
+          // 生成随机文件名 Math.floor(Math.random() *10000)
+          let randomName = Date.now() + file.name.split('.').pop()
+          let result = await this.ossClient.multipartUpload(randomName, file, {
+            partSize: 1024 * 1024, // 分片大小 ,1M
+            progress: async function (progress) {
+              this.progress = progress
+            }
+          })
+          this.visible = false
+          this.progress = 0
+          this.notifyBackend(result.name)
+        } catch (e) {
+          // 捕获超时异常
+          if (e.code === 'ConnectionTimeoutError') {
+            this.$Message.error('文件上传超时')
+            // do ConnectionTimeoutError operation
+          }
+        }
+      }
+    },
+    /**
+     * 通知后端文件名称，
+     * 文件上传成功，
+     */
+    notifyBackend (fileName) {
+      server({
+        method: 'post',
+        url: '',
+        data: {
+          fileName
+        }
+      })
     },
     handleSuccess (res, file) {
       // const vm = this

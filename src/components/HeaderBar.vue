@@ -1,17 +1,20 @@
 <template>
   <div class="header-bar">
     <a :class="['sider-trigger-a', collapsed ? 'collapsed' : '']"  type="text" @click="handleChange">
-      <Icon type="ios-menu" color="white" size="26"/>
+      <i class="icon font_family icon-shouji"></i>
     </a>
     <div class="header-bar-avator-dropdown">
       <Dropdown class="header-bar-avator-dropdown-notify">
-        <Badge :count="100" type="primary">
-          <Icon type="ios-notifications" size="30" color="#fff"></Icon>
-        </Badge>
-        <DropdownMenu slot="list">
+        <Poptip trigger="hover" title="消息中心" content="暂无系统消息">
+          <Badge :count="0" type="primary">
+            <Icon type="ios-notifications" size="30" color="#fff"></Icon>
+          </Badge>
+
+        </Poptip>
+        <!-- <DropdownMenu slot="list">
           <DropdownItem name="1" >通知</DropdownItem>
           <DropdownItem name="2" >订单</DropdownItem>
-        </DropdownMenu>
+        </DropdownMenu> -->
       </Dropdown>
       <Dropdown  @on-click="handleClick">
         <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" size="small"></avatar>
@@ -21,7 +24,7 @@
           <DropdownItem name="logout" >退出登录</DropdownItem>
         </DropdownMenu>
       </Dropdown>
-    </div>
+    </row></div>
   </div>
 </template>
 
@@ -46,7 +49,7 @@ export default {
   },
   methods: {
     handleChange () {
-      this.$emit('on-coll-change', !this.collapsed)
+      this.$emit('update:collapsed', !this.collapsed)
     },
     handleClick (name) {
       switch (name) {
@@ -60,19 +63,20 @@ export default {
 </script>
 <style lang="stylus">
 .sider-trigger-a
-  width: 40px
+  width: 25px
   height 50px
   display inline-block
   text-align center
   color #5c6b77
-  margin-top 13px
+  background #3A424B
   float left
   i
     transition transform .2s ease
     vertical-align top
-  &.collapsed i
-    transform rotateZ(90deg)
-    transition transform .2s ease
+    color #ffffff
+.collapsed
+  transform rotateZ(180deg)
+  transition transform .2s ease
 .header-bar
   width 100%
   height 100%
