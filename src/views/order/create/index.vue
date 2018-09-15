@@ -15,12 +15,12 @@
       <Col span="6">
       <FormItem label="始发城市" prop="start">
         <!-- <Cascader v-model="orderForm.start" :data="areaData" :render-format="formatArea" filterable></Cascader> -->
-        <AreaSelect v-model="orderForm.start"></AreaSelect>
+        <AreaSelect v-model="orderForm.start" :deep="true"></AreaSelect>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="目的城市" prop="end">
-        <AreaSelect v-model="orderForm.end" :adjustment="true"></AreaSelect>
+        <AreaSelect v-model="orderForm.end" :deep="true" :adjustment="true"></AreaSelect>
         <!-- <Cascader ref="cascaderEnd" v-model="orderForm.end" :data="areaData" :render-format="formatArea" change-on-select filterable  @on-change="handleChangeEnd"></Cascader> -->
       </FormItem>
       </Col>
@@ -33,12 +33,12 @@
       </Col>
       <Col span="6" prop="deliveryTime">
       <FormItem label="发货时间">
-        <DatePicker v-model="orderForm.deliveryTime" :time-picker-options="{steps: [1, 60]}" format="yyyy-MM-dd HH:mm" type="datetime"></DatePicker>
+        <DatePicker v-model="orderForm.deliveryTime" :time-picker-options="{steps: [1, 60, 60]}" format="yyyy-MM-dd HH:mm前" type="datetime"></DatePicker>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="到货时间" prop="arriveTime">
-        <DatePicker v-model="orderForm.arriveTime" :time-picker-options="{steps: [1, 60]}" format="yyyy-MM-dd HH:mm" type="datetime"></DatePicker>
+        <DatePicker v-model="orderForm.arriveTime" :time-picker-options="{steps: [1, 60, 60]}" format="yyyy-MM-dd HH:mm前" type="datetime"></DatePicker>
       </FormItem>
       </Col>
     </Row>
