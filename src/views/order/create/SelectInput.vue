@@ -57,6 +57,7 @@ export default {
     onSelect: {
       type: Function
     },
+    onFoucs: Function,
     remoteMethod: {
       type: Function
     }
@@ -144,6 +145,7 @@ export default {
         this.remoteCall()
       }
       this.isFocus = true
+      this.$emit('on-focus')
     },
     handleBlur () {
       this.isFocus = false

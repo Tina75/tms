@@ -6,8 +6,9 @@
         <SelectInput
           v-model="orderForm.consignerName"
           :maxlength="20"
-          :remote="true"
-          :remote-method="fetchClients"
+          :remote="false"
+          :local-options="clients"
+          @on-focus.once="getClients"
           @on-select="handleSelectConsigner">
         </SelectInput>
       </FormItem>
@@ -183,21 +184,21 @@
       </Col>
       <Col span="6">
       <FormItem label="回单数量" prop="receiptCount">
-        <InputNumber v-model="orderForm.receiptCount" :min="1" class="order-create__input-w100">
+        <InputNumber v-model="orderForm.receiptCount" :min="1" :parser="value => parseInt(value)" class="order-create__input-w100">
         </InputNumber>
       </FormItem>
       </Col>
       <Col span="12">
       <FormItem label="备注" prop="remark">
-        <Input v-model="orderForm.remark" :maxlength="60" type="text">
+        <Input v-model="orderForm.remark" :maxlength="100" type="text">
           </Input>
       </FormItem>
       </Col>
     </Row>
     <FormItem class="van-center">
-      <Button @click="resetForm">清空</Button>
+      <Button type="primary" @click="handleSubmit">保存</Button>
       <Button class="i-ml-10" @click="print">保存并打印</Button>
-      <Button class="i-ml-10" type="primary" @click="handleSubmit">保存</Button>
+      <Button class="i-ml-10" @click="resetForm">清空</Button>
     </FormItem>
     <OrderPrint ref="printer" :data="orderForm">
     </OrderPrint>
@@ -576,6 +577,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'clients',
       'orderDetail',
       'clients',
       'consignerContacts',
@@ -765,11 +767,6 @@ export default {
     resetForm () {
       this.$refs.orderForm.resetFields()
       this.clearCargoes()
-    },
-    fetchClients (query) {
-      return this.getClients(query).then((reponse) => {
-        return reponse
-      })
     },
     print () {
       this.$refs.printer.print()

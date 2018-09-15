@@ -22,10 +22,10 @@ export default {
         // 收货人信息，包含客户信息
         const clients = response.data.data.list
         // 客户列表
-        const clientList = clients.map((user) => ({name: user.name, value: user.name, id: user.id}))
+        // const clientList = clients.map((user) => ({name: user.name, value: user.name, id: user.id}))
 
         commit(types.RECEIVE_CLIENT_LIST, clients)
-        resolve(clientList)
+        // resolve(clientList)
       }).catch((error) => {
         reject(error)
       })
@@ -45,7 +45,8 @@ export default {
           consignerId
         }
       }).then((response) => {
-        const { addressList, cargoList, consigneeList, consigner } = response.data.data
+        const { addressList, cargoList, consigneeList, ...consigner } = response.data.data
+        consigner.id = consignerId
         commit(types.RECEIVE_CONSIGNERS_LIST, [consigner])
         // 发货地址
         commit(types.RECEIVE_ADDRESS_LIST, addressList.list)
