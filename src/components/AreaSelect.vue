@@ -1,6 +1,9 @@
 <template>
   <Cascader
     ref="selector"
+    :placeholder="placeholder"
+    :clearable="clearable"
+    :disabled="disabled"
     v-model="selected"
     :data="areaData"
     :render-format="formatArea"
@@ -17,6 +20,18 @@ import areas from '@/libs/js/City'
 export default {
   props: {
     value: [String, Array],
+    clearable: {
+      type: Boolean,
+      default: true
+    },
+    placeholder: {
+      type: String,
+      default: '请选择'
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
     // 部分组件位置偏，弹出窗容易遮盖，设置true时，可实时调整位置
     adjustment: false,
     // 深度搜索，默认第一次只加载省的数据。市区的数据不加载，deep为true时，再加载市数据，一般搜索的时候有用
