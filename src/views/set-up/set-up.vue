@@ -166,6 +166,41 @@ export default {
     title: '设置'
   },
   data () {
+    let this_ = this
+    var pswRight = function (rule, value, callback) {
+      if (value) {
+        Server({
+          url: 'set/pswRight',
+          method: 'get',
+          data: value
+        }).then(({ data }) => {
+          console.log(data)
+        })
+        return callback(new Error('原始密码错误，请重输'))
+      } else {
+        callback()
+      }
+    }
+    var checkPwd = function (rule, value, callback) {
+      if (value) {
+        if (/^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,16}$/.test(value)) {
+          return callback(new Error('只支持数字、大小写字母的组合，不支持特殊字符'))
+        }
+        callback()
+      } else {
+        callback()
+      }
+    }
+    var checkPwdSame = function (rule, value, callback) {
+      if (value) {
+        if (value !== this_.formPwd.password) {
+          return callback(new Error('两次密码不一致，请重输'))
+        }
+        callback()
+      } else {
+        callback()
+      }
+    }
     return {
       setUpMenu: [{
         name: '修改密码',
@@ -195,45 +230,50 @@ export default {
       // 短信
       switchMsg: false,
       checkNum: 0,
+      msgCheckBoxList: [],
       messageList: [{
         title: '发运提醒',
         message: '提醒内容： 【智加云TMS公司】XX公司，您的货物已装车，由车牌号XXXX司机姓名XXXX司机电话XXXX派送。',
         checkBox: [{
           label: '发货人',
-          model: false
+          model: '1'
         }, {
           label: '发货人',
-          model: false
+          model: '2'
         }]
       }, {
         title: '到货提醒',
         message: '提醒内容： 【智加云TMS公司】XX公司，您的货物已签收，由车牌号XXXX司机姓名XXXX司机电话XXXX完成派送。',
         checkBox: [{
           label: '发货人',
-          model: false
+          model: '3'
         }, {
           label: '发货人',
-          model: false
+          model: '4'
         }]
       }, {
         title: '指派司机提醒',
         message: '发货提醒： 【智加云TMS公司】XX公司给您发了新的指派运单，请再司机端查看。',
         checkBox: [{
           label: '司机',
-          model: false
+          model: '5'
         }]
       }],
       // 校验相关
       // 密码
       rulePwd: {
         oldPassword: [
-          { required: true, message: '请输入原始密码', trigger: 'blur' }
+          { required: true, message: '请输入原始密码', trigger: 'blur' },
+          { validator: pswRight, trigger: 'blur' }
         ],
         password: [
-          { required: true, message: '请输入新密码', trigger: 'blur' }
+          { required: true, message: '请输入新密码', trigger: 'blur' },
+          { validator: checkPwd, trigger: 'blur' }
         ],
         confirmPassword: [
-          { required: true, message: '请再次输入新密码', trigger: 'blur' }
+          { required: true, message: '请再次输入新密码', trigger: 'blur' },
+          { validator: checkPwd, trigger: 'blur' },
+          { validator: checkPwdSame, trigger: 'blur' }
         ]
       },
       // 个人
@@ -302,6 +342,17 @@ export default {
         console.log(data.data)
         // this.messageList = data.data.smsCode
       })
+      this.msgCheckBoxList = ['1']
+      this.checkNum = 0
+      for (const checkList of this.messageList) {
+        checkList.checkBox.forEach(element => {
+          if (this.msgCheckBoxList.includes(element.model)) {
+            this.checkNum++
+            element.model = true
+          }
+        })
+        this.switchMsg = (this.checkNum > 0)
+      }
     },
     clickLeftMenu (id, menuName) {
       this.rightTitle = menuName
