@@ -2,7 +2,11 @@
   <div class="messageDivAll">
     <h1 style="text-align:left;">{{messageInfo.title}}</h1>
     <p>{{messageInfo.dataTime}}
-      <Button class="msgRemoveBtn" @click="removeBtn">删除</Button>
+      <Button class="msgRemoveBtn" @click="removeBtn">
+        <span class="msgConfigBtn" @click="msgRemoveBtn(msg)">
+          <i class="icon font_family icon-shanchu1"></i></span><span style="margin:0 5px;">删除
+        </span>
+      </Button>
     </p>
     <p class="msgInfo">{{messageInfo.message}}</p>
     <p v-if="this.messageInfo.url !== ''" class="msgInfoHref">活动链接：<a :href="messageInfo.url">{{messageInfo.url}}</a></p>
