@@ -11,55 +11,57 @@
         </Select>
         <!-- <Input
           v-if="selectStatus === 0"
-          v-model="customerName"
+          v-model="consignerName"
           placeholder="请输入客户名称"
           search
           style="width: 200px"
           @on-click="searchList" /> -->
         <AutoComplete
           v-if="selectStatus === 0"
-          v-model="customerName"
+          v-model="keywords.consignerName"
           :data="customerData"
           clearable
           placeholder="请选择或输入客户名称"
           style="width:200px"
           @on-search="searchList">
         </AutoComplete>
-        <Input v-else-if="selectStatus === 1" v-model="orderNum" placeholder="请输入订单号" style="width: 200px" clearable />
-        <Input v-else v-model="waybillNum" placeholder="请输入运单号" style="width: 200px" clearable />
-        <Button type="primary" icon="ios-search" style="width: 40px;margin-right: 0;" @on-click="searchList"></Button>
+        <Input v-else-if="selectStatus === 1" v-model="keywords.orderNo" placeholder="请输入订单号" style="width: 200px" clearable />
+        <Input v-else v-model="keywords.waybillNo" placeholder="请输入运单号" style="width: 200px" clearable />
+        <Button type="primary" icon="ios-search" style="width: 40px;margin-right: 0;" @click="searchList"></Button>
         <Button type="text" class="high-search" size="small" @click="handleSwitchSearch">高级搜索</Button>
       </div>
     </div>
     <div v-if="!simpleSearch" class="operate-box">
       <div style="margin-bottom: 10px;">
         <AutoComplete
-          v-model="customerName"
+          v-model="keywords.consignerName"
           :data="customerData"
           placeholder="请选择或输入客户名称"
           style="width:200px">
         </AutoComplete>
-        <Input v-model="orderNum" placeholder="请输入订单号" style="width: 200px" />
-        <Input v-model="customerOrderNum" placeholder="请输入客户订单号" style="width: 200px" />
-        <Input v-model="waybillNum" placeholder="请输入运单号" style="width: 200px" />
+        <Input v-model="keywords.orderNo" placeholder="请输入订单号" style="width: 200px" />
+        <Input v-model="keywords.customerOrderNo" placeholder="请输入客户订单号" style="width: 200px" />
+        <Input v-model="keywords.waybillNo" placeholder="请输入运单号" style="width: 200px" />
       </div>
       <div style="display: flex;justify-content: space-between;">
-        <div>
-          <Input v-model="customerOrderNum" placeholder="请输入始发地" style="width: 200px" />
-          <Input v-model="waybillNum" placeholder="请输入目的地" style="width: 200px" />
-          <DatePicker type="daterange" split-panels placeholder="开始日期-结束日期" style="width: 200px"></DatePicker>
+        <div style="">
+          <area-select v-model="keywords.start" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <area-select v-model="keywords.end" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <DatePicker v-model="keywords.time" type="daterange" split-panels placeholder="开始日期-结束日期" style="width: 200px;display: inline-block;"></DatePicker>
         </div>
         <div>
-          <Button type="primary">搜索</Button>
+          <Button type="primary" @click="searchList">搜索</Button>
           <Button type="default">清除条件</Button>
           <Button type="default" style="margin-right: 0;" @click="handleSwitchSearch">简易搜索</Button>
         </div>
       </div>
     </div>
     <page-table
+      :url="url"
+      :method="method"
+      :keywords="keywords"
       :columns="tableColumns"
       :extra-columns="extraColumns"
-      :data="tableData"
       :show-filter="true"
       style="margin-top: 15px"
       @on-selection-change="handleSelectionChange"
@@ -72,18 +74,22 @@
 import BasePage from '@/basic/BasePage'
 import TabHeader from '@/components/TabHeader'
 import PageTable from '@/components/page-table/'
+import Server from '@/libs/js/server'
+import AreaSelect from '@/components/AreaSelect'
 export default {
   name: 'order',
 
   components: {
     TabHeader,
-    PageTable
+    PageTable,
+    AreaSelect
   },
   mixins: [ BasePage ],
   metaInfo: { title: '订单管理' },
   data () {
     return {
       url: 'order/list',
+      method: 'post',
       status: [
         { name: '全部', count: '' },
         { name: '待提货', count: '123' },
@@ -92,6 +98,7 @@ export default {
         { name: '已到货', count: '12' },
         { name: '已回单', count: '3333' }
       ],
+      curStatusName: '全部',
       btnGroup: [
         { name: '送货调度', value: 1 },
         { name: '提货调度', value: 2 },
@@ -115,10 +122,18 @@ export default {
           label: '运单号'
         }
       ],
-      customerName: '',
-      orderNum: '',
-      customerOrderNum: '',
-      waybillNum: '',
+      keywords: {
+        status: null,
+        consignerName: '',
+        orderNo: '',
+        waybillNo: '',
+        customerOrderNo: '',
+        startTime: '',
+        endTime: '',
+        time: ['', ''],
+        start: '',
+        end: ''
+      },
       customerData: ['Steve Jobs', 'Stephen Gary Wozniak', 'Jonathan Paul Ive'],
       simpleSearch: true,
       tableColumns: [
@@ -130,81 +145,175 @@ export default {
         {
           title: '操作',
           key: 'do',
-          width: 180,
+          width: 160,
           extra: true,
           render: (h, params) => {
-            if (params.row.orderNo === 'D111111') {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text'
-                  },
-                  style: {
-                    marginRight: '5px',
-                    color: '#00a4bd'
-                  },
-                  on: {
-                    click: () => {
-                      this.openSeparateDialog(params)
+            if (this.curStatusName === '全部' || this.curStatusName === '待提货' || this.curStatusName === '待调度') {
+              // 未拆且未转 显示拆单、外转按钮
+              if (params.row.parentId === '0' && params.row.disassembleStatus === '0' && params.row.transStatus === '0') {
+                if (params.row.pickup === '1') { // 如果是上门提货则没有外转
+                  return h('div', [
+                    h('Button', {
+                      props: {
+                        type: 'text'
+                      },
+                      style: {
+                        marginRight: '5px',
+                        color: '#00a4bd'
+                      },
+                      on: {
+                        click: () => {
+                          this.openSeparateDialog(params)
+                        }
+                      }
+                    }, '拆单')
+                  ])
+                } else {
+                  return h('div', [
+                    h('Button', {
+                      props: {
+                        type: 'text'
+                      },
+                      style: {
+                        marginRight: '5px',
+                        color: '#00a4bd'
+                      },
+                      on: {
+                        click: () => {
+                          this.openSeparateDialog(params)
+                        }
+                      }
+                    }, '拆单'),
+                    h('Button', {
+                      props: {
+                        type: 'text'
+                      },
+                      style: {
+                        marginRight: '5px',
+                        color: '#00a4bd'
+                      },
+                      on: {
+                        click: () => {
+                          this.openOuterDialog(params)
+                        }
+                      }
+                    }, '外转')
+                  ])
+                }
+              } else if (params.row.parentId === '0' && params.row.disassembleStatus === '1') { // 已拆且是父单  显示还原、删除按钮
+                return h('div', [
+                  h('Button', {
+                    props: {
+                      type: 'text'
+                    },
+                    style: {
+                      marginRight: '5px',
+                      color: '#00a4bd'
+                    },
+                    on: {
+                      click: () => {
+                        this.openSeparateDialog(params)
+                      }
                     }
-                  }
-                }, '拆单')
-              ])
-            } else {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text'
-                  },
-                  style: {
-                    marginRight: '5px',
-                    color: '#00a4bd'
-                  },
-                  on: {
-                    click: () => {
-                      this.openSeparateDialog(params)
+                  }, '还原'),
+                  h('Button', {
+                    props: {
+                      type: 'text'
+                    },
+                    style: {
+                      marginRight: '5px',
+                      color: '#00a4bd'
+                    },
+                    on: {
+                      click: () => {
+                        this.openOuterDialog(params)
+                      }
                     }
-                  }
-                }, '拆单'),
-                h('Button', {
-                  props: {
-                    type: 'text'
-                  },
-                  style: {
-                    marginRight: '5px',
-                    color: '#00a4bd'
-                  },
-                  on: {
-                    click: () => {
-                      this.openOuterDialog(params)
+                  }, '删除')
+                ])
+              } else if (params.row.parentId !== '0') { // 子单   显示拆单按钮
+                return h('div', [
+                  h('Button', {
+                    props: {
+                      type: 'text'
+                    },
+                    style: {
+                      marginRight: '5px',
+                      color: '#00a4bd'
+                    },
+                    on: {
+                      click: () => {
+                        this.openSeparateDialog(params)
+                      }
                     }
-                  }
-                }, '外转')
-              ])
+                  }, '拆单')
+                ])
+              } else if (params.row.transStatus === '1') {} // 订单外转  不显示按钮
             }
           }
         },
         {
           title: '订单号',
           key: 'orderNo',
-          width: 160,
+          className: 'padding-20',
           render: (h, params) => {
-            return h('a', {
-              props: {
-                type: 'text'
-              },
-              style: {
-                marginRight: '5px',
-                color: '#418DF9'
-              },
-              on: {
-                click: () => {
-                  this.$router.push({
-                    path: '/order-management/detail'
-                  })
+            if (params.row.parentId !== '0') {
+              return h('div', [
+                h('span', {
+                  style: {
+                    display: 'inline-block',
+                    width: '14px',
+                    height: '14px',
+                    background: '#418DF9',
+                    borderRadius: '2px',
+                    color: '#fff',
+                    lineHeight: '14px',
+                    textAlign: 'center',
+                    marginRight: '5px',
+                    marginLeft: '-19px'
+                  }
+                }, '子'),
+                h('a', {
+                  props: {
+                    type: 'text'
+                  },
+                  style: {
+                    marginRight: '5px',
+                    color: '#418DF9'
+                  },
+                  on: {
+                    click: () => {
+                      this.openTab({
+                        path: '/order-management/detail',
+                        query: {
+                          id: params.row.orderNo
+                        }
+                      })
+                    }
+                  }
+                }, params.row.orderNo)
+              ])
+            } else {
+              return h('a', {
+                props: {
+                  type: 'text'
+                },
+                style: {
+                  marginRight: '5px',
+                  color: '#418DF9'
+                },
+                on: {
+                  click: () => {
+                    this.openTab({
+                      path: '/order-management/detail',
+                      query: {
+                        id: params.row.orderNo
+                      }
+                    })
+                  }
                 }
-              }
-            }, params.row.orderNo)
+              }, params.row.orderNo)
+            }
           }
         },
         {
@@ -217,8 +326,7 @@ export default {
         },
         {
           title: '客户名称',
-          key: 'consignerName',
-          width: 180
+          key: 'consignerName'
         },
         {
           title: '始发地',
@@ -229,23 +337,16 @@ export default {
           key: 'end'
         },
         {
-          title: '里程数（公里）',
-          key: 'kilometres'
-        },
-        {
           title: '体积（方）',
-          key: 'volume',
-          width: 100
+          key: 'volume'
         },
         {
           title: '重量（吨）',
-          key: 'weight',
-          width: 100
+          key: 'weight'
         },
         {
           title: '下单时间',
-          key: 'create_time',
-          width: 150
+          key: 'createTime'
         }
       ],
       extraColumns: [
@@ -305,59 +406,9 @@ export default {
         },
         {
           title: '下单时间',
-          key: 'create_time',
+          key: 'createTime',
           fixed: false,
           visible: true
-        }
-      ],
-      tableData: [
-        {
-          orderNo: 'D21234734637647',
-          customerOrderNo: 'D2123473',
-          waybillNo: 'D2123473',
-          consignerName: '南京可口可乐有限公司',
-          start: '江苏省南京市',
-          end: '新疆乌鲁木齐',
-          kilometres: 45,
-          volume: 45,
-          weight: 78,
-          create_time: '2018-08-09 12:00:23'
-        },
-        {
-          orderNo: 'D111111',
-          customerOrderNo: 'D2123473',
-          waybillNo: 'D2123473',
-          consignerName: '南京可口可乐有限公司',
-          start: '江苏省南京市',
-          end: '新疆乌鲁木齐',
-          kilometres: 45,
-          volume: 45,
-          weight: 78,
-          create_time: '2018-08-09 12:00:23'
-        },
-        {
-          orderNo: 'D111111',
-          customerOrderNo: 'D2123473',
-          waybillNo: 'D2123473',
-          consignerName: '南京可口可乐有限公司',
-          start: '江苏省南京市',
-          end: '新疆乌鲁木齐',
-          kilometres: 45,
-          volume: 45,
-          weight: 78,
-          create_time: '2018-08-09 12:00:23'
-        },
-        {
-          orderNo: 'D21234734637647',
-          customerOrderNo: 'D2123473',
-          waybillNo: 'D2123473',
-          consignerName: '南京可口可乐有限公司',
-          start: '江苏省南京市',
-          end: '新疆乌鲁木齐',
-          kilometres: 45,
-          volume: 45,
-          weight: 78,
-          create_time: '2018-08-09 12:00:23'
         }
       ],
       selectOrderList: [] // 选中的订单集合
@@ -366,17 +417,41 @@ export default {
 
   computed: {},
 
-  mounted () {},
+  watch: {
+    // 搜索关键字变化后,重置分页参数，重新发送请求
+    keywords: {
+      handler (val) {
+        console.log(val)
+      },
+      deep: true
+    }
+  },
+
+  mounted () {
+    this.getOrderNum()
+  },
 
   methods: {
-    searchList () {
-      console.log('触发')
+    // 获取各状态订单数目
+    getOrderNum () {
+      Server({
+        url: 'order/getOrderNum',
+        method: 'get'
+      }).then((res) => {
+        console.log(res)
+      })
     },
+    searchList () {
+      console.log(this.keywords)
+    },
+    // 高级搜索切换
     handleSwitchSearch () {
       this.simpleSearch = !this.simpleSearch
     },
+    // tab状态栏切换
     handleTabChange (val) {
       console.log(val)
+      this.curStatusName = val
       if (val === '全部') {
         this.operateValue = 1
         this.btnGroup = [
@@ -410,6 +485,7 @@ export default {
         ]
       }
     },
+    // 表头按钮操作
     handleOperateClick (btn) {
       this.operateValue = btn.value
       const _this = this
@@ -417,7 +493,7 @@ export default {
         this.$Message.warning('请至少选择一条信息')
         return
       }
-      if (btn.name === '送货调度' || btn.name === '提货调度') {
+      if (btn.name === '送货调度' || btn.name === '提货调度') { // 打开送货或提货调度窗口
         _this.openDialog({
           name: 'order-management/dialog/dispatch',
           data: { id: this.selectOrderList, name: btn.name },
@@ -427,8 +503,19 @@ export default {
             }
           }
         })
+      } else if (btn.name === '订单还原' || btn.name === '删除') { // 打开还原或删除窗口
+        _this.openDialog({
+          name: 'order-management/dialog/restoreOrDelete',
+          data: { id: this.selectOrderList, name: btn.name },
+          methods: {
+            ok (node) {
+              _this.onAddUserSuccess(node)
+            }
+          }
+        })
       }
     },
+    // 外转
     openOuterDialog (params) {
       const _this = this
       this.openDialog({
@@ -441,6 +528,7 @@ export default {
         }
       })
     },
+    // 拆单
     openSeparateDialog (params) {
       const _this = this
       this.openDialog({
@@ -456,10 +544,12 @@ export default {
     onAddUserSuccess () {
       this.$Message.success('This is a success tip')
     },
+    // 筛选列表显示字段
     handleColumnChange (val) {
       console.log(val)
       this.extraColumns = val
     },
+    // 列表批量选择操作
     handleSelectionChange (val) {
       this.selectOrderList = val
     }
@@ -484,4 +574,9 @@ export default {
   padding: 10px
   .ivu-input-wrapper,.ivu-auto-complete
     margin-right 20px
+</style>
+<style lang="stylus">
+.padding-20
+  .ivu-table-cell
+    padding-left 20px
 </style>

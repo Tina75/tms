@@ -30,7 +30,7 @@
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 export default {
-  name: 'editUser',
+  name: 'separate',
   mixins: [BaseDialog],
   data () {
     return {

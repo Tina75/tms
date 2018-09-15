@@ -40,7 +40,7 @@
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 export default {
-  name: 'editUser',
+  name: 'outer',
   mixins: [BaseDialog],
   data () {
     return {
@@ -76,7 +76,7 @@ export default {
             url: 'user/update',
             method: 'post',
             data: this.info
-          }).then(() => {
+          }).then((res) => {
             this.ok()
             this.visibale = false
           })
