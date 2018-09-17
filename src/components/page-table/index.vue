@@ -245,9 +245,12 @@ export default {
   },
   watch: {
     // 搜索关键字变化后,重置分页参数，重新发送请求
-    keywords () {
-      this.pagination.pageNo = 1
-      this.fetch()
+    keywords: {
+      handler: () => {
+        this.pagination.pageNo = 1
+        this.fetch()
+      },
+      deep: true
     },
     data (newData) {
       // this.dataSource = newData.slice()

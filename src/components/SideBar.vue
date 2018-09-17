@@ -5,12 +5,12 @@
       <template v-for="item in menuList">
         <template v-if="item.children">
           <Submenu v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path">
-            <template slot="title"><Icon :type="item.icon" size="18"/>{{item.name}}</template>
+            <template slot="title"><i :class="['icon','font_family',`${item.icon}`]"/>{{item.name}}</template>
             <menu-item v-for="child in item.children" v-if="hasPower(child.powerCode)" :name="child.path" :key="child.name" >{{child.name}}</menu-item>
           </Submenu>
         </template>
         <template v-else>
-          <menu-item v-if="hasPower(item.powerCode)" :name="item.path"  :key="item.path"><Icon :type="item.icon" size="18"/>{{item.name}}</menu-item>
+          <menu-item v-if="hasPower(item.powerCode)" :name="item.path"  :key="item.path"><i :class="['icon','font_family',`${item.icon}`]"/>{{item.name}}</menu-item>
         </template>
       </template>
     </Menu>
@@ -118,4 +118,7 @@ export default {
   font-size 21px
 .icon-logo-1
   font-size 32px
+.icon
+  display inline-block
+  vertical-align middle
 </style>

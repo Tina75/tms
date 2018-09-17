@@ -20,17 +20,13 @@ export default class Cargo {
       this.remark = props.remark
     }
   }
-
-  // set weight (value) {
-  //   this.weight = value ? value.toFixed(2) : value
-  // }
-  // set volume (value) {
-  //   this.volume = value ? value.toFixed(1) : value
-  // }
-  // set cargoCost (value) {
-  //   this.cargoCost = value ? parseInt(value) : value
-  // }
-  // set quantity (value) {
-  //   this.quantity = value ? parseInt(value) : value
-  // }
+  validate () {
+    if (!this.cargoName) {
+      return { success: false, message: '请输入货物名称' }
+    }
+    if (!this.weight && !this.volume) {
+      return { success: false, message: '货物重量和体积至少输入一项' }
+    }
+    return { success: true }
+  }
 }

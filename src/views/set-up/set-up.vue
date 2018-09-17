@@ -16,14 +16,14 @@
     <div v-if="'1' === this.rightKey" style="height:250px;">
       <Col span="10" class="setConf">
       <Form ref="formPwd" :model="formPwd" :rules="rulePwd" :label-width="90">
-        <FormItem label="原始密码：" prop="originalPwd">
-          <Input v-model="formPwd.originalPwd" type="password" placeholder="请输入原始密码"></Input>
+        <FormItem label="原始密码：" prop="oldPassword">
+          <Input v-model="formPwd.oldPassword" type="password" placeholder="请输入原始密码"></Input>
         </FormItem>
         <FormItem label="新密码：" prop="password">
           <Input v-model="formPwd.password" type="password" placeholder="请输入新密码"></Input>
         </FormItem>
-        <FormItem label="确认密码：" prop="passwordConfirm">
-          <Input v-model="formPwd.passwordConfirm" type="password" placeholder="请再次输入新密码"></Input>
+        <FormItem label="确认密码：" prop="confirmPassword">
+          <Input v-model="formPwd.confirmPassword" type="password" placeholder="请再次输入新密码"></Input>
         </FormItem>
         <FormItem>
           <Button type="primary" @click="pwdSubmit('formPwd')">保存</Button>
@@ -36,13 +36,13 @@
       <Col span="10" class="setConf">
       <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="90">
         <FormItem label="账号：">
-          <span>{{formPersonal.account}}</span>
+          <span>{{formPersonal.phone}}</span>
         </FormItem>
         <FormItem label="姓名：" prop="name">
           <Input v-model="formPersonal.name" placeholder="请输入姓名"></Input>
         </FormItem>
         <FormItem label="角色：">
-          <span>{{formPersonal.role}}</span>
+          <span>{{formPersonal.roleName}}</span>
         </FormItem>
         <FormItem label="头像：">
           <!--个人设置-图片相关-->
@@ -99,8 +99,8 @@
           </p>
         </div>
       </Card>
-      <Button type="primary" class="msgSaveBtn">保存</Button>
-        </Col>
+      <Button type="primary" class="msgSaveBtn" @click="msgSaveBtn">保存</Button>
+      </Col>
     </div>
     <!--公司设置-->
     <div v-if="'4' === this.rightKey" style="height:530px;">
@@ -109,14 +109,14 @@
         <FormItem label="公司名称：" prop="name">
           <Input v-model="formCompany.name" placeholder="请输入公司名称"></Input>
         </FormItem>
-        <FormItem label="公司联系人：" prop="contacts">
-          <Input v-model="formCompany.contacts" placeholder="请输入公司联系人"></Input>
+        <FormItem label="公司联系人：" prop="contact">
+          <Input v-model="formCompany.contact" placeholder="请输入公司联系人"></Input>
         </FormItem>
-        <FormItem label="联系方式：" prop="contactsType">
-          <Input v-model="formCompany.contactsType" placeholder="请输入联系方式"></Input>
+        <FormItem label="联系方式：" prop="contactPhone">
+          <Input v-model="formCompany.contactPhone" placeholder="请输入联系方式"></Input>
         </FormItem>
-        <FormItem label="所在省市：" prop="province">
-          <Input v-model="formCompany.province" placeholder="请选择所在省市"></Input>
+        <FormItem label="所在省市：" prop="cityId">
+          <Input v-model="formCompany.cityId" placeholder="请选择所在省市"></Input>
         </FormItem>
         <FormItem label="公司地址：" prop="address">
           <Input v-model="formCompany.address" placeholder="请输入公司地址"></Input>
@@ -158,6 +158,7 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
+import Server from '@/libs/js/server'
 export default {
   name: 'set-up',
   mixins: [ BasePage ],
@@ -165,6 +166,41 @@ export default {
     title: '设置'
   },
   data () {
+    let this_ = this
+    var pswRight = function (rule, value, callback) {
+      if (value) {
+        Server({
+          url: 'set/pswRight',
+          method: 'get',
+          data: value
+        }).then(({ data }) => {
+          console.log(data)
+        })
+        return callback(new Error('原始密码错误，请重输'))
+      } else {
+        callback()
+      }
+    }
+    var checkPwd = function (rule, value, callback) {
+      if (value) {
+        if (/^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,16}$/.test(value)) {
+          return callback(new Error('只支持数字、大小写字母的组合，不支持特殊字符'))
+        }
+        callback()
+      } else {
+        callback()
+      }
+    }
+    var checkPwdSame = function (rule, value, callback) {
+      if (value) {
+        if (value !== this_.formPwd.password) {
+          return callback(new Error('两次密码不一致，请重输'))
+        }
+        callback()
+      } else {
+        callback()
+      }
+    }
     return {
       setUpMenu: [{
         name: '修改密码',
@@ -183,65 +219,61 @@ export default {
       rightKey: '1',
       // 密码
       formPwd: {
-        originalPwd: '',
+        oldPassword: '',
         password: '',
-        passwordConfirm: ''
+        confirmPassword: ''
       },
       // 个人
-      formPersonal: {
-        account: '1513165411813354',
-        name: '士大夫似',
-        role: '管理员'
-      },
+      formPersonal: {},
       // 公司
-      formCompany: {
-        name: '士大夫似',
-        contacts: '管理员',
-        contactsType: '156131351513',
-        province: '江苏',
-        address: '江苏南京雨花台区'
-      },
+      formCompany: {},
       // 短信
       switchMsg: false,
+      checkNum: 0,
+      msgCheckBoxList: [],
       messageList: [{
         title: '发运提醒',
         message: '提醒内容： 【智加云TMS公司】XX公司，您的货物已装车，由车牌号XXXX司机姓名XXXX司机电话XXXX派送。',
         checkBox: [{
           label: '发货人',
-          model: false
+          model: '1'
         }, {
           label: '发货人',
-          model: false
+          model: '2'
         }]
       }, {
         title: '到货提醒',
         message: '提醒内容： 【智加云TMS公司】XX公司，您的货物已签收，由车牌号XXXX司机姓名XXXX司机电话XXXX完成派送。',
         checkBox: [{
           label: '发货人',
-          model: false
+          model: '3'
         }, {
           label: '发货人',
-          model: false
+          model: '4'
         }]
       }, {
         title: '指派司机提醒',
         message: '发货提醒： 【智加云TMS公司】XX公司给您发了新的指派运单，请再司机端查看。',
         checkBox: [{
           label: '司机',
-          model: false
+          model: '5'
         }]
       }],
       // 校验相关
       // 密码
       rulePwd: {
-        originalPwd: [
-          { required: true, message: '请输入原始密码', trigger: 'blur' }
+        oldPassword: [
+          { required: true, message: '请输入原始密码', trigger: 'blur' },
+          { validator: pswRight, trigger: 'blur' }
         ],
         password: [
-          { required: true, message: '请输入新密码', trigger: 'blur' }
+          { required: true, message: '请输入新密码', trigger: 'blur' },
+          { validator: checkPwd, trigger: 'blur' }
         ],
-        passwordConfirm: [
-          { required: true, message: '请再次输入新密码', trigger: 'blur' }
+        confirmPassword: [
+          { required: true, message: '请再次输入新密码', trigger: 'blur' },
+          { validator: checkPwd, trigger: 'blur' },
+          { validator: checkPwdSame, trigger: 'blur' }
         ]
       },
       // 个人
@@ -255,13 +287,13 @@ export default {
         name: [
           { required: true, message: '请输入公司名称', trigger: 'blur' }
         ],
-        contacts: [
+        contact: [
           { required: true, message: '请输入公司联系人', trigger: 'blur' }
         ],
-        contactsType: [
+        contactPhone: [
           { required: true, message: '请输入联系方式', trigger: 'blur' }
         ],
-        province: [
+        cityId: [
           { required: true, message: '请选择所在省市', trigger: 'blur' }
         ],
         address: [
@@ -281,10 +313,47 @@ export default {
     }
   },
   mounted: function () {
-    // this.uploadList = this.$refs.upload.fileList
-    // this.uploadListCompany = this.$refs.uploadCompany.fileList
+    this.getUserInfo()
+    this.getCompanyInof()
+    this.smsInfo()
   },
   methods: {
+    getCompanyInof () {
+      Server({
+        url: 'set/companyInfo',
+        method: 'get'
+      }).then(({ data }) => {
+        this.formCompany = data
+      })
+    },
+    getUserInfo () {
+      Server({
+        url: 'set/userInfo',
+        method: 'get'
+      }).then(({ data }) => {
+        this.formPersonal = data.data
+      })
+    },
+    smsInfo () {
+      Server({
+        url: 'set/smsInfo',
+        method: 'get'
+      }).then(({ data }) => {
+        console.log(data.data)
+        // this.messageList = data.data.smsCode
+      })
+      this.msgCheckBoxList = ['1']
+      this.checkNum = 0
+      for (const checkList of this.messageList) {
+        checkList.checkBox.forEach(element => {
+          if (this.msgCheckBoxList.includes(element.model)) {
+            this.checkNum++
+            element.model = true
+          }
+        })
+        this.switchMsg = (this.checkNum > 0)
+      }
+    },
     clickLeftMenu (id, menuName) {
       this.rightTitle = menuName
       this.rightKey = id
@@ -293,7 +362,14 @@ export default {
     pwdSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          this.$Message.success('Success!')
+          // this.$Message.success('Success!')
+          Server({
+            url: 'set/updatePsw',
+            method: 'post',
+            data: this.formPwd
+          }).then(({ data }) => {
+            console.log(data.data)
+          })
         } else {
           this.$Message.error('Fail!')
         }
@@ -303,7 +379,17 @@ export default {
     personalSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          this.$Message.success('Success!')
+          // this.$Message.success('Success!')
+          let param = {}
+          param.name = this.formPersonal.name
+          param.avatarPic = this.formPersonal.roleName
+          Server({
+            url: 'set/person',
+            method: 'post',
+            data: param
+          }).then(({ data }) => {
+            console.log(data.data)
+          })
         } else {
           this.$Message.error('Fail!')
         }
@@ -313,7 +399,14 @@ export default {
     companySubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          this.$Message.success('Success!')
+          // this.$Message.success('Success!')
+          Server({
+            url: 'set/company',
+            method: 'post',
+            data: this.formCompany
+          }).then(({ data }) => {
+            console.log(data.data)
+          })
         } else {
           this.$Message.error('Fail!')
         }
@@ -329,16 +422,25 @@ export default {
     },
     checkBtnBox (model) {
       let statusList = []
-      let checkNum = 0
+      this.checkNum = 0
       for (const checkList of this.messageList) {
         checkList.checkBox.forEach(element => {
-          checkNum++
+          this.checkNum++
           if (element.model) {
             statusList.push(element.model)
           }
         })
-        this.switchMsg = (statusList.length === checkNum)
+        this.switchMsg = (statusList.length > 0)
       }
+    },
+    msgSaveBtn () {
+      Server({
+        url: 'set/sms',
+        method: 'post',
+        data: this.messageList
+      }).then(({ data }) => {
+        console.log(data.data)
+      })
     },
     // 图片相关 -个人
     handleSuccess (res, file) {

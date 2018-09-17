@@ -61,7 +61,7 @@ const mutations = {
     order.consignerCargoes.splice(index, 1)
   },
   [types.UPDATE_CONSIGNER_CARGO] ({ order }, item) {
-    order.consignerCargoes[item.index] = Object.assign({}, order.consignerCargoes[item.index], item.cargo)
+    order.consignerCargoes[item.index] = new Cargo(Object.assign({}, order.consignerCargoes[item.index], item.cargo))
   },
   [types.UPDATE_FULL_CONSIGNER_CARGO] ({ order }, item) {
     order.consignerCargoes.splice(item.index, 1, item.cargo)

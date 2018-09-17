@@ -2,7 +2,7 @@
   <div>
     <div class="header">
       <div class="left">
-        <Button type="primary" @click="modaladd = true">新增</Button>
+        <Button type="primary" @click="modaladd">新增</Button>
       </div>
       <div class="right">
         <template>
@@ -11,10 +11,10 @@
           </Select>
         </template>
         <template v-if="selectStatus==0">
-          <Input v-model="name" placeholder="请输入发货方名称" search style="width: 200px"  @on-search="searchList" />
+          <Input v-model="name" :maxlength="20" placeholder="请输入发货方名称" search style="width: 200px"  @on-search="searchList" />
         </template>
         <template v-else>
-          <Input v-model="contact" placeholder="请输入发货方联系人" search style="width: 200px"  @on-search="searchList" />
+          <Input v-model="contact" :maxlength="15" placeholder="请输入发货方联系人" search style="width: 200px"  @on-search="searchList" />
         </template>
       </div>
     </div>
@@ -22,97 +22,26 @@
       <template>
         <Table :columns="columns1" :data="data1"></Table>
       </template>
+      <!--<page-table :data="data1" :columns="columns1" :total="100" :current.sync="2"></page-table>-->
     </div>
     <div class="footer">
       <template>
         <Page :total="totalCount"
-              :current="pageNo" :page-size-opts="pageArray"
+              :current.sync="pageNo" :page-size-opts="pageArray"
               size="small"
-              show-sizer show-elevator show-total/>
+              show-sizer
+              show-elevator show-total @on-change="handleChangePage"/>
       </template>
     </div>
-    <template>
-      <Modal
-        v-model="modaladd"
-        footer-hide
-        title="新增发货方"
-        label-position="left"
-      >
-        <Form ref="addValidate" :model="addValidate" :rules="addRuleValidate" :label-width="122">
-          <FormItem label="发货方名称:" prop="name">
-            <Input v-model="addValidate.name" placeholder="请输入"></Input>
-          </FormItem>
-          <FormItem label="发货方联系人:" prop="contact">
-            <Input v-model="addValidate.contact" placeholder="请输入"></Input>
-          </FormItem>
-          <FormItem label="联系电话" prop="phone">
-            <Input v-model="addValidate.phone" placeholder="请输入"></Input>
-          </FormItem>
-          <FormItem label="支付方式:" prop="city">
-            <Select v-model="addValidate.payType" placeholder="Select your city">
-              <Option value="1">现付</Option>
-              <Option value="2">到付</Option>
-              <Option value="3">回单付</Option>
-              <Option value="4">月结</Option>
-            </Select>
-          </FormItem>
-          <FormItem label="备注:" prop="remark">
-            <Input v-model="addValidate.remark" :autosize="{minRows: 2,maxRows: 5}" type="textarea"  placeholder="请输入"></Input>
-          </FormItem>
-          <FormItem>
-            <Button type="primary" @click="handleSubmit('addValidate')">确定</Button>
-            <Button style="margin-left: 8px" @click="handleReset('addValidate')" >取消</Button>
-          </FormItem>
-        </Form>
-      </Modal>
-    </template>
-    <template>
-      <Modal
-        v-model="modalupdate"
-        footer-hide
-        title="修改发货方"
-        label-position="left"
-      >
-        <Form ref="updateValidate" :model="updateValidate" :rules="updateRuleValidate" :label-width="122">
-          <FormItem label="发货方名称:" prop="name">
-            <Input v-model="updateValidate.name" placeholder="请输入"></Input>
-          </FormItem>
-          <FormItem label="发货方联系人:" prop="contact">
-            <Input v-model="updateValidate.contact" placeholder="请输入"></Input>
-          </FormItem>
-          <FormItem label="联系电话" prop="phone">
-            <Input v-model="updateValidate.phone" placeholder="请输入"></Input>
-          </FormItem>
-          <FormItem label="支付方式:" prop="city">
-            <Select v-model="updateValidate.payType" placeholder="请选择">
-              <Option value="1">现付</Option>
-              <Option value="2">到付</Option>
-              <Option value="3">回单付</Option>
-              <Option value="4">月结</Option>
-            </Select>
-          </FormItem>
-          <FormItem label="备注:" prop="remark">
-            <Input v-model="updateValidate.remark" :autosize="{minRows: 2,maxRows: 5}" type="textarea"  placeholder="请输入"></Input>
-          </FormItem>
-          <FormItem>
-            <Button type="primary" @click="handleSubmit('addValidate')">确定</Button>
-            <Button style="margin-left: 8px" @click="handleReset('addValidate')" >取消</Button>
-          </FormItem>
-        </Form>
-      </Modal>
-    </template>
   </div>
 </template>
 
 <script>
-// import { senderList } from './client'
+import { consignerList, consignerDelete, CODE } from './client'
 import BasePage from '@/basic/BasePage'
 export default {
   name: 'sender',
-  mixins: [BasePage],
-  metaInfo: {
-    title: '发货方管理'
-  },
+  mixins: [ BasePage ],
   data () {
     return {
       selectStatus: 0,
@@ -128,7 +57,7 @@ export default {
       ],
       name: '',
       contact: '',
-      totalCount: '' || 100,
+      totalCount: 0, // 总条数
       pageArray: [10, 20, 50, 100],
       pageNo: 1,
       pageSize: 10,
@@ -148,14 +77,28 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.updateValidate = {
-                      name: params.row.name,
-                      contact: params.row.contact,
-                      phone: params.row.phone,
-                      payType: params.row.payType,
-                      remark: params.row.remark
-                    }
-                    this.modalupdate = true
+                    let _this = this
+                    this.openDialog({
+                      name: 'client/dialog/sender',
+                      data: {
+                        title: '修改发货方',
+                        flag: 2, // 编辑
+                        id: params.row.id,
+                        validate: {
+                          name: params.row.name,
+                          contact: params.row.contact,
+                          phone: params.row.phone,
+                          payType: params.row.payType + '',
+                          remark: params.row.remark
+                        }
+                      },
+                      methods: {
+                        ok () {
+                          _this.searchList() // 刷新页面
+                        }
+                      }
+                    })
+                    // this.modalupdate = true
                   }
                 }
               }, '修改'),
@@ -166,7 +109,16 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.remove(params.index)
+                    consignerDelete({
+                      id: params.row.id
+                    }).then(res => {
+                      if (res.data.code === CODE) {
+                        this.$Message.success(res.data.msg)
+                        this.searchList() // 刷新页面
+                      } else {
+                        this.$Message.error(res.data.msg)
+                      }
+                    })
                   }
                 }
               }, '删除')
@@ -185,7 +137,8 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.openTab({ path: '/client/sender-info', query: { id: '111111' } })
+                    this.$router.push({ path: '/client/sender-info', query: { id: params.row.id }
+                    })
                   }
                 }
               }, params.row.name)
@@ -214,7 +167,22 @@ export default {
         },
         {
           title: '付款方式描述',
-          key: 'payTypeDesc'
+          key: 'payType',
+          render: (h, params) => {
+            let text = ''
+            if (params.row.payType === 1) {
+              text = '现付'
+            } else if (params.row.payType === 2) {
+              text = '到付'
+            } else if (params.row.payType === 3) {
+              text = '回单付'
+            } else if (params.row.payType === 4) {
+              text = '月结'
+            } else {
+              text = ''
+            }
+            return h('div', {}, text)
+          }
         },
         {
           title: '创建时间',
@@ -223,80 +191,66 @@ export default {
         }
       ],
       data1: [
-        {
-          id: 1,
-          name: 'John Brown',
-          contact: 18,
-          phone: 'New York No. 1 Lake Park',
-          consignerAddressCnt: '2016-10-03',
-          consigneeCnt: '2016-10-03',
-          cargoCnt: '2016-10-03',
-          payTypeDesc: '2016-10-03',
-          createTime: '2016-10-03'
-        }
-      ],
-      modaladd: false,
-      addValidate: {
-        name: '',
-        contact: '',
-        phone: '',
-        payType: '',
-        remark: ''
-      },
-      addRuleValidate: {
-        name: [
-          { required: true, message: 'The name cannot be empty', trigger: 'blur' }
-        ],
-        contact: [
-          { required: true, message: 'Mailbox cannot be empty', trigger: 'blur' },
-          { type: 'email', message: 'Incorrect email format', trigger: 'blur' }
-        ],
-        phone: [
-          { required: true, message: 'Please select the city', trigger: 'change' }
-        ],
-        payType: [
-          { required: true, message: 'Please select gender', trigger: 'change' }
-        ],
-        remark: [
-          { required: true, message: 'Please select gender', trigger: 'change' }
-        ]
-      },
-      modalupdate: false,
-      updateValidate: {
-        name: '',
-        contact: '',
-        phone: '',
-        payType: '',
-        remark: ''
-      },
-      updateRuleValidate: {
-        name: [
-          { required: true, message: 'The name cannot be empty', trigger: 'blur' }
-        ],
-        contact: [
-          { required: true, message: 'Mailbox cannot be empty', trigger: 'blur' },
-          { type: 'email', message: 'Incorrect email format', trigger: 'blur' }
-        ],
-        phone: [
-          { required: true, message: 'Please select the city', trigger: 'change' }
-        ],
-        payType: [
-          { required: true, message: 'Please select gender', trigger: 'change' }
-        ],
-        remark: [
-          { required: true, message: 'Please select gender', trigger: 'change' }
-        ]
-      }
+        // {
+        //   id: 1,
+        //   name: 'John Brown',
+        //   contact: 18,
+        //   phone: 'New York No. 1 Lake Park',
+        //   consignerAddressCnt: '2016-10-03',
+        //   consigneeCnt: '2016-10-03',
+        //   cargoCnt: '2016-10-03',
+        //   payTypeDesc: '2016-10-03',
+        //   createTime: '2016-10-03',
+        //   remark:'我是备注'
+        // }
+      ]
     }
   },
   methods: {
     searchList () {
-      console.log('触发')
+      let data = {
+        pageNo: this.pageNo,
+        pageSize: this.pageSize,
+        name: this.name,
+        contact: this.contact
+      }
+      consignerList(data).then(res => {
+        this.data1 = res.data.data.list
+        this.totalCount = res.data.data.totalCount
+      })
+    },
+    modaladd () {
+      var _this = this
+      this.openDialog({
+        name: 'client/dialog/sender',
+        data: {
+          title: '新增发货方',
+          flag: 1 // 新增
+        },
+        methods: {
+          ok () {
+            console.log(this)
+            _this.searchList() // 刷新页面
+          }
+        }
+      })
+    },
+    handleChangePage (pageNo) {
+      // 重新组装数据，生成查询参数
+      this.pageNo = pageNo
+      this.searchList()
     }
   }
 }
 </script>
 
 <style scoped lang="stylus">
-  @import "../../libs/css/client.styl"
+  .header
+    display flex
+    justify-content space-between
+    margin-bottom 14px
+  .footer
+    margin-top 22px
+    display flex
+    justify-content flex-end
 </style>
