@@ -49,14 +49,14 @@ export default {
         consigner.id = consignerId
         commit(types.RECEIVE_CONSIGNERS_LIST, [consigner])
         // 发货地址
-        commit(types.RECEIVE_ADDRESS_LIST, addressList.list)
+        commit(types.RECEIVE_ADDRESS_LIST, addressList)
         // 货物信息
-        commit(types.RECEIVE_CARGO_LIST, cargoList.list)
-        commit(types.RECEIVE_CONSIGNER_CARGO_LIST, cargoList.list.map((cargo) => {
+        commit(types.RECEIVE_CARGO_LIST, cargoList)
+        commit(types.RECEIVE_CONSIGNER_CARGO_LIST, cargoList.map((cargo) => {
           return new Cargo(cargo)
         }))
         // 收货方地址
-        commit(types.RECEIVE_CONSIGNEES_LIST, consigneeList.list)
+        commit(types.RECEIVE_CONSIGNEES_LIST, consigneeList)
         resolve(response.data)
       }).catch((error) => {
         reject(error)
@@ -77,7 +77,7 @@ export default {
    * @param {*} index
    */
   removeCargo ({state, commit}, index) {
-    if (state.order.cargoes.length === 1) {
+    if (state.order.consignerCargoes.length === 1) {
       return
     }
     commit(types.REMOVE_CONSIGNER_CARGO, index)

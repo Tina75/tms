@@ -669,13 +669,17 @@ export default {
       // index, name, value
       if (type === 'update') {
         if (!this.tempCargoes[item.index]) {
-          this.tempCargoes[item.index] = {[item.name]: item.value}
           if (sumFields.indexOf(item.name) !== -1) {
             this.statics[item.name] = float.round(this.statics[item.name] - (this.consignerCargoes[item.index][item.name] || 0) + item.value)
           }
+          this.tempCargoes[item.index] = {[item.name]: item.value}
         } else {
           if (sumFields.indexOf(item.name) !== -1) {
-            this.statics[item.name] = float.round(this.statics[item.name] - (this.tempCargoes[item.index][item.name] || 0) + item.value)
+            if (this.tempCargoes[item.index][item.name]) {
+              this.statics[item.name] = float.round(this.statics[item.name] - (this.tempCargoes[item.index][item.name] || 0) + item.value)
+            } else {
+              this.statics[item.name] = float.round(this.statics[item.name] - (this.consignerCargoes[item.index][item.name] || 0) + item.value)
+            }
           }
           this.tempCargoes[item.index][item.name] = item.value
         }
@@ -700,11 +704,11 @@ export default {
         // 设置发货人信息，发货联系人，手机，发货地址
         _this.orderForm.consignerContact = consigner.contact
         _this.orderForm.consignerPhone = consigner.phone
-        _this.orderForm.consignerAddress = addresses.list[0].address
+        _this.orderForm.consignerAddress = addresses[0].address
         // 设置收货人信息，收货人，手机，收货地址
-        _this.orderForm.consigneeName = consignees.list[0].contact
-        _this.orderForm.consigneePhone = consignees.list[0].phone
-        _this.orderForm.consigneeAddress = consignees.list[0].address
+        _this.orderForm.consigneeName = consignees[0].contact
+        _this.orderForm.consigneePhone = consignees[0].phone
+        _this.orderForm.consigneeAddress = consignees[0].address
       })
     },
     // 显示计费规则

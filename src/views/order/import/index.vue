@@ -102,7 +102,7 @@ export default {
         },
         {
           title: '操作人',
-          key: 'operator'
+          key: 'operatorName'
         },
         {
           title: '操作',
