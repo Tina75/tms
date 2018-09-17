@@ -1,3 +1,6 @@
+// 客户公司名称列表
+export const clients = ({order}) => order.clients.map((user) => ({name: user.name, value: user.name, id: user.id}))
+
 // 发货联系人
 export const consigners = ({order}) => order.consigners
 export const consignerContacts = ({order}, getters) => getters.consigners.map(user => ({name: user.contact, value: user.contact, id: user.id}))

@@ -4,7 +4,7 @@
     <p>{{messageInfo.dataTime}}
       <Button class="msgRemoveBtn" @click="removeBtn">
         <span class="msgConfigBtn" @click="msgRemoveBtn(msg)">
-          <i class="icon font_family icon-shanchu1"></i></span><span style="margin:0 5px;">删除
+        <i class="icon font_family icon-shanchu1"></i></span><span style="margin:0 5px;">删除
         </span>
       </Button>
     </p>

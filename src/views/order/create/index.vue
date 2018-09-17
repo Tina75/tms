@@ -6,8 +6,9 @@
         <SelectInput
           v-model="orderForm.consignerName"
           :maxlength="20"
-          :remote="true"
-          :remote-method="fetchClients"
+          :remote="false"
+          :local-options="clients"
+          @on-focus.once="getClients"
           @on-select="handleSelectConsigner">
         </SelectInput>
       </FormItem>
@@ -15,12 +16,12 @@
       <Col span="6">
       <FormItem label="始发城市" prop="start">
         <!-- <Cascader v-model="orderForm.start" :data="areaData" :render-format="formatArea" filterable></Cascader> -->
-        <AreaSelect v-model="orderForm.start"></AreaSelect>
+        <AreaSelect v-model="orderForm.start" :deep="true"></AreaSelect>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="目的城市" prop="end">
-        <AreaSelect v-model="orderForm.end" :adjustment="true"></AreaSelect>
+        <AreaSelect v-model="orderForm.end" :deep="true" :adjustment="true"></AreaSelect>
         <!-- <Cascader ref="cascaderEnd" v-model="orderForm.end" :data="areaData" :render-format="formatArea" change-on-select filterable  @on-change="handleChangeEnd"></Cascader> -->
       </FormItem>
       </Col>
@@ -33,12 +34,12 @@
       </Col>
       <Col span="6" prop="deliveryTime">
       <FormItem label="发货时间">
-        <DatePicker v-model="orderForm.deliveryTime" :time-picker-options="{steps: [1, 60]}" format="yyyy-MM-dd HH:mm" type="datetime"></DatePicker>
+        <DatePicker v-model="orderForm.deliveryTime" :time-picker-options="{steps: [1, 60, 60]}" format="yyyy-MM-dd HH:mm前" type="datetime" style="width:100%"></DatePicker>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="到货时间" prop="arriveTime">
-        <DatePicker v-model="orderForm.arriveTime" :time-picker-options="{steps: [1, 60]}" format="yyyy-MM-dd HH:mm" type="datetime"></DatePicker>
+        <DatePicker v-model="orderForm.arriveTime" :time-picker-options="{steps: [1, 60, 60]}" format="yyyy-MM-dd HH:mm前" type="datetime" style="width:100%"></DatePicker>
       </FormItem>
       </Col>
     </Row>
@@ -120,12 +121,12 @@
       <Col span="6">
       <FormItem label="运输费用" prop="freightFee">
         <Row>
-          <Col span="16">
+          <Col span="18">
           <TagNumberInput :min="0" v-model="orderForm.freightFee" :parser="handleParseFloat">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           </Col>
-          <Col span="8">
+          <Col span="6">
           <span @click="showCounter">
             <Icon type="ios-calculator" size="26" color="#00a4bd"></Icon>
           </span>
@@ -183,21 +184,21 @@
       </Col>
       <Col span="6">
       <FormItem label="回单数量" prop="receiptCount">
-        <InputNumber v-model="orderForm.receiptCount" :min="1" class="order-create__input-w100">
+        <InputNumber v-model="orderForm.receiptCount" :min="1" :parser="value => parseInt(value)" class="order-create__input-w100">
         </InputNumber>
       </FormItem>
       </Col>
       <Col span="12">
       <FormItem label="备注" prop="remark">
-        <Input v-model="orderForm.remark" :maxlength="60" type="text">
+        <Input v-model="orderForm.remark" :maxlength="100" type="text">
           </Input>
       </FormItem>
       </Col>
     </Row>
     <FormItem class="van-center">
-      <Button @click="resetForm">清空</Button>
+      <Button type="primary" @click="handleSubmit">保存</Button>
       <Button class="i-ml-10" @click="print">保存并打印</Button>
-      <Button class="i-ml-10" type="primary" @click="handleSubmit">保存</Button>
+      <Button class="i-ml-10" @click="resetForm">清空</Button>
     </FormItem>
     <OrderPrint ref="printer" :data="orderForm">
     </OrderPrint>
@@ -207,7 +208,7 @@
 <script>
 import Vue from 'vue'
 import Title from './Title.vue'
-import SelectInput from './SelectInput.vue'
+import SelectInput from '@/components/SelectInput.vue'
 import TagNumberInput from './TagNumberInput'
 import { mapGetters, mapActions } from 'vuex'
 import float from '@/libs/js/float'
@@ -290,6 +291,12 @@ export default {
           title: '货物名称',
           key: 'cargoName',
           width: 170,
+          renderHeader: (h, params) => {
+            return h('span', [
+              h('span', {class: 'van-c-red'}, '*'),
+              h('span', params.column.title)
+            ])
+          },
           render (h, params) {
             return h('SelectInput', {
               props: {
@@ -315,6 +322,7 @@ export default {
           key: 'weight',
           renderHeader: (h, params) => {
             return h('span', [
+              h('span', {class: 'van-c-red'}, '*'),
               h('span', params.column.title),
               h('Tooltip', {
                 props: {
@@ -359,6 +367,12 @@ export default {
         {
           title: '体积(方)',
           key: 'volume',
+          renderHeader (h, params) {
+            return h('span', [
+              h('span', {class: 'van-c-red'}, '*'),
+              h('span', params.column.title)
+            ])
+          },
           render (h, params) {
             return h('InputNumber', {
               props: {
@@ -563,6 +577,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'clients',
       'orderDetail',
       'clients',
       'consignerContacts',
@@ -681,7 +696,7 @@ export default {
     handleSelectConsigner (name, row) {
       const _this = this
       _this.getConsignerDetail(row.id).then((response) => {
-        const { consigner, consigneeList: consignees, addressList: addresses } = response.data
+        const { consigneeList: consignees, addressList: addresses, ...consigner } = response.data
         // 设置发货人信息，发货联系人，手机，发货地址
         _this.orderForm.consignerContact = consigner.contact
         _this.orderForm.consignerPhone = consigner.phone
@@ -711,27 +726,40 @@ export default {
     handleSubmit () {
       console.log('orderForm', this.orderForm)
       const vm = this
+      this.syncStoreCargoes()
       this.$refs.orderForm.validate((valid) => {
         if (valid) {
-          const orderForm = this.orderForm
+          const cargoList = vm.consignerCargoes
+          const orderForm = vm.orderForm
+          let findError = null
+          // 校验货物信息
+          for (let index in cargoList) {
+            let cargo = cargoList[index]
+            let info = cargo.validate()
+            if (!info.success) {
+              findError = info.message
+              break
+            }
+          }
+          if (findError) {
+            vm.$Message.error(findError)
+            return
+          }
           // 始发城市，目的城市，到达时间等需要额外处理
           let form = Object.assign({}, orderForm, {
             start: orderForm.start[orderForm.start.length - 1],
             end: orderForm.end[orderForm.end.length - 1],
-            arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.format('YYYY-MM-DD HH:mm'),
-            deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.format('YYYY-MM-DD HH:mm'),
-            cargoList: this.consignerCargoes
+            arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime,
+            deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime,
+            cargoList
           })
           vm.submitOrder(form)
             .then((response) => {
               vm.resetForm()
               this.$Message.success('创建订单成功')
             })
-            .catch((er) => {
-              this.$Message.error(er.msg || '创建订单失败')
-            })
         } else {
-          this.$Message.error('valid', valid)
+          this.$Message.error('请检查表单数据')
         }
       })
     },
@@ -739,11 +767,6 @@ export default {
     resetForm () {
       this.$refs.orderForm.resetFields()
       this.clearCargoes()
-    },
-    fetchClients (query) {
-      return this.getClients(query).then((reponse) => {
-        return reponse
-      })
     },
     print () {
       this.$refs.printer.print()

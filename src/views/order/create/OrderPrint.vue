@@ -1,5 +1,5 @@
 <template>
-  <Modal :visible="visible">
+  <Modal>
     <div ref="htmlContent" class="order-detail">
       <Title>客户信息</Title>
       <Row>
@@ -46,8 +46,7 @@ export default {
           text-align: center;
           margin: 10px 0;
         }
-      `,
-      visible: false
+      `
     }
   },
   mounted () {
@@ -55,7 +54,6 @@ export default {
   },
   methods: {
     print () {
-      this.visible = true
       this.printer.print(this.$refs.htmlContent, this.cssText)
     }
   }

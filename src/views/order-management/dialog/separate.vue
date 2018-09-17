@@ -55,25 +55,27 @@ export default {
                   on: {
                     click: () => {
                       this.isSeparate = false
-                      if (!this.quantityVal) {
-                        this.childPortionData = this.parentOrderCargoList.splice(params.index, 1)[0]
-                        this.childOrderCargoList.unshift(this.childPortionData)
+                      console.log(this.quantityVal)
+                      if (!this.quantityVal && this.quantityVal !== null) {
+                        // 部分整拆
+                        this.separateWholeList(params.index)
                       } else {
+                        // 修改原单数据
                         let parentData = { ...params.row }
                         let quantity = params.row.quantity
                         let cargoCost = params.row.cargoCost
                         parentData.quantity = params.row.quantity - this.quantityVal
-                        parentData.weight = params.row.weight - this.weightVal
-                        parentData.volume = params.row.volume - this.volumeVal
+                        parentData.weight = (this.weightVal || this.weightVal === null) ? params.row.weight - this.weightVal : 0
+                        parentData.volume = (this.volumeVal || this.volumeVal === null) ? params.row.volume - this.volumeVal : 0
                         parentData.cargoCost = (params.row.cargoCost * parentData.quantity / quantity)
-                        this.$set(this.parentOrderCargoList, params.index, parentData) // 修改原单数据
-
+                        this.$set(this.parentOrderCargoList, params.index, parentData)
+                        // 生成子单数据
                         let childData = { ...params.row }
                         childData.cargoCost = cargoCost - parentData.cargoCost
-                        childData.quantity = this.quantityVal
-                        childData.weight = this.weightVal
-                        childData.volume = this.volumeVal
-                        this.childOrderCargoList.unshift(childData) // 生成子单数据
+                        childData.quantity = this.quantityVal || 0
+                        childData.weight = this.weightVal === null ? 0 : (this.weightVal ? this.weightVal : params.row.weight)
+                        childData.volume = this.volumeVal === null ? 0 : (this.volumeVal ? this.volumeVal : params.row.volume)
+                        this.childOrderCargoList.unshift(childData)
                       }
                     }
                   }
@@ -107,7 +109,10 @@ export default {
                     click: () => {
                       this.isSeparate = true
                       this.currentId = params.row.id
-                      this.childPortionData = params.row
+                      this.cargoCostVal = 0
+                      this.quantityVal = 0
+                      this.weightVal = 0
+                      this.volumeVal = 0
                     }
                   }
                 }, '拆部分'),
@@ -122,8 +127,7 @@ export default {
                   on: {
                     click: () => {
                       // console.log(params)
-                      let childList = this.parentOrderCargoList.splice(params.index, 1)
-                      this.childOrderCargoList.unshift(childList[0])
+                      this.separateWholeList(params.index)
                     }
                   }
                 }, '拆整笔')
@@ -241,7 +245,34 @@ export default {
                 },
                 on: {
                   click: () => {
-                    console.log(params)
+                    // console.log(params)
+                    if (!this.parentOrderCargoList.length) {
+                      let restoreData = this.childOrderCargoList.splice(params.index, 1)
+                      this.parentOrderCargoList.push(restoreData[0])
+                    } else {
+                      let hasParentList = this.parentOrderCargoList.find((item) => {
+                        return item.id === params.row.id
+                      })
+                      if (hasParentList !== undefined) {
+                        hasParentList.quantity = Number(hasParentList.quantity)
+                        hasParentList.cargoCost = Number(hasParentList.cargoCost)
+                        hasParentList.weight = Number(hasParentList.weight)
+                        hasParentList.volume = Number(hasParentList.volume)
+                        params.row.quantity = Number(params.row.quantity)
+                        params.row.cargoCost = Number(params.row.cargoCost)
+                        params.row.weight = Number(params.row.weight)
+                        params.row.volume = Number(params.row.volume)
+
+                        hasParentList.quantity += params.row.quantity
+                        hasParentList.cargoCost += params.row.cargoCost
+                        hasParentList.weight += params.row.weight
+                        hasParentList.volume += params.row.volume
+                        this.childOrderCargoList.splice(params.index, 1)
+                      } else {
+                        let child = this.childOrderCargoList.splice(params.index, 1)
+                        this.parentOrderCargoList.push(child[0])
+                      }
+                    }
                   }
                 }
               }, '还原')
@@ -277,7 +308,6 @@ export default {
       parentOrderCargoList: [],
       childOrderCargoList: [],
       currentId: 0,
-      parentPortionData: {}, // 原单拆分后的数据
       childPortionData: {}, // 拆分成子单后的数据
       quantityVal: 0,
       weightVal: 0,
@@ -307,6 +337,10 @@ export default {
         console.log(res)
         this.parentOrderCargoList = res.data.data.orderCargoList
       })
+    },
+    separateWholeList (index) {
+      let childList = this.parentOrderCargoList.splice(index, 1)[0]
+      this.childOrderCargoList.unshift(childList)
     }
   }
 
