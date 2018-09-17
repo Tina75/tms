@@ -1,6 +1,6 @@
 <template>
   <Poptip v-model="visible" trigger="click" width="290" placement="bottom-end" word-wrap transfer>
-    <Icon type="ios-list" class="ios-list-icon"></Icon>
+    <FontIcon type="gengduo" class="ios-list-icon" size="18" color="#00A4BD"></FontIcon>
     <div slot="title"><span>选择要显示的字段</span></div>
     <div slot="content">
       <CheckboxGroup v-model="checkList">
@@ -19,9 +19,11 @@
 <script>
 import draggable from 'vuedraggable'
 import _ from 'lodash'
+import FontIcon from '../FontIcon.vue'
 export default {
   components: {
-    draggable
+    draggable,
+    FontIcon
   },
   props: {
     list: {
@@ -155,11 +157,6 @@ export default {
     }
   }
 .ios-list-icon {
-    font-size: 18px;
     cursor: pointer;
-
-    &:hover {
-      color: #2d8cf0;
-    }
   }
 </style>

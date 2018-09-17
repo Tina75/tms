@@ -81,19 +81,11 @@ export default {
      */
     addPage: function (data) {
       this.ema.fire('Page.push', data)
+    },
+    // 权限控制
+    hasePower: function (power) {
+      if (!power) { return true }
+      return this.$store.state.permissions.includes(power)
     }
-    // // 权限控制
-    // hasePower: function (power) {
-    //   var flag = false
-    //   var powerArr = (power || '').split(',') || []
-    //   var list = this.$store.state.powerControl.powerList
-    //   list.forEach((value) => {
-    //     if (powerArr.indexOf(value.toString()) != -1) {
-    //       flag = true
-    //       return false
-    //     }
-    //   })
-    //   return flag
-    // }
   }
 }

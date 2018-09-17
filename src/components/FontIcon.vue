@@ -1,5 +1,5 @@
 <template>
-  <i :class="classes"></i>
+  <i :class="classes" :style="styles"></i>
 </template>
 
 <script>

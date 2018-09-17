@@ -6,7 +6,7 @@
       </Sider>
       <Layout>
         <Header class="header-con">
-          <header-bar :collapsed.sync="collapsed" :name="name" @on-coll-change="handleCollapsedChange"/>
+          <header-bar :collapsed.sync="collapsed" :name="name"/>
           <div class="tag-nav-wrapper">
             <tab-nav :list="tabNavList" :value="$route" @on-close="handleCloseTab" @on-select="onTabSelect"/>
           </div>
@@ -31,7 +31,7 @@ import SideBar from '@/components/SideBar'
 import TabNav from '@/components/TabNav'
 import Dialogs from '@/components/Dialogs'
 import menuJson from '@/assets/menu.json'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 export default {
   components: { HeaderBar, SideBar, TabNav, Dialogs },
@@ -43,11 +43,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['tabNavList']),
-    ...mapMutations(['setTabNavList'])
+    ...mapGetters(['tabNavList'])
   },
 
-  mounted () {
+  async mounted () {
     window.EMA.bind('logout', () => {
       this.logout()
     })
@@ -55,38 +54,40 @@ export default {
       window.location.reload()
     })
     window.EMA.bind('openTab1', (route) => {
-      console.log('open')
-      let tag = {...route}
+      let tag = { ...route }
       tag.name = route.query.id ? route.query.id : route.name
-      // this.setTabNavList(this.getNewTagList(this.tabNavList, tag))
-      this.$store.commit('setTabNavList', this.getNewTagList(this.tabNavList, tag))
+      this.setTabNavList(this.getNewTagList(this.tabNavList, tag))
       this.turnToPage(tag)
-      // this.$router.push(route)
     })
+    // 获取用户权限
+    await this.getPermissons()
+    // 初始化tabnav
+    this.initTabNav()
+    if (this.$route.path === '/') {
+      setTimeout(() => {
+        this.onMenuSelect({ name: '首页', path: '/home/index' })
+      }, 200)
+    }
   },
   methods: {
+    ...mapActions(['getPermissons']),
+    ...mapMutations(['setTabNavList', 'initTabNav']),
     logout () {
       localStorage.removeItem('tms_is_login')
       window.location.reload()
-    },
-    handleCollapsedChange (state) {
-      this.collapsed = state
     },
     handleCloseTab (list, route) {
       // 选中前一个tab
       const nextRoute = this.getNextRoute(this.tabNavList, route)
       this.$router.push(nextRoute)
-      this.$store.commit('setTabNavList', list)
-      // this.setTabNavList(list) // 更新store
+      this.setTabNavList(list) // 更新store
     },
     onTabSelect (item) {
       this.turnToPage(item)
     },
     onMenuSelect (menuItem) {
-      console.log('onMenuSelect', menuItem)
+      this.setTabNavList(this.getNewTagList(this.tabNavList, menuItem))
       this.turnToPage(menuItem)
-      this.$store.commit('setTabNavList', this.getNewTagList(this.tabNavList, menuItem))
-      // this.setTabNavList(this.getNewTagList(this.tabNavList, menuItem))
     },
     turnToPage (route) {
       let { path, params, query } = {}
@@ -96,16 +97,7 @@ export default {
         params = route.params
         query = route.query
       }
-      // if (path.indexOf('isTurnByHref_') > -1) {
-      //   window.open(path.split('_')[1])
-      //   return
-      // }
-      // this.$store.commit('changeTag')
-      this.$router.push({
-        path,
-        params,
-        query
-      })
+      this.$router.push({ path, params, query })
     },
     getNextRoute (list, route) {
       let res = {}
@@ -145,11 +137,14 @@ export default {
  * @description 如果该newRoute已经存在则不再添加
  */
     getNewTagList  (list, newRoute) {
-      console.log('list')
-      const { name, path, meta, query } = newRoute
+      const { name, path, query } = newRoute
       let newList = [...list]
       if (newList.findIndex(item => item.path === path) >= 0) return newList
-      else newList.push({ name, path, meta, query })
+      else {
+        // find当前tab位置并在其后面添加新tab
+        const idx = newList.findIndex(item => item.path === this.$route.path)
+        newList.splice(idx + 1, 0, { name, path, query })
+      }
       return newList
     }
   }

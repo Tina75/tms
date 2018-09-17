@@ -1,15 +1,15 @@
 // 发货联系人
-export const consigners = ({order}) => order.consigners
-export const consignerContacts = ({order}, getters) => getters.consigners.map(user => ({name: user.contact, value: user.contact, id: user.id}))
+export const consigners = ({ order }) => order.consigners
+export const consignerContacts = ({ order }, getters) => getters.consigners.map(user => ({ name: user.contact, value: user.contact, id: user.id }))
 export const consignerPhones = (state, getters) => getters.consigners(user => ({
   name: user.phone,
   value: user.phone,
   id: user.id
 }))
 // 发货地址
-export const consignerAddresses = ({order}) => order.addresses.map(item => ({name: item.address, value: item.address, id: item.id}))
+export const consignerAddresses = ({ order }) => order.addresses.map(item => ({ name: item.address, value: item.address, id: item.id }))
 // 收货方数据，下面分拆
-export const consignees = ({order}) => order.consignees
+export const consignees = ({ order }) => order.consignees
 // 收货方联系人列表
 export const consigneeContacts = (state, getters) => getters.consignees.map((user) => ({
   name: user.contact + ',' + user.phone,
@@ -28,9 +28,9 @@ export const consigneeAddresses = (state, getters) => getters.consignees.map((us
   value: user.address,
   id: user.id
 }))
-export const cargoes = ({order}) => order.cargoes
+export const cargoes = ({ order }) => order.cargoes
 
-export const consignerCargoes = ({order}) => order.consignerCargoes
+export const consignerCargoes = ({ order }) => order.consignerCargoes
 // 下拉框选择货物
 export const cargoOptions = (state, getters) => {
   return getters.cargoes.map(cargo => {
@@ -42,6 +42,7 @@ export const cargoOptions = (state, getters) => {
   })
 }
 export const sumRow = (state, getters) => {
+  console.log(getters.consignerCargoes)
   return getters.consignerCargoes.reduce((sum, cargo) => {
     // 读取临时数据
 

@@ -563,6 +563,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'orderDetail',
       'clients',
       'consignerContacts',
       'consignerPhones',
@@ -593,13 +594,25 @@ export default {
     }
   },
   created () {
+    const vm = this
     Vue.component('SelectInput', SelectInput)
+    const orderId = this.$route.query.id || undefined
+    if (orderId) {
+      this.getOrderDetail(orderId)
+        .then((orderDetail) => {
+          for (let key in vm.orderForm) {
+            vm.orderForm[key] = orderDetail[key] || vm.orderForm[key]
+          }
+          // Todo:到货时间，发货时间转换，结算方式
+        })
+    }
   },
   mounted () {
     this.statics = Object.assign({}, this.sumRow)
   },
   destroyed () {
     this.resetForm()
+    this.clearOrderDetail()
   },
   methods: {
     ...mapActions([
@@ -610,6 +623,8 @@ export default {
       'updateCargo',
       'fullUpdateCargo',
       'clearCargoes',
+      'clearOrderDetail',
+      'getOrderDetail',
       'submitOrder'
     ]),
     // 保留2位小数
@@ -623,7 +638,7 @@ export default {
       const cargo = this.cargoes.find(cg => cg.id === cargoItem.id)
       if (cargo) {
         this.syncStoreCargoes()
-        this.fullUpdateCargo({index: params.index, cargo})
+        this.fullUpdateCargo({ index: params.index, cargo })
       }
     },
     /**
@@ -639,7 +654,7 @@ export default {
       // index, name, value
       if (type === 'update') {
         if (!this.tempCargoes[item.index]) {
-          this.tempCargoes[item.index] = {[item.name]: item.value}
+          this.tempCargoes[item.index] = { [item.name]: item.value }
           if (sumFields.indexOf(item.name) !== -1) {
             this.statics[item.name] = float.round(this.statics[item.name] - (this.consignerCargoes[item.index][item.name] || 0) + item.value)
           }
@@ -657,7 +672,7 @@ export default {
     // 同步当前的修改数据到vuex的store
     syncStoreCargoes () {
       for (let index in this.tempCargoes) {
-        this.updateCargo({index, cargo: this.tempCargoes[index]})
+        this.updateCargo({ index, cargo: this.tempCargoes[index] })
       }
       // 同步完，释放掉
       this.tempCargoes = {}
@@ -670,11 +685,11 @@ export default {
         // 设置发货人信息，发货联系人，手机，发货地址
         _this.orderForm.consignerContact = consigner.contact
         _this.orderForm.consignerPhone = consigner.phone
-        _this.orderForm.consignerAddress = addresses[0].address
+        _this.orderForm.consignerAddress = addresses.list[0].address
         // 设置收货人信息，收货人，手机，收货地址
-        _this.orderForm.consigneeName = consignees[0].contact
-        _this.orderForm.consigneePhone = consignees[0].phone
-        _this.orderForm.consigneeAddress = consignees[0].address
+        _this.orderForm.consigneeName = consignees.list[0].contact
+        _this.orderForm.consigneePhone = consignees.list[0].phone
+        _this.orderForm.consigneeAddress = consignees.list[0].address
       })
     },
     // 显示计费规则

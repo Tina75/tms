@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import PageTable from '@/components/PageTable'
+import PageTable from '@/components/page-table/index'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 /**

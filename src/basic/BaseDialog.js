@@ -58,19 +58,11 @@ export default {
     close: function () {
       console.log('close ' + this.$options.name)
       this.ema.fire('Dialogs.close', this.$options.name)
-    }
+    },
     // 权限控制
-    // hasPower: function (power) {
-    //   var flag = false
-    //   var powerArr = (power || '').split(',') || []
-    //   var list = window.powerList
-    //   list.forEach((value) => {
-    //     if (powerArr.indexOf(value.toString()) != -1) {
-    //       flag = true
-    //       return false
-    //     }
-    //   })
-    //   return flag
-    // }
+    hasPower: function (power) {
+      if (!power) { return true }
+      return this.$store.state.permissions.includes(power)
+    }
   }
 }

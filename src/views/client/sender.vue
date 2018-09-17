@@ -185,7 +185,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.openTab({ path: '/client/sender-info', query: {id: '111111'} })
+                    this.openTab({ path: '/client/sender-info', query: { id: '111111' } })
                   }
                 }
               }, params.row.name)

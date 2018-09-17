@@ -5,7 +5,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 export default {
-  name: 'home',
+  name: 'index',
   meteInfo: { title: '首页' },
   mixins: [BasePage],
   data () {

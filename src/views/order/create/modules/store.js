@@ -18,6 +18,7 @@ const state = {
       pageSize: 10,
       total: 0
     },
+    detail: {}, // 订单详情
     clients: [], // 客户信息
     consigners: [], // 发货方信息
     addresses: [], // 发货方地址
@@ -32,37 +33,40 @@ const state = {
 }
 
 const mutations = {
-  [types.RECEIVE_CLIENT_LIST] ({order}, list) {
+  [types.RECEIVE_CLIENT_LIST] ({ order }, list) {
     order.clients = list
   },
-  [types.RECEIVE_CONSIGNERS_LIST] ({order}, list) {
+  [types.RECEIVE_CONSIGNERS_LIST] ({ order }, list) {
     order.consigners = list
   },
-  [types.RECEIVE_ADDRESS_LIST] ({order}, list) {
+  [types.RECEIVE_ADDRESS_LIST] ({ order }, list) {
     order.addresses = list
   },
-  [types.RECEIVE_CONSIGNEES_LIST] ({order}, list) {
+  [types.RECEIVE_CONSIGNEES_LIST] ({ order }, list) {
     order.consignees = list
   },
-  [types.RECEIVE_CARGO_LIST] ({order}, list) {
+  [types.RECEIVE_CARGO_LIST] ({ order }, list) {
     order.cargoes = list
   },
-  [types.RECEIVE_CONSIGNER_CARGO_LIST] ({order}, list) {
+  [types.RECEIVE_CONSIGNER_CARGO_LIST] ({ order }, list) {
     order.consignerCargoes = list
   },
-  [types.APPEND_CONSIGNER_CARGO] ({order}, index) {
+  [types.RECEIVE_ORDER_DETAIL] ({ order }, detail) {
+    order.detail = detail
+  },
+  [types.APPEND_CONSIGNER_CARGO] ({ order }, index) {
     order.consignerCargoes.splice(index, -1, new Cargo(defaultCargo))
   },
-  [types.REMOVE_CONSIGNER_CARGO] ({order}, index) {
+  [types.REMOVE_CONSIGNER_CARGO] ({ order }, index) {
     order.consignerCargoes.splice(index, 1)
   },
-  [types.UPDATE_CONSIGNER_CARGO] ({order}, item) {
+  [types.UPDATE_CONSIGNER_CARGO] ({ order }, item) {
     order.consignerCargoes[item.index] = Object.assign({}, order.consignerCargoes[item.index], item.cargo)
   },
-  [types.UPDATE_FULL_CONSIGNER_CARGO] ({order}, item) {
+  [types.UPDATE_FULL_CONSIGNER_CARGO] ({ order }, item) {
     order.consignerCargoes.splice(item.index, 1, item.cargo)
   },
-  [types.CLEAR_CONSIGNER_CARGO_LIST] ({order}) {
+  [types.CLEAR_CONSIGNER_CARGO_LIST] ({ order }) {
     order.consignerCargoes = [new Cargo()]
   }
 }
