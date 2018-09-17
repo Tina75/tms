@@ -5,7 +5,7 @@
       <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
       <p class="menuTitle">{{menu.name}}</p>
       <Badge :text="menu.infoNum" style="float:right;margin-top:-20px;"></Badge>
-        </MenuItem>
+      </MenuItem>
     </Menu>
     </Col>
     <Col span="18">
