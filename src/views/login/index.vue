@@ -30,7 +30,8 @@
               <Icon slot="prefix" :color="inputIconColor('captchaCode')" type="ios-contact" />
               </Input>
               <div class="form-captcha">
-                <img :src="captchaImage" class="form-captcha-img" >
+                <img :src="captchaImage" class="form-captcha-img"
+                     @click="getCaptcha">
               </div>
             </FormItem>
 
@@ -131,7 +132,7 @@ export default {
         if (this.rememberPW) this.localPwSave()
         else window.localStorage.removeItem('local_rememberd_pw')
         window.localStorage.setItem('tms_is_login', true)
-        location.reload()
+        // location.reload()
       }).catch(err => console.error(err))
     }
   }
