@@ -56,7 +56,15 @@
         </div>
       </div>
     </div>
-    <page-table :columns="tableColumns" :extra-columns="extraColumns" :data="tableData" :show-filter="true" style="margin-top: 15px" @on-column-change="handleColumnChange"></page-table>
+    <page-table
+      :columns="tableColumns"
+      :extra-columns="extraColumns"
+      :data="tableData"
+      :show-filter="true"
+      style="margin-top: 15px"
+      @on-selection-change="handleSelectionChange"
+      @on-column-change="handleColumnChange">
+    </page-table>
   </div>
 </template>
 
@@ -75,6 +83,7 @@ export default {
   metaInfo: { title: '订单管理' },
   data () {
     return {
+      url: 'order/list',
       status: [
         { name: '全部', count: '' },
         { name: '待提货', count: '123' },
@@ -179,8 +188,24 @@ export default {
           title: '订单号',
           key: 'orderNo',
           width: 160,
-          fixed: true,
-          visible: true
+          render: (h, params) => {
+            return h('a', {
+              props: {
+                type: 'text'
+              },
+              style: {
+                marginRight: '5px',
+                color: '#418DF9'
+              },
+              on: {
+                click: () => {
+                  this.$router.push({
+                    path: '/order-management/detail'
+                  })
+                }
+              }
+            }, params.row.orderNo)
+          }
         },
         {
           title: '客户订单号',
@@ -334,7 +359,8 @@ export default {
           weight: 78,
           create_time: '2018-08-09 12:00:23'
         }
-      ]
+      ],
+      selectOrderList: [] // 选中的订单集合
     }
   },
 
@@ -386,9 +412,22 @@ export default {
     },
     handleOperateClick (btn) {
       this.operateValue = btn.value
-    },
-    showTableRow (e) {
-      console.log(e)
+      const _this = this
+      if (!this.selectOrderList.length) {
+        this.$Message.warning('请至少选择一条信息')
+        return
+      }
+      if (btn.name === '送货调度' || btn.name === '提货调度') {
+        _this.openDialog({
+          name: 'order-management/dialog/dispatch',
+          data: { id: this.selectOrderList, name: btn.name },
+          methods: {
+            ok (node) {
+              _this.onAddUserSuccess(node)
+            }
+          }
+        })
+      }
     },
     openOuterDialog (params) {
       const _this = this
@@ -420,6 +459,9 @@ export default {
     handleColumnChange (val) {
       console.log(val)
       this.extraColumns = val
+    },
+    handleSelectionChange (val) {
+      this.selectOrderList = val
     }
   }
 }
