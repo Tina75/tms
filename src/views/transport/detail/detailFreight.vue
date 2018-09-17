@@ -1,4 +1,5 @@
 <template>
+  <!-- 默认状态 -->
   <div v-if="!inEditing">
     <!-- 运单号及状态 -->
     <section class="detail-header">
@@ -141,6 +142,7 @@
     </section>
   </div>
 
+  <!-- 编辑状态 -->
   <div v-else>
     <!-- 运单号及状态 -->
     <section class="detail-header">
@@ -161,29 +163,31 @@
         <Row class="detail-field-group">
           <i-col span="7">
             <span class="detail-field-title">始发地：</span>
-            <span>{{ info.start }}</span>
+            <Input v-model="info.start"></Input>
           </i-col>
           <i-col span="7">
             <span class="detail-field-title">目的地：</span>
-            <span>{{ info.end }}</span>
+            <Input v-model="info.end"></Input>
           </i-col>
           <i-col span="10">
             <span class="detail-field-title">承运商：</span>
-            <span>{{ info.carrierName }}</span>
+            <Input v-model="info.carrierName"></Input>
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="7">
             <span class="detail-field-title">车牌号：</span>
-            <span>{{ info.carNo }}</span>
+            <Input v-model="info.carNo"></Input>
           </i-col>
           <i-col span="7">
             <span class="detail-field-title">车型：</span>
-            <span>{{ info.carType + ' ' + info.carLength }}</span>
+            <!-- <span>{{ info.carType + ' ' + info.carLength }}</span> -->
+            <Input v-model="info.carType"></Input>
           </i-col>
           <i-col span="10">
             <span class="detail-field-title">司机：</span>
-            <span>{{ info.driverName + ' ' + info.driverPhone }}</span>
+            <!-- <span>{{ info.driverName + ' ' + info.driverPhone }}</span> -->
+            <Input v-model="info.driverName"></Input>
           </i-col>
         </Row>
         <Row class="detail-field-group">
