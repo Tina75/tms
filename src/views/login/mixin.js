@@ -1,15 +1,20 @@
 import Server from '@/libs/js/server'
 
 let timer
-let waitingTime = 5
+const waitingTime = 5
 
 let captchaUrl
 switch (process.env.NODE_ENV) {
   case 'development':
-    captchaUrl = 'http://192.168.1.49:5656/dolphin-web/user/captcha'; break
+    captchaUrl = 'http://192.168.1.49:5656/dolphin-web/user/captcha'
+    break
   case 'production':
-    captchaUrl = '//dev-boss.yundada56.com/bluewhale-boss/user/captcha'; break
+    captchaUrl = '//dev-boss.yundada56.com/bluewhale-boss/user/captcha'
+    break
 }
+
+// 密码校验 匹配数字与大小写字母
+const passwordReg = /^([a-z]|[A-Z]|\d){6,16}$/
 
 export default {
   replace: true,
@@ -111,16 +116,15 @@ export default {
     inputBlurWithPw () {
       return this.validate('password', {
         extraRules: () => {
-          if (this.form.password.length > 16 || this.form.password.length < 6) {
-            this.$Message.error('密码格式不正确，至少6位，至多16位')
-            return false
+          if (!passwordReg.test(this.form.password)) {
+            this.$Message.error('密码只支持数字、大小写字母，至少为6位，至多为16位')
           }
           return true
         }
       })
     },
 
-    // 实时校验手机号是否已注册
+    // 实时校验手机号是否已注册-注册时
     imCheckPhoneIsSignup () {
       Server({
         url: '/user/phone',

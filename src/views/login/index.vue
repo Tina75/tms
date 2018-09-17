@@ -11,7 +11,7 @@
               <Input v-model="form.phone" :maxlength="11" placeholder="登录账号/手机号"
                      @on-focus="inputFocus('phone')"
                      @on-blur="inputBlur('phone')">
-              <Icon slot="prefix" :color="inputIconColor('phone')" type="ios-contact" />
+              <i slot="prefix" :style="inputIconColor('phone')" class="icon font_family icon-ico-user"></i>
               </Input>
             </FormItem>
 
@@ -19,7 +19,7 @@
               <Input v-model="form.password" type="password" placeholder="输入密码"
                      @on-focus="inputFocus('password')"
                      @on-blur="inputBlur('password')">
-              <Icon slot="prefix" :color="inputIconColor('password')" type="ios-contact" />
+              <i slot="prefix" :style="inputIconColor('password')" class="icon font_family icon-ico-password"></i>
               </Input>
             </FormItem>
 
@@ -27,7 +27,7 @@
               <Input v-model="form.captchaCode" class="form-captcha-input" type="text" placeholder="输入验证码"
                      @on-focus="inputFocus('captchaCode')"
                      @on-blur="inputBlur('captchaCode')">
-              <Icon slot="prefix" :color="inputIconColor('captchaCode')" type="ios-contact" />
+              <i slot="prefix" :style="inputIconColor('captchaCode')" class="icon font_family icon-ico-yzm"></i>
               </Input>
               <div class="form-captcha">
                 <img :src="captchaImage" class="form-captcha-img"
@@ -87,7 +87,7 @@ export default {
   methods: {
     // 输入框聚焦改变图标颜色
     inputIconColor (type) {
-      return this.currentFocus === type ? '#00A4BD' : '#9DA1B0'
+      return { color: this.currentFocus === type ? '#00A4BD' : '#9DA1B0' }
     },
 
     // 输入框聚焦
@@ -132,6 +132,11 @@ export default {
         if (this.rememberPW) this.localPwSave()
         else window.localStorage.removeItem('local_rememberd_pw')
         window.localStorage.setItem('tms_is_login', true)
+
+        const exp = new Date()
+        exp.setTime(exp.getTime() + 60 * 24 * 60 * 60 * 1000)
+        document.cookie = `token=${escape(res.data.data.data ? res.data.data.data.token : res.data.data.token)};expires=${exp.toGMTString()}`
+
         location.reload()
       }).catch(err => console.error(err))
     }
