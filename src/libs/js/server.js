@@ -7,12 +7,12 @@ let instance = axios.create({
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
   loading: false,
-  ignoreCode: false
+  ignoreCode: process.env.NODE_ENV === 'development'
 })
 
 switch (process.env.NODE_ENV) {
   case 'development':
-    instance.defaults.baseURL = 'http://yapi.yundada56.com/mock/154'; break
+    instance.defaults.baseURL = 'http://yapi.yundada56.com/mock/214'; break
   case 'production':
     instance.defaults.baseURL = '//dev-boss.yundada56.com/bluewhale-boss/'; break
 }

@@ -25,11 +25,10 @@
             ref="tagsPageOpened"
             :key="`tag-nav-${index}`"
             :name="item.name"
-            :checked="item.href === currentValue.href"
-            @on-close="handleClose"
-            @on-refresh="handleRefresh"
-            @click.native="handleClick(item)"
-          >{{ showTitleInside(item) }}
+            :checked="item.path === value.path"
+            @on-close="handleClose(item)"
+            @on-refresh="handleRefresh(item)"
+            @click.native="handleClick(item)">
           </tab-nav-item>
         </transition-group>
       </div>
@@ -38,20 +37,14 @@
 </template>
 
 <script>
-// import { showTitle } from '@/libs/util'
 import BaseComponent from '@/basic/BaseComponent'
 import TabNavItem from '@/components/TabNavItem'
 export default {
-  name: 'tagsNav',
+  name: 'TabNav',
   components: { TabNavItem },
   mixins: [BaseComponent],
   props: {
-    value: {
-      type: Object,
-      default () {
-        return {}
-      }
-    },
+    value: Object,
     list: {
       type: Array,
       default () {
@@ -61,13 +54,7 @@ export default {
   },
   data () {
     return {
-      tagBodyLeft: 0,
-      currentValue: this.value
-    }
-  },
-  watch: {
-    value: function (val) {
-      this.currentValue = val
+      tagBodyLeft: 0
     }
   },
   methods: {
@@ -94,46 +81,35 @@ export default {
         }
       }
     },
-    handleTagsOption (type) {
-      if (type === 'close-all') {
-        // 关闭所有，除了home
-        let res = this.list.filter(item => item.href === '/home')
-        // this.$emit('on-close', res, 'all')
-        this.$store.commit('updateTabList', res)
-      } else {
-        // 关闭除当前页和home页的其他页
-        let res = this.list.filter(item => item.href === this.value.href || item.name === '/home')
-        // this.$emit('on-close', res, 'others')
-        this.$store.commit('updateTabList', res)
-      }
-    },
-    handleClose (name) {
-      // TODO:
-      let res = this.list.filter(item => item.name !== name)
-      // this.$emit('on-close', res, undefined, name)
-      this.$store.commit('updateTabList', res)
+    // handleTagsOption (type) {
+    //   if (type === 'close-all') {
+    //     // 关闭所有，除了home
+    //     let res = this.list.filter(item => item.path === '/home')
+    //     // this.$emit('on-close', res, 'all')
+    //     this.$store.commit('updateTabList', res)
+    //   } else {
+    //     // 关闭除当前页和home页的其他页
+    //     let res = this.list.filter(item => item.path === this.value.path || item.name === '/home')
+    //     // this.$emit('on-close', res, 'others')
+    //     this.$store.commit('updateTabList', res)
+    //   }
+    // },
+    handleClose (item) {
+      let res = this.list.filter(element => element.name !== item.name)
+      this.$emit('on-close', res, item)
     },
     handleRefresh (item) {
-      this.$Message.info(item)
-      // this.ema.fire('refresh')
-      // this.$router.push({path: '/company-manage/staff-manage'})
+      this.$Message.info(`${item.name}已刷新`)
+      window.location.reload()
     },
     handleClick (item) {
-      this.currentValue = item
-      this.$store.commit('changeTab', item)
-      this.$emit('input', item)
-    },
-    showTitleInside (item) {
-      // return showTitle(item, this)
-      return item.name
+      this.$emit('on-select', item)
     }
   }
 }
 </script>
 
 <style lang="stylus">
-.test
-  color red!important
 .no-select
   -webkit-touch-callout none
   -webkit-user-select none
@@ -168,11 +144,14 @@ export default {
       padding 6px 4px
       line-height 14px
       text-align center
+      font-size 14px
     &.left-btn
       left 0px
+      background #252A2F
     &.right-btn
       // right 32px
       right 0px
+      background #252A2F
       border-right 1px solid #3A424B
   .scroll-outer
     position absolute
@@ -185,7 +164,7 @@ export default {
     .scroll-body
       height calc(100% - 1px)
       display inline-block
-      padding 1px 4px 0
+      // padding 1px 4px 0
       position absolute
       overflow visible
       white-space nowrap

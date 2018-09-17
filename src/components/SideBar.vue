@@ -1,29 +1,30 @@
 <template>
   <div>
-    <p class="title">TMS</p>
-    <Menu v-show="!collapsed" ref="menu"  :active-name="currTab.href" :open-names="openedNames"  accordion width="200" theme="dark" @on-select="handleSelect">
+    <Menu v-show="!collapsed" ref="menu"  :active-name="$route.path === '/'?'/home/index':$route.path" :open-names="openedNames"  accordion width="200" theme="dark" @on-select="handleSelect">
+      <p class="title"><i class="icon font_family icon-logo-zjy" ></i></p>
       <template v-for="item in menuList">
         <template v-if="item.children">
-          <Submenu :name="item.name" :key="item.href">
+          <Submenu v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path">
             <template slot="title"><Icon :type="item.icon" size="18"/>{{item.name}}</template>
-            <menu-item v-for="child in item.children" :name="child.href" :key="child.name" :to="child.href">{{child.name}}</menu-item>
+            <menu-item v-for="child in item.children" v-if="hasPower(child.powerCode)" :name="child.path" :key="child.name" >{{child.name}}</menu-item>
           </Submenu>
         </template>
         <template v-else>
-          <menu-item :name="item.href" :to="item.href" :key="item.href"><Icon :type="item.icon" size="18"/>{{item.name}}</menu-item>
+          <menu-item v-if="hasPower(item.powerCode)" :name="item.path"  :key="item.path"><Icon :type="item.icon" size="18"/>{{item.name}}</menu-item>
         </template>
       </template>
     </Menu>
     <div v-show="collapsed" class="menu-collapsed">
+      <p class="title"><i class="icon font_family icon-logo-1"></i></p>
       <template v-for="item in menuList" >
-        <div :key="item.name" >
+        <div v-if="hasPower(item.powerCode)"  :key="item.path">
           <Poptip v-if="item.children" trigger="hover"  placement="left-start">
-            <div v-for="child in item.children" slot="content" :key="child.href" @click="handleSelect(child.href)">
-              <menu-item :name="child.href" :to="child.href" :key="child.href" >{{child.name}}</menu-item>
+            <div v-for="child in item.children" slot="content" :key="child.path" @click="handleSelect(child.path)">
+              <menu-item  v-if="hasPower(child.powerCode)" :name="child.path" :to="child.path" :key="child.path" >{{child.name}}</menu-item>
             </div>
             <a class="drop-menu-a" href=""><Icon :type="item.icon" color="#fff" size="22"/></a>
           </Poptip>
-          <a v-else :href="item.href" class="drop-menu-a"><Icon :type="item.icon" color="#fff" size="22"/></a>
+          <a v-else :href="item.path" class="drop-menu-a"><Icon :type="item.icon" color="#fff" size="22"/></a>
         </div>
       </template>
     </div>
@@ -31,41 +32,34 @@
 </template>
 
 <script>
-import menu from '@/assets/menu.json'
-import { mapGetters } from 'vuex'
 export default {
   props: {
-    collapsed: Boolean
+    collapsed: Boolean,
+    activeName: String,
+    menuList: Array
   },
   data () {
     return {
-      menuList: menu,
       openedNames: []
     }
   },
-  computed: {
-    ...mapGetters(['currTab'])
-  },
   watch: {
-    currTab: function (val) {
-      this.getopenedNames(val.name)
-    }
-  },
-  mounted () {
-  },
-  methods: {
-    getopenedNames (activeName) {
-      let openItem = getParent(this.menuList)
-      this.openedNames = []
-      this.openedNames.push(openItem.name)
+    activeName (val) {
+      this.openedNames = this.getopenedNames(val)
+    },
+    openedNames (val) {
       this.$nextTick(() => {
         this.$refs.menu.updateOpened()
       })
-      function getParent (element = []) {
-        return element.find(item => {
-          return item.name === activeName || getParent(item.children)
-        })
-      }
+    }
+  },
+  mounted () {
+    this.openedNames = this.getopenedNames(this.activeName)
+  },
+  methods: {
+    getopenedNames (activeName) {
+      const matchs = activeName.split('/')
+      return ['/' + matchs[1]]
     },
     handleSelect (name) {
       let target = ''
@@ -73,12 +67,12 @@ export default {
         const element = this.menuList[i]
         target = walk(element)
         if (target) {
-          this.$store.commit('changeTab', target)
+          this.$emit('on-select', target)
           return
         }
       }
       function walk (element) {
-        if (element.href === name) {
+        if (element.path === name) {
           return element
         } else if (element.children) {
           return element.children.find(item => {
@@ -88,7 +82,21 @@ export default {
           return ''
         }
       }
-      this.$emit('on-select', name)
+    },
+    // 权限控制
+    hasPower: function (power) {
+      if (!power) { return true }
+      return this.$store.state.permissions.includes(power)
+    //   var flag = false
+    //   var powerArr = (power || '').split(',') || []
+    //   var list = window.powerList
+    //   list.forEach((value) => {
+    //     if (powerArr.indexOf(value.toString()) !== -1) {
+    //       flag = true
+    //       return false
+    //     }
+    //   })
+    //   return flag
     }
   }
 }
@@ -106,4 +114,8 @@ export default {
   .drop-menu-a
     padding 6px 15px
     display inline-block
+.icon-logo-zjy
+  font-size 21px
+.icon-logo-1
+  font-size 32px
 </style>

@@ -2,15 +2,17 @@
   <div>
     <Col span="5">
     <Menu :theme="theme" class="leftMenu">
-      <Button type="primary" class="centerBtn" @click="createRole">新增角色</Button>
-      <div style="height:500px; overflow-y:auto; padding-top: 60px;">
+      <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:50px;">
+        <Button type="primary" class="centerBtn" @click="createRole">新增角色</Button>
+      </div>
+      <div style="height:500px; overflow-y:auto; padding-top: 20px;">
         <MenuItem v-for="menu in list1" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.name)">
         <p class="menuTitle">{{menu.name}}</p>
-        <span class="configBtnItem">
+        <span v-if="menu.name !== '超级管理员'" class="configBtnItem">
           <span class="configBtn" @click="editRole(menu.name)">修改</span>
           <span type="text" class="configBtn" @click="removeRole(menu.name)">删除</span>
         </span>
-        </MenuItem>
+          </MenuItem>
       </div>
       <Modal v-model="createRoleModal" width="360">
         <p slot="header" style="text-align:center">
@@ -31,7 +33,6 @@
     <Col span="18">
     <p class="rightTitle">{{rightTitle}}的权限
       <Button
-        v-show="rightTitle !== '用户角色的权限'"
         class="saveRoleBtn"
         type="primary"
         @click="saveRole">
@@ -48,7 +49,7 @@
       </p>
       <P>确定删除'{{rightTitle}}'?</P>
     </Modal>
-    <div v-show="rightTitle !== '用户角色的权限'" class="divTree">
+    <div class="divTree">
       <Card v-for="treeData in listInitTreeList" :key="treeData.index" dis-hover class="cardTreeItem">
         <p slot="title">{{treeData[0].title}}</p>
         <Tree
@@ -69,7 +70,7 @@ export default {
   name: 'employee-manage',
   mixins: [ BasePage ],
   metaInfo: {
-    title: '员工管理'
+    title: '角色管理'
   },
   data () {
     let this_ = this
@@ -86,7 +87,7 @@ export default {
     }
     return {
       theme: 'light',
-      rightTitle: '用户角色的权限',
+      rightTitle: '超级管理员',
       createRoleModal: false,
       removeRoleModal: false,
       editRoleModalTitle: '',

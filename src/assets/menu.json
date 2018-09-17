@@ -1,137 +1,148 @@
 [
   {
     "name":"首页",
-    "href":"/home/index",
+    "path":"/home/index",
     "icon":"md-home",
     "powerCode":0
   },
   {
     "name":"受理开单",
     "icon":"md-paper",
-    "powerCode":0,
+    "path":"/1",
+    "powerCode":100000,
     "children":[
       {
         "name":"手动下单",
-        "href":"/1",
-        "powerCode":0
+        "path":"/order/create",
+        "powerCode":100100
       },
       {
         "name":"批量导入",
-        "href":"/2",
-        "powerCode":0
+        "path":"/order/import",
+        "powerCode":100200
       }
     ]
   },
   {
     "name":"订单管理",
     "icon":"md-list-box",
-    "powerCode":0,
+    "path":"/order-management",
+    "powerCode":110000,
     "children":[
       {
         "name":"订单管理",
-        "href":"/order-management/order",
-        "powerCode":0
+        "path":"/order-management/order",
+        "powerCode":110100
       },
       {
         "name":"回单管理",
-        "href":"/order-management/receipt",
-        "powerCode":0
+        "path":"/order-management/receipt",
+        "powerCode":110200
       }
     ]
   },
   {
     "name":"运输管理",
-    "powerCode":0,
+    "powerCode":120000,
     "icon":"md-bus",
-    "href":"/transport",
+    "path":"/transport",
     "children":[
       {
         "name":"调度工作台",
-        "href":"/transport/dispatch",
-        "powerCode":0
+        "path":"/transport/dispatch",
+        "powerCode":110300
       },
       {
         "name":"运单管理",
-        "href":"/transport/waybill",
-        "powerCode":0
+        "path":"/transport/waybill",
+        "powerCode":120100
       },
       {
         "name":"提货管理",
-        "href":"/transport/receiveOrder",
-        "powerCode":0
+        "path":"/transport/receiveOrder",
+        "powerCode":120200
       },
       {
         "name":"外转单管理",
-        "href":"/transport/outerOrder",
-        "powerCode":0
+        "path":"/transport/outerOrder",
+        "powerCode":120300
       }
     ]
   },
   {
     "name":"财务",
-    "href":"/finance",
+    "path":"/finance",
     "icon":"md-options",
     "powerCode":0
   },
   {
     "name":"报表",
-    "href":"/stats",
+    "path":"/stats",
     "icon":"md-stats",
     "powerCode":0
   },
   {
     "name":"客户管理",
     "icon":"md-person",
-    "powerCode":0,
+    "path":"/client",
+    "powerCode":130000,
     "children":[
       {
         "name":"发货方管理",
-        "href":"/client/sender",
-        "powerCode":0
+        "path":"/client/sender",
+        "powerCode":130100
       },
       {
         "name":"承运商管理",
-        "href":"/client/carrier",
-        "powerCode":0
+        "path":"/client/carrier",
+        "powerCode":130200
       },
       {
         "name":"外转方管理",
-        "href":"/client/transfer",
-        "powerCode":0
+        "path":"/client/transfer",
+        "powerCode":130300
       }
     ]
   },
   {
     "name":"公司管理",
     "icon":"md-briefcase",
+    "path":"/company-manage",
+    "powerCode":140000,
     "children":[
       {
         "name":"员工管理",
-        "href":"/company-manage/staff-manage",
-        "powerCode":0
+        "path":"/company-manage/staff-manage",
+        "powerCode":140200
       },
       {
         "name":"角色管理",
-        "href":"/company-manage/employee-manage",
-        "powerCode":0
+        "path":"/company-manage/employee-manage",
+        "powerCode":140100
       }
     ]
   },
   {
     "name":"设置",
-    "href":"/set-up/set-up",
+    "path":"/set-up/set-up",
     "icon":"md-settings",
+    "powerCode":150000
+  },
+  {
+    "name":"消息",
+    "href":"#/info/info",
+    "icon":"md-chatbubbles",
     "powerCode":0
   },
   {
     "name":"帮助",
-    "href":"/helper/help",
+    "path":"/helper/help",
     "icon":"md-help-circle",
     "powerCode":0
   },
   {
     "name":"example",
-    "href":"/example/page1",
+    "path":"/example/page1",
     "icon":"md-alert"
   }
 
