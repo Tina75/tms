@@ -222,7 +222,7 @@ export default {
           key: 'do',
           width: 60,
           extra: true,
-          render: (h, params) => {
+          render: (h, p) => {
             return h('a', {
               on: {
                 click: () => {
@@ -242,6 +242,15 @@ export default {
             return h('a', {
               style: {
                 color: '#418DF9'
+              },
+              on: {
+                click: () => {
+                  console.log(p)
+                  this.openTab({
+                    path: '/transport/detail/detailFreight',
+                    query: { id: p.row.waybillId }
+                  })
+                }
               }
             }, p.row.waybillNo)
           }

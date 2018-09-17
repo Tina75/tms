@@ -7,7 +7,7 @@ export default {
    * @param {*} store
    * @param {*} name
    */
-  getClients ({state, commit}, name) {
+  getClients ({ state, commit }, name) {
     return new Promise((resolve, reject) => {
       const { pageNo, pageSize } = state.order.pagination
       server({
@@ -36,7 +36,7 @@ export default {
    * @param {*} store
    * @param {*} consignerId
    */
-  getConsignerDetail ({state, commit}, consignerId) {
+  getConsignerDetail ({ state, commit }, consignerId) {
     return new Promise((resolve, reject) => {
       server({
         method: 'get',
@@ -68,7 +68,7 @@ export default {
    * @param {*} store
    * @param {*} index
    */
-  appendCargo ({commit}, index) {
+  appendCargo ({ commit }, index) {
     commit(types.APPEND_CONSIGNER_CARGO, index + 1)
   },
   /**
@@ -76,7 +76,7 @@ export default {
    * @param {*} store
    * @param {*} index
    */
-  removeCargo ({state, commit}, index) {
+  removeCargo ({ state, commit }, index) {
     if (state.order.cargoes.length === 1) {
       return
     }
@@ -87,7 +87,7 @@ export default {
    * @param {*} store
    * @param {*} item
    */
-  updateCargo ({state, commit}, item) {
+  updateCargo ({ state, commit }, item) {
     commit(types.UPDATE_CONSIGNER_CARGO, item)
   },
   /**
@@ -95,7 +95,7 @@ export default {
    * @param {*} store
    * @param {*} item
    */
-  fullUpdateCargo ({commit}, item) {
+  fullUpdateCargo ({ commit }, item) {
     item.cargo = new Cargo(item.cargo)
     commit(types.UPDATE_FULL_CONSIGNER_CARGO, item)
   },
@@ -103,7 +103,7 @@ export default {
     store.commit(types.CLEAR_CONSIGNER_CARGO_LIST)
     store.commit(types.RECEIVE_CARGO_LIST, [])
   },
-  clearOrderDetail ({commit}) {
+  clearOrderDetail ({ commit }) {
     commit(types.RECEIVE_ORDER_DETAIL, {})
   },
   /**
@@ -111,7 +111,7 @@ export default {
    * @param {*} store
    * @param {*} id
    */
-  getOrderDetail ({state, commit}, id) {
+  getOrderDetail ({ state, commit }, id) {
     return new Promise((resolve, reject) => {
       server({
         method: 'get',
@@ -121,7 +121,7 @@ export default {
         }
       })
         .then((response) => {
-          const {orderCargoList, ...order} = response.data.data
+          const { orderCargoList, ...order } = response.data.data
           commit(types.RECEIVE_CONSIGNER_CARGO_LIST, orderCargoList.map((item) => new Cargo(item)))
           commit(types.RECEIVE_ORDER_DETAIL, order)
           resolve(order)
@@ -130,7 +130,7 @@ export default {
     })
   },
   // 提交表单
-  submitOrder ({state}, form) {
+  submitOrder ({ state }, form) {
     let url = 'order/create'
     if (state.order.detail.id) {
       url = 'order/update'
