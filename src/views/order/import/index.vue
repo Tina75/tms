@@ -90,7 +90,10 @@ export default {
         },
         {
           title: '导入结果',
-          key: 'status'
+          key: 'status',
+          render: (h, params) => {
+            return h('span', params.row.status === 1 ? '导入成功' : '导入失败')
+          }
         },
         {
           title: '导入订单数',
@@ -104,15 +107,22 @@ export default {
           title: '操作',
           key: 'action',
           render: (h, params) => {
-            return h('div', [
+            const actions = [
               h('a', {
-                href: 'params.column.fileUrl'
-              }, '下载'),
-              h('a', {
-                href: 'javascript:;',
-                class: 'i-ml-10'
-              }, '查看订单')
-            ])
+                attrs: {
+                  href: params.row.fileUrl
+                }
+              }, '下载')
+            ]
+            if (params.row.status === 1) {
+              actions.push(h('a', {
+                class: 'i-ml-10',
+                attrs: {
+                  href: 'javascript:;'
+                }
+              }, '查看订单'))
+            }
+            return h('div', actions)
           }
         }
       ]
@@ -155,7 +165,8 @@ export default {
   },
   methods: {
     handleLoad (response) {
-      if (response.data.msg !== 10000 || !response.data.data || response.data.data.length === 0) {
+      // response.data.msg !== 10000
+      if (!response.data.data || response.data.data.length === 0) {
         this.$refs.footer.parentElement.parentElement.style['display'] = 'block'
       } else {
         this.$refs.footer.parentElement.parentElement.style['display'] = 'none'

@@ -15,14 +15,12 @@
       </Col>
       <Col span="6">
       <FormItem label="始发城市" prop="start">
-        <!-- <Cascader v-model="orderForm.start" :data="areaData" :render-format="formatArea" filterable></Cascader> -->
         <AreaSelect v-model="orderForm.start" :deep="true"></AreaSelect>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="目的城市" prop="end">
         <AreaSelect v-model="orderForm.end" :deep="true" :adjustment="true"></AreaSelect>
-        <!-- <Cascader ref="cascaderEnd" v-model="orderForm.end" :data="areaData" :render-format="formatArea" change-on-select filterable  @on-change="handleChangeEnd"></Cascader> -->
       </FormItem>
       </Col>
     </Row>
@@ -55,7 +53,7 @@
       </Col>
       <Col span="6">
       <FormItem label="手机号" prop="consignerPhone">
-        <Input v-model="orderForm.consignerPhone" :maxlength="11" type="text"></Input>
+        <Input v-model="orderForm.consignerPhone" :maxlength="11" type="mobile"></Input>
       </FormItem>
       </Col>
       <Col span="6">
@@ -240,7 +238,7 @@ export default {
       return { index: params.index, name: params.column.key, value }
     }
     const validatePhone = (rule, value, callback) => {
-      if (/(13[0-9]|15[0-9]|166|17[0-9]|18[0-9]|14[57])[0-9]{8}$/.test(value)) {
+      if (/(13[0-9]|15[0-9]|166|17[0-9]|18[0-9]|14[0-9])[0-9]{8}$/.test(value)) {
         callback()
       } else {
         callback(new Error('请输入正确的手机号码'))
