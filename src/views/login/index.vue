@@ -132,7 +132,7 @@ export default {
         if (this.rememberPW) this.localPwSave()
         else window.localStorage.removeItem('local_rememberd_pw')
         window.localStorage.setItem('tms_is_login', true)
-        // location.reload()
+        location.reload()
       }).catch(err => console.error(err))
     }
   }
