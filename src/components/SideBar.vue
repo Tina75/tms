@@ -5,12 +5,12 @@
       <template v-for="item in menuList">
         <template v-if="item.children">
           <Submenu v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path">
-            <template slot="title"><i :class="['icon','font_family',`${item.icon}`]"/>{{item.name}}</template>
+            <template slot="title"><FontIcon :type="item.icon" :size="16" ></FontIcon>{{item.name}}</template>
             <menu-item v-for="child in item.children" v-if="hasPower(child.powerCode)" :name="child.path" :key="child.name" >{{child.name}}</menu-item>
           </Submenu>
         </template>
         <template v-else>
-          <menu-item v-if="hasPower(item.powerCode)" :name="item.path"  :key="item.path"><i :class="['icon','font_family',`${item.icon}`]"/>{{item.name}}</menu-item>
+          <menu-item v-if="hasPower(item.powerCode)" :name="item.path"  :key="item.path"><FontIcon :type="item.icon" :size="16"></FontIcon>{{item.name}}</menu-item>
         </template>
       </template>
     </Menu>
@@ -22,9 +22,13 @@
             <div v-for="child in item.children" slot="content" :key="child.path" @click="handleSelect(child.path)">
               <menu-item  v-if="hasPower(child.powerCode)" :name="child.path" :to="child.path" :key="child.path" >{{child.name}}</menu-item>
             </div>
-            <a class="drop-menu-a" href=""><Icon :type="item.icon" color="#fff" size="22"/></a>
+            <a class="drop-menu-a"><FontIcon :type="item.icon" :size="20" color="white"></FontIcon></a>
           </Poptip>
-          <a v-else :href="item.path" class="drop-menu-a"><Icon :type="item.icon" color="#fff" size="22"/></a>
+          <Tooltip v-else :content="item.name" transfer placement="left">
+            <a  :href="`#${item.path}`" class="drop-menu-a">
+              <FontIcon :type="item.icon" :size="20" color="white"></FontIcon>
+            </a>
+          </Tooltip>
         </div>
       </template>
     </div>
@@ -32,7 +36,9 @@
 </template>
 
 <script>
+import FontIcon from '@/components/FontIcon'
 export default {
+  components: {FontIcon},
   props: {
     collapsed: Boolean,
     activeName: String,

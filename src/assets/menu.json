@@ -2,12 +2,12 @@
   {
     "name":"首页",
     "path":"/home/index",
-    "icon":"icon-shouye",
+    "icon":"shouye",
     "powerCode":0
   },
   {
     "name":"受理开单",
-    "icon":"icon-shoulikaidan",
+    "icon":"shoulikaidan",
     "path":"/order",
     "powerCode":100000,
     "children":[
@@ -25,7 +25,7 @@
   },
   {
     "name":"订单管理",
-    "icon":"icon-dingdanguanli",
+    "icon":"dingdanguanli",
     "path":"/order-management",
     "powerCode":110000,
     "children":[
@@ -44,7 +44,7 @@
   {
     "name":"运输管理",
     "powerCode":120000,
-    "icon":"icon-huoyuanguanli",
+    "icon":"huoyuanguanli",
     "path":"/transport",
     "children":[
       {
@@ -72,18 +72,18 @@
   {
     "name":"财务",
     "path":"/finance",
-    "icon":"icon-caiwuguanli",
+    "icon":"caiwuguanli",
     "powerCode":0
   },
   {
     "name":"报表",
     "path":"/stats",
-    "icon":"icon-baobiaoguanli",
+    "icon":"baobiaoguanli",
     "powerCode":0
   },
   {
     "name":"客户管理",
-    "icon":"icon-yonghuguanli",
+    "icon":"yonghuguanli",
     "path":"/client",
     "powerCode":130000,
     "children":[
@@ -106,7 +106,7 @@
   },
   {
     "name":"公司管理",
-    "icon":"icon-gongsiguanli",
+    "icon":"gongsiguanli",
     "path":"/company-manage",
     "powerCode":140000,
     "children":[
@@ -125,7 +125,7 @@
   {
     "name":"设置",
     "path":"/set-up/set-up",
-    "icon":"icon-shezhi",
+    "icon":"shezhi",
     "powerCode":150000
   },
   {
@@ -137,7 +137,7 @@
   {
     "name":"帮助",
     "path":"/helper/help",
-    "icon":"icon-bangzhuzhongxin",
+    "icon":"bangzhuzhongxin",
     "powerCode":0
   }
 
