@@ -41,7 +41,7 @@ import BaseComponent from '@/basic/BaseComponent'
 import TabNavItem from '@/components/TabNavItem'
 export default {
   name: 'TabNav',
-  components: {TabNavItem},
+  components: { TabNavItem },
   mixins: [BaseComponent],
   props: {
     value: Object,

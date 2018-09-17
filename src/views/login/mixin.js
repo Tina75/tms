@@ -1,7 +1,20 @@
 import Server from '@/libs/js/server'
 
 let timer
-let waitingTime = 5
+const waitingTime = 5
+
+let captchaUrl
+switch (process.env.NODE_ENV) {
+  case 'development':
+    captchaUrl = 'http://192.168.1.49:5656/dolphin-web/user/captcha'
+    break
+  case 'production':
+    captchaUrl = '//dev-boss.yundada56.com/bluewhale-boss/user/captcha'
+    break
+}
+
+// 密码校验 匹配数字与大小写字母
+const passwordReg = /^([a-z]|[A-Z]|\d){6,16}$/
 
 export default {
   replace: true,
@@ -89,27 +102,70 @@ export default {
       return valid
     },
 
+    // 输入框失焦
+    inputBlur (type) {
+      if (this.currentFocus !== undefined) this.currentFocus = ''
+      if (!this.validate(type)) return
+
+      if (type === 'phone' && this.$route.path === '/login/sign-up') this.imCheckPhoneIsSignup()
+      else if (type === 'captchaCode') this.imCheckCapthcha()
+      else if (type === 'smsCode') this.imCheckSMSCode()
+    },
+
     // 校验密码-添加设置密码时的位数规则
     inputBlurWithPw () {
       return this.validate('password', {
         extraRules: () => {
-          if (this.form.password.length > 16 || this.form.password.length < 6) {
-            this.$Message.error('密码格式不正确，至少6位，至多16位')
-            return false
+          if (!passwordReg.test(this.form.password)) {
+            this.$Message.error('密码只支持数字、大小写字母，至少为6位，至多为16位')
           }
           return true
         }
       })
     },
 
+    // 实时校验手机号是否已注册-注册时
+    imCheckPhoneIsSignup () {
+      Server({
+        url: '/user/phone',
+        method: 'get',
+        data: { phone: this.form.phone }
+      }).then(res => {
+        console.log('手机号校验通过')
+      }).catch(err => console.error(err))
+    },
+
+    // 实时校验图形验证码
+    imCheckCapthcha () {
+      Server({
+        url: '/user/testCaptcha',
+        method: 'get',
+        data: { captchaCode: this.form.captchaCode }
+      }).then(res => {
+        console.log('图形验证码校验通过')
+      }).catch(err => {
+        console.error(err)
+        this.getCaptcha()
+      })
+    },
+
+    // 实时校验短信验证码
+    imCheckSMSCode () {
+      Server({
+        url: '/user/smsCode',
+        method: 'get',
+        data: {
+          phone: this.form.phone,
+          smsCode: this.form.smsCode
+        }
+      }).then(res => {
+        console.log('短信验证码校验通过')
+      }).catch(err => console.error(err))
+    },
+
     // 获取图片验证码
     getCaptcha () {
-      Server({
-        url: '/user/captcha',
-        method: 'get'
-      }).then(res => {
-        this.captchaImage = res.data.data
-      }).catch(err => console.error(err))
+      this.captchaImage = `${captchaUrl}?${new Date().getTime()}`
     },
 
     // 发送手机验证码
@@ -137,12 +193,6 @@ export default {
           }
         }, 1000)
       }).catch(err => console.error(err))
-    },
-
-    // 输入框失焦
-    inputBlur (type) {
-      if (this.currentFocus !== undefined) this.currentFocus = ''
-      this.validate(type)
     }
   }
 

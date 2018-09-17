@@ -291,7 +291,7 @@ export default {
           width: 170,
           renderHeader: (h, params) => {
             return h('span', [
-              h('span', {class: 'van-c-red'}, '*'),
+              h('span', { class: 'van-c-red' }, '*'),
               h('span', params.column.title)
             ])
           },
@@ -320,7 +320,7 @@ export default {
           key: 'weight',
           renderHeader: (h, params) => {
             return h('span', [
-              h('span', {class: 'van-c-red'}, '*'),
+              h('span', { class: 'van-c-red' }, '*'),
               h('span', params.column.title),
               h('Tooltip', {
                 props: {
@@ -367,7 +367,7 @@ export default {
           key: 'volume',
           renderHeader (h, params) {
             return h('span', [
-              h('span', {class: 'van-c-red'}, '*'),
+              h('span', { class: 'van-c-red' }, '*'),
               h('span', params.column.title)
             ])
           },
@@ -651,7 +651,7 @@ export default {
       const cargo = this.cargoes.find(cg => cg.id === cargoItem.id)
       if (cargo) {
         this.syncStoreCargoes()
-        this.fullUpdateCargo({index: params.index, cargo})
+        this.fullUpdateCargo({ index: params.index, cargo })
       }
     },
     /**
@@ -667,6 +667,7 @@ export default {
       // index, name, value
       if (type === 'update') {
         if (!this.tempCargoes[item.index]) {
+          this.tempCargoes[item.index] = { [item.name]: item.value }
           if (sumFields.indexOf(item.name) !== -1) {
             this.statics[item.name] = float.round(this.statics[item.name] - (this.consignerCargoes[item.index][item.name] || 0) + item.value)
           }
@@ -689,7 +690,7 @@ export default {
     // 同步当前的修改数据到vuex的store
     syncStoreCargoes () {
       for (let index in this.tempCargoes) {
-        this.updateCargo({index, cargo: this.tempCargoes[index]})
+        this.updateCargo({ index, cargo: this.tempCargoes[index] })
       }
       // 同步完，释放掉
       this.tempCargoes = {}

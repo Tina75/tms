@@ -54,7 +54,7 @@ export default {
       window.location.reload()
     })
     window.EMA.bind('openTab1', (route) => {
-      let tag = {...route}
+      let tag = { ...route }
       tag.name = route.query.id ? route.query.id : route.name
       this.setTabNavList(this.getNewTagList(this.tabNavList, tag))
       this.turnToPage(tag)
@@ -65,7 +65,7 @@ export default {
     this.initTabNav()
     if (this.$route.path === '/') {
       setTimeout(() => {
-        this.onMenuSelect({name: '首页', path: '/home/index'})
+        this.onMenuSelect({ name: '首页', path: '/home/index' })
       }, 200)
     }
   },
@@ -97,7 +97,7 @@ export default {
         params = route.params
         query = route.query
       }
-      this.$router.push({path, params, query})
+      this.$router.push({ path, params, query })
     },
     getNextRoute (list, route) {
       let res = {}

@@ -1,12 +1,17 @@
 import axios from 'axios'
 import { LoadingBar, Message } from 'iview'
 
+function getToken () {
+  let temp = document.cookie.match(new RegExp('(^| )token=([^;]*)(;|$)'))
+  if (temp) return unescape(temp[2])
+}
+
 let instance = axios.create({
   baseURL: '/',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-    'Authrization': '7ac53c08f527d6f258d087a1129095a3'
+    'Authrization': getToken()
   },
   withCredentials: true,
   loading: false,
@@ -15,7 +20,7 @@ let instance = axios.create({
 
 switch (process.env.NODE_ENV) {
   case 'development':
-    instance.defaults.baseURL = '/'; break
+    instance.defaults.baseURL = 'http://192.168.1.49:5656/dolphin-web'; break
   case 'production':
     instance.defaults.baseURL = '//dev-boss.yundada56.com/bluewhale-boss/'; break
 }
