@@ -199,8 +199,10 @@ export default {
               },
               on: {
                 click: () => {
-                  this.$router.push({
-                    path: '/order-management/detail'
+                  console.log(params)
+                  this.openTab({
+                    path: '/order-management/detail',
+                    query: { id: params.row.orderNo }
                   })
                 }
               }

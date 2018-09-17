@@ -11,8 +11,8 @@
         <FormItem label="手机号：" prop="phone">
           <Input v-model="formModal.phone" placeholder="请输入员工姓名"></Input>
         </FormItem>
-        <FormItem label="角色：" prop="select">
-          <Select v-model="formModal.select" clearable>
+        <FormItem label="角色：" prop="roleId">
+          <Select v-model="formModal.roleId" clearable>
             <Option
               v-for="item in selectList"
               :value="item.name"
@@ -41,7 +41,7 @@ export default {
       formModal: {
         name: '',
         phone: '',
-        select: ''
+        roleId: ''
       },
       selectList: [{
         name: '全部',
@@ -60,7 +60,7 @@ export default {
         phone: [
           { required: true, message: '请输入手机号', trigger: 'blur' }
         ],
-        select: [
+        roleId: [
           { required: true, message: '请选择角色', trigger: 'blur' }
         ]
       },
@@ -79,14 +79,23 @@ export default {
     save () {
       this.$refs['formModal'].validate((valid) => {
         if (valid) {
-          Server({
-            url: 'user/update',
-            method: 'post',
-            data: this.formModal
-          }).then(() => {
-            this.ok()
-            this.visibale = false
-          })
+          if (this.title === '添加员工') {
+            Server({
+              url: 'employee/add',
+              method: 'post',
+              data: this.formModal
+            }).then(({ data }) => {
+              console.log(data)
+            })
+          } else {
+            Server({
+              url: 'employee/update',
+              method: 'post',
+              data: this.formModal
+            }).then(({ data }) => {
+              console.log(data)
+            })
+          }
         }
       })
     }

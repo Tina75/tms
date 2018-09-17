@@ -4,7 +4,10 @@ import { LoadingBar, Message } from 'iview'
 let instance = axios.create({
   baseURL: '/',
   timeout: 10000,
-  headers: { 'Content-Type': 'application/json' },
+  headers: {
+    'Content-Type': 'application/json',
+    'Authrization': '7ac53c08f527d6f258d087a1129095a3'
+  },
   withCredentials: true,
   loading: false,
   ignoreCode: process.env.NODE_ENV === 'development'
@@ -12,7 +15,7 @@ let instance = axios.create({
 
 switch (process.env.NODE_ENV) {
   case 'development':
-    instance.defaults.baseURL = 'http://yapi.yundada56.com/mock/214'; break
+    instance.defaults.baseURL = '/'; break
   case 'production':
     instance.defaults.baseURL = '//dev-boss.yundada56.com/bluewhale-boss/'; break
 }

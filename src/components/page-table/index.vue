@@ -156,6 +156,7 @@ export default {
       type: Boolean,
       default: true
     },
+    onLoad: Function, // 每次请求后，回调，返回列表搜索结果
     onCurrentChange: Function,
     onSelect: Function,
     onSelectCancel: Function,
@@ -245,9 +246,12 @@ export default {
   },
   watch: {
     // 搜索关键字变化后,重置分页参数，重新发送请求
-    keywords () {
-      this.pagination.pageNo = 1
-      this.fetch()
+    keywords: {
+      handler () {
+        this.pagination.pageNo = 1
+        this.fetch()
+      },
+      deep: true
     },
     data (newData) {
       // this.dataSource = newData.slice()
@@ -309,6 +313,7 @@ export default {
           if (this.showPagination) {
             vm.pagination.totalCount = response.data.pageTotals
           }
+          vm.$emit('on-load', response)
         })
         .catch((errorInfo) => {
           vm.loading = false

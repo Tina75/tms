@@ -1,6 +1,9 @@
 <template>
   <Cascader
     ref="selector"
+    :placeholder="placeholder"
+    :clearable="clearable"
+    :disabled="disabled"
     v-model="selected"
     :data="areaData"
     :render-format="formatArea"
@@ -17,8 +20,25 @@ import areas from '@/libs/js/City'
 export default {
   props: {
     value: [String, Array],
+    clearable: {
+      type: Boolean,
+      default: true
+    },
+    placeholder: {
+      type: String,
+      default: '请选择'
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
     // 部分组件位置偏，弹出窗容易遮盖，设置true时，可实时调整位置
     adjustment: false,
+    // 深度搜索，默认第一次只加载省的数据。市区的数据不加载，deep为true时，再加载市数据，一般搜索的时候有用
+    deep: {
+      type: Boolean,
+      deep: false
+    },
     onChange: Function
   },
   data () {
@@ -31,11 +51,14 @@ export default {
     value (newValue) {
       if (newValue.join('') !== this.selected.join('') && newValue && typeof newValue === 'string') {
         this.selected = areas.getPathByCode(this.value).map((item) => item.code)
+      } else if (!newValue || newValue.length === 0) {
+        this.selected = []
       }
     }
   },
   created () {
-    this.areaData = areas.getAllRoots().map((item) => {
+    const vm = this
+    const data = areas.getAllRoots().map((item) => {
       return {
         value: item.code,
         label: item.name,
@@ -44,6 +67,15 @@ export default {
         hasChild: true
       }
     })
+    if (this.deep) {
+      data.forEach(province => {
+        let children = vm.loadNext(province.value, true)
+        if (children.length > 0) {
+          province.children = children
+        }
+      })
+    }
+    this.areaData = data
   },
   mounted () {
     if (this.value && typeof this.value === 'string') {
@@ -53,25 +85,31 @@ export default {
   methods: {
     loadData (item, callback) {
       item.loading = true
-      const children = areas.getAllChild(item.value)
+      const children = this.loadNext(item.value)
       if (children.length > 0) {
-        item.children = children.map(item => {
-          let data = {
-            value: item.code,
-            label: item.name,
-            parent: item.parent
-          }
-          if (item.hasChild) {
-            data.children = []
-            data.loading = false
-            data.hasChild = true
-          }
-          return data
-        })
+        item.children = children
       }
-
       item.loading = false
       callback()
+    },
+    loadNext (value, deep = false) {
+      const vm = this
+      return areas.getAllChild(value).map(item => {
+        let data = {
+          value: item.code,
+          label: item.name,
+          parent: item.parent
+        }
+        if (item.hasChild) {
+          data.children = []
+          data.loading = false
+          data.hasChild = true
+        }
+        if (item.hasChild && deep) {
+          data.children = vm.loadNext(item.code)
+        }
+        return data
+      })
     },
     handleChange (value, selectedData) {
       if (this.adjustment) {
@@ -84,7 +122,8 @@ export default {
 
     // 格式化省市区
     formatArea (labels, selectedData) {
-      return Object.values(labels).join('')
+      let set = new Set(labels)
+      return Array.from(set).join('')
     }
   }
 }
