@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visibale" :mask-closable="true" width="360" @on-visible-change="close">
+  <Modal v-model="visible" :mask-closable="true" width="360" @on-visible-change="close">
     <p slot="header" class="order-import__dialog-header">
       <Icon type="md-close-circle" size="26" color="#EC4E4E"></Icon>
       导入失败
@@ -17,12 +17,12 @@ export default {
   data () {
     return {
       download: 'javascript:;',
-      visibale: true
+      visible: true
     }
   },
   methods: {
     downloadReport () {
-      this.visibale = false
+      this.visible = false
       this.ok && this.ok()
     }
   }
