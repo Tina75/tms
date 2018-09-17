@@ -25,8 +25,7 @@
       />
       <Button :to="downloadUrl" class="i-ml-10" target="_blank">下载模板</Button>
     </div>
-    <Input v-model="keywords.name"></Input>
-    <PageTable ref="pageTable" :keywords="keywords" :columns="columns" :show-filter="false" url="order/template/getImportedOrderTemplateList" no-data-text=" " @on-load="handleLoad">
+    <PageTable ref="pageTable" :columns="columns" :show-filter="false" url="order/template/getImportedOrderTemplateList" no-data-text=" " @on-load="handleLoad">
       <div ref="footer" slot="footer" class="order-import__empty-content van-center">
         <div class="order-import__empty-content-wrap">
           <div>
@@ -80,9 +79,6 @@ export default {
       visible: false,
       progress: 0,
       ossClient: null,
-      keywords: {
-        name: ''
-      },
       columns: [
         {
           title: '导入日期',
@@ -159,7 +155,7 @@ export default {
   },
   methods: {
     handleLoad (response) {
-      if (response.data.data.length === 0) {
+      if (response.data.msg !== 10000 || !response.data.data || response.data.data.length === 0) {
         this.$refs.footer.parentElement.parentElement.style['display'] = 'block'
       } else {
         this.$refs.footer.parentElement.parentElement.style['display'] = 'none'

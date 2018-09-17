@@ -206,7 +206,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import Title from './Title.vue'
 import SelectInput from '@/components/SelectInput.vue'
 import TagNumberInput from './TagNumberInput'
@@ -224,7 +223,8 @@ export default {
     Title,
     TagNumberInput,
     OrderPrint,
-    AreaSelect
+    AreaSelect,
+    SelectInput
   },
   mixins: [BaseComponent, BasePage],
   data () {
@@ -298,7 +298,7 @@ export default {
             ])
           },
           render (h, params) {
-            return h('SelectInput', {
+            return h(SelectInput, {
               props: {
                 value: params.row[params.column.key] || '',
                 remote: false,
@@ -610,7 +610,7 @@ export default {
   },
   created () {
     const vm = this
-    Vue.component('SelectInput', SelectInput)
+    // Vue.component('SelectInput', SelectInput)
     const orderId = this.$route.query.id || undefined
     if (orderId) {
       this.getOrderDetail(orderId)
