@@ -2,131 +2,131 @@
   {
     "name":"首页",
     "path":"/home/index",
-    "icon":"icon-shouye",
+    "icon":"shouye",
     "powerCode":0
   },
   {
     "name":"受理开单",
-    "icon":"icon-shoulikaidan",
+    "icon":"shoulikaidan",
     "path":"/order",
-    "powerCode":100000,
+    "powerCode":0,
     "children":[
       {
         "name":"手动下单",
         "path":"/order/create",
-        "powerCode":100100
+        "powerCode":0
       },
       {
         "name":"批量导入",
         "path":"/order/import",
-        "powerCode":100200
+        "powerCode":0
       }
     ]
   },
   {
     "name":"订单管理",
-    "icon":"icon-dingdanguanli",
+    "icon":"dingdanguanli",
     "path":"/order-management",
-    "powerCode":110000,
+    "powerCode":0,
     "children":[
       {
         "name":"订单管理",
         "path":"/order-management/order",
-        "powerCode":110100
+        "powerCode":0
       },
       {
         "name":"回单管理",
         "path":"/order-management/receipt",
-        "powerCode":110200
+        "powerCode":0
       }
     ]
   },
   {
     "name":"运输管理",
-    "powerCode":120000,
-    "icon":"icon-huoyuanguanli",
+    "powerCode":0,
+    "icon":"huoyuanguanli",
     "path":"/transport",
     "children":[
       {
         "name":"调度工作台",
         "path":"/transport/dispatch",
-        "powerCode":110300
+        "powerCode":0
       },
       {
         "name":"运单管理",
         "path":"/transport/waybill",
-        "powerCode":120100
+        "powerCode":0
       },
       {
         "name":"提货管理",
         "path":"/transport/receiveOrder",
-        "powerCode":120200
+        "powerCode":0
       },
       {
         "name":"外转单管理",
         "path":"/transport/outerOrder",
-        "powerCode":120300
+        "powerCode":0
       }
     ]
   },
   {
     "name":"财务",
     "path":"/finance",
-    "icon":"icon-caiwuguanli",
+    "icon":"caiwuguanli",
     "powerCode":0
   },
   {
     "name":"报表",
     "path":"/stats",
-    "icon":"icon-baobiaoguanli",
+    "icon":"baobiaoguanli",
     "powerCode":0
   },
   {
     "name":"客户管理",
-    "icon":"icon-yonghuguanli",
+    "icon":"yonghuguanli",
     "path":"/client",
-    "powerCode":130000,
+    "powerCode":0,
     "children":[
       {
         "name":"发货方管理",
         "path":"/client/sender",
-        "powerCode":130100
+        "powerCode":0
       },
       {
         "name":"承运商管理",
         "path":"/client/carrier",
-        "powerCode":130200
+        "powerCode":0
       },
       {
         "name":"外转方管理",
         "path":"/client/transfer",
-        "powerCode":130300
+        "powerCode":0
       }
     ]
   },
   {
     "name":"公司管理",
-    "icon":"icon-gongsiguanli",
+    "icon":"gongsiguanli",
     "path":"/company-manage",
-    "powerCode":140000,
+    "powerCode":0,
     "children":[
       {
         "name":"员工管理",
         "path":"/company-manage/staff-manage",
-        "powerCode":140200
+        "powerCode":0
       },
       {
         "name":"角色管理",
         "path":"/company-manage/employee-manage",
-        "powerCode":140100
+        "powerCode":0
       }
     ]
   },
   {
     "name":"设置",
     "path":"/set-up/set-up",
-    "icon":"icon-shezhi",
-    "powerCode":150000
+    "icon":"shezhi",
+    "powerCode":0
   },
   {
     "name":"消息",
@@ -137,7 +137,7 @@
   {
     "name":"帮助",
     "path":"/helper/help",
-    "icon":"icon-bangzhuzhongxin",
+    "icon":"bangzhuzhongxin",
     "powerCode":0
   }
 
