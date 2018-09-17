@@ -208,7 +208,7 @@
 <script>
 import Vue from 'vue'
 import Title from './Title.vue'
-import SelectInput from './SelectInput.vue'
+import SelectInput from '@/components/SelectInput.vue'
 import TagNumberInput from './TagNumberInput'
 import { mapGetters, mapActions } from 'vuex'
 import float from '@/libs/js/float'
@@ -696,7 +696,7 @@ export default {
     handleSelectConsigner (name, row) {
       const _this = this
       _this.getConsignerDetail(row.id).then((response) => {
-        const { consigner, consigneeList: consignees, addressList: addresses } = response.data
+        const { consigneeList: consignees, addressList: addresses, ...consigner } = response.data
         // 设置发货人信息，发货联系人，手机，发货地址
         _this.orderForm.consignerContact = consigner.contact
         _this.orderForm.consignerPhone = consigner.phone
