@@ -114,6 +114,7 @@ export default {
                 }
               }, '下载')
             ]
+            // 导入成功可以看下载
             if (params.row.status === 1) {
               actions.push(h('a', {
                 class: 'i-ml-10',
@@ -128,33 +129,9 @@ export default {
       ]
     }
   },
-  initOssInstance () {
-    const vm = this
-    /**
-     * 后端获取阿里云access token, region 参数
-     * 初始化oss client，用户上传模板前需要准备好
-     */
-    server({
-      method: 'get',
-      url: ''
-    })
-      .then((response) => {
-        vm.ossClient = new OssClient({
-          region: response.data.region,
-          accessKeyId: response.data.accessKeyId,
-          accessKeySecret: response.data.accessKeySecret,
-          bucket: response.data.bucket
-        })
-      })
-  },
   created () {
-    // 获取导入模板下载地址
-    server({
-      method: 'get',
-      url: 'order/template/get'
-    }).then((response) => {
-      this.downloadUrl = response.data.data.fileUrl
-    })
+    this.initOssInstance()
+    this.getDownloadUrl()
   },
   mounted () {
     if (this.$refs.footer) {
@@ -164,6 +141,38 @@ export default {
     // this.$refs.footer.$parent.style['height'] = '200px'
   },
   methods: {
+    initOssInstance () {
+      const vm = this
+      /**
+       * 后端获取阿里云access token, region 参数
+       * 初始化oss client，用户上传模板前需要准备好
+       */
+      server({
+        method: 'post',
+        url: 'file/prepareUpload'
+      })
+        .then((response) => {
+          const { data } = response.data
+          vm.ossClient = new OssClient({
+            region: data.endpoint,
+            accessKeyId: data.stsAccessKey,
+            accessKeySecret: data.stsToken,
+            bucket: data.bucketName
+          })
+        })
+    },
+    /**
+     * 模板下载地址
+     */
+    getDownloadUrl () {
+      // 获取导入模板下载地址
+      server({
+        method: 'get',
+        url: 'order/template/get'
+      }).then((response) => {
+        this.downloadUrl = response.data.data.fileUrl
+      })
+    },
     handleLoad (response) {
       // response.data.msg !== 10000
       if (!response.data.data || response.data.data.length === 0) {

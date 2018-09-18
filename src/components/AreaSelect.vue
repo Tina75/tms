@@ -68,12 +68,15 @@ export default {
       }
     })
     if (this.deep) {
-      data.forEach(province => {
-        let children = vm.loadNext(province.value, true)
-        if (children.length > 0) {
-          province.children = children
-        }
-      })
+      // 先让页面渲染完，在更新数据，防止进入页面很慢
+      setTimeout(() => {
+        data.forEach(province => {
+          let children = vm.loadNext(province.value, true)
+          if (children.length > 0) {
+            province.children = children
+          }
+        })
+      }, 200)
     }
     this.areaData = data
   },
