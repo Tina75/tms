@@ -58,8 +58,6 @@ export default {
         {
           title: '操作',
           key: 'id',
-          // width: 150,
-          // align: 'left',
           render: (h, params) => {
             return h('div', [
               h('span', {
@@ -72,7 +70,6 @@ export default {
                   click: () => {
                     let _this = this
                     if (params.row.carrierType === 1) {
-                      // debugger
                       this._carrierDetailsForDriver(params.row.carrierId, () => {
                         _this.openDialog({
                           name: 'client/dialog/carrier',
@@ -86,12 +83,12 @@ export default {
                               },
                               driver: { // 1 个体司机
                                 driverName: _this.driver.driverName,
-                                driverPhone: _this.driver.driverName,
+                                driverPhone: _this.driver.driverPhone,
                                 carNO: _this.driver.carNO,
-                                carType: _this.driver.carType,
-                                carLength: _this.driver.carLength,
-                                shippingWeight: _this.driver.shippingWeight,
-                                shippingVolume: _this.driver.shippingVolume,
+                                carType: _this.driver.carType + '',
+                                carLength: _this.driver.carLength + '',
+                                shippingWeight: _this.driver.shippingWeight + '',
+                                shippingVolume: _this.driver.shippingVolume + '',
                                 remark: _this.driver.remark,
                                 payType: _this.driver.payType + ''
                               }
@@ -106,6 +103,7 @@ export default {
                       })
                     } else {
                       this._carrierDetailsForCompany(params.row.carrierId, () => {
+                        console.log(_this.company)
                         _this.openDialog({
                           name: 'client/dialog/carrier',
                           data: {
@@ -120,7 +118,7 @@ export default {
                                 carrierName: _this.company.carrierName,
                                 carrierPrincipal: _this.company.carrierPrincipal,
                                 carrierPhone: _this.company.carrierPhone,
-                                payType: _this.company.payType,
+                                payType: _this.company.payType + '',
                                 remark: _this.company.remark
                               }
                             }
@@ -235,8 +233,12 @@ export default {
         },
         {
           title: '创建时间',
-          key: 'createTimeLong',
-          sortable: true
+          key: 'createTime',
+          sortable: true,
+          render: (h, params) => {
+            let text = this.formatDate(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
         }
       ],
       data1: [],
@@ -260,7 +262,13 @@ export default {
       }
     }
   },
+  mounted () {
+    this.searchList()
+  },
   methods: {
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
     searchList () {
       let data = {
         pageNo: this.pageNo,

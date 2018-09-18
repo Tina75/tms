@@ -7,8 +7,8 @@
   >
     <p slot="header" style="text-align:center">{{title}}</p>
     <Form :model="validate.type" :rules="ruleValidate.type" :label-width="122">
-      <FormItem label="类型:" prop="selectStatus">
-        <Select v-model="validate.type.selectStatus">
+      <FormItem  label="类型:" prop="selectStatus">
+        <Select v-model="validate.type.selectStatus" :disabled="flag===2">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </FormItem>
@@ -21,9 +21,6 @@
       <FormItem label="手机号码" prop="driverPhone">
         <Input v-model="validate.driver.driverPhone" placeholder="请输入"/>
       </FormItem>
-      <!--<FormItem label="联系电话" prop="driverPhone">-->
-      <!--<Input v-model="validate.driver.driverPhone" placeholder="请输入"/>-->
-      <!--</FormItem>-->
       <FormItem label="车牌号" prop="carNO">
         <Input v-model="validate.driver.carNO" placeholder="请输入"/>
       </FormItem>
@@ -68,9 +65,9 @@
       <FormItem label="车载容积" prop="shippingVolume">
         <Input v-model="validate.driver.shippingVolume" placeholder="请输入"/>方
       </FormItem>
-      <FormItem label="结算方式:">
-        <Select v-model="validate.driver.payType" >
-          <Option value="">请选择</Option>
+      <FormItem label="结算方式:" >
+        <Select v-model="validate.driver.payType" clearable>
+          <!--<Option value="">请选择</Option>-->
           <!--<Option value="1">现付</Option>-->
           <!--<Option value="2">到付</Option>-->
           <Option value="3">回单付</Option>
@@ -97,8 +94,8 @@
         <Input v-model="validate.company.carrierPhone" placeholder="请输入"/>
       </FormItem>
       <FormItem label="结算方式:">
-        <Select v-model="validate.driver.payType" >
-          <Option value="">请选择</Option>
+        <Select v-model="validate.company.payType" clearable>
+          <!--<Option value="">请选择</Option>-->
           <!--<Option value="1">现付</Option>-->
           <!--<Option value="2">到付</Option>-->
           <Option value="3">回单付</Option>
@@ -106,7 +103,7 @@
         </Select>
       </FormItem>
       <FormItem label="备注:" >
-        <Input v-model="validate.driver.remark" :autosize="{minRows: 2,maxRows: 5}" :maxlength="100" type="textarea"  placeholder="请输入"/>
+        <Input v-model="validate.company.remark" :autosize="{minRows: 2,maxRows: 5}" :maxlength="100" type="textarea"  placeholder="请输入"/>
       </FormItem>
     </Form>
     <div v-if="validate.type.selectStatus == 1" slot="footer">
@@ -128,6 +125,7 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      flag: 2,
       modal: true,
       selectList: [
         {
@@ -178,8 +176,8 @@ export default {
             { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
           ],
           carNO: [
-            { required: true, message: '司机名称不能为空', trigger: 'blur' }
-            // { type: 'string', message: '车牌号格式错误', pattern: /^[\u4e00-\u9fa5]{1}[A-Z]{1}[A-Z0-9]{5}$/, trigger: 'blur' }
+            { required: true, message: '车牌号不能为空', trigger: 'blur' }
+            // { type: 'string', message: '车牌号格式错误', pattern: /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1}$/, trigger: 'blur' }
           ],
           carType: [
             { required: true, message: '车型不能为空', trigger: 'change' }
@@ -213,7 +211,6 @@ export default {
   methods: {
     save (name) {
       this.$refs[name].validate((valid) => {
-        console.log(name)
         if (valid) {
           if (this.flag === 1) { // 新增
             if (this.validate.type.selectStatus === 1) { // 司机
@@ -231,7 +228,6 @@ export default {
           this.modal = false
         }
       })
-      //
     },
     _carrierAddForDriver () {
       let data = {
@@ -284,7 +280,6 @@ export default {
         carrierId: this.id
       }
       carrierForDriverUpdate(data).then(res => {
-        console.log(res)
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
         } else {

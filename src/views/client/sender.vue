@@ -65,8 +65,6 @@ export default {
         {
           title: '操作',
           key: 'id',
-          // width: 150,
-          // align: 'left',
           render: (h, params) => {
             return h('div', [
               h('span', {
@@ -77,27 +75,28 @@ export default {
                 },
                 on: {
                   click: () => {
+                    let _this = this
+                    console.log(params.row.payType + '')
                     this.openDialog({
                       name: 'client/dialog/sender',
                       data: {
                         title: '修改发货方',
                         flag: 2, // 编辑
-                        id: params.row.name,
+                        id: params.row.id,
                         validate: {
                           name: params.row.name,
                           contact: params.row.contact,
                           phone: params.row.phone,
-                          payType: params.row.payTypeDesc,
+                          payType: params.row.payType + '',
                           remark: params.row.remark
                         }
                       },
                       methods: {
                         ok () {
-                          console.log('ok!')
+                          _this.searchList() // 刷新页面
                         }
                       }
                     })
-                    // this.modalupdate = true
                   }
                 }
               }, '修改'),
@@ -109,7 +108,7 @@ export default {
                 on: {
                   click: () => {
                     consignerDelete({
-                      consignerId: params.row.id
+                      id: params.row.id
                     }).then(res => {
                       if (res.data.code === CODE) {
                         this.$Message.success(res.data.msg)
@@ -166,16 +165,16 @@ export default {
         },
         {
           title: '付款方式描述',
-          key: 'payTypeDesc',
+          key: 'payType',
           render: (h, params) => {
             let text = ''
-            if (params.row.payTypeDesc === 1) {
+            if (params.row.payType === 1) {
               text = '现付'
-            } else if (params.row.payTypeDesc === 2) {
+            } else if (params.row.payType === 2) {
               text = '到付'
-            } else if (params.row.payTypeDesc === 3) {
+            } else if (params.row.payType === 3) {
               text = '回单付'
-            } else if (params.row.payTypeDesc === 4) {
+            } else if (params.row.payType === 4) {
               text = '月结'
             } else {
               text = ''
@@ -186,26 +185,23 @@ export default {
         {
           title: '创建时间',
           key: 'createTime',
-          sortable: true
+          sortable: true,
+          render: (h, params) => {
+            let text = this.formatDate(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
         }
       ],
-      data1: [
-        // {
-        //   id: 1,
-        //   name: 'John Brown',
-        //   contact: 18,
-        //   phone: 'New York No. 1 Lake Park',
-        //   consignerAddressCnt: '2016-10-03',
-        //   consigneeCnt: '2016-10-03',
-        //   cargoCnt: '2016-10-03',
-        //   payTypeDesc: '2016-10-03',
-        //   createTime: '2016-10-03',
-        //   remark:'我是备注'
-        // }
-      ]
+      data1: []
     }
   },
+  mounted () {
+    this.searchList()
+  },
   methods: {
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
     searchList () {
       let data = {
         pageNo: this.pageNo,
@@ -228,7 +224,6 @@ export default {
         },
         methods: {
           ok () {
-            console.log(this)
             _this.searchList() // 刷新页面
           }
         }
