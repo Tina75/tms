@@ -17,8 +17,7 @@
         <Input v-model="validate.phone" placeholder="请输入"/>
       </FormItem>
       <FormItem label="支付方式:" >
-        <Select v-model="validate.payType" placeholder="请输入">
-          <Option value= "">请选择</Option>
+        <Select v-model="validate.payType" clearable placeholder="请输入">
           <Option value="1">现付</Option>
           <Option value="2">到付</Option>
           <Option value="3">回单付</Option>
@@ -26,7 +25,7 @@
         </Select>
       </FormItem>
       <FormItem label="备注:" >
-        <Input v-model="validate.remark" :autosize="{minRows: 2,maxRows: 5}" type="textarea"  placeholder="请输入"/>
+        <Input v-model="validate.remark" :maxlength="100" :autosize="{minRows: 2,maxRows: 5}" type="textarea"  placeholder="请输入"/>
       </FormItem>
     </Form>
     <div slot="footer">
@@ -55,10 +54,10 @@ export default {
       },
       ruleValidate: {
         name: [
-          { required: true, message: '发货方名称不能为空', trigger: 'blur' }
+          { required: true, type: 'string', message: '发货方名称不能为空', trigger: 'blur' }
         ],
         contact: [
-          { required: true, message: '发货方联系人不能为空', trigger: 'blur' }
+          { required: true, type: 'string', message: '发货方联系人不能为空', trigger: 'blur' }
         ],
         phone: [
           { required: true, message: '联系电话不能为空', trigger: 'blur' },
@@ -81,15 +80,7 @@ export default {
       })
     },
     _consignerAdd () {
-      let data = {
-        name: this.validate.name,
-        contact: this.validate.contact,
-        phone: this.validate.phone,
-        payType: this.validate.payType,
-        remark: this.validate.remark
-      }
-      consignerAdd(data).then(res => {
-        console.log(res)
+      consignerAdd(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
         } else {
@@ -98,16 +89,9 @@ export default {
       })
     },
     _consignerUpdate () {
-      let data = {
-        name: this.validate.name,
-        contact: this.validate.contact,
-        phone: this.validate.phone,
-        payType: this.validate.payType,
-        remark: this.validate.remark,
-        id: this.id
-      }
-      consignerUpdate(data).then(res => {
-        console.log(res)
+      Object.assign(this.validate, {id: this.id})
+      console.log(this.validate)
+      consignerUpdate(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
         } else {
