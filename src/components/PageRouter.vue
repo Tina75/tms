@@ -59,7 +59,7 @@ export default {
       for (var k in params) {
         arr.push(params[k])
       }
-      if (arr.length === 0) arr.push(localStorage.getItem('tms_is_login') ? 'home/index' : 'login/index')
+      if (arr.length === 0) arr.push(localStorage.getItem('tms_is_login') ? 'home/index' : 'login')
       return arr.join('/')
     }
   }

@@ -23,8 +23,9 @@ export default {
         const clients = response.data.data.list
         // 客户列表
         // const clientList = clients.map((user) => ({name: user.name, value: user.name, id: user.id}))
-
-        commit(types.RECEIVE_CLIENT_LIST, clients)
+        if (clients && clients.length > 0) {
+          commit(types.RECEIVE_CLIENT_LIST, clients)
+        }
         // resolve(clientList)
       }).catch((error) => {
         reject(error)
@@ -36,27 +37,33 @@ export default {
    * @param {*} store
    * @param {*} consignerId
    */
-  getConsignerDetail ({ state, commit }, consignerId) {
+  getConsignerDetail ({ state, commit }, id) {
     return new Promise((resolve, reject) => {
       server({
         method: 'get',
         url: 'consigner/detail',
         params: {
-          consignerId
+          id
         }
       }).then((response) => {
         const { addressList, cargoList, consigneeList, ...consigner } = response.data.data
-        consigner.id = consignerId
+        consigner.id = id
         commit(types.RECEIVE_CONSIGNERS_LIST, [consigner])
-        // 发货地址
-        commit(types.RECEIVE_ADDRESS_LIST, addressList.list)
-        // 货物信息
-        commit(types.RECEIVE_CARGO_LIST, cargoList.list)
-        commit(types.RECEIVE_CONSIGNER_CARGO_LIST, cargoList.list.map((cargo) => {
-          return new Cargo(cargo)
-        }))
-        // 收货方地址
-        commit(types.RECEIVE_CONSIGNEES_LIST, consigneeList.list)
+        if (addressList.length > 0) {
+          // 发货地址
+          commit(types.RECEIVE_ADDRESS_LIST, addressList)
+        }
+        if (cargoList.length > 0) {
+          // 货物信息
+          commit(types.RECEIVE_CARGO_LIST, cargoList)
+          commit(types.RECEIVE_CONSIGNER_CARGO_LIST, cargoList.map((cargo) => {
+            return new Cargo(cargo)
+          }))
+        }
+        if (consigneeList.length > 0) {
+          // 收货方地址
+          commit(types.RECEIVE_CONSIGNEES_LIST, consigneeList)
+        }
         resolve(response.data)
       }).catch((error) => {
         reject(error)
@@ -76,8 +83,8 @@ export default {
    * @param {*} store
    * @param {*} index
    */
-  removeCargo ({ state, commit }, index) {
-    if (state.order.cargoes.length === 1) {
+  removeCargo ({state, commit}, index) {
+    if (state.order.consignerCargoes.length === 1) {
       return
     }
     commit(types.REMOVE_CONSIGNER_CARGO, index)

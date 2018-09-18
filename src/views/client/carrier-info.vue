@@ -1,5 +1,5 @@
 <template>
-  <div v-if="carrierType == 1" class="info-detail">
+  <div v-if="carrierType === 1" class="info-detail">
     <div class="info">
       <div class="title">承运商信息</div>
       <div class="list-info">
@@ -119,7 +119,7 @@
       <Tabs :animated="false">
         <TabPane label="司机">
           <div class="add">
-            <Button type="primary" @click="_consignerAddressAdd">新增</Button>
+            <Button type="primary" @click="_carrierAddDriver">新增</Button>
           </div>
           <template>
             <Table :columns="columns1" :data="data1"></Table>
@@ -136,7 +136,7 @@
         </TabPane>
         <TabPane label="车辆">
           <div class="add">
-            <Button type="primary" @click="_consignerConsigneeAdd">新增</Button>
+            <Button type="primary" @click="_carrierAddVehicle">新增</Button>
           </div>
           <template>
             <Table :columns="columns2" :data="data2"></Table>
@@ -164,7 +164,7 @@ export default {
   mixins: [ BasePage ],
   data () {
     return {
-      id: this.$route.query.id, // carrierId
+      carrierId: this.$route.query.carrierId, // carrierId 承运商id
       carrierType: this.$route.query.carrierType,
       driverList: {
         driverName: '',
@@ -204,7 +204,7 @@ export default {
                       data: {
                         title: '修改司机',
                         flag: 2, // 修改
-                        id: params.row.driverId,
+                        driverId: params.row.driverId,
                         validate: {
                           driverType: params.row.driverType + '',
                           driverName: params.row.driverName,
@@ -317,22 +317,28 @@ export default {
                 on: {
                   click: () => {
                     var _this = this
+                    console.log(params.row)
                     this.openDialog({
                       name: 'client/dialog/carrier-vehicle',
                       data: {
                         title: '修改车辆',
                         flag: 2, // 修改
                         id: params.row.driverId,
-                        carrierId: _this.id,
+                        carrierId: _this.carrierId,
+                        driverId: params.row.driverId,
+                        driverName: params.row.driverName,
+                        carId: params.row.carId,
                         validate: {
-                          contact: params.row.contact,
-                          phone: params.row.phone,
-                          address: params.row.address
+                          carNO: params.row.carNO,
+                          carType: params.row.carType + '',
+                          shippingWeight: params.row.shippingWeight,
+                          carLength: params.row.carLength + '',
+                          shippingVolume: params.row.shippingVolume
                         }
                       },
                       methods: {
                         ok () {
-                          _this._consignerConsigneeList() // 刷新页面
+                          _this._carrierListCar() // 刷新页面
                         }
                       }
                     })
@@ -423,9 +429,9 @@ export default {
     }
   },
   mounted () {
-    if (this.carrierType === 1) {
+    if (this.carrierType === 1) { // 类型为个体司机
       this._carrierDetailsForDriver()
-    } else {
+    } else { // 类型为运输公司
       this._carrierDetailsForCompany()
       this._carrierListDriver()
       this._carrierListCar()
@@ -434,7 +440,7 @@ export default {
   methods: {
     _carrierDetailsForDriver () {
       let data = {
-        carrierId: this.id
+        carrierId: this.carrierId
       }
       carrierDetailsForDriver(data).then(res => {
         if (res.data.code === CODE) {
@@ -454,7 +460,7 @@ export default {
     },
     _carrierDetailsForCompany () {
       let data = {
-        carrierId: this.id
+        carrierId: this.carrierId
       }
       carrierDetailsForCompany(data).then(res => {
         if (res.data.code === CODE) {
@@ -472,7 +478,7 @@ export default {
     // 司机列表，新增，删除，修改
     _carrierListDriver () {
       let data = {
-        carrierId: this.id,
+        carrierId: this.carrierId,
         pageNo: this.pageNo1,
         pageSize: this.pageSize1
       }
@@ -483,14 +489,14 @@ export default {
         }
       })
     },
-    _consignerAddressAdd () {
+    _carrierAddDriver () {
       var _this = this
       this.openDialog({
         name: 'client/dialog/carrier-driver',
         data: {
           title: '新增司机',
           flag: 1, // 新增
-          id: this.id // carrierId
+          carrierId: this.carrierId // carrierId
         },
         methods: {
           ok () {
@@ -507,7 +513,7 @@ export default {
     // 车辆列表，新增，删除，修改
     _carrierListCar () {
       let data = {
-        carrierId: this.id,
+        carrierId: this.carrierId,
         pageNo: this.pageNo2,
         pageSize: this.pageSize2
       }
@@ -518,14 +524,16 @@ export default {
         }
       })
     },
-    _consignerConsigneeAdd () {
+    _carrierAddVehicle () {
       var _this = this
+      console.log(_this.carrierId)
       this.openDialog({
-        name: 'client/dialog/sender-consignee',
+        name: 'client/dialog/carrier-vehicle',
         data: {
-          title: '新增收货方',
+          title: '新增车辆',
           flag: 1, // 新增
-          carrierId: this.id
+          driverId: _this.driverId,
+          carrierId: _this.carrierId
         },
         methods: {
           ok () {
