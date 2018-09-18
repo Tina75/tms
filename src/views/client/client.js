@@ -1,4 +1,4 @@
-import server from '@/libs/js/server.js'
+import server from '../../libs/js/server'
 // 基本变量
 export const CODE = 10000
 // 发货方列表
@@ -12,7 +12,6 @@ export function consignerList (data) {
 
 // 发货方的新增
 export function consignerAdd (data) {
-  console.log(data)
   return server({
     url: '/consigner/add',
     headers: {
@@ -349,6 +348,18 @@ export function carrierDeleteVehicle (data) {
     },
     method: 'DELETE',
     params: data
+  })
+}
+
+// 查询承运商下尚未被绑定车辆的司机
+export function listUnbindedDriver (data) {
+  return server({
+    url: '/carrier/list/unbinded/driver',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'GET',
+    data: data
   })
 }
 

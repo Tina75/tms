@@ -6,7 +6,7 @@ let instance = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-    'Authrization': '7ac53c08f527d6f258d087a1129095a3'
+    'Authorization': '58cf998919859fc8c015365f0380855c1537171254506'
   },
   withCredentials: true,
   loading: false,
@@ -16,6 +16,7 @@ let instance = axios.create({
 switch (process.env.NODE_ENV) {
   case 'development':
     instance.defaults.baseURL = '/'; break
+    // instance.defaults.baseURL = 'http://192.168.1.49:5656/dolphin-web'; break
   case 'production':
     instance.defaults.baseURL = '//dev-boss.yundada56.com/bluewhale-boss/'; break
 }

@@ -71,14 +71,14 @@
       <FormItem label="结算方式:">
         <Select v-model="validate.driver.payType" >
           <Option value="">请选择</Option>
-          <Option value="1">现付</Option>
-          <Option value="2">到付</Option>
+          <!--<Option value="1">现付</Option>-->
+          <!--<Option value="2">到付</Option>-->
           <Option value="3">回单付</Option>
           <Option value="4">月结</Option>
-          <Option value="5">预付+到付</Option>
-          <Option value="6">预付+回付</Option>
-          <Option value="7">到付+回付</Option>
-          <Option value="8">三段付</Option>
+          <!--<Option value="5">预付+到付</Option>-->
+          <!--<Option value="6">预付+回付</Option>-->
+          <!--<Option value="7">到付+回付</Option>-->
+          <!--<Option value="8">三段付</Option>-->
         </Select>
       </FormItem>
       <FormItem label="备注:" >
@@ -99,8 +99,8 @@
       <FormItem label="结算方式:">
         <Select v-model="validate.driver.payType" >
           <Option value="">请选择</Option>
-          <Option value="1">现付</Option>
-          <Option value="2">到付</Option>
+          <!--<Option value="1">现付</Option>-->
+          <!--<Option value="2">到付</Option>-->
           <Option value="3">回单付</Option>
           <Option value="4">月结</Option>
         </Select>
@@ -159,7 +159,7 @@ export default {
           carrierName: '',
           carrierPrincipal: '',
           carrierPhone: '',
-          payType: 1, // 支付方式1：现付 2：到付 3：回单付 4：月结
+          payType: '', // 支付方式1：现付 2：到付 3：回单付 4：月结
           remark: ''
         }
       },
@@ -178,8 +178,8 @@ export default {
             { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
           ],
           carNO: [
-            { required: true, message: '司机名称不能为空', trigger: 'blur' },
-            { type: 'string', message: '车牌号格式错误', pattern: /^[\u4e00-\u9fa5]{1}[A-Z]{1}[A-Z0-9]{5}$/, trigger: 'blur' }
+            { required: true, message: '司机名称不能为空', trigger: 'blur' }
+            // { type: 'string', message: '车牌号格式错误', pattern: /^[\u4e00-\u9fa5]{1}[A-Z]{1}[A-Z0-9]{5}$/, trigger: 'blur' }
           ],
           carType: [
             { required: true, message: '车型不能为空', trigger: 'change' }

@@ -93,7 +93,7 @@ export default {
                                 shippingWeight: _this.driver.shippingWeight,
                                 shippingVolume: _this.driver.shippingVolume,
                                 remark: _this.driver.remark,
-                                payType: _this.driver.payType
+                                payType: _this.driver.payType + ''
                               }
                             }
                           },
@@ -171,7 +171,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.$router.push({ path: '/client/carrier-info', query: { id: params.row.carrierId, carrierType: params.row.carrierType }
+                    this.$router.push({ path: '/client/carrier-info', query: { carrierId: params.row.carrierId, carrierType: params.row.carrierType }
                     })
                   }
                 }

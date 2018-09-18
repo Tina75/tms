@@ -77,24 +77,23 @@ export default {
                 },
                 on: {
                   click: () => {
-                    let _this = this
                     this.openDialog({
                       name: 'client/dialog/sender',
                       data: {
                         title: '修改发货方',
                         flag: 2, // 编辑
-                        id: params.row.id,
+                        id: params.row.name,
                         validate: {
                           name: params.row.name,
                           contact: params.row.contact,
                           phone: params.row.phone,
-                          payType: params.row.payType + '',
+                          payType: params.row.payTypeDesc,
                           remark: params.row.remark
                         }
                       },
                       methods: {
                         ok () {
-                          _this.searchList() // 刷新页面
+                          console.log('ok!')
                         }
                       }
                     })
@@ -110,7 +109,7 @@ export default {
                 on: {
                   click: () => {
                     consignerDelete({
-                      id: params.row.id
+                      consignerId: params.row.id
                     }).then(res => {
                       if (res.data.code === CODE) {
                         this.$Message.success(res.data.msg)
@@ -167,16 +166,16 @@ export default {
         },
         {
           title: '付款方式描述',
-          key: 'payType',
+          key: 'payTypeDesc',
           render: (h, params) => {
             let text = ''
-            if (params.row.payType === 1) {
+            if (params.row.payTypeDesc === 1) {
               text = '现付'
-            } else if (params.row.payType === 2) {
+            } else if (params.row.payTypeDesc === 2) {
               text = '到付'
-            } else if (params.row.payType === 3) {
+            } else if (params.row.payTypeDesc === 3) {
               text = '回单付'
-            } else if (params.row.payType === 4) {
+            } else if (params.row.payTypeDesc === 4) {
               text = '月结'
             } else {
               text = ''
