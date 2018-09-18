@@ -60,7 +60,7 @@ export default {
         data: this.orderIds
       }).then(() => {
         // this.ok()
-        this.$Message.success('还原成功')
+        this.$Message.success('删除成功')
         this.visibale = false
       })
     }

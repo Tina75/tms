@@ -6,7 +6,7 @@
         <Button v-for="(btn, index) in btnGroup" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
       </div>
       <div v-if="simpleSearch" class="right">
-        <Select v-model="selectStatus"  style="width:120px;margin-right: 11px">
+        <Select v-model="selectStatus"  style="width:120px;margin-right: 11px" @on-change="handleChangeSearchStatus">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
         <!-- <Input
@@ -20,13 +20,15 @@
           v-if="selectStatus === 0"
           v-model="keywords.consignerName"
           :data="customerData"
+          :filter-method="filterMethod"
           clearable
           placeholder="请选择或输入客户名称"
           style="width:200px"
-          @on-search="searchList">
+          @on-select="searchList"
+          @on-change="autoSearch">
         </AutoComplete>
-        <Input v-else-if="selectStatus === 1" v-model="keywords.orderNo" placeholder="请输入订单号" style="width: 200px" clearable />
-        <Input v-else v-model="keywords.waybillNo" placeholder="请输入运单号" style="width: 200px" clearable />
+        <Input v-else-if="selectStatus === 1" v-model="keywords.orderNo" placeholder="请输入订单号" style="width: 200px" clearable @on-enter="searchList" @on-change="autoSearch"/>
+        <Input v-else v-model="keywords.waybillNo" placeholder="请输入运单号" style="width: 200px" clearable @on-enter="searchList" @on-change="autoSearch"/>
         <Button type="primary" icon="ios-search" style="width: 40px;margin-right: 0;" @click="searchList"></Button>
         <Button type="text" class="high-search" size="small" @click="handleSwitchSearch">高级搜索</Button>
       </div>
@@ -36,6 +38,7 @@
         <AutoComplete
           v-model="keywords.consignerName"
           :data="customerData"
+          :filter-method="filterMethod"
           placeholder="请选择或输入客户名称"
           style="width:200px">
         </AutoComplete>
@@ -47,11 +50,11 @@
         <div style="">
           <area-select v-model="keywords.start" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
           <area-select v-model="keywords.end" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
-          <DatePicker v-model="keywords.time" type="daterange" split-panels placeholder="开始日期-结束日期" style="width: 200px;display: inline-block;"></DatePicker>
+          <DatePicker v-model="times" type="daterange" format="yyyy-MM-dd" split-panels placeholder="开始日期-结束日期" style="width: 200px;display: inline-block;" @on-change="handleTimeChange"></DatePicker>
         </div>
         <div>
           <Button type="primary" @click="searchList">搜索</Button>
-          <Button type="default">清除条件</Button>
+          <Button type="default" @click="clearKeywords">清除条件</Button>
           <Button type="default" style="margin-right: 0;" @click="handleSwitchSearch">简易搜索</Button>
         </div>
       </div>
@@ -59,7 +62,7 @@
     <page-table
       :url="url"
       :method="method"
-      :keywords="keywords"
+      :keywords="keyword"
       :columns="tableColumns"
       :extra-columns="extraColumns"
       :show-filter="true"
@@ -92,11 +95,11 @@ export default {
       method: 'post',
       status: [
         { name: '全部', count: '' },
-        { name: '待提货', count: '123' },
-        { name: '待调度', count: 123 },
-        { name: '在途', count: '23' },
-        { name: '已到货', count: '12' },
-        { name: '已回单', count: '3333' }
+        { name: '待提货', count: '' },
+        { name: '待调度', count: '' },
+        { name: '在途', count: '' },
+        { name: '已到货', count: '' },
+        { name: '已回单', count: '' }
       ],
       curStatusName: '全部',
       btnGroup: [
@@ -107,7 +110,7 @@ export default {
         { name: '导出', value: 5 }
       ],
       operateValue: 1,
-      selectStatus: 0,
+      selectStatus: 0, // 当前搜索状态   0：客户名称   1：订单号  2：运单号
       selectList: [
         {
           value: 0,
@@ -122,18 +125,19 @@ export default {
           label: '运单号'
         }
       ],
+      keyword: {},
       keywords: {
         status: null,
         consignerName: '',
         orderNo: '',
         waybillNo: '',
         customerOrderNo: '',
-        startTime: '',
-        endTime: '',
-        time: ['', ''],
-        start: '',
-        end: ''
+        // startTime: '',
+        // endTime: '',
+        start: [],
+        end: []
       },
+      times: ['', ''],
       customerData: ['Steve Jobs', 'Stephen Gary Wozniak', 'Jonathan Paul Ive'],
       simpleSearch: true,
       tableColumns: [
@@ -212,7 +216,7 @@ export default {
                     },
                     on: {
                       click: () => {
-                        this.openSeparateDialog(params)
+                        this.openResOrDelDialog(params, '还原')
                       }
                     }
                   }, '还原'),
@@ -226,7 +230,7 @@ export default {
                     },
                     on: {
                       click: () => {
-                        this.openOuterDialog(params)
+                        this.openResOrDelDialog(params, '删除')
                       }
                     }
                   }, '删除')
@@ -286,7 +290,9 @@ export default {
                       this.openTab({
                         path: '/order-management/detail',
                         query: {
-                          id: params.row.orderNo
+                          id: params.row.orderNo,
+                          orderId: params.row.id,
+                          from: 'order'
                         }
                       })
                     }
@@ -417,15 +423,7 @@ export default {
 
   computed: {},
 
-  watch: {
-    // 搜索关键字变化后,重置分页参数，重新发送请求
-    keywords: {
-      handler (val) {
-        console.log(val)
-      },
-      deep: true
-    }
-  },
+  watch: {},
 
   mounted () {
     this.getOrderNum()
@@ -439,14 +437,92 @@ export default {
         method: 'get'
       }).then((res) => {
         console.log(res)
+        let list = res.data.data.orderNumList
+        list.map((item) => {
+          if (item.name === 'total') {
+            item.name = '全部'
+          }
+          if (item.name === 'pickup') {
+            item.name = '待提货'
+          }
+          if (item.name === 'dispatch') {
+            item.name = '待调度'
+          }
+          if (item.name === 'transit') {
+            item.name = '在途'
+          }
+          if (item.name === 'arrive') {
+            item.name = '已到货'
+          }
+          if (item.name === 'receipt') {
+            item.name = '已回单'
+          }
+        })
+        this.status = list
       })
     },
+    // 切换搜索条件  客户名称/订单号/运单号
+    handleChangeSearchStatus (val) {
+      this.clearKeywords()
+      this.selectStatus = val
+    },
+    // 条件搜索
     searchList () {
-      console.log(this.keywords)
+      this.keyword = Object.assign({}, this.keywords, {
+        // 地址搜索为最后一级区号
+        start: this.keywords.start.length ? Number(this.keywords.start[this.keywords.start.length - 1]) : null,
+        end: this.keywords.end.length ? Number(this.keywords.end[this.keywords.end.length - 1]) : null
+      })
+    },
+    // 点X清除搜索条件时  默认为无搜索条件下的数据
+    autoSearch () {
+      if (this.selectStatus === 0) {
+        if (!this.keywords.consignerName) {
+          this.searchList()
+        }
+      } else if (this.selectStatus === 1) {
+        if (!this.keywords.orderNo) {
+          this.searchList()
+        }
+      } else {
+        if (!this.keywords.waybillNo) {
+          this.searchList()
+        }
+      }
+    },
+    // 过滤已维护的客户信息
+    filterMethod (value, option) {
+      if (value) {
+        return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
+      }
+    },
+    // 清除keywords搜索
+    clearKeywords () {
+      this.keywords = {
+        status: this.keywords.status,
+        consignerName: '',
+        orderNo: '',
+        waybillNo: '',
+        customerOrderNo: '',
+        // startTime: '',
+        // endTime: '',
+        start: [],
+        end: []
+      }
+      this.keyword = Object.assign({}, this.keywords, {
+        start: null,
+        end: null
+      })
     },
     // 高级搜索切换
     handleSwitchSearch () {
+      this.clearKeywords()
       this.simpleSearch = !this.simpleSearch
+    },
+    // 修改开始结束时间
+    handleTimeChange (val) {
+      // this.keywords.startTime = val[0]
+      // this.keywords.endTime = val[1]
     },
     // tab状态栏切换
     handleTabChange (val) {
@@ -461,6 +537,8 @@ export default {
           { name: '删除', value: 4 },
           { name: '导出', value: 5 }
         ]
+        this.keywords.status = null
+        this.keyword = {...this.keywords}
       } else if (val === '待提货') {
         this.operateValue = 1
         this.btnGroup = [
@@ -469,6 +547,8 @@ export default {
           { name: '删除', value: 3 },
           { name: '导出', value: 4 }
         ]
+        this.keywords.status = 10
+        this.keyword = {...this.keywords}
       } else if (val === '待调度') {
         this.operateValue = 1
         this.btnGroup = [
@@ -478,41 +558,34 @@ export default {
           { name: '删除', value: 4 },
           { name: '导出', value: 5 }
         ]
+        this.keywords.status = 20
+        this.keyword = {...this.keywords}
       } else {
         this.operateValue = 1
         this.btnGroup = [
           { name: '导出', value: 1 }
         ]
+        if (val === '在途') {
+          this.keywords.status = 30
+        } else if (val === '已到货') {
+          this.keywords.status = 40
+        } else {
+          this.keywords.status = 50
+        }
+        this.keyword = {...this.keywords}
       }
     },
     // 表头按钮操作
     handleOperateClick (btn) {
       this.operateValue = btn.value
-      const _this = this
       if (!this.selectOrderList.length) {
         this.$Message.warning('请至少选择一条信息')
         return
       }
       if (btn.name === '送货调度' || btn.name === '提货调度') { // 打开送货或提货调度窗口
-        _this.openDialog({
-          name: 'order-management/dialog/dispatch',
-          data: { id: this.selectOrderList, name: btn.name },
-          methods: {
-            ok (node) {
-              _this.onAddUserSuccess(node)
-            }
-          }
-        })
+        this.openDispatchDialog(btn.name)
       } else if (btn.name === '订单还原' || btn.name === '删除') { // 打开还原或删除窗口
-        _this.openDialog({
-          name: 'order-management/dialog/restoreOrDelete',
-          data: { id: this.selectOrderList, name: btn.name },
-          methods: {
-            ok (node) {
-              _this.onAddUserSuccess(node)
-            }
-          }
-        })
+        this.openResOrDelDialog('', btn.name) // 点表头按钮批量操作   params入参为空
       }
     },
     // 外转
@@ -520,7 +593,7 @@ export default {
       const _this = this
       this.openDialog({
         name: 'order-management/dialog/outer',
-        data: { id: params.row.orderNo },
+        data: { id: params.row.id },
         methods: {
           ok (node) {
             _this.onAddUserSuccess(node)
@@ -533,7 +606,42 @@ export default {
       const _this = this
       this.openDialog({
         name: 'order-management/dialog/separate',
-        data: { id: params.row.orderNo },
+        data: { id: params.row.id, orderNo: params.row.orderNo },
+        methods: {
+          ok (node) {
+            _this.onAddUserSuccess(node)
+          }
+        }
+      })
+    },
+    // 送货或提货调度
+    openDispatchDialog (name) {
+      const _this = this
+      _this.openDialog({
+        name: 'order-management/dialog/dispatch',
+        data: { id: this.selectOrderList, name: name },
+        methods: {
+          ok (node) {
+            _this.onAddUserSuccess(node)
+          }
+        }
+      })
+    },
+    // 还原或删除 (支持单条和多条)
+    openResOrDelDialog (params, name) {
+      const _this = this
+      const data = {
+        id: this.selectOrderList,
+        name: name
+      }
+      // params不为空时，id值为当前行
+      if (params) {
+        data.id = [params.row]
+      }
+      console.log(this.selectOrderList)
+      _this.openDialog({
+        name: 'order-management/dialog/restoreOrDelete',
+        data: data,
         methods: {
           ok (node) {
             _this.onAddUserSuccess(node)

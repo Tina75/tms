@@ -224,7 +224,7 @@ export default {
         if (valid) {
           const data = Object.assign(this.pick, {orderIds: this.orderIds})
           Server({
-            url: 'load/bill/create',
+            url: 'loadbill/bill/create',
             method: 'post',
             data: data
           }).then(() => {
