@@ -5,7 +5,7 @@
       <Form :model="formSearch" :label-width="80" style="padding-left:-20px;">
         <Col span="6">
         <FormItem label="姓名：">
-          <Input v-model="formSearch.name" placeholder="请输入姓名"></Input>
+          <SelectInput v-model="formSearch.name" :remote="true" :remote-method="searchName" placeholder="请输入姓名"></SelectInput>
         </FormItem>
         </Col>
         <Col span="6">
@@ -37,15 +37,14 @@
     <Button type="primary" style="margin-top:6px;" @click="eaditStaff('add')">添加员工</Button>
     </Col>
     <Col span="23">
-    <page-table :columns="menuColumns" url="employee/list" list-field="users" style="margin-top: 20px;"></page-table>
-    </Table>
+    <page-table :columns="menuColumns" :keywords="formSearchInit" url="employee/list" list-field="list" style="margin-top: 20px;"></page-table>
     </Col>
     <Modal v-model="visibaleTransfer" width="360">
       <p slot="header" style="text-align:center">
         <span>转移权限</span>
       </p>
       <Form ref="transferformModal" :model="transferformModal" :rules="rulesTransfer" :label-width="100" style="height: 50px;">
-        <FormItem label="角色账号：" prop="select">
+        <FormItem label="角色账号：" prop="roleId">
           <Select v-model="transferformModal.roleId" clearable>
             <Option
               v-for="item in selectList"
@@ -81,10 +80,12 @@
 import BasePage from '@/basic/BasePage'
 import pageTable from '@/components/page-table'
 import Server from '@/libs/js/server'
+import SelectInput from '@/components/SelectInput'
 export default {
   name: 'staff-manage',
   components: {
-    pageTable
+    pageTable,
+    SelectInput
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -99,6 +100,7 @@ export default {
       transferformModal: {
         roleId: ''
       },
+      formSearchInit: {},
       formSearch: {
         name: '',
         phone: '',
@@ -185,7 +187,7 @@ export default {
       },
       {
         title: '创建时间',
-        key: 'create_time'
+        key: 'createTime'
       }],
       rulesTransfer: {
         roleId: [
@@ -196,13 +198,27 @@ export default {
   },
   mounted: function () {},
   methods: {
+    searchName () {
+      let params = {}
+      params.name = '1'
+      return Server({
+        url: 'employee/nameLike',
+        method: 'get',
+        data: params
+      }).then(({ data }) => {
+        console.log(data)
+        return data.map(item => ({label: 'name', value: 'id'}))
+      })
+    },
     searchBtn () {
+      this.formSearchInit = this.formSearch
       Server({
         url: 'employee/list',
         method: 'get',
-        data: this.formSearch
+        data: this.formSearchInit
       }).then(({ data }) => {
-        // this.data1 = data.data;
+        // if (data.code === 10000)
+        console.log(data)
       })
     },
     eaditStaff (params) {

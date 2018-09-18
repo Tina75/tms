@@ -15,7 +15,7 @@
           <Select v-model="formModal.roleId" clearable>
             <Option
               v-for="item in selectList"
-              :value="item.name"
+              :value="item.id"
               :key="item.id">
               {{ item.name }}
             </Option>
@@ -118,8 +118,14 @@ export default {
               data: this.formModal
             }).then(({ data }) => {
               console.log(data)
+              if (data.code === 10000) {
+                this.$Message.success('添加成功!')
+                this.close()
+                this.successModal = true
+              } else {
+                this.$Message.success(data.msg)
+              }
             })
-            this.successModal = true
           } else {
             Server({
               url: 'employee/update',
@@ -127,8 +133,13 @@ export default {
               data: this.formModal
             }).then(({ data }) => {
               console.log(data)
+              if (data.code === 10000) {
+                this.$Message.success('修改成功!')
+                this.close()
+              } else {
+                this.$Message.success(data.msg)
+              }
             })
-            this.$Message.success('修改成功!')
           }
         }
       })

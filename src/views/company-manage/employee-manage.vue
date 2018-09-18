@@ -5,7 +5,7 @@
       <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:50px;">
         <Button type="primary" class="centerBtn" @click="createRole">新增角色</Button>
       </div>
-      <div style="height:500px; overflow-y:auto; padding-top: 20px;">
+      <div style="max-height:500px; overflow-y:auto; padding-top: 20px;">
         <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" class="menu" @click.native="clickLeftMenu(menu)">
         <p class="menuTitle">{{menu.name}}</p>
         <span v-if="menu.name !== '超级管理员'" class="configBtnItem">
@@ -152,8 +152,8 @@ export default {
         method: 'get'
       }).then(({ data }) => {
         this.menuList = data.data
-        this.menuList[0].codes = ['2003', '3016']
-        this.menuList[1].codes = ['2015', '2012', '3067']
+        console.log(this.menuList)
+        // this.menuList[0].codes = ['1001', '1002', '1003', '1004', '1005', '1006', '1007', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '3001', '3002', '3003', '3004', '3005', '3006', '3007', '3008', '3009', '3010', '3011', '3012', '3013', '3014', '3015', '3016', '3017', '3018', '3019', '3020', '3021', '3022', '3023', '3024', '3025', '3026', '3027', '3028', '3029', '3030', '3031', '3032', '3033', '3034', '3035', '3036', '3037', '3038', '3039', '3040', '3041', '3042', '3043', '3044', '3045', '3046', '3047', '3048', '3049', '3050', '3051', '3052', '3053', '3054', '3055', '3056', '3057', '3058', '3059', '3060', '3061', '3062', '3063', '3064', '3065', '3066', '3067', '3068', '3069'];
       })
     },
     initTreeList (arrayCodeList) {
@@ -178,6 +178,7 @@ export default {
       })
     },
     clickLeftMenu (menu) {
+      console.log(menu.codes)
       this.rightTitle = menu.name
       this.arrayCodeList = menu.codes
       this.menuParam = menu
@@ -198,11 +199,7 @@ export default {
     },
     removeRole (menu) {
       this.removeMenuParams = menu
-      if (menu.name.length > 10) {
-        this.removeRoleModal = true
-      } else {
-        this.removeRoleModalFail = true
-      }
+      this.removeRoleModal = true
     },
     saveRole () {
       let selectChecBoxList = []
@@ -218,8 +215,12 @@ export default {
         data: this.menuParam
       }).then(({ data }) => {
         console.log(data)
+        if (data.code === 10000) {
+          this.$Message.success('角色权限修改成功!')
+        } else {
+          this.$Message.success(data.msg)
+        }
       })
-      this.$Message.success('角色权限修改成功!')
     },
     subFormRole (name) {
       this.$refs[name].validate((valid) => {
@@ -231,7 +232,12 @@ export default {
               method: 'post',
               data: this.formModal
             }).then(({ data }) => {
-              this.$Message.success('添加成功!')
+              if (data.code === 10000) {
+                this.$Message.success('添加成功!')
+                this.getMenuList()
+              } else {
+                this.$Message.success(data.msg)
+              }
             })
           } else {
             Server({
@@ -239,7 +245,12 @@ export default {
               method: 'post',
               data: this.formModal
             }).then(({ data }) => {
-              this.$Message.success('修改成功!')
+              if (data.code === 10000) {
+                this.$Message.success('修改成功!')
+                this.getMenuList()
+              } else {
+                this.$Message.success(data.msg)
+              }
             })
           }
         }
@@ -251,15 +262,25 @@ export default {
     },
     removeFormRole () {
       console.log(this.removeMenuParams)
-      // Server({
-      //   url: 'role/del',
-      //   method: 'post',
-      //   data: this.removeMenuParams.id
-      // }).then(({ data }) => {
-      //   this.removeRoleModal = false
-      // })
-      this.removeRoleModal = false
-      this.$Message.success('删除角色成功!')
+      let params = {}
+      params.id = this.removeMenuParams.id
+      Server({
+        url: 'role/del',
+        method: 'post',
+        data: params
+      }).then(({ data }) => {
+        this.removeRoleModal = false
+        if (data.code === 10000) {
+          this.removeRoleModal = false
+          this.$Message.success('删除角色成功!')
+          this.getMenuList()
+        } else if (data.code === 410009) {
+          this.removeRoleModal = false
+          this.removeRoleModalFail = true
+        } else {
+          this.$Message.success(data.msg)
+        }
+      })
     },
     removeCancelForm () {
       this.removeRoleModal = false
