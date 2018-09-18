@@ -15,14 +15,12 @@
       </Col>
       <Col span="6">
       <FormItem label="始发城市" prop="start">
-        <!-- <Cascader v-model="orderForm.start" :data="areaData" :render-format="formatArea" filterable></Cascader> -->
         <AreaSelect v-model="orderForm.start" :deep="true"></AreaSelect>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="目的城市" prop="end">
         <AreaSelect v-model="orderForm.end" :deep="true" :adjustment="true"></AreaSelect>
-        <!-- <Cascader ref="cascaderEnd" v-model="orderForm.end" :data="areaData" :render-format="formatArea" change-on-select filterable  @on-change="handleChangeEnd"></Cascader> -->
       </FormItem>
       </Col>
     </Row>
@@ -55,7 +53,7 @@
       </Col>
       <Col span="6">
       <FormItem label="手机号" prop="consignerPhone">
-        <Input v-model="orderForm.consignerPhone" :maxlength="11" type="text"></Input>
+        <Input v-model="orderForm.consignerPhone" :maxlength="11" type="mobile"></Input>
       </FormItem>
       </Col>
       <Col span="6">
@@ -206,7 +204,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import Title from './Title.vue'
 import SelectInput from '@/components/SelectInput.vue'
 import TagNumberInput from './TagNumberInput'
@@ -224,7 +221,8 @@ export default {
     Title,
     TagNumberInput,
     OrderPrint,
-    AreaSelect
+    AreaSelect,
+    SelectInput
   },
   mixins: [BaseComponent, BasePage],
   data () {
@@ -240,7 +238,7 @@ export default {
       return { index: params.index, name: params.column.key, value }
     }
     const validatePhone = (rule, value, callback) => {
-      if (/(13[0-9]|15[0-9]|166|17[0-9]|18[0-9]|14[57])[0-9]{8}$/.test(value)) {
+      if (/(13[0-9]|15[0-9]|166|17[0-9]|18[0-9]|14[0-9])[0-9]{8}$/.test(value)) {
         callback()
       } else {
         callback(new Error('请输入正确的手机号码'))
@@ -298,7 +296,7 @@ export default {
             ])
           },
           render (h, params) {
-            return h('SelectInput', {
+            return h(SelectInput, {
               props: {
                 value: params.row[params.column.key] || '',
                 remote: false,
@@ -610,7 +608,7 @@ export default {
   },
   created () {
     const vm = this
-    Vue.component('SelectInput', SelectInput)
+    // Vue.component('SelectInput', SelectInput)
     const orderId = this.$route.query.id || undefined
     if (orderId) {
       this.getOrderDetail(orderId)
@@ -673,9 +671,14 @@ export default {
           if (sumFields.indexOf(item.name) !== -1) {
             this.statics[item.name] = float.round(this.statics[item.name] - (this.consignerCargoes[item.index][item.name] || 0) + item.value)
           }
+          this.tempCargoes[item.index] = {[item.name]: item.value}
         } else {
           if (sumFields.indexOf(item.name) !== -1) {
-            this.statics[item.name] = float.round(this.statics[item.name] - (this.tempCargoes[item.index][item.name] || 0) + item.value)
+            if (this.tempCargoes[item.index][item.name]) {
+              this.statics[item.name] = float.round(this.statics[item.name] - (this.tempCargoes[item.index][item.name] || 0) + item.value)
+            } else {
+              this.statics[item.name] = float.round(this.statics[item.name] - (this.consignerCargoes[item.index][item.name] || 0) + item.value)
+            }
           }
           this.tempCargoes[item.index][item.name] = item.value
         }
@@ -700,11 +703,15 @@ export default {
         // 设置发货人信息，发货联系人，手机，发货地址
         _this.orderForm.consignerContact = consigner.contact
         _this.orderForm.consignerPhone = consigner.phone
-        _this.orderForm.consignerAddress = addresses.list[0].address
-        // 设置收货人信息，收货人，手机，收货地址
-        _this.orderForm.consigneeName = consignees.list[0].contact
-        _this.orderForm.consigneePhone = consignees.list[0].phone
-        _this.orderForm.consigneeAddress = consignees.list[0].address
+        if (addresses.length > 0) {
+          _this.orderForm.consignerAddress = addresses[0].address
+        }
+        if (consignees.length > 0) {
+          // 设置收货人信息，收货人，手机，收货地址
+          _this.orderForm.consigneeName = consignees[0].contact
+          _this.orderForm.consigneePhone = consignees[0].phone
+          _this.orderForm.consigneeAddress = consignees[0].address
+        }
       })
     },
     // 显示计费规则
@@ -729,12 +736,12 @@ export default {
       this.syncStoreCargoes()
       this.$refs.orderForm.validate((valid) => {
         if (valid) {
-          const cargoList = vm.consignerCargoes
+          const orderCargoList = vm.consignerCargoes
           const orderForm = vm.orderForm
           let findError = null
           // 校验货物信息
-          for (let index in cargoList) {
-            let cargo = cargoList[index]
+          for (let index in orderCargoList) {
+            let cargo = orderCargoList[index]
             let info = cargo.validate()
             if (!info.success) {
               findError = info.message
@@ -751,7 +758,11 @@ export default {
             end: orderForm.end[orderForm.end.length - 1],
             arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime,
             deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime,
-            cargoList
+            orderCargoList
+          });
+
+          ['start', 'end', 'pickup', 'settlementType'].forEach(field => {
+            form[field] = parseInt(form[field])
           })
           vm.submitOrder(form)
             .then((response) => {
