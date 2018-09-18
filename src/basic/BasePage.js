@@ -17,6 +17,8 @@ export default {
   beforeMount: function () {},
   // 模板编译挂载之后,不保证组件已经在document中。
   mounted: function () {
+    console.log(this.$options.name)
+
     // 更新页面定位信息
     // this.$store.dispatch('changeActiveIndex', this.$options.name)
   },
