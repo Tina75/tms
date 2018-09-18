@@ -240,6 +240,14 @@ export default {
             return h('a', {
               style: {
                 color: '#418DF9'
+              },
+              on: {
+                click: () => {
+                  this.openTab({
+                    path: '/transport/detail/detailOuter',
+                    query: { id: p.row.transId }
+                  })
+                }
               }
             }, p.row.transNo)
           }

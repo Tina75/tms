@@ -19,21 +19,13 @@
     </div>
 
     <section class="detail-info">
-      <!-- 运单信息 -->
+      <!-- 提货单信息 -->
       <div>
         <div class="detail-part-title">
-          <span>运单信息</span>
+          <span>提货单信息</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="6">
-            <span class="detail-field-title">始发地：</span>
-            <span>{{ info.start }}</span>
-          </i-col>
-          <i-col span="6" offset="1">
-            <span class="detail-field-title">目的地：</span>
-            <span>{{ info.end }}</span>
-          </i-col>
-          <i-col span="10" offset="1">
+          <i-col span="13">
             <span class="detail-field-title">承运商：</span>
             <span>{{ info.carrierName }}</span>
           </i-col>
@@ -90,10 +82,6 @@
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">卸货费：</span>
             <span>{{ payment.unloadFee }}元</span>
-          </i-col>
-          <i-col span="3" offset="2">
-            <span class="detail-field-title-sm">保险费：</span>
-            <span>{{ payment.insuranceFee }}元</span>
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">其他：</span>
@@ -162,23 +150,13 @@
     </section>
 
     <section class="detail-info">
-      <!-- 运单信息 -->
+      <!-- 提货单信息 -->
       <div>
         <div class="detail-part-title">
-          <span>运单信息</span>
+          <span>提货单信息</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="6">
-            <span class="detail-field-title detail-field-required">始发地：</span>
-            <Input v-model="info.start"
-                   class="detail-info-input"></Input>
-          </i-col>
-          <i-col span="6" offset="1">
-            <span class="detail-field-title detail-field-required">目的地：</span>
-            <Input v-model="info.end"
-                   class="detail-info-input"></Input>
-          </i-col>
-          <i-col span="10" offset="1">
+          <i-col span="13">
             <span class="detail-field-title detail-field-required">承运商：</span>
             <Input v-model="info.carrierName"
                    class="detail-info-input"></Input>
@@ -227,7 +205,6 @@
         <div class="detail-part-title">
           <span>货物明细</span>
         </div>
-        <Button type="primary" style="margin-bottom: 22px;">添加订单</Button>
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
@@ -261,13 +238,6 @@
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">卸货费：</span>
             <Input v-model="payment.unloadFee"
-                   class="detail-payment-input">
-            <span slot="suffix">元</span>
-            </Input>
-          </i-col>
-          <i-col span="3" offset="2">
-            <span class="detail-field-title-sm">保险费：</span>
-            <Input v-model="payment.insuranceFee"
                    class="detail-payment-input">
             <span slot="suffix">元</span>
             </Input>
@@ -321,15 +291,13 @@ import Server from '@/libs/js/server'
 export default {
   name: 'DetailFeright',
   mixins: [ BasePage, DetailMixin ],
-  metaInfo: { title: '运单详情' },
+  metaInfo: { title: '提货单详情' },
   data () {
     return {
       // 信息
       info: {
-        waybillNo: '',
+        pickupNo: '',
         status: '',
-        start: '',
-        end: '',
         carrierName: '',
         carNo: '',
         carType: '',
@@ -345,7 +313,6 @@ export default {
         freightFee: '',
         loadFee: '',
         unloadFee: '',
-        insuranceFee: '',
         otherFee: '',
         totalFee: '',
         settlementPayInfo: []
@@ -354,12 +321,12 @@ export default {
       // 所有按钮组
       btnList: [
         {
-          status: '待派车',
+          status: '待提货',
           btns: [{
             name: '删除',
             func: () => console.log(Math.random())
           }, {
-            name: '派车',
+            name: '提货',
             func: () => console.log(Math.random())
           }, {
             name: '编辑',
@@ -369,18 +336,16 @@ export default {
           }]
         },
         {
-          status: '待发运',
-          btns: []
-        },
-        {
-          status: '在途',
+          status: '提货中',
           btns: [{
-            name: '位置',
-            func: () => console.log(Math.random())
+            name: '到货',
+            func: () => {
+              this.inEditing = true
+            }
           }]
         },
         {
-          status: '已到货',
+          status: '已提货',
           btns: []
         }
       ],
@@ -393,17 +358,6 @@ export default {
             return h('span', {
               style: { color: '#3A7EDE' }
             }, p.row.orderNo)
-          }
-        },
-        {
-          title: '客户订单号',
-          key: 'customerOrderNo'
-        },
-        {
-          title: '始发地-目的地',
-          key: 'start',
-          render: (h, p) => {
-            return h('span', p.row.start + '-' + p.row.end)
           }
         },
         {
@@ -431,35 +385,22 @@ export default {
           key: 'volume'
         },
         {
-          title: '备注1',
-          key: 'remark1'
+          title: '客户名称',
+          key: 'consignerName'
         },
         {
-          title: '备注2',
-          key: 'remark2'
+          title: '提货联系人',
+          key: 'consigneeContact'
+        },
+        {
+          title: '联系电话',
+          key: 'consigneePhone'
+        },
+        {
+          title: '提货地址',
+          key: 'consigneeAddress'
         }
       ]
-    }
-  },
-
-  watch: {
-    inEditing (val) {
-      if (val) {
-        this.tableColumns.unshift({
-          title: '操作',
-          key: 'action',
-          width: 60,
-          render: (h, p) => {
-            return h('a', {
-              on: {
-                click: () => {}
-              }
-            }, '移出')
-          }
-        })
-      } else {
-        this.tableColumns.shift()
-      }
     }
   },
 
@@ -467,30 +408,30 @@ export default {
     // 将数据返回的标识映射为文字
     statusFilter (status) {
       switch (status) {
-        case 1: return '待派车'
-        case 2: return '待发运'
-        case 3: return '在途'
-        case 4: return '已到货'
+        case 1: return '待提货'
+        case 2: return '提货中'
+        case 3: return '已提货'
       }
     },
 
     fetchData () {
       this.loading = true
       Server({
-        url: '/waybill/details',
+        url: '/outside/bill/detail',
         method: 'post',
-        data: { waybillId: this.id }
+        data: { pickUpId: this.id }
       }).then(res => {
         const data = res.data.data
 
         for (let key in this.info) {
-          this.info[key] = data.waybill[key]
+          this.info[key] = data.loadbill[key]
         }
         for (let key in this.payment) {
-          this.payment[key] = data.waybill[key]
+          if (key === 'settlementPayInfo') this.payment['settlementPayInfo'] = [data.loadbill['settlementPayInfo']]
+          else this.payment[key] = data.loadbill[key]
         }
         this.detail = data.cargoList
-        this.logList = data.operaterLog
+        this.logList = data.loadBillLogs
 
         this.info.status = this.statusFilter(this.info.status)
         this.payment.settlementType = this.payment.settlementType.toString()

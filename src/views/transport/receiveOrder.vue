@@ -230,6 +230,14 @@ export default {
             return h('a', {
               style: {
                 color: '#418DF9'
+              },
+              on: {
+                click: () => {
+                  this.openTab({
+                    path: '/transport/detail/detailPickup',
+                    query: { id: p.row.pickUpId }
+                  })
+                }
               }
             }, p.row.pickupNo)
           }

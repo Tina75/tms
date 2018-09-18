@@ -246,7 +246,6 @@ export default {
               },
               on: {
                 click: () => {
-                  console.log(p)
                   this.openTab({
                     path: '/transport/detail/detailFreight',
                     query: { id: p.row.waybillId }
