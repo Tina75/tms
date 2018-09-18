@@ -11,7 +11,7 @@ let instance = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-    'Authrization': getToken()
+    'Authorization': getToken()
   },
   withCredentials: true,
   loading: false,

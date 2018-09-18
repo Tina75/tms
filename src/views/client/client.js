@@ -1,4 +1,4 @@
-import server from '@/libs/js/server.js'
+import server from '../../libs/js/server'
 // 基本变量
 export const CODE = 10000
 // 发货方列表
@@ -12,7 +12,6 @@ export function consignerList (data) {
 
 // 发货方的新增
 export function consignerAdd (data) {
-  console.log(data)
   return server({
     url: '/consigner/add',
     headers: {
@@ -25,14 +24,13 @@ export function consignerAdd (data) {
 
 // 发货方的修改
 export function consignerUpdate (data) {
-  console.log(data)
   return server({
     url: '/consigner/update',
     headers: {
       'Content-Type': 'application/json'
     },
     method: 'post',
-    data: data
+    data: Object.assign(data, {payType: data.payType || ''})
   })
 }
 
@@ -49,10 +47,10 @@ export function consignerDelete (data) {
   })
 }
 
-// 发货方的详情
+// 发货方详情分页
 export function consignerDetail (data) {
   return server({
-    url: '/consigner/detail',
+    url: '/consigner/detail/page',
     method: 'GET',
     data: data
   })
@@ -349,6 +347,18 @@ export function carrierDeleteVehicle (data) {
     },
     method: 'DELETE',
     params: data
+  })
+}
+
+// 查询承运商下尚未被绑定车辆的司机
+export function listUnbindedDriver (data) {
+  return server({
+    url: '/carrier/list/unbinded/driver',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'GET',
+    data: data
   })
 }
 

@@ -1,7 +1,7 @@
 import Server from '@/libs/js/server'
 
 let timer
-const waitingTime = 5
+const waitingTime = 60
 
 let captchaUrl
 switch (process.env.NODE_ENV) {

@@ -10,6 +10,8 @@
       @keydown.up.prevent="handleKeydown"
       @keydown.down.prevent="handleKeydown"
       @keydown.enter="handleKeydown"
+      @mouseenter="mousehover = true"
+      @mouseleave="mousehover = false"
     >
       <Input
         v-model="currentValue"
@@ -19,7 +21,8 @@
         @on-change="handleChange"
         @on-focus="handleFocus"
         @on-blur="handleBlur">
-      <Icon slot="suffix" type="ios-arrow-down" class="select-input__input-icon"></Icon>
+      <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-input__clear-icon" @click.native.stop="handleClear"></Icon>
+      <Icon v-if="!mousehover || !isClearable" slot="suffix" type="ios-arrow-down" class="select-input__input-icon"></Icon>
     </Input>
     </div>
     <DropdownMenu ref="dropdown" slot="list" :style="{'max-height':'150px', overflow:'auto'}">
@@ -44,6 +47,10 @@ export default {
   props: {
     maxlength: Number,
     value: String,
+    clearable: {
+      type: Boolean,
+      default: false
+    },
     transfer: {
       type: Boolean,
       default: false
@@ -62,6 +69,7 @@ export default {
       type: Function
     },
     onFoucs: Function,
+    onClear: Function,
     remoteMethod: {
       type: Function
     }
@@ -71,6 +79,7 @@ export default {
       isFocus: false,
       focusIndex: -1,
       currentValue: this.value,
+      mousehover: false,
       lastRemoteQuery: null,
       isRemoteCall: false,
       options: this.localOptions.slice()
@@ -92,6 +101,12 @@ export default {
         'select-input__input',
         this.visible ? 'select-input__input-visible' : ''
       ]
+    },
+    notEmpty () {
+      return typeof this.currentValue !== 'undefined' && String(this.currentValue).trim() !== ''
+    },
+    isClearable () {
+      return this.notEmpty && this.clearable
     }
 
   },
@@ -139,6 +154,13 @@ export default {
       if (value === this.currentValue) return
 
       this.currentValue = value
+    },
+    // 清空
+    handleClear () {
+      this.$emit('on-clear')
+
+      this.currentValue = ''
+      this.focusIndex = -1
     },
     // 点击下拉框项
     handleSelect (name) {
@@ -190,8 +212,6 @@ export default {
       }
     },
     handleKeydown (e) {
-      console.log(e.key)
-
       if (this.visible) {
         e.preventDefault()
         const keyCode = e.key.toLowerCase()
@@ -236,6 +256,8 @@ export default {
         transform rotate(180deg)
         -moz-transform rotate(180deg)
         -webkit-transform rotate(180deg)
+  &__clear-icon
+    cursor pointer
   &__input-icon
     transition transform 0.2s ease-in-out
     -webkit-transition -webkit-transform 0.2s ease-in-out

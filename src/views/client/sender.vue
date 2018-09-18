@@ -65,8 +65,6 @@ export default {
         {
           title: '操作',
           key: 'id',
-          // width: 150,
-          // align: 'left',
           render: (h, params) => {
             return h('div', [
               h('span', {
@@ -78,6 +76,7 @@ export default {
                 on: {
                   click: () => {
                     let _this = this
+                    console.log(params.row.payType + '')
                     this.openDialog({
                       name: 'client/dialog/sender',
                       data: {
@@ -98,7 +97,6 @@ export default {
                         }
                       }
                     })
-                    // this.modalupdate = true
                   }
                 }
               }, '修改'),
@@ -187,26 +185,23 @@ export default {
         {
           title: '创建时间',
           key: 'createTime',
-          sortable: true
+          sortable: true,
+          render: (h, params) => {
+            let text = this.formatDate(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
         }
       ],
-      data1: [
-        // {
-        //   id: 1,
-        //   name: 'John Brown',
-        //   contact: 18,
-        //   phone: 'New York No. 1 Lake Park',
-        //   consignerAddressCnt: '2016-10-03',
-        //   consigneeCnt: '2016-10-03',
-        //   cargoCnt: '2016-10-03',
-        //   payTypeDesc: '2016-10-03',
-        //   createTime: '2016-10-03',
-        //   remark:'我是备注'
-        // }
-      ]
+      data1: []
     }
   },
+  mounted () {
+    this.searchList()
+  },
   methods: {
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
     searchList () {
       let data = {
         pageNo: this.pageNo,
@@ -229,7 +224,6 @@ export default {
         },
         methods: {
           ok () {
-            console.log(this)
             _this.searchList() // 刷新页面
           }
         }

@@ -61,6 +61,9 @@
 import Server from '@/libs/js/server'
 import mixin from './mixin'
 
+// token与记住密码过期时长
+const EXPIRES = 60 * 24 * 60 * 60 * 1000
+
 export default {
   name: 'SignIn',
   mixins: [ mixin ],
@@ -99,9 +102,8 @@ export default {
     localPwParser () {
       const encodePW = window.localStorage.local_rememberd_pw
       if (!encodePW) return
-      const storeTime = 60 * 24 * 60 * 60 * 1000 // 记住密码的时长
       const decodePW = window.atob(encodePW).split('/')
-      if ((new Date().getTime()) > Number(decodePW[2]) + storeTime) {
+      if ((new Date().getTime()) > Number(decodePW[2]) + EXPIRES) {
         window.localStorage.removeItem('local_rememberd_pw')
         return
       }
@@ -118,6 +120,13 @@ export default {
       window.localStorage.setItem('local_rememberd_pw', encodePW)
     },
 
+    // 设置cookie-token
+    setToken (token) {
+      const exp = new Date()
+      exp.setTime(exp.getTime() + EXPIRES)
+      document.cookie = `token=${escape(token)};expires=${exp.toGMTString()}`
+    },
+
     // 登录处理
     login () {
       for (let key in this.form) {
@@ -132,11 +141,8 @@ export default {
         if (this.rememberPW) this.localPwSave()
         else window.localStorage.removeItem('local_rememberd_pw')
         window.localStorage.setItem('tms_is_login', true)
-
-        const exp = new Date()
-        exp.setTime(exp.getTime() + 60 * 24 * 60 * 60 * 1000)
-        document.cookie = `token=${escape(res.data.data.data ? res.data.data.data.token : res.data.data.token)};expires=${exp.toGMTString()}`
-
+        window.localStorage.setItem('user_info', res.data.data)
+        this.setToken(res.data.data.token)
         location.reload()
       }).catch(err => console.error(err))
     }
