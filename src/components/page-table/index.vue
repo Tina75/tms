@@ -50,7 +50,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import server from '@/libs/js/server'
 import SliderIcon from './SliderIcon.vue'
 import _ from 'lodash'
@@ -74,6 +73,9 @@ import _ from 'lodash'
    * 6.onColumnChange 函数，当显示隐藏排序排序发生变化时候回调，参数返回新的extraColumns
   */
 export default {
+  components: {
+    SliderIcon
+  },
   props: {
     // 请求的地址
     url: String,
@@ -156,6 +158,7 @@ export default {
       type: Boolean,
       default: true
     },
+    onLoad: Function, // 每次请求后，回调，返回列表搜索结果
     onCurrentChange: Function,
     onSelect: Function,
     onSelectCancel: Function,
@@ -216,7 +219,7 @@ export default {
           title: 'icon',
           width: 48,
           renderHeader (h, params) {
-            return h('SliderIcon', {
+            return h(SliderIcon, {
               props: {
                 list: vm.extraColumns
               },
@@ -245,9 +248,12 @@ export default {
   },
   watch: {
     // 搜索关键字变化后,重置分页参数，重新发送请求
-    keywords () {
-      this.pagination.pageNo = 1
-      this.fetch()
+    keywords: {
+      handler () {
+        this.pagination.pageNo = 1
+        this.fetch()
+      },
+      deep: true
     },
     data (newData) {
       // this.dataSource = newData.slice()
@@ -255,7 +261,6 @@ export default {
     }
   },
   created () {
-    Vue.component('SliderIcon', SliderIcon)
     this.isRemote = !!this.url
     this.showSlotFooter = this.$slots.footer !== undefined
     this.showSlotHeader = this.$slots.header !== undefined
@@ -309,10 +314,12 @@ export default {
           if (this.showPagination) {
             vm.pagination.totalCount = response.data.pageTotals
           }
+          vm.$emit('on-load', response)
         })
         .catch((errorInfo) => {
           vm.loading = false
-          vm.$Message.error(errorInfo.msg)
+          // vm.$Message.error(errorInfo.msg)
+          vm.$emit('on-load', errorInfo)
         })
     },
     /**

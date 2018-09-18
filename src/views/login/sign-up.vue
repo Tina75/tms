@@ -25,7 +25,8 @@
               <Input v-model="form.captchaCode" class="form-captcha-input" type="text" placeholder="输入验证码"
                      @on-blur="inputBlur('captchaCode')" />
               <div class="form-captcha">
-                <img :src="captchaImage" class="form-captcha-img" >
+                <img :src="captchaImage" class="form-captcha-img"
+                     @click="getCaptcha">
               </div>
             </FormItem>
 
@@ -113,11 +114,16 @@ export default {
         name: '', // 公司名称
         userName: '', // 联系人姓名
         address: '', // 公司地址
-        cityId: []
+        cityId: ''
       },
       location: [], // 所在省市区
 
       cities: []
+    }
+  },
+  watch: {
+    location () {
+      this.form.cityId = this.location[this.location.length - 1]
     }
   },
   created () {

@@ -38,7 +38,7 @@
 <script>
 import FontIcon from '@/components/FontIcon'
 export default {
-  components: {FontIcon},
+  components: { FontIcon },
   props: {
     collapsed: Boolean,
     activeName: String,

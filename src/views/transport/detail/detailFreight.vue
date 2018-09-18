@@ -1,4 +1,5 @@
 <template>
+  <!-- 默认状态 -->
   <div v-if="!inEditing">
     <!-- 运单号及状态 -->
     <section class="detail-header">
@@ -24,35 +25,35 @@
           <span>运单信息</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="7">
+          <i-col span="6">
             <span class="detail-field-title">始发地：</span>
             <span>{{ info.start }}</span>
           </i-col>
-          <i-col span="7">
+          <i-col span="6" offset="1">
             <span class="detail-field-title">目的地：</span>
             <span>{{ info.end }}</span>
           </i-col>
-          <i-col span="10">
+          <i-col span="10" offset="1">
             <span class="detail-field-title">承运商：</span>
             <span>{{ info.carrierName }}</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
-          <i-col span="7">
+          <i-col span="6">
             <span class="detail-field-title">车牌号：</span>
             <span>{{ info.carNo }}</span>
           </i-col>
-          <i-col span="7">
+          <i-col span="6" offset="1">
             <span class="detail-field-title">车型：</span>
             <span>{{ info.carType + ' ' + info.carLength }}</span>
           </i-col>
-          <i-col span="10">
+          <i-col span="10" offset="1">
             <span class="detail-field-title">司机：</span>
             <span>{{ info.driverName + ' ' + info.driverPhone }}</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
-          <i-col span="14">
+          <i-col span="13">
             <span class="detail-field-title">备注：</span>
             <span>{{ info.remark }}</span>
           </i-col>
@@ -66,10 +67,10 @@
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
-          <span>总货值：{{ total.cargoCost }}</span>
-          <span>总数量：{{ total.quantity }}</span>
-          <span>总体积：{{ total.weight }}</span>
-          <span>总重量：{{ total.volume }}</span>
+          <span>总货值：{{ orderTotal.cargoCost }}</span>
+          <span>总数量：{{ orderTotal.quantity }}</span>
+          <span>总体积：{{ orderTotal.weight }}</span>
+          <span>总重量：{{ orderTotal.volume }}</span>
         </div>
       </div>
       <!-- 应付费用 -->
@@ -78,37 +79,39 @@
           <span>应付费用</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="4">
-            <span class="detail-field-title">运输费：</span>
+          <i-col span="3">
+            <span class="detail-field-title-sm">运输费：</span>
             <span>{{ payment.freightFee }}元</span>
           </i-col>
-          <i-col span="4">
-            <span class="detail-field-title">装货费：</span>
+          <i-col span="3" offset="2">
+            <span class="detail-field-title-sm">装货费：</span>
             <span>{{ payment.loadFee }}元</span>
           </i-col>
-          <i-col span="4">
-            <span class="detail-field-title">卸货费：</span>
+          <i-col span="3" offset="2">
+            <span class="detail-field-title-sm">卸货费：</span>
             <span>{{ payment.unloadFee }}元</span>
           </i-col>
-          <i-col span="4">
-            <span class="detail-field-title">保险费：</span>
+          <i-col span="3" offset="2">
+            <span class="detail-field-title-sm">保险费：</span>
             <span>{{ payment.insuranceFee }}元</span>
           </i-col>
-          <i-col span="4">
-            <span class="detail-field-title">其他：</span>
+          <i-col span="3" offset="2">
+            <span class="detail-field-title-sm">其他：</span>
             <span>{{ payment.otherFee }}元</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="24">
-            <span class="detail-field-title">费用合计：</span>
-            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{ payment.totalFee }}</span>元
+            <span class="detail-field-title-sm">费用合计：</span>
+            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="24">
-            <span class="detail-field-title">结算方式：</span>
-            <span>月结</span>
+            <span class="detail-field-title-sm">结算方式：</span>
+            <div class="detail-payment-way">
+              {{ payment.settlementType === '1' ? '按单结' : '月结' }}
+            </div>
           </i-col>
         </Row>
       </div>
@@ -141,6 +144,7 @@
     </section>
   </div>
 
+  <!-- 编辑状态 -->
   <div v-else>
     <!-- 运单号及状态 -->
     <section class="detail-header">
@@ -159,37 +163,52 @@
           <span>运单信息</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="7">
-            <span class="detail-field-title">始发地：</span>
-            <span>{{ info.start }}</span>
+          <i-col span="6">
+            <span class="detail-field-title detail-field-required">始发地：</span>
+            <Input v-model="info.start"
+                   class="detail-info-input"></Input>
           </i-col>
-          <i-col span="7">
-            <span class="detail-field-title">目的地：</span>
-            <span>{{ info.end }}</span>
+          <i-col span="6" offset="1">
+            <span class="detail-field-title detail-field-required">目的地：</span>
+            <Input v-model="info.end"
+                   class="detail-info-input"></Input>
           </i-col>
-          <i-col span="10">
-            <span class="detail-field-title">承运商：</span>
-            <span>{{ info.carrierName }}</span>
-          </i-col>
-        </Row>
-        <Row class="detail-field-group">
-          <i-col span="7">
-            <span class="detail-field-title">车牌号：</span>
-            <span>{{ info.carNo }}</span>
-          </i-col>
-          <i-col span="7">
-            <span class="detail-field-title">车型：</span>
-            <span>{{ info.carType + ' ' + info.carLength }}</span>
-          </i-col>
-          <i-col span="10">
-            <span class="detail-field-title">司机：</span>
-            <span>{{ info.driverName + ' ' + info.driverPhone }}</span>
+          <i-col span="10" offset="1">
+            <span class="detail-field-title detail-field-required">承运商：</span>
+            <Input v-model="info.carrierName"
+                   class="detail-info-input"></Input>
           </i-col>
         </Row>
         <Row class="detail-field-group">
-          <i-col span="14">
+          <i-col span="6">
+            <span class="detail-field-title detail-field-required">车牌号：</span>
+            <Input v-model="info.carNo"
+                   class="detail-info-input"></Input>
+          </i-col>
+          <i-col span="6" offset="1">
+            <span class="detail-field-title">车型/车长：</span>
+            <Input v-model="info.carType"
+                   class="detail-info-input-half"
+                   style="margin-right: 12px;"></Input>
+            <Input v-model="info.carLength"
+                   class="detail-info-input-half"></Input>
+          </i-col>
+          <i-col span="3" offset="1">
+            <span class="detail-field-title detail-field-required">司机：</span>
+            <Input v-model="info.driverName"
+                   class="detail-info-input"></Input>
+          </i-col>
+          <i-col span="5" offset="1">
+            <span class="detail-field-title">司机手机号：</span>
+            <Input v-model="info.driverPhone"
+                   class="detail-info-input"></Input>
+          </i-col>
+        </Row>
+        <Row class="detail-field-group">
+          <i-col span="13">
             <span class="detail-field-title">备注：</span>
-            <span>{{ info.remark }}</span>
+            <Input v-model="info.remark"
+                   class="detail-info-input"></Input>
           </i-col>
         </Row>
       </div>
@@ -202,10 +221,10 @@
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
-          <span>总货值：{{ total.cargoCost }}</span>
-          <span>总数量：{{ total.quantity }}</span>
-          <span>总体积：{{ total.weight }}</span>
-          <span>总重量：{{ total.volume }}</span>
+          <span>总货值：{{ orderTotal.cargoCost }}</span>
+          <span>总数量：{{ orderTotal.quantity }}</span>
+          <span>总体积：{{ orderTotal.weight }}</span>
+          <span>总重量：{{ orderTotal.volume }}</span>
         </div>
       </div>
       <!-- 应付费用 -->
@@ -214,36 +233,36 @@
           <span>应付费用</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="4">
-            <span class="detail-field-title">运输费：</span>
+          <i-col span="3">
+            <span class="detail-field-title-sm detail-field-required">运输费：</span>
             <Input v-model="payment.freightFee"
                    class="detail-payment-input">
             <span slot="suffix">元</span>
             </Input>
           </i-col>
-          <i-col span="4">
-            <span class="detail-field-title">装货费：</span>
+          <i-col span="3" offset="2">
+            <span class="detail-field-title-sm">装货费：</span>
             <Input v-model="payment.loadFee"
                    class="detail-payment-input">
             <span slot="suffix">元</span>
             </Input>
           </i-col>
-          <i-col span="4">
-            <span class="detail-field-title">卸货费：</span>
+          <i-col span="3" offset="2">
+            <span class="detail-field-title-sm">卸货费：</span>
             <Input v-model="payment.unloadFee"
                    class="detail-payment-input">
             <span slot="suffix">元</span>
             </Input>
           </i-col>
-          <i-col span="4">
-            <span class="detail-field-title">保险费：</span>
+          <i-col span="3" offset="2">
+            <span class="detail-field-title-sm">保险费：</span>
             <Input v-model="payment.insuranceFee"
                    class="detail-payment-input">
             <span slot="suffix">元</span>
             </Input>
           </i-col>
-          <i-col span="4">
-            <span class="detail-field-title">其他：</span>
+          <i-col span="3" offset="2">
+            <span class="detail-field-title-sm">其他：</span>
             <Input v-model="payment.otherFee"
                    class="detail-payment-input">
             <span slot="suffix">元</span>
@@ -252,14 +271,19 @@
         </Row>
         <Row class="detail-field-group">
           <i-col span="24">
-            <span class="detail-field-title">费用合计：</span>
-            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{ payment.totalFee }}</span>元
+            <span class="detail-field-title-sm">费用合计：</span>
+            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="24">
-            <span class="detail-field-title">结算方式：</span>
-            <span>月结</span>
+            <span class="detail-field-title-sm detail-field-required">结算方式：</span>
+            <div class="detail-payment-way">
+              <RadioGroup v-model="payment.settlementType">
+                <Radio label="1">按单结</Radio>
+                <Radio label="2">月结</Radio>
+              </RadioGroup>
+            </div>
           </i-col>
         </Row>
       </div>
@@ -285,9 +309,9 @@ export default {
     return {
       loading: false,
       inEditing: false,
+      waybillId: this.$route.query.id,
       // 信息
       info: {
-        waybillId: '',
         waybillNo: '',
         status: '',
         start: '',
@@ -415,7 +439,7 @@ export default {
       return { height: this.showLog ? 41 * this.logList.length + 'px' : '15px' }
     },
 
-    total () {
+    orderTotal () {
       return this.detail.reduce((last, item) => {
         return {
           cargoCost: last.cargoCost + item.cargoCost,
@@ -429,7 +453,12 @@ export default {
         weight: 0,
         volume: 0
       })
+    },
+
+    paymentTotal () {
+      return this.payment.freightFee + this.payment.loadFee + this.payment.unloadFee + this.payment.insuranceFee + this.payment.otherFee
     }
+
   },
   watch: {
     inEditing (val) {
@@ -521,15 +550,16 @@ export default {
       this.loading = true
       Server({
         url: '/waybill/details',
-        method: 'get'
+        method: 'post',
+        data: { waybillId: this.waybillId }
       }).then(res => {
         const data = res.data.data
 
         for (let key in this.info) {
-          this.info[key] = data.waybillInfo[key]
+          this.info[key] = data.waybill[key]
         }
         for (let key in this.payment) {
-          this.payment[key] = data.waybillInfo[key]
+          this.payment[key] = data.waybill[key]
         }
         this.detail = data.cargoList
         this.logList = data.operaterLog
@@ -537,6 +567,7 @@ export default {
         this.info.status = this.statusFilter(this.info.status)
         this.info.carType = this.carTypeFilter(this.info.carType)
         this.info.carLength = this.carLengthFilter(this.info.carLength)
+        this.payment.settlementType = this.payment.settlementType.toString()
         this.setBtnsWithStatus()
 
         this.loading = false

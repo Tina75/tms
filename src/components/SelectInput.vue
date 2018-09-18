@@ -2,7 +2,7 @@
   <Dropdown
     :visible="visible"
     :transfer="transfer"
-    class="order-create__input-select"
+    class="select-input__dropdown"
     trigger="custom"
     @on-click="handleSelect"
   >
@@ -10,14 +10,19 @@
       @keydown.up.prevent="handleKeydown"
       @keydown.down.prevent="handleKeydown"
       @keydown.enter="handleKeydown"
+      @mouseenter="mousehover = true"
+      @mouseleave="mousehover = false"
     >
       <Input
         v-model="currentValue"
+        :placeholder="placeholder"
         :maxlength="maxlength"
-        icon="ios-arrow-down"
+        :class="classes"
         @on-change="handleChange"
         @on-focus="handleFocus"
         @on-blur="handleBlur">
+      <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-input__clear-icon" @click.native.stop="handleClear"></Icon>
+      <Icon v-if="!mousehover || !isClearable" slot="suffix" type="ios-arrow-down" class="select-input__input-icon"></Icon>
     </Input>
     </div>
     <DropdownMenu ref="dropdown" slot="list" :style="{'max-height':'150px', overflow:'auto'}">
@@ -34,12 +39,18 @@
 
 <script>
 /**
- * 输入框，同时支持请求查询服务端，显示数据
+ * 选择 |输入框，
+ * 支持下拉选择，也支持输入的组件
+ * 同时支持请求查询服务端，显示数据
  */
 export default {
   props: {
     maxlength: Number,
     value: String,
+    clearable: {
+      type: Boolean,
+      default: false
+    },
     transfer: {
       type: Boolean,
       default: false
@@ -57,6 +68,8 @@ export default {
     onSelect: {
       type: Function
     },
+    onFoucs: Function,
+    onClear: Function,
     remoteMethod: {
       type: Function
     }
@@ -66,6 +79,7 @@ export default {
       isFocus: false,
       focusIndex: -1,
       currentValue: this.value,
+      mousehover: false,
       lastRemoteQuery: null,
       isRemoteCall: false,
       options: this.localOptions.slice()
@@ -81,6 +95,18 @@ export default {
     },
     visible () {
       return this.filterOptions.length > 0 && this.isFocus
+    },
+    classes () {
+      return [
+        'select-input__input',
+        this.visible ? 'select-input__input-visible' : ''
+      ]
+    },
+    notEmpty () {
+      return typeof this.currentValue !== 'undefined' && String(this.currentValue).trim() !== ''
+    },
+    isClearable () {
+      return this.notEmpty && this.clearable
     }
 
   },
@@ -129,6 +155,13 @@ export default {
 
       this.currentValue = value
     },
+    // 清空
+    handleClear () {
+      this.$emit('on-clear')
+
+      this.currentValue = ''
+      this.focusIndex = -1
+    },
     // 点击下拉框项
     handleSelect (name) {
       const item = this.options.find((opt) => opt.name === name || opt.value === name)
@@ -144,6 +177,7 @@ export default {
         this.remoteCall()
       }
       this.isFocus = true
+      this.$emit('on-focus')
     },
     handleBlur () {
       this.isFocus = false
@@ -178,8 +212,6 @@ export default {
       }
     },
     handleKeydown (e) {
-      console.log(e.key)
-
       if (this.visible) {
         e.preventDefault()
         const keyCode = e.key.toLowerCase()
@@ -214,8 +246,20 @@ export default {
 }
 </script>
 
-<style lang="stylus" scoped>
-.order-create
-  &__input-select
+<style lang="stylus">
+.select-input
+  &__dropdown
     width 100%
+  &__input
+    &-visible
+      .select-input__input-icon
+        transform rotate(180deg)
+        -moz-transform rotate(180deg)
+        -webkit-transform rotate(180deg)
+  &__clear-icon
+    cursor pointer
+  &__input-icon
+    transition transform 0.2s ease-in-out
+    -webkit-transition -webkit-transform 0.2s ease-in-out
+    -moz-transition  -moz-transform 0.2s ease-in-out
 </style>

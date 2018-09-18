@@ -6,11 +6,11 @@ export const getUserInfo = ({ rootState, commit, state, dispatch }, data) => {
 }
 
 /** 获取用户权限 */
-export const getPermissons = ({commit}, list) => {
+export const getPermissons = ({ commit }, list) => {
   return Server({
     url: '/user/permission',
     method: 'get'
-  }).then(({data}) => {
+  }).then(({ data }) => {
     commit('initPermissions', data.data)
   }).catch(e => {
     console.log(e)

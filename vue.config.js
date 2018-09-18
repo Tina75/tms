@@ -15,13 +15,15 @@ module.exports = {
     inline: true,
     proxy: {
       '/': {
-        target: 'http://192.168.1.42:8888/bluewhale-line/',
+        // target: 'http://yapi.yundada56.com/mock/214',
+        target: 'http://192.168.1.49:5656/dolphin-web',
         ws: false,
         changOrigin: true
       }
     }
   },
   configureWebpack: {
+    devtool: 'source-map',
     externals: {
       'area-data': 'AreaData',
       'vue': 'Vue',
