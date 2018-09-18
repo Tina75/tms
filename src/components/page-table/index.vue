@@ -156,6 +156,7 @@ export default {
       type: Boolean,
       default: true
     },
+    onLoad: Function, // 每次请求后，回调，返回列表搜索结果
     onCurrentChange: Function,
     onSelect: Function,
     onSelectCancel: Function,
@@ -312,6 +313,7 @@ export default {
           if (this.showPagination) {
             vm.pagination.totalCount = response.data.pageTotals
           }
+          vm.$emit('on-load', response)
         })
         .catch((errorInfo) => {
           vm.loading = false

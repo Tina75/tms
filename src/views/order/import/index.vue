@@ -23,10 +23,11 @@
         accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         @change="handleChange"
       />
-      <Button class="i-ml-10" to="/order/template/download" target="_blank">下载模板</Button>
+      <Button :to="downloadUrl" class="i-ml-10" target="_blank">下载模板</Button>
     </div>
-    <PageTable ref="pageTable" :columns="columns" :data="data" :show-filter="false" no-data-text=" ">
-      <div v-if="data.length === 0" ref="footer" slot="footer" class="order-import__empty-content van-center">
+    <Input v-model="keywords.name"></Input>
+    <PageTable ref="pageTable" :keywords="keywords" :columns="columns" :show-filter="false" url="order/template/getImportedOrderTemplateList" no-data-text=" " @on-load="handleLoad">
+      <div ref="footer" slot="footer" class="order-import__empty-content van-center">
         <div class="order-import__empty-content-wrap">
           <div>
             <img src="../assets/empty-order.png" />
@@ -75,35 +76,29 @@ export default {
   mixins: [BaseComponent, BasePage],
   data () {
     return {
-      emptyContent: '',
+      downloadUrl: '',
       visible: false,
-      data: [
-        // {
-        //   createDate: '2018-9-10',
-        //   importFile: 'test.txt',
-        //   result: '导入成功',
-        //   orderQuantity: 2,
-        //   operator: '离散'
-        // }
-      ],
       progress: 0,
       ossClient: null,
+      keywords: {
+        name: ''
+      },
       columns: [
         {
           title: '导入日期',
-          key: 'createDate'
+          key: 'createTime'
         },
         {
           title: '导入文件名',
-          key: 'importFile'
+          key: 'fileName'
         },
         {
           title: '导入结果',
-          key: 'result'
+          key: 'status'
         },
         {
           title: '导入订单数',
-          key: 'orderQuantity'
+          key: 'orderCount'
         },
         {
           title: '操作人',
@@ -115,7 +110,7 @@ export default {
           render: (h, params) => {
             return h('div', [
               h('a', {
-                href: 'javascript:;'
+                href: 'params.column.fileUrl'
               }, '下载'),
               h('a', {
                 href: 'javascript:;',
@@ -129,7 +124,10 @@ export default {
   },
   initOssInstance () {
     const vm = this
-    // 后端获取阿里云access token, region
+    /**
+     * 后端获取阿里云access token, region 参数
+     * 初始化oss client，用户上传模板前需要准备好
+     */
     server({
       method: 'get',
       url: ''
@@ -143,13 +141,30 @@ export default {
         })
       })
   },
+  created () {
+    // 获取导入模板下载地址
+    server({
+      method: 'get',
+      url: 'order/template/get'
+    }).then((response) => {
+      this.downloadUrl = response.data.data.fileUrl
+    })
+  },
   mounted () {
     if (this.$refs.footer) {
       this.$refs.footer.parentElement.parentElement.style['min-height'] = '180px'
+      this.$refs.footer.parentElement.parentElement.style['display'] = 'none'
     }
     // this.$refs.footer.$parent.style['height'] = '200px'
   },
   methods: {
+    handleLoad (response) {
+      if (response.data.data.length === 0) {
+        this.$refs.footer.parentElement.parentElement.style['display'] = 'block'
+      } else {
+        this.$refs.footer.parentElement.parentElement.style['display'] = 'none'
+      }
+    },
     // 主动触发上传
     handleClick (e) {
       this.$refs.fileInput.click()
@@ -180,7 +195,7 @@ export default {
           })
           this.visible = false
           this.progress = 0
-          this.notifyBackend(result.name)
+          this.notifyBackend(randomName, result.name)
         } catch (e) {
           // 捕获超时异常
           if (e.code === 'ConnectionTimeoutError') {
@@ -194,12 +209,13 @@ export default {
      * 通知后端文件名称，
      * 文件上传成功，
      */
-    notifyBackend (fileName) {
+    notifyBackend (fileName, fileUrl) {
       server({
         method: 'post',
-        url: '',
+        url: 'order/template/uploadNotify',
         data: {
-          fileName
+          fileName,
+          fileUrl
         }
       })
     },

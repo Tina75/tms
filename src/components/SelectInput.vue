@@ -2,7 +2,7 @@
   <Dropdown
     :visible="visible"
     :transfer="transfer"
-    class="order-create__input-select"
+    class="select-input__dropdown"
     trigger="custom"
     @on-click="handleSelect"
   >
@@ -15,10 +15,11 @@
         v-model="currentValue"
         :placeholder="placeholder"
         :maxlength="maxlength"
-        icon="ios-arrow-down"
+        :class="classes"
         @on-change="handleChange"
         @on-focus="handleFocus"
         @on-blur="handleBlur">
+      <Icon slot="suffix" type="ios-arrow-down" class="select-input__input-icon"></Icon>
     </Input>
     </div>
     <DropdownMenu ref="dropdown" slot="list" :style="{'max-height':'150px', overflow:'auto'}">
@@ -35,7 +36,9 @@
 
 <script>
 /**
- * 输入框，同时支持请求查询服务端，显示数据
+ * 选择 |输入框，
+ * 支持下拉选择，也支持输入的组件
+ * 同时支持请求查询服务端，显示数据
  */
 export default {
   props: {
@@ -83,6 +86,12 @@ export default {
     },
     visible () {
       return this.filterOptions.length > 0 && this.isFocus
+    },
+    classes () {
+      return [
+        'select-input__input',
+        this.visible ? 'select-input__input-visible' : ''
+      ]
     }
 
   },
@@ -217,8 +226,18 @@ export default {
 }
 </script>
 
-<style lang="stylus" scoped>
-.order-create
-  &__input-select
+<style lang="stylus">
+.select-input
+  &__dropdown
     width 100%
+  &__input
+    &-visible
+      .select-input__input-icon
+        transform rotate(180deg)
+        -moz-transform rotate(180deg)
+        -webkit-transform rotate(180deg)
+  &__input-icon
+    transition transform 0.2s ease-in-out
+    -webkit-transition -webkit-transform 0.2s ease-in-out
+    -moz-transition  -moz-transform 0.2s ease-in-out
 </style>

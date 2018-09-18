@@ -22,9 +22,29 @@
   line-height 3
 
 .detail-field-title
+  position relative
   color #777
   display inline-block
   width 100px
+  padding-left 10px
+
+  &-sm
+    position relative
+    color #777
+    display inline-block
+    width: 80px
+    padding-left 10px
+
+.detail-field-required:before
+  content "*"
+  position absolute
+  width 10px
+  height 39px
+  left 0
+  top 0
+  line-height 39px
+  text-align center
+  color #EC4E4E
 
 .detail-part-title
   margin-top 60px
@@ -59,14 +79,15 @@
   font-weight: bolder
 
   &-title
-    font-weight normal
-    padding-right 5px
-    box-sizing border-box
+    padding-left 18px
 
   span
     display inline-block
-    min-width 111px
-    text-align center
+    margin-right 44px
+
+.detail-payment-way
+  display inline-block
+  width calc( 100% - 80px )
 
 .detail-log
   display flex
@@ -123,12 +144,18 @@
     margin 0 12px
 
 .detail-payment-input
-  width 80px
+  width 100px
 
   span
     font-size 11px
     line-height 32px
     color #999999
+
+.detail-info-input
+  width calc( 100% - 100px )
+
+  &-half
+    width calc( 50% - 56px )
 
 
 
