@@ -161,7 +161,7 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import DetailMixin from './detailMixin'
+import detailMixin from './detailMixin'
 import Server from '@/libs/js/server'
 
 export default {
@@ -177,7 +177,7 @@ export default {
         )
     }
   },
-  mixins: [ BasePage, DetailMixin ],
+  mixins: [ BasePage, detailMixin ],
   metaInfo: { title: '外转单详情' },
   data () {
     return {

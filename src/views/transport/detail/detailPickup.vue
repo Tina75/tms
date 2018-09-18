@@ -285,12 +285,12 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import DetailMixin from './detailMixin'
+import detailMixin from './detailMixin'
 import Server from '@/libs/js/server'
 
 export default {
   name: 'DetailFeright',
-  mixins: [ BasePage, DetailMixin ],
+  mixins: [ BasePage, detailMixin ],
   metaInfo: { title: '提货单详情' },
   data () {
     return {
