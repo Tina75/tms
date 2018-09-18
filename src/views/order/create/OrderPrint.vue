@@ -4,13 +4,13 @@
       <Title>客户信息</Title>
       <Row>
         <Col span="6">客户名称：{{data.consignerName}}</Col>
-        <Col span="6">要求发货时间： {{data.deliveryTime}}上午</Col>
-        <Col span="12">期望到货时间：{{data.arriveTime}} 下午</Col>
+        <Col span="6">要求发货时间： {{data.deliveryTime | datetime}}上午</Col>
+        <Col span="12">期望到货时间：{{data.arriveTime | datetime}} 下午</Col>
       </Row>
       <Row>
         <Col span="6">始发地：{{data.start}}</Col>
         <Col span="6">目的地：{{data.end}}</Col>
-        <Col span="6">提货方式：{{data.pickup}}</Col>
+        <Col span="6">提货方式：{{pickup}}</Col>
         <Col span="6">回单数：{{data.receiptCount}}</Col>
       </Row>
       <Row>
@@ -32,6 +32,9 @@
 
 <script>
 import Printd from 'printd'
+import areas from '@/libs/js/City'
+// import settlements from './constant/settlement.js'
+import pickups from './constant/pickup.js'
 export default {
   props: {
     data: {
@@ -47,6 +50,17 @@ export default {
           margin: 10px 0;
         }
       `
+    }
+  },
+  computed: {
+    startCity () {
+      return this.data.start ? areas.getPathByCode(this.data.start).map(item => item.name).join('') : ''
+    },
+    endCity () {
+      return this.data.end ? areas.getPathByCode(this.data.start).map(item => item.name).join('') : ''
+    },
+    pickup () {
+      return pickups.find(item => item.value === this.data.pickup).name || pickups[0].name
     }
   },
   mounted () {

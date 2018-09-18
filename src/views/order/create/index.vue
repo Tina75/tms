@@ -109,10 +109,11 @@
       <Col span="6">
       <FormItem label="结算方式" prop="settlementType">
         <Select v-model="orderForm.settlementType">
-          <Option value="1">现付</Option>
+          <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+          <!-- <Option value="1">现付</Option>
           <Option value="2">到付</Option>
           <Option value="3">回付</Option>
-          <Option value="4">月结</Option>
+          <Option value="4">月结</Option> -->
         </Select>
       </FormItem>
       </Col>
@@ -175,8 +176,9 @@
       <Col span="6">
       <FormItem label="提货方式" prop="pickup">
         <Select v-model="orderForm.pickup">
-          <Option value="1">上门提货</Option>
-          <Option value="2">直接送货</Option>
+          <!-- <Option value="1">上门提货</Option>
+          <Option value="2">直接送货</Option> -->
+          <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
       </FormItem>
       </Col>
@@ -213,6 +215,9 @@ import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import OrderPrint from './OrderPrint'
 import AreaSelect from '@/components/AreaSelect'
+
+import settlements from './constant/settlement.js'
+import pickups from './constant/pickup.js'
 export default {
   metaInfo: {
     title: '手动下单'
@@ -245,6 +250,8 @@ export default {
       }
     }
     return {
+      settlements,
+      pickups,
       goodsColumn: [
         {
           title: ' ',
@@ -323,12 +330,14 @@ export default {
               h('span', { class: 'van-c-red' }, '*'),
               h('span', params.column.title),
               h('Tooltip', {
+                attrs: {
+                  id: 'order-create__weight-tooltip'
+                },
                 props: {
                   'max-width': '200',
                   content: '为了方便您计算价格，重量和体积必须填写一项',
                   placement: 'top-start',
                   transfer: true
-
                 }
               }, [
                 h('Icon', {
@@ -498,7 +507,7 @@ export default {
         // 货品信息
         cargoList: [],
         // 付款方式
-        settlementType: '4', // 默认月结，1:现付，2：到付 ，3：回付 4月结
+        settlementType: 4, // 默认月结，1:现付，2：到付 ，3：回付 4月结
         // 运输费用
         freightFee: null,
         // 装货费
@@ -510,7 +519,7 @@ export default {
         // 其他费用
         otherFee: null,
         // 提货方式
-        pickup: '1', // 默认上门提货，2：直接送货
+        pickup: 1, // 默认上门提货，2：直接送货
         // 回单数量
         receiptCount: null,
         // 备注
@@ -616,7 +625,12 @@ export default {
           for (let key in vm.orderForm) {
             vm.orderForm[key] = orderDetail[key] || vm.orderForm[key]
           }
-          // Todo:到货时间，发货时间转换，结算方式
+          if (vm.orderForm.deliveryTime) {
+            vm.orderForm.deliveryTime = new Date(vm.orderForm.deliveryTime)
+          }
+          if (vm.orderForm.arriveTime) {
+            vm.orderForm.arriveTime = new Date(vm.orderForm.arriveTime)
+          }
         })
     }
   },
@@ -667,21 +681,16 @@ export default {
       // index, name, value
       if (type === 'update') {
         if (!this.tempCargoes[item.index]) {
-          this.tempCargoes[item.index] = { [item.name]: item.value }
-          if (sumFields.indexOf(item.name) !== -1) {
+          this.tempCargoes[item.index] = {}
+        }
+        if (sumFields.indexOf(item.name) !== -1) {
+          if (this.tempCargoes[item.index][item.name]) {
+            this.statics[item.name] = float.round(this.statics[item.name] - (this.tempCargoes[item.index][item.name] || 0) + item.value)
+          } else {
             this.statics[item.name] = float.round(this.statics[item.name] - (this.consignerCargoes[item.index][item.name] || 0) + item.value)
           }
-          this.tempCargoes[item.index] = {[item.name]: item.value}
-        } else {
-          if (sumFields.indexOf(item.name) !== -1) {
-            if (this.tempCargoes[item.index][item.name]) {
-              this.statics[item.name] = float.round(this.statics[item.name] - (this.tempCargoes[item.index][item.name] || 0) + item.value)
-            } else {
-              this.statics[item.name] = float.round(this.statics[item.name] - (this.consignerCargoes[item.index][item.name] || 0) + item.value)
-            }
-          }
-          this.tempCargoes[item.index][item.name] = item.value
         }
+        this.tempCargoes[item.index][item.name] = item.value
       } else if (type === 'remove') {
         this.tempCargoes[item.index] = null
         delete this.tempCargoes[item.index]
@@ -756,12 +765,12 @@ export default {
           let form = Object.assign({}, orderForm, {
             start: orderForm.start[orderForm.start.length - 1],
             end: orderForm.end[orderForm.end.length - 1],
-            arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime,
-            deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime,
+            arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
+            deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
             orderCargoList
           });
 
-          ['start', 'end', 'pickup', 'settlementType'].forEach(field => {
+          ['start', 'end'].forEach(field => {
             form[field] = parseInt(form[field])
           })
           vm.submitOrder(form)
@@ -770,7 +779,7 @@ export default {
               this.$Message.success('创建订单成功')
             })
         } else {
-          this.$Message.error('请检查表单数据')
+          this.$Message.error('请填写必填信息')
         }
       })
     },
