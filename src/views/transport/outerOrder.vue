@@ -23,21 +23,21 @@
                v-model="easySearchKeyword"
                :icon="easySearchKeyword ? 'ios-close-circle' : ''"
                placeholder="请输入外转方名称"
-               style="width: 200px"
+               class="search-input"
                @on-click="resetEasySearch" />
 
         <Input v-if="easySelectMode === 2"
                v-model="easySearchKeyword"
                :icon="easySearchKeyword ? 'ios-close-circle' : ''"
                placeholder="请输入订单号"
-               style="width: 200px"
+               class="search-input"
                @on-click="resetEasySearch" />
 
         <Input v-if="easySelectMode === 3"
                v-model="easySearchKeyword"
                :icon="easySearchKeyword ? 'ios-close-circle' : ''"
                placeholder="请输入外转单号"
-               style="width: 200px"
+               class="search-input"
                @on-click="resetEasySearch" />
 
         <Button icon="ios-search"
@@ -53,18 +53,18 @@
     <div v-if="!isEasySearch" class="operate-box">
 
       <div style="margin-bottom: 10px;">
-        <Input v-model="seniorSearchFields.consignerName" placeholder="请输入客户名称" style="width: 200px" />
-        <Input v-model="seniorSearchFields.orderNo" placeholder="请输入订单号" style="width: 200px" />
-        <Input v-model="seniorSearchFields.customerOrderNo" placeholder="请输入客户订单号" style="width: 200px" />
-        <Input v-model="seniorSearchFields.transNo" placeholder="请输入外转单号" style="width: 200px" />
-        <Input v-model="seniorSearchFields.transfereeName" placeholder="请输入外转方名称" style="width: 200px" />
+        <Input v-model="seniorSearchFields.consignerName" placeholder="请输入客户名称" class="search-input-senior" />
+        <Input v-model="seniorSearchFields.orderNo" placeholder="请输入订单号" class="search-input-senior" />
+        <Input v-model="seniorSearchFields.customerOrderNo" placeholder="请输入客户订单号" class="search-input-senior" />
+        <Input v-model="seniorSearchFields.transNo" placeholder="请输入外转单号" class="search-input-senior" />
+        <Input v-model="seniorSearchFields.transfereeName" placeholder="请输入外转方名称" class="search-input-senior" />
       </div>
 
       <div style="display: flex;justify-content: space-between;">
         <div>
-          <Input v-model="seniorSearchFields.start" placeholder="请输入始发地" style="width: 200px" />
-          <Input v-model="seniorSearchFields.end" placeholder="请输入目的地" style="width: 200px" />
-          <DatePicker type="daterange" split-panels placeholder="开始日期-结束日期" style="width: 200px"></DatePicker>
+          <AreaSelect v-model="seniorSearchFields.start" placeholder="请输入始发地" class="search-input-senior" />
+          <AreaSelect v-model="seniorSearchFields.end" placeholder="请输入目的地" class="search-input-senior" />
+          <DatePicker type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
         </div>
         <div>
           <Button type="primary"
@@ -108,13 +108,14 @@
 import BasePage from '@/basic/BasePage'
 import TabHeader from '@/components/TabHeader'
 import PageTable from '@/components/page-table'
-import TransportTableMixin from './transportTableMixin'
+import AreaSelect from '@/components/AreaSelect'
+import TransportMixin from './transportMixin'
 import Server from '@/libs/js/server'
 
 export default {
   name: 'OuterManager',
-  components: { TabHeader, PageTable },
-  mixins: [ BasePage, TransportTableMixin ],
+  components: { TabHeader, PageTable, AreaSelect },
+  mixins: [ BasePage, TransportMixin ],
   metaInfo: { title: '外转单管理' },
   data () {
     return {

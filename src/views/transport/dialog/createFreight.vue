@@ -3,10 +3,10 @@
     <p slot="header" style="text-align:center">{{title}}</p>
     <Form ref="$form" :model="form" :rules="rules" :label-width="80">
       <FormItem label="始发地" prop="start">
-        <Input v-model="form.start" style="width:200px" placeholder="请选择"/>
+        <AreaSelect v-model="form.start" style="width:200px" placeholder="请选择"/>
       </FormItem>
       <FormItem label="目的地" prop="end">
-        <Input v-model="form.end" style="width:200px" placeholder="请选择"/>
+        <AreaSelect v-model="form.end" style="width:200px" placeholder="请选择"/>
       </FormItem>
       <FormItem label="承运商" prop="carrierName">
         <Input v-model="form.carrierName" style="width:200px" placeholder="请选择"/>
@@ -24,9 +24,11 @@
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
+import AreaSelect from '@/components/AreaSelect'
 
 export default {
   name: 'CreatedFreight',
+  components: { AreaSelect },
   mixins: [ BaseDialog ],
   data () {
     return {

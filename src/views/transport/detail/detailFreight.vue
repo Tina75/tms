@@ -102,7 +102,7 @@
         </Row>
         <Row class="detail-field-group">
           <i-col span="24">
-            <span class="detail-field-title-sm">费用合计：</span>
+            <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
             <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
           </i-col>
         </Row>
@@ -111,6 +111,11 @@
             <span class="detail-field-title-sm">结算方式：</span>
             <div class="detail-payment-way">
               {{ payment.settlementType === '1' ? '按单结' : '月结' }}
+              <Table v-if="payment.settlementType === '2'"
+                     :columns="tablePayment"
+                     :data="payment.settlementPayInfo"
+                     :loading="loading"
+                     width="350"></Table>
             </div>
           </i-col>
         </Row>
@@ -208,6 +213,7 @@
           <i-col span="13">
             <span class="detail-field-title">备注：</span>
             <Input v-model="info.remark"
+                   :maxlength="100"
                    class="detail-info-input"></Input>
           </i-col>
         </Row>
@@ -271,7 +277,7 @@
         </Row>
         <Row class="detail-field-group">
           <i-col span="24">
-            <span class="detail-field-title-sm">费用合计：</span>
+            <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
             <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
           </i-col>
         </Row>
@@ -283,6 +289,11 @@
                 <Radio label="1">按单结</Radio>
                 <Radio label="2">月结</Radio>
               </RadioGroup>
+              <Table v-if="payment.settlementType === '2'"
+                     :columns="tablePayment"
+                     :data="payment.settlementPayInfo"
+                     :loading="loading"
+                     width="350"></Table>
             </div>
           </i-col>
         </Row>
@@ -335,7 +346,7 @@ export default {
         insuranceFee: '',
         otherFee: '',
         totalFee: '',
-        settlementPayInfo: ''
+        settlementPayInfo: []
       },
 
       // 所有按钮组
@@ -425,6 +436,62 @@ export default {
         {
           title: '备注2',
           key: 'remark2'
+        }
+      ],
+      tablePayment: [
+        {
+          title: '付款方式',
+          key: 'payType',
+          width: 100,
+          render: (h, p) => {
+            let type
+            if (p.row.payType === 1) type = '预付'
+            if (p.row.payType === 2) type = '到付'
+            if (p.row.payType === 3) type = '回付'
+            return h('span', {
+              style: { fontWeight: 'bolder' }
+            }, type)
+          }
+        },
+        {
+          title: '现金',
+          key: 'cashAmount',
+          render: (h, p) => {
+            if (!this.inEditing) {
+              return h('span', p.row.cashAmount)
+            } else {
+              return h('Input', {
+                props: {
+                  value: p.row.cashAmount,
+                  placeholder: '请输入'
+                },
+                style: {
+                  width: 'auto',
+                  borderStyle: 'none'
+                }
+              })
+            }
+          }
+        },
+        {
+          title: '油卡',
+          key: 'fuelCardAmount',
+          render: (h, p) => {
+            if (!this.inEditing) {
+              return h('span', p.row.fuelCardAmount)
+            } else {
+              return h('Input', {
+                props: {
+                  value: p.row.fuelCardAmount,
+                  placeholder: '请输入'
+                },
+                style: {
+                  width: 'auto',
+                  borderStyle: 'none'
+                }
+              })
+            }
+          }
         }
       ],
 
@@ -569,7 +636,7 @@ export default {
         this.info.carLength = this.carLengthFilter(this.info.carLength)
         this.payment.settlementType = this.payment.settlementType.toString()
         this.setBtnsWithStatus()
-
+        console.log(this.payment.settlementPayInfo)
         this.loading = false
       }).catch(err => console.error(err))
     }

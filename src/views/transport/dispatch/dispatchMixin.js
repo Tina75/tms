@@ -33,10 +33,11 @@ export default {
         },
         {
           title: 'icon',
-          width: 50,
+          width: 80,
           renderHeader: (h, p) => {
-            return h('Icon', {
-              props: { type: 'md-arrow-round-forward' }
+            return h('i', {
+              class: 'icon font_family icon-ico-line',
+              style: { fontSize: '25px' }
             })
           }
         },
@@ -186,14 +187,24 @@ export default {
     // 右侧表格列选中
     rightTableRowClick (row, index) {
       this.rightSelectRow = { row, index }
+      this.rightTableData.forEach((item, i) => {
+        if (i === index) item._highlight = true
+        else item._highlight = false
+      })
     },
 
     /** 数据操作 */
 
     // 为表格数据添加自定义字段及自定义过滤
-    dataFilter (data, param, extraRule) {
+    dataFilter (data, fields, extraRule) {
       return data.map(item => {
-        item[param] = false
+        if (fields instanceof Array) {
+          fields.forEach(field => {
+            item[field] = false
+          })
+        } else {
+          item[fields] = false
+        }
         if (extraRule) item = extraRule(item)
         return item
       })

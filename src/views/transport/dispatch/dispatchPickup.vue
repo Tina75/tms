@@ -122,7 +122,7 @@ export default {
         url: '/dispatch/loadbill/list',
         method: 'get'
       }).then(res => {
-        this.rightTableData = this.dataFilter(res.data.data.loadbillList, '_expanded', item => {
+        this.rightTableData = this.dataFilter(res.data.data.loadbillList, ['_expanded', '_highlight'], item => {
           if (JSON.stringify(item) === JSON.stringify(this.rightExpandRow)) item._expanded = true
           return item
         })

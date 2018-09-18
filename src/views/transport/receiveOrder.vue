@@ -23,21 +23,21 @@
                v-model="easySearchKeyword"
                :icon="easySearchKeyword ? 'ios-close-circle' : ''"
                placeholder="请输入提货单号"
-               style="width: 200px"
+               class="search-input"
                @on-click="resetEasySearch" />
 
         <Input v-if="easySelectMode === 2"
                v-model="easySearchKeyword"
                :icon="easySearchKeyword ? 'ios-close-circle' : ''"
                placeholder="请输入承运商"
-               style="width: 200px"
+               class="search-input"
                @on-click="resetEasySearch" />
 
         <Input v-if="easySelectMode === 3"
                v-model="easySearchKeyword"
                :icon="easySearchKeyword ? 'ios-close-circle' : ''"
                placeholder="请输入车牌号"
-               style="width: 200px"
+               class="search-input"
                @on-click="resetEasySearch" />
 
         <Button icon="ios-search"
@@ -53,15 +53,15 @@
     <div v-if="!isEasySearch" class="operate-box">
 
       <div style="margin-bottom: 10px;">
-        <Input v-model="seniorSearchFields.pickupNo" placeholder="请输入提货单号" style="width: 200px" />
-        <Input v-model="seniorSearchFields.carrierName" placeholder="请选择承运商" style="width: 200px" />
-        <Input v-model="seniorSearchFields.driverName" placeholder="请输入司机" style="width: 200px" />
-        <Input v-model="seniorSearchFields.carNo" placeholder="请输入车牌号" style="width: 200px" />
+        <Input v-model="seniorSearchFields.pickupNo" placeholder="请输入提货单号"  class="search-input-senior" />
+        <Input v-model="seniorSearchFields.carrierName" placeholder="请选择承运商"  class="search-input-senior" />
+        <Input v-model="seniorSearchFields.driverName" placeholder="请输入司机"  class="search-input-senior" />
+        <Input v-model="seniorSearchFields.carNo" placeholder="请输入车牌号"  class="search-input-senior" />
       </div>
 
       <div style="display: flex;justify-content: space-between;">
         <div>
-          <DatePicker type="daterange" split-panels placeholder="开始日期-结束日期" style="width: 200px"></DatePicker>
+          <DatePicker type="daterange" split-panels placeholder="开始日期-结束日期"  class="search-input-senior"></DatePicker>
         </div>
         <div>
           <Button type="primary"
@@ -105,13 +105,13 @@
 import BasePage from '@/basic/BasePage'
 import TabHeader from '@/components/TabHeader'
 import PageTable from '@/components/page-table'
-import TransportTableMixin from './transportTableMixin'
+import TransportMixin from './transportMixin'
 import Server from '@/libs/js/server'
 
 export default {
   name: 'ReceiveManager',
   components: { TabHeader, PageTable },
-  mixins: [ BasePage, TransportTableMixin ],
+  mixins: [ BasePage, TransportMixin ],
   metaInfo: { title: '提货管理' },
   data () {
     return {

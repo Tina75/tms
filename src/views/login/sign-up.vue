@@ -79,9 +79,14 @@
           </template>
 
           <FormItem>
+            <Checkbox v-model="protocol" style="line-height: 1.3;">
+              我已阅读并同意
+              <a @click.prevent="showProtocol(1)">《智加云TMS服务协议》</a>
+              <a @click.prevent="showProtocol(2)">《智加云TMS隐私协议》</a>
+            </Checkbox>
             <Button class="form-button" type="primary" long
                     @click="nextStep">{{step === 2 ? '立即注册' : '下一步'}}</Button>
-            <p style="text-align: right;">已有账号？<router-link to="/">请登录></router-link></p>
+            <p style="text-align: center;">已有账号？<router-link to="/">请登录></router-link></p>
           </FormItem>
         </Form>
       </div>
@@ -90,13 +95,14 @@
 </template>
 
 <script>
+import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import City from '@/libs/js/City'
 import mixin from './mixin'
 
 export default {
   name: 'SignUp',
-  mixins: [ mixin ],
+  mixins: [ BasePage, mixin ],
   metaInfo: {
     title: '注册账号'
   },
@@ -104,6 +110,8 @@ export default {
     return {
       step: 0,
       stepList: ['验证手机号', '填写账号信息', '注册成功'],
+      protocol: true,
+      showP: 0,
 
       form: {
         phone: '',
@@ -131,6 +139,13 @@ export default {
     this.getCities()
   },
   methods: {
+    showProtocol (type) {
+      console.log(type)
+      this.openDialog({
+        name: 'login/protocol',
+        data: { type }
+      })
+    },
     // 下一步校验
     nextStep () {
       let validParams
@@ -155,6 +170,12 @@ export default {
         this.step++
         return
       }
+
+      if (!this.protocol) {
+        this.$Message.warning('请先阅读并同意《智加云TMS服务协议》《智加云TMS隐私协议》')
+        return
+      }
+
       Server({
         url: '/user/register',
         method: 'post',

@@ -141,7 +141,7 @@ export default {
         if (this.rememberPW) this.localPwSave()
         else window.localStorage.removeItem('local_rememberd_pw')
         window.localStorage.setItem('tms_is_login', true)
-        window.localStorage.setItem('user_info', res.data.data)
+        window.localStorage.setItem('user_info', JSON.stringify(res.data.data))
         this.setToken(res.data.data.token)
         location.reload()
       }).catch(err => console.error(err))
