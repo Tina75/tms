@@ -28,7 +28,10 @@ const state = {
     // 客户实际需要的货物，基于上面的cargoes
     consignerCargoes: [
       new Cargo(defaultCargo)
-    ]
+    ],
+    carriers: [], // 承运商信息
+    carrierCars: [], // 承运商车辆信息
+    carrierDrivers: [] // 承运商司机信息
   }
 }
 
@@ -68,6 +71,15 @@ const mutations = {
   },
   [types.CLEAR_CONSIGNER_CARGO_LIST] ({ order }) {
     order.consignerCargoes = [new Cargo()]
+  },
+  [types.RECEIVE_CARRIER_LIST] ({ order }, list) {
+    order.carriers = list
+  },
+  [types.RECEIVE_CARRIER_CAR_LIST] ({ order }, list) {
+    order.carrierCars = list
+  },
+  [types.RECEIVE_CARRIER_DRIVER_LIST] ({ order }, list) {
+    order.carrierDrivers = list
   }
 }
 export default {

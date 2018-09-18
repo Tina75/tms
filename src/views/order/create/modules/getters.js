@@ -61,3 +61,12 @@ export const sumRow = (state, getters) => {
     quantity: 0
   })
 }
+
+// 承运商列表
+export const carriers = ({ order }) => order.carriers.map((user) => ({ name: user.carrierName, value: user.carrierName, id: user.carrierId }))
+
+// 承运商车辆信息
+export const carrierCars = ({ order }) => order.carrierCars.map((car) => ({ name: car.carNO, value: car.carNO, id: car.carId }))
+
+// 承运商司机信息
+export const carrierDrivers = ({ order }) => order.carrierDrivers.map((driver) => ({ name: driver.driverName, value: driver.driverName, id: driver.driverId }))

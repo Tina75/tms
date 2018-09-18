@@ -15,31 +15,37 @@
       </Form>
       <Form v-else ref="pick" :model="pick" :rules="pickRules" :label-width="60" inline label-position="left">
         <FormItem label="承运商" prop="carrierName">
-          <!-- <Input v-model="pick.companny" style="width:180px" placeholder="请输入"/> -->
-          <AutoComplete
+          <SelectInput
             v-model="pick.carrierName"
-            :data="maintainData"
+            :maxlength="20"
+            :remote="false"
+            :local-options="carriers"
             placeholder="请输入"
-            style="width:180px">
-          </AutoComplete>
+            style="width:180px"
+            @on-focus.once="getCarriers"
+            @on-select="handleSelectCarrier">
+          </SelectInput>
         </FormItem>
         <FormItem label="车牌号" prop="carNo" style="margin-left:27px;">
-          <!-- <Input v-model="pick.number" style="width:180px" placeholder="请输入"/> -->
-          <AutoComplete
+          <SelectInput
             v-model="pick.carNo"
-            :data="maintainData"
+            :maxlength="20"
+            :remote="false"
+            :local-options="carrierCars"
             placeholder="请输入"
-            style="width:180px">
-          </AutoComplete>
+            style="width:180px"
+            @on-select="handleSelectCarrierCars">
+          </SelectInput>
         </FormItem>
         <FormItem label="司机" prop="driver" style="margin-left:27px;">
-          <!-- <Input v-model="pick.driver" style="width:180px" placeholder="请输入"/> -->
-          <AutoComplete
+          <SelectInput
             v-model="pick.driver"
-            :data="maintainData"
+            :maxlength="15"
+            :remote="false"
+            :local-options="carrierDrivers"
             placeholder="请输入"
             style="width:180px">
-          </AutoComplete>
+          </SelectInput>
         </FormItem>
       </Form>
       <Table :columns="tableColumns" :data="id"></Table>
@@ -61,11 +67,14 @@
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 import AreaSelect from '@/components/AreaSelect'
+import SelectInput from '@/components/SelectInput.vue'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'dispatch',
 
   components: {
-    AreaSelect
+    AreaSelect,
+    SelectInput
   },
 
   mixins: [BaseDialog],
@@ -149,6 +158,11 @@ export default {
   },
 
   computed: {
+    ...mapGetters([
+      'carriers',
+      'carrierCars',
+      'carrierDrivers'
+    ]),
     orderTotal () {
       return this.id.length
     },
@@ -185,6 +199,25 @@ export default {
   },
 
   methods: {
+    ...mapActions([
+      'getCarriers'
+    ]),
+    // 选择承运商dropdown的数据
+    handleSelectCarrier (name, row) {
+      console.log(name, row)
+      this.$store.dispatch('getCarrierCars', row.id)
+      this.$store.dispatch('getCarrierDrivers', row.id)
+    },
+    // 选择承运商车辆信息
+    handleSelectCarrierCars (name, row) {
+      console.log(name, row)
+    },
+    // 过滤已维护的客户信息
+    filterMethod (value, option) {
+      if (value) {
+        return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
+      }
+    },
     save () {
       if (this.name === '送货调度') {
         this.doSendDispatch()
@@ -224,7 +257,7 @@ export default {
         if (valid) {
           const data = Object.assign(this.pick, {orderIds: this.orderIds})
           Server({
-            url: 'loadbill/bill/create',
+            url: 'load/bill/create',
             method: 'post',
             data: data
           }).then(() => {

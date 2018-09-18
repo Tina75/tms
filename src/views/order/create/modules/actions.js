@@ -148,5 +148,80 @@ export default {
         .then((response) => resolve(response))
         .catch((err) => reject(err))
     })
+  },
+
+  /**
+   * 查询承运商列表
+   * @param {*} type
+   * @param {*} keyword
+   */
+  getCarriers ({ state, commit }) {
+    return new Promise((resolve, reject) => {
+      const { pageNo, pageSize } = state.order.pagination
+      server({
+        method: 'get',
+        url: 'carrier/list',
+        params: {
+          pageNo: pageNo,
+          pageSize: pageSize,
+          type: 1,
+          keyword: null
+        }
+      }).then((response) => {
+        // 承运商信息
+        const carriers = response.data.data.carrierList
+        commit(types.RECEIVE_CARRIER_LIST, carriers)
+      }).catch((error) => {
+        reject(error)
+      })
+    })
+  },
+  /**
+   * 根据承运商id查询其下属车辆
+   * @param {*} carrierId
+   */
+  getCarrierCars ({ state, commit }, carrierId) {
+    return new Promise((resolve, reject) => {
+      const { pageNo, pageSize } = state.order.pagination
+      server({
+        method: 'get',
+        url: 'carrier/list/car',
+        params: {
+          pageNo: pageNo,
+          pageSize: pageSize,
+          carrierId
+        }
+      }).then((response) => {
+        // 承运商车辆信息
+        const carrierCars = response.data.data.carList
+        commit(types.RECEIVE_CARRIER_CAR_LIST, carrierCars)
+      }).catch((error) => {
+        reject(error)
+      })
+    })
+  },
+  /**
+   * 根据承运商id查询其下属司机
+   * @param {*} carrierId
+   */
+  getCarrierDrivers ({ state, commit }, carrierId) {
+    return new Promise((resolve, reject) => {
+      const { pageNo, pageSize } = state.order.pagination
+      server({
+        method: 'get',
+        url: 'carrier/list/driver',
+        params: {
+          pageNo: pageNo,
+          pageSize: pageSize,
+          carrierId
+        }
+      }).then((response) => {
+        // 承运商车辆信息
+        const carrierDrivers = response.data.data.driverList
+        commit(types.RECEIVE_CARRIER_DRIVER_LIST, carrierDrivers)
+      }).catch((error) => {
+        reject(error)
+      })
+    })
   }
 }

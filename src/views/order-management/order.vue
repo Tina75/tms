@@ -9,48 +9,66 @@
         <Select v-model="selectStatus"  style="width:120px;margin-right: 11px" @on-change="handleChangeSearchStatus">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
-        <!-- <Input
-          v-if="selectStatus === 0"
-          v-model="consignerName"
-          placeholder="请输入客户名称"
-          search
-          style="width: 200px"
-          @on-click="searchList" /> -->
-        <AutoComplete
+        <SelectInput
           v-if="selectStatus === 0"
           v-model="keywords.consignerName"
-          :data="customerData"
-          :filter-method="filterMethod"
-          clearable
+          :maxlength="20"
+          :remote="false"
+          :local-options="clients"
           placeholder="请选择或输入客户名称"
           style="width:200px"
-          @on-select="searchList"
-          @on-change="autoSearch">
-        </AutoComplete>
-        <Input v-else-if="selectStatus === 1" v-model="keywords.orderNo" placeholder="请输入订单号" style="width: 200px" clearable @on-enter="searchList" @on-change="autoSearch"/>
-        <Input v-else v-model="keywords.waybillNo" placeholder="请输入运单号" style="width: 200px" clearable @on-enter="searchList" @on-change="autoSearch"/>
+          @on-focus.once="getClients">
+        </SelectInput>
+        <Input
+          v-else-if="selectStatus === 1"
+          v-model.lazy="keywords.orderNo"
+          :maxlength="30"
+          placeholder="请输入订单号"
+          style="width: 200px"
+          clearable
+          @on-enter="searchList"
+          @on-change="autoSearch"/>
+        <Input
+          v-else
+          v-model.lazy="keywords.waybillNo"
+          :maxlength="30"
+          placeholder="请输入运单号"
+          style="width: 200px"
+          clearable
+          @on-enter="searchList"
+          @on-change="autoSearch"/>
         <Button type="primary" icon="ios-search" style="width: 40px;margin-right: 0;" @click="searchList"></Button>
         <Button type="text" class="high-search" size="small" @click="handleSwitchSearch">高级搜索</Button>
       </div>
     </div>
     <div v-if="!simpleSearch" class="operate-box">
       <div style="margin-bottom: 10px;">
-        <AutoComplete
+        <SelectInput
           v-model="keywords.consignerName"
-          :data="customerData"
-          :filter-method="filterMethod"
+          :maxlength="20"
+          :remote="false"
+          :local-options="clients"
           placeholder="请选择或输入客户名称"
-          style="width:200px">
-        </AutoComplete>
-        <Input v-model="keywords.orderNo" placeholder="请输入订单号" style="width: 200px" />
-        <Input v-model="keywords.customerOrderNo" placeholder="请输入客户订单号" style="width: 200px" />
-        <Input v-model="keywords.waybillNo" placeholder="请输入运单号" style="width: 200px" />
+          style="width:200px;margin-right: 20px;"
+          @on-focus.once="getClients">
+        </SelectInput>
+        <Input v-model="keywords.orderNo" :maxlength="30" placeholder="请输入订单号" style="width: 200px" />
+        <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户订单号" style="width: 200px" />
+        <Input v-model="keywords.waybillNo" :maxlength="30" placeholder="请输入运单号" style="width: 200px" />
       </div>
       <div style="display: flex;justify-content: space-between;">
         <div style="">
           <area-select v-model="keywords.start" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
           <area-select v-model="keywords.end" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
-          <DatePicker v-model="times" type="daterange" format="yyyy-MM-dd" split-panels placeholder="开始日期-结束日期" style="width: 200px;display: inline-block;" @on-change="handleTimeChange"></DatePicker>
+          <DatePicker
+            :options="timeOption"
+            v-model="times"
+            type="daterange"
+            format="yyyy-MM-dd"
+            placeholder="开始日期-结束日期"
+            style="width: 200px;display: inline-block;"
+            @on-change="handleTimeChange">
+          </DatePicker>
         </div>
         <div>
           <Button type="primary" @click="searchList">搜索</Button>
@@ -60,6 +78,7 @@
       </div>
     </div>
     <page-table
+      ref="pageTable"
       :url="url"
       :method="method"
       :keywords="keyword"
@@ -79,13 +98,16 @@ import TabHeader from '@/components/TabHeader'
 import PageTable from '@/components/page-table/'
 import Server from '@/libs/js/server'
 import AreaSelect from '@/components/AreaSelect'
+import SelectInput from '@/components/SelectInput.vue'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'order',
 
   components: {
     TabHeader,
     PageTable,
-    AreaSelect
+    AreaSelect,
+    SelectInput
   },
   mixins: [ BasePage ],
   metaInfo: { title: '订单管理' },
@@ -132,12 +154,17 @@ export default {
         orderNo: '',
         waybillNo: '',
         customerOrderNo: '',
-        // startTime: '',
-        // endTime: '',
+        startTime: '',
+        endTime: '',
         start: [],
         end: []
       },
       times: ['', ''],
+      timeOption: {
+        disabledDate (date) {
+          return date && date.valueOf() > Date.now()
+        }
+      },
       customerData: ['Steve Jobs', 'Stephen Gary Wozniak', 'Jonathan Paul Ive'],
       simpleSearch: true,
       tableColumns: [
@@ -421,7 +448,11 @@ export default {
     }
   },
 
-  computed: {},
+  computed: {
+    ...mapGetters([
+      'clients'
+    ])
+  },
 
   watch: {},
 
@@ -430,6 +461,9 @@ export default {
   },
 
   methods: {
+    ...mapActions([
+      'getClients'
+    ]),
     // 获取各状态订单数目
     getOrderNum () {
       Server({
@@ -476,11 +510,7 @@ export default {
     },
     // 点X清除搜索条件时  默认为无搜索条件下的数据
     autoSearch () {
-      if (this.selectStatus === 0) {
-        if (!this.keywords.consignerName) {
-          this.searchList()
-        }
-      } else if (this.selectStatus === 1) {
+      if (this.selectStatus === 1) {
         if (!this.keywords.orderNo) {
           this.searchList()
         }
@@ -488,12 +518,6 @@ export default {
         if (!this.keywords.waybillNo) {
           this.searchList()
         }
-      }
-    },
-    // 过滤已维护的客户信息
-    filterMethod (value, option) {
-      if (value) {
-        return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
       }
     },
     // 清除keywords搜索
@@ -504,14 +528,15 @@ export default {
         orderNo: '',
         waybillNo: '',
         customerOrderNo: '',
-        // startTime: '',
-        // endTime: '',
         start: [],
         end: []
       }
+      this.times = ['', '']
       this.keyword = Object.assign({}, this.keywords, {
         start: null,
-        end: null
+        end: null,
+        startTime: null,
+        endTime: null
       })
     },
     // 高级搜索切换
@@ -521,8 +546,8 @@ export default {
     },
     // 修改开始结束时间
     handleTimeChange (val) {
-      // this.keywords.startTime = val[0]
-      // this.keywords.endTime = val[1]
+      this.keywords.startTime = val[0]
+      this.keywords.endTime = val[1]
     },
     // tab状态栏切换
     handleTabChange (val) {
@@ -538,7 +563,7 @@ export default {
           { name: '导出', value: 5 }
         ]
         this.keywords.status = null
-        this.keyword = {...this.keywords}
+        // this.keyword = {...this.keywords}
       } else if (val === '待提货') {
         this.operateValue = 1
         this.btnGroup = [
@@ -548,7 +573,7 @@ export default {
           { name: '导出', value: 4 }
         ]
         this.keywords.status = 10
-        this.keyword = {...this.keywords}
+        // this.keyword = {...this.keywords}
       } else if (val === '待调度') {
         this.operateValue = 1
         this.btnGroup = [
@@ -559,7 +584,7 @@ export default {
           { name: '导出', value: 5 }
         ]
         this.keywords.status = 20
-        this.keyword = {...this.keywords}
+        // this.keyword = {...this.keywords}
       } else {
         this.operateValue = 1
         this.btnGroup = [
@@ -572,8 +597,9 @@ export default {
         } else {
           this.keywords.status = 50
         }
-        this.keyword = {...this.keywords}
+        // this.keyword = {...this.keywords}
       }
+      this.clearKeywords() // 清楚搜索条件
     },
     // 表头按钮操作
     handleOperateClick (btn) {
@@ -586,6 +612,13 @@ export default {
         this.openDispatchDialog(btn.name)
       } else if (btn.name === '订单还原' || btn.name === '删除') { // 打开还原或删除窗口
         this.openResOrDelDialog('', btn.name) // 点表头按钮批量操作   params入参为空
+      } else {
+        // 导出
+        this.$refs.pageTable.$refs.table.exportCsv({
+          filename: 'Custom data',
+          columns: this.tableColumns.filter((col, index) => index > 1),
+          data: this.selectOrderList
+        })
       }
     },
     // 外转

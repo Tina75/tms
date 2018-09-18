@@ -20,7 +20,8 @@ let instance = axios.create({
 
 switch (process.env.NODE_ENV) {
   case 'development':
-    instance.defaults.baseURL = 'http://192.168.1.49:5656/dolphin-web'; break
+    // instance.defaults.baseURL = 'http://192.168.1.49:5656/dolphin-web'; break
+    instance.defaults.baseURL = 'http://yapi.yundada56.com/mock/214'; break
   case 'production':
     instance.defaults.baseURL = '//dev-boss.yundada56.com/bluewhale-boss/'; break
 }

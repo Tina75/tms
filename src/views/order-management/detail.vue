@@ -5,17 +5,17 @@
         <li>单号：{{detail.orderNo}}</li>
         <li>客户订单号：{{detail.customerOrderNo}}</li>
         <li>运单号：{{detail.waybillNo}} &nbsp;&nbsp;&nbsp;
-          <Poptip placement="bottom" @on-popper-show="showPoptip" @on-popper-hide="hidePoptip">
+          <Poptip v-if="waybillNums.length > 0" placement="bottom" @on-popper-show="showPoptip" @on-popper-hide="hidePoptip">
             <a>{{ show ? '收起全部' : '展开全部' }}</a>
             <div slot="title" style="color:rgba(51,51,51,1);text-align: center;">全部运单号</div>
             <ul slot="content">
-              <li v-for="(item, index) in waybillNums" :key="index" style="line-height: 25px;">
-                <a href="" style="color: #3A7EDE;">{{item}}</a>
+              <li v-for="(item, index) in waybillNums" :key="index" style="line-height: 25px;cursor:pointer;" @click="handleWaybillNo(item.id)">
+                <span style="color: #3A7EDE;">{{item.waybillNo}}</span>
               </li>
             </ul>
           </Poptip>
         </li>
-        <li>订单状态：<span style="font-weight: bold;">{{detail.status}}</span></li>
+        <li>订单状态：<span style="font-weight: bold;">{{statusName(detail.status)}}</span></li>
       </ul>
     </header>
     <div style="text-align: right;margin: 28px;">
@@ -134,7 +134,7 @@
         <Row>
           <i-col span="24">
             <span>费用合计：</span>
-            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">1150</span>元
+            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{FeeTotal}}</span>元
           </i-col>
         </Row>
         <Row>
@@ -176,14 +176,16 @@ export default {
   metaInfo: { title: '订单详情' },
   data () {
     return {
-      detail: {},
+      detail: {
+        orderCargoList: []
+      },
       from: this.$route.query.from,
       waybillNums: [
-        'D201809870987755',
-        'D201809870987756',
-        'D201809870987757',
-        'D201809870987758',
-        'D201809870987759'
+        // 'D201809870987755',
+        // 'D201809870987756',
+        // 'D201809870987757',
+        // 'D201809870987758',
+        // 'D201809870987759'
       ],
       show: false,
       btnGroup: [],
@@ -227,31 +229,47 @@ export default {
       orderLogCount: 0,
       showLog: false,
       orderLog: [
-        { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '回单已回收' },
-        { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '已送到达目的地' },
-        { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '车辆发运' },
-        { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '指派司机' },
-        { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '送货调度' },
-        { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '编辑订单' },
-        { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '创建订单成功' }
+        // { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '回单已回收' },
+        // { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '已送到达目的地' },
+        // { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '车辆发运' },
+        // { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '指派司机' },
+        // { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '送货调度' },
+        // { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '编辑订单' },
+        // { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '创建订单成功' }
       ]
     }
   },
 
   computed: {
     orderTotal () {
-      return 10
+      return this.detail.orderCargoList.length
     },
     volumeTotal () {
-      return 10
+      let total = 0
+      this.detail.orderCargoList.map((item) => {
+        total += Number(item.volume)
+      })
+      return total
     },
     weightTotal () {
-      return 10
+      let total = 0
+      this.detail.orderCargoList.map((item) => {
+        total += Number(item.weight)
+      })
+      return total
+    },
+    FeeTotal () {
+      let total = 0
+      total += this.detail.freightFee
+      total += this.detail.loadFee
+      total += this.detail.unloadFee
+      total += this.detail.insuranceFee
+      total += this.detail.otherFee
+      return total
     }
   },
 
   mounted () {
-    this.orderLogCount = this.orderLog.length
     this.getDetail()
   },
 
@@ -278,6 +296,9 @@ export default {
         }).then((res) => {
           console.log(res)
           this.detail = res.data.data
+          this.orderLog = res.data.data.orderLogs // 订单日志
+          this.orderLogCount = res.data.data.orderLogs.length // 订单日志数量
+          this.waybillNums = res.data.data.waybillList // 运单子单
         })
         // 过滤当前详情页操作按钮
         if (this.detail.status === '10') { // 待提货条件下  编辑、删除按钮必有
@@ -373,6 +394,8 @@ export default {
         }).then((res) => {
           console.log(res)
           this.detail = res.data.data
+          this.orderLog = res.data.data.receiptOrderLog // 回单日志
+          this.orderLogCount = res.data.data.receiptOrderLog.length // 回单日志数量
         })
         // 过滤当前详情页操作按钮   0待回收；1待返厂（已回收）；2已返厂
         if (this.detail.receiptStatus === 0) {
@@ -387,6 +410,39 @@ export default {
           this.operateValue = 1
         }
       }
+    },
+    statusName (code) {
+      let name
+      switch (code) {
+        case 0:
+          name = '待回收'
+          break
+        case 1:
+          name = '待返厂'
+          break
+        case 2:
+          name = '已返厂'
+          break
+        case 10:
+          name = '待提货'
+          break
+        case 20:
+          name = '待调度'
+          break
+        case 30:
+          name = '在途'
+          break
+        case 40:
+          name = '已到货'
+          break
+        case 50:
+          name = '已回单'
+          break
+      }
+      return name
+    },
+    handleWaybillNo (id) {
+      console.log(id)
     }
   }
 }
