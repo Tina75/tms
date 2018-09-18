@@ -11,19 +11,19 @@ import Vue from 'vue'
 // import noPage from '../pages/noPage'
 // import noPowerPage from '../pages/noPowerPage'
 var pagePrex = 'page-'
-// var keyIndex = 0
+var keyIndex = 0
 export default {
   name: 'PageRouter',
   data: function () {
     return {
-      current: '',
-      componentCache: []
+      current: ''
     }
   },
   watch: {
     $route (to, from) {
       // 对路由变化作出响应...
-      // console.log(to, from)
+      console.log('对路由变化作出响应')
+      console.log(to, from)
       if (to.path !== from.path) {
         // 如果页面改变。load新页面加入
         this.loadPage(to.params)
@@ -37,12 +37,7 @@ export default {
   methods: {
     loadPage: function (data) {
       var path = this.getPath()
-      var key = `${pagePrex}${path.replace('/', '-')}`
-      if (this.componentCache[key]) {
-        this.current = this.componentCache[key]
-        console.log('exist', key)
-        return false
-      }
+      console.log('path->' + path)
       import('../views/' + path + '').then(module => {
         var tempModule = Vue.extend(module.default)
         tempModule = tempModule.extend({
@@ -51,10 +46,8 @@ export default {
           },
           methods: data.methods || {}
         })
-        // keyIndex++
-        // Vue.component(`${pagePrex}${path.replace('/', '-')}-${keyIndex}`, tempModule)
-        Vue.component(key, tempModule)
-        this.componentCache[key] = tempModule
+        keyIndex++
+        Vue.component(`${pagePrex}${path.replace('/', '-')}-${keyIndex}`, tempModule)
         this.current = tempModule
       }).catch(() => {
         console.error('不存在该页面', path)
@@ -66,7 +59,7 @@ export default {
       for (var k in params) {
         arr.push(params[k])
       }
-      if (arr.length === 0) arr.push(localStorage.getItem('tms_is_login') ? 'home/index' : 'login/index')
+      if (arr.length === 0) arr.push(localStorage.getItem('tms_is_login') ? 'home/index' : 'login')
       return arr.join('/')
     }
   }
