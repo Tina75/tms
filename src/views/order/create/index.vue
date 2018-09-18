@@ -703,11 +703,15 @@ export default {
         // 设置发货人信息，发货联系人，手机，发货地址
         _this.orderForm.consignerContact = consigner.contact
         _this.orderForm.consignerPhone = consigner.phone
-        _this.orderForm.consignerAddress = addresses[0].address
-        // 设置收货人信息，收货人，手机，收货地址
-        _this.orderForm.consigneeName = consignees[0].contact
-        _this.orderForm.consigneePhone = consignees[0].phone
-        _this.orderForm.consigneeAddress = consignees[0].address
+        if (addresses.length > 0) {
+          _this.orderForm.consignerAddress = addresses[0].address
+        }
+        if (consignees.length > 0) {
+          // 设置收货人信息，收货人，手机，收货地址
+          _this.orderForm.consigneeName = consignees[0].contact
+          _this.orderForm.consigneePhone = consignees[0].phone
+          _this.orderForm.consigneeAddress = consignees[0].address
+        }
       })
     },
     // 显示计费规则
@@ -732,12 +736,12 @@ export default {
       this.syncStoreCargoes()
       this.$refs.orderForm.validate((valid) => {
         if (valid) {
-          const cargoList = vm.consignerCargoes
+          const orderCargoList = vm.consignerCargoes
           const orderForm = vm.orderForm
           let findError = null
           // 校验货物信息
-          for (let index in cargoList) {
-            let cargo = cargoList[index]
+          for (let index in orderCargoList) {
+            let cargo = orderCargoList[index]
             let info = cargo.validate()
             if (!info.success) {
               findError = info.message
@@ -754,7 +758,11 @@ export default {
             end: orderForm.end[orderForm.end.length - 1],
             arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime,
             deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime,
-            cargoList
+            orderCargoList
+          });
+
+          ['start', 'end', 'pickup', 'settlementType'].forEach(field => {
+            form[field] = parseInt(form[field])
           })
           vm.submitOrder(form)
             .then((response) => {
