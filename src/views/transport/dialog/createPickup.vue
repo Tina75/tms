@@ -3,10 +3,17 @@
     <p slot="header" style="text-align:center">{{title}}</p>
     <Form ref="$form" :model="form" :rules="rules" :label-width="80">
       <FormItem label="承运商" prop="carrierName">
-        <Input v-model="form.carrierName" style="width:200px" placeholder="请选择"/>
+        <SelectCarrier v-model="form.carrierName"
+                       placeholder="请选择"
+                       style="width:200px"
+                       @on-change="carrierChange" />
       </FormItem>
       <FormItem label="车辆" prop="carNo">
-        <Input v-model="form.carNo" style="width:200px" placeholder="请选择"/>
+        <selectCar ref="$selectCar"
+                   v-model="form.carNo"
+                   :carrier-id="carrierId"
+                   placeholder="请选择"
+                   style="width:200px" />
       </FormItem>
     </Form>
     <div slot="footer">
@@ -18,23 +25,28 @@
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
+import SelectCarrier from '../components/selectCarrier'
+import selectCar from '../components/selectCar'
+import Server from '@/libs/js/server'
 
 export default {
-  name: 'CreatedFreight',
+  name: 'CreatedPickup',
+  components: { SelectCarrier, selectCar },
   mixins: [ BaseDialog ],
   data () {
     return {
       visiable: true,
+      carrierId: '',
       form: {
         carrierName: '',
         carNo: ''
       },
       rules: {
         carrierName: [
-          { required: true, message: '承运商' }
+          { required: true, message: '请选择承运商' }
         ],
         carNo: [
-          { required: true, message: '车辆' }
+          { required: true, message: '请选择车辆' }
         ]
       }
     }
@@ -43,8 +55,19 @@ export default {
     create () {
       this.$refs.$form.validate(valid => {
         if (valid) {
-          this.close()
-          this.complete()
+          if (!this.$refs.$selectCar.validate()) {
+            this.$Message.error('车牌号不正确')
+            return
+          }
+          Server({
+            url: '/dispatch/add/loadbill',
+            method: 'post',
+            data: this.form
+          }).then(res => {
+            this.$Message.success('新建成功')
+            this.close()
+            this.complete()
+          }).catch(err => console.error(err))
         }
       })
     }

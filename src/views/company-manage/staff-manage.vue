@@ -5,7 +5,7 @@
       <Form :model="formSearch" :label-width="80" style="padding-left:-20px;">
         <Col span="6">
         <FormItem label="姓名：">
-          <Input v-model="formSearch.name" placeholder="请输入姓名"></Input>
+          <SelectInput v-model="formSearch.name" :remote="true" :remote-method="searchName" placeholder="请输入姓名"></SelectInput>
         </FormItem>
         </Col>
         <Col span="6">
@@ -37,26 +37,25 @@
     <Button type="primary" style="margin-top:6px;" @click="eaditStaff('add')">添加员工</Button>
     </Col>
     <Col span="23">
-    <page-table :columns="menuColumns" url="employee/list" list-field="users" style="margin-top: 20px;"></page-table>
-    </Table>
+    <page-table :columns="menuColumns" :keywords="formSearchInit" url="employee/list" list-field="list" style="margin-top: 20px;"></page-table>
     </Col>
     <Modal v-model="visibaleTransfer" width="360">
       <p slot="header" style="text-align:center">
         <span>转移权限</span>
       </p>
       <Form ref="transferformModal" :model="transferformModal" :rules="rulesTransfer" :label-width="100" style="height: 50px;">
-        <FormItem label="角色账号：" prop="select">
-          <Select v-model="transferformModal.roleId" clearable>
+        <FormItem label="角色账号：" prop="staff">
+          <Select v-model="transferformModal.staff" clearable>
             <Option
-              v-for="item in selectList"
-              :value="item.name"
-              :key="item.id">
-              {{ item.name }}
+              v-for="item in staffSelectList"
+              :value="item.phone"
+              :key="item.phone">
+              {{ item.name + '--' + item.phone}}
             </Option>
           </Select>
         </FormItem>
         <FormItem>
-          <p style="color:red; margin-top:-10px;">角色转移之后，您的角色将变成"管理员"</p>
+          <p style="color:red; margin-top:-10px;">提示：确认操作后，您将于接收该角色的人员互换角色</p>
         </FormItem>
       </Form>
       <div slot="footer" style="margin-top:40px;">
@@ -81,10 +80,12 @@
 import BasePage from '@/basic/BasePage'
 import pageTable from '@/components/page-table'
 import Server from '@/libs/js/server'
+import SelectInput from '@/components/SelectInput'
 export default {
   name: 'staff-manage',
   components: {
-    pageTable
+    pageTable,
+    SelectInput
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -97,31 +98,24 @@ export default {
       visibaleMoadlTitle: '',
       roleRowInit: {},
       transferformModal: {
-        roleId: ''
+        staff: ''
       },
+      formSearchInit: {},
       formSearch: {
         name: '',
         phone: '',
-        roleId: '全部',
+        roleId: '',
         pageNo: 1,
         pageSize: 20
       },
-      selectList: [{
-        name: '全部',
-        id: '1'
-      }, {
-        name: '管理员',
-        id: '2'
-      }, {
-        name: '录入员',
-        id: '3'
-      }],
+      selectList: [],
+      staffSelectList: [],
       menuColumns: [{
         title: '操作',
         key: 'do',
         width: 200,
         render: (h, params) => {
-          if (params.row.name === '超级管理员') {
+          if (params.row.roleName === '超级管理员') {
             return h('div', [
               h('Button', {
                 props: {
@@ -181,28 +175,62 @@ export default {
       },
       {
         title: '角色',
-        key: 'roleId'
+        key: 'roleName'
       },
       {
         title: '创建时间',
-        key: 'create_time'
+        key: 'createTime'
       }],
       rulesTransfer: {
-        roleId: [
+        staff: [
           { required: true, message: '请选择角色账号', trigger: 'blur' }
         ]
       }
     }
   },
-  mounted: function () {},
+  mounted: function () {
+    this.getRoleSelectList()
+    this.getStaffSelectList()
+  },
   methods: {
+    getRoleSelectList () {
+      Server({
+        url: 'role/list',
+        method: 'get'
+      }).then(({ data }) => {
+        this.selectList = data.data
+      })
+    },
+    getStaffSelectList () {
+      Server({
+        url: 'employee/list',
+        method: 'get'
+      }).then(({ data }) => {
+        this.staffSelectList = Object.assign({}, data.data.list)
+      })
+    },
+    searchName () {
+      let params = {}
+      params.name = this.formSearch.name
+      return Server({
+        url: 'employee/nameLike',
+        method: 'get',
+        data: params
+      }).then(({ data }) => {
+        return data.map(item => ({label: 'name', value: 'id'}))
+      })
+        .catch((errorInfo) => {
+          return Promise.reject(errorInfo)
+        })
+    },
     searchBtn () {
+      this.formSearchInit = Object.assign({}, this.formSearch)
       Server({
         url: 'employee/list',
         method: 'get',
-        data: this.formSearch
+        data: this.formSearchInit
       }).then(({ data }) => {
-        // this.data1 = data.data;
+        console.log('查询table data')
       })
     },
     eaditStaff (params) {
@@ -220,7 +248,7 @@ export default {
         },
         methods: {
           ok (node) {
-            _this.onAddUserSuccess(node)
+            console.log(_this.formSearchInit)
           }
         }
       })
@@ -228,17 +256,22 @@ export default {
     transferFormSub (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          let params = {}
+          params.phone = this.transferformModal.staff
           Server({
             url: 'employee/role',
             method: 'post',
-            data: this.roleRowInit.phone
+            data: params
           }).then(({ data }) => {
-            // this.data1 = data.data;
+            if (data.code === 10000) {
+              this.$Message.success('转移成功!')
+              this.visibaleTransfer = false
+              this.formSearchInit = {}
+            } else {
+              this.$Message.error(data.msg)
+              this.visibaleTransfer = false
+            }
           })
-          this.$Message.success('Success!')
-          this.visibaleTransfer = false
-        } else {
-          this.$Message.error('Fail!')
         }
       })
     },
@@ -254,14 +287,22 @@ export default {
       this.visibaleTransfer = true
     },
     removeSubForm () {
+      let params = {}
+      params.id = this.roleRowInit.id
       Server({
         url: 'employee/del',
         method: 'post',
-        data: this.roleRowInit.id
+        data: params
       }).then(({ data }) => {
-        console.log(data)
+        if (data.code === 10000) {
+          this.visibaleRemove = false
+          this.$Message.success('删除成功！')
+          this.formSearchInit = {}
+        } else {
+          this.$Message.error(data.msg)
+          this.visibaleRemove = false
+        }
       })
-      this.visibaleRemove = false
     },
     removeCancelForm () {
       this.visibaleRemove = false
