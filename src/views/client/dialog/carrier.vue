@@ -240,7 +240,6 @@ export default {
         shippingVolume: Math.floor(this.validate.driver.shippingVolume * 10) / 10,
         remark: this.validate.driver.remark,
         payType: this.validate.driver.payType
-        // Math.floor(this.validate.cargoCost * 100) / 100,
       }
       carrierAddForDriver(data).then(res => {
         if (res.data.code === CODE) {

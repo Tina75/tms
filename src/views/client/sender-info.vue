@@ -107,6 +107,9 @@ import { CODE, consignerDetail, consignerAddressList, consignerAddressDelete, co
 export default {
   name: 'sender-info',
   mixins: [ BasePage ],
+  metaInfo: {
+    title: '发货方详情'
+  },
   data () {
     return {
       id: this.$route.query.id, // 发货方id
@@ -502,7 +505,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-  @import "../../libs/css/client.styl"
+  @import "client.styl"
   .footer
     margin-top 22px
     display flex
