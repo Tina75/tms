@@ -184,7 +184,7 @@
       </Col>
       <Col span="6">
       <FormItem label="回单数量" prop="receiptCount">
-        <InputNumber v-model="orderForm.receiptCount" :min="1" :parser="value => parseInt(value)" class="order-create__input-w100">
+        <InputNumber v-model="orderForm.receiptCount" :min="1" :parser="value => parseInt(value).toString()" class="order-create__input-w100">
         </InputNumber>
       </FormItem>
       </Col>
@@ -310,7 +310,7 @@ export default {
                 remote: false,
                 localOptions: _this.cargoOptions,
                 transfer: true,
-                maxlength: 20
+                maxlength: 10
               },
               on: {
                 'on-blur': (value) => {
@@ -355,7 +355,8 @@ export default {
             return h('InputNumber', {
               props: {
                 value: params.row[params.column.key] || null,
-                min: 0
+                min: 0,
+                parser: _this.handleParseFloat
               },
               on: {
                 'on-change': (value) => {
@@ -385,7 +386,10 @@ export default {
             return h('InputNumber', {
               props: {
                 value: params.row[params.column.key] || null,
-                min: 0
+                min: 0,
+                parser: (value) => {
+                  return float.floor(value, 1).toString()
+                }
               },
               on: {
                 'on-change': (value) => {
@@ -409,7 +413,8 @@ export default {
             return h('InputNumber', {
               props: {
                 value: params.row[params.column.key] || null,
-                min: 0
+                min: 0,
+                parser: _this.handleParseFloat
               },
               on: {
                 'on-change': (value) => {
@@ -419,7 +424,7 @@ export default {
                 },
                 'on-blur': () => {
                   if ('value' in params) {
-                    _this.updateLocalCargo(setObject(params, parseInt(params.value || 0)))
+                    _this.updateLocalCargo(setObject(params, float.floor(params.value || 0)))
                   }
                 }
               }
@@ -433,7 +438,8 @@ export default {
             return h('InputNumber', {
               props: {
                 value: params.row[params.column.key] || null,
-                min: 1
+                min: 1,
+                parser: (value) => parseInt(value).toString()
               },
               on: {
                 'on-change': (value) => {
@@ -658,7 +664,7 @@ export default {
     ]),
     // 保留2位小数
     handleParseFloat (value) {
-      return float.floor(value)
+      return float.floor(value).toString()
     },
     /**
      * 货物名称选择下拉项目时触发
@@ -794,6 +800,7 @@ export default {
       this.syncStoreCargoes()
       this.orderPrint = _.cloneDeep(this.orderForm)
       this.orderPrint.orderCargoList = _.cloneDeep(this.consignerCargoes)
+      this.orderPrint.totalFee = this.totalFee
       this.$refs.printer.print()
 
       // this.handleSubmit()
