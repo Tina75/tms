@@ -1,4 +1,5 @@
 import Server from '@/libs/js/server'
+import City from '@/libs/js/City'
 import tableExpand from './tableExpand'
 
 export default {
@@ -29,7 +30,10 @@ export default {
         {
           title: '始发地',
           key: 'start',
-          ellipsis: true
+          ellipsis: true,
+          render: (h, p) => {
+            return h('span', this.cityFilter(p.row.start))
+          }
         },
         {
           title: 'icon',
@@ -44,7 +48,10 @@ export default {
         {
           title: '目的地',
           key: 'end',
-          ellipsis: true
+          ellipsis: true,
+          render: (h, p) => {
+            return h('span', this.cityFilter(p.row.end))
+          }
         },
         {
           title: '体积（方）',
@@ -115,12 +122,18 @@ export default {
         {
           title: '始发地',
           key: 'start',
-          ellipsis: true
+          ellipsis: true,
+          render: (h, p) => {
+            return h('span', this.cityFilter(p.row.start))
+          }
         },
         {
           title: '目的地',
           key: 'end',
-          ellipsis: true
+          ellipsis: true,
+          render: (h, p) => {
+            return h('span', this.cityFilter(p.row.end))
+          }
         },
         {
           title: '体积（方）',
@@ -142,7 +155,7 @@ export default {
   },
 
   methods: {
-    tableHeightComput () {
+    tableHeightCompute () {
       this.tableHeight = this.$refs.$dispatch.offsetHeight
       window.onresize = () => {
         this.tableHeight = this.$refs.$dispatch.offsetHeight
@@ -193,6 +206,11 @@ export default {
       })
     },
 
+    // 格式化城市
+    cityFilter (code) {
+      return City.codeToFullName(code, 3, '')
+    },
+
     /** 数据操作 */
 
     // 为表格数据添加自定义字段及自定义过滤
@@ -223,7 +241,10 @@ export default {
           return item
         })
         this.leftTableLoading = false
-      }).catch(err => console.error(err))
+      }).catch(err => {
+        this.leftTableLoading = false
+        console.error(err)
+      })
     },
 
     // 查询左侧列表展开数据 10-提货 20-调度

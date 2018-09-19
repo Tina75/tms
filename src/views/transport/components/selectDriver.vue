@@ -2,7 +2,7 @@
   <SelectInput v-model="currentValue"
                :maxlength="20"
                :local-options="list"
-               placeholder="请选择"
+               :placeholder="placeholder"
                @on-select="selectDriver"
                @on-blur="inputDriver" />
 </template>
@@ -16,7 +16,8 @@ export default {
   components: { SelectInput },
   props: {
     value: String,
-    carrierId: String
+    carrierId: String,
+    placeholder: String
   },
   data () {
     return {

@@ -235,7 +235,6 @@ export default {
           key: 'transNo',
           width: 160,
           fixed: true,
-          visible: true,
           render: (h, p) => {
             return h('a', {
               style: {
