@@ -52,7 +52,7 @@
             </div>
           </div>
         </div>
-          </Col>
+        </Col>
       </div>
       <!--运输消息-->
       <div v-if="'2' === this.searchData.type" style="height:250px;">
@@ -72,15 +72,16 @@
             </div>
           </div>
         </div>
-          </Col>
+        </Col>
       </div>
     </div>
     <Page
-      :total="40"
+      :total="pageTotal"
       :current="searchData.page"
       :page-size="searchData.pageSize"
       size="small"
       show-elevator
+      show-total
       show-sizer
       style="float:right"
       @on-change="searchInfoData"
@@ -120,7 +121,7 @@ export default {
         page: 1,
         pageSize: 10
       },
-      pageTotal: 40,
+      pageTotal: 0,
       sysMessageList: [],
       orderMessageList: [],
       transportMessageList: []
@@ -149,11 +150,17 @@ export default {
       }).then(({ data }) => {
         if (params.type === '1') {
           this.orderMessageList = data.data.list
+          this.searchData.type = '1'
         } else if (params.type === '2') {
           this.transportMessageList = data.data.list
+          this.searchData.type = '2'
         } else {
           this.sysMessageList = data.data.list
+          this.searchData.type = '0'
         }
+        this.searchData.page = 1
+        this.searchData.pageSize = data.data.pageSize
+        this.pageTotal = data.data.pageTotals
       })
     },
     clickLeftMenu (id, menuName) {
