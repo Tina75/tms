@@ -23,8 +23,8 @@
         </FormItem>
       </Form>
       <div slot="footer">
-        <Button  type="primary"  @click="save">确定</Button>
-        <Button  type="default"  @click="close">取消</Button>
+        <Button type="primary"  @click="save">确定</Button>
+        <Button type="default"  @click="close">取消</Button>
       </div>
     </Modal>
     <Modal
@@ -73,16 +73,7 @@ export default {
         phone: '',
         roleId: ''
       },
-      selectList: [{
-        name: '全部',
-        id: '1'
-      }, {
-        name: '管理员',
-        id: '2'
-      }, {
-        name: '录入员',
-        id: '3'
-      }],
+      selectList: [],
       rulesModal: {
         name: [
           { required: true, message: '请输入员工姓名', trigger: 'blur' },
@@ -93,7 +84,7 @@ export default {
           { validator: checkPhone, trigger: 'blur' }
         ],
         roleId: [
-          { required: true, message: '请选择角色', trigger: 'blur' }
+          { required: true, message: '请选择角色' }
         ]
       },
       visibale: true
@@ -106,8 +97,17 @@ export default {
   },
   mounted: function () {
     this.formModal = Object.assign({}, this.formData)
+    this.getRoleSelectList()
   },
   methods: {
+    getRoleSelectList () {
+      Server({
+        url: 'role/list',
+        method: 'get'
+      }).then(({ data }) => {
+        this.selectList = data.data
+      })
+    },
     save () {
       this.$refs['formModal'].validate((valid) => {
         if (valid) {
@@ -117,7 +117,6 @@ export default {
               method: 'post',
               data: this.formModal
             }).then(({ data }) => {
-              console.log(data)
               if (data.code === 10000) {
                 this.$Message.success('添加成功!')
                 this.close()
@@ -132,7 +131,6 @@ export default {
               method: 'post',
               data: this.formModal
             }).then(({ data }) => {
-              console.log(data)
               if (data.code === 10000) {
                 this.$Message.success('修改成功!')
                 this.close()
