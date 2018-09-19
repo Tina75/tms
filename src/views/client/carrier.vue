@@ -10,7 +10,7 @@
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
-        <Input v-model="keyword" :maxlength="15" placeholder="请输入" search style="width: 200px"  @on-search="searchList" />
+        <Input v-model="keyword" :maxlength="15" :placeholder="selectStatus === 1 ? '请输入承运商名称' : '请输入承运商联系人名称'"  search style="width: 200px"  @on-search="searchList" />
       </div>
     </div>
     <div>
@@ -35,6 +35,9 @@ import { carrierList, carrierDelete, CODE, carrierDetailsForDriver, carrierDetai
 import BasePage from '@/basic/BasePage'
 export default {
   name: 'carrier',
+  metaInfo: {
+    title: '智加云承运商列表'
+  },
   mixins: [ BasePage ],
   data () {
     return {

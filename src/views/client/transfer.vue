@@ -10,7 +10,7 @@
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
-        <Input  v-model="keyword" :maxlength="20" placeholder="请输入" search style="width: 200px"  @on-search="searchList" />
+        <Input  v-model="keyword" :maxlength="20" :placeholder="selectStatus === 1 ? '请输入外转方名称' : '请输入负责人名称'" search style="width: 200px"  @on-search="searchList" />
       </div>
     </div>
     <div>
@@ -36,6 +36,9 @@ import BasePage from '@/basic/BasePage'
 export default {
   name: 'transfer',
   mixins: [ BasePage ],
+  metaInfo: {
+    title: '外转方列表'
+  },
   data () {
     return {
       selectStatus: 1,
