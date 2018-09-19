@@ -20,7 +20,8 @@
         <Input v-model="validate.companyAddress" placeholder="请输入"/>
       </FormItem>
       <FormItem label="支付方式:" >
-        <Select v-model="validate.payType" placeholder="请输入" clearable>
+        <Select v-model="validate.payType" placeholder="请输入">
+          <Option value="">请选择</Option>
           <Option value="1">现付</Option>
           <Option value="2">到付</Option>
           <Option value="3">回单付</Option>
@@ -73,6 +74,9 @@ export default {
       }
     }
   },
+  mounted () {
+    console.log(this.validate)
+  },
   methods: {
     save (name) {
       this.$refs[name].validate((valid) => {
@@ -87,7 +91,16 @@ export default {
       })
     },
     _transfereeAdd () {
-      transfereeAdd(this.validate).then(res => {
+      let data = {
+        name: this.validate.name,
+        contact: this.validate.contact,
+        phone: this.validate.phone,
+        payType: this.validate.payType,
+        companyAddress: this.validate.companyAddress,
+        remark: this.validate.remark
+      }
+      transfereeAdd(data).then(res => {
+        console.log(res)
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
         } else {
@@ -96,8 +109,17 @@ export default {
       })
     },
     _transfereeUpdate () {
-      Object.assign(this.validate, {id: this.id})
-      transfereeUpdate(this.validate).then(res => {
+      let data = {
+        name: this.validate.name,
+        contact: this.validate.contact,
+        phone: this.validate.phone,
+        payType: this.validate.payType,
+        remark: this.validate.remark,
+        companyAddress: this.validate.companyAddress,
+        id: this.id
+      }
+      transfereeUpdate(data).then(res => {
+        console.log(res)
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
         } else {

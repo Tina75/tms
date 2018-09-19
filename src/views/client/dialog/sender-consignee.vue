@@ -18,9 +18,6 @@
         <FormItem label="收货地址:" prop="address">
           <Input v-model="validate.address" :maxlength="60" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="备注:" prop="remark">
-          <Input v-model="validate.remark"  placeholder="请输入"/>
-        </FormItem>
       </Form>
       <div slot="footer">
         <Button type="primary" @click="save('validate')">确定</Button>
@@ -44,8 +41,7 @@ export default {
       validate: {
         contact: '',
         phone: '',
-        address: '',
-        remark: ''
+        address: ''
       },
       ruleValidate: {
         contact: [
@@ -58,6 +54,9 @@ export default {
         address: [
           { required: true, message: '收货地址不能为空', trigger: 'blur' }
         ]
+        // remark: [
+        //   { required: true, message: '备注不能为空', trigger: 'blur' }
+        // ],
       }
     }
   },
@@ -75,8 +74,13 @@ export default {
       })
     },
     add () {
-      Object.assign(this.validate, {consignerId: this.consignerId})
-      consignerConsigneeAdd(this.validate).then(res => {
+      let data = {
+        consignerId: this.consignerId,
+        contact: this.validate.contact,
+        phone: this.validate.phone,
+        address: this.validate.address
+      }
+      consignerConsigneeAdd(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
         } else {
@@ -85,8 +89,13 @@ export default {
       })
     },
     update () {
-      Object.assign(this.validate, {id: this.id})
-      consignerConsigneeUpdate(this.validate).then(res => {
+      let data = {
+        id: this.id,
+        contact: this.validate.contact,
+        phone: this.validate.phone,
+        address: this.validate.address
+      }
+      consignerConsigneeUpdate(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
         } else {

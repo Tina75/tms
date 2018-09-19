@@ -1,3 +1,4 @@
+<!--发货方详情地址新增编辑-->
 <template>
   <div>
     <Modal
@@ -23,11 +24,8 @@
         <FormItem label="体积:" prop="volume">
           <Input v-model="validate.volume" :maxlength="60" placeholder="请输入"/>万
         </FormItem>
-        <FormItem label="备注1:" >
-          <Input v-model="validate.remark1" :maxlength="100" placeholder="请输入"/>
-        </FormItem>
-        <FormItem label="备注2:" >
-          <Input v-model="validate.remark2" :maxlength="100" placeholder="请输入"/>
+        <FormItem label="备注:" >
+          <Input v-model="validate.remark" :maxlength="100" placeholder="请输入"/>
         </FormItem>
       </Form>
       <div slot="footer">
@@ -55,8 +53,7 @@ export default {
         cargoCost: '',
         weight: '',
         volume: '',
-        remark1: '',
-        remark2: ''
+        remark: ''
       },
       ruleValidate: {
         cargoName: [
@@ -95,8 +92,7 @@ export default {
         cargoCost: Math.floor(this.validate.cargoCost * 100) / 100,
         weight: Math.floor(this.validate.weight * 100) / 100,
         volume: Math.floor(this.validate.volume * 10) / 10,
-        remark1: this.validate.remark1,
-        remark2: this.validate.remark2
+        remark: this.validate.remark
       }
       consignerCargoAdd(data).then(res => {
         if (res.data.code === CODE) {
@@ -114,8 +110,7 @@ export default {
         cargoCost: Math.floor(this.validate.cargoCost * 100) / 100,
         weight: Math.floor(this.validate.weight * 100) / 100,
         volume: Math.floor(this.validate.volume * 10) / 10,
-        remark1: this.validate.remark1,
-        remark2: this.validate.remark2
+        remark: this.validate.remark
       }
       consignerCargoUpdate(data).then(res => {
         if (res.data.code === CODE) {

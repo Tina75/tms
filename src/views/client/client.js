@@ -24,13 +24,14 @@ export function consignerAdd (data) {
 
 // 发货方的修改
 export function consignerUpdate (data) {
+  console.log(data)
   return server({
     url: '/consigner/update',
     headers: {
       'Content-Type': 'application/json'
     },
     method: 'post',
-    data: Object.assign(data, {payType: data.payType || ''})
+    data: data
   })
 }
 
@@ -47,10 +48,10 @@ export function consignerDelete (data) {
   })
 }
 
-// 发货方详情分页
+// 发货方的详情
 export function consignerDetail (data) {
   return server({
-    url: '/consigner/detail/page',
+    url: '/consigner/detail',
     method: 'GET',
     data: data
   })

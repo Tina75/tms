@@ -17,6 +17,7 @@
       <template>
         <Table :columns="columns1" :data="data1"></Table>
       </template>
+      <!--<page-table :data="data1" :columns="columns1" :total="100" :current.sync="2"></page-table>-->
     </div>
     <div class="footer">
       <template>
@@ -58,6 +59,8 @@ export default {
         {
           title: '操作',
           key: 'id',
+          // width: 150,
+          // align: 'left',
           render: (h, params) => {
             return h('div', [
               h('span', {
@@ -151,23 +154,13 @@ export default {
         {
           title: '创建时间',
           key: 'createTime',
-          sortable: true,
-          render: (h, params) => {
-            let text = this.formatDate(params.row.createTime)
-            return h('div', { props: {} }, text)
-          }
+          sortable: true
         }
       ],
       data1: []
     }
   },
-  mounted () {
-    this.searchList()
-  },
   methods: {
-    formatDate (value, format) {
-      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
-    },
     searchList () {
       let data = {
         pageNo: this.pageNo,
