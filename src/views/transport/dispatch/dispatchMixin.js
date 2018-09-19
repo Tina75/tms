@@ -211,12 +211,12 @@ export default {
     },
 
     // 查询左侧列表数据 10-提货 20-调度
-    fetchLeftTableData (type) {
+    fetchLeftTableData (status) {
       this.leftTableLoading = true
       Server({
         url: '/dispatch/aggregation/order',
         method: 'get',
-        data: { type }
+        data: { status }
       }).then(res => {
         this.leftTableData = this.dataFilter(res.data.data.orderList, '_expanded', item => {
           if (JSON.stringify(item) === JSON.stringify(this.leftExpandRow)) item._expanded = true
@@ -227,14 +227,14 @@ export default {
     },
 
     // 查询左侧列表展开数据 10-提货 20-调度
-    fetchLeftTableExpandData (type) {
+    fetchLeftTableExpandData (status) {
       this.leftTableExpandData = []
       this.leftTableExpandLoading = true
       Server({
         url: '/dispatch/assign/order/cargo/list',
         method: 'get',
         data: {
-          type,
+          status,
           start: this.leftExpandRow.start,
           end: this.leftExpandRow.end
         }

@@ -227,7 +227,8 @@
         <div class="detail-part-title">
           <span>货物明细</span>
         </div>
-        <Button type="primary" style="margin-bottom: 22px;">添加订单</Button>
+        <Button type="primary" style="margin-bottom: 22px;"
+                @click="addOrder">添加订单</Button>
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
@@ -385,6 +386,7 @@ export default {
         }
       ],
 
+      tableCanEdit: true,
       tableColumns: [
         {
           title: '订单号',
@@ -439,27 +441,6 @@ export default {
           key: 'remark2'
         }
       ]
-    }
-  },
-
-  watch: {
-    inEditing (val) {
-      if (val) {
-        this.tableColumns.unshift({
-          title: '操作',
-          key: 'action',
-          width: 60,
-          render: (h, p) => {
-            return h('a', {
-              on: {
-                click: () => {}
-              }
-            }, '移出')
-          }
-        })
-      } else {
-        this.tableColumns.shift()
-      }
     }
   },
 

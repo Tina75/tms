@@ -205,6 +205,8 @@
         <div class="detail-part-title">
           <span>货物明细</span>
         </div>
+        <Button type="primary" style="margin-bottom: 22px;"
+                @click="addOrder">添加订单</Button>
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
@@ -350,6 +352,7 @@ export default {
         }
       ],
 
+      tableCanEdit: true,
       tableColumns: [
         {
           title: '订单号',

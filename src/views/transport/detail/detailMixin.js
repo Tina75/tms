@@ -127,6 +127,30 @@ export default {
     }
   },
 
+  watch: {
+    inEditing (val) {
+      if (!this.tableCanEdit) return
+      if (val) {
+        this.tableColumns.unshift({
+          title: '操作',
+          key: 'action',
+          width: 60,
+          render: (h, p) => {
+            return h('a', {
+              on: {
+                click: () => {
+                  this.detail.splice(p.index, 1)
+                }
+              }
+            }, '移出')
+          }
+        })
+      } else {
+        this.tableColumns.shift()
+      }
+    }
+  },
+
   methods: {
     // 根据状态设置按钮
     setBtnsWithStatus () {
@@ -154,6 +178,19 @@ export default {
         methods: {
           ok (charge) {
             this.payment.freightFee = charge || 0
+          }
+        }
+      })
+    },
+
+    // 添加订单
+    addOrder () {
+      this.openDialog({
+        name: 'transport/dialog/addOrder',
+        data: {},
+        methods: {
+          add (orders) {
+            console.log(orders)
           }
         }
       })

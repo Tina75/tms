@@ -20,8 +20,8 @@ let instance = axios.create({
 
 switch (process.env.NODE_ENV) {
   case 'development':
-    // instance.defaults.baseURL = 'http://192.168.1.49:5656/dolphin-web'; break
-    instance.defaults.baseURL = 'http://192.168.1.39:3000/mock/214'; break
+    instance.defaults.baseURL = 'http://192.168.1.49:5656/dolphin-web'; break
+    // instance.defaults.baseURL = 'http://192.168.1.39:3000/mock/214'; break
   case 'production':
     instance.defaults.baseURL = '//dev-boss.yundada56.com/bluewhale-boss/'; break
 }
@@ -57,6 +57,8 @@ instance.interceptors.response.use((res) => {
         Message.error(`${res.data.msg}`)
         window.EMA.fire('logout')
         break
+      case 310013:// 手机号已注册走10000流程
+        return res
       default:
         Message.error(res.data.msg)
         break

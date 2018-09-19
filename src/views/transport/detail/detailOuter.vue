@@ -3,10 +3,10 @@
     <!-- 运单号及状态 -->
     <section class="detail-header">
       <ul class="detail-header-list">
-        <li class="detail-header-list-item">运单号：{{ info.waybillNo }}</li>
-        <li class="detail-header-list-item">客户订单号：</li>
-        <li class="detail-header-list-item">外转单号：{{ info.outTransNo }}</li>
-        <li class="detail-header-list-item">外转方运单号：</li>
+        <li class="detail-header-list-item">订单号：{{ info.orderNo }}</li>
+        <li class="detail-header-list-item">客户订单号：{{ info.customerOrderNo }}</li>
+        <li class="detail-header-list-item">外转单号：{{ info.transNo }}</li>
+        <li class="detail-header-list-item">外转方运单号：{{ info.outTransNo }}</li>
         <li class="detail-header-list-item">订单状态：
           <span style="font-weight: bold;">{{ info.status }}</span>
         </li>
@@ -185,6 +185,8 @@ export default {
       // 信息
       info: {
         orderNo: '',
+        customerOrderNo: '',
+        transNo: '',
         outTransNo: '',
         status: '',
         consignerName: '',
@@ -241,6 +243,7 @@ export default {
         }
       ],
 
+      tableCanEdit: false,
       tableColumns: [
         {
           title: '货物名称',
