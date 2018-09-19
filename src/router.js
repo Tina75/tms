@@ -25,6 +25,10 @@ export default new Router({
       component: () => import('@/views/order/create')
     },
     {
+      path: '/transport/waybill',
+      component: () => import('@/views/transport/waybill')
+    },
+    {
       path: '/:name/:name1/:name2',
       component: PageRouter
     },

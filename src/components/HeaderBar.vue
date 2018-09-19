@@ -46,7 +46,7 @@
           <p class="dropdown-line"><label for="">公司</label>{{UserInfo.companyName}}</p>
           <p class="dropdown-line"><label for="">有效期至</label>{{UserInfo.expirationTime | datetime('yyyy-MM-dd')}}</p>
           <br>
-          <p style="text-align:center"><a>延长有效期</a>&nbsp;&nbsp;&nbsp;&nbsp;<a style="color:#EC4E4E">登出</a></p>
+          <p style="text-align:center"><a @click="renew">延长有效期</a>&nbsp;&nbsp;&nbsp;&nbsp;<a style="color:#EC4E4E">登出</a></p>
 
           <!-- <DropdownItem name="logout" >退出登录</DropdownItem> -->
         </DropdownMenu>
@@ -91,6 +91,15 @@ export default {
     },
     openMsg (type) {
       this.$emit('on-msg-click', type)
+    },
+    renew () {
+      window.EMA.fire('Dialogs.push', {
+        name: 'dialogs/renew',
+        data: {
+          title: '提示',
+          expirationTime: this.UserInfo.expirationTime
+        }
+      })
     }
   }
 }
