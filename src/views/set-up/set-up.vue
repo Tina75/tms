@@ -29,7 +29,7 @@
           <Button type="primary" @click="pwdSubmit('formPwd')">保存</Button>
         </FormItem>
       </Form>
-        </Col>
+      </Col>
     </div>
     <!--个人设置-->
     <div v-if="'2' === this.rightKey" style="height:350px;">
@@ -44,9 +44,9 @@
         <FormItem label="角色：">
           <span>{{formPersonal.roleName}}</span>
         </FormItem>
-        <FormItem label="头像：">
-          <!--个人设置-图片相关-->
-          <div class="demo-upload-list">
+        <!-- <FormItem label="头像："> -->
+        <!--个人设置-图片相关-->
+        <!-- <div class="demo-upload-list">
             <img :src="uploadList.url">
           </div>
           <Upload
@@ -64,17 +64,17 @@
             style="display: inline-block;width:58px; color:#00a4bd"
           >
             修改头像
-          </Upload>
-          <!--个人设置-图片相关-->
-        </FormItem>
+          </Upload> -->
+        <!--个人设置-图片相关-->
+        <!-- </FormItem>
         <FormItem>
           <p style="color:rgba(153,153,153,1);">尺寸60*60像素，大小不超过1M</p>
-        </FormItem>
+        </FormItem> -->
         <FormItem>
           <Button type="primary" @click="personalSubmit('formPersonal')">保存</Button>
         </FormItem>
       </Form>
-        </Col>
+      </Col>
     </div>
     <!--短信设置-->
     <div v-if="'3' === this.rightKey">
@@ -116,14 +116,15 @@
           <Input v-model="formCompany.contactPhone" placeholder="请输入联系方式"></Input>
         </FormItem>
         <FormItem label="所在省市：" prop="cityId">
-          <Input v-model="formCompany.cityId" placeholder="请选择所在省市"></Input>
+          <!-- <Input v-model="formCompany.cityId" placeholder="请选择所在省市"></Input> -->
+          <AreaSelect v-model="formCompany.cityId" :deep="true"></AreaSelect>
         </FormItem>
         <FormItem label="公司地址：" prop="address">
           <Input v-model="formCompany.address" placeholder="请输入公司地址"></Input>
         </FormItem>
-        <FormItem label="公司LOGO：">
-          <!--公司设置-图片相关-->
-          <div class="demo-upload-list">
+        <!-- <FormItem label="公司LOGO："> -->
+        <!--公司设置-图片相关-->
+        <!-- <div class="demo-upload-list">
             <img :src="uploadListCompany.url">
           </div>
           <Upload
@@ -140,12 +141,12 @@
             action="//jsonplaceholder.typicode.com/posts/"
             style="display: inline-block;width:58px; color:#00a4bd">
             点击上传
-          </Upload>
-          <!--公司设置-图片相关-->
-        </FormItem>
+          </Upload> -->
+        <!--公司设置-图片相关-->
+        <!-- </FormItem>
         <FormItem>
           <p style="color:rgba(153,153,153,1);">尺寸60*60像素，大小不超过1M</p>
-        </FormItem>
+        </FormItem> -->
         <FormItem>
           <Button type="primary" @click="companySubmit('formCompany')">保存</Button>
         </FormItem>
@@ -159,8 +160,12 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
+import AreaSelect from '@/components/AreaSelect'
 export default {
   name: 'set-up',
+  components: {
+    AreaSelect
+  },
   mixins: [ BasePage ],
   metaInfo: {
     title: '设置'
@@ -169,34 +174,31 @@ export default {
     let this_ = this
     var pswRight = function (rule, value, callback) {
       if (value) {
+        let params = {}
+        params.oldPassword = value
         Server({
           url: 'set/pswRight',
           method: 'get',
-          data: value
+          data: params
         }).then(({ data }) => {
-          console.log(data)
+          callback()
+        }).catch(() => {
+          return callback(new Error('原始密码错误，请重输'))
         })
-        return callback(new Error('原始密码错误，请重输'))
       } else {
         callback()
       }
     }
     var checkPwd = function (rule, value, callback) {
-      if (value) {
-        if (/^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,16}$/.test(value)) {
-          return callback(new Error('只支持数字、大小写字母的组合，不支持特殊字符'))
-        }
-        callback()
+      if (!(/^[0-9A-Za-z].{5,16}$/.test(value))) {
+        return callback(new Error('密码只能包含数字、大小写字母，至少为6位，至多为16位'))
       } else {
         callback()
       }
     }
     var checkPwdSame = function (rule, value, callback) {
-      if (value) {
-        if (value !== this_.formPwd.password) {
-          return callback(new Error('两次密码不一致，请重输'))
-        }
-        callback()
+      if (value !== this_.formPwd.password) {
+        return callback(new Error('两次密码不一致，请重输'))
       } else {
         callback()
       }
@@ -231,32 +233,38 @@ export default {
       switchMsg: false,
       checkNum: 0,
       msgCheckBoxList: [],
+      msgSlectCheckBox: [],
       messageList: [{
         title: '发运提醒',
         message: '提醒内容： 【智加云TMS公司】XX公司，您的货物已装车，由车牌号XXXX司机姓名XXXX司机电话XXXX派送。',
         checkBox: [{
           label: '发货人',
-          model: '1'
+          model: '1',
+          key: '1'
         }, {
           label: '发货人',
-          model: '2'
+          model: '2',
+          key: '2'
         }]
       }, {
         title: '到货提醒',
         message: '提醒内容： 【智加云TMS公司】XX公司，您的货物已签收，由车牌号XXXX司机姓名XXXX司机电话XXXX完成派送。',
         checkBox: [{
           label: '发货人',
-          model: '3'
+          model: '3',
+          key: '3'
         }, {
           label: '发货人',
-          model: '4'
+          model: '4',
+          key: '4'
         }]
       }, {
         title: '指派司机提醒',
         message: '发货提醒： 【智加云TMS公司】XX公司给您发了新的指派运单，请再司机端查看。',
         checkBox: [{
           label: '司机',
-          model: '5'
+          model: '5',
+          key: '5'
         }]
       }],
       // 校验相关
@@ -294,7 +302,7 @@ export default {
           { required: true, message: '请输入联系方式', trigger: 'blur' }
         ],
         cityId: [
-          { required: true, message: '请选择所在省市', trigger: 'blur' }
+          { required: true, message: '请选择所在省市' }
         ],
         address: [
           { required: true, message: '请输入公司地址', trigger: 'blur' }
@@ -323,7 +331,8 @@ export default {
         url: 'set/companyInfo',
         method: 'get'
       }).then(({ data }) => {
-        this.formCompany = data
+        this.formCompany = Object.assign({}, data.data)
+        this.formCompany.cityId = this.formCompany.cityId.toString()
       })
     },
     getUserInfo () {
@@ -331,7 +340,7 @@ export default {
         url: 'set/userInfo',
         method: 'get'
       }).then(({ data }) => {
-        this.formPersonal = data.data
+        this.formPersonal = Object.assign({}, data.data)
       })
     },
     smsInfo () {
@@ -339,20 +348,18 @@ export default {
         url: 'set/smsInfo',
         method: 'get'
       }).then(({ data }) => {
-        console.log(data.data)
-        // this.messageList = data.data.smsCode
+        this.msgCheckBoxList = data.data.smsCode === '' ? [] : data.data.smsCode
+        this.checkNum = 0
+        for (const checkList of this.messageList) {
+          checkList.checkBox.forEach(element => {
+            if (this.msgCheckBoxList.includes(element.model)) {
+              this.checkNum++
+              element.model = true
+            }
+          })
+          this.switchMsg = (this.checkNum > 0)
+        }
       })
-      this.msgCheckBoxList = ['1']
-      this.checkNum = 0
-      for (const checkList of this.messageList) {
-        checkList.checkBox.forEach(element => {
-          if (this.msgCheckBoxList.includes(element.model)) {
-            this.checkNum++
-            element.model = true
-          }
-        })
-        this.switchMsg = (this.checkNum > 0)
-      }
     },
     clickLeftMenu (id, menuName) {
       this.rightTitle = menuName
@@ -362,16 +369,18 @@ export default {
     pwdSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          // this.$Message.success('Success!')
           Server({
             url: 'set/updatePsw',
             method: 'post',
             data: this.formPwd
           }).then(({ data }) => {
-            console.log(data.data)
+            if (data.code === 10000) {
+              this.$Message.success('保存成功!')
+              this.formPwd = {}
+            } else {
+              this.$Message.info(data.msg)
+            }
           })
-        } else {
-          this.$Message.error('Fail!')
         }
       })
     },
@@ -379,19 +388,21 @@ export default {
     personalSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          // this.$Message.success('Success!')
           let param = {}
           param.name = this.formPersonal.name
-          param.avatarPic = this.formPersonal.roleName
+          param.avatarPic = ''
           Server({
             url: 'set/person',
             method: 'post',
             data: param
           }).then(({ data }) => {
-            console.log(data.data)
+            if (data.code === 10000) {
+              this.$Message.success('保存成功!')
+              this.formPwd = {}
+            } else {
+              this.$Message.info(data.msg)
+            }
           })
-        } else {
-          this.$Message.error('Fail!')
         }
       })
     },
@@ -399,16 +410,19 @@ export default {
     companySubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          // this.$Message.success('Success!')
+          let params = Object.assign({}, this.formCompany)
+          params.cityId = params.cityId[2].toString()
           Server({
             url: 'set/company',
             method: 'post',
-            data: this.formCompany
+            data: params
           }).then(({ data }) => {
-            console.log(data.data)
+            if (data.code === 10000) {
+              this.$Message.success('保存成功!')
+            } else {
+              this.$Message.error(data.msg)
+            }
           })
-        } else {
-          this.$Message.error('Fail!')
         }
       })
     },
@@ -423,23 +437,32 @@ export default {
     checkBtnBox (model) {
       let statusList = []
       this.checkNum = 0
+      let listInit = new Set()
       for (const checkList of this.messageList) {
         checkList.checkBox.forEach(element => {
           this.checkNum++
-          if (element.model) {
-            statusList.push(element.model)
+          statusList.push(element.model)
+          if (element.model === true) {
+            listInit.add(element.key)
           }
         })
         this.switchMsg = (statusList.length > 0)
       }
+      this.msgSlectCheckBox = Array.from(listInit)
     },
     msgSaveBtn () {
+      let params = {}
+      params.smsCode = this.msgSlectCheckBox
       Server({
         url: 'set/sms',
         method: 'post',
-        data: this.messageList
+        data: params
       }).then(({ data }) => {
-        console.log(data.data)
+        if (data.code === 10000) {
+          this.$Message.success('保存成功!')
+        } else {
+          this.$Message.error(data.msg)
+        }
       })
     },
     // 图片相关 -个人

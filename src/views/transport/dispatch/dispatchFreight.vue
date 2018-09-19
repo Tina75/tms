@@ -132,7 +132,7 @@ export default {
         url: '/dispatch/waybill/list',
         method: 'get'
       }).then(res => {
-        this.rightTableData = this.dataFilter(res.data.data.waybillList, '_expanded', item => {
+        this.rightTableData = this.dataFilter(res.data.data.waybillList, ['_expanded', '_highlight'], item => {
           if (JSON.stringify(item) === JSON.stringify(this.rightExpandRow)) item._expanded = true
           return item
         })

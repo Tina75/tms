@@ -16,7 +16,7 @@ module.exports = {
     proxy: {
       '/': {
         // target: 'http://yapi.yundada56.com/mock/214',
-        target: 'http://192.168.1.49:5656/dolphin-web',
+        target: 'http://192.168.1.221:5656/dolphin-web',
         ws: false,
         changOrigin: true
       }

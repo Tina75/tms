@@ -1,4 +1,4 @@
-<!--发货方详情地址新增编辑-->
+<!--承运商详情----司机新增编辑-->
 <template>
   <div>
     <Modal
@@ -39,7 +39,8 @@ export default {
   data () {
     return {
       modal: true,
-      id: '',
+      carrierId: '', // 承运商id
+      driverId: '', // 司机id
       validate: {
         driverType: '1',
         driverName: '',
@@ -73,7 +74,7 @@ export default {
     },
     add () {
       let data = {
-        carrierId: this.id,
+        carrierId: this.carrierId,
         driverType: this.validate.driverType,
         driverName: this.validate.driverName,
         driverPhone: this.validate.driverPhone
@@ -88,7 +89,7 @@ export default {
     },
     update () {
       let data = {
-        driverId: this.id,
+        driverId: this.driverId,
         driverType: this.validate.driverType,
         driverName: this.validate.driverName,
         driverPhone: this.validate.driverPhone

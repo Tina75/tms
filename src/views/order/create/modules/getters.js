@@ -3,12 +3,12 @@ export const clients = ({ order }) => order.clients.map((user) => ({ name: user.
 
 // 发货联系人
 export const consigners = ({ order }) => order.consigners
-export const consignerContacts = ({ order }, getters) => getters.consigners.map(user => ({ name: user.contact, value: user.contact, id: user.id }))
-export const consignerPhones = (state, getters) => getters.consigners(user => ({
-  name: user.phone,
-  value: user.phone,
-  id: user.id
-}))
+// export const consignerContacts = ({ order }, getters) => getters.consigners.map(user => ({ name: user.contact, value: user.contact, id: user.id }))
+// export const consignerPhones = (state, getters) => getters.consigners(user => ({
+//   name: user.phone,
+//   value: user.phone,
+//   id: user.id
+// }))
 // 发货地址
 export const consignerAddresses = ({ order }) => order.addresses.map(item => ({ name: item.address, value: item.address, id: item.id }))
 // 收货方数据，下面分拆
