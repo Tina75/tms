@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, CODE } from '../client'
+import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, CODE, CAR } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
 export default {
   name: 'carrier',
@@ -176,8 +176,8 @@ export default {
             { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
           ],
           carNO: [
-            { required: true, message: '车牌号不能为空', trigger: 'blur' }
-            // { type: 'string', message: '车牌号格式错误', pattern: /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1}$/, trigger: 'blur' }
+            { required: true, message: '车牌号不能为空', trigger: 'blur' },
+            { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
           ],
           carType: [
             { required: true, message: '车型不能为空', trigger: 'change' }
@@ -240,7 +240,6 @@ export default {
         shippingVolume: Math.floor(this.validate.driver.shippingVolume * 10) / 10,
         remark: this.validate.driver.remark,
         payType: this.validate.driver.payType
-        // Math.floor(this.validate.cargoCost * 100) / 100,
       }
       carrierAddForDriver(data).then(res => {
         if (res.data.code === CODE) {

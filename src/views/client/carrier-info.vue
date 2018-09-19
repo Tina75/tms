@@ -233,6 +233,7 @@ export default {
                       if (res.data.code === CODE) {
                         this.$Message.success(res.data.msg)
                         this._carrierListDriver() // 刷新页面
+                        this._carrierListCar() // 车辆列表也要刷新
                       } else {
                         this.$Message.error(res.data.msg)
                       }
@@ -331,9 +332,9 @@ export default {
                         validate: {
                           carNO: params.row.carNO,
                           carType: params.row.carType + '',
-                          shippingWeight: params.row.shippingWeight,
+                          shippingWeight: params.row.shippingWeight + '',
                           carLength: params.row.carLength + '',
-                          shippingVolume: params.row.shippingVolume
+                          shippingVolume: params.row.shippingVolume + ''
                         }
                       },
                       methods: {

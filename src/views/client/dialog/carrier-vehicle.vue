@@ -69,7 +69,7 @@
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
-import { carrierAddVehicle, carrierUpdateVehicle, listUnbindedDriver, CODE } from '../client'
+import { carrierAddVehicle, carrierUpdateVehicle, listUnbindedDriver, CODE, CAR } from '../client'
 export default {
   name: 'carrier-vehicle',
   mixins: [BaseDialog],
@@ -90,8 +90,8 @@ export default {
       },
       ruleValidate: {
         carNO: [
-          { required: true, message: '车牌号不能为空', trigger: 'blur' }
-          // { type: 'string', message: '车牌号格式错误', pattern: /^[\u4e00-\u9fa5]{1}[A-Z]{1}[A-Z0-9]{5}$/, trigger: 'blur' }
+          { required: true, message: '车牌号不能为空', trigger: 'blur' },
+          { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
         ],
         carType: [
           { required: true, message: '车型不能为空', trigger: 'change' }
@@ -109,21 +109,22 @@ export default {
       }
     }
   },
-  beforeCreate () {
+  created () {
     let data = {
-      carrierId: this.carrierId
+      carrierId: this.carrierId,
+      driverId: this.driverId
     }
     listUnbindedDriver(data).then(res => {
       console.log(res)
       if (res.data.code === CODE) {
         this.unbindedDriver = res.data.data
         this.unbindedDriver.unshift({driverId: '', driverName: '请选择'})
-        if (this.flag === 2) { // 编辑
-          this.unbindedDriver.push({
-            driverId: this.driverId,
-            driverName: this.driverName
-          })
-        }
+        // if (this.flag === 2) { // 编辑
+        //   this.unbindedDriver.push({
+        //     driverId: this.driverId,
+        //     driverName: this.driverName
+        //   })
+        // }
       }
     })
   },
@@ -161,9 +162,9 @@ export default {
     update () {
       let data = {
         carNO: this.validate.carNO,
-        carType: this.validate.carType - 0,
+        carType: this.validate.carType,
         shippingWeight: this.validate.shippingWeight,
-        carLength: this.validate.carLength - 0,
+        carLength: this.validate.carLength,
         shippingVolume: this.validate.shippingVolume,
         driverId: this.driverId,
         carrierId: this.carrierId,
