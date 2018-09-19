@@ -9,6 +9,10 @@ export default new Router({
   routes: [
     // 需要做强缓存的页面需要在这里配置路由
     {
+      path: '/home',
+      component: () => import('@/views/home/index')
+    },
+    {
       path: '/order-management/order',
       component: () => import('@/views/order-management/order')
     },

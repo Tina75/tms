@@ -162,6 +162,9 @@ import { CODE, carrierDetailsForDriver, carrierDetailsForCompany, carrierListDri
 export default {
   name: 'carrier-info',
   mixins: [ BasePage ],
+  metaInfo: {
+    title: '承运商详情'
+  },
   data () {
     return {
       carrierId: this.$route.query.carrierId, // carrierId 承运商id
@@ -553,7 +556,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-  @import "../../libs/css/client.styl"
+  @import "client.styl"
   .footer
     margin-top 22px
     display flex

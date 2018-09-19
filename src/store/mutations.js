@@ -1,6 +1,6 @@
 export default{
   initUserInfo (state, payload) {
-    state.userInfo = payload
+    state.userInfo = Object.assign(state.userInfo, payload)
   },
   initPermissions (state, payload) {
     state.permissions = payload || []
@@ -11,6 +11,11 @@ export default{
   },
   initTabNav (state) {
     state.tabNavList = localStorage.tabNavCache ? JSON.parse(localStorage.tabNavCache) : []
+  },
+  updateMsgCount (state, payload) {
+    const msg = {...payload}
+    msg.all = msg.sysNum + msg.orderNum + msg.carrierNum
+    state.messageCount = msg
   }
 }
 
