@@ -12,6 +12,10 @@
     <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;">
       <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute;"></span>
       <span style="margin-left:25px; font-size: 16px;">{{rightTitle}}</span>
+      <span style="float:right; margin-top:-10px;">
+        <Button style="margin-right:20px;" @click="removeInfoAll">全部删除</Button>
+        <Button  @click="removeInfoSome">批量删除</Button>
+      </span>
     </div>
     <div style="min-height:520px;">
       <!--系统消息-->
@@ -203,6 +207,12 @@ export default {
           message: msg
         }
       })
+    },
+    removeInfoAll () {
+      console.log('删除全部')
+    },
+    removeInfoSome () {
+      console.log('删除部分')
     },
     searchInfoData (page) {
       this.searchData.page = page
