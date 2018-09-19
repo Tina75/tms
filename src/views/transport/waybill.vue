@@ -541,7 +541,18 @@ export default {
         method: 'post',
         data: { waybillIds: this.tableSelection.map(item => item.waybillId) }
       }).then(res => {
-        console.log(res.data.data.list)
+        // const points = res.data.data.list
+
+        this.openDialog({
+          name: 'transport/dialog/map',
+          data: {
+            points: [{
+              longtitude: 116.404,
+              latitude: 39.915
+            }]
+          },
+          methods: {}
+        })
       }).catch(err => console.error(err))
     },
 

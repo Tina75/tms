@@ -358,7 +358,17 @@ export default {
           status: '待派车',
           btns: [{
             name: '删除',
-            func: () => console.log(Math.random())
+            func: () => {
+              Server({
+                url: '/waybill/delete',
+                method: 'delete',
+                data: { waybillIds: [ this.id ] }
+              }).then(res => {
+                this.$Message.success('删除成功')
+                this.tableSelection = []
+                this.fetchData()
+              }).catch(err => console.error(err))
+            }
           }, {
             name: '派车',
             func: () => console.log(Math.random())
@@ -377,7 +387,21 @@ export default {
           status: '在途',
           btns: [{
             name: '位置',
-            func: () => console.log(Math.random())
+            func: () => {
+              Server({
+                url: '/waybill/location',
+                method: 'post',
+                data: { waybillIds: [ this.id ] }
+              }).then(res => {
+                const points = res.data.data.list
+
+                this.openDialog({
+                  name: 'transport/dialog/map',
+                  data: { points },
+                  methods: {}
+                })
+              }).catch(err => console.error(err))
+            }
           }]
         },
         {
