@@ -25,7 +25,7 @@
       />
       <Button :to="downloadUrl" class="i-ml-10" target="_blank">下载模板</Button>
     </div>
-    <PageTable ref="pageTable" :columns="columns" :show-filter="false" url="order/template/getImportedOrderTemplateList" no-data-text=" " @on-load="handleLoad">
+    <PageTable ref="pageTable" :columns="columns" :show-filter="false" url="order/template/getImportedOrderTemplateList" method="post" no-data-text=" " @on-load="handleLoad">
       <div ref="footer" slot="footer" class="order-import__empty-content van-center">
         <div class="order-import__empty-content-wrap">
           <div>
@@ -175,7 +175,7 @@ export default {
     },
     handleLoad (response) {
       // response.data.msg !== 10000
-      if (!response.data.data || response.data.data.length === 0) {
+      if (!response.data.data || response.data.data.list.length === 0) {
         this.$refs.footer.parentElement.parentElement.style['display'] = 'block'
       } else {
         this.$refs.footer.parentElement.parentElement.style['display'] = 'none'
