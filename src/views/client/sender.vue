@@ -42,6 +42,9 @@ import BasePage from '@/basic/BasePage'
 export default {
   name: 'sender',
   mixins: [ BasePage ],
+  metaInfo: {
+    title: '发货方列表'
+  },
   data () {
     return {
       selectStatus: 0,

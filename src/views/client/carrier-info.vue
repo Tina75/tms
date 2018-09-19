@@ -134,7 +134,7 @@
             </template>
           </div>
         </TabPane>
-        <TabPane label="车辆">
+        <TabPane label="车辆" >
           <div class="add">
             <Button type="primary" @click="_carrierAddVehicle">新增</Button>
           </div>
@@ -162,6 +162,9 @@ import { CODE, carrierDetailsForDriver, carrierDetailsForCompany, carrierListDri
 export default {
   name: 'carrier-info',
   mixins: [ BasePage ],
+  metaInfo: {
+    title: '承运商详情'
+  },
   data () {
     return {
       carrierId: this.$route.query.carrierId, // carrierId 承运商id
@@ -233,6 +236,7 @@ export default {
                       if (res.data.code === CODE) {
                         this.$Message.success(res.data.msg)
                         this._carrierListDriver() // 刷新页面
+                        this._carrierListCar() // 车辆列表也要刷新
                       } else {
                         this.$Message.error(res.data.msg)
                       }
@@ -331,9 +335,9 @@ export default {
                         validate: {
                           carNO: params.row.carNO,
                           carType: params.row.carType + '',
-                          shippingWeight: params.row.shippingWeight,
+                          shippingWeight: params.row.shippingWeight + '',
                           carLength: params.row.carLength + '',
-                          shippingVolume: params.row.shippingVolume
+                          shippingVolume: params.row.shippingVolume + ''
                         }
                       },
                       methods: {
@@ -552,7 +556,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-  @import "../../libs/css/client.styl"
+  @import "client.styl"
   .footer
     margin-top 22px
     display flex

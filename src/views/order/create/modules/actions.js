@@ -9,14 +9,14 @@ export default {
    */
   getClients ({ state, commit }, name) {
     return new Promise((resolve, reject) => {
-      const { pageNo, pageSize } = state.order.pagination
+      // const { pageNo, pageSize } = state.order.pagination
       server({
         method: 'get',
         url: 'consigner/list',
         params: {
-          pageNo: pageNo,
-          pageSize: pageSize,
-          name
+          // pageNo: pageNo,
+          // pageSize: pageSize,
+          // name
         }
       }).then((response) => {
         // 收货人信息，包含客户信息
