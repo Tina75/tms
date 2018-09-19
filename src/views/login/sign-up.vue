@@ -86,7 +86,7 @@
             </Checkbox>
             <Button class="form-button" type="primary" long
                     @click="nextStep">{{step === 2 ? '立即注册' : '下一步'}}</Button>
-            <p style="text-align: center;">已有账号？<router-link to="/">请登录></router-link></p>
+            <p style="text-align: center;">已有账号？<a @click.prevent="changeMode('signin')">请登录></a></p>
           </FormItem>
         </Form>
       </div>

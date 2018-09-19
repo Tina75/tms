@@ -26,6 +26,10 @@ export default {
     }
   },
   methods: {
+    changeMode (mode) {
+      this.$emit('on-change', mode)
+    },
+
     // 输入框校验
     validate (type, { extraRules, done } = {}) {
       switch (type) {
