@@ -7,17 +7,19 @@
       </p>
       <Form ref="info" :model="info" :rules="rules" :label-width="100">
         <FormItem label="外转方" prop="transfereeName">
-          <!-- <Input v-model="info.name" style="width:200px" placeholder="请输入"/> -->
-          <AutoComplete
+          <SelectInput
             v-model="info.transfereeName"
-            :filter-method="filterMethod"
-            :data="outerCompany"
+            :maxlength="20"
+            :remote="false"
+            :local-options="transferees"
             placeholder="请输入"
-            style="width:200px">
-          </AutoComplete>
+            style="width:200px"
+            @on-focus.once="getTransferees"
+            @on-select="handleSelectTransferee">
+          </SelectInput>
         </FormItem>
         <FormItem label="外转方运单号">
-          <Input v-model="info.outTransNo" style="width:200px" placeholder="请输入"/>
+          <Input v-model="info.outTransNo" :maxlength="20" style="width:200px" placeholder="请输入"/>
         </FormItem>
         <FormItem label="付款方式" prop="payType">
           <Select v-model="info.payType" style="width:200px">
@@ -28,7 +30,10 @@
           </Select>
         </FormItem>
         <FormItem label="外转运费" prop="transFee">
-          <Input v-model="info.transFee" style="width:180px" placeholder="请输入"/>
+          <!-- <Input v-model="info.transFee" style="width:180px" placeholder="请输入"/> -->
+          <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" style="width:180px">
+            <span slot="suffix" class="order-create__input-suffix">元</span>
+          </TagNumberInput>
           <Icon type="ios-calculator" size="26" color="#00a4bd" @click="showCounter"></Icon>
         </FormItem>
       </Form>
@@ -43,21 +48,37 @@
 <script>
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
+import SelectInput from '@/components/SelectInput.vue'
+import TagNumberInput from '@/views/order/create/TagNumberInput'
+import float from '@/libs/js/float'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'outer',
+
+  components: {
+    SelectInput,
+    TagNumberInput
+  },
+
   mixins: [BaseDialog],
   data () {
     return {
       info: { transfereeName: '', outTransNo: '', payType: '', transFee: '' },
       rules: {
         transfereeName: { required: true, message: '请填写外转方', trigger: 'blur' },
-        payType: { required: true, message: '请选择付款方式', trigger: 'change' },
-        transFee: { required: true, message: '请填写外转运费', trigger: 'blur' }
+        payType: { required: true, message: '请选择付款方式' },
+        transFee: { required: true, type: 'number', message: '请填写外转运费', trigger: 'blur' }
       },
-      visibale: true,
-      outerCompany: ['Steve Jobs', 'Stephen Gary Wozniak', 'Jonathan Paul Ive']
+      visibale: true
     }
   },
+
+  computed: {
+    ...mapGetters([
+      'transferees'
+    ])
+  },
+
   watch: {
     visibale: function (val) {
       !val && this.close()
@@ -68,15 +89,24 @@ export default {
   },
 
   methods: {
-    // 过滤已维护的客户信息
-    filterMethod (value, option) {
-      if (value) {
-        return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
-      }
+    ...mapActions([
+      'getTransferees'
+    ]),
+    // 保留2位小数
+    handleParseFloat (value) {
+      return float.floor(value)
+    },
+    // 选择已维护外转方后操作
+    handleSelectTransferee (name, row) {
+      console.log(name, row)
     },
     save () {
       this.$refs['info'].validate((valid) => {
-        this.info = Object.assign({}, this.info, {orderId: this.id})
+        this.info = Object.assign({}, this.info, {
+          orderId: this.id,
+          payType: Number(this.info.payType),
+          transFee: Number(this.info.transFee)
+        })
         if (valid) {
           Server({
             url: 'outside/bill/create',

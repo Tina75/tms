@@ -45,7 +45,7 @@ export default {
       Server({
         url: 'order/recovery',
         method: 'post',
-        data: this.orderIds
+        data: { orderIds: this.orderIds }
       }).then(() => {
         // this.ok()
         this.$Message.success('还原成功')
@@ -57,7 +57,7 @@ export default {
       Server({
         url: 'order/delete',
         method: 'post',
-        data: this.orderIds
+        data: { orderIds: this.orderIds }
       }).then(() => {
         // this.ok()
         this.$Message.success('删除成功')

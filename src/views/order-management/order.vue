@@ -14,10 +14,12 @@
           v-model="keywords.consignerName"
           :maxlength="20"
           :remote="false"
+          :clearable="true"
           :local-options="clients"
           placeholder="请选择或输入客户名称"
           style="width:200px"
-          @on-focus.once="getClients">
+          @on-focus.once="getClients"
+          @on-clear="clearKeywords">
         </SelectInput>
         <Input
           v-else-if="selectStatus === 1"
@@ -150,12 +152,12 @@ export default {
       keyword: {},
       keywords: {
         status: null,
-        consignerName: '',
-        orderNo: '',
-        waybillNo: '',
-        customerOrderNo: '',
-        startTime: '',
-        endTime: '',
+        consignerName: null,
+        orderNo: null,
+        waybillNo: null,
+        customerOrderNo: null,
+        startTime: null,
+        endTime: null,
         start: [],
         end: []
       },
@@ -181,8 +183,8 @@ export default {
           render: (h, params) => {
             if (this.curStatusName === '全部' || this.curStatusName === '待提货' || this.curStatusName === '待调度') {
               // 未拆且未转 显示拆单、外转按钮
-              if (params.row.parentId === '0' && params.row.disassembleStatus === '0' && params.row.transStatus === '0') {
-                if (params.row.pickup === '1') { // 如果是上门提货则没有外转
+              if (params.row.parentId === '' && params.row.disassembleStatus === 0 && params.row.transStatus === 0) {
+                if (params.row.pickup === 1) { // 如果是上门提货则没有外转
                   return h('div', [
                     h('Button', {
                       props: {
@@ -231,7 +233,7 @@ export default {
                     }, '外转')
                   ])
                 }
-              } else if (params.row.parentId === '0' && params.row.disassembleStatus === '1') { // 已拆且是父单  显示还原、删除按钮
+              } else if (params.row.parentId === '' && params.row.disassembleStatus === 1) { // 已拆且是父单  显示还原、删除按钮
                 return h('div', [
                   h('Button', {
                     props: {
@@ -262,7 +264,7 @@ export default {
                     }
                   }, '删除')
                 ])
-              } else if (params.row.parentId !== '0') { // 子单   显示拆单按钮
+              } else if (params.row.parentId !== '') { // 子单   显示拆单按钮
                 return h('div', [
                   h('Button', {
                     props: {
@@ -279,7 +281,7 @@ export default {
                     }
                   }, '拆单')
                 ])
-              } else if (params.row.transStatus === '1') {} // 订单外转  不显示按钮
+              } else if (params.row.transStatus === 1) {} // 订单外转  不显示按钮
             }
           }
         },
@@ -288,7 +290,7 @@ export default {
           key: 'orderNo',
           className: 'padding-20',
           render: (h, params) => {
-            if (params.row.parentId !== '0') {
+            if (params.row.parentId !== '') {
               return h('div', [
                 h('span', {
                   style: {
@@ -340,7 +342,9 @@ export default {
                     this.openTab({
                       path: '/order-management/detail',
                       query: {
-                        id: params.row.orderNo
+                        id: params.row.orderNo,
+                        orderId: params.row.id,
+                        from: 'order'
                       }
                     })
                   }
@@ -457,7 +461,7 @@ export default {
   watch: {},
 
   mounted () {
-    this.getOrderNum()
+    // this.getOrderNum()
   },
 
   methods: {
@@ -512,11 +516,11 @@ export default {
     autoSearch () {
       if (this.selectStatus === 1) {
         if (!this.keywords.orderNo) {
-          this.searchList()
+          this.clearKeywords()
         }
       } else {
         if (!this.keywords.waybillNo) {
-          this.searchList()
+          this.clearKeywords()
         }
       }
     },
@@ -524,10 +528,10 @@ export default {
     clearKeywords () {
       this.keywords = {
         status: this.keywords.status,
-        consignerName: '',
-        orderNo: '',
-        waybillNo: '',
-        customerOrderNo: '',
+        consignerName: null,
+        orderNo: null,
+        waybillNo: null,
+        customerOrderNo: null,
         start: [],
         end: []
       }

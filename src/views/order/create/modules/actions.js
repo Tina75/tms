@@ -230,5 +230,32 @@ export default {
         reject(error)
       })
     })
+  },
+
+  /**
+   * 外转方列表
+   * @param {*} type 1 外转方名称  2 负责人
+   * @param {*} keyword
+   */
+  getTransferees ({ state, commit }) {
+    return new Promise((resolve, reject) => {
+      const { pageNo, pageSize } = state.order.pagination
+      server({
+        method: 'get',
+        url: 'transferee/list',
+        params: {
+          pageNo: pageNo,
+          pageSize: pageSize,
+          type: 1,
+          keyword: null
+        }
+      }).then((response) => {
+        // 外转方信息
+        const transferees = response.data.data.transfereeList
+        commit(types.RECEIVE_TRANSFEREE_LIST, transferees)
+      }).catch((error) => {
+        reject(error)
+      })
+    })
   }
 }

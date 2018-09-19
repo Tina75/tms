@@ -31,7 +31,8 @@ const state = {
     ],
     carriers: [], // 承运商信息
     carrierCars: [], // 承运商车辆信息
-    carrierDrivers: [] // 承运商司机信息
+    carrierDrivers: [], // 承运商司机信息
+    transferees: [] // 外转方信息
   }
 }
 
@@ -80,6 +81,9 @@ const mutations = {
   },
   [types.RECEIVE_CARRIER_DRIVER_LIST] ({ order }, list) {
     order.carrierDrivers = list
+  },
+  [types.RECEIVE_TRANSFEREE_LIST] ({ order }, list) {
+    order.transferees = list
   }
 }
 export default {
