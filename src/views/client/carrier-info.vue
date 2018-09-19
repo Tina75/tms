@@ -553,7 +553,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-  @import "../../libs/css/client.styl"
+  @import "client.styl"
   .footer
     margin-top 22px
     display flex
