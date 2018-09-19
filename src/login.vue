@@ -9,18 +9,40 @@
     </header>
 
     <div class="login-body">
-      <router-view />
+      <Signin v-if="mode === 'signin'"
+              @on-change="modeChange" />
+      <Signup v-if="mode === 'signup'"
+              @on-change="modeChange" />
+      <FindBack v-if="mode === 'findback'"
+                @on-change="modeChange" />
     </div>
 
     <footer class="login-footer">
       版权所有·智加云 Copyright &#169; 2018 5566.com All Rights Reserved
     </footer>
+    <Dialogs />
   </div>
 </template>
 
 <script>
+import Dialogs from '@/components/Dialogs'
+import Signin from '@/views/login/index'
+import Signup from '@/views/login/sign-up'
+import FindBack from '@/views/login/find-back'
+
 export default {
-  name: 'Login'
+  name: 'Login',
+  components: { Dialogs, Signin, Signup, FindBack },
+  data () {
+    return {
+      mode: 'signin'
+    }
+  },
+  methods: {
+    modeChange (mode) {
+      this.mode = mode
+    }
+  }
 }
 </script>
 

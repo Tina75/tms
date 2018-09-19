@@ -6,16 +6,16 @@
       </Sider>
       <Layout>
         <Header class="header-con">
-          <header-bar :collapsed.sync="collapsed" :name="name"/>
+          <header-bar :collapsed.sync="collapsed" :name="UserInfo.name"/>
           <div class="tag-nav-wrapper">
-            <tab-nav :list="tabNavList" :value="$route" @on-close="handleCloseTab" @on-select="onTabSelect"/>
+            <tab-nav :list="TabNavList" :value="$route" @on-close="handleCloseTab" @on-select="onTabSelect"/>
           </div>
         </Header>
         <Content >
           <Layout>
             <Content class="content">
               <keep-alive>
-                <router-view/>
+                <router-view />
               </keep-alive>
             </Content>
           </Layout>
@@ -38,31 +38,44 @@ export default {
   data () {
     return {
       collapsed: false,
-      name: '端木和天',
       menuList: menuJson
     }
   },
   computed: {
-    ...mapGetters(['tabNavList'])
+    ...mapGetters(['TabNavList', 'UserInfo'])
   },
 
   async mounted () {
     window.EMA.bind('logout', () => {
       this.logout()
     })
-    window.EMA.bind('refresh', () => {
-      window.location.reload()
+    window.EMA.bind('refresh', (router) => {
+      // window.location.reload()
+      console.log('refresh')
+      // this.$nextTick(() => {
+      //   debugger
+      // this.onMenuSelect(router)
+      // router.query = {_time: 111}
+      // window.EMA.fire('openTab', router)
+      // })
+      this.$router.go(0)
     })
-    window.EMA.bind('openTab1', (route) => {
+    window.EMA.bind('updateUserInfo', () => {
+      this.getUserInfo()
+    })
+    window.EMA.bind('openTab', (route) => {
       let tag = { ...route }
-      tag.name = route.query.id ? route.query.id : route.name
-      this.setTabNavList(this.getNewTagList(this.tabNavList, tag))
-      this.turnToPage(tag)
+      if (route.query) {
+        tag.name = route.query.id ? route.query.id : route.name
+        this.setTabNavList(this.getNewTagList(this.TabNavList, tag))
+        this.turnToPage(tag)
+      }
     })
+    this.initTabNav()
+    this.getUserInfo()
     // 获取用户权限
     await this.getPermissons()
     // 初始化tabnav
-    this.initTabNav()
     if (this.$route.path === '/') {
       setTimeout(() => {
         this.onMenuSelect({ name: '首页', path: '/home/index' })
@@ -70,7 +83,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getPermissons']),
+    ...mapActions(['getPermissons', 'getUserInfo']),
     ...mapMutations(['setTabNavList', 'initTabNav']),
     logout () {
       localStorage.removeItem('tms_is_login')
@@ -78,7 +91,7 @@ export default {
     },
     handleCloseTab (list, route) {
       // 选中前一个tab
-      const nextRoute = this.getNextRoute(this.tabNavList, route)
+      const nextRoute = this.getNextRoute(this.TabNavList, route)
       this.$router.push(nextRoute)
       this.setTabNavList(list) // 更新store
     },
@@ -86,7 +99,7 @@ export default {
       this.turnToPage(item)
     },
     onMenuSelect (menuItem) {
-      this.setTabNavList(this.getNewTagList(this.tabNavList, menuItem))
+      this.setTabNavList(this.getNewTagList(this.TabNavList, menuItem))
       this.turnToPage(menuItem)
     },
     turnToPage (route) {
