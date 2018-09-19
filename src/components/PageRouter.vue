@@ -22,8 +22,7 @@ export default {
   watch: {
     $route (to, from) {
       // 对路由变化作出响应...
-      console.log('对路由变化作出响应')
-      console.log(to, from)
+      console.log('对路由变化作出响应 ' + from.path + ' -> ' + to.path)
       if (to.path !== from.path) {
         // 如果页面改变。load新页面加入
         this.loadPage(to.params)
@@ -59,7 +58,7 @@ export default {
       for (var k in params) {
         arr.push(params[k])
       }
-      if (arr.length === 0) arr.push(localStorage.getItem('tms_is_login') ? 'home/index' : 'login')
+      if (arr.length === 0) arr.push(localStorage.getItem('tms_is_login') ? 'home' : 'login')
       return arr.join('/')
     }
   }
