@@ -1,7 +1,7 @@
 <template>
   <div class="temAll">
     <Col span="3">
-    <Menu active-name="系统消息" class="leftMenu" style="width: 150px;  background: rgba(248,248,248,1);">
+    <Menu :active-name="typeName" class="leftMenu" style="width: 150px;  background: rgba(248,248,248,1);">
       <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
       <p class="menuTitle">{{menu.name}}</p>
       <Badge v-if="menu.infoNum" :text="menu.infoNum.toString()" style="float:right;margin-top:-20px;"></Badge>
@@ -42,7 +42,7 @@
             <div class="msgImg">
               <i class="icon font_family icon-dingdanxiaoxi" style="font-size:28px; background: white; color: #418DF9;"></i>
             </div>
-            <div class="msgContent">
+            <div class="msgContent" @click="clickContenInfo(msg)">
               <p class="msgContentTitle">{{msg.title}}</p>
               <pre class="msgContentText">{{msg.content}}</pre>
             </div>
@@ -62,7 +62,7 @@
             <div class="msgImg">
               <i class="icon font_family icon-yunshuxiaoxi" style="font-size:28px; background: white; color: #00A4BD;"></i>
             </div>
-            <div class="msgContent">
+            <div class="msgContent" @click="clickContenInfo(msg)">
               <p class="msgContentTitle">{{msg.title}}</p>
               <pre class="msgContentText">{{msg.content}}</pre>
             </div>
@@ -103,6 +103,8 @@ export default {
   data () {
     return {
       rightTitle: '系统消息',
+      type: '0',
+      typeName: '系统消息',
       menuList: [{
         name: '系统消息',
         id: '0',
@@ -130,6 +132,17 @@ export default {
   mounted: function () {
     this.getMenuList(this.searchData)
     this.getMenuInfoNum()
+    switch (this.$route.query.name) {
+      case '0':
+        this.typeName = '系统消息'
+        break
+      case '1':
+        this.typeName = '订单消息'
+        break
+      case '2':
+        this.typeName = '运输消息'
+        break
+    }
   },
   methods: {
     getMenuInfoNum () {
@@ -170,7 +183,6 @@ export default {
       this.getMenuList(this.searchData)
     },
     msgRemoveBtn (message) {
-      console.log(message)
       Server({
         url: 'message/del',
         method: 'post',
@@ -184,7 +196,6 @@ export default {
       })
     },
     clickContenInfo (msg) {
-      console.log(msg)
       this.openTab({
         path: '/info/message-info',
         query: {
@@ -194,12 +205,12 @@ export default {
       })
     },
     searchInfoData (page) {
-      console.log(page)
       this.searchData.page = page
+      this.getMenuList(this.searchData)
     },
     chagePageSize (pagenum) {
       this.searchData.pageSize = pagenum
-      console.log(this.pageSize)
+      this.getMenuList(this.searchData)
     }
   }
 }
@@ -223,7 +234,7 @@ export default {
     margin-bottom: 5px;
   .msgConfigDiv
     float: right;
-    margin-top: -38px;
+    margin-top: -55px;
   .msgContentText
     white-space: nowrap;
     overflow: hidden;

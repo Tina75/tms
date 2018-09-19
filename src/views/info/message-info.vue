@@ -1,14 +1,14 @@
 <template>
   <div class="messageDivAll">
     <h1 style="text-align:left;">{{messageInfo.title}}</h1>
-    <p>{{messageInfo.dataTime}}
+    <p>{{ this.formatDate(messageInfo.createTime) }}
       <Button class="msgRemoveBtn" @click="removeBtn">
         <span class="msgConfigBtn" @click="msgRemoveBtn(msg)">
         <i class="icon font_family icon-shanchu1"></i></span><span style="margin:0 5px;">删除
         </span>
       </Button>
     </p>
-    <p class="msgInfo">{{messageInfo.message}}</p>
+    <p class="msgInfo">{{messageInfo.content}}</p>
     <p v-if="this.messageInfo.url !== ''" class="msgInfoHref">活动链接：<a :href="messageInfo.url">{{messageInfo.url}}</a></p>
 
   </div>
@@ -25,17 +25,17 @@ export default {
   },
   data () {
     return {
-      messageInfo: {
-        title: '系统升级通知',
-        message: '尊敬的客户您好。。撒娇傅雷家书链接发的垃圾受到法律的框架‘大法官书链接发的垃圾受到法律的框架‘大法官书链接发的垃圾受到法律的框架‘大法官垃圾的逻辑啊师傅阿斯顿激发距离首府' +
-                '活动地址：<a href="http://www.baidu.com">file</a>asdfasdfsadfsadfsadfsad垃圾受到法律的框架‘大法官书链接发的垃圾受到法律的框架‘大',
-        id: '1',
-        dataTime: '2018-05-08 11:30:08',
-        url: 'http://www.baidu.com'
-      }
+      messageInfo: {}
     }
   },
+  mounted: function () {
+    debugger
+    this.messageInfo = this.$route.query.message
+  },
   methods: {
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
     removeBtn () {
     }
   }

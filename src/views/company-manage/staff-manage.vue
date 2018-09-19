@@ -18,7 +18,7 @@
           <Select v-model="formSearch.roleId" clearable>
             <Option
               v-for="item in selectList"
-              :value="item.name"
+              :value="item.id"
               :key="item.id">
               {{ item.name }}
             </Option>
@@ -39,11 +39,11 @@
     <Col span="23">
     <page-table :columns="menuColumns" :keywords="formSearchInit" url="employee/list" list-field="list" style="margin-top: 20px;"></page-table>
     </Col>
-    <Modal v-model="visibaleTransfer" width="360">
+    <Modal v-model="visibaleTransfer" width="400">
       <p slot="header" style="text-align:center">
         <span>转移权限</span>
       </p>
-      <Form ref="transferformModal" :model="transferformModal" :rules="rulesTransfer" :label-width="100" style="height: 50px;">
+      <Form ref="transferformModal" :model="transferformModal" :rules="rulesTransfer" :label-width="100" style="height: 70px;">
         <FormItem label="角色账号：" prop="staff">
           <Select v-model="transferformModal.staff" clearable>
             <Option
@@ -55,10 +55,10 @@
           </Select>
         </FormItem>
         <FormItem>
-          <p style="color:red; margin-top:-10px;">提示：确认操作后，您将于接收该角色的人员互换角色</p>
+          <p style="color:red; margin-top:-10px;">确认操作后，您将于接收该角色的人员互换角色</p>
         </FormItem>
       </Form>
-      <div slot="footer" style="margin-top:40px;">
+      <div slot="footer" style="margin-top:20px;">
         <Button type="primary" @click="transferFormSub('transferformModal')">确定</Button>
         <Button  @click="transferCancelForm">取消</Button>
       </div>
@@ -67,7 +67,8 @@
       <p slot="header" style="text-align:center">
         <span>提示</span>
       </p>
-      <p>确定要删除用户{{this.roleRowInit.name}}吗?</P>
+      <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white; color: #FFBB44;float:left;"></i>
+      <p style="margin-top:13px; margin-left:40px;">确定要删除用户{{this.roleRowInit.name}}吗?</P>
       <div slot="footer">
         <Button type="primary" @click="removeSubForm">确定</Button>
         <Button  @click="removeCancelForm">取消</Button>
@@ -179,7 +180,11 @@ export default {
       },
       {
         title: '创建时间',
-        key: 'createTime'
+        key: 'createTime',
+        render: (h, params) => {
+          let text = this.formatDate(params.row.createTime)
+          return h('div', { props: {} }, text)
+        }
       }],
       rulesTransfer: {
         staff: [
@@ -193,6 +198,9 @@ export default {
     this.getStaffSelectList()
   },
   methods: {
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
     getRoleSelectList () {
       Server({
         url: 'role/list',
@@ -212,12 +220,17 @@ export default {
     searchName () {
       let params = {}
       params.name = this.formSearch.name
+      if (!params.name) {
+        return Promise.resolve([])
+      }
       return Server({
         url: 'employee/nameLike',
         method: 'get',
         data: params
       }).then(({ data }) => {
-        return data.map(item => ({label: 'name', value: 'id'}))
+        if (data.data.length > 0) {
+          return data.data.map(item => ({value: item.name, ...item}))
+        }
       })
         .catch((errorInfo) => {
           return Promise.reject(errorInfo)
@@ -248,7 +261,7 @@ export default {
         },
         methods: {
           ok (node) {
-            console.log(_this.formSearchInit)
+            _this.formSearchInit = {}
           }
         }
       })

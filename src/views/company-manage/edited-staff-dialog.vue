@@ -121,6 +121,7 @@ export default {
                 this.$Message.success('添加成功!')
                 this.close()
                 this.successModal = true
+                this.ok()
               } else {
                 this.$Message.success(data.msg)
               }
@@ -134,6 +135,7 @@ export default {
               if (data.code === 10000) {
                 this.$Message.success('修改成功!')
                 this.close()
+                this.ok()
               } else {
                 this.$Message.success(data.msg)
               }
