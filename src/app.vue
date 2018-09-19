@@ -90,7 +90,7 @@ export default {
       // TODO: something
     },
     openMsgTab (type = 0) {
-      const router = {path: '/info/info', name: '消息', params: {type: type}}
+      const router = {path: '/info/info', name: '消息', query: {type: type}}
       this.onMenuSelect(router)
     },
     logout () {
@@ -138,8 +138,9 @@ export default {
       const query1 = route1.query || {}
       const query2 = route2.query || {}
       // return (route1.name === route2.name) && this.objEqual(params1, params2) && this.objEqual(query1, query2)
-      return (route1.name === route2.name) && this.objEqual(query1, query2)
+      return (route1.name === route2.name) && (query1.id === query2.id)
     },
+
     /**
      * @param {*} obj1 对象
      * @param {*} obj2 对象
