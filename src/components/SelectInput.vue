@@ -206,6 +206,8 @@ export default {
           promise.then((options) => {
             this.isRemoteCall = false
             this.options = options
+          }).catch(errorInfo => {
+            this.isRemoteCall = false
           })
         }
         this.lastRemoteQuery = query

@@ -44,13 +44,13 @@
         <span>转移权限</span>
       </p>
       <Form ref="transferformModal" :model="transferformModal" :rules="rulesTransfer" :label-width="100" style="height: 50px;">
-        <FormItem label="角色账号：" prop="roleId">
-          <Select v-model="transferformModal.roleId" clearable>
+        <FormItem label="角色账号：" prop="staff">
+          <Select v-model="transferformModal.staff" clearable>
             <Option
-              v-for="item in selectList"
-              :value="item.name"
-              :key="item.id">
-              {{ item.name }}
+              v-for="item in staffSelectList"
+              :value="item.phone"
+              :key="item.phone">
+              {{ item.name + '--' + item.phone}}
             </Option>
           </Select>
         </FormItem>
@@ -98,32 +98,24 @@ export default {
       visibaleMoadlTitle: '',
       roleRowInit: {},
       transferformModal: {
-        roleId: ''
+        staff: ''
       },
       formSearchInit: {},
       formSearch: {
         name: '',
         phone: '',
-        roleId: '全部',
+        roleId: '',
         pageNo: 1,
         pageSize: 20
       },
-      selectList: [{
-        name: '全部',
-        id: '1'
-      }, {
-        name: '管理员',
-        id: '2'
-      }, {
-        name: '录入员',
-        id: '3'
-      }],
+      selectList: [],
+      staffSelectList: [],
       menuColumns: [{
         title: '操作',
         key: 'do',
         width: 200,
         render: (h, params) => {
-          if (params.row.name === '超级管理员') {
+          if (params.row.roleName === '超级管理员') {
             return h('div', [
               h('Button', {
                 props: {
@@ -183,42 +175,62 @@ export default {
       },
       {
         title: '角色',
-        key: 'roleId'
+        key: 'roleName'
       },
       {
         title: '创建时间',
         key: 'createTime'
       }],
       rulesTransfer: {
-        roleId: [
+        staff: [
           { required: true, message: '请选择角色账号', trigger: 'blur' }
         ]
       }
     }
   },
-  mounted: function () {},
+  mounted: function () {
+    this.getRoleSelectList()
+    this.getStaffSelectList()
+  },
   methods: {
+    getRoleSelectList () {
+      Server({
+        url: 'role/list',
+        method: 'get'
+      }).then(({ data }) => {
+        this.selectList = data.data
+      })
+    },
+    getStaffSelectList () {
+      Server({
+        url: 'employee/list',
+        method: 'get'
+      }).then(({ data }) => {
+        this.staffSelectList = Object.assign({}, data.data.list)
+      })
+    },
     searchName () {
       let params = {}
-      params.name = '1'
+      params.name = this.formSearch.name
       return Server({
         url: 'employee/nameLike',
         method: 'get',
         data: params
       }).then(({ data }) => {
-        console.log(data)
         return data.map(item => ({label: 'name', value: 'id'}))
       })
+        .catch((errorInfo) => {
+          return Promise.reject(errorInfo)
+        })
     },
     searchBtn () {
-      this.formSearchInit = this.formSearch
+      this.formSearchInit = Object.assign({}, this.formSearch)
       Server({
         url: 'employee/list',
         method: 'get',
         data: this.formSearchInit
       }).then(({ data }) => {
-        // if (data.code === 10000)
-        console.log(data)
+        console.log('查询table data')
       })
     },
     eaditStaff (params) {
@@ -236,7 +248,7 @@ export default {
         },
         methods: {
           ok (node) {
-            _this.onAddUserSuccess(node)
+            console.log(_this.formSearchInit)
           }
         }
       })
@@ -244,16 +256,22 @@ export default {
     transferFormSub (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          let params = {}
+          params.phone = this.transferformModal.staff
           Server({
             url: 'employee/role',
             method: 'post',
-            data: this.roleRowInit.phone
+            data: params
           }).then(({ data }) => {
-            // this.data1 = data.data;
+            if (data.code === 10000) {
+              this.$Message.success('转移成功!')
+              this.visibaleTransfer = false
+              this.formSearchInit = {}
+            } else {
+              this.$Message.error(data.msg)
+              this.visibaleTransfer = false
+            }
           })
-          this.$Message.success('转移成功!')
-          this.visibaleTransfer = false
-        } else {
         }
       })
     },
@@ -269,14 +287,22 @@ export default {
       this.visibaleTransfer = true
     },
     removeSubForm () {
+      let params = {}
+      params.id = this.roleRowInit.id
       Server({
         url: 'employee/del',
         method: 'post',
-        data: this.roleRowInit.id
+        data: params
       }).then(({ data }) => {
-        console.log(data)
+        if (data.code === 10000) {
+          this.visibaleRemove = false
+          this.$Message.success('删除成功！')
+          this.formSearchInit = {}
+        } else {
+          this.$Message.error(data.msg)
+          this.visibaleRemove = false
+        }
       })
-      this.visibaleRemove = false
     },
     removeCancelForm () {
       this.visibaleRemove = false

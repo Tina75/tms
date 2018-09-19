@@ -57,8 +57,8 @@
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="收货人" prop="consigneeName">
-        <SelectInput v-model="orderForm.consigneeName" :maxlength="15" :local-options="consigneeContacts" :remote="false">
+      <FormItem label="收货人" prop="consigneeContact">
+        <SelectInput v-model="orderForm.consigneeContact" :maxlength="15" :local-options="consigneeContacts" :remote="false">
         </SelectInput>
       </FormItem>
       </Col>
@@ -200,7 +200,7 @@
       <Button class="i-ml-10" @click="print">保存并打印</Button>
       <Button class="i-ml-10" @click="resetForm">清空</Button>
     </FormItem>
-    <OrderPrint ref="printer" :data="orderForm">
+    <OrderPrint ref="printer" :data.sync="orderPrint">
     </OrderPrint>
   </Form>
 </template>
@@ -216,6 +216,7 @@ import BasePage from '@/basic/BasePage'
 import OrderPrint from './OrderPrint'
 import AreaSelect from '@/components/AreaSelect'
 
+import _ from 'lodash'
 import settlements from './constant/settlement.js'
 import pickups from './constant/pickup.js'
 export default {
@@ -501,11 +502,11 @@ export default {
         // 发货地址
         consignerAddress: '',
         // 收货人
-        consigneeName: '',
+        consigneeContact: '',
         consigneePhone: '',
         consigneeAddress: '',
         // 货品信息
-        cargoList: [],
+        orderCargoList: [],
         // 付款方式
         settlementType: 4, // 默认月结，1:现付，2：到付 ，3：回付 4月结
         // 运输费用
@@ -525,6 +526,7 @@ export default {
         // 备注
         remark: ''
       },
+      orderPrint: {},
       rules: {
         consignerName: [
           // { validator: validateConsignerName, trigger: 'blur' }
@@ -549,7 +551,7 @@ export default {
         consignerAddress: [
           { required: true, message: '请输入发货地址' }
         ],
-        consigneeName: [
+        consigneeContact: [
           { required: true, message: '请输入收货人名称' }
         ],
         consigneePhone: [
@@ -717,7 +719,7 @@ export default {
         }
         if (consignees.length > 0) {
           // 设置收货人信息，收货人，手机，收货地址
-          _this.orderForm.consigneeName = consignees[0].contact
+          _this.orderForm.consigneeContact = consignees[0].contact
           _this.orderForm.consigneePhone = consignees[0].phone
           _this.orderForm.consigneeAddress = consignees[0].address
         }
@@ -789,7 +791,12 @@ export default {
       this.clearCargoes()
     },
     print () {
+      this.syncStoreCargoes()
+      this.orderPrint = _.cloneDeep(this.orderForm)
+      this.orderPrint.orderCargoList = _.cloneDeep(this.consignerCargoes)
       this.$refs.printer.print()
+
+      // this.handleSubmit()
     }
   }
 }
