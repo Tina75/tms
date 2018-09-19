@@ -13,11 +13,11 @@ const defaultCargo = {
 const state = {
   order: {
     form: {},
-    pagination: {
-      pageNo: 1,
-      pageSize: 10,
-      total: 0
-    },
+    // pagination: {
+    //   pageNo: 1,
+    //   pageSize: 10,
+    //   total: 0
+    // },
     detail: {}, // 订单详情
     clients: [], // 客户信息
     consigners: [], // 发货方信息
