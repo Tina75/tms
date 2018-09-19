@@ -8,7 +8,7 @@ function getToken () {
 
 let instance = axios.create({
   baseURL: '/',
-  timeout: 10000,
+  timeout: 1000,
   headers: {
     'Content-Type': 'application/json',
     'Authorization': getToken()
@@ -20,8 +20,7 @@ let instance = axios.create({
 
 switch (process.env.NODE_ENV) {
   case 'development':
-    instance.defaults.baseURL = 'http://192.168.1.49:5656/dolphin-web'; break
-    // instance.defaults.baseURL = 'http://192.168.1.39:3000/mock/214'; break
+    instance.defaults.baseURL = '/'; break
   case 'production':
     instance.defaults.baseURL = '//dev-boss.yundada56.com/bluewhale-boss/'; break
 }
@@ -49,13 +48,15 @@ instance.interceptors.response.use((res) => {
     return res
   } else {
     switch (code) {
-      case 280102:// token失效或不存在
-      case 280103:// 账号在其他设备登录
-      case 280104:// 认证校验不通过
-      case 280105:// 客户端头信息缺失
-      case 280106:// 用户不存在
+      case 310010:// token失效或不存在
+      case 310011:// 账号在其他设备登录
         Message.error(`${res.data.msg}`)
         window.EMA.fire('logout')
+        break
+      case 210014:
+      case 600002:// 无权限
+        Message.error(`${res.data.msg},请刷新页面`)
+        window.EMA.fire('refresh')
         break
       case 310013:// 手机号已注册走10000流程
         return res

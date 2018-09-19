@@ -8,7 +8,7 @@
         </Select>
       </FormItem>
     </Form>
-    <div slot="footer">
+    <div slot="footer" class="van-center">
       <Button  type="primary"  @click="save">确定</Button>
       <Button  type="default"  @click.native="visibale = false">取消</Button>
     </div>

@@ -44,9 +44,9 @@
         <FormItem label="角色：">
           <span>{{formPersonal.roleName}}</span>
         </FormItem>
-        <FormItem label="头像：">
-          <!--个人设置-图片相关-->
-          <div class="demo-upload-list">
+        <!-- <FormItem label="头像："> -->
+        <!--个人设置-图片相关-->
+        <!-- <div class="demo-upload-list">
             <img :src="uploadList.url">
           </div>
           <Upload
@@ -64,12 +64,12 @@
             style="display: inline-block;width:58px; color:#00a4bd"
           >
             修改头像
-          </Upload>
-          <!--个人设置-图片相关-->
-        </FormItem>
+          </Upload> -->
+        <!--个人设置-图片相关-->
+        <!-- </FormItem>
         <FormItem>
           <p style="color:rgba(153,153,153,1);">尺寸60*60像素，大小不超过1M</p>
-        </FormItem>
+        </FormItem> -->
         <FormItem>
           <Button type="primary" @click="personalSubmit('formPersonal')">保存</Button>
         </FormItem>
@@ -121,9 +121,9 @@
         <FormItem label="公司地址：" prop="address">
           <Input v-model="formCompany.address" placeholder="请输入公司地址"></Input>
         </FormItem>
-        <FormItem label="公司LOGO：">
-          <!--公司设置-图片相关-->
-          <div class="demo-upload-list">
+        <!-- <FormItem label="公司LOGO："> -->
+        <!--公司设置-图片相关-->
+        <!-- <div class="demo-upload-list">
             <img :src="uploadListCompany.url">
           </div>
           <Upload
@@ -140,12 +140,12 @@
             action="//jsonplaceholder.typicode.com/posts/"
             style="display: inline-block;width:58px; color:#00a4bd">
             点击上传
-          </Upload>
-          <!--公司设置-图片相关-->
-        </FormItem>
+          </Upload> -->
+        <!--公司设置-图片相关-->
+        <!-- </FormItem>
         <FormItem>
           <p style="color:rgba(153,153,153,1);">尺寸60*60像素，大小不超过1M</p>
-        </FormItem>
+        </FormItem> -->
         <FormItem>
           <Button type="primary" @click="companySubmit('formCompany')">保存</Button>
         </FormItem>
@@ -169,34 +169,31 @@ export default {
     let this_ = this
     var pswRight = function (rule, value, callback) {
       if (value) {
+        let params = {}
+        params.oldPassword = value
         Server({
           url: 'set/pswRight',
           method: 'get',
-          data: value
+          data: params
         }).then(({ data }) => {
-          console.log(data)
+          callback()
+        }).catch(() => {
+          return callback(new Error('原始密码错误，请重输'))
         })
-        return callback(new Error('原始密码错误，请重输'))
       } else {
         callback()
       }
     }
     var checkPwd = function (rule, value, callback) {
-      if (value) {
-        if (/^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,16}$/.test(value)) {
-          return callback(new Error('只支持数字、大小写字母的组合，不支持特殊字符'))
-        }
-        callback()
+      if (!(/^[0-9A-Za-z].{5,16}$/.test(value))) {
+        return callback(new Error('密码只能包含数字、大小写字母，至少为6位，至多为16位'))
       } else {
         callback()
       }
     }
     var checkPwdSame = function (rule, value, callback) {
-      if (value) {
-        if (value !== this_.formPwd.password) {
-          return callback(new Error('两次密码不一致，请重输'))
-        }
-        callback()
+      if (value !== this_.formPwd.password) {
+        return callback(new Error('两次密码不一致，请重输'))
       } else {
         callback()
       }
@@ -323,7 +320,7 @@ export default {
         url: 'set/companyInfo',
         method: 'get'
       }).then(({ data }) => {
-        this.formCompany = data
+        this.formCompany = data.data
       })
     },
     getUserInfo () {
@@ -362,16 +359,18 @@ export default {
     pwdSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          // this.$Message.success('Success!')
           Server({
             url: 'set/updatePsw',
             method: 'post',
             data: this.formPwd
           }).then(({ data }) => {
-            console.log(data.data)
+            if (data.code === 10000) {
+              this.$Message.success('保存成功!')
+              this.formPwd = {}
+            } else {
+              this.$Message.info(data.msg)
+            }
           })
-        } else {
-          this.$Message.error('Fail!')
         }
       })
     },
@@ -390,8 +389,6 @@ export default {
           }).then(({ data }) => {
             console.log(data.data)
           })
-        } else {
-          this.$Message.error('Fail!')
         }
       })
     },
@@ -399,16 +396,17 @@ export default {
     companySubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          // this.$Message.success('Success!')
           Server({
             url: 'set/company',
             method: 'post',
             data: this.formCompany
           }).then(({ data }) => {
-            console.log(data.data)
+            if (data.code === 10000) {
+              this.$Message.success('保存成功!')
+            } else {
+              this.$Message.error(data.msg)
+            }
           })
-        } else {
-          this.$Message.error('Fail!')
         }
       })
     },

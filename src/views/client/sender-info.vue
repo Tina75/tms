@@ -25,7 +25,11 @@
           <Col span="6">
           <div>
             <span class="label">结算方式：</span>
-            {{list.payTypeDesc}}
+            <span v-if="list.payType===1">现付</span>
+            <span v-else-if="list.payType===2">到付</span>
+            <span v-else-if="list.payType===3">回单付</span>
+            <span v-else-if="list.payType===4">月结</span>
+            <span v-else></span>
           </div>
           </Col>
         </Row>
@@ -105,12 +109,12 @@ export default {
   mixins: [ BasePage ],
   data () {
     return {
-      id: this.$route.query.id,
+      id: this.$route.query.id, // 发货方id
       list: {
         name: '',
         contact: '',
         phone: '',
-        payTypeDesc: '',
+        payType: '',
         remark: ''
       },
       columns1: [
@@ -199,7 +203,8 @@ export default {
                         validate: {
                           contact: params.row.contact,
                           phone: params.row.phone,
-                          address: params.row.address
+                          address: params.row.address,
+                          remark: params.row.remark
                         }
                       },
                       methods: {
@@ -275,10 +280,11 @@ export default {
                         validate: {
                           cargoName: params.row.cargoName,
                           unit: params.row.unit,
-                          cargoCost: params.row.cargoCost,
-                          weight: params.row.weight,
-                          volume: params.row.volume,
-                          remark: params.row.remark
+                          cargoCost: String(params.row.cargoCost),
+                          weight: String(params.row.weight),
+                          volume: String(params.row.volume),
+                          remark1: params.row.remark1,
+                          remark2: params.row.remark2
                         }
                       },
                       methods: {
@@ -334,8 +340,12 @@ export default {
           key: 'volume'
         },
         {
-          title: '备注',
-          key: 'remark'
+          title: '备注1',
+          key: 'remark1'
+        },
+        {
+          title: '备注2',
+          key: 'remark2'
         }
       ],
       data1: [],
@@ -364,14 +374,13 @@ export default {
         id: this.id
       }
       consignerDetail(data).then(res => {
-        console.log(res)
         if (res.data.code === CODE) {
           let data = res.data.data
           this.list = {
             name: data.name,
             contact: data.contact,
             phone: data.phone,
-            payTypeDesc: data.payTypeDesc,
+            payType: data.payType,
             remark: data.remark
           }
           this.data1 = data.addressList.list
@@ -391,7 +400,6 @@ export default {
         pageSize: this.pageSize1
       }
       consignerAddressList(data).then(res => {
-        console.log(res.data.data)
         if (res.data.code === CODE) {
           this.data1 = res.data.data.list
           this.totalCount1 = res.data.data.totalCount
