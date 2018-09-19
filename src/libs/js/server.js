@@ -58,6 +58,8 @@ instance.interceptors.response.use((res) => {
         Message.error(`${res.data.msg},请刷新页面`)
         window.EMA.fire('refresh')
         break
+      case 310013:// 手机号已注册走10000流程
+        return res
       default:
         Message.error(res.data.msg)
         break

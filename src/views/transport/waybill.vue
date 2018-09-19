@@ -23,21 +23,21 @@
                v-model="easySearchKeyword"
                :icon="easySearchKeyword ? 'ios-close-circle' : ''"
                placeholder="请输入运单号"
-               style="width: 200px"
+               class="search-input"
                @on-click="resetEasySearch" />
 
         <Input v-if="easySelectMode === 2"
                v-model="easySearchKeyword"
                :icon="easySearchKeyword ? 'ios-close-circle' : ''"
                placeholder="请输入承运商"
-               style="width: 200px"
+               class="search-input"
                @on-click="resetEasySearch" />
 
         <Input v-if="easySelectMode === 3"
                v-model="easySearchKeyword"
                :icon="easySearchKeyword ? 'ios-close-circle' : ''"
                placeholder="请输入车牌号"
-               style="width: 200px"
+               class="search-input"
                @on-click="resetEasySearch" />
 
         <Button icon="ios-search"
@@ -53,17 +53,17 @@
     <div v-if="!isEasySearch" class="operate-box">
 
       <div style="margin-bottom: 10px;">
-        <Input v-model="seniorSearchFields.waybillNo" placeholder="请输入运单号" style="width: 200px" />
-        <Input v-model="seniorSearchFields.carrierName" placeholder="请选择承运商" style="width: 200px" />
-        <Input v-model="seniorSearchFields.driverName" placeholder="请输入司机" style="width: 200px" />
-        <Input v-model="seniorSearchFields.carNo" placeholder="请输入车牌号" style="width: 200px" />
+        <Input v-model="seniorSearchFields.waybillNo" placeholder="请输入运单号" class="search-input-senior" />
+        <Input v-model="seniorSearchFields.carrierName" placeholder="请选择承运商" class="search-input-senior" />
+        <Input v-model="seniorSearchFields.driverName" placeholder="请输入司机" class="search-input-senior" />
+        <Input v-model="seniorSearchFields.carNo" placeholder="请输入车牌号" class="search-input-senior" />
       </div>
 
       <div style="display: flex;justify-content: space-between;">
         <div>
-          <Input v-model="seniorSearchFields.start" placeholder="请输入始发地" style="width: 200px" />
-          <Input v-model="seniorSearchFields.end" placeholder="请输入目的地" style="width: 200px" />
-          <DatePicker type="daterange" split-panels placeholder="开始日期-结束日期" style="width: 200px"></DatePicker>
+          <AreaSelect v-model="seniorSearchFields.start" placeholder="请输入始发地" class="search-input-senior" />
+          <AreaSelect v-model="seniorSearchFields.end" placeholder="请输入目的地" class="search-input-senior" />
+          <DatePicker type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
         </div>
         <div>
           <Button type="primary"
@@ -107,13 +107,14 @@
 import BasePage from '@/basic/BasePage'
 import TabHeader from '@/components/TabHeader'
 import PageTable from '@/components/page-table'
-import TransportTableMixin from './transportTableMixin'
+import AreaSelect from '@/components/AreaSelect'
+import TransportMixin from './transportMixin'
 import Server from '@/libs/js/server'
 
 export default {
   name: 'WaybillManager',
-  components: { TabHeader, PageTable },
-  mixins: [ BasePage, TransportTableMixin ],
+  components: { TabHeader, PageTable, AreaSelect },
+  mixins: [ BasePage, TransportMixin ],
   metaInfo: { title: '运单管理' },
   data () {
     return {
@@ -245,7 +246,6 @@ export default {
               },
               on: {
                 click: () => {
-                  console.log(p)
                   this.openTab({
                     path: '/transport/detail/detailFreight',
                     query: { id: p.row.waybillId }
@@ -425,10 +425,10 @@ export default {
         this.page.total = data.totalCount
         this.tabList = [
           { name: '全部', count: '' },
-          { name: '待派车', count: data.statusCntInfo.waitAssignCarCnt },
-          { name: '待发运', count: data.statusCntInfo.waitSendCarCnt },
-          { name: '在途', count: data.statusCntInfo.inTransportCnt },
-          { name: '已到货', count: data.statusCntInfo.arrivedCnt }
+          { name: '待派车', count: data.statusCntInfo.waitAssignCarCnt || 0 },
+          { name: '待发运', count: data.statusCntInfo.waitSendCarCnt || 0 },
+          { name: '在途', count: data.statusCntInfo.inTransportCnt || 0 },
+          { name: '已到货', count: data.statusCntInfo.arrivedCnt || 0 }
         ]
       }).catch(err => console.error(err))
     }
