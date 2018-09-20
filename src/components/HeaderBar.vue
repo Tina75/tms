@@ -11,19 +11,19 @@
           </Badge>
           <div slot="content" class="msg">
             <div class="msg-item" @click="openMsg(0)">
-              <Badge :count="MsgCount.sysNum" type="danger" class="msg-item-count">
+              <Badge :count="MsgCount.sysNum"  class="msg-item-count">
                 <img src="../assets/icon-system-msg.png" alt="" width="34">
               </Badge>
               <p>系统消息</p>
             </div>
             <div class="msg-item" @click="openMsg(1)">
-              <Badge :count="MsgCount.orderNum" type="danger" class="msg-item-count">
+              <Badge :count="MsgCount.orderNum"  class="msg-item-count">
                 <img src="../assets/icon-order-msg.png" alt="" width="34">
               </Badge>
               <p>订单消息</p>
             </div>
             <div class="msg-item" @click="openMsg(2)">
-              <Badge :count="MsgCount.carrierNum" type="danger" class="msg-item-count">
+              <Badge :count="MsgCount.carrierNum" class="msg-item-count">
                 <img src="../assets/icon-truck-msg.png" alt="" width="34">
               </Badge>
               <p>运输消息</p>
@@ -89,7 +89,7 @@ export default {
           break
       }
     },
-    openMsg (type) {
+    openMsg (type = 0) {
       this.$emit('on-msg-click', type)
     },
     renew () {
