@@ -206,6 +206,7 @@ export default {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     },
     searchList () {
+      this.selectStatus === 0 ? this.contact = '' : this.name = ''
       let data = {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
