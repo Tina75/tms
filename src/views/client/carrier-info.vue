@@ -130,7 +130,8 @@
                     :current.sync="pageNo1" :page-size-opts="pageArray1"
                     size="small"
                     show-sizer
-                    show-elevator show-total @on-change="handleChangePage1"/>
+                    show-elevator show-total @on-change="handleChangePage1"
+                    @on-page-size-change="handleChangePageSize1"/>
             </template>
           </div>
         </TabPane>
@@ -147,7 +148,8 @@
                     :current.sync="pageNo2" :page-size-opts="pageArray2"
                     size="small"
                     show-sizer
-                    show-elevator show-total @on-change="handleChangePage2"/>
+                    show-elevator show-total @on-change="handleChangePage2"
+                    @on-page-size-change="handleChangePageSize2"/>
             </template>
           </div>
         </TabPane>
@@ -514,6 +516,10 @@ export default {
       this.pageNo1 = pageNo
       this._carrierListDriver()
     },
+    handleChangePageSize1 (pageSize) {
+      this.pageSize1 = pageSize
+      this._carrierListDriver()
+    },
     // 车辆列表，新增，删除，修改
     _carrierListCar () {
       let data = {
@@ -549,6 +555,10 @@ export default {
     handleChangePage2 (pageNo) {
       // 重新组装数据，生成查询参数
       this.pageNo2 = pageNo
+      this._carrierListCar()
+    },
+    handleChangePageSize2 (pageSize) {
+      this.pageSize2 = pageSize
       this._carrierListCar()
     }
   }

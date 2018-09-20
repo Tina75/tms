@@ -24,7 +24,8 @@
               :current.sync="pageNo" :page-size-opts="pageArray"
               size="small"
               show-sizer
-              show-elevator show-total @on-change="handleChangePage"/>
+              show-elevator show-total @on-change="handleChangePage"
+              @on-page-size-change="handleChangePageSize"/>
       </template>
     </div>
   </div>
@@ -172,7 +173,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.$router.push({ path: '/client/carrier-info', query: { carrierId: params.row.carrierId, carrierType: params.row.carrierType }
+                    this.openTab({ path: '/client/carrier-info', query: { carrierId: params.row.carrierId, carrierType: params.row.carrierType }
                     })
                   }
                 }
@@ -307,6 +308,10 @@ export default {
     handleChangePage (pageNo) {
       // 重新组装数据，生成查询参数
       this.pageNo = pageNo
+      this.searchList()
+    },
+    handleChangePageSize (pageSize) {
+      this.pageSize = pageSize
       this.searchList()
     },
     _carrierDetailsForCompany (carrierId, fn) {

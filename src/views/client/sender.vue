@@ -30,7 +30,8 @@
               :current.sync="pageNo" :page-size-opts="pageArray"
               size="small"
               show-sizer
-              show-elevator show-total @on-change="handleChangePage"/>
+              show-elevator show-total @on-change="handleChangePage"
+              @on-page-size-change="handleChangePageSize"/>
       </template>
     </div>
   </div>
@@ -138,7 +139,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.$router.push({ path: '/client/sender-info', query: { id: params.row.id }
+                    this.openTab({ path: '/client/sender-info', query: { id: params.row.id }
                     })
                   }
                 }
@@ -206,6 +207,7 @@ export default {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     },
     searchList () {
+      this.selectStatus === 0 ? this.contact = '' : this.name = ''
       let data = {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
@@ -235,6 +237,10 @@ export default {
     handleChangePage (pageNo) {
       // 重新组装数据，生成查询参数
       this.pageNo = pageNo
+      this.searchList()
+    },
+    handleChangePageSize (pageSize) {
+      this.pageSize = pageSize
       this.searchList()
     }
   }
