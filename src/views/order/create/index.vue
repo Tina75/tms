@@ -57,8 +57,8 @@
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="收货人" prop="consigneeName">
-        <SelectInput v-model="orderForm.consigneeName" :maxlength="15" :local-options="consigneeContacts" :remote="false">
+      <FormItem label="收货人" prop="consigneeContact">
+        <SelectInput v-model="orderForm.consigneeContact" :maxlength="15" :local-options="consigneeContacts" :remote="false">
         </SelectInput>
       </FormItem>
       </Col>
@@ -127,7 +127,7 @@
           </Col>
           <Col span="6">
           <span @click="showCounter">
-            <Icon type="ios-calculator" size="26" color="#00a4bd"></Icon>
+            <FontIcon type="jisuanqi" size="20" color="#00a4bd" class="i-ml-5"></FontIcon>
           </span>
           </Col>
         </Row>
@@ -184,7 +184,7 @@
       </Col>
       <Col span="6">
       <FormItem label="回单数量" prop="receiptCount">
-        <InputNumber v-model="orderForm.receiptCount" :min="1" :parser="value => parseInt(value)" class="order-create__input-w100">
+        <InputNumber v-model="orderForm.receiptCount" :min="1" :parser="value => parseInt(value).toString()" class="order-create__input-w100">
         </InputNumber>
       </FormItem>
       </Col>
@@ -200,7 +200,7 @@
       <Button class="i-ml-10" @click="print">保存并打印</Button>
       <Button class="i-ml-10" @click="resetForm">清空</Button>
     </FormItem>
-    <OrderPrint ref="printer" :data="orderForm">
+    <OrderPrint ref="printer" :data.sync="orderPrint">
     </OrderPrint>
   </Form>
 </template>
@@ -215,7 +215,8 @@ import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import OrderPrint from './OrderPrint'
 import AreaSelect from '@/components/AreaSelect'
-
+import FontIcon from '@/components/FontIcon'
+import _ from 'lodash'
 import settlements from './constant/settlement.js'
 import pickups from './constant/pickup.js'
 export default {
@@ -227,7 +228,8 @@ export default {
     TagNumberInput,
     OrderPrint,
     AreaSelect,
-    SelectInput
+    SelectInput,
+    FontIcon
   },
   mixins: [BaseComponent, BasePage],
   data () {
@@ -309,7 +311,7 @@ export default {
                 remote: false,
                 localOptions: _this.cargoOptions,
                 transfer: true,
-                maxlength: 20
+                maxlength: 10
               },
               on: {
                 'on-blur': (value) => {
@@ -354,7 +356,8 @@ export default {
             return h('InputNumber', {
               props: {
                 value: params.row[params.column.key] || null,
-                min: 0
+                min: 0,
+                parser: _this.handleParseFloat
               },
               on: {
                 'on-change': (value) => {
@@ -384,7 +387,10 @@ export default {
             return h('InputNumber', {
               props: {
                 value: params.row[params.column.key] || null,
-                min: 0
+                min: 0,
+                parser: (value) => {
+                  return float.floor(value, 1).toString()
+                }
               },
               on: {
                 'on-change': (value) => {
@@ -408,7 +414,8 @@ export default {
             return h('InputNumber', {
               props: {
                 value: params.row[params.column.key] || null,
-                min: 0
+                min: 0,
+                parser: _this.handleParseFloat
               },
               on: {
                 'on-change': (value) => {
@@ -418,7 +425,7 @@ export default {
                 },
                 'on-blur': () => {
                   if ('value' in params) {
-                    _this.updateLocalCargo(setObject(params, parseInt(params.value || 0)))
+                    _this.updateLocalCargo(setObject(params, float.floor(params.value || 0)))
                   }
                 }
               }
@@ -432,7 +439,8 @@ export default {
             return h('InputNumber', {
               props: {
                 value: params.row[params.column.key] || null,
-                min: 1
+                min: 1,
+                parser: (value) => parseInt(value).toString()
               },
               on: {
                 'on-change': (value) => {
@@ -501,11 +509,11 @@ export default {
         // 发货地址
         consignerAddress: '',
         // 收货人
-        consigneeName: '',
+        consigneeContact: '',
         consigneePhone: '',
         consigneeAddress: '',
         // 货品信息
-        cargoList: [],
+        orderCargoList: [],
         // 付款方式
         settlementType: 4, // 默认月结，1:现付，2：到付 ，3：回付 4月结
         // 运输费用
@@ -525,6 +533,7 @@ export default {
         // 备注
         remark: ''
       },
+      orderPrint: {},
       rules: {
         consignerName: [
           // { validator: validateConsignerName, trigger: 'blur' }
@@ -549,7 +558,7 @@ export default {
         consignerAddress: [
           { required: true, message: '请输入发货地址' }
         ],
-        consigneeName: [
+        consigneeContact: [
           { required: true, message: '请输入收货人名称' }
         ],
         consigneePhone: [
@@ -656,7 +665,7 @@ export default {
     ]),
     // 保留2位小数
     handleParseFloat (value) {
-      return float.floor(value)
+      return float.floor(value).toString()
     },
     /**
      * 货物名称选择下拉项目时触发
@@ -717,7 +726,7 @@ export default {
         }
         if (consignees.length > 0) {
           // 设置收货人信息，收货人，手机，收货地址
-          _this.orderForm.consigneeName = consignees[0].contact
+          _this.orderForm.consigneeContact = consignees[0].contact
           _this.orderForm.consigneePhone = consignees[0].phone
           _this.orderForm.consigneeAddress = consignees[0].address
         }
@@ -789,7 +798,13 @@ export default {
       this.clearCargoes()
     },
     print () {
+      this.syncStoreCargoes()
+      this.orderPrint = _.cloneDeep(this.orderForm)
+      this.orderPrint.orderCargoList = _.cloneDeep(this.consignerCargoes)
+      this.orderPrint.totalFee = this.totalFee
       this.$refs.printer.print()
+
+      // this.handleSubmit()
     }
   }
 }

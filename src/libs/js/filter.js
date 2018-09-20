@@ -100,3 +100,17 @@ Vue.filter('formatid', function (value) {
 Vue.filter('codeToName', function (cityId) {
   return City.codeToName(cityId)
 })
+/**
+ * 根据code获取城市全名
+ * @param code 城市code
+ * @param deep  1：省  2：市  3：区
+ */
+Vue.filter('codeToFullName', function (cityId) {
+  return City.codeToFullName(cityId)
+})
+/**
+ * 将元转为分
+ */
+Vue.filter('toPoint', function (cityId) {
+  return cityId / 100
+})

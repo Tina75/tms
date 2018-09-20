@@ -5,30 +5,58 @@
     </a>
     <div class="header-bar-avator-dropdown">
       <Dropdown class="header-bar-avator-dropdown-notify">
-        <Poptip trigger="hover" title="消息中心" content="暂无系统消息">
-          <Badge :count="0" type="primary">
+        <Poptip trigger="hover" title="消息中心" content="暂无系统消息" width="300">
+          <Badge :count="MsgCount.all" type="primary">
             <Icon type="ios-notifications" size="30" color="#fff"></Icon>
           </Badge>
-
+          <div slot="content" class="msg">
+            <div class="msg-item" @click="openMsg(0)">
+              <Badge :count="MsgCount.sysNum"  class="msg-item-count">
+                <img src="../assets/icon-system-msg.png" alt="" width="34">
+              </Badge>
+              <p>系统消息</p>
+            </div>
+            <div class="msg-item" @click="openMsg(1)">
+              <Badge :count="MsgCount.orderNum"  class="msg-item-count">
+                <img src="../assets/icon-order-msg.png" alt="" width="34">
+              </Badge>
+              <p>订单消息</p>
+            </div>
+            <div class="msg-item" @click="openMsg(2)">
+              <Badge :count="MsgCount.carrierNum" class="msg-item-count">
+                <img src="../assets/icon-truck-msg.png" alt="" width="34">
+              </Badge>
+              <p>运输消息</p>
+            </div>
+          </div>
         </Poptip>
         <!-- <DropdownMenu slot="list">
           <DropdownItem name="1" >通知</DropdownItem>
           <DropdownItem name="2" >订单</DropdownItem>
         </DropdownMenu> -->
       </Dropdown>
-      <Dropdown  @on-click="handleClick">
+      <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick">
         <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" size="small"></avatar>
         <span class="user-info"><p>{{name}}</p> </span>
         <Icon type="md-arrow-dropdown" size="12"/>
-        <DropdownMenu slot="list">
-          <DropdownItem name="logout" >退出登录</DropdownItem>
+        <DropdownMenu slot="list" class="dropdown-box i-pa-10">
+          <p class="dropdown-line"><label for="">姓名</label>{{UserInfo.name}}</p>
+          <p class="dropdown-line"><label for="">手机号</label>{{UserInfo.phone}}</p>
+          <p class="dropdown-line"><label for="">角色</label>{{UserInfo.roleName}}</p>
+          <p class="dropdown-line"><label for="">公司</label>{{UserInfo.companyName}}</p>
+          <p class="dropdown-line"><label for="">有效期至</label>{{UserInfo.expirationTime | datetime('yyyy-MM-dd')}}</p>
+          <br>
+          <p style="text-align:center"><a @click="renew">延长有效期</a>&nbsp;&nbsp;&nbsp;&nbsp;<a style="color:#EC4E4E" @click="logout">登出</a></p>
+
+          <!-- <DropdownItem name="logout" >退出登录</DropdownItem> -->
         </DropdownMenu>
       </Dropdown>
-    </row></div>
+    </div>
   </div>
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
 export default {
   name: 'headerBar',
   props: {
@@ -47,6 +75,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['MsgCount', 'UserInfo'])
+  },
   methods: {
     handleChange () {
       this.$emit('update:collapsed', !this.collapsed)
@@ -57,6 +88,21 @@ export default {
           window.EMA.fire('logout')
           break
       }
+    },
+    openMsg (type = 0) {
+      this.$emit('on-msg-click', type)
+    },
+    logout () {
+      window.EMA.fire('logout')
+    },
+    renew () {
+      window.EMA.fire('Dialogs.push', {
+        name: 'dialogs/renew',
+        data: {
+          title: '提示',
+          expirationTime: this.UserInfo.expirationTime
+        }
+      })
     }
   }
 }
@@ -100,17 +146,57 @@ export default {
   &-avator-dropdown
     float right
     display inline-block
-    margin-top 10px
+    margin-top 8px
     vertical-align middle
     line-height 10px
-    padding 0 15px 0
+    padding 0 5px 0
+    // .dropdown-box
+    //   text-align center
+    .dropdown-line
+      height 20px
+      padding 5px 0px
+      color #555555
+      white-space nowrap
+      overflow hidden
+      text-overflow ellipsis
+      max-width 140px
+      label
+        min-width 50px
+        text-align left
+        display inline-block
+    .ivu-badge-count
+      top: -2px;
+      right: 8px;
+      padding: 0 3px;
+      min-width 0
+      box-shadow: 0 0 0 1px #000;
+      line-height: 12px;
+      height 14px
     &:hover
       cursor pointer
     &-notify
       margin-top 3px
       margin-right 20px
+      .msg
+        display: -webkit-flex;
+        display flex
+        &-item
+          display inline-block
+          flex 1
+          text-align center
+          color #555555
+          font-size 12px
+          &-count .ivu-badge-count
+            box-shadow: none;
+            margin-top 8px
+            right 0
+          img
+            display inline-block
+            padding-top 12px
+
   .user-info
     width:60px;
     padding-left 5px
     display:inline-block;
+    color white
 </style>

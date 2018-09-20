@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <Menu v-show="!collapsed" ref="menu"  :active-name="$route.path === '/'?'/home/index':$route.path" :open-names="openedNames"  accordion width="200" theme="dark" @on-select="handleSelect">
-      <p class="title"><i class="icon font_family icon-logo-zjy" ></i></p>
+  <div class="sider">
+    <Menu v-show="!collapsed" ref="menu"  :active-name="$route.path === '/'?'/home':$route.path" :open-names="openedNames"  accordion width="200" theme="dark" @on-select="handleSelect">
+      <p class="title"><i class="icon font_family icon-ico-slogo" ></i></p>
       <template v-for="item in menuList">
         <template v-if="item.children">
           <Submenu v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path">
@@ -120,11 +120,11 @@ export default {
   .drop-menu-a
     padding 6px 15px
     display inline-block
-.icon-logo-zjy
-  font-size 21px
+.icon-ico-slogo
+  font-size 24px
 .icon-logo-1
   font-size 32px
 .icon
   display inline-block
-  vertical-align middle
+  // vertical-align middle
 </style>

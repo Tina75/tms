@@ -6,10 +6,10 @@ const waitingTime = 60
 let captchaUrl
 switch (process.env.NODE_ENV) {
   case 'development':
-    captchaUrl = 'http://192.168.1.49:5656/dolphin-web/user/captcha'
+    captchaUrl = '//192.168.1.49:5656/dolphin-web/user/captcha'
     break
   case 'production':
-    captchaUrl = '//dev-boss.yundada56.com/bluewhale-boss/user/captcha'
+    captchaUrl = '//192.168.1.49:5656/dolphin-web/user/captcha'
     break
 }
 
@@ -26,6 +26,10 @@ export default {
     }
   },
   methods: {
+    changeMode (mode) {
+      this.$emit('on-change', mode)
+    },
+
     // 输入框校验
     validate (type, { extraRules, done } = {}) {
       switch (type) {
@@ -105,11 +109,16 @@ export default {
     // 输入框失焦
     inputBlur (type) {
       if (this.currentFocus !== undefined) this.currentFocus = ''
-      if (!this.validate(type)) return
+      this.validate(type)
+      // if (!this.validate(type)) return
 
-      if (type === 'phone' && this.$route.path === '/login/sign-up') this.imCheckPhoneIsSignup()
-      else if (type === 'captchaCode') this.imCheckCapthcha()
-      else if (type === 'smsCode') this.imCheckSMSCode()
+      // if (type === 'phone') {
+      //   let mode = 'signin'
+      //   if (this.$route.path === '/login/sign-up') mode = 'signup'
+      //   if (this.$route.path === '/login/find-back') mode = 'findback'
+      //   this.imCheckPhone(mode)
+      // } else if (type === 'captchaCode') this.imCheckCapthcha()
+      // else if (type === 'smsCode') this.imCheckSMSCode()
     },
 
     // 校验密码-添加设置密码时的位数规则
@@ -124,14 +133,20 @@ export default {
       })
     },
 
-    // 实时校验手机号是否已注册-注册时
-    imCheckPhoneIsSignup () {
+    // 实时校验手机号
+    imCheckPhone (mode) {
       Server({
         url: '/user/phone',
         method: 'get',
         data: { phone: this.form.phone }
       }).then(res => {
-        console.log('手机号校验通过')
+        if (mode === 'signup' && res.data.code === 310013) {
+          this.$Message.error('该手机号已注册，请登录')
+        } else if (mode === 'signin' && res.data.code === 10000) {
+          this.$Message.error('该手机号未注册，请先注册')
+        } else if (mode === 'findback' && res.data.code === 10000) {
+          this.$Message.error('该手机号未注册，请先注册')
+        }
       }).catch(err => console.error(err))
     },
 

@@ -59,8 +59,8 @@
       <p slot="header" style="text-align:center">
         <span>提示</span>
       </p>
-      <P>有员工属于该角色，暂时不能删除</P>
-      <P>如需删除，请先将员工更换角色。</P>
+      <P style="color:gray;">有员工属于该角色，暂时不能删除,如需删除，请先将</P>
+      <P style="color:gray;">员工更换角色。</P>
       <div slot="footer">
         <Button type="primary" @click="removeCancelFormFail">我知道了</Button>
       </div>
@@ -71,13 +71,14 @@
           <!-- <Checkbox v-model="treeData[0].checked" @on-change="checkTitleBox(treeData[0].key)" style="margin-top: -5px;"></Checkbox> -->
           <span>{{treeData[0].title}}</span>
         </p>
-        <Tree :ref="treeData[0].key"
-              :expand="false"
-              :data="treeData"
-              class="treeContentDiv"
-              multiple
-              show-checkbox
-              @on-check-change="treeCheckBox">
+        <Tree
+          :ref="treeData[0].key"
+          :expand="false"
+          :data="treeData"
+          class="treeContentDiv"
+          multiple
+          show-checkbox
+          @on-check-change="treeCheckBox">
         </Tree>
       </Card>
     </div>
@@ -141,7 +142,7 @@ export default {
     }
   },
   created () {
-    this.arrayCodeList = ['1001', '1002', '1003', '1004', '1005', '1006', '1007', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '3001', '3002', '3003', '3004', '3005', '3006', '3007', '3008', '3009', '3010', '3011', '3012', '3013', '3014', '3015', '3016', '3017', '3018', '3019', '3020', '3021', '3022', '3023', '3024', '3025', '3026', '3027', '3028', '3029', '3030', '3031', '3032', '3033', '3034', '3035', '3036', '3037', '3038', '3039', '3040', '3041', '3042', '3043', '3044', '3045', '3046', '3047', '3048', '3049', '3050', '3051', '3052', '3053', '3054', '3055', '3056', '3057', '3058', '3059', '3060', '3061', '3062', '3063', '3064', '3065', '3066', '3067', '3068', '3069']
+    this.arrayCodeList = ['100000', '110000', '120000', '130000', '140000', '150000', '100100', '100200', '110100', '110200', '120100', '120200', '120300', '130100', '130200', '130300', '140100', '140200', '150100', '150200', '100101', '100102', '100103', '100201', '100202', '100203', '100204', '110101', '110102', '110103', '110104', '110105', '110106', '110107', '110108', '110109', '110201', '110202', '110203', '120101', '120102', '120103', '120104', '120105', '120106', '120107', '120108', '120201', '120202', '120203', '120204', '120205', '120206', '120207', '120301', '120302', '120303', '120304', '120305', '130101', '130102', '130103', '130104', '130105', '130106', '130107', '130108', '130109', '130110', '130111', '130112', '130201', '130202', '130203', '130204', '130205', '130206', '130207', '130208', '130209', '130301', '130302', '130303', '140101', '140102', '140103', '140201', '140202', '140203', '110300']
     this.initTreeList(this.arrayCodeList)
     this.getMenuList()
   },
@@ -152,8 +153,6 @@ export default {
         method: 'get'
       }).then(({ data }) => {
         this.menuList = data.data
-        console.log(this.menuList)
-        // this.menuList[0].codes = ['1001', '1002', '1003', '1004', '1005', '1006', '1007', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '3001', '3002', '3003', '3004', '3005', '3006', '3007', '3008', '3009', '3010', '3011', '3012', '3013', '3014', '3015', '3016', '3017', '3018', '3019', '3020', '3021', '3022', '3023', '3024', '3025', '3026', '3027', '3028', '3029', '3030', '3031', '3032', '3033', '3034', '3035', '3036', '3037', '3038', '3039', '3040', '3041', '3042', '3043', '3044', '3045', '3046', '3047', '3048', '3049', '3050', '3051', '3052', '3053', '3054', '3055', '3056', '3057', '3058', '3059', '3060', '3061', '3062', '3063', '3064', '3065', '3066', '3067', '3068', '3069'];
       })
     },
     initTreeList (arrayCodeList) {
@@ -178,9 +177,8 @@ export default {
       })
     },
     clickLeftMenu (menu) {
-      console.log(menu.codes)
       this.rightTitle = menu.name
-      this.arrayCodeList = menu.codes
+      this.arrayCodeList = (menu.codes === '' ? [] : JSON.parse(menu.codes))
       this.menuParam = menu
       this.disSaveBtn = true
     },
@@ -206,15 +204,21 @@ export default {
       for (let key in this.listInitTreeList) {
         this.$refs[key][0].getCheckedNodes().forEach(node => {
           selectChecBoxList.push(node.code)
+          // 加入父级code
+          if (!selectChecBoxList.includes(node.parentId) && node.parentId !== undefined) {
+            selectChecBoxList.push(node.parentId)
+          }
         })
       }
       this.menuParam.codes = selectChecBoxList
+      let params = {}
+      params.id = this.menuParam.id
+      params.resIds = this.menuParam.codes
       Server({
         url: 'role/update',
         method: 'post',
-        data: this.menuParam
+        data: params
       }).then(({ data }) => {
-        console.log(data)
         if (data.code === 10000) {
           this.$Message.success('角色权限修改成功!')
         } else {
@@ -261,7 +265,6 @@ export default {
       this.createRoleModal = false
     },
     removeFormRole () {
-      console.log(this.removeMenuParams)
       let params = {}
       params.id = this.removeMenuParams.id
       Server({

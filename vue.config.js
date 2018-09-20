@@ -16,7 +16,7 @@ module.exports = {
     proxy: {
       '/': {
         // target: 'http://yapi.yundada56.com/mock/214',
-        target: 'http://192.168.1.49:5656/dolphin-web',
+        target: '//192.168.1.49:5656/dolphin-web/',
         ws: false,
         changOrigin: true
       }
@@ -30,7 +30,8 @@ module.exports = {
       'vue-router': 'VueRouter',
       'vuex': 'Vuex',
       'iview': 'iview',
-      'lodash': '_'
+      'lodash': '_',
+      'BMap': 'BMap'
     }
   }
 }

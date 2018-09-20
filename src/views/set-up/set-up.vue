@@ -13,9 +13,9 @@
       <span style="margin-left:25px; font-size: 16px;">{{rightTitle}}</span>
     </div>
     <!--密码设置-->
-    <div v-if="'1' === this.rightKey" style="height:250px;">
+    <div v-if="'1' === this.rightKey" key="1" style="height:250px;">
       <Col span="10" class="setConf">
-      <Form ref="formPwd" :model="formPwd" :rules="rulePwd" :label-width="90">
+      <Form ref="formPwd" :model="formPwd" :rules="rulePwd" :label-width="90" label-position="left">
         <FormItem label="原始密码：" prop="oldPassword">
           <Input v-model="formPwd.oldPassword" type="password" placeholder="请输入原始密码"></Input>
         </FormItem>
@@ -29,17 +29,17 @@
           <Button type="primary" @click="pwdSubmit('formPwd')">保存</Button>
         </FormItem>
       </Form>
-        </Col>
+      </Col>
     </div>
     <!--个人设置-->
-    <div v-if="'2' === this.rightKey" style="height:350px;">
+    <div v-else-if="'2' === this.rightKey" key="2" style="height:350px;">
       <Col span="10" class="setConf">
-      <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="90">
+      <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="90" label-position="left">
         <FormItem label="账号：">
           <span>{{formPersonal.phone}}</span>
         </FormItem>
-        <FormItem label="姓名：" prop="name">
-          <Input v-model="formPersonal.name" placeholder="请输入姓名"></Input>
+        <FormItem label="姓名：" prop="name" style="margin-left: -9px;">
+          <Input v-model="formPersonal.name" placeholder="请输入姓名" style="margin-left: 9px;"></Input>
         </FormItem>
         <FormItem label="角色：">
           <span>{{formPersonal.roleName}}</span>
@@ -74,15 +74,15 @@
           <Button type="primary" @click="personalSubmit('formPersonal')">保存</Button>
         </FormItem>
       </Form>
-        </Col>
+      </Col>
     </div>
     <!--短信设置-->
-    <div v-if="'3' === this.rightKey">
+    <div v-else-if="'3' === this.rightKey">
       <Col span="18" class="setConf">
       <Card dis-hover>
         <div solt="title" class="msgCardTitle">
           开启短信提醒
-          <i-switch v-model="switchMsg" @on-change="changeCheckBoxGroup" />
+          <i-switch v-model="switchMsg" style="margin-left:20px;" @on-change="changeCheckBoxGroup" />
         </div>
         <div v-for="msg in this.messageList" :key="msg.title" class="mesDiv">
           <p style="font-weight: bold">{{msg.title}}</p>
@@ -103,9 +103,9 @@
       </Col>
     </div>
     <!--公司设置-->
-    <div v-if="'4' === this.rightKey" style="height:530px;">
+    <div v-else-if="'4' === this.rightKey" key="4" style="height:530px;">
       <Col span="10" class="setConf">
-      <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="120">
+      <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="120" label-position="left">
         <FormItem label="公司名称：" prop="name">
           <Input v-model="formCompany.name" placeholder="请输入公司名称"></Input>
         </FormItem>
@@ -116,7 +116,7 @@
           <Input v-model="formCompany.contactPhone" placeholder="请输入联系方式"></Input>
         </FormItem>
         <FormItem label="所在省市：" prop="cityId">
-          <Input v-model="formCompany.cityId" placeholder="请选择所在省市"></Input>
+          <AreaSelect v-model="formCompany.cityId" :deep="true"></AreaSelect>
         </FormItem>
         <FormItem label="公司地址：" prop="address">
           <Input v-model="formCompany.address" placeholder="请输入公司地址"></Input>
@@ -159,8 +159,12 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
+import AreaSelect from '@/components/AreaSelect'
 export default {
   name: 'set-up',
+  components: {
+    AreaSelect
+  },
   mixins: [ BasePage ],
   metaInfo: {
     title: '设置'
@@ -198,6 +202,23 @@ export default {
         callback()
       }
     }
+    var checkName = function (rule, value, callback) {
+      if (value.length < 2 || value.length > 10) {
+        return callback(new Error('姓名不能小于2个字且不能多于10个字'))
+      } else {
+        callback()
+      }
+    }
+    var checkPhone = function (rule, value, callback) {
+      if (value) {
+        if (!(/^1\d{10}$/.test(value))) {
+          return callback(new Error('手机号格式不正确'))
+        }
+        callback()
+      } else {
+        callback()
+      }
+    }
     return {
       setUpMenu: [{
         name: '修改密码',
@@ -228,32 +249,38 @@ export default {
       switchMsg: false,
       checkNum: 0,
       msgCheckBoxList: [],
+      msgSlectCheckBox: [],
       messageList: [{
         title: '发运提醒',
         message: '提醒内容： 【智加云TMS公司】XX公司，您的货物已装车，由车牌号XXXX司机姓名XXXX司机电话XXXX派送。',
         checkBox: [{
           label: '发货人',
-          model: '1'
+          model: '1',
+          key: '1'
         }, {
           label: '发货人',
-          model: '2'
+          model: '2',
+          key: '2'
         }]
       }, {
         title: '到货提醒',
         message: '提醒内容： 【智加云TMS公司】XX公司，您的货物已签收，由车牌号XXXX司机姓名XXXX司机电话XXXX完成派送。',
         checkBox: [{
           label: '发货人',
-          model: '3'
+          model: '3',
+          key: '3'
         }, {
           label: '发货人',
-          model: '4'
+          model: '4',
+          key: '4'
         }]
       }, {
         title: '指派司机提醒',
         message: '发货提醒： 【智加云TMS公司】XX公司给您发了新的指派运单，请再司机端查看。',
         checkBox: [{
           label: '司机',
-          model: '5'
+          model: '5',
+          key: '5'
         }]
       }],
       // 校验相关
@@ -276,7 +303,8 @@ export default {
       // 个人
       rulePersonal: {
         name: [
-          { required: true, message: '请输入姓名', trigger: 'blur' }
+          { required: true, message: '请输入姓名', trigger: 'blur' },
+          { validator: checkName, trigger: 'blur' }
         ]
       },
       // 公司
@@ -285,28 +313,30 @@ export default {
           { required: true, message: '请输入公司名称', trigger: 'blur' }
         ],
         contact: [
-          { required: true, message: '请输入公司联系人', trigger: 'blur' }
+          { required: true, message: '请输入公司联系人', trigger: 'blur' },
+          { validator: checkName, trigger: 'blur' }
         ],
         contactPhone: [
-          { required: true, message: '请输入联系方式', trigger: 'blur' }
+          { required: true, message: '请输入联系方式', trigger: 'blur' },
+          { validator: checkPhone, trigger: 'blur' }
         ],
         cityId: [
-          { required: true, message: '请选择所在省市', trigger: 'blur' }
+          { required: true, message: '请选择所在省市' }
         ],
         address: [
           { required: true, message: '请输入公司地址', trigger: 'blur' }
         ]
-      },
-      // 图片相关-个人
-      uploadList: {
-        'name': 'bc7521e033abdd1e92222d733590f104',
-        'url': 'https://o5wwk8baw.qnssl.com/bc7521e033abdd1e92222d733590f104/avatar'
-      },
-      // 图片相关-公司
-      uploadListCompany: {
-        'name': 'a42bdcc1178e62b4694c830f028db5c0',
-        'url': 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'
       }
+      // 图片相关-个人
+      // uploadList: {
+      //   'name': 'bc7521e033abdd1e92222d733590f104',
+      //   'url': 'https://o5wwk8baw.qnssl.com/bc7521e033abdd1e92222d733590f104/avatar'
+      // },
+      // // 图片相关-公司
+      // uploadListCompany: {
+      //   'name': 'a42bdcc1178e62b4694c830f028db5c0',
+      //   'url': 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'
+      // }
     }
   },
   mounted: function () {
@@ -320,7 +350,8 @@ export default {
         url: 'set/companyInfo',
         method: 'get'
       }).then(({ data }) => {
-        this.formCompany = data.data
+        this.formCompany = Object.assign({}, data.data)
+        this.formCompany.cityId = this.formCompany.cityId.toString()
       })
     },
     getUserInfo () {
@@ -328,7 +359,7 @@ export default {
         url: 'set/userInfo',
         method: 'get'
       }).then(({ data }) => {
-        this.formPersonal = data.data
+        this.formPersonal = Object.assign({}, data.data)
       })
     },
     smsInfo () {
@@ -336,24 +367,24 @@ export default {
         url: 'set/smsInfo',
         method: 'get'
       }).then(({ data }) => {
-        console.log(data.data)
-        // this.messageList = data.data.smsCode
+        this.msgCheckBoxList = data.data.smsCode === '' ? [] : data.data.smsCode
+        this.checkNum = 0
+        for (const checkList of this.messageList) {
+          checkList.checkBox.forEach(element => {
+            if (this.msgCheckBoxList.includes(element.model)) {
+              this.checkNum++
+              element.model = true
+            }
+          })
+          this.switchMsg = (this.checkNum > 0)
+        }
       })
-      this.msgCheckBoxList = ['1']
-      this.checkNum = 0
-      for (const checkList of this.messageList) {
-        checkList.checkBox.forEach(element => {
-          if (this.msgCheckBoxList.includes(element.model)) {
-            this.checkNum++
-            element.model = true
-          }
-        })
-        this.switchMsg = (this.checkNum > 0)
-      }
     },
     clickLeftMenu (id, menuName) {
-      this.rightTitle = menuName
-      this.rightKey = id
+      this.$nextTick(function () {
+        this.rightTitle = menuName
+        this.rightKey = id
+      })
     },
     // 密码
     pwdSubmit (name) {
@@ -378,16 +409,20 @@ export default {
     personalSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          // this.$Message.success('Success!')
           let param = {}
           param.name = this.formPersonal.name
-          param.avatarPic = this.formPersonal.roleName
+          param.avatarPic = ''
           Server({
             url: 'set/person',
             method: 'post',
             data: param
           }).then(({ data }) => {
-            console.log(data.data)
+            if (data.code === 10000) {
+              this.$Message.success('保存成功!')
+              this.formPwd = {}
+            } else {
+              this.$Message.info(data.msg)
+            }
           })
         }
       })
@@ -396,10 +431,12 @@ export default {
     companySubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          let params = Object.assign({}, this.formCompany)
+          params.cityId = params.cityId[2].toString()
           Server({
             url: 'set/company',
             method: 'post',
-            data: this.formCompany
+            data: params
           }).then(({ data }) => {
             if (data.code === 10000) {
               this.$Message.success('保存成功!')
@@ -421,77 +458,86 @@ export default {
     checkBtnBox (model) {
       let statusList = []
       this.checkNum = 0
+      let listInit = new Set()
       for (const checkList of this.messageList) {
         checkList.checkBox.forEach(element => {
           this.checkNum++
-          if (element.model) {
-            statusList.push(element.model)
+          statusList.push(element.model)
+          if (element.model === true) {
+            listInit.add(element.key)
           }
         })
         this.switchMsg = (statusList.length > 0)
       }
+      this.msgSlectCheckBox = Array.from(listInit)
     },
     msgSaveBtn () {
+      let params = {}
+      params.smsCode = this.msgSlectCheckBox
       Server({
         url: 'set/sms',
         method: 'post',
-        data: this.messageList
+        data: params
       }).then(({ data }) => {
-        console.log(data.data)
+        if (data.code === 10000) {
+          this.$Message.success('保存成功!')
+        } else {
+          this.$Message.error(data.msg)
+        }
       })
-    },
-    // 图片相关 -个人
-    handleSuccess (res, file) {
-      file.url = 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'
-      file.name = 'a42bdcc1178e62b4694c830f028db5c0'
-    },
-    handleFormatError (file) {
-      this.$Notice.warning({
-        title: 'The file format is incorrect',
-        desc: 'File format of ' + file.name + ' is incorrect, please select jpg or png.'
-      })
-    },
-    handleMaxSize (file) {
-      this.$Notice.warning({
-        title: 'Exceeding file size limit',
-        desc: 'File  ' + file.name + ' is too large, no more than 2M.'
-      })
-    },
-    handleBeforeUpload (file) {
-      const check = this.uploadList.length < 5
-      if (!check) {
-        this.$Notice.warning({
-          title: 'Up to five pictures can be uploaded.'
-        })
-      }
-      return check
-    },
-    // 图片相关 -公司
-    handleSuccessCompany (res, file) {
-      file.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar'
-      file.name = '7eb99afb9d5f317c912f08b5212fd69a'
-    },
-    handleFormatErrorCompany (file) {
-      this.$Notice.warning({
-        title: 'The file format is incorrect',
-        desc: 'File format of ' + file.name + ' is incorrect, please select jpg or png.'
-      })
-    },
-    handleMaxSizeCompany (file) {
-      this.$Notice.warning({
-        title: 'Exceeding file size limit',
-        desc: 'File  ' + file.name + ' is too large, no more than 2M.'
-      })
-    },
-    handleBeforeUploadCompany () {
-      const check = this.uploadListCompany.length < 5
-      if (!check) {
-        this.$Notice.warning({
-          title: 'Up to five pictures can be uploaded.'
-        })
-      }
-      return check
     }
+    // 图片相关 -个人
+    // handleSuccess (res, file) {
+    //   file.url = 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'
+    //   file.name = 'a42bdcc1178e62b4694c830f028db5c0'
+    // },
+    // handleFormatError (file) {
+    //   this.$Notice.warning({
+    //     title: 'The file format is incorrect',
+    //     desc: 'File format of ' + file.name + ' is incorrect, please select jpg or png.'
+    //   })
+    // },
+    // handleMaxSize (file) {
+    //   this.$Notice.warning({
+    //     title: 'Exceeding file size limit',
+    //     desc: 'File  ' + file.name + ' is too large, no more than 2M.'
+    //   })
+    // },
+    // handleBeforeUpload (file) {
+    //   const check = this.uploadList.length < 5
+    //   if (!check) {
+    //     this.$Notice.warning({
+    //       title: 'Up to five pictures can be uploaded.'
+    //     })
+    //   }
+    //   return check
+    // },
+    // 图片相关 -公司
+    // handleSuccessCompany (res, file) {
+    //   file.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar'
+    //   file.name = '7eb99afb9d5f317c912f08b5212fd69a'
+    // },
+    // handleFormatErrorCompany (file) {
+    //   this.$Notice.warning({
+    //     title: 'The file format is incorrect',
+    //     desc: 'File format of ' + file.name + ' is incorrect, please select jpg or png.'
+    //   })
+    // },
+    // handleMaxSizeCompany (file) {
+    //   this.$Notice.warning({
+    //     title: 'Exceeding file size limit',
+    //     desc: 'File  ' + file.name + ' is too large, no more than 2M.'
+    //   })
+    // },
+    // handleBeforeUploadCompany () {
+    //   const check = this.uploadListCompany.length < 5
+    //   if (!check) {
+    //     this.$Notice.warning({
+    //       title: 'Up to five pictures can be uploaded.'
+    //     })
+    //   }
+    //   return check
+    // }
   }
 }
 </script>

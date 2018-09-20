@@ -6,7 +6,7 @@
       </Sider>
       <Layout>
         <Header class="header-con">
-          <header-bar :collapsed.sync="collapsed" :name="UserInfo.name"/>
+          <header-bar :collapsed.sync="collapsed" :name="UserInfo.name" @on-msg-click="openMsgTab"/>
           <div class="tag-nav-wrapper">
             <tab-nav :list="TabNavList" :value="$route" @on-close="handleCloseTab" @on-select="onTabSelect"/>
           </div>
@@ -45,20 +45,22 @@ export default {
     ...mapGetters(['TabNavList', 'UserInfo'])
   },
 
-  async mounted () {
-    window.EMA.bind('logout', () => {
-      this.logout()
+  mounted () {
+    window.EMA.bind('logout', (msg) => {
+      if (msg) {
+        this.$Modal.warning({
+          title: '提示',
+          content: `${msg}，请重新登录`,
+          onOk: () => { this.logout() }
+        })
+      } else {
+        this.logout()
+      }
     })
-    window.EMA.bind('refresh', (router) => {
-      // window.location.reload()
-      console.log('refresh')
-      // this.$nextTick(() => {
-      //   debugger
-      // this.onMenuSelect(router)
-      // router.query = {_time: 111}
-      // window.EMA.fire('openTab', router)
-      // })
-      this.$router.go(0)
+    window.EMA.bind('refresh', (route) => {
+      if (!route.query) route.query = {}
+      route.query._time = new Date().getTime()
+      this.turnToPage(route)
     })
     window.EMA.bind('updateUserInfo', () => {
       this.getUserInfo()
@@ -71,28 +73,40 @@ export default {
         this.turnToPage(tag)
       }
     })
-    this.initTabNav()
-    this.getUserInfo()
-    // 获取用户权限
-    await this.getPermissons()
+    this.init()
+
     // 初始化tabnav
-    if (this.$route.path === '/') {
-      setTimeout(() => {
-        this.onMenuSelect({ name: '首页', path: '/home/index' })
-      }, 200)
-    }
+    // if (this.$route.path === '/') {
+    //   setTimeout(() => {
+    //     this.onMenuSelect({ name: '首页', path: '/home' })
+    //   }, 200)
+    // }
   },
   methods: {
-    ...mapActions(['getPermissons', 'getUserInfo']),
+    ...mapActions(['getPermissons', 'getUserInfo', 'getMessageCount']),
     ...mapMutations(['setTabNavList', 'initTabNav']),
+    async init () {
+      await this.getPermissons()
+      this.initTabNav()
+      this.getUserInfo()
+      this.getMessageCount()
+      // 获取用户权限
+      // TODO: something
+    },
+    openMsgTab (type = 0) {
+      const router = {path: '/info/info', name: '消息', query: {type: type}}
+      this.onMenuSelect(router)
+    },
     logout () {
-      localStorage.removeItem('tms_is_login')
+      // localStorage.removeItem('tms_is_login')
+      localStorage.clear()
+      // this.$router.go(0)
       window.location.reload()
     },
     handleCloseTab (list, route) {
       // 选中前一个tab
       const nextRoute = this.getNextRoute(this.TabNavList, route)
-      this.$router.push(nextRoute)
+      this.turnToPage(nextRoute)
       this.setTabNavList(list) // 更新store
     },
     onTabSelect (item) {
@@ -125,12 +139,14 @@ export default {
      * @param {*} route2 路由对象
      */
     routeEqual (route1, route2) {
-      const params1 = route1.params || {}
-      const params2 = route2.params || {}
+      // const params1 = route1.params || {}
+      // const params2 = route2.params || {}
       const query1 = route1.query || {}
       const query2 = route2.query || {}
-      return (route1.name === route2.name) && this.objEqual(params1, params2) && this.objEqual(query1, query2)
+      // return (route1.name === route2.name) && this.objEqual(params1, params2) && this.objEqual(query1, query2)
+      return (route1.name === route2.name) && (query1.id === query2.id)
     },
+
     /**
      * @param {*} obj1 对象
      * @param {*} obj2 对象
@@ -238,6 +254,8 @@ html, body
   color rgba(255,255,255,1)
   font-family:PingFangSC-Regular;
   font-weight:400;
+.ivu-menu-item>i
+  margin-right 20px
 .ivu-modal-footer
   border-top none
   text-align center

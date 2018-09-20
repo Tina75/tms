@@ -45,7 +45,7 @@
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型：</span>
-            <span>{{ info.carType + ' ' + info.carLength }}</span>
+            <span>{{ info.carType|carTypeFilter }} {{ info.carLength|carLengthFilter }}</span>
           </i-col>
           <i-col span="10" offset="1">
             <span class="detail-field-title">司机：</span>
@@ -102,7 +102,7 @@
         </Row>
         <Row class="detail-field-group">
           <i-col span="24">
-            <span class="detail-field-title-sm">费用合计：</span>
+            <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
             <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
           </i-col>
         </Row>
@@ -111,6 +111,11 @@
             <span class="detail-field-title-sm">结算方式：</span>
             <div class="detail-payment-way">
               {{ payment.settlementType === '1' ? '按单结' : '月结' }}
+              <Table v-if="payment.settlementType === '2'"
+                     :columns="tablePayment"
+                     :data="payment.settlementPayInfo"
+                     :loading="loading"
+                     width="350"></Table>
             </div>
           </i-col>
         </Row>
@@ -124,8 +129,8 @@
 
           <div class="detail-log-icon"
                @click="showLog = !showLog">
-            <span
-              :class="showLog ? 'detail-log-hide' : 'detail-log-show'">《</span>
+            <i :class="showLog ? 'detail-log-hide' : 'detail-log-show'"
+               class="icon font_family icon-zhankai1"></i>
           </div>
 
           <Timeline :style="logListHeight"
@@ -187,13 +192,17 @@
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型/车长：</span>
-            <Input v-model="info.carType"
-                   class="detail-info-input-half"
-                   style="margin-right: 12px;"></Input>
-            <Input v-model="info.carLength"
-                   class="detail-info-input-half"></Input>
+            <Select v-model="info.carType"
+                    class="detail-info-input-half"
+                    style="margin-right: 12px;">
+              <Option v-for="item in carType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+            <Select v-model="info.carLength"
+                    class="detail-info-input-half">
+              <Option v-for="item in carLength" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
           </i-col>
-          <i-col span="3" offset="1">
+          <i-col span="4" offset="1">
             <span class="detail-field-title detail-field-required">司机：</span>
             <Input v-model="info.driverName"
                    class="detail-info-input"></Input>
@@ -208,6 +217,7 @@
           <i-col span="13">
             <span class="detail-field-title">备注：</span>
             <Input v-model="info.remark"
+                   :maxlength="100"
                    class="detail-info-input"></Input>
           </i-col>
         </Row>
@@ -217,7 +227,8 @@
         <div class="detail-part-title">
           <span>货物明细</span>
         </div>
-        <Button type="primary" style="margin-bottom: 22px;">添加订单</Button>
+        <Button type="primary" style="margin-bottom: 22px;"
+                @click="addOrder">添加订单</Button>
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
@@ -233,14 +244,15 @@
           <span>应付费用</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="3">
+          <i-col span="4">
             <span class="detail-field-title-sm detail-field-required">运输费：</span>
             <Input v-model="payment.freightFee"
                    class="detail-payment-input">
             <span slot="suffix">元</span>
             </Input>
+            <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
           </i-col>
-          <i-col span="3" offset="2">
+          <i-col span="3" offset="1">
             <span class="detail-field-title-sm">装货费：</span>
             <Input v-model="payment.loadFee"
                    class="detail-payment-input">
@@ -271,7 +283,7 @@
         </Row>
         <Row class="detail-field-group">
           <i-col span="24">
-            <span class="detail-field-title-sm">费用合计：</span>
+            <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
             <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
           </i-col>
         </Row>
@@ -283,6 +295,11 @@
                 <Radio label="1">按单结</Radio>
                 <Radio label="2">月结</Radio>
               </RadioGroup>
+              <Table v-if="payment.settlementType === '2'"
+                     :columns="tablePayment"
+                     :data="payment.settlementPayInfo"
+                     :loading="loading"
+                     width="350"></Table>
             </div>
           </i-col>
         </Row>
@@ -299,17 +316,15 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
+import detailMixin from './detailMixin'
 import Server from '@/libs/js/server'
 
 export default {
   name: 'DetailFeright',
-  mixins: [ BasePage ],
+  mixins: [ BasePage, detailMixin ],
   metaInfo: { title: '运单详情' },
   data () {
     return {
-      loading: false,
-      inEditing: false,
-      waybillId: this.$route.query.id,
       // 信息
       info: {
         waybillNo: '',
@@ -324,8 +339,7 @@ export default {
         driverPhone: '',
         remark: ''
       },
-      // 明细
-      detail: [],
+
       // 费用
       payment: {
         settlementType: '',
@@ -335,7 +349,7 @@ export default {
         insuranceFee: '',
         otherFee: '',
         totalFee: '',
-        settlementPayInfo: ''
+        settlementPayInfo: []
       },
 
       // 所有按钮组
@@ -344,7 +358,17 @@ export default {
           status: '待派车',
           btns: [{
             name: '删除',
-            func: () => console.log(Math.random())
+            func: () => {
+              Server({
+                url: '/waybill/delete',
+                method: 'delete',
+                data: { waybillIds: [ this.id ] }
+              }).then(res => {
+                this.$Message.success('删除成功')
+                this.tableSelection = []
+                this.fetchData()
+              }).catch(err => console.error(err))
+            }
           }, {
             name: '派车',
             func: () => console.log(Math.random())
@@ -363,7 +387,21 @@ export default {
           status: '在途',
           btns: [{
             name: '位置',
-            func: () => console.log(Math.random())
+            func: () => {
+              Server({
+                url: '/waybill/location',
+                method: 'post',
+                data: { waybillIds: [ this.id ] }
+              }).then(res => {
+                const points = res.data.data.list
+
+                this.openDialog({
+                  name: 'transport/dialog/map',
+                  data: { points },
+                  methods: {}
+                })
+              }).catch(err => console.error(err))
+            }
           }]
         },
         {
@@ -371,8 +409,8 @@ export default {
           btns: []
         }
       ],
-      currentBtns: [], // 当前按钮组
 
+      tableCanEdit: true,
       tableColumns: [
         {
           title: '订单号',
@@ -426,62 +464,8 @@ export default {
           title: '备注2',
           key: 'remark2'
         }
-      ],
-
-      showLog: false,
-      logList: []
+      ]
     }
-  },
-
-  computed: {
-    // 根据日志收起展开动态计算高度
-    logListHeight () {
-      return { height: this.showLog ? 41 * this.logList.length + 'px' : '15px' }
-    },
-
-    orderTotal () {
-      return this.detail.reduce((last, item) => {
-        return {
-          cargoCost: last.cargoCost + item.cargoCost,
-          quantity: last.quantity + item.quantity,
-          weight: last.weight + item.weight,
-          volume: last.volume + item.volume
-        }
-      }, {
-        cargoCost: 0,
-        quantity: 0,
-        weight: 0,
-        volume: 0
-      })
-    },
-
-    paymentTotal () {
-      return this.payment.freightFee + this.payment.loadFee + this.payment.unloadFee + this.payment.insuranceFee + this.payment.otherFee
-    }
-
-  },
-  watch: {
-    inEditing (val) {
-      if (val) {
-        this.tableColumns.unshift({
-          title: '操作',
-          key: 'action',
-          width: 60,
-          render: (h, p) => {
-            return h('a', {
-              on: {
-                click: () => {}
-              }
-            }, '移出')
-          }
-        })
-      } else {
-        this.tableColumns.shift()
-      }
-    }
-  },
-  created () {
-    this.fetchData()
   },
 
   methods: {
@@ -494,64 +478,13 @@ export default {
         case 4: return '已到货'
       }
     },
-    carTypeFilter (type) {
-      switch (type) {
-        case 1: return '平板'
-        case 2: return '高栏'
-        case 3: return '厢车'
-        case 4: return '自卸'
-        case 5: return '冷藏'
-        case 6: return '保温'
-        case 7: return '高低板'
-        case 8: return '面包车'
-        case 9: return '爬梯车'
-        case 10: return '飞翼车'
-      }
-    },
-    carLengthFilter (length) {
-      switch (length) {
-        case 1: return '1.8米'
-        case 2: return '2.8米'
-        case 3: return '3.8米'
-        case 4: return '4.2米'
-        case 5: return '5米'
-        case 6: return '6.2米'
-        case 7: return '6.8米'
-        case 8: return '7.7米'
-        case 9: return '8.2米'
-        case 10: return '8.7米'
-        case 11: return '9.6米'
-        case 12: return '11.7米'
-        case 13: return '12.5米'
-        case 14: return '13米'
-        case 15: return '15米'
-        case 16: return '16米'
-        case 17: return '17.5米'
-      }
-    },
-
-    // 根据状态设置按钮
-    setBtnsWithStatus () {
-      for (let i = 0; i < this.btnList.length; i++) {
-        if (this.btnList[i].status === this.info.status) {
-          this.currentBtns = this.btnList[0].btns
-          return
-        }
-      }
-    },
-
-    // 取消编辑
-    cancelEdit () {
-      this.inEditing = false
-      this.fetchData()
-    },
 
     fetchData () {
       this.loading = true
       Server({
         url: '/waybill/details',
         method: 'post',
-        data: { waybillId: this.waybillId }
+        data: { waybillId: this.id }
       }).then(res => {
         const data = res.data.data
 
@@ -565,11 +498,8 @@ export default {
         this.logList = data.operaterLog
 
         this.info.status = this.statusFilter(this.info.status)
-        this.info.carType = this.carTypeFilter(this.info.carType)
-        this.info.carLength = this.carLengthFilter(this.info.carLength)
         this.payment.settlementType = this.payment.settlementType.toString()
         this.setBtnsWithStatus()
-
         this.loading = false
       }).catch(err => console.error(err))
     }
