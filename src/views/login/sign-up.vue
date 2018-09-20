@@ -185,7 +185,7 @@ export default {
       }).then(res => {
         this.$Message.success('注册成功')
         setTimeout(() => {
-          this.$router.push('/')
+          this.changeMode('signin')
         }, 2000)
       }).catch(err => console.error(err))
     },
