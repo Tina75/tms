@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="login">
     <header class="login-header">
-      <span>1</span>
+      <i class="icon font_family icon-ico-slogo"></i>
       <div class="login-header-tel">
         <p>400-788-5656</p>
         <p>客服电话</p>
@@ -47,6 +47,10 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+  .icon-ico-slogo
+    color #FFFFFF
+    font-size 50px
+
   .login
     position relative
     width 100%
