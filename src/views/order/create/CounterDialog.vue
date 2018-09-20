@@ -4,7 +4,7 @@
     <Form ref="counterForm" :model="counterForm" :label-width="80">
       <FormItem label="计费规则" prop="rule">
         <Select v-model="counterForm.rule">
-          <Option value="1">盖浇饭</Option>
+          <Option value="1">暂无数据</Option>
         </Select>
       </FormItem>
     </Form>

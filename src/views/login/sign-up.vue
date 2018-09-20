@@ -69,8 +69,10 @@
           <!-- step 3 -->
           <template v-if="step === 2">
             <FormItem prop="password">
-              <Input v-model="form.password" :maxlength="16" type="password" placeholder="设置登录密码"
-                     @on-blur="inputBlurWithPw" />
+              <Tooltip content="密码只支持6-16位的数字、大小写字母" style="width: 100%;" placement="top">
+                <Input v-model="form.password" :maxlength="16" type="password" placeholder="设置登录密码"
+                       @on-blur="inputBlurWithPw" />
+              </Tooltip>
             </FormItem>
             <FormItem prop="confirmPassword">
               <Input v-model="form.confirmPassword" :maxlength="16" type="password" placeholder="再次输入密码"
@@ -183,7 +185,7 @@ export default {
       }).then(res => {
         this.$Message.success('注册成功')
         setTimeout(() => {
-          this.$router.push('/')
+          this.changeMode('signin')
         }, 2000)
       }).catch(err => console.error(err))
     },

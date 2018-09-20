@@ -38,7 +38,7 @@
         </div>
       </div>
     </PageTable>
-    <Modal
+    <!-- <Modal
       :value="visible"
       :closable="false"
       :mask-closable="false"
@@ -50,7 +50,7 @@
         </i-circle>
       </div>
       <div slot="footer"></div>
-    </Modal>
+    </Modal> -->
   </div>
 </template>
 
@@ -60,6 +60,7 @@ import PageTable from '@/components/page-table/index'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import server from '@/libs/js/server'
+
 /**
  * 批量导入
  * 1.文件类型
@@ -91,21 +92,25 @@ export default {
         {
           title: '导入结果',
           key: 'status',
+          width: 100,
           render: (h, params) => {
             return h('span', params.row.status === 1 ? '导入成功' : '导入失败')
           }
         },
         {
           title: '导入订单数',
-          key: 'orderCount'
+          key: 'orderCount',
+          width: 100
         },
         {
           title: '操作人',
-          key: 'operatorName'
+          key: 'operatorName',
+          width: 120
         },
         {
           title: '操作',
           key: 'action',
+          width: 120,
           render: (h, params) => {
             const actions = [
               h('a', {
@@ -149,15 +154,21 @@ export default {
        */
       server({
         method: 'post',
-        url: 'file/prepareUpload'
+        url: 'file/prepareUpload',
+        data: {
+          bizType: 'order',
+          fileCount: 1,
+          fileSuffix: 'xlsx'
+        }
       })
         .then((response) => {
           const { data } = response.data
           vm.ossClient = new OssClient({
-            region: data.endpoint,
-            accessKeyId: data.stsAccessKey,
-            accessKeySecret: data.stsToken,
-            bucket: data.bucketName
+            accessKeyId: data.ossTokenDTO.stsAccessId,
+            accessKeySecret: data.ossTokenDTO.stsAccessKey,
+            stsToken: data.ossTokenDTO.stsToken,
+            bucket: data.ossTokenDTO.bucketName,
+            endpoint: data.ossTokenDTO.endpoint
           })
         })
     },
@@ -200,18 +211,23 @@ export default {
     async uploadFile (file) {
       if (this.ossClient) {
         try {
-          this.visible = true
+          // this.visible = true
           // 生成随机文件名 Math.floor(Math.random() *10000)
-          let randomName = Date.now() + file.name.split('.').pop()
+          let randomName = Date.now() + '.' + file.name.split('.').pop()
           let result = await this.ossClient.multipartUpload(randomName, file, {
             partSize: 1024 * 1024, // 分片大小 ,1M
-            progress: async function (progress) {
-              this.progress = progress
+            progress: function (progress, pp) {
+              console.log('progress', progress)
+              if (progress) {
+                this.progress = progress
+              }
             }
           })
-          this.visible = false
-          this.progress = 0
-          this.notifyBackend(randomName, result.name)
+          this.$nextTick(() => {
+            // this.visible = false
+            this.progress = 0
+          })
+          this.notifyBackend(result.name, result.res.requestUrls[0])
         } catch (e) {
           // 捕获超时异常
           if (e.code === 'ConnectionTimeoutError') {
@@ -226,6 +242,7 @@ export default {
      * 文件上传成功，
      */
     notifyBackend (fileName, fileUrl) {
+      const vm = this
       server({
         method: 'post',
         url: 'order/template/uploadNotify',
@@ -233,14 +250,20 @@ export default {
           fileName,
           fileUrl
         }
+      }).then(() => {
+        vm.$refs.pageTable.fetch()
+      }).catch(() => {
+        vm.$refs.pageTable.fetch()
       })
     },
+    // !废弃，暂时不用
     handleSuccess (res, file) {
       // const vm = this
       if (res.code === 1000) {
         this.$Message.success('导入成功')
       }
     },
+    // !废弃，暂时不用
     handleError (errorInfo, file, fileList) {
       const vm = this
       this.openDialog({

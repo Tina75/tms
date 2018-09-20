@@ -1,6 +1,10 @@
+import City from '../../libs/js/City'
+
 export default {
   data () {
     return {
+      carrierId: '',
+      order: 'desc', // 倒序 asc升序
       // 分页
       page: {
         current: 1,
@@ -30,8 +34,9 @@ export default {
   methods: {
     // 搜索
     startSearch () {
-      if (this.isEasySearch && !this.easySearchKeyword) return
-      else if (!this.isEasySearch) {
+      // if (this.isEasySearch && !this.easySearchKeyword) return
+      // else
+      if (!this.isEasySearch) {
         let canSearch = false
         for (let key in this.seniorSearchFields) {
           if (this.seniorSearchFields[key] !== '') canSearch = true
@@ -50,6 +55,7 @@ export default {
     },
     // 重置搜索条件
     resetEasySearch () {
+      this.carrierId = ''
       if (this.easySearchKeyword === '') return
       this.easySearchKeyword = ''
       if (!this.inSearching) return
@@ -60,7 +66,9 @@ export default {
     resetSeniorSearch () {
       let needReset = false
       for (let key in this.seniorSearchFields) {
-        if (this.seniorSearchFields[key] !== '') {
+        if (['startCodes', 'endCodes', 'dateRange'].indexOf(key) > -1) {
+          this.seniorSearchFields[key] = []
+        } else if (this.seniorSearchFields[key] !== '') {
           this.seniorSearchFields[key] = ''
           needReset = true
         }
@@ -70,6 +78,10 @@ export default {
       this.inSearching = false
       this.resetSeniorSearch()
       this.fetchData()
+    },
+    // 承运商改变
+    carrierChange (val) {
+      this.carrierId = val.value
     },
     // tab切换
     tabChanged (tab) {
@@ -84,6 +96,8 @@ export default {
       // 重置搜索条件
       this.resetEasySearch()
       this.resetSeniorSearch()
+      // 搜索
+      this.fetchData()
     },
     // 分页切换
     pageChange (current) {
@@ -103,22 +117,54 @@ export default {
     selectionChanged (selection) {
       this.tableSelection = selection
     },
+    // 表格按时间排序
+    tableSort ({ order }) {
+      this.order = order
+      this.fetchData()
+    },
     // 设置查询参数
     setFetchParams () {
       let params = {
         status: this.tabStatus,
         pageNo: this.page.current,
-        pageSize: this.page.size
+        pageSize: this.page.size,
+        order: this.order === 'asc' ? 'asc' : 'desc'
       }
       if (this.inSearching) {
         if (this.isEasySearch) {
           params.type = this.easySelectMode
-          params.keyword = this.easySearchKeyword
+          params.keyWord = this.easySearchKeyword
         } else {
-          params = Object.assign(params, this.seniorSearchFields)
+          if (this.seniorSearchFields.startCodes.length) {
+            this.seniorSearchFields.start = this.seniorSearchFields.startCodes[2]
+          } else this.seniorSearchFields.start = ''
+          if (this.seniorSearchFields.endCodes.length) {
+            this.seniorSearchFields.end = this.seniorSearchFields.endCodes[2]
+          } else this.seniorSearchFields.end = ''
+          if (this.seniorSearchFields.dateRange[0]) {
+            this.seniorSearchFields.startTime = this.seniorSearchFields.dateRange[0].Format('yyyy-MM-dd hh:mm:ss')
+          } else this.seniorSearchFields.startTime = ''
+          if (this.seniorSearchFields.dateRange[1]) {
+            this.seniorSearchFields.endTime = this.seniorSearchFields.dateRange[1].Format('yyyy-MM-dd hh:mm:ss')
+          } else this.seniorSearchFields.endTime = ''
+
+          for (let key in this.seniorSearchFields) {
+            if (['startCodes', 'endCodes', 'dateRange'].indexOf(key) > -1) continue
+            if (this.seniorSearchFields[key].length) {
+              params[key] = this.seniorSearchFields[key]
+            }
+          }
         }
       }
       return params
+    },
+    // 格式化日期
+    dateFormatter (timestamp) {
+      return new Date(timestamp).Format('yyyy-MM-dd hh:mm:ss')
+    },
+    // 格式化城市
+    cityFilter (code) {
+      return City.codeToFullName(code, 3, '')
     }
   }
 }

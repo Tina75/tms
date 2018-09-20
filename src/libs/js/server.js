@@ -8,20 +8,19 @@ function getToken () {
 
 let instance = axios.create({
   baseURL: '/',
-  timeout: 1000,
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
     'Authorization': getToken()
   },
   withCredentials: true,
   loading: false,
-  ignoreCode: process.env.NODE_ENV === 'development'
+  ignoreCode: false
 })
 
 switch (process.env.NODE_ENV) {
   case 'development':
-    instance.defaults.baseURL = 'http://192.168.1.49:5656/dolphin-web'; break
-    // instance.defaults.baseURL = 'http://yapi.yundada56.com/mock/214'; break
+    instance.defaults.baseURL = 'http://192.168.1.49:5656/dolphin-web/'; break
   case 'production':
     instance.defaults.baseURL = '//dev-boss.yundada56.com/bluewhale-boss/'; break
 }
@@ -45,13 +44,12 @@ instance.interceptors.request.use((config) => {
 instance.interceptors.response.use((res) => {
   LoadingBar.finish()
   var code = Number(res.data.code)
-  if (!res.config.ignoreCode || code === 10000) {
+  if (res.config.ignoreCode || code === 10000) {
     return res
   } else {
     switch (code) {
       case 310010:// token失效或不存在
       case 310011:// 账号在其他设备登录
-        Message.error(`${res.data.msg}`)
         window.EMA.fire('logout')
         break
       case 210014:
