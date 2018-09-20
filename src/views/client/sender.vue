@@ -138,7 +138,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.$router.push({ path: '/client/sender-info', query: { id: params.row.id }
+                    this.openTab({ path: '/client/sender-info', query: { id: params.row.id }
                     })
                   }
                 }

@@ -50,7 +50,7 @@
               v-for="item in staffSelectList"
               :value="item.phone"
               :key="item.phone">
-              {{ item.name + '--' + item.phone}}
+              {{ item.name + '/' + item.phone}}
             </Option>
           </Select>
         </FormItem>
@@ -116,7 +116,7 @@ export default {
         key: 'do',
         width: 200,
         render: (h, params) => {
-          if (params.row.roleName === '超级管理员') {
+          if (params.row.type === 1) {
             return h('div', [
               h('Button', {
                 props: {
@@ -214,6 +214,11 @@ export default {
         url: 'employee/list',
         method: 'get'
       }).then(({ data }) => {
+        for (let index = 0; index < data.data.list.length; index++) {
+          if (data.data.list[index].type === 1) {
+            data.data.list.splice(index, 1)
+          }
+        }
         this.staffSelectList = Object.assign({}, data.data.list)
       })
     },
@@ -229,7 +234,7 @@ export default {
         data: params
       }).then(({ data }) => {
         if (data.data.length > 0) {
-          return data.data.map(item => ({value: item.name, ...item}))
+          return data.data.map(item => ({value: item.name, name: item.name + '/' + item.phone}))
         }
       })
         .catch((errorInfo) => {

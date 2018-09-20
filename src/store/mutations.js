@@ -1,6 +1,6 @@
 export default{
   initUserInfo (state, payload) {
-    state.userInfo = Object.assign(state.userInfo, payload)
+    state.userInfo = payload || {}
   },
   initPermissions (state, payload) {
     state.permissions = payload || []
@@ -10,7 +10,7 @@ export default{
     localStorage.tabNavCache = JSON.stringify([...list])
   },
   initTabNav (state) {
-    state.tabNavList = localStorage.tabNavCache ? JSON.parse(localStorage.tabNavCache) : []
+    state.tabNavList = localStorage.tabNavCache ? JSON.parse(localStorage.tabNavCache) : [{path: '/home', name: '首页', param: {name: 'home'}}]
   },
   updateMsgCount (state, payload) {
     const msg = {...payload}

@@ -1,4 +1,11 @@
 export default {
+  data7: [{
+    key: 'data7',
+    title: '首页',
+    expand: true,
+    code: '160000',
+    children: []
+  }],
   data1: [{
     key: 'data1',
     title: '受理开单',
@@ -188,6 +195,73 @@ export default {
       ]
     }]
   }],
+  data8: [{
+    key: 'data8',
+    title: '财务管理',
+    expand: true,
+    code: '170000',
+    children: [{
+      title: '发货方对账',
+      expand: true,
+      code: '170100',
+      parentId: '170000',
+      children: [
+        { title: '按单核销', code: '170101', parentId: '170100' },
+        { title: '生成对账单', code: '170102', parentId: '170100' },
+        { title: '对账单核销', code: '170103', parentId: '170100' },
+        { title: '对账单导出', code: '170104', parentId: '170100' },
+        { title: '查看核销单详情', code: '170105', parentId: '170100' },
+        { title: '核销单导出', code: '170106', parentId: '170100' }
+      ]
+    }, {
+      title: '承运商对账',
+      expand: true,
+      code: '170200',
+      parentId: '170000',
+      children: [
+        { title: '按单核销', code: '170201', parentId: '170200' },
+        { title: '生成对账单', code: '170202', parentId: '170200' },
+        { title: '对账单核销', code: '170203', parentId: '170200' },
+        { title: '对账单导出', code: '170204', parentId: '170200' },
+        { title: '查看核销单详情', code: '170205', parentId: '170200' },
+        { title: '核销单导出', code: '170206', parentId: '170200' }
+      ]
+    }, {
+      title: '外转方对账',
+      expand: true,
+      code: '170300',
+      parentId: '170000',
+      children: [
+        { title: '按单核销', code: '170301', parentId: '170300' },
+        { title: '生成对账单', code: '170302', parentId: '170300' },
+        { title: '对账单核销', code: '170303', parentId: '170300' },
+        { title: '对账单导出', code: '170304', parentId: '170300' },
+        { title: '查看核销单详情', code: '170305', parentId: '170300' },
+        { title: '核销单导出', code: '170306', parentId: '170300' }
+      ]
+    }, {
+      title: '计费规则',
+      expand: true,
+      code: '170400',
+      parentId: '170000',
+      children: [
+        { title: '新增', code: '170401', parentId: '170400' },
+        { title: '编辑', code: '170402', parentId: '170400' },
+        { title: '删除', code: '170403', parentId: '170400' }
+      ]
+    }]
+  }],
+  data9: [{
+    key: 'data9',
+    title: '报表',
+    expand: true,
+    code: '180000',
+    children: [
+      { title: '运营报表', code: '180100', parentId: '180000' },
+      { title: '营业额汇总表', code: '180200', parentId: '180000' },
+      { title: '利润报表', code: '180300', parentId: '180000' }
+    ]
+  }],
   data6: [{
     key: 'data6',
     title: '设置',
@@ -197,5 +271,19 @@ export default {
       { title: '公司设置', code: '150100', parentId: '150000' },
       { title: '短信设置', code: '150200', parentId: '150000' }
     ]
+  }],
+  data10: [{
+    key: 'data10',
+    title: '消息',
+    expand: true,
+    code: '190000',
+    children: []
+  }],
+  data11: [{
+    key: 'data11',
+    title: '帮助',
+    expand: true,
+    code: '200000',
+    children: []
   }]
 }
