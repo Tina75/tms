@@ -10,7 +10,7 @@
 <script>
 import Vue from 'vue'
 // import Home from '../views/home/index'
-// import noPage from '../pages/noPage'
+import noPage from '@/views/error-page/404'
 // import noPowerPage from '../pages/noPowerPage'
 var pagePrex = 'page-'
 var keyIndex = 0
@@ -28,7 +28,7 @@ export default {
       console.log('对路由变化作出响应 ' + from.path + ' -> ' + to.path)
       // if (to.path !== from.path) {
       // 如果页面改变。load新页面加入
-      this.loadPage(to.params, to.path === from.path)
+      this.loadPage(to.params, to.path === from.path || to.query.noCache)
       // }
     }
   },
@@ -41,8 +41,10 @@ export default {
       var path = this.getPath()
       let key = `${pagePrex}${path.replace('/', '-')}-${keyIndex}`
       if (this.componentCache[key] && !noCache) {
+        console.log('from cache ' + key)
         this.current = this.componentCache[key]
       } else {
+        console.log('from import ' + key)
         import('../views/' + path + '').then(module => {
           let tempModule = Vue.extend(module.default)
           tempModule = tempModule.extend({
@@ -56,6 +58,7 @@ export default {
           this.componentCache[key] = tempModule
           this.current = tempModule
         }).catch(() => {
+          this.current = noPage
           console.error('不存在该页面', path)
         })
       }
