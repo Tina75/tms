@@ -1,10 +1,12 @@
 <template>
   <Form ref="orderForm" :label-width="80" :model="orderForm" :rules="rules">
+    <Spin v-if="loading" fix></Spin>
     <Row :gutter="16">
       <Col span="12">
       <FormItem label="客户" prop="consignerName" required>
         <SelectInput
           v-model="orderForm.consignerName"
+          :auto-focus="true"
           :maxlength="20"
           :remote="false"
           :local-options="clients"
@@ -215,10 +217,13 @@ import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import OrderPrint from './OrderPrint'
 import AreaSelect from '@/components/AreaSelect'
+// import areas from '@/libs/js/City'
 import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
 import settlements from './constant/settlement.js'
 import pickups from './constant/pickup.js'
+
+const transferFeeList = ['freightFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
 export default {
   metaInfo: {
     title: '手动下单'
@@ -254,6 +259,7 @@ export default {
     return {
       settlements,
       pickups,
+      loading: false,
       goodsColumn: [
         {
           title: ' ',
@@ -473,8 +479,25 @@ export default {
           }
         },
         {
-          title: '备注',
-          key: 'remark',
+          title: '备注1',
+          key: 'remark1',
+          render (h, params) {
+            return h('Input', {
+              props: {
+                value: params.row[params.column.key] || '',
+                maxlength: 100
+              },
+              on: {
+                'on-blur': (e) => {
+                  _this.updateLocalCargo(setObject(params, e.target.value))
+                }
+              }
+            })
+          }
+        },
+        {
+          title: '备注2',
+          key: 'remark2',
           render (h, params) {
             return h('Input', {
               props: {
@@ -531,7 +554,8 @@ export default {
         // 回单数量
         receiptCount: null,
         // 备注
-        remark: ''
+        remark1: '',
+        remark2: ''
       },
       orderPrint: {},
       rules: {
@@ -624,16 +648,24 @@ export default {
       this.statics = Object.assign({}, this.sumRow)
     }
   },
-  created () {
+  mounted () {
     const vm = this
-    // Vue.component('SelectInput', SelectInput)
+    this.statics = Object.assign({}, this.sumRow)
     const orderId = this.$route.query.id || undefined
     if (orderId) {
+      vm.loading = true
       this.getOrderDetail(orderId)
         .then((orderDetail) => {
+          vm.loading = false
           for (let key in vm.orderForm) {
             vm.orderForm[key] = orderDetail[key] || vm.orderForm[key]
           }
+          // 分转换元
+          transferFeeList.forEach((fee) => {
+            vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
+          })
+          // vm.orderForm.start = areas.getPathByCode(orderDetail.start).map((item) => item.code)
+          // vm.orderForm.end = areas.getPathByCode(orderDetail.end).map((item) => item.code)
           if (vm.orderForm.deliveryTime) {
             vm.orderForm.deliveryTime = new Date(vm.orderForm.deliveryTime)
           }
@@ -642,9 +674,6 @@ export default {
           }
         })
     }
-  },
-  mounted () {
-    this.statics = Object.assign({}, this.sumRow)
   },
   destroyed () {
     this.resetForm()
@@ -776,11 +805,15 @@ export default {
             end: orderForm.end[orderForm.end.length - 1],
             arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
             deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
-            orderCargoList
+            orderCargoList: orderCargoList.map(cargo => cargo.toJson())
           });
 
           ['start', 'end'].forEach(field => {
             form[field] = parseInt(form[field])
+          })
+          // 转换成分单位
+          transferFeeList.forEach((fee) => {
+            form[fee] = form[fee] ? form[fee] * 100 : 0
           })
           vm.submitOrder(form)
             .then((response) => {
@@ -804,7 +837,7 @@ export default {
       this.orderPrint.totalFee = this.totalFee
       this.$refs.printer.print()
 
-      // this.handleSubmit()
+      this.handleSubmit()
     }
   }
 }

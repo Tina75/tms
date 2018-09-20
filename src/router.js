@@ -9,7 +9,7 @@ export default new Router({
   routes: [
     // 需要做强缓存的页面需要在这里配置路由
     // {
-    //   path: '/home',
+    //   path: '/',
     //   component: () => import('@/views/home/index')
     // },
     // {

@@ -17,7 +17,8 @@ export default class Cargo {
       // 包装, 10个字
       this.unit = props.unit
       // 备注 100
-      this.remark = props.remark
+      this.remark1 = props.remark1
+      this.remark2 = props.remark2
     }
   }
   validate () {
@@ -28,5 +29,18 @@ export default class Cargo {
       return { success: false, message: '货物重量和体积至少填写一项' }
     }
     return { success: true }
+  }
+
+  toJson () {
+    return {
+      cargoName: this.cargoName,
+      weight: this.weight,
+      volume: this.volume,
+      cargoCost: this.cargoCost * 100,
+      quantity: this.quantity,
+      unit: this.unit,
+      remark1: this.remark1,
+      remark2: this.remark2
+    }
   }
 }

@@ -309,10 +309,11 @@ export default {
       })
         .then((response) => {
           vm.loading = false
-          // const { list, ...pagination } = response.data
-          vm.dataSource = response.data.data[vm.listField]
+          const { data } = response.data
+          vm.dataSource = data[vm.listField]
           if (this.showPagination) {
-            vm.pagination.totalCount = response.data.pageTotals || response.data.totalCount
+            vm.pagination.pageSize = data.pageSize
+            vm.pagination.totalCount = data.totalCount || data.pageTotals
           }
           vm.$emit('on-load', response)
         })
