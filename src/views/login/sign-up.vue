@@ -110,7 +110,7 @@ export default {
   },
   data () {
     return {
-      step: 2,
+      step: 0,
       stepList: ['验证手机号', '填写账号信息', '注册成功'],
       protocol: true,
       showP: 0,
