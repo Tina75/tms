@@ -73,7 +73,29 @@
     "name":"财务",
     "path":"/finance",
     "icon":"caiwuguanli",
-    "powerCode":0
+    "powerCode":0,
+    "children":[
+      {
+        "name":"发货方对账",
+        "path":"/finance/sender",
+        "powerCode":0
+      },
+      {
+        "name":"承运商对账",
+        "path":"/finance/carrier",
+        "powerCode":0
+      },
+      {
+        "name":"外转方对账",
+        "path":"/finance/transfer",
+        "powerCode":0
+      },
+      {
+        "name":"计费规则",
+        "path":"/finance/rules",
+        "powerCode":0
+      }
+    ]
   },
   {
     "name":"报表",
