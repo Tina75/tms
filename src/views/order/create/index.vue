@@ -837,7 +837,7 @@ export default {
       this.orderPrint.totalFee = this.totalFee
       this.$refs.printer.print()
 
-      // this.handleSubmit()
+      this.handleSubmit()
     }
   }
 }
