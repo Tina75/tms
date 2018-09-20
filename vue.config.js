@@ -30,7 +30,8 @@ module.exports = {
       'vue-router': 'VueRouter',
       'vuex': 'Vuex',
       'iview': 'iview',
-      'lodash': '_'
+      'lodash': '_',
+      'BMap': 'BMap'
     }
   }
 }

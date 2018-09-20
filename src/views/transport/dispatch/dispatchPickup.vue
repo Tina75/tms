@@ -27,7 +27,12 @@
 
         <Button type="primary" style="float: right;" @click="createFreight">新建提货单</Button>
       </div>
-      <Table :columns="rightTableHeader" :data="rightTableData" :loading="rightTableLoading && !rightTableData.length"
+      <div v-if="!rightTableData.length && !rightTableLoading" class="dispatch-empty">
+        <img src="../../../assets/img-empty.png" class="dispatch-empty-img">
+        <p>暂无未提货提货单，赶快创建新的提货单吧～</p>
+      </div>
+      <Table v-else
+             :columns="rightTableHeader" :data="rightTableData" :loading="rightTableLoading && !rightTableData.length"
              highlight-row
              @on-expand="keepRightExpandOnly"
              @on-row-click="rightTableRowClick"></Table>
@@ -127,7 +132,10 @@ export default {
           return item
         })
         this.rightTableLoading = false
-      }).catch(err => console.error(err))
+      }).catch(err => {
+        this.rightTableLoading = false
+        console.error(err)
+      })
     },
     // 查询左侧表格展开数据
     fetchLeftExpandData () {

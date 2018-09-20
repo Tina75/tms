@@ -225,7 +225,6 @@ export default {
           key: 'pickupNo',
           width: 160,
           fixed: true,
-          visible: true,
           render: (h, p) => {
             return h('a', {
               style: {
@@ -268,7 +267,34 @@ export default {
         },
         {
           title: '创建时间',
-          key: 'createTimeLong'
+          key: 'createTimeLong',
+          render: (h, p) => {
+            return h('span', this.dateFormatter(p.row.createTimeLong))
+          }
+        },
+        {
+          title: '制单人',
+          key: 'createOperator'
+        },
+        {
+          title: '货值',
+          key: 'cargoCost'
+        },
+        {
+          title: '付款方式',
+          key: 'settlementType'
+        },
+        {
+          title: '司机手机号码',
+          key: 'driverPhone'
+        },
+        {
+          title: '车型',
+          key: 'carType'
+        },
+        {
+          title: '订单数',
+          key: 'orderCnt'
         }
       ],
       extraColumns: [
