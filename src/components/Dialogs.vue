@@ -1,5 +1,5 @@
 <template>
-  <div v-if="dialogs.length>0" class="dialogs">
+  <div v-if="show" class="dialogs">
     <component v-for="item in dialogs" :is="item.name" :key="item.name"></component>
   </div>
 </template>
@@ -12,7 +12,8 @@ export default {
   name: 'Dialogs',
   data: function () {
     return {
-      dialogs: []
+      dialogs: [],
+      show: true
     }
   },
   watch: {
@@ -31,6 +32,10 @@ export default {
         methods: data.methods
       }, () => {
         this.pushDialog(data.name.replace(/\//g, '-'))
+        this.show = false
+        this.$nextTick(() => {
+          this.show = true
+        })
       })
     })
     // 关闭指定弹出框
@@ -43,6 +48,10 @@ export default {
         }
       }
       this.dialogs.splice(i, 1)
+      this.show = false
+      this.$nextTick(() => {
+        this.show = true
+      })
     })
   },
   methods: {

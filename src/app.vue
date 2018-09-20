@@ -38,7 +38,8 @@ export default {
   data () {
     return {
       collapsed: false,
-      menuList: menuJson
+      menuList: menuJson,
+      defaultTab: { name: '首页', path: '/home' }
     }
   },
   computed: {
@@ -74,7 +75,9 @@ export default {
       }
     })
     this.init()
-
+    // this.$nextTick(() => {
+    //   this.turnToPage(this.defaultTab)
+    // })
     // 初始化tabnav
     // if (this.$route.path === '/') {
     //   setTimeout(() => {
@@ -98,9 +101,7 @@ export default {
       this.onMenuSelect(router)
     },
     logout () {
-      // localStorage.removeItem('tms_is_login')
       localStorage.clear()
-      // this.$router.go(0)
       window.location.reload()
     },
     handleCloseTab (list, route) {

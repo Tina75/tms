@@ -69,7 +69,10 @@ export default {
       for (var k in params) {
         arr.push(params[k])
       }
-      if (arr.length === 0) arr.push(localStorage.getItem('tms_is_login') ? 'home' : 'login')
+      if (arr.length === 0) {
+        arr.push('home')
+        this.$router.push({path: '/home', params: {name: 'home'}})
+      }
       return arr.join('/')
     }
   }

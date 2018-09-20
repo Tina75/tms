@@ -126,7 +126,7 @@ export default {
     // 显示计费规则
     showCounter () {
       this.openDialog({
-        name: 'order/create/CounterDialog.vue',
+        name: 'order/create/CounterDialog',
         data: {
           value: 0
         },
