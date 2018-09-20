@@ -6,10 +6,10 @@ const waitingTime = 60
 let captchaUrl
 switch (process.env.NODE_ENV) {
   case 'development':
-    captchaUrl = 'http://192.168.1.49:5656/dolphin-web/user/captcha'
+    captchaUrl = '//192.168.1.49:5656/dolphin-web/user/captcha'
     break
   case 'production':
-    captchaUrl = '//dev-boss.yundada56.com/bluewhale-boss/user/captcha'
+    captchaUrl = '//192.168.1.49:5656/dolphin-web/user/captcha'
     break
 }
 

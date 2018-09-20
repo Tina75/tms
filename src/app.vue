@@ -46,12 +46,16 @@ export default {
   },
 
   mounted () {
-    window.EMA.bind('logout', () => {
-      this.$Modal.warning({
-        title: '提示',
-        content: '账号出现异常，请重新登录',
-        onOk: () => { this.logout() }
-      })
+    window.EMA.bind('logout', (msg) => {
+      if (msg) {
+        this.$Modal.warning({
+          title: '提示',
+          content: `${msg}，请重新登录`,
+          onOk: () => { this.logout() }
+        })
+      } else {
+        this.logout()
+      }
     })
     window.EMA.bind('refresh', (route) => {
       if (!route.query) route.query = {}
@@ -82,11 +86,11 @@ export default {
     ...mapActions(['getPermissons', 'getUserInfo', 'getMessageCount']),
     ...mapMutations(['setTabNavList', 'initTabNav']),
     async init () {
+      await this.getPermissons()
       this.initTabNav()
       this.getUserInfo()
       this.getMessageCount()
       // 获取用户权限
-      await this.getPermissons()
       // TODO: something
     },
     openMsgTab (type = 0) {
@@ -250,6 +254,8 @@ html, body
   color rgba(255,255,255,1)
   font-family:PingFangSC-Regular;
   font-weight:400;
+.ivu-menu-item>i
+  margin-right 20px
 .ivu-modal-footer
   border-top none
   text-align center
