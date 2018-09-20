@@ -14,6 +14,7 @@
       @mouseleave="mousehover = false"
     >
       <Input
+        ref="input"
         v-model="currentValue"
         :placeholder="placeholder"
         :maxlength="maxlength"
@@ -45,6 +46,10 @@
  */
 export default {
   props: {
+    autoFocus: {
+      type: Boolean,
+      default: false
+    },
     maxlength: Number,
     value: String,
     clearable: {
@@ -88,7 +93,7 @@ export default {
   },
   computed: {
     filterOptions () {
-      if (this.remote) {
+      if (this.remote || !this.currentValue) {
         return this.options
       } else {
         return this.options.filter(opt => opt.name.indexOf(this.currentValue) !== -1)
@@ -141,6 +146,16 @@ export default {
       } else if (topDistance < 0) {
         dropdownInstance.$el.scrollTop += topDistance
       }
+    }
+  },
+  mounted () {
+    // 加载默认focus
+    if (this.autoFocus) {
+      this.isFocus = true
+      this.visible = true
+      this.$nextTick(() => {
+        this.$refs.input.$refs.input.focus()
+      })
     }
   },
   methods: {
