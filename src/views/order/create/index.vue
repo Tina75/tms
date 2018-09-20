@@ -217,7 +217,7 @@ import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import OrderPrint from './OrderPrint'
 import AreaSelect from '@/components/AreaSelect'
-import areas from '@/libs/js/City'
+// import areas from '@/libs/js/City'
 import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
 import settlements from './constant/settlement.js'
@@ -664,8 +664,8 @@ export default {
           transferFeeList.forEach((fee) => {
             vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
           })
-          vm.orderForm.start = areas.getPathByCode(orderDetail.start).map((item) => item.code)
-          vm.orderForm.end = areas.getPathByCode(orderDetail.end).map((item) => item.code)
+          // vm.orderForm.start = areas.getPathByCode(orderDetail.start).map((item) => item.code)
+          // vm.orderForm.end = areas.getPathByCode(orderDetail.end).map((item) => item.code)
           if (vm.orderForm.deliveryTime) {
             vm.orderForm.deliveryTime = new Date(vm.orderForm.deliveryTime)
           }

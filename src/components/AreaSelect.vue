@@ -53,6 +53,9 @@ export default {
         this.selected = newValue
       } else if (!newValue || newValue.length === 0) {
         this.selected = []
+      } else if (typeof newValue === 'number' && newValue) {
+        this.selected = areas.getPathByCode(newValue).map((item) => item.code)
+        this.$emit('input', this.selected)
       }
     }
   },
