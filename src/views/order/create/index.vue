@@ -127,7 +127,7 @@
           </Col>
           <Col span="6">
           <span @click="showCounter">
-            <FontIcon type="jisuanqi" size="26" color="#00a4bd"></FontIcon>
+            <FontIcon type="jisuanqi" size="20" color="#00a4bd" class="i-ml-5"></FontIcon>
           </span>
           </Col>
         </Row>
