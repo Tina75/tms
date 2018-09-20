@@ -1,6 +1,8 @@
 <template>
   <div>
-    <component :is="current"></component>
+    <keep-alive>
+      <component :is="current"></component>
+    </keep-alive>
   </div>
 </template>
 <style lang="stylus" >
@@ -16,17 +18,18 @@ export default {
   name: 'PageRouter',
   data: function () {
     return {
-      current: ''
+      current: '',
+      componentCache: []
     }
   },
   watch: {
     $route (to, from) {
       // 对路由变化作出响应...
       console.log('对路由变化作出响应 ' + from.path + ' -> ' + to.path)
-      if (to.path !== from.path) {
-        // 如果页面改变。load新页面加入
-        this.loadPage(to.params)
-      }
+      // if (to.path !== from.path) {
+      // 如果页面改变。load新页面加入
+      this.loadPage(to.params, to.path === from.path)
+      // }
     }
   },
   // components: { 'page-noPage': noPage, 'page-noPowerPage': noPowerPage },
@@ -34,23 +37,28 @@ export default {
     this.loadPage(this.$route.params)
   },
   methods: {
-    loadPage: function (data) {
+    loadPage: function (data, noCache) {
       var path = this.getPath()
-      console.log('path->' + path)
-      import('../views/' + path + '').then(module => {
-        var tempModule = Vue.extend(module.default)
-        tempModule = tempModule.extend({
-          data: function () {
-            return data.data || {}
-          },
-          methods: data.methods || {}
+      let key = `${pagePrex}${path.replace('/', '-')}-${keyIndex}`
+      if (this.componentCache[key] && !noCache) {
+        this.current = this.componentCache[key]
+      } else {
+        import('../views/' + path + '').then(module => {
+          let tempModule = Vue.extend(module.default)
+          tempModule = tempModule.extend({
+            data: function () {
+              return data.data || {}
+            },
+            methods: data.methods || {}
+          })
+          // keyIndex++
+          Vue.component(key, tempModule)
+          this.componentCache[key] = tempModule
+          this.current = tempModule
+        }).catch(() => {
+          console.error('不存在该页面', path)
         })
-        keyIndex++
-        Vue.component(`${pagePrex}${path.replace('/', '-')}-${keyIndex}`, tempModule)
-        this.current = tempModule
-      }).catch(() => {
-        console.error('不存在该页面', path)
-      })
+      }
     },
     getPath () {
       var params = this.$route.params
@@ -62,6 +70,5 @@ export default {
       return arr.join('/')
     }
   }
-  // eslint-disable-next-line
-  }
+}
 </script>

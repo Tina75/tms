@@ -49,14 +49,10 @@ export default {
     window.EMA.bind('logout', () => {
       this.logout()
     })
-    window.EMA.bind('refresh', (router) => {
-      // window.location.reload()
-      console.log('refresh')
-      // this.$nextTick(() => {
-      // router.query = {_time: 111}
-      // window.EMA.fire('openTab', router)
-      // })
-      this.$router.go(0)
+    window.EMA.bind('refresh', (route) => {
+      if (!route.query) route.query = {}
+      route.query._time = new Date().getTime()
+      this.turnToPage(route)
     })
     window.EMA.bind('updateUserInfo', () => {
       this.getUserInfo()
@@ -100,7 +96,7 @@ export default {
     handleCloseTab (list, route) {
       // 选中前一个tab
       const nextRoute = this.getNextRoute(this.TabNavList, route)
-      this.$router.push(nextRoute)
+      this.turnToPage(nextRoute)
       this.setTabNavList(list) // 更新store
     },
     onTabSelect (item) {
