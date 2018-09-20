@@ -44,7 +44,7 @@ instance.interceptors.request.use((config) => {
 instance.interceptors.response.use((res) => {
   LoadingBar.finish()
   var code = Number(res.data.code)
-  if (!res.config.ignoreCode || code === 10000) {
+  if (res.config.ignoreCode || code === 10000) {
     return res
   } else {
     switch (code) {
