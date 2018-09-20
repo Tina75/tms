@@ -59,7 +59,7 @@
         <Input v-model="keywords.waybillNo" :maxlength="30" placeholder="请输入运单号" style="width: 200px" />
       </div>
       <div style="display: flex;justify-content: space-between;">
-        <div style="">
+        <div>
           <area-select v-model="keywords.start" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
           <area-select v-model="keywords.end" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
           <DatePicker
@@ -433,12 +433,6 @@ export default {
           visible: true
         },
         {
-          title: '里程数（公里）',
-          key: 'kilometres',
-          fixed: false,
-          visible: true
-        },
-        {
           title: '体积（方）',
           key: 'volume',
           fixed: false,
@@ -455,17 +449,70 @@ export default {
           key: 'createTime',
           fixed: false,
           visible: true
+        },
+        {
+          title: '发货联系人',
+          key: 'consignerContact',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '收货联系人',
+          key: 'consigneeContact',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '修改时间',
+          key: 'updateTime',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '货物类型',
+          key: 'loadFee',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '数量',
+          key: 'settlementType',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '要求装货时间',
+          key: 'deliveryTime',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '要求卸货时间',
+          key: 'arriveTime',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '运费',
+          key: 'totalFee',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '修改人',
+          key: 'unloadFee',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '创建人',
+          key: 'creatorId',
+          fixed: false,
+          visible: false
         }
       ],
       selectOrderList: [] // 选中的订单集合
     }
-  },
-
-  beforeRouteLeave (to, from, next) {
-    if (sessionStorage.getItem('operateVal')) {
-      sessionStorage.removeItem('operateVal')
-    }
-    next()
   },
 
   computed: {
@@ -474,10 +521,14 @@ export default {
     ])
   },
 
-  watch: {},
+  created () {
+    if (sessionStorage.getItem('operateVal')) {
+      sessionStorage.removeItem('operateVal')
+    }
+  },
 
   mounted () {
-    // this.getOrderNum()
+    this.getOrderNum()
   },
 
   methods: {
@@ -487,32 +538,58 @@ export default {
     // 获取各状态订单数目
     getOrderNum () {
       Server({
-        url: 'order/getOrderNum',
+        url: 'order/getOrderNumByStatus',
         method: 'get'
       }).then((res) => {
         console.log(res)
-        let list = res.data.data.orderNumList
+        let list = res.data.data
+        let arr = []
         list.map((item) => {
-          if (item.name === 'total') {
-            item.name = '全部'
+          if (item.total !== undefined) {
+            let t = {
+              name: '全部',
+              count: ''
+            }
+            arr.unshift(t)
           }
-          if (item.name === 'pickup') {
-            item.name = '待提货'
+          if (item.pickup !== undefined) {
+            let p = {
+              name: '待提货',
+              count: item.pickup
+            }
+            arr.push(p)
           }
-          if (item.name === 'dispatch') {
-            item.name = '待调度'
+          if (item.dispatch !== undefined) {
+            let d = {
+              name: '待调度',
+              count: item.dispatch
+            }
+            arr.push(d)
           }
-          if (item.name === 'transit') {
-            item.name = '在途'
+          if (item.transit !== undefined) {
+            let t = {
+              name: '在途',
+              count: item.transit
+            }
+            arr.push(t)
           }
-          if (item.name === 'arrive') {
-            item.name = '已到货'
+          if (item.arrive !== undefined) {
+            let a = {
+              name: '已到货',
+              count: item.arrive
+            }
+            arr.push(a)
           }
-          if (item.name === 'receipt') {
-            item.name = '已回单'
+          if (item.receipt !== undefined) {
+            let r = {
+              name: '已回单',
+              count: item.receipt
+            }
+            arr.push(r)
           }
         })
-        this.status = list
+        console.log(arr)
+        this.status = arr
       })
     },
     // 切换搜索条件  客户名称/订单号/运单号
@@ -643,9 +720,9 @@ export default {
         } else {
           this.openDispatchDialog(btn.name)
         }
-      } else if (btn.name === '提货调度') { // 待提货（status:10）且未创建提货单(pickupStatus: 0)且未外转(transStatus: 0) 可以批量操作
+      } else if (btn.name === '提货调度') { // 待提货（status:10）且未创建提货单(pickupStatus: 0)且未外转(transStatus: 0)且是父单(parentId：'') 可以批量操作
         let data = this.selectOrderList.find((item) => {
-          return (item.status !== 10 || item.pickupStatus !== 0 || item.transStatus !== 0)
+          return (item.status !== 10 || item.pickupStatus !== 0 || item.transStatus !== 0 || item.parentId !== '')
         })
         if (data !== undefined) {
           this.$Message.warning('您选择的订单不支持提货调度')
