@@ -47,7 +47,7 @@ export default {
         method: 'post',
         data: { orderIds: this.orderIds }
       }).then(() => {
-        // this.ok()
+        this.ok()
         this.$Message.success('还原成功')
         this.visibale = false
       })
@@ -59,7 +59,7 @@ export default {
         method: 'post',
         data: { orderIds: this.orderIds }
       }).then(() => {
-        // this.ok()
+        this.ok()
         this.$Message.success('删除成功')
         this.visibale = false
       })

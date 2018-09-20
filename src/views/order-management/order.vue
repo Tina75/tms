@@ -102,6 +102,7 @@ import Server from '@/libs/js/server'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
+import City from '@/libs/js/City'
 export default {
   name: 'order',
 
@@ -167,7 +168,6 @@ export default {
           return date && date.valueOf() > Date.now()
         }
       },
-      customerData: ['Steve Jobs', 'Stephen Gary Wozniak', 'Jonathan Paul Ive'],
       simpleSearch: true,
       tableColumns: [
         {
@@ -184,7 +184,7 @@ export default {
             if (this.curStatusName === '全部' || this.curStatusName === '待提货' || this.curStatusName === '待调度') {
               // 未拆且未转 显示拆单、外转按钮
               if (params.row.parentId === '' && params.row.disassembleStatus === 0 && params.row.transStatus === 0) {
-                if (params.row.pickup === 1) { // 如果是上门提货则没有外转
+                if (params.row.dispatchStatus === 1 || (params.row.pickup === 1 && (params.row.status === 20 || (params.row.pickupStatus === 1 && params.row.status === 10)))) { // 如果是待调度状态(或者已提货未调度,或者已创建运单)且是上门提货则没有外转
                   return h('div', [
                     h('Button', {
                       props: {
@@ -367,11 +367,17 @@ export default {
         },
         {
           title: '始发地',
-          key: 'start'
+          key: 'start',
+          render: (h, params) => {
+            return h('span', City.codeToFullName(params.row.start))
+          }
         },
         {
           title: '目的地',
-          key: 'end'
+          key: 'end',
+          render: (h, params) => {
+            return h('span', City.codeToFullName(params.row.end))
+          }
         },
         {
           title: '体积（方）',
@@ -383,7 +389,10 @@ export default {
         },
         {
           title: '下单时间',
-          key: 'createTime'
+          key: 'createTime',
+          render: (h, params) => {
+            return h('span', new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm'))
+          }
         }
       ],
       extraColumns: [
@@ -452,6 +461,13 @@ export default {
     }
   },
 
+  beforeRouteLeave (to, from, next) {
+    if (sessionStorage.getItem('operateVal')) {
+      sessionStorage.removeItem('operateVal')
+    }
+    next()
+  },
+
   computed: {
     ...mapGetters([
       'clients'
@@ -511,6 +527,7 @@ export default {
         start: this.keywords.start.length ? Number(this.keywords.start[this.keywords.start.length - 1]) : null,
         end: this.keywords.end.length ? Number(this.keywords.end[this.keywords.end.length - 1]) : null
       })
+      this.selectOrderList = []
     },
     // 点X清除搜索条件时  默认为无搜索条件下的数据
     autoSearch () {
@@ -542,6 +559,7 @@ export default {
         startTime: null,
         endTime: null
       })
+      this.selectOrderList = []
     },
     // 高级搜索切换
     handleSwitchSearch () {
@@ -612,10 +630,46 @@ export default {
         this.$Message.warning('请至少选择一条信息')
         return
       }
-      if (btn.name === '送货调度' || btn.name === '提货调度') { // 打开送货或提货调度窗口
-        this.openDispatchDialog(btn.name)
-      } else if (btn.name === '订单还原' || btn.name === '删除') { // 打开还原或删除窗口
-        this.openResOrDelDialog('', btn.name) // 点表头按钮批量操作   params入参为空
+      this.isBatchOperation(btn)
+    },
+    // 判断各个状态下表头按钮批量操作报错
+    isBatchOperation (btn) {
+      if (btn.name === '送货调度') { // 待调度（status:20）且未创建运单(dispatchStatus: 0)且未外转(transStatus: 0) 可以批量操作
+        let data = this.selectOrderList.find((item) => {
+          return (item.status !== 20 || item.dispatchStatus !== 0 || item.transStatus !== 0)
+        })
+        if (data !== undefined) {
+          this.$Message.warning('您选择的订单不支持送货调度')
+        } else {
+          this.openDispatchDialog(btn.name)
+        }
+      } else if (btn.name === '提货调度') { // 待提货（status:10）且未创建提货单(pickupStatus: 0)且未外转(transStatus: 0) 可以批量操作
+        let data = this.selectOrderList.find((item) => {
+          return (item.status !== 10 || item.pickupStatus !== 0 || item.transStatus !== 0)
+        })
+        if (data !== undefined) {
+          this.$Message.warning('您选择的订单不支持提货调度')
+        } else {
+          this.openDispatchDialog(btn.name)
+        }
+      } else if (btn.name === '订单还原') { // parentId: '' 且 已拆单(disassembleStatus：1)  可以批量操作
+        let data = this.selectOrderList.find((item) => {
+          return (item.parentId !== '' || item.disassembleStatus !== 1)
+        })
+        if (data !== undefined) {
+          this.$Message.warning('您选择的订单不支持订单还原')
+        } else {
+          this.openResOrDelDialog('', btn.name)
+        }
+      } else if (btn.name === '删除') { // status < 30 且  待调度条件下不是上门提货（pickup：2）可以批量操作
+        let data = this.selectOrderList.find((item) => {
+          return (item.status > 20 || (item.status === 20 && item.pickup === 1))
+        })
+        if (data !== undefined) {
+          this.$Message.warning('您选择的订单不支持删除')
+        } else {
+          this.openResOrDelDialog('', btn.name)
+        }
       } else {
         // 导出
         this.$refs.pageTable.$refs.table.exportCsv({
@@ -633,7 +687,7 @@ export default {
         data: { id: params.row.id },
         methods: {
           ok (node) {
-            _this.onAddUserSuccess(node)
+            _this.$refs.pageTable.fetch() // 刷新table
           }
         }
       })
@@ -646,7 +700,7 @@ export default {
         data: { id: params.row.id, orderNo: params.row.orderNo },
         methods: {
           ok (node) {
-            _this.onAddUserSuccess(node)
+            _this.$refs.pageTable.fetch() // 刷新table
           }
         }
       })
@@ -659,7 +713,7 @@ export default {
         data: { id: this.selectOrderList, name: name },
         methods: {
           ok (node) {
-            _this.onAddUserSuccess(node)
+            _this.$refs.pageTable.fetch() // 刷新table
           }
         }
       })
@@ -681,13 +735,10 @@ export default {
         data: data,
         methods: {
           ok (node) {
-            _this.onAddUserSuccess(node)
+            _this.$refs.pageTable.fetch() // 刷新table
           }
         }
       })
-    },
-    onAddUserSuccess () {
-      this.$Message.success('This is a success tip')
     },
     // 筛选列表显示字段
     handleColumnChange (val) {

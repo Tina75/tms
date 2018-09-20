@@ -23,10 +23,11 @@
         </FormItem>
         <FormItem label="付款方式" prop="payType">
           <Select v-model="info.payType" style="width:200px">
-            <Option value="1">现付</Option>
+            <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+            <!-- <Option value="1">现付</Option>
             <Option value="2">到付</Option>
             <Option value="3">回单付</Option>
-            <Option value="4">月结</Option>
+            <Option value="4">月结</Option> -->
           </Select>
         </FormItem>
         <FormItem label="外转运费" prop="transFee">
@@ -51,6 +52,7 @@ import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '@/components/SelectInput.vue'
 import TagNumberInput from '@/views/order/create/TagNumberInput'
 import float from '@/libs/js/float'
+import settlements from '@/views/order/create/constant/settlement.js'
 import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'outer',
@@ -63,7 +65,8 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
-      info: { transfereeName: '', outTransNo: '', payType: '', transFee: '' },
+      settlements,
+      info: { transfereeName: '', outTransNo: '', payType: '', transFee: null },
       rules: {
         transfereeName: { required: true, message: '请填写外转方', trigger: 'blur' },
         payType: { required: true, message: '请选择付款方式' },
@@ -113,6 +116,7 @@ export default {
             method: 'post',
             data: this.info
           }).then((res) => {
+            this.ok()
             this.$Message.success('创建外转单成功')
             this.visibale = false
           })

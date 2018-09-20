@@ -337,7 +337,7 @@ export default {
           method: 'post',
           data: data
         }).then((res) => {
-          console.log(res)
+          this.ok()
           this.$Message.success('拆单成功')
           this.visibale = false
         })

@@ -69,6 +69,8 @@ import BaseDialog from '@/basic/BaseDialog'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
+import City from '@/libs/js/City'
+import { CAR } from '@/views/client/client'
 export default {
   name: 'dispatch',
 
@@ -89,7 +91,10 @@ export default {
       pick: { carrierName: '', carNo: '', driver: '' },
       pickRules: {
         carrierName: { required: true, message: '请填写承运商', trigger: 'blur' },
-        carNo: { required: true, message: '请填写车牌号', trigger: 'blur' },
+        carNo: [
+          { required: true, message: '请填写车牌号', trigger: 'blur' },
+          { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
+        ],
         driver: { required: true, message: '请填写司机姓名', trigger: 'blur' }
       },
       visibale: true,
@@ -137,11 +142,17 @@ export default {
         },
         {
           title: '始发地',
-          key: 'start'
+          key: 'start',
+          render: (h, params) => {
+            return h('span', City.codeToFullName(params.row.start))
+          }
         },
         {
           title: '目的地',
-          key: 'end'
+          key: 'end',
+          render: (h, params) => {
+            return h('span', City.codeToFullName(params.row.end))
+          }
         },
         {
           title: '体积（方）',
@@ -242,7 +253,7 @@ export default {
             method: 'post',
             data: data
           }).then(() => {
-            // this.ok()
+            this.ok()
             this.$Message.success('创建运单成功')
             this.visibale = false
           })
@@ -261,7 +272,7 @@ export default {
             method: 'post',
             data: data
           }).then(() => {
-            // this.ok()
+            this.ok()
             this.$Message.success('创建提货单成功')
             this.visibale = false
           })

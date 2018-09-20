@@ -164,13 +164,13 @@ export default {
    */
   getCarriers ({ state, commit }) {
     return new Promise((resolve, reject) => {
-      const { pageNo, pageSize } = state.order.pagination
+      // const { pageNo, pageSize } = state.order.pagination
       server({
         method: 'get',
         url: 'carrier/list',
         params: {
-          pageNo: pageNo,
-          pageSize: pageSize,
+          // pageNo: pageNo,
+          // pageSize: pageSize,
           type: 1,
           keyword: null
         }
@@ -189,13 +189,13 @@ export default {
    */
   getCarrierCars ({ state, commit }, carrierId) {
     return new Promise((resolve, reject) => {
-      const { pageNo, pageSize } = state.order.pagination
+      // const { pageNo, pageSize } = state.order.pagination
       server({
         method: 'get',
         url: 'carrier/list/car',
         params: {
-          pageNo: pageNo,
-          pageSize: pageSize,
+          // pageNo: pageNo,
+          // pageSize: pageSize,
           carrierId
         }
       }).then((response) => {
@@ -213,13 +213,13 @@ export default {
    */
   getCarrierDrivers ({ state, commit }, carrierId) {
     return new Promise((resolve, reject) => {
-      const { pageNo, pageSize } = state.order.pagination
+      // const { pageNo, pageSize } = state.order.pagination
       server({
         method: 'get',
         url: 'carrier/list/driver',
         params: {
-          pageNo: pageNo,
-          pageSize: pageSize,
+          // pageNo: pageNo,
+          // pageSize: pageSize,
           carrierId
         }
       }).then((response) => {
@@ -239,13 +239,13 @@ export default {
    */
   getTransferees ({ state, commit }) {
     return new Promise((resolve, reject) => {
-      const { pageNo, pageSize } = state.order.pagination
+      // const { pageNo, pageSize } = state.order.pagination
       server({
         method: 'get',
         url: 'transferee/list',
         params: {
-          pageNo: pageNo,
-          pageSize: pageSize,
+          // pageNo: pageNo,
+          // pageSize: pageSize,
           type: 1,
           keyword: null
         }
