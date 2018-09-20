@@ -69,6 +69,7 @@ export default {
      */
     openTab: function (data) {
       data.name = this.$options.metaInfo.title
+      data.query.noCache = true
       this.ema.fire('openTab', data)
     },
     /**
