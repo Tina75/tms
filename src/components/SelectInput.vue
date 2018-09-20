@@ -1,6 +1,6 @@
 <template>
   <Dropdown
-    :visible="visible"
+    :visible="showDropdown"
     :transfer="transfer"
     class="select-input__dropdown"
     trigger="custom"
@@ -77,6 +77,7 @@ export default {
   data () {
     return {
       isFocus: false,
+      visible: false,
       focusIndex: -1,
       currentValue: this.value,
       mousehover: false,
@@ -93,13 +94,13 @@ export default {
         return this.options.filter(opt => opt.name.indexOf(this.currentValue) !== -1)
       }
     },
-    visible () {
-      return this.filterOptions.length > 0 && this.isFocus
+    showDropdown () {
+      return this.visible && this.filterOptions.length > 0 && this.isFocus
     },
     classes () {
       return [
         'select-input__input',
-        this.visible ? 'select-input__input-visible' : ''
+        this.showDropdown ? 'select-input__input-visible' : ''
       ]
     },
     notEmpty () {
@@ -166,22 +167,22 @@ export default {
     handleSelect (name) {
       const item = this.options.find((opt) => opt.name === name || opt.value === name)
       this.currentValue = item.value
-      this.focusIndex = -1
+      this.resetSelect()
       // 选中某一项
       this.$emit('on-select', name, item)
       this.$emit('input', item.value)
     },
     handleFocus () {
+      this.visible = true
+      this.isFocus = true
       if (this.remote) {
         // 鼠标focus的时候，需要默认查询所有
         this.remoteCall()
       }
-      this.isFocus = true
       this.$emit('on-focus')
     },
     handleBlur () {
-      this.isFocus = false
-      this.focusIndex = -1
+      this.resetSelect()
       // 设置输入框的值，不选择下拉框的选项
       // this.$emit('input', this.currentValue)
       this.$emit('on-blur', this.currentValue)
@@ -193,6 +194,7 @@ export default {
       if (this.remote) {
         this.remoteCall(e.target.value)
       }
+      this.visible = true
       this.$emit('input', this.currentValue)
     },
     // 远程请求
@@ -243,6 +245,11 @@ export default {
         index = 0
       }
       this.focusIndex = index
+    },
+    resetSelect () {
+      this.focusIndex = -1
+      this.visible = false
+      this.isFocus = false
     }
   }
 }

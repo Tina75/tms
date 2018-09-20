@@ -8,7 +8,8 @@
       </div>
     </header>
 
-    <div class="login-body">
+    <div :class="{'login-bg': mode === 'signin'}"
+         class="login-body">
       <Signin v-if="mode === 'signin'"
               @on-change="modeChange" />
       <Signup v-if="mode === 'signup'"
@@ -96,4 +97,9 @@ export default {
       position relative
       min-height 550px
       height calc( 100% - 216px )
+
+    &-bg
+      background url("./assets/bg-tms-login.png") no-repeat
+      background-size cover
+
 </style>
