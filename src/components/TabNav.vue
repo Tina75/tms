@@ -114,13 +114,7 @@ export default {
       this.$emit('on-close', res, item)
     },
     handleRefresh (item) {
-      this.$Message.info(`${item.name}已刷新`)
-
-      // this.handleClose(item)
-      // this.ema.fire('openTab', {...item})
-      // this.$router.push({'name': '订单管理', 'path': '/order-management/order'})
       this.ema.fire('refresh', {...item})
-      // window.location.reload()
     },
     handleClick (item) {
       this.$emit('on-select', item)

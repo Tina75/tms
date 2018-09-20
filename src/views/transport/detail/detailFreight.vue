@@ -129,8 +129,8 @@
 
           <div class="detail-log-icon"
                @click="showLog = !showLog">
-            <span
-              :class="showLog ? 'detail-log-hide' : 'detail-log-show'">《</span>
+            <i :class="showLog ? 'detail-log-hide' : 'detail-log-show'"
+               class="icon font_family icon-zhankai1"></i>
           </div>
 
           <Timeline :style="logListHeight"

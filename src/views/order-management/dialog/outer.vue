@@ -128,7 +128,7 @@ export default {
     showCounter () {
       const _this = this
       this.openDialog({
-        name: 'order/create/CounterDialog.vue',
+        name: 'order/create/CounterDialog',
         data: {
           value: 0
         },

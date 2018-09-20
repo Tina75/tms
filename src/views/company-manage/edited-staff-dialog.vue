@@ -105,7 +105,12 @@ export default {
         url: 'role/list',
         method: 'get'
       }).then(({ data }) => {
-        this.selectList = data.data
+        for (let index = 0; index < data.data.length; index++) {
+          if (data.data[index].type === 1) {
+            data.data.splice(index, 1)
+          }
+        }
+        this.selectList = Object.assign({}, data.data)
       })
     },
     save () {

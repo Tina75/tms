@@ -38,7 +38,8 @@ export default {
   data () {
     return {
       collapsed: false,
-      menuList: menuJson
+      menuList: menuJson,
+      defaultTab: { name: '首页', path: '/home' }
     }
   },
   computed: {
@@ -46,12 +47,16 @@ export default {
   },
 
   mounted () {
-    window.EMA.bind('logout', () => {
-      this.$Modal.warning({
-        title: '提示',
-        content: '账号出现异常，请重新登录',
-        onOk: () => { this.logout() }
-      })
+    window.EMA.bind('logout', (msg) => {
+      if (msg) {
+        this.$Modal.warning({
+          title: '提示',
+          content: `${msg}，请重新登录`,
+          onOk: () => { this.logout() }
+        })
+      } else {
+        this.logout()
+      }
     })
     window.EMA.bind('refresh', (route) => {
       if (!route.query) route.query = {}
@@ -70,7 +75,9 @@ export default {
       }
     })
     this.init()
-
+    // this.$nextTick(() => {
+    //   this.turnToPage(this.defaultTab)
+    // })
     // 初始化tabnav
     // if (this.$route.path === '/') {
     //   setTimeout(() => {
@@ -82,11 +89,11 @@ export default {
     ...mapActions(['getPermissons', 'getUserInfo', 'getMessageCount']),
     ...mapMutations(['setTabNavList', 'initTabNav']),
     async init () {
+      await this.getPermissons()
       this.initTabNav()
       this.getUserInfo()
       this.getMessageCount()
       // 获取用户权限
-      await this.getPermissons()
       // TODO: something
     },
     openMsgTab (type = 0) {
@@ -94,9 +101,7 @@ export default {
       this.onMenuSelect(router)
     },
     logout () {
-      // localStorage.removeItem('tms_is_login')
       localStorage.clear()
-      // this.$router.go(0)
       window.location.reload()
     },
     handleCloseTab (list, route) {
@@ -250,6 +255,8 @@ html, body
   color rgba(255,255,255,1)
   font-family:PingFangSC-Regular;
   font-weight:400;
+.ivu-menu-item>i
+  margin-right 20px
 .ivu-modal-footer
   border-top none
   text-align center

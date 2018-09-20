@@ -18,6 +18,7 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 export default {
+  name: 'CounterDialog',
   mixins: [BaseDialog],
   data () {
     return {
@@ -27,10 +28,15 @@ export default {
       visibale: true
     }
   },
+  watch: {
+    visibale: function (val) {
+      !val && this.close()
+    }
+  },
   methods: {
     save () {
-      this.visibale = false
       this.ok(this.counterForm.rule)
+      this.visibale = false
     }
   }
 }
