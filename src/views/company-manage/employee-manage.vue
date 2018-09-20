@@ -8,7 +8,7 @@
       <div style="max-height:500px; overflow-y:auto; padding-top: 20px;">
         <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" class="menu" @click.native="clickLeftMenu(menu)">
         <p class="menuTitle">{{menu.name}}</p>
-        <span v-if="menu.name !== '超级管理员'" class="configBtnItem">
+        <span v-if="menu.type !== 1" class="configBtnItem">
           <span class="configBtn" @click="editRole(menu)">修改</span>
           <span type="text" class="configBtn" @click="removeRole(menu)">删除</span>
         </span>
