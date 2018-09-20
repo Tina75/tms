@@ -3,29 +3,39 @@
     <Modal v-model="visibale" :mask-closable="false" width="360">
       <p slot="header" style="text-align:center">
         <!-- <Icon type="ios-information-circle"></Icon> -->
-        <span>订单外转id={{id}}</span>
+        <span>订单外转</span>
       </p>
       <Form ref="info" :model="info" :rules="rules" :label-width="100">
-        <FormItem label="外转方" prop="name">
-          <!-- <Input v-model="info.name" style="width:200px" placeholder="请输入"/> -->
-          <AutoComplete
-            v-model="info.name"
-            :data="outerCompany"
+        <FormItem label="外转方" prop="transfereeName">
+          <SelectInput
+            v-model="info.transfereeName"
+            :maxlength="20"
+            :remote="false"
+            :local-options="transferees"
             placeholder="请输入"
-            style="width:200px">
-          </AutoComplete>
+            style="width:200px"
+            @on-focus.once="getTransferees"
+            @on-select="handleSelectTransferee">
+          </SelectInput>
         </FormItem>
         <FormItem label="外转方运单号">
-          <Input v-model="info.phone" style="width:200px" placeholder="请输入"/>
+          <Input v-model="info.outTransNo" :maxlength="20" style="width:200px" placeholder="请输入"/>
         </FormItem>
         <FormItem label="付款方式" prop="payType">
           <Select v-model="info.payType" style="width:200px">
-            <Option v-for="item in payTypes" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+            <!-- <Option value="1">现付</Option>
+            <Option value="2">到付</Option>
+            <Option value="3">回单付</Option>
+            <Option value="4">月结</Option> -->
           </Select>
         </FormItem>
-        <FormItem label="外转运费" prop="outerCharge">
-          <Input v-model="info.outerCharge" style="width:180px" placeholder="请输入"/>
-          <Icon type="ios-calculator" size="26"/>
+        <FormItem label="外转运费" prop="transFee">
+          <!-- <Input v-model="info.transFee" style="width:180px" placeholder="请输入"/> -->
+          <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" style="width:180px">
+            <span slot="suffix" class="order-create__input-suffix">元</span>
+          </TagNumberInput>
+          <Icon type="ios-calculator" size="26" color="#00a4bd" @click="showCounter"></Icon>
         </FormItem>
       </Form>
       <div slot="footer">
@@ -39,26 +49,39 @@
 <script>
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
+import SelectInput from '@/components/SelectInput.vue'
+import TagNumberInput from '@/views/order/create/TagNumberInput'
+import float from '@/libs/js/float'
+import settlements from '@/views/order/create/constant/settlement.js'
+import { mapGetters, mapActions } from 'vuex'
 export default {
-  name: 'editUser',
+  name: 'outer',
+
+  components: {
+    SelectInput,
+    TagNumberInput
+  },
+
   mixins: [BaseDialog],
   data () {
     return {
-      info: { name: '', waybillNum: '', payType: '0', outerCharge: '' },
+      settlements,
+      info: { transfereeName: '', outTransNo: '', payType: '', transFee: null },
       rules: {
-        name: { required: true, message: '请填写外转方', trigger: 'blur' },
-        payType: { required: true, message: '请选择付款方式', trigger: 'blur' },
-        outerCharge: { required: true, message: '请填写外转运费', trigger: 'blur' }
+        transfereeName: { required: true, message: '请填写外转方', trigger: 'blur' },
+        payType: { required: true, message: '请选择付款方式' },
+        transFee: { required: true, type: 'number', message: '请填写外转运费', trigger: 'blur' }
       },
-      visibale: true,
-      outerCompany: ['Steve Jobs', 'Stephen Gary Wozniak', 'Jonathan Paul Ive'],
-      payTypes: [
-        { label: '到付', value: '0' },
-        { label: '回付', value: '1' },
-        { label: '周期结', value: '2' }
-      ]
+      visibale: true
     }
   },
+
+  computed: {
+    ...mapGetters([
+      'transferees'
+    ])
+  },
+
   watch: {
     visibale: function (val) {
       !val && this.close()
@@ -69,17 +92,48 @@ export default {
   },
 
   methods: {
+    ...mapActions([
+      'getTransferees'
+    ]),
+    // 保留2位小数
+    handleParseFloat (value) {
+      return float.floor(value)
+    },
+    // 选择已维护外转方后操作
+    handleSelectTransferee (name, row) {
+      console.log(name, row)
+    },
     save () {
       this.$refs['info'].validate((valid) => {
+        this.info = Object.assign({}, this.info, {
+          orderId: this.id,
+          payType: Number(this.info.payType),
+          transFee: Number(this.info.transFee)
+        })
         if (valid) {
           Server({
-            url: 'user/update',
+            url: 'outside/bill/create',
             method: 'post',
             data: this.info
-          }).then(() => {
+          }).then((res) => {
             this.ok()
+            this.$Message.success('创建外转单成功')
             this.visibale = false
           })
+        }
+      })
+    },
+    // 显示计费规则
+    showCounter () {
+      this.openDialog({
+        name: 'order/create/CounterDialog.vue',
+        data: {
+          value: 0
+        },
+        methods: {
+          ok (value) {
+            // vm.orderForm.freightFee = value || 0
+          }
         }
       })
     }

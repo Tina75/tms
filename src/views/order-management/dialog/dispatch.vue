@@ -5,41 +5,47 @@
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>{{name}}</span>
       </p>
-      <Form v-if="name === '送货调度'" :model="send" :rules="sendRules" :label-width="60" inline label-position="left">
+      <Form v-if="name === '送货调度'" ref="send" :model="send" :rules="sendRules" :label-width="60" inline label-position="left">
         <FormItem label="始发地" prop="start">
-          <Input v-model="send.start" style="width:180px" placeholder="请输入"/>
+          <area-select v-model="send.start" style="width:180px"></area-select>
         </FormItem>
         <FormItem label="目的地" prop="end" style="margin-left:27px;">
-          <Input v-model="send.end" style="width:180px" placeholder="请输入"/>
+          <area-select v-model="send.end" style="width:180px"></area-select>
         </FormItem>
       </Form>
-      <Form v-else ref="info" :model="extract" :rules="extractRules" :label-width="60" inline label-position="left">
-        <FormItem label="承运商" prop="companny">
-          <!-- <Input v-model="extract.companny" style="width:180px" placeholder="请输入"/> -->
-          <AutoComplete
-            v-model="extract.companny"
-            :data="maintainData"
+      <Form v-else ref="pick" :model="pick" :rules="pickRules" :label-width="60" inline label-position="left">
+        <FormItem label="承运商" prop="carrierName">
+          <SelectInput
+            v-model="pick.carrierName"
+            :maxlength="20"
+            :remote="false"
+            :local-options="carriers"
             placeholder="请输入"
-            style="width:180px">
-          </AutoComplete>
+            style="width:180px"
+            @on-focus.once="getCarriers"
+            @on-select="handleSelectCarrier">
+          </SelectInput>
         </FormItem>
-        <FormItem label="车牌号" prop="number" style="margin-left:27px;">
-          <!-- <Input v-model="extract.number" style="width:180px" placeholder="请输入"/> -->
-          <AutoComplete
-            v-model="extract.number"
-            :data="maintainData"
+        <FormItem label="车牌号" prop="carNo" style="margin-left:27px;">
+          <SelectInput
+            v-model="pick.carNo"
+            :maxlength="20"
+            :remote="false"
+            :local-options="carrierCars"
             placeholder="请输入"
-            style="width:180px">
-          </AutoComplete>
+            style="width:180px"
+            @on-select="handleSelectCarrierCars">
+          </SelectInput>
         </FormItem>
         <FormItem label="司机" prop="driver" style="margin-left:27px;">
-          <!-- <Input v-model="extract.driver" style="width:180px" placeholder="请输入"/> -->
-          <AutoComplete
-            v-model="extract.driver"
-            :data="maintainData"
+          <SelectInput
+            v-model="pick.driver"
+            :maxlength="15"
+            :remote="false"
+            :local-options="carrierDrivers"
             placeholder="请输入"
             style="width:180px">
-          </AutoComplete>
+          </SelectInput>
         </FormItem>
       </Form>
       <Table :columns="tableColumns" :data="id"></Table>
@@ -60,20 +66,35 @@
 <script>
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
+import AreaSelect from '@/components/AreaSelect'
+import SelectInput from '@/components/SelectInput.vue'
+import { mapGetters, mapActions } from 'vuex'
+import City from '@/libs/js/City'
+import { CAR } from '@/views/client/client'
 export default {
-  name: 'editUser',
+  name: 'dispatch',
+
+  components: {
+    AreaSelect,
+    SelectInput
+  },
+
   mixins: [BaseDialog],
+
   data () {
     return {
-      send: { start: '', end: '' },
+      send: { start: [], end: [] },
       sendRules: {
-        start: { required: true, message: '请填写始发地', trigger: 'blur' },
-        end: { required: true, message: '请填写目的地', trigger: 'blur' }
+        start: { required: true, type: 'array', min: 1, message: '请填写始发地', trigger: 'change' },
+        end: { required: true, type: 'array', min: 1, message: '请填写目的地', trigger: 'change' }
       },
-      extract: { companny: '', number: '', driver: '' },
-      extractRules: {
-        companny: { required: true, message: '请填写承运商', trigger: 'blur' },
-        number: { required: true, message: '请填写车牌号', trigger: 'blur' },
+      pick: { carrierName: '', carNo: '', driver: '' },
+      pickRules: {
+        carrierName: { required: true, message: '请填写承运商', trigger: 'blur' },
+        carNo: [
+          { required: true, message: '请填写车牌号', trigger: 'blur' },
+          { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
+        ],
         driver: { required: true, message: '请填写司机姓名', trigger: 'blur' }
       },
       visibale: true,
@@ -121,11 +142,17 @@ export default {
         },
         {
           title: '始发地',
-          key: 'start'
+          key: 'start',
+          render: (h, params) => {
+            return h('span', City.codeToFullName(params.row.start))
+          }
         },
         {
           title: '目的地',
-          key: 'end'
+          key: 'end',
+          render: (h, params) => {
+            return h('span', City.codeToFullName(params.row.end))
+          }
         },
         {
           title: '体积（方）',
@@ -142,6 +169,11 @@ export default {
   },
 
   computed: {
+    ...mapGetters([
+      'carriers',
+      'carrierCars',
+      'carrierDrivers'
+    ]),
     orderTotal () {
       return this.id.length
     },
@@ -158,6 +190,13 @@ export default {
         total += item.weight
       })
       return total
+    },
+    orderIds () {
+      let arr = []
+      this.id.map((item) => {
+        arr.push(item.id)
+      })
+      return arr
     }
   },
 
@@ -171,16 +210,70 @@ export default {
   },
 
   methods: {
+    ...mapActions([
+      'getCarriers'
+    ]),
+    // 选择承运商dropdown的数据
+    handleSelectCarrier (name, row) {
+      console.log(name, row)
+      this.$store.dispatch('getCarrierCars', row.id)
+      this.$store.dispatch('getCarrierDrivers', row.id)
+    },
+    // 选择承运商车辆信息
+    handleSelectCarrierCars (name, row) {
+      console.log(name, row)
+    },
+    // 过滤已维护的客户信息
+    filterMethod (value, option) {
+      if (value) {
+        return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
+      }
+    },
     save () {
-      this.$refs['info'].validate((valid) => {
+      if (this.name === '送货调度') {
+        this.doSendDispatch()
+      } else {
+        this.doPickDispatch()
+      }
+    },
+    // 送货调度  创建运单
+    doSendDispatch () {
+      this.$refs['send'].validate((valid) => {
+        console.log(valid)
+        console.log(this.send)
         if (valid) {
-          console.log(this.extract)
+          // 地址入参为最后一级区号
+          let sendCodes = {
+            start: Number(this.send.start[this.send.start.length - 1]),
+            end: Number(this.send.end[this.send.end.length - 1])
+          }
+          const data = Object.assign(sendCodes, {orderIds: this.orderIds})
           Server({
-            url: 'user/update',
+            url: 'waybill/create',
             method: 'post',
-            data: this.extract
+            data: data
           }).then(() => {
             this.ok()
+            this.$Message.success('创建运单成功')
+            this.visibale = false
+          })
+        }
+      })
+    },
+    // 提货调度  创建提货单
+    doPickDispatch () {
+      this.$refs['pick'].validate((valid) => {
+        console.log(valid)
+        console.log(this.pick)
+        if (valid) {
+          const data = Object.assign(this.pick, {orderIds: this.orderIds})
+          Server({
+            url: 'load/bill/create',
+            method: 'post',
+            data: data
+          }).then(() => {
+            this.ok()
+            this.$Message.success('创建提货单成功')
             this.visibale = false
           })
         }

@@ -55,6 +55,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import OssClient from 'ali-oss'
 import PageTable from '@/components/page-table/index'
 import BaseComponent from '@/basic/BaseComponent'
@@ -75,6 +76,7 @@ export default {
   },
   mixins: [BaseComponent, BasePage],
   data () {
+    const vm = this
     return {
       downloadUrl: '',
       visible: false,
@@ -83,7 +85,11 @@ export default {
       columns: [
         {
           title: '导入日期',
-          key: 'createTime'
+          key: 'createTime',
+          render (h, params) {
+            let time = params.row.createTime
+            return time ? h('span', new Date(time).Format('yyyy-MM-dd hh:mm:ss')) : ''
+          }
         },
         {
           title: '导入文件名',
@@ -125,6 +131,16 @@ export default {
                 class: 'i-ml-10',
                 attrs: {
                   href: 'javascript:;'
+                },
+                on: {
+                  click: () => {
+                    vm.openTab({
+                      path: '/order-management/order',
+                      query: {
+                        id: vm.UserInfo.name
+                      }
+                    })
+                  }
                 }
               }, '查看订单'))
             }
@@ -133,6 +149,9 @@ export default {
         }
       ]
     }
+  },
+  computed: {
+    ...mapGetters(['UserInfo'])
   },
   created () {
     this.initOssInstance()
@@ -143,7 +162,6 @@ export default {
       this.$refs.footer.parentElement.parentElement.style['min-height'] = '180px'
       this.$refs.footer.parentElement.parentElement.style['display'] = 'none'
     }
-    // this.$refs.footer.$parent.style['height'] = '200px'
   },
   methods: {
     initOssInstance () {
@@ -199,13 +217,23 @@ export default {
     /**
      * 文件上传后，回调
      */
-    handleChange (e) {
+    async handleChange (e) {
       const files = e.target.files
 
       if (!files || files.length === 0) {
         return false
       }
-      this.uploadFile(files[0])
+      try {
+        const uploadResult = await this.uploadFile(files[0])
+        const notifyResult = await this.notifyBackend(uploadResult.name, uploadResult.res.requestUrls[0])
+        if (notifyResult.data.code === 10000) {
+          this.$Message.success('导入文件成功')
+        }
+      } catch (error) {
+        console.error('导入订单', error)
+      }
+
+      this.$refs.pageTable.fetch()
       this.$refs.fileInput.value = null
     },
     async uploadFile (file) {
@@ -227,13 +255,14 @@ export default {
             // this.visible = false
             this.progress = 0
           })
-          this.notifyBackend(result.name, result.res.requestUrls[0])
+          return result
         } catch (e) {
           // 捕获超时异常
           if (e.code === 'ConnectionTimeoutError') {
             this.$Message.error('文件上传超时')
             // do ConnectionTimeoutError operation
           }
+          throw e
         }
       }
     },
@@ -241,20 +270,21 @@ export default {
      * 通知后端文件名称，
      * 文件上传成功，
      */
-    notifyBackend (fileName, fileUrl) {
-      const vm = this
-      server({
-        method: 'post',
-        url: 'order/template/uploadNotify',
-        data: {
-          fileName,
-          fileUrl
-        }
-      }).then(() => {
-        vm.$refs.pageTable.fetch()
-      }).catch(() => {
-        vm.$refs.pageTable.fetch()
-      })
+    async notifyBackend (fileName, fileUrl) {
+      try {
+        const result = await server({
+          method: 'post',
+          url: 'order/template/uploadNotify',
+          data: {
+            fileName,
+            fileUrl
+          }
+        })
+        return result
+      } catch (error) {
+        // vm.$refs.pageTable.fetch()
+        throw error
+      }
     },
     // !废弃，暂时不用
     handleSuccess (res, file) {

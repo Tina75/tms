@@ -127,7 +127,7 @@
           </Col>
           <Col span="6">
           <span @click="showCounter">
-            <Icon type="ios-calculator" size="26" color="#00a4bd"></Icon>
+            <FontIcon type="jisuanqi" size="20" color="#00a4bd" class="i-ml-5"></FontIcon>
           </span>
           </Col>
         </Row>
@@ -215,7 +215,7 @@ import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import OrderPrint from './OrderPrint'
 import AreaSelect from '@/components/AreaSelect'
-
+import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
 import settlements from './constant/settlement.js'
 import pickups from './constant/pickup.js'
@@ -228,7 +228,8 @@ export default {
     TagNumberInput,
     OrderPrint,
     AreaSelect,
-    SelectInput
+    SelectInput,
+    FontIcon
   },
   mixins: [BaseComponent, BasePage],
   data () {

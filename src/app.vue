@@ -45,9 +45,13 @@ export default {
     ...mapGetters(['TabNavList', 'UserInfo'])
   },
 
-  async mounted () {
+  mounted () {
     window.EMA.bind('logout', () => {
-      this.logout()
+      this.$Modal.warning({
+        title: '提示',
+        content: '账号出现异常，请重新登录',
+        onOk: () => { this.logout() }
+      })
     })
     window.EMA.bind('refresh', (route) => {
       if (!route.query) route.query = {}
@@ -90,7 +94,9 @@ export default {
       this.onMenuSelect(router)
     },
     logout () {
-      localStorage.removeItem('tms_is_login')
+      // localStorage.removeItem('tms_is_login')
+      localStorage.clear()
+      // this.$router.go(0)
       window.location.reload()
     },
     handleCloseTab (list, route) {
