@@ -109,15 +109,16 @@ export default {
     // 输入框失焦
     inputBlur (type) {
       if (this.currentFocus !== undefined) this.currentFocus = ''
-      if (!this.validate(type)) return
+      this.validate(type)
+      // if (!this.validate(type)) return
 
-      if (type === 'phone') {
-        let mode = 'signin'
-        if (this.$route.path === '/login/sign-up') mode = 'signup'
-        if (this.$route.path === '/login/find-back') mode = 'findback'
-        this.imCheckPhone(mode)
-      } else if (type === 'captchaCode') this.imCheckCapthcha()
-      else if (type === 'smsCode') this.imCheckSMSCode()
+      // if (type === 'phone') {
+      //   let mode = 'signin'
+      //   if (this.$route.path === '/login/sign-up') mode = 'signup'
+      //   if (this.$route.path === '/login/find-back') mode = 'findback'
+      //   this.imCheckPhone(mode)
+      // } else if (type === 'captchaCode') this.imCheckCapthcha()
+      // else if (type === 'smsCode') this.imCheckSMSCode()
     },
 
     // 校验密码-添加设置密码时的位数规则
