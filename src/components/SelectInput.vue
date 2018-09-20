@@ -192,7 +192,7 @@ export default {
       this.isFocus = true
       if (this.remote) {
         // 鼠标focus的时候，需要默认查询所有
-        this.remoteCall()
+        this.remoteCall(this.currentValue)
       }
       this.$emit('on-focus')
     },
