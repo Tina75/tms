@@ -180,7 +180,7 @@ export default {
   .login-img
     display block
     position relative
-    width 500px
+    width 654px
     margin-right 107px
     z-index 1
 

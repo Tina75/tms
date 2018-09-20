@@ -95,7 +95,7 @@ export default {
       align-items center
       justify-content center
       position relative
-      min-height 550px
+      min-height 552px
       height calc( 100% - 216px )
 
     &-bg

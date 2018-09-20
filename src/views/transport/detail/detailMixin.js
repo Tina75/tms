@@ -1,4 +1,8 @@
 import CarConfigs from './carConfigs.json'
+import MoneyInput from '../components/moneyInput'
+import City from '@/libs/js/City'
+import { mapGetters, mapActions } from 'vuex'
+import { CAR } from '@/views/client/client'
 
 const carType = CarConfigs.carType
 const carLength = CarConfigs.carLength
@@ -18,6 +22,7 @@ export default {
         {
           title: '付款方式',
           key: 'payType',
+          align: 'center',
           width: 100,
           render: (h, p) => {
             let type
@@ -36,14 +41,22 @@ export default {
             if (!this.inEditing) {
               return h('span', p.row.cashAmount)
             } else {
-              return h('Input', {
+              return h(MoneyInput, {
                 props: {
                   value: p.row.cashAmount,
-                  placeholder: '请输入'
+                  placeholder: '请输入',
+                  suffix: false
                 },
                 style: {
-                  width: 'auto',
-                  borderStyle: 'none'
+                  width: '60px'
+                },
+                on: {
+                  'on-blur': (money) => {
+                    let temp = p.row
+                    temp.cashAmount = money
+                    this.settlementPayInfo.splice(p.index, 1, temp)
+                    this.checkTotalAmount()
+                  }
                 }
               })
             }
@@ -56,14 +69,22 @@ export default {
             if (!this.inEditing) {
               return h('span', p.row.fuelCardAmount)
             } else {
-              return h('Input', {
+              return h(MoneyInput, {
                 props: {
                   value: p.row.fuelCardAmount,
-                  placeholder: '请输入'
+                  placeholder: '请输入',
+                  suffix: false
                 },
                 style: {
-                  width: 'auto',
-                  borderStyle: 'none'
+                  width: '60px'
+                },
+                on: {
+                  'on-blur': (money) => {
+                    let temp = p.row
+                    temp.fuelCardAmount = money
+                    this.settlementPayInfo.splice(p.index, 1, temp)
+                    this.checkTotalAmount()
+                  }
                 }
               })
             }
@@ -90,7 +111,11 @@ export default {
     },
     // 支付总额
     paymentTotal () {
-      return this.payment.freightFee + this.payment.loadFee + this.payment.unloadFee + this.payment.insuranceFee + this.payment.otherFee
+      return Number(this.payment.freightFee) +
+      Number(this.payment.loadFee) +
+      Number(this.payment.unloadFee) +
+      Number(this.payment.insuranceFee) +
+      Number(this.payment.otherFee)
     },
     // 货物总计
     orderTotal () {
@@ -107,10 +132,20 @@ export default {
         weight: 0,
         volume: 0
       })
-    }
+    },
+
+    ...mapGetters([
+      'carriers',
+      'carrierCars',
+      'carrierDrivers'
+    ])
   },
 
   filters: {
+    formatCity (code) {
+      return City.codeToFullName(code, 3)
+    },
+
     carTypeFilter (value) {
       for (let i = 0; i < carType.length; i++) {
         if (value === carType[i].value) {
@@ -128,6 +163,12 @@ export default {
   },
 
   watch: {
+    startCodes () {
+      this.info.start = this.startCodes[2]
+    },
+    endCodes () {
+      this.info.end = this.endCodes[2]
+    },
     inEditing (val) {
       if (!this.tableCanEdit) return
       if (val) {
@@ -152,10 +193,29 @@ export default {
   },
 
   methods: {
+    ...mapActions([
+      'getCarriers'
+    ]),
+
+    handleSelectCarrier (name, row) {
+      console.log(name, row)
+      this.$store.dispatch('getCarrierCars', row.id)
+      this.$store.dispatch('getCarrierDrivers', row.id)
+    },
+
+    // 根据城市code查询父级code
+    // getParentCodes () {
+    //   const start = City.getParentByCode(this.info.start)
+    //   const end = City.getParentByCode(this.info.end)
+    //   this.startCodes = [Number(start.parent), Number(start.code), this.info.start]
+    //   this.endCodes = [Number(end.parent), Number(end.code), this.info.end]
+    //   console.log(this.startCodes, this.endCodes)
+    // },
+
     // 根据状态设置按钮
     setBtnsWithStatus () {
       for (let i = 0; i < this.btnList.length; i++) {
-        if (this.btnList[i].status === this.info.status) {
+        if (this.btnList[i].status === this.status) {
           this.currentBtns = this.btnList[i].btns
           return
         }
@@ -183,6 +243,19 @@ export default {
       })
     },
 
+    // 校验结算方式输入金额
+    checkTotalAmount () {
+      let total = 0
+      this.settlementPayInfo.forEach(item => {
+        total = total + Number(item.cashAmount) + Number(item.fuelCardAmount)
+      })
+      if (total > Number(this.paymentTotal)) {
+        this.$Message.error('结算总额不能超过费用合计')
+        return false
+      }
+      return true
+    },
+
     // 添加订单
     addOrder () {
       this.openDialog({
@@ -194,6 +267,62 @@ export default {
           }
         }
       })
+    },
+
+    // 格式化金额
+    formatMoney () {
+      let temp = Object.assign({}, this.payment)
+      for (let key in temp) {
+        temp[key] = Number(temp[key]) * 100
+      }
+      return temp
+    },
+    // 格式化计费方式金额
+    formatPayInfo () {
+      return this.settlementPayInfo.map(item => {
+        return {
+          payType: item.payType,
+          fuelCardAmount: Number(item.fuelCardAmount) * 100,
+          cashAmount: Number(item.cashAmount) * 100
+        }
+      })
+    },
+    // 校验
+    validate () {
+      if (!this.info.start) {
+        this.$Message.error('请输入始发地')
+        return false
+      }
+      if (!this.info.end) {
+        this.$Message.error('请输入目的地')
+        return false
+      }
+      if (!this.info.carrierName) {
+        this.$Message.error('请输入承运商')
+        return false
+      }
+      if (!this.info.driverName) {
+        this.$Message.error('请输入司机')
+        return false
+      }
+      if (!this.info.carNo) {
+        this.$Message.error('请输入车牌号')
+        return false
+      }
+      if (!CAR.test(this.info.carNo)) {
+        this.$Message.error('请输入正确的车牌号')
+        return false
+      }
+      if (!this.payment.freightFee) {
+        this.$Message.error('请输入运输费')
+        return false
+      }
+      if (!this.settlementType) {
+        this.$Message.error('请选择结算方式')
+        return false
+      }
+      if (!this.checkTotalAmount) return false
+      return true
     }
   }
 }
