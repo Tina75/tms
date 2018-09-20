@@ -189,6 +189,7 @@ export default {
       this.searchData.type = id
       this.searchData.page = 1
       this.getMenuList(this.searchData)
+      this.getMenuInfoNum()
     },
     msgRemoveBtn (message) {
       Server({

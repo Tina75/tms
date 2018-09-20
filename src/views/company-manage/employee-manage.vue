@@ -139,7 +139,7 @@ export default {
   },
   watch: {
     arrayCodeList (newList) {
-      if (this.menuParam.name === '超级管理员') {
+      if (this.menuParam.type === 1) {
         this.initTreeList(newList, 'type')
       } else {
         this.initTreeList(newList)

@@ -339,11 +339,7 @@ export default {
       // }
     }
   },
-  mounted: function () {
-    this.getUserInfo()
-    this.getCompanyInof()
-    this.smsInfo()
-  },
+  mounted: function () {},
   methods: {
     getCompanyInof () {
       Server({
@@ -351,7 +347,6 @@ export default {
         method: 'get'
       }).then(({ data }) => {
         this.formCompany = Object.assign({}, data.data)
-        this.formCompany.cityId = this.formCompany.cityId.toString()
       })
     },
     getUserInfo () {
@@ -376,15 +371,23 @@ export default {
               element.model = true
             }
           })
-          this.switchMsg = (this.checkNum > 0)
         }
       })
     },
     clickLeftMenu (id, menuName) {
-      this.$nextTick(function () {
-        this.rightTitle = menuName
-        this.rightKey = id
-      })
+      this.rightTitle = menuName
+      this.rightKey = id
+      switch (id) {
+        case '2':
+          this.getUserInfo()
+          break
+        case '3':
+          this.smsInfo()
+          break
+        case '4':
+          this.getCompanyInof()
+          break
+      }
     },
     // 密码
     pwdSubmit (name) {
