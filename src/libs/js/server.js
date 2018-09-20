@@ -15,7 +15,7 @@ let instance = axios.create({
   },
   withCredentials: true,
   loading: false,
-  ignoreCode: process.env.NODE_ENV === 'development'
+  ignoreCode: false
 })
 
 switch (process.env.NODE_ENV) {
@@ -50,7 +50,6 @@ instance.interceptors.response.use((res) => {
     switch (code) {
       case 310010:// token失效或不存在
       case 310011:// 账号在其他设备登录
-        Message.error(`${res.data.msg}`)
         window.EMA.fire('logout')
         break
       case 210014:
