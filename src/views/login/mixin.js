@@ -6,10 +6,10 @@ const waitingTime = 60
 let captchaUrl
 switch (process.env.NODE_ENV) {
   case 'development':
-    captchaUrl = 'http://192.168.1.49:5656/dolphin-web/user/captcha'
+    captchaUrl = '//192.168.1.49:5656/dolphin-web/user/captcha'
     break
   case 'production':
-    captchaUrl = '//dev-boss.yundada56.com/bluewhale-boss/user/captcha'
+    captchaUrl = '//192.168.1.49:5656/dolphin-web/user/captcha'
     break
 }
 
@@ -109,15 +109,16 @@ export default {
     // 输入框失焦
     inputBlur (type) {
       if (this.currentFocus !== undefined) this.currentFocus = ''
-      if (!this.validate(type)) return
+      this.validate(type)
+      // if (!this.validate(type)) return
 
-      if (type === 'phone') {
-        let mode = 'signin'
-        if (this.$route.path === '/login/sign-up') mode = 'signup'
-        if (this.$route.path === '/login/find-back') mode = 'findback'
-        this.imCheckPhone(mode)
-      } else if (type === 'captchaCode') this.imCheckCapthcha()
-      else if (type === 'smsCode') this.imCheckSMSCode()
+      // if (type === 'phone') {
+      //   let mode = 'signin'
+      //   if (this.$route.path === '/login/sign-up') mode = 'signup'
+      //   if (this.$route.path === '/login/find-back') mode = 'findback'
+      //   this.imCheckPhone(mode)
+      // } else if (type === 'captchaCode') this.imCheckCapthcha()
+      // else if (type === 'smsCode') this.imCheckSMSCode()
     },
 
     // 校验密码-添加设置密码时的位数规则

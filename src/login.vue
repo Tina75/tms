@@ -1,14 +1,15 @@
 <template>
   <div id="app" class="login">
     <header class="login-header">
-      <span>1</span>
+      <i class="icon font_family icon-ico-slogo"></i>
       <div class="login-header-tel">
         <p>400-788-5656</p>
         <p>客服电话</p>
       </div>
     </header>
 
-    <div class="login-body">
+    <div :class="{'login-bg': mode === 'signin'}"
+         class="login-body">
       <Signin v-if="mode === 'signin'"
               @on-change="modeChange" />
       <Signup v-if="mode === 'signup'"
@@ -47,6 +48,10 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+  .icon-ico-slogo
+    color #FFFFFF
+    font-size 50px
+
   .login
     position relative
     width 100%
@@ -92,4 +97,9 @@ export default {
       position relative
       min-height 550px
       height calc( 100% - 216px )
+
+    &-bg
+      background url("./assets/bg-tms-login.png") no-repeat
+      background-size cover
+
 </style>

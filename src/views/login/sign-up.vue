@@ -110,7 +110,7 @@ export default {
   },
   data () {
     return {
-      step: 2,
+      step: 0,
       stepList: ['验证手机号', '填写账号信息', '注册成功'],
       protocol: true,
       showP: 0,
@@ -185,7 +185,7 @@ export default {
       }).then(res => {
         this.$Message.success('注册成功')
         setTimeout(() => {
-          this.$router.push('/')
+          this.changeMode('signin')
         }, 2000)
       }).catch(err => console.error(err))
     },

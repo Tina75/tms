@@ -2,20 +2,20 @@
   <div>
     <header class="detail-header">
       <ul>
-        <li>单号：D2333333333</li>
-        <li>客户订单号：D2333333333333</li>
-        <li>运单号：D233333333333333 &nbsp;&nbsp;&nbsp;
-          <Poptip placement="bottom" @on-popper-show="showPoptip" @on-popper-hide="hidePoptip">
+        <li>单号：{{detail.orderNo}}</li>
+        <li>客户订单号：{{detail.customerOrderNo}}</li>
+        <li>运单号：{{detail.waybillNo}} &nbsp;&nbsp;&nbsp;
+          <Poptip v-if="waybillNums.length > 0" placement="bottom" @on-popper-show="showPoptip" @on-popper-hide="hidePoptip">
             <a>{{ show ? '收起全部' : '展开全部' }}</a>
             <div slot="title" style="color:rgba(51,51,51,1);text-align: center;">全部运单号</div>
             <ul slot="content">
-              <li v-for="(item, index) in waybillNums" :key="index" style="line-height: 25px;">
-                <a href="" style="color: #3A7EDE;">{{item}}</a>
+              <li v-for="(item, index) in waybillNums" :key="index" style="line-height: 25px;cursor:pointer;" @click="handleWaybillNo(item.id)">
+                <span style="color: #3A7EDE;">{{item.waybillNo}}</span>
               </li>
             </ul>
           </Poptip>
         </li>
-        <li>订单状态：<span style="font-weight: bold;">待提货</span></li>
+        <li>订单状态：<span style="font-weight: bold;">{{statusToName(detail.status)}}</span></li>
       </ul>
     </header>
     <div style="text-align: right;margin: 28px;">
@@ -24,80 +24,80 @@
     <section>
       <div>
         <div class="title">
-          <span>客户信息</span>
+          <span>{{from === 'order' ? '客户信息' : '回单信息'}}</span>
         </div>
         <Row>
           <i-col span="7">
             <span>客户名称：</span>
-            <span>南京太古可口可乐</span>
+            <span>{{detail.consignerName}}</span>
           </i-col>
           <i-col span="7">
             <span>要求发货时间：</span>
-            <span>2018-08-20 上午08～09</span>
+            <span>{{detail.deliveryTime | datetime}}</span>
           </i-col>
           <i-col span="10">
-            <span>要求发货时间：</span>
-            <span>2018-08-20 上午08～09</span>
+            <span>期望到货时间：</span>
+            <span>{{detail.arriveTime | datetime}}</span>
           </i-col>
         </Row>
         <Row>
           <i-col span="7">
             <span>始发地：</span>
-            <span>江苏省南京市</span>
+            <span>{{detail.start | codeToFullName}}</span>
           </i-col>
           <i-col span="7">
             <span>目的地：</span>
-            <span>安徽省六安市</span>
+            <span>{{detail.end | codeToFullName}}</span>
           </i-col>
           <i-col span="7">
             <span>提货方式：</span>
-            <span>上门提货</span>
+            <span>{{pickupToName(detail.pickup)}}</span>
           </i-col>
           <i-col span="3">
             <span>回单数：</span>
-            <span>2</span>
+            <span>{{detail.receiptCount}}</span>
           </i-col>
         </Row>
         <Row style="margin-top:25px">
           <i-col span="7">
             <span>发货联系人：</span>
-            <span>古天乐</span>
+            <span>{{detail.consignerContact}}</span>
           </i-col>
           <i-col span="7">
             <span>联系方式：</span>
-            <span>13909877890</span>
+            <span>{{detail.consignerPhone}}</span>
           </i-col>
           <i-col span="10">
             <span>发货地址：</span>
-            <span>江苏省南京市雨花台区花神大道101号</span>
+            <span>{{detail.consignerAddress}}</span>
           </i-col>
         </Row>
         <Row>
           <i-col span="7">
-            <span>发货联系人：</span>
-            <span>张家辉</span>
+            <span>收货联系人：</span>
+            <span>{{detail.consigneeContact}}</span>
           </i-col>
           <i-col span="7">
             <span>联系方式：</span>
-            <span>13909877890</span>
+            <span>{{detail.consigneePhone}}</span>
           </i-col>
           <i-col span="10">
-            <span>发货地址：</span>
-            <span>安徽省六安市明珠广场101号</span>
+            <span>收货地址：</span>
+            <span>{{detail.consigneeAddress}}</span>
           </i-col>
         </Row>
         <Row style="margin-top: 25px;">
           <i-col span="24">
             <span>备注：</span>
-            <span>无</span>
+            <span>{{detail.remark}}</span>
           </i-col>
         </Row>
       </div>
-      <div>
+      <div v-if="from === 'order'">
         <div class="title">
           <span>货物明细</span>
         </div>
-        <Table :columns="tableColumns" :data="tableData"></Table>
+        <Table :columns="tableColumns" :data="detail.orderCargoList"></Table>
         <div class="table-footer">
           <span style="padding-right: 5px;box-sizing:border-box">合计</span>
           <span>订单总数：{{ orderTotal }}</span>
@@ -105,36 +105,36 @@
           <span>总重量：{{ weightTotal }}</span>
         </div>
       </div>
-      <div>
+      <div v-if="from === 'order'">
         <div class="title">
           <span>应收费用</span>
         </div>
         <Row>
           <i-col span="4">
             <span>运输费：</span>
-            <span>700元</span>
+            <span>{{detail.freightFee | toPoint}}元</span>
           </i-col>
           <i-col span="4">
             <span>装货费：</span>
-            <span>200元</span>
+            <span>{{detail.loadFee | toPoint}}元</span>
           </i-col>
           <i-col span="4">
             <span>卸货费：</span>
-            <span>0元</span>
+            <span>{{detail.unloadFee | toPoint}}元</span>
           </i-col>
           <i-col span="4">
             <span>保险费：</span>
-            <span>0元</span>
+            <span>{{detail.insuranceFee | toPoint}}元</span>
           </i-col>
           <i-col span="4">
             <span>其他：</span>
-            <span>0元</span>
+            <span>{{detail.otherFee | toPoint}}元</span>
           </i-col>
         </Row>
         <Row>
           <i-col span="24">
             <span>费用合计：</span>
-            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">1150</span>元
+            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{FeeTotal | toPoint}}</span>元
           </i-col>
         </Row>
         <Row>
@@ -146,7 +146,7 @@
       </div>
       <div class="order-log">
         <div class="title">
-          <span>订单日志</span>
+          <span>{{from === 'order' ? '订单日志' : '回单日志'}}</span>
         </div>
         <div style="display: flex;justify-content: flex-start;height: 300px;">
           <div class="fold-icon" @click="showOrderLog">
@@ -167,6 +167,8 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
+import Server from '@/libs/js/server'
+import '@/libs/js/filter'
 export default {
   name: 'detail',
 
@@ -175,20 +177,13 @@ export default {
   metaInfo: { title: '订单详情' },
   data () {
     return {
-      waybillNums: [
-        'D201809870987755',
-        'D201809870987756',
-        'D201809870987757',
-        'D201809870987758',
-        'D201809870987759'
-      ],
+      detail: {
+        orderCargoList: []
+      },
+      from: this.$route.query.from,
+      waybillNums: [],
       show: false,
-      btnGroup: [
-        { name: '删除', value: 1 },
-        { name: '打印', value: 2 },
-        { name: '拆单', value: 3 },
-        { name: '编辑', value: 4 }
-      ],
+      btnGroup: [],
       operateValue: 4,
       tableColumns: [
         {
@@ -197,7 +192,7 @@ export default {
         },
         {
           title: '包装',
-          key: 'cargoCost'
+          key: 'package'
         },
         {
           title: '数量',
@@ -205,7 +200,7 @@ export default {
         },
         {
           title: '货值（元）',
-          key: 'unit'
+          key: 'cargoCost'
         },
         {
           title: '重量（吨）',
@@ -228,32 +223,41 @@ export default {
       currentStep: 0,
       orderLogCount: 0,
       showLog: false,
-      orderLog: [
-        { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '回单已回收' },
-        { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '已送到达目的地' },
-        { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '车辆发运' },
-        { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '指派司机' },
-        { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '送货调度' },
-        { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '编辑订单' },
-        { createTime: '2018-08 18 13:09:45', operatorName: '古天乐', description: '创建订单成功' }
-      ]
+      orderLog: []
     }
   },
 
   computed: {
     orderTotal () {
-      return 10
+      return this.detail.orderCargoList.length
     },
     volumeTotal () {
-      return 10
+      let total = 0
+      this.detail.orderCargoList.map((item) => {
+        total += Number(item.volume)
+      })
+      return total
     },
     weightTotal () {
-      return 10
+      let total = 0
+      this.detail.orderCargoList.map((item) => {
+        total += Number(item.weight)
+      })
+      return total
+    },
+    FeeTotal () {
+      let total = 0
+      total += this.detail.freightFee
+      total += this.detail.loadFee
+      total += this.detail.unloadFee
+      total += this.detail.insuranceFee
+      total += this.detail.otherFee
+      return total
     }
   },
 
   mounted () {
-    this.orderLogCount = this.orderLog.length
+    this.getDetail()
   },
 
   methods: {
@@ -265,10 +269,190 @@ export default {
     },
     handleOperateClick (btn) {
       this.operateValue = btn.value
+      if (btn.name === '拆单') {
+        this.openSeparateDialog(this.detail)
+      } else if (btn.name === '外转') {
+        this.openOuterDialog(this.detail)
+      } else if (btn.name === '还原' || btn.name === '删除') {
+        this.openResOrDelDialog(this.detail, btn.name)
+      } else { // 编辑
+        this.$router.push({
+          path: '/order/create',
+          query: {
+            id: this.detail.id
+          }
+        })
+      }
+    },
+    // 外转
+    openOuterDialog (order) {
+      const _this = this
+      this.openDialog({
+        name: 'order-management/dialog/outer',
+        data: { id: order.id },
+        methods: {
+          ok (node) {
+            _this.getDetail()
+          }
+        }
+      })
+    },
+    // 拆单
+    openSeparateDialog (order) {
+      const _this = this
+      this.openDialog({
+        name: 'order-management/dialog/separate',
+        data: { id: order.id, orderNo: order.orderNo },
+        methods: {
+          ok (node) {
+            _this.getDetail()
+          }
+        }
+      })
+    },
+    // 还原或删除 (单条操作)
+    openResOrDelDialog (order, name) {
+      const _this = this
+      const data = {
+        id: [order],
+        name: name
+      }
+      this.openDialog({
+        name: 'order-management/dialog/restoreOrDelete',
+        data: data,
+        methods: {
+          ok (node) {
+            _this.getDetail()
+          }
+        }
+      })
     },
     showOrderLog () {
       this.showLog = !this.showLog
       console.log(this.showLog)
+    },
+    getDetail () {
+      // 订单详情  from: order   回单详情 from: receipt
+      if (this.$route.query.from === 'order') {
+        Server({
+          url: 'order/detail?id=' + this.$route.query.orderId,
+          method: 'get'
+        }).then((res) => {
+          console.log(res)
+          this.detail = res.data.data
+          // this.orderLog = res.data.data.orderLogs // 订单日志
+          // this.orderLogCount = res.data.data.orderLogs.length // 订单日志数量
+          // this.waybillNums = res.data.data.waybillList // 运单子单
+          // 过滤当前详情页操作按钮
+          this.filterOrderButton()
+        })
+      } else { // 回单详情
+        Server({
+          url: 'order/getReceiptOrderDetail?id=' + this.$route.query.orderId,
+          method: 'get'
+        }).then((res) => {
+          console.log(res)
+          this.detail = res.data.data
+          this.orderLog = res.data.data.receiptOrderLog // 回单日志
+          this.orderLogCount = res.data.data.receiptOrderLog.length // 回单日志数量
+        })
+        // 过滤当前详情页操作按钮   0待回收；1待返厂（已回收）；2已返厂
+        if (this.detail.receiptStatus === 0) {
+          this.btnGroup = [
+            { name: '回收', value: 1 }
+          ]
+          this.operateValue = 1
+        } else if (this.detail.receiptStatus === 1) {
+          this.btnGroup = [
+            { name: '返厂', value: 1 }
+          ]
+          this.operateValue = 1
+        }
+      }
+    },
+    statusToName (code) {
+      let name
+      switch (code) {
+        case 0:
+          name = '待回收'
+          break
+        case 1:
+          name = '待返厂'
+          break
+        case 2:
+          name = '已返厂'
+          break
+        case 10:
+          name = '待提货'
+          break
+        case 20:
+          name = '待调度'
+          break
+        case 30:
+          name = '在途'
+          break
+        case 40:
+          name = '已到货'
+          break
+        case 50:
+          name = '已回单'
+          break
+      }
+      return name
+    },
+    pickupToName (code) {
+      let name
+      switch (code) {
+        case 1:
+          name = '上门提货'
+          break
+        case 2:
+          name = '直接送货'
+          break
+      }
+      return name
+    },
+    handleWaybillNo (id) {
+      console.log(id)
+    },
+    // 订单详情按钮过滤
+    filterOrderButton () {
+      if (this.detail.status === 10 || this.detail.status === 20) { // 待提货、待调度状态下
+        // 未拆且未转 显示拆单、外转按钮
+        if (this.detail.parentId === '' && this.detail.disassembleStatus === 0 && this.detail.transStatus === 0) {
+          if (this.detail.dispatchStatus === 1 || (this.detail.pickup === 1 && (this.detail.status === 20 || (this.detail.pickupStatus === 1 && this.detail.status === 10)))) { // 如果是待调度状态(或者已提货未调度,或者已创建运单)且是上门提货则没有外转
+            this.btnGroup = [
+              { name: '拆单', value: 2 }
+            ]
+          } else {
+            this.btnGroup = [
+              { name: '拆单', value: 2 },
+              { name: '外转', value: 3 }
+            ]
+          }
+        } else if (this.detail.parentId === '' && this.detail.disassembleStatus === 1) { // 已拆且是父单  显示还原按钮
+          this.btnGroup = [
+            { name: '还原', value: 2 }
+          ]
+        } else if (this.detail.parentId !== '') { // 子单   显示拆单按钮
+          this.btnGroup = [
+            { name: '拆单', value: 2 }
+          ]
+        } else if (this.detail.transStatus === 1) { // 订单外转  不显示按钮
+          this.btnGroup = []
+        }
+
+        // 待提货、待提货状态统一加上编辑、删除 （待调度状态下上门提货除外）
+        if (!(this.detail.status === 20 && this.detail.pickup === 1)) {
+          this.btnGroup.unshift(
+            { name: '删除', value: 1 }
+          )
+          this.btnGroup.push(
+            { name: '编辑', value: this.btnGroup[this.btnGroup.length - 1].value + 1 }
+          )
+        }
+      }
+      this.operateValue = this.btnGroup[this.btnGroup.length - 1].value // 默认点亮最后一个按钮
     }
   }
 }

@@ -11,19 +11,19 @@
           </Badge>
           <div slot="content" class="msg">
             <div class="msg-item" @click="openMsg(0)">
-              <Badge :count="MsgCount.sysNum" type="danger" class="msg-item-count">
+              <Badge :count="MsgCount.sysNum"  class="msg-item-count">
                 <img src="../assets/icon-system-msg.png" alt="" width="34">
               </Badge>
               <p>系统消息</p>
             </div>
             <div class="msg-item" @click="openMsg(1)">
-              <Badge :count="MsgCount.orderNum" type="danger" class="msg-item-count">
+              <Badge :count="MsgCount.orderNum"  class="msg-item-count">
                 <img src="../assets/icon-order-msg.png" alt="" width="34">
               </Badge>
               <p>订单消息</p>
             </div>
             <div class="msg-item" @click="openMsg(2)">
-              <Badge :count="MsgCount.carrierNum" type="danger" class="msg-item-count">
+              <Badge :count="MsgCount.carrierNum" class="msg-item-count">
                 <img src="../assets/icon-truck-msg.png" alt="" width="34">
               </Badge>
               <p>运输消息</p>
@@ -46,7 +46,7 @@
           <p class="dropdown-line"><label for="">公司</label>{{UserInfo.companyName}}</p>
           <p class="dropdown-line"><label for="">有效期至</label>{{UserInfo.expirationTime | datetime('yyyy-MM-dd')}}</p>
           <br>
-          <p style="text-align:center"><a>延长有效期</a>&nbsp;&nbsp;&nbsp;&nbsp;<a style="color:#EC4E4E">登出</a></p>
+          <p style="text-align:center"><a @click="renew">延长有效期</a>&nbsp;&nbsp;&nbsp;&nbsp;<a style="color:#EC4E4E" @click="logout">登出</a></p>
 
           <!-- <DropdownItem name="logout" >退出登录</DropdownItem> -->
         </DropdownMenu>
@@ -89,8 +89,20 @@ export default {
           break
       }
     },
-    openMsg (type) {
+    openMsg (type = 0) {
       this.$emit('on-msg-click', type)
+    },
+    logout () {
+      window.EMA.fire('logout')
+    },
+    renew () {
+      window.EMA.fire('Dialogs.push', {
+        name: 'dialogs/renew',
+        data: {
+          title: '提示',
+          expirationTime: this.UserInfo.expirationTime
+        }
+      })
     }
   }
 }
