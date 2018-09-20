@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="sider">
     <Menu v-show="!collapsed" ref="menu"  :active-name="$route.path === '/'?'/home':$route.path" :open-names="openedNames"  accordion width="200" theme="dark" @on-select="handleSelect">
       <p class="title"><i class="icon font_family icon-ico-slogo" ></i></p>
       <template v-for="item in menuList">
@@ -126,5 +126,5 @@ export default {
   font-size 32px
 .icon
   display inline-block
-  vertical-align middle
+  // vertical-align middle
 </style>
