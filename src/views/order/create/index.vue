@@ -245,7 +245,7 @@ export default {
       return { index: params.index, name: params.column.key, value }
     }
     const validatePhone = (rule, value, callback) => {
-      if (/(13[0-9]|15[0-9]|166|17[0-9]|18[0-9]|14[0-9])[0-9]{8}$/.test(value)) {
+      if (/(13[0-9]|15[0-9]|166|17[0-9]|18[0-9]|14[0-9]|19[0-9])[0-9]{8}$/.test(value)) {
         callback()
       } else {
         callback(new Error('请输入正确的手机号码'))
