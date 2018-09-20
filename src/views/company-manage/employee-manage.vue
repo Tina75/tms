@@ -1,7 +1,7 @@
 <template>
   <div>
     <Col span="5">
-    <Menu active-name="超级管理员" class="leftMenu">
+    <Menu :active-name="menuInitName" class="leftMenu">
       <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:50px;">
         <Button type="primary" class="centerBtn" @click="createRole">新增角色</Button>
       </div>
@@ -113,7 +113,8 @@ export default {
     }
     return {
       single: true,
-      rightTitle: '超级管理员',
+      rightTitle: '',
+      menuInitName: '',
       disSaveBtn: true,
       createRoleModal: false,
       removeRoleModal: false,
@@ -138,13 +139,16 @@ export default {
   },
   watch: {
     arrayCodeList (newList) {
-      this.initTreeList(newList)
+      if (this.menuParam.name === '超级管理员') {
+        this.initTreeList(newList, 'type')
+      } else {
+        this.initTreeList(newList)
+      }
     }
   },
   created () {
-    this.arrayCodeList = ['100000', '110000', '120000', '130000', '140000', '150000', '100100', '100200', '110100', '110200', '120100', '120200', '120300', '130100', '130200', '130300', '140100', '140200', '150100', '150200', '100101', '100102', '100103', '100201', '100202', '100203', '100204', '110101', '110102', '110103', '110104', '110105', '110106', '110107', '110108', '110109', '110201', '110202', '110203', '120101', '120102', '120103', '120104', '120105', '120106', '120107', '120108', '120201', '120202', '120203', '120204', '120205', '120206', '120207', '120301', '120302', '120303', '120304', '120305', '130101', '130102', '130103', '130104', '130105', '130106', '130107', '130108', '130109', '130110', '130111', '130112', '130201', '130202', '130203', '130204', '130205', '130206', '130207', '130208', '130209', '130301', '130302', '130303', '140101', '140102', '140103', '140201', '140202', '140203', '110300']
-    this.initTreeList(this.arrayCodeList)
     this.getMenuList()
+    this.initTreeList(this.arrayCodeList, 'type')
   },
   methods: {
     getMenuList () {
@@ -153,20 +157,39 @@ export default {
         method: 'get'
       }).then(({ data }) => {
         this.menuList = data.data
+        for (let index = 0; index < data.data.length; index++) {
+          if (data.data[index].type === 1) {
+            this.rightTitle = this.menuInitName = data.data[index].name
+            this.arrayCodeList = JSON.parse(data.data[index].codes)
+            this.menuParam = data.data[index]
+          }
+        }
       })
     },
-    initTreeList (arrayCodeList) {
+    initTreeList (arrayCodeList, type) {
       const treeList = _.cloneDeep(roleTreeList)
       for (let key in treeList) {
-        this.getTreeList(arrayCodeList, treeList[key][0].children)
+        if (type) {
+          treeList[key][0].disabled = true
+        } else {
+          treeList[key][0].disabled = false
+        }
+        this.getTreeList(arrayCodeList, treeList[key][0].children, type)
       }
       this.listInitTreeList = treeList
     },
-    getTreeList (arrayCodeList, treeData) {
+    getTreeList (arrayCodeList, treeData, type) {
       const vm = this
       treeData.forEach(element => {
         for (let index = 0; index < arrayCodeList.length; index++) {
-          if (arrayCodeList.includes(element.code)) {
+          if (arrayCodeList.includes(element.code) && type) {
+            element.disabled = true
+            if (element.children) {
+              vm.getTreeList(arrayCodeList, element.children, type)
+            } else {
+              element.checked = true
+            }
+          } else if (arrayCodeList.includes(element.code)) {
             if (element.children) {
               vm.getTreeList(arrayCodeList, element.children)
             } else {

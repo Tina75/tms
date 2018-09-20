@@ -134,7 +134,6 @@ export default {
     }
   },
   created () {
-    debugger
     switch (this.$route.query.type) {
       case 0:
         this.rightTitle = this.typeName = '系统消息'
