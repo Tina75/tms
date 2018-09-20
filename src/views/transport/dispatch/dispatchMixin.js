@@ -116,7 +116,7 @@ export default {
         },
         {
           title: '客户名称',
-          key: 'carrierName',
+          key: 'consignerName',
           ellipsis: true
         },
         {

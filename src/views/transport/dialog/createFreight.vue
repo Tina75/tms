@@ -9,17 +9,24 @@
         <AreaSelect v-model="form.end" style="width:200px" placeholder="请选择"/>
       </FormItem>
       <FormItem label="承运商" prop="carrierName">
-        <SelectCarrier v-model="form.carrierName"
-                       placeholder="请选择"
-                       style="width:200px"
-                       @on-change="carrierChange" />
+        <SelectInput
+          v-model="form.carrierName"
+          :maxlength="20"
+          :remote="false"
+          :local-options="carriers"
+          placeholder="请选择"
+          style="width:200px"
+          @on-focus.once="getCarriers"
+          @on-select="handleSelectCarrier" />
       </FormItem>
       <FormItem label="车辆" prop="carNo">
-        <selectCar ref="$selectCar"
-                   v-model="form.carNo"
-                   :carrier-id="carrierId"
-                   placeholder="请选择"
-                   style="width:200px" />
+        <SelectInput
+          v-model="form.carNo"
+          :maxlength="8"
+          :remote="false"
+          :local-options="carrierCars"
+          placeholder="请选择"
+          style="width:200px" />
       </FormItem>
     </Form>
     <div slot="footer" style="text-align: center;">
@@ -32,18 +39,18 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import AreaSelect from '@/components/AreaSelect'
-import SelectCarrier from '../components/selectCarrier'
-import selectCar from '../components/selectCar'
+import SelectInput from '@/components/SelectInput.vue'
 import Server from '@/libs/js/server'
+import { mapGetters, mapActions } from 'vuex'
+import { CAR } from '@/views/client/client'
 
 export default {
   name: 'CreatedFreight',
-  components: { AreaSelect, SelectCarrier, selectCar },
+  components: { AreaSelect, SelectInput },
   mixins: [ BaseDialog ],
   data () {
     return {
       visiable: true,
-      carrierId: '',
       form: {
         start: '',
         end: '',
@@ -56,18 +63,37 @@ export default {
         ],
         end: [
           { required: true, message: '请选择目的地' }
+        ],
+        carNo: [
+          { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
         ]
       }
     }
   },
+  computed: {
+    ...mapGetters([
+      'carriers',
+      'carrierCars',
+      'carrierDrivers'
+    ])
+  },
   methods: {
+    ...mapActions([
+      'getCarriers'
+    ]),
+    handleSelectCarrier (name, row) {
+      console.log(name, row)
+      this.$store.dispatch('getCarrierCars', row.id)
+      this.$store.dispatch('getCarrierDrivers', row.id)
+    },
+
     create () {
       this.$refs.$form.validate(valid => {
         if (valid) {
-          if (this.form.carNo && !this.$refs.$selectCar.validate()) {
-            this.$Message.error('车牌号不正确')
-            return
-          }
+          // if (this.form.carNo && !this.$refs.$selectCar.validate()) {
+          //   this.$Message.error('车牌号不正确')
+          //   return
+          // }
           Server({
             url: '/dispatch/add/waybill',
             method: 'post',

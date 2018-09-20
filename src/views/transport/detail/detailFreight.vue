@@ -6,7 +6,7 @@
       <ul class="detail-header-list">
         <li class="detail-header-list-item">运单号：{{ info.waybillNo }}</li>
         <li class="detail-header-list-item">订单状态：
-          <span style="font-weight: bold;">{{ info.status }}</span>
+          <span style="font-weight: bold;">{{ status }}</span>
         </li>
       </ul>
     </section>
@@ -27,11 +27,11 @@
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title">始发地：</span>
-            <span>{{ info.start }}</span>
+            <span>{{ info.start | formatCity }}</span>
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">目的地：</span>
-            <span>{{ info.end }}</span>
+            <span>{{ info.end | formatCity }}</span>
           </i-col>
           <i-col span="10" offset="1">
             <span class="detail-field-title">承运商：</span>
@@ -81,23 +81,23 @@
         <Row class="detail-field-group">
           <i-col span="3">
             <span class="detail-field-title-sm">运输费：</span>
-            <span>{{ payment.freightFee }}元</span>
+            <span>{{ payment.freightFee || 0 }}元</span>
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">装货费：</span>
-            <span>{{ payment.loadFee }}元</span>
+            <span>{{ payment.loadFee || 0 }}元</span>
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">卸货费：</span>
-            <span>{{ payment.unloadFee }}元</span>
+            <span>{{ payment.unloadFee || 0 }}元</span>
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">保险费：</span>
-            <span>{{ payment.insuranceFee }}元</span>
+            <span>{{ payment.insuranceFee || 0 }}元</span>
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">其他：</span>
-            <span>{{ payment.otherFee }}元</span>
+            <span>{{ payment.otherFee || 0 }}元</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
@@ -110,12 +110,12 @@
           <i-col span="24">
             <span class="detail-field-title-sm">结算方式：</span>
             <div class="detail-payment-way">
-              {{ payment.settlementType === '1' ? '按单结' : '月结' }}
-              <Table v-if="payment.settlementType === '2'"
-                     :columns="tablePayment"
-                     :data="payment.settlementPayInfo"
-                     :loading="loading"
-                     width="350"></Table>
+              {{ settlementType === '1' ? '按单结' : '月结' }}
+              <Table
+                :columns="tablePayment"
+                :data="settlementPayInfo"
+                :loading="loading"
+                width="350"></Table>
             </div>
           </i-col>
         </Row>
@@ -129,8 +129,7 @@
 
           <div class="detail-log-icon"
                @click="showLog = !showLog">
-            <i :class="showLog ? 'detail-log-hide' : 'detail-log-show'"
-               class="icon font_family icon-zhankai1"></i>
+            <i :class="{'detail-log-show': showLog}"></i>
           </div>
 
           <Timeline :style="logListHeight"
@@ -170,25 +169,35 @@
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title detail-field-required">始发地：</span>
-            <Input v-model="info.start"
-                   class="detail-info-input"></Input>
+            <AreaSelect v-model="startCodes"
+                        class="detail-info-input" />
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title detail-field-required">目的地：</span>
-            <Input v-model="info.end"
-                   class="detail-info-input"></Input>
+            <AreaSelect v-model="endCodes"
+                        class="detail-info-input" />
           </i-col>
           <i-col span="10" offset="1">
             <span class="detail-field-title detail-field-required">承运商：</span>
-            <Input v-model="info.carrierName"
-                   class="detail-info-input"></Input>
+            <SelectInput
+              v-model="info.carrierName"
+              :maxlength="20"
+              :remote="false"
+              :local-options="carriers"
+              class="detail-info-input"
+              @on-focus.once="getCarriers"
+              @on-select="handleSelectCarrier" />
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title detail-field-required">车牌号：</span>
-            <Input v-model="info.carNo"
-                   class="detail-info-input"></Input>
+            <SelectInput
+              v-model="info.carNo"
+              :maxlength="8"
+              :remote="false"
+              :local-options="carrierCars"
+              class="detail-info-input" />
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型/车长：</span>
@@ -204,8 +213,12 @@
           </i-col>
           <i-col span="4" offset="1">
             <span class="detail-field-title detail-field-required">司机：</span>
-            <Input v-model="info.driverName"
-                   class="detail-info-input"></Input>
+            <SelectInput
+              v-model="info.driverName"
+              :maxlength="5"
+              :remote="false"
+              :local-options="carrierDrivers"
+              class="detail-info-input" />
           </i-col>
           <i-col span="5" offset="1">
             <span class="detail-field-title">司机手机号：</span>
@@ -246,39 +259,29 @@
         <Row class="detail-field-group">
           <i-col span="4">
             <span class="detail-field-title-sm detail-field-required">运输费：</span>
-            <Input v-model="payment.freightFee"
-                   class="detail-payment-input">
-            <span slot="suffix">元</span>
-            </Input>
+            <MoneyInput v-model="payment.freightFee"
+                        class="detail-payment-input" />
             <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
           </i-col>
           <i-col span="3" offset="1">
             <span class="detail-field-title-sm">装货费：</span>
-            <Input v-model="payment.loadFee"
-                   class="detail-payment-input">
-            <span slot="suffix">元</span>
-            </Input>
+            <MoneyInput v-model="payment.loadFee"
+                        class="detail-payment-input" />
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">卸货费：</span>
-            <Input v-model="payment.unloadFee"
-                   class="detail-payment-input">
-            <span slot="suffix">元</span>
-            </Input>
+            <MoneyInput v-model="payment.unloadFee"
+                        class="detail-payment-input" />
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">保险费：</span>
-            <Input v-model="payment.insuranceFee"
-                   class="detail-payment-input">
-            <span slot="suffix">元</span>
-            </Input>
+            <MoneyInput v-model="payment.insuranceFee"
+                        class="detail-payment-input" />
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">其他：</span>
-            <Input v-model="payment.otherFee"
-                   class="detail-payment-input">
-            <span slot="suffix">元</span>
-            </Input>
+            <MoneyInput v-model="payment.otherFee"
+                        class="detail-payment-input" />
           </i-col>
         </Row>
         <Row class="detail-field-group">
@@ -291,15 +294,15 @@
           <i-col span="24">
             <span class="detail-field-title-sm detail-field-required">结算方式：</span>
             <div class="detail-payment-way">
-              <RadioGroup v-model="payment.settlementType">
+              <RadioGroup v-model="settlementType">
                 <Radio label="1">按单结</Radio>
                 <Radio label="2">月结</Radio>
               </RadioGroup>
-              <Table v-if="payment.settlementType === '2'"
-                     :columns="tablePayment"
-                     :data="payment.settlementPayInfo"
-                     :loading="loading"
-                     width="350"></Table>
+              <Table
+                :columns="tablePayment"
+                :data="settlementPayInfo"
+                :loading="loading"
+                width="350"></Table>
             </div>
           </i-col>
         </Row>
@@ -307,8 +310,10 @@
     </section>
 
     <section class="detail-edit-footer">
-      <Button class="detail-edit-footer-btn" type="primary">保存</Button>
-      <Button class="detail-edit-footer-btn" type="default" @click="cancelEdit">取消</Button>
+      <Button class="detail-edit-footer-btn" type="primary"
+              @click="save">保存</Button>
+      <Button class="detail-edit-footer-btn" type="default"
+              @click="cancelEdit">取消</Button>
     </section>
 
   </div>
@@ -318,17 +323,23 @@
 import BasePage from '@/basic/BasePage'
 import detailMixin from './detailMixin'
 import Server from '@/libs/js/server'
+import MoneyInput from '../components/moneyInput'
+import AreaSelect from '@/components/AreaSelect'
+import SelectInput from '@/components/SelectInput'
 
 export default {
   name: 'DetailFeright',
+  components: { MoneyInput, SelectInput, AreaSelect },
   mixins: [ BasePage, detailMixin ],
   metaInfo: { title: '运单详情' },
   data () {
     return {
+      startCodes: [],
+      endCodes: [],
+      status: '',
       // 信息
       info: {
         waybillNo: '',
-        status: '',
         start: '',
         end: '',
         carrierName: '',
@@ -342,15 +353,19 @@ export default {
 
       // 费用
       payment: {
-        settlementType: '',
         freightFee: '',
         loadFee: '',
         unloadFee: '',
         insuranceFee: '',
         otherFee: '',
-        totalFee: '',
-        settlementPayInfo: []
+        totalFee: ''
       },
+      settlementType: '',
+      settlementPayInfo: [
+        { payType: 1, fuelCardAmount: 0, cashAmount: 0 },
+        { payType: 2, fuelCardAmount: 0, cashAmount: 0 },
+        { payType: 3, fuelCardAmount: 0, cashAmount: 0 }
+      ],
 
       // 所有按钮组
       btnList: [
@@ -497,10 +512,37 @@ export default {
         this.detail = data.cargoList
         this.logList = data.operaterLog
 
-        this.info.status = this.statusFilter(this.info.status)
-        this.payment.settlementType = this.payment.settlementType.toString()
+        this.status = this.statusFilter(data.waybill.status)
+        this.settlementType = data.waybill.settlementType.toString()
+        let temp = this.settlementPayInfo.map((item, i) => {
+          if (!data.waybill.settlementPayInfo[i]) return item
+          return Object.assign(item, data.waybill.settlementPayInfo[i])
+        })
+        this.settlementPayInfo = temp
+
         this.setBtnsWithStatus()
         this.loading = false
+      }).catch(err => console.error(err))
+    },
+
+    save () {
+      if (!this.validate()) return
+      Server({
+        url: '/waybill/update',
+        method: 'post',
+        data: {
+          waybill: {
+            waybillId: this.id,
+            ...this.info,
+            ...this.formatMoney(),
+            settlementType: this.settlementType,
+            settlementPayInfo: this.formatPayInfo()
+          },
+          cargoList: []
+        }
+      }).then(res => {
+        this.$Message.success('保存成功')
+        this.cancelEdit()
       }).catch(err => console.error(err))
     }
   }

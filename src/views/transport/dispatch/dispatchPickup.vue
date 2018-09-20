@@ -144,14 +144,14 @@ export default {
     // 将左侧选中订单添加到右侧选中运单
     moveOrders2Pickup () {
       this.leftMoveToRight('/dispatch/add/order/to/loadbill', {
-        loadbillId: this.rightSelectRow.row.loadbillId,
+        pickUpId: this.rightSelectRow.row.loadbillId,
         orderIds: this.leftSelection
       })
     },
     // 从提货单移除
     removeOrdersFromPickup () {
       this.rightMoveToLeft('/dispatch/move/cargo/from/loadbill/list', {
-        loadbillId: this.rightSelectRow.row.loadbillId,
+        pickUpId: this.rightSelectRow.row.loadbillId,
         orderIds: this.rightSelection
       })
     }
