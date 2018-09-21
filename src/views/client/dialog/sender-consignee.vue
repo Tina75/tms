@@ -5,6 +5,7 @@
       v-model="modal"
       :mask-closable="true"
       label-position="left"
+      class="modal"
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
@@ -18,7 +19,7 @@
         <FormItem label="收货地址:" prop="address">
           <Input v-model="validate.address" :maxlength="60" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="备注:" prop="remark">
+        <FormItem label="备注:" class="ivu-form-item-required blank" prop="remark">
           <Input v-model="validate.remark"  placeholder="请输入"/>
         </FormItem>
       </Form>
@@ -99,5 +100,5 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-
+  @import "../client.styl"
 </style>

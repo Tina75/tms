@@ -5,6 +5,7 @@
       v-model="modal"
       :mask-closable="true"
       label-position="left"
+      class="modal"
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
@@ -26,7 +27,7 @@
             <Option value="10">飞翼车</Option>
           </Select>
         </FormItem>
-        <FormItem label="车长" prop="carLength">
+        <FormItem label="车长:" prop="carLength">
           <Select v-model="validate.carLength" >
             <Option value="1">1.8米</Option>
             <Option value="2">2.7米</Option>
@@ -50,10 +51,10 @@
         <FormItem label="核定载重量:" prop="shippingWeight">
           <Input v-model="validate.shippingWeight"  placeholder="请输入"/>吨
         </FormItem>
-        <FormItem label="车载容积:" prop="shippingVolume">
+        <FormItem label="车载容积:" prop="shippingVolume" class="ivu-form-item-required blank">
           <Input v-model="validate.shippingVolume"  placeholder="请输入"/>方
         </FormItem>
-        <FormItem label="主司机:" >
+        <FormItem label="主司机:" class="ivu-form-item-required blank">
           <Select v-model="driverId" >
             <Option v-for="(item,index) in unbindedDriver" :key="index"  :value= "item.driverId">{{item.driverName}}</Option>
           </Select>
@@ -98,13 +99,13 @@ export default {
         ],
         shippingWeight: [
           { required: true, message: '载重量不能为空', trigger: 'blur' },
-          { type: 'string', message: '必须为大于0的数,且精确到两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
+          { type: 'string', message: '必须为大于等于0的数,且精确到两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
         ],
         carLength: [
           { required: true, message: '车长不能为空', trigger: 'change' }
         ],
         shippingVolume: [
-          { type: 'string', message: '必须为大于0的数,且精确到一位小数', pattern: /^(\+)?\d+(\.\d{1})?$/, trigger: 'blur' }
+          { type: 'string', message: '必须为大于等于0的数,且精确到一位小数', pattern: /^(\+)?\d+(\.\d{1})?$/, trigger: 'blur' }
         ]
       }
     }
@@ -118,12 +119,6 @@ export default {
       if (res.data.code === CODE) {
         this.unbindedDriver = res.data.data
         this.unbindedDriver.unshift({driverId: '', driverName: '请选择'})
-        // if (this.flag === 2) { // 编辑
-        //   this.unbindedDriver.push({
-        //     driverId: this.driverId,
-        //     driverName: this.driverName
-        //   })
-        // }
       }
     })
   },
@@ -182,6 +177,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
+  @import "../client.styl"
   .ivu-input-wrapper,.ivu-select
     width: 86%
     margin-right 8px

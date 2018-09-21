@@ -4,6 +4,7 @@
       v-model="modal"
       :mask-closable="true"
       label-position="left"
+      class="modal"
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
@@ -11,22 +12,22 @@
         <FormItem label="货物名称:" prop="cargoName">
           <Input v-model="validate.cargoName" :maxlength="20" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="包装单位:">
+        <FormItem label="包装单位:" class="ivu-form-item-required blank">
           <Input v-model="validate.unit" :maxlength="10" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="货值:" prop="cargoCost">
+        <FormItem label="货值:" prop="cargoCost" class="ivu-form-item-required blank">
           <Input v-model="validate.cargoCost" :maxlength="60" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="重量:" prop="weight">
+        <FormItem label="重量:" prop="weight" class="ivu-form-item-required blank">
           <Input v-model="validate.weight" :maxlength="60" placeholder="请输入"/>吨
         </FormItem>
-        <FormItem label="体积:" prop="volume">
-          <Input v-model="validate.volume" :maxlength="60" placeholder="请输入"/>万
+        <FormItem label="体积:" prop="volume" class="ivu-form-item-required blank">
+          <Input v-model="validate.volume" :maxlength="60" placeholder="请输入"/>方
         </FormItem>
-        <FormItem label="备注1:" >
+        <FormItem label="备注1:" class="ivu-form-item-required blank">
           <Input v-model="validate.remark1" :maxlength="100" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="备注2:" >
+        <FormItem label="备注2:" class="ivu-form-item-required blank">
           <Input v-model="validate.remark2" :maxlength="100" placeholder="请输入"/>
         </FormItem>
       </Form>
@@ -63,13 +64,13 @@ export default {
           { required: true, message: '货物名称不能为空', trigger: 'blur' }
         ],
         cargoCost: [
-          { type: 'string', message: '必须为大于0的数,且精确到两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
+          { type: 'string', message: '必须为大于等于0的数,且精确到两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
         ],
         weight: [
-          { type: 'string', message: '必须为大于0的数,且精确到两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
+          { type: 'string', message: '必须为大于等于0的数,且精确到两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
         ],
         volume: [
-          { type: 'string', message: '必须为大于0的数,且精确到一位小数', pattern: /^(\+)?\d+(\.\d)?$/, trigger: 'blur' }
+          { type: 'string', message: '必须为大于等于0的数,且精确到一位小数', pattern: /^(\+)?\d+(\.\d)?$/, trigger: 'blur' }
         ]
       }
     }
@@ -130,6 +131,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
+  @import "../client.styl"
   .ivu-input-wrapper
     width: 86%
     margin-right 8px
