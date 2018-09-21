@@ -1,7 +1,7 @@
 <template>
   <div class="sider">
     <Menu v-show="!collapsed" ref="menu"  :active-name="$route.path === '/'?'/home':$route.path" :open-names="openedNames"  accordion width="200" theme="dark" @on-select="handleSelect">
-      <p class="title"><i class="icon font_family icon-ico-slogo" ></i></p>
+      <div class="title"><i class="icon font_family icon-logo-zjy" ></i></div>
       <template v-for="item in menuList">
         <template v-if="item.children">
           <Submenu v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path">
@@ -10,7 +10,7 @@
           </Submenu>
         </template>
         <template v-else>
-          <menu-item v-if="hasPower(item.powerCode)" :name="item.path"  :key="item.path"><FontIcon :type="item.icon" :size="16"></FontIcon>{{item.name}}</menu-item>
+          <menu-item v-if="hasPower(item.powerCode)" :name="item.path"  :key="item.path"><FontIcon :type="item.icon" :size="18"></FontIcon>{{item.name}}</menu-item>
         </template>
       </template>
     </Menu>
@@ -120,7 +120,7 @@ export default {
   .drop-menu-a
     padding 6px 15px
     display inline-block
-.icon-ico-slogo
+.icon-logo-zjy
   font-size 24px
 .icon-logo-1
   font-size 32px
