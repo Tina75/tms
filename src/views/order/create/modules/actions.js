@@ -106,12 +106,27 @@ export default {
     item.cargo = new Cargo(item.cargo)
     commit(types.UPDATE_FULL_CONSIGNER_CARGO, item)
   },
+  /**
+   * 清除货品信息
+   * @param {*} store
+   */
   clearCargoes (store) {
     store.commit(types.CLEAR_CONSIGNER_CARGO_LIST)
     store.commit(types.RECEIVE_CARGO_LIST, [])
   },
+  /**
+   * 清除订单详情
+   * @param {*} param0
+   */
   clearOrderDetail ({ commit }) {
     commit(types.RECEIVE_ORDER_DETAIL, {})
+  },
+  /**
+   * 清除公司列表
+   * @param {*} param0
+   */
+  clearClients ({commit}) {
+    commit(types.RECEIVE_CLIENT_LIST, [])
   },
   /**
    * 查询订单详情
@@ -129,7 +144,7 @@ export default {
       })
         .then((response) => {
           const { orderCargoList, ...order } = response.data.data
-          commit(types.RECEIVE_CONSIGNER_CARGO_LIST, orderCargoList.map((item) => new Cargo(item)))
+          commit(types.RECEIVE_CONSIGNER_CARGO_LIST, orderCargoList.map((item) => new Cargo(item, true)))
           commit(types.RECEIVE_ORDER_DETAIL, order)
           resolve(order)
         })
