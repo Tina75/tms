@@ -5,6 +5,7 @@
       v-model="modal"
       :mask-closable="true"
       label-position="left"
+      class="modal"
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
@@ -19,7 +20,7 @@
           <Input v-model="validate.driverName" :maxlength="15" placeholder="请输入"/>
         </FormItem>
         <FormItem label="手机号码:" prop="driverPhone">
-          <Input v-model="validate.driverPhone"  placeholder="请输入"/>
+          <Input v-model="validate.driverPhone" :maxlength="11"  placeholder="请输入"/>
         </FormItem>
       </Form>
       <div slot="footer">
@@ -107,5 +108,5 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-
+  @import "../client.styl"
 </style>

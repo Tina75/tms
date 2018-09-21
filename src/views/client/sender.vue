@@ -157,7 +157,8 @@ export default {
         },
         {
           title: '发货方地址数量',
-          key: 'consignerAddressCnt'
+          // key: 'consignerAddressCnt'
+          key: 'addressCnt'
         },
         {
           title: '收货方数量',

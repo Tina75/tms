@@ -4,25 +4,27 @@
       <div class="title">发货方信息</div>
       <div class="list-info">
         <Row class="row">
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">发货方名称：</span>
             {{list.name}}
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">发货联系人：</span>
             {{list.contact}}
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">联系电话：</span>
             {{list.phone}}
           </div>
           </Col>
-          <Col span="6">
+        </Row>
+        <Row class="row">
+          <Col span="24">
           <div>
             <span class="label">结算方式：</span>
             <span v-if="list.payType===1">现付</span>
@@ -34,7 +36,7 @@
           </Col>
         </Row>
         <Row class="row">
-          <Col span="6">
+          <Col span="24">
           <div>
             <span class="label">备注：</span>
             {{list.remark}}
@@ -181,7 +183,7 @@ export default {
           }
         },
         {
-          title: '收货人',
+          title: '收货地址',
           key: 'address'
         }
       ],

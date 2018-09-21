@@ -4,52 +4,51 @@
       <div class="title">承运商信息</div>
       <div class="list-info">
         <Row class="row">
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">类型：</span>
             个体司机
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">司机姓名：</span>
             {{driverList.driverName}}
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">联系电话：</span>
             {{driverList.driverPhone}}
           </div>
           </Col>
-          <Col span="6">
+        </Row>
+        <Row class="row">
+          <Col span="8">
           <div>
             <span class="label">车牌号：</span>
             {{driverList.carNO}}
           </div>
           </Col>
-        </Row>
-        <Row class="row">
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">车型：</span>
-            <span v-if="driverList.carType === 1">平板</span>
-            <span v-else-if="driverList.carType === 2">高栏</span>
-            <span v-else-if="driverList.carType === 3">厢车</span>
-            <span v-else-if="driverList.carType === 4">自卸</span>
-            <span v-else-if="driverList.carType === 5">冷藏</span>
-            <span v-else-if="driverList.carType === 6">保温</span>
-            <span v-else-if="driverList.carType === 7">高低板</span>
-            <span v-else-if="driverList.carType === 8">面包车</span>
-            <span v-else-if="driverList.carType === 9">爬梯车</span>
-            <span v-else-if="driverList.carType === 10">飞翼车</span>
+            <span v-if="driverList.carType === 1">平板{{driverList.carType}}米</span>
+            <span v-else-if="driverList.carType === 2">高栏{{driverList.carType}}米</span>
+            <span v-else-if="driverList.carType === 3">厢车{{driverList.carType}}米</span>
+            <span v-else-if="driverList.carType === 4">自卸{{driverList.carType}}米</span>
+            <span v-else-if="driverList.carType === 5">冷藏{{driverList.carType}}米</span>
+            <span v-else-if="driverList.carType === 6">保温{{driverList.carType}}米</span>
+            <span v-else-if="driverList.carType === 7">高低板{{driverList.carType}}米</span>
+            <span v-else-if="driverList.carType === 8">面包车{{driverList.carType}}米</span>
+            <span v-else-if="driverList.carType === 9">爬梯车{{driverList.carType}}米</span>
+            <span v-else-if="driverList.carType === 10">飞翼车{{driverList.carType}}米</span>
             <span v-else></span>
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">付款方式：</span>
-            {{driverList.payType}}
             <span v-if="driverList.payType===1">现付</span>
             <span v-else-if="driverList.payType===2">到付</span>
             <span v-else-if="driverList.payType===3">回单付</span>
@@ -61,7 +60,9 @@
             <span v-else></span>
           </div>
           </Col>
-          <Col span="6">
+        </Row>
+        <Row class="row">
+          <Col span="24">
           <div>
             <span class="label">备注：</span>
             {{driverList.remark}}
@@ -76,25 +77,33 @@
       <div class="title">承运商信息</div>
       <div class="list-info">
         <Row class="row">
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">承运商名称：</span>
             {{companyList.carrierName}}
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">类型：</span>
             运输公司
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">负责人：</span>
             {{companyList.carrierPrincipal}}
           </div>
           </Col>
-          <Col span="6">
+        </Row>
+        <Row  class="row">
+          <Col span="8">
+          <div>
+            <span class="label">联系电话：</span>
+            {{companyList.carrierPhone}}
+          </div>
+          </Col>
+          <Col span="8">
           <div>
             <span class="label">结算方式：</span>
             <span v-if="companyList.payType === 1">现付</span>
@@ -106,7 +115,7 @@
           </Col>
         </Row>
         <Row class="row">
-          <Col span="6">
+          <Col span="24">
           <div>
             <span class="label">备注：</span>
             {{companyList.remark}}
@@ -169,7 +178,7 @@ export default {
   },
   data () {
     return {
-      carrierId: this.$route.query.carrierId, // carrierId 承运商id
+      carrierId: this.$route.query.id, // carrierId 承运商id
       carrierType: this.$route.query.carrierType,
       driverList: {
         driverName: '',
@@ -304,7 +313,7 @@ export default {
             } else {
               text = ''
             }
-            return h('div', {}, text)
+            return h('div', {}, params.row.carLength + '米' + text)
           }
         }
       ],
@@ -345,6 +354,7 @@ export default {
                       methods: {
                         ok () {
                           _this._carrierListCar() // 刷新页面
+                          _this._carrierListDriver() // 车辆列表也要刷新
                         }
                       }
                     })
@@ -406,7 +416,7 @@ export default {
             } else {
               text = ''
             }
-            return h('div', {}, text)
+            return h('div', {}, params.row.carLength + '米' + text)
           }
         },
         {
@@ -548,6 +558,7 @@ export default {
         methods: {
           ok () {
             _this._carrierListCar() // 刷新页面
+            _this._carrierListDriver() // 司机列表也要刷新
           }
         }
       })

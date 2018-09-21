@@ -173,7 +173,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.openTab({ path: '/client/carrier-info', query: { carrierId: params.row.carrierId, carrierType: params.row.carrierType }
+                    this.openTab({ path: '/client/carrier-info', query: { id: params.row.carrierId, carrierType: params.row.carrierType }
                     })
                   }
                 }
