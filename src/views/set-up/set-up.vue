@@ -77,8 +77,8 @@
       </Col>
     </div>
     <!--短信设置-->
-    <div v-else-if="'3' === this.rightKey">
-      <Col span="18" class="setConf">
+    <div v-else-if="'3' === this.rightKey" key="3">
+      <Col span="20" class="setConf">
       <Card dis-hover>
         <div solt="title" class="msgCardTitle">
           开启短信提醒
@@ -87,6 +87,7 @@
         <div v-for="msg in this.messageList" :key="msg.title" class="mesDiv">
           <p style="font-weight: bold">{{msg.title}}</p>
           <p>{{msg.message}}</p>
+          <p>{{msg.messageReturn}}</p>
           <p>接收人：
             <Checkbox
               v-for="checkBtn in msg.checkBox"
@@ -160,6 +161,7 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import AreaSelect from '@/components/AreaSelect'
+import _ from 'lodash'
 export default {
   name: 'set-up',
   components: {
@@ -250,9 +252,11 @@ export default {
       checkNum: 0,
       msgCheckBoxList: [],
       msgSlectCheckBox: [],
+      messageListInit: [],
       messageList: [{
         title: '发运提醒',
-        message: '提醒内容： 【智加云TMS公司】XX公司，您的货物已装车，由车牌号XXXX司机姓名XXXX司机电话XXXX派送。',
+        message: '提醒内容： 【智加云TMS公司】XX公司，您的货物已装车，由车牌号XXXX司机姓名XXXX司机电话XXXX派送；提货单不发短信；',
+        messageReturn: '外转单：【智加云TMS公司】XX公司，您的xxx货物已装车。',
         checkBox: [{
           label: '发货人',
           model: '1',
@@ -264,7 +268,8 @@ export default {
         }]
       }, {
         title: '到货提醒',
-        message: '提醒内容： 【智加云TMS公司】XX公司，您的货物已签收，由车牌号XXXX司机姓名XXXX司机电话XXXX完成派送。',
+        message: '提醒内容： 【智加云TMS公司】XX公司，您的货物已签收，由车牌号XXXX司机姓名XXXX司机电话XXXX完成派送；提货单不发短信；',
+        messageReturn: '外转单：【智加云TMS公司】XX公司，您的xxx货物已签收。',
         checkBox: [{
           label: '发货人',
           model: '3',
@@ -276,7 +281,8 @@ export default {
         }]
       }, {
         title: '指派司机提醒',
-        message: '发货提醒： 【智加云TMS公司】XX公司给您发了新的指派运单，请再司机端查看。',
+        message: '发货提醒： 【智加云TMS公司】XX公司给您发了新的指派运单，请尽快提货；',
+        messageReturn: '提货单：【智加云TMS】XX公司给您发了新的指派了提货单，请尽快提货；外转单不发短信。',
         checkBox: [{
           label: '司机',
           model: '5',
@@ -340,9 +346,7 @@ export default {
     }
   },
   mounted: function () {
-    this.getUserInfo()
-    this.getCompanyInof()
-    this.smsInfo()
+    this.messageListInit = _.cloneDeep(this.messageList)
   },
   methods: {
     getCompanyInof () {
@@ -351,7 +355,6 @@ export default {
         method: 'get'
       }).then(({ data }) => {
         this.formCompany = Object.assign({}, data.data)
-        this.formCompany.cityId = this.formCompany.cityId.toString()
       })
     },
     getUserInfo () {
@@ -363,28 +366,36 @@ export default {
       })
     },
     smsInfo () {
+      this.messageList = _.cloneDeep(this.messageListInit)
       Server({
         url: 'set/smsInfo',
         method: 'get'
       }).then(({ data }) => {
         this.msgCheckBoxList = data.data.smsCode === '' ? [] : data.data.smsCode
-        this.checkNum = 0
         for (const checkList of this.messageList) {
           checkList.checkBox.forEach(element => {
             if (this.msgCheckBoxList.includes(element.model)) {
-              this.checkNum++
               element.model = true
+              this.switchMsg = true
             }
           })
-          this.switchMsg = (this.checkNum > 0)
         }
       })
     },
     clickLeftMenu (id, menuName) {
-      this.$nextTick(function () {
-        this.rightTitle = menuName
-        this.rightKey = id
-      })
+      this.rightTitle = menuName
+      this.rightKey = id
+      switch (id) {
+        case '2':
+          this.getUserInfo()
+          break
+        case '3':
+          this.smsInfo()
+          break
+        case '4':
+          this.getCompanyInof()
+          break
+      }
     },
     // 密码
     pwdSubmit (name) {
@@ -461,13 +472,13 @@ export default {
       let listInit = new Set()
       for (const checkList of this.messageList) {
         checkList.checkBox.forEach(element => {
-          this.checkNum++
           statusList.push(element.model)
           if (element.model === true) {
             listInit.add(element.key)
+            this.checkNum++
           }
         })
-        this.switchMsg = (statusList.length > 0)
+        this.switchMsg = this.checkNum > 0
       }
       this.msgSlectCheckBox = Array.from(listInit)
     },
@@ -549,8 +560,8 @@ export default {
     left: 50%;
     margin-left: -35%
 .mesDiv
-  height: 100px;
-  width: 670px;
+  height: 120px;
+  width: 720px;
   padding: 15px 0;
   border-top: 1px solid rgba(201,206,217,1);
   cursor: hand;
