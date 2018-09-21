@@ -35,6 +35,7 @@
           <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" style="width:180px">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
+          <!-- <i style="display: inline-block;width:32px;height: 32px; color:#00a4bd;" @click="showCounter"></i> -->
           <Icon type="ios-calculator" size="26" color="#00a4bd" @click="showCounter"></Icon>
         </FormItem>
       </Form>
@@ -125,14 +126,15 @@ export default {
     },
     // 显示计费规则
     showCounter () {
+      const _this = this
       this.openDialog({
-        name: 'order/create/CounterDialog.vue',
+        name: 'order/create/CounterDialog',
         data: {
           value: 0
         },
         methods: {
           ok (value) {
-            // vm.orderForm.freightFee = value || 0
+            _this.info.transFee = value || 0
           }
         }
       })

@@ -267,6 +267,7 @@ export default {
     hidePoptip (e) {
       this.show = false
     },
+    // 各状态按钮操作
     handleOperateClick (btn) {
       this.operateValue = btn.value
       if (btn.name === '拆单') {
@@ -275,13 +276,15 @@ export default {
         this.openOuterDialog(this.detail)
       } else if (btn.name === '还原' || btn.name === '删除') {
         this.openResOrDelDialog(this.detail, btn.name)
-      } else { // 编辑
-        this.$router.push({
-          path: '/order/create',
+      } else if (btn.name === '编辑') { // 编辑
+        this.openTab({
+          path: '/order/update',
           query: {
             id: this.detail.id
           }
         })
+      } else if (btn.name === '回收' || btn.name === '返厂') {
+        this.openReturnDialog(this.detail, btn.name)
       }
     },
     // 外转
@@ -327,10 +330,29 @@ export default {
         }
       })
     },
+    // 回收或返厂 (单条操作)
+    openReturnDialog (order, name) {
+      const _this = this
+      const data = {
+        id: [order],
+        name: name
+      }
+      this.openDialog({
+        name: 'order-management/dialog/return',
+        data: data,
+        methods: {
+          ok (node) {
+            _this.getDetail()
+          }
+        }
+      })
+    },
+    // 日志切换显示
     showOrderLog () {
       this.showLog = !this.showLog
       console.log(this.showLog)
     },
+    // 拉取table数据
     getDetail () {
       // 订单详情  from: order   回单详情 from: receipt
       if (this.$route.query.from === 'order') {
@@ -340,11 +362,11 @@ export default {
         }).then((res) => {
           console.log(res)
           this.detail = res.data.data
-          // this.orderLog = res.data.data.orderLogs // 订单日志
-          // this.orderLogCount = res.data.data.orderLogs.length // 订单日志数量
-          // this.waybillNums = res.data.data.waybillList // 运单子单
-          // 过滤当前详情页操作按钮
+          // 过滤订单详情页操作按钮
           this.filterOrderButton()
+          this.orderLog = res.data.data.orderLogs // 订单日志
+          this.orderLogCount = res.data.data.orderLogs.length // 订单日志数量
+          this.waybillNums = res.data.data.waybillList // 运单子单
         })
       } else { // 回单详情
         Server({
@@ -353,23 +375,14 @@ export default {
         }).then((res) => {
           console.log(res)
           this.detail = res.data.data
+          // 过滤回单详情页操作按钮
+          this.filterReceiptButton()
           this.orderLog = res.data.data.receiptOrderLog // 回单日志
           this.orderLogCount = res.data.data.receiptOrderLog.length // 回单日志数量
         })
-        // 过滤当前详情页操作按钮   0待回收；1待返厂（已回收）；2已返厂
-        if (this.detail.receiptStatus === 0) {
-          this.btnGroup = [
-            { name: '回收', value: 1 }
-          ]
-          this.operateValue = 1
-        } else if (this.detail.receiptStatus === 1) {
-          this.btnGroup = [
-            { name: '返厂', value: 1 }
-          ]
-          this.operateValue = 1
-        }
       }
     },
+    // 状态改名称
     statusToName (code) {
       let name
       switch (code) {
@@ -400,6 +413,7 @@ export default {
       }
       return name
     },
+    // 提货状态转名称
     pickupToName (code) {
       let name
       switch (code) {
@@ -412,6 +426,7 @@ export default {
       }
       return name
     },
+    // 点击展开的运单子单
     handleWaybillNo (id) {
       console.log(id)
     },
@@ -453,6 +468,20 @@ export default {
         }
       }
       this.operateValue = this.btnGroup[this.btnGroup.length - 1].value // 默认点亮最后一个按钮
+    },
+    // 回单详情按钮过滤   0待回收；1待返厂（已回收）；2已返厂
+    filterReceiptButton () {
+      if (this.detail.receiptStatus === '0') {
+        this.btnGroup = [
+          { name: '回收', value: 1 }
+        ]
+        this.operateValue = 1
+      } else if (this.detail.receiptStatus === '1') {
+        this.btnGroup = [
+          { name: '返厂', value: 1 }
+        ]
+        this.operateValue = 1
+      }
     }
   }
 }

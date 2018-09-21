@@ -1,10 +1,12 @@
 <template>
   <Form ref="orderForm" :label-width="80" :model="orderForm" :rules="rules">
+    <Spin v-if="loading" fix></Spin>
     <Row :gutter="16">
       <Col span="12">
-      <FormItem label="客户" prop="consignerName" required>
+      <FormItem label="客户:" prop="consignerName" required>
         <SelectInput
           v-model="orderForm.consignerName"
+          :auto-focus="autoFocus"
           :maxlength="20"
           :remote="false"
           :local-options="clients"
@@ -14,29 +16,29 @@
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="始发城市" prop="start">
+      <FormItem label="始发城市:" prop="start">
         <AreaSelect v-model="orderForm.start" :deep="true"></AreaSelect>
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="目的城市" prop="end">
+      <FormItem label="目的城市:" prop="end">
         <AreaSelect v-model="orderForm.end" :deep="true" :adjustment="true"></AreaSelect>
       </FormItem>
       </Col>
     </Row>
     <Row :gutter="16">
       <Col span="12">
-      <FormItem label="客户订单号" prop="customerOrderNo">
+      <FormItem label="客户订单号:" prop="customerOrderNo">
         <Input v-model="orderForm.customerOrderNo" :maxlength="30" type="text"></Input>
       </FormItem>
       </Col>
       <Col span="6" prop="deliveryTime">
-      <FormItem label="发货时间">
+      <FormItem label="发货时间:">
         <DatePicker v-model="orderForm.deliveryTime" :time-picker-options="{steps: [1, 60, 60]}" format="yyyy-MM-dd HH:mm前" type="datetime" style="width:100%"></DatePicker>
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="到货时间" prop="arriveTime">
+      <FormItem label="到货时间:" prop="arriveTime">
         <DatePicker v-model="orderForm.arriveTime" :time-picker-options="{steps: [1, 60, 60]}" format="yyyy-MM-dd HH:mm前" type="datetime" style="width:100%"></DatePicker>
       </FormItem>
       </Col>
@@ -47,35 +49,35 @@
     </Row>
     <Row :gutter="16">
       <Col span="6">
-      <FormItem label="发货人" prop="consignerContact">
+      <FormItem label="发货人:" prop="consignerContact">
         <Input v-model="orderForm.consignerContact" :maxlength="15" type="text"></Input>
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="手机号" prop="consignerPhone">
+      <FormItem label="手机号:" prop="consignerPhone">
         <Input v-model="orderForm.consignerPhone" :maxlength="11" type="mobile"></Input>
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="收货人" prop="consigneeContact">
+      <FormItem label="收货人:" prop="consigneeContact">
         <SelectInput v-model="orderForm.consigneeContact" :maxlength="15" :local-options="consigneeContacts" :remote="false">
         </SelectInput>
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="手机号" prop="consigneePhone">
+      <FormItem label="手机号:" prop="consigneePhone">
         <SelectInput v-model="orderForm.consigneePhone" :maxlength="11" :local-options="consigneePhones" :remote="false"></SelectInput>
       </FormItem>
       </Col>
     </Row>
     <Row :gutter="16">
       <Col span="12">
-      <FormItem label="发货地址" prop="consignerAddress">
+      <FormItem label="发货地址:" prop="consignerAddress">
         <SelectInput v-model="orderForm.consignerAddress" :maxlength="60" :local-options="consignerAddresses" :remote="false"></SelectInput>
       </FormItem>
       </Col>
       <Col span="12">
-      <FormItem label="收货地址" prop="consigneeAddress">
+      <FormItem label="收货地址:" prop="consigneeAddress">
         <SelectInput v-model="orderForm.consigneeAddress" :maxlength="60" :local-options="consigneeAddresses" :remote="false"></SelectInput>
       </FormItem>
       </Col>
@@ -96,7 +98,7 @@
             <div class="ivu-table-cell">总体积：{{statics.volume}}方</div>
           </td>
           <td>
-            <div class="ivu-table-cell">总货值：{{statics.cargoCost}}</div>
+            <div class="ivu-table-cell">总货值：{{statics.cargoCost}}元</div>
           </td>
           <td>
             <div class="ivu-table-cell">总数量：{{statics.quantity}}</div>
@@ -107,7 +109,7 @@
     <Title class="i-mb-15 i-mt-15">应收费用</Title>
     <Row :gutter="16">
       <Col span="6">
-      <FormItem label="结算方式" prop="settlementType">
+      <FormItem label="结算方式:" prop="settlementType">
         <Select v-model="orderForm.settlementType">
           <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
           <!-- <Option value="1">现付</Option>
@@ -118,7 +120,7 @@
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="运输费用" prop="freightFee">
+      <FormItem label="运输费用:" prop="freightFee">
         <Row>
           <Col span="18">
           <TagNumberInput :min="0" v-model="orderForm.freightFee" :parser="handleParseFloat">
@@ -134,14 +136,14 @@
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="装货费用" prop="loadFee">
+      <FormItem label="装货费用:" prop="loadFee">
         <TagNumberInput :min="0" v-model="orderForm.loadFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="卸货费用" prop="unloadFee">
+      <FormItem label="卸货费用:" prop="unloadFee">
         <TagNumberInput :min="0" v-model="orderForm.unloadFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
@@ -150,14 +152,14 @@
     </Row>
     <Row :gutter="16">
       <Col span="6">
-      <FormItem label="保险费用" prop="insuranceFee">
+      <FormItem label="保险费用:" prop="insuranceFee">
         <TagNumberInput :min="0" v-model="orderForm.insuranceFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="其他费用" prop="otherFee">
+      <FormItem label="其他费用:" prop="otherFee">
         <TagNumberInput :min="0" v-model="orderForm.otherFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
@@ -166,7 +168,7 @@
     </Row>
     <Row :gutter="16">
       <Col span="10">
-      <FormItem label="费用合计">
+      <FormItem label="费用合计:">
         <span class="order-create__font-total">{{totalFee}}</span>元
       </FormItem>
       </Col>
@@ -174,7 +176,7 @@
     <Title>其他</Title>
     <Row :gutter="16" class="i-mt-15">
       <Col span="6">
-      <FormItem label="提货方式" prop="pickup">
+      <FormItem label="提货方式:" prop="pickup">
         <Select v-model="orderForm.pickup">
           <!-- <Option value="1">上门提货</Option>
           <Option value="2">直接送货</Option> -->
@@ -183,13 +185,13 @@
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="回单数量" prop="receiptCount">
+      <FormItem label="回单数量:" prop="receiptCount">
         <InputNumber v-model="orderForm.receiptCount" :min="1" :parser="value => parseInt(value).toString()" class="order-create__input-w100">
         </InputNumber>
       </FormItem>
       </Col>
       <Col span="12">
-      <FormItem label="备注" prop="remark">
+      <FormItem label="备注:" prop="remark">
         <Input v-model="orderForm.remark" :maxlength="100" type="text">
           </Input>
       </FormItem>
@@ -215,10 +217,13 @@ import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import OrderPrint from './OrderPrint'
 import AreaSelect from '@/components/AreaSelect'
+// import areas from '@/libs/js/City'
 import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
 import settlements from './constant/settlement.js'
 import pickups from './constant/pickup.js'
+
+const transferFeeList = ['freightFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
 export default {
   metaInfo: {
     title: '手动下单'
@@ -245,7 +250,7 @@ export default {
       return { index: params.index, name: params.column.key, value }
     }
     const validatePhone = (rule, value, callback) => {
-      if (/(13[0-9]|15[0-9]|166|17[0-9]|18[0-9]|14[0-9]|19[0-9])[0-9]{8}$/.test(value)) {
+      if (/1[0-9]{10}$/.test(value)) {
         callback()
       } else {
         callback(new Error('请输入正确的手机号码'))
@@ -254,6 +259,8 @@ export default {
     return {
       settlements,
       pickups,
+      autoFocus: false,
+      loading: false,
       goodsColumn: [
         {
           title: ' ',
@@ -473,8 +480,25 @@ export default {
           }
         },
         {
-          title: '备注',
-          key: 'remark',
+          title: '备注1',
+          key: 'remark1',
+          render (h, params) {
+            return h('Input', {
+              props: {
+                value: params.row[params.column.key] || '',
+                maxlength: 100
+              },
+              on: {
+                'on-blur': (e) => {
+                  _this.updateLocalCargo(setObject(params, e.target.value))
+                }
+              }
+            })
+          }
+        },
+        {
+          title: '备注2',
+          key: 'remark2',
           render (h, params) {
             return h('Input', {
               props: {
@@ -531,7 +555,8 @@ export default {
         // 回单数量
         receiptCount: null,
         // 备注
-        remark: ''
+        remark1: '',
+        remark2: ''
       },
       orderPrint: {},
       rules: {
@@ -625,15 +650,28 @@ export default {
     }
   },
   created () {
+    if (!this.$route.query.id) {
+      this.autoFocus = true
+    }
+  },
+  mounted () {
     const vm = this
-    // Vue.component('SelectInput', SelectInput)
+    this.statics = Object.assign({}, this.sumRow)
     const orderId = this.$route.query.id || undefined
     if (orderId) {
+      vm.loading = true
       this.getOrderDetail(orderId)
         .then((orderDetail) => {
+          vm.loading = false
           for (let key in vm.orderForm) {
             vm.orderForm[key] = orderDetail[key] || vm.orderForm[key]
           }
+          // 分转换元
+          transferFeeList.forEach((fee) => {
+            vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
+          })
+          // vm.orderForm.start = areas.getPathByCode(orderDetail.start).map((item) => item.code)
+          // vm.orderForm.end = areas.getPathByCode(orderDetail.end).map((item) => item.code)
           if (vm.orderForm.deliveryTime) {
             vm.orderForm.deliveryTime = new Date(vm.orderForm.deliveryTime)
           }
@@ -643,11 +681,9 @@ export default {
         })
     }
   },
-  mounted () {
-    this.statics = Object.assign({}, this.sumRow)
-  },
   destroyed () {
     this.resetForm()
+    this.clearClients()
     this.clearOrderDetail()
   },
   methods: {
@@ -660,6 +696,7 @@ export default {
       'fullUpdateCargo',
       'clearCargoes',
       'clearOrderDetail',
+      'clearClients',
       'getOrderDetail',
       'submitOrder'
     ]),
@@ -776,11 +813,15 @@ export default {
             end: orderForm.end[orderForm.end.length - 1],
             arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
             deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
-            orderCargoList
+            orderCargoList: orderCargoList.map(cargo => cargo.toJson())
           });
 
           ['start', 'end'].forEach(field => {
             form[field] = parseInt(form[field])
+          })
+          // 转换成分单位
+          transferFeeList.forEach((fee) => {
+            form[fee] = form[fee] ? form[fee] * 100 : 0
           })
           vm.submitOrder(form)
             .then((response) => {
@@ -804,7 +845,7 @@ export default {
       this.orderPrint.totalFee = this.totalFee
       this.$refs.printer.print()
 
-      // this.handleSubmit()
+      this.handleSubmit()
     }
   }
 }

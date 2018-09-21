@@ -15,7 +15,7 @@
       <div v-if="isEasySearch" class="right">
         <Select v-model="easySelectMode"
                 style="width:120px; margin-right: 11px"
-                @0n-change="resetEasySearch">
+                @on-change="resetEasySearch">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
 
@@ -26,30 +26,23 @@
                class="search-input"
                @on-click="resetEasySearch" />
 
-        <SelectCarrier v-if="easySelectMode === 2"
-                       v-model="easySearchKeyword"
-                       placeholder="请输入承运商"
-                       class="search-input"
-                       @on-change="carrierChange" />
+        <SelectInput v-if="easySelectMode === 2"
+                     v-model="easySearchKeyword"
+                     :maxlength="20"
+                     :remote="false"
+                     :local-options="carriers"
+                     placeholder="请输入承运商"
+                     class="search-input"
+                     @on-focus.once="getCarriers"
+                     @on-select="handleSelectCarrier" />
 
-        <SelectCar v-if="easySelectMode === 3"
-                   v-model="easySearchKeyword"
-                   :carrier-id="carrierId"
-                   placeholder="请输入车牌号"
-                   class="search-input" />
-        <!-- <Input v-if="easySelectMode === 2"
-               v-model="easySearchKeyword"
-               :icon="easySearchKeyword ? 'ios-close-circle' : ''"
-               placeholder="请输入承运商"
-               class="search-input"
-               @on-click="resetEasySearch" />
-
-        <Input v-if="easySelectMode === 3"
-               v-model="easySearchKeyword"
-               :icon="easySearchKeyword ? 'ios-close-circle' : ''"
-               placeholder="请输入车牌号"
-               class="search-input"
-               @on-click="resetEasySearch" /> -->
+        <SelectInput v-if="easySelectMode === 3"
+                     v-model="easySearchKeyword"
+                     :maxlength="8"
+                     :remote="false"
+                     :local-options="carrierCars"
+                     placeholder="请输入车牌号"
+                     class="search-input" />
 
         <Button icon="ios-search"
                 style="width: 40px; margin-left: -2px;" @click="startSearch"></Button>
@@ -65,18 +58,29 @@
 
       <div style="margin-bottom: 10px;">
         <Input v-model="seniorSearchFields.waybillNo" placeholder="请输入运单号" class="search-input-senior" />
-        <SelectCarrier v-model="seniorSearchFields.carrierName"
-                       placeholder="请输入承运商"
-                       class="search-input-senior"
-                       @on-change="carrierChange" />
-        <SelectDriver v-model="seniorSearchFields.driverName"
-                      :carrier-id="carrierId"
-                      placeholder="请输入司机"
-                      class="search-input-senior" />
-        <SelectCar v-model="seniorSearchFields.carNo"
-                   :carrier-id="carrierId"
-                   placeholder="请输入车牌号"
-                   class="search-input-senior" />
+        <SelectInput
+          v-model="seniorSearchFields.carrierName"
+          :maxlength="20"
+          :remote="false"
+          :local-options="carriers"
+          placeholder="请输入承运商"
+          class="search-input-senior"
+          @on-focus.once="getCarriers"
+          @on-select="handleSelectCarrier" />
+        <SelectInput
+          v-model="seniorSearchFields.driverName"
+          :maxlength="5"
+          :remote="false"
+          :local-options="carrierDrivers"
+          placeholder="请输入司机"
+          class="search-input-senior" />
+        <SelectInput
+          v-model="seniorSearchFields.carNo"
+          :maxlength="8"
+          :remote="false"
+          :local-options="carrierCars"
+          placeholder="请输入车牌号"
+          class="search-input-senior" />
       </div>
 
       <div style="display: flex;justify-content: space-between;">
@@ -129,15 +133,14 @@ import BasePage from '@/basic/BasePage'
 import TabHeader from '@/components/TabHeader'
 import PageTable from '@/components/page-table'
 import AreaSelect from '@/components/AreaSelect'
-import SelectCarrier from './components/selectCarrier'
-import SelectDriver from './components/selectDriver'
-import SelectCar from './components/selectCar'
+import SelectInput from '@/components/SelectInput.vue'
 import TransportMixin from './transportMixin'
 import Server from '@/libs/js/server'
+import Export from '@/libs/js/export'
 
 export default {
   name: 'WaybillManager',
-  components: { TabHeader, PageTable, AreaSelect, SelectCarrier, SelectDriver, SelectCar },
+  components: { TabHeader, PageTable, AreaSelect, SelectInput },
   mixins: [ BasePage, TransportMixin ],
   metaInfo: { title: '运单管理' },
   data () {
@@ -180,7 +183,9 @@ export default {
             }
           }, {
             name: '导出',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billExport()
+            }
           }]
         },
         {
@@ -192,7 +197,9 @@ export default {
             }
           }, {
             name: '导出',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billExport()
+            }
           }]
         },
         {
@@ -207,7 +214,9 @@ export default {
             func: () => console.log(Math.random())
           }, {
             name: '导出',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billExport()
+            }
           }]
         },
         {
@@ -219,14 +228,18 @@ export default {
             }
           }, {
             name: '导出',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billExport()
+            }
           }]
         },
         {
           tab: '已到货',
           btns: [{
             name: '导出',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billExport()
+            }
           }]
         }
       ],
@@ -269,7 +282,7 @@ export default {
               return h('a', {
                 on: {
                   click: () => {
-                    //
+                    this.billSendCar(p.row.waybillId)
                   }
                 }
               }, '派车')
@@ -541,16 +554,14 @@ export default {
         method: 'post',
         data: { waybillIds: this.tableSelection.map(item => item.waybillId) }
       }).then(res => {
-        // const points = res.data.data.list
-
+        const points = res.data.data.list
+        if (!points.length) {
+          this.$Message.warning('暂无位置')
+          return
+        }
         this.openDialog({
           name: 'transport/dialog/map',
-          data: {
-            points: [{
-              longtitude: 116.404,
-              latitude: 39.915
-            }]
-          },
+          data: { points },
           methods: {}
         })
       }).catch(err => console.error(err))
@@ -610,13 +621,36 @@ export default {
 
     // 导出
     billExport () {
-      Server({
+      let data = this.setFetchParams()
+      delete data.order
+
+      if (this.tableSelection.length) {
+        data.exportType = 1
+        data.waybillIds = this.tableSelection.map(item => item.waybillId)
+      } else if (this.inSearching) data.exportType = 3
+      else data.exportType = 2
+
+      Export({
         url: '/waybill/export',
         method: 'post',
-        data: { waybillIds: this.tableSelection.map(item => item.waybillId) }
+        data
       }).then(res => {
         this.$Message.success('导出成功')
       }).catch(err => console.error(err))
+    },
+
+    // 派车
+    billSendCar (id) {
+      var self = this
+      self.openDialog({
+        name: 'transport/dialog/sendCar',
+        data: { id },
+        methods: {
+          complete () {
+            self.fetchData()
+          }
+        }
+      })
     }
   }
 }

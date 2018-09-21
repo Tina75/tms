@@ -56,6 +56,11 @@ export default {
                     click: () => {
                       this.isSeparate = false
                       console.log(this.quantityVal)
+                      if (this.quantityVal === null || this.weightVal === null || this.volumeVal === null) {
+                        this.$Message.warning('数量、重量、体积不可为空')
+                        this.isSeparate = true
+                        return
+                      }
                       if (!this.quantityVal && this.quantityVal !== null) {
                         // 部分整拆
                         this.separateWholeList(params.index)
@@ -327,6 +332,10 @@ export default {
 
   methods: {
     save () {
+      if (this.isSeparate) {
+        this.$Message.warning('您还有未确认的拆单，请先确认')
+        return
+      }
       if (this.parentOrderCargoList.length > 0 && this.childOrderCargoList.length > 0) {
         const data = {
           id: this.id,

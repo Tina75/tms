@@ -1,9 +1,9 @@
 import City from '../../libs/js/City'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   data () {
     return {
-      carrierId: '',
       order: 'desc', // 倒序 asc升序
       // 分页
       page: {
@@ -25,6 +25,14 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters([
+      'carriers',
+      'carrierCars',
+      'carrierDrivers'
+    ])
+  },
+
   created () {
     // 初始化按钮组
     this.currentBtns = this.btnList[0].btns
@@ -32,6 +40,15 @@ export default {
   },
 
   methods: {
+    ...mapActions([
+      'getCarriers'
+    ]),
+    handleSelectCarrier (name, row) {
+      console.log(name, row)
+      this.$store.dispatch('getCarrierCars', row.id)
+      this.$store.dispatch('getCarrierDrivers', row.id)
+    },
+
     // 搜索
     startSearch () {
       // if (this.isEasySearch && !this.easySearchKeyword) return

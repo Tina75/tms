@@ -105,9 +105,7 @@ export default {
       formSearch: {
         name: '',
         phone: '',
-        roleId: '',
-        pageNo: 1,
-        pageSize: 20
+        roleId: ''
       },
       selectList: [],
       staffSelectList: [],
@@ -116,7 +114,7 @@ export default {
         key: 'do',
         width: 200,
         render: (h, params) => {
-          if (params.row.roleName === '超级管理员') {
+          if (params.row.type === 1) {
             return h('div', [
               h('Button', {
                 props: {
@@ -243,13 +241,6 @@ export default {
     },
     searchBtn () {
       this.formSearchInit = Object.assign({}, this.formSearch)
-      Server({
-        url: 'employee/list',
-        method: 'get',
-        data: this.formSearchInit
-      }).then(({ data }) => {
-        console.log('查询table data')
-      })
     },
     eaditStaff (params) {
       if (params !== 'add') {
