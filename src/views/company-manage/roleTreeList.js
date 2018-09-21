@@ -1,11 +1,11 @@
 export default {
-  data7: [{
-    key: 'data7',
-    title: '首页',
-    expand: true,
-    code: '160000',
-    children: []
-  }],
+  // data7: [{
+  //   key: 'data7',
+  //   title: '首页',
+  //   expand: true,
+  //   code: '160000',
+  //   children: []
+  // }],
   data1: [{
     key: 'data1',
     title: '受理开单',
