@@ -116,15 +116,20 @@
     text-align center
     cursor pointer
 
-    .icon
-      color #fff
+    i
+      display block
+      width 16px
+      height 16px
+      margin 5px
+      background url(../../../assets/img-icon-expand.png) no-repeat
+      background-size contain
       transition all 0.3s linear
 
   &-timeline
     height 15px
     margin-top 7px
+    transition all 0.3s linear
     overflow hidden
-    transition height 0.3s linear
 
     &-item
       i
@@ -139,10 +144,7 @@
           background-color #00A4BD
 
   &-show
-    transform rotate(-90deg) translate(-5px, 0)
-
-  &-hide
-    transform rotate(90deg)
+    transform rotate(180deg)
 
 .detail-edit-footer
   margin-top 50px
@@ -162,9 +164,11 @@
     color #999999
 
 .detail-info-input
+  display inline-block
   width calc( 100% - 100px )
 
   &-half
+    display inline-block
     width calc( 50% - 56px )
 
 
