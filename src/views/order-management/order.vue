@@ -1,6 +1,6 @@
 <template>
   <div>
-    <tab-header :tabs="status" @tabChange="handleTabChange"></tab-header>
+    <tab-header :name="curStatusName" :tabs="status" @tabChange="handleTabChange"></tab-header>
     <div style="margin-top: 30px;display: flex;justify-content: space-between;">
       <div>
         <Button v-for="(btn, index) in btnGroup" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
@@ -126,7 +126,7 @@ export default {
         { name: '已到货', count: '' },
         { name: '已回单', count: '' }
       ],
-      curStatusName: '全部',
+      curStatusName: '待提货',
       btnGroup: [
         { name: '送货调度', value: 1 },
         { name: '提货调度', value: 2 },
@@ -152,7 +152,7 @@ export default {
       ],
       keyword: {},
       keywords: {
-        status: null,
+        status: 10,
         consignerName: null,
         orderNo: null,
         waybillNo: null,
@@ -181,91 +181,37 @@ export default {
           width: 160,
           extra: true,
           render: (h, params) => {
-            if (this.curStatusName === '全部' || this.curStatusName === '待提货' || this.curStatusName === '待调度') {
-              // 未拆且未转 显示拆单、外转按钮
-              if (params.row.parentId === '' && params.row.disassembleStatus === 0 && params.row.transStatus === 0) {
-                if (params.row.dispatchStatus === 1 || (params.row.pickup === 1 && (params.row.status === 20 || (params.row.pickupStatus === 1 && params.row.status === 10)))) { // 如果是待调度状态(或者已提货未调度,或者已创建运单)且是上门提货则没有外转
-                  return h('div', [
-                    h('Button', {
-                      props: {
-                        type: 'text'
-                      },
-                      style: {
-                        marginRight: '5px',
-                        color: '#00a4bd'
-                      },
-                      on: {
-                        click: () => {
-                          this.openSeparateDialog(params)
-                        }
-                      }
-                    }, '拆单')
-                  ])
-                } else {
-                  return h('div', [
-                    h('Button', {
-                      props: {
-                        type: 'text'
-                      },
-                      style: {
-                        marginRight: '5px',
-                        color: '#00a4bd'
-                      },
-                      on: {
-                        click: () => {
-                          this.openSeparateDialog(params)
-                        }
-                      }
-                    }, '拆单'),
-                    h('Button', {
-                      props: {
-                        type: 'text'
-                      },
-                      style: {
-                        marginRight: '5px',
-                        color: '#00a4bd'
-                      },
-                      on: {
-                        click: () => {
-                          this.openOuterDialog(params)
-                        }
-                      }
-                    }, '外转')
-                  ])
-                }
-              } else if (params.row.parentId === '' && params.row.disassembleStatus === 1) { // 已拆且是父单  显示还原、删除按钮
-                return h('div', [
-                  h('Button', {
-                    props: {
-                      type: 'text'
-                    },
-                    style: {
-                      marginRight: '5px',
-                      color: '#00a4bd'
-                    },
-                    on: {
-                      click: () => {
-                        this.openResOrDelDialog(params, '还原')
-                      }
-                    }
-                  }, '还原'),
-                  h('Button', {
-                    props: {
-                      type: 'text'
-                    },
-                    style: {
-                      marginRight: '5px',
-                      color: '#00a4bd'
-                    },
-                    on: {
-                      click: () => {
-                        this.openResOrDelDialog(params, '删除')
-                      }
-                    }
-                  }, '删除')
-                ])
-              } else if (params.row.parentId !== '') { // 子单   显示拆单按钮
-                return h('div', [
+            /**
+             * status  10：待提货 20：待调度 30：在途 40：已到货 50：已回单
+             * parentId    父单：('' && 被拆单: disassembleStatus=1)， 子单：不为''
+             * disassembleStatus   是否被拆单：1是;0否（只对父单有效，子单被拆单也为0）
+             * transStatus   是否被外转：1是，0否
+             * dispatchStatus 是否被调度：1是，0否
+             * pickupStatus  是否被提货：1是；0否
+             * pickup   提货方式 1上门提货、2直接送货 （开单时选择上门提货  初始状态为待提货（10），开单时选择直接送货，初始状态为待调度（20））
+             *
+             *
+             * 展示按钮：拆单、外转、还原、删除、编辑（详情页独有）
+             * 1、待提货状态下：（status: 10）
+             *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）】显示
+             *    外转：【（未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被提货：pickupStatus=0）】显示
+             *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被提货：pickupStatus=0）】显示
+             *    删除：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （被拆单后的父单：disassembleStatus=1）】显示
+             *    编辑：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
+             * 2、待调度状态下：（status: 20）
+             *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）&& （未被调度：dispatchStatus=0）】显示
+             *    外转：【（不是上门提货：pickup !== 1） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被调度：dispatchStatus=0）】显示
+             *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被调度：dispatchStatus=0）】显示
+             *    删除：【（不是上门提货：pickup !== 1） && （未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （被拆单后的父单：disassembleStatus=1）】显示
+             *    编辑：【（未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
+             */
+            let r = params.row
+            if (r.status === 10) { // 待提货状态
+              // 需显示的按钮组
+              let renderBtn = []
+              // 拆单按钮
+              if (r.transStatus === 0 && r.disassembleStatus !== 1) {
+                renderBtn.push(
                   h('Button', {
                     props: {
                       type: 'text'
@@ -280,8 +226,147 @@ export default {
                       }
                     }
                   }, '拆单')
-                ])
-              } else if (params.row.transStatus === 1) {} // 订单外转  不显示按钮
+                )
+              }
+              // 外转按钮
+              if (r.disassembleStatus === 0 && r.parentId === '' && r.pickupStatus === 0) {
+                renderBtn.push(
+                  h('Button', {
+                    props: {
+                      type: 'text'
+                    },
+                    style: {
+                      marginRight: '5px',
+                      color: '#00a4bd'
+                    },
+                    on: {
+                      click: () => {
+                        this.openOuterDialog(params)
+                      }
+                    }
+                  }, '外转')
+                )
+              }
+              // 还原按钮
+              if (r.parentId === '' && r.disassembleStatus === 1 && r.pickupStatus === 0) {
+                renderBtn.push(
+                  h('Button', {
+                    props: {
+                      type: 'text'
+                    },
+                    style: {
+                      marginRight: '5px',
+                      color: '#00a4bd'
+                    },
+                    on: {
+                      click: () => {
+                        this.openResOrDelDialog(params, '还原')
+                      }
+                    }
+                  }, '还原')
+                )
+              }
+              // 删除按钮
+              if (r.transStatus === 0 && r.pickupStatus === 0 && r.disassembleStatus === 1) {
+                renderBtn.push(
+                  h('Button', {
+                    props: {
+                      type: 'text'
+                    },
+                    style: {
+                      marginRight: '5px',
+                      color: '#00a4bd'
+                    },
+                    on: {
+                      click: () => {
+                        this.openResOrDelDialog(params, '删除')
+                      }
+                    }
+                  }, '删除')
+                )
+              }
+              return h('div', renderBtn)
+            }
+            if (r.status === 20) { // 待调度状态
+              // 需显示的按钮组
+              let renderBtn = []
+              // 拆单按钮
+              if (r.transStatus === 0 && r.disassembleStatus !== 1 && r.dispatchStatus === 0) {
+                renderBtn.push(
+                  h('Button', {
+                    props: {
+                      type: 'text'
+                    },
+                    style: {
+                      marginRight: '5px',
+                      color: '#00a4bd'
+                    },
+                    on: {
+                      click: () => {
+                        this.openSeparateDialog(params)
+                      }
+                    }
+                  }, '拆单')
+                )
+              }
+              // 外转按钮
+              if (r.pickup !== 1 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0) {
+                renderBtn.push(
+                  h('Button', {
+                    props: {
+                      type: 'text'
+                    },
+                    style: {
+                      marginRight: '5px',
+                      color: '#00a4bd'
+                    },
+                    on: {
+                      click: () => {
+                        this.openOuterDialog(params)
+                      }
+                    }
+                  }, '外转')
+                )
+              }
+              // 还原按钮
+              if (r.parentId === '' && r.disassembleStatus === 1 && r.dispatchStatus === 0) {
+                renderBtn.push(
+                  h('Button', {
+                    props: {
+                      type: 'text'
+                    },
+                    style: {
+                      marginRight: '5px',
+                      color: '#00a4bd'
+                    },
+                    on: {
+                      click: () => {
+                        this.openResOrDelDialog(params, '还原')
+                      }
+                    }
+                  }, '还原')
+                )
+              }
+              // 删除按钮
+              if (r.pickup !== 1 && r.transStatus === 0 && r.dispatchStatus === 0 && r.disassembleStatus === 1) {
+                renderBtn.push(
+                  h('Button', {
+                    props: {
+                      type: 'text'
+                    },
+                    style: {
+                      marginRight: '5px',
+                      color: '#00a4bd'
+                    },
+                    on: {
+                      click: () => {
+                        this.openResOrDelDialog(params, '删除')
+                      }
+                    }
+                  }, '删除')
+                )
+              }
+              return h('div', renderBtn)
             }
           }
         },
@@ -329,7 +414,7 @@ export default {
                 }, params.row.orderNo)
               ])
             } else {
-              return h('a', {
+              return [h('a', {
                 props: {
                   type: 'text'
                 },
@@ -349,7 +434,7 @@ export default {
                     })
                   }
                 }
-              }, params.row.orderNo)
+              }, params.row.orderNo)]
             }
           }
         },
@@ -529,6 +614,10 @@ export default {
 
   mounted () {
     this.getOrderNum()
+    this.keyword = Object.assign({}, this.keywords, {
+      start: null,
+      end: null
+    })
   },
 
   methods: {
@@ -711,9 +800,9 @@ export default {
     },
     // 判断各个状态下表头按钮批量操作报错
     isBatchOperation (btn) {
-      if (btn.name === '送货调度') { // 待调度（status:20）且未创建运单(dispatchStatus: 0)且未外转(transStatus: 0) 可以批量操作
+      if (btn.name === '送货调度') { // 待调度（status:20）&& 未创建运单(dispatchStatus: 0) && 未外转(transStatus: 0) && 不是父单（disassembleStatus !== 1）可以批量操作
         let data = this.selectOrderList.find((item) => {
-          return (item.status !== 20 || item.dispatchStatus !== 0 || item.transStatus !== 0)
+          return (item.status !== 20 || item.dispatchStatus !== 0 || item.transStatus !== 0 || item.disassembleStatus === 1)
         })
         if (data !== undefined) {
           this.$Message.warning('您选择的订单不支持送货调度')
@@ -729,18 +818,18 @@ export default {
         } else {
           this.openDispatchDialog(btn.name)
         }
-      } else if (btn.name === '订单还原') { // parentId: '' 且 已拆单(disassembleStatus：1)  可以批量操作
+      } else if (btn.name === '订单还原') { // 【（是待提货或待调度状态：status < 30） && （是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被提货：pickupStatus=0） && （未被调度：dispatchStatus=0） && （未外转：transStatus=0）】 可以批量操作
         let data = this.selectOrderList.find((item) => {
-          return (item.parentId !== '' || item.disassembleStatus !== 1)
+          return (item.status > 20 || item.parentId !== '' || item.disassembleStatus !== 1 || item.pickupStatus !== 0 || item.dispatchStatus !== 0 || item.transStatus !== 0)
         })
         if (data !== undefined) {
           this.$Message.warning('您选择的订单不支持订单还原')
         } else {
           this.openResOrDelDialog('', btn.name)
         }
-      } else if (btn.name === '删除') { // status < 30 且  待调度条件下不是上门提货（pickup：2）可以批量操作
+      } else if (btn.name === '删除') { // 【（是待提货或待调度状态：status < 30） && （未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未被调度：dispatchStatus=0） && （被拆单后的父单：disassembleStatus=1） && （待调度条件下不是上门提货（pickup !== 1））】可以批量操作
         let data = this.selectOrderList.find((item) => {
-          return (item.status > 20 || (item.status === 20 && item.pickup === 1))
+          return (item.status > 20 || item.pickupStatus !== 0 || item.dispatchStatus !== 0 || item.transStatus !== 0 || (item.status === 20 && item.pickup === 1))
         })
         if (data !== undefined) {
           this.$Message.warning('您选择的订单不支持删除')

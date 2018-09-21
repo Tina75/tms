@@ -7,14 +7,14 @@
       </p>
       <div>
         <div class="order-number">
-          订单号：{{ childOrderCargoList.length ? orderNo + '-1' : orderNo }}
+          订单号：{{ orderNo }}
         </div>
         <Table :columns="columns1" :data="parentOrderCargoList"></Table>
       </div>
       <div v-if="childOrderCargoList.length">
         <div style="border-top: 1px dashed rgba(203,206,211,1);margin: 32px 0 20px;"></div>
         <div class="order-number">
-          订单号：{{ orderNo + '-2' }}
+          子订单：
         </div>
         <Table :columns="columns2" :data="childOrderCargoList"></Table>
       </div>
