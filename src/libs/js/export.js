@@ -16,7 +16,7 @@ let instance = axios.create({
   withCredentials: true,
   loading: false,
   ignoreCode: false,
-  responseType: 'arraybuffer'
+  responseType: 'application/json' // arraybuffer
 })
 
 switch (process.env.NODE_ENV) {

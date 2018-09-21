@@ -34,9 +34,9 @@ export default {
   },
 
   created () {
-    // 初始化按钮组
     this.currentBtns = this.btnList[0].btns
     this.fetchData()
+    this.getCarriers()
   },
 
   methods: {
@@ -72,7 +72,6 @@ export default {
     },
     // 重置搜索条件
     resetEasySearch () {
-      this.carrierId = ''
       if (this.easySearchKeyword === '') return
       this.easySearchKeyword = ''
       if (!this.inSearching) return
@@ -152,12 +151,18 @@ export default {
           params.type = this.easySelectMode
           params.keyWord = this.easySearchKeyword
         } else {
-          if (this.seniorSearchFields.startCodes.length) {
-            this.seniorSearchFields.start = this.seniorSearchFields.startCodes[2]
-          } else this.seniorSearchFields.start = ''
-          if (this.seniorSearchFields.endCodes.length) {
-            this.seniorSearchFields.end = this.seniorSearchFields.endCodes[2]
-          } else this.seniorSearchFields.end = ''
+          if (this.seniorSearchFields.startCodes) {
+            if (this.seniorSearchFields.startCodes.length) {
+              this.seniorSearchFields.start = this.seniorSearchFields.startCodes[2]
+            } else this.seniorSearchFields.start = ''
+          }
+
+          if (this.seniorSearchFields.endCodes) {
+            if (this.seniorSearchFields.endCodes.length) {
+              this.seniorSearchFields.end = this.seniorSearchFields.endCodes[2]
+            } else this.seniorSearchFields.end = ''
+          }
+
           if (this.seniorSearchFields.dateRange[0]) {
             this.seniorSearchFields.startTime = this.seniorSearchFields.dateRange[0].Format('yyyy-MM-dd hh:mm:ss')
           } else this.seniorSearchFields.startTime = ''

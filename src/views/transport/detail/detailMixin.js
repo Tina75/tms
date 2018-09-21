@@ -10,7 +10,7 @@ const carLength = CarConfigs.carLength
 export default {
   data () {
     return {
-      id: this.$route.query.id,
+      id: this.$route.query.qid,
       loading: false,
       inEditing: false,
       currentBtns: [], // 当前按钮组
@@ -102,6 +102,7 @@ export default {
 
   created () {
     this.fetchData()
+    this.getCarriers()
   },
 
   computed: {
@@ -114,7 +115,7 @@ export default {
       return Number(this.payment.freightFee) +
       Number(this.payment.loadFee) +
       Number(this.payment.unloadFee) +
-      Number(this.payment.insuranceFee) +
+      Number(this.payment.insuranceFee ? this.payment.insuranceFee : 0) +
       Number(this.payment.otherFee)
     },
     // 货物总计
@@ -142,7 +143,13 @@ export default {
   },
 
   filters: {
+    formatTime (timestamp) {
+      if (!timestamp) return ''
+      return new Date(timestamp).Format('yyyy-MM-dd hh:mm:ss')
+    },
+
     formatCity (code) {
+      if (!code) return ''
       return City.codeToFullName(code, 3)
     },
 
@@ -164,10 +171,16 @@ export default {
 
   watch: {
     startCodes () {
-      this.info.start = this.startCodes[2]
+      if (!(this.startCodes instanceof Array)) return
+      this.info.start = this.startCodes.length
+        ? this.startCodes[this.startCodes.length - 1]
+        : ''
     },
     endCodes () {
-      this.info.end = this.endCodes[2]
+      if (!(this.endCodes instanceof Array)) return
+      this.info.end = this.endCodes.length && (this.endCodes instanceof Array)
+        ? this.endCodes[this.endCodes.length - 1]
+        : ''
     },
     inEditing (val) {
       if (!this.tableCanEdit) return
@@ -202,15 +215,6 @@ export default {
       this.$store.dispatch('getCarrierCars', row.id)
       this.$store.dispatch('getCarrierDrivers', row.id)
     },
-
-    // 根据城市code查询父级code
-    // getParentCodes () {
-    //   const start = City.getParentByCode(this.info.start)
-    //   const end = City.getParentByCode(this.info.end)
-    //   this.startCodes = [Number(start.parent), Number(start.code), this.info.start]
-    //   this.endCodes = [Number(end.parent), Number(end.code), this.info.end]
-    //   console.log(this.startCodes, this.endCodes)
-    // },
 
     // 根据状态设置按钮
     setBtnsWithStatus () {
@@ -249,6 +253,7 @@ export default {
       this.settlementPayInfo.forEach(item => {
         total = total + Number(item.cashAmount) + Number(item.fuelCardAmount)
       })
+      console.log(total, Number(this.paymentTotal))
       if (total > Number(this.paymentTotal)) {
         this.$Message.error('结算总额不能超过费用合计')
         return false
@@ -269,7 +274,12 @@ export default {
       })
     },
 
-    // 格式化金额
+    // 设置金额单位为元
+    setMoneyUnit2Yuan (money) {
+      return money ? money / 100 : 0
+    },
+
+    // 格式化金额单位为分
     formatMoney () {
       let temp = Object.assign({}, this.payment)
       for (let key in temp) {
@@ -277,8 +287,9 @@ export default {
       }
       return temp
     },
-    // 格式化计费方式金额
+    // 格式化计费方式金额单位为分
     formatPayInfo () {
+      // if (this.settlementType !== '1') return
       return this.settlementPayInfo.map(item => {
         return {
           payType: item.payType,
@@ -289,11 +300,11 @@ export default {
     },
     // 校验
     validate () {
-      if (!this.info.start) {
+      if (this.info.start && !this.info.start) {
         this.$Message.error('请输入始发地')
         return false
       }
-      if (!this.info.end) {
+      if (this.info.end && !this.info.end) {
         this.$Message.error('请输入目的地')
         return false
       }
@@ -321,7 +332,8 @@ export default {
         this.$Message.error('请选择结算方式')
         return false
       }
-      if (!this.checkTotalAmount) return false
+      if (this.settlementType === '1' && !this.checkTotalAmount()) return false
+
       return true
     }
   }

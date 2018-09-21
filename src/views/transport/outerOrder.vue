@@ -15,16 +15,17 @@
       <div v-if="isEasySearch" class="right">
         <Select v-model="easySelectMode"
                 style="width:120px; margin-right: 11px"
-                @0n-change="resetEasySearch">
+                @on-change="resetEasySearch">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
 
-        <Input v-if="easySelectMode === 1"
-               v-model="easySearchKeyword"
-               :icon="easySearchKeyword ? 'ios-close-circle' : ''"
-               placeholder="请输入外转方名称"
-               class="search-input"
-               @on-click="resetEasySearch" />
+        <SelectInput v-if="easySelectMode === 1"
+                     v-model="easySearchKeyword"
+                     :maxlength="20"
+                     :remote="false"
+                     :local-options="transferees"
+                     placeholder="请输入外转方名称"
+                     class="search-input" />
 
         <Input v-if="easySelectMode === 2"
                v-model="easySearchKeyword"
@@ -41,7 +42,8 @@
                @on-click="resetEasySearch" />
 
         <Button icon="ios-search"
-                style="width: 40px; margin-left: -2px;" @click="startSearch"></Button>
+                class="search-btn-easy"
+                @click="startSearch"></Button>
 
         <Button class="senior-search"
                 type="text" size="small"
@@ -53,18 +55,30 @@
     <div v-if="!isEasySearch" class="operate-box">
 
       <div style="margin-bottom: 10px;">
-        <Input v-model="seniorSearchFields.consignerName" placeholder="请输入客户名称" class="search-input-senior" />
+        <SelectInput v-model="seniorSearchFields.consignerName"
+                     :maxlength="20"
+                     :remote="false"
+                     :local-options="consigners"
+                     placeholder="请输入客户名称"
+                     class="search-input-senior" />
+
         <Input v-model="seniorSearchFields.orderNo" placeholder="请输入订单号" class="search-input-senior" />
         <Input v-model="seniorSearchFields.customerOrderNo" placeholder="请输入客户订单号" class="search-input-senior" />
         <Input v-model="seniorSearchFields.transNo" placeholder="请输入外转单号" class="search-input-senior" />
-        <Input v-model="seniorSearchFields.transfereeName" placeholder="请输入外转方名称" class="search-input-senior" />
+
+        <SelectInput v-model="seniorSearchFields.transfereeName"
+                     :maxlength="20"
+                     :remote="false"
+                     :local-options="transferees"
+                     placeholder="请输入外转方名称"
+                     class="search-input-senior" />
       </div>
 
       <div style="display: flex;justify-content: space-between;">
         <div>
-          <AreaSelect v-model="seniorSearchFields.start" placeholder="请输入始发地" class="search-input-senior" />
-          <AreaSelect v-model="seniorSearchFields.end" placeholder="请输入目的地" class="search-input-senior" />
-          <DatePicker type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
+          <AreaSelect v-model="seniorSearchFields.startCodes" placeholder="请输入始发地" class="search-input-senior" />
+          <AreaSelect v-model="seniorSearchFields.endCodes" placeholder="请输入目的地" class="search-input-senior" />
+          <DatePicker v-model="seniorSearchFields.dateRange" type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
         </div>
         <div>
           <Button type="primary"
@@ -87,7 +101,8 @@
                :show-pagination="false"
                style="margin-top: 15px"
                @on-column-change="tableColumnsChanged"
-               @on-selection-change="selectionChanged"></PageTable>
+               @on-selection-change="selectionChanged"
+               @on-sort-change="tableSort"></PageTable>
 
     <Page :total="page.total"
           :current="page.current"
@@ -109,12 +124,14 @@ import BasePage from '@/basic/BasePage'
 import TabHeader from '@/components/TabHeader'
 import PageTable from '@/components/page-table'
 import AreaSelect from '@/components/AreaSelect'
+import SelectInput from '@/components/SelectInput'
 import TransportMixin from './transportMixin'
 import Server from '@/libs/js/server'
+import Export from '@/libs/js/export'
 
 export default {
   name: 'OuterManager',
-  components: { TabHeader, PageTable, AreaSelect },
+  components: { TabHeader, PageTable, AreaSelect, SelectInput },
   mixins: [ BasePage, TransportMixin ],
   metaInfo: { title: '外转单管理' },
   data () {
@@ -133,46 +150,66 @@ export default {
           tab: '全部',
           btns: [{
             name: '发运',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billShipment()
+            }
           }, {
             name: '到货',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billArrived()
+            }
           }, {
             name: '删除',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billDelete()
+            }
           }, {
             name: '导出',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billExport()
+            }
           }]
         },
         {
           tab: '待发运',
           btns: [{
             name: '发运',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billShipment()
+            }
           }, {
             name: '删除',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billDelete()
+            }
           }, {
             name: '导出',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billExport()
+            }
           }]
         },
         {
           tab: '在途',
           btns: [{
             name: '到货',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billArrived()
+            }
           }, {
             name: '导出',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billExport()
+            }
           }]
         },
         {
           tab: '已到货',
           btns: [{
             name: '导出',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billExport()
+            }
           }]
         }
       ],
@@ -191,8 +228,11 @@ export default {
         customerOrderNo: '', // 客户订单号
         transNo: '', // 外转单号
         transfereeName: '', // 外转方名称
+        startCodes: [], // 始发地codes
+        endCodes: [], // 目的地codes
         start: '', // 始发地
         end: '', // 目的地
+        dateRange: [new Date(), new Date()], // 日期范围
         startTime: '', // 开始时间
         endTime: '' // 结束时间
       },
@@ -208,26 +248,28 @@ export default {
           key: 'do',
           width: 100,
           extra: true,
-          render: (h, params) => {
-            return h('div', [
-              h('a', {
-                on: {
-                  click: () => {
-
+          render: (h, p) => {
+            if (p.row.status === 1) {
+              return h('div', [
+                h('a', {
+                  on: {
+                    click: () => {
+                      this.billShipment([p.row.transId])
+                    }
+                  },
+                  style: {
+                    marginRight: '10px'
                   }
-                },
-                style: {
-                  marginRight: '10px'
-                }
-              }, '发运'),
-              h('a', {
-                on: {
-                  click: () => {
-
+                }, '发运'),
+                h('a', {
+                  on: {
+                    click: () => {
+                      this.billDelete([p.row.transId])
+                    }
                   }
-                }
-              }, '删除')
-            ])
+                }, '删除')
+              ])
+            }
           }
         },
         {
@@ -244,7 +286,10 @@ export default {
                 click: () => {
                   this.openTab({
                     path: '/transport/detail/detailOuter',
-                    query: { id: p.row.transId }
+                    query: {
+                      id: p.row.transNo,
+                      qid: p.row.transId
+                    }
                   })
                 }
               }
@@ -265,11 +310,19 @@ export default {
         },
         {
           title: '始发地',
-          key: 'start'
+          key: 'start',
+          ellipsis: true,
+          render: (h, p) => {
+            return h('span', this.cityFilter(p.row.start))
+          }
         },
         {
           title: '目的地',
-          key: 'end'
+          key: 'end',
+          ellipsis: true,
+          render: (h, p) => {
+            return h('span', this.cityFilter(p.row.end))
+          }
         },
         {
           title: '外转运费（元）',
@@ -285,7 +338,65 @@ export default {
         },
         {
           title: '外转时间',
-          key: 'createTimeLong'
+          key: 'createTimeLong',
+          sortable: 'custom',
+          render: (h, p) => {
+            return h('span', this.dateFormatter(p.row.createTimeLong))
+          }
+        },
+        {
+          title: '客户订单号',
+          key: 'customerOrderNo'
+        },
+        {
+          title: '客户名称',
+          key: 'consignerName'
+        },
+        {
+          title: '发货人',
+          key: 'consignerContact'
+        },
+        {
+          title: '发货人手机号码',
+          key: 'consignerPhone'
+        },
+        {
+          title: '收货人',
+          key: 'consigneeContact'
+        },
+        {
+          title: '收货人手机号码',
+          key: 'consigneePhone'
+        },
+        {
+          title: '货值',
+          key: 'cargoCost'
+        },
+        {
+          title: '付款方式',
+          key: 'payType'
+        },
+        {
+          title: '要求装货时间',
+          key: 'deliveryTimeLong',
+          render: (h, p) => {
+            return h('span', this.dateFormatter(p.row.deliveryTimeLong))
+          }
+        },
+        {
+          title: '期望到货时间',
+          key: 'arriveTimeLong',
+          render: (h, p) => {
+            return h('span', this.dateFormatter(p.row.arriveTimeLong))
+          }
+        },
+        {
+          title: '订单数',
+          key: 'orderCnt'
+        },
+        {
+          title: '回单数',
+          key: 'backbillCnt'
         }
       ],
 
@@ -352,61 +463,61 @@ export default {
         },
         {
           title: '客户订单号',
-          key: 'x1',
+          key: 'customerOrderNo',
           fixed: false,
           visible: false
         },
         {
           title: '客户名称',
-          key: 'x2',
+          key: 'consignerName',
           fixed: false,
           visible: false
         },
         {
           title: '发货人',
-          key: 'x3',
+          key: 'consignerContact',
           fixed: false,
           visible: false
         },
         {
           title: '发货人手机号码',
-          key: 'x4',
+          key: 'consignerPhone',
           fixed: false,
           visible: false
         },
         {
           title: '收货人',
-          key: 'x5',
+          key: 'consigneeContact',
           fixed: false,
           visible: false
         },
         {
           title: '收货人手机号码',
-          key: 'x6',
+          key: 'consigneePhone',
           fixed: false,
           visible: false
         },
         {
           title: '货值',
-          key: 'x7',
+          key: 'cargoCost',
           fixed: false,
           visible: false
         },
         {
           title: '付款方式',
-          key: 'settlementType',
+          key: 'payType',
           fixed: false,
           visible: false
         },
         {
           title: '要求装货时间',
-          key: 'x8',
+          key: 'deliveryTimeLong',
           fixed: false,
           visible: false
         },
         {
           title: '期望到货时间',
-          key: 'x9',
+          key: 'arriveTimeLong',
           fixed: false,
           visible: false
         },
@@ -422,10 +533,16 @@ export default {
           fixed: false,
           visible: false
         }
-      ]
+      ],
+
+      transferees: [], // 外转方列表
+      consigners: [] // 客户列表
     }
   },
-
+  created () {
+    this.getTransferee()
+    this.getConsigners()
+  },
   methods: {
     // 设置标签状态
     setTabStatus (tab) {
@@ -454,10 +571,129 @@ export default {
         this.page.total = data.totalCount
         this.tabList = [
           { name: '全部', count: '' },
-          { name: '待发运', count: data.statusCntInfo.waitLoadCnt },
-          { name: '在途', count: data.statusCntInfo.loaddingCnt },
-          { name: '已到货', count: data.statusCntInfo.loadedCnt }
+          { name: '待发运', count: data.statusCntInfo.waitCnt || 0 },
+          { name: '在途', count: data.statusCntInfo.loadCnt || 0 },
+          { name: '已到货', count: data.statusCntInfo.loadedCnt || 0 }
         ]
+      }).catch(err => console.error(err))
+    },
+
+    // 查询外转方
+    getTransferee () {
+      Server({
+        url: '/transferee/list',
+        method: 'get',
+        data: { type: 1 }
+      }).then(res => {
+        this.transferees = res.data.data.transfereeList.map(item => {
+          return { name: item.name, value: item.name }
+        })
+      }).catch(err => console.error(err))
+    },
+
+    // 查询客户
+    getConsigners () {
+      Server({
+        url: '/consigner/list',
+        method: 'get'
+      }).then(res => {
+        this.consigners = res.data.data.list.map(item => {
+          return { name: item.name, value: item.name }
+        })
+      }).catch(err => console.error(err))
+    },
+
+    // 删除
+    billDelete (ids) {
+      let transIds
+      if (ids && ids.length) transIds = ids
+      else if (this.tableSelection.length) transIds = this.tableSelection
+      else return
+
+      Server({
+        url: '/outside/bill/delete',
+        method: 'delete',
+        data: { transIds }
+      }).then(res => {
+        this.$Message.success('删除成功')
+        this.tableSelection = []
+        this.fetchData()
+      }).catch(err => console.error(err))
+    },
+
+    // 到货
+    billArrived () {
+      const self = this
+      if (!self.tableSelection.length) return
+      self.openDialog({
+        name: 'transport/dialog/confirm',
+        data: {
+          title: '到货确认',
+          message: '是否确认到货？'
+        },
+        methods: {
+          confirm () {
+            Server({
+              url: '/outside/bill/confirm/arrival',
+              method: 'post',
+              data: { transIds: self.tableSelection.map(item => item.transId) }
+            }).then(res => {
+              self.$Message.success('操作成功')
+              self.tableSelection = []
+              self.fetchData()
+            }).catch(err => console.error(err))
+          }
+        }
+      })
+    },
+
+    // 发运
+    billShipment (ids) {
+      let transIds
+      if (ids && ids.length) transIds = ids
+      else if (this.tableSelection.length) transIds = this.tableSelection
+      else return
+
+      const self = this
+      self.openDialog({
+        name: 'transport/dialog/confirm',
+        data: {
+          title: '发运',
+          message: '是否发运？发运以后将不能再修改外转单信息'
+        },
+        methods: {
+          confirm () {
+            Server({
+              url: '/outside/bill/send',
+              method: 'post',
+              data: { transIds }
+            }).then(res => {
+              self.$Message.success('操作成功')
+              self.tableSelection = []
+              self.fetchData()
+            }).catch(err => console.error(err))
+          }
+        }
+      })
+    },
+
+    // 导出
+    billExport () {
+      let data = this.setFetchParams()
+      delete data.order
+
+      if (this.tableSelection.length) {
+        data.exportType = 1
+        data.transIds = this.tableSelection.map(item => item.transId)
+      } else if (this.inSearching) data.exportType = 3
+      else data.exportType = 2
+
+      Export({
+        url: '/outside/bill/export',
+        method: 'post',
+        data
+      }).then(res => {
+        this.$Message.success('导出成功')
       }).catch(err => console.error(err))
     }
   }

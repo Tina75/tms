@@ -55,7 +55,7 @@
         <Row class="detail-field-group">
           <i-col span="13">
             <span class="detail-field-title">备注：</span>
-            <span>{{ info.remark }}</span>
+            <span>{{ info.remark || '无' }}</span>
           </i-col>
         </Row>
       </div>
@@ -109,13 +109,14 @@
         <Row class="detail-field-group">
           <i-col span="24">
             <span class="detail-field-title-sm">结算方式：</span>
-            <div class="detail-payment-way">
+            <div v-if="settlementType"
+                 class="detail-payment-way">
               {{ settlementType === '1' ? '按单结' : '月结' }}
-              <Table
-                :columns="tablePayment"
-                :data="settlementPayInfo"
-                :loading="loading"
-                width="350"></Table>
+              <Table v-if="settlementType === '1'"
+                     :columns="tablePayment"
+                     :data="settlementPayInfo"
+                     :loading="loading"
+                     width="350"></Table>
             </div>
           </i-col>
         </Row>
@@ -138,7 +139,7 @@
             <TimelineItem v-for="(item, key) in logList"
                           :key="key" class="detail-log-timeline-item">
               <i slot="dot"></i>
-              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong}}</span>
+              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong | formatTime}}</span>
               <span style="color: #333;">{{'【' + item.operatorName + '】' + item.description}}</span>
             </TimelineItem>
 
@@ -155,7 +156,7 @@
       <ul class="detail-header-list">
         <li class="detail-header-list-item">运单号：{{ info.waybillNo }}</li>
         <li class="detail-header-list-item">订单状态：
-          <span style="font-weight: bold;">{{ info.status }}</span>
+          <span style="font-weight: bold;">{{ status }}</span>
         </li>
       </ul>
     </section>
@@ -185,7 +186,6 @@
               :remote="false"
               :local-options="carriers"
               class="detail-info-input"
-              @on-focus.once="getCarriers"
               @on-select="handleSelectCarrier" />
           </i-col>
         </Row>
@@ -298,11 +298,11 @@
                 <Radio label="1">按单结</Radio>
                 <Radio label="2">月结</Radio>
               </RadioGroup>
-              <Table
-                :columns="tablePayment"
-                :data="settlementPayInfo"
-                :loading="loading"
-                width="350"></Table>
+              <Table v-if="settlementType === '1'"
+                     :columns="tablePayment"
+                     :data="settlementPayInfo"
+                     :loading="loading"
+                     width="350"></Table>
             </div>
           </i-col>
         </Row>
@@ -334,8 +334,8 @@ export default {
   metaInfo: { title: '运单详情' },
   data () {
     return {
-      startCodes: [],
-      endCodes: [],
+      startCodes: '',
+      endCodes: '',
       status: '',
       // 信息
       info: {
@@ -374,19 +374,13 @@ export default {
           btns: [{
             name: '删除',
             func: () => {
-              Server({
-                url: '/waybill/delete',
-                method: 'delete',
-                data: { waybillIds: [ this.id ] }
-              }).then(res => {
-                this.$Message.success('删除成功')
-                this.tableSelection = []
-                this.fetchData()
-              }).catch(err => console.error(err))
+              this.billDelete()
             }
           }, {
             name: '派车',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billSendCar()
+            }
           }, {
             name: '编辑',
             func: () => {
@@ -403,19 +397,7 @@ export default {
           btns: [{
             name: '位置',
             func: () => {
-              Server({
-                url: '/waybill/location',
-                method: 'post',
-                data: { waybillIds: [ this.id ] }
-              }).then(res => {
-                const points = res.data.data.list
-
-                this.openDialog({
-                  name: 'transport/dialog/map',
-                  data: { points },
-                  methods: {}
-                })
-              }).catch(err => console.error(err))
+              this.billLocation()
             }
           }]
         },
@@ -507,16 +489,23 @@ export default {
           this.info[key] = data.waybill[key]
         }
         for (let key in this.payment) {
-          this.payment[key] = data.waybill[key]
+          this.payment[key] = this.setMoneyUnit2Yuan(data.waybill[key])
         }
         this.detail = data.cargoList
         this.logList = data.operaterLog
 
+        this.startCodes = data.waybill.start.toString()
+        this.endCodes = data.waybill.end.toString()
         this.status = this.statusFilter(data.waybill.status)
         this.settlementType = data.waybill.settlementType.toString()
         let temp = this.settlementPayInfo.map((item, i) => {
           if (!data.waybill.settlementPayInfo[i]) return item
-          return Object.assign(item, data.waybill.settlementPayInfo[i])
+          else {
+            const temp = data.waybill.settlementPayInfo[i]
+            temp.fuelCardAmount = this.setMoneyUnit2Yuan(temp.fuelCardAmount)
+            temp.cashAmount = this.setMoneyUnit2Yuan(temp.cashAmount)
+            return Object.assign(item, temp)
+          }
         })
         this.settlementPayInfo = temp
 
@@ -543,6 +532,53 @@ export default {
       }).then(res => {
         this.$Message.success('保存成功')
         this.cancelEdit()
+      }).catch(err => console.error(err))
+    },
+
+    // 按钮操作
+    // 派车
+    billSendCar () {
+      var self = this
+      self.openDialog({
+        name: 'transport/dialog/sendCar',
+        data: {
+          id: this.id,
+          type: 'sendCar'
+        },
+        methods: {
+          complete () {
+            self.fetchData()
+          }
+        }
+      })
+    },
+    // 位置
+    billLocation () {
+      Server({
+        url: '/waybill/location',
+        method: 'post',
+        data: { waybillIds: [ this.id ] }
+      }).then(res => {
+        const points = res.data.data.list
+        if (!points.length) {
+          this.$Message.warning('暂无位置')
+          return
+        }
+        this.openDialog({
+          name: 'transport/dialog/map',
+          data: { points },
+          methods: {}
+        })
+      }).catch(err => console.error(err))
+    },
+    // 删除
+    billDelete () {
+      Server({
+        url: '/waybill/delete',
+        method: 'delete',
+        data: { waybillIds: [ this.id ] }
+      }).then(res => {
+        this.$Message.success('删除成功')
       }).catch(err => console.error(err))
     }
   }

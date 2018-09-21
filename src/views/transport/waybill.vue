@@ -45,7 +45,8 @@
                      class="search-input" />
 
         <Button icon="ios-search"
-                style="width: 40px; margin-left: -2px;" @click="startSearch"></Button>
+                class="search-btn-easy"
+                @click="startSearch"></Button>
 
         <Button class="senior-search"
                 type="text" size="small"
@@ -133,7 +134,7 @@ import BasePage from '@/basic/BasePage'
 import TabHeader from '@/components/TabHeader'
 import PageTable from '@/components/page-table'
 import AreaSelect from '@/components/AreaSelect'
-import SelectInput from '@/components/SelectInput.vue'
+import SelectInput from '@/components/SelectInput'
 import TransportMixin from './transportMixin'
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
@@ -303,7 +304,10 @@ export default {
                 click: () => {
                   this.openTab({
                     path: '/transport/detail/detailFreight',
-                    query: { id: p.row.waybillId }
+                    query: {
+                      id: p.row.waybillNo,
+                      qid: p.row.waybillId
+                    }
                   })
                 }
               }
@@ -644,7 +648,10 @@ export default {
       var self = this
       self.openDialog({
         name: 'transport/dialog/sendCar',
-        data: { id },
+        data: {
+          id,
+          type: 'sendCar'
+        },
         methods: {
           complete () {
             self.fetchData()
