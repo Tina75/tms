@@ -28,8 +28,8 @@
     <Card class="searchCard" dis-hover>
       <p slot="title">{{picContent.title}}</p>
       <div v-if="'pic' === this.type">
-        <p>{{picContent.content}}</p>
-        <p v-if="picContent.url">活动链接<a :href="picContent.url">{{picContent.url}}</a></p>
+        <pre>{{picContent.content}}</pre>
+        <pre v-if="picContent.url">活动链接<a :href="picContent.url">{{picContent.url}}</a></pre>
       </div>
       <div v-else>
         <!-- <p>{{videoContent.content}}</p> -->

@@ -6,11 +6,11 @@
         <span>{{name}}</span>
       </p>
       <Form ref="info" :model="info" :rules="rules" :label-width="100">
-        <FormItem :label="'共' + name + '回单数量'">
+        <FormItem :label="'共' + name + '回单数量'" style="margin-left: 40px;">
           <span style="color: #00A4BD;margin-right: 5px;font-size: 13px;">{{id.length}}</span>份
         </FormItem>
-        <FormItem label="接收人">
-          <Input v-model="info.name" style="width:200px" placeholder="请输入"/>
+        <FormItem :label="name === '回收' ? '回收人' : '接收人'" prop="name">
+          <Input v-model="info.name" :maxlength="15" style="width:200px" placeholder="请输入"/>
         </FormItem>
       </Form>
       <div slot="footer">
@@ -36,6 +36,17 @@ export default {
       visibale: true
     }
   },
+
+  computed: {
+    orderIds () {
+      let arr = []
+      this.id.map((item) => {
+        arr.push(item.id)
+      })
+      return arr
+    }
+  },
+
   watch: {
     visibale: function (val) {
       !val && this.close()
@@ -47,13 +58,17 @@ export default {
 
   methods: {
     save () {
-      let status = this.name === '回收' ? 1 : 2
-      this.doRecovery(status)
+      this.$refs['info'].validate((valid) => {
+        if (valid) {
+          let status = this.name === '回收' ? 1 : 2
+          this.doRecovery(status)
+        }
+      })
     },
     // receiptStatus：1回收   2返厂
     doRecovery (status) {
       const data = {
-        orderId: this.id[0].id, // 测试  默认第一条
+        orderId: this.orderIds, // 测试  默认第一条
         receiptStatus: status
       }
       Server({
@@ -63,6 +78,7 @@ export default {
       }).then(() => {
         this.ok()
         this.visibale = false
+        this.$Message.success(this.name + '成功')
       })
     }
   }

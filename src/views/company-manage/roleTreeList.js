@@ -1,4 +1,11 @@
 export default {
+  data7: [{
+    key: 'data7',
+    title: '首页',
+    expand: true,
+    code: '160000',
+    children: []
+  }],
   data1: [{
     key: 'data1',
     title: '受理开单',
@@ -188,23 +195,6 @@ export default {
       ]
     }]
   }],
-  data6: [{
-    key: 'data6',
-    title: '设置',
-    expand: true,
-    code: '150000',
-    children: [
-      { title: '公司设置', code: '150100', parentId: '150000' },
-      { title: '短信设置', code: '150200', parentId: '150000' }
-    ]
-  }],
-  data7: [{
-    key: 'data7',
-    title: '首页',
-    expand: true,
-    code: '160000',
-    children: []
-  }],
   data8: [{
     key: 'data8',
     title: '财务管理',
@@ -270,6 +260,16 @@ export default {
       { title: '运营报表', code: '180100', parentId: '180000' },
       { title: '营业额汇总表', code: '180200', parentId: '180000' },
       { title: '利润报表', code: '180300', parentId: '180000' }
+    ]
+  }],
+  data6: [{
+    key: 'data6',
+    title: '设置',
+    expand: true,
+    code: '150000',
+    children: [
+      { title: '公司设置', code: '150100', parentId: '150000' },
+      { title: '短信设置', code: '150200', parentId: '150000' }
     ]
   }],
   data10: [{
