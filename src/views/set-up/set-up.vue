@@ -77,7 +77,7 @@
       </Col>
     </div>
     <!--短信设置-->
-    <div v-else-if="'3' === this.rightKey">
+    <div v-else-if="'3' === this.rightKey" key="3">
       <Col span="18" class="setConf">
       <Card dis-hover>
         <div solt="title" class="msgCardTitle">
@@ -160,6 +160,7 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import AreaSelect from '@/components/AreaSelect'
+import _ from 'lodash'
 export default {
   name: 'set-up',
   components: {
@@ -250,6 +251,7 @@ export default {
       checkNum: 0,
       msgCheckBoxList: [],
       msgSlectCheckBox: [],
+      messageListInit: [],
       messageList: [{
         title: '发运提醒',
         message: '提醒内容： 【智加云TMS公司】XX公司，您的货物已装车，由车牌号XXXX司机姓名XXXX司机电话XXXX派送。',
@@ -339,7 +341,9 @@ export default {
       // }
     }
   },
-  mounted: function () {},
+  mounted: function () {
+    this.messageListInit = _.cloneDeep(this.messageList)
+  },
   methods: {
     getCompanyInof () {
       Server({
@@ -358,17 +362,17 @@ export default {
       })
     },
     smsInfo () {
+      this.messageList = _.cloneDeep(this.messageListInit)
       Server({
         url: 'set/smsInfo',
         method: 'get'
       }).then(({ data }) => {
         this.msgCheckBoxList = data.data.smsCode === '' ? [] : data.data.smsCode
-        this.checkNum = 0
         for (const checkList of this.messageList) {
           checkList.checkBox.forEach(element => {
             if (this.msgCheckBoxList.includes(element.model)) {
-              this.checkNum++
               element.model = true
+              this.switchMsg = true
             }
           })
         }
@@ -464,13 +468,13 @@ export default {
       let listInit = new Set()
       for (const checkList of this.messageList) {
         checkList.checkBox.forEach(element => {
-          this.checkNum++
           statusList.push(element.model)
           if (element.model === true) {
             listInit.add(element.key)
+            this.checkNum++
           }
         })
-        this.switchMsg = (statusList.length > 0)
+        this.switchMsg = this.checkNum > 0
       }
       this.msgSlectCheckBox = Array.from(listInit)
     },

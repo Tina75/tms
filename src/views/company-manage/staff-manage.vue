@@ -105,9 +105,7 @@ export default {
       formSearch: {
         name: '',
         phone: '',
-        roleId: '',
-        pageNo: 1,
-        pageSize: 10
+        roleId: ''
       },
       selectList: [],
       staffSelectList: [],
