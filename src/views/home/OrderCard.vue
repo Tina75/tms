@@ -83,7 +83,8 @@ export default {
     left -1px
     right -1px
   &__card-header
-    padding-top 26px
+    padding-top 34px
+    padding-bottom 22px
     border-bottom-style dashed
     &-title
       padding-left 0
@@ -99,6 +100,8 @@ export default {
       font-size 30px
   &__card-body
     padding 16px 0
-    height 184px
+    height 188px
     overflow hidden
+.ivu-card-extra
+  top 24px
 </style>
