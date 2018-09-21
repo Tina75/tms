@@ -100,28 +100,21 @@
     </div>
 
     <!-- 表格 -->
-    <PageTable :columns="tableColumns"
+    <PageTable ref="$table"
+               :columns="tableColumns"
                :extra-columns="extraColumns"
-               :data="tableData"
                :show-filter="true"
-               :show-pagination="false"
+               :keywords="searchFields"
+               url="/load/bill/list"
+               method="post"
+               list-field="loadbillList"
                style="margin-top: 15px"
                @on-column-change="tableColumnsChanged"
                @on-selection-change="selectionChanged"
-               @on-sort-change="tableSort"></PageTable>
+               @on-sort-change="tableSort"
+               @on-load="dataOnload"></PageTable>
 
-    <Page :total="page.total"
-          :current="page.current"
-          :page-size="page.size"
-          :page-size-opts="[10,20,50]"
-          class="table-pagination"
-          size="small"
-          show-sizer
-          show-elevator
-          show-total
-          @on-change="pageChange"
-          @on-page-size-change="pageSizeChange"></Page>
-
+    <PrintPickup ref="$printer" :data="printData" />
   </div>
 </template>
 
@@ -130,13 +123,14 @@ import BasePage from '@/basic/BasePage'
 import TabHeader from '@/components/TabHeader'
 import PageTable from '@/components/page-table'
 import SelectInput from '@/components/SelectInput.vue'
+import PrintPickup from './components/PrintPickup'
 import TransportMixin from './transportMixin'
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 
 export default {
   name: 'ReceiveManager',
-  components: { TabHeader, PageTable, SelectInput },
+  components: { TabHeader, PageTable, SelectInput, PrintPickup },
   mixins: [ BasePage, TransportMixin ],
   metaInfo: { title: '提货管理' },
   data () {
@@ -160,7 +154,9 @@ export default {
             }
           }, {
             name: '打印',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billPrint()
+            }
           }, {
             name: '删除',
             func: () => {
@@ -182,7 +178,9 @@ export default {
           tab: '待提货',
           btns: [{
             name: '打印',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billPrint()
+            }
           }, {
             name: '删除',
             func: () => {
@@ -204,7 +202,9 @@ export default {
             }
           }, {
             name: '打印',
-            func: () => console.log(Math.random())
+            func: () => {
+              this.billPrint()
+            }
           }, {
             name: '位置',
             func: () => {
@@ -456,22 +456,42 @@ export default {
     },
 
     // 数据查询
-    fetchData () {
-      Server({
-        url: '/load/bill/list',
-        method: 'post',
-        data: this.setFetchParams()
-      }).then(res => {
-        const data = res.data.data
-        this.tableData = data.loadbillList
-        this.page.total = data.totalCount
-        this.tabList = [
-          { name: '全部', count: '' },
-          { name: '待提货', count: data.statusCntInfo.waitCnt || 0 },
-          { name: '提货中', count: data.statusCntInfo.loadCnt || 0 },
-          { name: '已提货', count: data.statusCntInfo.loadedCnt || 0 }
-        ]
-      }).catch(err => console.error(err))
+    dataOnload (res) {
+      const data = res.data.data
+      this.page.current = data.pageNo
+      this.page.size = data.pageSize
+      this.tabList = [
+        { name: '全部', count: '' },
+        { name: '待提货', count: data.statusCntInfo.waitCnt || 0 },
+        { name: '提货中', count: data.statusCntInfo.loadCnt || 0 },
+        { name: '已提货', count: data.statusCntInfo.loadedCnt || 0 }
+      ]
+    },
+
+    // 打印查询详情
+    fetchDetail () {
+      let promises = this.tableSelection.map(item => {
+        return new Promise((resolve, reject) => {
+          Server({
+            url: '/load/bill/print',
+            method: 'post',
+            data: { pickUpId: item.pickUpId }
+          }).then(res => {
+            resolve(res.data.data)
+          })
+        })
+      })
+      return Promise.all(promises)
+    },
+
+    // 打印
+    billPrint () {
+      if (!this.tableSelection.length) return
+      this.fetchDetail()
+        .then(data => {
+          this.printData = data
+          this.$refs.$printer.print()
+        })
     },
 
     // 导出

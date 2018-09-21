@@ -219,7 +219,7 @@
           <span>货物明细</span>
         </div>
         <Button type="primary" style="margin-bottom: 22px;"
-                @click="addOrder">添加订单</Button>
+                @click="addOrder('pickup')">添加订单</Button>
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
@@ -482,7 +482,9 @@ export default {
             settlementType: this.settlementType,
             settlementPayInfo: this.formatPayInfo()
           },
-          cargoList: []
+          cargoList: this.arrayUnique(this.detail.map(item => {
+            return item.orderId
+          }))
         }
       }).then(res => {
         this.$Message.success('保存成功')

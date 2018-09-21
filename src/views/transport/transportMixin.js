@@ -8,9 +8,9 @@ export default {
       // 分页
       page: {
         current: 1,
-        size: 10,
-        total: 0
+        size: 10
       },
+      searchFields: {},
 
       tabStatus: void 0, // 当前标签页
       currentBtns: [], // 当前按钮组
@@ -20,8 +20,9 @@ export default {
       easySelectMode: 1, // 简易搜索当前类型
       easySearchKeyword: '', // 简易搜索字段
 
-      tableData: [], // 表格数据
-      tableSelection: [] // 表格的选中项
+      tableSelection: [], // 表格的选中项
+
+      printData: []
     }
   },
 
@@ -35,7 +36,6 @@ export default {
 
   created () {
     this.currentBtns = this.btnList[0].btns
-    this.fetchData()
     this.getCarriers()
   },
 
@@ -44,9 +44,13 @@ export default {
       'getCarriers'
     ]),
     handleSelectCarrier (name, row) {
-      console.log(name, row)
       this.$store.dispatch('getCarrierCars', row.id)
       this.$store.dispatch('getCarrierDrivers', row.id)
+    },
+
+    fetchData () {
+      this.searchFields = this.setFetchParams()
+      this.$refs.$table.fetch()
     },
 
     // 搜索

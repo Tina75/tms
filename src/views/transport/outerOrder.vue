@@ -94,27 +94,19 @@
     </div>
 
     <!-- 表格 -->
-    <PageTable :columns="tableColumns"
+    <PageTable ref="$table"
+               :columns="tableColumns"
                :extra-columns="extraColumns"
-               :data="tableData"
                :show-filter="true"
-               :show-pagination="false"
+               :keywords="searchFields"
+               url="/outside/bill/list"
+               method="post"
+               list-field="list"
                style="margin-top: 15px"
                @on-column-change="tableColumnsChanged"
                @on-selection-change="selectionChanged"
-               @on-sort-change="tableSort"></PageTable>
-
-    <Page :total="page.total"
-          :current="page.current"
-          :page-size="page.size"
-          :page-size-opts="[10,20,50]"
-          class="table-pagination"
-          size="small"
-          show-sizer
-          show-elevator
-          show-total
-          @on-change="pageChange"
-          @on-page-size-change="pageSizeChange"></Page>
+               @on-sort-change="tableSort"
+               @on-load="dataOnload"></PageTable>
 
   </div>
 </template>
@@ -250,25 +242,13 @@ export default {
           extra: true,
           render: (h, p) => {
             if (p.row.status === 1) {
-              return h('div', [
-                h('a', {
-                  on: {
-                    click: () => {
-                      this.billShipment([p.row.transId])
-                    }
-                  },
-                  style: {
-                    marginRight: '10px'
+              return h('a', {
+                on: {
+                  click: () => {
+                    this.billShipment([p.row.transId])
                   }
-                }, '发运'),
-                h('a', {
-                  on: {
-                    click: () => {
-                      this.billDelete([p.row.transId])
-                    }
-                  }
-                }, '删除')
-              ])
+                }
+              }, '发运')
             }
           }
         },
@@ -560,22 +540,16 @@ export default {
     },
 
     // 数据查询
-    fetchData () {
-      Server({
-        url: '/outside/bill/list',
-        method: 'post',
-        data: this.setFetchParams()
-      }).then(res => {
-        const data = res.data.data
-        this.tableData = data.list
-        this.page.total = data.totalCount
-        this.tabList = [
-          { name: '全部', count: '' },
-          { name: '待发运', count: data.statusCntInfo.waitCnt || 0 },
-          { name: '在途', count: data.statusCntInfo.loadCnt || 0 },
-          { name: '已到货', count: data.statusCntInfo.loadedCnt || 0 }
-        ]
-      }).catch(err => console.error(err))
+    dataOnload (res) {
+      const data = res.data.data
+      this.page.current = data.pageNo
+      this.page.size = data.pageSize
+      this.tabList = [
+        { name: '全部', count: '' },
+        { name: '待发运', count: data.statusCntInfo.waitCnt || 0 },
+        { name: '在途', count: data.statusCntInfo.loadCnt || 0 },
+        { name: '已到货', count: data.statusCntInfo.loadedCnt || 0 }
+      ]
     },
 
     // 查询外转方

@@ -1,6 +1,7 @@
 import CarConfigs from './carConfigs.json'
 import MoneyInput from '../components/moneyInput'
 import City from '@/libs/js/City'
+import Server from '@/libs/js/server'
 import { mapGetters, mapActions } from 'vuex'
 import { CAR } from '@/views/client/client'
 
@@ -193,7 +194,9 @@ export default {
             return h('a', {
               on: {
                 click: () => {
-                  this.detail.splice(p.index, 1)
+                  const id = p.row.orderId
+                  const temp = this.detail.filter(item => item.orderId !== id)
+                  this.detail = temp
                 }
               }
             }, '移出')
@@ -211,9 +214,13 @@ export default {
     ]),
 
     handleSelectCarrier (name, row) {
-      console.log(name, row)
       this.$store.dispatch('getCarrierCars', row.id)
       this.$store.dispatch('getCarrierDrivers', row.id)
+    },
+
+    formatCity (code) {
+      if (!code) return ''
+      return City.codeToFullName(code, 3)
     },
 
     // 根据状态设置按钮
@@ -262,16 +269,34 @@ export default {
     },
 
     // 添加订单
-    addOrder () {
-      this.openDialog({
+    addOrder (type) {
+      const self = this
+      self.openDialog({
         name: 'transport/dialog/addOrder',
-        data: {},
+        data: {
+          type,
+          billHasSelected: self.arrayUnique(self.detail.map(item => item.orderId))
+        },
         methods: {
-          add (orders) {
-            console.log(orders)
+          confirm (ids) {
+            self.fetchOrderDetail(ids)
           }
         }
       })
+    },
+
+    // 查询订单详情
+    fetchOrderDetail (ids) {
+      if (!ids.length) return
+      Server({
+        url: '/order/cargo/detail',
+        method: 'post',
+        data: { orderIds: ids }
+      }).then(res => {
+        res.data.data.cargoList.forEach(item => {
+          this.detail.push(item)
+        })
+      }).catch(err => console.error(err))
     },
 
     // 设置金额单位为元
@@ -335,6 +360,11 @@ export default {
       if (this.settlementType === '1' && !this.checkTotalAmount()) return false
 
       return true
+    },
+
+    // 去重
+    arrayUnique (arr) {
+      return Array.from(new Set(arr))
     }
   }
 }
