@@ -12,9 +12,13 @@
     <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;">
       <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute;"></span>
       <span style="margin-left:25px; font-size: 16px;">{{rightTitle}}</span>
-      <span style="float:right; margin-top:-10px;">
-        <Button style="margin-right:20px;" @click="removeInfoAll">全部删除</Button>
-        <Button  @click="removeInfoSome">批量删除</Button>
+      <span v-if="batchBtnShow" key="1" style="float:right; margin-top:-10px;">
+        <Button style="margin-right:20px;" @click="removeInfoAll(searchData.type)">全部删除</Button>
+        <Button @click="removeInfoSome">批量删除</Button>
+      </span>
+      <span v-if="!batchBtnShow" key="2" style="float:right; margin-top:-10px;">
+        <Button style="margin-right:20px;" @click="removeCancelBtn">取消</Button>
+        <Button :disabled="removeSubBtnDis" type="primary" @click="removeSubBtn">确定</Button>
       </span>
     </div>
     <div style="min-height:520px;">
@@ -22,7 +26,16 @@
       <div v-if="'0' === this.searchData.type" style="height:250px;">
         <Col span="24">
         <div class="mesDivAll">
+          <Checkbox
+            v-if="!batchBtnShow"
+            :indeterminate="indeterminate"
+            :value="checkAll"
+            @click.native="handleCheckAll">
+            全选</Checkbox>
           <div v-for="msg in this.sysMessageList" :key="msg.id" class="megDiv">
+            <CheckboxGroup v-if="!batchBtnShow" v-model="checkAllGroup" style="float: left; margin-top: 10px;" @on-change="checkAllGroupChange">
+              <Checkbox :label="msg.id" class="checkboxItem"></Checkbox>
+            </CheckboxGroup>
             <div class="msgImg">
               <i class="icon font_family icon-xitongxiaoxi" style="font-size:28px; background: white; color: #FFBB44;"></i>
             </div>
@@ -32,7 +45,9 @@
             </div>
             <div class="msgConfigDiv">
               <p>{{msg.createTime}}</p>
-              <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
+              <span class="msgConfigBtn" @click="msgRemoveBtn(msg.id)">
+                <i class="icon font_family icon-shanchu1"></i>
+              </span>
             </div>
           </div>
         </div>
@@ -42,7 +57,16 @@
       <div v-if="'1' === this.searchData.type" style="height:250px;">
         <Col span="24">
         <div class="mesDivAll">
+          <Checkbox
+            v-if="!batchBtnShow"
+            :indeterminate="indeterminate"
+            :value="checkAll"
+            @click.native="handleCheckAll">
+            全选</Checkbox>
           <div v-for="msg in this.orderMessageList" :key="msg.id" class="megDiv">
+            <CheckboxGroup v-if="!batchBtnShow" v-model="checkAllGroup" style="float: left; margin-top: 10px;" @on-change="checkAllGroupChange">
+              <Checkbox :label="msg.id" class="checkboxItem"></Checkbox>
+            </CheckboxGroup>
             <div class="msgImg">
               <i class="icon font_family icon-dingdanxiaoxi" style="font-size:28px; background: white; color: #418DF9;"></i>
             </div>
@@ -52,7 +76,7 @@
             </div>
             <div class="msgConfigDiv">
               <p>{{msg.createTime}}</p>
-              <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
+              <span class="msgConfigBtn" @click="msgRemoveBtn(msg.id)"><i class="icon font_family icon-shanchu1"></i></span>
             </div>
           </div>
         </div>
@@ -62,7 +86,16 @@
       <div v-if="'2' === this.searchData.type" style="height:250px;">
         <Col span="24">
         <div class="mesDivAll">
+          <Checkbox
+            v-if="!batchBtnShow"
+            :indeterminate="indeterminate"
+            :value="checkAll"
+            @click.native="handleCheckAll">
+            全选</Checkbox>
           <div v-for="msg in this.transportMessageList" :key="msg.id" class="megDiv">
+            <CheckboxGroup v-if="!batchBtnShow" v-model="checkAllGroup" style="float: left; margin-top: 10px;" @on-change="checkAllGroupChange">
+              <Checkbox :label="msg.id" class="checkboxItem"></Checkbox>
+            </CheckboxGroup>
             <div class="msgImg">
               <i class="icon font_family icon-yunshuxiaoxi" style="font-size:28px; background: white; color: #00A4BD;"></i>
             </div>
@@ -72,7 +105,7 @@
             </div>
             <div class="msgConfigDiv">
               <p>{{msg.createTime}}</p>
-              <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
+              <span class="msgConfigBtn" @click="msgRemoveBtn(msg.id)"><i class="icon font_family icon-shanchu1"></i></span>
             </div>
           </div>
         </div>
@@ -80,8 +113,8 @@
       </div>
     </div>
     <Page
-      :total="pageTotal"
-      :current="searchData.page"
+      :total="totalCount"
+      :current="searchData.pageNo"
       :page-size="searchData.pageSize"
       size="small"
       show-elevator
@@ -109,6 +142,12 @@ export default {
       rightTitle: '',
       type: '0',
       typeName: '',
+      batchBtnShow: true,
+      indeterminate: false,
+      removeSubBtnDis: true,
+      checkAll: false,
+      checkAllGroup: [],
+      checkBoxListInit: [],
       menuList: [{
         name: '系统消息',
         id: '0',
@@ -124,13 +163,22 @@ export default {
       }],
       searchData: {
         type: '0',
-        page: 1,
+        pageNo: 1,
         pageSize: 10
       },
-      pageTotal: 0,
+      totalCount: 0,
       sysMessageList: [],
       orderMessageList: [],
       transportMessageList: []
+    }
+  },
+  watch: {
+    checkAllGroup (newVal) {
+      if (newVal.length > 0) {
+        this.removeSubBtnDis = false
+      } else {
+        this.removeSubBtnDis = true
+      }
     }
   },
   created () {
@@ -179,30 +227,43 @@ export default {
           this.sysMessageList = data.data.list
           this.searchData.type = '0'
         }
-        this.searchData.page = 1
+        data.data.list.forEach(element => {
+          this.checkBoxListInit.push(element.id)
+        })
+        this.searchData.pageNo = data.data.pageNo
         this.searchData.pageSize = data.data.pageSize
-        this.pageTotal = data.data.pageTotals
+        this.totalCount = data.data.totalCount
       })
     },
     clickLeftMenu (id, menuName) {
       this.rightTitle = menuName
       this.searchData.type = id
-      this.searchData.page = 1
+      this.searchData.pageNo = 1
       this.getMenuList(this.searchData)
       this.getMenuInfoNum()
+      this.checkBoxGroupInit()
     },
-    msgRemoveBtn (message) {
+    removeInfo (id, type) {
+      let params = {}
+      params.ids = id
+      params.type = type
+      console.log(params)
       Server({
         url: 'message/del',
         method: 'post',
-        data: {id: message.id, type: message.type}
+        data: params
       }).then(({ data }) => {
         if (data.code === 10000) {
           this.$Message.success('删除成功!')
+          this.getMenuList(this.searchData)
+          this.getMenuInfoNum()
         } else {
           this.$Message.success(data.msg)
         }
       })
+    },
+    msgRemoveBtn (id) {
+      this.removeInfo([id])
     },
     clickContenInfo (msg) {
       this.openTab({
@@ -213,19 +274,60 @@ export default {
         }
       })
     },
-    removeInfoAll () {
-      console.log('删除全部')
+    removeInfoAll (type) {
+      this.removeInfo(null, type)
     },
     removeInfoSome () {
-      console.log('删除部分')
+      this.batchBtnShow = !this.batchBtnShow
+    },
+    removeCancelBtn () {
+      this.batchBtnShow = !this.batchBtnShow
+    },
+    removeSubBtn () {
+      this.removeInfo(this.checkAllGroup)
+      this.batchBtnShow = !this.batchBtnShow
+    },
+    checkBoxGroupInit () {
+      // 复选框gourp Init
+      this.batchBtnShow = true
+      this.checkAllGroup = []
+      this.checkAll = false
+    },
+    handleCheckAll () {
+      if (this.indeterminate) {
+        this.checkAll = false
+      } else {
+        this.checkAll = !this.checkAll
+      }
+      this.indeterminate = false
+      if (this.checkAll) {
+        this.checkAllGroup = Object.assign([], this.checkBoxListInit)
+      } else {
+        this.checkAllGroup = []
+      }
+    },
+    checkAllGroupChange (data) {
+      if (data.length === this.checkBoxListInit.length) {
+        this.indeterminate = false
+        this.checkAll = true
+      } else if (data.length > 0) {
+        this.indeterminate = true
+        this.checkAll = false
+      } else {
+        this.indeterminate = false
+        this.checkAll = false
+      }
     },
     searchInfoData (page) {
-      this.searchData.page = page
+      this.searchData.pageNo = page
       this.getMenuList(this.searchData)
+      this.getMenuInfoNum()
+      this.checkBoxGroupInit()
     },
     chagePageSize (pagenum) {
       this.searchData.pageSize = pagenum
       this.getMenuList(this.searchData)
+      this.getMenuInfoNum()
     }
   }
 }

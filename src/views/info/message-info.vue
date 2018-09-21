@@ -9,7 +9,7 @@
       </Button>
     </p>
     <p class="msgInfo">{{messageInfo.content}}</p>
-    <p v-if="this.messageInfo.url !== ''" class="msgInfoHref">活动链接：<a :href="messageInfo.url">{{messageInfo.url}}</a></p>
+    <pre v-if="this.messageInfo.url !== ''" class="msgInfoHref">活动链接：<a :href="messageInfo.url">{{messageInfo.url}}</a></pre>
 
   </div>
 </template>
