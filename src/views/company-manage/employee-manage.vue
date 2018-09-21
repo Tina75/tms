@@ -151,17 +151,25 @@ export default {
     this.initTreeList(this.arrayCodeList, 'type')
   },
   methods: {
-    getMenuList () {
+    getMenuList (selectMenu) {
       Server({
         url: 'role/list',
         method: 'get'
       }).then(({ data }) => {
         this.menuList = data.data
         for (let index = 0; index < data.data.length; index++) {
-          if (data.data[index].type === 1) {
-            this.rightTitle = this.menuInitName = data.data[index].name
-            this.arrayCodeList = JSON.parse(data.data[index].codes)
-            this.menuParam = data.data[index]
+          if (selectMenu) {
+            if (data.data[index].id === selectMenu.id) {
+              this.menuParam = data.data[index]
+              this.rightTitle = this.menuInitName = data.data[index].name
+              this.arrayCodeList = JSON.parse(data.data[index].codes)
+            }
+          } else {
+            if (data.data[index].type === 1) {
+              this.menuParam = data.data[index]
+              this.rightTitle = this.menuInitName = data.data[index].name
+              this.arrayCodeList = JSON.parse(data.data[index].codes)
+            }
           }
         }
       })
@@ -244,9 +252,14 @@ export default {
       }).then(({ data }) => {
         if (data.code === 10000) {
           this.$Message.success('角色权限修改成功!')
+          this.getMenuList(this.menuParam)
         } else {
-          this.$Message.success(data.msg)
+          this.$Message.error(data.msg)
         }
+      }).then(() => {
+        debugger
+        this.arrayCodeList = this.menuParam.codes
+        this.rightTitle = this.menuParam.name
       })
     },
     subFormRole (name) {

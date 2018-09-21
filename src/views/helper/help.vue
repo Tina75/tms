@@ -1,7 +1,7 @@
 <template>
   <div>
     <Col span="5">
-    <Menu :open-names="['1']">
+    <Menu open-names="['1']" accordion>
       <Submenu name="1">
         <template slot="title">
           <i class="icon font_family icon-tupian" style="background: white; color: #FFBB44;"></i>
@@ -9,7 +9,7 @@
         </template>
         <MenuItem v-for="menu in picMenu" :key="menu.id" :name="menu.title" @click.native="clickLeftMenuPic(menu)">
         {{menu.title}}
-        </MenuItem>
+          </MenuItem>
       </Submenu>
     </Menu>
     <Menu>
@@ -20,7 +20,7 @@
         </template>
         <MenuItem v-for="menu in videoMenu" :key="menu.id" :name="menu.title" @click.native="clickLeftMenuVideo(menu)">
         {{menu.title}}
-        </MenuItem>
+          </MenuItem>
       </Submenu>
     </Menu>
     </Col>
@@ -29,12 +29,10 @@
       <p slot="title">{{picContent.title}}</p>
       <div v-if="'pic' === this.type">
         <pre>{{picContent.content}}</pre>
-        <pre v-if="picContent.url">活动链接<a :href="picContent.url">{{picContent.url}}</a></pre>
+        <img :src="picContent.urlList" />
       </div>
       <div v-else>
-        <!-- <p>{{videoContent.content}}</p> -->
-        <!-- <p>视频地址:<a :href="videoContent.url" style="margin-left:20px;">{{videoContent.url}}</a></p> -->
-        <video :src="videoContent.url" style="width:100%;" controls="controls">
+        <video :src="videoContent.urlList" style="width:100%;" controls="controls">
           您的浏览器不支持 video 标签。
         </video>
       </div>
@@ -70,8 +68,13 @@ export default {
         url: 'help/list',
         method: 'get'
       }).then(({ data }) => {
-        this.picMenu = data.data
-        this.videoMenu = data.data
+        data.data.forEach(menu => {
+          if (menu.type === 1) {
+            this.picMenu.push(menu)
+          } else if (menu.type === 2) {
+            this.videoMenu.push(menu)
+          }
+        })
         this.picContent = this.picMenu[0]
         console.log(this.picMenu)
       })
