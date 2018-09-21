@@ -381,18 +381,19 @@ export default {
 .divTree
   clear: both;
   .cardTreeItem
-    width: 300px;
+    width: 270px;
     height: 400px;
     float: left;
     margin: 5px;
     .treeContentDiv
-      width: 282px;
+      width: 252px;
       height: 330px;
       margin-top: -15px;
       overflow-y:auto;
       overflow-x:auto;
 .saveRoleBtn
   float: right;
+  margin-right: 100px;
 .centerBtn
   position: absolute;
   left: 30%;
