@@ -31,8 +31,9 @@
         <pre>{{picContent.content}}</pre>
         <img :src="picContent.urlList" class="imgInfo" />
       </div>
-      <div v-else>
-        <video :src="videoContent.urlList" style="width:100%;" controls="controls">
+      <div v-if="'video' === this.type">
+        <video width="100%" height="240" controls>
+          <source :src="videoContent.urlList">
           您的浏览器不支持 video 标签。
         </video>
       </div>
