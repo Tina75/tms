@@ -29,7 +29,6 @@ export default {
     }
   },
   mounted: function () {
-    debugger
     this.messageInfo = this.$route.query.message
   },
   methods: {

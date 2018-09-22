@@ -273,13 +273,58 @@ export default {
       this.removeInfo([id])
     },
     clickContenInfo (msg) {
-      this.openTab({
-        path: '/info/message-info',
-        query: {
-          id: msg.id,
-          message: msg
-        }
-      })
+      switch (msg.type) {
+        // 0系统消息4订单消息5回单消息6运单消息7提货单消息8外转单消息
+        case 0:
+          this.openTab({
+            path: '/info/message-info',
+            query: {
+              id: msg.id,
+              message: msg
+            }
+          })
+          break
+        case 4:
+          this.openTab({
+            path: '/order-management/order',
+            query: {
+              id: '订单管理'
+            }
+          })
+          break
+        case 5:
+          this.openTab({
+            path: '/order-management/receipt',
+            query: {
+              id: '回单管理'
+            }
+          })
+          break
+        case 6:
+          this.openTab({
+            path: '/transport/waybill',
+            query: {
+              id: '运单管理'
+            }
+          })
+          break
+        case 7:
+          this.openTab({
+            path: '/transport/receiveOrder',
+            query: {
+              id: '提货单管理'
+            }
+          })
+          break
+        case 8:
+          this.openTab({
+            path: '/transport/outerOrder',
+            query: {
+              id: '外转单管理'
+            }
+          })
+          break
+      }
     },
     removeInfoAll (type) {
       this.removeInfo(null, type)
