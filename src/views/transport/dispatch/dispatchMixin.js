@@ -54,6 +54,10 @@ export default {
           }
         },
         {
+          title: '订单数',
+          key: 'ordreNum'
+        },
+        {
           title: '体积（方）',
           key: 'volume'
         },

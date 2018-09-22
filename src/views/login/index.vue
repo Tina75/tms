@@ -158,24 +158,24 @@ export default {
     align-items center
     justify-content center
 
-    &:before, &:after
-      content ""
-      display block
-      position absolute
-      top 0
-      z-index 0
-    &:before
-      width 133px
-      height 181px
-      left 0
-      background url("../../assets/img-login-bubble-left.png") no-repeat
-      background-size contain
-    &:after
-      width 112px
-      height 140px
-      right 0
-      background url("../../assets/img-login-bubble-right.png") no-repeat
-      background-size contain
+    // &:before, &:after
+    //   content ""
+    //   display block
+    //   position absolute
+    //   top 0
+    //   z-index 0
+    // &:before
+    //   width 133px
+    //   height 181px
+    //   left 0
+    //   background url("../../assets/img-login-bubble-left.png") no-repeat
+    //   background-size contain
+    // &:after
+    //   width 112px
+    //   height 140px
+    //   right 0
+    //   background url("../../assets/img-login-bubble-right.png") no-repeat
+    //   background-size contain
 
   .login-img
     display block

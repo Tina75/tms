@@ -81,6 +81,10 @@ export default {
             this.$Message.error('联系人不能为空')
             return false
           }
+          if (this.form.userName.length > 10 || this.form.userName.length < 2) {
+            this.$Message.error('联系人不能少于2个字也不能超过10个字')
+            return false
+          }
           break
         case 'address':
           if (!this.form.address.length) {
@@ -135,47 +139,62 @@ export default {
 
     // 实时校验手机号
     imCheckPhone (mode) {
-      Server({
-        url: '/user/phone',
-        method: 'get',
-        data: { phone: this.form.phone }
-      }).then(res => {
-        if (mode === 'signup' && res.data.code === 310013) {
-          this.$Message.error('该手机号已注册，请登录')
-        } else if (mode === 'signin' && res.data.code === 10000) {
-          this.$Message.error('该手机号未注册，请先注册')
-        } else if (mode === 'findback' && res.data.code === 10000) {
-          this.$Message.error('该手机号未注册，请先注册')
-        }
-      }).catch(err => console.error(err))
+      return new Promise((resolve, reject) => {
+        Server({
+          url: '/user/phone',
+          method: 'get',
+          data: { phone: this.form.phone }
+        }).then(res => {
+          if (mode === 'signup' && res.data.code === 310013) {
+            this.$Message.error('该手机号已注册，请登录')
+            reject && reject(new Error('该手机号已注册，请登录'))
+          } else if (mode === 'signin' && res.data.code === 10000) {
+            this.$Message.error('该手机号未注册，请先注册')
+            reject && reject(new Error('该手机号未注册，请先注册'))
+          } else if (mode === 'findback' && res.data.code === 10000) {
+            this.$Message.error('该手机号未注册，请先注册')
+            reject && reject(new Error('该手机号未注册，请先注册'))
+          }
+          resolve()
+        }).catch(err => console.error(err))
+      })
     },
 
     // 实时校验图形验证码
     imCheckCapthcha () {
-      Server({
-        url: '/user/testCaptcha',
-        method: 'get',
-        data: { captchaCode: this.form.captchaCode }
-      }).then(res => {
-        console.log('图形验证码校验通过')
-      }).catch(err => {
-        console.error(err)
-        this.getCaptcha()
+      return new Promise((resolve, reject) => {
+        Server({
+          url: '/user/testCaptcha',
+          method: 'get',
+          data: { captchaCode: this.form.captchaCode }
+        }).then(res => {
+          console.log('图形验证码校验通过')
+          resolve()
+        }).catch(err => {
+          console.error(err)
+          this.getCaptcha()
+        })
       })
     },
 
     // 实时校验短信验证码
     imCheckSMSCode () {
-      Server({
-        url: '/user/smsCode',
-        method: 'get',
-        data: {
-          phone: this.form.phone,
-          smsCode: this.form.smsCode
-        }
-      }).then(res => {
-        console.log('短信验证码校验通过')
-      }).catch(err => console.error(err))
+      return new Promise((resolve, reject) => {
+        Server({
+          url: '/user/smsCode',
+          method: 'get',
+          data: {
+            phone: this.form.phone,
+            smsCode: this.form.smsCode
+          }
+        }).then(res => {
+          console.log('短信验证码校验通过')
+          resolve()
+        }).catch(err => {
+          console.error(err)
+          this.getCaptcha()
+        })
+      })
     },
 
     // 获取图片验证码
@@ -207,7 +226,10 @@ export default {
             clearInterval(timer)
           }
         }, 1000)
-      }).catch(err => console.error(err))
+      }).catch(err => {
+        this.getCaptcha()
+        console.error(err)
+      })
     }
   }
 
