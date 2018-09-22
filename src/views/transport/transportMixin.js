@@ -8,9 +8,9 @@ export default {
       // 分页
       page: {
         current: 1,
-        size: 10,
-        total: 0
+        size: 10
       },
+      searchFields: {},
 
       tabStatus: void 0, // 当前标签页
       currentBtns: [], // 当前按钮组
@@ -20,8 +20,9 @@ export default {
       easySelectMode: 1, // 简易搜索当前类型
       easySearchKeyword: '', // 简易搜索字段
 
-      tableData: [], // 表格数据
-      tableSelection: [] // 表格的选中项
+      tableSelection: [], // 表格的选中项
+
+      printData: []
     }
   },
 
@@ -34,9 +35,8 @@ export default {
   },
 
   created () {
-    // 初始化按钮组
     this.currentBtns = this.btnList[0].btns
-    this.fetchData()
+    this.getCarriers()
   },
 
   methods: {
@@ -44,9 +44,13 @@ export default {
       'getCarriers'
     ]),
     handleSelectCarrier (name, row) {
-      console.log(name, row)
       this.$store.dispatch('getCarrierCars', row.id)
       this.$store.dispatch('getCarrierDrivers', row.id)
+    },
+
+    fetchData () {
+      this.searchFields = this.setFetchParams()
+      this.$refs.$table.fetch()
     },
 
     // 搜索
@@ -72,7 +76,6 @@ export default {
     },
     // 重置搜索条件
     resetEasySearch () {
-      this.carrierId = ''
       if (this.easySearchKeyword === '') return
       this.easySearchKeyword = ''
       if (!this.inSearching) return
@@ -152,12 +155,18 @@ export default {
           params.type = this.easySelectMode
           params.keyWord = this.easySearchKeyword
         } else {
-          if (this.seniorSearchFields.startCodes.length) {
-            this.seniorSearchFields.start = this.seniorSearchFields.startCodes[2]
-          } else this.seniorSearchFields.start = ''
-          if (this.seniorSearchFields.endCodes.length) {
-            this.seniorSearchFields.end = this.seniorSearchFields.endCodes[2]
-          } else this.seniorSearchFields.end = ''
+          if (this.seniorSearchFields.startCodes) {
+            if (this.seniorSearchFields.startCodes.length) {
+              this.seniorSearchFields.start = this.seniorSearchFields.startCodes[2]
+            } else this.seniorSearchFields.start = ''
+          }
+
+          if (this.seniorSearchFields.endCodes) {
+            if (this.seniorSearchFields.endCodes.length) {
+              this.seniorSearchFields.end = this.seniorSearchFields.endCodes[2]
+            } else this.seniorSearchFields.end = ''
+          }
+
           if (this.seniorSearchFields.dateRange[0]) {
             this.seniorSearchFields.startTime = this.seniorSearchFields.dateRange[0].Format('yyyy-MM-dd hh:mm:ss')
           } else this.seniorSearchFields.startTime = ''

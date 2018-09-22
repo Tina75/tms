@@ -8,7 +8,7 @@ function getToken () {
 
 let instance = axios.create({
   baseURL: '/',
-  timeout: 10000,
+  timeout: 1000,
   headers: {
     'Content-Type': 'application/json',
     'Authorization': getToken()

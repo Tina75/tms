@@ -10,7 +10,6 @@
           :local-options="carriers"
           placeholder="请选择"
           style="width:200px"
-          @on-focus.once="getCarriers"
           @on-select="handleSelectCarrier" />
       </FormItem>
       <FormItem label="车辆" prop="carNo">
@@ -65,6 +64,9 @@ export default {
       'carrierCars',
       'carrierDrivers'
     ])
+  },
+  created () {
+    this.getCarriers()
   },
   methods: {
     ...mapActions([

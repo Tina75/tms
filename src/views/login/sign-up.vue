@@ -47,7 +47,8 @@
           <!-- step 2 -->
           <template v-if="step === 1">
             <FormItem prop="userName">
-              <Input v-model="form.userName" placeholder="输入联系人姓名"
+              <Input v-model="form.userName" :maxlength="10"
+                     placeholder="输入联系人姓名"
                      @on-blur="inputBlur('userName')" />
             </FormItem>
             <FormItem prop="name">
@@ -81,14 +82,17 @@
           </template>
 
           <FormItem>
-            <Checkbox v-model="protocol" style="line-height: 1.3;">
+            <Checkbox v-model="protocol" style="line-height: 1.5;">
               我已阅读并同意
               <a @click.prevent="showProtocol(1)">《智加云TMS服务协议》</a>
               <a @click.prevent="showProtocol(2)">《智加云TMS隐私协议》</a>
             </Checkbox>
             <Button class="form-button" type="primary" long
                     @click="nextStep">{{step === 2 ? '立即注册' : '下一步'}}</Button>
-            <p style="text-align: center;">已有账号？<a @click.prevent="changeMode('signin')">请登录></a></p>
+            <div>
+              <a v-if="step" @click.prevent="step = step - 1">&lt;上一步</a>
+              <p style="float: right;">已有账号？<a @click.prevent="changeMode('signin')">请登录&gt;</a></p>
+            </div>
           </FormItem>
         </Form>
       </div>
@@ -168,7 +172,15 @@ export default {
         }
       }
 
-      if (this.step !== 2) {
+      if (this.step === 0) {
+        this.imCheckPhone()
+          .then(this.imCheckCapthcha)
+          .then(this.imCheckSMSCode)
+          .then(() => {
+            this.step++
+          })
+        return
+      } else if (this.step === 1) {
         this.step++
         return
       }

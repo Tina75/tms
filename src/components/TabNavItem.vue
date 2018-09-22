@@ -67,4 +67,5 @@ export default {
   &__checked
     background #EFEFEF
     color #00A4BD
+    shape-outside circle()
 </style>
