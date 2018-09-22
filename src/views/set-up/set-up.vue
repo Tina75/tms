@@ -211,6 +211,20 @@ export default {
         callback()
       }
     }
+    var checkNameCompany = function (rule, value, callback) {
+      if (value.length > 25) {
+        return callback(new Error('公司名不能超过25个字'))
+      } else {
+        callback()
+      }
+    }
+    var checkAddressCompany = function (rule, value, callback) {
+      if (value.length < 5 || value.length > 40) {
+        return callback(new Error('公司地址不能少于5个字也不能超过40个字'))
+      } else {
+        callback()
+      }
+    }
     var checkPhone = function (rule, value, callback) {
       if (value) {
         if (!(/^1\d{10}$/.test(value))) {
@@ -316,7 +330,8 @@ export default {
       // 公司
       ruleCompany: {
         name: [
-          { required: true, message: '请输入公司名称', trigger: 'blur' }
+          { required: true, message: '请输入公司名称', trigger: 'blur' },
+          { validator: checkNameCompany, trigger: 'blur' }
         ],
         contact: [
           { required: true, message: '请输入公司联系人', trigger: 'blur' },
@@ -330,7 +345,8 @@ export default {
           { required: true, message: '请选择所在省市' }
         ],
         address: [
-          { required: true, message: '请输入公司地址', trigger: 'blur' }
+          { required: true, message: '请输入公司地址', trigger: 'blur' },
+          { validator: checkAddressCompany, trigger: 'blur' }
         ]
       }
       // 图片相关-个人
@@ -443,7 +459,7 @@ export default {
       this.$refs[name].validate((valid) => {
         if (valid) {
           let params = Object.assign({}, this.formCompany)
-          params.cityId = params.cityId[2].toString()
+          params.cityId = params.cityId[params.cityId.length - 1].toString()
           Server({
             url: 'set/company',
             method: 'post',

@@ -30,6 +30,7 @@
             v-if="!batchBtnShow"
             :indeterminate="indeterminate"
             :value="checkAll"
+            style="margin-left: 15px;"
             @click.native="handleCheckAll">
             全选</Checkbox>
           <div v-for="msg in this.sysMessageList" :key="msg.id" class="megDiv">
@@ -196,6 +197,13 @@ export default {
         this.rightTitle = this.typeName = '系统消息'
     }
   },
+  updated () {
+    if (!this.batchBtnShow) {
+      for (let index = 0; index < document.getElementsByClassName('checkboxItem').length; index++) {
+        document.getElementsByClassName('checkboxItem')[index].children[1].innerText = ''
+      }
+    }
+  },
   mounted: function () {
     this.getMenuList(this.searchData)
     this.getMenuInfoNum()
@@ -247,7 +255,6 @@ export default {
       let params = {}
       params.ids = id
       params.type = type
-      console.log(params)
       Server({
         url: 'message/del',
         method: 'post',
