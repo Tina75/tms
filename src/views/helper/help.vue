@@ -1,7 +1,7 @@
 <template>
   <div>
     <Col span="5">
-    <Menu open-names="['1']" accordion>
+    <Menu :open-names="['1']" accordion>
       <Submenu name="1">
         <template slot="title">
           <i class="icon font_family icon-tupian" style="background: white; color: #FFBB44;"></i>
@@ -13,7 +13,7 @@
       </Submenu>
     </Menu>
     <Menu>
-      <Submenu>
+      <Submenu name="2">
         <template slot="title">
           <i class="icon font_family icon-shipin" style="background: white; color: #418DF9;"></i>
           视频介绍
@@ -29,7 +29,7 @@
       <p slot="title">{{picContent.title}}</p>
       <div v-if="'pic' === this.type">
         <pre>{{picContent.content}}</pre>
-        <img :src="picContent.urlList" />
+        <img :src="picContent.urlList" class="imgInfo" />
       </div>
       <div v-else>
         <video :src="videoContent.urlList" style="width:100%;" controls="controls">
@@ -92,4 +92,6 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
+.imgInfo
+  max-width: 680px;
 </style>

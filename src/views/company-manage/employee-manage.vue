@@ -393,7 +393,7 @@ export default {
       overflow-x:auto;
 .saveRoleBtn
   float: right;
-  margin-right: 100px;
+  margin-right: 20px;
 .centerBtn
   position: absolute;
   left: 30%;
