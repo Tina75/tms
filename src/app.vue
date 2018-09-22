@@ -91,10 +91,15 @@ export default {
     async init () {
       await this.getPermissons()
       this.initTabNav()
+      this.toHome()
       this.getUserInfo()
       this.getMessageCount()
       // 获取用户权限
       // TODO: something
+    },
+    toHome () {
+      const home = {path: '/home', params: {name: 'home'}}
+      this.turnToPage(home)
     },
     openMsgTab (type = 0) {
       const router = {path: '/info/info', name: '消息', query: {type: type}}
