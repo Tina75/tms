@@ -1,7 +1,7 @@
 <template>
   <div>
     <Tabs value="dispatchFreight">
-      <TabPane label="运货调度" name="dispatchFreight">
+      <TabPane label="送货调度" name="dispatchFreight">
         <DispatchFreight />
       </TabPane>
       <TabPane label="提货调度" name="dispatchPickup">

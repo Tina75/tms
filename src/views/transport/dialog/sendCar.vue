@@ -1,6 +1,8 @@
 <template>
   <Modal v-model="visiable" :mask-closable="true" width="1100" @on-visible-change="close">
-    <p slot="header" style="text-align:center">派车</p>
+    <p slot="header" style="text-align:center">
+      {{ type === 'sendCar' ? '派车' : '提货' }}
+    </p>
 
     <div class="part">
       <Row class="detail-field-group">
@@ -102,7 +104,8 @@
               <Radio label="1">按单结</Radio>
               <Radio label="2">月结</Radio>
             </RadioGroup>
-            <Table  :columns="tablePayment"
+            <Table  v-if="settlementType === '1'"
+                    :columns="tablePayment"
                     :data="settlementPayInfo"
                     :loading="loading"
                     width="350"></Table>
@@ -156,11 +159,7 @@ export default {
         otherFee: 0
       },
       settlementType: '1',
-      settlementPayInfo: [
-        { payType: 1, fuelCardAmount: 0, cashAmount: 0 },
-        { payType: 2, fuelCardAmount: 0, cashAmount: 0 },
-        { payType: 3, fuelCardAmount: 0, cashAmount: 0 }
-      ],
+      settlementPayInfo: [],
       // 支付方式表格
       tablePayment: [
         {
@@ -244,6 +243,13 @@ export default {
     ])
   },
   created () {
+    this.settlementPayInfo = this.type === 'sendCar' ? [
+      { payType: 1, fuelCardAmount: 0, cashAmount: 0 },
+      { payType: 2, fuelCardAmount: 0, cashAmount: 0 },
+      { payType: 3, fuelCardAmount: 0, cashAmount: 0 }
+    ] : [
+      { payType: 2, fuelCardAmount: 0, cashAmount: 0 }
+    ]
     this.fetchData()
   },
   methods: {
@@ -286,24 +292,32 @@ export default {
     fetchData () {
       this.loading = true
       Server({
-        url: '/waybill/details',
+        url: this.type === 'sendCar' ? '/waybill/details' : '/load/bill/details',
         method: 'post',
-        data: { waybillId: this.id }
+        data: this.type === 'sendCar' ? { waybillId: this.id } : {
+          pickUpId: this.id
+        }
       }).then(res => {
         const data = res.data.data
+        const billInfo = this.type === 'sendCar' ? data.waybill : data.loadbill
 
         for (let key in this.info) {
-          this.info[key] = data.waybill[key]
+          this.info[key] = billInfo[key]
         }
         for (let key in this.payment) {
-          this.payment[key] = data.waybill[key]
+          this.payment[key] = this.setMoneyUnit2Yuan(billInfo[key])
         }
 
-        this.settlementType = data.waybill.settlementType ? data.waybill.settlementType.toString() : '1'
-        const settlementPayInfo = data.waybill.settlementPayInfo
+        this.settlementType = billInfo.settlementType ? billInfo.settlementType.toString() : '1'
+        const settlementPayInfo = billInfo.settlementPayInfo
         let temp = this.settlementPayInfo.map((item, i) => {
           if (!settlementPayInfo[i]) return item
-          return Object.assign(item, settlementPayInfo[i])
+          else {
+            const temp = settlementPayInfo[i]
+            temp.fuelCardAmount = this.setMoneyUnit2Yuan(temp.fuelCardAmount)
+            temp.cashAmount = this.setMoneyUnit2Yuan(temp.cashAmount)
+            return Object.assign(item, temp)
+          }
         })
         this.settlementPayInfo = temp
 
@@ -311,6 +325,11 @@ export default {
       }).catch(err => console.error(err))
     },
 
+    // 设置金额单位为元
+    setMoneyUnit2Yuan (money) {
+      return money ? money / 100 : 0
+    },
+    // 格式化金额单位为分
     formatMoney () {
       let temp = Object.assign({}, this.payment)
       for (let key in temp) {
@@ -318,7 +337,9 @@ export default {
       }
       return temp
     },
+    // 格式化计费方式金额单位为分
     formatPayInfo () {
+      // if (this.settlementType !== '1') return
       return this.settlementPayInfo.map(item => {
         return {
           payType: item.payType,
@@ -349,23 +370,32 @@ export default {
         this.$Message.error('请输入运输费')
         return false
       }
-      if (!this.checkTotalAmount) return false
+      if (this.settlementType === '1' && !this.checkTotalAmount()) return false
       return true
     },
 
     sendCar () {
       if (!this.validate()) return
 
+      let data = {
+        ...this.info,
+        ...this.formatMoney(),
+        settlementType: this.settlementType,
+        settlementPayInfo: this.formatPayInfo()
+      }
+      let url
+      if (this.type === 'sendCar') {
+        data.waybillId = this.id
+        url = '/waybill/assign/vehicle'
+      } else {
+        data.pickUpId = this.id
+        url = '/load/bill/pick/up'
+      }
+
       Server({
-        url: '/waybill/assign/vehicle',
+        url,
         method: 'post',
-        data: {
-          waybillId: this.id,
-          ...this.info,
-          ...this.formatMoney(),
-          settlementType: this.settlementType,
-          settlementPayInfo: this.formatPayInfo()
-        }
+        data
       }).then(res => {
         this.$Message.success('操作成功')
         this.complete()

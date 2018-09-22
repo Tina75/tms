@@ -39,9 +39,9 @@
       <!-- <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick"> -->
       <Poptip placement="bottom-end" title="账号信息" width="260">
 
-        <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" size="small"></avatar>
+        <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" size="normal" style="border:1px solid #fff"></avatar>
         <span class="user-info"><p>{{name}}</p> </span>
-        <Icon type="md-arrow-dropdown" class="i-mr-20" size="14"/>
+        <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
         <div slot="content">
           <p class="dropdown-line"><label for="">账户名：</label>{{UserInfo.name}} &nbsp; &nbsp; &nbsp; &nbsp;<Tag color="cyan" style="font-size:12px">{{UserInfo.roleName}}</Tag></p>
           <p class="dropdown-line"><label for="">手机号：</label>{{UserInfo.phone}}</p>
@@ -171,12 +171,12 @@ export default {
       text-overflow ellipsis
       max-width 200px
       label
-        min-width 50px
+        min-width 60px
         text-align left
         display inline-block
     .ivu-badge-count
       top: -2px;
-      right: 8px;
+      right: 4px;
       padding: 0 3px;
       min-width 0
       box-shadow: 0 0 0 1px #000;
