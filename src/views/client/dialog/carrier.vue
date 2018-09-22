@@ -3,6 +3,7 @@
     v-model="modal"
     :mask-closable="true"
     label-position="left"
+    class="modal"
     @on-visible-change="close"
   >
     <p slot="header" style="text-align:center">{{title}}</p>
@@ -19,7 +20,7 @@
         <Input v-model="validate.driver.driverName" :maxlength="15" placeholder="请输入"/>
       </FormItem>
       <FormItem label="手机号码" prop="driverPhone">
-        <Input v-model="validate.driver.driverPhone" placeholder="请输入"/>
+        <Input v-model="validate.driver.driverPhone" :maxlength="11" placeholder="请输入"/>
       </FormItem>
       <FormItem label="车牌号" prop="carNO">
         <Input v-model="validate.driver.carNO" placeholder="请输入"/>
@@ -38,7 +39,7 @@
           <Option value="10">飞翼车</Option>
         </Select>
       </FormItem>
-      <FormItem label="车长" prop="carLength">
+      <FormItem label="车长:" prop="carLength">
         <Select v-model="validate.driver.carLength" >
           <Option value="1">1.8米</Option>
           <Option value="2">2.7米</Option>
@@ -59,13 +60,13 @@
           <Option value="17">17.5米</Option>
         </Select>
       </FormItem>
-      <FormItem label="核定载重量" prop="shippingWeight">
+      <FormItem label="核定载重量:" prop="shippingWeight">
         <Input v-model="validate.driver.shippingWeight" placeholder="请输入"/>吨
       </FormItem>
-      <FormItem label="车载容积" prop="shippingVolume">
+      <FormItem label="车载容积:" class="ivu-form-item-required blank" prop="shippingVolume">
         <Input v-model="validate.driver.shippingVolume" placeholder="请输入"/>方
       </FormItem>
-      <FormItem label="结算方式:" >
+      <FormItem label="结算方式:" class="ivu-form-item-required blank">
         <Select v-model="validate.driver.payType" clearable>
           <!--<Option value="">请选择</Option>-->
           <!--<Option value="1">现付</Option>-->
@@ -78,7 +79,7 @@
           <!--<Option value="8">三段付</Option>-->
         </Select>
       </FormItem>
-      <FormItem label="备注:" >
+      <FormItem label="备注:" class="ivu-form-item-required blank">
         <Input v-model="validate.driver.remark" :autosize="{minRows: 2,maxRows: 5}" :maxlength="100" type="textarea"  placeholder="请输入"/>
       </FormItem>
     </Form>
@@ -87,11 +88,11 @@
       <FormItem label="承运商名称:" prop="carrierName">
         <Input v-model="validate.company.carrierName" :maxlength="20" placeholder="请输入"/>
       </FormItem>
-      <FormItem label="负责人" prop="carrierPrincipal">
+      <FormItem label="负责人:" prop="carrierPrincipal">
         <Input v-model="validate.company.carrierPrincipal" :maxlength="15" placeholder="请输入"/>
       </FormItem>
-      <FormItem label="联系电话" prop="carrierPhone">
-        <Input v-model="validate.company.carrierPhone" placeholder="请输入"/>
+      <FormItem label="联系电话:" prop="carrierPhone">
+        <Input v-model="validate.company.carrierPhone" :maxlength="11" placeholder="请输入"/>
       </FormItem>
       <FormItem label="结算方式:">
         <Select v-model="validate.company.payType" clearable>
@@ -187,10 +188,10 @@ export default {
           ],
           shippingWeight: [
             { required: true, message: '载重量不能为空', trigger: 'blur' },
-            { type: 'string', message: '必须为大于0的数,且精确到两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
+            { type: 'string', message: '必须为大于等于0的数,且精确到两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
           ],
           shippingVolume: [
-            { type: 'string', message: '必须为大于0的数,且精确到一位小数', pattern: /^(\+)?\d+(\.\d{1})?$/, trigger: 'blur' }
+            { type: 'string', message: '必须为大于等于0的数,且精确到一位小数', pattern: /^(\+)?\d+(\.\d{1})?$/, trigger: 'blur' }
           ]
         },
         company: {
@@ -308,6 +309,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
+  @import "../client.styl"
   .ivu-input-wrapper,.ivu-select
     width: 86%
     margin-right 8px
