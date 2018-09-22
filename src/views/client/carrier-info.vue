@@ -33,16 +33,16 @@
           <Col span="8">
           <div>
             <span class="label">车型：</span>
-            <span v-if="driverList.carType === 1">平板{{driverList.carType}}米</span>
-            <span v-else-if="driverList.carType === 2">高栏{{driverList.carType}}米</span>
-            <span v-else-if="driverList.carType === 3">厢车{{driverList.carType}}米</span>
-            <span v-else-if="driverList.carType === 4">自卸{{driverList.carType}}米</span>
-            <span v-else-if="driverList.carType === 5">冷藏{{driverList.carType}}米</span>
-            <span v-else-if="driverList.carType === 6">保温{{driverList.carType}}米</span>
-            <span v-else-if="driverList.carType === 7">高低板{{driverList.carType}}米</span>
-            <span v-else-if="driverList.carType === 8">面包车{{driverList.carType}}米</span>
-            <span v-else-if="driverList.carType === 9">爬梯车{{driverList.carType}}米</span>
-            <span v-else-if="driverList.carType === 10">飞翼车{{driverList.carType}}米</span>
+            <span v-if="driverList.carType === 1">平板{{driverList.carLength}}米</span>
+            <span v-else-if="driverList.carType === 2">高栏{{driverList.carLength}}米</span>
+            <span v-else-if="driverList.carType === 3">厢车{{driverList.carLength}}米</span>
+            <span v-else-if="driverList.carType === 4">自卸{{driverList.carLength}}米</span>
+            <span v-else-if="driverList.carType === 5">冷藏{{driverList.carLength}}米</span>
+            <span v-else-if="driverList.carType === 6">保温{{driverList.carLength}}米</span>
+            <span v-else-if="driverList.carType === 7">高低板{{driverList.carLength}}米</span>
+            <span v-else-if="driverList.carType === 8">面包车{{driverList.carLength}}米</span>
+            <span v-else-if="driverList.carType === 9">爬梯车{{driverList.carLength}}米</span>
+            <span v-else-if="driverList.carType === 10">飞翼车{{driverList.carLength}}米</span>
             <span v-else></span>
           </div>
           </Col>
@@ -313,7 +313,8 @@ export default {
             } else {
               text = ''
             }
-            return h('div', {}, params.row.carLength + '米' + text)
+            text = text ? params.row.carLength + '米' + text : ''
+            return h('div', {}, text)
           }
         }
       ],
@@ -416,7 +417,8 @@ export default {
             } else {
               text = ''
             }
-            return h('div', {}, params.row.carLength + '米' + text)
+            text = text ? params.row.carLength + '米' + text : ''
+            return h('div', {}, text)
           }
         },
         {

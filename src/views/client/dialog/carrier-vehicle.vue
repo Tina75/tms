@@ -145,6 +145,7 @@ export default {
         driverId: this.driverId,
         carrierId: this.carrierId
       }
+      Object.assign(data, {driverId: this.driverId || ''})
       carrierAddVehicle(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
@@ -164,6 +165,7 @@ export default {
         carrierId: this.carrierId,
         carId: this.carId
       }
+      Object.assign(data, {driverId: this.driverId || ''})
       carrierUpdateVehicle(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
