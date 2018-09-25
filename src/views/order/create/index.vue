@@ -198,8 +198,8 @@
       </Col>
     </Row>
     <FormItem class="van-center">
-      <Button type="primary" @click="handleSubmit">保存</Button>
-      <Button class="i-ml-10" @click="print">保存并打印</Button>
+      <Button :disabled="disabled" type="primary" @click="handleSubmit">保存</Button>
+      <Button :disabled="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button class="i-ml-10" @click="resetForm">清空</Button>
     </FormItem>
     <OrderPrint ref="printer" :data.sync="orderPrint">
@@ -217,13 +217,13 @@ import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import OrderPrint from './OrderPrint'
 import AreaSelect from '@/components/AreaSelect'
-// import areas from '@/libs/js/City'
 import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
 import settlements from './constant/settlement.js'
 import pickups from './constant/pickup.js'
 
 const transferFeeList = ['freightFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
+const specialCity = ['110000', '120000', '710000', '810000', '820000']
 export default {
   metaInfo: {
     title: '手动下单'
@@ -256,11 +256,37 @@ export default {
         callback(new Error('请输入正确的手机号码'))
       }
     }
+
+    const validateArea = (value) => {
+      if (value.length === 1 && !specialCity.includes(value[0])) {
+        return false
+      }
+      return true
+    }
+    const validateStart = (rule, value, callback) => {
+      if (!validateArea(value)) {
+        callback(new Error('请至少选择到市一级城市'))
+      } else if (_this.orderForm.end.length > 0 && value.length > 0 && _.isEqual(_this.orderForm.end, value)) {
+        callback(new Error('始发城市不能和目的城市相同'))
+      } else {
+        callback()
+      }
+    }
+    const validateEnd = (rule, value, callback) => {
+      if (!validateArea(value)) {
+        callback(new Error('请至少选择到市一级城市'))
+      } else if (_this.orderForm.start.length > 0 && value.length > 0 && _.isEqual(_this.orderForm.start, value)) {
+        callback(new Error('目的城市不能和始发城市相同'))
+      } else {
+        callback()
+      }
+    }
     return {
       settlements,
-      pickups,
-      autoFocus: false,
-      loading: false,
+      pickups, // 提货方式
+      autoFocus: false, // 客户信息输入框自动焦点focus
+      loading: false, // 查询订单详情加载状态
+      disabled: false, // 保存按钮
       goodsColumn: [
         {
           title: ' ',
@@ -553,7 +579,7 @@ export default {
         // 提货方式
         pickup: 1, // 默认上门提货，2：直接送货
         // 回单数量
-        receiptCount: null,
+        receiptCount: 1,
         // 备注
         remark1: '',
         remark2: ''
@@ -565,10 +591,12 @@ export default {
           { required: true, message: '请输入客户名称' }
         ],
         start: [
-          { required: true, type: 'array', message: '请选择始发城市' }
+          { required: true, type: 'array', message: '请选择始发城市' },
+          { validator: validateStart }
         ],
         end: [
-          { required: true, type: 'array', message: '请选择目的城市' }
+          { required: true, type: 'array', message: '请选择目的城市' },
+          { validator: validateEnd }
         ],
         arriveTime: [
           { validator: validateArriveTime, trigger: 'blur' }
@@ -767,6 +795,10 @@ export default {
           _this.orderForm.consigneePhone = consignees[0].phone
           _this.orderForm.consigneeAddress = consignees[0].address
         }
+        let settlementType = consigner.settlementType || consigner.payType
+        if (settlementType) {
+          _this.orderForm.settlementType = settlementType
+        }
       })
     },
     // 显示计费规则
@@ -785,52 +817,66 @@ export default {
       })
     },
     // 提交表单
-    handleSubmit () {
+    handleSubmit (e) {
       console.log('orderForm', this.orderForm)
       const vm = this
       this.syncStoreCargoes()
-      this.$refs.orderForm.validate((valid) => {
-        if (valid) {
-          const orderCargoList = vm.consignerCargoes
-          const orderForm = vm.orderForm
-          let findError = null
-          // 校验货物信息
-          for (let index in orderCargoList) {
-            let cargo = orderCargoList[index]
-            let info = cargo.validate()
-            if (!info.success) {
-              findError = info.message
-              break
+      vm.disabled = true
+      return new Promise((resolve, reject) => {
+        vm.$refs.orderForm.validate((valid) => {
+          if (valid) {
+            const orderCargoList = vm.consignerCargoes
+            const orderForm = vm.orderForm
+            let findError = null
+            // 校验货物信息
+            for (let index in orderCargoList) {
+              let cargo = orderCargoList[index]
+              let info = cargo.validate()
+              if (!info.success) {
+                findError = info.message
+                break
+              }
             }
-          }
-          if (findError) {
-            vm.$Message.error(findError)
-            return
-          }
-          // 始发城市，目的城市，到达时间等需要额外处理
-          let form = Object.assign({}, orderForm, {
-            start: orderForm.start[orderForm.start.length - 1],
-            end: orderForm.end[orderForm.end.length - 1],
-            arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
-            deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
-            orderCargoList: orderCargoList.map(cargo => cargo.toJson())
-          });
+            if (findError) {
+              vm.$Message.error(findError)
+              vm.disabled = false
+              reject(new Error(findError.message))
+            }
+            // 始发城市，目的城市，到达时间等需要额外处理
+            let form = Object.assign({}, orderForm, {
+              start: orderForm.start[orderForm.start.length - 1],
+              end: orderForm.end[orderForm.end.length - 1],
+              arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
+              deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
+              orderCargoList: orderCargoList.map(cargo => cargo.toJson())
+            });
 
-          ['start', 'end'].forEach(field => {
-            form[field] = parseInt(form[field])
-          })
-          // 转换成分单位
-          transferFeeList.forEach((fee) => {
-            form[fee] = form[fee] ? form[fee] * 100 : 0
-          })
-          vm.submitOrder(form)
-            .then((response) => {
-              vm.resetForm()
-              this.$Message.success('创建订单成功')
+            ['start', 'end'].forEach(field => {
+              form[field] = parseInt(form[field])
             })
-        } else {
-          this.$Message.error('请填写必填信息')
-        }
+            // 转换成分单位
+            transferFeeList.forEach((fee) => {
+              form[fee] = form[fee] ? form[fee] * 100 : 0
+            })
+            vm.submitOrder(form)
+              .then((response) => {
+                this.$Message.success('创建订单成功')
+                if (e) {
+                  vm.resetForm()
+                }
+                vm.disabled = false
+                resolve()
+              })
+              .catch((er) => {
+                vm.disabled = false
+                reject(er)
+              })
+          } else {
+            vm.disabled = false
+            this.$Message.error('请填写必填信息')
+            reject(new Error('请填写必填信息'))
+          }
+        })
       })
     },
     // 清空重置表单
@@ -839,13 +885,15 @@ export default {
       this.clearCargoes()
     },
     print () {
-      this.syncStoreCargoes()
-      this.orderPrint = _.cloneDeep(this.orderForm)
-      this.orderPrint.orderCargoList = _.cloneDeep(this.consignerCargoes)
-      this.orderPrint.totalFee = this.totalFee
-      this.$refs.printer.print()
-
+      const vm = this
       this.handleSubmit()
+        .then(() => {
+          vm.orderPrint = _.cloneDeep(vm.orderForm)
+          vm.orderPrint.orderCargoList = _.cloneDeep(vm.consignerCargoes)
+          vm.orderPrint.totalFee = vm.totalFee
+          vm.$refs.printer.print()
+          vm.resetForm()
+        })
     }
   }
 }

@@ -57,7 +57,7 @@ export default {
           // 货物信息
           commit(types.RECEIVE_CARGO_LIST, cargoList)
           commit(types.RECEIVE_CONSIGNER_CARGO_LIST, cargoList.map((cargo) => {
-            return new Cargo(cargo)
+            return new Cargo(cargo, true)
           }))
         }
         if (consigneeList.length > 0) {
