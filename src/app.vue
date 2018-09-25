@@ -98,15 +98,17 @@ export default {
       // TODO: something
     },
     toHome () {
-      const home = {path: '/home', params: {name: 'home'}}
+      const home = { path: '/home', params: { name: 'home' } }
       this.turnToPage(home)
     },
     openMsgTab (type = 0) {
-      const router = {path: '/info/info', name: '消息', query: {type: type}}
+      const router = { path: '/info/info', name: '消息', query: { type: type } }
       this.onMenuSelect(router)
     },
     logout () {
+      const localRememberdPW = window.localStorage.local_rememberd_pw
       localStorage.clear()
+      if (localRememberdPW) window.localStorage.setItem('local_rememberd_pw', localRememberdPW)
       window.location.reload()
     },
     handleCloseTab (list, route) {
