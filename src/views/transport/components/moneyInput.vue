@@ -14,7 +14,7 @@
 export default {
   name: 'MoneyInput',
   props: {
-    value: [Number, String],
+    value: [ Number, String ],
     placeholder: String,
     suffix: {
       type: Boolean,

@@ -211,6 +211,20 @@ export default {
         callback()
       }
     }
+    var checkNameCompany = function (rule, value, callback) {
+      if (value.length > 25) {
+        return callback(new Error('公司名不能超过25个字'))
+      } else {
+        callback()
+      }
+    }
+    var checkAddressCompany = function (rule, value, callback) {
+      if (value.length < 5 || value.length > 40) {
+        return callback(new Error('公司地址不能少于5个字也不能超过40个字'))
+      } else {
+        callback()
+      }
+    }
     var checkPhone = function (rule, value, callback) {
       if (value) {
         if (!(/^1\d{10}$/.test(value))) {
@@ -255,34 +269,34 @@ export default {
       messageListInit: [],
       messageList: [{
         title: '发运提醒',
-        message: '提醒内容： 【智加云TMS公司】XX公司，您的货物已装车，由车牌号XXXX司机姓名XXXX司机电话XXXX派送；提货单不发短信；',
+        message: '提醒内容： 【智加云TMS公司】XX公司，您的货物已装车，由车牌号XXXX司机姓名XXXX司机电话XXXX派送；',
         messageReturn: '外转单：【智加云TMS公司】XX公司，您的xxx货物已装车。',
         checkBox: [{
           label: '发货人',
           model: '1',
           key: '1'
         }, {
-          label: '发货人',
+          label: '收货人',
           model: '2',
           key: '2'
         }]
       }, {
         title: '到货提醒',
-        message: '提醒内容： 【智加云TMS公司】XX公司，您的货物已签收，由车牌号XXXX司机姓名XXXX司机电话XXXX完成派送；提货单不发短信；',
+        message: '提醒内容： 【智加云TMS公司】XX公司，您的货物已签收，由车牌号XXXX司机姓名XXXX司机电话XXXX完成派送；',
         messageReturn: '外转单：【智加云TMS公司】XX公司，您的xxx货物已签收。',
         checkBox: [{
           label: '发货人',
           model: '3',
           key: '3'
         }, {
-          label: '发货人',
+          label: '收货人',
           model: '4',
           key: '4'
         }]
       }, {
         title: '指派司机提醒',
-        message: '发货提醒： 【智加云TMS公司】XX公司给您发了新的指派运单，请尽快提货；',
-        messageReturn: '提货单：【智加云TMS】XX公司给您发了新的指派了提货单，请尽快提货；外转单不发短信。',
+        message: '提醒内容： 【智加云TMS】XX公司给您指派了新的运单，请尽快装货；',
+        messageReturn: '提货单：【智加云TMS】XX公司给您指派了新的提货单，请尽快提货；',
         checkBox: [{
           label: '司机',
           model: '5',
@@ -316,7 +330,8 @@ export default {
       // 公司
       ruleCompany: {
         name: [
-          { required: true, message: '请输入公司名称', trigger: 'blur' }
+          { required: true, message: '请输入公司名称', trigger: 'blur' },
+          { validator: checkNameCompany, trigger: 'blur' }
         ],
         contact: [
           { required: true, message: '请输入公司联系人', trigger: 'blur' },
@@ -330,7 +345,8 @@ export default {
           { required: true, message: '请选择所在省市' }
         ],
         address: [
-          { required: true, message: '请输入公司地址', trigger: 'blur' }
+          { required: true, message: '请输入公司地址', trigger: 'blur' },
+          { validator: checkAddressCompany, trigger: 'blur' }
         ]
       }
       // 图片相关-个人
@@ -443,7 +459,7 @@ export default {
       this.$refs[name].validate((valid) => {
         if (valid) {
           let params = Object.assign({}, this.formCompany)
-          params.cityId = params.cityId[2].toString()
+          params.cityId = params.cityId[params.cityId.length - 1].toString()
           Server({
             url: 'set/company',
             method: 'post',
