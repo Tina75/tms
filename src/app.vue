@@ -32,6 +32,7 @@ import TabNav from '@/components/TabNav'
 import Dialogs from '@/components/Dialogs'
 import menuJson from '@/assets/menu.json'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
+import Cookies from 'js-cookie'
 
 export default {
   components: { HeaderBar, SideBar, TabNav, Dialogs },
@@ -51,7 +52,7 @@ export default {
       if (msg) {
         this.$Modal.warning({
           title: '提示',
-          content: `${msg}，请重新登录`,
+          content: msg,
           onOk: () => { this.logout() }
         })
       } else {
@@ -107,7 +108,8 @@ export default {
     },
     logout () {
       localStorage.clear()
-      window.location.reload()
+      Cookies.remove('token', { path: '/tms' })
+      this.$router.go(0)
     },
     handleCloseTab (list, route) {
       // 选中前一个tab
