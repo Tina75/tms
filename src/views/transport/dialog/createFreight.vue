@@ -37,7 +37,7 @@
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
-import AreaSelect from '@/components/AreaSelect'
+import AreaSelect from '../components/AreaSelect'
 import SelectInput from '@/components/SelectInput.vue'
 import Server from '@/libs/js/server'
 import { mapGetters, mapActions } from 'vuex'
@@ -100,8 +100,8 @@ export default {
             url: '/dispatch/add/waybill',
             method: 'post',
             data: {
-              start: this.form.start[this.form.start.length - 1],
-              end: this.form.end[this.form.end.length - 1],
+              start: this.form.start,
+              end: this.form.end,
               carrierName: this.form.carrierName,
               carNo: this.form.carNo
             }

@@ -73,7 +73,7 @@ export default {
     * @description 打开首页
     */
     toHome () {
-      const home = {path: '/home', params: {name: 'home'}}
+      const home = { path: '/home', params: { name: 'home' } }
       this.turnToPage(home)
     },
 
@@ -82,7 +82,7 @@ export default {
     * @param {*} type 消息页对应的type
     */
     openMsgTab (type = 0) {
-      const router = {path: '/info/info', name: '消息', query: {type: type}}
+      const router = { path: '/info/info', name: '消息', query: { type: type } }
       this.onMenuSelect(router)
     },
 
@@ -95,7 +95,9 @@ export default {
         title: '提示',
         content: msg,
         onOk: () => {
+          const localRememberdPW = window.localStorage.local_rememberd_pw
           localStorage.clear()
+          if (localRememberdPW) window.localStorage.setItem('local_rememberd_pw', localRememberdPW)
           Cookies.remove('token', { path: '/tms' })
           this.$router.go(0)
         }

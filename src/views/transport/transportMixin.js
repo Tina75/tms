@@ -20,6 +20,7 @@ export default {
       easySelectMode: 1, // 简易搜索当前类型
       easySearchKeyword: '', // 简易搜索字段
 
+      tableWidth: 0,
       tableSelection: [], // 表格的选中项
 
       printData: []
@@ -39,6 +40,10 @@ export default {
     this.getCarriers()
   },
 
+  mounted () {
+    this.watchWindowWidth()
+  },
+
   methods: {
     ...mapActions([
       'getCarriers'
@@ -48,9 +53,27 @@ export default {
       this.$store.dispatch('getCarrierDrivers', row.id)
     },
 
+    checkTableSelection () {
+      if (!this.tableSelection.length) {
+        this.$Message.error('请先选择后再操作')
+        return false
+      }
+      return true
+    },
+
+    // 窗口宽度改变
+    watchWindowWidth () {
+      const $box = this.$refs.$box
+      console.log($box)
+      this.tableWidth = $box.offsetWidth
+      window.onresize = () => {
+        this.tableWidth = $box.offsetWidth
+      }
+    },
+
     fetchData () {
       this.searchFields = this.setFetchParams()
-      this.$refs.$table.fetch()
+      // this.$refs.$table.fetch()
     },
 
     // 搜索
@@ -152,8 +175,10 @@ export default {
       }
       if (this.inSearching) {
         if (this.isEasySearch) {
-          params.type = this.easySelectMode
-          params.keyWord = this.easySearchKeyword
+          if (this.easySearchKeyword) {
+            params.type = this.easySelectMode
+            params.keyWord = this.easySearchKeyword
+          }
         } else {
           if (this.seniorSearchFields.startCodes) {
             if (this.seniorSearchFields.startCodes.length) {
@@ -171,7 +196,8 @@ export default {
             this.seniorSearchFields.startTime = this.seniorSearchFields.dateRange[0].Format('yyyy-MM-dd hh:mm:ss')
           } else this.seniorSearchFields.startTime = ''
           if (this.seniorSearchFields.dateRange[1]) {
-            this.seniorSearchFields.endTime = this.seniorSearchFields.dateRange[1].Format('yyyy-MM-dd hh:mm:ss')
+            let endTime = this.seniorSearchFields.dateRange[1].getTime() + (24 * 60 * 60 - 1) * 1000
+            this.seniorSearchFields.endTime = (new Date(endTime)).Format('yyyy-MM-dd hh:mm:ss')
           } else this.seniorSearchFields.endTime = ''
 
           for (let key in this.seniorSearchFields) {
