@@ -73,7 +73,7 @@ export default {
     * @description 打开首页
     */
     toHome () {
-      const home = {path: '/home', params: {name: 'home'}, meta: {title: '首页'}}
+      const home = {path: '/home', params: {name: 'home'}, query: {title: '首页'}}
       this.turnToPage(home)
     },
 

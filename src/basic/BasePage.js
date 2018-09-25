@@ -71,7 +71,7 @@ export default {
      */
     openTab: function (data) {
       data.query = Object.assign({noCache: true}, data.query)
-      data.meta = {title: data.title ? data.title : (data.query.id ? data.query.id : this.$options.metaInfo.title)}
+      data.query.title = data.title ? data.title : (data.query.id ? data.query.id : this.$options.metaInfo.title)
       // data.query = data.title ? data.title : data.query.id
       // data.multi = Boolean(data.multi)
       this.ema.fire('openTab', data)
