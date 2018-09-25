@@ -85,6 +85,9 @@ export default {
       }
       function walk (element) {
         if (element.path === name) {
+          element.query = Object.assign(element.query || {}, {title: element.name})
+          console.log('xxx->' + JSON.stringify(element))
+
           return element
         } else if (element.children) {
           return element.children.find(item => {

@@ -139,7 +139,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.openTab({ path: '/client/sender-info', query: { id: params.row.id }
+                    this.openTab({ path: '/client/sender-info', name: '客户详情', query: { id: params.row.id }
                     })
                   }
                 }

@@ -24,8 +24,8 @@
             v-for="(item,index) in list"
             ref="tagsPageOpened"
             :key="`tag-nav-${index}`"
-            :name="item.name"
-            :checked="item.query?item.query.id===value.query.id:item.path === value.path"
+            :name="item.query.title?item.query.title:'xxx'"
+            :checked="item.query.title === value.query.title"
             @on-close="handleClose(item)"
             @on-refresh="handleRefresh(item)"
             @click.native="handleClick(item)">
@@ -70,6 +70,11 @@ export default {
           return this.currItem.path === this.value.path
         }
       }
+    }
+  },
+  watch: {
+    value: function (params) {
+      console.log('value changed ->', params)
     }
   },
   methods: {
