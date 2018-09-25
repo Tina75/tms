@@ -241,7 +241,7 @@ export default {
     const _this = this
     const validateArriveTime = (rule, value, callback) => {
       if (_this.orderForm.deliveryTime && value && value.valueOf() < _this.orderForm.deliveryTime.valueOf()) {
-        callback(new Error('到货时间需小于发货时间'))
+        callback(new Error('到货时间需晚于发货时间'))
       } else {
         callback()
       }
