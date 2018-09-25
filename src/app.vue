@@ -6,16 +6,16 @@
       </Sider>
       <Layout>
         <Header class="header-con">
-          <header-bar :collapsed.sync="collapsed" :name="name"/>
+          <header-bar :collapsed.sync="collapsed" :name="UserInfo.name" @on-msg-click="openMsgTab"/>
           <div class="tag-nav-wrapper">
-            <tab-nav :list="tabNavList" :value="$route" @on-close="handleCloseTab" @on-select="onTabSelect"/>
+            <tab-nav :list="TabNavList" :value="$route" @on-close="handleCloseTab" @on-select="onTabSelect"/>
           </div>
         </Header>
         <Content >
           <Layout>
             <Content class="content">
               <keep-alive>
-                <router-view/>
+                <router-view />
               </keep-alive>
             </Content>
           </Layout>
@@ -38,55 +38,88 @@ export default {
   data () {
     return {
       collapsed: false,
-      name: '端木和天',
-      menuList: menuJson
+      menuList: menuJson,
+      defaultTab: { name: '首页', path: '/home' }
     }
   },
   computed: {
-    ...mapGetters(['tabNavList'])
+    ...mapGetters(['TabNavList', 'UserInfo'])
   },
 
-  async mounted () {
-    window.EMA.bind('logout', () => {
-      this.logout()
+  mounted () {
+    window.EMA.bind('logout', (msg) => {
+      if (msg) {
+        this.$Modal.warning({
+          title: '提示',
+          content: `${msg}，请重新登录`,
+          onOk: () => { this.logout() }
+        })
+      } else {
+        this.logout()
+      }
     })
-    window.EMA.bind('refresh', () => {
-      window.location.reload()
+    window.EMA.bind('refresh', (route) => {
+      if (!route.query) route.query = {}
+      route.query._time = new Date().getTime()
+      this.turnToPage(route)
     })
-    window.EMA.bind('openTab1', (route) => {
-      let tag = {...route}
-      tag.name = route.query.id ? route.query.id : route.name
-      this.setTabNavList(this.getNewTagList(this.tabNavList, tag))
-      this.turnToPage(tag)
+    window.EMA.bind('updateUserInfo', () => {
+      this.getUserInfo()
     })
-    // 获取用户权限
-    await this.getPermissons()
+    window.EMA.bind('openTab', (route) => {
+      let tag = { ...route }
+      if (route.query) {
+        tag.name = route.query.id ? route.query.id : route.name
+        this.setTabNavList(this.getNewTagList(this.TabNavList, tag))
+        this.turnToPage(tag)
+      }
+    })
+    this.init()
+    // this.$nextTick(() => {
+    //   this.turnToPage(this.defaultTab)
+    // })
     // 初始化tabnav
-    this.initTabNav()
-    if (this.$route.path === '/') {
-      setTimeout(() => {
-        this.onMenuSelect({name: '首页', path: '/home/index'})
-      }, 200)
-    }
+    // if (this.$route.path === '/') {
+    //   setTimeout(() => {
+    //     this.onMenuSelect({ name: '首页', path: '/home' })
+    //   }, 200)
+    // }
   },
   methods: {
-    ...mapActions(['getPermissons']),
+    ...mapActions(['getPermissons', 'getUserInfo', 'getMessageCount']),
     ...mapMutations(['setTabNavList', 'initTabNav']),
+    async init () {
+      await this.getPermissons()
+      this.initTabNav()
+      this.toHome()
+      this.getUserInfo()
+      this.getMessageCount()
+      // 获取用户权限
+      // TODO: something
+    },
+    toHome () {
+      const home = {path: '/home', params: {name: 'home'}}
+      this.turnToPage(home)
+    },
+    openMsgTab (type = 0) {
+      const router = {path: '/info/info', name: '消息', query: {type: type}}
+      this.onMenuSelect(router)
+    },
     logout () {
-      localStorage.removeItem('tms_is_login')
+      localStorage.clear()
       window.location.reload()
     },
     handleCloseTab (list, route) {
       // 选中前一个tab
-      const nextRoute = this.getNextRoute(this.tabNavList, route)
-      this.$router.push(nextRoute)
+      const nextRoute = this.getNextRoute(this.TabNavList, route)
+      this.turnToPage(nextRoute)
       this.setTabNavList(list) // 更新store
     },
     onTabSelect (item) {
       this.turnToPage(item)
     },
     onMenuSelect (menuItem) {
-      this.setTabNavList(this.getNewTagList(this.tabNavList, menuItem))
+      this.setTabNavList(this.getNewTagList(this.TabNavList, menuItem))
       this.turnToPage(menuItem)
     },
     turnToPage (route) {
@@ -97,7 +130,7 @@ export default {
         params = route.params
         query = route.query
       }
-      this.$router.push({path, params, query})
+      this.$router.push({ path, params, query })
     },
     getNextRoute (list, route) {
       let res = {}
@@ -112,12 +145,14 @@ export default {
      * @param {*} route2 路由对象
      */
     routeEqual (route1, route2) {
-      const params1 = route1.params || {}
-      const params2 = route2.params || {}
+      // const params1 = route1.params || {}
+      // const params2 = route2.params || {}
       const query1 = route1.query || {}
       const query2 = route2.query || {}
-      return (route1.name === route2.name) && this.objEqual(params1, params2) && this.objEqual(query1, query2)
+      // return (route1.name === route2.name) && this.objEqual(params1, params2) && this.objEqual(query1, query2)
+      return (route1.name === route2.name) && (query1.id === query2.id)
     },
+
     /**
      * @param {*} obj1 对象
      * @param {*} obj2 对象
@@ -172,14 +207,6 @@ html, body
   .container
     height 100vh
     background #EFEFEF
-    .ivu-layout-sider
-      background-color #252A2F
-      .ivu-menu-dark
-        background-color #252A2F
-    .ivu-layout-header
-      height 50px
-      line-height 50px
-      padding 0
     .logo-con
       height 50px
       padding 10px
@@ -200,31 +227,12 @@ html, body
         height 46px
         // background #F0F0F0
         overflow hidden
-        .ivu-tag-dot
-          border-bottom none!important
-          border-radius 8px 8px 0 0
-          background #3A424B!important
-          border none !important
-          .ivu-tag-text
-            color #fff
     .content
       margin 15px
       padding 15px
       background white
       min-height 88vh
-.ivu-menu-dark.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu), .ivu-menu-dark.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu):hover, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title-active:not(.ivu-menu-submenu), .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title-active:not(.ivu-menu-submenu):hover
-  background #00A4BD
-.ivu-menu-dark.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu), .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title-active:not(.ivu-menu-submenu)
-  color white
-.ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu .ivu-menu-item-active, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu .ivu-menu-item-active:hover
-  background #00A4BD!important
-.ivu-menu-dark.ivu-menu-vertical .ivu-menu-opened
-  background none
 
-.ivu-menu-dark.ivu-menu-vertical .ivu-menu-item, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title
-  color rgba(255,255,255,1)
-  font-family:PingFangSC-Regular;
-  font-weight:400;
 .ivu-modal-footer
   border-top none
   text-align center

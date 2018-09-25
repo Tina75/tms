@@ -10,14 +10,13 @@
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
-        <Input  v-model="keyword" :maxlength="20" placeholder="请输入" search style="width: 200px"  @on-search="searchList" />
+        <Input  v-model="keyword" :maxlength="20" :placeholder="selectStatus === 1 ? '请输入外转方名称' : '请输入负责人名称'" search style="width: 200px"  @on-search="searchList" />
       </div>
     </div>
     <div>
       <template>
         <Table :columns="columns1" :data="data1"></Table>
       </template>
-      <!--<page-table :data="data1" :columns="columns1" :total="100" :current.sync="2"></page-table>-->
     </div>
     <div class="footer">
       <template>
@@ -25,7 +24,8 @@
               :current.sync="pageNo" :page-size-opts="pageArray"
               size="small"
               show-sizer
-              show-elevator show-total @on-change="handleChangePage"/>
+              show-elevator show-total @on-change="handleChangePage"
+              @on-page-size-change="handleChangePageSize"/>
       </template>
     </div>
   </div>
@@ -37,6 +37,9 @@ import BasePage from '@/basic/BasePage'
 export default {
   name: 'transfer',
   mixins: [ BasePage ],
+  metaInfo: {
+    title: '外转方列表'
+  },
   data () {
     return {
       selectStatus: 1,
@@ -59,8 +62,6 @@ export default {
         {
           title: '操作',
           key: 'id',
-          // width: 150,
-          // align: 'left',
           render: (h, params) => {
             return h('div', [
               h('span', {
@@ -154,13 +155,23 @@ export default {
         {
           title: '创建时间',
           key: 'createTime',
-          sortable: true
+          sortable: true,
+          render: (h, params) => {
+            let text = this.formatDate(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
         }
       ],
       data1: []
     }
   },
+  mounted () {
+    this.searchList()
+  },
   methods: {
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
     searchList () {
       let data = {
         pageNo: this.pageNo,
@@ -191,6 +202,10 @@ export default {
     handleChangePage (pageNo) {
       // 重新组装数据，生成查询参数
       this.pageNo = pageNo
+      this.searchList()
+    },
+    handleChangePageSize (pageSize) {
+      this.pageSize = pageSize
       this.searchList()
     }
   }

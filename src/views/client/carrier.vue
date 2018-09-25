@@ -10,7 +10,7 @@
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
-        <Input v-model="keyword" :maxlength="15" placeholder="请输入" search style="width: 200px"  @on-search="searchList" />
+        <Input v-model="keyword" :maxlength="15" :placeholder="selectStatus === 1 ? '请输入承运商名称' : '请输入承运商联系人名称'"  search style="width: 200px"  @on-search="searchList" />
       </div>
     </div>
     <div>
@@ -24,7 +24,8 @@
               :current.sync="pageNo" :page-size-opts="pageArray"
               size="small"
               show-sizer
-              show-elevator show-total @on-change="handleChangePage"/>
+              show-elevator show-total @on-change="handleChangePage"
+              @on-page-size-change="handleChangePageSize"/>
       </template>
     </div>
   </div>
@@ -35,6 +36,9 @@ import { carrierList, carrierDelete, CODE, carrierDetailsForDriver, carrierDetai
 import BasePage from '@/basic/BasePage'
 export default {
   name: 'carrier',
+  metaInfo: {
+    title: '智加云承运商列表'
+  },
   mixins: [ BasePage ],
   data () {
     return {
@@ -58,8 +62,6 @@ export default {
         {
           title: '操作',
           key: 'id',
-          // width: 150,
-          // align: 'left',
           render: (h, params) => {
             return h('div', [
               h('span', {
@@ -72,7 +74,6 @@ export default {
                   click: () => {
                     let _this = this
                     if (params.row.carrierType === 1) {
-                      // debugger
                       this._carrierDetailsForDriver(params.row.carrierId, () => {
                         _this.openDialog({
                           name: 'client/dialog/carrier',
@@ -86,14 +87,14 @@ export default {
                               },
                               driver: { // 1 个体司机
                                 driverName: _this.driver.driverName,
-                                driverPhone: _this.driver.driverName,
+                                driverPhone: _this.driver.driverPhone,
                                 carNO: _this.driver.carNO,
-                                carType: _this.driver.carType,
-                                carLength: _this.driver.carLength,
-                                shippingWeight: _this.driver.shippingWeight,
-                                shippingVolume: _this.driver.shippingVolume,
+                                carType: _this.driver.carType + '',
+                                carLength: _this.driver.carLength + '',
+                                shippingWeight: _this.driver.shippingWeight + '',
+                                shippingVolume: _this.driver.shippingVolume + '',
                                 remark: _this.driver.remark,
-                                payType: _this.driver.payType
+                                payType: _this.driver.payType + ''
                               }
                             }
                           },
@@ -106,6 +107,7 @@ export default {
                       })
                     } else {
                       this._carrierDetailsForCompany(params.row.carrierId, () => {
+                        console.log(_this.company)
                         _this.openDialog({
                           name: 'client/dialog/carrier',
                           data: {
@@ -120,7 +122,7 @@ export default {
                                 carrierName: _this.company.carrierName,
                                 carrierPrincipal: _this.company.carrierPrincipal,
                                 carrierPhone: _this.company.carrierPhone,
-                                payType: _this.company.payType,
+                                payType: _this.company.payType + '',
                                 remark: _this.company.remark
                               }
                             }
@@ -171,7 +173,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.$router.push({ path: '/client/carrier-info', query: { id: params.row.carrierId, carrierType: params.row.carrierType }
+                    this.openTab({ path: '/client/carrier-info', query: { id: params.row.carrierId, carrierType: params.row.carrierType }
                     })
                   }
                 }
@@ -235,8 +237,12 @@ export default {
         },
         {
           title: '创建时间',
-          key: 'createTimeLong',
-          sortable: true
+          key: 'createTime',
+          sortable: true,
+          render: (h, params) => {
+            let text = this.formatDate(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
         }
       ],
       data1: [],
@@ -260,7 +266,13 @@ export default {
       }
     }
   },
+  mounted () {
+    this.searchList()
+  },
   methods: {
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
     searchList () {
       let data = {
         pageNo: this.pageNo,
@@ -296,6 +308,10 @@ export default {
     handleChangePage (pageNo) {
       // 重新组装数据，生成查询参数
       this.pageNo = pageNo
+      this.searchList()
+    },
+    handleChangePageSize (pageSize) {
+      this.pageSize = pageSize
       this.searchList()
     },
     _carrierDetailsForCompany (carrierId, fn) {

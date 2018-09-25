@@ -50,7 +50,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import server from '@/libs/js/server'
 import SliderIcon from './SliderIcon.vue'
 import _ from 'lodash'
@@ -74,6 +73,9 @@ import _ from 'lodash'
    * 6.onColumnChange 函数，当显示隐藏排序排序发生变化时候回调，参数返回新的extraColumns
   */
 export default {
+  components: {
+    SliderIcon
+  },
   props: {
     // 请求的地址
     url: String,
@@ -217,7 +219,7 @@ export default {
           title: 'icon',
           width: 48,
           renderHeader (h, params) {
-            return h('SliderIcon', {
+            return h(SliderIcon, {
               props: {
                 list: vm.extraColumns
               },
@@ -259,7 +261,6 @@ export default {
     }
   },
   created () {
-    Vue.component('SliderIcon', SliderIcon)
     this.isRemote = !!this.url
     this.showSlotFooter = this.$slots.footer !== undefined
     this.showSlotHeader = this.$slots.header !== undefined
@@ -308,16 +309,18 @@ export default {
       })
         .then((response) => {
           vm.loading = false
-          // const { list, ...pagination } = response.data
-          vm.dataSource = response.data.data[vm.listField]
+          const { data } = response.data
+          vm.dataSource = data[vm.listField]
           if (this.showPagination) {
-            vm.pagination.totalCount = response.data.pageTotals
+            vm.pagination.pageSize = data.pageSize
+            vm.pagination.totalCount = data.totalCount || data.pageTotals
           }
           vm.$emit('on-load', response)
         })
         .catch((errorInfo) => {
           vm.loading = false
-          vm.$Message.error(errorInfo.msg)
+          // vm.$Message.error(errorInfo.msg)
+          vm.$emit('on-load', errorInfo)
         })
     },
     /**

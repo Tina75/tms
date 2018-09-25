@@ -33,8 +33,10 @@
           </FormItem>
 
           <FormItem prop="password">
-            <Input v-model="form.password" :maxlength="16" type="password" placeholder="密码"
-                   @on-blur="inputBlurWithPw" />
+            <Tooltip content="密码只支持6-16位的数字、大小写字母" style="width: 100%;" placement="top">
+              <Input v-model="form.password" :maxlength="16" type="password" placeholder="密码"
+                     @on-blur="inputBlurWithPw" />
+            </Tooltip>
           </FormItem>
 
           <FormItem prop="confirmPassword">
@@ -93,7 +95,7 @@ export default {
       }).then(res => {
         this.$Message.success('密码设置成功')
         setTimeout(() => {
-          this.$router.push('/')
+          this.changeMode('signin')
         }, 2000)
       }).catch(err => console.error(err))
     }

@@ -7,14 +7,14 @@
       </p>
       <div>
         <div class="order-number">
-          订单号：{{ childOrderCargoList.length ? id + '-1' : id }}
+          订单号：{{ childOrderCargoList.length ? orderNo + '-1' : orderNo }}
         </div>
         <Table :columns="columns1" :data="parentOrderCargoList"></Table>
       </div>
       <div v-if="childOrderCargoList.length">
         <div style="border-top: 1px dashed rgba(203,206,211,1);margin: 32px 0 20px;"></div>
         <div class="order-number">
-          订单号：{{ id + '-2' }}
+          订单号：{{ orderNo + '-2' }}
         </div>
         <Table :columns="columns2" :data="childOrderCargoList"></Table>
       </div>
@@ -30,7 +30,7 @@
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 export default {
-  name: 'editUser',
+  name: 'separate',
   mixins: [BaseDialog],
   data () {
     return {
@@ -56,6 +56,11 @@ export default {
                     click: () => {
                       this.isSeparate = false
                       console.log(this.quantityVal)
+                      if (this.quantityVal === null || this.weightVal === null || this.volumeVal === null) {
+                        this.$Message.warning('数量、重量、体积不可为空')
+                        this.isSeparate = true
+                        return
+                      }
                       if (!this.quantityVal && this.quantityVal !== null) {
                         // 部分整拆
                         this.separateWholeList(params.index)
@@ -322,12 +327,32 @@ export default {
   },
 
   mounted: function () {
-    console.log(this.id)
     this.getData()
   },
 
   methods: {
     save () {
+      if (this.isSeparate) {
+        this.$Message.warning('您还有未确认的拆单，请先确认')
+        return
+      }
+      if (this.parentOrderCargoList.length > 0 && this.childOrderCargoList.length > 0) {
+        const data = {
+          id: this.id,
+          orderCargoList: [[...this.parentOrderCargoList], [...this.childOrderCargoList]]
+        }
+        Server({
+          url: 'order/disassemble',
+          method: 'post',
+          data: data
+        }).then((res) => {
+          this.ok()
+          this.$Message.success('拆单成功')
+          this.visibale = false
+        })
+      } else {
+        this.$Message.warning('父单和子单必须至少有一条')
+      }
     },
     getData () {
       Server({

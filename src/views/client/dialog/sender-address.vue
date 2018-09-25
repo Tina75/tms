@@ -1,16 +1,16 @@
-<!--发货方详情地址新增编辑-->
 <template>
   <div>
     <Modal
       v-model="modal"
       :mask-closable="true"
       label-position="left"
+      class="modal"
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122">
         <FormItem label="发货地址:" prop="address">
-          <Input v-model="validate.address" :maxlength="20" placeholder="请输入"/>
+          <Input v-model="validate.address" :maxlength="60" placeholder="请输入"/>
         </FormItem>
       </Form>
       <div slot="footer">
@@ -87,5 +87,5 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-
+  @import "../client.styl"
 </style>

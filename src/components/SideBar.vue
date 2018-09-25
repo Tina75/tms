@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <Menu v-show="!collapsed" ref="menu"  :active-name="$route.path === '/'?'/home/index':$route.path" :open-names="openedNames"  accordion width="200" theme="dark" @on-select="handleSelect">
-      <p class="title"><i class="icon font_family icon-logo-zjy" ></i></p>
+  <div class="sider">
+    <Menu v-show="!collapsed" ref="menu"  :active-name="$route.path === '/'?'/home':$route.path" :open-names="openedNames"  accordion width="200" theme="dark" @on-select="handleSelect">
+      <div class="title"><i class="icon font_family icon-logo-zjy" ></i></div>
       <template v-for="item in menuList">
         <template v-if="item.children">
           <Submenu v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path">
@@ -10,7 +10,7 @@
           </Submenu>
         </template>
         <template v-else>
-          <menu-item v-if="hasPower(item.powerCode)" :name="item.path"  :key="item.path"><FontIcon :type="item.icon" :size="16"></FontIcon>{{item.name}}</menu-item>
+          <menu-item v-if="hasPower(item.powerCode)" :name="item.path"  :key="item.path"><FontIcon :type="item.icon" :size="18"></FontIcon>{{item.name}}</menu-item>
         </template>
       </template>
     </Menu>
@@ -38,7 +38,7 @@
 <script>
 import FontIcon from '@/components/FontIcon'
 export default {
-  components: {FontIcon},
+  components: { FontIcon },
   props: {
     collapsed: Boolean,
     activeName: String,
@@ -121,10 +121,10 @@ export default {
     padding 6px 15px
     display inline-block
 .icon-logo-zjy
-  font-size 21px
+  font-size 24px
 .icon-logo-1
   font-size 32px
 .icon
   display inline-block
-  vertical-align middle
+  // vertical-align middle
 </style>

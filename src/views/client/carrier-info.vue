@@ -1,55 +1,54 @@
 <template>
-  <div v-if="carrierType == 1" class="info-detail">
+  <div v-if="carrierType === 1" class="info-detail">
     <div class="info">
       <div class="title">承运商信息</div>
       <div class="list-info">
         <Row class="row">
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">类型：</span>
             个体司机
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">司机姓名：</span>
             {{driverList.driverName}}
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">联系电话：</span>
             {{driverList.driverPhone}}
           </div>
           </Col>
-          <Col span="6">
+        </Row>
+        <Row class="row">
+          <Col span="8">
           <div>
             <span class="label">车牌号：</span>
             {{driverList.carNO}}
           </div>
           </Col>
-        </Row>
-        <Row class="row">
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">车型：</span>
-            <span v-if="driverList.carType === 1">平板</span>
-            <span v-else-if="driverList.carType === 2">高栏</span>
-            <span v-else-if="driverList.carType === 3">厢车</span>
-            <span v-else-if="driverList.carType === 4">自卸</span>
-            <span v-else-if="driverList.carType === 5">冷藏</span>
-            <span v-else-if="driverList.carType === 6">保温</span>
-            <span v-else-if="driverList.carType === 7">高低板</span>
-            <span v-else-if="driverList.carType === 8">面包车</span>
-            <span v-else-if="driverList.carType === 9">爬梯车</span>
-            <span v-else-if="driverList.carType === 10">飞翼车</span>
+            <span v-if="driverList.carType === 1">平板{{driverList.carLength}}米</span>
+            <span v-else-if="driverList.carType === 2">高栏{{driverList.carLength}}米</span>
+            <span v-else-if="driverList.carType === 3">厢车{{driverList.carLength}}米</span>
+            <span v-else-if="driverList.carType === 4">自卸{{driverList.carLength}}米</span>
+            <span v-else-if="driverList.carType === 5">冷藏{{driverList.carLength}}米</span>
+            <span v-else-if="driverList.carType === 6">保温{{driverList.carLength}}米</span>
+            <span v-else-if="driverList.carType === 7">高低板{{driverList.carLength}}米</span>
+            <span v-else-if="driverList.carType === 8">面包车{{driverList.carLength}}米</span>
+            <span v-else-if="driverList.carType === 9">爬梯车{{driverList.carLength}}米</span>
+            <span v-else-if="driverList.carType === 10">飞翼车{{driverList.carLength}}米</span>
             <span v-else></span>
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">付款方式：</span>
-            {{driverList.payType}}
             <span v-if="driverList.payType===1">现付</span>
             <span v-else-if="driverList.payType===2">到付</span>
             <span v-else-if="driverList.payType===3">回单付</span>
@@ -61,7 +60,9 @@
             <span v-else></span>
           </div>
           </Col>
-          <Col span="6">
+        </Row>
+        <Row class="row">
+          <Col span="24">
           <div>
             <span class="label">备注：</span>
             {{driverList.remark}}
@@ -76,25 +77,33 @@
       <div class="title">承运商信息</div>
       <div class="list-info">
         <Row class="row">
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">承运商名称：</span>
             {{companyList.carrierName}}
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">类型：</span>
             运输公司
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">负责人：</span>
             {{companyList.carrierPrincipal}}
           </div>
           </Col>
-          <Col span="6">
+        </Row>
+        <Row  class="row">
+          <Col span="8">
+          <div>
+            <span class="label">联系电话：</span>
+            {{companyList.carrierPhone}}
+          </div>
+          </Col>
+          <Col span="8">
           <div>
             <span class="label">结算方式：</span>
             <span v-if="companyList.payType === 1">现付</span>
@@ -106,7 +115,7 @@
           </Col>
         </Row>
         <Row class="row">
-          <Col span="6">
+          <Col span="24">
           <div>
             <span class="label">备注：</span>
             {{companyList.remark}}
@@ -119,7 +128,7 @@
       <Tabs :animated="false">
         <TabPane label="司机">
           <div class="add">
-            <Button type="primary" @click="_consignerAddressAdd">新增</Button>
+            <Button type="primary" @click="_carrierAddDriver">新增</Button>
           </div>
           <template>
             <Table :columns="columns1" :data="data1"></Table>
@@ -130,13 +139,14 @@
                     :current.sync="pageNo1" :page-size-opts="pageArray1"
                     size="small"
                     show-sizer
-                    show-elevator show-total @on-change="handleChangePage1"/>
+                    show-elevator show-total @on-change="handleChangePage1"
+                    @on-page-size-change="handleChangePageSize1"/>
             </template>
           </div>
         </TabPane>
-        <TabPane label="车辆">
+        <TabPane label="车辆" >
           <div class="add">
-            <Button type="primary" @click="_consignerConsigneeAdd">新增</Button>
+            <Button type="primary" @click="_carrierAddVehicle">新增</Button>
           </div>
           <template>
             <Table :columns="columns2" :data="data2"></Table>
@@ -147,7 +157,8 @@
                     :current.sync="pageNo2" :page-size-opts="pageArray2"
                     size="small"
                     show-sizer
-                    show-elevator show-total @on-change="handleChangePage2"/>
+                    show-elevator show-total @on-change="handleChangePage2"
+                    @on-page-size-change="handleChangePageSize2"/>
             </template>
           </div>
         </TabPane>
@@ -162,9 +173,12 @@ import { CODE, carrierDetailsForDriver, carrierDetailsForCompany, carrierListDri
 export default {
   name: 'carrier-info',
   mixins: [ BasePage ],
+  metaInfo: {
+    title: '承运商详情'
+  },
   data () {
     return {
-      id: this.$route.query.id, // carrierId
+      carrierId: this.$route.query.id, // carrierId 承运商id
       carrierType: this.$route.query.carrierType,
       driverList: {
         driverName: '',
@@ -204,7 +218,7 @@ export default {
                       data: {
                         title: '修改司机',
                         flag: 2, // 修改
-                        id: params.row.driverId,
+                        driverId: params.row.driverId,
                         validate: {
                           driverType: params.row.driverType + '',
                           driverName: params.row.driverName,
@@ -233,6 +247,7 @@ export default {
                       if (res.data.code === CODE) {
                         this.$Message.success(res.data.msg)
                         this._carrierListDriver() // 刷新页面
+                        this._carrierListCar() // 车辆列表也要刷新
                       } else {
                         this.$Message.error(res.data.msg)
                       }
@@ -298,6 +313,7 @@ export default {
             } else {
               text = ''
             }
+            text = text ? params.row.carLength + '米' + text : ''
             return h('div', {}, text)
           }
         }
@@ -317,22 +333,29 @@ export default {
                 on: {
                   click: () => {
                     var _this = this
+                    console.log(params.row)
                     this.openDialog({
                       name: 'client/dialog/carrier-vehicle',
                       data: {
                         title: '修改车辆',
                         flag: 2, // 修改
                         id: params.row.driverId,
-                        carrierId: _this.id,
+                        carrierId: _this.carrierId,
+                        driverId: params.row.driverId,
+                        driverName: params.row.driverName,
+                        carId: params.row.carId,
                         validate: {
-                          contact: params.row.contact,
-                          phone: params.row.phone,
-                          address: params.row.address
+                          carNO: params.row.carNO,
+                          carType: params.row.carType + '',
+                          shippingWeight: params.row.shippingWeight + '',
+                          carLength: params.row.carLength + '',
+                          shippingVolume: params.row.shippingVolume + ''
                         }
                       },
                       methods: {
                         ok () {
-                          _this._consignerConsigneeList() // 刷新页面
+                          _this._carrierListCar() // 刷新页面
+                          _this._carrierListDriver() // 车辆列表也要刷新
                         }
                       }
                     })
@@ -394,6 +417,7 @@ export default {
             } else {
               text = ''
             }
+            text = text ? params.row.carLength + '米' + text : ''
             return h('div', {}, text)
           }
         },
@@ -423,9 +447,9 @@ export default {
     }
   },
   mounted () {
-    if (this.carrierType === 1) {
+    if (this.carrierType === 1) { // 类型为个体司机
       this._carrierDetailsForDriver()
-    } else {
+    } else { // 类型为运输公司
       this._carrierDetailsForCompany()
       this._carrierListDriver()
       this._carrierListCar()
@@ -434,7 +458,7 @@ export default {
   methods: {
     _carrierDetailsForDriver () {
       let data = {
-        carrierId: this.id
+        carrierId: this.carrierId
       }
       carrierDetailsForDriver(data).then(res => {
         if (res.data.code === CODE) {
@@ -454,7 +478,7 @@ export default {
     },
     _carrierDetailsForCompany () {
       let data = {
-        carrierId: this.id
+        carrierId: this.carrierId
       }
       carrierDetailsForCompany(data).then(res => {
         if (res.data.code === CODE) {
@@ -472,7 +496,7 @@ export default {
     // 司机列表，新增，删除，修改
     _carrierListDriver () {
       let data = {
-        carrierId: this.id,
+        carrierId: this.carrierId,
         pageNo: this.pageNo1,
         pageSize: this.pageSize1
       }
@@ -483,14 +507,14 @@ export default {
         }
       })
     },
-    _consignerAddressAdd () {
+    _carrierAddDriver () {
       var _this = this
       this.openDialog({
         name: 'client/dialog/carrier-driver',
         data: {
           title: '新增司机',
           flag: 1, // 新增
-          id: this.id // carrierId
+          carrierId: this.carrierId // carrierId
         },
         methods: {
           ok () {
@@ -504,10 +528,14 @@ export default {
       this.pageNo1 = pageNo
       this._carrierListDriver()
     },
+    handleChangePageSize1 (pageSize) {
+      this.pageSize1 = pageSize
+      this._carrierListDriver()
+    },
     // 车辆列表，新增，删除，修改
     _carrierListCar () {
       let data = {
-        carrierId: this.id,
+        carrierId: this.carrierId,
         pageNo: this.pageNo2,
         pageSize: this.pageSize2
       }
@@ -518,18 +546,21 @@ export default {
         }
       })
     },
-    _consignerConsigneeAdd () {
+    _carrierAddVehicle () {
       var _this = this
+      console.log(_this.carrierId)
       this.openDialog({
-        name: 'client/dialog/sender-consignee',
+        name: 'client/dialog/carrier-vehicle',
         data: {
-          title: '新增收货方',
+          title: '新增车辆',
           flag: 1, // 新增
-          carrierId: this.id
+          driverId: _this.driverId,
+          carrierId: _this.carrierId
         },
         methods: {
           ok () {
             _this._carrierListCar() // 刷新页面
+            _this._carrierListDriver() // 司机列表也要刷新
           }
         }
       })
@@ -538,13 +569,17 @@ export default {
       // 重新组装数据，生成查询参数
       this.pageNo2 = pageNo
       this._carrierListCar()
+    },
+    handleChangePageSize2 (pageSize) {
+      this.pageSize2 = pageSize
+      this._carrierListCar()
     }
   }
 }
 </script>
 
 <style scoped lang="stylus">
-  @import "../../libs/css/client.styl"
+  @import "client.styl"
   .footer
     margin-top 22px
     display flex
