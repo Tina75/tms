@@ -128,6 +128,7 @@
       </div>
     </div>
     <Page
+      v-if="batchBtnShowAll"
       :total="totalCount"
       :current="searchData.pageNo"
       :page-size="searchData.pageSize"
