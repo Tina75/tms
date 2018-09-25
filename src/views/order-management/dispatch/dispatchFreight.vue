@@ -64,10 +64,9 @@ export default {
                 }
               },
               props: {
+                tableLoading: this.rightTableExpandLoading,
                 tableHeader: this.expandTableTypeTwo,
-                tableDataFunc: () => {
-                  return p.row.waybillOrderList
-                }
+                tableData: this.rightTableExpandData
               }
             })
           }
@@ -153,9 +152,25 @@ export default {
         console.error(err)
       })
     },
-    // 查询左侧表格展开数据
+    // 查询表格展开数据
     fetchLeftExpandData () {
       this.fetchLeftTableExpandData('20')
+    },
+    fetchRightExpandData () {
+      this.rightTableExpandLoading = true
+      Server({
+        url: '/dispatch/waybill/order/list',
+        method: 'get',
+        data: {
+          waybillId: this.rightExpandRow.waybillId
+        }
+      }).then(res => {
+        this.rightTableExpandData = res.data.data.waybillOrderList
+        this.rightTableExpandLoading = false
+      }).catch(err => {
+        this.rightTableExpandLoading = false
+        console.error(err)
+      })
     },
     // 将左侧选中订单添加到右侧选中运单
     moveOrders2Freight () {

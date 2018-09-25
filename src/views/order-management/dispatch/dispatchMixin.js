@@ -150,11 +150,13 @@ export default {
       leftTableExpandData: [], // 左侧展开数据
       leftTableExpandLoading: false, // 左侧展开数据加载状态
       leftTableLoading: false, // 左侧表格加载
+
       rightExpandRow: null, // 右侧展开列
       rightSelectRow: null, // 右侧选中列
       rightSelection: [], // 右侧选中数据
+      rightTableLoading: false, // 右侧表格加载
       rightTableExpandData: [], // 右侧展开数据
-      rightTableLoading: false // 右侧表格加载
+      rightTableExpandLoading: false // 右侧展开数据加载状态
     }
   },
 
@@ -199,6 +201,7 @@ export default {
         return
       }
       this.keepExpandOnly(row, 'right')
+      this.fetchRightExpandData()
     },
 
     // 右侧表格列选中
