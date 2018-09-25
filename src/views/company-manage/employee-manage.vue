@@ -33,7 +33,7 @@
     <Col span="18">
     <p class="rightTitle">{{rightTitle}}的权限
       <Button
-        v-if="rightTitle !== '超级管理员'"
+        v-if="menuParam.type !== 1"
         :disabled="disSaveBtn"
         class="saveRoleBtn"
         type="primary"

@@ -17,7 +17,7 @@
           <Button style="margin-right:20px;" @click="removeInfoAll(searchData.type)">全部删除</Button>
           <Button @click="removeInfoSome">批量删除</Button>
         </span>
-        <span v-if="!batchBtnShow" key="2" style="float:right; margin-top:-10px;">
+        <span v-if="!batchBtnShow" key="2" style="float:right; margin-top:-35px;">
           <Button style="margin-right:20px;" @click="removeCancelBtn">取消</Button>
           <Button :disabled="removeSubBtnDis" type="primary" @click="removeSubBtn">确定</Button>
         </span>
@@ -52,7 +52,7 @@
             </div>
             <div class="msgConfigDiv">
               <p>{{ formatDate(msg.createTime) }}</p>
-              <span class="msgConfigBtn" @click="msgRemoveBtn(msg.id)">
+              <span class="msgConfigBtn" @click="msgRemoveBtn(msg)">
                 <i class="icon font_family icon-shanchu1"></i>
               </span>
             </div>
@@ -68,6 +68,7 @@
             v-if="!batchBtnShow"
             :indeterminate="indeterminate"
             :value="checkAll"
+            style="margin-left: 15px;"
             @click.native="handleCheckAll">
             全选</Checkbox>
           <div v-if="this.orderMessageList.length === 0" class="noneImg">
@@ -87,7 +88,7 @@
             </div>
             <div class="msgConfigDiv">
               <p>{{ formatDate(msg.createTime) }}</p>
-              <span class="msgConfigBtn" @click="msgRemoveBtn(msg.id)"><i class="icon font_family icon-shanchu1"></i></span>
+              <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
             </div>
           </div>
         </div>
@@ -101,6 +102,7 @@
             v-if="!batchBtnShow"
             :indeterminate="indeterminate"
             :value="checkAll"
+            style="margin-left: 15px;"
             @click.native="handleCheckAll">
             全选</Checkbox>
           <div v-if="this.transportMessageList.length === 0" class="noneImg">
@@ -120,12 +122,45 @@
             </div>
             <div class="msgConfigDiv">
               <p>{{ formatDate(msg.createTime) }}</p>
-              <span class="msgConfigBtn" @click="msgRemoveBtn(msg.id)"><i class="icon font_family icon-shanchu1"></i></span>
+              <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
             </div>
           </div>
         </div>
         </Col>
       </div>
+      <Modal v-model="visibaleRemove" type="warning" width="360">
+        <p slot="header" style="text-align:center">
+          <span>提示</span>
+        </p>
+        <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white; color: #FFBB44;float:left;"></i>
+        <p style="margin-top:13px; margin-left:40px;">确定要删除“{{messageInit.title}}”消息吗?</P>
+        <div slot="footer">
+          <Button type="primary" @click="removeSubForm">确定</Button>
+          <Button  @click="removeCancelForm">取消</Button>
+        </div>
+      </Modal>
+      <Modal v-model="visibaleRemoveSome" type="warning" width="360">
+        <p slot="header" style="text-align:center">
+          <span>提示</span>
+        </p>
+        <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white; color: #FFBB44;float:left;"></i>
+        <p style="margin-top:13px; margin-left:40px;">确定要批量删除选中的消息吗?</P>
+        <div slot="footer">
+          <Button type="primary" @click="removeSubFormSome">确定</Button>
+          <Button  @click="removeCancelFormSome">取消</Button>
+        </div>
+      </Modal>
+      <Modal v-model="visibaleRemoveAll" type="warning" width="360">
+        <p slot="header" style="text-align:center">
+          <span>提示</span>
+        </p>
+        <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white; color: #FFBB44;float:left;"></i>
+        <p style="margin-top:13px; margin-left:40px;">确定要删除全部消息吗?</P>
+        <div slot="footer">
+          <Button type="primary" @click="removeSubFormAll">确定</Button>
+          <Button  @click="removeCancelFormAll">取消</Button>
+        </div>
+      </Modal>
     </div>
     <Page
       v-if="batchBtnShowAll"
@@ -158,6 +193,12 @@ export default {
       rightTitle: '',
       type: '0',
       typeName: '',
+      messageInit: {},
+      messageType: '',
+      messageCheckGroupInit: [],
+      visibaleRemove: false,
+      visibaleRemoveAll: false,
+      visibaleRemoveSome: false,
       batchBtnShowAll: false,
       batchBtnShow: true,
       indeterminate: false,
@@ -284,6 +325,9 @@ export default {
       }).then(({ data }) => {
         if (data.code === 10000) {
           this.$Message.success('删除成功!')
+          this.visibaleRemove = false
+          this.visibaleRemoveSome = false
+          this.visibaleRemoveAll = false
           this.getMenuList(this.searchData)
           this.getMenuInfoNum()
         } else {
@@ -291,8 +335,28 @@ export default {
         }
       })
     },
-    msgRemoveBtn (id) {
-      this.removeInfo([id])
+    removeSubFormSome () {
+      this.batchBtnShow = !this.batchBtnShow
+      this.removeInfo(this.messageCheckGroupInit)
+    },
+    removeCancelFormSome () {
+      this.visibaleRemoveSome = false
+    },
+    removeSubFormAll () {
+      this.removeInfo(null, Number(this.messageType))
+    },
+    removeCancelFormAll () {
+      this.visibaleRemoveAll = false
+    },
+    removeSubForm () {
+      this.removeInfo([this.messageInit.id])
+    },
+    removeCancelForm () {
+      this.visibaleRemove = false
+    },
+    msgRemoveBtn (msg) {
+      this.messageInit = Object.assign({}, msg)
+      this.visibaleRemove = true
     },
     clickContenInfo (msg) {
       switch (msg.type) {
@@ -339,7 +403,8 @@ export default {
       }
     },
     removeInfoAll (type) {
-      this.removeInfo(null, type)
+      this.messageType = type
+      this.visibaleRemoveAll = true
     },
     removeInfoSome () {
       this.batchBtnShow = !this.batchBtnShow
@@ -348,8 +413,8 @@ export default {
       this.batchBtnShow = !this.batchBtnShow
     },
     removeSubBtn () {
-      this.removeInfo(this.checkAllGroup)
-      this.batchBtnShow = !this.batchBtnShow
+      this.visibaleRemoveSome = true
+      this.messageCheckGroupInit = Object.assign([], this.checkAllGroup)
     },
     checkBoxGroupInit () {
       // 复选框gourp Init
