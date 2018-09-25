@@ -51,7 +51,7 @@
               <pre class="msgContentText">{{msg.content}}</pre>
             </div>
             <div class="msgConfigDiv">
-              <p>{{msg.createTime}}</p>
+              <p>{{ formatDate(msg.createTime) }}</p>
               <span class="msgConfigBtn" @click="msgRemoveBtn(msg.id)">
                 <i class="icon font_family icon-shanchu1"></i>
               </span>
@@ -86,7 +86,7 @@
               <pre class="msgContentText">{{msg.content}}</pre>
             </div>
             <div class="msgConfigDiv">
-              <p>{{msg.createTime}}</p>
+              <p>{{ formatDate(msg.createTime) }}</p>
               <span class="msgConfigBtn" @click="msgRemoveBtn(msg.id)"><i class="icon font_family icon-shanchu1"></i></span>
             </div>
           </div>
@@ -119,7 +119,7 @@
               <pre class="msgContentText">{{msg.content}}</pre>
             </div>
             <div class="msgConfigDiv">
-              <p>{{msg.createTime}}</p>
+              <p>{{ formatDate(msg.createTime) }}</p>
               <span class="msgConfigBtn" @click="msgRemoveBtn(msg.id)"><i class="icon font_family icon-shanchu1"></i></span>
             </div>
           </div>
@@ -157,7 +157,7 @@ export default {
       rightTitle: '',
       type: '0',
       typeName: '',
-      batchBtnShowAll: true,
+      batchBtnShowAll: false,
       batchBtnShow: true,
       indeterminate: false,
       removeSubBtnDis: true,
@@ -224,6 +224,9 @@ export default {
     this.getMenuInfoNum()
   },
   methods: {
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
     getMenuInfoNum () {
       Server({
         url: 'message/num',
@@ -305,31 +308,31 @@ export default {
         case 4:
           this.openTab({
             path: '/order-management/order',
-            query: { type: '' }
+            query: {}
           })
           break
         case 5:
           this.openTab({
             path: '/order-management/receipt',
-            query: { type: '' }
+            query: {}
           })
           break
         case 6:
           this.openTab({
             path: '/transport/waybill',
-            query: { type: '' }
+            query: {}
           })
           break
         case 7:
           this.openTab({
             path: '/transport/receiveOrder',
-            query: { type: '' }
+            query: {}
           })
           break
         case 8:
           this.openTab({
             path: '/transport/outerOrder',
-            query: { type: '' }
+            query: {}
           })
           break
       }

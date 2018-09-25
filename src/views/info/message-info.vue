@@ -1,7 +1,7 @@
 <template>
   <div class="messageDivAll">
     <h1 style="text-align:left;">{{messageInfo.title}}</h1>
-    <p>{{ this.formatDate(messageInfo.createTime) }}
+    <p>{{ formatDate(messageInfo.createTime) }}
       <Button class="msgRemoveBtn" @click="removeBtn">
         <span class="msgConfigBtn" @click="msgRemoveBtn(msg)">
         <i class="icon font_family icon-shanchu1"></i></span><span style="margin:0 5px;">删除
