@@ -48,26 +48,14 @@ export default {
   },
 
   mounted () {
-    window.EMA.bind('logout', (msg = '请重新登录') => {
-      this.logout(msg)
-    })
-    window.EMA.bind('refresh', (route) => {
+    window.EMA.bind('logout', (msg = '请重新登录') => { this.logout(msg) })
+    window.EMA.bind('reloadTab', (route) => {
       if (!route.query) route.query = {}
       route.query._time = new Date().getTime()
       this.turnToPage(route)
     })
-    window.EMA.bind('updateUserInfo', () => {
-      this.getUserInfo()
-    })
-    window.EMA.bind('openTab', (route) => {
-      this.onMenuSelect(route)
-      // let tag = { ...route }
-      // if (route.query) {
-      //   tag.name = route.query.id ? route.query.id : route.name
-      //   this.setTabNavList(this.getNewTagList(this.TabNavList, tag))
-      //   this.turnToPage(tag)
-      // }
-    })
+    window.EMA.bind('updateUserInfo', () => { this.getUserInfo() })
+    window.EMA.bind('openTab', (route) => { this.onMenuSelect(route) })
     this.init()
   },
   methods: {
@@ -79,8 +67,6 @@ export default {
       this.toHome()
       this.getUserInfo()
       this.getMessageCount()
-      // 获取用户权限
-      // TODO: something
     },
 
     /**
