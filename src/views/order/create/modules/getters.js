@@ -18,6 +18,7 @@ export const consignees = ({ order }) => order.consignees
 export const consigneeContacts = (state, getters) => getters.consignees.map((user) => ({
   name: user.contact + ',' + user.phone,
   value: user.contact,
+  phone: user.phone,
   id: user.id
 }))
 // 收货方手机

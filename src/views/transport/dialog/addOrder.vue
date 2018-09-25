@@ -11,7 +11,7 @@
         :total="totalCount"
         :current="pageNo"
         :page-size="pageSize"
-        :page-size-opts="[1,10,20,50]"
+        :page-size-opts="[10,20,50]"
         size="small"
         show-sizer
         show-elevator

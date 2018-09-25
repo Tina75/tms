@@ -1,7 +1,7 @@
 <template>
   <div ref="$dispatch" class="dispatch">
     <div class="dispatch-part">
-      <div class="dispatch-part-title">可调度订单</div>
+      <div class="dispatch-part-title">可提货订单</div>
       <Table :columns="leftTableHeader" :data="leftTableData"
              :loading="leftTableLoading && !leftTableData.length"
              @on-expand="keepLeftExpandOnly"></Table>
@@ -12,24 +12,24 @@
         <br><br>
         <Button :disabled="!leftSelection.length || !rightSelectRow" type="primary"
                 icon="ios-arrow-forward"
-                @click="moveOrders2Freight">加入</Button>
+                @click="moveOrders2Pickup">加入</Button>
         <br><br>
         <Button :disabled="!rightSelection.length" type="primary"
                 icon="ios-arrow-back"
-                @click="removeOrdersFromFreight">移除</Button>
+                @click="removeOrdersFromPickup">移除</Button>
       </div>
 
     </div>
 
     <div class="dispatch-part">
       <div class="dispatch-part-title">
-        未发运订单
+        未提货提货单
 
-        <Button type="primary" style="float: right;" @click="createFreight">新建运单</Button>
+        <Button type="primary" style="float: right;" @click="createFreight">新建提货单</Button>
       </div>
       <div v-if="!rightTableData.length && !rightTableLoading" class="dispatch-empty">
         <img src="../../../assets/img-empty.png" class="dispatch-empty-img">
-        <p>暂无未发运运单，赶快创建新的运单吧～</p>
+        <p>暂无未提货提货单，赶快创建新的提货单吧～</p>
       </div>
       <Table v-else
              :columns="rightTableHeader" :data="rightTableData" :loading="rightTableLoading && !rightTableData.length"
@@ -64,39 +64,22 @@ export default {
                 }
               },
               props: {
-                tableHeader: this.expandTableTypeTwo,
-                tableDataFunc: () => {
-                  return p.row.waybillOrderList
-                }
+                tableLoading: this.rightTableExpandLoading,
+                tableHeader: this.expandTableTypeOne,
+                tableData: this.rightTableExpandData
               }
             })
           }
         },
         {
-          title: '运单号',
-          key: 'waybillNo',
+          title: '提货单号',
+          key: 'loadbillNo',
           render: (h, p) => {
             return h('span', {
               style: {
                 color: '#418DF9'
               }
-            }, p.row.waybillNo)
-          }
-        },
-        {
-          title: '始发地',
-          key: 'start',
-          ellipsis: true,
-          render: (h, p) => {
-            return h('span', this.cityFilter(p.row.start))
-          }
-        },
-        {
-          title: '目的地',
-          key: 'end',
-          ellipsis: true,
-          render: (h, p) => {
-            return h('span', this.cityFilter(p.row.end))
+            }, p.row.loadbillNo)
           }
         },
         {
@@ -120,9 +103,9 @@ export default {
   methods: {
     createFreight () {
       this.openDialog({
-        name: 'transport/dialog/createFreight',
+        name: 'transport/dialog/createPickup',
         data: {
-          title: '新增运单'
+          title: '新增提货单'
         },
         methods: {
           complete: () => {
@@ -133,17 +116,17 @@ export default {
     },
 
     fetchData () {
-      this.fetchLeftTableData('20')
+      this.fetchLeftTableData('10')
       this.fetchRightTableData()
     },
     // 查询右侧表格数据
     fetchRightTableData () {
       this.rightTableLoading = true
       Server({
-        url: '/dispatch/waybill/list',
+        url: '/dispatch/loadbill/list',
         method: 'get'
       }).then(res => {
-        this.rightTableData = this.dataFilter(res.data.data.waybillList, ['_expanded', '_highlight'], item => {
+        this.rightTableData = this.dataFilter(res.data.data.loadbillList, ['_expanded', '_highlight'], item => {
           if (JSON.stringify(item) === JSON.stringify(this.rightExpandRow)) item._expanded = true
           return item
         })
@@ -153,21 +136,37 @@ export default {
         console.error(err)
       })
     },
-    // 查询左侧表格展开数据
+    // 查询表格展开数据
     fetchLeftExpandData () {
-      this.fetchLeftTableExpandData('20')
+      this.fetchLeftTableExpandData('10')
+    },
+    fetchRightExpandData () {
+      this.rightTableExpandLoading = true
+      Server({
+        url: '/dispatch/loadbill/order/list',
+        method: 'get',
+        data: {
+          loadbillId: this.rightExpandRow.loadbillId
+        }
+      }).then(res => {
+        this.rightTableExpandData = res.data.data.loadbillOrderList
+        this.rightTableExpandLoading = false
+      }).catch(err => {
+        this.rightTableExpandLoading = false
+        console.error(err)
+      })
     },
     // 将左侧选中订单添加到右侧选中运单
-    moveOrders2Freight () {
-      this.leftMoveToRight('/dispatch/add/order/to/waybill', {
-        waybillId: this.rightSelectRow.row.waybillId,
+    moveOrders2Pickup () {
+      this.leftMoveToRight('/dispatch/add/order/to/loadbill', {
+        pickUpId: this.rightSelectRow.row.loadbillId,
         orderIds: this.leftSelection
       })
     },
-    // 从运单移除
-    removeOrdersFromFreight () {
-      this.rightMoveToLeft('/dispatch/move/cargo/from/waybill/list', {
-        waybillId: this.rightSelectRow.row.waybillId,
+    // 从提货单移除
+    removeOrdersFromPickup () {
+      this.rightMoveToLeft('/dispatch/move/cargo/from/loadbill/list', {
+        pickUpId: this.rightSelectRow.row.loadbillId,
         orderIds: this.rightSelection
       })
     }

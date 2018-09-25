@@ -32,11 +32,13 @@
         </FormItem>
         <FormItem label="外转运费" prop="transFee">
           <!-- <Input v-model="info.transFee" style="width:180px" placeholder="请输入"/> -->
-          <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" style="width:180px">
+          <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" style="width:175px">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
-          <!-- <i style="display: inline-block;width:32px;height: 32px; color:#00a4bd;" @click="showCounter"></i> -->
-          <Icon type="ios-calculator" size="26" color="#00a4bd" @click="showCounter"></Icon>
+          <!-- <Icon type="ios-calculator" size="26" color="#00a4bd" @click="showCounter"></Icon> -->
+          <span @click="showCounter">
+            <FontIcon type="jisuanqi" size="22" color="#00a4bd" class="i-ml-5" style="vertical-align: middle;"></FontIcon>
+          </span>
         </FormItem>
       </Form>
       <div slot="footer">
@@ -54,13 +56,15 @@ import SelectInput from '@/components/SelectInput.vue'
 import TagNumberInput from '@/views/order/create/TagNumberInput'
 import float from '@/libs/js/float'
 import settlements from '@/views/order/create/constant/settlement.js'
+import FontIcon from '@/components/FontIcon'
 import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'outer',
 
   components: {
     SelectInput,
-    TagNumberInput
+    TagNumberInput,
+    FontIcon
   },
 
   mixins: [BaseDialog],

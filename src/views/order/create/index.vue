@@ -60,7 +60,7 @@
       </Col>
       <Col span="6">
       <FormItem label="收货人:" prop="consigneeContact">
-        <SelectInput v-model="orderForm.consigneeContact" :maxlength="15" :local-options="consigneeContacts" :remote="false">
+        <SelectInput v-model="orderForm.consigneeContact" :maxlength="15" :local-options="consigneeContacts" :remote="false" @on-select="handleSelectConsignee">
         </SelectInput>
       </FormItem>
       </Col>
@@ -241,7 +241,7 @@ export default {
     const _this = this
     const validateArriveTime = (rule, value, callback) => {
       if (_this.orderForm.deliveryTime && value && value.valueOf() < _this.orderForm.deliveryTime.valueOf()) {
-        callback(new Error('到货时间需小于发货时间'))
+        callback(new Error('到货时间需晚于发货时间'))
       } else {
         callback()
       }
@@ -801,6 +801,12 @@ export default {
           _this.orderForm.settlementType = settlementType
         }
       })
+    },
+    /**
+     * 选中收货人，手机号一起设置
+     */
+    handleSelectConsignee (name, row) {
+      this.orderForm.consigneePhone = row.phone
     },
     // 显示计费规则
     showCounter () {

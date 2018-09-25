@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <div class="tab-header">
-    <Tabs v-model="name1" :animated="false" @on-click="handleChangeTab">
+    <Tabs v-model="name" :animated="false" @on-click="handleChangeTab">
       <TabPane v-for="(tab, index) in tabs" :key="index" :label="`${tab.name} ${tab.count}`" :name="tab.name"></TabPane>
     </Tabs>
   </div>
@@ -13,6 +13,10 @@ export default {
   name: 'tabHeader',
 
   props: {
+    name: {
+      type: String,
+      require: true
+    },
     tabs: {
       type: Array,
       default () {
@@ -24,7 +28,6 @@ export default {
 
   data () {
     return {
-      name1: '全部'
     }
   },
 

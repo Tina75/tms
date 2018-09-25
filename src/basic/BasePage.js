@@ -70,7 +70,7 @@ export default {
      *  }
      */
     openTab: function (data) {
-      data.query.noCache = true
+      data.query = Object.assign({noCache: true}, data.query)
       data.name = data.query.id ? data.query.id : data.name
       // data.multi = Boolean(data.multi)
       this.ema.fire('openTab', data)

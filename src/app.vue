@@ -48,26 +48,14 @@ export default {
   },
 
   mounted () {
-    window.EMA.bind('logout', (msg = '请重新登录') => {
-      this.logout(msg)
-    })
-    window.EMA.bind('refresh', (route) => {
+    window.EMA.bind('logout', (msg = '请重新登录') => { this.logout(msg) })
+    window.EMA.bind('reloadTab', (route) => {
       if (!route.query) route.query = {}
       route.query._time = new Date().getTime()
       this.turnToPage(route)
     })
-    window.EMA.bind('updateUserInfo', () => {
-      this.getUserInfo()
-    })
-    window.EMA.bind('openTab', (route) => {
-      this.onMenuSelect(route)
-      // let tag = { ...route }
-      // if (route.query) {
-      //   tag.name = route.query.id ? route.query.id : route.name
-      //   this.setTabNavList(this.getNewTagList(this.TabNavList, tag))
-      //   this.turnToPage(tag)
-      // }
-    })
+    window.EMA.bind('updateUserInfo', () => { this.getUserInfo() })
+    window.EMA.bind('openTab', (route) => { this.onMenuSelect(route) })
     this.init()
   },
   methods: {
@@ -79,15 +67,13 @@ export default {
       this.toHome()
       this.getUserInfo()
       this.getMessageCount()
-      // 获取用户权限
-      // TODO: something
     },
 
     /**
     * @description 打开首页
     */
     toHome () {
-      const home = {path: '/home', params: {name: 'home'}}
+      const home = { path: '/home', params: { name: 'home' } }
       this.turnToPage(home)
     },
 
@@ -96,7 +82,7 @@ export default {
     * @param {*} type 消息页对应的type
     */
     openMsgTab (type = 0) {
-      const router = {path: '/info/info', name: '消息', query: {type: type}}
+      const router = { path: '/info/info', name: '消息', query: { type: type } }
       this.onMenuSelect(router)
     },
 
@@ -109,7 +95,9 @@ export default {
         title: '提示',
         content: msg,
         onOk: () => {
+          const localRememberdPW = window.localStorage.local_rememberd_pw
           localStorage.clear()
+          if (localRememberdPW) window.localStorage.setItem('local_rememberd_pw', localRememberdPW)
           Cookies.remove('token', { path: '/tms' })
           this.$router.go(0)
         }

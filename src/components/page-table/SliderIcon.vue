@@ -141,7 +141,7 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 .slider-icon
   &__checkbox-list
     max-height: 450px;

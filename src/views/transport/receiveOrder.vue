@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div ref="$box">
     <TabHeader :tabs="tabList" @tabChange="tabChanged"></TabHeader>
 
     <div style="margin-top: 30px;display: flex;justify-content: space-between;">
@@ -22,6 +22,7 @@
         <Input v-if="easySelectMode === 1"
                v-model="easySearchKeyword"
                :icon="easySearchKeyword ? 'ios-close-circle' : ''"
+               :maxlength="20"
                placeholder="请输入提货单号"
                class="search-input"
                @on-click="resetEasySearch" />
@@ -57,7 +58,7 @@
     <div v-if="!isEasySearch" class="operate-box">
 
       <div style="margin-bottom: 10px;">
-        <Input v-model="seniorSearchFields.pickupNo" placeholder="请输入提货单号"  class="search-input-senior" />
+        <Input v-model="seniorSearchFields.pickupNo" :maxlength="20" placeholder="请输入提货单号"  class="search-input-senior" />
         <SelectInput
           v-model="seniorSearchFields.carrierName"
           :maxlength="20"
@@ -101,6 +102,7 @@
 
     <!-- 表格 -->
     <PageTable ref="$table"
+               :width="tableWidth"
                :columns="tableColumns"
                :extra-columns="extraColumns"
                :show-filter="true"
@@ -250,12 +252,14 @@ export default {
         {
           type: 'selection',
           width: 50,
-          align: 'center'
+          align: 'center',
+          fixed: 'left'
         },
         {
           title: '操作',
           key: 'do',
           width: 60,
+          fixed: 'left',
           extra: true,
           render: (h, p) => {
             if (p.row.status === 1) {
@@ -272,8 +276,8 @@ export default {
         {
           title: '提货单号',
           key: 'pickupNo',
-          width: 160,
-          fixed: true,
+          minWidth: 160,
+          fixed: 'left',
           render: (h, p) => {
             return h('a', {
               style: {
@@ -295,59 +299,72 @@ export default {
         },
         {
           title: '承运商',
-          key: 'carrierName'
+          key: 'carrierName',
+          minWidth: 100
         },
         {
           title: '司机',
-          key: 'driverName'
+          key: 'driverName',
+          minWidth: 100
         },
         {
           title: '车牌号',
-          key: 'carNo'
+          key: 'carNo',
+          minWidth: 100
         },
         {
           title: '合计运费（元）',
-          key: 'totalFee'
+          key: 'totalFee',
+          minWidth: 120
         },
         {
           title: '体积（方）',
-          key: 'volume'
+          key: 'volume',
+          minWidth: 100
         },
         {
           title: '重量（吨）',
-          key: 'weight'
+          key: 'weight',
+          minWidth: 100
         },
         {
           title: '创建时间',
           key: 'createTimeLong',
           sortable: 'custom',
+          minWidth: 160,
           render: (h, p) => {
             return h('span', this.dateFormatter(p.row.createTimeLong))
           }
         },
         {
           title: '制单人',
-          key: 'createOperator'
+          key: 'createOperator',
+          minWidth: 100
         },
         {
           title: '货值',
-          key: 'cargoCost'
+          key: 'cargoCost',
+          minWidth: 100
         },
         {
-          title: '付款方式',
-          key: 'settlementType'
+          title: '结算方式',
+          key: 'settlementType',
+          minWidth: 100
         },
         {
           title: '司机手机号码',
-          key: 'driverPhone'
+          key: 'driverPhone',
+          minWidth: 160
         },
         {
           title: '车型',
-          key: 'carType'
+          key: 'carType',
+          minWidth: 100
         },
         {
           title: '订单数',
-          key: 'orderCnt'
+          key: 'orderCnt',
+          minWidth: 100
         }
       ],
       extraColumns: [
@@ -412,7 +429,7 @@ export default {
           visible: false
         },
         {
-          title: '付款方式',
+          title: '结算方式',
           key: 'settlementType',
           fixed: false,
           visible: false
@@ -462,9 +479,9 @@ export default {
       this.page.size = data.pageSize
       this.tabList = [
         { name: '全部', count: '' },
-        { name: '待提货', count: data.statusCntInfo.waitCnt || 0 },
-        { name: '提货中', count: data.statusCntInfo.loadCnt || 0 },
-        { name: '已提货', count: data.statusCntInfo.loadedCnt || 0 }
+        { name: '待提货', count: data.statusCntInfo.waitCnt || '' },
+        { name: '提货中', count: data.statusCntInfo.loadCnt || '' },
+        { name: '已提货', count: data.statusCntInfo.loadedCnt || '' }
       ]
     },
 
@@ -486,7 +503,7 @@ export default {
 
     // 打印
     billPrint () {
-      if (!this.tableSelection.length) return
+      if (!this.checkTableSelection()) return
       this.fetchDetail()
         .then(data => {
           this.printData = data
@@ -516,7 +533,7 @@ export default {
 
     // 位置
     billLocation () {
-      if (!this.tableSelection.length) return
+      if (!this.checkTableSelection()) return
       Server({
         url: '/load/bill/location',
         method: 'post',
@@ -537,22 +554,34 @@ export default {
 
     // 删除
     billDelete () {
-      if (!this.tableSelection.length) return
-      Server({
-        url: '/load/bill/delete',
-        method: 'delete',
-        data: { pickUpIds: this.tableSelection.map(item => item.pickUpId) }
-      }).then(res => {
-        this.$Message.success('删除成功')
-        this.tableSelection = []
-        this.fetchData()
-      }).catch(err => console.error(err))
+      const self = this
+      if (!this.checkTableSelection()) return
+      self.openDialog({
+        name: 'transport/dialog/confirm',
+        data: {
+          title: '删除确认',
+          message: '是否确认删除？'
+        },
+        methods: {
+          confirm () {
+            Server({
+              url: '/load/bill/delete',
+              method: 'delete',
+              data: { pickUpIds: this.tableSelection.map(item => item.pickUpId) }
+            }).then(res => {
+              this.$Message.success('删除成功')
+              this.tableSelection = []
+              this.fetchData()
+            }).catch(err => console.error(err))
+          }
+        }
+      })
     },
 
     // 到货
     billArrived () {
       const self = this
-      if (!self.tableSelection.length) return
+      if (!this.checkTableSelection()) return
       self.openDialog({
         name: 'transport/dialog/confirm',
         data: {
