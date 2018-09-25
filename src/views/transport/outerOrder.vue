@@ -615,7 +615,7 @@ export default {
     billDelete (ids) {
       let transIds
       if (ids && ids.length) transIds = ids
-      else if (this.tableSelection.length) transIds = this.tableSelection
+      else if (this.tableSelection.length) transIds = this.tableSelection.map(item => item.transId)
       else {
         this.$Message.error('请先选择后再操作')
         return
@@ -649,7 +649,7 @@ export default {
       const self = this
       let transIds
       if (ids && ids.length) transIds = ids
-      else if (this.tableSelection.length) transIds = this.tableSelection
+      else if (this.tableSelection.length) transIds = this.tableSelection.map(item => item.transId)
       else {
         this.$Message.error('请先选择后再操作')
         return
@@ -680,7 +680,7 @@ export default {
     billShipment (ids) {
       let transIds
       if (ids && ids.length) transIds = ids
-      else if (this.tableSelection.length) transIds = this.tableSelection
+      else if (this.tableSelection.length) transIds = this.tableSelection.map(item => item.transId)
       else {
         this.$Message.error('请先选择后再操作')
         return

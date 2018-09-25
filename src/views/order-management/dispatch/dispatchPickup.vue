@@ -64,10 +64,9 @@ export default {
                 }
               },
               props: {
+                tableLoading: this.rightTableExpandLoading,
                 tableHeader: this.expandTableTypeOne,
-                tableDataFunc: () => {
-                  return p.row.loadbillOrderList
-                }
+                tableData: this.rightTableExpandData
               }
             })
           }
@@ -137,9 +136,25 @@ export default {
         console.error(err)
       })
     },
-    // 查询左侧表格展开数据
+    // 查询表格展开数据
     fetchLeftExpandData () {
       this.fetchLeftTableExpandData('10')
+    },
+    fetchRightExpandData () {
+      this.rightTableExpandLoading = true
+      Server({
+        url: '/dispatch/loadbill/order/list',
+        method: 'get',
+        data: {
+          loadbillId: this.rightExpandRow.loadbillId
+        }
+      }).then(res => {
+        this.rightTableExpandData = res.data.data.loadbillOrderList
+        this.rightTableExpandLoading = false
+      }).catch(err => {
+        this.rightTableExpandLoading = false
+        console.error(err)
+      })
     },
     // 将左侧选中订单添加到右侧选中运单
     moveOrders2Pickup () {
