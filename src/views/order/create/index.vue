@@ -781,6 +781,7 @@ export default {
     // 选择客户dropdown的数据
     handleSelectConsigner (name, row) {
       const _this = this
+      _this.resetForm()
       _this.getConsignerDetail(row.id).then((response) => {
         const { consigneeList: consignees, addressList: addresses, ...consigner } = response.data
         // 设置发货人信息，发货联系人，手机，发货地址

@@ -49,12 +49,6 @@ export const cargoOptions = (state, getters) => {
     if (cargo.unit) {
       name.push(cargo.unit)
     }
-    if (cargo.remark1) {
-      name.push(cargo.remark1)
-    }
-    if (cargo.remark2) {
-      name.push(cargo.remark2)
-    }
     return {
       name: name.join('，'),
       value: cargo.cargoName,
