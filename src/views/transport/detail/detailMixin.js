@@ -18,6 +18,16 @@ export default {
 
       detail: [], // 货物明细
 
+      // 费用
+      payment: {
+        freightFee: '',
+        loadFee: '',
+        unloadFee: '',
+        insuranceFee: '',
+        otherFee: '',
+        totalFee: ''
+      },
+
       // 支付方式表格
       tablePayment: [
         {
@@ -122,6 +132,7 @@ export default {
     // 货物总计
     orderTotal () {
       return this.detail.reduce((last, item) => {
+        item.cargoCost = item.cargoCost / 100
         return {
           cargoCost: last.cargoCost + item.cargoCost,
           quantity: last.quantity + item.quantity,
@@ -333,19 +344,19 @@ export default {
         this.$Message.error('请输入目的地')
         return false
       }
-      if (!this.info.carrierName) {
+      if (this.pageName === 'pickup' && !this.info.carrierName) {
         this.$Message.error('请输入承运商')
         return false
       }
-      if (!this.info.driverName) {
-        this.$Message.error('请输入司机')
-        return false
-      }
-      if (!this.info.carNo) {
+      // if (!this.info.driverName) {
+      //   this.$Message.error('请输入司机')
+      //   return false
+      // }
+      if (this.pageName === 'pickup' && !this.info.carNo) {
         this.$Message.error('请输入车牌号')
         return false
       }
-      if (!CAR.test(this.info.carNo)) {
+      if (this.pageName === 'pickup' && !CAR.test(this.info.carNo)) {
         this.$Message.error('请输入正确的车牌号')
         return false
       }

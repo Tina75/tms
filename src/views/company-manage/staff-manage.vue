@@ -231,9 +231,7 @@ export default {
         method: 'get',
         data: params
       }).then(({ data }) => {
-        if (data.data.length > 0) {
-          return data.data.map(item => ({value: item.name, name: item.name + '/' + item.phone}))
-        }
+        return data.data.map(item => ({value: item.name, name: item.name + '/' + item.phone}))
       })
         .catch((errorInfo) => {
           return Promise.reject(errorInfo)

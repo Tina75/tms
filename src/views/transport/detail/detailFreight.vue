@@ -179,7 +179,7 @@
                         class="detail-info-input" />
           </i-col>
           <i-col span="10" offset="1">
-            <span class="detail-field-title detail-field-required">承运商：</span>
+            <span class="detail-field-title">承运商：</span>
             <SelectInput
               v-model="info.carrierName"
               :maxlength="20"
@@ -191,7 +191,7 @@
         </Row>
         <Row class="detail-field-group">
           <i-col span="6">
-            <span class="detail-field-title detail-field-required">车牌号：</span>
+            <span class="detail-field-title">车牌号：</span>
             <SelectInput
               v-model="info.carNo"
               :maxlength="8"
@@ -212,7 +212,7 @@
             </Select>
           </i-col>
           <i-col span="4" offset="1">
-            <span class="detail-field-title detail-field-required">司机：</span>
+            <span class="detail-field-title">司机：</span>
             <SelectInput
               v-model="info.driverName"
               :maxlength="5"
@@ -257,28 +257,28 @@
           <span>应付费用</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="4">
+          <i-col span="5">
             <span class="detail-field-title-sm detail-field-required">运输费：</span>
             <MoneyInput v-model="payment.freightFee"
                         class="detail-payment-input" />
             <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
           </i-col>
-          <i-col span="3" offset="1">
+          <i-col span="4">
             <span class="detail-field-title-sm">装货费：</span>
             <MoneyInput v-model="payment.loadFee"
                         class="detail-payment-input" />
           </i-col>
-          <i-col span="3" offset="2">
+          <i-col span="4">
             <span class="detail-field-title-sm">卸货费：</span>
             <MoneyInput v-model="payment.unloadFee"
                         class="detail-payment-input" />
           </i-col>
-          <i-col span="3" offset="2">
+          <i-col span="4">
             <span class="detail-field-title-sm">保险费：</span>
             <MoneyInput v-model="payment.insuranceFee"
                         class="detail-payment-input" />
           </i-col>
-          <i-col span="3" offset="2">
+          <i-col span="4">
             <span class="detail-field-title-sm">其他：</span>
             <MoneyInput v-model="payment.otherFee"
                         class="detail-payment-input" />
@@ -334,6 +334,7 @@ export default {
   metaInfo: { title: '运单详情' },
   data () {
     return {
+      pageName: 'feright',
       startCodes: '',
       endCodes: '',
       status: '',
@@ -351,15 +352,7 @@ export default {
         remark: ''
       },
 
-      // 费用
-      payment: {
-        freightFee: '',
-        loadFee: '',
-        unloadFee: '',
-        insuranceFee: '',
-        otherFee: '',
-        totalFee: ''
-      },
+      // 支付方式
       settlementType: '',
       settlementPayInfo: [
         { payType: 1, fuelCardAmount: 0, cashAmount: 0 },
@@ -443,7 +436,10 @@ export default {
         },
         {
           title: '货值（元）',
-          key: 'cargoCost'
+          key: 'cargoCost',
+          render: (h, p) => {
+            return h('span', p.row.cargoCost / 100)
+          }
         },
         {
           title: '重量（吨）',

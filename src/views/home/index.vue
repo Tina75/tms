@@ -66,7 +66,7 @@
       </BlankCard>
       </Col>
       <Col span="12" class="i-mt-15">
-      <BlankCard>
+      <BlankCard :padding="false">
         <div slot="title">在途车辆位置</div>
         <div slot="extra">...</div>
         <div ref="positionMap" style="height:238px"></div>

@@ -225,7 +225,7 @@ export default {
       }
       try {
         const uploadResult = await this.uploadFile(files[0])
-        const notifyResult = await this.notifyBackend(uploadResult.name, uploadResult.res.requestUrls[0])
+        const notifyResult = await this.notifyBackend(files[0].name, uploadResult.res.requestUrls[0])
         if (notifyResult.data.code === 10000) {
           this.$Message.success('导入文件成功')
         }

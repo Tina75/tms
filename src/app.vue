@@ -86,7 +86,9 @@ export default {
         title: '提示',
         content: msg,
         onOk: () => {
+          const localRememberdPW = window.localStorage.local_rememberd_pw
           localStorage.clear()
+          if (localRememberdPW) window.localStorage.setItem('local_rememberd_pw', localRememberdPW)
           Cookies.remove('token', { path: '/tms' })
           this.$router.go(0)
         }
