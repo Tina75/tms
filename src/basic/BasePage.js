@@ -63,13 +63,16 @@ export default {
      * 打开一个tab页
      * @param data
      *  {
-     *    name:'', //tab应该显示的名称
-     *    data:{}, //传给弹出框的基础数据 data能包含数据
+     *    name:'', //tab应该显示的名称,默认值为metaInfo.title
+     *    path:'', //路径
+     *    multi:false //是否支持多开 默认false
+     *    query:{}
      *  }
      */
     openTab: function (data) {
-      data.name = this.$options.metaInfo.title
-      data.query.noCache = true
+      data.query = Object.assign({noCache: true}, data.query)
+      data.name = data.query.id ? data.query.id : data.name
+      // data.multi = Boolean(data.multi)
       this.ema.fire('openTab', data)
     },
     /**

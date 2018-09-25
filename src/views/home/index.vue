@@ -69,6 +69,7 @@
       <BlankCard>
         <div slot="title">在途车辆位置</div>
         <div slot="extra">...</div>
+        <div ref="positionMap" style="height:238px"></div>
       </BlankCard>
       </Col>
       <Col span="24" class="i-mt-15">
@@ -107,9 +108,13 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import BMap from 'BMap'
 import OrderCard from './OrderCard.vue'
 import BlankCard from './BlankCard.vue'
 import BasePage from '@/basic/BasePage'
+
+import MarkerOverlay from './libs/MarkerOverlay.js'
+import LabelOverlay from './libs/LabelOverlay.js'
 export default {
   name: 'index',
   meteInfo: { title: '首页' },
@@ -128,7 +133,7 @@ export default {
       wayBills: [
         {name: '待送货调度订单数量', value: '12'},
         {name: '待送派车订单数量', value: '32'},
-        {name: '待发运订单数量', value: '42'},
+        {name: '待发运订单数量', value: '412'},
         {name: '运输中订单数量', value: '42'}
       ],
       outsideBills: [
@@ -158,6 +163,19 @@ export default {
   },
   mounted () {
     console.log('user', this.UserInfo)
+    this.$nextTick(() => {
+      const bmap = new BMap.Map(this.$refs.positionMap)
+      const point = new BMap.Point(118.787842, 32.026739)
+      bmap.centerAndZoom(point, 16)
+
+      const markerOverlay = new MarkerOverlay(point)
+      const labelOverlay = new LabelOverlay(point, '苏A 88888')
+
+      bmap.addOverlay(labelOverlay)
+      bmap.addOverlay(markerOverlay)
+
+      this.$refs.positionMap.style.top = '-4px'
+    })
   },
   methods: {
     getGreetings () {
@@ -167,9 +185,11 @@ export default {
 
 }
 </script>
-<style lang="stylus" scoped>
+<style lang="stylus">
 .page-home
   &__message-item
     background-color #f3f3f3
     margin-bottom 8px
+.anchorBL
+  display none
 </style>

@@ -1,17 +1,18 @@
 import axios from 'axios'
 import { LoadingBar, Message } from 'iview'
+import Cookies from 'js-cookie'
 
-function getToken () {
-  let temp = document.cookie.match(new RegExp('(^| )token=([^;]*)(;|$)'))
-  if (temp) return unescape(temp[2])
-}
+// function getToken () {
+//   let temp = document.cookie.match(new RegExp('(^| )token=([^;]*)(;|$)'))
+//   if (temp) return unescape(temp[2])
+// }
 
 let instance = axios.create({
   baseURL: '/',
-  timeout: 10000,
+  timeout: 1000,
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': getToken()
+    'Authorization': Cookies.get('token')
   },
   withCredentials: true,
   loading: false,
@@ -50,7 +51,7 @@ instance.interceptors.response.use((res) => {
     switch (code) {
       case 310010:// token失效或不存在
       case 310011:// 账号在其他设备登录
-        window.EMA.fire('logout')
+        window.EMA.fire('logout', `${res.data.msg}，请重新登录`)
         break
       case 210014:
       case 600002:// 无权限

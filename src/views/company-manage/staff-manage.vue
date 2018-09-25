@@ -105,9 +105,7 @@ export default {
       formSearch: {
         name: '',
         phone: '',
-        roleId: '',
-        pageNo: 1,
-        pageSize: 20
+        roleId: ''
       },
       selectList: [],
       staffSelectList: [],
@@ -233,9 +231,7 @@ export default {
         method: 'get',
         data: params
       }).then(({ data }) => {
-        if (data.data.length > 0) {
-          return data.data.map(item => ({value: item.name, name: item.name + '/' + item.phone}))
-        }
+        return data.data.map(item => ({value: item.name, name: item.name + '/' + item.phone}))
       })
         .catch((errorInfo) => {
           return Promise.reject(errorInfo)
@@ -243,13 +239,6 @@ export default {
     },
     searchBtn () {
       this.formSearchInit = Object.assign({}, this.formSearch)
-      Server({
-        url: 'employee/list',
-        method: 'get',
-        data: this.formSearchInit
-      }).then(({ data }) => {
-        console.log('查询table data')
-      })
     },
     eaditStaff (params) {
       if (params !== 'add') {

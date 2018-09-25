@@ -4,17 +4,31 @@
 
     <Table :columns="columns"
            :data="data"
-           :loading="loading"></Table>
+           :loading="loading"
+           @on-selection-change="selectionChange"></Table>
+    <div style="text-align: right; margin-top: 10px;">
+      <Page
+        :total="totalCount"
+        :current="pageNo"
+        :page-size="pageSize"
+        :page-size-opts="[1,10,20,50]"
+        size="small"
+        show-sizer
+        show-elevator
+        show-total
+        @on-change="handleChangePage"
+        @on-page-size-change="handlePageSizeChange"></Page>
+    </div>
 
     <div slot="footer">
-      <Button  type="primary"  @click="save">确定</Button>
-      <Button  type="default"  @click.native="visibale = false">取消</Button>
+      <Button  type="primary" @click="ok">确定</Button>
+      <Button  type="default" @click.native="visibale = false">取消</Button>
     </div>
   </Modal>
 </template>
 
 <script>
-// import Server from '@/libs/js/server'
+import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 export default {
   name: 'AddOrder',
@@ -23,6 +37,9 @@ export default {
     return {
       visibale: true,
       loading: false,
+      pageNo: 1,
+      pageSize: 1,
+      totalCount: 0,
       columns: [
         {
           type: 'selection',
@@ -57,12 +74,67 @@ export default {
           key: 'weight'
         }
       ],
-      data: []
-
+      data: [],
+      selection: [[]]
     }
   },
+  created () {
+    this.fetchData()
+  },
   methods: {
+    fetchData () {
+      this.loading = true
+      Server({
+        url: '/order/list',
+        method: 'post',
+        data: {
+          isDispatch: 1,
+          status: this.type === 'freight' ? 20 : 10,
+          pageNo: this.pageNo,
+          pageSize: this.pageSize
+        }
+      }).then(res => {
+        this.totalCount = res.data.data.totalCount
+        this.data = res.data.data.list.map(item => {
+          const selected = this.selection[this.pageNo - 1]
+          item._checked = false
+          if (selected.indexOf(item.id) > -1) item._checked = true
+          if (this.billHasSelected.indexOf(item.id) > -1) item._checked = true
+          return item
+        })
+        this.loading = false
+      })
+    },
 
+    selectionChange (selection) {
+      const temp = selection.map(item => item.id)
+      this.selection.splice(this.pageNo - 1, 1, temp)
+    },
+
+    handleChangePage (page) {
+      this.pageNo = page
+      if (page > this.selection.length) this.selection.push([])
+      this.fetchData()
+    },
+
+    handlePageSizeChange (size) {
+      this.pageNo = 1
+      this.pageSize = size
+      this.fetchData()
+    },
+
+    getAllSelection () {
+      let all = []
+      this.selection.map(arr => {
+        all = all.concat(arr)
+      })
+      return all
+    },
+
+    ok () {
+      this.confirm(this.getAllSelection())
+      this.close()
+    }
   }
 }
 

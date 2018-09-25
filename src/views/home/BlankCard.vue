@@ -28,6 +28,6 @@ export default {
   &__blank-header
     border-bottom none
   &__blank-body
-    height 214px
+    height 234px
     padding 0 16px
 </style>

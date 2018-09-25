@@ -4,25 +4,27 @@
       <div class="title">发货方信息</div>
       <div class="list-info">
         <Row class="row">
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">发货方名称：</span>
             {{list.name}}
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">发货联系人：</span>
             {{list.contact}}
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">联系电话：</span>
             {{list.phone}}
           </div>
           </Col>
-          <Col span="6">
+        </Row>
+        <Row class="row">
+          <Col span="24">
           <div>
             <span class="label">结算方式：</span>
             <span v-if="list.payType===1">现付</span>
@@ -34,7 +36,7 @@
           </Col>
         </Row>
         <Row class="row">
-          <Col span="6">
+          <Col span="24">
           <div>
             <span class="label">备注：</span>
             {{list.remark}}
@@ -58,7 +60,8 @@
                     :current.sync="pageNo1" :page-size-opts="pageArray1"
                     size="small"
                     show-sizer
-                    show-elevator show-total @on-change="handleChangePage1"/>
+                    show-elevator show-total @on-change="handleChangePage1"
+                    @on-page-size-change="handleChangePageSize1"/>
             </template>
           </div>
         </TabPane>
@@ -75,7 +78,8 @@
                     :current.sync="pageNo2" :page-size-opts="pageArray2"
                     size="small"
                     show-sizer
-                    show-elevator show-total @on-change="handleChangePage2"/>
+                    show-elevator show-total @on-change="handleChangePage2"
+                    @on-page-size-change="handleChangePageSize2"/>
             </template>
           </div>
         </TabPane>
@@ -92,7 +96,8 @@
                     :current.sync="pageNo3" :page-size-opts="pageArray3"
                     size="small"
                     show-sizer
-                    show-elevator show-total @on-change="handleChangePage3"/>
+                    show-elevator show-total @on-change="handleChangePage3"
+                    @on-page-size-change="handleChangePageSize3"/>
             </template>
           </div>
         </TabPane>
@@ -178,7 +183,7 @@ export default {
           }
         },
         {
-          title: '收货人',
+          title: '收货地址',
           key: 'address'
         }
       ],
@@ -430,6 +435,10 @@ export default {
       this.pageNo1 = pageNo
       this._consignerAddressList()
     },
+    handleChangePageSize1 (pageSize) {
+      this.pageSize1 = pageSize
+      this._consignerAddressList()
+    },
     // 收货方列表，新增，删除，修改
     _consignerConsigneeList () {
       let data = {
@@ -465,6 +474,10 @@ export default {
       this.pageNo2 = pageNo
       this._consignerConsigneeList()
     },
+    handleChangePageSize2 (pageSize) {
+      this.pageSize2 = pageSize
+      this._consignerConsigneeList()
+    },
     // 常发货物列表，新增，删除，修改
     _consignerCargoList () {
       let data = {
@@ -498,6 +511,10 @@ export default {
     handleChangePage3 (pageNo) {
       // 重新组装数据，生成查询参数
       this.pageNo3 = pageNo
+      this._consignerCargoList()
+    },
+    handleChangePageSize3 (pageSize) {
+      this.pageSize3 = pageSize
       this._consignerCargoList()
     }
   }
