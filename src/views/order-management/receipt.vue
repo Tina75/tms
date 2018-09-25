@@ -144,17 +144,14 @@ export default {
         {
           title: '操作',
           key: 'do',
-          width: 160,
+          width: 100,
           extra: true,
           render: (h, params) => {
-            if (params.row.receiptStatus === '0') {
+            if (params.row.receiptOrder.receiptStatus === 0 && params.row.status === 40) {
               return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text'
-                  },
+                h('a', {
                   style: {
-                    marginRight: '5px',
+                    marginRight: '25px',
                     color: '#00a4bd'
                   },
                   on: {
@@ -164,14 +161,11 @@ export default {
                   }
                 }, '回收')
               ])
-            } else if (params.row.receiptStatus === '1') {
+            } else if (params.row.receiptOrder.receiptStatus === 1) {
               return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text'
-                  },
+                h('a', {
                   style: {
-                    marginRight: '5px',
+                    marginRight: '25px',
                     color: '#00a4bd'
                   },
                   on: {
@@ -322,7 +316,14 @@ export default {
   },
 
   created () {
-    sessionStorage.setItem('operateVal', '待回收')
+    // 刷新页面停留当前tab页
+    if (sessionStorage.getItem('receiptVal')) {
+      this.curStatusName = sessionStorage.getItem('receiptVal')
+      this.keyword.receiptStatus = this.statusToCode(this.curStatusName)
+    } else {
+      sessionStorage.setItem('receiptVal', '待回收')
+      this.keyword.receiptStatus = 0
+    }
   },
 
   mounted () {
@@ -418,9 +419,9 @@ export default {
         this.$Message.warning('请至少选择一条信息')
         return
       }
-      if (btn.name === '回收') { // receiptStatus都为0 才可批量回收
+      if (btn.name === '回收') { // receiptStatus都为0且status已到货状态（40） 才可批量回收
         let data = this.selectOrderList.find((item) => {
-          return item.receiptStatus !== '0'
+          return (item.receiptOrder.receiptStatus !== 0 || item.status !== 40)
         })
         if (data !== undefined) {
           this.$Message.warning('您选择的订单不支持回收')
@@ -429,7 +430,7 @@ export default {
         }
       } else if (btn.name === '返厂') { // receiptStatus都为1 才可批量返厂
         let data = this.selectOrderList.find((item) => {
-          return item.receiptStatus !== '1'
+          return item.receiptOrder.receiptStatus !== 1
         })
         if (data !== undefined) {
           this.$Message.warning('您选择的订单不支持返厂')
@@ -459,6 +460,28 @@ export default {
           }
         }
       })
+    },
+    // 状态转为状态码
+    statusToCode (name) {
+      let code
+      switch (name) {
+        case '全部':
+          code = null
+          break
+        case '待回收':
+          code = 0
+          break
+        case '待返厂':
+          code = 1
+          break
+        case '已返厂':
+          code = 2
+          break
+        default:
+          code = 0
+          break
+      }
+      return code
     }
   }
 }
