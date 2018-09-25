@@ -112,6 +112,9 @@ import BMap from 'BMap'
 import OrderCard from './OrderCard.vue'
 import BlankCard from './BlankCard.vue'
 import BasePage from '@/basic/BasePage'
+
+import MarkerOverlay from './libs/MarkerOverlay.js'
+import LabelOverlay from './libs/LabelOverlay.js'
 export default {
   name: 'index',
   meteInfo: { title: '首页' },
@@ -164,25 +167,14 @@ export default {
       const bmap = new BMap.Map(this.$refs.positionMap)
       const point = new BMap.Point(118.787842, 32.026739)
       bmap.centerAndZoom(point, 16)
-      var mk = new BMap.Marker(point)
 
-      const opts = {
-        position: point,
-        offset: new BMap.Size(-30, -54) // 文本偏移
-      }
-      const label = new BMap.Label('苏A88888', opts)
-      label.setStyle({
-        borderColor: '#00A4BD',
-        backgroundColor: '#00A4BD',
-        borderRadius: '4px',
-        color: '#fff',
-        fontSize: '12px',
-        height: '22px',
-        padding: '0 5px',
-        lineHeight: '20px'
-      })
-      bmap.addOverlay(mk)
-      bmap.addOverlay(label)
+      const markerOverlay = new MarkerOverlay(point)
+      const labelOverlay = new LabelOverlay(point, '苏A 88888')
+
+      bmap.addOverlay(labelOverlay)
+      bmap.addOverlay(markerOverlay)
+
+      this.$refs.positionMap.style.top = '-4px'
     })
   },
   methods: {
