@@ -1,3 +1,4 @@
+import float from '@/libs/js/float'
 // 客户公司名称列表
 export const clients = ({ order }) => order.clients.map((user) => ({ name: user.name, value: user.name, id: user.id }))
 
@@ -37,21 +38,31 @@ export const consignerCargoes = ({ order }) => order.consignerCargoes
 // 下拉框选择货物
 export const cargoOptions = (state, getters) => {
   return getters.cargoes.map(cargo => {
+    let name = [
+      cargo.cargoName,
+      `${cargo.weight}吨`,
+      `${cargo.volume}方`
+    ]
+    if (cargo.cargoCost) {
+      name.push(`${cargo.cargoCost}元`)
+    }
+    if (cargo.unit) {
+      name.push(cargo.unit)
+    }
     return {
-      name: `${cargo.cargoName}，${cargo.weight}吨，${cargo.volume}方，${cargo.cargoCost}元`,
+      name: name.join('，'),
       value: cargo.cargoName,
       id: cargo.id
     }
   })
 }
 export const sumRow = (state, getters) => {
-  console.log(getters.consignerCargoes)
   return getters.consignerCargoes.reduce((sum, cargo) => {
     // 读取临时数据
 
-    sum.weight = (cargo.weight || 0) + sum.weight
-    sum.volume = (cargo.volume || 0) + sum.volume
-    sum.cargoCost = (cargo.cargoCost || 0) + sum.cargoCost
+    sum.weight = float.round((cargo.weight || 0) + sum.weight)
+    sum.volume = float.round((cargo.volume || 0) + sum.volume, 1)
+    sum.cargoCost = float.round((cargo.cargoCost || 0) + sum.cargoCost)
     sum.quantity = (cargo.quantity || 0) + sum.quantity
     return sum
   }, {

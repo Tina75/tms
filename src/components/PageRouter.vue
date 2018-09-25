@@ -13,13 +13,12 @@ import Vue from 'vue'
 import noPage from '@/views/error-page/404'
 // import noPowerPage from '../pages/noPowerPage'
 var pagePrex = 'page-'
-var keyIndex = 0
 export default {
   name: 'PageRouter',
   data: function () {
     return {
       current: '',
-      componentCache: []
+      componentCache: {}
     }
   },
   watch: {
@@ -35,11 +34,18 @@ export default {
   // components: { 'page-noPage': noPage, 'page-noPowerPage': noPowerPage },
   mounted: function () {
     this.loadPage(this.$route.params)
+    window.EMA.bind('PageRouter.remove', (path) => {
+      let key = `page${path.replace(/\//g, '-')}`
+      console.log('要关闭的tab-key ->' + key)
+      if (this.componentCache[key]) {
+        this.componentCache[key] = undefined
+      }
+    })
   },
   methods: {
     loadPage: function (data, noCache) {
       var path = this.getPath()
-      let key = `${pagePrex}${path.replace('/', '-')}-${keyIndex}`
+      let key = `${pagePrex}${path.replace('/', '-')}`
       if (this.componentCache[key] && !noCache) {
         console.log('from cache ' + key)
         this.current = this.componentCache[key]
@@ -53,7 +59,6 @@ export default {
             },
             methods: data.methods || {}
           })
-          // keyIndex++
           Vue.component(key, tempModule)
           this.componentCache[key] = tempModule
           this.current = tempModule
