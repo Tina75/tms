@@ -106,12 +106,8 @@ export default {
           width: 110,
           render: (h, params) => {
             return h('div', [
-              h('Button', {
-                props: {
-                  type: 'text'
-                },
+              h('a', {
                 style: {
-                  marginRight: '5px',
                   color: '#00a4bd'
                 },
                 on: {

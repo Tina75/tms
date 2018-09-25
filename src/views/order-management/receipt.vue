@@ -1,6 +1,6 @@
 <template>
   <div>
-    <tab-header :tabs="status" @tabChange="handleTabChange"></tab-header>
+    <tab-header :name="curStatusName" :tabs="status" @tabChange="handleTabChange"></tab-header>
     <div style="margin-top: 30px;display: flex;justify-content: space-between;">
       <div>
         <Button v-for="(btn, index) in btnGroup" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
@@ -25,21 +25,21 @@
           v-else-if="selectStatus === 1"
           v-model.lazy="keywords.orderNo"
           :maxlength="30"
+          :icon="keywords.orderNo ? 'ios-close-circle' : ''"
           placeholder="请输入订单号"
           style="width: 200px"
-          clearable
           @on-enter="searchList"
-          @on-change="autoSearch"/>
+          @on-click="clearKeywords"/>
         <Input
           v-else
           v-model.lazy="keywords.waybillNo"
           :maxlength="30"
+          :icon="keywords.waybillNo ? 'ios-close-circle' : ''"
           placeholder="请输入运单号"
           style="width: 200px"
-          clearable
           @on-enter="searchList"
-          @on-change="autoSearch"/>
-        <Button type="primary" icon="ios-search" style="width: 40px;margin-right: 0;" @on-click="searchList"></Button>
+          @on-click="clearKeywords"/>
+        <Button type="primary" icon="ios-search" style="width: 40px;margin-right: 0;" @click="searchList"></Button>
         <Button type="text" class="high-search" size="small" @click="handleSwitchSearch">高级搜索</Button>
       </div>
     </div>
@@ -103,6 +103,7 @@ import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
 import City from '@/libs/js/City'
+import SearchMixin from './searchMixin'
 export default {
   name: 'receipt',
 
@@ -112,7 +113,7 @@ export default {
     AreaSelect,
     SelectInput
   },
-  mixins: [ BasePage ],
+  mixins: [ BasePage, SearchMixin ],
   metaInfo: { title: '回单管理' },
   data () {
     return {
@@ -124,47 +125,16 @@ export default {
         { name: '待返厂', count: '' },
         { name: '已返厂', count: '' }
       ],
-      curStatusName: '',
+      keyword: {
+        receiptStatus: 0// 默认待回收状态  传给pageTable可重新请求数据
+      },
+      curStatusName: '待回收',
       btnGroup: [
         { name: '回收', value: 1 },
         { name: '返厂', value: 2 },
         { name: '导出', value: 3 }
       ],
       operateValue: 1,
-      selectStatus: 0,
-      selectList: [
-        {
-          value: 0,
-          label: '客户名称'
-        },
-        {
-          value: 1,
-          label: '订单号'
-        },
-        {
-          value: 2,
-          label: '运单号'
-        }
-      ],
-      keyword: {},
-      keywords: {
-        receiptStatus: null,
-        consignerName: null,
-        orderNo: null,
-        waybillNo: null,
-        customerOrderNo: null,
-        startTime: null,
-        endTime: null,
-        start: [],
-        end: []
-      },
-      times: ['', ''],
-      timeOption: {
-        disabledDate (date) {
-          return date && date.valueOf() > Date.now()
-        }
-      },
-      simpleSearch: true,
       tableColumns: [
         {
           type: 'selection',
@@ -341,8 +311,7 @@ export default {
           fixed: false,
           visible: true
         }
-      ],
-      selectReceiptList: [] // 选中的回单集合
+      ]
     }
   },
 
@@ -353,9 +322,7 @@ export default {
   },
 
   created () {
-    if (sessionStorage.getItem('operateVal')) {
-      sessionStorage.removeItem('operateVal')
-    }
+    sessionStorage.setItem('operateVal', '待回收')
   },
 
   mounted () {
@@ -408,62 +375,6 @@ export default {
         this.status = arr
       })
     },
-    // 切换搜索条件  客户名称/订单号/运单号
-    handleChangeSearchStatus (val) {
-      this.clearKeywords()
-      this.selectStatus = val
-    },
-    // 条件搜索
-    searchList () {
-      this.keyword = Object.assign({}, this.keywords, {
-        // 地址搜索为最后一级区号
-        start: this.keywords.start.length ? Number(this.keywords.start[this.keywords.start.length - 1]) : null,
-        end: this.keywords.end.length ? Number(this.keywords.end[this.keywords.end.length - 1]) : null
-      })
-      this.selectReceiptList = []
-    },
-    // 点X清除搜索条件时  默认为无搜索条件下的数据
-    autoSearch () {
-      if (this.selectStatus === 1) {
-        if (!this.keywords.orderNo) {
-          this.clearKeywords()
-        }
-      } else {
-        if (!this.keywords.waybillNo) {
-          this.clearKeywords()
-        }
-      }
-    },
-    // 清除keywords搜索
-    clearKeywords () {
-      this.keywords = {
-        receiptStatus: this.keywords.receiptStatus,
-        consignerName: null,
-        orderNo: null,
-        waybillNo: null,
-        customerOrderNo: null,
-        start: [],
-        end: []
-      }
-      this.times = ['', '']
-      this.keyword = Object.assign({}, this.keywords, {
-        start: null,
-        end: null,
-        startTime: null,
-        endTime: null
-      })
-      this.selectReceiptList = []
-    },
-    // 高级搜索切换
-    handleSwitchSearch () {
-      this.clearKeywords()
-      this.simpleSearch = !this.simpleSearch
-    },
-    // 修改开始结束时间
-    handleTimeChange (val) {
-      this.keywords.startTime = val[0]
-      this.keywords.endTime = val[1]
-    },
     // tab状态栏切换
     handleTabChange (val) {
       console.log(val)
@@ -497,17 +408,18 @@ export default {
         ]
         this.keywords.receiptStatus = 2
       }
+      this.isSearching = true
       this.clearKeywords() // 清楚搜索条件
     },
     // 表头按钮批量操作
     handleOperateClick (btn) {
       this.operateValue = btn.value
-      if (!this.selectReceiptList.length) {
+      if (!this.selectOrderList.length) {
         this.$Message.warning('请至少选择一条信息')
         return
       }
       if (btn.name === '回收') { // receiptStatus都为0 才可批量回收
-        let data = this.selectReceiptList.find((item) => {
+        let data = this.selectOrderList.find((item) => {
           return item.receiptStatus !== '0'
         })
         if (data !== undefined) {
@@ -516,7 +428,7 @@ export default {
           this.openReturnDialog('', btn.name)
         }
       } else if (btn.name === '返厂') { // receiptStatus都为1 才可批量返厂
-        let data = this.selectReceiptList.find((item) => {
+        let data = this.selectOrderList.find((item) => {
           return item.receiptStatus !== '1'
         })
         if (data !== undefined) {
@@ -527,23 +439,11 @@ export default {
       } else { // 导出
       }
     },
-    onAddUserSuccess () {
-      this.$Message.success('This is a success tip')
-    },
-    // 筛选列表显示字段
-    handleColumnChange (val) {
-      console.log(val)
-      this.extraColumns = val
-    },
-    // 列表批量选择操作
-    handleSelectionChange (val) {
-      this.selectReceiptList = val
-    },
     // 打开回收或返厂弹窗 (支持单条、多条操作))
     openReturnDialog (params, name) {
       const _this = this
       const data = {
-        id: this.selectReceiptList,
+        id: this.selectOrderList,
         name: name
       }
       // params不为空时，id值为当前行
