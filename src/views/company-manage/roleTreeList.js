@@ -1,11 +1,11 @@
 export default {
-  data7: [{
-    key: 'data7',
-    title: '首页',
-    expand: true,
-    code: '160000',
-    children: []
-  }],
+  // data7: [{
+  //   key: 'data7',
+  //   title: '首页',
+  //   expand: true,
+  //   code: '160000',
+  //   children: []
+  // }],
   data1: [{
     key: 'data1',
     title: '受理开单',
@@ -271,19 +271,19 @@ export default {
       { title: '公司设置', code: '150100', parentId: '150000' },
       { title: '短信设置', code: '150200', parentId: '150000' }
     ]
-  }],
-  data10: [{
-    key: 'data10',
-    title: '消息',
-    expand: true,
-    code: '190000',
-    children: []
-  }],
-  data11: [{
-    key: 'data11',
-    title: '帮助',
-    expand: true,
-    code: '200000',
-    children: []
   }]
+  // data10: [{
+  //   key: 'data10',
+  //   title: '消息',
+  //   expand: true,
+  //   code: '190000',
+  //   children: []
+  // }],
+  // data11: [{
+  //   key: 'data11',
+  //   title: '帮助',
+  //   expand: true,
+  //   code: '200000',
+  //   children: []
+  // }]
 }

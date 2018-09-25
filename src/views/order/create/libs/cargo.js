@@ -1,6 +1,11 @@
 let uniqueIndex = 0
 export default class Cargo {
-  constructor (props) {
+  /**
+   *
+   * @param {Object} props
+   * @param {Boolean} transfer 需要除以100转换为元
+   */
+  constructor (props, transfer = false) {
     this.quantity = 1
     this.editable = false
     this.index = uniqueIndex++
@@ -10,8 +15,13 @@ export default class Cargo {
       this.weight = props.weight
       // 体积方，保留1位小数
       this.volume = props.volume
-      // 货值，整数
-      this.cargoCost = props.cargoCost
+      if (!transfer) {
+        // 货值，整数
+        this.cargoCost = props.cargoCost
+      } else {
+        this.cargoCost = (props.cargoCost || 0) / 100
+      }
+
       // 数量
       this.quantity = props.quantity || 1
       // 包装, 10个字

@@ -8,8 +8,8 @@
         </span>
       </Button>
     </p>
-    <p class="msgInfo">{{messageInfo.content}}</p>
-    <p v-if="this.messageInfo.url !== ''" class="msgInfoHref">活动链接：<a :href="messageInfo.url">{{messageInfo.url}}</a></p>
+    <pre class="msgInfo">{{messageInfo.content}}</pre>
+    <pre v-if="this.messageInfo.url !== ''" class="msgInfoHref">活动链接：<a :href="messageInfo.url">{{messageInfo.url}}</a></pre>
 
   </div>
 </template>
@@ -29,7 +29,6 @@ export default {
     }
   },
   mounted: function () {
-    debugger
     this.messageInfo = this.$route.query.message
   },
   methods: {

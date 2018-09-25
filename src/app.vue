@@ -91,10 +91,15 @@ export default {
     async init () {
       await this.getPermissons()
       this.initTabNav()
+      this.toHome()
       this.getUserInfo()
       this.getMessageCount()
       // 获取用户权限
       // TODO: something
+    },
+    toHome () {
+      const home = {path: '/home', params: {name: 'home'}}
+      this.turnToPage(home)
     },
     openMsgTab (type = 0) {
       const router = {path: '/info/info', name: '消息', query: {type: type}}
@@ -202,14 +207,6 @@ html, body
   .container
     height 100vh
     background #EFEFEF
-    .ivu-layout-sider
-      background-color #252A2F
-      .ivu-menu-dark
-        background-color #252A2F
-    .ivu-layout-header
-      height 50px
-      line-height 50px
-      padding 0
     .logo-con
       height 50px
       padding 10px
@@ -230,33 +227,12 @@ html, body
         height 46px
         // background #F0F0F0
         overflow hidden
-        .ivu-tag-dot
-          border-bottom none!important
-          border-radius 8px 8px 0 0
-          background #3A424B!important
-          border none !important
-          .ivu-tag-text
-            color #fff
     .content
       margin 15px
       padding 15px
       background white
       min-height 88vh
-.ivu-menu-dark.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu), .ivu-menu-dark.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu):hover, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title-active:not(.ivu-menu-submenu), .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title-active:not(.ivu-menu-submenu):hover
-  background #00A4BD
-.ivu-menu-dark.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu), .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title-active:not(.ivu-menu-submenu)
-  color white
-.ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu .ivu-menu-item-active, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu .ivu-menu-item-active:hover
-  background #00A4BD!important
-.ivu-menu-dark.ivu-menu-vertical .ivu-menu-opened
-  background none
 
-.ivu-menu-dark.ivu-menu-vertical .ivu-menu-item, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title
-  color rgba(255,255,255,1)
-  font-family:PingFangSC-Regular;
-  font-weight:400;
-.ivu-menu-item>i
-  margin-right 20px
 .ivu-modal-footer
   border-top none
   text-align center

@@ -1,26 +1,26 @@
 <template>
   <div>
     <Col span="5">
-    <Menu :open-names="['1']">
+    <Menu :open-names="['1']" accordion>
       <Submenu name="1">
         <template slot="title">
-          <i class="icon font_family icon-tupian" style="background: white; color: #FFBB44;"></i>
+          <i class="icon font_family icon-tupian" style="background: white; color: #FFBB44; overflow: hidden; width: 20px;"></i>
           图文介绍
         </template>
         <MenuItem v-for="menu in picMenu" :key="menu.id" :name="menu.title" @click.native="clickLeftMenuPic(menu)">
         {{menu.title}}
-        </MenuItem>
+          </MenuItem>
       </Submenu>
     </Menu>
     <Menu>
-      <Submenu>
+      <Submenu name="2">
         <template slot="title">
-          <i class="icon font_family icon-shipin" style="background: white; color: #418DF9;"></i>
+          <i class="icon font_family icon-shipin" style="background: white; color: #418DF9; overflow: hidden; width: 20px;"></i>
           视频介绍
         </template>
         <MenuItem v-for="menu in videoMenu" :key="menu.id" :name="menu.title" @click.native="clickLeftMenuVideo(menu)">
         {{menu.title}}
-        </MenuItem>
+          </MenuItem>
       </Submenu>
     </Menu>
     </Col>
@@ -28,13 +28,12 @@
     <Card class="searchCard" dis-hover>
       <p slot="title">{{picContent.title}}</p>
       <div v-if="'pic' === this.type">
-        <p>{{picContent.content}}</p>
-        <p v-if="picContent.url">活动链接<a :href="picContent.url">{{picContent.url}}</a></p>
+        <pre>{{picContent.content}}</pre>
+        <img :src="picContent.urlList" class="imgInfo" />
       </div>
-      <div v-else>
-        <!-- <p>{{videoContent.content}}</p> -->
-        <!-- <p>视频地址:<a :href="videoContent.url" style="margin-left:20px;">{{videoContent.url}}</a></p> -->
-        <video :src="videoContent.url" style="width:100%;" controls="controls">
+      <div v-if="'video' === this.type">
+        <video width="100%" height="240" controls>
+          <source :src="videoContent.urlList">
           您的浏览器不支持 video 标签。
         </video>
       </div>
@@ -70,8 +69,13 @@ export default {
         url: 'help/list',
         method: 'get'
       }).then(({ data }) => {
-        this.picMenu = data.data
-        this.videoMenu = data.data
+        data.data.forEach(menu => {
+          if (menu.type === 1) {
+            this.picMenu.push(menu)
+          } else if (menu.type === 2) {
+            this.videoMenu.push(menu)
+          }
+        })
         this.picContent = this.picMenu[0]
         console.log(this.picMenu)
       })
@@ -89,4 +93,6 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
+.imgInfo
+  max-width: 680px;
 </style>
