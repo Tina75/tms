@@ -25,20 +25,20 @@
           v-else-if="selectStatus === 1"
           v-model.lazy="keywords.orderNo"
           :maxlength="30"
+          :icon="keywords.orderNo ? 'ios-close-circle' : ''"
           placeholder="请输入订单号"
           style="width: 200px"
-          clearable
           @on-enter="searchList"
-          @on-change="autoSearch"/>
+          @on-click="clearKeywords"/>
         <Input
           v-else
           v-model.lazy="keywords.waybillNo"
           :maxlength="30"
+          :icon="keywords.waybillNo ? 'ios-close-circle' : ''"
           placeholder="请输入运单号"
           style="width: 200px"
-          clearable
           @on-enter="searchList"
-          @on-change="autoSearch"/>
+          @on-click="clearKeywords"/>
         <Button type="primary" icon="ios-search" style="width: 40px;margin-right: 0;" @click="searchList"></Button>
         <Button type="text" class="high-search" size="small" @click="handleSwitchSearch">高级搜索</Button>
       </div>
@@ -103,6 +103,7 @@ import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
 import City from '@/libs/js/City'
+import SearchMixin from './searchMixin'
 export default {
   name: 'order',
 
@@ -112,7 +113,7 @@ export default {
     AreaSelect,
     SelectInput
   },
-  mixins: [ BasePage ],
+  mixins: [ BasePage, SearchMixin ],
   metaInfo: { title: '订单管理' },
   data () {
     return {
@@ -135,40 +136,9 @@ export default {
         { name: '导出', value: 5 }
       ],
       operateValue: 1,
-      selectStatus: 0, // 当前搜索状态   0：客户名称   1：订单号  2：运单号
-      selectList: [
-        {
-          value: 0,
-          label: '客户名称'
-        },
-        {
-          value: 1,
-          label: '订单号'
-        },
-        {
-          value: 2,
-          label: '运单号'
-        }
-      ],
-      keyword: {},
-      keywords: {
-        status: 10,
-        consignerName: null,
-        orderNo: null,
-        waybillNo: null,
-        customerOrderNo: null,
-        startTime: null,
-        endTime: null,
-        start: [],
-        end: []
+      keyword: {
+        status: 10 // 默认待提货状态  传给pageTable可重新请求数据
       },
-      times: ['', ''],
-      timeOption: {
-        disabledDate (date) {
-          return date && date.valueOf() > Date.now()
-        }
-      },
-      simpleSearch: true,
       tableColumns: [
         {
           type: 'selection',
@@ -178,7 +148,7 @@ export default {
         {
           title: '操作',
           key: 'do',
-          width: 160,
+          width: 140,
           extra: true,
           render: (h, params) => {
             /**
@@ -194,13 +164,13 @@ export default {
              * 展示按钮：拆单、外转、还原、删除、编辑（详情页独有）
              * 1、待提货状态下：（status: 10）
              *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）】显示
-             *    外转：【（未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被提货：pickupStatus=0）】显示
+             *    外转：【（未外转：transStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被提货：pickupStatus=0）】显示
              *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被提货：pickupStatus=0）】显示
              *    删除：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （被拆单后的父单：disassembleStatus=1）】显示
              *    编辑：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
              * 2、待调度状态下：（status: 20）
              *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）&& （未被调度：dispatchStatus=0）】显示
-             *    外转：【（不是上门提货：pickup !== 1） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被调度：dispatchStatus=0）】显示
+             *    外转：【（未外转：transStatus=0） && （不是上门提货：pickup !== 1） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被调度：dispatchStatus=0）】显示
              *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被调度：dispatchStatus=0）】显示
              *    删除：【（不是上门提货：pickup !== 1） && （未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （被拆单后的父单：disassembleStatus=1）】显示
              *    编辑：【（未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
@@ -212,12 +182,9 @@ export default {
               // 拆单按钮
               if (r.transStatus === 0 && r.disassembleStatus !== 1) {
                 renderBtn.push(
-                  h('Button', {
-                    props: {
-                      type: 'text'
-                    },
+                  h('a', {
                     style: {
-                      marginRight: '5px',
+                      marginRight: '25px',
                       color: '#00a4bd'
                     },
                     on: {
@@ -229,14 +196,11 @@ export default {
                 )
               }
               // 外转按钮
-              if (r.disassembleStatus === 0 && r.parentId === '' && r.pickupStatus === 0) {
+              if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.pickupStatus === 0) {
                 renderBtn.push(
-                  h('Button', {
-                    props: {
-                      type: 'text'
-                    },
+                  h('a', {
                     style: {
-                      marginRight: '5px',
+                      marginRight: '25px',
                       color: '#00a4bd'
                     },
                     on: {
@@ -250,12 +214,9 @@ export default {
               // 还原按钮
               if (r.parentId === '' && r.disassembleStatus === 1 && r.pickupStatus === 0) {
                 renderBtn.push(
-                  h('Button', {
-                    props: {
-                      type: 'text'
-                    },
+                  h('a', {
                     style: {
-                      marginRight: '5px',
+                      marginRight: '25px',
                       color: '#00a4bd'
                     },
                     on: {
@@ -269,12 +230,9 @@ export default {
               // 删除按钮
               if (r.transStatus === 0 && r.pickupStatus === 0 && r.disassembleStatus === 1) {
                 renderBtn.push(
-                  h('Button', {
-                    props: {
-                      type: 'text'
-                    },
+                  h('a', {
                     style: {
-                      marginRight: '5px',
+                      marginRight: '25px',
                       color: '#00a4bd'
                     },
                     on: {
@@ -293,12 +251,9 @@ export default {
               // 拆单按钮
               if (r.transStatus === 0 && r.disassembleStatus !== 1 && r.dispatchStatus === 0) {
                 renderBtn.push(
-                  h('Button', {
-                    props: {
-                      type: 'text'
-                    },
+                  h('a', {
                     style: {
-                      marginRight: '5px',
+                      marginRight: '25px',
                       color: '#00a4bd'
                     },
                     on: {
@@ -310,14 +265,11 @@ export default {
                 )
               }
               // 外转按钮
-              if (r.pickup !== 1 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0) {
+              if (r.transStatus === 0 && r.pickup !== 1 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0) {
                 renderBtn.push(
-                  h('Button', {
-                    props: {
-                      type: 'text'
-                    },
+                  h('a', {
                     style: {
-                      marginRight: '5px',
+                      marginRight: '25px',
                       color: '#00a4bd'
                     },
                     on: {
@@ -331,12 +283,9 @@ export default {
               // 还原按钮
               if (r.parentId === '' && r.disassembleStatus === 1 && r.dispatchStatus === 0) {
                 renderBtn.push(
-                  h('Button', {
-                    props: {
-                      type: 'text'
-                    },
+                  h('a', {
                     style: {
-                      marginRight: '5px',
+                      marginRight: '25px',
                       color: '#00a4bd'
                     },
                     on: {
@@ -350,12 +299,9 @@ export default {
               // 删除按钮
               if (r.pickup !== 1 && r.transStatus === 0 && r.dispatchStatus === 0 && r.disassembleStatus === 1) {
                 renderBtn.push(
-                  h('Button', {
-                    props: {
-                      type: 'text'
-                    },
+                  h('a', {
                     style: {
-                      marginRight: '5px',
+                      marginRight: '25px',
                       color: '#00a4bd'
                     },
                     on: {
@@ -476,7 +422,7 @@ export default {
           title: '下单时间',
           key: 'createTime',
           render: (h, params) => {
-            return h('span', new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm'))
+            return h('span', new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm:ss'))
           }
         }
       ],
@@ -607,17 +553,18 @@ export default {
   },
 
   created () {
+    // 刷新页面停留当前tab页
     if (sessionStorage.getItem('operateVal')) {
-      sessionStorage.removeItem('operateVal')
+      this.curStatusName = sessionStorage.getItem('operateVal')
+      this.keyword.status = this.statusToCode(this.curStatusName)
+    } else {
+      sessionStorage.setItem('operateVal', '待提货')
+      this.keyword.status = 10
     }
   },
 
   mounted () {
     this.getOrderNum()
-    this.keyword = Object.assign({}, this.keywords, {
-      start: null,
-      end: null
-    })
   },
 
   methods: {
@@ -681,62 +628,6 @@ export default {
         this.status = arr
       })
     },
-    // 切换搜索条件  客户名称/订单号/运单号
-    handleChangeSearchStatus (val) {
-      this.clearKeywords()
-      this.selectStatus = val
-    },
-    // 条件搜索
-    searchList () {
-      this.keyword = Object.assign({}, this.keywords, {
-        // 地址搜索为最后一级区号
-        start: this.keywords.start.length ? Number(this.keywords.start[this.keywords.start.length - 1]) : null,
-        end: this.keywords.end.length ? Number(this.keywords.end[this.keywords.end.length - 1]) : null
-      })
-      this.selectOrderList = []
-    },
-    // 点X清除搜索条件时  默认为无搜索条件下的数据
-    autoSearch () {
-      if (this.selectStatus === 1) {
-        if (!this.keywords.orderNo) {
-          this.clearKeywords()
-        }
-      } else {
-        if (!this.keywords.waybillNo) {
-          this.clearKeywords()
-        }
-      }
-    },
-    // 清除keywords搜索
-    clearKeywords () {
-      this.keywords = {
-        status: this.keywords.status,
-        consignerName: null,
-        orderNo: null,
-        waybillNo: null,
-        customerOrderNo: null,
-        start: [],
-        end: []
-      }
-      this.times = ['', '']
-      this.keyword = Object.assign({}, this.keywords, {
-        start: null,
-        end: null,
-        startTime: null,
-        endTime: null
-      })
-      this.selectOrderList = []
-    },
-    // 高级搜索切换
-    handleSwitchSearch () {
-      this.clearKeywords()
-      this.simpleSearch = !this.simpleSearch
-    },
-    // 修改开始结束时间
-    handleTimeChange (val) {
-      this.keywords.startTime = val[0]
-      this.keywords.endTime = val[1]
-    },
     // tab状态栏切换
     handleTabChange (val) {
       console.log(val)
@@ -787,6 +678,7 @@ export default {
         }
         // this.keyword = {...this.keywords}
       }
+      this.isSearching = true
       this.clearKeywords() // 清楚搜索条件
     },
     // 表头按钮操作
@@ -906,14 +798,33 @@ export default {
         }
       })
     },
-    // 筛选列表显示字段
-    handleColumnChange (val) {
-      console.log(val)
-      this.extraColumns = val
-    },
-    // 列表批量选择操作
-    handleSelectionChange (val) {
-      this.selectOrderList = val
+    // 状态转为状态码
+    statusToCode (name) {
+      let code
+      switch (name) {
+        case '全部':
+          code = null
+          break
+        case '待提货':
+          code = 10
+          break
+        case '待调度':
+          code = 20
+          break
+        case '在途':
+          code = 30
+          break
+        case '已到货':
+          code = 40
+          break
+        case '已回单':
+          code = 50
+          break
+        default:
+          code = 10
+          break
+      }
+      return code
     }
   }
 }

@@ -33,11 +33,11 @@
           </i-col>
           <i-col span="7">
             <span>要求发货时间：</span>
-            <span>{{detail.deliveryTime | datetime}}</span>
+            <span>{{detail.deliveryTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
           </i-col>
           <i-col span="10">
             <span>期望到货时间：</span>
-            <span>{{detail.arriveTime | datetime}}</span>
+            <span>{{detail.arriveTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
           </i-col>
         </Row>
         <Row>
@@ -155,7 +155,7 @@
           <Timeline :class="showLog ? 'show-timeline' : 'hide-timeline'" :style="{ 'height': showLog ? 41*orderLogCount + 'px' : '15px' }" style="margin-top: 7px;overflow: hidden;">
             <TimelineItem v-for="(item, index) in orderLog" :key="index">
               <i slot="dot"></i>
-              <span style="margin-right: 60px;color: #777;">{{item.createTime}}</span>
+              <span style="margin-right: 60px;color: #777;">{{item.createTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
               <span style="color: #333;">{{'【' + item.operatorName + '】' + item.description}}</span>
             </TimelineItem>
           </Timeline>
@@ -188,7 +188,8 @@ export default {
       tableColumns: [
         {
           title: '货物名称',
-          key: 'cargoName'
+          key: 'cargoName',
+          className: 'padding-left-22'
         },
         {
           title: '包装',
@@ -212,11 +213,11 @@ export default {
         },
         {
           title: '备注1',
-          key: 'remark'
+          key: 'remark1'
         },
         {
           title: '备注2',
-          key: 'remark'
+          key: 'remark2'
         }
       ],
       tableData: [],
@@ -364,8 +365,8 @@ export default {
           this.detail = res.data.data
           // 过滤订单详情页操作按钮
           this.filterOrderButton()
-          // this.orderLog = res.data.data.orderLogs // 订单日志
-          // this.orderLogCount = res.data.data.orderLogs.length // 订单日志数量
+          this.orderLog = res.data.data.orderLogs // 订单日志
+          this.orderLogCount = res.data.data.orderLogs.length // 订单日志数量
           // this.waybillNums = res.data.data.waybillList // 运单子单
         })
       } else { // 回单详情
@@ -377,8 +378,8 @@ export default {
           this.detail = res.data.data
           // 过滤回单详情页操作按钮
           this.filterReceiptButton()
-          this.orderLog = res.data.data.receiptOrderLog // 回单日志
-          this.orderLogCount = res.data.data.receiptOrderLog.length // 回单日志数量
+          this.orderLog = res.data.data.receiptOrderLogs // 回单日志
+          this.orderLogCount = res.data.data.receiptOrderLogs.length // 回单日志数量
         })
       }
     },
@@ -445,7 +446,7 @@ export default {
        * 展示按钮：拆单、外转、还原、删除、编辑（详情页独有）
        * 1、待提货状态下：（status: 10）
        *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）】显示
-       *    外转：【（未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被提货：pickupStatus=0）】显示
+       *    外转：【（未外转：transStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被提货：pickupStatus=0）】显示
        *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被提货：pickupStatus=0）】显示
        *    删除：
        *          订单列表里显示：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （被拆单后的父单：disassembleStatus=1）】
@@ -453,7 +454,7 @@ export default {
        *    编辑：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
        * 2、待调度状态下：（status: 20）
        *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）&& （未被调度：dispatchStatus=0）】显示
-       *    外转：【（不是上门提货：pickup !== 1） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被调度：dispatchStatus=0）】显示
+       *    外转：【（未外转：transStatus=0） && （不是上门提货：pickup !== 1） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被调度：dispatchStatus=0）】显示
        *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被调度：dispatchStatus=0）】显示
        *    删除：
        *          订单列表里显示：【（不是上门提货：pickup !== 1） && （未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （被拆单后的父单：disassembleStatus=1）】
@@ -476,7 +477,7 @@ export default {
           )
         }
         // 外转按钮
-        if (r.disassembleStatus === 0 && r.parentId === '' && r.pickupStatus === 0) {
+        if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.pickupStatus === 0) {
           renderBtn.push(
             { name: '外转', value: 3 }
           )
@@ -508,7 +509,7 @@ export default {
           )
         }
         // 外转按钮
-        if (r.pickup !== 1 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0) {
+        if (r.transStatus === 0 && r.pickup !== 1 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0) {
           renderBtn.push(
             { name: '外转', value: 3 }
           )
@@ -648,4 +649,6 @@ export default {
       padding 5px 10px
     .ivu-poptip-popper
       top 118px !important
+  .padding-left-22
+    padding-left 22px
 </style>
