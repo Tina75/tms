@@ -144,7 +144,10 @@ export default {
         window.localStorage.setItem('tms_is_login', true)
         this.setToken(res.data.data.token)
         location.reload()
-      }).catch(err => console.error(err))
+      }).catch(err => {
+        this.getCaptcha()
+        console.error(err)
+      })
     }
   }
 }
@@ -180,7 +183,7 @@ export default {
   .login-img
     display block
     position relative
-    width 654px
+    width 48vw
     margin-right 107px
     z-index 1
 

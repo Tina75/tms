@@ -4,7 +4,7 @@
       <div v-for="(item, key) in data" ref="$part"
            :key="key"
            class="order-detail">
-        <h3 class="van-center i-mb-20">【数据暂缺】公司装车清单</h3>
+        <h3 class="van-center i-mb-20">{{item.waybill.companyName}}公司装车清单</h3>
         <table cellspacing="0" cellpadding="10" border="0" style="width:100%">
           <tbody>
             <tr>

@@ -4,7 +4,7 @@
       <p slot="header" style="text-align:center">
         <span>编辑</span>
       </p>
-      <Form ref="info" :model="info" :rules="rules" :label-width="100">
+      <Form ref="info" :model="info" :rules="rules" :label-width="100" label-position="left">
         <FormItem label="外转方" prop="transfereeName">
           <SelectInput
             v-model="info.transfereeName"
