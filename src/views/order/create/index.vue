@@ -60,7 +60,7 @@
       </Col>
       <Col span="6">
       <FormItem label="收货人:" prop="consigneeContact">
-        <SelectInput v-model="orderForm.consigneeContact" :maxlength="15" :local-options="consigneeContacts" :remote="false">
+        <SelectInput v-model="orderForm.consigneeContact" :maxlength="15" :local-options="consigneeContacts" :remote="false" @on-select="handleSelectConsignee">
         </SelectInput>
       </FormItem>
       </Col>
@@ -801,6 +801,12 @@ export default {
           _this.orderForm.settlementType = settlementType
         }
       })
+    },
+    /**
+     * 选中收货人，手机号一起设置
+     */
+    handleSelectConsignee (name, row) {
+      this.orderForm.consigneePhone = row.phone
     },
     // 显示计费规则
     showCounter () {

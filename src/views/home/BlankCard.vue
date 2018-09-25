@@ -9,7 +9,7 @@
       <slot name="extra">
       </slot>
     </div>
-    <div class="ivu-card-body tms-home__blank-body">
+    <div :class="cardBodyClass">
       <slot></slot>
     </div>
   </div>
@@ -18,7 +18,20 @@
 <script>
 export default {
   props: {
-    title: String
+    title: String,
+    padding: {
+      type: Boolean,
+      default: true
+    }
+  },
+  computed: {
+    cardBodyClass () {
+      return [
+        'ivu-card-body',
+        'tms-home__blank-body',
+        this.padding ? '' : 'tms-home__no-padding'
+      ]
+    }
   }
 }
 </script>
@@ -30,4 +43,7 @@ export default {
   &__blank-body
     height 234px
     padding 0 16px
+  &__no-padding
+    padding-left 0
+    padding-right 0
 </style>
