@@ -1,14 +1,14 @@
 <template>
   <div id="app">
     <Layout class="container">
-      <Sider v-model="collapsed" :collapsed-width="56" hide-trigger collapsible >
+      <Sider v-model="collapsed" :collapsed-width="50" hide-trigger collapsible >
         <side-bar :collapsed="collapsed" :active-name="$route.path" :menu-list="menuList" @on-select="onMenuSelect"/>
       </Sider>
       <Layout>
         <Header class="header-con">
           <header-bar :collapsed.sync="collapsed" :name="UserInfo.name" @on-msg-click="openMsgTab"/>
           <div class="tag-nav-wrapper">
-            <tab-nav :list="TabNavList" :value="$route" @on-close="handleCloseTab" @on-select="onTabSelect"/>
+            <tab-nav :list="TabNavList" :value="$route" @on-close="onTabClose" @on-select="onTabSelect"/>
           </div>
         </Header>
         <Content >
@@ -48,16 +48,8 @@ export default {
   },
 
   mounted () {
-    window.EMA.bind('logout', (msg) => {
-      if (msg) {
-        this.$Modal.warning({
-          title: '提示',
-          content: msg,
-          onOk: () => { this.logout() }
-        })
-      } else {
-        this.logout()
-      }
+    window.EMA.bind('logout', (msg = '请重新登录') => {
+      this.logout(msg)
     })
     window.EMA.bind('refresh', (route) => {
       if (!route.query) route.query = {}
@@ -68,23 +60,15 @@ export default {
       this.getUserInfo()
     })
     window.EMA.bind('openTab', (route) => {
-      let tag = { ...route }
-      if (route.query) {
-        tag.name = route.query.id ? route.query.id : route.name
-        this.setTabNavList(this.getNewTagList(this.TabNavList, tag))
-        this.turnToPage(tag)
-      }
+      this.onMenuSelect(route)
+      // let tag = { ...route }
+      // if (route.query) {
+      //   tag.name = route.query.id ? route.query.id : route.name
+      //   this.setTabNavList(this.getNewTagList(this.TabNavList, tag))
+      //   this.turnToPage(tag)
+      // }
     })
     this.init()
-    // this.$nextTick(() => {
-    //   this.turnToPage(this.defaultTab)
-    // })
-    // 初始化tabnav
-    // if (this.$route.path === '/') {
-    //   setTimeout(() => {
-    //     this.onMenuSelect({ name: '首页', path: '/home' })
-    //   }, 200)
-    // }
   },
   methods: {
     ...mapActions(['getPermissons', 'getUserInfo', 'getMessageCount']),
@@ -98,32 +82,76 @@ export default {
       // 获取用户权限
       // TODO: something
     },
+
+    /**
+    * @description 打开首页
+    */
     toHome () {
       const home = {path: '/home', params: {name: 'home'}}
       this.turnToPage(home)
     },
+
+    /**
+    * @description 打开消息页
+    * @param {*} type 消息页对应的type
+    */
     openMsgTab (type = 0) {
       const router = {path: '/info/info', name: '消息', query: {type: type}}
       this.onMenuSelect(router)
     },
-    logout () {
-      localStorage.clear()
-      Cookies.remove('token', { path: '/tms' })
-      this.$router.go(0)
+
+    /**
+    * @description 登出，清空localStorage中的tab页记录，删除本地token，刷新页面
+    * @param msg 提示语
+    */
+    logout (msg) {
+      this.$Modal.warning({
+        title: '提示',
+        content: msg,
+        onOk: () => {
+          localStorage.clear()
+          Cookies.remove('token', { path: '/tms' })
+          this.$router.go(0)
+        }
+      })
     },
-    handleCloseTab (list, route) {
+
+    /**
+     * @description 关闭tab标签时调用
+     * @param {*} list 关闭后的tab页list
+     * @param {*} route 关闭的tab对象，用于查找前一个tab并置为高亮
+    */
+    onTabClose (list, route) {
+      // 删除cache
+      window.EMA.fire('PageRouter.remove', route.path)
       // 选中前一个tab
       const nextRoute = this.getNextRoute(this.TabNavList, route)
       this.turnToPage(nextRoute)
-      this.setTabNavList(list) // 更新store
+      // 更新store
+      this.setTabNavList(list)
     },
+
+    /**
+     * @description 切换tab标签
+     * @param {*} item 被选中的菜单对象
+     */
     onTabSelect (item) {
       this.turnToPage(item)
     },
+
+    /**
+     * @description 切换菜单
+     * @param {*} menuItem 被选中的菜单对象
+     */
     onMenuSelect (menuItem) {
       this.setTabNavList(this.getNewTagList(this.TabNavList, menuItem))
       this.turnToPage(menuItem)
     },
+
+    /**
+     * @description 切换tab标签
+     * @param {*} route 跳转目标的path或route对象
+     */
     turnToPage (route) {
       let { path, params, query } = {}
       if (typeof route === 'string') path = route
@@ -168,11 +196,12 @@ export default {
       /* eslint-disable-next-line */
       else return !keysArr1.some(key => obj1[key] != obj2[key])
     },
+
     /**
- * @param {*} list 现有标签导航列表
- * @param {*} newRoute 新添加的路由原信息对象
- * @description 如果该newRoute已经存在则不再添加
- */
+     * @param {*} list 现有标签导航列表
+     * @param {*} newRoute 新添加的路由原信息对象
+     * @description 如果该newRoute已经存在则不再添加
+     */
     getNewTagList  (list, newRoute) {
       const { name, path, query } = newRoute
       let newList = [...list]
