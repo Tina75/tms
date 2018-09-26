@@ -87,7 +87,7 @@ export default {
       this.ema.fire('Page.push', data)
     },
     // 权限控制
-    hasePower: function (power) {
+    hasPower: function (power) {
       if (!power) { return true }
       return this.$store.state.permissions.includes(power)
     }
