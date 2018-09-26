@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { LoadingBar, Message } from 'iview'
 
+let fileName = ''
+
 function getToken () {
   let temp = document.cookie.match(new RegExp('(^| )token=([^;]*)(;|$)'))
   if (temp) return unescape(temp[2])
@@ -16,7 +18,7 @@ let instance = axios.create({
   withCredentials: true,
   loading: false,
   ignoreCode: false,
-  responseType: 'arraybuffer' // application/json
+  responseType: 'arraybuffer' // 'application/json'
 })
 
 switch (process.env.NODE_ENV) {
@@ -36,6 +38,7 @@ instance.interceptors.request.use((config) => {
   if (config.method === 'get' && config.data) {
     config.params = config.data
   }
+  fileName = config.fileName
   return config
 }, (error) => {
   return Promise.reject(error)
@@ -44,14 +47,15 @@ instance.interceptors.request.use((config) => {
 // code状态码200判断
 instance.interceptors.response.use((res) => {
   LoadingBar.finish()
-  var code = Number(res.data.code)
-  if (!code) {
+  // console.log(String.fromCharCode.apply(null, new Uint8Array(res.data)))
+  if (res.data instanceof ArrayBuffer) {
     let blob = new Blob([res.data], { type: 'application/x-xls' })
     let downloadLink = document.createElement('a')
     downloadLink.href = URL.createObjectURL(blob)
-    downloadLink.download = new Date().getTime() + '.xls'
+    downloadLink.download = fileName + new Date().Format('yyyy-MM-dd') + '.xls'
     downloadLink.click()
   } else {
+    const code = res.data.code
     switch (code) {
       case 310010:// token失效或不存在
       case 310011:// 账号在其他设备登录

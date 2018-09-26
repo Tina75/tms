@@ -2,7 +2,7 @@
   <div>
     <div class="header">
       <div class="left">
-        <Button type="primary" @click="modaladd">新增</Button>
+        <Button v-if="hasPower(130101)" type="primary"  @click="modaladd">新增</Button>
       </div>
       <div class="right">
         <template>
@@ -35,7 +35,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { consignerList, consignerDelete, CODE } from './client'
 import BasePage from '@/basic/BasePage'
@@ -69,8 +68,9 @@ export default {
           title: '操作',
           key: 'id',
           render: (h, params) => {
-            return h('div', [
-              h('span', {
+            let renderBtn = []
+            if (this.hasPower(130102)) {
+              renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
                   color: '#00A4BD',
@@ -79,7 +79,6 @@ export default {
                 on: {
                   click: () => {
                     let _this = this
-                    console.log(params.row.payType + '')
                     this.openDialog({
                       name: 'client/dialog/sender',
                       data: {
@@ -102,28 +101,41 @@ export default {
                     })
                   }
                 }
-              }, '修改'),
-              h('span', {
+              }, '修改'))
+            }
+            if (this.hasPower(130103)) {
+              renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
                   cursor: 'pointer'
                 },
                 on: {
                   click: () => {
-                    consignerDelete({
-                      id: params.row.id
-                    }).then(res => {
-                      if (res.data.code === CODE) {
-                        this.$Message.success(res.data.msg)
-                        this.searchList() // 刷新页面
-                      } else {
-                        this.$Message.error(res.data.msg)
+                    let _this = this
+                    this.openDialog({
+                      name: 'client/dialog/confirmDelete',
+                      data: {
+                      },
+                      methods: {
+                        ok () {
+                          consignerDelete({
+                            id: params.row.id
+                          }).then(res => {
+                            if (res.data.code === CODE) {
+                              _this.$Message.success(res.data.msg)
+                              _this.searchList() // 刷新页面
+                            } else {
+                              _this.$Message.error(res.data.msg)
+                            }
+                          })
+                        }
                       }
                     })
                   }
                 }
-              }, '删除')
-            ])
+              }, '删除'))
+            }
+            return h('div', renderBtn)
           }
         },
         {
@@ -138,7 +150,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.openTab({ path: '/client/sender-info', query: { id: params.row.id }
+                    this.openTab({ path: '/client/sender-info', title: '发货方详情', query: { id: params.row.id }
                     })
                   }
                 }
@@ -246,7 +258,6 @@ export default {
   }
 }
 </script>
-
 <style scoped lang="stylus">
   .header
     display flex

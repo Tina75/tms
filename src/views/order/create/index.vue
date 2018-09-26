@@ -32,8 +32,8 @@
         <Input v-model="orderForm.customerOrderNo" :maxlength="30" type="text"></Input>
       </FormItem>
       </Col>
-      <Col span="6" prop="deliveryTime">
-      <FormItem label="发货时间:">
+      <Col span="6">
+      <FormItem label="发货时间:" prop="deliveryTime">
         <DatePicker v-model="orderForm.deliveryTime" :time-picker-options="{steps: [1, 60, 60]}" format="yyyy-MM-dd HH:mm前" type="datetime" style="width:100%"></DatePicker>
       </FormItem>
       </Col>
@@ -198,9 +198,9 @@
       </Col>
     </Row>
     <FormItem class="van-center">
-      <Button :disabled="disabled" type="primary" @click="handleSubmit">保存</Button>
-      <Button :disabled="disabled" class="i-ml-10" @click="print">保存并打印</Button>
-      <Button class="i-ml-10" @click="resetForm">清空</Button>
+      <Button v-if="hasPower(100101)" :disabled="disabled" type="primary" @click="handleSubmit">保存</Button>
+      <Button v-if="hasPower(100102)" :disabled="disabled" class="i-ml-10" @click="print">保存并打印</Button>
+      <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
     </FormItem>
     <OrderPrint ref="printer" :data.sync="orderPrint">
     </OrderPrint>
@@ -240,7 +240,7 @@ export default {
   data () {
     const _this = this
     const validateArriveTime = (rule, value, callback) => {
-      if (_this.orderForm.deliveryTime && value && value.valueOf() < _this.orderForm.deliveryTime.valueOf()) {
+      if (_this.orderForm.deliveryTime && value && value.valueOf() <= _this.orderForm.deliveryTime.valueOf()) {
         callback(new Error('到货时间需晚于发货时间'))
       } else {
         callback()
@@ -816,7 +816,8 @@ export default {
       this.openDialog({
         name: 'order/create/CounterDialog.vue',
         data: {
-          value: 0
+          value: 0,
+          parterName: vm.orderForm.consignerName
         },
         methods: {
           ok (value) {
@@ -875,9 +876,14 @@ export default {
                   this.$Message.success('修改订单成功')
                 }
                 if (e && !form.id) {
+                  // 保存不打印，创建订单
                   vm.resetForm()
                 }
                 vm.disabled = false
+                if (e && form.id) {
+                  // 保存，不打印，修改页面
+                  vm.closeTab()
+                }
                 resolve()
               })
               .catch((er) => {
@@ -897,6 +903,9 @@ export default {
       this.$refs.orderForm.resetFields()
       this.clearCargoes()
     },
+    closeTab () {
+      this.ema.fire('closeTab', this.$route)
+    },
     print () {
       const vm = this
       this.handleSubmit()
@@ -906,7 +915,10 @@ export default {
           vm.orderPrint.totalFee = vm.totalFee
           vm.$refs.printer.print()
           if (!vm.orderPrint.id) {
+            // 创建订单页面
             vm.resetForm()
+          } else {
+            vm.closeTab()
           }
         })
     }

@@ -4,7 +4,7 @@
       <div v-for="(item, key) in data" ref="$part"
            :key="key"
            class="order-detail">
-        <h3 class="van-center i-mb-20">{{item.waybill.companyName}}公司装车清单</h3>
+        <h3 class="van-center i-mb-20">{{item.loadbill.companyName}}公司装车清单</h3>
         <table cellspacing="0" cellpadding="10" border="0" style="width:100%">
           <tbody>
             <tr>
@@ -37,18 +37,18 @@
               <td>{{cargo.cargoName}}</td>
               <td>{{cargo.unit}}</td>
               <td>{{cargo.quantity}}</td>
-              <td>{{cargo.cargoCost}}</td>
+              <td>{{cargo.cargoCost / 100}}</td>
               <td>{{cargo.weight}}</td>
               <td>{{cargo.volume}}</td>
             </tr>
             <tr>
               <td colspan="6" class="table-footer">
-                <span class="table-footer-item">运输费：{{item.loadbill.freightFee|| 0}} 元</span>
-                <span class="table-footer-item">装货费：{{item.loadbill.loadFee || 0}} 元</span>
-                <span class="table-footer-item">卸货费：{{item.loadbill.unloadFee || 0}} 元</span>
-                <span class="table-footer-item">保险费：{{item.loadbill.insuranceFee || 0}} 元</span>
-                <span class="table-footer-item">其他：{{item.loadbill.otherFee || 0}} 元</span>
-                <span class="table-footer-item">合计运费: {{item.loadbill.totalFee || 0}} 元</span>
+                <span class="table-footer-item">运输费：{{item.loadbill.freightFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">装货费：{{item.loadbill.loadFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">卸货费：{{item.loadbill.unloadFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">保险费：{{item.loadbill.insuranceFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">其他：{{item.loadbill.otherFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">合计运费: {{item.loadbill.totalFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">结算方式：{{item.loadbill.settlementType | settlementTypeFilter}}</span>
               </td>
             </tr>

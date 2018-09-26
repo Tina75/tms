@@ -40,7 +40,6 @@ import BaseDialog from '@/basic/BaseDialog'
 import AreaSelect from '../components/AreaSelect'
 import SelectInput from '@/components/SelectInput.vue'
 import Server from '@/libs/js/server'
-import { mapGetters, mapActions } from 'vuex'
 import { CAR } from '@/views/client/client'
 
 export default {
@@ -50,6 +49,9 @@ export default {
   data () {
     return {
       visiable: true,
+      carriers: [],
+      carrierCars: [],
+
       form: {
         start: '',
         end: '',
@@ -69,23 +71,45 @@ export default {
       }
     }
   },
-  computed: {
-    ...mapGetters([
-      'carriers',
-      'carrierCars',
-      'carrierDrivers'
-    ])
-  },
   created () {
     this.getCarriers()
   },
   methods: {
-    ...mapActions([
-      'getCarriers'
-    ]),
+    getCarriers () {
+      Server({
+        url: '/carrier/listOrderByUpdateTimeDesc',
+        method: 'get',
+        data: { type: 1 }
+      }).then(res => {
+        this.carriers = res.data.data.carrierList.map(item => {
+          return {
+            name: item.carrierName,
+            value: item.carrierName,
+            id: item.carrierId,
+            carNo: item.carNO
+          }
+        })
+      })
+    },
+
+    getCarrierCars (carrierId) {
+      Server({
+        url: '/carrier/list/carOrderByUpdateTimeDesc',
+        method: 'get',
+        data: { carrierId }
+      }).then(res => {
+        this.carrierCars = res.data.data.carList.map(item => {
+          return {
+            name: item.carNO,
+            value: item.carNO
+          }
+        })
+      })
+    },
+
     handleSelectCarrier (name, row) {
-      console.log(name, row)
-      this.$store.dispatch('getCarrierCars', row.id)
+      if (row.carNo) this.form.carNo = row.carNo
+      this.getCarrierCars(row.id)
       this.$store.dispatch('getCarrierDrivers', row.id)
     },
 

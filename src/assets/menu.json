@@ -9,17 +9,17 @@
     "name":"受理开单",
     "icon":"shoulikaidan",
     "path":"/order",
-    "powerCode":0,
+    "powerCode":100000,
     "children":[
       {
-        "name":"手动下单",
+        "name":"手工下单",
         "path":"/order/create",
-        "powerCode":0
+        "powerCode":100100
       },
       {
         "name":"批量导入",
         "path":"/order/import",
-        "powerCode":0
+        "powerCode":100200
       }
     ]
   },
@@ -27,45 +27,45 @@
     "name":"订单管理",
     "icon":"dingdanguanli",
     "path":"/order-management",
-    "powerCode":0,
+    "powerCode":110000,
     "children":[
       {
         "name":"订单管理",
         "path":"/order-management/order",
-        "powerCode":0
+        "powerCode":110100
       },
       {
         "name":"回单管理",
         "path":"/order-management/receipt",
-        "powerCode":0
+        "powerCode":110200
       },
       {
         "name":"调度工作台",
         "path":"/order-management/dispatch",
-        "powerCode":0
+        "powerCode":110300
       }
     ]
   },
   {
     "name":"运输管理",
-    "powerCode":0,
+    "powerCode":120000,
     "icon":"huoyuanguanli",
     "path":"/transport",
     "children":[
       {
         "name":"运单管理",
         "path":"/transport/waybill",
-        "powerCode":0
+        "powerCode":120100
       },
       {
         "name":"提货管理",
         "path":"/transport/receiveOrder",
-        "powerCode":0
+        "powerCode":120200
       },
       {
         "name":"外转单管理",
         "path":"/transport/outerOrder",
-        "powerCode":0
+        "powerCode":120300
       }
     ]
   },
@@ -73,13 +73,35 @@
     "name":"财务",
     "path":"/finance",
     "icon":"caiwuguanli",
-    "powerCode":0
+    "powerCode":170000,
+    "children":[
+      {
+        "name":"发货方对账",
+        "path":"/finance/sender",
+        "powerCode":170100
+      },
+      {
+        "name":"承运商对账",
+        "path":"/finance/carrier",
+        "powerCode":170200
+      },
+      {
+        "name":"外转方对账",
+        "path":"/finance/transfer",
+        "powerCode":170300
+      },
+      {
+        "name":"计费规则",
+        "path":"/finance/rules",
+        "powerCode":170400
+      }
+    ]
   },
   {
     "name":"报表",
     "path":"/report",
     "icon":"baobiaoguanli",
-    "powerCode":0,
+    "powerCode":180000,
     "children":[
       {
         "name":"运营报表",
@@ -102,22 +124,22 @@
     "name":"客户管理",
     "icon":"yonghuguanli",
     "path":"/client",
-    "powerCode":0,
+    "powerCode":130000,
     "children":[
       {
         "name":"发货方管理",
         "path":"/client/sender",
-        "powerCode":0
+        "powerCode":130100
       },
       {
         "name":"承运商管理",
         "path":"/client/carrier",
-        "powerCode":0
+        "powerCode":130200
       },
       {
         "name":"外转方管理",
         "path":"/client/transfer",
-        "powerCode":0
+        "powerCode":130300
       }
     ]
   },
@@ -125,17 +147,17 @@
     "name":"公司管理",
     "icon":"gongsiguanli",
     "path":"/company-manage",
-    "powerCode":0,
+    "powerCode":140000,
     "children":[
       {
         "name":"员工管理",
         "path":"/company-manage/staff-manage",
-        "powerCode":0
+        "powerCode":140200
       },
       {
         "name":"角色管理",
         "path":"/company-manage/employee-manage",
-        "powerCode":0
+        "powerCode":140100
       }
     ]
   },
@@ -143,7 +165,7 @@
     "name":"设置",
     "path":"/set-up/set-up",
     "icon":"shezhi",
-    "powerCode":0
+    "powerCode":150000
   },
   {
     "name":"消息",

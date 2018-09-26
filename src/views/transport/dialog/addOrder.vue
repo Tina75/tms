@@ -38,7 +38,7 @@ export default {
       visibale: true,
       loading: false,
       pageNo: 1,
-      pageSize: 1,
+      pageSize: 10,
       totalCount: 0,
       columns: [
         {

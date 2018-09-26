@@ -12,8 +12,8 @@
     </section>
 
     <div class="detail-btn-group">
-      <Button v-for="(item, key) in currentBtns"
-              :key="key" :type="key === (currentBtns.length - 1) ? 'primary' : 'default'"
+      <Button v-for="(item, key) in showButtons"
+              :key="key" :type="key === (showButtons.length - 1) ? 'primary' : 'default'"
               class="detail-btn-item"
               @click="item.func">{{ item.name }}</Button>
     </div>
@@ -197,7 +197,8 @@
               :maxlength="8"
               :remote="false"
               :local-options="carrierCars"
-              class="detail-info-input" />
+              class="detail-info-input"
+              @on-select="handleSelectCarrierCar" />
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型/车长：</span>
@@ -258,7 +259,7 @@
         </div>
         <Row class="detail-field-group">
           <i-col span="5">
-            <span class="detail-field-title-sm detail-field-required">运输费：</span>
+            <span class="detail-field-title-sm">运输费：</span>
             <MoneyInput v-model="payment.freightFee"
                         class="detail-payment-input" />
             <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
@@ -292,7 +293,7 @@
         </Row>
         <Row class="detail-field-group">
           <i-col span="24">
-            <span class="detail-field-title-sm detail-field-required">结算方式：</span>
+            <span class="detail-field-title-sm">结算方式：</span>
             <div class="detail-payment-way">
               <RadioGroup v-model="settlementType">
                 <Radio label="1">按单结</Radio>
@@ -366,16 +367,19 @@ export default {
           status: '待派车',
           btns: [{
             name: '删除',
+            code: 120105,
             func: () => {
               this.billDelete()
             }
           }, {
             name: '派车',
+            code: 120101,
             func: () => {
               this.billSendCar()
             }
           }, {
             name: '编辑',
+            code: 120107,
             func: () => {
               this.inEditing = true
             }
@@ -389,6 +393,7 @@ export default {
           status: '在途',
           btns: [{
             name: '位置',
+            code: 120106,
             func: () => {
               this.billLocation()
             }
@@ -406,8 +411,20 @@ export default {
           title: '订单号',
           key: 'orderNo',
           render: (h, p) => {
-            return h('span', {
-              style: { color: '#3A7EDE' }
+            return h('a', {
+              style: { color: '#3A7EDE' },
+              on: {
+                click: () => {
+                  this.openTab({
+                    path: '/order-management/detail',
+                    query: {
+                      id: p.row.orderNo,
+                      orderId: p.row.orderId,
+                      from: 'order'
+                    }
+                  })
+                }
+              }
             }, p.row.orderNo)
           }
         },
@@ -577,6 +594,7 @@ export default {
         data: { waybillIds: [ this.id ] }
       }).then(res => {
         this.$Message.success('删除成功')
+        this.ema.fire('closeTab', this.$route)
       }).catch(err => console.error(err))
     }
   }
