@@ -70,6 +70,10 @@ export default {
       this.getMessageCount()
     },
 
+    /**
+    * @description 打开消息tab
+    * @param type 消息类型
+    */
     onOpenMsg (type) {
       const route = {path: '/info/info', query: {type: type, title: '消息'}}
       window.EMA.fire('openTab', route)
