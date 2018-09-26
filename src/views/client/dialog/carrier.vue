@@ -3,12 +3,13 @@
     v-model="modal"
     :mask-closable="true"
     label-position="left"
+    class="modal"
     @on-visible-change="close"
   >
     <p slot="header" style="text-align:center">{{title}}</p>
     <Form :model="validate.type" :rules="ruleValidate.type" :label-width="122">
-      <FormItem label="类型:" prop="selectStatus">
-        <Select v-model="validate.type.selectStatus">
+      <FormItem  label="类型:" prop="selectStatus">
+        <Select v-model="validate.type.selectStatus" :disabled="flag===2">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </FormItem>
@@ -19,11 +20,8 @@
         <Input v-model="validate.driver.driverName" :maxlength="15" placeholder="请输入"/>
       </FormItem>
       <FormItem label="手机号码" prop="driverPhone">
-        <Input v-model="validate.driver.driverPhone" placeholder="请输入"/>
+        <Input v-model="validate.driver.driverPhone" :maxlength="11" placeholder="请输入"/>
       </FormItem>
-      <!--<FormItem label="联系电话" prop="driverPhone">-->
-      <!--<Input v-model="validate.driver.driverPhone" placeholder="请输入"/>-->
-      <!--</FormItem>-->
       <FormItem label="车牌号" prop="carNO">
         <Input v-model="validate.driver.carNO" placeholder="请输入"/>
       </FormItem>
@@ -41,7 +39,7 @@
           <Option value="10">飞翼车</Option>
         </Select>
       </FormItem>
-      <FormItem label="车长" prop="carLength">
+      <FormItem label="车长:" prop="carLength">
         <Select v-model="validate.driver.carLength" >
           <Option value="1">1.8米</Option>
           <Option value="2">2.7米</Option>
@@ -62,26 +60,26 @@
           <Option value="17">17.5米</Option>
         </Select>
       </FormItem>
-      <FormItem label="核定载重量" prop="shippingWeight">
+      <FormItem label="核定载重量:" prop="shippingWeight">
         <Input v-model="validate.driver.shippingWeight" placeholder="请输入"/>吨
       </FormItem>
-      <FormItem label="车载容积" prop="shippingVolume">
+      <FormItem label="车载容积:" class="ivu-form-item-required blank" prop="shippingVolume">
         <Input v-model="validate.driver.shippingVolume" placeholder="请输入"/>方
       </FormItem>
-      <FormItem label="结算方式:">
-        <Select v-model="validate.driver.payType" >
-          <Option value="">请选择</Option>
-          <Option value="1">现付</Option>
-          <Option value="2">到付</Option>
+      <FormItem label="结算方式:" class="ivu-form-item-required blank">
+        <Select v-model="validate.driver.payType" clearable>
+          <!--<Option value="">请选择</Option>-->
+          <!--<Option value="1">现付</Option>-->
+          <!--<Option value="2">到付</Option>-->
           <Option value="3">回单付</Option>
           <Option value="4">月结</Option>
-          <Option value="5">预付+到付</Option>
-          <Option value="6">预付+回付</Option>
-          <Option value="7">到付+回付</Option>
-          <Option value="8">三段付</Option>
+          <!--<Option value="5">预付+到付</Option>-->
+          <!--<Option value="6">预付+回付</Option>-->
+          <!--<Option value="7">到付+回付</Option>-->
+          <!--<Option value="8">三段付</Option>-->
         </Select>
       </FormItem>
-      <FormItem label="备注:" >
+      <FormItem label="备注:" class="ivu-form-item-required blank">
         <Input v-model="validate.driver.remark" :autosize="{minRows: 2,maxRows: 5}" :maxlength="100" type="textarea"  placeholder="请输入"/>
       </FormItem>
     </Form>
@@ -90,23 +88,23 @@
       <FormItem label="承运商名称:" prop="carrierName">
         <Input v-model="validate.company.carrierName" :maxlength="20" placeholder="请输入"/>
       </FormItem>
-      <FormItem label="负责人" prop="carrierPrincipal">
+      <FormItem label="负责人:" prop="carrierPrincipal">
         <Input v-model="validate.company.carrierPrincipal" :maxlength="15" placeholder="请输入"/>
       </FormItem>
-      <FormItem label="联系电话" prop="carrierPhone">
-        <Input v-model="validate.company.carrierPhone" placeholder="请输入"/>
+      <FormItem label="联系电话:" prop="carrierPhone">
+        <Input v-model="validate.company.carrierPhone" :maxlength="11" placeholder="请输入"/>
       </FormItem>
       <FormItem label="结算方式:">
-        <Select v-model="validate.driver.payType" >
-          <Option value="">请选择</Option>
-          <Option value="1">现付</Option>
-          <Option value="2">到付</Option>
+        <Select v-model="validate.company.payType" clearable>
+          <!--<Option value="">请选择</Option>-->
+          <!--<Option value="1">现付</Option>-->
+          <!--<Option value="2">到付</Option>-->
           <Option value="3">回单付</Option>
           <Option value="4">月结</Option>
         </Select>
       </FormItem>
       <FormItem label="备注:" >
-        <Input v-model="validate.driver.remark" :autosize="{minRows: 2,maxRows: 5}" :maxlength="100" type="textarea"  placeholder="请输入"/>
+        <Input v-model="validate.company.remark" :autosize="{minRows: 2,maxRows: 5}" :maxlength="100" type="textarea"  placeholder="请输入"/>
       </FormItem>
     </Form>
     <div v-if="validate.type.selectStatus == 1" slot="footer">
@@ -121,13 +119,14 @@
 </template>
 
 <script>
-import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, CODE } from '../client'
+import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, CODE, CAR } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
 export default {
   name: 'carrier',
   mixins: [BaseDialog],
   data () {
     return {
+      flag: 2,
       modal: true,
       selectList: [
         {
@@ -159,7 +158,7 @@ export default {
           carrierName: '',
           carrierPrincipal: '',
           carrierPhone: '',
-          payType: 1, // 支付方式1：现付 2：到付 3：回单付 4：月结
+          payType: '', // 支付方式1：现付 2：到付 3：回单付 4：月结
           remark: ''
         }
       },
@@ -178,8 +177,8 @@ export default {
             { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
           ],
           carNO: [
-            { required: true, message: '司机名称不能为空', trigger: 'blur' },
-            { type: 'string', message: '车牌号格式错误', pattern: /^[\u4e00-\u9fa5]{1}[A-Z]{1}[A-Z0-9]{5}$/, trigger: 'blur' }
+            { required: true, message: '车牌号不能为空', trigger: 'blur' },
+            { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
           ],
           carType: [
             { required: true, message: '车型不能为空', trigger: 'change' }
@@ -189,10 +188,10 @@ export default {
           ],
           shippingWeight: [
             { required: true, message: '载重量不能为空', trigger: 'blur' },
-            { type: 'string', message: '必须为大于0的数,且精确到两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
+            { type: 'string', message: '必须为大于等于0的数,且精确到两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
           ],
           shippingVolume: [
-            { type: 'string', message: '必须为大于0的数,且精确到一位小数', pattern: /^(\+)?\d+(\.\d{1})?$/, trigger: 'blur' }
+            { type: 'string', message: '必须为大于等于0的数,且精确到一位小数', pattern: /^(\+)?\d+(\.\d{1})?$/, trigger: 'blur' }
           ]
         },
         company: {
@@ -213,7 +212,6 @@ export default {
   methods: {
     save (name) {
       this.$refs[name].validate((valid) => {
-        console.log(name)
         if (valid) {
           if (this.flag === 1) { // 新增
             if (this.validate.type.selectStatus === 1) { // 司机
@@ -231,7 +229,6 @@ export default {
           this.modal = false
         }
       })
-      //
     },
     _carrierAddForDriver () {
       let data = {
@@ -244,7 +241,6 @@ export default {
         shippingVolume: Math.floor(this.validate.driver.shippingVolume * 10) / 10,
         remark: this.validate.driver.remark,
         payType: this.validate.driver.payType
-        // Math.floor(this.validate.cargoCost * 100) / 100,
       }
       carrierAddForDriver(data).then(res => {
         if (res.data.code === CODE) {
@@ -284,7 +280,6 @@ export default {
         carrierId: this.id
       }
       carrierForDriverUpdate(data).then(res => {
-        console.log(res)
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
         } else {
@@ -314,6 +309,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
+  @import "../client.styl"
   .ivu-input-wrapper,.ivu-select
     width: 86%
     margin-right 8px

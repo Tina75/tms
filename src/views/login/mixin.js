@@ -1,7 +1,20 @@
 import Server from '@/libs/js/server'
 
 let timer
-let waitingTime = 5
+const waitingTime = 60
+
+let captchaUrl
+switch (process.env.NODE_ENV) {
+  case 'development':
+    captchaUrl = '//192.168.1.49:5656/dolphin-web/user/captcha'
+    break
+  case 'production':
+    captchaUrl = '//192.168.1.49:5656/dolphin-web/user/captcha'
+    break
+}
+
+// 密码校验 匹配数字与大小写字母
+const passwordReg = /^([a-z]|[A-Z]|\d){6,16}$/
 
 export default {
   replace: true,
@@ -13,6 +26,10 @@ export default {
     }
   },
   methods: {
+    changeMode (mode) {
+      this.$emit('on-change', mode)
+    },
+
     // 输入框校验
     validate (type, { extraRules, done } = {}) {
       switch (type) {
@@ -64,6 +81,10 @@ export default {
             this.$Message.error('联系人不能为空')
             return false
           }
+          if (this.form.userName.length > 10 || this.form.userName.length < 2) {
+            this.$Message.error('联系人不能少于2个字也不能超过10个字')
+            return false
+          }
           break
         case 'address':
           if (!this.form.address.length) {
@@ -89,27 +110,96 @@ export default {
       return valid
     },
 
+    // 输入框失焦
+    inputBlur (type) {
+      if (this.currentFocus !== undefined) this.currentFocus = ''
+      this.validate(type)
+      // if (!this.validate(type)) return
+
+      // if (type === 'phone') {
+      //   let mode = 'signin'
+      //   if (this.$route.path === '/login/sign-up') mode = 'signup'
+      //   if (this.$route.path === '/login/find-back') mode = 'findback'
+      //   this.imCheckPhone(mode)
+      // } else if (type === 'captchaCode') this.imCheckCapthcha()
+      // else if (type === 'smsCode') this.imCheckSMSCode()
+    },
+
     // 校验密码-添加设置密码时的位数规则
     inputBlurWithPw () {
       return this.validate('password', {
         extraRules: () => {
-          if (this.form.password.length > 16 || this.form.password.length < 6) {
-            this.$Message.error('密码格式不正确，至少6位，至多16位')
-            return false
+          if (!passwordReg.test(this.form.password)) {
+            this.$Message.error('密码只支持数字、大小写字母，至少为6位，至多为16位')
           }
           return true
         }
       })
     },
 
+    // 实时校验手机号
+    imCheckPhone (mode) {
+      return new Promise((resolve, reject) => {
+        Server({
+          url: '/user/phone',
+          method: 'get',
+          data: { phone: this.form.phone }
+        }).then(res => {
+          if (mode === 'signup' && res.data.code === 310013) {
+            this.$Message.error('该手机号已注册，请登录')
+            reject && reject(new Error('该手机号已注册，请登录'))
+          } else if (mode === 'signin' && res.data.code === 10000) {
+            this.$Message.error('该手机号未注册，请先注册')
+            reject && reject(new Error('该手机号未注册，请先注册'))
+          } else if (mode === 'findback' && res.data.code === 10000) {
+            this.$Message.error('该手机号未注册，请先注册')
+            reject && reject(new Error('该手机号未注册，请先注册'))
+          }
+          resolve()
+        }).catch(err => console.error(err))
+      })
+    },
+
+    // 实时校验图形验证码
+    imCheckCapthcha () {
+      return new Promise((resolve, reject) => {
+        Server({
+          url: '/user/testCaptcha',
+          method: 'get',
+          data: { captchaCode: this.form.captchaCode }
+        }).then(res => {
+          console.log('图形验证码校验通过')
+          resolve()
+        }).catch(err => {
+          console.error(err)
+          this.getCaptcha()
+        })
+      })
+    },
+
+    // 实时校验短信验证码
+    imCheckSMSCode () {
+      return new Promise((resolve, reject) => {
+        Server({
+          url: '/user/smsCode',
+          method: 'get',
+          data: {
+            phone: this.form.phone,
+            smsCode: this.form.smsCode
+          }
+        }).then(res => {
+          console.log('短信验证码校验通过')
+          resolve()
+        }).catch(err => {
+          console.error(err)
+          this.getCaptcha()
+        })
+      })
+    },
+
     // 获取图片验证码
     getCaptcha () {
-      Server({
-        url: '/user/captcha',
-        method: 'get'
-      }).then(res => {
-        this.captchaImage = res.data.data
-      }).catch(err => console.error(err))
+      this.captchaImage = `${captchaUrl}?${new Date().getTime()}`
     },
 
     // 发送手机验证码
@@ -136,13 +226,10 @@ export default {
             clearInterval(timer)
           }
         }, 1000)
-      }).catch(err => console.error(err))
-    },
-
-    // 输入框失焦
-    inputBlur (type) {
-      if (this.currentFocus !== undefined) this.currentFocus = ''
-      this.validate(type)
+      }).catch(err => {
+        this.getCaptcha()
+        console.error(err)
+      })
     }
   }
 

@@ -1,0 +1,39 @@
+.dispatch
+  display flex
+  overflow hidden
+  // height calc( 88vh - 83px )
+
+  &-part
+    flex 1
+
+    &-title
+      height 32px
+      line-height 32px
+      margin-bottom 10px
+      font-size 14px
+      font-weight: bolder
+
+  &-actions
+    display flex
+    flex-wrap wrap
+    align-items center
+    justify-content center
+    flex 0 0 120px
+    text-align center
+
+  &-empty
+    display flex
+    flex-direction column
+    justify-content center
+    align-items center
+    height calc( 100% - 42px )
+    min-height calc( 88vh - 83px )
+    border 1px solid #C9CED9
+
+    &-img
+      width 70px
+      margin-bottom 12px
+
+    p
+      color #999999
+      text-align center

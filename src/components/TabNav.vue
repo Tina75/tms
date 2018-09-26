@@ -41,7 +41,7 @@ import BaseComponent from '@/basic/BaseComponent'
 import TabNavItem from '@/components/TabNavItem'
 export default {
   name: 'TabNav',
-  components: {TabNavItem},
+  components: { TabNavItem },
   mixins: [BaseComponent],
   props: {
     value: Object,
@@ -114,8 +114,7 @@ export default {
       this.$emit('on-close', res, item)
     },
     handleRefresh (item) {
-      this.$Message.info(`${item.name}已刷新`)
-      window.location.reload()
+      this.ema.fire('reloadTab', {...item})
     },
     handleClick (item) {
       this.$emit('on-select', item)

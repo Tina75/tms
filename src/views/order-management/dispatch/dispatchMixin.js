@@ -1,4 +1,5 @@
 import Server from '@/libs/js/server'
+import City from '@/libs/js/City'
 import tableExpand from './tableExpand'
 
 export default {
@@ -29,21 +30,32 @@ export default {
         {
           title: '始发地',
           key: 'start',
-          ellipsis: true
+          ellipsis: true,
+          render: (h, p) => {
+            return h('span', this.cityFilter(p.row.start))
+          }
         },
         {
           title: 'icon',
-          width: 50,
+          width: 80,
           renderHeader: (h, p) => {
-            return h('Icon', {
-              props: { type: 'md-arrow-round-forward' }
+            return h('i', {
+              class: 'icon font_family icon-ico-line',
+              style: { fontSize: '25px' }
             })
           }
         },
         {
           title: '目的地',
           key: 'end',
-          ellipsis: true
+          ellipsis: true,
+          render: (h, p) => {
+            return h('span', this.cityFilter(p.row.end))
+          }
+        },
+        {
+          title: '订单数',
+          key: 'ordreNum'
         },
         {
           title: '体积（方）',
@@ -108,18 +120,24 @@ export default {
         },
         {
           title: '客户名称',
-          key: 'carrierName',
+          key: 'consignerName',
           ellipsis: true
         },
         {
           title: '始发地',
           key: 'start',
-          ellipsis: true
+          ellipsis: true,
+          render: (h, p) => {
+            return h('span', this.cityFilter(p.row.start))
+          }
         },
         {
           title: '目的地',
           key: 'end',
-          ellipsis: true
+          ellipsis: true,
+          render: (h, p) => {
+            return h('span', this.cityFilter(p.row.end))
+          }
         },
         {
           title: '体积（方）',
@@ -132,16 +150,18 @@ export default {
       leftTableExpandData: [], // 左侧展开数据
       leftTableExpandLoading: false, // 左侧展开数据加载状态
       leftTableLoading: false, // 左侧表格加载
+
       rightExpandRow: null, // 右侧展开列
       rightSelectRow: null, // 右侧选中列
       rightSelection: [], // 右侧选中数据
+      rightTableLoading: false, // 右侧表格加载
       rightTableExpandData: [], // 右侧展开数据
-      rightTableLoading: false // 右侧表格加载
+      rightTableExpandLoading: false // 右侧展开数据加载状态
     }
   },
 
   methods: {
-    tableHeightComput () {
+    tableHeightCompute () {
       this.tableHeight = this.$refs.$dispatch.offsetHeight
       window.onresize = () => {
         this.tableHeight = this.$refs.$dispatch.offsetHeight
@@ -181,49 +201,68 @@ export default {
         return
       }
       this.keepExpandOnly(row, 'right')
+      this.fetchRightExpandData()
     },
 
     // 右侧表格列选中
     rightTableRowClick (row, index) {
       this.rightSelectRow = { row, index }
+      this.rightTableData.forEach((item, i) => {
+        if (i === index) item._highlight = true
+        else item._highlight = false
+      })
+    },
+
+    // 格式化城市
+    cityFilter (code) {
+      return City.codeToFullName(code, 3, '')
     },
 
     /** 数据操作 */
 
     // 为表格数据添加自定义字段及自定义过滤
-    dataFilter (data, param, extraRule) {
+    dataFilter (data, fields, extraRule) {
       return data.map(item => {
-        item[param] = false
+        if (fields instanceof Array) {
+          fields.forEach(field => {
+            item[field] = false
+          })
+        } else {
+          item[fields] = false
+        }
         if (extraRule) item = extraRule(item)
         return item
       })
     },
 
     // 查询左侧列表数据 10-提货 20-调度
-    fetchLeftTableData (type) {
+    fetchLeftTableData (status) {
       this.leftTableLoading = true
       Server({
         url: '/dispatch/aggregation/order',
         method: 'get',
-        data: { type }
+        data: { status }
       }).then(res => {
         this.leftTableData = this.dataFilter(res.data.data.orderList, '_expanded', item => {
           if (JSON.stringify(item) === JSON.stringify(this.leftExpandRow)) item._expanded = true
           return item
         })
         this.leftTableLoading = false
-      }).catch(err => console.error(err))
+      }).catch(err => {
+        this.leftTableLoading = false
+        console.error(err)
+      })
     },
 
     // 查询左侧列表展开数据 10-提货 20-调度
-    fetchLeftTableExpandData (type) {
+    fetchLeftTableExpandData (status) {
       this.leftTableExpandData = []
       this.leftTableExpandLoading = true
       Server({
         url: '/dispatch/assign/order/cargo/list',
         method: 'get',
         data: {
-          type,
+          status,
           start: this.leftExpandRow.start,
           end: this.leftExpandRow.end
         }

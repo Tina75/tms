@@ -4,11 +4,11 @@
     <Form ref="counterForm" :model="counterForm" :label-width="80">
       <FormItem label="计费规则" prop="rule">
         <Select v-model="counterForm.rule">
-          <Option value="1">盖浇饭</Option>
+          <Option value="1">暂无数据</Option>
         </Select>
       </FormItem>
     </Form>
-    <div slot="footer">
+    <div slot="footer" class="van-center">
       <Button  type="primary"  @click="save">确定</Button>
       <Button  type="default"  @click.native="visibale = false">取消</Button>
     </div>
@@ -18,6 +18,7 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 export default {
+  name: 'CounterDialog',
   mixins: [BaseDialog],
   data () {
     return {
@@ -27,10 +28,15 @@ export default {
       visibale: true
     }
   },
+  watch: {
+    visibale: function (val) {
+      !val && this.close()
+    }
+  },
   methods: {
     save () {
-      this.visibale = false
       this.ok(this.counterForm.rule)
+      this.visibale = false
     }
   }
 }

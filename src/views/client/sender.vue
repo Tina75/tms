@@ -30,7 +30,8 @@
               :current.sync="pageNo" :page-size-opts="pageArray"
               size="small"
               show-sizer
-              show-elevator show-total @on-change="handleChangePage"/>
+              show-elevator show-total @on-change="handleChangePage"
+              @on-page-size-change="handleChangePageSize"/>
       </template>
     </div>
   </div>
@@ -42,6 +43,9 @@ import BasePage from '@/basic/BasePage'
 export default {
   name: 'sender',
   mixins: [ BasePage ],
+  metaInfo: {
+    title: '发货方列表'
+  },
   data () {
     return {
       selectStatus: 0,
@@ -65,8 +69,6 @@ export default {
         {
           title: '操作',
           key: 'id',
-          // width: 150,
-          // align: 'left',
           render: (h, params) => {
             return h('div', [
               h('span', {
@@ -78,6 +80,7 @@ export default {
                 on: {
                   click: () => {
                     let _this = this
+                    console.log(params.row.payType + '')
                     this.openDialog({
                       name: 'client/dialog/sender',
                       data: {
@@ -98,7 +101,6 @@ export default {
                         }
                       }
                     })
-                    // this.modalupdate = true
                   }
                 }
               }, '修改'),
@@ -137,7 +139,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.$router.push({ path: '/client/sender-info', query: { id: params.row.id }
+                    this.openTab({ path: '/client/sender-info', query: { id: params.row.id }
                     })
                   }
                 }
@@ -155,7 +157,8 @@ export default {
         },
         {
           title: '发货方地址数量',
-          key: 'consignerAddressCnt'
+          // key: 'consignerAddressCnt'
+          key: 'addressCnt'
         },
         {
           title: '收货方数量',
@@ -187,27 +190,25 @@ export default {
         {
           title: '创建时间',
           key: 'createTime',
-          sortable: true
+          sortable: true,
+          render: (h, params) => {
+            let text = this.formatDate(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
         }
       ],
-      data1: [
-        // {
-        //   id: 1,
-        //   name: 'John Brown',
-        //   contact: 18,
-        //   phone: 'New York No. 1 Lake Park',
-        //   consignerAddressCnt: '2016-10-03',
-        //   consigneeCnt: '2016-10-03',
-        //   cargoCnt: '2016-10-03',
-        //   payTypeDesc: '2016-10-03',
-        //   createTime: '2016-10-03',
-        //   remark:'我是备注'
-        // }
-      ]
+      data1: []
     }
   },
+  mounted () {
+    this.searchList()
+  },
   methods: {
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
     searchList () {
+      this.selectStatus === 0 ? this.contact = '' : this.name = ''
       let data = {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
@@ -229,7 +230,6 @@ export default {
         },
         methods: {
           ok () {
-            console.log(this)
             _this.searchList() // 刷新页面
           }
         }
@@ -238,6 +238,10 @@ export default {
     handleChangePage (pageNo) {
       // 重新组装数据，生成查询参数
       this.pageNo = pageNo
+      this.searchList()
+    },
+    handleChangePageSize (pageSize) {
+      this.pageSize = pageSize
       this.searchList()
     }
   }

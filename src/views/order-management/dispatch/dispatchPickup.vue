@@ -27,7 +27,12 @@
 
         <Button type="primary" style="float: right;" @click="createFreight">新建提货单</Button>
       </div>
-      <Table :columns="rightTableHeader" :data="rightTableData" :loading="rightTableLoading && !rightTableData.length"
+      <div v-if="!rightTableData.length && !rightTableLoading" class="dispatch-empty">
+        <img src="../../../assets/img-empty.png" class="dispatch-empty-img">
+        <p>暂无未提货提货单，赶快创建新的提货单吧～</p>
+      </div>
+      <Table v-else
+             :columns="rightTableHeader" :data="rightTableData" :loading="rightTableLoading && !rightTableData.length"
              highlight-row
              @on-expand="keepRightExpandOnly"
              @on-row-click="rightTableRowClick"></Table>
@@ -59,10 +64,9 @@ export default {
                 }
               },
               props: {
+                tableLoading: this.rightTableExpandLoading,
                 tableHeader: this.expandTableTypeOne,
-                tableDataFunc: () => {
-                  return p.row.loadbillOrderList
-                }
+                tableData: this.rightTableExpandData
               }
             })
           }
@@ -122,28 +126,47 @@ export default {
         url: '/dispatch/loadbill/list',
         method: 'get'
       }).then(res => {
-        this.rightTableData = this.dataFilter(res.data.data.loadbillList, '_expanded', item => {
+        this.rightTableData = this.dataFilter(res.data.data.loadbillList, ['_expanded', '_highlight'], item => {
           if (JSON.stringify(item) === JSON.stringify(this.rightExpandRow)) item._expanded = true
           return item
         })
         this.rightTableLoading = false
-      }).catch(err => console.error(err))
+      }).catch(err => {
+        this.rightTableLoading = false
+        console.error(err)
+      })
     },
-    // 查询左侧表格展开数据
+    // 查询表格展开数据
     fetchLeftExpandData () {
       this.fetchLeftTableExpandData('10')
+    },
+    fetchRightExpandData () {
+      this.rightTableExpandLoading = true
+      Server({
+        url: '/dispatch/loadbill/order/list',
+        method: 'get',
+        data: {
+          loadbillId: this.rightExpandRow.loadbillId
+        }
+      }).then(res => {
+        this.rightTableExpandData = res.data.data.loadbillOrderList
+        this.rightTableExpandLoading = false
+      }).catch(err => {
+        this.rightTableExpandLoading = false
+        console.error(err)
+      })
     },
     // 将左侧选中订单添加到右侧选中运单
     moveOrders2Pickup () {
       this.leftMoveToRight('/dispatch/add/order/to/loadbill', {
-        loadbillId: this.rightSelectRow.row.loadbillId,
+        pickUpId: this.rightSelectRow.row.loadbillId,
         orderIds: this.leftSelection
       })
     },
     // 从提货单移除
     removeOrdersFromPickup () {
       this.rightMoveToLeft('/dispatch/move/cargo/from/loadbill/list', {
-        loadbillId: this.rightSelectRow.row.loadbillId,
+        pickUpId: this.rightSelectRow.row.loadbillId,
         orderIds: this.rightSelection
       })
     }

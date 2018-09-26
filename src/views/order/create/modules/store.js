@@ -13,11 +13,11 @@ const defaultCargo = {
 const state = {
   order: {
     form: {},
-    pagination: {
-      pageNo: 1,
-      pageSize: 10,
-      total: 0
-    },
+    // pagination: {
+    //   pageNo: 1,
+    //   pageSize: 10,
+    //   total: 0
+    // },
     detail: {}, // 订单详情
     clients: [], // 客户信息
     consigners: [], // 发货方信息
@@ -28,46 +28,62 @@ const state = {
     // 客户实际需要的货物，基于上面的cargoes
     consignerCargoes: [
       new Cargo(defaultCargo)
-    ]
+    ],
+    carriers: [], // 承运商信息
+    carrierCars: [], // 承运商车辆信息
+    carrierDrivers: [], // 承运商司机信息
+    transferees: [] // 外转方信息
   }
 }
 
 const mutations = {
-  [types.RECEIVE_CLIENT_LIST] ({order}, list) {
+  [types.RECEIVE_CLIENT_LIST] ({ order }, list) {
     order.clients = list
   },
-  [types.RECEIVE_CONSIGNERS_LIST] ({order}, list) {
+  [types.RECEIVE_CONSIGNERS_LIST] ({ order }, list) {
     order.consigners = list
   },
-  [types.RECEIVE_ADDRESS_LIST] ({order}, list) {
+  [types.RECEIVE_ADDRESS_LIST] ({ order }, list) {
     order.addresses = list
   },
-  [types.RECEIVE_CONSIGNEES_LIST] ({order}, list) {
+  [types.RECEIVE_CONSIGNEES_LIST] ({ order }, list) {
     order.consignees = list
   },
-  [types.RECEIVE_CARGO_LIST] ({order}, list) {
+  [types.RECEIVE_CARGO_LIST] ({ order }, list) {
     order.cargoes = list
   },
-  [types.RECEIVE_CONSIGNER_CARGO_LIST] ({order}, list) {
+  [types.RECEIVE_CONSIGNER_CARGO_LIST] ({ order }, list) {
     order.consignerCargoes = list
   },
-  [types.RECEIVE_ORDER_DETAIL] ({order}, detail) {
+  [types.RECEIVE_ORDER_DETAIL] ({ order }, detail) {
     order.detail = detail
   },
-  [types.APPEND_CONSIGNER_CARGO] ({order}, index) {
+  [types.APPEND_CONSIGNER_CARGO] ({ order }, index) {
     order.consignerCargoes.splice(index, -1, new Cargo(defaultCargo))
   },
-  [types.REMOVE_CONSIGNER_CARGO] ({order}, index) {
+  [types.REMOVE_CONSIGNER_CARGO] ({ order }, index) {
     order.consignerCargoes.splice(index, 1)
   },
-  [types.UPDATE_CONSIGNER_CARGO] ({order}, item) {
+  [types.UPDATE_CONSIGNER_CARGO] ({ order }, item) {
     order.consignerCargoes[item.index] = new Cargo(Object.assign({}, order.consignerCargoes[item.index], item.cargo))
   },
-  [types.UPDATE_FULL_CONSIGNER_CARGO] ({order}, item) {
+  [types.UPDATE_FULL_CONSIGNER_CARGO] ({ order }, item) {
     order.consignerCargoes.splice(item.index, 1, item.cargo)
   },
-  [types.CLEAR_CONSIGNER_CARGO_LIST] ({order}) {
+  [types.CLEAR_CONSIGNER_CARGO_LIST] ({ order }) {
     order.consignerCargoes = [new Cargo()]
+  },
+  [types.RECEIVE_CARRIER_LIST] ({ order }, list) {
+    order.carriers = list
+  },
+  [types.RECEIVE_CARRIER_CAR_LIST] ({ order }, list) {
+    order.carrierCars = list
+  },
+  [types.RECEIVE_CARRIER_DRIVER_LIST] ({ order }, list) {
+    order.carrierDrivers = list
+  },
+  [types.RECEIVE_TRANSFEREE_LIST] ({ order }, list) {
+    order.transferees = list
   }
 }
 export default {

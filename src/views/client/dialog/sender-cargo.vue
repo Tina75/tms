@@ -1,10 +1,10 @@
-<!--发货方详情地址新增编辑-->
 <template>
   <div>
     <Modal
       v-model="modal"
       :mask-closable="true"
       label-position="left"
+      class="modal"
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
@@ -12,20 +12,23 @@
         <FormItem label="货物名称:" prop="cargoName">
           <Input v-model="validate.cargoName" :maxlength="20" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="包装单位:">
+        <FormItem label="包装单位:" class="ivu-form-item-required blank">
           <Input v-model="validate.unit" :maxlength="10" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="货值:" prop="cargoCost">
+        <FormItem label="货值:" prop="cargoCost" class="ivu-form-item-required blank">
           <Input v-model="validate.cargoCost" :maxlength="60" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="重量:" prop="weight">
+        <FormItem label="重量:" prop="weight" class="ivu-form-item-required blank">
           <Input v-model="validate.weight" :maxlength="60" placeholder="请输入"/>吨
         </FormItem>
-        <FormItem label="体积:" prop="volume">
-          <Input v-model="validate.volume" :maxlength="60" placeholder="请输入"/>万
+        <FormItem label="体积:" prop="volume" class="ivu-form-item-required blank">
+          <Input v-model="validate.volume" :maxlength="60" placeholder="请输入"/>方
         </FormItem>
-        <FormItem label="备注:" >
-          <Input v-model="validate.remark" :maxlength="100" placeholder="请输入"/>
+        <FormItem label="备注1:" class="ivu-form-item-required blank">
+          <Input v-model="validate.remark1" :maxlength="100" placeholder="请输入"/>
+        </FormItem>
+        <FormItem label="备注2:" class="ivu-form-item-required blank">
+          <Input v-model="validate.remark2" :maxlength="100" placeholder="请输入"/>
         </FormItem>
       </Form>
       <div slot="footer">
@@ -53,20 +56,21 @@ export default {
         cargoCost: '',
         weight: '',
         volume: '',
-        remark: ''
+        remark1: '',
+        remark2: ''
       },
       ruleValidate: {
         cargoName: [
           { required: true, message: '货物名称不能为空', trigger: 'blur' }
         ],
         cargoCost: [
-          { type: 'string', message: '必须为大于0的数,且精确到两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
+          { type: 'string', message: '必须为大于等于0的数,且精确到两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
         ],
         weight: [
-          { type: 'string', message: '必须为大于0的数,且精确到两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
+          { type: 'string', message: '必须为大于等于0的数,且精确到两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
         ],
         volume: [
-          { type: 'string', message: '必须为大于0的数,且精确到一位小数', pattern: /^(\+)?\d+(\.\d)?$/, trigger: 'blur' }
+          { type: 'string', message: '必须为大于等于0的数,且精确到一位小数', pattern: /^(\+)?\d+(\.\d)?$/, trigger: 'blur' }
         ]
       }
     }
@@ -92,7 +96,8 @@ export default {
         cargoCost: Math.floor(this.validate.cargoCost * 100) / 100,
         weight: Math.floor(this.validate.weight * 100) / 100,
         volume: Math.floor(this.validate.volume * 10) / 10,
-        remark: this.validate.remark
+        remark1: this.validate.remark1,
+        remark2: this.validate.remark2
       }
       consignerCargoAdd(data).then(res => {
         if (res.data.code === CODE) {
@@ -110,7 +115,8 @@ export default {
         cargoCost: Math.floor(this.validate.cargoCost * 100) / 100,
         weight: Math.floor(this.validate.weight * 100) / 100,
         volume: Math.floor(this.validate.volume * 10) / 10,
-        remark: this.validate.remark
+        remark1: this.validate.remark1,
+        remark2: this.validate.remark2
       }
       consignerCargoUpdate(data).then(res => {
         if (res.data.code === CODE) {
@@ -125,6 +131,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
+  @import "../client.styl"
   .ivu-input-wrapper
     width: 86%
     margin-right 8px

@@ -1,7 +1,7 @@
 [
   {
     "name":"首页",
-    "path":"/home/index",
+    "path":"/home",
     "icon":"shouye",
     "powerCode":0
   },
@@ -38,6 +38,11 @@
         "name":"回单管理",
         "path":"/order-management/receipt",
         "powerCode":0
+      },
+      {
+        "name":"调度工作台",
+        "path":"/order-management/dispatch",
+        "powerCode":0
       }
     ]
   },
@@ -47,11 +52,6 @@
     "icon":"huoyuanguanli",
     "path":"/transport",
     "children":[
-      {
-        "name":"调度工作台",
-        "path":"/transport/dispatch",
-        "powerCode":0
-      },
       {
         "name":"运单管理",
         "path":"/transport/waybill",
@@ -148,7 +148,7 @@
   {
     "name":"消息",
     "path":"/info/info",
-    "icon":"md-chatbubbles",
+    "icon":"xiaoxishezhi",
     "powerCode":0
   },
   {

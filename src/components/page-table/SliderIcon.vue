@@ -3,11 +3,16 @@
     <FontIcon type="gengduo" class="ios-list-icon" size="18" color="#00A4BD"></FontIcon>
     <div slot="title"><span>选择要显示的字段</span></div>
     <div slot="content">
-      <CheckboxGroup v-model="checkList">
-        <draggable v-model="sortArray" :options="options" :move="checkMove">
-          <Checkbox v-for="item in sortArray" :disabled="item.fixed" :data-key="item.key" :key="item.key" :label="item.title" :class="itemClass(item)"></Checkbox>
-        </draggable>
-      </CheckboxGroup>
+      <div class="slider-icon__checkbox-list">
+        <CheckboxGroup v-model="checkList">
+          <draggable v-model="sortArray" :options="options" :move="checkMove">
+            <Checkbox v-for="item in sortArray" :disabled="item.fixed" :data-key="item.key" :key="item.key" :label="item.title" :class="itemClass(item)">
+              <span>{{item.title}}</span>
+              <FontIcon v-if="!item.fixed" type="tuodong"></FontIcon>
+            </Checkbox>
+          </draggable>
+        </CheckboxGroup>
+      </div>
       <div class="slider-icon__drawer-footer">
         <Button @click="cancel">取消</Button>
         <Button type="primary" @click="ok">确定</Button>
@@ -82,7 +87,7 @@ export default {
     },
     itemClass (item) {
       return [
-        'slider-icon__checkbox-list',
+        'slider-icon__checkbox',
         {
           'slider-icon__draggable-item': !item.fixed
         }
@@ -136,15 +141,27 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 .slider-icon
-  &__checkbox-list{
+  &__checkbox-list
+    max-height: 450px;
+    overflow-y: auto;
+  &__checkbox
     display: block
-  }
-  &__draggable-item{
+  &__draggable-item
     margin: 0
     padding: 8px 0
-  }
+    position: relative
+    &:hover
+      background-color #E9FCFF
+      .font_family
+        display inline
+    .font_family
+      position: absolute;
+      right: 20px;
+      top: 4px;
+      color: #00A4BD;
+      display: none
   &__drawer-footer{
     width: 100%;
     border-top: 1px solid #e8e8e8;

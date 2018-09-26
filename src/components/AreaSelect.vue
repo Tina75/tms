@@ -49,10 +49,13 @@ export default {
   },
   watch: {
     value (newValue) {
-      if (newValue.join('') !== this.selected.join('') && newValue && typeof newValue === 'string') {
-        this.selected = areas.getPathByCode(this.value).map((item) => item.code)
+      if (typeof newValue === 'object' && newValue.join('') !== this.selected.join('') && newValue.length > 0) {
+        this.selected = newValue
       } else if (!newValue || newValue.length === 0) {
         this.selected = []
+      } else if (typeof newValue === 'number' && newValue) {
+        this.selected = areas.getPathByCode(newValue).map((item) => item.code)
+        this.$emit('input', this.selected)
       }
     }
   },
@@ -68,12 +71,15 @@ export default {
       }
     })
     if (this.deep) {
-      data.forEach(province => {
-        let children = vm.loadNext(province.value, true)
-        if (children.length > 0) {
-          province.children = children
-        }
-      })
+      // 先让页面渲染完，在更新数据，防止进入页面很慢
+      setTimeout(() => {
+        data.forEach(province => {
+          let children = vm.loadNext(province.value, true)
+          if (children.length > 0) {
+            province.children = children
+          }
+        })
+      }, 200)
     }
     this.areaData = data
   },
