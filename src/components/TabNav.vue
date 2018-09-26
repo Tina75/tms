@@ -72,11 +72,6 @@ export default {
       }
     }
   },
-  watch: {
-    value: function (params) {
-      console.log('value changed ->', params)
-    }
-  },
   methods: {
     handlescroll (e) {
       var type = e.type
@@ -115,8 +110,7 @@ export default {
     //   }
     // },
     handleClose (item) {
-      let res = this.list.filter(element => element.name !== item.name)
-      this.$emit('on-close', res, item)
+      this.$emit('on-close', item)
     },
     handleRefresh (item) {
       this.ema.fire('reloadTab', {...item})

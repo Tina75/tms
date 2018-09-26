@@ -52,6 +52,7 @@ export default {
     window.EMA.bind('updateUserInfo', () => { this.getUserInfo() })
     window.EMA.bind('logout', (msg = '请重新登录') => { this.logout(msg) })
     window.EMA.bind('openTab', (route) => { this.onMenuSelect(route) })
+    window.EMA.bind('closeTab', (route) => { this.onTabClose(route) })
     window.EMA.bind('reloadTab', (route) => {
       route.query = Object.assign({_time: new Date().getTime()}, route.query)
       this.turnToPage(route)
@@ -100,14 +101,16 @@ export default {
      * @param {*} list 关闭后的tab页list
      * @param {*} route 关闭的tab对象，用于查找前一个tab并置为高亮
     */
-    onTabClose (list, route) {
+    onTabClose (route) {
       // 删除cache
       window.EMA.fire('PageRouter.remove', route.path)
       // 选中前一个tab
       const nextRoute = this.getNextRoute(this.TabNavList, route)
       this.turnToPage(nextRoute)
+
       // 更新store
-      this.setTabNavList(list)
+      let res = this.TabNavList.filter(element => element.query.title !== route.query.title)
+      this.setTabNavList(res)
     },
 
     /**
@@ -159,15 +162,15 @@ export default {
      * @param {*} route2 路由对象
      */
     routeEqual (route1, route2) {
-      const meta1 = route1.meta || {}
-      const meta2 = route2.meta || {}
+      const query1 = route1.query || {}
+      const query2 = route2.query || {}
       // return (route1.name === route2.name) && this.objEqual(params1, params2) && this.objEqual(query1, query2)
-      // return (route1.name === route2.name) && (query1.id === query2.id)
-      return (route1.name === route2.name) && this.objEqual(meta1, meta2)
+      return (route1.path === route2.path) && (query1.title === query2.title)
+      // return (route1.name === route2.name) && this.objEqual(meta1, meta2)
     },
 
     /**
-     * @param {*} obj1 对象
+   * @param {*} obj1 对象
      * @param {*} obj2 对象
      * @description 判断两个对象是否相等，这两个对象的值只能是数字或字符串
      */

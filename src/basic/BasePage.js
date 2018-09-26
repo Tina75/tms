@@ -65,15 +65,13 @@ export default {
      *  {
      *    title:'', //tab应该显示的名称,默认值为query.id或metaInfo.title
      *    path:'', //路径
-     *    multi:false //是否支持多开 默认false
+     *    multi:false //是否支持多开 默认false 已废弃
      *    query:{}
      *  }
      */
     openTab: function (data) {
       data.query = Object.assign({noCache: true}, data.query)
       data.query.title = data.title ? data.title : (data.query.id ? data.query.id : this.$options.metaInfo.title)
-      // data.query = data.title ? data.title : data.query.id
-      // data.multi = Boolean(data.multi)
       this.ema.fire('openTab', data)
     },
     /**
