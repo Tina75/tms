@@ -25,6 +25,8 @@ export default {
     $route (to, from) {
       // 对路由变化作出响应...
       console.log('对路由变化作出响应 ' + from.path + ' -> ' + to.path)
+      console.log(from, to)
+
       // if (to.path !== from.path) {
       // 如果页面改变。load新页面加入
       this.loadPage(to.params, to.path === from.path || to.query.noCache)
@@ -76,7 +78,7 @@ export default {
       }
       if (arr.length === 0) {
         arr.push('home')
-        this.$router.push({path: '/home', params: {name: 'home'}})
+        this.$router.push({path: '/home', params: {name: 'home'}, query: {title: '首页'}})
       }
       return arr.join('/')
     }

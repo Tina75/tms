@@ -64,7 +64,6 @@ export default {
     // 窗口宽度改变
     watchWindowWidth () {
       const $box = this.$refs.$box
-      console.log($box)
       this.tableWidth = $box.offsetWidth
       window.onresize = () => {
         this.tableWidth = $box.offsetWidth
@@ -128,6 +127,7 @@ export default {
     },
     // tab切换
     tabChanged (tab) {
+      console.log(tab)
       // 设置当前的按钮组
       for (let i = 0; i < this.btnList.length; i++) {
         if (tab === this.btnList[i].tab) {

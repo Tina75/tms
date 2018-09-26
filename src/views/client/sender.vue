@@ -22,7 +22,6 @@
       <template>
         <Table :columns="columns1" :data="data1"></Table>
       </template>
-      <!--<page-table :data="data1" :columns="columns1" :total="100" :current.sync="2"></page-table>-->
     </div>
     <div class="footer">
       <template>
@@ -139,7 +138,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.openTab({ path: '/client/sender-info', query: { id: params.row.id }
+                    this.openTab({ path: '/client/sender-info', name: '客户详情', query: { id: params.row.id }
                     })
                   }
                 }

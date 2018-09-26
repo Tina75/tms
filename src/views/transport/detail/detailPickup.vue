@@ -240,7 +240,7 @@
         </div>
         <Row class="detail-field-group">
           <i-col span="5">
-            <span class="detail-field-title-sm detail-field-required">运输费：</span>
+            <span class="detail-field-title-sm">运输费：</span>
             <MoneyInput v-model="payment.freightFee"
                         class="detail-payment-input" />
             <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
@@ -507,6 +507,7 @@ export default {
         data: { pickUpIds: [ this.id ] }
       }).then(res => {
         this.$Message.success('删除成功')
+        this.ema.fire('colseTab', this.$route)
       }).catch(err => console.error(err))
     },
 
