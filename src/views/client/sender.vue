@@ -2,7 +2,7 @@
   <div>
     <div class="header">
       <div class="left">
-        <Button type="primary" @click="modaladd">新增</Button>
+        <Button v-if="hasPower(130101)" type="primary"  @click="modaladd">新增</Button>
       </div>
       <div class="right">
         <template>
@@ -35,7 +35,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { consignerList, consignerDelete, CODE } from './client'
 import BasePage from '@/basic/BasePage'
@@ -69,8 +68,9 @@ export default {
           title: '操作',
           key: 'id',
           render: (h, params) => {
-            return h('div', [
-              h('span', {
+            let renderBtn = []
+            if (this.hasPower(130102)) {
+              renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
                   color: '#00A4BD',
@@ -101,8 +101,10 @@ export default {
                     })
                   }
                 }
-              }, '修改'),
-              h('span', {
+              }, '修改'))
+            }
+            if (this.hasPower(130103)) {
+              renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
                   cursor: 'pointer'
@@ -131,8 +133,9 @@ export default {
                     })
                   }
                 }
-              }, '删除')
-            ])
+              }, '删除'))
+            }
+            return h('div', renderBtn)
           }
         },
         {
@@ -255,7 +258,6 @@ export default {
   }
 }
 </script>
-
 <style scoped lang="stylus">
   .header
     display flex
