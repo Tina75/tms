@@ -694,6 +694,8 @@ export default {
           for (let key in vm.orderForm) {
             vm.orderForm[key] = orderDetail[key] || vm.orderForm[key]
           }
+          // 加上id
+          vm.orderForm.id = orderDetail.id
           // 分转换元
           transferFeeList.forEach((fee) => {
             vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
@@ -867,8 +869,12 @@ export default {
             })
             vm.submitOrder(form)
               .then((response) => {
-                this.$Message.success('创建订单成功')
-                if (e) {
+                if (!form.id) {
+                  this.$Message.success('创建订单成功')
+                } else {
+                  this.$Message.success('修改订单成功')
+                }
+                if (e && !form.id) {
                   vm.resetForm()
                 }
                 vm.disabled = false
@@ -899,7 +905,9 @@ export default {
           vm.orderPrint.orderCargoList = _.cloneDeep(vm.consignerCargoes)
           vm.orderPrint.totalFee = vm.totalFee
           vm.$refs.printer.print()
-          vm.resetForm()
+          if (!vm.orderPrint.id) {
+            vm.resetForm()
+          }
         })
     }
   }

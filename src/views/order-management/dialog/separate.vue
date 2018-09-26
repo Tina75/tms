@@ -107,11 +107,11 @@ export default {
                         parentData.quantity = params.row.quantity - this.quantityVal
                         parentData.weight = (this.weightVal || this.weightVal === null) ? params.row.weight - this.weightVal : 0
                         parentData.volume = (this.volumeVal || this.volumeVal === null) ? params.row.volume - this.volumeVal : 0
-                        parentData.cargoCost = (params.row.cargoCost * parentData.quantity / quantity)
+                        parentData.cargoCost = (cargoCost * parentData.quantity / quantity)
                         // 货值、重量体积保留2位小数
-                        parentData.weight = parentData.weight.toFixed(2)
-                        parentData.volume = parentData.volume.toFixed(2)
-                        parentData.cargoCost = parentData.cargoCost.toFixed(2)
+                        // parentData.weight = Number(parentData.weight).toFixed(2)
+                        // parentData.volume = Number(parentData.volume).toFixed(2)
+                        // parentData.cargoCost = Number(parentData.cargoCost).toFixed(2)
                         this.$set(this.parentOrderCargoList, params.index, parentData)
 
                         // 生成子单数据
@@ -121,9 +121,9 @@ export default {
                         childData.weight = this.weightVal === null ? 0 : (this.weightVal ? this.weightVal : params.row.weight)
                         childData.volume = this.volumeVal === null ? 0 : (this.volumeVal ? this.volumeVal : params.row.volume)
                         // 货值、重量体积保留2位小数
-                        childData.weight = childData.weight.toFixed(2)
-                        childData.volume = childData.volume.toFixed(2)
-                        childData.cargoCost = childData.cargoCost.toFixed(2)
+                        // childData.weight = Number(childData.weight).toFixed(2)
+                        // childData.volume = Number(childData.volume).toFixed(2)
+                        // childData.cargoCost = Number(childData.cargoCost).toFixed(2)
                         this.childOrderCargoList.unshift(childData)
                       }
                     }
@@ -195,7 +195,10 @@ export default {
         },
         {
           title: '货值',
-          key: 'cargoCost'
+          key: 'cargoCost',
+          render: (h, params) => {
+            return h('div', (Number(params.row.cargoCost) / 100).toFixed(2))
+          }
         },
         {
           title: '数量',
@@ -237,7 +240,7 @@ export default {
               return h('div', [
                 h('InputNumber', {
                   props: {
-                    min: 1,
+                    min: 0,
                     max: Number(params.row.weight),
                     value: Number(params.row.weight),
                     precision: 2,
@@ -253,7 +256,7 @@ export default {
                 })
               ])
             } else {
-              return h('div', params.row.weight)
+              return h('div', Number(params.row.weight).toFixed(2))
             }
           }
         },
@@ -265,10 +268,10 @@ export default {
               return h('div', [
                 h('InputNumber', {
                   props: {
-                    min: 1,
+                    min: 0,
                     max: Number(params.row.volume),
                     value: Number(params.row.volume),
-                    precision: 2,
+                    precision: 1,
                     activeChange: false
                   },
                   style: {
@@ -281,7 +284,7 @@ export default {
                 })
               ])
             } else {
-              return h('div', params.row.volume)
+              return h('div', Number(params.row.volume).toFixed(1))
             }
           }
         }
@@ -340,7 +343,10 @@ export default {
         },
         {
           title: '货值',
-          key: 'cargoCost'
+          key: 'cargoCost',
+          render: (h, params) => {
+            return h('div', (Number(params.row.cargoCost) / 100).toFixed(2))
+          }
         },
         {
           title: '数量',
@@ -353,11 +359,17 @@ export default {
         },
         {
           title: '重量（吨）',
-          key: 'weight'
+          key: 'weight',
+          render: (h, params) => {
+            return h('div', Number(params.row.weight).toFixed(2))
+          }
         },
         {
           title: '体积（方）',
-          key: 'volume'
+          key: 'volume',
+          render: (h, params) => {
+            return h('div', Number(params.row.volume).toFixed(1))
+          }
         }
       ],
       parentOrderCargoList: [],
@@ -396,6 +408,7 @@ export default {
         this.visibale = false
       })
     },
+    // 查货物详情
     getData () {
       Server({
         url: 'order/detail?id=' + this.id,
@@ -405,6 +418,7 @@ export default {
         this.parentOrderCargoList = res.data.data.orderCargoList
       })
     },
+    // 拆整笔
     separateWholeList (index) {
       let childList = this.parentOrderCargoList.splice(index, 1)[0]
       this.childOrderCargoList.unshift(childList)

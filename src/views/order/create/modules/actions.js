@@ -56,9 +56,10 @@ export default {
         if (cargoList.length > 0) {
           // 货物信息
           commit(types.RECEIVE_CARGO_LIST, cargoList)
-          commit(types.RECEIVE_CONSIGNER_CARGO_LIST, cargoList.map((cargo) => {
-            return new Cargo(cargo, true)
-          }))
+          // commit(types.RECEIVE_CONSIGNER_CARGO_LIST, cargoList.map((cargo) => {
+          //   return new Cargo(cargo, true)
+          // }))
+          commit(types.RECEIVE_CONSIGNER_CARGO_LIST, [new Cargo(cargoList[0], true)])
         }
         if (consigneeList.length > 0) {
           // 收货方地址
@@ -152,11 +153,10 @@ export default {
     })
   },
   // 提交表单
-  submitOrder ({ state }, form) {
+  submitOrder ({ state, rootState }, form) {
     let url = 'order/create'
-    if (state.order.detail.id) {
+    if (form.id) {
       url = 'order/update'
-      form.id = state.order.detail.id
     }
 
     return new Promise((resolve, reject) => {

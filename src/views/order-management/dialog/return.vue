@@ -7,7 +7,7 @@
       </p>
       <Form ref="info" :model="info" :rules="rules" :label-width="100">
         <FormItem :label="'共' + name + '回单数量'" style="margin-left: 40px;">
-          <span style="color: #00A4BD;margin-right: 5px;font-size: 13px;">{{id.length}}</span>份
+          <span style="color: #00A4BD;margin-right: 5px;font-size: 13px;">{{receiptCount}}</span>份
         </FormItem>
         <FormItem :label="name === '回收' ? '回收人' : '接收人'" prop="name">
           <Input v-model="info.name" :maxlength="15" style="width:200px" placeholder="请输入"/>
@@ -53,6 +53,14 @@ export default {
         arr.push(item.receiptOrder.id)
       })
       return arr
+    },
+    // 回单数量
+    receiptCount () {
+      let total = 0
+      this.id.map((item) => {
+        total += item.receiptCount
+      })
+      return total
     }
   },
 
