@@ -1,6 +1,6 @@
 <template>
   <div ref="$dispatch" class="dispatch">
-    <div class="dispatch-part">
+    <div class="dispatch-part-fix">
       <div class="dispatch-part-title">可调度订单</div>
       <Table :width="440"
              :columns="leftTableHeader" :data="leftTableData"
@@ -33,7 +33,7 @@
         <p>暂无未发运运单，赶快创建新的运单吧～</p>
       </div>
       <Table v-else
-             :width="tableWidth - 440"
+             :width="rightTableWidth"
              :columns="rightTableHeader" :data="rightTableData" :loading="rightTableLoading && !rightTableData.length"
              highlight-row
              @on-expand="keepRightExpandOnly"
@@ -84,9 +84,18 @@ export default {
           // fixed: 'left',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', {
+            return h('a', {
               style: {
                 color: '#418DF9'
+              },
+              on: {
+                click: () => {
+                  this.openTab({
+                    title: p.row.waybillNo,
+                    path: '/transport/detail/detailPickup',
+                    query: { id: p.row.waybillId }
+                  })
+                }
               }
             }, p.row.waybillNo)
           }
