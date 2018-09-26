@@ -145,14 +145,24 @@ export default {
                 },
                 on: {
                   click: () => {
-                    carrierDelete({
-                      carrierId: params.row.carrierId
-                    }).then(res => {
-                      if (res.data.code === CODE) {
-                        this.$Message.success(res.data.msg)
-                        this.searchList() // 刷新页面
-                      } else {
-                        this.$Message.error(res.data.msg)
+                    let _this = this
+                    this.openDialog({
+                      name: 'client/dialog/confirmDelete',
+                      data: {
+                      },
+                      methods: {
+                        ok () {
+                          carrierDelete({
+                            carrierId: params.row.carrierId
+                          }).then(res => {
+                            if (res.data.code === CODE) {
+                              _this.$Message.success(res.data.msg)
+                              _this.searchList() // 刷新页面
+                            } else {
+                              _this.$Message.error(res.data.msg)
+                            }
+                          })
+                        }
                       }
                     })
                   }
@@ -173,7 +183,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.openTab({ path: '/client/carrier-info', query: { id: params.row.carrierId, carrierType: params.row.carrierType }
+                    this.openTab({ path: '/client/carrier-info', title: '承运商详情', query: { id: params.row.carrierId, carrierType: params.row.carrierType }
                     })
                   }
                 }
