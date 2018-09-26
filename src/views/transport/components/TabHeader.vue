@@ -29,16 +29,17 @@ export default {
 
   created () {
     const current = window.sessionStorage['TABHEADER_' + this.type]
-    if (current) {
-      this.current = current
-      this.handleChangeTab(this.current)
-    }
+    if (current) this.current = current
   },
 
   methods: {
     handleChangeTab (name) {
       window.sessionStorage.setItem('TABHEADER_' + this.type, name)
       this.$emit('on-change', name)
+    },
+
+    getCurrent () {
+      return this.current
     }
   }
 }

@@ -261,10 +261,10 @@ export default {
         position absolute
         display block
         width 70%
-        height 4px
+        height 1px
         left 15%
         top 35%
-        border-top 2px dashed #9DA1B0
+        border-top 1px dashed #9DA1B0
         z-index 0
 
       &-item

@@ -142,7 +142,7 @@ export default {
                     })
                   }
                 }
-              }, '查看订单'))
+              }, '查看导入订单'))
             }
             return h('div', actions)
           }

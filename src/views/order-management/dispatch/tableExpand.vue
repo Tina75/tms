@@ -46,7 +46,7 @@ export default {
 
 <style lang="stylus">
   .expand-table
-    margin -20px -50px -20px -30px
+    margin -20px -50px -20px -20px
     border-color transparent
 
     .ivu-table, .ivu-table th, .ivu-table td
