@@ -77,9 +77,26 @@
   },
   {
     "name":"报表",
-    "path":"/stats",
+    "path":"/report",
     "icon":"baobiaoguanli",
-    "powerCode":0
+    "powerCode":0,
+    "children":[
+      {
+        "name":"运营报表",
+        "path":"/report/operate",
+        "powerCode":0
+      },
+      {
+        "name":"营业额汇总表",
+        "path":"/report/total",
+        "powerCode":0
+      },
+      {
+        "name":"利润报表",
+        "path":"/report/profit",
+        "powerCode":0
+      }
+    ]
   },
   {
     "name":"客户管理",

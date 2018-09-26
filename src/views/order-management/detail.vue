@@ -279,6 +279,7 @@ export default {
         this.openResOrDelDialog(this.detail, btn.name)
       } else if (btn.name === '编辑') { // 编辑
         this.openTab({
+          title: this.detail.orderNo,
           path: '/order/update',
           query: {
             id: this.detail.id
@@ -534,12 +535,12 @@ export default {
     },
     // 回单详情按钮过滤   0待回收；1待返厂（已回收）；2已返厂
     filterReceiptButton () {
-      if (this.detail.receiptStatus === '0') {
+      if (this.detail.receiptOrder.receiptStatus === 0 && this.detail.status === 40) {
         this.btnGroup = [
           { name: '回收', value: 1 }
         ]
         this.operateValue = 1
-      } else if (this.detail.receiptStatus === '1') {
+      } else if (this.detail.receiptOrder.receiptStatus === 1) {
         this.btnGroup = [
           { name: '返厂', value: 1 }
         ]
