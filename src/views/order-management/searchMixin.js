@@ -143,6 +143,7 @@ export default {
     },
     // 列表批量选择操作
     handleSelectionChange (val) {
+      console.log(val)
       this.selectOrderList = val
     },
     // 表格按时间排序
@@ -155,6 +156,41 @@ export default {
     // 格式化城市
     cityFilter (code) {
       return City.codeToFullName(code, 3, '')
+    },
+    // 结算方式码转为名称
+    settlementToName (val) {
+      let name
+      switch (val) {
+        case 1:
+          name = '现付'
+          break
+        case 2:
+          name = '到付'
+          break
+        case 3:
+          name = '回付'
+          break
+        case 4:
+          name = '月结'
+          break
+        default:
+          name = ''
+          break
+      }
+      return name
+    },
+    // 提货状态转名称
+    pickupToName (code) {
+      let name
+      switch (code) {
+        case 1:
+          name = '上门提货'
+          break
+        case 2:
+          name = '直接送货'
+          break
+      }
+      return name
     }
   }
 }

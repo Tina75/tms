@@ -99,7 +99,7 @@
         </div>
         <Table :columns="tableColumns" :data="detail.orderCargoList"></Table>
         <div class="table-footer">
-          <span style="padding-right: 5px;box-sizing:border-box">合计</span>
+          <span style="padding-right: 5px;box-sizing:border-box;">合计</span>
           <span>订单总数：{{ orderTotal }}</span>
           <span>总体积：{{ volumeTotal }}</span>
           <span>总重量：{{ weightTotal }}</span>
@@ -148,15 +148,15 @@
         <div class="title">
           <span>{{from === 'order' ? '订单日志' : '回单日志'}}</span>
         </div>
-        <div style="display: flex;justify-content: flex-start;height: 300px;">
+        <div style="display: flex;justify-content: flex-start;min-height: 300px;">
           <div class="fold-icon" @click="showOrderLog">
             <span :class="showLog ? 'hide-log' : 'show-log'">《</span>
           </div>
-          <Timeline :class="showLog ? 'show-timeline' : 'hide-timeline'" :style="{ 'height': showLog ? 41*orderLogCount + 'px' : '15px' }" style="margin-top: 7px;overflow: hidden;">
+          <Timeline :class="showLog ? 'show-timeline' : 'hide-timeline'" :style="{ 'height': showLog ? 42*orderLogCount + 'px' : '15px' }" style="margin-top: 7px;overflow: hidden;">
             <TimelineItem v-for="(item, index) in orderLog" :key="index">
               <i slot="dot"></i>
-              <span style="margin-right: 60px;color: #777;">{{item.createTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
-              <span style="color: #333;">{{'【' + item.operatorName + '】' + item.description}}</span>
+              <span style="margin-right: 60px;color: #777;font-size: 13px;">{{item.createTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
+              <span style="color: #333;font-size: 13px;">{{'【' + item.operatorName + '】' + item.description}}</span>
             </TimelineItem>
           </Timeline>
         </div>
@@ -368,7 +368,7 @@ export default {
           this.filterOrderButton()
           this.orderLog = res.data.data.orderLogs // 订单日志
           this.orderLogCount = res.data.data.orderLogs.length // 订单日志数量
-          // this.waybillNums = res.data.data.waybillList // 运单子单
+          this.waybillNums = res.data.data.waybillNoList // 运单子单
         })
       } else { // 回单详情
         Server({
@@ -563,7 +563,7 @@ export default {
     margin-left 15px
     width 80px
   .ivu-row
-    font-size 13px
+    font-size 14px
     font-family 'PingFangSC-Regular'
     line-height 3
     .ivu-col
@@ -602,8 +602,9 @@ export default {
     border 1px solid #dcdee2
     border-top none
     line-height 48px
-    font-family 'PingFangSC-Regular'
-    color rgba(51,51,51,1)
+    font-family 'PingFangSC-Medium'
+    font-weight bold
+    color #2c3e50
     span
       display inline-block
       min-width 111px

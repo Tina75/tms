@@ -133,7 +133,8 @@ export default {
         { name: '提货调度', value: 2, code: 110102 },
         { name: '订单还原', value: 3, code: 110105 },
         { name: '删除', value: 4, code: 110107 },
-        { name: '导出', value: 5, code: 110109 }
+        { name: '打印', value: 5, code: 110108 },
+        { name: '导出', value: 6, code: 110109 }
       ],
       operateValue: 1,
       keyword: {
@@ -143,11 +144,13 @@ export default {
         {
           type: 'selection',
           width: 60,
-          align: 'center'
+          align: 'center',
+          fixed: 'left'
         },
         {
           title: '操作',
           key: 'do',
+          fixed: 'left',
           width: 140,
           extra: true,
           render: (h, params) => {
@@ -319,6 +322,9 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
+          fixed: 'left',
+          minWidth: 150,
+          tooltip: true,
           className: 'padding-20',
           render: (h, params) => {
             if (params.row.parentId !== '') {
@@ -386,19 +392,27 @@ export default {
         },
         {
           title: '客户订单号',
-          key: 'customerOrderNo'
+          key: 'customerOrderNo',
+          minWidth: 150,
+          tooltip: true
         },
         {
           title: '运单号',
-          key: 'waybillNo'
+          key: 'waybillNo',
+          minWidth: 150,
+          tooltip: true
         },
         {
           title: '客户名称',
-          key: 'consignerName'
+          key: 'consignerName',
+          minWidth: 150,
+          tooltip: true
         },
         {
           title: '始发地',
           key: 'start',
+          minWidth: 150,
+          tooltip: true,
           render: (h, params) => {
             return h('span', City.codeToFullName(params.row.start))
           }
@@ -406,24 +420,161 @@ export default {
         {
           title: '目的地',
           key: 'end',
+          minWidth: 150,
+          tooltip: true,
           render: (h, params) => {
             return h('span', City.codeToFullName(params.row.end))
           }
         },
         {
           title: '体积（方）',
-          key: 'volume'
+          key: 'volume',
+          minWidth: 100,
+          tooltip: true
         },
         {
           title: '重量（吨）',
-          key: 'weight'
+          key: 'weight',
+          minWidth: 100,
+          tooltip: true
         },
         {
           title: '下单时间',
           key: 'createTime',
+          minWidth: 150,
+          tooltip: true,
           render: (h, params) => {
-            return h('span', new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm:ss'))
+            return h('span', params.row.createTime ? new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm:ss') : '')
           }
+        },
+        {
+          title: '要求发货时间',
+          key: 'deliveryTime',
+          minWidth: 150,
+          tooltip: true,
+          render: (h, params) => {
+            return h('span', params.row.deliveryTime ? new Date(params.row.deliveryTime).Format('yyyy-MM-dd hh:mm:ss') : '')
+          }
+        },
+        {
+          title: '期望到货时间',
+          key: 'arriveTime',
+          minWidth: 150,
+          tooltip: true,
+          render: (h, params) => {
+            return h('span', params.row.arriveTime ? new Date(params.row.arriveTime).Format('yyyy-MM-dd hh:mm:ss') : '')
+          }
+        },
+        {
+          title: '发货人',
+          key: 'consignerContact',
+          minWidth: 120,
+          tooltip: true
+        },
+        {
+          title: '发货人手机号',
+          key: 'consignerPhone',
+          minWidth: 140,
+          tooltip: true
+        },
+        {
+          title: '发货地址',
+          key: 'consignerAddress',
+          minWidth: 140,
+          tooltip: true
+        },
+        {
+          title: '收货人',
+          key: 'consigneeContact',
+          minWidth: 120,
+          tooltip: true
+        },
+        {
+          title: '收货人手机号',
+          key: 'consigneePhone',
+          minWidth: 120,
+          tooltip: true
+        },
+        {
+          title: '收货地址',
+          key: 'consigneeAddress',
+          minWidth: 140,
+          tooltip: true
+        },
+        {
+          title: '结算方式',
+          key: 'settlementType',
+          minWidth: 120,
+          tooltip: true,
+          render: (h, params) => {
+            return h('span', this.settlementToName(params.row.settlementType))
+          }
+        },
+        {
+          title: '装货费',
+          key: 'loadFee',
+          minWidth: 120,
+          tooltip: true,
+          render: (h, params) => {
+            return h('span', params.row.loadFee ? (params.row.loadFee / 100).toFixed(2) : '')
+          }
+        },
+        {
+          title: '卸货费',
+          key: 'unloadFee',
+          minWidth: 120,
+          tooltip: true,
+          render: (h, params) => {
+            return h('span', params.row.unloadFee ? (params.row.unloadFee / 100).toFixed(2) : '')
+          }
+        },
+        {
+          title: '保险费',
+          key: 'insuranceFee',
+          minWidth: 120,
+          tooltip: true,
+          render: (h, params) => {
+            return h('span', params.row.insuranceFee ? (params.row.insuranceFee / 100).toFixed(2) : '')
+          }
+        },
+        {
+          title: '其他',
+          key: 'otherFee',
+          minWidth: 120,
+          tooltip: true,
+          render: (h, params) => {
+            return h('span', params.row.otherFee ? (params.row.otherFee / 100).toFixed(2) : '')
+          }
+        },
+        {
+          title: '总费用',
+          key: 'totalFee',
+          minWidth: 120,
+          tooltip: true,
+          render: (h, params) => {
+            return h('span', params.row.totalFee ? (params.row.totalFee / 100).toFixed(2) : '')
+          }
+        },
+        {
+          title: '提货方式',
+          key: 'pickup',
+          minWidth: 120,
+          tooltip: true,
+          render: (h, params) => {
+            return h('span', this.pickupToName(params.row.pickup))
+          }
+        },
+        {
+          title: '回单数量',
+          key: 'receiptCount',
+          minWidth: 120,
+          tooltip: true
+        },
+        {
+          title: '制单人',
+          key: 'creatorId',
+          minWidth: 120,
+          tooltip: true
         }
       ],
       extraColumns: [
@@ -482,19 +633,19 @@ export default {
           visible: true
         },
         {
-          title: '要求装货时间',
+          title: '要求发货时间',
           key: 'deliveryTime',
           fixed: false,
           visible: false
         },
         {
-          title: '要求卸货时间',
+          title: '期望到货时间',
           key: 'arriveTime',
           fixed: false,
           visible: false
         },
         {
-          title: '发货联系人',
+          title: '发货人',
           key: 'consignerContact',
           fixed: false,
           visible: false
@@ -512,8 +663,8 @@ export default {
           visible: false
         },
         {
-          title: '收货联系人',
-          key: 'consigneeName',
+          title: '收货人',
+          key: 'consigneeContact',
           fixed: false,
           visible: false
         },
@@ -524,31 +675,61 @@ export default {
           visible: false
         },
         {
-          title: '收货人手机号',
-          key: 'consigneePhone',
+          title: '收货地址',
+          key: 'consigneeAddress',
           fixed: false,
           visible: false
         },
         {
-          title: '修改时间',
-          key: 'updateTime',
+          title: '结算方式',
+          key: 'settlementType',
           fixed: false,
           visible: false
         },
         {
-          title: '运费',
-          key: 'freightFee',
+          title: '装货费',
+          key: 'loadFee',
           fixed: false,
           visible: false
         },
         {
-          title: '修改人',
+          title: '卸货费',
           key: 'unloadFee',
           fixed: false,
           visible: false
         },
         {
-          title: '创建人',
+          title: '保险费',
+          key: 'insuranceFee',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '其他',
+          key: 'otherFee',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '总费用',
+          key: 'totalFee',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '提货方式',
+          key: 'pickup',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '回单数量',
+          key: 'receiptCount',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '制单人',
           key: 'creatorId',
           fixed: false,
           visible: false
@@ -661,7 +842,8 @@ export default {
           { name: '提货调度', value: 1, code: 110102 },
           { name: '订单还原', value: 2, code: 110105 },
           { name: '删除', value: 3, code: 110107 },
-          { name: '导出', value: 4, code: 110109 }
+          { name: '打印', value: 4, code: 110108 },
+          { name: '导出', value: 5, code: 110109 }
         ]
         this.keywords.status = 10
         // this.keyword = {...this.keywords}
@@ -669,9 +851,9 @@ export default {
         this.operateValue = 1
         this.btnGroup = [
           { name: '送货调度', value: 1, code: 110101 },
-          { name: '提货调度', value: 2, code: 110102 },
-          { name: '订单还原', value: 3, code: 110105 },
-          { name: '删除', value: 4, code: 110107 },
+          { name: '订单还原', value: 2, code: 110105 },
+          { name: '删除', value: 3, code: 110107 },
+          { name: '打印', value: 4, code: 110108 },
           { name: '导出', value: 5, code: 110109 }
         ]
         this.keywords.status = 20
@@ -679,7 +861,7 @@ export default {
       } else {
         this.operateValue = 1
         this.btnGroup = [
-          { name: '导出', value: 5, code: 110109 }
+          { name: '导出', value: 1, code: 110109 }
         ]
         if (val === '在途') {
           this.keywords.status = 30
@@ -740,13 +922,16 @@ export default {
         } else {
           this.openResOrDelDialog('', btn.name)
         }
-      } else {
+      } else if (btn.name === '导出') {
         // 导出
         this.$refs.pageTable.$refs.table.exportCsv({
           filename: 'Custom data',
           columns: this.tableColumns.filter((col, index) => index > 1),
           data: this.selectOrderList
         })
+      } else {
+        // 打印
+        console.log('打印')
       }
     },
     // 外转
