@@ -59,9 +59,9 @@ export default {
         method: 'post',
         data: { orderIds: this.orderIds }
       }).then(() => {
-        this.ok()
         this.$Message.success('删除成功')
         this.visibale = false
+        this.ema.fire('closeTab', this.$route) // 关闭tab页
       })
     }
   }

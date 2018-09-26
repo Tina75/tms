@@ -218,6 +218,7 @@ export default {
         ).concat({
           title: 'icon',
           width: 48,
+          fixed: 'right',
           renderHeader (h, params) {
             return h(SliderIcon, {
               props: {

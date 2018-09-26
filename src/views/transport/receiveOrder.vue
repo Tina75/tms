@@ -1,12 +1,12 @@
 <template>
   <div ref="$box">
-    <TabHeader :tabs="tabList" @tabChange="tabChanged"></TabHeader>
+    <TabHeader :tabs="tabList" type="PICKUP" @on-change="tabChanged"></TabHeader>
 
     <div style="margin-top: 30px;display: flex;justify-content: space-between;">
 
       <!-- 按钮组 -->
       <div>
-        <Button v-for="(item, key) in currentBtns" :key="key"
+        <Button v-for="(item, key) in showButtons" :key="key"
                 :type="key === 0 ? 'primary' : 'default'"
                 @click="item.func">{{ item.name }}</Button>
       </div>
@@ -32,17 +32,21 @@
                      :maxlength="20"
                      :remote="false"
                      :local-options="carriers"
+                     clearable
                      placeholder="请输入承运商"
                      class="search-input"
-                     @on-select="handleSelectCarrier" />
+                     @on-select="handleSelectCarrier"
+                     @on-clear="resetEasySearch" />
 
         <SelectInput v-if="easySelectMode === 3"
                      v-model="easySearchKeyword"
                      :maxlength="8"
                      :remote="false"
                      :local-options="carrierCars"
+                     clearable
                      placeholder="请输入车牌号"
-                     class="search-input" />
+                     class="search-input"
+                     @on-clear="resetEasySearch" />
 
         <Button icon="ios-search"
                 class="search-btn-easy"
@@ -122,7 +126,7 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import TabHeader from '@/components/TabHeader'
+import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
 import SelectInput from '@/components/SelectInput.vue'
 import PrintPickup from './components/PrintPickup'
@@ -151,26 +155,31 @@ export default {
           tab: '全部',
           btns: [{
             name: '到货',
+            code: 120203,
             func: () => {
               this.billArrived()
             }
           }, {
             name: '打印',
+            code: 120202,
             func: () => {
               this.billPrint()
             }
           }, {
             name: '删除',
+            code: 120204,
             func: () => {
               this.billDelete()
             }
           }, {
             name: '位置',
+            code: 120205,
             func: () => {
               this.billLocation()
             }
           }, {
             name: '导出',
+            code: 120207,
             func: () => {
               this.billExport()
             }
@@ -180,16 +189,19 @@ export default {
           tab: '待提货',
           btns: [{
             name: '打印',
+            code: 120202,
             func: () => {
               this.billPrint()
             }
           }, {
             name: '删除',
+            code: 120202,
             func: () => {
               this.billDelete()
             }
           }, {
             name: '导出',
+            code: 120207,
             func: () => {
               this.billExport()
             }
@@ -199,21 +211,25 @@ export default {
           tab: '提货中',
           btns: [{
             name: '到货',
+            code: 120203,
             func: () => {
               this.billArrived()
             }
           }, {
             name: '打印',
+            code: 120202,
             func: () => {
               this.billPrint()
             }
           }, {
             name: '位置',
+            code: 120205,
             func: () => {
               this.billLocation()
             }
           }, {
             name: '导出',
+            code: 120207,
             func: () => {
               this.billExport()
             }
@@ -223,6 +239,7 @@ export default {
           tab: '已提货',
           btns: [{
             name: '导出',
+            code: 120207,
             func: () => {
               this.billExport()
             }
@@ -262,7 +279,7 @@ export default {
           fixed: 'left',
           extra: true,
           render: (h, p) => {
-            if (p.row.status === 1) {
+            if (p.row.status === 1 && this.hasPower(120201)) {
               return h('a', {
                 on: {
                   click: () => {
@@ -286,11 +303,9 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
+                    title: p.row.pickupNo,
                     path: '/transport/detail/detailPickup',
-                    query: {
-                      id: p.row.pickupNo,
-                      qid: p.row.pickUpId
-                    }
+                    query: { id: p.row.pickUpId }
                   })
                 }
               }
@@ -479,10 +494,11 @@ export default {
       this.page.size = data.pageSize
       this.tabList = [
         { name: '全部', count: '' },
-        { name: '待提货', count: data.statusCntInfo.waitCnt || '' },
-        { name: '提货中', count: data.statusCntInfo.loadCnt || '' },
-        { name: '已提货', count: data.statusCntInfo.loadedCnt || '' }
+        { name: '待提货', count: data.statusCntInfo.waitCnt || 0 },
+        { name: '提货中', count: data.statusCntInfo.loadCnt || 0 },
+        { name: '已提货', count: data.statusCntInfo.loadedCnt || 0 }
       ]
+      this.$forceUpdate()
     },
 
     // 打印查询详情
@@ -567,7 +583,7 @@ export default {
             Server({
               url: '/load/bill/delete',
               method: 'delete',
-              data: { pickUpIds: this.tableSelection.map(item => item.pickUpId) }
+              data: { pickUpIds: self.tableSelection.map(item => item.pickUpId) }
             }).then(res => {
               this.$Message.success('删除成功')
               this.tableSelection = []

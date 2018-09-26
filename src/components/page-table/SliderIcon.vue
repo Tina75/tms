@@ -5,7 +5,7 @@
     <div slot="content">
       <div class="slider-icon__checkbox-list">
         <CheckboxGroup v-model="checkList">
-          <draggable v-model="sortArray" :options="options" :move="checkMove">
+          <draggable v-model="sortArray" :options="options" :move="checkMove" class="slider-icon__draggable-column">
             <Checkbox v-for="item in sortArray" :disabled="item.fixed" :data-key="item.key" :key="item.key" :label="item.title" :class="itemClass(item)">
               <span>{{item.title}}</span>
               <FontIcon v-if="!item.fixed" type="tuodong"></FontIcon>
@@ -45,6 +45,7 @@ export default {
       sortData: [],
       oldSortData: [],
       options: {
+        group: 'share',
         dragClass: '.slider-icon__draggable-item'
       }
     }
@@ -144,13 +145,23 @@ export default {
 <style lang="stylus" scoped>
 .slider-icon
   &__checkbox-list
-    max-height: 450px;
-    overflow-y: auto;
+    max-height: 346px
+    overflow-y: auto
+  &__draggable-column
+    max-height: 346px
+    -webkit-column-width: 116px
+    -moz-column-width: 116px
+    column-width: 116px
+    -webkit-column-gap: 6px
+    -moz-column-gap: 6px
+    column-gap: 6px
+
   &__checkbox
-    display: block
+    display: inline-block
+    padding: 8px 0
+    width: 116px
   &__draggable-item
     margin: 0
-    padding: 8px 0
     position: relative
     &:hover
       background-color #E9FCFF
@@ -158,7 +169,7 @@ export default {
         display inline
     .font_family
       position: absolute;
-      right: 20px;
+      right: 0px;
       top: 4px;
       color: #00A4BD;
       display: none

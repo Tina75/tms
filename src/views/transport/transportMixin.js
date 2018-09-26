@@ -32,7 +32,13 @@ export default {
       'carriers',
       'carrierCars',
       'carrierDrivers'
-    ])
+    ]),
+
+    showButtons () {
+      return this.currentBtns.filter(item => {
+        return this.hasPower(item.code)
+      })
+    }
   },
 
   created () {
@@ -127,6 +133,7 @@ export default {
     },
     // tab切换
     tabChanged (tab) {
+      console.log(tab)
       // 设置当前的按钮组
       for (let i = 0; i < this.btnList.length; i++) {
         if (tab === this.btnList[i].tab) {

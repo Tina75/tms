@@ -11,7 +11,7 @@ const carLength = CarConfigs.carLength
 export default {
   data () {
     return {
-      id: this.$route.query.qid,
+      id: this.$route.query.id,
       loading: false,
       inEditing: false,
       currentBtns: [], // 当前按钮组
@@ -144,6 +144,12 @@ export default {
         quantity: 0,
         weight: 0,
         volume: 0
+      })
+    },
+
+    showButtons () {
+      return this.currentBtns.filter(item => {
+        return this.hasPower(item.code)
       })
     },
 

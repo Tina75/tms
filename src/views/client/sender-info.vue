@@ -166,14 +166,24 @@ export default {
                 },
                 on: {
                   click: () => {
-                    consignerAddressDelete({
-                      id: params.row.id
-                    }).then(res => {
-                      if (res.data.code === CODE) {
-                        this.$Message.success(res.data.msg)
-                        this._consignerAddressList() // 刷新页面
-                      } else {
-                        this.$Message.error(res.data.msg)
+                    let _this = this
+                    this.openDialog({
+                      name: 'client/dialog/confirmDelete',
+                      data: {
+                      },
+                      methods: {
+                        ok () {
+                          consignerAddressDelete({
+                            id: params.row.id
+                          }).then(res => {
+                            if (res.data.code === CODE) {
+                              _this.$Message.success(res.data.msg)
+                              _this._consignerAddressList() // 刷新页面
+                            } else {
+                              _this.$Message.error(res.data.msg)
+                            }
+                          })
+                        }
                       }
                     })
                   }
@@ -231,14 +241,24 @@ export default {
                 },
                 on: {
                   click: () => {
-                    consignerConsigneeDelete({
-                      id: params.row.id
-                    }).then(res => {
-                      if (res.data.code === CODE) {
-                        this.$Message.success(res.data.msg)
-                        this._consignerConsigneeList() // 刷新页面
-                      } else {
-                        this.$Message.error(res.data.msg)
+                    let _this = this
+                    this.openDialog({
+                      name: 'client/dialog/confirmDelete',
+                      data: {
+                      },
+                      methods: {
+                        ok () {
+                          consignerConsigneeDelete({
+                            id: params.row.id
+                          }).then(res => {
+                            if (res.data.code === CODE) {
+                              _this.$Message.success(res.data.msg)
+                              _this._consignerConsigneeList() // 刷新页面
+                            } else {
+                              _this.$Message.error(res.data.msg)
+                            }
+                          })
+                        }
                       }
                     })
                   }
@@ -311,14 +331,24 @@ export default {
                 },
                 on: {
                   click: () => {
-                    consignerCargoDelete({
-                      id: params.row.id
-                    }).then(res => {
-                      if (res.data.code === CODE) {
-                        this.$Message.success(res.data.msg)
-                        this._consignerCargoList() // 刷新页面
-                      } else {
-                        this.$Message.error(res.data.msg)
+                    let _this = this
+                    this.openDialog({
+                      name: 'client/dialog/confirmDelete',
+                      data: {
+                      },
+                      methods: {
+                        ok () {
+                          consignerCargoDelete({
+                            id: params.row.id
+                          }).then(res => {
+                            if (res.data.code === CODE) {
+                              _this.$Message.success(res.data.msg)
+                              _this._consignerCargoList() // 刷新页面
+                            } else {
+                              _this.$Message.error(res.data.msg)
+                            }
+                          })
+                        }
                       }
                     })
                   }

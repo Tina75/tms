@@ -12,6 +12,8 @@
       <div class="fontclass">.icon-dingdanguanli</div>
     </div>
     <p><Button type="danger" @click="closeTab">关闭当前tab页</Button></p>
+    <br>
+    <p><Button v-if="hasPower(110301)" type="primary" @click="closeTab">关闭当前tab页</Button></p>
   </div>
 </template>
 
