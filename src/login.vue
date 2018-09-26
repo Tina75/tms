@@ -56,7 +56,7 @@ export default {
     position relative
     width 100%
     height 100%
-    background #252A2F
+    background #1c2125
     overflow auto
 
     &-header
@@ -86,9 +86,9 @@ export default {
     &-footer
       height 128px
       line-height 128px
-      color #FFFFFF
+      color rgba(255, 255, 255, 0.6)
       text-align center
-      background #2E3338
+      background #1c2125
 
     &-body
       display flex
@@ -100,7 +100,7 @@ export default {
 
     &-bg
       background url("./assets/bg-tms-login.png") no-repeat
-      background-size cover
+      background-size 105%
       background-position center center
 
 </style>
