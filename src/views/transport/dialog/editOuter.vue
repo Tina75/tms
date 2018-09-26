@@ -114,10 +114,13 @@ export default {
     save () {
       this.$refs['info'].validate((valid) => {
         if (valid) {
+          const data = Object.assign({}, this.info)
+          data.transFee = data.transFee * 100
+
           Server({
             url: '/outside/bill/update',
             method: 'post',
-            data: this.info
+            data
           }).then((res) => {
             this.$Message.success('操作成功')
             this.close()
