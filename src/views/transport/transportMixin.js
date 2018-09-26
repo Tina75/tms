@@ -32,7 +32,13 @@ export default {
       'carriers',
       'carrierCars',
       'carrierDrivers'
-    ])
+    ]),
+
+    showButtons () {
+      return this.currentBtns.filter(item => {
+        return this.hasPower(item.code)
+      })
+    }
   },
 
   created () {

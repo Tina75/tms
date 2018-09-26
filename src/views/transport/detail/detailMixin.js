@@ -147,6 +147,12 @@ export default {
       })
     },
 
+    showButtons () {
+      return this.currentBtns.filter(item => {
+        return this.hasPower(item.code)
+      })
+    },
+
     ...mapGetters([
       'carriers',
       'carrierCars',
