@@ -1,6 +1,6 @@
 <template>
   <div ref="$box">
-    <TabHeader :tabs="tabList" @tabChange="tabChanged"></TabHeader>
+    <TabHeader :tabs="tabList" type="PICKUP" @on-change="tabChanged"></TabHeader>
 
     <div style="margin-top: 30px;display: flex;justify-content: space-between;">
 
@@ -122,7 +122,7 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import TabHeader from '@/components/TabHeader'
+import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
 import SelectInput from '@/components/SelectInput.vue'
 import PrintPickup from './components/PrintPickup'
@@ -479,9 +479,9 @@ export default {
       this.page.size = data.pageSize
       this.tabList = [
         { name: '全部', count: '' },
-        { name: '待提货', count: data.statusCntInfo.waitCnt || '' },
-        { name: '提货中', count: data.statusCntInfo.loadCnt || '' },
-        { name: '已提货', count: data.statusCntInfo.loadedCnt || '' }
+        { name: '待提货', count: data.statusCntInfo.waitCnt || 0 },
+        { name: '提货中', count: data.statusCntInfo.loadCnt || 0 },
+        { name: '已提货', count: data.statusCntInfo.loadedCnt || 0 }
       ]
     },
 
