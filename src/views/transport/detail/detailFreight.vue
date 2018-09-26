@@ -577,6 +577,7 @@ export default {
         data: { waybillIds: [ this.id ] }
       }).then(res => {
         this.$Message.success('删除成功')
+        this.ema.fire('colseTab', this.$route)
       }).catch(err => console.error(err))
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <div ref="$box">
-    <TabHeader :tabs="tabList" @tabChange="tabChanged"></TabHeader>
+    <TabHeader :tabs="tabList" type="WAYBILL" @on-change="tabChanged"></TabHeader>
 
     <div style="margin-top: 30px;display: flex;justify-content: space-between;">
 
@@ -126,7 +126,7 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import TabHeader from '@/components/TabHeader'
+import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput'
@@ -541,10 +541,10 @@ export default {
       this.page.size = data.pageSize
       this.tabList = [
         { name: '全部', count: '' },
-        { name: '待派车', count: data.statusCntInfo.waitAssignCarCnt || '' },
-        { name: '待发运', count: data.statusCntInfo.waitSendCarCnt || '' },
-        { name: '在途', count: data.statusCntInfo.inTransportCnt || '' },
-        { name: '已到货', count: data.statusCntInfo.arrivedCnt || '' }
+        { name: '待派车', count: data.statusCntInfo.waitAssignCarCnt || 0 },
+        { name: '待发运', count: data.statusCntInfo.waitSendCarCnt || 0 },
+        { name: '在途', count: data.statusCntInfo.inTransportCnt || 0 },
+        { name: '已到货', count: data.statusCntInfo.arrivedCnt || 0 }
       ]
     },
 
