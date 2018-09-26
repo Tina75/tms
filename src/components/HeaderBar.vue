@@ -94,16 +94,8 @@ export default {
     handleChange () {
       this.$emit('update:collapsed', !this.collapsed)
     },
-    handleClick (name) {
-      switch (name) {
-        case 'logout':
-          window.EMA.fire('logout')
-          break
-      }
-    },
     openMsg (type = 0) {
-      const route = {path: '/info/info', name: '消息', query: {type: type}}
-      window.EMA.fire('openTab', route)
+      this.$emit('on-open-msg', type)
     },
     logout () {
       window.EMA.fire('logout')
