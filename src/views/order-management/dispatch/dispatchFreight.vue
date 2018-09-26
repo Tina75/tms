@@ -2,7 +2,8 @@
   <div ref="$dispatch" class="dispatch">
     <div class="dispatch-part">
       <div class="dispatch-part-title">可调度订单</div>
-      <Table :columns="leftTableHeader" :data="leftTableData"
+      <Table :width="440"
+             :columns="leftTableHeader" :data="leftTableData"
              :loading="leftTableLoading && !leftTableData.length"
              @on-expand="keepLeftExpandOnly"></Table>
     </div>
@@ -23,7 +24,7 @@
 
     <div class="dispatch-part">
       <div class="dispatch-part-title">
-        未发运订单
+        未发运运单
 
         <Button type="primary" style="float: right;" @click="createFreight">新建运单</Button>
       </div>
@@ -32,6 +33,7 @@
         <p>暂无未发运运单，赶快创建新的运单吧～</p>
       </div>
       <Table v-else
+             :width="tableWidth - 440"
              :columns="rightTableHeader" :data="rightTableData" :loading="rightTableLoading && !rightTableData.length"
              highlight-row
              @on-expand="keepRightExpandOnly"
@@ -49,6 +51,9 @@ import tableExpand from './tableExpand'
 export default {
   name: 'DispatchFreight',
   mixins: [ BasePage, dispatchMixin ],
+  props: {
+    width: Number
+  },
   data () {
     return {
       // 右侧表格表头
@@ -56,6 +61,7 @@ export default {
         {
           type: 'expand',
           width: 30,
+          // fixed: 'left',
           render: (h, p) => {
             return h(tableExpand, {
               on: {
@@ -64,6 +70,7 @@ export default {
                 }
               },
               props: {
+                // width: this.tableWidth - 20,
                 tableLoading: this.rightTableExpandLoading,
                 tableHeader: this.expandTableTypeTwo,
                 tableData: this.rightTableExpandData
@@ -74,6 +81,8 @@ export default {
         {
           title: '运单号',
           key: 'waybillNo',
+          // fixed: 'left',
+          minWidth: 160,
           render: (h, p) => {
             return h('span', {
               style: {
@@ -85,6 +94,7 @@ export default {
         {
           title: '始发地',
           key: 'start',
+          minWidth: 120,
           ellipsis: true,
           render: (h, p) => {
             return h('span', this.cityFilter(p.row.start))
@@ -93,6 +103,7 @@ export default {
         {
           title: '目的地',
           key: 'end',
+          minWidth: 120,
           ellipsis: true,
           render: (h, p) => {
             return h('span', this.cityFilter(p.row.end))
@@ -100,15 +111,18 @@ export default {
         },
         {
           title: '车牌号',
-          key: 'carNo'
+          key: 'carNo',
+          minWidth: 120
         },
         {
           title: '体积（方）',
-          key: 'volume'
+          key: 'volume',
+          minWidth: 120
         },
         {
           title: '重量（吨）',
-          key: 'weight'
+          key: 'weight',
+          minWidth: 120
         }
       ]
     }

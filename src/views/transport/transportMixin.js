@@ -64,7 +64,6 @@ export default {
     // 窗口宽度改变
     watchWindowWidth () {
       const $box = this.$refs.$box
-      console.log($box)
       this.tableWidth = $box.offsetWidth
       window.onresize = () => {
         this.tableWidth = $box.offsetWidth

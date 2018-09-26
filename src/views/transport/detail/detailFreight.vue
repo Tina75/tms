@@ -258,7 +258,7 @@
         </div>
         <Row class="detail-field-group">
           <i-col span="5">
-            <span class="detail-field-title-sm detail-field-required">运输费：</span>
+            <span class="detail-field-title-sm">运输费：</span>
             <MoneyInput v-model="payment.freightFee"
                         class="detail-payment-input" />
             <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
