@@ -330,7 +330,7 @@ export default {
         data: { transIds: [ this.id ] }
       }).then(res => {
         this.$Message.success('删除成功')
-        this.ema.fire('colseTab', this.$route)
+        this.ema.fire('closeTab', this.$route)
       }).catch(err => console.error(err))
     },
 

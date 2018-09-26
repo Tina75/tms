@@ -575,15 +575,13 @@ export default {
     },
     // 删除
     billDelete () {
-      // this.ema.fire('colseTab', this.$route)
-      // return
       Server({
         url: '/waybill/delete',
         method: 'delete',
         data: { waybillIds: [ this.id ] }
       }).then(res => {
         this.$Message.success('删除成功')
-        this.ema.fire('colseTab', this.$route)
+        this.ema.fire('closeTab', this.$route)
       }).catch(err => console.error(err))
     }
   }
