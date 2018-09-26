@@ -90,12 +90,19 @@ export default {
       },
       pick: { carrierName: '', carNo: '', driver: '' },
       pickRules: {
-        carrierName: { required: true, message: '请填写承运商', trigger: 'blur' },
+        carrierName: [
+          { required: true, message: '请填写承运商', trigger: 'blur' },
+          { required: true, message: '请填写承运商', trigger: 'change' }
+        ],
         carNo: [
           { required: true, message: '请填写车牌号', trigger: 'blur' },
-          { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
+          { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' },
+          { required: true, message: '请填写车牌号', trigger: 'change' }
         ],
-        driver: { required: true, message: '请填写司机姓名', trigger: 'blur' }
+        driver: [
+          { required: true, message: '请填写司机姓名', trigger: 'blur' },
+          { required: true, message: '请填写司机姓名', trigger: 'change' }
+        ]
       },
       visibale: true,
       tableColumns: [

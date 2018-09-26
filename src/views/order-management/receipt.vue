@@ -457,6 +457,7 @@ export default {
         methods: {
           ok (node) {
             _this.$refs.pageTable.fetch() // 刷新table
+            _this.getOrderNum() // 刷新tab页数量
           }
         }
       })

@@ -482,36 +482,6 @@ export default {
           visible: true
         },
         {
-          title: '发货联系人',
-          key: 'consignerContact',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '收货联系人',
-          key: 'consigneeContact',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '修改时间',
-          key: 'updateTime',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '货物类型',
-          key: 'loadFee',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '数量',
-          key: 'settlementType',
-          fixed: false,
-          visible: false
-        },
-        {
           title: '要求装货时间',
           key: 'deliveryTime',
           fixed: false,
@@ -524,8 +494,50 @@ export default {
           visible: false
         },
         {
+          title: '发货联系人',
+          key: 'consignerContact',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '发货人手机号',
+          key: 'consignerPhone',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '发货地址',
+          key: 'consignerAddress',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '收货联系人',
+          key: 'consigneeName',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '收货人手机号',
+          key: 'consigneePhone',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '收货人手机号',
+          key: 'consigneePhone',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '修改时间',
+          key: 'updateTime',
+          fixed: false,
+          visible: false
+        },
+        {
           title: '运费',
-          key: 'totalFee',
+          key: 'freightFee',
           fixed: false,
           visible: false
         },
@@ -746,6 +758,7 @@ export default {
         methods: {
           ok (node) {
             _this.$refs.pageTable.fetch() // 刷新table
+            _this.getOrderNum() // 刷新tab页数量
           }
         }
       })
@@ -759,6 +772,7 @@ export default {
         methods: {
           ok (node) {
             _this.$refs.pageTable.fetch() // 刷新table
+            _this.getOrderNum() // 刷新tab页数量
           }
         }
       })
@@ -772,6 +786,7 @@ export default {
         methods: {
           ok (node) {
             _this.$refs.pageTable.fetch() // 刷新table
+            _this.getOrderNum() // 刷新tab页数量
           }
         }
       })
@@ -794,6 +809,7 @@ export default {
         methods: {
           ok (node) {
             _this.$refs.pageTable.fetch() // 刷新table
+            _this.getOrderNum() // 刷新tab页数量
           }
         }
       })
