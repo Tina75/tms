@@ -26,14 +26,14 @@
           </Poptip> -->
           <Dropdown v-if="item.children" placement="right-start" >
             <a class="drop-menu-a"><font-icon :type="item.icon" :size="20" color="white"/></a>
-            <DropdownMenu slot="list" class="i-ml-5">
-              <DropdownItem v-for="child in item.children"  :key="child.path" @click="handleSelect(child.path)">
-                <menu-item  v-if="hasPower(child.powerCode)" :name="child.path" :to="child.path" :key="child.path" >{{child.name}}</menu-item>
+            <DropdownMenu slot="list" >
+              <DropdownItem v-for="child in item.children"  :key="child.path" >
+                <p v-if="hasPower(child.powerCode)" :name="child.path" :key="child.path"  @click="handleSelect(child)">{{child.name}}</p>
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
           <Tooltip v-else :content="item.name" transfer placement="left">
-            <menu-item  v-if="hasPower(item.powerCode)" :name="item.path" :to="item.path"><font-icon :type="item.icon" :size="20" color="white"/></menu-item>
+            <menu-item v-if="hasPower(item.powerCode)"  :name="item.path"><a class="drop-menu-a"  @click="handleSelect(item)"><font-icon :type="item.icon" :size="20" color="white"/></a></menu-item>
           </Tooltip>
         </div>
       </template>
@@ -73,8 +73,9 @@ export default {
       const matchs = activeName.split('/')
       return ['/' + matchs[1]]
     },
-    handleSelect (name) {
+    handleSelect (route) {
       let target = ''
+      const path = typeof route === 'object' ? route.path : route
       for (let i = 0; i < this.menuList.length; i++) {
         const element = this.menuList[i]
         target = walk(element)
@@ -84,10 +85,8 @@ export default {
         }
       }
       function walk (element) {
-        if (element.path === name) {
+        if (element.path === path) {
           element.query = Object.assign(element.query || {}, {title: element.name})
-          console.log('xxx->' + JSON.stringify(element))
-
           return element
         } else if (element.children) {
           return element.children.find(item => {
