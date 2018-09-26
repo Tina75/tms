@@ -73,7 +73,29 @@
     "name":"财务",
     "path":"/finance",
     "icon":"caiwuguanli",
-    "powerCode":170000
+    "powerCode":170000,
+    "children":[
+      {
+        "name":"发货方对账",
+        "path":"/finance/sender",
+        "powerCode":170100
+      },
+      {
+        "name":"承运商对账",
+        "path":"/finance/carrier",
+        "powerCode":170200
+      },
+      {
+        "name":"外转方对账",
+        "path":"/finance/transfer",
+        "powerCode":170300
+      },
+      {
+        "name":"计费规则",
+        "path":"/finance/rules",
+        "powerCode":170400
+      }
+    ]
   },
   {
     "name":"报表",

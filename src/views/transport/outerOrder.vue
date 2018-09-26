@@ -1,6 +1,6 @@
 <template>
   <div ref="$box">
-    <TabHeader :tabs="tabList" type="OUTER" @on-change="tabChanged"></TabHeader>
+    <TabHeader :tabs="tabList" :type="tabType" @on-change="tabChanged"></TabHeader>
 
     <div style="margin-top: 30px;display: flex;justify-content: space-between;">
 
@@ -24,8 +24,10 @@
                      :maxlength="20"
                      :remote="false"
                      :local-options="transferees"
+                     clearable
                      placeholder="请输入外转方名称"
-                     class="search-input" />
+                     class="search-input"
+                     @on-clear="resetEasySearch" />
 
         <Input v-if="easySelectMode === 2"
                v-model="easySearchKeyword"
@@ -131,6 +133,7 @@ export default {
   metaInfo: { title: '外转单管理' },
   data () {
     return {
+      tabType: 'OUTER',
       // 标签栏
       tabList: [
         { name: '全部', count: '' },
@@ -157,7 +160,7 @@ export default {
             }
           }, {
             name: '删除',
-            code: 120303,
+            code: 120304,
             func: () => {
               this.billDelete()
             }
@@ -288,11 +291,9 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
+                    title: p.row.transNo,
                     path: '/transport/detail/detailOuter',
-                    query: {
-                      id: p.row.transNo,
-                      qid: p.row.transId
-                    }
+                    query: { id: p.row.transId }
                   })
                 }
               }
@@ -594,6 +595,7 @@ export default {
         { name: '在途', count: data.statusCntInfo.loadCnt || 0 },
         { name: '已到货', count: data.statusCntInfo.loadedCnt || 0 }
       ]
+      this.$forceUpdate()
     },
 
     // 查询外转方
@@ -645,9 +647,9 @@ export default {
               method: 'delete',
               data: { transIds }
             }).then(res => {
-              this.$Message.success('删除成功')
-              this.tableSelection = []
-              this.fetchData()
+              self.$Message.success('删除成功')
+              self.tableSelection = []
+              self.$refs.$table.fetch()
             }).catch(err => console.error(err))
           }
         }
@@ -679,7 +681,7 @@ export default {
             }).then(res => {
               self.$Message.success('操作成功')
               self.tableSelection = []
-              self.fetchData()
+              self.$refs.$table.fetch()
             }).catch(err => console.error(err))
           }
         }
@@ -712,7 +714,7 @@ export default {
             }).then(res => {
               self.$Message.success('操作成功')
               self.tableSelection = []
-              self.fetchData()
+              self.$refs.$table.fetch()
             }).catch(err => console.error(err))
           }
         }
@@ -733,7 +735,8 @@ export default {
       Export({
         url: '/outside/bill/export',
         method: 'post',
-        data
+        data,
+        fileName: '外转单明细'
       }).then(res => {
         this.$Message.success('导出成功')
       }).catch(err => console.error(err))

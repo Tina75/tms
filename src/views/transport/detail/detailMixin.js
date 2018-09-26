@@ -2,7 +2,7 @@ import CarConfigs from './carConfigs.json'
 import MoneyInput from '../components/moneyInput'
 import City from '@/libs/js/City'
 import Server from '@/libs/js/server'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import { CAR } from '@/views/client/client'
 
 const carType = CarConfigs.carType
@@ -11,9 +11,11 @@ const carLength = CarConfigs.carLength
 export default {
   data () {
     return {
-      id: this.$route.query.qid,
+      id: this.$route.query.id,
       loading: false,
       inEditing: false,
+      carriers: [], // 承运商
+      carrierCars: [], // 车辆
       currentBtns: [], // 当前按钮组
 
       detail: [], // 货物明细
@@ -154,8 +156,6 @@ export default {
     },
 
     ...mapGetters([
-      'carriers',
-      'carrierCars',
       'carrierDrivers'
     ])
   },
@@ -226,13 +226,54 @@ export default {
   },
 
   methods: {
-    ...mapActions([
-      'getCarriers'
-    ]),
+    getCarriers () {
+      Server({
+        url: '/carrier/listOrderByUpdateTimeDesc',
+        method: 'get',
+        data: { type: 1 }
+      }).then(res => {
+        this.carriers = res.data.data.carrierList.map(item => {
+          return {
+            name: item.carrierName,
+            value: item.carrierName,
+            payType: item.payType,
+            carrierPhone: item.carrierPhone,
+            id: item.carrierId
+          }
+        })
+      })
+    },
+
+    getCarrierCars (carrierId) {
+      Server({
+        url: '/carrier/list/carOrderByUpdateTimeDesc',
+        method: 'get',
+        data: { carrierId }
+      }).then(res => {
+        this.carrierCars = res.data.data.carList.map(item => {
+          return {
+            name: item.carNO,
+            value: item.carNO,
+            id: item.carId,
+            driverName: item.driverName,
+            driverPhone: item.driverPhone,
+            carType: item.carType,
+            carLength: item.carLength
+          }
+        })
+      })
+    },
 
     handleSelectCarrier (name, row) {
-      this.$store.dispatch('getCarrierCars', row.id)
+      this.getCarrierCars(row.id)
       this.$store.dispatch('getCarrierDrivers', row.id)
+    },
+
+    handleSelectCarrierCar (name, row) {
+      const keys = ['driverName', 'driverPhone', 'carType', 'carLength']
+      keys.forEach(key => {
+        this.info[key] = row[key]
+      })
     },
 
     formatCity (code) {
@@ -370,10 +411,10 @@ export default {
       //   this.$Message.error('请输入运输费')
       //   return false
       // }
-      if (!this.settlementType) {
-        this.$Message.error('请选择结算方式')
-        return false
-      }
+      // if (!this.settlementType) {
+      //   this.$Message.error('请选择结算方式')
+      //   return false
+      // }
       if (this.settlementType === '1' && !this.checkTotalAmount()) return false
 
       return true

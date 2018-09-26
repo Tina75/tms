@@ -6,7 +6,7 @@
       </Sider>
       <Layout>
         <Header class="header-con">
-          <header-bar :collapsed.sync="collapsed" :name="UserInfo.name" />
+          <header-bar :collapsed.sync="collapsed" :name="UserInfo.name" @on-open-msg="onOpenMsg"/>
           <div class="tag-nav-wrapper">
             <tab-nav :list="TabNavList" :value="$route" @on-close="onTabClose" @on-select="onTabSelect"/>
           </div>
@@ -70,6 +70,14 @@ export default {
       this.getMessageCount()
     },
 
+    /**
+    * @description 打开消息tab
+    * @param type 消息类型
+    */
+    onOpenMsg (type) {
+      const route = {path: '/info/info', query: {type: type, title: '消息'}}
+      window.EMA.fire('openTab', route)
+    },
     /**
     * @description 打开首页
     */

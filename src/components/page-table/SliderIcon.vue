@@ -145,10 +145,11 @@ export default {
 <style lang="stylus" scoped>
 .slider-icon
   &__checkbox-list
-    max-height: 340px
+    max-height: 380px
     overflow-y: auto
   &__draggable-column
-    webkit-column-width: 116px
+    max-height: 380px
+    -webkit-column-width: 116px
     -moz-column-width: 116px
     column-width: 116px
     -webkit-column-gap: 6px
@@ -157,10 +158,10 @@ export default {
 
   &__checkbox
     display: inline-block
+    padding: 8px 0
     width: 116px
   &__draggable-item
     margin: 0
-    padding: 8px 0
     position: relative
     &:hover
       background-color #E9FCFF

@@ -1,7 +1,20 @@
 <template>
   <div>
-    <div>
-      <p v-html="greetings"></p>
+    <div class="page-home__header">
+      <Row>
+        <Col span="20">
+        <p v-html="greetings"></p>
+        </Col>
+        <Col span="4" class="van-right">
+        <Poptip trigger="click" placement="bottom-end">
+          <FontIcon type="shouye" size="20" class="page-home__setting-icon" />
+          <div slot="content">
+            插件
+          </div>
+        </Poptip>
+        </Col>
+      </Row>
+
     </div>
     <Row gutter="16">
       <Col span="6" class="i-mt-15">
@@ -112,6 +125,7 @@ import BMap from 'BMap'
 import OrderCard from './OrderCard.vue'
 import BlankCard from './BlankCard.vue'
 import BasePage from '@/basic/BasePage'
+import FontIcon from '@/components/FontIcon'
 
 import MarkerOverlay from './libs/MarkerOverlay.js'
 import LabelOverlay from './libs/LabelOverlay.js'
@@ -120,6 +134,7 @@ export default {
   meteInfo: { title: '首页' },
   components: {
     OrderCard,
+    FontIcon,
     BlankCard
   },
   mixins: [BasePage],
@@ -187,6 +202,10 @@ export default {
 </script>
 <style lang="stylus">
 .page-home
+  &__header
+    position relative
+  &__setting-icon
+    cursor pointer
   &__message-item
     background-color #f3f3f3
     margin-bottom 8px

@@ -34,7 +34,7 @@
     </Card>
     </Col>
     <Col span="23">
-    <Button type="primary" style="margin-top:6px;" @click="eaditStaff('add')">添加员工</Button>
+    <Button v-if="hasPower(140201)" type="primary" style="margin-top:6px;" @click="eaditStaff('add')">添加员工</Button>
     </Col>
     <Col span="23">
     <page-table :columns="menuColumns" :keywords="formSearchInit" url="employee/list" list-field="list" style="margin-top: 20px;"></page-table>
@@ -132,35 +132,71 @@ export default {
               }, '转移权限')
             ])
           } else {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'text'
-                },
-                style: {
-                  color: '#00A4BD',
-                  marginLeft: '-20px'
-                },
-                on: {
-                  click: () => {
-                    this.eaditStaff(params)
+            if (this.hasPower(140202) && this.hasPower(140203)) {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text'
+                  },
+                  style: {
+                    color: '#00A4BD',
+                    marginLeft: '-20px'
+                  },
+                  on: {
+                    click: () => {
+                      this.eaditStaff(params)
+                    }
                   }
-                }
-              }, '修改'),
-              h('Button', {
-                props: {
-                  type: 'text'
-                },
-                style: {
-                  color: '#00A4BD'
-                },
-                on: {
-                  click: () => {
-                    this.removeStaff(params)
+                }, '修改'),
+                h('Button', {
+                  props: {
+                    type: 'text'
+                  },
+                  style: {
+                    color: '#00A4BD'
+                  },
+                  on: {
+                    click: () => {
+                      this.removeStaff(params)
+                    }
                   }
-                }
-              }, '删除')
-            ])
+                }, '删除')
+              ])
+            } else if (this.hasPower(140202)) {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text'
+                  },
+                  style: {
+                    color: '#00A4BD',
+                    marginLeft: '-20px'
+                  },
+                  on: {
+                    click: () => {
+                      this.eaditStaff(params)
+                    }
+                  }
+                }, '修改')
+              ])
+            } else if (this.hasPower(140203)) {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text'
+                  },
+                  style: {
+                    color: '#00A4BD',
+                    marginLeft: '-20px'
+                  },
+                  on: {
+                    click: () => {
+                      this.removeStaff(params)
+                    }
+                  }
+                }, '删除')
+              ])
+            }
           }
         }
       },

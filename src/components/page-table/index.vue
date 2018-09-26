@@ -77,6 +77,16 @@ export default {
     SliderIcon
   },
   props: {
+    // 数据里唯一的编号字段，默认id
+    rowId: {
+      type: String,
+      default: 'id'
+    },
+    // 已经选中的数据 id 列表，会根据上面给的rowid参数，判断数据是否选中
+    selected: {
+      type: Array,
+      default: () => []
+    },
     // 请求的地址
     url: String,
     // 部分接口查询方法可能是post
@@ -218,6 +228,7 @@ export default {
         ).concat({
           title: 'icon',
           width: 48,
+          fixed: 'right',
           renderHeader (h, params) {
             return h(SliderIcon, {
               props: {
@@ -236,6 +247,10 @@ export default {
       } else {
         return this.columns
       }
+    },
+    // 是否是复选框表格
+    isSelection () {
+      return this.columns.length > 0 && this.columns[0].type === 'selection'
     },
     dataList () {
       if (this.isRemote) {
@@ -310,7 +325,16 @@ export default {
         .then((response) => {
           vm.loading = false
           const { data } = response.data
-          vm.dataSource = data[vm.listField]
+          if (vm.isSelection) {
+            vm.dataSource = data[vm.listField].map((item) => {
+              if (vm.selected.includes(item[vm.rowId])) {
+                item._checked = true
+              }
+              return item
+            })
+          } else {
+            vm.dataSource = data[vm.listField]
+          }
           if (this.showPagination) {
             vm.pagination.pageSize = data.pageSize
             vm.pagination.totalCount = data.totalCount || data.pageTotals

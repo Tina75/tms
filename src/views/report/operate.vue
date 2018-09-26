@@ -85,8 +85,16 @@ export default {
       url: '',
       method: 'post',
       keywords: {
+        consignerName: '',
+        orderNo: '',
+        customerOrderNo: '',
+        waybillNo: '',
         start: '',
-        end: ''
+        end: '',
+        startTime: '',
+        endTime: '',
+        pageNo: '',
+        pageSize: ''
       },
       cityList: [
         {

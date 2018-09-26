@@ -2,9 +2,9 @@
   <div class="temAll">
     <Col span="3">
     <Menu active-name="修改密码" class="leftMenu" style="width: 150px;  background: rgba(248,248,248,1);">
-      <MenuItem v-for="menu in setUpMenu" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
+      <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
       <p class="menuTitle">{{menu.name}}</p>
-        </MenuItem>
+      </MenuItem>
     </Menu>
     </Col>
     <Col span="18">
@@ -244,10 +244,12 @@ export default {
         id: '2'
       }, {
         name: '短信设置',
-        id: '3'
+        id: '3',
+        code: '150200'
       }, {
         name: '公司设置',
-        id: '4'
+        id: '4',
+        code: '150100'
       }],
       rightTitle: '修改密码',
       rightKey: '1',
