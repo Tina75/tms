@@ -49,7 +49,7 @@
       <Tabs :animated="false">
         <TabPane label="发货地址">
           <div class="add">
-            <Button type="primary" @click="_consignerAddressAdd">新增</Button>
+            <Button v-if="hasPower(130104)"  type="primary" @click="_consignerAddressAdd">新增</Button>
           </div>
           <template>
             <Table :columns="columns1" :data="data1"></Table>
@@ -67,7 +67,7 @@
         </TabPane>
         <TabPane label="收货方">
           <div class="add">
-            <Button type="primary" @click="_consignerConsigneeAdd">新增</Button>
+            <Button v-if="hasPower(130107)" type="primary"  @click="_consignerConsigneeAdd">新增</Button>
           </div>
           <template>
             <Table :columns="columns2" :data="data2"></Table>
@@ -85,7 +85,7 @@
         </TabPane>
         <TabPane label="常发货物">
           <div class="add">
-            <Button type="primary" @click="_consignerCargoAdd">新增</Button>
+            <Button v-if="hasPower(130110)" type="primary" @click="_consignerCargoAdd">新增</Button>
           </div>
           <template>
             <Table :columns="columns3" :data="data3"></Table>
@@ -130,8 +130,9 @@ export default {
           title: '操作',
           key: 'id',
           render: (h, params) => {
-            return h('div', [
-              h('span', {
+            let renderBtn = []
+            if (this.hasPower(130105)) {
+              renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
                   color: '#00A4BD',
@@ -158,8 +159,10 @@ export default {
                     })
                   }
                 }
-              }, '修改'),
-              h('span', {
+              }, '修改'))
+            }
+            if (this.hasPower(130106)) {
+              renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
                   cursor: 'pointer'
@@ -188,8 +191,9 @@ export default {
                     })
                   }
                 }
-              }, '删除')
-            ])
+              }, '删除'))
+            }
+            return h('div', renderBtn)
           }
         },
         {
@@ -202,8 +206,9 @@ export default {
           title: '操作',
           key: 'id',
           render: (h, params) => {
-            return h('div', [
-              h('span', {
+            let renderBtn = []
+            if (this.hasPower(130108)) {
+              renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
                   color: '#00A4BD',
@@ -233,7 +238,9 @@ export default {
                     })
                   }
                 }
-              }, '修改'),
+              }, '修改'))
+            }
+            if (this.hasPower(130109)) {
               h('span', {
                 style: {
                   color: '#00A4BD',
@@ -264,7 +271,8 @@ export default {
                   }
                 }
               }, '删除')
-            ])
+            }
+            return h('div', renderBtn)
           }
         },
         {
@@ -289,8 +297,9 @@ export default {
           title: '操作',
           key: 'id',
           render: (h, params) => {
-            return h('div', [
-              h('span', {
+            let renderBtn = []
+            if (this.hasPower(130111)) {
+              renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
                   color: '#00A4BD',
@@ -323,8 +332,10 @@ export default {
                     })
                   }
                 }
-              }, '修改'),
-              h('span', {
+              }, '修改'))
+            }
+            if (this.hasPower(130112)) {
+              renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
                   cursor: 'pointer'
@@ -353,8 +364,9 @@ export default {
                     })
                   }
                 }
-              }, '删除')
-            ])
+              }, '删除'))
+            }
+            return h('div', renderBtn)
           }
         },
         {
