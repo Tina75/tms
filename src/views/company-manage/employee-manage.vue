@@ -32,14 +32,15 @@
     </Col>
     <Col span="18">
     <p class="rightTitle">{{rightTitle}}的权限
+    </p><div v-if="hasPower(140102)" class="saveRoleBtn">
       <Button
         v-if="menuParam.type !== 1"
         :disabled="disSaveBtn"
-        class="saveRoleBtn"
         type="primary"
         @click="saveRole">
         保存
       </Button>
+    </div>
     </p>
     <Modal
       v-model="removeRoleModal"
@@ -376,7 +377,7 @@ export default {
 .rightTitle
   font-size: 20px;
   color: #333333;
-  line-height: 35px;
+  line-height: 45px;
   padding: 0 20px 0 10px;
 .divTree
   clear: both;
@@ -394,6 +395,7 @@ export default {
 .saveRoleBtn
   float: right;
   margin-right: 20px;
+  margin-top: -30px;
 .centerBtn
   position: absolute;
   left: 30%;
