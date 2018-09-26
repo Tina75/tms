@@ -94,15 +94,8 @@ export default {
     handleChange () {
       this.$emit('update:collapsed', !this.collapsed)
     },
-    handleClick (name) {
-      switch (name) {
-        case 'logout':
-          window.EMA.fire('logout')
-          break
-      }
-    },
     openMsg (type = 0) {
-      this.$emit('on-msg-click', type)
+      this.$emit('on-open-msg', type)
     },
     logout () {
       window.EMA.fire('logout')

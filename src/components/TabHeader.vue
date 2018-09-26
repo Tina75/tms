@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <div class="tab-header">
-    <Tabs v-model="name" :animated="false" @on-click="handleChangeTab">
+    <Tabs v-model="tabName" :animated="false" @on-click="handleChangeTab">
       <TabPane v-for="(tab, index) in tabs" :key="index" :label="`${tab.name} ${tab.count}`" :name="tab.name"></TabPane>
     </Tabs>
   </div>
@@ -28,12 +28,14 @@ export default {
 
   data () {
     return {
+      tabName: '待提货'
     }
   },
 
   computed: {},
 
   mounted () {
+    this.tabName = this.name
   },
 
   methods: {
