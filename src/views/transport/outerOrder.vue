@@ -24,8 +24,10 @@
                      :maxlength="20"
                      :remote="false"
                      :local-options="transferees"
+                     clearable
                      placeholder="请输入外转方名称"
-                     class="search-input" />
+                     class="search-input"
+                     @on-clear="resetEasySearch" />
 
         <Input v-if="easySelectMode === 2"
                v-model="easySearchKeyword"
@@ -288,11 +290,9 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
+                    title: p.row.transNo,
                     path: '/transport/detail/detailOuter',
-                    query: {
-                      id: p.row.transNo,
-                      qid: p.row.transId
-                    }
+                    query: { id: p.row.transId }
                   })
                 }
               }
@@ -594,6 +594,7 @@ export default {
         { name: '在途', count: data.statusCntInfo.loadCnt || 0 },
         { name: '已到货', count: data.statusCntInfo.loadedCnt || 0 }
       ]
+      this.$forceUpdate()
     },
 
     // 查询外转方

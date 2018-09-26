@@ -32,18 +32,22 @@
                      :maxlength="20"
                      :remote="false"
                      :local-options="carriers"
+                     clearable
                      placeholder="请输入承运商"
                      class="search-input"
                      @on-focus.once="getCarriers"
-                     @on-select="handleSelectCarrier" />
+                     @on-select="handleSelectCarrier"
+                     @on-clear="resetEasySearch" />
 
         <SelectInput v-if="easySelectMode === 3"
                      v-model="easySearchKeyword"
                      :maxlength="8"
                      :remote="false"
                      :local-options="carrierCars"
+                     clearable
                      placeholder="请输入车牌号"
-                     class="search-input" />
+                     class="search-input"
+                     @on-clear="resetEasySearch" />
 
         <Button icon="ios-search"
                 class="search-btn-easy"
@@ -319,11 +323,9 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
+                    title: p.row.waybillNo,
                     path: '/transport/detail/detailFreight',
-                    query: {
-                      id: p.row.waybillNo,
-                      qid: p.row.waybillId
-                    }
+                    query: { id: p.row.waybillId }
                   })
                 }
               }
@@ -361,7 +363,10 @@ export default {
         {
           title: '合计运费（元）',
           key: 'totalFee',
-          minWidth: 120
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', p.row.totalFee / 100)
+          }
         },
         {
           title: '体积（方）',
@@ -560,6 +565,7 @@ export default {
         { name: '在途', count: data.statusCntInfo.inTransportCnt || 0 },
         { name: '已到货', count: data.statusCntInfo.arrivedCnt || 0 }
       ]
+      this.$forceUpdate()
     },
 
     // 打印查询详情
