@@ -73,23 +73,23 @@
         <Row class="detail-field-group">
           <i-col span="3">
             <span class="detail-field-title-sm">运输费：</span>
-            <span>{{ payment.freightFee || 0 }}元</span>
+            <span class="detail-field-fee">{{ payment.freightFee || 0 }}元</span>
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">装货费：</span>
-            <span>{{ payment.loadFee || 0 }}元</span>
+            <span class="detail-field-fee">{{ payment.loadFee || 0 }}元</span>
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">卸货费：</span>
-            <span>{{ payment.unloadFee || 0 }}元</span>
+            <span class="detail-field-fee">{{ payment.unloadFee || 0 }}元</span>
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">保险费：</span>
-            <span>{{ payment.insuranceFee || 0 }}元</span>
+            <span class="detail-field-fee">{{ payment.insuranceFee || 0 }}元</span>
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">其他：</span>
-            <span>{{ payment.otherFee || 0 }}元</span>
+            <span class="detail-field-fee">{{ payment.otherFee || 0 }}元</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">

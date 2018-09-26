@@ -362,7 +362,7 @@ export default {
           minWidth: 100
         },
         {
-          title: '合计运费（元）',
+          title: '合计运费',
           key: 'totalFee',
           minWidth: 120,
           render: (h, p) => {
