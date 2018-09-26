@@ -1,12 +1,12 @@
 <template>
   <div ref="$box">
-    <TabHeader :tabs="tabList" @tabChange="tabChanged"></TabHeader>
+    <TabHeader :tabs="tabList" type="OUTER" @on-change="tabChanged"></TabHeader>
 
     <div style="margin-top: 30px;display: flex;justify-content: space-between;">
 
       <!-- 按钮组 -->
       <div>
-        <Button v-for="(item, key) in currentBtns" :key="key"
+        <Button v-for="(item, key) in showButtons" :key="key"
                 :type="key === 0 ? 'primary' : 'default'"
                 @click="item.func">{{ item.name }}</Button>
       </div>
@@ -116,7 +116,7 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import TabHeader from '@/components/TabHeader'
+import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput'
@@ -145,21 +145,25 @@ export default {
           tab: '全部',
           btns: [{
             name: '发运',
+            code: 120301,
             func: () => {
               this.billShipment()
             }
           }, {
             name: '到货',
+            code: 120302,
             func: () => {
               this.billArrived()
             }
           }, {
             name: '删除',
+            code: 120303,
             func: () => {
               this.billDelete()
             }
           }, {
             name: '导出',
+            code: 120305,
             func: () => {
               this.billExport()
             }
@@ -169,16 +173,19 @@ export default {
           tab: '待发运',
           btns: [{
             name: '发运',
+            code: 120301,
             func: () => {
               this.billShipment()
             }
           }, {
             name: '删除',
+            code: 120304,
             func: () => {
               this.billDelete()
             }
           }, {
             name: '导出',
+            code: 120305,
             func: () => {
               this.billExport()
             }
@@ -188,11 +195,13 @@ export default {
           tab: '在途',
           btns: [{
             name: '到货',
+            code: 120302,
             func: () => {
               this.billArrived()
             }
           }, {
             name: '导出',
+            code: 120305,
             func: () => {
               this.billExport()
             }
@@ -202,6 +211,7 @@ export default {
           tab: '已到货',
           btns: [{
             name: '导出',
+            code: 120305,
             func: () => {
               this.billExport()
             }
@@ -246,7 +256,7 @@ export default {
           fixed: 'left',
           extra: true,
           render: (h, p) => {
-            if (p.row.status === 1) {
+            if (p.row.status === 1 && this.hasPower(120301)) {
               return h('a', {
                 on: {
                   click: () => {
@@ -254,7 +264,7 @@ export default {
                   }
                 }
               }, '发运')
-            } else if (p.row.status === 2) {
+            } else if (p.row.status === 2 && this.hasPower(120302)) {
               return h('a', {
                 on: {
                   click: () => {
@@ -580,9 +590,9 @@ export default {
       this.page.size = data.pageSize
       this.tabList = [
         { name: '全部', count: '' },
-        { name: '待发运', count: data.statusCntInfo.waitCnt || '' },
-        { name: '在途', count: data.statusCntInfo.loadCnt || '' },
-        { name: '已到货', count: data.statusCntInfo.loadedCnt || '' }
+        { name: '待发运', count: data.statusCntInfo.waitCnt || 0 },
+        { name: '在途', count: data.statusCntInfo.loadCnt || 0 },
+        { name: '已到货', count: data.statusCntInfo.loadedCnt || 0 }
       ]
     },
 

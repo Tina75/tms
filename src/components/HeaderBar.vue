@@ -102,7 +102,8 @@ export default {
       }
     },
     openMsg (type = 0) {
-      this.$emit('on-msg-click', type)
+      const route = {path: '/info/info', name: '消息', query: {type: type}}
+      window.EMA.fire('openTab', route)
     },
     logout () {
       window.EMA.fire('logout')

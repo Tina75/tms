@@ -14,8 +14,8 @@
     </section>
 
     <div class="detail-btn-group">
-      <Button v-for="(item, key) in currentBtns"
-              :key="key" :type="key === (currentBtns.length - 1) ? 'primary' : 'default'"
+      <Button v-for="(item, key) in showButtons"
+              :key="key" :type="key === (showButtons.length - 1) ? 'primary' : 'default'"
               class="detail-btn-item"
               @click="item.func">{{ item.name }}</Button>
     </div>
@@ -215,16 +215,19 @@ export default {
           status: '待发运',
           btns: [{
             name: '删除',
+            code: 120304,
             func: () => {
               this.billDelete()
             }
           }, {
             name: '发运',
+            code: 120301,
             func: () => {
               this.billShipment()
             }
           }, {
             name: '编辑',
+            code: 120303,
             func: () => {
               this.billEdit()
             }
@@ -234,6 +237,7 @@ export default {
           status: '在途',
           btns: [{
             name: '到货',
+            code: 120302,
             func: () => {
               this.billArrived()
             }
@@ -326,6 +330,7 @@ export default {
         data: { transIds: [ this.id ] }
       }).then(res => {
         this.$Message.success('删除成功')
+        this.ema.fire('colseTab', this.$route)
       }).catch(err => console.error(err))
     },
 

@@ -6,7 +6,7 @@
       </Sider>
       <Layout>
         <Header class="header-con">
-          <header-bar :collapsed.sync="collapsed" :name="UserInfo.name" @on-msg-click="openMsgTab"/>
+          <header-bar :collapsed.sync="collapsed" :name="UserInfo.name" />
           <div class="tag-nav-wrapper">
             <tab-nav :list="TabNavList" :value="$route" @on-close="onTabClose" @on-select="onTabSelect"/>
           </div>
@@ -39,23 +39,24 @@ export default {
   data () {
     return {
       collapsed: false,
-      menuList: menuJson,
-      defaultTab: { name: '首页', path: '/home' }
+      menuList: menuJson
     }
   },
   computed: {
     ...mapGetters(['TabNavList', 'UserInfo'])
+    // currentRoute: function () {
+    // }
   },
 
   mounted () {
+    window.EMA.bind('updateUserInfo', () => { this.getUserInfo() })
     window.EMA.bind('logout', (msg = '请重新登录') => { this.logout(msg) })
+    window.EMA.bind('openTab', (route) => { this.onMenuSelect(route) })
+    window.EMA.bind('closeTab', (route) => { this.onTabClose(route) })
     window.EMA.bind('reloadTab', (route) => {
-      if (!route.query) route.query = {}
-      route.query._time = new Date().getTime()
+      route.query = Object.assign({_time: new Date().getTime()}, route.query)
       this.turnToPage(route)
     })
-    window.EMA.bind('updateUserInfo', () => { this.getUserInfo() })
-    window.EMA.bind('openTab', (route) => { this.onMenuSelect(route) })
     this.init()
   },
   methods: {
@@ -73,17 +74,8 @@ export default {
     * @description 打开首页
     */
     toHome () {
-      const home = { path: '/home', params: { name: 'home' } }
+      const home = {path: '/home', params: {name: 'home'}, query: {title: '首页'}}
       this.turnToPage(home)
-    },
-
-    /**
-    * @description 打开消息页
-    * @param {*} type 消息页对应的type
-    */
-    openMsgTab (type = 0) {
-      const router = { path: '/info/info', name: '消息', query: { type: type } }
-      this.onMenuSelect(router)
     },
 
     /**
@@ -109,14 +101,16 @@ export default {
      * @param {*} list 关闭后的tab页list
      * @param {*} route 关闭的tab对象，用于查找前一个tab并置为高亮
     */
-    onTabClose (list, route) {
+    onTabClose (route) {
       // 删除cache
       window.EMA.fire('PageRouter.remove', route.path)
       // 选中前一个tab
       const nextRoute = this.getNextRoute(this.TabNavList, route)
       this.turnToPage(nextRoute)
+
       // 更新store
-      this.setTabNavList(list)
+      let res = this.TabNavList.filter(element => element.query.title !== route.query.title)
+      this.setTabNavList(res)
     },
 
     /**
@@ -132,6 +126,8 @@ export default {
      * @param {*} menuItem 被选中的菜单对象
      */
     onMenuSelect (menuItem) {
+      console.log('1.', JSON.stringify(menuItem))
+
       this.setTabNavList(this.getNewTagList(this.TabNavList, menuItem))
       this.turnToPage(menuItem)
     },
@@ -141,14 +137,17 @@ export default {
      * @param {*} route 跳转目标的path或route对象
      */
     turnToPage (route) {
-      let { path, params, query } = {}
+      let { path, params, query, meta } = {}
       if (typeof route === 'string') path = route
       else {
         path = route.path
         params = route.params
         query = route.query
+        meta = route.meta
       }
-      this.$router.push({ path, params, query })
+      console.log('2.' + JSON.stringify({ path, params, query, meta }))
+
+      this.$router.push({ path, params, query, meta })
     },
     getNextRoute (list, route) {
       let res = {}
@@ -163,16 +162,15 @@ export default {
      * @param {*} route2 路由对象
      */
     routeEqual (route1, route2) {
-      // const params1 = route1.params || {}
-      // const params2 = route2.params || {}
       const query1 = route1.query || {}
       const query2 = route2.query || {}
       // return (route1.name === route2.name) && this.objEqual(params1, params2) && this.objEqual(query1, query2)
-      return (route1.name === route2.name) && (query1.id === query2.id)
+      return (route1.path === route2.path) && (query1.title === query2.title)
+      // return (route1.name === route2.name) && this.objEqual(meta1, meta2)
     },
 
     /**
-     * @param {*} obj1 对象
+   * @param {*} obj1 对象
      * @param {*} obj2 对象
      * @description 判断两个对象是否相等，这两个对象的值只能是数字或字符串
      */
@@ -191,7 +189,7 @@ export default {
      * @description 如果该newRoute已经存在则不再添加
      */
     getNewTagList  (list, newRoute) {
-      const { name, path, query } = newRoute
+      const { name, path, query, meta } = newRoute
       let newList = [...list]
       // if (newList.findIndex(item => item.path === path) >= 0) {
       if (newList.findIndex(item => this.routeEqual(item, newRoute)) >= 0) {
@@ -200,7 +198,7 @@ export default {
         // find当前tab位置并在其后面添加新tab
         const idx = newList.findIndex(item => item.path === this.$route.path)
         // const idx = newList.findIndex(item => this.routeEqual(item, this.$route))
-        newList.splice(idx + 1, 0, { name, path, query })
+        newList.splice(idx + 1, 0, { name, path, query, meta })
       }
       return newList
     }
