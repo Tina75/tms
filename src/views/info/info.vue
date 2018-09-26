@@ -1,10 +1,10 @@
 <template>
   <div class="temAll">
-    <Col span="3">
-    <Menu :active-name="typeName" class="leftMenu" style="width: 150px;  background: rgba(248,248,248,1);">
+    <Col span="4">
+    <Menu :active-name="typeName" class="leftMenu" style="width: 180px;">
       <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
       <p class="menuTitle">{{menu.name}}</p>
-      <Badge v-if="menu.infoNum" :text="menu.infoNum.toString()" style="float:right;margin-top:-20px;"></Badge>
+      <Badge v-if="menu.infoNum" :count="menu.infoNum" style="float:right;margin-top:-20px;"></Badge>
       </MenuItem>
     </Menu>
     </Col>
@@ -51,7 +51,7 @@
               <pre class="msgContentText">{{msg.content}}</pre>
             </div>
             <div class="msgConfigDiv">
-              <p>{{ formatDate(msg.createTime) }}</p>
+              <p style="color: #9DA1B0">{{ formatDate(msg.createTime) }}</p>
               <span class="msgConfigBtn" @click="msgRemoveBtn(msg)">
                 <i class="icon font_family icon-shanchu1"></i>
               </span>
@@ -181,6 +181,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
+import { mapActions } from 'vuex'
 export default {
   name: 'info',
   components: {},
@@ -259,6 +260,9 @@ export default {
     }
   },
   updated () {
+    this.menuList[0].infoNum = this.$store.getters.MsgCount.sysNum
+    this.menuList[1].infoNum = this.$store.getters.MsgCount.orderNum
+    this.menuList[2].infoNum = this.$store.getters.MsgCount.carrierNum
     if (!this.batchBtnShow) {
       for (let index = 0; index < document.getElementsByClassName('checkboxItem').length; index++) {
         document.getElementsByClassName('checkboxItem')[index].children[1].innerText = ''
@@ -267,22 +271,27 @@ export default {
   },
   mounted: function () {
     this.getMenuList(this.searchData)
-    this.getMenuInfoNum()
+    // this.getMenuInfoNum()
+    this.getMessageCount()
   },
   methods: {
+    ...mapActions(['getMessageCount']),
+    async init () {
+      this.getMessageCount()
+    },
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     },
-    getMenuInfoNum () {
-      Server({
-        url: 'message/num',
-        method: 'get'
-      }).then(({ data }) => {
-        this.menuList[0].infoNum = data.data.sysNum > 99 ? '99+' : data.data.sysNum
-        this.menuList[1].infoNum = data.data.orderNum > 99 ? '99+' : data.data.orderNum
-        this.menuList[2].infoNum = data.data.carrierNum > 99 ? '99+' : data.data.carrierNum
-      })
-    },
+    // getMenuInfoNum () {
+    //   Server({
+    //     url: 'message/num',
+    //     method: 'get'
+    //   }).then(({ data }) => {
+    //     this.menuList[0].infoNum = data.data.sysNum > 99 ? '99+' : data.data.sysNum
+    //     this.menuList[1].infoNum = data.data.orderNum > 99 ? '99+' : data.data.orderNum
+    //     this.menuList[2].infoNum = data.data.carrierNum > 99 ? '99+' : data.data.carrierNum
+    //   })
+    // },
     getMenuList (params) {
       Server({
         url: 'message/listPage',
@@ -315,7 +324,8 @@ export default {
       this.searchData.type = id
       this.searchData.pageNo = 1
       this.getMenuList(this.searchData)
-      this.getMenuInfoNum()
+      // this.getMenuInfoNum()
+      this.getMessageCount()
       this.checkBoxGroupInit()
     },
     removeInfo (id, type) {
@@ -333,7 +343,8 @@ export default {
           this.visibaleRemoveSome = false
           this.visibaleRemoveAll = false
           this.getMenuList(this.searchData)
-          this.getMenuInfoNum()
+          // this.getMenuInfoNum()
+          this.getMessageCount()
         } else {
           this.$Message.success(data.msg)
         }
@@ -454,54 +465,57 @@ export default {
     searchInfoData (page) {
       this.searchData.pageNo = page
       this.getMenuList(this.searchData)
-      this.getMenuInfoNum()
+      // this.getMenuInfoNum()
+      this.getMessageCount()
       this.checkBoxGroupInit()
     },
     chagePageSize (pagenum) {
       this.searchData.pageSize = pagenum
       this.getMenuList(this.searchData)
-      this.getMenuInfoNum()
+      // this.getMenuInfoNum()
+      this.getMessageCount()
     }
   }
 }
 
 </script>
 <style lang='stylus' scoped>
-.temAll
-  margin: 20px;
-  .megDiv
-    clear: both;
-    height: 55px;
-    margin: 20px 15px;
-    border-bottom: 1px solid #e9e9e9;
-    padding-bottom:10px;
-    margin-top: 25px;
-  .msgImg
-    float: left;
-    margin-right: 20px;
-  .msgContentTitle
-    font-weight: bold;
-    margin-bottom: 5px;
-  .msgConfigDiv
-    float: right;
-    margin-top: -55px;
-  .msgContentText
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 630px;
-  .msgContent
-    cursor: pointer;
-  .msgConfigBtn
-    cursor: pointer;
-    float: right;
-  .noneImg
-    position: absolute;
-    left: 50%;
-    margin-left: -110px;
-    margin-top: 100px;
-    text-align: center;
-    color: #999999;
-    font-size: 16px;
-    font-weight: 400;
+// .temAll
+//   margin: 20px;
+.megDiv
+  clear: both;
+  height: 55px;
+  margin: 20px 15px;
+  border-bottom: 1px solid #e9e9e9;
+  padding-bottom:10px;
+  margin-top: 25px;
+.msgImg
+  float: left;
+  margin-right: 20px;
+.msgContentTitle
+  font-weight: bold;
+  margin-bottom: 5px;
+.msgConfigDiv
+  float: right;
+  margin-top: -55px;
+.msgContentText
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 630px;
+  color: "#777B"
+.msgContent
+  cursor: pointer;
+.msgConfigBtn
+  cursor: pointer;
+  float: right;
+.noneImg
+  position: absolute;
+  left: 50%;
+  margin-left: -110px;
+  margin-top: 100px;
+  text-align: center;
+  color: #999999;
+  font-size: 16px;
+  font-weight: 400;
 </style>

@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="divAll">
     <Col span="5">
     <Menu :open-names="['1']" accordion>
       <Submenu name="1">
         <template slot="title">
-          <i class="icon font_family icon-tupian" style="background: white; color: #FFBB44; overflow: hidden; width: 20px;"></i>
+          <i class="icon font_family icon-tupian" style="background: #efefef; color: #FFBB44; overflow: hidden; width: 20px;"></i>
           图文介绍
         </template>
         <MenuItem v-for="menu in picMenu" :key="menu.id" :name="menu.title" @click.native="clickLeftMenuPic(menu)">
@@ -15,7 +15,7 @@
     <Menu>
       <Submenu name="2">
         <template slot="title">
-          <i class="icon font_family icon-shipin" style="background: white; color: #418DF9; overflow: hidden; width: 20px;"></i>
+          <i class="icon font_family icon-shipin" style="background: #efefef; color: #418DF9; overflow: hidden; width: 20px;"></i>
           视频介绍
         </template>
         <MenuItem v-for="menu in videoMenu" :key="menu.id" :name="menu.title" @click.native="clickLeftMenuVideo(menu)">
@@ -93,6 +93,12 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
+// .ivu-menu-light
+//   background: #efefef;
+// >>> .ivu-menu-vertical.ivu-menu-light:after,
+// .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu):after,
+// .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
+//   background: #fff;
 .imgInfo
   max-width: 680px;
 </style>
