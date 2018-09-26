@@ -19,7 +19,7 @@
       </ul>
     </header>
     <div style="text-align: right;margin: 28px;">
-      <Button v-for="(btn, index) in btnGroup" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
+      <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
     </div>
     <section>
       <div>
@@ -468,31 +468,31 @@ export default {
         // 删除按钮
         if (r.transStatus === 0 && r.pickupStatus === 0) {
           renderBtn.push(
-            { name: '删除', value: 1 }
+            { name: '删除', value: 1, code: 110107 }
           )
         }
         // 拆单按钮
         if (r.transStatus === 0 && r.disassembleStatus !== 1) {
           renderBtn.push(
-            { name: '拆单', value: 2 }
+            { name: '拆单', value: 2, code: 110103 }
           )
         }
         // 外转按钮
         if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.pickupStatus === 0) {
           renderBtn.push(
-            { name: '外转', value: 3 }
+            { name: '外转', value: 3, code: 110104 }
           )
         }
         // 还原按钮
         if (r.parentId === '' && r.disassembleStatus === 1 && r.pickupStatus === 0) {
           renderBtn.push(
-            { name: '还原', value: 4 }
+            { name: '还原', value: 4, code: 110105 }
           )
         }
         // 编辑按钮
         if (r.transStatus === 0 && r.pickupStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
           renderBtn.push(
-            { name: '编辑', value: 5 }
+            { name: '编辑', value: 5, code: 110106 }
           )
         }
       }
@@ -500,31 +500,31 @@ export default {
         // 删除按钮
         if (r.pickup !== 1 && r.transStatus === 0 && r.dispatchStatus === 0) {
           renderBtn.push(
-            { name: '删除', value: 1 }
+            { name: '删除', value: 1, code: 110107 }
           )
         }
         // 拆单按钮
         if (r.transStatus === 0 && r.disassembleStatus !== 1 && r.dispatchStatus === 0) {
           renderBtn.push(
-            { name: '拆单', value: 2 }
+            { name: '拆单', value: 2, code: 110103 }
           )
         }
         // 外转按钮
         if (r.transStatus === 0 && r.pickup !== 1 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0) {
           renderBtn.push(
-            { name: '外转', value: 3 }
+            { name: '外转', value: 3, code: 110104 }
           )
         }
         // 还原按钮
         if (r.parentId === '' && r.disassembleStatus === 1 && r.dispatchStatus === 0) {
           renderBtn.push(
-            { name: '还原', value: 4 }
+            { name: '还原', value: 4, code: 110105 }
           )
         }
         // 编辑按钮
         if (r.transStatus === 0 && r.dispatchStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
           renderBtn.push(
-            { name: '编辑', value: 5 }
+            { name: '编辑', value: 5, code: 110106 }
           )
         }
       }
@@ -537,12 +537,12 @@ export default {
     filterReceiptButton () {
       if (this.detail.receiptOrder.receiptStatus === 0 && this.detail.status === 40) {
         this.btnGroup = [
-          { name: '回收', value: 1 }
+          { name: '回收', value: 1, code: 110201 }
         ]
         this.operateValue = 1
       } else if (this.detail.receiptOrder.receiptStatus === 1) {
         this.btnGroup = [
-          { name: '返厂', value: 1 }
+          { name: '返厂', value: 1, code: 110202 }
         ]
         this.operateValue = 1
       }

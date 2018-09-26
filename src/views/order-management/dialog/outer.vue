@@ -71,11 +71,18 @@ export default {
   data () {
     return {
       settlements,
-      info: { transfereeName: '', outTransNo: '', payType: '', transFee: null },
+      info: { transfereeName: '', outTransNo: '', payType: 4, transFee: null },
       rules: {
-        transfereeName: { required: true, message: '请填写外转方', trigger: 'blur' },
-        payType: { required: true, message: '请选择付款方式' },
-        transFee: { required: true, type: 'number', message: '请填写外转运费', trigger: 'blur' }
+        transfereeName: [
+          { required: true, message: '请填写外转方', trigger: 'blur' },
+          { required: true, message: '请填写外转方', trigger: 'change' }
+        ],
+        payType: [
+          { required: true, message: '请选择付款方式' }
+        ],
+        transFee: [
+          { required: true, type: 'number', message: '请填写外转运费' }
+        ]
       },
       visibale: true
     }
@@ -107,6 +114,7 @@ export default {
     // 选择已维护外转方后操作
     handleSelectTransferee (name, row) {
       console.log(name, row)
+      this.info.payType = row.payType
     },
     save () {
       this.$refs['info'].validate((valid) => {
