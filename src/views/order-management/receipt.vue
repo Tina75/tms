@@ -3,7 +3,7 @@
     <tab-header :name="curStatusName" :tabs="status" @tabChange="handleTabChange"></tab-header>
     <div style="margin-top: 30px;display: flex;justify-content: space-between;">
       <div>
-        <Button v-for="(btn, index) in btnGroup" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
+        <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
       </div>
       <div v-if="simpleSearch" class="right">
         <Select v-model="selectStatus"  style="width:120px;margin-right: 11px" @on-change="handleChangeSearchStatus">
@@ -130,9 +130,9 @@ export default {
       },
       curStatusName: '待回收',
       btnGroup: [
-        { name: '回收', value: 1 },
-        { name: '返厂', value: 2 },
-        { name: '导出', value: 3 }
+        { name: '回收', value: 1, code: 110201 },
+        { name: '返厂', value: 2, code: 110202 },
+        { name: '导出', value: 3, code: 110203 }
       ],
       operateValue: 1,
       tableColumns: [
@@ -147,7 +147,7 @@ export default {
           width: 100,
           extra: true,
           render: (h, params) => {
-            if (params.row.receiptOrder.receiptStatus === 0 && params.row.status === 40) {
+            if (params.row.receiptOrder.receiptStatus === 0 && params.row.status === 40 && this.hasPower(110201)) {
               return h('div', [
                 h('a', {
                   style: {
@@ -161,7 +161,7 @@ export default {
                   }
                 }, '回收')
               ])
-            } else if (params.row.receiptOrder.receiptStatus === 1) {
+            } else if (params.row.receiptOrder.receiptStatus === 1 && this.hasPower(110202)) {
               return h('div', [
                 h('a', {
                   style: {
@@ -383,29 +383,29 @@ export default {
       if (val === '全部') {
         this.operateValue = 1
         this.btnGroup = [
-          { name: '回收', value: 1 },
-          { name: '返厂', value: 2 },
-          { name: '导出', value: 3 }
+          { name: '回收', value: 1, code: 110201 },
+          { name: '返厂', value: 2, code: 110202 },
+          { name: '导出', value: 3, code: 110203 }
         ]
         this.keywords.receiptStatus = null
       } else if (val === '待回收') {
         this.operateValue = 1
         this.btnGroup = [
-          { name: '回收', value: 1 },
-          { name: '导出', value: 2 }
+          { name: '回收', value: 1, code: 110201 },
+          { name: '导出', value: 2, code: 110203 }
         ]
         this.keywords.receiptStatus = 0
       } else if (val === '待返厂') {
         this.operateValue = 1
         this.btnGroup = [
-          { name: '返厂', value: 1 },
-          { name: '导出', value: 2 }
+          { name: '返厂', value: 1, code: 110202 },
+          { name: '导出', value: 2, code: 110203 }
         ]
         this.keywords.receiptStatus = 1
       } else {
         this.operateValue = 1
         this.btnGroup = [
-          { name: '导出', value: 1 }
+          { name: '导出', value: 1, code: 110203 }
         ]
         this.keywords.receiptStatus = 2
       }
