@@ -1,6 +1,6 @@
 <template>
   <div ref="$box">
-    <TabHeader :tabs="tabList" type="WAYBILL" @on-change="tabChanged"></TabHeader>
+    <TabHeader ref="$tab" :tabs="tabList" :type="tabType" @on-change="tabChanged"></TabHeader>
 
     <div style="margin-top: 30px;display: flex;justify-content: space-between;">
 
@@ -146,6 +146,7 @@ export default {
   metaInfo: { title: '运单管理' },
   data () {
     return {
+      tabType: 'WAYBILL',
       // 标签栏
       tabList: [
         { name: '全部', count: '' },
@@ -395,12 +396,21 @@ export default {
         {
           title: '货值',
           key: 'cargoCost',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            return h('span', p.row.cargoCost / 100)
+          }
         },
         {
           title: '结算方式',
           key: 'settlementType',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            let type = ''
+            if (p.row.settlementType === 1) type = '按单结'
+            if (p.row.settlementType === 2) type = '月结'
+            return h('span', type)
+          }
         },
         {
           title: '司机',
@@ -415,7 +425,10 @@ export default {
         {
           title: '车型',
           key: 'carType',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            return h('span', this.carTypeFilter(p.row.carType) + ' ' + this.carLengthFilter(p.row.carLength))
+          }
         },
         {
           title: '订单数',
@@ -613,7 +626,7 @@ export default {
             }).then(res => {
               self.$Message.success('删除成功')
               self.tableSelection = []
-              self.fetchData()
+              self.$refs.$table.fetch()
             }).catch(err => console.error(err))
           }
         }
@@ -629,6 +642,11 @@ export default {
         data: { waybillIds: this.tableSelection.map(item => item.waybillId) }
       }).then(res => {
         const points = res.data.data.list
+        // [{
+        //   longtitude: 118.787842,
+        //   latitude: 32.026739,
+        //   carNo: '苏A88888'
+        // }]
         if (!points.length) {
           this.$Message.warning('暂无位置')
           return
@@ -660,7 +678,7 @@ export default {
             }).then(res => {
               self.$Message.success('操作成功')
               self.tableSelection = []
-              self.fetchData()
+              self.$refs.$table.fetch()
             }).catch(err => console.error(err))
           }
         }
@@ -686,7 +704,7 @@ export default {
             }).then(res => {
               self.$Message.success('操作成功')
               self.tableSelection = []
-              self.fetchData()
+              self.$refs.$table.fetch()
             }).catch(err => console.error(err))
           }
         }
@@ -707,7 +725,8 @@ export default {
       Export({
         url: '/waybill/export',
         method: 'post',
-        data
+        data,
+        fileName: '运单明细'
       }).then(res => {
         this.$Message.success('导出成功')
       }).catch(err => console.error(err))
@@ -724,7 +743,7 @@ export default {
         },
         methods: {
           complete () {
-            self.fetchData()
+            self.$refs.$table.fetch()
           }
         }
       })

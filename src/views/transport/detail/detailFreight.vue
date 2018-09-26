@@ -197,7 +197,8 @@
               :maxlength="8"
               :remote="false"
               :local-options="carrierCars"
-              class="detail-info-input" />
+              class="detail-info-input"
+              @on-select="handleSelectCarrierCar" />
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型/车长：</span>
@@ -292,7 +293,7 @@
         </Row>
         <Row class="detail-field-group">
           <i-col span="24">
-            <span class="detail-field-title-sm detail-field-required">结算方式：</span>
+            <span class="detail-field-title-sm">结算方式：</span>
             <div class="detail-payment-way">
               <RadioGroup v-model="settlementType">
                 <Radio label="1">按单结</Radio>
@@ -410,8 +411,20 @@ export default {
           title: '订单号',
           key: 'orderNo',
           render: (h, p) => {
-            return h('span', {
-              style: { color: '#3A7EDE' }
+            return h('a', {
+              style: { color: '#3A7EDE' },
+              on: {
+                click: () => {
+                  this.openTab({
+                    path: '/order-management/detail',
+                    query: {
+                      id: p.row.orderNo,
+                      orderId: p.row.orderId,
+                      from: 'order'
+                    }
+                  })
+                }
+              }
             }, p.row.orderNo)
           }
         },

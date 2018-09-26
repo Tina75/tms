@@ -12,7 +12,8 @@
             :remote="false"
             :local-options="transferees"
             placeholder="请输入"
-            style="width:200px">
+            style="width:200px"
+            @on-select="handleSelectTransferee">
           </SelectInput>
         </FormItem>
         <FormItem label="外转方运单号">
@@ -46,7 +47,6 @@ import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '@/components/SelectInput.vue'
 import TagNumberInput from '@/views/order/create/TagNumberInput'
 import float from '@/libs/js/float'
-import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'outer',
 
@@ -58,6 +58,7 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      transferees: [],
       info: {
         transfereeName: '',
         outTransNo: '',
@@ -65,18 +66,12 @@ export default {
         transFee: ''
       },
       rules: {
-        transfereeName: { required: true, message: '请填写外转方', trigger: 'blur' },
+        transfereeName: { required: true, message: '请填写外转方' },
         payType: { required: true, message: '请选择付款方式' },
         transFee: { required: true, type: 'number', message: '请填写外转运费', trigger: 'blur' }
       },
       visibale: true
     }
-  },
-
-  computed: {
-    ...mapGetters([
-      'transferees'
-    ])
   },
 
   watch: {
@@ -91,9 +86,25 @@ export default {
   },
 
   methods: {
-    ...mapActions([
-      'getTransferees'
-    ]),
+    getTransferees () {
+      Server({
+        url: '/transferee/list',
+        method: 'get',
+        data: { type: 1 }
+      }).then(res => {
+        this.transferees = res.data.data.transfereeList.map(item => {
+          return {
+            name: item.name,
+            value: item.name,
+            payType: item.payType
+          }
+        })
+      })
+    },
+
+    handleSelectTransferee (name, row) {
+      if (row.payType) this.info.payType = row.payType
+    },
 
     // 保留2位小数
     handleParseFloat (value) {

@@ -87,9 +87,21 @@ export default {
           // fixed: 'left',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', {
+            return h('a', {
               style: {
                 color: '#418DF9'
+              },
+              on: {
+                click: () => {
+                  this.openTab({
+                    path: '/order-management/detail',
+                    query: {
+                      id: p.row.orderNo,
+                      orderId: p.row.orderId,
+                      from: 'order'
+                    }
+                  })
+                }
               }
             }, p.row.orderNo)
           }
@@ -124,9 +136,21 @@ export default {
           minWidth: 160,
           // fixed: 'left',
           render: (h, p) => {
-            return h('span', {
+            return h('a', {
               style: {
                 color: '#418DF9'
+              },
+              on: {
+                click: () => {
+                  this.openTab({
+                    path: '/order-management/detail',
+                    query: {
+                      id: p.row.orderNo,
+                      orderId: p.row.orderId,
+                      from: 'order'
+                    }
+                  })
+                }
               }
             }, p.row.orderNo)
           }
@@ -183,8 +207,8 @@ export default {
   },
 
   computed: {
-    tableWidth () {
-      return this.width ? (this.width - 120) : 0
+    rightTableWidth () {
+      return this.width ? (this.width - 120 - 440) : 0
     }
   },
 
