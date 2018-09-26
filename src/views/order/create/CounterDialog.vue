@@ -15,7 +15,7 @@
       </div>
     </Form>
     <div slot="footer" class="van-center">
-      <Button v-if="emptyRule" type="primary" to="/finance/rule">去设置</Button>
+      <Button v-if="emptyRule" type="primary" to="/finance/rules">去设置</Button>
       <Button v-else type="primary" @click="save">确定</Button>
       <Button type="default" class="i-ml-10" @click.native="visibale = false">取消</Button>
     </div>
@@ -28,14 +28,12 @@ import server from '@/libs/js/server'
 export default {
   name: 'CounterDialog',
   mixins: [BaseDialog],
-  props: {
-    parterName: String
-  },
   data () {
     return {
       counterForm: {
         rule: ''
       },
+      parterName: null,
       ruleOptions: [],
       visibale: true
     }
