@@ -1,6 +1,6 @@
 <template>
   <div ref="$box">
-    <TabHeader :tabs="tabList" type="OUTER" @on-change="tabChanged"></TabHeader>
+    <TabHeader :tabs="tabList" :type="tabType" @on-change="tabChanged"></TabHeader>
 
     <div style="margin-top: 30px;display: flex;justify-content: space-between;">
 
@@ -133,6 +133,7 @@ export default {
   metaInfo: { title: '外转单管理' },
   data () {
     return {
+      tabType: 'OUTER',
       // 标签栏
       tabList: [
         { name: '全部', count: '' },
@@ -159,7 +160,7 @@ export default {
             }
           }, {
             name: '删除',
-            code: 120303,
+            code: 120304,
             func: () => {
               this.billDelete()
             }
@@ -646,9 +647,9 @@ export default {
               method: 'delete',
               data: { transIds }
             }).then(res => {
-              this.$Message.success('删除成功')
-              this.tableSelection = []
-              this.fetchData()
+              self.$Message.success('删除成功')
+              self.tableSelection = []
+              self.$refs.$table.fetch()
             }).catch(err => console.error(err))
           }
         }
@@ -680,7 +681,7 @@ export default {
             }).then(res => {
               self.$Message.success('操作成功')
               self.tableSelection = []
-              self.fetchData()
+              self.$refs.$table.fetch()
             }).catch(err => console.error(err))
           }
         }
@@ -713,7 +714,7 @@ export default {
             }).then(res => {
               self.$Message.success('操作成功')
               self.tableSelection = []
-              self.fetchData()
+              self.$refs.$table.fetch()
             }).catch(err => console.error(err))
           }
         }
@@ -734,7 +735,8 @@ export default {
       Export({
         url: '/outside/bill/export',
         method: 'post',
-        data
+        data,
+        fileName: '外转单明细'
       }).then(res => {
         this.$Message.success('导出成功')
       }).catch(err => console.error(err))

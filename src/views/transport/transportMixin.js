@@ -1,5 +1,9 @@
 import City from '../../libs/js/City'
+import CarConfigs from './detail/carConfigs.json'
 import { mapGetters, mapActions } from 'vuex'
+
+const carType = CarConfigs.carType
+const carLength = CarConfigs.carLength
 
 export default {
   data () {
@@ -44,6 +48,11 @@ export default {
   created () {
     this.currentBtns = this.btnList[0].btns
     this.getCarriers()
+    const columns = window.sessionStorage[this.tabType + '_COLUMNS']
+    if (columns) this.extraColumns = JSON.parse(columns)
+    const tab = window.sessionStorage['TABHEADER_' + this.tabType]
+    if (tab) this.tabStatus = this.setTabStatus(tab)
+    this.fetchData()
   },
 
   mounted () {
@@ -54,6 +63,7 @@ export default {
     ...mapActions([
       'getCarriers'
     ]),
+
     handleSelectCarrier (name, row) {
       this.$store.dispatch('getCarrierCars', row.id)
       this.$store.dispatch('getCarrierDrivers', row.id)
@@ -67,6 +77,24 @@ export default {
       return true
     },
 
+    carTypeFilter (value) {
+      for (let i = 0; i < carType.length; i++) {
+        if (value === carType[i].value) {
+          return carType[i].label
+        }
+      }
+      return ''
+    },
+
+    carLengthFilter (value) {
+      for (let i = 0; i < carLength.length; i++) {
+        if (value === carLength[i].value) {
+          return carLength[i].label
+        }
+      }
+      return ''
+    },
+
     // 窗口宽度改变
     watchWindowWidth () {
       const $box = this.$refs.$box
@@ -78,7 +106,6 @@ export default {
 
     fetchData () {
       this.searchFields = this.setFetchParams()
-      // this.$refs.$table.fetch()
     },
 
     // 搜索
@@ -127,10 +154,6 @@ export default {
       this.resetSeniorSearch()
       this.fetchData()
     },
-    // 承运商改变
-    carrierChange (val) {
-      this.carrierId = val.value
-    },
     // tab切换
     tabChanged (tab) {
       console.log(tab)
@@ -161,6 +184,7 @@ export default {
     // 表格显示项筛选
     tableColumnsChanged (columns) {
       this.extraColumns = columns
+      window.sessionStorage.setItem(this.tabType + '_COLUMNS', JSON.stringify(columns))
     },
     // 选中的表格行
     selectionChanged (selection) {

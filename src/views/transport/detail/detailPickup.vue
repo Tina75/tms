@@ -73,23 +73,23 @@
         <Row class="detail-field-group">
           <i-col span="3">
             <span class="detail-field-title-sm">运输费：</span>
-            <span>{{ payment.freightFee || 0 }}元</span>
+            <span class="detail-field-fee">{{ payment.freightFee || 0 }}元</span>
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">装货费：</span>
-            <span>{{ payment.loadFee || 0 }}元</span>
+            <span class="detail-field-fee">{{ payment.loadFee || 0 }}元</span>
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">卸货费：</span>
-            <span>{{ payment.unloadFee || 0 }}元</span>
+            <span class="detail-field-fee">{{ payment.unloadFee || 0 }}元</span>
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">保险费：</span>
-            <span>{{ payment.insuranceFee || 0 }}元</span>
+            <span class="detail-field-fee">{{ payment.insuranceFee || 0 }}元</span>
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">其他：</span>
-            <span>{{ payment.otherFee || 0 }}元</span>
+            <span class="detail-field-fee">{{ payment.otherFee || 0 }}元</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
@@ -179,7 +179,8 @@
               :maxlength="8"
               :remote="false"
               :local-options="carrierCars"
-              class="detail-info-input" />
+              class="detail-info-input"
+              @on-select="handleSelectCarrierCar" />
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型/车长：</span>
@@ -274,7 +275,7 @@
         </Row>
         <Row class="detail-field-group">
           <i-col span="24">
-            <span class="detail-field-title-sm detail-field-required">结算方式：</span>
+            <span class="detail-field-title-sm">结算方式：</span>
             <div class="detail-payment-way">
               <RadioGroup v-model="settlementType">
                 <Radio label="1">按单结</Radio>
@@ -381,8 +382,20 @@ export default {
           title: '订单号',
           key: 'orderNo',
           render: (h, p) => {
-            return h('span', {
-              style: { color: '#3A7EDE' }
+            return h('a', {
+              style: { color: '#3A7EDE' },
+              on: {
+                click: () => {
+                  this.openTab({
+                    path: '/order-management/detail',
+                    query: {
+                      id: p.row.orderNo,
+                      orderId: p.row.orderId,
+                      from: 'order'
+                    }
+                  })
+                }
+              }
             }, p.row.orderNo)
           }
         },

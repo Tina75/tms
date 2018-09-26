@@ -7,7 +7,7 @@
         <li class="detail-header-list-item">客户订单号：{{ info.customerOrderNo }}</li>
         <li class="detail-header-list-item">外转单号：{{ info.transNo }}</li>
         <li class="detail-header-list-item">外转方运单号：{{ info.outTransNo }}</li>
-        <li class="detail-header-list-item">订单状态：
+        <li class="detail-header-list-item">外转单状态：
           <span style="font-weight: bold;">{{ status }}</span>
         </li>
       </ul>
@@ -117,15 +117,15 @@
         <Row class="detail-field-group">
           <i-col span="5">
             <span class="detail-field-title-sm">外转方：</span>
-            <span>{{ payment.transfereeName }}</span>
+            <span class="detail-field-fee">{{ payment.transfereeName }}</span>
           </i-col>
           <i-col span="5" offset="2">
             <span class="detail-field-title-sm">外传费用：</span>
-            <span>{{ payment.transFee }}元</span>
+            <span class="detail-field-fee">{{ payment.transFee }}元</span>
           </i-col>
           <i-col span="5" offset="2">
             <span class="detail-field-title-sm">结算方式：</span>
-            <span>{{ payment.payType | payType }}</span>
+            <span class="detail-field-fee">{{ payment.payType | payType }}</span>
           </i-col>
         </Row>
       </div>

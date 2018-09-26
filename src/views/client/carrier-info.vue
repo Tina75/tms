@@ -33,17 +33,7 @@
           <Col span="8">
           <div>
             <span class="label">车型：</span>
-            <span v-if="driverList.carType === 1">平板{{driverList.carLength}}米</span>
-            <span v-else-if="driverList.carType === 2">高栏{{driverList.carLength}}米</span>
-            <span v-else-if="driverList.carType === 3">厢车{{driverList.carLength}}米</span>
-            <span v-else-if="driverList.carType === 4">自卸{{driverList.carLength}}米</span>
-            <span v-else-if="driverList.carType === 5">冷藏{{driverList.carLength}}米</span>
-            <span v-else-if="driverList.carType === 6">保温{{driverList.carLength}}米</span>
-            <span v-else-if="driverList.carType === 7">高低板{{driverList.carLength}}米</span>
-            <span v-else-if="driverList.carType === 8">面包车{{driverList.carLength}}米</span>
-            <span v-else-if="driverList.carType === 9">爬梯车{{driverList.carLength}}米</span>
-            <span v-else-if="driverList.carType === 10">飞翼车{{driverList.carLength}}米</span>
-            <span v-else></span>
+            <span>{{carTypeMap[driverList.carType]}}{{carLengthMap[driverList.carLength]}}</span>
           </div>
           </Col>
           <Col span="8">
@@ -180,6 +170,37 @@ export default {
     return {
       carrierId: this.$route.query.id, // carrierId 承运商id
       carrierType: this.$route.query.carrierType,
+      carTypeMap: {
+        1: '平板',
+        2: '高栏',
+        3: '厢车',
+        4: '自卸',
+        5: '冷藏',
+        6: '保温',
+        7: '高低板',
+        8: '面包车',
+        9: '爬梯车',
+        10: '飞翼车'
+      },
+      carLengthMap: {
+        1: '1.8米',
+        2: '2.7米',
+        3: '3.8米',
+        4: '4.2米',
+        5: '5米',
+        6: '6.2米',
+        7: '6.8米',
+        8: '7.7米',
+        9: '8.2米',
+        10: '8.7米',
+        11: '9.6米',
+        12: '11.7米',
+        13: '12.5米',
+        14: '13米',
+        15: '15米',
+        16: '16米',
+        17: '17.5米'
+      },
       driverList: {
         driverName: '',
         carNO: '',
@@ -303,32 +324,7 @@ export default {
           title: '车型',
           key: 'carType',
           render: (h, params) => {
-            let text = ''
-            if (params.row.carType === 1) {
-              text = '平板'
-            } else if (params.row.carType === 2) {
-              text = '高栏'
-            } else if (params.row.carType === 3) {
-              text = '厢车'
-            } else if (params.row.carType === 4) {
-              text = '自卸'
-            } else if (params.row.carType === 5) {
-              text = '冷藏'
-            } else if (params.row.carType === 6) {
-              text = '保温'
-            } else if (params.row.carType === 7) {
-              text = '高低板'
-            } else if (params.row.carType === 8) {
-              text = '面包车'
-            } else if (params.row.carType === 9) {
-              text = '爬梯车'
-            } else if (params.row.carType === 10) {
-              text = '飞翼车'
-            } else {
-              text = ''
-            }
-            text = text ? params.row.carLength + '米' + text : ''
-            return h('div', {}, text)
+            return h('div', {}, this.carLengthMap[params.row.carLength] + this.carTypeMap[params.row.carType])
           }
         }
       ],

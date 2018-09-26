@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { LoadingBar, Message } from 'iview'
 
+let fileName = ''
+
 function getToken () {
   let temp = document.cookie.match(new RegExp('(^| )token=([^;]*)(;|$)'))
   if (temp) return unescape(temp[2])
@@ -36,6 +38,7 @@ instance.interceptors.request.use((config) => {
   if (config.method === 'get' && config.data) {
     config.params = config.data
   }
+  fileName = config.fileName
   return config
 }, (error) => {
   return Promise.reject(error)
@@ -49,7 +52,7 @@ instance.interceptors.response.use((res) => {
     let blob = new Blob([res.data], { type: 'application/x-xls' })
     let downloadLink = document.createElement('a')
     downloadLink.href = URL.createObjectURL(blob)
-    downloadLink.download = '订单明细' + new Date().Format('yyyy-MM-dd') + '.xls'
+    downloadLink.download = fileName + new Date().Format('yyyy-MM-dd') + '.xls'
     downloadLink.click()
   } else {
     const code = res.data.code
