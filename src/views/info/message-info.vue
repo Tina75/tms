@@ -64,6 +64,7 @@ export default {
         if (data.code === 10000) {
           this.$Message.success('删除成功!')
           this.visibaleRemove = false
+          this.ema.fire('closeTab', this.$route)
         } else {
           this.$Message.success(data.msg)
         }
