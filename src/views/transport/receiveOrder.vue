@@ -32,17 +32,21 @@
                      :maxlength="20"
                      :remote="false"
                      :local-options="carriers"
+                     clearable
                      placeholder="请输入承运商"
                      class="search-input"
-                     @on-select="handleSelectCarrier" />
+                     @on-select="handleSelectCarrier"
+                     @on-clear="resetEasySearch" />
 
         <SelectInput v-if="easySelectMode === 3"
                      v-model="easySearchKeyword"
                      :maxlength="8"
                      :remote="false"
                      :local-options="carrierCars"
+                     clearable
                      placeholder="请输入车牌号"
-                     class="search-input" />
+                     class="search-input"
+                     @on-clear="resetEasySearch" />
 
         <Button icon="ios-search"
                 class="search-btn-easy"
@@ -299,11 +303,9 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
+                    title: p.row.pickupNo,
                     path: '/transport/detail/detailPickup',
-                    query: {
-                      id: p.row.pickupNo,
-                      qid: p.row.pickUpId
-                    }
+                    query: { id: p.row.pickUpId }
                   })
                 }
               }
@@ -496,6 +498,7 @@ export default {
         { name: '提货中', count: data.statusCntInfo.loadCnt || 0 },
         { name: '已提货', count: data.statusCntInfo.loadedCnt || 0 }
       ]
+      this.$forceUpdate()
     },
 
     // 打印查询详情
@@ -580,7 +583,7 @@ export default {
             Server({
               url: '/load/bill/delete',
               method: 'delete',
-              data: { pickUpIds: this.tableSelection.map(item => item.pickUpId) }
+              data: { pickUpIds: self.tableSelection.map(item => item.pickUpId) }
             }).then(res => {
               this.$Message.success('删除成功')
               this.tableSelection = []
