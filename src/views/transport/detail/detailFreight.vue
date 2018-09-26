@@ -12,8 +12,8 @@
     </section>
 
     <div class="detail-btn-group">
-      <Button v-for="(item, key) in currentBtns"
-              :key="key" :type="key === (currentBtns.length - 1) ? 'primary' : 'default'"
+      <Button v-for="(item, key) in showButtons"
+              :key="key" :type="key === (showButtons.length - 1) ? 'primary' : 'default'"
               class="detail-btn-item"
               @click="item.func">{{ item.name }}</Button>
     </div>
@@ -366,16 +366,19 @@ export default {
           status: '待派车',
           btns: [{
             name: '删除',
+            code: 120105,
             func: () => {
               this.billDelete()
             }
           }, {
             name: '派车',
+            code: 120101,
             func: () => {
               this.billSendCar()
             }
           }, {
             name: '编辑',
+            code: 120107,
             func: () => {
               this.inEditing = true
             }
@@ -389,6 +392,7 @@ export default {
           status: '在途',
           btns: [{
             name: '位置',
+            code: 120106,
             func: () => {
               this.billLocation()
             }
@@ -571,6 +575,8 @@ export default {
     },
     // 删除
     billDelete () {
+      // this.ema.fire('colseTab', this.$route)
+      // return
       Server({
         url: '/waybill/delete',
         method: 'delete',

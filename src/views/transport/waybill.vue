@@ -6,7 +6,7 @@
 
       <!-- 按钮组 -->
       <div>
-        <Button v-for="(item, key) in currentBtns" :key="key"
+        <Button v-for="(item, key) in showButtons" :key="key"
                 :type="key === 0 ? 'primary' : 'default'"
                 @click="item.func">{{ item.name }}</Button>
       </div>
@@ -157,31 +157,37 @@ export default {
           tab: '全部',
           btns: [{
             name: '发运',
+            code: 120102,
             func: () => {
               this.billShipment()
             }
           }, {
             name: '打印',
+            code: 120103,
             func: () => {
               this.billPrint()
             }
           }, {
             name: '到货',
+            code: 120104,
             func: () => {
               this.billArrived()
             }
           }, {
             name: '删除',
+            code: 120105,
             func: () => {
               this.billDelete()
             }
           }, {
             name: '位置',
+            code: 120106,
             func: () => {
               this.billLocation()
             }
           }, {
             name: '导出',
+            code: 120108,
             func: () => {
               this.billExport()
             }
@@ -191,11 +197,13 @@ export default {
           tab: '待派车',
           btns: [{
             name: '删除',
+            code: 120105,
             func: () => {
               this.billDelete()
             }
           }, {
             name: '导出',
+            code: 120108,
             func: () => {
               this.billExport()
             }
@@ -205,16 +213,19 @@ export default {
           tab: '待发运',
           btns: [{
             name: '发运',
+            code: 120102,
             func: () => {
               this.billShipment()
             }
           }, {
             name: '打印',
+            code: 120103,
             func: () => {
               this.billPrint()
             }
           }, {
             name: '导出',
+            code: 120108,
             func: () => {
               this.billExport()
             }
@@ -224,11 +235,13 @@ export default {
           tab: '在途',
           btns: [{
             name: '到货',
+            code: 120104,
             func: () => {
               this.billArrived()
             }
           }, {
             name: '导出',
+            code: 120108,
             func: () => {
               this.billExport()
             }
@@ -238,6 +251,7 @@ export default {
           tab: '已到货',
           btns: [{
             name: '导出',
+            code: 120108,
             func: () => {
               this.billExport()
             }
@@ -281,7 +295,7 @@ export default {
           fixed: 'left',
           extra: true,
           render: (h, p) => {
-            if (p.row.status === 1) {
+            if (p.row.status === 1 && this.hasPower(120101)) {
               return h('a', {
                 on: {
                   click: () => {

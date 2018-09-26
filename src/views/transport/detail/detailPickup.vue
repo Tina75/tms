@@ -12,8 +12,8 @@
     </section>
 
     <div class="detail-btn-group">
-      <Button v-for="(item, key) in currentBtns"
-              :key="key" :type="key === (currentBtns.length - 1) ? 'primary' : 'default'"
+      <Button v-for="(item, key) in showButtons"
+              :key="key" :type="key === (showButtons.length - 1) ? 'primary' : 'default'"
               class="detail-btn-item"
               @click="item.func">{{ item.name }}</Button>
     </div>
@@ -341,16 +341,19 @@ export default {
           status: '待提货',
           btns: [{
             name: '删除',
+            code: 120204,
             func: () => {
               this.billDelete()
             }
           }, {
             name: '提货',
+            code: 120201,
             func: () => {
               this.billPickup()
             }
           }, {
             name: '编辑',
+            code: 120206,
             func: () => {
               this.inEditing = true
             }
@@ -360,6 +363,7 @@ export default {
           status: '提货中',
           btns: [{
             name: '到货',
+            code: 120203,
             func: () => {
               this.billArrived()
             }
