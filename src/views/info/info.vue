@@ -243,15 +243,19 @@ export default {
     switch (this.$route.query.type) {
       case 0:
         this.rightTitle = this.typeName = '系统消息'
+        this.searchData.type = '0'
         break
       case 1:
         this.rightTitle = this.typeName = '订单消息'
+        this.searchData.type = '1'
         break
       case 2:
         this.rightTitle = this.typeName = '运输消息'
+        this.searchData.type = '2'
         break
       default:
         this.rightTitle = this.typeName = '系统消息'
+        this.searchData.type = '0'
     }
   },
   updated () {
@@ -373,31 +377,31 @@ export default {
         case 4:
           this.openTab({
             path: '/order-management/order',
-            query: {}
+            query: { id: '订单管理' }
           })
           break
         case 5:
           this.openTab({
             path: '/order-management/receipt',
-            query: {}
+            query: { id: '回单管理' }
           })
           break
         case 6:
           this.openTab({
             path: '/transport/waybill',
-            query: {}
+            query: { id: '运单管理' }
           })
           break
         case 7:
           this.openTab({
             path: '/transport/receiveOrder',
-            query: {}
+            query: { id: '提货管理' }
           })
           break
         case 8:
           this.openTab({
             path: '/transport/outerOrder',
-            query: {}
+            query: { id: '外转单管理' }
           })
           break
       }

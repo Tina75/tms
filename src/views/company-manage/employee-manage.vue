@@ -3,14 +3,14 @@
     <Col span="5">
     <Menu :active-name="menuInitName" class="leftMenu">
       <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:50px;">
-        <Button type="primary" class="centerBtn" @click="createRole">新增角色</Button>
+        <Button v-if="hasPower(140101)" type="primary" class="centerBtn" @click="createRole">新增角色</Button>
       </div>
       <div style="max-height:500px; overflow-y:auto; padding-top: 20px;">
         <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" class="menu" @click.native="clickLeftMenu(menu)">
         <p class="menuTitle">{{menu.name}}</p>
         <span v-if="menu.type !== 1" class="configBtnItem">
-          <span class="configBtn" @click="editRole(menu)">修改</span>
-          <span type="text" class="configBtn" @click="removeRole(menu)">删除</span>
+          <span v-if="hasPower(140102)" class="configBtn" @click="editRole(menu)">修改</span>
+          <span v-if="hasPower(140103)" type="text" class="configBtn" @click="removeRole(menu)">删除</span>
         </span>
         </MenuItem>
       </div>
@@ -32,14 +32,15 @@
     </Col>
     <Col span="18">
     <p class="rightTitle">{{rightTitle}}的权限
+    </p><div v-if="hasPower(140102)" class="saveRoleBtn">
       <Button
         v-if="menuParam.type !== 1"
         :disabled="disSaveBtn"
-        class="saveRoleBtn"
         type="primary"
         @click="saveRole">
         保存
       </Button>
+    </div>
     </p>
     <Modal
       v-model="removeRoleModal"
@@ -238,6 +239,9 @@ export default {
           // 加入父级code
           if (!selectChecBoxList.includes(node.parentId) && node.parentId !== undefined) {
             selectChecBoxList.push(node.parentId)
+            if (node.grandId !== undefined) {
+              selectChecBoxList.push(node.grandId)
+            }
           }
         })
       }
@@ -257,7 +261,6 @@ export default {
           this.$Message.error(data.msg)
         }
       }).then(() => {
-        debugger
         this.arrayCodeList = this.menuParam.codes
         this.rightTitle = this.menuParam.name
       })
@@ -376,7 +379,7 @@ export default {
 .rightTitle
   font-size: 20px;
   color: #333333;
-  line-height: 35px;
+  line-height: 45px;
   padding: 0 20px 0 10px;
 .divTree
   clear: both;
@@ -394,6 +397,7 @@ export default {
 .saveRoleBtn
   float: right;
   margin-right: 20px;
+  margin-top: -30px;
 .centerBtn
   position: absolute;
   left: 30%;

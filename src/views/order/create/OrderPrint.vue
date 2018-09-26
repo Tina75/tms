@@ -3,6 +3,11 @@
     <div ref="htmlContent" class="order-detail">
       <h3 class="van-center i-mb-10">{{data.consignerName}}公司托运单</h3>
       <table cellspacing="0" cellpadding="10" border="0" style="width:100%">
+        <colgroup>
+          <col width="160" />
+          <col width="240" />
+          <col width="240" />
+        </colgroup>
         <tbody>
           <tr>
             <td>客户：{{data.consignerName}}</td>
@@ -53,7 +58,7 @@
               卸货费：{{data.unloadFee || 0}} 元 &nbsp;&nbsp;
               保险费：{{data.insuranceFee || 0}} 元 &nbsp;&nbsp;
               其他：{{data.otherFee || 0}} 元 &nbsp;&nbsp;
-              合计运费: {{data.totalFee || 0}} 元 &nbsp;&nbsp;
+              合计运费: {{data.totalFee || 0}} 元
               结算方式：{{settlement || 0}}
             </td>
           </tr>

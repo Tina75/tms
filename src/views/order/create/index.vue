@@ -816,7 +816,8 @@ export default {
       this.openDialog({
         name: 'order/create/CounterDialog.vue',
         data: {
-          value: 0
+          value: 0,
+          parterName: vm.orderForm.consignerName
         },
         methods: {
           ok (value) {
