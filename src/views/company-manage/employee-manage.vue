@@ -239,6 +239,9 @@ export default {
           // 加入父级code
           if (!selectChecBoxList.includes(node.parentId) && node.parentId !== undefined) {
             selectChecBoxList.push(node.parentId)
+            if (node.grandId !== undefined) {
+              selectChecBoxList.push(node.grandId)
+            }
           }
         })
       }
@@ -258,7 +261,6 @@ export default {
           this.$Message.error(data.msg)
         }
       }).then(() => {
-        debugger
         this.arrayCodeList = this.menuParam.codes
         this.rightTitle = this.menuParam.name
       })
