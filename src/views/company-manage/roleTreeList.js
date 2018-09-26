@@ -66,6 +66,10 @@ export default {
         { title: '返厂', code: '110202', parentId: '110200' },
         { title: '导出', code: '110203', parentId: '110200' }
       ]
+    }, {
+      title: '调度工作台',
+      code: '110300',
+      parentId: '110000'
     }]
   }],
   data3: [{
