@@ -241,7 +241,7 @@ export default {
               }, '修改'))
             }
             if (this.hasPower(130109)) {
-              h('span', {
+              renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
                   cursor: 'pointer'
@@ -270,7 +270,7 @@ export default {
                     })
                   }
                 }
-              }, '删除')
+              }, '删除'))
             }
             return h('div', renderBtn)
           }
