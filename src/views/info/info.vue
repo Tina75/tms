@@ -243,15 +243,19 @@ export default {
     switch (this.$route.query.type) {
       case 0:
         this.rightTitle = this.typeName = '系统消息'
+        this.searchData.type = '0'
         break
       case 1:
         this.rightTitle = this.typeName = '订单消息'
+        this.searchData.type = '1'
         break
       case 2:
         this.rightTitle = this.typeName = '运输消息'
+        this.searchData.type = '2'
         break
       default:
         this.rightTitle = this.typeName = '系统消息'
+        this.searchData.type = '0'
     }
   },
   updated () {
