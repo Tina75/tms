@@ -132,9 +132,9 @@ export default {
     // 货物总计
     orderTotal () {
       return this.detail.reduce((last, item) => {
-        item.cargoCost = item.cargoCost / 100
+        const cargoCost = item.cargoCost / 100
         return {
-          cargoCost: last.cargoCost + item.cargoCost,
+          cargoCost: last.cargoCost + cargoCost,
           quantity: last.quantity + item.quantity,
           weight: last.weight + item.weight,
           volume: last.volume + item.volume
@@ -360,10 +360,10 @@ export default {
         this.$Message.error('请输入正确的车牌号')
         return false
       }
-      if (!this.payment.freightFee) {
-        this.$Message.error('请输入运输费')
-        return false
-      }
+      // if (!this.payment.freightFee) {
+      //   this.$Message.error('请输入运输费')
+      //   return false
+      // }
       if (!this.settlementType) {
         this.$Message.error('请选择结算方式')
         return false
