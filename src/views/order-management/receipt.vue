@@ -64,12 +64,21 @@
           <area-select v-model="keywords.end" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
           <DatePicker
             :options="timeOption"
-            v-model="times"
+            v-model="recoveryTimes"
             type="daterange"
             format="yyyy-MM-dd"
-            placeholder="开始日期-结束日期"
+            placeholder="回收开始日期-回收结束日期"
+            style="width: 200px;display: inline-block;margin-right: 20px;"
+            @on-change="handleRecoveryTimeChange">
+          </DatePicker>
+          <DatePicker
+            :options="timeOption"
+            v-model="returnTimes"
+            type="daterange"
+            format="yyyy-MM-dd"
+            placeholder="返厂开始日期-返厂结束日期"
             style="width: 200px;display: inline-block;"
-            @on-change="handleTimeChange">
+            @on-change="handleReturnTimeChange">
           </DatePicker>
         </div>
         <div>
@@ -101,6 +110,7 @@ import BasePage from '@/basic/BasePage'
 import TabHeader from '@/components/TabHeader'
 import PageTable from '@/components/page-table/'
 import Server from '@/libs/js/server'
+import Export from '@/libs/js/export'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
@@ -463,12 +473,14 @@ export default {
 
   created () {
     // 刷新页面停留当前tab页
-    if (sessionStorage.getItem('receiptVal')) {
-      this.curStatusName = sessionStorage.getItem('receiptVal')
+    if (sessionStorage.getItem('RECEIPT_TAB_NAME')) {
+      this.curStatusName = sessionStorage.getItem('RECEIPT_TAB_NAME')
       this.keyword.receiptStatus = this.statusToCode(this.curStatusName)
+      this.handleTabChange(this.curStatusName) // 表头按钮状态
     } else {
-      sessionStorage.setItem('receiptVal', '待回收')
+      sessionStorage.setItem('RECEIPT_TAB_NAME', '待回收')
       this.keyword.receiptStatus = 0
+      this.handleTabChange('待回收') // 表头按钮状态
     }
   },
 
@@ -562,7 +574,7 @@ export default {
     // 表头按钮批量操作
     handleOperateClick (btn) {
       this.operateValue = btn.value
-      if (!this.selectOrderList.length) {
+      if (!this.selectOrderList.length && btn.name !== '导出') {
         this.$Message.warning('请至少选择一条信息')
         return
       }
@@ -585,6 +597,7 @@ export default {
           this.openReturnDialog('', btn.name)
         }
       } else { // 导出
+        this.export()
       }
     },
     // 打开回收或返厂弹窗 (支持单条、多条操作))
@@ -630,6 +643,20 @@ export default {
           break
       }
       return code
+    },
+    // 导出
+    export () {
+      const data = Object.assign({}, this.keyword, {
+        receiptOrderIds: this.selectedId.length > 0 ? this.selectedId : null
+      })
+      Export({
+        url: 'order/exportReceiptOrder',
+        method: 'post',
+        data,
+        fileName: '回单明细'
+      }).then((res) => {
+        this.$Message.success('导出成功')
+      }).catch(err => console.error(err))
     }
   }
 }

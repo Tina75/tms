@@ -9,8 +9,8 @@
             <a>{{ show ? '收起全部' : '展开全部' }}</a>
             <div slot="title" style="color:rgba(51,51,51,1);text-align: center;">全部运单号</div>
             <ul slot="content">
-              <li v-for="(item, index) in waybillNums" :key="index" style="line-height: 25px;cursor:pointer;" @click="handleWaybillNo(item.id)">
-                <span style="color: #3A7EDE;">{{item.waybillNo}}</span>
+              <li v-for="(item, index) in waybillNums" :key="index" style="line-height: 25px;cursor:pointer;" @click="handleWaybillNo(item)">
+                <span style="color: #3A7EDE;">{{item}}</span>
               </li>
             </ul>
           </Poptip>
@@ -201,7 +201,10 @@ export default {
         },
         {
           title: '货值（元）',
-          key: 'cargoCost'
+          key: 'cargoCost',
+          render: (h, params) => {
+            return h('span', params.row.cargoCost / 100)
+          }
         },
         {
           title: '重量（吨）',
@@ -431,6 +434,13 @@ export default {
     // 点击展开的运单子单
     handleWaybillNo (id) {
       console.log(id)
+      this.openTab({
+        title: id,
+        path: '/transport/detail/detailFreight',
+        query: {
+          id: id
+        }
+      })
     },
     // 订单详情按钮过滤
     filterOrderButton () {

@@ -94,6 +94,8 @@
       @on-selection-change="handleSelectionChange"
       @on-column-change="handleColumnChange">
     </page-table>
+    <OrderPrint ref="printer" :data.sync="orderPrint">
+    </OrderPrint>
   </div>
 </template>
 
@@ -102,8 +104,11 @@ import BasePage from '@/basic/BasePage'
 import TabHeader from '@/components/TabHeader'
 import PageTable from '@/components/page-table/'
 import Server from '@/libs/js/server'
+import Export from '@/libs/js/export'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput.vue'
+import OrderPrint from '@/views/order/create/OrderPrint'
+// import _ from 'lodash'
 import { mapGetters, mapActions } from 'vuex'
 import City from '@/libs/js/City'
 import SearchMixin from './searchMixin'
@@ -114,7 +119,8 @@ export default {
     TabHeader,
     PageTable,
     AreaSelect,
-    SelectInput
+    SelectInput,
+    OrderPrint
   },
   mixins: [ BasePage, SearchMixin ],
   metaInfo: { title: '订单管理' },
@@ -737,7 +743,8 @@ export default {
           fixed: false,
           visible: false
         }
-      ]
+      ],
+      orderPrint: {}
     }
   },
 
@@ -749,12 +756,14 @@ export default {
 
   created () {
     // 刷新页面停留当前tab页
-    if (sessionStorage.getItem('operateVal')) {
-      this.curStatusName = sessionStorage.getItem('operateVal')
+    if (sessionStorage.getItem('ORDER_TAB_NAME')) {
+      this.curStatusName = sessionStorage.getItem('ORDER_TAB_NAME')
       this.keyword.status = this.statusToCode(this.curStatusName)
+      this.handleTabChange(this.curStatusName) // 表头按钮状态
     } else {
-      sessionStorage.setItem('operateVal', '待提货')
+      sessionStorage.setItem('ORDER_TAB_NAME', '待提货')
       this.keyword.status = 10
+      this.handleTabChange('待提货') // 表头按钮状态
     }
   },
 
@@ -881,7 +890,7 @@ export default {
     // 表头按钮操作
     handleOperateClick (btn) {
       this.operateValue = btn.value
-      if (!this.selectOrderList.length) {
+      if (!this.selectOrderList.length && btn.name !== '导出') {
         this.$Message.warning('请至少选择一条信息')
         return
       }
@@ -926,15 +935,11 @@ export default {
           this.openResOrDelDialog('', btn.name)
         }
       } else if (btn.name === '导出') {
-        // 导出
-        this.$refs.pageTable.$refs.table.exportCsv({
-          filename: 'Custom data',
-          columns: this.tableColumns.filter((col, index) => index > 1),
-          data: this.selectOrderList
-        })
+        this.export()
       } else {
         // 打印
         console.log(this.selectedId.length)
+        this.print()
       }
     },
     // 外转
@@ -1029,6 +1034,28 @@ export default {
           break
       }
       return code
+    },
+    // 打印
+    print () {
+      const vm = this
+      // vm.orderPrint = _.cloneDeep(vm.orderForm)
+      // vm.orderPrint.orderCargoList = _.cloneDeep(vm.consignerCargoes)
+      // vm.orderPrint.totalFee = vm.totalFee
+      vm.$refs.printer.print()
+    },
+    // 导出
+    export () {
+      const data = Object.assign({}, this.keyword, {
+        exportOrderIds: this.selectedId.length > 0 ? this.selectedId : null
+      })
+      Export({
+        url: 'order/exportOrder',
+        method: 'post',
+        data,
+        fileName: '订单明细'
+      }).then((res) => {
+        this.$Message.success('导出成功')
+      }).catch(err => console.error(err))
     }
   }
 }
