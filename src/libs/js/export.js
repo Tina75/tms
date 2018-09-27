@@ -47,37 +47,46 @@ instance.interceptors.request.use((config) => {
 // code状态码200判断
 instance.interceptors.response.use((res) => {
   LoadingBar.finish()
+  const tempBlob = new Blob([res.data], { type: 'application/json' })
+  const reader = new FileReader()
+  reader.onload = e => {
+    let code
+    let msg
+    const resStr = e.target.result
+    console.log(resStr)
+    try {
+      const resJson = JSON.parse(resStr)
+      if (resJson && resJson.code) {
+        code = resJson.code
+        msg = resJson.msg
+      }
+    } catch (err) {}
 
-  let code
-  try {
-    const resStr = String.fromCharCode.apply(null, new Uint8Array(res.data))
-    const resJson = JSON.parse(resStr)
-    if (resJson && resJson.code) code = resJson.code
-  } catch (err) {}
-
-  if (!code) {
-    let blob = new Blob([res.data], { type: 'application/x-xls' })
-    let downloadLink = document.createElement('a')
-    downloadLink.href = URL.createObjectURL(blob)
-    downloadLink.download = fileName + new Date().Format('yyyy-MM-dd') + '.xls'
-    downloadLink.click()
-  } else {
-    switch (code) {
-      case 310010:// token失效或不存在
-      case 310011:// 账号在其他设备登录
-        window.EMA.fire('logout')
-        break
-      case 210014:
-      case 600002:// 无权限
-        Message.error(`${res.data.msg},请刷新页面`)
-        window.EMA.fire('refresh')
-        break
-      default:
-        Message.error(res.data.msg)
-        break
+    if (!code) {
+      let blob = new Blob([res.data], { type: 'application/x-xls' })
+      let downloadLink = document.createElement('a')
+      downloadLink.href = URL.createObjectURL(blob)
+      downloadLink.download = fileName + new Date().Format('yyyy-MM-dd') + '.xls'
+      downloadLink.click()
+      Message.success('导出成功')
+    } else {
+      switch (code) {
+        case 310010:// token失效或不存在
+        case 310011:// 账号在其他设备登录
+          window.EMA.fire('logout')
+          break
+        case 210014:
+        case 600002:// 无权限
+          Message.error(`${msg},请刷新页面`)
+          window.EMA.fire('refresh')
+          break
+        default:
+          Message.error(msg)
+          break
+      }
     }
-    return Promise.reject(res)
   }
+  reader.readAsText(tempBlob)
 }, (error) => {
   if (error.message.indexOf('timeout') !== -1) {
     Message.error('接口超时')

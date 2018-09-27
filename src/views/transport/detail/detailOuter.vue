@@ -265,7 +265,10 @@ export default {
         },
         {
           title: '货值（元）',
-          key: 'cargoCost'
+          key: 'cargoCost',
+          render: (h, p) => {
+            return h('span', p.row.cargoCost / 100)
+          }
         },
         {
           title: '重量（吨）',

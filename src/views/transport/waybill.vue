@@ -727,9 +727,7 @@ export default {
         method: 'post',
         data,
         fileName: '运单明细'
-      }).then(res => {
-        this.$Message.success('导出成功')
-      }).catch(err => console.error(err))
+      })
     },
 
     // 派车
