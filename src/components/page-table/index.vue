@@ -337,14 +337,14 @@ export default {
           const { data } = response.data
           if (vm.isSelection) {
             // 当有复选框场景的时候，需要主动勾选上
-            vm.dataSource = data[vm.listField].map((item) => {
+            vm.dataSource = (data[vm.listField] || []).map((item) => {
               if (vm.selected.includes(item[vm.rowId])) {
                 item._checked = true
               }
               return item
             })
           } else {
-            vm.dataSource = data[vm.listField]
+            vm.dataSource = data[vm.listField] || []
           }
           if (this.showPagination) {
             vm.pagination.pageSize = data.pageSize
