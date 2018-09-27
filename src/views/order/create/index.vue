@@ -592,7 +592,7 @@ export default {
         ],
         start: [
           { required: true, type: 'array', message: '请选择始发城市' },
-          { validator: validateStart }
+          { validator: validateStart, trigger: 'change' }
         ],
         end: [
           { required: true, type: 'array', message: '请选择目的城市' },

@@ -135,9 +135,10 @@ export default {
                 on: {
                   click: () => {
                     vm.openTab({
+                      title: '订单管理',
                       path: '/order-management/order',
                       query: {
-                        id: vm.UserInfo.name
+                        id: params.row.id
                       }
                     })
                   }
