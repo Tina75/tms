@@ -1,7 +1,7 @@
 <template>
   <div class="temAll">
-    <Col span="3">
-    <Menu active-name="修改密码" class="leftMenu" style="width: 150px;  background: rgba(248,248,248,1);">
+    <Col span="4">
+    <Menu active-name="修改密码" class="leftMenu" style="width: 180px;">
       <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
       <p class="menuTitle">{{menu.name}}</p>
       </MenuItem>
@@ -94,7 +94,7 @@
               :key="checkBtn.index"
               v-model="checkBtn.model"
               style="margin-left:15px;"
-              @on-change="checkBtnBox(checkBtn.model)">
+              @on-change="checkBtnBox()">
               {{checkBtn.label}}
             </Checkbox>
           </p>
@@ -261,12 +261,15 @@ export default {
       },
       // 个人
       formPersonal: {},
+      formPersonalInit: {},
       // 公司
       formCompany: {},
+      formCompanyInit: {},
       // 短信
       switchMsg: false,
       checkNum: 0,
       msgCheckBoxList: [],
+      msgCheckBoxListInit: [],
       msgSlectCheckBox: [],
       messageListInit: [],
       messageList: [{
@@ -367,12 +370,13 @@ export default {
     this.messageListInit = _.cloneDeep(this.messageList)
   },
   methods: {
-    getCompanyInof () {
+    getCompanyInfo () {
       Server({
         url: 'set/companyInfo',
         method: 'get'
       }).then(({ data }) => {
         this.formCompany = Object.assign({}, data.data)
+        this.formCompanyInit = Object.assign({}, data.data)
       })
     },
     getUserInfo () {
@@ -381,6 +385,7 @@ export default {
         method: 'get'
       }).then(({ data }) => {
         this.formPersonal = Object.assign({}, data.data)
+        this.formPersonalInit = Object.assign({}, data.data)
       })
     },
     smsInfo () {
@@ -390,6 +395,7 @@ export default {
         method: 'get'
       }).then(({ data }) => {
         this.msgCheckBoxList = data.data.smsCode === '' ? [] : data.data.smsCode
+        this.msgCheckBoxListInit = data.data.smsCode === '' ? [] : data.data.smsCode
         for (const checkList of this.messageList) {
           checkList.checkBox.forEach(element => {
             if (this.msgCheckBoxList.includes(element.model)) {
@@ -411,7 +417,7 @@ export default {
           this.smsInfo()
           break
         case '4':
-          this.getCompanyInof()
+          this.getCompanyInfo()
           break
       }
     },
@@ -438,6 +444,10 @@ export default {
     personalSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          if (this.formPersonal.name === this.formPersonalInit.name) {
+            this.$Message.info('您还未变更任何信息，无需保存')
+            return
+          }
           let param = {}
           param.name = this.formPersonal.name
           param.avatarPic = ''
@@ -460,6 +470,16 @@ export default {
     companySubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          if (this.formCompany.address === this.formCompanyInit.address &&
+              this.formCompany.contact === this.formCompanyInit.contact &&
+              this.formCompany.contactPhone === this.formCompanyInit.contactPhone &&
+              this.formCompany.id === this.formCompanyInit.id &&
+              this.formCompany.logoUrl === this.formCompanyInit.logoUrl &&
+              this.formCompany.name === this.formCompanyInit.name &&
+              Number(this.formCompany.cityId[this.formCompany.cityId.length - 1]) === Number(this.formCompanyInit.cityId)) {
+            this.$Message.info('您还未变更任何信息，无需保存')
+            return
+          }
           let params = Object.assign({}, this.formCompany)
           params.cityId = params.cityId[params.cityId.length - 1].toString()
           Server({
@@ -484,7 +504,7 @@ export default {
         })
       }
     },
-    checkBtnBox (model) {
+    checkBtnBox () {
       let statusList = []
       this.checkNum = 0
       let listInit = new Set()
@@ -501,8 +521,13 @@ export default {
       this.msgSlectCheckBox = Array.from(listInit)
     },
     msgSaveBtn () {
+      this.checkBtnBox()
       let params = {}
       params.smsCode = this.msgSlectCheckBox
+      if (this.msgSlectCheckBox.sort().toString() === this.msgCheckBoxListInit.sort().toString()) {
+        this.$Message.info('您还未变更任何信息，无需保存')
+        return
+      }
       Server({
         url: 'set/sms',
         method: 'post',
@@ -571,8 +596,8 @@ export default {
 }
 </script>
 <style lang='stylus' scoped>
-.temAll
-  margin: 20px;
+// .temAll
+//   margin: 20px;
   .setConf
     margin-top: 20px;
     left: 50%;
