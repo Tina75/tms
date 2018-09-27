@@ -38,6 +38,7 @@ export default {
       },
       simpleSearch: true, // 简单搜索
       selectOrderList: [], // 选中的订单集合
+      selectedId: [], // 选中的订单集合的ID集合
       isSearching: false // 是否正在搜索中
     }
   },
@@ -143,7 +144,29 @@ export default {
     },
     // 列表批量选择操作
     handleSelectionChange (val) {
-      this.selectOrderList = val
+      // console.log(val)
+    },
+    // 多选模式下 列表选中某一项时触发
+    handleOnSelect (selection, row) {
+      this.selectOrderList.push(row)
+      console.log(this.selectOrderList)
+      this.pickupID()
+    },
+    // 多选模式下 取消选中某一项时触发
+    handleOnSelectCancel (selection, row) {
+      let index = this.selectOrderList.findIndex((item) => item.id === row.id)
+      this.selectOrderList.splice(index, 1) // 删掉已勾选中对应id的项
+      console.log(this.selectOrderList)
+      this.pickupID()
+    },
+    // 将selectOrderList项中的id提出来组成新数组赋值给selectedId
+    pickupID () {
+      let s = []
+      this.selectOrderList.map((item) => {
+        s.push(item.id)
+      })
+      this.selectedId = s
+      console.log(this.selectedId)
     },
     // 表格按时间排序
     tableSort ({ order }) {
@@ -155,6 +178,41 @@ export default {
     // 格式化城市
     cityFilter (code) {
       return City.codeToFullName(code, 3, '')
+    },
+    // 结算方式码转为名称
+    settlementToName (val) {
+      let name
+      switch (val) {
+        case 1:
+          name = '现付'
+          break
+        case 2:
+          name = '到付'
+          break
+        case 3:
+          name = '回付'
+          break
+        case 4:
+          name = '月结'
+          break
+        default:
+          name = ''
+          break
+      }
+      return name
+    },
+    // 提货状态转名称
+    pickupToName (code) {
+      let name
+      switch (code) {
+        case 1:
+          name = '上门提货'
+          break
+        case 2:
+          name = '直接送货'
+          break
+      }
+      return name
     }
   }
 }

@@ -88,6 +88,8 @@
       :extra-columns="extraColumns"
       :show-filter="true"
       style="margin-top: 15px"
+      @on-select="handleOnSelect"
+      @on-select-cancel="handleOnSelectCancel"
       @on-selection-change="handleSelectionChange"
       @on-column-change="handleColumnChange">
     </page-table>
@@ -139,11 +141,13 @@ export default {
         {
           type: 'selection',
           width: 60,
-          align: 'center'
+          align: 'center',
+          fixed: 'left'
         },
         {
           title: '操作',
           key: 'do',
+          fixed: 'left',
           width: 100,
           extra: true,
           render: (h, params) => {
@@ -181,6 +185,9 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
+          fixed: 'left',
+          minWidth: 150,
+          tooltip: true,
           render: (h, params) => {
             return h('a', {
               props: {
@@ -207,19 +214,27 @@ export default {
         },
         {
           title: '客户订单号',
-          key: 'customerOrderNo'
+          key: 'customerOrderNo',
+          minWidth: 150,
+          tooltip: true
         },
         {
           title: '运单号',
-          key: 'waybillNo'
+          key: 'waybillNo',
+          minWidth: 150,
+          tooltip: true
         },
         {
           title: '客户名称',
-          key: 'consignerName'
+          key: 'consignerName',
+          minWidth: 150,
+          tooltip: true
         },
         {
           title: '始发地',
           key: 'start',
+          minWidth: 150,
+          tooltip: true,
           render: (h, params) => {
             return h('span', City.codeToFullName(params.row.start))
           }
@@ -227,26 +242,103 @@ export default {
         {
           title: '目的地',
           key: 'end',
+          minWidth: 150,
+          tooltip: true,
           render: (h, params) => {
             return h('span', City.codeToFullName(params.row.end))
           }
         },
         {
           title: '回单数',
-          key: 'volume'
+          key: 'receiptCount',
+          minWidth: 100,
+          tooltip: true
         },
         {
           title: '回收时间',
           key: 'recoveryTime',
+          minWidth: 150,
+          tooltip: true,
           render: (h, params) => {
-            return h('span', new Date(params.row.recoveryTime).Format('yyyy-MM-dd hh:mm'))
+            return h('span', params.row.recoveryTime ? new Date(params.row.recoveryTime).Format('yyyy-MM-dd hh:mm:ss') : '')
           }
         },
         {
           title: '返厂时间',
           key: 'returnTime',
+          minWidth: 150,
+          tooltip: true,
           render: (h, params) => {
-            return h('span', new Date(params.row.returnTime).Format('yyyy-MM-dd hh:mm'))
+            return h('span', params.row.returnTime ? new Date(params.row.returnTime).Format('yyyy-MM-dd hh:mm:ss') : '')
+          }
+        },
+        {
+          title: '下单时间',
+          key: 'createTime',
+          minWidth: 150,
+          tooltip: true,
+          render: (h, params) => {
+            return h('span', params.row.createTime ? new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm:ss') : '')
+          }
+        },
+        {
+          title: '发货人',
+          key: 'consignerContact',
+          minWidth: 120,
+          tooltip: true
+        },
+        {
+          title: '发货人手机号',
+          key: 'consignerPhone',
+          minWidth: 140,
+          tooltip: true
+        },
+        {
+          title: '收货人',
+          key: 'consigneeContact',
+          minWidth: 120,
+          tooltip: true
+        },
+        {
+          title: '收货人手机号',
+          key: 'consigneePhone',
+          minWidth: 140,
+          tooltip: true
+        },
+        {
+          title: '要求装货时间',
+          key: 'deliveryTime',
+          minWidth: 150,
+          tooltip: true,
+          render: (h, params) => {
+            return h('span', params.row.deliveryTime ? new Date(params.row.deliveryTime).Format('yyyy-MM-dd hh:mm:ss') : '')
+          }
+        },
+        {
+          title: '期望到货时间',
+          key: 'arriveTime',
+          minWidth: 150,
+          tooltip: true,
+          render: (h, params) => {
+            return h('span', params.row.arriveTime ? new Date(params.row.arriveTime).Format('yyyy-MM-dd hh:mm:ss') : '')
+          }
+        },
+        {
+          title: '结算方式',
+          key: 'settlementType',
+          minWidth: 120,
+          tooltip: true,
+          render: (h, params) => {
+            return h('span', this.settlementToName(params.row.settlementType))
+          }
+        },
+        {
+          title: '总费用',
+          key: 'totalFee',
+          minWidth: 120,
+          tooltip: true,
+          render: (h, params) => {
+            return h('span', params.row.totalFee ? (params.row.totalFee / 100).toFixed(2) : '')
           }
         }
       ],
@@ -289,7 +381,7 @@ export default {
         },
         {
           title: '回单数',
-          key: 'volume',
+          key: 'receiptCount',
           fixed: false,
           visible: true
         },
@@ -304,6 +396,60 @@ export default {
           key: 'returnTime',
           fixed: false,
           visible: true
+        },
+        {
+          title: '下单时间',
+          key: 'createTime',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '发货人',
+          key: 'consignerContact',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '发货人手机号',
+          key: 'consignerPhone',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '收货人',
+          key: 'consigneeContact',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '收货人手机号',
+          key: 'consigneePhone',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '要求装货时间',
+          key: 'deliveryTime',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '期望到货时间',
+          key: 'arriveTime',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '结算方式',
+          key: 'settlementType',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '总费用',
+          key: 'totalFee',
+          fixed: false,
+          visible: false
         }
       ]
     }
@@ -380,6 +526,7 @@ export default {
     handleTabChange (val) {
       console.log(val)
       this.curStatusName = val
+      this.selectedId = []
       if (val === '全部') {
         this.operateValue = 1
         this.btnGroup = [
