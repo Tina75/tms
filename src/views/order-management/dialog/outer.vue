@@ -55,7 +55,7 @@ import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '@/components/SelectInput.vue'
 import TagNumberInput from '@/views/order/create/TagNumberInput'
 import float from '@/libs/js/float'
-import settlements from '@/views/order/create/constant/settlement.js'
+import settlements from '@/libs/constant/settlement.js'
 import FontIcon from '@/components/FontIcon'
 import { mapGetters, mapActions } from 'vuex'
 export default {
