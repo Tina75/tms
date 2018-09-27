@@ -18,7 +18,9 @@ export default {
   // 模板编译挂载之后,不保证组件已经在document中。
   mounted: function () {
     console.log(this.$options.name)
-
+    // if (this.$route.query && this.$route.query.noCache) {
+    //   this.$route.query.noCache = undefined
+    // }
     // 更新页面定位信息
     // this.$store.dispatch('changeActiveIndex', this.$options.name)
   },
@@ -71,6 +73,7 @@ export default {
      */
     openTab: function (data) {
       data.query = Object.assign({noCache: true}, data.query)
+      // data.query = Object.assign({_time: new Date().getTime()}, data.query)
       data.query.title = data.title ? data.title : (data.query.id ? data.query.id : this.$options.metaInfo.title)
       this.ema.fire('openTab', data)
     },
