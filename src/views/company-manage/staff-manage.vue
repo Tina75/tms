@@ -320,8 +320,7 @@ export default {
           }).then(({ data }) => {
             if (data.code === 10000) {
               this.$Message.success('转移成功!')
-              this.visibaleTransfer = false
-              this.formSearchInit = {}
+              location.reload()
             } else {
               this.$Message.error(data.msg)
               this.visibaleTransfer = false
