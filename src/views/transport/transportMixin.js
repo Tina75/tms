@@ -105,6 +105,7 @@ export default {
     },
 
     fetchData () {
+      this.tableSelection = []
       this.searchFields = this.setFetchParams()
     },
 
@@ -156,7 +157,6 @@ export default {
     },
     // tab切换
     tabChanged (tab) {
-      console.log(tab)
       // 设置当前的按钮组
       for (let i = 0; i < this.btnList.length; i++) {
         if (tab === this.btnList[i].tab) {
