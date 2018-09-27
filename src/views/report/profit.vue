@@ -6,11 +6,12 @@
           <Button v-for="(item,index) in btnGroup" :key="index" :type="item.value===operateValue?'primary':'default'" @click="handleOperaterValue(item)">{{item.name}}</Button>
         </ButtonGroup>
         <DatePicker
-          v-model="time"
+          v-model="times"
           type="daterange"
           format="yyyy-MM-dd"
           placeholder="开始日期-结束日期"
           style="display: inline-block;width: 240px;height: 35px;margin-left: 20px"
+          @on-change="handleTimeChange"
         >
         </DatePicker>
         <Tooltip max-width="200" content="营业额汇总报表：按照订单的下单日期提取数据；利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
@@ -116,12 +117,29 @@ export default {
         { name: '半年', value: 4 }
       ],
       operateValue: 2,
-      time: ''
+      times: '',
+      keywords: {
+        startTime: '',
+        endTime: '',
+        type: 1
+      }
     }
   },
   methods: {
     handleOperaterValue (btn) {
       this.operateValue = btn.value
+      this.date()
+    },
+    handleTimeChange (val) {
+      this.keywords.startTime = val[0]
+      this.keywords.endTime = val[1]
+    },
+    date () {
+      let date = new Date('yyyy-month-dd')
+      console.log(date)
+      let newDate = new Date(date.getTime() - 7 * 24 * 60 * 60 * 1000)
+      console.log(newDate.getDate())
+      // let seven = newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + newDate.getDate()
     }
   }
 }
