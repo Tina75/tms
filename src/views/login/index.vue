@@ -3,7 +3,7 @@
     <img class="login-img" src="@/assets/img-tms-login.png"></img>
     <div class="form-body" @keydown.enter="login">
       <Card :bordered="false">
-        <div class="form-title">智加云账号登录</div>
+        <div class="form-title">运掌柜账号登录</div>
         <div class="form-content">
           <Form ref="loginForm" :model="form">
 
@@ -69,7 +69,7 @@ export default {
   name: 'SignIn',
   mixins: [ mixin ],
   metaInfo: {
-    title: '智加云账号登录'
+    title: '运掌柜账号登录'
   },
   data () {
     return {

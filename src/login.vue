@@ -19,7 +19,7 @@
     </div>
 
     <footer class="login-footer">
-      版权所有·智加云 Copyright &#169; 2018 5566.com All Rights Reserved
+      版权所有·运掌柜 Copyright &#169; 2018 5566.com All Rights Reserved
     </footer>
     <Dialogs />
   </div>
