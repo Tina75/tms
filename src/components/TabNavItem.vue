@@ -1,10 +1,12 @@
 <template>
-  <div :class="['tab-item',checked?'tab-item__checked':'']">
-    <!-- <i  v-show="checked" class="icon font_family icon-shuaxin tab-item__icon i-mr-5" @click.stop="$emit('on-refresh')"></i> -->
-    <Icon  v-show="checked" class="tab-item__icon " type="ios-refresh" size="18" @click.stop="$emit('on-refresh')"/>
-    <span class="tab-item__name">{{name}}</span>
-    <Icon v-show="closeable" class="tab-item__icon" type="ios-close" size="18" @click.stop="$emit('on-close')"/>
-    <!-- <i  v-show="closeable" class="icon font_family icon-shanchu tab-item__icon i-pl-5" @click.stop="close"></i> -->
+  <div :class="['item-container',checked?'mh-10':'']">
+    <i v-show="checked" class="icon font_family icon-you2 icon-left" style=""></i>
+    <div :class="['tab-item',checked?'tab-item__checked':'']">
+      <Icon  v-show="checked" class="tab-item__icon " type="ios-refresh" size="18" @click.stop="$emit('on-refresh')"/>
+      <span class="tab-item__name">{{name}}</span>
+      <Icon v-show="closeable" class="tab-item__icon" type="ios-close" size="18" @click.stop="$emit('on-close')"/>
+    </div>
+    <i v-show="checked" class="icon font_family icon-you2 icon-right" ></i>
   </div>
 </template>
 
@@ -37,13 +39,34 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
+.item-container
+  display inline-block
+  position relative
+  padding-right 5px
+  padding-left 5px
+.mh-10
+  padding 0 5px
+.icon-left
+  color #EFEFEF
+  position:absolute;
+  -webkit-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  left -4px
+  font-size 10px
+  bottom -12px
+.icon-right
+  color #EFEFEF
+  position absolute
+  right -4px
+  font-size 10px
+  bottom -12px
 .tab-item
   display inline-block
   color #EFEFEF
   max-width 120px
   min-width 80px
   line-height 30px
-  margin-right 6px
+  // margin-right 6px
   padding 0 2px 0 5px
   height 30px
   border-radius 8px 8px 0px 0px
