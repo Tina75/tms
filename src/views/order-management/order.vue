@@ -85,9 +85,12 @@
       :method="method"
       :keywords="keyword"
       :columns="tableColumns"
+      :selected="selectedId"
       :extra-columns="extraColumns"
       :show-filter="true"
       style="margin-top: 15px"
+      @on-select="handleOnSelect"
+      @on-select-cancel="handleOnSelectCancel"
       @on-selection-change="handleSelectionChange"
       @on-column-change="handleColumnChange">
     </page-table>
@@ -734,8 +737,7 @@ export default {
           fixed: false,
           visible: false
         }
-      ],
-      selectOrderList: [] // 选中的订单集合
+      ]
     }
   },
 
@@ -825,6 +827,7 @@ export default {
     handleTabChange (val) {
       console.log(val)
       this.curStatusName = val
+      this.selectedId = []
       if (val === '全部') {
         this.operateValue = 1
         this.btnGroup = [
@@ -931,7 +934,7 @@ export default {
         })
       } else {
         // 打印
-        console.log('打印')
+        console.log(this.selectedId.length)
       }
     },
     // 外转

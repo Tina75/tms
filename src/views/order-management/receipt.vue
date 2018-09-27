@@ -88,6 +88,8 @@
       :extra-columns="extraColumns"
       :show-filter="true"
       style="margin-top: 15px"
+      @on-select="handleOnSelect"
+      @on-select-cancel="handleOnSelectCancel"
       @on-selection-change="handleSelectionChange"
       @on-column-change="handleColumnChange">
     </page-table>
@@ -248,7 +250,7 @@ export default {
         },
         {
           title: '回单数',
-          key: 'volume',
+          key: 'receiptCount',
           minWidth: 100,
           tooltip: true
         },
@@ -379,7 +381,7 @@ export default {
         },
         {
           title: '回单数',
-          key: 'volume',
+          key: 'receiptCount',
           fixed: false,
           visible: true
         },
@@ -524,6 +526,7 @@ export default {
     handleTabChange (val) {
       console.log(val)
       this.curStatusName = val
+      this.selectedId = []
       if (val === '全部') {
         this.operateValue = 1
         this.btnGroup = [

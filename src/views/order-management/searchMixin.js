@@ -38,6 +38,7 @@ export default {
       },
       simpleSearch: true, // 简单搜索
       selectOrderList: [], // 选中的订单集合
+      selectedId: [], // 选中的订单集合的ID集合
       isSearching: false // 是否正在搜索中
     }
   },
@@ -143,8 +144,29 @@ export default {
     },
     // 列表批量选择操作
     handleSelectionChange (val) {
-      console.log(val)
-      this.selectOrderList = val
+      // console.log(val)
+    },
+    // 多选模式下 列表选中某一项时触发
+    handleOnSelect (selection, row) {
+      this.selectOrderList.push(row)
+      console.log(this.selectOrderList)
+      this.pickupID()
+    },
+    // 多选模式下 取消选中某一项时触发
+    handleOnSelectCancel (selection, row) {
+      let index = this.selectOrderList.findIndex((item) => item.id === row.id)
+      this.selectOrderList.splice(index, 1) // 删掉已勾选中对应id的项
+      console.log(this.selectOrderList)
+      this.pickupID()
+    },
+    // 将selectOrderList项中的id提出来组成新数组赋值给selectedId
+    pickupID () {
+      let s = []
+      this.selectOrderList.map((item) => {
+        s.push(item.id)
+      })
+      this.selectedId = s
+      console.log(this.selectedId)
     },
     // 表格按时间排序
     tableSort ({ order }) {
