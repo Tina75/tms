@@ -91,7 +91,12 @@ export default {
       Server({
         url: '/user/forgetpsw',
         method: 'post',
-        data: this.form
+        data: {
+          phone: this.form.phone,
+          smsCode: this.form.smsCode,
+          password: this.form.password,
+          confirmPassword: this.form.confirmPassword
+        }
       }).then(res => {
         this.$Message.success('密码设置成功')
         setTimeout(() => {
