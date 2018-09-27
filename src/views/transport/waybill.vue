@@ -420,7 +420,7 @@ export default {
         {
           title: '司机手机号码',
           key: 'driverPhone',
-          minWidth: 100
+          minWidth: 120
         },
         {
           title: '车型',

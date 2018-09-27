@@ -375,7 +375,7 @@ export default {
         {
           title: '发货人手机号码',
           key: 'consignerPhone',
-          minWidth: 160
+          minWidth: 140
         },
         {
           title: '收货人',
@@ -385,7 +385,7 @@ export default {
         {
           title: '收货人手机号码',
           key: 'consigneePhone',
-          minWidth: 160
+          minWidth: 140
         },
         {
           title: '货值',

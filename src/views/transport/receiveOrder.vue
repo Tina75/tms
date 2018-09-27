@@ -382,7 +382,7 @@ export default {
         {
           title: '司机手机号码',
           key: 'driverPhone',
-          minWidth: 160
+          minWidth: 120
         },
         {
           title: '车型',
