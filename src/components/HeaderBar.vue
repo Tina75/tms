@@ -38,7 +38,6 @@
 
       <!-- <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick"> -->
       <Poptip placement="bottom-end" title="账号信息" width="260">
-
         <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg"  style="border:1px solid #fff"></avatar>
         <span class="user-info"><p>{{name}}</p> </span>
         <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
@@ -51,18 +50,6 @@
           <p style="text-align:center" class="i-mt-10"><Button type="default" @click="logout">&nbsp; &nbsp;退出&nbsp; &nbsp;</Button></p>
         </div>
       </Poptip>
-      <!-- <DropdownMenu slot="list" class="dropdown-box i-pa-10">
-          <p class="dropdown-line"><label for="">姓名</label>{{UserInfo.name}}</p>
-          <p class="dropdown-line"><label for="">手机号</label>{{UserInfo.phone}}</p>
-          <p class="dropdown-line"><label for="">角色</label>{{UserInfo.roleName}}</p>
-          <p class="dropdown-line"><label for="">公司</label>{{UserInfo.companyName}}</p>
-          <p class="dropdown-line"><label for="">有效期至</label>{{UserInfo.expirationTime | datetime('yyyy-MM-dd')}}</p>
-          <br>
-          <p style="text-align:center"><a @click="renew">延长有效期</a>&nbsp;&nbsp;&nbsp;&nbsp;<a style="color:#EC4E4E" @click="logout">登出</a></p> -->
-
-      <!-- <DropdownItem name="logout" >退出登录</DropdownItem> -->
-      <!-- </DropdownMenu> -->
-      <!-- </Dropdown> -->
     </div>
   </div>
 </template>
@@ -162,7 +149,7 @@ export default {
       white-space nowrap
       overflow hidden
       text-overflow ellipsis
-      max-width 200px
+      max-width 230px
       label
         min-width 60px
         text-align left

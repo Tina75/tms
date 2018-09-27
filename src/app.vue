@@ -50,7 +50,7 @@ export default {
 
   mounted () {
     window.EMA.bind('updateUserInfo', () => { this.getUserInfo() })
-    window.EMA.bind('logout', (msg = '请重新登录') => { this.logout(msg) })
+    window.EMA.bind('logout', (msg) => { this.logout(msg) })
     window.EMA.bind('openTab', (route) => { this.onMenuSelect(route) })
     window.EMA.bind('closeTab', (route) => { this.onTabClose(route) })
     window.EMA.bind('reloadTab', (route) => {
@@ -67,9 +67,13 @@ export default {
       this.initTabNav()
       this.toHome()
       this.getUserInfo()
-      this.getMessageCount()
+      this.loopMessage()
     },
-
+    loopMessage () {
+      setInterval(() => {
+        this.getMessageCount()
+      }, 60 * 1000)
+    },
     /**
     * @description 打开消息tab
     * @param type 消息类型
@@ -91,17 +95,24 @@ export default {
     * @param msg 提示语
     */
     logout (msg) {
-      this.$Modal.warning({
-        title: '提示',
-        content: msg,
-        onOk: () => {
-          const localRememberdPW = window.localStorage.local_rememberd_pw
-          localStorage.clear()
-          if (localRememberdPW) window.localStorage.setItem('local_rememberd_pw', localRememberdPW)
-          Cookies.remove('token', { path: '/tms' })
-          this.$router.go(0)
-        }
-      })
+      if (msg) {
+        this.$Modal.warning({
+          title: '提示',
+          content: msg,
+          onOk: () => {
+            clearLocalData()
+          }
+        })
+      } else {
+        clearLocalData()
+      }
+      function clearLocalData () {
+        const localRememberdPW = window.localStorage.local_rememberd_pw
+        localStorage.clear()
+        if (localRememberdPW) window.localStorage.setItem('local_rememberd_pw', localRememberdPW)
+        Cookies.remove('token', { path: '/tms' })
+        window.location.reload()
+      }
     },
 
     /**

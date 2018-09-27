@@ -202,7 +202,7 @@
       <Button v-if="hasPower(100102)" :disabled="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
     </FormItem>
-    <OrderPrint ref="printer" :data.sync="orderPrint">
+    <OrderPrint ref="printer" :list="orderPrint">
     </OrderPrint>
   </Form>
 </template>
@@ -215,12 +215,12 @@ import { mapGetters, mapActions } from 'vuex'
 import float from '@/libs/js/float'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
-import OrderPrint from './OrderPrint'
+import OrderPrint from '../../print-template/OrderPrint'
 import AreaSelect from '@/components/AreaSelect'
 import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
-import settlements from './constant/settlement.js'
-import pickups from './constant/pickup.js'
+import settlements from '@/libs/constant/settlement.js'
+import pickups from '@/libs/constant/pickup.js'
 
 const transferFeeList = ['freightFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
 const specialCity = ['110000', '120000', '710000', '810000', '820000']
@@ -584,7 +584,7 @@ export default {
         remark1: '',
         remark2: ''
       },
-      orderPrint: {},
+      orderPrint: [],
       rules: {
         consignerName: [
           // { validator: validateConsignerName, trigger: 'blur' }
@@ -592,7 +592,7 @@ export default {
         ],
         start: [
           { required: true, type: 'array', message: '请选择始发城市' },
-          { validator: validateStart }
+          { validator: validateStart, trigger: 'change' }
         ],
         end: [
           { required: true, type: 'array', message: '请选择目的城市' },
@@ -814,7 +814,7 @@ export default {
     showCounter () {
       const vm = this
       this.openDialog({
-        name: 'order/create/CounterDialog.vue',
+        name: 'order/create/FinanceRuleDialog.vue',
         data: {
           value: 0,
           parterName: vm.orderForm.consignerName
@@ -910,11 +910,13 @@ export default {
       const vm = this
       this.handleSubmit()
         .then(() => {
-          vm.orderPrint = _.cloneDeep(vm.orderForm)
-          vm.orderPrint.orderCargoList = _.cloneDeep(vm.consignerCargoes)
-          vm.orderPrint.totalFee = vm.totalFee
+          let orderPrint = _.cloneDeep(vm.orderForm)
+          orderPrint.orderCargoList = _.cloneDeep(vm.consignerCargoes)
+          orderPrint.totalFee = vm.totalFee
+
+          vm.orderPrint = [orderPrint]
           vm.$refs.printer.print()
-          if (!vm.orderPrint.id) {
+          if (!orderPrint.id) {
             // 创建订单页面
             vm.resetForm()
           } else {

@@ -135,14 +135,15 @@ export default {
                 on: {
                   click: () => {
                     vm.openTab({
+                      title: '订单管理',
                       path: '/order-management/order',
                       query: {
-                        id: vm.UserInfo.name
+                        id: params.row.id
                       }
                     })
                   }
                 }
-              }, '查看订单'))
+              }, '查看导入订单'))
             }
             return h('div', actions)
           }
