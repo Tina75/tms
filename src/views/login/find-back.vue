@@ -14,7 +14,7 @@
             <Input v-model="form.captchaCode" class="form-captcha-input" type="text" placeholder="输入验证码"
                    @on-blur="inputBlur('captchaCode')" />
             <div class="form-captcha">
-              <img :src="captchaImage" class="form-captcha-img" >
+              <img :src="captchaImage" class="form-captcha-img" @click="getCaptcha">
             </div>
           </FormItem>
 
@@ -91,7 +91,12 @@ export default {
       Server({
         url: '/user/forgetpsw',
         method: 'post',
-        data: this.form
+        data: {
+          phone: this.form.phone,
+          smsCode: this.form.smsCode,
+          password: this.form.password,
+          confirmPassword: this.form.confirmPassword
+        }
       }).then(res => {
         this.$Message.success('密码设置成功')
         setTimeout(() => {

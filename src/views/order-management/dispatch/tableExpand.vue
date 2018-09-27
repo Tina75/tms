@@ -3,7 +3,6 @@
          :data="data" :loading="tableLoading"
          class="expand-table"
          @on-selection-change="selectionChange">
-         <!-- <p slot="loading">加载中...</p> -->
   </Table>
 </template>
 
