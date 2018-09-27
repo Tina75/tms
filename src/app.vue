@@ -98,7 +98,7 @@ export default {
       if (msg) {
         this.$Modal.warning({
           title: '提示',
-          content: msg + ',请重新登录',
+          content: msg,
           onOk: () => {
             clearLocalData()
           }

@@ -4,7 +4,7 @@
     <Menu :open-names="['1']" accordion>
       <Submenu name="1">
         <template slot="title">
-          <i class="icon font_family icon-tupian" style="background: #efefef; color: #FFBB44; overflow: hidden; width: 20px;"></i>
+          <i class="icon font_family icon-tupian" style="color: #FFBB44; overflow: hidden; width: 20px;"></i>
           图文介绍
         </template>
         <MenuItem v-for="menu in picMenu" :key="menu.id" :name="menu.title" @click.native="clickLeftMenuPic(menu)">

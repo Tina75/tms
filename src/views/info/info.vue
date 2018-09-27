@@ -2,7 +2,7 @@
   <div class="temAll">
     <Col span="4">
     <Menu :active-name="typeName" class="leftMenu" style="width: 180px;">
-      <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
+      <MenuItem v-for="menu in menuList" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
       <p class="menuTitle">{{menu.name}}</p>
       <Badge v-if="menu.infoNum" :count="menu.infoNum" style="float:right;margin-top:-20px;"></Badge>
       </MenuItem>
@@ -11,7 +11,7 @@
     <Col span="18">
     <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;">
       <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute;"></span>
-      <span style="margin-left:25px; font-size: 16px;">{{rightTitle}}</span>
+      <span style="margin-left:25px; font-size: 16px; font-weight:600;">{{rightTitle}}</span>
       <div v-if="batchBtnShowAll">
         <span v-if="batchBtnShow" key="1" style="float:right; margin-top:-35px;">
           <Button style="margin-right:20px;" @click="removeInfoAll(searchData.type)">全部删除</Button>
@@ -48,7 +48,7 @@
             </div>
             <div class="msgContent" @click="clickContenInfo(msg)">
               <p class="msgContentTitle">{{msg.title}}</p>
-              <pre class="msgContentText">{{msg.content}}</pre>
+              <pre class="msgContentText" style="color: #777B89">{{msg.content}}</pre>
             </div>
             <div class="msgConfigDiv">
               <p style="color: #9DA1B0">{{ formatDate(msg.createTime) }}</p>
@@ -84,10 +84,10 @@
             </div>
             <div class="msgContent" @click="clickContenInfo(msg)">
               <p class="msgContentTitle">{{msg.title}}</p>
-              <pre class="msgContentText">{{msg.content}}</pre>
+              <pre class="msgContentText" style="color: #777B89">{{msg.content}}</pre>
             </div>
             <div class="msgConfigDiv">
-              <p>{{ formatDate(msg.createTime) }}</p>
+              <p style="color: #9DA1B0">{{ formatDate(msg.createTime) }}</p>
               <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
             </div>
           </div>
@@ -118,10 +118,10 @@
             </div>
             <div class="msgContent" @click="clickContenInfo(msg)">
               <p class="msgContentTitle">{{msg.title}}</p>
-              <pre class="msgContentText">{{msg.content}}</pre>
+              <pre class="msgContentText" style="color: #777B89">{{msg.content}}</pre>
             </div>
             <div class="msgConfigDiv">
-              <p>{{ formatDate(msg.createTime) }}</p>
+              <p style="color: #9DA1B0">{{ formatDate(msg.createTime) }}</p>
               <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
             </div>
           </div>
@@ -214,11 +214,13 @@ export default {
       }, {
         name: '订单消息',
         id: '1',
-        infoNum: ''
+        infoNum: '',
+        code: 110100
       }, {
         name: '运输消息',
         id: '2',
-        infoNum: ''
+        infoNum: '',
+        code: 120100
       }],
       searchData: {
         type: '0',
@@ -493,7 +495,8 @@ export default {
   float: left;
   margin-right: 20px;
 .msgContentTitle
-  font-weight: bold;
+  font-weight: bold
+  color: "#2F323E"
   margin-bottom: 5px;
 .msgConfigDiv
   float: right;
@@ -503,7 +506,7 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   width: 630px;
-  color: "#777B"
+  color: "#9DA1B0"
 .msgContent
   cursor: pointer;
 .msgConfigBtn
