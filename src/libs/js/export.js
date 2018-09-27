@@ -47,15 +47,21 @@ instance.interceptors.request.use((config) => {
 // code状态码200判断
 instance.interceptors.response.use((res) => {
   LoadingBar.finish()
-  // console.log(String.fromCharCode.apply(null, new Uint8Array(res.data)))
-  if (res.data instanceof ArrayBuffer) {
+
+  let code
+  try {
+    const resStr = String.fromCharCode.apply(null, new Uint8Array(res.data))
+    const resJson = JSON.parse(resStr)
+    if (resJson && resJson.code) code = resJson.code
+  } catch (err) {}
+
+  if (!code) {
     let blob = new Blob([res.data], { type: 'application/x-xls' })
     let downloadLink = document.createElement('a')
     downloadLink.href = URL.createObjectURL(blob)
     downloadLink.download = fileName + new Date().Format('yyyy-MM-dd') + '.xls'
     downloadLink.click()
   } else {
-    const code = res.data.code
     switch (code) {
       case 310010:// token失效或不存在
       case 310011:// 账号在其他设备登录
