@@ -1,28 +1,37 @@
 <template>
   <div class="finance-list">
-    <TabHeader :tabs="tabList" @tabChange="tabChanged"></TabHeader>
+    <div class="tab-box">
+      <Tabs v-model="active">
+        <TabPane label="待核销" name="1" />
+        <TabPane label="对账单" name="2" />
+        <TabPane label="已核销" name="3" />
+      </Tabs>
+    </div>
+    <div class="data-container">
+      <writing-off v-if="active === '1'" :scene="1"></writing-off>
+      <checking-order v-if="active === '2'" :scene="1"></checking-order>
+      <Written-Off v-if="active === '3'" :scene="1"></Written-Off>
+    </div>
   </div>
 </template>
 
 <script>
 import BasePage from '@/basic/BasePage'
 import { mapGetters, mapActions } from 'vuex'
-import TabHeader from '@/components/TabHeader'
+import WritingOff from './components/WritingOff'
+import CheckingOrder from './components/CheckingOrder'
+import WrittenOff from './components/WrittenOff'
 
 export default {
-  name: 'account-list',
+  name: 'senderList',
   metaInfo: {
     title: '发货方对账'
   },
+  components: {CheckingOrder, WritingOff, WrittenOff},
   mixins: [ BasePage ],
-  components: {TabHeader},
   data () {
     return {
-      tabList: [
-        { name: '待核销', count: '' },
-        { name: '对账单', count: '' },
-        { name: '已核销', count: '' }
-      ]
+      active: '1'
     }
   },
   computed: {
@@ -30,23 +39,20 @@ export default {
   },
   methods: {
     ...mapActions([]),
-    tabChanged () {}
+    tabChanged (tab) {
+      console.log(tab)
+    }
   }
 }
 </script>
 <style lang="stylus" scoped>
-.account-list
-  padding: 20px
-  .block
-    background-color: #ffffff
-    padding: 20px
-    box-shadow: 0 3px 5px 0 #cccccc
-    margin-bottom: 15px
-    .ivu-select
-      width: 100px
-  .data-block
-    text-align: right
-    .ivu-table-wrapper
-      margin-top: 20px
-      margin-bottom: 20px
+  .tab-box
+    margin -15px
+    padding 7px 15px
+    border-bottom 15px solid #f5f7f9
+    /deep/ .ivu-tabs-bar
+      border-bottom none
+      margin-bottom 1px
+      .ivu-tabs-ink-bar
+        bottom 2px
 </style>

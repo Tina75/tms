@@ -1,173 +1,58 @@
 <template>
   <div class="finance-list">
+    <div class="tab-box">
+      <Tabs v-model="active">
+        <TabPane label="待核销" name="1" />
+        <TabPane label="对账单" name="2" />
+        <TabPane label="已核销" name="3" />
+      </Tabs>
+    </div>
+    <div class="data-container">
+      <writing-off v-if="active === '1'" :scene="3"></writing-off>
+      <checking-order v-if="active === '2'" :scene="3"></checking-order>
+      <Written-Off v-if="active === '3'" :scene="3"></Written-Off>
+    </div>
   </div>
 </template>
 
 <script>
+import BasePage from '@/basic/BasePage'
 import { mapGetters, mapActions } from 'vuex'
+import WritingOff from './components/WritingOff'
+import CheckingOrder from './components/CheckingOrder'
+import WrittenOff from './components/WrittenOff'
 
 export default {
-  name: 'account-list',
+  name: 'transferList',
   metaInfo: {
-    title: '已注册公司'
+    title: '外转方对账'
   },
-  components: {},
+  components: {CheckingOrder, WritingOff, WrittenOff},
+  mixins: [ BasePage ],
   data () {
     return {
-      accountQuery: {
-        name: '',
-        beginTime: '',
-        endTime: '',
-        status: ''
-      },
-      accountColumn: [
-        {
-          title: '公司名',
-          key: 'rank',
-          render: (h, params) => {
-            return h('a', {
-              on: {
-                click: () => {
-                  this.toDetail(params)
-                }
-              }
-            }, params.row.name)
-          }
-        },
-        {
-          title: '姓名',
-          key: 'userName'
-        },
-        {
-          title: '账号',
-          key: 'name'
-        },
-        {
-          title: '注册时间',
-          key: 'createTimeText'
-        },
-        {
-          title: '有效时间',
-          key: 'expirationTimeText'
-        },
-        {
-          title: '充值审核时间',
-          key: 'expUpdateTimeText'
-        },
-        {
-          title: '沟通状态',
-          key: 'statusText'
-        },
-        {
-          title: '操作',
-          key: 'action',
-          width: 200,
-          align: 'center',
-          render: (h, params) => {
-            return h('div', [
-              h('a', {
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.toEdit(params)
-                  }
-                }
-              }, '修改'),
-              h('a', {
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.toAddLog(params)
-                  }
-                }
-              }, '添加记录'),
-              h('a', {
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.openPremium(params)
-                  }
-                }
-              }, '延长有效期')
-            ])
-          }
-        }
-      ]
+      active: '1'
     }
   },
   computed: {
-    ...mapGetters(['AccountQuerySave', 'CommunicateStatusMap', 'AccountData'])
+    ...mapGetters([])
   },
   methods: {
-    ...mapActions(['setAccountQuery', 'getAccountList', 'accountUpgrade']),
-    async startQuery () {
-      await this.setAccountQuery(this.accountQuery)
-      await this.getAccountList()
-    },
-    toDetail (data) {
-      this.$router.push({
-        name: 'accountDetail',
-        params: {
-          id: data.row.id
-        }
-      })
-    },
-    toEdit (data) {
-      this.$router.push({
-        name: 'accountEdit',
-        params: {
-          id: data.row.id
-        }
-      })
-    },
-    toAddLog (data) {
-      this.$router.push({
-        name: 'accountAddLog',
-        params: {
-          id: data.row.id
-        }
-      })
-    },
-    openPremium (data) {
-      let _this = this
-      this.$Modal.confirm({
-        title: '提示',
-        content: `${data.row.name}有效期为${data.row.expirationTimeText}，确认对其延长365天有效期？<br />请确保该公司已经线下打款进入公司账户`,
-        okText: '确认',
-        cancelText: '取消',
-        async onOk () {
-          await _this.accountUpgrade(data.row.id)
-          await _this.getAccountList()
-        }
-      })
+    ...mapActions([]),
+    tabChanged (tab) {
+      console.log(tab)
     }
-  },
-  async beforeRouteEnter (to, from, next) {
-    next(vm => {
-      vm.getAccountList()
-    })
   }
 }
 </script>
 <style lang="stylus" scoped>
-.account-list
-  padding: 20px
-  .block
-    background-color: #ffffff
-    padding: 20px
-    box-shadow: 0 3px 5px 0 #cccccc
-    margin-bottom: 15px
-    .ivu-select
-      width: 100px
-  .data-block
-    text-align: right
-    .ivu-table-wrapper
-      margin-top: 20px
-      margin-bottom: 20px
+  .tab-box
+    margin -15px
+    padding 7px 15px
+    border-bottom 15px solid #f5f7f9
+    /deep/ .ivu-tabs-bar
+      border-bottom none
+      margin-bottom 1px
+      .ivu-tabs-ink-bar
+        bottom 2px
 </style>
