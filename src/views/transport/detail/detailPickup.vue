@@ -206,6 +206,7 @@
           <i-col span="5" offset="1">
             <span class="detail-field-title">司机手机号：</span>
             <Input v-model="info.driverPhone"
+                   :maxlength="11"
                    class="detail-info-input"></Input>
           </i-col>
         </Row>
@@ -503,7 +504,7 @@ export default {
             ...this.info,
             ...this.formatMoney(),
             settlementType: this.settlementType,
-            settlementPayInfo: this.formatPayInfo()
+            settlementPayInfo: this.settlementType === '1' ? this.formatPayInfo() : void 0
           },
           cargoList: this.arrayUnique(this.detail.map(item => {
             return item.orderId

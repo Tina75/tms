@@ -170,12 +170,12 @@
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title detail-field-required">始发地：</span>
-            <AreaSelect v-model="startCodes"
+            <AreaSelect v-model="startCodes" deep
                         class="detail-info-input" />
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title detail-field-required">目的地：</span>
-            <AreaSelect v-model="endCodes"
+            <AreaSelect v-model="endCodes" deep
                         class="detail-info-input" />
           </i-col>
           <i-col span="10" offset="1">
@@ -224,6 +224,7 @@
           <i-col span="5" offset="1">
             <span class="detail-field-title">司机手机号：</span>
             <Input v-model="info.driverPhone"
+                   :maxlength="11"
                    class="detail-info-input"></Input>
           </i-col>
         </Row>
@@ -509,6 +510,7 @@ export default {
 
         this.startCodes = data.waybill.start.toString()
         this.endCodes = data.waybill.end.toString()
+
         this.status = this.statusFilter(data.waybill.status)
         this.settlementType = data.waybill.settlementType.toString()
         let temp = this.settlementPayInfo.map((item, i) => {
@@ -538,7 +540,7 @@ export default {
             ...this.info,
             ...this.formatMoney(),
             settlementType: this.settlementType,
-            settlementPayInfo: this.formatPayInfo()
+            settlementPayInfo: this.settlementType === '1' ? this.formatPayInfo() : void 0
           },
           cargoList: this.arrayUnique(this.detail.map(item => {
             return item.orderId

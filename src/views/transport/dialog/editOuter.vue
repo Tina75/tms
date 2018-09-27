@@ -21,9 +21,10 @@
         </FormItem>
         <FormItem label="付款方式" prop="payType">
           <Select v-model="info.payType" style="width:200px">
-            <Option value="1">到付</Option>
-            <Option value="2">回付</Option>
-            <Option value="3">月结</Option>
+            <Option value="1">现付</Option>
+            <Option value="2">到付</Option>
+            <Option value="3">回付</Option>
+            <Option value="4">月结</Option>
           </Select>
         </FormItem>
         <FormItem label="外转运费" prop="transFee">
@@ -88,7 +89,7 @@ export default {
   methods: {
     getTransferees () {
       Server({
-        url: '/transferee/list',
+        url: '/transferee/listOrderbyUpdateTimeDesc',
         method: 'get',
         data: { type: 1 }
       }).then(res => {
@@ -96,7 +97,7 @@ export default {
           return {
             name: item.name,
             value: item.name,
-            payType: item.payType
+            payType: item.payType.toString()
           }
         })
       })
@@ -129,6 +130,7 @@ export default {
         }
       })
     },
+
     // 显示计费规则
     showCounter () {
       const _this = this

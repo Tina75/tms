@@ -92,7 +92,7 @@ export default {
                 click: () => {
                   this.openTab({
                     title: p.row.waybillNo,
-                    path: '/transport/detail/detailPickup',
+                    path: '/transport/detail/detailFreight',
                     query: { id: p.row.waybillId }
                   })
                 }

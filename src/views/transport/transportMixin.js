@@ -246,7 +246,8 @@ export default {
     },
     // 格式化城市
     cityFilter (code) {
-      return City.codeToFullName(code, 3, '')
+      if (!code) return ''
+      return Array.from(new Set(City.codeToFullName(code, 3, '-').split('-'))).join('')
     }
   }
 }

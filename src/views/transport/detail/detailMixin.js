@@ -68,7 +68,7 @@ export default {
                     let temp = p.row
                     temp.cashAmount = money
                     this.settlementPayInfo.splice(p.index, 1, temp)
-                    this.checkTotalAmount()
+                    // this.checkTotalAmount()
                   }
                 }
               })
@@ -96,7 +96,7 @@ export default {
                     let temp = p.row
                     temp.fuelCardAmount = money
                     this.settlementPayInfo.splice(p.index, 1, temp)
-                    this.checkTotalAmount()
+                    // this.checkTotalAmount()
                   }
                 }
               })
@@ -168,7 +168,7 @@ export default {
 
     formatCity (code) {
       if (!code) return ''
-      return City.codeToFullName(code, 3)
+      return Array.from(new Set(City.codeToFullName(code, 3, '-').split('-'))).join('')
     },
 
     carTypeFilter (value) {
@@ -188,7 +188,7 @@ export default {
   },
 
   watch: {
-    startCodes () {
+    startCodes (n, o) {
       if (!(this.startCodes instanceof Array)) return
       this.info.start = this.startCodes.length
         ? this.startCodes[this.startCodes.length - 1]
@@ -196,7 +196,7 @@ export default {
     },
     endCodes () {
       if (!(this.endCodes instanceof Array)) return
-      this.info.end = this.endCodes.length && (this.endCodes instanceof Array)
+      this.info.end = this.endCodes.length
         ? this.endCodes[this.endCodes.length - 1]
         : ''
     },
@@ -261,6 +261,16 @@ export default {
             carLength: item.carLength
           }
         })
+        if (this.carrierCars.length) {
+          this.info.carNo = this.carrierCars[0].name
+          this.handleSelectCarrierCar(null, this.carrierCars[0])
+        } else {
+          this.info.carNo = ''
+          const keys = ['driverName', 'driverPhone', 'carType', 'carLength']
+          keys.forEach(key => {
+            this.info[key] = ''
+          })
+        }
       })
     },
 
@@ -278,7 +288,11 @@ export default {
 
     formatCity (code) {
       if (!code) return ''
-      return City.codeToFullName(code, 3)
+      return this.arrayUnique(City.codeToFullName(code, 3, '-').split('-'))
+    },
+
+    getFullCityCode (code) {
+      return City.getPathByCode(code).map(item => Number(item.code))
     },
 
     // 根据状态设置按钮
@@ -318,9 +332,8 @@ export default {
       this.settlementPayInfo.forEach(item => {
         total = total + Number(item.cashAmount) + Number(item.fuelCardAmount)
       })
-      console.log(total, Number(this.paymentTotal))
-      if (total > Number(this.paymentTotal)) {
-        this.$Message.error('结算总额不能超过费用合计')
+      if (total !== Number(this.paymentTotal) && total !== 0) {
+        this.$Message.error('结算总额应与费用合计相等')
         return false
       }
       return true

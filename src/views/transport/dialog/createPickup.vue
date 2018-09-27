@@ -54,8 +54,8 @@ export default {
           { required: true, message: '请选择承运商' }
         ],
         carNo: [
-          { required: true, message: '请填写车牌号', trigger: 'blur' },
-          { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
+          { required: true, message: '请填写车牌号' },
+          { type: 'string', message: '车牌号格式错误', pattern: CAR }
         ]
       }
     }
@@ -93,11 +93,12 @@ export default {
             value: item.carNO
           }
         })
+        if (this.carrierCars.length) this.form.carNo = this.carrierCars[0].name
+        else this.form.carNo = ''
       })
     },
 
     handleSelectCarrier (name, row) {
-      if (row.carNo) this.form.carNo = row.carNo
       this.getCarrierCars(row.id)
       this.$store.dispatch('getCarrierDrivers', row.id)
     },
