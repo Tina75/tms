@@ -14,7 +14,7 @@
             <Input v-model="form.captchaCode" class="form-captcha-input" type="text" placeholder="输入验证码"
                    @on-blur="inputBlur('captchaCode')" />
             <div class="form-captcha">
-              <img :src="captchaImage" class="form-captcha-img" >
+              <img :src="captchaImage" class="form-captcha-img" @click="getCaptcha">
             </div>
           </FormItem>
 
