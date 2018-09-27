@@ -11,14 +11,8 @@
             <tab-nav :list="TabNavList" :value="$route" @on-close="onTabClose" @on-select="onTabSelect"/>
           </div>
         </Header>
-        <Content >
-          <Layout>
-            <Content class="content">
-              <keep-alive>
-                <router-view />
-              </keep-alive>
-            </Content>
-          </Layout>
+        <Content class="content">
+          <router-view />
         </Content>
       </Layout>
     </Layout>
@@ -264,10 +258,9 @@ html, body
         // background #F0F0F0
         overflow hidden
     .content
-      margin 15px
-      padding 15px
-      background white
-      min-height 88vh
+      padding 15px 20px
+      height 100%
+      overflow-y auto
 
 .ivu-modal-footer
   border-top none

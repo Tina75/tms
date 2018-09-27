@@ -1,11 +1,14 @@
 <template>
-  <div>
+  <div class="wrapper">
     <keep-alive>
       <component :is="current"></component>
     </keep-alive>
   </div>
 </template>
-<style lang="stylus" >
+<style lang="stylus" scoped>
+  .wrapper
+    padding 20px 15px
+    background white
 </style>
 <script>
 import Vue from 'vue'
@@ -38,7 +41,6 @@ export default {
     this.loadPage(this.$route.params)
     window.EMA.bind('PageRouter.remove', (path) => {
       let key = `page${path.replace(/\//g, '-')}`
-      console.log('要关闭的tab-key ->' + key)
       if (this.componentCache[key]) {
         this.componentCache[key] = undefined
       }
