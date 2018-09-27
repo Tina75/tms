@@ -1,15 +1,17 @@
 <template>
   <div class="messageDivAll">
     <h1 style="text-align:left;">{{messageInfo.title}}</h1>
-    <p>{{ formatDate(messageInfo.createTime) }}
+    <p style="color: #9DA1B0">{{ formatDate(messageInfo.createTime) }}
       <Button class="msgRemoveBtn" @click="removeBtn">
         <span class="msgConfigBtn">
         <i class="icon font_family icon-shanchu1"></i></span><span style="margin:0 5px;">删除
         </span>
       </Button>
     </p>
-    <pre class="msgInfo">{{messageInfo.content}}</pre>
-    <pre v-if="this.messageInfo.url !== ''" class="msgInfoHref">活动链接：<a :href="messageInfo.url">{{messageInfo.url}}</a></pre>
+    <pre class="msgInfo" style="color: #9DA1B0">{{messageInfo.content}}</pre>
+    <pre v-if="this.messageInfo.url !== ''" class="msgInfoHref" style="color: #9DA1B0"
+    >活动链接：<a :href="messageInfo.url">{{messageInfo.url}}</a>
+    </pre>
     <Modal v-model="visibaleRemove" type="warning" width="360">
       <p slot="header" style="text-align:center">
         <span>提示</span>
