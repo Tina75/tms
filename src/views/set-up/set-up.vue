@@ -1,7 +1,7 @@
 <template>
   <div class="temAll">
-    <Col span="4">
-    <Menu active-name="修改密码" class="leftMenu" style="width: 180px;">
+    <Col span="3">
+    <Menu active-name="修改密码" style="width: 100%;">
       <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
       <p class="menuTitle">{{menu.name}}</p>
       </MenuItem>
@@ -9,8 +9,8 @@
     </Col>
     <Col span="18">
     <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;">
-      <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute;"></span>
-      <span style="margin-left:25px; font-size: 16px;">{{rightTitle}}</span>
+      <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute; left: 20px;"></span>
+      <span style="margin-left:35px; font-size: 16px;">{{rightTitle}}</span>
     </div>
     <!--密码设置-->
     <div v-if="'1' === this.rightKey" key="1" style="height:250px;">

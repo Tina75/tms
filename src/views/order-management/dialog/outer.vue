@@ -1,11 +1,11 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visibale" :mask-closable="false" width="360">
+    <Modal v-model="visibale" :mask-closable="false" width="360" class="outer-dialog">
       <p slot="header" style="text-align:center">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>订单外转</span>
       </p>
-      <Form ref="info" :model="info" :rules="rules" :label-width="100">
+      <Form ref="info" :model="info" :rules="rules" :label-width="100" label-position="left">
         <FormItem label="外转方" prop="transfereeName">
           <SelectInput
             v-model="info.transfereeName"
@@ -160,4 +160,11 @@ export default {
 .dialog
   p
     text-align center
+</style>
+<style lang='stylus'>
+.outer-dialog .ivu-form
+  .ivu-form-item-label
+    padding 10px 10px 10px 15px
+  .ivu-form-item-content
+    margin-left 110px !important
 </style>

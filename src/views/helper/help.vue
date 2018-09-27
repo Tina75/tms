@@ -1,7 +1,7 @@
 <template>
   <div class="divAll">
-    <Col span="5">
-    <Menu :open-names="['1']" accordion>
+    <Col span="4">
+    <Menu :open-names="['1']" style="width: 100%;">
       <Submenu name="1">
         <template slot="title">
           <i class="icon font_family icon-tupian" style="color: #FFBB44; overflow: hidden; width: 20px;"></i>
@@ -12,10 +12,10 @@
           </MenuItem>
       </Submenu>
     </Menu>
-    <Menu>
+    <Menu style="width: 100%;">
       <Submenu name="2">
         <template slot="title">
-          <i class="icon font_family icon-shipin" style="background: #efefef; color: #418DF9; overflow: hidden; width: 20px;"></i>
+          <i class="icon font_family icon-shipin" style="color: #418DF9; overflow: hidden; width: 20px;"></i>
           视频介绍
         </template>
         <MenuItem v-for="menu in videoMenu" :key="menu.id" :name="menu.title" @click.native="clickLeftMenuVideo(menu)">
