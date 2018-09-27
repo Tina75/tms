@@ -250,6 +250,10 @@ export default {
       if (!status) {
         this.rightExpandRow = null
         this.rightSelection = []
+        const rowStr = JSON.stringify(row)
+        this.rightTableData.forEach(item => {
+          if (JSON.stringify(item) === rowStr) item._expanded = false
+        })
         return
       }
       this.keepExpandOnly(row, 'right')
