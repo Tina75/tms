@@ -111,6 +111,7 @@
                @on-column-change="tableColumnsChanged"
                @on-selection-change="selectionChanged"
                @on-sort-change="tableSort"
+               @on-page-size-change="pageSizeChange"
                @on-load="dataOnload"></PageTable>
 
   </div>
@@ -338,7 +339,7 @@ export default {
           key: 'transFee',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.cargoCost / 100)
+            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : p.row.cargoCost)
           }
         },
         {
@@ -395,7 +396,7 @@ export default {
           key: 'cargoCost',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.cargoCost / 100)
+            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : p.row.cargoCost)
           }
         },
         {
@@ -403,7 +404,7 @@ export default {
           key: 'payType',
           minWidth: 100,
           render: (h, p) => {
-            let type
+            let type = ''
             switch (p.row.payType) {
               case 1:
                 type = '现付'
@@ -412,11 +413,12 @@ export default {
                 type = '到付'
                 break
               case 3:
-                type = '回付'
+                type = '回单付'
                 break
               case 4:
                 type = '月结'
                 break
+              default: break
             }
             return h('span', type)
           }

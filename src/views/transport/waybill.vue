@@ -122,6 +122,7 @@
                @on-column-change="tableColumnsChanged"
                @on-selection-change="selectionChanged"
                @on-sort-change="tableSort"
+               @on-page-size-change="pageSizeChange"
                @on-load="dataOnload"></PageTable>
 
     <PrintFreight ref="$printer" :data="printData" />
