@@ -1,7 +1,7 @@
 <template>
   <div>
-    <Col span="5">
-    <Menu :active-name="menuInitName" class="leftMenu">
+    <Col span="4">
+    <Menu :active-name="menuInitName" class="leftMenu" style="width:100%">
       <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:50px;">
         <Button v-if="hasPower(140101)" type="primary" class="centerBtn" @click="createRole">新增角色</Button>
       </div>
@@ -396,12 +396,12 @@ export default {
       overflow-x:auto;
 .saveRoleBtn
   float: right;
-  margin-right: 20px;
-  margin-top: -30px;
+  margin-right: 120px;
+  margin-top: -35px;
 .centerBtn
   position: absolute;
-  left: 30%;
-  margin-left: -45px;
+  left: 50%;
+  margin-left: -75px;
   width:150px;
   height:35px;
   background:rgba(0,164,189,1);

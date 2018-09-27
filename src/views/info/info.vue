@@ -1,7 +1,7 @@
 <template>
   <div class="temAll">
-    <Col span="4">
-    <Menu :active-name="typeName" class="leftMenu" style="width: 180px;">
+    <Col span="3">
+    <Menu :active-name="typeName" style="width: 100%;">
       <MenuItem v-for="menu in menuList" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
       <p class="menuTitle">{{menu.name}}</p>
       <Badge v-if="menu.infoNum" :count="menu.infoNum" style="float:right;margin-top:-20px;"></Badge>
@@ -10,8 +10,8 @@
     </Col>
     <Col span="18">
     <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;">
-      <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute;"></span>
-      <span style="margin-left:25px; font-size: 16px; font-weight:600;">{{rightTitle}}</span>
+      <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute; left: 20px;"></span>
+      <span style="margin-left:35px; font-size: 16px; font-weight:600;">{{rightTitle}}</span>
       <div v-if="batchBtnShowAll">
         <span v-if="batchBtnShow" key="1" style="float:right; margin-top:-35px;">
           <Button style="margin-right:20px;" @click="removeInfoAll(searchData.type)">全部删除</Button>

@@ -174,7 +174,7 @@ export default {
 
       if (this.step === 0) {
         this.imCheckPhone()
-          .then(this.imCheckCapthcha)
+          // .then(this.imCheckCapthcha)
           .then(this.imCheckSMSCode)
           .then(() => {
             this.step++
