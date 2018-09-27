@@ -23,7 +23,7 @@
           <Select v-model="info.payType" style="width:200px">
             <Option value="1">现付</Option>
             <Option value="2">到付</Option>
-            <Option value="3">回付</Option>
+            <Option value="3">回单付</Option>
             <Option value="4">月结</Option>
           </Select>
         </FormItem>

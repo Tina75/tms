@@ -53,7 +53,7 @@ instance.interceptors.response.use((res) => {
     let code
     let msg
     const resStr = e.target.result
-    console.log(resStr)
+
     try {
       const resJson = JSON.parse(resStr)
       if (resJson && resJson.code) {
