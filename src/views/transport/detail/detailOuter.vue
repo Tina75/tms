@@ -264,38 +264,46 @@ export default {
       tableColumns: [
         {
           title: '货物名称',
-          key: 'cargoName'
+          key: 'cargoName',
+          minWidth: 160
         },
         {
           title: '包装',
-          key: 'packing'
+          key: 'packing',
+          minWidth: 80
         },
         {
           title: '数量',
-          key: 'quantity'
+          key: 'quantity',
+          minWidth: 80
         },
         {
-          title: '货值（元）',
+          title: '货值(元)',
           key: 'cargoCost',
+          minWidth: 100,
           render: (h, p) => {
             return h('span', p.row.cargoCost / 100)
           }
         },
         {
-          title: '重量（吨）',
-          key: 'weight'
+          title: '重量(吨)',
+          key: 'weight',
+          minWidth: 100
         },
         {
-          title: '体积（方）',
-          key: 'volume'
+          title: '体积(方)',
+          key: 'volume',
+          minWidth: 100
         },
         {
           title: '备注1',
-          key: 'remark1'
+          key: 'remark1',
+          minWidth: 160
         },
         {
           title: '备注2',
-          key: 'remark2'
+          key: 'remark2',
+          minWidth: 160
         }
       ]
     }
