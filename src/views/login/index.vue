@@ -182,7 +182,7 @@ export default {
     display flex
     align-items center
     justify-content center
-    margin-right 15vw
+    margin-right 11vw
 
     // &:before, &:after
     //   content ""
@@ -207,7 +207,7 @@ export default {
     display block
     position relative
     width 48vw
-    margin-right 107px
+    margin-right 4vw
     z-index 1
 
   .form-body
