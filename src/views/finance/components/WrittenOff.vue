@@ -52,8 +52,11 @@
 </template>
 
 <script>
+import BaseComponent from '@/basic/BaseComponent'
+
 export default {
   name: 'writtenOff',
+  mixins: [ BaseComponent ],
   props: {
     scene: {
       type: Number,
@@ -210,7 +213,20 @@ export default {
     resetQuery () {},
     writeOff (data) {},
     exportWrittenOff (data) {},
-    toDetail (data) {},
+    toDetail (data) {
+      this.openTab({
+        title: '对账单详情',
+        path: '/finance/writtenOffDetail',
+        query: {
+          id: data.row.orderNo,
+          orderId: data.row.id,
+          verifyNo: data.row.verifyNo,
+          dateRange: data.row.dateRange,
+          partnerName: data.row.partnerName,
+          scene: this.scene
+        }
+      })
+    },
     resort () {},
     getWrittenOffList () {}
   }

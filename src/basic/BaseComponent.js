@@ -59,7 +59,7 @@ export default {
      *  }
      */
     openTab: function (data) {
-      data.name = this.$options.metaInfo.title
+      data.query.title = data.title ? data.title : (data.query.id ? data.query.id : this.$options.metaInfo.title)
       this.ema.fire('openTab', data)
     },
     /**

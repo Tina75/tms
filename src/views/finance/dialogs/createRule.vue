@@ -1,34 +1,16 @@
 <template>
   <Modal v-model="visibale" :mask-closable="true" width="440" @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">核销</p>
-    <div class="write-off-form">
-      <Form ref="writeOffForm" :model="writeOffForm" :rules="validate" :label-width="100">
-        <FormItem label="结算方式：">
-          <p>{{settleTypeDesc}}</p>
+    <div class="create-rule-form">
+      <Form ref="createRuleForm" :model="createRuleForm" :rules="validate" :label-width="100">
+        <FormItem label="规则名称：" prop="ruleName">
+          <Input v-model="createRuleForm.ruleName" placeholder="请输入" />
         </FormItem>
-        <FormItem label="应收金额：">
-          <p><span>{{needPay}}</span>元</p>
-        </FormItem>
-        <FormItem label="实收金额：" prop="actualFee">
-          <Input v-model="writeOffForm.actualFee" placeholder="请输入" />
-        </FormItem>
-        <FormItem label="付款方式：" prop="payType">
-          <p v-if="isOil">油卡</p>
-          <RadioGroup v-else v-model="writeOffForm.payType">
-            <Radio label="1">现金</Radio>
-            <Radio label="2">银行卡</Radio>
-            <Radio label="3">微信</Radio>
-            <Radio label="4">支付宝</Radio>
-          </RadioGroup>
-        </FormItem>
-        <FormItem label="收款账号：">
-          <Input v-model="writeOffForm.account" placeholder="请输入" />
-        </FormItem>
-        <FormItem label="开户行：">
-          <Input v-model="writeOffForm.bankBranch" placeholder="请输入" />
-        </FormItem>
-        <FormItem label="备注：">
-          <Input v-model="writeOffForm.remark" type="textarea" placeholder="请输入" />
+        <FormItem label="发货方：" prop="partnerName">
+          <Select v-model="createRuleForm.partnerName">
+            <Option value="1">重量</Option>
+            <Option value="2">体积</Option>
+          </Select>
         </FormItem>
       </Form>
     </div>
@@ -42,34 +24,24 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 export default {
-  name: 'writeOff',
+  name: 'createRule',
   mixins: [BaseDialog],
   data () {
     return {
-      writeOffForm: {
-        actualFee: '',
-        payType: '',
-        account: '',
-        bankBranch: '',
-        remark: ''
+      createRuleForm: {
+        ruleName: '',
+        partnerName: ''
       },
       validate: {
-        actualFee: { required: true, message: '请填写实付金额', trigger: 'blur' },
-        payType: { required: true, message: '请选择付款方式', trigger: 'change' }
+        ruleName: { required: true, message: '请填写规则名称', trigger: 'blur' },
+        partnerName: { required: true, message: '请选择发货方', trigger: 'change' }
       },
       visibale: true
     }
   },
-  watch: {
-    isOil (val) {
-      if (val) {
-        this.writeOffForm.payType = '5'
-      }
-    }
-  },
   methods: {
     save () {
-      this.$refs['writeOffForm'].validate((valid) => {
+      this.$refs['createRuleForm'].validate((valid) => {
         if (valid) {
           this.ok()
           this.visibale = false
