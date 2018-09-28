@@ -121,17 +121,26 @@ export default {
         {
           title: '车牌号',
           key: 'carNo',
-          minWidth: 120
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', p.row.carNo ? p.row.carNo : '-')
+          }
         },
         {
           title: '体积（方）',
           key: 'volume',
-          minWidth: 120
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', p.row.volume ? p.row.volume : '-')
+          }
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          minWidth: 120
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', p.row.weight ? p.row.weight : '-')
+          }
         }
       ]
     }

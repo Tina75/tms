@@ -363,30 +363,42 @@ export default {
         {
           title: '承运商',
           key: 'carrierName',
-          minWidth: 160
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.carrierName ? p.row.carrierName : '-')
+          }
         },
         {
           title: '车牌号',
           key: 'carNo',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            return h('span', p.row.carNo ? p.row.carNo : '-')
+          }
         },
         {
           title: '合计运费',
           key: 'totalFee',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.totalFee / 100)
+            return h('span', p.row.totalFee ? p.row.totalFee / 100 : '-')
           }
         },
         {
           title: '体积（方）',
           key: 'volume',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            return h('span', p.row.volume ? p.row.volume : '-')
+          }
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            return h('span', p.row.weight ? p.row.weight : '-')
+          }
         },
         {
           title: '创建时间',
@@ -400,14 +412,17 @@ export default {
         {
           title: '制单人',
           key: 'createOperator',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            return h('span', p.row.createOperator ? p.row.createOperator : '-')
+          }
         },
         {
           title: '货值',
           key: 'cargoCost',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.cargoCost / 100)
+            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : '-')
           }
         },
         {
@@ -415,7 +430,7 @@ export default {
           key: 'settlementType',
           minWidth: 100,
           render: (h, p) => {
-            let type = ''
+            let type = '-'
             if (p.row.settlementType === 1) type = '按单结'
             if (p.row.settlementType === 2) type = '月结'
             return h('span', type)
@@ -424,30 +439,44 @@ export default {
         {
           title: '司机',
           key: 'driverName',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            return h('span', p.row.driverName ? p.row.driverName : '-')
+          }
         },
         {
           title: '司机手机号码',
           key: 'driverPhone',
-          minWidth: 120
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', p.row.driverPhone ? p.row.driverPhone : '-')
+          }
         },
         {
           title: '车型',
           key: 'carType',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', this.carTypeFilter(p.row.carType) + ' ' + this.carLengthFilter(p.row.carLength))
+            const carType = this.carTypeFilter(p.row.carType)
+            const carLength = this.carLengthFilter(p.row.carLength)
+            return h('span', carType && carLength ? [carType, carLength].join(' ') : '-')
           }
         },
         {
           title: '订单数',
           key: 'orderCnt',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            return h('span', p.row.orderCnt ? p.row.orderCnt : '-')
+          }
         },
         {
           title: '回单数',
           key: 'backbillCnt',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            return h('span', p.row.backbillCnt ? p.row.backbillCnt : '-')
+          }
         }
       ],
       extraColumns: [

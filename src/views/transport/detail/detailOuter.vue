@@ -265,45 +265,66 @@ export default {
         {
           title: '货物名称',
           key: 'cargoName',
-          minWidth: 160
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.cargoName ? p.row.cargoName : '-')
+          }
         },
         {
           title: '包装',
           key: 'packing',
-          minWidth: 80
+          minWidth: 80,
+          render: (h, p) => {
+            return h('span', p.row.packing ? p.row.packing : '-')
+          }
         },
         {
           title: '数量',
           key: 'quantity',
-          minWidth: 80
+          minWidth: 80,
+          render: (h, p) => {
+            return h('span', p.row.quantity ? p.row.quantity : '-')
+          }
         },
         {
           title: '货值(元)',
           key: 'cargoCost',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.cargoCost / 100)
+            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : '-')
           }
         },
         {
           title: '重量(吨)',
           key: 'weight',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            return h('span', p.row.weight ? p.row.weight : '-')
+          }
         },
         {
           title: '体积(方)',
           key: 'volume',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            return h('span', p.row.volume ? p.row.volume : '-')
+          }
         },
         {
           title: '备注1',
           key: 'remark1',
-          minWidth: 160
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.remark1 ? p.row.remark1 : '-')
+          }
         },
         {
           title: '备注2',
           key: 'remark2',
-          minWidth: 160
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.remark2 ? p.row.remark2 : '-')
+          }
         }
       ]
     }
