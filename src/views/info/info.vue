@@ -484,7 +484,7 @@ export default {
 <style lang='stylus' scoped>
 .temAll
   width: 100%;
-  height: -webkit-fill-available;
+  overflow: auto;
 .megDiv
   clear: both;
   height: 55px;

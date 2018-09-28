@@ -368,7 +368,7 @@ export default {
 <style lang='stylus' scoped>
 .temAll
   width: 100%
-  height: -webkit-fill-available
+  overflow: auto;
   .leftMenu
     min-height: 600px;
   .menu:hover

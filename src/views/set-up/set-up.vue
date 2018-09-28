@@ -602,7 +602,7 @@ export default {
 <style lang='stylus' scoped>
 .temAll
   width: 100%
-  height: -webkit-fill-available
+  overflow: auto;
   .setConf
     margin-top: 20px;
     left: 50%;
