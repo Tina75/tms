@@ -482,8 +482,9 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
-// .temAll
-//   margin: 20px;
+.temAll
+  width: 100%;
+  height: -webkit-fill-available;
 .megDiv
   clear: both;
   height: 55px;
