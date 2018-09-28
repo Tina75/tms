@@ -4,52 +4,41 @@
       <div class="title">承运商信息</div>
       <div class="list-info">
         <Row class="row">
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">类型：</span>
             个体司机
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">司机姓名：</span>
             {{driverList.driverName}}
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">联系电话：</span>
             {{driverList.driverPhone}}
           </div>
           </Col>
-          <Col span="6">
+        </Row>
+        <Row class="row">
+          <Col span="8">
           <div>
             <span class="label">车牌号：</span>
             {{driverList.carNO}}
           </div>
           </Col>
-        </Row>
-        <Row class="row">
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">车型：</span>
-            <span v-if="driverList.carType === 1">平板</span>
-            <span v-else-if="driverList.carType === 2">高栏</span>
-            <span v-else-if="driverList.carType === 3">厢车</span>
-            <span v-else-if="driverList.carType === 4">自卸</span>
-            <span v-else-if="driverList.carType === 5">冷藏</span>
-            <span v-else-if="driverList.carType === 6">保温</span>
-            <span v-else-if="driverList.carType === 7">高低板</span>
-            <span v-else-if="driverList.carType === 8">面包车</span>
-            <span v-else-if="driverList.carType === 9">爬梯车</span>
-            <span v-else-if="driverList.carType === 10">飞翼车</span>
-            <span v-else></span>
+            <span>{{carTypeMap[driverList.carType]}}{{carLengthMap[driverList.carLength]}}</span>
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">付款方式：</span>
-            {{driverList.payType}}
             <span v-if="driverList.payType===1">现付</span>
             <span v-else-if="driverList.payType===2">到付</span>
             <span v-else-if="driverList.payType===3">回单付</span>
@@ -61,7 +50,9 @@
             <span v-else></span>
           </div>
           </Col>
-          <Col span="6">
+        </Row>
+        <Row class="row">
+          <Col span="24">
           <div>
             <span class="label">备注：</span>
             {{driverList.remark}}
@@ -76,25 +67,33 @@
       <div class="title">承运商信息</div>
       <div class="list-info">
         <Row class="row">
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">承运商名称：</span>
             {{companyList.carrierName}}
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">类型：</span>
             运输公司
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">负责人：</span>
             {{companyList.carrierPrincipal}}
           </div>
           </Col>
-          <Col span="6">
+        </Row>
+        <Row  class="row">
+          <Col span="8">
+          <div>
+            <span class="label">联系电话：</span>
+            {{companyList.carrierPhone}}
+          </div>
+          </Col>
+          <Col span="8">
           <div>
             <span class="label">结算方式：</span>
             <span v-if="companyList.payType === 1">现付</span>
@@ -106,7 +105,7 @@
           </Col>
         </Row>
         <Row class="row">
-          <Col span="6">
+          <Col span="24">
           <div>
             <span class="label">备注：</span>
             {{companyList.remark}}
@@ -119,7 +118,7 @@
       <Tabs :animated="false">
         <TabPane label="司机">
           <div class="add">
-            <Button type="primary" @click="_carrierAddDriver">新增</Button>
+            <Button v-if="hasPower(130204)" type="primary" @click="_carrierAddDriver">新增</Button>
           </div>
           <template>
             <Table :columns="columns1" :data="data1"></Table>
@@ -130,13 +129,14 @@
                     :current.sync="pageNo1" :page-size-opts="pageArray1"
                     size="small"
                     show-sizer
-                    show-elevator show-total @on-change="handleChangePage1"/>
+                    show-elevator show-total @on-change="handleChangePage1"
+                    @on-page-size-change="handleChangePageSize1"/>
             </template>
           </div>
         </TabPane>
         <TabPane label="车辆" >
           <div class="add">
-            <Button type="primary" @click="_carrierAddVehicle">新增</Button>
+            <Button v-if="hasPower(130207)" type="primary" @click="_carrierAddVehicle">新增</Button>
           </div>
           <template>
             <Table :columns="columns2" :data="data2"></Table>
@@ -147,7 +147,8 @@
                     :current.sync="pageNo2" :page-size-opts="pageArray2"
                     size="small"
                     show-sizer
-                    show-elevator show-total @on-change="handleChangePage2"/>
+                    show-elevator show-total @on-change="handleChangePage2"
+                    @on-page-size-change="handleChangePageSize2"/>
             </template>
           </div>
         </TabPane>
@@ -167,8 +168,39 @@ export default {
   },
   data () {
     return {
-      carrierId: this.$route.query.carrierId, // carrierId 承运商id
+      carrierId: this.$route.query.id, // carrierId 承运商id
       carrierType: this.$route.query.carrierType,
+      carTypeMap: {
+        1: '平板',
+        2: '高栏',
+        3: '厢车',
+        4: '自卸',
+        5: '冷藏',
+        6: '保温',
+        7: '高低板',
+        8: '面包车',
+        9: '爬梯车',
+        10: '飞翼车'
+      },
+      carLengthMap: {
+        1: '1.8米',
+        2: '2.7米',
+        3: '3.8米',
+        4: '4.2米',
+        5: '5米',
+        6: '6.2米',
+        7: '6.8米',
+        8: '7.7米',
+        9: '8.2米',
+        10: '8.7米',
+        11: '9.6米',
+        12: '11.7米',
+        13: '12.5米',
+        14: '13米',
+        15: '15米',
+        16: '16米',
+        17: '17.5米'
+      },
       driverList: {
         driverName: '',
         carNO: '',
@@ -192,8 +224,9 @@ export default {
           title: '操作',
           key: 'id',
           render: (h, params) => {
-            return h('div', [
-              h('span', {
+            let renderBtn = []
+            if (this.hasPower(130205)) {
+              renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
                   color: '#00A4BD',
@@ -222,29 +255,42 @@ export default {
                     })
                   }
                 }
-              }, '修改'),
-              h('span', {
+              }, '修改'))
+            }
+            if (this.hasPower(130206)) {
+              renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
                   cursor: 'pointer'
                 },
                 on: {
                   click: () => {
-                    carrierDeleteDriver({
-                      driverId: params.row.driverId
-                    }).then(res => {
-                      if (res.data.code === CODE) {
-                        this.$Message.success(res.data.msg)
-                        this._carrierListDriver() // 刷新页面
-                        this._carrierListCar() // 车辆列表也要刷新
-                      } else {
-                        this.$Message.error(res.data.msg)
+                    let _this = this
+                    this.openDialog({
+                      name: 'client/dialog/confirmDelete',
+                      data: {
+                      },
+                      methods: {
+                        ok () {
+                          carrierDeleteDriver({
+                            driverId: params.row.driverId
+                          }).then(res => {
+                            if (res.data.code === CODE) {
+                              _this.$Message.success(res.data.msg)
+                              _this._carrierListDriver() // 刷新页面
+                              _this._carrierListCar() // 车辆列表也要刷新
+                            } else {
+                              _this.$Message.error(res.data.msg)
+                            }
+                          })
+                        }
                       }
                     })
                   }
                 }
-              }, '删除')
-            ])
+              }, '删除'))
+            }
+            return h('div', renderBtn)
           }
         },
         {
@@ -278,30 +324,7 @@ export default {
           title: '车型',
           key: 'carType',
           render: (h, params) => {
-            let text = ''
-            if (params.row.carType === 1) {
-              text = '平板'
-            } else if (params.row.carType === 2) {
-              text = '高栏'
-            } else if (params.row.carType === 3) {
-              text = '厢车'
-            } else if (params.row.carType === 4) {
-              text = '自卸'
-            } else if (params.row.carType === 5) {
-              text = '冷藏'
-            } else if (params.row.carType === 6) {
-              text = '保温'
-            } else if (params.row.carType === 7) {
-              text = '高低板'
-            } else if (params.row.carType === 8) {
-              text = '面包车'
-            } else if (params.row.carType === 9) {
-              text = '爬梯车'
-            } else if (params.row.carType === 10) {
-              text = '飞翼车'
-            } else {
-              text = ''
-            }
+            let text = params.row.carType ? (this.carLengthMap[params.row.carLength] + this.carTypeMap[params.row.carType]) : ''
             return h('div', {}, text)
           }
         }
@@ -311,8 +334,9 @@ export default {
           title: '操作',
           key: 'id',
           render: (h, params) => {
-            return h('div', [
-              h('span', {
+            let renderBtn = []
+            if (this.hasPower(130208)) {
+              renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
                   color: '#00A4BD',
@@ -343,33 +367,47 @@ export default {
                       methods: {
                         ok () {
                           _this._carrierListCar() // 刷新页面
+                          _this._carrierListDriver() // 车辆列表也要刷新
                         }
                       }
                     })
                   }
                 }
-              }, '修改'),
-              h('span', {
+              }, '修改'))
+            }
+            if (this.hasPower(130209)) {
+              renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
                   cursor: 'pointer'
                 },
                 on: {
                   click: () => {
-                    carrierDeleteVehicle({
-                      carId: params.row.carId
-                    }).then(res => {
-                      if (res.data.code === CODE) {
-                        this.$Message.success(res.data.msg)
-                        this._carrierListCar() // 刷新页面
-                      } else {
-                        this.$Message.error(res.data.msg)
+                    let _this = this
+                    this.openDialog({
+                      name: 'client/dialog/confirmDelete',
+                      data: {
+                      },
+                      methods: {
+                        ok () {
+                          carrierDeleteVehicle({
+                            carId: params.row.carId
+                          }).then(res => {
+                            if (res.data.code === CODE) {
+                              _this.$Message.success(res.data.msg)
+                              _this._carrierListCar() // 刷新页面
+                            } else {
+                              _this.$Message.error(res.data.msg)
+                            }
+                          })
+                        }
                       }
                     })
                   }
                 }
-              }, '删除')
-            ])
+              }, '删除'))
+            }
+            return h('div', renderBtn)
           }
         },
         {
@@ -380,30 +418,31 @@ export default {
           title: '车型',
           key: 'carType',
           render: (h, params) => {
-            let text = ''
-            if (params.row.carType === 1) {
-              text = '平板'
-            } else if (params.row.carType === 2) {
-              text = '高栏'
-            } else if (params.row.carType === 3) {
-              text = '厢车'
-            } else if (params.row.carType === 4) {
-              text = '自卸'
-            } else if (params.row.carType === 5) {
-              text = '冷藏'
-            } else if (params.row.carType === 6) {
-              text = '保温'
-            } else if (params.row.carType === 7) {
-              text = '高低板'
-            } else if (params.row.carType === 8) {
-              text = '面包车'
-            } else if (params.row.carType === 9) {
-              text = '爬梯车'
-            } else if (params.row.carType === 10) {
-              text = '飞翼车'
-            } else {
-              text = ''
-            }
+            // let text = ''
+            // if (params.row.carType === 1) {
+            //   text = '平板'
+            // } else if (params.row.carType === 2) {
+            //   text = '高栏'
+            // } else if (params.row.carType === 3) {
+            //   text = '厢车'
+            // } else if (params.row.carType === 4) {
+            //   text = '自卸'
+            // } else if (params.row.carType === 5) {
+            //   text = '冷藏'
+            // } else if (params.row.carType === 6) {
+            //   text = '保温'
+            // } else if (params.row.carType === 7) {
+            //   text = '高低板'
+            // } else if (params.row.carType === 8) {
+            //   text = '面包车'
+            // } else if (params.row.carType === 9) {
+            //   text = '爬梯车'
+            // } else if (params.row.carType === 10) {
+            //   text = '飞翼车'
+            // } else {
+            //   text = ''
+            // }
+            let text = params.row.carType ? (this.carLengthMap[params.row.carLength] + this.carTypeMap[params.row.carType]) : ''
             return h('div', {}, text)
           }
         },
@@ -514,6 +553,10 @@ export default {
       this.pageNo1 = pageNo
       this._carrierListDriver()
     },
+    handleChangePageSize1 (pageSize) {
+      this.pageSize1 = pageSize
+      this._carrierListDriver()
+    },
     // 车辆列表，新增，删除，修改
     _carrierListCar () {
       let data = {
@@ -542,6 +585,7 @@ export default {
         methods: {
           ok () {
             _this._carrierListCar() // 刷新页面
+            _this._carrierListDriver() // 司机列表也要刷新
           }
         }
       })
@@ -549,6 +593,10 @@ export default {
     handleChangePage2 (pageNo) {
       // 重新组装数据，生成查询参数
       this.pageNo2 = pageNo
+      this._carrierListCar()
+    },
+    handleChangePageSize2 (pageSize) {
+      this.pageSize2 = pageSize
       this._carrierListCar()
     }
   }

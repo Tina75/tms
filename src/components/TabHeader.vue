@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <div class="tab-header">
-    <Tabs v-model="name1" :animated="false" @on-click="handleChangeTab">
+    <Tabs v-model="tabName" :animated="false" @on-click="handleChangeTab">
       <TabPane v-for="(tab, index) in tabs" :key="index" :label="`${tab.name} ${tab.count}`" :name="tab.name"></TabPane>
     </Tabs>
   </div>
@@ -13,6 +13,10 @@ export default {
   name: 'tabHeader',
 
   props: {
+    name: {
+      type: String,
+      require: true
+    },
     tabs: {
       type: Array,
       default () {
@@ -24,21 +28,30 @@ export default {
 
   data () {
     return {
-      name1: '全部'
+      tabName: '待提货'
     }
   },
 
   computed: {},
 
   mounted () {
+    this.tabName = this.name
   },
 
   methods: {
     handleChangeTab (val) {
-      let operateVal = sessionStorage.getItem('operateVal')
-      if (val !== operateVal) {
-        this.$emit('tabChange', val)
-        sessionStorage.setItem('operateVal', val)
+      if (this.$route.path === '/order-management/order') {
+        let operateVal = sessionStorage.getItem('operateVal')
+        if (val !== operateVal) {
+          this.$emit('tabChange', val)
+          sessionStorage.setItem('operateVal', val)
+        }
+      } else if (this.$route.path === '/order-management/receipt') {
+        let receiptVal = sessionStorage.getItem('receiptVal')
+        if (val !== receiptVal) {
+          this.$emit('tabChange', val)
+          sessionStorage.setItem('receiptVal', val)
+        }
       }
     }
   }

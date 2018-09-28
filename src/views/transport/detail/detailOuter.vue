@@ -7,15 +7,15 @@
         <li class="detail-header-list-item">客户订单号：{{ info.customerOrderNo }}</li>
         <li class="detail-header-list-item">外转单号：{{ info.transNo }}</li>
         <li class="detail-header-list-item">外转方运单号：{{ info.outTransNo }}</li>
-        <li class="detail-header-list-item">订单状态：
-          <span style="font-weight: bold;">{{ info.status }}</span>
+        <li class="detail-header-list-item">外转单状态：
+          <span style="font-weight: bold;">{{ status }}</span>
         </li>
       </ul>
     </section>
 
     <div class="detail-btn-group">
-      <Button v-for="(item, key) in currentBtns"
-              :key="key" :type="key === (currentBtns.length - 1) ? 'primary' : 'default'"
+      <Button v-for="(item, key) in showButtons"
+              :key="key" :type="key === (showButtons.length - 1) ? 'primary' : 'default'"
               class="detail-btn-item"
               @click="item.func">{{ item.name }}</Button>
     </div>
@@ -34,26 +34,26 @@
           <i-col span="6">
             <span class="detail-field-title"
                   style="width: 120px;">要求发货时间：</span>
-            <span>{{ info.deliveryTimeLong }}</span>
+            <span>{{ info.deliveryTimeLong | formatTime }}</span>
           </i-col>
           <i-col span="6">
             <span class="detail-field-title"
                   style="width: 120px;">期望到货时间：</span>
-            <span>{{ info.arriveTimeLong }}</span>
+            <span>{{ info.arriveTimeLong | formatTime }}</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title">始发地：</span>
-            <span>{{ info.start }}</span>
+            <span>{{ info.start | formatCity }}</span>
           </i-col>
           <i-col span="6">
             <span class="detail-field-title">目的地：</span>
-            <span>{{ info.end }}</span>
+            <span>{{ info.end | formatCity }}</span>
           </i-col>
           <i-col span="6">
             <span class="detail-field-title">提货方式：</span>
-            <span>{{ info.pickup ? '上门提货' : '非上门提货' }}</span>
+            <span>{{ info.pickup ? '上门提货' : '送货上门' }}</span>
           </i-col>
           <i-col span="6">
             <span class="detail-field-title">回单数：</span>
@@ -91,7 +91,7 @@
         <Row class="detail-field-group" style="margin-top: 20px;">
           <i-col span="13">
             <span class="detail-field-title">备注：</span>
-            <span>{{ info.remark }}</span>
+            <span>{{ info.remark || '无' }}</span>
           </i-col>
         </Row>
       </div>
@@ -117,15 +117,15 @@
         <Row class="detail-field-group">
           <i-col span="5">
             <span class="detail-field-title-sm">外转方：</span>
-            <span>{{ payment.transfereeName }}</span>
+            <span class="detail-field-fee">{{ payment.transfereeName }}</span>
           </i-col>
           <i-col span="5" offset="2">
             <span class="detail-field-title-sm">外传费用：</span>
-            <span>{{ payment.transFee }}元</span>
+            <span class="detail-field-fee">{{ payment.transFee }}元</span>
           </i-col>
           <i-col span="5" offset="2">
             <span class="detail-field-title-sm">结算方式：</span>
-            <span>{{ payment.payType|payType }}</span>
+            <span class="detail-field-fee">{{ payment.payType | payType }}</span>
           </i-col>
         </Row>
       </div>
@@ -138,8 +138,7 @@
 
           <div class="detail-log-icon"
                @click="showLog = !showLog">
-            <span
-              :class="showLog ? 'detail-log-hide' : 'detail-log-show'">《</span>
+            <i :class="{'detail-log-show': showLog}"></i>
           </div>
 
           <Timeline :style="logListHeight"
@@ -148,7 +147,7 @@
             <TimelineItem v-for="(item, key) in logList"
                           :key="key" class="detail-log-timeline-item">
               <i slot="dot"></i>
-              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong}}</span>
+              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong | formatTime}}</span>
               <span style="color: #333;">{{'【' + item.operatorName + '】' + item.description}}</span>
             </TimelineItem>
 
@@ -181,14 +180,13 @@ export default {
   metaInfo: { title: '外转单详情' },
   data () {
     return {
-
+      status: '',
       // 信息
       info: {
         orderNo: '',
         customerOrderNo: '',
         transNo: '',
         outTransNo: '',
-        status: '',
         consignerName: '',
         deliveryTimeLong: '',
         arriveTimeLong: '',
@@ -217,14 +215,21 @@ export default {
           status: '待发运',
           btns: [{
             name: '删除',
-            func: () => console.log(Math.random())
+            code: 120304,
+            func: () => {
+              this.billDelete()
+            }
           }, {
             name: '发运',
-            func: () => console.log(Math.random())
+            code: 120301,
+            func: () => {
+              this.billShipment()
+            }
           }, {
             name: '编辑',
+            code: 120303,
             func: () => {
-              this.inEditing = true
+              this.billEdit()
             }
           }]
         },
@@ -232,8 +237,9 @@ export default {
           status: '在途',
           btns: [{
             name: '到货',
+            code: 120302,
             func: () => {
-              this.inEditing = true
+              this.billArrived()
             }
           }]
         },
@@ -309,10 +315,84 @@ export default {
         this.detail = data.cargoList
         this.logList = data.operaterLogs
 
-        this.info.status = this.statusFilter(this.info.status || 1)
+        this.status = this.statusFilter(data.customerInfo.status)
         this.setBtnsWithStatus()
         this.loading = false
       }).catch(err => console.error(err))
+    },
+
+    // 按钮操作
+    // 删除
+    billDelete (ids) {
+      Server({
+        url: '/outside/bill/delete',
+        method: 'delete',
+        data: { transIds: [ this.id ] }
+      }).then(res => {
+        this.$Message.success('删除成功')
+        this.ema.fire('closeTab', this.$route)
+      }).catch(err => console.error(err))
+    },
+
+    // 到货
+    billArrived () {
+      const self = this
+      self.openDialog({
+        name: 'transport/dialog/confirm',
+        data: {
+          title: '到货确认',
+          message: '是否确认到货？'
+        },
+        methods: {
+          confirm () {
+            Server({
+              url: '/outside/bill/confirm/arrival',
+              method: 'post',
+              data: { transIds: [ self.id ] }
+            }).then(res => {
+              self.$Message.success('操作成功')
+            }).catch(err => console.error(err))
+          }
+        }
+      })
+    },
+
+    // 发运
+    billShipment () {
+      const self = this
+      self.openDialog({
+        name: 'transport/dialog/confirm',
+        data: {
+          title: '发运',
+          message: '是否发运？发运以后将不能再修改外转单信息'
+        },
+        methods: {
+          confirm () {
+            Server({
+              url: '/outside/bill/send',
+              method: 'post',
+              data: { transIds: [ self.id ] }
+            }).then(res => {
+              self.$Message.success('操作成功')
+              self.fetchData()
+            }).catch(err => console.error(err))
+          }
+        }
+      })
+    },
+
+    // 编辑
+    billEdit () {
+      const self = this
+      self.openDialog({
+        name: 'transport/dialog/editOuter',
+        data: { id: this.id },
+        methods: {
+          complete () {
+            self.fetchData()
+          }
+        }
+      })
     }
   }
 }

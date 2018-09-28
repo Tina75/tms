@@ -1,6 +1,7 @@
 <template>
   <div :class="['tab-item',checked?'tab-item__checked':'']">
-    <i  v-show="checked" class="icon font_family icon-shuaxin tab-item__icon i-pr-5" @click.stop="$emit('on-refresh')"></i>
+    <!-- <i  v-show="checked" class="icon font_family icon-shuaxin tab-item__icon i-mr-5" @click.stop="$emit('on-refresh')"></i> -->
+    <Icon  v-show="checked" class="tab-item__icon " type="ios-refresh" size="18" @click.stop="$emit('on-refresh')"/>
     <span class="tab-item__name">{{name}}</span>
     <Icon v-show="closeable" class="tab-item__icon" type="ios-close" size="18" @click.stop="$emit('on-close')"/>
     <!-- <i  v-show="closeable" class="icon font_family icon-shanchu tab-item__icon i-pl-5" @click.stop="close"></i> -->
@@ -50,10 +51,14 @@ export default {
   cursor pointer
   font-weight 500
   text-align center
+
   &__icon
     display inline-block
     vertical-align middle
     font-size 12px
+    transition 0.5s
+    &:hover
+      transform rotate(180deg)
   &__name
     max-width 60px
     line-height 1
@@ -67,4 +72,5 @@ export default {
   &__checked
     background #EFEFEF
     color #00A4BD
+    shape-outside circle()
 </style>

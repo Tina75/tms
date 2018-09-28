@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div ref="$box">
     <Tabs value="dispatchFreight">
-      <TabPane label="运货调度" name="dispatchFreight">
-        <DispatchFreight />
+      <TabPane label="送货调度" name="dispatchFreight">
+        <DispatchFreight :width="tabWidth" />
       </TabPane>
       <TabPane label="提货调度" name="dispatchPickup">
-        <DispatchPickup />
+        <DispatchPickup :width="tabWidth" />
       </TabPane>
     </Tabs>
   </div>
@@ -25,14 +25,23 @@ export default {
   mixins: [ BasePage ],
   data () {
     return {
+      tabWidth: 0
     }
   },
 
-  computed: {},
+  mounted () {
+    this.computeTabWidth()
+  },
 
-  mounted: function () {},
-
-  methods: {}
+  methods: {
+    computeTabWidth () {
+      const $box = this.$refs.$box
+      this.tabWidth = $box.offsetWidth
+      window.onresize = () => {
+        this.tabWidth = $box.offsetWidth
+      }
+    }
+  }
 }
 </script>
 

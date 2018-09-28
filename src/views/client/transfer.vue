@@ -2,7 +2,7 @@
   <div>
     <div class="header">
       <div class="left">
-        <Button type="primary" @click="modaladd">新增</Button>
+        <Button v-if="hasPower(130301)" type="primary" @click="modaladd">新增</Button>
       </div>
       <div class="right">
         <template>
@@ -24,7 +24,8 @@
               :current.sync="pageNo" :page-size-opts="pageArray"
               size="small"
               show-sizer
-              show-elevator show-total @on-change="handleChangePage"/>
+              show-elevator show-total @on-change="handleChangePage"
+              @on-page-size-change="handleChangePageSize"/>
       </template>
     </div>
   </div>
@@ -62,8 +63,9 @@ export default {
           title: '操作',
           key: 'id',
           render: (h, params) => {
-            return h('div', [
-              h('span', {
+            let renderBtn = []
+            if (this.hasPower(130302)) {
+              renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
                   color: '#00A4BD',
@@ -96,28 +98,41 @@ export default {
                     // this.modalupdate = true
                   }
                 }
-              }, '修改'),
-              h('span', {
+              }, '修改'))
+            }
+            if (this.hasPower(130303)) {
+              renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
                   cursor: 'pointer'
                 },
                 on: {
                   click: () => {
-                    transfereeDelete({
-                      transfereeId: params.row.id
-                    }).then(res => {
-                      if (res.data.code === CODE) {
-                        this.$Message.success(res.data.msg)
-                        this.searchList() // 刷新页面
-                      } else {
-                        this.$Message.error(res.data.msg)
+                    let _this = this
+                    this.openDialog({
+                      name: 'client/dialog/confirmDelete',
+                      data: {
+                      },
+                      methods: {
+                        ok () {
+                          transfereeDelete({
+                            transfereeId: params.row.id
+                          }).then(res => {
+                            if (res.data.code === CODE) {
+                              _this.$Message.success(res.data.msg)
+                              _this.searchList() // 刷新页面
+                            } else {
+                              _this.$Message.error(res.data.msg)
+                            }
+                          })
+                        }
                       }
                     })
                   }
                 }
-              }, '删除')
-            ])
+              }, '删除'))
+            }
+            return h('div', renderBtn)
           }
         },
         {
@@ -201,6 +216,10 @@ export default {
     handleChangePage (pageNo) {
       // 重新组装数据，生成查询参数
       this.pageNo = pageNo
+      this.searchList()
+    },
+    handleChangePageSize (pageSize) {
+      this.pageSize = pageSize
       this.searchList()
     }
   }

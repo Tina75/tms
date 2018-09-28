@@ -54,29 +54,47 @@ import server from '@/libs/js/server'
 import SliderIcon from './SliderIcon.vue'
 import _ from 'lodash'
 /**
-   * iview的table和page的组件是分开的
-   * 其实实际的场景中，大多数页面都是需要结合table和page，
-   * 以及包含自动发请求，管理数据的table
-   * 本组件大多数接口和iview table保持一致
-   * 新增props如下：
-   * 1.url，会根据此url主动发请求，不传此字段，默认本地数据，需要传data属性
-   * 2.keywrods， 传入url时生效，会根据keywords改变，主动发请求
-   * 3.listField ，部分接口传回的列表字段标识不够统一，如果遇到特殊的名称如：orderlist，billList,请传入此字段
-   * 4.showFilter，订单相关表列的字段过多，此时需要支持自主扩展隐藏、显示、排序列等功能
-   * 5.extraColumns，showFilter为true时，此字段必传，代表需要操作隐藏显示和排序的字段列表，
-   *    格式：{
-   *          title:'订单号',// 名称
-   *          key:'orderNo',// 标识符
-   *          visible:true, //是否显示或隐藏
-   *          fixed:true, // 固定列，不参与排序和隐藏显示
-   *    }
-   * 6.onColumnChange 函数，当显示隐藏排序排序发生变化时候回调，参数返回新的extraColumns
+  * iview的table和page的组件是分开的
+  * 其实实际的场景中，大多数页面都是需要结合table和page，
+  * 以及包含自动发请求，管理数据的table
+  * 本组件大多数接口和iview table保持一致
+  * 新增props如下：
+  * 1.url，会根据此url主动发请求，不传此字段，默认本地数据，需要传data属性
+  * 2.keywrods， 传入url时生效，会根据keywords改变，主动发请求
+  * 3.listField ，部分接口传回的列表字段标识不够统一，如果遇到特殊的名称如：orderlist，billList,请传入此字段
+  * 4.showFilter，订单相关表列的字段过多，此时需要支持自主扩展隐藏、显示、排序列等功能
+  * 5.extraColumns，showFilter为true时，此字段必传，代表需要操作隐藏显示和排序的字段列表，
+  *    格式：{
+  *          title:'订单号',// 名称
+  *          key:'orderNo',// 标识符
+  *          visible:true, //是否显示或隐藏
+  *          fixed:true, // 固定列，不参与排序和隐藏显示
+  *    }
+  * 6.onColumnChange 函数，当显示隐藏排序排序发生变化时候回调，参数返回新的extraColumns
+  * 7.rowId data数据的关键字编号，与下面的selected配合使用
+  * 8.selected 已选中的selectedId列表集合['id1','id2']，当有列出现type=selection的才需要传
+  * 9.autoload 默认发送请求加载数据，设置成false，则不发送请求，根据关键字请求
   */
 export default {
   components: {
     SliderIcon
   },
   props: {
+    // 第一次加载，默认发送请求
+    autoload: {
+      type: Boolean,
+      default: true
+    },
+    // 数据里唯一的编号字段，默认id
+    rowId: {
+      type: String,
+      default: 'id'
+    },
+    // 已经选中的数据 id 列表，会根据上面给的rowid参数，判断数据是否选中
+    selected: {
+      type: Array,
+      default: () => []
+    },
     // 请求的地址
     url: String,
     // 部分接口查询方法可能是post
@@ -218,6 +236,7 @@ export default {
         ).concat({
           title: 'icon',
           width: 48,
+          fixed: 'right',
           renderHeader (h, params) {
             return h(SliderIcon, {
               props: {
@@ -236,6 +255,10 @@ export default {
       } else {
         return this.columns
       }
+    },
+    // 是否是复选框表格
+    isSelection () {
+      return this.columns.length > 0 && this.columns[0].type === 'selection'
     },
     dataList () {
       if (this.isRemote) {
@@ -269,7 +292,9 @@ export default {
     if (!this.isRemote) {
       this.setLocalDataSource(this.data)
     }
-    this.fetch()
+    if (this.autoload) {
+      this.fetch()
+    }
   },
   methods: {
 
@@ -309,10 +334,21 @@ export default {
       })
         .then((response) => {
           vm.loading = false
-          // const { list, ...pagination } = response.data
-          vm.dataSource = response.data.data[vm.listField]
+          const { data } = response.data
+          if (vm.isSelection) {
+            // 当有复选框场景的时候，需要主动勾选上
+            vm.dataSource = (data[vm.listField] || []).map((item) => {
+              if (vm.selected.includes(item[vm.rowId])) {
+                item._checked = true
+              }
+              return item
+            })
+          } else {
+            vm.dataSource = data[vm.listField] || []
+          }
           if (this.showPagination) {
-            vm.pagination.totalCount = response.data.pageTotals
+            vm.pagination.pageSize = data.pageSize
+            vm.pagination.totalCount = data.totalCount || data.pageTotals
           }
           vm.$emit('on-load', response)
         })

@@ -35,22 +35,21 @@
           <DropdownItem name="2" >订单</DropdownItem>
         </DropdownMenu> -->
       </Dropdown>
-      <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick">
-        <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" size="small"></avatar>
-        <span class="user-info"><p>{{name}}</p> </span>
-        <Icon type="md-arrow-dropdown" size="12"/>
-        <DropdownMenu slot="list" class="dropdown-box i-pa-10">
-          <p class="dropdown-line"><label for="">姓名</label>{{UserInfo.name}}</p>
-          <p class="dropdown-line"><label for="">手机号</label>{{UserInfo.phone}}</p>
-          <p class="dropdown-line"><label for="">角色</label>{{UserInfo.roleName}}</p>
-          <p class="dropdown-line"><label for="">公司</label>{{UserInfo.companyName}}</p>
-          <p class="dropdown-line"><label for="">有效期至</label>{{UserInfo.expirationTime | datetime('yyyy-MM-dd')}}</p>
-          <br>
-          <p style="text-align:center"><a @click="renew">延长有效期</a>&nbsp;&nbsp;&nbsp;&nbsp;<a style="color:#EC4E4E" @click="logout">登出</a></p>
 
-          <!-- <DropdownItem name="logout" >退出登录</DropdownItem> -->
-        </DropdownMenu>
-      </Dropdown>
+      <!-- <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick"> -->
+      <Poptip placement="bottom-end" title="账号信息" width="260">
+        <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg"  style="border:1px solid #fff"></avatar>
+        <span class="user-info"><p>{{name}}</p> </span>
+        <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
+        <div slot="content">
+          <p class="dropdown-line"><label for="">账户名：</label>{{UserInfo.name}} &nbsp; &nbsp; &nbsp; &nbsp;<Tag color="cyan" style="font-size:12px">{{UserInfo.roleName}}</Tag></p>
+          <p class="dropdown-line"><label for="">手机号：</label>{{UserInfo.phone}}</p>
+          <p class="dropdown-line"><label for="">公司：</label>{{UserInfo.companyName}}</p>
+          <p class="dropdown-line"><label for="">有效期至：</label>{{UserInfo.expirationTime | datetime('yyyy-MM-dd')}}</p>
+          <p class="dropdown-line"><a @click="renew">延长账号有效期</a></p>
+          <p style="text-align:center" class="i-mt-10"><Button type="default" @click="logout">&nbsp; &nbsp;退出&nbsp; &nbsp;</Button></p>
+        </div>
+      </Poptip>
     </div>
   </div>
 </template>
@@ -82,15 +81,8 @@ export default {
     handleChange () {
       this.$emit('update:collapsed', !this.collapsed)
     },
-    handleClick (name) {
-      switch (name) {
-        case 'logout':
-          window.EMA.fire('logout')
-          break
-      }
-    },
     openMsg (type = 0) {
-      this.$emit('on-msg-click', type)
+      this.$emit('on-open-msg', type)
     },
     logout () {
       window.EMA.fire('logout')
@@ -149,24 +141,22 @@ export default {
     margin-top 8px
     vertical-align middle
     line-height 10px
-    padding 0 5px 0
     // .dropdown-box
     //   text-align center
     .dropdown-line
-      height 20px
       padding 5px 0px
       color #555555
       white-space nowrap
       overflow hidden
       text-overflow ellipsis
-      max-width 140px
+      max-width 230px
       label
-        min-width 50px
+        min-width 60px
         text-align left
         display inline-block
     .ivu-badge-count
       top: -2px;
-      right: 8px;
+      right: 4px;
       padding: 0 3px;
       min-width 0
       box-shadow: 0 0 0 1px #000;

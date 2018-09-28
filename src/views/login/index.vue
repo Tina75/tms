@@ -144,7 +144,10 @@ export default {
         window.localStorage.setItem('tms_is_login', true)
         this.setToken(res.data.data.token)
         location.reload()
-      }).catch(err => console.error(err))
+      }).catch(err => {
+        this.getCaptcha()
+        console.error(err)
+      })
     }
   }
 }
@@ -158,29 +161,29 @@ export default {
     align-items center
     justify-content center
 
-    &:before, &:after
-      content ""
-      display block
-      position absolute
-      top 0
-      z-index 0
-    &:before
-      width 133px
-      height 181px
-      left 0
-      background url("../../assets/img-login-bubble-left.png") no-repeat
-      background-size contain
-    &:after
-      width 112px
-      height 140px
-      right 0
-      background url("../../assets/img-login-bubble-right.png") no-repeat
-      background-size contain
+    // &:before, &:after
+    //   content ""
+    //   display block
+    //   position absolute
+    //   top 0
+    //   z-index 0
+    // &:before
+    //   width 133px
+    //   height 181px
+    //   left 0
+    //   background url("../../assets/img-login-bubble-left.png") no-repeat
+    //   background-size contain
+    // &:after
+    //   width 112px
+    //   height 140px
+    //   right 0
+    //   background url("../../assets/img-login-bubble-right.png") no-repeat
+    //   background-size contain
 
   .login-img
     display block
     position relative
-    width 500px
+    width 48vw
     margin-right 107px
     z-index 1
 

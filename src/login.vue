@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="login">
     <header class="login-header">
-      <i class="icon font_family icon-ico-slogo"></i>
+      <i class="icon font_family icon-logo-p"></i>
       <div class="login-header-tel">
         <p>400-788-5656</p>
         <p>客服电话</p>
@@ -48,7 +48,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-  .icon-ico-slogo
+  .icon
     color #FFFFFF
     font-size 50px
 
@@ -56,7 +56,7 @@ export default {
     position relative
     width 100%
     height 100%
-    background #252A2F
+    background #1c2125
     overflow auto
 
     &-header
@@ -86,20 +86,21 @@ export default {
     &-footer
       height 128px
       line-height 128px
-      color #FFFFFF
+      color rgba(255, 255, 255, 0.6)
       text-align center
-      background #2E3338
+      background #1c2125
 
     &-body
       display flex
       align-items center
       justify-content center
       position relative
-      min-height 550px
+      min-height 552px
       height calc( 100% - 216px )
 
     &-bg
       background url("./assets/bg-tms-login.png") no-repeat
-      background-size cover
+      background-size 105%
+      background-position center center
 
 </style>

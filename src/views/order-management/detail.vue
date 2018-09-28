@@ -19,7 +19,7 @@
       </ul>
     </header>
     <div style="text-align: right;margin: 28px;">
-      <Button v-for="(btn, index) in btnGroup" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
+      <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
     </div>
     <section>
       <div>
@@ -33,11 +33,11 @@
           </i-col>
           <i-col span="7">
             <span>要求发货时间：</span>
-            <span>{{detail.deliveryTime | datetime}}</span>
+            <span>{{detail.deliveryTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
           </i-col>
           <i-col span="10">
             <span>期望到货时间：</span>
-            <span>{{detail.arriveTime | datetime}}</span>
+            <span>{{detail.arriveTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
           </i-col>
         </Row>
         <Row>
@@ -99,7 +99,7 @@
         </div>
         <Table :columns="tableColumns" :data="detail.orderCargoList"></Table>
         <div class="table-footer">
-          <span style="padding-right: 5px;box-sizing:border-box">合计</span>
+          <span style="padding-right: 5px;box-sizing:border-box;">合计</span>
           <span>订单总数：{{ orderTotal }}</span>
           <span>总体积：{{ volumeTotal }}</span>
           <span>总重量：{{ weightTotal }}</span>
@@ -148,15 +148,15 @@
         <div class="title">
           <span>{{from === 'order' ? '订单日志' : '回单日志'}}</span>
         </div>
-        <div style="display: flex;justify-content: flex-start;height: 300px;">
+        <div style="display: flex;justify-content: flex-start;min-height: 300px;">
           <div class="fold-icon" @click="showOrderLog">
             <span :class="showLog ? 'hide-log' : 'show-log'">《</span>
           </div>
-          <Timeline :class="showLog ? 'show-timeline' : 'hide-timeline'" :style="{ 'height': showLog ? 41*orderLogCount + 'px' : '15px' }" style="margin-top: 7px;overflow: hidden;">
+          <Timeline :class="showLog ? 'show-timeline' : 'hide-timeline'" :style="{ 'height': showLog ? 42*orderLogCount + 'px' : '15px' }" style="margin-top: 7px;overflow: hidden;">
             <TimelineItem v-for="(item, index) in orderLog" :key="index">
               <i slot="dot"></i>
-              <span style="margin-right: 60px;color: #777;">{{item.createTime}}</span>
-              <span style="color: #333;">{{'【' + item.operatorName + '】' + item.description}}</span>
+              <span style="margin-right: 60px;color: #777;font-size: 13px;">{{item.createTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
+              <span style="color: #333;font-size: 13px;">{{'【' + item.operatorName + '】' + item.description}}</span>
             </TimelineItem>
           </Timeline>
         </div>
@@ -184,11 +184,12 @@ export default {
       waybillNums: [],
       show: false,
       btnGroup: [],
-      operateValue: 4,
+      operateValue: 5,
       tableColumns: [
         {
           title: '货物名称',
-          key: 'cargoName'
+          key: 'cargoName',
+          className: 'padding-left-22'
         },
         {
           title: '包装',
@@ -212,11 +213,11 @@ export default {
         },
         {
           title: '备注1',
-          key: 'remark'
+          key: 'remark1'
         },
         {
           title: '备注2',
-          key: 'remark'
+          key: 'remark2'
         }
       ],
       tableData: [],
@@ -267,6 +268,7 @@ export default {
     hidePoptip (e) {
       this.show = false
     },
+    // 各状态按钮操作
     handleOperateClick (btn) {
       this.operateValue = btn.value
       if (btn.name === '拆单') {
@@ -275,13 +277,16 @@ export default {
         this.openOuterDialog(this.detail)
       } else if (btn.name === '还原' || btn.name === '删除') {
         this.openResOrDelDialog(this.detail, btn.name)
-      } else { // 编辑
-        this.$router.push({
-          path: '/order/create',
+      } else if (btn.name === '编辑') { // 编辑
+        this.openTab({
+          title: this.detail.orderNo,
+          path: '/order/update',
           query: {
             id: this.detail.id
           }
         })
+      } else if (btn.name === '回收' || btn.name === '返厂') {
+        this.openReturnDialog(this.detail, btn.name)
       }
     },
     // 外转
@@ -327,10 +332,29 @@ export default {
         }
       })
     },
+    // 回收或返厂 (单条操作)
+    openReturnDialog (order, name) {
+      const _this = this
+      const data = {
+        id: [order],
+        name: name
+      }
+      this.openDialog({
+        name: 'order-management/dialog/return',
+        data: data,
+        methods: {
+          ok (node) {
+            _this.getDetail()
+          }
+        }
+      })
+    },
+    // 日志切换显示
     showOrderLog () {
       this.showLog = !this.showLog
       console.log(this.showLog)
     },
+    // 拉取table数据
     getDetail () {
       // 订单详情  from: order   回单详情 from: receipt
       if (this.$route.query.from === 'order') {
@@ -340,11 +364,11 @@ export default {
         }).then((res) => {
           console.log(res)
           this.detail = res.data.data
-          // this.orderLog = res.data.data.orderLogs // 订单日志
-          // this.orderLogCount = res.data.data.orderLogs.length // 订单日志数量
-          // this.waybillNums = res.data.data.waybillList // 运单子单
-          // 过滤当前详情页操作按钮
+          // 过滤订单详情页操作按钮
           this.filterOrderButton()
+          this.orderLog = res.data.data.orderLogs // 订单日志
+          this.orderLogCount = res.data.data.orderLogs.length // 订单日志数量
+          this.waybillNums = res.data.data.waybillNoList // 运单子单
         })
       } else { // 回单详情
         Server({
@@ -353,23 +377,14 @@ export default {
         }).then((res) => {
           console.log(res)
           this.detail = res.data.data
-          this.orderLog = res.data.data.receiptOrderLog // 回单日志
-          this.orderLogCount = res.data.data.receiptOrderLog.length // 回单日志数量
+          // 过滤回单详情页操作按钮
+          this.filterReceiptButton()
+          this.orderLog = res.data.data.receiptOrderLogs // 回单日志
+          this.orderLogCount = res.data.data.receiptOrderLogs.length // 回单日志数量
         })
-        // 过滤当前详情页操作按钮   0待回收；1待返厂（已回收）；2已返厂
-        if (this.detail.receiptStatus === 0) {
-          this.btnGroup = [
-            { name: '回收', value: 1 }
-          ]
-          this.operateValue = 1
-        } else if (this.detail.receiptStatus === 1) {
-          this.btnGroup = [
-            { name: '返厂', value: 1 }
-          ]
-          this.operateValue = 1
-        }
       }
     },
+    // 状态改名称
     statusToName (code) {
       let name
       switch (code) {
@@ -400,6 +415,7 @@ export default {
       }
       return name
     },
+    // 提货状态转名称
     pickupToName (code) {
       let name
       switch (code) {
@@ -412,47 +428,124 @@ export default {
       }
       return name
     },
+    // 点击展开的运单子单
     handleWaybillNo (id) {
       console.log(id)
     },
     // 订单详情按钮过滤
     filterOrderButton () {
-      if (this.detail.status === 10 || this.detail.status === 20) { // 待提货、待调度状态下
-        // 未拆且未转 显示拆单、外转按钮
-        if (this.detail.parentId === '' && this.detail.disassembleStatus === 0 && this.detail.transStatus === 0) {
-          if (this.detail.dispatchStatus === 1 || (this.detail.pickup === 1 && (this.detail.status === 20 || (this.detail.pickupStatus === 1 && this.detail.status === 10)))) { // 如果是待调度状态(或者已提货未调度,或者已创建运单)且是上门提货则没有外转
-            this.btnGroup = [
-              { name: '拆单', value: 2 }
-            ]
-          } else {
-            this.btnGroup = [
-              { name: '拆单', value: 2 },
-              { name: '外转', value: 3 }
-            ]
-          }
-        } else if (this.detail.parentId === '' && this.detail.disassembleStatus === 1) { // 已拆且是父单  显示还原按钮
-          this.btnGroup = [
-            { name: '还原', value: 2 }
-          ]
-        } else if (this.detail.parentId !== '') { // 子单   显示拆单按钮
-          this.btnGroup = [
-            { name: '拆单', value: 2 }
-          ]
-        } else if (this.detail.transStatus === 1) { // 订单外转  不显示按钮
-          this.btnGroup = []
-        }
-
-        // 待提货、待提货状态统一加上编辑、删除 （待调度状态下上门提货除外）
-        if (!(this.detail.status === 20 && this.detail.pickup === 1)) {
-          this.btnGroup.unshift(
-            { name: '删除', value: 1 }
+      /**
+       * status  10：待提货 20：待调度 30：在途 40：已到货 50：已回单
+       * parentId    父单：('' && 被拆单: disassembleStatus=1)， 子单：不为''
+       * disassembleStatus   是否被拆单：1是;0否（只对父单有效，子单被拆单也为0）
+       * transStatus   是否被外转：1是，0否
+       * dispatchStatus 是否被调度：1是，0否
+       * pickupStatus  是否被提货：1是；0否
+       * pickup   提货方式 1上门提货、2直接送货 （开单时选择上门提货  初始状态为待提货（10），开单时选择直接送货，初始状态为待调度（20））
+       *
+       *
+       * 展示按钮：拆单、外转、还原、删除、编辑（详情页独有）
+       * 1、待提货状态下：（status: 10）
+       *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）】显示
+       *    外转：【（未外转：transStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被提货：pickupStatus=0）】显示
+       *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被提货：pickupStatus=0）】显示
+       *    删除：
+       *          订单列表里显示：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （被拆单后的父单：disassembleStatus=1）】
+       *          订单详情里显示：【（未外转：transStatus=0） && （未被提货：pickupStatus=0）】
+       *    编辑：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
+       * 2、待调度状态下：（status: 20）
+       *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）&& （未被调度：dispatchStatus=0）】显示
+       *    外转：【（未外转：transStatus=0） && （不是上门提货：pickup !== 1） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被调度：dispatchStatus=0）】显示
+       *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被调度：dispatchStatus=0）】显示
+       *    删除：
+       *          订单列表里显示：【（不是上门提货：pickup !== 1） && （未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （被拆单后的父单：disassembleStatus=1）】
+       *          订单详情里显示：【（不是上门提货：pickup !== 1） && （未外转：transStatus=0） && （未被调度：dispatchStatus=0）】
+       *    编辑：【（未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
+       */
+      let r = this.detail
+      let renderBtn = []
+      if (r.status === 10) { // 待提货状态
+        // 删除按钮
+        if (r.transStatus === 0 && r.pickupStatus === 0) {
+          renderBtn.push(
+            { name: '删除', value: 1, code: 110107 }
           )
-          this.btnGroup.push(
-            { name: '编辑', value: this.btnGroup[this.btnGroup.length - 1].value + 1 }
+        }
+        // 拆单按钮
+        if (r.transStatus === 0 && r.disassembleStatus !== 1) {
+          renderBtn.push(
+            { name: '拆单', value: 2, code: 110103 }
+          )
+        }
+        // 外转按钮
+        if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.pickupStatus === 0) {
+          renderBtn.push(
+            { name: '外转', value: 3, code: 110104 }
+          )
+        }
+        // 还原按钮
+        if (r.parentId === '' && r.disassembleStatus === 1 && r.pickupStatus === 0) {
+          renderBtn.push(
+            { name: '还原', value: 4, code: 110105 }
+          )
+        }
+        // 编辑按钮
+        if (r.transStatus === 0 && r.pickupStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
+          renderBtn.push(
+            { name: '编辑', value: 5, code: 110106 }
           )
         }
       }
-      this.operateValue = this.btnGroup[this.btnGroup.length - 1].value // 默认点亮最后一个按钮
+      if (r.status === 20) { // 待调度状态
+        // 删除按钮
+        if (r.pickup !== 1 && r.transStatus === 0 && r.dispatchStatus === 0) {
+          renderBtn.push(
+            { name: '删除', value: 1, code: 110107 }
+          )
+        }
+        // 拆单按钮
+        if (r.transStatus === 0 && r.disassembleStatus !== 1 && r.dispatchStatus === 0) {
+          renderBtn.push(
+            { name: '拆单', value: 2, code: 110103 }
+          )
+        }
+        // 外转按钮
+        if (r.transStatus === 0 && r.pickup !== 1 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0) {
+          renderBtn.push(
+            { name: '外转', value: 3, code: 110104 }
+          )
+        }
+        // 还原按钮
+        if (r.parentId === '' && r.disassembleStatus === 1 && r.dispatchStatus === 0) {
+          renderBtn.push(
+            { name: '还原', value: 4, code: 110105 }
+          )
+        }
+        // 编辑按钮
+        if (r.transStatus === 0 && r.dispatchStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
+          renderBtn.push(
+            { name: '编辑', value: 5, code: 110106 }
+          )
+        }
+      }
+      this.btnGroup = renderBtn
+      if (this.btnGroup.length > 0) {
+        this.operateValue = this.btnGroup[this.btnGroup.length - 1].value // 默认点亮最后一个按钮
+      }
+    },
+    // 回单详情按钮过滤   0待回收；1待返厂（已回收）；2已返厂
+    filterReceiptButton () {
+      if (this.detail.receiptOrder.receiptStatus === 0 && this.detail.status === 40) {
+        this.btnGroup = [
+          { name: '回收', value: 1, code: 110201 }
+        ]
+        this.operateValue = 1
+      } else if (this.detail.receiptOrder.receiptStatus === 1) {
+        this.btnGroup = [
+          { name: '返厂', value: 1, code: 110202 }
+        ]
+        this.operateValue = 1
+      }
     }
   }
 }
@@ -470,7 +563,7 @@ export default {
     margin-left 15px
     width 80px
   .ivu-row
-    font-size 13px
+    font-size 14px
     font-family 'PingFangSC-Regular'
     line-height 3
     .ivu-col
@@ -509,8 +602,9 @@ export default {
     border 1px solid #dcdee2
     border-top none
     line-height 48px
-    font-family 'PingFangSC-Regular'
-    color rgba(51,51,51,1)
+    font-family 'PingFangSC-Medium'
+    font-weight bold
+    color #2c3e50
     span
       display inline-block
       min-width 111px
@@ -557,4 +651,6 @@ export default {
       padding 5px 10px
     .ivu-poptip-popper
       top 118px !important
+  .padding-left-22
+    padding-left 22px
 </style>

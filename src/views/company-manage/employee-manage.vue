@@ -1,16 +1,16 @@
 <template>
   <div>
-    <Col span="5">
-    <Menu active-name="超级管理员" class="leftMenu">
+    <Col span="4">
+    <Menu :active-name="menuInitName" class="leftMenu" style="width:100%">
       <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:50px;">
-        <Button type="primary" class="centerBtn" @click="createRole">新增角色</Button>
+        <Button v-if="hasPower(140101)" type="primary" class="centerBtn" @click="createRole">新增角色</Button>
       </div>
       <div style="max-height:500px; overflow-y:auto; padding-top: 20px;">
         <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" class="menu" @click.native="clickLeftMenu(menu)">
         <p class="menuTitle">{{menu.name}}</p>
-        <span v-if="menu.name !== '超级管理员'" class="configBtnItem">
-          <span class="configBtn" @click="editRole(menu)">修改</span>
-          <span type="text" class="configBtn" @click="removeRole(menu)">删除</span>
+        <span v-if="menu.type !== 1" class="configBtnItem">
+          <span v-if="hasPower(140102)" class="configBtn" @click="editRole(menu)">修改</span>
+          <span v-if="hasPower(140103)" type="text" class="configBtn" @click="removeRole(menu)">删除</span>
         </span>
         </MenuItem>
       </div>
@@ -32,14 +32,15 @@
     </Col>
     <Col span="18">
     <p class="rightTitle">{{rightTitle}}的权限
+    </p><div v-if="hasPower(140102)" class="saveRoleBtn">
       <Button
-        v-if="rightTitle !== '超级管理员'"
+        v-if="menuParam.type !== 1"
         :disabled="disSaveBtn"
-        class="saveRoleBtn"
         type="primary"
         @click="saveRole">
         保存
       </Button>
+    </div>
     </p>
     <Modal
       v-model="removeRoleModal"
@@ -113,7 +114,8 @@ export default {
     }
     return {
       single: true,
-      rightTitle: '超级管理员',
+      rightTitle: '',
+      menuInitName: '',
       disSaveBtn: true,
       createRoleModal: false,
       removeRoleModal: false,
@@ -138,35 +140,65 @@ export default {
   },
   watch: {
     arrayCodeList (newList) {
-      this.initTreeList(newList)
+      if (this.menuParam.type === 1) {
+        this.initTreeList(newList, 'type')
+      } else {
+        this.initTreeList(newList)
+      }
     }
   },
   created () {
-    this.arrayCodeList = ['100000', '110000', '120000', '130000', '140000', '150000', '100100', '100200', '110100', '110200', '120100', '120200', '120300', '130100', '130200', '130300', '140100', '140200', '150100', '150200', '100101', '100102', '100103', '100201', '100202', '100203', '100204', '110101', '110102', '110103', '110104', '110105', '110106', '110107', '110108', '110109', '110201', '110202', '110203', '120101', '120102', '120103', '120104', '120105', '120106', '120107', '120108', '120201', '120202', '120203', '120204', '120205', '120206', '120207', '120301', '120302', '120303', '120304', '120305', '130101', '130102', '130103', '130104', '130105', '130106', '130107', '130108', '130109', '130110', '130111', '130112', '130201', '130202', '130203', '130204', '130205', '130206', '130207', '130208', '130209', '130301', '130302', '130303', '140101', '140102', '140103', '140201', '140202', '140203', '110300']
-    this.initTreeList(this.arrayCodeList)
     this.getMenuList()
+    this.initTreeList(this.arrayCodeList, 'type')
   },
   methods: {
-    getMenuList () {
+    getMenuList (selectMenu) {
       Server({
         url: 'role/list',
         method: 'get'
       }).then(({ data }) => {
         this.menuList = data.data
+        for (let index = 0; index < data.data.length; index++) {
+          if (selectMenu) {
+            if (data.data[index].id === selectMenu.id) {
+              this.menuParam = data.data[index]
+              this.rightTitle = this.menuInitName = data.data[index].name
+              this.arrayCodeList = JSON.parse(data.data[index].codes)
+            }
+          } else {
+            if (data.data[index].type === 1) {
+              this.menuParam = data.data[index]
+              this.rightTitle = this.menuInitName = data.data[index].name
+              this.arrayCodeList = JSON.parse(data.data[index].codes)
+            }
+          }
+        }
       })
     },
-    initTreeList (arrayCodeList) {
+    initTreeList (arrayCodeList, type) {
       const treeList = _.cloneDeep(roleTreeList)
       for (let key in treeList) {
-        this.getTreeList(arrayCodeList, treeList[key][0].children)
+        if (type) {
+          treeList[key][0].disabled = true
+        } else {
+          treeList[key][0].disabled = false
+        }
+        this.getTreeList(arrayCodeList, treeList[key][0].children, type)
       }
       this.listInitTreeList = treeList
     },
-    getTreeList (arrayCodeList, treeData) {
+    getTreeList (arrayCodeList, treeData, type) {
       const vm = this
       treeData.forEach(element => {
         for (let index = 0; index < arrayCodeList.length; index++) {
-          if (arrayCodeList.includes(element.code)) {
+          if (arrayCodeList.includes(element.code) && type) {
+            element.disabled = true
+            if (element.children) {
+              vm.getTreeList(arrayCodeList, element.children, type)
+            } else {
+              element.checked = true
+            }
+          } else if (arrayCodeList.includes(element.code)) {
             if (element.children) {
               vm.getTreeList(arrayCodeList, element.children)
             } else {
@@ -207,6 +239,9 @@ export default {
           // 加入父级code
           if (!selectChecBoxList.includes(node.parentId) && node.parentId !== undefined) {
             selectChecBoxList.push(node.parentId)
+            if (node.grandId !== undefined) {
+              selectChecBoxList.push(node.grandId)
+            }
           }
         })
       }
@@ -221,9 +256,13 @@ export default {
       }).then(({ data }) => {
         if (data.code === 10000) {
           this.$Message.success('角色权限修改成功!')
+          this.getMenuList(this.menuParam)
         } else {
-          this.$Message.success(data.msg)
+          this.$Message.error(data.msg)
         }
+      }).then(() => {
+        this.arrayCodeList = this.menuParam.codes
+        this.rightTitle = this.menuParam.name
       })
     },
     subFormRole (name) {
@@ -340,27 +379,29 @@ export default {
 .rightTitle
   font-size: 20px;
   color: #333333;
-  line-height: 35px;
+  line-height: 45px;
   padding: 0 20px 0 10px;
 .divTree
   clear: both;
   .cardTreeItem
-    width: 300px;
+    width: 270px;
     height: 400px;
     float: left;
     margin: 5px;
     .treeContentDiv
-      width: 282px;
+      width: 252px;
       height: 330px;
       margin-top: -15px;
       overflow-y:auto;
       overflow-x:auto;
 .saveRoleBtn
   float: right;
+  margin-right: 120px;
+  margin-top: -35px;
 .centerBtn
   position: absolute;
-  left: 30%;
-  margin-left: -45px;
+  left: 50%;
+  margin-left: -75px;
   width:150px;
   height:35px;
   background:rgba(0,164,189,1);

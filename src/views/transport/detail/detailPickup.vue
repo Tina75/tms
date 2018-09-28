@@ -4,16 +4,16 @@
     <!-- 运单号及状态 -->
     <section class="detail-header">
       <ul class="detail-header-list">
-        <li class="detail-header-list-item">运单号：{{ info.waybillNo }}</li>
-        <li class="detail-header-list-item">订单状态：
-          <span style="font-weight: bold;">{{ info.status }}</span>
+        <li class="detail-header-list-item">提货单单号：{{ info.pickupNo }}</li>
+        <li class="detail-header-list-item">提货单状态：
+          <span style="font-weight: bold;">{{ status }}</span>
         </li>
       </ul>
     </section>
 
     <div class="detail-btn-group">
-      <Button v-for="(item, key) in currentBtns"
-              :key="key" :type="key === (currentBtns.length - 1) ? 'primary' : 'default'"
+      <Button v-for="(item, key) in showButtons"
+              :key="key" :type="key === (showButtons.length - 1) ? 'primary' : 'default'"
               class="detail-btn-item"
               @click="item.func">{{ item.name }}</Button>
     </div>
@@ -47,7 +47,7 @@
         <Row class="detail-field-group">
           <i-col span="13">
             <span class="detail-field-title">备注：</span>
-            <span>{{ info.remark }}</span>
+            <span>{{ info.remark || '无' }}</span>
           </i-col>
         </Row>
       </div>
@@ -73,19 +73,23 @@
         <Row class="detail-field-group">
           <i-col span="3">
             <span class="detail-field-title-sm">运输费：</span>
-            <span>{{ payment.freightFee }}元</span>
+            <span class="detail-field-fee">{{ payment.freightFee || 0 }}元</span>
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">装货费：</span>
-            <span>{{ payment.loadFee }}元</span>
+            <span class="detail-field-fee">{{ payment.loadFee || 0 }}元</span>
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">卸货费：</span>
-            <span>{{ payment.unloadFee }}元</span>
+            <span class="detail-field-fee">{{ payment.unloadFee || 0 }}元</span>
+          </i-col>
+          <i-col span="3" offset="2">
+            <span class="detail-field-title-sm">保险费：</span>
+            <span class="detail-field-fee">{{ payment.insuranceFee || 0 }}元</span>
           </i-col>
           <i-col span="3" offset="2">
             <span class="detail-field-title-sm">其他：</span>
-            <span>{{ payment.otherFee }}元</span>
+            <span class="detail-field-fee">{{ payment.otherFee || 0 }}元</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
@@ -97,11 +101,12 @@
         <Row class="detail-field-group">
           <i-col span="24">
             <span class="detail-field-title-sm">结算方式：</span>
-            <div class="detail-payment-way">
-              {{ payment.settlementType === '1' ? '按单结' : '月结' }}
-              <Table v-if="payment.settlementType === '2'"
+            <div v-if="settlementType"
+                 class="detail-payment-way">
+              {{ settlementType === '1' ? '按单结' : '月结' }}
+              <Table v-if="settlementType === '1'"
                      :columns="tablePayment"
-                     :data="payment.settlementPayInfo"
+                     :data="settlementPayInfo"
                      :loading="loading"
                      width="350"></Table>
             </div>
@@ -117,8 +122,7 @@
 
           <div class="detail-log-icon"
                @click="showLog = !showLog">
-            <span
-              :class="showLog ? 'detail-log-hide' : 'detail-log-show'">《</span>
+            <i :class="{'detail-log-show': showLog}"></i>
           </div>
 
           <Timeline :style="logListHeight"
@@ -127,7 +131,7 @@
             <TimelineItem v-for="(item, key) in logList"
                           :key="key" class="detail-log-timeline-item">
               <i slot="dot"></i>
-              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong}}</span>
+              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong | formatTime}}</span>
               <span style="color: #333;">{{'【' + item.operatorName + '】' + item.description}}</span>
             </TimelineItem>
 
@@ -142,9 +146,9 @@
     <!-- 运单号及状态 -->
     <section class="detail-header">
       <ul class="detail-header-list">
-        <li class="detail-header-list-item">运单号：{{ info.waybillNo }}</li>
+        <li class="detail-header-list-item">运单号：{{ info.pickupNo }}</li>
         <li class="detail-header-list-item">订单状态：
-          <span style="font-weight: bold;">{{ info.status }}</span>
+          <span style="font-weight: bold;">{{ status }}</span>
         </li>
       </ul>
     </section>
@@ -158,15 +162,25 @@
         <Row class="detail-field-group">
           <i-col span="13">
             <span class="detail-field-title detail-field-required">承运商：</span>
-            <Input v-model="info.carrierName"
-                   class="detail-info-input"></Input>
+            <SelectInput
+              v-model="info.carrierName"
+              :maxlength="20"
+              :remote="false"
+              :local-options="carriers"
+              class="detail-info-input"
+              @on-select="handleSelectCarrier" />
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title detail-field-required">车牌号：</span>
-            <Input v-model="info.carNo"
-                   class="detail-info-input"></Input>
+            <SelectInput
+              v-model="info.carNo"
+              :maxlength="8"
+              :remote="false"
+              :local-options="carrierCars"
+              class="detail-info-input"
+              @on-select="handleSelectCarrierCar" />
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型/车长：</span>
@@ -181,9 +195,13 @@
             </Select>
           </i-col>
           <i-col span="4" offset="1">
-            <span class="detail-field-title detail-field-required">司机：</span>
-            <Input v-model="info.driverName"
-                   class="detail-info-input"></Input>
+            <span class="detail-field-title">司机：</span>
+            <SelectInput
+              v-model="info.driverName"
+              :maxlength="5"
+              :remote="false"
+              :local-options="carrierDrivers"
+              class="detail-info-input" />
           </i-col>
           <i-col span="5" offset="1">
             <span class="detail-field-title">司机手机号：</span>
@@ -206,7 +224,7 @@
           <span>货物明细</span>
         </div>
         <Button type="primary" style="margin-bottom: 22px;"
-                @click="addOrder">添加订单</Button>
+                @click="addOrder('pickup')">添加订单</Button>
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
@@ -222,34 +240,31 @@
           <span>应付费用</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="4">
-            <span class="detail-field-title-sm detail-field-required">运输费：</span>
-            <Input v-model="payment.freightFee"
-                   class="detail-payment-input">
-            <span slot="suffix">元</span>
-            </Input>
+          <i-col span="5">
+            <span class="detail-field-title-sm">运输费：</span>
+            <MoneyInput v-model="payment.freightFee"
+                        class="detail-payment-input" />
             <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
           </i-col>
-          <i-col span="3" offset="1">
+          <i-col span="4">
             <span class="detail-field-title-sm">装货费：</span>
-            <Input v-model="payment.loadFee"
-                   class="detail-payment-input">
-            <span slot="suffix">元</span>
-            </Input>
+            <MoneyInput v-model="payment.loadFee"
+                        class="detail-payment-input" />
           </i-col>
-          <i-col span="3" offset="2">
+          <i-col span="4">
             <span class="detail-field-title-sm">卸货费：</span>
-            <Input v-model="payment.unloadFee"
-                   class="detail-payment-input">
-            <span slot="suffix">元</span>
-            </Input>
+            <MoneyInput v-model="payment.unloadFee"
+                        class="detail-payment-input" />
           </i-col>
-          <i-col span="3" offset="2">
+          <i-col span="4">
+            <span class="detail-field-title-sm">保险费：</span>
+            <MoneyInput v-model="payment.insuranceFee"
+                        class="detail-payment-input" />
+          </i-col>
+          <i-col span="4">
             <span class="detail-field-title-sm">其他：</span>
-            <Input v-model="payment.otherFee"
-                   class="detail-payment-input">
-            <span slot="suffix">元</span>
-            </Input>
+            <MoneyInput v-model="payment.otherFee"
+                        class="detail-payment-input" />
           </i-col>
         </Row>
         <Row class="detail-field-group">
@@ -260,15 +275,15 @@
         </Row>
         <Row class="detail-field-group">
           <i-col span="24">
-            <span class="detail-field-title-sm detail-field-required">结算方式：</span>
+            <span class="detail-field-title-sm">结算方式：</span>
             <div class="detail-payment-way">
-              <RadioGroup v-model="payment.settlementType">
+              <RadioGroup v-model="settlementType">
                 <Radio label="1">按单结</Radio>
                 <Radio label="2">月结</Radio>
               </RadioGroup>
-              <Table v-if="payment.settlementType === '2'"
+              <Table v-if="settlementType === '1'"
                      :columns="tablePayment"
-                     :data="payment.settlementPayInfo"
+                     :data="settlementPayInfo"
                      :loading="loading"
                      width="350"></Table>
             </div>
@@ -278,7 +293,8 @@
     </section>
 
     <section class="detail-edit-footer">
-      <Button class="detail-edit-footer-btn" type="primary">保存</Button>
+      <Button class="detail-edit-footer-btn" type="primary"
+              @click="save">保存</Button>
       <Button class="detail-edit-footer-btn" type="default" @click="cancelEdit">取消</Button>
     </section>
 
@@ -289,17 +305,22 @@
 import BasePage from '@/basic/BasePage'
 import detailMixin from './detailMixin'
 import Server from '@/libs/js/server'
+import MoneyInput from '../components/moneyInput'
+import AreaSelect from '@/components/AreaSelect'
+import SelectInput from '@/components/SelectInput'
 
 export default {
   name: 'DetailFeright',
+  components: { MoneyInput, SelectInput, AreaSelect },
   mixins: [ BasePage, detailMixin ],
   metaInfo: { title: '提货单详情' },
   data () {
     return {
+      pageName: 'pickup',
+      status: '',
       // 信息
       info: {
         pickupNo: '',
-        status: '',
         carrierName: '',
         carNo: '',
         carType: '',
@@ -309,16 +330,11 @@ export default {
         remark: ''
       },
 
-      // 费用
-      payment: {
-        settlementType: '',
-        freightFee: '',
-        loadFee: '',
-        unloadFee: '',
-        otherFee: '',
-        totalFee: '',
-        settlementPayInfo: []
-      },
+      // 支付方式
+      settlementType: '',
+      settlementPayInfo: [
+        { payType: 2, fuelCardAmount: 0, cashAmount: 0 }
+      ],
 
       // 所有按钮组
       btnList: [
@@ -326,12 +342,19 @@ export default {
           status: '待提货',
           btns: [{
             name: '删除',
-            func: () => console.log(Math.random())
+            code: 120204,
+            func: () => {
+              this.billDelete()
+            }
           }, {
             name: '提货',
-            func: () => console.log(Math.random())
+            code: 120201,
+            func: () => {
+              this.billPickup()
+            }
           }, {
             name: '编辑',
+            code: 120206,
             func: () => {
               this.inEditing = true
             }
@@ -341,8 +364,9 @@ export default {
           status: '提货中',
           btns: [{
             name: '到货',
+            code: 120203,
             func: () => {
-              this.inEditing = true
+              this.billArrived()
             }
           }]
         },
@@ -358,8 +382,20 @@ export default {
           title: '订单号',
           key: 'orderNo',
           render: (h, p) => {
-            return h('span', {
-              style: { color: '#3A7EDE' }
+            return h('a', {
+              style: { color: '#3A7EDE' },
+              on: {
+                click: () => {
+                  this.openTab({
+                    path: '/order-management/detail',
+                    query: {
+                      id: p.row.orderNo,
+                      orderId: p.row.orderId,
+                      from: 'order'
+                    }
+                  })
+                }
+              }
             }, p.row.orderNo)
           }
         },
@@ -377,7 +413,10 @@ export default {
         },
         {
           title: '货值（元）',
-          key: 'cargoCost'
+          key: 'cargoCost',
+          render: (h, p) => {
+            return h('span', p.row.cargoCost / 100)
+          }
         },
         {
           title: '重量（吨）',
@@ -420,7 +459,7 @@ export default {
     fetchData () {
       this.loading = true
       Server({
-        url: '/outside/bill/detail',
+        url: '/load/bill/details',
         method: 'post',
         data: { pickUpId: this.id }
       }).then(res => {
@@ -430,17 +469,104 @@ export default {
           this.info[key] = data.loadbill[key]
         }
         for (let key in this.payment) {
-          if (key === 'settlementPayInfo') this.payment['settlementPayInfo'] = [data.loadbill['settlementPayInfo']]
-          else this.payment[key] = data.loadbill[key]
+          this.payment[key] = this.setMoneyUnit2Yuan(data.loadbill[key])
         }
         this.detail = data.cargoList
         this.logList = data.loadBillLogs
 
-        this.info.status = this.statusFilter(this.info.status)
-        this.payment.settlementType = this.payment.settlementType.toString()
+        this.status = this.statusFilter(data.loadbill.status)
+        this.settlementType = data.loadbill.settlementType.toString()
+        let temp = this.settlementPayInfo.map((item, i) => {
+          if (!data.loadbill.settlementPayInfo[i]) return item
+          else {
+            const temp = data.loadbill.settlementPayInfo[i]
+            temp.fuelCardAmount = this.setMoneyUnit2Yuan(temp.fuelCardAmount)
+            temp.cashAmount = this.setMoneyUnit2Yuan(temp.cashAmount)
+            return Object.assign(item, temp)
+          }
+        })
+        this.settlementPayInfo = temp
+
         this.setBtnsWithStatus()
         this.loading = false
       }).catch(err => console.error(err))
+    },
+
+    save () {
+      if (!this.validate()) return
+      Server({
+        url: '/load/bill/update',
+        method: 'post',
+        data: {
+          loadbill: {
+            pickUpId: this.id,
+            ...this.info,
+            ...this.formatMoney(),
+            settlementType: this.settlementType,
+            settlementPayInfo: this.formatPayInfo()
+          },
+          cargoList: this.arrayUnique(this.detail.map(item => {
+            return item.orderId
+          }))
+        }
+      }).then(res => {
+        this.$Message.success('保存成功')
+        this.cancelEdit()
+      }).catch(err => console.error(err))
+    },
+
+    // 按钮操作
+    // 删除
+    billDelete () {
+      Server({
+        url: '/load/bill/delete',
+        method: 'delete',
+        data: { pickUpIds: [ this.id ] }
+      }).then(res => {
+        this.$Message.success('删除成功')
+        this.ema.fire('closeTab', this.$route)
+      }).catch(err => console.error(err))
+    },
+
+    // 到货
+    billArrived () {
+      const self = this
+      self.openDialog({
+        name: 'transport/dialog/confirm',
+        data: {
+          title: '到货确认',
+          message: '是否确认到货？'
+        },
+        methods: {
+          confirm () {
+            Server({
+              url: '/load/bill/confirm/arrival',
+              method: 'post',
+              data: { pickUpIds: [ self.id ] }
+            }).then(res => {
+              self.$Message.success('操作成功')
+              self.fetchData()
+            }).catch(err => console.error(err))
+          }
+        }
+      })
+    },
+
+    // 提货
+    billPickup () {
+      var self = this
+      self.openDialog({
+        name: 'transport/dialog/sendCar',
+        data: {
+          id: this.id,
+          type: 'pickUp'
+        },
+        methods: {
+          complete () {
+            self.fetchData()
+          }
+        }
+      })
     }
   }
 }

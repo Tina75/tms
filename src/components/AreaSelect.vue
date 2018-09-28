@@ -49,10 +49,13 @@ export default {
   },
   watch: {
     value (newValue) {
-      if (newValue.join('') !== this.selected.join('') && newValue && typeof newValue === 'string') {
-        this.selected = areas.getPathByCode(this.value).map((item) => item.code)
+      if (typeof newValue === 'object' && newValue.join('') !== this.selected.join('') && newValue.length > 0) {
+        this.selected = newValue
       } else if (!newValue || newValue.length === 0) {
         this.selected = []
+      } else if (typeof newValue === 'number' && newValue) {
+        this.selected = areas.getPathByCode(newValue).map((item) => item.code)
+        this.$emit('input', this.selected)
       }
     }
   },

@@ -1,8 +1,9 @@
 <template>
   <div ref="$dispatch" class="dispatch">
-    <div class="dispatch-part">
+    <div class="dispatch-part-fix">
       <div class="dispatch-part-title">可提货订单</div>
-      <Table :columns="leftTableHeader" :data="leftTableData"
+      <Table :width="440"
+             :columns="leftTableHeader" :data="leftTableData"
              :loading="leftTableLoading && !leftTableData.length"
              @on-expand="keepLeftExpandOnly"></Table>
     </div>
@@ -32,6 +33,7 @@
         <p>暂无未提货提货单，赶快创建新的提货单吧～</p>
       </div>
       <Table v-else
+             :width="rightTableWidth"
              :columns="rightTableHeader" :data="rightTableData" :loading="rightTableLoading && !rightTableData.length"
              highlight-row
              @on-expand="keepRightExpandOnly"
@@ -49,6 +51,9 @@ import tableExpand from './tableExpand'
 export default {
   name: 'DispatchFreight',
   mixins: [ BasePage, dispatchMixin ],
+  props: {
+    width: Number
+  },
   data () {
     return {
       // 右侧表格表头
@@ -56,6 +61,7 @@ export default {
         {
           type: 'expand',
           width: 30,
+          // fixed: 'left',
           render: (h, p) => {
             return h(tableExpand, {
               on: {
@@ -64,10 +70,10 @@ export default {
                 }
               },
               props: {
+                // width: this.tableWidth - 20,
+                tableLoading: this.rightTableExpandLoading,
                 tableHeader: this.expandTableTypeOne,
-                tableDataFunc: () => {
-                  return p.row.loadbillOrderList
-                }
+                tableData: this.rightTableExpandData
               }
             })
           }
@@ -75,25 +81,39 @@ export default {
         {
           title: '提货单号',
           key: 'loadbillNo',
+          minWidth: 120,
+          // fixed: 'left',
           render: (h, p) => {
-            return h('span', {
+            return h('a', {
               style: {
                 color: '#418DF9'
+              },
+              on: {
+                click: () => {
+                  this.openTab({
+                    title: p.row.loadbillNo,
+                    path: '/transport/detail/detailPickup',
+                    query: { id: p.row.loadbillId }
+                  })
+                }
               }
             }, p.row.loadbillNo)
           }
         },
         {
           title: '车牌号',
-          key: 'carNo'
+          key: 'carNo',
+          minWidth: 120
         },
         {
           title: '体积（方）',
-          key: 'volume'
+          key: 'volume',
+          minWidth: 120
         },
         {
           title: '重量（吨）',
-          key: 'weight'
+          key: 'weight',
+          minWidth: 120
         }
       ]
     }
@@ -137,21 +157,37 @@ export default {
         console.error(err)
       })
     },
-    // 查询左侧表格展开数据
+    // 查询表格展开数据
     fetchLeftExpandData () {
       this.fetchLeftTableExpandData('10')
+    },
+    fetchRightExpandData () {
+      this.rightTableExpandLoading = true
+      Server({
+        url: '/dispatch/loadbill/order/list',
+        method: 'get',
+        data: {
+          loadbillId: this.rightExpandRow.loadbillId
+        }
+      }).then(res => {
+        this.rightTableExpandData = res.data.data.loadbillOrderList
+        this.rightTableExpandLoading = false
+      }).catch(err => {
+        this.rightTableExpandLoading = false
+        console.error(err)
+      })
     },
     // 将左侧选中订单添加到右侧选中运单
     moveOrders2Pickup () {
       this.leftMoveToRight('/dispatch/add/order/to/loadbill', {
-        loadbillId: this.rightSelectRow.row.loadbillId,
+        pickUpId: this.rightSelectRow.row.loadbillId,
         orderIds: this.leftSelection
       })
     },
     // 从提货单移除
     removeOrdersFromPickup () {
       this.rightMoveToLeft('/dispatch/move/cargo/from/loadbill/list', {
-        loadbillId: this.rightSelectRow.row.loadbillId,
+        pickUpId: this.rightSelectRow.row.loadbillId,
         orderIds: this.rightSelection
       })
     }

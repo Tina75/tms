@@ -3,17 +3,23 @@
     <p slot="header" style="text-align:center">{{title}}</p>
     <Form ref="$form" :model="form" :rules="rules" :label-width="80">
       <FormItem label="承运商" prop="carrierName">
-        <SelectCarrier v-model="form.carrierName"
-                       placeholder="请选择"
-                       style="width:200px"
-                       @on-change="carrierChange" />
+        <SelectInput
+          v-model="form.carrierName"
+          :maxlength="20"
+          :remote="false"
+          :local-options="carriers"
+          placeholder="请选择"
+          style="width:200px"
+          @on-select="handleSelectCarrier" />
       </FormItem>
       <FormItem label="车辆" prop="carNo">
-        <selectCar ref="$selectCar"
-                   v-model="form.carNo"
-                   :carrier-id="carrierId"
-                   placeholder="请选择"
-                   style="width:200px" />
+        <SelectInput
+          v-model="form.carNo"
+          :maxlength="8"
+          :remote="false"
+          :local-options="carrierCars"
+          placeholder="请选择"
+          style="width:200px" />
       </FormItem>
     </Form>
     <div slot="footer">
@@ -25,18 +31,20 @@
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
-import SelectCarrier from '../components/selectCarrier'
-import selectCar from '../components/selectCar'
+import SelectInput from '@/components/SelectInput.vue'
 import Server from '@/libs/js/server'
+import { CAR } from '@/views/client/client'
 
 export default {
   name: 'CreatedPickup',
-  components: { SelectCarrier, selectCar },
+  components: { SelectInput },
   mixins: [ BaseDialog ],
   data () {
     return {
       visiable: true,
-      carrierId: '',
+      carriers: [],
+      carrierCars: [],
+
       form: {
         carrierName: '',
         carNo: ''
@@ -46,19 +54,61 @@ export default {
           { required: true, message: '请选择承运商' }
         ],
         carNo: [
-          { required: true, message: '请选择车辆' }
+          { required: true, message: '请填写车牌号', trigger: 'blur' },
+          { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
         ]
       }
     }
   },
+  created () {
+    this.getCarriers()
+  },
   methods: {
+    getCarriers () {
+      Server({
+        url: '/carrier/listOrderByUpdateTimeDesc',
+        method: 'get',
+        data: { type: 1 }
+      }).then(res => {
+        this.carriers = res.data.data.carrierList.map(item => {
+          return {
+            name: item.carrierName,
+            value: item.carrierName,
+            id: item.carrierId,
+            carNo: item.carNO
+          }
+        })
+      })
+    },
+
+    getCarrierCars (carrierId) {
+      Server({
+        url: '/carrier/list/carOrderByUpdateTimeDesc',
+        method: 'get',
+        data: { carrierId }
+      }).then(res => {
+        this.carrierCars = res.data.data.carList.map(item => {
+          return {
+            name: item.carNO,
+            value: item.carNO
+          }
+        })
+      })
+    },
+
+    handleSelectCarrier (name, row) {
+      if (row.carNo) this.form.carNo = row.carNo
+      this.getCarrierCars(row.id)
+      this.$store.dispatch('getCarrierDrivers', row.id)
+    },
+
     create () {
       this.$refs.$form.validate(valid => {
         if (valid) {
-          if (!this.$refs.$selectCar.validate()) {
-            this.$Message.error('车牌号不正确')
-            return
-          }
+          // if (!this.$refs.$selectCar.validate()) {
+          //   this.$Message.error('车牌号不正确')
+          //   return
+          // }
           Server({
             url: '/dispatch/add/loadbill',
             method: 'post',

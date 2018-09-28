@@ -56,9 +56,10 @@ export default {
         if (cargoList.length > 0) {
           // 货物信息
           commit(types.RECEIVE_CARGO_LIST, cargoList)
-          commit(types.RECEIVE_CONSIGNER_CARGO_LIST, cargoList.map((cargo) => {
-            return new Cargo(cargo)
-          }))
+          // commit(types.RECEIVE_CONSIGNER_CARGO_LIST, cargoList.map((cargo) => {
+          //   return new Cargo(cargo, true)
+          // }))
+          commit(types.RECEIVE_CONSIGNER_CARGO_LIST, [new Cargo(cargoList[0], true)])
         }
         if (consigneeList.length > 0) {
           // 收货方地址
@@ -106,12 +107,27 @@ export default {
     item.cargo = new Cargo(item.cargo)
     commit(types.UPDATE_FULL_CONSIGNER_CARGO, item)
   },
+  /**
+   * 清除货品信息
+   * @param {*} store
+   */
   clearCargoes (store) {
     store.commit(types.CLEAR_CONSIGNER_CARGO_LIST)
     store.commit(types.RECEIVE_CARGO_LIST, [])
   },
+  /**
+   * 清除订单详情
+   * @param {*} param0
+   */
   clearOrderDetail ({ commit }) {
     commit(types.RECEIVE_ORDER_DETAIL, {})
+  },
+  /**
+   * 清除公司列表
+   * @param {*} param0
+   */
+  clearClients ({commit}) {
+    commit(types.RECEIVE_CLIENT_LIST, [])
   },
   /**
    * 查询订单详情
@@ -129,7 +145,7 @@ export default {
       })
         .then((response) => {
           const { orderCargoList, ...order } = response.data.data
-          commit(types.RECEIVE_CONSIGNER_CARGO_LIST, orderCargoList.map((item) => new Cargo(item)))
+          commit(types.RECEIVE_CONSIGNER_CARGO_LIST, orderCargoList.map((item) => new Cargo(item, true)))
           commit(types.RECEIVE_ORDER_DETAIL, order)
           resolve(order)
         })
@@ -137,11 +153,10 @@ export default {
     })
   },
   // 提交表单
-  submitOrder ({ state }, form) {
+  submitOrder ({ state, rootState }, form) {
     let url = 'order/create'
-    if (state.order.detail.id) {
+    if (form.id) {
       url = 'order/update'
-      form.id = state.order.detail.id
     }
 
     return new Promise((resolve, reject) => {

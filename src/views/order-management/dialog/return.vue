@@ -6,11 +6,11 @@
         <span>{{name}}</span>
       </p>
       <Form ref="info" :model="info" :rules="rules" :label-width="100">
-        <FormItem :label="'共' + name + '回单数量'">
-          <span style="color: #00A4BD;margin-right: 5px;font-size: 13px;">{{id.length}}</span>份
+        <FormItem :label="'共' + name + '回单数量'" style="margin-left: 40px;">
+          <span style="color: #00A4BD;margin-right: 5px;font-size: 13px;">{{receiptCount}}</span>份
         </FormItem>
-        <FormItem label="接收人">
-          <Input v-model="info.name" style="width:200px" placeholder="请输入"/>
+        <FormItem :label="name === '回收' ? '回收人' : '接收人'" prop="name">
+          <Input v-model="info.name" :maxlength="15" style="width:200px" placeholder="请输入"/>
         </FormItem>
       </Form>
       <div slot="footer">
@@ -36,6 +36,34 @@ export default {
       visibale: true
     }
   },
+
+  computed: {
+    // 订单ID集合
+    orderIds () {
+      let arr = []
+      this.id.map((item) => {
+        arr.push(item.id)
+      })
+      return arr
+    },
+    // 回单id集合
+    ids () {
+      let arr = []
+      this.id.map((item) => {
+        arr.push(item.receiptOrder.id)
+      })
+      return arr
+    },
+    // 回单数量
+    receiptCount () {
+      let total = 0
+      this.id.map((item) => {
+        total += item.receiptCount
+      })
+      return total
+    }
+  },
+
   watch: {
     visibale: function (val) {
       !val && this.close()
@@ -47,14 +75,24 @@ export default {
 
   methods: {
     save () {
-      let status = this.name === '回收' ? 1 : 2
-      this.doRecovery(status)
+      this.$refs['info'].validate((valid) => {
+        if (valid) {
+          let status = this.name === '回收' ? 1 : 2
+          this.doRecovery(status)
+        }
+      })
     },
     // receiptStatus：1回收   2返厂
     doRecovery (status) {
       const data = {
-        orderId: this.id[0].id, // 测试  默认第一条
-        receiptStatus: status
+        receiptStatus: status,
+        orderIds: this.orderIds, // 订单id集合
+        ids: this.ids // 回单id集合
+      }
+      if (status === 1) { // 回收人
+        data.recoveryName = this.info.name
+      } else { // 返厂人
+        data.returnName = this.info.name
       }
       Server({
         url: 'order/updateReceiptOrder',
@@ -63,6 +101,7 @@ export default {
       }).then(() => {
         this.ok()
         this.visibale = false
+        this.$Message.success(this.name + '成功')
       })
     }
   }

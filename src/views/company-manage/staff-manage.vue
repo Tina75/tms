@@ -34,7 +34,7 @@
     </Card>
     </Col>
     <Col span="23">
-    <Button type="primary" style="margin-top:6px;" @click="eaditStaff('add')">添加员工</Button>
+    <Button v-if="hasPower(140201)" type="primary" style="margin-top:6px;" @click="eaditStaff('add')">添加员工</Button>
     </Col>
     <Col span="23">
     <page-table :columns="menuColumns" :keywords="formSearchInit" url="employee/list" list-field="list" style="margin-top: 20px;"></page-table>
@@ -50,7 +50,7 @@
               v-for="item in staffSelectList"
               :value="item.phone"
               :key="item.phone">
-              {{ item.name + '--' + item.phone}}
+              {{ item.name + '/' + item.phone}}
             </Option>
           </Select>
         </FormItem>
@@ -94,6 +94,7 @@ export default {
   },
   data () {
     return {
+      userInfo: {},
       visibaleTransfer: false,
       visibaleRemove: false,
       visibaleMoadlTitle: '',
@@ -105,9 +106,7 @@ export default {
       formSearch: {
         name: '',
         phone: '',
-        roleId: '',
-        pageNo: 1,
-        pageSize: 20
+        roleId: ''
       },
       selectList: [],
       staffSelectList: [],
@@ -116,7 +115,7 @@ export default {
         key: 'do',
         width: 200,
         render: (h, params) => {
-          if (params.row.roleName === '超级管理员') {
+          if (params.row.type === 1 && this.userInfo.type === 1) {
             return h('div', [
               h('Button', {
                 props: {
@@ -133,36 +132,74 @@ export default {
                 }
               }, '转移权限')
             ])
+          } else if (params.row.type === 1 && this.userInfo.type !== 1) {
+
           } else {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'text'
-                },
-                style: {
-                  color: '#00A4BD',
-                  marginLeft: '-20px'
-                },
-                on: {
-                  click: () => {
-                    this.eaditStaff(params)
+            if (this.hasPower(140202) && this.hasPower(140203)) {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text'
+                  },
+                  style: {
+                    color: '#00A4BD',
+                    marginLeft: '-20px'
+                  },
+                  on: {
+                    click: () => {
+                      this.eaditStaff(params)
+                    }
                   }
-                }
-              }, '修改'),
-              h('Button', {
-                props: {
-                  type: 'text'
-                },
-                style: {
-                  color: '#00A4BD'
-                },
-                on: {
-                  click: () => {
-                    this.removeStaff(params)
+                }, '修改'),
+                h('Button', {
+                  props: {
+                    type: 'text'
+                  },
+                  style: {
+                    color: '#00A4BD'
+                  },
+                  on: {
+                    click: () => {
+                      this.removeStaff(params)
+                    }
                   }
-                }
-              }, '删除')
-            ])
+                }, '删除')
+              ])
+            } else if (this.hasPower(140202)) {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text'
+                  },
+                  style: {
+                    color: '#00A4BD',
+                    marginLeft: '-20px'
+                  },
+                  on: {
+                    click: () => {
+                      this.eaditStaff(params)
+                    }
+                  }
+                }, '修改')
+              ])
+            } else if (this.hasPower(140203)) {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text'
+                  },
+                  style: {
+                    color: '#00A4BD',
+                    marginLeft: '-20px'
+                  },
+                  on: {
+                    click: () => {
+                      this.removeStaff(params)
+                    }
+                  }
+                }, '删除')
+              ])
+            }
           }
         }
       },
@@ -194,10 +231,19 @@ export default {
     }
   },
   mounted: function () {
+    this.getUserInfo()
     this.getRoleSelectList()
     this.getStaffSelectList()
   },
   methods: {
+    getUserInfo () {
+      Server({
+        url: 'set/userInfo',
+        method: 'get'
+      }).then(({ data }) => {
+        this.userInfo = Object.assign({}, data.data)
+      })
+    },
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     },
@@ -214,6 +260,11 @@ export default {
         url: 'employee/list',
         method: 'get'
       }).then(({ data }) => {
+        for (let index = 0; index < data.data.list.length; index++) {
+          if (data.data.list[index].type === 1) {
+            data.data.list.splice(index, 1)
+          }
+        }
         this.staffSelectList = Object.assign({}, data.data.list)
       })
     },
@@ -228,9 +279,7 @@ export default {
         method: 'get',
         data: params
       }).then(({ data }) => {
-        if (data.data.length > 0) {
-          return data.data.map(item => ({value: item.name, ...item}))
-        }
+        return data.data.map(item => ({value: item.name, name: item.name + '/' + item.phone}))
       })
         .catch((errorInfo) => {
           return Promise.reject(errorInfo)
@@ -238,13 +287,6 @@ export default {
     },
     searchBtn () {
       this.formSearchInit = Object.assign({}, this.formSearch)
-      Server({
-        url: 'employee/list',
-        method: 'get',
-        data: this.formSearchInit
-      }).then(({ data }) => {
-        console.log('查询table data')
-      })
     },
     eaditStaff (params) {
       if (params !== 'add') {

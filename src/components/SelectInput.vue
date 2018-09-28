@@ -14,6 +14,7 @@
       @mouseleave="mousehover = false"
     >
       <Input
+        ref="input"
         v-model="currentValue"
         :placeholder="placeholder"
         :maxlength="maxlength"
@@ -45,8 +46,17 @@
  */
 export default {
   props: {
+    autoFocus: {
+      type: Boolean,
+      default: false
+    },
     maxlength: Number,
     value: String,
+    // 中文搜索的时候，在拼音阶段不搜索
+    onlyChinese: {
+      type: Boolean,
+      default: true
+    },
     clearable: {
       type: Boolean,
       default: false
@@ -78,6 +88,7 @@ export default {
     return {
       isFocus: false,
       visible: false,
+      composing: false, // 中文输入法不希望在写拼音的时候触发input，搜索；是在完成中文后再搜索,IME问题
       focusIndex: -1,
       currentValue: this.value,
       mousehover: false,
@@ -88,7 +99,7 @@ export default {
   },
   computed: {
     filterOptions () {
-      if (this.remote) {
+      if (this.remote || !this.currentValue) {
         return this.options
       } else {
         return this.options.filter(opt => opt.name.indexOf(this.currentValue) !== -1)
@@ -143,7 +154,35 @@ export default {
       }
     }
   },
+  mounted () {
+    const vm = this
+    // 加载默认focus
+    if (this.autoFocus) {
+      this.isFocus = true
+      this.visible = true
+      this.$nextTick(() => {
+        this.$refs.input.$refs.input.focus()
+      })
+    }
+    if (this.onlyChinese && this.remote) {
+      const originInput = this.$refs.input.$refs.input
+      originInput.addEventListener('compositionstart', vm.onCompositionStart)
+      originInput.addEventListener('compositionend', vm.onCompositionEnd)
+    }
+  },
   methods: {
+    onCompositionStart () {
+      this.composing = true
+    },
+    /**
+     * 中文输入结束后触发搜索
+     * 绑定改事件后，不触发handleChange
+     * 所以主动调用handleChange
+     */
+    onCompositionEnd (e) {
+      this.composing = false
+      this.handleChange(e)
+    },
     heightlightText (text) {
       if (this.currentValue) {
         let reg = new RegExp('(' + this.currentValue + ')', 'g')
@@ -177,7 +216,7 @@ export default {
       this.isFocus = true
       if (this.remote) {
         // 鼠标focus的时候，需要默认查询所有
-        this.remoteCall()
+        this.remoteCall(this.currentValue)
       }
       this.$emit('on-focus')
     },
@@ -191,6 +230,7 @@ export default {
      * 更改关键字，input onChange事件
      */
     handleChange (e) {
+      console.log('handleChange')
       if (this.remote) {
         this.remoteCall(e.target.value)
       }
@@ -199,7 +239,7 @@ export default {
     },
     // 远程请求
     remoteCall (query) {
-      let validQuery = this.lastRemoteQuery !== query && !this.isRemoteCall
+      let validQuery = this.lastRemoteQuery !== query && !this.isRemoteCall && !this.composing
       let shouldCallRemote = this.remoteMethod && typeof this.remoteMethod === 'function' && this.remote
       if (validQuery && shouldCallRemote) {
         this.isRemoteCall = true

@@ -10,7 +10,8 @@ export default{
     localStorage.tabNavCache = JSON.stringify([...list])
   },
   initTabNav (state) {
-    state.tabNavList = localStorage.tabNavCache ? JSON.parse(localStorage.tabNavCache) : [{path: '/home', name: '首页', param: {name: 'home'}}]
+    localStorage.tabNavCache = ''
+    state.tabNavList = localStorage.tabNavCache ? JSON.parse(localStorage.tabNavCache) : [{path: '/home', query: {title: '首页'}, param: {name: 'home'}}]
   },
   updateMsgCount (state, payload) {
     const msg = {...payload}

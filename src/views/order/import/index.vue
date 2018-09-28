@@ -14,7 +14,7 @@
         style="display:inline-block">
         <Button type="primary">导入文件</Button>
       </Upload> -->
-      <Button type="primary" @click="handleClick">导入文件</Button>
+      <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入文件</Button>
       <input
         ref="fileInput"
         name="file"
@@ -23,7 +23,7 @@
         accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         @change="handleChange"
       />
-      <Button :to="downloadUrl" class="i-ml-10" target="_blank">下载模板</Button>
+      <Button v-if="hasPower(100202)" :to="downloadUrl" class="i-ml-10" target="_blank">下载模板</Button>
     </div>
     <PageTable ref="pageTable" :columns="columns" :show-filter="false" url="order/template/getImportedOrderTemplateList" method="post" no-data-text=" " @on-load="handleLoad">
       <div ref="footer" slot="footer" class="order-import__empty-content van-center">
@@ -33,7 +33,7 @@
             <div>您还没有导入订单，去下载模板导入订单吧！</div>
           </div>
           <div class="i-mt-10">
-            <Button type="primary" @click="handleClick">导入文件</Button>
+            <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入文件</Button>
           </div>
         </div>
       </div>
@@ -135,14 +135,15 @@ export default {
                 on: {
                   click: () => {
                     vm.openTab({
+                      title: '订单管理',
                       path: '/order-management/order',
                       query: {
-                        id: vm.UserInfo.name
+                        id: params.row.id
                       }
                     })
                   }
                 }
-              }, '查看订单'))
+              }, '查看导入订单'))
             }
             return h('div', actions)
           }
@@ -225,7 +226,7 @@ export default {
       }
       try {
         const uploadResult = await this.uploadFile(files[0])
-        const notifyResult = await this.notifyBackend(uploadResult.name, uploadResult.res.requestUrls[0])
+        const notifyResult = await this.notifyBackend(files[0].name, uploadResult.res.requestUrls[0])
         if (notifyResult.data.code === 10000) {
           this.$Message.success('导入文件成功')
         }

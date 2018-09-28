@@ -1,16 +1,20 @@
 import City from '../../libs/js/City'
+import CarConfigs from './detail/carConfigs.json'
+import { mapGetters, mapActions } from 'vuex'
+
+const carType = CarConfigs.carType
+const carLength = CarConfigs.carLength
 
 export default {
   data () {
     return {
-      carrierId: '',
       order: 'desc', // 倒序 asc升序
       // 分页
       page: {
         current: 1,
-        size: 10,
-        total: 0
+        size: 10
       },
+      searchFields: {},
 
       tabStatus: void 0, // 当前标签页
       currentBtns: [], // 当前按钮组
@@ -20,18 +24,90 @@ export default {
       easySelectMode: 1, // 简易搜索当前类型
       easySearchKeyword: '', // 简易搜索字段
 
-      tableData: [], // 表格数据
-      tableSelection: [] // 表格的选中项
+      tableWidth: 0,
+      tableSelection: [], // 表格的选中项
+
+      printData: []
+    }
+  },
+
+  computed: {
+    ...mapGetters([
+      'carriers',
+      'carrierCars',
+      'carrierDrivers'
+    ]),
+
+    showButtons () {
+      return this.currentBtns.filter(item => {
+        return this.hasPower(item.code)
+      })
     }
   },
 
   created () {
-    // 初始化按钮组
     this.currentBtns = this.btnList[0].btns
+    this.getCarriers()
+    const columns = window.sessionStorage[this.tabType + '_COLUMNS']
+    if (columns) this.extraColumns = JSON.parse(columns)
+    const tab = window.sessionStorage['TABHEADER_' + this.tabType]
+    if (tab) this.tabStatus = this.setTabStatus(tab)
     this.fetchData()
   },
 
+  mounted () {
+    this.watchWindowWidth()
+  },
+
   methods: {
+    ...mapActions([
+      'getCarriers'
+    ]),
+
+    handleSelectCarrier (name, row) {
+      this.$store.dispatch('getCarrierCars', row.id)
+      this.$store.dispatch('getCarrierDrivers', row.id)
+    },
+
+    checkTableSelection () {
+      if (!this.tableSelection.length) {
+        this.$Message.error('请先选择后再操作')
+        return false
+      }
+      return true
+    },
+
+    carTypeFilter (value) {
+      for (let i = 0; i < carType.length; i++) {
+        if (value === carType[i].value) {
+          return carType[i].label
+        }
+      }
+      return ''
+    },
+
+    carLengthFilter (value) {
+      for (let i = 0; i < carLength.length; i++) {
+        if (value === carLength[i].value) {
+          return carLength[i].label
+        }
+      }
+      return ''
+    },
+
+    // 窗口宽度改变
+    watchWindowWidth () {
+      const $box = this.$refs.$box
+      this.tableWidth = $box.offsetWidth
+      window.onresize = () => {
+        this.tableWidth = $box.offsetWidth
+      }
+    },
+
+    fetchData () {
+      this.searchFields = this.setFetchParams()
+    },
+
     // 搜索
     startSearch () {
       // if (this.isEasySearch && !this.easySearchKeyword) return
@@ -55,7 +131,6 @@ export default {
     },
     // 重置搜索条件
     resetEasySearch () {
-      this.carrierId = ''
       if (this.easySearchKeyword === '') return
       this.easySearchKeyword = ''
       if (!this.inSearching) return
@@ -79,12 +154,9 @@ export default {
       this.resetSeniorSearch()
       this.fetchData()
     },
-    // 承运商改变
-    carrierChange (val) {
-      this.carrierId = val.value
-    },
     // tab切换
     tabChanged (tab) {
+      console.log(tab)
       // 设置当前的按钮组
       for (let i = 0; i < this.btnList.length; i++) {
         if (tab === this.btnList[i].tab) {
@@ -112,6 +184,7 @@ export default {
     // 表格显示项筛选
     tableColumnsChanged (columns) {
       this.extraColumns = columns
+      window.sessionStorage.setItem(this.tabType + '_COLUMNS', JSON.stringify(columns))
     },
     // 选中的表格行
     selectionChanged (selection) {
@@ -132,20 +205,29 @@ export default {
       }
       if (this.inSearching) {
         if (this.isEasySearch) {
-          params.type = this.easySelectMode
-          params.keyWord = this.easySearchKeyword
+          if (this.easySearchKeyword) {
+            params.type = this.easySelectMode
+            params.keyWord = this.easySearchKeyword
+          }
         } else {
-          if (this.seniorSearchFields.startCodes.length) {
-            this.seniorSearchFields.start = this.seniorSearchFields.startCodes[2]
-          } else this.seniorSearchFields.start = ''
-          if (this.seniorSearchFields.endCodes.length) {
-            this.seniorSearchFields.end = this.seniorSearchFields.endCodes[2]
-          } else this.seniorSearchFields.end = ''
+          if (this.seniorSearchFields.startCodes) {
+            if (this.seniorSearchFields.startCodes.length) {
+              this.seniorSearchFields.start = this.seniorSearchFields.startCodes[2]
+            } else this.seniorSearchFields.start = ''
+          }
+
+          if (this.seniorSearchFields.endCodes) {
+            if (this.seniorSearchFields.endCodes.length) {
+              this.seniorSearchFields.end = this.seniorSearchFields.endCodes[2]
+            } else this.seniorSearchFields.end = ''
+          }
+
           if (this.seniorSearchFields.dateRange[0]) {
             this.seniorSearchFields.startTime = this.seniorSearchFields.dateRange[0].Format('yyyy-MM-dd hh:mm:ss')
           } else this.seniorSearchFields.startTime = ''
           if (this.seniorSearchFields.dateRange[1]) {
-            this.seniorSearchFields.endTime = this.seniorSearchFields.dateRange[1].Format('yyyy-MM-dd hh:mm:ss')
+            let endTime = this.seniorSearchFields.dateRange[1].getTime() + (24 * 60 * 60 - 1) * 1000
+            this.seniorSearchFields.endTime = (new Date(endTime)).Format('yyyy-MM-dd hh:mm:ss')
           } else this.seniorSearchFields.endTime = ''
 
           for (let key in this.seniorSearchFields) {
