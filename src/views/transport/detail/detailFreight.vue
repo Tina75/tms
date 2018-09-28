@@ -411,6 +411,7 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
+          width: 160,
           render: (h, p) => {
             return h('a', {
               style: { color: '#3A7EDE' },
@@ -431,49 +432,59 @@ export default {
         },
         {
           title: '客户订单号',
-          key: 'customerOrderNo'
+          key: 'customerOrderNo',
+          width: 160
         },
         {
           title: '始发地-目的地',
           key: 'start',
+          minWidth: 250,
           render: (h, p) => {
             return h('span', this.formatCity(p.row.start) + '-' + this.formatCity(p.row.end))
           }
         },
         {
           title: '货物名称',
-          key: 'cargoName'
+          key: 'cargoName',
+          minWidth: 160
         },
         {
           title: '包装',
-          key: 'packing'
+          key: 'packing',
+          width: 80
         },
         {
           title: '数量',
-          key: 'quantity'
+          key: 'quantity',
+          width: 80
         },
         {
-          title: '货值（元）',
+          title: '货值(元)',
           key: 'cargoCost',
+          width: 100,
           render: (h, p) => {
             return h('span', p.row.cargoCost / 100)
           }
         },
         {
-          title: '重量（吨）',
-          key: 'weight'
+          title: '重量(吨)',
+          key: 'weight',
+          width: 100
         },
         {
-          title: '体积（方）',
-          key: 'volume'
+          title: '体积(方)',
+          key: 'volume',
+          width: 100
         },
         {
           title: '备注1',
-          key: 'remark1'
+          key: 'remark1',
+          minWidth: 160
         },
         {
           title: '备注2',
-          key: 'remark2'
+          key: 'remark2',
+          minWidth: 160
         }
       ]
     }

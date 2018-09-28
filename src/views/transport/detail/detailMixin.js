@@ -288,7 +288,7 @@ export default {
 
     formatCity (code) {
       if (!code) return ''
-      return this.arrayUnique(City.codeToFullName(code, 3, '-').split('-'))
+      return this.arrayUnique(City.codeToFullName(code, 3, '-').split('-')).join('')
     },
 
     getFullCityCode (code) {
