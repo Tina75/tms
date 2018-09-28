@@ -30,7 +30,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { carrierList, carrierDelete, CODE, carrierDetailsForDriver, carrierDetailsForCompany } from './client'
 import BasePage from '@/basic/BasePage'
@@ -362,7 +361,6 @@ export default {
   }
 }
 </script>
-
 <style scoped lang="stylus">
   .header
     display flex
