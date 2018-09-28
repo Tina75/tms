@@ -53,13 +53,13 @@ export default {
   transform: rotate(-90deg);
   left -3px
   font-size 10px
-  bottom -12px
+  bottom -11px
 .icon-right
   color #EFEFEF
   position absolute
   right -3px
   font-size 10px
-  bottom -12px
+  bottom -11px
 .tab-item
   display inline-block
   color #EFEFEF

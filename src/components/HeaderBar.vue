@@ -77,6 +77,9 @@ export default {
   computed: {
     ...mapGetters(['MsgCount', 'UserInfo'])
   },
+  mounted () {
+    if (sessionStorage.getItem('first_time_login')) this.renew()
+  },
   methods: {
     handleChange () {
       this.$emit('update:collapsed', !this.collapsed)
