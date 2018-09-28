@@ -19,7 +19,7 @@
         </Tooltip>
       </div>
       <div class="search-btn">
-        <Button type="primary">搜索</Button>
+        <Button type="primary" @click="search">搜索</Button>
         <Button style="margin-left: 8px">清除条件</Button>
       </div>
     </div>
@@ -41,29 +41,29 @@
         <div class="item" style="flex: 2">
           <div class="item-inner">
             <div>运输费</div>
-            <div>10</div>
+            <div>{{orderFreightFee}}</div>
           </div>
           <div class="item-inner">
             <div>装货费</div>
-            <div>10</div>
+            <div>{{orderLoadFee}}</div>
           </div>
           <div class="item-inner">
             <div>卸货费</div>
-            <div>10</div>
+            <div>{{orderUnloadFee}}</div>
           </div>
           <div class="item-inner">
             <div>保险费</div>
-            <div>10</div>
+            <div>{{orderInsuranceFee}}</div>
           </div>
           <div class="item-inner">
             <div>其他费用</div>
-            <div>10</div>
+            <div>{{orderOtherFee}}</div>
           </div>
         </div>
       </div>
       <div class="title" style="text-align: right;padding-right: 10%; ">
         <span>主营业务收入合计</span>
-        <span class="num">79582</span>
+        <span class="num">{{orderTotalFee}}</span>
       </div>
       <div class="items">
         <div class="item">支出</div>
@@ -71,39 +71,40 @@
         <div class="item" style="flex: 2">
           <div class="item-inner">
             <div>运输费</div>
-            <div>10</div>
+            <div>{{carrierFreightFee}}</div>
           </div>
           <div class="item-inner">
             <div>装货费</div>
-            <div>10</div>
+            <div>{{carrierLoadFee}}</div>
           </div>
           <div class="item-inner">
             <div>卸货费</div>
-            <div>10</div>
+            <div>{{carrierUnloadFee}}</div>
           </div>
           <div class="item-inner">
             <div>保险费</div>
-            <div>10</div>
+            <div>{{carrierInsuranceFee}}</div>
           </div>
           <div class="item-inner">
             <div>其他费用</div>
-            <div>10</div>
+            <div>{{carrierOtherFee}}</div>
           </div>
         </div>
       </div>
       <div class="title" style="text-align: right;padding-right: 10%">
         <span>主营业务支出合计</span>
-        <span class="num">79582</span>
+        <span class="num">{{carrierTotalFee}}</span>
       </div>
       <div class="title" style="text-align: right;padding-right: 10%">
         <span>利润</span>
-        <span class="num">79582</span>
+        <span class="num">{{transbillTransFee}}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import Server from '@/libs/js/server'
 export default {
   name: 'profit',
   components: {
@@ -116,30 +117,99 @@ export default {
         { name: '本季度', value: 3 },
         { name: '半年', value: 4 }
       ],
-      operateValue: 2,
-      times: '',
+      operateValue: '',
+      times: ['', ''],
       keywords: {
         startTime: '',
         endTime: '',
         type: 1
-      }
+      },
+      orderFreightFee: '',
+      orderLoadFee: '',
+      orderUnloadFee: '',
+      orderOtherFee: '',
+      orderInsuranceFee: '',
+      orderTotalFee: '',
+      carrierFreightFee: '',
+      carrierLoadFee: '',
+      carrierUnloadFee: '',
+      carrierOtherFee: '',
+      carrierInsuranceFee: '',
+      carrierTotalFee: '',
+      transbillTransFee: ''
     }
   },
   methods: {
+    search () {
+      Object.assign(this.keywords, {key: null})
+      Server({
+        url: '/report/for/profits',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        data: this.keywords
+      }).then((res) => {
+        console.log(res)
+      })
+    },
     handleOperaterValue (btn) {
       this.operateValue = btn.value
-      this.date()
+      this.date(btn.value)
     },
     handleTimeChange (val) {
       this.keywords.startTime = val[0]
       this.keywords.endTime = val[1]
     },
-    date () {
-      let date = new Date('yyyy-month-dd')
-      console.log(date)
-      let newDate = new Date(date.getTime() - 7 * 24 * 60 * 60 * 1000)
-      console.log(newDate.getDate())
-      // let seven = newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + newDate.getDate()
+    date (value) {
+      let start = ''
+      let end = ''
+      /* 当前时间时间戳 */
+      let now = new Date(2018, 2, 10).getTime()
+      /* 当前时间 yyyy - mm -dd */
+      end = this.formatDate(now)
+      /* 当前月份 */
+      let month = this.formatDate(now).slice(5, 7)
+      switch (value) {
+        case 1:
+          start = this.formatDate(now - 7 * 24 * 60 * 60 * 1000)
+          break
+        case 2:
+          start = this.formatDate(now).slice(0, -2) + '01'
+          break
+        case 3:
+          let startMonth = ''
+          if (month < 4) {
+            startMonth = '01'
+          }
+          if (month > 3 && month < 7) {
+            startMonth = '04'
+          }
+          if (month > 6 && month < 10) {
+            startMonth = '07'
+          }
+          if (month > 9) {
+            startMonth = '10'
+          }
+          start = this.formatDate(now).slice(0, 5) + startMonth + this.formatDate(now).slice(-3)
+          break
+        case 4:
+          /* 当前年份 */
+          let year = this.formatDate(now).slice(0, 4)
+          console.log(year)
+          if (month > 6) {
+            start = year + '-0' + (month - 6) + this.formatDate(now).slice(-3)
+          } else {
+            start = (year - 1) + '-0' + (12 + parseInt(month) - 6) + this.formatDate(now).slice(-3)
+          }
+          break
+      }
+      this.times = [start, end]
+      this.keywords.startTime = start
+      this.keywords.endTime = end
+    },
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
     }
   }
 }

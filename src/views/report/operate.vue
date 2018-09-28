@@ -70,6 +70,7 @@
     </div>
     <page-table
       ref="pageTable"
+      :autoload="autoload"
       :url="url"
       :method="method"
       :keywords="keyword"
@@ -99,6 +100,7 @@ export default {
     return {
       url: '/report/for/operating',
       method: 'POST',
+      autoload: false,
       keywords: {
         consignerName: '',
         orderNo: '',
