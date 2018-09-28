@@ -257,6 +257,8 @@ html, body
         height 46px
         // background #F0F0F0
         overflow hidden
+        .tags-nav .scroll-outer .scroll-body
+          bottom -1px
     .content
       padding 15px 20px
       height 100%

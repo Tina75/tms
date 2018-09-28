@@ -116,7 +116,6 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: 120,
           render: (h, params) => {
             const actions = [
               h('a', {

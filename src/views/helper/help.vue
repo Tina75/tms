@@ -101,7 +101,7 @@ export default {
 //   background: #fff;
 .temAll
   width: 100%
-  height: -webkit-fill-available
+  overflow: auto;
 .imgInfo
   max-width: 680px;
 </style>
