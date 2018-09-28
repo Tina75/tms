@@ -20,7 +20,7 @@
     </div>
     <div>
       <template>
-        <Table :columns="columns1" :data="data1"></Table>
+        <Table :columns="columns1" :data="data1" @on-sort-change = "timeSort"></Table>
       </template>
     </div>
     <div class="footer">
@@ -59,6 +59,7 @@ export default {
       ],
       name: '',
       contact: '',
+      order: '',
       totalCount: 0, // 总条数
       pageArray: [10, 20, 50, 100],
       pageNo: 1,
@@ -201,7 +202,7 @@ export default {
         {
           title: '创建时间',
           key: 'createTime',
-          sortable: true,
+          sortable: 'custom',
           render: (h, params) => {
             let text = this.formatDate(params.row.createTime)
             return h('div', { props: {} }, text)
@@ -215,16 +216,14 @@ export default {
     this.searchList()
   },
   methods: {
-    formatDate (value, format) {
-      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
-    },
     searchList () {
       this.selectStatus === 0 ? this.contact = '' : this.name = ''
       let data = {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
         name: this.name,
-        contact: this.contact
+        contact: this.contact,
+        order: this.order
       }
       consignerList(data).then(res => {
         this.data1 = res.data.data.list
@@ -254,6 +253,13 @@ export default {
     handleChangePageSize (pageSize) {
       this.pageSize = pageSize
       this.searchList()
+    },
+    timeSort (column) {
+      this.order = (column.order === 'normal' ? '' : column.order)
+      this.searchList()
+    },
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     }
   }
 }
