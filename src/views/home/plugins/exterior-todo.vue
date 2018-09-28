@@ -25,8 +25,8 @@ export default {
   data () {
     return {
       data: [
-        { id: 'waitPickOrderCnt', name: '外转方待对账订单', value: 0 },
-        { id: 'waitPickCnt', name: '外转方待核销订单', value: 0 }
+        { id: 'waitPickOrderCnt', name: '外转方待对账订单', value: 1 },
+        { id: 'waitPickCnt', name: '外转方待核销订单', value: 10 }
       ]
     }
   },

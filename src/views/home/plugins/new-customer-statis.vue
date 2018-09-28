@@ -11,9 +11,7 @@
 </template>
 
 <script>
-/**
- * 新增顾客数
- */
+// 新增顾客数
 import BlankCard from '../components/BlankCard.vue'
 import ECharts from 'vue-echarts/components/ECharts'
 import mixin from './mixin.js'
@@ -45,7 +43,7 @@ export default {
           left: 'center',
           top: 'center',
           style: {
-            text: '300单',
+            text: '300家',
             textAlign: 'center',
             fill: '#333',
             font: 'bolder 1em "Microsoft YaHei", sans-serif'
@@ -73,10 +71,9 @@ export default {
               }
             },
             data: [
-              {value: 335, name: '待调度'},
-              {value: 310, name: '待提货'},
-              {value: 234, name: '在途'},
-              {value: 135, name: '已送达'}
+              {value: 335, name: '发货方'},
+              {value: 310, name: '承运商'},
+              {value: 234, name: '外转方'}
             ]
           }
         ]
