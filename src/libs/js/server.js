@@ -51,7 +51,7 @@ instance.interceptors.response.use((res) => {
     switch (code) {
       case 310010:// token失效或不存在
       case 310011:// 账号在其他设备登录
-        window.EMA.fire('logout', `${res.data.msg}，请重新登录`)
+        window.EMA.fire('logout', `${res.data.msg}`)
         break
       case 210014:
       case 600002:// 无权限
