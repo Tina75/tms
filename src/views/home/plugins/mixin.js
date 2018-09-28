@@ -9,6 +9,13 @@ export default {
       valid: false
     }
   },
+  created () {
+    if (this.$options.name) {
+      this.eventHub.$on(`plugin.${this.$options.name}`, () => {
+        console.log('receive message' + this.$options.name)
+      })
+    }
+  },
   methods: {
     fetch (url, method = 'get', data = {}) {
       return server({

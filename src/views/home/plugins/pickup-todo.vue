@@ -23,6 +23,7 @@ import OrderCard from '../components/OrderCard.vue'
 import mixin from './mixin.js'
 
 export default {
+  name: 'pickup-todo',
   components: {
     OrderCard
   },
@@ -43,11 +44,6 @@ export default {
         return num
       }, 0)
     }
-  },
-  created () {
-    this.eventHub.$on('plugin.pickup-todo', () => {
-      console.log('receive message')
-    })
   },
   methods: {
     load () {

@@ -26,6 +26,7 @@ import 'echarts/lib/chart/pie'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/graphic'
 export default {
+  name: 'create-order=statis',
   components: {
     BlankCard,
     ECharts
@@ -85,11 +86,6 @@ export default {
         ]
       }
     }
-  },
-  created () {
-    this.eventHub.$on('plugin.create-order-statis', () => {
-      console.log('receive message')
-    })
   },
   methods: {
     load () {
