@@ -168,12 +168,23 @@ export default {
 
   filters: {
     payType (type) {
-      return type === 1
-        ? '到付'
-        : (type === 2
-          ? '回付'
-          : '月结'
-        )
+      let temp = ''
+      switch (type) {
+        case 1:
+          temp = '现付'
+          break
+        case 2:
+          temp = '到付'
+          break
+        case 3:
+          temp = '回单付'
+          break
+        case 4:
+          temp = '月结'
+          break
+        default: break
+      }
+      return temp
     }
   },
   mixins: [ BasePage, detailMixin ],
@@ -265,7 +276,10 @@ export default {
         },
         {
           title: '货值（元）',
-          key: 'cargoCost'
+          key: 'cargoCost',
+          render: (h, p) => {
+            return h('span', p.row.cargoCost / 100)
+          }
         },
         {
           title: '重量（吨）',

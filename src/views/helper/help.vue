@@ -1,5 +1,5 @@
 <template>
-  <div class="divAll">
+  <div class="temAll">
     <Col span="4">
     <Menu :open-names="['1']" style="width: 100%;">
       <Submenu name="1">
@@ -99,6 +99,9 @@ export default {
 // .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu):after,
 // .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
 //   background: #fff;
+.temAll
+  width: 100%
+  height: -webkit-fill-available
 .imgInfo
   max-width: 680px;
 </style>

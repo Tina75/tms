@@ -367,7 +367,8 @@ export default {
 </script>
 <style lang='stylus' scoped>
 .temAll
-  margin-left 20px;
+  width: 100%
+  height: -webkit-fill-available
 .classPage
   clear: both;
   float: right;

@@ -15,7 +15,7 @@
     </div>
     <div>
       <template>
-        <Table :columns="columns1" :data="data1"></Table>
+        <Table :columns="columns1" :data="data1" @on-sort-change = "timeSort"></Table>
       </template>
     </div>
     <div class="footer">
@@ -37,7 +37,7 @@ import BasePage from '@/basic/BasePage'
 export default {
   name: 'carrier',
   metaInfo: {
-    title: '智加云承运商列表'
+    title: '运掌柜承运商列表'
   },
   mixins: [ BasePage ],
   data () {
@@ -54,10 +54,15 @@ export default {
         }
       ],
       keyword: '',
+      order: null,
       totalCount: 0, // 总条数
       pageArray: [10, 20, 50, 100],
       pageNo: 1,
       pageSize: 10,
+      payTypeMap: {
+        1: '按单付',
+        2: '月结'
+      },
       columns1: [
         {
           title: '操作',
@@ -228,31 +233,13 @@ export default {
           title: '结算方式',
           key: 'payType',
           render: (h, params) => {
-            let text = ''
-            if (params.row.payType === 1) {
-              text = '现付'
-            } else if (params.row.payType === 2) {
-              text = '到付'
-            } else if (params.row.payType === 3) {
-              text = '回单付'
-            } else if (params.row.payType === 4) {
-              text = '月结'
-            } else if (params.row.payType === 5) {
-              text = '预付+到付'
-            } else if (params.row.payType === 6) {
-              text = ' 预付+回付'
-            } else if (params.row.payType === 7) {
-              text = '到付+回付'
-            } else if (params.row.payType === 8) {
-              text = '三段付'
-            }
-            return h('div', {}, text)
+            return h('div', {}, this.payTypeMap[params.row.payType])
           }
         },
         {
           title: '创建时间',
           key: 'createTime',
-          sortable: true,
+          sortable: 'custom',
           render: (h, params) => {
             let text = this.formatDate(params.row.createTime)
             return h('div', { props: {} }, text)
@@ -284,15 +271,13 @@ export default {
     this.searchList()
   },
   methods: {
-    formatDate (value, format) {
-      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
-    },
     searchList () {
       let data = {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
         type: this.selectStatus,
-        keyword: this.keyword
+        keyword: this.keyword,
+        order: this.order
       }
       carrierList(data).then(res => {
         if (res.data.code === CODE) {
@@ -366,6 +351,13 @@ export default {
           fn()
         }
       })
+    },
+    timeSort (column) {
+      this.order = (column.order === 'normal' ? null : column.order)
+      this.searchList()
+    },
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     }
   }
 }
