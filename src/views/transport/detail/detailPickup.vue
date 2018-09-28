@@ -382,6 +382,7 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
+          width: 160,
           render: (h, p) => {
             return h('a', {
               style: { color: '#3A7EDE' },
@@ -402,46 +403,56 @@ export default {
         },
         {
           title: '货物名称',
-          key: 'cargoName'
+          key: 'cargoName',
+          minWidth: 160
         },
         {
           title: '包装',
-          key: 'packing'
+          key: 'packing',
+          width: 80
         },
         {
           title: '数量',
-          key: 'quantity'
+          key: 'quantity',
+          width: 80
         },
         {
-          title: '货值（元）',
+          title: '货值(元)',
           key: 'cargoCost',
+          width: 100,
           render: (h, p) => {
             return h('span', p.row.cargoCost / 100)
           }
         },
         {
-          title: '重量（吨）',
-          key: 'weight'
+          title: '重量(吨)',
+          key: 'weight',
+          width: 100
         },
         {
-          title: '体积（方）',
-          key: 'volume'
+          title: '体积(方)',
+          key: 'volume',
+          width: 100
         },
         {
           title: '客户名称',
-          key: 'consignerName'
+          key: 'consignerName',
+          minWidth: 160
         },
         {
           title: '提货联系人',
-          key: 'consigneeContact'
+          key: 'consigneeContact',
+          minWidth: 120
         },
         {
           title: '联系电话',
-          key: 'consigneePhone'
+          key: 'consigneePhone',
+          minWidth: 120
         },
         {
           title: '提货地址',
-          key: 'consigneeAddress'
+          key: 'consigneeAddress',
+          minWidth: 200
         }
       ]
     }

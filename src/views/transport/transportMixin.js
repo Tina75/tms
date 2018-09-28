@@ -179,7 +179,6 @@ export default {
     // 分页size改变
     pageSizeChange (size) {
       this.page.size = size
-      this.fetchData()
     },
     // 表格显示项筛选
     tableColumnsChanged (columns) {
@@ -242,6 +241,7 @@ export default {
     },
     // 格式化日期
     dateFormatter (timestamp) {
+      if (!timestamp) return ''
       return new Date(timestamp).Format('yyyy-MM-dd hh:mm:ss')
     },
     // 格式化城市

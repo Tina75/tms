@@ -74,6 +74,17 @@
         <Button  @click="removeCancelForm">取消</Button>
       </div>
     </Modal>
+    <Modal
+      v-model="visibaleAddStaffSuccess"
+      width="360">
+      <p slot="header" style="text-align:center">
+        <span>提示</span>
+      </p>
+      <P>添加员工成功，员工的登录账号为手机号，初始登录密码已发送至员工手机；</P>
+      <div slot="footer">
+        <Button type="primary" @click="knowCancel">我知道了</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -97,6 +108,7 @@ export default {
       userInfo: {},
       visibaleTransfer: false,
       visibaleRemove: false,
+      visibaleAddStaffSuccess: false,
       visibaleMoadlTitle: '',
       roleRowInit: {},
       transferformModal: {
@@ -304,6 +316,9 @@ export default {
         methods: {
           ok (node) {
             _this.formSearchInit = {}
+            if (params === 'add') {
+              _this.visibaleAddStaffSuccess = true
+            }
           }
         }
       })
@@ -328,6 +343,9 @@ export default {
           })
         }
       })
+    },
+    knowCancel () {
+      this.visibaleAddStaffSuccess = false
     },
     transferCancelForm () {
       this.visibaleTransfer = false

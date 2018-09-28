@@ -2,11 +2,6 @@ import axios from 'axios'
 import { LoadingBar, Message } from 'iview'
 import Cookies from 'js-cookie'
 
-// function getToken () {
-//   let temp = document.cookie.match(new RegExp('(^| )token=([^;]*)(;|$)'))
-//   if (temp) return unescape(temp[2])
-// }
-
 let instance = axios.create({
   baseURL: '/',
   timeout: 1000,
