@@ -65,17 +65,26 @@ export default {
         {
           title: '订单数',
           key: 'ordreNum',
-          minWidth: 80
+          minWidth: 80,
+          render: (h, p) => {
+            return h('span', p.row.ordreNum ? p.row.ordreNum : '-')
+          }
         },
         {
           title: '体积(方)',
           key: 'volume',
-          minWidth: 80
+          minWidth: 80,
+          render: (h, p) => {
+            return h('span', p.row.volume ? p.row.volume : '-')
+          }
         },
         {
           title: '重量(吨)',
           key: 'weight',
-          minWidth: 80
+          minWidth: 80,
+          render: (h, p) => {
+            return h('span', p.row.weight ? p.row.weight : '-')
+          }
         }
       ],
 
@@ -117,17 +126,26 @@ export default {
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 160
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.consignerName ? p.row.consignerName : '-')
+          }
         },
         {
           title: '体积（方）',
           key: 'volume',
-          minWidth: 120
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', p.row.volume ? p.row.volume : '-')
+          }
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          minWidth: 120
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', p.row.weight ? p.row.weight : '-')
+          }
         }
       ],
       // 展开表格类型2 订单号 客户名称 始发地 目的地 体积
@@ -165,7 +183,10 @@ export default {
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 160
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.consignerName ? p.row.consignerName : '-')
+          }
         },
         {
           title: '始发地',
@@ -196,12 +217,18 @@ export default {
         {
           title: '体积（方）',
           key: 'volume',
-          minWidth: 120
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', p.row.volume ? p.row.volume : '-')
+          }
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          minWidth: 120
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', p.row.weight ? p.row.weight : '-')
+          }
         }
       ],
 
@@ -285,7 +312,8 @@ export default {
 
     // 格式化城市
     cityFilter (code) {
-      return City.codeToFullName(code, 3, '')
+      if (!code) return '-'
+      return Array.from(new Set(City.codeToFullName(code, 3, '-').split('-'))).join('')
     },
 
     /** 数据操作 */
