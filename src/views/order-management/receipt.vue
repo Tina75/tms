@@ -99,6 +99,7 @@
       style="margin-top: 15px"
       @on-select="handleOnSelect"
       @on-select-cancel="handleOnSelectCancel"
+      @on-select-all="handleOnSelectAll"
       @on-selection-change="handleSelectionChange"
       @on-column-change="handleColumnChange">
     </page-table>
@@ -196,7 +197,7 @@ export default {
           title: '订单号',
           key: 'orderNo',
           fixed: 'left',
-          minWidth: 150,
+          minWidth: 160,
           tooltip: true,
           render: (h, params) => {
             return h('a', {
@@ -225,25 +226,25 @@ export default {
         {
           title: '客户订单号',
           key: 'customerOrderNo',
-          minWidth: 150,
+          minWidth: 160,
           tooltip: true
         },
         {
           title: '运单号',
           key: 'waybillNo',
-          minWidth: 150,
+          minWidth: 160,
           tooltip: true
         },
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 150,
+          minWidth: 170,
           tooltip: true
         },
         {
           title: '始发地',
           key: 'start',
-          minWidth: 150,
+          minWidth: 170,
           tooltip: true,
           render: (h, params) => {
             return h('span', City.codeToFullName(params.row.start))
@@ -252,7 +253,7 @@ export default {
         {
           title: '目的地',
           key: 'end',
-          minWidth: 150,
+          minWidth: 170,
           tooltip: true,
           render: (h, params) => {
             return h('span', City.codeToFullName(params.row.end))

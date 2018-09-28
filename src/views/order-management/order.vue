@@ -91,10 +91,11 @@
       style="margin-top: 15px"
       @on-select="handleOnSelect"
       @on-select-cancel="handleOnSelectCancel"
+      @on-select-all="handleOnSelectAll"
       @on-selection-change="handleSelectionChange"
       @on-column-change="handleColumnChange">
     </page-table>
-    <OrderPrint ref="printer" :data.sync="orderPrint">
+    <OrderPrint ref="printer" :list="orderPrint">
     </OrderPrint>
   </div>
 </template>
@@ -107,8 +108,8 @@ import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput.vue'
-import OrderPrint from '../print-template/OrderPrint'
-// import _ from 'lodash'
+import OrderPrint from './components/OrderPrint'
+import _ from 'lodash'
 import { mapGetters, mapActions } from 'vuex'
 import City from '@/libs/js/City'
 import SearchMixin from './searchMixin'
@@ -332,7 +333,7 @@ export default {
           title: '订单号',
           key: 'orderNo',
           fixed: 'left',
-          minWidth: 150,
+          minWidth: 160,
           tooltip: true,
           className: 'padding-20',
           render: (h, params) => {
@@ -402,25 +403,25 @@ export default {
         {
           title: '客户订单号',
           key: 'customerOrderNo',
-          minWidth: 150,
+          minWidth: 160,
           tooltip: true
         },
         {
           title: '运单号',
           key: 'waybillNo',
-          minWidth: 150,
+          minWidth: 160,
           tooltip: true
         },
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 150,
+          minWidth: 170,
           tooltip: true
         },
         {
           title: '始发地',
           key: 'start',
-          minWidth: 150,
+          minWidth: 170,
           tooltip: true,
           render: (h, params) => {
             return h('span', City.codeToFullName(params.row.start))
@@ -429,7 +430,7 @@ export default {
         {
           title: '目的地',
           key: 'end',
-          minWidth: 150,
+          minWidth: 170,
           tooltip: true,
           render: (h, params) => {
             return h('span', City.codeToFullName(params.row.end))
@@ -744,7 +745,7 @@ export default {
           visible: false
         }
       ],
-      orderPrint: {}
+      orderPrint: []
     }
   },
 
@@ -1037,11 +1038,17 @@ export default {
     },
     // 打印
     print () {
-      const vm = this
-      // vm.orderPrint = _.cloneDeep(vm.orderForm)
-      // vm.orderPrint.orderCargoList = _.cloneDeep(vm.consignerCargoes)
-      // vm.orderPrint.totalFee = vm.totalFee
-      vm.$refs.printer.print()
+      Server({
+        url: 'order/getOrderAndDetailList',
+        method: 'post',
+        data: {
+          orderIds: this.selectedId
+        }
+      }).then((res) => {
+        console.log(res)
+        this.orderPrint = _.cloneDeep(res.data.data)
+        this.$refs.printer.print()
+      })
     },
     // 导出
     export () {
@@ -1053,9 +1060,7 @@ export default {
         method: 'post',
         data,
         fileName: '订单明细'
-      }).then((res) => {
-        this.$Message.success('导出成功')
-      }).catch(err => console.error(err))
+      })
     }
   }
 }

@@ -39,8 +39,9 @@ export default {
         }
       },
       simpleSearch: true, // 简单搜索
-      selectOrderList: [], // 选中的订单集合
+      selectOrderList: [], // 跨页选择订单集合
       selectedId: [], // 选中的订单集合的ID集合
+      curSelectOrderList: [], // 当前页面选中的订单集合
       isSearching: false // 是否正在搜索中
     }
   },
@@ -168,20 +169,30 @@ export default {
     },
     // 列表批量选择操作
     handleSelectionChange (val) {
-      // console.log(val)
+      // this.selectOrderList = val
+      // console.log(this.selectOrderList)
+      // let set = new Set(this.selectOrderList)
+      // this.selectOrderList = Array.from(set)
+      // this.pickupID()
     },
     // 多选模式下 列表选中某一项时触发
     handleOnSelect (selection, row) {
       this.selectOrderList.push(row)
-      console.log(this.selectOrderList)
       this.pickupID()
     },
     // 多选模式下 取消选中某一项时触发
     handleOnSelectCancel (selection, row) {
       let index = this.selectOrderList.findIndex((item) => item.id === row.id)
       this.selectOrderList.splice(index, 1) // 删掉已勾选中对应id的项
-      console.log(this.selectOrderList)
       this.pickupID()
+    },
+    // 在多选模式下有效，点击全选时触发
+    handleOnSelectAll (selection, status) {
+      this.selectOrderList = [...selection]
+      let set = new Set(this.selectOrderList)
+      this.selectOrderList = Array.from(set)
+      this.pickupID()
+      console.log(this.selectedId)
     },
     // 将selectOrderList项中的id提出来组成新数组赋值给selectedId
     pickupID () {
