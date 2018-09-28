@@ -274,7 +274,7 @@ export default {
       messageListInit: [],
       messageList: [{
         title: '发运提醒',
-        message: '提醒内容：【运掌柜TMS】您的货物已由xx公司安排送货，由车牌号XXXX司机姓名XXXX司机电话XXXX派送；',
+        message: '运单：【运掌柜TMS】您的货物已由xx公司安排送货，由车牌号XXXX司机姓名XXXX司机电话XXXX派送；',
         messageReturn: '外转单：【运掌柜TMS】您的xxx货物已由xx公司安排送货。',
         checkBox: [{
           label: '发货人',
@@ -287,7 +287,7 @@ export default {
         }]
       }, {
         title: '到货提醒',
-        message: '提醒内容：【运掌柜TMS】您的货物已签收，由车牌号XXX司机姓名XXX司机电话XXXX完成配送；',
+        message: '运单：【运掌柜TMS】您的货物已签收，由车牌号XXX司机姓名XXX司机电话XXXX完成配送；',
         messageReturn: '外转单：【运掌柜TMS】您的xxx货物已签收。',
         checkBox: [{
           label: '发货人',
@@ -300,7 +300,7 @@ export default {
         }]
       }, {
         title: '指派司机提醒',
-        message: '提醒内容：【运掌柜TMS】XX公司给您指派了新的运单，请尽快装货；',
+        message: '运单：【运掌柜TMS】XX公司给您指派了新的运单，请尽快装货；',
         messageReturn: '提货单：【运掌柜TMS】XX公司给您指派了新的提货单，请尽快提货。',
         checkBox: [{
           label: '司机',
