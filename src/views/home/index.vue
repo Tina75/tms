@@ -9,7 +9,20 @@
         <Poptip trigger="click" placement="bottom-end">
           <FontIcon type="shouye" size="20" class="page-home__setting-icon" />
           <div slot="content">
-            插件
+            <div class="page-home__dropdown-header">
+              选择显示面板
+            </div>
+            <CheckboxGroup v-model="cardChecks" class="page-home__dropdown-body">
+              <div v-for="(item, index) in cards" :key="index" class="page-home__dropdown-checkbox">
+                <Checkbox :label="item.id">
+                  <span>{{item.label}}</span>
+                </Checkbox>
+              </div>
+            </CheckboxGroup>
+            <div class="page-home__dropdown-footer">
+              <Button type="primary" size="small">确定</Button>
+              <Button class="i-ml-10" size="small">取消</Button>
+            </div>
           </div>
         </Poptip>
         </Col>
@@ -105,7 +118,25 @@ export default {
   data () {
     return {
       // eventHub: new Vue(),
-      permission: []
+      permission: [],
+      cardChecks: ['pickup-todo'],
+      cards: [
+        {label: '提货待办', value: '1', id: 'pickup-todo'},
+        {label: '送货待办', value: '1', id: 'delivery-todo'},
+        {label: '外转待办', value: '1', id: 'trans-todo'},
+        {label: '发货方核销待办', value: '1', id: 'consigner-todo'},
+        {label: '承运商核销待办', value: '1', id: 'carrier-todo'},
+        {label: '外转方核销待办', value: '1', id: 'transferfee-todo'},
+        {label: '消息中心', value: '1', id: 'message-center'},
+        {label: '今日订单数', value: '1', id: 'order-create'},
+        {label: '新增客户数', value: '1', id: 'new-customer'},
+        {label: '在途车辆位置', value: '1', id: 'transport-location'},
+        {label: '营业额通知', value: '1', id: 'turnover-statistics'},
+        {label: '调度订单数', value: '1', id: 'dispatch-statistics'},
+        {label: '开单数', value: '1', id: 'order-statistics'},
+        {label: '应收款/应付款项', value: '1', id: 'pay-receive'},
+        {label: '货物重量/体积', value: '1', id: 'cargo-statistics'}
+      ]
     }
   },
   computed: {
@@ -158,8 +189,20 @@ export default {
 
 }
 </script>
-<style lang="stylus">
+<style lang="stylus" scoped>
 .page-home
+  &__dropdown-header
+    text-align center
+    border-bottom 1px solid #efefef
+    padding 10px 0
+  &__dropdown-body
+    text-align left
+    padding 5px 10px
+  &__dropdown-checkbox
+    margin 6px 0
+  &__dropdown-footer
+    padding 10px 0
+    text-align center
   &__padding-8
     padding-left 8px
     padding-right 8px
@@ -170,7 +213,4 @@ export default {
   &__message-item
     background-color #f3f3f3
     margin-bottom 8px
-.anchorBL
-  display none
-
 </style>
