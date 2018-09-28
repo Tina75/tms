@@ -197,11 +197,11 @@
       </FormItem>
       </Col>
     </Row>
-    <FormItem class="van-center">
+    <div class="van-center">
       <Button v-if="hasPower(100101)" :disabled="disabled" type="primary" @click="handleSubmit">保存</Button>
       <Button v-if="hasPower(100102)" :disabled="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
-    </FormItem>
+    </div>
     <OrderPrint ref="printer" :list="orderPrint">
     </OrderPrint>
   </Form>
