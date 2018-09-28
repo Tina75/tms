@@ -21,6 +21,7 @@
 import OrderCard from '../components/OrderCard.vue'
 import mixin from './mixin.js'
 export default {
+  name: 'transfer-todo',
   components: {
     OrderCard
   },
@@ -40,11 +41,6 @@ export default {
         return num
       }, 0)
     }
-  },
-  created () {
-    this.eventHub.$on('plugin.transfer-todo', () => {
-      console.log('receive message')
-    })
   },
   methods: {
     load () {
