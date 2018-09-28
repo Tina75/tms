@@ -124,7 +124,7 @@ export default {
   methods: {
     createFreight () {
       this.openDialog({
-        name: 'transport/dialog/createPickup',
+        name: 'order-management/dialog/createPickup',
         data: {
           title: '新增提货单'
         },

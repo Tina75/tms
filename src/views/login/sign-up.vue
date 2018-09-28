@@ -73,10 +73,10 @@
           <FormItem>
             <Checkbox v-model="protocol" style="line-height: 1.5;">
               我已阅读并同意
-              <a @click.prevent="showProtocol(1)">《运掌柜TMS服务协议》</a>
-              <a @click.prevent="showProtocol(2)">《运掌柜TMS隐私协议》</a>
+              <a style="color: #418DF9;" @click.prevent="showProtocol(1)">《运掌柜TMS服务协议》</a>
+              <a style="color: #418DF9;" @click.prevent="showProtocol(2)">《运掌柜TMS隐私协议》</a>
             </Checkbox>
-            <Button class="form-button" type="primary" long
+            <Button type="primary" long
                     @click="nextStep">{{step === 2 ? '立即注册' : '下一步'}}</Button>
             <div>
               <a v-if="step" @click.prevent="step = step - 1">&lt;上一步</a>
