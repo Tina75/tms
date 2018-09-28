@@ -202,7 +202,11 @@ export default {
         {
           title: '创建时间',
           key: 'createTime',
-          sortable: 'custom'
+          sortable: 'custom',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
         }
       ],
       data1: []
@@ -253,6 +257,9 @@ export default {
     timeSort (column) {
       this.order = (column.order === 'normal' ? '' : column.order)
       this.searchList()
+    },
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     }
   }
 }
