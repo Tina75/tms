@@ -7,14 +7,14 @@
           <Option value="1">暂无数据</Option>
         </Select>
       </FormItem>
-      <div v-else class="van-center i-pb-10 i-pt-10">
+      <div v-else class="i-pb-10 i-pt-10" style="text-align: center;">
         <span>
           <Icon type="md-alert" size="26" color="#FFBB44"></Icon>
           您还未给此客户设置计费规则
         </span>
       </div>
     </Form>
-    <div slot="footer" class="van-center">
+    <div slot="footer" style="text-align: center;">
       <Button v-if="emptyRule" type="primary" @click="gotoSetRules">去设置</Button>
       <Button v-else type="primary" @click="save">确定</Button>
       <Button type="default" class="i-ml-10" @click.native="visibale = false">取消</Button>
