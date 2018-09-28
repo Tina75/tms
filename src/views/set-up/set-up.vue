@@ -227,8 +227,8 @@ export default {
     }
     var checkPhone = function (rule, value, callback) {
       if (value) {
-        if (!(/^1\d{10}$/.test(value))) {
-          return callback(new Error('手机号格式不正确'))
+        if (!(/^1\d{10}$/.test(value) || /^0\d{2,3}-?\d{7,8}$/.test(value))) {
+          return callback(new Error('联系方式格式不正确'))
         }
         callback()
       } else {
