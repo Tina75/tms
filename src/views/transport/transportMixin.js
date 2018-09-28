@@ -241,12 +241,12 @@ export default {
     },
     // 格式化日期
     dateFormatter (timestamp) {
-      if (!timestamp) return ''
+      if (!timestamp) return '-'
       return new Date(timestamp).Format('yyyy-MM-dd hh:mm:ss')
     },
     // 格式化城市
     cityFilter (code) {
-      if (!code) return ''
+      if (!code) return '-'
       return Array.from(new Set(City.codeToFullName(code, 3, '-').split('-'))).join('')
     }
   }

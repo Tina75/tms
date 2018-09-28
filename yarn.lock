@@ -2131,10 +2131,6 @@ css-loader@^1.0.0:
 css-parse@1.7.x:
   version "1.7.0"
   resolved "http://registry.npm.taobao.org/css-parse/download/css-parse-1.7.0.tgz#321f6cf73782a6ff751111390fc05e2c657d8c9b"
-<<<<<<< HEAD
-=======
-  integrity sha1-Mh9s9zeCpv91ERE5D8BeLGV9jJs=
->>>>>>> 4f8b21c247b92b016fda0e243369799a5808209e
 
 css-select-base-adapter@~0.1.0:
   version "0.1.0"
