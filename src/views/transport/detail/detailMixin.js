@@ -288,7 +288,7 @@ export default {
 
     formatCity (code) {
       if (!code) return ''
-      return this.arrayUnique(City.codeToFullName(code, 3, '-').split('-'))
+      return this.arrayUnique(City.codeToFullName(code, 3, '-').split('-')).join('')
     },
 
     getFullCityCode (code) {
@@ -314,13 +314,16 @@ export default {
     // 计费规则
     showChargeRules () {
       this.openDialog({
-        name: 'order/create/CounterDialog.vue',
+        name: 'transport/dialog/financeRule',
         data: {
           value: 0
         },
         methods: {
           ok (charge) {
             this.payment.freightFee = charge || 0
+          },
+          cancel () {
+            self.close()
           }
         }
       })

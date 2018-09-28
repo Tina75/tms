@@ -32,7 +32,11 @@ export default {
           minWidth: 80,
           ellipsis: true,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.start))
+            return h('Tooltip', {
+              props: {
+                content: this.cityFilter(p.row.start)
+              }
+            }, this.cityFilter(p.row.start))
           }
         },
         // {
@@ -51,7 +55,11 @@ export default {
           minWidth: 80,
           ellipsis: true,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.end))
+            return h('Tooltip', {
+              props: {
+                content: this.cityFilter(p.row.end)
+              }
+            }, this.cityFilter(p.row.end))
           }
         },
         {
@@ -109,7 +117,6 @@ export default {
         {
           title: '客户名称',
           key: 'consignerName',
-          ellipsis: true,
           minWidth: 160
         },
         {
@@ -158,7 +165,6 @@ export default {
         {
           title: '客户名称',
           key: 'consignerName',
-          ellipsis: true,
           minWidth: 160
         },
         {
@@ -167,7 +173,11 @@ export default {
           minWidth: 160,
           ellipsis: true,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.start))
+            return h('Tooltip', {
+              props: {
+                content: this.cityFilter(p.row.start)
+              }
+            }, this.cityFilter(p.row.start))
           }
         },
         {
@@ -176,7 +186,11 @@ export default {
           minWidth: 160,
           ellipsis: true,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.end))
+            return h('Tooltip', {
+              props: {
+                content: this.cityFilter(p.row.end)
+              }
+            }, this.cityFilter(p.row.end))
           }
         },
         {

@@ -5,7 +5,7 @@
       <Card :bordered="false">
         <div class="form-title">运掌柜账号登录</div>
         <div class="form-content">
-          <Form ref="loginForm" :model="form">
+          <Form ref="loginForm" :model="form" :rules="rules">
 
             <FormItem prop="phone">
               <Input v-model="form.phone" :maxlength="11" placeholder="登录账号/手机号"
@@ -35,8 +35,8 @@
               </div>
             </FormItem>
 
-            <FormItem>
-              <Button class="form-button" type="primary" long @click="login">登录</Button>
+            <FormItem class="form-button">
+              <Button type="primary" long @click="login">登录</Button>
 
               <ul class="form-action">
                 <li class="form-action-item">
@@ -61,6 +61,7 @@
 <script>
 import Server from '@/libs/js/server'
 import mixin from './mixin'
+import { VALIDATOR_PHONE } from './validator'
 
 // token与记住密码过期时长
 const EXPIRES = 60 * 24 * 60 * 60 * 1000
@@ -80,23 +81,44 @@ export default {
         captchaCode: ''
       },
 
+      rules: {
+        phone: [
+          { required: true, message: '手机号不能为空', trigger: 'blur' },
+          { validator: VALIDATOR_PHONE, trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '密码不能为空', trigger: 'blur' }
+        ],
+        captchaCode: [{ required: true, message: '图形验证码不能为空', trigger: 'blur' }]
+      },
+
       currentFocus: '', // 当前聚焦的输入框类型
       rememberPW: false // 记住密码
     }
   },
   created () {
+    const signupPhone = window.sessionStorage.signup_phone
+    if (signupPhone) {
+      this.form.phone = signupPhone
+      window.sessionStorage.removeItem('signup_phone')
+    }
     this.localPwParser()
     this.getCaptcha()
   },
   methods: {
     // 输入框聚焦改变图标颜色
     inputIconColor (type) {
-      return { color: this.currentFocus === type ? '#00A4BD' : '#9DA1B0' }
+      return { color: this.currentFocus === type ? '#00A4BD' : '#C9CED9' }
     },
 
     // 输入框聚焦
     inputFocus (type) {
       this.currentFocus = type
+    },
+
+    // 输入框失焦
+    inputBlur (type) {
+      if (this.currentFocus !== undefined) this.currentFocus = ''
     },
 
     // 记住密码-解析密码
@@ -130,24 +152,23 @@ export default {
 
     // 登录处理
     login () {
-      for (let key in this.form) {
-        if (!this.validate(key)) return
-      }
-
-      Server({
-        url: '/user/login',
-        method: 'post',
-        data: this.form
-      }).then(res => {
-        if (this.rememberPW) this.localPwSave()
-        else window.localStorage.removeItem('local_rememberd_pw')
-        window.localStorage.setItem('tms_is_login', true)
-        this.setToken(res.data.data.token)
-        window.sessionStorage.setItem('first_time_login', !!res.data.data.notice)
-        location.reload()
-      }).catch(err => {
-        this.getCaptcha()
-        console.error(err)
+      this.$refs.loginForm.validate(valid => {
+        if (!valid) return
+        Server({
+          url: '/user/login',
+          method: 'post',
+          data: this.form
+        }).then(res => {
+          if (this.rememberPW) this.localPwSave()
+          else window.localStorage.removeItem('local_rememberd_pw')
+          window.localStorage.setItem('tms_is_login', true)
+          this.setToken(res.data.data.token)
+          window.sessionStorage.setItem('first_time_login', !!res.data.data.notice)
+          location.reload()
+        }).catch(err => {
+          this.getCaptcha()
+          console.error(err)
+        })
       })
     }
   }
@@ -161,6 +182,7 @@ export default {
     display flex
     align-items center
     justify-content center
+    margin-right 11vw
 
     // &:before, &:after
     //   content ""
@@ -185,7 +207,7 @@ export default {
     display block
     position relative
     width 48vw
-    margin-right 107px
+    margin-right 4vw
     z-index 1
 
   .form-body

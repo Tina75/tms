@@ -322,7 +322,11 @@ export default {
           ellipsis: true,
           minWidth: 160,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.start))
+            return h('Tooltip', {
+              props: {
+                content: this.cityFilter(p.row.start)
+              }
+            }, this.cityFilter(p.row.start))
           }
         },
         {
@@ -331,7 +335,11 @@ export default {
           ellipsis: true,
           minWidth: 160,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.end))
+            return h('Tooltip', {
+              props: {
+                content: this.cityFilter(p.row.end)
+              }
+            }, this.cityFilter(p.row.end))
           }
         },
         {
@@ -627,7 +635,7 @@ export default {
     // 查询外转方
     getTransferee () {
       Server({
-        url: '/transferee/list',
+        url: '/transferee/listOrderbyUpdateTimeDesc',
         method: 'get',
         data: { type: 1 }
       }).then(res => {
