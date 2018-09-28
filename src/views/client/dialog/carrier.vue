@@ -68,15 +68,7 @@
       </FormItem>
       <FormItem label="结算方式:" class="ivu-form-item-required blank">
         <Select v-model="validate.driver.payType" clearable>
-          <!--<Option value="">请选择</Option>-->
-          <!--<Option value="1">现付</Option>-->
-          <!--<Option value="2">到付</Option>-->
-          <Option value="3">回单付</Option>
-          <Option value="4">月结</Option>
-          <!--<Option value="5">预付+到付</Option>-->
-          <!--<Option value="6">预付+回付</Option>-->
-          <!--<Option value="7">到付+回付</Option>-->
-          <!--<Option value="8">三段付</Option>-->
+          <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
         </Select>
       </FormItem>
       <FormItem label="备注:" class="ivu-form-item-required blank">
@@ -96,11 +88,7 @@
       </FormItem>
       <FormItem label="结算方式:">
         <Select v-model="validate.company.payType" clearable>
-          <!--<Option value="">请选择</Option>-->
-          <!--<Option value="1">现付</Option>-->
-          <!--<Option value="2">到付</Option>-->
-          <Option value="3">回单付</Option>
-          <Option value="4">月结</Option>
+          <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
         </Select>
       </FormItem>
       <FormItem label="备注:" >
@@ -128,6 +116,10 @@ export default {
     return {
       flag: 2,
       modal: true,
+      payTypeMap: {
+        1: '按单付',
+        2: '月结'
+      },
       selectList: [
         {
           value: 1,
