@@ -21,18 +21,16 @@
       <DeliveryTodo />
       <TransferTodo />
       <MessageCenter />
-
+      <!-- 发货方核销代办 -->
       <ShipperTodo />
+      <!-- 承运商核销代办 -->
       <CarrierTodo />
+      <!-- 外转方核销代办 -->
       <ExteriorTodo />
       <CreateOrderStatis />
+      <!-- 新增顾客数 -->
       <NewCustumerStatis />
-      <!-- <Col span="6" class="i-mt-15">
-      <BlankCard>
-        <div slot="title">新增客户数</div>
-        <div slot="extra">...</div>
-      </BlankCard>
-      </Col> -->
+      <!-- 在途车辆信息 -->
       <CarPosition />
 
       <Col span="24" class="i-mt-15">
