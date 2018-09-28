@@ -143,6 +143,7 @@ export default {
         else window.localStorage.removeItem('local_rememberd_pw')
         window.localStorage.setItem('tms_is_login', true)
         this.setToken(res.data.data.token)
+        window.sessionStorage.setItem('first_time_login', !!res.data.data.notice)
         location.reload()
       }).catch(err => {
         this.getCaptcha()

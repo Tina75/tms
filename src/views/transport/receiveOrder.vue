@@ -518,30 +518,17 @@ export default {
       this.$forceUpdate()
     },
 
-    // 打印查询详情
-    fetchDetail () {
-      let promises = this.tableSelection.map(item => {
-        return new Promise((resolve, reject) => {
-          Server({
-            url: '/load/bill/print',
-            method: 'post',
-            data: { pickUpId: item.pickUpId }
-          }).then(res => {
-            resolve(res.data.data)
-          })
-        })
-      })
-      return Promise.all(promises)
-    },
-
     // 打印
     billPrint () {
       if (!this.checkTableSelection()) return
-      this.fetchDetail()
-        .then(data => {
-          this.printData = data
-          this.$refs.$printer.print()
-        })
+      Server({
+        url: '/load/bill/batchPrint',
+        method: 'post',
+        data: { pickUpIds: this.tableSelection.map(item => item.pickUpId) }
+      }).then(res => {
+        this.printData = res.data.data
+        this.$refs.$printer.print()
+      })
     },
 
     // 导出
