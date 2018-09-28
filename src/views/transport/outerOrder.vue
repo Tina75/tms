@@ -627,7 +627,7 @@ export default {
     // 查询外转方
     getTransferee () {
       Server({
-        url: '/transferee/list',
+        url: '/transferee/listOrderbyUpdateTimeDesc',
         method: 'get',
         data: { type: 1 }
       }).then(res => {

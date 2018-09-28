@@ -16,9 +16,7 @@
 </template>
 
 <script>
-import mixin from './mixin.js'
 export default {
-  mixins: [mixin],
   props: {
     to: String,
     title: String,

@@ -20,10 +20,13 @@
  * 3.运输中订单数量
  */
 import OrderCard from '../components/OrderCard.vue'
+import mixin from './mixin.js'
+
 export default {
   components: {
     OrderCard
   },
+  mixins: [mixin],
   data () {
     return {
       data: [
@@ -40,6 +43,11 @@ export default {
         return num
       }, 0)
     }
+  },
+  created () {
+    this.eventHub.$on('plugin.pickup-todo', () => {
+      console.log('receive message')
+    })
   },
   methods: {
     load () {

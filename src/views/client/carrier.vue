@@ -30,7 +30,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { carrierList, carrierDelete, CODE, carrierDetailsForDriver, carrierDetailsForCompany } from './client'
 import BasePage from '@/basic/BasePage'
@@ -353,7 +352,20 @@ export default {
       })
     },
     timeSort (column) {
-      this.order = (column.order === 'normal' ? null : column.order)
+      let str = ''
+      if (column.key === 'createTime') { // 为之后预留更新时间排序
+        str += 'create_time,'
+      } else {
+        str += 'update_time,,'
+      }
+      if (column.order === 'asc') {
+        str += 'asc'
+      } else if (column.order === 'desc') {
+        str += 'desc'
+      } else {
+        str = null
+      }
+      this.order = str
       this.searchList()
     },
     formatDate (value, format) {
@@ -362,7 +374,6 @@ export default {
   }
 }
 </script>
-
 <style scoped lang="stylus">
   .header
     display flex

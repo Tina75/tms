@@ -1,19 +1,16 @@
 import axios from 'axios'
+import Server from './server'
+import Cookies from 'js-cookie'
 import { LoadingBar, Message } from 'iview'
 
 let fileName = ''
-
-function getToken () {
-  let temp = document.cookie.match(new RegExp('(^| )token=([^;]*)(;|$)'))
-  if (temp) return unescape(temp[2])
-}
 
 let instance = axios.create({
   baseURL: '/',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': getToken()
+    'Authorization': Cookies.get('token')
   },
   withCredentials: true,
   loading: false,
@@ -21,12 +18,7 @@ let instance = axios.create({
   responseType: 'arraybuffer' // 'application/json'
 })
 
-switch (process.env.NODE_ENV) {
-  case 'development':
-    instance.defaults.baseURL = 'http://192.168.1.49:5656/dolphin-web/'; break
-  case 'production':
-    instance.defaults.baseURL = '//192.168.1.49:5656/dolphin-web/'; break
-}
+instance.defaults.baseURL = Server.defaults.baseURL
 
 // POST传参序列化
 instance.interceptors.request.use((config) => {

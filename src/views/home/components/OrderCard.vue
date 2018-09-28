@@ -18,7 +18,7 @@
     </div>
     <div class="ivu-card-body tms-home__card-body">
       <CellGroup>
-        <Cell v-for="(item, index) in data" :key="index" :title="item.name" :extra="item.value.toString()">
+        <Cell v-for="(item, index) in data" :key="index" :title="item.name" :extra="item.value.toString()" :to="item.url">
           <Icon slot="icon" :color="theme" type="ios-play"></Icon>
         </Cell>
       </CellGroup>
@@ -27,12 +27,11 @@
 </template>
 
 <script>
-import mixin from './mixin.js'
 export default {
-  mixins: [mixin],
   props: {
     title: String,
     label: String,
+    to: String,
     extra: [String, Number],
     range: {
       type: Array,

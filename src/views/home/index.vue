@@ -70,7 +70,9 @@
 </template>
 
 <script>
+
 import { mapGetters } from 'vuex'
+import server from '@/libs/js/server'
 import BMap from 'BMap'
 import OrderCard from './components/OrderCard.vue'
 import BlankCard from './components/BlankCard.vue'
@@ -85,6 +87,7 @@ import TransferTodo from './plugins/transfer-todo.vue'
 import MessageCenter from './plugins/message-center.vue'
 
 import CreateOrderStatis from './plugins/create-order-statis.vue'
+import { eventHub } from './plugins/mixin.js'
 export default {
   name: 'index',
   meteInfo: { title: '首页' },
@@ -101,6 +104,8 @@ export default {
   mixins: [BasePage],
   data () {
     return {
+      // eventHub: new Vue(),
+      permission: []
     }
   },
   computed: {
@@ -123,6 +128,7 @@ export default {
   },
   mounted () {
     console.log('user', this.UserInfo)
+    // const vm = this
     this.$nextTick(() => {
       const bmap = new BMap.Map(this.$refs.positionMap)
       const point = new BMap.Point(118.787842, 32.026739)
@@ -135,6 +141,13 @@ export default {
       bmap.addOverlay(markerOverlay)
 
       this.$refs.positionMap.style.top = '-4px'
+    })
+    server({
+      url: 'home/plugin/user',
+      method: 'get'
+    }).then(response => {
+      console.log('permision', response)
+      eventHub.$emit('plugin.pickup-todo', 'pickup')
     })
   },
   methods: {

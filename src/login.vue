@@ -100,7 +100,7 @@ export default {
 
     &-bg
       background url("./assets/bg-tms-login.png") no-repeat
-      background-size 105%
+      background-size cover
       background-position center center
 
 </style>
