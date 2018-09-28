@@ -61,7 +61,7 @@ import PageTable from '@/components/page-table/index'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import server from '@/libs/js/server'
-
+import jsCookie from 'js-cookie'
 /**
  * 批量导入
  * 1.文件类型
@@ -133,13 +133,15 @@ export default {
                 },
                 on: {
                   click: () => {
-                    vm.openTab({
-                      title: '订单管理',
-                      path: '/order-management/order',
-                      query: {
-                        id: params.row.id
-                      }
-                    })
+                  // vm.openTab({
+                  //   title: '订单管理',
+                  //   path: '/order-management/order',
+                  //   query: {
+                  //     id: params.row.id
+                  //   }
+                  // })
+                    jsCookie.set('imported_id', params.row.id, {expires: 1})
+                    vm.$router.push({path: '/order-management/order', query: {title: '订单管理'}})
                   }
                 }
               }, '查看导入订单'))
