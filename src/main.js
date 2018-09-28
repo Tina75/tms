@@ -10,7 +10,6 @@ import EmaProxy from 'ema-proxy'
 require('./libs/js/filter')
 require('./libs/js/date')
 require('./libs/css/iview.css')
-// require('./libs/css/ripple.css')
 
 Vue.config.productionTip = false
 
