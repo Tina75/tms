@@ -582,30 +582,17 @@ export default {
       this.$forceUpdate()
     },
 
-    // 打印查询详情
-    fetchDetail () {
-      let promises = this.tableSelection.map(item => {
-        return new Promise((resolve, reject) => {
-          Server({
-            url: '/waybill/print',
-            method: 'post',
-            data: { waybillId: item.waybillId }
-          }).then(res => {
-            resolve(res.data.data)
-          })
-        })
-      })
-      return Promise.all(promises)
-    },
-
     // 打印
     billPrint () {
       if (!this.checkTableSelection()) return
-      this.fetchDetail()
-        .then(data => {
-          this.printData = data
-          this.$refs.$printer.print()
-        })
+      Server({
+        url: '/waybill/batchPrint',
+        method: 'post',
+        data: { waybillIds: this.tableSelection.map(item => item.waybillId) }
+      }).then(res => {
+        this.printData = res.data.data
+        this.$refs.$printer.print()
+      })
     },
 
     // 删除
