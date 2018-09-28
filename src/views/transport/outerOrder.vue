@@ -309,7 +309,10 @@ export default {
         {
           title: '外转方运单号',
           key: 'outTransNo',
-          minWidth: 160
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.outTransNo ? p.row.outTransNo : '-')
+          }
         },
         {
           title: '外转方名称',
@@ -322,7 +325,11 @@ export default {
           ellipsis: true,
           minWidth: 160,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.start))
+            return h('Tooltip', {
+              props: {
+                content: this.cityFilter(p.row.start)
+              }
+            }, this.cityFilter(p.row.start))
           }
         },
         {
@@ -331,7 +338,11 @@ export default {
           ellipsis: true,
           minWidth: 160,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.end))
+            return h('Tooltip', {
+              props: {
+                content: this.cityFilter(p.row.end)
+              }
+            }, this.cityFilter(p.row.end))
           }
         },
         {
@@ -345,12 +356,18 @@ export default {
         {
           title: '体积（方）',
           key: 'volume',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            return h('span', p.row.volume ? p.row.volume : '-')
+          }
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            return h('span', p.row.weight ? p.row.weight : '-')
+          }
         },
         {
           title: '外转时间',
@@ -364,32 +381,50 @@ export default {
         {
           title: '客户订单号',
           key: 'customerOrderNo',
-          minWidth: 160
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.customerOrderNo ? p.row.customerOrderNo : '-')
+          }
         },
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 160
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.consignerName ? p.row.consignerName : '-')
+          }
         },
         {
           title: '发货人',
           key: 'consignerContact',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            return h('span', p.row.consignerContact ? p.row.consignerContact : '-')
+          }
         },
         {
           title: '发货人手机号码',
           key: 'consignerPhone',
-          minWidth: 140
+          minWidth: 140,
+          render: (h, p) => {
+            return h('span', p.row.consignerPhone ? p.row.consignerPhone : '-')
+          }
         },
         {
           title: '收货人',
           key: 'consigneeContact',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            return h('span', p.row.consigneeContact ? p.row.consigneeContact : '-')
+          }
         },
         {
           title: '收货人手机号码',
           key: 'consigneePhone',
-          minWidth: 140
+          minWidth: 140,
+          render: (h, p) => {
+            return h('span', p.row.consigneePhone ? p.row.consigneePhone : '-')
+          }
         },
         {
           title: '货值',
@@ -404,7 +439,7 @@ export default {
           key: 'payType',
           minWidth: 100,
           render: (h, p) => {
-            let type = ''
+            let type = '-'
             switch (p.row.payType) {
               case 1:
                 type = '现付'
@@ -442,12 +477,18 @@ export default {
         {
           title: '回单数',
           key: 'receiptCount',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            return h('span', p.row.receiptCount ? p.row.receiptCount : '-')
+          }
         },
         {
           title: '制单人',
           key: 'createOperator',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            return h('span', p.row.createOperator ? p.row.createOperator : '-')
+          }
         }
       ],
 

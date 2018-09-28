@@ -50,7 +50,7 @@ export default {
 <style lang="stylus" scoped>
   .icon
     color #FFFFFF
-    font-size 50px
+    font-size 40px
 
   .login
     position relative

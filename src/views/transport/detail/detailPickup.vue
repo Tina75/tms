@@ -404,55 +404,82 @@ export default {
         {
           title: '货物名称',
           key: 'cargoName',
-          minWidth: 160
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.cargoName ? p.row.cargoName : '-')
+          }
         },
         {
           title: '包装',
           key: 'packing',
-          width: 80
+          width: 80,
+          render: (h, p) => {
+            return h('span', p.row.packing ? p.row.packing : '-')
+          }
         },
         {
           title: '数量',
           key: 'quantity',
-          width: 80
+          width: 80,
+          render: (h, p) => {
+            return h('span', p.row.quantity ? p.row.quantity : '-')
+          }
         },
         {
           title: '货值(元)',
           key: 'cargoCost',
           width: 100,
           render: (h, p) => {
-            return h('span', p.row.cargoCost / 100)
+            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : '-')
           }
         },
         {
           title: '重量(吨)',
           key: 'weight',
-          width: 100
+          width: 100,
+          render: (h, p) => {
+            return h('span', p.row.weight ? p.row.weight : '-')
+          }
         },
         {
           title: '体积(方)',
           key: 'volume',
-          width: 100
+          width: 100,
+          render: (h, p) => {
+            return h('span', p.row.volume ? p.row.volume : '-')
+          }
         },
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 160
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.consignerName ? p.row.consignerName : '-')
+          }
         },
         {
           title: '提货联系人',
           key: 'consigneeContact',
-          minWidth: 120
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', p.row.consigneeContact ? p.row.consigneeContact : '-')
+          }
         },
         {
           title: '联系电话',
           key: 'consigneePhone',
-          minWidth: 120
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', p.row.cargoName ? p.row.cargoName : '-')
+          }
         },
         {
           title: '提货地址',
           key: 'consigneeAddress',
-          minWidth: 200
+          minWidth: 200,
+          render: (h, p) => {
+            return h('span', p.row.cargoName ? p.row.cargoName : '-')
+          }
         }
       ]
     }

@@ -39,8 +39,8 @@
             <Input v-model="form.confirmPassword" :maxlength="16" type="password" placeholder="确认密码" />
           </FormItem>
 
-          <FormItem>
-            <Button class="form-button" type="primary" long @click="handleSubmit">确定</Button>
+          <FormItem class="form-button">
+            <Button type="primary" long @click="handleSubmit">确定</Button>
           </FormItem>
         </Form>
       </div>

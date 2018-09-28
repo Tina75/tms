@@ -35,8 +35,8 @@
               </div>
             </FormItem>
 
-            <FormItem>
-              <Button class="form-button" type="primary" long @click="login">登录</Button>
+            <FormItem class="form-button">
+              <Button type="primary" long @click="login">登录</Button>
 
               <ul class="form-action">
                 <li class="form-action-item">
@@ -108,7 +108,7 @@ export default {
   methods: {
     // 输入框聚焦改变图标颜色
     inputIconColor (type) {
-      return { color: this.currentFocus === type ? '#00A4BD' : '#9DA1B0' }
+      return { color: this.currentFocus === type ? '#00A4BD' : '#C9CED9' }
     },
 
     // 输入框聚焦
@@ -163,7 +163,7 @@ export default {
           else window.localStorage.removeItem('local_rememberd_pw')
           window.localStorage.setItem('tms_is_login', true)
           this.setToken(res.data.data.token)
-          window.sessionStorage.setItem('first_time_login', !!res.data.data.notice)
+          window.sessionStorage.setItem('first_time_login', !res.data.data.lastLoginTime)
           location.reload()
         }).catch(err => {
           this.getCaptcha()
@@ -182,6 +182,7 @@ export default {
     display flex
     align-items center
     justify-content center
+    margin-right 11vw
 
     // &:before, &:after
     //   content ""
@@ -206,7 +207,7 @@ export default {
     display block
     position relative
     width 48vw
-    margin-right 107px
+    margin-right 4vw
     z-index 1
 
   .form-body

@@ -32,7 +32,11 @@ export default {
           minWidth: 80,
           ellipsis: true,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.start))
+            return h('Tooltip', {
+              props: {
+                content: this.cityFilter(p.row.start)
+              }
+            }, this.cityFilter(p.row.start))
           }
         },
         // {
@@ -51,23 +55,36 @@ export default {
           minWidth: 80,
           ellipsis: true,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.end))
+            return h('Tooltip', {
+              props: {
+                content: this.cityFilter(p.row.end)
+              }
+            }, this.cityFilter(p.row.end))
           }
         },
         {
           title: '订单数',
           key: 'ordreNum',
-          minWidth: 80
+          minWidth: 80,
+          render: (h, p) => {
+            return h('span', p.row.ordreNum ? p.row.ordreNum : '-')
+          }
         },
         {
           title: '体积(方)',
           key: 'volume',
-          minWidth: 80
+          minWidth: 80,
+          render: (h, p) => {
+            return h('span', p.row.volume ? p.row.volume : '-')
+          }
         },
         {
           title: '重量(吨)',
           key: 'weight',
-          minWidth: 80
+          minWidth: 80,
+          render: (h, p) => {
+            return h('span', p.row.weight ? p.row.weight : '-')
+          }
         }
       ],
 
@@ -78,13 +95,13 @@ export default {
       expandTableTypeOne: [
         {
           type: 'selection',
-          width: 50
-          // fixed: 'left'
+          width: 50,
+          fixed: 'left'
         },
         {
           title: '订单号',
           key: 'orderNo',
-          // fixed: 'left',
+          fixed: 'left',
           minWidth: 160,
           render: (h, p) => {
             return h('a', {
@@ -109,32 +126,40 @@ export default {
         {
           title: '客户名称',
           key: 'consignerName',
-          ellipsis: true,
-          minWidth: 160
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.consignerName ? p.row.consignerName : '-')
+          }
         },
         {
           title: '体积（方）',
           key: 'volume',
-          minWidth: 120
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', p.row.volume ? p.row.volume : '-')
+          }
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          minWidth: 120
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', p.row.weight ? p.row.weight : '-')
+          }
         }
       ],
       // 展开表格类型2 订单号 客户名称 始发地 目的地 体积
       expandTableTypeTwo: [
         {
           type: 'selection',
-          width: 50
-          // fixed: 'left'
+          width: 50,
+          fixed: 'left'
         },
         {
           title: '订单号',
           key: 'orderNo',
           minWidth: 160,
-          // fixed: 'left',
+          fixed: 'left',
           render: (h, p) => {
             return h('a', {
               style: {
@@ -158,8 +183,10 @@ export default {
         {
           title: '客户名称',
           key: 'consignerName',
-          ellipsis: true,
-          minWidth: 160
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.consignerName ? p.row.consignerName : '-')
+          }
         },
         {
           title: '始发地',
@@ -167,7 +194,11 @@ export default {
           minWidth: 160,
           ellipsis: true,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.start))
+            return h('Tooltip', {
+              props: {
+                content: this.cityFilter(p.row.start)
+              }
+            }, this.cityFilter(p.row.start))
           }
         },
         {
@@ -176,18 +207,28 @@ export default {
           minWidth: 160,
           ellipsis: true,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.end))
+            return h('Tooltip', {
+              props: {
+                content: this.cityFilter(p.row.end)
+              }
+            }, this.cityFilter(p.row.end))
           }
         },
         {
           title: '体积（方）',
           key: 'volume',
-          minWidth: 120
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', p.row.volume ? p.row.volume : '-')
+          }
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          minWidth: 120
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', p.row.weight ? p.row.weight : '-')
+          }
         }
       ],
 
@@ -271,7 +312,8 @@ export default {
 
     // 格式化城市
     cityFilter (code) {
-      return City.codeToFullName(code, 3, '')
+      if (!code) return '-'
+      return Array.from(new Set(City.codeToFullName(code, 3, '-').split('-'))).join('')
     },
 
     /** 数据操作 */

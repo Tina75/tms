@@ -34,6 +34,7 @@ import BlankCard from '../components/BlankCard.vue'
 import FontIcon from '@/components/FontIcon'
 import mixin from './mixin.js'
 export default {
+  name: 'message-center',
   components: {
     BlankCard,
     FontIcon
@@ -47,11 +48,6 @@ export default {
         {title: '订单快到啦', url: '/info/info', createTime: '2018-8-8', type: 2}
       ]
     }
-  },
-  created () {
-    this.eventHub.$on('plugin.message-center', () => {
-      console.log('receive message')
-    })
   },
   methods: {
     getIcon (type) {

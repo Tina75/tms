@@ -60,8 +60,12 @@ export default {
       await this.getPermissons()
       this.initTabNav()
       this.toHome()
-      this.getUserInfo()
+      await this.getUserInfo()
       this.loopMessage()
+      if (sessionStorage.getItem('first_time_login') === 'true') {
+        if (this.UserInfo.roleName === '超级管理员') this.renew()
+        else this.changePasswordTip()
+      }
     },
     loopMessage () {
       setInterval(() => {
@@ -109,6 +113,27 @@ export default {
       }
     },
 
+    renew () {
+      window.EMA.fire('Dialogs.push', {
+        name: 'dialogs/renew',
+        data: {
+          title: '提示',
+          expirationTime: this.UserInfo.expirationTime
+        }
+      })
+    },
+
+    changePasswordTip () {
+      this.$Modal.confirm({
+        title: '提示',
+        content: '<p>您的密码为初始密码，为确保账户安全，请及时修改密码</p>',
+        okText: '立即修改',
+        cancelText: '我知道了',
+        onOk: () => {
+          window.EMA.fire('openTab', {path: '/set-up/set-up', query: {title: '设置'}})
+        }
+      })
+    },
     /**
      * @description 关闭tab标签时调用
      * @param {*} list 关闭后的tab页list
