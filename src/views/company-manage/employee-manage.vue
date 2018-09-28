@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="temAll">
     <Col span="4">
     <Menu :active-name="menuInitName" class="leftMenu" style="width:100%">
       <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:50px;">
@@ -366,52 +366,55 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
-.leftMenu
-  min-height: 600px;
-.menu:hover
-  .configBtnItem
-    display: block
-  .menuTitle
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 120px;
-.rightTitle
-  font-size: 20px;
-  color: #333333;
-  line-height: 45px;
-  padding: 0 20px 0 10px;
-.divTree
-  clear: both;
-  .cardTreeItem
-    width: 270px;
-    height: 400px;
-    float: left;
-    margin: 5px;
-    .treeContentDiv
-      width: 252px;
-      height: 330px;
-      margin-top: -15px;
-      overflow-y:auto;
-      overflow-x:auto;
-.saveRoleBtn
-  float: right;
-  margin-right: 120px;
-  margin-top: -35px;
-.centerBtn
-  position: absolute;
-  left: 50%;
-  margin-left: -75px;
-  width:150px;
-  height:35px;
-  background:rgba(0,164,189,1);
-  border-radius:2px;
-.configBtnItem
+.temAll
+  width: 100%
+  overflow: auto;
+  .leftMenu
+    min-height: 600px;
+  .menu:hover
+    .configBtnItem
+      display: block
+    .menuTitle
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 120px;
+  .rightTitle
+    font-size: 20px;
+    color: #333333;
+    line-height: 45px;
+    padding: 0 20px 0 10px;
+  .divTree
+    clear: both;
+    .cardTreeItem
+      width: 270px;
+      height: 400px;
+      float: left;
+      margin: 5px;
+      .treeContentDiv
+        width: 252px;
+        height: 330px;
+        margin-top: -15px;
+        overflow-y:auto;
+        overflow-x:auto;
+  .saveRoleBtn
     float: right;
-    margin-top: -20px;
-    display: none;
-  .configBtn
-    color: #00A4BD;
-    font-size: 12px;
-    margin-left: 10px;
+    margin-right: 120px;
+    margin-top: -35px;
+  .centerBtn
+    position: absolute;
+    left: 50%;
+    margin-left: -75px;
+    width:150px;
+    height:35px;
+    background:rgba(0,164,189,1);
+    border-radius:2px;
+  .configBtnItem
+      float: right;
+      margin-top: -20px;
+      display: none;
+    .configBtn
+      color: #00A4BD;
+      font-size: 12px;
+      margin-left: 10px;
 </style>

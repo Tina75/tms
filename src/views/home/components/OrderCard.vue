@@ -18,7 +18,7 @@
     </div>
     <div class="ivu-card-body tms-home__card-body">
       <CellGroup>
-        <Cell v-for="item in data" :key="item.value" :title="item.name" :extra="item.value">
+        <Cell v-for="(item, index) in data" :key="index" :title="item.name" :extra="item.value.toString()" :to="item.url">
           <Icon slot="icon" :color="theme" type="ios-play"></Icon>
         </Cell>
       </CellGroup>
@@ -31,6 +31,7 @@ export default {
   props: {
     title: String,
     label: String,
+    to: String,
     extra: [String, Number],
     range: {
       type: Array,

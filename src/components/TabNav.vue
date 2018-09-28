@@ -24,7 +24,7 @@
             v-for="(item,index) in list"
             ref="tagsPageOpened"
             :key="`tag-nav-${index}`"
-            :name="item.query.title?item.query.title:'xxx'"
+            :name="item.query.title?item.query.title:'null'"
             :checked="item.query.title === value.query.title"
             @on-close="handleClose(item)"
             @on-refresh="handleRefresh(item)"
@@ -175,7 +175,8 @@ export default {
     bottom 0
     // box-shadow 0px 0 3px 2px rgba(100,100,100,.1) inset
     .scroll-body
-      height calc(100% - 1px)
+      // height calc(100% - 1px)
+      height 100%
       display inline-block
       // padding 1px 4px 0
       position absolute

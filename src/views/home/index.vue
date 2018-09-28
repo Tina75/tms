@@ -17,61 +17,11 @@
 
     </div>
     <Row gutter="16">
-      <Col span="6" class="i-mt-15">
-      <OrderCard
-        :data="loadBills"
-        :range="['#418DF9','#76E7FD']"
-        theme="#418DF9"
-        title="提货待办"
-        label="提示文字"
-        extra="123"
-      >
-      </OrderCard>
-      </Col>
-      <Col span="6" class="i-mt-15">
-      <OrderCard
-        :data="wayBills"
-        :range="['#FFBB44','#FFB897']"
-        theme="#FFBB44"
-        title="送货待办"
-        label="提示文字"
-        extra="456"
-      >
-      </OrderCard>
-      </Col>
-      <Col span="6" class="i-mt-15">
-      <OrderCard
-        :data="outsideBills"
-        :range="['#00A4BD','#00E0CD']"
-        theme="#00A4BD"
-        title="外转待办"
-        label="提示文字"
-        extra="789"
-      >
-      </OrderCard>
-      </Col>
-      <Col span="6" class="i-mt-15">
-      <BlankCard>
-        <div slot="title">消息中心</div>
-        <div slot="extra">...</div>
-        <CellGroup>
-          <Cell title="系统升级提示" label="2018-9-12" class="page-home__message-item">
-            <Icon slot="icon" type="md-chatboxes">
-            </Icon>
-          </Cell>
-          <Cell title="系统升级提示" label="2018-9-12" class="page-home__message-item">
-            <Icon slot="icon" type="md-chatboxes">
-            </Icon>
-          </Cell>
-        </cell></CellGroup>
-      </BlankCard>
-      </Col>
-      <Col span="6" class="i-mt-15">
-      <BlankCard>
-        <div slot="title">今日订单数</div>
-        <div slot="extra">...</div>
-      </BlankCard>
-      </Col>
+      <PickupTodo />
+      <DeliveryTodo />
+      <TransferTodo />
+      <MessageCenter />
+      <CreateOrderStatis />
       <Col span="6" class="i-mt-15">
       <BlankCard>
         <div slot="title">新增客户数</div>
@@ -120,42 +70,42 @@
 </template>
 
 <script>
+
 import { mapGetters } from 'vuex'
+import server from '@/libs/js/server'
 import BMap from 'BMap'
-import OrderCard from './OrderCard.vue'
-import BlankCard from './BlankCard.vue'
+import OrderCard from './components/OrderCard.vue'
+import BlankCard from './components/BlankCard.vue'
 import BasePage from '@/basic/BasePage'
 import FontIcon from '@/components/FontIcon'
 
 import MarkerOverlay from './libs/MarkerOverlay.js'
 import LabelOverlay from './libs/LabelOverlay.js'
+import PickupTodo from './plugins/pickup-todo.vue'
+import DeliveryTodo from './plugins/delivery-todo.vue'
+import TransferTodo from './plugins/transfer-todo.vue'
+import MessageCenter from './plugins/message-center.vue'
+
+import CreateOrderStatis from './plugins/create-order-statis.vue'
+import { eventHub } from './plugins/mixin.js'
 export default {
   name: 'index',
   meteInfo: { title: '首页' },
   components: {
     OrderCard,
     FontIcon,
-    BlankCard
+    BlankCard,
+    PickupTodo,
+    DeliveryTodo,
+    TransferTodo,
+    MessageCenter,
+    CreateOrderStatis
   },
   mixins: [BasePage],
   data () {
     return {
-      loadBills: [
-        {name: '待提货调度订单数量', value: '12'},
-        {name: '待提货提货订单数量', value: '32'},
-        {name: '运输中订单数量', value: '42'}
-      ],
-      wayBills: [
-        {name: '待送货调度订单数量', value: '12'},
-        {name: '待送派车订单数量', value: '32'},
-        {name: '待发运订单数量', value: '412'},
-        {name: '运输中订单数量', value: '42'}
-      ],
-      outsideBills: [
-        {name: '待提货调度订单数量', value: '12'},
-        {name: '待提货提货订单数量', value: '32'},
-        {name: '运输中订单数量', value: '42'}
-      ]
+      // eventHub: new Vue(),
+      permission: []
     }
   },
   computed: {
@@ -178,6 +128,7 @@ export default {
   },
   mounted () {
     console.log('user', this.UserInfo)
+    // const vm = this
     this.$nextTick(() => {
       const bmap = new BMap.Map(this.$refs.positionMap)
       const point = new BMap.Point(118.787842, 32.026739)
@@ -191,6 +142,13 @@ export default {
 
       this.$refs.positionMap.style.top = '-4px'
     })
+    server({
+      url: 'home/plugin/user',
+      method: 'get'
+    }).then(response => {
+      console.log('permision', response)
+      eventHub.$emit('plugin.pickup-todo', 'pickup')
+    })
   },
   methods: {
     getGreetings () {
@@ -202,6 +160,9 @@ export default {
 </script>
 <style lang="stylus">
 .page-home
+  &__padding-8
+    padding-left 8px
+    padding-right 8px
   &__header
     position relative
   &__setting-icon
@@ -211,4 +172,5 @@ export default {
     margin-bottom 8px
 .anchorBL
   display none
+
 </style>

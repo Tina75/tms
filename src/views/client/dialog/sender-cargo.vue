@@ -93,9 +93,9 @@ export default {
         consignerId: this.consignerId,
         cargoName: this.validate.cargoName,
         unit: this.validate.unit,
-        cargoCost: Math.floor(this.validate.cargoCost * 100) / 100,
-        weight: Math.floor(this.validate.weight * 100) / 100,
-        volume: Math.floor(this.validate.volume * 10) / 10,
+        cargoCost: parseFloat(this.validate.cargoCost) * 100, // *100传给后端
+        weight: parseFloat(this.validate.weight),
+        volume: parseFloat(this.validate.volume),
         remark1: this.validate.remark1,
         remark2: this.validate.remark2
       }
@@ -112,9 +112,9 @@ export default {
         id: this.id,
         cargoName: this.validate.cargoName,
         unit: this.validate.unit,
-        cargoCost: Math.floor(this.validate.cargoCost * 100) / 100,
-        weight: Math.floor(this.validate.weight * 100) / 100,
-        volume: Math.floor(this.validate.volume * 10) / 10,
+        cargoCost: parseFloat(this.validate.cargoCost) * 100,
+        weight: parseFloat(this.validate.weight),
+        volume: parseFloat(this.validate.volume),
         remark1: this.validate.remark1,
         remark2: this.validate.remark2
       }

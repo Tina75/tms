@@ -118,6 +118,7 @@
                @on-column-change="tableColumnsChanged"
                @on-selection-change="selectionChanged"
                @on-sort-change="tableSort"
+               @on-page-size-change="pageSizeChange"
                @on-load="dataOnload"></PageTable>
 
     <PrintPickup ref="$printer" :data="printData" />
@@ -382,7 +383,7 @@ export default {
         {
           title: '司机手机号码',
           key: 'driverPhone',
-          minWidth: 160
+          minWidth: 120
         },
         {
           title: '车型',
@@ -517,30 +518,17 @@ export default {
       this.$forceUpdate()
     },
 
-    // 打印查询详情
-    fetchDetail () {
-      let promises = this.tableSelection.map(item => {
-        return new Promise((resolve, reject) => {
-          Server({
-            url: '/load/bill/print',
-            method: 'post',
-            data: { pickUpId: item.pickUpId }
-          }).then(res => {
-            resolve(res.data.data)
-          })
-        })
-      })
-      return Promise.all(promises)
-    },
-
     // 打印
     billPrint () {
       if (!this.checkTableSelection()) return
-      this.fetchDetail()
-        .then(data => {
-          this.printData = data
-          this.$refs.$printer.print()
-        })
+      Server({
+        url: '/load/bill/batchPrint',
+        method: 'post',
+        data: { pickUpIds: this.tableSelection.map(item => item.pickUpId) }
+      }).then(res => {
+        this.printData = res.data.data
+        this.$refs.$printer.print()
+      })
     },
 
     // 导出
@@ -559,9 +547,7 @@ export default {
         method: 'post',
         data,
         fileName: '提货单明细'
-      }).then(res => {
-        this.$Message.success('导出成功')
-      }).catch(err => console.error(err))
+      })
     },
 
     // 位置

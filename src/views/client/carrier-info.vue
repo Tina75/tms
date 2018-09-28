@@ -418,30 +418,6 @@ export default {
           title: '车型',
           key: 'carType',
           render: (h, params) => {
-            // let text = ''
-            // if (params.row.carType === 1) {
-            //   text = '平板'
-            // } else if (params.row.carType === 2) {
-            //   text = '高栏'
-            // } else if (params.row.carType === 3) {
-            //   text = '厢车'
-            // } else if (params.row.carType === 4) {
-            //   text = '自卸'
-            // } else if (params.row.carType === 5) {
-            //   text = '冷藏'
-            // } else if (params.row.carType === 6) {
-            //   text = '保温'
-            // } else if (params.row.carType === 7) {
-            //   text = '高低板'
-            // } else if (params.row.carType === 8) {
-            //   text = '面包车'
-            // } else if (params.row.carType === 9) {
-            //   text = '爬梯车'
-            // } else if (params.row.carType === 10) {
-            //   text = '飞翼车'
-            // } else {
-            //   text = ''
-            // }
             let text = params.row.carType ? (this.carLengthMap[params.row.carLength] + this.carTypeMap[params.row.carType]) : ''
             return h('div', {}, text)
           }

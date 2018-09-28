@@ -852,10 +852,13 @@ export default {
               vm.disabled = false
               reject(new Error(findError.message))
             }
+            // 始发地遇到北京市等特殊直辖市，需要只保留第一级code
+            let start = specialCity.includes(orderForm.start[0]) && orderForm.start.length === 2 ? orderForm.start[0] : orderForm.start[orderForm.start.length - 1]
+            let end = specialCity.includes(orderForm.end[0]) && orderForm.end.length === 2 ? orderForm.end[0] : orderForm.end[orderForm.end.length - 1]
             // 始发城市，目的城市，到达时间等需要额外处理
             let form = Object.assign({}, orderForm, {
-              start: orderForm.start[orderForm.start.length - 1],
-              end: orderForm.end[orderForm.end.length - 1],
+              start: start,
+              end: end,
               arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
               deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
               orderCargoList: orderCargoList.map(cargo => cargo.toJson())

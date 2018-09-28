@@ -111,6 +111,7 @@
                @on-column-change="tableColumnsChanged"
                @on-selection-change="selectionChanged"
                @on-sort-change="tableSort"
+               @on-page-size-change="pageSizeChange"
                @on-load="dataOnload"></PageTable>
 
   </div>
@@ -336,7 +337,10 @@ export default {
         {
           title: '外转运费',
           key: 'transFee',
-          minWidth: 120
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : p.row.cargoCost)
+          }
         },
         {
           title: '体积（方）',
@@ -375,7 +379,7 @@ export default {
         {
           title: '发货人手机号码',
           key: 'consignerPhone',
-          minWidth: 160
+          minWidth: 140
         },
         {
           title: '收货人',
@@ -385,17 +389,39 @@ export default {
         {
           title: '收货人手机号码',
           key: 'consigneePhone',
-          minWidth: 160
+          minWidth: 140
         },
         {
           title: '货值',
           key: 'cargoCost',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : p.row.cargoCost)
+          }
         },
         {
           title: '结算方式',
           key: 'payType',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, p) => {
+            let type = ''
+            switch (p.row.payType) {
+              case 1:
+                type = '现付'
+                break
+              case 2:
+                type = '到付'
+                break
+              case 3:
+                type = '回单付'
+                break
+              case 4:
+                type = '月结'
+                break
+              default: break
+            }
+            return h('span', type)
+          }
         },
         {
           title: '要求装货时间',
@@ -415,7 +441,7 @@ export default {
         },
         {
           title: '回单数',
-          key: 'backbillCnt',
+          key: 'receiptCount',
           minWidth: 100
         },
         {
@@ -548,7 +574,7 @@ export default {
         },
         {
           title: '回单数',
-          key: 'backbillCnt',
+          key: 'receiptCount',
           fixed: false,
           visible: false
         },
@@ -737,9 +763,7 @@ export default {
         method: 'post',
         data,
         fileName: '外转单明细'
-      }).then(res => {
-        this.$Message.success('导出成功')
-      }).catch(err => console.error(err))
+      })
     }
   }
 }

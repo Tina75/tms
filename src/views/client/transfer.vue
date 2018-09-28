@@ -15,7 +15,7 @@
     </div>
     <div>
       <template>
-        <Table :columns="columns1" :data="data1"></Table>
+        <Table :columns="columns1" :data="data1" @on-sort-change = "timeSort"></Table>
       </template>
     </div>
     <div class="footer">
@@ -54,6 +54,7 @@ export default {
         }
       ],
       keyword: '',
+      order: null,
       totalCount: 0, // 总条数
       pageArray: [10, 20, 50, 100],
       pageNo: 1,
@@ -169,7 +170,7 @@ export default {
         {
           title: '创建时间',
           key: 'createTime',
-          sortable: true,
+          sortable: 'custom',
           render: (h, params) => {
             let text = this.formatDate(params.row.createTime)
             return h('div', { props: {} }, text)
@@ -183,15 +184,13 @@ export default {
     this.searchList()
   },
   methods: {
-    formatDate (value, format) {
-      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
-    },
     searchList () {
       let data = {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
         type: this.selectStatus,
-        keyword: this.keyword
+        keyword: this.keyword,
+        order: this.order
       }
       transfereeList(data).then(res => {
         this.data1 = res.data.data.transfereeList
@@ -221,6 +220,26 @@ export default {
     handleChangePageSize (pageSize) {
       this.pageSize = pageSize
       this.searchList()
+    },
+    timeSort (column) {
+      let str = ''
+      if (column.key === 'createTime') { // 为之后预留更新时间排序
+        str += 'create_time,'
+      } else {
+        str += 'update_time,,'
+      }
+      if (column.order === 'asc') {
+        str += 'asc'
+      } else if (column.order === 'desc') {
+        str += 'desc'
+      } else {
+        str = null
+      }
+      this.order = str
+      this.searchList()
+    },
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     }
   }
 }

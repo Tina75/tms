@@ -9,7 +9,7 @@
           <Input v-model="formModal.name" placeholder="请输入员工姓名"></Input>
         </FormItem>
         <FormItem label="手机号：" prop="phone">
-          <Input v-model="formModal.phone" placeholder="请输入员工姓名"></Input>
+          <Input v-model="formModal.phone" placeholder="请输入手机号"></Input>
         </FormItem>
         <FormItem label="角色：" prop="roleId">
           <Select v-model="formModal.roleId" clearable>

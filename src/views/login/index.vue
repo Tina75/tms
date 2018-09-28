@@ -3,7 +3,7 @@
     <img class="login-img" src="@/assets/img-tms-login.png"></img>
     <div class="form-body" @keydown.enter="login">
       <Card :bordered="false">
-        <div class="form-title">智加云账号登录</div>
+        <div class="form-title">运掌柜账号登录</div>
         <div class="form-content">
           <Form ref="loginForm" :model="form">
 
@@ -69,7 +69,7 @@ export default {
   name: 'SignIn',
   mixins: [ mixin ],
   metaInfo: {
-    title: '智加云账号登录'
+    title: '运掌柜账号登录'
   },
   data () {
     return {
@@ -143,6 +143,7 @@ export default {
         else window.localStorage.removeItem('local_rememberd_pw')
         window.localStorage.setItem('tms_is_login', true)
         this.setToken(res.data.data.token)
+        window.sessionStorage.setItem('first_time_login', !!res.data.data.notice)
         location.reload()
       }).catch(err => {
         this.getCaptcha()
