@@ -100,7 +100,7 @@
           </p>
         </div>
       </Card>
-      <Button type="primary" class="msgSaveBtn" @click="msgSaveBtn">保存</Button>
+      <Button type="primary" class="msgSaveBtn test111" @click="msgSaveBtn">保存1</Button>
       </Col>
     </div>
     <!--公司设置-->

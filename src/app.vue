@@ -130,7 +130,7 @@ export default {
         okText: '立即修改',
         cancelText: '我知道了',
         onOk: () => {
-
+          window.EMA.fire('openTab', {path: '/set-up/set-up', query: {title: '设置'}})
         }
       })
     },
