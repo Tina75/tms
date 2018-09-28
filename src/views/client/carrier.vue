@@ -37,7 +37,7 @@ import BasePage from '@/basic/BasePage'
 export default {
   name: 'carrier',
   metaInfo: {
-    title: '智加云承运商列表'
+    title: '运掌柜承运商列表'
   },
   mixins: [ BasePage ],
   data () {

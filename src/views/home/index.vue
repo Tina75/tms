@@ -122,8 +122,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import BMap from 'BMap'
-import OrderCard from './OrderCard.vue'
-import BlankCard from './BlankCard.vue'
+import OrderCard from './components/OrderCard.vue'
+import BlankCard from './components/BlankCard.vue'
 import BasePage from '@/basic/BasePage'
 import FontIcon from '@/components/FontIcon'
 
