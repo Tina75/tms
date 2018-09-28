@@ -118,6 +118,7 @@
                @on-column-change="tableColumnsChanged"
                @on-selection-change="selectionChanged"
                @on-sort-change="tableSort"
+               @on-page-size-change="pageSizeChange"
                @on-load="dataOnload"></PageTable>
 
     <PrintPickup ref="$printer" :data="printData" />
