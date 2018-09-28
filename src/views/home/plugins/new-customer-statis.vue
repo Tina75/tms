@@ -51,7 +51,7 @@ export default {
         },
         series: [
           {
-            name: '今日订单数',
+            name: '今日新增顾客数',
             type: 'pie',
             radius: ['42%', '62%'],
             avoidLabelOverlap: true,
@@ -83,7 +83,7 @@ export default {
   methods: {
     load () {
       const vm = this
-      this.fetch('home/open/order/statistics')
+      this.fetch('home/new/customer/cnt')
         .then((response) => {
           vm.options = response.data
         })

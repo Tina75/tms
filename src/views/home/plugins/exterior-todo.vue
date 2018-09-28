@@ -41,7 +41,7 @@ export default {
   methods: {
     load () {
       const vm = this
-      this.fetch('home/pickup/todo')
+      this.fetch('home/trans/todo')
         .then((response) => {
           const data = response.data
           vm.data.forEach((item) => {

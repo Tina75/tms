@@ -25,7 +25,7 @@ export default {
   data () {
     return {
       data: [
-        { id: 'waitPickOrderCnt', name: '发货方待对账订单', value: 0 },
+        { id: 'waitPickOrderCnt', name: '发货方待对账订单', value: 50 },
         { id: 'waitPickCnt', name: '发货方待核销订单', value: 0 }
       ]
     }
@@ -41,7 +41,7 @@ export default {
   methods: {
     load () {
       const vm = this
-      this.fetch('home/pickup/todo')
+      this.fetch('home/consigner/todo')
         .then((response) => {
           const data = response.data
           vm.data.forEach((item) => {
