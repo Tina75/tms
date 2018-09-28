@@ -116,7 +116,6 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: 120,
           render: (h, params) => {
             const actions = [
               h('a', {
@@ -242,7 +241,7 @@ export default {
         try {
           // this.visible = true
           // 生成随机文件名 Math.floor(Math.random() *10000)
-          let randomName = Date.now() + '.' + file.name.split('.').pop()
+          let randomName = file.name + new Date().Format('yyyyMMddhhmm') + '.' + file.name.split('.').pop()
           let result = await this.ossClient.multipartUpload(randomName, file, {
             partSize: 1024 * 1024, // 分片大小 ,1M
             progress: function (progress, pp) {

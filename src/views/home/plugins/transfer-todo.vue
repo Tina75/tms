@@ -2,10 +2,10 @@
   <div is="i-col" span="6" class="i-mt-15 page-home__padding-8">
     <OrderCard
       :data="data"
-      :range="['#418DF9','#76E7FD']"
       :extra="total"
-      theme="#418DF9"
-      title="提货待办"
+      :range="['#00A4BD','#00E0CD']"
+      theme="#00A4BD"
+      title="外转待办"
       label="提示文字"
     >
     </OrderCard>
@@ -14,14 +14,12 @@
 
 <script>
 /**
- * 提货待办
- * 1.待提货调度订单数量
- * 2.待提货提货订单数量
- * 3.运输中订单数量
+ * 外转待办
+ * 1.待发运的外转单数量
+ * 2.运输中外转单数量
  */
 import OrderCard from '../components/OrderCard.vue'
 import mixin from './mixin.js'
-
 export default {
   components: {
     OrderCard
@@ -30,9 +28,8 @@ export default {
   data () {
     return {
       data: [
-        { id: 'waitPickOrderCnt', name: '待提货调度订单数量', value: 0 },
-        { id: 'waitPickCnt', name: '待提货提货订单数量', value: 0 },
-        { id: 'inTransportCnt', name: '运输中订单数量', value: 0 }
+        {id: 'waitSendCarCnt', name: '待发运的外转单数量', value: 0},
+        {id: 'inTransportCnt', name: '运输中外转单数量', value: 0}
       ]
     }
   },
@@ -45,14 +42,14 @@ export default {
     }
   },
   created () {
-    this.eventHub.$on('plugin.pickup-todo', () => {
+    this.eventHub.$on('plugin.transfer-todo', () => {
       console.log('receive message')
     })
   },
   methods: {
     load () {
       const vm = this
-      this.fetch('home/pickup/todo')
+      this.fetch('home/trans/todo')
         .then((response) => {
           const data = response.data
           vm.data.forEach((item) => {
@@ -65,4 +62,5 @@ export default {
 </script>
 
 <style>
+
 </style>

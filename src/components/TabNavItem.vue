@@ -51,24 +51,24 @@ export default {
   position:absolute;
   -webkit-transform: rotate(-90deg);
   transform: rotate(-90deg);
-  left -4px
+  left -3px
   font-size 10px
-  bottom -12px
+  bottom -11px
 .icon-right
   color #EFEFEF
   position absolute
-  right -4px
+  right -3px
   font-size 10px
-  bottom -12px
+  bottom -11px
 .tab-item
   display inline-block
   color #EFEFEF
   max-width 120px
   min-width 80px
-  line-height 30px
+  line-height 32px
   // margin-right 6px
   padding 0 2px 0 5px
-  height 30px
+  height 32px
   border-radius 8px 8px 0px 0px
   background #3A424B
   cursor pointer
@@ -95,5 +95,6 @@ export default {
   &__checked
     background #EFEFEF
     color #00A4BD
-    shape-outside circle()
+    border-sizing content-box
+    border-bottom 1px solid #efefef
 </style>

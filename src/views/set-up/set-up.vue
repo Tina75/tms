@@ -227,8 +227,8 @@ export default {
     }
     var checkPhone = function (rule, value, callback) {
       if (value) {
-        if (!(/^1\d{10}$/.test(value))) {
-          return callback(new Error('手机号格式不正确'))
+        if (!(/^1\d{10}$/.test(value) || /^0\d{2,3}-?\d{7,8}$/.test(value))) {
+          return callback(new Error('联系方式格式不正确'))
         }
         callback()
       } else {
@@ -425,6 +425,10 @@ export default {
     pwdSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          if (this.formPwd.oldPassword === this.formPwd.password) {
+            this.$Message.info('您还未变更任何信息，无需保存')
+            return
+          }
           Server({
             url: 'set/updatePsw',
             method: 'post',
@@ -596,8 +600,9 @@ export default {
 }
 </script>
 <style lang='stylus' scoped>
-// .temAll
-//   margin: 20px;
+.temAll
+  width: 100%
+  overflow: auto;
   .setConf
     margin-top: 20px;
     left: 50%;
