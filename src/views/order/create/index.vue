@@ -223,7 +223,7 @@ import settlements from '@/libs/constant/settlement.js'
 import pickups from '@/libs/constant/pickup.js'
 
 const transferFeeList = ['freightFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
-const specialCity = ['110000', '120000', '710000', '810000', '820000']
+const specialCity = ['110000', '120000', '710000', '810000', '820000', '500000', '310000']
 export default {
   metaInfo: {
     title: '手动下单'

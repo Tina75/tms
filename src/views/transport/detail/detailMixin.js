@@ -314,13 +314,16 @@ export default {
     // 计费规则
     showChargeRules () {
       this.openDialog({
-        name: 'order/create/CounterDialog.vue',
+        name: 'transport/dialog/financeRule',
         data: {
           value: 0
         },
         methods: {
           ok (charge) {
             this.payment.freightFee = charge || 0
+          },
+          cancel () {
+            self.close()
           }
         }
       })

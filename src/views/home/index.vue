@@ -87,7 +87,7 @@ import TransferTodo from './plugins/transfer-todo.vue'
 import MessageCenter from './plugins/message-center.vue'
 
 import CreateOrderStatis from './plugins/create-order-statis.vue'
-import { eventHub } from './plugins/mixin.js'
+// import { eventHub } from './plugins/mixin.js'
 export default {
   name: 'index',
   meteInfo: { title: '首页' },
@@ -127,7 +127,7 @@ export default {
     }
   },
   mounted () {
-    console.log('user', this.UserInfo)
+    // console.log('user', this.UserInfo)
     // const vm = this
     this.$nextTick(() => {
       const bmap = new BMap.Map(this.$refs.positionMap)
@@ -146,8 +146,8 @@ export default {
       url: 'home/plugin/user',
       method: 'get'
     }).then(response => {
-      console.log('permision', response)
-      eventHub.$emit('plugin.pickup-todo', 'pickup')
+      // console.log('permision', response)
+      // eventHub.$emit('plugin.delivery-todo', 'pickup')
     })
   },
   methods: {
