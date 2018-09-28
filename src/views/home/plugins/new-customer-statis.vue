@@ -1,7 +1,7 @@
 <template>
   <div is="i-col" span="6" class="i-mt-15 page-home__padding-8">
     <BlankCard>
-      <div slot="title">今日订单数</div>
+      <div slot="title">新增顾客数</div>
       <div slot="extra">...</div>
       <div>
         <ECharts :options="options" :auto-resize="true"></ECharts>
@@ -12,11 +12,7 @@
 
 <script>
 /**
- * 今天开单统计
- * 1. {arrive:'已到达订单数'}
- * 2. {wait_pickup:'待提货订单数'}
- * 3. {wait_dispacth: '待调度订单'}
- * 4. {in_transport: '运输中订单'}
+ * 新增顾客数
  */
 import BlankCard from '../components/BlankCard.vue'
 import ECharts from 'vue-echarts/components/ECharts'
@@ -26,7 +22,7 @@ import 'echarts/lib/chart/pie'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/graphic'
 export default {
-  name: 'create-order-statis',
+  name: 'new-customer-statis',
   components: {
     BlankCard,
     ECharts
@@ -98,7 +94,3 @@ export default {
   }
 }
 </script>
-
-<style lang="stylus">
-
-</style>

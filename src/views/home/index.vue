@@ -21,20 +21,20 @@
       <DeliveryTodo />
       <TransferTodo />
       <MessageCenter />
+
+      <ShipperTodo />
+      <CarrierTodo />
+      <ExteriorTodo />
       <CreateOrderStatis />
-      <Col span="6" class="i-mt-15">
+      <NewCustumerStatis />
+      <!-- <Col span="6" class="i-mt-15">
       <BlankCard>
         <div slot="title">新增客户数</div>
         <div slot="extra">...</div>
       </BlankCard>
-      </Col>
-      <Col span="12" class="i-mt-15">
-      <BlankCard :padding="false">
-        <div slot="title">在途车辆位置</div>
-        <div slot="extra">...</div>
-        <div ref="positionMap" style="height:238px"></div>
-      </BlankCard>
-      </Col>
+      </Col> -->
+      <CarPosition />
+
       <Col span="24" class="i-mt-15">
       <BlankCard>
         <div slot="title">营业额通知（近七日）</div>
@@ -73,14 +73,12 @@
 
 import { mapGetters } from 'vuex'
 import server from '@/libs/js/server'
-import BMap from 'BMap'
+
 import OrderCard from './components/OrderCard.vue'
 import BlankCard from './components/BlankCard.vue'
 import BasePage from '@/basic/BasePage'
 import FontIcon from '@/components/FontIcon'
 
-import MarkerOverlay from './libs/MarkerOverlay.js'
-import LabelOverlay from './libs/LabelOverlay.js'
 import PickupTodo from './plugins/pickup-todo.vue'
 import DeliveryTodo from './plugins/delivery-todo.vue'
 import TransferTodo from './plugins/transfer-todo.vue'
@@ -88,6 +86,13 @@ import MessageCenter from './plugins/message-center.vue'
 
 import CreateOrderStatis from './plugins/create-order-statis.vue'
 // import { eventHub } from './plugins/mixin.js'
+
+import ShipperTodo from './plugins/shipper-todo.vue'
+import CarrierTodo from './plugins/carrier-todo.vue'
+import ExteriorTodo from './plugins/exterior-todo.vue'
+import NewCustumerStatis from './plugins/new-customer-statis.vue'
+import CarPosition from './plugins/car-postion.vue'
+
 export default {
   name: 'index',
   meteInfo: { title: '首页' },
@@ -99,7 +104,12 @@ export default {
     DeliveryTodo,
     TransferTodo,
     MessageCenter,
-    CreateOrderStatis
+    CreateOrderStatis,
+    ShipperTodo,
+    CarrierTodo,
+    ExteriorTodo,
+    NewCustumerStatis,
+    CarPosition
   },
   mixins: [BasePage],
   data () {
@@ -129,19 +139,6 @@ export default {
   mounted () {
     console.log('user', this.UserInfo)
     // const vm = this
-    this.$nextTick(() => {
-      const bmap = new BMap.Map(this.$refs.positionMap)
-      const point = new BMap.Point(118.787842, 32.026739)
-      bmap.centerAndZoom(point, 16)
-
-      const markerOverlay = new MarkerOverlay(point)
-      const labelOverlay = new LabelOverlay(point, '苏A 88888')
-
-      bmap.addOverlay(labelOverlay)
-      bmap.addOverlay(markerOverlay)
-
-      this.$refs.positionMap.style.top = '-4px'
-    })
     server({
       url: 'home/plugin/user',
       method: 'get'
