@@ -89,9 +89,6 @@
       :extra-columns="extraColumns"
       :show-filter="true"
       style="margin-top: 15px"
-      @on-select="handleOnSelect"
-      @on-select-cancel="handleOnSelectCancel"
-      @on-select-all="handleOnSelectAll"
       @on-selection-change="handleSelectionChange"
       @on-column-change="handleColumnChange">
     </page-table>
@@ -161,7 +158,7 @@ export default {
           title: '操作',
           key: 'do',
           fixed: 'left',
-          width: 140,
+          width: 120,
           extra: true,
           render: (h, params) => {
             /**
@@ -646,19 +643,19 @@ export default {
           title: '要求发货时间',
           key: 'deliveryTime',
           fixed: false,
-          visible: false
+          visible: true
         },
         {
           title: '期望到货时间',
           key: 'arriveTime',
           fixed: false,
-          visible: false
+          visible: true
         },
         {
           title: '发货人',
           key: 'consignerContact',
           fixed: false,
-          visible: false
+          visible: true
         },
         {
           title: '发货人手机号',
