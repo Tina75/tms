@@ -317,13 +317,16 @@ export default {
     showChargeRules () {
       const self = this
       self.openDialog({
-        name: 'order/create/CounterDialog.vue',
+        name: 'transport/dialog/financeRule',
         data: {
           value: 0
         },
         methods: {
           ok (charge) {
             self.payment.freightFee = charge || 0
+          },
+          cancel () {
+            self.close()
           }
         }
       })
