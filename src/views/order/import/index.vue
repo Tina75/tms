@@ -88,7 +88,7 @@ export default {
           key: 'createTime',
           render (h, params) {
             let time = params.row.createTime
-            return time ? h('span', new Date(time).Format('yyyy-MM-dd hh:mm:ss')) : ''
+            return time ? h('span', new Date(time).Format('yyyy-MM-dd hh:mm:ss')) : h('span', '-')
           }
         },
         {
@@ -106,7 +106,13 @@ export default {
         {
           title: '导入订单数',
           key: 'orderCount',
-          width: 100
+          width: 100,
+          render: (h, params) => {
+            if (params.row[params.column.key]) {
+              return h('span', params.row[params.column.key])
+            }
+            return h('span', '-')
+          }
         },
         {
           title: '操作人',
