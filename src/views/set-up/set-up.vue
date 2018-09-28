@@ -13,7 +13,7 @@
       <span style="margin-left:35px; font-size: 16px;">{{rightTitle}}</span>
     </div>
     <!--密码设置-->
-    <div v-if="'1' === this.rightKey" key="1" style="height:250px;">
+    <div v-if="'1' === this.rightKey" key="1" style="height:530px;">
       <Col span="10" class="setConf">
       <Form ref="formPwd" :model="formPwd" :rules="rulePwd" :label-width="90" label-position="left">
         <FormItem label="原始密码：" prop="oldPassword">
@@ -32,7 +32,7 @@
       </Col>
     </div>
     <!--个人设置-->
-    <div v-else-if="'2' === this.rightKey" key="2" style="height:350px;">
+    <div v-else-if="'2' === this.rightKey" key="2" style="height:530px;">
       <Col span="10" class="setConf">
       <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="90" label-position="left">
         <FormItem label="账号：">
@@ -77,7 +77,7 @@
       </Col>
     </div>
     <!--短信设置-->
-    <div v-else-if="'3' === this.rightKey" key="3">
+    <div v-else-if="'3' === this.rightKey" key="3" style="height:530px;">
       <Col span="20" class="setConf">
       <Card dis-hover>
         <div solt="title" class="msgCardTitle">
@@ -100,7 +100,7 @@
           </p>
         </div>
       </Card>
-      <Button type="primary" class="msgSaveBtn" @click="msgSaveBtn">保存</Button>
+      <Button type="primary" class="msgSaveBtn test111" @click="msgSaveBtn">保存1</Button>
       </Col>
     </div>
     <!--公司设置-->
@@ -618,8 +618,7 @@ export default {
     margin-top: 5px;
 .msgSaveBtn
     position: absolute;
-    left: 50%;
-    margin-left: -35px;
+    left: 30%;
     margin-top: 20px;
 .msgCardTitle
   margin-bottom: 15px;
