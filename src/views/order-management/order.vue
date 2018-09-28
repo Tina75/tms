@@ -60,8 +60,8 @@
       </div>
       <div style="display: flex;justify-content: space-between;">
         <div>
-          <area-select v-model="keywords.start" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
-          <area-select v-model="keywords.end" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <area-select v-model="keywords.start" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <area-select v-model="keywords.end" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
           <DatePicker
             :options="timeOption"
             v-model="times"

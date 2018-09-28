@@ -84,7 +84,7 @@
 
 <script>
 import Printd from 'printd'
-import areas from '@/libs/js/City'
+import City from '@/libs/js/City'
 import settlements from '@/libs/constant/settlement.js'
 import pickups from '@/libs/constant/pickup.js'
 export default {
@@ -134,10 +134,10 @@ export default {
   },
   methods: {
     startCity (data) {
-      return data.start && data.start.length > 0 ? areas.getPathByCode(data.start[this.data.start.length - 1]).map(item => item.name).join('') : ''
+      return data.start ? City.codeToFullName(data.start) : ''
     },
     endCity (data) {
-      return data.end && data.end.length > 0 ? areas.getPathByCode(data.end[this.data.end.length - 1]).map(item => item.name).join('') : ''
+      return data.end ? City.codeToFullName(data.end) : ''
     },
     pickup (data) {
       let pick = pickups.find(item => item.value === data.pickup)
