@@ -142,7 +142,7 @@ export default {
   methods: {
     createFreight () {
       this.openDialog({
-        name: 'transport/dialog/createFreight',
+        name: 'order-management/dialog/createFreight',
         data: {
           title: '新增运单'
         },

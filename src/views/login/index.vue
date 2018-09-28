@@ -35,8 +35,8 @@
               </div>
             </FormItem>
 
-            <FormItem>
-              <Button class="form-button" type="primary" long @click="login">登录</Button>
+            <FormItem class="form-button">
+              <Button type="primary" long @click="login">登录</Button>
 
               <ul class="form-action">
                 <li class="form-action-item">
@@ -108,7 +108,7 @@ export default {
   methods: {
     // 输入框聚焦改变图标颜色
     inputIconColor (type) {
-      return { color: this.currentFocus === type ? '#00A4BD' : '#9DA1B0' }
+      return { color: this.currentFocus === type ? '#00A4BD' : '#C9CED9' }
     },
 
     // 输入框聚焦
@@ -182,6 +182,7 @@ export default {
     display flex
     align-items center
     justify-content center
+    margin-right 15vw
 
     // &:before, &:after
     //   content ""
