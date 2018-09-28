@@ -127,7 +127,7 @@ export default {
     }
   },
   mounted () {
-    console.log('user', this.UserInfo)
+    // console.log('user', this.UserInfo)
     // const vm = this
     this.$nextTick(() => {
       const bmap = new BMap.Map(this.$refs.positionMap)
@@ -146,7 +146,7 @@ export default {
       url: 'home/plugin/user',
       method: 'get'
     }).then(response => {
-      console.log('permision', response)
+      // console.log('permision', response)
       // eventHub.$emit('plugin.delivery-todo', 'pickup')
     })
   },
