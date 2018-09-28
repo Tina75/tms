@@ -425,6 +425,10 @@ export default {
     pwdSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          if (this.formPwd.oldPassword === this.formPwd.password) {
+            this.$Message.info('您还未变更任何信息，无需保存')
+            return
+          }
           Server({
             url: 'set/updatePsw',
             method: 'post',
