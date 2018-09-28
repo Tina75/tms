@@ -49,7 +49,7 @@ export default {
     border-color transparent
 
     .ivu-table, .ivu-table th, .ivu-table td
-      background transparent
+      background #f8f8f9
 
     .ivu-table-row  td
       border-color transparent

@@ -86,13 +86,13 @@ export default {
       expandTableTypeOne: [
         {
           type: 'selection',
-          width: 50
-          // fixed: 'left'
+          width: 50,
+          fixed: 'left'
         },
         {
           title: '订单号',
           key: 'orderNo',
-          // fixed: 'left',
+          fixed: 'left',
           minWidth: 160,
           render: (h, p) => {
             return h('a', {
@@ -134,14 +134,14 @@ export default {
       expandTableTypeTwo: [
         {
           type: 'selection',
-          width: 50
-          // fixed: 'left'
+          width: 50,
+          fixed: 'left'
         },
         {
           title: '订单号',
           key: 'orderNo',
           minWidth: 160,
-          // fixed: 'left',
+          fixed: 'left',
           render: (h, p) => {
             return h('a', {
               style: {
