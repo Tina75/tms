@@ -88,7 +88,7 @@ export default {
           key: 'createTime',
           render (h, params) {
             let time = params.row.createTime
-            return time ? h('span', new Date(time).Format('yyyy-MM-dd hh:mm:ss')) : ''
+            return time ? h('span', new Date(time).Format('yyyy-MM-dd hh:mm:ss')) : h('span', '-')
           }
         },
         {
@@ -100,13 +100,24 @@ export default {
           key: 'status',
           width: 100,
           render: (h, params) => {
-            return h('span', params.row.status === 1 ? '导入成功' : '导入失败')
+            if (params.row.status === 1) {
+              return h('span', '导入成功')
+            } else if (params.row.status === 0) {
+              return h('span', '导入失败')
+            }
+            return h('span', '正在处理')
           }
         },
         {
           title: '导入订单数',
           key: 'orderCount',
-          width: 100
+          width: 100,
+          render: (h, params) => {
+            if (params.row[params.column.key]) {
+              return h('span', params.row[params.column.key])
+            }
+            return h('span', '-')
+          }
         },
         {
           title: '操作人',

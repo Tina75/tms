@@ -278,6 +278,8 @@ export default {
     // 搜索关键字变化后,重置分页参数，重新发送请求
     keywords: {
       handler () {
+        // 关键字变化，重置清空选中项
+        this.clearSelected()
         this.pagination.pageNo = 1
         this.fetch()
       },
@@ -480,6 +482,12 @@ export default {
       this.pagination.pageSize = pageSize
       this.fetch()
       this.$emit('on-page-size-change', pageSize)
+    },
+    /**
+     * 清空复选框选择的行数据
+     */
+    clearSelected () {
+      this.selectedRow = []
     }
   }
 }

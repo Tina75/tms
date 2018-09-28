@@ -433,58 +433,89 @@ export default {
         {
           title: '客户订单号',
           key: 'customerOrderNo',
-          width: 160
+          width: 160,
+          render: (h, p) => {
+            return h('span', p.row.customerOrderNo ? p.row.customerOrderNo : '-')
+          }
         },
         {
           title: '始发地-目的地',
           key: 'start',
           minWidth: 250,
+          ellipsis: true,
           render: (h, p) => {
-            return h('span', this.formatCity(p.row.start) + '-' + this.formatCity(p.row.end))
+            const start = this.formatCity(p.row.start)
+            const end = this.formatCity(p.row.end)
+            return h('Tooltip', {
+              props: {
+                content: start && end ? [start, end].join('-') : '-'
+              }
+            }, start && end ? [start, end].join('-') : '-')
           }
         },
         {
           title: '货物名称',
           key: 'cargoName',
-          minWidth: 160
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.cargoName ? p.row.cargoName : '-')
+          }
         },
         {
           title: '包装',
           key: 'packing',
-          width: 80
+          width: 80,
+          render: (h, p) => {
+            return h('span', p.row.packing ? p.row.packing : '-')
+          }
         },
         {
           title: '数量',
           key: 'quantity',
-          width: 80
+          width: 80,
+          render: (h, p) => {
+            return h('span', p.row.quantity ? p.row.quantity : '-')
+          }
         },
         {
           title: '货值(元)',
           key: 'cargoCost',
           width: 100,
           render: (h, p) => {
-            return h('span', p.row.cargoCost / 100)
+            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : '-')
           }
         },
         {
           title: '重量(吨)',
           key: 'weight',
-          width: 100
+          width: 100,
+          render: (h, p) => {
+            return h('span', p.row.weight ? p.row.weight : '-')
+          }
         },
         {
           title: '体积(方)',
           key: 'volume',
-          width: 100
+          width: 100,
+          render: (h, p) => {
+            return h('span', p.row.volume ? p.row.volume : '-')
+          }
         },
         {
           title: '备注1',
           key: 'remark1',
-          minWidth: 160
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.quantity ? p.row.quantity : '-')
+          }
         },
         {
           title: '备注2',
           key: 'remark2',
-          minWidth: 160
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.quantity ? p.row.quantity : '-')
+          }
         }
       ]
     }

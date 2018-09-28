@@ -20,7 +20,7 @@
         @on-page-size-change="handlePageSizeChange"></Page>
     </div>
 
-    <div slot="footer">
+    <div slot="footer" style="text-align: center;">
       <Button  type="primary" @click="ok">确定</Button>
       <Button  type="default" @click.native="visibale = false">取消</Button>
     </div>
@@ -30,6 +30,8 @@
 <script>
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
+import City from '@/libs/js/City'
+
 export default {
   name: 'AddOrder',
   mixins: [ BaseDialog ],
@@ -47,31 +49,66 @@ export default {
         },
         {
           title: '订单号',
-          key: 'orderNo'
+          key: 'orderNo',
+          minWidth: 160
         },
         {
           title: '客户订单号',
-          key: 'customerOrderNo'
+          key: 'customerOrderNo',
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.customerOrderNo ? p.row.customerOrderNo : '-')
+          }
         },
         {
           title: '客户名称',
-          key: 'consignerName'
+          key: 'consignerName',
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.consignerName ? p.row.consignerName : '-')
+          }
         },
         {
           title: '始发地',
-          key: 'start'
+          key: 'start',
+          ellipsis: true,
+          minWidth: 160,
+          render: (h, p) => {
+            return h('Tooltip', {
+              props: {
+                content: this.cityFilter(p.row.start)
+              }
+            }, this.cityFilter(p.row.start))
+          }
         },
         {
           title: '目的地',
-          key: 'end'
+          key: 'end',
+          ellipsis: true,
+          minWidth: 160,
+          render: (h, p) => {
+            return h('Tooltip', {
+              props: {
+                content: this.cityFilter(p.row.start)
+              }
+            }, this.cityFilter(p.row.start))
+          }
         },
         {
           title: '体积（方）',
-          key: 'volume'
+          key: 'volume',
+          width: 120,
+          render: (h, p) => {
+            return h('span', p.row.volume ? p.row.volume : '-')
+          }
         },
         {
           title: '重量（吨）',
-          key: 'weight'
+          key: 'weight',
+          width: 120,
+          render: (h, p) => {
+            return h('span', p.row.weight ? p.row.weight : '-')
+          }
         }
       ],
       data: [],
@@ -104,6 +141,11 @@ export default {
         })
         this.loading = false
       })
+    },
+
+    cityFilter (code) {
+      if (!code) return '-'
+      return Array.from(new Set(City.codeToFullName(code, 3, '-').split('-'))).join('')
     },
 
     selectionChange (selection) {
