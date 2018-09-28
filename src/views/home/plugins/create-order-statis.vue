@@ -20,6 +20,7 @@
  */
 import BlankCard from '../components/BlankCard.vue'
 import ECharts from 'vue-echarts/components/ECharts'
+import mixin from './mixin.js'
 
 import 'echarts/lib/chart/pie'
 import 'echarts/lib/component/tooltip'
@@ -29,6 +30,7 @@ export default {
     BlankCard,
     ECharts
   },
+  mixins: [mixin],
   data () {
     return {
       options: {
@@ -83,6 +85,11 @@ export default {
         ]
       }
     }
+  },
+  created () {
+    this.eventHub.$on('plugin.create-order-statis', () => {
+      console.log('receive message')
+    })
   },
   methods: {
     load () {
