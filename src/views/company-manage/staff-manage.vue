@@ -1,6 +1,6 @@
 <template>
   <div class="temAll">
-    <Col span="23">
+    <Col span="24">
     <Card class="searchCard" dis-hover>
       <Form :model="formSearch" :label-width="80" style="padding-left:-20px;">
         <Col span="6">
@@ -33,10 +33,10 @@
       </Form>
     </Card>
     </Col>
-    <Col span="23">
+    <Col span="24">
     <Button v-if="hasPower(140201)" type="primary" style="margin-top:6px;" @click="eaditStaff('add')">添加员工</Button>
     </Col>
-    <Col span="23">
+    <Col span="24">
     <page-table :columns="menuColumns" :keywords="formSearchInit" url="employee/list" list-field="list" style="margin-top: 20px;"></page-table>
     </Col>
     <Modal v-model="visibaleTransfer" width="400">
@@ -373,8 +373,6 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
-// >>> .ivu-btn-text:hover
-//   background-color: #ebf7ff;
 .temAll
   width: 100%
   overflow: auto;
