@@ -98,18 +98,38 @@ export default {
   },
   methods: {
     search () {
-      this.keyword = {
-        createTimeStart: this.keyword.startTime,
-        createTimeEnd: this.keyword.endTime
+      // 输入框都为空，type=1,搜索数据清空
+      if (!this.isEmpty()) {
+        this.keyword = {
+          type: 1
+        }
+        return
       }
+      this.keyword = {
+        createTimeStart: this.keywords.startTime,
+        createTimeEnd: this.keywords.endTime
+      }
+    },
+    // 判断搜索条件是不是都是空，为空则key = 1
+    isEmpty () {
+      /* flag返回false，则对象中值都是空 */
+      let flag = false
+      for (let key in this.keywords) {
+        if (this.keywords[key] && this.keywords[key].length) {
+          flag = true
+        }
+      }
+      return flag
     },
     clearKeywords () {
       this.keyword = {
-        createTimeStart: '',
-        createTimeEnd: '',
         type: 1
       }
       this.times = ['', '']
+      this.keywords = {
+        startTime: '',
+        endTime: ''
+      }
       this.operateValue = ''
     },
     handleOperaterValue (btn) {
@@ -173,6 +193,10 @@ export default {
     },
     // 导出
     ProfitsExport () {
+      if (!this.isEmpty()) {
+        this.$Message.error('请先输入导出条件')
+        return
+      }
       Export({
         url: '/report/exportTurnoverSummary',
         method: 'post',
