@@ -13,7 +13,7 @@ export const CAR_TYPE = [
 
 export const CAR_LENGTH = [
   {value: 1, label: '1.8米'},
-  {value: 2, label: '2.8米'},
+  {value: 2, label: '2.7米'},
   {value: 3, label: '3.8米'},
   {value: 4, label: '4.2米'},
   {value: 5, label: '5米'},

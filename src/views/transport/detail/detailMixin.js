@@ -8,6 +8,7 @@ export default {
   data () {
     return {
       id: this.$route.query.id,
+      no: this.$route.query.no,
       loading: false,
       inEditing: false,
       carriers: [], // 承运商

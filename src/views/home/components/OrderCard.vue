@@ -96,26 +96,19 @@ export default {
     padding-top 34px
     padding-bottom 22px
     border-bottom-style dashed
+    &:before,&:after
+      position absolute
+      content ' '
+      background-color #efefef
+      bottom -5px
+      padding 5px
+      border-radius 50%
+      -webkit-border-radius 50%
+      -moz-border-radius 50%
     &:before
-      position absolute
-      content ' '
-      background-color #efefef
       left -5px
-      bottom -5px
-      padding 5px
-      border-radius 50%
-      -webkit-border-radius 50%
-      -moz-border-radius 50%
     &:after
-      position absolute
-      content ' '
-      background-color #efefef
       right -5px
-      bottom -5px
-      padding 5px
-      border-radius 50%
-      -webkit-border-radius 50%
-      -moz-border-radius 50%
     &-title
       padding-left 0
       color #333333

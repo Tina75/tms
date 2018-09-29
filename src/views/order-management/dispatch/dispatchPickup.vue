@@ -32,12 +32,14 @@
         <img src="../../../assets/img-empty.png" class="dispatch-empty-img">
         <p>暂无未提货提货单，赶快创建新的提货单吧～</p>
       </div>
-      <Table v-else
-             :width="rightTableWidth"
-             :columns="rightTableHeader" :data="rightTableData" :loading="rightTableLoading && !rightTableData.length"
-             highlight-row
-             @on-expand="keepRightExpandOnly"
-             @on-row-click="rightTableRowClick"></Table>
+      <div v-else>
+        <Table
+          :columns="rightTableHeader" :data="rightTableData" :loading="rightTableLoading && !rightTableData.length"
+          highlight-row
+          @on-expand="keepRightExpandOnly"
+          @on-row-click="rightTableRowClick"></Table>
+      </div>
+
     </div>
   </div>
 </template>
@@ -51,9 +53,6 @@ import tableExpand from './tableExpand'
 export default {
   name: 'DispatchFreight',
   mixins: [ BasePage, dispatchMixin ],
-  props: {
-    width: Number
-  },
   data () {
     return {
       // 右侧表格表头
@@ -109,7 +108,7 @@ export default {
           }
         },
         {
-          title: '体积（方）',
+          title: '体积(方)',
           key: 'volume',
           minWidth: 120,
           render: (h, p) => {
@@ -117,7 +116,7 @@ export default {
           }
         },
         {
-          title: '重量（吨）',
+          title: '重量(吨)',
           key: 'weight',
           minWidth: 120,
           render: (h, p) => {
