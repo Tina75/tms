@@ -345,7 +345,7 @@ export default {
           key: 'transFee',
           minWidth: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoCost / 100)
+            return this.tableDataRender(h, p.row.transFee / 100)
           }
         },
         {
