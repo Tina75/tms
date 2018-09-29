@@ -6,45 +6,49 @@
         <p v-html="greetings"></p>
         </Col>
         <Col span="4" class="van-right">
-        <Poptip trigger="click" placement="bottom-end">
+        <Poptip v-model="visible" trigger="click" placement="bottom-end">
           <FontIcon type="shouye" size="20" class="page-home__setting-icon" />
           <div slot="content">
             <div class="page-home__dropdown-header">
               选择显示面板
             </div>
             <CheckboxGroup v-model="cardChecks" class="page-home__dropdown-body">
-              <div v-for="(item, index) in cards" :key="index" class="page-home__dropdown-checkbox">
-                <Checkbox :label="item.id">
-                  <span>{{item.label}}</span>
+              <div v-for="(item, index) in cardsList" :key="index" class="page-home__dropdown-checkbox">
+                <Checkbox :label="item.name">
+                  <span>{{cardsMap[item.name]}}</span>
                 </Checkbox>
               </div>
             </CheckboxGroup>
             <div class="page-home__dropdown-footer">
-              <Button type="primary" size="small">确定</Button>
-              <Button class="i-ml-10" size="small">取消</Button>
+              <Button type="primary" size="small" @click="confirmAction">确定</Button>
+              <Button class="i-ml-10" size="small" @click="() => { this.visible = false}">取消</Button>
             </div>
           </div>
         </Poptip>
         </Col>
       </Row>
-
     </div>
     <Row :gutter="16">
-      <PickupTodo />
-      <DeliveryTodo />
-      <TransferTodo />
-      <MessageCenter />
+      <!-- 提货代办 -->
+      <PickupTodo v-if="cardChecks.includes('pickup-todo')"/>
+      <!-- 送货代办 -->
+      <DeliveryTodo v-if="cardChecks.includes('delivery-todo')"/>
+      <!-- 外转代办 -->
+      <TransferTodo v-if="cardChecks.includes('trans-todo')"/>
+      <!-- 消息中心 -->
+      <MessageCenter v-if="cardChecks.includes('message-center')"/>
       <!-- 发货方核销代办 -->
-      <ShipperTodo />
+      <ShipperTodo v-if="cardChecks.includes('consigner-todo')"/>
       <!-- 承运商核销代办 -->
-      <CarrierTodo />
+      <CarrierTodo v-if="cardChecks.includes('carrier-todo')"/>
       <!-- 外转方核销代办 -->
-      <ExteriorTodo />
-      <CreateOrderStatis />
+      <ExteriorTodo  v-if="cardChecks.includes('transferfee-todo')"/>
+      <!-- 今日订单数 -->
+      <CreateOrderStatis v-if="cardChecks.includes('order-create')"/>
       <!-- 新增顾客数 -->
-      <NewCustumerStatis />
+      <NewCustumerStatis  v-if="cardChecks.includes('new-customer')"/>
       <!-- 在途车辆信息 -->
-      <CarPosition />
+      <CarPosition  v-if="cardChecks.includes('transport-location')"/>
 
       <Col span="24" class="i-mt-15">
       <BlankCard>
@@ -81,7 +85,6 @@
 </template>
 
 <script>
-
 import { mapGetters } from 'vuex'
 import server from '@/libs/js/server'
 
@@ -125,27 +128,28 @@ export default {
   mixins: [BasePage],
   data () {
     return {
-      // eventHub: new Vue(),
+      visible: false,
       permission: [],
-      cardChecks: ['pickup-todo'],
-      cards: [
-        {label: '提货待办', value: '1', id: 'pickup-todo'},
-        {label: '送货待办', value: '1', id: 'delivery-todo'},
-        {label: '外转待办', value: '1', id: 'trans-todo'},
-        {label: '回单待办', value: '1', id: 'receipt-todo'},
-        {label: '发货方核销待办', value: '1', id: 'consigner-todo'},
-        {label: '承运商核销待办', value: '1', id: 'carrier-todo'},
-        {label: '外转方核销待办', value: '1', id: 'transferfee-todo'},
-        {label: '消息中心', value: '1', id: 'message-center'},
-        {label: '今日订单数', value: '1', id: 'order-create'},
-        {label: '新增客户数', value: '1', id: 'new-customer'},
-        {label: '在途车辆位置', value: '1', id: 'transport-location'},
-        {label: '营业额通知', value: '1', id: 'turnover-statistics'},
-        {label: '调度订单数', value: '1', id: 'dispatch-statistics'},
-        {label: '开单数', value: '1', id: 'order-statistics'},
-        {label: '应收款/应付款项', value: '1', id: 'pay-receive'},
-        {label: '货物重量/体积', value: '1', id: 'cargo-statistics'}
-      ]
+      cardChecks: [],
+      cardsMap: {
+        'pickup-todo': '提货待办',
+        'delivery-todo': '送货待办',
+        'trans-todo': '外转待办',
+        'receipt-todo': '回单待办',
+        'consigner-todo': '发货方核销待办',
+        'carrier-todo': '承运商核销待办',
+        'transferfee-todo': '外转方核销待办',
+        'message-center': '消息中心',
+        'order-create': '今日订单数',
+        'new-customer': '新增客户数',
+        'transport-location': '在途车辆位置',
+        'turnover-statistics': '营业额通知',
+        'dispatch-statistics': '调度订单数',
+        'order-statistics': '开单数',
+        'pay-receive': '应收款/应付款项',
+        'cargo-statistics': '货物重量/体积'
+      },
+      cardsList: []
     }
   },
   computed: {
@@ -169,17 +173,49 @@ export default {
   mounted () {
     // console.log('user', this.UserInfo)
     // const vm = this
-    server({
-      url: 'home/plugin/user',
-      method: 'get'
-    }).then(response => {
-      // console.log('permision', response)
-      // eventHub.$emit('plugin.delivery-todo', 'pickup')
-    })
+    // server({
+    //   url: 'home/plugin/user',
+    //   method: 'get'
+    // }).then(response => {
+    // console.log('permision', response)
+    // eventHub.$emit('plugin.delivery-todo', 'pickup')
+    // })
+    this.initCardList()
+    console.log(server)
   },
   methods: {
-    getGreetings () {
-
+    // 获取card数组
+    initCardList () {
+      setTimeout(() => {
+        const data = [
+          {code: 1, name: 'pickup-todo', url: '', w: '', h: '', s: '', valid: '1'},
+          {code: 2, name: 'delivery-todo', url: '', w: '', h: '', s: '', valid: '1'},
+          {code: 3, name: 'trans-todo', url: '', w: '', h: '', s: '', valid: '1'},
+          {code: 4, name: 'receipt-todo', url: '', w: '', h: '', s: '', valid: '1'},
+          {code: 5, name: 'consigner-todo', url: '', w: '', h: '', s: '', valid: '1'},
+          {code: 6, name: 'carrier-todo', url: '', w: '', h: '', s: '', valid: '1'},
+          {code: 7, name: 'transferfee-todo', url: '', w: '', h: '', s: '', valid: '1'},
+          {code: 8, name: 'message-center', url: '', w: '', h: '', s: '', valid: '1'},
+          {code: 9, name: 'order-create', url: '', w: '', h: '', s: '', valid: '1'},
+          {code: 10, name: 'new-customer', url: '', w: '', h: '', s: '', valid: '1'},
+          {code: 11, name: 'transport-location', url: '', w: '', h: '', s: '', valid: '1'},
+          {code: 12, name: 'turnover-statistics', url: '', w: '', h: '', s: '', valid: '1'},
+          {code: 13, name: 'dispatch-statistics', url: '', w: '', h: '', s: '', valid: '0'},
+          {code: 14, name: 'order-statistics', url: '', w: '', h: '', s: '', valid: '0'},
+          {code: 15, name: 'pay-receive', url: '', w: '', h: '', s: '', valid: '1'},
+          {code: 16, name: 'cargo-statistics', url: '', w: '', h: '', s: '', valid: '1'}
+        ]
+        this.cardsList = data
+        for (const i of this.cardsList) {
+          if (i.valid === '1') {
+            this.cardChecks.push(i.name)
+          }
+        }
+      }, 0)
+    },
+    // 确认请求
+    confirmAction () {
+      this.visible = false
     }
   }
 
