@@ -19,7 +19,9 @@
     <div class="ivu-card-body tms-home__card-body">
       <CellGroup>
         <Cell v-for="(item, index) in data" :key="index" :title="item.name" :extra="item.value.toString()" :to="item.url">
-          <Icon slot="icon" :color="theme" type="ios-play"></Icon>
+          <span slot="icon" class="ivu-badge ivu-badge-status">
+            <span :style="{'background-color':theme}" class="ivu-badge-status-dot"></span>
+          </span>
         </Cell>
       </CellGroup>
     </div>
@@ -84,9 +86,30 @@ export default {
     left -1px
     right -1px
   &__card-header
+    position relative
     padding-top 34px
     padding-bottom 22px
     border-bottom-style dashed
+    &:before
+      position absolute
+      content ' '
+      background-color #efefef
+      left -5px
+      bottom -5px
+      padding 5px
+      border-radius 50%
+      -webkit-border-radius 50%
+      -moz-border-radius 50%
+    &:after
+      position absolute
+      content ' '
+      background-color #efefef
+      right -5px
+      bottom -5px
+      padding 5px
+      border-radius 50%
+      -webkit-border-radius 50%
+      -moz-border-radius 50%
     &-title
       padding-left 0
       color #333333
