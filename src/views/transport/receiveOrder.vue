@@ -111,6 +111,7 @@
                :extra-columns="extraColumns"
                :show-filter="true"
                :keywords="searchFields"
+               row-id="pickUpId"
                url="/load/bill/list"
                method="post"
                list-field="loadbillList"
@@ -127,18 +128,21 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
+import TransportBase from './transportBase'
+import TransportMixin from './transportMixin'
+
 import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
 import SelectInput from '@/components/SelectInput.vue'
 import PrintPickup from './components/PrintPickup'
-import TransportMixin from './transportMixin'
+
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 
 export default {
   name: 'ReceiveManager',
   components: { TabHeader, PageTable, SelectInput, PrintPickup },
-  mixins: [ BasePage, TransportMixin ],
+  mixins: [ BasePage, TransportBase, TransportMixin ],
   metaInfo: { title: '提货管理' },
   data () {
     return {
@@ -368,7 +372,7 @@ export default {
           sortable: 'custom',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', this.dateFormatter(p.row.createTimeLong))
+            return h('span', this.timeFormatter(p.row.createTimeLong))
           }
         },
         {
@@ -411,8 +415,8 @@ export default {
           key: 'carType',
           minWidth: 100,
           render: (h, p) => {
-            const carType = this.carTypeFilter(p.row.carType)
-            const carLength = this.carLengthFilter(p.row.carLength)
+            const carType = this.carTypeFormatter(p.row.carType)
+            const carLength = this.carLengthFormatter(p.row.carLength)
             return h('span', carType && carLength ? [carType, carLength].join(' ') : '-')
           }
         },

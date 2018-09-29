@@ -104,6 +104,7 @@
                :extra-columns="extraColumns"
                :show-filter="true"
                :keywords="searchFields"
+               row-id="transId"
                url="/outside/bill/list"
                method="post"
                list-field="list"
@@ -119,18 +120,21 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
+import TransportBase from './transportBase'
+import TransportMixin from './transportMixin'
+
 import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput'
-import TransportMixin from './transportMixin'
+
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 
 export default {
   name: 'OuterManager',
   components: { TabHeader, PageTable, AreaSelect, SelectInput },
-  mixins: [ BasePage, TransportMixin ],
+  mixins: [ BasePage, TransportBase, TransportMixin ],
   metaInfo: { title: '外转单管理' },
   data () {
     return {
@@ -327,9 +331,9 @@ export default {
           render: (h, p) => {
             return h('Tooltip', {
               props: {
-                content: this.cityFilter(p.row.start)
+                content: this.cityFormatter(p.row.start)
               }
-            }, this.cityFilter(p.row.start))
+            }, this.cityFormatter(p.row.start))
           }
         },
         {
@@ -340,9 +344,9 @@ export default {
           render: (h, p) => {
             return h('Tooltip', {
               props: {
-                content: this.cityFilter(p.row.end)
+                content: this.cityFormatter(p.row.end)
               }
-            }, this.cityFilter(p.row.end))
+            }, this.cityFormatter(p.row.end))
           }
         },
         {
@@ -350,7 +354,7 @@ export default {
           key: 'transFee',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : p.row.cargoCost)
+            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : '-')
           }
         },
         {
@@ -375,7 +379,7 @@ export default {
           sortable: 'custom',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', this.dateFormatter(p.row.createTimeLong))
+            return h('span', this.timeFormatter(p.row.createTimeLong))
           }
         },
         {
@@ -463,7 +467,7 @@ export default {
           key: 'deliveryTimeLong',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', this.dateFormatter(p.row.deliveryTimeLong))
+            return h('span', this.timeFormatter(p.row.deliveryTimeLong))
           }
         },
         {
@@ -471,7 +475,7 @@ export default {
           key: 'arriveTimeLong',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', this.dateFormatter(p.row.arriveTimeLong))
+            return h('span', this.timeFormatter(p.row.arriveTimeLong))
           }
         },
         {
