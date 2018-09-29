@@ -125,7 +125,7 @@
           </i-col>
           <i-col span="5" offset="2">
             <span class="detail-field-title-sm">结算方式：</span>
-            <span class="detail-field-fee">{{ payment.payType | payType }}</span>
+            <span class="detail-field-fee">{{ payment.payType | payTypeFormatter(true) }}</span>
           </i-col>
         </Row>
       </div>
@@ -166,27 +166,6 @@ import Server from '@/libs/js/server'
 
 export default {
   name: 'DetailFeright',
-  filters: {
-    payType (type) {
-      let temp = ''
-      switch (type) {
-        case 1:
-          temp = '现付'
-          break
-        case 2:
-          temp = '到付'
-          break
-        case 3:
-          temp = '回单付'
-          break
-        case 4:
-          temp = '月结'
-          break
-        default: break
-      }
-      return temp
-    }
-  },
   mixins: [ BasePage, TransportBase, DetailMixin ],
   metaInfo: { title: '外转单详情' },
   data () {

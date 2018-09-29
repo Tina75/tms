@@ -131,6 +131,7 @@ export default {
         'pickup-todo': '提货待办',
         'delivery-todo': '送货待办',
         'trans-todo': '外转待办',
+        'receipt-todo': '回单待办',
         'consigner-todo': '发货方核销待办',
         'carrier-todo': '承运商核销待办',
         'transferfee-todo': '外转方核销待办',
@@ -148,20 +149,20 @@ export default {
         {code: 1, name: 'pickup-todo', url: '', w: '', h: '', s: '', valid: '1'},
         {code: 2, name: 'delivery-todo', url: '', w: '', h: '', s: '', valid: '1'},
         {code: 3, name: 'trans-todo', url: '', w: '', h: '', s: '', valid: '1'},
-        {code: 4, name: 'consigner-todo', url: '', w: '', h: '', s: '', valid: '1'},
-        {code: 5, name: 'carrier-todo', url: '', w: '', h: '', s: '', valid: '1'},
-        {code: 6, name: 'transferfee-todo', url: '', w: '', h: '', s: '', valid: '1'},
-        {code: 7, name: 'message-center', url: '', w: '', h: '', s: '', valid: '1'},
-        {code: 8, name: 'order-create', url: '', w: '', h: '', s: '', valid: '1'},
-        {code: 9, name: 'new-customer', url: '', w: '', h: '', s: '', valid: '1'},
-        {code: 10, name: 'transport-location', url: '', w: '', h: '', s: '', valid: '1'},
-        {code: 11, name: 'turnover-statistics', url: '', w: '', h: '', s: '', valid: '1'},
-        {code: 12, name: 'dispatch-statistics', url: '', w: '', h: '', s: '', valid: '1'},
-        {code: 13, name: 'order-statistics', url: '', w: '', h: '', s: '', valid: '1'},
-        {code: 14, name: 'pay-receive', url: '', w: '', h: '', s: '', valid: '1'},
-        {code: 15, name: 'cargo-statistics', url: '', w: '', h: '', s: '', valid: '1'}
+        {code: 4, name: 'receipt-todo', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 5, name: 'consigner-todo', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 6, name: 'carrier-todo', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 7, name: 'transferfee-todo', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 8, name: 'message-center', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 9, name: 'order-create', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 10, name: 'new-customer', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 11, name: 'transport-location', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 12, name: 'turnover-statistics', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 13, name: 'dispatch-statistics', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 14, name: 'order-statistics', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 15, name: 'pay-receive', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 16, name: 'cargo-statistics', url: '', w: '', h: '', s: '', valid: '1'}
       ]
-
     }
   },
   computed: {
