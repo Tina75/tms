@@ -7,6 +7,7 @@
     </div>
     <div class="ivu-card-extra tms-home__blank-extra" @click.native="push(to)">
       <slot name="extra">
+        <FontIcon type="gengduo1" color="#D8D8D8" size="25" />
       </slot>
     </div>
     <div :class="cardBodyClass">
@@ -16,7 +17,11 @@
 </template>
 
 <script>
+import FontIcon from '@/components/FontIcon'
 export default {
+  components: {
+    FontIcon
+  },
   props: {
     to: String,
     title: String,
@@ -43,6 +48,7 @@ export default {
     border-bottom none
   &__blank-extra
     cursor pointer
+    top 1px
   &__blank-body
     height 234px
     padding 0 16px

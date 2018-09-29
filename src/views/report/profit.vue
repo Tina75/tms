@@ -144,7 +144,13 @@ export default {
   },
   methods: {
     search () {
-      Object.assign(this.keywords, {type: null})
+      if (!this.keywords.startTime && !this.keywords.endTime) {
+        this.keywords = {
+          type: 1
+        }
+      } else {
+        Object.assign(this.keywords, {type: null})
+      }
       Server({
         url: '/report/for/profits',
         headers: {
@@ -153,7 +159,6 @@ export default {
         method: 'POST',
         data: this.keywords
       }).then((res) => {
-        console.log(res)
         if (res.data.code === 10000) {
           Object.assign(this.res, res.data.data)
         }
@@ -178,6 +183,7 @@ export default {
       this.keywords.startTime = val[0]
       this.keywords.endTime = val[1]
     },
+    /* 点击button，对应时间 */
     date (value) {
       let start = ''
       let end = ''
@@ -230,6 +236,10 @@ export default {
     },
     // 导出
     ProfitsExport () {
+      if (!this.keywords.startTime && !this.keywords.endTime) {
+        this.$Message.error('请先输入导出条件')
+        return
+      }
       Export({
         url: '/report/for/profits/export',
         method: 'post',

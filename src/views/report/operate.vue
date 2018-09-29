@@ -483,6 +483,13 @@ export default {
       'getClients'
     ]),
     search () {
+      // 输入框都为空，type=1,搜索数据清空
+      if (!this.isEmpty()) {
+        this.keyword = {
+          type: 1
+        }
+        return
+      }
       this.keyword = {
         consignerName: this.keywords.consignerName || null,
         orderNo: this.keywords.orderNo || null,
@@ -493,6 +500,17 @@ export default {
         startTime: this.keywords.startTime || null,
         endTime: this.keywords.endTime || null
       }
+    },
+    // 判断搜索条件是不是都是空，为空则key = 1
+    isEmpty () {
+      /* flag返回false，则对象中值都是空 */
+      let flag = false
+      for (let key in this.keywords) {
+        if (this.keywords[key] && this.keywords[key].length) {
+          flag = true
+        }
+      }
+      return flag
     },
     clearKeywords () {
       this.keywords = {
@@ -512,6 +530,10 @@ export default {
     },
     // 导出
     ProfitsExport () {
+      if (!this.isEmpty()) {
+        this.$Message.error('请先输入导出条件')
+        return
+      }
       let data = {
         consignerName: this.keywords.consignerName || null,
         orderNo: this.keywords.orderNo || null,
@@ -533,7 +555,6 @@ export default {
     },
     // 筛选列表显示字段
     handleColumnChange (val) {
-      console.log(val)
       this.extraColumns = val
     },
     handleTimeChange (val) {
