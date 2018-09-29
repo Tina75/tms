@@ -138,8 +138,10 @@ export default {
         {
           title: '客户订单号',
           key: 'customerOrderNo',
-          minWidth: 140,
-          tooltip: true
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.customerOrderNo ? p.row.customerOrderNo : '-')
+          }
         },
         {
           title: '客户名称',

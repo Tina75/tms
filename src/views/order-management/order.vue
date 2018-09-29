@@ -478,7 +478,7 @@ export default {
           key: 'volume',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.waybillNo ? p.row.waybillNo : '-')
+            return h('span', p.row.volume ? p.row.volume : '-')
           }
         },
         {
@@ -486,7 +486,7 @@ export default {
           key: 'weight',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.waybillNo ? p.row.waybillNo : '-')
+            return h('span', p.row.weight ? p.row.weight : '-')
           }
         },
         {
