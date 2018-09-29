@@ -535,7 +535,10 @@ export default {
       Server({
         url: '/waybill/details',
         method: 'post',
-        data: { waybillId: this.id }
+        data: {
+          waybillId: this.id,
+          waybillNo: this.no
+        }
       }).then(res => {
         const data = res.data.data
 

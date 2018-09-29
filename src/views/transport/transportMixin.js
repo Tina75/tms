@@ -1,9 +1,12 @@
-import { mapGetters, mapActions } from 'vuex'
+import Server from '@/libs/js/server'
+import { mapGetters } from 'vuex'
 
 export default {
   data () {
     return {
       order: 'desc', // 倒序 asc升序
+      carriers: [],
+      carrierCars: [],
       // 分页
       page: {
         current: 1,
@@ -19,7 +22,6 @@ export default {
       easySelectMode: 1, // 简易搜索当前类型
       easySearchKeyword: '', // 简易搜索字段
 
-      tableWidth: 0,
       tableSelection: [], // 表格的选中项
 
       printData: []
@@ -28,8 +30,6 @@ export default {
 
   computed: {
     ...mapGetters([
-      'carriers',
-      'carrierCars',
       'carrierDrivers'
     ]),
 
@@ -50,17 +50,47 @@ export default {
     this.fetchData()
   },
 
-  mounted () {
-    this.watchWindowWidth()
-  },
-
   methods: {
-    ...mapActions([
-      'getCarriers'
-    ]),
+    getCarriers () {
+      Server({
+        url: '/carrier/listOrderByUpdateTimeDesc',
+        method: 'get',
+        data: { type: 1 }
+      }).then(res => {
+        this.carriers = res.data.data.carrierList.map(item => {
+          return {
+            name: item.carrierName,
+            value: item.carrierName,
+            payType: item.payType,
+            carrierPhone: item.carrierPhone,
+            id: item.carrierId
+          }
+        })
+      })
+    },
+
+    getCarrierCars (carrierId) {
+      Server({
+        url: '/carrier/list/carOrderByUpdateTimeDesc',
+        method: 'get',
+        data: { carrierId }
+      }).then(res => {
+        this.carrierCars = res.data.data.carList.map(item => {
+          return {
+            name: item.carNO,
+            value: item.carNO,
+            id: item.carId,
+            driverName: item.driverName,
+            driverPhone: item.driverPhone,
+            carType: item.carType,
+            carLength: item.carLength
+          }
+        })
+      })
+    },
 
     handleSelectCarrier (name, row) {
-      this.$store.dispatch('getCarrierCars', row.id)
+      this.getCarrierCars(row.id)
       this.$store.dispatch('getCarrierDrivers', row.id)
     },
 
@@ -70,15 +100,6 @@ export default {
         return false
       }
       return true
-    },
-
-    // 窗口宽度改变
-    watchWindowWidth () {
-      const $box = this.$refs.$box
-      this.tableWidth = $box.offsetWidth
-      window.onresize = () => {
-        this.tableWidth = $box.offsetWidth
-      }
     },
 
     fetchData () {
@@ -150,8 +171,8 @@ export default {
     },
     // 分页切换
     pageChange (current) {
+      console.log(current)
       this.page.current = current
-      this.fetchData()
     },
     // 分页size改变
     pageSizeChange (size) {
@@ -176,8 +197,6 @@ export default {
     setFetchParams () {
       let params = {
         status: this.tabStatus,
-        pageNo: this.page.current,
-        pageSize: this.page.size,
         order: this.order === 'asc' ? 'asc' : 'desc'
       }
       if (this.inSearching) {
@@ -189,13 +208,13 @@ export default {
         } else {
           if (this.seniorSearchFields.startCodes) {
             if (this.seniorSearchFields.startCodes.length) {
-              this.seniorSearchFields.start = this.seniorSearchFields.startCodes[2]
+              this.seniorSearchFields.start = this.seniorSearchFields.startCodes[this.seniorSearchFields.startCodes.length - 1]
             } else this.seniorSearchFields.start = ''
           }
 
           if (this.seniorSearchFields.endCodes) {
             if (this.seniorSearchFields.endCodes.length) {
-              this.seniorSearchFields.end = this.seniorSearchFields.endCodes[2]
+              this.seniorSearchFields.end = this.seniorSearchFields.endCodes[this.seniorSearchFields.endCodes.length - 1]
             } else this.seniorSearchFields.end = ''
           }
 

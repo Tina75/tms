@@ -33,6 +33,18 @@ export default new Router({
       component: () => import('@/views/home/index')
     },
     {
+      path: '/set-up/index',
+      component: () => import('@/views/set-up/index')
+    },
+    {
+      path: '/info/index',
+      component: () => import('@/views/info/index')
+    },
+    {
+      path: '/helper/index',
+      component: () => import('@/views/helper/index')
+    },
+    {
       path: '/:name/:name1/:name2',
       component: PageRouter
     },

@@ -160,6 +160,7 @@ export default {
         for (let key in this.info) {
           this.info[key] = data.customerInfo[key]
         }
+        this.info.transFee = this.info.transFee / 100
         this.info.payType = this.info.payType.toString()
       }).catch(err => console.error(err))
     }

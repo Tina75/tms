@@ -31,7 +31,7 @@ export default {
           key: 'start',
           minWidth: 80,
           render: (h, p) => {
-            return this.tableDataRender(h, this.cityFilter(p.row.start), 3)
+            return this.tableDataRender(h, this.cityFilter(p.row.start), 2)
           }
         },
         // {
@@ -49,7 +49,7 @@ export default {
           key: 'end',
           minWidth: 80,
           render: (h, p) => {
-            return this.tableDataRender(h, this.cityFilter(p.row.end), 3)
+            return this.tableDataRender(h, this.cityFilter(p.row.end), 2)
           }
         },
         {
@@ -85,14 +85,14 @@ export default {
       expandTableTypeOne: [
         {
           type: 'selection',
-          width: 50,
-          fixed: 'left'
+          width: 45
+          // fixed: 'left'
         },
         {
           title: '订单号',
           key: 'orderNo',
-          fixed: 'left',
-          minWidth: 160,
+          // fixed: 'left',
+          minWidth: 130,
           render: (h, p) => {
             return h('a', {
               style: {
@@ -116,25 +116,25 @@ export default {
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 160,
+          minWidth: 100,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.consignerName)
+            return this.tableDataRender(h, p.row.consignerName, 4)
           }
         },
         {
-          title: '体积（方）',
+          title: '体积(方)',
           key: 'volume',
-          minWidth: 120,
+          minWidth: 80,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.volume)
+            return this.tableDataRender(h, p.row.volume, 5)
           }
         },
         {
-          title: '重量（吨）',
+          title: '重量(吨)',
           key: 'weight',
-          minWidth: 120,
+          minWidth: 80,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.weight)
+            return this.tableDataRender(h, p.row.weight, 5)
           }
         }
       ],
@@ -195,7 +195,7 @@ export default {
           }
         },
         {
-          title: '体积（方）',
+          title: '体积(方)',
           key: 'volume',
           minWidth: 120,
           render: (h, p) => {
@@ -203,7 +203,7 @@ export default {
           }
         },
         {
-          title: '重量（吨）',
+          title: '重量(吨)',
           key: 'weight',
           minWidth: 120,
           render: (h, p) => {
@@ -227,20 +227,7 @@ export default {
     }
   },
 
-  computed: {
-    rightTableWidth () {
-      return this.width ? (this.width - 120 - 440) : 0
-    }
-  },
-
   methods: {
-    tableHeightCompute () {
-      this.tableHeight = this.$refs.$dispatch.offsetHeight
-      window.onresize = () => {
-        this.tableHeight = this.$refs.$dispatch.offsetHeight
-      }
-    },
-
     // 保证只有一行展开
     keepExpandOnly (row, side) {
       let data = this.leftTableData

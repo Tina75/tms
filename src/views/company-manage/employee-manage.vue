@@ -5,7 +5,7 @@
       <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:50px;">
         <Button v-if="hasPower(140101)" type="primary" class="centerBtn" @click="createRole">新增角色</Button>
       </div>
-      <div style="max-height:500px; overflow-y:auto; padding-top: 20px;">
+      <div style="max-height:750px; overflow-y:auto; padding-top: 20px;">
         <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" class="menu" @click.native="clickLeftMenu(menu)">
         <p class="menuTitle">{{menu.name}}</p>
         <span v-if="menu.type !== 1" class="configBtnItem">
@@ -30,13 +30,14 @@
       </Modal>
     </Menu>
     </Col>
-    <Col span="18">
+    <Col span="18" style="margin-left: 20px;">
     <p class="rightTitle">{{rightTitle}}的权限
     </p><div v-if="hasPower(140102)" class="saveRoleBtn">
       <Button
         v-if="menuParam.type !== 1"
         :disabled="disSaveBtn"
         type="primary"
+        style="width:80px;"
         @click="saveRole">
         保存
       </Button>
@@ -70,7 +71,7 @@
       <Card v-for="treeData in listInitTreeList" :key="treeData.index" dis-hover class="cardTreeItem">
         <p slot="title">
           <!-- <Checkbox v-model="treeData[0].checked" @on-change="checkTitleBox(treeData[0].key)" style="margin-top: -5px;"></Checkbox> -->
-          <span>{{treeData[0].title}}</span>
+          <span style="color:rgba(51,51,51,1)">{{treeData[0].title}}</span>
         </p>
         <Tree
           :ref="treeData[0].key"
@@ -366,14 +367,22 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
+>>>.ivu-card-head
+  background:rgba(248,248,248,1);
+>>>.ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
+  color: #515a6e;
 .temAll
   width: 100%
   overflow: auto;
   .leftMenu
-    min-height: 600px;
+    min-height: 860px;
   .menu:hover
+    background: #e3fcfc;
+    color: #515a6e;
     .configBtnItem
       display: block
+  .menu
+    margin-left: -50px;
     .menuTitle
       white-space: nowrap;
       overflow: hidden;
@@ -381,9 +390,12 @@ export default {
       width: 120px;
   .rightTitle
     font-size: 20px;
-    color: #333333;
-    line-height: 45px;
+    color: #333;
+    line-height: 55px;
     padding: 0 20px 0 10px;
+    margin-top: -10px;
+    font-weight:600;
+    color:rgba(51,51,51,1);
   .divTree
     clear: both;
     .cardTreeItem
@@ -391,9 +403,10 @@ export default {
       height: 400px;
       float: left;
       margin: 5px;
+      border-radius: 0px;
       .treeContentDiv
         width: 252px;
-        height: 330px;
+        height: 346px;
         margin-top: -15px;
         overflow-y:auto;
         overflow-x:auto;
