@@ -28,6 +28,7 @@
         <i-col span="7" offset="1">
           <span class="detail-field-title">司机手机号：</span>
           <Input v-model="info.driverPhone"
+                 :maxlength="11"
                  class="detail-info-input"></Input>
         </i-col>
       </Row>
