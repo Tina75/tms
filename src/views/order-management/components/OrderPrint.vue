@@ -1,0 +1,168 @@
+<template>
+  <Modal v-model="visible" @on-cancel="visible=false">
+    <div ref="htmlContent">
+      <div v-for="(data, index) in list" :key="index" class="order-detail">
+        <h3 class="van-center i-mb-20">{{data.consignerName}}公司托运单</h3>
+        <table cellspacing="0" cellpadding="10" border="0" style="width:100%">
+          <colgroup>
+            <col width="160" />
+            <col width="240" />
+            <col width="240" />
+          </colgroup>
+          <tbody>
+            <tr>
+              <td>客户：{{data.consignerName}}</td>
+              <td>始发地：{{startCity(data)}}</td>
+              <td>目的地：{{endCity(data)}}</td>
+            </tr>
+            <tr>
+              <td>发货人：{{data.consignerContact}}</td>
+              <td>手机号：{{data.consignerPhone}}</td>
+              <td>发货地址：{{data.consignerAddress}}</td>
+            </tr>
+            <tr>
+              <td>收货人：{{data.consigneeContact}}</td>
+              <td>手机号：{{data.consigneePhone}}</td>
+              <td>收货地址：{{data.consigneeAddress}}</td>
+            </tr>
+            <tr>
+              <td>提货方式：{{pickup(data)}}</td>
+              <td>回单数：{{data.receiptCount}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table cellspacing="0" cellpadding="5" border="1" class="i-mt-20 i-mb-20" style="width:100%">
+          <thead>
+            <tr>
+              <th>货物名称</th>
+              <th>包装单位</th>
+              <th>数量</th>
+              <th>货值（元）</th>
+              <th>重量（吨）</th>
+              <th>体积（方）</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(cargo, index) in data.orderCargoList" :key="index" class="table-content">
+              <td>{{cargo.cargoName}}</td>
+              <td>{{cargo.unit}}</td>
+              <td>{{cargo.quantity}}</td>
+              <td>{{cargo.cargoCost / 100}}</td>
+              <td>{{cargo.weight}}</td>
+              <td>{{cargo.volume}}</td>
+            </tr>
+            <tr>
+              <td colspan="6" class="table-footer">
+                <span class="table-footer-item">运输费：{{data.freightFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">装货费：{{data.loadFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">卸货费：{{data.unloadFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">保险费：{{data.insuranceFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">其他：{{data.otherFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">合计运费: {{data.totalFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">结算方式：{{settlement(data) || 0}}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="remark-line">
+          备注：{{data.remark || '无'}}
+        </div>
+        <table style="width:100%">
+          <tbody>
+            <tr>
+              <td>托运人签字：</td>
+              <td>司机签字：</td>
+              <td>收货人签字：</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </Modal>
+</template>
+
+<script>
+import Printd from 'printd'
+import City from '@/libs/js/City'
+import settlements from '@/libs/constant/settlement.js'
+import pickups from '@/libs/constant/pickup.js'
+export default {
+  props: {
+    list: {
+      type: Array,
+      default: () => []
+    }
+  },
+  data () {
+    return {
+      cssText: `
+        .order-detail {
+          text-align: center;
+          padding-top: 20px;
+          page-break-after: always;
+        }
+        .i-mt-20 {
+          margin-top: 20px;
+        }
+        .i-mb-20 {
+          margin-bottom: 20px
+        }
+        .remark-line {
+          text-align: left;
+          padding: 10px 0 20px;
+          margin: 10px 0 15px;
+          border-bottom: 1px dashed #ccc;
+        }
+        .table-content {
+          text-align: center;
+        }
+        .table-footer {
+          padding: 10px 20px;
+          line-height: 1.5;
+        }
+        .table-footer-item {
+          display: inline-block;
+          margin-right: 50px
+        }
+      `,
+      visible: false
+    }
+  },
+  mounted () {
+    this.printer = new Printd()
+  },
+  methods: {
+    startCity (data) {
+      return data.start ? City.codeToFullName(data.start) : ''
+    },
+    endCity (data) {
+      return data.end ? City.codeToFullName(data.end) : ''
+    },
+    pickup (data) {
+      let pick = pickups.find(item => item.value === data.pickup)
+      if (pick) {
+        return pick.name
+      }
+      return pickups[0].name
+    },
+    settlement (data) {
+      let type = settlements.find(item => item.value === data.settlementType)
+      if (type) {
+        return type.name
+      }
+      return settlements[0].name
+    },
+    print () {
+      // this.visible = true
+      this.$nextTick(() => {
+        this.printer.print(this.$refs.htmlContent, this.cssText)
+      })
+    }
+  }
+}
+</script>
+
+<style>
+
+</style>
