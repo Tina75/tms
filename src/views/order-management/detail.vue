@@ -2,7 +2,7 @@
   <div>
     <header class="detail-header">
       <ul>
-        <li>单号：{{detail.orderNo}}</li>
+        <li>订单号：{{detail.orderNo}}</li>
         <li>客户订单号：{{detail.customerOrderNo}}</li>
         <li>运单号：{{detail.waybillNo}} &nbsp;&nbsp;&nbsp;
           <Poptip v-if="waybillNums.length > 0" placement="bottom" @on-popper-show="showPoptip" @on-popper-hide="hidePoptip">
@@ -380,6 +380,7 @@ export default {
         }).then((res) => {
           console.log(res)
           this.detail = res.data.data
+          this.detail.status = res.data.data.receiptOrder.receiptStatus // 回单状态
           // 过滤回单详情页操作按钮
           this.filterReceiptButton()
           this.orderLog = res.data.data.receiptOrderLogs // 回单日志
@@ -456,10 +457,10 @@ export default {
        *
        * 展示按钮：拆单、外转、还原、删除、编辑（详情页独有）
        * 1、待提货状态下：（status: 10）
-       *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）】显示
+       *    拆单： 无拆单按钮            //【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）】显示
        *    外转：【（未外转：transStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被提货：pickupStatus=0）】显示
-       *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被提货：pickupStatus=0）】显示
-       *    删除：
+       *    还原： 无还原按钮            //【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被提货：pickupStatus=0）】显示
+       *    删除： 无删除按钮            //
        *          订单列表里显示：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （被拆单后的父单：disassembleStatus=1）】
        *          订单详情里显示：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （不是子单：parentId=''）】
        *    编辑：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
@@ -476,17 +477,17 @@ export default {
       let renderBtn = []
       if (r.status === 10) { // 待提货状态
         // 删除按钮
-        if (r.transStatus === 0 && r.pickupStatus === 0 && r.parentId === '') {
-          renderBtn.push(
-            { name: '删除', value: 1, code: 110107 }
-          )
-        }
+        // if (r.transStatus === 0 && r.pickupStatus === 0 && r.parentId === '') {
+        //   renderBtn.push(
+        //     { name: '删除', value: 1, code: 110107 }
+        //   )
+        // }
         // 拆单按钮
-        if (r.transStatus === 0 && r.disassembleStatus !== 1) {
-          renderBtn.push(
-            { name: '拆单', value: 2, code: 110103 }
-          )
-        }
+        // if (r.transStatus === 0 && r.disassembleStatus !== 1) {
+        //   renderBtn.push(
+        //     { name: '拆单', value: 2, code: 110103 }
+        //   )
+        // }
         // 外转按钮
         if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.pickupStatus === 0) {
           renderBtn.push(
@@ -494,11 +495,11 @@ export default {
           )
         }
         // 还原按钮
-        if (r.parentId === '' && r.disassembleStatus === 1 && r.pickupStatus === 0) {
-          renderBtn.push(
-            { name: '还原', value: 4, code: 110105 }
-          )
-        }
+        // if (r.parentId === '' && r.disassembleStatus === 1 && r.pickupStatus === 0) {
+        //   renderBtn.push(
+        //     { name: '还原', value: 4, code: 110105 }
+        //   )
+        // }
         // 编辑按钮
         if (r.transStatus === 0 && r.pickupStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
           renderBtn.push(

@@ -37,9 +37,9 @@
             @on-select="handleSelectCarrierCars">
           </SelectInput>
         </FormItem>
-        <FormItem label="司机" prop="driver" style="margin-left:27px;">
+        <FormItem label="司机" prop="driverName" style="margin-left:27px;">
           <SelectInput
-            v-model="pick.driver"
+            v-model="pick.driverName"
             :maxlength="15"
             :remote="false"
             :local-options="carrierDrivers"
@@ -48,7 +48,7 @@
           </SelectInput>
         </FormItem>
       </Form>
-      <Table :columns="tableColumns" :data="id"></Table>
+      <Table :columns="tableColumns" :data="id" :height="id.length > 10 ? 520 : id.length * 48 + 40"></Table>
       <div class="table-footer">
         <span style="padding-right: 5px;box-sizing:border-box">合计</span>
         <span>订单总数：{{ orderTotal }}</span>
@@ -88,7 +88,7 @@ export default {
         start: { required: true, type: 'array', min: 1, message: '请填写始发地', trigger: 'change' },
         end: { required: true, type: 'array', min: 1, message: '请填写目的地', trigger: 'change' }
       },
-      pick: { carrierName: '', carNo: '', driver: '' },
+      pick: { carrierName: '', carNo: '', driverName: '' },
       pickRules: {
         carrierName: [
           { required: true, message: '请填写承运商', trigger: 'blur' },
@@ -99,7 +99,7 @@ export default {
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' },
           { required: true, message: '请填写车牌号', trigger: 'change' }
         ],
-        driver: [
+        driverName: [
           { required: true, message: '请填写司机姓名', trigger: 'blur' },
           { required: true, message: '请填写司机姓名', trigger: 'change' }
         ]
@@ -110,7 +110,7 @@ export default {
           title: '操作',
           key: 'do',
           align: 'center',
-          width: 110,
+          width: 80,
           render: (h, params) => {
             return h('div', [
               h('a', {
@@ -132,42 +132,74 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
-          width: 160
+          minWidth: 160,
+          tooltip: true
         },
         {
           title: '客户订单号',
-          key: 'customerOrderNo'
+          key: 'customerOrderNo',
+          minWidth: 140,
+          tooltip: true
         },
         {
           title: '客户名称',
           key: 'consignerName',
-          width: 180
+          minWidth: 140,
+          tooltip: true
         },
         {
           title: '始发地',
           key: 'start',
+          minWidth: 130,
+          ellipsis: true,
           render: (h, params) => {
-            return h('span', City.codeToFullName(params.row.start))
+            if (City.codeToFullName(params.row.start).length > 8) {
+              return h('Tooltip', {
+                props: {
+                  placement: 'bottom',
+                  content: City.codeToFullName(params.row.start)
+                }
+              }, [
+                h('span', this.formatterAddress(City.codeToFullName(params.row.start)))
+              ])
+            } else {
+              return h('span', City.codeToFullName(params.row.start))
+            }
           }
         },
         {
           title: '目的地',
           key: 'end',
+          minWidth: 130,
+          ellipsis: true,
           render: (h, params) => {
-            return h('span', City.codeToFullName(params.row.end))
+            if (City.codeToFullName(params.row.end).length > 8) {
+              return h('Tooltip', {
+                props: {
+                  placement: 'bottom',
+                  content: City.codeToFullName(params.row.end)
+                }
+              }, [
+                h('span', this.formatterAddress(City.codeToFullName(params.row.end)))
+              ])
+            } else {
+              return h('span', City.codeToFullName(params.row.end))
+            }
           }
         },
         {
           title: '体积（方）',
-          key: 'volume'
+          key: 'volume',
+          minWidth: 100,
+          tooltip: true
         },
         {
           title: '重量（吨）',
-          key: 'weight'
+          key: 'weight',
+          minWidth: 100,
+          tooltip: true
         }
-      ],
-      tableData: [],
-      maintainData: ['Steve Jobs', 'Stephen Gary Wozniak', 'Jonathan Paul Ive']
+      ]
     }
   },
 
@@ -185,14 +217,14 @@ export default {
       this.id.map((item) => {
         total += item.volume
       })
-      return total
+      return total.toFixed(2)
     },
     weightTotal () {
       let total = 0
       this.id.map((item) => {
         total += item.weight
       })
-      return total
+      return total.toFixed(2)
     },
     orderIds () {
       let arr = []
@@ -281,6 +313,11 @@ export default {
           })
         }
       })
+    },
+    // 将地址字符串8位后的替换成...
+    formatterAddress (str) {
+      let dot = str.substring(8)
+      return str.replace(dot, ' ...')
     }
   }
 

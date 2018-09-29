@@ -39,7 +39,7 @@
           style="width: 200px"
           @on-enter="searchList"
           @on-click="clearKeywords"/>
-        <Button type="primary" icon="ios-search" style="width: 40px;margin-right: 0;" @click="searchList"></Button>
+        <Button type="primary" icon="ios-search" style="width: 40px;margin-right: 0;border-top-left-radius: 0;border-bottom-left-radius: 0;" @click="searchList"></Button>
         <Button type="text" class="high-search" size="small" @click="handleSwitchSearch">高级搜索</Button>
       </div>
     </div>
@@ -85,7 +85,6 @@
       :method="method"
       :keywords="keyword"
       :columns="tableColumns"
-      :selected="selectedId"
       :extra-columns="extraColumns"
       :show-filter="true"
       style="margin-top: 15px"
@@ -143,6 +142,21 @@ export default {
         { name: '打印', value: 5, code: 110108 },
         { name: '导出', value: 6, code: 110109 }
       ],
+      selectStatus: 0, // 当前搜索状态   0：客户名称   1：订单号  2：运单号
+      selectList: [
+        {
+          value: 0,
+          label: '客户名称'
+        },
+        {
+          value: 1,
+          label: '订单号'
+        },
+        {
+          value: 2,
+          label: '运单号'
+        }
+      ],
       operateValue: 1,
       keyword: {
         status: 10 // 默认待提货状态  传给pageTable可重新请求数据
@@ -173,11 +187,11 @@ export default {
              *
              * 展示按钮：拆单、外转、还原、删除、编辑（详情页独有）
              * 1、待提货状态下：（status: 10）
-             *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）】显示
+             *    拆单： 无拆单按钮           //【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）】显示
              *    外转：【（未外转：transStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被提货：pickupStatus=0）】显示
-             *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被提货：pickupStatus=0）】显示
-             *    删除：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （被拆单后的父单：disassembleStatus=1）】显示
-             *    编辑：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
+             *    还原： 无还原按钮           //【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被提货：pickupStatus=0）】显示
+             *    删除： 无删除按钮           //【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （被拆单后的父单：disassembleStatus=1）】显示
+             *    编辑： 无编辑按钮           //【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
              * 2、待调度状态下：（status: 20）
              *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）&& （未被调度：dispatchStatus=0）】显示
              *    外转：【（未外转：transStatus=0） && （不是上门提货：pickup !== 1） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被调度：dispatchStatus=0）】显示
@@ -190,21 +204,21 @@ export default {
               // 需显示的按钮组
               let renderBtn = []
               // 拆单按钮
-              if (r.transStatus === 0 && r.disassembleStatus !== 1 && this.hasPower(110103)) {
-                renderBtn.push(
-                  h('a', {
-                    style: {
-                      marginRight: '25px',
-                      color: '#00a4bd'
-                    },
-                    on: {
-                      click: () => {
-                        this.openSeparateDialog(params)
-                      }
-                    }
-                  }, '拆单')
-                )
-              }
+              // if (r.transStatus === 0 && r.disassembleStatus !== 1 && this.hasPower(110103)) {
+              //   renderBtn.push(
+              //     h('a', {
+              //       style: {
+              //         marginRight: '25px',
+              //         color: '#00a4bd'
+              //       },
+              //       on: {
+              //         click: () => {
+              //           this.openSeparateDialog(params)
+              //         }
+              //       }
+              //     }, '拆单')
+              //   )
+              // }
               // 外转按钮
               if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.pickupStatus === 0 && this.hasPower(110104)) {
                 renderBtn.push(
@@ -222,37 +236,37 @@ export default {
                 )
               }
               // 还原按钮
-              if (r.parentId === '' && r.disassembleStatus === 1 && r.pickupStatus === 0 && this.hasPower(110105)) {
-                renderBtn.push(
-                  h('a', {
-                    style: {
-                      marginRight: '25px',
-                      color: '#00a4bd'
-                    },
-                    on: {
-                      click: () => {
-                        this.openResOrDelDialog(params, '还原')
-                      }
-                    }
-                  }, '还原')
-                )
-              }
+              // if (r.parentId === '' && r.disassembleStatus === 1 && r.pickupStatus === 0 && this.hasPower(110105)) {
+              //   renderBtn.push(
+              //     h('a', {
+              //       style: {
+              //         marginRight: '25px',
+              //         color: '#00a4bd'
+              //       },
+              //       on: {
+              //         click: () => {
+              //           this.openResOrDelDialog(params, '还原')
+              //         }
+              //       }
+              //     }, '还原')
+              //   )
+              // }
               // 删除按钮
-              if (r.transStatus === 0 && r.pickupStatus === 0 && r.disassembleStatus === 1 && this.hasPower(110107)) {
-                renderBtn.push(
-                  h('a', {
-                    style: {
-                      marginRight: '25px',
-                      color: '#00a4bd'
-                    },
-                    on: {
-                      click: () => {
-                        this.openResOrDelDialog(params, '删除')
-                      }
-                    }
-                  }, '删除')
-                )
-              }
+              // if (r.transStatus === 0 && r.pickupStatus === 0 && r.disassembleStatus === 1 && this.hasPower(110107)) {
+              //   renderBtn.push(
+              //     h('a', {
+              //       style: {
+              //         marginRight: '25px',
+              //         color: '#00a4bd'
+              //       },
+              //       on: {
+              //         click: () => {
+              //           this.openResOrDelDialog(params, '删除')
+              //         }
+              //       }
+              //     }, '删除')
+              //   )
+              // }
               return h('div', renderBtn)
             }
             if (r.status === 20) { // 待调度状态
@@ -401,75 +415,102 @@ export default {
           title: '客户订单号',
           key: 'customerOrderNo',
           minWidth: 160,
-          tooltip: true
+          render: (h, p) => {
+            return h('span', p.row.customerOrderNo ? p.row.customerOrderNo : '-')
+          }
         },
         {
           title: '运单号',
           key: 'waybillNo',
           minWidth: 160,
-          tooltip: true
+          render: (h, p) => {
+            return h('span', p.row.waybillNo ? p.row.waybillNo : '-')
+          }
         },
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 170,
+          minWidth: 180,
           tooltip: true
         },
         {
           title: '始发地',
           key: 'start',
-          minWidth: 170,
-          tooltip: true,
+          minWidth: 180,
+          ellipsis: true,
           render: (h, params) => {
-            return h('span', City.codeToFullName(params.row.start))
+            if (City.codeToFullName(params.row.start).length > 12) {
+              return h('Tooltip', {
+                props: {
+                  placement: 'bottom',
+                  content: City.codeToFullName(params.row.start)
+                }
+              }, [
+                h('span', this.formatterAddress(City.codeToFullName(params.row.start)))
+              ])
+            } else {
+              return h('span', City.codeToFullName(params.row.start))
+            }
           }
         },
         {
           title: '目的地',
           key: 'end',
-          minWidth: 170,
-          tooltip: true,
+          minWidth: 180,
+          ellipsis: true,
           render: (h, params) => {
-            return h('span', City.codeToFullName(params.row.end))
+            if (City.codeToFullName(params.row.end).length > 12) {
+              return h('Tooltip', {
+                props: {
+                  placement: 'bottom',
+                  content: City.codeToFullName(params.row.end)
+                }
+              }, [
+                h('span', this.formatterAddress(City.codeToFullName(params.row.end)))
+              ])
+            } else {
+              return h('span', City.codeToFullName(params.row.end))
+            }
           }
         },
         {
           title: '体积（方）',
           key: 'volume',
           minWidth: 100,
-          tooltip: true
+          render: (h, p) => {
+            return h('span', p.row.waybillNo ? p.row.waybillNo : '-')
+          }
         },
         {
           title: '重量（吨）',
           key: 'weight',
           minWidth: 100,
-          tooltip: true
+          render: (h, p) => {
+            return h('span', p.row.waybillNo ? p.row.waybillNo : '-')
+          }
         },
         {
           title: '下单时间',
           key: 'createTime',
           minWidth: 150,
-          tooltip: true,
           render: (h, params) => {
-            return h('span', params.row.createTime ? new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm:ss') : '')
+            return h('span', params.row.createTime ? new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
           }
         },
         {
           title: '要求发货时间',
           key: 'deliveryTime',
           minWidth: 150,
-          tooltip: true,
           render: (h, params) => {
-            return h('span', params.row.deliveryTime ? new Date(params.row.deliveryTime).Format('yyyy-MM-dd hh:mm:ss') : '')
+            return h('span', params.row.deliveryTime ? new Date(params.row.deliveryTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
           }
         },
         {
           title: '期望到货时间',
           key: 'arriveTime',
           minWidth: 150,
-          tooltip: true,
           render: (h, params) => {
-            return h('span', params.row.arriveTime ? new Date(params.row.arriveTime).Format('yyyy-MM-dd hh:mm:ss') : '')
+            return h('span', params.row.arriveTime ? new Date(params.row.arriveTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
           }
         },
         {
@@ -481,13 +522,13 @@ export default {
         {
           title: '发货人手机号',
           key: 'consignerPhone',
-          minWidth: 140,
+          minWidth: 130,
           tooltip: true
         },
         {
           title: '发货地址',
           key: 'consignerAddress',
-          minWidth: 140,
+          minWidth: 180,
           tooltip: true
         },
         {
@@ -499,20 +540,19 @@ export default {
         {
           title: '收货人手机号',
           key: 'consigneePhone',
-          minWidth: 120,
+          minWidth: 130,
           tooltip: true
         },
         {
           title: '收货地址',
           key: 'consigneeAddress',
-          minWidth: 140,
+          minWidth: 180,
           tooltip: true
         },
         {
           title: '结算方式',
           key: 'settlementType',
           minWidth: 120,
-          tooltip: true,
           render: (h, params) => {
             return h('span', this.settlementToName(params.row.settlementType))
           }
@@ -521,52 +561,47 @@ export default {
           title: '装货费',
           key: 'loadFee',
           minWidth: 120,
-          tooltip: true,
           render: (h, params) => {
-            return h('span', params.row.loadFee ? (params.row.loadFee / 100).toFixed(2) : '')
+            return h('span', params.row.loadFee ? (params.row.loadFee / 100).toFixed(2) : '-')
           }
         },
         {
           title: '卸货费',
           key: 'unloadFee',
           minWidth: 120,
-          tooltip: true,
+
           render: (h, params) => {
-            return h('span', params.row.unloadFee ? (params.row.unloadFee / 100).toFixed(2) : '')
+            return h('span', params.row.unloadFee ? (params.row.unloadFee / 100).toFixed(2) : '-')
           }
         },
         {
           title: '保险费',
           key: 'insuranceFee',
           minWidth: 120,
-          tooltip: true,
           render: (h, params) => {
-            return h('span', params.row.insuranceFee ? (params.row.insuranceFee / 100).toFixed(2) : '')
+            return h('span', params.row.insuranceFee ? (params.row.insuranceFee / 100).toFixed(2) : '-')
           }
         },
         {
           title: '其他',
           key: 'otherFee',
           minWidth: 120,
-          tooltip: true,
           render: (h, params) => {
-            return h('span', params.row.otherFee ? (params.row.otherFee / 100).toFixed(2) : '')
+            return h('span', params.row.otherFee ? (params.row.otherFee / 100).toFixed(2) : '-')
           }
         },
         {
           title: '总费用',
           key: 'totalFee',
           minWidth: 120,
-          tooltip: true,
           render: (h, params) => {
-            return h('span', params.row.totalFee ? (params.row.totalFee / 100).toFixed(2) : '')
+            return h('span', params.row.totalFee ? (params.row.totalFee / 100).toFixed(2) : '-')
           }
         },
         {
           title: '提货方式',
           key: 'pickup',
           minWidth: 120,
-          tooltip: true,
           render: (h, params) => {
             return h('span', this.pickupToName(params.row.pickup))
           }
@@ -579,9 +614,11 @@ export default {
         },
         {
           title: '制单人',
-          key: 'creatorId',
+          key: 'creatorName',
           minWidth: 120,
-          tooltip: true
+          render: (h, p) => {
+            return h('span', p.row.creatorName ? p.row.creatorName : '-')
+          }
         }
       ],
       extraColumns: [
@@ -737,7 +774,7 @@ export default {
         },
         {
           title: '制单人',
-          key: 'creatorId',
+          key: 'creatorName',
           fixed: false,
           visible: false
         }
@@ -834,7 +871,8 @@ export default {
     handleTabChange (val) {
       console.log(val)
       this.curStatusName = val
-      this.selectedId = []
+      this.selectOrderList = [] // 重置当前已勾选项
+      this.selectedId = [] // 重置当前已勾选id项
       if (val === '全部') {
         this.operateValue = 1
         this.btnGroup = [
@@ -897,15 +935,24 @@ export default {
     // 判断各个状态下表头按钮批量操作报错
     isBatchOperation (btn) {
       if (btn.name === '送货调度') { // 待调度（status:20）&& 未创建运单(dispatchStatus: 0) && 未外转(transStatus: 0) && 不是父单（disassembleStatus !== 1）可以批量操作
+        if (this.selectOrderList.length > 20) { // 一次最多选择20条订单
+          this.$Message.warning('一次最多选择20条订单')
+          return
+        }
         let data = this.selectOrderList.find((item) => {
           return (item.status !== 20 || item.dispatchStatus !== 0 || item.transStatus !== 0 || item.disassembleStatus === 1)
         })
         if (data !== undefined) {
+          console.log(this.selectOrderList)
           this.$Message.warning('您选择的订单不支持送货调度')
         } else {
           this.openDispatchDialog(btn.name)
         }
       } else if (btn.name === '提货调度') { // 待提货（status:10）且未创建提货单(pickupStatus: 0)且未外转(transStatus: 0)且是父单(parentId：'') 可以批量操作
+        if (this.selectOrderList.length > 20) { // 一次最多选择20条订单
+          this.$Message.warning('一次最多选择20条订单')
+          return
+        }
         let data = this.selectOrderList.find((item) => {
           return (item.status !== 10 || item.pickupStatus !== 0 || item.transStatus !== 0 || item.parentId !== '')
         })
@@ -936,7 +983,6 @@ export default {
         this.export()
       } else {
         // 打印
-        console.log(this.selectedId.length)
         this.print()
       }
     },
