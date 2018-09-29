@@ -1,12 +1,8 @@
-import CarConfigs from './carConfigs.json'
 import MoneyInput from '../components/moneyInput'
-import City from '@/libs/js/City'
+
 import Server from '@/libs/js/server'
 import { mapGetters } from 'vuex'
 import { CAR } from '@/views/client/client'
-
-const carType = CarConfigs.carType
-const carLength = CarConfigs.carLength
 
 export default {
   data () {
@@ -106,10 +102,7 @@ export default {
       ],
 
       showLog: false,
-      logList: [],
-
-      carType,
-      carLength
+      logList: []
     }
   },
 
@@ -158,33 +151,6 @@ export default {
     ...mapGetters([
       'carrierDrivers'
     ])
-  },
-
-  filters: {
-    formatTime (timestamp) {
-      if (!timestamp) return ''
-      return new Date(timestamp).Format('yyyy-MM-dd hh:mm:ss')
-    },
-
-    formatCity (code) {
-      if (!code) return ''
-      return Array.from(new Set(City.codeToFullName(code, 3, '-').split('-'))).join('')
-    },
-
-    carTypeFilter (value) {
-      for (let i = 0; i < carType.length; i++) {
-        if (value === carType[i].value) {
-          return carType[i].label
-        }
-      }
-    },
-    carLengthFilter (value) {
-      for (let i = 0; i < carLength.length; i++) {
-        if (value === carLength[i].value) {
-          return carLength[i].label
-        }
-      }
-    }
   },
 
   watch: {
@@ -286,15 +252,6 @@ export default {
       })
     },
 
-    formatCity (code) {
-      if (!code) return ''
-      return this.arrayUnique(City.codeToFullName(code, 3, '-').split('-')).join('')
-    },
-
-    getFullCityCode (code) {
-      return City.getPathByCode(code).map(item => Number(item.code))
-    },
-
     // 根据状态设置按钮
     setBtnsWithStatus () {
       for (let i = 0; i < this.btnList.length; i++) {
@@ -349,7 +306,7 @@ export default {
         name: 'transport/dialog/addOrder',
         data: {
           type,
-          billHasSelected: self.arrayUnique(self.detail.map(item => item.orderId))
+          billHasSelected: Array.from(new Set(self.detail.map(item => item.orderId)))
         },
         methods: {
           confirm (ids) {
@@ -434,11 +391,6 @@ export default {
       if (this.settlementType === '1' && !this.checkTotalAmount()) return false
 
       return true
-    },
-
-    // 去重
-    arrayUnique (arr) {
-      return Array.from(new Set(arr))
     }
   }
 }

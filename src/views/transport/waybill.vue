@@ -115,6 +115,7 @@
                :extra-columns="extraColumns"
                :show-filter="true"
                :keywords="searchFields"
+               row-id="waybillId"
                url="/waybill/list"
                method="post"
                list-field="waybillList"
@@ -131,19 +132,22 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
+import TransportBase from './transportBase'
+import TransportMixin from './transportMixin'
+
 import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput'
 import PrintFreight from './components/PrintFreight'
-import TransportMixin from './transportMixin'
+
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 
 export default {
   name: 'WaybillManager',
   components: { TabHeader, PageTable, AreaSelect, SelectInput, PrintFreight },
-  mixins: [ BasePage, TransportMixin ],
+  mixins: [ BasePage, TransportBase, TransportMixin ],
   metaInfo: { title: '运单管理' },
   data () {
     return {
@@ -342,9 +346,9 @@ export default {
           render: (h, p) => {
             return h('Tooltip', {
               props: {
-                content: this.cityFilter(p.row.start)
+                content: this.cityFormatter(p.row.start)
               }
-            }, this.cityFilter(p.row.start))
+            }, this.cityFormatter(p.row.start))
           }
         },
         {
@@ -355,9 +359,9 @@ export default {
           render: (h, p) => {
             return h('Tooltip', {
               props: {
-                content: this.cityFilter(p.row.end)
+                content: this.cityFormatter(p.row.end)
               }
-            }, this.cityFilter(p.row.end))
+            }, this.cityFormatter(p.row.end))
           }
         },
         {
@@ -406,7 +410,7 @@ export default {
           minWidth: 160,
           sortable: 'custom',
           render: (h, p) => {
-            return h('span', this.dateFormatter(p.row.createTimeLong))
+            return h('span', this.timeFormatter(p.row.createTimeLong))
           }
         },
         {
@@ -457,8 +461,8 @@ export default {
           key: 'carType',
           minWidth: 100,
           render: (h, p) => {
-            const carType = this.carTypeFilter(p.row.carType)
-            const carLength = this.carLengthFilter(p.row.carLength)
+            const carType = this.carTypeFormatter(p.row.carType)
+            const carLength = this.carLengthFormatter(p.row.carLength)
             return h('span', carType && carLength ? [carType, carLength].join(' ') : '-')
           }
         },

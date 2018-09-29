@@ -37,7 +37,7 @@
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型：</span>
-            <span>{{ info.carType|carTypeFilter }} {{ info.carLength|carLengthFilter }}</span>
+            <span>{{ info.carType|carTypeFormatter }} {{ info.carLength|carLengthFormatter }}</span>
           </i-col>
           <i-col span="10" offset="1">
             <span class="detail-field-title">司机：</span>
@@ -131,7 +131,7 @@
             <TimelineItem v-for="(item, key) in logList"
                           :key="key" class="detail-log-timeline-item">
               <i slot="dot"></i>
-              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong | formatTime}}</span>
+              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong | timeFormatter}}</span>
               <span style="color: #333;">{{'【' + item.operatorName + '】' + item.description}}</span>
             </TimelineItem>
 
@@ -304,7 +304,9 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import detailMixin from './detailMixin'
+import TransportBase from '../transportBase'
+import DetailMixin from './detailMixin'
+
 import Server from '@/libs/js/server'
 import MoneyInput from '../components/moneyInput'
 import AreaSelect from '@/components/AreaSelect'
@@ -313,7 +315,7 @@ import SelectInput from '@/components/SelectInput'
 export default {
   name: 'DetailFeright',
   components: { MoneyInput, SelectInput, AreaSelect },
-  mixins: [ BasePage, detailMixin ],
+  mixins: [ BasePage, TransportBase, DetailMixin ],
   metaInfo: { title: '提货单详情' },
   data () {
     return {

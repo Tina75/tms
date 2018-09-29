@@ -73,10 +73,7 @@
 <script>
 import Printd from 'printd'
 import City from '@/libs/js/City'
-import CarConfigs from '../detail/carConfigs.json'
-
-const carType = CarConfigs.carType
-const carLength = CarConfigs.carLength
+import { getCarType, getCarLength } from '@/libs/constant/carInfo'
 
 export default {
 
@@ -92,21 +89,9 @@ export default {
       return City.codeToFullName(code, 3, '')
     },
     // 格式化车型
-    carTypeFilter (value) {
-      for (let i = 0; i < carType.length; i++) {
-        if (value === carType[i].value) {
-          return carType[i].label
-        }
-      }
-    },
+    carTypeFilter: getCarType,
     // 格式化车长
-    carLengthFilter (value) {
-      for (let i = 0; i < carLength.length; i++) {
-        if (value === carLength[i].value) {
-          return carLength[i].label
-        }
-      }
-    },
+    carLengthFilter: getCarLength,
     // 格式化结算方式
     settlementTypeFilter (type) {
       if (type === 1) return '按单结'

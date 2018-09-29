@@ -1,9 +1,4 @@
-import City from '../../libs/js/City'
-import CarConfigs from './detail/carConfigs.json'
 import { mapGetters, mapActions } from 'vuex'
-
-const carType = CarConfigs.carType
-const carLength = CarConfigs.carLength
 
 export default {
   data () {
@@ -75,24 +70,6 @@ export default {
         return false
       }
       return true
-    },
-
-    carTypeFilter (value) {
-      for (let i = 0; i < carType.length; i++) {
-        if (value === carType[i].value) {
-          return carType[i].label
-        }
-      }
-      return ''
-    },
-
-    carLengthFilter (value) {
-      for (let i = 0; i < carLength.length; i++) {
-        if (value === carLength[i].value) {
-          return carLength[i].label
-        }
-      }
-      return ''
     },
 
     // 窗口宽度改变
@@ -187,6 +164,7 @@ export default {
     },
     // 选中的表格行
     selectionChanged (selection) {
+      console.log(selection)
       this.tableSelection = selection
     },
     // 表格按时间排序
@@ -238,16 +216,6 @@ export default {
         }
       }
       return params
-    },
-    // 格式化日期
-    dateFormatter (timestamp) {
-      if (!timestamp) return '-'
-      return new Date(timestamp).Format('yyyy-MM-dd hh:mm:ss')
-    },
-    // 格式化城市
-    cityFilter (code) {
-      if (!code) return '-'
-      return Array.from(new Set(City.codeToFullName(code, 3, '-').split('-'))).join('')
     }
   }
 }
