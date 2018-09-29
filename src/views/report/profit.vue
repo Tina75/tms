@@ -20,11 +20,11 @@
       </div>
       <div class="search-btn">
         <Button type="primary" @click="search">搜索</Button>
-        <Button style="margin-left: 8px">清除条件</Button>
+        <Button style="margin-left: 8px" @click="clearKeywords">清除条件</Button>
       </div>
     </div>
     <div style="margin: 18px 0 12px 0">
-      <Button type="primary">导出</Button>
+      <Button type="primary" @click="ProfitsExport">导出</Button>
     </div>
     <div class="table">
       <div class="title">
@@ -41,29 +41,29 @@
         <div class="item" style="flex: 2">
           <div class="item-inner">
             <div>运输费</div>
-            <div>{{orderFreightFee}}</div>
+            <div>{{res.orderFreightFee}}</div>
           </div>
           <div class="item-inner">
             <div>装货费</div>
-            <div>{{orderLoadFee}}</div>
+            <div>{{res.orderLoadFee}}</div>
           </div>
           <div class="item-inner">
             <div>卸货费</div>
-            <div>{{orderUnloadFee}}</div>
+            <div>{{res.orderUnloadFee}}</div>
           </div>
           <div class="item-inner">
             <div>保险费</div>
-            <div>{{orderInsuranceFee}}</div>
+            <div>{{res.orderInsuranceFee}}</div>
           </div>
           <div class="item-inner">
             <div>其他费用</div>
-            <div>{{orderOtherFee}}</div>
+            <div>{{res.orderOtherFee}}</div>
           </div>
         </div>
       </div>
       <div class="title" style="text-align: right;padding-right: 10%; ">
         <span>主营业务收入合计</span>
-        <span class="num">{{orderTotalFee}}</span>
+        <span class="num">{{res.orderTotalFee}}</span>
       </div>
       <div class="items">
         <div class="item">支出</div>
@@ -71,33 +71,33 @@
         <div class="item" style="flex: 2">
           <div class="item-inner">
             <div>运输费</div>
-            <div>{{carrierFreightFee}}</div>
+            <div>{{res.carrierFreightFee}}</div>
           </div>
           <div class="item-inner">
             <div>装货费</div>
-            <div>{{carrierLoadFee}}</div>
+            <div>{{res.carrierLoadFee}}</div>
           </div>
           <div class="item-inner">
             <div>卸货费</div>
-            <div>{{carrierUnloadFee}}</div>
+            <div>{{res.carrierUnloadFee}}</div>
           </div>
           <div class="item-inner">
             <div>保险费</div>
-            <div>{{carrierInsuranceFee}}</div>
+            <div>{{res.carrierInsuranceFee}}</div>
           </div>
           <div class="item-inner">
             <div>其他费用</div>
-            <div>{{carrierOtherFee}}</div>
+            <div>{{res.carrierOtherFee}}</div>
           </div>
         </div>
       </div>
       <div class="title" style="text-align: right;padding-right: 10%">
         <span>主营业务支出合计</span>
-        <span class="num">{{carrierTotalFee}}</span>
+        <span class="num">{{res.carrierTotalFee}}</span>
       </div>
       <div class="title" style="text-align: right;padding-right: 10%">
         <span>利润</span>
-        <span class="num">{{transbillTransFee}}</span>
+        <span class="num">{{res.transbillTransFee}}</span>
       </div>
     </div>
   </div>
@@ -105,6 +105,7 @@
 
 <script>
 import Server from '@/libs/js/server'
+import Export from '@/libs/js/export'
 export default {
   name: 'profit',
   components: {
@@ -124,24 +125,26 @@ export default {
         endTime: '',
         type: 1
       },
-      orderFreightFee: '',
-      orderLoadFee: '',
-      orderUnloadFee: '',
-      orderOtherFee: '',
-      orderInsuranceFee: '',
-      orderTotalFee: '',
-      carrierFreightFee: '',
-      carrierLoadFee: '',
-      carrierUnloadFee: '',
-      carrierOtherFee: '',
-      carrierInsuranceFee: '',
-      carrierTotalFee: '',
-      transbillTransFee: ''
+      res: {
+        orderFreightFee: '',
+        orderLoadFee: '',
+        orderUnloadFee: '',
+        orderOtherFee: '',
+        orderInsuranceFee: '',
+        orderTotalFee: '',
+        carrierFreightFee: '',
+        carrierLoadFee: '',
+        carrierUnloadFee: '',
+        carrierOtherFee: '',
+        carrierInsuranceFee: '',
+        carrierTotalFee: '',
+        transbillTransFee: ''
+      }
     }
   },
   methods: {
     search () {
-      Object.assign(this.keywords, {key: null})
+      Object.assign(this.keywords, {type: null})
       Server({
         url: '/report/for/profits',
         headers: {
@@ -151,10 +154,24 @@ export default {
         data: this.keywords
       }).then((res) => {
         console.log(res)
+        if (res.data.code === 10000) {
+          Object.assign(this.res, res.data.data)
+        }
       })
+    },
+    clearKeywords () {
+      this.operateValue = ''
+      this.times = ['', '']
+      this.keywords = {
+        startTime: '',
+        endTime: '',
+        type: 1
+      }
+      this.search()
     },
     handleOperaterValue (btn) {
       this.operateValue = btn.value
+      // 对应时间改变
       this.date(btn.value)
     },
     handleTimeChange (val) {
@@ -210,6 +227,16 @@ export default {
     },
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
+    },
+    // 导出
+    ProfitsExport () {
+      Export({
+        url: '/report/for/profits/export',
+        method: 'post',
+        data: Object.assign(this.keywords, {type: null})
+      }).then(res => {
+        this.$Message.success('导出成功')
+      }).catch(err => console.error(err))
     }
   }
 }
