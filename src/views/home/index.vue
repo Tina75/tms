@@ -12,7 +12,7 @@
             <div class="page-home__dropdown-header">
               选择显示面板
             </div>
-            <CheckboxGroup v-model="cardChecks" class="page-home__dropdown-body" @on-change="checkGroupChange">
+            <CheckboxGroup v-model="cardChecks" class="page-home__dropdown-body">
               <div v-for="(item, index) in cardsList" :key="index" class="page-home__dropdown-checkbox">
                 <Checkbox :label="item.name">
                   <span>{{cardsMap[item.name].name}}</span>
@@ -184,9 +184,6 @@ export default {
     console.log(server)
   },
   methods: {
-    checkGroupChange (arr) {
-      console.log(this.cardChecks)
-    },
     // 获取card数组
     initCardList () {
       setTimeout(() => {
