@@ -145,9 +145,12 @@ export default {
   methods: {
     search () {
       if (!this.keywords.startTime && !this.keywords.endTime) {
-        return
+        this.keywords = {
+          type: 1
+        }
+      } else {
+        Object.assign(this.keywords, {type: null})
       }
-      Object.assign(this.keywords, {type: null})
       Server({
         url: '/report/for/profits',
         headers: {
