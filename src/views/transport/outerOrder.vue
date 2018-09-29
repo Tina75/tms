@@ -443,23 +443,7 @@ export default {
           key: 'payType',
           minWidth: 100,
           render: (h, p) => {
-            let type = '-'
-            switch (p.row.payType) {
-              case 1:
-                type = '现付'
-                break
-              case 2:
-                type = '到付'
-                break
-              case 3:
-                type = '回单付'
-                break
-              case 4:
-                type = '月结'
-                break
-              default: break
-            }
-            return h('span', type)
+            return h('span', this.payTypeFormatter(p.row.payType, true) || '-')
           }
         },
         {
