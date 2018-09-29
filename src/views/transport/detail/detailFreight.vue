@@ -585,9 +585,9 @@ export default {
             settlementType: this.settlementType,
             settlementPayInfo: this.settlementType === '1' ? this.formatPayInfo() : void 0
           },
-          cargoList: this.arrayUnique(this.detail.map(item => {
+          cargoList: Array.from(new Set((this.detail.map(item => {
             return item.orderId
-          }))
+          }))))
         }
       }).then(res => {
         this.$Message.success('保存成功')
