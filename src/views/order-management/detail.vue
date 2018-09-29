@@ -15,7 +15,7 @@
             </ul>
           </Poptip>
         </li>
-        <li>订单状态：<span style="font-weight: bold;">{{statusToName(detail.status)}}</span></li>
+        <li>订单状态：<span style="font-weight: bold;">{{ this.$route.query.from === 'order' ? statusToName(detail.status) : statusToName(detail.receiptOrder.receiptStatus) }}</span></li>
       </ul>
     </header>
     <div style="text-align: right;margin: 28px;">
@@ -380,7 +380,6 @@ export default {
         }).then((res) => {
           console.log(res)
           this.detail = res.data.data
-          this.detail.status = res.data.data.receiptOrder.receiptStatus // 回单状态
           // 过滤回单详情页操作按钮
           this.filterReceiptButton()
           this.orderLog = res.data.data.receiptOrderLogs // 回单日志
@@ -433,13 +432,13 @@ export default {
       return name
     },
     // 点击展开的运单子单
-    handleWaybillNo (id) {
-      console.log(id)
+    handleWaybillNo (no) {
+      console.log(no)
       this.openTab({
-        title: id,
+        title: no,
         path: '/transport/detail/detailFreight',
         query: {
-          id: id
+          no: no
         }
       })
     },
