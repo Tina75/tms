@@ -29,7 +29,7 @@
       </Row>
 
     </div>
-    <Row gutter="16">
+    <Row :gutter="16">
       <PickupTodo />
       <DeliveryTodo />
       <TransferTodo />
