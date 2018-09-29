@@ -132,6 +132,7 @@ export default {
         {label: '提货待办', value: '1', id: 'pickup-todo'},
         {label: '送货待办', value: '1', id: 'delivery-todo'},
         {label: '外转待办', value: '1', id: 'trans-todo'},
+        {label: '回单待办', value: '1', id: 'receipt-todo'},
         {label: '发货方核销待办', value: '1', id: 'consigner-todo'},
         {label: '承运商核销待办', value: '1', id: 'carrier-todo'},
         {label: '外转方核销待办', value: '1', id: 'transferfee-todo'},
