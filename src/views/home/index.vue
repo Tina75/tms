@@ -13,9 +13,9 @@
               选择显示面板
             </div>
             <CheckboxGroup v-model="cardChecks" class="page-home__dropdown-body">
-              <div v-for="(item, index) in cards" :key="index" class="page-home__dropdown-checkbox">
-                <Checkbox :label="item.id">
-                  <span>{{item.label}}</span>
+              <div v-for="(item, index) in cardsList" :key="index" class="page-home__dropdown-checkbox">
+                <Checkbox :label="item.name">
+                  <span>{{cardsMap[item.name]}}</span>
                 </Checkbox>
               </div>
             </CheckboxGroup>
@@ -27,9 +27,8 @@
         </Poptip>
         </Col>
       </Row>
-
     </div>
-    <Row gutter="16">
+    <Row :gutter="16">
       <PickupTodo />
       <DeliveryTodo />
       <TransferTodo />
@@ -128,23 +127,41 @@ export default {
       // eventHub: new Vue(),
       permission: [],
       cardChecks: ['pickup-todo'],
-      cards: [
-        {label: '提货待办', value: '1', id: 'pickup-todo'},
-        {label: '送货待办', value: '1', id: 'delivery-todo'},
-        {label: '外转待办', value: '1', id: 'trans-todo'},
-        {label: '发货方核销待办', value: '1', id: 'consigner-todo'},
-        {label: '承运商核销待办', value: '1', id: 'carrier-todo'},
-        {label: '外转方核销待办', value: '1', id: 'transferfee-todo'},
-        {label: '消息中心', value: '1', id: 'message-center'},
-        {label: '今日订单数', value: '1', id: 'order-create'},
-        {label: '新增客户数', value: '1', id: 'new-customer'},
-        {label: '在途车辆位置', value: '1', id: 'transport-location'},
-        {label: '营业额通知', value: '1', id: 'turnover-statistics'},
-        {label: '调度订单数', value: '1', id: 'dispatch-statistics'},
-        {label: '开单数', value: '1', id: 'order-statistics'},
-        {label: '应收款/应付款项', value: '1', id: 'pay-receive'},
-        {label: '货物重量/体积', value: '1', id: 'cargo-statistics'}
+      cardsMap: {
+        'pickup-todo': '提货待办',
+        'delivery-todo': '送货待办',
+        'trans-todo': '外转待办',
+        'consigner-todo': '发货方核销待办',
+        'carrier-todo': '承运商核销待办',
+        'transferfee-todo': '外转方核销待办',
+        'message-center': '消息中心',
+        'order-create': '今日订单数',
+        'new-customer': '新增客户数',
+        'transport-location': '在途车辆位置',
+        'turnover-statistics': '营业额通知',
+        'dispatch-statistics': '调度订单数',
+        'order-statistics': '开单数',
+        'pay-receive': '应收款/应付款项',
+        'cargo-statistics': '货物重量/体积'
+      },
+      cardsList: [
+        {code: 1, name: 'pickup-todo', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 2, name: 'delivery-todo', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 3, name: 'trans-todo', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 4, name: 'consigner-todo', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 5, name: 'carrier-todo', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 6, name: 'transferfee-todo', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 7, name: 'message-center', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 8, name: 'order-create', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 9, name: 'new-customer', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 10, name: 'transport-location', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 11, name: 'turnover-statistics', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 12, name: 'dispatch-statistics', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 13, name: 'order-statistics', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 14, name: 'pay-receive', url: '', w: '', h: '', s: '', valid: '1'},
+        {code: 15, name: 'cargo-statistics', url: '', w: '', h: '', s: '', valid: '1'}
       ]
+
     }
   },
   computed: {
