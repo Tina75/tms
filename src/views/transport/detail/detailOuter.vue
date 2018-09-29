@@ -121,7 +121,7 @@
           </i-col>
           <i-col span="5" offset="2">
             <span class="detail-field-title-sm">外传费用：</span>
-            <span class="detail-field-fee">{{ payment.transFee }}元</span>
+            <span class="detail-field-fee">{{ payment.transFee / 100 }}元</span>
           </i-col>
           <i-col span="5" offset="2">
             <span class="detail-field-title-sm">结算方式：</span>
