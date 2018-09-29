@@ -111,6 +111,7 @@
                :extra-columns="extraColumns"
                :show-filter="true"
                :keywords="searchFields"
+               row-id="pickUpId"
                url="/load/bill/list"
                method="post"
                list-field="loadbillList"
@@ -127,18 +128,21 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
+import TransportBase from './transportBase'
+import TransportMixin from './transportMixin'
+
 import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
 import SelectInput from '@/components/SelectInput.vue'
 import PrintPickup from './components/PrintPickup'
-import TransportMixin from './transportMixin'
+
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 
 export default {
   name: 'ReceiveManager',
   components: { TabHeader, PageTable, SelectInput, PrintPickup },
-  mixins: [ BasePage, TransportMixin ],
+  mixins: [ BasePage, TransportBase, TransportMixin ],
   metaInfo: { title: '提货管理' },
   data () {
     return {
@@ -319,7 +323,7 @@ export default {
           key: 'carrierName',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.carrierName ? p.row.carrierName : '-')
+            return this.tableDataRender(h, p.row.carrierName)
           }
         },
         {
@@ -327,7 +331,7 @@ export default {
           key: 'driverName',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.driverName ? p.row.driverName : '-')
+            return this.tableDataRender(h, p.row.driverName)
           }
         },
         {
@@ -335,7 +339,7 @@ export default {
           key: 'carNo',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.carNo ? p.row.carNo : '-')
+            return this.tableDataRender(h, p.row.carNo)
           }
         },
         {
@@ -343,7 +347,7 @@ export default {
           key: 'totalFee',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.totalFee ? p.row.totalFee / 100 : '-')
+            return this.tableDataRender(h, p.row.totalFee / 100)
           }
         },
         {
@@ -351,7 +355,7 @@ export default {
           key: 'volume',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
+            return this.tableDataRender(h, p.row.volume)
           }
         },
         {
@@ -359,7 +363,7 @@ export default {
           key: 'weight',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
+            return this.tableDataRender(h, p.row.weight)
           }
         },
         {
@@ -368,7 +372,7 @@ export default {
           sortable: 'custom',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', this.dateFormatter(p.row.createTimeLong))
+            return this.tableDataRender(h, this.timeFormatter(p.row.createTimeLong), true)
           }
         },
         {
@@ -376,7 +380,7 @@ export default {
           key: 'createOperator',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.createOperator ? p.row.createOperator : '-')
+            return this.tableDataRender(h, p.row.createOperator)
           }
         },
         {
@@ -384,7 +388,7 @@ export default {
           key: 'cargoCost',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : '-')
+            return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },
         {
@@ -392,10 +396,7 @@ export default {
           key: 'settlementType',
           minWidth: 100,
           render: (h, p) => {
-            let type = '-'
-            if (p.row.settlementType === 1) type = '按单结'
-            if (p.row.settlementType === 2) type = '月结'
-            return h('span', type)
+            return this.tableDataRender(h, this.payTypeFormatter(p.row.settlementType))
           }
         },
         {
@@ -403,7 +404,7 @@ export default {
           key: 'driverPhone',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.driverPhone ? p.row.driverPhone : '-')
+            return this.tableDataRender(h, p.row.driverPhone)
           }
         },
         {
@@ -411,9 +412,9 @@ export default {
           key: 'carType',
           minWidth: 100,
           render: (h, p) => {
-            const carType = this.carTypeFilter(p.row.carType)
-            const carLength = this.carLengthFilter(p.row.carLength)
-            return h('span', carType && carLength ? [carType, carLength].join(' ') : '-')
+            const carType = this.carTypeFormatter(p.row.carType)
+            const carLength = this.carLengthFormatter(p.row.carLength)
+            return this.tableDataRender(h, carType || carLength ? [carType, carLength].join(' ') : '')
           }
         },
         {
@@ -421,7 +422,7 @@ export default {
           key: 'orderCnt',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.orderCnt ? p.row.orderCnt : '-')
+            return this.tableDataRender(h, p.row.orderCnt)
           }
         }
       ],

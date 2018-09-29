@@ -29,6 +29,10 @@ export default new Router({
     //   component: () => import('@/views/transport/waybill')
     // },
     {
+      path: '/home',
+      component: () => import('@/views/home/index')
+    },
+    {
       path: '/:name/:name1/:name2',
       component: PageRouter
     },

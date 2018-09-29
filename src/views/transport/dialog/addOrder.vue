@@ -30,11 +30,11 @@
 <script>
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
-import City from '@/libs/js/City'
+import TransportBase from '../transportBase'
 
 export default {
   name: 'AddOrder',
-  mixins: [ BaseDialog ],
+  mixins: [ BaseDialog, TransportBase ],
   data () {
     return {
       visibale: true,
@@ -57,7 +57,7 @@ export default {
           key: 'customerOrderNo',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.customerOrderNo ? p.row.customerOrderNo : '-')
+            return this.tableDataRender(h, p.row.customerOrderNo)
           }
         },
         {
@@ -65,33 +65,24 @@ export default {
           key: 'consignerName',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.consignerName ? p.row.consignerName : '-')
+            return this.tableDataRender(h, p.row.consignerName)
           }
         },
         {
           title: '始发地',
           key: 'start',
-          ellipsis: true,
-          minWidth: 160,
+          minWidth: 180,
           render: (h, p) => {
-            return h('Tooltip', {
-              props: {
-                content: this.cityFilter(p.row.start)
-              }
-            }, this.cityFilter(p.row.start))
+            return this.tableDataRender(h, this.cityFormatter(p.row.start))
           }
         },
         {
           title: '目的地',
           key: 'end',
           ellipsis: true,
-          minWidth: 160,
+          minWidth: 180,
           render: (h, p) => {
-            return h('Tooltip', {
-              props: {
-                content: this.cityFilter(p.row.start)
-              }
-            }, this.cityFilter(p.row.start))
+            return this.tableDataRender(h, this.cityFormatter(p.row.end))
           }
         },
         {
@@ -99,7 +90,7 @@ export default {
           key: 'volume',
           width: 120,
           render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
+            return this.tableDataRender(h, p.row.volume)
           }
         },
         {
@@ -107,7 +98,7 @@ export default {
           key: 'weight',
           width: 120,
           render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
+            return this.tableDataRender(h, p.row.weight)
           }
         }
       ],
@@ -141,11 +132,6 @@ export default {
         })
         this.loading = false
       })
-    },
-
-    cityFilter (code) {
-      if (!code) return '-'
-      return Array.from(new Set(City.codeToFullName(code, 3, '-').split('-'))).join('')
     },
 
     selectionChange (selection) {

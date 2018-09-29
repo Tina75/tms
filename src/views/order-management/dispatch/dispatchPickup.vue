@@ -105,7 +105,7 @@ export default {
           key: 'carNo',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.carNo ? p.row.carNo : '-')
+            return this.tableDataRender(h, p.row.carNo)
           }
         },
         {
@@ -113,7 +113,7 @@ export default {
           key: 'volume',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
+            return this.tableDataRender(h, p.row.volume)
           }
         },
         {
@@ -121,7 +121,7 @@ export default {
           key: 'weight',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
+            return this.tableDataRender(h, p.row.weight)
           }
         }
       ]
