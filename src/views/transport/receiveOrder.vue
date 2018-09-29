@@ -48,7 +48,7 @@
                      class="search-input"
                      @on-clear="resetEasySearch" />
 
-        <Button icon="ios-search"
+        <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
                 @click="startSearch"></Button>
 
@@ -105,22 +105,24 @@
     </div>
 
     <!-- 表格 -->
-    <PageTable ref="$table"
-               :width="tableWidth"
-               :columns="tableColumns"
-               :extra-columns="extraColumns"
-               :show-filter="true"
-               :keywords="searchFields"
-               row-id="pickUpId"
-               url="/load/bill/list"
-               method="post"
-               list-field="loadbillList"
-               style="margin-top: 15px"
-               @on-column-change="tableColumnsChanged"
-               @on-selection-change="selectionChanged"
-               @on-sort-change="tableSort"
-               @on-page-size-change="pageSizeChange"
-               @on-load="dataOnload"></PageTable>
+    <div>
+      <PageTable ref="$table"
+                 :columns="tableColumns"
+                 :extra-columns="extraColumns"
+                 :show-filter="true"
+                 :keywords="searchFields"
+                 row-id="pickUpId"
+                 url="/load/bill/list"
+                 method="post"
+                 list-field="loadbillList"
+                 style="margin-top: 15px"
+                 @on-column-change="tableColumnsChanged"
+                 @on-selection-change="selectionChanged"
+                 @on-sort-change="tableSort"
+                 @on-change="pageChange"
+                 @on-page-size-change="pageSizeChange"
+                 @on-load="dataOnload" />
+    </div>
 
     <PrintPickup ref="$printer" :data="printData" />
   </div>
@@ -561,6 +563,8 @@ export default {
     // 导出
     billExport () {
       let data = this.setFetchParams()
+      data.pageNo = this.page.current
+      data.pageSize = this.page.size
       delete data.order
 
       if (this.tableSelection.length) {

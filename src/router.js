@@ -33,16 +33,16 @@ export default new Router({
       component: () => import('@/views/home/index')
     },
     {
-      path: '/set-up/set-up',
-      component: () => import('@/views/set-up/set-up')
+      path: '/set-up/index',
+      component: () => import('@/views/set-up/index')
     },
     {
-      path: '/info/info',
-      component: () => import('@/views/info/info')
+      path: '/info/index',
+      component: () => import('@/views/info/index')
     },
     {
-      path: '/helper/help',
-      component: () => import('@/views/helper/help')
+      path: '/helper/index',
+      component: () => import('@/views/helper/index')
     },
     {
       path: '/:name/:name1/:name2',
