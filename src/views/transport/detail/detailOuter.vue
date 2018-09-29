@@ -34,22 +34,22 @@
           <i-col span="6">
             <span class="detail-field-title"
                   style="width: 120px;">要求发货时间：</span>
-            <span>{{ info.deliveryTimeLong | formatTime }}</span>
+            <span>{{ info.deliveryTimeLong | timeFormatter }}</span>
           </i-col>
           <i-col span="6">
             <span class="detail-field-title"
                   style="width: 120px;">期望到货时间：</span>
-            <span>{{ info.arriveTimeLong | formatTime }}</span>
+            <span>{{ info.arriveTimeLong | timeFormatter }}</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title">始发地：</span>
-            <span>{{ info.start | formatCity }}</span>
+            <span>{{ info.start | cityFormatter }}</span>
           </i-col>
           <i-col span="6">
             <span class="detail-field-title">目的地：</span>
-            <span>{{ info.end | formatCity }}</span>
+            <span>{{ info.end | cityFormatter }}</span>
           </i-col>
           <i-col span="6">
             <span class="detail-field-title">提货方式：</span>
@@ -62,29 +62,29 @@
         </Row>
         <Row class="detail-field-group" style="margin-top: 20px;">
           <i-col span="6">
-            <span class="detail-field-title">发货联系人</span>
+            <span class="detail-field-title">发货联系人：</span>
             <span>{{ info.consignerContact }}</span>
           </i-col>
           <i-col span="6">
-            <span class="detail-field-title">联系方式</span>
+            <span class="detail-field-title">联系方式：</span>
             <span>{{ info.consignerPhone }}</span>
           </i-col>
           <i-col span="12">
-            <span class="detail-field-title">发货地址</span>
+            <span class="detail-field-title">发货地址：</span>
             <span>{{ info.consignerAddress }}</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="6">
-            <span class="detail-field-title">收货联系人</span>
+            <span class="detail-field-title">收货联系人：</span>
             <span>{{ info.consigneeContact }}</span>
           </i-col>
           <i-col span="6">
-            <span class="detail-field-title">联系方式</span>
+            <span class="detail-field-title">联系方式：</span>
             <span>{{ info.consigneePhone }}</span>
           </i-col>
           <i-col span="12">
-            <span class="detail-field-title">收货地址</span>
+            <span class="detail-field-title">收货地址：</span>
             <span>{{ info.consignerAddress }}</span>
           </i-col>
         </Row>
@@ -147,7 +147,7 @@
             <TimelineItem v-for="(item, key) in logList"
                           :key="key" class="detail-log-timeline-item">
               <i slot="dot"></i>
-              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong | formatTime}}</span>
+              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong | timeFormatter}}</span>
               <span style="color: #333;">{{'【' + item.operatorName + '】' + item.description}}</span>
             </TimelineItem>
 
@@ -160,12 +160,12 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import detailMixin from './detailMixin'
+import TransportBase from '../transportBase'
+import DetailMixin from './detailMixin'
 import Server from '@/libs/js/server'
 
 export default {
   name: 'DetailFeright',
-
   filters: {
     payType (type) {
       let temp = ''
@@ -187,7 +187,7 @@ export default {
       return temp
     }
   },
-  mixins: [ BasePage, detailMixin ],
+  mixins: [ BasePage, TransportBase, DetailMixin ],
   metaInfo: { title: '外转单详情' },
   data () {
     return {
