@@ -2,14 +2,21 @@
 <template>
   <div class="error404">
     <div class="error404-body-con">
-      <Card>
+      <div>
+        <h3 class="error404-body-con-title">404</h3>
+        <div class="error404-body-con-message">糟糕，网页出错了</div>
+        <div>
+          <img class="error404-body-con-img" src="@/assets/404.png" alt="not found">
+        </div>
+      </div>
+      <!-- <Card>
         <div class="error404-body-con-title">4<span><Icon type="ios-navigate-outline"/></span>4</div>
         <p class="error404-body-con-message">YOU&nbsp;&nbsp;LOOK&nbsp;&nbsp;LOST</p>
         <div class="error404-btn-con">
           <i-button size="large" style="width: 200px;" type="text" @click="goHome">返回首页</i-button>
           <i-button size="large" style="width: 200px;margin-left: 40px;" type="primary" @click="backPage">返回上一页</i-button>
         </div>
-      </Card>
+      </Card> -->
     </div>
   </div>
 </template>
@@ -33,47 +40,40 @@ export default {
 }
 </script>
 <style lang="stylus">
-@keyframes error404animation
-  0%
-      transform rotateZ(0deg)
-  20%
-      transform rotateZ(-60deg)
-  40%
-      transform rotateZ(-10deg)
-  60%
-      transform rotateZ(50deg)
-  80%
-      transform rotateZ(-20deg)
-  100%
-      transform rotateZ(0deg)
+// @keyframes error404animation
+//   0%
+//       transform rotateZ(0deg)
+//   20%
+//       transform rotateZ(-60deg)
+//   40%
+//       transform rotateZ(-10deg)
+//   60%
+//       transform rotateZ(50deg)
+//   80%
+//       transform rotateZ(-20deg)
+//   100%
+//       transform rotateZ(0deg)
 .error404
   &-body-con
-    width 700px
-    height 500px
+    top 50px
+    right 0
+    left 200px
+    margin 0px auto
+    padding 100px 0
+    text-align center
     position absolute
-    left 50%
-    top 50%
-    transform translate(-50%,-50%)
+    color #999999
+    background #efefef
     &-title
-      text-align center
-      font-size 240px
-      font-weight 700
-      color #2d8cf0
-      height 260px
-      line-height 260px
-      margin-top 40px
-      span
-        display inline-block
-        color #19be6b
-        font-size 230px
-        animation error404animation 3s ease 0s infinite alternate
+      font-size 80px
+      font-weight 100
     &-message
-      display block
-      text-align center
       font-size 30px
-      font-weight 500
-      letter-spacing 12px
-      color #dddde2
+      margin-bottom 56px
+      font-weight 100
+    &-img
+      width 180px
+      height 220px
   &-btn-con
     text-align center
     padding 20px 0

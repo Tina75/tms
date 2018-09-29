@@ -34,22 +34,22 @@
           <i-col span="6">
             <span class="detail-field-title"
                   style="width: 120px;">要求发货时间：</span>
-            <span>{{ info.deliveryTimeLong | formatTime }}</span>
+            <span>{{ info.deliveryTimeLong | timeFormatter }}</span>
           </i-col>
           <i-col span="6">
             <span class="detail-field-title"
                   style="width: 120px;">期望到货时间：</span>
-            <span>{{ info.arriveTimeLong | formatTime }}</span>
+            <span>{{ info.arriveTimeLong | timeFormatter }}</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title">始发地：</span>
-            <span>{{ info.start | formatCity }}</span>
+            <span>{{ info.start | cityFormatter }}</span>
           </i-col>
           <i-col span="6">
             <span class="detail-field-title">目的地：</span>
-            <span>{{ info.end | formatCity }}</span>
+            <span>{{ info.end | cityFormatter }}</span>
           </i-col>
           <i-col span="6">
             <span class="detail-field-title">提货方式：</span>
@@ -62,29 +62,29 @@
         </Row>
         <Row class="detail-field-group" style="margin-top: 20px;">
           <i-col span="6">
-            <span class="detail-field-title">发货联系人</span>
+            <span class="detail-field-title">发货联系人：</span>
             <span>{{ info.consignerContact }}</span>
           </i-col>
           <i-col span="6">
-            <span class="detail-field-title">联系方式</span>
+            <span class="detail-field-title">联系方式：</span>
             <span>{{ info.consignerPhone }}</span>
           </i-col>
           <i-col span="12">
-            <span class="detail-field-title">发货地址</span>
+            <span class="detail-field-title">发货地址：</span>
             <span>{{ info.consignerAddress }}</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="6">
-            <span class="detail-field-title">收货联系人</span>
+            <span class="detail-field-title">收货联系人：</span>
             <span>{{ info.consigneeContact }}</span>
           </i-col>
           <i-col span="6">
-            <span class="detail-field-title">联系方式</span>
+            <span class="detail-field-title">联系方式：</span>
             <span>{{ info.consigneePhone }}</span>
           </i-col>
           <i-col span="12">
-            <span class="detail-field-title">收货地址</span>
+            <span class="detail-field-title">收货地址：</span>
             <span>{{ info.consignerAddress }}</span>
           </i-col>
         </Row>
@@ -121,11 +121,11 @@
           </i-col>
           <i-col span="5" offset="2">
             <span class="detail-field-title-sm">外传费用：</span>
-            <span class="detail-field-fee">{{ payment.transFee }}元</span>
+            <span class="detail-field-fee">{{ payment.transFee / 100 }}元</span>
           </i-col>
           <i-col span="5" offset="2">
             <span class="detail-field-title-sm">结算方式：</span>
-            <span class="detail-field-fee">{{ payment.payType | payType }}</span>
+            <span class="detail-field-fee">{{ payment.payType | payTypeFormatter(true) }}</span>
           </i-col>
         </Row>
       </div>
@@ -147,7 +147,7 @@
             <TimelineItem v-for="(item, key) in logList"
                           :key="key" class="detail-log-timeline-item">
               <i slot="dot"></i>
-              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong | formatTime}}</span>
+              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong | timeFormatter}}</span>
               <span style="color: #333;">{{'【' + item.operatorName + '】' + item.description}}</span>
             </TimelineItem>
 
@@ -160,34 +160,13 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import detailMixin from './detailMixin'
+import TransportBase from '../transportBase'
+import DetailMixin from './detailMixin'
 import Server from '@/libs/js/server'
 
 export default {
   name: 'DetailFeright',
-
-  filters: {
-    payType (type) {
-      let temp = ''
-      switch (type) {
-        case 1:
-          temp = '现付'
-          break
-        case 2:
-          temp = '到付'
-          break
-        case 3:
-          temp = '回单付'
-          break
-        case 4:
-          temp = '月结'
-          break
-        default: break
-      }
-      return temp
-    }
-  },
-  mixins: [ BasePage, detailMixin ],
+  mixins: [ BasePage, TransportBase, DetailMixin ],
   metaInfo: { title: '外转单详情' },
   data () {
     return {
@@ -267,7 +246,7 @@ export default {
           key: 'cargoName',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.cargoName ? p.row.cargoName : '-')
+            return this.tableDataRender(h, p.row.cargoName)
           }
         },
         {
@@ -275,7 +254,7 @@ export default {
           key: 'packing',
           minWidth: 80,
           render: (h, p) => {
-            return h('span', p.row.packing ? p.row.packing : '-')
+            return this.tableDataRender(h, p.row.packing)
           }
         },
         {
@@ -283,7 +262,7 @@ export default {
           key: 'quantity',
           minWidth: 80,
           render: (h, p) => {
-            return h('span', p.row.quantity ? p.row.quantity : '-')
+            return this.tableDataRender(h, p.row.quantity)
           }
         },
         {
@@ -291,7 +270,7 @@ export default {
           key: 'cargoCost',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : '-')
+            return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },
         {
@@ -299,7 +278,7 @@ export default {
           key: 'weight',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
+            return this.tableDataRender(h, p.row.weight)
           }
         },
         {
@@ -307,7 +286,7 @@ export default {
           key: 'volume',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
+            return this.tableDataRender(h, p.row.volume)
           }
         },
         {
@@ -315,7 +294,7 @@ export default {
           key: 'remark1',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.remark1 ? p.row.remark1 : '-')
+            return this.tableDataRender(h, p.row.remark1)
           }
         },
         {
@@ -323,7 +302,7 @@ export default {
           key: 'remark2',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.remark2 ? p.row.remark2 : '-')
+            return this.tableDataRender(h, p.row.remark2)
           }
         }
       ]
