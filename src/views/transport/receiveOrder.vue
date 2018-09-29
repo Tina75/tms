@@ -323,7 +323,7 @@ export default {
           key: 'carrierName',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.carrierName ? p.row.carrierName : '-')
+            return this.tableDataRender(h, p.row.carrierName)
           }
         },
         {
@@ -331,7 +331,7 @@ export default {
           key: 'driverName',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.driverName ? p.row.driverName : '-')
+            return this.tableDataRender(h, p.row.driverName)
           }
         },
         {
@@ -339,7 +339,7 @@ export default {
           key: 'carNo',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.carNo ? p.row.carNo : '-')
+            return this.tableDataRender(h, p.row.carNo)
           }
         },
         {
@@ -347,7 +347,7 @@ export default {
           key: 'totalFee',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.totalFee ? p.row.totalFee / 100 : '-')
+            return this.tableDataRender(h, p.row.totalFee / 100)
           }
         },
         {
@@ -355,7 +355,7 @@ export default {
           key: 'volume',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
+            return this.tableDataRender(h, p.row.volume)
           }
         },
         {
@@ -363,7 +363,7 @@ export default {
           key: 'weight',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
+            return this.tableDataRender(h, p.row.weight)
           }
         },
         {
@@ -372,7 +372,7 @@ export default {
           sortable: 'custom',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', this.timeFormatter(p.row.createTimeLong))
+            return this.tableDataRender(h, this.timeFormatter(p.row.createTimeLong), true)
           }
         },
         {
@@ -380,7 +380,7 @@ export default {
           key: 'createOperator',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.createOperator ? p.row.createOperator : '-')
+            return this.tableDataRender(h, p.row.createOperator)
           }
         },
         {
@@ -388,7 +388,7 @@ export default {
           key: 'cargoCost',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : '-')
+            return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },
         {
@@ -396,7 +396,7 @@ export default {
           key: 'settlementType',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', this.payTypeFormatter(p.row.settlementType) || '-')
+            return this.tableDataRender(h, this.payTypeFormatter(p.row.settlementType))
           }
         },
         {
@@ -404,7 +404,7 @@ export default {
           key: 'driverPhone',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.driverPhone ? p.row.driverPhone : '-')
+            return this.tableDataRender(h, p.row.driverPhone)
           }
         },
         {
@@ -414,7 +414,7 @@ export default {
           render: (h, p) => {
             const carType = this.carTypeFormatter(p.row.carType)
             const carLength = this.carLengthFormatter(p.row.carLength)
-            return h('span', carType && carLength ? [carType, carLength].join(' ') : '-')
+            return this.tableDataRender(h, carType || carLength ? [carType, carLength].join(' ') : '')
           }
         },
         {
@@ -422,7 +422,7 @@ export default {
           key: 'orderCnt',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.orderCnt ? p.row.orderCnt : '-')
+            return this.tableDataRender(h, p.row.orderCnt)
           }
         }
       ],

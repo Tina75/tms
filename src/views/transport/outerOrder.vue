@@ -315,7 +315,7 @@ export default {
           key: 'outTransNo',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.outTransNo ? p.row.outTransNo : '-')
+            return this.tableDataRender(h, p.row.outTransNo, true)
           }
         },
         {
@@ -326,27 +326,18 @@ export default {
         {
           title: '始发地',
           key: 'start',
-          ellipsis: true,
-          minWidth: 160,
+          minWidth: 180,
           render: (h, p) => {
-            return h('Tooltip', {
-              props: {
-                content: this.cityFormatter(p.row.start)
-              }
-            }, this.cityFormatter(p.row.start))
+            console.log(this.cityFormatter(p.row.start))
+            return this.tableDataRender(h, this.cityFormatter(p.row.start))
           }
         },
         {
           title: '目的地',
           key: 'end',
-          ellipsis: true,
-          minWidth: 160,
+          minWidth: 180,
           render: (h, p) => {
-            return h('Tooltip', {
-              props: {
-                content: this.cityFormatter(p.row.end)
-              }
-            }, this.cityFormatter(p.row.end))
+            return this.tableDataRender(h, this.cityFormatter(p.row.end))
           }
         },
         {
@@ -354,7 +345,7 @@ export default {
           key: 'transFee',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : '-')
+            return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },
         {
@@ -362,7 +353,7 @@ export default {
           key: 'volume',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
+            return this.tableDataRender(h, p.row.volume)
           }
         },
         {
@@ -370,7 +361,7 @@ export default {
           key: 'weight',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
+            return this.tableDataRender(h, p.row.weight)
           }
         },
         {
@@ -379,7 +370,7 @@ export default {
           sortable: 'custom',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', this.timeFormatter(p.row.createTimeLong))
+            return this.tableDataRender(h, this.timeFormatter(p.row.createTimeLong), true)
           }
         },
         {
@@ -387,7 +378,7 @@ export default {
           key: 'customerOrderNo',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.customerOrderNo ? p.row.customerOrderNo : '-')
+            return this.tableDataRender(h, p.row.customerOrderNo)
           }
         },
         {
@@ -395,7 +386,7 @@ export default {
           key: 'consignerName',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.consignerName ? p.row.consignerName : '-')
+            return this.tableDataRender(h, p.row.consignerName)
           }
         },
         {
@@ -403,7 +394,7 @@ export default {
           key: 'consignerContact',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.consignerContact ? p.row.consignerContact : '-')
+            return this.tableDataRender(h, p.row.consignerContact)
           }
         },
         {
@@ -411,7 +402,7 @@ export default {
           key: 'consignerPhone',
           minWidth: 140,
           render: (h, p) => {
-            return h('span', p.row.consignerPhone ? p.row.consignerPhone : '-')
+            return this.tableDataRender(h, p.row.consignerPhone)
           }
         },
         {
@@ -419,7 +410,7 @@ export default {
           key: 'consigneeContact',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.consigneeContact ? p.row.consigneeContact : '-')
+            return this.tableDataRender(h, p.row.consigneeContact)
           }
         },
         {
@@ -427,7 +418,7 @@ export default {
           key: 'consigneePhone',
           minWidth: 140,
           render: (h, p) => {
-            return h('span', p.row.consigneePhone ? p.row.consigneePhone : '-')
+            return this.tableDataRender(h, p.row.consigneePhone)
           }
         },
         {
@@ -435,7 +426,7 @@ export default {
           key: 'cargoCost',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : p.row.cargoCost)
+            return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },
         {
@@ -443,7 +434,7 @@ export default {
           key: 'payType',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', this.payTypeFormatter(p.row.payType, true) || '-')
+            return this.tableDataRender(h, this.payTypeFormatter(p.row.payType, true))
           }
         },
         {
@@ -451,7 +442,7 @@ export default {
           key: 'deliveryTimeLong',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', this.timeFormatter(p.row.deliveryTimeLong))
+            return this.tableDataRender(h, this.timeFormatter(p.row.deliveryTimeLong), true)
           }
         },
         {
@@ -459,7 +450,7 @@ export default {
           key: 'arriveTimeLong',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', this.timeFormatter(p.row.arriveTimeLong))
+            return this.tableDataRender(h, this.timeFormatter(p.row.arriveTimeLong), true)
           }
         },
         {
@@ -467,7 +458,7 @@ export default {
           key: 'receiptCount',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.receiptCount ? p.row.receiptCount : '-')
+            return this.tableDataRender(h, p.row.receiptCount)
           }
         },
         {
@@ -475,7 +466,7 @@ export default {
           key: 'createOperator',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.createOperator ? p.row.createOperator : '-')
+            return this.tableDataRender(h, p.row.createOperator)
           }
         }
       ],
