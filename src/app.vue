@@ -296,4 +296,6 @@ html, body
     min-width 85px
 .ivu-layout
   background #efefef
+.ivu-message
+  z-index 2000 !important
 </style>

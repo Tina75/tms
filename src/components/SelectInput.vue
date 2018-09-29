@@ -201,6 +201,7 @@ export default {
 
       this.currentValue = ''
       this.focusIndex = -1
+      this.$emit('input', this.currentValue)
     },
     // 点击下拉框项
     handleSelect (name) {
@@ -230,7 +231,6 @@ export default {
      * 更改关键字，input onChange事件
      */
     handleChange (e) {
-      console.log('handleChange')
       if (this.remote) {
         this.remoteCall(e.target.value)
       }

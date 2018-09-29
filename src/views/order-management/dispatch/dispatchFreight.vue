@@ -103,19 +103,17 @@ export default {
         {
           title: '始发地',
           key: 'start',
-          minWidth: 120,
-          ellipsis: true,
+          minWidth: 180,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.start))
+            return this.tableDataRender(h, this.cityFilter(p.row.start))
           }
         },
         {
           title: '目的地',
           key: 'end',
-          minWidth: 120,
-          ellipsis: true,
+          minWidth: 180,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.end))
+            return this.tableDataRender(h, this.cityFilter(p.row.end))
           }
         },
         {
@@ -123,7 +121,7 @@ export default {
           key: 'carNo',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.carNo ? p.row.carNo : '-')
+            return this.tableDataRender(h, p.row.carNo)
           }
         },
         {
@@ -131,7 +129,7 @@ export default {
           key: 'volume',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
+            return this.tableDataRender(h, p.row.volume)
           }
         },
         {
@@ -139,7 +137,7 @@ export default {
           key: 'weight',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
+            return this.tableDataRender(h, p.row.weight)
           }
         }
       ]
