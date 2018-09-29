@@ -22,7 +22,7 @@
       </Submenu>
     </Menu>
     </Col>
-    <Col span="20" style="background:#fff; padding-left: 20px;">
+    <Col span="20" style="background:#fff; padding-left: 20px; height: inherit;">
     <Card class="searchCard" dis-hover>
       <p slot="title" style="font-size:16px; color:rgba(51,51,51,1);">{{picContent.title}}</p>
       <div v-if="'pic' === this.type">

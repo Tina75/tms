@@ -7,7 +7,7 @@
       </MenuItem>
     </Menu>
     </Col>
-    <Col span="21" style="background:#fff">
+    <Col span="21" style="background:#fff; padding-left:20px; height: inherit;">
     <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;">
       <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute; left: 20px;"></span>
       <span style="margin-left:35px; font-size: 16px;">{{rightTitle}}</span>
