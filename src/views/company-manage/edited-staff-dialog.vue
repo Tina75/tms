@@ -27,18 +27,6 @@
         <Button type="default"  @click="close">取消</Button>
       </div>
     </Modal>
-    <Modal
-      v-model="successModal"
-      width="360">
-      <p slot="header" style="text-align:center">
-        <span>提示</span>
-      </p>
-      <P>添加员工成功，员工的登录账号为手机号</P>
-      <P>初始登录密码已发送至员工手机</P>
-      <div slot="footer">
-        <Button type="primary" @click="close">我知道了</Button>
-      </div>
-    </Modal>
   </div>
 </template>
 
@@ -67,7 +55,6 @@ export default {
       }
     }
     return {
-      successModal: false,
       formModal: {
         name: '',
         phone: '',
@@ -125,7 +112,6 @@ export default {
               if (data.code === 10000) {
                 this.$Message.success('添加成功!')
                 this.close()
-                this.successModal = true
                 this.ok()
               } else {
                 this.$Message.success(data.msg)

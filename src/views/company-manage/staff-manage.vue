@@ -27,7 +27,7 @@
         </Col>
         <Col span="3">
         <FormItem>
-          <Button type="primary" @click="searchBtn">搜索</Button>
+          <Button type="primary" style="width:80px;" @click="searchBtn">搜索</Button>
         </FormItem>
         </Col>
       </Form>
@@ -55,7 +55,7 @@
           </Select>
         </FormItem>
         <FormItem>
-          <p style="color:red; margin-top:-10px;">确认操作后，您将于接收该角色的人员互换角色</p>
+          <p style="color:red; margin-top:-10px;">确认操作后，您将与接收该角色的人员互换角色</p>
         </FormItem>
       </Form>
       <div slot="footer" style="margin-top:20px;">
@@ -80,7 +80,8 @@
       <p slot="header" style="text-align:center">
         <span>提示</span>
       </p>
-      <P>添加员工成功，员工的登录账号为手机号，初始登录密码已发送至员工手机；</P>
+      <P>添加员工成功，员工的登录账号为手机号</P>
+      <p>初始登录密码已发送至员工手机</p>
       <div slot="footer">
         <Button type="primary" @click="knowCancel">我知道了</Button>
       </div>
@@ -129,13 +130,10 @@ export default {
         render: (h, params) => {
           if (params.row.type === 1 && this.userInfo.type === 1) {
             return h('div', [
-              h('Button', {
-                props: {
-                  type: 'text'
-                },
+              h('span', {
                 style: {
                   color: '#00A4BD',
-                  marginLeft: '-20px'
+                  cursor: 'pointer'
                 },
                 on: {
                   click: () => {
@@ -149,13 +147,10 @@ export default {
           } else {
             if (this.hasPower(140202) && this.hasPower(140203)) {
               return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text'
-                  },
+                h('span', {
                   style: {
                     color: '#00A4BD',
-                    marginLeft: '-20px'
+                    cursor: 'pointer'
                   },
                   on: {
                     click: () => {
@@ -163,12 +158,11 @@ export default {
                     }
                   }
                 }, '修改'),
-                h('Button', {
-                  props: {
-                    type: 'text'
-                  },
+                h('span', {
                   style: {
-                    color: '#00A4BD'
+                    color: '#00A4BD',
+                    cursor: 'pointer',
+                    marginLeft: '20px'
                   },
                   on: {
                     click: () => {
@@ -179,13 +173,10 @@ export default {
               ])
             } else if (this.hasPower(140202)) {
               return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text'
-                  },
+                h('span', {
                   style: {
                     color: '#00A4BD',
-                    marginLeft: '-20px'
+                    cursor: 'pointer'
                   },
                   on: {
                     click: () => {
@@ -196,13 +187,11 @@ export default {
               ])
             } else if (this.hasPower(140203)) {
               return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text'
-                  },
+                h('span', {
                   style: {
                     color: '#00A4BD',
-                    marginLeft: '-20px'
+                    cursor: 'pointer',
+                    marginLeft: '20px'
                   },
                   on: {
                     click: () => {
@@ -384,6 +373,8 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
+// >>> .ivu-btn-text:hover
+//   background-color: #ebf7ff;
 .temAll
   width: 100%
   overflow: auto;
@@ -394,6 +385,7 @@ export default {
 .searchCard
   height:70px;
   background:rgba(249,249,249,1);
+  border: none;
 .dialog
   p
   text-align center

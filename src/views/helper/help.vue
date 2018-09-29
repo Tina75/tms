@@ -1,32 +1,30 @@
 <template>
   <div class="temAll">
     <Col span="4">
-    <Menu :open-names="['1']" style="width: 100%;">
+    <Menu :open-names="['1']" style="width: 100%; background:rgba(243,245,249,1)" accordion>
       <Submenu name="1">
         <template slot="title">
           <i class="icon font_family icon-tupian" style="color: #FFBB44; overflow: hidden; width: 20px;"></i>
-          图文介绍
+          <span style="font-size:16px;">图文介绍</span>
         </template>
-        <MenuItem v-for="menu in picMenu" :key="menu.id" :name="menu.title" @click.native="clickLeftMenuPic(menu)">
+        <MenuItem v-for="menu in picMenu" :key="menu.id" :name="menu.title" style="font-size:14px;" @click.native="clickLeftMenuPic(menu)">
         {{menu.title}}
           </MenuItem>
       </Submenu>
-    </Menu>
-    <Menu style="width: 100%;">
       <Submenu name="2">
         <template slot="title">
           <i class="icon font_family icon-shipin" style="color: #418DF9; overflow: hidden; width: 20px;"></i>
-          视频介绍
+          <span style="font-size:16px;">视频介绍</span>
         </template>
-        <MenuItem v-for="menu in videoMenu" :key="menu.id" :name="menu.title" @click.native="clickLeftMenuVideo(menu)">
+        <MenuItem v-for="menu in videoMenu" :key="menu.id" :name="menu.title" style="font-size:14px;" @click.native="clickLeftMenuVideo(menu)">
         {{menu.title}}
           </MenuItem>
       </Submenu>
     </Menu>
     </Col>
-    <Col span="18">
+    <Col span="20" style="background:#fff; padding-left: 20px;">
     <Card class="searchCard" dis-hover>
-      <p slot="title">{{picContent.title}}</p>
+      <p slot="title" style="font-size:16px; color:rgba(51,51,51,1);">{{picContent.title}}</p>
       <div v-if="'pic' === this.type">
         <pre>{{picContent.content}}</pre>
         <img :src="picContent.urlList" class="imgInfo" />
@@ -93,14 +91,17 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
-// .ivu-menu-light
-//   background: #efefef;
-// >>> .ivu-menu-vertical.ivu-menu-light:after,
-// .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu):after,
-// .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
-//   background: #fff;
+>>> .ivu-menu-vertical.ivu-menu-light:after
+  background: #fff;
+>>> .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
+    background: #fff;
+    color: #515a6e;
+>>> .ivu-card-bordered
+   border: none;
 .temAll
   width: 100%
+  height: 100%;
+  background:rgba(243,245,249,1);
   overflow: auto;
 .imgInfo
   max-width: 680px;
