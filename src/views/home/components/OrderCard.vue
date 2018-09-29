@@ -18,11 +18,17 @@
     </div>
     <div class="ivu-card-body tms-home__card-body">
       <CellGroup>
-        <Cell v-for="(item, index) in data" :key="index" :title="item.name" :extra="item.value.toString()" :to="item.url">
+        <Cell v-for="(item, index) in data" :key="index" :to="item.url">
           <span slot="icon" class="ivu-badge ivu-badge-status">
             <span :style="{'background-color':theme}" class="ivu-badge-status-dot"></span>
           </span>
-        </Cell>
+          <span slot="extra" class="tms-home__cell-extra">
+            {{item.value.toString()}}
+          </span>
+          <span class="tms-home__cell-item" >
+            {{item.name}}
+          </span>
+        </spanclass="tms-home__cell-item"></Cell>
       </CellGroup>
     </div>
   </div>
@@ -126,6 +132,10 @@ export default {
     padding 16px 0
     height 188px
     overflow hidden
+  &__cell-item
+    font-size 12px
+  &__cell-extra
+    font-size 16px
 .ivu-card-extra
   top 24px
 </style>

@@ -2,9 +2,6 @@
   <div is="i-col" span="6" class="i-mt-15 page-home__padding-8">
     <BlankCard to="info/info">
       <div slot="title">消息中心</div>
-      <div slot="extra">
-        ...
-      </div>
       <CellGroup>
         <Cell v-for="(msg, index) in data" :key="index" :title="msg.title" :label="msg.createTime" class="page-home__message-item">
           <FontIcon slot="icon" :type="getIcon(msg.type)" :color="getColor(msg.type)" size="26">
