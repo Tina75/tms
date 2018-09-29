@@ -396,10 +396,6 @@ export default {
                 'on-change': (value) => {
                   if (params.value !== value) {
                     params.value = value
-                  }
-                },
-                'on-blur': () => {
-                  if ('value' in params) {
                     _this.updateLocalCargo(setObject(params, float.floor(params.value)))
                   }
                 }
@@ -429,10 +425,6 @@ export default {
                 'on-change': (value) => {
                   if (params.value !== value) {
                     params.value = value
-                  }
-                },
-                'on-blur': () => {
-                  if ('value' in params) {
                     _this.updateLocalCargo(setObject(params, float.floor(params.value, 1)))
                   }
                 }
@@ -454,10 +446,6 @@ export default {
                 'on-change': (value) => {
                   if (params.value !== value) {
                     params.value = value
-                  }
-                },
-                'on-blur': () => {
-                  if ('value' in params) {
                     _this.updateLocalCargo(setObject(params, float.floor(params.value || 0)))
                   }
                 }
@@ -477,10 +465,8 @@ export default {
               },
               on: {
                 'on-change': (value) => {
-                  params.value = value
-                },
-                'on-blur': () => {
-                  if ('value' in params) {
+                  if (params.value !== value) {
+                    params.value = value
                     _this.updateLocalCargo(setObject(params, parseInt(params.value || 1)))
                   }
                 }

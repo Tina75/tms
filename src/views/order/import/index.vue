@@ -100,7 +100,12 @@ export default {
           key: 'status',
           width: 100,
           render: (h, params) => {
-            return h('span', params.row.status === 1 ? '导入成功' : '导入失败')
+            if (params.row.status === 1) {
+              return h('span', '导入成功')
+            } else if (params.row.status === 0) {
+              return h('span', '导入失败')
+            }
+            return h('span', '正在处理')
           }
         },
         {
