@@ -246,7 +246,7 @@ export default {
           key: 'cargoName',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.cargoName ? p.row.cargoName : '-')
+            return this.tableDataRender(h, p.row.cargoName)
           }
         },
         {
@@ -254,7 +254,7 @@ export default {
           key: 'packing',
           minWidth: 80,
           render: (h, p) => {
-            return h('span', p.row.packing ? p.row.packing : '-')
+            return this.tableDataRender(h, p.row.packing)
           }
         },
         {
@@ -262,7 +262,7 @@ export default {
           key: 'quantity',
           minWidth: 80,
           render: (h, p) => {
-            return h('span', p.row.quantity ? p.row.quantity : '-')
+            return this.tableDataRender(h, p.row.quantity)
           }
         },
         {
@@ -270,7 +270,7 @@ export default {
           key: 'cargoCost',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : '-')
+            return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },
         {
@@ -278,7 +278,7 @@ export default {
           key: 'weight',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
+            return this.tableDataRender(h, p.row.weight)
           }
         },
         {
@@ -286,7 +286,7 @@ export default {
           key: 'volume',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
+            return this.tableDataRender(h, p.row.volume)
           }
         },
         {
@@ -294,7 +294,7 @@ export default {
           key: 'remark1',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.remark1 ? p.row.remark1 : '-')
+            return this.tableDataRender(h, p.row.remark1)
           }
         },
         {
@@ -302,7 +302,7 @@ export default {
           key: 'remark2',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.remark2 ? p.row.remark2 : '-')
+            return this.tableDataRender(h, p.row.remark2)
           }
         }
       ]

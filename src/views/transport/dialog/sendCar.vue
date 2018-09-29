@@ -410,6 +410,10 @@ export default {
         this.$Message.error('请输入司机')
         return false
       }
+      if (this.info.driverPhone && !(/^1\d{10}$/.test(this.info.driverPhone))) {
+        this.$Message.error('司机手机号格式不正确')
+        return false
+      }
       if (!this.info.carNo) {
         this.$Message.error('请输入车牌号')
         return false

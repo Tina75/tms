@@ -30,13 +30,8 @@ export default {
           title: '始发地',
           key: 'start',
           minWidth: 80,
-          ellipsis: true,
           render: (h, p) => {
-            return h('Tooltip', {
-              props: {
-                content: this.cityFilter(p.row.start)
-              }
-            }, this.cityFilter(p.row.start))
+            return this.tableDataRender(h, this.cityFilter(p.row.start), 3)
           }
         },
         // {
@@ -53,13 +48,8 @@ export default {
           title: '目的地',
           key: 'end',
           minWidth: 80,
-          ellipsis: true,
           render: (h, p) => {
-            return h('Tooltip', {
-              props: {
-                content: this.cityFilter(p.row.end)
-              }
-            }, this.cityFilter(p.row.end))
+            return this.tableDataRender(h, this.cityFilter(p.row.end), 3)
           }
         },
         {
@@ -67,7 +57,7 @@ export default {
           key: 'ordreNum',
           minWidth: 80,
           render: (h, p) => {
-            return h('span', p.row.ordreNum ? p.row.ordreNum : '-')
+            return this.tableDataRender(h, p.row.ordreNum)
           }
         },
         {
@@ -75,7 +65,7 @@ export default {
           key: 'volume',
           minWidth: 80,
           render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
+            return this.tableDataRender(h, p.row.volume)
           }
         },
         {
@@ -83,7 +73,7 @@ export default {
           key: 'weight',
           minWidth: 80,
           render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
+            return this.tableDataRender(h, p.row.weight)
           }
         }
       ],
@@ -128,7 +118,7 @@ export default {
           key: 'consignerName',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.consignerName ? p.row.consignerName : '-')
+            return this.tableDataRender(h, p.row.consignerName)
           }
         },
         {
@@ -136,7 +126,7 @@ export default {
           key: 'volume',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
+            return this.tableDataRender(h, p.row.volume)
           }
         },
         {
@@ -144,7 +134,7 @@ export default {
           key: 'weight',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
+            return this.tableDataRender(h, p.row.weight)
           }
         }
       ],
@@ -185,33 +175,23 @@ export default {
           key: 'consignerName',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.consignerName ? p.row.consignerName : '-')
+            return this.tableDataRender(h, p.row.consignerName)
           }
         },
         {
           title: '始发地',
           key: 'start',
-          minWidth: 160,
-          ellipsis: true,
+          minWidth: 180,
           render: (h, p) => {
-            return h('Tooltip', {
-              props: {
-                content: this.cityFilter(p.row.start)
-              }
-            }, this.cityFilter(p.row.start))
+            return this.tableDataRender(h, this.cityFilter(p.row.start))
           }
         },
         {
           title: '目的地',
           key: 'end',
-          minWidth: 160,
-          ellipsis: true,
+          minWidth: 180,
           render: (h, p) => {
-            return h('Tooltip', {
-              props: {
-                content: this.cityFilter(p.row.end)
-              }
-            }, this.cityFilter(p.row.end))
+            return this.tableDataRender(h, this.cityFilter(p.row.end))
           }
         },
         {
@@ -219,7 +199,7 @@ export default {
           key: 'volume',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
+            return this.tableDataRender(h, p.row.volume)
           }
         },
         {
@@ -227,7 +207,7 @@ export default {
           key: 'weight',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
+            return this.tableDataRender(h, p.row.weight)
           }
         }
       ],
@@ -395,6 +375,25 @@ export default {
         this.rightSelection = []
         this.fetchData()
       }).catch(err => console.error(err))
+    },
+
+    // 表格内容渲染方法
+    // 当text内容长度大于12时截取显示...并使用tooltip
+    // 当text无内容时替换为-
+    tableDataRender (h, text, overLength = 12) {
+      text = text.toString()
+      let showText = text.length > overLength ? text.substr(0, overLength) + '...' : text
+      showText = showText || '-'
+      if (text.length <= overLength) {
+        return h('span', showText)
+      } else {
+        return h('Tooltip', {
+          props: {
+            placement: 'top',
+            content: text
+          }
+        }, showText)
+      }
     }
   }
 }
