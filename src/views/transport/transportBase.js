@@ -56,6 +56,24 @@ export default {
   },
 
   methods: {
-    ...FORMATTERS
+    ...FORMATTERS,
+
+    // 表格内容渲染方法
+    // 当text内容长度大于12时截取显示...并使用tooltip
+    // 当text无内容时替换为-
+    tableDataRender (h, text, unEllipsis) {
+      text = text.toString()
+      let showText = (text.length > 12 && !unEllipsis) ? text.substr(0, 12) + '...' : text
+      showText = showText || '-'
+      if (text.length <= 12 || unEllipsis) {
+        return h('span', showText)
+      } else {
+        return h('Tooltip', {
+          props: {
+            content: text
+          }
+        }, showText)
+      }
+    }
   }
 }

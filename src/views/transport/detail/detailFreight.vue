@@ -438,22 +438,17 @@ export default {
           key: 'customerOrderNo',
           width: 160,
           render: (h, p) => {
-            return h('span', p.row.customerOrderNo ? p.row.customerOrderNo : '-')
+            return this.tableDataRender(h, p.row.customerOrderNo)
           }
         },
         {
           title: '始发地-目的地',
           key: 'start',
           minWidth: 250,
-          ellipsis: true,
           render: (h, p) => {
             const start = this.cityFormatter(p.row.start)
             const end = this.cityFormatter(p.row.end)
-            return h('Tooltip', {
-              props: {
-                content: start && end ? [start, end].join('-') : '-'
-              }
-            }, start && end ? [start, end].join('-') : '-')
+            return this.tableDataRender(h, start && end ? [start, end].join('-') : '')
           }
         },
         {
@@ -461,7 +456,7 @@ export default {
           key: 'cargoName',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.cargoName ? p.row.cargoName : '-')
+            return this.tableDataRender(h, p.row.cargoName)
           }
         },
         {
@@ -469,7 +464,7 @@ export default {
           key: 'packing',
           width: 80,
           render: (h, p) => {
-            return h('span', p.row.packing ? p.row.packing : '-')
+            return this.tableDataRender(h, p.row.packing)
           }
         },
         {
@@ -477,7 +472,7 @@ export default {
           key: 'quantity',
           width: 80,
           render: (h, p) => {
-            return h('span', p.row.quantity ? p.row.quantity : '-')
+            return this.tableDataRender(h, p.row.quantity)
           }
         },
         {
@@ -485,7 +480,7 @@ export default {
           key: 'cargoCost',
           width: 100,
           render: (h, p) => {
-            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : '-')
+            return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },
         {
@@ -493,7 +488,7 @@ export default {
           key: 'weight',
           width: 100,
           render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
+            return this.tableDataRender(h, p.row.weight)
           }
         },
         {
@@ -501,7 +496,7 @@ export default {
           key: 'volume',
           width: 100,
           render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
+            return this.tableDataRender(h, p.row.volume)
           }
         },
         {
@@ -509,7 +504,7 @@ export default {
           key: 'remark1',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.quantity ? p.row.quantity : '-')
+            return this.tableDataRender(h, p.row.remark1)
           }
         },
         {
@@ -517,7 +512,7 @@ export default {
           key: 'remark2',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.quantity ? p.row.quantity : '-')
+            return this.tableDataRender(h, p.row.remark2)
           }
         }
       ]

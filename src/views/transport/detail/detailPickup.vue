@@ -408,7 +408,7 @@ export default {
           key: 'cargoName',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.cargoName ? p.row.cargoName : '-')
+            return this.tableDataRender(h, p.row.cargoName)
           }
         },
         {
@@ -416,7 +416,7 @@ export default {
           key: 'packing',
           width: 80,
           render: (h, p) => {
-            return h('span', p.row.packing ? p.row.packing : '-')
+            return this.tableDataRender(h, p.row.packing)
           }
         },
         {
@@ -424,7 +424,7 @@ export default {
           key: 'quantity',
           width: 80,
           render: (h, p) => {
-            return h('span', p.row.quantity ? p.row.quantity : '-')
+            return this.tableDataRender(h, p.row.quantity)
           }
         },
         {
@@ -432,7 +432,7 @@ export default {
           key: 'cargoCost',
           width: 100,
           render: (h, p) => {
-            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : '-')
+            return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },
         {
@@ -440,7 +440,7 @@ export default {
           key: 'weight',
           width: 100,
           render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
+            return this.tableDataRender(h, p.row.weight)
           }
         },
         {
@@ -448,7 +448,7 @@ export default {
           key: 'volume',
           width: 100,
           render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
+            return this.tableDataRender(h, p.row.volume)
           }
         },
         {
@@ -456,7 +456,7 @@ export default {
           key: 'consignerName',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.consignerName ? p.row.consignerName : '-')
+            return this.tableDataRender(h, p.row.consignerName)
           }
         },
         {
@@ -464,7 +464,7 @@ export default {
           key: 'consigneeContact',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.consigneeContact ? p.row.consigneeContact : '-')
+            return this.tableDataRender(h, p.row.consigneeContact)
           }
         },
         {
@@ -472,7 +472,7 @@ export default {
           key: 'consigneePhone',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.cargoName ? p.row.cargoName : '-')
+            return this.tableDataRender(h, p.row.consigneePhone)
           }
         },
         {
@@ -480,7 +480,7 @@ export default {
           key: 'consigneeAddress',
           minWidth: 200,
           render: (h, p) => {
-            return h('span', p.row.cargoName ? p.row.cargoName : '-')
+            return this.tableDataRender(h, p.row.consigneeAddress)
           }
         }
       ]
