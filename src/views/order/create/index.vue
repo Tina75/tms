@@ -197,11 +197,11 @@
       </FormItem>
       </Col>
     </Row>
-    <FormItem class="van-center">
+    <div class="van-center">
       <Button v-if="hasPower(100101)" :disabled="disabled" type="primary" @click="handleSubmit">保存</Button>
       <Button v-if="hasPower(100102)" :disabled="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
-    </FormItem>
+    </div>
     <OrderPrint ref="printer" :list="orderPrint">
     </OrderPrint>
   </Form>
@@ -396,10 +396,6 @@ export default {
                 'on-change': (value) => {
                   if (params.value !== value) {
                     params.value = value
-                  }
-                },
-                'on-blur': () => {
-                  if ('value' in params) {
                     _this.updateLocalCargo(setObject(params, float.floor(params.value)))
                   }
                 }
@@ -429,10 +425,6 @@ export default {
                 'on-change': (value) => {
                   if (params.value !== value) {
                     params.value = value
-                  }
-                },
-                'on-blur': () => {
-                  if ('value' in params) {
                     _this.updateLocalCargo(setObject(params, float.floor(params.value, 1)))
                   }
                 }
@@ -454,10 +446,6 @@ export default {
                 'on-change': (value) => {
                   if (params.value !== value) {
                     params.value = value
-                  }
-                },
-                'on-blur': () => {
-                  if ('value' in params) {
                     _this.updateLocalCargo(setObject(params, float.floor(params.value || 0)))
                   }
                 }
@@ -477,10 +465,8 @@ export default {
               },
               on: {
                 'on-change': (value) => {
-                  params.value = value
-                },
-                'on-blur': () => {
-                  if ('value' in params) {
+                  if (params.value !== value) {
+                    params.value = value
                     _this.updateLocalCargo(setObject(params, parseInt(params.value || 1)))
                   }
                 }

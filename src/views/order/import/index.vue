@@ -82,6 +82,7 @@ export default {
       visible: false,
       progress: 0,
       ossClient: null,
+      ossDir: '',
       columns: [
         {
           title: '导入日期',
@@ -100,7 +101,12 @@ export default {
           key: 'status',
           width: 100,
           render: (h, params) => {
-            return h('span', params.row.status === 1 ? '导入成功' : '导入失败')
+            if (params.row.status === 1) {
+              return h('span', '导入成功')
+            } else if (params.row.status === 0) {
+              return h('span', '导入失败')
+            }
+            return h('span', '正在处理')
           }
         },
         {
@@ -189,6 +195,7 @@ export default {
       })
         .then((response) => {
           const { data } = response.data
+          vm.ossDir = data.ossKeys[0]
           vm.ossClient = new OssClient({
             accessKeyId: data.ossTokenDTO.stsAccessId,
             accessKeySecret: data.ossTokenDTO.stsAccessKey,
@@ -249,11 +256,10 @@ export default {
         try {
           // this.visible = true
           // 生成随机文件名 Math.floor(Math.random() *10000)
-          let randomName = file.name + new Date().Format('yyyyMMddhhmm') + '.' + file.name.split('.').pop()
-          let result = await this.ossClient.multipartUpload(randomName, file, {
+          let randomName = file.name.split('.')[0] + new Date().Format('yyyyMMddhhmmss') + '.' + file.name.split('.').pop()
+          let result = await this.ossClient.multipartUpload(this.ossDir + randomName, file, {
             partSize: 1024 * 1024, // 分片大小 ,1M
             progress: function (progress, pp) {
-              console.log('progress', progress)
               if (progress) {
                 this.progress = progress
               }
@@ -285,7 +291,7 @@ export default {
           url: 'order/template/uploadNotify',
           data: {
             fileName,
-            fileUrl
+            fileUrl: decodeURI(fileUrl) // 中文转义回来
           }
         })
         return result
@@ -312,7 +318,6 @@ export default {
         },
         methods: {
           ok () {
-            console.log('fetch')
             vm.$refs.pageTable.fetch()
           }
         }
