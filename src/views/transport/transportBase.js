@@ -18,7 +18,29 @@ const FORMATTERS = {
   carTypeFormatter: getCarType,
 
   // 格式化车长
-  carLengthFormatter: getCarLength
+  carLengthFormatter: getCarLength,
+
+  // 格式化支付方式
+  payTypeFormatter (type, isTransfer) {
+    let text = ''
+    switch (Number(type)) {
+      case 1:
+        text = isTransfer ? '现付' : '按单结'
+        break
+      case 2:
+        text = isTransfer ? '到付' : '月结'
+        break
+      case 3:
+        text = '回单付'
+        break
+      case 4:
+        text = '月结'
+        break
+      default: break
+    }
+    return text
+  }
+
 }
 
 export default {

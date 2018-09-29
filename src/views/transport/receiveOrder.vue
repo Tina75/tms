@@ -396,10 +396,7 @@ export default {
           key: 'settlementType',
           minWidth: 100,
           render: (h, p) => {
-            let type = '-'
-            if (p.row.settlementType === 1) type = '按单结'
-            if (p.row.settlementType === 2) type = '月结'
-            return h('span', type)
+            return h('span', this.payTypeFormatter(p.row.settlementType) || '-')
           }
         },
         {

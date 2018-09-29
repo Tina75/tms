@@ -9,8 +9,8 @@
           <tbody>
             <tr>
               <td>承运商：{{item.waybill.carrierName}}</td>
-              <td>始发地：{{item.waybill.start | cityFilter}}</td>
-              <td>目的地：{{item.waybill.end | cityFilter}}</td>
+              <td>始发地：{{item.waybill.start | cityFormatter}}</td>
+              <td>目的地：{{item.waybill.end | cityFormatter}}</td>
             </tr>
             <tr>
               <td>车牌号：{{item.waybill.carNo}}</td>
@@ -18,7 +18,7 @@
               <td>手机号码：{{item.waybill.driverPhone}}</td>
             </tr>
             <tr>
-              <td>车型：{{item.waybill.carType|carTypeFilter}} {{item.waybill.carLength|carLengthFilter}}</td>
+              <td>车型：{{item.waybill.carType|carTypeFormatter}} {{item.waybill.carLength|carLengthFormatter}}</td>
               <td>回单数：{{item.waybill.backbillCnt}}</td>
             </tr>
           </tbody>
@@ -53,7 +53,7 @@
                 <span class="table-footer-item">保险费：{{item.waybill.insuranceFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">其他：{{item.waybill.otherFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">合计运费: {{item.waybill.totalFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">结算方式：{{item.waybill.settlementType | settlementTypeFilter}}</span>
+                <span class="table-footer-item">结算方式：{{item.waybill.settlementType | payTypeFormatter}}</span>
               </td>
             </tr>
           </tbody>
@@ -76,34 +76,11 @@
 </template>
 
 <script>
+import TransportBase from '../transportBase'
 import Printd from 'printd'
-import City from '@/libs/js/City'
-import { getCarType, getCarLength } from '@/libs/constant/carInfo'
 
 export default {
-
-  filters: {
-    // 格式化日期
-    dateFormatter (timestamp) {
-      if (!timestamp) return ''
-      return new Date(timestamp).Format('yyyy-MM-dd hh:mm:ss')
-    },
-    // 格式化城市
-    cityFilter (code) {
-      if (!code) return ''
-      return City.codeToFullName(code, 3, '')
-    },
-    // 格式化车型
-    carTypeFilter: getCarType,
-    // 格式化车长
-    carLengthFilter: getCarLength,
-    // 格式化结算方式
-    settlementTypeFilter (type) {
-      if (type === 1) return '按单结'
-      else if (type === 2) return '月结'
-      else return ''
-    }
-  },
+  mixins: [ TransportBase ],
   props: {
     data: {
       type: Array,
