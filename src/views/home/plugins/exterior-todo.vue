@@ -18,6 +18,7 @@ import OrderCard from '../components/OrderCard.vue'
 import mixin from './mixin.js'
 
 export default {
+  name: 'exterior-todo',
   components: {
     OrderCard
   },
