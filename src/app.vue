@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Layout class="container">
-      <Sider v-model="collapsed" :collapsed-width="50" hide-trigger collapsible >
+      <Sider v-model="collapsed" :collapsed-width="50" hide-trigger collapsible style="overflow:hidden">
         <side-bar :collapsed="collapsed" :active-name="$route.path" :menu-list="menuList" @on-select="onMenuSelect"/>
       </Sider>
       <Layout>
