@@ -39,10 +39,12 @@
 import BaseDialog from '@/basic/BaseDialog'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput.vue'
+import _ from 'lodash'
 import Server from '@/libs/js/server'
 import { CAR } from '@/views/client/client'
 
-const specialCity = ['110000', '120000', '710000', '810000', '820000']
+// 北京 天津 上海 重庆 台湾 香港 澳门
+const specialCity = ['110000', '120000', '310000', '500000', '710000', '810000', '820000']
 
 export default {
   name: 'CreatedFreight',
@@ -58,13 +60,18 @@ export default {
     const validateStart = (rule, value, callback) => {
       if (!validateArea(value)) {
         callback(new Error('请至少选择到市一级城市'))
+      } else if (this.form.end.length > 0 && value.length > 0 && _.isEqual(this.form.end, value)) {
+        callback(new Error('始发城市不能和目的城市相同'))
       } else {
         callback()
       }
     }
     const validateEnd = (rule, value, callback) => {
+      console.log(value)
       if (!validateArea(value)) {
         callback(new Error('请至少选择到市一级城市'))
+      } else if (this.form.start.length > 0 && value.length > 0 && _.isEqual(this.form.start, value)) {
+        callback(new Error('目的城市不能和始发城市相同'))
       } else {
         callback()
       }
