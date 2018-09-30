@@ -14,7 +14,7 @@ export default {
       },
       searchFields: {},
 
-      tabStatus: void 0, // 当前标签页
+      tabStatus: 1, // 当前标签页
       currentBtns: [], // 当前按钮组
 
       isEasySearch: true, // 是否为简易搜索
