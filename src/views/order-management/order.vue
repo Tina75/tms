@@ -995,6 +995,7 @@ export default {
         methods: {
           ok (node) {
             _this.$refs.pageTable.fetch() // 刷新table
+            _this.setSelection()
             _this.getOrderNum() // 刷新tab页数量
           }
         }
@@ -1009,6 +1010,7 @@ export default {
         methods: {
           ok (node) {
             _this.$refs.pageTable.fetch() // 刷新table
+            _this.setSelection()
             _this.getOrderNum() // 刷新tab页数量
           }
         }
@@ -1023,6 +1025,7 @@ export default {
         methods: {
           ok (node) {
             _this.$refs.pageTable.fetch() // 刷新table
+            _this.setSelection()
             _this.getOrderNum() // 刷新tab页数量
           }
         }
@@ -1046,10 +1049,17 @@ export default {
         methods: {
           ok (node) {
             _this.$refs.pageTable.fetch() // 刷新table
+            _this.setSelection()
             _this.getOrderNum() // 刷新tab页数量
           }
         }
       })
+    },
+    // 重置勾选项
+    setSelection () {
+      this.selectOrderList = [] // 重置当前已勾选项
+      this.selectedId = [] // 重置当前已勾选id项
+      this.$refs.pageTable.clearSelected()
     },
     // 状态转为状态码
     statusToCode (name) {

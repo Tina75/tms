@@ -33,7 +33,7 @@
           <Col span="8">
           <div>
             <span class="label">车型：</span>
-            <span>{{carTypeMap[driverList.carType]}}{{carLengthMap[driverList.carLength]}}</span>
+            <span>{{carTypeMap[driverList.carType-1].label}}{{carLengthMap[driverList.carLength-1].label}}</span>
           </div>
           </Col>
           <Col span="8">
@@ -159,6 +159,7 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
+import {CAR_TYPE, CAR_LENGTH} from '@/libs/constant/carInfo'
 import { CODE, carrierDetailsForDriver, carrierDetailsForCompany, carrierListDriver, carrierListCar, carrierDeleteVehicle, carrierDeleteDriver } from './client'
 export default {
   name: 'carrier-info',
@@ -170,37 +171,8 @@ export default {
     return {
       carrierId: this.$route.query.id, // carrierId 承运商id
       carrierType: this.$route.query.carrierType,
-      carTypeMap: {
-        1: '平板',
-        2: '高栏',
-        3: '厢车',
-        4: '自卸',
-        5: '冷藏',
-        6: '保温',
-        7: '高低板',
-        8: '面包车',
-        9: '爬梯车',
-        10: '飞翼车'
-      },
-      carLengthMap: {
-        1: '1.8米',
-        2: '2.7米',
-        3: '3.8米',
-        4: '4.2米',
-        5: '5米',
-        6: '6.2米',
-        7: '6.8米',
-        8: '7.7米',
-        9: '8.2米',
-        10: '8.7米',
-        11: '9.6米',
-        12: '11.7米',
-        13: '12.5米',
-        14: '13米',
-        15: '15米',
-        16: '16米',
-        17: '17.5米'
-      },
+      carTypeMap: CAR_TYPE,
+      carLengthMap: CAR_LENGTH,
       driverList: {
         driverName: '',
         carNO: '',
@@ -324,7 +296,7 @@ export default {
           title: '车型',
           key: 'carType',
           render: (h, params) => {
-            let text = params.row.carType ? (this.carLengthMap[params.row.carLength] + this.carTypeMap[params.row.carType]) : ''
+            let text = params.row.carType ? (this.carLengthMap[params.row.carLength - 1].label + this.carTypeMap[params.row.carType - 1].label) : ''
             return h('div', {}, text)
           }
         }
@@ -418,7 +390,7 @@ export default {
           title: '车型',
           key: 'carType',
           render: (h, params) => {
-            let text = params.row.carType ? (this.carLengthMap[params.row.carLength] + this.carTypeMap[params.row.carType]) : ''
+            let text = params.row.carType ? (this.carLengthMap[params.row.carLength - 1].label + this.carTypeMap[params.row.carType - 1].label) : ''
             return h('div', {}, text)
           }
         },
