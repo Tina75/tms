@@ -131,6 +131,9 @@ export default {
           return item
         })
         this.loading = false
+      }).catch(err => {
+        this.loading = false
+        console.error(err)
       })
     },
 

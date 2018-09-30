@@ -33,7 +33,7 @@
           <Col span="8">
           <div>
             <span class="label">车型：</span>
-            <span>{{carTypeMap[driverList.carType-1].label}}{{carLengthMap[driverList.carLength-1].label}}</span>
+            <span>{{carTypeMap[driverList.carType]}}{{carLengthMap[driverList.carLength]}}</span>
           </div>
           </Col>
           <Col span="8">
@@ -159,7 +159,7 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import {CAR_TYPE, CAR_LENGTH} from '@/libs/constant/carInfo'
+import {CAR_TYPE1, CAR_LENGTH1} from '@/libs/constant/carInfo'
 import { CODE, carrierDetailsForDriver, carrierDetailsForCompany, carrierListDriver, carrierListCar, carrierDeleteVehicle, carrierDeleteDriver } from './client'
 export default {
   name: 'carrier-info',
@@ -171,8 +171,8 @@ export default {
     return {
       carrierId: this.$route.query.id, // carrierId 承运商id
       carrierType: this.$route.query.carrierType,
-      carTypeMap: CAR_TYPE,
-      carLengthMap: CAR_LENGTH,
+      carTypeMap: CAR_TYPE1,
+      carLengthMap: CAR_LENGTH1,
       driverList: {
         driverName: '',
         carNO: '',
@@ -296,7 +296,7 @@ export default {
           title: '车型',
           key: 'carType',
           render: (h, params) => {
-            let text = params.row.carType ? (this.carLengthMap[params.row.carLength - 1].label + this.carTypeMap[params.row.carType - 1].label) : ''
+            let text = params.row.carType ? (this.carLengthMap[params.row.carLength] + this.carTypeMap[params.row.carType]) : ''
             return h('div', {}, text)
           }
         }
@@ -390,7 +390,7 @@ export default {
           title: '车型',
           key: 'carType',
           render: (h, params) => {
-            let text = params.row.carType ? (this.carLengthMap[params.row.carLength - 1].label + this.carTypeMap[params.row.carType - 1].label) : ''
+            let text = params.row.carType ? (this.carLengthMap[params.row.carLength] + this.carTypeMap[params.row.carType]) : ''
             return h('div', {}, text)
           }
         },

@@ -24,7 +24,7 @@
             </div>
             <a class="drop-menu-a"><font-icon :type="item.icon" :size="20" color="white"/></a>
           </Poptip> -->
-          <Dropdown v-if="item.children" placement="right-start" >
+          <Dropdown v-if="item.children" placement="right-start" transfer >
             <a class="drop-menu-a"><font-icon :type="item.icon" :size="20" color="white"/></a>
             <DropdownMenu slot="list" >
               <DropdownItem v-for="child in item.children"  :key="child.path" >
