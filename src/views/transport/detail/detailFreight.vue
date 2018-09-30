@@ -414,7 +414,7 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
-          width: 160,
+          width: 200,
           render: (h, p) => {
             return h('a', {
               style: { color: '#3A7EDE' },
@@ -436,7 +436,7 @@ export default {
         {
           title: '客户订单号',
           key: 'customerOrderNo',
-          width: 160,
+          width: 200,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.customerOrderNo)
           }
