@@ -478,7 +478,7 @@ export default {
         {
           title: '提货地址',
           key: 'consigneeAddress',
-          minWidth: 200,
+          width: 200,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.consigneeAddress)
           }

@@ -92,7 +92,7 @@ export default {
           title: '订单号',
           key: 'orderNo',
           // fixed: 'left',
-          minWidth: 200,
+          width: 200,
           render: (h, p) => {
             return h('a', {
               style: {
@@ -148,7 +148,7 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
-          minWidth: 200,
+          width: 200,
           fixed: 'left',
           render: (h, p) => {
             return h('a', {

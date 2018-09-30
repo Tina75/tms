@@ -27,6 +27,7 @@ export default {
   watch: {
     value () {
       this.money = Number(this.value).toFixed(2)
+      this.$emit('input', Number(this.value))
     }
   },
   methods: {
