@@ -47,7 +47,7 @@ export default {
     const tab = window.sessionStorage['TABHEADER_' + this.tabType]
     if (tab) {
       this.tabStatus = this.setTabStatus(tab)
-      console.log(this.tabStatus)
+      this.tabChanged(tab)
     } else {
       this.currentBtns = this.btnList[1].btns
     }
