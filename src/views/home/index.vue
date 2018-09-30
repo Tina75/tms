@@ -51,37 +51,35 @@
       <NewCustumerStatis  v-if="cardChecks.includes('new-customer')"/>
       <!-- 在途车辆信息 -->
       <CarPosition  v-if="cardChecks.includes('transport-location')"/>
+    </Row>
 
-      <Col span="24" class="i-mt-15">
+    <Row gutter="16">
+      <PickupTodo />
+      <DeliveryTodo />
+      <TransferTodo />
+      <MessageCenter />
+      <CreateOrderStatis />
+
+      <Col span="6" class="i-mt-15">
       <BlankCard>
-        <div slot="title">营业额通知（近七日）</div>
+        <div slot="title">新增客户数</div>
         <div slot="extra">...</div>
       </BlankCard>
       </Col>
+
       <Col span="12" class="i-mt-15">
-      <BlankCard>
-        <div slot="title">调度订单数</div>
+      <BlankCard :padding="false">
+        <div slot="title">在途车辆位置</div>
         <div slot="extra">...</div>
+        <div ref="positionMap" style="height:238px"></div>
       </BlankCard>
       </Col>
-      <Col span="12" class="i-mt-15">
-      <BlankCard>
-        <div slot="title">开单数</div>
-        <div slot="extra">...</div>
-      </BlankCard>
-      </Col>
-      <Col span="12" class="i-mt-15">
-      <BlankCard>
-        <div slot="title">应收款项/应付款项</div>
-        <div slot="extra">...</div>
-      </BlankCard>
-      </Col>
-      <Col span="12" class="i-mt-15">
-      <BlankCard>
-        <div slot="title">货物重量/体积</div>
-        <div slot="extra">...</div>
-      </BlankCard>
-      </Col>
+
+      <Turnover />
+      <SchedulingOrder />
+      <Billing />
+      <ReceiptsPayments />
+      <Goods />
     </Row>
   </div>
 </template>
@@ -100,6 +98,11 @@ import DeliveryTodo from './plugins/delivery-todo.vue'
 import TransferTodo from './plugins/transfer-todo.vue'
 import ReceiptTodo from './plugins/receipt-todo.vue'
 import MessageCenter from './plugins/message-center.vue'
+import Turnover from './plugins/turnover'
+import SchedulingOrder from './plugins/scheduling-order'
+import Billing from './plugins/billing'
+import ReceiptsPayments from './plugins/receipts-payments'
+import Goods from './plugins/goods'
 
 import CreateOrderStatis from './plugins/create-order-statis.vue'
 // import { eventHub } from './plugins/mixin.js'
@@ -122,12 +125,17 @@ export default {
     TransferTodo,
     MessageCenter,
     CreateOrderStatis,
-    ShipperTodo,
+    Turnover,
+    SchedulingOrder,
+    Billing,
+    ReceiptsPayments,
+    Goods,
     CarrierTodo,
     ExteriorTodo,
-    ReceiptTodo,
     NewCustumerStatis,
-    CarPosition
+    CarPosition,
+    ReceiptTodo,
+    ShipperTodo
   },
   mixins: [BasePage],
   data () {
