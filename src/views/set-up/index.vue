@@ -7,10 +7,10 @@
       </MenuItem>
     </Menu>
     </Col>
-    <Col span="21" style="background:#fff">
+    <Col span="21" style="background:#fff; padding-left:20px; height: inherit;">
     <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;">
       <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute; left: 20px;"></span>
-      <span style="margin-left:35px; font-size: 16px;">{{rightTitle}}</span>
+      <span style="margin-left:35px; font-size: 16px; font-weight:600;">{{rightTitle}}</span>
     </div>
     <!--密码设置-->
     <div v-if="'1' === this.rightKey" key="1" style="height:530px;">

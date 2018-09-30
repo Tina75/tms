@@ -3,7 +3,7 @@
     <div ref="htmlContent">
       <div v-for="(data, index) in list" :key="index" class="order-detail">
         <h3 class="van-center i-mb-20">{{data.consignerName}}公司托运单</h3>
-        <table cellspacing="0" cellpadding="10" border="0" style="width:100%">
+        <table class="order-info" cellspacing="0" cellpadding="10" border="0" style="width:100%">
           <colgroup>
             <col width="160" />
             <col width="240" />
@@ -101,6 +101,9 @@ export default {
           text-align: center;
           padding-top: 20px;
           page-break-after: always;
+        }
+        .order-info td {
+          vertical-align: top;
         }
         .i-mt-20 {
           margin-top: 20px;

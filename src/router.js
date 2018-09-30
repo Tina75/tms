@@ -41,6 +41,10 @@ export default new Router({
       component: () => import('@/views/info/index')
     },
     {
+      path: '/info/message-info',
+      component: () => import('@/views/info/message-info')
+    },
+    {
       path: '/helper/index',
       component: () => import('@/views/helper/index')
     },

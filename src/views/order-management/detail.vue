@@ -15,7 +15,7 @@
             </ul>
           </Poptip>
         </li>
-        <li>订单状态：<span style="font-weight: bold;">{{ this.$route.query.from === 'order' ? statusToName(detail.status) : statusToName(detail.receiptOrder.receiptStatus) }}</span></li>
+        <li>{{ this.$route.query.from === 'order' ? '订单状态：' : '回单状态：'}}<span style="font-weight: bold;">{{ this.$route.query.from === 'order' ? statusToName(detail.status) : statusToName(detail.receiptOrder.receiptStatus) }}</span></li>
       </ul>
     </header>
     <div style="text-align: right;margin: 28px;">
@@ -555,6 +555,8 @@ export default {
           { name: '返厂', value: 1, code: 110202 }
         ]
         this.operateValue = 1
+      } else {
+        this.btnGroup = []
       }
     }
   }

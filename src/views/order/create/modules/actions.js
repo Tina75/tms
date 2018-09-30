@@ -187,7 +187,8 @@ export default {
           // pageNo: pageNo,
           // pageSize: pageSize,
           type: 1,
-          keyword: null
+          keyword: null,
+          order: 'create_time,asc'
         }
       }).then((response) => {
         // 承运商信息
@@ -262,7 +263,8 @@ export default {
           // pageNo: pageNo,
           // pageSize: pageSize,
           type: 1,
-          keyword: null
+          keyword: null,
+          order: 'create_time,asc'
         }
       }).then((response) => {
         // 外转方信息
