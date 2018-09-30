@@ -61,7 +61,11 @@ export default {
       }).then(() => {
         this.$Message.success('删除成功')
         this.visibale = false
-        this.ema.fire('closeTab', this.$route) // 关闭tab页
+        if (this.$route.path === '/order-management/detail') {
+          this.ema.fire('closeTab', this.$route) // 关闭tab页
+        } else {
+          this.ok()
+        }
       })
     }
   }
