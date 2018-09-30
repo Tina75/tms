@@ -27,12 +27,12 @@
       </FormItem>
       <FormItem label="车型:" prop="carType">
         <Select v-model="validate.driver.carType" >
-          <Option v-for="item in carTypeMap" :key="item.value" :value="item.value">{{item.label}}</Option>
+          <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
         </Select>
       </FormItem>
       <FormItem label="车长:" prop="carLength">
         <Select v-model="validate.driver.carLength" >
-          <Option v-for="item in carLengthMap" :key="item.value" :value="item.value">{{item.label}}</Option>
+          <Option v-for="(item, key) in carLengthMap" :key="key" :value="key">{{item}}</Option>
         </Select>
       </FormItem>
       <FormItem label="核定载重量:" prop="shippingWeight">
@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import {CAR_TYPE, CAR_LENGTH} from '@/libs/constant/carInfo'
+import {CAR_TYPE1, CAR_LENGTH1} from '@/libs/constant/carInfo'
 import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, CODE, CAR } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
 export default {
@@ -90,8 +90,8 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
-      carTypeMap: CAR_TYPE,
-      carLengthMap: CAR_LENGTH,
+      carTypeMap: CAR_TYPE1,
+      carLengthMap: CAR_LENGTH1,
       flag: 2,
       modal: true,
       payTypeMap: {
@@ -117,8 +117,8 @@ export default {
           driverName: '',
           driverPhone: '',
           carNO: '',
-          carType: 1,
-          carLength: 1,
+          carType: '',
+          carLength: '',
           shippingWeight: '',
           shippingVolume: '',
           remark: '',

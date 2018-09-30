@@ -30,7 +30,7 @@
       <DropdownItem
         v-for="(option, index) in filterOptions"
         :key="option.name"
-        :name="option.value"
+        :name="option.name"
         :class="{'ivu-select-item-focus': focusIndex === index}"
         v-html="heightlightText(option.name)">
       </DropdownItem>
@@ -205,11 +205,16 @@ export default {
     },
     // 点击下拉框项
     handleSelect (name) {
-      const item = this.options.find((opt) => opt.name === name || opt.value === name)
+      const item = this.options.find((opt) => {
+        if (opt.name) {
+          return opt.name === name
+        }
+        return opt.value === name
+      })
       this.currentValue = item.value
       this.resetSelect()
       // 选中某一项
-      this.$emit('on-select', name, item)
+      this.$emit('on-select', item.value, item)
       this.$emit('input', item.value)
     },
     handleFocus () {

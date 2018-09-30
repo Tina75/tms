@@ -33,8 +33,7 @@
             :remote="false"
             :local-options="carrierCars"
             placeholder="请输入"
-            style="width:180px"
-            @on-select="handleSelectCarrierCars">
+            style="width:180px">
           </SelectInput>
         </FormItem>
         <FormItem label="司机" prop="driverName" style="margin-left:27px;">
@@ -253,7 +252,10 @@ export default {
     // 选择承运商dropdown的数据
     handleSelectCarrier (name, row) {
       console.log(name, row)
-      this.$store.dispatch('getCarrierCars', row.id)
+      this.$store.dispatch('getCarrierCars', row.id).then((res) => {
+        this.pick.carNo = res[0].carNO //  默认带出第一条车牌号
+        this.pick.driverName = res[0].driverName //  默认带出第一条司机姓名
+      })
       this.$store.dispatch('getCarrierDrivers', row.id)
     },
     // 选择承运商车辆信息

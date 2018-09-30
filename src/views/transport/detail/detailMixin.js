@@ -1,6 +1,7 @@
 import MoneyInput from '../components/moneyInput'
 
 import Server from '@/libs/js/server'
+import Float from '@/libs/js/float'
 import { mapGetters } from 'vuex'
 import { CAR } from '@/views/client/client'
 
@@ -119,21 +120,21 @@ export default {
     },
     // 支付总额
     paymentTotal () {
-      return Number(this.payment.freightFee) +
+      return Float.round(Number(this.payment.freightFee) +
       Number(this.payment.loadFee) +
       Number(this.payment.unloadFee) +
       Number(this.payment.insuranceFee ? this.payment.insuranceFee : 0) +
-      Number(this.payment.otherFee)
+      Number(this.payment.otherFee))
     },
     // 货物总计
     orderTotal () {
       return this.detail.reduce((last, item) => {
         const cargoCost = item.cargoCost / 100
         return {
-          cargoCost: last.cargoCost + cargoCost,
-          quantity: last.quantity + item.quantity,
-          weight: last.weight + item.weight,
-          volume: last.volume + item.volume
+          cargoCost: Float.round(last.cargoCost + cargoCost),
+          quantity: Float.round(last.quantity + item.quantity),
+          weight: Float.round(last.weight + item.weight),
+          volume: Float.round(last.volume + item.volume)
         }
       }, {
         cargoCost: 0,

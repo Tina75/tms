@@ -10,6 +10,18 @@ export const CAR_TYPE = [
   {value: 9, label: '爬梯车'},
   {value: 10, label: '飞翼车'}
 ]
+export const CAR_TYPE1 = {
+  1: '平板',
+  2: '高栏',
+  3: '厢车',
+  4: '自卸',
+  5: '冷藏',
+  6: '保温',
+  7: '高低板',
+  8: '面包车',
+  9: '爬梯车',
+  10: '飞翼车'
+}
 
 export const CAR_LENGTH = [
   {value: 1, label: '1.8米'},
@@ -30,6 +42,25 @@ export const CAR_LENGTH = [
   {value: 16, label: '16米'},
   {value: 17, label: '17.5米'}
 ]
+export const CAR_LENGTH1 = {
+  1: '1.8米',
+  2: '2.7米',
+  3: '3.8米',
+  4: '4.2米',
+  5: '5米',
+  6: '6.2米',
+  7: '6.8米',
+  8: '7.7米',
+  9: '8.2米',
+  10: '8.7米',
+  11: '9.6米',
+  12: '11.7米',
+  13: '12.5米',
+  14: '13米',
+  15: '15米',
+  16: '16米',
+  17: '17.5米'
+}
 
 export function getCarType (value) {
   for (let i = 0; i < CAR_TYPE.length; i++) {

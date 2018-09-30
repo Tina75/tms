@@ -109,6 +109,7 @@ import _ from 'lodash'
 import { mapGetters, mapActions } from 'vuex'
 import City from '@/libs/js/City'
 import SearchMixin from './searchMixin'
+import jsCookie from 'js-cookie'
 export default {
   name: 'order',
 
@@ -123,6 +124,7 @@ export default {
   metaInfo: { title: '订单管理' },
   data () {
     return {
+      tabType: 'ORDER',
       url: 'order/list',
       method: 'post',
       status: [
@@ -558,6 +560,14 @@ export default {
           }
         },
         {
+          title: '运输费',
+          key: 'freightFee',
+          minWidth: 120,
+          render: (h, params) => {
+            return h('span', params.row.freightFee ? (params.row.freightFee / 100).toFixed(2) : '-')
+          }
+        },
+        {
           title: '装货费',
           key: 'loadFee',
           minWidth: 120,
@@ -731,6 +741,12 @@ export default {
           visible: false
         },
         {
+          title: '运输费',
+          key: 'freightFee',
+          fixed: false,
+          visible: false
+        },
+        {
           title: '装货费',
           key: 'loadFee',
           fixed: false,
@@ -789,16 +805,44 @@ export default {
     ])
   },
 
+  watch: {
+    $route (to, from) {
+      // 批量导入点查看进入的传importId字段，订单列表显示《全部》tab页
+      if (to.path === '/order-management/order') {
+        let importId = jsCookie.get('imported_id')
+        console.log(importId)
+        // debugger
+        if (importId) {
+          this.keyword = {
+            importId: importId
+          }
+          sessionStorage.setItem('ORDER_TAB_NAME', '全部')
+          jsCookie.remove('imported_id')
+        }
+      }
+    }
+  },
+
   created () {
+    let importId = jsCookie.get('imported_id')
     // 刷新页面停留当前tab页
-    if (sessionStorage.getItem('ORDER_TAB_NAME')) {
-      this.curStatusName = sessionStorage.getItem('ORDER_TAB_NAME')
-      this.keyword.status = this.statusToCode(this.curStatusName)
-      this.handleTabChange(this.curStatusName) // 表头按钮状态
-    } else {
-      sessionStorage.setItem('ORDER_TAB_NAME', '待提货')
-      this.keyword.status = 10
-      this.handleTabChange('待提货') // 表头按钮状态
+    if (!importId) {
+      console.log(jsCookie.get('imported_id'))
+      if (sessionStorage.getItem('ORDER_TAB_NAME')) {
+        this.curStatusName = sessionStorage.getItem('ORDER_TAB_NAME')
+        this.keyword.status = this.statusToCode(this.curStatusName)
+        this.handleTabChange(this.curStatusName) // 表头按钮状态
+      } else {
+        sessionStorage.setItem('ORDER_TAB_NAME', '待提货')
+        this.keyword.status = 10
+        this.handleTabChange('待提货') // 表头按钮状态
+      }
+    } else { // 批量导入点查看进入的传importId字段，订单列表显示《全部》tab页
+      this.keyword = {
+        importId: importId
+      }
+      sessionStorage.setItem('ORDER_TAB_NAME', '全部')
+      jsCookie.remove('imported_id')
     }
   },
 
@@ -880,7 +924,8 @@ export default {
           { name: '提货调度', value: 2, code: 110102 },
           { name: '订单还原', value: 3, code: 110105 },
           { name: '删除', value: 4, code: 110107 },
-          { name: '导出', value: 5, code: 110109 }
+          { name: '打印', value: 5, code: 110108 },
+          { name: '导出', value: 6, code: 110109 }
         ]
         this.keywords.status = null
         // this.keyword = {...this.keywords}
@@ -888,10 +933,9 @@ export default {
         this.operateValue = 1
         this.btnGroup = [
           { name: '提货调度', value: 1, code: 110102 },
-          { name: '订单还原', value: 2, code: 110105 },
-          { name: '删除', value: 3, code: 110107 },
-          { name: '打印', value: 4, code: 110108 },
-          { name: '导出', value: 5, code: 110109 }
+          { name: '删除', value: 2, code: 110107 },
+          { name: '打印', value: 3, code: 110108 },
+          { name: '导出', value: 4, code: 110109 }
         ]
         this.keywords.status = 10
         // this.keyword = {...this.keywords}
