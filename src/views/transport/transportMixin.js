@@ -41,12 +41,16 @@ export default {
   },
 
   created () {
-    this.currentBtns = this.btnList[1].btns
     this.getCarriers()
     const columns = window.sessionStorage[this.tabType + '_COLUMNS']
     if (columns) this.extraColumns = JSON.parse(columns)
     const tab = window.sessionStorage['TABHEADER_' + this.tabType]
-    if (tab) this.tabStatus = this.setTabStatus(tab)
+    if (tab) {
+      this.tabStatus = this.setTabStatus(tab)
+      this.tabChanged(tab)
+    } else {
+      this.currentBtns = this.btnList[1].btns
+    }
     this.fetchData()
   },
 
