@@ -102,7 +102,7 @@ import ReceiptTodo from './plugins/receipt-todo.vue'
 import MessageCenter from './plugins/message-center.vue'
 
 import CreateOrderStatis from './plugins/create-order-statis.vue'
-// import { eventHub } from './plugins/mixin.js'
+import { eventHub } from './plugins/mixin.js'
 
 import ShipperTodo from './plugins/shipper-todo.vue'
 import CarrierTodo from './plugins/carrier-todo.vue'
@@ -153,7 +153,8 @@ export default {
         'pay-receive': '应收款/应付款项',
         'cargo-statistics': '货物重量/体积'
       },
-      cardsList: []
+      cardsList: [],
+      intersectionObserver: null
     }
   },
   computed: {
@@ -174,6 +175,19 @@ export default {
       }
     }
   },
+  created () {
+    // 监控卡片卡片
+    eventHub.$on('plugin:add', this.addChild)
+  },
+  beforeMount () {
+    if ('IntersectionObserver' in window) {
+      this.intersectionObserver = new IntersectionObserver(this.intersectionObserverEvent, {
+        root: this.$parent.$el || document.querySelector('.ivu-layout-content'),
+        rootMargin: '0px',
+        threshold: [0]
+      })
+    }
+  },
   mounted () {
     // console.log('user', this.UserInfo)
     // const vm = this
@@ -186,7 +200,36 @@ export default {
     })
     this.initCardList()
   },
+  beforeDestroy () {
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect()
+      this.intersectionObserver = null
+    }
+    eventHub.$off('plugin:add', this.addChild)
+  },
   methods: {
+
+    addChild (_vm) {
+      if (this.intersectionObserver) {
+        _vm.$el.$vm = _vm
+        this.intersectionObserver.observe(_vm.$el)
+      }
+    },
+    /**
+     * @param array entries 监控的element元素数组
+     */
+    intersectionObserverEvent (entries) {
+      const vm = this
+      entries.forEach((entry) => {
+        if (entry.isIntersecting || entry.intersectionRatio > 0) {
+          eventHub.$emit(`plugin:${entry.target.$vm.$options.name}`)
+          vm.unobserve(entry.target)
+        }
+      })
+    },
+    unobserve (el) {
+      this.intersectionObserver.unobserve(el)
+    },
     // 获取card数组
     initCardList () {
       setTimeout(() => {

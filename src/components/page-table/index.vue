@@ -5,7 +5,7 @@
       :width="width"
       :height="height"
       :data="dataList"
-      :columns="filterColumns"
+      :columns="mapColumns"
       :stripe="stripe"
       :border="border"
       :show-header="showHeader"
@@ -258,6 +258,17 @@ export default {
         return this.columns
       }
     },
+    mapColumns () {
+      return this.filterColumns.map((col) => {
+        if (col.key && !col.render) {
+          col.render = (h, params) => {
+            let value = params.row[col.key]
+            return h('span', !_.isNull(value) && !_.isUndefined(value) && params.row[col.key] !== '' ? params.row[col.key] : '-')
+          }
+        }
+        return col
+      })
+    },
     // 是否是复选框表格
     isSelection () {
       return this.columns.length > 0 && this.columns[0].type === 'selection'
@@ -356,7 +367,7 @@ export default {
           } else {
             vm.dataSource = data[vm.listField] || []
           }
-          if (this.showPagination) {
+          if (vm.showPagination) {
             vm.pagination.pageSize = data.pageSize
             vm.pagination.totalCount = data.totalCount || data.pageTotals
           }

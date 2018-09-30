@@ -695,6 +695,9 @@ export default {
             vm.orderForm.arriveTime = new Date(vm.orderForm.arriveTime)
           }
         })
+        .catch((errorInfo) => {
+          vm.loading = false
+        })
     }
   },
   destroyed () {
