@@ -81,7 +81,7 @@ export default {
           title: '运单号',
           key: 'waybillNo',
           // fixed: 'left',
-          minWidth: 160,
+          width: 200,
           render: (h, p) => {
             return h('a', {
               style: {
@@ -154,7 +154,7 @@ export default {
         },
         methods: {
           complete: () => {
-            this.fetchRightTableData()
+            this.fetchRightTableData('waybillId')
           }
         }
       })

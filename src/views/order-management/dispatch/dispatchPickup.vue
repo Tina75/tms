@@ -80,7 +80,7 @@ export default {
         {
           title: '提货单号',
           key: 'loadbillNo',
-          minWidth: 120,
+          width: 200,
           // fixed: 'left',
           render: (h, p) => {
             return h('a', {
@@ -138,7 +138,7 @@ export default {
         },
         methods: {
           complete: () => {
-            this.fetchRightTableData()
+            this.fetchRightTableData('loadbillId')
           }
         }
       })

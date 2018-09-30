@@ -233,20 +233,7 @@ export default {
       this.removeRoleModal = true
     },
     saveRole () {
-      let selectChecBoxList = []
-      for (let key in this.listInitTreeList) {
-        this.$refs[key][0].getCheckedNodes().forEach(node => {
-          selectChecBoxList.push(node.code)
-          // 加入父级code
-          if (!selectChecBoxList.includes(node.parentId) && node.parentId !== undefined) {
-            selectChecBoxList.push(node.parentId)
-            if (node.grandId !== undefined) {
-              selectChecBoxList.push(node.grandId)
-            }
-          }
-        })
-      }
-      this.menuParam.codes = selectChecBoxList
+      this.menuParam.codes = this.checkBrowsePage()
       let params = {}
       params.id = this.menuParam.id
       params.resIds = this.menuParam.codes
@@ -331,8 +318,25 @@ export default {
     removeCancelFormFail () {
       this.removeRoleModalFail = false
     },
-    treeCheckBox () {
+    checkBrowsePage () {
+      let selectChecBoxList = []
+      for (let key in this.listInitTreeList) {
+        this.$refs[key][0].getCheckedNodes().forEach(node => {
+          selectChecBoxList.push(node.code)
+          // 加入父级code
+          if (!selectChecBoxList.includes(node.parentId) && node.parentId !== undefined) {
+            selectChecBoxList.push(node.parentId)
+            if (node.grandId !== undefined) {
+              selectChecBoxList.push(node.grandId)
+            }
+          }
+        })
+      }
+      return selectChecBoxList
+    },
+    treeCheckBox (node) {
       this.disSaveBtn = false
+      this.arrayCodeList = this.checkBrowsePage()
     }
     // renderContent (h, { root, node, data }) {
     //   if (node.nodeKey === 0) {

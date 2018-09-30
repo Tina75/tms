@@ -37,7 +37,8 @@ export default {
   },
 
   created () {
-    // 初始化按钮组
+    const columns = window.sessionStorage[this.tabType + '_COLUMNS']
+    if (columns) this.extraColumns = JSON.parse(columns)
   },
 
   mounted () {
@@ -154,8 +155,9 @@ export default {
       this.keywords.returnTimeEnd = val[1]
     },
     // 筛选列表显示字段
-    handleColumnChange (col) {
-      this.extraColumns = col
+    handleColumnChange (columns) {
+      this.extraColumns = columns
+      window.sessionStorage.setItem(this.tabType + '_COLUMNS', JSON.stringify(columns))
     },
     // 列表批量选择操作
     handleSelectionChange () {
