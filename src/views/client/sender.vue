@@ -265,12 +265,5 @@ export default {
 }
 </script>
 <style scoped lang="stylus">
-  .header
-    display flex
-    justify-content space-between
-    margin-bottom 14px
-  .footer
-    margin-top 22px
-    display flex
-    justify-content flex-end
+ @import "client.styl"
 </style>

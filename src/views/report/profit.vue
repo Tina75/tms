@@ -6,11 +6,12 @@
           <Button v-for="(item,index) in btnGroup" :key="index" :type="item.value===operateValue?'primary':'default'" @click="handleOperaterValue(item)">{{item.name}}</Button>
         </ButtonGroup>
         <DatePicker
-          v-model="time"
+          v-model="times"
           type="daterange"
           format="yyyy-MM-dd"
           placeholder="开始日期-结束日期"
           style="display: inline-block;width: 240px;height: 35px;margin-left: 20px"
+          @on-change="handleTimeChange"
         >
         </DatePicker>
         <Tooltip max-width="200" content="营业额汇总报表：按照订单的下单日期提取数据；利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
@@ -18,12 +19,12 @@
         </Tooltip>
       </div>
       <div class="search-btn">
-        <Button type="primary">搜索</Button>
-        <Button style="margin-left: 8px">清除条件</Button>
+        <Button type="primary" @click="search">搜索</Button>
+        <Button style="margin-left: 8px" @click="clearKeywords">清除条件</Button>
       </div>
     </div>
     <div style="margin: 18px 0 12px 0">
-      <Button type="primary">导出</Button>
+      <Button type="primary" @click="ProfitsExport">导出</Button>
     </div>
     <div class="table">
       <div class="title">
@@ -40,29 +41,29 @@
         <div class="item" style="flex: 2">
           <div class="item-inner">
             <div>运输费</div>
-            <div>10</div>
+            <div>{{res.orderFreightFee}}</div>
           </div>
           <div class="item-inner">
             <div>装货费</div>
-            <div>10</div>
+            <div>{{res.orderLoadFee}}</div>
           </div>
           <div class="item-inner">
             <div>卸货费</div>
-            <div>10</div>
+            <div>{{res.orderUnloadFee}}</div>
           </div>
           <div class="item-inner">
             <div>保险费</div>
-            <div>10</div>
+            <div>{{res.orderInsuranceFee}}</div>
           </div>
           <div class="item-inner">
             <div>其他费用</div>
-            <div>10</div>
+            <div>{{res.orderOtherFee}}</div>
           </div>
         </div>
       </div>
       <div class="title" style="text-align: right;padding-right: 10%; ">
         <span>主营业务收入合计</span>
-        <span class="num">79582</span>
+        <span class="num">{{res.orderTotalFee}}</span>
       </div>
       <div class="items">
         <div class="item">支出</div>
@@ -70,39 +71,41 @@
         <div class="item" style="flex: 2">
           <div class="item-inner">
             <div>运输费</div>
-            <div>10</div>
+            <div>{{res.carrierFreightFee}}</div>
           </div>
           <div class="item-inner">
             <div>装货费</div>
-            <div>10</div>
+            <div>{{res.carrierLoadFee}}</div>
           </div>
           <div class="item-inner">
             <div>卸货费</div>
-            <div>10</div>
+            <div>{{res.carrierUnloadFee}}</div>
           </div>
           <div class="item-inner">
             <div>保险费</div>
-            <div>10</div>
+            <div>{{res.carrierInsuranceFee}}</div>
           </div>
           <div class="item-inner">
             <div>其他费用</div>
-            <div>10</div>
+            <div>{{res.carrierOtherFee}}</div>
           </div>
         </div>
       </div>
       <div class="title" style="text-align: right;padding-right: 10%">
         <span>主营业务支出合计</span>
-        <span class="num">79582</span>
+        <span class="num">{{res.carrierTotalFee}}</span>
       </div>
       <div class="title" style="text-align: right;padding-right: 10%">
         <span>利润</span>
-        <span class="num">79582</span>
+        <span class="num">{{res.transbillTransFee}}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import Server from '@/libs/js/server'
+import Export from '@/libs/js/export'
 export default {
   name: 'profit',
   components: {
@@ -115,13 +118,135 @@ export default {
         { name: '本季度', value: 3 },
         { name: '半年', value: 4 }
       ],
-      operateValue: 2,
-      time: ''
+      operateValue: '',
+      times: ['', ''],
+      keywords: {
+        startTime: '',
+        endTime: '',
+        type: 1
+      },
+      res: {
+        orderFreightFee: '',
+        orderLoadFee: '',
+        orderUnloadFee: '',
+        orderOtherFee: '',
+        orderInsuranceFee: '',
+        orderTotalFee: '',
+        carrierFreightFee: '',
+        carrierLoadFee: '',
+        carrierUnloadFee: '',
+        carrierOtherFee: '',
+        carrierInsuranceFee: '',
+        carrierTotalFee: '',
+        transbillTransFee: ''
+      }
     }
   },
   methods: {
+    search () {
+      if (!this.keywords.startTime && !this.keywords.endTime) {
+        this.keywords = {
+          type: 1
+        }
+      } else {
+        Object.assign(this.keywords, {type: null})
+      }
+      Server({
+        url: '/report/for/profits',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        data: this.keywords
+      }).then((res) => {
+        if (res.data.code === 10000) {
+          Object.assign(this.res, res.data.data)
+        }
+      })
+    },
+    clearKeywords () {
+      this.operateValue = ''
+      this.times = ['', '']
+      this.keywords = {
+        startTime: '',
+        endTime: '',
+        type: 1
+      }
+      this.search()
+    },
     handleOperaterValue (btn) {
       this.operateValue = btn.value
+      // 对应时间改变
+      this.date(btn.value)
+    },
+    handleTimeChange (val) {
+      this.keywords.startTime = val[0]
+      this.keywords.endTime = val[1]
+    },
+    /* 点击button，对应时间 */
+    date (value) {
+      let start = ''
+      let end = ''
+      /* 当前时间时间戳 */
+      let now = new Date(2018, 2, 10).getTime()
+      /* 当前时间 yyyy - mm -dd */
+      end = this.formatDate(now)
+      /* 当前月份 */
+      let month = this.formatDate(now).slice(5, 7)
+      switch (value) {
+        case 1:
+          start = this.formatDate(now - 7 * 24 * 60 * 60 * 1000)
+          break
+        case 2:
+          start = this.formatDate(now).slice(0, -2) + '01'
+          break
+        case 3:
+          let startMonth = ''
+          if (month < 4) {
+            startMonth = '01'
+          }
+          if (month > 3 && month < 7) {
+            startMonth = '04'
+          }
+          if (month > 6 && month < 10) {
+            startMonth = '07'
+          }
+          if (month > 9) {
+            startMonth = '10'
+          }
+          start = this.formatDate(now).slice(0, 5) + startMonth + this.formatDate(now).slice(-3)
+          break
+        case 4:
+          /* 当前年份 */
+          let year = this.formatDate(now).slice(0, 4)
+          console.log(year)
+          if (month > 6) {
+            start = year + '-0' + (month - 6) + this.formatDate(now).slice(-3)
+          } else {
+            start = (year - 1) + '-0' + (12 + parseInt(month) - 6) + this.formatDate(now).slice(-3)
+          }
+          break
+      }
+      this.times = [start, end]
+      this.keywords.startTime = start
+      this.keywords.endTime = end
+    },
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
+    },
+    // 导出
+    ProfitsExport () {
+      if (!this.keywords.startTime && !this.keywords.endTime) {
+        this.$Message.error('请先输入导出条件')
+        return
+      }
+      Export({
+        url: '/report/for/profits/export',
+        method: 'post',
+        data: Object.assign(this.keywords, {type: null})
+      }).then(res => {
+        this.$Message.success('导出成功')
+      }).catch(err => console.error(err))
     }
   }
 }

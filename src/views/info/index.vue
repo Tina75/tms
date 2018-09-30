@@ -1,23 +1,23 @@
 <template>
   <div class="temAll">
     <Col span="3">
-    <Menu :active-name="typeName" style="width: 100%;">
+    <Menu :active-name="typeName" style="width: 100%; background:rgba(243,245,249,1)">
       <MenuItem v-for="menu in menuList" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
-      <p class="menuTitle">{{menu.name}}</p>
-      <Badge v-if="menu.infoNum" :count="menu.infoNum" style="float:right;margin-top:-20px;"></Badge>
+      <p class="menuTitle" style="margin-left:-15px;">{{menu.name}}</p>
+      <Badge v-if="menu.infoNum" :count="menu.infoNum" style="float:right;margin-top:-20px; width:30px;"></Badge>
       </MenuItem>
     </Menu>
     </Col>
-    <Col span="18">
+    <Col span="21" style="background:#fff; padding: 0 25px 50px 25px; height: inherit;">
     <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;">
       <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute; left: 20px;"></span>
       <span style="margin-left:35px; font-size: 16px; font-weight:600;">{{rightTitle}}</span>
       <div v-if="batchBtnShowAll">
-        <span v-if="batchBtnShow" key="1" style="float:right; margin-top:-35px;">
+        <span v-if="batchBtnShow" key="1" style="float:right; margin-top:-30px; margin-right:20px;">
           <Button style="margin-right:20px;" @click="removeInfoAll(searchData.type)">全部删除</Button>
           <Button @click="removeInfoSome">批量删除</Button>
         </span>
-        <span v-if="!batchBtnShow" key="2" style="float:right; margin-top:-35px;">
+        <span v-if="!batchBtnShow" key="2" style="float:right; margin-top:-30px; margin-right:20px;">
           <Button style="margin-right:20px;" @click="removeCancelBtn">取消</Button>
           <Button :disabled="removeSubBtnDis" type="primary" @click="removeSubBtn">确定</Button>
         </span>
@@ -215,12 +215,12 @@ export default {
         name: '订单消息',
         id: '1',
         infoNum: '',
-        code: 110100
+        code: 110000
       }, {
         name: '运输消息',
         id: '2',
         infoNum: '',
-        code: 120100
+        code: 120000
       }],
       searchData: {
         type: '0',
@@ -482,8 +482,15 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
+>>> .ivu-menu-vertical.ivu-menu-light:after
+  background: #fff;
+>>> .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
+    background: #fff;
+    color: #515a6e;
 .temAll
   width: 100%;
+  height: 100%;
+  background:rgba(243,245,249,1);
   overflow: auto;
 .megDiv
   clear: both;

@@ -106,10 +106,6 @@ export default {
     create () {
       this.$refs.$form.validate(valid => {
         if (valid) {
-          // if (!this.$refs.$selectCar.validate()) {
-          //   this.$Message.error('车牌号不正确')
-          //   return
-          // }
           Server({
             url: '/dispatch/add/loadbill',
             method: 'post',

@@ -45,7 +45,7 @@
                class="search-input"
                @on-click="resetEasySearch" />
 
-        <Button icon="ios-search"
+        <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
                 @click="startSearch"></Button>
 
@@ -98,39 +98,45 @@
     </div>
 
     <!-- 表格 -->
-    <PageTable ref="$table"
-               :width="tableWidth"
-               :columns="tableColumns"
-               :extra-columns="extraColumns"
-               :show-filter="true"
-               :keywords="searchFields"
-               url="/outside/bill/list"
-               method="post"
-               list-field="list"
-               style="margin-top: 15px"
-               @on-column-change="tableColumnsChanged"
-               @on-selection-change="selectionChanged"
-               @on-sort-change="tableSort"
-               @on-page-size-change="pageSizeChange"
-               @on-load="dataOnload"></PageTable>
+    <div>
+      <PageTable ref="$table"
+                 :columns="tableColumns"
+                 :extra-columns="extraColumns"
+                 :show-filter="true"
+                 :keywords="searchFields"
+                 row-id="transId"
+                 url="/outside/bill/list"
+                 method="post"
+                 list-field="list"
+                 style="margin-top: 15px"
+                 @on-column-change="tableColumnsChanged"
+                 @on-selection-change="selectionChanged"
+                 @on-sort-change="tableSort"
+                 @on-change="pageChange"
+                 @on-page-size-change="pageSizeChange"
+                 @on-load="dataOnload" />
+    </div>
 
   </div>
 </template>
 
 <script>
 import BasePage from '@/basic/BasePage'
+import TransportBase from './transportBase'
+import TransportMixin from './transportMixin'
+
 import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput'
-import TransportMixin from './transportMixin'
+
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 
 export default {
   name: 'OuterManager',
   components: { TabHeader, PageTable, AreaSelect, SelectInput },
-  mixins: [ BasePage, TransportMixin ],
+  mixins: [ BasePage, TransportBase, TransportMixin ],
   metaInfo: { title: '外转单管理' },
   data () {
     return {
@@ -311,7 +317,7 @@ export default {
           key: 'outTransNo',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.outTransNo ? p.row.outTransNo : '-')
+            return this.tableDataRender(h, p.row.outTransNo, true)
           }
         },
         {
@@ -322,27 +328,18 @@ export default {
         {
           title: '始发地',
           key: 'start',
-          ellipsis: true,
-          minWidth: 160,
+          minWidth: 180,
           render: (h, p) => {
-            return h('Tooltip', {
-              props: {
-                content: this.cityFilter(p.row.start)
-              }
-            }, this.cityFilter(p.row.start))
+            console.log(this.cityFormatter(p.row.start))
+            return this.tableDataRender(h, this.cityFormatter(p.row.start))
           }
         },
         {
           title: '目的地',
           key: 'end',
-          ellipsis: true,
-          minWidth: 160,
+          minWidth: 180,
           render: (h, p) => {
-            return h('Tooltip', {
-              props: {
-                content: this.cityFilter(p.row.end)
-              }
-            }, this.cityFilter(p.row.end))
+            return this.tableDataRender(h, this.cityFormatter(p.row.end))
           }
         },
         {
@@ -350,7 +347,7 @@ export default {
           key: 'transFee',
           minWidth: 120,
           render: (h, p) => {
-            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : p.row.cargoCost)
+            return this.tableDataRender(h, p.row.transFee / 100)
           }
         },
         {
@@ -358,7 +355,7 @@ export default {
           key: 'volume',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
+            return this.tableDataRender(h, p.row.volume)
           }
         },
         {
@@ -366,7 +363,7 @@ export default {
           key: 'weight',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
+            return this.tableDataRender(h, p.row.weight)
           }
         },
         {
@@ -375,7 +372,7 @@ export default {
           sortable: 'custom',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', this.dateFormatter(p.row.createTimeLong))
+            return this.tableDataRender(h, this.timeFormatter(p.row.createTimeLong), true)
           }
         },
         {
@@ -383,7 +380,7 @@ export default {
           key: 'customerOrderNo',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.customerOrderNo ? p.row.customerOrderNo : '-')
+            return this.tableDataRender(h, p.row.customerOrderNo)
           }
         },
         {
@@ -391,7 +388,7 @@ export default {
           key: 'consignerName',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.consignerName ? p.row.consignerName : '-')
+            return this.tableDataRender(h, p.row.consignerName)
           }
         },
         {
@@ -399,7 +396,7 @@ export default {
           key: 'consignerContact',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.consignerContact ? p.row.consignerContact : '-')
+            return this.tableDataRender(h, p.row.consignerContact)
           }
         },
         {
@@ -407,7 +404,7 @@ export default {
           key: 'consignerPhone',
           minWidth: 140,
           render: (h, p) => {
-            return h('span', p.row.consignerPhone ? p.row.consignerPhone : '-')
+            return this.tableDataRender(h, p.row.consignerPhone)
           }
         },
         {
@@ -415,7 +412,7 @@ export default {
           key: 'consigneeContact',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.consigneeContact ? p.row.consigneeContact : '-')
+            return this.tableDataRender(h, p.row.consigneeContact)
           }
         },
         {
@@ -423,7 +420,7 @@ export default {
           key: 'consigneePhone',
           minWidth: 140,
           render: (h, p) => {
-            return h('span', p.row.consigneePhone ? p.row.consigneePhone : '-')
+            return this.tableDataRender(h, p.row.consigneePhone)
           }
         },
         {
@@ -431,7 +428,7 @@ export default {
           key: 'cargoCost',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : p.row.cargoCost)
+            return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },
         {
@@ -439,23 +436,7 @@ export default {
           key: 'payType',
           minWidth: 100,
           render: (h, p) => {
-            let type = '-'
-            switch (p.row.payType) {
-              case 1:
-                type = '现付'
-                break
-              case 2:
-                type = '到付'
-                break
-              case 3:
-                type = '回单付'
-                break
-              case 4:
-                type = '月结'
-                break
-              default: break
-            }
-            return h('span', type)
+            return this.tableDataRender(h, this.payTypeFormatter(p.row.payType, true))
           }
         },
         {
@@ -463,7 +444,7 @@ export default {
           key: 'deliveryTimeLong',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', this.dateFormatter(p.row.deliveryTimeLong))
+            return this.tableDataRender(h, this.timeFormatter(p.row.deliveryTimeLong), true)
           }
         },
         {
@@ -471,7 +452,7 @@ export default {
           key: 'arriveTimeLong',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', this.dateFormatter(p.row.arriveTimeLong))
+            return this.tableDataRender(h, this.timeFormatter(p.row.arriveTimeLong), true)
           }
         },
         {
@@ -479,7 +460,7 @@ export default {
           key: 'receiptCount',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.receiptCount ? p.row.receiptCount : '-')
+            return this.tableDataRender(h, p.row.receiptCount)
           }
         },
         {
@@ -487,7 +468,7 @@ export default {
           key: 'createOperator',
           minWidth: 100,
           render: (h, p) => {
-            return h('span', p.row.createOperator ? p.row.createOperator : '-')
+            return this.tableDataRender(h, p.row.createOperator)
           }
         }
       ],
@@ -791,6 +772,8 @@ export default {
     // 导出
     billExport () {
       let data = this.setFetchParams()
+      data.pageNo = this.page.current
+      data.pageSize = this.page.size
       delete data.order
 
       if (this.tableSelection.length) {

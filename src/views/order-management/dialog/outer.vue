@@ -121,7 +121,7 @@ export default {
         this.info = Object.assign({}, this.info, {
           orderId: this.id,
           payType: Number(this.info.payType),
-          transFee: Number(this.info.transFee)
+          transFee: Number(this.info.transFee) / 100
         })
         if (valid) {
           Server({

@@ -28,6 +28,7 @@
         <i-col span="7" offset="1">
           <span class="detail-field-title">司机手机号：</span>
           <Input v-model="info.driverPhone"
+                 :maxlength="11"
                  class="detail-info-input"></Input>
         </i-col>
       </Row>
@@ -126,12 +127,9 @@ import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import SelectInput from '@/components/SelectInput.vue'
 import MoneyInput from '../components/moneyInput'
-import CarConfigs from '../detail/carConfigs.json'
+import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
 import { mapGetters } from 'vuex'
 import { CAR } from '@/views/client/client'
-
-const carType = CarConfigs.carType
-const carLength = CarConfigs.carLength
 
 export default {
   name: 'SendCar',
@@ -141,8 +139,8 @@ export default {
     return {
       visiable: true,
       loading: false,
-      carType,
-      carLength,
+      carType: CAR_TYPE,
+      carLength: CAR_LENGTH,
       carriers: [], // 承运商
       carrierCars: [], // 车辆
       info: {
@@ -411,6 +409,10 @@ export default {
       }
       if (!this.info.driverName) {
         this.$Message.error('请输入司机')
+        return false
+      }
+      if (this.info.driverPhone && !(/^1\d{10}$/.test(this.info.driverPhone))) {
+        this.$Message.error('司机手机号格式不正确')
         return false
       }
       if (!this.info.carNo) {

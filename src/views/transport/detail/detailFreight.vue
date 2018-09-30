@@ -27,11 +27,11 @@
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title">始发地：</span>
-            <span>{{ info.start | formatCity }}</span>
+            <span>{{ info.start | cityFormatter }}</span>
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">目的地：</span>
-            <span>{{ info.end | formatCity }}</span>
+            <span>{{ info.end | cityFormatter }}</span>
           </i-col>
           <i-col span="10" offset="1">
             <span class="detail-field-title">承运商：</span>
@@ -45,7 +45,7 @@
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型：</span>
-            <span>{{ info.carType|carTypeFilter }} {{ info.carLength|carLengthFilter }}</span>
+            <span>{{ info.carType|carTypeFormatter }} {{ info.carLength|carLengthFormatter }}</span>
           </i-col>
           <i-col span="10" offset="1">
             <span class="detail-field-title">司机：</span>
@@ -139,7 +139,7 @@
             <TimelineItem v-for="(item, key) in logList"
                           :key="key" class="detail-log-timeline-item">
               <i slot="dot"></i>
-              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong | formatTime}}</span>
+              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong | timeFormatter}}</span>
               <span style="color: #333;">{{'【' + item.operatorName + '】' + item.description}}</span>
             </TimelineItem>
 
@@ -323,7 +323,9 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import detailMixin from './detailMixin'
+import TransportBase from '../transportBase'
+import DetailMixin from './detailMixin'
+
 import Server from '@/libs/js/server'
 import MoneyInput from '../components/moneyInput'
 import AreaSelect from '@/components/AreaSelect'
@@ -331,9 +333,10 @@ import SelectInput from '@/components/SelectInput'
 
 export default {
   name: 'DetailFeright',
-  components: { MoneyInput, SelectInput, AreaSelect },
-  mixins: [ BasePage, detailMixin ],
   metaInfo: { title: '运单详情' },
+  components: { MoneyInput, SelectInput, AreaSelect },
+  mixins: [ BasePage, TransportBase, DetailMixin ],
+
   data () {
     return {
       pageName: 'feright',
@@ -435,22 +438,17 @@ export default {
           key: 'customerOrderNo',
           width: 160,
           render: (h, p) => {
-            return h('span', p.row.customerOrderNo ? p.row.customerOrderNo : '-')
+            return this.tableDataRender(h, p.row.customerOrderNo)
           }
         },
         {
           title: '始发地-目的地',
           key: 'start',
           minWidth: 250,
-          ellipsis: true,
           render: (h, p) => {
-            const start = this.formatCity(p.row.start)
-            const end = this.formatCity(p.row.end)
-            return h('Tooltip', {
-              props: {
-                content: start && end ? [start, end].join('-') : '-'
-              }
-            }, start && end ? [start, end].join('-') : '-')
+            const start = this.cityFormatter(p.row.start)
+            const end = this.cityFormatter(p.row.end)
+            return this.tableDataRender(h, start && end ? [start, end].join('-') : '')
           }
         },
         {
@@ -458,7 +456,7 @@ export default {
           key: 'cargoName',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.cargoName ? p.row.cargoName : '-')
+            return this.tableDataRender(h, p.row.cargoName)
           }
         },
         {
@@ -466,7 +464,7 @@ export default {
           key: 'packing',
           width: 80,
           render: (h, p) => {
-            return h('span', p.row.packing ? p.row.packing : '-')
+            return this.tableDataRender(h, p.row.packing)
           }
         },
         {
@@ -474,7 +472,7 @@ export default {
           key: 'quantity',
           width: 80,
           render: (h, p) => {
-            return h('span', p.row.quantity ? p.row.quantity : '-')
+            return this.tableDataRender(h, p.row.quantity)
           }
         },
         {
@@ -482,7 +480,7 @@ export default {
           key: 'cargoCost',
           width: 100,
           render: (h, p) => {
-            return h('span', p.row.cargoCost ? p.row.cargoCost / 100 : '-')
+            return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },
         {
@@ -490,7 +488,7 @@ export default {
           key: 'weight',
           width: 100,
           render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
+            return this.tableDataRender(h, p.row.weight)
           }
         },
         {
@@ -498,7 +496,7 @@ export default {
           key: 'volume',
           width: 100,
           render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
+            return this.tableDataRender(h, p.row.volume)
           }
         },
         {
@@ -506,7 +504,7 @@ export default {
           key: 'remark1',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.quantity ? p.row.quantity : '-')
+            return this.tableDataRender(h, p.row.remark1)
           }
         },
         {
@@ -514,7 +512,7 @@ export default {
           key: 'remark2',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.quantity ? p.row.quantity : '-')
+            return this.tableDataRender(h, p.row.remark2)
           }
         }
       ]
@@ -537,7 +535,10 @@ export default {
       Server({
         url: '/waybill/details',
         method: 'post',
-        data: { waybillId: this.id }
+        data: {
+          waybillId: this.id,
+          waybillNo: this.no
+        }
       }).then(res => {
         const data = res.data.data
 
@@ -584,9 +585,9 @@ export default {
             settlementType: this.settlementType,
             settlementPayInfo: this.settlementType === '1' ? this.formatPayInfo() : void 0
           },
-          cargoList: this.arrayUnique(this.detail.map(item => {
+          cargoList: Array.from(new Set((this.detail.map(item => {
             return item.orderId
-          }))
+          }))))
         }
       }).then(res => {
         this.$Message.success('保存成功')

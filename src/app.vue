@@ -77,7 +77,7 @@ export default {
     * @param type 消息类型
     */
     onOpenMsg (type) {
-      const route = {path: '/info/info', query: {type: type, title: '消息'}}
+      const route = {path: '/info/index', query: {type: type, title: '消息'}}
       window.EMA.fire('openTab', route)
     },
     /**
@@ -296,4 +296,6 @@ html, body
     min-width 85px
 .ivu-layout
   background #efefef
+.ivu-message
+  z-index 2000 !important
 </style>
