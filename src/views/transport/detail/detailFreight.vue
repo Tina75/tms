@@ -249,8 +249,8 @@
           <span class="table-footer-title">总计</span>
           <span>总货值：{{ orderTotal.cargoCost }}</span>
           <span>总数量：{{ orderTotal.quantity }}</span>
-          <span>总体积：{{ orderTotal.weight }}</span>
-          <span>总重量：{{ orderTotal.volume }}</span>
+          <span>总体积：{{ orderTotal.volume }}</span>
+          <span>总重量：{{ orderTotal.weight }}</span>
         </div>
       </div>
       <!-- 应付费用 -->
@@ -414,7 +414,7 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
-          width: 160,
+          width: 200,
           render: (h, p) => {
             return h('a', {
               style: { color: '#3A7EDE' },
@@ -436,7 +436,7 @@ export default {
         {
           title: '客户订单号',
           key: 'customerOrderNo',
-          width: 160,
+          width: 200,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.customerOrderNo)
           }

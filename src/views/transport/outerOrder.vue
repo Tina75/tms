@@ -288,7 +288,7 @@ export default {
         {
           title: '外转单号',
           key: 'transNo',
-          minWidth: 160,
+          minWidth: 200,
           fixed: 'left',
           render: (h, p) => {
             return h('a', {
@@ -310,12 +310,12 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
-          minWidth: 160
+          minWidth: 200
         },
         {
           title: '外转方运单号',
           key: 'outTransNo',
-          minWidth: 160,
+          minWidth: 200,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.outTransNo, true)
           }
@@ -378,7 +378,7 @@ export default {
         {
           title: '客户订单号',
           key: 'customerOrderNo',
-          minWidth: 160,
+          minWidth: 200,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.customerOrderNo)
           }

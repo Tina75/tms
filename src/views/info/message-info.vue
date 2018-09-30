@@ -79,7 +79,11 @@ export default {
 <style lang='stylus' scoped>
 .messageDivAll
   margin: 0 auto;
-  width: 800px;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background: #fff;
+  padding: 20px 200px;
   .msgRemoveBtn
     float: right;
     margin: -10px 20px;

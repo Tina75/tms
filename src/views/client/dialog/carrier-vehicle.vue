@@ -15,12 +15,12 @@
         </FormItem>
         <FormItem label="车型:" prop="carType">
           <Select v-model="validate.carType" >
-            <Option v-for="item in carTypeMap" :key="item.value" :value="item.value">{{item.label}}</Option>
+            <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
           </Select>
         </FormItem>
         <FormItem label="车长:" prop="carLength">
           <Select v-model="validate.carLength" >
-            <Option v-for="item in carLengthMap" :key="item.value" :value="item.value">{{item.label}}</Option>
+            <Option v-for="(item, key) in carLengthMap" :key="key" :value="key">{{item}}</Option>
           </Select>
         </FormItem>
         <FormItem label="核定载重量:" prop="shippingWeight">
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import {CAR_TYPE, CAR_LENGTH} from '@/libs/constant/carInfo'
+import {CAR_TYPE1, CAR_LENGTH1} from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
 import { carrierAddVehicle, carrierUpdateVehicle, listUnbindedDriver, CODE, CAR } from '../client'
 export default {
@@ -52,8 +52,8 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
-      carTypeMap: CAR_TYPE,
-      carLengthMap: CAR_LENGTH,
+      carTypeMap: CAR_TYPE1,
+      carLengthMap: CAR_LENGTH1,
       modal: true,
       carrierId: '', // 承运商id
       driverId: 0, // 司机id
@@ -62,9 +62,9 @@ export default {
       unbindedDriver: [], // 承运商下尚未被绑定车辆的司机
       validate: {
         carNO: '',
-        carType: 1,
+        carType: '',
         shippingWeight: '',
-        carLength: 1,
+        carLength: '',
         shippingVolume: ''
       },
       ruleValidate: {

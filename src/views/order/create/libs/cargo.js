@@ -8,8 +8,8 @@ export default class Cargo {
   constructor (props, transfer = false) {
     this.quantity = 1
     this.editable = false
-    this.index = uniqueIndex++
     if (props) {
+      this.id = props.id || uniqueIndex++
       this.cargoName = props.cargoName
       // 重量，保留2位小数
       this.weight = props.weight

@@ -92,7 +92,7 @@ export default {
           title: '订单号',
           key: 'orderNo',
           // fixed: 'left',
-          minWidth: 130,
+          minWidth: 200,
           render: (h, p) => {
             return h('a', {
               style: {
@@ -116,7 +116,7 @@ export default {
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 100,
+          minWidth: 85,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.consignerName, 4)
           }
@@ -148,7 +148,7 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
-          minWidth: 160,
+          minWidth: 200,
           fixed: 'left',
           render: (h, p) => {
             return h('a', {
@@ -309,12 +309,16 @@ export default {
         data: { status }
       }).then(res => {
         this.leftTableData = this.dataFilter(res.data.data.orderList, '_expanded', item => {
-          if (JSON.stringify(item) === JSON.stringify(this.leftExpandRow)) item._expanded = true
+          if (this.leftExpandRow && item.start === this.leftExpandRow.start && item.end === this.leftExpandRow.end) {
+            item._expanded = true
+            this.fetchLeftTableExpandData(status)
+          }
           return item
         })
         this.leftTableLoading = false
       }).catch(err => {
         this.leftTableLoading = false
+        this.leftTableData = []
         console.error(err)
       })
     },
@@ -337,7 +341,11 @@ export default {
           return item
         })
         this.leftTableExpandLoading = false
-      }).catch(err => console.error(err))
+      }).catch(err => {
+        console.error(err)
+        this.leftTableExpandLoading = false
+        this.leftTableExpandData = []
+      })
     },
 
     // 左侧订单移到右侧

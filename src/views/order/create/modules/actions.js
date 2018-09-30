@@ -54,12 +54,14 @@ export default {
           commit(types.RECEIVE_ADDRESS_LIST, addressList)
         }
         if (cargoList.length > 0) {
+          const transformCargoList = cargoList.map((cargo) => new Cargo(cargo, true))
           // 货物信息
-          commit(types.RECEIVE_CARGO_LIST, cargoList)
+          commit(types.RECEIVE_CARGO_LIST, transformCargoList)
           // commit(types.RECEIVE_CONSIGNER_CARGO_LIST, cargoList.map((cargo) => {
           //   return new Cargo(cargo, true)
           // }))
-          commit(types.RECEIVE_CONSIGNER_CARGO_LIST, [new Cargo(cargoList[0], true)])
+          // 只复制一个
+          commit(types.RECEIVE_CONSIGNER_CARGO_LIST, transformCargoList.slice(0, 1))
         }
         if (consigneeList.length > 0) {
           // 收货方地址

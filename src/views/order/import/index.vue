@@ -83,6 +83,7 @@ export default {
       progress: 0,
       ossClient: null,
       ossDir: '',
+      timer: null,
       columns: [
         {
           title: '导入日期',
@@ -177,6 +178,11 @@ export default {
       this.$refs.footer.parentElement.parentElement.style['display'] = 'none'
     }
   },
+  beforeDestroy () {
+    if (this.timer) {
+      clearTimeout(this.timer)
+    }
+  },
   methods: {
     initOssInstance () {
       const vm = this
@@ -238,11 +244,17 @@ export default {
       if (!files || files.length === 0) {
         return false
       }
+      const file = files[0]
+      if (file.name.length > 58) {
+        this.$Message.warning('上传文件名长度请勿超过58位')
+        this.$refs.fileInput.value = null
+        return
+      }
       try {
-        const uploadResult = await this.uploadFile(files[0])
-        const notifyResult = await this.notifyBackend(files[0].name, uploadResult.res.requestUrls[0])
+        const uploadResult = await this.uploadFile(file)
+        const notifyResult = await this.notifyBackend(file.name, uploadResult.res.requestUrls[0])
         if (notifyResult.data.code === 10000) {
-          this.$Message.success('导入文件成功')
+          this.$Message.success({content: '导入文件完成，后台正在处理中，请稍后查看结果', duration: 3})
         }
       } catch (error) {
         console.error('导入订单', error)

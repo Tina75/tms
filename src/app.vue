@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Layout class="container">
-      <Sider v-model="collapsed" :collapsed-width="50" hide-trigger collapsible >
+      <Sider v-model="collapsed" :collapsed-width="50" hide-trigger collapsible style="overflow:hidden">
         <side-bar :collapsed="collapsed" :active-name="$route.path" :menu-list="menuList" @on-select="onMenuSelect"/>
       </Sider>
       <Layout>
@@ -77,7 +77,7 @@ export default {
     * @param type 消息类型
     */
     onOpenMsg (type) {
-      const route = {path: '/info/info', query: {type: type, title: '消息'}}
+      const route = {path: '/info/index', query: {type: type, title: '消息'}}
       window.EMA.fire('openTab', route)
     },
     /**
