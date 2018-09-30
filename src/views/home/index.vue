@@ -35,6 +35,8 @@
       <DeliveryTodo v-if="cardChecks.includes('delivery-todo')"/>
       <!-- 外转代办 -->
       <TransferTodo v-if="cardChecks.includes('trans-todo')"/>
+      <!-- 回单代办 -->
+      <ReceiptTodo v-if="cardChecks.includes('receipt-todo')"></ReceiptTodo>
       <!-- 消息中心 -->
       <MessageCenter v-if="cardChecks.includes('message-center')"/>
       <!-- 发货方核销代办 -->
@@ -96,6 +98,7 @@ import FontIcon from '@/components/FontIcon'
 import PickupTodo from './plugins/pickup-todo.vue'
 import DeliveryTodo from './plugins/delivery-todo.vue'
 import TransferTodo from './plugins/transfer-todo.vue'
+import ReceiptTodo from './plugins/receipt-todo.vue'
 import MessageCenter from './plugins/message-center.vue'
 
 import CreateOrderStatis from './plugins/create-order-statis.vue'
@@ -122,6 +125,7 @@ export default {
     ShipperTodo,
     CarrierTodo,
     ExteriorTodo,
+    ReceiptTodo,
     NewCustumerStatis,
     CarPosition
   },
@@ -173,15 +177,14 @@ export default {
   mounted () {
     // console.log('user', this.UserInfo)
     // const vm = this
-    // server({
-    //   url: 'home/plugin/user',
-    //   method: 'get'
-    // }).then(response => {
-    // console.log('permision', response)
-    // eventHub.$emit('plugin.delivery-todo', 'pickup')
-    // })
+    server({
+      url: 'home/plugin/user',
+      method: 'get'
+    }).then(response => {
+      console.log('permision', response)
+      // eventHub.$emit('plugin.delivery-todo', 'pickup')
+    })
     this.initCardList()
-    console.log(server)
   },
   methods: {
     // 获取card数组

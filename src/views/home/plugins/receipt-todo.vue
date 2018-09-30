@@ -3,9 +3,9 @@
     <OrderCard
       :data="data"
       :extra="total"
-      :range="['#00A4BD','#00E0CD']"
-      theme="#00A4BD"
-      title="发货方核销待办"
+      :range="['#418DF9','#76E7FD']"
+      theme="#418DF9"
+      title="回单待办"
       label="提示文字"
     >
     </OrderCard>
@@ -13,11 +13,15 @@
 </template>
 
 <script>
-// 发货方核销待办
+/**
+ * 外转待办
+ * 1.待发运的外转单数量
+ * 2.运输中外转单数量
+ */
 import OrderCard from '../components/OrderCard.vue'
 import mixin from './mixin.js'
-
 export default {
+  name: 'transfer-todo',
   components: {
     OrderCard
   },
@@ -25,8 +29,8 @@ export default {
   data () {
     return {
       data: [
-        { id: 'waitPickOrderCnt', name: '发货方待对账订单', value: 50 },
-        { id: 'waitPickCnt', name: '发货方待核销订单', value: 0 }
+        {id: 'waitRecovery', name: '待回收单数', value: 0},
+        {id: 'waitReturnFactory', name: '待返厂单数', value: 0}
       ]
     }
   },
@@ -41,7 +45,7 @@ export default {
   methods: {
     load () {
       const vm = this
-      this.fetch('home/consigner/todo')
+      this.fetch('home/receipt/todo')
         .then((response) => {
           const data = response.data
           vm.data.forEach((item) => {
@@ -52,3 +56,7 @@ export default {
   }
 }
 </script>
+
+<style>
+
+</style>
