@@ -193,34 +193,52 @@ export default {
         },
         {
           title: '包装',
-          key: 'package'
+          key: 'unit',
+          render: (h, p) => {
+            return h('span', p.row.unit ? p.row.unit : '-')
+          }
         },
         {
           title: '数量',
-          key: 'quantity'
+          key: 'quantity',
+          render: (h, p) => {
+            return h('span', p.row.quantity ? p.row.quantity : '-')
+          }
         },
         {
           title: '货值（元）',
           key: 'cargoCost',
           render: (h, params) => {
-            return h('span', params.row.cargoCost / 100)
+            return h('span', params.row.cargoCost ? params.row.cargoCost / 100 : '-')
           }
         },
         {
           title: '重量（吨）',
-          key: 'weight'
+          key: 'weight',
+          render: (h, p) => {
+            return h('span', p.row.weight ? p.row.weight : '-')
+          }
         },
         {
           title: '体积（方）',
-          key: 'volume'
+          key: 'volume',
+          render: (h, p) => {
+            return h('span', p.row.volume ? p.row.volume : '-')
+          }
         },
         {
           title: '备注1',
-          key: 'remark1'
+          key: 'remark1',
+          render: (h, p) => {
+            return h('span', p.row.remark1 ? p.row.remark1 : '-')
+          }
         },
         {
           title: '备注2',
-          key: 'remark2'
+          key: 'remark2',
+          render: (h, p) => {
+            return h('span', p.row.remark2 ? p.row.remark2 : '-')
+          }
         }
       ],
       tableData: [],
@@ -470,17 +488,17 @@ export default {
        *    删除：
        *          订单列表里显示：【（不是上门提货：pickup !== 1） && （未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （被拆单后的父单：disassembleStatus=1）】
        *          订单详情里显示：【（不是上门提货：pickup !== 1） && （未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （不是子单：parentId=''）】
-       *    编辑：【（未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
+       *    编辑：【（不是上门提货：pickup !== 1） && （未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
        */
       let r = this.detail
       let renderBtn = []
       if (r.status === 10) { // 待提货状态
         // 删除按钮
-        // if (r.transStatus === 0 && r.pickupStatus === 0 && r.parentId === '') {
-        //   renderBtn.push(
-        //     { name: '删除', value: 1, code: 110107 }
-        //   )
-        // }
+        if (r.transStatus === 0 && r.pickupStatus === 0 && r.parentId === '') {
+          renderBtn.push(
+            { name: '删除', value: 1, code: 110107 }
+          )
+        }
         // 拆单按钮
         // if (r.transStatus === 0 && r.disassembleStatus !== 1) {
         //   renderBtn.push(
@@ -532,7 +550,7 @@ export default {
           )
         }
         // 编辑按钮
-        if (r.transStatus === 0 && r.dispatchStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
+        if (r.pickup !== 1 && r.transStatus === 0 && r.dispatchStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
           renderBtn.push(
             { name: '编辑', value: 5, code: 110106 }
           )

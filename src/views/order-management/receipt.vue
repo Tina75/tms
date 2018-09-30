@@ -127,6 +127,7 @@ export default {
   metaInfo: { title: '回单管理' },
   data () {
     return {
+      tabType: 'RECEIPT',
       url: 'order/getReceiptOrderList',
       method: 'post',
       status: [
@@ -305,7 +306,7 @@ export default {
           key: 'recoveryTime',
           minWidth: 150,
           render: (h, params) => {
-            return h('span', params.row.recoveryTime ? new Date(params.row.recoveryTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
+            return h('span', params.row.receiptOrder.recoveryTime ? new Date(params.row.receiptOrder.recoveryTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
           }
         },
         {
@@ -313,7 +314,7 @@ export default {
           key: 'returnTime',
           minWidth: 150,
           render: (h, params) => {
-            return h('span', params.row.returnTime ? new Date(params.row.returnTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
+            return h('span', params.row.receiptOrder.returnTime ? new Date(params.row.receiptOrder.returnTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
           }
         },
         {
@@ -321,7 +322,7 @@ export default {
           key: 'createTime',
           minWidth: 150,
           render: (h, params) => {
-            return h('span', params.row.createTime ? new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
+            return h('span', params.row.receiptOrder.createTime ? new Date(params.row.receiptOrder.createTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
           }
         },
         {

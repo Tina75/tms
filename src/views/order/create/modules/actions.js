@@ -208,7 +208,7 @@ export default {
       // const { pageNo, pageSize } = state.order.pagination
       server({
         method: 'get',
-        url: 'carrier/list/car',
+        url: 'carrier/list/carOrderByUpdateTimeDesc',
         params: {
           // pageNo: pageNo,
           // pageSize: pageSize,
@@ -218,6 +218,7 @@ export default {
         // 承运商车辆信息
         const carrierCars = response.data.data.carList
         commit(types.RECEIVE_CARRIER_CAR_LIST, carrierCars)
+        resolve(carrierCars)
       }).catch((error) => {
         reject(error)
       })
@@ -242,6 +243,7 @@ export default {
         // 承运商车辆信息
         const carrierDrivers = response.data.data.driverList
         commit(types.RECEIVE_CARRIER_DRIVER_LIST, carrierDrivers)
+        resolve(carrierDrivers)
       }).catch((error) => {
         reject(error)
       })
