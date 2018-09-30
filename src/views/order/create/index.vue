@@ -567,8 +567,7 @@ export default {
         // 回单数量
         receiptCount: 1,
         // 备注
-        remark1: '',
-        remark2: ''
+        remark: ''
       },
       orderPrint: [],
       rules: {

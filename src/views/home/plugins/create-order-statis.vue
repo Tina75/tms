@@ -33,7 +33,18 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      options: {
+      total: '300',
+      data: [
+        {value: 0, name: '待调度', id: 'wait_dispacth'},
+        {value: 0, name: '待提货', id: 'wait_pickup'},
+        {value: 0, name: '在途', id: 'in_transport'},
+        {value: 0, name: '已送达', id: 'arrive'}
+      ]
+    }
+  },
+  computed: {
+    options () {
+      return {
         color: ['#418DF9', '#00A4BD', '#FA871E', '#FFBB44', '#FA871E', '#A7E7FF', '#79D9F0'],
         tooltip: {
           trigger: 'item',
@@ -48,7 +59,7 @@ export default {
           left: 'center',
           top: 'center',
           style: {
-            text: '300单',
+            text: this.total,
             textAlign: 'center',
             fill: '#333',
             font: 'bolder 1em "Microsoft YaHei", sans-serif'
@@ -75,12 +86,7 @@ export default {
                 color: '#D9DEE8'
               }
             },
-            data: [
-              {value: 335, name: '待调度'},
-              {value: 310, name: '待提货'},
-              {value: 234, name: '在途'},
-              {value: 135, name: '已送达'}
-            ]
+            data: this.data
           }
         ]
       }
@@ -91,7 +97,10 @@ export default {
       const vm = this
       this.fetch('home/open/order/statistics')
         .then((response) => {
-          vm.options = response.data
+          const data = response.data
+          vm.data.forEach((item) => {
+            item.value = data[item.id]
+          })
         })
     }
   }
