@@ -2,7 +2,6 @@
   <div is="i-col" span="6" class="i-mt-15 page-home__padding-8">
     <BlankCard>
       <div slot="title">新增顾客数</div>
-      <div slot="extra">...</div>
       <div>
         <ECharts :options="options" :auto-resize="true"></ECharts>
       </div>

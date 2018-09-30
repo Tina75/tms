@@ -2,7 +2,6 @@
   <div is="i-col" span="12" class="i-mt-15 page-home__padding-8">
     <BlankCard :padding="false">
       <div slot="title">在途车辆位置</div>
-      <div slot="extra">...</div>
       <div ref="positionMap" style="height:238px"></div>
     </BlankCard>
   </div>
