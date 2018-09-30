@@ -5,7 +5,7 @@
       <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:50px;">
         <Button v-if="hasPower(140101)" type="primary" class="centerBtn" @click="createRole">新增角色</Button>
       </div>
-      <div style="max-height:750px; overflow-y:auto; padding-top: 20px;">
+      <div style="max-height:810px; overflow-y:auto; padding-top: 20px;">
         <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" class="menu" @click.native="clickLeftMenu(menu)">
         <p class="menuTitle">{{menu.name}}</p>
         <span v-if="menu.type !== 1" class="configBtnItem">
@@ -373,9 +373,10 @@ export default {
   color: #515a6e;
 .temAll
   width: 100%
-  overflow: auto;
+  min-height: 1500px;
+  // overflow: auto;
   .leftMenu
-    min-height: 860px;
+    min-height: 810px;
   .menu:hover
     background: #e3fcfc;
     color: #515a6e;
