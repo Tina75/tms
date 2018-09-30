@@ -168,46 +168,29 @@ export default {
   methods: {
     // 获取card数组
     initCardList () {
-      // server({
-      //   url: 'home/plugin/user',
-      //   method: 'get'
-      // }).then(res => {
-      //   console.log('permision', res)
-      // })
-      setTimeout(() => {
-        const data = [
-          {code: 1, name: 'pickup-todo', url: '', w: '', h: '', s: '', valid: '1'},
-          {code: 2, name: 'delivery-todo', url: '', w: '', h: '', s: '', valid: '1'},
-          {code: 3, name: 'trans-todo', url: '', w: '', h: '', s: '', valid: '1'},
-          {code: 4, name: 'receipt-todo', url: '', w: '', h: '', s: '', valid: '1'},
-          {code: 5, name: 'consigner-todo', url: '', w: '', h: '', s: '', valid: '1'},
-          {code: 6, name: 'carrier-todo', url: '', w: '', h: '', s: '', valid: '1'},
-          {code: 7, name: 'transferfee-todo', url: '', w: '', h: '', s: '', valid: '1'},
-          {code: 8, name: 'message-center', url: '', w: '', h: '', s: '', valid: '1'},
-          {code: 9, name: 'order-create', url: '', w: '', h: '', s: '', valid: '1'},
-          {code: 10, name: 'new-customer', url: '', w: '', h: '', s: '', valid: '1'},
-          {code: 11, name: 'transport-location', url: '', w: '', h: '', s: '', valid: '1'},
-          {code: 12, name: 'turnover-statistics', url: '', w: '', h: '', s: '', valid: '1'},
-          {code: 13, name: 'dispatch-statistics', url: '', w: '', h: '', s: '', valid: '1'},
-          {code: 14, name: 'order-statistics', url: '', w: '', h: '', s: '', valid: '1'},
-          {code: 15, name: 'pay-receive', url: '', w: '', h: '', s: '', valid: '1'},
-          {code: 16, name: 'cargo-statistics', url: '', w: '', h: '', s: '', valid: '1'}
-        ]
-        let [valid, invalid] = [[], []]
-        for (const i of data) {
-          if (i.valid === '1') {
-            valid.push(i)
-            this.cardChecksTemp.push(i.name)
-          } else if (i.valid === '0') {
-            invalid.push(i)
+      server({
+        url: 'home/plugin/user',
+        method: 'get'
+      }).then(res => {
+        if (res && res.data) {
+          const data = res.data.data
+          let [valid, invalid] = [[], []]
+          this.cardChecksTemp = []
+          for (const i of data) {
+            if (i.valid === 1) {
+              valid.push(i)
+              this.cardChecksTemp.push(i.name)
+            } else if (i.valid === 0) {
+              invalid.push(i)
+            }
           }
+          valid = valid.sort((a, b) => a.code - b.code)
+          invalid = invalid.sort((a, b) => (a, b) => (a.code - b.code))
+          // 排序
+          this.cardsList = [...valid, ...invalid]
+          this.cardChecks = this.cardChecksTemp
         }
-        valid = valid.sort((a, b) => a.code - b.code)
-        invalid = invalid.sort((a, b) => (a, b) => (a.code - b.code))
-        // 排序
-        this.cardsList = [...valid, ...invalid]
-        this.cardChecks = this.cardChecksTemp
-      }, 0)
+      })
     },
     // 确认请求
     confirmAction () {
