@@ -16,6 +16,7 @@ import MarkerOverlay from '../libs/MarkerOverlay.js'
 import LabelOverlay from '../libs/LabelOverlay.js'
 
 export default {
+  name: 'car-position',
   components: {
     BlankCard
   },
