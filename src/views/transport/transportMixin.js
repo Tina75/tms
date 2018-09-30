@@ -41,7 +41,7 @@ export default {
   },
 
   created () {
-    this.currentBtns = this.btnList[0].btns
+    this.currentBtns = this.btnList[1].btns
     this.getCarriers()
     const columns = window.sessionStorage[this.tabType + '_COLUMNS']
     if (columns) this.extraColumns = JSON.parse(columns)

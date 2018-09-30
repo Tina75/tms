@@ -386,6 +386,7 @@ export default {
             code: 120107,
             func: () => {
               this.inEditing = true
+              this.setPlace()
             }
           }]
         },
@@ -530,6 +531,20 @@ export default {
       }
     },
 
+    setPlace (clear) {
+      if (clear) {
+        this.startCodes = ''
+        this.endCodes = ''
+        return
+      }
+      // 由于 AreaSelect 组件数据延时获取机制
+      // 导致如果不延迟到数据获取完毕后再赋值会出现bug
+      setTimeout(() => {
+        this.startCodes = this.info.start
+        this.endCodes = this.info.end
+      }, 250)
+    },
+
     fetchData () {
       this.loading = true
       Server({
@@ -542,6 +557,7 @@ export default {
       }).then(res => {
         const data = res.data.data
 
+        this.id = data.waybill.waybillId
         for (let key in this.info) {
           this.info[key] = data.waybill[key]
         }
@@ -550,9 +566,6 @@ export default {
         }
         this.detail = data.cargoList
         this.logList = data.operaterLog
-
-        this.startCodes = data.waybill.start.toString()
-        this.endCodes = data.waybill.end.toString()
 
         this.status = this.statusFilter(data.waybill.status)
         this.settlementType = data.waybill.settlementType.toString()

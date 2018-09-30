@@ -81,7 +81,7 @@ export default {
           title: '运单号',
           key: 'waybillNo',
           // fixed: 'left',
-          minWidth: 200,
+          width: 200,
           render: (h, p) => {
             return h('a', {
               style: {

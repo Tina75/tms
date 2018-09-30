@@ -301,7 +301,7 @@ export default {
         {
           title: '提货单号',
           key: 'pickupNo',
-          minWidth: 200,
+          width: 200,
           fixed: 'left',
           render: (h, p) => {
             return h('a', {
