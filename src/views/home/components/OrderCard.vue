@@ -35,20 +35,19 @@
 </template>
 
 <script>
+
+const theme = {
+  '#418DF9': ['#418DF9', '#76E7FD'],
+  '#FFBB44': ['#FFBB44', '#FFB897'],
+  '#00A4BD': ['#00A4BD', '#00E0CD']
+}
+let themeIndex = 0
 export default {
   props: {
     title: String,
     label: String,
     to: String,
     extra: [String, Number],
-    range: {
-      type: Array,
-      default: () => []
-    },
-    theme: {
-      type: String,
-      default: '#333333'
-    },
     data: {
       type: Array,
       default: () => []
@@ -56,9 +55,13 @@ export default {
   },
   data () {
     return {
+      theme: Object.keys(theme)[themeIndex]
     }
   },
   computed: {
+    range () {
+      return theme[this.theme]
+    },
     totalStyle () {
       return {
         color: this.theme
@@ -73,6 +76,12 @@ export default {
           `linear-gradient(right,#FFB897,${this.range[0]}, ${this.range[1]})`
         ]
       }
+    }
+  },
+  created () {
+    themeIndex++
+    if (themeIndex > 2) {
+      themeIndex = 0
     }
   }
 }

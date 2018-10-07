@@ -3,8 +3,6 @@
     <OrderCard
       :data="data"
       :extra="total"
-      :range="['#00A4BD','#00E0CD']"
-      theme="#00A4BD"
       title="发货方核销待办"
       label="提示文字"
     >
@@ -26,8 +24,8 @@ export default {
   data () {
     return {
       data: [
-        { id: 'waitPickOrderCnt', name: '发货方待对账订单', value: 50 },
-        { id: 'waitPickCnt', name: '发货方待核销订单', value: 0 }
+        { id: 'wait_reconcile', name: '发货方待对账订单', value: 0 },
+        { id: 'wait_verify', name: '发货方待核销订单', value: 0 }
       ]
     }
   },
@@ -41,13 +39,12 @@ export default {
   },
   methods: {
     load () {
-      const vm = this
       this.fetch('home/consigner/todo')
         .then((response) => {
           const data = response.data
-          vm.data.forEach((item) => {
-            item.value = data[item.id]
-          })
+          for (const i of this.data) {
+            i.value = data[i.id]
+          }
         })
     }
   }
