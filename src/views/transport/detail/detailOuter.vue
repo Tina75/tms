@@ -85,7 +85,7 @@
           </i-col>
           <i-col span="12">
             <span class="detail-field-title">收货地址：</span>
-            <span>{{ info.consignerAddress }}</span>
+            <span>{{ info.consigneeAddress }}</span>
           </i-col>
         </Row>
         <Row class="detail-field-group" style="margin-top: 20px;">
@@ -244,7 +244,7 @@ export default {
         {
           title: '货物名称',
           key: 'cargoName',
-          minWidth: 160,
+          minWidth: 180,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.cargoName)
           }
@@ -252,7 +252,7 @@ export default {
         {
           title: '包装',
           key: 'packing',
-          minWidth: 80,
+          width: 100,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.packing)
           }
@@ -260,7 +260,7 @@ export default {
         {
           title: '数量',
           key: 'quantity',
-          minWidth: 80,
+          width: 100,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.quantity)
           }
@@ -268,15 +268,15 @@ export default {
         {
           title: '货值(元)',
           key: 'cargoCost',
-          minWidth: 100,
+          width: 100,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoCost / 100)
+            return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
           }
         },
         {
           title: '重量(吨)',
           key: 'weight',
-          minWidth: 100,
+          width: 100,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.weight)
           }
@@ -284,7 +284,7 @@ export default {
         {
           title: '体积(方)',
           key: 'volume',
-          minWidth: 100,
+          width: 100,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.volume)
           }
@@ -292,7 +292,7 @@ export default {
         {
           title: '备注1',
           key: 'remark1',
-          minWidth: 160,
+          minWidth: 140,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.remark1)
           }
@@ -300,7 +300,7 @@ export default {
         {
           title: '备注2',
           key: 'remark2',
-          minWidth: 160,
+          minWidth: 140,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.remark2)
           }

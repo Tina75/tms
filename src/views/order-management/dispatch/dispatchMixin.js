@@ -29,9 +29,9 @@ export default {
         {
           title: '始发地',
           key: 'start',
-          minWidth: 80,
+          minWidth: 135,
           render: (h, p) => {
-            return this.tableDataRender(h, this.cityFilter(p.row.start), 2)
+            return this.tableDataRender(h, this.cityFilter(p.row.start), 9)
           }
         },
         // {
@@ -47,15 +47,15 @@ export default {
         {
           title: '目的地',
           key: 'end',
-          minWidth: 80,
+          minWidth: 135,
           render: (h, p) => {
-            return this.tableDataRender(h, this.cityFilter(p.row.end), 2)
+            return this.tableDataRender(h, this.cityFilter(p.row.end), 9)
           }
         },
         {
           title: '订单数',
           key: 'ordreNum',
-          minWidth: 80,
+          width: 60,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.ordreNum)
           }
@@ -63,7 +63,7 @@ export default {
         {
           title: '体积(方)',
           key: 'volume',
-          minWidth: 80,
+          width: 65,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.volume)
           }
@@ -71,7 +71,7 @@ export default {
         {
           title: '重量(吨)',
           key: 'weight',
-          minWidth: 80,
+          width: 65,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.weight)
           }
@@ -92,7 +92,7 @@ export default {
           title: '订单号',
           key: 'orderNo',
           // fixed: 'left',
-          width: 200,
+          width: 180,
           render: (h, p) => {
             return h('a', {
               style: {
@@ -148,7 +148,7 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
-          width: 200,
+          width: 180,
           fixed: 'left',
           render: (h, p) => {
             return h('a', {
@@ -173,7 +173,7 @@ export default {
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 160,
+          minWidth: 180,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.consignerName)
           }
@@ -181,7 +181,7 @@ export default {
         {
           title: '始发地',
           key: 'start',
-          minWidth: 180,
+          width: 180,
           render: (h, p) => {
             return this.tableDataRender(h, this.cityFilter(p.row.start))
           }
@@ -189,7 +189,7 @@ export default {
         {
           title: '目的地',
           key: 'end',
-          minWidth: 180,
+          width: 180,
           render: (h, p) => {
             return this.tableDataRender(h, this.cityFilter(p.row.end))
           }
@@ -197,7 +197,7 @@ export default {
         {
           title: '体积(方)',
           key: 'volume',
-          minWidth: 120,
+          width: 100,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.volume)
           }
@@ -205,7 +205,7 @@ export default {
         {
           title: '重量(吨)',
           key: 'weight',
-          minWidth: 120,
+          width: 100,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.weight)
           }
@@ -379,14 +379,18 @@ export default {
       text = text.toString()
       let showText = text.length > overLength ? text.substr(0, overLength) + '...' : text
       showText = showText || '-'
+      const style = {
+        marginRight: '-18px'
+      }
       if (text.length <= overLength) {
-        return h('span', showText)
+        return h('span', { style }, showText)
       } else {
         return h('Tooltip', {
           props: {
             placement: 'top',
             content: text
-          }
+          },
+          style
         }, showText)
       }
     }
