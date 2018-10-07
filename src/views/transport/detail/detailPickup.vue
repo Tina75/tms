@@ -153,6 +153,8 @@
       </ul>
     </section>
 
+    <div class="detail-btn-group"></div>
+
     <section class="detail-info">
       <!-- 提货单信息 -->
       <div>
@@ -413,10 +415,10 @@ export default {
         },
         {
           title: '包装',
-          key: 'packing',
+          key: 'unit',
           width: 100,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.packing)
+            return this.tableDataRender(h, p.row.unit)
           }
         },
         {
@@ -461,7 +463,7 @@ export default {
         },
         {
           title: '提货联系人',
-          key: 'consigneeContact',
+          key: 'consignerContact',
           width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.consigneeContact)
@@ -469,7 +471,7 @@ export default {
         },
         {
           title: '联系电话',
-          key: 'consigneePhone',
+          key: 'consignerPhone',
           width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.consigneePhone)
@@ -477,7 +479,7 @@ export default {
         },
         {
           title: '提货地址',
-          key: 'consigneeAddress',
+          key: 'consignerAddress',
           minWidth: 180,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.consigneeAddress)

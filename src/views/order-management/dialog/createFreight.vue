@@ -1,31 +1,29 @@
 <template>
   <Modal v-model="visiable" :mask-closable="true" width="360" @on-visible-change="close">
     <p slot="header" style="text-align:center">{{title}}</p>
-    <Form ref="$form" :model="form" :rules="rules" :label-width="80">
-      <FormItem label="始发地" prop="start">
-        <AreaSelect v-model="form.start" :deep="true" style="width:200px" placeholder="请选择"/>
+    <Form ref="$form" :model="form" :rules="rules" :label-width="70" style="padding:0 20px;">
+      <FormItem label="始发地：" prop="start">
+        <AreaSelect v-model="form.start" :deep="true" placeholder="请选择"/>
       </FormItem>
-      <FormItem label="目的地" prop="end">
-        <AreaSelect v-model="form.end" :deep="true" style="width:200px" placeholder="请选择"/>
+      <FormItem label="目的地：" prop="end">
+        <AreaSelect v-model="form.end" :deep="true" placeholder="请选择"/>
       </FormItem>
-      <FormItem label="承运商" prop="carrierName">
+      <FormItem label="承运商：" prop="carrierName">
         <SelectInput
           v-model="form.carrierName"
           :maxlength="20"
           :remote="false"
           :local-options="carriers"
           placeholder="请选择"
-          style="width:200px"
           @on-select="handleSelectCarrier" />
       </FormItem>
-      <FormItem label="车辆" prop="carNo">
+      <FormItem label="车辆：" prop="carNo">
         <SelectInput
           v-model="form.carNo"
           :maxlength="8"
           :remote="false"
           :local-options="carrierCars"
-          placeholder="请选择"
-          style="width:200px" />
+          placeholder="请选择" />
       </FormItem>
     </Form>
     <div slot="footer" style="text-align: center;">

@@ -4,8 +4,8 @@
       <p slot="header" style="text-align:center">
         <span>编辑</span>
       </p>
-      <Form ref="info" :model="info" :rules="rules" :label-width="100" label-position="left">
-        <FormItem label="外转方" prop="transfereeName">
+      <Form ref="info" :model="info" :rules="rules" :label-width="100" label-position="left" style="padding-left: 15px;">
+        <FormItem label="外转方：" prop="transfereeName">
           <SelectInput
             v-model="info.transfereeName"
             :maxlength="20"
@@ -16,10 +16,10 @@
             @on-select="handleSelectTransferee">
           </SelectInput>
         </FormItem>
-        <FormItem label="外转方运单号">
+        <FormItem label="外转方运单号：">
           <Input v-model="info.outTransNo" :maxlength="20" style="width:200px" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="付款方式" prop="payType">
+        <FormItem label="付款方式：" prop="payType">
           <Select v-model="info.payType" style="width:200px">
             <Option value="1">现付</Option>
             <Option value="2">到付</Option>
@@ -27,7 +27,7 @@
             <Option value="4">月结</Option>
           </Select>
         </FormItem>
-        <FormItem label="外转运费" prop="transFee">
+        <FormItem label="外转运费：" prop="transFee">
           <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" style="width:180px">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
