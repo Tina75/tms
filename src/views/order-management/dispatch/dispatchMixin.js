@@ -1,5 +1,5 @@
 import Server from '@/libs/js/server'
-import City from '@/libs/js/City'
+import City from '@/libs/js/city'
 import tableExpand from './tableExpand'
 
 export default {
@@ -280,7 +280,7 @@ export default {
     // 格式化城市
     cityFilter (code) {
       if (!code) return '-'
-      return Array.from(new Set(City.codeToFullName(code, 3, '-').split('-'))).join('')
+      return Array.from(new Set(City.codeToFullNameArr(code, 3))).join('')
     },
 
     /** 数据操作 */

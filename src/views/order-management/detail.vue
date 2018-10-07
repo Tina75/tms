@@ -43,11 +43,11 @@
         <Row>
           <i-col span="7">
             <span>始发地：</span>
-            <span>{{detail.start | codeToFullName}}</span>
+            <span>{{detail.start | codeToFullNameArr}}</span>
           </i-col>
           <i-col span="7">
             <span>目的地：</span>
-            <span>{{detail.end | codeToFullName}}</span>
+            <span>{{detail.end | codeToFullNameArr}}</span>
           </i-col>
           <i-col span="7">
             <span>提货方式：</span>
