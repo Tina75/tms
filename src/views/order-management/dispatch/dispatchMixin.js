@@ -1,5 +1,5 @@
 import Server from '@/libs/js/server'
-import City from '@/libs/js/city'
+import City from '@/libs/js/City'
 import tableExpand from './tableExpand'
 
 export default {

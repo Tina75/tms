@@ -112,7 +112,7 @@ import Export from '@/libs/js/export'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
-import City from '@/libs/js/city'
+import City from '@/libs/js/City'
 import SearchMixin from './searchMixin'
 export default {
   name: 'receipt',
