@@ -28,7 +28,7 @@ export default {
 
   filters: {
     retMoney (val) {
-      return '￥' + Number(val).toFixed(2)
+      return '￥' + (Number(val) / 100).toFixed(2)
     }
   },
 
@@ -59,7 +59,7 @@ export default {
               fontSize: 14
             },
             data: [
-              {value: this.receive, name: '应收'}
+              {value: Number(this.receive) / 100, name: '应收'}
             ]
           },
           {
@@ -76,7 +76,7 @@ export default {
               fontSize: 14
             },
             data: [
-              {value: this.pay, name: '应付'}
+              {value: Number(this.pay) / 100, name: '应付'}
             ]
           }
         ]
