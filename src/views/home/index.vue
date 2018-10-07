@@ -173,7 +173,7 @@ export default {
       this.intersectionObserver = new IntersectionObserver(this.intersectionObserverEvent, {
         root: this.$parent.$el || document.querySelector('.ivu-layout-content'),
         rootMargin: '0px',
-        threshold: [0]
+        thresholds: [0]
       })
     }
   },

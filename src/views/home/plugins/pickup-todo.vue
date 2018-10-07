@@ -2,9 +2,7 @@
   <div is="i-col" span="6" class="i-mt-15 page-home__padding-8">
     <OrderCard
       :data="data"
-      :range="['#418DF9','#76E7FD']"
       :extra="total"
-      theme="#418DF9"
       title="提货待办"
       label="提示文字"
     >

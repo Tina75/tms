@@ -64,7 +64,7 @@ export default {
           left: 'center',
           top: 'center',
           style: {
-            text: this.total,
+            text: this.total + '单',
             textAlign: 'center',
             fill: '#333',
             font: 'bolder 1em "Microsoft YaHei", sans-serif'

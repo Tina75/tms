@@ -3,8 +3,6 @@
     <OrderCard
       :data="data"
       :extra="total"
-      :range="['#418DF9','#76E7FD']"
-      theme="#418DF9"
       title="回单待办"
       label="提示文字"
     >
