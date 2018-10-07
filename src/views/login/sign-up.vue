@@ -1,5 +1,5 @@
 <template>
-  <div class="form-body" @keydown.enter="nextStep">
+  <div class="form-body">
     <Card :bordered="false" style="height: 100%;">
       <div class="form-title">注册账号</div>
 
@@ -13,7 +13,7 @@
 
       <div class="form-content">
 
-        <Form ref="loginForm" :model="form" :rules="rules">
+        <Form ref="loginForm" :model="form" :rules="rules" @submit.native.prevent>
           <!-- step 1 -->
           <template v-if="step === 0">
             <FormItem prop="phone">
