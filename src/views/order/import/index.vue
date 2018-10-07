@@ -113,13 +113,7 @@ export default {
         {
           title: '导入订单数',
           key: 'orderCount',
-          width: 100,
-          render: (h, params) => {
-            if (params.row[params.column.key]) {
-              return h('span', params.row[params.column.key])
-            }
-            return h('span', '-')
-          }
+          width: 100
         },
         {
           title: '操作人',

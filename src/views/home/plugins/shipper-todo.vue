@@ -2,9 +2,9 @@
   <div is="i-col" span="6" class="i-mt-15 page-home__padding-8">
     <OrderCard
       :data="data"
-      :range="['#418DF9','#76E7FD']"
       :extra="total"
-      theme="#418DF9"
+      :range="['#00A4BD','#00E0CD']"
+      theme="#00A4BD"
       title="发货方核销待办"
       label="提示文字"
     >
@@ -18,6 +18,7 @@ import OrderCard from '../components/OrderCard.vue'
 import mixin from './mixin.js'
 
 export default {
+  name: 'shipper-todo',
   components: {
     OrderCard
   },
