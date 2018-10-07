@@ -464,10 +464,10 @@ export default {
         },
         {
           title: '包装',
-          key: 'packing',
+          key: 'unit',
           width: 100,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.packing)
+            return this.tableDataRender(h, p.row.unit)
           }
         },
         {
