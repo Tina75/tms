@@ -86,7 +86,7 @@
 import PageTable from '@/components/page-table'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput.vue'
-import City from '@/libs/js/City'
+import City from '@/libs/js/city'
 import { mapGetters, mapActions } from 'vuex'
 import Export from '@/libs/js/export'
 export default {
@@ -170,14 +170,14 @@ export default {
           title: '始发地',
           key: 'start',
           render: (h, params) => {
-            return h('span', City.codeToFullName(params.row.start))
+            return h('span', City.codeToFullNameArr(params.row.start))
           }
         },
         {
           title: '目的地',
           key: 'end',
           render: (h, params) => {
-            return h('span', City.codeToFullName(params.row.end))
+            return h('span', City.codeToFullNameArr(params.row.end))
           }
         },
         {
