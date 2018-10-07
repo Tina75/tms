@@ -418,6 +418,7 @@ export default {
           key: 'unit',
           width: 100,
           render: (h, p) => {
+            console.log(p.row.unit)
             return this.tableDataRender(h, p.row.unit)
           }
         },
@@ -466,7 +467,7 @@ export default {
           key: 'consignerContact',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.consigneeContact)
+            return this.tableDataRender(h, p.row.consignerContact)
           }
         },
         {
@@ -474,7 +475,7 @@ export default {
           key: 'consignerPhone',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.consigneePhone)
+            return this.tableDataRender(h, p.row.consignerPhone)
           }
         },
         {
@@ -482,7 +483,7 @@ export default {
           key: 'consignerAddress',
           minWidth: 180,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.consigneeAddress)
+            return this.tableDataRender(h, p.row.consignerAddress)
           }
         }
       ]

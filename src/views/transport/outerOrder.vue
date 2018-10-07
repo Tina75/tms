@@ -330,7 +330,6 @@ export default {
           key: 'start',
           width: 180,
           render: (h, p) => {
-            console.log(this.cityFormatter(p.row.start))
             return this.tableDataRender(h, this.cityFormatter(p.row.start))
           }
         },
