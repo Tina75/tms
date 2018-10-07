@@ -23,7 +23,7 @@
         accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         @change="handleChange"
       />
-      <Button v-if="hasPower(100202)" :to="downloadUrl" class="i-ml-10" target="_blank">下载模板</Button>
+      <Button v-if="hasPower(100202)" :to="downloadUrl" download="下载模板" class="i-ml-10" target="_blank">下载模板</Button>
     </div>
     <PageTable ref="pageTable" :columns="columns" :show-filter="false" url="order/template/getImportedOrderTemplateList" method="post" no-data-text=" " @on-load="handleLoad">
       <div ref="footer" slot="footer" class="order-import__empty-content van-center">
@@ -105,7 +105,9 @@ export default {
             if (params.row.status === 1) {
               return h('span', '导入成功')
             } else if (params.row.status === 0) {
-              return h('span', '导入失败')
+              return h('span', {
+                class: 'i-error'
+              }, '导入失败')
             }
             return h('span', '正在处理')
           }

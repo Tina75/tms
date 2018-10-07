@@ -1,6 +1,6 @@
 <template>
   <div is="i-col" span="6" class="i-mt-15 page-home__padding-8">
-    <BlankCard>
+    <BlankCard to="order-management/order" page-title="订单列表">
       <div slot="title">今日订单数</div>
       <div>
         <ECharts :options="options" :auto-resize="true"></ECharts>
@@ -33,7 +33,6 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      total: '300',
       data: [
         {value: 0, name: '待调度', id: 'wait_dispacth'},
         {value: 0, name: '待提货', id: 'wait_pickup'},
@@ -43,6 +42,12 @@ export default {
     }
   },
   computed: {
+    total () {
+      return this.data.reduce((num, item) => {
+        num += item.value
+        return num
+      }, 0)
+    },
     options () {
       return {
         color: ['#418DF9', '#00A4BD', '#FA871E', '#FFBB44', '#FA871E', '#A7E7FF', '#79D9F0'],
