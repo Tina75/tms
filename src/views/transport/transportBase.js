@@ -5,7 +5,7 @@ const FORMATTERS = {
   // 格式化时间
   timeFormatter (timestamp) {
     if (!timestamp) return ''
-    return new Date(timestamp).Format('yyyy-MM-dd hh:mm:ss')
+    return new Date(timestamp).Format('yyyy-MM-dd hh:mm')
   },
 
   // 格式化城市

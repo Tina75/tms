@@ -1,9 +1,9 @@
 <template>
-  <div class="form-body" @keydown.enter="handleSubmit">
+  <div class="form-body">
     <Card :bordered="false" style="height: 100%;">
       <div class="form-title">忘记密码</div>
       <div class="form-content">
-        <Form ref="loginForm" :model="form" :rules="rules">
+        <Form ref="loginForm" :model="form" :rules="rules" @submit.native.prevent>
 
           <FormItem prop="phone">
             <Input v-model="form.phone" :maxlength="11" placeholder="请输入用户手机号" />

@@ -406,7 +406,7 @@ export default {
         {
           title: '货物名称',
           key: 'cargoName',
-          minWidth: 160,
+          minWidth: 180,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.cargoName)
           }
@@ -414,7 +414,7 @@ export default {
         {
           title: '包装',
           key: 'packing',
-          width: 80,
+          width: 100,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.packing)
           }
@@ -422,7 +422,7 @@ export default {
         {
           title: '数量',
           key: 'quantity',
-          width: 80,
+          width: 100,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.quantity)
           }
@@ -432,7 +432,7 @@ export default {
           key: 'cargoCost',
           width: 100,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoCost / 100)
+            return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
           }
         },
         {
@@ -454,7 +454,7 @@ export default {
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 160,
+          minWidth: 180,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.consignerName)
           }
@@ -462,7 +462,7 @@ export default {
         {
           title: '提货联系人',
           key: 'consigneeContact',
-          minWidth: 120,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.consigneeContact)
           }
@@ -470,7 +470,7 @@ export default {
         {
           title: '联系电话',
           key: 'consigneePhone',
-          minWidth: 120,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.consigneePhone)
           }
@@ -478,7 +478,7 @@ export default {
         {
           title: '提货地址',
           key: 'consigneeAddress',
-          width: 200,
+          minWidth: 180,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.consigneeAddress)
           }

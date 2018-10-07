@@ -7,17 +7,17 @@
            :loading="loading"
            @on-selection-change="selectionChange"></Table>
     <div style="text-align: right; margin-top: 10px;">
-      <Page
-        :total="totalCount"
-        :current="pageNo"
-        :page-size="pageSize"
-        :page-size-opts="[10,20,50]"
-        size="small"
-        show-sizer
-        show-elevator
-        show-total
-        @on-change="handleChangePage"
-        @on-page-size-change="handlePageSizeChange"></Page>
+      <Page v-if="totalCount > 10"
+            :total="totalCount"
+            :current="pageNo"
+            :page-size="pageSize"
+            :page-size-opts="[10,20,50]"
+            size="small"
+            show-sizer
+            show-elevator
+            show-total
+            @on-change="handleChangePage"
+            @on-page-size-change="handlePageSizeChange"></Page>
     </div>
 
     <div slot="footer" style="text-align: center;">
@@ -57,13 +57,13 @@ export default {
           key: 'customerOrderNo',
           width: 200,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.customerOrderNo)
+            return this.tableDataRender(h, p.row.customerOrderNo, true)
           }
         },
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 160,
+          minWidth: 200,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.consignerName)
           }
@@ -86,17 +86,17 @@ export default {
           }
         },
         {
-          title: '体积（方）',
+          title: '体积(方)',
           key: 'volume',
-          width: 120,
+          width: 100,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.volume)
           }
         },
         {
-          title: '重量（吨）',
+          title: '重量(吨)',
           key: 'weight',
-          width: 120,
+          width: 100,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.weight)
           }
