@@ -1,4 +1,4 @@
-import City from '../../libs/js/City'
+import City from '../../libs/js/city'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -181,7 +181,7 @@ export default {
     },
     // 格式化城市
     cityFilter (code) {
-      return City.codeToFullName(code, 3, '')
+      return City.codeToFullNameArr(code, 3, '')
     },
     // 结算方式码转为名称
     settlementToName (val) {
