@@ -17,6 +17,7 @@ export default {
       code: '100100',
       parentId: '100000',
       children: [
+        { title: '页面查看', code: '100100', parentId: '100000' },
         { title: '保存', code: '100101', parentId: '100100', grandId: '100000' },
         { title: '打印并保存', code: '100102', parentId: '100100', grandId: '100000' },
         { title: '清空', code: '100103', parentId: '100100', grandId: '100000' }
@@ -28,6 +29,7 @@ export default {
       code: '100200',
       parentId: '100000',
       children: [
+        { title: '页面查看', code: '100200', parentId: '100000' },
         { title: '导入文件', code: '100201', parentId: '100200', grandId: '100000' },
         { title: '下载模板', code: '100202', parentId: '100200', grandId: '100000' },
         { title: '下载（列表上）', code: '100203', parentId: '100200', grandId: '100000' },
@@ -46,6 +48,7 @@ export default {
       parentId: '110000',
       expand: true,
       children: [
+        { title: '页面查看', code: '110100', parentId: '110000' },
         { title: '送货调度', code: '110101', parentId: '110100', grandId: '110000' },
         { title: '提货调度', code: '110102', parentId: '110100', grandId: '110000' },
         { title: '拆单', code: '110103', parentId: '110100', grandId: '110000' },
@@ -62,6 +65,7 @@ export default {
       parentId: '110000',
       expand: true,
       children: [
+        { title: '页面查看', code: '110200', parentId: '110000' },
         { title: '回收', code: '110201', parentId: '110200', grandId: '110000' },
         { title: '返厂', code: '110202', parentId: '110200', grandId: '110000' },
         { title: '导出', code: '110203', parentId: '110200', grandId: '110000' }
@@ -83,6 +87,7 @@ export default {
       parentId: '120000',
       expand: true,
       children: [
+        { title: '页面查看', code: '120100', parentId: '120000' },
         { title: '发运', code: '120102', parentId: '120100', grandId: '120000' },
         { title: '派车', code: '120101', parentId: '120100', grandId: '120000' },
         { title: '打印', code: '120103', parentId: '120100', grandId: '120000' },
@@ -98,6 +103,7 @@ export default {
       parentId: '120000',
       expand: true,
       children: [
+        { title: '页面查看', code: '120200', parentId: '120000' },
         { title: '提货', code: '120201', parentId: '120200', grandId: '120000' },
         { title: '打印', code: '120202', parentId: '120200', grandId: '120000' },
         { title: '到货', code: '120203', parentId: '120200', grandId: '120000' },
@@ -112,6 +118,7 @@ export default {
       parentId: '120000',
       expand: true,
       children: [
+        { title: '页面查看', code: '120300', parentId: '120000' },
         { title: '发运', code: '120301', parentId: '120300', grandId: '120000' },
         { title: '到货', code: '120302', parentId: '120300', grandId: '120000' },
         { title: '编辑', code: '120303', parentId: '120300', grandId: '120000' },
@@ -131,6 +138,7 @@ export default {
       parentId: '130000',
       expand: true,
       children: [
+        { title: '页面查看', code: '130100', parentId: '130000' },
         { title: '新增发货方', code: '130101', parentId: '130100', grandId: '130000' },
         { title: '修改发货方', code: '130102', parentId: '130100', grandId: '130000' },
         { title: '删除发货方', code: '130103', parentId: '130100', grandId: '130000' },
@@ -150,6 +158,7 @@ export default {
       parentId: '130000',
       expand: true,
       children: [
+        { title: '页面查看', code: '130200', parentId: '130000' },
         { title: '新增承运商', code: '130201', parentId: '130200', grandId: '130000' },
         { title: '修改承运商', code: '130202', parentId: '130200', grandId: '130000' },
         { title: '删除承运商', code: '130203', parentId: '130200', grandId: '130000' },
@@ -166,6 +175,7 @@ export default {
       code: '130300',
       parentId: '130000',
       children: [
+        { title: '页面查看', code: '130300', parentId: '130000' },
         { title: '新增外转方', code: '130301', parentId: '130300', grandId: '130000' },
         { title: '修改外转方', code: '130302', parentId: '130300', grandId: '130000' },
         { title: '删除外转方', code: '130303', parentId: '130300', grandId: '130000' }
@@ -183,6 +193,7 @@ export default {
       code: '140100',
       parentId: '140000',
       children: [
+        { title: '页面查看', code: '140100', parentId: '140000' },
         { title: '添加角色', code: '140101', parentId: '140100', grandId: '140000' },
         { title: '更改角色', code: '140102', parentId: '140100', grandId: '140000' },
         { title: '删除角色', code: '140103', parentId: '140100', grandId: '140000' }
@@ -193,6 +204,7 @@ export default {
       code: '140200',
       parentId: '140000',
       children: [
+        { title: '页面查看', code: '140200', parentId: '140000' },
         { title: '添加员工', code: '140201', parentId: '140200', grandId: '140000' },
         { title: '修改员工', code: '140202', parentId: '140200', grandId: '140000' },
         { title: '删除员工', code: '140203', parentId: '140200', grandId: '140000' }
@@ -210,6 +222,7 @@ export default {
       code: '170100',
       parentId: '170000',
       children: [
+        { title: '页面查看', code: '170100', parentId: '170000' },
         { title: '按单核销', code: '170101', parentId: '170100', grandId: '170000' },
         { title: '生成对账单', code: '170102', parentId: '170100', grandId: '170000' },
         { title: '对账单核销', code: '170103', parentId: '170100', grandId: '170000' },
@@ -223,6 +236,7 @@ export default {
       code: '170200',
       parentId: '170000',
       children: [
+        { title: '页面查看', code: '170200', parentId: '170000' },
         { title: '按单核销', code: '170201', parentId: '170200', grandId: '170000' },
         { title: '生成对账单', code: '170202', parentId: '170200', grandId: '170000' },
         { title: '对账单核销', code: '170203', parentId: '170200', grandId: '170000' },
@@ -236,6 +250,7 @@ export default {
       code: '170300',
       parentId: '170000',
       children: [
+        { title: '页面查看', code: '170300', parentId: '170000' },
         { title: '按单核销', code: '170301', parentId: '170300', grandId: '170000' },
         { title: '生成对账单', code: '170302', parentId: '170300', grandId: '170000' },
         { title: '对账单核销', code: '170303', parentId: '170300', grandId: '170000' },
@@ -249,6 +264,7 @@ export default {
       code: '170400',
       parentId: '170000',
       children: [
+        { title: '页面查看', code: '170400', parentId: '170000' },
         { title: '新增', code: '170401', parentId: '170400', grandId: '170000' },
         { title: '编辑', code: '170402', parentId: '170400', grandId: '170000' },
         { title: '删除', code: '170403', parentId: '170400', grandId: '170000' }

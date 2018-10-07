@@ -135,13 +135,16 @@ export default {
     showCounter () {
       const _this = this
       this.openDialog({
-        name: 'order/create/CounterDialog',
+        name: 'transport/dialog/financeRule',
         data: {
           value: 0
         },
         methods: {
           ok (value) {
             _this.info.transFee = value || 0
+          },
+          cancel () {
+            self.close()
           }
         }
       })
@@ -157,6 +160,7 @@ export default {
         for (let key in this.info) {
           this.info[key] = data.customerInfo[key]
         }
+        this.info.transFee = this.info.transFee / 100
         this.info.payType = this.info.payType.toString()
       }).catch(err => console.error(err))
     }

@@ -30,7 +30,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { carrierList, carrierDelete, CODE, carrierDetailsForDriver, carrierDetailsForCompany } from './client'
 import BasePage from '@/basic/BasePage'
@@ -239,7 +238,11 @@ export default {
         {
           title: '创建时间',
           key: 'createTime',
-          sortable: 'custom'
+          sortable: 'custom',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
         }
       ],
       data1: [],
@@ -349,20 +352,28 @@ export default {
       })
     },
     timeSort (column) {
-      this.order = (column.order === 'normal' ? null : column.order)
+      let str = ''
+      if (column.key === 'createTime') { // 为之后预留更新时间排序
+        str += 'create_time,'
+      } else {
+        str += 'update_time,,'
+      }
+      if (column.order === 'asc') {
+        str += 'asc'
+      } else if (column.order === 'desc') {
+        str += 'desc'
+      } else {
+        str = null
+      }
+      this.order = str
       this.searchList()
+    },
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     }
   }
 }
 </script>
-
 <style scoped lang="stylus">
-  .header
-    display flex
-    justify-content space-between
-    margin-bottom 14px
-  .footer
-    margin-top 22px
-    display flex
-    justify-content flex-end
+  @import "client.styl"
 </style>

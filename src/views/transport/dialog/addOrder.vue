@@ -7,20 +7,20 @@
            :loading="loading"
            @on-selection-change="selectionChange"></Table>
     <div style="text-align: right; margin-top: 10px;">
-      <Page
-        :total="totalCount"
-        :current="pageNo"
-        :page-size="pageSize"
-        :page-size-opts="[10,20,50]"
-        size="small"
-        show-sizer
-        show-elevator
-        show-total
-        @on-change="handleChangePage"
-        @on-page-size-change="handlePageSizeChange"></Page>
+      <Page v-if="totalCount > 10"
+            :total="totalCount"
+            :current="pageNo"
+            :page-size="pageSize"
+            :page-size-opts="[10,20,50]"
+            size="small"
+            show-sizer
+            show-elevator
+            show-total
+            @on-change="handleChangePage"
+            @on-page-size-change="handlePageSizeChange"></Page>
     </div>
 
-    <div slot="footer">
+    <div slot="footer" style="text-align: center;">
       <Button  type="primary" @click="ok">确定</Button>
       <Button  type="default" @click.native="visibale = false">取消</Button>
     </div>
@@ -30,9 +30,11 @@
 <script>
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
+import TransportBase from '../transportBase'
+
 export default {
   name: 'AddOrder',
-  mixins: [ BaseDialog ],
+  mixins: [ BaseDialog, TransportBase ],
   data () {
     return {
       visibale: true,
@@ -47,31 +49,57 @@ export default {
         },
         {
           title: '订单号',
-          key: 'orderNo'
+          key: 'orderNo',
+          width: 200
         },
         {
           title: '客户订单号',
-          key: 'customerOrderNo'
+          key: 'customerOrderNo',
+          width: 200,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.customerOrderNo, true)
+          }
         },
         {
           title: '客户名称',
-          key: 'consignerName'
+          key: 'consignerName',
+          minWidth: 200,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.consignerName)
+          }
         },
         {
           title: '始发地',
-          key: 'start'
+          key: 'start',
+          minWidth: 180,
+          render: (h, p) => {
+            return this.tableDataRender(h, this.cityFormatter(p.row.start))
+          }
         },
         {
           title: '目的地',
-          key: 'end'
+          key: 'end',
+          ellipsis: true,
+          minWidth: 180,
+          render: (h, p) => {
+            return this.tableDataRender(h, this.cityFormatter(p.row.end))
+          }
         },
         {
-          title: '体积（方）',
-          key: 'volume'
+          title: '体积(方)',
+          key: 'volume',
+          width: 100,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.volume)
+          }
         },
         {
-          title: '重量（吨）',
-          key: 'weight'
+          title: '重量(吨)',
+          key: 'weight',
+          width: 100,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.weight)
+          }
         }
       ],
       data: [],
@@ -103,6 +131,9 @@ export default {
           return item
         })
         this.loading = false
+      }).catch(err => {
+        this.loading = false
+        console.error(err)
       })
     },
 

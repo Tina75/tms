@@ -4,11 +4,12 @@
   // height calc( 88vh - 83px )
 
   &-part
-    flex 1
+    flex none
 
-    &-fix
-      flex none
+    &:first-child
       width 440px
+    &:last-child
+      width calc(100% - 620px)
 
     &-title
       height 32px

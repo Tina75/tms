@@ -5,23 +5,33 @@
         <Row :gutter="24" class="row">
           <Col span="6">
           <div class="col">
-            <Select v-model="model1" placeholder="请选择或输入客户名称">
-              <Option v-for="col in cityList" :value="col.value" :key="col.value">{{ col.label }}</Option>
-            </Select>
+            <SelectInput
+              v-model="keywords.consignerName"
+              :maxlength="20"
+              :remote="false"
+              :clearable="true"
+              :local-options="clients"
+              placeholder="请选择或输入客户名称"
+              style="width: 100%"
+              @on-focus.once="getClients"
+            >
+            </SelectInput>
           </div>
       </Col>
           <Col span="6">
           <div class="col">
-            <Input v-model="value" :maxlength="20"  placeholder="请输入订单号"/>
+            <Input v-model="keywords.orderNo" :maxlength="20"  placeholder="请输入订单号"/>
           </div>
       </Col>
           <Col span="6">
           <div class="col">
-            <Input v-model="value" :maxlength="20" placeholder="请输入客户订单号"  />
+            <Input v-model="keywords.customerOrderNo" :maxlength="20" placeholder="请输入客户订单号"  />
           </div>
       </Col>
           <Col span="6">
-          <div class="col"><Input :maxlength="20" v-model="value" placeholder="请输入运单号"  /></div>
+          <div class="col">
+            <Input :maxlength="20" v-model="keywords.waybillNo" placeholder="请输入运单号"  />
+          </div>
       </Col>
         </Row>
         <Row :gutter="24">
@@ -38,11 +48,12 @@
           <Col span="6">
           <div class="col">
             <DatePicker
-              v-model="time"
+              v-model="times"
               type="daterange"
               format="yyyy-MM-dd"
               placeholder="开始日期-结束日期"
               style="width: 100%"
+              @on-change="handleTimeChange"
             >
             </DatePicker>
           </div>
@@ -50,18 +61,19 @@
         </Row>
       </div>
       <div class="search-btn">
-        <Button type="primary">搜索</Button>
-        <Button style="margin-left: 8px">清除条件</Button>
+        <Button type="primary" @click="search">搜索</Button>
+        <Button style="margin-left: 8px" @click="clearKeywords">清除条件</Button>
       </div>
     </div>
     <div style="margin: 18px 0 12px 0">
-      <Button type="primary">导出</Button>
+      <Button type="primary" @click="ProfitsExport">导出</Button>
     </div>
     <page-table
       ref="pageTable"
+      :autoload="autoload"
       :url="url"
       :method="method"
-      :keywords="keywords"
+      :keywords="keyword"
       :columns="columns"
       :extra-columns="extraColumns"
       :show-filter="true"
@@ -73,126 +85,74 @@
 <script>
 import PageTable from '@/components/page-table'
 import AreaSelect from '@/components/AreaSelect'
+import SelectInput from '@/components/SelectInput.vue'
 import City from '@/libs/js/City'
+import { mapGetters, mapActions } from 'vuex'
+import Export from '@/libs/js/export'
 export default {
   name: 'operate',
   components: {
+    SelectInput,
     PageTable,
     AreaSelect
   },
   data () {
     return {
-      url: '',
-      method: 'post',
+      url: '/report/for/operating',
+      method: 'POST',
+      autoload: false,
       keywords: {
         consignerName: '',
         orderNo: '',
         customerOrderNo: '',
         waybillNo: '',
-        start: '',
-        end: '',
+        start: [],
+        end: [],
         startTime: '',
-        endTime: '',
-        pageNo: '',
-        pageSize: ''
+        endTime: ''
       },
-      cityList: [
-        {
-          value: 'New York',
-          label: 'New York'
-        },
-        {
-          value: 'London',
-          label: 'London'
-        },
-        {
-          value: 'Sydney',
-          label: 'Sydney'
-        },
-        {
-          value: 'Ottawa',
-          label: 'Ottawa'
-        },
-        {
-          value: 'Paris',
-          label: 'Paris'
-        },
-        {
-          value: 'Canberra',
-          label: 'Canberra'
-        }
-      ],
-      model1: '',
-      value: '',
-      time: '',
+      keyword: {
+        type: 1
+      },
+      times: ['', ''],
+      /* 订单状态 */
+      orderStatusMap: {
+        10: '提货',
+        20: '待调度',
+        30: '在途 ',
+        40: '已到货',
+        50: '已回单'
+      },
+      /* 提货单状态 */
+      loadbillStatusMap: {
+        1: '待提货',
+        2: '提货中',
+        3: '已提货'
+      },
+      /* 运单状态  */
+      waybillStatusMap: {
+        1: '待派车',
+        2: '待发运',
+        3: '在途',
+        4: '已到货'
+      },
+      /* 外转单状态  */
+      transbillStatusMap: {
+        1: '待发运',
+        2: '在途',
+        3: '货'
+      },
+      /* 回单状态  */
+      receiptStatusMap: {
+        0: '待回收',
+        1: '待返厂',
+        2: '已返厂'
+      },
       columns: [
         {
           title: '订单号',
           key: 'orderNo',
-          className: 'padding-20',
-          render: (h, params) => {
-            if (params.row.parentId !== '') {
-              return h('div', [
-                h('span', {
-                  style: {
-                    display: 'inline-block',
-                    width: '14px',
-                    height: '14px',
-                    background: '#418DF9',
-                    borderRadius: '2px',
-                    color: '#fff',
-                    lineHeight: '14px',
-                    textAlign: 'center',
-                    marginRight: '5px',
-                    marginLeft: '-19px'
-                  }
-                }, '子'),
-                h('a', {
-                  props: {
-                    type: 'text'
-                  },
-                  style: {
-                    marginRight: '5px',
-                    color: '#418DF9'
-                  },
-                  on: {
-                    click: () => {
-                      this.openTab({
-                        path: '/order-management/detail',
-                        query: {
-                          id: params.row.orderNo,
-                          orderId: params.row.id,
-                          from: 'order'
-                        }
-                      })
-                    }
-                  }
-                }, params.row.orderNo)
-              ])
-            } else {
-              return h('a', {
-                props: {
-                  type: 'text'
-                },
-                style: {
-                  marginRight: '5px',
-                  color: '#418DF9'
-                },
-                on: {
-                  click: () => {
-                    this.openTab({
-                      path: '/order-management/detail',
-                      query: {
-                        id: params.row.orderNo,
-                        orderId: params.row.id,
-                        from: 'order'
-                      }
-                    })
-                  }
-                }
-              }, params.row.orderNo)
-            }
-          }
+          className: 'padding-20'
         },
         {
           title: '客户订单号',
@@ -230,10 +190,103 @@ export default {
         },
         {
           title: '下单时间',
-          key: 'createTime',
+          key: 'orderCreateTime',
           render: (h, params) => {
-            return h('span', new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm'))
+            return h('span', new Date(params.row.orderCreateTime).Format('yyyy-MM-dd hh:mm'))
           }
+        },
+        {
+          title: '合计运费',
+          key: 'orderTotalFee'
+        },
+        {
+          title: '订单状态',
+          key: 'orderStatus',
+          render: (h, params) => {
+            return h('span', this.orderStatusMap[params.row.orderStatus])
+          }
+        },
+        {
+          title: '提货单号',
+          key: 'loadbillNo'
+        },
+        {
+          title: '提货单状态',
+          key: 'loadbillStatus'
+        },
+        {
+          title: '提货总费用',
+          key: 'loadbillTotalFee'
+        },
+        {
+          title: '提货承运商',
+          key: 'loadbillCarrierName'
+        },
+        {
+          title: '提货单司机',
+          key: 'loadbillDriver'
+        },
+        {
+          title: '提货单车牌号',
+          key: 'loadbillCarNo'
+        },
+        {
+          title: '提货单车辆信息',
+          key: 'loadbillCarInfo'
+        },
+        {
+          title: '运单状态',
+          key: 'waybillStatus',
+          render: (h, params) => {
+            return h('span', this.waybillStatusMap[params.row.waybillStatus])
+          }
+        },
+        {
+          title: '送货总费用',
+          key: 'waybillTotalFee'
+        },
+        {
+          title: '送货承运商',
+          key: 'waybillCarrierName'
+        },
+        {
+          title: '运单司机',
+          key: 'waybillDriver'
+        },
+        {
+          title: '运单车牌号',
+          key: 'waybillCarNo'
+        },
+        {
+          title: '运单车辆信息',
+          key: 'waybillCarInfo'
+        },
+        {
+          title: '外转单号',
+          key: 'transbillNo'
+        },
+        {
+          title: '外转单状态',
+          key: 'transbillStatus',
+          render: (h, params) => {
+            return h('span', this.transbillStatusMap[params.row.transbillStatus])
+          }
+        },
+        {
+          title: '外转方费用',
+          key: 'transbillTotalFee'
+        },
+        {
+          title: '外转方',
+          key: 'transfereeName'
+        },
+        {
+          title: '回单号',
+          key: 'receiptNo'
+        },
+        {
+          title: '回单状态',
+          key: 'receiptStatus'
         }
       ],
       extraColumns: [
@@ -246,12 +299,6 @@ export default {
         {
           title: '客户订单号',
           key: 'customerOrderNo',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '运单号',
-          key: 'waybillNo',
           fixed: false,
           visible: true
         },
@@ -286,79 +333,233 @@ export default {
           visible: true
         },
         {
+          title: '合计运费',
+          key: 'orderTotalFee',
+          fixed: false,
+          visible: false
+        },
+        {
           title: '下单时间',
-          key: 'createTime',
+          key: 'orderCreateTime',
           fixed: false,
           visible: true
         },
         {
-          title: '发货联系人',
-          key: 'consignerContact',
+          title: '订单状态',
+          key: 'orderStatus',
           fixed: false,
           visible: false
         },
         {
-          title: '收货联系人',
-          key: 'consigneeContact',
+          title: '提货单号',
+          key: 'loadbillNo',
           fixed: false,
           visible: false
         },
         {
-          title: '修改时间',
-          key: 'updateTime',
+          title: '提货单状态',
+          key: 'loadbillStatus',
           fixed: false,
           visible: false
         },
         {
-          title: '货物类型',
-          key: 'loadFee',
+          title: '提货总费用',
+          key: 'loadbillTotalFee',
           fixed: false,
           visible: false
         },
         {
-          title: '数量',
-          key: 'settlementType',
+          title: '提货承运商',
+          key: 'loadbillCarrierName',
           fixed: false,
           visible: false
         },
         {
-          title: '要求装货时间',
-          key: 'deliveryTime',
+          title: '提货单司机',
+          key: 'loadbillDriver',
           fixed: false,
           visible: false
         },
         {
-          title: '要求卸货时间',
-          key: 'arriveTime',
+          title: '提货单车牌号',
+          key: 'loadbillCarNo',
           fixed: false,
           visible: false
         },
         {
-          title: '运费',
-          key: 'totalFee',
+          title: '提货单车辆信息',
+          key: 'loadbillCarInfo',
           fixed: false,
           visible: false
         },
         {
-          title: '修改人',
-          key: 'unloadFee',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '创建人',
-          key: 'creatorId',
+          title: '运单号',
+          key: 'waybillNo',
           fixed: false,
           visible: true
+        },
+        {
+          title: '运单状态',
+          key: 'waybillStatus',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '送货总费用',
+          key: 'waybillTotalFee',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '送货承运商',
+          key: 'waybillCarrierName',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '运单司机',
+          key: 'waybillDriver',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '运单车牌号',
+          key: 'waybillCarNo',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '运单车辆信息',
+          key: 'waybillCarInfo',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '外转单号',
+          key: 'transbillNo',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '外转单状态',
+          key: 'transbillStatus',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '外转方费用',
+          key: 'transbillTotalFee',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '外转方',
+          key: 'transfereeName',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '回单号',
+          key: 'receiptNo',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '回单状态',
+          key: 'receiptStatus',
+          fixed: false,
+          visible: false
         }
       ]
     }
   },
+  computed: {
+    ...mapGetters([
+      'clients'
+    ])
+  },
   methods: {
+    ...mapActions([
+      'getClients'
+    ]),
+    search () {
+      // 输入框都为空，type=1,搜索数据清空
+      if (!this.isEmpty()) {
+        this.keyword = {
+          type: 1
+        }
+        return
+      }
+      this.keyword = {
+        consignerName: this.keywords.consignerName || null,
+        orderNo: this.keywords.orderNo || null,
+        customerOrderNo: this.keywords.customerOrderNo || null,
+        waybillNo: this.keywords.waybillNo || null,
+        start: (this.keywords.start !== null && this.keywords.start.length) ? Number(this.keywords.start[this.keywords.start.length - 1]) : null,
+        end: (this.keywords.end !== null && this.keywords.end.length) ? Number(this.keywords.end[this.keywords.end.length - 1]) : null,
+        startTime: this.keywords.startTime || null,
+        endTime: this.keywords.endTime || null
+      }
+    },
+    // 判断搜索条件是不是都是空，为空则key = 1
+    isEmpty () {
+      /* flag返回false，则对象中值都是空 */
+      let flag = false
+      for (let key in this.keywords) {
+        if (this.keywords[key] && this.keywords[key].length) {
+          flag = true
+        }
+      }
+      return flag
+    },
+    clearKeywords () {
+      this.keywords = {
+        consignerName: '',
+        orderNo: '',
+        customerOrderNo: '',
+        waybillNo: '',
+        start: [],
+        end: [],
+        startTime: '',
+        endTime: ''
+      }
+      this.times = ['', '']
+      this.keyword = {
+        type: 1 // 不搜索
+      }
+    },
+    // 导出
+    ProfitsExport () {
+      if (!this.isEmpty()) {
+        this.$Message.error('请先输入导出条件')
+        return
+      }
+      let data = {
+        consignerName: this.keywords.consignerName || null,
+        orderNo: this.keywords.orderNo || null,
+        customerOrderNo: this.keywords.customerOrderNo || null,
+        waybillNo: this.keywords.waybillNo || null,
+        start: (this.keywords.start !== null && this.keywords.start.length) ? Number(this.keywords.start[this.keywords.start.length - 1]) : null,
+        end: (this.keywords.end !== null && this.keywords.end.length) ? Number(this.keywords.end[this.keywords.end.length - 1]) : null,
+        startTime: this.keywords.startTime || null,
+        endTime: this.keywords.endTime || null
+      }
+      Export({
+        url: '/report/for/operating/export',
+        method: 'post',
+        data
+        // fileName: '运单明细'
+      }).then(res => {
+        this.$Message.success('导出成功')
+      }).catch(err => console.error(err))
+    },
     // 筛选列表显示字段
     handleColumnChange (val) {
-      console.log(val)
       this.extraColumns = val
+    },
+    handleTimeChange (val) {
+      this.keywords.startTime = val[0]
+      this.keywords.endTime = val[1]
     }
   }
 }

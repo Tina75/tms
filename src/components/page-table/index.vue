@@ -5,7 +5,7 @@
       :width="width"
       :height="height"
       :data="dataList"
-      :columns="filterColumns"
+      :columns="mapColumns"
       :stripe="stripe"
       :border="border"
       :show-header="showHeader"
@@ -72,8 +72,8 @@ import _ from 'lodash'
   *    }
   * 6.onColumnChange 函数，当显示隐藏排序排序发生变化时候回调，参数返回新的extraColumns
   * 7.rowId data数据的关键字编号，与下面的selected配合使用
-  * 8.selected 已选中的selectedId列表集合['id1','id2']，当有列出现type=selection的才需要传
-  * 9.autoload 默认发送请求加载数据，设置成false，则不发送请求，根据关键字请求
+  * 8.autoload 默认发送请求加载数据，设置成false，则不发送请求，根据关键字请求
+  * 9.onCancelAll 取消选中所有的时候调用，返回selection
   */
 export default {
   components: {
@@ -91,10 +91,10 @@ export default {
       default: 'id'
     },
     // 已经选中的数据 id 列表，会根据上面给的rowid参数，判断数据是否选中
-    selected: {
-      type: Array,
-      default: () => []
-    },
+    // selected: {
+    //   type: Array,
+    //   default: () => []
+    // },
     // 请求的地址
     url: String,
     // 部分接口查询方法可能是post
@@ -181,6 +181,7 @@ export default {
     onSelect: Function,
     onSelectCancel: Function,
     onSelectAll: Function,
+    onCancelAll: Function,
     onSelectionChange: Function,
     onSortChange: Function,
     onFilterChange: Function,
@@ -196,6 +197,7 @@ export default {
       isRemote: false,
       // 请求时候的加载状态
       loading: false,
+      selectedRow: [],
       pagination: {
         pageSize: 10,
         pageNo: 1,
@@ -256,9 +258,23 @@ export default {
         return this.columns
       }
     },
+    mapColumns () {
+      return this.filterColumns.map((col) => {
+        if (col.key && !col.render) {
+          col.render = (h, params) => {
+            let value = params.row[col.key]
+            return h('span', !_.isNull(value) && !_.isUndefined(value) && params.row[col.key] !== '' ? params.row[col.key] : '-')
+          }
+        }
+        return col
+      })
+    },
     // 是否是复选框表格
     isSelection () {
       return this.columns.length > 0 && this.columns[0].type === 'selection'
+    },
+    selected () {
+      return this.selectedRow.map(item => item[this.rowId])
     },
     dataList () {
       if (this.isRemote) {
@@ -273,6 +289,8 @@ export default {
     // 搜索关键字变化后,重置分页参数，重新发送请求
     keywords: {
       handler () {
+        // 关键字变化，重置清空选中项
+        this.clearSelected()
         this.pagination.pageNo = 1
         this.fetch()
       },
@@ -282,6 +300,9 @@ export default {
       // this.dataSource = newData.slice()
       this.setLocalDataSource(newData)
     }
+  },
+  destroyed () {
+    this.selectedRow = []
   },
   created () {
     this.isRemote = !!this.url
@@ -346,7 +367,7 @@ export default {
           } else {
             vm.dataSource = data[vm.listField] || []
           }
-          if (this.showPagination) {
+          if (vm.showPagination) {
             vm.pagination.pageSize = data.pageSize
             vm.pagination.totalCount = data.totalCount || data.pageTotals
           }
@@ -372,7 +393,8 @@ export default {
      * @param {object} row 选中的行
      */
     handleSelect (selection, row) {
-      this.$emit('on-select', selection, row)
+      this.selectedRow.push(row)
+      this.$emit('on-select', this.selectedRow, row)
     },
     /**
      * 取消选中一项后回调
@@ -380,21 +402,42 @@ export default {
      * @param {object} row 未选中的行
      */
     handleSelectCancel (selection, row) {
-      this.$emit('on-select-cancel', selection, row)
+      const rowId = this.rowId
+      this.selectedRow = this.selectedRow.filter(item => item[rowId] !== row[rowId])
+      this.$emit('on-select-cancel', this.selectedRow, row)
     },
     /**
      * 选中所有
      * @param {array} selection
      */
     handleSelectAll (selection) {
-      this.$emit('on-select-all', selection)
+      this.selectedRow = _.unionBy(this.selectedRow, selection, this.rowId)
+      this.$emit('on-select-all', this.selectedRow)
     },
     /**
      * 选中项发送变化后回调
      * @param {array} selection
      */
     handleSelectionChange (selection) {
-      this.$emit('on-selection-change', selection)
+      const vm = this
+      if (selection.length === 0) {
+        // 这里只处理全取消的场景
+        if (this.selectedRow.length === this.pagination.pageSize) {
+          // 如果选中的行正好和分页参数一致，说明只有当前页被选中了，直接清空数组
+          this.selectedRow = []
+        } else {
+          let dataIds = this.dataSource.map((item) => {
+            return item[vm.rowId]
+          })
+          this.selectedRow = this.selectedRow.filter((data) => {
+            return !dataIds.includes(data[vm.rowId])
+          })
+          dataIds = []
+        }
+        // 取消全部，通知回调
+        this.$emit('on-cancel-all', this.selectedRow)
+      }
+      this.$emit('on-selection-change', this.selectedRow)
     },
     /**
      * 排序时候有效，排序时回调
@@ -450,6 +493,12 @@ export default {
       this.pagination.pageSize = pageSize
       this.fetch()
       this.$emit('on-page-size-change', pageSize)
+    },
+    /**
+     * 清空复选框选择的行数据
+     */
+    clearSelected () {
+      this.selectedRow = []
     }
   }
 }

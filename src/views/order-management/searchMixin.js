@@ -4,21 +4,6 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
-      selectStatus: 0, // 当前搜索状态   0：客户名称   1：订单号  2：运单号
-      selectList: [
-        {
-          value: 0,
-          label: '客户名称'
-        },
-        {
-          value: 1,
-          label: '订单号'
-        },
-        {
-          value: 2,
-          label: '运单号'
-        }
-      ],
       keywords: {
         // status: null,
         consignerName: null,
@@ -39,7 +24,7 @@ export default {
         }
       },
       simpleSearch: true, // 简单搜索
-      selectOrderList: [], // 选中的订单集合
+      selectOrderList: [], // 跨页选择订单集合
       selectedId: [], // 选中的订单集合的ID集合
       isSearching: false // 是否正在搜索中
     }
@@ -52,7 +37,8 @@ export default {
   },
 
   created () {
-    // 初始化按钮组
+    const columns = window.sessionStorage[this.tabType + '_COLUMNS']
+    if (columns) this.extraColumns = JSON.parse(columns)
   },
 
   mounted () {
@@ -88,23 +74,29 @@ export default {
         key.status = this.keywords.status
         key.startTime = this.keywords.startTime || null
         key.endTime = this.keywords.endTime || null
+        // 简单搜索模式下当前搜索框值为空是默认不是搜索状态
+        if (this.simpleSearch && ((this.selectStatus === 0 && !this.keywords.consignerName) || (this.selectStatus === 1 && !this.keywords.orderNo) || (this.selectStatus === 2 && !this.keywords.waybillNo))) {
+          this.isSearching = false
+        } else {
+          this.isSearching = true
+        }
       } else { // 回单列表搜索
         key.receiptStatus = this.keywords.receiptStatus
         key.recoveryTimeStart = this.keywords.recoveryTimeStart || null
         key.recoveryTimeEnd = this.keywords.recoveryTimeEnd || null
         key.returnTimeStart = this.keywords.returnTimeStart || null
         key.returnTimeEnd = this.keywords.returnTimeEnd || null
+        // 简单搜索模式下当前搜索框值为空是默认不是搜索状态
+        if (this.simpleSearch && ((this.selectStatus === 0 && !this.keywords.consignerName) || (this.selectStatus === 1 && !this.keywords.orderNo) || (this.selectStatus === 2 && !this.keywords.customerOrderNo))) {
+          this.isSearching = false
+        } else {
+          this.isSearching = true
+        }
       }
       this.keywords = key
       this.keyword = {...this.keywords}
       this.selectOrderList = [] // 重置当前已勾选项
       this.selectedId = [] // 重置当前已勾选id项
-      // 简单搜索模式下当前搜索框值为空是默认不是搜索状态
-      if (this.simpleSearch && ((this.selectStatus === 0 && !this.keywords.consignerName) || (this.selectStatus === 1 && !this.keywords.orderNo) || (this.selectStatus === 2 && !this.keywords.waybillNo))) {
-        this.isSearching = false
-      } else {
-        this.isSearching = true
-      }
     },
     // 清除keywords搜索
     clearKeywords () {
@@ -163,33 +155,21 @@ export default {
       this.keywords.returnTimeEnd = val[1]
     },
     // 筛选列表显示字段
-    handleColumnChange (col) {
-      this.extraColumns = col
+    handleColumnChange (columns) {
+      this.extraColumns = columns
+      window.sessionStorage.setItem(this.tabType + '_COLUMNS', JSON.stringify(columns))
     },
     // 列表批量选择操作
-    handleSelectionChange (val) {
-      // console.log(val)
-    },
-    // 多选模式下 列表选中某一项时触发
-    handleOnSelect (selection, row) {
-      this.selectOrderList.push(row)
-      console.log(this.selectOrderList)
-      this.pickupID()
-    },
-    // 多选模式下 取消选中某一项时触发
-    handleOnSelectCancel (selection, row) {
-      let index = this.selectOrderList.findIndex((item) => item.id === row.id)
-      this.selectOrderList.splice(index, 1) // 删掉已勾选中对应id的项
-      console.log(this.selectOrderList)
-      this.pickupID()
-    },
-    // 将selectOrderList项中的id提出来组成新数组赋值给selectedId
-    pickupID () {
-      let s = []
-      this.selectOrderList.map((item) => {
-        s.push(item.id)
+    handleSelectionChange () {
+      // 当前选中集合
+      this.selectOrderList = this.$refs.pageTable.selectedRow
+      // 当前选中项id集合
+      let ids = []
+      this.$refs.pageTable.selectedRow.map((item) => {
+        ids.push(item.id)
       })
-      this.selectedId = s
+      this.selectedId = ids
+      console.log(this.selectOrderList)
       console.log(this.selectedId)
     },
     // 表格按时间排序
@@ -237,6 +217,11 @@ export default {
           break
       }
       return name
+    },
+    // 将地址字符串12位后的替换成...
+    formatterAddress (str) {
+      let dot = str.substring(12)
+      return str.replace(dot, ' ...')
     }
   }
 }

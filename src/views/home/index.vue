@@ -6,156 +6,144 @@
         <p v-html="greetings"></p>
         </Col>
         <Col span="4" class="van-right">
-        <Poptip trigger="click" placement="bottom-end">
+        <Poptip v-model="visible" trigger="click" placement="bottom-end">
           <FontIcon type="shouye" size="20" class="page-home__setting-icon" />
           <div slot="content">
-            插件
+            <div class="page-home__dropdown-header">
+              选择显示面板
+            </div>
+            <CheckboxGroup v-model="cardChecks" class="page-home__dropdown-body">
+              <div v-for="(item, index) in cardsList" :key="index" class="page-home__dropdown-checkbox">
+                <Checkbox :label="item.name">
+                  <span>{{cardsMap[item.name]}}</span>
+                </Checkbox>
+              </div>
+            </CheckboxGroup>
+            <div class="page-home__dropdown-footer">
+              <Button type="primary" size="small" @click="confirmAction">确定</Button>
+              <Button class="i-ml-10" size="small" @click="cancelAction">取消</Button>
+            </div>
           </div>
         </Poptip>
         </Col>
       </Row>
-
     </div>
-    <Row gutter="16">
-      <Col span="6" class="i-mt-15">
-      <OrderCard
-        :data="loadBills"
-        :range="['#418DF9','#76E7FD']"
-        theme="#418DF9"
-        title="提货待办"
-        label="提示文字"
-        extra="123"
-      >
-      </OrderCard>
-      </Col>
-      <Col span="6" class="i-mt-15">
-      <OrderCard
-        :data="wayBills"
-        :range="['#FFBB44','#FFB897']"
-        theme="#FFBB44"
-        title="送货待办"
-        label="提示文字"
-        extra="456"
-      >
-      </OrderCard>
-      </Col>
-      <Col span="6" class="i-mt-15">
-      <OrderCard
-        :data="outsideBills"
-        :range="['#00A4BD','#00E0CD']"
-        theme="#00A4BD"
-        title="外转待办"
-        label="提示文字"
-        extra="789"
-      >
-      </OrderCard>
-      </Col>
-      <Col span="6" class="i-mt-15">
-      <BlankCard>
-        <div slot="title">消息中心</div>
-        <div slot="extra">...</div>
-        <CellGroup>
-          <Cell title="系统升级提示" label="2018-9-12" class="page-home__message-item">
-            <Icon slot="icon" type="md-chatboxes">
-            </Icon>
-          </Cell>
-          <Cell title="系统升级提示" label="2018-9-12" class="page-home__message-item">
-            <Icon slot="icon" type="md-chatboxes">
-            </Icon>
-          </Cell>
-        </cell></CellGroup>
-      </BlankCard>
-      </Col>
-      <Col span="6" class="i-mt-15">
-      <BlankCard>
-        <div slot="title">今日订单数</div>
-        <div slot="extra">...</div>
-      </BlankCard>
-      </Col>
-      <Col span="6" class="i-mt-15">
-      <BlankCard>
-        <div slot="title">新增客户数</div>
-        <div slot="extra">...</div>
-      </BlankCard>
-      </Col>
-      <Col span="12" class="i-mt-15">
-      <BlankCard :padding="false">
-        <div slot="title">在途车辆位置</div>
-        <div slot="extra">...</div>
-        <div ref="positionMap" style="height:238px"></div>
-      </BlankCard>
-      </Col>
-      <Col span="24" class="i-mt-15">
-      <BlankCard>
-        <div slot="title">营业额通知（近七日）</div>
-        <div slot="extra">...</div>
-      </BlankCard>
-      </Col>
-      <Col span="12" class="i-mt-15">
-      <BlankCard>
-        <div slot="title">调度订单数</div>
-        <div slot="extra">...</div>
-      </BlankCard>
-      </Col>
-      <Col span="12" class="i-mt-15">
-      <BlankCard>
-        <div slot="title">开单数</div>
-        <div slot="extra">...</div>
-      </BlankCard>
-      </Col>
-      <Col span="12" class="i-mt-15">
-      <BlankCard>
-        <div slot="title">应收款项/应付款项</div>
-        <div slot="extra">...</div>
-      </BlankCard>
-      </Col>
-      <Col span="12" class="i-mt-15">
-      <BlankCard>
-        <div slot="title">货物重量/体积</div>
-        <div slot="extra">...</div>
-      </BlankCard>
-      </Col>
+    <Row :gutter="16">
+      <!-- 提货代办 -->
+      <PickupTodo v-if="cardChecksTemp.includes('pickup-todo')"/>
+      <!-- 送货代办 -->
+      <DeliveryTodo v-if="cardChecksTemp.includes('delivery-todo')"/>
+      <!-- 外转代办 -->
+      <TransferTodo v-if="cardChecksTemp.includes('trans-todo')"/>
+      <!-- 回单代办 -->
+      <ReceiptTodo v-if="cardChecksTemp.includes('receipt-todo')" />
+      <!-- 消息中心 -->
+      <MessageCenter v-if="cardChecksTemp.includes('message-center')"/>
+      <!-- 发货方核销代办 -->
+      <ShipperTodo v-if="cardChecksTemp.includes('consigner-todo')"/>
+      <!-- 承运商核销代办 -->
+      <CarrierTodo v-if="cardChecksTemp.includes('carrier-todo')"/>
+      <!-- 外转方核销代办 -->
+      <ExteriorTodo  v-if="cardChecksTemp.includes('transferfee-todo')"/>
+      <!-- 今日订单数 -->
+      <CreateOrderStatis v-if="cardChecksTemp.includes('order-create')"/>
+      <!-- 新增顾客数 -->
+      <NewCustumerStatis v-if="cardChecksTemp.includes('new-customer')"/>
+      <!-- 在途车辆信息 -->
+      <CarPosition v-if="cardChecksTemp.includes('transport-location')"/>
+
+      <Turnover v-if="cardChecksTemp.includes('turnover-statistics')" />
+
+      <SchedulingOrder v-if="cardChecksTemp.includes('dispatch-statistics')"/>
+
+      <Billing v-if="cardChecksTemp.includes('order-statistics')"/>
+
+      <ReceiptsPayments v-if="cardChecksTemp.includes('pay-receive')"/>
+
+      <Goods v-if="cardChecksTemp.includes('cargo-statistics')"/>
     </Row>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import BMap from 'BMap'
+import server from '@/libs/js/server'
+
 import OrderCard from './components/OrderCard.vue'
 import BlankCard from './components/BlankCard.vue'
 import BasePage from '@/basic/BasePage'
 import FontIcon from '@/components/FontIcon'
 
-import MarkerOverlay from './libs/MarkerOverlay.js'
-import LabelOverlay from './libs/LabelOverlay.js'
+import PickupTodo from './plugins/pickup-todo.vue'
+import DeliveryTodo from './plugins/delivery-todo.vue'
+import TransferTodo from './plugins/transfer-todo.vue'
+import ReceiptTodo from './plugins/receipt-todo.vue'
+import MessageCenter from './plugins/message-center.vue'
+import CreateOrderStatis from './plugins/create-order-statis.vue'
+
+import Turnover from './plugins/turnover'
+import SchedulingOrder from './plugins/scheduling-order'
+import Billing from './plugins/billing'
+import ReceiptsPayments from './plugins/receipts-payments'
+import Goods from './plugins/goods'
+import { eventHub } from './plugins/mixin.js'
+
+import ShipperTodo from './plugins/shipper-todo.vue'
+import CarrierTodo from './plugins/carrier-todo.vue'
+import ExteriorTodo from './plugins/exterior-todo.vue'
+import NewCustumerStatis from './plugins/new-customer-statis.vue'
+import CarPosition from './plugins/car-postion.vue'
+
 export default {
   name: 'index',
   meteInfo: { title: '首页' },
   components: {
     OrderCard,
     FontIcon,
-    BlankCard
+    BlankCard,
+    PickupTodo,
+    DeliveryTodo,
+    TransferTodo,
+    MessageCenter,
+    CreateOrderStatis,
+    Turnover,
+    SchedulingOrder,
+    Billing,
+    ReceiptsPayments,
+    Goods,
+    CarrierTodo,
+    ExteriorTodo,
+    NewCustumerStatis,
+    CarPosition,
+    ReceiptTodo,
+    ShipperTodo
   },
   mixins: [BasePage],
   data () {
     return {
-      loadBills: [
-        {name: '待提货调度订单数量', value: '12'},
-        {name: '待提货提货订单数量', value: '32'},
-        {name: '运输中订单数量', value: '42'}
-      ],
-      wayBills: [
-        {name: '待送货调度订单数量', value: '12'},
-        {name: '待送派车订单数量', value: '32'},
-        {name: '待发运订单数量', value: '412'},
-        {name: '运输中订单数量', value: '42'}
-      ],
-      outsideBills: [
-        {name: '待提货调度订单数量', value: '12'},
-        {name: '待提货提货订单数量', value: '32'},
-        {name: '运输中订单数量', value: '42'}
-      ]
+      visible: false,
+      cardChecks: [],
+      cardChecksTemp: [],
+      cardsMap: {
+        'pickup-todo': '提货待办',
+        'delivery-todo': '送货待办',
+        'trans-todo': '外转待办',
+        'receipt-todo': '回单待办',
+        'consigner-todo': '发货方核销待办',
+        'carrier-todo': '承运商核销待办',
+        'transferfee-todo': '外转方核销待办',
+        'message-center': '消息中心',
+        'order-create': '今日订单数',
+        'new-customer': '新增客户数',
+        'transport-location': '在途车辆位置',
+        'turnover-statistics': '营业额通知',
+        'dispatch-statistics': '调度订单数',
+        'order-statistics': '开单数',
+        'pay-receive': '应收款/应付款项',
+        'cargo-statistics': '货物重量/体积'
+      },
+      cardsList: [],
+      intersectionObserver: null
     }
   },
   computed: {
@@ -176,32 +164,120 @@ export default {
       }
     }
   },
+  created () {
+    // 监控卡片卡片
+    eventHub.$on('plugin:add', this.addChild)
+  },
+  beforeMount () {
+    if ('IntersectionObserver' in window) {
+      this.intersectionObserver = new IntersectionObserver(this.intersectionObserverEvent, {
+        root: this.$parent.$el || document.querySelector('.ivu-layout-content'),
+        rootMargin: '0px',
+        threshold: [0]
+      })
+    }
+  },
   mounted () {
-    console.log('user', this.UserInfo)
-    this.$nextTick(() => {
-      const bmap = new BMap.Map(this.$refs.positionMap)
-      const point = new BMap.Point(118.787842, 32.026739)
-      bmap.centerAndZoom(point, 16)
-
-      const markerOverlay = new MarkerOverlay(point)
-      const labelOverlay = new LabelOverlay(point, '苏A 88888')
-
-      bmap.addOverlay(labelOverlay)
-      bmap.addOverlay(markerOverlay)
-
-      this.$refs.positionMap.style.top = '-4px'
-    })
+    this.initCardList()
+  },
+  beforeDestroy () {
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect()
+      this.intersectionObserver = null
+    }
+    eventHub.$off('plugin:add', this.addChild)
   },
   methods: {
-    getGreetings () {
 
+    addChild (_vm) {
+      if (this.intersectionObserver) {
+        _vm.$el.$vm = _vm
+        this.intersectionObserver.observe(_vm.$el)
+      }
+    },
+    /**
+     * @param array entries 监控的element元素数组
+     */
+    intersectionObserverEvent (entries) {
+      const vm = this
+      entries.forEach((entry) => {
+        if (entry.isIntersecting || entry.intersectionRatio > 0) {
+          eventHub.$emit(`plugin:${entry.target.$vm.$options.name}`)
+          vm.unobserve(entry.target)
+        }
+      })
+    },
+    unobserve (el) {
+      this.intersectionObserver.unobserve(el)
+    },
+    // 获取card数组
+    initCardList () {
+      server({
+        url: 'home/plugin/user',
+        method: 'get'
+      }).then(res => {
+        if (res && res.data) {
+          const data = res.data.data
+          let [valid, invalid] = [[], []]
+          this.cardChecksTemp = []
+          for (const i of data) {
+            if (i.valid === 1) {
+              valid.push(i)
+              this.cardChecksTemp.push(i.name)
+            } else if (i.valid === 0) {
+              invalid.push(i)
+            }
+          }
+          valid = valid.sort((a, b) => a.code - b.code)
+          invalid = invalid.sort((a, b) => (a, b) => (a.code - b.code))
+          // 排序
+          this.cardsList = [...valid, ...invalid]
+          this.cardChecks = this.cardChecksTemp
+        }
+      })
+    },
+    // 确认请求
+    confirmAction () {
+      const data = this.cardsList.map(el => {
+        const status = this.cardChecks.includes(el.name)
+        status ? el.valid = 1 : el.valid = 0
+        return el
+      })
+      server({
+        url: 'home/plugin/save',
+        method: 'post',
+        data
+      }).then(res => {
+        this.visible = false
+        this.initCardList()
+      })
+    },
+    // 取消
+    cancelAction () {
+      this.visible = false
+      this.cardChecks = this.cardChecksTemp
     }
   }
 
 }
 </script>
-<style lang="stylus">
+<style lang="stylus" scoped>
 .page-home
+  &__dropdown-header
+    text-align center
+    border-bottom 1px solid #efefef
+    padding 10px 0
+  &__dropdown-body
+    text-align left
+    padding 5px 10px
+  &__dropdown-checkbox
+    margin 6px 0
+  &__dropdown-footer
+    padding 10px 0
+    text-align center
+  &__padding-8
+    padding-left 8px
+    padding-right 8px
   &__header
     position relative
   &__setting-icon
@@ -209,6 +285,4 @@ export default {
   &__message-item
     background-color #f3f3f3
     margin-bottom 8px
-.anchorBL
-  display none
 </style>

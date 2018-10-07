@@ -54,12 +54,14 @@ export default {
           commit(types.RECEIVE_ADDRESS_LIST, addressList)
         }
         if (cargoList.length > 0) {
+          const transformCargoList = cargoList.map((cargo) => new Cargo(cargo, true))
           // 货物信息
-          commit(types.RECEIVE_CARGO_LIST, cargoList)
+          commit(types.RECEIVE_CARGO_LIST, transformCargoList)
           // commit(types.RECEIVE_CONSIGNER_CARGO_LIST, cargoList.map((cargo) => {
           //   return new Cargo(cargo, true)
           // }))
-          commit(types.RECEIVE_CONSIGNER_CARGO_LIST, [new Cargo(cargoList[0], true)])
+          // 只复制一个
+          commit(types.RECEIVE_CONSIGNER_CARGO_LIST, transformCargoList.slice(0, 1))
         }
         if (consigneeList.length > 0) {
           // 收货方地址
@@ -187,7 +189,8 @@ export default {
           // pageNo: pageNo,
           // pageSize: pageSize,
           type: 1,
-          keyword: null
+          keyword: null,
+          order: 'create_time,asc'
         }
       }).then((response) => {
         // 承运商信息
@@ -207,7 +210,7 @@ export default {
       // const { pageNo, pageSize } = state.order.pagination
       server({
         method: 'get',
-        url: 'carrier/list/car',
+        url: 'carrier/list/carOrderByUpdateTimeDesc',
         params: {
           // pageNo: pageNo,
           // pageSize: pageSize,
@@ -217,6 +220,7 @@ export default {
         // 承运商车辆信息
         const carrierCars = response.data.data.carList
         commit(types.RECEIVE_CARRIER_CAR_LIST, carrierCars)
+        resolve(carrierCars)
       }).catch((error) => {
         reject(error)
       })
@@ -241,6 +245,7 @@ export default {
         // 承运商车辆信息
         const carrierDrivers = response.data.data.driverList
         commit(types.RECEIVE_CARRIER_DRIVER_LIST, carrierDrivers)
+        resolve(carrierDrivers)
       }).catch((error) => {
         reject(error)
       })
@@ -262,7 +267,8 @@ export default {
           // pageNo: pageNo,
           // pageSize: pageSize,
           type: 1,
-          keyword: null
+          keyword: null,
+          order: 'create_time,asc'
         }
       }).then((response) => {
         // 外转方信息

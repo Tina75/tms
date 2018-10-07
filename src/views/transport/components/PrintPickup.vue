@@ -10,7 +10,7 @@
             <tr>
               <td>承运商：{{item.loadbill.carrierName}}</td>
               <td>车牌号：{{item.loadbill.carNo}}</td>
-              <td>车型：{{item.loadbill.carType|carTypeFilter}} {{item.loadbill.carLength|carLengthFilter}}</td>
+              <td>车型：{{item.loadbill.carType|carTypeFormatter}} {{item.loadbill.carLength|carLengthFormatter}}</td>
             </tr>
             <tr>
               <td>司机：{{item.loadbill.driverName}}</td>
@@ -49,7 +49,7 @@
                 <span class="table-footer-item">保险费：{{item.loadbill.insuranceFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">其他：{{item.loadbill.otherFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">合计运费: {{item.loadbill.totalFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">结算方式：{{item.loadbill.settlementType | settlementTypeFilter}}</span>
+                <span class="table-footer-item">结算方式：{{item.loadbill.settlementType | payTypeFormatter}}</span>
               </td>
             </tr>
           </tbody>
@@ -71,49 +71,11 @@
 </template>
 
 <script>
+import TransportBase from '../transportBase'
 import Printd from 'printd'
-import City from '@/libs/js/City'
-import CarConfigs from '../detail/carConfigs.json'
-
-const carType = CarConfigs.carType
-const carLength = CarConfigs.carLength
 
 export default {
-
-  filters: {
-    // 格式化日期
-    dateFormatter (timestamp) {
-      if (!timestamp) return ''
-      return new Date(timestamp).Format('yyyy-MM-dd hh:mm:ss')
-    },
-    // 格式化城市
-    cityFilter (code) {
-      if (!code) return ''
-      return City.codeToFullName(code, 3, '')
-    },
-    // 格式化车型
-    carTypeFilter (value) {
-      for (let i = 0; i < carType.length; i++) {
-        if (value === carType[i].value) {
-          return carType[i].label
-        }
-      }
-    },
-    // 格式化车长
-    carLengthFilter (value) {
-      for (let i = 0; i < carLength.length; i++) {
-        if (value === carLength[i].value) {
-          return carLength[i].label
-        }
-      }
-    },
-    // 格式化结算方式
-    settlementTypeFilter (type) {
-      if (type === 1) return '按单结'
-      else if (type === 2) return '月结'
-      else return ''
-    }
-  },
+  mixins: [ TransportBase ],
   props: {
     data: {
       type: Array,

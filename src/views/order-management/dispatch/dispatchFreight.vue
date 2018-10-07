@@ -2,7 +2,7 @@
   <div ref="$dispatch" class="dispatch">
     <div class="dispatch-part-fix">
       <div class="dispatch-part-title">可调度订单</div>
-      <Table :width="440"
+      <Table :width="500"
              :columns="leftTableHeader" :data="leftTableData"
              :loading="leftTableLoading && !leftTableData.length"
              @on-expand="keepLeftExpandOnly"></Table>
@@ -32,12 +32,14 @@
         <img src="../../../assets/img-empty.png" class="dispatch-empty-img">
         <p>暂无未发运运单，赶快创建新的运单吧～</p>
       </div>
-      <Table v-else
-             :width="rightTableWidth"
-             :columns="rightTableHeader" :data="rightTableData" :loading="rightTableLoading && !rightTableData.length"
-             highlight-row
-             @on-expand="keepRightExpandOnly"
-             @on-row-click="rightTableRowClick"></Table>
+      <div v-else>
+        <Table
+          :columns="rightTableHeader" :data="rightTableData" :loading="rightTableLoading && !rightTableData.length"
+          highlight-row
+          @on-expand="keepRightExpandOnly"
+          @on-row-click="rightTableRowClick"></Table>
+      </div>
+
     </div>
   </div>
 </template>
@@ -51,9 +53,6 @@ import tableExpand from './tableExpand'
 export default {
   name: 'DispatchFreight',
   mixins: [ BasePage, dispatchMixin ],
-  props: {
-    width: Number
-  },
   data () {
     return {
       // 右侧表格表头
@@ -82,7 +81,7 @@ export default {
           title: '运单号',
           key: 'waybillNo',
           // fixed: 'left',
-          minWidth: 160,
+          width: 180,
           render: (h, p) => {
             return h('a', {
               style: {
@@ -103,35 +102,42 @@ export default {
         {
           title: '始发地',
           key: 'start',
-          minWidth: 120,
-          ellipsis: true,
+          minWidth: 180,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.start))
+            return this.tableDataRender(h, this.cityFilter(p.row.start))
           }
         },
         {
           title: '目的地',
           key: 'end',
-          minWidth: 120,
-          ellipsis: true,
+          minWidth: 180,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.end))
+            return this.tableDataRender(h, this.cityFilter(p.row.end))
           }
         },
         {
           title: '车牌号',
           key: 'carNo',
-          minWidth: 120
+          width: 100,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.carNo)
+          }
         },
         {
-          title: '体积（方）',
+          title: '体积(方)',
           key: 'volume',
-          minWidth: 120
+          width: 100,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.volume)
+          }
         },
         {
-          title: '重量（吨）',
+          title: '重量(吨)',
           key: 'weight',
-          minWidth: 120
+          width: 100,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.weight)
+          }
         }
       ]
     }
@@ -142,13 +148,13 @@ export default {
   methods: {
     createFreight () {
       this.openDialog({
-        name: 'transport/dialog/createFreight',
+        name: 'order-management/dialog/createFreight',
         data: {
           title: '新增运单'
         },
         methods: {
           complete: () => {
-            this.fetchRightTableData()
+            this.fetchRightTableData('waybillId')
           }
         }
       })
@@ -156,22 +162,26 @@ export default {
 
     fetchData () {
       this.fetchLeftTableData('20')
-      this.fetchRightTableData()
+      this.fetchRightTableData('waybillId')
     },
     // 查询右侧表格数据
-    fetchRightTableData () {
+    fetchRightTableData (id) {
       this.rightTableLoading = true
       Server({
         url: '/dispatch/waybill/list',
         method: 'get'
       }).then(res => {
         this.rightTableData = this.dataFilter(res.data.data.waybillList, ['_expanded', '_highlight'], item => {
-          if (JSON.stringify(item) === JSON.stringify(this.rightExpandRow)) item._expanded = true
+          if (this.rightExpandRow && item[id] === this.rightExpandRow[id]) {
+            item._expanded = true
+            this.fetchRightExpandData()
+          }
           return item
         })
         this.rightTableLoading = false
       }).catch(err => {
         this.rightTableLoading = false
+        this.rightTableData = []
         console.error(err)
       })
     },
@@ -192,6 +202,7 @@ export default {
         this.rightTableExpandLoading = false
       }).catch(err => {
         this.rightTableExpandLoading = false
+        this.rightTableExpandData = []
         console.error(err)
       })
     },

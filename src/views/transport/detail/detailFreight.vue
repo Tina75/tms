@@ -27,11 +27,11 @@
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title">始发地：</span>
-            <span>{{ info.start | formatCity }}</span>
+            <span>{{ info.start | cityFormatter }}</span>
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">目的地：</span>
-            <span>{{ info.end | formatCity }}</span>
+            <span>{{ info.end | cityFormatter }}</span>
           </i-col>
           <i-col span="10" offset="1">
             <span class="detail-field-title">承运商：</span>
@@ -45,7 +45,7 @@
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型：</span>
-            <span>{{ info.carType|carTypeFilter }} {{ info.carLength|carLengthFilter }}</span>
+            <span>{{ info.carType|carTypeFormatter }} {{ info.carLength|carLengthFormatter }}</span>
           </i-col>
           <i-col span="10" offset="1">
             <span class="detail-field-title">司机：</span>
@@ -139,7 +139,7 @@
             <TimelineItem v-for="(item, key) in logList"
                           :key="key" class="detail-log-timeline-item">
               <i slot="dot"></i>
-              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong | formatTime}}</span>
+              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong | timeFormatter}}</span>
               <span style="color: #333;">{{'【' + item.operatorName + '】' + item.description}}</span>
             </TimelineItem>
 
@@ -249,8 +249,8 @@
           <span class="table-footer-title">总计</span>
           <span>总货值：{{ orderTotal.cargoCost }}</span>
           <span>总数量：{{ orderTotal.quantity }}</span>
-          <span>总体积：{{ orderTotal.weight }}</span>
-          <span>总重量：{{ orderTotal.volume }}</span>
+          <span>总体积：{{ orderTotal.volume }}</span>
+          <span>总重量：{{ orderTotal.weight }}</span>
         </div>
       </div>
       <!-- 应付费用 -->
@@ -323,7 +323,9 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import detailMixin from './detailMixin'
+import TransportBase from '../transportBase'
+import DetailMixin from './detailMixin'
+
 import Server from '@/libs/js/server'
 import MoneyInput from '../components/moneyInput'
 import AreaSelect from '@/components/AreaSelect'
@@ -331,9 +333,10 @@ import SelectInput from '@/components/SelectInput'
 
 export default {
   name: 'DetailFeright',
-  components: { MoneyInput, SelectInput, AreaSelect },
-  mixins: [ BasePage, detailMixin ],
   metaInfo: { title: '运单详情' },
+  components: { MoneyInput, SelectInput, AreaSelect },
+  mixins: [ BasePage, TransportBase, DetailMixin ],
+
   data () {
     return {
       pageName: 'feright',
@@ -383,6 +386,7 @@ export default {
             code: 120107,
             func: () => {
               this.inEditing = true
+              this.setPlace()
             }
           }]
         },
@@ -411,6 +415,7 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
+          width: 200,
           render: (h, p) => {
             return h('a', {
               style: { color: '#3A7EDE' },
@@ -431,49 +436,85 @@ export default {
         },
         {
           title: '客户订单号',
-          key: 'customerOrderNo'
+          key: 'customerOrderNo',
+          width: 200,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.customerOrderNo, true)
+          }
         },
         {
           title: '始发地-目的地',
           key: 'start',
+          width: 180,
           render: (h, p) => {
-            return h('span', this.formatCity(p.row.start) + '-' + this.formatCity(p.row.end))
+            const start = this.cityFormatter(p.row.start)
+            const end = this.cityFormatter(p.row.end)
+            return this.tableDataRender(h, start && end ? [start, end].join('-') : '')
           }
         },
         {
           title: '货物名称',
-          key: 'cargoName'
-        },
-        {
-          title: '包装',
-          key: 'packing'
-        },
-        {
-          title: '数量',
-          key: 'quantity'
-        },
-        {
-          title: '货值（元）',
-          key: 'cargoCost',
+          key: 'cargoName',
+          minWidth: 180,
           render: (h, p) => {
-            return h('span', p.row.cargoCost / 100)
+            return this.tableDataRender(h, p.row.cargoName)
           }
         },
         {
-          title: '重量（吨）',
-          key: 'weight'
+          title: '包装',
+          key: 'packing',
+          width: 100,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.packing)
+          }
         },
         {
-          title: '体积（方）',
-          key: 'volume'
+          title: '数量',
+          key: 'quantity',
+          width: 100,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.quantity)
+          }
+        },
+        {
+          title: '货值(元)',
+          key: 'cargoCost',
+          width: 100,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
+          }
+        },
+        {
+          title: '重量(吨)',
+          key: 'weight',
+          width: 100,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.weight)
+          }
+        },
+        {
+          title: '体积(方)',
+          key: 'volume',
+          width: 100,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.volume)
+          }
         },
         {
           title: '备注1',
-          key: 'remark1'
+          key: 'remark1',
+          minWidth: 140,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.remark1)
+          }
         },
         {
           title: '备注2',
-          key: 'remark2'
+          key: 'remark2',
+          minWidth: 140,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.remark2)
+          }
         }
       ]
     }
@@ -490,15 +531,33 @@ export default {
       }
     },
 
+    setPlace (clear) {
+      if (clear) {
+        this.startCodes = ''
+        this.endCodes = ''
+        return
+      }
+      // 由于 AreaSelect 组件数据延时获取机制
+      // 导致如果不延迟到数据获取完毕后再赋值会出现bug
+      setTimeout(() => {
+        this.startCodes = this.info.start
+        this.endCodes = this.info.end
+      }, 250)
+    },
+
     fetchData () {
       this.loading = true
       Server({
         url: '/waybill/details',
         method: 'post',
-        data: { waybillId: this.id }
+        data: {
+          waybillId: this.id,
+          waybillNo: this.no
+        }
       }).then(res => {
         const data = res.data.data
 
+        this.id = data.waybill.waybillId
         for (let key in this.info) {
           this.info[key] = data.waybill[key]
         }
@@ -507,9 +566,6 @@ export default {
         }
         this.detail = data.cargoList
         this.logList = data.operaterLog
-
-        this.startCodes = data.waybill.start.toString()
-        this.endCodes = data.waybill.end.toString()
 
         this.status = this.statusFilter(data.waybill.status)
         this.settlementType = data.waybill.settlementType.toString()
@@ -542,9 +598,9 @@ export default {
             settlementType: this.settlementType,
             settlementPayInfo: this.settlementType === '1' ? this.formatPayInfo() : void 0
           },
-          cargoList: this.arrayUnique(this.detail.map(item => {
+          cargoList: Array.from(new Set((this.detail.map(item => {
             return item.orderId
-          }))
+          }))))
         }
       }).then(res => {
         this.$Message.success('保存成功')

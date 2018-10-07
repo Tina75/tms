@@ -1,6 +1,6 @@
 <template>
   <div class="temAll">
-    <Col span="23">
+    <Col span="24">
     <Card class="searchCard" dis-hover>
       <Form :model="formSearch" :label-width="80" style="padding-left:-20px;">
         <Col span="6">
@@ -27,16 +27,16 @@
         </Col>
         <Col span="3">
         <FormItem>
-          <Button type="primary" @click="searchBtn">搜索</Button>
+          <Button type="primary" style="width:80px;" @click="searchBtn">搜索</Button>
         </FormItem>
         </Col>
       </Form>
     </Card>
     </Col>
-    <Col span="23">
+    <Col span="24">
     <Button v-if="hasPower(140201)" type="primary" style="margin-top:6px;" @click="eaditStaff('add')">添加员工</Button>
     </Col>
-    <Col span="23">
+    <Col span="24">
     <page-table :columns="menuColumns" :keywords="formSearchInit" url="employee/list" list-field="list" style="margin-top: 20px;"></page-table>
     </Col>
     <Modal v-model="visibaleTransfer" width="400">
@@ -55,7 +55,7 @@
           </Select>
         </FormItem>
         <FormItem>
-          <p style="color:red; margin-top:-10px;">确认操作后，您将于接收该角色的人员互换角色</p>
+          <p style="color:red; margin-top:-10px;">确认操作后，您将与接收该角色的人员互换角色</p>
         </FormItem>
       </Form>
       <div slot="footer" style="margin-top:20px;">
@@ -72,6 +72,18 @@
       <div slot="footer">
         <Button type="primary" @click="removeSubForm">确定</Button>
         <Button  @click="removeCancelForm">取消</Button>
+      </div>
+    </Modal>
+    <Modal
+      v-model="visibaleAddStaffSuccess"
+      width="360">
+      <p slot="header" style="text-align:center">
+        <span>提示</span>
+      </p>
+      <P>添加员工成功，员工的登录账号为手机号</P>
+      <p>初始登录密码已发送至员工手机</p>
+      <div slot="footer">
+        <Button type="primary" @click="knowCancel">我知道了</Button>
       </div>
     </Modal>
   </div>
@@ -97,6 +109,7 @@ export default {
       userInfo: {},
       visibaleTransfer: false,
       visibaleRemove: false,
+      visibaleAddStaffSuccess: false,
       visibaleMoadlTitle: '',
       roleRowInit: {},
       transferformModal: {
@@ -117,13 +130,10 @@ export default {
         render: (h, params) => {
           if (params.row.type === 1 && this.userInfo.type === 1) {
             return h('div', [
-              h('Button', {
-                props: {
-                  type: 'text'
-                },
+              h('span', {
                 style: {
                   color: '#00A4BD',
-                  marginLeft: '-20px'
+                  cursor: 'pointer'
                 },
                 on: {
                   click: () => {
@@ -133,17 +143,14 @@ export default {
               }, '转移权限')
             ])
           } else if (params.row.type === 1 && this.userInfo.type !== 1) {
-
+            return h('div', '—')
           } else {
             if (this.hasPower(140202) && this.hasPower(140203)) {
               return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text'
-                  },
+                h('span', {
                   style: {
                     color: '#00A4BD',
-                    marginLeft: '-20px'
+                    cursor: 'pointer'
                   },
                   on: {
                     click: () => {
@@ -151,12 +158,11 @@ export default {
                     }
                   }
                 }, '修改'),
-                h('Button', {
-                  props: {
-                    type: 'text'
-                  },
+                h('span', {
                   style: {
-                    color: '#00A4BD'
+                    color: '#00A4BD',
+                    cursor: 'pointer',
+                    marginLeft: '20px'
                   },
                   on: {
                     click: () => {
@@ -167,13 +173,10 @@ export default {
               ])
             } else if (this.hasPower(140202)) {
               return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text'
-                  },
+                h('span', {
                   style: {
                     color: '#00A4BD',
-                    marginLeft: '-20px'
+                    cursor: 'pointer'
                   },
                   on: {
                     click: () => {
@@ -184,13 +187,11 @@ export default {
               ])
             } else if (this.hasPower(140203)) {
               return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text'
-                  },
+                h('span', {
                   style: {
                     color: '#00A4BD',
-                    marginLeft: '-20px'
+                    cursor: 'pointer',
+                    marginLeft: '20px'
                   },
                   on: {
                     click: () => {
@@ -304,6 +305,9 @@ export default {
         methods: {
           ok (node) {
             _this.formSearchInit = {}
+            if (params === 'add') {
+              _this.visibaleAddStaffSuccess = true
+            }
           }
         }
       })
@@ -328,6 +332,9 @@ export default {
           })
         }
       })
+    },
+    knowCancel () {
+      this.visibaleAddStaffSuccess = false
     },
     transferCancelForm () {
       this.visibaleTransfer = false
@@ -368,7 +375,7 @@ export default {
 <style lang='stylus' scoped>
 .temAll
   width: 100%
-  height: -webkit-fill-available
+  overflow: auto;
 .classPage
   clear: both;
   float: right;
@@ -376,6 +383,7 @@ export default {
 .searchCard
   height:70px;
   background:rgba(249,249,249,1);
+  border: none;
 .dialog
   p
   text-align center

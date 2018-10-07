@@ -18,9 +18,17 @@
     </div>
     <div class="ivu-card-body tms-home__card-body">
       <CellGroup>
-        <Cell v-for="item in data" :key="item.value" :title="item.name" :extra="item.value">
-          <Icon slot="icon" :color="theme" type="ios-play"></Icon>
-        </Cell>
+        <Cell v-for="(item, index) in data" :key="index" :to="item.url">
+          <span slot="icon" class="ivu-badge ivu-badge-status">
+            <span :style="{'background-color':theme}" class="ivu-badge-status-dot"></span>
+          </span>
+          <span slot="extra" class="tms-home__cell-extra">
+            {{item.value.toString()}}
+          </span>
+          <span class="tms-home__cell-item" >
+            {{item.name}}
+          </span>
+        </spanclass="tms-home__cell-item"></Cell>
       </CellGroup>
     </div>
   </div>
@@ -31,6 +39,7 @@ export default {
   props: {
     title: String,
     label: String,
+    to: String,
     extra: [String, Number],
     range: {
       type: Array,
@@ -83,9 +92,23 @@ export default {
     left -1px
     right -1px
   &__card-header
+    position relative
     padding-top 34px
     padding-bottom 22px
     border-bottom-style dashed
+    &:before,&:after
+      position absolute
+      content ' '
+      background-color #efefef
+      bottom -5px
+      padding 5px
+      border-radius 50%
+      -webkit-border-radius 50%
+      -moz-border-radius 50%
+    &:before
+      left -5px
+    &:after
+      right -5px
     &-title
       padding-left 0
       color #333333
@@ -102,6 +125,10 @@ export default {
     padding 16px 0
     height 188px
     overflow hidden
+  &__cell-item
+    font-size 12px
+  &__cell-extra
+    font-size 16px
 .ivu-card-extra
   top 24px
 </style>

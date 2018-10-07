@@ -1,17 +1,15 @@
-import CarConfigs from './carConfigs.json'
 import MoneyInput from '../components/moneyInput'
-import City from '@/libs/js/City'
+
 import Server from '@/libs/js/server'
+import Float from '@/libs/js/float'
 import { mapGetters } from 'vuex'
 import { CAR } from '@/views/client/client'
-
-const carType = CarConfigs.carType
-const carLength = CarConfigs.carLength
 
 export default {
   data () {
     return {
       id: this.$route.query.id,
+      no: this.$route.query.no,
       loading: false,
       inEditing: false,
       carriers: [], // 承运商
@@ -106,10 +104,7 @@ export default {
       ],
 
       showLog: false,
-      logList: [],
-
-      carType,
-      carLength
+      logList: []
     }
   },
 
@@ -125,21 +120,21 @@ export default {
     },
     // 支付总额
     paymentTotal () {
-      return Number(this.payment.freightFee) +
+      return Float.round(Number(this.payment.freightFee) +
       Number(this.payment.loadFee) +
       Number(this.payment.unloadFee) +
       Number(this.payment.insuranceFee ? this.payment.insuranceFee : 0) +
-      Number(this.payment.otherFee)
+      Number(this.payment.otherFee))
     },
     // 货物总计
     orderTotal () {
       return this.detail.reduce((last, item) => {
         const cargoCost = item.cargoCost / 100
         return {
-          cargoCost: last.cargoCost + cargoCost,
-          quantity: last.quantity + item.quantity,
-          weight: last.weight + item.weight,
-          volume: last.volume + item.volume
+          cargoCost: Float.round(last.cargoCost + cargoCost),
+          quantity: Float.round(last.quantity + item.quantity),
+          weight: Float.round(last.weight + item.weight),
+          volume: Float.round(last.volume + item.volume)
         }
       }, {
         cargoCost: 0,
@@ -160,35 +155,8 @@ export default {
     ])
   },
 
-  filters: {
-    formatTime (timestamp) {
-      if (!timestamp) return ''
-      return new Date(timestamp).Format('yyyy-MM-dd hh:mm:ss')
-    },
-
-    formatCity (code) {
-      if (!code) return ''
-      return Array.from(new Set(City.codeToFullName(code, 3, '-').split('-'))).join('')
-    },
-
-    carTypeFilter (value) {
-      for (let i = 0; i < carType.length; i++) {
-        if (value === carType[i].value) {
-          return carType[i].label
-        }
-      }
-    },
-    carLengthFilter (value) {
-      for (let i = 0; i < carLength.length; i++) {
-        if (value === carLength[i].value) {
-          return carLength[i].label
-        }
-      }
-    }
-  },
-
   watch: {
-    startCodes (n, o) {
+    startCodes () {
       if (!(this.startCodes instanceof Array)) return
       this.info.start = this.startCodes.length
         ? this.startCodes[this.startCodes.length - 1]
@@ -286,15 +254,6 @@ export default {
       })
     },
 
-    formatCity (code) {
-      if (!code) return ''
-      return this.arrayUnique(City.codeToFullName(code, 3, '-').split('-'))
-    },
-
-    getFullCityCode (code) {
-      return City.getPathByCode(code).map(item => Number(item.code))
-    },
-
     // 根据状态设置按钮
     setBtnsWithStatus () {
       for (let i = 0; i < this.btnList.length; i++) {
@@ -314,13 +273,16 @@ export default {
     // 计费规则
     showChargeRules () {
       this.openDialog({
-        name: 'order/create/CounterDialog.vue',
+        name: 'transport/dialog/financeRule',
         data: {
           value: 0
         },
         methods: {
           ok (charge) {
             this.payment.freightFee = charge || 0
+          },
+          cancel () {
+            self.close()
           }
         }
       })
@@ -346,7 +308,7 @@ export default {
         name: 'transport/dialog/addOrder',
         data: {
           type,
-          billHasSelected: self.arrayUnique(self.detail.map(item => item.orderId))
+          billHasSelected: Array.from(new Set(self.detail.map(item => item.orderId)))
         },
         methods: {
           confirm (ids) {
@@ -412,6 +374,10 @@ export default {
       //   this.$Message.error('请输入司机')
       //   return false
       // }
+      if (this.info.driverPhone && !(/^1\d{10}$/.test(this.info.driverPhone))) {
+        this.$Message.error('司机手机号格式不正确')
+        return false
+      }
       if (this.pageName === 'pickup' && !this.info.carNo) {
         this.$Message.error('请输入车牌号')
         return false
@@ -431,11 +397,6 @@ export default {
       if (this.settlementType === '1' && !this.checkTotalAmount()) return false
 
       return true
-    },
-
-    // 去重
-    arrayUnique (arr) {
-      return Array.from(new Set(arr))
     }
   }
 }

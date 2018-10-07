@@ -61,7 +61,7 @@ import PageTable from '@/components/page-table/index'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import server from '@/libs/js/server'
-
+import jsCookie from 'js-cookie'
 /**
  * 批量导入
  * 1.文件类型
@@ -82,13 +82,15 @@ export default {
       visible: false,
       progress: 0,
       ossClient: null,
+      ossDir: '',
+      timer: null,
       columns: [
         {
           title: '导入日期',
           key: 'createTime',
           render (h, params) {
             let time = params.row.createTime
-            return time ? h('span', new Date(time).Format('yyyy-MM-dd hh:mm:ss')) : ''
+            return time ? h('span', new Date(time).Format('yyyy-MM-dd hh:mm:ss')) : h('span', '-')
           }
         },
         {
@@ -100,7 +102,12 @@ export default {
           key: 'status',
           width: 100,
           render: (h, params) => {
-            return h('span', params.row.status === 1 ? '导入成功' : '导入失败')
+            if (params.row.status === 1) {
+              return h('span', '导入成功')
+            } else if (params.row.status === 0) {
+              return h('span', '导入失败')
+            }
+            return h('span', '正在处理')
           }
         },
         {
@@ -116,7 +123,6 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: 120,
           render: (h, params) => {
             const actions = [
               h('a', {
@@ -134,13 +140,15 @@ export default {
                 },
                 on: {
                   click: () => {
-                    vm.openTab({
-                      title: '订单管理',
-                      path: '/order-management/order',
-                      query: {
-                        id: params.row.id
-                      }
-                    })
+                  // vm.openTab({
+                  //   title: '订单管理',
+                  //   path: '/order-management/order',
+                  //   query: {
+                  //     id: params.row.id
+                  //   }
+                  // })
+                    jsCookie.set('imported_id', params.row.id, {expires: 1})
+                    vm.$router.push({path: '/order-management/order', query: {title: '订单管理'}})
                   }
                 }
               }, '查看导入订单'))
@@ -164,6 +172,11 @@ export default {
       this.$refs.footer.parentElement.parentElement.style['display'] = 'none'
     }
   },
+  beforeDestroy () {
+    if (this.timer) {
+      clearTimeout(this.timer)
+    }
+  },
   methods: {
     initOssInstance () {
       const vm = this
@@ -182,6 +195,7 @@ export default {
       })
         .then((response) => {
           const { data } = response.data
+          vm.ossDir = data.ossKeys[0]
           vm.ossClient = new OssClient({
             accessKeyId: data.ossTokenDTO.stsAccessId,
             accessKeySecret: data.ossTokenDTO.stsAccessKey,
@@ -224,11 +238,17 @@ export default {
       if (!files || files.length === 0) {
         return false
       }
+      const file = files[0]
+      if (file.name.length > 58) {
+        this.$Message.warning('上传文件名长度请勿超过58位')
+        this.$refs.fileInput.value = null
+        return
+      }
       try {
-        const uploadResult = await this.uploadFile(files[0])
-        const notifyResult = await this.notifyBackend(files[0].name, uploadResult.res.requestUrls[0])
+        const uploadResult = await this.uploadFile(file)
+        const notifyResult = await this.notifyBackend(file.name, uploadResult.res.requestUrls[0])
         if (notifyResult.data.code === 10000) {
-          this.$Message.success('导入文件成功')
+          this.$Message.success({content: '导入文件完成，后台正在处理中，请稍后查看结果', duration: 3})
         }
       } catch (error) {
         console.error('导入订单', error)
@@ -242,11 +262,10 @@ export default {
         try {
           // this.visible = true
           // 生成随机文件名 Math.floor(Math.random() *10000)
-          let randomName = Date.now() + '.' + file.name.split('.').pop()
-          let result = await this.ossClient.multipartUpload(randomName, file, {
+          let randomName = file.name.split('.')[0] + new Date().Format('yyyyMMddhhmmss') + '.' + file.name.split('.').pop()
+          let result = await this.ossClient.multipartUpload(this.ossDir + randomName, file, {
             partSize: 1024 * 1024, // 分片大小 ,1M
             progress: function (progress, pp) {
-              console.log('progress', progress)
               if (progress) {
                 this.progress = progress
               }
@@ -278,7 +297,7 @@ export default {
           url: 'order/template/uploadNotify',
           data: {
             fileName,
-            fileUrl
+            fileUrl: decodeURI(fileUrl) // 中文转义回来
           }
         })
         return result
@@ -305,7 +324,6 @@ export default {
         },
         methods: {
           ok () {
-            console.log('fetch')
             vm.$refs.pageTable.fetch()
           }
         }

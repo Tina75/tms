@@ -1,5 +1,5 @@
 <template>
-  <div class="form-body" @keydown.enter="nextStep">
+  <div class="form-body">
     <Card :bordered="false" style="height: 100%;">
       <div class="form-title">注册账号</div>
 
@@ -13,17 +13,15 @@
 
       <div class="form-content">
 
-        <Form ref="loginForm" :model="form">
+        <Form ref="loginForm" :model="form" :rules="rules" @submit.native.prevent>
           <!-- step 1 -->
           <template v-if="step === 0">
             <FormItem prop="phone">
-              <Input v-model="form.phone" :maxlength="11" placeholder="输入手机号"
-                     @on-blur="inputBlur('phone')" />
+              <Input v-model="form.phone" :maxlength="11" placeholder="输入手机号" />
             </FormItem>
 
             <FormItem prop="captchaCode">
-              <Input v-model="form.captchaCode" class="form-captcha-input" type="text" placeholder="输入验证码"
-                     @on-blur="inputBlur('captchaCode')" />
+              <Input v-model="form.captchaCode" class="form-captcha-input" type="text" placeholder="输入验证码" />
               <div class="form-captcha">
                 <img :src="captchaImage" class="form-captcha-img"
                      @click="getCaptcha">
@@ -33,8 +31,7 @@
             <FormItem prop="smsCode">
               <Row>
                 <Col :span="14">
-                <Input v-model="form.smsCode" type="text" placeholder="输入手机验证码"
-                       @on-blur="inputBlur('smsCode')" />
+                <Input v-model="form.smsCode" type="text" placeholder="输入手机验证码" />
                 </Col>
                 <Col :span="9" :offset="1">
                 <Button :disabled="!captchaEnable" long
@@ -48,22 +45,16 @@
           <template v-if="step === 1">
             <FormItem prop="userName">
               <Input v-model="form.userName" :maxlength="10"
-                     placeholder="输入联系人姓名"
-                     @on-blur="inputBlur('userName')" />
+                     placeholder="输入联系人姓名" />
             </FormItem>
             <FormItem prop="name">
-              <Input v-model="form.name" :maxlength="25" placeholder="输入公司名称"
-                     @on-blur="inputBlur('name')"
-                     @on-keydown="companyNameRuleToast" />
+              <Input v-model="form.name" :maxlength="25" placeholder="输入公司名称" />
             </FormItem>
-            <FormItem prop="location">
-              <Cascader :data="cities" v-model="location" placeholder="选择省/市/区"
-                        @on-change="locationChange"
-                        @on-visible-change="locationBlur"></Cascader>
+            <FormItem prop="cityId">
+              <Cascader :data="cities" v-model="form.cityId" placeholder="选择省/市/区"></Cascader>
             </FormItem>
             <FormItem prop="address">
-              <Input v-model="form.address" :maxlength="40" placeholder="输入公司详细地址"
-                     @on-blur="inputBlur('address')" />
+              <Input v-model="form.address" :maxlength="40" placeholder="输入公司详细地址" />
             </FormItem>
           </template>
 
@@ -71,23 +62,21 @@
           <template v-if="step === 2">
             <FormItem prop="password">
               <Tooltip content="密码只支持6-16位的数字、大小写字母" style="width: 100%;" placement="top">
-                <Input v-model="form.password" :maxlength="16" type="password" placeholder="设置登录密码"
-                       @on-blur="inputBlurWithPw" />
+                <Input v-model="form.password" :maxlength="16" type="password" placeholder="设置登录密码" />
               </Tooltip>
             </FormItem>
             <FormItem prop="confirmPassword">
-              <Input v-model="form.confirmPassword" :maxlength="16" type="password" placeholder="再次输入密码"
-                     @on-blur="inputBlur('confirmPassword')" />
+              <Input v-model="form.confirmPassword" :maxlength="16" type="password" placeholder="再次输入密码" />
             </FormItem>
           </template>
 
           <FormItem>
             <Checkbox v-model="protocol" style="line-height: 1.5;">
               我已阅读并同意
-              <a @click.prevent="showProtocol(1)">《运掌柜TMS服务协议》</a>
-              <a @click.prevent="showProtocol(2)">《运掌柜TMS隐私协议》</a>
+              <a style="color: #418DF9;" @click.prevent="showProtocol(1)">《运掌柜TMS服务协议》</a>
+              <a style="color: #418DF9;" @click.prevent="showProtocol(2)">《运掌柜TMS隐私协议》</a>
             </Checkbox>
-            <Button class="form-button" type="primary" long
+            <Button type="primary" long
                     @click="nextStep">{{step === 2 ? '立即注册' : '下一步'}}</Button>
             <div>
               <a v-if="step" @click.prevent="step = step - 1">&lt;上一步</a>
@@ -105,6 +94,7 @@ import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import City from '@/libs/js/City'
 import mixin from './mixin'
+import { VALIDATOR_PHONE, VALIDATOR_PASSWORD, VALIDATOR_CONFIRM_PASSWORD } from './validator'
 
 export default {
   name: 'SignUp',
@@ -128,16 +118,40 @@ export default {
         name: '', // 公司名称
         userName: '', // 联系人姓名
         address: '', // 公司地址
-        cityId: ''
+        cityId: []
       },
-      location: [], // 所在省市区
+
+      rules: {
+        phone: [
+          { required: true, message: '手机号不能为空', trigger: 'blur' },
+          { validator: VALIDATOR_PHONE, trigger: 'blur' }
+        ],
+        captchaCode: [{ required: true, message: '图形验证码不能为空', trigger: 'blur' }],
+        smsCode: [{ required: true, message: '验证码不能为空', trigger: 'blur' }],
+        password: [
+          { required: true, message: '密码不能为空', trigger: 'blur' },
+          { validator: VALIDATOR_PASSWORD, trigger: 'blur' }
+        ],
+        confirmPassword: [
+          { required: true, message: '确认密码不能为空', trigger: 'blur' },
+          { validator: VALIDATOR_CONFIRM_PASSWORD, trigger: 'blur', vm: this }
+        ],
+        name: [
+          { required: true, message: '公司名不能为空', trigger: 'blur' },
+          { type: 'string', min: 2, max: 10, message: '联系人不能少于2个字也不能超过10个字', trigger: 'blur' }
+        ],
+        userName: [
+          { required: true, message: '联系人不能为空', trigger: 'blur' },
+          { type: 'string', max: 25, message: '公司名不能超过25个字', trigger: 'blur' }
+        ],
+        address: [
+          { required: true, message: '公司地址不能为空', trigger: 'blur' },
+          { type: 'string', min: 5, max: 40, message: '公司地址不能少于5个字也不能超过40个字', trigger: 'blur' }
+        ],
+        cityId: [{ required: true, message: '省市区不能为空' }]
+      },
 
       cities: []
-    }
-  },
-  watch: {
-    location () {
-      this.form.cityId = this.location[this.location.length - 1]
     }
   },
   created () {
@@ -154,68 +168,45 @@ export default {
     },
     // 下一步校验
     nextStep () {
-      let validParams
-      if (this.step === 0) {
-        validParams = ['phone', 'captchaCode', 'smsCode']
-      } else if (this.step === 1) {
-        validParams = ['userName', 'name', 'cityId', 'address']
-      } else {
-        validParams = this.form
-      }
+      this.$refs.loginForm.validate(valid => {
+        if (!valid) return
 
-      for (let index in validParams) {
-        const key = validParams[index]
-        if (key !== 'password') {
-          if (!this.validate(key)) return
+        if (this.step === 0) {
+          this.imCheckPhone()
+            .then(this.imCheckSMSCode)
+            .then(() => {
+              this.step++
+            })
+        } else if (this.step === 1) {
+          this.step++
         } else {
-          if (!this.inputBlurWithPw(key)) return
+          if (!this.protocol) {
+            this.$Message.warning('请先阅读并同意《运掌柜TMS服务协议》《运掌柜TMS隐私协议》')
+            return
+          }
+
+          let data = Object.assign({}, this.form)
+          data.cityId = data.cityId[2]
+
+          Server({
+            url: '/user/register',
+            method: 'post',
+            data
+          }).then(res => {
+            this.$Message.success('注册成功')
+            window.sessionStorage.setItem('signup_phone', data.phone)
+            setTimeout(() => {
+              this.changeMode('signin')
+            }, 2000)
+          }).catch(err => console.error(err))
         }
-      }
-
-      if (this.step === 0) {
-        this.imCheckPhone()
-          // .then(this.imCheckCapthcha)
-          .then(this.imCheckSMSCode)
-          .then(() => {
-            this.step++
-          })
-        return
-      } else if (this.step === 1) {
-        this.step++
-        return
-      }
-
-      if (!this.protocol) {
-        this.$Message.warning('请先阅读并同意《运掌柜TMS服务协议》《运掌柜TMS隐私协议》')
-        return
-      }
-
-      Server({
-        url: '/user/register',
-        method: 'post',
-        data: validParams
-      }).then(res => {
-        this.$Message.success('注册成功')
-        setTimeout(() => {
-          this.changeMode('signin')
-        }, 2000)
-      }).catch(err => console.error(err))
+      })
     },
 
-    companyNameRuleToast (e) {
-      if (e.keyCode === 8 || e.keyCode === 46) return // backspace & delete
-      if (this.form.name.length === 25) this.$Message.warning('公司名不能超过25个字')
-    },
-
-    // 省市区选择改变
-    locationChange (value, data) {
-      this.cityId = value[value.length - 1]
-    },
-
-    // 省市区选择失焦
-    locationBlur (open) {
-      if (!open && !this.cityId) this.inputBlur('cityId')
-    },
+    // companyNameRuleToast (e) {
+    //   if (e.keyCode === 8 || e.keyCode === 46) return // backspace & delete
+    //   if (this.form.name.length === 25) this.$Message.warning('公司名不能超过25个字')
+    // },
 
     // 查询城市列表
     getCities () {
@@ -240,7 +231,7 @@ export default {
 
   .form-body
     width 800px
-    height 520px
+    height 530px
     left 50%
     top 50%
     transform translate(-50%, -50%)
