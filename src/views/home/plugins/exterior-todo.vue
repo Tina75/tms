@@ -26,8 +26,8 @@ export default {
   data () {
     return {
       data: [
-        { id: 'waitPickOrderCnt', name: '外转方待对账订单', value: 1 },
-        { id: 'waitPickCnt', name: '外转方待核销订单', value: 10 }
+        { id: 'wait_reconcile', name: '外转方待对账订单', value: 0 },
+        { id: 'wait_verify', name: '外转方待核销订单', value: 0 }
       ]
     }
   },
@@ -41,13 +41,12 @@ export default {
   },
   methods: {
     load () {
-      const vm = this
-      this.fetch('home/trans/todo')
+      this.fetch('home/transferee/todo')
         .then((response) => {
           const data = response.data
-          vm.data.forEach((item) => {
-            item.value = data[item.id]
-          })
+          for (const i of this.data) {
+            i.value = data[i.id]
+          }
         })
     }
   }

@@ -42,7 +42,7 @@ export default {
           left: 'center',
           top: 'center',
           style: {
-            text: '300家',
+            text: '0家',
             textAlign: 'center',
             fill: '#333',
             font: 'bolder 1em "Microsoft YaHei", sans-serif'
@@ -70,9 +70,9 @@ export default {
               }
             },
             data: [
-              {value: 335, name: '发货方'},
-              {value: 310, name: '承运商'},
-              {value: 234, name: '外转方'}
+              {value: 10, name: '发货方'},
+              {value: 20, name: '承运商'},
+              {value: 30, name: '外转方'}
             ]
           }
         ]
@@ -81,10 +81,14 @@ export default {
   },
   methods: {
     load () {
-      const vm = this
       this.fetch('home/new/customer/cnt')
         .then((response) => {
-          vm.options = response.data
+          const [data, res] = [response.data, []]
+          res.push({value: data.consignerCnt, name: '发货方'})
+          res.push({value: data.carriersCnt, name: '承运商'})
+          res.push({value: data.transfereeCnt, name: '外转方'})
+          this.options.series[0].data = res
+          this.options.graphic.style.text = `${data.consignerCnt + data.carriersCnt + data.transfereeCnt}家`
         })
     }
   }
