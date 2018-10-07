@@ -161,6 +161,8 @@
       </ul>
     </section>
 
+    <div class="detail-btn-group"></div>
+
     <section class="detail-info">
       <!-- 运单信息 -->
       <div>

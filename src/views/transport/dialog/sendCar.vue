@@ -44,7 +44,7 @@
             class="detail-info-input"
             @on-select="handleSelectCarrierCar" />
         </i-col>
-        <i-col span="8" offset="1">
+        <i-col span="7" offset="1">
           <span class="detail-field-title">车型：</span>
           <Select v-model="info.carType"
                   class="detail-info-input-half"
