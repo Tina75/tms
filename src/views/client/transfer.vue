@@ -184,6 +184,19 @@ export default {
             let text = this.formatDate(params.row.createTime)
             return h('div', { props: {} }, text)
           }
+        },
+        {
+          title: '备注',
+          key: 'remark',
+          render (h, params) {
+            let text = ''
+            if (params.row.remark === '' || params.row.remark === null) {
+              text = '-'
+            } else {
+              text = params.row.remark
+            }
+            return h('span', {}, text)
+          }
         }
       ],
       data1: []
