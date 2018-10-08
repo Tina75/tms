@@ -14,13 +14,13 @@
         </span>
         </MenuItem>
       </div>
-      <Modal v-model="createRoleModal" width="360">
+      <Modal v-model="createRoleModal" width="400">
         <p slot="header" style="text-align:center">
           <span>{{editRoleModalTitle}}</span>
         </p>
-        <Form ref="formModal" :model="formModal" :rules="rulesRole" :label-width="80" style="height: 50px;">
+        <Form ref="formModal" :model="formModal" :rules="rulesRole" :label-width="80" style="padding:20px;height: 80px;">
           <FormItem label="角色名：" prop="name">
-            <Input :maxlength="11" v-model="formModal.name" placeholder="请输入角色名"></Input>
+            <Input :maxlength="11" v-model="formModal.name" placeholder="请输入角色名" style="width:200px;"></Input>
           </FormItem>
         </Form>
         <div slot="footer">
@@ -49,7 +49,10 @@
       <p slot="header" style="text-align:center">
         <span>提示</span>
       </p>
-      <P>确定删除'{{rightTitle}}'?</P>
+      <p style="margin-left:70px; margin-top: 10px;">
+        <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
+      </p><p style="margin-top:23px; margin-left:50px;">确定删除'{{rightTitle}}'?</P>
+      </p>
       <div slot="footer">
         <Button type="primary" @click="removeFormRole">确定</Button>
         <Button  @click="removeCancelForm">取消</Button>
@@ -57,7 +60,7 @@
     </Modal>
     <Modal
       v-model="removeRoleModalFail"
-      width="360">
+      width="400">
       <p slot="header" style="text-align:center">
         <span>提示</span>
       </p>
@@ -431,6 +434,7 @@ export default {
       float: right;
       margin-top: -20px;
       display: none;
+      margin-right: 20px;
     .configBtn
       color: #00A4BD;
       font-size: 12px;
