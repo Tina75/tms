@@ -38,8 +38,6 @@ export default {
   },
   computed: {
     ...mapGetters(['TabNavList', 'UserInfo'])
-    // currentRoute: function () {
-    // }
   },
 
   mounted () {
@@ -130,7 +128,7 @@ export default {
         okText: '立即修改',
         cancelText: '我知道了',
         onOk: () => {
-          window.EMA.fire('openTab', {path: '/set-up/set-up', query: {title: '设置'}})
+          window.EMA.fire('openTab', {path: '/set-up', query: {title: '设置'}})
         }
       })
     },
@@ -183,8 +181,6 @@ export default {
         query = route.query
         meta = route.meta
       }
-      console.log('2.' + JSON.stringify({ path, params, query, meta }))
-
       this.$router.push({ path, params, query, meta })
     },
     getNextRoute (list, route) {
