@@ -56,10 +56,10 @@
                   <div class="rule-route">
                     <Row :gutter="20">
                       <Col span="12">
-                        <AreaSelect v-model="item.departure" placeholder="请输入始发地" class="search-input-senior" />
+                      <AreaSelect v-model="item.departure" placeholder="请输入始发地" class="search-input-senior" />
                       </Col>
                       <Col span="12">
-                        <AreaSelect v-model="item.destination" placeholder="请输入目的地" class="search-input-senior" />
+                      <AreaSelect v-model="item.destination" placeholder="请输入目的地" class="search-input-senior" />
                       </Col>
                     </Row>
                   </div>
