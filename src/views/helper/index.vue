@@ -4,7 +4,7 @@
     <Menu :open-names="['1']" style="width: 100%; background:rgba(243,245,249,1)" accordion>
       <Submenu name="1">
         <template slot="title">
-          <i class="icon font_family icon-tupian" style="color: #FFBB44; overflow: hidden; width: 20px;"></i>
+          <i class="icon font_family icon-tupian" style="color: #FFBB44; overflow: hidden; width: 20px;font-size: 19px;"></i>
           <span style="font-size:16px;">图文介绍</span>
         </template>
         <MenuItem v-for="menu in picMenu" :key="menu.id" :name="menu.title" style="font-size:14px;" @click.native="clickLeftMenuPic(menu)">
@@ -13,7 +13,7 @@
       </Submenu>
       <Submenu name="2">
         <template slot="title">
-          <i class="icon font_family icon-shipin" style="color: #418DF9; overflow: hidden; width: 20px;"></i>
+          <i class="icon font_family icon-shipin" style="color: #418DF9; overflow: hidden; width: 20px;font-size: 19px;"></i>
           <span style="font-size:16px;">视频介绍</span>
         </template>
         <MenuItem v-for="menu in videoMenu" :key="menu.id" :name="menu.title" style="font-size:14px;" @click.native="clickLeftMenuVideo(menu)">
@@ -24,12 +24,13 @@
     </Col>
     <Col span="20" style="background:#fff; padding-left: 20px; height: inherit;">
     <Card class="searchCard" dis-hover>
-      <p slot="title" style="font-size:16px; color:rgba(51,51,51,1);">{{picContent.title}}</p>
       <div v-if="'pic' === this.type">
+        <p slot="title" style="font-size:16px; color:rgba(51,51,51,1);">{{picContent.title}}</p>
         <pre>{{picContent.content}}</pre>
         <img :src="picContent.urlList" class="imgInfo" />
       </div>
       <div v-if="'video' === this.type">
+        <p slot="title" style="font-size:16px; color:rgba(51,51,51,1);">{{videoContent.title}}</p>
         <video width="100%" height="240" controls>
           <source :src="videoContent.urlList">
           您的浏览器不支持 video 标签。
@@ -93,11 +94,17 @@ export default {
 <style lang='stylus' scoped>
 >>> .ivu-menu-vertical.ivu-menu-light:after
   background: #fff;
+  height: 30px;
 >>> .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
     background: #fff;
-    color: #515a6e;
+    color: #00A4BD;
+    height: 30px;
+    font-weight: 500;
 >>> .ivu-card-bordered
    border: none;
+>>> .ivu-menu-vertical .ivu-menu-item, .ivu-menu-vertical .ivu-menu-submenu-title
+  height: 30px;
+  padding-top: 6px;
 .temAll
   width: 100%
   height: 100%;

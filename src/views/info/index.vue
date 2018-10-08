@@ -10,7 +10,7 @@
     </Col>
     <Col span="21" style="background:#fff; padding: 0 25px 50px 25px; height: inherit; overflow: auto;">
     <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;">
-      <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute; left: 20px;"></span>
+      <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute; left:20px;margin-top: 2px;"></span>
       <span style="margin-left:35px; font-size: 16px; font-weight:600;">{{rightTitle}}</span>
       <div v-if="batchBtnShowAll">
         <span v-if="batchBtnShow" key="1" style="float:right; margin-top:-30px; margin-right:20px;">
@@ -18,8 +18,8 @@
           <Button @click="removeInfoSome">批量删除</Button>
         </span>
         <span v-if="!batchBtnShow" key="2" style="float:right; margin-top:-30px; margin-right:20px;">
-          <Button style="margin-right:20px;" @click="removeCancelBtn">取消</Button>
-          <Button :disabled="removeSubBtnDis" type="primary" @click="removeSubBtn">确定</Button>
+          <Button style="margin-right:20px; width:86px;" @click="removeCancelBtn">取消</Button>
+          <Button :disabled="removeSubBtnDis" type="primary" style="width:86px;" @click="removeSubBtn">确定</Button>
         </span>
       </div>
     </div>
@@ -32,9 +32,9 @@
             v-if="!batchBtnShow"
             :indeterminate="indeterminate"
             :value="checkAll"
-            style="margin-left: 15px;"
-            @click.native="handleCheckAll">
-            全选</Checkbox>
+            style="margin-left: 15px; margin-top:10px;"
+            @click.prevent.native="handleCheckAll">
+          <span style="margin-left:10px; color:#777B89; cursor: default;">全选</span></Checkbox>
           <div v-if="this.sysMessageList.length === 0" class="noneImg">
             <img src="./noneInfo.png"/>
             <p>暂无消息</p>
@@ -68,9 +68,9 @@
             v-if="!batchBtnShow"
             :indeterminate="indeterminate"
             :value="checkAll"
-            style="margin-left: 15px;"
-            @click.native="handleCheckAll">
-            全选</Checkbox>
+            style="margin-left: 15px; margin-top:10px;"
+            @click.prevent.native="handleCheckAll">
+          <span style="margin-left:10px; color:#777B89; cursor: default;">全选</span></Checkbox>
           <div v-if="this.orderMessageList.length === 0" class="noneImg">
             <img src="./noneInfo.png"/>
             <p>暂无消息</p>
@@ -102,9 +102,9 @@
             v-if="!batchBtnShow"
             :indeterminate="indeterminate"
             :value="checkAll"
-            style="margin-left: 15px;"
-            @click.native="handleCheckAll">
-            全选</Checkbox>
+            style="margin-left: 15px; margin-top:10px;"
+            @click.prevent.native="handleCheckAll">
+          <span style="margin-left:10px; color:#777B89; cursor: default;">全选</span></Checkbox>
           <div v-if="this.transportMessageList.length === 0" class="noneImg">
             <img src="./noneInfo.png"/>
             <p>暂无消息</p>

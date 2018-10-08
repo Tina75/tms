@@ -1,4 +1,4 @@
-import City from '@/libs/js/City'
+import City from '@/libs/js/city'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
