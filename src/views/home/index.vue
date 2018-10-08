@@ -1,12 +1,15 @@
 <template>
   <div>
     <div class="page-home__header">
+      <Alert v-if="notice" type="warning" class="page-home__header-notice" banner closable>
+        {{notice}}
+      </Alert>
       <Row>
-        <Col span="20">
+        <Col span="18">
         <p v-html="greetings"></p>
         </Col>
-        <Col span="4" class="van-right">
-        <span class="i-mr-30">{{today}}</span>
+        <Col span="6">
+        <span class="page-home__header-date">{{today}}</span>
         <Poptip v-model="visible" trigger="click" placement="bottom-end">
           <FontIcon type="shouye" size="20" class="page-home__setting-icon" />
           <div slot="content">
@@ -123,6 +126,8 @@ export default {
   data () {
     return {
       visible: false,
+      // notice: '因腾讯云服务器数据丢失，部分数据展示异常。紧急抢修中，请您耐心等待',
+      notice: null,
       cardChecks: [],
       cardChecksTemp: [],
       cardsMap: {
@@ -301,6 +306,13 @@ export default {
     padding-right 8px
   &__header
     position relative
+  &__header-notice
+    position absolute
+    z-index 10
+    width 100%
+  &__header-date
+    vertical-align super
+    margin-right 30px
   &__setting-icon
     cursor pointer
   &__message-item

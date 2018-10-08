@@ -254,7 +254,7 @@ export default {
                 clearTimeout(timer)
               }
               if (status === 0) {
-                vm.$Message.success({content: `此次导入订单失败，具体失败原因下载错误报告`, duration: 3})
+                vm.$Message.error({content: `此次导入订单失败，具体失败原因下载错误报告`, duration: 3})
               } else {
                 vm.$Message.success({content: `导入成功，共导入${res.data.data.orderNum}条订单`, duration: 3})
               }

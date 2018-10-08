@@ -129,11 +129,6 @@ export default {
       }
     }
   },
-
-  created () {
-    this.load()
-  },
-
   methods: {
     load () {
       const self = this
