@@ -393,6 +393,9 @@ export default {
     overflow: hidden;
     .configBtnItem
       display: block
+    .configBtnItem:hover
+      display: block
+      overflow: hidden;
   .menu
     margin-left: -50px;
     .menuTitle

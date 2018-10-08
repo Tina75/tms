@@ -621,7 +621,6 @@ export default {
       width:300px;
     .labelClassSty
       font-weight: bold;
-
 .mesDiv
   min-height: 120px;
   width: 100%;
