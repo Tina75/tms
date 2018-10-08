@@ -126,19 +126,19 @@ export default {
         type: 1
       },
       res: {
-        orderFreightFee: '',
-        orderLoadFee: '',
-        orderUnloadFee: '',
-        orderOtherFee: '',
-        orderInsuranceFee: '',
-        orderTotalFee: '',
-        carrierFreightFee: '',
-        carrierLoadFee: '',
-        carrierUnloadFee: '',
-        carrierOtherFee: '',
-        carrierInsuranceFee: '',
-        carrierTotalFee: '',
-        transbillTransFee: ''
+        orderFreightFee: '-',
+        orderLoadFee: '-',
+        orderUnloadFee: '-',
+        orderOtherFee: '-',
+        orderInsuranceFee: '-',
+        orderTotalFee: '-',
+        carrierFreightFee: '-',
+        carrierLoadFee: '-',
+        carrierUnloadFee: '-',
+        carrierOtherFee: '-',
+        carrierInsuranceFee: '-',
+        carrierTotalFee: '-',
+        transbillTransFee: '-'
       }
     }
   },
@@ -160,7 +160,22 @@ export default {
         data: this.keywords
       }).then((res) => {
         if (res.data.code === 10000) {
-          Object.assign(this.res, res.data.data)
+          // Object.assign(this.res, res.data.data)
+          this.res = {
+            orderFreightFee: res.data.data.orderFreightFee === '' ? '-' : res.data.data.orderFreightFee,
+            orderLoadFee: res.data.data.orderLoadFee === '' ? '-' : res.data.data.orderLoadFee,
+            orderUnloadFee: res.data.data.orderUnloadFee === '' ? '-' : res.data.data.orderUnloadFee,
+            orderOtherFee: res.data.data.orderUnloadFee === '' ? '-' : res.data.data.orderUnloadFee,
+            orderInsuranceFee: res.data.data.orderInsuranceFee === '' ? '-' : res.data.data.orderInsuranceFee,
+            orderTotalFee: res.data.data.orderTotalFee === '' ? '-' : res.data.data.orderTotalFee,
+            carrierFreightFee: res.data.data.carrierFreightFee === '' ? '-' : res.data.data.carrierFreightFee,
+            carrierLoadFee: res.data.data.carrierFreightFee === '' ? '-' : res.data.data.carrierFreightFee,
+            carrierUnloadFee: res.data.data.carrierUnloadFee === '' ? '-' : res.data.data.carrierUnloadFee,
+            carrierOtherFee: res.data.data.carrierOtherFee === '' ? '-' : res.data.data.carrierOtherFee,
+            carrierInsuranceFee: res.data.data.carrierInsuranceFee === '' ? '-' : res.data.data.carrierInsuranceFee,
+            carrierTotalFee: res.data.data.carrierTotalFee === '' ? '-' : res.data.data.carrierTotalFee,
+            transbillTransFee: res.data.data.transbillTransFee === '' ? '-' : res.data.data.transbillTransFee
+          }
         }
       })
     },
@@ -188,7 +203,7 @@ export default {
       let start = ''
       let end = ''
       /* 当前时间时间戳 */
-      let now = new Date(2018, 2, 10).getTime()
+      let now = new Date().getTime()
       /* 当前时间 yyyy - mm -dd */
       end = this.formatDate(now)
       /* 当前月份 */
