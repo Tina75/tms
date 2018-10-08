@@ -5,6 +5,8 @@
       :extra="total"
       title="外转待办"
       label="提示文字"
+      to="/transport/outerOrder"
+      page-title="外转单管理"
     >
     </OrderCard>
   </div>
@@ -27,8 +29,8 @@ export default {
   data () {
     return {
       data: [
-        {id: 'waitSendCarCnt', name: '待发运的外转单数量', value: 0},
-        {id: 'inTransportCnt', name: '运输中外转单数量', value: 0}
+        {id: 'waitSendCarCnt', name: '待发运的外转单数量', value: 0, tab: 'waitSendCarCnt'},
+        {id: 'inTransportCnt', name: '运输中外转单数量', value: 0, tab: 'inTransportCnt'}
       ]
     }
   },

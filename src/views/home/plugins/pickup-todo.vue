@@ -5,6 +5,8 @@
       :extra="total"
       title="提货待办"
       label="提示文字"
+      to="/order-management/order"
+      page-title="订单管理"
     >
     </OrderCard>
   </div>
@@ -29,9 +31,9 @@ export default {
   data () {
     return {
       data: [
-        { id: 'waitPickOrderCnt', name: '待提货调度订单数量', value: 0 },
-        { id: 'waitPickCnt', name: '待提货提货订单数量', value: 0 },
-        { id: 'inTransportCnt', name: '运输中订单数量', value: 0 }
+        { id: 'waitPickOrderCnt', name: '待提货调度订单数量', value: 0, tab: 'waitPickOrderCnt' },
+        { id: 'waitPickCnt', name: '待提货提货订单数量', value: 0, tab: 'waitPickCnt' },
+        { id: 'inTransportCnt', name: '运输中订单数量', value: 0, tab: 'inTransportCnt' }
       ]
     }
   },

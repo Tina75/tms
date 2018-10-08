@@ -5,6 +5,8 @@
       :extra="total"
       title="发货方核销待办"
       label="提示文字"
+      to="/finance/sender"
+      page-title="发货方对账"
     >
     </OrderCard>
   </div>
@@ -24,8 +26,8 @@ export default {
   data () {
     return {
       data: [
-        { id: 'wait_reconcile', name: '发货方待对账订单', value: 0 },
-        { id: 'wait_verify', name: '发货方待核销订单', value: 0 }
+        { id: 'wait_reconcile', name: '发货方待对账订单', value: 0, tab: 'waitReconcile' },
+        { id: 'wait_verify', name: '发货方待核销订单', value: 0, tab: 'waitVerify' }
       ]
     }
   },
