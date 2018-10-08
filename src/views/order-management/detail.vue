@@ -3,8 +3,8 @@
     <header class="detail-header">
       <ul>
         <li>订单号：{{detail.orderNo}}</li>
-        <li>客户订单号：{{detail.customerOrderNo}}</li>
-        <li>运单号：{{detail.waybillNo}} &nbsp;&nbsp;&nbsp;
+        <li>客户订单号：{{detail.customerOrderNo || '-' }}</li>
+        <li>运单号：{{detail.waybillNo || '-'}} &nbsp;&nbsp;&nbsp;
           <Poptip v-if="waybillNums.length > 0" placement="bottom" @on-popper-show="showPoptip" @on-popper-hide="hidePoptip">
             <a>{{ show ? '收起全部' : '展开全部' }}</a>
             <div slot="title" style="color:rgba(51,51,51,1);text-align: center;">全部运单号</div>
@@ -18,12 +18,12 @@
         <li>{{ this.$route.query.from === 'order' ? '订单状态：' : '回单状态：'}}<span style="font-weight: bold;">{{ this.$route.query.from === 'order' ? statusToName(detail.status) : statusToName(detail.receiptOrder.receiptStatus) }}</span></li>
       </ul>
     </header>
-    <div style="text-align: right;margin: 28px;">
+    <div style="text-align: right;margin: 25px 0;">
       <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
     </div>
     <section>
       <div>
-        <div class="title">
+        <div class="title" style="margin-top: 0">
           <span>{{from === 'order' ? '客户信息' : '回单信息'}}</span>
         </div>
         <Row>
@@ -33,29 +33,33 @@
           </i-col>
           <i-col span="7">
             <span>要求发货时间：</span>
-            <span>{{detail.deliveryTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
+            <span v-if="detail.deliveryTime">{{detail.deliveryTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
+            <span v-else>-</span>
           </i-col>
           <i-col span="10">
             <span>期望到货时间：</span>
-            <span>{{detail.arriveTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
+            <span v-if="detail.arriveTime">{{detail.arriveTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
+            <span v-else>-</span>
           </i-col>
         </Row>
         <Row>
           <i-col span="7">
             <span>始发地：</span>
-            <span>{{detail.start | codeToFullNameArr}}</span>
+            <span>{{detail.start | cityFormatter}}</span>
           </i-col>
           <i-col span="7">
             <span>目的地：</span>
-            <span>{{detail.end | codeToFullNameArr}}</span>
+            <span>{{detail.end | cityFormatter}}</span>
           </i-col>
           <i-col span="7">
             <span>提货方式：</span>
-            <span>{{pickupToName(detail.pickup)}}</span>
+            <span v-if="detail.pickup">{{pickupToName(detail.pickup)}}</span>
+            <span v-else>-</span>
           </i-col>
           <i-col span="3">
             <span>回单数：</span>
-            <span>{{detail.receiptCount}}</span>
+            <span v-if="detail.receiptCount">{{detail.receiptCount}}</span>
+            <span v-else>-</span>
           </i-col>
         </Row>
         <Row style="margin-top:25px">
@@ -93,16 +97,18 @@
           </i-col>
         </Row>
       </div>
-      <div v-if="from === 'order'">
+      <div v-if="from === 'order'" class="cargo-details">
         <div class="title">
           <span>货物明细</span>
         </div>
         <Table :columns="tableColumns" :data="detail.orderCargoList"></Table>
         <div class="table-footer">
           <span style="padding-right: 5px;box-sizing:border-box;">合计</span>
-          <span>订单总数：{{ orderTotal }}</span>
-          <span>总体积：{{ volumeTotal }}</span>
-          <span>总重量：{{ weightTotal }}</span>
+          <!-- <span>订单总数：{{ orderTotal }}</span> -->
+          <span>总货值：{{ cargoCostTotal }}</span>
+          <span>总数量：{{ quantityTotal }}</span>
+          <span>总重量：{{ weightTotal }}吨</span>
+          <span>总体积：{{ volumeTotal }}方</span>
         </div>
       </div>
       <div v-if="from === 'order'">
@@ -112,35 +118,41 @@
         <Row>
           <i-col span="4">
             <span>运输费：</span>
-            <span>{{detail.freightFee | toPoint}}元</span>
+            <span v-if="detail.freightFee" style="font-weight:bold;">{{detail.freightFee | toPoint}}元</span>
+            <span v-else>-</span>
           </i-col>
           <i-col span="4">
             <span>装货费：</span>
-            <span>{{detail.loadFee | toPoint}}元</span>
+            <span v-if="detail.loadFee" style="font-weight:bold;">{{detail.loadFee | toPoint}}元</span>
+            <span v-else>-</span>
           </i-col>
           <i-col span="4">
             <span>卸货费：</span>
-            <span>{{detail.unloadFee | toPoint}}元</span>
+            <span v-if="detail.unloadFee" style="font-weight:bold;">{{detail.unloadFee | toPoint}}元</span>
+            <span v-else>-</span>
           </i-col>
           <i-col span="4">
             <span>保险费：</span>
-            <span>{{detail.insuranceFee | toPoint}}元</span>
+            <span v-if="detail.insuranceFee" style="font-weight:bold;">{{detail.insuranceFee | toPoint}}元</span>
+            <span v-else>-</span>
           </i-col>
           <i-col span="4">
             <span>其他：</span>
-            <span>{{detail.otherFee | toPoint}}元</span>
+            <span v-if="detail.otherFee" style="font-weight:bold;">{{detail.otherFee | toPoint}}元</span>
+            <span v-else>-</span>
           </i-col>
         </Row>
         <Row>
           <i-col span="24">
             <span>费用合计：</span>
-            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{FeeTotal | toPoint}}</span>元
+            <span v-if="!detail.parentId" style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{FeeTotal | toPoint}} 元</span>
+            <span v-else>-</span>
           </i-col>
         </Row>
         <Row>
           <i-col span="24">
             <span>结算方式：</span>
-            <span>月结</span>
+            <span>{{settlementToName(detail.settlementType)}}</span>
           </i-col>
         </Row>
       </div>
@@ -148,9 +160,9 @@
         <div class="title">
           <span>{{from === 'order' ? '订单日志' : '回单日志'}}</span>
         </div>
-        <div style="display: flex;justify-content: flex-start;min-height: 300px;">
+        <div style="display: flex;justify-content: flex-start;min-height: 150px;">
           <div class="fold-icon" @click="showOrderLog">
-            <span :class="showLog ? 'hide-log' : 'show-log'">《</span>
+            <span :class="showLog ? 'hide-log' : 'show-log'"></span>
           </div>
           <Timeline :class="showLog ? 'show-timeline' : 'hide-timeline'" :style="{ 'height': showLog ? 42*orderLogCount + 'px' : '15px' }" style="margin-top: 7px;overflow: hidden;">
             <TimelineItem v-for="(item, index) in orderLog" :key="index">
@@ -189,7 +201,7 @@ export default {
         {
           title: '货物名称',
           key: 'cargoName',
-          className: 'padding-left-22'
+          className: 'padding-left-10'
         },
         {
           title: '包装',
@@ -250,23 +262,43 @@ export default {
   },
 
   computed: {
+    // 订单总数
     orderTotal () {
       return this.detail.orderCargoList.length
     },
+    // 总货值
+    cargoCostTotal () {
+      let total = 0
+      this.detail.orderCargoList.map((item) => {
+        total += Number(item.cargoCost)
+      })
+      return (total / 100).toFixed(2)
+    },
+    // 总数量
+    quantityTotal () {
+      let total = 0
+      this.detail.orderCargoList.map((item) => {
+        total += Number(item.quantity)
+      })
+      return total
+    },
+    // 总体积
     volumeTotal () {
       let total = 0
       this.detail.orderCargoList.map((item) => {
         total += Number(item.volume)
       })
-      return total
+      return total.toFixed(1)
     },
+    // 总重量
     weightTotal () {
       let total = 0
       this.detail.orderCargoList.map((item) => {
         total += Number(item.weight)
       })
-      return total
+      return total.toFixed(2)
     },
+    // 总费用
     FeeTotal () {
       let total = 0
       total += this.detail.freightFee
@@ -291,7 +323,7 @@ export default {
     },
     // 各状态按钮操作
     handleOperateClick (btn) {
-      this.operateValue = btn.value
+      // this.operateValue = btn.value
       if (btn.name === '拆单') {
         this.openSeparateDialog(this.detail)
       } else if (btn.name === '外转') {
@@ -300,7 +332,7 @@ export default {
         this.openResOrDelDialog(this.detail, btn.name)
       } else if (btn.name === '编辑') { // 编辑
         this.openTab({
-          title: this.detail.orderNo,
+          title: '编辑' + this.detail.orderNo,
           path: '/order/update',
           query: {
             id: this.detail.id
@@ -445,6 +477,25 @@ export default {
           break
         case 2:
           name = '直接送货'
+          break
+      }
+      return name
+    },
+    // 结算方式转名称
+    settlementToName (code) {
+      let name
+      switch (code) {
+        case 1:
+          name = '现付'
+          break
+        case 2:
+          name = '到付'
+          break
+        case 3:
+          name = '回付'
+          break
+        case 4:
+          name = '月结'
           break
       }
       return name
@@ -605,10 +656,10 @@ export default {
         &:last-child
           color #333
   .title
-    margin-top 60px
+    margin-top 54px
     span
       height 34px
-      font-size 24px
+      font-size 20px
       font-family 'PingFangSC-Semibold'
       font-weight 600
       color rgba(51,51,51,1)
@@ -661,13 +712,15 @@ export default {
     cursor pointer
     span
       display block
-      color #fff
-      margin-top 2px
+      width 16px
+      height 16px
+      margin 5px
+      background url(../../assets/img-icon-expand.png) no-repeat
+      background-size contain
   .show-log
-    transform rotate(-90deg) translate(-5px, 0)
     transition all 0.3s linear
   .hide-log
-    transform rotate(90deg)
+    transform rotate(180deg)
     transition all 0.3s linear
   .show-timeline
      transition height 0.3s linear
@@ -681,6 +734,6 @@ export default {
       padding 5px 10px
     .ivu-poptip-popper
       top 118px !important
-  .padding-left-22
-    padding-left 22px
+  .cargo-details .padding-left-10
+    padding-left 30px !important
 </style>

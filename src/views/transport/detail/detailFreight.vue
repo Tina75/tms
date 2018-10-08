@@ -69,8 +69,8 @@
           <span class="table-footer-title">总计</span>
           <span>总货值：{{ orderTotal.cargoCost }}</span>
           <span>总数量：{{ orderTotal.quantity }}</span>
-          <span>总体积：{{ orderTotal.weight }}</span>
-          <span>总重量：{{ orderTotal.volume }}</span>
+          <span>总体积：{{ orderTotal.volume }}</span>
+          <span>总重量：{{ orderTotal.weight }}</span>
         </div>
       </div>
       <!-- 应付费用 -->
@@ -200,7 +200,7 @@
               :remote="false"
               :local-options="carrierCars"
               class="detail-info-input"
-              @on-select="handleSelectCarrierCar" />
+              @on-select="autoComplete" />
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型/车长：</span>
@@ -221,7 +221,8 @@
               :maxlength="5"
               :remote="false"
               :local-options="carrierDrivers"
-              class="detail-info-input" />
+              class="detail-info-input"
+              @on-select="autoComplete" />
           </i-col>
           <i-col span="5" offset="1">
             <span class="detail-field-title">司机手机号：</span>
@@ -324,6 +325,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import BasePage from '@/basic/BasePage'
 import TransportBase from '../transportBase'
 import DetailMixin from './detailMixin'
@@ -332,6 +334,8 @@ import Server from '@/libs/js/server'
 import MoneyInput from '../components/moneyInput'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput'
+
+const specialCity = ['110000', '120000', '310000', '500000', '710000', '810000', '820000']
 
 export default {
   name: 'DetailFeright',
@@ -522,6 +526,17 @@ export default {
     }
   },
 
+  watch: {
+    startCodes () {
+      if (!(this.startCodes instanceof Array)) return
+      this.info.start = specialCity.includes(this.startCodes[0]) && this.startCodes.length === 2 ? this.startCodes[0] : this.startCodes[this.startCodes.length - 1]
+    },
+    endCodes () {
+      if (!(this.endCodes instanceof Array)) return
+      this.info.end = specialCity.includes(this.endCodes[0]) && this.startCodes.length === 2 ? this.endCodes[0] : this.endCodes[this.endCodes.length - 1]
+    }
+  },
+
   methods: {
     // 将数据返回的标识映射为文字
     statusFilter (status) {
@@ -545,6 +560,24 @@ export default {
         this.startCodes = this.info.start
         this.endCodes = this.info.end
       }, 250)
+    },
+
+    checkPlace () {
+      let start = specialCity.includes(this.startCodes[0]) && this.startCodes.length === 2 ? this.startCodes[0] : this.startCodes[this.startCodes.length - 1]
+      let end = specialCity.includes(this.endCodes[0]) && this.endCodes.length === 2 ? this.endCodes[0] : this.endCodes[this.endCodes.length - 1]
+
+      if (this.startCodes.length === 1 && !specialCity.includes(this.startCodes[0])) {
+        this.$Message.error('始发地请至少选择到市一级城市')
+        return false
+      } else if (this.endCodes.length === 1 && !specialCity.includes(this.endCodes[0])) {
+        this.$Message.error('目的地请至少选择到市一级城市')
+        return false
+      } else if ((this.startCodes.length > 0 && this.endCodes.length > 0 && _.isEqual(this.startCodes, this.endCodes)) || start === end) {
+        this.$Message.error('始发地不能和目的地相同')
+        return false
+      } else {
+        return true
+      }
     },
 
     fetchData () {

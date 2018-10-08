@@ -112,7 +112,7 @@ import Export from '@/libs/js/export'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
-import City from '@/libs/js/city'
+// import City from '@/libs/js/city'
 import SearchMixin from './searchMixin'
 export default {
   name: 'receipt',
@@ -210,7 +210,7 @@ export default {
           title: '订单号',
           key: 'orderNo',
           fixed: 'left',
-          minWidth: 160,
+          minWidth: 180,
           render: (h, params) => {
             return h('a', {
               props: {
@@ -262,17 +262,17 @@ export default {
           key: 'start',
           minWidth: 180,
           render: (h, params) => {
-            if (City.codeToFullNameArr(params.row.start).length > 12) {
+            if (this.cityFormatter(params.row.start).length > 12) {
               return h('Tooltip', {
                 props: {
                   placement: 'bottom',
-                  content: City.codeToFullNameArr(params.row.start)
+                  content: this.cityFormatter(params.row.start)
                 }
               }, [
-                h('span', this.formatterAddress(City.codeToFullNameArr(params.row.start)))
+                h('span', this.formatterAddress(this.cityFormatter(params.row.start)))
               ])
             } else {
-              return h('span', City.codeToFullNameArr(params.row.start))
+              return h('span', this.cityFormatter(params.row.start))
             }
           }
         },
@@ -281,17 +281,17 @@ export default {
           key: 'end',
           minWidth: 180,
           render: (h, params) => {
-            if (City.codeToFullNameArr(params.row.end).length > 12) {
+            if (this.cityFormatter(params.row.end).length > 12) {
               return h('Tooltip', {
                 props: {
                   placement: 'bottom',
-                  content: City.codeToFullNameArr(params.row.end)
+                  content: this.cityFormatter(params.row.end)
                 }
               }, [
-                h('span', this.formatterAddress(City.codeToFullNameArr(params.row.end)))
+                h('span', this.formatterAddress(this.cityFormatter(params.row.end)))
               ])
             } else {
-              return h('span', City.codeToFullNameArr(params.row.end))
+              return h('span', this.cityFormatter(params.row.end))
             }
           }
         },
@@ -604,7 +604,7 @@ export default {
     },
     // 表头按钮批量操作
     handleOperateClick (btn) {
-      this.operateValue = btn.value
+      // this.operateValue = btn.value
       if (!this.selectOrderList.length && btn.name !== '导出') {
         this.$Message.warning('请至少选择一条信息')
         return
@@ -685,9 +685,7 @@ export default {
         method: 'post',
         data,
         fileName: '回单明细'
-      }).then((res) => {
-        this.$Message.success('导出成功')
-      }).catch(err => console.error(err))
+      })
     }
   }
 }

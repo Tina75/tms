@@ -56,19 +56,24 @@ export default {
       return true
     }
     const validateStart = (rule, value, callback) => {
+      let start = specialCity.includes(this.form.start[0]) && this.form.start.length === 2 ? this.form.start[0] : this.form.start[this.form.start.length - 1]
+      let end = specialCity.includes(this.form.end[0]) && this.form.end.length === 2 ? this.form.end[0] : this.form.end[this.form.end.length - 1]
+
       if (!validateArea(value)) {
         callback(new Error('请至少选择到市一级城市'))
-      } else if (this.form.end.length > 0 && value.length > 0 && _.isEqual(this.form.end, value)) {
+      } else if ((this.form.end.length > 0 && value.length > 0 && _.isEqual(this.form.end, value)) || start === end) {
         callback(new Error('始发城市不能和目的城市相同'))
       } else {
         callback()
       }
     }
     const validateEnd = (rule, value, callback) => {
-      console.log(value)
+      let start = specialCity.includes(this.form.start[0]) && this.form.start.length === 2 ? this.form.start[0] : this.form.start[this.form.start.length - 1]
+      let end = specialCity.includes(this.form.end[0]) && this.form.end.length === 2 ? this.form.end[0] : this.form.end[this.form.end.length - 1]
+
       if (!validateArea(value)) {
         callback(new Error('请至少选择到市一级城市'))
-      } else if (this.form.start.length > 0 && value.length > 0 && _.isEqual(this.form.start, value)) {
+      } else if ((this.form.start.length > 0 && value.length > 0 && _.isEqual(this.form.start, value)) || start === end) {
         callback(new Error('目的城市不能和始发城市相同'))
       } else {
         callback()
@@ -88,11 +93,11 @@ export default {
       },
       rules: {
         start: [
-          { required: true, type: 'array', message: '请选择始发地' },
+          { required: true, type: 'array', message: '请选择始发地', trigger: 'blur' },
           { validator: validateStart }
         ],
         end: [
-          { required: true, type: 'array', message: '请选择目的地' },
+          { required: true, type: 'array', message: '请选择目的地', trigger: 'blur' },
           { validator: validateEnd }
         ],
         carNo: [
@@ -147,16 +152,12 @@ export default {
     create () {
       this.$refs.$form.validate(valid => {
         if (valid) {
-          // if (this.form.carNo && !this.$refs.$selectCar.validate()) {
-          //   this.$Message.error('车牌号不正确')
-          //   return
-          // }
           Server({
             url: '/dispatch/add/waybill',
             method: 'post',
             data: {
-              start: this.form.start[this.form.start.length - 1],
-              end: this.form.end[this.form.end.length - 1],
+              start: specialCity.includes(this.form.start[0]) && this.form.start.length === 2 ? this.form.start[0] : this.form.start[this.form.start.length - 1],
+              end: specialCity.includes(this.form.end[0]) && this.form.end.length === 2 ? this.form.end[0] : this.form.end[this.form.end.length - 1],
               carrierName: this.form.carrierName,
               carNo: this.form.carNo ? this.form.carNo : void 0
             }

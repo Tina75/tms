@@ -61,8 +61,8 @@
           <span class="table-footer-title">总计</span>
           <span>总货值：{{ orderTotal.cargoCost }}</span>
           <span>总数量：{{ orderTotal.quantity }}</span>
-          <span>总体积：{{ orderTotal.weight }}</span>
-          <span>总重量：{{ orderTotal.volume }}</span>
+          <span>总体积：{{ orderTotal.volume }}</span>
+          <span>总重量：{{ orderTotal.weight }}</span>
         </div>
       </div>
       <!-- 应付费用 -->
@@ -71,23 +71,23 @@
           <span>应付费用</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="3">
+          <i-col span="4">
             <span class="detail-field-title-sm">运输费：</span>
             <span class="detail-field-fee">{{ payment.freightFee || 0 }}元</span>
           </i-col>
-          <i-col span="3" offset="2">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">装货费：</span>
             <span class="detail-field-fee">{{ payment.loadFee || 0 }}元</span>
           </i-col>
-          <i-col span="3" offset="2">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">卸货费：</span>
             <span class="detail-field-fee">{{ payment.unloadFee || 0 }}元</span>
           </i-col>
-          <i-col span="3" offset="2">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">保险费：</span>
             <span class="detail-field-fee">{{ payment.insuranceFee || 0 }}元</span>
           </i-col>
-          <i-col span="3" offset="2">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">其他：</span>
             <span class="detail-field-fee">{{ payment.otherFee || 0 }}元</span>
           </i-col>
@@ -182,7 +182,7 @@
               :remote="false"
               :local-options="carrierCars"
               class="detail-info-input"
-              @on-select="handleSelectCarrierCar" />
+              @on-select="autoComplete" />
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型/车长：</span>
@@ -203,7 +203,8 @@
               :maxlength="5"
               :remote="false"
               :local-options="carrierDrivers"
-              class="detail-info-input" />
+              class="detail-info-input"
+              @on-select="autoComplete" />
           </i-col>
           <i-col span="5" offset="1">
             <span class="detail-field-title">司机手机号：</span>
@@ -243,28 +244,28 @@
           <span>应付费用</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="5">
+          <i-col span="4">
             <span class="detail-field-title-sm">运输费：</span>
             <MoneyInput v-model="payment.freightFee"
                         class="detail-payment-input" />
-            <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
+                        <!-- <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a> -->
           </i-col>
-          <i-col span="4">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">装货费：</span>
             <MoneyInput v-model="payment.loadFee"
                         class="detail-payment-input" />
           </i-col>
-          <i-col span="4">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">卸货费：</span>
             <MoneyInput v-model="payment.unloadFee"
                         class="detail-payment-input" />
           </i-col>
-          <i-col span="4">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">保险费：</span>
             <MoneyInput v-model="payment.insuranceFee"
                         class="detail-payment-input" />
           </i-col>
-          <i-col span="4">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">其他：</span>
             <MoneyInput v-model="payment.otherFee"
                         class="detail-payment-input" />

@@ -159,6 +159,7 @@ export default {
           method: 'post',
           data: this.form
         }).then(res => {
+          debugger
           if (this.rememberPW) this.localPwSave()
           else window.localStorage.removeItem('local_rememberd_pw')
           window.localStorage.setItem('tms_is_login', true)

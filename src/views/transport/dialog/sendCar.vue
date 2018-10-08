@@ -23,7 +23,8 @@
             :maxlength="5"
             :remote="false"
             :local-options="carrierDrivers"
-            class="detail-info-input" />
+            class="detail-info-input"
+            @on-select="autoComplete" />
         </i-col>
         <i-col span="7" offset="1">
           <span class="detail-field-title">司机手机号：</span>
@@ -42,7 +43,7 @@
             :remote="false"
             :local-options="carrierCars"
             class="detail-info-input"
-            @on-select="handleSelectCarrierCar" />
+            @on-select="autoComplete" />
         </i-col>
         <i-col span="7" offset="1">
           <span class="detail-field-title">车型：</span>
@@ -65,7 +66,7 @@
           <span class="detail-field-title-sm detail-field-required">运输费：</span>
           <MoneyInput v-model="payment.freightFee"
                       class="detail-payment-input" />
-          <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
+          <a v-if="type === 'sendCar'" class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
         </i-col>
         <i-col span="4">
           <span class="detail-field-title-sm">装货费：</span>
@@ -128,7 +129,6 @@ import Server from '@/libs/js/server'
 import SelectInput from '@/components/SelectInput.vue'
 import MoneyInput from '../components/moneyInput'
 import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
-import { mapGetters } from 'vuex'
 import { CAR } from '@/views/client/client'
 
 export default {
@@ -142,6 +142,7 @@ export default {
       carType: CAR_TYPE,
       carLength: CAR_LENGTH,
       carriers: [], // 承运商
+      carrierDrivers: [], // 司机
       carrierCars: [], // 车辆
       info: {
         carrierName: '',
@@ -150,6 +151,12 @@ export default {
         carNo: '',
         carType: '',
         carLength: ''
+      },
+      financeRulesInfo: {
+        start: void 0,
+        end: void 0,
+        weight: void 0,
+        volume: void 0
       },
       payment: {
         freightFee: 0,
@@ -188,7 +195,7 @@ export default {
                 suffix: false
               },
               style: {
-                width: '60px'
+                width: '70px'
               },
               on: {
                 'on-blur': (money) => {
@@ -235,10 +242,7 @@ export default {
       Number(this.payment.unloadFee) +
       Number(this.payment.insuranceFee) +
       Number(this.payment.otherFee)).toFixed(2)
-    },
-    ...mapGetters([
-      'carrierDrivers'
-    ])
+    }
   },
   created () {
     this.settlementPayInfo = this.type === 'sendCar' ? [
@@ -270,6 +274,27 @@ export default {
       })
     },
 
+    getCarrierDrivers (carrierId) {
+      Server({
+        method: 'get',
+        url: 'carrier/list/driver',
+        params: {
+          carrierId
+        }
+      }).then((res) => {
+        this.carrierDrivers = res.data.data.driverList.map(item => {
+          return {
+            name: item.driverName,
+            value: item.driverName,
+            driverPhone: item.driverPhone,
+            carType: item.carType,
+            carLength: item.carLength,
+            carNo: item.carNO
+          }
+        })
+      })
+    },
+
     getCarrierCars (carrierId) {
       Server({
         url: '/carrier/list/carOrderByUpdateTimeDesc',
@@ -288,11 +313,11 @@ export default {
           }
         })
         if (this.carrierCars.length) {
+          this.autoComplete(null, this.carrierCars[0])
           this.info.carNo = this.carrierCars[0].name
-          this.handleSelectCarrierCar(null, this.carrierCars[0])
         } else {
           this.info.carNo = ''
-          const keys = ['driverName', 'driverPhone', 'carType', 'carLength']
+          const keys = ['driverName', 'driverPhone', 'carType', 'carLength', 'carNo']
           keys.forEach(key => {
             this.info[key] = ''
           })
@@ -301,12 +326,12 @@ export default {
     },
 
     handleSelectCarrier (name, row) {
+      this.getCarrierDrivers(row.id)
       this.getCarrierCars(row.id)
-      this.$store.dispatch('getCarrierDrivers', row.id)
     },
 
-    handleSelectCarrierCar (name, row) {
-      const keys = ['driverName', 'driverPhone', 'carType', 'carLength']
+    autoComplete (name, row) {
+      const keys = ['driverName', 'driverPhone', 'carType', 'carLength', 'carNo']
       keys.forEach(key => {
         this.info[key] = row[key]
       })
@@ -314,10 +339,11 @@ export default {
 
     showChargeRules () {
       const self = this
-      self.openDialog({
-        name: 'transport/dialog/financeRule',
+      this.openDialog({
+        name: 'dialogs/financeRule',
         data: {
-          value: 0
+          partnerType: 2,
+          ...self.financeRulesInfo
         },
         methods: {
           ok (charge) {
@@ -356,6 +382,11 @@ export default {
 
         for (let key in this.info) {
           this.info[key] = billInfo[key]
+        }
+        if (this.type === 'sendCar') {
+          for (let key in this.financeRulesInfo) {
+            this.financeRulesInfo[key] = billInfo[key]
+          }
         }
         for (let key in this.payment) {
           this.payment[key] = this.setMoneyUnit2Yuan(billInfo[key])
