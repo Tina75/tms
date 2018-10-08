@@ -8,7 +8,7 @@
         <Col span="18">
         <p v-html="greetings"></p>
         </Col>
-        <Col span="6">
+        <Col span="6" class="van-right">
         <span class="page-home__header-date">{{today}}</span>
         <Poptip v-model="visible" trigger="click" placement="bottom-end">
           <FontIcon type="shouye" size="20" class="page-home__setting-icon" />

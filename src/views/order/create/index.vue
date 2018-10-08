@@ -122,12 +122,12 @@
       <Col span="6">
       <FormItem label="运输费用:" prop="freightFee">
         <Row>
-          <Col span="18">
+          <Col span="20">
           <TagNumberInput :min="0" v-model="orderForm.freightFee" :parser="handleParseFloat">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           </Col>
-          <Col span="6">
+          <Col span="4">
           <span @click="showCounter">
             <FontIcon type="jisuanqi" size="20" color="#00a4bd" class="i-ml-5"></FontIcon>
           </span>
@@ -358,7 +358,7 @@ export default {
           }
         },
         {
-          title: '重量(吨)',
+          title: '重量（吨）',
           key: 'weight',
           renderHeader: (h, params) => {
             return h('span', [
@@ -406,7 +406,7 @@ export default {
           }
         },
         {
-          title: '体积(方)',
+          title: '体积（方）',
           key: 'volume',
           renderHeader (h, params) {
             return h('span', [
@@ -435,7 +435,7 @@ export default {
           }
         },
         {
-          title: '货值(元)',
+          title: '货值（元）',
           key: 'cargoCost',
           render (h, params) {
             return h('InputNumber', {
