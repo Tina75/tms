@@ -16,9 +16,9 @@ let instance = axios.create({
 
 switch (process.env.NODE_ENV) {
   case 'development':
-    instance.defaults.baseURL = 'http://192.168.1.49:5656/dolphin-web/'; break
+    instance.defaults.baseURL = '//dev.tms5566.com/dolphin-web/'; break
   case 'production':
-    instance.defaults.baseURL = '//192.168.1.49:5656/dolphin-web/'; break
+    instance.defaults.baseURL = '//dev.tms5566.com/dolphin-web/'; break
 }
 
 // POST传参序列化

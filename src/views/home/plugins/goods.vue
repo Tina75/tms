@@ -86,17 +86,12 @@ export default {
       }
     }
   },
-
-  created () {
-    this.load()
-  },
-
   methods: {
     load () {
       const self = this
       this.fetch('/home/cargo/statistics')
         .then(response => {
-          if (Number(response.code) === 1000) {
+          if (Number(response.code) === 10000) {
             const res = response.data
             res.map(item => {
               let obj = {

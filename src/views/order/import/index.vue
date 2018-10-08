@@ -38,19 +38,26 @@
         </div>
       </div>
     </PageTable>
-    <!-- <Modal
+    <Modal
       :value="visible"
       :closable="false"
       :mask-closable="false"
-      title="文件正在努力上传.."
+      title="导入订单结果"
     >
-      <div class="van-center">
-        <i-circle :percent="progress">
-          <span style="font-size:24px">{{progress}}%</span>
-        </i-circle>
-      </div>
+      <Row>
+        <Col span="24" class="van-center i-mt-10">
+        <Spin fix>
+        </Spin>
+      </Col>
+      </Row>
+      <Row>
+        <Col span="24" class="van-center i-primary i-mt-10">
+        <span>导入订单正在紧急处理中..</span>
+        </Col>
+      </Row>
+
       <div slot="footer"></div>
-    </Modal> -->
+    </Modal>
   </div>
 </template>
 
@@ -142,15 +149,12 @@ export default {
                 },
                 on: {
                   click: () => {
-                  // vm.openTab({
-                  //   title: '订单管理',
-                  //   path: '/order-management/order',
-                  //   query: {
-                  //     id: params.row.id
-                  //   }
-                  // })
                     jsCookie.set('imported_id', params.row.id, {expires: 1})
-                    vm.$router.push({path: '/order-management/order', query: {title: '订单管理'}})
+                    vm.openTab({
+                      title: '订单管理',
+                      path: '/order-management/order'
+                    })
+                    // vm.$router.push({path: '/order-management/order', query: {title: '订单管理'}})
                   }
                 }
               }, '查看导入订单'))
@@ -231,6 +235,46 @@ export default {
     handleClick (e) {
       this.$refs.fileInput.click()
     },
+    loopCheckFileProgress (importId) {
+      const vm = this
+      let timer = null
+      function checkProgress () {
+        try {
+          timer = setTimeout(async () => {
+            const res = await server({
+              method: 'get',
+              url: 'order/getImportResult',
+              data: {
+                importId
+              }
+            })
+            const status = res.data.data.status
+            if (status === 1 || status === 0) {
+              if (timer) {
+                clearTimeout(timer)
+              }
+              if (status === 0) {
+                vm.$Message.success({content: `此次导入订单失败，具体失败原因下载错误报告`, duration: 3})
+              } else {
+                vm.$Message.success({content: `导入成功，共导入${res.data.data.orderNum}条订单`, duration: 3})
+              }
+              vm.visible = false
+              vm.$refs.pageTable.fetch()
+            } else {
+              checkProgress()
+            }
+          }, 3000)
+        } catch (error) {
+          if (timer) {
+            clearTimeout(timer)
+          }
+          vm.visible = false
+          vm.$Message.error({content: error.data.msg, duration: 3})
+          return error
+        }
+      }
+      checkProgress()
+    },
     /**
      * 文件上传后，回调
      */
@@ -250,10 +294,13 @@ export default {
         const uploadResult = await this.uploadFile(file)
         const notifyResult = await this.notifyBackend(file.name, uploadResult.res.requestUrls[0])
         if (notifyResult.data.code === 10000) {
-          this.$Message.success({content: '导入文件完成，后台正在处理中，请稍后查看结果', duration: 3})
+          // this.$Message.success({content: '导入文件完成，后台正在处理中，请稍后查看结果', duration: 3})
+          this.visible = true
+          this.loopCheckFileProgress(notifyResult.data.data.id)
         }
       } catch (error) {
-        console.error('导入订单', error)
+        // console.error('导入订单', error)
+        this.$Message.error({content: '导入订单文件失败', duration: 3})
       }
 
       this.$refs.pageTable.fetch()
