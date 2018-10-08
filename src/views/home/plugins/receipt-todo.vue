@@ -29,8 +29,8 @@ export default {
   data () {
     return {
       data: [
-        {id: 'waitRecovery', name: '待回收单数', value: 0, tab: 'waitRecovery'},
-        {id: 'waitReturnFactory', name: '待返厂单数', value: 0, tab: 'waitReturnFactory'}
+        {id: 'waitRecovery', name: '待回收单数', value: 0, tab: '待回收'},
+        {id: 'waitReturnFactory', name: '待返厂单数', value: 0, tab: '待返厂'}
       ]
     }
   },
