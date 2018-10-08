@@ -90,7 +90,7 @@ export default {
       })
     },
     _consignerUpdate () {
-      Object.assign(this.validate, {id: this.id})
+      Object.assign(this.validate, { id: this.id })
       console.log(this.validate)
       consignerUpdate(this.validate).then(res => {
         if (res.data.code === CODE) {
