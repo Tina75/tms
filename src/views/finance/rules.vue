@@ -52,25 +52,25 @@
                 <div class="item-remove">
                   <Icon type="md-remove-circle" @click="removeItem(index)"/>
                 </div>
-                <Collapse v-model="ruleShowIndex">
-                  <Panel name="1" hide-arrow>
-                    <div slot class="rule-route">
-                      <Row :gutter="20">
-                        <Col span="6">
+                <Collapse v-model="ruleShowIndex" class="rule-content">
+                  <div class="rule-route">
+                    <Row :gutter="20">
+                      <Col span="12">
                         <AreaSelect v-model="item.departure" placeholder="请输入始发地" class="search-input-senior" />
-                        </Col>
-                        <Col span="6">
+                      </Col>
+                      <Col span="12">
                         <AreaSelect v-model="item.destination" placeholder="请输入目的地" class="search-input-senior" />
-                        </Col>
-                      </Row>
-                    </div>
+                      </Col>
+                    </Row>
+                  </div>
+                  <Panel :name="(index + 1) + ''" hide-arrow>
                     <div slot="content">
                       <div class="ivu-table-wrapper">
                         <div class="ivu-table ivu-table-default ivu-table-with-fixed-top">
                           <div class="ivu-table-header">
                             <table cellspacing="0" cellpadding="0" border="0" style="width: 100%">
                               <colgroup>
-                                <col width="150">
+                                <col width="100">
                                 <col width="250">
                                 <col width="250">
                               </colgroup>
@@ -92,7 +92,7 @@
                           <div class="ivu-table-body">
                             <table cellspacing="0" cellpadding="0" border="0" style="width: 100%">
                               <colgroup>
-                                <col width="150">
+                                <col width="100">
                                 <col width="250">
                                 <col width="250">
                               </colgroup>
@@ -173,11 +173,7 @@ export default {
         queryText: ''
       },
       companyData: [],
-      ruleDetail: {
-        ruleType: '1',
-        ruleName: '',
-        detail: []
-      }
+      ruleDetail: {}
     }
   },
   computed: {
@@ -250,6 +246,7 @@ export default {
               ruleId: data.row.ruleId
             }
           }).then(res => {
+            _this.ruleDetail = {}
             _this.getRules()
           }).catch(err => console.error(err))
         }
@@ -378,6 +375,15 @@ export default {
         .rule-item
           display: flex
           margin-bottom: 10px
+          .rule-content
+            position: relative
+            .rule-route
+              display: block
+              position: absolute
+              width: 400px
+              top: 10px
+              left: 20px
+              z-index: 101
           .item-remove
             width: 25px
             align-items center
