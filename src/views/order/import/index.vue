@@ -93,6 +93,40 @@ export default {
       timer: null,
       columns: [
         {
+          title: '操作',
+          key: 'action',
+          width: 160,
+          render: (h, params) => {
+            const actions = [
+              h('a', {
+                attrs: {
+                  href: params.row.fileUrl
+                }
+              }, '下载')
+            ]
+            // 导入成功可以看下载
+            if (params.row.status === 1) {
+              actions.push(h('a', {
+                class: 'i-ml-10',
+                attrs: {
+                  href: 'javascript:;'
+                },
+                on: {
+                  click: () => {
+                    jsCookie.set('imported_id', params.row.id, {expires: 1})
+                    vm.openTab({
+                      title: '订单管理',
+                      path: '/order-management/order'
+                    })
+                    // vm.$router.push({path: '/order-management/order', query: {title: '订单管理'}})
+                  }
+                }
+              }, '查看导入订单'))
+            }
+            return h('div', actions)
+          }
+        },
+        {
           title: '导入日期',
           key: 'createTime',
           render (h, params) {
@@ -128,39 +162,6 @@ export default {
           title: '操作人',
           key: 'operatorName',
           width: 120
-        },
-        {
-          title: '操作',
-          key: 'action',
-          render: (h, params) => {
-            const actions = [
-              h('a', {
-                attrs: {
-                  href: params.row.fileUrl
-                }
-              }, '下载')
-            ]
-            // 导入成功可以看下载
-            if (params.row.status === 1) {
-              actions.push(h('a', {
-                class: 'i-ml-10',
-                attrs: {
-                  href: 'javascript:;'
-                },
-                on: {
-                  click: () => {
-                    jsCookie.set('imported_id', params.row.id, {expires: 1})
-                    vm.openTab({
-                      title: '订单管理',
-                      path: '/order-management/order'
-                    })
-                    // vm.$router.push({path: '/order-management/order', query: {title: '订单管理'}})
-                  }
-                }
-              }, '查看导入订单'))
-            }
-            return h('div', actions)
-          }
         }
       ]
     }
