@@ -9,39 +9,39 @@
     </Col>
     <Col span="21" style="background:#fff; padding-left:20px; height: inherit;">
     <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;">
-      <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute; left: 20px;"></span>
+      <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute; left: 20px; margin-top: 2px;"></span>
       <span style="margin-left:35px; font-size: 16px; font-weight:600;">{{rightTitle}}</span>
     </div>
     <!--密码设置-->
-    <div v-if="'1' === this.rightKey" key="1" style="height:530px;">
+    <div v-if="'1' === this.rightKey" key="1" class="divSetContent">
       <Col span="10" class="setConf">
       <Form ref="formPwd" :model="formPwd" :rules="rulePwd" :label-width="90" label-position="left">
-        <FormItem label="原始密码：" prop="oldPassword">
-          <Input v-model="formPwd.oldPassword" type="password" placeholder="请输入原始密码"></Input>
+        <FormItem label="原始密码：" prop="oldPassword" class="labelClassSty">
+          <Input v-model="formPwd.oldPassword" type="password" placeholder="请输入原始密码" class="inputClassSty"></Input>
         </FormItem>
-        <FormItem label="新密码：" prop="password">
-          <Input v-model="formPwd.password" type="password" placeholder="请输入新密码"></Input>
+        <FormItem label="新密码：" prop="password" class="labelClassSty">
+          <Input v-model="formPwd.password" type="password" placeholder="请输入新密码" class="inputClassSty"></Input>
         </FormItem>
-        <FormItem label="确认密码：" prop="confirmPassword">
-          <Input v-model="formPwd.confirmPassword" type="password" placeholder="请再次输入新密码"></Input>
+        <FormItem label="确认密码：" prop="confirmPassword" class="labelClassSty">
+          <Input v-model="formPwd.confirmPassword" type="password" placeholder="请再次输入新密码" class="inputClassSty"></Input>
         </FormItem>
         <FormItem>
-          <Button type="primary" @click="pwdSubmit('formPwd')">保存</Button>
+          <Button type="primary" style="width:86px;" @click="pwdSubmit('formPwd')">保存</Button>
         </FormItem>
       </Form>
       </Col>
     </div>
     <!--个人设置-->
-    <div v-else-if="'2' === this.rightKey" key="2" style="height:530px;">
+    <div v-else-if="'2' === this.rightKey" key="2" class="divSetContent">
       <Col span="10" class="setConf">
       <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="90" label-position="left">
-        <FormItem label="账号：">
+        <FormItem label="账号：" class="labelClassSty">
           <span>{{formPersonal.phone}}</span>
         </FormItem>
-        <FormItem label="姓名：" prop="name" style="margin-left: -9px;">
-          <Input v-model="formPersonal.name" placeholder="请输入姓名" style="margin-left: 9px;"></Input>
+        <FormItem label="姓名：" prop="name" style="margin-left: -9px;" class="labelClassSty">
+          <Input v-model="formPersonal.name" placeholder="请输入姓名" style="margin-left: 9px;" class="inputClassSty"></Input>
         </FormItem>
-        <FormItem label="角色：">
+        <FormItem label="角色：" class="labelClassSty">
           <span>{{formPersonal.roleName}}</span>
         </FormItem>
         <!-- <FormItem label="头像："> -->
@@ -71,13 +71,13 @@
           <p style="color:rgba(153,153,153,1);">尺寸60*60像素，大小不超过1M</p>
         </FormItem> -->
         <FormItem>
-          <Button type="primary" @click="personalSubmit('formPersonal')">保存</Button>
+          <Button type="primary" style="width:86px;"  @click="personalSubmit('formPersonal')">保存</Button>
         </FormItem>
       </Form>
       </Col>
     </div>
     <!--短信设置-->
-    <div v-else-if="'3' === this.rightKey" key="3" style="height:530px;">
+    <div v-else-if="'3' === this.rightKey" key="3" style="margin-left:-125px;" class="divSetContent">
       <Col span="20" class="setConf">
       <Card dis-hover>
         <div solt="title" class="msgCardTitle">
@@ -100,27 +100,27 @@
           </p>
         </div>
       </Card>
-      <Button type="primary" class="msgSaveBtn test111" @click="msgSaveBtn">保存1</Button>
+      <Button type="primary" class="msgSaveBtn test111" style="width:86px;" @click="msgSaveBtn">保存</Button>
       </Col>
     </div>
     <!--公司设置-->
-    <div v-else-if="'4' === this.rightKey" key="4" style="height:530px;">
+    <div v-else-if="'4' === this.rightKey" key="4" class="divSetContent">
       <Col span="10" class="setConf">
       <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="120" label-position="left">
-        <FormItem label="公司名称：" prop="name">
-          <Input v-model="formCompany.name" placeholder="请输入公司名称"></Input>
+        <FormItem label="公司名称：" prop="name" class="labelClassSty">
+          <Input v-model="formCompany.name" placeholder="请输入公司名称" class="inputClassSty"></Input>
         </FormItem>
-        <FormItem label="公司联系人：" prop="contact">
-          <Input v-model="formCompany.contact" placeholder="请输入公司联系人"></Input>
+        <FormItem label="公司联系人：" prop="contact" class="labelClassSty">
+          <Input v-model="formCompany.contact" placeholder="请输入公司联系人" class="inputClassSty"></Input>
         </FormItem>
-        <FormItem label="联系方式：" prop="contactPhone">
-          <Input v-model="formCompany.contactPhone" placeholder="请输入联系方式"></Input>
+        <FormItem label="联系方式：" prop="contactPhone" class="labelClassSty">
+          <Input v-model="formCompany.contactPhone" placeholder="请输入联系方式" class="inputClassSty"></Input>
         </FormItem>
-        <FormItem label="所在省市：" prop="cityId">
-          <AreaSelect v-model="formCompany.cityId" :deep="true"></AreaSelect>
+        <FormItem label="所在省市：" prop="cityId" class="labelClassSty">
+          <AreaSelect v-model="formCompany.cityId" :deep="true" class="inputClassSty"></AreaSelect>
         </FormItem>
-        <FormItem label="公司地址：" prop="address">
-          <Input v-model="formCompany.address" placeholder="请输入公司地址"></Input>
+        <FormItem label="公司地址：" prop="address" class="labelClassSty">
+          <Input v-model="formCompany.address" placeholder="请输入公司地址" class="inputClassSty"></Input>
         </FormItem>
         <!-- <FormItem label="公司LOGO："> -->
         <!--公司设置-图片相关-->
@@ -148,7 +148,7 @@
           <p style="color:rgba(153,153,153,1);">尺寸60*60像素，大小不超过1M</p>
         </FormItem> -->
         <FormItem>
-          <Button type="primary" @click="companySubmit('formCompany')">保存</Button>
+          <Button type="primary" style="width:86px;" @click="companySubmit('formCompany')">保存</Button>
         </FormItem>
       </Form>
         </Col>
@@ -617,6 +617,11 @@ export default {
     margin-top: 20px;
     left: 50%;
     margin-left: -35%
+    .inputClassSty
+      width:300px;
+    .labelClassSty
+      font-weight: bold;
+
 .mesDiv
   height: 120px;
   width: 720px;
@@ -664,4 +669,10 @@ export default {
   font-size: 20px;
   cursor: pointer;
   margin: 0 2px;
+.divSetContent
+  width: 900px;
+  height:530px;
+  margin-top:40px;
+  left: 15%;
+  position: absolute;
 </style>
