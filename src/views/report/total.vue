@@ -107,6 +107,7 @@ export default {
     search () {
       // 输入框都为空，type=1,搜索数据清空
       if (!this.isEmpty()) {
+        this.$Message.error('请先输入搜索条件')
         this.keyword = {
           type: 1
         }
@@ -178,7 +179,7 @@ export default {
           if (month > 9) {
             startMonth = '10'
           }
-          start = this.formatDate(now).slice(0, 5) + startMonth + this.formatDate(now).slice(-3)
+          start = this.formatDate(now).slice(0, 5) + startMonth + '-01'
           break
         case 4:
           /* 当前年份 */
@@ -211,10 +212,9 @@ export default {
       Export({
         url: '/report/exportTurnoverSummary',
         method: 'post',
-        data: data
-      }).then(res => {
-        this.$Message.success('导出成功')
-      }).catch(err => console.error(err))
+        data: data,
+        fileName: '营业额汇总报表'
+      })
     }
   }
 }

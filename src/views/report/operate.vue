@@ -77,6 +77,7 @@
       :columns="columns"
       :extra-columns="extraColumns"
       :show-filter="true"
+      width="100%"
       @on-column-change="handleColumnChange">
     </page-table>
   </div>
@@ -152,27 +153,28 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
-          ellipsis: true
+          fixed: 'left',
+          width: 150
         },
         {
           title: '客户订单号',
           key: 'customerOrderNo',
-          ellipsis: true
+          width: 150
         },
         {
           title: '运单号',
           key: 'waybillNo',
-          ellipsis: true
+          width: 150
         },
         {
           title: '客户名称',
           key: 'consignerName',
-          ellipsis: true
+          width: 150
         },
         {
           title: '始发地',
           key: 'start',
-          ellipsis: true,
+          width: 250,
           render: (h, params) => {
             return h('span', City.codeToFullNameArr(params.row.start))
           }
@@ -180,7 +182,7 @@ export default {
         {
           title: '目的地',
           key: 'end',
-          ellipsis: true,
+          width: 250,
           render: (h, params) => {
             return h('span', City.codeToFullNameArr(params.row.end))
           }
@@ -188,17 +190,17 @@ export default {
         {
           title: '体积（方）',
           key: 'volume',
-          ellipsis: true
+          width: 150
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          ellipsis: true
+          width: 150
         },
         {
           title: '下单时间',
           key: 'orderCreateTime',
-          ellipsis: true,
+          width: 250,
           render: (h, params) => {
             return h('span', new Date(params.row.orderCreateTime).Format('yyyy-MM-dd hh:mm'))
           }
@@ -206,116 +208,134 @@ export default {
         {
           title: '合计运费',
           key: 'orderTotalFee',
-          ellipsis: true
+          width: 150,
+          render: (h, params) => {
+            return h('span', (params.row.orderTotalFee / 100).toFixed(2))
+          }
         },
         {
           title: '订单状态',
           key: 'orderStatus',
-          ellipsis: true,
+          width: 150,
           render: (h, params) => {
-            return h('span', this.orderStatusMap[params.row.orderStatus])
+            return h('span', params.row.orderStatus ? this.orderStatusMap[params.row.orderStatus] : '-')
           }
         },
         {
           title: '提货单号',
           key: 'loadbillNo',
-          ellipsis: true
+          width: 150
         },
         {
           title: '提货单状态',
           key: 'loadbillStatus',
-          ellipsis: true
+          width: 150,
+          render: (h, params) => {
+            return h('span', params.row.loadbillStatus ? this.loadbillStatusMap[params.row.loadbillStatus] : '-')
+          }
         },
         {
           title: '提货总费用',
           key: 'loadbillTotalFee',
-          ellipsis: true
+          width: 150,
+          render: (h, params) => {
+            return h('span', (params.row.loadbillTotalFee / 100).toFixed(2))
+          }
         },
         {
           title: '提货承运商',
           key: 'loadbillCarrierName',
-          ellipsis: true
+          width: 150
         },
         {
           title: '提货单司机',
           key: 'loadbillDriver',
-          ellipsis: true
+          width: 150
         },
         {
           title: '提货单车牌号',
           key: 'loadbillCarNo',
-          ellipsis: true
+          width: 150
         },
         {
           title: '提货单车辆信息',
           key: 'loadbillCarInfo',
-          ellipsis: true
+          width: 150
         },
         {
           title: '运单状态',
           key: 'waybillStatus',
-          ellipsis: true,
+          width: 150,
           render: (h, params) => {
-            return h('span', this.waybillStatusMap[params.row.waybillStatus])
+            return h('span', params.row.waybillStatus ? this.waybillStatusMap[params.row.waybillStatus] : '-')
           }
         },
         {
           title: '送货总费用',
           key: 'waybillTotalFee',
-          ellipsis: true
+          width: 150,
+          render: (h, params) => {
+            return h('span', (params.row.waybillTotalFee / 100).toFixed(2))
+          }
         },
         {
           title: '送货承运商',
           key: 'waybillCarrierName',
-          ellipsis: true
+          width: 150
         },
         {
           title: '运单司机',
           key: 'waybillDriver',
-          ellipsis: true
+          width: 150
         },
         {
           title: '运单车牌号',
           key: 'waybillCarNo',
-          ellipsis: true
+          width: 150
         },
         {
           title: '运单车辆信息',
           key: 'waybillCarInfo',
-          ellipsis: true
+          width: 150
         },
         {
           title: '外转单号',
           key: 'transbillNo',
-          ellipsis: true
+          width: 150
         },
         {
           title: '外转单状态',
           key: 'transbillStatus',
-          ellipsis: true,
+          width: 150,
           render: (h, params) => {
-            return h('span', this.transbillStatusMap[params.row.transbillStatus])
+            return h('span', params.row.transbillStatus ? this.transbillStatusMap[params.row.transbillStatus] : '-')
           }
         },
         {
           title: '外转方费用',
           key: 'transbillTotalFee',
-          ellipsis: true
+          width: 150,
+          render: (h, params) => {
+            return h('span', (params.row.transbillTotalFee / 100).toFixed(2))
+          }
         },
         {
           title: '外转方',
           key: 'transfereeName',
-          ellipsis: true
+          width: 150
         },
         {
           title: '回单号',
           key: 'receiptNo',
-          ellipsis: true
+          width: 150
         },
         {
           title: '回单状态',
           key: 'receiptStatus',
-          ellipsis: true
+          width: 150,
+          render: (h, params) => {
+            return h('span', params.row.receiptStatus ? this.receiptStatusMap[params.row.receiptStatus] : '-')
+          }
         }
       ],
       extraColumns: [
@@ -514,6 +534,7 @@ export default {
     search () {
       // 输入框都为空，type=1,搜索数据清空
       if (!this.isEmpty()) {
+        this.$Message.error('请先输入搜索条件')
         this.keyword = {
           type: 1
         }
@@ -576,11 +597,9 @@ export default {
       Export({
         url: '/report/for/operating/export',
         method: 'post',
-        data
-        // fileName: '运单明细'
-      }).then(res => {
-        this.$Message.success('导出成功')
-      }).catch(err => console.error(err))
+        data,
+        fileName: '运单报表'
+      })
     },
     // 筛选列表显示字段
     handleColumnChange (val) {
@@ -604,6 +623,8 @@ export default {
     padding 13px
     .search-col
       flex 4
+      /deep/ .ivu-input
+        height 35px
       .row
         margin-bottom 12px
     .search-btn
