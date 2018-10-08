@@ -71,23 +71,23 @@
           <span>应付费用</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="3">
+          <i-col span="4">
             <span class="detail-field-title-sm">运输费：</span>
             <span class="detail-field-fee">{{ payment.freightFee || 0 }}元</span>
           </i-col>
-          <i-col span="3" offset="2">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">装货费：</span>
             <span class="detail-field-fee">{{ payment.loadFee || 0 }}元</span>
           </i-col>
-          <i-col span="3" offset="2">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">卸货费：</span>
             <span class="detail-field-fee">{{ payment.unloadFee || 0 }}元</span>
           </i-col>
-          <i-col span="3" offset="2">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">保险费：</span>
             <span class="detail-field-fee">{{ payment.insuranceFee || 0 }}元</span>
           </i-col>
-          <i-col span="3" offset="2">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">其他：</span>
             <span class="detail-field-fee">{{ payment.otherFee || 0 }}元</span>
           </i-col>
@@ -243,28 +243,28 @@
           <span>应付费用</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="5">
+          <i-col span="4">
             <span class="detail-field-title-sm">运输费：</span>
             <MoneyInput v-model="payment.freightFee"
                         class="detail-payment-input" />
-            <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
+                        <!-- <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a> -->
           </i-col>
-          <i-col span="4">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">装货费：</span>
             <MoneyInput v-model="payment.loadFee"
                         class="detail-payment-input" />
           </i-col>
-          <i-col span="4">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">卸货费：</span>
             <MoneyInput v-model="payment.unloadFee"
                         class="detail-payment-input" />
           </i-col>
-          <i-col span="4">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">保险费：</span>
             <MoneyInput v-model="payment.insuranceFee"
                         class="detail-payment-input" />
           </i-col>
-          <i-col span="4">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">其他：</span>
             <MoneyInput v-model="payment.otherFee"
                         class="detail-payment-input" />

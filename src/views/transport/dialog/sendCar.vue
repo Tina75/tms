@@ -65,7 +65,7 @@
           <span class="detail-field-title-sm detail-field-required">运输费：</span>
           <MoneyInput v-model="payment.freightFee"
                       class="detail-payment-input" />
-          <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
+          <a v-if="type === 'sendCar'" class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
         </i-col>
         <i-col span="4">
           <span class="detail-field-title-sm">装货费：</span>
@@ -150,6 +150,12 @@ export default {
         carNo: '',
         carType: '',
         carLength: ''
+      },
+      financeRulesInfo: {
+        start: void 0,
+        end: void 0,
+        weight: void 0,
+        volume: void 0
       },
       payment: {
         freightFee: 0,
@@ -314,10 +320,11 @@ export default {
 
     showChargeRules () {
       const self = this
-      self.openDialog({
-        name: 'transport/dialog/financeRule',
+      this.openDialog({
+        name: 'dialogs/financeRule',
         data: {
-          value: 0
+          partnerType: 2,
+          ...self.financeRulesInfo
         },
         methods: {
           ok (charge) {
@@ -356,6 +363,11 @@ export default {
 
         for (let key in this.info) {
           this.info[key] = billInfo[key]
+        }
+        if (this.type === 'sendCar') {
+          for (let key in this.financeRulesInfo) {
+            this.financeRulesInfo[key] = billInfo[key]
+          }
         }
         for (let key in this.payment) {
           this.payment[key] = this.setMoneyUnit2Yuan(billInfo[key])
