@@ -288,7 +288,7 @@ export default {
         {
           title: '外转单号',
           key: 'transNo',
-          width: 200,
+          width: 180,
           fixed: 'left',
           render: (h, p) => {
             return h('a', {
@@ -310,12 +310,12 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
-          width: 200
+          width: 180
         },
         {
           title: '外转方运单号',
           key: 'outTransNo',
-          width: 200
+          width: 180
         },
         {
           title: '外转方名称',
@@ -371,7 +371,7 @@ export default {
         {
           title: '客户订单号',
           key: 'customerOrderNo',
-          width: 200
+          width: 180
         },
         {
           title: '客户名称',

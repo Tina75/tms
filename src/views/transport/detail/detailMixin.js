@@ -272,15 +272,22 @@ export default {
 
     // 计费规则
     showChargeRules () {
+      const self = this
       this.openDialog({
-        name: 'transport/dialog/financeRule',
-        data: {
-          value: 0
+        name: 'dialogs/financeRule',
+        data: { // 以下数据必传
+          partnerType: self.pageName === 'pickup' ? 3 : 2, // 计费规则分类 - 发货方1 承运商2 外转方3
+          weight: self.orderTotal.weight, // 货物重量
+          volume: self.orderTotal.volume, // 货物体积
+          start: self.info.start, // 始发地code
+          end: self.info.end // 目的地code
         },
         methods: {
+          // 确认计费规则后返回金额(元)
           ok (charge) {
-            this.payment.freightFee = charge || 0
+            self.payment.freightFee = charge || 0
           },
+          // 在计费规则中点击去设置按钮后关闭该对话框
           cancel () {
             self.close()
           }

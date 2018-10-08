@@ -9,6 +9,7 @@
   .wrapper
     padding 20px 15px
     background white
+    min-height 100%
 </style>
 <script>
 import Vue from 'vue'

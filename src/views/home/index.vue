@@ -1,11 +1,15 @@
 <template>
   <div>
     <div class="page-home__header">
+      <Alert v-if="notice" type="warning" class="page-home__header-notice" banner closable>
+        {{notice}}
+      </Alert>
       <Row>
-        <Col span="20">
+        <Col span="18">
         <p v-html="greetings"></p>
         </Col>
-        <Col span="4" class="van-right">
+        <Col span="6" class="van-right">
+        <span class="page-home__header-date">{{today}}</span>
         <Poptip v-model="visible" trigger="click" placement="bottom-end">
           <FontIcon type="shouye" size="20" class="page-home__setting-icon" />
           <div slot="content">
@@ -122,6 +126,8 @@ export default {
   data () {
     return {
       visible: false,
+      // notice: '因腾讯云服务器数据丢失，部分数据展示异常。紧急抢修中，请您耐心等待',
+      notice: null,
       cardChecks: [],
       cardChecksTemp: [],
       cardsMap: {
@@ -148,6 +154,10 @@ export default {
   },
   computed: {
     ...mapGetters(['UserInfo']),
+    today () {
+      var now = new Date()
+      return now.Format('yyyy年MM月dd日') + ' ' + this.week(now.getDay())
+    },
     greetings () {
       const now = new Date().getHours()
       const name = this.UserInfo.name
@@ -188,7 +198,24 @@ export default {
     eventHub.$off('plugin:add', this.addChild)
   },
   methods: {
-
+    week (day) {
+      switch (day) {
+        case 1:
+          return '周一'
+        case 2:
+          return '周二'
+        case 3:
+          return '周三'
+        case 4:
+          return '周四'
+        case 5:
+          return '周五'
+        case 6:
+          return '周六'
+        case 7:
+          return '周日'
+      }
+    },
     addChild (_vm) {
       if (this.intersectionObserver) {
         _vm.$el.$vm = _vm
@@ -218,19 +245,13 @@ export default {
       }).then(res => {
         if (res && res.data) {
           const data = res.data.data
-          // let [valid, invalid] = [[], []]
           this.cardChecksTemp = []
           for (const i of data) {
             if (i.valid === 1) {
-              // valid.push(i)
               this.cardChecksTemp.push(i.name)
-              // } else if (i.valid === 0) {
-              // invalid.push(i)
             }
           }
-          // valid = valid.sort((a, b) => a.code - b.code)
-          // invalid = invalid.sort((a, b) => (a, b) => (a.code - b.code))
-          this.cardsList = data // [...valid, ...invalid]
+          this.cardsList = data
           this.cardChecks = this.cardChecksTemp
         }
       })
@@ -279,6 +300,13 @@ export default {
     padding-right 8px
   &__header
     position relative
+  &__header-notice
+    position absolute
+    z-index 10
+    width 100%
+  &__header-date
+    vertical-align super
+    margin-right 30px
   &__setting-icon
     cursor pointer
   &__message-item
