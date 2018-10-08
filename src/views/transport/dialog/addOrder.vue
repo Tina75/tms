@@ -50,12 +50,12 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
-          width: 200
+          width: 180
         },
         {
           title: '客户订单号',
           key: 'customerOrderNo',
-          width: 200,
+          width: 180,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.customerOrderNo, true)
           }
@@ -63,7 +63,7 @@ export default {
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 200,
+          minWidth: 180,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.consignerName)
           }
