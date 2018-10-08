@@ -107,7 +107,7 @@ import SelectInput from '@/components/SelectInput.vue'
 import OrderPrint from './components/OrderPrint'
 import _ from 'lodash'
 import { mapGetters, mapActions } from 'vuex'
-import City from '@/libs/js/City'
+import City from '@/libs/js/city'
 import SearchMixin from './searchMixin'
 import jsCookie from 'js-cookie'
 export default {

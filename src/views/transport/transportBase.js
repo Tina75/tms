@@ -1,4 +1,4 @@
-import City from '@/libs/js/City'
+import City from '@/libs/js/city'
 import { CAR_TYPE, CAR_LENGTH, getCarType, getCarLength } from '@/libs/constant/carInfo'
 
 const FORMATTERS = {
