@@ -181,8 +181,9 @@ export default {
       return new Date(timestamp).Format('yyyy-MM-dd hh:mm:ss')
     },
     // 格式化城市
-    cityFilter (code) {
-      return City.codeToFullNameArr(code, 3, '')
+    cityFormatter (code) {
+      if (!code) return ''
+      return Array.from(new Set(City.codeToFullNameArr(code, 3))).join('')
     },
     // 结算方式码转为名称
     settlementToName (val) {
