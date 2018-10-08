@@ -5,6 +5,8 @@
       :extra="total"
       title="回单待办"
       label="提示文字"
+      to="/transport/outerOrder"
+      page-title="回单待办"
     >
     </OrderCard>
   </div>
@@ -27,8 +29,8 @@ export default {
   data () {
     return {
       data: [
-        {id: 'waitRecovery', name: '待回收单数', value: 0},
-        {id: 'waitReturnFactory', name: '待返厂单数', value: 0}
+        {id: 'waitRecovery', name: '待回收单数', value: 0, tab: 'waitRecovery'},
+        {id: 'waitReturnFactory', name: '待返厂单数', value: 0, tab: 'waitReturnFactory'}
       ]
     }
   },
