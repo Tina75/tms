@@ -9,7 +9,7 @@
         </template>
         <MenuItem v-for="menu in picMenu" :key="menu.id" :name="menu.title" style="font-size:14px;" @click.native="clickLeftMenuPic(menu)">
         {{menu.title}}
-          </MenuItem>
+        </MenuItem>
       </Submenu>
       <Submenu name="2">
         <template slot="title">
@@ -27,7 +27,9 @@
       <div v-if="'pic' === this.type">
         <p slot="title" style="font-size:16px; color:rgba(51,51,51,1);">{{picContent.title}}</p>
         <pre>{{picContent.content}}</pre>
-        <img :src="picContent.urlList" class="imgInfo" />
+        <div v-for="url in picContent.urlList" :key="url.index">
+          <img :src="url" class="imgInfo" />
+        </div>
       </div>
       <div v-if="'video' === this.type">
         <p slot="title" style="font-size:16px; color:rgba(51,51,51,1);">{{videoContent.title}}</p>
@@ -70,6 +72,11 @@ export default {
       }).then(({ data }) => {
         data.data.forEach(menu => {
           if (menu.type === 1) {
+            if (menu.urlList.includes(',')) {
+              menu.urlList = menu.urlList.split(',')
+            } else {
+              menu.urlList = [menu.urlList]
+            }
             this.picMenu.push(menu)
           } else if (menu.type === 2) {
             this.videoMenu.push(menu)
@@ -78,6 +85,16 @@ export default {
         this.picContent = this.picMenu[0]
         console.log(this.picMenu)
       })
+    },
+    picImagList () {
+      for (let index = 0; index < this.picMenu.length; index++) {
+        if (this.picMenu[index].urlList.includes(',')) {
+          console.dir(this.picMenu[index])
+          this.picMenu[index].urlList = this.picMenu[index].urlList.split(',')
+        } else {
+          this.picMenu[index].urlList = [this.picMenu[index].urlList]
+        }
+      }
     },
     clickLeftMenuPic (menu) {
       this.picContent = Object.assign({}, menu)

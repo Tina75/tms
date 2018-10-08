@@ -8,7 +8,7 @@
       </MenuItem>
     </Menu>
     </Col>
-    <Col span="21" style="background:#fff; padding: 0 25px 50px 25px; height: inherit; overflow: auto;">
+    <Col span="21" style="background:#fff; padding: 0 25px 50px 25px; overflow: auto;">
     <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;">
       <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute; left:20px;margin-top: 2px;"></span>
       <span style="margin-left:35px; font-size: 16px; font-weight:600;">{{rightTitle}}</span>
@@ -44,16 +44,16 @@
               <Checkbox :label="msg.id" class="checkboxItem"></Checkbox>
             </CheckboxGroup>
             <div class="msgImg">
-              <i class="icon font_family icon-xitongxiaoxi" style="font-size:28px; background: white; color: #FFBB44;"></i>
+              <i class="icon font_family icon-xitongxiaoxi" style="font-size:36px; background: white; color: #FFBB44;"></i>
             </div>
             <div class="msgContent" @click="clickContenInfo(msg)">
               <p class="msgContentTitle">{{msg.title}}</p>
-              <pre class="msgContentText" style="color: #777B89">{{msg.content}}</pre>
+              <pre class="msgContentText">{{msg.content}}</pre>
             </div>
             <div class="msgConfigDiv">
               <p style="color: #9DA1B0">{{ formatDate(msg.createTime) }}</p>
               <span class="msgConfigBtn" @click="msgRemoveBtn(msg)">
-                <i class="icon font_family icon-shanchu1"></i>
+                <i class="icon font_family icon-shanchu1" style="color: #777B89"></i>
               </span>
             </div>
           </div>
@@ -80,15 +80,15 @@
               <Checkbox :label="msg.id" class="checkboxItem"></Checkbox>
             </CheckboxGroup>
             <div class="msgImg">
-              <i class="icon font_family icon-dingdanxiaoxi" style="font-size:28px; background: white; color: #418DF9;"></i>
+              <i class="icon font_family icon-dingdanxiaoxi" style="font-size:36px; background: white; color: #418DF9;"></i>
             </div>
             <div class="msgContent" @click="clickContenInfo(msg)">
               <p class="msgContentTitle">{{msg.title}}</p>
-              <pre class="msgContentText" style="color: #777B89">{{msg.content}}</pre>
+              <pre class="msgContentText">{{msg.content}}</pre>
             </div>
             <div class="msgConfigDiv">
               <p style="color: #9DA1B0">{{ formatDate(msg.createTime) }}</p>
-              <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
+              <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1" style="color: #777B89"></i></span>
             </div>
           </div>
         </div>
@@ -114,15 +114,15 @@
               <Checkbox :label="msg.id" class="checkboxItem"></Checkbox>
             </CheckboxGroup>
             <div class="msgImg">
-              <i class="icon font_family icon-yunshuxiaoxi" style="font-size:28px; background: white; color: #00A4BD;"></i>
+              <i class="icon font_family icon-yunshuxiaoxi" style="font-size:36px; background: white; color: #00A4BD;"></i>
             </div>
             <div class="msgContent" @click="clickContenInfo(msg)">
               <p class="msgContentTitle">{{msg.title}}</p>
-              <pre class="msgContentText" style="color: #777B89">{{msg.content}}</pre>
+              <pre class="msgContentText">{{msg.content}}</pre>
             </div>
             <div class="msgConfigDiv">
               <p style="color: #9DA1B0">{{ formatDate(msg.createTime) }}</p>
-              <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1"></i></span>
+              <span class="msgConfigBtn" @click="msgRemoveBtn(msg)"><i class="icon font_family icon-shanchu1" style="color: #777B89"></i></span>
             </div>
           </div>
         </div>
@@ -132,8 +132,10 @@
         <p slot="header" style="text-align:center">
           <span>提示</span>
         </p>
-        <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white; color: #FFBB44;float:left;"></i>
-        <p style="margin-top:13px; margin-left:40px;">确定要删除“{{messageInit.title}}”消息吗?</P>
+        <p style="margin-left:70px; margin-top: 10px;">
+          <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
+        </p><p style="margin-top:23px; margin-left:50px;">确定要删除“{{messageInit.title}}”消息吗?</P>
+        </p>
         <div slot="footer">
           <Button type="primary" @click="removeSubForm">确定</Button>
           <Button  @click="removeCancelForm">取消</Button>
@@ -143,8 +145,10 @@
         <p slot="header" style="text-align:center">
           <span>提示</span>
         </p>
-        <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white; color: #FFBB44;float:left;"></i>
-        <p style="margin-top:13px; margin-left:40px;">确定要批量删除选中的消息吗?</P>
+        <p style="margin-left:70px; margin-top: 10px;">
+          <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
+        </p><p style="margin-top:23px; margin-left:50px;">确定要批量删除选中的消息吗?</P>
+        </p>
         <div slot="footer">
           <Button type="primary" @click="removeSubFormSome">确定</Button>
           <Button  @click="removeCancelFormSome">取消</Button>
@@ -154,8 +158,10 @@
         <p slot="header" style="text-align:center">
           <span>提示</span>
         </p>
-        <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white; color: #FFBB44;float:left;"></i>
-        <p style="margin-top:13px; margin-left:40px;">确定要删除全部消息吗?</P>
+        <p style="margin-left:70px; margin-top: 10px;">
+          <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
+        </p><p style="margin-top:23px; margin-left:50px;">确定要删除所有的“{{rightTitle}}”?</P>
+        </p>
         <div slot="footer">
           <Button type="primary" @click="removeSubFormAll">确定</Button>
           <Button  @click="removeCancelFormAll">取消</Button>
@@ -502,10 +508,12 @@ export default {
 .msgImg
   float: left;
   margin-right: 20px;
+  margin-top: -3px;
 .msgContentTitle
   font-weight: bold
   color: "#2F323E"
   margin-bottom: 5px;
+  font-size:14px;
 .msgConfigDiv
   float: right;
   margin-top: -55px;
@@ -514,7 +522,8 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   width: 630px;
-  color: "#9DA1B0"
+  color: #777B89
+  font-size:12px;
 .msgContent
   cursor: pointer;
 .msgConfigBtn

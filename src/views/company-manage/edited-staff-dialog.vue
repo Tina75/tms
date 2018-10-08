@@ -1,18 +1,18 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visibale" :mask-closable="false" width="360">
+    <Modal v-model="visibale" :mask-closable="false" width="400">
       <p slot="header" style="text-align:center">
         <span>{{title}}</span>
       </p>
-      <Form ref="formModal" :model="formModal" :rules="rulesModal" :label-width="120" label-position="left" style="height: 200px;">
+      <Form ref="formModal" :model="formModal" :rules="rulesModal" :label-width="100" label-position="left" style="padding: 25px;height: 200px;">
         <FormItem label="员工姓名：" prop="name">
-          <Input v-model="formModal.name" placeholder="请输入员工姓名"></Input>
+          <Input v-model="formModal.name" placeholder="请输入员工姓名" class="inputClass"></Input>
         </FormItem>
         <FormItem label="手机号：" prop="phone">
-          <Input v-model="formModal.phone" placeholder="请输入手机号"></Input>
+          <Input v-model="formModal.phone" placeholder="请输入手机号" class="inputClass"></Input>
         </FormItem>
         <FormItem label="角色：" prop="roleId">
-          <Select v-model="formModal.roleId" clearable>
+          <Select v-model="formModal.roleId" clearable class="inputClass">
             <Option
               v-for="item in selectList"
               :value="item.id"
@@ -144,4 +144,6 @@ export default {
 .dialog
   p
     text-align center
+.inputClass
+  width: 200px;
 </style>
