@@ -56,8 +56,8 @@ export default {
       return true
     }
     const validateStart = (rule, value, callback) => {
-      let start = specialCity.includes(this.form.start[0]) ? this.form.start[0] : this.form.start[this.form.start.length - 1]
-      let end = specialCity.includes(this.form.end[0]) ? this.form.end[0] : this.form.end[value.length - 1]
+      let start = specialCity.includes(this.form.start[0]) && this.form.start.length === 2 ? this.form.start[0] : this.form.start[this.form.start.length - 1]
+      let end = specialCity.includes(this.form.end[0]) && this.form.end.length === 2 ? this.form.end[0] : this.form.end[this.form.end.length - 1]
 
       if (!validateArea(value)) {
         callback(new Error('请至少选择到市一级城市'))
@@ -68,8 +68,8 @@ export default {
       }
     }
     const validateEnd = (rule, value, callback) => {
-      let start = specialCity.includes(this.form.start[0]) ? this.form.start[0] : this.form.start[this.form.start.length - 1]
-      let end = specialCity.includes(this.form.end[0]) ? this.form.end[0] : this.form.end[value.length - 1]
+      let start = specialCity.includes(this.form.start[0]) && this.form.start.length === 2 ? this.form.start[0] : this.form.start[this.form.start.length - 1]
+      let end = specialCity.includes(this.form.end[0]) && this.form.end.length === 2 ? this.form.end[0] : this.form.end[this.form.end.length - 1]
 
       if (!validateArea(value)) {
         callback(new Error('请至少选择到市一级城市'))

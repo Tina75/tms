@@ -370,14 +370,15 @@ export default {
     },
     // 校验
     validate () {
-      if (this.info.start && !this.info.start) {
+      if (this.info.start !== undefined && !this.info.start) {
         this.$Message.error('请输入始发地')
         return false
       }
-      if (this.info.end && !this.info.end) {
+      if (this.info.end !== undefined && !this.info.end) {
         this.$Message.error('请输入目的地')
         return false
       }
+      if (this.info.start !== undefined || this.info.end !== undefined) return this.checkPlace()
       if (this.pageName === 'pickup' && !this.info.carrierName) {
         this.$Message.error('请输入承运商')
         return false
