@@ -65,7 +65,8 @@ export default {
         method: 'get',
         url: '/finance/charge/listRules',
         params: {
-          partnerType: this.partnerType
+          partnerType: this.partnerType,
+          partnerName: this.partnerName
         }
       }).then((res) => {
         this.ruleOptions = res.data.data
