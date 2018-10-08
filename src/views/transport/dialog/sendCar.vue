@@ -479,6 +479,8 @@ export default {
      border-style none
      padding-bottom 10px
 
+  .detail-field-title-sm
+    width 75px
   .detail-payment-input
-    width 80px
+    width 100px
 </style>

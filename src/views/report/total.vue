@@ -67,31 +67,38 @@ export default {
       columns: [
         {
           title: '客户名称',
-          key: 'consignerName'
+          key: 'consignerName',
+          ellipsis: true
         },
         {
           title: '订单数',
-          key: 'orderNum'
+          key: 'orderNum',
+          ellipsis: true
         },
         {
           title: '运输费',
-          key: 'freightFee'
+          key: 'freightFee',
+          ellipsis: true
         },
         {
           title: '装卸费',
-          key: 'loadFee'
+          key: 'loadFee',
+          ellipsis: true
         },
         {
           title: '卸货费',
-          key: 'unloadFee'
+          key: 'unloadFee',
+          ellipsis: true
         },
         {
           title: '其他费用',
-          key: 'otherFee'
+          key: 'otherFee',
+          ellipsis: true
         },
         {
           title: '费用合计',
-          key: 'totalFee'
+          key: 'totalFee',
+          ellipsis: true
         }
       ]
     }
@@ -145,7 +152,7 @@ export default {
       let start = ''
       let end = ''
       /* 当前时间时间戳 */
-      let now = new Date(2018, 2, 10).getTime()
+      let now = new Date().getTime()
       /* 当前时间 yyyy - mm -dd */
       end = this.formatDate(now)
       /* 当前月份 */
@@ -197,10 +204,14 @@ export default {
         this.$Message.error('请先输入导出条件')
         return
       }
+      let data = {
+        createTimeStart: this.keywords.startTime,
+        createTimeEnd: this.keywords.endTime
+      }
       Export({
         url: '/report/exportTurnoverSummary',
         method: 'post',
-        data: this.keyword
+        data: data
       }).then(res => {
         this.$Message.success('导出成功')
       }).catch(err => console.error(err))

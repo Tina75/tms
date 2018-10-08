@@ -198,7 +198,8 @@ export default {
           waybillId: this.rightExpandRow.waybillId
         }
       }).then(res => {
-        this.rightTableExpandData = res.data.data.waybillOrderList
+        this.rightTableExpandData = this.heightLightNewRow(res.data.data.waybillOrderList)
+        console.log(this.rightTableExpandData)
         this.rightTableExpandLoading = false
       }).catch(err => {
         this.rightTableExpandLoading = false

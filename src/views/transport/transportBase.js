@@ -1,4 +1,4 @@
-import City from '@/libs/js/City'
+import City from '@/libs/js/city'
 import { CAR_TYPE, CAR_LENGTH, getCarType, getCarLength } from '@/libs/constant/carInfo'
 
 const FORMATTERS = {
@@ -11,7 +11,6 @@ const FORMATTERS = {
   // 格式化城市
   cityFormatter (code) {
     if (!code) return ''
-    console.log('code->' + code, City.codeToFullNameArr(code, 3, '-'))
     return Array.from(new Set(City.codeToFullNameArr(code, 3))).join('')
   },
 

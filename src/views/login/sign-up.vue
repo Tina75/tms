@@ -92,7 +92,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
-import City from '@/libs/js/City'
+import City from '@/libs/js/city'
 import mixin from './mixin'
 import { VALIDATOR_PHONE, VALIDATOR_PASSWORD, VALIDATOR_CONFIRM_PASSWORD } from './validator'
 

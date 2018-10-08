@@ -182,7 +182,7 @@ export default {
           loadbillId: this.rightExpandRow.loadbillId
         }
       }).then(res => {
-        this.rightTableExpandData = res.data.data.loadbillOrderList
+        this.rightTableExpandData = this.heightLightNewRow(res.data.data.loadbillOrderList)
         this.rightTableExpandLoading = false
       }).catch(err => {
         this.rightTableExpandLoading = false

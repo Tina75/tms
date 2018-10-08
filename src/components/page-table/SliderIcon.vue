@@ -145,10 +145,8 @@ export default {
 <style lang="stylus" scoped>
 .slider-icon
   &__checkbox-list
-    max-height: 380px
     overflow-y: auto
   &__draggable-column
-    max-height: 380px
     -webkit-column-width: 116px
     -moz-column-width: 116px
     column-width: 116px
