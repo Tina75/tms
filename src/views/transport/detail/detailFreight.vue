@@ -325,6 +325,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import BasePage from '@/basic/BasePage'
 import TransportBase from '../transportBase'
 import DetailMixin from './detailMixin'
@@ -333,6 +334,8 @@ import Server from '@/libs/js/server'
 import MoneyInput from '../components/moneyInput'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput'
+
+const specialCity = ['110000', '120000', '310000', '500000', '710000', '810000', '820000']
 
 export default {
   name: 'DetailFeright',
@@ -526,15 +529,11 @@ export default {
   watch: {
     startCodes () {
       if (!(this.startCodes instanceof Array)) return
-      this.info.start = this.startCodes.length
-        ? this.startCodes[this.startCodes.length - 1]
-        : ''
+      this.info.start = specialCity.includes(this.startCodes[0]) && this.startCodes.length === 2 ? this.startCodes[0] : this.startCodes[this.startCodes.length - 1]
     },
     endCodes () {
       if (!(this.endCodes instanceof Array)) return
-      this.info.end = this.endCodes.length
-        ? this.endCodes[this.endCodes.length - 1]
-        : ''
+      this.info.end = specialCity.includes(this.endCodes[0]) && this.startCodes.length === 2 ? this.endCodes[0] : this.endCodes[this.endCodes.length - 1]
     }
   },
 
@@ -561,6 +560,24 @@ export default {
         this.startCodes = this.info.start
         this.endCodes = this.info.end
       }, 250)
+    },
+
+    checkPlace () {
+      let start = specialCity.includes(this.startCodes[0]) && this.startCodes.length === 2 ? this.startCodes[0] : this.startCodes[this.startCodes.length - 1]
+      let end = specialCity.includes(this.endCodes[0]) && this.endCodes.length === 2 ? this.endCodes[0] : this.endCodes[this.endCodes.length - 1]
+
+      if (this.startCodes.length === 1 && !specialCity.includes(this.startCodes[0])) {
+        this.$Message.error('始发地请至少选择到市一级城市')
+        return false
+      } else if (this.endCodes.length === 1 && !specialCity.includes(this.endCodes[0])) {
+        this.$Message.error('目的地请至少选择到市一级城市')
+        return false
+      } else if ((this.startCodes.length > 0 && this.endCodes.length > 0 && _.isEqual(this.startCodes, this.endCodes)) || start === end) {
+        this.$Message.error('始发地不能和目的地相同')
+        return false
+      } else {
+        return true
+      }
     },
 
     fetchData () {
