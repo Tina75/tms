@@ -245,19 +245,13 @@ export default {
       }).then(res => {
         if (res && res.data) {
           const data = res.data.data
-          // let [valid, invalid] = [[], []]
           this.cardChecksTemp = []
           for (const i of data) {
             if (i.valid === 1) {
-              // valid.push(i)
               this.cardChecksTemp.push(i.name)
-              // } else if (i.valid === 0) {
-              // invalid.push(i)
             }
           }
-          // valid = valid.sort((a, b) => a.code - b.code)
-          // invalid = invalid.sort((a, b) => (a, b) => (a.code - b.code))
-          this.cardsList = data // [...valid, ...invalid]
+          this.cardsList = data
           this.cardChecks = this.cardChecksTemp
         }
       })

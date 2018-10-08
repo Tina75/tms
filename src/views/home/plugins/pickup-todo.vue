@@ -31,9 +31,9 @@ export default {
   data () {
     return {
       data: [
-        { id: 'waitPickOrderCnt', name: '待提货调度订单数量', value: 0, tab: 'waitPickOrderCnt' },
-        { id: 'waitPickCnt', name: '待提货提货订单数量', value: 0, tab: 'waitPickCnt' },
-        { id: 'inTransportCnt', name: '运输中订单数量', value: 0, tab: 'inTransportCnt' }
+        { id: 'waitPickOrderCnt', name: '待提货调度订单数量', value: 0, tab: '全部' },
+        { id: 'waitPickCnt', name: '待提货提货订单数量', value: 0, tab: '待提货' },
+        { id: 'inTransportCnt', name: '运输中订单数量', value: 0, tab: '提货中' }
       ]
     }
   },
