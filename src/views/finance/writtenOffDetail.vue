@@ -3,10 +3,10 @@
     <div class="case-info">
       <Row>
         <Col span="6">
-        <p><label>对账批次号：</label><span>{{$route.query.verifyNo}}</span></p>
+        <p><label>核销单号：</label><span>{{$route.query.verifyNo}}</span></p>
         </Col>
         <Col span="8">
-        <p><label>日期范围：</label><span>{{$route.query.dateRange}}</span></p>
+        <p><label>对账批次号：</label><span>{{writtenOffData.orderNo}}</span></p>
         </Col>
         <Col span="6">
         <p><label>{{sceneMap[$route.query.scene]}}：</label><span>{{$route.query.partnerName}}</span></p>
@@ -38,7 +38,7 @@
         <Timeline>
           <TimelineItem v-for="(item, index) in verifyInfoList" :key="index">
             <i slot="dot" class="time-line-dot"></i>
-            <p class="check-date">{{item.operateTime}}</p>
+            <p class="check-date">{{item.createTime|datetime}}</p>
             <div class="check-info">
               <Row>
                 <Col span="3">
@@ -76,6 +76,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
+import '@/libs/js/filter'
 import Vue from 'vue'
 
 /**
@@ -105,8 +106,9 @@ export default {
       },
       active: '1',
       writtenOffData: {
-        orderNum: 100,
-        totalFeeText: 1000.87,
+        orderNum: 0,
+        orderNo: '',
+        totalFeeText: 0,
         list: []
       },
       verifyInfoList: []
@@ -170,6 +172,7 @@ export default {
         }
       }).then(res => {
         this.writtenOffData.orderNum = res.data.data.orderNum
+        this.writtenOffData.orderNo = res.data.data.orderNo
         this.writtenOffData.totalFeeText = (res.data.data.totalFee / 100).toFixed(2)
         this.writtenOffData.list = res.data.data.orderList.map(item => {
           return Object.assign({}, item, {
@@ -222,7 +225,8 @@ export default {
           border-color: #dcdee2
           border-width: 0 1px 1px 1px
           color: #333333
-          font-weight: 12px
+          font-size: 12px
+          font-weight: bold
         .time-line-dot
           width: 13px
           height: 13px

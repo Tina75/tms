@@ -16,7 +16,7 @@ let instance = axios.create({
 
 switch (process.env.NODE_ENV) {
   case 'development':
-    instance.defaults.baseURL = '//dev.tms5566.com/dolphin-web/'; break
+    instance.defaults.baseURL = '//192.168.198.129:5656/dolphin-web/'; break
   case 'production':
     instance.defaults.baseURL = '//dev.tms5566.com/dolphin-web/'; break
 }

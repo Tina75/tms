@@ -8,8 +8,7 @@
         </FormItem>
         <FormItem label="发货方：" prop="partnerName">
           <Select v-model="createRuleForm.partnerName">
-            <Option value="1">重量</Option>
-            <Option value="2">体积</Option>
+            <Option v-for="(item, index) in partnerList" :key="index" :value="key">{{item}}</Option>
           </Select>
         </FormItem>
       </Form>
@@ -23,6 +22,7 @@
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
+import Server from '@/libs/js/server'
 export default {
   name: 'createRule',
   mixins: [BaseDialog],
@@ -36,15 +36,40 @@ export default {
         ruleName: { required: true, message: '请填写规则名称', trigger: 'blur' },
         partnerName: { required: true, message: '请选择发货方', trigger: 'change' }
       },
+      partnerList: [],
       visibale: true
     }
   },
+  mounted () {
+    this.getPartnerList()
+  },
   methods: {
+    getPartnerList () {
+      Server({
+        url: '/finance/charge/getPartners',
+        method: 'get',
+        params: {
+          partnerType: this.scene
+        }
+      }).then(res => {
+        this.partnerList = res.data.data
+      }).catch(err => console.error(err))
+    },
     save () {
       this.$refs['createRuleForm'].validate((valid) => {
         if (valid) {
-          this.ok()
-          this.visibale = false
+          Server({
+            url: '/finance/charge/addRule',
+            method: 'post',
+            data: {
+              partnerName: this.createRuleForm.partnerName,
+              partnerType: this.scene,
+              ruleName: this.createRuleForm.ruleName
+            }
+          }).then(res => {
+            this.visibale = false
+            this.ok()
+          }).catch(err => console.error(err))
         }
       })
     }

@@ -1,7 +1,7 @@
 <template>
   <div class="finance-rules">
     <div class="tab-box">
-      <Tabs v-model="active">
+      <Tabs v-model="active" @on-click="switchTab">
         <TabPane v-for="(name, key) in sceneMap" :key="key" :label="name" :name="key" />
       </Tabs>
     </div>
@@ -11,14 +11,14 @@
         <div class="query-box">
           <Form :model="rulesQuery" inline>
             <FormItem>
-              <Select v-model="rulesQuery.partnerType" clearable>
+              <Select v-model="rulesQuery.type" clearable>
                 <Option value="1">{{sceneMap[active]}}名称</Option>
                 <Option value="2">规则名称</Option>
               </Select>
             </FormItem>
             <FormItem>
               <Input v-model="rulesQuery.queryText" :placeholder="`请输入${sceneMap[active]}名称`" style="width: auto">
-              <Icon slot="suffix" type="ios-search"/>
+              <Icon slot="suffix" type="ios-search" @click="getRules"/>
               </Input>
             </FormItem>
           </Form>
@@ -27,9 +27,9 @@
       <div class="list-box">
         <Row :gutter="20">
           <Col span="7">
-          <Table :columns="companyColumn" :data="companyData" height="500"></Table>
+          <Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showRuleDetail"></Table>
           </Col>
-          <Col span="17">
+          <Col v-if="ruleDetail.ruleId" span="17">
           <div class="rule-block">
             <div class="rule-basic">
               <Form inline>
@@ -48,19 +48,19 @@
               </Form>
             </div>
             <div class="rules-list">
-              <div v-for="(item, index) in ruleDetail.rules" :key="index" class="rule-item">
+              <div v-for="(item, index) in ruleDetail.details" :key="index" class="rule-item">
                 <div class="item-remove">
-                  <Icon type="md-remove-circle" />
+                  <Icon type="md-remove-circle" @click="removeItem(index)"/>
                 </div>
                 <Collapse v-model="ruleShowIndex">
-                  <Panel name="1"  hide-arrow>
+                  <Panel name="1" hide-arrow>
                     <div slot class="rule-route">
                       <Row :gutter="20">
                         <Col span="6">
-                        <AreaSelect v-model="item.startCodes" placeholder="请输入始发地" class="search-input-senior" />
+                        <AreaSelect v-model="item.departure" placeholder="请输入始发地" class="search-input-senior" />
                         </Col>
                         <Col span="6">
-                        <AreaSelect v-model="item.endCodes" placeholder="请输入目的地" class="search-input-senior" />
+                        <AreaSelect v-model="item.destination" placeholder="请输入目的地" class="search-input-senior" />
                         </Col>
                       </Row>
                     </div>
@@ -97,12 +97,12 @@
                                 <col width="250">
                               </colgroup>
                               <tbody class="ivu-table-tbody">
-                                <tr v-for="(el, no) in item.chargeRanges" :key="no" class="ivu-table-row">
+                                <tr v-for="(el, no) in item.chargeRules" :key="no" class="ivu-table-row">
                                   <td>
                                     <div class="ivu-table-cell">
                                       <div class="adjuster">
                                         <Icon class="add" type="md-add-circle" @click="addEl(index)"/>
-                                        <Icon v-if="item.chargeRanges.length > 1" class="remove" type="md-remove-circle" @click="removeEl(index)"/>
+                                        <Icon v-if="item.chargeRules.length > 1" class="remove" type="md-remove-circle" @click="removeEl(index, no)"/>
                                       </div>
                                     </div>
                                   </td>
@@ -130,8 +130,8 @@
                 </Collapse>
               </div>
               <div class="item-add-btn">
-                <p>
-                  <Icon class="add" type="md-add-circle" @click="addItem(index)"/>
+                <p @click="addItem">
+                  <Icon class="add" type="md-add-circle"/>
                   新增计费明细
                 </p>
               </div>
@@ -149,6 +149,7 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
+import Server from '@/libs/js/server'
 import AreaSelect from '@/components/AreaSelect'
 
 export default {
@@ -168,54 +169,14 @@ export default {
         3: '外转方'
       },
       rulesQuery: {
-        partnerType: '',
+        type: '',
         queryText: ''
       },
-      companyData: [
-        {
-          partnerName: '龙虎物流',
-          ruleName: '按重量计费'
-        },
-        {
-          partnerName: '龙虎物流',
-          ruleName: '按体积计费'
-        },
-        {
-          partnerName: '武当物流',
-          ruleName: '按重量计费'
-        },
-        {
-          partnerName: '武当物流',
-          ruleName: '按体积计费'
-        },
-        {
-          partnerName: '天地物流',
-          ruleName: '按重量计费'
-        },
-        {
-          partnerName: '天地物流',
-          ruleName: '按体积计费'
-        }
-      ],
+      companyData: [],
       ruleDetail: {
         ruleType: '1',
         ruleName: '',
-        rules: [
-          {
-            startCodes: 110300,
-            endCodes: 110300,
-            chargeRanges: [
-              {
-                base: '1000',
-                price: '1000'
-              },
-              {
-                base: '1000',
-                price: '1000'
-              }
-            ]
-          }
-        ]
+        detail: []
       }
     }
   },
@@ -239,7 +200,7 @@ export default {
             return h('a', {
               on: {
                 click: () => {
-                  this.remove(params)
+                  this.removeRule(params)
                 }
               }
             }, '删除')
@@ -248,11 +209,10 @@ export default {
       ]
     }
   },
+  mounted () {
+    this.getRules()
+  },
   methods: {
-    startQuery () {
-      this.setAccountQuery(this.accountQuery)
-      this.getAccountList()
-    },
     toDetail (data) {
       this.$router.push({
         name: 'accountDetail',
@@ -262,20 +222,117 @@ export default {
       })
     },
     addRule () {
+      const _this = this
       this.openDialog({
         name: 'finance/dialogs/createRule',
-        data: {},
-        methods: {}
+        data: {
+          scene: this.active
+        },
+        methods: {
+          ok () {
+            _this.getRules()
+          }
+        }
       })
     },
-    addEl () {},
-    addItem () {},
-    saveRules () {}
-  },
-  async beforeRouteEnter (to, from, next) {
-    next(vm => {
-      vm.getAccountList()
-    })
+    removeRule (data) {
+      const _this = this
+      this.$Modal.confirm({
+        title: '提示',
+        content: '确认从删除该条规则吗？',
+        okText: '确认',
+        cancelText: '取消',
+        async onOk () {
+          Server({
+            url: '/finance/charge/deleteRule',
+            method: 'post',
+            data: {
+              ruleId: data.row.ruleId
+            }
+          }).then(res => {
+            _this.getRules()
+          }).catch(err => console.error(err))
+        }
+      })
+    },
+    addEl (index) {
+      this.ruleDetail.details[index].chargeRules.push({base: '', price: ''})
+    },
+    removeEl (index, no) {
+      this.ruleDetail.details[index].chargeRules.splice(no, 1)
+    },
+    addItem () {
+      this.ruleDetail.details.push({
+        departure: '',
+        destination: '',
+        chargeRules: [
+          {base: '', price: ''}
+        ]
+      })
+    },
+    removeItem (index) {
+      this.ruleDetail.details.splice(index, 1)
+    },
+    saveRules () {
+      Server({
+        url: '/finance/charge/updateRule',
+        method: 'post',
+        data: Object.assign({}, this.ruleDetail, {
+          details: this.ruleDetail.details.map(item => {
+            return {
+              departure: item.departure[item.departure.length - 1],
+              destination: item.destination[item.destination.length - 1],
+              chargeRules: item.chargeRules.map(el => {
+                return {
+                  base: parseFloat(el.base) * 100,
+                  price: parseFloat(el.price) * 100
+                }
+              })
+            }
+          })
+        })
+      }).then(res => {
+        this.getRules()
+      }).catch(err => console.error(err))
+    },
+    switchTab () {
+      this.getRules()
+    },
+    getRules () {
+      Server({
+        url: '/finance/charge/listRules',
+        method: 'get',
+        params: {
+          partnerType: this.active,
+          partnerName: this.rulesQuery.type === '1' ? this.rulesQuery.queryText : '',
+          ruleName: this.rulesQuery.type === '2' ? this.rulesQuery.queryText : ''
+        }
+      }).then(res => {
+        this.companyData = res.data.data
+        if (this.ruleDetail && this.ruleDetail.ruleId) {
+          this.showRuleDetail(this.companyData.find(item => item.ruleId === this.ruleDetail.ruleId))
+        }
+      }).catch(err => console.error(err))
+    },
+    showRuleDetail (data) {
+      this.ruleDetail = {
+        ruleId: data.ruleId,
+        ruleType: data.detail.ruleType + '',
+        ruleName: data.ruleName,
+        details: Object.assign([], data.detail.rules.map(item => {
+          return {
+            departure: item.departure + '',
+            destination: item.destination + '',
+            chargeRules: item.chargeRules.map(el => {
+              return {
+                base: el.base / 100,
+                price: el.price / 100
+              }
+            })
+          }
+        }))
+      }
+    }
   }
 }
 </script>
