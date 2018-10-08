@@ -3,10 +3,10 @@
     <OrderCard
       :data="data"
       :extra="total"
-      :range="['#FFBB44','#FFB897']"
-      theme="#FFBB44"
       title="承运商核销待办"
       label="提示文字"
+      to="/finance/carrier"
+      page-title="承运商对账"
     >
     </OrderCard>
   </div>
@@ -26,8 +26,8 @@ export default {
   data () {
     return {
       data: [
-        { id: 'wait_reconcile', name: '承运商待对账订单', value: 0 },
-        { id: 'wait_verify', name: '承运商待核销订单', value: 0 }
+        { id: 'wait_reconcile', name: '承运商待对账订单', value: 0, tab: 'waitReconcile' },
+        { id: 'wait_verify', name: '承运商待核销订单', value: 0, tab: 'waitVerify' }
       ]
     }
   },

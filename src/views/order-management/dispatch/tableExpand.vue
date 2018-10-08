@@ -1,6 +1,7 @@
 <template>
   <Table :columns="tableHeader"
          :data="data" :loading="tableLoading"
+         :row-class-name="heightLightNewRow"
          class="expand-table"
          @on-selection-change="selectionChange">
   </Table>
@@ -38,12 +39,20 @@ export default {
   methods: {
     selectionChange (selection) {
       this.$emit('on-expand-select', selection.map(item => item.orderId))
+    },
+
+    heightLightNewRow (row) {
+      if (row.isNew) return 'row-highlight'
+      else return ''
     }
   }
 }
 </script>
 
 <style lang="stylus">
+  .ivu-table .row-highlight td
+    background-color #ebf7ff !important
+
   .expand-table
     margin -20px -50px -20px -50px
     border-color transparent
@@ -51,6 +60,6 @@ export default {
     .ivu-table, .ivu-table th, .ivu-table td
       background #f8f8f9
 
-    .ivu-table-row  td
+    .ivu-table-row td
       border-color transparent
 </style>

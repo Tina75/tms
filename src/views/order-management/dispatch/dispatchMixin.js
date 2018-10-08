@@ -300,6 +300,17 @@ export default {
       })
     },
 
+    // 右侧展开表格新增项高亮
+    heightLightNewRow (newList) {
+      if (!this.rightTableExpandData.length) return newList
+      const oldList = this.rightTableExpandData.map(item => item.orderId)
+      return newList.map(item => {
+        if (oldList.indexOf(item.orderId) === -1) item.isNew = true
+        else item.isNew = false
+        return item
+      })
+    },
+
     // 查询左侧列表数据 10-提货 20-调度
     fetchLeftTableData (status) {
       this.leftTableLoading = true

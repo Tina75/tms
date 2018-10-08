@@ -76,7 +76,7 @@ export default {
       })
     },
     add () {
-      Object.assign(this.validate, {consignerId: this.consignerId})
+      Object.assign(this.validate, { consignerId: this.consignerId })
       consignerConsigneeAdd(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
@@ -86,7 +86,7 @@ export default {
       })
     },
     update () {
-      Object.assign(this.validate, {id: this.id})
+      Object.assign(this.validate, { id: this.id })
       consignerConsigneeUpdate(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面

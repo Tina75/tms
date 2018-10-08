@@ -10,7 +10,10 @@
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
-        <Input v-model="keyword" :maxlength="15" :placeholder="selectStatus === 1 ? '请输入承运商名称' : '请输入承运商联系人名称'"  search style="width: 200px"  @on-search="searchList" />
+        <Input v-model="keyword" :maxlength="15" :placeholder="selectStatus === 1 ? '请输入承运商名称' : '请输入承运商联系人名称'" class="search-input"  />
+        <Button icon="ios-search" type="primary"
+                class="search-btn-easy"
+                @click="searchList"></Button>
       </div>
     </div>
     <div>
@@ -60,12 +63,14 @@ export default {
       pageSize: 10,
       payTypeMap: {
         1: '按单付',
-        2: '月结'
+        2: '月结',
+        '': '_'
       },
       columns1: [
         {
           title: '操作',
           key: 'id',
+          width: 100,
           render: (h, params) => {
             let renderBtn = []
             if (this.hasPower(130202)) {
@@ -239,6 +244,7 @@ export default {
           title: '创建时间',
           key: 'createTime',
           sortable: 'custom',
+          width: 150,
           render: (h, params) => {
             let text = this.formatDate(params.row.createTime)
             return h('div', { props: {} }, text)

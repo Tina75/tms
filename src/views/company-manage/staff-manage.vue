@@ -43,9 +43,9 @@
       <p slot="header" style="text-align:center">
         <span>转移权限</span>
       </p>
-      <Form ref="transferformModal" :model="transferformModal" :rules="rulesTransfer" :label-width="100" style="height: 70px;">
+      <Form ref="transferformModal" :model="transferformModal" :rules="rulesTransfer" :label-width="100" style="height: 70px;margin-top:20px;">
         <FormItem label="角色账号：" prop="staff">
-          <Select v-model="transferformModal.staff" clearable>
+          <Select v-model="transferformModal.staff" clearable style="width:200px;">
             <Option
               v-for="item in staffSelectList"
               :value="item.phone"
@@ -58,7 +58,7 @@
           <p style="color:red; margin-top:-10px;">确认操作后，您将与接收该角色的人员互换角色</p>
         </FormItem>
       </Form>
-      <div slot="footer" style="margin-top:20px;">
+      <div slot="footer" style="margin-top:10px;">
         <Button type="primary" @click="transferFormSub('transferformModal')">确定</Button>
         <Button  @click="transferCancelForm">取消</Button>
       </div>
@@ -67,16 +67,16 @@
       <p slot="header" style="text-align:center">
         <span>提示</span>
       </p>
-      <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white; color: #FFBB44;float:left;"></i>
-      <p style="margin-top:13px; margin-left:40px;">确定要删除用户{{this.roleRowInit.name}}吗?</P>
-      <div slot="footer">
+      <p style="margin-left:70px; margin-top: 10px;">
+        <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
+      </p><p style="margin-top:23px; margin-left:50px;">确定要删除用户{{this.roleRowInit.name}}吗?</P>
+      </p>
+      <div slot="footer" style="margin-top: 20px;">
         <Button type="primary" @click="removeSubForm">确定</Button>
         <Button  @click="removeCancelForm">取消</Button>
       </div>
     </Modal>
-    <Modal
-      v-model="visibaleAddStaffSuccess"
-      width="360">
+    <Modal v-model="visibaleAddStaffSuccess" width="400">
       <p slot="header" style="text-align:center">
         <span>提示</span>
       </p>
@@ -126,7 +126,7 @@ export default {
       menuColumns: [{
         title: '操作',
         key: 'do',
-        width: 200,
+        width: 100,
         render: (h, params) => {
           if (params.row.type === 1 && this.userInfo.type === 1) {
             return h('div', [
@@ -219,6 +219,7 @@ export default {
       {
         title: '创建时间',
         key: 'createTime',
+        width: 150,
         render: (h, params) => {
           let text = this.formatDate(params.row.createTime)
           return h('div', { props: {} }, text)
