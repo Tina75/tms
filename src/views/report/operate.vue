@@ -140,7 +140,7 @@ export default {
       transbillStatusMap: {
         1: '待发运',
         2: '在途',
-        3: '货'
+        3: '到货'
       },
       /* 回单状态  */
       receiptStatusMap: {
@@ -152,23 +152,27 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
-          className: 'padding-20'
+          ellipsis: true
         },
         {
           title: '客户订单号',
-          key: 'customerOrderNo'
+          key: 'customerOrderNo',
+          ellipsis: true
         },
         {
           title: '运单号',
-          key: 'waybillNo'
+          key: 'waybillNo',
+          ellipsis: true
         },
         {
           title: '客户名称',
-          key: 'consignerName'
+          key: 'consignerName',
+          ellipsis: true
         },
         {
           title: '始发地',
           key: 'start',
+          ellipsis: true,
           render: (h, params) => {
             return h('span', City.codeToFullNameArr(params.row.start))
           }
@@ -176,117 +180,142 @@ export default {
         {
           title: '目的地',
           key: 'end',
+          ellipsis: true,
           render: (h, params) => {
             return h('span', City.codeToFullNameArr(params.row.end))
           }
         },
         {
           title: '体积（方）',
-          key: 'volume'
+          key: 'volume',
+          ellipsis: true
         },
         {
           title: '重量（吨）',
-          key: 'weight'
+          key: 'weight',
+          ellipsis: true
         },
         {
           title: '下单时间',
           key: 'orderCreateTime',
+          ellipsis: true,
           render: (h, params) => {
             return h('span', new Date(params.row.orderCreateTime).Format('yyyy-MM-dd hh:mm'))
           }
         },
         {
           title: '合计运费',
-          key: 'orderTotalFee'
+          key: 'orderTotalFee',
+          ellipsis: true
         },
         {
           title: '订单状态',
           key: 'orderStatus',
+          ellipsis: true,
           render: (h, params) => {
             return h('span', this.orderStatusMap[params.row.orderStatus])
           }
         },
         {
           title: '提货单号',
-          key: 'loadbillNo'
+          key: 'loadbillNo',
+          ellipsis: true
         },
         {
           title: '提货单状态',
-          key: 'loadbillStatus'
+          key: 'loadbillStatus',
+          ellipsis: true
         },
         {
           title: '提货总费用',
-          key: 'loadbillTotalFee'
+          key: 'loadbillTotalFee',
+          ellipsis: true
         },
         {
           title: '提货承运商',
-          key: 'loadbillCarrierName'
+          key: 'loadbillCarrierName',
+          ellipsis: true
         },
         {
           title: '提货单司机',
-          key: 'loadbillDriver'
+          key: 'loadbillDriver',
+          ellipsis: true
         },
         {
           title: '提货单车牌号',
-          key: 'loadbillCarNo'
+          key: 'loadbillCarNo',
+          ellipsis: true
         },
         {
           title: '提货单车辆信息',
-          key: 'loadbillCarInfo'
+          key: 'loadbillCarInfo',
+          ellipsis: true
         },
         {
           title: '运单状态',
           key: 'waybillStatus',
+          ellipsis: true,
           render: (h, params) => {
             return h('span', this.waybillStatusMap[params.row.waybillStatus])
           }
         },
         {
           title: '送货总费用',
-          key: 'waybillTotalFee'
+          key: 'waybillTotalFee',
+          ellipsis: true
         },
         {
           title: '送货承运商',
-          key: 'waybillCarrierName'
+          key: 'waybillCarrierName',
+          ellipsis: true
         },
         {
           title: '运单司机',
-          key: 'waybillDriver'
+          key: 'waybillDriver',
+          ellipsis: true
         },
         {
           title: '运单车牌号',
-          key: 'waybillCarNo'
+          key: 'waybillCarNo',
+          ellipsis: true
         },
         {
           title: '运单车辆信息',
-          key: 'waybillCarInfo'
+          key: 'waybillCarInfo',
+          ellipsis: true
         },
         {
           title: '外转单号',
-          key: 'transbillNo'
+          key: 'transbillNo',
+          ellipsis: true
         },
         {
           title: '外转单状态',
           key: 'transbillStatus',
+          ellipsis: true,
           render: (h, params) => {
             return h('span', this.transbillStatusMap[params.row.transbillStatus])
           }
         },
         {
           title: '外转方费用',
-          key: 'transbillTotalFee'
+          key: 'transbillTotalFee',
+          ellipsis: true
         },
         {
           title: '外转方',
-          key: 'transfereeName'
+          key: 'transfereeName',
+          ellipsis: true
         },
         {
           title: '回单号',
-          key: 'receiptNo'
+          key: 'receiptNo',
+          ellipsis: true
         },
         {
           title: '回单状态',
-          key: 'receiptStatus'
+          key: 'receiptStatus',
+          ellipsis: true
         }
       ],
       extraColumns: [
