@@ -68,7 +68,7 @@ import BaseDialog from '@/basic/BaseDialog'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
-import City from '@/libs/js/city'
+import City from '@/libs/js/City'
 import { CAR } from '@/views/client/client'
 export default {
   name: 'dispatch',

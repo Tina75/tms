@@ -16,7 +16,7 @@
 
 <script>
 // import area from '@/libs/js/area'
-import areas from '@/libs/js/city'
+import areas from '@/libs/js/City'
 export default {
   props: {
     value: [String, Array],

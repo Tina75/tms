@@ -84,7 +84,7 @@
 
 <script>
 import Printd from 'printd'
-import City from '@/libs/js/city'
+import City from '@/libs/js/City'
 import settlements from '@/libs/constant/settlement.js'
 import pickups from '@/libs/constant/pickup.js'
 export default {

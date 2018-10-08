@@ -394,6 +394,8 @@ export default {
               },
               on: {
                 'on-change': (value) => {
+                  // console.log('params.value', params.value)
+                  // console.log('value', value)
                   if (params.value !== value) {
                     params.value = value
                     _this.updateLocalCargo(setObject(params, float.floor(params.value)))
@@ -748,7 +750,7 @@ export default {
           this.tempCargoes[item.index] = {}
         }
         if (sumFields.indexOf(item.name) !== -1) {
-          if (this.tempCargoes[item.index][item.name]) {
+          if (this.tempCargoes[item.index][item.name] || this.tempCargoes[item.index][item.name] === 0) {
             this.statics[item.name] = float.round(this.statics[item.name] - (this.tempCargoes[item.index][item.name] || 0) + item.value)
           } else {
             this.statics[item.name] = float.round(this.statics[item.name] - (this.consignerCargoes[item.index][item.name] || 0) + item.value)
