@@ -402,7 +402,7 @@ export default {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      width: 65%;
+      width: 75%;
       float:left;
   .rightTitle
     font-size: 20px;
@@ -443,7 +443,7 @@ export default {
       margin-top: -20px;
       display: none;
       margin-right: 5px;
-      z-index: 99
+      background: #e3fcfc;
     .configBtn
       color: #00A4BD;
       font-size: 12px;
