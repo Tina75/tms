@@ -44,7 +44,15 @@ export default {
     this.getCarriers()
     const columns = window.sessionStorage[this.tabType + '_COLUMNS']
     if (columns) this.extraColumns = JSON.parse(columns)
-    const tab = window.sessionStorage['TABHEADER_' + this.tabType]
+
+    let tab
+    if (this.$route.query.tab) {
+      tab = this.$route.query.tab
+      window.sessionStorage.setItem('TABHEADER_' + this.tabType, tab)
+    } else {
+      tab = window.sessionStorage['TABHEADER_' + this.tabType]
+    }
+
     if (tab) {
       this.tabStatus = this.setTabStatus(tab)
       this.tabChanged(tab)
