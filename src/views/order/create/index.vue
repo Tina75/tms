@@ -394,6 +394,8 @@ export default {
               },
               on: {
                 'on-change': (value) => {
+                  // console.log('params.value', params.value)
+                  // console.log('value', value)
                   if (params.value !== value) {
                     params.value = value
                     _this.updateLocalCargo(setObject(params, float.floor(params.value)))
@@ -567,8 +569,7 @@ export default {
         // 回单数量
         receiptCount: 1,
         // 备注
-        remark1: '',
-        remark2: ''
+        remark: ''
       },
       orderPrint: [],
       rules: {
@@ -695,6 +696,9 @@ export default {
             vm.orderForm.arriveTime = new Date(vm.orderForm.arriveTime)
           }
         })
+        .catch((errorInfo) => {
+          vm.loading = false
+        })
     }
   },
   destroyed () {
@@ -746,7 +750,7 @@ export default {
           this.tempCargoes[item.index] = {}
         }
         if (sumFields.indexOf(item.name) !== -1) {
-          if (this.tempCargoes[item.index][item.name]) {
+          if (this.tempCargoes[item.index][item.name] || this.tempCargoes[item.index][item.name] === 0) {
             this.statics[item.name] = float.round(this.statics[item.name] - (this.tempCargoes[item.index][item.name] || 0) + item.value)
           } else {
             this.statics[item.name] = float.round(this.statics[item.name] - (this.consignerCargoes[item.index][item.name] || 0) + item.value)

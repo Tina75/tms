@@ -80,7 +80,7 @@ export default {
         {
           title: '提货单号',
           key: 'loadbillNo',
-          minWidth: 200,
+          width: 180,
           // fixed: 'left',
           render: (h, p) => {
             return h('a', {
@@ -102,7 +102,7 @@ export default {
         {
           title: '车牌号',
           key: 'carNo',
-          minWidth: 120,
+          minWidth: 100,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.carNo)
           }
@@ -110,7 +110,7 @@ export default {
         {
           title: '体积(方)',
           key: 'volume',
-          minWidth: 120,
+          minWidth: 100,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.volume)
           }
@@ -118,7 +118,7 @@ export default {
         {
           title: '重量(吨)',
           key: 'weight',
-          minWidth: 120,
+          minWidth: 100,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.weight)
           }

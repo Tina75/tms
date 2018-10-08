@@ -156,7 +156,7 @@ export default {
   },
 
   watch: {
-    startCodes (n, o) {
+    startCodes () {
       if (!(this.startCodes instanceof Array)) return
       this.info.start = this.startCodes.length
         ? this.startCodes[this.startCodes.length - 1]

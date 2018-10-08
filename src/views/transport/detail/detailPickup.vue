@@ -153,6 +153,8 @@
       </ul>
     </section>
 
+    <div class="detail-btn-group"></div>
+
     <section class="detail-info">
       <!-- 提货单信息 -->
       <div>
@@ -406,23 +408,24 @@ export default {
         {
           title: '货物名称',
           key: 'cargoName',
-          minWidth: 160,
+          minWidth: 180,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.cargoName)
           }
         },
         {
           title: '包装',
-          key: 'packing',
-          width: 80,
+          key: 'unit',
+          width: 100,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.packing)
+            console.log(p.row.unit)
+            return this.tableDataRender(h, p.row.unit)
           }
         },
         {
           title: '数量',
           key: 'quantity',
-          width: 80,
+          width: 100,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.quantity)
           }
@@ -432,7 +435,7 @@ export default {
           key: 'cargoCost',
           width: 100,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoCost / 100)
+            return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
           }
         },
         {
@@ -454,33 +457,33 @@ export default {
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 160,
+          minWidth: 180,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.consignerName)
           }
         },
         {
           title: '提货联系人',
-          key: 'consigneeContact',
-          minWidth: 120,
+          key: 'consignerContact',
+          width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.consigneeContact)
+            return this.tableDataRender(h, p.row.consignerContact)
           }
         },
         {
           title: '联系电话',
-          key: 'consigneePhone',
-          minWidth: 120,
+          key: 'consignerPhone',
+          width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.consigneePhone)
+            return this.tableDataRender(h, p.row.consignerPhone)
           }
         },
         {
           title: '提货地址',
-          key: 'consigneeAddress',
-          minWidth: 200,
+          key: 'consignerAddress',
+          minWidth: 180,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.consigneeAddress)
+            return this.tableDataRender(h, p.row.consignerAddress)
           }
         }
       ]

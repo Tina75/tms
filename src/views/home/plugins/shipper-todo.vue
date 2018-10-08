@@ -2,9 +2,7 @@
   <div is="i-col" span="6" class="i-mt-15 page-home__padding-8">
     <OrderCard
       :data="data"
-      :range="['#418DF9','#76E7FD']"
       :extra="total"
-      theme="#418DF9"
       title="发货方核销待办"
       label="提示文字"
     >
@@ -18,6 +16,7 @@ import OrderCard from '../components/OrderCard.vue'
 import mixin from './mixin.js'
 
 export default {
+  name: 'shipper-todo',
   components: {
     OrderCard
   },
@@ -25,8 +24,8 @@ export default {
   data () {
     return {
       data: [
-        { id: 'waitPickOrderCnt', name: '发货方待对账订单', value: 50 },
-        { id: 'waitPickCnt', name: '发货方待核销订单', value: 0 }
+        { id: 'wait_reconcile', name: '发货方待对账订单', value: 0 },
+        { id: 'wait_verify', name: '发货方待核销订单', value: 0 }
       ]
     }
   },
@@ -40,13 +39,12 @@ export default {
   },
   methods: {
     load () {
-      const vm = this
       this.fetch('home/consigner/todo')
         .then((response) => {
           const data = response.data
-          vm.data.forEach((item) => {
-            item.value = data[item.id]
-          })
+          for (const i of this.data) {
+            i.value = data[i.id]
+          }
         })
     }
   }

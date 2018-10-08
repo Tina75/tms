@@ -5,7 +5,7 @@
         <span>{{title}}</span>
       </slot>
     </div>
-    <div class="ivu-card-extra tms-home__blank-extra" @click.native="push(to)">
+    <div class="ivu-card-extra tms-home__blank-extra" @click="push">
       <slot name="extra">
         <FontIcon type="gengduo1" color="#D8D8D8" size="25" />
       </slot>
@@ -18,13 +18,16 @@
 
 <script>
 import FontIcon from '@/components/FontIcon'
+import BasePage from '@/basic/BasePage'
 export default {
   components: {
     FontIcon
   },
+  mixins: [BasePage],
   props: {
     to: String,
     title: String,
+    pageTitle: String,
     padding: {
       type: Boolean,
       default: true
@@ -37,6 +40,14 @@ export default {
         'tms-home__blank-body',
         this.padding ? '' : 'tms-home__no-padding'
       ]
+    }
+  },
+  methods: {
+    push (e) {
+      if (!this.to) {
+        return
+      }
+      this.openTab({path: this.to, title: this.pageTitle || this.title || ''})
     }
   }
 }

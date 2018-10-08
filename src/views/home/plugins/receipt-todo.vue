@@ -3,7 +3,7 @@
     <OrderCard
       :data="data"
       :extra="total"
-      title="外转待办"
+      title="回单待办"
       label="提示文字"
     >
     </OrderCard>
@@ -27,8 +27,8 @@ export default {
   data () {
     return {
       data: [
-        {id: 'waitSendCarCnt', name: '待发运的外转单数量', value: 0},
-        {id: 'inTransportCnt', name: '运输中外转单数量', value: 0}
+        {id: 'waitRecovery', name: '待回收单数', value: 0},
+        {id: 'waitReturnFactory', name: '待返厂单数', value: 0}
       ]
     }
   },
@@ -43,7 +43,7 @@ export default {
   methods: {
     load () {
       const vm = this
-      this.fetch('home/trans/todo')
+      this.fetch('home/receipt/todo')
         .then((response) => {
           const data = response.data
           vm.data.forEach((item) => {

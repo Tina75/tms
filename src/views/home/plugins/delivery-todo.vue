@@ -3,8 +3,6 @@
     <OrderCard
       :data="data"
       :extra="total"
-      :range="['#FFBB44','#FFB897']"
-      theme="#FFBB44"
       title="送货待办"
       label="提示文字"
     >

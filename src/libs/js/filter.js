@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import City from './City'
+import City from './city.js'
 Vue.filter('imgType', function (value) {
   let name = ''
   switch (value) {
@@ -106,7 +106,7 @@ Vue.filter('codeToName', function (cityId) {
  * @param deep  1：省  2：市  3：区
  */
 Vue.filter('codeToFullName', function (cityId) {
-  return City.codeToFullName(cityId)
+  return City.codeToFullNameArr(cityId)
 })
 /**
  * 将元转为分

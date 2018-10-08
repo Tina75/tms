@@ -1,11 +1,11 @@
 <template>
   <div class="login-signin">
     <img class="login-img" src="@/assets/img-tms-login.png"></img>
-    <div class="form-body" @keydown.enter="login">
+    <div class="form-body">
       <Card :bordered="false">
         <div class="form-title">运掌柜账号登录</div>
         <div class="form-content">
-          <Form ref="loginForm" :model="form" :rules="rules">
+          <Form ref="loginForm" :model="form" :rules="rules" @submit.native.prevent>
 
             <FormItem prop="phone">
               <Input v-model="form.phone" :maxlength="11" placeholder="登录账号/手机号"

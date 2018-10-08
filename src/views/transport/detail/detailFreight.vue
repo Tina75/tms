@@ -161,6 +161,8 @@
       </ul>
     </section>
 
+    <div class="detail-btn-group"></div>
+
     <section class="detail-info">
       <!-- 运单信息 -->
       <div>
@@ -386,6 +388,7 @@ export default {
             code: 120107,
             func: () => {
               this.inEditing = true
+              this.setPlace()
             }
           }]
         },
@@ -438,13 +441,13 @@ export default {
           key: 'customerOrderNo',
           width: 200,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.customerOrderNo)
+            return this.tableDataRender(h, p.row.customerOrderNo, true)
           }
         },
         {
           title: '始发地-目的地',
           key: 'start',
-          minWidth: 250,
+          width: 180,
           render: (h, p) => {
             const start = this.cityFormatter(p.row.start)
             const end = this.cityFormatter(p.row.end)
@@ -454,23 +457,23 @@ export default {
         {
           title: '货物名称',
           key: 'cargoName',
-          minWidth: 160,
+          minWidth: 180,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.cargoName)
           }
         },
         {
           title: '包装',
-          key: 'packing',
-          width: 80,
+          key: 'unit',
+          width: 100,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.packing)
+            return this.tableDataRender(h, p.row.unit)
           }
         },
         {
           title: '数量',
           key: 'quantity',
-          width: 80,
+          width: 100,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.quantity)
           }
@@ -480,7 +483,7 @@ export default {
           key: 'cargoCost',
           width: 100,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoCost / 100)
+            return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
           }
         },
         {
@@ -502,7 +505,7 @@ export default {
         {
           title: '备注1',
           key: 'remark1',
-          minWidth: 160,
+          minWidth: 140,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.remark1)
           }
@@ -510,7 +513,7 @@ export default {
         {
           title: '备注2',
           key: 'remark2',
-          minWidth: 160,
+          minWidth: 140,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.remark2)
           }
@@ -530,6 +533,20 @@ export default {
       }
     },
 
+    setPlace (clear) {
+      if (clear) {
+        this.startCodes = ''
+        this.endCodes = ''
+        return
+      }
+      // 由于 AreaSelect 组件数据延时获取机制
+      // 导致如果不延迟到数据获取完毕后再赋值会出现bug
+      setTimeout(() => {
+        this.startCodes = this.info.start
+        this.endCodes = this.info.end
+      }, 250)
+    },
+
     fetchData () {
       this.loading = true
       Server({
@@ -542,6 +559,7 @@ export default {
       }).then(res => {
         const data = res.data.data
 
+        this.id = data.waybill.waybillId
         for (let key in this.info) {
           this.info[key] = data.waybill[key]
         }
@@ -550,9 +568,6 @@ export default {
         }
         this.detail = data.cargoList
         this.logList = data.operaterLog
-
-        this.startCodes = data.waybill.start.toString()
-        this.endCodes = data.waybill.end.toString()
 
         this.status = this.statusFilter(data.waybill.status)
         this.settlementType = data.waybill.settlementType.toString()

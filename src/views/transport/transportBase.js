@@ -1,17 +1,17 @@
-import City from '@/libs/js/City'
+import City from '@/libs/js/city'
 import { CAR_TYPE, CAR_LENGTH, getCarType, getCarLength } from '@/libs/constant/carInfo'
 
 const FORMATTERS = {
   // 格式化时间
   timeFormatter (timestamp) {
     if (!timestamp) return ''
-    return new Date(timestamp).Format('yyyy-MM-dd hh:mm:ss')
+    return new Date(timestamp).Format('yyyy-MM-dd hh:mm')
   },
 
   // 格式化城市
   cityFormatter (code) {
     if (!code) return ''
-    return Array.from(new Set(City.codeToFullName(code, 3, '-').split('-'))).join('')
+    return Array.from(new Set(City.codeToFullNameArr(code, 3))).join('')
   },
 
   // 格式化车型

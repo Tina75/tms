@@ -68,7 +68,7 @@ import BaseDialog from '@/basic/BaseDialog'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
-import City from '@/libs/js/City'
+import City from '@/libs/js/city'
 import { CAR } from '@/views/client/client'
 export default {
   name: 'dispatch',
@@ -154,17 +154,17 @@ export default {
           minWidth: 130,
           ellipsis: true,
           render: (h, params) => {
-            if (City.codeToFullName(params.row.start).length > 8) {
+            if (City.codeToFullNameArr(params.row.start).length > 8) {
               return h('Tooltip', {
                 props: {
                   placement: 'bottom',
-                  content: City.codeToFullName(params.row.start)
+                  content: City.codeToFullNameArr(params.row.start)
                 }
               }, [
-                h('span', this.formatterAddress(City.codeToFullName(params.row.start)))
+                h('span', this.formatterAddress(City.codeToFullNameArr(params.row.start)))
               ])
             } else {
-              return h('span', City.codeToFullName(params.row.start))
+              return h('span', City.codeToFullNameArr(params.row.start))
             }
           }
         },
@@ -174,17 +174,17 @@ export default {
           minWidth: 130,
           ellipsis: true,
           render: (h, params) => {
-            if (City.codeToFullName(params.row.end).length > 8) {
+            if (City.codeToFullNameArr(params.row.end).length > 8) {
               return h('Tooltip', {
                 props: {
                   placement: 'bottom',
-                  content: City.codeToFullName(params.row.end)
+                  content: City.codeToFullNameArr(params.row.end)
                 }
               }, [
-                h('span', this.formatterAddress(City.codeToFullName(params.row.end)))
+                h('span', this.formatterAddress(City.codeToFullNameArr(params.row.end)))
               ])
             } else {
-              return h('span', City.codeToFullName(params.row.end))
+              return h('span', City.codeToFullNameArr(params.row.end))
             }
           }
         },

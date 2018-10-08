@@ -321,7 +321,7 @@ export default {
         {
           title: '运单号',
           key: 'waybillNo',
-          minWidth: 200,
+          width: 200,
           fixed: 'left',
           render: (h, p) => {
             return h('a', {
@@ -343,7 +343,7 @@ export default {
         {
           title: '始发地',
           key: 'start',
-          minWidth: 180,
+          width: 180,
           ellipsis: true,
           render: (h, p) => {
             return this.tableDataRender(h, this.cityFormatter(p.row.start))
@@ -352,7 +352,7 @@ export default {
         {
           title: '目的地',
           key: 'end',
-          minWidth: 180,
+          width: 180,
           ellipsis: true,
           render: (h, p) => {
             return this.tableDataRender(h, this.cityFormatter(p.row.end))
@@ -361,7 +361,7 @@ export default {
         {
           title: '承运商',
           key: 'carrierName',
-          minWidth: 160,
+          minWidth: 180,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.carrierName)
           }
@@ -369,39 +369,30 @@ export default {
         {
           title: '车牌号',
           key: 'carNo',
-          minWidth: 100,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.carNo)
-          }
+          width: 100
         },
         {
           title: '合计运费',
           key: 'totalFee',
-          minWidth: 120,
+          width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.totalFee / 100)
+            return this.tableDataRender(h, p.row.totalFee === '' ? '' : p.row.totalFee / 100)
           }
         },
         {
-          title: '体积（方）',
+          title: '体积(方)',
           key: 'volume',
-          minWidth: 100,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.volume)
-          }
+          width: 100
         },
         {
-          title: '重量（吨）',
+          title: '重量(吨)',
           key: 'weight',
-          minWidth: 100,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.weight)
-          }
+          width: 100
         },
         {
           title: '创建时间',
           key: 'createTimeLong',
-          minWidth: 160,
+          width: 160,
           sortable: 'custom',
           render: (h, p) => {
             return this.tableDataRender(h, this.timeFormatter(p.row.createTimeLong), true)
@@ -410,23 +401,20 @@ export default {
         {
           title: '制单人',
           key: 'createOperator',
-          minWidth: 100,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.createOperator)
-          }
+          width: 120
         },
         {
           title: '货值',
           key: 'cargoCost',
-          minWidth: 100,
+          width: 100,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoCost / 100)
+            return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
           }
         },
         {
           title: '结算方式',
           key: 'settlementType',
-          minWidth: 100,
+          width: 100,
           render: (h, p) => {
             return this.tableDataRender(h, this.payTypeFormatter(p.row.settlementType))
           }
@@ -434,23 +422,17 @@ export default {
         {
           title: '司机',
           key: 'driverName',
-          minWidth: 100,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.driverName)
-          }
+          width: 120
         },
         {
           title: '司机手机号码',
           key: 'driverPhone',
-          minWidth: 120,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.driverPhone)
-          }
+          width: 120
         },
         {
           title: '车型',
           key: 'carType',
-          minWidth: 100,
+          width: 120,
           render: (h, p) => {
             const carType = this.carTypeFormatter(p.row.carType)
             const carLength = this.carLengthFormatter(p.row.carLength)
@@ -460,18 +442,12 @@ export default {
         {
           title: '订单数',
           key: 'orderCnt',
-          minWidth: 100,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.orderCnt)
-          }
+          width: 100
         },
         {
           title: '回单数',
           key: 'backbillCnt',
-          minWidth: 100,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.backbillCnt)
-          }
+          width: 100
         }
       ],
       extraColumns: [

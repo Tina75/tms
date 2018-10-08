@@ -5,7 +5,7 @@
       :width="width"
       :height="height"
       :data="dataList"
-      :columns="filterColumns"
+      :columns="mapColumns"
       :stripe="stripe"
       :border="border"
       :show-header="showHeader"
@@ -30,7 +30,7 @@
         <slot name="header"></slot>
       </div>
     </Table>
-    <div v-if="showPagination" class="page-table__footer-pagination">
+    <div v-if="showPagination && !ltPageSize" class="page-table__footer-pagination">
       <div class="page-table__footer-pagination-fr">
         <Page
           :total="pagination.totalCount"
@@ -252,11 +252,28 @@ export default {
               }
             })
           },
-          key: 'filter-columns'
+          key: 'filter-columns',
+          render: (h) => {
+            return h('span', '')
+          }
         })
       } else {
         return this.columns
       }
+    },
+    /**
+     * 空字符串一律使用中划线【-】代替
+     */
+    mapColumns () {
+      return this.filterColumns.map((col) => {
+        if (col.key && !col.render) {
+          col.render = (h, params) => {
+            let value = params.row[col.key]
+            return h('span', !_.isNull(value) && !_.isUndefined(value) && params.row[col.key] !== '' ? params.row[col.key] : '-')
+          }
+        }
+        return col
+      })
     },
     // 是否是复选框表格
     isSelection () {
@@ -265,6 +282,10 @@ export default {
     selected () {
       return this.selectedRow.map(item => item[this.rowId])
     },
+    /**
+     * 1.如果使用本地数据，分页自己拆分
+     * 2.如果使用远程服务数据，由原服务端数据
+     */
     dataList () {
       if (this.isRemote) {
         return this.dataSource
@@ -272,6 +293,12 @@ export default {
         const { pageSize, pageNo } = this.pagination
         return this.dataSource.slice((pageNo - 1) * pageSize, pageNo * pageSize)
       }
+    },
+    /**
+     * 总数据少于pageSize 分页不予显示
+     */
+    ltPageSize () {
+      return this.pagination.totalCount <= this.pagination.pageSize
     }
   },
   watch: {
@@ -356,7 +383,7 @@ export default {
           } else {
             vm.dataSource = data[vm.listField] || []
           }
-          if (this.showPagination) {
+          if (vm.showPagination) {
             vm.pagination.pageSize = data.pageSize
             vm.pagination.totalCount = data.totalCount || data.pageTotals
           }

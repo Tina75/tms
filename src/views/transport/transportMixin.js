@@ -14,7 +14,7 @@ export default {
       },
       searchFields: {},
 
-      tabStatus: void 0, // 当前标签页
+      tabStatus: 1, // 当前标签页
       currentBtns: [], // 当前按钮组
 
       isEasySearch: true, // 是否为简易搜索
@@ -41,12 +41,24 @@ export default {
   },
 
   created () {
-    this.currentBtns = this.btnList[0].btns
     this.getCarriers()
     const columns = window.sessionStorage[this.tabType + '_COLUMNS']
     if (columns) this.extraColumns = JSON.parse(columns)
-    const tab = window.sessionStorage['TABHEADER_' + this.tabType]
-    if (tab) this.tabStatus = this.setTabStatus(tab)
+
+    let tab
+    if (this.$route.query.tab) {
+      tab = this.$route.query.tab
+      window.sessionStorage.setItem('TABHEADER_' + this.tabType, tab)
+    } else {
+      tab = window.sessionStorage['TABHEADER_' + this.tabType]
+    }
+
+    if (tab) {
+      this.tabStatus = this.setTabStatus(tab)
+      this.tabChanged(tab)
+    } else {
+      this.currentBtns = this.btnList[1].btns
+    }
     this.fetchData()
   },
 

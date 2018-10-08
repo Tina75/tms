@@ -288,7 +288,7 @@ export default {
         {
           title: '外转单号',
           key: 'transNo',
-          minWidth: 200,
+          width: 200,
           fixed: 'left',
           render: (h, p) => {
             return h('a', {
@@ -310,34 +310,33 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
-          minWidth: 200
+          width: 200
         },
         {
           title: '外转方运单号',
           key: 'outTransNo',
-          minWidth: 200,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.outTransNo, true)
-          }
+          width: 200
         },
         {
           title: '外转方名称',
           key: 'transfereeName',
-          minWidth: 160
+          minWidth: 180,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.transfereeName, true)
+          }
         },
         {
           title: '始发地',
           key: 'start',
-          minWidth: 180,
+          width: 180,
           render: (h, p) => {
-            console.log(this.cityFormatter(p.row.start))
             return this.tableDataRender(h, this.cityFormatter(p.row.start))
           }
         },
         {
           title: '目的地',
           key: 'end',
-          minWidth: 180,
+          width: 180,
           render: (h, p) => {
             return this.tableDataRender(h, this.cityFormatter(p.row.end))
           }
@@ -345,32 +344,26 @@ export default {
         {
           title: '外转运费',
           key: 'transFee',
-          minWidth: 120,
+          width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.transFee / 100)
+            return this.tableDataRender(h, p.row.transFee === '' ? '' : p.row.transFee / 100)
           }
         },
         {
           title: '体积（方）',
           key: 'volume',
-          minWidth: 100,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.volume)
-          }
+          width: 100
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          minWidth: 100,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.weight)
-          }
+          width: 100
         },
         {
           title: '外转时间',
           key: 'createTimeLong',
           sortable: 'custom',
-          minWidth: 160,
+          width: 160,
           render: (h, p) => {
             return this.tableDataRender(h, this.timeFormatter(p.row.createTimeLong), true)
           }
@@ -378,15 +371,12 @@ export default {
         {
           title: '客户订单号',
           key: 'customerOrderNo',
-          minWidth: 200,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.customerOrderNo)
-          }
+          width: 200
         },
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 160,
+          minWidth: 180,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.consignerName)
           }
@@ -394,47 +384,35 @@ export default {
         {
           title: '发货人',
           key: 'consignerContact',
-          minWidth: 100,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.consignerContact)
-          }
+          width: 120
         },
         {
           title: '发货人手机号码',
           key: 'consignerPhone',
-          minWidth: 140,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.consignerPhone)
-          }
+          width: 120
         },
         {
           title: '收货人',
           key: 'consigneeContact',
-          minWidth: 100,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.consigneeContact)
-          }
+          width: 120
         },
         {
           title: '收货人手机号码',
           key: 'consigneePhone',
-          minWidth: 140,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.consigneePhone)
-          }
+          width: 120
         },
         {
           title: '货值',
           key: 'cargoCost',
-          minWidth: 100,
+          width: 100,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoCost / 100)
+            return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
           }
         },
         {
           title: '结算方式',
           key: 'payType',
-          minWidth: 100,
+          width: 100,
           render: (h, p) => {
             return this.tableDataRender(h, this.payTypeFormatter(p.row.payType, true))
           }
@@ -442,7 +420,7 @@ export default {
         {
           title: '要求装货时间',
           key: 'deliveryTimeLong',
-          minWidth: 160,
+          width: 160,
           render: (h, p) => {
             return this.tableDataRender(h, this.timeFormatter(p.row.deliveryTimeLong), true)
           }
@@ -450,7 +428,7 @@ export default {
         {
           title: '期望到货时间',
           key: 'arriveTimeLong',
-          minWidth: 160,
+          width: 160,
           render: (h, p) => {
             return this.tableDataRender(h, this.timeFormatter(p.row.arriveTimeLong), true)
           }
@@ -458,18 +436,12 @@ export default {
         {
           title: '回单数',
           key: 'receiptCount',
-          minWidth: 100,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.receiptCount)
-          }
+          width: 100
         },
         {
           title: '制单人',
           key: 'createOperator',
-          minWidth: 100,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.createOperator)
-          }
+          width: 120
         }
       ],
 

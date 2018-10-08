@@ -1,31 +1,29 @@
 <template>
   <Modal v-model="visiable" :mask-closable="true" width="360" @on-visible-change="close">
     <p slot="header" style="text-align:center">{{title}}</p>
-    <Form ref="$form" :model="form" :rules="rules" :label-width="80">
-      <FormItem label="始发地" prop="start">
-        <AreaSelect v-model="form.start" :deep="true" style="width:200px" placeholder="请选择"/>
+    <Form ref="$form" :model="form" :rules="rules" :label-width="70" style="padding:0 20px;">
+      <FormItem label="始发地：" prop="start">
+        <AreaSelect v-model="form.start" :deep="true" placeholder="请选择"/>
       </FormItem>
-      <FormItem label="目的地" prop="end">
-        <AreaSelect v-model="form.end" :deep="true" style="width:200px" placeholder="请选择"/>
+      <FormItem label="目的地：" prop="end">
+        <AreaSelect v-model="form.end" :deep="true" placeholder="请选择"/>
       </FormItem>
-      <FormItem label="承运商" prop="carrierName">
+      <FormItem label="承运商：" prop="carrierName">
         <SelectInput
           v-model="form.carrierName"
           :maxlength="20"
           :remote="false"
           :local-options="carriers"
           placeholder="请选择"
-          style="width:200px"
           @on-select="handleSelectCarrier" />
       </FormItem>
-      <FormItem label="车辆" prop="carNo">
+      <FormItem label="车辆：" prop="carNo">
         <SelectInput
           v-model="form.carNo"
           :maxlength="8"
           :remote="false"
           :local-options="carrierCars"
-          placeholder="请选择"
-          style="width:200px" />
+          placeholder="请选择" />
       </FormItem>
     </Form>
     <div slot="footer" style="text-align: center;">
@@ -39,10 +37,12 @@
 import BaseDialog from '@/basic/BaseDialog'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput.vue'
+import _ from 'lodash'
 import Server from '@/libs/js/server'
 import { CAR } from '@/views/client/client'
 
-const specialCity = ['110000', '120000', '710000', '810000', '820000']
+// 北京 天津 上海 重庆 台湾 香港 澳门
+const specialCity = ['110000', '120000', '310000', '500000', '710000', '810000', '820000']
 
 export default {
   name: 'CreatedFreight',
@@ -58,13 +58,18 @@ export default {
     const validateStart = (rule, value, callback) => {
       if (!validateArea(value)) {
         callback(new Error('请至少选择到市一级城市'))
+      } else if (this.form.end.length > 0 && value.length > 0 && _.isEqual(this.form.end, value)) {
+        callback(new Error('始发城市不能和目的城市相同'))
       } else {
         callback()
       }
     }
     const validateEnd = (rule, value, callback) => {
+      console.log(value)
       if (!validateArea(value)) {
         callback(new Error('请至少选择到市一级城市'))
+      } else if (this.form.start.length > 0 && value.length > 0 && _.isEqual(this.form.start, value)) {
+        callback(new Error('目的城市不能和始发城市相同'))
       } else {
         callback()
       }

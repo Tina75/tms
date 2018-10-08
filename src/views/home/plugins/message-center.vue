@@ -1,9 +1,9 @@
 <template>
   <div is="i-col" span="6" class="i-mt-15 page-home__padding-8">
-    <BlankCard to="info/index">
+    <BlankCard to="info/index" page-title="消息">
       <div slot="title">消息中心</div>
       <CellGroup>
-        <Cell v-for="(msg, index) in data" :key="index" :title="msg.title" :label="msg.createTime" class="page-home__message-item">
+        <Cell v-for="(msg, index) in data" :key="index" :title="msg.title" :label="formatTime(msg.createTime)" class="page-home__message-item">
           <FontIcon slot="icon" :type="getIcon(msg.type)" :color="getColor(msg.type)" size="26">
           </FontIcon>
         </Cell>
@@ -47,6 +47,9 @@ export default {
     }
   },
   methods: {
+    formatTime (date) {
+      return new Date(date).Format('yyyy-MM-dd hh:mm')
+    },
     getIcon (type) {
       switch (type) {
         case 0:
