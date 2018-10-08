@@ -111,5 +111,5 @@ export default {
 </script>
 
 <style scoped lang="stylus">
- /*@import "../client.styl"*/
+ @import "../client.styl"
 </style>
