@@ -86,7 +86,7 @@
 import PageTable from '@/components/page-table'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput.vue'
-import City from '@/libs/js/City'
+import City from '@/libs/js/city'
 import { mapGetters, mapActions } from 'vuex'
 import Export from '@/libs/js/export'
 export default {
