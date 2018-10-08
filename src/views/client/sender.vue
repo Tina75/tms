@@ -11,11 +11,14 @@
           </Select>
         </template>
         <template v-if="selectStatus==0">
-          <Input v-model="name" :maxlength="20" placeholder="请输入发货方名称" search style="width: 200px"  @on-search="searchList" />
+          <Input v-model="name" :maxlength="20" class="search-input" placeholder="请输入发货方名称"    />
         </template>
         <template v-else>
-          <Input v-model="contact" :maxlength="15" placeholder="请输入发货方联系人" search style="width: 200px"  @on-search="searchList" />
+          <Input v-model="contact" :maxlength="15" class="search-input" placeholder="请输入发货方联系人" />
         </template>
+        <Button icon="ios-search" type="primary"
+                class="search-btn-easy"
+                @click="searchList"></Button>
       </div>
     </div>
     <div>
@@ -68,6 +71,7 @@ export default {
         {
           title: '操作',
           key: 'id',
+          width: 100,
           render: (h, params) => {
             let renderBtn = []
             if (this.hasPower(130102)) {
@@ -141,14 +145,15 @@ export default {
         },
         {
           title: '发货方名称',
-          // key: 'name',
+          width: 280,
           render: (h, params) => {
             return h('div', [
-              h('span', {
+              h('a', {
                 style: {
                   color: '#418DF9',
                   cursor: 'pointer'
                 },
+                title: params.row.name,
                 on: {
                   click: () => {
                     this.openTab({ path: '/client/sender-info', title: '发货方详情', query: { id: params.row.id }
@@ -161,11 +166,14 @@ export default {
         },
         {
           title: '发货方联系人',
-          key: 'contact'
+          key: 'contact',
+          ellipsis: true,
+          tooltip: true
         },
         {
           title: '联系电话',
-          key: 'phone'
+          key: 'phone',
+          width: 120
         },
         {
           title: '发货方地址数量',
@@ -194,7 +202,7 @@ export default {
             } else if (params.row.payType === 4) {
               text = '月结'
             } else {
-              text = ''
+              text = '-'
             }
             return h('div', {}, text)
           }
@@ -203,6 +211,7 @@ export default {
           title: '创建时间',
           key: 'createTime',
           sortable: 'custom',
+          width: 150,
           render: (h, params) => {
             let text = this.formatDate(params.row.createTime)
             return h('div', { props: {} }, text)
