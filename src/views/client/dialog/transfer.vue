@@ -97,7 +97,7 @@ export default {
       })
     },
     _transfereeUpdate () {
-      Object.assign(this.validate, {id: this.id})
+      Object.assign(this.validate, { id: this.id })
       transfereeUpdate(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面

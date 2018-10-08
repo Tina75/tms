@@ -386,7 +386,7 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
-          width: 200,
+          width: 180,
           render: (h, p) => {
             return h('a', {
               style: { color: '#3A7EDE' },

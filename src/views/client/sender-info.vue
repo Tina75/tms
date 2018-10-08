@@ -289,13 +289,23 @@ export default {
         },
         {
           title: '备注',
-          key: 'remark'
+          key: 'remark',
+          render (h, params) {
+            let text = ''
+            if (params.row.remark === '' || params.row.remark === null) {
+              text = '-'
+            } else {
+              text = params.row.remark
+            }
+            return h('span', {}, text)
+          }
         }
       ],
       columns3: [
         {
           title: '操作',
           key: 'id',
+          width: 100,
           render: (h, params) => {
             let renderBtn = []
             if (this.hasPower(130111)) {
@@ -371,11 +381,22 @@ export default {
         },
         {
           title: '货品名称',
-          key: 'cargoName'
+          key: 'cargoName',
+          ellipsis: true,
+          tooltip: true
         },
         {
           title: '包装单位',
-          key: 'unit'
+          key: 'unit',
+          render (h, params) {
+            let text = ''
+            if (params.row.unit === '' || params.row.unit === null) {
+              text = '-'
+            } else {
+              text = params.row.unit
+            }
+            return h('span', {}, text)
+          }
         },
         {
           title: '货值',
@@ -386,19 +407,55 @@ export default {
         },
         {
           title: '重量(吨)',
-          key: 'weight'
+          key: 'weight',
+          render (h, params) {
+            let text = ''
+            if (params.row.weight === '' || params.row.weight === null) {
+              text = '-'
+            } else {
+              text = params.row.weight
+            }
+            return h('span', {}, text)
+          }
         },
         {
           title: '体积(方)',
-          key: 'volume'
+          key: 'volume',
+          render (h, params) {
+            let text = ''
+            if (params.row.volume === '' || params.row.volume === null) {
+              text = '-'
+            } else {
+              text = params.row.volume
+            }
+            return h('span', {}, text)
+          }
         },
         {
           title: '备注1',
-          key: 'remark1'
+          key: 'remark1',
+          render (h, params) {
+            let text = ''
+            if (params.row.remark1 === '' || params.row.remark1 === null) {
+              text = '-'
+            } else {
+              text = params.row.remark1
+            }
+            return h('span', {}, text)
+          }
         },
         {
           title: '备注2',
-          key: 'remark2'
+          key: 'remark2',
+          render (h, params) {
+            let text = ''
+            if (params.row.remark2 === '' || params.row.remark2 === null) {
+              text = '-'
+            } else {
+              text = params.row.remark2
+            }
+            return h('span', {}, text)
+          }
         }
       ],
       data1: [],
