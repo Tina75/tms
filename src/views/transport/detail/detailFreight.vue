@@ -69,8 +69,8 @@
           <span class="table-footer-title">总计</span>
           <span>总货值：{{ orderTotal.cargoCost }}</span>
           <span>总数量：{{ orderTotal.quantity }}</span>
-          <span>总体积：{{ orderTotal.weight }}</span>
-          <span>总重量：{{ orderTotal.volume }}</span>
+          <span>总体积：{{ orderTotal.volume }}</span>
+          <span>总重量：{{ orderTotal.weight }}</span>
         </div>
       </div>
       <!-- 应付费用 -->
@@ -200,7 +200,7 @@
               :remote="false"
               :local-options="carrierCars"
               class="detail-info-input"
-              @on-select="handleSelectCarrierCar" />
+              @on-select="autoComplete" />
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型/车长：</span>
@@ -221,7 +221,8 @@
               :maxlength="5"
               :remote="false"
               :local-options="carrierDrivers"
-              class="detail-info-input" />
+              class="detail-info-input"
+              @on-select="autoComplete" />
           </i-col>
           <i-col span="5" offset="1">
             <span class="detail-field-title">司机手机号：</span>
@@ -519,6 +520,21 @@ export default {
           }
         }
       ]
+    }
+  },
+
+  watch: {
+    startCodes () {
+      if (!(this.startCodes instanceof Array)) return
+      this.info.start = this.startCodes.length
+        ? this.startCodes[this.startCodes.length - 1]
+        : ''
+    },
+    endCodes () {
+      if (!(this.endCodes instanceof Array)) return
+      this.info.end = this.endCodes.length
+        ? this.endCodes[this.endCodes.length - 1]
+        : ''
     }
   },
 

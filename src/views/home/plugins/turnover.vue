@@ -138,8 +138,9 @@ export default {
             const res = response.data
             res.map(item => {
               console.log(item)
+              const fmtTotal = Number(item.total) / 100
               self.xData.push(item.day)
-              self.yTotalData.push(item.total)
+              self.yTotalData.push(fmtTotal)
               self.yCountData.push(item.cnt)
             })
           }
