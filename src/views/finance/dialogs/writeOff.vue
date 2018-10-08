@@ -3,7 +3,7 @@
     <p slot="header" style="text-align:center;font-size:17px">核销</p>
     <div class="write-off-form">
       <Form ref="writeOffForm" :model="writeOffForm" :rules="validate" :label-width="100">
-        <FormItem label="结算方式：">
+        <FormItem v-if="settleTypeDesc" label="结算方式：">
           <p>{{settleTypeDesc}}</p>
         </FormItem>
         <FormItem label="应收金额：">
@@ -41,11 +41,16 @@
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
+import Server from '@/libs/js/server'
+
 export default {
   name: 'writeOff',
   mixins: [BaseDialog],
   data () {
     return {
+      settleTypeDesc: '',
+      isOil: false,
+      needPay: 0,
       writeOffForm: {
         actualFee: '',
         payType: '',
@@ -71,8 +76,22 @@ export default {
     save () {
       this.$refs['writeOffForm'].validate((valid) => {
         if (valid) {
-          this.ok()
-          this.visibale = false
+          Server({
+            url: '/finance/verify/verifyOrder',
+            method: 'post',
+            data: {
+              id: this.id,
+              actualFee: parseInt(this.writeOffForm.actualFee) * 100,
+              payType: this.writeOffForm.payType,
+              account: this.writeOffForm.account,
+              bankBranch: this.writeOffForm.bankBranch,
+              remark: this.writeOffForm.remark,
+              verifyType: this.verifyType
+            }
+          }).then(res => {
+            this.ok()
+            this.visibale = false
+          }).catch(err => console.error(err))
         }
       })
     }

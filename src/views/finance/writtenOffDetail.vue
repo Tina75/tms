@@ -26,7 +26,7 @@
             <p>总单数：{{writtenOffData.orderNum}}</p>
             </Col>
             <Col span="3">
-            <p>总运费：{{writtenOffData.totalFee}}</p>
+            <p>总运费：{{writtenOffData.totalFeeText}}</p>
             </Col>
           </Row>
         </div>
@@ -45,10 +45,10 @@
                 <p>核销人：<span>{{item.operatorName}}</span></p>
                 </Col>
                 <Col span="3">
-                <p>应付金额：<span>{{item.calcFee}}</span></p>
+                <p>应付金额：<span>{{item.calcFee|moneyFormat}}</span></p>
                 </Col>
                 <Col span="3">
-                <p>实付金额：<span>{{item.actualFee}}</span></p>
+                <p>实付金额：<span>{{item.actualFee|moneyFormat}}</span></p>
                 </Col>
                 <Col span="3">
                 <p>付款方式：<span>{{item.payTypeDesc}}</span></p>
@@ -75,7 +75,15 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import { mapGetters, mapActions } from 'vuex'
+import Server from '@/libs/js/server'
+import Vue from 'vue'
+
+/**
+ *金额格式化
+ */
+Vue.filter('moneyFormat', function (value) {
+  return value ? (value / 100).toFixed(2) : ''
+})
 
 export default {
   name: 'writtenOffDetail',
@@ -98,86 +106,13 @@ export default {
       active: '1',
       writtenOffData: {
         orderNum: 100,
-        totalFee: 1000.87,
-        list: [
-          {
-            orderId: '7777777777777',
-            orderNo: '7777777777777',
-            departureName: '南京市秦淮区',
-            destinationName: '南京市玄武区',
-            totalFeeText: '1000',
-            settleTypeDesc: '月结',
-            orderStatusDesc: '已回单',
-            orderTimeText: new Date().getTime()
-          },
-          {
-            orderId: '7777777777777',
-            orderNo: '7777777777777',
-            departureName: '南京市秦淮区',
-            destinationName: '南京市玄武区',
-            totalFeeText: '1000',
-            settleTypeDesc: '月结',
-            orderStatusDesc: '已回单',
-            orderTimeText: new Date().getTime()
-          },
-          {
-            orderId: '7777777777777',
-            orderNo: '7777777777777',
-            departureName: '南京市秦淮区',
-            destinationName: '南京市玄武区',
-            totalFeeText: '1000',
-            settleTypeDesc: '月结',
-            orderStatusDesc: '已回单',
-            orderTimeText: new Date().getTime()
-          },
-          {
-            orderId: '7777777777777',
-            orderNo: '7777777777777',
-            departureName: '南京市秦淮区',
-            destinationName: '南京市玄武区',
-            totalFeeText: '1000',
-            settleTypeDesc: '月结',
-            orderStatusDesc: '已回单',
-            orderTimeText: new Date().getTime()
-          }
-        ]
+        totalFeeText: 1000.87,
+        list: []
       },
-      verifyInfoList: [
-        {
-          operateTime: '2018-09-27 15:35',
-          operatorName: '秦天师',
-          calcFee: 10000,
-          actualFee: 10000,
-          payTypeDesc: '回单付',
-          account: '110110110110110',
-          bank: '天地银行',
-          remark: '太上感应篇'
-        },
-        {
-          operateTime: '2018-09-27 15:35',
-          operatorName: '秦天师',
-          calcFee: 10000,
-          actualFee: 10000,
-          payTypeDesc: '回单付',
-          account: '110110110110110',
-          bank: '天地银行',
-          remark: '太上感应篇'
-        },
-        {
-          operateTime: '2018-09-27 15:35',
-          operatorName: '秦天师',
-          calcFee: 10000,
-          actualFee: 10000,
-          payTypeDesc: '回单付',
-          account: '110110110110110',
-          bank: '天地银行',
-          remark: '太上感应篇'
-        }
-      ]
+      verifyInfoList: []
     }
   },
   computed: {
-    ...mapGetters([]),
     writtenOffColumn () {
       return [
         {
@@ -222,10 +157,29 @@ export default {
     }
   },
   mounted () {
-    // this.metaInfo.title = this.$route.query.title
+    // this.metaInfo.title = this.sceneMap[this.scene] + '对账'
+    this.getDetail()
   },
   methods: {
-    ...mapActions([]),
+    getDetail () {
+      Server({
+        url: '/finance/verify/detail',
+        method: 'get',
+        params: {
+          verifyId: this.$route.query.verifyId
+        }
+      }).then(res => {
+        this.writtenOffData.orderNum = res.data.data.orderNum
+        this.writtenOffData.totalFeeText = (res.data.data.totalFee / 100).toFixed(2)
+        this.writtenOffData.list = res.data.data.orderList.map(item => {
+          return Object.assign({}, item, {
+            totalFeeText: (item.totalFee / 100).toFixed(2),
+            orderTimeText: new Date(item.orderTime).Format('yyyy-MM-dd hh:mm')
+          })
+        })
+        this.verifyInfoList = res.data.data.verifyInfoList
+      }).catch(err => console.error(err))
+    },
     tabChanged (tab) {
       console.log(tab)
     },

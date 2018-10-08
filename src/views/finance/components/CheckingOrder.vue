@@ -38,13 +38,15 @@
     </div>
     <div class="list-box">
       <Table :columns="orderColumn" :data="orderData.list" height="500" @on-sort-change="resort"></Table>
-      <Page :current.sync="checkingOrderQuery.pageNo" :total="orderData.totalCount" :page-size="checkingOrderQuery.size"  size="small" show-elevator show-total show-sizer @on-change="getCheckList"/>
+      <Page :current.sync="checkingOrderQuerySave.pageNo" :total="orderData.totalCount" :page-size="checkingOrderQuerySave.size"  size="small" show-elevator show-total show-sizer @on-change="getCheckList" @on-page-size-change="resetPageSize"/>
     </div>
   </div>
 </template>
 
 <script>
 import BaseComponent from '@/basic/BaseComponent'
+import Server from '@/libs/js/server'
+import Export from '@/libs/js/export'
 
 export default {
   name: 'checkingOrder',
@@ -70,70 +72,19 @@ export default {
       checkingOrderQuery: {
         name: '',
         periodType: '1',
+        period: []
+      },
+      checkingOrderQuerySave: {
+        name: '',
+        periodType: '1',
         period: [],
+        sortDesc: true,
         pageNo: 1,
         pageSize: 10
       },
       orderData: {
-        totalCount: 100,
-        list: [
-          {
-            reconcileNo: '7777777777777',
-            dateRange: '2018-09-25到2018-09-28',
-            partnerName: '秦天师',
-            totalFeeText: '1000',
-            orderNum: '200',
-            createTime: new Date().getTime()
-          },
-          {
-            reconcileNo: '7777777777777',
-            dateRange: '2018-09-25到2018-09-28',
-            partnerName: '秦天师',
-            totalFeeText: '1000',
-            orderNum: '200',
-            createTime: new Date().getTime()
-          },
-          {
-            reconcileNo: '7777777777777',
-            dateRange: '2018-09-25到2018-09-28',
-            partnerName: '秦天师',
-            totalFeeText: '1000',
-            orderNum: '200',
-            createTime: new Date().getTime()
-          },
-          {
-            reconcileNo: '7777777777777',
-            dateRange: '2018-09-25到2018-09-28',
-            partnerName: '秦天师',
-            totalFeeText: '1000',
-            orderNum: '200',
-            createTime: new Date().getTime()
-          },
-          {
-            reconcileNo: '7777777777777',
-            dateRange: '2018-09-25到2018-09-28',
-            partnerName: '秦天师',
-            totalFeeText: '1000',
-            orderNum: '200',
-            createTime: new Date().getTime()
-          },
-          {
-            reconcileNo: '7777777777777',
-            dateRange: '2018-09-25到2018-09-28',
-            partnerName: '秦天师',
-            totalFeeText: '1000',
-            orderNum: '200',
-            createTime: new Date().getTime()
-          },
-          {
-            reconcileNo: '7777777777777',
-            dateRange: '2018-09-25到2018-09-28',
-            partnerName: '秦天师',
-            totalFeeText: '1000',
-            orderNum: '200',
-            createTime: new Date().getTime()
-          }
-        ]
+        totalCount: 0,
+        list: []
       }
     }
   },
@@ -205,17 +156,55 @@ export default {
       ]
     }
   },
-  mounted () {},
+  mounted () {
+    this.getCheckList()
+  },
   methods: {
-    startQuery () {},
-    resetQuery () {},
-    writeOff (data) {},
-    exportOrder (data) {},
+    startQuery () {
+      Object.assign(this.checkingOrderQuerySave, this.checkingOrderQuery)
+      this.getCheckList()
+    },
+    resetQuery () {
+      this.checkingOrderQuery = {
+        name: '',
+        periodType: '1',
+        period: []
+      }
+    },
+    writeOff (data) {
+      let _this = this
+      this.openDialog({
+        name: 'finance/dialogs/writeOff',
+        data: {
+          id: data.row.reconcileId,
+          verifyType: 3,
+          isOil: 0,
+          needPay: data.row.totalFeeText
+        },
+        methods: {
+          ok () {
+            _this.loadData()
+          }
+        }
+      })
+    },
+    exportOrder (data) {
+      Export({
+        url: '/finance/reconcile/export',
+        method: 'GET',
+        params: {
+          reconcileId: data.row.reconcileId
+        },
+        fileName: '对账单'
+      }).then(res => {
+        this.$Message.success('导出成功')
+      }).catch(err => console.error(err))
+    },
     toDetail (data) {
       this.openDialog({
         name: 'finance/dialogs/orderList',
         data: {
-          id: data.row.id,
+          id: data.row.reconcileId,
           reconcileNo: data.row.reconcileNo,
           dateRange: data.row.dateRange,
           partnerName: data.row.partnerName,
@@ -224,8 +213,37 @@ export default {
         methods: {}
       })
     },
-    resort () {},
-    getCheckList () {}
+    resort () {
+      this.checkingOrderQuerySave.sortDesc = !this.checkingOrderQuerySave.sortDesc
+      this.checkingOrderQuerySave.pageNo = 1
+      this.getCheckList()
+    },
+    getCheckList () {
+      Server({
+        url: '/finance/reconcile/list',
+        method: 'get',
+        params: {
+          partnerType: this.scene,
+          partnerName: this.checkingOrderQuerySave.name,
+          orderByCreateTime: this.checkingOrderQuerySave.sortDesc ? 1 : 2,
+          startTime: this.checkingOrderQuerySave.period[0] ? this.checkingOrderQuerySave.period[0].getTime() : '',
+          endTime: this.checkingOrderQuerySave.period[1] ? this.checkingOrderQuerySave.period[1].getTime() : '',
+          pageNo: this.checkingOrderQuerySave.pageNo,
+          pageSize: this.checkingOrderQuerySave.pageSize
+        }
+      }).then(res => {
+        this.orderData.totalCount = res.data.data.reconcileList.totalCount
+        this.orderData.list = res.data.data.reconcileList.map(item => {
+          return Object.assign({}, item, {
+            totalFeeText: (item.totalFee / 100).toFixed(2)
+          })
+        })
+      }).catch(err => console.error(err))
+    },
+    resetPageSize () {
+      this.checkingOrderQuerySave.pageNo = 1
+      this.getCheckList()
+    }
   }
 }
 </script>

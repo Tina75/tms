@@ -18,12 +18,12 @@
         <p><label>总单据数量：</label><span>{{orderData.orderNum}}</span></p>
         </Col>
         <Col span="5">
-        <p><label>运费总额：</label><span>{{orderData.totalFee}}</span></p>
+        <p><label>运费总额：</label><span>{{orderData.totalFeeText}}</span></p>
         </Col>
       </Row>
       <div class="list-box">
-        <Table :columns="orderColumn" :data="orderData.reconcileList" height="500"></Table>
-        <Page :current.sync="listQuery.pageNo" :total="orderData.orderNum" :page-size="listQuery.pageSize"  size="small" show-elevator show-total show-sizer @on-change="getOrderList"/>
+        <Table :columns="orderColumn" :data="orderData.list" height="500"></Table>
+        <Page :current.sync="listQuery.pageNo" :total="orderData.orderNum" :page-size="listQuery.pageSize"  size="small" show-elevator show-total show-sizer @on-change="getOrderList"  @on-page-size-change="resetPageSize"/>
       </div>
     </div>
     <div slot="footer" style="text-align:center">
@@ -34,6 +34,8 @@
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
+import Server from '@/libs/js/server'
+
 export default {
   name: 'orderList',
   mixins: [BaseDialog],
@@ -51,52 +53,7 @@ export default {
       orderData: {
         orderNum: 100,
         totalFee: 1000.87,
-        reconcileList: [
-          {
-            orderId: '7777777777777',
-            orderNo: '7777777777777',
-            departureName: '南京市秦淮区',
-            destinationName: '南京市玄武区',
-            truckNo: '赣B12345',
-            totalFeeText: '1000',
-            settleTypeDesc: '月结',
-            orderStatusDesc: '已回单',
-            orderTimeText: new Date().getTime()
-          },
-          {
-            orderId: '7777777777777',
-            orderNo: '7777777777777',
-            departureName: '南京市秦淮区',
-            destinationName: '南京市玄武区',
-            truckNo: '赣B12345',
-            totalFeeText: '1000',
-            settleTypeDesc: '月结',
-            orderStatusDesc: '已回单',
-            orderTimeText: new Date().getTime()
-          },
-          {
-            orderId: '7777777777777',
-            orderNo: '7777777777777',
-            departureName: '南京市秦淮区',
-            destinationName: '南京市玄武区',
-            truckNo: '赣B12345',
-            totalFeeText: '1000',
-            settleTypeDesc: '月结',
-            orderStatusDesc: '已回单',
-            orderTimeText: new Date().getTime()
-          },
-          {
-            orderId: '7777777777777',
-            orderNo: '7777777777777',
-            departureName: '南京市秦淮区',
-            destinationName: '南京市玄武区',
-            truckNo: '赣B12345',
-            totalFeeText: '1000',
-            settleTypeDesc: '月结',
-            orderStatusDesc: '已回单',
-            orderTimeText: new Date().getTime()
-          }
-        ]
+        list: []
       },
       visibale: true
     }
@@ -166,11 +123,54 @@ export default {
       ]
     }
   },
+  mounted () {
+    this.getOrderList()
+  },
   methods: {
-    save () {},
-    getOrderList () {}
+    removeOrder (data) {
+      const _this = this
+      this.$Modal.confirm({
+        title: '提示',
+        content: '确认从对账单中删除该条订单吗？',
+        okText: '确认',
+        cancelText: '取消',
+        async onOk () {
+          Server({
+            url: '/finance/reconcile/removeSub',
+            method: 'post',
+            data: {
+              subOrderId: data.row.orderId
+            }
+          }).then(res => {
+            _this.orderData.getOrderList()
+          }).catch(err => console.error(err))
+        }
+      })
+    },
+    getOrderList () {
+      Server({
+        url: '/finance/reconcile/detail',
+        method: 'get',
+        params: {
+          reconcileId: this.id,
+          pageNo: this.listQuery.pageNo,
+          pageSize: this.listQuery.pageSize
+        }
+      }).then(res => {
+        this.orderData.orderNum = res.data.data.orderNum
+        this.orderData.totalFeeText = (res.data.data.totalFee / 100).toFixed(2)
+        this.orderData.list = res.data.data.subOrderInfos.map(item => {
+          return Object.assign({}, item, {
+            totalFeeText: (item.totalFee / 100).toFixed(2)
+          })
+        })
+      }).catch(err => console.error(err))
+    },
+    resetPageSize () {
+      this.listQuery.pageNo = 1
+      this.getOrderList()
+    }
   }
-
 }
 
 </script>

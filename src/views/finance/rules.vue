@@ -150,7 +150,6 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import AreaSelect from '@/components/AreaSelect'
-import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'financeRules',
@@ -215,13 +214,12 @@ export default {
                 price: '1000'
               }
             ]
-          },
+          }
         ]
       }
     }
   },
   computed: {
-    ...mapGetters([]),
     companyColumn () {
       return [
         {
@@ -251,10 +249,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions([]),
-    async startQuery () {
-      await this.setAccountQuery(this.accountQuery)
-      await this.getAccountList()
+    startQuery () {
+      this.setAccountQuery(this.accountQuery)
+      this.getAccountList()
     },
     toDetail (data) {
       this.$router.push({

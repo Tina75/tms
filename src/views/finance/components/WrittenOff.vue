@@ -45,14 +45,16 @@
       </Form>
     </div>
     <div class="list-box">
-      <Table :columns="orderColumn" :data="writtenOffData.list" height="500" @on-sort-change="resort"></Table>
-      <Page :current.sync="writtenOffQuery.pageNo" :total="writtenOffData.totalCount" :page-size="writtenOffQuery.size"  size="small" show-elevator show-total show-sizer @on-change="getWrittenOffList"/>
+      <Table :columns="orderColumn" :data="writtenOffData.list" height="500" @on-sort-change="resort" @on-selection-change="setOrderIds"></Table>
+      <Page :current.sync="writtenOffQuery.pageNo" :total="writtenOffData.totalCount" :page-size="writtenOffQuery.size"  size="small" show-elevator show-total show-sizer @on-change="getWrittenOffList" @on-page-size-change="resetPageSize"/>
     </div>
   </div>
 </template>
 
 <script>
 import BaseComponent from '@/basic/BaseComponent'
+import Server from '@/libs/js/server'
+import Export from '@/libs/js/export'
 
 export default {
   name: 'writtenOff',
@@ -89,77 +91,22 @@ export default {
         name: '',
         orderType: '1',
         period: [],
-        verifyNo: '',
+        orderNo: ''
+      },
+      writtenOffQuerySave: {
+        name: '',
+        orderType: '1',
+        period: [],
+        orderNo: '',
+        sortDesc: true,
         pageNo: 1,
         pageSize: 10
       },
       writtenOffData: {
         totalCount: 100,
-        list: [
-          {
-            verifyNo: '7777777777777',
-            dateRange: '2018-09-25到2018-09-28',
-            partnerName: '秦天师',
-            truckNumber: '赣B12345',
-            totalFeeText: '1000',
-            orderNum: '200',
-            createTime: new Date().getTime()
-          },
-          {
-            verifyNo: '7777777777777',
-            dateRange: '2018-09-25到2018-09-28',
-            partnerName: '秦天师',
-            truckNumber: '赣B12345',
-            totalFeeText: '1000',
-            orderNum: '200',
-            createTime: new Date().getTime()
-          },
-          {
-            verifyNo: '7777777777777',
-            dateRange: '2018-09-25到2018-09-28',
-            partnerName: '秦天师',
-            truckNumber: '赣B12345',
-            totalFeeText: '1000',
-            orderNum: '200',
-            createTime: new Date().getTime()
-          },
-          {
-            verifyNo: '7777777777777',
-            dateRange: '2018-09-25到2018-09-28',
-            partnerName: '秦天师',
-            truckNumber: '赣B12345',
-            totalFeeText: '1000',
-            orderNum: '200',
-            createTime: new Date().getTime()
-          },
-          {
-            verifyNo: '7777777777777',
-            dateRange: '2018-09-25到2018-09-28',
-            partnerName: '秦天师',
-            truckNumber: '赣B12345',
-            totalFeeText: '1000',
-            orderNum: '200',
-            createTime: new Date().getTime()
-          },
-          {
-            verifyNo: '7777777777777',
-            dateRange: '2018-09-25到2018-09-28',
-            partnerName: '秦天师',
-            totalFeeText: '1000',
-            orderNum: '200',
-            createTime: new Date().getTime()
-          },
-          {
-            verifyNo: '7777777777777',
-            dateRange: '2018-09-25到2018-09-28',
-            partnerName: '秦天师',
-            truckNumber: '赣B12345',
-            totalFeeText: '1000',
-            orderNum: '200',
-            createTime: new Date().getTime()
-          }
-        ]
-      }
+        list: []
+      },
+      selectedIds: []
     }
   },
   computed: {
@@ -207,19 +154,44 @@ export default {
       ]
     }
   },
-  mounted () {},
+  mounted () {
+    this.getWrittenOffList()
+  },
   methods: {
-    startQuery () {},
-    resetQuery () {},
-    writeOff (data) {},
-    exportWrittenOff (data) {},
+    setOrderIds (data) {
+      this.selectedIds = data.map(item => item.verifyId)
+    },
+    startQuery () {
+      Object.assign(this.writtenOffQuerySave, this.writtenOffQuery)
+      this.getWrittenOffList()
+    },
+    resetQuery () {
+      this.writtenOffQuery = {
+        name: '',
+        orderType: '1',
+        period: [],
+        orderNo: ''
+      }
+    },
+    exportWrittenOff () {
+      Export({
+        url: '/finance/verify/export',
+        method: 'GET',
+        params: {
+          verifyIds: this.selectedIds.join(','),
+          partnerType: this.scene
+        },
+        fileName: '核销单'
+      }).then(res => {
+        this.$Message.success('导出成功')
+      }).catch(err => console.error(err))
+    },
     toDetail (data) {
       this.openTab({
         title: '对账单详情',
         path: '/finance/writtenOffDetail',
         query: {
-          id: data.row.orderNo,
-          orderId: data.row.id,
+          verifyId: data.row.verifyId,
           verifyNo: data.row.verifyNo,
           dateRange: data.row.dateRange,
           partnerName: data.row.partnerName,
@@ -227,8 +199,39 @@ export default {
         }
       })
     },
-    resort () {},
-    getWrittenOffList () {}
+    resort () {
+      this.writtenOffQuerySave.sortDesc = !this.writtenOffQuerySave.sortDesc
+      this.writtenOffQuerySave.pageNo = 1
+      this.getWrittenOffList()
+    },
+    getWrittenOffList () {
+      Server({
+        url: '/finance/verify/list',
+        method: 'get',
+        params: {
+          partnerType: this.scene,
+          partnerName: this.writtenOffQuerySave.name,
+          orderByCreateTime: this.writtenOffQuerySave.sortDesc ? 1 : 2,
+          startTime: this.writtenOffQuerySave.period[0] ? this.writtenOffQuerySave.period[0].getTime() : '',
+          endTime: this.writtenOffQuerySave.period[1] ? this.writtenOffQuerySave.period[1].getTime() : '',
+          orderType: this.writtenOffQuerySave.orderType,
+          orderNo: this.writtenOffQuerySave.orderNo,
+          pageNo: this.writtenOffQuerySave.pageNo,
+          pageSize: this.writtenOffQuerySave.pageSize
+        }
+      }).then(res => {
+        this.writtenOffData.totalCount = res.data.data.totalCount
+        this.writtenOffData.list = res.data.data.dataList.map(item => {
+          return Object.assign({}, item, {
+            totalFeeText: (item.totalFee / 100).toFixed(2)
+          })
+        })
+      }).catch(err => console.error(err))
+    },
+    resetPageSize () {
+      this.writtenOffQuerySave.pageNo = 1
+      this.getWrittenOffList()
+    }
   }
 }
 </script>

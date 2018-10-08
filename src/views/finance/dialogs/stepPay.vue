@@ -5,10 +5,10 @@
       <div class="total-data">
         <Row>
           <Col span="10">
-          <p><label>结算方式：</label><span>按单结算</span></p>
+          <p><label>结算方式：</label><span>{{settleTypeDesc}}</span></p>
           </Col>
           <Col span="10">
-          <p><label>应付金额：</label><i>1024.58</i><span>元</span></p>
+          <p><label>应付金额：</label><i>{{needPay}}</i><span>元</span></p>
           </Col>
         </Row>
       </div>
@@ -59,20 +59,20 @@
                     <div class="ivu-table-cell">
                       <span v-if="!item.showAdjuster">{{index + 1}}</span>
                       <div v-else class="adjuster">
-                        <Icon class="add" type="md-add-circle" @click="addItem(index)"/>
-                        <Icon class="remove" type="md-remove-circle" @click="removeItem(index)"/>
+                        <Icon v-if="index === payItems.length - 1" class="add" type="md-add-circle" @click="addItem(index)"/>
+                        <Icon v-if="!item.verifyStatus" class="remove" type="md-remove-circle" @click="removeItem(item, index)"/>
                       </div>
                     </div>
                   </td>
                   <td class="">
                     <div class="ivu-table-cell">
-                      <a v-if="!item.verifyStatus && !item.isEdit">核销</a>
+                      <a v-if="!item.verifyStatus && !item.isEdit" @click="writeOff(item)">核销</a>
                     </div>
                   </td>
                   <td class="">
                     <div class="ivu-table-cell">
                       <Select v-if="item.isEdit" v-model="item.payType">
-                        <Option v-for="(value, key) in payTypeMap" :value="value" :key="key">{{ value }}</Option>
+                        <Option v-for="(value, key) in payTypeMap" :value="key" :key="key">{{ value }}</Option>
                       </Select>
                       <span v-else>{{item.payTypeDesc}}</span>
                     </div>
@@ -80,12 +80,12 @@
                   <td class="">
                     <div class="ivu-table-cell">
                       <Input v-if="item.isEdit" v-model="item.fee"/>
-                      <span v-else>{{item.fee}}</span>
+                      <span v-else>{{item.feeText}}</span>
                     </div>
                   </td>
                   <td class="">
                     <div class="ivu-table-cell">
-                      <a v-if="item.isEdit">保存</a>
+                      <a v-if="item.isEdit" @click="saveItem(item)">保存</a>
                       <span v-else>{{item.verifyStatusDesc}}</span>
                     </div>
                   </td>
@@ -102,6 +102,7 @@
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
+import Server from '@/libs/js/server'
 
 export default {
   name: 'stepPay',
@@ -116,55 +117,67 @@ export default {
         5: '回付现金',
         6: '回付油卡'
       },
-      payItems: [
-        {
-          isEdit: false,
-          showAdjuster: false,
-          payTypeDesc: '预付油卡',
-          payType: 1,
-          fee: 1000,
-          verifyStatus: 0,
-          verifyStatusDesc: '未核销'
-        },
-        {
-          isEdit: false,
-          showAdjuster: false,
-          payTypeDesc: '预付油卡',
-          payType: 1,
-          fee: 1000,
-          verifyStatus: 0,
-          verifyStatusDesc: '未核销'
-        },
-        {
-          isEdit: false,
-          showAdjuster: false,
-          payTypeDesc: '预付油卡',
-          payType: 1,
-          fee: 1000,
-          verifyStatus: 0,
-          verifyStatusDesc: '未核销'
-        },
-        {
-          isEdit: false,
-          showAdjuster: false,
-          payTypeDesc: '预付油卡',
-          payType: 1,
-          fee: 1000,
-          verifyStatus: 0,
-          verifyStatusDesc: '未核销'
-        }
-      ],
+      payItems: [],
       visibale: true
     }
   },
+  mounted () {
+    this.loadData()
+  },
   methods: {
-    save () {
-      this.$refs['writeOffForm'].validate((valid) => {
-        if (valid) {
-          this.ok()
-          this.visibale = false
+    loadData () {
+      Server({
+        url: '/finance/verify/getPayItems',
+        method: 'get',
+        params: {
+          orderId: this.id
+        }
+      }).then(res => {
+        this.payItems = res.data.data.map(item => {
+          return Object.assign({}, item, {
+            feeText: (item.fee / 100).toFixed(2),
+            isEdit: false,
+            showAdjuster: false
+          })
+        })
+      }).catch(err => console.error(err))
+    },
+    writeOff (item) {
+      const _this = this
+      this.openDialog({
+        name: 'finance/dialogs/writeOff',
+        data: {
+          id: item.id,
+          verifyType: 2,
+          isOil: item.payType === 2 || item.payType === 4 || item.payType === 6,
+          needPay: item.feeText,
+          settleTypeDesc: this.settleTypeDesc
+        },
+        methods: {
+          ok () {
+            _this.loadData()
+          }
         }
       })
+    },
+    saveItem (item) {
+      if (!item.payType) {
+        this.$Message.error('请选择支付方式')
+      } else if (!/^([1-9]\d*)(.([1-9]|(0-9)\d))?$/.test(item.fee)) {
+        this.$Message.error('请输入合法的金额')
+      } else {
+        Server({
+          url: '/finance/verify/addPayItem',
+          method: 'post',
+          data: {
+            orderId: this.id,
+            payType: item.payType,
+            fee: parseFloat(item.fee) * 100
+          }
+        }).then(res => {
+          this.loadData()
+        }).catch(err => console.error(err))
+      }
     },
     addItem (index) {
       this.payItems.splice(index + 1, 0, {
@@ -174,8 +187,20 @@ export default {
         fee: ''
       })
     },
-    removeItem (index) {
-      this.payItems.splice(index, 1)
+    removeItem (item, index) {
+      if (item.isEdit) {
+        this.payItems.splice(index, 1)
+      } else {
+        Server({
+          url: '/finance/verify/deletePayItem',
+          method: 'post',
+          data: {
+            payItemId: item.id
+          }
+        }).then(res => {
+          this.loadData()
+        }).catch(err => console.error(err))
+      }
     }
   }
 }

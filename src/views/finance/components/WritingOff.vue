@@ -42,10 +42,10 @@
     <div class="list-box">
       <Row :gutter="20">
         <Col span="8">
-        <Table :columns="companyColumn" :data="companyData" height="500"></Table>
+        <Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showOrderData"></Table>
         </Col>
-        <Col span="16">
-        <Table :columns="orderColumn" :data="orderData" height="500"></Table>
+        <Col span="16" class="order-list">
+        <Table :columns="orderColumn" :data="orderData" height="500" @on-selection-change="setOrderIds"></Table>
         </Col>
       </Row>
     </div>
@@ -54,6 +54,7 @@
 
 <script>
 import BaseComponent from '@/basic/BaseComponent'
+import Server from '@/libs/js/server'
 
 export default {
   name: 'writingOff',
@@ -110,87 +111,20 @@ export default {
         periodType: '1',
         period: []
       },
+      writingOffQuerySave: {
+        name: '',
+        periodType: '1',
+        period: []
+      },
       periodTypeMap: {
         1: '下单时间',
         2: '到货日期',
         3: '回单日期'
       },
-      companyData: [
-        {
-          partnerName: '秦天师',
-          orderNum: 18,
-          calcTotalFeeText: '1822',
-          verifiedFeeText: '1000'
-        },
-        {
-          partnerName: '秦天师',
-          orderNum: 18,
-          calcTotalFeeText: '1822',
-          verifiedFeeText: '1000'
-        },
-        {
-          partnerName: '秦天师',
-          orderNum: 18,
-          calcTotalFeeText: '1822',
-          verifiedFeeText: '1000'
-        },
-        {
-          partnerName: '秦天师',
-          orderNum: 18,
-          calcTotalFeeText: '1822',
-          verifiedFeeText: '1000'
-        },
-        {
-          partnerName: '秦天师',
-          orderNum: 18,
-          calcTotalFeeText: '1822',
-          verifiedFeeText: '1000'
-        }
-      ],
-      orderData: [
-        {
-          displayNo: '7777777777777',
-          departureName: '江苏省南京市',
-          destinationName: '广东省广州市',
-          totalFeeText: '1000',
-          settleTypeDesc: '预付',
-          statusDesc: '已到货',
-          isMultiPay: 1,
-          _disabled: true
-        },
-        {
-          displayNo: '7777777777777',
-          departureName: '江苏省南京市',
-          destinationName: '广东省广州市',
-          totalFeeText: '1000',
-          settleTypeDesc: '预付',
-          statusDesc: '已到货'
-        },
-        {
-          displayNo: '7777777777777',
-          departureName: '江苏省南京市',
-          destinationName: '广东省广州市',
-          totalFeeText: '1000',
-          settleTypeDesc: '预付',
-          statusDesc: '已到货'
-        },
-        {
-          displayNo: '7777777777777',
-          departureName: '江苏省南京市',
-          destinationName: '广东省广州市',
-          totalFeeText: '1000',
-          settleTypeDesc: '预付',
-          statusDesc: '已到货'
-        },
-        {
-          displayNo: '7777777777777',
-          departureName: '江苏省南京市',
-          destinationName: '广东省广州市',
-          totalFeeText: '1000',
-          settleTypeDesc: '预付',
-          statusDesc: '已到货'
-        }
-      ]
+      companyData: [],
+      orderData: [],
+      selectedIds: [],
+      currentPartner: {}
     }
   },
   computed: {
@@ -238,7 +172,7 @@ export default {
         {
           title: this.orderNameMap[this.scene] + '号',
           width: 140,
-          key: 'displayNo',
+          key: 'orderNo',
           render: (h, params) => {
             return h('a', {
               on: {
@@ -246,7 +180,7 @@ export default {
                   this.toDetail(params)
                 }
               }
-            }, params.row.displayNo)
+            }, params.row.orderNo)
           }
         },
         {
@@ -296,39 +230,69 @@ export default {
           }
         },
         {
-          title: this.orderNameMap[this.scene] + '状态',
-          width: 160,
-          key: 'statusDesc',
+          title: '状态',
+          width: 100,
+          key: 'orderStatusDesc',
           filters: this.orderStatusMap[this.scene],
           filterMethod (value, row) {
-            return row.statusDesc === value
+            return row.orderStatusDesc === value
           }
         }
       ]
     }
   },
-  mounted () {},
+  mounted () {
+    this.loadData()
+  },
   methods: {
-    createBill () {
-      this.openDialog({
-        name: 'finance/dialogs/createCheck',
-        data: {
-          partnerName: '南京晕哒哒喽可口可乐公司',
-          orderNum: '11',
-          dateRange: '2018-09-01 至 2018-09-12'
-        },
-        methods: {}
-      })
+    setOrderIds (data) {
+      this.selectedIds = data.map(item => item.id)
     },
-    startQuery () {},
-    resetQuery () {},
+    createBill () {
+      const _this = this
+      if (this.selectedIds.length > 1) {
+        this.openDialog({
+          name: 'finance/dialogs/createCheck',
+          data: {
+            idList: this.selectedIds,
+            partnerName: this.currentPartner.partnerName,
+            orderNum: this.currentPartner.orderNum,
+            dayType: this.writingOffQuerySave.periodType,
+            startTime: this.writingOffQuerySave.startTime || '',
+            endTime: this.writingOffQuerySave.endTime || '',
+            partnerType: this.scene
+          },
+          methods: {
+            ok () {
+              _this.loadData()
+            }
+          }
+        })
+      } else {
+        this.$Message.warning('请选择2条以上的数据')
+      }
+    },
+    startQuery () {
+      this.orderData = []
+      this.writingOffQuerySave = this.writingOffQuery
+      this.loadData()
+    },
+    resetQuery () {
+      this.writingOffQuery = {
+        name: '',
+        periodType: '1',
+        period: []
+      }
+    },
     writeOff (data) {
       const _this = this
       if (data.row.isMultiPay) {
         this.openDialog({
           name: 'finance/dialogs/stepPay',
           data: {
-            id: data.row.id
+            id: data.row.id,
+            needPay: data.row.totalFeeText,
+            settleTypeDesc: data.row.settleTypeDesc
           },
           methods: {}
         })
@@ -351,7 +315,39 @@ export default {
       }
     },
     toDetail (data) {},
-    loadData () {}
+    loadData () {
+      Server({
+        url: '/finance/getUnverify',
+        method: 'get',
+        params: {
+          partnerType: this.scene,
+          partnerName: this.writingOffQuerySave.name,
+          dayType: this.writingOffQuerySave.periodType,
+          startTime: this.writingOffQuerySave.period[0] ? this.writingOffQuerySave.period[0].getTime() : '',
+          endTime: this.writingOffQuerySave.period[1] ? this.writingOffQuerySave.period[1].getTime() : ''
+        }
+      }).then(res => {
+        this.companyData = res.data.data.map(item => {
+          return Object.assign({}, item, {
+            calcTotalFeeText: (item.calcTotalFee / 100).toFixed(2),
+            verifiedFeeText: (item.verifiedFee / 100).toFixed(2)
+          })
+        })
+        if (this.currentPartner.id && this.companyData.map(item => item.id).indexOf(this.currentPartner.id) >= 0) {
+          this.currentPartner = this.companyData.find(item => this.currentPartner.id === item.id)
+          this.showOrderData(this.companyData.find(item => this.currentPartner.id === item.id).orderInfos)
+        }
+      }).catch(err => console.error(err))
+    },
+    showOrderData (data) {
+      this.currentPartner = data
+      this.orderData = data.orderInfos.map(item => {
+        return Object.assign({}, item, {
+          totalFeeText: (item.totalFee / 100).toFixed(2),
+          _disabled: !!item.isMultiPay
+        })
+      })
+    }
   }
 }
 </script>
@@ -366,4 +362,8 @@ export default {
       background-color: #f9f9f9
       /deep/ .ivu-form-item
         margin-bottom: 0
+    .order-list
+      /deep/ .ivu-table-cell
+        padding-left: 5px
+        padding-right: 5px
 </style>
