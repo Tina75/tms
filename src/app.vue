@@ -61,7 +61,7 @@ export default {
       await this.getUserInfo()
       this.loopMessage()
       if (sessionStorage.getItem('first_time_login') === 'true') {
-        if (this.UserInfo.roleName === '超级管理员') this.renew()
+        if (this.UserInfo.type === 1) this.renew()
         else this.changePasswordTip()
       }
     },

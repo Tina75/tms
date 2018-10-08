@@ -135,7 +135,7 @@ export default {
     showCounter () {
       const _this = this
       this.openDialog({
-        name: 'transport/dialog/financeRule',
+        name: 'dialogs/financeRule',
         data: {
           value: 0
         },

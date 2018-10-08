@@ -39,15 +39,7 @@
           <Col span="8">
           <div>
             <span class="label">付款方式：</span>
-            <span v-if="driverList.payType===1">现付</span>
-            <span v-else-if="driverList.payType===2">到付</span>
-            <span v-else-if="driverList.payType===3">回单付</span>
-            <span v-else-if="driverList.payType===4">月结</span>
-            <span v-else-if="driverList.payType===5">预付+到付</span>
-            <span v-else-if="driverList.payType===6">预付+回付</span>
-            <span v-else-if="driverList.payType===7">到付+回付</span>
-            <span v-else-if="driverList.payType===8">三段付</span>
-            <span v-else></span>
+            <span>{{payTypeMap[driverList.payType]}}</span>
           </div>
           </Col>
         </Row>
@@ -96,11 +88,7 @@
           <Col span="8">
           <div>
             <span class="label">结算方式：</span>
-            <span v-if="companyList.payType === 1">现付</span>
-            <span v-else-if="companyList.payType === 2">到付</span>
-            <span v-else-if="companyList.payType === 3">回单付</span>
-            <span v-else-if="companyList.payType === 4">月结</span>
-            <span v-else></span>
+            <span>{{payTypeMap[companyList.payType]}}</span>
           </div>
           </Col>
         </Row>
@@ -159,7 +147,7 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import {CAR_TYPE1, CAR_LENGTH1} from '@/libs/constant/carInfo'
+import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import { CODE, carrierDetailsForDriver, carrierDetailsForCompany, carrierListDriver, carrierListCar, carrierDeleteVehicle, carrierDeleteDriver } from './client'
 export default {
   name: 'carrier-info',
@@ -173,6 +161,11 @@ export default {
       carrierType: this.$route.query.carrierType,
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH1,
+      payTypeMap: {
+        1: '按单付',
+        2: '月结',
+        '': ''
+      },
       driverList: {
         driverName: '',
         carNO: '',
@@ -195,6 +188,7 @@ export default {
         {
           title: '操作',
           key: 'id',
+          width: 100,
           render: (h, params) => {
             let renderBtn = []
             if (this.hasPower(130205)) {
@@ -290,13 +284,22 @@ export default {
         },
         {
           title: '车牌号',
-          key: 'carNO'
+          key: 'carNO',
+          render (h, params) {
+            let text = ''
+            if (params.row.carNO === '' || params.row.carNO === null) {
+              text = '-'
+            } else {
+              text = params.row.carNO
+            }
+            return h('span', {}, text)
+          }
         },
         {
           title: '车型',
           key: 'carType',
           render: (h, params) => {
-            let text = params.row.carType ? (this.carLengthMap[params.row.carLength] + this.carTypeMap[params.row.carType]) : ''
+            let text = params.row.carType ? (this.carLengthMap[params.row.carLength] + this.carTypeMap[params.row.carType]) : '-'
             return h('div', {}, text)
           }
         }
@@ -305,6 +308,7 @@ export default {
         {
           title: '操作',
           key: 'id',
+          width: 100,
           render: (h, params) => {
             let renderBtn = []
             if (this.hasPower(130208)) {
@@ -400,11 +404,29 @@ export default {
         },
         {
           title: '车载容积(方)',
-          key: 'shippingVolume'
+          key: 'shippingVolume',
+          render (h, params) {
+            let text = ''
+            if (params.row.shippingVolume === '' || params.row.shippingVolume === null) {
+              text = '-'
+            } else {
+              text = params.row.shippingVolume
+            }
+            return h('span', {}, text)
+          }
         },
         {
           title: '主司机',
-          key: 'driverName'
+          key: 'driverName',
+          render (h, params) {
+            let text = ''
+            if (params.row.driverName === '' || params.row.driverName === null) {
+              text = '-'
+            } else {
+              text = params.row.driverName
+            }
+            return h('span', {}, text)
+          }
         }
       ],
       data1: [],

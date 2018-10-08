@@ -10,7 +10,10 @@
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
-        <Input  v-model="keyword" :maxlength="20" :placeholder="selectStatus === 1 ? '请输入外转方名称' : '请输入负责人名称'" search style="width: 200px"  @on-search="searchList" />
+        <Input  v-model="keyword" :maxlength="20" :placeholder="selectStatus === 1 ? '请输入外转方名称' : '请输入负责人名称'" class="search-input" />
+        <Button icon="ios-search" type="primary"
+                class="search-btn-easy"
+                @click="searchList"></Button>
       </div>
     </div>
     <div>
@@ -63,6 +66,7 @@ export default {
         {
           title: '操作',
           key: 'id',
+          width: 100,
           render: (h, params) => {
             let renderBtn = []
             if (this.hasPower(130302)) {
@@ -138,11 +142,15 @@ export default {
         },
         {
           title: '外转方名称',
-          key: 'name'
+          key: 'name',
+          ellipsis: true,
+          tooltip: true
         },
         {
           title: '负责人',
-          key: 'contact'
+          key: 'contact',
+          ellipsis: true,
+          tooltip: true
         },
         {
           title: '联系电话',
@@ -162,7 +170,7 @@ export default {
             } else if (params.row.payType === 4) {
               text = '月结'
             } else {
-              text = ''
+              text = '-'
             }
             return h('div', {}, text)
           }
@@ -171,9 +179,23 @@ export default {
           title: '创建时间',
           key: 'createTime',
           sortable: 'custom',
+          width: 150,
           render: (h, params) => {
             let text = this.formatDate(params.row.createTime)
             return h('div', { props: {} }, text)
+          }
+        },
+        {
+          title: '备注',
+          key: 'remark',
+          render (h, params) {
+            let text = ''
+            if (params.row.remark === '' || params.row.remark === null) {
+              text = '-'
+            } else {
+              text = params.row.remark
+            }
+            return h('span', {}, text)
           }
         }
       ],
