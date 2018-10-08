@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Layout class="container">
-      <Sider v-model="collapsed" :collapsed-width="50" hide-trigger collapsible >
+      <Sider v-model="collapsed" :collapsed-width="50" hide-trigger collapsible style="overflow:hidden">
         <side-bar :collapsed="collapsed" :active-name="$route.path" :menu-list="menuList" @on-select="onMenuSelect"/>
       </Sider>
       <Layout>
@@ -11,14 +11,8 @@
             <tab-nav :list="TabNavList" :value="$route" @on-close="onTabClose" @on-select="onTabSelect"/>
           </div>
         </Header>
-        <Content >
-          <Layout>
-            <Content class="content">
-              <keep-alive>
-                <router-view />
-              </keep-alive>
-            </Content>
-          </Layout>
+        <Content class="content">
+          <router-view />
         </Content>
       </Layout>
     </Layout>
@@ -66,8 +60,12 @@ export default {
       await this.getPermissons()
       this.initTabNav()
       this.toHome()
-      this.getUserInfo()
+      await this.getUserInfo()
       this.loopMessage()
+      if (sessionStorage.getItem('first_time_login') === 'true') {
+        if (this.UserInfo.roleName === '超级管理员') this.renew()
+        else this.changePasswordTip()
+      }
     },
     loopMessage () {
       setInterval(() => {
@@ -79,7 +77,7 @@ export default {
     * @param type 消息类型
     */
     onOpenMsg (type) {
-      const route = {path: '/info/info', query: {type: type, title: '消息'}}
+      const route = {path: '/info/index', query: {type: type, title: '消息'}}
       window.EMA.fire('openTab', route)
     },
     /**
@@ -115,6 +113,27 @@ export default {
       }
     },
 
+    renew () {
+      window.EMA.fire('Dialogs.push', {
+        name: 'dialogs/renew',
+        data: {
+          title: '提示',
+          expirationTime: this.UserInfo.expirationTime
+        }
+      })
+    },
+
+    changePasswordTip () {
+      this.$Modal.confirm({
+        title: '提示',
+        content: '<p>您的密码为初始密码，为确保账户安全，请及时修改密码</p>',
+        okText: '立即修改',
+        cancelText: '我知道了',
+        onOk: () => {
+          window.EMA.fire('openTab', {path: '/set-up/set-up', query: {title: '设置'}})
+        }
+      })
+    },
     /**
      * @description 关闭tab标签时调用
      * @param {*} list 关闭后的tab页list
@@ -263,11 +282,12 @@ html, body
         height 46px
         // background #F0F0F0
         overflow hidden
+        .tags-nav .scroll-outer .scroll-body
+          bottom -1px
     .content
-      margin 15px
-      padding 15px
-      background white
-      min-height 88vh
+      padding 15px 20px
+      height 100%
+      overflow-y auto
 
 .ivu-modal-footer
   border-top none
@@ -276,4 +296,6 @@ html, body
     min-width 85px
 .ivu-layout
   background #efefef
+.ivu-message
+  z-index 2000 !important
 </style>

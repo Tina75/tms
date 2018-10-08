@@ -1,19 +1,19 @@
 <template>
   <div class="temAll">
     <Col span="3">
-    <Menu active-name="修改密码" style="width: 100%;">
+    <Menu active-name="修改密码" style="width: 100%; background:rgba(243,245,249,1)">
       <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
       <p class="menuTitle">{{menu.name}}</p>
       </MenuItem>
     </Menu>
     </Col>
-    <Col span="18">
+    <Col span="21" style="background:#fff; padding-left:20px; height: inherit;">
     <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;">
       <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute; left: 20px;"></span>
-      <span style="margin-left:35px; font-size: 16px;">{{rightTitle}}</span>
+      <span style="margin-left:35px; font-size: 16px; font-weight:600;">{{rightTitle}}</span>
     </div>
     <!--密码设置-->
-    <div v-if="'1' === this.rightKey" key="1" style="height:250px;">
+    <div v-if="'1' === this.rightKey" key="1" style="height:530px;">
       <Col span="10" class="setConf">
       <Form ref="formPwd" :model="formPwd" :rules="rulePwd" :label-width="90" label-position="left">
         <FormItem label="原始密码：" prop="oldPassword">
@@ -32,7 +32,7 @@
       </Col>
     </div>
     <!--个人设置-->
-    <div v-else-if="'2' === this.rightKey" key="2" style="height:350px;">
+    <div v-else-if="'2' === this.rightKey" key="2" style="height:530px;">
       <Col span="10" class="setConf">
       <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="90" label-position="left">
         <FormItem label="账号：">
@@ -77,7 +77,7 @@
       </Col>
     </div>
     <!--短信设置-->
-    <div v-else-if="'3' === this.rightKey" key="3">
+    <div v-else-if="'3' === this.rightKey" key="3" style="height:530px;">
       <Col span="20" class="setConf">
       <Card dis-hover>
         <div solt="title" class="msgCardTitle">
@@ -86,21 +86,21 @@
         </div>
         <div v-for="msg in this.messageList" :key="msg.title" class="mesDiv">
           <p style="font-weight: bold">{{msg.title}}</p>
-          <p>{{msg.message}}</p>
+          <p>{{msg.messageTitle}}<span style="margin-left:12px;">{{msg.message}}</span></p>
           <p>{{msg.messageReturn}}</p>
           <p>接收人：
             <Checkbox
               v-for="checkBtn in msg.checkBox"
               :key="checkBtn.index"
               v-model="checkBtn.model"
-              style="margin-left:15px;"
+              style="margin-left:5px;"
               @on-change="checkBtnBox()">
               {{checkBtn.label}}
             </Checkbox>
           </p>
         </div>
       </Card>
-      <Button type="primary" class="msgSaveBtn" @click="msgSaveBtn">保存</Button>
+      <Button type="primary" class="msgSaveBtn test111" @click="msgSaveBtn">保存1</Button>
       </Col>
     </div>
     <!--公司设置-->
@@ -227,8 +227,8 @@ export default {
     }
     var checkPhone = function (rule, value, callback) {
       if (value) {
-        if (!(/^1\d{10}$/.test(value))) {
-          return callback(new Error('手机号格式不正确'))
+        if (!(/^1\d{10}$/.test(value) || /^0\d{2,3}-?\d{7,8}$/.test(value))) {
+          return callback(new Error('联系方式格式不正确'))
         }
         callback()
       } else {
@@ -274,8 +274,9 @@ export default {
       messageListInit: [],
       messageList: [{
         title: '发运提醒',
-        message: '提醒内容：【智加云TMS】您的货物已由xx公司安排送货，由车牌号XXXX司机姓名XXXX司机电话XXXX派送；',
-        messageReturn: '外转单：【智加云TMS】您的xxx货物已由xx公司安排送货。',
+        messageTitle: '运单：',
+        message: '【运掌柜TMS】您的货物已由xx公司安排送货，由车牌号XXXX司机姓名XXXX司机电话XXXX派送；',
+        messageReturn: '外转单：【运掌柜TMS】您的xxx货物已由xx公司安排送货。',
         checkBox: [{
           label: '发货人',
           model: '1',
@@ -287,8 +288,9 @@ export default {
         }]
       }, {
         title: '到货提醒',
-        message: '提醒内容：【智加云TMS】您的货物已签收，由车牌号XXX司机姓名XXX司机电话XXXX完成配送；',
-        messageReturn: '外转单：【智加云TMS】您的xxx货物已签收。',
+        messageTitle: '运单：',
+        message: '【运掌柜TMS】您的货物已签收，由车牌号XXX司机姓名XXX司机电话XXXX完成配送；',
+        messageReturn: '外转单：【运掌柜TMS】您的xxx货物已签收。',
         checkBox: [{
           label: '发货人',
           model: '3',
@@ -300,8 +302,9 @@ export default {
         }]
       }, {
         title: '指派司机提醒',
-        message: '提醒内容：【智加云TMS】XX公司给您指派了新的运单，请尽快装货；',
-        messageReturn: '提货单：【智加云TMS】XX公司给您指派了新的提货单，请尽快提货。',
+        messageTitle: '运单：',
+        message: '【运掌柜TMS】XX公司给您指派了新的运单，请尽快装货；',
+        messageReturn: '提货单：【运掌柜TMS】XX公司给您指派了新的提货单，请尽快提货。',
         checkBox: [{
           label: '司机',
           model: '5',
@@ -425,6 +428,10 @@ export default {
     pwdSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          if (this.formPwd.oldPassword === this.formPwd.password) {
+            this.$Message.info('您还未变更任何信息，无需保存')
+            return
+          }
           Server({
             url: 'set/updatePsw',
             method: 'post',
@@ -596,8 +603,16 @@ export default {
 }
 </script>
 <style lang='stylus' scoped>
-// .temAll
-//   margin: 20px;
+>>> .ivu-menu-vertical.ivu-menu-light:after
+  background: #fff;
+>>> .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
+    background: #fff;
+    color: #515a6e;
+.temAll
+  width: 100%
+  height: 100%;
+  background:rgba(243,245,249,1);
+  overflow: auto;
   .setConf
     margin-top: 20px;
     left: 50%;
@@ -613,8 +628,7 @@ export default {
     margin-top: 5px;
 .msgSaveBtn
     position: absolute;
-    left: 50%;
-    margin-left: -35px;
+    left: 30%;
     margin-top: 20px;
 .msgCardTitle
   margin-bottom: 15px;

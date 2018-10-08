@@ -19,7 +19,7 @@
     </div>
 
     <footer class="login-footer">
-      版权所有·智加云 Copyright &#169; 2018 5566.com All Rights Reserved
+      版权所有·运掌柜 Copyright &#169; 2018 5566.com All Rights Reserved
     </footer>
     <Dialogs />
   </div>
@@ -50,7 +50,7 @@ export default {
 <style lang="stylus" scoped>
   .icon
     color #FFFFFF
-    font-size 50px
+    font-size 40px
 
   .login
     position relative
@@ -100,7 +100,7 @@ export default {
 
     &-bg
       background url("./assets/bg-tms-login.png") no-repeat
-      background-size 105%
+      background-size cover
       background-position center center
 
 </style>

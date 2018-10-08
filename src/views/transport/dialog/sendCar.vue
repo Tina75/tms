@@ -14,7 +14,6 @@
             :remote="false"
             :local-options="carriers"
             class="detail-info-input"
-            @on-focus.once="getCarriers"
             @on-select="handleSelectCarrier" />
         </i-col>
         <i-col span="7" offset="1">
@@ -29,6 +28,7 @@
         <i-col span="7" offset="1">
           <span class="detail-field-title">司机手机号：</span>
           <Input v-model="info.driverPhone"
+                 :maxlength="11"
                  class="detail-info-input"></Input>
         </i-col>
       </Row>
@@ -41,9 +41,10 @@
             :maxlength="8"
             :remote="false"
             :local-options="carrierCars"
-            class="detail-info-input" />
+            class="detail-info-input"
+            @on-select="handleSelectCarrierCar" />
         </i-col>
-        <i-col span="8" offset="1">
+        <i-col span="7" offset="1">
           <span class="detail-field-title">车型：</span>
           <Select v-model="info.carType"
                   class="detail-info-input-half"
@@ -126,12 +127,9 @@ import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import SelectInput from '@/components/SelectInput.vue'
 import MoneyInput from '../components/moneyInput'
-import CarConfigs from '../detail/carConfigs.json'
-import { mapGetters, mapActions } from 'vuex'
+import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
+import { mapGetters } from 'vuex'
 import { CAR } from '@/views/client/client'
-
-const carType = CarConfigs.carType
-const carLength = CarConfigs.carLength
 
 export default {
   name: 'SendCar',
@@ -141,8 +139,10 @@ export default {
     return {
       visiable: true,
       loading: false,
-      carType,
-      carLength,
+      carType: CAR_TYPE,
+      carLength: CAR_LENGTH,
+      carriers: [], // 承运商
+      carrierCars: [], // 车辆
       info: {
         carrierName: '',
         driverName: '',
@@ -195,7 +195,7 @@ export default {
                   let temp = p.row
                   temp.cashAmount = money
                   this.settlementPayInfo.splice(p.index, 1, temp)
-                  this.checkTotalAmount()
+                  // this.checkTotalAmount()
                 }
               }
             })
@@ -219,7 +219,7 @@ export default {
                   let temp = p.row
                   temp.fuelCardAmount = money
                   this.settlementPayInfo.splice(p.index, 1, temp)
-                  this.checkTotalAmount()
+                  // this.checkTotalAmount()
                 }
               }
             })
@@ -237,8 +237,6 @@ export default {
       Number(this.payment.otherFee)).toFixed(2)
     },
     ...mapGetters([
-      'carriers',
-      'carrierCars',
       'carrierDrivers'
     ])
   },
@@ -251,27 +249,82 @@ export default {
       { payType: 2, fuelCardAmount: 0, cashAmount: 0 }
     ]
     this.fetchData()
+    this.getCarriers()
   },
   methods: {
-    ...mapActions([
-      'getCarriers'
-    ]),
+    getCarriers () {
+      Server({
+        url: '/carrier/listOrderByUpdateTimeDesc',
+        method: 'get',
+        data: { type: 1 }
+      }).then(res => {
+        this.carriers = res.data.data.carrierList.map(item => {
+          return {
+            name: item.carrierName,
+            value: item.carrierName,
+            payType: item.payType,
+            carrierPhone: item.carrierPhone,
+            id: item.carrierId
+          }
+        })
+      })
+    },
+
+    getCarrierCars (carrierId) {
+      Server({
+        url: '/carrier/list/carOrderByUpdateTimeDesc',
+        method: 'get',
+        data: { carrierId }
+      }).then(res => {
+        this.carrierCars = res.data.data.carList.map(item => {
+          return {
+            name: item.carNO,
+            value: item.carNO,
+            id: item.carId,
+            driverName: item.driverName,
+            driverPhone: item.driverPhone,
+            carType: item.carType,
+            carLength: item.carLength
+          }
+        })
+        if (this.carrierCars.length) {
+          this.info.carNo = this.carrierCars[0].name
+          this.handleSelectCarrierCar(null, this.carrierCars[0])
+        } else {
+          this.info.carNo = ''
+          const keys = ['driverName', 'driverPhone', 'carType', 'carLength']
+          keys.forEach(key => {
+            this.info[key] = ''
+          })
+        }
+      })
+    },
+
     handleSelectCarrier (name, row) {
-      console.log(name, row)
-      this.$store.dispatch('getCarrierCars', row.id)
+      this.getCarrierCars(row.id)
       this.$store.dispatch('getCarrierDrivers', row.id)
+    },
+
+    handleSelectCarrierCar (name, row) {
+      const keys = ['driverName', 'driverPhone', 'carType', 'carLength']
+      keys.forEach(key => {
+        this.info[key] = row[key]
+      })
     },
 
     showChargeRules () {
       const self = this
       self.openDialog({
-        name: 'order/create/CounterDialog.vue',
+        name: 'transport/dialog/financeRule',
         data: {
           value: 0
         },
         methods: {
           ok (charge) {
             self.payment.freightFee = charge || 0
+          },
+          cancel () {
+            self.close()
           }
         }
       })
@@ -282,8 +335,8 @@ export default {
       this.settlementPayInfo.forEach(item => {
         total = total + Number(item.cashAmount) + Number(item.fuelCardAmount)
       })
-      if (total > Number(this.paymentTotal)) {
-        this.$Message.error('结算总额不能超过费用合计')
+      if (total !== Number(this.paymentTotal) && total !== 0) {
+        this.$Message.error('结算总额应与费用合计相等')
         return false
       }
       return true
@@ -358,6 +411,10 @@ export default {
         this.$Message.error('请输入司机')
         return false
       }
+      if (this.info.driverPhone && !(/^1\d{10}$/.test(this.info.driverPhone))) {
+        this.$Message.error('司机手机号格式不正确')
+        return false
+      }
       if (!this.info.carNo) {
         this.$Message.error('请输入车牌号')
         return false
@@ -378,7 +435,12 @@ export default {
       if (!this.validate()) return
 
       let data = {
-        ...this.info,
+        carrierName: this.info.carrierName,
+        driverName: this.info.driverName,
+        driverPhone: this.info.driverPhone ? this.info.driverPhone : void 0,
+        carNo: this.info.carNo,
+        carType: this.info.carType ? this.info.carType : void 0,
+        carLength: this.info.carLength ? this.info.carLength : void 0,
         ...this.formatMoney(),
         settlementType: this.settlementType,
         settlementPayInfo: this.formatPayInfo()

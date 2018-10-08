@@ -41,16 +41,16 @@ export default {
   methods: {
     handleChangeTab (val) {
       if (this.$route.path === '/order-management/order') {
-        let operateVal = sessionStorage.getItem('operateVal')
-        if (val !== operateVal) {
+        let orderTabName = sessionStorage.getItem('ORDER_TAB_NAME')
+        if (val !== orderTabName) {
           this.$emit('tabChange', val)
-          sessionStorage.setItem('operateVal', val)
+          sessionStorage.setItem('ORDER_TAB_NAME', val)
         }
       } else if (this.$route.path === '/order-management/receipt') {
-        let receiptVal = sessionStorage.getItem('receiptVal')
-        if (val !== receiptVal) {
+        let receiptTabName = sessionStorage.getItem('RECEIPT_TAB_NAME')
+        if (val !== receiptTabName) {
           this.$emit('tabChange', val)
-          sessionStorage.setItem('receiptVal', val)
+          sessionStorage.setItem('RECEIPT_TAB_NAME', val)
         }
       }
     }

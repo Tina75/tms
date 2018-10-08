@@ -4,8 +4,8 @@
       <p slot="header" style="text-align:center">
         <span>编辑</span>
       </p>
-      <Form ref="info" :model="info" :rules="rules" :label-width="100" label-position="left">
-        <FormItem label="外转方" prop="transfereeName">
+      <Form ref="info" :model="info" :rules="rules" :label-width="100" label-position="left" style="padding-left: 15px;">
+        <FormItem label="外转方：" prop="transfereeName">
           <SelectInput
             v-model="info.transfereeName"
             :maxlength="20"
@@ -16,17 +16,18 @@
             @on-select="handleSelectTransferee">
           </SelectInput>
         </FormItem>
-        <FormItem label="外转方运单号">
+        <FormItem label="外转方运单号：">
           <Input v-model="info.outTransNo" :maxlength="20" style="width:200px" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="付款方式" prop="payType">
+        <FormItem label="付款方式：" prop="payType">
           <Select v-model="info.payType" style="width:200px">
-            <Option value="1">到付</Option>
-            <Option value="2">回付</Option>
-            <Option value="3">月结</Option>
+            <Option value="1">现付</Option>
+            <Option value="2">到付</Option>
+            <Option value="3">回单付</Option>
+            <Option value="4">月结</Option>
           </Select>
         </FormItem>
-        <FormItem label="外转运费" prop="transFee">
+        <FormItem label="外转运费：" prop="transFee">
           <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" style="width:180px">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
@@ -88,7 +89,7 @@ export default {
   methods: {
     getTransferees () {
       Server({
-        url: '/transferee/list',
+        url: '/transferee/listOrderbyUpdateTimeDesc',
         method: 'get',
         data: { type: 1 }
       }).then(res => {
@@ -96,7 +97,7 @@ export default {
           return {
             name: item.name,
             value: item.name,
-            payType: item.payType
+            payType: item.payType.toString()
           }
         })
       })
@@ -129,17 +130,21 @@ export default {
         }
       })
     },
+
     // 显示计费规则
     showCounter () {
       const _this = this
       this.openDialog({
-        name: 'order/create/CounterDialog',
+        name: 'transport/dialog/financeRule',
         data: {
           value: 0
         },
         methods: {
           ok (value) {
             _this.info.transFee = value || 0
+          },
+          cancel () {
+            self.close()
           }
         }
       })
@@ -155,6 +160,7 @@ export default {
         for (let key in this.info) {
           this.info[key] = data.customerInfo[key]
         }
+        this.info.transFee = this.info.transFee / 100
         this.info.payType = this.info.payType.toString()
       }).catch(err => console.error(err))
     }

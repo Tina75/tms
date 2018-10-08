@@ -27,37 +27,12 @@
       </FormItem>
       <FormItem label="车型:" prop="carType">
         <Select v-model="validate.driver.carType" >
-          <Option value="1">平板</Option>
-          <Option value="2">高栏</Option>
-          <Option value="3">厢车</Option>
-          <Option value="4">自卸</Option>
-          <Option value="5">冷藏</Option>
-          <Option value="6">保温</Option>
-          <Option value="7">高低板</Option>
-          <Option value="8">面包车</Option>
-          <Option value="9">爬梯车</Option>
-          <Option value="10">飞翼车</Option>
+          <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
         </Select>
       </FormItem>
       <FormItem label="车长:" prop="carLength">
         <Select v-model="validate.driver.carLength" >
-          <Option value="1">1.8米</Option>
-          <Option value="2">2.7米</Option>
-          <Option value="3">3.8米</Option>
-          <Option value="4">4.2米</Option>
-          <Option value="5">5米</Option>
-          <Option value="6">6.2米</Option>
-          <Option value="7">6.8米</Option>
-          <Option value="8">7.7米</Option>
-          <Option value="9">8.2米</Option>
-          <Option value="10">8.7米</Option>
-          <Option value="11">9.6米</Option>
-          <Option value="12">11.7米</Option>
-          <Option value="13">12.5米</Option>
-          <Option value="14">13米</Option>
-          <Option value="15">15米</Option>
-          <Option value="16">16米</Option>
-          <Option value="17">17.5米</Option>
+          <Option v-for="(item, key) in carLengthMap" :key="key" :value="key">{{item}}</Option>
         </Select>
       </FormItem>
       <FormItem label="核定载重量:" prop="shippingWeight">
@@ -68,15 +43,7 @@
       </FormItem>
       <FormItem label="结算方式:" class="ivu-form-item-required blank">
         <Select v-model="validate.driver.payType" clearable>
-          <!--<Option value="">请选择</Option>-->
-          <!--<Option value="1">现付</Option>-->
-          <!--<Option value="2">到付</Option>-->
-          <Option value="3">回单付</Option>
-          <Option value="4">月结</Option>
-          <!--<Option value="5">预付+到付</Option>-->
-          <!--<Option value="6">预付+回付</Option>-->
-          <!--<Option value="7">到付+回付</Option>-->
-          <!--<Option value="8">三段付</Option>-->
+          <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
         </Select>
       </FormItem>
       <FormItem label="备注:" class="ivu-form-item-required blank">
@@ -96,11 +63,7 @@
       </FormItem>
       <FormItem label="结算方式:">
         <Select v-model="validate.company.payType" clearable>
-          <!--<Option value="">请选择</Option>-->
-          <!--<Option value="1">现付</Option>-->
-          <!--<Option value="2">到付</Option>-->
-          <Option value="3">回单付</Option>
-          <Option value="4">月结</Option>
+          <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
         </Select>
       </FormItem>
       <FormItem label="备注:" >
@@ -119,6 +82,7 @@
 </template>
 
 <script>
+import {CAR_TYPE1, CAR_LENGTH1} from '@/libs/constant/carInfo'
 import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, CODE, CAR } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
 export default {
@@ -126,8 +90,14 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      carTypeMap: CAR_TYPE1,
+      carLengthMap: CAR_LENGTH1,
       flag: 2,
       modal: true,
+      payTypeMap: {
+        1: '按单付',
+        2: '月结'
+      },
       selectList: [
         {
           value: 1,
@@ -147,8 +117,8 @@ export default {
           driverName: '',
           driverPhone: '',
           carNO: '',
-          carType: 1,
-          carLength: 1,
+          carType: '',
+          carLength: '',
           shippingWeight: '',
           shippingVolume: '',
           remark: '',

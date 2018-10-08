@@ -25,13 +25,14 @@ module.exports = {
   configureWebpack: {
     devtool: 'source-map',
     externals: {
-      'area-data': 'AreaData',
       'vue': 'Vue',
-      'vue-router': 'VueRouter',
-      'vuex': 'Vuex',
       'iview': 'iview',
       'lodash': '_',
       'BMap': 'BMap'
     }
-  }
+  },
+  transpileDependencies: [
+    /\/node_modules\/vue-echarts\//,
+    /\/node_modules\/resize-detector\//
+  ]
 }

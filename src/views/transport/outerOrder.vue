@@ -45,7 +45,7 @@
                class="search-input"
                @on-click="resetEasySearch" />
 
-        <Button icon="ios-search"
+        <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
                 @click="startSearch"></Button>
 
@@ -98,38 +98,45 @@
     </div>
 
     <!-- 表格 -->
-    <PageTable ref="$table"
-               :width="tableWidth"
-               :columns="tableColumns"
-               :extra-columns="extraColumns"
-               :show-filter="true"
-               :keywords="searchFields"
-               url="/outside/bill/list"
-               method="post"
-               list-field="list"
-               style="margin-top: 15px"
-               @on-column-change="tableColumnsChanged"
-               @on-selection-change="selectionChanged"
-               @on-sort-change="tableSort"
-               @on-load="dataOnload"></PageTable>
+    <div>
+      <PageTable ref="$table"
+                 :columns="tableColumns"
+                 :extra-columns="extraColumns"
+                 :show-filter="true"
+                 :keywords="searchFields"
+                 row-id="transId"
+                 url="/outside/bill/list"
+                 method="post"
+                 list-field="list"
+                 style="margin-top: 15px"
+                 @on-column-change="tableColumnsChanged"
+                 @on-selection-change="selectionChanged"
+                 @on-sort-change="tableSort"
+                 @on-change="pageChange"
+                 @on-page-size-change="pageSizeChange"
+                 @on-load="dataOnload" />
+    </div>
 
   </div>
 </template>
 
 <script>
 import BasePage from '@/basic/BasePage'
+import TransportBase from './transportBase'
+import TransportMixin from './transportMixin'
+
 import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput'
-import TransportMixin from './transportMixin'
+
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 
 export default {
   name: 'OuterManager',
   components: { TabHeader, PageTable, AreaSelect, SelectInput },
-  mixins: [ BasePage, TransportMixin ],
+  mixins: [ BasePage, TransportBase, TransportMixin ],
   metaInfo: { title: '外转单管理' },
   data () {
     return {
@@ -281,7 +288,7 @@ export default {
         {
           title: '外转单号',
           key: 'transNo',
-          minWidth: 160,
+          width: 200,
           fixed: 'left',
           render: (h, p) => {
             return h('a', {
@@ -303,125 +310,138 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
-          minWidth: 160
+          width: 200
         },
         {
           title: '外转方运单号',
           key: 'outTransNo',
-          minWidth: 160
+          width: 200
         },
         {
           title: '外转方名称',
           key: 'transfereeName',
-          minWidth: 160
+          minWidth: 180,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.transfereeName, true)
+          }
         },
         {
           title: '始发地',
           key: 'start',
-          ellipsis: true,
-          minWidth: 160,
+          width: 180,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.start))
+            return this.tableDataRender(h, this.cityFormatter(p.row.start))
           }
         },
         {
           title: '目的地',
           key: 'end',
-          ellipsis: true,
-          minWidth: 160,
+          width: 180,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.end))
+            return this.tableDataRender(h, this.cityFormatter(p.row.end))
           }
         },
         {
           title: '外转运费',
           key: 'transFee',
-          minWidth: 120
+          width: 120,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.transFee === '' ? '' : p.row.transFee / 100)
+          }
         },
         {
           title: '体积（方）',
           key: 'volume',
-          minWidth: 100
+          width: 100
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          minWidth: 100
+          width: 100
         },
         {
           title: '外转时间',
           key: 'createTimeLong',
           sortable: 'custom',
-          minWidth: 160,
+          width: 160,
           render: (h, p) => {
-            return h('span', this.dateFormatter(p.row.createTimeLong))
+            return this.tableDataRender(h, this.timeFormatter(p.row.createTimeLong), true)
           }
         },
         {
           title: '客户订单号',
           key: 'customerOrderNo',
-          minWidth: 160
+          width: 200
         },
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 160
+          minWidth: 180,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.consignerName)
+          }
         },
         {
           title: '发货人',
           key: 'consignerContact',
-          minWidth: 100
+          width: 120
         },
         {
           title: '发货人手机号码',
           key: 'consignerPhone',
-          minWidth: 160
+          width: 120
         },
         {
           title: '收货人',
           key: 'consigneeContact',
-          minWidth: 100
+          width: 120
         },
         {
           title: '收货人手机号码',
           key: 'consigneePhone',
-          minWidth: 160
+          width: 120
         },
         {
           title: '货值',
           key: 'cargoCost',
-          minWidth: 100
+          width: 100,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
+          }
         },
         {
           title: '结算方式',
           key: 'payType',
-          minWidth: 100
+          width: 100,
+          render: (h, p) => {
+            return this.tableDataRender(h, this.payTypeFormatter(p.row.payType, true))
+          }
         },
         {
           title: '要求装货时间',
           key: 'deliveryTimeLong',
-          minWidth: 160,
+          width: 160,
           render: (h, p) => {
-            return h('span', this.dateFormatter(p.row.deliveryTimeLong))
+            return this.tableDataRender(h, this.timeFormatter(p.row.deliveryTimeLong), true)
           }
         },
         {
           title: '期望到货时间',
           key: 'arriveTimeLong',
-          minWidth: 160,
+          width: 160,
           render: (h, p) => {
-            return h('span', this.dateFormatter(p.row.arriveTimeLong))
+            return this.tableDataRender(h, this.timeFormatter(p.row.arriveTimeLong), true)
           }
         },
         {
           title: '回单数',
-          key: 'backbillCnt',
-          minWidth: 100
+          key: 'receiptCount',
+          width: 100
         },
         {
           title: '制单人',
           key: 'createOperator',
-          minWidth: 100
+          width: 120
         }
       ],
 
@@ -548,7 +568,7 @@ export default {
         },
         {
           title: '回单数',
-          key: 'backbillCnt',
+          key: 'receiptCount',
           fixed: false,
           visible: false
         },
@@ -601,7 +621,7 @@ export default {
     // 查询外转方
     getTransferee () {
       Server({
-        url: '/transferee/list',
+        url: '/transferee/listOrderbyUpdateTimeDesc',
         method: 'get',
         data: { type: 1 }
       }).then(res => {
@@ -724,6 +744,8 @@ export default {
     // 导出
     billExport () {
       let data = this.setFetchParams()
+      data.pageNo = this.page.current
+      data.pageSize = this.page.size
       delete data.order
 
       if (this.tableSelection.length) {
@@ -737,9 +759,7 @@ export default {
         method: 'post',
         data,
         fileName: '外转单明细'
-      }).then(res => {
-        this.$Message.success('导出成功')
-      }).catch(err => console.error(err))
+      })
     }
   }
 }

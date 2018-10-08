@@ -1,7 +1,7 @@
 <template>
   <div class="sider">
     <Menu v-show="!collapsed" ref="menu" :active-name="$route.path" :open-names="openedNames" accordion width="200" theme="dark" @on-select="handleSelect">
-      <div class="title"><font-icon type="logo-zjy" size="24" color="white"/></div>
+      <div class="title"><font-icon type="logo-zjy1" size="24" color="white"/></div>
       <template v-for="item in menuList">
         <template v-if="item.children">
           <Submenu v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path">
@@ -24,7 +24,7 @@
             </div>
             <a class="drop-menu-a"><font-icon :type="item.icon" :size="20" color="white"/></a>
           </Poptip> -->
-          <Dropdown v-if="item.children" placement="right-start" >
+          <Dropdown v-if="item.children" placement="right-start" transfer >
             <a class="drop-menu-a"><font-icon :type="item.icon" :size="20" color="white"/></a>
             <DropdownMenu slot="list" >
               <DropdownItem v-for="child in item.children"  :key="child.path" >
@@ -121,7 +121,8 @@ export default {
   font-size 20px
   color white
   text-align center
-  line-height 49px
+  line-height 52px
+  height 50px
   padding 0
   margin 0
 .menu-collapsed

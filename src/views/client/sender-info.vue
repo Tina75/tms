@@ -317,7 +317,7 @@ export default {
                         validate: {
                           cargoName: params.row.cargoName,
                           unit: params.row.unit,
-                          cargoCost: String(params.row.cargoCost),
+                          cargoCost: (params.row.cargoCost / 100).toFixed(2),
                           weight: String(params.row.weight),
                           volume: String(params.row.volume),
                           remark1: params.row.remark1,
@@ -379,7 +379,10 @@ export default {
         },
         {
           title: '货值',
-          key: 'cargoCost'
+          key: 'cargoCost',
+          render (h, params) {
+            return h('div', {}, (params.row.cargoCost / 100).toFixed(2))
+          }
         },
         {
           title: '重量(吨)',

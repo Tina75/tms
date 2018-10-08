@@ -9,7 +9,7 @@
           <Input v-model="formModal.name" placeholder="请输入员工姓名"></Input>
         </FormItem>
         <FormItem label="手机号：" prop="phone">
-          <Input v-model="formModal.phone" placeholder="请输入员工姓名"></Input>
+          <Input v-model="formModal.phone" placeholder="请输入手机号"></Input>
         </FormItem>
         <FormItem label="角色：" prop="roleId">
           <Select v-model="formModal.roleId" clearable>
@@ -25,18 +25,6 @@
       <div slot="footer">
         <Button type="primary"  @click="save">确定</Button>
         <Button type="default"  @click="close">取消</Button>
-      </div>
-    </Modal>
-    <Modal
-      v-model="successModal"
-      width="360">
-      <p slot="header" style="text-align:center">
-        <span>提示</span>
-      </p>
-      <P>添加员工成功，员工的登录账号为手机号</P>
-      <P>初始登录密码已发送至员工手机</P>
-      <div slot="footer">
-        <Button type="primary" @click="close">我知道了</Button>
       </div>
     </Modal>
   </div>
@@ -67,7 +55,6 @@ export default {
       }
     }
     return {
-      successModal: false,
       formModal: {
         name: '',
         phone: '',
@@ -125,7 +112,6 @@ export default {
               if (data.code === 10000) {
                 this.$Message.success('添加成功!')
                 this.close()
-                this.successModal = true
                 this.ok()
               } else {
                 this.$Message.success(data.msg)

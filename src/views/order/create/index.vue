@@ -197,11 +197,11 @@
       </FormItem>
       </Col>
     </Row>
-    <FormItem class="van-center">
+    <div class="van-center">
       <Button v-if="hasPower(100101)" :disabled="disabled" type="primary" @click="handleSubmit">保存</Button>
       <Button v-if="hasPower(100102)" :disabled="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
-    </FormItem>
+    </div>
     <OrderPrint ref="printer" :list="orderPrint">
     </OrderPrint>
   </Form>
@@ -215,7 +215,7 @@ import { mapGetters, mapActions } from 'vuex'
 import float from '@/libs/js/float'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
-import OrderPrint from '../../print-template/OrderPrint'
+import OrderPrint from './OrderPrint'
 import AreaSelect from '@/components/AreaSelect'
 import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
@@ -223,7 +223,7 @@ import settlements from '@/libs/constant/settlement.js'
 import pickups from '@/libs/constant/pickup.js'
 
 const transferFeeList = ['freightFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
-const specialCity = ['110000', '120000', '710000', '810000', '820000']
+const specialCity = ['110000', '120000', '710000', '810000', '820000', '500000', '310000']
 export default {
   metaInfo: {
     title: '手动下单'
@@ -394,12 +394,10 @@ export default {
               },
               on: {
                 'on-change': (value) => {
+                  // console.log('params.value', params.value)
+                  // console.log('value', value)
                   if (params.value !== value) {
                     params.value = value
-                  }
-                },
-                'on-blur': () => {
-                  if ('value' in params) {
                     _this.updateLocalCargo(setObject(params, float.floor(params.value)))
                   }
                 }
@@ -429,10 +427,6 @@ export default {
                 'on-change': (value) => {
                   if (params.value !== value) {
                     params.value = value
-                  }
-                },
-                'on-blur': () => {
-                  if ('value' in params) {
                     _this.updateLocalCargo(setObject(params, float.floor(params.value, 1)))
                   }
                 }
@@ -454,10 +448,6 @@ export default {
                 'on-change': (value) => {
                   if (params.value !== value) {
                     params.value = value
-                  }
-                },
-                'on-blur': () => {
-                  if ('value' in params) {
                     _this.updateLocalCargo(setObject(params, float.floor(params.value || 0)))
                   }
                 }
@@ -477,10 +467,8 @@ export default {
               },
               on: {
                 'on-change': (value) => {
-                  params.value = value
-                },
-                'on-blur': () => {
-                  if ('value' in params) {
+                  if (params.value !== value) {
+                    params.value = value
                     _this.updateLocalCargo(setObject(params, parseInt(params.value || 1)))
                   }
                 }
@@ -581,8 +569,7 @@ export default {
         // 回单数量
         receiptCount: 1,
         // 备注
-        remark1: '',
-        remark2: ''
+        remark: ''
       },
       orderPrint: [],
       rules: {
@@ -709,6 +696,9 @@ export default {
             vm.orderForm.arriveTime = new Date(vm.orderForm.arriveTime)
           }
         })
+        .catch((errorInfo) => {
+          vm.loading = false
+        })
     }
   },
   destroyed () {
@@ -760,7 +750,7 @@ export default {
           this.tempCargoes[item.index] = {}
         }
         if (sumFields.indexOf(item.name) !== -1) {
-          if (this.tempCargoes[item.index][item.name]) {
+          if (this.tempCargoes[item.index][item.name] || this.tempCargoes[item.index][item.name] === 0) {
             this.statics[item.name] = float.round(this.statics[item.name] - (this.tempCargoes[item.index][item.name] || 0) + item.value)
           } else {
             this.statics[item.name] = float.round(this.statics[item.name] - (this.consignerCargoes[item.index][item.name] || 0) + item.value)
@@ -852,10 +842,13 @@ export default {
               vm.disabled = false
               reject(new Error(findError.message))
             }
+            // 始发地遇到北京市等特殊直辖市，需要只保留第一级code
+            let start = specialCity.includes(orderForm.start[0]) && orderForm.start.length === 2 ? orderForm.start[0] : orderForm.start[orderForm.start.length - 1]
+            let end = specialCity.includes(orderForm.end[0]) && orderForm.end.length === 2 ? orderForm.end[0] : orderForm.end[orderForm.end.length - 1]
             // 始发城市，目的城市，到达时间等需要额外处理
             let form = Object.assign({}, orderForm, {
-              start: orderForm.start[orderForm.start.length - 1],
-              end: orderForm.end[orderForm.end.length - 1],
+              start: start,
+              end: end,
               arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
               deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
               orderCargoList: orderCargoList.map(cargo => cargo.toJson())

@@ -77,6 +77,8 @@ export default {
   computed: {
     ...mapGetters(['MsgCount', 'UserInfo'])
   },
+  mounted () {
+  },
   methods: {
     handleChange () {
       this.$emit('update:collapsed', !this.collapsed)

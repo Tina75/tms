@@ -29,10 +29,9 @@ export default {
         {
           title: '始发地',
           key: 'start',
-          minWidth: 80,
-          ellipsis: true,
+          minWidth: 135,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.start))
+            return this.tableDataRender(h, this.cityFilter(p.row.start), 9)
           }
         },
         // {
@@ -48,26 +47,34 @@ export default {
         {
           title: '目的地',
           key: 'end',
-          minWidth: 80,
-          ellipsis: true,
+          minWidth: 135,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.end))
+            return this.tableDataRender(h, this.cityFilter(p.row.end), 9)
           }
         },
         {
           title: '订单数',
           key: 'ordreNum',
-          minWidth: 80
+          width: 60,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.ordreNum)
+          }
         },
         {
           title: '体积(方)',
           key: 'volume',
-          minWidth: 80
+          width: 65,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.volume)
+          }
         },
         {
           title: '重量(吨)',
           key: 'weight',
-          minWidth: 80
+          width: 65,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.weight)
+          }
         }
       ],
 
@@ -78,14 +85,14 @@ export default {
       expandTableTypeOne: [
         {
           type: 'selection',
-          width: 50
+          width: 45
           // fixed: 'left'
         },
         {
           title: '订单号',
           key: 'orderNo',
           // fixed: 'left',
-          minWidth: 160,
+          width: 180,
           render: (h, p) => {
             return h('a', {
               style: {
@@ -109,32 +116,40 @@ export default {
         {
           title: '客户名称',
           key: 'consignerName',
-          ellipsis: true,
-          minWidth: 160
+          minWidth: 85,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.consignerName, 4)
+          }
         },
         {
-          title: '体积（方）',
+          title: '体积(方)',
           key: 'volume',
-          minWidth: 120
+          minWidth: 80,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.volume, 5)
+          }
         },
         {
-          title: '重量（吨）',
+          title: '重量(吨)',
           key: 'weight',
-          minWidth: 120
+          minWidth: 80,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.weight, 5)
+          }
         }
       ],
       // 展开表格类型2 订单号 客户名称 始发地 目的地 体积
       expandTableTypeTwo: [
         {
           type: 'selection',
-          width: 50
-          // fixed: 'left'
+          width: 50,
+          fixed: 'left'
         },
         {
           title: '订单号',
           key: 'orderNo',
-          minWidth: 160,
-          // fixed: 'left',
+          width: 180,
+          fixed: 'left',
           render: (h, p) => {
             return h('a', {
               style: {
@@ -158,36 +173,42 @@ export default {
         {
           title: '客户名称',
           key: 'consignerName',
-          ellipsis: true,
-          minWidth: 160
+          minWidth: 180,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.consignerName)
+          }
         },
         {
           title: '始发地',
           key: 'start',
-          minWidth: 160,
-          ellipsis: true,
+          width: 180,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.start))
+            return this.tableDataRender(h, this.cityFilter(p.row.start))
           }
         },
         {
           title: '目的地',
           key: 'end',
-          minWidth: 160,
-          ellipsis: true,
+          width: 180,
           render: (h, p) => {
-            return h('span', this.cityFilter(p.row.end))
+            return this.tableDataRender(h, this.cityFilter(p.row.end))
           }
         },
         {
-          title: '体积（方）',
+          title: '体积(方)',
           key: 'volume',
-          minWidth: 120
+          width: 100,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.volume)
+          }
         },
         {
-          title: '重量（吨）',
+          title: '重量(吨)',
           key: 'weight',
-          minWidth: 120
+          width: 100,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.weight)
+          }
         }
       ],
 
@@ -206,20 +227,7 @@ export default {
     }
   },
 
-  computed: {
-    rightTableWidth () {
-      return this.width ? (this.width - 120 - 440) : 0
-    }
-  },
-
   methods: {
-    tableHeightCompute () {
-      this.tableHeight = this.$refs.$dispatch.offsetHeight
-      window.onresize = () => {
-        this.tableHeight = this.$refs.$dispatch.offsetHeight
-      }
-    },
-
     // 保证只有一行展开
     keepExpandOnly (row, side) {
       let data = this.leftTableData
@@ -250,6 +258,10 @@ export default {
       if (!status) {
         this.rightExpandRow = null
         this.rightSelection = []
+        const rowStr = JSON.stringify(row)
+        this.rightTableData.forEach(item => {
+          if (JSON.stringify(item) === rowStr) item._expanded = false
+        })
         return
       }
       this.keepExpandOnly(row, 'right')
@@ -267,7 +279,8 @@ export default {
 
     // 格式化城市
     cityFilter (code) {
-      return City.codeToFullName(code, 3, '')
+      if (!code) return '-'
+      return Array.from(new Set(City.codeToFullNameArr(code, 3))).join('')
     },
 
     /** 数据操作 */
@@ -296,12 +309,16 @@ export default {
         data: { status }
       }).then(res => {
         this.leftTableData = this.dataFilter(res.data.data.orderList, '_expanded', item => {
-          if (JSON.stringify(item) === JSON.stringify(this.leftExpandRow)) item._expanded = true
+          if (this.leftExpandRow && item.start === this.leftExpandRow.start && item.end === this.leftExpandRow.end) {
+            item._expanded = true
+            this.fetchLeftTableExpandData(status)
+          }
           return item
         })
         this.leftTableLoading = false
       }).catch(err => {
         this.leftTableLoading = false
+        this.leftTableData = []
         console.error(err)
       })
     },
@@ -324,7 +341,11 @@ export default {
           return item
         })
         this.leftTableExpandLoading = false
-      }).catch(err => console.error(err))
+      }).catch(err => {
+        console.error(err)
+        this.leftTableExpandLoading = false
+        this.leftTableExpandData = []
+      })
     },
 
     // 左侧订单移到右侧
@@ -349,6 +370,29 @@ export default {
         this.rightSelection = []
         this.fetchData()
       }).catch(err => console.error(err))
+    },
+
+    // 表格内容渲染方法
+    // 当text内容长度大于12时截取显示...并使用tooltip
+    // 当text无内容时替换为-
+    tableDataRender (h, text, overLength = 12) {
+      text = text.toString()
+      let showText = text.length > overLength ? text.substr(0, overLength) + '...' : text
+      showText = showText || '-'
+      const style = {
+        marginRight: '-18px'
+      }
+      if (text.length <= overLength) {
+        return h('span', { style }, showText)
+      } else {
+        return h('Tooltip', {
+          props: {
+            placement: 'top',
+            content: text
+          },
+          style
+        }, showText)
+      }
     }
   }
 }

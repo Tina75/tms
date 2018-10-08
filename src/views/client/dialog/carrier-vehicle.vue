@@ -15,37 +15,12 @@
         </FormItem>
         <FormItem label="车型:" prop="carType">
           <Select v-model="validate.carType" >
-            <Option value="1">平板</Option>
-            <Option value="2">高栏</Option>
-            <Option value="3">厢车</Option>
-            <Option value="4">自卸</Option>
-            <Option value="5">冷藏</Option>
-            <Option value="6">保温</Option>
-            <Option value="7">高低板</Option>
-            <Option value="8">面包车</Option>
-            <Option value="9">爬梯车</Option>
-            <Option value="10">飞翼车</Option>
+            <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
           </Select>
         </FormItem>
         <FormItem label="车长:" prop="carLength">
           <Select v-model="validate.carLength" >
-            <Option value="1">1.8米</Option>
-            <Option value="2">2.7米</Option>
-            <Option value="3">3.8米</Option>
-            <Option value="4">4.2米</Option>
-            <Option value="5">5米</Option>
-            <Option value="6">6.2米</Option>
-            <Option value="7">6.8米</Option>
-            <Option value="8">7.7米</Option>
-            <Option value="9">8.2米</Option>
-            <Option value="10">8.7米</Option>
-            <Option value="11">9.6米</Option>
-            <Option value="12">11.7米</Option>
-            <Option value="13">12.5米</Option>
-            <Option value="14">13米</Option>
-            <Option value="15">15米</Option>
-            <Option value="16">16米</Option>
-            <Option value="17">17.5米</Option>
+            <Option v-for="(item, key) in carLengthMap" :key="key" :value="key">{{item}}</Option>
           </Select>
         </FormItem>
         <FormItem label="核定载重量:" prop="shippingWeight">
@@ -69,6 +44,7 @@
 </template>
 
 <script>
+import {CAR_TYPE1, CAR_LENGTH1} from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
 import { carrierAddVehicle, carrierUpdateVehicle, listUnbindedDriver, CODE, CAR } from '../client'
 export default {
@@ -76,6 +52,8 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      carTypeMap: CAR_TYPE1,
+      carLengthMap: CAR_LENGTH1,
       modal: true,
       carrierId: '', // 承运商id
       driverId: 0, // 司机id
@@ -84,9 +62,9 @@ export default {
       unbindedDriver: [], // 承运商下尚未被绑定车辆的司机
       validate: {
         carNO: '',
-        carType: 1,
+        carType: '',
         shippingWeight: '',
-        carLength: 1,
+        carLength: '',
         shippingVolume: ''
       },
       ruleValidate: {

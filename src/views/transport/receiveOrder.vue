@@ -48,7 +48,7 @@
                      class="search-input"
                      @on-clear="resetEasySearch" />
 
-        <Button icon="ios-search"
+        <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
                 @click="startSearch"></Button>
 
@@ -105,20 +105,24 @@
     </div>
 
     <!-- 表格 -->
-    <PageTable ref="$table"
-               :width="tableWidth"
-               :columns="tableColumns"
-               :extra-columns="extraColumns"
-               :show-filter="true"
-               :keywords="searchFields"
-               url="/load/bill/list"
-               method="post"
-               list-field="loadbillList"
-               style="margin-top: 15px"
-               @on-column-change="tableColumnsChanged"
-               @on-selection-change="selectionChanged"
-               @on-sort-change="tableSort"
-               @on-load="dataOnload"></PageTable>
+    <div>
+      <PageTable ref="$table"
+                 :columns="tableColumns"
+                 :extra-columns="extraColumns"
+                 :show-filter="true"
+                 :keywords="searchFields"
+                 row-id="pickUpId"
+                 url="/load/bill/list"
+                 method="post"
+                 list-field="loadbillList"
+                 style="margin-top: 15px"
+                 @on-column-change="tableColumnsChanged"
+                 @on-selection-change="selectionChanged"
+                 @on-sort-change="tableSort"
+                 @on-change="pageChange"
+                 @on-page-size-change="pageSizeChange"
+                 @on-load="dataOnload" />
+    </div>
 
     <PrintPickup ref="$printer" :data="printData" />
   </div>
@@ -126,18 +130,21 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
+import TransportBase from './transportBase'
+import TransportMixin from './transportMixin'
+
 import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
 import SelectInput from '@/components/SelectInput.vue'
 import PrintPickup from './components/PrintPickup'
-import TransportMixin from './transportMixin'
+
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 
 export default {
   name: 'ReceiveManager',
   components: { TabHeader, PageTable, SelectInput, PrintPickup },
-  mixins: [ BasePage, TransportMixin ],
+  mixins: [ BasePage, TransportBase, TransportMixin ],
   metaInfo: { title: '提货管理' },
   data () {
     return {
@@ -294,7 +301,7 @@ export default {
         {
           title: '提货单号',
           key: 'pickupNo',
-          minWidth: 160,
+          width: 200,
           fixed: 'left',
           render: (h, p) => {
             return h('a', {
@@ -316,86 +323,91 @@ export default {
         {
           title: '承运商',
           key: 'carrierName',
-          minWidth: 100
+          minWidth: 180,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.carrierName)
+          }
         },
         {
           title: '司机',
           key: 'driverName',
-          minWidth: 100
+          width: 120
         },
         {
           title: '车牌号',
           key: 'carNo',
-          minWidth: 100
+          width: 100
         },
         {
           title: '合计运费',
           key: 'totalFee',
-          minWidth: 120,
+          width: 120,
           render: (h, p) => {
-            return h('span', p.row.totalFee / 100)
+            return this.tableDataRender(h, p.row.totalFee === '' ? '' : p.row.totalFee / 100)
           }
         },
         {
           title: '体积（方）',
           key: 'volume',
-          minWidth: 100
+          width: 100
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          minWidth: 100
+          width: 100
         },
         {
           title: '创建时间',
           key: 'createTimeLong',
           sortable: 'custom',
-          minWidth: 160,
+          width: 160,
           render: (h, p) => {
-            return h('span', this.dateFormatter(p.row.createTimeLong))
+            return this.tableDataRender(h, this.timeFormatter(p.row.createTimeLong), true)
           }
         },
         {
           title: '制单人',
           key: 'createOperator',
-          minWidth: 100
+          width: 120,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.createOperator)
+          }
         },
         {
           title: '货值',
           key: 'cargoCost',
-          minWidth: 100,
+          width: 100,
           render: (h, p) => {
-            return h('span', p.row.cargoCost / 100)
+            return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
           }
         },
         {
           title: '结算方式',
           key: 'settlementType',
-          minWidth: 100,
+          width: 100,
           render: (h, p) => {
-            let type = ''
-            if (p.row.settlementType === 1) type = '按单结'
-            if (p.row.settlementType === 2) type = '月结'
-            return h('span', type)
+            return this.tableDataRender(h, this.payTypeFormatter(p.row.settlementType))
           }
         },
         {
           title: '司机手机号码',
           key: 'driverPhone',
-          minWidth: 160
+          width: 120
         },
         {
           title: '车型',
           key: 'carType',
-          minWidth: 100,
+          width: 120,
           render: (h, p) => {
-            return h('span', this.carTypeFilter(p.row.carType) + ' ' + this.carLengthFilter(p.row.carLength))
+            const carType = this.carTypeFormatter(p.row.carType)
+            const carLength = this.carLengthFormatter(p.row.carLength)
+            return this.tableDataRender(h, carType || carLength ? [carType, carLength].join(' ') : '')
           }
         },
         {
           title: '订单数',
           key: 'orderCnt',
-          minWidth: 100
+          width: 100
         }
       ],
       extraColumns: [
@@ -517,35 +529,24 @@ export default {
       this.$forceUpdate()
     },
 
-    // 打印查询详情
-    fetchDetail () {
-      let promises = this.tableSelection.map(item => {
-        return new Promise((resolve, reject) => {
-          Server({
-            url: '/load/bill/print',
-            method: 'post',
-            data: { pickUpId: item.pickUpId }
-          }).then(res => {
-            resolve(res.data.data)
-          })
-        })
-      })
-      return Promise.all(promises)
-    },
-
     // 打印
     billPrint () {
       if (!this.checkTableSelection()) return
-      this.fetchDetail()
-        .then(data => {
-          this.printData = data
-          this.$refs.$printer.print()
-        })
+      Server({
+        url: '/load/bill/batchPrint',
+        method: 'post',
+        data: { pickUpIds: this.tableSelection.map(item => item.pickUpId) }
+      }).then(res => {
+        this.printData = res.data.data
+        this.$refs.$printer.print()
+      })
     },
 
     // 导出
     billExport () {
       let data = this.setFetchParams()
+      data.pageNo = this.page.current
+      data.pageSize = this.page.size
       delete data.order
 
       if (this.tableSelection.length) {
@@ -559,9 +560,7 @@ export default {
         method: 'post',
         data,
         fileName: '提货单明细'
-      }).then(res => {
-        this.$Message.success('导出成功')
-      }).catch(err => console.error(err))
+      })
     },
 
     // 位置

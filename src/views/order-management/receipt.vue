@@ -32,14 +32,14 @@
           @on-click="clearKeywords"/>
         <Input
           v-else
-          v-model.lazy="keywords.waybillNo"
+          v-model.lazy="keywords.customerOrderNo"
           :maxlength="30"
-          :icon="keywords.waybillNo ? 'ios-close-circle' : ''"
-          placeholder="请输入运单号"
+          :icon="keywords.customerOrderNo ? 'ios-close-circle' : ''"
+          placeholder="请输入客户订单号"
           style="width: 200px"
           @on-enter="searchList"
           @on-click="clearKeywords"/>
-        <Button type="primary" icon="ios-search" style="width: 40px;margin-right: 0;" @click="searchList"></Button>
+        <Button type="primary" icon="ios-search" style="width: 40px;margin-right: 0;border-top-left-radius: 0;border-bottom-left-radius: 0;" @click="searchList"></Button>
         <Button type="text" class="high-search" size="small" @click="handleSwitchSearch">高级搜索</Button>
       </div>
     </div>
@@ -60,16 +60,25 @@
       </div>
       <div style="display: flex;justify-content: space-between;">
         <div>
-          <area-select v-model="keywords.start" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
-          <area-select v-model="keywords.end" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <area-select v-model="keywords.start" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <area-select v-model="keywords.end" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
           <DatePicker
             :options="timeOption"
-            v-model="times"
+            v-model="recoveryTimes"
             type="daterange"
             format="yyyy-MM-dd"
-            placeholder="开始日期-结束日期"
+            placeholder="回收开始日期-回收结束日期"
+            style="width: 200px;display: inline-block;margin-right: 20px;"
+            @on-change="handleRecoveryTimeChange">
+          </DatePicker>
+          <DatePicker
+            :options="timeOption"
+            v-model="returnTimes"
+            type="daterange"
+            format="yyyy-MM-dd"
+            placeholder="返厂开始日期-返厂结束日期"
             style="width: 200px;display: inline-block;"
-            @on-change="handleTimeChange">
+            @on-change="handleReturnTimeChange">
           </DatePicker>
         </div>
         <div>
@@ -88,8 +97,6 @@
       :extra-columns="extraColumns"
       :show-filter="true"
       style="margin-top: 15px"
-      @on-select="handleOnSelect"
-      @on-select-cancel="handleOnSelectCancel"
       @on-selection-change="handleSelectionChange"
       @on-column-change="handleColumnChange">
     </page-table>
@@ -101,6 +108,7 @@ import BasePage from '@/basic/BasePage'
 import TabHeader from '@/components/TabHeader'
 import PageTable from '@/components/page-table/'
 import Server from '@/libs/js/server'
+import Export from '@/libs/js/export'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
@@ -119,6 +127,7 @@ export default {
   metaInfo: { title: '回单管理' },
   data () {
     return {
+      tabType: 'RECEIPT',
       url: 'order/getReceiptOrderList',
       method: 'post',
       status: [
@@ -126,6 +135,21 @@ export default {
         { name: '待回收', count: '' },
         { name: '待返厂', count: '' },
         { name: '已返厂', count: '' }
+      ],
+      selectStatus: 0, // 当前搜索状态   0：客户名称   1：订单号  2：客户订单号
+      selectList: [
+        {
+          value: 0,
+          label: '客户名称'
+        },
+        {
+          value: 1,
+          label: '订单号'
+        },
+        {
+          value: 2,
+          label: '客户订单号'
+        }
       ],
       keyword: {
         receiptStatus: 0// 默认待回收状态  传给pageTable可重新请求数据
@@ -186,8 +210,7 @@ export default {
           title: '订单号',
           key: 'orderNo',
           fixed: 'left',
-          minWidth: 150,
-          tooltip: true,
+          minWidth: 160,
           render: (h, params) => {
             return h('a', {
               props: {
@@ -215,37 +238,61 @@ export default {
         {
           title: '客户订单号',
           key: 'customerOrderNo',
-          minWidth: 150,
-          tooltip: true
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.customerOrderNo ? p.row.customerOrderNo : '-')
+          }
         },
         {
           title: '运单号',
           key: 'waybillNo',
-          minWidth: 150,
-          tooltip: true
+          minWidth: 160,
+          render: (h, p) => {
+            return h('span', p.row.waybillNo ? p.row.waybillNo : '-')
+          }
         },
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 150,
+          minWidth: 180,
           tooltip: true
         },
         {
           title: '始发地',
           key: 'start',
-          minWidth: 150,
-          tooltip: true,
+          minWidth: 180,
           render: (h, params) => {
-            return h('span', City.codeToFullName(params.row.start))
+            if (City.codeToFullNameArr(params.row.start).length > 12) {
+              return h('Tooltip', {
+                props: {
+                  placement: 'bottom',
+                  content: City.codeToFullNameArr(params.row.start)
+                }
+              }, [
+                h('span', this.formatterAddress(City.codeToFullNameArr(params.row.start)))
+              ])
+            } else {
+              return h('span', City.codeToFullNameArr(params.row.start))
+            }
           }
         },
         {
           title: '目的地',
           key: 'end',
-          minWidth: 150,
-          tooltip: true,
+          minWidth: 180,
           render: (h, params) => {
-            return h('span', City.codeToFullName(params.row.end))
+            if (City.codeToFullNameArr(params.row.end).length > 12) {
+              return h('Tooltip', {
+                props: {
+                  placement: 'bottom',
+                  content: City.codeToFullNameArr(params.row.end)
+                }
+              }, [
+                h('span', this.formatterAddress(City.codeToFullNameArr(params.row.end)))
+              ])
+            } else {
+              return h('span', City.codeToFullNameArr(params.row.end))
+            }
           }
         },
         {
@@ -258,27 +305,24 @@ export default {
           title: '回收时间',
           key: 'recoveryTime',
           minWidth: 150,
-          tooltip: true,
           render: (h, params) => {
-            return h('span', params.row.recoveryTime ? new Date(params.row.recoveryTime).Format('yyyy-MM-dd hh:mm:ss') : '')
+            return h('span', params.row.receiptOrder.recoveryTime ? new Date(params.row.receiptOrder.recoveryTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
           }
         },
         {
           title: '返厂时间',
           key: 'returnTime',
           minWidth: 150,
-          tooltip: true,
           render: (h, params) => {
-            return h('span', params.row.returnTime ? new Date(params.row.returnTime).Format('yyyy-MM-dd hh:mm:ss') : '')
+            return h('span', params.row.receiptOrder.returnTime ? new Date(params.row.receiptOrder.returnTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
           }
         },
         {
           title: '下单时间',
           key: 'createTime',
           minWidth: 150,
-          tooltip: true,
           render: (h, params) => {
-            return h('span', params.row.createTime ? new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm:ss') : '')
+            return h('span', params.row.receiptOrder.createTime ? new Date(params.row.receiptOrder.createTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
           }
         },
         {
@@ -290,7 +334,7 @@ export default {
         {
           title: '发货人手机号',
           key: 'consignerPhone',
-          minWidth: 140,
+          minWidth: 130,
           tooltip: true
         },
         {
@@ -302,32 +346,29 @@ export default {
         {
           title: '收货人手机号',
           key: 'consigneePhone',
-          minWidth: 140,
+          minWidth: 130,
           tooltip: true
         },
         {
           title: '要求装货时间',
           key: 'deliveryTime',
           minWidth: 150,
-          tooltip: true,
           render: (h, params) => {
-            return h('span', params.row.deliveryTime ? new Date(params.row.deliveryTime).Format('yyyy-MM-dd hh:mm:ss') : '')
+            return h('span', params.row.deliveryTime ? new Date(params.row.deliveryTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
           }
         },
         {
           title: '期望到货时间',
           key: 'arriveTime',
           minWidth: 150,
-          tooltip: true,
           render: (h, params) => {
-            return h('span', params.row.arriveTime ? new Date(params.row.arriveTime).Format('yyyy-MM-dd hh:mm:ss') : '')
+            return h('span', params.row.arriveTime ? new Date(params.row.arriveTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
           }
         },
         {
           title: '结算方式',
           key: 'settlementType',
           minWidth: 120,
-          tooltip: true,
           render: (h, params) => {
             return h('span', this.settlementToName(params.row.settlementType))
           }
@@ -336,9 +377,8 @@ export default {
           title: '总费用',
           key: 'totalFee',
           minWidth: 120,
-          tooltip: true,
           render: (h, params) => {
-            return h('span', params.row.totalFee ? (params.row.totalFee / 100).toFixed(2) : '')
+            return h('span', params.row.totalFee ? (params.row.totalFee / 100).toFixed(2) : '-')
           }
         }
       ],
@@ -407,7 +447,7 @@ export default {
           title: '发货人',
           key: 'consignerContact',
           fixed: false,
-          visible: false
+          visible: true
         },
         {
           title: '发货人手机号',
@@ -463,12 +503,14 @@ export default {
 
   created () {
     // 刷新页面停留当前tab页
-    if (sessionStorage.getItem('receiptVal')) {
-      this.curStatusName = sessionStorage.getItem('receiptVal')
+    if (sessionStorage.getItem('RECEIPT_TAB_NAME')) {
+      this.curStatusName = sessionStorage.getItem('RECEIPT_TAB_NAME')
       this.keyword.receiptStatus = this.statusToCode(this.curStatusName)
+      this.handleTabChange(this.curStatusName) // 表头按钮状态
     } else {
-      sessionStorage.setItem('receiptVal', '待回收')
+      sessionStorage.setItem('RECEIPT_TAB_NAME', '待回收')
       this.keyword.receiptStatus = 0
+      this.handleTabChange('待回收') // 表头按钮状态
     }
   },
 
@@ -526,7 +568,8 @@ export default {
     handleTabChange (val) {
       console.log(val)
       this.curStatusName = val
-      this.selectedId = []
+      this.selectOrderList = [] // 重置当前已勾选项
+      this.selectedId = [] // 重置当前已勾选id项
       if (val === '全部') {
         this.operateValue = 1
         this.btnGroup = [
@@ -562,7 +605,7 @@ export default {
     // 表头按钮批量操作
     handleOperateClick (btn) {
       this.operateValue = btn.value
-      if (!this.selectOrderList.length) {
+      if (!this.selectOrderList.length && btn.name !== '导出') {
         this.$Message.warning('请至少选择一条信息')
         return
       }
@@ -585,6 +628,7 @@ export default {
           this.openReturnDialog('', btn.name)
         }
       } else { // 导出
+        this.export()
       }
     },
     // 打开回收或返厂弹窗 (支持单条、多条操作))
@@ -630,6 +674,20 @@ export default {
           break
       }
       return code
+    },
+    // 导出
+    export () {
+      const data = Object.assign({}, this.keyword, {
+        receiptOrderIds: this.selectedId.length > 0 ? this.selectedId : null
+      })
+      Export({
+        url: 'order/exportReceiptOrder',
+        method: 'post',
+        data,
+        fileName: '回单明细'
+      }).then((res) => {
+        this.$Message.success('导出成功')
+      }).catch(err => console.error(err))
     }
   }
 }

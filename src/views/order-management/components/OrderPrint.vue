@@ -1,9 +1,9 @@
 <template>
   <Modal v-model="visible" @on-cancel="visible=false">
-    <div ref="htmlContent" class="order-detail">
-      <div v-for="(data, index) in list" :key="index">
-        <h3 class="van-center i-mb-10">{{data.consignerName}}公司托运单</h3>
-        <table cellspacing="0" cellpadding="10" border="0" style="width:100%">
+    <div ref="htmlContent">
+      <div v-for="(data, index) in list" :key="index" class="order-detail">
+        <h3 class="van-center i-mb-20">{{data.consignerName}}公司托运单</h3>
+        <table class="order-info" cellspacing="0" cellpadding="10" border="0" style="width:100%">
           <colgroup>
             <col width="160" />
             <col width="240" />
@@ -32,7 +32,7 @@
           </tbody>
         </table>
 
-        <table cellspacing="0" cellpadding="5" border="1" class="i-mt-10 i-mb-10" style="width:100%">
+        <table cellspacing="0" cellpadding="5" border="1" class="i-mt-20 i-mb-20" style="width:100%">
           <thead>
             <tr>
               <th>货物名称</th>
@@ -44,29 +44,29 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(cargo, index) in data.orderCargoList" :key="index">
+            <tr v-for="(cargo, index) in data.orderCargoList" :key="index" class="table-content">
               <td>{{cargo.cargoName}}</td>
               <td>{{cargo.unit}}</td>
               <td>{{cargo.quantity}}</td>
-              <td>{{cargo.cargoCost}}</td>
+              <td>{{cargo.cargoCost / 100}}</td>
               <td>{{cargo.weight}}</td>
               <td>{{cargo.volume}}</td>
             </tr>
             <tr>
-              <td colspan="6">
-                运输费：{{data.freightFee || 0}} 元 &nbsp;&nbsp;
-                装货费：{{data.loadFee || 0}} 元 &nbsp;&nbsp;
-                卸货费：{{data.unloadFee || 0}} 元 &nbsp;&nbsp;
-                保险费：{{data.insuranceFee || 0}} 元 &nbsp;&nbsp;
-                其他：{{data.otherFee || 0}} 元 &nbsp;&nbsp;
-                合计运费: {{data.totalFee || 0}} 元
-                结算方式：{{settlement(data) || 0}}
+              <td colspan="6" class="table-footer">
+                <span class="table-footer-item">运输费：{{data.freightFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">装货费：{{data.loadFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">卸货费：{{data.unloadFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">保险费：{{data.insuranceFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">其他：{{data.otherFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">合计运费: {{data.totalFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">结算方式：{{settlement(data) || 0}}</span>
               </td>
             </tr>
           </tbody>
         </table>
         <div class="remark-line">
-          备注：{{data.remark}}
+          备注：{{data.remark || '无'}}
         </div>
         <table style="width:100%">
           <tbody>
@@ -84,7 +84,7 @@
 
 <script>
 import Printd from 'printd'
-import areas from '@/libs/js/City'
+import City from '@/libs/js/City'
 import settlements from '@/libs/constant/settlement.js'
 import pickups from '@/libs/constant/pickup.js'
 export default {
@@ -99,19 +99,34 @@ export default {
       cssText: `
         .order-detail {
           text-align: center;
-          margin: 10px 0;
+          padding-top: 20px;
+          page-break-after: always;
         }
-        .i-mt-10 {
-          margin-top: 10px;
+        .order-info td {
+          vertical-align: top;
         }
-        .i-mb-10 {
-          margin-bottom: 10px
+        .i-mt-20 {
+          margin-top: 20px;
+        }
+        .i-mb-20 {
+          margin-bottom: 20px
         }
         .remark-line {
           text-align: left;
           padding: 10px 0 20px;
           margin: 10px 0 15px;
           border-bottom: 1px dashed #ccc;
+        }
+        .table-content {
+          text-align: center;
+        }
+        .table-footer {
+          padding: 10px 20px;
+          line-height: 1.5;
+        }
+        .table-footer-item {
+          display: inline-block;
+          margin-right: 50px
         }
       `,
       visible: false
@@ -122,10 +137,10 @@ export default {
   },
   methods: {
     startCity (data) {
-      return data.start && data.start.length > 0 ? areas.getPathByCode(data.start[this.data.start.length - 1]).map(item => item.name).join('') : ''
+      return data.start ? City.codeToFullNameArr(data.start) : ''
     },
     endCity (data) {
-      return data.end && data.end.length > 0 ? areas.getPathByCode(data.end[this.data.end.length - 1]).map(item => item.name).join('') : ''
+      return data.end ? City.codeToFullNameArr(data.end) : ''
     },
     pickup (data) {
       let pick = pickups.find(item => item.value === data.pickup)

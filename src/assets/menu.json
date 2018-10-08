@@ -163,19 +163,19 @@
   },
   {
     "name":"设置",
-    "path":"/set-up/set-up",
+    "path":"/set-up/index",
     "icon":"shezhi",
     "powerCode":150000
   },
   {
     "name":"消息",
-    "path":"/info/info",
+    "path":"/info/index",
     "icon":"xiaoxishezhi",
     "powerCode":0
   },
   {
     "name":"帮助",
-    "path":"/helper/help",
+    "path":"/helper/index",
     "icon":"bangzhuzhongxin",
     "powerCode":0
   }

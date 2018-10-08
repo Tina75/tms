@@ -3,7 +3,6 @@
          :data="data" :loading="tableLoading"
          class="expand-table"
          @on-selection-change="selectionChange">
-         <!-- <p slot="loading">加载中...</p> -->
   </Table>
 </template>
 
@@ -46,11 +45,11 @@ export default {
 
 <style lang="stylus">
   .expand-table
-    margin -20px -50px -20px -20px
+    margin -20px -50px -20px -50px
     border-color transparent
 
     .ivu-table, .ivu-table th, .ivu-table td
-      background transparent
+      background #f8f8f9
 
     .ivu-table-row  td
       border-color transparent
