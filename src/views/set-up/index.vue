@@ -7,7 +7,7 @@
       </MenuItem>
     </Menu>
     </Col>
-    <Col span="21" style="background:#fff; padding-left:20px; height: inherit;">
+    <Col span="21" style="background:#fff; padding-left:20px; height: inherit; overflow: auto;">
     <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;margin-right: 20px;">
       <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute; left: 20px; margin-top: 2px;"></span>
       <span style="margin-left:35px; font-size: 16px; font-weight:600;">{{rightTitle}}</span>
@@ -621,10 +621,9 @@ export default {
       width:300px;
     .labelClassSty
       font-weight: bold;
-
 .mesDiv
-  height: 120px;
-  width: 720px;
+  min-height: 120px;
+  width: 100%;
   padding: 15px 0;
   border-top: 1px solid rgba(201,206,217,1);
   cursor: hand;
@@ -670,8 +669,8 @@ export default {
   cursor: pointer;
   margin: 0 2px;
 .divSetContent
-  width: 900px;
-  height:530px;
+  width: 70%;
+  min-height:400px;
   margin-top:40px;
   left: 15%;
   position: absolute;
