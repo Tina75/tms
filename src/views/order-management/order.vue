@@ -813,10 +813,13 @@ export default {
         console.log(importId)
         // debugger
         if (importId) {
-          this.keyword = {
-            importId: importId
-          }
+          this.keywords.importId = importId
+          this.keywords.status = this.keywords.status
+          this.keywords.start = null
+          this.keywords.end = null
+          this.keyword = this.keywords
           sessionStorage.setItem('ORDER_TAB_NAME', '全部')
+          this.curStatusName = '全部'
           jsCookie.remove('imported_id')
         }
       }
@@ -838,10 +841,13 @@ export default {
         this.handleTabChange('待提货') // 表头按钮状态
       }
     } else { // 批量导入点查看进入的传importId字段，订单列表显示《全部》tab页
-      this.keyword = {
-        importId: importId
-      }
+      this.keywords.importId = importId
+      this.keywords.status = null // 默认全部状态
+      this.keywords.start = null
+      this.keywords.end = null
+      this.keyword = this.keywords
       sessionStorage.setItem('ORDER_TAB_NAME', '全部')
+      this.curStatusName = '全部'
       jsCookie.remove('imported_id')
     }
   },

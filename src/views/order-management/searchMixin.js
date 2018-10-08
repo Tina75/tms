@@ -74,6 +74,7 @@ export default {
         key.status = this.keywords.status
         key.startTime = this.keywords.startTime || null
         key.endTime = this.keywords.endTime || null
+        key.importId = this.keywords.importId || null
         // 简单搜索模式下当前搜索框值为空是默认不是搜索状态
         if (this.simpleSearch && ((this.selectStatus === 0 && !this.keywords.consignerName) || (this.selectStatus === 1 && !this.keywords.orderNo) || (this.selectStatus === 2 && !this.keywords.waybillNo))) {
           this.isSearching = false
@@ -101,7 +102,6 @@ export default {
     // 清除keywords搜索
     clearKeywords () {
       let key = {
-        // status: this.keywords.status,
         consignerName: null,
         orderNo: null,
         waybillNo: null,
@@ -115,6 +115,7 @@ export default {
         key.startTime = null
         key.endTime = null
         this.times = ['', '']
+        key.importId = this.keywords.importId // 导入批次号
       } else {
         key.receiptStatus = this.keywords.receiptStatus
         key.recoveryTimeStart = null
