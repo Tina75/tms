@@ -13,29 +13,30 @@
     </div>
     <div class="ivu-card-extra">
       <span :style="totalStyle" class="tms-home__card-header-total">
-        {{extra}}
+        <CountTo :start-value="Math.ceil(extra/2)" :end-val="extra" :duration="3000"></CountTo>
       </span>
     </div>
     <div class="ivu-card-body tms-home__card-body">
-      <CellGroup>
-        <Cell v-for="(item, index) in data" :key="index" :to="item.url">
+      <CellGroup @on-click="push">
+        <Cell v-for="(item, index) in data" :key="index" :to="item.url" :name="item.tab">
           <span slot="icon" class="ivu-badge ivu-badge-status">
             <span :style="{'background-color':theme}" class="ivu-badge-status-dot"></span>
           </span>
           <span slot="extra" class="tms-home__cell-extra">
-            {{item.value.toString()}}
+            <CountTo :start-val="Math.ceil(item.value/2)" :end-val="item.value" :duration="2000"></CountTo>
           </span>
           <span class="tms-home__cell-item" >
             {{item.name}}
           </span>
-        </spanclass="tms-home__cell-item"></Cell>
+        </Cell>
       </CellGroup>
     </div>
   </div>
 </template>
 
 <script>
-
+import BasePage from '@/basic/BasePage'
+import CountTo from 'vue-count-to'
 const theme = {
   '#418DF9': ['#418DF9', '#76E7FD'],
   '#FFBB44': ['#FFBB44', '#FFB897'],
@@ -43,11 +44,16 @@ const theme = {
 }
 let themeIndex = 0
 export default {
+  components: {
+    CountTo
+  },
+  mixins: [BasePage],
   props: {
     title: String,
     label: String,
     to: String,
     extra: [String, Number],
+    pageTitle: String,
     data: {
       type: Array,
       default: () => []
@@ -82,6 +88,18 @@ export default {
     themeIndex++
     if (themeIndex > 2) {
       themeIndex = 0
+    }
+  },
+  methods: {
+    push (tab) {
+      if (!this.to) {
+        return
+      }
+      this.openTab({
+        path: this.to,
+        title: this.pageTitle || this.title || '',
+        query: { tab }
+      })
     }
   }
 }
