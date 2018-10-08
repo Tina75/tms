@@ -149,15 +149,12 @@ export default {
                 },
                 on: {
                   click: () => {
-                  // vm.openTab({
-                  //   title: '订单管理',
-                  //   path: '/order-management/order',
-                  //   query: {
-                  //     id: params.row.id
-                  //   }
-                  // })
                     jsCookie.set('imported_id', params.row.id, {expires: 1})
-                    vm.$router.push({path: '/order-management/order', query: {title: '订单管理'}})
+                    vm.openTab({
+                      title: '订单管理',
+                      path: '/order-management/order'
+                    })
+                    // vm.$router.push({path: '/order-management/order', query: {title: '订单管理'}})
                   }
                 }
               }, '查看导入订单'))
