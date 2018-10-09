@@ -69,6 +69,7 @@ import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import server from '@/libs/js/server'
 import jsCookie from 'js-cookie'
+import TMSUrl from '@/libs/constant/url.js'
 /**
  * 批量导入
  * 1.文件类型
@@ -116,7 +117,7 @@ export default {
                     jsCookie.set('imported_id', params.row.id, {expires: 1})
                     vm.openTab({
                       title: '订单管理',
-                      path: '/order-management/order'
+                      path: TMSUrl.ORDER_MANAGEMENT
                     })
                     // vm.$router.push({path: '/order-management/order', query: {title: '订单管理'}})
                   }
