@@ -1,5 +1,4 @@
-import MoneyInput from '../components/moneyInput'
-
+import MoneyInput from '../components/MoneyInput'
 import Server from '@/libs/js/server'
 import Float from '@/libs/js/float'
 import { CAR } from '@/views/client/client'
@@ -110,7 +109,6 @@ export default {
 
   created () {
     this.fetchData()
-    this.getCarriers()
   },
 
   computed: {
@@ -178,91 +176,6 @@ export default {
   },
 
   methods: {
-    getCarriers () {
-      Server({
-        url: '/carrier/listOrderByUpdateTimeDesc',
-        method: 'get',
-        data: { type: 1 }
-      }).then(res => {
-        this.carriers = res.data.data.carrierList.map(item => {
-          return {
-            name: item.carrierName,
-            value: item.carrierName,
-            payType: item.payType,
-            carrierPhone: item.carrierPhone,
-            id: item.carrierId
-          }
-        })
-      })
-    },
-
-    getCarrierDrivers (carrierId) {
-      Server({
-        method: 'get',
-        url: 'carrier/list/driver',
-        params: {
-          carrierId
-        }
-      }).then((res) => {
-        this.carrierDrivers = res.data.data.driverList.map(item => {
-          return {
-            name: item.driverName,
-            value: item.driverName,
-            driverPhone: item.driverPhone,
-            carType: item.carType,
-            carLength: item.carLength,
-            carNo: item.carNO
-          }
-        })
-      })
-    },
-
-    getCarrierCars (carrierId) {
-      Server({
-        url: '/carrier/list/carOrderByUpdateTimeDesc',
-        method: 'get',
-        data: { carrierId }
-      }).then(res => {
-        this.carrierCars = res.data.data.carList.map(item => {
-          return {
-            name: item.carNO,
-            value: item.carNO,
-            id: item.carId,
-            driverName: item.driverName,
-            driverPhone: item.driverPhone,
-            carType: item.carType,
-            carLength: item.carLength
-          }
-        })
-        if (this.carrierCars.length) {
-          this.autoComplete(null, this.carrierCars[0])
-          this.info.carNo = this.carrierCars[0].name
-        } else {
-          this.info.carNo = ''
-          const keys = ['driverName', 'driverPhone', 'carType', 'carLength', 'carNo']
-          keys.forEach(key => {
-            this.info[key] = ''
-          })
-        }
-      })
-    },
-
-    handleSelectCarrier (name, row) {
-      this.getCarrierDrivers(row.id)
-      this.getCarrierCars(row.id)
-    },
-
-    autoComplete (name, row) {
-      const keys = ['driverName', 'driverPhone', 'carType', 'carLength', 'carNo']
-      keys.forEach(key => {
-        this.info[key] = row[key]
-      })
-    },
-
-    carNoformatter () {
-      this.info.carNo = this.info.carNo.toUpperCase()
-    },
-
     // 根据状态设置按钮
     setBtnsWithStatus () {
       for (let i = 0; i < this.btnList.length; i++) {
