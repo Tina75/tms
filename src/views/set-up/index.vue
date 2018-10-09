@@ -397,15 +397,17 @@ export default {
         url: 'set/smsInfo',
         method: 'get'
       }).then(({ data }) => {
-        this.msgCheckBoxList = data.data.smsCode === '' ? [] : data.data.smsCode
-        this.msgCheckBoxListInit = data.data.smsCode === '' ? [] : data.data.smsCode
-        for (const checkList of this.messageList) {
-          checkList.checkBox.forEach(element => {
-            if (this.msgCheckBoxList.includes(element.model)) {
-              element.model = true
-              this.switchMsg = true
-            }
-          })
+        if (data.data.smsCode) {
+          this.msgCheckBoxList = data.data.smsCode === '' ? [] : data.data.smsCode
+          this.msgCheckBoxListInit = data.data.smsCode === '' ? [] : data.data.smsCode
+          for (const checkList of this.messageList) {
+            checkList.checkBox.forEach(element => {
+              if (this.msgCheckBoxList.includes(element.model)) {
+                element.model = true
+                this.switchMsg = true
+              }
+            })
+          }
         }
       })
     },

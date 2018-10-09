@@ -11,7 +11,7 @@ module.exports = {
     'no-console': 'off',
     'no-debugger': 'off',
     'vue/html-self-closing': 'false',
-    'vue/no-parsing-error)': 'false',
+    'vue/no-parsing-error': 'error',
     'vue/html-end-tags': 'error',
     // 'vue/require-default-prop': 'error',
     'vue/require-prop-types': 'error',
