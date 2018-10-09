@@ -424,6 +424,11 @@ export default {
         width: 252px;
         height: 346px;
         margin-top: -15px;
+        overflow:hidden;
+      .treeContentDiv:hover
+        width: 252px;
+        height: 346px;
+        margin-top: -15px;
         overflow-y:auto;
         overflow-x:auto;
   .saveRoleBtn
@@ -448,5 +453,4 @@ export default {
       color: #00A4BD;
       font-size: 12px;
       margin-left: 10px;
-      z-index: 99
 </style>
