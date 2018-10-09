@@ -129,7 +129,7 @@
         </Col>
       </div>
       <Modal v-model="visibaleRemove" type="warning" width="360">
-        <p slot="header" style="text-align:center">
+        <p slot="header" style="text-align:center;font-size: 16px;">
           <span>提示</span>
         </p>
         <p style="margin-left:70px; margin-top: 10px;">
@@ -142,7 +142,7 @@
         </div>
       </Modal>
       <Modal v-model="visibaleRemoveSome" type="warning" width="360">
-        <p slot="header" style="text-align:center">
+        <p slot="header" style="text-align:center;font-size: 16px;">
           <span>提示</span>
         </p>
         <p style="margin-left:70px; margin-top: 10px;">
@@ -155,7 +155,7 @@
         </div>
       </Modal>
       <Modal v-model="visibaleRemoveAll" type="warning" width="360">
-        <p slot="header" style="text-align:center">
+        <p slot="header" style="text-align:center;font-size: 16px;">
           <span>提示</span>
         </p>
         <p style="margin-left:70px; margin-top: 10px;">
