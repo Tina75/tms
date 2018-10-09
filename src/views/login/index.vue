@@ -14,7 +14,6 @@
               <i slot="prefix" :style="inputIconColor('phone')" class="icon font_family icon-ico-user"></i>
               </Input>
             </FormItem>
-
             <FormItem prop="password">
               <Input v-model="form.password" type="password" placeholder="输入密码"
                      @on-focus="inputFocus('password')"

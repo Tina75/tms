@@ -38,7 +38,7 @@
 
       <!-- <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick"> -->
       <Poptip placement="bottom-end" title="账号信息" width="260">
-        <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg"  style="border:1px solid #fff"></avatar>
+        <Avatar class="avatar"  style="border:1px solid #fff"></avatar>
         <span class="user-info"><p>{{name}}</p> </span>
         <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
         <div slot="content">
@@ -125,6 +125,9 @@ export default {
   background #252A2F
   color #fff
   // border-bottom 1px solid #efefef
+  .avatar
+    background-image url(../assets/default-avatar.jpg)
+    background-size 30px
   &-bread-crumb
     padding-left 60px
     width 350px
