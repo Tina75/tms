@@ -268,6 +268,7 @@ html, body
         margin 0 auto
     .header-con
       position relative
+      z-index 9
       .tag-nav-wrapper
         width auto
         top 4px
@@ -276,6 +277,7 @@ html, body
         position absolute
         padding 0
         height 46px
+        z-index 9
         // background #F0F0F0
         overflow hidden
         .tags-nav .scroll-outer .scroll-body

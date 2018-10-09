@@ -346,14 +346,26 @@ export default {
     // 按钮操作
     // 删除
     billDelete (ids) {
-      Server({
-        url: '/outside/bill/delete',
-        method: 'delete',
-        data: { transIds: [ this.id ] }
-      }).then(res => {
-        this.$Message.success('删除成功')
-        this.ema.fire('closeTab', this.$route)
-      }).catch(err => console.error(err))
+      const self = this
+      self.openDialog({
+        name: 'transport/dialog/confirm',
+        data: {
+          title: '删除确认',
+          message: '是否确认删除？'
+        },
+        methods: {
+          confirm () {
+            Server({
+              url: '/outside/bill/delete',
+              method: 'delete',
+              data: { transIds: [ self.id ] }
+            }).then(res => {
+              self.$Message.success('删除成功')
+              self.ema.fire('closeTab', self.$route)
+            }).catch(err => console.error(err))
+          }
+        }
+      })
     },
 
     // 到货
