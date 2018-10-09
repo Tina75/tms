@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visibale" :mask-closable="false" width="360">
+    <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
       <p slot="header" style="text-align:center">
         <span>{{title}}</span>
       </p>
@@ -73,8 +73,7 @@ export default {
         roleId: [
           { required: true, message: '请选择角色' }
         ]
-      },
-      visibale: true
+      }
     }
   },
   watch: {

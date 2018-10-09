@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="true" width="1100" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" width="1100"  @on-visible-change="close">
     <p slot="header" style="text-align:center">
       {{ type === 'sendCar' ? '派车' : '提货' }}
     </p>
@@ -117,7 +117,7 @@
 
     <div slot="footer" style="text-align: center;">
       <Button  type="primary"  @click="sendCar">确定</Button>
-      <Button  type="default"  @click.native="visiable = false">取消</Button>
+      <Button  type="default"  @click.native="close">取消</Button>
     </div>
   </Modal>
 </template>
@@ -137,7 +137,6 @@ export default {
   mixins: [ BaseDialog ],
   data () {
     return {
-      visiable: true,
       loading: false,
       carType: CAR_TYPE,
       carLength: CAR_LENGTH,

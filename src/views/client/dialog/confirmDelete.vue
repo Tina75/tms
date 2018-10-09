@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visibale" :mask-closable="true" width="360" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
     <p slot="header" style="text-align:center">删除</p>
     <div style="text-align: center;">
       <Icon type="ios-information-circle" size="24" color="#FFBB44"></Icon>
@@ -7,7 +7,7 @@
     </div>
     <div slot="footer">
       <Button  type="primary"  @click="save">确定</Button>
-      <Button  type="default"  @click.native="visibale = false">取消</Button>
+      <Button  type="default"  @click.native="close">取消</Button>
     </div>
   </Modal>
 </template>
@@ -19,13 +19,12 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
-      visibale: true
     }
   },
   methods: {
     save () {
       this.ok()
-      this.visibale = false
+      this.close()
     }
   }
 }

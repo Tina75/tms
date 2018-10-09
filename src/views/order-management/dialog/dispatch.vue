@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visibale" :mask-closable="false" width="1036">
+    <Modal v-model="visiable" :mask-closable="false" width="1036" @on-visible-change="close">
       <p slot="header" style="text-align:center">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>{{name}}</span>
@@ -103,7 +103,6 @@ export default {
           { required: true, message: '请填写司机姓名', trigger: 'change' }
         ]
       },
-      visibale: true,
       tableColumns: [
         {
           title: '操作',
@@ -294,7 +293,7 @@ export default {
           }).then(() => {
             this.ok()
             this.$Message.success('创建运单成功')
-            this.visibale = false
+            this.close()
           })
         }
       })
@@ -313,7 +312,7 @@ export default {
           }).then(() => {
             this.ok()
             this.$Message.success('创建提货单成功')
-            this.visibale = false
+            this.close()
           })
         }
       })

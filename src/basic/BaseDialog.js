@@ -1,11 +1,13 @@
 export default {
   replace: true,
+  props: {
+    visiable: Boolean
+  },
   data: function () {
     return {
       // modulePowers: modulePowers,
       title: '',
-      size: 'small',
-      Visible: true // 弹出框显示状态
+      size: 'small'
     }
   },
   // 组件是你刚被创建,组件属性计算前
@@ -56,7 +58,7 @@ export default {
       this.ema.fire('Dialogs.push', data)
     },
     close: function () {
-      console.log('close ' + this.$options.name)
+      console.log('close ' + this.$options.name + ' ' + this.visibale)
       this.ema.fire('Dialogs.close', this.$options.name)
     },
     // 权限控制

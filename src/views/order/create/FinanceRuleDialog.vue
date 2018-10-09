@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visibale" :mask-closable="true" width="360" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
     <p slot="header" style="text-align:center">计费规则</p>
     <Form ref="counterForm" :model="counterForm" :label-width="80">
       <FormItem v-if="!emptyRule" label="计费规则" prop="rule">
@@ -17,7 +17,7 @@
     <div slot="footer" class="van-center">
       <Button v-if="emptyRule" type="primary" to="/finance/rules">去设置</Button>
       <Button v-else type="primary" @click="save">确定</Button>
-      <Button type="default" class="i-ml-10" @click.native="visibale = false">取消</Button>
+      <Button type="default" class="i-ml-10" @click.native="close">取消</Button>
     </div>
   </Modal>
 </template>
@@ -34,8 +34,7 @@ export default {
         rule: ''
       },
       parterName: null,
-      ruleOptions: [],
-      visibale: true
+      ruleOptions: []
     }
   },
   computed: {
@@ -70,7 +69,7 @@ export default {
   methods: {
     save () {
       this.ok(this.counterForm.rule)
-      this.visibale = false
+      this.close()
     }
   }
 }

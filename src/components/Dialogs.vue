@@ -1,6 +1,8 @@
 <template>
-  <div v-if="show" class="dialogs">
-    <component v-for="item in dialogs" :is="item.name" :key="item.name"></component>
+  <div>
+    <div v-for="item in dialogs" :key="item.name">
+      <component :is="item.name" :visiable="item.visiable"></component>
+    </div>
   </div>
 </template>
 <style lang="stylus" scoped >
@@ -13,8 +15,7 @@ export default {
   data: function () {
     return {
       dialogs: [],
-      show: true
-      // caches: []
+      cache: {}
     }
   },
   watch: {
@@ -33,54 +34,53 @@ export default {
         methods: data.methods
       }, () => {
         this.pushDialog(data.name.replace(/\//g, '-'))
-        this.show = false
-        this.$nextTick(() => {
-          this.show = true
-        })
       })
     })
     // 关闭指定弹出框
     this.bindEvent('close', (name) => {
-      var lenght = this.dialogs.length - 1
-      for (var i = lenght; i >= 0; i--) {
-        var obj = this.dialogs[ i ]
-        if (obj.name === name) {
-          break
-        }
-      }
-      this.dialogs.splice(i, 1)
-      this.show = false
-      this.$nextTick(() => {
-        this.show = true
-      })
+      this.dialogs[this.dialogs.length - 1].visiable = false
+      // var lenght = this.dialogs.length - 1
+      // for (var i = lenght; i >= 0; i--) {
+      //   var obj = this.dialogs[ i ]
+      //   if (obj.name === name) {
+      //     break
+      //   }
+      // }
+      this.dialogs.splice(this.dialogs.length - 1, 1)
     })
   },
   methods: {
     pushDialog: function (name) {
       // 对基础数据验证放入弹框列表中
       this.dialogs.push({
-        name: name
+        name: name,
+        visiable: true
       })
+      // this.dialogs.splice(0, 0, {name: name})
     },
     loadDialog: function (data, fn) {
       var name = data.name
-      import('../views/' + name + '').then(module => {
-        // 加载弹出框模块
-        // 注入method 方法,注入初始化数据
-        let tempModule = Vue.extend(module.default)
-        tempModule = tempModule.extend({
-          data: function () {
-            return data.data
-          },
-          methods: data.methods
-        })
-        // const key = name.replace(/\//g, '-')
-        Vue.component(name.replace(/\//g, '-'), tempModule)
-        // this.caches[key] = tempModule
+      const key = name.replace(/\//g, '-')
+      if (this.cache[key]) {
         fn()
-      }).catch(() => {
-        console.error('Chunk loading failed', name.replace(/\//g, '-'))
-      })
+      } else {
+        import('../views/' + name + '').then(module => {
+          // 加载弹出框模块
+          // 注入method 方法,注入初始化数据
+          let tempModule = Vue.extend(module.default)
+          tempModule = tempModule.extend({
+            data: function () {
+              return data.data
+            },
+            methods: data.methods
+          })
+          Vue.component(name.replace(/\//g, '-'), tempModule)
+          this.cache[key] = tempModule
+          fn()
+        }).catch(() => {
+          console.error('Chunk loading failed', name.replace(/\//g, '-'))
+        })
+      }
     },
     close: function () {
       console.log('close')
