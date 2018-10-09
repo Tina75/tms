@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="show" :mask-closable="false" width="1100"  @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" width="1100"  @on-visible-change="close">
     <p slot="header" style="text-align:center">
       {{ type === 'sendCar' ? '派车' : '提货' }}
     </p>
@@ -8,36 +8,42 @@
       <Row class="detail-field-group">
         <i-col span="7">
           <span class="detail-field-title detail-field-required">承运商：</span>
-          <SelectInput v-model="info.carrierName"
-                       class="detail-info-input"
-                       mode="carrier"
-                       @on-select="selectCarrierHandler" />
+          <SelectInput
+            v-model="info.carrierName"
+            :maxlength="20"
+            :remote="false"
+            :local-options="carriers"
+            class="detail-info-input"
+            @on-select="handleSelectCarrier" />
         </i-col>
         <i-col span="7" offset="1">
           <span class="detail-field-title detail-field-required">司机：</span>
-          <SelectInput :carrier-id="carrierId"
-                       v-model="info.driverName"
-                       class="detail-info-input"
-                       mode="driver"
-                       @on-select="autoComplete"
-                       @on-option-loaded="driverOptionLoaded" />
+          <SelectInput
+            v-model="info.driverName"
+            :maxlength="5"
+            :remote="false"
+            :local-options="carrierDrivers"
+            class="detail-info-input"
+            @on-select="autoComplete" />
         </i-col>
         <i-col span="7" offset="1">
           <span class="detail-field-title">司机手机号：</span>
           <Input v-model="info.driverPhone"
                  :maxlength="11"
-                 class="detail-info-input" />
+                 class="detail-info-input"></Input>
         </i-col>
       </Row>
 
       <Row class="detail-field-group">
         <i-col span="7">
           <span class="detail-field-title detail-field-required">车牌号：</span>
-          <SelectInput :carrier-id="carrierId"
-                       v-model="info.carNo"
-                       class="detail-info-input"
-                       mode="carNo"
-                       @on-select="autoComplete" />
+          <SelectInput
+            v-model="info.carNo"
+            :maxlength="8"
+            :remote="false"
+            :local-options="carrierCars"
+            class="detail-info-input"
+            @on-select="autoComplete" />
         </i-col>
         <i-col span="7" offset="1">
           <span class="detail-field-title">车型：</span>
@@ -111,32 +117,33 @@
     </div>
 
     <div slot="footer" style="text-align: center;">
-      <Button type="primary" @click="submit">确定</Button>
-      <Button type="default" @click.native="close">取消</Button>
+      <Button  type="primary"  @click="sendCar">确定</Button>
+      <Button  type="default"  @click.native="close">取消</Button>
     </div>
   </Modal>
 </template>
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
-import SelectInput from '../components/SelectInput.vue'
-import SelectInputMixin from '../components/selectInputMixin'
-import MoneyInput from '../components/MoneyInput'
 import Server from '@/libs/js/server'
+import SelectInput from '@/components/SelectInput.vue'
+import MoneyInput from '../components/MoneyInput'
 import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
 import { CAR } from '@/views/client/client'
 
 export default {
   name: 'SendCar',
   components: { SelectInput, MoneyInput },
-  mixins: [ BaseDialog, SelectInputMixin ],
+  mixins: [ BaseDialog ],
   data () {
     return {
-      show: true,
+      visiable: true,
       loading: false,
       carType: CAR_TYPE,
       carLength: CAR_LENGTH,
-
+      carriers: [], // 承运商
+      carrierDrivers: [], // 司机
+      carrierCars: [], // 车辆
       info: {
         carrierName: '',
         driverName: '',
@@ -246,9 +253,90 @@ export default {
       { payType: 2, fuelCardAmount: 0, cashAmount: 0 }
     ]
     this.fetchData()
+    this.getCarriers()
   },
   methods: {
-    // 计费规则
+    getCarriers () {
+      Server({
+        url: '/carrier/listOrderByUpdateTimeDesc',
+        method: 'get',
+        data: { type: 1 }
+      }).then(res => {
+        this.carriers = res.data.data.carrierList.map(item => {
+          return {
+            name: item.carrierName,
+            value: item.carrierName,
+            payType: item.payType,
+            carrierPhone: item.carrierPhone,
+            id: item.carrierId
+          }
+        })
+      })
+    },
+
+    getCarrierDrivers (carrierId) {
+      Server({
+        method: 'get',
+        url: 'carrier/list/driver',
+        params: {
+          carrierId
+        }
+      }).then((res) => {
+        this.carrierDrivers = res.data.data.driverList.map(item => {
+          return {
+            name: item.driverName,
+            value: item.driverName,
+            driverPhone: item.driverPhone,
+            carType: item.carType,
+            carLength: item.carLength,
+            carNo: item.carNO
+          }
+        })
+      })
+    },
+
+    getCarrierCars (carrierId) {
+      Server({
+        url: '/carrier/list/carOrderByUpdateTimeDesc',
+        method: 'get',
+        data: { carrierId }
+      }).then(res => {
+        this.carrierCars = res.data.data.carList.map(item => {
+          return {
+            name: item.carNO,
+            value: item.carNO,
+            id: item.carId,
+            driverName: item.driverName,
+            driverPhone: item.driverPhone,
+            carType: item.carType,
+            carLength: item.carLength
+          }
+        })
+        if (this.carrierCars.length) {
+          this.autoComplete(null, this.carrierCars[0])
+          this.info.carNo = this.carrierCars[0].name
+        } else {
+          this.info.carNo = ''
+          const keys = ['driverName', 'driverPhone', 'carType', 'carLength', 'carNo']
+          keys.forEach(key => {
+            this.info[key] = ''
+          })
+        }
+      })
+    },
+
+    handleSelectCarrier (name, row) {
+      this.getCarrierDrivers(row.id)
+      this.getCarrierCars(row.id)
+    },
+
+    autoComplete (name, row) {
+      const keys = ['driverName', 'driverPhone', 'carType', 'carLength', 'carNo']
+      keys.forEach(key => {
+        this.info[key] = row[key]
+      })
+    },
+
     showChargeRules () {
       const self = this
       this.openDialog({
@@ -268,7 +356,6 @@ export default {
       })
     },
 
-    // 校验总金额
     checkTotalAmount () {
       let total = 0
       this.settlementPayInfo.forEach(item => {
@@ -294,7 +381,7 @@ export default {
         const billInfo = this.type === 'sendCar' ? data.waybill : data.loadbill
 
         for (let key in this.info) {
-          this.info[key] = billInfo[key] ? billInfo[key] : ''
+          this.info[key] = billInfo[key]
         }
         if (this.type === 'sendCar') {
           for (let key in this.financeRulesInfo) {
@@ -346,7 +433,6 @@ export default {
       })
     },
 
-    // 提交前数据校验
     validate () {
       if (!this.info.carrierName) {
         this.$Message.error('请输入承运商')
@@ -376,7 +462,7 @@ export default {
       return true
     },
 
-    submit () {
+    sendCar () {
       if (!this.validate()) return
 
       let data = {

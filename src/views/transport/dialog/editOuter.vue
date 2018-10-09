@@ -59,6 +59,7 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      visiable: true,
       transferees: [],
       info: {
         transfereeName: '',
