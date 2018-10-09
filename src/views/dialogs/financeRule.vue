@@ -33,7 +33,7 @@ export default {
   mixins: [ BaseDialog ],
   data () {
     const chargeValidate = (rule, value, callback) => {
-      if (!this.charge) callback(new Error('未能计算出运费，请检查计费规则是否正确'))
+      if (!this.charge) callback(new Error('未能找到相应的计费规则'))
       callback()
     }
 
@@ -64,7 +64,7 @@ export default {
         }
       }).then((res) => {
         this.ruleOptions = res.data.data
-        this.ruleEmpty = !!res.data.data
+        this.ruleEmpty = res.data.data.length <= 0
       }).catch(err => {
         console.error(err)
       })
