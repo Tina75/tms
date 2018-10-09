@@ -221,6 +221,7 @@ import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
 import settlements from '@/libs/constant/settlement.js'
 import pickups from '@/libs/constant/pickup.js'
+import Cargo from './libs/cargo'
 
 const transferFeeList = ['freightFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
 const specialCity = ['110000', '120000', '710000', '810000', '820000', '500000', '310000']
@@ -470,6 +471,7 @@ export default {
                   if (params.value !== value) {
                     params.value = value
                     _this.updateLocalCargo(setObject(params, parseInt(params.value || 1)))
+                    _this.syncUpdateCargoProps(params)
                   }
                 }
               }
@@ -760,6 +762,38 @@ export default {
       } else if (type === 'remove') {
         this.tempCargoes[item.index] = null
         delete this.tempCargoes[item.index]
+      }
+    },
+    /**
+     * 当选中已维护货物的时候，更改数量时，需要同时修改重量、体积和货值等参数
+     * @param params {index:number, column: object, row: object}
+     */
+    syncUpdateCargoProps (params) {
+      // 是否输入了货物名称
+      let cargoName
+      if (this.tempCargoes[params.index] && this.tempCargoes[params.index].cargoName) {
+        cargoName = this.tempCargoes[params.index].cargoName
+      } else if (this.consignerCargoes[params.index].cargoName) {
+        cargoName = this.consignerCargoes[params.index].cargoName
+      }
+      // 查找货物名称，是否是已维护的货物信息
+      if (cargoName) {
+        const matchCargo = this.cargoes.find((cargo) => cargo.cargoName === cargoName)
+        // 匹配成功
+        if (matchCargo) {
+          let syncCargo = new Cargo(matchCargo);
+          ['weight', 'volume', 'cargoCost'].forEach((key) => {
+            // this.updateLocalCargo({
+            //   name: key,
+            //   index: params.index,
+            //   value: params.value * matchCargo[key]
+            // })
+            syncCargo[key] = params.value * syncCargo[key]
+          })
+          syncCargo.quantity = params.value
+          this.syncStoreCargoes()
+          this.fullUpdateCargo({ index: params.index, cargo: syncCargo })
+        }
       }
     },
     // 同步当前的修改数据到vuex的store

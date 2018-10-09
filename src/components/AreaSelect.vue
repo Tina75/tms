@@ -53,7 +53,7 @@ export default {
         this.selected = newValue
       } else if (!newValue || newValue.length === 0) {
         this.selected = []
-      } else if (typeof newValue === 'number' && newValue) {
+      } else if ((typeof newValue === 'number' || typeof newValue === 'string') && newValue) {
         this.selected = areas.getPathByCode(newValue).map((item) => item.code)
         this.$emit('input', this.selected)
       }
@@ -84,8 +84,10 @@ export default {
     this.areaData = data
   },
   mounted () {
-    if (this.value && typeof this.value === 'string') {
-      this.selected = areas.getPathByCode(this.value).map((item) => item.code)
+    if (this.value && (typeof this.value === 'string' || typeof this.value === 'number')) {
+      setTimeout(() => {
+        this.selected = areas.getPathByCode(this.value).map((item) => item.code)
+      }, 100)
     }
   },
   methods: {
