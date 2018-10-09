@@ -17,7 +17,7 @@
 <script>
 // import area from '@/libs/js/area'
 import areas from '@/libs/js/city'
-import { requestAnimationFrame } from '@/libs/js/requestAnimationFrame.js'
+import { requestAnimationFrame, cancelAnimationFrame } from '@/libs/js/requestAnimationFrame.js'
 // 直辖市code
 export const specialCity = ['110000', '120000', '710000', '810000', '820000', '500000', '310000']
 /**
@@ -54,6 +54,12 @@ export default {
   },
   data () {
     return {
+      // 正在装载地图数据
+      loading: true,
+      // 装载数据索引标记
+      rqaIndex: 0,
+      // 装载任务编号
+      rqafId: '',
       areaData: [],
       selected: []
     }
@@ -65,6 +71,7 @@ export default {
       } else if (!newValue || newValue.length === 0) {
         this.selected = []
       } else if ((typeof newValue === 'number' || typeof newValue === 'string') && newValue) {
+        this.forceLoad()
         this.selected = areas.getPathByCode(newValue).map((item) => item.code)
         this.$emit('input', this.selected)
       }
@@ -81,31 +88,58 @@ export default {
         hasChild: true
       }
     })
+
     if (this.deep) {
       // 先让页面渲染完，在更新数据，防止进入页面很慢
-      let index = 0
       let length = data.length
       const allLoad = function () {
-        let province = data[index]
+        let province = data[vm.rqaIndex]
         let children = vm.loadNext(province.value, true)
         if (children.length > 0) {
           province.children = children
         }
-        index++
-        if (index < length) {
-          requestAnimationFrame(allLoad)
+        vm.rqaIndex++
+        if (vm.rqaIndex < length) {
+          vm.rqafId = requestAnimationFrame(allLoad)
+        } else {
+          vm.resetAnimation()
         }
       }
-      requestAnimationFrame(allLoad)
+      vm.rqafId = requestAnimationFrame(allLoad)
     }
     this.areaData = data
   },
   mounted () {
     if (this.value && (typeof this.value === 'string' || typeof this.value === 'number')) {
+      this.forceLoad()
       this.selected = areas.getPathByCode(this.value).map((item) => item.code)
     }
   },
   methods: {
+    // 不等延迟执行加载数据，强行加载所有数据，会有点慢
+    forceLoad () {
+      if (this.loading) {
+        // 取消执行
+        if (this.deep) {
+          cancelAnimationFrame(this.rqafId)
+        }
+        let length = this.areaData.length
+        while (this.rqaIndex < length) {
+          let province = this.areaData[this.rqaIndex]
+          let children = this.loadNext(province.value, true)
+          if (children.length > 0) {
+            province.children = children
+          }
+          this.rqaIndex++
+        }
+        this.resetAnimation()
+      }
+    },
+    resetAnimation () {
+      this.rqaIndex = 0
+      this.rqafId = null
+      this.loading = false
+    },
     loadData (item, callback) {
       item.loading = true
       const children = this.loadNext(item.value)
