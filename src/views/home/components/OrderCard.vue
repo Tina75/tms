@@ -7,7 +7,7 @@
           {{title}}
         </div>
         <div class="tms-home__card-header-label">
-          {{label}}
+          <!-- {{label}} -->
         </div>
       </slot>
     </div>
@@ -145,6 +145,7 @@ export default {
     &-label
       font-size 12px
       color #999999
+      height 12px
     &-total
       font-weight bold
       font-size 30px

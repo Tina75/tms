@@ -41,8 +41,10 @@
           show-sizer
           show-elevator
           show-total
+          class="page-table__pagination-bar"
           @on-change="handleChangePage"
-          @on-page-size-change="handlePageSizeChange"></Page>
+          @on-page-size-change="handlePageSizeChange"
+        ></Page>
       </div>
     </div>
   </div>
@@ -515,15 +517,18 @@ export default {
 </script>
 
 <style lang="stylus">
-.page-table {
+.page-table
   position: relative;
   margin-top: 0px
-  &__footer-pagination {
+  &__footer-pagination
     margin: 10px;
     overflow: hidden;
-    &-fr {
+    &-fr
       float: right;
-    }
-  }
-}
+  &__pagination-bar
+    .ivu-page-item-active
+      background-color: #00A4BD
+      border-radius:4px
+      a
+        color: #fff
 </style>
