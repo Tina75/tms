@@ -32,10 +32,10 @@ export default {
   data () {
     return {
       data: [
-        {id: 'waitDispatchOrderCnt', name: '待送货调度订单数量', value: 0, tab: '全部'},
-        {id: 'waitAssignCarCnt', name: '待派车订单数量', value: 0, tab: '待派车'},
-        {id: 'waitSendCarCnt', name: '待发运订单数量', value: 0, tab: '待发运'},
-        {id: 'inTransportCnt', name: '运输中订单数量', value: 0, tab: '在途'}
+        { id: 'waitDispatchOrderCnt', name: '待送货调度订单数量', value: 0, tab: '全部' },
+        { id: 'waitAssignCarCnt', name: '待派车订单数量', value: 0, tab: '待派车' },
+        { id: 'waitSendCarCnt', name: '待发运订单数量', value: 0, tab: '待发运' },
+        { id: 'inTransportCnt', name: '运输中订单数量', value: 0, tab: '在途' }
       ]
     }
   },

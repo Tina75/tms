@@ -114,7 +114,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    jsCookie.set('imported_id', params.row.id, {expires: 1})
+                    jsCookie.set('imported_id', params.row.id, { expires: 1 })
                     vm.openTab({
                       title: '订单管理',
                       path: TMSUrl.ORDER_MANAGEMENT
@@ -256,9 +256,9 @@ export default {
                 clearTimeout(timer)
               }
               if (status === 0) {
-                vm.$Message.error({content: `此次导入订单失败，具体失败原因下载错误报告`, duration: 3})
+                vm.$Message.error({ content: `此次导入订单失败，具体失败原因下载错误报告`, duration: 3 })
               } else {
-                vm.$Message.success({content: `导入成功，共导入${res.data.data.orderNum}条订单`, duration: 3})
+                vm.$Message.success({ content: `导入成功，共导入${res.data.data.orderNum}条订单`, duration: 3 })
               }
               vm.visible = false
               vm.$refs.pageTable.fetch()
@@ -271,7 +271,7 @@ export default {
             clearTimeout(timer)
           }
           vm.visible = false
-          vm.$Message.error({content: error.data.msg, duration: 3})
+          vm.$Message.error({ content: error.data.msg, duration: 3 })
           return error
         }
       }
@@ -302,7 +302,7 @@ export default {
         }
       } catch (error) {
         // console.error('导入订单', error)
-        this.$Message.error({content: '导入订单文件失败', duration: 3})
+        this.$Message.error({ content: '导入订单文件失败', duration: 3 })
       }
 
       this.$refs.pageTable.fetch()
