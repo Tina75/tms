@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visiable" :mask-closable="false" width="360" class="outer-dialog" @on-visible-change="close">
+    <Modal v-model="visiable" :mask-closable="false" width="390" class="outer-dialog" @on-visible-change="close">
       <p slot="header" style="text-align:center">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>订单外转</span>
