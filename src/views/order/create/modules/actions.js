@@ -86,7 +86,7 @@ export default {
    * @param {*} store
    * @param {*} index
    */
-  removeCargo ({state, commit}, index) {
+  removeCargo ({ state, commit }, index) {
     if (state.order.consignerCargoes.length === 1) {
       return
     }
@@ -128,7 +128,7 @@ export default {
    * 清除公司列表
    * @param {*} param0
    */
-  clearClients ({commit}) {
+  clearClients ({ commit }) {
     commit(types.RECEIVE_CLIENT_LIST, [])
   },
   /**

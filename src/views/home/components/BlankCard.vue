@@ -47,7 +47,7 @@ export default {
       if (!this.to) {
         return
       }
-      this.openTab({path: this.to, title: this.pageTitle || this.title || ''})
+      this.openTab({ path: this.to, title: this.pageTitle || this.title || '' })
     }
   }
 }
