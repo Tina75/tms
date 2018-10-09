@@ -31,8 +31,8 @@
     </Menu>
     </Col>
     <Col span="18" style="margin-left: 20px; max-height:850px; overflow-y:auto;">
-    <p class="rightTitle">{{rightTitle}}的权限
-    </p><div v-if="hasPower(140102)" class="saveRoleBtn">
+    <p v-if="rightTitle !== ''" class="rightTitle">{{rightTitle}}的权限</p>
+    <div v-if="hasPower(140102)" class="saveRoleBtn">
       <Button
         v-if="menuParam.type !== 1"
         :disabled="disSaveBtn"
@@ -380,12 +380,13 @@ export default {
   color: #515a6e;
 .temAll
   width: 100%
-  min-height: 1500px;
+  min-height: 1000px;
   overflow: auto;
   .leftMenu
-    min-height: 810px;
+    height: 836px;
+    overflow-y: hidden;
   .leftMenu :hover
-    max-height: 810px;
+    max-height: 785px;
     overflow-y: scroll;
   .centerBtnDiv:hover
     overflow: hidden;
@@ -407,6 +408,7 @@ export default {
       width: 75%;
       float:left;
   .rightTitle
+    height: 55px;
     font-size: 20px;
     color: #333;
     line-height: 55px;
