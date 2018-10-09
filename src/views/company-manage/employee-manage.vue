@@ -5,7 +5,7 @@
       <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:50px;">
         <Button v-if="hasPower(140101)" type="primary" class="centerBtn" @click="createRole">新增角色</Button>
       </div>
-      <div style="max-height:810px; overflow-y:auto; padding-top: 20px;">
+      <div>
         <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" class="menu" @click.native="clickLeftMenu(menu)">
         <p class="menuTitle">{{menu.name}}</p>
         <span v-if="menu.type !== 1" class="configBtnItem">
@@ -30,7 +30,7 @@
       </Modal>
     </Menu>
     </Col>
-    <Col span="18" style="margin-left: 20px;">
+    <Col span="18" style="margin-left: 20px; max-height:850px; overflow-y:auto;">
     <p class="rightTitle">{{rightTitle}}的权限
     </p><div v-if="hasPower(140102)" class="saveRoleBtn">
       <Button
@@ -374,28 +374,36 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
->>>.ivu-card-head
+>>> .ivu-card-head
   background:rgba(248,248,248,1);
->>>.ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
+>>> .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
   color: #515a6e;
 .temAll
   width: 100%
   min-height: 1500px;
-  // overflow: auto;
+  overflow: auto;
   .leftMenu
     min-height: 810px;
+  .leftMenu :hover
+    max-height: 810px;
+    overflow-y: scroll;
   .menu:hover
     background: #e3fcfc;
     color: #515a6e;
+    overflow: hidden;
     .configBtnItem
       display: block
+    .configBtnItem:hover
+      display: block
+      overflow: hidden;
   .menu
     margin-left: -50px;
     .menuTitle
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      width: 120px;
+      width: 75%;
+      float:left;
   .rightTitle
     font-size: 20px;
     color: #333;
@@ -434,9 +442,11 @@ export default {
       float: right;
       margin-top: -20px;
       display: none;
-      margin-right: 20px;
+      margin-right: 5px;
+      background: #e3fcfc;
     .configBtn
       color: #00A4BD;
       font-size: 12px;
       margin-left: 10px;
+      z-index: 99
 </style>
