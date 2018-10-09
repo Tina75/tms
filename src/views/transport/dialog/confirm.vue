@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visibale" :mask-closable="true" width="350" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" width="350" @on-visible-change="close">
     <p slot="header" style="text-align:center">{{ title }}</p>
 
     <p style="text-align: center;">
@@ -9,7 +9,7 @@
 
     <div slot="footer" style="text-align: center;">
       <Button  type="primary"  @click="ok">确定</Button>
-      <Button  type="default"  @click.native="visibale = false">取消</Button>
+      <Button  type="default"  @click.native="close">取消</Button>
     </div>
   </Modal>
 </template>
@@ -20,7 +20,7 @@ export default {
   name: 'Confirm',
   mixins: [ BaseDialog ],
   data () {
-    return { visibale: true }
+    return { }
   },
   methods: {
     ok () {

@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visibale" :mask-closable="true" width="360" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
     <p slot="header" style="text-align:center">计费规则</p>
     <Form v-if="!ruleEmpty" ref="$form" :model="ruleForm" :rules="rules" :label-width="80">
       <FormItem label="计费规则：" prop="ruleIndex">
@@ -19,19 +19,18 @@
     <div slot="footer" style="text-align: center;">
       <Button v-if="ruleEmpty" type="primary" @click="gotoSetRules">去设置</Button>
       <Button v-else type="primary" @click="save">确定</Button>
-      <Button type="default" class="i-ml-10" @click.native="visibale = false">取消</Button>
+      <Button type="default" class="i-ml-10" @click.native="close">取消</Button>
     </div>
   </Modal>
 </template>
 
 <script>
-import BasePage from '@/basic/BasePage'
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 
 export default {
   name: 'FinanceRule',
-  mixins: [ BasePage, BaseDialog ],
+  mixins: [ BaseDialog ],
   data () {
     const chargeValidate = (rule, value, callback) => {
       if (!this.charge) callback(new Error('未能计算出运费，请检查计费规则是否正确'))
@@ -46,13 +45,7 @@ export default {
       charge: 0,
       rules: {
         ruleIndex: [{ validator: chargeValidate }]
-      },
-      visibale: true
-    }
-  },
-  watch: {
-    visibale: function (val) {
-      !val && this.close()
+      }
     }
   },
   created () {
@@ -97,7 +90,7 @@ export default {
       this.$refs.$form.validate(valid => {
         if (!valid) return
         this.ok(this.charge)
-        this.visibale = false
+        this.close()
       })
     },
 

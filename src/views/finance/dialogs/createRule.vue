@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visibale" :mask-closable="true" width="440" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="true" width="440" @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">核销</p>
     <div class="create-rule-form">
       <Form ref="createRuleForm" :model="createRuleForm" :rules="validate" :label-width="100">
@@ -36,8 +36,7 @@ export default {
         ruleName: { required: true, message: '请填写规则名称', trigger: 'blur' },
         partnerName: { required: true, message: '请选择发货方', trigger: 'change' }
       },
-      partnerList: [],
-      visibale: true
+      partnerList: []
     }
   },
   mounted () {
@@ -67,7 +66,7 @@ export default {
               ruleName: this.createRuleForm.ruleName
             }
           }).then(res => {
-            this.visibale = false
+            this.close()
             this.ok()
           }).catch(err => console.error(err))
         }

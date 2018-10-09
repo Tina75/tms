@@ -2,8 +2,8 @@
 <template>
   <div>
     <Modal
-      v-model="modal"
-      :mask-closable="true"
+      v-model="visiable"
+      :mask-closable="false"
       label-position="left"
       class="modal"
       @on-visible-change="close"
@@ -37,7 +37,7 @@
       </Form>
       <div slot="footer">
         <Button type="primary" @click="save('validate')">确定</Button>
-        <Button style="margin-left: 8px" @click.native="modal = false"  >取消</Button>
+        <Button style="margin-left: 8px" @click.native="close"  >取消</Button>
       </div>
     </Modal>
   </div>
@@ -54,7 +54,6 @@ export default {
     return {
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH1,
-      modal: true,
       carrierId: '', // 承运商id
       driverId: 0, // 司机id
       driverName: '', // 只有编辑需要的数据
@@ -109,7 +108,7 @@ export default {
           } else { // 2-编辑
             this.update()
           }
-          this.modal = false
+          this.close()
         }
       })
     },
