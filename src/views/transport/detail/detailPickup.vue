@@ -520,7 +520,7 @@ export default {
         this.logList = data.loadBillLogs
 
         this.status = this.statusFilter(data.loadbill.status)
-        this.settlementType = data.loadbill.settlementType.toString()
+        this.settlementType = data.loadbill.settlementType ? data.loadbill.settlementType.toString() : ''
         let temp = this.settlementPayInfo.map((item, i) => {
           if (!data.loadbill.settlementPayInfo[i]) return item
           else {
