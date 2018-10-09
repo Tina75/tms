@@ -17,6 +17,17 @@
 <script>
 // import area from '@/libs/js/area'
 import areas from '@/libs/js/city'
+import { requestAnimationFrame } from '@/libs/js/requestAnimationFrame.js'
+// 直辖市code
+export const specialCity = ['110000', '120000', '710000', '810000', '820000', '500000', '310000']
+/**
+ * areaSelect组件返回的值是数组，提交表单后需要返回最后一级code
+ * 直辖市地区如果只选择了两级，例如：北京市-北京市，那默认统一取第一级的值
+ * @param {*} codes areaSelect组件的值
+ */
+export const getCodeFromList = (codes) => {
+  return specialCity.includes(codes[0]) && codes.length === 2 ? codes[0] : codes[codes.length - 1]
+}
 export default {
   props: {
     value: [String, Array],
@@ -72,22 +83,26 @@ export default {
     })
     if (this.deep) {
       // 先让页面渲染完，在更新数据，防止进入页面很慢
-      setTimeout(() => {
-        data.forEach(province => {
-          let children = vm.loadNext(province.value, true)
-          if (children.length > 0) {
-            province.children = children
-          }
-        })
-      }, 200)
+      let index = 0
+      let length = data.length
+      const allLoad = function () {
+        let province = data[index]
+        let children = vm.loadNext(province.value, true)
+        if (children.length > 0) {
+          province.children = children
+        }
+        index++
+        if (index < length) {
+          requestAnimationFrame(allLoad)
+        }
+      }
+      requestAnimationFrame(allLoad)
     }
     this.areaData = data
   },
   mounted () {
     if (this.value && (typeof this.value === 'string' || typeof this.value === 'number')) {
-      setTimeout(() => {
-        this.selected = areas.getPathByCode(this.value).map((item) => item.code)
-      }, 100)
+      this.selected = areas.getPathByCode(this.value).map((item) => item.code)
     }
   },
   methods: {

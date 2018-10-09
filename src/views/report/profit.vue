@@ -7,6 +7,7 @@
         </ButtonGroup>
         <DatePicker
           v-model="times"
+          :options="options"
           type="daterange"
           format="yyyy-MM-dd"
           placeholder="开始日期-结束日期"
@@ -149,7 +150,13 @@ export default {
         carrierOtherFee: '-',
         carrierInsuranceFee: '-',
         carrierTotalFee: '-',
-        transbillTransFee: '-'
+        transbillTransFee: '-',
+        profits: '-'
+      },
+      options: {
+        disabledDate (date) {
+          return date && date.valueOf() > Date.now()
+        }
       }
     }
   },
@@ -198,6 +205,8 @@ export default {
     handleTimeChange (val) {
       this.keywords.startTime = val[0]
       this.keywords.endTime = val[1]
+      // 去掉蓝显
+      this.operateValue = ''
     },
     /* 点击button，对应时间 */
     date (value) {
