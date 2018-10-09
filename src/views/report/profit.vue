@@ -150,7 +150,8 @@ export default {
         carrierOtherFee: '-',
         carrierInsuranceFee: '-',
         carrierTotalFee: '-',
-        transbillTransFee: '-'
+        transbillTransFee: '-',
+        profits: '-'
       },
       options: {
         disabledDate (date) {
