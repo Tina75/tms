@@ -54,7 +54,7 @@ export default {
   computed: {
     options () {
       return {
-        color: ['#418DF9', '#00A4BD', '#FA871E', '#FFBB44', '#FA871E', '#A7E7FF', '#79D9F0'],
+        color: ['#5D9EFF', '#11C88C', '#79D9F0', '#A7E7FF'],
         tooltip: {
           trigger: 'item',
           formatter: (param) => {

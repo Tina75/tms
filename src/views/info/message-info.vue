@@ -13,7 +13,7 @@
     >活动链接：<a :href="messageInfo.url">{{messageInfo.url}}</a>
     </pre>
     <Modal v-model="visibaleRemove" type="warning" width="360">
-      <p slot="header" style="text-align:center">
+      <p slot="header" style="text-align:center;font-size: 16px;">
         <span>提示</span>
       </p>
       <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white; color: #FFBB44;float:left;"></i>
