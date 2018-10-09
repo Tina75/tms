@@ -30,7 +30,7 @@
         <slot name="header"></slot>
       </div>
     </Table>
-    <div v-if="showPagination && !ltPageSize" class="page-table__footer-pagination">
+    <div v-if="showPagination" class="page-table__footer-pagination">
       <div class="page-table__footer-pagination-fr">
         <Page
           :total="pagination.totalCount"
@@ -293,12 +293,6 @@ export default {
         const { pageSize, pageNo } = this.pagination
         return this.dataSource.slice((pageNo - 1) * pageSize, pageNo * pageSize)
       }
-    },
-    /**
-     * 总数据少于pageSize 分页不予显示
-     */
-    ltPageSize () {
-      return this.pagination.totalCount <= this.pagination.pageSize
     }
   },
   watch: {
