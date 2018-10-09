@@ -7,6 +7,7 @@
         </ButtonGroup>
         <DatePicker
           v-model="times"
+          :options="options"
           type="daterange"
           format="yyyy-MM-dd"
           placeholder="开始日期-结束日期"
@@ -68,39 +69,63 @@ export default {
         {
           title: '客户名称',
           key: 'consignerName',
-          ellipsis: true
+          ellipsis: true,
+          tooltip: true
         },
         {
           title: '订单数',
           key: 'orderNum',
-          ellipsis: true
+          ellipsis: true,
+          tooltip: true
+        },
+        {
+          title: '保险费',
+          key: 'insuranceFee',
+          render: (h, params) => {
+            return h('span', (params.row.insuranceFee / 100).toFixed(2))
+          }
         },
         {
           title: '运输费',
           key: 'freightFee',
-          ellipsis: true
+          render: (h, params) => {
+            return h('span', (params.row.freightFee / 100).toFixed(2))
+          }
         },
         {
           title: '装卸费',
           key: 'loadFee',
-          ellipsis: true
+          render: (h, params) => {
+            return h('span', (params.row.loadFee / 100).toFixed(2))
+          }
         },
         {
           title: '卸货费',
           key: 'unloadFee',
-          ellipsis: true
+          render: (h, params) => {
+            return h('span', (params.row.unloadFee / 100).toFixed(2))
+          }
         },
         {
           title: '其他费用',
           key: 'otherFee',
-          ellipsis: true
+          render: (h, params) => {
+            return h('span', (params.row.otherFee / 100).toFixed(2))
+          }
         },
         {
           title: '费用合计',
           key: 'totalFee',
-          ellipsis: true
+          render: (h, params) => {
+            return h('span', (params.row.totalFee / 100).toFixed(2))
+          }
         }
-      ]
+      ],
+      options: {
+        disabledDate (date) {
+          return date && date.valueOf() > Date.now()
+        }
+      }
     }
   },
   methods: {
@@ -148,6 +173,8 @@ export default {
     handleTimeChange (val) {
       this.keywords.startTime = val[0]
       this.keywords.endTime = val[1]
+      // 去掉蓝显
+      this.operateValue = ''
     },
     date (value) {
       let start = ''

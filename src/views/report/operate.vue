@@ -37,12 +37,12 @@
         <Row :gutter="24">
           <Col span="6">
           <div class="col">
-            <area-select v-model="keywords.start" style="width: 100%"></area-select>
+            <area-select v-model="keywords.start" placeholder="请输入始发地" style="width: 100%"></area-select>
           </div>
         </Col>
           <Col span="6">
           <div class="col">
-            <area-select v-model="keywords.end" style="width: 100%"></area-select>
+            <area-select v-model="keywords.end" placeholder="请输入目的地" style="width: 100%"></area-select>
           </div>
         </Col>
           <Col span="6">
