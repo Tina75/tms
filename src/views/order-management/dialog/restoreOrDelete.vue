@@ -7,7 +7,7 @@
     </div>
     <div slot="footer">
       <Button  type="primary"  @click="save">确定</Button>
-      <Button  type="default"  @click.native="visibale = false">取消</Button>
+      <Button  type="default"  @click.native="close">取消</Button>
     </div>
   </Modal>
 </template>
@@ -20,7 +20,6 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
-      visibale: true
     }
   },
   computed: {
@@ -49,7 +48,7 @@ export default {
       }).then(() => {
         this.ok()
         this.$Message.success('还原成功')
-        this.visibale = false
+        this.close()
       })
     },
     // 订单删除
@@ -60,7 +59,7 @@ export default {
         data: { orderIds: this.orderIds }
       }).then(() => {
         this.$Message.success('删除成功')
-        this.visibale = false
+        this.close()
         if (this.$route.path === '/order-management/detail') {
           this.ema.fire('closeTab', this.$route) // 关闭tab页
         } else {

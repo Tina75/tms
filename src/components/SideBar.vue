@@ -86,7 +86,7 @@ export default {
       }
       function walk (element) {
         if (element.path === path) {
-          element.query = Object.assign(element.query || {}, {title: element.name})
+          element.query = Object.assign(element.query || {}, { title: element.name })
           return element
         } else if (element.children) {
           return element.children.find(item => {
@@ -117,6 +117,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.sider
+  z-index 10
 .title
   font-size 20px
   color white

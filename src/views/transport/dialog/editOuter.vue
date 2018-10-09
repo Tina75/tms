@@ -1,10 +1,10 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visibale" :mask-closable="false" width="360">
+    <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
       <p slot="header" style="text-align:center">
         <span>编辑</span>
       </p>
-      <Form ref="info" :model="info" :rules="rules" :label-width="100" label-position="left" style="padding-left: 15px;">
+      <Form ref="info" :model="info" :rules="rules" :label-width="100" label-position="left">
         <FormItem label="外转方：" prop="transfereeName">
           <SelectInput
             v-model="info.transfereeName"
@@ -28,10 +28,12 @@
           </Select>
         </FormItem>
         <FormItem label="外转运费：" prop="transFee">
-          <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" style="width:180px">
-            <span slot="suffix" class="order-create__input-suffix">元</span>
-          </TagNumberInput>
-          <Icon type="ios-calculator" size="26" color="#00a4bd" @click="showCounter"></Icon>
+          <div style="width:200px">
+            <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" style="width:170px">
+              <span slot="suffix" class="order-create__input-suffix">元</span>
+            </TagNumberInput>
+            <Icon type="ios-calculator" size="30" color="#00a4bd" @click="showCounter"></Icon>
+          </div>
         </FormItem>
       </Form>
       <div slot="footer">
@@ -59,6 +61,7 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      visiable: true,
       transferees: [],
       info: {
         transfereeName: '',
@@ -70,14 +73,7 @@ export default {
         transfereeName: { required: true, message: '请填写外转方' },
         payType: { required: true, message: '请选择付款方式' },
         transFee: { required: true, type: 'number', message: '请填写外转运费', trigger: 'blur' }
-      },
-      visibale: true
-    }
-  },
-
-  watch: {
-    visibale: function (val) {
-      !val && this.close()
+      }
     }
   },
 
@@ -143,7 +139,7 @@ export default {
           ok (value) {
             _this.info.transFee = value || 0
           },
-          cancel () {
+          closeParentDialog () {
             self.close()
           }
         }

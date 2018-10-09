@@ -83,8 +83,7 @@ export default {
         transFee: [
           { required: true, type: 'number', message: '请填写外转运费' }
         ]
-      },
-      visibale: true
+      }
     }
   },
 
@@ -92,12 +91,6 @@ export default {
     ...mapGetters([
       'transferees'
     ])
-  },
-
-  watch: {
-    visibale: function (val) {
-      !val && this.close()
-    }
   },
 
   mounted: function () {
@@ -131,7 +124,7 @@ export default {
           }).then((res) => {
             this.ok()
             this.$Message.success('创建外转单成功')
-            this.visibale = false
+            this.close()
           })
         }
       })

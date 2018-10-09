@@ -104,7 +104,6 @@ export default {
           { required: true, message: '请填写司机姓名', trigger: 'change' }
         ]
       },
-      visibale: true,
       tableColumns: [
         {
           title: '操作',
@@ -237,12 +236,6 @@ export default {
     }
   },
 
-  watch: {
-    visibale: function (val) {
-      !val && this.close()
-    }
-  },
-
   mounted: function () {
   },
 
@@ -287,7 +280,7 @@ export default {
             start: Number(this.send.start[this.send.start.length - 1]),
             end: Number(this.send.end[this.send.end.length - 1])
           }
-          const data = Object.assign(sendCodes, {orderIds: this.orderIds})
+          const data = Object.assign(sendCodes, { orderIds: this.orderIds })
           Server({
             url: 'waybill/create',
             method: 'post',
@@ -295,7 +288,7 @@ export default {
           }).then(() => {
             this.ok()
             this.$Message.success('创建运单成功')
-            this.visibale = false
+            this.close()
           })
         }
       })
@@ -306,7 +299,7 @@ export default {
         console.log(valid)
         console.log(this.pick)
         if (valid) {
-          const data = Object.assign(this.pick, {orderIds: this.orderIds})
+          const data = Object.assign(this.pick, { orderIds: this.orderIds })
           Server({
             url: 'load/bill/create',
             method: 'post',
@@ -314,7 +307,7 @@ export default {
           }).then(() => {
             this.ok()
             this.$Message.success('创建提货单成功')
-            this.visibale = false
+            this.close()
           })
         }
       })

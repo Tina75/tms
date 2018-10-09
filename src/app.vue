@@ -46,7 +46,7 @@ export default {
     window.EMA.bind('openTab', (route) => { this.onMenuSelect(route) })
     window.EMA.bind('closeTab', (route) => { this.onTabClose(route) })
     window.EMA.bind('reloadTab', (route) => {
-      route.query = Object.assign({_time: new Date().getTime()}, route.query)
+      route.query = Object.assign({ _time: new Date().getTime() }, route.query)
       this.turnToPage(route)
     })
     this.init()
@@ -75,14 +75,14 @@ export default {
     * @param type 消息类型
     */
     onOpenMsg (type) {
-      const route = {path: '/info/index', query: {type: type, title: '消息'}}
+      const route = { path: '/info/index', query: { type: type, title: '消息' } }
       window.EMA.fire('openTab', route)
     },
     /**
     * @description 打开首页
     */
     toHome () {
-      const home = {path: '/home', params: {name: 'home'}, query: {title: '首页'}}
+      const home = { path: '/home', params: { name: 'home' }, query: { title: '首页' } }
       this.turnToPage(home)
     },
 
@@ -128,7 +128,7 @@ export default {
         okText: '立即修改',
         cancelText: '我知道了',
         onOk: () => {
-          window.EMA.fire('openTab', {path: '/set-up', query: {title: '设置'}})
+          window.EMA.fire('openTab', { path: '/set-up/index', query: { title: '设置' } })
         }
       })
     },
@@ -268,6 +268,7 @@ html, body
         margin 0 auto
     .header-con
       position relative
+      z-index 9
       .tag-nav-wrapper
         width auto
         top 4px
@@ -276,6 +277,7 @@ html, body
         position absolute
         padding 0
         height 46px
+        z-index 9
         // background #F0F0F0
         overflow hidden
         .tags-nav .scroll-outer .scroll-body

@@ -162,15 +162,15 @@ export default {
       const now = new Date().getHours()
       const name = this.UserInfo.name
       if (now >= 5 && now < 11) {
-        return `<strong class="van-font-14 i-pr-20">早上好，${name}</strong> &nbsp;&nbsp;拥抱阳光，转身心情`
+        return `<strong class="van-font-14 i-pr-20">早上好，${name}</strong> &nbsp;&nbsp;每天给自己一个希望，只为明天更美好。`
       } else if (now >= 11 && now < 14) {
-        return `<strong class="van-font-14 i-pr-20">中午好，${name}</strong> &nbsp;&nbsp;拥抱阳光，转身心情`
+        return `<strong class="van-font-14 i-pr-20">中午好，${name}</strong> &nbsp;&nbsp;拥抱阳光，转身心情。`
       } else if (now >= 14 && now < 17) {
-        return `<strong class="van-font-14 i-pr-20">下午好，${name}</strong> &nbsp;&nbsp;拥抱阳光，转身心情`
+        return `<strong class="van-font-14 i-pr-20">下午好，${name}</strong> &nbsp;&nbsp;拥抱阳光，转身心情。`
       } else if (now >= 17 && now < 22) {
-        return `<strong class="van-font-14 i-pr-20">晚上好，${name}</strong> &nbsp;&nbsp;拥抱阳光，转身心情`
+        return `<strong class="van-font-14 i-pr-20">晚上好，${name}</strong> &nbsp;&nbsp;既然选择了远方，便只顾风雨兼程。`
       } else if (now >= 22 && now < 5) {
-        return `<strong class="van-font-14 i-pr-20">夜深了，${name}</strong> &nbsp;&nbsp;拥抱阳光，转身心情`
+        return `<strong class="van-font-14 i-pr-20">夜深了，${name}</strong> &nbsp;&nbsp;再怎么忙绿，也要注意休息哦。`
       }
     }
   },

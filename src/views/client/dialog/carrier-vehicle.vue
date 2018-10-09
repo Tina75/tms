@@ -2,8 +2,8 @@
 <template>
   <div>
     <Modal
-      v-model="modal"
-      :mask-closable="true"
+      v-model="visiable"
+      :mask-closable="false"
       label-position="left"
       class="modal"
       @on-visible-change="close"
@@ -37,14 +37,14 @@
       </Form>
       <div slot="footer">
         <Button type="primary" @click="save('validate')">确定</Button>
-        <Button style="margin-left: 8px" @click.native="modal = false"  >取消</Button>
+        <Button style="margin-left: 8px" @click.native="close"  >取消</Button>
       </div>
     </Modal>
   </div>
 </template>
 
 <script>
-import {CAR_TYPE1, CAR_LENGTH1} from '@/libs/constant/carInfo'
+import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
 import { carrierAddVehicle, carrierUpdateVehicle, listUnbindedDriver, CODE, CAR } from '../client'
 export default {
@@ -54,7 +54,6 @@ export default {
     return {
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH1,
-      modal: true,
       carrierId: '', // 承运商id
       driverId: 0, // 司机id
       driverName: '', // 只有编辑需要的数据
@@ -96,7 +95,7 @@ export default {
     listUnbindedDriver(data).then(res => {
       if (res.data.code === CODE) {
         this.unbindedDriver = res.data.data
-        this.unbindedDriver.unshift({driverId: '', driverName: '请选择'})
+        this.unbindedDriver.unshift({ driverId: '', driverName: '请选择' })
       }
     })
   },
@@ -109,7 +108,7 @@ export default {
           } else { // 2-编辑
             this.update()
           }
-          this.modal = false
+          this.close()
         }
       })
     },
@@ -123,7 +122,7 @@ export default {
         driverId: this.driverId,
         carrierId: this.carrierId
       }
-      Object.assign(data, {driverId: this.driverId || ''})
+      Object.assign(data, { driverId: this.driverId || '' })
       carrierAddVehicle(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
@@ -143,7 +142,7 @@ export default {
         carrierId: this.carrierId,
         carId: this.carId
       }
-      Object.assign(data, {driverId: this.driverId || ''})
+      Object.assign(data, { driverId: this.driverId || '' })
       carrierUpdateVehicle(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面

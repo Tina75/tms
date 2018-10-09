@@ -7,9 +7,9 @@
       </MenuItem>
     </Menu>
     </Col>
-    <Col span="21" style="background:#fff; padding-left:20px; height: inherit;">
+    <Col span="21" style="background:#fff; padding-left:20px; height: inherit; overflow: auto;">
     <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;margin-right: 20px;">
-      <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute; left: 20px; margin-top: 2px;"></span>
+      <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute; left: 20px; margin-top: 2px;border-radius:3px;"></span>
       <span style="margin-left:35px; font-size: 16px; font-weight:600;">{{rightTitle}}</span>
     </div>
     <!--密码设置-->
@@ -397,15 +397,17 @@ export default {
         url: 'set/smsInfo',
         method: 'get'
       }).then(({ data }) => {
-        this.msgCheckBoxList = data.data.smsCode === '' ? [] : data.data.smsCode
-        this.msgCheckBoxListInit = data.data.smsCode === '' ? [] : data.data.smsCode
-        for (const checkList of this.messageList) {
-          checkList.checkBox.forEach(element => {
-            if (this.msgCheckBoxList.includes(element.model)) {
-              element.model = true
-              this.switchMsg = true
-            }
-          })
+        if (data.data.smsCode) {
+          this.msgCheckBoxList = data.data.smsCode === '' ? [] : data.data.smsCode
+          this.msgCheckBoxListInit = data.data.smsCode === '' ? [] : data.data.smsCode
+          for (const checkList of this.messageList) {
+            checkList.checkBox.forEach(element => {
+              if (this.msgCheckBoxList.includes(element.model)) {
+                element.model = true
+                this.switchMsg = true
+              }
+            })
+          }
         }
       })
     },
@@ -488,7 +490,7 @@ export default {
             return
           }
           let params = Object.assign({}, this.formCompany)
-          params.cityId = params.cityId[params.cityId.length - 1].toString()
+          params.cityId = params.cityId.length === 2 ? params.cityId[0] : params.cityId[params.cityId.length - 1]
           Server({
             url: 'set/company',
             method: 'post',
@@ -621,10 +623,9 @@ export default {
       width:300px;
     .labelClassSty
       font-weight: bold;
-
 .mesDiv
-  height: 120px;
-  width: 720px;
+  min-height: 120px;
+  width: 100%;
   padding: 15px 0;
   border-top: 1px solid rgba(201,206,217,1);
   cursor: hand;
@@ -670,8 +671,8 @@ export default {
   cursor: pointer;
   margin: 0 2px;
 .divSetContent
-  width: 900px;
-  height:530px;
+  width: 70%;
+  min-height:400px;
   margin-top:40px;
   left: 15%;
   position: absolute;

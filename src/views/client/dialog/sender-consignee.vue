@@ -2,8 +2,8 @@
 <template>
   <div>
     <Modal
-      v-model="modal"
-      :mask-closable="true"
+      v-model="visiable"
+      :mask-closable="false"
       label-position="left"
       class="modal"
       @on-visible-change="close"
@@ -25,7 +25,7 @@
       </Form>
       <div slot="footer">
         <Button type="primary" @click="save('validate')">确定</Button>
-        <Button style="margin-left: 8px" @click.native="modal = false"  >取消</Button>
+        <Button style="margin-left: 8px" @click.native="close"  >取消</Button>
       </div>
     </Modal>
   </div>
@@ -39,7 +39,6 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
-      modal: true,
       consignerId: '', // 详情传过来的id
       id: '',
       validate: {
@@ -71,7 +70,7 @@ export default {
           } else { // 2-编辑
             this.update()
           }
-          this.modal = false
+          this.close()
         }
       })
     },

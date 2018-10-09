@@ -49,7 +49,7 @@
           </i-col>
           <i-col span="10" offset="1">
             <span class="detail-field-title">司机：</span>
-            <span>{{ info.driverName + ' ' + info.driverPhone }}</span>
+            <span>{{ (info.driverName || '') + ' ' + (info.driverPhone || '') }}</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
@@ -182,25 +182,20 @@
           </i-col>
           <i-col span="10" offset="1">
             <span class="detail-field-title">承运商：</span>
-            <SelectInput
-              v-model="info.carrierName"
-              :maxlength="20"
-              :remote="false"
-              :local-options="carriers"
-              class="detail-info-input"
-              @on-select="handleSelectCarrier" />
+            <SelectInput v-model="info.carrierName"
+                         class="detail-info-input"
+                         mode="carrier"
+                         @on-select="selectCarrierHandler" />
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title">车牌号：</span>
-            <SelectInput
-              v-model="info.carNo"
-              :maxlength="8"
-              :remote="false"
-              :local-options="carrierCars"
-              class="detail-info-input"
-              @on-select="autoComplete" />
+            <SelectInput :carrier-id="carrierId"
+                         v-model="info.carNo"
+                         class="detail-info-input"
+                         mode="carNo"
+                         @on-select="autoComplete" />
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型/车长：</span>
@@ -216,19 +211,18 @@
           </i-col>
           <i-col span="4" offset="1">
             <span class="detail-field-title">司机：</span>
-            <SelectInput
-              v-model="info.driverName"
-              :maxlength="5"
-              :remote="false"
-              :local-options="carrierDrivers"
-              class="detail-info-input"
-              @on-select="autoComplete" />
+            <SelectInput :carrier-id="carrierId"
+                         v-model="info.driverName"
+                         class="detail-info-input"
+                         mode="driver"
+                         @on-select="autoComplete"
+                         @on-option-loaded="driverOptionLoaded" />
           </i-col>
           <i-col span="5" offset="1">
             <span class="detail-field-title">司机手机号：</span>
             <Input v-model="info.driverPhone"
                    :maxlength="11"
-                   class="detail-info-input"></Input>
+                   class="detail-info-input" />
           </i-col>
         </Row>
         <Row class="detail-field-group">
@@ -236,7 +230,7 @@
             <span class="detail-field-title">备注：</span>
             <Input v-model="info.remark"
                    :maxlength="100"
-                   class="detail-info-input"></Input>
+                   class="detail-info-input" />
           </i-col>
         </Row>
       </div>
@@ -325,20 +319,24 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import BasePage from '@/basic/BasePage'
 import TransportBase from '../transportBase'
 import DetailMixin from './detailMixin'
 
 import Server from '@/libs/js/server'
-import MoneyInput from '../components/moneyInput'
+import MoneyInput from '../components/MoneyInput'
 import AreaSelect from '@/components/AreaSelect'
-import SelectInput from '@/components/SelectInput'
+import SelectInput from '../components/SelectInput.vue'
+import SelectInputMixin from '../components/selectInputMixin'
+
+const specialCity = ['110000', '120000', '310000', '500000', '710000', '810000', '820000']
 
 export default {
   name: 'DetailFeright',
   metaInfo: { title: '运单详情' },
   components: { MoneyInput, SelectInput, AreaSelect },
-  mixins: [ BasePage, TransportBase, DetailMixin ],
+  mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
 
   data () {
     return {
@@ -526,15 +524,11 @@ export default {
   watch: {
     startCodes () {
       if (!(this.startCodes instanceof Array)) return
-      this.info.start = this.startCodes.length
-        ? this.startCodes[this.startCodes.length - 1]
-        : ''
+      this.info.start = specialCity.includes(this.startCodes[0]) && this.startCodes.length === 2 ? this.startCodes[0] : this.startCodes[this.startCodes.length - 1]
     },
     endCodes () {
       if (!(this.endCodes instanceof Array)) return
-      this.info.end = this.endCodes.length
-        ? this.endCodes[this.endCodes.length - 1]
-        : ''
+      this.info.end = specialCity.includes(this.endCodes[0]) && this.startCodes.length === 2 ? this.endCodes[0] : this.endCodes[this.endCodes.length - 1]
     }
   },
 
@@ -563,6 +557,24 @@ export default {
       }, 250)
     },
 
+    checkPlace () {
+      let start = specialCity.includes(this.startCodes[0]) && this.startCodes.length === 2 ? this.startCodes[0] : this.startCodes[this.startCodes.length - 1]
+      let end = specialCity.includes(this.endCodes[0]) && this.endCodes.length === 2 ? this.endCodes[0] : this.endCodes[this.endCodes.length - 1]
+
+      if (this.startCodes.length === 1 && !specialCity.includes(this.startCodes[0])) {
+        this.$Message.error('始发地请至少选择到市一级城市')
+        return false
+      } else if (this.endCodes.length === 1 && !specialCity.includes(this.endCodes[0])) {
+        this.$Message.error('目的地请至少选择到市一级城市')
+        return false
+      } else if ((this.startCodes.length > 0 && this.endCodes.length > 0 && _.isEqual(this.startCodes, this.endCodes)) || start === end) {
+        this.$Message.error('始发地不能和目的地相同')
+        return false
+      } else {
+        return true
+      }
+    },
+
     fetchData () {
       this.loading = true
       Server({
@@ -586,7 +598,7 @@ export default {
         this.logList = data.operaterLog
 
         this.status = this.statusFilter(data.waybill.status)
-        this.settlementType = data.waybill.settlementType.toString()
+        this.settlementType = data.waybill.settlementType ? data.waybill.settlementType.toString() : ''
         let temp = this.settlementPayInfo.map((item, i) => {
           if (!data.waybill.settlementPayInfo[i]) return item
           else {
@@ -664,14 +676,26 @@ export default {
     },
     // 删除
     billDelete () {
-      Server({
-        url: '/waybill/delete',
-        method: 'delete',
-        data: { waybillIds: [ this.id ] }
-      }).then(res => {
-        this.$Message.success('删除成功')
-        this.ema.fire('closeTab', this.$route)
-      }).catch(err => console.error(err))
+      const self = this
+      self.openDialog({
+        name: 'transport/dialog/confirm',
+        data: {
+          title: '删除确认',
+          message: '是否确认删除？'
+        },
+        methods: {
+          confirm () {
+            Server({
+              url: '/waybill/delete',
+              method: 'delete',
+              data: { waybillIds: [ self.id ] }
+            }).then(res => {
+              self.$Message.success('删除成功')
+              self.ema.fire('closeTab', self.$route)
+            }).catch(err => console.error(err))
+          }
+        }
+      })
     }
   }
 }

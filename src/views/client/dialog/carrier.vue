@@ -1,7 +1,7 @@
 <template>
   <Modal
-    v-model="modal"
-    :mask-closable="true"
+    v-model="visiable"
+    :mask-closable="false"
     label-position="left"
     class="modal"
     @on-visible-change="close"
@@ -72,17 +72,17 @@
     </Form>
     <div v-if="validate.type.selectStatus == 1" slot="footer">
       <Button type="primary" @click="save('validateDriver')">确定</Button>
-      <Button style="margin-left: 8px" @click.native="modal = false">取消</Button>
+      <Button style="margin-left: 8px" @click.native="close">取消</Button>
     </div>
     <div v-else slot="footer">
       <Button type="primary" @click="save('validateCompany')">确定</Button>
-      <Button style="margin-left: 8px" @click.native="modal = false">取消</Button>
+      <Button style="margin-left: 8px" @click.native="close">取消</Button>
     </div>
   </Modal>
 </template>
 
 <script>
-import {CAR_TYPE1, CAR_LENGTH1} from '@/libs/constant/carInfo'
+import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, CODE, CAR } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
 export default {
@@ -93,7 +93,6 @@ export default {
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH1,
       flag: 2,
-      modal: true,
       payTypeMap: {
         1: '按单付',
         2: '月结'
@@ -196,7 +195,7 @@ export default {
               this._carrierForCompanyUpdate()
             }
           }
-          this.modal = false
+          this.close()
         }
       })
     },

@@ -188,14 +188,32 @@ export default {
         {
           title: '备注',
           key: 'remark',
+          ellipsis: true,
+          tooltip: true,
           render (h, params) {
             let text = ''
             if (params.row.remark === '' || params.row.remark === null) {
               text = '-'
             } else {
-              text = params.row.remark
+              text = params.row.remark.length > 12 ? params.row.remark.slice(0, 12) + '...' : params.row.remark
             }
-            return h('span', {}, text)
+            // return h('Tooltip', {content: '1525'}, text)
+            return h('div', [
+              h('Tooltip', {
+                props: {
+                  placeholder: 'bottom',
+                  transfer: true
+                }
+              }, [
+                text,
+                h('div', {
+                  slot: 'content',
+                  style: {
+                    whiteSpace: 'normal'
+                  }
+                }, params.row.remark)
+              ])
+            ])
           }
         }
       ],

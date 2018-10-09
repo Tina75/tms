@@ -1,47 +1,44 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="true" width="360" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
     <p slot="header" style="text-align:center">{{title}}</p>
     <Form ref="$form" :model="form" :rules="rules" :label-width="70" label-position="left" style="padding:0 20px;">
       <FormItem label="承运商：" prop="carrierName">
-        <SelectInput
-          v-model="form.carrierName"
-          :maxlength="20"
-          :remote="false"
-          :local-options="carriers"
-          placeholder="请选择"
-          @on-select="handleSelectCarrier" />
+        <SelectInput v-model="form.carrierName"
+                     mode="carrier"
+                     placeholder="请选择"
+                     @on-select="selectCarrierHandler" />
       </FormItem>
       <FormItem label="车辆：" prop="carNo">
-        <SelectInput
-          v-model="form.carNo"
-          :maxlength="8"
-          :remote="false"
-          :local-options="carrierCars"
-          placeholder="请选择" />
+        <SelectInput :carrier-id="carrierId"
+                     v-model="form.carNo"
+                     mode="carNo"
+                     placeholder="请选择"
+                     @on-select="autoComplete" />
       </FormItem>
     </Form>
     <div slot="footer">
       <Button  type="primary"  @click="create">确定</Button>
-      <Button  type="default"  @click.native="visiable = false">取消</Button>
+      <Button  type="default"  @click.native="close">取消</Button>
     </div>
   </Modal>
 </template>
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
-import SelectInput from '@/components/SelectInput.vue'
+import SelectInput from '@/views/transport/components/SelectInput.vue'
+import SelectInputMixin from '@/views/transport/components/selectInputMixin'
 import Server from '@/libs/js/server'
 import { CAR } from '@/views/client/client'
 
 export default {
   name: 'CreatedPickup',
   components: { SelectInput },
-  mixins: [ BaseDialog ],
+  mixins: [ BaseDialog, SelectInputMixin ],
   data () {
     return {
-      visiable: true,
-      carriers: [],
-      carrierCars: [],
+      // select input data
+      keyFields: 'form',
+      linkageFields: ['carNo'],
 
       form: {
         carrierName: '',
@@ -58,48 +55,7 @@ export default {
       }
     }
   },
-  created () {
-    this.getCarriers()
-  },
   methods: {
-    getCarriers () {
-      Server({
-        url: '/carrier/listOrderByUpdateTimeDesc',
-        method: 'get',
-        data: { type: 1 }
-      }).then(res => {
-        this.carriers = res.data.data.carrierList.map(item => {
-          return {
-            name: item.carrierName,
-            value: item.carrierName,
-            id: item.carrierId,
-            carNo: item.carNO
-          }
-        })
-      })
-    },
-
-    getCarrierCars (carrierId) {
-      Server({
-        url: '/carrier/list/carOrderByUpdateTimeDesc',
-        method: 'get',
-        data: { carrierId }
-      }).then(res => {
-        this.carrierCars = res.data.data.carList.map(item => {
-          return {
-            name: item.carNO,
-            value: item.carNO
-          }
-        })
-        if (this.carrierCars.length) this.form.carNo = this.carrierCars[0].name
-        else this.form.carNo = ''
-      })
-    },
-
-    handleSelectCarrier (name, row) {
-      this.getCarrierCars(row.id)
-      this.$store.dispatch('getCarrierDrivers', row.id)
-    },
 
     create () {
       this.$refs.$form.validate(valid => {

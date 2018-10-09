@@ -2,10 +2,10 @@
   <div class="temAll">
     <Col span="4">
     <Menu :active-name="menuInitName" class="leftMenu" style="width:100%">
-      <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:50px;">
+      <div class="centerBtnDiv" style="border-bottom: 1px solid #e9e9e9;padding-bottom:50px;">
         <Button v-if="hasPower(140101)" type="primary" class="centerBtn" @click="createRole">新增角色</Button>
       </div>
-      <div style="max-height:810px; overflow-y:auto; padding-top: 20px;">
+      <div>
         <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" class="menu" @click.native="clickLeftMenu(menu)">
         <p class="menuTitle">{{menu.name}}</p>
         <span v-if="menu.type !== 1" class="configBtnItem">
@@ -15,10 +15,10 @@
         </MenuItem>
       </div>
       <Modal v-model="createRoleModal" width="400">
-        <p slot="header" style="text-align:center">
+        <p slot="header" style="text-align:center;font-size: 16px;">
           <span>{{editRoleModalTitle}}</span>
         </p>
-        <Form ref="formModal" :model="formModal" :rules="rulesRole" :label-width="80" style="padding:20px;height: 80px;">
+        <Form ref="formModal" :model="formModal" :rules="rulesRole" :label-width="80" style="padding:20px;height: 70px;">
           <FormItem label="角色名：" prop="name">
             <Input :maxlength="11" v-model="formModal.name" placeholder="请输入角色名" style="width:200px;"></Input>
           </FormItem>
@@ -30,9 +30,9 @@
       </Modal>
     </Menu>
     </Col>
-    <Col span="18" style="margin-left: 20px;">
-    <p class="rightTitle">{{rightTitle}}的权限
-    </p><div v-if="hasPower(140102)" class="saveRoleBtn">
+    <Col span="18" style="margin-left: 20px; max-height:850px; overflow-y:auto;">
+    <p v-if="rightTitle !== ''" class="rightTitle">{{rightTitle}}的权限</p>
+    <div v-if="hasPower(140102)" class="saveRoleBtn">
       <Button
         v-if="menuParam.type !== 1"
         :disabled="disSaveBtn"
@@ -46,12 +46,12 @@
     <Modal
       v-model="removeRoleModal"
       width="360">
-      <p slot="header" style="text-align:center">
+      <p slot="header" style="text-align:center;font-size: 16px;">
         <span>提示</span>
       </p>
       <p style="margin-left:70px; margin-top: 10px;">
         <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
-      </p><p style="margin-top:23px; margin-left:50px;">确定删除'{{rightTitle}}'?</P>
+      </p><p style="margin-top:23px; margin-bottom:10px; margin-left:50px;">确定删除'{{rightTitle}}'?</P>
       </p>
       <div slot="footer">
         <Button type="primary" @click="removeFormRole">确定</Button>
@@ -61,7 +61,7 @@
     <Modal
       v-model="removeRoleModalFail"
       width="400">
-      <p slot="header" style="text-align:center">
+      <p slot="header" style="text-align:center;font-size: 16px;">
         <span>提示</span>
       </p>
       <P style="color:gray;">有员工属于该角色，暂时不能删除,如需删除，请先将</P>
@@ -374,29 +374,41 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
->>>.ivu-card-head
+>>> .ivu-card-head
   background:rgba(248,248,248,1);
->>>.ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
+>>> .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
   color: #515a6e;
 .temAll
   width: 100%
-  min-height: 1500px;
-  // overflow: auto;
+  min-height: 1000px;
+  overflow: auto;
   .leftMenu
-    min-height: 810px;
+    height: 836px;
+    overflow-y: hidden;
+  .leftMenu :hover
+    max-height: 785px;
+    overflow-y: auto;
+  .centerBtnDiv:hover
+    overflow: hidden;
   .menu:hover
     background: #e3fcfc;
     color: #515a6e;
+    overflow: hidden;
     .configBtnItem
       display: block
+    .configBtnItem:hover
+      display: block
+      overflow: hidden;
   .menu
     margin-left: -50px;
     .menuTitle
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      width: 120px;
+      width: 75%;
+      float:left;
   .rightTitle
+    height: 55px;
     font-size: 20px;
     color: #333;
     line-height: 55px;
@@ -416,6 +428,11 @@ export default {
         width: 252px;
         height: 346px;
         margin-top: -15px;
+        overflow:hidden;
+      .treeContentDiv:hover
+        width: 252px;
+        height: 346px;
+        margin-top: -15px;
         overflow-y:auto;
         overflow-x:auto;
   .saveRoleBtn
@@ -430,11 +447,14 @@ export default {
     height:35px;
     background:rgba(0,164,189,1);
     border-radius:2px;
+  .centerBtn:hover
+    overflow: hidden;
   .configBtnItem
       float: right;
       margin-top: -20px;
       display: none;
-      margin-right: 20px;
+      margin-right: 5px;
+      background: #e3fcfc;
     .configBtn
       color: #00A4BD;
       font-size: 12px;

@@ -18,7 +18,7 @@
             </FormItem>
             <FormItem>
               <Input v-model="rulesQuery.queryText" :placeholder="`请输入${sceneMap[active]}名称`" style="width: auto">
-              <Icon slot="suffix" type="ios-search" @click="getRules"/>
+              <Icon slot="suffix" type="ios-search" class="suffix-btn" @click="getRules"/>
               </Input>
             </FormItem>
           </Form>
@@ -63,7 +63,8 @@
                       </Col>
                     </Row>
                   </div>
-                  <Panel :name="(index + 1) + ''" hide-arrow>
+                  <Panel :name="(index + 1) + ''">
+                    <div slot></div>
                     <div slot="content">
                       <div class="ivu-table-wrapper">
                         <div class="ivu-table ivu-table-default ivu-table-with-fixed-top">
@@ -157,7 +158,7 @@ export default {
   metaInfo: {
     title: '计费规则'
   },
-  components: {AreaSelect},
+  components: { AreaSelect },
   mixins: [ BasePage ],
   data () {
     return {
@@ -253,7 +254,7 @@ export default {
       })
     },
     addEl (index) {
-      this.ruleDetail.details[index].chargeRules.push({base: '', price: ''})
+      this.ruleDetail.details[index].chargeRules.push({ base: '', price: '' })
     },
     removeEl (index, no) {
       this.ruleDetail.details[index].chargeRules.splice(no, 1)
@@ -263,7 +264,7 @@ export default {
         departure: '',
         destination: '',
         chargeRules: [
-          {base: '', price: ''}
+          { base: '', price: '' }
         ]
       })
     },
@@ -354,6 +355,12 @@ export default {
       .ivu-btn
         padding-left: 30px
         padding-right: 30px
+      .suffix-btn
+        background-color: #00a4bd
+        color: #ffffff
+        padding: 0 8px
+        border-top-right-radius: 2px
+        border-bottom-right-radius: 2px
     .rule-block
       border: 1px solid #C9CED9
       .rule-basic
@@ -397,6 +404,7 @@ export default {
               height: 54px
               background-color: #ffffff
               padding: 10px 20px
+              text-align: right
             .ivu-table-cell
               span
                 padding: 10px

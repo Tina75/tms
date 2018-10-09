@@ -58,7 +58,7 @@ instance.interceptors.response.use((res) => {
       let blob = new Blob([res.data], { type: 'application/x-xls' })
       let downloadLink = document.createElement('a')
       downloadLink.href = URL.createObjectURL(blob)
-      downloadLink.download = fileName + new Date().Format('yyyy-MM-dd') + '.xls'
+      downloadLink.download = fileName + new Date().Format('yyyy-MM-dd_hhmmss') + '.xls'
       downloadLink.click()
       Message.success('导出成功')
     } else {
