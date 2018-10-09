@@ -83,8 +83,8 @@ export default {
         },
 
         grid: {
-          left: 0,
-          right: 0,
+          left: 15,
+          right: 15,
           top: 30,
           bottom: 12,
           containLabel: true

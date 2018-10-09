@@ -23,16 +23,16 @@
     </Menu>
     </Col>
     <Col span="20" style="background:#fff; padding-left: 20px; height: inherit;">
-    <Card class="searchCard" dis-hover>
+    <Card dis-hover>
       <div v-if="'pic' === this.type">
-        <p slot="title" style="font-size:16px; color:rgba(51,51,51,1);">{{picContent.title}}</p>
+        <p slot="title" class="rightDivTitle">{{picContent.title}}</p>
         <pre>{{picContent.content}}</pre>
         <div v-for="url in picContent.urlList" :key="url.index">
           <img :src="url" class="imgInfo" />
         </div>
       </div>
       <div v-if="'video' === this.type">
-        <p slot="title" style="font-size:16px; color:rgba(51,51,51,1);">{{videoContent.title}}</p>
+        <p slot="title" class="rightDivTitle">{{videoContent.title}}</p>
         <video width="100%" height="240" controls>
           <source :src="videoContent.urlList">
           您的浏览器不支持 video 标签。
@@ -127,6 +127,14 @@ export default {
   height: 100%;
   background:rgba(243,245,249,1);
   overflow: auto;
+  .rightDivTitle
+    font-size:16px;
+    color:rgba(51,51,51,1);
+    margin-bottom: 50px;
+    border-bottom: 1px solid #e9e9e9;
+    padding-bottom:15px;
+    margin-top: 20px;
+    margin-right: 20px;
 .imgInfo
   max-width: 680px;
 </style>

@@ -40,7 +40,7 @@
     <page-table :columns="menuColumns" :keywords="formSearchInit" url="employee/list" list-field="list" style="margin-top: 20px;"></page-table>
     </Col>
     <Modal v-model="visibaleTransfer" width="400">
-      <p slot="header" style="text-align:center">
+      <p slot="header" style="text-align:center;font-size: 16px;">
         <span>转移权限</span>
       </p>
       <Form ref="transferformModal" :model="transferformModal" :rules="rulesTransfer" :label-width="100" style="height: 70px;margin-top:20px;">
@@ -64,7 +64,7 @@
       </div>
     </Modal>
     <Modal v-model="visibaleRemove" type="warning" width="360">
-      <p slot="header" style="text-align:center">
+      <p slot="header" style="text-align:center;font-size: 16px;">
         <span>提示</span>
       </p>
       <p style="margin-left:70px; margin-top: 10px;">
@@ -77,7 +77,7 @@
       </div>
     </Modal>
     <Modal v-model="visibaleAddStaffSuccess" width="400">
-      <p slot="header" style="text-align:center">
+      <p slot="header" style="text-align:center;font-size: 16px;">
         <span>提示</span>
       </p>
       <P>添加员工成功，员工的登录账号为手机号</P>
