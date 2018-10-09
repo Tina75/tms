@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visibale" :mask-closable="true" width="440" footer-hide @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" width="440" footer-hide @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">核销</p>
     <div class="step-pay-data">
       <div class="total-data">
@@ -117,8 +117,7 @@ export default {
         5: '回付现金',
         6: '回付油卡'
       },
-      payItems: [],
-      visibale: true
+      payItems: []
     }
   },
   mounted () {

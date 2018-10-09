@@ -186,7 +186,16 @@ export default {
     tabChanged (tab) {
       console.log(tab)
     },
-    toDetail () {}
+    toDetail (data) {
+      this.openTab({
+        path: '/order-management/detail',
+        query: {
+          id: data.row.orderNo,
+          orderId: data.row.id,
+          from: 'order'
+        }
+      })
+    }
   }
 }
 </script>

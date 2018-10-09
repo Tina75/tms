@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visibale" :mask-closable="false" width="850">
+    <Modal v-model="visiable" :mask-closable="false" width="850" @on-visible-change="close">
       <p slot="header" style="text-align:center">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>拆单</span>
@@ -40,7 +40,6 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
-      visibale: true,
       isSeparate: false,
       columns1: [
         {
@@ -382,11 +381,6 @@ export default {
       cargoCostVal: 0
     }
   },
-  watch: {
-    visibale: function (val) {
-      !val && this.close()
-    }
-  },
 
   mounted: function () {
     this.getData()
@@ -405,7 +399,7 @@ export default {
       }).then((res) => {
         this.ok()
         this.$Message.success('拆单成功')
-        this.visibale = false
+        this.close()
       })
     },
     // 查货物详情

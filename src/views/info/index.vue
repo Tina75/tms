@@ -3,8 +3,8 @@
     <Col span="3">
     <Menu :active-name="typeName" style="width: 100%; background:rgba(243,245,249,1)">
       <MenuItem v-for="menu in menuList" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
-      <p class="menuTitle" style="margin-left: -5px;">{{menu.name}}</p>
-      <Badge v-if="menu.infoNum" :count="menu.infoNum" style="float:right;margin-top:-20px; width:30px;"></Badge>
+      <p style="margin-left:-20px;">{{menu.name}}
+      <Badge v-if="menu.infoNum" :count="menu.infoNum" style="float:right;width:30px;"></Badge></p>
       </MenuItem>
     </Menu>
     </Col>

@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visibale" :mask-closable="true" width="330" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="true" width="330" @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">生成对账单</p>
     <div class="create-data">
       <p><label>承运方：</label><span>{{partnerName}}</span></p>
@@ -29,8 +29,7 @@ export default {
   data () {
     return {
       startTime: 0,
-      endTime: 0,
-      visibale: true
+      endTime: 0
     }
   },
   methods: {
@@ -47,7 +46,7 @@ export default {
         }
       }).then(res => {
         this.ok()
-        this.visibale = false
+        this.close()
       }).catch(err => console.error(err))
     }
   }

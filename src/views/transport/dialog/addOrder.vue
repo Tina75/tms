@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visibale" :mask-closable="true" width="1036" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" width="1036" @on-visible-change="close">
     <p slot="header" style="text-align:center">添加订单</p>
 
     <Table :columns="columns"
@@ -22,7 +22,7 @@
 
     <div slot="footer" style="text-align: center;">
       <Button  type="primary" @click="ok">确定</Button>
-      <Button  type="default" @click.native="visibale = false">取消</Button>
+      <Button  type="default" @click.native="close">取消</Button>
     </div>
   </Modal>
 </template>
@@ -37,7 +37,6 @@ export default {
   mixins: [ BaseDialog, TransportBase ],
   data () {
     return {
-      visibale: true,
       loading: false,
       pageNo: 1,
       pageSize: 10,

@@ -186,7 +186,7 @@ export default {
         },
         {
           title: '承运商名称',
-          // key: 'name',
+          width: 200,
           render: (h, params) => {
             return h('div', [
               h('span', {
@@ -219,11 +219,14 @@ export default {
         },
         {
           title: '负责人',
-          key: 'carrierPrincipal'
+          key: 'carrierPrincipal',
+          ellipsis: true,
+          tooltip: true
         },
         {
           title: '联系电话',
-          key: 'carrierPhone'
+          key: 'carrierPhone',
+          width: 120
         },
         {
           title: '司机数',
