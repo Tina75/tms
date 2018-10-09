@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visibale" :mask-closable="false" width="360">
+    <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
       <p slot="header" style="text-align:center">
         <span>编辑</span>
       </p>
@@ -70,14 +70,7 @@ export default {
         transfereeName: { required: true, message: '请填写外转方' },
         payType: { required: true, message: '请选择付款方式' },
         transFee: { required: true, type: 'number', message: '请填写外转运费', trigger: 'blur' }
-      },
-      visibale: true
-    }
-  },
-
-  watch: {
-    visibale: function (val) {
-      !val && this.close()
+      }
     }
   },
 

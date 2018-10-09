@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visibale" :mask-closable="false" width="360">
+    <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
       <p slot="header" style="text-align:center">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>{{name}}</span>
@@ -32,8 +32,7 @@ export default {
       info: { name: '' },
       rules: {
         name: { required: true, message: '请填写回收人', trigger: 'blur' }
-      },
-      visibale: true
+      }
     }
   },
 
@@ -61,12 +60,6 @@ export default {
         total += item.receiptCount
       })
       return total
-    }
-  },
-
-  watch: {
-    visibale: function (val) {
-      !val && this.close()
     }
   },
 
@@ -100,7 +93,7 @@ export default {
         data: data
       }).then(() => {
         this.ok()
-        this.visibale = false
+        this.close()
         this.$Message.success(this.name + '成功')
       })
     }

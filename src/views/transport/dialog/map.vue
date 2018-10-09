@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visibale" :mask-closable="true" width="1000" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" width="1000" @on-visible-change="close">
     <p slot="header" style="text-align:center">位置</p>
 
     <div id="map"></div>
@@ -21,7 +21,6 @@ export default {
   mixins: [ BaseDialog ],
   data () {
     return {
-      visibale: true
     }
   },
   mounted () {

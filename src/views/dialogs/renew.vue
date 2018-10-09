@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visibale" :mask-closable="true" width="440" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" width="440" @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">{{title}}</p>
     <br>
     <b class="dialog-title">该版本将于<a>{{expirationTime | datetime}}</a>到期，到期后您将无法使用该软件</b>
@@ -15,7 +15,7 @@
       <p><a ><i class="icon font_family icon-ico-call"></i>400-788-5656</a></p>
     </div>
     <div slot="footer" style="text-align:center">
-      <Button  type="primary"  @click.native="visibale = false">我知道了</Button>
+      <Button  type="primary"  @click.native="close">我知道了</Button>
     </div>
   </Modal>
 </template>
@@ -31,8 +31,7 @@ export default {
       rules: {
         name: { required: true, message: '请填写姓名', trigger: 'blur' },
         phone: { required: true, message: '请填写手机号', trigger: 'blur' }
-      },
-      visibale: true
+      }
     }
   },
   methods: {
@@ -45,7 +44,7 @@ export default {
           //   data: this.info
           // }).then(() => {
           this.ok()
-          this.visibale = false
+          this.close()
           // })
         }
       })

@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visibale" :mask-closable="true" width="880" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="true" width="880" @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">对账单明细</p>
     <div class="order-list">
       <Row>
@@ -54,8 +54,7 @@ export default {
         orderNum: 100,
         totalFee: 1000.87,
         list: []
-      },
-      visibale: true
+      }
     }
   },
   computed: {

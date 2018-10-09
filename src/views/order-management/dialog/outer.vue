@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visibale" :mask-closable="false" width="360" class="outer-dialog">
+    <Modal v-model="visiable" :mask-closable="false" width="360" class="outer-dialog" @on-visible-change="close">
       <p slot="header" style="text-align:center">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>订单外转</span>
@@ -83,8 +83,7 @@ export default {
         transFee: [
           { required: true, type: 'number', message: '请填写外转运费' }
         ]
-      },
-      visibale: true
+      }
     }
   },
 
@@ -92,12 +91,6 @@ export default {
     ...mapGetters([
       'transferees'
     ])
-  },
-
-  watch: {
-    visibale: function (val) {
-      !val && this.close()
-    }
   },
 
   mounted: function () {
@@ -131,7 +124,7 @@ export default {
           }).then((res) => {
             this.ok()
             this.$Message.success('创建外转单成功')
-            this.visibale = false
+            this.close()
           })
         }
       })
