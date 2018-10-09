@@ -5,15 +5,18 @@ export default {
   data () {
     return {
       keywords: {
-        // status: null,
         consignerName: null,
         orderNo: null,
         waybillNo: null,
         customerOrderNo: null,
         startTime: null,
         endTime: null,
-        start: [],
-        end: []
+        start: '', // 始发地
+        end: '' // 目的地
+      },
+      cityCodes: {
+        startCodes: [], // 始发地codes
+        endCodes: [] // 目的地codes
       },
       times: ['', ''], // 下单开始结束时间
       recoveryTimes: ['', ''], // 回收开始结束时间
@@ -67,8 +70,8 @@ export default {
         waybillNo: this.keywords.waybillNo || null,
         customerOrderNo: this.keywords.customerOrderNo || null,
         // 地址搜索为最后一级区号
-        start: (this.keywords.start !== null && this.keywords.start.length) ? Number(this.keywords.start[this.keywords.start.length - 1]) : null,
-        end: (this.keywords.end !== null && this.keywords.end.length) ? Number(this.keywords.end[this.keywords.end.length - 1]) : null
+        start: (this.cityCodes.startCodes !== null && this.cityCodes.startCodes.length) ? this.cityCodes.startCodes[this.cityCodes.startCodes.length - 1] : null,
+        end: (this.cityCodes.endCodes !== null && this.cityCodes.endCodes.length) ? this.cityCodes.endCodes[this.cityCodes.endCodes.length - 1] : null
       }
       if (this.$route.path === '/order-management/order') { // 订单列表搜索
         key.status = this.keywords.status
@@ -106,8 +109,8 @@ export default {
         orderNo: null,
         waybillNo: null,
         customerOrderNo: null,
-        start: [],
-        end: []
+        start: '', // 始发地
+        end: '' // 目的地
       }
       // 订单列表状态字段status，回单列表状态字段receiptStatus, 时间搜索（不一致，根据路由判断）
       if (this.$route.path === '/order-management/order') {
@@ -126,6 +129,10 @@ export default {
         this.returnTimes = ['', '']
       }
       this.keywords = key
+      this.cityCodes = {
+        startCodes: '',
+        endCodes: ''
+      }
       if (!this.isSearching) return
       this.keyword = Object.assign({}, key, {
         start: null,

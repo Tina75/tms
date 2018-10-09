@@ -1,6 +1,6 @@
 <template>
   <Modal v-model="visibale" :mask-closable="true" width="360" @on-visible-change="close">
-    <p slot="header" style="text-align:center">{{name}}</p>
+    <p slot="header" class="dialog-title">{{name}}</p>
     <div style="text-align: center;">
       <Icon type="ios-information-circle" size="24" color="#FFBB44"></Icon>
       <span style="margin-left: 5px;">共选择了{{id.length}}条订单，确定{{name}}吗？</span>
@@ -74,4 +74,10 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
+  .dialog-title
+    text-align center
+    font-size 16px
+    font-family 'PingFangSC-Medium'
+    color rgba(47,50,62,1)
+    letter-spacing 1px
 </style>
