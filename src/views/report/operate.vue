@@ -49,6 +49,7 @@
           <div class="col">
             <DatePicker
               v-model="times"
+              :options="options"
               type="daterange"
               format="yyyy-MM-dd"
               placeholder="开始日期-结束日期"
@@ -114,6 +115,11 @@ export default {
       },
       keyword: {
         type: 1
+      },
+      options: {
+        disabledDate (date) {
+          return date && date.valueOf() > Date.now()
+        }
       },
       times: ['', ''],
       /* 订单状态 */
