@@ -136,7 +136,7 @@ export default {
           ok (value) {
             _this.info.transFee = value || 0
           },
-          cancel () {
+          closeParentDialog () {
             self.close()
           }
         }

@@ -200,7 +200,8 @@
               :remote="false"
               :local-options="carrierCars"
               class="detail-info-input"
-              @on-select="autoComplete" />
+              @on-select="autoComplete"
+              @input="carNoformatter" />
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型/车长：</span>
