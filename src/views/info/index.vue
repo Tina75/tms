@@ -268,9 +268,9 @@ export default {
     }
   },
   updated () {
-    this.menuList[0].infoNum = 8// this.$store.getters.MsgCount.sysNum
-    this.menuList[1].infoNum = 85// this.$store.getters.MsgCount.orderNum
-    this.menuList[2].infoNum = 1000// this.$store.getters.MsgCount.carrierNum
+    this.menuList[0].infoNum = this.$store.getters.MsgCount.sysNum
+    this.menuList[1].infoNum = this.$store.getters.MsgCount.orderNum
+    this.menuList[2].infoNum = this.$store.getters.MsgCount.carrierNum
     if (!this.batchBtnShow) {
       for (let index = 0; index < document.getElementsByClassName('checkboxItem').length; index++) {
         document.getElementsByClassName('checkboxItem')[index].children[1].innerText = ''
