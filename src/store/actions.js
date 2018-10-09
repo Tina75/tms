@@ -5,7 +5,7 @@ export const getUserInfo = ({ rootState, commit, state, dispatch }, data) => {
   return Server({
     url: '/set/userInfo',
     method: 'get'
-  }).then(({data}) => {
+  }).then(({ data }) => {
     commit('initUserInfo', data.data)
   }).catch(e => {
     console.log(e)
@@ -17,7 +17,7 @@ export const getCompanyInfo = ({ rootState, commit, state, dispatch }, data) => 
   return Server({
     url: '/set/companyInfo',
     method: 'get'
-  }).then(({data}) => {
+  }).then(({ data }) => {
     commit('initUserInfo', data.data)
   }).catch(e => {
     console.log(e)
