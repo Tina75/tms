@@ -8,9 +8,9 @@
       </MenuItem>
     </Menu>
     </Col>
-    <Col span="21" style="background:#fff; padding: 0 25px 50px 25px; overflow: auto;">
+    <Col span="21" style="background:#fff; padding: 0 25px 50px 25px; overflow: auto;height: inherit;">
     <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;">
-      <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute; left:20px;margin-top: 2px;"></span>
+      <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute; left:25px;margin-top: 2px;border-radius:3px;"></span>
       <span style="margin-left:35px; font-size: 16px; font-weight:600;">{{rightTitle}}</span>
       <div v-if="batchBtnShowAll">
         <span v-if="batchBtnShow" key="1" style="float:right; margin-top:-30px; margin-right:20px;">
@@ -134,7 +134,7 @@
         </p>
         <p style="margin-left:70px; margin-top: 10px;">
           <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
-        </p><p style="margin-top:23px; margin-left:50px;">确定要删除“{{messageInit.title}}”消息吗?</P>
+        </p><p style="margin-top:23px; margin-bottom:10px; margin-left:50px;">确定要删除“{{messageInit.title}}”消息吗?</P>
         </p>
         <div slot="footer">
           <Button type="primary" @click="removeSubForm">确定</Button>
@@ -147,7 +147,7 @@
         </p>
         <p style="margin-left:70px; margin-top: 10px;">
           <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
-        </p><p style="margin-top:23px; margin-left:50px;">确定要批量删除选中的消息吗?</P>
+        </p><p style="margin-top:23px;margin-bottom:10px; margin-left:50px;">确定要批量删除选中的消息吗?</P>
         </p>
         <div slot="footer">
           <Button type="primary" @click="removeSubFormSome">确定</Button>
@@ -160,7 +160,7 @@
         </p>
         <p style="margin-left:70px; margin-top: 10px;">
           <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
-        </p><p style="margin-top:23px; margin-left:50px;">确定要删除所有的“{{rightTitle}}”?</P>
+        </p><p style="margin-top:23px; margin-bottom:10px; margin-left:50px;">确定要删除所有的“{{rightTitle}}”?</P>
         </p>
         <div slot="footer">
           <Button type="primary" @click="removeSubFormAll">确定</Button>

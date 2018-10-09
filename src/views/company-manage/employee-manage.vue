@@ -18,7 +18,7 @@
         <p slot="header" style="text-align:center;font-size: 16px;">
           <span>{{editRoleModalTitle}}</span>
         </p>
-        <Form ref="formModal" :model="formModal" :rules="rulesRole" :label-width="80" style="padding:20px;height: 80px;">
+        <Form ref="formModal" :model="formModal" :rules="rulesRole" :label-width="80" style="padding:20px;height: 70px;">
           <FormItem label="角色名：" prop="name">
             <Input :maxlength="11" v-model="formModal.name" placeholder="请输入角色名" style="width:200px;"></Input>
           </FormItem>
@@ -31,8 +31,8 @@
     </Menu>
     </Col>
     <Col span="18" style="margin-left: 20px; max-height:850px; overflow-y:auto;">
-    <p class="rightTitle">{{rightTitle}}的权限
-    </p><div v-if="hasPower(140102)" class="saveRoleBtn">
+    <p v-if="rightTitle !== ''" class="rightTitle">{{rightTitle}}的权限</p>
+    <div v-if="hasPower(140102)" class="saveRoleBtn">
       <Button
         v-if="menuParam.type !== 1"
         :disabled="disSaveBtn"
@@ -51,7 +51,7 @@
       </p>
       <p style="margin-left:70px; margin-top: 10px;">
         <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
-      </p><p style="margin-top:23px; margin-left:50px;">确定删除'{{rightTitle}}'?</P>
+      </p><p style="margin-top:23px; margin-bottom:10px; margin-left:50px;">确定删除'{{rightTitle}}'?</P>
       </p>
       <div slot="footer">
         <Button type="primary" @click="removeFormRole">确定</Button>
@@ -380,13 +380,14 @@ export default {
   color: #515a6e;
 .temAll
   width: 100%
-  min-height: 1500px;
+  min-height: 1000px;
   overflow: auto;
   .leftMenu
-    min-height: 810px;
+    height: 836px;
+    overflow-y: hidden;
   .leftMenu :hover
-    max-height: 810px;
-    overflow-y: scroll;
+    max-height: 785px;
+    overflow-y: auto;
   .centerBtnDiv:hover
     overflow: hidden;
   .menu:hover
@@ -407,6 +408,7 @@ export default {
       width: 75%;
       float:left;
   .rightTitle
+    height: 55px;
     font-size: 20px;
     color: #333;
     line-height: 55px;
