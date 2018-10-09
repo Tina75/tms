@@ -314,7 +314,16 @@ export default {
         })
       }
     },
-    toDetail (data) {},
+    toDetail (data) {
+      this.openTab({
+        path: '/order-management/detail',
+        query: {
+          id: data.row.orderNo,
+          orderId: data.row.id,
+          from: 'order'
+        }
+      })
+    },
     loadData () {
       Server({
         url: '/finance/getUnverify',

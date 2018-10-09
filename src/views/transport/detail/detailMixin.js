@@ -259,6 +259,10 @@ export default {
       })
     },
 
+    carNoformatter () {
+      this.info.carNo = this.info.carNo.toUpperCase()
+    },
+
     // 根据状态设置按钮
     setBtnsWithStatus () {
       for (let i = 0; i < this.btnList.length; i++) {
@@ -291,11 +295,11 @@ export default {
           // 确认计费规则后返回金额(元)
           ok (charge) {
             self.payment.freightFee = charge || 0
-          },
-          // 在计费规则中点击去设置按钮后关闭该对话框
-          cancel () {
-            self.close()
           }
+          // 如果有两层对话框，在计费规则中点击去设置按钮后需要关闭第一层对话框
+          // closeParentDialog () {
+          // self.close()
+          // }
         }
       })
     },
