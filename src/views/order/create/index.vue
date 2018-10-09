@@ -853,7 +853,7 @@ export default {
         return
       }
       if (vm.statics.weight <= 0 || vm.statics.volume <= 0) {
-        this.$Message.warning('请先填写货物信息必要信息')
+        this.$Message.warning('请先填写货物必要信息')
         return
       }
       this.openDialog({
