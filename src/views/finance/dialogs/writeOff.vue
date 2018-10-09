@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visibale" :mask-closable="true" width="440" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="true" width="440" @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">核销</p>
     <div class="write-off-form">
       <Form ref="writeOffForm" :model="writeOffForm" :rules="validate" :label-width="100">
@@ -61,8 +61,7 @@ export default {
       validate: {
         actualFee: { required: true, message: '请填写实付金额', trigger: 'blur' },
         payType: { required: true, message: '请选择付款方式', trigger: 'change' }
-      },
-      visibale: true
+      }
     }
   },
   watch: {
@@ -90,7 +89,7 @@ export default {
             }
           }).then(res => {
             this.ok()
-            this.visibale = false
+            this.close()
           }).catch(err => console.error(err))
         }
       })

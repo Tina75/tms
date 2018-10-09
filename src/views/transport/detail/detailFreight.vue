@@ -49,7 +49,7 @@
           </i-col>
           <i-col span="10" offset="1">
             <span class="detail-field-title">司机：</span>
-            <span>{{ info.driverName + ' ' + info.driverPhone }}</span>
+            <span>{{ (info.driverName || '') + ' ' + (info.driverPhone || '') }}</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
@@ -200,7 +200,8 @@
               :remote="false"
               :local-options="carrierCars"
               class="detail-info-input"
-              @on-select="autoComplete" />
+              @on-select="autoComplete"
+              @input="carNoformatter" />
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型/车长：</span>
@@ -603,7 +604,7 @@ export default {
         this.logList = data.operaterLog
 
         this.status = this.statusFilter(data.waybill.status)
-        this.settlementType = data.waybill.settlementType.toString()
+        this.settlementType = data.waybill.settlementType ? data.waybill.settlementType.toString() : ''
         let temp = this.settlementPayInfo.map((item, i) => {
           if (!data.waybill.settlementPayInfo[i]) return item
           else {

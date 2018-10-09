@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="true" width="360" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
     <p slot="header" style="text-align:center">{{title}}</p>
     <Form ref="$form" :model="form" :rules="rules" :label-width="70" label-position="left" style="padding:0 20px;">
       <FormItem label="承运商：" prop="carrierName">
@@ -22,7 +22,7 @@
     </Form>
     <div slot="footer">
       <Button  type="primary"  @click="create">确定</Button>
-      <Button  type="default"  @click.native="visiable = false">取消</Button>
+      <Button  type="default"  @click.native="close">取消</Button>
     </div>
   </Modal>
 </template>
@@ -39,7 +39,6 @@ export default {
   mixins: [ BaseDialog ],
   data () {
     return {
-      visiable: true,
       carriers: [],
       carrierCars: [],
 
