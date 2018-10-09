@@ -1,7 +1,7 @@
 <template>
   <div class="dialog">
     <Modal v-model="visiable" :mask-closable="false" width="400" @on-visible-change="close">
-      <p slot="header" style="text-align:center">
+      <p slot="header" style="text-align:center;font-size: 16px;">
         <span>{{title}}</span>
       </p>
       <Form ref="formModal" :model="formModal" :rules="rulesModal" :label-width="100" label-position="left" style="padding: 25px;height: 200px;">

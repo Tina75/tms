@@ -2,7 +2,7 @@
   <div class="temAll">
     <Col span="4">
     <Menu :active-name="menuInitName" class="leftMenu" style="width:100%">
-      <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:50px;">
+      <div class="centerBtnDiv" style="border-bottom: 1px solid #e9e9e9;padding-bottom:50px;">
         <Button v-if="hasPower(140101)" type="primary" class="centerBtn" @click="createRole">新增角色</Button>
       </div>
       <div>
@@ -15,7 +15,7 @@
         </MenuItem>
       </div>
       <Modal v-model="createRoleModal" width="400">
-        <p slot="header" style="text-align:center">
+        <p slot="header" style="text-align:center;font-size: 16px;">
           <span>{{editRoleModalTitle}}</span>
         </p>
         <Form ref="formModal" :model="formModal" :rules="rulesRole" :label-width="80" style="padding:20px;height: 80px;">
@@ -46,7 +46,7 @@
     <Modal
       v-model="removeRoleModal"
       width="360">
-      <p slot="header" style="text-align:center">
+      <p slot="header" style="text-align:center;font-size: 16px;">
         <span>提示</span>
       </p>
       <p style="margin-left:70px; margin-top: 10px;">
@@ -61,7 +61,7 @@
     <Modal
       v-model="removeRoleModalFail"
       width="400">
-      <p slot="header" style="text-align:center">
+      <p slot="header" style="text-align:center;font-size: 16px;">
         <span>提示</span>
       </p>
       <P style="color:gray;">有员工属于该角色，暂时不能删除,如需删除，请先将</P>
@@ -387,6 +387,8 @@ export default {
   .leftMenu :hover
     max-height: 810px;
     overflow-y: scroll;
+  .centerBtnDiv:hover
+    overflow: hidden;
   .menu:hover
     background: #e3fcfc;
     color: #515a6e;
@@ -424,6 +426,11 @@ export default {
         width: 252px;
         height: 346px;
         margin-top: -15px;
+        overflow:hidden;
+      .treeContentDiv:hover
+        width: 252px;
+        height: 346px;
+        margin-top: -15px;
         overflow-y:auto;
         overflow-x:auto;
   .saveRoleBtn
@@ -438,6 +445,8 @@ export default {
     height:35px;
     background:rgba(0,164,189,1);
     border-radius:2px;
+  .centerBtn:hover
+    overflow: hidden;
   .configBtnItem
       float: right;
       margin-top: -20px;
@@ -448,5 +457,4 @@ export default {
       color: #00A4BD;
       font-size: 12px;
       margin-left: 10px;
-      z-index: 99
 </style>

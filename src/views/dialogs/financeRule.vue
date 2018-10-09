@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
+  <Modal v-model="visiable" :z-index="zIndex" :mask-closable="false" width="360" @on-visible-change="close">
     <p slot="header" style="text-align:center">计费规则</p>
     <Form v-if="!ruleEmpty" ref="$form" :model="ruleForm" :rules="rules" :label-width="80">
       <FormItem label="计费规则：" prop="ruleIndex">
@@ -43,6 +43,7 @@ export default {
       ruleOptions: [],
       ruleEmpty: false,
       charge: 0,
+      zIndex: new Date().getTime(),
       rules: {
         ruleIndex: [{ validator: chargeValidate }]
       }
@@ -96,7 +97,7 @@ export default {
 
     gotoSetRules () {
       this.close()
-      this.cancel()
+      if (this.closeParentDialog) this.closeParentDialog()
       this.openTab({
         title: '计费规则',
         path: '/finance/rules'
