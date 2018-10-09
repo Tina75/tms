@@ -18,7 +18,7 @@
         <p slot="header" style="text-align:center;font-size: 16px;">
           <span>{{editRoleModalTitle}}</span>
         </p>
-        <Form ref="formModal" :model="formModal" :rules="rulesRole" :label-width="80" style="padding:20px;height: 80px;">
+        <Form ref="formModal" :model="formModal" :rules="rulesRole" :label-width="80" style="padding:20px;height: 70px;">
           <FormItem label="角色名：" prop="name">
             <Input :maxlength="11" v-model="formModal.name" placeholder="请输入角色名" style="width:200px;"></Input>
           </FormItem>
@@ -51,7 +51,7 @@
       </p>
       <p style="margin-left:70px; margin-top: 10px;">
         <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
-      </p><p style="margin-top:23px; margin-left:50px;">确定删除'{{rightTitle}}'?</P>
+      </p><p style="margin-top:23px; margin-bottom:10px; margin-left:50px;">确定删除'{{rightTitle}}'?</P>
       </p>
       <div slot="footer">
         <Button type="primary" @click="removeFormRole">确定</Button>
@@ -387,7 +387,7 @@ export default {
     overflow-y: hidden;
   .leftMenu :hover
     max-height: 785px;
-    overflow-y: scroll;
+    overflow-y: auto;
   .centerBtnDiv:hover
     overflow: hidden;
   .menu:hover
