@@ -426,6 +426,4 @@ export default {
 
   .detail-field-title-sm
     width 75px
-  .detail-payment-input
-    width 100px
 </style>
