@@ -349,7 +349,7 @@ export default {
           ok (charge) {
             self.payment.freightFee = charge || 0
           },
-          cancel () {
+          closeParentDialog () {
             self.close()
           }
         }

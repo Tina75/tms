@@ -103,7 +103,7 @@ export default {
 
     gotoSetRules () {
       this.close()
-      this.cancel()
+      if (this.closeParentDialog) this.closeParentDialog()
       this.openTab({
         title: '计费规则',
         path: '/finance/rules'
