@@ -165,6 +165,16 @@ export default {
         })
       }).catch(err => console.error(err))
     },
+    toDetail (data) {
+      this.openTab({
+        path: '/order-management/detail',
+        query: {
+          id: data.row.orderNo,
+          orderId: data.row.id,
+          from: 'order'
+        }
+      })
+    },
     resetPageSize () {
       this.listQuery.pageNo = 1
       this.getOrderList()
