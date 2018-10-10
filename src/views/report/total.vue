@@ -45,6 +45,9 @@ export default {
   components: {
     PageTable
   },
+  metaInfo: {
+    title: '营业额汇总表'
+  },
   data: function () {
     return {
       btnGroup: [
