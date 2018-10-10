@@ -262,30 +262,31 @@ export default {
         endTime: '' // 结束时间
       },
 
+      tableActionColumn: {
+        title: '操作',
+        key: 'action',
+        width: 60,
+        fixed: 'left',
+        extra: true,
+        render: (h, p) => {
+          if (p.row.status === 1 && this.hasPower(120201)) {
+            return h('a', {
+              on: {
+                click: () => {
+                  this.billPickup(p.row.pickUpId)
+                }
+              }
+            }, '提货')
+          }
+        }
+      },
+
       tableColumns: [
         {
           type: 'selection',
           width: 50,
           align: 'center',
           fixed: 'left'
-        },
-        {
-          title: '操作',
-          key: 'do',
-          width: 60,
-          fixed: 'left',
-          extra: true,
-          render: (h, p) => {
-            if (p.row.status === 1 && this.hasPower(120201)) {
-              return h('a', {
-                on: {
-                  click: () => {
-                    this.billPickup(p.row.pickUpId)
-                  }
-                }
-              }, '提货')
-            }
-          }
         },
         {
           title: '提货单号',
@@ -325,7 +326,7 @@ export default {
         {
           title: '车牌号',
           key: 'carNo',
-          width: 100
+          width: 120
         },
         {
           title: '合计运费',
@@ -338,18 +339,18 @@ export default {
         {
           title: '体积（方）',
           key: 'volume',
-          width: 100
+          width: 120
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          width: 100
+          width: 120
         },
         {
           title: '创建时间',
           key: 'createTimeLong',
           sortable: 'custom',
-          width: 160,
+          minWidth: 160,
           render: (h, p) => {
             return this.tableDataRender(h, this.timeFormatter(p.row.createTimeLong), true)
           }
@@ -365,7 +366,7 @@ export default {
         {
           title: '货值',
           key: 'cargoCost',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
           }
@@ -373,7 +374,7 @@ export default {
         {
           title: '结算方式',
           key: 'settlementType',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, this.payTypeFormatter(p.row.settlementType))
           }
@@ -396,7 +397,7 @@ export default {
         {
           title: '订单数',
           key: 'orderCnt',
-          width: 100
+          width: 120
         }
       ],
       extraColumns: [
@@ -493,12 +494,16 @@ export default {
     setTabStatus (tab) {
       switch (tab) {
         case '全部':
+          this.triggerTableActionColumn(true)
           return
         case '待提货':
+          this.triggerTableActionColumn(true)
           return 1
         case '提货中':
+          this.triggerTableActionColumn(false)
           return 2
         case '已提货':
+          this.triggerTableActionColumn(false)
           return 3
         default:
       }

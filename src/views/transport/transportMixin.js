@@ -43,8 +43,8 @@ export default {
     if (columns) this.extraColumns = JSON.parse(columns)
 
     let tab
-    if (this.$route.query.tab) {
-      tab = this.$route.query.tab
+    if (this.$route.query.tab && this.$route.query.tab < this.tabList.length) {
+      tab = this.tabList[this.$route.query.tab].name
       window.sessionStorage.setItem('TABHEADER_' + this.tabType, tab)
     } else {
       tab = window.sessionStorage['TABHEADER_' + this.tabType]
@@ -66,6 +66,15 @@ export default {
         return false
       }
       return true
+    },
+
+    triggerTableActionColumn (show) {
+      const hasAction = this.tableColumns[1].key === 'action'
+      if (hasAction && !show) { // 移除action
+        this.tableColumns.splice(1, 1)
+      } else if (!hasAction && show) { // 添加action
+        this.tableColumns.splice(1, 0, this.tableActionColumn)
+      }
     },
 
     fetchData () {
