@@ -31,7 +31,7 @@ export default {
       xData: [],
       yData: [],
 
-      linkto: url.OPERATE_REPORT
+      linkto: url.OPERATE_REPORT + '?tab=7'
     }
   },
 
