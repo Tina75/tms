@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visibale" :mask-closable="false" width="360">
+    <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
       <p slot="header" class="dialog-title">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>{{name}}</span>
@@ -107,5 +107,6 @@ export default {
   text-align center
   font-size 16px
   font-family 'PingFangSC-Medium'
+  font-weight 700
   color rgba(47,50,62,1)
 </style>

@@ -2,6 +2,7 @@ import MoneyInput from '../components/MoneyInput'
 import Server from '@/libs/js/server'
 import Float from '@/libs/js/float'
 import { CAR } from '@/views/client/client'
+import { validateCityies } from '@/libs/constant/cityValidator'
 
 export default {
   data () {
@@ -86,7 +87,7 @@ export default {
                   suffix: false
                 },
                 style: {
-                  width: '60px'
+                  width: '70px'
                 },
                 on: {
                   'on-blur': (money) => {
@@ -295,7 +296,7 @@ export default {
         this.$Message.error('请输入目的地')
         return false
       }
-      if (this.info.start !== undefined || this.info.end !== undefined) return this.checkPlace()
+      if (this.info.start !== undefined || this.info.end !== undefined) return validateCityies(this.startCodes, this.endCodes)
       if (this.pageName === 'pickup' && !this.info.carrierName) {
         this.$Message.error('请输入承运商')
         return false

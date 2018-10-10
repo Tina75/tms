@@ -29,7 +29,7 @@ export default {
     mode: {
       type: String,
       required: true,
-      validator: (value) => ['carrier', 'driver', 'carNo'].indexOf(value) !== -1
+      validator: (value) => ['carrier', 'driver', 'carNo', 'consigner', 'transferee'].indexOf(value) !== -1
     },
     // 承运商id
     carrierId: [ String, Number ]
@@ -64,6 +64,14 @@ export default {
         case 'carNo':
           this.maxLength = 8
           this.getCars()
+          return
+        case 'consigner':
+          this.maxLength = 20
+          this.getConsigners()
+          return
+        case 'transferee':
+          this.maxLength = 20
+          this.getTransferees()
       }
     },
 
@@ -118,6 +126,33 @@ export default {
           return item
         })
         this.$emit('on-option-loaded', this.options)
+      })
+    },
+
+    // 查询客户
+    getConsigners () {
+      Server({
+        url: '/consigner/list',
+        method: 'get'
+      }).then(res => {
+        this.options = res.data.data.list.map(item => {
+          item.value = item.name
+          return item
+        })
+      })
+    },
+
+    // 查询外装方
+    getTransferees () {
+      Server({
+        url: '/transferee/listOrderbyUpdateTimeDesc',
+        method: 'get',
+        data: { type: 1 }
+      }).then(res => {
+        this.options = res.data.data.transfereeList.map(item => {
+          item.value = item.name
+          return item
+        })
       })
     },
 

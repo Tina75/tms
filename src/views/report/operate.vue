@@ -42,7 +42,7 @@
         </Col>
           <Col span="6">
           <div class="col">
-            <area-select v-model="keywords.end"  placeholder="请输入目的地" style="width: 100%"></area-select>
+            <area-select v-model="keywords.end" placeholder="请输入目的地" style="width: 100%"></area-select>
           </div>
         </Col>
           <Col span="6">

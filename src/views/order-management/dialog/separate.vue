@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visibale" :mask-closable="false" width="850">
+    <Modal v-model="visiable" :mask-closable="false" width="850" @on-visible-change="close">
       <p slot="header" class="dialog-title">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>拆单</span>
@@ -427,6 +427,7 @@ export default {
   text-align center
   font-size 16px
   font-family 'PingFangSC-Medium'
+  font-weight 700
   color rgba(47,50,62,1)
   letter-spacing 1px
 .order-number

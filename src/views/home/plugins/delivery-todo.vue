@@ -5,8 +5,6 @@
       :extra="total"
       title="送货待办"
       label="提示文字"
-      to="/transport/waybill"
-      page-title="运单管理"
     >
     </OrderCard>
   </div>
@@ -22,6 +20,7 @@
  */
 import OrderCard from '../components/OrderCard.vue'
 import mixin from './mixin.js'
+import TMSUrl from '@/libs/constant/url.js'
 
 export default {
   name: 'delivery-todo',
@@ -32,10 +31,10 @@ export default {
   data () {
     return {
       data: [
-        { id: 'waitDispatchOrderCnt', name: '待送货调度订单数量', value: 0, tab: '全部' },
-        { id: 'waitAssignCarCnt', name: '待派车订单数量', value: 0, tab: '待派车' },
-        { id: 'waitSendCarCnt', name: '待发运订单数量', value: 0, tab: '待发运' },
-        { id: 'inTransportCnt', name: '运输中订单数量', value: 0, tab: '在途' }
+        { id: 'waitDispatchOrderCnt', name: '待送货调度订单数量', value: 0, tab: '2', href: TMSUrl.ORDER_MANAGEMENT, title: '订单管理' },
+        { id: 'waitAssignCarCnt', name: '待派车订单数量', value: 0, tab: '1', href: TMSUrl.TANSPORT_ORDER, title: '运单管理' },
+        { id: 'waitSendCarCnt', name: '待发运订单数量', value: 0, tab: '2', href: TMSUrl.TANSPORT_ORDER, title: '运单管理' },
+        { id: 'inTransportCnt', name: '运输中订单数量', value: 0, tab: '3', href: TMSUrl.TANSPORT_ORDER, title: '运单管理' }
       ]
     }
   },
