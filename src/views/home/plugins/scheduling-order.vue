@@ -1,6 +1,6 @@
 <template>
   <div is="i-col" :span="12" class="i-mt-15 page-home__padding-8">
-    <blank-card :to="linkto" title="调度订单数" page-title="运营报表">
+    <blank-card :to="linkto" title="调度订单数" page-title="运营报表" tab="7">
       <div>
         <ECharts :options="options" :auto-resize="true"></ECharts>
       </div>
@@ -31,7 +31,7 @@ export default {
       xData: [],
       yData: [],
 
-      linkto: url.OPERATE_REPORT + '?tab=7'
+      linkto: url.OPERATE_REPORT
     }
   },
 

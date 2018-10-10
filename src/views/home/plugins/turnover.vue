@@ -1,6 +1,6 @@
 <template>
   <div is="i-col" :span="24" class="i-mt-15 page-home__padding-8">
-    <blank-card :to="linkto" title="营业额通知（近七日）" page-title="营业额汇总表">
+    <blank-card :to="linkto" title="营业额通知（近七日）" page-title="营业额汇总表" tab="7">
       <div>
         <ECharts :options="options" :auto-resize="true"></ECharts>
       </div>
@@ -32,7 +32,7 @@ export default {
       yTotalData: [],
       yCountData: [],
 
-      linkto: url.TOTAL_REPORT + '?tab=7'
+      linkto: url.TOTAL_REPORT
     }
   },
 
