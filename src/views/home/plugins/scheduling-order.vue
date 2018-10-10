@@ -67,7 +67,7 @@ export default {
         },
 
         yAxis: {
-          name: '万',
+          name: '笔',
           type: 'value',
           nameTextStyle: {
             padding: [0, 25, 0, 0]
