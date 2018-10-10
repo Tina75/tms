@@ -63,13 +63,13 @@ export default {
           { required: true, message: '货物名称不能为空', trigger: 'blur' }
         ],
         cargoCost: [
-          { type: 'string', message: '必须为大于等于0的数,且精确到两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
+          { type: 'string', message: '必须为大于等于0的数,最多两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
         ],
         weight: [
-          { type: 'string', message: '必须为大于等于0的数,且精确到两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
+          { type: 'string', message: '必须为大于等于0的数,最多两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
         ],
         volume: [
-          { type: 'string', message: '必须为大于等于0的数,且精确到一位小数', pattern: /^(\+)?\d+(\.\d)?$/, trigger: 'blur' }
+          { type: 'string', message: '必须为大于等于0的数,最多一位小数', pattern: /^(\+)?\d+(\.\d)?$/, trigger: 'blur' }
         ]
       }
     }
