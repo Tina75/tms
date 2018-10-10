@@ -144,7 +144,7 @@ export default {
           key: 'orderNum'
         },
         {
-          title: '应收总额',
+          title: this.scene === 1 ? '应收总额' : '应付总额',
           key: 'calcTotalFeeText'
         },
         {
@@ -203,7 +203,7 @@ export default {
           title: '结算方式',
           width: 110,
           key: 'settleTypeDesc',
-          filters: this.sence === 2 ? [
+          filters: this.scene === 2 ? [
             {
               label: '按单结算',
               value: '按单结算'
@@ -295,6 +295,7 @@ export default {
           name: 'finance/dialogs/stepPay',
           data: {
             id: data.row.id,
+            scene: this.scene,
             needPay: data.row.totalFeeText,
             settleTypeDesc: data.row.settleTypeDesc
           },
@@ -307,6 +308,7 @@ export default {
             id: data.row.id,
             verifyType: 1,
             isOil: 0,
+            scene: this.scene,
             needPay: data.row.totalFeeText,
             settleTypeDesc: data.row.settleTypeDesc
           },
