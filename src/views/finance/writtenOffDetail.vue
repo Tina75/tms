@@ -203,21 +203,21 @@ export default {
           this.openTab({
             title: data.row.orderNo,
             path: '/transport/detail/detailFreight',
-            query: { id: data.row.id} // id 或 no 二选一
+            query: {id: data.row.id} // id 或 no 二选一
           })
           break
         case 3:
           this.openTab({
             title: data.row.orderNo,
             path: '/transport/detail/detailPickup',
-            query: { id: data.row.id}
+            query: {id: data.row.id}
           })
           break
         case 4:
           this.openTab({
             title: data.row.orderNo,
             path: '/transport/detail/detailOuter',
-            query: { id: data.row.id}
+            query: {id: data.row.id}
           })
           break
       }
