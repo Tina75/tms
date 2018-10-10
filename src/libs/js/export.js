@@ -48,7 +48,7 @@ instance.interceptors.response.use((res) => {
 
     try {
       const resJson = JSON.parse(resStr)
-      if (resJson && resJson.code) {
+      if (resJson && resJson.code && resJson.code === 10000) {
         code = resJson.code
         msg = resJson.msg
       }

@@ -56,7 +56,7 @@
                 <div class="item-remove">
                   <Icon type="md-remove-circle" @click="removeItem(index)"/>
                 </div>
-                <Collapse v-model="ruleShowIndex" class="rule-content">
+                <Collapse v-model="item.showRule" class="rule-content">
                   <div class="rule-route">
                     <Row :gutter="20">
                       <Col span="12">
@@ -167,7 +167,6 @@ export default {
   data () {
     return {
       active: '1',
-      ruleShowIndex: '1',
       unitMap: {
         1: '吨',
         2: '方'
@@ -274,6 +273,7 @@ export default {
       this.ruleDetail.details.push({
         departure: '',
         destination: '',
+        showRule: (this.ruleDetail.details.length + 1) + '',
         chargeRules: [
           { base: '', price: '' }
         ]
@@ -301,6 +301,7 @@ export default {
           })
         })
       }).then(res => {
+        this.$Message.success('保存成功')
         this.getRules()
       }).catch(err => console.error(err))
     },
@@ -339,10 +340,11 @@ export default {
         ruleId: data.ruleId,
         ruleType: data.detail.ruleType ? (data.detail.ruleType + '') : '1',
         ruleName: data.ruleName,
-        details: Object.assign([], data.detail.rules.map(item => {
+        details: Object.assign([], data.detail.rules.map((item, index) => {
           return {
             departure: item.departure + '',
             destination: item.destination + '',
+            showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
               return {
                 base: el.base / 100,
@@ -409,7 +411,7 @@ export default {
             .rule-route
               display: block
               position: absolute
-              width: 400px
+              width: 500px
               top: 10px
               left: 20px
               z-index: 101
