@@ -385,6 +385,7 @@ export default {
               data: { transIds: [ self.id ] }
             }).then(res => {
               self.$Message.success('操作成功')
+              self.fetchData()
             }).catch(err => console.error(err))
           }
         }
