@@ -18,13 +18,13 @@
             <Radio v-for="(value, key) in payTypeMap" :key="key" :label="key">{{value}}</Radio>
           </RadioGroup>
         </FormItem>
-        <FormItem v-if="writeOffForm.payType !== '1'" :label="accountMap[writeOffForm.payType]">
+        <FormItem v-if="writeOffForm.payType !== '1'" :label="accountMap[writeOffForm.payType]" prop="account">
           <Input v-model="writeOffForm.account" placeholder="请输入" />
         </FormItem>
-        <FormItem v-if="writeOffForm.payType === '2'" label="开户行：">
+        <FormItem v-if="writeOffForm.payType === '2'" label="开户行：" prop="bankBranch">
           <Input v-model="writeOffForm.bankBranch" placeholder="请输入" />
         </FormItem>
-        <FormItem label="备注：">
+        <FormItem label="备注：" prop="remark">
           <Input v-model="writeOffForm.remark" type="textarea" placeholder="请输入" />
         </FormItem>
       </Form>

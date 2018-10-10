@@ -246,7 +246,7 @@ export default {
       const _this = this
       this.$Modal.confirm({
         title: '提示',
-        content: '确认从删除该条规则吗？',
+        content: '确认删除该条规则吗？',
         okText: '确认',
         cancelText: '取消',
         async onOk () {
@@ -283,27 +283,39 @@ export default {
       this.ruleDetail.details.splice(index, 1)
     },
     saveRules () {
-      Server({
-        url: '/finance/charge/updateRule',
-        method: 'post',
-        data: Object.assign({}, this.ruleDetail, {
-          details: this.ruleDetail.details.map(item => {
-            return {
-              departure: item.departure[item.departure.length - 1],
-              destination: item.destination[item.destination.length - 1],
-              chargeRules: item.chargeRules.map(el => {
+      const _this = this
+      this.$Modal.confirm({
+        title: '提示',
+        content: '确认保存该条规则吗？',
+        okText: '确认',
+        cancelText: '取消',
+        async onOk () {
+          Server({
+            url: '/finance/charge/updateRule',
+            method: 'post',
+            data: Object.assign({}, _this.ruleDetail, {
+              details: _this.ruleDetail.details.map(item => {
                 return {
-                  base: parseFloat(el.base) * 100,
-                  price: parseFloat(el.price) * 100
+                  departure: item.departure[item.departure.length - 1],
+                  destination: item.destination[item.destination.length - 1],
+                  chargeRules: item.chargeRules.map(el => {
+                    return {
+                      base: parseFloat(el.base) * 100,
+                      price: parseFloat(el.price) * 100
+                    }
+                  })
                 }
               })
-            }
-          })
-        })
-      }).then(res => {
-        this.$Message.success('保存成功')
-        this.getRules()
-      }).catch(err => console.error(err))
+            })
+          }).then(res => {
+            _this.$Message.success('保存成功')
+            _this.getRules()
+          }).catch(err => console.error(err))
+        },
+        async onCancel () {
+          _this.getRules()
+        }
+      })
     },
     switchTab () {
       this.rulesQuery = {
