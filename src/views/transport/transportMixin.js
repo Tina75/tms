@@ -43,8 +43,8 @@ export default {
     if (columns) this.extraColumns = JSON.parse(columns)
 
     let tab
-    if (this.$route.query.tab) {
-      tab = this.$route.query.tab
+    if (this.$route.query.tab && this.$route.query.tab < this.tabList.length) {
+      tab = this.tabList[this.$route.query.tab].name
       window.sessionStorage.setItem('TABHEADER_' + this.tabType, tab)
     } else {
       tab = window.sessionStorage['TABHEADER_' + this.tabType]
