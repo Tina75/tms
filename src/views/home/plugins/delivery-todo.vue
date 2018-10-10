@@ -31,7 +31,7 @@ export default {
   data () {
     return {
       data: [
-        { id: 'waitDispatchOrderCnt', name: '待送货调度订单数量', value: 0, tab: '2', href: TMSUrl.ORDER_MANAGEMENT, title: '订单管理' },
+        { id: 'waitDispatchOrderCnt', name: '待送货调度订单数量', value: 0, tab: '1', href: TMSUrl.DISPATCH_PANEL, title: '调度工作台' },
         { id: 'waitAssignCarCnt', name: '待派车订单数量', value: 0, tab: '1', href: TMSUrl.TANSPORT_ORDER, title: '运单管理' },
         { id: 'waitSendCarCnt', name: '待发运订单数量', value: 0, tab: '2', href: TMSUrl.TANSPORT_ORDER, title: '运单管理' },
         { id: 'inTransportCnt', name: '运输中订单数量', value: 0, tab: '3', href: TMSUrl.TANSPORT_ORDER, title: '运单管理' }
