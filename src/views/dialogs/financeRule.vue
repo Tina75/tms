@@ -103,7 +103,8 @@ export default {
       if (this.closeParentDialog) this.closeParentDialog()
       this.openTab({
         title: '计费规则',
-        path: '/finance/rules'
+        path: '/finance/rules',
+        query: { tab: this.partnerType - 1 }
       })
     }
   }
