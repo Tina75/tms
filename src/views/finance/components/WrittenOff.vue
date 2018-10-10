@@ -181,17 +181,21 @@ export default {
       }
     },
     exportWrittenOff () {
-      Export({
-        url: '/finance/verify/export',
-        method: 'post',
-        data: {
-          verifyIds: this.selectedIds.join(','),
-          partnerType: this.scene
-        },
-        fileName: '核销单'
-      }).then(res => {
-        this.$Message.success('导出成功')
-      }).catch(err => console.error(err))
+      if (this.selectedIds.length > 0) {
+        Export({
+          url: '/finance/verify/export',
+          method: 'post',
+          data: {
+            verifyIds: this.selectedIds.join(','),
+            partnerType: this.scene
+          },
+          fileName: '核销单'
+        }).then(res => {
+          this.$Message.success('导出成功')
+        }).catch(err => console.error(err))
+      } else {
+        this.$Message.warning('请选择1条以上的数据')
+      }
     },
     toDetail (data) {
       this.openTab({

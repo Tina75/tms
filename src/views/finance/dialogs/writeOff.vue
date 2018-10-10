@@ -6,10 +6,10 @@
         <FormItem v-if="settleTypeDesc" label="结算方式：">
           <p>{{settleTypeDesc}}</p>
         </FormItem>
-        <FormItem :label="scene === 1 ? '应收金额' : '应付金额'">
+        <FormItem :label="scene === 1 ? '应收金额：' : '应付金额：'">
           <p><span>{{needPay}}</span>元</p>
         </FormItem>
-        <FormItem :label="scene === 1 ? '实收金额' : '实付金额'" prop="actualFee">
+        <FormItem :label="scene === 1 ? '实收金额：' : '实付金额：'" prop="actualFee">
           <Input v-model="writeOffForm.actualFee" placeholder="请输入" />
         </FormItem>
         <FormItem label="付款方式：" prop="payType">
@@ -56,10 +56,10 @@ export default {
         4: '支付宝'
       },
       accountMap: {
-        2: '银行卡卡号',
-        3: '微信号',
-        4: '支付宝账号',
-        5: '油卡卡号'
+        2: '银行卡卡号：',
+        3: '微信号：',
+        4: '支付宝账号：',
+        5: '油卡卡号：'
       },
       writeOffForm: {
         actualFee: '',
