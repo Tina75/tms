@@ -396,31 +396,31 @@ export default {
         case 4:
           this.openTab({
             path: '/order-management/order',
-            query: { id: '订单管理' }
+            title: '订单管理'
           })
           break
         case 5:
           this.openTab({
             path: '/order-management/receipt',
-            query: { id: '回单管理' }
+            title: '回单管理'
           })
           break
         case 6:
           this.openTab({
             path: '/transport/waybill',
-            query: { id: '运单管理' }
+            title: '运单管理'
           })
           break
         case 7:
           this.openTab({
             path: '/transport/receiveOrder',
-            query: { id: '提货管理' }
+            title: '提货管理'
           })
           break
         case 8:
           this.openTab({
             path: '/transport/outerOrder',
-            query: { id: '外转单管理' }
+            title: '外转单管理'
           })
           break
       }
@@ -524,6 +524,7 @@ export default {
   width: 630px;
   color: #777B89
   font-size:12px;
+  font-family: PingFangSC-Regular;
 .msgContent
   cursor: pointer;
 .msgConfigBtn
