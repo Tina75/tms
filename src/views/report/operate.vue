@@ -533,6 +533,11 @@ export default {
       'clients'
     ])
   },
+  mounted () {
+    if (this.$route.query.tab) { // 首页跳转来的
+      this.showSevenDate()
+    }
+  },
   methods: {
     ...mapActions([
       'getClients'
@@ -614,6 +619,19 @@ export default {
     handleTimeChange (val) {
       this.keywords.startTime = val[0]
       this.keywords.endTime = val[1]
+    },
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
+    },
+    showSevenDate () {
+      let now = new Date().getTime()
+      this.keywords.startTime = this.formatDate(now - 7 * 24 * 60 * 60 * 1000)
+      this.keywords.endTime = this.formatDate(now)
+      this.times = [this.keywords.startTime, this.keywords.endTime]
+      this.keyword = {
+        startTime: this.keywords.startTime,
+        endTime: this.keywords.endTime
+      }
     }
   }
 }
