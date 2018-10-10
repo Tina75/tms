@@ -216,6 +216,7 @@ export default {
                       methods: {
                         ok () {
                           _this._carrierListDriver() // 刷新页面
+                          _this._carrierListCar() // 车辆列表也要刷新
                         }
                       }
                     })
@@ -372,6 +373,7 @@ export default {
                             if (res.data.code === CODE) {
                               _this.$Message.success(res.data.msg)
                               _this._carrierListCar() // 刷新页面
+                              _this._carrierListDriver() // 司机列表也要刷新
                             } else {
                               _this.$Message.error(res.data.msg)
                             }
