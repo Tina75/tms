@@ -1,7 +1,7 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visiable" :mask-closable="false" width="1036" @on-visible-change="close">
-      <p slot="header" style="text-align:center">
+    <Modal v-model="visibale" :mask-closable="false" width="1036">
+      <p slot="header" class="dialog-title">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>{{name}}</span>
       </p>
@@ -13,7 +13,7 @@
           <area-select v-model="send.end" :deep="true" style="width:180px"></area-select>
         </FormItem>
       </Form>
-      <Form v-else ref="pick" :model="pick" :rules="pickRules" :label-width="60" inline label-position="left">
+      <Form v-else ref="pick" :model="pick" :rules="pickRules" :label-width="70" inline label-position="left">
         <FormItem label="承运商" prop="carrierName">
           <SelectInput
             v-model="pick.carrierName"
@@ -280,7 +280,7 @@ export default {
             start: Number(this.send.start[this.send.start.length - 1]),
             end: Number(this.send.end[this.send.end.length - 1])
           }
-          const data = Object.assign(sendCodes, {orderIds: this.orderIds})
+          const data = Object.assign(sendCodes, { orderIds: this.orderIds })
           Server({
             url: 'waybill/create',
             method: 'post',
@@ -299,7 +299,7 @@ export default {
         console.log(valid)
         console.log(this.pick)
         if (valid) {
-          const data = Object.assign(this.pick, {orderIds: this.orderIds})
+          const data = Object.assign(this.pick, { orderIds: this.orderIds })
           Server({
             url: 'load/bill/create',
             method: 'post',
@@ -332,9 +332,12 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
-.dialog
-  p
-    text-align center
+.dialog-title
+  text-align center
+  font-size 16px
+  font-family 'PingFangSC-Medium'
+  color rgba(47,50,62,1)
+  letter-spacing 1px
 .table-footer
   height 48px
   border 1px solid #dcdee2

@@ -32,7 +32,7 @@ export function consignerUpdate (data) {
       'Content-Type': 'application/json'
     },
     method: 'post',
-    data: Object.assign(data, {payType: data.payType || ''})
+    data: Object.assign(data, { payType: data.payType || '' })
   })
 }
 
