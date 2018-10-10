@@ -122,6 +122,9 @@ export default {
   name: 'profit',
   components: {
   },
+  metaInfo: {
+    title: '利润报表'
+  },
   data: function () {
     return {
       btnGroup: [
