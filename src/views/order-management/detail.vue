@@ -647,6 +647,7 @@ export default {
   .ivu-btn
     margin-left 15px
     width 80px
+    height 35px
   .ivu-btn-default
     background #F9F9F9
   .ivu-row

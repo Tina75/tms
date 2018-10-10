@@ -231,6 +231,18 @@ export default {
     formatterAddress (str) {
       let dot = str.substring(12)
       return str.replace(dot, ' ...')
+    },
+    // 在途、已到货、已回单、已返厂取消操作栏
+    deleteOperateCol () {
+      if (this.tableColumns[1].title === '操作') {
+        this.operateCol = this.tableColumns.splice(1, 1)
+      }
+    },
+    // 全部、待提货、待调度、待回收、待返厂加上操作栏
+    addOperateCol () {
+      if (this.tableColumns[1].title !== '操作') {
+        this.tableColumns.splice(1, 0, this.operateCol[0])
+      }
     }
   }
 }
