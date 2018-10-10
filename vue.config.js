@@ -36,7 +36,6 @@ module.exports = {
     devtool: 'source-map',
     externals: {
       'vue': 'Vue',
-      'iview': 'iview',
       'lodash': '_',
       'BMap': 'BMap'
     }

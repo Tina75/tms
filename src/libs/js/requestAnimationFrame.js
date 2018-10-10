@@ -1,3 +1,11 @@
+/**
+ * 动画函数，fork from vue-count-to
+ * @Author: mayousheng:Y010220
+ * @Date: 2018-10-09 15:36:52
+ * @Last Modified by:   Y010220
+ * @Last Modified time: 2018-10-09 15:36:52
+ */
+
 let lastTime = 0
 const prefixes = 'webkit moz ms o'.split(' ') // 各浏览器前缀
 

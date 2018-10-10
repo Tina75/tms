@@ -22,19 +22,20 @@ export default {
     }
   },
   data () {
-    return { money: Number(this.value).toFixed(2) }
+    return { money: Number(this.value) ? Number(this.value).toFixed(2) : '' }
   },
   watch: {
-    value () {
-      this.money = Number(this.value).toFixed(2)
-      this.$emit('input', Number(this.value))
+    value (val) {
+      this.money = Number(val) ? Number(val).toFixed(2) : ''
     }
   },
   methods: {
     moneyFormatter () {
-      if (isNaN(Number(this.money))) {
-        this.money = Number(this.value).toFixed(2)
-        this.$Message.error('请输入正确的数值')
+      if (isNaN(Number(this.money)) || Number(this.money) < 0) {
+        this.money = Number(this.value) ? Number(this.value).toFixed(2) : ''
+        this.$Message.error('请输入正确的金额')
+      } else if (!Number(this.money)) {
+        this.money = ''
       } else {
         this.money = Number(this.money).toFixed(2)
       }

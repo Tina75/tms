@@ -15,8 +15,8 @@
           @on-change="handleTimeChange"
         >
         </DatePicker>
-        <Tooltip max-width="200" content="营业额汇总报表：按照订单的下单日期提取数据；利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
-          <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;margin-left: 18px" />
+        <Tooltip max-width="200" style="margin-left: 18px" content="营业额汇总报表：按照订单的下单日期提取数据；利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
+          <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;" />
         </Tooltip>
       </div>
       <div class="search-btn">
@@ -93,7 +93,7 @@
             <div>保险费</div>
             <div>{{res.carrierInsuranceFee}}</div>
           </div>
-          <div class="item-inner" style="border-bottom: none">
+          <div class="item-inner"  style="border-bottom: none">
             <div>其他费用</div>
             <div>{{res.carrierOtherFee}}</div>
           </div>
@@ -168,7 +168,7 @@ export default {
           type: 1
         }
       } else {
-        Object.assign(this.keywords, {type: null})
+        Object.assign(this.keywords, { type: null })
       }
       Server({
         url: '/report/for/profits',
@@ -268,7 +268,7 @@ export default {
       Export({
         url: '/report/for/profits/export',
         method: 'post',
-        data: Object.assign(this.keywords, {type: null}),
+        data: Object.assign(this.keywords, { type: null }),
         fileName: '利润报表'
       })
     }

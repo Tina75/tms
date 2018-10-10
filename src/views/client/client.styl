@@ -23,12 +23,18 @@
     visibility: hidden
 
 .modal
+  .ivu-input-wrapper,.ivu-select
+    height 35px
+    .ivu-select-placeholder
+      height 35px
+      line-height 35px
   /deep/ .ivu-form  .ivu-form-item-label
     text-align left!important
  /deep/ .ivu-modal-body
-   padding 16px 30px
+   padding 30px 40px 40px 30px
  /*字体大小修改*/
  /deep/ .ivu-input
+   height 35px
    font-size 13px
  /deep/ textarea.ivu-input
    font-size 13px
@@ -53,7 +59,14 @@
   justify-content flex-end
 
 //  搜搜样式
+.right
+  /deep/ .ivu-select-selected-value
+    height 35px
+    line-height 35px
+  .ivu-select-single .ivu-select-selection
+    height 35px
 .search-input
+  height 35px
   display inline-block
   width: 200px
 
@@ -63,11 +76,12 @@
     margin-right 20px
 .search-btn-easy
   width 40px
-  height 32px
+  height 35px
   margin-left -2px
   margin-right 0
   border-top-left-radius 0
   border-bottom-left-radius 0
+
 
 //  详情部分字体大小修改
 .list-info

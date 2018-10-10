@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import {CAR_TYPE1, CAR_LENGTH1} from '@/libs/constant/carInfo'
+import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, CODE, CAR } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
 export default {

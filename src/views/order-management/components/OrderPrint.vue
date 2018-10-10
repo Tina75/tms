@@ -12,8 +12,8 @@
           <tbody>
             <tr>
               <td>客户：{{data.consignerName}}</td>
-              <td>始发地：{{startCity(data)}}</td>
-              <td>目的地：{{endCity(data)}}</td>
+              <td>始发地：{{cityFormatter(data.start)}}</td>
+              <td>目的地：{{cityFormatter(data.end)}}</td>
             </tr>
             <tr>
               <td>发货人：{{data.consignerContact}}</td>
@@ -136,11 +136,10 @@ export default {
     this.printer = new Printd()
   },
   methods: {
-    startCity (data) {
-      return data.start ? City.codeToFullNameArr(data.start) : ''
-    },
-    endCity (data) {
-      return data.end ? City.codeToFullNameArr(data.end) : ''
+    // 格式化城市
+    cityFormatter (code) {
+      if (!code) return ''
+      return Array.from(new Set(City.codeToFullNameArr(code, 3))).join('')
     },
     pickup (data) {
       let pick = pickups.find(item => item.value === data.pickup)

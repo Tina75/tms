@@ -113,7 +113,7 @@ export default {
       this.$emit('on-close', item)
     },
     handleRefresh (item) {
-      this.ema.fire('reloadTab', {...item})
+      this.ema.fire('reloadTab', { ...item })
     },
     handleClick (item) {
       this.$emit('on-select', item)

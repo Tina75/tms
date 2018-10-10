@@ -186,10 +186,41 @@ export default {
         },
         {
           title: '承运商名称',
-          width: 200,
+          ellipsis: true,
+          width: 180,
           render: (h, params) => {
-            return h('div', [
-              h('span', {
+            let text = ''
+            if (params.row.carrierName.length > 12) { // 显示tooltip
+              text = params.row.carrierName.slice(0, 12) + '...'
+              return h('div', [
+                h('Tooltip', {
+                  props: {
+                    placeholder: 'bottom',
+                    transfer: false
+                  }
+                }, [
+                  h('span', {
+                    style: {
+                      color: '#418DF9',
+                      cursor: 'pointer'
+                    },
+                    on: {
+                      click: () => {
+                        this.openTab({ path: '/client/carrier-info', title: '承运商详情', query: { id: params.row.carrierId, carrierType: params.row.carrierType }
+                        })
+                      }
+                    }
+                  }, text),
+                  h('div', {
+                    slot: 'content',
+                    style: {
+                      whiteSpace: 'normal'
+                    }
+                  }, params.row.carrierName)
+                ])
+              ])
+            } else {
+              return h('span', {
                 style: {
                   color: '#418DF9',
                   cursor: 'pointer'
@@ -201,7 +232,7 @@ export default {
                   }
                 }
               }, params.row.carrierName)
-            ])
+            }
           }
         },
         {
