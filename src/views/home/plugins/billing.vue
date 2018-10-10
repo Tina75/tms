@@ -97,7 +97,7 @@ export default {
           {
             type: 'line',
             smooth: true,
-            showSymbol: false,
+            showSymbol: true,
             data: this.yData || [],
             areaStyle: {
               color: {

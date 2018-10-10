@@ -1,8 +1,10 @@
 <template>
   <div>
     <div class="page-home__header">
-      <Alert v-if="notice" type="warning" class="page-home__header-notice" banner closable>
-        {{notice}}
+      <Alert v-if="notice" type="warning" class="page-home__header-notice" banner closable show-icon>
+        <Icon slot="icon" type="ios-bulb-outline"></Icon>
+        <div>
+        </div>
       </Alert>
       <Row>
         <Col span="18">
@@ -189,6 +191,12 @@ export default {
   },
   mounted () {
     this.initCardList()
+    // server({
+    //   url: 'home/message',
+    //   method: 'get'
+    // }).then(res => {
+    //   this.notice = res.data.data
+    // })
   },
   beforeDestroy () {
     if (this.intersectionObserver) {
@@ -301,7 +309,6 @@ export default {
   &__header
     position relative
   &__header-notice
-    position absolute
     z-index 10
     width 100%
   &__header-date
