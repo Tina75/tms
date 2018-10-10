@@ -196,7 +196,9 @@ export default {
       const self = this
       this.openDialog({
         name: 'dialogs/financeRule',
-        data: { // 以下数据必传
+        data: {
+          // partnerName: partnerName, // 可选
+          // 以下数据必传
           partnerType: self.pageName === 'pickup' ? 3 : 2, // 计费规则分类 - 发货方1 承运商2 外转方3
           weight: self.orderTotal.weight, // 货物重量
           volume: self.orderTotal.volume, // 货物体积
