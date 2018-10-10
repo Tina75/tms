@@ -1,9 +1,8 @@
 <template>
   <div is="i-col" :span="24" class="i-mt-15 page-home__padding-8">
     <blank-card :to="linkto" title="营业额通知（近七日）" page-title="营业额汇总表" tab="7">
-      <div>
-        <ECharts :options="options" :auto-resize="true"></ECharts>
-      </div>
+      <ECharts v-if="xData.length" :options="options" :auto-resize="true"></ECharts>
+      <no-data v-else/>
     </blank-card>
   </div>
 </template>
@@ -13,6 +12,7 @@ import BlankCard from '../components/BlankCard'
 import ECharts from 'vue-echarts/components/ECharts'
 import mixin from './mixin.js'
 import url from '@/libs/constant/url'
+import NoData from './noData'
 
 import 'echarts/lib/chart/bar'
 
@@ -21,7 +21,8 @@ export default {
 
   components: {
     BlankCard,
-    ECharts
+    ECharts,
+    NoData
   },
 
   mixins: [mixin],
