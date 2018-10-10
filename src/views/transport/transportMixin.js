@@ -1,3 +1,5 @@
+import { getCityCode } from '@/libs/constant/cityValidator'
+
 export default {
   data () {
     return {
@@ -170,17 +172,9 @@ export default {
             params.keyWord = this.easySearchKeyword
           }
         } else {
-          if (this.seniorSearchFields.startCodes) {
-            if (this.seniorSearchFields.startCodes.length) {
-              this.seniorSearchFields.start = this.seniorSearchFields.startCodes[this.seniorSearchFields.startCodes.length - 1]
-            } else this.seniorSearchFields.start = ''
-          }
+          this.seniorSearchFields.start = getCityCode(this.seniorSearchFields.startCodes)
 
-          if (this.seniorSearchFields.endCodes) {
-            if (this.seniorSearchFields.endCodes.length) {
-              this.seniorSearchFields.end = this.seniorSearchFields.endCodes[this.seniorSearchFields.endCodes.length - 1]
-            } else this.seniorSearchFields.end = ''
-          }
+          this.seniorSearchFields.end = getCityCode(this.seniorSearchFields.endCodes)
 
           if (this.seniorSearchFields.dateRange[0]) {
             this.seniorSearchFields.startTime = this.seniorSearchFields.dateRange[0].Format('yyyy-MM-dd hh:mm:ss')

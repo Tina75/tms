@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
+  <Modal v-model="show" :mask-closable="false" width="360" @on-visible-change="close">
     <p slot="header" style="text-align:center">{{title}}</p>
     <Form ref="$form" :model="form" :rules="rules" :label-width="70" style="padding:0 20px;">
       <FormItem label="始发地：" prop="start">
@@ -34,50 +34,18 @@ import BaseDialog from '@/basic/BaseDialog'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/views/transport/components/SelectInput.vue'
 import SelectInputMixin from '@/views/transport/components/selectInputMixin'
-import _ from 'lodash'
 import Server from '@/libs/js/server'
 import { CAR } from '@/views/client/client'
-
-// 北京 天津 上海 重庆 台湾 香港 澳门
-const specialCity = ['110000', '120000', '310000', '500000', '710000', '810000', '820000']
+import { FORM_VALIDATE_START, FORM_VALIDATE_END, getCityCode, resetCityValidator } from '@/libs/constant/cityValidator'
 
 export default {
   name: 'CreatedFreight',
   components: { AreaSelect, SelectInput },
   mixins: [ BaseDialog, SelectInputMixin ],
   data () {
-    const validateArea = (value) => {
-      if (value.length === 1 && !specialCity.includes(value[0])) {
-        return false
-      }
-      return true
-    }
-    const validateStart = (rule, value, callback) => {
-      let start = specialCity.includes(this.form.start[0]) && this.form.start.length === 2 ? this.form.start[0] : this.form.start[this.form.start.length - 1]
-      let end = specialCity.includes(this.form.end[0]) && this.form.end.length === 2 ? this.form.end[0] : this.form.end[this.form.end.length - 1]
-
-      if (!validateArea(value)) {
-        callback(new Error('请至少选择到市一级城市'))
-      } else if ((this.form.end.length > 0 && value.length > 0 && _.isEqual(this.form.end, value)) || start === end) {
-        callback(new Error('始发城市不能和目的城市相同'))
-      } else {
-        callback()
-      }
-    }
-    const validateEnd = (rule, value, callback) => {
-      let start = specialCity.includes(this.form.start[0]) && this.form.start.length === 2 ? this.form.start[0] : this.form.start[this.form.start.length - 1]
-      let end = specialCity.includes(this.form.end[0]) && this.form.end.length === 2 ? this.form.end[0] : this.form.end[this.form.end.length - 1]
-
-      if (!validateArea(value)) {
-        callback(new Error('请至少选择到市一级城市'))
-      } else if ((this.form.start.length > 0 && value.length > 0 && _.isEqual(this.form.start, value)) || start === end) {
-        callback(new Error('目的城市不能和始发城市相同'))
-      } else {
-        callback()
-      }
-    }
-
     return {
+      show: true,
+
       // select input data
       keyFields: 'form',
       linkageFields: ['carNo'],
@@ -91,11 +59,11 @@ export default {
       rules: {
         start: [
           { required: true, type: 'array', message: '请选择始发地', trigger: 'blur' },
-          { validator: validateStart }
+          { validator: FORM_VALIDATE_START, trigger: 'change' }
         ],
         end: [
           { required: true, type: 'array', message: '请选择目的地', trigger: 'blur' },
-          { validator: validateEnd }
+          { validator: FORM_VALIDATE_END, trigger: 'change' }
         ],
         carNo: [
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
@@ -103,8 +71,8 @@ export default {
       }
     }
   },
+  created () { resetCityValidator() },
   methods: {
-
     create () {
       this.$refs.$form.validate(valid => {
         if (valid) {
@@ -112,8 +80,8 @@ export default {
             url: '/dispatch/add/waybill',
             method: 'post',
             data: {
-              start: specialCity.includes(this.form.start[0]) && this.form.start.length === 2 ? this.form.start[0] : this.form.start[this.form.start.length - 1],
-              end: specialCity.includes(this.form.end[0]) && this.form.end.length === 2 ? this.form.end[0] : this.form.end[this.form.end.length - 1],
+              start: getCityCode(this.form.start),
+              end: getCityCode(this.form.end),
               carrierName: this.form.carrierName,
               carNo: this.form.carNo ? this.form.carNo : void 0
             }

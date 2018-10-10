@@ -21,11 +21,9 @@
 
         <SelectInput v-if="easySelectMode === 1"
                      v-model="easySearchKeyword"
-                     :maxlength="20"
-                     :remote="false"
-                     :local-options="transferees"
-                     clearable
+                     mode="transferee"
                      placeholder="请输入外转方名称"
+                     clearable
                      class="search-input"
                      @on-clear="resetEasySearch" />
 
@@ -60,9 +58,7 @@
 
       <div style="margin-bottom: 10px;">
         <SelectInput v-model="seniorSearchFields.consignerName"
-                     :maxlength="20"
-                     :remote="false"
-                     :local-options="consigners"
+                     mode="consigner"
                      placeholder="请输入客户名称"
                      class="search-input-senior" />
 
@@ -71,9 +67,7 @@
         <Input v-model="seniorSearchFields.transNo" :maxlength="20" placeholder="请输入外转单号" class="search-input-senior" />
 
         <SelectInput v-model="seniorSearchFields.transfereeName"
-                     :maxlength="20"
-                     :remote="false"
-                     :local-options="transferees"
+                     mode="transferee"
                      placeholder="请输入外转方名称"
                      class="search-input-senior" />
       </div>
@@ -128,7 +122,7 @@ import TransportMixin from './transportMixin'
 import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
 import AreaSelect from '@/components/AreaSelect'
-import SelectInput from '@/components/SelectInput'
+import SelectInput from './components/SelectInput.vue'
 
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
@@ -578,15 +572,8 @@ export default {
           fixed: false,
           visible: false
         }
-      ],
-
-      transferees: [], // 外转方列表
-      consigners: [] // 客户列表
+      ]
     }
-  },
-  created () {
-    this.getTransferee()
-    this.getConsigners()
   },
   methods: {
     // 设置标签状态
@@ -616,31 +603,6 @@ export default {
         { name: '已到货', count: data.statusCntInfo.loadedCnt || 0 }
       ]
       this.$forceUpdate()
-    },
-
-    // 查询外转方
-    getTransferee () {
-      Server({
-        url: '/transferee/listOrderbyUpdateTimeDesc',
-        method: 'get',
-        data: { type: 1 }
-      }).then(res => {
-        this.transferees = res.data.data.transfereeList.map(item => {
-          return { name: item.name, value: item.name }
-        })
-      }).catch(err => console.error(err))
-    },
-
-    // 查询客户
-    getConsigners () {
-      Server({
-        url: '/consigner/list',
-        method: 'get'
-      }).then(res => {
-        this.consigners = res.data.data.list.map(item => {
-          return { name: item.name, value: item.name }
-        })
-      }).catch(err => console.error(err))
     },
 
     // 删除
