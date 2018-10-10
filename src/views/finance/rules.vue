@@ -29,8 +29,12 @@
           <Col span="7">
           <Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showRuleDetail"></Table>
           </Col>
-          <Col v-if="ruleDetail.ruleId" span="17">
-          <div class="rule-block">
+          <Col span="17">
+          <div v-if="!ruleDetail.ruleId" class="data-empty">
+            <img src="../../assets/img-empty.png" class="data-empty-img">
+            <p>请点击左侧{{sceneMap[active]}}设置计费规则明细～</p>
+          </div>
+          <div v-else class="rule-block">
             <div class="rule-basic">
               <Form inline>
                 <span>按</span>
@@ -40,10 +44,10 @@
                     <Option value="2">体积</Option>
                   </Select>
                 </FormItem>
-                <span>计算&#12288;&#12288;单位：元/吨</span>
+                <span>计算&#12288;&#12288;单位：元/{{unitMap[ruleDetail.ruleType]}}</span>
                 <span>&#12288;&#12288;&#12288;&#12288;&#12288;规则名：</span>
                 <FormItem>
-                  <Input v-model="ruleDetail.ruleName" :placeholder="`请输入${sceneMap[active]}名称`" style="width: auto" />
+                  <Input v-model="ruleDetail.ruleName" :placeholder="`请输入规则名称`" style="width: auto" />
                 </FormItem>
               </Form>
             </div>
@@ -111,13 +115,13 @@
                                     <div class="ivu-table-cell">
                                       <span>大于等于</span>
                                       <Input v-model="el.base" style="width: 120px"/>
-                                      <span>吨</span>
+                                      <span>{{unitMap[ruleDetail.ruleType]}}</span>
                                     </div>
                                   </td>
                                   <td class="">
                                     <div class="ivu-table-cell">
                                       <Input v-model="el.price" style="width: 120px"/>
-                                      <span>元/吨</span>
+                                      <span>元/{{unitMap[ruleDetail.ruleType]}}</span>
                                     </div>
                                   </td>
                                 </tr>
@@ -164,6 +168,10 @@ export default {
     return {
       active: '1',
       ruleShowIndex: '1',
+      unitMap: {
+        1: '吨',
+        2: '方'
+      },
       sceneMap: {
         1: '发货方',
         2: '承运商',
@@ -315,7 +323,7 @@ export default {
     showRuleDetail (data) {
       this.ruleDetail = {
         ruleId: data.ruleId,
-        ruleType: data.detail.ruleType + '',
+        ruleType: data.detail.ruleType ? (data.detail.ruleType + '') : '1',
         ruleName: data.ruleName,
         details: Object.assign([], data.detail.rules.map(item => {
           return {
@@ -434,4 +442,17 @@ export default {
       .ivu-btn
         padding-left: 30px
         padding-right: 30px
+    .data-empty
+      display flex
+      flex-direction column
+      justify-content center
+      align-items center
+      height 500px
+      border 1px solid #dcdee2
+      .data-empty-img
+        width 70px
+        margin-bottom 12px
+      p
+        color #999999
+        text-align center
 </style>

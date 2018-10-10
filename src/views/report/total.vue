@@ -45,6 +45,9 @@ export default {
   components: {
     PageTable
   },
+  metaInfo: {
+    title: '营业额汇总表'
+  },
   data: function () {
     return {
       btnGroup: [
@@ -126,6 +129,11 @@ export default {
           return date && date.valueOf() > Date.now()
         }
       }
+    }
+  },
+  mounted () {
+    if (this.$route.query.tab) { // 首页跳转来的
+      this.showSevenDate()
     }
   },
   methods: {
@@ -242,6 +250,12 @@ export default {
         data: data,
         fileName: '营业额汇总报表'
       })
+    },
+    // 默认展示近七天数据
+    showSevenDate () {
+      this.operateValue = 1
+      this.date(this.operateValue)
+      this.search()
     }
   }
 }

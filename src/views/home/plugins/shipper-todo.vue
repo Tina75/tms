@@ -25,8 +25,8 @@ export default {
   data () {
     return {
       data: [
-        { id: 'wait_reconcile', name: '发货方待对账订单', value: 0, tab: '2', href: TMSUrl.SENDER_FINANCE, title: '发货方对账' },
-        { id: 'wait_verify', name: '发货方待核销订单', value: 0, tab: '1', href: TMSUrl.SENDER_FINANCE, title: '发货方对账' }
+        { id: 'wait_verify', name: '发货方待核销订单数', value: 0, tab: '1', href: TMSUrl.SENDER_FINANCE, title: '发货方对账' },
+        { id: 'wait_reconcile', name: '发货方对账单数量', value: 0, tab: '2', href: TMSUrl.SENDER_FINANCE, title: '发货方对账' }
       ]
     }
   },
