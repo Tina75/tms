@@ -41,6 +41,8 @@ export default {
   },
 
   mounted () {
+    console.log(process)
+
     window.EMA.bind('updateUserInfo', () => { this.getUserInfo() })
     window.EMA.bind('logout', (msg) => { this.logout(msg) })
     window.EMA.bind('openTab', (route) => { this.onMenuSelect(route) })

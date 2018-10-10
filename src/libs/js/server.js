@@ -3,7 +3,7 @@ import { LoadingBar, Message } from 'iview'
 import Cookies from 'js-cookie'
 
 let instance = axios.create({
-  baseURL: '/',
+  baseURL: process.env.VUE_APP_HOST,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -13,13 +13,6 @@ let instance = axios.create({
   loading: false,
   ignoreCode: false
 })
-
-switch (process.env.NODE_ENV) {
-  case 'development':
-    instance.defaults.baseURL = '//dev.tms5566.com/dolphin-web/'; break
-  case 'production':
-    instance.defaults.baseURL = '//dev.tms5566.com/dolphin-web/'; break
-}
 
 // POST传参序列化
 instance.interceptors.request.use((config) => {
