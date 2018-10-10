@@ -108,7 +108,7 @@ export default {
 
     // 显示计费规则
     showCounter () {
-      const _this = this
+      const self = this
       this.openDialog({
         name: 'dialogs/financeRule',
         data: {
@@ -116,7 +116,7 @@ export default {
         },
         methods: {
           ok (value) {
-            _this.info.transFee = value || 0
+            self.info.transFee = value || 0
           },
           closeParentDialog () {
             self.close()
