@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visibale" :mask-closable="false" width="1036">
+    <Modal v-model="visiable" :mask-closable="false" width="1053" @on-visible-change="close">
       <p slot="header" class="dialog-title">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>{{name}}</span>
@@ -137,7 +137,7 @@ export default {
         {
           title: '客户订单号',
           key: 'customerOrderNo',
-          minWidth: 160,
+          minWidth: 150,
           render: (h, p) => {
             return h('span', p.row.customerOrderNo ? p.row.customerOrderNo : '-')
           }
@@ -145,7 +145,7 @@ export default {
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 140,
+          minWidth: 130,
           tooltip: true
         },
         {
@@ -336,6 +336,7 @@ export default {
   text-align center
   font-size 16px
   font-family 'PingFangSC-Medium'
+  font-weight 700
   color rgba(47,50,62,1)
   letter-spacing 1px
 .table-footer

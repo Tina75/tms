@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visibale" :mask-closable="true" width="360" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="true" width="360" @on-visible-change="close">
     <p slot="header" class="dialog-title">{{name}}</p>
     <div style="text-align: center;">
       <Icon type="ios-information-circle" size="24" color="#FFBB44"></Icon>
@@ -77,6 +77,7 @@ export default {
     text-align center
     font-size 16px
     font-family 'PingFangSC-Medium'
+    font-weight 700
     color rgba(47,50,62,1)
     letter-spacing 1px
 </style>

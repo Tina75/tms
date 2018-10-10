@@ -1,21 +1,21 @@
 <template>
   <div class="temAll">
     <Col span="24">
-    <Card class="searchCard" dis-hover>
-      <Form :model="formSearch" :label-width="80" style="padding-left:-20px;">
-        <Col span="6">
+    <div class="searchCard">
+      <Form :model="formSearch" :label-width="60" label-position="left">
+        <Col span="6" class="searchInput">
         <FormItem label="姓名：">
-          <SelectInput v-model="formSearch.name" :remote="true" :remote-method="searchName" placeholder="请输入姓名"></SelectInput>
+          <SelectInput v-model="formSearch.name" :remote="true" :remote-method="searchName" placeholder="请输入姓名" style="min-width:200px;"></SelectInput>
         </FormItem>
         </Col>
         <Col span="6">
-        <FormItem label="账号：">
-          <Input v-model="formSearch.phone" placeholder="请输入账号"></Input>
+        <FormItem label="账号：" class="searchInput">
+          <Input v-model="formSearch.phone" placeholder="请输入账号" style="min-width:200px;"></Input>
         </FormItem>
         </Col>
         <Col span="6">
-        <FormItem label="角色：">
-          <Select v-model="formSearch.roleId" clearable>
+        <FormItem label="角色：" class="searchInput">
+          <Select v-model="formSearch.roleId" clearable style="min-width:200px;">
             <Option
               v-for="item in selectList"
               :value="item.id"
@@ -31,13 +31,13 @@
         </FormItem>
         </Col>
       </Form>
-    </Card>
+    </div>
     </Col>
     <Col span="24">
     <Button v-if="hasPower(140201)" type="primary" style="margin-top:6px;" @click="eaditStaff('add')">添加员工</Button>
     </Col>
     <Col span="24">
-    <page-table :columns="menuColumns" :keywords="formSearchInit" url="employee/list" list-field="list" style="margin-top: 20px;"></page-table>
+    <page-table :columns="menuColumns" :keywords="formSearchInit" url="employee/list" list-field="list" style="margin-top: 20px;min-height:700px;"></page-table>
     </Col>
     <Modal v-model="visibaleTransfer" width="400">
       <p slot="header" style="text-align:center;font-size: 16px;">
@@ -377,14 +377,14 @@ export default {
 .temAll
   width: 100%
   overflow: auto;
-.classPage
-  clear: both;
-  float: right;
-  margin: 50px;
 .searchCard
   height:70px;
   background:rgba(249,249,249,1);
   border: none;
+  padding-top: 18px;
+  .searchInput
+    margin-right:40px;
+    margin-left: 10px;
 .dialog
   p
   text-align center
