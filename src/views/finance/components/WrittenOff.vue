@@ -19,7 +19,7 @@
           </Col>
           <Col span="2">
           <FormItem>
-            <Select v-model="writtenOffQuery.orderType" clearable>
+            <Select v-model="writtenOffQuery.orderType">
               <Option v-for="(value, key) in orderTypeMap[scene]" :key="key" :value="key">{{value}}</Option>
             </Select>
           </FormItem>

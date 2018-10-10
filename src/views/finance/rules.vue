@@ -11,7 +11,7 @@
         <div class="query-box">
           <Form ref="rulesQuery" :model="rulesQuery" :rules="validate" inline>
             <FormItem>
-              <Select v-model="rulesQuery.type" clearable>
+              <Select v-model="rulesQuery.type">
                 <Option value="1">{{sceneMap[active]}}名称</Option>
                 <Option value="2">规则名称</Option>
               </Select>

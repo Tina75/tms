@@ -14,7 +14,7 @@
           </Col>
           <Col span="2">
           <FormItem>
-            <Select v-model="writingOffQuery.periodType" clearable>
+            <Select v-model="writingOffQuery.periodType">
               <Option v-for="(value, key) in periodTypeMap" v-if="key === '1' || key === '2' || (scene === 1 && key === '3')" :key="key" :value="key">{{value}}</Option>
             </Select>
           </FormItem>
