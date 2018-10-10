@@ -30,8 +30,8 @@
       </Modal>
     </Menu>
     </Col>
-    <Col span="18" style="margin-left: 20px;">
-    <div class="rightHead">
+    <Col span="18" class="rightHead">
+    <div>
       <p v-if="rightTitle !== ''" class="rightTitle">{{rightTitle}}的权限</p>
       <div v-if="hasPower(140102)" class="saveRoleBtn">
         <Button
@@ -416,17 +416,23 @@ export default {
       text-overflow: ellipsis;
       width: 75%;
       float:left;
-  .rightTitle
-    height: 55px;
-    font-size: 20px;
-    color: #333;
-    line-height: 55px;
-    padding: 0 20px 0 10px;
-    margin-top: -10px;
-    font-weight:600;
-    color:rgba(51,51,51,1);
+  .rightHead
+    border-bottom: 1px solid #e9e9e9;
+    margin-top: 5px
+    margin-right: 20px;
+    .rightTitle
+      height: 55px;
+      font-size: 20px;
+      color: #333;
+      line-height: 55px;
+      padding: 0 20px 0 10px;
+      margin-top: -10px;
+      margin-left: 20px;
+      font-weight:600;
+      color:rgba(51,51,51,1);
   .divTree
     clear: both;
+    margin-top:15px;
     .cardTreeItem
       width: 270px;
       height: 400px;
