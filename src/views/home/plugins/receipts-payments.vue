@@ -59,7 +59,7 @@ export default {
               fontSize: 14
             },
             data: [
-              {value: Number(this.receive) / 100, name: '应收'}
+              { value: Number(this.receive) / 100, name: '应收' }
             ]
           },
           {
@@ -76,7 +76,7 @@ export default {
               fontSize: 14
             },
             data: [
-              {value: Number(this.pay) / 100, name: '应付'}
+              { value: Number(this.pay) / 100, name: '应付' }
             ]
           }
         ]

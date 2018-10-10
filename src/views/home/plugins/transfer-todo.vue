@@ -27,8 +27,8 @@ export default {
   data () {
     return {
       data: [
-        {id: 'waitSendCarCnt', name: '待发运的外转单数量', value: 0},
-        {id: 'inTransportCnt', name: '运输中外转单数量', value: 0}
+        { id: 'waitSendCarCnt', name: '待发运的外转单数量', value: 0 },
+        { id: 'inTransportCnt', name: '运输中外转单数量', value: 0 }
       ]
     }
   },

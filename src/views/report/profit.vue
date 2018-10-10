@@ -149,7 +149,7 @@ export default {
           type: 1
         }
       } else {
-        Object.assign(this.keywords, {type: null})
+        Object.assign(this.keywords, { type: null })
       }
       Server({
         url: '/report/for/profits',
@@ -258,7 +258,7 @@ export default {
       Export({
         url: '/report/for/profits/export',
         method: 'post',
-        data: Object.assign(this.keywords, {type: null})
+        data: Object.assign(this.keywords, { type: null })
       }).then(res => {
         this.$Message.success('导出成功')
       }).catch(err => console.error(err))

@@ -80,7 +80,7 @@ export default {
       }
       if (arr.length === 0) {
         arr.push('home')
-        this.$router.push({path: '/home', params: {name: 'home'}, query: {title: '首页'}})
+        this.$router.push({ path: '/home', params: { name: 'home' }, query: { title: '首页' } })
       }
       return arr.join('/')
     }

@@ -159,7 +159,7 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import {CAR_TYPE1, CAR_LENGTH1} from '@/libs/constant/carInfo'
+import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import { CODE, carrierDetailsForDriver, carrierDetailsForCompany, carrierListDriver, carrierListCar, carrierDeleteVehicle, carrierDeleteDriver } from './client'
 export default {
   name: 'carrier-info',

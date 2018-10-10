@@ -94,7 +94,7 @@ export default {
         }
       }
       this.keywords = key
-      this.keyword = {...this.keywords}
+      this.keyword = { ...this.keywords }
       this.selectOrderList = [] // 重置当前已勾选项
       this.selectedId = [] // 重置当前已勾选id项
     },

@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import {CAR_TYPE1, CAR_LENGTH1} from '@/libs/constant/carInfo'
+import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
 import { carrierAddVehicle, carrierUpdateVehicle, listUnbindedDriver, CODE, CAR } from '../client'
 export default {
@@ -95,7 +95,7 @@ export default {
     listUnbindedDriver(data).then(res => {
       if (res.data.code === CODE) {
         this.unbindedDriver = res.data.data
-        this.unbindedDriver.unshift({driverId: '', driverName: '请选择'})
+        this.unbindedDriver.unshift({ driverId: '', driverName: '请选择' })
       }
     })
   },
@@ -122,7 +122,7 @@ export default {
         driverId: this.driverId,
         carrierId: this.carrierId
       }
-      Object.assign(data, {driverId: this.driverId || ''})
+      Object.assign(data, { driverId: this.driverId || '' })
       carrierAddVehicle(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
@@ -142,7 +142,7 @@ export default {
         carrierId: this.carrierId,
         carId: this.carId
       }
-      Object.assign(data, {driverId: this.driverId || ''})
+      Object.assign(data, { driverId: this.driverId || '' })
       carrierUpdateVehicle(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
