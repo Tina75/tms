@@ -93,7 +93,7 @@
             <div>保险费</div>
             <div>{{res.carrierInsuranceFee}}</div>
           </div>
-          <div class="item-inner" style="border-bottom: none">
+          <div class="item-inner"  style="border-bottom: none">
             <div>其他费用</div>
             <div>{{res.carrierOtherFee}}</div>
           </div>
