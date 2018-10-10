@@ -1,0 +1,20 @@
+// 打开运单详情
+this.openTab({
+  title: waybillNo,
+  path: '/transport/detail/detailFreight',
+  query: { id: waybillId, no: waybillNo } // id 或 no 二选一
+})
+
+// 打开提货单详情
+this.openTab({
+  title: pickupNo,
+  path: '/transport/detail/detailPickup',
+  query: { id: pickUpId }
+})
+
+// 打开外转单详情
+this.openTab({
+  title: transNo,
+  path: '/transport/detail/detailOuter',
+  query: { id: transId }
+})
