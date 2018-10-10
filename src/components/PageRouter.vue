@@ -9,7 +9,8 @@
   .wrapper
     padding 20px 15px
     background white
-    min-height 100%
+    height 100%
+    overflow: auto;
 </style>
 <script>
 import Vue from 'vue'
@@ -81,7 +82,7 @@ export default {
       }
       if (arr.length === 0) {
         arr.push('home')
-        this.$router.push({path: '/home', params: {name: 'home'}, query: {title: '首页'}})
+        this.$router.push({ path: '/home', params: { name: 'home' }, query: { title: '首页' } })
       }
       return arr.join('/')
     }

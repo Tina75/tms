@@ -145,23 +145,56 @@ export default {
         },
         {
           title: '发货方名称',
-          width: 280,
+          ellipsis: true,
+          minWidth: 50,
           render: (h, params) => {
-            return h('div', [
-              h('a', {
-                style: {
-                  color: '#418DF9',
-                  cursor: 'pointer'
-                },
-                title: params.row.name,
-                on: {
-                  click: () => {
-                    this.openTab({ path: '/client/sender-info', title: '发货方详情', query: { id: params.row.id }
-                    })
+            let text = ''
+            if (params.row.name.length > 11) {
+              text = params.row.name.slice(0, 11) + '...'
+              return h('div', [
+                h('Tooltip', {
+                  props: {
+                    placeholder: 'bottom',
+                    transfer: false
                   }
-                }
-              }, params.row.name)
-            ])
+                }, [
+                  h('a', {
+                    style: {
+                      color: '#418DF9',
+                      cursor: 'pointer'
+                    },
+                    on: {
+                      click: () => {
+                        this.openTab({ path: '/client/sender-info', title: '发货方详情', query: { id: params.row.id }
+                        })
+                      }
+                    }
+                  }, text),
+                  h('div', {
+                    slot: 'content',
+                    style: {
+                      whiteSpace: 'normal'
+                    }
+                  }, params.row.name)
+                ])
+              ])
+            } else {
+              return h('div', [
+                h('a', {
+                  style: {
+                    color: '#418DF9',
+                    cursor: 'pointer'
+                  },
+                  title: params.row.name,
+                  on: {
+                    click: () => {
+                      this.openTab({ path: '/client/sender-info', title: '发货方详情', query: { id: params.row.id }
+                      })
+                    }
+                  }
+                }, params.row.name)
+              ])
+            }
           }
         },
         {
@@ -173,11 +206,10 @@ export default {
         {
           title: '联系电话',
           key: 'phone',
-          width: 120
+          width: 110
         },
         {
-          title: '发货方地址数量',
-          // key: 'consignerAddressCnt'
+          title: '发货地址数',
           key: 'addressCnt'
         },
         {
@@ -189,7 +221,7 @@ export default {
           key: 'cargoCnt'
         },
         {
-          title: '付款方式描述',
+          title: '付款方式',
           key: 'payType',
           render: (h, params) => {
             let text = ''

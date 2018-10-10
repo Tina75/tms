@@ -5,7 +5,7 @@
       <div>
         <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
       </div>
-      <div v-if="simpleSearch" class="right">
+      <div v-if="simpleSearch" class="receipt-right">
         <Select v-model="selectStatus"  style="width:120px;margin-right: 11px" @on-change="handleChangeSearchStatus">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
@@ -39,7 +39,7 @@
           style="width: 200px"
           @on-enter="searchList"
           @on-click="clearKeywords"/>
-        <Button type="primary" icon="ios-search" style="width: 40px;margin-right: 0;border-top-left-radius: 0;border-bottom-left-radius: 0;" @click="searchList"></Button>
+        <Button type="primary" icon="ios-search" style="width: 40px;margin-left:-2px;margin-right: 0;border-top-left-radius: 0;border-bottom-left-radius: 0;" @click="searchList"></Button>
         <Button type="text" class="high-search" size="small" @click="handleSwitchSearch">高级搜索</Button>
       </div>
     </div>
@@ -60,8 +60,8 @@
       </div>
       <div style="display: flex;justify-content: space-between;">
         <div>
-          <area-select v-model="keywords.start" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
-          <area-select v-model="keywords.end" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <area-select v-model="cityCodes.startCodes" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <area-select v-model="cityCodes.endCodes" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
           <DatePicker
             :options="timeOption"
             v-model="recoveryTimes"
@@ -164,7 +164,7 @@ export default {
       tableColumns: [
         {
           type: 'selection',
-          width: 60,
+          width: 50,
           align: 'center',
           fixed: 'left'
         },
@@ -172,7 +172,7 @@ export default {
           title: '操作',
           key: 'do',
           fixed: 'left',
-          width: 100,
+          width: 70,
           extra: true,
           render: (h, params) => {
             if (params.row.receiptOrder.receiptStatus === 0 && params.row.status === 40 && this.hasPower(110201)) {
@@ -225,7 +225,7 @@ export default {
                   this.openTab({
                     path: '/order-management/detail',
                     query: {
-                      id: params.row.orderNo,
+                      id: '回单' + params.row.orderNo,
                       orderId: params.row.id,
                       from: 'receipt'
                     }
@@ -382,6 +382,7 @@ export default {
           }
         }
       ],
+      operateCol: [], // 操作栏
       extraColumns: [
         {
           title: '订单号',
@@ -498,7 +499,15 @@ export default {
   computed: {
     ...mapGetters([
       'clients'
-    ])
+    ]),
+    // 回单id集合
+    receiptOrderIds () {
+      let arr = []
+      this.selectOrderList.map((item) => {
+        arr.push(item.receiptOrder.id)
+      })
+      return arr
+    }
   },
 
   created () {
@@ -571,6 +580,8 @@ export default {
       this.selectOrderList = [] // 重置当前已勾选项
       this.selectedId = [] // 重置当前已勾选id项
       if (val === '全部') {
+        // 全部、待回收、待返厂加上操作栏
+        this.addOperateCol()
         this.operateValue = 1
         this.btnGroup = [
           { name: '回收', value: 1, code: 110201 },
@@ -579,6 +590,8 @@ export default {
         ]
         this.keywords.receiptStatus = null
       } else if (val === '待回收') {
+        // 全部、待回收、待返厂加上操作栏
+        this.addOperateCol()
         this.operateValue = 1
         this.btnGroup = [
           { name: '回收', value: 1, code: 110201 },
@@ -586,6 +599,8 @@ export default {
         ]
         this.keywords.receiptStatus = 0
       } else if (val === '待返厂') {
+        // 全部、待回收、待返厂加上操作栏
+        this.addOperateCol()
         this.operateValue = 1
         this.btnGroup = [
           { name: '返厂', value: 1, code: 110202 },
@@ -593,6 +608,8 @@ export default {
         ]
         this.keywords.receiptStatus = 1
       } else {
+        // 已返厂取消操作栏
+        this.deleteOperateCol()
         this.operateValue = 1
         this.btnGroup = [
           { name: '导出', value: 1, code: 110203 }
@@ -678,7 +695,7 @@ export default {
     // 导出
     export () {
       const data = Object.assign({}, this.keyword, {
-        receiptOrderIds: this.selectedId.length > 0 ? this.selectedId : null
+        receiptOrderIds: this.selectedId.length > 0 ? this.receiptOrderIds : null
       })
       Export({
         url: 'order/exportReceiptOrder',
@@ -694,6 +711,9 @@ export default {
 .ivu-btn
   margin-right 15px
   width 80px
+  height 35px
+.ivu-btn-default
+  background #F9F9F9
 .high-search
   width 36px
   height 30px
@@ -708,4 +728,9 @@ export default {
   padding: 10px
   .ivu-input-wrapper,.ivu-auto-complete
     margin-right 20px
+</style>
+<style lang="stylus">
+.receipt-right
+  .ivu-input
+    height 35px
 </style>

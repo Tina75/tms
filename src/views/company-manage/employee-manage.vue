@@ -1,6 +1,6 @@
 <template>
   <div class="temAll">
-    <Col span="4">
+    <Col span="4" style="height:100%">
     <Menu :active-name="menuInitName" class="leftMenu" style="width:100%">
       <div class="centerBtnDiv" style="border-bottom: 1px solid #e9e9e9;padding-bottom:50px;">
         <Button v-if="hasPower(140101)" type="primary" class="centerBtn" @click="createRole">新增角色</Button>
@@ -30,19 +30,22 @@
       </Modal>
     </Menu>
     </Col>
-    <Col span="18" style="margin-left: 20px; max-height:850px; overflow-y:auto;">
-    <p v-if="rightTitle !== ''" class="rightTitle">{{rightTitle}}的权限</p>
-    <div v-if="hasPower(140102)" class="saveRoleBtn">
-      <Button
-        v-if="menuParam.type !== 1"
-        :disabled="disSaveBtn"
-        type="primary"
-        style="width:80px;"
-        @click="saveRole">
-        保存
-      </Button>
+    <Col span="18" class="rightHead">
+    <div>
+      <p v-if="rightTitle !== ''" class="rightTitle">{{rightTitle}}的权限</p>
+      <div v-if="hasPower(140102)" class="saveRoleBtn">
+        <Button
+          v-if="menuParam.type !== 1"
+          :disabled="disSaveBtn"
+          type="primary"
+          style="width:80px;"
+          @click="saveRole">
+          保存
+        </Button>
+      </div>
     </div>
-    </p>
+    </Col>
+    <Col span="18" class="contentDiv">
     <Modal
       v-model="removeRoleModal"
       width="360">
@@ -154,6 +157,7 @@ export default {
   created () {
     this.getMenuList()
     this.initTreeList(this.arrayCodeList, 'type')
+    document.getElementsByClassName('content')[0].style.overflowY = 'hidden'
   },
   methods: {
     getMenuList (selectMenu) {
@@ -379,15 +383,20 @@ export default {
 >>> .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
   color: #515a6e;
 .temAll
-  width: 100%
-  min-height: 1000px;
-  overflow: auto;
+  width: 100%;
+  height: 100%
+  overflow: hidden;
+  .contentDiv
+    margin-left: 20px;
+    height:calc(100% - 45px);
+    overflow-y:auto;
+    padding-bottom: 80px;
   .leftMenu
-    height: 836px;
-    overflow-y: hidden;
+    height: 100%
+    overflow: hidden;
   .leftMenu :hover
-    max-height: 785px;
-    overflow-y: auto;
+    max-height: calc(100% - 50px);
+    overflow-y: scroll;
   .centerBtnDiv:hover
     overflow: hidden;
   .menu:hover
@@ -407,17 +416,23 @@ export default {
       text-overflow: ellipsis;
       width: 75%;
       float:left;
-  .rightTitle
-    height: 55px;
-    font-size: 20px;
-    color: #333;
-    line-height: 55px;
-    padding: 0 20px 0 10px;
-    margin-top: -10px;
-    font-weight:600;
-    color:rgba(51,51,51,1);
+  .rightHead
+    border-bottom: 1px solid #e9e9e9;
+    margin-top: 5px
+    margin-right: 20px;
+    .rightTitle
+      height: 55px;
+      font-size: 20px;
+      color: #333;
+      line-height: 55px;
+      padding: 0 20px 0 10px;
+      margin-top: -10px;
+      margin-left: 20px;
+      font-weight:600;
+      color:rgba(51,51,51,1);
   .divTree
     clear: both;
+    margin-top:15px;
     .cardTreeItem
       width: 270px;
       height: 400px;
@@ -438,7 +453,7 @@ export default {
   .saveRoleBtn
     float: right;
     margin-right: 120px;
-    margin-top: -35px;
+    margin-top: -45px;
   .centerBtn
     position: absolute;
     left: 50%;

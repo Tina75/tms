@@ -1,17 +1,17 @@
 <template>
   <div class="messageDivAll">
-    <h1 style="text-align:left;">{{messageInfo.title}}</h1>
-    <p style="color: #9DA1B0">{{ formatDate(messageInfo.createTime) }}
+    <h1 class="title">{{messageInfo.title}}</h1>
+    <p class="dateTime">{{ formatDate(messageInfo.createTime) }}
       <Button class="msgRemoveBtn" @click="removeBtn">
         <span class="msgConfigBtn">
-        <i class="icon font_family icon-shanchu1"></i></span><span style="margin:0 5px;">删除
+        <i class="icon font_family icon-shanchu1" style="font-size:12px;"></i></span><span style="margin:0 5px;">删除
         </span>
       </Button>
     </p>
     <pre class="msgInfo" style="color: #9DA1B0">{{messageInfo.content}}</pre>
-    <pre v-if="this.messageInfo.url !== ''" class="msgInfoHref" style="color: #9DA1B0"
-    >活动链接：<a :href="messageInfo.url">{{messageInfo.url}}</a>
-    </pre>
+    <div v-if="this.messageInfo.url !== ''" class="msgInfoHrefDiv"><span style="color: #9DA1B0">活动链接：</span>
+      <a :href="messageInfo.url" style="color:#418DF9;">{{messageInfo.url}}</a>
+    </div>
     <Modal v-model="visibaleRemove" type="warning" width="360">
       <p slot="header" style="text-align:center;font-size: 16px;">
         <span>提示</span>
@@ -84,13 +84,35 @@ export default {
   overflow: auto;
   background: #fff;
   padding: 20px 200px;
+  .title
+    font-weight:500;
+    text-align:left;
+    font-size:16px;
+    font-weight:bold;
+    line-height:22px;
+    color: #2F323E;
+  .dateTime
+    color: #9DA1B0;
+    font-size:12px;
+    font-weight:400;
+    line-height:17px;
+    margin: 15px 0;
   .msgRemoveBtn
     float: right;
-    margin: -10px 20px;
+    margin: -20px 20px;
+    width: 70px;
   .msgInfo
     clear: both;
     margin-top: 20px;
     text-indent:25px;
-  .msgInfoHref
-    margin-top: 20px;
+    color: #777B89;
+    font-weight:400;
+    font-size:12px;
+    line-height:17px;
+    font-family: PingFangSC-Regular;
+  .msgInfoHrefDiv
+    width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 </style>

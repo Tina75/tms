@@ -15,10 +15,10 @@
             </ul>
           </Poptip>
         </li>
-        <li>{{ this.$route.query.from === 'order' ? '订单状态：' : '回单状态：'}}<span style="font-weight: bold;">{{ this.$route.query.from === 'order' ? statusToName(detail.status) : statusToName(detail.receiptOrder.receiptStatus) }}</span></li>
+        <li>{{ from === 'order' ? '订单状态：' : '回单状态：'}}<span style="font-weight: bold;">{{ from === 'order' ? statusToName(orderStatus) : statusToName(receiptStatus) }}</span></li>
       </ul>
     </header>
-    <div style="text-align: right;margin: 25px 0;">
+    <div style="text-align: right;margin: 25px 0;min-height: 1px;">
       <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
     </div>
     <section>
@@ -116,22 +116,22 @@
           <span>应收费用</span>
         </div>
         <Row>
-          <i-col span="4">
+          <i-col span="4" style="margin-right: 30px;">
             <span>运输费：</span>
             <span v-if="detail.freightFee" style="font-weight:bold;">{{detail.freightFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
-          <i-col span="4">
+          <i-col span="4" style="margin-right: 30px;">
             <span>装货费：</span>
             <span v-if="detail.loadFee" style="font-weight:bold;">{{detail.loadFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
-          <i-col span="4">
+          <i-col span="4" style="margin-right: 30px;">
             <span>卸货费：</span>
             <span v-if="detail.unloadFee" style="font-weight:bold;">{{detail.unloadFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
-          <i-col span="4">
+          <i-col span="4" style="margin-right: 30px;">
             <span>保险费：</span>
             <span v-if="detail.insuranceFee" style="font-weight:bold;">{{detail.insuranceFee | toPoint}}元</span>
             <span v-else>-</span>
@@ -193,6 +193,8 @@ export default {
         orderCargoList: []
       },
       from: this.$route.query.from,
+      orderStatus: '',
+      receiptStatus: '',
       waybillNums: [],
       show: false,
       btnGroup: [],
@@ -201,7 +203,7 @@ export default {
         {
           title: '货物名称',
           key: 'cargoName',
-          className: 'padding-left-10'
+          className: 'padding-left-45'
         },
         {
           title: '包装',
@@ -410,13 +412,14 @@ export default {
     // 拉取table数据
     getDetail () {
       // 订单详情  from: order   回单详情 from: receipt
-      if (this.$route.query.from === 'order') {
+      if (this.from === 'order') {
         Server({
           url: 'order/detail?id=' + this.$route.query.orderId,
           method: 'get'
         }).then((res) => {
           console.log(res)
           this.detail = res.data.data
+          this.orderStatus = res.data.data.status
           // 过滤订单详情页操作按钮
           this.filterOrderButton()
           this.orderLog = res.data.data.orderLogs // 订单日志
@@ -430,6 +433,7 @@ export default {
         }).then((res) => {
           console.log(res)
           this.detail = res.data.data
+          this.receiptStatus = res.data.data.receiptOrder.receiptStatus
           // 过滤回单详情页操作按钮
           this.filterReceiptButton()
           this.orderLog = res.data.data.receiptOrderLogs // 回单日志
@@ -643,6 +647,9 @@ export default {
   .ivu-btn
     margin-left 15px
     width 80px
+    height 35px
+  .ivu-btn-default
+    background #F9F9F9
   .ivu-row
     font-size 14px
     font-family 'PingFangSC-Regular'
@@ -688,7 +695,7 @@ export default {
     color #2c3e50
     span
       display inline-block
-      min-width 111px
+      min-width 140px
       text-align center
   .order-log
     .ivu-timeline-item
@@ -734,6 +741,6 @@ export default {
       padding 5px 10px
     .ivu-poptip-popper
       top 118px !important
-  .cargo-details .padding-left-10
-    padding-left 30px !important
+  .cargo-details .padding-left-45
+    padding-left 45px !important
 </style>

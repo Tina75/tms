@@ -41,9 +41,9 @@ export default {
   data () {
     return {
       data: [
-        {title: '系统升级提示', url: '/info/index', createTime: '2018-8-8', type: 0},
-        {title: '订单发货啦', url: '/info/index', createTime: '2018-8-8', type: 1},
-        {title: '订单快到啦', url: '/info/index', createTime: '2018-8-8', type: 2}
+        { title: '系统升级提示', url: '/info/index', createTime: '2018-8-8', type: 0 },
+        { title: '订单发货啦', url: '/info/index', createTime: '2018-8-8', type: 1 },
+        { title: '订单快到啦', url: '/info/index', createTime: '2018-8-8', type: 2 }
       ]
     }
   },
