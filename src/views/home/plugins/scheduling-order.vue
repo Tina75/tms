@@ -45,6 +45,7 @@ export default {
         },
 
         xAxis: {
+          name: '月/日',
           type: 'category',
           data: this.xData || [],
           splitLine: {
@@ -85,8 +86,8 @@ export default {
         },
 
         grid: {
-          left: 15,
-          right: 15,
+          left: 25,
+          right: 60,
           top: 30,
           bottom: 12,
           containLabel: true

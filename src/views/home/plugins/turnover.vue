@@ -48,8 +48,8 @@ export default {
           trigger: 'axis'
         },
         grid: {
-          left: 15,
-          right: 15,
+          left: 25,
+          right: 30,
           top: 30,
           bottom: 12,
           containLabel: true
