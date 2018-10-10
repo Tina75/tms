@@ -26,7 +26,7 @@
     <Card dis-hover>
       <div v-if="'pic' === this.type">
         <p slot="title" class="rightDivTitle">{{picContent.title}}</p>
-        <pre>{{picContent.content}}</pre>
+        <pre class="preText">{{picContent.content}}</pre>
         <div v-for="url in picContent.urlList" :key="url.index">
           <img :src="url" class="imgInfo" />
         </div>
@@ -129,12 +129,19 @@ export default {
   overflow: auto;
   .rightDivTitle
     font-size:16px;
-    color:rgba(51,51,51,1);
+    color:#333333
     margin-bottom: 50px;
     border-bottom: 1px solid #e9e9e9;
     padding-bottom:15px;
     margin-top: 20px;
     margin-right: 20px;
+    line-height:22px;
+    font-weight:bold;
+  .preText
+    font-family: PingFangSC-Regular;
+    font-size:14px;
+    color: #333333;
+    font-weight:400;
 .imgInfo
   max-width: 680px;
 </style>
