@@ -1,7 +1,6 @@
 <template>
   <div is="i-col" :span="12" class="i-mt-15 page-home__padding-8">
-    <blank-card>
-      <div slot="title">调度订单数</div>
+    <blank-card :to="linkto" title="调度订单数" page-title="运营报表" tab="7">
       <div>
         <ECharts :options="options" :auto-resize="true"></ECharts>
       </div>
@@ -13,6 +12,7 @@
 import BlankCard from '../components/BlankCard'
 import ECharts from 'vue-echarts/components/ECharts'
 import mixin from './mixin.js'
+import url from '@/libs/constant/url'
 
 import 'echarts/lib/chart/line'
 
@@ -29,7 +29,9 @@ export default {
   data () {
     return {
       xData: [],
-      yData: []
+      yData: [],
+
+      linkto: url.OPERATE_REPORT
     }
   },
 
@@ -94,7 +96,7 @@ export default {
           {
             type: 'line',
             smooth: true,
-            showSymbol: false,
+            showSymbol: true,
             data: this.yData || [],
             areaStyle: {
               color: {

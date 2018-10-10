@@ -5,8 +5,6 @@
       :extra="total"
       title="外转待办"
       label="提示文字"
-      to="/transport/outerOrder"
-      page-title="外转单管理"
     >
     </OrderCard>
   </div>
@@ -20,6 +18,8 @@
  */
 import OrderCard from '../components/OrderCard.vue'
 import mixin from './mixin.js'
+import TMSUrl from '@/libs/constant/url.js'
+
 export default {
   name: 'transfer-todo',
   components: {
@@ -29,8 +29,8 @@ export default {
   data () {
     return {
       data: [
-        { id: 'waitSendCarCnt', name: '待发运的外转单数量', value: 0, tab: '待发运' },
-        { id: 'inTransportCnt', name: '运输中外转单数量', value: 0, tab: '在途' }
+        { id: 'waitSendCarCnt', name: '待发运的外转单数量', value: 0, tab: '1', href: TMSUrl.OUTER_ORDER, title: '外转单管理' },
+        { id: 'inTransportCnt', name: '运输中外转单数量', value: 0, tab: '2', href: TMSUrl.OUTER_ORDER, title: '外转单管理' }
       ]
     }
   },

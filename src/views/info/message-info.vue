@@ -3,12 +3,11 @@
     <h1 class="title">{{messageInfo.title}}</h1>
     <p class="dateTime">{{ formatDate(messageInfo.createTime) }}
       <Button class="msgRemoveBtn" @click="removeBtn">
-        <span class="msgConfigBtn">
-        <i class="icon font_family icon-shanchu1" style="font-size:12px;"></i></span><span style="margin:0 5px;">删除
-        </span>
+        <span class="msgConfigBtn"><i class="icon font_family icon-shanchu1" style="font-size:14px;color:#9DA1B0;"></i></span>
+        <span style="margin: 0 4px;font-size:12px;color:#2F323E">删除</span>
       </Button>
     </p>
-    <pre class="msgInfo" style="color: #9DA1B0">{{messageInfo.content}}</pre>
+    <pre class="msgInfo">{{messageInfo.content}}</pre>
     <div v-if="this.messageInfo.url !== ''" class="msgInfoHrefDiv"><span style="color: #9DA1B0">活动链接：</span>
       <a :href="messageInfo.url" style="color:#418DF9;">{{messageInfo.url}}</a>
     </div>
@@ -101,6 +100,8 @@ export default {
     float: right;
     margin: -20px 20px;
     width: 70px;
+    height: 28px;
+    padding: 0;
   .msgInfo
     clear: both;
     margin-top: 20px;

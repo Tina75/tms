@@ -5,8 +5,6 @@
       :extra="total"
       title="提货待办"
       label="提示文字"
-      to="/order-management/order"
-      page-title="订单管理"
     >
     </OrderCard>
   </div>
@@ -21,6 +19,7 @@
  */
 import OrderCard from '../components/OrderCard.vue'
 import mixin from './mixin.js'
+import TMSUrl from '@/libs/constant/url.js'
 
 export default {
   name: 'pickup-todo',
@@ -31,9 +30,9 @@ export default {
   data () {
     return {
       data: [
-        { id: 'waitPickOrderCnt', name: '待提货调度订单数量', value: 0, tab: '全部' },
-        { id: 'waitPickCnt', name: '待提货提货订单数量', value: 0, tab: '待提货' },
-        { id: 'inTransportCnt', name: '运输中订单数量', value: 0, tab: '提货中' }
+        { id: 'waitPickOrderCnt', name: '待提货调度订单数量', value: 0, tab: '2', href: TMSUrl.DISPATCH_PANEL, title: '调度工作台' },
+        { id: 'waitPickCnt', name: '待提货提货订单数量', value: 0, tab: '1', href: TMSUrl.PICKUP_ORDER, title: '提货管理' },
+        { id: 'inTransportCnt', name: '提货中提货单数量', value: 0, tab: '2', href: TMSUrl.PICKUP_ORDER, title: '提货管理' }
       ]
     }
   },
