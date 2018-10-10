@@ -128,6 +128,11 @@ export default {
       }
     }
   },
+  mounted () {
+    if (this.$route.query.tab) { // 首页跳转来的
+      this.showSevenDate()
+    }
+  },
   methods: {
     search () {
       // 输入框都为空，type=1,搜索数据清空
@@ -242,6 +247,12 @@ export default {
         data: data,
         fileName: '营业额汇总报表'
       })
+    },
+    // 默认展示近七天数据
+    showSevenDate () {
+      this.operateValue = 1
+      this.date(this.operateValue)
+      this.search()
     }
   }
 }
