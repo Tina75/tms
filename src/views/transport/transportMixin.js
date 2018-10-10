@@ -72,7 +72,7 @@ export default {
       const hasAction = this.tableColumns[1].key === 'action'
       if (hasAction && !show) { // 移除action
         this.tableColumns.splice(1, 1)
-      } else { // 添加action
+      } else if (!hasAction && show) { // 添加action
         this.tableColumns.splice(1, 0, this.tableActionColumn)
       }
     },
