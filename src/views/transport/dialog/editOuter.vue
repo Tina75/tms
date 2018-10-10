@@ -28,7 +28,7 @@
             <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" style="width:170px">
               <span slot="suffix" class="order-create__input-suffix">元</span>
             </TagNumberInput>
-            <Icon type="ios-calculator" size="30" color="#00a4bd" @click="showCounter"></Icon>
+            <a @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1" style="font-size: 26px; vertical-align: middle; margin-left: 4px;"></i></a>
           </div>
         </FormItem>
       </Form>
@@ -107,7 +107,7 @@ export default {
     },
 
     // 显示计费规则
-    showCounter () {
+    showChargeRules () {
       const self = this
       this.openDialog({
         name: 'dialogs/financeRule',
