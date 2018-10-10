@@ -37,6 +37,9 @@ export default {
   computed: {
     ...mapGetters([])
   },
+  mounted () {
+    this.active = this.$route.query.tab || '1'
+  },
   methods: {
     ...mapActions([]),
     tabChanged (tab) {

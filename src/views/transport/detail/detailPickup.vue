@@ -336,6 +336,7 @@ export default {
       settlementPayInfo: [
         { payType: 2, fuelCardAmount: 0, cashAmount: 0 }
       ],
+      settlementPayInfoBack: [], // 支付信息备份
 
       // 所有按钮组
       btnList: [
@@ -526,6 +527,7 @@ export default {
           }
         })
         this.settlementPayInfo = temp
+        this.settlementPayInfoBack = Object.assign([], temp)
 
         this.setBtnsWithStatus()
         this.loading = false
