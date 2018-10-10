@@ -17,7 +17,7 @@ import BlankCard from '../components/BlankCard'
 import ECharts from 'vue-echarts/components/ECharts'
 import mixin from './mixin.js'
 import url from '@/libs/constant/url'
-
+import float from '@/libs/js/float'
 export default {
   name: 'receipts-payments',
 
@@ -60,7 +60,7 @@ export default {
               fontSize: 14
             },
             data: [
-              { value: Number(this.receive) / 100, name: '应收' }
+              { value: float.round(Number(this.receive) / 100), name: '应收' }
             ]
           },
           {
@@ -77,7 +77,7 @@ export default {
               fontSize: 14
             },
             data: [
-              { value: Number(this.pay) / 100, name: '应付' }
+              { value: float.round(Number(this.pay) / 100), name: '应付' }
             ]
           }
         ]
