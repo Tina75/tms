@@ -315,14 +315,40 @@ export default {
       }
     },
     toDetail (data) {
-      this.openTab({
-        path: '/order-management/detail',
-        query: {
-          id: data.row.orderNo,
-          orderId: data.row.id,
-          from: 'order'
-        }
-      })
+      switch (data.row.orderType) {
+        case 1:
+          this.openTab({
+            path: '/order-management/detail',
+            title: data.row.orderNo,
+            query: {
+              id: data.row.orderNo,
+              orderId: data.row.id,
+              from: 'order'
+            }
+          })
+          break
+        case 2:
+          this.openTab({
+            title: data.row.orderNo,
+            path: '/transport/detail/detailFreight',
+            query: { id: data.row.id} // id 或 no 二选一
+          })
+          break
+        case 3:
+          this.openTab({
+            title: data.row.orderNo,
+            path: '/transport/detail/detailPickup',
+            query: { id: data.row.id}
+          })
+          break
+        case 4:
+          this.openTab({
+            title: data.row.orderNo,
+            path: '/transport/detail/detailOuter',
+            query: { id: data.row.id}
+          })
+          break
+      }
     },
     loadData () {
       Server({

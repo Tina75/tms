@@ -8,7 +8,7 @@
         </FormItem>
         <FormItem :label="sceneMap[scene] + '：'" prop="partnerName">
           <Select v-model="createRuleForm.partnerName">
-            <Option v-for="(item, index) in partnerList" :key="index" :value="key">{{item}}</Option>
+            <Option v-for="(item, index) in partnerList" :key="index" :value="item">{{item}}</Option>
           </Select>
         </FormItem>
       </Form>
