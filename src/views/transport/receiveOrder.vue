@@ -27,24 +27,19 @@
                class="search-input"
                @on-click="resetEasySearch" />
 
-        <SelectInput v-if="easySelectMode === 2"
-                     v-model="easySearchKeyword"
-                     :maxlength="20"
-                     :remote="false"
-                     :local-options="carriers"
-                     clearable
+        <SelectInput v-if="easySelectMode === 2" v-model="easySearchKeyword"
+                     mode="carrier"
                      placeholder="请输入承运商"
+                     clearable
                      class="search-input"
-                     @on-select="handleSelectCarrier"
+                     @on-select="selectCarrierHandler"
                      @on-clear="resetEasySearch" />
 
-        <SelectInput v-if="easySelectMode === 3"
-                     v-model="easySearchKeyword"
-                     :maxlength="8"
-                     :remote="false"
-                     :local-options="carrierCars"
-                     clearable
+        <SelectInput v-if="easySelectMode === 3" v-model="easySearchKeyword"
+                     :carrier-id="carrierId"
+                     mode="carNo"
                      placeholder="请输入车牌号"
+                     clearable
                      class="search-input"
                      @on-clear="resetEasySearch" />
 
@@ -63,28 +58,21 @@
 
       <div style="margin-bottom: 10px;">
         <Input v-model="seniorSearchFields.pickupNo" :maxlength="20" placeholder="请输入提货单号"  class="search-input-senior" />
-        <SelectInput
-          v-model="seniorSearchFields.carrierName"
-          :maxlength="20"
-          :remote="false"
-          :local-options="carriers"
-          placeholder="请输入承运商"
-          class="search-input-senior"
-          @on-select="handleSelectCarrier" />
-        <SelectInput
-          v-model="seniorSearchFields.driverName"
-          :maxlength="5"
-          :remote="false"
-          :local-options="carrierDrivers"
-          placeholder="请输入司机"
-          class="search-input-senior" />
-        <SelectInput
-          v-model="seniorSearchFields.carNo"
-          :maxlength="8"
-          :remote="false"
-          :local-options="carrierCars"
-          placeholder="请输入车牌号"
-          class="search-input-senior" />
+        <SelectInput v-model="seniorSearchFields.carrierName"
+                     mode="carrier"
+                     placeholder="请输入承运商"
+                     class="search-input-senior"
+                     @on-select="selectCarrierHandler" />
+        <SelectInput v-model="seniorSearchFields.driverName"
+                     :carrier-id="carrierId"
+                     mode="driver"
+                     placeholder="请输入司机"
+                     class="search-input-senior" />
+        <SelectInput v-model="seniorSearchFields.carNo"
+                     :carrier-id="carrierId"
+                     mode="carNo"
+                     placeholder="请输入车牌号"
+                     class="search-input-senior" />
       </div>
 
       <div style="display: flex;justify-content: space-between;">
@@ -135,7 +123,8 @@ import TransportMixin from './transportMixin'
 
 import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
-import SelectInput from '@/components/SelectInput.vue'
+import SelectInput from './components/SelectInput.vue'
+import SelectInputMixin from './components/selectInputMixin'
 import PrintPickup from './components/PrintPickup'
 
 import Server from '@/libs/js/server'
@@ -144,7 +133,7 @@ import Export from '@/libs/js/export'
 export default {
   name: 'ReceiveManager',
   components: { TabHeader, PageTable, SelectInput, PrintPickup },
-  mixins: [ BasePage, TransportBase, TransportMixin ],
+  mixins: [ BasePage, TransportBase, SelectInputMixin, TransportMixin ],
   metaInfo: { title: '提货管理' },
   data () {
     return {
