@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" width="1100"  @on-visible-change="close">
+  <Modal v-model="show" :mask-closable="false" width="1100"  @on-visible-change="close">
     <p slot="header" style="text-align:center">
       {{ type === 'sendCar' ? '派车' : '提货' }}
     </p>
@@ -8,41 +8,36 @@
       <Row class="detail-field-group">
         <i-col span="7">
           <span class="detail-field-title detail-field-required">承运商：</span>
-          <SelectInput
-            v-model="info.carrierName"
-            :maxlength="20"
-            :remote="false"
-            :local-options="carriers"
-            class="detail-info-input"
-            @on-select="handleSelectCarrier" />
+          <SelectInput v-model="info.carrierName"
+                       class="detail-info-input"
+                       mode="carrier"
+                       @on-select="selectCarrierHandler" />
         </i-col>
         <i-col span="7" offset="1">
           <span class="detail-field-title detail-field-required">司机：</span>
-          <SelectInput
-            v-model="info.driverName"
-            :maxlength="5"
-            :remote="false"
-            :local-options="carrierDrivers"
-            class="detail-info-input" />
+          <SelectInput :carrier-id="carrierId"
+                       v-model="info.driverName"
+                       class="detail-info-input"
+                       mode="driver"
+                       @on-select="autoComplete"
+                       @on-option-loaded="driverOptionLoaded" />
         </i-col>
         <i-col span="7" offset="1">
           <span class="detail-field-title">司机手机号：</span>
           <Input v-model="info.driverPhone"
                  :maxlength="11"
-                 class="detail-info-input"></Input>
+                 class="detail-info-input" />
         </i-col>
       </Row>
 
       <Row class="detail-field-group">
         <i-col span="7">
           <span class="detail-field-title detail-field-required">车牌号：</span>
-          <SelectInput
-            v-model="info.carNo"
-            :maxlength="8"
-            :remote="false"
-            :local-options="carrierCars"
-            class="detail-info-input"
-            @on-select="handleSelectCarrierCar" />
+          <SelectInput :carrier-id="carrierId"
+                       v-model="info.carNo"
+                       class="detail-info-input"
+                       mode="carNo"
+                       @on-select="autoComplete" />
         </i-col>
         <i-col span="7" offset="1">
           <span class="detail-field-title">车型：</span>
@@ -65,7 +60,7 @@
           <span class="detail-field-title-sm detail-field-required">运输费：</span>
           <MoneyInput v-model="payment.freightFee"
                       class="detail-payment-input" />
-          <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
+          <a v-if="type === 'sendCar'" class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
         </i-col>
         <i-col span="4">
           <span class="detail-field-title-sm">装货费：</span>
@@ -116,32 +111,32 @@
     </div>
 
     <div slot="footer" style="text-align: center;">
-      <Button  type="primary"  @click="sendCar">确定</Button>
-      <Button  type="default"  @click.native="close">取消</Button>
+      <Button type="primary" @click="submit">确定</Button>
+      <Button type="default" @click.native="close">取消</Button>
     </div>
   </Modal>
 </template>
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
+import SelectInput from '../components/SelectInput.vue'
+import SelectInputMixin from '../components/selectInputMixin'
+import MoneyInput from '../components/MoneyInput'
 import Server from '@/libs/js/server'
-import SelectInput from '@/components/SelectInput.vue'
-import MoneyInput from '../components/moneyInput'
 import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
-import { mapGetters } from 'vuex'
 import { CAR } from '@/views/client/client'
 
 export default {
   name: 'SendCar',
   components: { SelectInput, MoneyInput },
-  mixins: [ BaseDialog ],
+  mixins: [ BaseDialog, SelectInputMixin ],
   data () {
     return {
+      show: true,
       loading: false,
       carType: CAR_TYPE,
       carLength: CAR_LENGTH,
-      carriers: [], // 承运商
-      carrierCars: [], // 车辆
+
       info: {
         carrierName: '',
         driverName: '',
@@ -149,6 +144,12 @@ export default {
         carNo: '',
         carType: '',
         carLength: ''
+      },
+      financeRulesInfo: {
+        start: void 0,
+        end: void 0,
+        weight: void 0,
+        volume: void 0
       },
       payment: {
         freightFee: 0,
@@ -187,7 +188,7 @@ export default {
                 suffix: false
               },
               style: {
-                width: '60px'
+                width: '70px'
               },
               on: {
                 'on-blur': (money) => {
@@ -211,7 +212,7 @@ export default {
                 suffix: false
               },
               style: {
-                width: '60px'
+                width: '70px'
               },
               on: {
                 'on-blur': (money) => {
@@ -234,10 +235,7 @@ export default {
       Number(this.payment.unloadFee) +
       Number(this.payment.insuranceFee) +
       Number(this.payment.otherFee)).toFixed(2)
-    },
-    ...mapGetters([
-      'carrierDrivers'
-    ])
+    }
   },
   created () {
     this.settlementPayInfo = this.type === 'sendCar' ? [
@@ -248,87 +246,29 @@ export default {
       { payType: 2, fuelCardAmount: 0, cashAmount: 0 }
     ]
     this.fetchData()
-    this.getCarriers()
   },
   methods: {
-    getCarriers () {
-      Server({
-        url: '/carrier/listOrderByUpdateTimeDesc',
-        method: 'get',
-        data: { type: 1 }
-      }).then(res => {
-        this.carriers = res.data.data.carrierList.map(item => {
-          return {
-            name: item.carrierName,
-            value: item.carrierName,
-            payType: item.payType,
-            carrierPhone: item.carrierPhone,
-            id: item.carrierId
-          }
-        })
-      })
-    },
-
-    getCarrierCars (carrierId) {
-      Server({
-        url: '/carrier/list/carOrderByUpdateTimeDesc',
-        method: 'get',
-        data: { carrierId }
-      }).then(res => {
-        this.carrierCars = res.data.data.carList.map(item => {
-          return {
-            name: item.carNO,
-            value: item.carNO,
-            id: item.carId,
-            driverName: item.driverName,
-            driverPhone: item.driverPhone,
-            carType: item.carType,
-            carLength: item.carLength
-          }
-        })
-        if (this.carrierCars.length) {
-          this.info.carNo = this.carrierCars[0].name
-          this.handleSelectCarrierCar(null, this.carrierCars[0])
-        } else {
-          this.info.carNo = ''
-          const keys = ['driverName', 'driverPhone', 'carType', 'carLength']
-          keys.forEach(key => {
-            this.info[key] = ''
-          })
-        }
-      })
-    },
-
-    handleSelectCarrier (name, row) {
-      this.getCarrierCars(row.id)
-      this.$store.dispatch('getCarrierDrivers', row.id)
-    },
-
-    handleSelectCarrierCar (name, row) {
-      const keys = ['driverName', 'driverPhone', 'carType', 'carLength']
-      keys.forEach(key => {
-        this.info[key] = row[key]
-      })
-    },
-
+    // 计费规则
     showChargeRules () {
       const self = this
-      self.openDialog({
-        name: 'transport/dialog/financeRule',
+      this.openDialog({
+        name: 'dialogs/financeRule',
         data: {
-          value: 0
+          partnerType: 2,
+          ...self.financeRulesInfo
         },
         methods: {
           ok (charge) {
             self.payment.freightFee = charge || 0
           },
-          cancel () {
+          closeParentDialog () {
             self.close()
           }
         }
       })
     },
 
+    // 校验总金额
     checkTotalAmount () {
       let total = 0
       this.settlementPayInfo.forEach(item => {
@@ -354,7 +294,12 @@ export default {
         const billInfo = this.type === 'sendCar' ? data.waybill : data.loadbill
 
         for (let key in this.info) {
-          this.info[key] = billInfo[key]
+          this.info[key] = billInfo[key] ? billInfo[key] : ''
+        }
+        if (this.type === 'sendCar') {
+          for (let key in this.financeRulesInfo) {
+            this.financeRulesInfo[key] = billInfo[key]
+          }
         }
         for (let key in this.payment) {
           this.payment[key] = this.setMoneyUnit2Yuan(billInfo[key])
@@ -401,6 +346,7 @@ export default {
       })
     },
 
+    // 提交前数据校验
     validate () {
       if (!this.info.carrierName) {
         this.$Message.error('请输入承运商')
@@ -430,7 +376,7 @@ export default {
       return true
     },
 
-    sendCar () {
+    submit () {
       if (!this.validate()) return
 
       let data = {
@@ -478,6 +424,6 @@ export default {
      border-style none
      padding-bottom 10px
 
-  .detail-payment-input
-    width 80px
+  .detail-field-title-sm
+    width 75px
 </style>

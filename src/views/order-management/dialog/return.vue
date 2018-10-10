@@ -1,7 +1,7 @@
 <template>
   <div class="dialog">
     <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
-      <p slot="header" style="text-align:center">
+      <p slot="header" class="dialog-title">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>{{name}}</span>
       </p>
@@ -63,12 +63,6 @@ export default {
     }
   },
 
-  watch: {
-    visibale: function (val) {
-      !val && this.close()
-    }
-  },
-
   mounted: function () {
   },
 
@@ -109,7 +103,10 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
-.dialog
-  p
-    text-align center
+.dialog-title
+  text-align center
+  font-size 16px
+  font-family 'PingFangSC-Medium'
+  font-weight 700
+  color rgba(47,50,62,1)
 </style>

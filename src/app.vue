@@ -61,8 +61,9 @@ export default {
       await this.getUserInfo()
       this.loopMessage()
       if (sessionStorage.getItem('first_time_login') === 'true') {
-        if (this.UserInfo.roleName === '超级管理员') this.renew()
+        if (this.UserInfo.type === 1) this.renew()
         else this.changePasswordTip()
+        sessionStorage.removeItem('first_time_login')
       }
     },
     loopMessage () {
@@ -128,7 +129,7 @@ export default {
         okText: '立即修改',
         cancelText: '我知道了',
         onOk: () => {
-          window.EMA.fire('openTab', { path: '/set-up', query: { title: '设置' } })
+          window.EMA.fire('openTab', { path: '/set-up/index', query: { title: '设置' } })
         }
       })
     },
@@ -268,6 +269,7 @@ html, body
         margin 0 auto
     .header-con
       position relative
+      z-index 9
       .tag-nav-wrapper
         width auto
         top 4px
@@ -276,6 +278,7 @@ html, body
         position absolute
         padding 0
         height 46px
+        z-index 9
         // background #F0F0F0
         overflow hidden
         .tags-nav .scroll-outer .scroll-body

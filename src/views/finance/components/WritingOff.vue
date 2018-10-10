@@ -1,0 +1,378 @@
+<!--  -->
+<template>
+  <div class="writing-off">
+    <div class="btns-box">
+      <Button type="primary" @click="createBill">生成对账单</Button>
+    </div>
+    <div class="query-box">
+      <Form :model="writingOffQuery" inline>
+        <Row>
+          <Col span="6">
+          <FormItem :label-width="100" :label="sceneMap[scene]">
+            <Input v-model="writingOffQuery.name" :placeholder="`请输入${sceneMap[scene]}名称`"/>
+          </FormItem>
+          </Col>
+          <Col span="2">
+          <FormItem>
+            <Select v-model="writingOffQuery.periodType" clearable>
+              <Option v-for="(value, key) in periodTypeMap" :key="key" :value="key">{{value}}</Option>
+            </Select>
+          </FormItem>
+          </Col>
+          <Col span="8">
+          <FormItem>
+            <DatePicker v-model="writingOffQuery.period"  type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 300px" />
+          </FormItem>
+          </Col>
+          <Col span="6">
+          <FormItem>
+            <Row>
+              <Col span="12">
+              <Button type="primary" @click="startQuery">搜索</Button>
+              </Col>
+              <Col span="12">
+              <Button type="default" @click="resetQuery">清除条件</Button>
+              </Col>
+            </Row>
+          </FormItem>
+          </Col>
+        </Row>
+      </Form>
+    </div>
+    <div class="list-box">
+      <Row :gutter="20">
+        <Col span="8">
+        <Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showOrderData"></Table>
+        </Col>
+        <Col span="16" class="order-list">
+        <Table :columns="orderColumn" :data="orderData" height="500" @on-selection-change="setOrderIds"></Table>
+        </Col>
+      </Row>
+    </div>
+  </div>
+</template>
+
+<script>
+import BaseComponent from '@/basic/BaseComponent'
+import Server from '@/libs/js/server'
+
+export default {
+  name: 'writingOff',
+  mixins: [ BaseComponent ],
+  props: {
+    scene: {
+      type: Number,
+      default: 0
+    }
+  },
+  data () {
+    return {
+      sceneMap: {
+        1: '发货方',
+        2: '承运商',
+        3: '外转方'
+      },
+      orderNameMap: {
+        1: '订单',
+        2: '运单/提货单',
+        3: '外转单'
+      },
+      orderStatusMap: {
+        1: [{
+          label: '在途',
+          value: '在途'
+        }, {
+          label: '已到货',
+          value: '已到货'
+        }, {
+          label: '已回单',
+          value: '已回单'
+        }],
+        2: [{
+          label: '在途',
+          value: '在途'
+        }, {
+          label: '已到货',
+          value: '已到货'
+        }, {
+          label: '已提货',
+          value: '已提货'
+        }],
+        3: [{
+          label: '在途',
+          value: '在途'
+        }, {
+          label: '已到货',
+          value: '已到货'
+        }]
+      },
+      writingOffQuery: {
+        name: '',
+        periodType: '1',
+        period: []
+      },
+      writingOffQuerySave: {
+        name: '',
+        periodType: '1',
+        period: []
+      },
+      periodTypeMap: {
+        1: '下单时间',
+        2: '到货日期',
+        3: '回单日期'
+      },
+      companyData: [],
+      orderData: [],
+      selectedIds: [],
+      currentPartner: {}
+    }
+  },
+  computed: {
+    companyColumn () {
+      return [
+        {
+          title: this.sceneMap[this.scene] + '名称',
+          width: 100,
+          key: 'partnerName'
+        },
+        {
+          title: '总单数',
+          key: 'orderNum'
+        },
+        {
+          title: '应收总额',
+          key: 'calcTotalFeeText'
+        },
+        {
+          title: '已结款',
+          key: 'verifiedFeeText'
+        }
+      ]
+    },
+    orderColumn () {
+      return [
+        {
+          type: 'selection',
+          width: 50
+        },
+        {
+          title: '操作',
+          width: 60,
+          key: 'action',
+          render: (h, params) => {
+            return h('a', {
+              on: {
+                click: () => {
+                  this.writeOff(params)
+                }
+              }
+            }, '核销')
+          }
+        },
+        {
+          title: this.orderNameMap[this.scene] + '号',
+          width: 140,
+          key: 'orderNo',
+          render: (h, params) => {
+            return h('a', {
+              on: {
+                click: () => {
+                  this.toDetail(params)
+                }
+              }
+            }, params.row.orderNo)
+          }
+        },
+        {
+          title: '始发地',
+          key: 'departureName'
+        },
+        {
+          title: '目的地',
+          key: 'destinationName'
+        },
+        {
+          title: '合计运费',
+          key: 'totalFeeText'
+        },
+        {
+          title: '结算方式',
+          width: 110,
+          key: 'settleTypeDesc',
+          filters: this.sence === 2 ? [
+            {
+              label: '按单结算',
+              value: '按单结算'
+            },
+            {
+              label: '按月结算',
+              value: '按月结算'
+            }] : [
+            {
+              label: '预付',
+              value: '预付'
+            },
+            {
+              label: '到付',
+              value: '到付'
+            },
+            {
+              label: '回单付',
+              value: '回单付'
+            },
+            {
+              label: '月结',
+              value: '月结'
+            }
+          ],
+          filterMethod (value, row) {
+            return row.settleTypeDesc === value
+          }
+        },
+        {
+          title: '状态',
+          width: 100,
+          key: 'orderStatusDesc',
+          filters: this.orderStatusMap[this.scene],
+          filterMethod (value, row) {
+            return row.orderStatusDesc === value
+          }
+        }
+      ]
+    }
+  },
+  mounted () {
+    this.loadData()
+  },
+  methods: {
+    setOrderIds (data) {
+      this.selectedIds = data.map(item => item.id)
+    },
+    createBill () {
+      const _this = this
+      if (this.selectedIds.length > 1) {
+        this.openDialog({
+          name: 'finance/dialogs/createCheck',
+          data: {
+            idList: this.selectedIds,
+            partnerName: this.currentPartner.partnerName,
+            orderNum: this.currentPartner.orderNum,
+            dayType: this.writingOffQuerySave.periodType,
+            startTime: this.writingOffQuerySave.startTime || '',
+            endTime: this.writingOffQuerySave.endTime || '',
+            partnerType: this.scene
+          },
+          methods: {
+            ok () {
+              _this.loadData()
+            }
+          }
+        })
+      } else {
+        this.$Message.warning('请选择2条以上的数据')
+      }
+    },
+    startQuery () {
+      this.orderData = []
+      this.writingOffQuerySave = this.writingOffQuery
+      this.loadData()
+    },
+    resetQuery () {
+      this.writingOffQuery = {
+        name: '',
+        periodType: '1',
+        period: []
+      }
+    },
+    writeOff (data) {
+      const _this = this
+      if (data.row.isMultiPay) {
+        this.openDialog({
+          name: 'finance/dialogs/stepPay',
+          data: {
+            id: data.row.id,
+            needPay: data.row.totalFeeText,
+            settleTypeDesc: data.row.settleTypeDesc
+          },
+          methods: {}
+        })
+      } else {
+        this.openDialog({
+          name: 'finance/dialogs/writeOff',
+          data: {
+            id: data.row.id,
+            verifyType: 1,
+            isOil: 0,
+            needPay: data.row.totalFeeText,
+            settleTypeDesc: data.row.settleTypeDesc
+          },
+          methods: {
+            ok () {
+              _this.loadData()
+            }
+          }
+        })
+      }
+    },
+    toDetail (data) {
+      this.openTab({
+        path: '/order-management/detail',
+        query: {
+          id: data.row.orderNo,
+          orderId: data.row.id,
+          from: 'order'
+        }
+      })
+    },
+    loadData () {
+      Server({
+        url: '/finance/getUnverify',
+        method: 'get',
+        params: {
+          partnerType: this.scene,
+          partnerName: this.writingOffQuerySave.name,
+          dayType: this.writingOffQuerySave.periodType,
+          startTime: this.writingOffQuerySave.period[0] ? this.writingOffQuerySave.period[0].getTime() : '',
+          endTime: this.writingOffQuerySave.period[1] ? this.writingOffQuerySave.period[1].getTime() : ''
+        }
+      }).then(res => {
+        this.companyData = res.data.data.map(item => {
+          return Object.assign({}, item, {
+            calcTotalFeeText: (item.calcTotalFee / 100).toFixed(2),
+            verifiedFeeText: (item.verifiedFee / 100).toFixed(2)
+          })
+        })
+        if (this.currentPartner.id && this.companyData.map(item => item.id).indexOf(this.currentPartner.id) >= 0) {
+          this.currentPartner = this.companyData.find(item => this.currentPartner.id === item.id)
+          this.showOrderData(this.companyData.find(item => this.currentPartner.id === item.id).orderInfos)
+        }
+      }).catch(err => console.error(err))
+    },
+    showOrderData (data) {
+      this.currentPartner = data
+      this.orderData = data.orderInfos.map(item => {
+        return Object.assign({}, item, {
+          totalFeeText: (item.totalFee / 100).toFixed(2),
+          _disabled: !!item.isMultiPay
+        })
+      })
+    }
+  }
+}
+</script>
+<style lang='stylus'>
+  .writing-off
+    margin: 35px 0 15px
+    .btns-box
+      margin-bottom: 20px
+    .query-box
+      padding: 20px 0
+      margin-bottom: 20px
+      background-color: #f9f9f9
+      /deep/ .ivu-form-item
+        margin-bottom: 0
+    .order-list
+      /deep/ .ivu-table-cell
+        padding-left: 5px
+        padding-right: 5px
+</style>

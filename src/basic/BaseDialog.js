@@ -57,8 +57,24 @@ export default {
     openDialog: function (data) {
       this.ema.fire('Dialogs.push', data)
     },
+    /**
+     * 打开一个tab页
+     * @param data
+     *  {
+     *    title:'', //tab应该显示的名称,默认值为query.id或metaInfo.title
+     *    path:'', //路径
+     *    multi:false //是否支持多开 默认false 已废弃
+     *    query:{}
+     *  }
+     */
+    openTab: function (data) {
+      data.query = Object.assign({ noCache: true }, data.query)
+      // data.query = Object.assign({_time: new Date().getTime()}, data.query)
+      data.query.title = data.title ? data.title : (data.query.id ? data.query.id : this.$options.metaInfo.title)
+      this.ema.fire('openTab', data)
+    },
     close: function () {
-      console.log('close ' + this.$options.name + ' ' + this.visibale)
+      console.log('close ' + this.$options.name)
       this.ema.fire('Dialogs.close', this.$options.name)
     },
     // 权限控制

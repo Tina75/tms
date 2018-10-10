@@ -2,9 +2,9 @@
   <div :class="['item-container',checked?'mh-10':'']">
     <i v-show="checked" class="icon font_family icon-you2 icon-left" style=""></i>
     <div :class="['tab-item',checked?'tab-item__checked':'']">
-      <Icon  v-show="checked" class="tab-item__icon " type="ios-refresh" size="18" @click.stop="$emit('on-refresh')"/>
-      <span class="tab-item__name">{{name}}</span>
-      <Icon v-show="closeable" class="tab-item__icon" type="ios-close" size="18" @click.stop="$emit('on-close')"/>
+      <Icon  v-show="checked" class="tab-item__icon " type="ios-refresh" size="20" @click.stop="$emit('on-refresh')"/>
+      <span class="tab-item__name">{{ name}}</span>
+      <Icon v-show="closeable" class="tab-item__icon" type="ios-close" size="20" @click.stop="$emit('on-close')"/>
     </div>
     <i v-show="checked" class="icon font_family icon-you2 icon-right" ></i>
   </div>
@@ -42,8 +42,8 @@ export default {
 .item-container
   display inline-block
   position relative
-  padding-right 5px
-  padding-left 5px
+  padding-right 3px
+  padding-left 3px
 .mh-10
   padding 0 5px
 .icon-left
@@ -67,7 +67,7 @@ export default {
   min-width 80px
   line-height 32px
   // margin-right 6px
-  padding 0 2px 0 5px
+  padding 0
   height 32px
   border-radius 8px 8px 0px 0px
   background #3A424B

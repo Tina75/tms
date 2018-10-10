@@ -1,7 +1,7 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visiable" :mask-closable="false" width="360" class="outer-dialog" @on-visible-change="close">
-      <p slot="header" style="text-align:center">
+    <Modal v-model="visiable" :mask-closable="false" width="400" class="outer-dialog" @on-visible-change="close">
+      <p slot="header" class="dialog-title">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>订单外转</span>
       </p>
@@ -93,12 +93,6 @@ export default {
     ])
   },
 
-  watch: {
-    visibale: function (val) {
-      !val && this.close()
-    }
-  },
-
   mounted: function () {
   },
 
@@ -157,9 +151,13 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
-.dialog
-  p
-    text-align center
+.dialog-title
+  text-align center
+  font-size 16px
+  font-family 'PingFangSC-Medium'
+  font-weight 700
+  color rgba(47,50,62,1)
+  letter-spacing 1px
 </style>
 <style lang='stylus'>
 .outer-dialog .ivu-form

@@ -5,7 +5,7 @@
       <div>
         <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
       </div>
-      <div v-if="simpleSearch" class="right">
+      <div v-if="simpleSearch" class="order-right">
         <Select v-model="selectStatus"  style="width:120px;margin-right: 11px" @on-change="handleChangeSearchStatus">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
@@ -39,7 +39,7 @@
           style="width: 200px"
           @on-enter="searchList"
           @on-click="clearKeywords"/>
-        <Button type="primary" icon="ios-search" style="width: 40px;margin-right: 0;border-top-left-radius: 0;border-bottom-left-radius: 0;" @click="searchList"></Button>
+        <Button type="primary" icon="ios-search" style="width: 40px;margin-left:-2px;margin-right: 0;border-top-left-radius: 0;border-bottom-left-radius: 0;" @click="searchList"></Button>
         <Button type="text" class="high-search" size="small" @click="handleSwitchSearch">高级搜索</Button>
       </div>
     </div>
@@ -60,8 +60,8 @@
       </div>
       <div style="display: flex;justify-content: space-between;">
         <div>
-          <area-select v-model="keywords.start" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
-          <area-select v-model="keywords.end" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <area-select v-model="cityCodes.startCodes" :deep="true" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <area-select v-model="cityCodes.endCodes" :deep="true" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
           <DatePicker
             :options="timeOption"
             v-model="times"
@@ -107,7 +107,7 @@ import SelectInput from '@/components/SelectInput.vue'
 import OrderPrint from './components/OrderPrint'
 import _ from 'lodash'
 import { mapGetters, mapActions } from 'vuex'
-import City from '@/libs/js/city'
+// import City from '@/libs/js/city'
 import SearchMixin from './searchMixin'
 import jsCookie from 'js-cookie'
 export default {
@@ -166,7 +166,7 @@ export default {
       tableColumns: [
         {
           type: 'selection',
-          width: 60,
+          width: 50,
           align: 'center',
           fixed: 'left'
         },
@@ -346,7 +346,7 @@ export default {
           title: '订单号',
           key: 'orderNo',
           fixed: 'left',
-          minWidth: 160,
+          minWidth: 180,
           tooltip: true,
           className: 'padding-20',
           render: (h, params) => {
@@ -441,17 +441,17 @@ export default {
           minWidth: 180,
           ellipsis: true,
           render: (h, params) => {
-            if (City.codeToFullNameArr(params.row.start).length > 12) {
+            if (this.cityFormatter(params.row.start).length > 12) {
               return h('Tooltip', {
                 props: {
                   placement: 'bottom',
-                  content: City.codeToFullNameArr(params.row.start)
+                  content: this.cityFormatter(params.row.start)
                 }
               }, [
-                h('span', this.formatterAddress(City.codeToFullNameArr(params.row.start)))
+                h('span', this.formatterAddress(this.cityFormatter(params.row.start)))
               ])
             } else {
-              return h('span', City.codeToFullNameArr(params.row.start))
+              return h('span', this.cityFormatter(params.row.start))
             }
           }
         },
@@ -461,17 +461,17 @@ export default {
           minWidth: 180,
           ellipsis: true,
           render: (h, params) => {
-            if (City.codeToFullNameArr(params.row.end).length > 12) {
+            if (this.cityFormatter(params.row.end).length > 12) {
               return h('Tooltip', {
                 props: {
                   placement: 'bottom',
-                  content: City.codeToFullNameArr(params.row.end)
+                  content: this.cityFormatter(params.row.end)
                 }
               }, [
-                h('span', this.formatterAddress(City.codeToFullNameArr(params.row.end)))
+                h('span', this.formatterAddress(this.cityFormatter(params.row.end)))
               ])
             } else {
-              return h('span', City.codeToFullNameArr(params.row.end))
+              return h('span', this.cityFormatter(params.row.end))
             }
           }
         },
@@ -631,6 +631,7 @@ export default {
           }
         }
       ],
+      operateCol: [], // 操作列
       extraColumns: [
         {
           title: '订单号',
@@ -805,24 +806,6 @@ export default {
     ])
   },
 
-  watch: {
-    $route (to, from) {
-      // 批量导入点查看进入的传importId字段，订单列表显示《全部》tab页
-      if (to.path === '/order-management/order') {
-        let importId = jsCookie.get('imported_id')
-        console.log(importId)
-        // debugger
-        if (importId) {
-          this.keyword = {
-            importId: importId
-          }
-          sessionStorage.setItem('ORDER_TAB_NAME', '全部')
-          jsCookie.remove('imported_id')
-        }
-      }
-    }
-  },
-
   created () {
     let importId = jsCookie.get('imported_id')
     // 刷新页面停留当前tab页
@@ -838,10 +821,11 @@ export default {
         this.handleTabChange('待提货') // 表头按钮状态
       }
     } else { // 批量导入点查看进入的传importId字段，订单列表显示《全部》tab页
-      this.keyword = {
-        importId: importId
-      }
+      this.keywords.importId = importId
+      this.keyword.status = null // 默认全部状态
+      this.keyword = this.keywords
       sessionStorage.setItem('ORDER_TAB_NAME', '全部')
+      this.curStatusName = '全部'
       jsCookie.remove('imported_id')
     }
   },
@@ -858,7 +842,10 @@ export default {
     getOrderNum () {
       Server({
         url: 'order/getOrderNumByStatus',
-        method: 'get'
+        method: 'get',
+        data: {
+          importId: this.keywords.importId || null
+        }
       }).then((res) => {
         console.log(res)
         let list = res.data.data
@@ -918,6 +905,8 @@ export default {
       this.selectOrderList = [] // 重置当前已勾选项
       this.selectedId = [] // 重置当前已勾选id项
       if (val === '全部') {
+        // 全部、待提货、待调度加上操作栏
+        this.addOperateCol()
         this.operateValue = 1
         this.btnGroup = [
           { name: '送货调度', value: 1, code: 110101 },
@@ -930,6 +919,8 @@ export default {
         this.keywords.status = null
         // this.keyword = {...this.keywords}
       } else if (val === '待提货') {
+        // 全部、待提货、待调度加上操作栏
+        this.addOperateCol()
         this.operateValue = 1
         this.btnGroup = [
           { name: '提货调度', value: 1, code: 110102 },
@@ -940,6 +931,8 @@ export default {
         this.keywords.status = 10
         // this.keyword = {...this.keywords}
       } else if (val === '待调度') {
+        // 全部、待提货、待调度加上操作栏
+        this.addOperateCol()
         this.operateValue = 1
         this.btnGroup = [
           { name: '送货调度', value: 1, code: 110101 },
@@ -951,6 +944,8 @@ export default {
         this.keywords.status = 20
         // this.keyword = {...this.keywords}
       } else {
+        // 在途、已到货、已回单取消操作栏
+        this.deleteOperateCol()
         this.operateValue = 1
         this.btnGroup = [
           { name: '导出', value: 1, code: 110109 }
@@ -969,7 +964,7 @@ export default {
     },
     // 表头按钮操作
     handleOperateClick (btn) {
-      this.operateValue = btn.value
+      // this.operateValue = btn.value
       if (!this.selectOrderList.length && btn.name !== '导出') {
         this.$Message.warning('请至少选择一条信息')
         return
@@ -1166,6 +1161,9 @@ export default {
 .ivu-btn
   margin-right 15px
   width 80px
+  height 35px
+.ivu-btn-default
+  background #F9F9F9
 .high-search
   width 36px
   height 30px
@@ -1185,4 +1183,7 @@ export default {
 .padding-20
   .ivu-table-cell
     padding-left 20px
+.order-right
+  .ivu-input
+    height 35px
 </style>

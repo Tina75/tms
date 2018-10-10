@@ -117,6 +117,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.sider
+  z-index 10
 .title
   font-size 20px
   color white

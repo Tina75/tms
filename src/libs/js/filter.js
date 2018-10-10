@@ -101,16 +101,17 @@ Vue.filter('codeToName', function (cityId) {
   return City.codeToName(cityId)
 })
 /**
- * 根据code获取城市全名
- * @param code 城市code
- * @param deep  1：省  2：市  3：区
- */
-Vue.filter('codeToFullName', function (cityId) {
-  return City.codeToFullNameArr(cityId)
-})
-/**
  * 将元转为分
  */
 Vue.filter('toPoint', function (cityId) {
   return cityId / 100
+})
+/**
+ * 根据code获取城市全名 格式化城市
+ * @param code 城市code
+ * @param deep  1：省  2：市  3：区
+ */
+Vue.filter('cityFormatter', function (code) {
+  if (!code) return ''
+  return Array.from(new Set(City.codeToFullNameArr(code, 3))).join('')
 })

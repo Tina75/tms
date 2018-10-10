@@ -38,14 +38,9 @@ export default {
     })
     // 关闭指定弹出框
     this.bindEvent('close', (name) => {
-      this.dialogs[this.dialogs.length - 1].visiable = false
-      // var lenght = this.dialogs.length - 1
-      // for (var i = lenght; i >= 0; i--) {
-      //   var obj = this.dialogs[ i ]
-      //   if (obj.name === name) {
-      //     break
-      //   }
-      // }
+      let obj = this.dialogs[this.dialogs.length - 1]
+      obj.visiable = false
+      this.cache[obj.name] = undefined
       this.dialogs.splice(this.dialogs.length - 1, 1)
     })
   },
@@ -83,7 +78,6 @@ export default {
       }
     },
     close: function () {
-      console.log('close')
       this.ema.fire('Dialogs.close', this.$options.name)
     },
     /**

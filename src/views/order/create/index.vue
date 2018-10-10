@@ -17,12 +17,12 @@
       </Col>
       <Col span="6">
       <FormItem label="始发城市:" prop="start">
-        <AreaSelect v-model="orderForm.start" :deep="true"></AreaSelect>
+        <AreaSelect v-model="orderForm.start" :deep="true" placeholder=""></AreaSelect>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="目的城市:" prop="end">
-        <AreaSelect v-model="orderForm.end" :deep="true" :adjustment="true"></AreaSelect>
+        <AreaSelect v-model="orderForm.end" :deep="true" :adjustment="true" placeholder=""></AreaSelect>
       </FormItem>
       </Col>
     </Row>
@@ -122,12 +122,12 @@
       <Col span="6">
       <FormItem label="运输费用:" prop="freightFee">
         <Row>
-          <Col span="18">
+          <Col span="20">
           <TagNumberInput :min="0" v-model="orderForm.freightFee" :parser="handleParseFloat">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           </Col>
-          <Col span="6">
+          <Col span="4">
           <span @click="showCounter">
             <FontIcon type="jisuanqi" size="20" color="#00a4bd" class="i-ml-5"></FontIcon>
           </span>
@@ -216,14 +216,14 @@ import float from '@/libs/js/float'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import OrderPrint from './OrderPrint'
-import AreaSelect from '@/components/AreaSelect'
+import AreaSelect, { getCodeFromList, specialCity } from '@/components/AreaSelect'
 import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
 import settlements from '@/libs/constant/settlement.js'
 import pickups from '@/libs/constant/pickup.js'
+import Cargo from './libs/cargo'
 
 const transferFeeList = ['freightFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
-const specialCity = ['110000', '120000', '710000', '810000', '820000', '500000', '310000']
 export default {
   metaInfo: {
     title: '手动下单'
@@ -358,7 +358,7 @@ export default {
           }
         },
         {
-          title: '重量(吨)',
+          title: '重量（吨）',
           key: 'weight',
           renderHeader: (h, params) => {
             return h('span', [
@@ -406,7 +406,7 @@ export default {
           }
         },
         {
-          title: '体积(方)',
+          title: '体积（方）',
           key: 'volume',
           renderHeader (h, params) {
             return h('span', [
@@ -435,7 +435,7 @@ export default {
           }
         },
         {
-          title: '货值(元)',
+          title: '货值（元）',
           key: 'cargoCost',
           render (h, params) {
             return h('InputNumber', {
@@ -466,10 +466,23 @@ export default {
                 parser: (value) => parseInt(value).toString()
               },
               on: {
+                'on-focus': () => {
+                  params.focus = true
+                },
                 'on-change': (value) => {
                   if (params.value !== value) {
                     params.value = value
+                    if (!params.focus) {
+                      _this.updateLocalCargo(setObject(params, parseInt(params.value || 1)))
+                      _this.syncUpdateCargoProps(params)
+                    }
+                  }
+                },
+                'on-blur': () => {
+                  params.focus = false
+                  if (params.value) {
                     _this.updateLocalCargo(setObject(params, parseInt(params.value || 1)))
+                    _this.syncUpdateCargoProps(params)
                   }
                 }
               }
@@ -762,6 +775,38 @@ export default {
         delete this.tempCargoes[item.index]
       }
     },
+    /**
+     * 当选中已维护货物的时候，更改数量时，需要同时修改重量、体积和货值等参数
+     * @param params {index:number, column: object, row: object}
+     */
+    syncUpdateCargoProps (params) {
+      // 是否输入了货物名称
+      let cargoName
+      if (this.tempCargoes[params.index] && this.tempCargoes[params.index].cargoName) {
+        cargoName = this.tempCargoes[params.index].cargoName
+      } else if (this.consignerCargoes[params.index].cargoName) {
+        cargoName = this.consignerCargoes[params.index].cargoName
+      }
+      // 查找货物名称，是否是已维护的货物信息
+      if (cargoName) {
+        const matchCargo = this.cargoes.find((cargo) => cargo.cargoName === cargoName)
+        // 匹配成功
+        if (matchCargo) {
+          let syncCargo = new Cargo(matchCargo);
+          ['weight', 'volume', 'cargoCost'].forEach((key) => {
+            // this.updateLocalCargo({
+            //   name: key,
+            //   index: params.index,
+            //   value: params.value * matchCargo[key]
+            // })
+            syncCargo[key] = params.value * syncCargo[key]
+          })
+          syncCargo.quantity = params.value
+          this.syncStoreCargoes()
+          this.fullUpdateCargo({ index: params.index, cargo: syncCargo })
+        }
+      }
+    },
     // 同步当前的修改数据到vuex的store
     syncStoreCargoes () {
       for (let index in this.tempCargoes) {
@@ -803,11 +848,23 @@ export default {
     // 显示计费规则
     showCounter () {
       const vm = this
+      if (!vm.orderForm.consignerName) {
+        this.$Message.warning('请先选择客户')
+        return
+      }
+      if (vm.statics.weight <= 0 || vm.statics.volume <= 0) {
+        this.$Message.warning('请先填写货物必要信息')
+        return
+      }
       this.openDialog({
-        name: 'order/create/FinanceRuleDialog.vue',
+        name: 'dialogs/financeRule.vue',
         data: {
-          value: 0,
-          parterName: vm.orderForm.consignerName
+          start: getCodeFromList(vm.orderForm.start), // 始发城市
+          end: getCodeFromList(vm.orderForm.end), // 目的城市
+          partnerName: vm.orderForm.consignerName, // 客户名
+          partnerType: 1, // 计算规则分类：1-发货方，2-承运商，3-外转方
+          weight: vm.statics.weight,
+          volume: vm.statics.volume
         },
         methods: {
           ok (value) {
@@ -816,11 +873,17 @@ export default {
         }
       })
     },
+    /**
+     * 获取最后一位code码
+     * 特殊地区，选择了北京市北京市，取首位code码
+     */
+    // getCityCode (codes) {
+    //   return specialCity.includes(codes[0]) && codes.length === 2 ? codes[0] : codes[codes.length - 1]
+    // },
     // 提交表单
     handleSubmit (e) {
-      console.log('orderForm', this.orderForm)
       const vm = this
-      this.syncStoreCargoes()
+      vm.syncStoreCargoes()
       vm.disabled = true
       return new Promise((resolve, reject) => {
         vm.$refs.orderForm.validate((valid) => {
@@ -843,8 +906,8 @@ export default {
               reject(new Error(findError.message))
             }
             // 始发地遇到北京市等特殊直辖市，需要只保留第一级code
-            let start = specialCity.includes(orderForm.start[0]) && orderForm.start.length === 2 ? orderForm.start[0] : orderForm.start[orderForm.start.length - 1]
-            let end = specialCity.includes(orderForm.end[0]) && orderForm.end.length === 2 ? orderForm.end[0] : orderForm.end[orderForm.end.length - 1]
+            let start = getCodeFromList(orderForm.start)
+            let end = getCodeFromList(orderForm.end)
             // 始发城市，目的城市，到达时间等需要额外处理
             let form = Object.assign({}, orderForm, {
               start: start,
@@ -896,9 +959,11 @@ export default {
       this.$refs.orderForm.resetFields()
       this.clearCargoes()
     },
+    // 修改订单完结束后，自动关闭页面
     closeTab () {
       this.ema.fire('closeTab', this.$route)
     },
+    // 打印
     print () {
       const vm = this
       this.handleSubmit()

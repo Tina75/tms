@@ -11,11 +11,14 @@
           </Select>
         </template>
         <template v-if="selectStatus==0">
-          <Input v-model="name" :maxlength="20" placeholder="请输入发货方名称" search style="width: 200px"  @on-search="searchList" />
+          <Input v-model="name" :maxlength="20" class="search-input" placeholder="请输入发货方名称"    />
         </template>
         <template v-else>
-          <Input v-model="contact" :maxlength="15" placeholder="请输入发货方联系人" search style="width: 200px"  @on-search="searchList" />
+          <Input v-model="contact" :maxlength="15" class="search-input" placeholder="请输入发货方联系人" />
         </template>
+        <Button icon="ios-search" type="primary"
+                class="search-btn-easy"
+                @click="searchList"></Button>
       </div>
     </div>
     <div>
@@ -68,6 +71,7 @@ export default {
         {
           title: '操作',
           key: 'id',
+          width: 100,
           render: (h, params) => {
             let renderBtn = []
             if (this.hasPower(130102)) {
@@ -141,35 +145,71 @@ export default {
         },
         {
           title: '发货方名称',
-          // key: 'name',
+          ellipsis: true,
+          minWidth: 50,
           render: (h, params) => {
-            return h('div', [
-              h('span', {
-                style: {
-                  color: '#418DF9',
-                  cursor: 'pointer'
-                },
-                on: {
-                  click: () => {
-                    this.openTab({ path: '/client/sender-info', title: '发货方详情', query: { id: params.row.id }
-                    })
+            let text = ''
+            if (params.row.name.length > 11) {
+              text = params.row.name.slice(0, 11) + '...'
+              return h('div', [
+                h('Tooltip', {
+                  props: {
+                    placeholder: 'bottom',
+                    transfer: false
                   }
-                }
-              }, params.row.name)
-            ])
+                }, [
+                  h('a', {
+                    style: {
+                      color: '#418DF9',
+                      cursor: 'pointer'
+                    },
+                    on: {
+                      click: () => {
+                        this.openTab({ path: '/client/sender-info', title: '发货方详情', query: { id: params.row.id }
+                        })
+                      }
+                    }
+                  }, text),
+                  h('div', {
+                    slot: 'content',
+                    style: {
+                      whiteSpace: 'normal'
+                    }
+                  }, params.row.name)
+                ])
+              ])
+            } else {
+              return h('div', [
+                h('a', {
+                  style: {
+                    color: '#418DF9',
+                    cursor: 'pointer'
+                  },
+                  title: params.row.name,
+                  on: {
+                    click: () => {
+                      this.openTab({ path: '/client/sender-info', title: '发货方详情', query: { id: params.row.id }
+                      })
+                    }
+                  }
+                }, params.row.name)
+              ])
+            }
           }
         },
         {
           title: '发货方联系人',
-          key: 'contact'
+          key: 'contact',
+          ellipsis: true,
+          tooltip: true
         },
         {
           title: '联系电话',
-          key: 'phone'
+          key: 'phone',
+          width: 110
         },
         {
-          title: '发货方地址数量',
-          // key: 'consignerAddressCnt'
+          title: '发货地址数',
           key: 'addressCnt'
         },
         {
@@ -181,7 +221,7 @@ export default {
           key: 'cargoCnt'
         },
         {
-          title: '付款方式描述',
+          title: '付款方式',
           key: 'payType',
           render: (h, params) => {
             let text = ''
@@ -194,7 +234,7 @@ export default {
             } else if (params.row.payType === 4) {
               text = '月结'
             } else {
-              text = ''
+              text = '-'
             }
             return h('div', {}, text)
           }
@@ -203,6 +243,7 @@ export default {
           title: '创建时间',
           key: 'createTime',
           sortable: 'custom',
+          width: 150,
           render: (h, params) => {
             let text = this.formatDate(params.row.createTime)
             return h('div', { props: {} }, text)

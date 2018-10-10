@@ -7,6 +7,7 @@
         </ButtonGroup>
         <DatePicker
           v-model="times"
+          :options="options"
           type="daterange"
           format="yyyy-MM-dd"
           placeholder="开始日期-结束日期"
@@ -14,8 +15,8 @@
           @on-change="handleTimeChange"
         >
         </DatePicker>
-        <Tooltip max-width="200" content="营业额汇总报表：按照订单的下单日期提取数据；利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
-          <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;margin-left: 18px" />
+        <Tooltip max-width="200" style="margin-left: 18px" content="营业额汇总报表：按照订单的下单日期提取数据；利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
+          <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;" />
         </Tooltip>
       </div>
       <div class="search-btn">
@@ -68,45 +69,70 @@ export default {
         {
           title: '客户名称',
           key: 'consignerName',
-          ellipsis: true
+          ellipsis: true,
+          tooltip: true
         },
         {
           title: '订单数',
           key: 'orderNum',
-          ellipsis: true
+          ellipsis: true,
+          tooltip: true
+        },
+        {
+          title: '保险费',
+          key: 'insuranceFee',
+          render: (h, params) => {
+            return h('span', params.row.insuranceFee)
+          }
         },
         {
           title: '运输费',
           key: 'freightFee',
-          ellipsis: true
+          render: (h, params) => {
+            return h('span', params.row.freightFee)
+          }
         },
         {
           title: '装卸费',
           key: 'loadFee',
-          ellipsis: true
+          render: (h, params) => {
+            return h('span', params.row.loadFee)
+          }
         },
         {
           title: '卸货费',
           key: 'unloadFee',
-          ellipsis: true
+          render: (h, params) => {
+            return h('span', params.row.unloadFee)
+          }
         },
         {
           title: '其他费用',
           key: 'otherFee',
-          ellipsis: true
+          render: (h, params) => {
+            return h('span', params.row.otherFee)
+          }
         },
         {
           title: '费用合计',
           key: 'totalFee',
-          ellipsis: true
+          render: (h, params) => {
+            return h('span', params.row.totalFee)
+          }
         }
-      ]
+      ],
+      options: {
+        disabledDate (date) {
+          return date && date.valueOf() > Date.now()
+        }
+      }
     }
   },
   methods: {
     search () {
       // 输入框都为空，type=1,搜索数据清空
       if (!this.isEmpty()) {
+        this.$Message.error('请先输入搜索条件')
         this.keyword = {
           type: 1
         }
@@ -147,6 +173,8 @@ export default {
     handleTimeChange (val) {
       this.keywords.startTime = val[0]
       this.keywords.endTime = val[1]
+      // 去掉蓝显
+      this.operateValue = ''
     },
     date (value) {
       let start = ''
@@ -178,7 +206,7 @@ export default {
           if (month > 9) {
             startMonth = '10'
           }
-          start = this.formatDate(now).slice(0, 5) + startMonth + this.formatDate(now).slice(-3)
+          start = this.formatDate(now).slice(0, 5) + startMonth + '-01'
           break
         case 4:
           /* 当前年份 */
@@ -211,10 +239,9 @@ export default {
       Export({
         url: '/report/exportTurnoverSummary',
         method: 'post',
-        data: data
-      }).then(res => {
-        this.$Message.success('导出成功')
-      }).catch(err => console.error(err))
+        data: data,
+        fileName: '营业额汇总报表'
+      })
     }
   }
 }

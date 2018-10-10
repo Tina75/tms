@@ -41,6 +41,7 @@
 
           <FormItem class="form-button">
             <Button type="primary" long @click="handleSubmit">确定</Button>
+            <p style="float: right; margin-top: 20px;"><a @click.prevent="changeMode('signin')">去登录&gt;</a></p>
           </FormItem>
         </Form>
       </div>

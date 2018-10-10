@@ -1,7 +1,7 @@
 <template>
   <div class="dialog">
     <Modal v-model="visiable" :mask-closable="false" width="850" @on-visible-change="close">
-      <p slot="header" style="text-align:center">
+      <p slot="header" class="dialog-title">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>拆单</span>
       </p>
@@ -381,11 +381,6 @@ export default {
       cargoCostVal: 0
     }
   },
-  watch: {
-    visibale: function (val) {
-      !val && this.close()
-    }
-  },
 
   mounted: function () {
     this.getData()
@@ -428,13 +423,17 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
-.dialog
-  p
-    text-align center
+.dialog-title
+  text-align center
+  font-size 16px
+  font-family 'PingFangSC-Medium'
+  font-weight 700
+  color rgba(47,50,62,1)
+  letter-spacing 1px
 .order-number
   height 20px
   font-size 13px
-  font-family PingFangSC-Regular
+  font-family 'PingFangSC-Regular'
   font-weight 400
   color rgba(47,50,62,1)
   line-height 20px

@@ -27,25 +27,19 @@
                class="search-input"
                @on-click="resetEasySearch" />
 
-        <SelectInput v-if="easySelectMode === 2"
-                     v-model="easySearchKeyword"
-                     :maxlength="20"
-                     :remote="false"
-                     :local-options="carriers"
-                     clearable
+        <SelectInput v-if="easySelectMode === 2" v-model="easySearchKeyword"
+                     mode="carrier"
                      placeholder="请输入承运商"
+                     clearable
                      class="search-input"
-                     @on-focus.once="getCarriers"
-                     @on-select="handleSelectCarrier"
+                     @on-select="selectCarrierHandler"
                      @on-clear="resetEasySearch" />
 
-        <SelectInput v-if="easySelectMode === 3"
-                     v-model="easySearchKeyword"
-                     :maxlength="8"
-                     :remote="false"
-                     :local-options="carrierCars"
-                     clearable
+        <SelectInput v-if="easySelectMode === 3" v-model="easySearchKeyword"
+                     :carrier-id="carrierId"
+                     mode="carNo"
                      placeholder="请输入车牌号"
+                     clearable
                      class="search-input"
                      @on-clear="resetEasySearch" />
 
@@ -64,29 +58,21 @@
 
       <div style="margin-bottom: 10px;">
         <Input v-model="seniorSearchFields.waybillNo" :maxlength="20"  placeholder="请输入运单号" class="search-input-senior" />
-        <SelectInput
-          v-model="seniorSearchFields.carrierName"
-          :maxlength="20"
-          :remote="false"
-          :local-options="carriers"
-          placeholder="请输入承运商"
-          class="search-input-senior"
-          @on-focus.once="getCarriers"
-          @on-select="handleSelectCarrier" />
-        <SelectInput
-          v-model="seniorSearchFields.driverName"
-          :maxlength="5"
-          :remote="false"
-          :local-options="carrierDrivers"
-          placeholder="请输入司机"
-          class="search-input-senior" />
-        <SelectInput
-          v-model="seniorSearchFields.carNo"
-          :maxlength="8"
-          :remote="false"
-          :local-options="carrierCars"
-          placeholder="请输入车牌号"
-          class="search-input-senior" />
+        <SelectInput v-model="seniorSearchFields.carrierName"
+                     mode="carrier"
+                     placeholder="请输入承运商"
+                     class="search-input-senior"
+                     @on-select="selectCarrierHandler" />
+        <SelectInput v-model="seniorSearchFields.driverName"
+                     :carrier-id="carrierId"
+                     mode="driver"
+                     placeholder="请输入司机"
+                     class="search-input-senior" />
+        <SelectInput v-model="seniorSearchFields.carNo"
+                     :carrier-id="carrierId"
+                     mode="carNo"
+                     placeholder="请输入车牌号"
+                     class="search-input-senior" />
       </div>
 
       <div style="display: flex;justify-content: space-between;">
@@ -140,7 +126,8 @@ import TransportMixin from './transportMixin'
 import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
 import AreaSelect from '@/components/AreaSelect'
-import SelectInput from '@/components/SelectInput'
+import SelectInput from './components/SelectInput.vue'
+import SelectInputMixin from './components/selectInputMixin'
 import PrintFreight from './components/PrintFreight'
 
 import Server from '@/libs/js/server'
@@ -149,7 +136,7 @@ import Export from '@/libs/js/export'
 export default {
   name: 'WaybillManager',
   components: { TabHeader, PageTable, AreaSelect, SelectInput, PrintFreight },
-  mixins: [ BasePage, TransportBase, TransportMixin ],
+  mixins: [ BasePage, TransportBase, SelectInputMixin, TransportMixin ],
   metaInfo: { title: '运单管理' },
   data () {
     return {
@@ -321,7 +308,7 @@ export default {
         {
           title: '运单号',
           key: 'waybillNo',
-          width: 200,
+          width: 180,
           fixed: 'left',
           render: (h, p) => {
             return h('a', {
@@ -638,11 +625,6 @@ export default {
         data: { waybillIds: this.tableSelection.map(item => item.waybillId) }
       }).then(res => {
         const points = res.data.data.list
-        // [{
-        //   longtitude: 118.787842,
-        //   latitude: 32.026739,
-        //   carNo: '苏A88888'
-        // }]
         if (!points.length) {
           this.$Message.warning('暂无位置')
           return

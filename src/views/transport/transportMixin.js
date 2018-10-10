@@ -1,12 +1,14 @@
-import Server from '@/libs/js/server'
-import { mapGetters } from 'vuex'
+import { getCityCode } from '@/libs/constant/cityValidator'
 
 export default {
   data () {
     return {
       order: 'desc', // 倒序 asc升序
-      carriers: [],
-      carrierCars: [],
+
+      // select input data
+      linkage: false,
+      keyFields: 'seniorSearchFields',
+
       // 分页
       page: {
         current: 1,
@@ -29,10 +31,6 @@ export default {
   },
 
   computed: {
-    ...mapGetters([
-      'carrierDrivers'
-    ]),
-
     showButtons () {
       return this.currentBtns.filter(item => {
         return this.hasPower(item.code)
@@ -41,10 +39,17 @@ export default {
   },
 
   created () {
-    this.getCarriers()
     const columns = window.sessionStorage[this.tabType + '_COLUMNS']
     if (columns) this.extraColumns = JSON.parse(columns)
-    const tab = window.sessionStorage['TABHEADER_' + this.tabType]
+
+    let tab
+    if (this.$route.query.tab) {
+      tab = this.$route.query.tab
+      window.sessionStorage.setItem('TABHEADER_' + this.tabType, tab)
+    } else {
+      tab = window.sessionStorage['TABHEADER_' + this.tabType]
+    }
+
     if (tab) {
       this.tabStatus = this.setTabStatus(tab)
       this.tabChanged(tab)
@@ -55,49 +60,6 @@ export default {
   },
 
   methods: {
-    getCarriers () {
-      Server({
-        url: '/carrier/listOrderByUpdateTimeDesc',
-        method: 'get',
-        data: { type: 1 }
-      }).then(res => {
-        this.carriers = res.data.data.carrierList.map(item => {
-          return {
-            name: item.carrierName,
-            value: item.carrierName,
-            payType: item.payType,
-            carrierPhone: item.carrierPhone,
-            id: item.carrierId
-          }
-        })
-      })
-    },
-
-    getCarrierCars (carrierId) {
-      Server({
-        url: '/carrier/list/carOrderByUpdateTimeDesc',
-        method: 'get',
-        data: { carrierId }
-      }).then(res => {
-        this.carrierCars = res.data.data.carList.map(item => {
-          return {
-            name: item.carNO,
-            value: item.carNO,
-            id: item.carId,
-            driverName: item.driverName,
-            driverPhone: item.driverPhone,
-            carType: item.carType,
-            carLength: item.carLength
-          }
-        })
-      })
-    },
-
-    handleSelectCarrier (name, row) {
-      this.getCarrierCars(row.id)
-      this.$store.dispatch('getCarrierDrivers', row.id)
-    },
-
     checkTableSelection () {
       if (!this.tableSelection.length) {
         this.$Message.error('请先选择后再操作')
@@ -210,17 +172,9 @@ export default {
             params.keyWord = this.easySearchKeyword
           }
         } else {
-          if (this.seniorSearchFields.startCodes) {
-            if (this.seniorSearchFields.startCodes.length) {
-              this.seniorSearchFields.start = this.seniorSearchFields.startCodes[this.seniorSearchFields.startCodes.length - 1]
-            } else this.seniorSearchFields.start = ''
-          }
+          this.seniorSearchFields.start = getCityCode(this.seniorSearchFields.startCodes)
 
-          if (this.seniorSearchFields.endCodes) {
-            if (this.seniorSearchFields.endCodes.length) {
-              this.seniorSearchFields.end = this.seniorSearchFields.endCodes[this.seniorSearchFields.endCodes.length - 1]
-            } else this.seniorSearchFields.end = ''
-          }
+          this.seniorSearchFields.end = getCityCode(this.seniorSearchFields.endCodes)
 
           if (this.seniorSearchFields.dateRange[0]) {
             this.seniorSearchFields.startTime = this.seniorSearchFields.dateRange[0].Format('yyyy-MM-dd hh:mm:ss')

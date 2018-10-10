@@ -69,6 +69,7 @@ import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import server from '@/libs/js/server'
 import jsCookie from 'js-cookie'
+import TMSUrl from '@/libs/constant/url.js'
 /**
  * 批量导入
  * 1.文件类型
@@ -92,6 +93,40 @@ export default {
       ossDir: '',
       timer: null,
       columns: [
+        {
+          title: '操作',
+          key: 'action',
+          width: 160,
+          render: (h, params) => {
+            const actions = [
+              h('a', {
+                attrs: {
+                  href: params.row.fileUrl
+                }
+              }, '下载')
+            ]
+            // 导入成功可以看下载
+            if (params.row.status === 1) {
+              actions.push(h('a', {
+                class: 'i-ml-10',
+                attrs: {
+                  href: 'javascript:;'
+                },
+                on: {
+                  click: () => {
+                    jsCookie.set('imported_id', params.row.id, { expires: 1 })
+                    vm.openTab({
+                      title: '订单管理',
+                      path: TMSUrl.ORDER_MANAGEMENT
+                    })
+                    // vm.$router.push({path: '/order-management/order', query: {title: '订单管理'}})
+                  }
+                }
+              }, '查看导入订单'))
+            }
+            return h('div', actions)
+          }
+        },
         {
           title: '导入日期',
           key: 'createTime',
@@ -128,42 +163,6 @@ export default {
           title: '操作人',
           key: 'operatorName',
           width: 120
-        },
-        {
-          title: '操作',
-          key: 'action',
-          render: (h, params) => {
-            const actions = [
-              h('a', {
-                attrs: {
-                  href: params.row.fileUrl
-                }
-              }, '下载')
-            ]
-            // 导入成功可以看下载
-            if (params.row.status === 1) {
-              actions.push(h('a', {
-                class: 'i-ml-10',
-                attrs: {
-                  href: 'javascript:;'
-                },
-                on: {
-                  click: () => {
-                  // vm.openTab({
-                  //   title: '订单管理',
-                  //   path: '/order-management/order',
-                  //   query: {
-                  //     id: params.row.id
-                  //   }
-                  // })
-                    jsCookie.set('imported_id', params.row.id, { expires: 1 })
-                    vm.$router.push({ path: '/order-management/order', query: { title: '订单管理' } })
-                  }
-                }
-              }, '查看导入订单'))
-            }
-            return h('div', actions)
-          }
         }
       ]
     }
@@ -257,7 +256,7 @@ export default {
                 clearTimeout(timer)
               }
               if (status === 0) {
-                vm.$Message.success({ content: `此次导入订单失败，具体失败原因下载错误报告`, duration: 3 })
+                vm.$Message.error({ content: `此次导入订单失败，具体失败原因下载错误报告`, duration: 3 })
               } else {
                 vm.$Message.success({ content: `导入成功，共导入${res.data.data.orderNum}条订单`, duration: 3 })
               }

@@ -46,8 +46,8 @@ export default {
           trigger: 'axis'
         },
         grid: {
-          left: 0,
-          right: 0,
+          left: 15,
+          right: 15,
           top: 30,
           bottom: 12,
           containLabel: true
@@ -129,11 +129,6 @@ export default {
       }
     }
   },
-
-  created () {
-    this.load()
-  },
-
   methods: {
     load () {
       const self = this
@@ -143,8 +138,9 @@ export default {
             const res = response.data
             res.map(item => {
               console.log(item)
+              const fmtTotal = Number(item.total) / 100
               self.xData.push(item.day)
-              self.yTotalData.push(item.total)
+              self.yTotalData.push(fmtTotal)
               self.yCountData.push(item.cnt)
             })
           }

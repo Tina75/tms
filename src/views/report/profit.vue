@@ -7,6 +7,7 @@
         </ButtonGroup>
         <DatePicker
           v-model="times"
+          :options="options"
           type="daterange"
           format="yyyy-MM-dd"
           placeholder="开始日期-结束日期"
@@ -14,8 +15,8 @@
           @on-change="handleTimeChange"
         >
         </DatePicker>
-        <Tooltip max-width="200" content="营业额汇总报表：按照订单的下单日期提取数据；利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
-          <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;margin-left: 18px" />
+        <Tooltip max-width="200" style="margin-left: 18px" content="营业额汇总报表：按照订单的下单日期提取数据；利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
+          <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;" />
         </Tooltip>
       </div>
       <div class="search-btn">
@@ -65,9 +66,16 @@
         <span>主营业务收入合计</span>
         <span class="num">{{res.orderTotalFee}}</span>
       </div>
-      <div class="items">
-        <div class="item">支出</div>
-        <div class="item">承运商运费支出</div>
+      <div class="items" >
+        <div class="item" style="height: 269px; line-height: 269px">支出</div>
+        <div style="flex:1;">
+          <div  style="height: 224px;line-height: 224px;border-right: 1px solid #c9ced9;border-bottom: 1px solid #c9ced9">
+            承运商运费支出
+          </div>
+          <div  style="height: 45px;line-height: 45px;border-right: 1px solid #c9ced9;border-bottom: 1px solid #c9ced9;" >
+            外转运费支出
+          </div>
+        </div>
         <div class="item" style="flex: 2">
           <div class="item-inner">
             <div>运输费</div>
@@ -85,9 +93,13 @@
             <div>保险费</div>
             <div>{{res.carrierInsuranceFee}}</div>
           </div>
-          <div class="item-inner">
+          <div class="item-inner"  style="border-bottom: none">
             <div>其他费用</div>
             <div>{{res.carrierOtherFee}}</div>
+          </div>
+          <div class="item-inner">
+            <div>外转费</div>
+            <div>{{res.transbillTransFee}}</div>
           </div>
         </div>
       </div>
@@ -97,7 +109,7 @@
       </div>
       <div class="title" style="text-align: right;padding-right: 10%">
         <span>利润</span>
-        <span class="num">{{res.transbillTransFee}}</span>
+        <span class="num">{{res.profits}}</span>
       </div>
     </div>
   </div>
@@ -138,13 +150,20 @@ export default {
         carrierOtherFee: '-',
         carrierInsuranceFee: '-',
         carrierTotalFee: '-',
-        transbillTransFee: '-'
+        transbillTransFee: '-',
+        profits: '-'
+      },
+      options: {
+        disabledDate (date) {
+          return date && date.valueOf() > Date.now()
+        }
       }
     }
   },
   methods: {
     search () {
-      if (!this.keywords.startTime && !this.keywords.endTime) {
+      if (!this.keywords.startTime && !this.keywords.endTime) { // 搜索条件为空
+        this.$Message.error('请先输入搜索条件')
         this.keywords = {
           type: 1
         }
@@ -161,20 +180,9 @@ export default {
       }).then((res) => {
         if (res.data.code === 10000) {
           // Object.assign(this.res, res.data.data)
-          this.res = {
-            orderFreightFee: res.data.data.orderFreightFee === '' ? '-' : res.data.data.orderFreightFee,
-            orderLoadFee: res.data.data.orderLoadFee === '' ? '-' : res.data.data.orderLoadFee,
-            orderUnloadFee: res.data.data.orderUnloadFee === '' ? '-' : res.data.data.orderUnloadFee,
-            orderOtherFee: res.data.data.orderUnloadFee === '' ? '-' : res.data.data.orderUnloadFee,
-            orderInsuranceFee: res.data.data.orderInsuranceFee === '' ? '-' : res.data.data.orderInsuranceFee,
-            orderTotalFee: res.data.data.orderTotalFee === '' ? '-' : res.data.data.orderTotalFee,
-            carrierFreightFee: res.data.data.carrierFreightFee === '' ? '-' : res.data.data.carrierFreightFee,
-            carrierLoadFee: res.data.data.carrierFreightFee === '' ? '-' : res.data.data.carrierFreightFee,
-            carrierUnloadFee: res.data.data.carrierUnloadFee === '' ? '-' : res.data.data.carrierUnloadFee,
-            carrierOtherFee: res.data.data.carrierOtherFee === '' ? '-' : res.data.data.carrierOtherFee,
-            carrierInsuranceFee: res.data.data.carrierInsuranceFee === '' ? '-' : res.data.data.carrierInsuranceFee,
-            carrierTotalFee: res.data.data.carrierTotalFee === '' ? '-' : res.data.data.carrierTotalFee,
-            transbillTransFee: res.data.data.transbillTransFee === '' ? '-' : res.data.data.transbillTransFee
+          this.res = res.data.data
+          for (let key in this.res) {
+            this.res[key] = this.res[key] === '' ? '-' : (this.res[key] / 100).toFixed(2)
           }
         }
       })
@@ -197,6 +205,8 @@ export default {
     handleTimeChange (val) {
       this.keywords.startTime = val[0]
       this.keywords.endTime = val[1]
+      // 去掉蓝显
+      this.operateValue = ''
     },
     /* 点击button，对应时间 */
     date (value) {
@@ -229,7 +239,7 @@ export default {
           if (month > 9) {
             startMonth = '10'
           }
-          start = this.formatDate(now).slice(0, 5) + startMonth + this.formatDate(now).slice(-3)
+          start = this.formatDate(now).slice(0, 5) + startMonth + '-01'
           break
         case 4:
           /* 当前年份 */
@@ -258,10 +268,9 @@ export default {
       Export({
         url: '/report/for/profits/export',
         method: 'post',
-        data: Object.assign(this.keywords, { type: null })
-      }).then(res => {
-        this.$Message.success('导出成功')
-      }).catch(err => console.error(err))
+        data: Object.assign(this.keywords, { type: null }),
+        fileName: '利润报表'
+      })
     }
   }
 }

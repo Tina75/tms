@@ -1,9 +1,8 @@
-import MoneyInput from '../components/moneyInput'
-
+import MoneyInput from '../components/MoneyInput'
 import Server from '@/libs/js/server'
 import Float from '@/libs/js/float'
-import { mapGetters } from 'vuex'
 import { CAR } from '@/views/client/client'
+import { validateCityies } from '@/libs/constant/cityValidator'
 
 export default {
   data () {
@@ -13,6 +12,7 @@ export default {
       loading: false,
       inEditing: false,
       carriers: [], // 承运商
+      carrierDrivers: [], // 司机
       carrierCars: [], // 车辆
       currentBtns: [], // 当前按钮组
 
@@ -59,7 +59,7 @@ export default {
                   suffix: false
                 },
                 style: {
-                  width: '60px'
+                  width: '70px'
                 },
                 on: {
                   'on-blur': (money) => {
@@ -87,7 +87,7 @@ export default {
                   suffix: false
                 },
                 style: {
-                  width: '60px'
+                  width: '70px'
                 },
                 on: {
                   'on-blur': (money) => {
@@ -110,7 +110,6 @@ export default {
 
   created () {
     this.fetchData()
-    this.getCarriers()
   },
 
   computed: {
@@ -148,26 +147,10 @@ export default {
       return this.currentBtns.filter(item => {
         return this.hasPower(item.code)
       })
-    },
-
-    ...mapGetters([
-      'carrierDrivers'
-    ])
+    }
   },
 
   watch: {
-    startCodes () {
-      if (!(this.startCodes instanceof Array)) return
-      this.info.start = this.startCodes.length
-        ? this.startCodes[this.startCodes.length - 1]
-        : ''
-    },
-    endCodes () {
-      if (!(this.endCodes instanceof Array)) return
-      this.info.end = this.endCodes.length
-        ? this.endCodes[this.endCodes.length - 1]
-        : ''
-    },
     inEditing (val) {
       if (!this.tableCanEdit) return
       if (val) {
@@ -194,66 +177,6 @@ export default {
   },
 
   methods: {
-    getCarriers () {
-      Server({
-        url: '/carrier/listOrderByUpdateTimeDesc',
-        method: 'get',
-        data: { type: 1 }
-      }).then(res => {
-        this.carriers = res.data.data.carrierList.map(item => {
-          return {
-            name: item.carrierName,
-            value: item.carrierName,
-            payType: item.payType,
-            carrierPhone: item.carrierPhone,
-            id: item.carrierId
-          }
-        })
-      })
-    },
-
-    getCarrierCars (carrierId) {
-      Server({
-        url: '/carrier/list/carOrderByUpdateTimeDesc',
-        method: 'get',
-        data: { carrierId }
-      }).then(res => {
-        this.carrierCars = res.data.data.carList.map(item => {
-          return {
-            name: item.carNO,
-            value: item.carNO,
-            id: item.carId,
-            driverName: item.driverName,
-            driverPhone: item.driverPhone,
-            carType: item.carType,
-            carLength: item.carLength
-          }
-        })
-        if (this.carrierCars.length) {
-          this.info.carNo = this.carrierCars[0].name
-          this.handleSelectCarrierCar(null, this.carrierCars[0])
-        } else {
-          this.info.carNo = ''
-          const keys = ['driverName', 'driverPhone', 'carType', 'carLength']
-          keys.forEach(key => {
-            this.info[key] = ''
-          })
-        }
-      })
-    },
-
-    handleSelectCarrier (name, row) {
-      this.getCarrierCars(row.id)
-      this.$store.dispatch('getCarrierDrivers', row.id)
-    },
-
-    handleSelectCarrierCar (name, row) {
-      const keys = ['driverName', 'driverPhone', 'carType', 'carLength']
-      keys.forEach(key => {
-        this.info[key] = row[key]
-      })
-    },
-
     // 根据状态设置按钮
     setBtnsWithStatus () {
       for (let i = 0; i < this.btnList.length; i++) {
@@ -272,18 +195,25 @@ export default {
 
     // 计费规则
     showChargeRules () {
+      const self = this
       this.openDialog({
-        name: 'transport/dialog/financeRule',
-        data: {
-          value: 0
+        name: 'dialogs/financeRule',
+        data: { // 以下数据必传
+          partnerType: self.pageName === 'pickup' ? 3 : 2, // 计费规则分类 - 发货方1 承运商2 外转方3
+          weight: self.orderTotal.weight, // 货物重量
+          volume: self.orderTotal.volume, // 货物体积
+          start: self.info.start, // 始发地code
+          end: self.info.end // 目的地code
         },
         methods: {
+          // 确认计费规则后返回金额(元)
           ok (charge) {
-            this.payment.freightFee = charge || 0
-          },
-          cancel () {
-            self.close()
+            self.payment.freightFee = charge || 0
           }
+          // 如果有两层对话框，在计费规则中点击去设置按钮后需要关闭第一层对话框
+          // closeParentDialog () {
+          // self.close()
+          // }
         }
       })
     },
@@ -358,14 +288,15 @@ export default {
     },
     // 校验
     validate () {
-      if (this.info.start && !this.info.start) {
+      if (this.info.start !== undefined && !this.info.start) {
         this.$Message.error('请输入始发地')
         return false
       }
-      if (this.info.end && !this.info.end) {
+      if (this.info.end !== undefined && !this.info.end) {
         this.$Message.error('请输入目的地')
         return false
       }
+      if (this.info.start !== undefined || this.info.end !== undefined) return validateCityies(this.startCodes, this.endCodes)
       if (this.pageName === 'pickup' && !this.info.carrierName) {
         this.$Message.error('请输入承运商')
         return false

@@ -1,21 +1,21 @@
 <template>
   <div class="temAll">
     <Col span="24">
-    <Card class="searchCard" dis-hover>
-      <Form :model="formSearch" :label-width="80" style="padding-left:-20px;">
-        <Col span="6">
+    <div class="searchCard">
+      <Form :model="formSearch" :label-width="60" label-position="left">
+        <Col span="6" class="searchInput">
         <FormItem label="姓名：">
-          <SelectInput v-model="formSearch.name" :remote="true" :remote-method="searchName" placeholder="请输入姓名"></SelectInput>
+          <SelectInput v-model="formSearch.name" :remote="true" :remote-method="searchName" placeholder="请输入姓名" style="min-width:200px;"></SelectInput>
         </FormItem>
         </Col>
         <Col span="6">
-        <FormItem label="账号：">
-          <Input v-model="formSearch.phone" placeholder="请输入账号"></Input>
+        <FormItem label="账号：" class="searchInput">
+          <Input v-model="formSearch.phone" placeholder="请输入账号" style="min-width:200px;"></Input>
         </FormItem>
         </Col>
         <Col span="6">
-        <FormItem label="角色：">
-          <Select v-model="formSearch.roleId" clearable>
+        <FormItem label="角色：" class="searchInput">
+          <Select v-model="formSearch.roleId" clearable style="min-width:200px;">
             <Option
               v-for="item in selectList"
               :value="item.id"
@@ -31,21 +31,21 @@
         </FormItem>
         </Col>
       </Form>
-    </Card>
+    </div>
     </Col>
     <Col span="24">
     <Button v-if="hasPower(140201)" type="primary" style="margin-top:6px;" @click="eaditStaff('add')">添加员工</Button>
     </Col>
     <Col span="24">
-    <page-table :columns="menuColumns" :keywords="formSearchInit" url="employee/list" list-field="list" style="margin-top: 20px;"></page-table>
+    <page-table :columns="menuColumns" :keywords="formSearchInit" url="employee/list" list-field="list" style="margin-top: 20px;min-height:700px;"></page-table>
     </Col>
     <Modal v-model="visibaleTransfer" width="400">
-      <p slot="header" style="text-align:center">
+      <p slot="header" style="text-align:center;font-size: 16px;">
         <span>转移权限</span>
       </p>
-      <Form ref="transferformModal" :model="transferformModal" :rules="rulesTransfer" :label-width="100" style="height: 70px;">
+      <Form ref="transferformModal" :model="transferformModal" :rules="rulesTransfer" :label-width="100" style="height: 70px;margin-top:20px;">
         <FormItem label="角色账号：" prop="staff">
-          <Select v-model="transferformModal.staff" clearable>
+          <Select v-model="transferformModal.staff" clearable style="width:200px;">
             <Option
               v-for="item in staffSelectList"
               :value="item.phone"
@@ -58,26 +58,26 @@
           <p style="color:red; margin-top:-10px;">确认操作后，您将与接收该角色的人员互换角色</p>
         </FormItem>
       </Form>
-      <div slot="footer" style="margin-top:20px;">
+      <div slot="footer" style="margin-top:10px;">
         <Button type="primary" @click="transferFormSub('transferformModal')">确定</Button>
         <Button  @click="transferCancelForm">取消</Button>
       </div>
     </Modal>
     <Modal v-model="visibaleRemove" type="warning" width="360">
-      <p slot="header" style="text-align:center">
+      <p slot="header" style="text-align:center;font-size: 16px;">
         <span>提示</span>
       </p>
-      <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white; color: #FFBB44;float:left;"></i>
-      <p style="margin-top:13px; margin-left:40px;">确定要删除用户{{this.roleRowInit.name}}吗?</P>
-      <div slot="footer">
+      <p style="margin-left:70px; margin-top: 10px;">
+        <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
+      </p><p style="margin-top:23px; margin-left:50px;">确定要删除用户{{this.roleRowInit.name}}吗?</P>
+      </p>
+      <div slot="footer" style="margin-top: 20px;">
         <Button type="primary" @click="removeSubForm">确定</Button>
         <Button  @click="removeCancelForm">取消</Button>
       </div>
     </Modal>
-    <Modal
-      v-model="visibaleAddStaffSuccess"
-      width="360">
-      <p slot="header" style="text-align:center">
+    <Modal v-model="visibaleAddStaffSuccess" width="400">
+      <p slot="header" style="text-align:center;font-size: 16px;">
         <span>提示</span>
       </p>
       <P>添加员工成功，员工的登录账号为手机号</P>
@@ -126,7 +126,7 @@ export default {
       menuColumns: [{
         title: '操作',
         key: 'do',
-        width: 200,
+        width: 100,
         render: (h, params) => {
           if (params.row.type === 1 && this.userInfo.type === 1) {
             return h('div', [
@@ -219,6 +219,7 @@ export default {
       {
         title: '创建时间',
         key: 'createTime',
+        width: 150,
         render: (h, params) => {
           let text = this.formatDate(params.row.createTime)
           return h('div', { props: {} }, text)
@@ -376,14 +377,14 @@ export default {
 .temAll
   width: 100%
   overflow: auto;
-.classPage
-  clear: both;
-  float: right;
-  margin: 50px;
 .searchCard
   height:70px;
   background:rgba(249,249,249,1);
   border: none;
+  padding-top: 18px;
+  .searchInput
+    margin-right:40px;
+    margin-left: 10px;
 .dialog
   p
   text-align center

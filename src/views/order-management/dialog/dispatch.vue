@@ -1,19 +1,19 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visiable" :mask-closable="false" width="1036" @on-visible-change="close">
-      <p slot="header" style="text-align:center">
+    <Modal v-model="visiable" :mask-closable="false" width="1053" @on-visible-change="close">
+      <p slot="header" class="dialog-title">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>{{name}}</span>
       </p>
       <Form v-if="name === '送货调度'" ref="send" :model="send" :rules="sendRules" :label-width="60" inline label-position="left">
         <FormItem label="始发地" prop="start">
-          <area-select v-model="send.start" style="width:180px"></area-select>
+          <area-select v-model="send.start" :deep="true" style="width:180px"></area-select>
         </FormItem>
         <FormItem label="目的地" prop="end" style="margin-left:27px;">
-          <area-select v-model="send.end" style="width:180px"></area-select>
+          <area-select v-model="send.end" :deep="true" style="width:180px"></area-select>
         </FormItem>
       </Form>
-      <Form v-else ref="pick" :model="pick" :rules="pickRules" :label-width="60" inline label-position="left">
+      <Form v-else ref="pick" :model="pick" :rules="pickRules" :label-width="70" inline label-position="left">
         <FormItem label="承运商" prop="carrierName">
           <SelectInput
             v-model="pick.carrierName"
@@ -33,7 +33,8 @@
             :remote="false"
             :local-options="carrierCars"
             placeholder="请输入"
-            style="width:180px">
+            style="width:180px"
+            @on-blur="handleCarNoBlur">
           </SelectInput>
         </FormItem>
         <FormItem label="司机" prop="driverName" style="margin-left:27px;">
@@ -49,7 +50,7 @@
       </Form>
       <Table :columns="tableColumns" :data="id" :height="id.length > 10 ? 520 : id.length * 48 + 40"></Table>
       <div class="table-footer">
-        <span style="padding-right: 5px;box-sizing:border-box">合计</span>
+        <span style="padding-right: 5px;box-sizing:border-box;margin-left:-12px;">合计</span>
         <span>订单总数：{{ orderTotal }}</span>
         <span>总体积：{{ volumeTotal }}</span>
         <span>总重量：{{ weightTotal }}</span>
@@ -136,7 +137,7 @@ export default {
         {
           title: '客户订单号',
           key: 'customerOrderNo',
-          minWidth: 160,
+          minWidth: 150,
           render: (h, p) => {
             return h('span', p.row.customerOrderNo ? p.row.customerOrderNo : '-')
           }
@@ -144,7 +145,7 @@ export default {
         {
           title: '客户名称',
           key: 'consignerName',
-          minWidth: 140,
+          minWidth: 130,
           tooltip: true
         },
         {
@@ -153,17 +154,17 @@ export default {
           minWidth: 130,
           ellipsis: true,
           render: (h, params) => {
-            if (City.codeToFullNameArr(params.row.start).length > 8) {
+            if (this.cityFormatter(params.row.start).length > 8) {
               return h('Tooltip', {
                 props: {
                   placement: 'bottom',
-                  content: City.codeToFullNameArr(params.row.start)
+                  content: this.cityFormatter(params.row.start)
                 }
               }, [
-                h('span', this.formatterAddress(City.codeToFullNameArr(params.row.start)))
+                h('span', this.formatterAddress(this.cityFormatter(params.row.start)))
               ])
             } else {
-              return h('span', City.codeToFullNameArr(params.row.start))
+              return h('span', this.cityFormatter(params.row.start))
             }
           }
         },
@@ -173,17 +174,17 @@ export default {
           minWidth: 130,
           ellipsis: true,
           render: (h, params) => {
-            if (City.codeToFullNameArr(params.row.end).length > 8) {
+            if (this.cityFormatter(params.row.end).length > 8) {
               return h('Tooltip', {
                 props: {
                   placement: 'bottom',
-                  content: City.codeToFullNameArr(params.row.end)
+                  content: this.cityFormatter(params.row.end)
                 }
               }, [
-                h('span', this.formatterAddress(City.codeToFullNameArr(params.row.end)))
+                h('span', this.formatterAddress(this.cityFormatter(params.row.end)))
               ])
             } else {
-              return h('span', City.codeToFullNameArr(params.row.end))
+              return h('span', this.cityFormatter(params.row.end))
             }
           }
         },
@@ -217,7 +218,7 @@ export default {
       this.id.map((item) => {
         total += item.volume
       })
-      return total.toFixed(2)
+      return total.toFixed(1)
     },
     weightTotal () {
       let total = 0
@@ -232,12 +233,6 @@ export default {
         arr.push(item.id)
       })
       return arr
-    }
-  },
-
-  watch: {
-    visibale: function (val) {
-      !val && this.close()
     }
   },
 
@@ -321,6 +316,15 @@ export default {
     formatterAddress (str) {
       let dot = str.substring(8)
       return str.replace(dot, ' ...')
+    },
+    // 车牌号小写转大写
+    handleCarNoBlur (val) {
+      this.pick.carNo = val.toUpperCase()
+    },
+    // 格式化城市
+    cityFormatter (code) {
+      if (!code) return ''
+      return Array.from(new Set(City.codeToFullNameArr(code, 3))).join('')
     }
   }
 
@@ -328,9 +332,13 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
-.dialog
-  p
-    text-align center
+.dialog-title
+  text-align center
+  font-size 16px
+  font-family 'PingFangSC-Medium'
+  font-weight 700
+  color rgba(47,50,62,1)
+  letter-spacing 1px
 .table-footer
   height 48px
   border 1px solid #dcdee2

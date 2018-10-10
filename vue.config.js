@@ -2,6 +2,16 @@ module.exports = {
   baseUrl: './',
   assetsDir: 'static',
   chainWebpack: config => {
+    // config.module
+    //   .rule('vue')
+    //   .test(/\.vue$/)
+    //   .use('iview-loader')
+    //   .loader('iview-loader')
+    //   .tap(options => {
+    //     // 修改它的选项...
+    //     return {prefix: false}
+    //   })
+    //   .end()
     config.plugins.delete('prefetch')
   },
   productionSourceMap: false,
@@ -26,7 +36,6 @@ module.exports = {
     devtool: 'source-map',
     externals: {
       'vue': 'Vue',
-      'iview': 'iview',
       'lodash': '_',
       'BMap': 'BMap'
     }
