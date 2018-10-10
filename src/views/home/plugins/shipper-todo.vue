@@ -5,8 +5,6 @@
       :extra="total"
       title="发货方核销待办"
       label="提示文字"
-      to="/finance/sender"
-      page-title="发货方对账"
     >
     </OrderCard>
   </div>
@@ -16,6 +14,7 @@
 // 发货方核销待办
 import OrderCard from '../components/OrderCard.vue'
 import mixin from './mixin.js'
+import TMSUrl from '@/libs/constant/url.js'
 
 export default {
   name: 'shipper-todo',
@@ -26,8 +25,8 @@ export default {
   data () {
     return {
       data: [
-        { id: 'wait_reconcile', name: '发货方待对账订单', value: 0, tab: 'waitReconcile' },
-        { id: 'wait_verify', name: '发货方待核销订单', value: 0, tab: 'waitVerify' }
+        { id: 'wait_reconcile', name: '发货方待对账订单', value: 0, tab: '2', href: TMSUrl.SENDER_FINANCE, title: '发货方对账' },
+        { id: 'wait_verify', name: '发货方待核销订单', value: 0, tab: '1', href: TMSUrl.SENDER_FINANCE, title: '发货方对账' }
       ]
     }
   },

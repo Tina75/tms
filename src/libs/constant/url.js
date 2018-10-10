@@ -18,7 +18,7 @@ const TMSUrl = {
   OUTER_ORDER: '/transport/outerOrder', // 外转单管理
   SENDER_FINANCE: '/finance/sender', // 发货方对账
   CARRIER_FINANCE: '/finance/carrier', // 承运商对账
-  TRANSFER_FINANCE: '/finance/transfer', // 外转方
+  TRANSFER_FINANCE: '/finance/transfer', // 外转方对账
   RULES_FINANCE: '/finance/rules', // 计费规则
   OPERATE_REPORT: '/report/operate', // 运营报表
   TOTAL_REPORT: '/report/total', // 营业额汇总表

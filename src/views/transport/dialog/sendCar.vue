@@ -212,7 +212,7 @@ export default {
                 suffix: false
               },
               style: {
-                width: '60px'
+                width: '70px'
               },
               on: {
                 'on-blur': (money) => {

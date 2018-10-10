@@ -5,7 +5,7 @@
       <div>
         <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
       </div>
-      <div v-if="simpleSearch" class="right">
+      <div v-if="simpleSearch" class="receipt-right">
         <Select v-model="selectStatus"  style="width:120px;margin-right: 11px" @on-change="handleChangeSearchStatus">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
@@ -580,10 +580,9 @@ export default {
       this.selectOrderList = [] // 重置当前已勾选项
       this.selectedId = [] // 重置当前已勾选id项
       if (val === '全部') {
+        // 全部、待回收、待返厂加上操作栏
+        this.addOperateCol()
         this.operateValue = 1
-        if (this.tableColumns[1].title !== '操作') {
-          this.tableColumns.splice(1, 0, this.operateCol[0])
-        }
         this.btnGroup = [
           { name: '回收', value: 1, code: 110201 },
           { name: '返厂', value: 2, code: 110202 },
@@ -591,31 +590,27 @@ export default {
         ]
         this.keywords.receiptStatus = null
       } else if (val === '待回收') {
+        // 全部、待回收、待返厂加上操作栏
+        this.addOperateCol()
         this.operateValue = 1
-        if (this.tableColumns[1].title !== '操作') {
-          this.tableColumns.splice(1, 0, this.operateCol[0])
-        }
         this.btnGroup = [
           { name: '回收', value: 1, code: 110201 },
           { name: '导出', value: 2, code: 110203 }
         ]
         this.keywords.receiptStatus = 0
       } else if (val === '待返厂') {
+        // 全部、待回收、待返厂加上操作栏
+        this.addOperateCol()
         this.operateValue = 1
-        if (this.tableColumns[1].title !== '操作') {
-          this.tableColumns.splice(1, 0, this.operateCol[0])
-        }
         this.btnGroup = [
           { name: '返厂', value: 1, code: 110202 },
           { name: '导出', value: 2, code: 110203 }
         ]
         this.keywords.receiptStatus = 1
       } else {
-        this.operateValue = 1
         // 已返厂取消操作栏
-        if (this.tableColumns[1].title === '操作') {
-          this.operateCol = this.tableColumns.splice(1, 1)
-        }
+        this.deleteOperateCol()
+        this.operateValue = 1
         this.btnGroup = [
           { name: '导出', value: 1, code: 110203 }
         ]
@@ -716,6 +711,7 @@ export default {
 .ivu-btn
   margin-right 15px
   width 80px
+  height 35px
 .ivu-btn-default
   background #F9F9F9
 .high-search
@@ -732,4 +728,9 @@ export default {
   padding: 10px
   .ivu-input-wrapper,.ivu-auto-complete
     margin-right 20px
+</style>
+<style lang="stylus">
+.receipt-right
+  .ivu-input
+    height 35px
 </style>

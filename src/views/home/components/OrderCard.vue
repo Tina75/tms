@@ -18,7 +18,7 @@
     </div>
     <div class="ivu-card-body tms-home__card-body">
       <CellGroup @on-click="push">
-        <Cell v-for="(item, index) in data" :key="index" :to="item.url" :name="item.tab">
+        <Cell v-for="(item, index) in data" :key="index" :to="item.url" :name="JSON.stringify({tab: item.tab, url: item.href, title: item.title})">
           <span slot="icon" class="ivu-badge ivu-badge-status">
             <span :style="{'background-color':theme}" class="ivu-badge-status-dot"></span>
           </span>
@@ -91,14 +91,17 @@ export default {
     }
   },
   methods: {
-    push (tab) {
-      if (!this.to) {
+    push (str) {
+      const obj = JSON.parse(str)
+      if (!obj.url) {
         return
       }
       this.openTab({
-        path: this.to,
-        title: this.pageTitle || this.title || '',
-        query: { tab }
+        path: obj.url,
+        title: obj.title || this.title || '',
+        query: {
+          tab: obj.tab
+        }
       })
     }
   }
