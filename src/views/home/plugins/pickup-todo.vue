@@ -32,7 +32,7 @@ export default {
       data: [
         { id: 'waitPickOrderCnt', name: '待提货调度订单数量', value: 0, tab: '2', href: TMSUrl.DISPATCH_PANEL, title: '调度工作台' },
         { id: 'waitPickCnt', name: '待提货提货订单数量', value: 0, tab: '1', href: TMSUrl.PICKUP_ORDER, title: '提货管理' },
-        { id: 'inTransportCnt', name: '运输中订单数量', value: 0, tab: '2', href: TMSUrl.PICKUP_ORDER, title: '提货管理' }
+        { id: 'inTransportCnt', name: '提货中提货单数量', value: 0, tab: '2', href: TMSUrl.PICKUP_ORDER, title: '提货管理' }
       ]
     }
   },
