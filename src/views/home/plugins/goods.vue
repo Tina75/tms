@@ -57,23 +57,12 @@ export default {
     options () {
       return {
         color: ['#5D9EFF', '#11C88C', '#79D9F0', '#A7E7FF'],
+
         tooltip: {
-          trigger: 'item',
-          formatter: (param) => {
-            return `${statusStr[param.name]}: ${param.value}`
-          }
+          trigger: 'item'
         },
+
         series: [
-          {
-            type: 'pie',
-            hoverAnimation: false,
-            center: ['75%', '35%'],
-            radius: '50%',
-            label: {
-              show: false
-            },
-            data: this.weightData || []
-          },
           {
             type: 'pie',
             hoverAnimation: false,
@@ -82,7 +71,27 @@ export default {
             label: {
               show: false
             },
-            data: this.volumeData || []
+            data: this.weightData || [],
+            tooltip: {
+              formatter: (param) => {
+                return `${statusStr[param.name]}: ${param.value} 吨`
+              }
+            }
+          },
+          {
+            type: 'pie',
+            hoverAnimation: false,
+            center: ['75%', '35%'],
+            radius: '50%',
+            label: {
+              show: false
+            },
+            data: this.volumeData || [],
+            tooltip: {
+              formatter: (param) => {
+                return `${statusStr[param.name]}: ${param.value} 方`
+              }
+            }
           }
         ]
       }
@@ -98,16 +107,16 @@ export default {
             res.map(item => {
               let obj = {
                 name: item.status,
-                value: item.volume
-              }
-              self.volumeData.push(obj)
-              let obj2 = {
-                name: item.status,
                 value: item.weight
               }
-              self.weightData.push(obj2)
-              self.volume += item.volume
+              let obj2 = {
+                name: item.status,
+                value: item.volume
+              }
+              self.weightData.push(obj)
+              self.volumeData.push(obj2)
               self.weight += item.weight
+              self.volume += item.volume
             })
           }
         })
