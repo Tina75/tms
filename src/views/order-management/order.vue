@@ -39,7 +39,7 @@
           style="width: 200px"
           @on-enter="searchList"
           @on-click="clearKeywords"/>
-        <Button type="primary" icon="ios-search" style="width: 40px;margin-right: 0;border-top-left-radius: 0;border-bottom-left-radius: 0;" @click="searchList"></Button>
+        <Button type="primary" icon="ios-search" style="width: 40px;margin-left:-2px;margin-right: 0;border-top-left-radius: 0;border-bottom-left-radius: 0;" @click="searchList"></Button>
         <Button type="text" class="high-search" size="small" @click="handleSwitchSearch">高级搜索</Button>
       </div>
     </div>
@@ -60,8 +60,8 @@
       </div>
       <div style="display: flex;justify-content: space-between;">
         <div>
-          <area-select v-model="keywords.start" :deep="true" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
-          <area-select v-model="keywords.end" :deep="true" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <area-select v-model="cityCodes.startCodes" :deep="true" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <area-select v-model="cityCodes.endCodes" :deep="true" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
           <DatePicker
             :options="timeOption"
             v-model="times"
@@ -166,7 +166,7 @@ export default {
       tableColumns: [
         {
           type: 'selection',
-          width: 60,
+          width: 50,
           align: 'center',
           fixed: 'left'
         },
@@ -631,6 +631,7 @@ export default {
           }
         }
       ],
+      operateCol: [], // 操作列
       extraColumns: [
         {
           title: '订单号',
@@ -805,27 +806,6 @@ export default {
     ])
   },
 
-  watch: {
-    // $route (to, from) {
-    //   // 批量导入点查看进入的传importId字段，订单列表显示《全部》tab页
-    //   if (to.path === '/order-management/order') {
-    //     let importId = jsCookie.get('imported_id')
-    //     console.log(importId)
-    //     // debugger
-    //     if (importId) {
-    //       this.keywords.importId = importId
-    //       this.keywords.status = this.keywords.status
-    //       this.keywords.start = null
-    //       this.keywords.end = null
-    //       this.keyword = this.keywords
-    //       sessionStorage.setItem('ORDER_TAB_NAME', '全部')
-    //       this.curStatusName = '全部'
-    //       jsCookie.remove('imported_id')
-    //     }
-    //   }
-    // }
-  },
-
   created () {
     let importId = jsCookie.get('imported_id')
     // 刷新页面停留当前tab页
@@ -842,9 +822,7 @@ export default {
       }
     } else { // 批量导入点查看进入的传importId字段，订单列表显示《全部》tab页
       this.keywords.importId = importId
-      this.keywords.status = null // 默认全部状态
-      this.keywords.start = null
-      this.keywords.end = null
+      this.keyword.status = null // 默认全部状态
       this.keyword = this.keywords
       sessionStorage.setItem('ORDER_TAB_NAME', '全部')
       this.curStatusName = '全部'
@@ -928,6 +906,9 @@ export default {
       this.selectedId = [] // 重置当前已勾选id项
       if (val === '全部') {
         this.operateValue = 1
+        if (this.tableColumns[1].title !== '操作') {
+          this.tableColumns.splice(1, 0, this.operateCol[0])
+        }
         this.btnGroup = [
           { name: '送货调度', value: 1, code: 110101 },
           { name: '提货调度', value: 2, code: 110102 },
@@ -940,6 +921,9 @@ export default {
         // this.keyword = {...this.keywords}
       } else if (val === '待提货') {
         this.operateValue = 1
+        if (this.tableColumns[1].title !== '操作') {
+          this.tableColumns.splice(1, 0, this.operateCol[0])
+        }
         this.btnGroup = [
           { name: '提货调度', value: 1, code: 110102 },
           { name: '删除', value: 2, code: 110107 },
@@ -950,6 +934,9 @@ export default {
         // this.keyword = {...this.keywords}
       } else if (val === '待调度') {
         this.operateValue = 1
+        if (this.tableColumns[1].title !== '操作') {
+          this.tableColumns.splice(1, 0, this.operateCol[0])
+        }
         this.btnGroup = [
           { name: '送货调度', value: 1, code: 110101 },
           { name: '订单还原', value: 2, code: 110105 },
@@ -961,6 +948,10 @@ export default {
         // this.keyword = {...this.keywords}
       } else {
         this.operateValue = 1
+        // 在途、已到货、已回单取消操作栏
+        if (this.tableColumns[1].title === '操作') {
+          this.operateCol = this.tableColumns.splice(1, 1)
+        }
         this.btnGroup = [
           { name: '导出', value: 1, code: 110109 }
         ]
@@ -1175,6 +1166,8 @@ export default {
 .ivu-btn
   margin-right 15px
   width 80px
+.ivu-btn-default
+  background #F9F9F9
 .high-search
   width 36px
   height 30px

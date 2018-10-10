@@ -313,6 +313,7 @@ export default {
   &__clear-icon
     cursor pointer
   &__input-icon
+    display none
     transition transform 0.2s ease-in-out
     -webkit-transition -webkit-transform 0.2s ease-in-out
     -moz-transition  -moz-transform 0.2s ease-in-out

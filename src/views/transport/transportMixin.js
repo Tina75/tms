@@ -1,12 +1,12 @@
-import Server from '@/libs/js/server'
-import { mapGetters } from 'vuex'
-
 export default {
   data () {
     return {
       order: 'desc', // 倒序 asc升序
-      carriers: [],
-      carrierCars: [],
+
+      // select input data
+      linkage: false,
+      keyFields: 'seniorSearchFields',
+
       // 分页
       page: {
         current: 1,
@@ -29,10 +29,6 @@ export default {
   },
 
   computed: {
-    ...mapGetters([
-      'carrierDrivers'
-    ]),
-
     showButtons () {
       return this.currentBtns.filter(item => {
         return this.hasPower(item.code)
@@ -41,7 +37,6 @@ export default {
   },
 
   created () {
-    this.getCarriers()
     const columns = window.sessionStorage[this.tabType + '_COLUMNS']
     if (columns) this.extraColumns = JSON.parse(columns)
 
@@ -63,49 +58,6 @@ export default {
   },
 
   methods: {
-    getCarriers () {
-      Server({
-        url: '/carrier/listOrderByUpdateTimeDesc',
-        method: 'get',
-        data: { type: 1 }
-      }).then(res => {
-        this.carriers = res.data.data.carrierList.map(item => {
-          return {
-            name: item.carrierName,
-            value: item.carrierName,
-            payType: item.payType,
-            carrierPhone: item.carrierPhone,
-            id: item.carrierId
-          }
-        })
-      })
-    },
-
-    getCarrierCars (carrierId) {
-      Server({
-        url: '/carrier/list/carOrderByUpdateTimeDesc',
-        method: 'get',
-        data: { carrierId }
-      }).then(res => {
-        this.carrierCars = res.data.data.carList.map(item => {
-          return {
-            name: item.carNO,
-            value: item.carNO,
-            id: item.carId,
-            driverName: item.driverName,
-            driverPhone: item.driverPhone,
-            carType: item.carType,
-            carLength: item.carLength
-          }
-        })
-      })
-    },
-
-    handleSelectCarrier (name, row) {
-      this.getCarrierCars(row.id)
-      this.$store.dispatch('getCarrierDrivers', row.id)
-    },
-
     checkTableSelection () {
       if (!this.tableSelection.length) {
         this.$Message.error('请先选择后再操作')

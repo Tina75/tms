@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
+  <Modal v-model="visiable" :z-index="zIndex" :mask-closable="false" width="360" @on-visible-change="close">
     <p slot="header" style="text-align:center">计费规则</p>
     <Form v-if="!ruleEmpty" ref="$form" :model="ruleForm" :rules="rules" :label-width="80">
       <FormItem label="计费规则：" prop="ruleIndex">
@@ -33,7 +33,7 @@ export default {
   mixins: [ BaseDialog ],
   data () {
     const chargeValidate = (rule, value, callback) => {
-      if (!this.charge) callback(new Error('未能计算出运费，请检查计费规则是否正确'))
+      if (!this.charge) callback(new Error('未能找到相应的计费规则'))
       callback()
     }
 
@@ -43,6 +43,7 @@ export default {
       ruleOptions: [],
       ruleEmpty: false,
       charge: 0,
+      zIndex: new Date().getTime(),
       rules: {
         ruleIndex: [{ validator: chargeValidate }]
       }
@@ -63,7 +64,7 @@ export default {
         }
       }).then((res) => {
         this.ruleOptions = res.data.data
-        this.ruleEmpty = !!res.data.data
+        this.ruleEmpty = res.data.data.length <= 0
       }).catch(err => {
         console.error(err)
       })
@@ -96,7 +97,7 @@ export default {
 
     gotoSetRules () {
       this.close()
-      this.cancel()
+      if (this.closeParentDialog) this.closeParentDialog()
       this.openTab({
         title: '计费规则',
         path: '/finance/rules'

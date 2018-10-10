@@ -13,7 +13,6 @@
     "ali-oss": "^6.0.1",
     "area-data": "^5.0.6",
     "axios": "^0.18.0",
-    "easy-ftp": "^0.3.44",
     "ema-proxy": "^1.0.1",
     "iview": "^3.0.0",
     "js-cookie": "^2.2.0",
@@ -38,7 +37,8 @@
     "lint-staged": "^7.2.2",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
-    "vue-template-compiler": "^2.5.17"
+    "vue-template-compiler": "^2.5.17",
+    "easy-ftp": "^0.3.44"
   },
   "browserslist": [
     "> 1%",

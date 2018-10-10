@@ -39,7 +39,7 @@
           style="width: 200px"
           @on-enter="searchList"
           @on-click="clearKeywords"/>
-        <Button type="primary" icon="ios-search" style="width: 40px;margin-right: 0;border-top-left-radius: 0;border-bottom-left-radius: 0;" @click="searchList"></Button>
+        <Button type="primary" icon="ios-search" style="width: 40px;margin-left:-2px;margin-right: 0;border-top-left-radius: 0;border-bottom-left-radius: 0;" @click="searchList"></Button>
         <Button type="text" class="high-search" size="small" @click="handleSwitchSearch">高级搜索</Button>
       </div>
     </div>
@@ -60,8 +60,8 @@
       </div>
       <div style="display: flex;justify-content: space-between;">
         <div>
-          <area-select v-model="keywords.start" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
-          <area-select v-model="keywords.end" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <area-select v-model="cityCodes.startCodes" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <area-select v-model="cityCodes.endCodes" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
           <DatePicker
             :options="timeOption"
             v-model="recoveryTimes"
@@ -164,7 +164,7 @@ export default {
       tableColumns: [
         {
           type: 'selection',
-          width: 60,
+          width: 50,
           align: 'center',
           fixed: 'left'
         },
@@ -172,7 +172,7 @@ export default {
           title: '操作',
           key: 'do',
           fixed: 'left',
-          width: 100,
+          width: 70,
           extra: true,
           render: (h, params) => {
             if (params.row.receiptOrder.receiptStatus === 0 && params.row.status === 40 && this.hasPower(110201)) {
@@ -225,7 +225,7 @@ export default {
                   this.openTab({
                     path: '/order-management/detail',
                     query: {
-                      id: params.row.orderNo,
+                      id: '回单' + params.row.orderNo,
                       orderId: params.row.id,
                       from: 'receipt'
                     }
@@ -382,6 +382,7 @@ export default {
           }
         }
       ],
+      operateCol: [], // 操作栏
       extraColumns: [
         {
           title: '订单号',
@@ -498,7 +499,15 @@ export default {
   computed: {
     ...mapGetters([
       'clients'
-    ])
+    ]),
+    // 回单id集合
+    receiptOrderIds () {
+      let arr = []
+      this.selectOrderList.map((item) => {
+        arr.push(item.receiptOrder.id)
+      })
+      return arr
+    }
   },
 
   created () {
@@ -572,6 +581,9 @@ export default {
       this.selectedId = [] // 重置当前已勾选id项
       if (val === '全部') {
         this.operateValue = 1
+        if (this.tableColumns[1].title !== '操作') {
+          this.tableColumns.splice(1, 0, this.operateCol[0])
+        }
         this.btnGroup = [
           { name: '回收', value: 1, code: 110201 },
           { name: '返厂', value: 2, code: 110202 },
@@ -580,6 +592,9 @@ export default {
         this.keywords.receiptStatus = null
       } else if (val === '待回收') {
         this.operateValue = 1
+        if (this.tableColumns[1].title !== '操作') {
+          this.tableColumns.splice(1, 0, this.operateCol[0])
+        }
         this.btnGroup = [
           { name: '回收', value: 1, code: 110201 },
           { name: '导出', value: 2, code: 110203 }
@@ -587,6 +602,9 @@ export default {
         this.keywords.receiptStatus = 0
       } else if (val === '待返厂') {
         this.operateValue = 1
+        if (this.tableColumns[1].title !== '操作') {
+          this.tableColumns.splice(1, 0, this.operateCol[0])
+        }
         this.btnGroup = [
           { name: '返厂', value: 1, code: 110202 },
           { name: '导出', value: 2, code: 110203 }
@@ -594,6 +612,10 @@ export default {
         this.keywords.receiptStatus = 1
       } else {
         this.operateValue = 1
+        // 已返厂取消操作栏
+        if (this.tableColumns[1].title === '操作') {
+          this.operateCol = this.tableColumns.splice(1, 1)
+        }
         this.btnGroup = [
           { name: '导出', value: 1, code: 110203 }
         ]
@@ -678,7 +700,7 @@ export default {
     // 导出
     export () {
       const data = Object.assign({}, this.keyword, {
-        receiptOrderIds: this.selectedId.length > 0 ? this.selectedId : null
+        receiptOrderIds: this.selectedId.length > 0 ? this.receiptOrderIds : null
       })
       Export({
         url: 'order/exportReceiptOrder',
@@ -694,6 +716,8 @@ export default {
 .ivu-btn
   margin-right 15px
   width 80px
+.ivu-btn-default
+  background #F9F9F9
 .high-search
   width 36px
   height 30px

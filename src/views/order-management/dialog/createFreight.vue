@@ -9,21 +9,17 @@
         <AreaSelect v-model="form.end" :deep="true" placeholder="请选择"/>
       </FormItem>
       <FormItem label="承运商：" prop="carrierName">
-        <SelectInput
-          v-model="form.carrierName"
-          :maxlength="20"
-          :remote="false"
-          :local-options="carriers"
-          placeholder="请选择"
-          @on-select="handleSelectCarrier" />
+        <SelectInput v-model="form.carrierName"
+                     mode="carrier"
+                     placeholder="请选择"
+                     @on-select="selectCarrierHandler" />
       </FormItem>
       <FormItem label="车辆：" prop="carNo">
-        <SelectInput
-          v-model="form.carNo"
-          :maxlength="8"
-          :remote="false"
-          :local-options="carrierCars"
-          placeholder="请选择" />
+        <SelectInput :carrier-id="carrierId"
+                     v-model="form.carNo"
+                     mode="carNo"
+                     placeholder="请选择"
+                     @on-select="autoComplete" />
       </FormItem>
     </Form>
     <div slot="footer" style="text-align: center;">
@@ -36,7 +32,8 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import AreaSelect from '@/components/AreaSelect'
-import SelectInput from '@/components/SelectInput.vue'
+import SelectInput from '@/views/transport/components/SelectInput.vue'
+import SelectInputMixin from '@/views/transport/components/selectInputMixin'
 import _ from 'lodash'
 import Server from '@/libs/js/server'
 import { CAR } from '@/views/client/client'
@@ -47,7 +44,7 @@ const specialCity = ['110000', '120000', '310000', '500000', '710000', '810000',
 export default {
   name: 'CreatedFreight',
   components: { AreaSelect, SelectInput },
-  mixins: [ BaseDialog ],
+  mixins: [ BaseDialog, SelectInputMixin ],
   data () {
     const validateArea = (value) => {
       if (value.length === 1 && !specialCity.includes(value[0])) {
@@ -81,8 +78,9 @@ export default {
     }
 
     return {
-      carriers: [],
-      carrierCars: [],
+      // select input data
+      keyFields: 'form',
+      linkageFields: ['carNo'],
 
       form: {
         start: [],
@@ -105,48 +103,7 @@ export default {
       }
     }
   },
-  created () {
-    this.getCarriers()
-  },
   methods: {
-    getCarriers () {
-      Server({
-        url: '/carrier/listOrderByUpdateTimeDesc',
-        method: 'get',
-        data: { type: 1 }
-      }).then(res => {
-        this.carriers = res.data.data.carrierList.map(item => {
-          return {
-            name: item.carrierName,
-            value: item.carrierName,
-            id: item.carrierId,
-            carNo: item.carNO
-          }
-        })
-      })
-    },
-
-    getCarrierCars (carrierId) {
-      Server({
-        url: '/carrier/list/carOrderByUpdateTimeDesc',
-        method: 'get',
-        data: { carrierId }
-      }).then(res => {
-        this.carrierCars = res.data.data.carList.map(item => {
-          return {
-            name: item.carNO,
-            value: item.carNO
-          }
-        })
-        if (this.carrierCars.length) this.form.carNo = this.carrierCars[0].name
-        else this.form.carNo = ''
-      })
-    },
-
-    handleSelectCarrier (name, row) {
-      this.getCarrierCars(row.id)
-      this.$store.dispatch('getCarrierDrivers', row.id)
-    },
 
     create () {
       this.$refs.$form.validate(valid => {

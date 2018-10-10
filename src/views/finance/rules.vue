@@ -158,7 +158,7 @@ export default {
   metaInfo: {
     title: '计费规则'
   },
-  components: {AreaSelect},
+  components: { AreaSelect },
   mixins: [ BasePage ],
   data () {
     return {
@@ -258,7 +258,7 @@ export default {
       })
     },
     addEl (index) {
-      this.ruleDetail.details[index].chargeRules.push({base: '', price: ''})
+      this.ruleDetail.details[index].chargeRules.push({ base: '', price: '' })
     },
     removeEl (index, no) {
       this.ruleDetail.details[index].chargeRules.splice(no, 1)
@@ -268,7 +268,7 @@ export default {
         departure: '',
         destination: '',
         chargeRules: [
-          {base: '', price: ''}
+          { base: '', price: '' }
         ]
       })
     },
