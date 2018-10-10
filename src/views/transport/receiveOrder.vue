@@ -129,6 +129,7 @@ import PrintPickup from './components/PrintPickup'
 
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
+import TMSUrl from '@/libs/constant/url'
 
 export default {
   name: 'ReceiveManager',
@@ -302,7 +303,7 @@ export default {
                 click: () => {
                   this.openTab({
                     title: p.row.pickupNo,
-                    path: '/transport/detail/detailPickup',
+                    path: TMSUrl.PICKUP_ORDER_DETAIL,
                     query: { id: p.row.pickUpId }
                   })
                 }

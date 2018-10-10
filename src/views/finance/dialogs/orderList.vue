@@ -51,8 +51,8 @@ export default {
         pageSize: 10
       },
       orderData: {
-        orderNum: 100,
-        totalFee: 1000.87,
+        orderNum: 0,
+        totalFee: 0,
         list: []
       }
     }
@@ -160,7 +160,8 @@ export default {
         this.orderData.totalFeeText = (res.data.data.totalFee / 100).toFixed(2)
         this.orderData.list = res.data.data.subOrderInfos.map(item => {
           return Object.assign({}, item, {
-            totalFeeText: (item.totalFee / 100).toFixed(2)
+            totalFeeText: (item.totalFee / 100).toFixed(2),
+            orderTimeText: new Date(item.orderTime).Format('yyyy-MM-dd hh:mm')
           })
         })
       }).catch(err => console.error(err))
@@ -201,8 +202,9 @@ export default {
           break
       }
     },
-    resetPageSize () {
+    resetPageSize (size) {
       this.listQuery.pageNo = 1
+      this.listQuery.pageSize = size
       this.getOrderList()
     }
   }
@@ -225,11 +227,4 @@ export default {
       vertical-align: middle
     .list-box
       text-align: right
-      /deep/ .ivu-table-wrapper
-        margin-bottom: 20px
-      /deep/ .ivu-page-item-active
-        background-color: #00a4bd
-        border-radius: 5px
-        a
-          color: #ffffff
 </style>

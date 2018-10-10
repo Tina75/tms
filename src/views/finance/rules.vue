@@ -9,14 +9,14 @@
       <div class="operate-block">
         <Button type="primary" @click="addRule">新增规则</Button>
         <div class="query-box">
-          <Form :model="rulesQuery" inline>
+          <Form ref="rulesQuery" :model="rulesQuery" :rules="validate" inline>
             <FormItem>
               <Select v-model="rulesQuery.type" clearable>
                 <Option value="1">{{sceneMap[active]}}名称</Option>
                 <Option value="2">规则名称</Option>
               </Select>
             </FormItem>
-            <FormItem>
+            <FormItem prop="queryText">
               <Input v-model="rulesQuery.queryText" :placeholder="`请输入${sceneMap[active]}名称`" style="width: auto">
               <Icon slot="suffix" type="ios-search" class="suffix-btn" @click="getRules"/>
               </Input>
@@ -178,11 +178,14 @@ export default {
         3: '外转方'
       },
       rulesQuery: {
-        type: '',
+        type: '1',
         queryText: ''
       },
       companyData: [],
-      ruleDetail: {}
+      ruleDetail: {},
+      validate: {
+        queryText: {type: 'string', max: 20, message: '不能超过20个字', trigger: 'blur'}
+      }
     }
   },
   computed: {
@@ -302,7 +305,18 @@ export default {
       }).catch(err => console.error(err))
     },
     switchTab () {
+      this.rulesQuery = {
+        type: '1',
+        queryText: ''
+      }
       this.getRules()
+    },
+    startQuery () {
+      this.$refs['rulesQuery'].validate((valid) => {
+        if (valid) {
+          this.getRules()
+        }
+      })
     },
     getRules () {
       Server({
