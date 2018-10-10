@@ -82,42 +82,42 @@ export default {
           title: '保险费',
           key: 'insuranceFee',
           render: (h, params) => {
-            return h('span', (params.row.insuranceFee / 100).toFixed(2))
+            return h('span', params.row.insuranceFee)
           }
         },
         {
           title: '运输费',
           key: 'freightFee',
           render: (h, params) => {
-            return h('span', (params.row.freightFee / 100).toFixed(2))
+            return h('span', params.row.freightFee)
           }
         },
         {
           title: '装卸费',
           key: 'loadFee',
           render: (h, params) => {
-            return h('span', (params.row.loadFee / 100).toFixed(2))
+            return h('span', params.row.loadFee)
           }
         },
         {
           title: '卸货费',
           key: 'unloadFee',
           render: (h, params) => {
-            return h('span', (params.row.unloadFee / 100).toFixed(2))
+            return h('span', params.row.unloadFee)
           }
         },
         {
           title: '其他费用',
           key: 'otherFee',
           render: (h, params) => {
-            return h('span', (params.row.otherFee / 100).toFixed(2))
+            return h('span', params.row.otherFee)
           }
         },
         {
           title: '费用合计',
           key: 'totalFee',
           render: (h, params) => {
-            return h('span', (params.row.totalFee / 100).toFixed(2))
+            return h('span', params.row.totalFee)
           }
         }
       ],
