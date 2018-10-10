@@ -1,6 +1,6 @@
 <template>
   <div is="i-col" span="6" class="i-mt-15 page-home__padding-8">
-    <BlankCard to="order-management/order" page-title="订单列表">
+    <BlankCard to="order-management/order" page-title="订单管理">
       <div slot="title">今日订单数</div>
       <div>
         <ECharts :options="options" :auto-resize="true"></ECharts>

@@ -1,7 +1,6 @@
 <template>
   <div is="i-col" :span="12" class="i-mt-15 page-home__padding-8">
-    <blank-card>
-      <div slot="title">货物重量 / 体积</div>
+    <blank-card :to="linkto" title="货物重量 / 体积" page-title="订单管理">
       <div class="chart">
         <ECharts :options="options" :auto-resize="true"></ECharts>
         <div class="chart__attach">
@@ -23,6 +22,7 @@
 import BlankCard from '../components/BlankCard'
 import ECharts from 'vue-echarts/components/ECharts'
 import mixin from './mixin.js'
+import url from '@/libs/constant/url'
 
 const statusStr = {
   10: '待提货',
@@ -47,7 +47,9 @@ export default {
       weight: 0,
 
       volumeData: [],
-      weightData: []
+      weightData: [],
+
+      linkto: url.ORDER_MANAGEMENT
     }
   },
 

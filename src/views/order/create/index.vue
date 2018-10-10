@@ -371,7 +371,7 @@ export default {
                 props: {
                   'max-width': '200',
                   content: '为了方便您计算价格，重量和体积必须填写一项',
-                  placement: 'top-start',
+                  placement: 'top',
                   transfer: true
                 }
               }, [
