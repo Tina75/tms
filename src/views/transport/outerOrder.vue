@@ -126,6 +126,7 @@ import SelectInput from './components/SelectInput.vue'
 
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
+import TMSUrl from '@/libs/constant/url'
 
 export default {
   name: 'OuterManager',
@@ -294,7 +295,7 @@ export default {
                 click: () => {
                   this.openTab({
                     title: p.row.transNo,
-                    path: '/transport/detail/detailOuter',
+                    path: TMSUrl.OUTER_ORDER_DETAIL,
                     query: { id: p.row.transId }
                   })
                 }

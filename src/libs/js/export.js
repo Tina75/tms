@@ -15,7 +15,7 @@ let instance = axios.create({
   withCredentials: true,
   loading: false,
   ignoreCode: false,
-  responseType: 'arraybuffer' // 'application/json'
+  responseType: 'arraybuffer'
 })
 
 instance.defaults.baseURL = Server.defaults.baseURL

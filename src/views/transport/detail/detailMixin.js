@@ -65,8 +65,7 @@ export default {
                   'on-blur': (money) => {
                     let temp = p.row
                     temp.cashAmount = money
-                    this.settlementPayInfo.splice(p.index, 1, temp)
-                    // this.checkTotalAmount()
+                    this.settlementPayInfoBack.splice(p.index, 1, temp)
                   }
                 }
               })
@@ -93,8 +92,7 @@ export default {
                   'on-blur': (money) => {
                     let temp = p.row
                     temp.fuelCardAmount = money
-                    this.settlementPayInfo.splice(p.index, 1, temp)
-                    // this.checkTotalAmount()
+                    this.settlementPayInfoBack.splice(p.index, 1, temp)
                   }
                 }
               })
@@ -196,10 +194,16 @@ export default {
     // 计费规则
     showChargeRules () {
       const self = this
+      if (!self.orderTotal.weight || !self.orderTotal.volume) {
+        this.$Message.error('请先添加订单')
+        return
+      }
       this.openDialog({
         name: 'dialogs/financeRule',
-        data: { // 以下数据必传
-          partnerType: self.pageName === 'pickup' ? 3 : 2, // 计费规则分类 - 发货方1 承运商2 外转方3
+        data: {
+          // partnerName: partnerName, // 可选
+          // 以下数据必传
+          partnerType: self.pageName === 'feright' ? 1 : 3, // 计费规则分类 - 发货方1 承运商2 外转方3
           weight: self.orderTotal.weight, // 货物重量
           volume: self.orderTotal.volume, // 货物体积
           start: self.info.start, // 始发地code
@@ -221,7 +225,7 @@ export default {
     // 校验结算方式输入金额
     checkTotalAmount () {
       let total = 0
-      this.settlementPayInfo.forEach(item => {
+      this.settlementPayInfoBack.forEach(item => {
         total = total + Number(item.cashAmount) + Number(item.fuelCardAmount)
       })
       if (total !== Number(this.paymentTotal) && total !== 0) {
@@ -278,7 +282,7 @@ export default {
     // 格式化计费方式金额单位为分
     formatPayInfo () {
       // if (this.settlementType !== '1') return
-      return this.settlementPayInfo.map(item => {
+      return this.settlementPayInfoBack.map(item => {
         return {
           payType: item.payType,
           fuelCardAmount: Number(item.fuelCardAmount) * 100,

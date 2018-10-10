@@ -304,11 +304,13 @@ import BasePage from '@/basic/BasePage'
 import TransportBase from '../transportBase'
 import DetailMixin from './detailMixin'
 
-import Server from '@/libs/js/server'
 import MoneyInput from '../components/MoneyInput'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '../components/SelectInput.vue'
 import SelectInputMixin from '../components/selectInputMixin'
+
+import Server from '@/libs/js/server'
+import TMSUrl from '@/libs/constant/url'
 
 export default {
   name: 'DetailFeright',
@@ -336,6 +338,7 @@ export default {
       settlementPayInfo: [
         { payType: 2, fuelCardAmount: 0, cashAmount: 0 }
       ],
+      settlementPayInfoBack: [], // 支付信息备份
 
       // 所有按钮组
       btnList: [
@@ -389,7 +392,8 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
-                    path: '/order-management/detail',
+                    // title: p.row.orderNo,
+                    path: TMSUrl.ORDER_DETAIL,
                     query: {
                       id: p.row.orderNo,
                       orderId: p.row.orderId,
@@ -526,6 +530,7 @@ export default {
           }
         })
         this.settlementPayInfo = temp
+        this.settlementPayInfoBack = Object.assign([], temp)
 
         this.setBtnsWithStatus()
         this.loading = false

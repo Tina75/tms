@@ -132,6 +132,7 @@ import PrintFreight from './components/PrintFreight'
 
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
+import TMSUrl from '@/libs/constant/url'
 
 export default {
   name: 'WaybillManager',
@@ -239,6 +240,12 @@ export default {
               this.billArrived()
             }
           }, {
+            name: '位置',
+            code: 120106,
+            func: () => {
+              this.billLocation()
+            }
+          }, {
             name: '导出',
             code: 120108,
             func: () => {
@@ -320,7 +327,7 @@ export default {
                 click: () => {
                   this.openTab({
                     title: p.row.waybillNo,
-                    path: '/transport/detail/detailFreight',
+                    path: TMSUrl.TRANSPORT_ORDER_DETAIL,
                     query: { id: p.row.waybillId }
                   })
                 }
