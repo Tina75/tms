@@ -323,13 +323,14 @@ import BasePage from '@/basic/BasePage'
 import TransportBase from '../transportBase'
 import DetailMixin from './detailMixin'
 
-import Server from '@/libs/js/server'
 import MoneyInput from '../components/MoneyInput'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '../components/SelectInput.vue'
 import SelectInputMixin from '../components/selectInputMixin'
 
+import Server from '@/libs/js/server'
 import { getCityCode } from '@/libs/constant/cityValidator'
+import TMSUrl from '@/libs/constant/url'
 
 export default {
   name: 'DetailFeright',
@@ -423,7 +424,8 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
-                    path: '/order-management/detail',
+                    // title: p.row.orderNo,
+                    path: TMSUrl.ORDER_DETAIL,
                     query: {
                       id: p.row.orderNo,
                       orderId: p.row.orderId,

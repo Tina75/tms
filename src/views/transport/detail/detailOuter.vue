@@ -4,9 +4,9 @@
     <section class="detail-header">
       <ul class="detail-header-list">
         <li class="detail-header-list-item">订单号：{{ info.orderNo }}</li>
-        <li class="detail-header-list-item">客户订单号：{{ info.customerOrderNo }}</li>
+        <li class="detail-header-list-item">客户订单号：{{ info.customerOrderNo || '-' }}</li>
         <li class="detail-header-list-item">外转单号：{{ info.transNo }}</li>
-        <li class="detail-header-list-item">外转方运单号：{{ info.outTransNo }}</li>
+        <li class="detail-header-list-item">外转方运单号：{{ info.outTransNo || '-' }}</li>
         <li class="detail-header-list-item">外转单状态：
           <span style="font-weight: bold;">{{ status }}</span>
         </li>
