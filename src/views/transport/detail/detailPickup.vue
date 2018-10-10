@@ -412,7 +412,7 @@ export default {
         {
           title: '包装',
           key: 'unit',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             console.log(p.row.unit)
             return this.tableDataRender(h, p.row.unit)
@@ -421,7 +421,7 @@ export default {
         {
           title: '数量',
           key: 'quantity',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.quantity)
           }
@@ -429,7 +429,7 @@ export default {
         {
           title: '货值(元)',
           key: 'cargoCost',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
           }
@@ -437,7 +437,7 @@ export default {
         {
           title: '重量(吨)',
           key: 'weight',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.weight)
           }
@@ -445,7 +445,7 @@ export default {
         {
           title: '体积(方)',
           key: 'volume',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.volume)
           }
