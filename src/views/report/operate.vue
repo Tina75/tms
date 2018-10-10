@@ -98,6 +98,9 @@ export default {
     PageTable,
     AreaSelect
   },
+  metaInfo: {
+    title: '运营报表'
+  },
   data () {
     return {
       url: '/report/for/operating',
