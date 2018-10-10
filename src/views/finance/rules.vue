@@ -29,8 +29,12 @@
           <Col span="7">
           <Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showRuleDetail"></Table>
           </Col>
-          <Col v-if="ruleDetail.ruleId" span="17">
-          <div class="rule-block">
+          <Col span="17">
+          <div v-if="!ruleDetail.ruleId" class="data-empty">
+            <img src="../../assets/img-empty.png" class="data-empty-img">
+            <p>请点击左侧{{sceneMap[active]}}设置计费规则明细～</p>
+          </div>
+          <div v-else class="rule-block">
             <div class="rule-basic">
               <Form inline>
                 <span>按</span>
@@ -438,4 +442,17 @@ export default {
       .ivu-btn
         padding-left: 30px
         padding-right: 30px
+    .data-empty
+      display flex
+      flex-direction column
+      justify-content center
+      align-items center
+      height 500px
+      border 1px solid #dcdee2
+      .data-empty-img
+        width 70px
+        margin-bottom 12px
+      p
+        color #999999
+        text-align center
 </style>
