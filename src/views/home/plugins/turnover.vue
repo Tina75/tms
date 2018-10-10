@@ -32,7 +32,7 @@ export default {
       yTotalData: [],
       yCountData: [],
 
-      linkto: url.TOTAL_REPORT
+      linkto: url.TOTAL_REPORT + '?tab=7'
     }
   },
 
