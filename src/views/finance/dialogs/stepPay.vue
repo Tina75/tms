@@ -15,7 +15,7 @@
       <div class="ivu-table-wrapper">
         <div class="ivu-table ivu-table-default ivu-table-with-fixed-top">
           <div class="ivu-table-header">
-            <table cellspacing="0" cellpadding="0" border="0" style="width: 408px;">
+            <table cellspacing="0" cellpadding="0" border="0">
               <colgroup>
                 <col width="70">
                 <col width="70">
@@ -45,7 +45,7 @@
             </table>
           </div>
           <div class="ivu-table-body">
-            <table cellspacing="0" cellpadding="0" border="0" style="width: 408px;">
+            <table cellspacing="0" cellpadding="0" border="0">
               <colgroup>
                 <col width="70">
                 <col width="70">
@@ -60,7 +60,7 @@
                       <span v-if="!item.showAdjuster">{{index + 1}}</span>
                       <div v-else class="adjuster">
                         <Icon v-if="index === payItems.length - 1" class="add" type="md-add-circle" @click="addItem(index)"/>
-                        <Icon v-if="!item.verifyStatus" class="remove" type="md-remove-circle" @click="removeItem(item, index)"/>
+                        <Icon v-if="!item.verifyStatus && payItems.length > 1" class="remove" type="md-remove-circle" @click="removeItem(item, index)"/>
                       </div>
                     </div>
                   </td>
@@ -147,6 +147,7 @@ export default {
         name: 'finance/dialogs/writeOff',
         data: {
           id: item.id,
+          scene: this.scene,
           verifyType: 2,
           isOil: item.payType === 2 || item.payType === 4 || item.payType === 6,
           needPay: item.feeText,
@@ -182,7 +183,7 @@ export default {
       this.payItems.splice(index + 1, 0, {
         isEdit: true,
         showAdjuster: false,
-        payType: 1,
+        payType: '',
         fee: ''
       })
     },

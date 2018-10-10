@@ -9,16 +9,9 @@
             <Input v-model="checkingOrderQuery.name" :placeholder="`请输入${sceneMap[scene]}名称`"/>
           </FormItem>
           </Col>
-          <Col span="2">
-          <FormItem>
-            <Select v-model="checkingOrderQuery.periodType" clearable>
-              <Option v-for="(value, key) in periodTypeMap" :key="key" :value="key">{{value}}</Option>
-            </Select>
-          </FormItem>
-          </Col>
           <Col span="8">
-          <FormItem>
-            <DatePicker v-model="checkingOrderQuery.period"  type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 300px" />
+          <FormItem label="创建时间" style="width: 100%">
+            <DatePicker v-model="checkingOrderQuery.period"  type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 200px" />
           </FormItem>
           </Col>
           <Col span="6">
@@ -71,12 +64,10 @@ export default {
       },
       checkingOrderQuery: {
         name: '',
-        periodType: '1',
         period: []
       },
       checkingOrderQuerySave: {
         name: '',
-        periodType: '1',
         period: [],
         sortDesc: true,
         pageNo: 1,
@@ -177,6 +168,7 @@ export default {
         name: 'finance/dialogs/writeOff',
         data: {
           id: data.row.reconcileId,
+          scene: this.scene,
           verifyType: 3,
           isOil: 0,
           needPay: data.row.totalFeeText
@@ -240,8 +232,9 @@ export default {
         })
       }).catch(err => console.error(err))
     },
-    resetPageSize () {
+    resetPageSize (size) {
       this.checkingOrderQuerySave.pageNo = 1
+      this.checkingOrderQuerySave.pageSize = size
       this.getCheckList()
     }
   }
@@ -262,9 +255,4 @@ export default {
       text-align: right
       /deep/ .ivu-table-wrapper
         margin-bottom: 20px
-      /deep/ .ivu-page-item-active
-        background-color: #00a4bd
-        border-radius: 5px
-        a
-          color: #ffffff
 </style>

@@ -45,6 +45,7 @@ export default {
         },
 
         xAxis: {
+          name: '月/日',
           type: 'category',
           data: this.xData || [],
           splitLine: {
@@ -66,7 +67,7 @@ export default {
         },
 
         yAxis: {
-          name: '万',
+          name: '笔',
           type: 'value',
           nameTextStyle: {
             padding: [0, 25, 0, 0]
@@ -85,8 +86,8 @@ export default {
         },
 
         grid: {
-          left: 15,
-          right: 15,
+          left: 25,
+          right: 60,
           top: 30,
           bottom: 12,
           containLabel: true

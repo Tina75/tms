@@ -168,7 +168,7 @@ export default {
       } else if (now >= 11 && now < 14) {
         return `<strong class="van-font-14 i-pr-20">中午好，${name}</strong> &nbsp;&nbsp;拥抱阳光，转身心情。`
       } else if (now >= 14 && now < 17) {
-        return `<strong class="van-font-14 i-pr-20">下午好，${name}</strong> &nbsp;&nbsp;拥抱阳光，转身心情。`
+        return `<strong class="van-font-14 i-pr-20">下午好，${name}</strong> &nbsp;&nbsp;相信自己，一定会有辉煌的一天。`
       } else if (now >= 17 && now < 22) {
         return `<strong class="van-font-14 i-pr-20">晚上好，${name}</strong> &nbsp;&nbsp;既然选择了远方，便只顾风雨兼程。`
       } else if (now >= 22 && now < 5) {
