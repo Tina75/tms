@@ -9,7 +9,7 @@
       <div class="operate-block">
         <Button type="primary" @click="addRule">新增规则</Button>
         <div class="query-box">
-          <Form ref="rulesQuery" :model="rulesQuery" inline :rules="validate">
+          <Form ref="rulesQuery" :model="rulesQuery" :rules="validate" inline>
             <FormItem>
               <Select v-model="rulesQuery.type" clearable>
                 <Option value="1">{{sceneMap[active]}}名称</Option>
