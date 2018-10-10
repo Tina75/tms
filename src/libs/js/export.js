@@ -48,13 +48,13 @@ instance.interceptors.response.use((res) => {
 
     try {
       const resJson = JSON.parse(resStr)
-      if (resJson && resJson.code && resJson.code === 10000) {
+      if (resJson && resJson.code) {
         code = resJson.code
         msg = resJson.msg
       }
     } catch (err) {}
 
-    if (!code) {
+    if (!code || code === 10000) {
       let blob = new Blob([res.data], { type: 'application/x-xls' })
       let downloadLink = document.createElement('a')
       downloadLink.href = URL.createObjectURL(blob)

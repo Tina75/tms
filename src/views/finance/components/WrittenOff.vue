@@ -191,7 +191,6 @@ export default {
           },
           fileName: '核销单'
         }).then(res => {
-          this.$Message.success('导出成功')
         }).catch(err => console.error(err))
       } else {
         this.$Message.warning('请选择1条以上的数据')

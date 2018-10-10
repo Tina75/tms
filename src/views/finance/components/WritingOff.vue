@@ -268,6 +268,7 @@ export default {
           },
           methods: {
             ok () {
+              this.$Message.success('创建成功')
               _this.loadData()
             }
           }
