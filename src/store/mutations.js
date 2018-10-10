@@ -11,10 +11,10 @@ export default{
   },
   initTabNav (state) {
     localStorage.tabNavCache = ''
-    state.tabNavList = localStorage.tabNavCache ? JSON.parse(localStorage.tabNavCache) : [{path: '/home', query: {title: '首页'}, param: {name: 'home'}}]
+    state.tabNavList = localStorage.tabNavCache ? JSON.parse(localStorage.tabNavCache) : [{ path: '/home', query: { title: '首页' }, param: { name: 'home' } }]
   },
   updateMsgCount (state, payload) {
-    const msg = {...payload}
+    const msg = { ...payload }
     msg.all = msg.sysNum + msg.orderNum + msg.carrierNum
     state.messageCount = msg
   }

@@ -1,7 +1,7 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
-      <p slot="header" style="text-align:center">
+    <Modal v-model="visibale" :mask-closable="false" width="360">
+      <p slot="header" class="dialog-title">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>{{name}}</span>
       </p>
@@ -103,7 +103,9 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
-.dialog
-  p
-    text-align center
+.dialog-title
+  text-align center
+  font-size 16px
+  font-family 'PingFangSC-Medium'
+  color rgba(47,50,62,1)
 </style>

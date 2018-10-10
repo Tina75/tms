@@ -27,7 +27,7 @@ export default {
   metaInfo: {
     title: '承运商对账'
   },
-  components: {CheckingOrder, WritingOff, WrittenOff},
+  components: { CheckingOrder, WritingOff, WrittenOff },
   mixins: [ BasePage ],
   data () {
     return {
