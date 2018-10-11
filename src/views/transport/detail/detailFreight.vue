@@ -1,322 +1,320 @@
 <template>
-  <div>
-    <!-- 默认状态 -->
-    <div v-show="!inEditing">
-      <!-- 运单号及状态 -->
-      <section class="detail-header">
-        <ul class="detail-header-list">
-          <li class="detail-header-list-item">运单号：{{ info.waybillNo }}</li>
-          <li class="detail-header-list-item">订单状态：
-            <span style="font-weight: bold;">{{ status }}</span>
-          </li>
-        </ul>
-      </section>
+  <!-- 默认状态 -->
+  <div v-if="!inEditing">
+    <!-- 运单号及状态 -->
+    <section class="detail-header">
+      <ul class="detail-header-list">
+        <li class="detail-header-list-item">运单号：{{ info.waybillNo }}</li>
+        <li class="detail-header-list-item">订单状态：
+          <span style="font-weight: bold;">{{ status }}</span>
+        </li>
+      </ul>
+    </section>
 
-      <div class="detail-btn-group">
-        <Button v-for="(item, key) in showButtons"
-                :key="key" :type="key === (showButtons.length - 1) ? 'primary' : 'default'"
-                class="detail-btn-item"
-                @click="item.func">{{ item.name }}</Button>
+    <div class="detail-btn-group">
+      <Button v-for="(item, key) in showButtons"
+              :key="key" :type="key === (showButtons.length - 1) ? 'primary' : 'default'"
+              class="detail-btn-item"
+              @click="item.func">{{ item.name }}</Button>
+    </div>
+
+    <section class="detail-info">
+      <!-- 运单信息 -->
+      <div>
+        <div class="detail-part-title">
+          <span>运单信息</span>
+        </div>
+        <Row class="detail-field-group">
+          <i-col span="6">
+            <span class="detail-field-title">始发地：</span>
+            <span>{{ info.start | cityFormatter }}</span>
+          </i-col>
+          <i-col span="6" offset="1">
+            <span class="detail-field-title">目的地：</span>
+            <span>{{ info.end | cityFormatter }}</span>
+          </i-col>
+          <i-col span="10" offset="1">
+            <span class="detail-field-title">承运商：</span>
+            <span>{{ info.carrierName }}</span>
+          </i-col>
+        </Row>
+        <Row class="detail-field-group">
+          <i-col span="6">
+            <span class="detail-field-title">车牌号：</span>
+            <span>{{ info.carNo }}</span>
+          </i-col>
+          <i-col span="6" offset="1">
+            <span class="detail-field-title">车型：</span>
+            <span>{{ info.carType|carTypeFormatter }} {{ info.carLength|carLengthFormatter }}</span>
+          </i-col>
+          <i-col span="10" offset="1">
+            <span class="detail-field-title">司机：</span>
+            <span>{{ (info.driverName || '') + ' ' + (info.driverPhone || '') }}</span>
+          </i-col>
+        </Row>
+        <Row class="detail-field-group">
+          <i-col span="13">
+            <span class="detail-field-title">备注：</span>
+            <span>{{ info.remark || '无' }}</span>
+          </i-col>
+        </Row>
       </div>
-
-      <section class="detail-info">
-        <!-- 运单信息 -->
-        <div>
-          <div class="detail-part-title">
-            <span>运单信息</span>
-          </div>
-          <Row class="detail-field-group">
-            <i-col span="6">
-              <span class="detail-field-title">始发地：</span>
-              <span>{{ info.start | cityFormatter }}</span>
-            </i-col>
-            <i-col span="6" offset="1">
-              <span class="detail-field-title">目的地：</span>
-              <span>{{ info.end | cityFormatter }}</span>
-            </i-col>
-            <i-col span="10" offset="1">
-              <span class="detail-field-title">承运商：</span>
-              <span>{{ info.carrierName }}</span>
-            </i-col>
-          </Row>
-          <Row class="detail-field-group">
-            <i-col span="6">
-              <span class="detail-field-title">车牌号：</span>
-              <span>{{ info.carNo }}</span>
-            </i-col>
-            <i-col span="6" offset="1">
-              <span class="detail-field-title">车型：</span>
-              <span>{{ info.carType|carTypeFormatter }} {{ info.carLength|carLengthFormatter }}</span>
-            </i-col>
-            <i-col span="10" offset="1">
-              <span class="detail-field-title">司机：</span>
-              <span>{{ (info.driverName || '') + ' ' + (info.driverPhone || '') }}</span>
-            </i-col>
-          </Row>
-          <Row class="detail-field-group">
-            <i-col span="13">
-              <span class="detail-field-title">备注：</span>
-              <span>{{ info.remark || '无' }}</span>
-            </i-col>
-          </Row>
+      <!-- 货物明细 -->
+      <div>
+        <div class="detail-part-title">
+          <span>货物明细</span>
         </div>
-        <!-- 货物明细 -->
-        <div>
-          <div class="detail-part-title">
-            <span>货物明细</span>
-          </div>
-          <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
-          <div class="table-footer">
-            <span class="table-footer-title">总计</span>
-            <span>总货值：{{ orderTotal.cargoCost }}</span>
-            <span>总数量：{{ orderTotal.quantity }}</span>
-            <span>总体积：{{ orderTotal.volume }}</span>
-            <span>总重量：{{ orderTotal.weight }}</span>
-          </div>
+        <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
+        <div class="table-footer">
+          <span class="table-footer-title">总计</span>
+          <span>总货值：{{ orderTotal.cargoCost }}</span>
+          <span>总数量：{{ orderTotal.quantity }}</span>
+          <span>总体积：{{ orderTotal.volume }}</span>
+          <span>总重量：{{ orderTotal.weight }}</span>
         </div>
-        <!-- 应付费用 -->
-        <div>
-          <div class="detail-part-title">
-            <span>应付费用</span>
-          </div>
-          <Row class="detail-field-group">
-            <i-col span="3">
-              <span class="detail-field-title-sm">运输费：</span>
-              <span class="detail-field-fee">{{ payment.freightFee || 0 }}元</span>
-            </i-col>
-            <i-col span="3" offset="2">
-              <span class="detail-field-title-sm">装货费：</span>
-              <span class="detail-field-fee">{{ payment.loadFee || 0 }}元</span>
-            </i-col>
-            <i-col span="3" offset="2">
-              <span class="detail-field-title-sm">卸货费：</span>
-              <span class="detail-field-fee">{{ payment.unloadFee || 0 }}元</span>
-            </i-col>
-            <i-col span="3" offset="2">
-              <span class="detail-field-title-sm">保险费：</span>
-              <span class="detail-field-fee">{{ payment.insuranceFee || 0 }}元</span>
-            </i-col>
-            <i-col span="3" offset="2">
-              <span class="detail-field-title-sm">其他：</span>
-              <span class="detail-field-fee">{{ payment.otherFee || 0 }}元</span>
-            </i-col>
-          </Row>
-          <Row class="detail-field-group">
-            <i-col span="24">
-              <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
-              <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
-            </i-col>
-          </Row>
-          <Row class="detail-field-group">
-            <i-col span="24">
-              <span class="detail-field-title-sm">结算方式：</span>
-              <div v-if="settlementType"
-                   class="detail-payment-way">
-                {{ settlementType === '1' ? '按单结' : '月结' }}
-                <Table v-if="settlementType === '1'"
-                       :columns="tablePayment"
-                       :data="settlementPayInfo"
-                       :loading="loading"
-                       width="350"></Table>
-              </div>
-            </i-col>
-          </Row>
+      </div>
+      <!-- 应付费用 -->
+      <div>
+        <div class="detail-part-title">
+          <span>应付费用</span>
         </div>
-        <!-- 运单日志 -->
-        <div>
-          <div class="detail-part-title">
-            <span>运单日志</span>
-          </div>
-          <div class="detail-log">
-
-            <div class="detail-log-icon"
-                 @click="showLog = !showLog">
-              <i :class="{'detail-log-show': showLog}"></i>
+        <Row class="detail-field-group">
+          <i-col span="3">
+            <span class="detail-field-title-sm">运输费：</span>
+            <span class="detail-field-fee">{{ payment.freightFee || 0 }}元</span>
+          </i-col>
+          <i-col span="3" offset="2">
+            <span class="detail-field-title-sm">装货费：</span>
+            <span class="detail-field-fee">{{ payment.loadFee || 0 }}元</span>
+          </i-col>
+          <i-col span="3" offset="2">
+            <span class="detail-field-title-sm">卸货费：</span>
+            <span class="detail-field-fee">{{ payment.unloadFee || 0 }}元</span>
+          </i-col>
+          <i-col span="3" offset="2">
+            <span class="detail-field-title-sm">保险费：</span>
+            <span class="detail-field-fee">{{ payment.insuranceFee || 0 }}元</span>
+          </i-col>
+          <i-col span="3" offset="2">
+            <span class="detail-field-title-sm">其他：</span>
+            <span class="detail-field-fee">{{ payment.otherFee || 0 }}元</span>
+          </i-col>
+        </Row>
+        <Row class="detail-field-group">
+          <i-col span="24">
+            <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
+            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
+          </i-col>
+        </Row>
+        <Row class="detail-field-group">
+          <i-col span="24">
+            <span class="detail-field-title-sm">结算方式：</span>
+            <div v-if="settlementType"
+                 class="detail-payment-way">
+              {{ settlementType === '1' ? '按单结' : '月结' }}
+              <Table v-if="settlementType === '1'"
+                     :columns="tablePayment"
+                     :data="settlementPayInfo"
+                     :loading="loading"
+                     width="350"></Table>
             </div>
-
-            <Timeline :style="logListHeight"
-                      class="detail-log-timeline">
-
-              <TimelineItem v-for="(item, key) in logList"
-                            :key="key" class="detail-log-timeline-item">
-                <i slot="dot"></i>
-                <span style="margin-right: 60px;color: #777;">{{item.createTimeLong | timeFormatter}}</span>
-                <span style="color: #333;">{{'【' + item.operatorName + '】' + item.description}}</span>
-              </TimelineItem>
-
-            </Timeline>
-          </div>
+          </i-col>
+        </Row>
+      </div>
+      <!-- 运单日志 -->
+      <div>
+        <div class="detail-part-title">
+          <span>运单日志</span>
         </div>
-      </section>
-    </div>
+        <div class="detail-log">
 
-    <!-- 编辑状态 -->
-    <div v-show="inEditing">
-      <!-- 运单号及状态 -->
-      <section class="detail-header">
-        <ul class="detail-header-list">
-          <li class="detail-header-list-item">运单号：{{ info.waybillNo }}</li>
-          <li class="detail-header-list-item">订单状态：
-            <span style="font-weight: bold;">{{ status }}</span>
-          </li>
-        </ul>
-      </section>
-
-      <div class="detail-btn-group"></div>
-
-      <section class="detail-info">
-        <!-- 运单信息 -->
-        <div>
-          <div class="detail-part-title">
-            <span>运单信息</span>
+          <div class="detail-log-icon"
+               @click="showLog = !showLog">
+            <i :class="{'detail-log-show': showLog}"></i>
           </div>
-          <Row class="detail-field-group">
-            <i-col span="6">
-              <span class="detail-field-title detail-field-required">始发地：</span>
-              <AreaSelect v-model="startCodes"
-                          class="detail-info-input" />
-            </i-col>
-            <i-col span="6" offset="1">
-              <span class="detail-field-title detail-field-required">目的地：</span>
-              <AreaSelect v-model="endCodes"
-                          class="detail-info-input" />
-            </i-col>
-            <i-col span="10" offset="1">
-              <span class="detail-field-title">承运商：</span>
-              <SelectInput v-model="info.carrierName"
-                           class="detail-info-input"
-                           mode="carrier"
-                           @on-select="selectCarrierHandler" />
-            </i-col>
-          </Row>
-          <Row class="detail-field-group">
-            <i-col span="6">
-              <span class="detail-field-title">车牌号：</span>
-              <SelectInput :carrier-id="carrierId"
-                           v-model="info.carNo"
-                           class="detail-info-input"
-                           mode="carNo"
-                           @on-select="autoComplete" />
-            </i-col>
-            <i-col span="6" offset="1">
-              <span class="detail-field-title">车型/车长：</span>
-              <Select v-model="info.carType"
-                      class="detail-info-input-half"
-                      style="margin-right: 12px;">
-                <Option v-for="item in carType" :value="item.value" :key="item.value">{{ item.label }}</Option>
-              </Select>
-              <Select v-model="info.carLength"
-                      class="detail-info-input-half">
-                <Option v-for="item in carLength" :value="item.value" :key="item.value">{{ item.label }}</Option>
-              </Select>
-            </i-col>
-            <i-col span="4" offset="1">
-              <span class="detail-field-title">司机：</span>
-              <SelectInput :carrier-id="carrierId"
-                           v-model="info.driverName"
-                           class="detail-info-input"
-                           mode="driver"
-                           @on-select="autoComplete"
-                           @on-option-loaded="driverOptionLoaded" />
-            </i-col>
-            <i-col span="5" offset="1">
-              <span class="detail-field-title">司机手机号：</span>
-              <Input v-model="info.driverPhone"
-                     :maxlength="11"
-                     class="detail-info-input" />
-            </i-col>
-          </Row>
-          <Row class="detail-field-group">
-            <i-col span="13">
-              <span class="detail-field-title">备注：</span>
-              <Input v-model="info.remark"
-                     :maxlength="100"
-                     class="detail-info-input" />
-            </i-col>
-          </Row>
+
+          <Timeline :style="logListHeight"
+                    class="detail-log-timeline">
+
+            <TimelineItem v-for="(item, key) in logList"
+                          :key="key" class="detail-log-timeline-item">
+              <i slot="dot"></i>
+              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong | timeFormatter}}</span>
+              <span style="color: #333;">{{'【' + item.operatorName + '】' + item.description}}</span>
+            </TimelineItem>
+
+          </Timeline>
         </div>
-        <!-- 货物明细 -->
-        <div>
-          <div class="detail-part-title">
-            <span>货物明细</span>
-          </div>
-          <Button type="primary" style="margin-bottom: 22px;"
-                  @click="addOrder('freight')">添加订单</Button>
-          <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
-          <div class="table-footer">
-            <span class="table-footer-title">总计</span>
-            <span>总货值：{{ orderTotal.cargoCost }}</span>
-            <span>总数量：{{ orderTotal.quantity }}</span>
-            <span>总体积：{{ orderTotal.volume }}</span>
-            <span>总重量：{{ orderTotal.weight }}</span>
-          </div>
-        </div>
-        <!-- 应付费用 -->
-        <div>
-          <div class="detail-part-title">
-            <span>应付费用</span>
-          </div>
-          <Row class="detail-field-group">
-            <i-col span="5">
-              <span class="detail-field-title-sm">运输费：</span>
-              <MoneyInput v-model="payment.freightFee"
-                          class="detail-payment-input" />
-              <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
-            </i-col>
-            <i-col span="4">
-              <span class="detail-field-title-sm">装货费：</span>
-              <MoneyInput v-model="payment.loadFee"
-                          class="detail-payment-input" />
-            </i-col>
-            <i-col span="4">
-              <span class="detail-field-title-sm">卸货费：</span>
-              <MoneyInput v-model="payment.unloadFee"
-                          class="detail-payment-input" />
-            </i-col>
-            <i-col span="4">
-              <span class="detail-field-title-sm">保险费：</span>
-              <MoneyInput v-model="payment.insuranceFee"
-                          class="detail-payment-input" />
-            </i-col>
-            <i-col span="4">
-              <span class="detail-field-title-sm">其他：</span>
-              <MoneyInput v-model="payment.otherFee"
-                          class="detail-payment-input" />
-            </i-col>
-          </Row>
-          <Row class="detail-field-group">
-            <i-col span="24">
-              <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
-              <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
-            </i-col>
-          </Row>
-          <Row class="detail-field-group">
-            <i-col span="24">
-              <span class="detail-field-title-sm">结算方式：</span>
-              <div class="detail-payment-way">
-                <RadioGroup v-model="settlementType">
-                  <Radio label="1">按单结</Radio>
-                  <Radio label="2">月结</Radio>
-                </RadioGroup>
-                <Table v-if="settlementType === '1'"
-                       :columns="tablePayment"
-                       :data="settlementPayInfo"
-                       :loading="loading"
-                       width="350"></Table>
-              </div>
-            </i-col>
-          </Row>
-        </div>
-      </section>
+      </div>
+    </section>
+  </div>
 
-      <section class="detail-edit-footer">
-        <Button class="detail-edit-footer-btn" type="primary"
-                @click="save">保存</Button>
-        <Button class="detail-edit-footer-btn" type="default"
-                @click="cancelEdit">取消</Button>
-      </section>
+  <!-- 编辑状态 -->
+  <div v-else>
+    <!-- 运单号及状态 -->
+    <section class="detail-header">
+      <ul class="detail-header-list">
+        <li class="detail-header-list-item">运单号：{{ info.waybillNo }}</li>
+        <li class="detail-header-list-item">订单状态：
+          <span style="font-weight: bold;">{{ status }}</span>
+        </li>
+      </ul>
+    </section>
 
-    </div>
+    <div class="detail-btn-group"></div>
+
+    <section class="detail-info">
+      <!-- 运单信息 -->
+      <div>
+        <div class="detail-part-title">
+          <span>运单信息</span>
+        </div>
+        <Row class="detail-field-group">
+          <i-col span="6">
+            <span class="detail-field-title detail-field-required">始发地：</span>
+            <AreaSelect v-model="startCodes"
+                        class="detail-info-input" />
+          </i-col>
+          <i-col span="6" offset="1">
+            <span class="detail-field-title detail-field-required">目的地：</span>
+            <AreaSelect v-model="endCodes"
+                        class="detail-info-input" />
+          </i-col>
+          <i-col span="10" offset="1">
+            <span class="detail-field-title">承运商：</span>
+            <SelectInput v-model="info.carrierName"
+                         class="detail-info-input"
+                         mode="carrier"
+                         @on-select="selectCarrierHandler" />
+          </i-col>
+        </Row>
+        <Row class="detail-field-group">
+          <i-col span="6">
+            <span class="detail-field-title">车牌号：</span>
+            <SelectInput :carrier-id="carrierId"
+                         v-model="info.carNo"
+                         class="detail-info-input"
+                         mode="carNo"
+                         @on-select="autoComplete" />
+          </i-col>
+          <i-col span="6" offset="1">
+            <span class="detail-field-title">车型/车长：</span>
+            <Select v-model="info.carType"
+                    class="detail-info-input-half"
+                    style="margin-right: 12px;">
+              <Option v-for="item in carType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+            <Select v-model="info.carLength"
+                    class="detail-info-input-half">
+              <Option v-for="item in carLength" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+          </i-col>
+          <i-col span="4" offset="1">
+            <span class="detail-field-title">司机：</span>
+            <SelectInput :carrier-id="carrierId"
+                         v-model="info.driverName"
+                         class="detail-info-input"
+                         mode="driver"
+                         @on-select="autoComplete"
+                         @on-option-loaded="driverOptionLoaded" />
+          </i-col>
+          <i-col span="5" offset="1">
+            <span class="detail-field-title">司机手机号：</span>
+            <Input v-model="info.driverPhone"
+                   :maxlength="11"
+                   class="detail-info-input" />
+          </i-col>
+        </Row>
+        <Row class="detail-field-group">
+          <i-col span="13">
+            <span class="detail-field-title">备注：</span>
+            <Input v-model="info.remark"
+                   :maxlength="100"
+                   class="detail-info-input" />
+          </i-col>
+        </Row>
+      </div>
+      <!-- 货物明细 -->
+      <div>
+        <div class="detail-part-title">
+          <span>货物明细</span>
+        </div>
+        <Button type="primary" style="margin-bottom: 22px;"
+                @click="addOrder('freight')">添加订单</Button>
+        <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
+        <div class="table-footer">
+          <span class="table-footer-title">总计</span>
+          <span>总货值：{{ orderTotal.cargoCost }}</span>
+          <span>总数量：{{ orderTotal.quantity }}</span>
+          <span>总体积：{{ orderTotal.volume }}</span>
+          <span>总重量：{{ orderTotal.weight }}</span>
+        </div>
+      </div>
+      <!-- 应付费用 -->
+      <div>
+        <div class="detail-part-title">
+          <span>应付费用</span>
+        </div>
+        <Row class="detail-field-group">
+          <i-col span="5">
+            <span class="detail-field-title-sm">运输费：</span>
+            <MoneyInput v-model="payment.freightFee"
+                        class="detail-payment-input" />
+            <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
+          </i-col>
+          <i-col span="4">
+            <span class="detail-field-title-sm">装货费：</span>
+            <MoneyInput v-model="payment.loadFee"
+                        class="detail-payment-input" />
+          </i-col>
+          <i-col span="4">
+            <span class="detail-field-title-sm">卸货费：</span>
+            <MoneyInput v-model="payment.unloadFee"
+                        class="detail-payment-input" />
+          </i-col>
+          <i-col span="4">
+            <span class="detail-field-title-sm">保险费：</span>
+            <MoneyInput v-model="payment.insuranceFee"
+                        class="detail-payment-input" />
+          </i-col>
+          <i-col span="4">
+            <span class="detail-field-title-sm">其他：</span>
+            <MoneyInput v-model="payment.otherFee"
+                        class="detail-payment-input" />
+          </i-col>
+        </Row>
+        <Row class="detail-field-group">
+          <i-col span="24">
+            <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
+            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
+          </i-col>
+        </Row>
+        <Row class="detail-field-group">
+          <i-col span="24">
+            <span class="detail-field-title-sm">结算方式：</span>
+            <div class="detail-payment-way">
+              <RadioGroup v-model="settlementType">
+                <Radio label="1">按单结</Radio>
+                <Radio label="2">月结</Radio>
+              </RadioGroup>
+              <Table v-if="settlementType === '1'"
+                     :columns="tablePayment"
+                     :data="settlementPayInfo"
+                     :loading="loading"
+                     width="350"></Table>
+            </div>
+          </i-col>
+        </Row>
+      </div>
+    </section>
+
+    <section class="detail-edit-footer">
+      <Button class="detail-edit-footer-btn" type="primary"
+              @click="save">保存</Button>
+      <Button class="detail-edit-footer-btn" type="default"
+              @click="cancelEdit">取消</Button>
+    </section>
+
   </div>
 </template>
 
