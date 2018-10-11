@@ -2,13 +2,13 @@
 <template>
   <div class="writing-off">
     <div class="btns-box">
-      <Button type="primary" @click="createBill">生成对账单</Button>
+      <Button v-if="(hasePower(170102) && scene === 1) || (hasePower(170202) && scene === 2) || (hasePower(170302) && scene === 3)" type="primary" @click="createBill">生成对账单</Button>
     </div>
     <div class="query-box">
-      <Form :model="writingOffQuery" inline>
+      <Form :model="writingOffQuery" label-position="left" inline>
         <Row>
           <Col span="6" style="margin-right: 50px">
-          <FormItem :label-width="100" :label="sceneMap[scene]">
+          <FormItem :label-width="65" :label="sceneMap[scene] + '：'">
             <Input v-model="writingOffQuery.name" :placeholder="`请输入${sceneMap[scene]}名称`"/>
           </FormItem>
           </Col>
@@ -26,7 +26,7 @@
           </Col>
           <Col span="4">
           <FormItem>
-            <Button type="primary" style="margin-right: 10px" @click="startQuery">&#12288;搜索&#12288;</Button>
+            <Button type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
             <Button type="default" @click="resetQuery">清除条件</Button>
           </FormItem>
           </Col>
@@ -163,21 +163,24 @@ export default {
           width: 60,
           key: 'action',
           render: (h, params) => {
-            return h('a', {
+            return (this.scene === 1 && this.hasePower(170101)) || (this.scene === 2 && this.hasePower(170201)) || (this.scene === 3 && this.hasePower(170301)) ? h('a', {
               on: {
                 click: () => {
                   this.writeOff(params)
                 }
               }
-            }, '核销')
+            }, '核销') : ''
           }
         },
         {
           title: this.orderNameMap[this.scene] + '号',
-          width: 140,
+          width: 160,
           key: 'orderNo',
           render: (h, params) => {
             return h('a', {
+              style: {
+                color: '#418DF9'
+              },
               on: {
                 click: () => {
                   this.toDetail(params)
@@ -401,10 +404,12 @@ export default {
 <style lang='stylus'>
   .writing-off
     margin: 35px 0 15px
+    /deep/ .ivu-btn
+      width: 86px
     .btns-box
       margin-bottom: 20px
     .query-box
-      padding: 20px 0
+      padding: 20px 10px
       margin-bottom: 20px
       background-color: #f9f9f9
       /deep/ .ivu-form-item

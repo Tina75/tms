@@ -130,12 +130,16 @@ export default {
       return [
         {
           title: '订单号',
+          width: 160,
           key: 'orderNo',
           renderHeader: (h) => {
             return h('span', {}, this.orderNameMap[this.$route.query.scene])
           },
           render: (h, params) => {
             return h('a', {
+              style: {
+                color: '#418DF9'
+              },
               on: {
                 click: () => {
                   this.toDetail(params)
