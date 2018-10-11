@@ -76,9 +76,13 @@ export default {
         },
         {
           title: '订单号',
+          width: 160,
           key: 'orderNo',
           render: (h, params) => {
             return h('a', {
+              style: {
+                color: '#418DF9'
+              },
               on: {
                 click: () => {
                   this.toDetail(params)
@@ -227,4 +231,11 @@ export default {
       vertical-align: middle
     .list-box
       text-align: right
+      /deep/ .ivu-table-wrapper
+        margin-bottom: 20px
+      /deep/ .ivu-page-item-active
+        background-color: #00a4bd
+        border-radius: 5px
+        a
+          color: #ffffff
 </style>
