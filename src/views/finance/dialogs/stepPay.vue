@@ -139,6 +139,9 @@ export default {
             showAdjuster: false
           })
         })
+        if (!res.data.data.some(item => !item.verifyStatus)) {
+          this.ok()
+        }
       }).catch(err => console.error(err))
     },
     writeOff (item) {
