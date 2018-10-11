@@ -14,7 +14,7 @@
           </Col>
           <Col span="6">
           <FormItem label="核销时间">
-            <DatePicker v-model="writtenOffQuery.period"  type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 180px" />
+            <DatePicker v-model="writtenOffQuery.period" :options="dateOption" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 180px" />
           </FormItem>
           </Col>
           <Col span="2">
@@ -75,22 +75,33 @@ export default {
       orderTypeMap: {
         1: {
           1: '订单号',
-          4: '对账批次号'
+          5: '对账批次号'
         },
         2: {
           2: '运单号',
           3: '提货单号',
-          4: '对账批次号'
+          5: '对账批次号'
         },
         3: {
-          5: '外转单号',
-          4: '对账批次号'
+          4: '外转单号',
+          5: '对账批次号'
         }
       },
       defaultOrderType: {
         1: '1',
         2: '2',
-        3: '5'
+        3: '4'
+      },
+      dateOption: {
+        disabledDate (date) {
+          return date && date.valueOf() > Date.now()
+        }
+      },
+      writtenOffQuery: {
+        name: '',
+        orderType: '',
+        period: [],
+        orderNo: ''
       },
       writtenOffQuerySave: {
         name: '',
@@ -109,14 +120,6 @@ export default {
     }
   },
   computed: {
-    writtenOffQuery () {
-      return {
-        name: '',
-        orderType: this.defaultOrderType[this.scene],
-        period: [],
-        orderNo: ''
-      }
-    },
     orderColumn () {
       return [
         {
@@ -161,7 +164,13 @@ export default {
       ]
     }
   },
+  watch: {
+    scene () {
+      this.writtenOffQuery.orderType = this.defaultOrderType[this.scene]
+    }
+  },
   mounted () {
+    this.writtenOffQuery.orderType = this.defaultOrderType[this.scene]
     this.getWrittenOffList()
   },
   methods: {
@@ -173,12 +182,10 @@ export default {
       this.getWrittenOffList()
     },
     resetQuery () {
-      this.writtenOffQuery = {
-        name: '',
-        orderType: '1',
-        period: [],
-        orderNo: ''
-      }
+      this.writtenOffQuery.name = ''
+      this.writtenOffQuery.orderType = this.defaultOrderType[this.scene]
+      this.writtenOffQuery.period = []
+      this.writtenOffQuery.orderNo = ''
     },
     exportWrittenOff () {
       if (this.selectedIds.length > 0) {
@@ -186,7 +193,7 @@ export default {
           url: '/finance/verify/export',
           method: 'post',
           data: {
-            verifyIds: this.selectedIds.join(','),
+            verifyIds: this.selectedIds,
             partnerType: this.scene
           },
           fileName: '核销单'

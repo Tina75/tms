@@ -421,7 +421,15 @@ export default {
       const self = this
       self.openDialog({
         name: 'transport/dialog/editOuter',
-        data: { id: this.id },
+        data: {
+          id: this.id,
+          financeRulesInfo: {
+            start: this.info.start,
+            end: this.info.end,
+            weight: self.orderTotal.weight,
+            volume: self.orderTotal.volume
+          }
+        },
         methods: {
           complete () {
             self.fetchData()
