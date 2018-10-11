@@ -22,6 +22,7 @@
 import BlankCard from '../components/BlankCard'
 import ECharts from 'vue-echarts/components/ECharts'
 import mixin from './mixin.js'
+import float from '@/libs/js/float'
 import url from '@/libs/constant/url'
 
 const statusStr = {
@@ -107,16 +108,16 @@ export default {
             res.map(item => {
               let obj = {
                 name: item.status,
-                value: item.weight
+                value: float.round(item.weight)
               }
               let obj2 = {
                 name: item.status,
-                value: item.volume
+                value: float.round(item.volume)
               }
               self.weightData.push(obj)
               self.volumeData.push(obj2)
-              self.weight += item.weight
-              self.volume += item.volume
+              self.weight += float.round(item.weight)
+              self.volume += float.round(item.volume)
             })
           }
         })
