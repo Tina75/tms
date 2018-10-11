@@ -19,16 +19,7 @@
 import areas from '@/libs/js/city'
 import { requestAnimationFrame, cancelAnimationFrame } from '@/libs/js/requestAnimationFrame.js'
 import AreaCascader from './AreaDropdown'
-// 直辖市code
-export const specialCity = ['110000', '120000', '710000', '810000', '820000', '500000', '310000']
-/**
- * areaSelect组件返回的值是数组，提交表单后需要返回最后一级code
- * 直辖市地区如果只选择了两级，例如：北京市-北京市，那默认统一取第一级的值
- * @param {*} codes areaSelect组件的值
- */
-export const getCodeFromList = (codes) => {
-  return specialCity.includes(codes[0]) && codes.length === 2 ? codes[0] : codes[codes.length - 1]
-}
+
 export default {
   components: {
     AreaCascader
