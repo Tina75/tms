@@ -11,7 +11,7 @@
           </Col>
           <Col span="8">
           <FormItem label="创建时间" style="width: 100%">
-            <DatePicker v-model="checkingOrderQuery.period"  type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 200px" />
+            <DatePicker v-model="checkingOrderQuery.period" :options="dateOption" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 200px" />
           </FormItem>
           </Col>
           <Col span="6">
@@ -61,6 +61,11 @@ export default {
         1: '下单时间',
         2: '到货日期',
         3: '回单日期'
+      },
+      dateOption: {
+        disabledDate (date) {
+          return date && date.valueOf() > Date.now()
+        }
       },
       checkingOrderQuery: {
         name: '',
@@ -175,7 +180,7 @@ export default {
         },
         methods: {
           ok () {
-            _this.loadData()
+            _this.getCheckList()
           }
         }
       })
