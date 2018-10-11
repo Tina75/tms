@@ -47,17 +47,25 @@ export default {
 }
 </script>
 
-<style lang="stylus" scoped>
-  .icon
-    color #FFFFFF
-    font-size 40px
-
+<style lang="stylus">
   .login
     position relative
     width 100%
     height 100%
     background #1c2125
     overflow auto
+
+    ul
+      list-style none
+    .ivu-input,
+    .ivu-btn
+      height 35px
+    .ivu-input-prefix i
+      line-height 35px
+
+    .icon-logo-p
+      color #FFFFFF
+      font-size 40px
 
     &-header
       display flex
@@ -102,5 +110,4 @@ export default {
       background url("./assets/bg-tms-login.png") no-repeat
       background-size cover
       background-position center center
-
 </style>
