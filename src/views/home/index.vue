@@ -102,7 +102,7 @@ import CarPosition from './plugins/car-postion.vue'
 
 export default {
   name: 'index',
-  meteInfo: { title: '首页' },
+  metaInfo: { title: '首页' },
   components: {
     OrderCard,
     FontIcon,
