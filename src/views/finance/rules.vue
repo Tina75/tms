@@ -183,7 +183,7 @@ export default {
       companyData: [],
       ruleDetail: {},
       validate: {
-        queryText: {type: 'string', max: 20, message: '不能超过20个字', trigger: 'blur'}
+        queryText: { type: 'string', max: 20, message: '不能超过20个字', trigger: 'blur' }
       }
     }
   },
