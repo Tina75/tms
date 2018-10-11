@@ -12,15 +12,16 @@
           format="yyyy-MM-dd"
           placeholder="开始日期-结束日期"
           style="display: inline-block;width: 240px;height: 35px;margin-left: 20px"
+          @on-clear = "clearKeywords"
           @on-change="handleTimeChange"
         >
         </DatePicker>
-        <Tooltip max-width="200" content="营业额汇总报表：按照订单的下单日期提取数据；利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
-          <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;margin-left: 18px" />
+        <Tooltip max-width="200" style="margin-left: 18px" content="利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
+          <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;" />
         </Tooltip>
       </div>
       <div class="search-btn">
-        <Button type="primary" @click="search">搜索</Button>
+        <Button type="primary" @click="search(true)">生成报表</Button>
         <Button style="margin-left: 8px" @click="clearKeywords">清除条件</Button>
       </div>
     </div>
@@ -28,89 +29,84 @@
       <Button type="primary" @click="ProfitsExport">导出</Button>
     </div>
     <div class="table">
-      <div class="title">
-        <ul class="list">
-          <li>方向</li>
-          <li>来源</li>
-          <li>费用明细</li>
-          <li>本期发生额</li>
-        </ul>
-      </div>
-      <div class="items">
-        <div class="item">收入</div>
-        <div class="item">上游运费收入</div>
-        <div class="item" style="flex: 2">
-          <div class="item-inner">
-            <div>运输费</div>
-            <div>{{res.orderFreightFee}}</div>
-          </div>
-          <div class="item-inner">
-            <div>装货费</div>
-            <div>{{res.orderLoadFee}}</div>
-          </div>
-          <div class="item-inner">
-            <div>卸货费</div>
-            <div>{{res.orderUnloadFee}}</div>
-          </div>
-          <div class="item-inner">
-            <div>保险费</div>
-            <div>{{res.orderInsuranceFee}}</div>
-          </div>
-          <div class="item-inner">
-            <div>其他费用</div>
-            <div>{{res.orderOtherFee}}</div>
-          </div>
-        </div>
-      </div>
-      <div class="title" style="text-align: right;padding-right: 10%; ">
-        <span>主营业务收入合计</span>
-        <span class="num">{{res.orderTotalFee}}</span>
-      </div>
-      <div class="items" >
-        <div class="item" style="height: 269px; line-height: 269px">支出</div>
-        <div style="flex:1;">
-          <div  style="height: 224px;line-height: 224px;border-right: 1px solid #c9ced9;border-bottom: 1px solid #c9ced9">
-            承运商运费支出
-          </div>
-          <div  style="height: 45px;line-height: 45px;border-right: 1px solid #c9ced9;border-bottom: 1px solid #c9ced9;" >
-            外转运费支出
-          </div>
-        </div>
-        <div class="item" style="flex: 2">
-          <div class="item-inner">
-            <div>运输费</div>
-            <div>{{res.carrierFreightFee}}</div>
-          </div>
-          <div class="item-inner">
-            <div>装货费</div>
-            <div>{{res.carrierLoadFee}}</div>
-          </div>
-          <div class="item-inner">
-            <div>卸货费</div>
-            <div>{{res.carrierUnloadFee}}</div>
-          </div>
-          <div class="item-inner">
-            <div>保险费</div>
-            <div>{{res.carrierInsuranceFee}}</div>
-          </div>
-          <div class="item-inner" style="border-bottom: none">
-            <div>其他费用</div>
-            <div>{{res.carrierOtherFee}}</div>
-          </div>
-          <div class="item-inner">
-            <div>外转费</div>
-            <div>{{res.transbillTransFee}}</div>
-          </div>
-        </div>
-      </div>
-      <div class="title" style="text-align: right;padding-right: 10%">
-        <span>主营业务支出合计</span>
-        <span class="num">{{res.carrierTotalFee}}</span>
-      </div>
-      <div class="title" style="text-align: right;padding-right: 10%">
-        <span>利润</span>
-        <span class="num">{{res.profits}}</span>
-      </div>
+      <Row type="flex" justify="start" class="small-height bg" style="font-size: 12px">
+        <Col span="6">方向</Col>
+        <Col span="6">来源</Col>
+        <Col span="6">费用明细</Col>
+        <Col span="6">本期发生额</Col>
+      </Row>
+      <Row type="flex" justify="start" class="middle-height" style="border-top: 0">
+        <Col span="6">收入</Col>
+        <Col span="6">上游运费收入</Col>
+        <Col span="12" >
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
+          <Col span="12">运输费</Col>
+          <Col span="12" class="num">{{res.orderFreightFee}}</Col>
+        </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+          <Col span="12">装货费</Col>
+          <Col span="12" class="num">{{res.orderLoadFee}}</Col>
+        </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+          <Col span="12">卸货费</Col>
+          <Col span="12" class="num">{{res.orderUnloadFee}}</Col>
+        </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+          <Col span="12">保险费</Col>
+          <Col span="12" class="num">{{res.orderInsuranceFee}}</Col>
+        </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-bottom-none border-right-none">
+          <Col span="12">其他费用</Col>
+          <Col span="12" class="num">{{res.orderOtherFee}}</Col>
+        </Row>
+        </Col>
+      </Row>
+      <Row type="flex" justify="start" class="small-height bg border-top-none">
+        <Col span="6" offset="18" style="text-align: right">主营业务收入合计<span class="money">{{res.orderTotalFee}}</span></Col>
+      </Row>
+      <Row type="flex" justify="start" class="big-height" style="border-top: 0">
+        <Col span="6">支出</Col>
+        <Col span="6">
+        <Row class="middle-height border-top-none border-right-none">
+          <Col>承运商运费支出</Col>
+        </Row>
+        <Row class="small-height border-top-none border-right-none">
+          <Col>外转运费支出</Col>
+        </Row>
+        </Col>
+        <Col span="12" >
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
+          <Col span="12">运输费</Col>
+          <Col span="12" class="num">{{res.carrierFreightFee}}</Col>
+        </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+          <Col span="12">装货费</Col>
+          <Col span="12" class="num">{{res.carrierLoadFee}}</Col>
+        </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+          <Col span="12">卸货费</Col>
+          <Col span="12" class="num">{{res.carrierUnloadFee}}</Col>
+        </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+          <Col span="12">保险费</Col>
+          <Col span="12" class="num">{{res.carrierInsuranceFee}}</Col>
+        </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+          <Col span="12">其他费用</Col>
+          <Col span="12" class="num">{{res.carrierOtherFee}}</Col>
+        </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-bottom-none border-right-none">
+          <Col span="12">外转费</Col>
+          <Col span="12" class="num">{{res.transbillTransFee}}</Col>
+        </Row>
+        </Col>
+      </Row>
+      <Row type="flex" justify="start" class="small-height bg border-top-none">
+        <Col span="6" offset="18" style="text-align: right">主营业务支出合计<span class="money">{{res.carrierTotalFee}}</span></Col>
+      </Row>
+      <Row type="flex" justify="start" class="small-height bg border-top-none">
+        <Col span="6" offset="18" style="text-align: right">利润<span class="money">{{res.profits}}</span></Col>
+      </Row>
     </div>
   </div>
 </template>
@@ -133,6 +129,7 @@ export default {
         { name: '本季度', value: 3 },
         { name: '半年', value: 4 }
       ],
+      isExport: false,
       operateValue: '',
       times: ['', ''],
       keywords: {
@@ -164,9 +161,11 @@ export default {
     }
   },
   methods: {
-    search () {
+    search (type) {
       if (!this.keywords.startTime && !this.keywords.endTime) { // 搜索条件为空
-        this.$Message.error('请先输入搜索条件')
+        if (type) {
+          this.$Message.error('请先输入搜索条件')
+        }
         this.keywords = {
           type: 1
         }
@@ -182,8 +181,8 @@ export default {
         data: this.keywords
       }).then((res) => {
         if (res.data.code === 10000) {
-          // Object.assign(this.res, res.data.data)
           this.res = res.data.data
+          this.onLoad(res.data.data)
           for (let key in this.res) {
             this.res[key] = this.res[key] === '' ? '-' : (this.res[key] / 100).toFixed(2)
           }
@@ -198,7 +197,7 @@ export default {
         endTime: '',
         type: 1
       }
-      this.search()
+      this.search(false)
     },
     handleOperaterValue (btn) {
       this.operateValue = btn.value
@@ -264,8 +263,8 @@ export default {
     },
     // 导出
     ProfitsExport () {
-      if (!this.keywords.startTime && !this.keywords.endTime) {
-        this.$Message.error('请先输入导出条件')
+      if (!this.isExport) {
+        this.$Message.error('导出内容为空')
         return
       }
       Export({
@@ -274,6 +273,15 @@ export default {
         data: Object.assign(this.keywords, { type: null }),
         fileName: '利润报表'
       })
+    },
+    onLoad (res) {
+      this.isExport = false
+      for (let key in res) {
+        if (res[key]) {
+          this.isExport = true
+          break
+        }
+      }
     }
   }
 }
@@ -292,44 +300,36 @@ export default {
       button
         width 80px
   .table
-    border 1px solid #C9CED9
     text-align center
-    font-size 14px
+    font-size 11px
     color #333
-    .title
+    .num
+      text-align right
+      padding-right 23%
+    .money
+      color #00A4BD
+      margin-left 5%
+      text-align right
+      padding-right 46%
+    .border-bottom-none
+      border-bottom none!important
+    .border-top-none
+      border-top none!important
+    .border-right-none
+      border-right none!important
+    .bg
+      background:rgba(248,248,248,1)
+      font-weight bold
+    .middle-height
+      height 224px
+      line-height 224px
+      border 1px solid #C9CED9
+    .small-height
+      border 1px solid #C9CED9
       height 45px
       line-height 45px
-      background #F8F8F8
-      border-bottom:1px solid #C9CED9
-      &:last-child
-        border-bottom none
-      .list
-        display flex
-        li
-          list-style none
-          flex 1
-          text-align center
-      .num
-        color #00A4BD
-        margin-left 20px
-        font-weight 500
-    .items
-      display flex
-      .item
-        flex 1
-        height 224px
-        line-height 224px
-        border-right  1px solid #C9CED9
-        border-bottom 1px solid #C9CED9
-        &:last-child
-          border-right none
-        .item-inner
-          display flex
-          height 45px
-          line-height 45px
-          border-bottom   1px solid #C9CED9
-          &:last-child
-            border-bottom  none
-          div
-            flex 1
+    .big-height
+      border 1px solid #C9CED9
+      height 269px
+      line-height 269px
 </style>

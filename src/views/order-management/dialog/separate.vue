@@ -1,6 +1,6 @@
 <template>
-  <div class="dialog">
-    <Modal v-model="visiable" :mask-closable="false" width="850" @on-visible-change="close">
+  <div>
+    <Modal v-model="visiable" :mask-closable="false" class="separate-dialog" width="850" @on-visible-change="close">
       <p slot="header" class="dialog-title">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>拆单</span>
@@ -83,47 +83,69 @@ export default {
                   on: {
                     click: () => {
                       this.isSeparate = false
-                      console.log(this.quantityVal)
                       if (this.quantityVal === null || this.weightVal === null || this.volumeVal === null) {
                         this.$Message.warning('数量、重量、体积不可为空')
                         this.isSeparate = true
                         return
                       }
-                      // 当不修改数量：this.quantityVal = 0  或者修改数量和原来一致：this.quantityVal === params.row.quantity  部分整拆
-                      if (!this.quantityVal || this.quantityVal === params.row.quantity) {
+                      /**
+                       * 当不修改数量：this.quantityVal = 0  或者修改数量和原来一致：this.quantityVal === params.row.quantity  &&
+                       * 当不修改重量：this.weightVal = 0  或者修改重量和原来一致：this.weightVal === params.row.weight  &&
+                       * 当不修改体积：this.volumeVal = 0  或者修改重量和原来一致：this.volumeVal === params.row.volume
+                       * 部分整拆
+                       * 重量、体积是小数，可能会出现1.000000000002的情况，需要转一下
+                       */
+                      console.log(this.quantityVal, params.row.quantity)
+                      console.log(this.weightVal, params.row.weight)
+                      console.log(this.volumeVal, params.row.volume)
+                      // 没修改过数量、重量、体积中任意一个 或 修改过数量、重量、体积跟初始值一致   部分整拆
+                      if (this.quantityVal === params.row.quantity && parseFloat(this.weightVal.toFixed(2)) === parseFloat(params.row.weight.toFixed(2)) && parseFloat(this.volumeVal.toFixed(1)) === parseFloat(params.row.volume.toFixed(1))) {
                         this.separateWholeList(params.index)
                       } else {
-                        // 数量修改后，体积和重量必须修改
-                        if ((this.weightVal === 0 || this.weightVal === params.row.weight) || (this.volumeVal === 0 || this.volumeVal === params.row.volume)) {
-                          this.$Message.warning('数量修改后，体积和重量必须修改')
-                          this.isSeparate = true
-                          return
+                        if (params.row.quantity !== 0) {
+                          if (this.quantityVal === 0) {
+                            this.$Message.warning('数量不能为0')
+                            this.isSeparate = true
+                            return
+                          }
                         }
-                        // 修改原单数据
-                        let parentData = { ...params.row }
-                        let quantity = params.row.quantity
-                        let cargoCost = params.row.cargoCost
-                        parentData.quantity = params.row.quantity - this.quantityVal
-                        parentData.weight = (this.weightVal || this.weightVal === null) ? params.row.weight - this.weightVal : 0
-                        parentData.volume = (this.volumeVal || this.volumeVal === null) ? params.row.volume - this.volumeVal : 0
-                        parentData.cargoCost = (cargoCost * parentData.quantity / quantity)
-                        // 货值、重量体积保留2位小数
-                        // parentData.weight = Number(parentData.weight).toFixed(2)
-                        // parentData.volume = Number(parentData.volume).toFixed(2)
-                        // parentData.cargoCost = Number(parentData.cargoCost).toFixed(2)
-                        this.$set(this.parentOrderCargoList, params.index, parentData)
-
-                        // 生成子单数据
-                        let childData = { ...params.row }
-                        childData.cargoCost = cargoCost - parentData.cargoCost
-                        childData.quantity = this.quantityVal || 0
-                        childData.weight = this.weightVal === null ? 0 : (this.weightVal ? this.weightVal : params.row.weight)
-                        childData.volume = this.volumeVal === null ? 0 : (this.volumeVal ? this.volumeVal : params.row.volume)
-                        // 货值、重量体积保留2位小数
-                        // childData.weight = Number(childData.weight).toFixed(2)
-                        // childData.volume = Number(childData.volume).toFixed(2)
-                        // childData.cargoCost = Number(childData.cargoCost).toFixed(2)
-                        this.childOrderCargoList.unshift(childData)
+                        if (params.row.weight !== 0) {
+                          if (this.weightVal === 0) {
+                            this.$Message.warning('重量不能为0')
+                            this.isSeparate = true
+                            return
+                          }
+                        }
+                        if (params.row.volume !== 0) {
+                          if (this.volumeVal === 0) {
+                            this.$Message.warning('体积不能为0')
+                            this.isSeparate = true
+                            return
+                          }
+                        }
+                        if (params.row.quantity !== 0) {
+                          if (this.quantityVal === params.row.quantity) {
+                            this.$Message.warning('数量必须修改')
+                            this.isSeparate = true
+                            return
+                          }
+                        }
+                        if (params.row.weight !== 0) {
+                          if (parseFloat(this.weightVal.toFixed(2)) === parseFloat(params.row.weight.toFixed(2))) {
+                            this.$Message.warning('重量必须修改')
+                            this.isSeparate = true
+                            return
+                          }
+                        }
+                        if (params.row.volume !== 0) {
+                          if (parseFloat(this.volumeVal.toFixed(1)) === parseFloat(params.row.volume.toFixed(1))) {
+                            this.$Message.warning('体积必须修改')
+                            this.isSeparate = true
+                            return
+                          }
+                        }
+                        // 拆部分
+                        this.separatePartList(params)
                       }
                     }
                   }
@@ -165,10 +187,10 @@ export default {
                       click: () => {
                         this.isSeparate = true
                         this.currentId = params.row.id
-                        this.cargoCostVal = 0
-                        this.quantityVal = 0
-                        this.weightVal = 0
-                        this.volumeVal = 0
+                        this.cargoCostVal = params.row.cargoCost
+                        this.quantityVal = params.row.quantity
+                        this.weightVal = params.row.weight
+                        this.volumeVal = params.row.volume
                       }
                     }
                   }, '拆部分'),
@@ -196,18 +218,18 @@ export default {
           title: '货值',
           key: 'cargoCost',
           render: (h, params) => {
-            return h('div', (Number(params.row.cargoCost) / 100).toFixed(2))
+            return h('div', parseFloat((params.row.cargoCost / 100).toFixed(2)))
           }
         },
         {
           title: '数量',
           key: 'quantity',
           render: (h, params) => {
-            if (this.isSeparate && (this.currentId === params.row.id)) {
+            if (this.isSeparate && (this.currentId === params.row.id) && (params.row.quantity !== 0)) {
               return h('div', [
                 h('InputNumber', {
                   props: {
-                    min: 1,
+                    min: 0,
                     max: Number(params.row.quantity),
                     value: Number(params.row.quantity),
                     precision: 0
@@ -235,13 +257,14 @@ export default {
           title: '重量（吨）',
           key: 'weight',
           render: (h, params) => {
-            if (this.isSeparate && (this.currentId === params.row.id)) {
+            if (this.isSeparate && (this.currentId === params.row.id) && (params.row.weight !== 0)) {
               return h('div', [
                 h('InputNumber', {
                   props: {
                     min: 0,
-                    max: Number(params.row.weight),
-                    value: Number(params.row.weight),
+                    max: parseFloat((params.row.weight).toFixed(2)) + 0.009, // 1.01 + 0.01 = 1.02000000002
+                    value: parseFloat((params.row.weight).toFixed(2)),
+                    step: 0.01,
                     precision: 2,
                     activeChange: false
                   },
@@ -249,13 +272,13 @@ export default {
                   },
                   on: {
                     'on-change': (val) => {
-                      this.weightVal = val
+                      this.weightVal = parseFloat(val.toFixed(2))
                     }
                   }
                 })
               ])
             } else {
-              return h('div', Number(params.row.weight).toFixed(2))
+              return h('div', parseFloat((params.row.weight).toFixed(2)))
             }
           }
         },
@@ -263,13 +286,14 @@ export default {
           title: '体积（方）',
           key: 'volume',
           render: (h, params) => {
-            if (this.isSeparate && (this.currentId === params.row.id)) {
+            if (this.isSeparate && (this.currentId === params.row.id) && (params.row.volume !== 0)) {
               return h('div', [
                 h('InputNumber', {
                   props: {
                     min: 0,
-                    max: Number(params.row.volume),
-                    value: Number(params.row.volume),
+                    max: parseFloat((params.row.volume).toFixed(1)) + 0.09, // 1.1 + 0.1 = 1.2000000002
+                    value: parseFloat((params.row.volume).toFixed(1)),
+                    step: 0.1,
                     precision: 1,
                     activeChange: false
                   },
@@ -277,13 +301,13 @@ export default {
                   },
                   on: {
                     'on-change': (val) => {
-                      this.volumeVal = val
+                      this.volumeVal = parseFloat(val.toFixed(1))
                     }
                   }
                 })
               ])
             } else {
-              return h('div', Number(params.row.volume).toFixed(1))
+              return h('div', parseFloat((params.row.volume).toFixed(1)))
             }
           }
         }
@@ -303,6 +327,10 @@ export default {
                 on: {
                   click: () => {
                     // console.log(params)
+                    this.isSeparate = false
+                    // this.quantityVal = params.row.quantity
+                    // this.weightVal = params.row.weight
+                    // this.volumeVal = params.row.volume
                     if (!this.parentOrderCargoList.length) {
                       let restoreData = this.childOrderCargoList.splice(params.index, 1)
                       this.parentOrderCargoList.push(restoreData[0])
@@ -344,7 +372,7 @@ export default {
           title: '货值',
           key: 'cargoCost',
           render: (h, params) => {
-            return h('div', (Number(params.row.cargoCost) / 100).toFixed(2))
+            return h('div', parseFloat((params.row.cargoCost / 100).toFixed(2)))
           }
         },
         {
@@ -360,21 +388,21 @@ export default {
           title: '重量（吨）',
           key: 'weight',
           render: (h, params) => {
-            return h('div', Number(params.row.weight).toFixed(2))
+            return h('div', parseFloat((params.row.weight).toFixed(2)))
           }
         },
         {
           title: '体积（方）',
           key: 'volume',
           render: (h, params) => {
-            return h('div', Number(params.row.volume).toFixed(1))
+            return h('div', parseFloat((params.row.volume).toFixed(1)))
           }
         }
       ],
       parentOrderCargoList: [],
       childOrderCargoList: [],
       currentId: 0,
-      childPortionData: {}, // 拆分成子单后的数据
+      // childPortionData: {}, // 拆分成子单后的数据
       quantityVal: 0,
       weightVal: 0,
       volumeVal: 0,
@@ -416,6 +444,35 @@ export default {
     separateWholeList (index) {
       let childList = this.parentOrderCargoList.splice(index, 1)[0]
       this.childOrderCargoList.unshift(childList)
+    },
+    // 拆部分
+    separatePartList (params) {
+      // 修改原单数据
+      let parentData = { ...params.row }
+      let quantity = params.row.quantity
+      let weight = params.row.weight
+      let volume = params.row.volume
+      let cargoCost = params.row.cargoCost
+      parentData.quantity = this.quantityVal ? params.row.quantity - this.quantityVal : 0
+      parentData.weight = this.weightVal ? params.row.weight - this.weightVal : 0
+      parentData.volume = this.volumeVal ? params.row.volume - this.volumeVal : 0
+      // 货值比例关联优先级：数量-->重量-->体积
+      if (params.row.quantity !== 0) {
+        parentData.cargoCost = (cargoCost * parentData.quantity / quantity)
+      } else if (params.row.weight !== 0) {
+        parentData.cargoCost = (cargoCost * parentData.weight / weight)
+      } else {
+        parentData.cargoCost = (cargoCost * parentData.volume / volume)
+      }
+      this.$set(this.parentOrderCargoList, params.index, parentData)
+
+      // 生成子单数据
+      let childData = { ...params.row }
+      childData.cargoCost = cargoCost - parentData.cargoCost
+      childData.quantity = this.quantityVal ? this.quantityVal : params.row.quantity
+      childData.weight = this.weightVal ? this.weightVal : params.row.weight
+      childData.volume = this.volumeVal ? this.volumeVal : params.row.volume
+      this.childOrderCargoList.unshift(childData)
     }
   }
 
@@ -437,10 +494,13 @@ export default {
   font-weight 400
   color rgba(47,50,62,1)
   line-height 20px
-  margin-bottom 15px
+  margin-bottom 16px
 </style>
 <style lang='stylus'>
 .padding-left-30
   .ivu-table-cell
     padding-left 30px
+.separate-dialog
+  .ivu-modal-body
+    padding 20px 32px
 </style>
