@@ -36,7 +36,8 @@ export default {
   mixins: [ BaseDialog ],
   data () {
     const chargeValidate = (rule, value, callback) => {
-      if (!this.charge) callback(new Error('未能找到相应的计费规则'))
+      const type = this.ruleOptions[value].ruleType
+      if ((type === 1 && !this.weight) || (type === 2 && !this.volume)) callback(new Error('未能找到相应的计费规则'))
       callback()
     }
 
