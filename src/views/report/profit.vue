@@ -16,7 +16,7 @@
           @on-change="handleTimeChange"
         >
         </DatePicker>
-        <Tooltip max-width="200" style="margin-left: 18px" content="营业额汇总报表：按照订单的下单日期提取数据；利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
+        <Tooltip max-width="200" style="margin-left: 18px" content="利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
           <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;" />
         </Tooltip>
       </div>
@@ -28,91 +28,6 @@
     <div style="margin: 18px 0 12px 0">
       <Button type="primary" @click="ProfitsExport">导出</Button>
     </div>
-    <!--<div class="table">-->
-    <!--<div class="title">-->
-    <!--<ul class="list">-->
-    <!--<li>方向</li>-->
-    <!--<li>来源</li>-->
-    <!--<li>费用明细</li>-->
-    <!--<li>本期发生额</li>-->
-    <!--</ul>-->
-    <!--</div>-->
-    <!--<div class="items">-->
-    <!--<div class="item">收入</div>-->
-    <!--<div class="item">上游运费收入</div>-->
-    <!--<div class="item" style="flex: 2">-->
-    <!--<div class="item-inner">-->
-    <!--<div>运输费</div>-->
-    <!--<div>{{res.orderFreightFee}}</div>-->
-    <!--</div>-->
-    <!--<div class="item-inner">-->
-    <!--<div>装货费</div>-->
-    <!--<div>{{res.orderLoadFee}}</div>-->
-    <!--</div>-->
-    <!--<div class="item-inner">-->
-    <!--<div>卸货费</div>-->
-    <!--<div>{{res.orderUnloadFee}}</div>-->
-    <!--</div>-->
-    <!--<div class="item-inner">-->
-    <!--<div>保险费</div>-->
-    <!--<div>{{res.orderInsuranceFee}}</div>-->
-    <!--</div>-->
-    <!--<div class="item-inner">-->
-    <!--<div>其他费用</div>-->
-    <!--<div>{{res.orderOtherFee}}</div>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div class="title" style="text-align: right;padding-right: 10%; ">-->
-    <!--<span>主营业务收入合计</span>-->
-    <!--<span class="num">{{res.orderTotalFee}}</span>-->
-    <!--</div>-->
-    <!--<div class="items" >-->
-    <!--<div class="item" style="height: 269px; line-height: 269px">支出</div>-->
-    <!--<div style="flex:1;">-->
-    <!--<div  style="height: 224px;line-height: 224px;border-right: 1px solid #c9ced9;border-bottom: 1px solid #c9ced9">-->
-    <!--承运商运费支出-->
-    <!--</div>-->
-    <!--<div  style="height: 45px;line-height: 45px;border-right: 1px solid #c9ced9;border-bottom: 1px solid #c9ced9;" >-->
-    <!--外转运费支出-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div class="item" style="flex: 2">-->
-    <!--<div class="item-inner">-->
-    <!--<div>运输费</div>-->
-    <!--<div>{{res.carrierFreightFee}}</div>-->
-    <!--</div>-->
-    <!--<div class="item-inner">-->
-    <!--<div>装货费</div>-->
-    <!--<div>{{res.carrierLoadFee}}</div>-->
-    <!--</div>-->
-    <!--<div class="item-inner">-->
-    <!--<div>卸货费</div>-->
-    <!--<div>{{res.carrierUnloadFee}}</div>-->
-    <!--</div>-->
-    <!--<div class="item-inner">-->
-    <!--<div>保险费</div>-->
-    <!--<div>{{res.carrierInsuranceFee}}</div>-->
-    <!--</div>-->
-    <!--<div class="item-inner" style="border-bottom: none">-->
-    <!--<div>其他费用</div>-->
-    <!--<div>{{res.carrierOtherFee}}</div>-->
-    <!--</div>-->
-    <!--<div class="item-inner" style="border-bottom: 1px solid #c9ced9;">-->
-    <!--<div>外转费</div>-->
-    <!--<div>{{res.transbillTransFee}}</div>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div class="title" style="text-align: right;padding-right: 10%">-->
-    <!--<span>主营业务支出合计</span>-->
-    <!--<span class="num">{{res.carrierTotalFee}}</span>-->
-    <!--</div>-->
-    <!--<div class="title" style="text-align: right;padding-right: 10%">-->
-    <!--<span>利润</span>-->
-    <!--<span class="num">{{res.profits}}</span>-->
-    <!--</div>-->
-    <!--</div>-->
     <div class="table">
       <Row type="flex" justify="start" class="small-height bg" style="font-size: 12px">
         <Col span="6">方向</Col>
