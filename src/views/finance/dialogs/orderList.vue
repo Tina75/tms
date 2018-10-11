@@ -141,7 +141,7 @@ export default {
               subOrderId: data.row.id
             }
           }).then(res => {
-            _this.orderData.getOrderList()
+            _this.getOrderList()
           }).catch(err => console.error(err))
         }
       })
