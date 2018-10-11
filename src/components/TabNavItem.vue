@@ -2,10 +2,9 @@
   <div :class="['item-container',checked?'mh-10':'']">
     <i v-show="checked" class="icon font_family icon-you2 icon-left" style=""></i>
     <div :class="['tab-item',checked?'tab-item__checked':'']">
-      <Icon  v-show="checked" class="tab-item__icon" type="ios-refresh" size="20" @click.stop="$emit('on-refresh')"/>
+      <Icon  v-show="checked" class="tab-item__icon " type="ios-refresh" size="20" @click.stop="$emit('on-refresh')"/>
       <span class="tab-item__name">{{name}}</span>
-      <Icon  v-show="closeable" class="tab-item__icon"  type="ios-close" size="20" @click.stop="$emit('on-close')"/>
-      <Icon  :class="['tab-item__icon', closeable ?'':'close-icon']"  type="ios-close" size="20" @click.stop="$emit('on-close')"/>
+      <Icon v-show="closeable" class="tab-item__icon" type="ios-close" size="20" @click.stop="$emit('on-close')"/>
     </div>
     <i v-show="checked" class="icon font_family icon-you2 icon-right" ></i>
   </div>
@@ -75,10 +74,7 @@ export default {
   cursor pointer
   font-weight 500
   text-align center
-  &:hover .close-icon
-    display inline
-  .close-icon
-    display none
+
   &__icon
     display inline-block
     vertical-align middle
