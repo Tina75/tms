@@ -216,7 +216,8 @@ import float from '@/libs/js/float'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import OrderPrint from './OrderPrint'
-import AreaSelect, { getCodeFromList, specialCity } from '@/components/AreaSelect'
+import AreaSelect from '@/components/AreaSelect'
+import { getCityCode, resetCityValidator, FORM_VALIDATE_START, FORM_VALIDATE_END } from '@/libs/constant/cityValidator'
 import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
 import settlements from '@/libs/constant/settlement.js'
@@ -254,31 +255,6 @@ export default {
         callback()
       } else {
         callback(new Error('请输入正确的手机号码'))
-      }
-    }
-
-    const validateArea = (value) => {
-      if (value.length === 1 && !specialCity.includes(value[0])) {
-        return false
-      }
-      return true
-    }
-    const validateStart = (rule, value, callback) => {
-      if (!validateArea(value)) {
-        callback(new Error('请至少选择到市一级城市'))
-      } else if (_this.orderForm.end.length > 0 && value.length > 0 && _.isEqual(_this.orderForm.end, value)) {
-        callback(new Error('始发城市不能和目的城市相同'))
-      } else {
-        callback()
-      }
-    }
-    const validateEnd = (rule, value, callback) => {
-      if (!validateArea(value)) {
-        callback(new Error('请至少选择到市一级城市'))
-      } else if (_this.orderForm.start.length > 0 && value.length > 0 && _.isEqual(_this.orderForm.start, value)) {
-        callback(new Error('目的城市不能和始发城市相同'))
-      } else {
-        callback()
       }
     }
     return {
@@ -592,11 +568,11 @@ export default {
         ],
         start: [
           { required: true, type: 'array', message: '请选择始发城市' },
-          { validator: validateStart, trigger: 'change' }
+          { validator: FORM_VALIDATE_START, trigger: 'change' }
         ],
         end: [
           { required: true, type: 'array', message: '请选择目的城市' },
-          { validator: validateEnd }
+          { validator: FORM_VALIDATE_END }
         ],
         arriveTime: [
           { validator: validateArriveTime, trigger: 'blur' }
@@ -718,6 +694,7 @@ export default {
     this.resetForm()
     this.clearClients()
     this.clearOrderDetail()
+    resetCityValidator()
   },
   methods: {
     ...mapActions([
@@ -859,8 +836,8 @@ export default {
       this.openDialog({
         name: 'dialogs/financeRule.vue',
         data: {
-          start: getCodeFromList(vm.orderForm.start), // 始发城市
-          end: getCodeFromList(vm.orderForm.end), // 目的城市
+          start: getCityCode(vm.orderForm.start), // 始发城市
+          end: getCityCode(vm.orderForm.end), // 目的城市
           partnerName: vm.orderForm.consignerName, // 客户名
           partnerType: 1, // 计算规则分类：1-发货方，2-承运商，3-外转方
           weight: vm.statics.weight,
@@ -906,8 +883,8 @@ export default {
               reject(new Error(findError.message))
             }
             // 始发地遇到北京市等特殊直辖市，需要只保留第一级code
-            let start = getCodeFromList(orderForm.start)
-            let end = getCodeFromList(orderForm.end)
+            let start = getCityCode(orderForm.start)
+            let end = getCityCode(orderForm.end)
             // 始发城市，目的城市，到达时间等需要额外处理
             let form = Object.assign({}, orderForm, {
               start: start,

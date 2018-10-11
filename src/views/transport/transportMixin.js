@@ -54,6 +54,7 @@ export default {
       this.tabStatus = this.setTabStatus(tab)
       this.tabChanged(tab)
     } else {
+      this.tabStatus = this.setTabStatus(this.tabList[1].name)
       this.currentBtns = this.btnList[1].btns
     }
     this.fetchData()
