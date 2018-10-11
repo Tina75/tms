@@ -850,13 +850,6 @@ export default {
         }
       })
     },
-    /**
-     * 获取最后一位code码
-     * 特殊地区，选择了北京市北京市，取首位code码
-     */
-    // getCityCode (codes) {
-    //   return specialCity.includes(codes[0]) && codes.length === 2 ? codes[0] : codes[codes.length - 1]
-    // },
     // 提交表单
     handleSubmit (e) {
       const vm = this
