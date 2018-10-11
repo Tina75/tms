@@ -6,7 +6,7 @@
         <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
       </div>
       <div v-if="simpleSearch" class="order-right">
-        <Select v-model="selectStatus"  style="width:120px;margin-right: 11px" @on-change="handleChangeSearchStatus">
+        <Select v-model="selectStatus" class="order-simple-select" style="width:120px;margin-top: 1px;margin-right: 11px" @on-change="handleChangeSearchStatus">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
         <SelectInput
@@ -1166,8 +1166,9 @@ export default {
   background #F9F9F9
 .high-search
   width 36px
-  height 30px
-  line-height 1.1
+  height 36px
+  line-height 1.4
+  letter-spacing 2px
   padding 0
   white-space normal
   margin-right 0
@@ -1180,6 +1181,12 @@ export default {
     margin-right 20px
 </style>
 <style lang="stylus">
+.order-simple-select
+  .ivu-select-selection
+    height 35px
+  .ivu-select-selected-value
+    height 35px !important
+    line-height 35px !important
 .padding-20
   .ivu-table-cell
     padding-left 20px
