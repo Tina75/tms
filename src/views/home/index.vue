@@ -3,16 +3,14 @@
     <div class="page-home__header">
       <Alert v-if="notice" type="warning" class="page-home__header-notice" banner closable show-icon>
         <Icon slot="icon" type="ios-bulb-outline"></Icon>
-        <div>
-        </div>
       </Alert>
-      <Row>
+      <Row class="page-home__header-row">
         <Col span="18">
-        <p v-html="greetings"></p>
+        <span class="page-home__header-greetings" v-html="greetings"></span>
         </Col>
         <Col span="6" class="van-right">
         <span class="page-home__header-date">{{today}}</span>
-        <Poptip v-model="visible" trigger="click" placement="bottom-end">
+        <Poptip v-model="visible" trigger="click" placement="bottom-end" style="height:21px">
           <FontIcon type="shouye" size="20" class="page-home__setting-icon" />
           <div slot="content">
             <div class="page-home__dropdown-header">
@@ -304,11 +302,14 @@ export default {
     padding 10px 0
     text-align center
   &__padding-8
-    padding-left 8px
-    padding-right 8px
+    padding-left 9px
+    padding-right 9px
   &__header
     position relative
-    overflow auto
+  &__header-row
+    line-height 20px
+  &__header-greetings
+    line-height 24px
   &__header-notice
     z-index 10
     width 100%

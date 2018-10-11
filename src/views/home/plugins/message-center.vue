@@ -3,9 +3,15 @@
     <BlankCard to="info/index" page-title="消息">
       <div slot="title">消息中心</div>
       <CellGroup v-if="data.length" @on-click="handleClick">
-        <Cell v-for="(msg, index) in data" :key="index" :name="msg.type" :title="msg.title" :label="formatTime(msg.createTime)" class="page-home__message-item">
+        <Cell v-for="(msg, index) in data" :key="index" :name="msg.type" class="message-center__message-item">
           <FontIcon slot="icon" :type="getIcon(msg.type)" :color="getColor(msg.type)" size="26">
           </FontIcon>
+          <span slot="label" class="message-center__label">
+            {{formatTime(msg.createTime)}}
+          </span>
+          <span class="message-center__title">
+            {{msg.content}}
+          </span>
         </Cell>
       </CellGroup>
       <NoData v-else></NoData>
@@ -90,6 +96,25 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="stylus" scoped>
+.message-center
+  &__message-item
+    position relative
+    padding-left 12px
+    margin-top 14px
+    &:first-child
+      margin-top 0
+  &__title
+    width 100%
+    position absolute
+    overflow hidden
+    text-overflow ellipsis
+    white-space nowrap
+    display block
+    top 2px
+    left 47px
+    padding-right 48px
+  &__label
+    position absolute
+    bottom 3px
 </style>
