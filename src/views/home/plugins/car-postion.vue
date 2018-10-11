@@ -2,10 +2,8 @@
   <div is="i-col" span="12" class="i-mt-15 page-home__padding-8">
     <BlankCard :padding="false" to="/transport/waybill" page-title="运单管理" tab="3">
       <div slot="title">在途车辆位置</div>
-      <div>
-        <noData v-if="!showMap"></noData>
-        <div v-else ref="positionMap" style="height:238px"></div>
-      </div>
+      <noData v-if="!showMap"></noData>
+      <div v-else ref="positionMap" style="height:238px"></div>
     </BlankCard>
   </div>
 </template>
