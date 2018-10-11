@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vue-cli-service serve --open",
+    "dev": "vue-cli-service serve --mode dev",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "deploy_dev": "vue-cli-service build && node upload -e dev",
-    "deploy_qa": "vue-cli-service build && node upload -e beta"
+    "deploy_dev": "vue-cli-service build --mode dev && node upload -e dev",
+    "deploy_beta": "vue-cli-service build --mode beta && node upload -e beta"
   },
   "dependencies": {
     "ali-oss": "^6.0.1",
@@ -34,11 +34,12 @@
     "@vue/cli-plugin-eslint": "^3.0.4",
     "@vue/cli-service": "^3.0.4",
     "@vue/eslint-config-standard": "^3.0.4",
+    "cross-env": "^5.2.0",
+    "easy-ftp": "^0.3.44",
     "lint-staged": "^7.2.2",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
-    "vue-template-compiler": "^2.5.17",
-    "easy-ftp": "^0.3.44"
+    "vue-template-compiler": "^2.5.17"
   },
   "browserslist": [
     "> 1%",

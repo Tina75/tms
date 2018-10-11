@@ -6,7 +6,7 @@
         <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
       </div>
       <div v-if="simpleSearch" class="receipt-right">
-        <Select v-model="selectStatus"  style="width:120px;margin-right: 11px" @on-change="handleChangeSearchStatus">
+        <Select v-model="selectStatus" class="order-simple-select" style="width:120px;margin-top: 1px;margin-right: 11px" @on-change="handleChangeSearchStatus">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
         <SelectInput
@@ -511,15 +511,34 @@ export default {
   },
 
   created () {
+    let tab = this.$route.query.tab
+    console.log(tab)
     // 刷新页面停留当前tab页
     if (sessionStorage.getItem('RECEIPT_TAB_NAME')) {
       this.curStatusName = sessionStorage.getItem('RECEIPT_TAB_NAME')
       this.keyword.receiptStatus = this.statusToCode(this.curStatusName)
       this.handleTabChange(this.curStatusName) // 表头按钮状态
     } else {
-      sessionStorage.setItem('RECEIPT_TAB_NAME', '待回收')
-      this.keyword.receiptStatus = 0
-      this.handleTabChange('待回收') // 表头按钮状态
+      // 首页跳转对应tab
+      if (tab) {
+        switch (tab) {
+          case '1':
+            this.keyword.receiptStatus = 0
+            break
+          case '2':
+            this.keyword.receiptStatus = 1
+            break
+          case '3':
+            this.keyword.receiptStatus = 2
+            break
+        }
+        sessionStorage.setItem('RECEIPT_TAB_NAME', this.status[this.$route.query.tab].name)
+        this.handleTabChange(this.status[this.$route.query.tab].name) // 表头按钮状态
+      } else {
+        sessionStorage.setItem('RECEIPT_TAB_NAME', '待回收')
+        this.keyword.receiptStatus = 0
+        this.handleTabChange('待回收') // 表头按钮状态
+      }
     }
   },
 
@@ -716,8 +735,9 @@ export default {
   background #F9F9F9
 .high-search
   width 36px
-  height 30px
-  line-height 1.1
+  height 36px
+  line-height 1.4
+  letter-spacing 2px
   padding 0
   white-space normal
   margin-right 0
@@ -730,6 +750,12 @@ export default {
     margin-right 20px
 </style>
 <style lang="stylus">
+.order-simple-select
+  .ivu-select-selection
+    height 35px
+  .ivu-select-selected-value
+    height 35px !important
+    line-height 35px !important
 .receipt-right
   .ivu-input
     height 35px

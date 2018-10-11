@@ -172,12 +172,12 @@
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title detail-field-required">始发地：</span>
-            <AreaSelect v-model="startCodes" deep
+            <AreaSelect v-model="startCodes"
                         class="detail-info-input" />
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title detail-field-required">目的地：</span>
-            <AreaSelect v-model="endCodes" deep
+            <AreaSelect v-model="endCodes"
                         class="detail-info-input" />
           </i-col>
           <i-col span="10" offset="1">
@@ -388,7 +388,6 @@ export default {
             code: 120107,
             func: () => {
               this.inEditing = true
-              this.setPlace()
             }
           }]
         },
@@ -524,11 +523,13 @@ export default {
   },
 
   watch: {
-    startCodes () {
-      this.info.start = getCityCode(this.startCodes)
+    startCodes (val) {
+      if (!(val instanceof Array)) return
+      this.info.start = getCityCode(val)
     },
-    endCodes () {
-      this.info.end = getCityCode(this.endCodes)
+    endCodes (val) {
+      if (!(val instanceof Array)) return
+      this.info.end = getCityCode(val)
     }
   },
 
@@ -541,20 +542,6 @@ export default {
         case 3: return '在途'
         case 4: return '已到货'
       }
-    },
-
-    setPlace (clear) {
-      if (clear) {
-        this.startCodes = ''
-        this.endCodes = ''
-        return
-      }
-      // 由于 AreaSelect 组件数据延时获取机制
-      // 导致如果不延迟到数据获取完毕后再赋值会出现bug
-      setTimeout(() => {
-        this.startCodes = this.info.start
-        this.endCodes = this.info.end
-      }, 250)
     },
 
     fetchData () {
@@ -573,6 +560,8 @@ export default {
         for (let key in this.info) {
           this.info[key] = data.waybill[key]
         }
+        this.startCodes = this.info.start.toString()
+        this.endCodes = this.info.end.toString()
         for (let key in this.payment) {
           this.payment[key] = this.setMoneyUnit2Yuan(data.waybill[key])
         }
@@ -619,6 +608,41 @@ export default {
         this.$Message.success('保存成功')
         this.cancelEdit()
       }).catch(err => console.error(err))
+    },
+
+    // 计费规则
+    showChargeRules () {
+      const self = this
+      if (!self.info.carrierName) {
+        this.$Message.error('请先选择承运商')
+        return
+      }
+      if (!self.detail.length) {
+        this.$Message.error('请先添加订单')
+        return
+      }
+      this.openDialog({
+        name: 'dialogs/financeRule',
+        data: {
+          // 以下数据必传
+          partnerType: 2, // 计费规则分类 - 发货方1 承运商2 外转方3
+          partnerName: self.info.carrierName, // 名称
+          weight: self.orderTotal.weight, // 货物重量
+          volume: self.orderTotal.volume, // 货物体积
+          start: self.info.start, // 始发地code
+          end: self.info.end // 目的地code
+        },
+        methods: {
+          // 确认计费规则后返回金额(元)
+          ok (charge) {
+            self.payment.freightFee = charge || 0
+          }
+          // 如果有两层对话框，在计费规则中点击去设置按钮后需要关闭第一层对话框
+          // closeParentDialog () {
+          // self.close()
+          // }
+        }
+      })
     },
 
     // 按钮操作

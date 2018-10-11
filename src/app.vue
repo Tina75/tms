@@ -41,6 +41,8 @@ export default {
   },
 
   mounted () {
+    console.log(process)
+
     window.EMA.bind('updateUserInfo', () => { this.getUserInfo() })
     window.EMA.bind('logout', (msg) => { this.logout(msg) })
     window.EMA.bind('openTab', (route) => { this.onMenuSelect(route) })
@@ -63,6 +65,7 @@ export default {
       if (sessionStorage.getItem('first_time_login') === 'true') {
         if (this.UserInfo.type === 1) this.renew()
         else this.changePasswordTip()
+        sessionStorage.removeItem('first_time_login')
       }
     },
     loopMessage () {
@@ -140,9 +143,13 @@ export default {
     onTabClose (route) {
       // 删除cache
       window.EMA.fire('PageRouter.remove', route.path)
-      // 选中前一个tab
-      const nextRoute = this.getNextRoute(this.TabNavList, route)
-      this.turnToPage(nextRoute)
+
+      console.log(route, this.$route)
+      if (this.routeEqual(route, this.$route)) {
+        // 选中前一个tab
+        const nextRoute = this.getNextRoute(this.TabNavList, route)
+        this.turnToPage(nextRoute)
+      }
 
       // 更新store
       let res = this.TabNavList.filter(element => element.query.title !== route.query.title)

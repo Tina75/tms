@@ -157,7 +157,6 @@ export default {
   created () {
     this.getMenuList()
     this.initTreeList(this.arrayCodeList, 'type')
-    document.getElementsByClassName('content')[0].style.overflowY = 'hidden'
   },
   methods: {
     getMenuList (selectMenu) {

@@ -217,26 +217,26 @@ export default {
       companyData: [],
       ruleDetail: {},
       validate: {
-        queryText: {type: 'string', max: 20, message: '不能超过20个字', trigger: 'blur'}
+        queryText: { type: 'string', max: 20, message: '不能超过20个字', trigger: 'blur' }
       },
       basicValidate: {
-        ruleType: {required: true, message: '请选择计算方案', trigger: 'change'},
-        ruleName: {required: true, message: '请填写规则名称', trigger: 'blur'}
+        ruleType: { required: true, message: '请选择计算方案', trigger: 'change' },
+        ruleName: { required: true, message: '请填写规则名称', trigger: 'blur' }
       },
       routeValidate: {
-        departure: {validator: startValidate, trigger: 'change'},
-        destination: {validator: endValidate, trigger: 'change'}
+        departure: { validator: startValidate, trigger: 'change' },
+        destination: { validator: endValidate, trigger: 'change' }
       },
       baseValidate: {
         base: [
-          {required: true, message: '请填写区间', trigger: 'blur'},
-          {pattern: /^[1-9]\d*(.\d{2})?$/, message: '最多精确到两位小数', trigger: 'blur'}
+          { required: true, message: '请填写区间', trigger: 'blur' },
+          { pattern: /^[1-9]\d*(.\d{2})?$/, message: '最多精确到两位小数', trigger: 'blur' }
         ]
       },
       priceValidate: {
         price: [
-          {required: true, message: '请填写金额', trigger: 'blur'},
-          {pattern: /^[1-9]\d*(.\d{2})?$/, message: '必须为大于0的数，最多精确到两位小数', trigger: 'blur'}
+          { required: true, message: '请填写金额', trigger: 'blur' },
+          { pattern: /^[1-9]\d*(.\d{2})?$/, message: '必须为大于0的数，最多精确到两位小数', trigger: 'blur' }
         ]
       }
     }

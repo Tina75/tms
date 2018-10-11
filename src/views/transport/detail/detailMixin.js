@@ -191,37 +191,6 @@ export default {
       this.fetchData()
     },
 
-    // 计费规则
-    showChargeRules () {
-      const self = this
-      if (!self.orderTotal.weight || !self.orderTotal.volume) {
-        this.$Message.error('请先添加订单')
-        return
-      }
-      this.openDialog({
-        name: 'dialogs/financeRule',
-        data: {
-          // partnerName: partnerName, // 可选
-          // 以下数据必传
-          partnerType: self.pageName === 'feright' ? 1 : 3, // 计费规则分类 - 发货方1 承运商2 外转方3
-          weight: self.orderTotal.weight, // 货物重量
-          volume: self.orderTotal.volume, // 货物体积
-          start: self.info.start, // 始发地code
-          end: self.info.end // 目的地code
-        },
-        methods: {
-          // 确认计费规则后返回金额(元)
-          ok (charge) {
-            self.payment.freightFee = charge || 0
-          }
-          // 如果有两层对话框，在计费规则中点击去设置按钮后需要关闭第一层对话框
-          // closeParentDialog () {
-          // self.close()
-          // }
-        }
-      })
-    },
-
     // 校验结算方式输入金额
     checkTotalAmount () {
       let total = 0
@@ -292,14 +261,6 @@ export default {
     },
     // 校验
     validate () {
-      if (this.info.start !== undefined && !this.info.start) {
-        this.$Message.error('请输入始发地')
-        return false
-      }
-      if (this.info.end !== undefined && !this.info.end) {
-        this.$Message.error('请输入目的地')
-        return false
-      }
       if (this.info.start !== undefined || this.info.end !== undefined) return validateCityies(this.startCodes, this.endCodes)
       if (this.pageName === 'pickup' && !this.info.carrierName) {
         this.$Message.error('请输入承运商')

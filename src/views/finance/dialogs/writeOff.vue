@@ -70,13 +70,13 @@ export default {
       },
       validate: {
         actualFee: [
-          {required: true, message: '请填写金额', trigger: 'blur'},
-          {pattern: /^[1-9]\d*(.\d{2})?$/, message: '必须为大于0的数，最多精确到两位小数', trigger: 'blur'}
+          { required: true, message: '请填写金额', trigger: 'blur' },
+          { pattern: /^[1-9]\d*(.\d{2})?$/, message: '必须为大于0的数，最多精确到两位小数', trigger: 'blur' }
         ],
         payType: { required: true, message: '请选择付款方式', trigger: 'change' },
-        account: {type: 'string', max: 30, message: '不能超过30个字', trigger: 'blur'},
-        bankBranch: {type: 'string', max: 30, message: '不能超过30个字', trigger: 'blur'},
-        remark: {type: 'string', max: 100, message: '不能超过100个字', trigger: 'blur'}
+        account: { type: 'string', max: 30, message: '不能超过30个字', trigger: 'blur' },
+        bankBranch: { type: 'string', max: 30, message: '不能超过30个字', trigger: 'blur' },
+        remark: { type: 'string', max: 100, message: '不能超过100个字', trigger: 'blur' }
       }
     }
   },

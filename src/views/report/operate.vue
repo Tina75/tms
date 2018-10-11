@@ -79,6 +79,7 @@
       :extra-columns="extraColumns"
       :show-filter="true"
       width="100%"
+      @on-load = "onLoad"
       @on-column-change="handleColumnChange">
     </page-table>
   </div>
@@ -125,6 +126,7 @@ export default {
         }
       },
       times: ['', ''],
+      isExport: false,
       /* 订单状态 */
       orderStatusMap: {
         10: '提货',
@@ -594,8 +596,8 @@ export default {
     },
     // 导出
     ProfitsExport () {
-      if (!this.isEmpty()) {
-        this.$Message.error('请先输入导出条件')
+      if (!this.isExport) {
+        this.$Message.error('导出内容为空')
         return
       }
       let data = {
@@ -634,6 +636,13 @@ export default {
       this.keyword = {
         startTime: this.keywords.startTime,
         endTime: this.keywords.endTime
+      }
+    },
+    onLoad (res) {
+      if (res.data.data.list && res.data.data.list.length > 0) {
+        this.isExport = true
+      } else {
+        this.isExport = false
       }
     }
   }
