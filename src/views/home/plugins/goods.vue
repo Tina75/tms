@@ -122,8 +122,6 @@ export default {
               self.weight += float.round(item.weight)
               self.volume += float.round(item.volume)
             })
-            console.log(self.weight)
-            console.log(self.volume)
           }
         })
     }
