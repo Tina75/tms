@@ -1,19 +1,20 @@
 <template>
   <div is="i-col" :span="12" class="i-mt-15 page-home__padding-8">
     <blank-card :to="linkto" title="货物重量 / 体积" page-title="订单管理">
-      <div class="chart">
+      <div v-if="volumeData.length || weightData.length" class="chart">
         <ECharts :options="options" :auto-resize="true"></ECharts>
         <div class="chart__attach">
-          <span class="chart__left">
+          <span v-if="weightData.length" class="chart__left">
             <span v-text="weight" />
             <small> 吨</small>
           </span>
-          <span class="chart__right">
+          <span v-if="volumeData.length" class="chart__right">
             <span v-text="volume" />
             <small> 方</small>
           </span>
         </div>
       </div>
+      <no-data v-else />
     </blank-card>
   </div>
 </template>
@@ -24,6 +25,7 @@ import ECharts from 'vue-echarts/components/ECharts'
 import mixin from './mixin.js'
 import float from '@/libs/js/float'
 import url from '@/libs/constant/url'
+import NoData from './noData'
 
 const statusStr = {
   10: '待提货',
@@ -37,7 +39,8 @@ export default {
 
   components: {
     BlankCard,
-    ECharts
+    ECharts,
+    NoData
   },
 
   mixins: [mixin],
@@ -119,6 +122,8 @@ export default {
               self.weight += float.round(item.weight)
               self.volume += float.round(item.volume)
             })
+            console.log(self.weight)
+            console.log(self.volume)
           }
         })
     }
