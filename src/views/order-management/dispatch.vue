@@ -1,5 +1,5 @@
 <template>
-  <Tabs value="dispatchFreight">
+  <Tabs :value="current">
     <TabPane label="送货调度" name="dispatchFreight">
       <DispatchFreight />
     </TabPane>
@@ -18,7 +18,12 @@ export default {
   metaInfo: {
     title: '调度工作台'
   },
-  components: { DispatchFreight, DispatchPickup }
+  components: { DispatchFreight, DispatchPickup },
+  data () {
+    return {
+      current: Number(this.$route.query.tab) === 2 ? 'dispatchPickup' : 'dispatchFreight'
+    }
+  }
 }
 </script>
 
