@@ -323,13 +323,14 @@ import BasePage from '@/basic/BasePage'
 import TransportBase from '../transportBase'
 import DetailMixin from './detailMixin'
 
-import Server from '@/libs/js/server'
 import MoneyInput from '../components/MoneyInput'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '../components/SelectInput.vue'
 import SelectInputMixin from '../components/selectInputMixin'
 
+import Server from '@/libs/js/server'
 import { getCityCode } from '@/libs/constant/cityValidator'
+import TMSUrl from '@/libs/constant/url'
 
 export default {
   name: 'DetailFeright',
@@ -364,6 +365,7 @@ export default {
         { payType: 2, fuelCardAmount: 0, cashAmount: 0 },
         { payType: 3, fuelCardAmount: 0, cashAmount: 0 }
       ],
+      settlementPayInfoBack: [], // 支付方式备份
 
       // 所有按钮组
       btnList: [
@@ -422,7 +424,8 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
-                    path: '/order-management/detail',
+                    // title: p.row.orderNo,
+                    path: TMSUrl.ORDER_DETAIL,
                     query: {
                       id: p.row.orderNo,
                       orderId: p.row.orderId,
@@ -463,7 +466,7 @@ export default {
         {
           title: '包装',
           key: 'unit',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.unit)
           }
@@ -471,7 +474,7 @@ export default {
         {
           title: '数量',
           key: 'quantity',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.quantity)
           }
@@ -479,7 +482,7 @@ export default {
         {
           title: '货值(元)',
           key: 'cargoCost',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
           }
@@ -487,7 +490,7 @@ export default {
         {
           title: '重量(吨)',
           key: 'weight',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.weight)
           }
@@ -495,7 +498,7 @@ export default {
         {
           title: '体积(方)',
           key: 'volume',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.volume)
           }
@@ -588,6 +591,7 @@ export default {
           }
         })
         this.settlementPayInfo = temp
+        this.settlementPayInfoBack = Object.assign([], temp)
 
         this.setBtnsWithStatus()
         this.loading = false

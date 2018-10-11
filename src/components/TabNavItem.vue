@@ -2,8 +2,8 @@
   <div :class="['item-container',checked?'mh-10':'']">
     <i v-show="checked" class="icon font_family icon-you2 icon-left" style=""></i>
     <div :class="['tab-item',checked?'tab-item__checked':'']">
-      <Icon  v-show="checked" class="tab-item__icon " type="ios-refresh" size="20" @click.stop="$emit('on-refresh')"/>
-      <span class="tab-item__name">{{ name}}</span>
+      <Icon  v-show="checked" class="tab-item__icon" type="ios-refresh" size="20" @click.stop="$emit('on-refresh')"/>
+      <span class="tab-item__name">{{name}}</span>
       <Icon v-show="closeable" class="tab-item__icon" type="ios-close" size="20" @click.stop="$emit('on-close')"/>
     </div>
     <i v-show="checked" class="icon font_family icon-you2 icon-right" ></i>

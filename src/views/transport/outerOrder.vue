@@ -126,6 +126,7 @@ import SelectInput from './components/SelectInput.vue'
 
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
+import TMSUrl from '@/libs/constant/url'
 
 export default {
   name: 'OuterManager',
@@ -246,38 +247,39 @@ export default {
         endTime: '' // 结束时间
       },
 
+      tableActionColumn: {
+        title: '操作',
+        key: 'action',
+        width: 120,
+        fixed: 'left',
+        extra: true,
+        render: (h, p) => {
+          if (p.row.status === 1 && this.hasPower(120301)) {
+            return h('a', {
+              on: {
+                click: () => {
+                  this.billShipment([p.row.transId])
+                }
+              }
+            }, '发运')
+          } else if (p.row.status === 2 && this.hasPower(120302)) {
+            return h('a', {
+              on: {
+                click: () => {
+                  this.billArrived([p.row.transId])
+                }
+              }
+            }, '到货')
+          }
+        }
+      },
+
       tableColumns: [
         {
           type: 'selection',
           width: 50,
           align: 'center',
           fixed: 'left'
-        },
-        {
-          title: '操作',
-          key: 'do',
-          width: 100,
-          fixed: 'left',
-          extra: true,
-          render: (h, p) => {
-            if (p.row.status === 1 && this.hasPower(120301)) {
-              return h('a', {
-                on: {
-                  click: () => {
-                    this.billShipment([p.row.transId])
-                  }
-                }
-              }, '发运')
-            } else if (p.row.status === 2 && this.hasPower(120302)) {
-              return h('a', {
-                on: {
-                  click: () => {
-                    this.billArrived([p.row.transId])
-                  }
-                }
-              }, '到货')
-            }
-          }
         },
         {
           title: '外转单号',
@@ -293,7 +295,7 @@ export default {
                 click: () => {
                   this.openTab({
                     title: p.row.transNo,
-                    path: '/transport/detail/detailOuter',
+                    path: TMSUrl.OUTER_ORDER_DETAIL,
                     query: { id: p.row.transId }
                   })
                 }
@@ -346,12 +348,12 @@ export default {
         {
           title: '体积（方）',
           key: 'volume',
-          width: 100
+          width: 120
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          width: 100
+          width: 120
         },
         {
           title: '外转时间',
@@ -398,7 +400,7 @@ export default {
         {
           title: '货值',
           key: 'cargoCost',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
           }
@@ -406,7 +408,7 @@ export default {
         {
           title: '结算方式',
           key: 'payType',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, this.payTypeFormatter(p.row.payType, true))
           }
@@ -430,7 +432,7 @@ export default {
         {
           title: '回单数',
           key: 'receiptCount',
-          width: 100
+          width: 120
         },
         {
           title: '制单人',
@@ -580,12 +582,16 @@ export default {
     setTabStatus (tab) {
       switch (tab) {
         case '全部':
+          this.triggerTableActionColumn(true)
           return
         case '待发运':
+          this.triggerTableActionColumn(true)
           return 1
         case '在途':
+          this.triggerTableActionColumn(true)
           return 2
         case '已到货':
+          this.triggerTableActionColumn(false)
           return 3
         default:
       }

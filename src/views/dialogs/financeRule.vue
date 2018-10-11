@@ -25,6 +25,9 @@
 </template>
 
 <script>
+
+/** 使用方式参考 /transport/detail/detailMixin.js 195行 */
+
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 
@@ -100,7 +103,8 @@ export default {
       if (this.closeParentDialog) this.closeParentDialog()
       this.openTab({
         title: '计费规则',
-        path: '/finance/rules'
+        path: '/finance/rules',
+        query: { tab: this.partnerType - 1 }
       })
     }
   }

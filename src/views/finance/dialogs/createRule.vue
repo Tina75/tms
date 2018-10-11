@@ -8,7 +8,7 @@
         </FormItem>
         <FormItem :label="sceneMap[scene] + '：'" prop="partnerName">
           <Select v-model="createRuleForm.partnerName">
-            <Option v-for="(item, index) in partnerList" :key="index" :value="key">{{item}}</Option>
+            <Option v-for="(item, index) in partnerList" :key="index" :value="item">{{item}}</Option>
           </Select>
         </FormItem>
       </Form>
@@ -45,7 +45,10 @@ export default {
         partnerName: ''
       },
       validate: {
-        ruleName: { required: true, message: '请填写规则名称', trigger: 'blur' },
+        ruleName: [
+          { required: true, message: '请填写规则名称', trigger: 'blur' },
+          { type: 'string', max: 30, message: '不能超过30个字', trigger: 'blur' }
+        ],
         partnerName: { required: true, validator: partnerNameValidate, trigger: 'change' }
       },
       partnerList: []

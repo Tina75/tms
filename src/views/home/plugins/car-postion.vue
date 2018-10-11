@@ -1,8 +1,11 @@
 <template>
   <div is="i-col" span="12" class="i-mt-15 page-home__padding-8">
-    <BlankCard :padding="false" to="/transport/waybill" page-title="运单管理">
+    <BlankCard :padding="false" to="/transport/waybill" page-title="运单管理" tab="3">
       <div slot="title">在途车辆位置</div>
-      <div ref="positionMap" style="height:238px"></div>
+      <div  style="height:238px">
+        <noData v-if="!showMap"></noData>
+        <div v-else ref="positionMap"></div>
+      </div>
     </BlankCard>
   </div>
 </template>
@@ -14,16 +17,19 @@ import mixin from './mixin.js'
 import BlankCard from '../components/BlankCard.vue'
 import MarkerOverlay from '../libs/MarkerOverlay.js'
 import LabelOverlay from '../libs/LabelOverlay.js'
+import noData from './noData.vue'
 
 export default {
   name: 'car-position',
   components: {
+    noData,
     BlankCard
   },
   mixins: [mixin],
   data () {
     return {
-      pointList: []
+      pointList: [],
+      showMap: false
     }
   },
   methods: {
@@ -40,6 +46,10 @@ export default {
         const bmap = new BMap.Map(this.$refs.positionMap)
 
         for (let i = 0; i < this.pointList.length; i++) {
+          if (!this.showMap) {
+            this.showMap = true
+            this.$refs.positionMap.style.top = '-4px'
+          }
           const item = this.pointList[i]
           const point = new BMap.Point(item.longtitude, item.latitude)
           if (i === 0) {
@@ -50,8 +60,6 @@ export default {
           bmap.addOverlay(markerOverlay)
           bmap.addOverlay(labelOverlay)
         }
-
-        this.$refs.positionMap.style.top = '-4px'
       })
     }
   }

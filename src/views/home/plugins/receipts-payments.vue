@@ -1,7 +1,6 @@
 <template>
   <div is="i-col" :span="12" class="i-mt-15 page-home__padding-8">
-    <blank-card>
-      <div slot="title">应收款项 / 应付款项</div>
+    <blank-card :to="linkto" title="应收款项 / 应付款项" page-title="营业额汇总表">
       <div class="chart">
         <ECharts :options="options" :auto-resize="true"></ECharts>
         <div class="chart__attach">
@@ -17,7 +16,8 @@
 import BlankCard from '../components/BlankCard'
 import ECharts from 'vue-echarts/components/ECharts'
 import mixin from './mixin.js'
-
+import url from '@/libs/constant/url'
+import float from '@/libs/js/float'
 export default {
   name: 'receipts-payments',
 
@@ -37,7 +37,8 @@ export default {
   data () {
     return {
       pay: 0,
-      receive: 0
+      receive: 0,
+      linkto: url.TOTAL_REPORT
     }
   },
 
@@ -59,7 +60,7 @@ export default {
               fontSize: 14
             },
             data: [
-              { value: Number(this.receive) / 100, name: '应收' }
+              { value: float.round(Number(this.receive) / 100), name: '应收' }
             ]
           },
           {
@@ -76,7 +77,7 @@ export default {
               fontSize: 14
             },
             data: [
-              { value: Number(this.pay) / 100, name: '应付' }
+              { value: float.round(Number(this.pay) / 100), name: '应付' }
             ]
           }
         ]

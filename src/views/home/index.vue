@@ -1,8 +1,10 @@
 <template>
   <div>
     <div class="page-home__header">
-      <Alert v-if="notice" type="warning" class="page-home__header-notice" banner closable>
-        {{notice}}
+      <Alert v-if="notice" type="warning" class="page-home__header-notice" banner closable show-icon>
+        <Icon slot="icon" type="ios-bulb-outline"></Icon>
+        <div>
+        </div>
       </Alert>
       <Row>
         <Col span="18">
@@ -166,7 +168,7 @@ export default {
       } else if (now >= 11 && now < 14) {
         return `<strong class="van-font-14 i-pr-20">中午好，${name}</strong> &nbsp;&nbsp;拥抱阳光，转身心情。`
       } else if (now >= 14 && now < 17) {
-        return `<strong class="van-font-14 i-pr-20">下午好，${name}</strong> &nbsp;&nbsp;拥抱阳光，转身心情。`
+        return `<strong class="van-font-14 i-pr-20">下午好，${name}</strong> &nbsp;&nbsp;相信自己，一定会有辉煌的一天。`
       } else if (now >= 17 && now < 22) {
         return `<strong class="van-font-14 i-pr-20">晚上好，${name}</strong> &nbsp;&nbsp;既然选择了远方，便只顾风雨兼程。`
       } else if (now >= 22 && now < 5) {
@@ -189,6 +191,12 @@ export default {
   },
   mounted () {
     this.initCardList()
+    // server({
+    //   url: 'home/message',
+    //   method: 'get'
+    // }).then(res => {
+    //   this.notice = res.data.data
+    // })
   },
   beforeDestroy () {
     if (this.intersectionObserver) {
@@ -301,7 +309,6 @@ export default {
   &__header
     position relative
   &__header-notice
-    position absolute
     z-index 10
     width 100%
   &__header-date

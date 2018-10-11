@@ -1,10 +1,8 @@
 <template>
   <div is="i-col" :span="12" class="i-mt-15 page-home__padding-8">
-    <blank-card>
-      <div slot="title">调度订单数</div>
-      <div>
-        <ECharts :options="options" :auto-resize="true"></ECharts>
-      </div>
+    <blank-card :to="linkto" title="调度订单数" page-title="运营报表" tab="7">
+      <ECharts v-if="xData.length" :options="options" :auto-resize="true"></ECharts>
+      <no-data v-else/>
     </blank-card>
   </div>
 </template>
@@ -13,6 +11,8 @@
 import BlankCard from '../components/BlankCard'
 import ECharts from 'vue-echarts/components/ECharts'
 import mixin from './mixin.js'
+import url from '@/libs/constant/url'
+import NoData from './noData'
 
 import 'echarts/lib/chart/line'
 
@@ -21,7 +21,8 @@ export default {
 
   components: {
     BlankCard,
-    ECharts
+    ECharts,
+    NoData
   },
 
   mixins: [mixin],
@@ -29,7 +30,9 @@ export default {
   data () {
     return {
       xData: [],
-      yData: []
+      yData: [],
+
+      linkto: url.OPERATE_REPORT
     }
   },
 
@@ -43,6 +46,7 @@ export default {
         },
 
         xAxis: {
+          name: '月/日',
           type: 'category',
           data: this.xData || [],
           splitLine: {
@@ -64,7 +68,7 @@ export default {
         },
 
         yAxis: {
-          name: '万',
+          name: '笔',
           type: 'value',
           nameTextStyle: {
             padding: [0, 25, 0, 0]
@@ -83,8 +87,8 @@ export default {
         },
 
         grid: {
-          left: 15,
-          right: 15,
+          left: 25,
+          right: 60,
           top: 30,
           bottom: 12,
           containLabel: true
@@ -94,7 +98,7 @@ export default {
           {
             type: 'line',
             smooth: true,
-            showSymbol: false,
+            showSymbol: true,
             data: this.yData || [],
             areaStyle: {
               color: {

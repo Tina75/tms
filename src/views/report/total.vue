@@ -15,8 +15,8 @@
           @on-change="handleTimeChange"
         >
         </DatePicker>
-        <Tooltip max-width="200" style="margin-left: 18px" content="营业额汇总报表：按照订单的下单日期提取数据；利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
-          <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;" />
+        <Tooltip max-width="200" content="营业额汇总报表：按照订单的下单日期提取数据；利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
+          <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;margin-left: 18px" />
         </Tooltip>
       </div>
       <div class="search-btn">
@@ -44,6 +44,9 @@ export default {
   name: 'total',
   components: {
     PageTable
+  },
+  metaInfo: {
+    title: '营业额汇总表'
   },
   data: function () {
     return {
@@ -82,42 +85,42 @@ export default {
           title: '保险费',
           key: 'insuranceFee',
           render: (h, params) => {
-            return h('span', params.row.insuranceFee)
+            return h('span', (params.row.insuranceFee / 100).toFixed(2))
           }
         },
         {
           title: '运输费',
           key: 'freightFee',
           render: (h, params) => {
-            return h('span', params.row.freightFee)
+            return h('span', (params.row.freightFee / 100).toFixed(2))
           }
         },
         {
           title: '装卸费',
           key: 'loadFee',
           render: (h, params) => {
-            return h('span', params.row.loadFee)
+            return h('span', (params.row.loadFee / 100).toFixed(2))
           }
         },
         {
           title: '卸货费',
           key: 'unloadFee',
           render: (h, params) => {
-            return h('span', params.row.unloadFee)
+            return h('span', (params.row.unloadFee / 100).toFixed(2))
           }
         },
         {
           title: '其他费用',
           key: 'otherFee',
           render: (h, params) => {
-            return h('span', params.row.otherFee)
+            return h('span', (params.row.otherFee / 100).toFixed(2))
           }
         },
         {
           title: '费用合计',
           key: 'totalFee',
           render: (h, params) => {
-            return h('span', params.row.totalFee)
+            return h('span', (params.row.totalFee / 100).toFixed(2))
           }
         }
       ],
@@ -126,6 +129,11 @@ export default {
           return date && date.valueOf() > Date.now()
         }
       }
+    }
+  },
+  mounted () {
+    if (this.$route.query.tab) { // 首页跳转来的
+      this.showSevenDate()
     }
   },
   methods: {
@@ -242,6 +250,12 @@ export default {
         data: data,
         fileName: '营业额汇总报表'
       })
+    },
+    // 默认展示近七天数据
+    showSevenDate () {
+      this.operateValue = 1
+      this.date(this.operateValue)
+      this.search()
     }
   }
 }

@@ -58,6 +58,9 @@ instance.interceptors.response.use((res) => {
   if (error.message.indexOf('timeout') !== -1) {
     Message.error('接口超时')
   }
+  if (error.response && error.response.status) {
+    Message.error(error.response.statusText + ' ' + error.response.status)
+  }
   return Promise.reject(error)
 })
 

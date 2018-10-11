@@ -4,9 +4,9 @@
     <section class="detail-header">
       <ul class="detail-header-list">
         <li class="detail-header-list-item">订单号：{{ info.orderNo }}</li>
-        <li class="detail-header-list-item">客户订单号：{{ info.customerOrderNo }}</li>
+        <li class="detail-header-list-item">客户订单号：{{ info.customerOrderNo || '-' }}</li>
         <li class="detail-header-list-item">外转单号：{{ info.transNo }}</li>
-        <li class="detail-header-list-item">外转方运单号：{{ info.outTransNo }}</li>
+        <li class="detail-header-list-item">外转方运单号：{{ info.outTransNo || '-' }}</li>
         <li class="detail-header-list-item">外转单状态：
           <span style="font-weight: bold;">{{ status }}</span>
         </li>
@@ -252,7 +252,7 @@ export default {
         {
           title: '包装',
           key: 'unit',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.unit)
           }
@@ -260,7 +260,7 @@ export default {
         {
           title: '数量',
           key: 'quantity',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.quantity)
           }
@@ -268,7 +268,7 @@ export default {
         {
           title: '货值(元)',
           key: 'cargoCost',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
           }
@@ -276,7 +276,7 @@ export default {
         {
           title: '重量(吨)',
           key: 'weight',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.weight)
           }
@@ -284,7 +284,7 @@ export default {
         {
           title: '体积(方)',
           key: 'volume',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.volume)
           }
@@ -385,6 +385,7 @@ export default {
               data: { transIds: [ self.id ] }
             }).then(res => {
               self.$Message.success('操作成功')
+              self.fetchData()
             }).catch(err => console.error(err))
           }
         }

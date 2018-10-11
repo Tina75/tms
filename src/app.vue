@@ -65,7 +65,6 @@ export default {
       if (sessionStorage.getItem('first_time_login') === 'true') {
         if (this.UserInfo.type === 1) this.renew()
         else this.changePasswordTip()
-        sessionStorage.removeItem('first_time_login')
       }
     },
     loopMessage () {
@@ -297,6 +296,4 @@ html, body
     min-width 85px
 .ivu-layout
   background #efefef
-.ivu-message
-  z-index 2000 !important
 </style>

@@ -15,7 +15,7 @@ let instance = axios.create({
   withCredentials: true,
   loading: false,
   ignoreCode: false,
-  responseType: 'arraybuffer' // 'application/json'
+  responseType: 'arraybuffer'
 })
 
 instance.defaults.baseURL = Server.defaults.baseURL
@@ -54,7 +54,7 @@ instance.interceptors.response.use((res) => {
       }
     } catch (err) {}
 
-    if (!code) {
+    if (!code || code === 10000) {
       let blob = new Blob([res.data], { type: 'application/x-xls' })
       let downloadLink = document.createElement('a')
       downloadLink.href = URL.createObjectURL(blob)
