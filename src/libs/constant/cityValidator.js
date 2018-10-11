@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import City from '@/libs/js/city'
 import { Message } from 'iview'
 
 // 直辖市与特殊地区：北京 天津 上海 重庆 台湾 香港 澳门
@@ -73,10 +74,21 @@ export const FORM_VALIDATE_END = (rule, value, cb) => {
 /**
  * 校验非表单始发地与目的地
  * 当 AreaSelect 组件不再表单中，提交数据时需要校验的情况，需要使用该方法
- * @param startCodes 始发地code数组
- * @param endCodes 目的地code数组
+ * @param startCodes 始发地code数组或已选中城市code
+ * @param endCodes 目的地code数组或已选中城市code
  */
 export const validateCityies = (startCodes, endCodes) => {
+  if (!startCodes || !startCodes.length) {
+    Message.error('请选择始发地')
+    return false
+  }
+  if (!endCodes || !endCodes.length) {
+    Message.error('请选择目的地')
+    return false
+  }
+
+  if (!(startCodes instanceof Array)) startCodes = City.getPathByCode(startCodes).map((item) => item.code)
+  if (!(endCodes instanceof Array)) endCodes = City.getPathByCode(endCodes).map((item) => item.code)
   const start = getCityCode(startCodes)
   const end = getCityCode(endCodes)
 
