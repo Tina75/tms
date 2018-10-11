@@ -184,7 +184,7 @@ export default {
     const startValidate = (rule, value, callback) => {
       if (value === '' || value.length === 0) {
         callback(new Error('请选择始发地'))
-      } else if (value.length < 2) {
+      } else if (!(value === '110000' || value === '120000' || value === '210000' || value === '500000' || value[0] === '110000' || value[0] === '120000' || value[0] === '210000' || value[0] === '500000') && value.length < 2) {
         callback(new Error('始发地至少要选择二级城市'))
       } else {
         callback()
@@ -193,7 +193,7 @@ export default {
     const endValidate = (rule, value, callback) => {
       if (!value.length) {
         callback(new Error('请选择目的地'))
-      } else if (value.length < 2) {
+      } else if (!(value === '110000' || value === '120000' || value === '210000' || value === '500000' || value[0] === '110000' || value[0] === '120000' || value[0] === '210000' || value[0] === '500000') && value.length < 2) {
         callback(new Error('目的地至少要选择二级城市'))
       } else {
         callback()
@@ -445,8 +445,8 @@ export default {
             showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
               return {
-                base: el.base / 100,
-                price: el.price / 100
+                base: el.base ? (el.base / 100) + '' : '',
+                price: el.price ? (el.price / 100) + '' : ''
               }
             })
           }

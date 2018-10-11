@@ -54,7 +54,7 @@
                 <p>付款方式：<span>{{item.payTypeDesc}}</span></p>
                 </Col>
                 <Col v-if="item.payType !== 1" span="8">
-                <p>{{accountMap[item.payType]}}：<span>{{item.account}}</span></p>
+                <p>{{accountMap[item.payType]}}<span>{{item.account}}</span></p>
                 </Col>
                 <Col v-if="item.payType === 2" span="4">
                 <p>开户行：<span>{{item.bank}}</span></p>

@@ -65,13 +65,13 @@ export default {
           width: 60,
           key: 'action',
           render: (h, params) => {
-            return h('a', {
+            return this.orderData.list.length > 2 ? h('a', {
               on: {
                 click: () => {
                   this.removeOrder(params)
                 }
               }
-            }, '移除')
+            }, '移除') : ''
           }
         },
         {
