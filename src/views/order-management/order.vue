@@ -1030,7 +1030,7 @@ export default {
       const _this = this
       this.openDialog({
         name: 'order-management/dialog/outer',
-        data: { id: params.row.id },
+        data: { detail: params.row },
         methods: {
           ok (node) {
             _this.$refs.pageTable.fetch() // 刷新table
