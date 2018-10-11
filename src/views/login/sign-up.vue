@@ -231,14 +231,14 @@ export default {
 
   .form-body
     width 800px
-    height 530px
+    height 540px
     left 50%
     top 50%
     transform translate(-50%, -50%)
 
     .form-content
       width 300px
-      margin 24px auto
+      margin auto
 
     .form-step
       position relative
