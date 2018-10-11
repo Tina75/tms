@@ -251,10 +251,15 @@ export default {
     // 计费规则
     showChargeRules () {
       const self = this
+      if (!self.info.carrierName) {
+        this.$Message.error('请先选择承运商')
+        return
+      }
       this.openDialog({
         name: 'dialogs/financeRule',
         data: {
           partnerType: 2,
+          partnerName: self.info.carrierName,
           ...self.financeRulesInfo
         },
         methods: {

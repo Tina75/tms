@@ -1,12 +1,12 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
+    <Modal v-model="show" :mask-closable="false" width="360" @on-visible-change="close">
       <p slot="header" style="text-align:center">
         <span>编辑</span>
       </p>
       <Form ref="info" :model="info" :rules="rules" :label-width="100" label-position="left">
         <FormItem label="外转方：" prop="transfereeName">
-          <SelectInput v-model="easySearchKeyword"
+          <SelectInput v-model="info.transfereeName"
                        mode="transferee"
                        placeholder="请输入"
                        style="width:200px"
@@ -57,7 +57,7 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
-      visiable: true,
+      show: true,
 
       info: {
         transfereeName: '',
@@ -109,14 +109,20 @@ export default {
     // 显示计费规则
     showChargeRules () {
       const self = this
+      if (!self.info.transfereeName) {
+        this.$Message.error('请先选择外转方')
+        return
+      }
       this.openDialog({
         name: 'dialogs/financeRule',
         data: {
-          value: 0
+          partnerType: 3,
+          partnerName: this.info.transfereeName,
+          ...self.financeRulesInfo
         },
         methods: {
-          ok (value) {
-            self.info.transFee = value || 0
+          ok (charge) {
+            self.info.transFee = charge || 0
           },
           closeParentDialog () {
             self.close()
