@@ -6,10 +6,10 @@
         <FormItem v-if="settleTypeDesc" label="结算方式：">
           <p>{{settleTypeDesc}}</p>
         </FormItem>
-        <FormItem :label="scene === 1 ? '应收金额' : '应付金额'">
+        <FormItem :label="scene === 1 ? '应收金额：' : '应付金额：'">
           <p><span>{{needPay}}</span>元</p>
         </FormItem>
-        <FormItem :label="scene === 1 ? '实收金额' : '实付金额'" prop="actualFee">
+        <FormItem :label="scene === 1 ? '实收金额：' : '实付金额：'" prop="actualFee">
           <Input v-model="writeOffForm.actualFee" placeholder="请输入" />
         </FormItem>
         <FormItem label="付款方式：" prop="payType">
@@ -18,13 +18,13 @@
             <Radio v-for="(value, key) in payTypeMap" :key="key" :label="key">{{value}}</Radio>
           </RadioGroup>
         </FormItem>
-        <FormItem v-if="writeOffForm.payType !== '1'" :label="accountMap[writeOffForm.payType]">
+        <FormItem v-if="writeOffForm.payType !== '1'" :label="accountMap[writeOffForm.payType]" prop="account">
           <Input v-model="writeOffForm.account" placeholder="请输入" />
         </FormItem>
-        <FormItem v-if="writeOffForm.payType === '2'" label="开户行：">
+        <FormItem v-if="writeOffForm.payType === '2'" label="开户行：" prop="bankBranch">
           <Input v-model="writeOffForm.bankBranch" placeholder="请输入" />
         </FormItem>
-        <FormItem label="备注：">
+        <FormItem label="备注：" prop="remark">
           <Input v-model="writeOffForm.remark" type="textarea" placeholder="请输入" />
         </FormItem>
       </Form>
@@ -56,10 +56,10 @@ export default {
         4: '支付宝'
       },
       accountMap: {
-        2: '银行卡卡号',
-        3: '微信号',
-        4: '支付宝账号',
-        5: '油卡卡号'
+        2: '银行卡卡号：',
+        3: '微信号：',
+        4: '支付宝账号：',
+        5: '油卡卡号：'
       },
       writeOffForm: {
         actualFee: '',
@@ -70,8 +70,8 @@ export default {
       },
       validate: {
         actualFee: [
-          { required: true, message: '请填写金额', trigger: 'blur' },
-          { pattern: /^[1-9]\d*(.\d{2})?$/, message: '必须为大于0的数，最多精确到两位小数', trigger: 'blur'}
+          {required: true, message: '请填写金额', trigger: 'blur'},
+          {pattern: /^[1-9]\d*(.\d{2})?$/, message: '必须为大于0的数，最多精确到两位小数', trigger: 'blur'}
         ],
         payType: { required: true, message: '请选择付款方式', trigger: 'change' },
         account: {type: 'string', max: 30, message: '不能超过30个字', trigger: 'blur'},

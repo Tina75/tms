@@ -14,7 +14,7 @@
           </Col>
           <Col span="2">
           <FormItem>
-            <Select v-model="writingOffQuery.periodType" clearable>
+            <Select v-model="writingOffQuery.periodType">
               <Option v-for="(value, key) in periodTypeMap" v-if="key === '1' || key === '2' || (scene === 1 && key === '3')" :key="key" :value="key">{{value}}</Option>
             </Select>
           </FormItem>
@@ -209,8 +209,8 @@ export default {
               value: '按单结算'
             },
             {
-              label: '按月结算',
-              value: '按月结算'
+              label: '月结',
+              value: '月结'
             }] : [
             {
               label: '预付',
@@ -268,6 +268,7 @@ export default {
           },
           methods: {
             ok () {
+              this.$Message.success('创建成功')
               _this.loadData()
             }
           }
@@ -299,7 +300,11 @@ export default {
             needPay: data.row.totalFeeText,
             settleTypeDesc: data.row.settleTypeDesc
           },
-          methods: {}
+          methods: {
+            ok () {
+              _this.loadData()
+            }
+          }
         })
       } else {
         this.openDialog({
@@ -314,7 +319,7 @@ export default {
           },
           methods: {
             ok () {
-              this.$Message.success('创建成功')
+              this.$Message.success('核销成功')
               _this.loadData()
             }
           }
@@ -329,7 +334,7 @@ export default {
             title: data.row.orderNo,
             query: {
               id: data.row.orderNo,
-              orderId: data.row.id,
+              orderId: data.row.orderId,
               from: 'order'
             }
           })
@@ -338,21 +343,21 @@ export default {
           this.openTab({
             title: data.row.orderNo,
             path: '/transport/detail/detailFreight',
-            query: {id: data.row.id} // id 或 no 二选一
+            query: {id: data.row.orderId} // id 或 no 二选一
           })
           break
         case 3:
           this.openTab({
             title: data.row.orderNo,
             path: '/transport/detail/detailPickup',
-            query: {id: data.row.id}
+            query: {id: data.row.orderId}
           })
           break
         case 4:
           this.openTab({
             title: data.row.orderNo,
             path: '/transport/detail/detailOuter',
-            query: {id: data.row.id}
+            query: {id: data.row.orderId}
           })
           break
       }
@@ -377,6 +382,8 @@ export default {
         })
         if (this.currentPartner.partnerName && this.companyData.map(item => item.partnerName).indexOf(this.currentPartner.partnerName) >= 0) {
           this.showOrderData(this.companyData.find(item => this.currentPartner.partnerName === item.partnerName))
+        } else {
+          this.orderData = []
         }
       }).catch(err => console.error(err))
     },
