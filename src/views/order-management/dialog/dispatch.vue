@@ -1,6 +1,6 @@
 <template>
-  <div class="dialog">
-    <Modal v-model="visiable" :mask-closable="false" width="1053" @on-visible-change="close">
+  <div>
+    <Modal v-model="visiable" :mask-closable="false" class="dispatch-dialog" width="1032" @on-visible-change="close">
       <p slot="header" class="dialog-title">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>{{name}}</span>
@@ -137,7 +137,7 @@ export default {
         {
           title: '客户订单号',
           key: 'customerOrderNo',
-          minWidth: 150,
+          minWidth: 140,
           render: (h, p) => {
             return h('span', p.row.customerOrderNo ? p.row.customerOrderNo : '-')
           }
@@ -151,7 +151,7 @@ export default {
         {
           title: '始发地',
           key: 'start',
-          minWidth: 130,
+          minWidth: 120,
           ellipsis: true,
           render: (h, params) => {
             if (this.cityFormatter(params.row.start).length > 8) {
@@ -171,7 +171,7 @@ export default {
         {
           title: '目的地',
           key: 'end',
-          minWidth: 130,
+          minWidth: 120,
           ellipsis: true,
           render: (h, params) => {
             if (this.cityFormatter(params.row.end).length > 8) {
@@ -350,4 +350,9 @@ export default {
     display inline-block
     min-width 111px
     text-align center
+</style>
+<style lang='stylus'>
+.dispatch-dialog
+  .ivu-modal-body
+    padding 22px 40px
 </style>

@@ -111,16 +111,16 @@ export default {
             res.map(item => {
               let obj = {
                 name: item.status,
-                value: float.round(item.weight)
+                value: item.weight
               }
               let obj2 = {
                 name: item.status,
-                value: float.round(item.volume)
+                value: item.volume
               }
               self.weightData.push(obj)
               self.volumeData.push(obj2)
-              self.weight += float.round(item.weight)
-              self.volume += float.round(item.volume)
+              self.weight = float.round(self.weight + item.weight)
+              self.volume = float.round(self.volume + item.volume)
             })
           }
         })
