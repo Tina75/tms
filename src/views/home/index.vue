@@ -308,6 +308,7 @@ export default {
     padding-right 8px
   &__header
     position relative
+    overflow auto
   &__header-notice
     z-index 10
     width 100%

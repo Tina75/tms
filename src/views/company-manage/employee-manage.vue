@@ -157,8 +157,6 @@ export default {
   created () {
     this.getMenuList()
     this.initTreeList(this.arrayCodeList, 'type')
-    document.getElementsByClassName('content')[0].style.overflowY = 'hidden'
-    document.getElementsByClassName('content')[0].children[0].style.padding = 0
   },
   methods: {
     getMenuList (selectMenu) {
@@ -389,13 +387,12 @@ export default {
   overflow: hidden;
   .contentDiv
     padding-left: 20px;
-    height:calc(100% - 65px);
+    height:calc(100% - 45px);
     overflow-y:auto;
     padding-bottom: 80px;
   .leftMenu
     height: 100%
     overflow: hidden;
-    padding-top: 15px;
   .leftMenu :hover
     max-height: calc(100% - 50px);
     overflow-y: scroll;
@@ -418,14 +415,14 @@ export default {
       text-overflow: ellipsis;
       width: 75%;
       float:left;
-      margin-left: 15px;
   .rightHead
     border-bottom: 1px solid #e9e9e9;
+    margin-top: 5px
     .rightTitle
-      height: 75px;
+      height: 55px;
       font-size: 20px;
       color: #333;
-      line-height: 85px;
+      line-height: 55px;
       padding: 0 20px 0 10px;
       margin-top: -10px;
       margin-left: 20px;
@@ -453,7 +450,7 @@ export default {
   .saveRoleBtn
     float: right;
     margin-right: 120px;
-    margin-top: -47px;
+    margin-top: -45px;
   .centerBtn
     position: absolute;
     left: 50%;
@@ -466,7 +463,7 @@ export default {
     overflow: hidden;
   .configBtnItem
       float: right;
-      margin-top: -22px;
+      margin-top: -20px;
       display: none;
       margin-right: 5px;
       background: #e3fcfc;
