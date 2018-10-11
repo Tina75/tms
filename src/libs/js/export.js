@@ -39,6 +39,7 @@ instance.interceptors.request.use((config) => {
 // code状态码200判断
 instance.interceptors.response.use((res) => {
   LoadingBar.finish()
+  console.log(res)
   const tempBlob = new Blob([res.data], { type: 'application/json' })
   const reader = new FileReader()
   reader.onload = e => {
