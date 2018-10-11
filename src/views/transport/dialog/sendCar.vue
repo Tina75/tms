@@ -160,6 +160,8 @@ export default {
       },
       settlementType: '1',
       settlementPayInfo: [],
+      settlementPayInfoBack: [], // 支付信息备份
+
       // 支付方式表格
       tablePayment: [
         {
@@ -194,8 +196,7 @@ export default {
                 'on-blur': (money) => {
                   let temp = p.row
                   temp.cashAmount = money
-                  this.settlementPayInfo.splice(p.index, 1, temp)
-                  // this.checkTotalAmount()
+                  this.settlementPayInfoBack.splice(p.index, 1, temp)
                 }
               }
             })
@@ -212,14 +213,13 @@ export default {
                 suffix: false
               },
               style: {
-                width: '60px'
+                width: '70px'
               },
               on: {
                 'on-blur': (money) => {
                   let temp = p.row
                   temp.fuelCardAmount = money
-                  this.settlementPayInfo.splice(p.index, 1, temp)
-                  // this.checkTotalAmount()
+                  this.settlementPayInfoBack.splice(p.index, 1, temp)
                 }
               }
             })
@@ -271,7 +271,7 @@ export default {
     // 校验总金额
     checkTotalAmount () {
       let total = 0
-      this.settlementPayInfo.forEach(item => {
+      this.settlementPayInfoBack.forEach(item => {
         total = total + Number(item.cashAmount) + Number(item.fuelCardAmount)
       })
       if (total !== Number(this.paymentTotal) && total !== 0) {
@@ -306,17 +306,17 @@ export default {
         }
 
         this.settlementType = billInfo.settlementType ? billInfo.settlementType.toString() : '1'
-        const settlementPayInfo = billInfo.settlementPayInfo
         let temp = this.settlementPayInfo.map((item, i) => {
-          if (!settlementPayInfo[i]) return item
+          if (!billInfo.settlementPayInfo[i]) return item
           else {
-            const temp = settlementPayInfo[i]
+            const temp = billInfo.settlementPayInfo[i]
             temp.fuelCardAmount = this.setMoneyUnit2Yuan(temp.fuelCardAmount)
             temp.cashAmount = this.setMoneyUnit2Yuan(temp.cashAmount)
             return Object.assign(item, temp)
           }
         })
         this.settlementPayInfo = temp
+        this.settlementPayInfoBack = Object.assign([], temp)
 
         this.loading = false
       }).catch(err => console.error(err))
@@ -337,7 +337,7 @@ export default {
     // 格式化计费方式金额单位为分
     formatPayInfo () {
       // if (this.settlementType !== '1') return
-      return this.settlementPayInfo.map(item => {
+      return this.settlementPayInfoBack.map(item => {
         return {
           payType: item.payType,
           fuelCardAmount: Number(item.fuelCardAmount) * 100,

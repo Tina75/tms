@@ -55,7 +55,7 @@
       </Col>
       <Col span="6">
       <FormItem label="手机号:" prop="consignerPhone">
-        <Input v-model="orderForm.consignerPhone" :maxlength="11" type="mobile"></Input>
+        <Input v-model="orderForm.consignerPhone" :maxlength="11"></Input>
       </FormItem>
       </Col>
       <Col span="6">
@@ -216,7 +216,8 @@ import float from '@/libs/js/float'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import OrderPrint from './OrderPrint'
-import AreaSelect, { getCodeFromList, specialCity } from '@/components/AreaSelect'
+import AreaSelect from '@/components/AreaSelect'
+import { getCityCode, resetCityValidator, FORM_VALIDATE_START, FORM_VALIDATE_END } from '@/libs/constant/cityValidator'
 import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
 import settlements from '@/libs/constant/settlement.js'
@@ -254,31 +255,6 @@ export default {
         callback()
       } else {
         callback(new Error('请输入正确的手机号码'))
-      }
-    }
-
-    const validateArea = (value) => {
-      if (value.length === 1 && !specialCity.includes(value[0])) {
-        return false
-      }
-      return true
-    }
-    const validateStart = (rule, value, callback) => {
-      if (!validateArea(value)) {
-        callback(new Error('请至少选择到市一级城市'))
-      } else if (_this.orderForm.end.length > 0 && value.length > 0 && _.isEqual(_this.orderForm.end, value)) {
-        callback(new Error('始发城市不能和目的城市相同'))
-      } else {
-        callback()
-      }
-    }
-    const validateEnd = (rule, value, callback) => {
-      if (!validateArea(value)) {
-        callback(new Error('请至少选择到市一级城市'))
-      } else if (_this.orderForm.start.length > 0 && value.length > 0 && _.isEqual(_this.orderForm.start, value)) {
-        callback(new Error('目的城市不能和始发城市相同'))
-      } else {
-        callback()
       }
     }
     return {
@@ -371,7 +347,7 @@ export default {
                 props: {
                   'max-width': '200',
                   content: '为了方便您计算价格，重量和体积必须填写一项',
-                  placement: 'top-start',
+                  placement: 'top',
                   transfer: true
                 }
               }, [
@@ -592,11 +568,11 @@ export default {
         ],
         start: [
           { required: true, type: 'array', message: '请选择始发城市' },
-          { validator: validateStart, trigger: 'change' }
+          { validator: FORM_VALIDATE_START, trigger: 'change' }
         ],
         end: [
           { required: true, type: 'array', message: '请选择目的城市' },
-          { validator: validateEnd }
+          { validator: FORM_VALIDATE_END }
         ],
         arriveTime: [
           { validator: validateArriveTime, trigger: 'blur' }
@@ -718,6 +694,7 @@ export default {
     this.resetForm()
     this.clearClients()
     this.clearOrderDetail()
+    resetCityValidator()
   },
   methods: {
     ...mapActions([
@@ -794,12 +771,7 @@ export default {
         if (matchCargo) {
           let syncCargo = new Cargo(matchCargo);
           ['weight', 'volume', 'cargoCost'].forEach((key) => {
-            // this.updateLocalCargo({
-            //   name: key,
-            //   index: params.index,
-            //   value: params.value * matchCargo[key]
-            // })
-            syncCargo[key] = params.value * syncCargo[key]
+            syncCargo[key] = float.round(params.value * syncCargo[key])
           })
           syncCargo.quantity = params.value
           this.syncStoreCargoes()
@@ -859,8 +831,8 @@ export default {
       this.openDialog({
         name: 'dialogs/financeRule.vue',
         data: {
-          start: getCodeFromList(vm.orderForm.start), // 始发城市
-          end: getCodeFromList(vm.orderForm.end), // 目的城市
+          start: getCityCode(vm.orderForm.start), // 始发城市
+          end: getCityCode(vm.orderForm.end), // 目的城市
           partnerName: vm.orderForm.consignerName, // 客户名
           partnerType: 1, // 计算规则分类：1-发货方，2-承运商，3-外转方
           weight: vm.statics.weight,
@@ -873,13 +845,6 @@ export default {
         }
       })
     },
-    /**
-     * 获取最后一位code码
-     * 特殊地区，选择了北京市北京市，取首位code码
-     */
-    // getCityCode (codes) {
-    //   return specialCity.includes(codes[0]) && codes.length === 2 ? codes[0] : codes[codes.length - 1]
-    // },
     // 提交表单
     handleSubmit (e) {
       const vm = this
@@ -906,8 +871,8 @@ export default {
               reject(new Error(findError.message))
             }
             // 始发地遇到北京市等特殊直辖市，需要只保留第一级code
-            let start = getCodeFromList(orderForm.start)
-            let end = getCodeFromList(orderForm.end)
+            let start = getCityCode(orderForm.start)
+            let end = getCityCode(orderForm.end)
             // 始发城市，目的城市，到达时间等需要额外处理
             let form = Object.assign({}, orderForm, {
               start: start,

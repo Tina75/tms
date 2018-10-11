@@ -2,12 +2,13 @@
   <div is="i-col" span="6" class="i-mt-15 page-home__padding-8">
     <BlankCard to="info/index" page-title="消息">
       <div slot="title">消息中心</div>
-      <CellGroup @on-click="handleClick">
+      <CellGroup v-if="data.length" @on-click="handleClick">
         <Cell v-for="(msg, index) in data" :key="index" :name="msg.type" :title="msg.title" :label="formatTime(msg.createTime)" class="page-home__message-item">
           <FontIcon slot="icon" :type="getIcon(msg.type)" :color="getColor(msg.type)" size="26">
           </FontIcon>
         </Cell>
       </CellGroup>
+      <NoData v-else></NoData>
     </BlankCard>
   </div>
 </template>
@@ -31,20 +32,18 @@ import BlankCard from '../components/BlankCard.vue'
 import FontIcon from '@/components/FontIcon'
 import mixin from './mixin.js'
 import BasePage from '@/basic/BasePage'
+import NoData from './noData'
 export default {
   name: 'message-center',
   components: {
     BlankCard,
-    FontIcon
+    FontIcon,
+    NoData
   },
   mixins: [mixin, BasePage],
   data () {
     return {
-      data: [
-        { title: '系统升级提示', url: '/info/index', createTime: '2018-8-8', type: 0 },
-        { title: '订单发货啦', url: '/info/index', createTime: '2018-8-8', type: 1 },
-        { title: '订单快到啦', url: '/info/index', createTime: '2018-8-8', type: 2 }
-      ]
+      data: []
     }
   },
   methods: {

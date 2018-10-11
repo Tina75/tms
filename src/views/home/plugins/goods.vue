@@ -1,20 +1,20 @@
 <template>
   <div is="i-col" :span="12" class="i-mt-15 page-home__padding-8">
-    <blank-card>
-      <div slot="title">货物重量 / 体积</div>
-      <div class="chart">
+    <blank-card :to="linkto" title="货物重量 / 体积" page-title="订单管理">
+      <div v-if="volumeData.length || weightData.length" class="chart">
         <ECharts :options="options" :auto-resize="true"></ECharts>
         <div class="chart__attach">
-          <span class="chart__left">
+          <span v-if="weightData.length" class="chart__left">
             <span v-text="weight" />
             <small> 吨</small>
           </span>
-          <span class="chart__right">
+          <span v-if="volumeData.length" class="chart__right">
             <span v-text="volume" />
             <small> 方</small>
           </span>
         </div>
       </div>
+      <no-data v-else />
     </blank-card>
   </div>
 </template>
@@ -23,6 +23,9 @@
 import BlankCard from '../components/BlankCard'
 import ECharts from 'vue-echarts/components/ECharts'
 import mixin from './mixin.js'
+import float from '@/libs/js/float'
+import url from '@/libs/constant/url'
+import NoData from './noData'
 
 const statusStr = {
   10: '待提货',
@@ -36,7 +39,8 @@ export default {
 
   components: {
     BlankCard,
-    ECharts
+    ECharts,
+    NoData
   },
 
   mixins: [mixin],
@@ -47,7 +51,9 @@ export default {
       weight: 0,
 
       volumeData: [],
-      weightData: []
+      weightData: [],
+
+      linkto: url.ORDER_MANAGEMENT
     }
   },
 
@@ -55,23 +61,12 @@ export default {
     options () {
       return {
         color: ['#5D9EFF', '#11C88C', '#79D9F0', '#A7E7FF'],
+
         tooltip: {
-          trigger: 'item',
-          formatter: (param) => {
-            return `${statusStr[param.name]}: ${param.value}`
-          }
+          trigger: 'item'
         },
+
         series: [
-          {
-            type: 'pie',
-            hoverAnimation: false,
-            center: ['75%', '35%'],
-            radius: '50%',
-            label: {
-              show: false
-            },
-            data: this.weightData || []
-          },
           {
             type: 'pie',
             hoverAnimation: false,
@@ -80,7 +75,27 @@ export default {
             label: {
               show: false
             },
-            data: this.volumeData || []
+            data: this.weightData || [],
+            tooltip: {
+              formatter: (param) => {
+                return `${statusStr[param.name]}: ${param.value} 吨`
+              }
+            }
+          },
+          {
+            type: 'pie',
+            hoverAnimation: false,
+            center: ['75%', '35%'],
+            radius: '50%',
+            label: {
+              show: false
+            },
+            data: this.volumeData || [],
+            tooltip: {
+              formatter: (param) => {
+                return `${statusStr[param.name]}: ${param.value} 方`
+              }
+            }
           }
         ]
       }
@@ -96,16 +111,16 @@ export default {
             res.map(item => {
               let obj = {
                 name: item.status,
-                value: item.volume
-              }
-              self.volumeData.push(obj)
-              let obj2 = {
-                name: item.status,
                 value: item.weight
               }
-              self.weightData.push(obj2)
-              self.volume += item.volume
-              self.weight += item.weight
+              let obj2 = {
+                name: item.status,
+                value: item.volume
+              }
+              self.weightData.push(obj)
+              self.volumeData.push(obj2)
+              self.weight = float.round(self.weight + item.weight)
+              self.volume = float.round(self.volume + item.volume)
             })
           }
         })

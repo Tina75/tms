@@ -5,8 +5,6 @@
       :extra="total"
       title="外转方核销待办"
       label="提示文字"
-      to="/finance/transfer"
-      page-title="外转方对账"
     >
     </OrderCard>
   </div>
@@ -16,6 +14,7 @@
 // 外转方核销待办
 import OrderCard from '../components/OrderCard.vue'
 import mixin from './mixin.js'
+import TMSUrl from '@/libs/constant/url.js'
 
 export default {
   name: 'exterior-todo',
@@ -26,8 +25,8 @@ export default {
   data () {
     return {
       data: [
-        { id: 'wait_reconcile', name: '外转方待对账订单', value: 0, tab: 'wait_reconcile' },
-        { id: 'wait_verify', name: '外转方待核销订单', value: 0, tab: 'wait_verify' }
+        { id: 'wait_verify', name: '外转方待核销订单数', value: 0, tab: '1', href: TMSUrl.TRANSFER_FINANCE, title: '外转方对账' },
+        { id: 'wait_reconcile', name: '外转方对账单数量', value: 0, tab: '2', href: TMSUrl.TRANSFER_FINANCE, title: '外转方对账' }
       ]
     }
   },

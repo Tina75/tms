@@ -6,15 +6,11 @@
       </p>
       <Form ref="info" :model="info" :rules="rules" :label-width="100" label-position="left">
         <FormItem label="外转方：" prop="transfereeName">
-          <SelectInput
-            v-model="info.transfereeName"
-            :maxlength="20"
-            :remote="false"
-            :local-options="transferees"
-            placeholder="请输入"
-            style="width:200px"
-            @on-select="handleSelectTransferee">
-          </SelectInput>
+          <SelectInput v-model="easySearchKeyword"
+                       mode="transferee"
+                       placeholder="请输入"
+                       style="width:200px"
+                       @on-select="handleSelectTransferee" />
         </FormItem>
         <FormItem label="外转方运单号：">
           <Input v-model="info.outTransNo" :maxlength="20" style="width:200px" placeholder="请输入"/>
@@ -32,7 +28,7 @@
             <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" style="width:170px">
               <span slot="suffix" class="order-create__input-suffix">元</span>
             </TagNumberInput>
-            <Icon type="ios-calculator" size="30" color="#00a4bd" @click="showCounter"></Icon>
+            <a @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1" style="font-size: 26px; vertical-align: middle; margin-left: 4px;"></i></a>
           </div>
         </FormItem>
       </Form>
@@ -47,7 +43,7 @@
 <script>
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
-import SelectInput from '@/components/SelectInput.vue'
+import SelectInput from '../components/SelectInput.vue'
 import TagNumberInput from '@/views/order/create/TagNumberInput'
 import float from '@/libs/js/float'
 export default {
@@ -62,7 +58,7 @@ export default {
   data () {
     return {
       visiable: true,
-      transferees: [],
+
       info: {
         transfereeName: '',
         outTransNo: '',
@@ -79,28 +75,11 @@ export default {
 
   created: function () {
     this.fetchData()
-    this.getTransferees()
   },
 
   methods: {
-    getTransferees () {
-      Server({
-        url: '/transferee/listOrderbyUpdateTimeDesc',
-        method: 'get',
-        data: { type: 1 }
-      }).then(res => {
-        this.transferees = res.data.data.transfereeList.map(item => {
-          return {
-            name: item.name,
-            value: item.name,
-            payType: item.payType.toString()
-          }
-        })
-      })
-    },
-
-    handleSelectTransferee (name, row) {
-      if (row.payType) this.info.payType = row.payType
+    handleSelectTransferee ({ row }) {
+      if (row.payType) this.info.payType = row.payType.toString()
     },
 
     // 保留2位小数
@@ -128,8 +107,8 @@ export default {
     },
 
     // 显示计费规则
-    showCounter () {
-      const _this = this
+    showChargeRules () {
+      const self = this
       this.openDialog({
         name: 'dialogs/financeRule',
         data: {
@@ -137,7 +116,7 @@ export default {
         },
         methods: {
           ok (value) {
-            _this.info.transFee = value || 0
+            self.info.transFee = value || 0
           },
           closeParentDialog () {
             self.close()

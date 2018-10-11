@@ -2,6 +2,7 @@ import MoneyInput from '../components/MoneyInput'
 import Server from '@/libs/js/server'
 import Float from '@/libs/js/float'
 import { CAR } from '@/views/client/client'
+import { validateCityies } from '@/libs/constant/cityValidator'
 
 export default {
   data () {
@@ -64,8 +65,7 @@ export default {
                   'on-blur': (money) => {
                     let temp = p.row
                     temp.cashAmount = money
-                    this.settlementPayInfo.splice(p.index, 1, temp)
-                    // this.checkTotalAmount()
+                    this.settlementPayInfoBack.splice(p.index, 1, temp)
                   }
                 }
               })
@@ -86,14 +86,13 @@ export default {
                   suffix: false
                 },
                 style: {
-                  width: '60px'
+                  width: '70px'
                 },
                 on: {
                   'on-blur': (money) => {
                     let temp = p.row
                     temp.fuelCardAmount = money
-                    this.settlementPayInfo.splice(p.index, 1, temp)
-                    // this.checkTotalAmount()
+                    this.settlementPayInfoBack.splice(p.index, 1, temp)
                   }
                 }
               })
@@ -195,10 +194,16 @@ export default {
     // 计费规则
     showChargeRules () {
       const self = this
+      if (!self.orderTotal.weight || !self.orderTotal.volume) {
+        this.$Message.error('请先添加订单')
+        return
+      }
       this.openDialog({
         name: 'dialogs/financeRule',
-        data: { // 以下数据必传
-          partnerType: self.pageName === 'pickup' ? 3 : 2, // 计费规则分类 - 发货方1 承运商2 外转方3
+        data: {
+          // partnerName: partnerName, // 可选
+          // 以下数据必传
+          partnerType: self.pageName === 'feright' ? 1 : 3, // 计费规则分类 - 发货方1 承运商2 外转方3
           weight: self.orderTotal.weight, // 货物重量
           volume: self.orderTotal.volume, // 货物体积
           start: self.info.start, // 始发地code
@@ -220,7 +225,7 @@ export default {
     // 校验结算方式输入金额
     checkTotalAmount () {
       let total = 0
-      this.settlementPayInfo.forEach(item => {
+      this.settlementPayInfoBack.forEach(item => {
         total = total + Number(item.cashAmount) + Number(item.fuelCardAmount)
       })
       if (total !== Number(this.paymentTotal) && total !== 0) {
@@ -277,7 +282,7 @@ export default {
     // 格式化计费方式金额单位为分
     formatPayInfo () {
       // if (this.settlementType !== '1') return
-      return this.settlementPayInfo.map(item => {
+      return this.settlementPayInfoBack.map(item => {
         return {
           payType: item.payType,
           fuelCardAmount: Number(item.fuelCardAmount) * 100,
@@ -287,15 +292,7 @@ export default {
     },
     // 校验
     validate () {
-      if (this.info.start !== undefined && !this.info.start) {
-        this.$Message.error('请输入始发地')
-        return false
-      }
-      if (this.info.end !== undefined && !this.info.end) {
-        this.$Message.error('请输入目的地')
-        return false
-      }
-      if (this.info.start !== undefined || this.info.end !== undefined) return this.checkPlace()
+      if (this.info.start !== undefined || this.info.end !== undefined) return validateCityies(this.startCodes, this.endCodes)
       if (this.pageName === 'pickup' && !this.info.carrierName) {
         this.$Message.error('请输入承运商')
         return false

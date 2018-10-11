@@ -42,7 +42,7 @@
         </Col>
           <Col span="6">
           <div class="col">
-            <area-select v-model="keywords.end"  placeholder="请输入目的地" style="width: 100%"></area-select>
+            <area-select v-model="keywords.end" placeholder="请输入目的地" style="width: 100%"></area-select>
           </div>
         </Col>
           <Col span="6">
@@ -79,6 +79,7 @@
       :extra-columns="extraColumns"
       :show-filter="true"
       width="100%"
+      @on-load = "onLoad"
       @on-column-change="handleColumnChange">
     </page-table>
   </div>
@@ -97,6 +98,9 @@ export default {
     SelectInput,
     PageTable,
     AreaSelect
+  },
+  metaInfo: {
+    title: '运营报表'
   },
   data () {
     return {
@@ -122,6 +126,7 @@ export default {
         }
       },
       times: ['', ''],
+      isExport: false,
       /* 订单状态 */
       orderStatusMap: {
         10: '提货',
@@ -533,6 +538,11 @@ export default {
       'clients'
     ])
   },
+  mounted () {
+    if (this.$route.query.tab) { // 首页跳转来的
+      this.showSevenDate()
+    }
+  },
   methods: {
     ...mapActions([
       'getClients'
@@ -586,8 +596,8 @@ export default {
     },
     // 导出
     ProfitsExport () {
-      if (!this.isEmpty()) {
-        this.$Message.error('请先输入导出条件')
+      if (!this.isExport) {
+        this.$Message.error('导出内容为空')
         return
       }
       let data = {
@@ -614,6 +624,26 @@ export default {
     handleTimeChange (val) {
       this.keywords.startTime = val[0]
       this.keywords.endTime = val[1]
+    },
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
+    },
+    showSevenDate () {
+      let now = new Date().getTime()
+      this.keywords.startTime = this.formatDate(now - 7 * 24 * 60 * 60 * 1000)
+      this.keywords.endTime = this.formatDate(now)
+      this.times = [this.keywords.startTime, this.keywords.endTime]
+      this.keyword = {
+        startTime: this.keywords.startTime,
+        endTime: this.keywords.endTime
+      }
+    },
+    onLoad (res) {
+      if (res.data.data.list && res.data.data.list.length > 0) {
+        this.isExport = true
+      } else {
+        this.isExport = false
+      }
     }
   }
 }

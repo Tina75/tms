@@ -1,3 +1,5 @@
+import { getCityCode } from '@/libs/constant/cityValidator'
+
 export default {
   data () {
     return {
@@ -41,8 +43,8 @@ export default {
     if (columns) this.extraColumns = JSON.parse(columns)
 
     let tab
-    if (this.$route.query.tab) {
-      tab = this.$route.query.tab
+    if (this.$route.query.tab && this.$route.query.tab < this.tabList.length) {
+      tab = this.tabList[this.$route.query.tab].name
       window.sessionStorage.setItem('TABHEADER_' + this.tabType, tab)
     } else {
       tab = window.sessionStorage['TABHEADER_' + this.tabType]
@@ -52,6 +54,7 @@ export default {
       this.tabStatus = this.setTabStatus(tab)
       this.tabChanged(tab)
     } else {
+      this.tabStatus = this.setTabStatus(this.tabList[1].name)
       this.currentBtns = this.btnList[1].btns
     }
     this.fetchData()
@@ -64,6 +67,15 @@ export default {
         return false
       }
       return true
+    },
+
+    triggerTableActionColumn (show) {
+      const hasAction = this.tableColumns[1].key === 'action'
+      if (hasAction && !show) { // 移除action
+        this.tableColumns.splice(1, 1)
+      } else if (!hasAction && show) { // 添加action
+        this.tableColumns.splice(1, 0, this.tableActionColumn)
+      }
     },
 
     fetchData () {
@@ -170,17 +182,9 @@ export default {
             params.keyWord = this.easySearchKeyword
           }
         } else {
-          if (this.seniorSearchFields.startCodes) {
-            if (this.seniorSearchFields.startCodes.length) {
-              this.seniorSearchFields.start = this.seniorSearchFields.startCodes[this.seniorSearchFields.startCodes.length - 1]
-            } else this.seniorSearchFields.start = ''
-          }
+          this.seniorSearchFields.start = getCityCode(this.seniorSearchFields.startCodes)
 
-          if (this.seniorSearchFields.endCodes) {
-            if (this.seniorSearchFields.endCodes.length) {
-              this.seniorSearchFields.end = this.seniorSearchFields.endCodes[this.seniorSearchFields.endCodes.length - 1]
-            } else this.seniorSearchFields.end = ''
-          }
+          this.seniorSearchFields.end = getCityCode(this.seniorSearchFields.endCodes)
 
           if (this.seniorSearchFields.dateRange[0]) {
             this.seniorSearchFields.startTime = this.seniorSearchFields.dateRange[0].Format('yyyy-MM-dd hh:mm:ss')

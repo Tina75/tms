@@ -51,8 +51,8 @@ export default {
         pageSize: 10
       },
       orderData: {
-        orderNum: 100,
-        totalFee: 1000.87,
+        orderNum: 0,
+        totalFee: 0,
         list: []
       }
     }
@@ -160,23 +160,51 @@ export default {
         this.orderData.totalFeeText = (res.data.data.totalFee / 100).toFixed(2)
         this.orderData.list = res.data.data.subOrderInfos.map(item => {
           return Object.assign({}, item, {
-            totalFeeText: (item.totalFee / 100).toFixed(2)
+            totalFeeText: (item.totalFee / 100).toFixed(2),
+            orderTimeText: new Date(item.orderTime).Format('yyyy-MM-dd hh:mm')
           })
         })
       }).catch(err => console.error(err))
     },
     toDetail (data) {
-      this.openTab({
-        path: '/order-management/detail',
-        query: {
-          id: data.row.orderNo,
-          orderId: data.row.id,
-          from: 'order'
-        }
-      })
+      switch (data.row.orderType) {
+        case 1:
+          this.openTab({
+            path: '/order-management/detail',
+            title: data.row.orderNo,
+            query: {
+              id: data.row.orderNo,
+              orderId: data.row.orderId,
+              from: 'order'
+            }
+          })
+          break
+        case 2:
+          this.openTab({
+            title: data.row.orderNo,
+            path: '/transport/detail/detailFreight',
+            query: { id: data.row.orderId } // id 或 no 二选一
+          })
+          break
+        case 3:
+          this.openTab({
+            title: data.row.orderNo,
+            path: '/transport/detail/detailPickup',
+            query: { id: data.row.orderId }
+          })
+          break
+        case 4:
+          this.openTab({
+            title: data.row.orderNo,
+            path: '/transport/detail/detailOuter',
+            query: { id: data.row.orderId }
+          })
+          break
+      }
     },
-    resetPageSize () {
+    resetPageSize (size) {
       this.listQuery.pageNo = 1
+      this.listQuery.pageSize = size
       this.getOrderList()
     }
   }
@@ -199,11 +227,4 @@ export default {
       vertical-align: middle
     .list-box
       text-align: right
-      /deep/ .ivu-table-wrapper
-        margin-bottom: 20px
-      /deep/ .ivu-page-item-active
-        background-color: #00a4bd
-        border-radius: 5px
-        a
-          color: #ffffff
 </style>

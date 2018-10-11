@@ -9,14 +9,14 @@
       <div class="operate-block">
         <Button type="primary" @click="addRule">新增规则</Button>
         <div class="query-box">
-          <Form :model="rulesQuery" inline>
+          <Form ref="rulesQuery" :model="rulesQuery" :rules="validate" inline>
             <FormItem>
-              <Select v-model="rulesQuery.type" clearable>
+              <Select v-model="rulesQuery.type">
                 <Option value="1">{{sceneMap[active]}}名称</Option>
                 <Option value="2">规则名称</Option>
               </Select>
             </FormItem>
-            <FormItem>
+            <FormItem prop="queryText">
               <Input v-model="rulesQuery.queryText" :placeholder="`请输入${sceneMap[active]}名称`" style="width: auto">
               <Icon slot="suffix" type="ios-search" class="suffix-btn" @click="getRules"/>
               </Input>
@@ -29,8 +29,12 @@
           <Col span="7">
           <Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showRuleDetail"></Table>
           </Col>
-          <Col v-if="ruleDetail.ruleId" span="17">
-          <div class="rule-block">
+          <Col span="17">
+          <div v-if="!ruleDetail.ruleId" class="data-empty">
+            <img src="../../assets/img-empty.png" class="data-empty-img">
+            <p>请点击左侧{{sceneMap[active]}}设置计费规则明细～</p>
+          </div>
+          <div v-else class="rule-block">
             <div class="rule-basic">
               <Form inline>
                 <span>按</span>
@@ -40,10 +44,10 @@
                     <Option value="2">体积</Option>
                   </Select>
                 </FormItem>
-                <span>计算&#12288;&#12288;单位：元/吨</span>
+                <span>计算&#12288;&#12288;单位：元/{{unitMap[ruleDetail.ruleType]}}</span>
                 <span>&#12288;&#12288;&#12288;&#12288;&#12288;规则名：</span>
                 <FormItem>
-                  <Input v-model="ruleDetail.ruleName" :placeholder="`请输入${sceneMap[active]}名称`" style="width: auto" />
+                  <Input v-model="ruleDetail.ruleName" :placeholder="`请输入规则名称`" style="width: auto" />
                 </FormItem>
               </Form>
             </div>
@@ -52,7 +56,7 @@
                 <div class="item-remove">
                   <Icon type="md-remove-circle" @click="removeItem(index)"/>
                 </div>
-                <Collapse v-model="ruleShowIndex" class="rule-content">
+                <Collapse v-model="item.showRule" class="rule-content">
                   <div class="rule-route">
                     <Row :gutter="20">
                       <Col span="12">
@@ -111,13 +115,13 @@
                                     <div class="ivu-table-cell">
                                       <span>大于等于</span>
                                       <Input v-model="el.base" style="width: 120px"/>
-                                      <span>吨</span>
+                                      <span>{{unitMap[ruleDetail.ruleType]}}</span>
                                     </div>
                                   </td>
                                   <td class="">
                                     <div class="ivu-table-cell">
                                       <Input v-model="el.price" style="width: 120px"/>
-                                      <span>元/吨</span>
+                                      <span>元/{{unitMap[ruleDetail.ruleType]}}</span>
                                     </div>
                                   </td>
                                 </tr>
@@ -163,18 +167,24 @@ export default {
   data () {
     return {
       active: '1',
-      ruleShowIndex: '1',
+      unitMap: {
+        1: '吨',
+        2: '方'
+      },
       sceneMap: {
         1: '发货方',
         2: '承运商',
         3: '外转方'
       },
       rulesQuery: {
-        type: '',
+        type: '1',
         queryText: ''
       },
       companyData: [],
-      ruleDetail: {}
+      ruleDetail: {},
+      validate: {
+        queryText: { type: 'string', max: 20, message: '不能超过20个字', trigger: 'blur' }
+      }
     }
   },
   computed: {
@@ -236,7 +246,7 @@ export default {
       const _this = this
       this.$Modal.confirm({
         title: '提示',
-        content: '确认从删除该条规则吗？',
+        content: '确认删除该条规则吗？',
         okText: '确认',
         cancelText: '取消',
         async onOk () {
@@ -263,6 +273,7 @@ export default {
       this.ruleDetail.details.push({
         departure: '',
         destination: '',
+        showRule: (this.ruleDetail.details.length + 1) + '',
         chargeRules: [
           { base: '', price: '' }
         ]
@@ -272,29 +283,53 @@ export default {
       this.ruleDetail.details.splice(index, 1)
     },
     saveRules () {
-      Server({
-        url: '/finance/charge/updateRule',
-        method: 'post',
-        data: Object.assign({}, this.ruleDetail, {
-          details: this.ruleDetail.details.map(item => {
-            return {
-              departure: item.departure[item.departure.length - 1],
-              destination: item.destination[item.destination.length - 1],
-              chargeRules: item.chargeRules.map(el => {
+      const _this = this
+      this.$Modal.confirm({
+        title: '提示',
+        content: '确认保存该条规则吗？',
+        okText: '确认',
+        cancelText: '取消',
+        async onOk () {
+          Server({
+            url: '/finance/charge/updateRule',
+            method: 'post',
+            data: Object.assign({}, _this.ruleDetail, {
+              details: _this.ruleDetail.details.map(item => {
                 return {
-                  base: parseFloat(el.base) * 100,
-                  price: parseFloat(el.price) * 100
+                  departure: item.departure[item.departure.length - 1],
+                  destination: item.destination[item.destination.length - 1],
+                  chargeRules: item.chargeRules.map(el => {
+                    return {
+                      base: parseFloat(el.base) * 100,
+                      price: parseFloat(el.price) * 100
+                    }
+                  })
                 }
               })
-            }
-          })
-        })
-      }).then(res => {
-        this.getRules()
-      }).catch(err => console.error(err))
+            })
+          }).then(res => {
+            _this.$Message.success('保存成功')
+            _this.getRules()
+          }).catch(err => console.error(err))
+        },
+        async onCancel () {
+          _this.getRules()
+        }
+      })
     },
     switchTab () {
+      this.rulesQuery = {
+        type: '1',
+        queryText: ''
+      }
       this.getRules()
+    },
+    startQuery () {
+      this.$refs['rulesQuery'].validate((valid) => {
+        if (valid) {
+          this.getRules()
+        }
+      })
     },
     getRules () {
       Server({
@@ -315,12 +350,13 @@ export default {
     showRuleDetail (data) {
       this.ruleDetail = {
         ruleId: data.ruleId,
-        ruleType: data.detail.ruleType + '',
+        ruleType: data.detail.ruleType ? (data.detail.ruleType + '') : '1',
         ruleName: data.ruleName,
-        details: Object.assign([], data.detail.rules.map(item => {
+        details: Object.assign([], data.detail.rules.map((item, index) => {
           return {
             departure: item.departure + '',
             destination: item.destination + '',
+            showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
               return {
                 base: el.base / 100,
@@ -387,7 +423,7 @@ export default {
             .rule-route
               display: block
               position: absolute
-              width: 400px
+              width: 500px
               top: 10px
               left: 20px
               z-index: 101
@@ -434,4 +470,17 @@ export default {
       .ivu-btn
         padding-left: 30px
         padding-right: 30px
+    .data-empty
+      display flex
+      flex-direction column
+      justify-content center
+      align-items center
+      height 500px
+      border 1px solid #dcdee2
+      .data-empty-img
+        width 70px
+        margin-bottom 12px
+      p
+        color #999999
+        text-align center
 </style>

@@ -1,18 +1,18 @@
 <template>
-  <div ref="$box">
+  <div ref="$box" class="transport-page">
     <TabHeader :tabs="tabList" :type="tabType" @on-change="tabChanged"></TabHeader>
 
     <div style="margin-top: 30px;display: flex;justify-content: space-between;">
 
       <!-- 按钮组 -->
-      <div>
+      <div class="custom-style">
         <Button v-for="(item, key) in showButtons" :key="key"
                 :type="key === 0 ? 'primary' : 'default'"
                 @click="item.func">{{ item.name }}</Button>
       </div>
 
       <!-- 简易搜索 -->
-      <div v-if="isEasySearch" class="right">
+      <div v-if="isEasySearch" class="right custom-style">
         <Select v-model="easySelectMode"
                 style="width:120px; margin-right: 11px"
                 @on-change="resetEasySearch">
@@ -54,7 +54,7 @@
     </div>
 
     <!-- 高级搜索 -->
-    <div v-if="!isEasySearch" class="operate-box">
+    <div v-if="!isEasySearch" class="operate-box custom-style">
 
       <div style="margin-bottom: 10px;">
         <Input v-model="seniorSearchFields.pickupNo" :maxlength="20" placeholder="请输入提货单号"  class="search-input-senior" />
@@ -129,6 +129,7 @@ import PrintPickup from './components/PrintPickup'
 
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
+import TMSUrl from '@/libs/constant/url'
 
 export default {
   name: 'ReceiveManager',
@@ -262,30 +263,31 @@ export default {
         endTime: '' // 结束时间
       },
 
+      tableActionColumn: {
+        title: '操作',
+        key: 'action',
+        width: 60,
+        fixed: 'left',
+        extra: true,
+        render: (h, p) => {
+          if (p.row.status === 1 && this.hasPower(120201)) {
+            return h('a', {
+              on: {
+                click: () => {
+                  this.billPickup(p.row.pickUpId)
+                }
+              }
+            }, '提货')
+          }
+        }
+      },
+
       tableColumns: [
         {
           type: 'selection',
           width: 50,
           align: 'center',
           fixed: 'left'
-        },
-        {
-          title: '操作',
-          key: 'do',
-          width: 60,
-          fixed: 'left',
-          extra: true,
-          render: (h, p) => {
-            if (p.row.status === 1 && this.hasPower(120201)) {
-              return h('a', {
-                on: {
-                  click: () => {
-                    this.billPickup(p.row.pickUpId)
-                  }
-                }
-              }, '提货')
-            }
-          }
         },
         {
           title: '提货单号',
@@ -301,7 +303,7 @@ export default {
                 click: () => {
                   this.openTab({
                     title: p.row.pickupNo,
-                    path: '/transport/detail/detailPickup',
+                    path: TMSUrl.PICKUP_ORDER_DETAIL,
                     query: { id: p.row.pickUpId }
                   })
                 }
@@ -325,7 +327,7 @@ export default {
         {
           title: '车牌号',
           key: 'carNo',
-          width: 100
+          width: 120
         },
         {
           title: '合计运费',
@@ -338,18 +340,18 @@ export default {
         {
           title: '体积（方）',
           key: 'volume',
-          width: 100
+          width: 120
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          width: 100
+          width: 120
         },
         {
           title: '创建时间',
           key: 'createTimeLong',
           sortable: 'custom',
-          width: 160,
+          minWidth: 160,
           render: (h, p) => {
             return this.tableDataRender(h, this.timeFormatter(p.row.createTimeLong), true)
           }
@@ -365,7 +367,7 @@ export default {
         {
           title: '货值',
           key: 'cargoCost',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
           }
@@ -373,7 +375,7 @@ export default {
         {
           title: '结算方式',
           key: 'settlementType',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, this.payTypeFormatter(p.row.settlementType))
           }
@@ -396,7 +398,7 @@ export default {
         {
           title: '订单数',
           key: 'orderCnt',
-          width: 100
+          width: 120
         }
       ],
       extraColumns: [
@@ -493,12 +495,16 @@ export default {
     setTabStatus (tab) {
       switch (tab) {
         case '全部':
+          this.triggerTableActionColumn(true)
           return
         case '待提货':
+          this.triggerTableActionColumn(true)
           return 1
         case '提货中':
+          this.triggerTableActionColumn(false)
           return 2
         case '已提货':
+          this.triggerTableActionColumn(false)
           return 3
         default:
       }
@@ -645,6 +651,6 @@ export default {
 }
 </script>
 
-<style lang='stylus' scoped>
+<style lang='stylus'>
   @import './transport.styl'
 </style>

@@ -1,18 +1,18 @@
 <template>
-  <div ref="$box">
+  <div ref="$box" class="transport-page">
     <TabHeader :tabs="tabList" :type="tabType" @on-change="tabChanged"></TabHeader>
 
     <div style="margin-top: 30px;display: flex;justify-content: space-between;">
 
       <!-- 按钮组 -->
-      <div>
+      <div class="custom-style">
         <Button v-for="(item, key) in showButtons" :key="key"
                 :type="key === 0 ? 'primary' : 'default'"
                 @click="item.func">{{ item.name }}</Button>
       </div>
 
       <!-- 简易搜索 -->
-      <div v-if="isEasySearch" class="right">
+      <div v-if="isEasySearch" class="right custom-style">
         <Select v-model="easySelectMode"
                 style="width:120px; margin-right: 11px"
                 @on-change="resetEasySearch">
@@ -21,11 +21,9 @@
 
         <SelectInput v-if="easySelectMode === 1"
                      v-model="easySearchKeyword"
-                     :maxlength="20"
-                     :remote="false"
-                     :local-options="transferees"
-                     clearable
+                     mode="transferee"
                      placeholder="请输入外转方名称"
+                     clearable
                      class="search-input"
                      @on-clear="resetEasySearch" />
 
@@ -56,13 +54,11 @@
     </div>
 
     <!-- 高级搜索 -->
-    <div v-if="!isEasySearch" class="operate-box">
+    <div v-if="!isEasySearch" class="operate-box custom-style">
 
       <div style="margin-bottom: 10px;">
         <SelectInput v-model="seniorSearchFields.consignerName"
-                     :maxlength="20"
-                     :remote="false"
-                     :local-options="consigners"
+                     mode="consigner"
                      placeholder="请输入客户名称"
                      class="search-input-senior" />
 
@@ -71,9 +67,7 @@
         <Input v-model="seniorSearchFields.transNo" :maxlength="20" placeholder="请输入外转单号" class="search-input-senior" />
 
         <SelectInput v-model="seniorSearchFields.transfereeName"
-                     :maxlength="20"
-                     :remote="false"
-                     :local-options="transferees"
+                     mode="transferee"
                      placeholder="请输入外转方名称"
                      class="search-input-senior" />
       </div>
@@ -128,10 +122,11 @@ import TransportMixin from './transportMixin'
 import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
 import AreaSelect from '@/components/AreaSelect'
-import SelectInput from '@/components/SelectInput'
+import SelectInput from './components/SelectInput.vue'
 
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
+import TMSUrl from '@/libs/constant/url'
 
 export default {
   name: 'OuterManager',
@@ -252,38 +247,39 @@ export default {
         endTime: '' // 结束时间
       },
 
+      tableActionColumn: {
+        title: '操作',
+        key: 'action',
+        width: 120,
+        fixed: 'left',
+        extra: true,
+        render: (h, p) => {
+          if (p.row.status === 1 && this.hasPower(120301)) {
+            return h('a', {
+              on: {
+                click: () => {
+                  this.billShipment([p.row.transId])
+                }
+              }
+            }, '发运')
+          } else if (p.row.status === 2 && this.hasPower(120302)) {
+            return h('a', {
+              on: {
+                click: () => {
+                  this.billArrived([p.row.transId])
+                }
+              }
+            }, '到货')
+          }
+        }
+      },
+
       tableColumns: [
         {
           type: 'selection',
           width: 50,
           align: 'center',
           fixed: 'left'
-        },
-        {
-          title: '操作',
-          key: 'do',
-          width: 100,
-          fixed: 'left',
-          extra: true,
-          render: (h, p) => {
-            if (p.row.status === 1 && this.hasPower(120301)) {
-              return h('a', {
-                on: {
-                  click: () => {
-                    this.billShipment([p.row.transId])
-                  }
-                }
-              }, '发运')
-            } else if (p.row.status === 2 && this.hasPower(120302)) {
-              return h('a', {
-                on: {
-                  click: () => {
-                    this.billArrived([p.row.transId])
-                  }
-                }
-              }, '到货')
-            }
-          }
         },
         {
           title: '外转单号',
@@ -299,7 +295,7 @@ export default {
                 click: () => {
                   this.openTab({
                     title: p.row.transNo,
-                    path: '/transport/detail/detailOuter',
+                    path: TMSUrl.OUTER_ORDER_DETAIL,
                     query: { id: p.row.transId }
                   })
                 }
@@ -352,12 +348,12 @@ export default {
         {
           title: '体积（方）',
           key: 'volume',
-          width: 100
+          width: 120
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          width: 100
+          width: 120
         },
         {
           title: '外转时间',
@@ -404,7 +400,7 @@ export default {
         {
           title: '货值',
           key: 'cargoCost',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
           }
@@ -412,7 +408,7 @@ export default {
         {
           title: '结算方式',
           key: 'payType',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, this.payTypeFormatter(p.row.payType, true))
           }
@@ -436,7 +432,7 @@ export default {
         {
           title: '回单数',
           key: 'receiptCount',
-          width: 100
+          width: 120
         },
         {
           title: '制单人',
@@ -578,27 +574,24 @@ export default {
           fixed: false,
           visible: false
         }
-      ],
-
-      transferees: [], // 外转方列表
-      consigners: [] // 客户列表
+      ]
     }
-  },
-  created () {
-    this.getTransferee()
-    this.getConsigners()
   },
   methods: {
     // 设置标签状态
     setTabStatus (tab) {
       switch (tab) {
         case '全部':
+          this.triggerTableActionColumn(true)
           return
         case '待发运':
+          this.triggerTableActionColumn(true)
           return 1
         case '在途':
+          this.triggerTableActionColumn(true)
           return 2
         case '已到货':
+          this.triggerTableActionColumn(false)
           return 3
         default:
       }
@@ -616,31 +609,6 @@ export default {
         { name: '已到货', count: data.statusCntInfo.loadedCnt || 0 }
       ]
       this.$forceUpdate()
-    },
-
-    // 查询外转方
-    getTransferee () {
-      Server({
-        url: '/transferee/listOrderbyUpdateTimeDesc',
-        method: 'get',
-        data: { type: 1 }
-      }).then(res => {
-        this.transferees = res.data.data.transfereeList.map(item => {
-          return { name: item.name, value: item.name }
-        })
-      }).catch(err => console.error(err))
-    },
-
-    // 查询客户
-    getConsigners () {
-      Server({
-        url: '/consigner/list',
-        method: 'get'
-      }).then(res => {
-        this.consigners = res.data.data.list.map(item => {
-          return { name: item.name, value: item.name }
-        })
-      }).catch(err => console.error(err))
     },
 
     // 删除
@@ -765,6 +733,6 @@ export default {
 }
 </script>
 
-<style lang='stylus' scoped>
+<style lang='stylus'>
   @import './transport.styl'
 </style>

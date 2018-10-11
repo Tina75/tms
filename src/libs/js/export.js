@@ -15,7 +15,7 @@ let instance = axios.create({
   withCredentials: true,
   loading: false,
   ignoreCode: false,
-  responseType: 'arraybuffer' // 'application/json'
+  responseType: 'arraybuffer'
 })
 
 instance.defaults.baseURL = Server.defaults.baseURL
@@ -39,6 +39,7 @@ instance.interceptors.request.use((config) => {
 // code状态码200判断
 instance.interceptors.response.use((res) => {
   LoadingBar.finish()
+  console.log(res)
   const tempBlob = new Blob([res.data], { type: 'application/json' })
   const reader = new FileReader()
   reader.onload = e => {
@@ -54,7 +55,7 @@ instance.interceptors.response.use((res) => {
       }
     } catch (err) {}
 
-    if (!code) {
+    if (!code || code === 10000) {
       let blob = new Blob([res.data], { type: 'application/x-xls' })
       let downloadLink = document.createElement('a')
       downloadLink.href = URL.createObjectURL(blob)

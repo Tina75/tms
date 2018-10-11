@@ -12,6 +12,7 @@
           format="yyyy-MM-dd"
           placeholder="开始日期-结束日期"
           style="display: inline-block;width: 240px;height: 35px;margin-left: 20px"
+          @on-clear = "clearKeywords"
           @on-change="handleTimeChange"
         >
         </DatePicker>
@@ -32,7 +33,8 @@
       :autoload="autoload"
       :method="method"
       :keywords="keyword"
-      :columns="columns">
+      :columns="columns"
+      @on-load = "onLoad">
     </page-table>
   </div>
 </template>
@@ -44,6 +46,9 @@ export default {
   name: 'total',
   components: {
     PageTable
+  },
+  metaInfo: {
+    title: '营业额汇总表'
   },
   data: function () {
     return {
@@ -58,6 +63,7 @@ export default {
       url: '/report/getTurnoverSummary',
       method: 'POST',
       autoload: false,
+      isExport: false,
       keywords: {
         startTime: '',
         endTime: ''
@@ -82,42 +88,42 @@ export default {
           title: '保险费',
           key: 'insuranceFee',
           render: (h, params) => {
-            return h('span', params.row.insuranceFee)
+            return h('span', (params.row.insuranceFee / 100).toFixed(2))
           }
         },
         {
           title: '运输费',
           key: 'freightFee',
           render: (h, params) => {
-            return h('span', params.row.freightFee)
+            return h('span', (params.row.freightFee / 100).toFixed(2))
           }
         },
         {
           title: '装卸费',
           key: 'loadFee',
           render: (h, params) => {
-            return h('span', params.row.loadFee)
+            return h('span', (params.row.loadFee / 100).toFixed(2))
           }
         },
         {
           title: '卸货费',
           key: 'unloadFee',
           render: (h, params) => {
-            return h('span', params.row.unloadFee)
+            return h('span', (params.row.unloadFee / 100).toFixed(2))
           }
         },
         {
           title: '其他费用',
           key: 'otherFee',
           render: (h, params) => {
-            return h('span', params.row.otherFee)
+            return h('span', (params.row.otherFee / 100).toFixed(2))
           }
         },
         {
           title: '费用合计',
           key: 'totalFee',
           render: (h, params) => {
-            return h('span', params.row.totalFee)
+            return h('span', (params.row.totalFee / 100).toFixed(2))
           }
         }
       ],
@@ -126,6 +132,11 @@ export default {
           return date && date.valueOf() > Date.now()
         }
       }
+    }
+  },
+  mounted () {
+    if (this.$route.query.tab) { // 首页跳转来的
+      this.showSevenDate()
     }
   },
   methods: {
@@ -228,8 +239,8 @@ export default {
     },
     // 导出
     ProfitsExport () {
-      if (!this.isEmpty()) {
-        this.$Message.error('请先输入导出条件')
+      if (!this.isExport) {
+        this.$Message.error('导出内容为空')
         return
       }
       let data = {
@@ -242,6 +253,19 @@ export default {
         data: data,
         fileName: '营业额汇总报表'
       })
+    },
+    onLoad (res) {
+      if (res.data.data.list && res.data.data.list.length > 0) {
+        this.isExport = true
+      } else {
+        this.isExport = false
+      }
+    },
+    // 默认展示近七天数据
+    showSevenDate () {
+      this.operateValue = 1
+      this.date(this.operateValue)
+      this.search()
     }
   }
 }

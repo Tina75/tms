@@ -27,6 +27,7 @@ export default {
   props: {
     to: String,
     title: String,
+    tab: String,
     pageTitle: String,
     padding: {
       type: Boolean,
@@ -47,7 +48,7 @@ export default {
       if (!this.to) {
         return
       }
-      this.openTab({ path: this.to, title: this.pageTitle || this.title || '' })
+      this.openTab({ path: this.to, title: this.pageTitle || this.title || '', query: { tab: this.tab } })
     }
   }
 }

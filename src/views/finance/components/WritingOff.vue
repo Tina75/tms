@@ -14,8 +14,8 @@
           </Col>
           <Col span="2">
           <FormItem>
-            <Select v-model="writingOffQuery.periodType" clearable>
-              <Option v-for="(value, key) in periodTypeMap" :key="key" :value="key">{{value}}</Option>
+            <Select v-model="writingOffQuery.periodType">
+              <Option v-for="(value, key) in periodTypeMap" v-if="key === '1' || key === '2' || (scene === 1 && key === '3')" :key="key" :value="key">{{value}}</Option>
             </Select>
           </FormItem>
           </Col>
@@ -45,7 +45,11 @@
         <Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showOrderData"></Table>
         </Col>
         <Col span="16" class="order-list">
-        <Table :columns="orderColumn" :data="orderData" height="500" @on-selection-change="setOrderIds"></Table>
+        <div v-if="!currentPartner.partnerName || !orderData.length" class="data-empty">
+          <img src="../../../assets/img-empty.png" class="data-empty-img">
+          <p>请点击左侧{{sceneMap[scene]}}列表查看{{orderNameMap[scene]}}哦～</p>
+        </div>
+        <Table v-else :columns="orderColumn" :data="orderData" height="500" @on-selection-change="setOrderIds"></Table>
         </Col>
       </Row>
     </div>
@@ -140,7 +144,7 @@ export default {
           key: 'orderNum'
         },
         {
-          title: '应收总额',
+          title: this.scene === 1 ? '应收总额' : '应付总额',
           key: 'calcTotalFeeText'
         },
         {
@@ -199,14 +203,14 @@ export default {
           title: '结算方式',
           width: 110,
           key: 'settleTypeDesc',
-          filters: this.sence === 2 ? [
+          filters: this.scene === 2 ? [
             {
               label: '按单结算',
               value: '按单结算'
             },
             {
-              label: '按月结算',
-              value: '按月结算'
+              label: '月结',
+              value: '月结'
             }] : [
             {
               label: '预付',
@@ -264,6 +268,7 @@ export default {
           },
           methods: {
             ok () {
+              this.$Message.success('创建成功')
               _this.loadData()
             }
           }
@@ -291,18 +296,7 @@ export default {
           name: 'finance/dialogs/stepPay',
           data: {
             id: data.row.id,
-            needPay: data.row.totalFeeText,
-            settleTypeDesc: data.row.settleTypeDesc
-          },
-          methods: {}
-        })
-      } else {
-        this.openDialog({
-          name: 'finance/dialogs/writeOff',
-          data: {
-            id: data.row.id,
-            verifyType: 1,
-            isOil: 0,
+            scene: this.scene,
             needPay: data.row.totalFeeText,
             settleTypeDesc: data.row.settleTypeDesc
           },
@@ -312,17 +306,61 @@ export default {
             }
           }
         })
+      } else {
+        this.openDialog({
+          name: 'finance/dialogs/writeOff',
+          data: {
+            id: data.row.id,
+            verifyType: 1,
+            isOil: 0,
+            scene: this.scene,
+            needPay: data.row.totalFeeText,
+            settleTypeDesc: data.row.settleTypeDesc
+          },
+          methods: {
+            ok () {
+              this.$Message.success('核销成功')
+              _this.loadData()
+            }
+          }
+        })
       }
     },
     toDetail (data) {
-      this.openTab({
-        path: '/order-management/detail',
-        query: {
-          id: data.row.orderNo,
-          orderId: data.row.id,
-          from: 'order'
-        }
-      })
+      switch (data.row.orderType) {
+        case 1:
+          this.openTab({
+            path: '/order-management/detail',
+            title: data.row.orderNo,
+            query: {
+              id: data.row.orderNo,
+              orderId: data.row.orderId,
+              from: 'order'
+            }
+          })
+          break
+        case 2:
+          this.openTab({
+            title: data.row.orderNo,
+            path: '/transport/detail/detailFreight',
+            query: { id: data.row.orderId } // id 或 no 二选一
+          })
+          break
+        case 3:
+          this.openTab({
+            title: data.row.orderNo,
+            path: '/transport/detail/detailPickup',
+            query: { id: data.row.orderId }
+          })
+          break
+        case 4:
+          this.openTab({
+            title: data.row.orderNo,
+            path: '/transport/detail/detailOuter',
+            query: { id: data.row.orderId }
+          })
+          break
+      }
     },
     loadData () {
       Server({
@@ -342,9 +380,10 @@ export default {
             verifiedFeeText: (item.verifiedFee / 100).toFixed(2)
           })
         })
-        if (this.currentPartner.id && this.companyData.map(item => item.id).indexOf(this.currentPartner.id) >= 0) {
-          this.currentPartner = this.companyData.find(item => this.currentPartner.id === item.id)
-          this.showOrderData(this.companyData.find(item => this.currentPartner.id === item.id).orderInfos)
+        if (this.currentPartner.partnerName && this.companyData.map(item => item.partnerName).indexOf(this.currentPartner.partnerName) >= 0) {
+          this.showOrderData(this.companyData.find(item => this.currentPartner.partnerName === item.partnerName))
+        } else {
+          this.orderData = []
         }
       }).catch(err => console.error(err))
     },
@@ -375,4 +414,17 @@ export default {
       /deep/ .ivu-table-cell
         padding-left: 5px
         padding-right: 5px
+    .data-empty
+      display flex
+      flex-direction column
+      justify-content center
+      align-items center
+      height 500px
+      border 1px solid #dcdee2
+      .data-empty-img
+        width 70px
+        margin-bottom 12px
+      p
+        color #999999
+        text-align center
 </style>

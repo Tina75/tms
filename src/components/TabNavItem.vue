@@ -2,9 +2,13 @@
   <div :class="['item-container',checked?'mh-10':'']">
     <i v-show="checked" class="icon font_family icon-you2 icon-left" style=""></i>
     <div :class="['tab-item',checked?'tab-item__checked':'']">
-      <Icon  v-show="checked" class="tab-item__icon " type="ios-refresh" size="20" @click.stop="$emit('on-refresh')"/>
-      <span class="tab-item__name">{{ name}}</span>
-      <Icon v-show="closeable" class="tab-item__icon" type="ios-close" size="20" @click.stop="$emit('on-close')"/>
+      <span style="display:inline-block;min-width:18px">
+        <Icon v-show="checked" class="tab-item__icon " type="ios-refresh" size="20" @click.stop="$emit('on-refresh')"/>
+      </span>
+      <span class="tab-item__name">{{name}}</span>
+      <span style="display:inline-block;min-width:18px">
+        <Icon v-show="closeable" :style="checked?'visibility:visible':'visibility:hidden'" class="tab-item__icon close-icon" type="ios-close" size="20" @click.stop="$emit('on-close')"/>
+      </span>
     </div>
     <i v-show="checked" class="icon font_family icon-you2 icon-right" ></i>
   </div>
@@ -24,7 +28,7 @@ export default {
   },
   computed: {
     closeable: function () {
-      return this.checked && this.name !== '首页'
+      return this.name !== '首页'
     }
   },
   methods: {
@@ -74,7 +78,8 @@ export default {
   cursor pointer
   font-weight 500
   text-align center
-
+  &:hover .close-icon
+    visibility visible !important
   &__icon
     display inline-block
     vertical-align middle
@@ -90,7 +95,7 @@ export default {
     display inline-block
     overflow hidden
     white-space nowrap
-    margin 0 4px
+    // margin 0 4px
     text-overflow ellipsis
   &__checked
     background #EFEFEF

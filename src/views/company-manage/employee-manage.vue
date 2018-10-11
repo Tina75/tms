@@ -30,7 +30,7 @@
       </Modal>
     </Menu>
     </Col>
-    <Col span="18" class="rightHead">
+    <Col span="20" class="rightHead">
     <div>
       <p v-if="rightTitle !== ''" class="rightTitle">{{rightTitle}}的权限</p>
       <div v-if="hasPower(140102)" class="saveRoleBtn">
@@ -45,7 +45,7 @@
       </div>
     </div>
     </Col>
-    <Col span="18" class="contentDiv">
+    <Col span="20" class="contentDiv">
     <Modal
       v-model="removeRoleModal"
       width="360">
@@ -157,7 +157,6 @@ export default {
   created () {
     this.getMenuList()
     this.initTreeList(this.arrayCodeList, 'type')
-    document.getElementsByClassName('content')[0].style.overflowY = 'hidden'
   },
   methods: {
     getMenuList (selectMenu) {
@@ -387,7 +386,7 @@ export default {
   height: 100%
   overflow: hidden;
   .contentDiv
-    margin-left: 20px;
+    padding-left: 20px;
     height:calc(100% - 45px);
     overflow-y:auto;
     padding-bottom: 80px;
@@ -419,7 +418,6 @@ export default {
   .rightHead
     border-bottom: 1px solid #e9e9e9;
     margin-top: 5px
-    margin-right: 20px;
     .rightTitle
       height: 55px;
       font-size: 20px;
@@ -429,7 +427,6 @@ export default {
       margin-top: -10px;
       margin-left: 20px;
       font-weight:600;
-      color:rgba(51,51,51,1);
   .divTree
     clear: both;
     margin-top:15px;

@@ -19,14 +19,14 @@
           </Col>
           <Col span="2">
           <FormItem>
-            <Select v-model="writtenOffQuery.orderType" clearable>
+            <Select v-model="writtenOffQuery.orderType">
               <Option v-for="(value, key) in orderTypeMap[scene]" :key="key" :value="key">{{value}}</Option>
             </Select>
           </FormItem>
           </Col>
           <Col span="4">
           <FormItem>
-            <Input v-model="writtenOffQuery.verifyNo" :placeholder="`请输入${orderTypeMap[scene][writtenOffQuery.orderType]}`"/>
+            <Input v-model="writtenOffQuery.orderNo" :placeholder="`请输入${orderTypeMap[scene][writtenOffQuery.orderType]}`"/>
           </FormItem>
           </Col>
           <Col span="6">
@@ -46,7 +46,7 @@
     </div>
     <div class="list-box">
       <Table :columns="orderColumn" :data="writtenOffData.list" height="500" @on-sort-change="resort" @on-selection-change="setOrderIds"></Table>
-      <Page :current.sync="writtenOffQuery.pageNo" :total="writtenOffData.totalCount" :page-size="writtenOffQuery.size"  size="small" show-elevator show-total show-sizer @on-change="getWrittenOffList" @on-page-size-change="resetPageSize"/>
+      <Page :current.sync="writtenOffQuerySave.pageNo" :total="writtenOffData.totalCount" :page-size="writtenOffQuerySave.pageSize"  size="small" show-elevator show-total show-sizer @on-change="getWrittenOffList" @on-page-size-change="resetPageSize"/>
     </div>
   </div>
 </template>
@@ -87,11 +87,10 @@ export default {
           4: '对账批次号'
         }
       },
-      writtenOffQuery: {
-        name: '',
-        orderType: '1',
-        period: [],
-        orderNo: ''
+      defaultOrderType: {
+        1: '1',
+        2: '2',
+        3: '5'
       },
       writtenOffQuerySave: {
         name: '',
@@ -110,6 +109,14 @@ export default {
     }
   },
   computed: {
+    writtenOffQuery () {
+      return {
+        name: '',
+        orderType: this.defaultOrderType[this.scene],
+        period: [],
+        orderNo: ''
+      }
+    },
     orderColumn () {
       return [
         {
@@ -174,21 +181,24 @@ export default {
       }
     },
     exportWrittenOff () {
-      Export({
-        url: '/finance/verify/export',
-        method: 'GET',
-        params: {
-          verifyIds: this.selectedIds.join(','),
-          partnerType: this.scene
-        },
-        fileName: '核销单'
-      }).then(res => {
-        this.$Message.success('导出成功')
-      }).catch(err => console.error(err))
+      if (this.selectedIds.length > 0) {
+        Export({
+          url: '/finance/verify/export',
+          method: 'post',
+          data: {
+            verifyIds: this.selectedIds.join(','),
+            partnerType: this.scene
+          },
+          fileName: '核销单'
+        }).then(res => {
+        }).catch(err => console.error(err))
+      } else {
+        this.$Message.warning('请选择1条以上的数据')
+      }
     },
     toDetail (data) {
       this.openTab({
-        title: '对账单详情',
+        title: '核销单详情',
         path: '/finance/writtenOffDetail',
         query: {
           verifyId: data.row.verifyId,
@@ -228,8 +238,9 @@ export default {
         })
       }).catch(err => console.error(err))
     },
-    resetPageSize () {
+    resetPageSize (size) {
       this.writtenOffQuerySave.pageNo = 1
+      this.writtenOffQuerySave.pageSize = size
       this.getWrittenOffList()
     }
   }
@@ -252,9 +263,4 @@ export default {
       text-align: right
       /deep/ .ivu-table-wrapper
         margin-bottom: 20px
-      /deep/ .ivu-page-item-active
-        background-color: #00a4bd
-        border-radius: 5px
-        a
-          color: #ffffff
 </style>

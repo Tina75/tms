@@ -172,12 +172,12 @@
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title detail-field-required">始发地：</span>
-            <AreaSelect v-model="startCodes" deep
+            <AreaSelect v-model="startCodes"
                         class="detail-info-input" />
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title detail-field-required">目的地：</span>
-            <AreaSelect v-model="endCodes" deep
+            <AreaSelect v-model="endCodes"
                         class="detail-info-input" />
           </i-col>
           <i-col span="10" offset="1">
@@ -319,18 +319,18 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import BasePage from '@/basic/BasePage'
 import TransportBase from '../transportBase'
 import DetailMixin from './detailMixin'
 
-import Server from '@/libs/js/server'
 import MoneyInput from '../components/MoneyInput'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '../components/SelectInput.vue'
 import SelectInputMixin from '../components/selectInputMixin'
 
-const specialCity = ['110000', '120000', '310000', '500000', '710000', '810000', '820000']
+import Server from '@/libs/js/server'
+import { getCityCode } from '@/libs/constant/cityValidator'
+import TMSUrl from '@/libs/constant/url'
 
 export default {
   name: 'DetailFeright',
@@ -365,6 +365,7 @@ export default {
         { payType: 2, fuelCardAmount: 0, cashAmount: 0 },
         { payType: 3, fuelCardAmount: 0, cashAmount: 0 }
       ],
+      settlementPayInfoBack: [], // 支付方式备份
 
       // 所有按钮组
       btnList: [
@@ -387,7 +388,6 @@ export default {
             code: 120107,
             func: () => {
               this.inEditing = true
-              this.setPlace()
             }
           }]
         },
@@ -423,7 +423,8 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
-                    path: '/order-management/detail',
+                    // title: p.row.orderNo,
+                    path: TMSUrl.ORDER_DETAIL,
                     query: {
                       id: p.row.orderNo,
                       orderId: p.row.orderId,
@@ -464,7 +465,7 @@ export default {
         {
           title: '包装',
           key: 'unit',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.unit)
           }
@@ -472,7 +473,7 @@ export default {
         {
           title: '数量',
           key: 'quantity',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.quantity)
           }
@@ -480,7 +481,7 @@ export default {
         {
           title: '货值(元)',
           key: 'cargoCost',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
           }
@@ -488,7 +489,7 @@ export default {
         {
           title: '重量(吨)',
           key: 'weight',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.weight)
           }
@@ -496,7 +497,7 @@ export default {
         {
           title: '体积(方)',
           key: 'volume',
-          width: 100,
+          width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.volume)
           }
@@ -522,13 +523,13 @@ export default {
   },
 
   watch: {
-    startCodes () {
-      if (!(this.startCodes instanceof Array)) return
-      this.info.start = specialCity.includes(this.startCodes[0]) && this.startCodes.length === 2 ? this.startCodes[0] : this.startCodes[this.startCodes.length - 1]
+    startCodes (val) {
+      if (!(val instanceof Array)) return
+      this.info.start = getCityCode(val)
     },
-    endCodes () {
-      if (!(this.endCodes instanceof Array)) return
-      this.info.end = specialCity.includes(this.endCodes[0]) && this.startCodes.length === 2 ? this.endCodes[0] : this.endCodes[this.endCodes.length - 1]
+    endCodes (val) {
+      if (!(val instanceof Array)) return
+      this.info.end = getCityCode(val)
     }
   },
 
@@ -540,38 +541,6 @@ export default {
         case 2: return '待发运'
         case 3: return '在途'
         case 4: return '已到货'
-      }
-    },
-
-    setPlace (clear) {
-      if (clear) {
-        this.startCodes = ''
-        this.endCodes = ''
-        return
-      }
-      // 由于 AreaSelect 组件数据延时获取机制
-      // 导致如果不延迟到数据获取完毕后再赋值会出现bug
-      setTimeout(() => {
-        this.startCodes = this.info.start
-        this.endCodes = this.info.end
-      }, 250)
-    },
-
-    checkPlace () {
-      let start = specialCity.includes(this.startCodes[0]) && this.startCodes.length === 2 ? this.startCodes[0] : this.startCodes[this.startCodes.length - 1]
-      let end = specialCity.includes(this.endCodes[0]) && this.endCodes.length === 2 ? this.endCodes[0] : this.endCodes[this.endCodes.length - 1]
-
-      if (this.startCodes.length === 1 && !specialCity.includes(this.startCodes[0])) {
-        this.$Message.error('始发地请至少选择到市一级城市')
-        return false
-      } else if (this.endCodes.length === 1 && !specialCity.includes(this.endCodes[0])) {
-        this.$Message.error('目的地请至少选择到市一级城市')
-        return false
-      } else if ((this.startCodes.length > 0 && this.endCodes.length > 0 && _.isEqual(this.startCodes, this.endCodes)) || start === end) {
-        this.$Message.error('始发地不能和目的地相同')
-        return false
-      } else {
-        return true
       }
     },
 
@@ -591,6 +560,8 @@ export default {
         for (let key in this.info) {
           this.info[key] = data.waybill[key]
         }
+        this.startCodes = this.info.start.toString()
+        this.endCodes = this.info.end.toString()
         for (let key in this.payment) {
           this.payment[key] = this.setMoneyUnit2Yuan(data.waybill[key])
         }
@@ -609,6 +580,7 @@ export default {
           }
         })
         this.settlementPayInfo = temp
+        this.settlementPayInfoBack = Object.assign([], temp)
 
         this.setBtnsWithStatus()
         this.loading = false
