@@ -270,6 +270,17 @@ export default {
       ]
     }
   },
+  watch: {
+    'ruleDetail.ruleType': function (val) {
+      if (val === '1') {
+        this.baseValidate.base[1].pattern = /^[1-9]\d*(.\d{2})?$/
+        this.baseValidate.base[1].message = '最多精确到两位小数'
+      } else {
+        this.baseValidate.base[1].pattern = /^[1-9]\d*(.\d)?$/
+        this.baseValidate.base[1].message = '最多精确到一位小数'
+      }
+    }
+  },
   mounted () {
     this.getRules()
   },

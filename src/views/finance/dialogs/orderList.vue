@@ -138,7 +138,7 @@ export default {
             url: '/finance/reconcile/removeSub',
             method: 'post',
             data: {
-              subOrderId: data.row.orderId
+              subOrderId: data.row.id
             }
           }).then(res => {
             _this.orderData.getOrderList()
