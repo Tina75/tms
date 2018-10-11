@@ -7,33 +7,27 @@
     <div class="query-box">
       <Form :model="writingOffQuery" inline>
         <Row>
-          <Col span="6">
+          <Col span="6" style="margin-right: 50px">
           <FormItem :label-width="100" :label="sceneMap[scene]">
             <Input v-model="writingOffQuery.name" :placeholder="`请输入${sceneMap[scene]}名称`"/>
           </FormItem>
           </Col>
-          <Col span="2">
+          <Col span="2" style="margin-right: 10px">
           <FormItem>
             <Select v-model="writingOffQuery.periodType">
               <Option v-for="(value, key) in periodTypeMap" v-if="key === '1' || key === '2' || (scene === 1 && key === '3')" :key="key" :value="key">{{value}}</Option>
             </Select>
           </FormItem>
           </Col>
-          <Col span="8">
+          <Col span="8" style="margin-right: 20px">
           <FormItem>
-            <DatePicker v-model="writingOffQuery.period" :options="dateOption" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 300px" />
+            <DatePicker v-model="writingOffQuery.period" :options="dateOption" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 100%" />
           </FormItem>
           </Col>
-          <Col span="6">
+          <Col span="4">
           <FormItem>
-            <Row>
-              <Col span="12">
-              <Button type="primary" @click="startQuery">搜索</Button>
-              </Col>
-              <Col span="12">
-              <Button type="default" @click="resetQuery">清除条件</Button>
-              </Col>
-            </Row>
+            <Button type="primary" style="margin-right: 10px" @click="startQuery">&#12288;搜索&#12288;</Button>
+            <Button type="default" @click="resetQuery">清除条件</Button>
           </FormItem>
           </Col>
         </Row>
@@ -415,6 +409,7 @@ export default {
       background-color: #f9f9f9
       /deep/ .ivu-form-item
         margin-bottom: 0
+        width: 100%
     .order-list
       /deep/ .ivu-table-cell
         padding-left: 5px

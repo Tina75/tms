@@ -140,6 +140,7 @@ export default {
           })
         })
         if (!res.data.data.some(item => !item.verifyStatus)) {
+          this.close()
           this.ok()
         }
       }).catch(err => console.error(err))

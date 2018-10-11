@@ -205,7 +205,7 @@ export default {
     },
     toDetail (data) {
       this.openTab({
-        title: '核销单详情',
+        title: data.row.verifyNo,
         path: '/finance/writtenOffDetail',
         query: {
           verifyId: data.row.verifyId,
