@@ -44,21 +44,37 @@ export default {
     renderCarPosition () {
       this.$nextTick(() => {
         const bmap = new BMap.Map(this.$refs.positionMap)
-
-        for (let i = 0; i < this.pointList.length; i++) {
+        const points = []
+        if (this.pointList.length > 0) {
           if (!this.showMap) {
             this.showMap = true
             this.$refs.positionMap.style.top = '-4px'
           }
-          const item = this.pointList[i]
-          const point = new BMap.Point(item.longtitude, item.latitude)
-          if (i === 0) {
-            bmap.centerAndZoom(point, 16)
+          for (let i = 0; i < this.pointList.length; i++) {
+            const item = this.pointList[i]
+            const point = new BMap.Point(item.longtitude, item.latitude)
+            if (i === 0) {
+              bmap.centerAndZoom(point, 16)
+            }
+            points.push(point)
+            const markerOverlay = new MarkerOverlay(point)
+            const labelOverlay = new LabelOverlay(point, item.carNo)
+            bmap.addOverlay(markerOverlay)
+            bmap.addOverlay(labelOverlay)
           }
-          const markerOverlay = new MarkerOverlay(point)
-          const labelOverlay = new LabelOverlay(point, item.carNo)
-          bmap.addOverlay(markerOverlay)
-          bmap.addOverlay(labelOverlay)
+          // 左上角，添加比例尺
+          const topLeftControl = new BMap.ScaleControl({ anchor: 'BMAP_ANCHOR_TOP_LEFT' })
+          const topLeftNavigation = new BMap.NavigationControl()
+          bmap.addControl(topLeftControl)
+          bmap.addControl(topLeftNavigation)
+          // 允许缩放
+          bmap.enableScrollWheelZoom(true)
+          if (points.length > 1) {
+          /**
+           * 根据提供的地理区域或坐标设置地图视野，调整后的视野会保证包含提供的地理区域或坐标
+           */
+            bmap.setViewPort(points)
+          }
         }
       })
     }
