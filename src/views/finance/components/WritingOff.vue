@@ -21,7 +21,7 @@
           </Col>
           <Col span="8">
           <FormItem>
-            <DatePicker v-model="writingOffQuery.period"  type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 300px" />
+            <DatePicker v-model="writingOffQuery.period" :options="dateOption" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 300px" />
           </FormItem>
           </Col>
           <Col span="6">
@@ -109,6 +109,11 @@ export default {
           label: '已到货',
           value: '已到货'
         }]
+      },
+      dateOption: {
+        disabledDate (date) {
+          return date && date.valueOf() > Date.now()
+        }
       },
       writingOffQuery: {
         name: '',
@@ -380,7 +385,7 @@ export default {
             verifiedFeeText: (item.verifiedFee / 100).toFixed(2)
           })
         })
-        if (this.currentPartner.partnerName && this.companyData.map(item => item.partnerName).indexOf(this.currentPartner.partnerName) >= 0) {
+        if (this.currentPartner.partnerName && this.companyData.some(item => item.partnerName === this.currentPartner.partnerName)) {
           this.showOrderData(this.companyData.find(item => this.currentPartner.partnerName === item.partnerName))
         } else {
           this.orderData = []

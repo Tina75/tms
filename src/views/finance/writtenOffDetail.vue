@@ -53,10 +53,10 @@
                 <Col span="3">
                 <p>付款方式：<span>{{item.payTypeDesc}}</span></p>
                 </Col>
-                <Col span="8">
-                <p>付款银行卡号：<span>{{item.account}}</span></p>
+                <Col v-if="item.payType !== 1" span="8">
+                <p>{{accountMap[item.payType]}}：<span>{{item.account}}</span></p>
                 </Col>
-                <Col span="4">
+                <Col v-if="item.payType === 2" span="4">
                 <p>开户行：<span>{{item.bank}}</span></p>
                 </Col>
               </Row>
@@ -104,6 +104,17 @@ export default {
         2: '单据',
         3: '外转单'
       },
+      orderNameMap: {
+        1: '订单号',
+        2: '运单号/提货单号',
+        3: '外转单号'
+      },
+      accountMap: {
+        2: '银行卡卡号：',
+        3: '微信号：',
+        4: '支付宝账号：',
+        5: '油卡卡号：'
+      },
       active: '1',
       writtenOffData: {
         orderNum: 0,
@@ -120,6 +131,9 @@ export default {
         {
           title: '订单号',
           key: 'orderNo',
+          renderHeader: (h) => {
+            return h('span', {}, this.orderNameMap[this.$route.query.scene])
+          },
           render: (h, params) => {
             return h('a', {
               on: {
