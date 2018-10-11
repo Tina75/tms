@@ -45,7 +45,10 @@ export default {
         partnerName: ''
       },
       validate: {
-        ruleName: { required: true, message: '请填写规则名称', trigger: 'blur' },
+        ruleName: [
+          { required: true, message: '请填写规则名称', trigger: 'blur' },
+          { type: 'string', max: 30, message: '不能超过30个字', trigger: 'blur' }
+        ],
         partnerName: { required: true, validator: partnerNameValidate, trigger: 'change' }
       },
       partnerList: []

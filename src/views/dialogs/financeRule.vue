@@ -4,7 +4,7 @@
     <Form v-if="!ruleEmpty" ref="$form" :model="ruleForm" :rules="rules" :label-width="80">
       <FormItem label="计费规则：" prop="ruleIndex">
         <Select v-model="ruleForm.ruleIndex" @on-change="ruleChanged">
-          <Option v-for="(item, key) in ruleOptions" :key="key" :value="key">{{ item.ruleName }}</Option>
+          <Option v-for="(item, key) in ruleOptions" :key="key" :value="key">{{ item.name }}</Option>
         </Select>
       </FormItem>
     </Form>
@@ -60,7 +60,7 @@ export default {
       this.loading = true
       Server({
         method: 'get',
-        url: '/finance/charge/listRules',
+        url: '/finance/charge/getRulesByPartner',
         params: {
           partnerType: this.partnerType,
           partnerName: this.partnerName
@@ -68,8 +68,6 @@ export default {
       }).then((res) => {
         this.ruleOptions = res.data.data
         this.ruleEmpty = res.data.data.length <= 0
-      }).catch(err => {
-        console.error(err)
       })
     },
 
@@ -79,10 +77,10 @@ export default {
         url: '/finance/charge/calc',
         method: 'get',
         data: {
-          ruleId: rule.ruleId,
+          ruleId: rule.id,
           departure: this.start,
           destination: this.end,
-          input: (rule.detail.ruleType === 1 ? this.weight : this.volume) * 100
+          input: (rule.ruleType === 1 ? this.weight : this.volume) * 100
         }
       }).then(res => {
         this.charge = res.data.data / 100

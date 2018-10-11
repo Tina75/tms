@@ -11,7 +11,7 @@
         <div class="query-box">
           <Form ref="rulesQuery" :model="rulesQuery" :rules="validate" inline>
             <FormItem>
-              <Select v-model="rulesQuery.type" clearable>
+              <Select v-model="rulesQuery.type">
                 <Option value="1">{{sceneMap[active]}}名称</Option>
                 <Option value="2">规则名称</Option>
               </Select>
@@ -56,7 +56,7 @@
                 <div class="item-remove">
                   <Icon type="md-remove-circle" @click="removeItem(index)"/>
                 </div>
-                <Collapse v-model="ruleShowIndex" class="rule-content">
+                <Collapse v-model="item.showRule" class="rule-content">
                   <div class="rule-route">
                     <Row :gutter="20">
                       <Col span="12">
@@ -167,7 +167,6 @@ export default {
   data () {
     return {
       active: '1',
-      ruleShowIndex: '1',
       unitMap: {
         1: '吨',
         2: '方'
@@ -184,7 +183,7 @@ export default {
       companyData: [],
       ruleDetail: {},
       validate: {
-        queryText: {type: 'string', max: 20, message: '不能超过20个字', trigger: 'blur'}
+        queryText: { type: 'string', max: 20, message: '不能超过20个字', trigger: 'blur' }
       }
     }
   },
@@ -247,7 +246,7 @@ export default {
       const _this = this
       this.$Modal.confirm({
         title: '提示',
-        content: '确认从删除该条规则吗？',
+        content: '确认删除该条规则吗？',
         okText: '确认',
         cancelText: '取消',
         async onOk () {
@@ -274,6 +273,7 @@ export default {
       this.ruleDetail.details.push({
         departure: '',
         destination: '',
+        showRule: (this.ruleDetail.details.length + 1) + '',
         chargeRules: [
           { base: '', price: '' }
         ]
@@ -283,26 +283,39 @@ export default {
       this.ruleDetail.details.splice(index, 1)
     },
     saveRules () {
-      Server({
-        url: '/finance/charge/updateRule',
-        method: 'post',
-        data: Object.assign({}, this.ruleDetail, {
-          details: this.ruleDetail.details.map(item => {
-            return {
-              departure: item.departure[item.departure.length - 1],
-              destination: item.destination[item.destination.length - 1],
-              chargeRules: item.chargeRules.map(el => {
+      const _this = this
+      this.$Modal.confirm({
+        title: '提示',
+        content: '确认保存该条规则吗？',
+        okText: '确认',
+        cancelText: '取消',
+        async onOk () {
+          Server({
+            url: '/finance/charge/updateRule',
+            method: 'post',
+            data: Object.assign({}, _this.ruleDetail, {
+              details: _this.ruleDetail.details.map(item => {
                 return {
-                  base: parseFloat(el.base) * 100,
-                  price: parseFloat(el.price) * 100
+                  departure: item.departure[item.departure.length - 1],
+                  destination: item.destination[item.destination.length - 1],
+                  chargeRules: item.chargeRules.map(el => {
+                    return {
+                      base: parseFloat(el.base) * 100,
+                      price: parseFloat(el.price) * 100
+                    }
+                  })
                 }
               })
-            }
-          })
-        })
-      }).then(res => {
-        this.getRules()
-      }).catch(err => console.error(err))
+            })
+          }).then(res => {
+            _this.$Message.success('保存成功')
+            _this.getRules()
+          }).catch(err => console.error(err))
+        },
+        async onCancel () {
+          _this.getRules()
+        }
+      })
     },
     switchTab () {
       this.rulesQuery = {
@@ -339,10 +352,11 @@ export default {
         ruleId: data.ruleId,
         ruleType: data.detail.ruleType ? (data.detail.ruleType + '') : '1',
         ruleName: data.ruleName,
-        details: Object.assign([], data.detail.rules.map(item => {
+        details: Object.assign([], data.detail.rules.map((item, index) => {
           return {
             departure: item.departure + '',
             destination: item.destination + '',
+            showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
               return {
                 base: el.base / 100,
@@ -409,7 +423,7 @@ export default {
             .rule-route
               display: block
               position: absolute
-              width: 400px
+              width: 500px
               top: 10px
               left: 20px
               z-index: 101

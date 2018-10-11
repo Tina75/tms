@@ -28,7 +28,7 @@ export default {
 
   filters: {
     retMoney (val) {
-      return '￥' + (Number(val) / 100).toFixed(2)
+      return '￥' + float.round(Number(val) / 100)
     }
   },
 
