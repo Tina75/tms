@@ -450,8 +450,8 @@ export default {
             showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
               return {
-                base: el.base ? (el.base / 100) + '' : '',
-                price: el.price ? (el.price / 100) + '' : ''
+                base: el.base ? (el.base / 100) + '' : '0',
+                price: el.price ? (el.price / 100) + '' : '0'
               }
             })
           }
