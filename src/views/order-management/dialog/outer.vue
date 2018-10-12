@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visiable" :mask-closable="false" width="360" class="outer-dialog" @on-visible-change="close">
+    <Modal v-model="visiable" :mask-closable="false" width="400" class="outer-dialog" @on-visible-change="close">
       <p slot="header" class="dialog-title">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>订单外转</span>
@@ -36,7 +36,7 @@
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           <!-- <Icon type="ios-calculator" size="26" color="#00a4bd" @click="showCounter"></Icon> -->
-          <span @click="showCounter">
+          <span @click="showChargeRules">
             <FontIcon type="jisuanqi" size="22" color="#00a4bd" class="i-ml-5" style="vertical-align: middle;"></FontIcon>
           </span>
         </FormItem>
@@ -112,7 +112,7 @@ export default {
     save () {
       this.$refs['info'].validate((valid) => {
         this.info = Object.assign({}, this.info, {
-          orderId: this.id,
+          orderId: this.detail.id,
           payType: Number(this.info.payType),
           transFee: Number(this.info.transFee) * 100
         })
@@ -129,21 +129,35 @@ export default {
         }
       })
     },
-    // 显示计费规则
-    showCounter () {
-      const _this = this
-      this.openDialog({
-        name: 'order/create/FinanceRuleDialog.vue',
-        data: {
-          value: 0,
-          parterName: _this.info.transfereeName
-        },
-        methods: {
-          ok (value) {
-            _this.info.transFee = value || 0
+    // 计费规则
+    showChargeRules () {
+      const self = this
+      if (self.info.transfereeName) {
+        this.openDialog({
+          name: 'dialogs/financeRule',
+          data: {
+            partnerName: self.info.transfereeName,
+            // 以下数据必传
+            partnerType: 3, // 计费规则分类 - 发货方1 承运商2 外转方3
+            weight: self.detail.weight, // 货物重量
+            volume: self.detail.volume, // 货物体积
+            start: self.detail.start, // 始发地code
+            end: self.detail.end // 目的地code
+          },
+          methods: {
+            // 确认计费规则后返回金额(元)
+            ok (charge) {
+              self.info.transFee = charge || 0
+            },
+            // 如果有两层对话框，在计费规则中点击去设置按钮后需要关闭第一层对话框
+            closeParentDialog () {
+              self.close()
+            }
           }
-        }
-      })
+        })
+      } else {
+        this.$Message.warning('请先选择外转方')
+      }
     }
   }
 

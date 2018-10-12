@@ -2,38 +2,32 @@
 <template>
   <div class="writing-off">
     <div class="btns-box">
-      <Button type="primary" @click="createBill">生成对账单</Button>
+      <Button v-if="(hasePower(170102) && scene === 1) || (hasePower(170202) && scene === 2) || (hasePower(170302) && scene === 3)" type="primary" @click="createBill">生成对账单</Button>
     </div>
     <div class="query-box">
-      <Form :model="writingOffQuery" inline>
+      <Form :model="writingOffQuery" label-position="left" inline>
         <Row>
-          <Col span="6">
-          <FormItem :label-width="100" :label="sceneMap[scene]">
+          <Col span="6" style="margin-right: 50px">
+          <FormItem :label-width="65" :label="sceneMap[scene] + '：'">
             <Input v-model="writingOffQuery.name" :placeholder="`请输入${sceneMap[scene]}名称`"/>
           </FormItem>
           </Col>
-          <Col span="2">
+          <Col span="2" style="margin-right: 10px">
           <FormItem>
             <Select v-model="writingOffQuery.periodType">
               <Option v-for="(value, key) in periodTypeMap" v-if="key === '1' || key === '2' || (scene === 1 && key === '3')" :key="key" :value="key">{{value}}</Option>
             </Select>
           </FormItem>
           </Col>
-          <Col span="8">
+          <Col span="8" style="margin-right: 20px">
           <FormItem>
-            <DatePicker v-model="writingOffQuery.period"  type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 300px" />
+            <DatePicker v-model="writingOffQuery.period" :options="dateOption" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 100%" />
           </FormItem>
           </Col>
-          <Col span="6">
+          <Col span="4">
           <FormItem>
-            <Row>
-              <Col span="12">
-              <Button type="primary" @click="startQuery">搜索</Button>
-              </Col>
-              <Col span="12">
-              <Button type="default" @click="resetQuery">清除条件</Button>
-              </Col>
-            </Row>
+            <Button type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
+            <Button type="default" @click="resetQuery">清除条件</Button>
           </FormItem>
           </Col>
         </Row>
@@ -110,6 +104,11 @@ export default {
           value: '已到货'
         }]
       },
+      dateOption: {
+        disabledDate (date) {
+          return date && date.valueOf() > Date.now()
+        }
+      },
       writingOffQuery: {
         name: '',
         periodType: '1',
@@ -164,21 +163,24 @@ export default {
           width: 60,
           key: 'action',
           render: (h, params) => {
-            return h('a', {
+            return (this.scene === 1 && this.hasePower(170101)) || (this.scene === 2 && this.hasePower(170201)) || (this.scene === 3 && this.hasePower(170301)) ? h('a', {
               on: {
                 click: () => {
                   this.writeOff(params)
                 }
               }
-            }, '核销')
+            }, '核销') : ''
           }
         },
         {
           title: this.orderNameMap[this.scene] + '号',
-          width: 140,
+          width: 160,
           key: 'orderNo',
           render: (h, params) => {
             return h('a', {
+              style: {
+                color: '#418DF9'
+              },
               on: {
                 click: () => {
                   this.toDetail(params)
@@ -380,7 +382,7 @@ export default {
             verifiedFeeText: (item.verifiedFee / 100).toFixed(2)
           })
         })
-        if (this.currentPartner.partnerName && this.companyData.map(item => item.partnerName).indexOf(this.currentPartner.partnerName) >= 0) {
+        if (this.currentPartner.partnerName && this.companyData.some(item => item.partnerName === this.currentPartner.partnerName)) {
           this.showOrderData(this.companyData.find(item => this.currentPartner.partnerName === item.partnerName))
         } else {
           this.orderData = []
@@ -402,14 +404,17 @@ export default {
 <style lang='stylus'>
   .writing-off
     margin: 35px 0 15px
+    /deep/ .ivu-btn
+      width: 86px
     .btns-box
       margin-bottom: 20px
     .query-box
-      padding: 20px 0
+      padding: 20px 10px
       margin-bottom: 20px
       background-color: #f9f9f9
       /deep/ .ivu-form-item
         margin-bottom: 0
+        width: 100%
     .order-list
       /deep/ .ivu-table-cell
         padding-left: 5px
