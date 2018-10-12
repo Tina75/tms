@@ -1,7 +1,7 @@
 <template>
   <div class="temAll">
     <Col span="3">
-    <Menu :active-name="typeName" style="width: 100%; background:rgba(243,245,249,1)">
+    <Menu :active-name="typeName" style="width: 100%; background:rgba(243,245,249,1);color: #333;">
       <MenuItem v-for="menu in menuList" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
       <p style="margin-left:-20px;">{{menu.name}}
       <Badge v-if="menu.infoNum" :count="menu.infoNum" style="float:right;width:30px;"></Badge></p>
@@ -267,20 +267,10 @@ export default {
         this.searchData.type = '0'
     }
   },
-  updated () {
-    this.menuList[0].infoNum = this.$store.getters.MsgCount.sysNum
-    this.menuList[1].infoNum = this.$store.getters.MsgCount.orderNum
-    this.menuList[2].infoNum = this.$store.getters.MsgCount.carrierNum
-    if (!this.batchBtnShow) {
-      for (let index = 0; index < document.getElementsByClassName('checkboxItem').length; index++) {
-        document.getElementsByClassName('checkboxItem')[index].children[1].innerText = ''
-      }
-    }
-  },
   mounted: function () {
-    this.getMenuList(this.searchData)
-    // this.getMenuInfoNum()
     this.getMessageCount()
+    this.getMenuInfoNum()
+    this.getMenuList(this.searchData)
   },
   methods: {
     ...mapActions(['getMessageCount']),
@@ -290,16 +280,16 @@ export default {
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     },
-    // getMenuInfoNum () {
-    //   Server({
-    //     url: 'message/num',
-    //     method: 'get'
-    //   }).then(({ data }) => {
-    //     this.menuList[0].infoNum = data.data.sysNum > 99 ? '99+' : data.data.sysNum
-    //     this.menuList[1].infoNum = data.data.orderNum > 99 ? '99+' : data.data.orderNum
-    //     this.menuList[2].infoNum = data.data.carrierNum > 99 ? '99+' : data.data.carrierNum
-    //   })
-    // },
+    getMenuInfoNum () {
+      this.menuList[0].infoNum = this.$store.getters.MsgCount.sysNum
+      this.menuList[1].infoNum = this.$store.getters.MsgCount.orderNum
+      this.menuList[2].infoNum = this.$store.getters.MsgCount.carrierNum
+      if (!this.batchBtnShow) {
+        for (let index = 0; index < document.getElementsByClassName('checkboxItem').length; index++) {
+          document.getElementsByClassName('checkboxItem')[index].children[1].innerText = ''
+        }
+      }
+    },
     getMenuList (params) {
       Server({
         url: 'message/listPage',
@@ -492,7 +482,8 @@ export default {
   background: #fff;
 >>> .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
     background: #fff;
-    color: #515a6e;
+    color: #333333;
+    font-weight: bold;
 .temAll
   width: 100%;
   height: 100%;
@@ -500,9 +491,9 @@ export default {
   overflow: auto;
 .megDiv
   clear: both;
-  height: 55px;
+  height: 70px;
   margin: 20px 15px;
-  border-bottom: 1px solid #e9e9e9;
+  border-bottom: 1px dashed #e9e9e9;
   padding-bottom:10px;
   margin-top: 25px;
 .msgImg
