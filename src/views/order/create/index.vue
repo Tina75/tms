@@ -178,15 +178,13 @@
       <Col span="6">
       <FormItem label="提货方式:" prop="pickup">
         <Select v-model="orderForm.pickup">
-          <!-- <Option value="1">上门提货</Option>
-          <Option value="2">直接送货</Option> -->
           <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="回单数量:" prop="receiptCount">
-        <InputNumber v-model="orderForm.receiptCount" :min="1" :parser="value => parseInt(value).toString()" class="order-create__input-w100">
+        <InputNumber v-model="orderForm.receiptCount" :min="0" :parser="value => parseInt(value).toString()" class="order-create__input-w100">
         </InputNumber>
       </FormItem>
       </Col>
@@ -554,7 +552,7 @@ export default {
         // 其他费用
         otherFee: null,
         // 提货方式
-        pickup: 1, // 默认上门提货，2：直接送货
+        pickup: 2, // 默认1：上门提货，2：直接送货
         // 回单数量
         receiptCount: 1,
         // 备注
@@ -708,7 +706,7 @@ export default {
         })
     }
   },
-  destroyed () {
+  beforeDestroy () {
     this.resetForm()
     this.clearClients()
     this.clearOrderDetail()
@@ -879,7 +877,10 @@ export default {
         this.$Message.warning('请先选择客户')
         return
       }
-      if (vm.statics.weight <= 0 || vm.statics.volume <= 0) {
+      /**
+       * 重量和体积二选一，或者都填写，可以了
+       */
+      if (vm.statics.weight <= 0 && vm.statics.volume <= 0) {
         this.$Message.warning('请先填写货物必要信息')
         return
       }
