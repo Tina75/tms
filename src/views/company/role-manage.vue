@@ -494,6 +494,7 @@ export default {
   margin-top:23px;
   margin-bottom:10px;
   margin-left:50px;
+  font-size: 14px;
 .formSty
   padding:20px;
   height: 70px;

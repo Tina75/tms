@@ -412,6 +412,7 @@ export default {
 .visibaleRemoveMessage
   margin-top:23px;
   margin-left:50px;
+  font-size: 14px;
 .modalFooter
   margin-top:20px;
 .transferformModal

@@ -134,7 +134,7 @@
         </p>
         <p style="margin-left:70px; margin-top: 10px;">
           <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
-        </p><p style="margin-top:23px; margin-bottom:10px; margin-left:50px;">确定要删除“{{messageInit.title}}”消息吗?</P>
+        </p><p style="margin-top:23px; margin-bottom:10px;font-size:14px; margin-left:50px;">确定要删除“{{messageInit.title}}”消息吗?</P>
         </p>
         <div slot="footer">
           <Button type="primary" @click="removeSubForm">确定</Button>
@@ -147,7 +147,7 @@
         </p>
         <p style="margin-left:70px; margin-top: 10px;">
           <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
-        </p><p style="margin-top:23px;margin-bottom:10px; margin-left:50px;">确定要批量删除选中的消息吗?</P>
+        </p><p style="margin-top:23px;margin-bottom:10px;font-size:14px; margin-left:50px;">确定要批量删除选中的消息吗?</P>
         </p>
         <div slot="footer">
           <Button type="primary" @click="removeSubFormSome">确定</Button>
@@ -160,7 +160,7 @@
         </p>
         <p style="margin-left:70px; margin-top: 10px;">
           <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
-        </p><p style="margin-top:23px; margin-bottom:10px; margin-left:50px;">确定要删除所有的“{{rightTitle}}”?</P>
+        </p><p style="margin-top:23px; margin-bottom:10px;font-size:14px; margin-left:50px;">确定要删除所有的“{{rightTitle}}”?</P>
         </p>
         <div slot="footer">
           <Button type="primary" @click="removeSubFormAll">确定</Button>

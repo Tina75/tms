@@ -16,7 +16,7 @@
         <span>提示</span>
       </p>
       <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white; color: #FFBB44;float:left;"></i>
-      <p style="margin-top:13px; margin-left:40px;">确定要删除“{{messageInfo.title}}”消息吗?</P>
+      <p style="margin-top:13px; margin-left:40px;font-size:14px;">确定要删除“{{messageInfo.title}}”消息吗?</P>
       <div slot="footer">
         <Button type="primary" @click="removeSubForm(messageInfo)">确定</Button>
         <Button  @click="removeCancelForm">取消</Button>
