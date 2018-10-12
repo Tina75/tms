@@ -14,7 +14,7 @@
             <DatePicker v-model="checkingOrderQuery.period" :options="dateOption" type="datetimerange" format="yyyy-MM-dd HH:mm" class="date-item" placeholder="开始时间-结束时间" />
           </FormItem>
           </Col>
-          <Col span="4">
+          <Col span="5">
           <FormItem>
             <Button type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
             <Button type="default" @click="resetQuery">清除条件</Button>
