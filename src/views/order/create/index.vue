@@ -611,6 +611,7 @@ export default {
         ]
 
       },
+      consignerCargoes: [new Cargo()],
       tempCargoes: {},
       statics: {
         weight: 0,
@@ -632,10 +633,26 @@ export default {
       'consigneePhones',
       'consigneeAddresses',
       'cargoes',
-      'cargoOptions',
-      'consignerCargoes',
-      'sumRow'
+      'cargoOptions'
+      //  'consignerCargoes',
+      // 'sumRow'
     ]),
+    sumRow (state, getters) {
+      return this.consignerCargoes.reduce((sum, cargo) => {
+        // 读取临时数据
+
+        sum.weight = float.round((cargo.weight || 0) + sum.weight)
+        sum.volume = float.round((cargo.volume || 0) + sum.volume, 1)
+        sum.cargoCost = float.round((cargo.cargoCost || 0) + sum.cargoCost)
+        sum.quantity = (cargo.quantity || 0) + sum.quantity
+        return sum
+      }, {
+        weight: 0,
+        volume: 0,
+        cargoCost: 0,
+        quantity: 0
+      })
+    },
     totalFee () {
       const feeList = ['freightFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
       const orderForm = this.orderForm
@@ -670,6 +687,7 @@ export default {
           for (let key in vm.orderForm) {
             vm.orderForm[key] = orderDetail[key] || vm.orderForm[key]
           }
+          this.consignerCargoes = orderDetail.orderCargoList.map((item) => new Cargo(item, true))
           // 加上id
           vm.orderForm.id = orderDetail.id
           // 分转换元
@@ -700,10 +718,10 @@ export default {
     ...mapActions([
       'getClients',
       'getConsignerDetail',
-      'appendCargo',
-      'removeCargo',
-      'updateCargo',
-      'fullUpdateCargo',
+      // 'appendCargo',
+      // 'removeCargo',
+      // 'updateCargo',
+      // 'fullUpdateCargo',
       'clearCargoes',
       'clearOrderDetail',
       'clearClients',
@@ -787,12 +805,44 @@ export default {
       // 同步完，释放掉
       this.tempCargoes = {}
     },
+    /**
+   * 添加一行货物信息
+   * @param {*} store
+   * @param {*} index
+   */
+    appendCargo (index) {
+      this.consignerCargoes.splice(index + 1, -1, new Cargo())
+    },
+    /**
+   * 删除一行
+   * @param {*} store
+   * @param {*} index
+   */
+    removeCargo (index) {
+      if (this.consignerCargoes.length === 1) {
+        return
+      }
+      this.consignerCargoes.splice(index, 1)
+    },
+    /**
+     * 修改货物信息
+     * @param {object} item {index:0, cargo:object}
+     */
+    updateCargo (item) {
+      this.consignerCargoes[item.index] = new Cargo(Object.assign({}, this.consignerCargoes[item.index], item.cargo))
+    },
+    /**
+     * 删除后增加
+     */
+    fullUpdateCargo (item) {
+      this.consignerCargoes.splice(item.index, 1, new Cargo(item.cargo))
+    },
     // 选择客户dropdown的数据
     handleSelectConsigner (name, row) {
       const _this = this
       _this.resetForm()
       _this.getConsignerDetail(row.id).then((response) => {
-        const { consigneeList: consignees, addressList: addresses, ...consigner } = response.data
+        const { consigneeList: consignees, addressList: addresses, cargoList, ...consigner } = response.data
         // 设置发货人信息，发货联系人，手机，发货地址
         _this.orderForm.consignerContact = consigner.contact
         _this.orderForm.consignerPhone = consigner.phone
@@ -808,6 +858,11 @@ export default {
         let settlementType = consigner.settlementType || consigner.payType
         if (settlementType) {
           _this.orderForm.settlementType = settlementType
+        }
+        if (cargoList.length > 0) {
+          // 清空信息，防止信息追加到已维护的货物信息中去
+          _this.tempCargoes = {}
+          _this.consignerCargoes = [new Cargo(cargoList[0])]
         }
       })
     },
@@ -923,6 +978,7 @@ export default {
     resetForm () {
       this.$refs.orderForm.resetFields()
       this.clearCargoes()
+      this.consignerCargoes = [new Cargo()]
     },
     // 修改订单完结束后，自动关闭页面
     closeTab () {
