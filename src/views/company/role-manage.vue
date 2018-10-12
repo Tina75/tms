@@ -52,9 +52,10 @@
       <p slot="header" class="modalTitle">
         <span>提示</span>
       </p>
-      <p style="margin-left:70px; margin-top: 10px;">
-        <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
-      </p><p style="margin-top:23px; margin-bottom:10px; margin-left:50px;">确定删除'{{rightTitle}}'?</P>
+      <p class="modalRemoveContend">
+        <i class="icon font_family icon-bangzhuzhongxin"></i>
+      </p>
+      <p class="modalRemoveContendP">确定删除'{{rightTitle}}'?</P>
       </p>
       <div slot="footer">
         <Button type="primary" @click="removeFormRole">确定</Button>
@@ -100,7 +101,7 @@ import roleTreeList from './roleTreeList.js'
 import Server from '@/libs/js/server'
 import _ from 'lodash'
 export default {
-  name: 'employee-manage',
+  name: 'role-manage',
   mixins: [ BasePage ],
   metaInfo: {
     title: '角色管理'
@@ -479,6 +480,20 @@ export default {
 .modalTitle
   text-align:center;
   font-size: 16px;
+  font-weight: bold;
+.modalRemoveContend
+  margin-left:70px;
+  margin-top: 10px;
+  i.icon.font_family.icon-bangzhuzhongxin
+    font-size:28px;
+    background: white;
+    color: #FFBB44;
+    float:left;
+    width:40px;
+.modalRemoveContendP
+  margin-top:23px;
+  margin-bottom:10px;
+  margin-left:50px;
 .formSty
   padding:20px;
   height: 70px;

@@ -31,7 +31,7 @@ const TMSUrl = {
   CARRIER_MANAGEMENT: '/client/carrier', // 承运商管理
   TRANSFER_MANAGEMENT: '/client/transfer', // 外转方管理
   STAFF_MANAGEMENT: '/company/staff-manage', // 员工管理
-  EMPLOYEE_MANAGEMENT: '/company/employee-manage', // 角色管理
+  EMPLOYEE_MANAGEMENT: '/company/role-manage', // 角色管理
   SETTING: '/set-up/index', // 设置
   MESSAGE_CENTER: '/information/index', // 消息中心
   HELP: '/helper/index' // 帮助中心
