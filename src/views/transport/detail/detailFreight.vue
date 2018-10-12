@@ -329,7 +329,7 @@ import SelectInput from '../components/SelectInput.vue'
 import SelectInputMixin from '../components/selectInputMixin'
 
 import Server from '@/libs/js/server'
-import { getCityCode } from '@/libs/js/cityValidator'
+import { getCityCode } from '@/libs/constant/cityValidator'
 import TMSUrl from '@/libs/constant/url'
 
 export default {
