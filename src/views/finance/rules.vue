@@ -234,7 +234,7 @@ export default {
       baseValidate: {
         base: [
           { required: true, message: '请填写区间', trigger: 'blur' },
-          { pattern: /^[1-9]\d*(.\d{2})?$/, message: '最多精确到两位小数', trigger: 'blur' }
+          { pattern: /^\d*(.\d{2})?$/, message: '最多精确到两位小数', trigger: 'blur' }
         ]
       },
       priceValidate: {
