@@ -12,7 +12,7 @@
     </ol>
     <div class="dialog-footer">
       如需延长有效期，请联系客服
-      <p><a ><i class="icon font_family icon-ico-call"></i>400-788-5656</a></p>
+      <p><a ><i class="icon font_family icon-ico-call"></i>025-58918856</a></p>
     </div>
     <div slot="footer" style="text-align:center">
       <Button  type="primary"  @click.native="close">我知道了</Button>

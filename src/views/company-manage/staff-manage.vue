@@ -54,7 +54,7 @@
             </Option>
           </Select>
         </FormItem>
-        <FormItem>
+        <FormItem style="width:370px;">
           <p style="color:red; margin-top:-10px;">确认操作后，您将与接收该角色的人员互换角色</p>
         </FormItem>
       </Form>
@@ -255,6 +255,7 @@ export default {
         method: 'get'
       }).then(({ data }) => {
         this.selectList = data.data
+        this.selectList.unshift({ id: '', name: '全部' })
       })
     },
     getStaffSelectList () {
