@@ -1,7 +1,7 @@
 <template>
   <div class="temAll">
     <Col span="3">
-    <Menu active-name="修改密码" style="width: 100%; background:rgba(243,245,249,1)">
+    <Menu active-name="修改密码" style="width: 100%; background:rgba(243,245,249,1);color: #333;">
       <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
       <p class="menuTitle">{{menu.name}}</p>
       </MenuItem>
@@ -609,7 +609,8 @@ export default {
   background: #fff;
 >>> .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
     background: #fff;
-    color: #515a6e;
+    color: #333333;
+    font-weight: bold;
 .temAll
   width: 100%
   height: 100%;

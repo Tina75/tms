@@ -2,7 +2,7 @@ import MoneyInput from '../components/MoneyInput'
 import Server from '@/libs/js/server'
 import Float from '@/libs/js/float'
 import { CAR } from '@/views/client/client'
-import { validateCityies } from '@/libs/constant/cityValidator'
+import { validateCityies } from '@/libs/js/cityValidator'
 
 export default {
   data () {
@@ -237,14 +237,14 @@ export default {
 
     // 设置金额单位为元
     setMoneyUnit2Yuan (money) {
-      return money ? money / 100 : 0
+      return typeof money === 'number' ? money / 100 : null
     },
 
     // 格式化金额单位为分
     formatMoney () {
       let temp = Object.assign({}, this.payment)
       for (let key in temp) {
-        temp[key] = Number(temp[key]) * 100
+        if (typeof temp[key] === 'number') temp[key] = temp[key] * 100
       }
       return temp
     },
@@ -254,8 +254,8 @@ export default {
       return this.settlementPayInfoBack.map(item => {
         return {
           payType: item.payType,
-          fuelCardAmount: Number(item.fuelCardAmount) * 100,
-          cashAmount: Number(item.cashAmount) * 100
+          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? item.fuelCardAmount * 100 : void 0,
+          cashAmount: typeof item.cashAmount === 'number' ? item.cashAmount * 100 : void 0
         }
       })
     },

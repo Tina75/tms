@@ -3,8 +3,8 @@
     <Col span="24">
     <div class="searchCard">
       <Form :model="formSearch" :label-width="60" label-position="left">
-        <Col span="6" class="searchInput">
-        <FormItem label="姓名：">
+        <Col span="6">
+        <FormItem label="姓名：" class="searchInput">
           <SelectInput v-model="formSearch.name" :remote="true" :remote-method="searchName" placeholder="请输入姓名" style="min-width:200px;"></SelectInput>
         </FormItem>
         </Col>
@@ -15,7 +15,7 @@
         </Col>
         <Col span="6">
         <FormItem label="角色：" class="searchInput">
-          <Select v-model="formSearch.roleId" clearable style="min-width:200px;">
+          <Select v-model="formSearch.roleId" style="min-width:200px;">
             <Option
               v-for="item in selectList"
               :value="item.id"
@@ -54,7 +54,7 @@
             </Option>
           </Select>
         </FormItem>
-        <FormItem>
+        <FormItem style="width:370px;">
           <p style="color:red; margin-top:-10px;">确认操作后，您将与接收该角色的人员互换角色</p>
         </FormItem>
       </Form>
@@ -119,7 +119,7 @@ export default {
       formSearch: {
         name: '',
         phone: '',
-        roleId: ''
+        roleId: '全部'
       },
       selectList: [],
       staffSelectList: [],
@@ -255,6 +255,7 @@ export default {
         method: 'get'
       }).then(({ data }) => {
         this.selectList = data.data
+        this.selectList.unshift({ id: '全部', name: '全部' })
       })
     },
     getStaffSelectList () {
@@ -288,7 +289,9 @@ export default {
         })
     },
     searchBtn () {
+      this.formSearch.roleId = (this.formSearch.roleId === '全部' ? '' : this.formSearch.roleId)
       this.formSearchInit = Object.assign({}, this.formSearch)
+      this.formSearch.roleId = (this.formSearch.roleId === '' ? '全部' : this.formSearch.roleId)
     },
     eaditStaff (params) {
       if (params !== 'add') {

@@ -160,7 +160,7 @@ export default {
     },
     greetings () {
       const now = new Date().getHours()
-      const name = this.UserInfo.name
+      const name = this.UserInfo.name || ''
       if (now >= 5 && now < 11) {
         return `<strong class="van-font-14 i-pr-20">早上好，${name}</strong> &nbsp;&nbsp;每天给自己一个希望，只为明天更美好。`
       } else if (now >= 11 && now < 14) {
@@ -301,9 +301,11 @@ export default {
   &__dropdown-footer
     padding 10px 0
     text-align center
-  &__padding-8
+  &__card-item
     padding-left 9px
     padding-right 9px
+    display list-item
+    overflow hidden
   &__header
     position relative
   &__header-row

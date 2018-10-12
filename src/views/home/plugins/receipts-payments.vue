@@ -1,5 +1,5 @@
 <template>
-  <div is="i-col" :span="12" class="i-mt-15 page-home__padding-8">
+  <div is="i-col" :span="12" class="i-mt-15 page-home__card-item">
     <blank-card :to="linkto" title="应收款项 / 应付款项" page-title="营业额汇总表">
       <div class="chart">
         <ECharts :options="options" :auto-resize="true"></ECharts>

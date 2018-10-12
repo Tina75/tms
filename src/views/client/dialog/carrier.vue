@@ -157,10 +157,10 @@ export default {
           ],
           shippingWeight: [
             { required: true, message: '载重量不能为空', trigger: 'blur' },
-            { type: 'string', message: '必须为大于等于0的数,最多两位小数', pattern: /^(\+)?\d+(\.\d{1,2})?$/, trigger: 'blur' }
+            { type: 'string', message: '必须为大于等于0的数字,最多两位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/, trigger: 'blur' }
           ],
           shippingVolume: [
-            { type: 'string', message: '必须为大于等于0的数,最多两位小数', pattern: /^(\+)?\d+(\.\d{1})?$/, trigger: 'blur' }
+            { type: 'string', message: '必须为大于等于0的数字,最多两位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/, trigger: 'blur' }
           ]
         },
         company: {
