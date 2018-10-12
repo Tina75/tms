@@ -36,7 +36,7 @@ import SelectInput from '@/views/transport/components/SelectInput.vue'
 import SelectInputMixin from '@/views/transport/components/selectInputMixin'
 import Server from '@/libs/js/server'
 import { CAR } from '@/views/client/client'
-import { FORM_VALIDATE_START, FORM_VALIDATE_END, getCityCode, resetCityValidator } from '@/libs/js/cityValidator'
+import { FORM_VALIDATE_START, FORM_VALIDATE_END, getCityCode, resetCityValidator } from '@/libs/constant/cityValidator'
 
 export default {
   name: 'CreatedFreight',
