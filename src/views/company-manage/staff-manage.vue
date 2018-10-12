@@ -15,7 +15,7 @@
         </Col>
         <Col span="6">
         <FormItem label="角色：" class="searchInput">
-          <Select v-model="formSearch.roleId" clearable style="min-width:200px;">
+          <Select v-model="formSearch.roleId" style="min-width:200px;">
             <Option
               v-for="item in selectList"
               :value="item.id"
@@ -119,7 +119,7 @@ export default {
       formSearch: {
         name: '',
         phone: '',
-        roleId: ''
+        roleId: '全部'
       },
       selectList: [],
       staffSelectList: [],
@@ -255,7 +255,7 @@ export default {
         method: 'get'
       }).then(({ data }) => {
         this.selectList = data.data
-        this.selectList.unshift({ id: '', name: '全部' })
+        this.selectList.unshift({ id: '全部', name: '全部' })
       })
     },
     getStaffSelectList () {
@@ -289,7 +289,9 @@ export default {
         })
     },
     searchBtn () {
+      this.formSearch.roleId = (this.formSearch.roleId === '全部' ? '' : this.formSearch.roleId)
       this.formSearchInit = Object.assign({}, this.formSearch)
+      this.formSearch.roleId = (this.formSearch.roleId === '' ? '全部' : this.formSearch.roleId)
     },
     eaditStaff (params) {
       if (params !== 'add') {
