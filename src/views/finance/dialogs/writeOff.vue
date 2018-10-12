@@ -71,7 +71,7 @@ export default {
       validate: {
         actualFee: [
           { required: true, message: '请填写金额', trigger: 'blur' },
-          { pattern: /^[1-9]\d*(.\d{1,2})?$/, message: '必须为大于0的数，最多精确到两位小数', trigger: 'blur' }
+          { pattern: /^(0|([1-9]\d*))(.\d{1,2})?$/, message: '必须为大于0的数，最多精确到两位小数', trigger: 'blur' }
         ],
         payType: { required: true, message: '请选择付款方式', trigger: 'change' },
         account: { type: 'string', max: 30, message: '不能超过30个字', trigger: 'blur' },
