@@ -37,7 +37,7 @@
         <Col span="6">本期发生额</Col>
       </Row>
       <Row type="flex" justify="start" class="middle-height" style="border-top: 0">
-        <Col span="6">收入</Col>
+        <Col span="6" style="border-right: 1px solid #C9CED9">收入</Col>
         <Col span="6">上游运费收入</Col>
         <Col span="12" >
         <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
