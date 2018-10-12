@@ -12,9 +12,9 @@
             <Input v-model="writtenOffQuery.name" :placeholder="`请输入${sceneMap[scene]}名称`"/>
           </FormItem>
           </Col>
-          <Col span="6" style="margin-right: 20px">
+          <Col span="5" style="margin-right: 20px">
           <FormItem :label-width="75" label="核销时间：">
-            <DatePicker v-model="writtenOffQuery.period" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width: 180px" />
+            <DatePicker v-model="writtenOffQuery.period" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width: 100%" />
           </FormItem>
           </Col>
           <Col span="2" style="margin-right: 10px">
