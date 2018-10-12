@@ -2,7 +2,7 @@
   <div class="finance-rules">
     <div class="tab-box">
       <Tabs v-model="active" @on-click="switchTab">
-        <TabPane v-for="(name, key) in sceneMap" :key="key" :label="name" :name="key" />
+        <TabPane v-for="(name, key) in sceneMap" v-if="key !== '4'" :key="key" :label="name" :name="key" />
       </Tabs>
     </div>
     <div class="data-container">
