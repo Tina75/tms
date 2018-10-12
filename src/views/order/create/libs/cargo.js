@@ -6,7 +6,7 @@ export default class Cargo {
    * @param {Boolean} transfer 需要除以100转换为元
    */
   constructor (props, transfer = false) {
-    this.quantity = 1
+    this.quantity = null
     this.editable = false
     if (props) {
       this.id = props.id || uniqueIndex++
