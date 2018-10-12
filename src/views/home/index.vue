@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page-home">
     <div class="page-home__header">
       <Alert v-if="notice" type="warning" class="page-home__header-notice" banner closable show-icon>
         <Icon slot="icon" type="ios-bulb-outline"></Icon>
@@ -288,7 +288,20 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
+.ivu-layout-sider-collapsed
+  .page-home
+    left 70px
 .page-home
+  -webkit-transition all .2s ease-in-out
+  transition all .2s ease-in-out
+  position absolute
+  left 218px
+  top 65px
+  right 20px
+  bottom 15px
+  overflow-y auto
+  overflow-x hidden
+  background-color #efefef;
   &__dropdown-header
     text-align center
     border-bottom 1px solid #efefef

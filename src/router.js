@@ -28,10 +28,10 @@ export default new Router({
     //   path: '/transport/waybill',
     //   component: () => import('@/views/transport/waybill')
     // },
-    {
-      path: '/home',
-      component: () => import('@/views/home/index')
-    },
+    // {
+    //   path: '/home',
+    //   component: () => import('@/views/home/index')
+    // },
     {
       path: '/set-up/index',
       component: () => import('@/views/set-up/index')

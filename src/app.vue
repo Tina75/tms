@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Layout class="container">
+    <Layout :class="classes">
       <Sider v-model="collapsed" :collapsed-width="50" hide-trigger collapsible style="overflow:hidden">
         <side-bar :collapsed="collapsed" :active-name="$route.path" :menu-list="menuList" @on-select="onMenuSelect"/>
       </Sider>
@@ -37,7 +37,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['TabNavList', 'UserInfo'])
+    ...mapGetters(['TabNavList', 'UserInfo']),
+    classes () {
+      return [
+        'container',
+        { 'ivu-layout-sider-collapsed': this.collapsed }
+      ]
+    }
   },
 
   mounted () {
