@@ -1,10 +1,12 @@
-import server from '@/libs/js/server.js'
+import server from '../../libs/js/server'
 // 基本变量
 export const CODE = 10000
+export const CAR = /(^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}(([0-9]{5}[DF]$)|([DF][A-HJ-NP-Z0-9][0-9]{4}$)))|(^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-HJ-NP-Z0-9]{4}[A-HJ-NP-Z0-9挂学警港澳]{1}$)/
+
 // 发货方列表
 export function consignerList (data) {
   return server({
-    url: '/consigner/list',
+    url: '/consigner/page',
     method: 'GET',
     data: data
   })
@@ -12,7 +14,6 @@ export function consignerList (data) {
 
 // 发货方的新增
 export function consignerAdd (data) {
-  console.log(data)
   return server({
     url: '/consigner/add',
     headers: {
@@ -25,14 +26,13 @@ export function consignerAdd (data) {
 
 // 发货方的修改
 export function consignerUpdate (data) {
-  console.log(data)
   return server({
     url: '/consigner/update',
     headers: {
       'Content-Type': 'application/json'
     },
     method: 'post',
-    data: data
+    data: Object.assign(data, { payType: data.payType || '' })
   })
 }
 
@@ -49,10 +49,10 @@ export function consignerDelete (data) {
   })
 }
 
-// 发货方的详情
+// 发货方详情分页
 export function consignerDetail (data) {
   return server({
-    url: '/consigner/detail',
+    url: '/consigner/detail/page',
     method: 'GET',
     data: data
   })
@@ -349,6 +349,18 @@ export function carrierDeleteVehicle (data) {
     },
     method: 'DELETE',
     params: data
+  })
+}
+
+// 查询承运商下尚未被绑定车辆的司机
+export function listUnbindedDriver (data) {
+  return server({
+    url: '/carrier/list/unbinded/driver',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'GET',
+    data: data
   })
 }
 

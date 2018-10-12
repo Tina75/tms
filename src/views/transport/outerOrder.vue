@@ -1,47 +1,51 @@
 <template>
-  <div>
-    <TabHeader :tabs="tabList" @tabChange="tabChanged"></TabHeader>
+  <div ref="$box" class="transport-page">
+    <TabHeader :tabs="tabList" :type="tabType" @on-change="tabChanged"></TabHeader>
 
     <div style="margin-top: 30px;display: flex;justify-content: space-between;">
 
       <!-- 按钮组 -->
-      <div>
-        <Button v-for="(item, key) in currentBtns" :key="key"
+      <div class="custom-style">
+        <Button v-for="(item, key) in showButtons" :key="key"
                 :type="key === 0 ? 'primary' : 'default'"
                 @click="item.func">{{ item.name }}</Button>
       </div>
 
       <!-- 简易搜索 -->
-      <div v-if="isEasySearch" class="right">
+      <div v-if="isEasySearch" class="right custom-style">
         <Select v-model="easySelectMode"
                 style="width:120px; margin-right: 11px"
-                @0n-change="resetEasySearch">
+                @on-change="resetEasySearch">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
 
-        <Input v-if="easySelectMode === 1"
-               v-model="easySearchKeyword"
-               :icon="easySearchKeyword ? 'ios-close-circle' : ''"
-               placeholder="请输入外转方名称"
-               style="width: 200px"
-               @on-click="resetEasySearch" />
+        <SelectInput v-if="easySelectMode === 1"
+                     v-model="easySearchKeyword"
+                     mode="transferee"
+                     placeholder="请输入外转方名称"
+                     clearable
+                     class="search-input"
+                     @on-clear="resetEasySearch" />
 
         <Input v-if="easySelectMode === 2"
                v-model="easySearchKeyword"
                :icon="easySearchKeyword ? 'ios-close-circle' : ''"
+               :maxlength="20"
                placeholder="请输入订单号"
-               style="width: 200px"
+               class="search-input"
                @on-click="resetEasySearch" />
 
         <Input v-if="easySelectMode === 3"
                v-model="easySearchKeyword"
                :icon="easySearchKeyword ? 'ios-close-circle' : ''"
+               :maxlength="20"
                placeholder="请输入外转单号"
-               style="width: 200px"
+               class="search-input"
                @on-click="resetEasySearch" />
 
-        <Button icon="ios-search"
-                style="width: 40px; margin-left: -2px;" @click="startSearch"></Button>
+        <Button icon="ios-search" type="primary"
+                class="search-btn-easy"
+                @click="startSearch"></Button>
 
         <Button class="senior-search"
                 type="text" size="small"
@@ -50,21 +54,29 @@
     </div>
 
     <!-- 高级搜索 -->
-    <div v-if="!isEasySearch" class="operate-box">
+    <div v-if="!isEasySearch" class="operate-box custom-style">
 
       <div style="margin-bottom: 10px;">
-        <Input v-model="seniorSearchFields.consignerName" placeholder="请输入客户名称" style="width: 200px" />
-        <Input v-model="seniorSearchFields.orderNo" placeholder="请输入订单号" style="width: 200px" />
-        <Input v-model="seniorSearchFields.customerOrderNo" placeholder="请输入客户订单号" style="width: 200px" />
-        <Input v-model="seniorSearchFields.transNo" placeholder="请输入外转单号" style="width: 200px" />
-        <Input v-model="seniorSearchFields.transfereeName" placeholder="请输入外转方名称" style="width: 200px" />
+        <SelectInput v-model="seniorSearchFields.consignerName"
+                     mode="consigner"
+                     placeholder="请输入客户名称"
+                     class="search-input-senior" />
+
+        <Input v-model="seniorSearchFields.orderNo" :maxlength="20" placeholder="请输入订单号" class="search-input-senior" />
+        <Input v-model="seniorSearchFields.customerOrderNo" :maxlength="20" placeholder="请输入客户订单号" class="search-input-senior" />
+        <Input v-model="seniorSearchFields.transNo" :maxlength="20" placeholder="请输入外转单号" class="search-input-senior" />
+
+        <SelectInput v-model="seniorSearchFields.transfereeName"
+                     mode="transferee"
+                     placeholder="请输入外转方名称"
+                     class="search-input-senior" />
       </div>
 
       <div style="display: flex;justify-content: space-between;">
         <div>
-          <Input v-model="seniorSearchFields.start" placeholder="请输入始发地" style="width: 200px" />
-          <Input v-model="seniorSearchFields.end" placeholder="请输入目的地" style="width: 200px" />
-          <DatePicker type="daterange" split-panels placeholder="开始日期-结束日期" style="width: 200px"></DatePicker>
+          <AreaSelect v-model="seniorSearchFields.startCodes" placeholder="请输入始发地" class="search-input-senior" />
+          <AreaSelect v-model="seniorSearchFields.endCodes" placeholder="请输入目的地" class="search-input-senior" />
+          <DatePicker v-model="seniorSearchFields.dateRange" type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
         </div>
         <div>
           <Button type="primary"
@@ -80,44 +92,50 @@
     </div>
 
     <!-- 表格 -->
-    <PageTable :columns="tableColumns"
-               :extra-columns="extraColumns"
-               :data="tableData"
-               :show-filter="true"
-               :show-pagination="false"
-               style="margin-top: 15px"
-               @on-column-change="tableColumnsChanged"
-               @on-selection-change="selectionChanged"></PageTable>
-
-    <Page :total="page.total"
-          :current="page.current"
-          :page-size="page.size"
-          :page-size-opts="[10,20,50]"
-          class="table-pagination"
-          size="small"
-          show-sizer
-          show-elevator
-          show-total
-          @on-change="pageChange"
-          @on-page-size-change="pageSizeChange"></Page>
+    <div>
+      <PageTable ref="$table"
+                 :columns="tableColumns"
+                 :extra-columns="extraColumns"
+                 :show-filter="true"
+                 :keywords="searchFields"
+                 row-id="transId"
+                 url="/outside/bill/list"
+                 method="post"
+                 list-field="list"
+                 style="margin-top: 15px"
+                 @on-column-change="tableColumnsChanged"
+                 @on-selection-change="selectionChanged"
+                 @on-sort-change="tableSort"
+                 @on-change="pageChange"
+                 @on-page-size-change="pageSizeChange"
+                 @on-load="dataOnload" />
+    </div>
 
   </div>
 </template>
 
 <script>
 import BasePage from '@/basic/BasePage'
-import TabHeader from '@/components/TabHeader'
+import TransportBase from './transportBase'
+import TransportMixin from './transportMixin'
+
+import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
-import TransportTableMixin from './transportTableMixin'
+import AreaSelect from '@/components/AreaSelect'
+import SelectInput from './components/SelectInput.vue'
+
 import Server from '@/libs/js/server'
+import Export from '@/libs/js/export'
+import TMSUrl from '@/libs/constant/url'
 
 export default {
   name: 'OuterManager',
-  components: { TabHeader, PageTable },
-  mixins: [ BasePage, TransportTableMixin ],
+  components: { TabHeader, PageTable, AreaSelect, SelectInput },
+  mixins: [ BasePage, TransportBase, TransportMixin ],
   metaInfo: { title: '外转单管理' },
   data () {
     return {
+      tabType: 'OUTER',
       // 标签栏
       tabList: [
         { name: '全部', count: '' },
@@ -132,46 +150,76 @@ export default {
           tab: '全部',
           btns: [{
             name: '发运',
-            func: () => console.log(Math.random())
+            code: 120301,
+            func: () => {
+              this.billShipment()
+            }
           }, {
             name: '到货',
-            func: () => console.log(Math.random())
+            code: 120302,
+            func: () => {
+              this.billArrived()
+            }
           }, {
             name: '删除',
-            func: () => console.log(Math.random())
+            code: 120304,
+            func: () => {
+              this.billDelete()
+            }
           }, {
             name: '导出',
-            func: () => console.log(Math.random())
+            code: 120305,
+            func: () => {
+              this.billExport()
+            }
           }]
         },
         {
           tab: '待发运',
           btns: [{
             name: '发运',
-            func: () => console.log(Math.random())
+            code: 120301,
+            func: () => {
+              this.billShipment()
+            }
           }, {
             name: '删除',
-            func: () => console.log(Math.random())
+            code: 120304,
+            func: () => {
+              this.billDelete()
+            }
           }, {
             name: '导出',
-            func: () => console.log(Math.random())
+            code: 120305,
+            func: () => {
+              this.billExport()
+            }
           }]
         },
         {
           tab: '在途',
           btns: [{
             name: '到货',
-            func: () => console.log(Math.random())
+            code: 120302,
+            func: () => {
+              this.billArrived()
+            }
           }, {
             name: '导出',
-            func: () => console.log(Math.random())
+            code: 120305,
+            func: () => {
+              this.billExport()
+            }
           }]
         },
         {
           tab: '已到货',
           btns: [{
             name: '导出',
-            func: () => console.log(Math.random())
+            code: 120305,
+            func: () => {
+              this.billExport()
+            }
           }]
         }
       ],
@@ -190,94 +238,206 @@ export default {
         customerOrderNo: '', // 客户订单号
         transNo: '', // 外转单号
         transfereeName: '', // 外转方名称
+        startCodes: [], // 始发地codes
+        endCodes: [], // 目的地codes
         start: '', // 始发地
         end: '', // 目的地
+        dateRange: ['', ''], // 日期范围
         startTime: '', // 开始时间
         endTime: '' // 结束时间
+      },
+
+      tableActionColumn: {
+        title: '操作',
+        key: 'action',
+        width: 120,
+        fixed: 'left',
+        extra: true,
+        render: (h, p) => {
+          if (p.row.status === 1 && this.hasPower(120301)) {
+            return h('a', {
+              on: {
+                click: () => {
+                  this.billShipment([p.row.transId])
+                }
+              }
+            }, '发运')
+          } else if (p.row.status === 2 && this.hasPower(120302)) {
+            return h('a', {
+              on: {
+                click: () => {
+                  this.billArrived([p.row.transId])
+                }
+              }
+            }, '到货')
+          }
+        }
       },
 
       tableColumns: [
         {
           type: 'selection',
           width: 50,
-          align: 'center'
-        },
-        {
-          title: '操作',
-          key: 'do',
-          width: 100,
-          extra: true,
-          render: (h, params) => {
-            return h('div', [
-              h('a', {
-                on: {
-                  click: () => {
-
-                  }
-                },
-                style: {
-                  marginRight: '10px'
-                }
-              }, '发运'),
-              h('a', {
-                on: {
-                  click: () => {
-
-                  }
-                }
-              }, '删除')
-            ])
-          }
+          align: 'center',
+          fixed: 'left'
         },
         {
           title: '外转单号',
           key: 'transNo',
-          width: 160,
-          fixed: true,
-          visible: true,
+          width: 180,
+          fixed: 'left',
           render: (h, p) => {
             return h('a', {
               style: {
                 color: '#418DF9'
+              },
+              on: {
+                click: () => {
+                  this.openTab({
+                    title: p.row.transNo,
+                    path: TMSUrl.OUTER_ORDER_DETAIL,
+                    query: { id: p.row.transId }
+                  })
+                }
               }
             }, p.row.transNo)
           }
         },
         {
           title: '订单号',
-          key: 'orderNo'
+          key: 'orderNo',
+          width: 180
         },
         {
           title: '外转方运单号',
-          key: 'outTransNo'
+          key: 'outTransNo',
+          width: 180
         },
         {
           title: '外转方名称',
-          key: 'transfereeName'
+          key: 'transfereeName',
+          minWidth: 180,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.transfereeName, true)
+          }
         },
         {
           title: '始发地',
-          key: 'start'
+          key: 'start',
+          width: 180,
+          render: (h, p) => {
+            return this.tableDataRender(h, this.cityFormatter(p.row.start))
+          }
         },
         {
           title: '目的地',
-          key: 'end'
+          key: 'end',
+          width: 180,
+          render: (h, p) => {
+            return this.tableDataRender(h, this.cityFormatter(p.row.end))
+          }
         },
         {
-          title: '外转运费（元）',
-          key: 'transFee'
+          title: '外转运费',
+          key: 'transFee',
+          width: 120,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.transFee === '' ? '' : p.row.transFee / 100)
+          }
         },
         {
           title: '体积（方）',
-          key: 'volume'
+          key: 'volume',
+          width: 120
         },
         {
           title: '重量（吨）',
-          key: 'weight'
+          key: 'weight',
+          width: 120
         },
         {
           title: '外转时间',
-          key: 'createTimeLong'
+          key: 'createTimeLong',
+          sortable: 'custom',
+          width: 160,
+          render: (h, p) => {
+            return this.tableDataRender(h, this.timeFormatter(p.row.createTimeLong), true)
+          }
+        },
+        {
+          title: '客户订单号',
+          key: 'customerOrderNo',
+          width: 180
+        },
+        {
+          title: '客户名称',
+          key: 'consignerName',
+          minWidth: 180,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.consignerName)
+          }
+        },
+        {
+          title: '发货人',
+          key: 'consignerContact',
+          width: 120
+        },
+        {
+          title: '发货人手机号码',
+          key: 'consignerPhone',
+          width: 120
+        },
+        {
+          title: '收货人',
+          key: 'consigneeContact',
+          width: 120
+        },
+        {
+          title: '收货人手机号码',
+          key: 'consigneePhone',
+          width: 120
+        },
+        {
+          title: '货值',
+          key: 'cargoCost',
+          width: 120,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
+          }
+        },
+        {
+          title: '结算方式',
+          key: 'payType',
+          width: 120,
+          render: (h, p) => {
+            return this.tableDataRender(h, this.payTypeFormatter(p.row.payType, true))
+          }
+        },
+        {
+          title: '要求装货时间',
+          key: 'deliveryTimeLong',
+          width: 160,
+          render: (h, p) => {
+            return this.tableDataRender(h, this.timeFormatter(p.row.deliveryTimeLong), true)
+          }
+        },
+        {
+          title: '期望到货时间',
+          key: 'arriveTimeLong',
+          width: 160,
+          render: (h, p) => {
+            return this.tableDataRender(h, this.timeFormatter(p.row.arriveTimeLong), true)
+          }
+        },
+        {
+          title: '回单数',
+          key: 'receiptCount',
+          width: 120
+        },
+        {
+          title: '制单人',
+          key: 'createOperator',
+          width: 120
         }
       ],
 
@@ -319,7 +479,7 @@ export default {
           visible: true
         },
         {
-          title: '外转运费（元）',
+          title: '外转运费',
           key: 'transFee',
           fixed: false,
           visible: true
@@ -344,118 +504,235 @@ export default {
         },
         {
           title: '客户订单号',
-          key: 'x1',
+          key: 'customerOrderNo',
           fixed: false,
           visible: false
         },
         {
           title: '客户名称',
-          key: 'x2',
+          key: 'consignerName',
           fixed: false,
           visible: false
         },
         {
           title: '发货人',
-          key: 'x3',
+          key: 'consignerContact',
           fixed: false,
           visible: false
         },
         {
           title: '发货人手机号码',
-          key: 'x4',
+          key: 'consignerPhone',
           fixed: false,
           visible: false
         },
         {
           title: '收货人',
-          key: 'x5',
+          key: 'consigneeContact',
           fixed: false,
           visible: false
         },
         {
           title: '收货人手机号码',
-          key: 'x6',
+          key: 'consigneePhone',
           fixed: false,
           visible: false
         },
         {
           title: '货值',
-          key: 'x7',
+          key: 'cargoCost',
           fixed: false,
           visible: false
         },
         {
-          title: '付款方式',
-          key: 'settlementType',
+          title: '结算方式',
+          key: 'payType',
           fixed: false,
           visible: false
         },
         {
           title: '要求装货时间',
-          key: 'x8',
+          key: 'deliveryTimeLong',
           fixed: false,
           visible: false
         },
         {
           title: '期望到货时间',
-          key: 'x9',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '订单数',
-          key: 'orderCnt',
+          key: 'arriveTimeLong',
           fixed: false,
           visible: false
         },
         {
           title: '回单数',
-          key: 'backbillCnt',
+          key: 'receiptCount',
+          fixed: false,
+          visible: false
+        },
+        {
+          title: '制单人',
+          key: 'createOperator',
           fixed: false,
           visible: false
         }
       ]
     }
   },
-
   methods: {
     // 设置标签状态
     setTabStatus (tab) {
       switch (tab) {
         case '全部':
+          this.triggerTableActionColumn(true)
           return
         case '待发运':
+          this.triggerTableActionColumn(true)
           return 1
         case '在途':
+          this.triggerTableActionColumn(true)
           return 2
         case '已到货':
+          this.triggerTableActionColumn(false)
           return 3
         default:
       }
     },
 
     // 数据查询
-    fetchData () {
-      Server({
-        url: '/outside/bill/list',
+    dataOnload (res) {
+      const data = res.data.data
+      this.page.current = data.pageNo
+      this.page.size = data.pageSize
+      this.tabList = [
+        { name: '全部', count: '' },
+        { name: '待发运', count: data.statusCntInfo.waitCnt || 0 },
+        { name: '在途', count: data.statusCntInfo.loadCnt || 0 },
+        { name: '已到货', count: data.statusCntInfo.loadedCnt || 0 }
+      ]
+      this.$forceUpdate()
+    },
+
+    // 删除
+    billDelete (ids) {
+      let transIds
+      if (ids && ids.length) transIds = ids
+      else if (this.tableSelection.length) transIds = this.tableSelection.map(item => item.transId)
+      else {
+        this.$Message.error('请先选择后再操作')
+        return
+      }
+
+      const self = this
+      self.openDialog({
+        name: 'transport/dialog/confirm',
+        data: {
+          title: '删除确认',
+          message: '是否确认删除？'
+        },
+        methods: {
+          confirm () {
+            Server({
+              url: '/outside/bill/delete',
+              method: 'delete',
+              data: { transIds }
+            }).then(res => {
+              self.$Message.success('删除成功')
+              self.tableSelection = []
+              self.$refs.$table.fetch()
+            }).catch(err => console.error(err))
+          }
+        }
+      })
+    },
+
+    // 到货
+    billArrived (ids) {
+      const self = this
+      let transIds
+      if (ids && ids.length) transIds = ids
+      else if (this.tableSelection.length) transIds = this.tableSelection.map(item => item.transId)
+      else {
+        this.$Message.error('请先选择后再操作')
+        return
+      }
+      self.openDialog({
+        name: 'transport/dialog/confirm',
+        data: {
+          title: '到货确认',
+          message: '是否确认到货？'
+        },
+        methods: {
+          confirm () {
+            Server({
+              url: '/outside/bill/confirm/arrival',
+              method: 'post',
+              data: { transIds }
+            }).then(res => {
+              self.$Message.success('操作成功')
+              self.tableSelection = []
+              self.$refs.$table.fetch()
+            }).catch(err => console.error(err))
+          }
+        }
+      })
+    },
+
+    // 发运
+    billShipment (ids) {
+      let transIds
+      if (ids && ids.length) transIds = ids
+      else if (this.tableSelection.length) transIds = this.tableSelection.map(item => item.transId)
+      else {
+        this.$Message.error('请先选择后再操作')
+        return
+      }
+
+      const self = this
+      self.openDialog({
+        name: 'transport/dialog/confirm',
+        data: {
+          title: '发运',
+          message: '是否发运？发运以后将不能再修改外转单信息'
+        },
+        methods: {
+          confirm () {
+            Server({
+              url: '/outside/bill/send',
+              method: 'post',
+              data: { transIds }
+            }).then(res => {
+              self.$Message.success('操作成功')
+              self.tableSelection = []
+              self.$refs.$table.fetch()
+            }).catch(err => console.error(err))
+          }
+        }
+      })
+    },
+
+    // 导出
+    billExport () {
+      let data = this.setFetchParams()
+      data.pageNo = this.page.current
+      data.pageSize = this.page.size
+      delete data.order
+
+      if (this.tableSelection.length) {
+        data.exportType = 1
+        data.transIds = this.tableSelection.map(item => item.transId)
+      } else if (this.inSearching) data.exportType = 3
+      else data.exportType = 2
+
+      Export({
+        url: '/outside/bill/export',
         method: 'post',
-        data: this.setFetchParams()
-      }).then(res => {
-        const data = res.data.data
-        this.tableData = data.list
-        this.page.total = data.totalCount
-        this.tabList = [
-          { name: '全部', count: '' },
-          { name: '待发运', count: data.statusCntInfo.waitLoadCnt },
-          { name: '在途', count: data.statusCntInfo.loaddingCnt },
-          { name: '已到货', count: data.statusCntInfo.loadedCnt }
-        ]
-      }).catch(err => console.error(err))
+        data,
+        fileName: '外转单明细'
+      })
     }
   }
 }
 </script>
 
-<style lang='stylus' scoped>
+<style lang='stylus'>
   @import './transport.styl'
 </style>

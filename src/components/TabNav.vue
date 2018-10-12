@@ -24,8 +24,8 @@
             v-for="(item,index) in list"
             ref="tagsPageOpened"
             :key="`tag-nav-${index}`"
-            :name="item.name"
-            :checked="item.query?item.query.id===value.query.id:item.path === value.path"
+            :name="item.query.title?item.query.title:'null'"
+            :checked="item.query.title === value.query.title"
             @on-close="handleClose(item)"
             @on-refresh="handleRefresh(item)"
             @click.native="handleClick(item)">
@@ -41,7 +41,7 @@ import BaseComponent from '@/basic/BaseComponent'
 import TabNavItem from '@/components/TabNavItem'
 export default {
   name: 'TabNav',
-  components: {TabNavItem},
+  components: { TabNavItem },
   mixins: [BaseComponent],
   props: {
     value: Object,
@@ -110,12 +110,10 @@ export default {
     //   }
     // },
     handleClose (item) {
-      let res = this.list.filter(element => element.name !== item.name)
-      this.$emit('on-close', res, item)
+      this.$emit('on-close', item)
     },
     handleRefresh (item) {
-      this.$Message.info(`${item.name}已刷新`)
-      window.location.reload()
+      this.ema.fire('reloadTab', { ...item })
     },
     handleClick (item) {
       this.$emit('on-select', item)
@@ -177,7 +175,8 @@ export default {
     bottom 0
     // box-shadow 0px 0 3px 2px rgba(100,100,100,.1) inset
     .scroll-body
-      height calc(100% - 1px)
+      // height calc(100% - 1px)
+      height 100%
       display inline-block
       // padding 1px 4px 0
       position absolute

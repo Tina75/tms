@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import City from './City'
+import City from './city.js'
 Vue.filter('imgType', function (value) {
   let name = ''
   switch (value) {
@@ -99,4 +99,19 @@ Vue.filter('formatid', function (value) {
  */
 Vue.filter('codeToName', function (cityId) {
   return City.codeToName(cityId)
+})
+/**
+ * 将元转为分
+ */
+Vue.filter('toPoint', function (cityId) {
+  return cityId / 100
+})
+/**
+ * 根据code获取城市全名 格式化城市
+ * @param code 城市code
+ * @param deep  1：省  2：市  3：区
+ */
+Vue.filter('cityFormatter', function (code) {
+  if (!code) return ''
+  return Array.from(new Set(City.codeToFullNameArr(code, 3))).join('')
 })

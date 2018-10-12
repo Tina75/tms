@@ -1,10 +1,11 @@
-<!--发货方详情地址新增编辑-->
+<!--承运商详情----司机新增编辑-->
 <template>
   <div>
     <Modal
-      v-model="modal"
-      :mask-closable="true"
+      v-model="visiable"
+      :mask-closable="false"
       label-position="left"
+      class="modal"
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
@@ -19,12 +20,12 @@
           <Input v-model="validate.driverName" :maxlength="15" placeholder="请输入"/>
         </FormItem>
         <FormItem label="手机号码:" prop="driverPhone">
-          <Input v-model="validate.driverPhone"  placeholder="请输入"/>
+          <Input v-model="validate.driverPhone" :maxlength="11"  placeholder="请输入"/>
         </FormItem>
       </Form>
       <div slot="footer">
         <Button type="primary" @click="save('validate')">确定</Button>
-        <Button style="margin-left: 8px" @click.native="modal = false"  >取消</Button>
+        <Button style="margin-left: 8px" @click.native="close"  >取消</Button>
       </div>
     </Modal>
   </div>
@@ -38,8 +39,8 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
-      modal: true,
-      id: '',
+      carrierId: '', // 承运商id
+      driverId: '', // 司机id
       validate: {
         driverType: '1',
         driverName: '',
@@ -67,13 +68,13 @@ export default {
           } else { // 2-编辑
             this.update()
           }
-          this.modal = false
+          this.close()
         }
       })
     },
     add () {
       let data = {
-        carrierId: this.id,
+        carrierId: this.carrierId,
         driverType: this.validate.driverType,
         driverName: this.validate.driverName,
         driverPhone: this.validate.driverPhone
@@ -88,7 +89,7 @@ export default {
     },
     update () {
       let data = {
-        driverId: this.id,
+        driverId: this.driverId,
         driverType: this.validate.driverType,
         driverName: this.validate.driverName,
         driverPhone: this.validate.driverPhone
@@ -106,5 +107,5 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-
+  @import "../client.styl"
 </style>

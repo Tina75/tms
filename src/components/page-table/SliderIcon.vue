@@ -1,13 +1,18 @@
 <template>
-  <Poptip v-model="visible" trigger="click" width="290" placement="bottom-end" word-wrap transfer>
+  <Poptip v-model="visible" trigger="click" width="290" placement="left" word-wrap transfer>
     <FontIcon type="gengduo" class="ios-list-icon" size="18" color="#00A4BD"></FontIcon>
     <div slot="title"><span>选择要显示的字段</span></div>
     <div slot="content">
-      <CheckboxGroup v-model="checkList">
-        <draggable v-model="sortArray" :options="options" :move="checkMove">
-          <Checkbox v-for="item in sortArray" :disabled="item.fixed" :data-key="item.key" :key="item.key" :label="item.title" :class="itemClass(item)"></Checkbox>
-        </draggable>
-      </CheckboxGroup>
+      <div class="slider-icon__checkbox-list">
+        <CheckboxGroup v-model="checkList">
+          <draggable v-model="sortArray" :options="options" :move="checkMove" class="slider-icon__draggable-column">
+            <Checkbox v-for="item in sortArray" :disabled="item.fixed" :data-key="item.key" :key="item.key" :label="item.title" :class="itemClass(item)">
+              <span>{{item.title}}</span>
+              <FontIcon v-if="!item.fixed" type="tuodong"></FontIcon>
+            </Checkbox>
+          </draggable>
+        </CheckboxGroup>
+      </div>
       <div class="slider-icon__drawer-footer">
         <Button @click="cancel">取消</Button>
         <Button type="primary" @click="ok">确定</Button>
@@ -40,6 +45,7 @@ export default {
       sortData: [],
       oldSortData: [],
       options: {
+        group: 'share',
         dragClass: '.slider-icon__draggable-item'
       }
     }
@@ -60,6 +66,12 @@ export default {
   watch: {
     list (newList) {
       this.saveList(newList)
+    },
+    /**
+     *  切换路由的时候，关闭
+     */
+    $route () {
+      this.closePoptip()
     }
   },
   mounted () {
@@ -67,6 +79,9 @@ export default {
     this.saveList(this.list)
   },
   methods: {
+    closePoptip () {
+      this.visible = false
+    },
     /**
      * 固定列，不允许拖动，也不允许被其他项干扰排序位置
      */
@@ -82,7 +97,7 @@ export default {
     },
     itemClass (item) {
       return [
-        'slider-icon__checkbox-list',
+        'slider-icon__checkbox',
         {
           'slider-icon__draggable-item': !item.fixed
         }
@@ -120,31 +135,40 @@ export default {
         }
         return item
       })
-      // let newList = []
-      // this.list.forEach(item => {
-      //   let _item = {}
-      //   if (list.indexOf(item.title) !== -1) {
-      //     Object.assign(_item, item, {visible: true})
-      //   } else {
-      //     Object.assign(_item, item, {visible: false})
-      //   }
-      //   newList.push(_item)
-      // })
-      // return newList
     }
   }
 }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 .slider-icon
-  &__checkbox-list{
-    display: block
-  }
-  &__draggable-item{
-    margin: 0
+  &__checkbox-list
+    overflow-y: auto
+  &__draggable-column
+    -webkit-column-width: 116px
+    -moz-column-width: 116px
+    column-width: 116px
+    -webkit-column-gap: 6px
+    -moz-column-gap: 6px
+    column-gap: 6px
+
+  &__checkbox
+    display: inline-block
     padding: 8px 0
-  }
+    width: 116px
+  &__draggable-item
+    margin: 0
+    position: relative
+    &:hover
+      background-color #E9FCFF
+      .font_family
+        display inline
+    .font_family
+      position: absolute;
+      right: 0px;
+      top: 4px;
+      color: #00A4BD;
+      display: none
   &__drawer-footer{
     width: 100%;
     border-top: 1px solid #e8e8e8;

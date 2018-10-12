@@ -1,7 +1,9 @@
 import Server from '@/libs/js/server'
 
 let timer
-let waitingTime = 5
+const waitingTime = 60
+
+let captchaUrl = Server.defaults.baseURL + 'user/captcha'
 
 export default {
   replace: true,
@@ -13,136 +15,112 @@ export default {
     }
   },
   methods: {
-    // 输入框校验
-    validate (type, { extraRules, done } = {}) {
-      switch (type) {
-        case 'phone':
-          if (!this.form.phone.length) {
-            this.$Message.error('手机号不能为空')
-            return false
-          } else if (this.form.phone.length !== 11 || this.form.phone[0] !== '1' || isNaN(Number(this.form.phone))) {
-            this.$Message.error('手机号格式不正确，请重输')
-            return false
-          }
-          break
-        case 'password':
-          if (!this.form.password.length) {
-            this.$Message.error('密码不能为空')
-            return false
-          }
-          break
-        case 'confirmPassword':
-          if (!this.form.confirmPassword.length) {
-            this.$Message.error('确认密码不能为空')
-            return false
-          }
-          if (this.form.password !== this.form.confirmPassword) {
-            this.$Message.error('前后两次密码不一致')
-            return false
-          }
-          break
-        case 'captchaCode':
-          if (!this.form.captchaCode.length) {
-            this.$Message.error('图形验证码不能为空')
-            return false
-          }
-          break
-        case 'smsCode':
-          if (!this.form.smsCode.length) {
-            this.$Message.error('验证码不能为空')
-            return false
-          }
-          break
-        case 'name':
-          if (!this.form.name.length) {
-            this.$Message.error('公司名不能为空')
-            return false
-          }
-          break
-        case 'userName':
-          if (!this.form.userName.length) {
-            this.$Message.error('联系人不能为空')
-            return false
-          }
-          break
-        case 'address':
-          if (!this.form.address.length) {
-            this.$Message.error('公司地址不能为空')
-            return false
-          }
-          if (this.form.address.length > 40 || this.form.address.length < 5) {
-            this.$Message.error('公司地址不能少于5个字也不能超过40个字')
-            return false
-          }
-          break
-        case 'cityId':
-          if (!this.form.cityId.length) {
-            this.$Message.error('省市区不能为空')
-            return false
-          }
-          break
-        default: break
-      }
-      let valid = true
-      if (extraRules) valid = extraRules()
-      done && done()
-      return valid
+    changeMode (mode) {
+      this.$emit('on-change', mode)
     },
 
-    // 校验密码-添加设置密码时的位数规则
-    inputBlurWithPw () {
-      return this.validate('password', {
-        extraRules: () => {
-          if (this.form.password.length > 16 || this.form.password.length < 6) {
-            this.$Message.error('密码格式不正确，至少6位，至多16位')
-            return false
+    // 实时校验手机号
+    imCheckPhone (mode) {
+      return new Promise((resolve, reject) => {
+        Server({
+          url: '/user/phone',
+          method: 'get',
+          data: { phone: this.form.phone }
+        }).then(res => {
+          if (mode === 'signup' && res.data.code === 310013) {
+            this.$Message.error('该手机号已注册，请登录')
+            reject && reject(new Error('该手机号已注册，请登录'))
+          } else if (mode === 'signin' && res.data.code === 10000) {
+            this.$Message.error('该手机号未注册，请先注册')
+            reject && reject(new Error('该手机号未注册，请先注册'))
+          } else if (mode === 'findback' && res.data.code === 10000) {
+            this.$Message.error('该手机号未注册，请先注册')
+            reject && reject(new Error('该手机号未注册，请先注册'))
           }
-          return true
-        }
+          resolve()
+        }).catch(err => console.error(err))
+      })
+    },
+
+    // 实时校验图形验证码
+    imCheckCapthcha () {
+      return new Promise((resolve, reject) => {
+        Server({
+          url: '/user/testCaptcha',
+          method: 'get',
+          data: { captchaCode: this.form.captchaCode }
+        }).then(res => {
+          console.log('图形验证码校验通过')
+          resolve()
+        }).catch(err => {
+          console.error(err)
+          this.getCaptcha()
+        })
+      })
+    },
+
+    // 实时校验短信验证码
+    imCheckSMSCode () {
+      return new Promise((resolve, reject) => {
+        Server({
+          url: '/user/smsCode',
+          method: 'get',
+          data: {
+            phone: this.form.phone,
+            smsCode: this.form.smsCode
+          }
+        }).then(res => {
+          console.log('短信验证码校验通过')
+          resolve()
+        }).catch(err => {
+          console.error(err)
+          this.getCaptcha()
+        })
       })
     },
 
     // 获取图片验证码
     getCaptcha () {
-      Server({
-        url: '/user/captcha',
-        method: 'get'
-      }).then(res => {
-        this.captchaImage = res.data.data
-      }).catch(err => console.error(err))
+      this.captchaImage = `${captchaUrl}?${new Date().getTime()}`
     },
 
     // 发送手机验证码
     sendSMS (url) {
-      const data = {
-        phone: this.form.phone,
-        captchaCode: this.form.captchaCode
-      }
-      for (let key in data) {
-        if (!this.validate(key)) return
-      }
-      Server({
-        url,
-        method: 'get',
-        data
-      }).then(res => {
-        this.$Message.success('短信验证码已发送至手机，请注意查收')
-        this.captchaEnable = false
-        timer = setInterval(() => {
-          if (this.intervalSeconds > 1) this.intervalSeconds--
-          else {
-            this.intervalSeconds = waitingTime
-            this.captchaEnable = true
-            clearInterval(timer)
+      const promises = ['phone', 'captchaCode'].map(prop => {
+        return new Promise((resolve, reject) => {
+          this.$refs.loginForm.validateField(prop, error => {
+            if (error) reject(new Error(error))
+            resolve()
+          })
+        })
+      })
+      Promise.all(promises)
+        .then(() => {
+          const data = {
+            phone: this.form.phone,
+            captchaCode: this.form.captchaCode
           }
-        }, 1000)
-      }).catch(err => console.error(err))
-    },
 
-    // 输入框失焦
-    inputBlur (type) {
-      if (this.currentFocus !== undefined) this.currentFocus = ''
-      this.validate(type)
+          Server({
+            url,
+            method: 'get',
+            data
+          }).then(res => {
+            this.$Message.success('短信验证码已发送至手机，请注意查收')
+            this.captchaEnable = false
+            timer = setInterval(() => {
+              if (this.intervalSeconds > 1) this.intervalSeconds--
+              else {
+                this.intervalSeconds = waitingTime
+                this.captchaEnable = true
+                clearInterval(timer)
+              }
+            }, 1000)
+          }).catch(err => {
+            this.getCaptcha()
+            console.error(err)
+          })
+        })
     }
   }
 

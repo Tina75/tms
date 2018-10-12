@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visibale" :mask-closable="true" width="360" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
     <p slot="header" style="text-align:center">{{title}}</p>
     <Form ref="info" :model="info" :rules="rules" :label-width="80">
       <p style="text-align:center">{{other}}</p>
@@ -12,7 +12,7 @@
     </Form>
     <div slot="footer">
       <Button  type="primary"  @click="save">确定</Button>
-      <Button  type="default"  @click.native="visibale = false">取消</Button>
+      <Button  type="default"  @click.native="close">取消</Button>
     </div>
   </Modal>
 </template>
@@ -29,8 +29,7 @@ export default {
       rules: {
         name: { required: true, message: '请填写姓名', trigger: 'blur' },
         phone: { required: true, message: '请填写手机号', trigger: 'blur' }
-      },
-      visibale: true
+      }
     }
   },
   methods: {
@@ -43,7 +42,7 @@ export default {
           //   data: this.info
           // }).then(() => {
           this.ok()
-          this.visibale = false
+          this.close()
           // })
         }
       })

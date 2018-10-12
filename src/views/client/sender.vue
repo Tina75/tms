@@ -2,27 +2,39 @@
   <div>
     <div class="header">
       <div class="left">
-        <Button type="primary" @click="modaladd">新增</Button>
+        <Button v-if="hasPower(130101)" type="primary"  @click="modaladd">新增</Button>
       </div>
       <div class="right">
         <template>
-          <Select v-model="selectStatus"  style="width:120px;margin-right: 11px">
+          <Select v-model="selectStatus"  style="width:120px;margin-right: 11px" @on-change="changeState">
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
         <template v-if="selectStatus==0">
-          <Input v-model="name" :maxlength="20" placeholder="请输入发货方名称" search style="width: 200px"  @on-search="searchList" />
+          <Input v-model="name" :maxlength="20"
+                 :icon="name? 'ios-close-circle' : ''"
+                 class="search-input"
+                 placeholder="请输入发货方名称"
+                 @on-enter="searchList"
+                 @on-click="clearKeywords()"/>
         </template>
         <template v-else>
-          <Input v-model="contact" :maxlength="15" placeholder="请输入发货方联系人" search style="width: 200px"  @on-search="searchList" />
+          <Input v-model="contact" :maxlength="15"
+                 :icon="contact? 'ios-close-circle' : ''"
+                 class="search-input"
+                 placeholder="请输入发货方联系人"
+                 @on-enter="searchList"
+                 @on-click="clearKeywords"/>
         </template>
+        <Button icon="ios-search" type="primary"
+                class="search-btn-easy"
+                @click="searchList"></Button>
       </div>
     </div>
     <div>
       <template>
-        <Table :columns="columns1" :data="data1"></Table>
+        <Table :columns="columns1" :data="data1" @on-sort-change = "timeSort"></Table>
       </template>
-      <!--<page-table :data="data1" :columns="columns1" :total="100" :current.sync="2"></page-table>-->
     </div>
     <div class="footer">
       <template>
@@ -30,18 +42,21 @@
               :current.sync="pageNo" :page-size-opts="pageArray"
               size="small"
               show-sizer
-              show-elevator show-total @on-change="handleChangePage"/>
+              show-elevator show-total @on-change="handleChangePage"
+              @on-page-size-change="handleChangePageSize"/>
       </template>
     </div>
   </div>
 </template>
-
 <script>
 import { consignerList, consignerDelete, CODE } from './client'
 import BasePage from '@/basic/BasePage'
 export default {
   name: 'sender',
   mixins: [ BasePage ],
+  metaInfo: {
+    title: '发货方列表'
+  },
   data () {
     return {
       selectStatus: 0,
@@ -57,6 +72,7 @@ export default {
       ],
       name: '',
       contact: '',
+      order: '',
       totalCount: 0, // 总条数
       pageArray: [10, 20, 50, 100],
       pageNo: 1,
@@ -65,11 +81,11 @@ export default {
         {
           title: '操作',
           key: 'id',
-          // width: 150,
-          // align: 'left',
+          width: 100,
           render: (h, params) => {
-            return h('div', [
-              h('span', {
+            let renderBtn = []
+            if (this.hasPower(130102)) {
+              renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
                   color: '#00A4BD',
@@ -98,64 +114,113 @@ export default {
                         }
                       }
                     })
-                    // this.modalupdate = true
                   }
                 }
-              }, '修改'),
-              h('span', {
+              }, '修改'))
+            }
+            if (this.hasPower(130103)) {
+              renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
                   cursor: 'pointer'
                 },
                 on: {
                   click: () => {
-                    consignerDelete({
-                      id: params.row.id
-                    }).then(res => {
-                      if (res.data.code === CODE) {
-                        this.$Message.success(res.data.msg)
-                        this.searchList() // 刷新页面
-                      } else {
-                        this.$Message.error(res.data.msg)
+                    let _this = this
+                    this.openDialog({
+                      name: 'client/dialog/confirmDelete',
+                      data: {
+                      },
+                      methods: {
+                        ok () {
+                          consignerDelete({
+                            id: params.row.id
+                          }).then(res => {
+                            if (res.data.code === CODE) {
+                              _this.$Message.success(res.data.msg)
+                              _this.searchList() // 刷新页面
+                            } else {
+                              _this.$Message.error(res.data.msg)
+                            }
+                          })
+                        }
                       }
                     })
                   }
                 }
-              }, '删除')
-            ])
+              }, '删除'))
+            }
+            return h('div', renderBtn)
           }
         },
         {
           title: '发货方名称',
-          // key: 'name',
+          ellipsis: true,
+          minWidth: 50,
           render: (h, params) => {
-            return h('div', [
-              h('span', {
-                style: {
-                  color: '#418DF9',
-                  cursor: 'pointer'
-                },
-                on: {
-                  click: () => {
-                    this.$router.push({ path: '/client/sender-info', query: { id: params.row.id }
-                    })
+            let text = ''
+            if (params.row.name.length > 11) {
+              text = params.row.name.slice(0, 11) + '...'
+              return h('div', [
+                h('Tooltip', {
+                  props: {
+                    placeholder: 'bottom',
+                    transfer: false
                   }
-                }
-              }, params.row.name)
-            ])
+                }, [
+                  h('a', {
+                    style: {
+                      color: '#418DF9',
+                      cursor: 'pointer'
+                    },
+                    on: {
+                      click: () => {
+                        this.openTab({ path: '/client/sender-info', title: '发货方详情', query: { id: params.row.id }
+                        })
+                      }
+                    }
+                  }, text),
+                  h('div', {
+                    slot: 'content',
+                    style: {
+                      whiteSpace: 'normal'
+                    }
+                  }, params.row.name)
+                ])
+              ])
+            } else {
+              return h('div', [
+                h('a', {
+                  style: {
+                    color: '#418DF9',
+                    cursor: 'pointer'
+                  },
+                  title: params.row.name,
+                  on: {
+                    click: () => {
+                      this.openTab({ path: '/client/sender-info', title: '发货方详情', query: { id: params.row.id }
+                      })
+                    }
+                  }
+                }, params.row.name)
+              ])
+            }
           }
         },
         {
           title: '发货方联系人',
-          key: 'contact'
+          key: 'contact',
+          ellipsis: true,
+          tooltip: true
         },
         {
           title: '联系电话',
-          key: 'phone'
+          key: 'phone',
+          width: 110
         },
         {
-          title: '发货方地址数量',
-          key: 'consignerAddressCnt'
+          title: '发货地址数',
+          key: 'addressCnt'
         },
         {
           title: '收货方数量',
@@ -166,7 +231,7 @@ export default {
           key: 'cargoCnt'
         },
         {
-          title: '付款方式描述',
+          title: '付款方式',
           key: 'payType',
           render: (h, params) => {
             let text = ''
@@ -179,7 +244,7 @@ export default {
             } else if (params.row.payType === 4) {
               text = '月结'
             } else {
-              text = ''
+              text = '-'
             }
             return h('div', {}, text)
           }
@@ -187,37 +252,43 @@ export default {
         {
           title: '创建时间',
           key: 'createTime',
-          sortable: true
+          sortable: 'custom',
+          width: 150,
+          render: (h, params) => {
+            let text = this.formatDate(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
         }
       ],
-      data1: [
-        // {
-        //   id: 1,
-        //   name: 'John Brown',
-        //   contact: 18,
-        //   phone: 'New York No. 1 Lake Park',
-        //   consignerAddressCnt: '2016-10-03',
-        //   consigneeCnt: '2016-10-03',
-        //   cargoCnt: '2016-10-03',
-        //   payTypeDesc: '2016-10-03',
-        //   createTime: '2016-10-03',
-        //   remark:'我是备注'
-        // }
-      ]
+      data1: []
     }
+  },
+  mounted () {
+    this.searchList()
   },
   methods: {
     searchList () {
+      this.selectStatus === 0 ? this.contact = '' : this.name = ''
       let data = {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
         name: this.name,
-        contact: this.contact
+        contact: this.contact,
+        order: this.order
       }
       consignerList(data).then(res => {
         this.data1 = res.data.data.list
         this.totalCount = res.data.data.totalCount
       })
+    },
+    clearKeywords () {
+      this.name = ''
+      this.contact = ''
+      this.searchList()
+    },
+    changeState () {
+      this.name = ''
+      this.contact = ''
     },
     modaladd () {
       var _this = this
@@ -229,7 +300,6 @@ export default {
         },
         methods: {
           ok () {
-            console.log(this)
             _this.searchList() // 刷新页面
           }
         }
@@ -239,18 +309,21 @@ export default {
       // 重新组装数据，生成查询参数
       this.pageNo = pageNo
       this.searchList()
+    },
+    handleChangePageSize (pageSize) {
+      this.pageSize = pageSize
+      this.searchList()
+    },
+    timeSort (column) {
+      this.order = (column.order === 'normal' ? '' : column.order)
+      this.searchList()
+    },
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     }
   }
 }
 </script>
-
 <style scoped lang="stylus">
-  .header
-    display flex
-    justify-content space-between
-    margin-bottom 14px
-  .footer
-    margin-top 22px
-    display flex
-    justify-content flex-end
+ @import "client.styl"
 </style>

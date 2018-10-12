@@ -2,20 +2,29 @@
   <div>
     <div class="header">
       <div class="left">
-        <Button type="primary" @click="modaladd">新增</Button>
+        <Button v-if="hasPower(130201)" type="primary" @click="modaladd">新增</Button>
       </div>
       <div class="right">
         <template>
-          <Select v-model="selectStatus"  style="width:120px;margin-right: 11px">
+          <Select v-model="selectStatus" style="width:120px;margin-right: 11px"  @on-change="changeState">
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
-        <Input v-model="keyword" :maxlength="15" placeholder="请输入" search style="width: 200px"  @on-search="searchList" />
+        <Input v-model="keyword"
+               :maxlength="15"
+               :icon="keyword? 'ios-close-circle' : ''"
+               :placeholder="selectStatus === 1 ? '请输入承运商名称' : '请输入承运商联系人名称'"
+               class="search-input"
+               @on-enter="searchList"
+               @on-click="clearKeywords"/>
+        <Button icon="ios-search" type="primary"
+                class="search-btn-easy"
+                @click="searchList"></Button>
       </div>
     </div>
     <div>
       <template>
-        <Table :columns="columns1" :data="data1"></Table>
+        <Table :columns="columns1" :data="data1" @on-sort-change = "timeSort"></Table>
       </template>
     </div>
     <div class="footer">
@@ -24,17 +33,20 @@
               :current.sync="pageNo" :page-size-opts="pageArray"
               size="small"
               show-sizer
-              show-elevator show-total @on-change="handleChangePage"/>
+              show-elevator show-total @on-change="handleChangePage"
+              @on-page-size-change="handleChangePageSize"/>
       </template>
     </div>
   </div>
 </template>
-
 <script>
 import { carrierList, carrierDelete, CODE, carrierDetailsForDriver, carrierDetailsForCompany } from './client'
 import BasePage from '@/basic/BasePage'
 export default {
   name: 'carrier',
+  metaInfo: {
+    title: '运掌柜承运商列表'
+  },
   mixins: [ BasePage ],
   data () {
     return {
@@ -50,19 +62,25 @@ export default {
         }
       ],
       keyword: '',
+      order: null,
       totalCount: 0, // 总条数
       pageArray: [10, 20, 50, 100],
       pageNo: 1,
       pageSize: 10,
+      payTypeMap: {
+        1: '按单付',
+        2: '月结',
+        '': '_'
+      },
       columns1: [
         {
           title: '操作',
           key: 'id',
-          // width: 150,
-          // align: 'left',
+          width: 100,
           render: (h, params) => {
-            return h('div', [
-              h('span', {
+            let renderBtn = []
+            if (this.hasPower(130202)) {
+              renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
                   color: '#00A4BD',
@@ -72,7 +90,6 @@ export default {
                   click: () => {
                     let _this = this
                     if (params.row.carrierType === 1) {
-                      // debugger
                       this._carrierDetailsForDriver(params.row.carrierId, () => {
                         _this.openDialog({
                           name: 'client/dialog/carrier',
@@ -86,14 +103,14 @@ export default {
                               },
                               driver: { // 1 个体司机
                                 driverName: _this.driver.driverName,
-                                driverPhone: _this.driver.driverName,
+                                driverPhone: _this.driver.driverPhone,
                                 carNO: _this.driver.carNO,
-                                carType: _this.driver.carType,
-                                carLength: _this.driver.carLength,
-                                shippingWeight: _this.driver.shippingWeight,
-                                shippingVolume: _this.driver.shippingVolume,
+                                carType: _this.driver.carType + '',
+                                carLength: _this.driver.carLength + '',
+                                shippingWeight: _this.driver.shippingWeight + '',
+                                shippingVolume: _this.driver.shippingVolume + '',
                                 remark: _this.driver.remark,
-                                payType: _this.driver.payType
+                                payType: _this.driver.payType + ''
                               }
                             }
                           },
@@ -106,6 +123,7 @@ export default {
                       })
                     } else {
                       this._carrierDetailsForCompany(params.row.carrierId, () => {
+                        console.log(_this.company)
                         _this.openDialog({
                           name: 'client/dialog/carrier',
                           data: {
@@ -120,7 +138,7 @@ export default {
                                 carrierName: _this.company.carrierName,
                                 carrierPrincipal: _this.company.carrierPrincipal,
                                 carrierPhone: _this.company.carrierPhone,
-                                payType: _this.company.payType,
+                                payType: _this.company.payType + '',
                                 remark: _this.company.remark
                               }
                             }
@@ -135,48 +153,92 @@ export default {
                     }
                   }
                 }
-              }, '修改'),
-              h('span', {
+              }, '修改'))
+            }
+            if (this.hasPower(130203)) {
+              renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
                   cursor: 'pointer'
                 },
                 on: {
                   click: () => {
-                    carrierDelete({
-                      carrierId: params.row.carrierId
-                    }).then(res => {
-                      if (res.data.code === CODE) {
-                        this.$Message.success(res.data.msg)
-                        this.searchList() // 刷新页面
-                      } else {
-                        this.$Message.error(res.data.msg)
+                    let _this = this
+                    this.openDialog({
+                      name: 'client/dialog/confirmDelete',
+                      data: {
+                      },
+                      methods: {
+                        ok () {
+                          carrierDelete({
+                            carrierId: params.row.carrierId
+                          }).then(res => {
+                            if (res.data.code === CODE) {
+                              _this.$Message.success(res.data.msg)
+                              _this.searchList() // 刷新页面
+                            } else {
+                              _this.$Message.error(res.data.msg)
+                            }
+                          })
+                        }
                       }
                     })
                   }
                 }
-              }, '删除')
-            ])
+              }, '删除'))
+            }
+            return h('div', renderBtn)
           }
         },
         {
           title: '承运商名称',
-          // key: 'name',
+          ellipsis: true,
+          width: 180,
           render: (h, params) => {
-            return h('div', [
-              h('span', {
+            let text = ''
+            if (params.row.carrierName.length > 12) { // 显示tooltip
+              text = params.row.carrierName.slice(0, 12) + '...'
+              return h('div', [
+                h('Tooltip', {
+                  props: {
+                    placeholder: 'bottom',
+                    transfer: false
+                  }
+                }, [
+                  h('span', {
+                    style: {
+                      color: '#418DF9',
+                      cursor: 'pointer'
+                    },
+                    on: {
+                      click: () => {
+                        this.openTab({ path: '/client/carrier-info', title: '承运商详情', query: { id: params.row.carrierId, carrierType: params.row.carrierType }
+                        })
+                      }
+                    }
+                  }, text),
+                  h('div', {
+                    slot: 'content',
+                    style: {
+                      whiteSpace: 'normal'
+                    }
+                  }, params.row.carrierName)
+                ])
+              ])
+            } else {
+              return h('span', {
                 style: {
                   color: '#418DF9',
                   cursor: 'pointer'
                 },
                 on: {
                   click: () => {
-                    this.$router.push({ path: '/client/carrier-info', query: { id: params.row.carrierId, carrierType: params.row.carrierType }
+                    this.openTab({ path: '/client/carrier-info', title: '承运商详情', query: { id: params.row.carrierId, carrierType: params.row.carrierType }
                     })
                   }
                 }
               }, params.row.carrierName)
-            ])
+            }
           }
         },
         {
@@ -194,11 +256,14 @@ export default {
         },
         {
           title: '负责人',
-          key: 'carrierPrincipal'
+          key: 'carrierPrincipal',
+          ellipsis: true,
+          tooltip: true
         },
         {
           title: '联系电话',
-          key: 'carrierPhone'
+          key: 'carrierPhone',
+          width: 120
         },
         {
           title: '司机数',
@@ -212,31 +277,18 @@ export default {
           title: '结算方式',
           key: 'payType',
           render: (h, params) => {
-            let text = ''
-            if (params.row.payType === 1) {
-              text = '现付'
-            } else if (params.row.payType === 2) {
-              text = '到付'
-            } else if (params.row.payType === 3) {
-              text = '回单付'
-            } else if (params.row.payType === 4) {
-              text = '月结'
-            } else if (params.row.payType === 5) {
-              text = '预付+到付'
-            } else if (params.row.payType === 6) {
-              text = ' 预付+回付'
-            } else if (params.row.payType === 7) {
-              text = '到付+回付'
-            } else if (params.row.payType === 8) {
-              text = '三段付'
-            }
-            return h('div', {}, text)
+            return h('div', {}, this.payTypeMap[params.row.payType])
           }
         },
         {
           title: '创建时间',
-          key: 'createTimeLong',
-          sortable: true
+          key: 'createTime',
+          sortable: 'custom',
+          width: 150,
+          render: (h, params) => {
+            let text = this.formatDate(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
         }
       ],
       data1: [],
@@ -260,13 +312,17 @@ export default {
       }
     }
   },
+  mounted () {
+    this.searchList()
+  },
   methods: {
     searchList () {
       let data = {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
         type: this.selectStatus,
-        keyword: this.keyword
+        keyword: this.keyword,
+        order: this.order
       }
       carrierList(data).then(res => {
         if (res.data.code === CODE) {
@@ -277,6 +333,13 @@ export default {
           this.$Message.error(res.data.msg)
         }
       })
+    },
+    clearKeywords () {
+      this.keyword = ''
+      this.searchList()
+    },
+    changeState () {
+      this.keyword = ''
     },
     modaladd () {
       var _this = this
@@ -296,6 +359,10 @@ export default {
     handleChangePage (pageNo) {
       // 重新组装数据，生成查询参数
       this.pageNo = pageNo
+      this.searchList()
+    },
+    handleChangePageSize (pageSize) {
+      this.pageSize = pageSize
       this.searchList()
     },
     _carrierDetailsForCompany (carrierId, fn) {
@@ -336,18 +403,30 @@ export default {
           fn()
         }
       })
+    },
+    timeSort (column) {
+      let str = ''
+      if (column.key === 'createTime') { // 为之后预留更新时间排序
+        str += 'create_time,'
+      } else {
+        str += 'update_time,,'
+      }
+      if (column.order === 'asc') {
+        str += 'asc'
+      } else if (column.order === 'desc') {
+        str += 'desc'
+      } else {
+        str = null
+      }
+      this.order = str
+      this.searchList()
+    },
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     }
   }
 }
 </script>
-
 <style scoped lang="stylus">
-  .header
-    display flex
-    justify-content space-between
-    margin-bottom 14px
-  .footer
-    margin-top 22px
-    display flex
-    justify-content flex-end
+  @import "client.styl"
 </style>

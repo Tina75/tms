@@ -1,24 +1,18 @@
 import axios from 'axios'
 import { LoadingBar, Message } from 'iview'
+import Cookies from 'js-cookie'
 
 let instance = axios.create({
-  baseURL: '/',
+  baseURL: process.env.VUE_APP_HOST,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-    'Authrization': '7ac53c08f527d6f258d087a1129095a3'
+    'Authorization': Cookies.get('token')
   },
   withCredentials: true,
   loading: false,
-  ignoreCode: process.env.NODE_ENV === 'development'
+  ignoreCode: false
 })
-
-switch (process.env.NODE_ENV) {
-  case 'development':
-    instance.defaults.baseURL = '/'; break
-  case 'production':
-    instance.defaults.baseURL = '//dev-boss.yundada56.com/bluewhale-boss/'; break
-}
 
 // POST传参序列化
 instance.interceptors.request.use((config) => {
@@ -39,18 +33,21 @@ instance.interceptors.request.use((config) => {
 instance.interceptors.response.use((res) => {
   LoadingBar.finish()
   var code = Number(res.data.code)
-  if (!res.config.ignoreCode || code === 10000) {
+  if (res.config.ignoreCode || code === 10000) {
     return res
   } else {
     switch (code) {
-      case 280102:// token失效或不存在
-      case 280103:// 账号在其他设备登录
-      case 280104:// 认证校验不通过
-      case 280105:// 客户端头信息缺失
-      case 280106:// 用户不存在
-        Message.error(`${res.data.msg}`)
-        window.EMA.fire('logout')
+      case 310010:// token失效或不存在
+      case 310011:// 账号在其他设备登录
+        window.EMA.fire('logout', `${res.data.msg}`)
         break
+      case 210014:
+      case 600002:// 无权限
+        Message.error(`${res.data.msg},请刷新页面`)
+        window.EMA.fire('refresh')
+        break
+      // case 310013:// 手机号已注册走10000流程
+      //   return res
       default:
         Message.error(res.data.msg)
         break
@@ -60,6 +57,9 @@ instance.interceptors.response.use((res) => {
 }, (error) => {
   if (error.message.indexOf('timeout') !== -1) {
     Message.error('接口超时')
+  }
+  if (error.response && error.response.status) {
+    Message.error(error.response.statusText + ' ' + error.response.status)
   }
   return Promise.reject(error)
 })

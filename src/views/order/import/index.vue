@@ -14,7 +14,7 @@
         style="display:inline-block">
         <Button type="primary">导入文件</Button>
       </Upload> -->
-      <Button type="primary" @click="handleClick">导入文件</Button>
+      <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入文件</Button>
       <input
         ref="fileInput"
         name="file"
@@ -23,10 +23,9 @@
         accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         @change="handleChange"
       />
-      <Button :to="downloadUrl" class="i-ml-10" target="_blank">下载模板</Button>
+      <Button v-if="hasPower(100202)" :to="downloadUrl" download="下载模板" class="i-ml-10" target="_blank">下载模板</Button>
     </div>
-    <Input v-model="keywords.name"></Input>
-    <PageTable ref="pageTable" :keywords="keywords" :columns="columns" :show-filter="false" url="order/template/getImportedOrderTemplateList" no-data-text=" " @on-load="handleLoad">
+    <PageTable ref="pageTable" :columns="columns" :show-filter="false" url="order/template/getImportedOrderTemplateList" method="post" no-data-text=" " @on-load="handleLoad">
       <div ref="footer" slot="footer" class="order-import__empty-content van-center">
         <div class="order-import__empty-content-wrap">
           <div>
@@ -34,7 +33,7 @@
             <div>您还没有导入订单，去下载模板导入订单吧！</div>
           </div>
           <div class="i-mt-10">
-            <Button type="primary" @click="handleClick">导入文件</Button>
+            <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入文件</Button>
           </div>
         </div>
       </div>
@@ -43,24 +42,34 @@
       :value="visible"
       :closable="false"
       :mask-closable="false"
-      title="文件正在努力上传.."
+      title="导入订单结果"
     >
-      <div class="van-center">
-        <i-circle :percent="progress">
-          <span style="font-size:24px">{{progress}}%</span>
-        </i-circle>
-      </div>
+      <Row>
+        <Col span="24" class="van-center i-mt-10">
+        <Spin fix>
+        </Spin>
+      </Col>
+      </Row>
+      <Row>
+        <Col span="24" class="van-center i-primary i-mt-10">
+        <span>导入订单正在紧急处理中..</span>
+        </Col>
+      </Row>
+
       <div slot="footer"></div>
     </Modal>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import OssClient from 'ali-oss'
 import PageTable from '@/components/page-table/index'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import server from '@/libs/js/server'
+import jsCookie from 'js-cookie'
+import TMSUrl from '@/libs/constant/url.js'
 /**
  * 批量导入
  * 1.文件类型
@@ -75,18 +84,56 @@ export default {
   },
   mixins: [BaseComponent, BasePage],
   data () {
+    const vm = this
     return {
       downloadUrl: '',
       visible: false,
       progress: 0,
       ossClient: null,
-      keywords: {
-        name: ''
-      },
+      ossDir: '',
+      timer: null,
       columns: [
         {
+          title: '操作',
+          key: 'action',
+          width: 160,
+          render: (h, params) => {
+            const actions = [
+              h('a', {
+                attrs: {
+                  href: params.row.fileUrl
+                }
+              }, '下载')
+            ]
+            // 导入成功可以看下载
+            if (params.row.status === 1) {
+              actions.push(h('a', {
+                class: 'i-ml-10',
+                attrs: {
+                  href: 'javascript:;'
+                },
+                on: {
+                  click: () => {
+                    jsCookie.set('imported_id', params.row.id, { expires: 1 })
+                    vm.openTab({
+                      title: '订单管理',
+                      path: TMSUrl.ORDER_MANAGEMENT
+                    })
+                    // vm.$router.push({path: '/order-management/order', query: {title: '订单管理'}})
+                  }
+                }
+              }, '查看导入订单'))
+            }
+            return h('div', actions)
+          }
+        },
+        {
           title: '导入日期',
-          key: 'createTime'
+          key: 'createTime',
+          render (h, params) {
+            let time = params.row.createTime
+            return time ? h('span', new Date(time).Format('yyyy-MM-dd hh:mm:ss')) : h('span', '-')
+          }
         },
         {
           title: '导入文件名',
@@ -94,72 +141,93 @@ export default {
         },
         {
           title: '导入结果',
-          key: 'status'
+          key: 'status',
+          width: 100,
+          render: (h, params) => {
+            if (params.row.status === 1) {
+              return h('span', '导入成功')
+            } else if (params.row.status === 0) {
+              return h('span', {
+                class: 'i-error'
+              }, '导入失败')
+            }
+            return h('span', '正在处理')
+          }
         },
         {
           title: '导入订单数',
-          key: 'orderCount'
+          key: 'orderCount',
+          width: 100
         },
         {
           title: '操作人',
-          key: 'operator'
-        },
-        {
-          title: '操作',
-          key: 'action',
-          render: (h, params) => {
-            return h('div', [
-              h('a', {
-                href: 'params.column.fileUrl'
-              }, '下载'),
-              h('a', {
-                href: 'javascript:;',
-                class: 'i-ml-10'
-              }, '查看订单')
-            ])
-          }
+          key: 'operatorName',
+          width: 120
         }
       ]
     }
   },
-  initOssInstance () {
-    const vm = this
-    /**
-     * 后端获取阿里云access token, region 参数
-     * 初始化oss client，用户上传模板前需要准备好
-     */
-    server({
-      method: 'get',
-      url: ''
-    })
-      .then((response) => {
-        vm.ossClient = new OssClient({
-          region: response.data.region,
-          accessKeyId: response.data.accessKeyId,
-          accessKeySecret: response.data.accessKeySecret,
-          bucket: response.data.bucket
-        })
-      })
+  computed: {
+    ...mapGetters(['UserInfo'])
   },
   created () {
-    // 获取导入模板下载地址
-    server({
-      method: 'get',
-      url: 'order/template/get'
-    }).then((response) => {
-      this.downloadUrl = response.data.data.fileUrl
-    })
+    this.initOssInstance()
+    this.getDownloadUrl()
   },
   mounted () {
     if (this.$refs.footer) {
       this.$refs.footer.parentElement.parentElement.style['min-height'] = '180px'
       this.$refs.footer.parentElement.parentElement.style['display'] = 'none'
     }
-    // this.$refs.footer.$parent.style['height'] = '200px'
+  },
+  beforeDestroy () {
+    if (this.timer) {
+      clearTimeout(this.timer)
+    }
   },
   methods: {
+    initOssInstance () {
+      const vm = this
+      /**
+       * 后端获取阿里云access token, region 参数
+       * 初始化oss client，用户上传模板前需要准备好
+       */
+      server({
+        method: 'post',
+        url: 'file/prepareUpload',
+        data: {
+          bizType: 'order',
+          fileCount: 1,
+          fileSuffix: 'xlsx'
+        }
+      })
+        .then((response) => {
+          const { data } = response.data
+          vm.ossDir = data.ossKeys[0]
+          vm.ossClient = new OssClient({
+            accessKeyId: data.ossTokenDTO.stsAccessId,
+            accessKeySecret: data.ossTokenDTO.stsAccessKey,
+            stsToken: data.ossTokenDTO.stsToken,
+            bucket: data.ossTokenDTO.bucketName,
+            endpoint: data.ossTokenDTO.endpoint
+          })
+        })
+    },
+    /**
+     * 模板下载地址
+     */
+    getDownloadUrl () {
+      // 获取导入模板下载地址
+      server({
+        method: 'get',
+        url: 'order/template/get'
+      }).then((response) => {
+        this.downloadUrl = response.data.data.fileUrl
+      })
+    },
     handleLoad (response) {
-      if (response.data.data.length === 0) {
+      // response.data.msg !== 10000
+      if (!response.data.data || response.data.data.list.length === 0) {
         this.$refs.footer.parentElement.parentElement.style['display'] = 'block'
       } else {
         this.$refs.footer.parentElement.parentElement.style['display'] = 'none'
@@ -169,39 +237,103 @@ export default {
     handleClick (e) {
       this.$refs.fileInput.click()
     },
+    loopCheckFileProgress (importId) {
+      const vm = this
+      let timer = null
+      function checkProgress () {
+        try {
+          timer = setTimeout(async () => {
+            const res = await server({
+              method: 'get',
+              url: 'order/getImportResult',
+              data: {
+                importId
+              }
+            })
+            const status = res.data.data.status
+            if (status === 1 || status === 0) {
+              if (timer) {
+                clearTimeout(timer)
+              }
+              if (status === 0) {
+                vm.$Message.error({ content: `此次导入订单失败，具体失败原因下载错误报告`, duration: 3 })
+              } else {
+                vm.$Message.success({ content: `导入成功，共导入${res.data.data.orderNum}条订单`, duration: 3 })
+              }
+              vm.visible = false
+              vm.$refs.pageTable.fetch()
+            } else {
+              checkProgress()
+            }
+          }, 3000)
+        } catch (error) {
+          if (timer) {
+            clearTimeout(timer)
+          }
+          vm.visible = false
+          vm.$Message.error({ content: error.data.msg, duration: 3 })
+          return error
+        }
+      }
+      checkProgress()
+    },
     /**
      * 文件上传后，回调
      */
-    handleChange (e) {
+    async handleChange (e) {
       const files = e.target.files
 
       if (!files || files.length === 0) {
         return false
       }
-      this.uploadFile(files[0])
+      const file = files[0]
+      if (file.name.length > 58) {
+        this.$Message.warning('上传文件名长度请勿超过58位')
+        this.$refs.fileInput.value = null
+        return
+      }
+      try {
+        const uploadResult = await this.uploadFile(file)
+        const notifyResult = await this.notifyBackend(file.name, uploadResult.res.requestUrls[0])
+        if (notifyResult.data.code === 10000) {
+          // this.$Message.success({content: '导入文件完成，后台正在处理中，请稍后查看结果', duration: 3})
+          this.visible = true
+          this.loopCheckFileProgress(notifyResult.data.data.id)
+        }
+      } catch (error) {
+        // console.error('导入订单', error)
+        this.$Message.error({ content: '导入订单文件失败', duration: 3 })
+      }
+
+      this.$refs.pageTable.fetch()
       this.$refs.fileInput.value = null
     },
     async uploadFile (file) {
       if (this.ossClient) {
         try {
-          this.visible = true
+          // this.visible = true
           // 生成随机文件名 Math.floor(Math.random() *10000)
-          let randomName = Date.now() + file.name.split('.').pop()
-          let result = await this.ossClient.multipartUpload(randomName, file, {
+          let randomName = file.name.split('.')[0] + new Date().Format('yyyyMMddhhmmss') + '.' + file.name.split('.').pop()
+          let result = await this.ossClient.multipartUpload(this.ossDir + randomName, file, {
             partSize: 1024 * 1024, // 分片大小 ,1M
-            progress: async function (progress) {
-              this.progress = progress
+            progress: function (progress, pp) {
+              if (progress) {
+                this.progress = progress
+              }
             }
           })
-          this.visible = false
-          this.progress = 0
-          this.notifyBackend(randomName, result.name)
+          this.$nextTick(() => {
+            // this.visible = false
+            this.progress = 0
+          })
+          return result
         } catch (e) {
           // 捕获超时异常
           if (e.code === 'ConnectionTimeoutError') {
             this.$Message.error('文件上传超时')
             // do ConnectionTimeoutError operation
           }
+          throw e
         }
       }
     },
@@ -209,22 +341,30 @@ export default {
      * 通知后端文件名称，
      * 文件上传成功，
      */
-    notifyBackend (fileName, fileUrl) {
-      server({
-        method: 'post',
-        url: 'order/template/uploadNotify',
-        data: {
-          fileName,
-          fileUrl
-        }
-      })
+    async notifyBackend (fileName, fileUrl) {
+      try {
+        const result = await server({
+          method: 'post',
+          url: 'order/template/uploadNotify',
+          data: {
+            fileName,
+            fileUrl: decodeURI(fileUrl) // 中文转义回来
+          }
+        })
+        return result
+      } catch (error) {
+        // vm.$refs.pageTable.fetch()
+        throw error
+      }
     },
+    // !废弃，暂时不用
     handleSuccess (res, file) {
       // const vm = this
       if (res.code === 1000) {
         this.$Message.success('导入成功')
       }
     },
+    // !废弃，暂时不用
     handleError (errorInfo, file, fileList) {
       const vm = this
       this.openDialog({
@@ -235,7 +375,6 @@ export default {
         },
         methods: {
           ok () {
-            console.log('fetch')
             vm.$refs.pageTable.fetch()
           }
         }

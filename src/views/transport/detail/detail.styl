@@ -1,3 +1,9 @@
+.ivu-btn
+  height 35px
+
+.ivu-btn-default
+  background #F9F9F9
+
 .detail-header
   height 60px
   padding-left 24px
@@ -10,8 +16,9 @@
       margin-right 28px
 
 .detail-btn-group
+  height 32px
   text-align right
-  margin 28px
+  margin 23px
 
 .detail-btn-item
   margin-left 15px
@@ -22,12 +29,37 @@
   line-height 3
 
 .detail-field-title
+  position relative
   color #777
   display inline-block
   width 100px
+  padding-left 10px
+  vertical-align top
+
+  &-sm
+    position relative
+    color #777
+    display inline-block
+    width: 80px
+    padding-left 10px
+    vertical-align top
+
+.detail-field-fee
+  font-weight bold
+
+.detail-field-required:before
+  content "*"
+  position absolute
+  width 10px
+  height 39px
+  left 0
+  top 0
+  line-height 39px
+  text-align center
+  color #EC4E4E
 
 .detail-part-title
-  margin-top 60px
+  margin-top 40px
 
   span
     height 34px
@@ -59,14 +91,26 @@
   font-weight: bolder
 
   &-title
+    padding-left 18px
     font-weight normal
-    padding-right 5px
-    box-sizing border-box
 
   span
     display inline-block
-    min-width 111px
-    text-align center
+    margin-right 44px
+
+.detail-payment-way
+  display inline-block
+  width calc( 100% - 80px )
+
+.detail-payment-calc
+  display inline-block
+  height 32px
+  line-height 32px
+  margin-left 10px
+  vertical-align middle
+
+  .icon-jisuanqi1
+    font-size 20px
 
 .detail-log
   display flex
@@ -82,16 +126,20 @@
     text-align center
     cursor pointer
 
-    span
+    i
       display block
-      color #fff
-      margin-top 2px
+      width 16px
+      height 16px
+      margin 5px
+      background url(../../../assets/img-icon-expand.png) no-repeat
+      background-size contain
+      transition all 0.3s linear
 
   &-timeline
     height 15px
     margin-top 7px
+    transition all 0.3s linear
     overflow hidden
-    transition height 0.3s linear
 
     &-item
       i
@@ -106,12 +154,7 @@
           background-color #00A4BD
 
   &-show
-    transform rotate(-90deg) translate(-5px, 0)
-    transition all 0.3s linear
-
-  &-hide
-    transform rotate(90deg)
-    transition all 0.3s linear
+    transform rotate(180deg)
 
 .detail-edit-footer
   margin-top 50px
@@ -123,12 +166,20 @@
     margin 0 12px
 
 .detail-payment-input
-  width 80px
+  width 95px
 
   span
     font-size 11px
     line-height 32px
     color #999999
+
+.detail-info-input
+  display inline-block
+  width calc( 100% - 100px ) !important
+
+  &-half
+    display inline-block
+    width calc( 50% - 56px )
 
 
 

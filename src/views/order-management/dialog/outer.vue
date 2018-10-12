@@ -1,31 +1,44 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visibale" :mask-closable="false" width="360">
-      <p slot="header" style="text-align:center">
+    <Modal v-model="visiable" :mask-closable="false" width="400" class="outer-dialog" @on-visible-change="close">
+      <p slot="header" class="dialog-title">
         <!-- <Icon type="ios-information-circle"></Icon> -->
-        <span>订单外转id={{id}}</span>
+        <span>订单外转</span>
       </p>
-      <Form ref="info" :model="info" :rules="rules" :label-width="100">
-        <FormItem label="外转方" prop="name">
-          <!-- <Input v-model="info.name" style="width:200px" placeholder="请输入"/> -->
-          <AutoComplete
-            v-model="info.name"
-            :data="outerCompany"
+      <Form ref="info" :model="info" :rules="rules" :label-width="100" label-position="left">
+        <FormItem label="外转方" prop="transfereeName">
+          <SelectInput
+            v-model="info.transfereeName"
+            :maxlength="20"
+            :remote="false"
+            :local-options="transferees"
             placeholder="请输入"
-            style="width:200px">
-          </AutoComplete>
+            style="width:200px"
+            @on-focus.once="getTransferees"
+            @on-select="handleSelectTransferee">
+          </SelectInput>
         </FormItem>
         <FormItem label="外转方运单号">
-          <Input v-model="info.phone" style="width:200px" placeholder="请输入"/>
+          <Input v-model="info.outTransNo" :maxlength="20" style="width:200px" placeholder="请输入"/>
         </FormItem>
         <FormItem label="付款方式" prop="payType">
           <Select v-model="info.payType" style="width:200px">
-            <Option v-for="item in payTypes" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+            <!-- <Option value="1">现付</Option>
+            <Option value="2">到付</Option>
+            <Option value="3">回单付</Option>
+            <Option value="4">月结</Option> -->
           </Select>
         </FormItem>
-        <FormItem label="外转运费" prop="outerCharge">
-          <Input v-model="info.outerCharge" style="width:180px" placeholder="请输入"/>
-          <Icon type="ios-calculator" size="26"/>
+        <FormItem label="外转运费" prop="transFee">
+          <!-- <Input v-model="info.transFee" style="width:180px" placeholder="请输入"/> -->
+          <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" style="width:175px">
+            <span slot="suffix" class="order-create__input-suffix">元</span>
+          </TagNumberInput>
+          <!-- <Icon type="ios-calculator" size="26" color="#00a4bd" @click="showCounter"></Icon> -->
+          <span @click="showChargeRules">
+            <FontIcon type="jisuanqi" size="22" color="#00a4bd" class="i-ml-5" style="vertical-align: middle;"></FontIcon>
+          </span>
         </FormItem>
       </Form>
       <div slot="footer">
@@ -39,49 +52,112 @@
 <script>
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
+import SelectInput from '@/components/SelectInput.vue'
+import TagNumberInput from '@/views/order/create/TagNumberInput'
+import float from '@/libs/js/float'
+import settlements from '@/libs/constant/settlement.js'
+import FontIcon from '@/components/FontIcon'
+import { mapGetters, mapActions } from 'vuex'
 export default {
-  name: 'editUser',
+  name: 'outer',
+
+  components: {
+    SelectInput,
+    TagNumberInput,
+    FontIcon
+  },
+
   mixins: [BaseDialog],
   data () {
     return {
-      info: { name: '', waybillNum: '', payType: '0', outerCharge: '' },
+      settlements,
+      info: { transfereeName: '', outTransNo: '', payType: 4, transFee: null },
       rules: {
-        name: { required: true, message: '请填写外转方', trigger: 'blur' },
-        payType: { required: true, message: '请选择付款方式', trigger: 'blur' },
-        outerCharge: { required: true, message: '请填写外转运费', trigger: 'blur' }
-      },
-      visibale: true,
-      outerCompany: ['Steve Jobs', 'Stephen Gary Wozniak', 'Jonathan Paul Ive'],
-      payTypes: [
-        { label: '到付', value: '0' },
-        { label: '回付', value: '1' },
-        { label: '周期结', value: '2' }
-      ]
+        transfereeName: [
+          { required: true, message: '请填写外转方', trigger: 'blur' },
+          { required: true, message: '请填写外转方', trigger: 'change' }
+        ],
+        payType: [
+          { required: true, message: '请选择付款方式' }
+        ],
+        transFee: [
+          { required: true, type: 'number', message: '请填写外转运费' }
+        ]
+      }
     }
   },
-  watch: {
-    visibale: function (val) {
-      !val && this.close()
-    }
+
+  computed: {
+    ...mapGetters([
+      'transferees'
+    ])
   },
 
   mounted: function () {
   },
 
   methods: {
+    ...mapActions([
+      'getTransferees'
+    ]),
+    // 保留2位小数
+    handleParseFloat (value) {
+      return float.floor(value)
+    },
+    // 选择已维护外转方后操作
+    handleSelectTransferee (name, row) {
+      console.log(name, row)
+      this.info.payType = row.payType
+    },
     save () {
       this.$refs['info'].validate((valid) => {
+        this.info = Object.assign({}, this.info, {
+          orderId: this.detail.id,
+          payType: Number(this.info.payType),
+          transFee: Number(this.info.transFee) * 100
+        })
         if (valid) {
           Server({
-            url: 'user/update',
+            url: 'outside/bill/create',
             method: 'post',
             data: this.info
-          }).then(() => {
+          }).then((res) => {
             this.ok()
-            this.visibale = false
+            this.$Message.success('创建外转单成功')
+            this.close()
           })
         }
       })
+    },
+    // 计费规则
+    showChargeRules () {
+      const self = this
+      if (self.info.transfereeName) {
+        this.openDialog({
+          name: 'dialogs/financeRule',
+          data: {
+            partnerName: self.info.transfereeName,
+            // 以下数据必传
+            partnerType: 3, // 计费规则分类 - 发货方1 承运商2 外转方3
+            weight: self.detail.weight, // 货物重量
+            volume: self.detail.volume, // 货物体积
+            start: self.detail.start, // 始发地code
+            end: self.detail.end // 目的地code
+          },
+          methods: {
+            // 确认计费规则后返回金额(元)
+            ok (charge) {
+              self.info.transFee = charge || 0
+            },
+            // 如果有两层对话框，在计费规则中点击去设置按钮后需要关闭第一层对话框
+            closeParentDialog () {
+              self.close()
+            }
+          }
+        })
+      } else {
+        this.$Message.warning('请先选择外转方')
+      }
     }
   }
 
@@ -89,7 +165,18 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
-.dialog
-  p
-    text-align center
+.dialog-title
+  text-align center
+  font-size 16px
+  font-family 'PingFangSC-Medium'
+  font-weight 700
+  color rgba(47,50,62,1)
+  letter-spacing 1px
+</style>
+<style lang='stylus'>
+.outer-dialog .ivu-form
+  .ivu-form-item-label
+    padding 10px 10px 10px 15px
+  .ivu-form-item-content
+    margin-left 110px !important
 </style>

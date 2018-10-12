@@ -11,6 +11,9 @@
       <div class="name">订单管理</div>
       <div class="fontclass">.icon-dingdanguanli</div>
     </div>
+    <p><Button type="danger" @click="closeTab">关闭当前tab页</Button></p>
+    <br>
+    <p><Button v-if="hasPower(110301)" type="primary" @click="closeTab">关闭当前tab页</Button></p>
   </div>
 </template>
 
@@ -41,6 +44,9 @@ export default {
           }
         }
       })
+    },
+    closeTab () {
+      this.ema.fire('closeTab', this.$route)
     }
   }
 }

@@ -1,24 +1,24 @@
 <template>
   <div class="temAll">
-    <Col span="23">
-    <Card class="searchCard" dis-hover>
-      <Form :model="formSearch" :label-width="80" style="padding-left:-20px;">
+    <Col span="24">
+    <div class="searchCard">
+      <Form :model="formSearch" :label-width="60" label-position="left">
         <Col span="6">
-        <FormItem label="姓名：">
-          <Input v-model="formSearch.name" placeholder="请输入姓名"></Input>
+        <FormItem label="姓名：" class="searchInput">
+          <SelectInput v-model="formSearch.name" :remote="true" :remote-method="searchName" placeholder="请输入姓名" style="min-width:200px;"></SelectInput>
         </FormItem>
         </Col>
         <Col span="6">
-        <FormItem label="账号：">
-          <Input v-model="formSearch.phone" placeholder="请输入账号"></Input>
+        <FormItem label="账号：" class="searchInput">
+          <Input v-model="formSearch.phone" placeholder="请输入账号" style="min-width:200px;"></Input>
         </FormItem>
         </Col>
         <Col span="6">
-        <FormItem label="角色：">
-          <Select v-model="formSearch.roleId" clearable>
+        <FormItem label="角色：" class="searchInput">
+          <Select v-model="formSearch.roleId" style="min-width:200px;">
             <Option
               v-for="item in selectList"
-              :value="item.name"
+              :value="item.id"
               :key="item.id">
               {{ item.name }}
             </Option>
@@ -27,51 +27,63 @@
         </Col>
         <Col span="3">
         <FormItem>
-          <Button type="primary" @click="searchBtn">搜索</Button>
+          <Button type="primary" style="width:80px;" @click="searchBtn">搜索</Button>
         </FormItem>
         </Col>
       </Form>
-    </Card>
+    </div>
     </Col>
-    <Col span="23">
-    <Button type="primary" style="margin-top:6px;" @click="eaditStaff('add')">添加员工</Button>
+    <Col span="24">
+    <Button v-if="hasPower(140201)" type="primary" style="margin-top:6px;" @click="eaditStaff('add')">添加员工</Button>
     </Col>
-    <Col span="23">
-    <page-table :columns="menuColumns" url="employee/list" list-field="users" style="margin-top: 20px;"></page-table>
-    </Table>
+    <Col span="24">
+    <page-table :columns="menuColumns" :keywords="formSearchInit" url="employee/list" list-field="list" style="margin-top: 20px;min-height:700px;"></page-table>
     </Col>
-    <Modal v-model="visibaleTransfer" width="360">
-      <p slot="header" style="text-align:center">
+    <Modal v-model="visibaleTransfer" width="400">
+      <p slot="header" style="text-align:center;font-size: 16px;">
         <span>转移权限</span>
       </p>
-      <Form ref="transferformModal" :model="transferformModal" :rules="rulesTransfer" :label-width="100" style="height: 50px;">
-        <FormItem label="角色账号：" prop="select">
-          <Select v-model="transferformModal.roleId" clearable>
+      <Form ref="transferformModal" :model="transferformModal" :rules="rulesTransfer" :label-width="100" style="height: 70px;margin-top:20px;">
+        <FormItem label="角色账号：" prop="staff">
+          <Select v-model="transferformModal.staff" clearable style="width:200px;">
             <Option
-              v-for="item in selectList"
-              :value="item.name"
-              :key="item.id">
-              {{ item.name }}
+              v-for="item in staffSelectList"
+              :value="item.phone"
+              :key="item.phone">
+              {{ item.name + '/' + item.phone}}
             </Option>
           </Select>
         </FormItem>
-        <FormItem>
-          <p style="color:red; margin-top:-10px;">角色转移之后，您的角色将变成"管理员"</p>
+        <FormItem style="width:370px;">
+          <p style="color:red; margin-top:-10px;">确认操作后，您将与接收该角色的人员互换角色</p>
         </FormItem>
       </Form>
-      <div slot="footer" style="margin-top:40px;">
+      <div slot="footer" style="margin-top:10px;">
         <Button type="primary" @click="transferFormSub('transferformModal')">确定</Button>
         <Button  @click="transferCancelForm">取消</Button>
       </div>
     </Modal>
     <Modal v-model="visibaleRemove" type="warning" width="360">
-      <p slot="header" style="text-align:center">
+      <p slot="header" style="text-align:center;font-size: 16px;">
         <span>提示</span>
       </p>
-      <p>确定要删除用户{{this.roleRowInit.name}}吗?</P>
-      <div slot="footer">
+      <p style="margin-left:70px; margin-top: 10px;">
+        <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
+      </p><p style="margin-top:23px; margin-left:50px;">确定要删除用户{{this.roleRowInit.name}}吗?</P>
+      </p>
+      <div slot="footer" style="margin-top: 20px;">
         <Button type="primary" @click="removeSubForm">确定</Button>
         <Button  @click="removeCancelForm">取消</Button>
+      </div>
+    </Modal>
+    <Modal v-model="visibaleAddStaffSuccess" width="400">
+      <p slot="header" style="text-align:center;font-size: 16px;">
+        <span>提示</span>
+      </p>
+      <P>添加员工成功，员工的登录账号为手机号</P>
+      <p>初始登录密码已发送至员工手机</p>
+      <div slot="footer">
+        <Button type="primary" @click="knowCancel">我知道了</Button>
       </div>
     </Modal>
   </div>
@@ -81,10 +93,12 @@
 import BasePage from '@/basic/BasePage'
 import pageTable from '@/components/page-table'
 import Server from '@/libs/js/server'
+import SelectInput from '@/components/SelectInput'
 export default {
   name: 'staff-manage',
   components: {
-    pageTable
+    pageTable,
+    SelectInput
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -92,44 +106,34 @@ export default {
   },
   data () {
     return {
+      userInfo: {},
       visibaleTransfer: false,
       visibaleRemove: false,
+      visibaleAddStaffSuccess: false,
       visibaleMoadlTitle: '',
       roleRowInit: {},
       transferformModal: {
-        roleId: ''
+        staff: ''
       },
+      formSearchInit: {},
       formSearch: {
         name: '',
         phone: '',
-        roleId: '全部',
-        pageNo: 1,
-        pageSize: 20
+        roleId: '全部'
       },
-      selectList: [{
-        name: '全部',
-        id: '1'
-      }, {
-        name: '管理员',
-        id: '2'
-      }, {
-        name: '录入员',
-        id: '3'
-      }],
+      selectList: [],
+      staffSelectList: [],
       menuColumns: [{
         title: '操作',
         key: 'do',
-        width: 200,
+        width: 100,
         render: (h, params) => {
-          if (params.row.name === '超级管理员') {
+          if (params.row.type === 1 && this.userInfo.type === 1) {
             return h('div', [
-              h('Button', {
-                props: {
-                  type: 'text'
-                },
+              h('span', {
                 style: {
                   color: '#00A4BD',
-                  marginLeft: '-20px'
+                  cursor: 'pointer'
                 },
                 on: {
                   click: () => {
@@ -138,36 +142,65 @@ export default {
                 }
               }, '转移权限')
             ])
+          } else if (params.row.type === 1 && this.userInfo.type !== 1) {
+            return h('div', '—')
           } else {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'text'
-                },
-                style: {
-                  color: '#00A4BD',
-                  marginLeft: '-20px'
-                },
-                on: {
-                  click: () => {
-                    this.eaditStaff(params)
+            if (this.hasPower(140202) && this.hasPower(140203)) {
+              return h('div', [
+                h('span', {
+                  style: {
+                    color: '#00A4BD',
+                    cursor: 'pointer'
+                  },
+                  on: {
+                    click: () => {
+                      this.eaditStaff(params)
+                    }
                   }
-                }
-              }, '修改'),
-              h('Button', {
-                props: {
-                  type: 'text'
-                },
-                style: {
-                  color: '#00A4BD'
-                },
-                on: {
-                  click: () => {
-                    this.removeStaff(params)
+                }, '修改'),
+                h('span', {
+                  style: {
+                    color: '#00A4BD',
+                    cursor: 'pointer',
+                    marginLeft: '20px'
+                  },
+                  on: {
+                    click: () => {
+                      this.removeStaff(params)
+                    }
                   }
-                }
-              }, '删除')
-            ])
+                }, '删除')
+              ])
+            } else if (this.hasPower(140202)) {
+              return h('div', [
+                h('span', {
+                  style: {
+                    color: '#00A4BD',
+                    cursor: 'pointer'
+                  },
+                  on: {
+                    click: () => {
+                      this.eaditStaff(params)
+                    }
+                  }
+                }, '修改')
+              ])
+            } else if (this.hasPower(140203)) {
+              return h('div', [
+                h('span', {
+                  style: {
+                    color: '#00A4BD',
+                    cursor: 'pointer',
+                    marginLeft: '20px'
+                  },
+                  on: {
+                    click: () => {
+                      this.removeStaff(params)
+                    }
+                  }
+                }, '删除')
+              ])
+            }
           }
         }
       },
@@ -181,29 +214,84 @@ export default {
       },
       {
         title: '角色',
-        key: 'roleId'
+        key: 'roleName'
       },
       {
         title: '创建时间',
-        key: 'create_time'
+        key: 'createTime',
+        width: 150,
+        render: (h, params) => {
+          let text = this.formatDate(params.row.createTime)
+          return h('div', { props: {} }, text)
+        }
       }],
       rulesTransfer: {
-        roleId: [
+        staff: [
           { required: true, message: '请选择角色账号', trigger: 'blur' }
         ]
       }
     }
   },
-  mounted: function () {},
+  mounted: function () {
+    this.getUserInfo()
+    this.getRoleSelectList()
+    this.getStaffSelectList()
+  },
   methods: {
-    searchBtn () {
+    getUserInfo () {
+      Server({
+        url: 'set/userInfo',
+        method: 'get'
+      }).then(({ data }) => {
+        this.userInfo = Object.assign({}, data.data)
+      })
+    },
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
+    getRoleSelectList () {
+      Server({
+        url: 'role/list',
+        method: 'get'
+      }).then(({ data }) => {
+        this.selectList = data.data
+        this.selectList.unshift({ id: '全部', name: '全部' })
+      })
+    },
+    getStaffSelectList () {
       Server({
         url: 'employee/list',
-        method: 'get',
-        data: this.formSearch
+        method: 'get'
       }).then(({ data }) => {
-        // this.data1 = data.data;
+        for (let index = 0; index < data.data.list.length; index++) {
+          if (data.data.list[index].type === 1) {
+            data.data.list.splice(index, 1)
+          }
+        }
+        this.staffSelectList = Object.assign({}, data.data.list)
       })
+    },
+    searchName () {
+      let params = {}
+      params.name = this.formSearch.name
+      if (!params.name) {
+        return Promise.resolve([])
+      }
+      return Server({
+        url: 'employee/nameLike',
+        method: 'get',
+        data: params
+      }).then(({ data }) => {
+        return data.data.map(item => ({ value: item.name, name: item.name + '/' + item.phone }))
+      })
+        .catch((errorInfo) => {
+          return Promise.reject(errorInfo)
+        })
+    },
+    searchBtn () {
+      this.formSearch.roleId = (this.formSearch.roleId === '全部' ? '' : this.formSearch.roleId)
+      this.formSearchInit = Object.assign({}, this.formSearch)
+      this.formSearch.roleId = (this.formSearch.roleId === '' ? '全部' : this.formSearch.roleId)
     },
     eaditStaff (params) {
       if (params !== 'add') {
@@ -220,7 +308,10 @@ export default {
         },
         methods: {
           ok (node) {
-            _this.onAddUserSuccess(node)
+            _this.formSearchInit = {}
+            if (params === 'add') {
+              _this.visibaleAddStaffSuccess = true
+            }
           }
         }
       })
@@ -228,19 +319,26 @@ export default {
     transferFormSub (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          let params = {}
+          params.phone = this.transferformModal.staff
           Server({
             url: 'employee/role',
             method: 'post',
-            data: this.roleRowInit.phone
+            data: params
           }).then(({ data }) => {
-            // this.data1 = data.data;
+            if (data.code === 10000) {
+              this.$Message.success('转移成功!')
+              location.reload()
+            } else {
+              this.$Message.error(data.msg)
+              this.visibaleTransfer = false
+            }
           })
-          this.$Message.success('Success!')
-          this.visibaleTransfer = false
-        } else {
-          this.$Message.error('Fail!')
         }
       })
+    },
+    knowCancel () {
+      this.visibaleAddStaffSuccess = false
     },
     transferCancelForm () {
       this.visibaleTransfer = false
@@ -254,14 +352,22 @@ export default {
       this.visibaleTransfer = true
     },
     removeSubForm () {
+      let params = {}
+      params.id = this.roleRowInit.id
       Server({
         url: 'employee/del',
         method: 'post',
-        data: this.roleRowInit.id
+        data: params
       }).then(({ data }) => {
-        console.log(data)
+        if (data.code === 10000) {
+          this.visibaleRemove = false
+          this.$Message.success('删除成功！')
+          this.formSearchInit = {}
+        } else {
+          this.$Message.error(data.msg)
+          this.visibaleRemove = false
+        }
       })
-      this.visibaleRemove = false
     },
     removeCancelForm () {
       this.visibaleRemove = false
@@ -272,14 +378,16 @@ export default {
 </script>
 <style lang='stylus' scoped>
 .temAll
-  margin-left 20px;
-.classPage
-  clear: both;
-  float: right;
-  margin: 50px;
+  width: 100%
+  overflow: auto;
 .searchCard
   height:70px;
   background:rgba(249,249,249,1);
+  border: none;
+  padding-top: 18px;
+  .searchInput
+    margin-right:40px;
+    margin-left: 10px;
 .dialog
   p
   text-align center

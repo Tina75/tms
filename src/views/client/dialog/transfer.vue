@@ -1,8 +1,9 @@
 <template>
   <Modal
-    v-model="modaladd"
-    :mask-closable="true"
+    v-model="visiable"
+    :mask-closable="false"
     label-position="left"
+    class="modal"
     @on-visible-change="close"
   >
     <p slot="header" style="text-align:center">{{title}}</p>
@@ -13,28 +14,27 @@
       <FormItem label="联系人:" prop="contact">
         <Input v-model="validate.contact" :maxlength="15" placeholder="请输入"/>
       </FormItem>
-      <FormItem label="联系电话" prop="phone">
-        <Input v-model="validate.phone" placeholder="请输入"/>
+      <FormItem label="联系电话:" prop="phone">
+        <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
       </FormItem>
-      <FormItem label="公司地址" prop="companyAddress">
-        <Input v-model="validate.companyAddress" placeholder="请输入"/>
+      <FormItem label="公司地址:" prop="companyAddress">
+        <Input v-model="validate.companyAddress" :maxlength="60" placeholder="请输入"/>
       </FormItem>
-      <FormItem label="支付方式:" >
-        <Select v-model="validate.payType" placeholder="请输入">
-          <Option value="">请选择</Option>
+      <FormItem label="支付方式:" class="ivu-form-item-required blank">
+        <Select v-model="validate.payType" placeholder="请输入" clearable>
           <Option value="1">现付</Option>
           <Option value="2">到付</Option>
           <Option value="3">回单付</Option>
           <Option value="4">月结</Option>
         </Select>
       </FormItem>
-      <FormItem label="备注:" >
-        <Input v-model="validate.remark" :autosize="{minRows: 2,maxRows: 5}" type="textarea"  placeholder="请输入"/>
+      <FormItem label="备注:" class="ivu-form-item-required blank">
+        <Input v-model="validate.remark" :autosize="{minRows: 2,maxRows: 5}" :maxlength="100"  type="textarea"  placeholder="请输入"/>
       </FormItem>
     </Form>
     <div slot="footer">
       <Button type="primary" @click="save('validate')">确定</Button>
-      <Button style="margin-left: 8px" @click.native="modaladd = false"  >取消</Button>
+      <Button style="margin-left: 8px" @click.native="close"  >取消</Button>
     </div>
   </Modal>
 </template>
@@ -74,9 +74,6 @@ export default {
       }
     }
   },
-  mounted () {
-    console.log(this.validate)
-  },
   methods: {
     save (name) {
       this.$refs[name].validate((valid) => {
@@ -86,21 +83,12 @@ export default {
           } else { // 2-编辑
             this._transfereeUpdate()
           }
-          this.modaladd = false
+          this.close()
         }
       })
     },
     _transfereeAdd () {
-      let data = {
-        name: this.validate.name,
-        contact: this.validate.contact,
-        phone: this.validate.phone,
-        payType: this.validate.payType,
-        companyAddress: this.validate.companyAddress,
-        remark: this.validate.remark
-      }
-      transfereeAdd(data).then(res => {
-        console.log(res)
+      transfereeAdd(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
         } else {
@@ -109,17 +97,8 @@ export default {
       })
     },
     _transfereeUpdate () {
-      let data = {
-        name: this.validate.name,
-        contact: this.validate.contact,
-        phone: this.validate.phone,
-        payType: this.validate.payType,
-        remark: this.validate.remark,
-        companyAddress: this.validate.companyAddress,
-        id: this.id
-      }
-      transfereeUpdate(data).then(res => {
-        console.log(res)
+      Object.assign(this.validate, { id: this.id })
+      transfereeUpdate(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
         } else {
@@ -132,5 +111,5 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-
+ @import "../client.styl"
 </style>

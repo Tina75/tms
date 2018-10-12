@@ -1,8 +1,9 @@
 <template>
   <Modal
-    v-model="modaladd"
-    :mask-closable="true"
+    v-model="visiable"
+    :mask-closable="false"
     label-position="left"
+    class="modal"
     @on-visible-change="close"
   >
     <p slot="header" style="text-align:center">{{title}}</p>
@@ -13,25 +14,24 @@
       <FormItem label="发货方联系人:" prop="contact">
         <Input v-model="validate.contact" :maxlength="15" placeholder="请输入"/>
       </FormItem>
-      <FormItem label="联系电话" prop="phone">
-        <Input v-model="validate.phone" placeholder="请输入"/>
+      <FormItem label="联系电话:" prop="phone">
+        <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
       </FormItem>
-      <FormItem label="支付方式:" >
-        <Select v-model="validate.payType" placeholder="请输入">
-          <Option value= "">请选择</Option>
+      <FormItem class="ivu-form-item-required blank" label="支付方式:" >
+        <Select v-model="validate.payType" clearable placeholder="请输入">
           <Option value="1">现付</Option>
           <Option value="2">到付</Option>
           <Option value="3">回单付</Option>
           <Option value="4">月结</Option>
         </Select>
       </FormItem>
-      <FormItem label="备注:" >
-        <Input v-model="validate.remark" :autosize="{minRows: 2,maxRows: 5}" type="textarea"  placeholder="请输入"/>
+      <FormItem class="ivu-form-item-required blank" label="备注:" >
+        <Input v-model="validate.remark" :maxlength="100" :autosize="{minRows: 2,maxRows: 5}" type="textarea"  placeholder="请输入"/>
       </FormItem>
     </Form>
     <div slot="footer">
       <Button type="primary" @click="save('validate')">确定</Button>
-      <Button style="margin-left: 8px" @click.native="modaladd = false"  >取消</Button>
+      <Button style="margin-left: 8px" @click.native="close"  >取消</Button>
     </div>
   </Modal>
 </template>
@@ -44,7 +44,6 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
-      modaladd: true,
       id: '',
       validate: {
         name: '',
@@ -55,10 +54,10 @@ export default {
       },
       ruleValidate: {
         name: [
-          { required: true, message: '发货方名称不能为空', trigger: 'blur' }
+          { required: true, type: 'string', message: '发货方名称不能为空', trigger: 'blur' }
         ],
         contact: [
-          { required: true, message: '发货方联系人不能为空', trigger: 'blur' }
+          { required: true, type: 'string', message: '发货方联系人不能为空', trigger: 'blur' }
         ],
         phone: [
           { required: true, message: '联系电话不能为空', trigger: 'blur' },
@@ -76,20 +75,12 @@ export default {
           } else { // 2-编辑
             this._consignerUpdate()
           }
-          this.modaladd = false
+          this.close()
         }
       })
     },
     _consignerAdd () {
-      let data = {
-        name: this.validate.name,
-        contact: this.validate.contact,
-        phone: this.validate.phone,
-        payType: this.validate.payType,
-        remark: this.validate.remark
-      }
-      consignerAdd(data).then(res => {
-        console.log(res)
+      consignerAdd(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
         } else {
@@ -98,16 +89,9 @@ export default {
       })
     },
     _consignerUpdate () {
-      let data = {
-        name: this.validate.name,
-        contact: this.validate.contact,
-        phone: this.validate.phone,
-        payType: this.validate.payType,
-        remark: this.validate.remark,
-        id: this.id
-      }
-      consignerUpdate(data).then(res => {
-        console.log(res)
+      Object.assign(this.validate, { id: this.id })
+      console.log(this.validate)
+      consignerUpdate(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
         } else {
@@ -120,5 +104,5 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-
+  @import "../client.styl"
 </style>

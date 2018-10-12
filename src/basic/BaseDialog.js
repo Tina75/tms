@@ -1,11 +1,13 @@
 export default {
   replace: true,
+  props: {
+    visiable: Boolean
+  },
   data: function () {
     return {
       // modulePowers: modulePowers,
       title: '',
-      size: 'small',
-      Visible: true // 弹出框显示状态
+      size: 'small'
     }
   },
   // 组件是你刚被创建,组件属性计算前
@@ -54,6 +56,22 @@ export default {
      */
     openDialog: function (data) {
       this.ema.fire('Dialogs.push', data)
+    },
+    /**
+     * 打开一个tab页
+     * @param data
+     *  {
+     *    title:'', //tab应该显示的名称,默认值为query.id或metaInfo.title
+     *    path:'', //路径
+     *    multi:false //是否支持多开 默认false 已废弃
+     *    query:{}
+     *  }
+     */
+    openTab: function (data) {
+      data.query = Object.assign({ noCache: true }, data.query)
+      // data.query = Object.assign({_time: new Date().getTime()}, data.query)
+      data.query.title = data.title ? data.title : (data.query.id ? data.query.id : this.$options.metaInfo.title)
+      this.ema.fire('openTab', data)
     },
     close: function () {
       console.log('close ' + this.$options.name)

@@ -1,18 +1,19 @@
 <template>
+  <!-- 默认状态 -->
   <div v-if="!inEditing">
     <!-- 运单号及状态 -->
     <section class="detail-header">
       <ul class="detail-header-list">
         <li class="detail-header-list-item">运单号：{{ info.waybillNo }}</li>
         <li class="detail-header-list-item">订单状态：
-          <span style="font-weight: bold;">{{ info.status }}</span>
+          <span style="font-weight: bold;">{{ status }}</span>
         </li>
       </ul>
     </section>
 
     <div class="detail-btn-group">
-      <Button v-for="(item, key) in currentBtns"
-              :key="key" :type="key === (currentBtns.length - 1) ? 'primary' : 'default'"
+      <Button v-for="(item, key) in showButtons"
+              :key="key" :type="key === (showButtons.length - 1) ? 'primary' : 'default'"
               class="detail-btn-item"
               @click="item.func">{{ item.name }}</Button>
     </div>
@@ -24,37 +25,37 @@
           <span>运单信息</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="7">
+          <i-col span="6">
             <span class="detail-field-title">始发地：</span>
-            <span>{{ info.start }}</span>
+            <span>{{ info.start | cityFormatter }}</span>
           </i-col>
-          <i-col span="7">
+          <i-col span="6" offset="1">
             <span class="detail-field-title">目的地：</span>
-            <span>{{ info.end }}</span>
+            <span>{{ info.end | cityFormatter }}</span>
           </i-col>
-          <i-col span="10">
+          <i-col span="10" offset="1">
             <span class="detail-field-title">承运商：</span>
             <span>{{ info.carrierName }}</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
-          <i-col span="7">
+          <i-col span="6">
             <span class="detail-field-title">车牌号：</span>
             <span>{{ info.carNo }}</span>
           </i-col>
-          <i-col span="7">
+          <i-col span="6" offset="1">
             <span class="detail-field-title">车型：</span>
-            <span>{{ info.carType + ' ' + info.carLength }}</span>
+            <span>{{ info.carType|carTypeFormatter }} {{ info.carLength|carLengthFormatter }}</span>
           </i-col>
-          <i-col span="10">
+          <i-col span="10" offset="1">
             <span class="detail-field-title">司机：</span>
-            <span>{{ info.driverName + ' ' + info.driverPhone }}</span>
+            <span>{{ (info.driverName || '') + ' ' + (info.driverPhone || '') }}</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
-          <i-col span="14">
+          <i-col span="13">
             <span class="detail-field-title">备注：</span>
-            <span>{{ info.remark }}</span>
+            <span>{{ info.remark || '无' }}</span>
           </i-col>
         </Row>
       </div>
@@ -66,10 +67,10 @@
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
-          <span>总货值：{{ total.cargoCost }}</span>
-          <span>总数量：{{ total.quantity }}</span>
-          <span>总体积：{{ total.weight }}</span>
-          <span>总重量：{{ total.volume }}</span>
+          <span>总货值：{{ orderTotal.cargoCost }}</span>
+          <span>总数量：{{ orderTotal.quantity }}</span>
+          <span>总体积：{{ orderTotal.volume }}</span>
+          <span>总重量：{{ orderTotal.weight }}</span>
         </div>
       </div>
       <!-- 应付费用 -->
@@ -78,37 +79,45 @@
           <span>应付费用</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="4">
-            <span class="detail-field-title">运输费：</span>
-            <span>{{ payment.freightFee }}元</span>
+          <i-col span="3">
+            <span class="detail-field-title-sm">运输费：</span>
+            <span class="detail-field-fee">{{ payment.freightFee || 0 }}元</span>
           </i-col>
-          <i-col span="4">
-            <span class="detail-field-title">装货费：</span>
-            <span>{{ payment.loadFee }}元</span>
+          <i-col span="3" offset="2">
+            <span class="detail-field-title-sm">装货费：</span>
+            <span class="detail-field-fee">{{ payment.loadFee || 0 }}元</span>
           </i-col>
-          <i-col span="4">
-            <span class="detail-field-title">卸货费：</span>
-            <span>{{ payment.unloadFee }}元</span>
+          <i-col span="3" offset="2">
+            <span class="detail-field-title-sm">卸货费：</span>
+            <span class="detail-field-fee">{{ payment.unloadFee || 0 }}元</span>
           </i-col>
-          <i-col span="4">
-            <span class="detail-field-title">保险费：</span>
-            <span>{{ payment.insuranceFee }}元</span>
+          <i-col span="3" offset="2">
+            <span class="detail-field-title-sm">保险费：</span>
+            <span class="detail-field-fee">{{ payment.insuranceFee || 0 }}元</span>
           </i-col>
-          <i-col span="4">
-            <span class="detail-field-title">其他：</span>
-            <span>{{ payment.otherFee }}元</span>
-          </i-col>
-        </Row>
-        <Row class="detail-field-group">
-          <i-col span="24">
-            <span class="detail-field-title">费用合计：</span>
-            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{ payment.totalFee }}</span>元
+          <i-col span="3" offset="2">
+            <span class="detail-field-title-sm">其他：</span>
+            <span class="detail-field-fee">{{ payment.otherFee || 0 }}元</span>
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="24">
-            <span class="detail-field-title">结算方式：</span>
-            <span>月结</span>
+            <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
+            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
+          </i-col>
+        </Row>
+        <Row class="detail-field-group">
+          <i-col span="24">
+            <span class="detail-field-title-sm">结算方式：</span>
+            <div v-if="settlementType"
+                 class="detail-payment-way">
+              {{ settlementType === '1' ? '按单结' : '月结' }}
+              <Table v-if="settlementType === '1'"
+                     :columns="tablePayment"
+                     :data="settlementPayInfo"
+                     :loading="loading"
+                     width="350"></Table>
+            </div>
           </i-col>
         </Row>
       </div>
@@ -121,8 +130,7 @@
 
           <div class="detail-log-icon"
                @click="showLog = !showLog">
-            <span
-              :class="showLog ? 'detail-log-hide' : 'detail-log-show'">《</span>
+            <i :class="{'detail-log-show': showLog}"></i>
           </div>
 
           <Timeline :style="logListHeight"
@@ -131,7 +139,7 @@
             <TimelineItem v-for="(item, key) in logList"
                           :key="key" class="detail-log-timeline-item">
               <i slot="dot"></i>
-              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong}}</span>
+              <span style="margin-right: 60px;color: #777;">{{item.createTimeLong | timeFormatter}}</span>
               <span style="color: #333;">{{'【' + item.operatorName + '】' + item.description}}</span>
             </TimelineItem>
 
@@ -141,16 +149,19 @@
     </section>
   </div>
 
+  <!-- 编辑状态 -->
   <div v-else>
     <!-- 运单号及状态 -->
     <section class="detail-header">
       <ul class="detail-header-list">
         <li class="detail-header-list-item">运单号：{{ info.waybillNo }}</li>
         <li class="detail-header-list-item">订单状态：
-          <span style="font-weight: bold;">{{ info.status }}</span>
+          <span style="font-weight: bold;">{{ status }}</span>
         </li>
       </ul>
     </section>
+
+    <div class="detail-btn-group"></div>
 
     <section class="detail-info">
       <!-- 运单信息 -->
@@ -159,37 +170,67 @@
           <span>运单信息</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="7">
-            <span class="detail-field-title">始发地：</span>
-            <span>{{ info.start }}</span>
+          <i-col span="6">
+            <span class="detail-field-title detail-field-required">始发地：</span>
+            <AreaSelect v-model="startCodes"
+                        class="detail-info-input" />
           </i-col>
-          <i-col span="7">
-            <span class="detail-field-title">目的地：</span>
-            <span>{{ info.end }}</span>
+          <i-col span="6" offset="1">
+            <span class="detail-field-title detail-field-required">目的地：</span>
+            <AreaSelect v-model="endCodes"
+                        class="detail-info-input" />
           </i-col>
-          <i-col span="10">
+          <i-col span="10" offset="1">
             <span class="detail-field-title">承运商：</span>
-            <span>{{ info.carrierName }}</span>
+            <SelectInput v-model="info.carrierName"
+                         class="detail-info-input"
+                         mode="carrier"
+                         @on-select="selectCarrierHandler" />
           </i-col>
         </Row>
         <Row class="detail-field-group">
-          <i-col span="7">
+          <i-col span="6">
             <span class="detail-field-title">车牌号：</span>
-            <span>{{ info.carNo }}</span>
+            <SelectInput :carrier-id="carrierId"
+                         v-model="info.carNo"
+                         class="detail-info-input"
+                         mode="carNo"
+                         @on-select="autoComplete" />
           </i-col>
-          <i-col span="7">
-            <span class="detail-field-title">车型：</span>
-            <span>{{ info.carType + ' ' + info.carLength }}</span>
+          <i-col span="6" offset="1">
+            <span class="detail-field-title">车型/车长：</span>
+            <Select v-model="info.carType"
+                    class="detail-info-input-half"
+                    style="margin-right: 12px;">
+              <Option v-for="item in carType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+            <Select v-model="info.carLength"
+                    class="detail-info-input-half">
+              <Option v-for="item in carLength" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
           </i-col>
-          <i-col span="10">
+          <i-col span="4" offset="1">
             <span class="detail-field-title">司机：</span>
-            <span>{{ info.driverName + ' ' + info.driverPhone }}</span>
+            <SelectInput :carrier-id="carrierId"
+                         v-model="info.driverName"
+                         class="detail-info-input"
+                         mode="driver"
+                         @on-select="autoComplete"
+                         @on-option-loaded="driverOptionLoaded" />
+          </i-col>
+          <i-col span="5" offset="1">
+            <span class="detail-field-title">司机手机号：</span>
+            <Input v-model="info.driverPhone"
+                   :maxlength="11"
+                   class="detail-info-input" />
           </i-col>
         </Row>
         <Row class="detail-field-group">
-          <i-col span="14">
+          <i-col span="13">
             <span class="detail-field-title">备注：</span>
-            <span>{{ info.remark }}</span>
+            <Input v-model="info.remark"
+                   :maxlength="100"
+                   class="detail-info-input" />
           </i-col>
         </Row>
       </div>
@@ -198,14 +239,15 @@
         <div class="detail-part-title">
           <span>货物明细</span>
         </div>
-        <Button type="primary" style="margin-bottom: 22px;">添加订单</Button>
+        <Button type="primary" style="margin-bottom: 22px;"
+                @click="addOrder('freight')">添加订单</Button>
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
-          <span>总货值：{{ total.cargoCost }}</span>
-          <span>总数量：{{ total.quantity }}</span>
-          <span>总体积：{{ total.weight }}</span>
-          <span>总重量：{{ total.volume }}</span>
+          <span>总货值：{{ orderTotal.cargoCost }}</span>
+          <span>总数量：{{ orderTotal.quantity }}</span>
+          <span>总体积：{{ orderTotal.volume }}</span>
+          <span>总重量：{{ orderTotal.weight }}</span>
         </div>
       </div>
       <!-- 应付费用 -->
@@ -214,60 +256,63 @@
           <span>应付费用</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="4">
-            <span class="detail-field-title">运输费：</span>
-            <Input v-model="payment.freightFee"
-                   class="detail-payment-input">
-            <span slot="suffix">元</span>
-            </Input>
+          <i-col span="5">
+            <span class="detail-field-title-sm">运输费：</span>
+            <MoneyInput v-model="payment.freightFee"
+                        class="detail-payment-input" />
+            <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
           </i-col>
           <i-col span="4">
-            <span class="detail-field-title">装货费：</span>
-            <Input v-model="payment.loadFee"
-                   class="detail-payment-input">
-            <span slot="suffix">元</span>
-            </Input>
+            <span class="detail-field-title-sm">装货费：</span>
+            <MoneyInput v-model="payment.loadFee"
+                        class="detail-payment-input" />
           </i-col>
           <i-col span="4">
-            <span class="detail-field-title">卸货费：</span>
-            <Input v-model="payment.unloadFee"
-                   class="detail-payment-input">
-            <span slot="suffix">元</span>
-            </Input>
+            <span class="detail-field-title-sm">卸货费：</span>
+            <MoneyInput v-model="payment.unloadFee"
+                        class="detail-payment-input" />
           </i-col>
           <i-col span="4">
-            <span class="detail-field-title">保险费：</span>
-            <Input v-model="payment.insuranceFee"
-                   class="detail-payment-input">
-            <span slot="suffix">元</span>
-            </Input>
+            <span class="detail-field-title-sm">保险费：</span>
+            <MoneyInput v-model="payment.insuranceFee"
+                        class="detail-payment-input" />
           </i-col>
           <i-col span="4">
-            <span class="detail-field-title">其他：</span>
-            <Input v-model="payment.otherFee"
-                   class="detail-payment-input">
-            <span slot="suffix">元</span>
-            </Input>
+            <span class="detail-field-title-sm">其他：</span>
+            <MoneyInput v-model="payment.otherFee"
+                        class="detail-payment-input" />
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="24">
-            <span class="detail-field-title">费用合计：</span>
-            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{ payment.totalFee }}</span>元
+            <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
+            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
           </i-col>
         </Row>
         <Row class="detail-field-group">
           <i-col span="24">
-            <span class="detail-field-title">结算方式：</span>
-            <span>月结</span>
+            <span class="detail-field-title-sm">结算方式：</span>
+            <div class="detail-payment-way">
+              <RadioGroup v-model="settlementType">
+                <Radio label="1">按单结</Radio>
+                <Radio label="2">月结</Radio>
+              </RadioGroup>
+              <Table v-if="settlementType === '1'"
+                     :columns="tablePayment"
+                     :data="settlementPayInfo"
+                     :loading="loading"
+                     width="350"></Table>
+            </div>
           </i-col>
         </Row>
       </div>
     </section>
 
     <section class="detail-edit-footer">
-      <Button class="detail-edit-footer-btn" type="primary">保存</Button>
-      <Button class="detail-edit-footer-btn" type="default" @click="cancelEdit">取消</Button>
+      <Button class="detail-edit-footer-btn" type="primary"
+              @click="save">保存</Button>
+      <Button class="detail-edit-footer-btn" type="default"
+              @click="cancelEdit">取消</Button>
     </section>
 
   </div>
@@ -275,21 +320,33 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
+import TransportBase from '../transportBase'
+import DetailMixin from './detailMixin'
+
+import MoneyInput from '../components/MoneyInput'
+import AreaSelect from '@/components/AreaSelect'
+import SelectInput from '../components/SelectInput.vue'
+import SelectInputMixin from '../components/selectInputMixin'
+
 import Server from '@/libs/js/server'
+import { getCityCode } from '@/libs/constant/cityValidator'
+import TMSUrl from '@/libs/constant/url'
 
 export default {
   name: 'DetailFeright',
-  mixins: [ BasePage ],
   metaInfo: { title: '运单详情' },
+  components: { MoneyInput, SelectInput, AreaSelect },
+  mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
+
   data () {
     return {
-      loading: false,
-      inEditing: false,
+      pageName: 'feright',
+      startCodes: '',
+      endCodes: '',
+      status: '',
       // 信息
       info: {
-        waybillId: '',
         waybillNo: '',
-        status: '',
         start: '',
         end: '',
         carrierName: '',
@@ -300,19 +357,15 @@ export default {
         driverPhone: '',
         remark: ''
       },
-      // 明细
-      detail: [],
-      // 费用
-      payment: {
-        settlementType: '',
-        freightFee: '',
-        loadFee: '',
-        unloadFee: '',
-        insuranceFee: '',
-        otherFee: '',
-        totalFee: '',
-        settlementPayInfo: ''
-      },
+
+      // 支付方式
+      settlementType: '',
+      settlementPayInfo: [
+        { payType: 1, fuelCardAmount: 0, cashAmount: 0 },
+        { payType: 2, fuelCardAmount: 0, cashAmount: 0 },
+        { payType: 3, fuelCardAmount: 0, cashAmount: 0 }
+      ],
+      settlementPayInfoBack: [], // 支付方式备份
 
       // 所有按钮组
       btnList: [
@@ -320,12 +373,19 @@ export default {
           status: '待派车',
           btns: [{
             name: '删除',
-            func: () => console.log(Math.random())
+            code: 120105,
+            func: () => {
+              this.billDelete()
+            }
           }, {
             name: '派车',
-            func: () => console.log(Math.random())
+            code: 120101,
+            func: () => {
+              this.billSendCar()
+            }
           }, {
             name: '编辑',
+            code: 120107,
             func: () => {
               this.inEditing = true
             }
@@ -339,7 +399,10 @@ export default {
           status: '在途',
           btns: [{
             name: '位置',
-            func: () => console.log(Math.random())
+            code: 120106,
+            func: () => {
+              this.billLocation()
+            }
           }]
         },
         {
@@ -347,112 +410,127 @@ export default {
           btns: []
         }
       ],
-      currentBtns: [], // 当前按钮组
 
+      tableCanEdit: true,
       tableColumns: [
         {
           title: '订单号',
           key: 'orderNo',
+          width: 180,
           render: (h, p) => {
-            return h('span', {
-              style: { color: '#3A7EDE' }
+            return h('a', {
+              style: { color: '#3A7EDE' },
+              on: {
+                click: () => {
+                  this.openTab({
+                    // title: p.row.orderNo,
+                    path: TMSUrl.ORDER_DETAIL,
+                    query: {
+                      id: p.row.orderNo,
+                      orderId: p.row.orderId,
+                      from: 'order'
+                    }
+                  })
+                }
+              }
             }, p.row.orderNo)
           }
         },
         {
           title: '客户订单号',
-          key: 'customerOrderNo'
+          key: 'customerOrderNo',
+          width: 180,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.customerOrderNo, true)
+          }
         },
         {
           title: '始发地-目的地',
           key: 'start',
+          width: 180,
           render: (h, p) => {
-            return h('span', p.row.start + '-' + p.row.end)
+            const start = this.cityFormatter(p.row.start)
+            const end = this.cityFormatter(p.row.end)
+            return this.tableDataRender(h, start && end ? [start, end].join('-') : '')
           }
         },
         {
           title: '货物名称',
-          key: 'cargoName'
+          key: 'cargoName',
+          minWidth: 180,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.cargoName)
+          }
         },
         {
           title: '包装',
-          key: 'packing'
+          key: 'unit',
+          width: 120,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.unit)
+          }
         },
         {
           title: '数量',
-          key: 'quantity'
+          key: 'quantity',
+          width: 120,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.quantity)
+          }
         },
         {
-          title: '货值（元）',
-          key: 'cargoCost'
+          title: '货值(元)',
+          key: 'cargoCost',
+          width: 120,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
+          }
         },
         {
-          title: '重量（吨）',
-          key: 'weight'
+          title: '重量(吨)',
+          key: 'weight',
+          width: 120,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.weight)
+          }
         },
         {
-          title: '体积（方）',
-          key: 'volume'
+          title: '体积(方)',
+          key: 'volume',
+          width: 120,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.volume)
+          }
         },
         {
           title: '备注1',
-          key: 'remark1'
+          key: 'remark1',
+          minWidth: 140,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.remark1)
+          }
         },
         {
           title: '备注2',
-          key: 'remark2'
-        }
-      ],
-
-      showLog: false,
-      logList: []
-    }
-  },
-
-  computed: {
-    // 根据日志收起展开动态计算高度
-    logListHeight () {
-      return { height: this.showLog ? 41 * this.logList.length + 'px' : '15px' }
-    },
-
-    total () {
-      return this.detail.reduce((last, item) => {
-        return {
-          cargoCost: last.cargoCost + item.cargoCost,
-          quantity: last.quantity + item.quantity,
-          weight: last.weight + item.weight,
-          volume: last.volume + item.volume
-        }
-      }, {
-        cargoCost: 0,
-        quantity: 0,
-        weight: 0,
-        volume: 0
-      })
-    }
-  },
-  watch: {
-    inEditing (val) {
-      if (val) {
-        this.tableColumns.unshift({
-          title: '操作',
-          key: 'action',
-          width: 60,
+          key: 'remark2',
+          minWidth: 140,
           render: (h, p) => {
-            return h('a', {
-              on: {
-                click: () => {}
-              }
-            }, '移出')
+            return this.tableDataRender(h, p.row.remark2)
           }
-        })
-      } else {
-        this.tableColumns.shift()
-      }
+        }
+      ]
     }
   },
-  created () {
-    this.fetchData()
+
+  watch: {
+    startCodes (val) {
+      if (!(val instanceof Array)) return
+      this.info.start = getCityCode(val)
+    },
+    endCodes (val) {
+      if (!(val instanceof Array)) return
+      this.info.end = getCityCode(val)
+    }
   },
 
   methods: {
@@ -465,82 +543,166 @@ export default {
         case 4: return '已到货'
       }
     },
-    carTypeFilter (type) {
-      switch (type) {
-        case 1: return '平板'
-        case 2: return '高栏'
-        case 3: return '厢车'
-        case 4: return '自卸'
-        case 5: return '冷藏'
-        case 6: return '保温'
-        case 7: return '高低板'
-        case 8: return '面包车'
-        case 9: return '爬梯车'
-        case 10: return '飞翼车'
-      }
-    },
-    carLengthFilter (length) {
-      switch (length) {
-        case 1: return '1.8米'
-        case 2: return '2.8米'
-        case 3: return '3.8米'
-        case 4: return '4.2米'
-        case 5: return '5米'
-        case 6: return '6.2米'
-        case 7: return '6.8米'
-        case 8: return '7.7米'
-        case 9: return '8.2米'
-        case 10: return '8.7米'
-        case 11: return '9.6米'
-        case 12: return '11.7米'
-        case 13: return '12.5米'
-        case 14: return '13米'
-        case 15: return '15米'
-        case 16: return '16米'
-        case 17: return '17.5米'
-      }
-    },
-
-    // 根据状态设置按钮
-    setBtnsWithStatus () {
-      for (let i = 0; i < this.btnList.length; i++) {
-        if (this.btnList[i].status === this.info.status) {
-          this.currentBtns = this.btnList[0].btns
-          return
-        }
-      }
-    },
-
-    // 取消编辑
-    cancelEdit () {
-      this.inEditing = false
-      this.fetchData()
-    },
 
     fetchData () {
       this.loading = true
       Server({
         url: '/waybill/details',
-        method: 'get'
+        method: 'post',
+        data: {
+          waybillId: this.id,
+          waybillNo: this.no
+        }
       }).then(res => {
         const data = res.data.data
 
+        this.id = data.waybill.waybillId
         for (let key in this.info) {
-          this.info[key] = data.waybillInfo[key]
+          this.info[key] = data.waybill[key]
         }
+        this.startCodes = this.info.start.toString()
+        this.endCodes = this.info.end.toString()
         for (let key in this.payment) {
-          this.payment[key] = data.waybillInfo[key]
+          this.payment[key] = this.setMoneyUnit2Yuan(data.waybill[key])
         }
         this.detail = data.cargoList
         this.logList = data.operaterLog
 
-        this.info.status = this.statusFilter(this.info.status)
-        this.info.carType = this.carTypeFilter(this.info.carType)
-        this.info.carLength = this.carLengthFilter(this.info.carLength)
-        this.setBtnsWithStatus()
+        this.status = this.statusFilter(data.waybill.status)
+        this.settlementType = data.waybill.settlementType ? data.waybill.settlementType.toString() : ''
+        let temp = this.settlementPayInfo.map((item, i) => {
+          if (!data.waybill.settlementPayInfo[i]) return item
+          else {
+            const temp = data.waybill.settlementPayInfo[i]
+            temp.fuelCardAmount = this.setMoneyUnit2Yuan(temp.fuelCardAmount)
+            temp.cashAmount = this.setMoneyUnit2Yuan(temp.cashAmount)
+            return Object.assign(item, temp)
+          }
+        })
+        this.settlementPayInfo = temp
+        this.settlementPayInfoBack = Object.assign([], temp)
 
+        this.setBtnsWithStatus()
         this.loading = false
       }).catch(err => console.error(err))
+    },
+
+    save () {
+      if (!this.validate()) return
+      Server({
+        url: '/waybill/update',
+        method: 'post',
+        data: {
+          waybill: {
+            waybillId: this.id,
+            ...this.info,
+            ...this.formatMoney(),
+            settlementType: this.settlementType,
+            settlementPayInfo: this.settlementType === '1' ? this.formatPayInfo() : void 0
+          },
+          cargoList: Array.from(new Set((this.detail.map(item => {
+            return item.orderId
+          }))))
+        }
+      }).then(res => {
+        this.$Message.success('保存成功')
+        this.cancelEdit()
+      }).catch(err => console.error(err))
+    },
+
+    // 计费规则
+    showChargeRules () {
+      const self = this
+      if (!self.info.carrierName) {
+        this.$Message.error('请先选择承运商')
+        return
+      }
+      if (!self.detail.length) {
+        this.$Message.error('请先添加订单')
+        return
+      }
+      this.openDialog({
+        name: 'dialogs/financeRule',
+        data: {
+          // 以下数据必传
+          partnerType: 2, // 计费规则分类 - 发货方1 承运商2 外转方3
+          partnerName: self.info.carrierName, // 名称
+          weight: self.orderTotal.weight, // 货物重量
+          volume: self.orderTotal.volume, // 货物体积
+          start: self.info.start, // 始发地code
+          end: self.info.end // 目的地code
+        },
+        methods: {
+          // 确认计费规则后返回金额(元)
+          ok (charge) {
+            self.payment.freightFee = charge || 0
+          }
+          // 如果有两层对话框，在计费规则中点击去设置按钮后需要关闭第一层对话框
+          // closeParentDialog () {
+          // self.close()
+          // }
+        }
+      })
+    },
+
+    // 按钮操作
+    // 派车
+    billSendCar () {
+      var self = this
+      self.openDialog({
+        name: 'transport/dialog/sendCar',
+        data: {
+          id: this.id,
+          type: 'sendCar'
+        },
+        methods: {
+          complete () {
+            self.fetchData()
+          }
+        }
+      })
+    },
+    // 位置
+    billLocation () {
+      Server({
+        url: '/waybill/location',
+        method: 'post',
+        data: { waybillIds: [ this.id ] }
+      }).then(res => {
+        const points = res.data.data.list
+        if (!points.length) {
+          this.$Message.warning('暂无位置')
+          return
+        }
+        this.openDialog({
+          name: 'transport/dialog/map',
+          data: { points },
+          methods: {}
+        })
+      }).catch(err => console.error(err))
+    },
+    // 删除
+    billDelete () {
+      const self = this
+      self.openDialog({
+        name: 'transport/dialog/confirm',
+        data: {
+          title: '删除确认',
+          message: '是否确认删除？'
+        },
+        methods: {
+          confirm () {
+            Server({
+              url: '/waybill/delete',
+              method: 'delete',
+              data: { waybillIds: [ self.id ] }
+            }).then(res => {
+              self.$Message.success('删除成功')
+              self.ema.fire('closeTab', self.$route)
+            }).catch(err => console.error(err))
+          }
+        }
+      })
     }
   }
 }

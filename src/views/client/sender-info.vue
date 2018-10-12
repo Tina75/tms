@@ -4,33 +4,39 @@
       <div class="title">发货方信息</div>
       <div class="list-info">
         <Row class="row">
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">发货方名称：</span>
             {{list.name}}
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">发货联系人：</span>
             {{list.contact}}
           </div>
           </Col>
-          <Col span="6">
+          <Col span="8">
           <div>
             <span class="label">联系电话：</span>
             {{list.phone}}
           </div>
           </Col>
-          <Col span="6">
+        </Row>
+        <Row class="row">
+          <Col span="24">
           <div>
             <span class="label">结算方式：</span>
-            {{list.payTypeDesc}}
+            <span v-if="list.payType===1">现付</span>
+            <span v-else-if="list.payType===2">到付</span>
+            <span v-else-if="list.payType===3">回单付</span>
+            <span v-else-if="list.payType===4">月结</span>
+            <span v-else></span>
           </div>
           </Col>
         </Row>
         <Row class="row">
-          <Col span="6">
+          <Col span="24">
           <div>
             <span class="label">备注：</span>
             {{list.remark}}
@@ -43,7 +49,7 @@
       <Tabs :animated="false">
         <TabPane label="发货地址">
           <div class="add">
-            <Button type="primary" @click="_consignerAddressAdd">新增</Button>
+            <Button v-if="hasPower(130104)"  type="primary" @click="_consignerAddressAdd">新增</Button>
           </div>
           <template>
             <Table :columns="columns1" :data="data1"></Table>
@@ -54,13 +60,14 @@
                     :current.sync="pageNo1" :page-size-opts="pageArray1"
                     size="small"
                     show-sizer
-                    show-elevator show-total @on-change="handleChangePage1"/>
+                    show-elevator show-total @on-change="handleChangePage1"
+                    @on-page-size-change="handleChangePageSize1"/>
             </template>
           </div>
         </TabPane>
         <TabPane label="收货方">
           <div class="add">
-            <Button type="primary" @click="_consignerConsigneeAdd">新增</Button>
+            <Button v-if="hasPower(130107)" type="primary"  @click="_consignerConsigneeAdd">新增</Button>
           </div>
           <template>
             <Table :columns="columns2" :data="data2"></Table>
@@ -71,13 +78,14 @@
                     :current.sync="pageNo2" :page-size-opts="pageArray2"
                     size="small"
                     show-sizer
-                    show-elevator show-total @on-change="handleChangePage2"/>
+                    show-elevator show-total @on-change="handleChangePage2"
+                    @on-page-size-change="handleChangePageSize2"/>
             </template>
           </div>
         </TabPane>
         <TabPane label="常发货物">
           <div class="add">
-            <Button type="primary" @click="_consignerCargoAdd">新增</Button>
+            <Button v-if="hasPower(130110)" type="primary" @click="_consignerCargoAdd">新增</Button>
           </div>
           <template>
             <Table :columns="columns3" :data="data3"></Table>
@@ -88,7 +96,8 @@
                     :current.sync="pageNo3" :page-size-opts="pageArray3"
                     size="small"
                     show-sizer
-                    show-elevator show-total @on-change="handleChangePage3"/>
+                    show-elevator show-total @on-change="handleChangePage3"
+                    @on-page-size-change="handleChangePageSize3"/>
             </template>
           </div>
         </TabPane>
@@ -103,14 +112,17 @@ import { CODE, consignerDetail, consignerAddressList, consignerAddressDelete, co
 export default {
   name: 'sender-info',
   mixins: [ BasePage ],
+  metaInfo: {
+    title: '发货方详情'
+  },
   data () {
     return {
-      id: this.$route.query.id,
+      id: this.$route.query.id, // 发货方id
       list: {
         name: '',
         contact: '',
         phone: '',
-        payTypeDesc: '',
+        payType: '',
         remark: ''
       },
       columns1: [
@@ -118,8 +130,9 @@ export default {
           title: '操作',
           key: 'id',
           render: (h, params) => {
-            return h('div', [
-              h('span', {
+            let renderBtn = []
+            if (this.hasPower(130105)) {
+              renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
                   color: '#00A4BD',
@@ -146,32 +159,45 @@ export default {
                     })
                   }
                 }
-              }, '修改'),
-              h('span', {
+              }, '修改'))
+            }
+            if (this.hasPower(130106)) {
+              renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
                   cursor: 'pointer'
                 },
                 on: {
                   click: () => {
-                    consignerAddressDelete({
-                      id: params.row.id
-                    }).then(res => {
-                      if (res.data.code === CODE) {
-                        this.$Message.success(res.data.msg)
-                        this._consignerAddressList() // 刷新页面
-                      } else {
-                        this.$Message.error(res.data.msg)
+                    let _this = this
+                    this.openDialog({
+                      name: 'client/dialog/confirmDelete',
+                      data: {
+                      },
+                      methods: {
+                        ok () {
+                          consignerAddressDelete({
+                            id: params.row.id
+                          }).then(res => {
+                            if (res.data.code === CODE) {
+                              _this.$Message.success(res.data.msg)
+                              _this._consignerAddressList() // 刷新页面
+                            } else {
+                              _this.$Message.error(res.data.msg)
+                            }
+                          })
+                        }
                       }
                     })
                   }
                 }
-              }, '删除')
-            ])
+              }, '删除'))
+            }
+            return h('div', renderBtn)
           }
         },
         {
-          title: '收货人',
+          title: '收货地址',
           key: 'address'
         }
       ],
@@ -180,8 +206,9 @@ export default {
           title: '操作',
           key: 'id',
           render: (h, params) => {
-            return h('div', [
-              h('span', {
+            let renderBtn = []
+            if (this.hasPower(130108)) {
+              renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
                   color: '#00A4BD',
@@ -199,7 +226,8 @@ export default {
                         validate: {
                           contact: params.row.contact,
                           phone: params.row.phone,
-                          address: params.row.address
+                          address: params.row.address,
+                          remark: params.row.remark
                         }
                       },
                       methods: {
@@ -210,28 +238,41 @@ export default {
                     })
                   }
                 }
-              }, '修改'),
-              h('span', {
+              }, '修改'))
+            }
+            if (this.hasPower(130109)) {
+              renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
                   cursor: 'pointer'
                 },
                 on: {
                   click: () => {
-                    consignerConsigneeDelete({
-                      id: params.row.id
-                    }).then(res => {
-                      if (res.data.code === CODE) {
-                        this.$Message.success(res.data.msg)
-                        this._consignerConsigneeList() // 刷新页面
-                      } else {
-                        this.$Message.error(res.data.msg)
+                    let _this = this
+                    this.openDialog({
+                      name: 'client/dialog/confirmDelete',
+                      data: {
+                      },
+                      methods: {
+                        ok () {
+                          consignerConsigneeDelete({
+                            id: params.row.id
+                          }).then(res => {
+                            if (res.data.code === CODE) {
+                              _this.$Message.success(res.data.msg)
+                              _this._consignerConsigneeList() // 刷新页面
+                            } else {
+                              _this.$Message.error(res.data.msg)
+                            }
+                          })
+                        }
                       }
                     })
                   }
                 }
-              }, '删除')
-            ])
+              }, '删除'))
+            }
+            return h('div', renderBtn)
           }
         },
         {
@@ -248,16 +289,27 @@ export default {
         },
         {
           title: '备注',
-          key: 'remark'
+          key: 'remark',
+          render (h, params) {
+            let text = ''
+            if (params.row.remark === '' || params.row.remark === null) {
+              text = '-'
+            } else {
+              text = params.row.remark
+            }
+            return h('span', {}, text)
+          }
         }
       ],
       columns3: [
         {
           title: '操作',
           key: 'id',
+          width: 100,
           render: (h, params) => {
-            return h('div', [
-              h('span', {
+            let renderBtn = []
+            if (this.hasPower(130111)) {
+              renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
                   color: '#00A4BD',
@@ -275,10 +327,11 @@ export default {
                         validate: {
                           cargoName: params.row.cargoName,
                           unit: params.row.unit,
-                          cargoCost: params.row.cargoCost,
-                          weight: params.row.weight,
-                          volume: params.row.volume,
-                          remark: params.row.remark
+                          cargoCost: (params.row.cargoCost / 100).toFixed(2),
+                          weight: String(params.row.weight),
+                          volume: String(params.row.volume),
+                          remark1: params.row.remark1,
+                          remark2: params.row.remark2
                         }
                       },
                       methods: {
@@ -289,53 +342,120 @@ export default {
                     })
                   }
                 }
-              }, '修改'),
-              h('span', {
+              }, '修改'))
+            }
+            if (this.hasPower(130112)) {
+              renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
                   cursor: 'pointer'
                 },
                 on: {
                   click: () => {
-                    consignerCargoDelete({
-                      id: params.row.id
-                    }).then(res => {
-                      if (res.data.code === CODE) {
-                        this.$Message.success(res.data.msg)
-                        this._consignerCargoList() // 刷新页面
-                      } else {
-                        this.$Message.error(res.data.msg)
+                    let _this = this
+                    this.openDialog({
+                      name: 'client/dialog/confirmDelete',
+                      data: {
+                      },
+                      methods: {
+                        ok () {
+                          consignerCargoDelete({
+                            id: params.row.id
+                          }).then(res => {
+                            if (res.data.code === CODE) {
+                              _this.$Message.success(res.data.msg)
+                              _this._consignerCargoList() // 刷新页面
+                            } else {
+                              _this.$Message.error(res.data.msg)
+                            }
+                          })
+                        }
                       }
                     })
                   }
                 }
-              }, '删除')
-            ])
+              }, '删除'))
+            }
+            return h('div', renderBtn)
           }
         },
         {
           title: '货品名称',
-          key: 'cargoName'
+          key: 'cargoName',
+          ellipsis: true,
+          tooltip: true
         },
         {
           title: '包装单位',
-          key: 'unit'
+          key: 'unit',
+          render (h, params) {
+            let text = ''
+            if (params.row.unit === '' || params.row.unit === null) {
+              text = '-'
+            } else {
+              text = params.row.unit
+            }
+            return h('span', {}, text)
+          }
         },
         {
           title: '货值',
-          key: 'cargoCost'
+          key: 'cargoCost',
+          render (h, params) {
+            return h('div', {}, (params.row.cargoCost / 100).toFixed(2))
+          }
         },
         {
           title: '重量(吨)',
-          key: 'weight'
+          key: 'weight',
+          render (h, params) {
+            let text = ''
+            if (params.row.weight === '' || params.row.weight === null) {
+              text = '-'
+            } else {
+              text = params.row.weight
+            }
+            return h('span', {}, text)
+          }
         },
         {
           title: '体积(方)',
-          key: 'volume'
+          key: 'volume',
+          render (h, params) {
+            let text = ''
+            if (params.row.volume === '' || params.row.volume === null) {
+              text = '-'
+            } else {
+              text = params.row.volume
+            }
+            return h('span', {}, text)
+          }
         },
         {
-          title: '备注',
-          key: 'remark'
+          title: '备注1',
+          key: 'remark1',
+          render (h, params) {
+            let text = ''
+            if (params.row.remark1 === '' || params.row.remark1 === null) {
+              text = '-'
+            } else {
+              text = params.row.remark1
+            }
+            return h('span', {}, text)
+          }
+        },
+        {
+          title: '备注2',
+          key: 'remark2',
+          render (h, params) {
+            let text = ''
+            if (params.row.remark2 === '' || params.row.remark2 === null) {
+              text = '-'
+            } else {
+              text = params.row.remark2
+            }
+            return h('span', {}, text)
+          }
         }
       ],
       data1: [],
@@ -364,14 +484,13 @@ export default {
         id: this.id
       }
       consignerDetail(data).then(res => {
-        console.log(res)
         if (res.data.code === CODE) {
           let data = res.data.data
           this.list = {
             name: data.name,
             contact: data.contact,
             phone: data.phone,
-            payTypeDesc: data.payTypeDesc,
+            payType: data.payType,
             remark: data.remark
           }
           this.data1 = data.addressList.list
@@ -391,7 +510,6 @@ export default {
         pageSize: this.pageSize1
       }
       consignerAddressList(data).then(res => {
-        console.log(res.data.data)
         if (res.data.code === CODE) {
           this.data1 = res.data.data.list
           this.totalCount1 = res.data.data.totalCount
@@ -417,6 +535,10 @@ export default {
     handleChangePage1 (pageNo) {
       // 重新组装数据，生成查询参数
       this.pageNo1 = pageNo
+      this._consignerAddressList()
+    },
+    handleChangePageSize1 (pageSize) {
+      this.pageSize1 = pageSize
       this._consignerAddressList()
     },
     // 收货方列表，新增，删除，修改
@@ -454,6 +576,10 @@ export default {
       this.pageNo2 = pageNo
       this._consignerConsigneeList()
     },
+    handleChangePageSize2 (pageSize) {
+      this.pageSize2 = pageSize
+      this._consignerConsigneeList()
+    },
     // 常发货物列表，新增，删除，修改
     _consignerCargoList () {
       let data = {
@@ -488,13 +614,17 @@ export default {
       // 重新组装数据，生成查询参数
       this.pageNo3 = pageNo
       this._consignerCargoList()
+    },
+    handleChangePageSize3 (pageSize) {
+      this.pageSize3 = pageSize
+      this._consignerCargoList()
     }
   }
 }
 </script>
 
 <style scoped lang="stylus">
-  @import "../../libs/css/client.styl"
+  @import "client.styl"
   .footer
     margin-top 22px
     display flex

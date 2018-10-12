@@ -167,7 +167,7 @@ export default {
       // 如果 step 是小数，且没有设置 precision，是有问题的
       if (val && !isNaN(this.precision)) val = Number(Number(val).toFixed(this.precision))
 
-      const {min, max} = this
+      const { min, max } = this
       if (val !== null) {
         if (val > max) {
           val = max

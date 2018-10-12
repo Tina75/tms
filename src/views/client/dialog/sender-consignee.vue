@@ -2,9 +2,10 @@
 <template>
   <div>
     <Modal
-      v-model="modal"
-      :mask-closable="true"
+      v-model="visiable"
+      :mask-closable="false"
       label-position="left"
+      class="modal"
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
@@ -18,10 +19,13 @@
         <FormItem label="收货地址:" prop="address">
           <Input v-model="validate.address" :maxlength="60" placeholder="请输入"/>
         </FormItem>
+        <FormItem label="备注:" class="ivu-form-item-required blank" prop="remark">
+          <Input v-model="validate.remark"  placeholder="请输入"/>
+        </FormItem>
       </Form>
       <div slot="footer">
         <Button type="primary" @click="save('validate')">确定</Button>
-        <Button style="margin-left: 8px" @click.native="modal = false"  >取消</Button>
+        <Button style="margin-left: 8px" @click.native="close"  >取消</Button>
       </div>
     </Modal>
   </div>
@@ -35,13 +39,13 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
-      modal: true,
       consignerId: '', // 详情传过来的id
       id: '',
       validate: {
         contact: '',
         phone: '',
-        address: ''
+        address: '',
+        remark: ''
       },
       ruleValidate: {
         contact: [
@@ -54,9 +58,6 @@ export default {
         address: [
           { required: true, message: '收货地址不能为空', trigger: 'blur' }
         ]
-        // remark: [
-        //   { required: true, message: '备注不能为空', trigger: 'blur' }
-        // ],
       }
     }
   },
@@ -69,18 +70,13 @@ export default {
           } else { // 2-编辑
             this.update()
           }
-          this.modal = false
+          this.close()
         }
       })
     },
     add () {
-      let data = {
-        consignerId: this.consignerId,
-        contact: this.validate.contact,
-        phone: this.validate.phone,
-        address: this.validate.address
-      }
-      consignerConsigneeAdd(data).then(res => {
+      Object.assign(this.validate, { consignerId: this.consignerId })
+      consignerConsigneeAdd(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
         } else {
@@ -89,13 +85,8 @@ export default {
       })
     },
     update () {
-      let data = {
-        id: this.id,
-        contact: this.validate.contact,
-        phone: this.validate.phone,
-        address: this.validate.address
-      }
-      consignerConsigneeUpdate(data).then(res => {
+      Object.assign(this.validate, { id: this.id })
+      consignerConsigneeUpdate(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
         } else {
@@ -108,5 +99,5 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-
+  @import "../client.styl"
 </style>
