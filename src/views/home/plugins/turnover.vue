@@ -1,5 +1,5 @@
 <template>
-  <div is="i-col" :span="24" class="i-mt-15 page-home__padding-8">
+  <div is="i-col" :span="24" class="i-mt-15 page-home__card-item">
     <blank-card :to="linkto" title="营业额通知（近七日）" page-title="营业额汇总表" tab="7">
       <ECharts v-if="xData.length" :options="options" :auto-resize="true"></ECharts>
       <no-data v-else/>
