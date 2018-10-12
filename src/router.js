@@ -37,12 +37,12 @@ export default new Router({
       component: () => import('@/views/set-up/index')
     },
     {
-      path: '/info/index',
-      component: () => import('@/views/info/index')
+      path: '/information/index',
+      component: () => import('@/views/information/index')
     },
     {
-      path: '/info/message-info',
-      component: () => import('@/views/info/message-info')
+      path: '/information/message-info',
+      component: () => import('@/views/information/message-info')
     },
     {
       path: '/helper/index',

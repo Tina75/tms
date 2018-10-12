@@ -146,17 +146,17 @@
   {
     "name":"公司管理",
     "icon":"gongsiguanli",
-    "path":"/company-manage",
+    "path":"/company",
     "powerCode":140000,
     "children":[
       {
         "name":"员工管理",
-        "path":"/company-manage/staff-manage",
+        "path":"/company/staff-manage",
         "powerCode":140200
       },
       {
         "name":"角色管理",
-        "path":"/company-manage/employee-manage",
+        "path":"/company/employee-manage",
         "powerCode":140100
       }
     ]
@@ -169,7 +169,7 @@
   },
   {
     "name":"消息",
-    "path":"/info/index",
+    "path":"/information/index",
     "icon":"xiaoxishezhi",
     "powerCode":0
   },

@@ -269,8 +269,11 @@ export default {
   },
   mounted: function () {
     this.getMessageCount()
-    this.getMenuInfoNum()
     this.getMenuList(this.searchData)
+    // this.getMenuInfoNum();
+  },
+  updated () {
+    this.getMenuInfoNum()
   },
   methods: {
     ...mapActions(['getMessageCount']),
@@ -322,9 +325,9 @@ export default {
       this.searchData.type = id
       this.searchData.pageNo = 1
       this.getMenuList(this.searchData)
-      // this.getMenuInfoNum()
-      this.getMessageCount()
+      // this.getMessageCount()
       this.checkBoxGroupInit()
+      this.getMenuInfoNum()
     },
     removeInfo (id, type) {
       let params = {}
@@ -341,8 +344,8 @@ export default {
           this.visibaleRemoveSome = false
           this.visibaleRemoveAll = false
           this.getMenuList(this.searchData)
-          // this.getMenuInfoNum()
-          this.getMessageCount()
+          this.getMenuInfoNum()
+          // this.getMessageCount()
         } else {
           this.$Message.success(data.msg)
         }
@@ -463,15 +466,15 @@ export default {
     searchInfoData (page) {
       this.searchData.pageNo = page
       this.getMenuList(this.searchData)
-      // this.getMenuInfoNum()
-      this.getMessageCount()
+      this.getMenuInfoNum()
+      // this.getMessageCount()
       this.checkBoxGroupInit()
     },
     chagePageSize (pagenum) {
       this.searchData.pageSize = pagenum
       this.getMenuList(this.searchData)
-      // this.getMenuInfoNum()
-      this.getMessageCount()
+      this.getMenuInfoNum()
+      // this.getMessageCount()
     }
   }
 }

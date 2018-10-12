@@ -1,8 +1,8 @@
 <template>
   <div class="temAll">
-    <Col span="4" style="height:100%">
+    <Col span="4" class="colHeight" style="height:100%">
     <Menu :active-name="menuInitName" class="leftMenu" style="width:100%">
-      <div class="centerBtnDiv" style="border-bottom: 1px solid #e9e9e9;padding-bottom:50px;">
+      <div class="centerBtnDiv">
         <Button v-if="hasPower(140101)" type="primary" class="centerBtn" @click="createRole">新增角色</Button>
       </div>
       <div>
@@ -15,12 +15,12 @@
         </MenuItem>
       </div>
       <Modal v-model="createRoleModal" width="400">
-        <p slot="header" style="text-align:center;font-size: 16px;">
+        <p slot="header" class="modalTitle">
           <span>{{editRoleModalTitle}}</span>
         </p>
-        <Form ref="formModal" :model="formModal" :rules="rulesRole" :label-width="80" style="padding:20px;height: 70px;">
+        <Form ref="formModal" :model="formModal" :rules="rulesRole" :label-width="80" class="formSty">
           <FormItem label="角色名：" prop="name">
-            <Input :maxlength="11" v-model="formModal.name" placeholder="请输入角色名" style="width:200px;"></Input>
+            <Input :maxlength="11" v-model="formModal.name" placeholder="请输入角色名" class="inputSty"></Input>
           </FormItem>
         </Form>
         <div slot="footer">
@@ -49,7 +49,7 @@
     <Modal
       v-model="removeRoleModal"
       width="360">
-      <p slot="header" style="text-align:center;font-size: 16px;">
+      <p slot="header" class="modalTitle">
         <span>提示</span>
       </p>
       <p style="margin-left:70px; margin-top: 10px;">
@@ -64,7 +64,7 @@
     <Modal
       v-model="removeRoleModalFail"
       width="400">
-      <p slot="header" style="text-align:center;font-size: 16px;">
+      <p slot="header" class="modalTitle">
         <span>提示</span>
       </p>
       <P style="color:gray;">有员工属于该角色，暂时不能删除,如需删除，请先将</P>
@@ -393,6 +393,9 @@ export default {
   .leftMenu
     height: 100%
     overflow: hidden;
+    .centerBtnDiv
+      border-bottom: 1px solid #e9e9e9;
+      padding-bottom:50px;
   .leftMenu :hover
     max-height: calc(100% - 50px);
     overflow-y: auto;
@@ -404,6 +407,8 @@ export default {
     overflow: hidden;
     .configBtnItem
       display: block
+    .configBtnItem:hover
+      overflow: hidden;
   .menu
     margin-left: -50px;
     .menuTitle
@@ -469,4 +474,14 @@ export default {
       color: #00A4BD;
       font-size: 12px;
       margin-left: 10px;
+.colHeight
+  height: 100%
+.modalTitle
+  text-align:center;
+  font-size: 16px;
+.formSty
+  padding:20px;
+  height: 70px;
+.inputSty
+  width:200px;
 </style>
