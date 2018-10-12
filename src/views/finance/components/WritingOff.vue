@@ -21,10 +21,10 @@
           </Col>
           <Col span="8" style="margin-right: 20px">
           <FormItem>
-            <DatePicker v-model="writingOffQuery.period" :options="dateOption" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 100%" />
+            <DatePicker v-model="writingOffQuery.period" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width: 100%" />
           </FormItem>
           </Col>
-          <Col span="4">
+          <Col span="5">
           <FormItem>
             <Button type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
             <Button type="default" @click="resetQuery">清除条件</Button>
@@ -135,7 +135,7 @@ export default {
       return [
         {
           title: this.sceneMap[this.scene] + '名称',
-          width: 100,
+          width: 140,
           key: 'partnerName'
         },
         {
@@ -290,6 +290,7 @@ export default {
         periodType: '1',
         period: []
       }
+      this.startQuery()
     },
     writeOff (data) {
       const _this = this
@@ -373,7 +374,7 @@ export default {
           partnerName: this.writingOffQuerySave.name,
           dayType: this.writingOffQuerySave.periodType,
           startTime: this.writingOffQuerySave.period[0] ? this.writingOffQuerySave.period[0].getTime() : '',
-          endTime: this.writingOffQuerySave.period[1] ? this.writingOffQuerySave.period[1].getTime() : ''
+          endTime: this.writingOffQuerySave.period[1] ? this.writingOffQuerySave.period[1].getTime() + 86400000 : ''
         }
       }).then(res => {
         this.companyData = res.data.data.map(item => {

@@ -11,10 +11,10 @@
           </Col>
           <Col span="8" style="margin-right: 20px">
           <FormItem :label-width="75" label="创建时间：">
-            <DatePicker v-model="checkingOrderQuery.period" :options="dateOption" type="datetimerange" format="yyyy-MM-dd HH:mm" class="date-item" placeholder="开始时间-结束时间" />
+            <DatePicker v-model="checkingOrderQuery.period" :options="dateOption" type="daterange" format="yyyy-MM-dd" class="date-item" placeholder="开始时间-结束时间" />
           </FormItem>
           </Col>
-          <Col span="4">
+          <Col span="5">
           <FormItem>
             <Button type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
             <Button type="default" @click="resetQuery">清除条件</Button>
@@ -163,6 +163,7 @@ export default {
         periodType: '1',
         period: []
       }
+      this.startQuery()
     },
     writeOff (data) {
       let _this = this
@@ -220,7 +221,7 @@ export default {
           partnerName: this.checkingOrderQuerySave.name,
           orderByCreateTime: this.checkingOrderQuerySave.sortDesc ? 1 : 2,
           startTime: this.checkingOrderQuerySave.period[0] ? this.checkingOrderQuerySave.period[0].getTime() : '',
-          endTime: this.checkingOrderQuerySave.period[1] ? this.checkingOrderQuerySave.period[1].getTime() : '',
+          endTime: this.checkingOrderQuerySave.period[1] ? this.checkingOrderQuerySave.period[1].getTime() + 86400000 : '',
           pageNo: this.checkingOrderQuerySave.pageNo,
           pageSize: this.checkingOrderQuerySave.pageSize
         }

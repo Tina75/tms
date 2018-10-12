@@ -8,6 +8,7 @@
         <DatePicker
           v-model="times"
           :options="options"
+          :start-date="perMonth"
           type="daterange"
           format="yyyy-MM-dd"
           placeholder="开始日期-结束日期"
@@ -114,6 +115,7 @@
 <script>
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
+import { getPreMonth } from './getPerMonth'
 export default {
   name: 'profit',
   components: {
@@ -158,6 +160,11 @@ export default {
           return date && date.valueOf() > Date.now()
         }
       }
+    }
+  },
+  computed: {
+    perMonth () {
+      return getPreMonth()
     }
   },
   methods: {
