@@ -135,6 +135,9 @@ export default {
   li
     margin-left 15px
     line-height 2
+.write-off-form
+  /deep/ textarea.ivu-input
+    font-size: 12px
 .dialog-footer
   text-align center
   margin-top 30px

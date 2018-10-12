@@ -73,27 +73,27 @@
     "name":"财务",
     "path":"/finance",
     "icon":"caiwuguanli",
-    "powerCode":0,
+    "powerCode":170000,
     "children":[
       {
         "name":"发货方对账",
         "path":"/finance/sender",
-        "powerCode":0
+        "powerCode":170100
       },
       {
         "name":"承运商对账",
         "path":"/finance/carrier",
-        "powerCode":0
+        "powerCode":170200
       },
       {
         "name":"外转方对账",
         "path":"/finance/transfer",
-        "powerCode":0
+        "powerCode":170300
       },
       {
         "name":"计费规则",
         "path":"/finance/rules",
-        "powerCode":0
+        "powerCode":170400
       }
     ]
   },
@@ -106,17 +106,17 @@
       {
         "name":"运营报表",
         "path":"/report/operate",
-        "powerCode":0
+        "powerCode":180100
       },
       {
         "name":"营业额汇总表",
         "path":"/report/total",
-        "powerCode":0
+        "powerCode":180200
       },
       {
         "name":"利润报表",
         "path":"/report/profit",
-        "powerCode":0
+        "powerCode":180300
       }
     ]
   },

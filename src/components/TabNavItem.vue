@@ -88,8 +88,9 @@ export default {
     &:hover
       transform rotate(180deg)
   &__name
-    max-width 60px
-    line-height 1
+    max-width 70px
+    // line-height 1
+    font-size 13px
     text-align center
     vertical-align middle
     display inline-block

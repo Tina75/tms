@@ -55,7 +55,7 @@
       </Col>
       <Col span="6">
       <FormItem label="手机号:" prop="consignerPhone">
-        <Input v-model="orderForm.consignerPhone" :maxlength="11" type="mobile"></Input>
+        <Input v-model="orderForm.consignerPhone" :maxlength="11"></Input>
       </FormItem>
       </Col>
       <Col span="6">
@@ -771,12 +771,7 @@ export default {
         if (matchCargo) {
           let syncCargo = new Cargo(matchCargo);
           ['weight', 'volume', 'cargoCost'].forEach((key) => {
-            // this.updateLocalCargo({
-            //   name: key,
-            //   index: params.index,
-            //   value: params.value * matchCargo[key]
-            // })
-            syncCargo[key] = params.value * syncCargo[key]
+            syncCargo[key] = float.round(params.value * syncCargo[key])
           })
           syncCargo.quantity = params.value
           this.syncStoreCargoes()
@@ -850,13 +845,6 @@ export default {
         }
       })
     },
-    /**
-     * 获取最后一位code码
-     * 特殊地区，选择了北京市北京市，取首位code码
-     */
-    // getCityCode (codes) {
-    //   return specialCity.includes(codes[0]) && codes.length === 2 ? codes[0] : codes[codes.length - 1]
-    // },
     // 提交表单
     handleSubmit (e) {
       const vm = this

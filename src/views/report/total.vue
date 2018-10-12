@@ -12,11 +12,12 @@
           format="yyyy-MM-dd"
           placeholder="开始日期-结束日期"
           style="display: inline-block;width: 240px;height: 35px;margin-left: 20px"
+          @on-clear = "clearKeywords"
           @on-change="handleTimeChange"
         >
         </DatePicker>
-        <Tooltip max-width="200" content="营业额汇总报表：按照订单的下单日期提取数据；利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
-          <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;margin-left: 18px" />
+        <Tooltip max-width="200" style="margin-left: 18px" content="营业额汇总报表：按照订单的下单日期提取数据">
+          <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;" />
         </Tooltip>
       </div>
       <div class="search-btn">
@@ -32,7 +33,8 @@
       :autoload="autoload"
       :method="method"
       :keywords="keyword"
-      :columns="columns">
+      :columns="columns"
+      @on-load = "onLoad">
     </page-table>
   </div>
 </template>
@@ -61,6 +63,7 @@ export default {
       url: '/report/getTurnoverSummary',
       method: 'POST',
       autoload: false,
+      isExport: false,
       keywords: {
         startTime: '',
         endTime: ''
@@ -236,8 +239,8 @@ export default {
     },
     // 导出
     ProfitsExport () {
-      if (!this.isEmpty()) {
-        this.$Message.error('请先输入导出条件')
+      if (!this.isExport) {
+        this.$Message.error('导出内容为空')
         return
       }
       let data = {
@@ -250,6 +253,13 @@ export default {
         data: data,
         fileName: '营业额汇总报表'
       })
+    },
+    onLoad (res) {
+      if (res.data.data.list && res.data.data.list.length > 0) {
+        this.isExport = true
+      } else {
+        this.isExport = false
+      }
     },
     // 默认展示近七天数据
     showSevenDate () {
