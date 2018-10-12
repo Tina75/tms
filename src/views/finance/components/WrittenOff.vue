@@ -183,6 +183,7 @@ export default {
       this.writtenOffQuery.orderType = this.defaultOrderType[this.scene]
       this.writtenOffQuery.period = []
       this.writtenOffQuery.orderNo = ''
+      this.startQuery()
     },
     exportWrittenOff () {
       if (this.selectedIds.length > 0) {

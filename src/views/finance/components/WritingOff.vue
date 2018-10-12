@@ -290,6 +290,7 @@ export default {
         periodType: '1',
         period: []
       }
+      this.startQuery()
     },
     writeOff (data) {
       const _this = this
