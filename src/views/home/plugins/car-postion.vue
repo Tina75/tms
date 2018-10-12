@@ -53,7 +53,7 @@ export default {
             const item = this.pointList[i]
             const point = new BMap.Point(item.longtitude, item.latitude)
             if (i === 0) {
-              bmap.centerAndZoom(point, 10)
+              bmap.centerAndZoom(point, 12)
             }
             points.push(point)
             const markerOverlay = new MarkerOverlay(point)
