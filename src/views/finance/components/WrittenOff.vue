@@ -2,7 +2,7 @@
 <template>
   <div class="written-off">
     <div class="btns-box">
-      <Button v-if="(hasePower(170106) && scene === 1) || (hasePower(170206) && scene === 2) || (hasePower(170306) && scene === 3)" type="primary" @click="exportWrittenOff">导出</Button>
+      <Button v-if="(hasPower(170106) && scene === 1) || (hasPower(170206) && scene === 2) || (hasPower(170306) && scene === 3)" type="primary" @click="exportWrittenOff">导出</Button>
     </div>
     <div class="query-box">
       <Form :model="writtenOffQuery" label-position="left" inline>
@@ -125,7 +125,7 @@ export default {
           width: 160,
           key: 'verifyNo',
           render: (h, params) => {
-            return (this.scene === 1 && this.hasePower(170105)) || (this.scene === 2 && this.hasePower(170205)) || (this.scene === 3 && this.hasePower(170305)) ? h('a', {
+            return (this.scene === 1 && this.hasPower(170105)) || (this.scene === 2 && this.hasPower(170205)) || (this.scene === 3 && this.hasPower(170305)) ? h('a', {
               style: {
                 color: '#418DF9'
               },
@@ -183,6 +183,7 @@ export default {
       this.writtenOffQuery.orderType = this.defaultOrderType[this.scene]
       this.writtenOffQuery.period = []
       this.writtenOffQuery.orderNo = ''
+      this.startQuery()
     },
     exportWrittenOff () {
       if (this.selectedIds.length > 0) {

@@ -86,7 +86,7 @@ export default {
           width: 120,
           key: 'action',
           render: (h, params) => {
-            return [(this.scene === 1 && this.hasePower(170103)) || (this.scene === 2 && this.hasePower(170203)) || (this.scene === 3 && this.hasePower(170303)) ? h('a', {
+            return [(this.scene === 1 && this.hasPower(170103)) || (this.scene === 2 && this.hasPower(170203)) || (this.scene === 3 && this.hasPower(170303)) ? h('a', {
               on: {
                 click: () => {
                   this.writeOff(params)
@@ -95,7 +95,7 @@ export default {
               style: {
                 marginRight: '10px'
               }
-            }, '核销') : '', (this.scene === 1 && this.hasePower(170104)) || (this.scene === 2 && this.hasePower(170204)) || (this.scene === 3 && this.hasePower(170304)) ? h('a', {
+            }, '核销') : '', (this.scene === 1 && this.hasPower(170104)) || (this.scene === 2 && this.hasPower(170204)) || (this.scene === 3 && this.hasPower(170304)) ? h('a', {
               on: {
                 click: () => {
                   this.exportOrder(params)
@@ -163,6 +163,7 @@ export default {
         periodType: '1',
         period: []
       }
+      this.startQuery()
     },
     writeOff (data) {
       let _this = this

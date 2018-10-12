@@ -167,7 +167,7 @@ export default {
     saveItem (item) {
       if (!item.payType) {
         this.$Message.error('请选择支付方式')
-      } else if (!/^([1-9]\d*)(.([1-9]|(0-9)\d))?$/.test(item.fee)) {
+      } else if (!/^(0|([1-9]\d*))([.]\d{1,2})?$/.test(item.fee)) {
         this.$Message.error('请输入合法的金额')
       } else {
         Server({
