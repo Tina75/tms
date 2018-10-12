@@ -2,7 +2,7 @@
 <template>
   <div class="writing-off">
     <div class="btns-box">
-      <Button v-if="(hasePower(170102) && scene === 1) || (hasePower(170202) && scene === 2) || (hasePower(170302) && scene === 3)" type="primary" @click="createBill">生成对账单</Button>
+      <Button v-if="(hasPower(170102) && scene === 1) || (hasPower(170202) && scene === 2) || (hasPower(170302) && scene === 3)" type="primary" @click="createBill">生成对账单</Button>
     </div>
     <div class="query-box">
       <Form :model="writingOffQuery" label-position="left" inline>
@@ -163,7 +163,7 @@ export default {
           width: 60,
           key: 'action',
           render: (h, params) => {
-            return (this.scene === 1 && this.hasePower(170101)) || (this.scene === 2 && this.hasePower(170201)) || (this.scene === 3 && this.hasePower(170301)) ? h('a', {
+            return (this.scene === 1 && this.hasPower(170101)) || (this.scene === 2 && this.hasPower(170201)) || (this.scene === 3 && this.hasPower(170301)) ? h('a', {
               on: {
                 click: () => {
                   this.writeOff(params)
