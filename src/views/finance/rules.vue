@@ -2,7 +2,7 @@
   <div class="finance-rules">
     <div class="tab-box">
       <Tabs v-model="active" @on-click="switchTab">
-        <TabPane v-for="(name, key) in sceneMap" :key="key" :label="name" :name="key" />
+        <TabPane v-for="(name, key) in sceneMap" v-if="key !== '4'" :key="key" :label="name" :name="key" />
       </Tabs>
     </div>
     <div class="data-container">
@@ -234,7 +234,7 @@ export default {
       baseValidate: {
         base: [
           { required: true, message: '请填写区间', trigger: 'blur' },
-          { pattern: /^[1-9]\d*(.\d{2})?$/, message: '最多精确到两位小数', trigger: 'blur' }
+          { pattern: /^\d*(.\d{1,2})?$/, message: '最多精确到两位小数', trigger: 'blur' }
         ]
       },
       priceValidate: {
@@ -278,7 +278,7 @@ export default {
   watch: {
     'ruleDetail.ruleType': function (val) {
       if (val === '1') {
-        this.baseValidate.base[1].pattern = /^[1-9]\d*(.\d{2})?$/
+        this.baseValidate.base[1].pattern = /^[1-9]\d*(.\d{1,2})?$/
         this.baseValidate.base[1].message = '最多精确到两位小数'
       } else {
         this.baseValidate.base[1].pattern = /^[1-9]\d*(.\d)?$/
@@ -482,7 +482,7 @@ export default {
       /deep/ .operation
         a
           display: none
-      /deep/ tr:hover, /deep/ .ivu-table-row-highlight
+      /deep/ tr:hover
         .operation
           a
             display: inline

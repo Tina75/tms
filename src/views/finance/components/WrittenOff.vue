@@ -2,7 +2,7 @@
 <template>
   <div class="written-off">
     <div class="btns-box">
-      <Button v-if="(hasePower(170106) && scene === 1) || (hasePower(170206) && scene === 2) || (hasePower(170306) && scene === 3)" type="primary" @click="exportWrittenOff">导出</Button>
+      <Button v-if="(hasPower(170106) && scene === 1) || (hasPower(170206) && scene === 2) || (hasPower(170306) && scene === 3)" type="primary" @click="exportWrittenOff">导出</Button>
     </div>
     <div class="query-box">
       <Form :model="writtenOffQuery" label-position="left" inline>
@@ -12,9 +12,9 @@
             <Input v-model="writtenOffQuery.name" :placeholder="`请输入${sceneMap[scene]}名称`"/>
           </FormItem>
           </Col>
-          <Col span="6" style="margin-right: 20px">
+          <Col span="5" style="margin-right: 20px">
           <FormItem :label-width="75" label="核销时间：">
-            <DatePicker v-model="writtenOffQuery.period" :options="dateOption" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 180px" />
+            <DatePicker v-model="writtenOffQuery.period" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width: 100%" />
           </FormItem>
           </Col>
           <Col span="2" style="margin-right: 10px">
@@ -29,7 +29,7 @@
             <Input v-model="writtenOffQuery.orderNo" :placeholder="`请输入${orderTypeMap[scene][writtenOffQuery.orderType]}`"/>
           </FormItem>
           </Col>
-          <Col span="4">
+          <Col span="5">
           <FormItem>
             <Button type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
             <Button type="default" @click="resetQuery">清除条件</Button>
@@ -125,7 +125,7 @@ export default {
           width: 160,
           key: 'verifyNo',
           render: (h, params) => {
-            return (this.scene === 1 && this.hasePower(170105)) || (this.scene === 2 && this.hasePower(170205)) || (this.scene === 3 && this.hasePower(170305)) ? h('a', {
+            return (this.scene === 1 && this.hasPower(170105)) || (this.scene === 2 && this.hasPower(170205)) || (this.scene === 3 && this.hasPower(170305)) ? h('a', {
               style: {
                 color: '#418DF9'
               },
@@ -183,6 +183,7 @@ export default {
       this.writtenOffQuery.orderType = this.defaultOrderType[this.scene]
       this.writtenOffQuery.period = []
       this.writtenOffQuery.orderNo = ''
+      this.startQuery()
     },
     exportWrittenOff () {
       if (this.selectedIds.length > 0) {
@@ -227,7 +228,7 @@ export default {
           partnerName: this.writtenOffQuerySave.name,
           orderByCreateTime: this.writtenOffQuerySave.sortDesc ? 1 : 2,
           startTime: this.writtenOffQuerySave.period[0] ? this.writtenOffQuerySave.period[0].getTime() : '',
-          endTime: this.writtenOffQuerySave.period[1] ? this.writtenOffQuerySave.period[1].getTime() : '',
+          endTime: this.writtenOffQuerySave.period[1] ? this.writtenOffQuerySave.period[1].getTime() + 86400000 : '',
           orderType: this.writtenOffQuerySave.orderType,
           orderNo: this.writtenOffQuerySave.orderNo,
           pageNo: this.writtenOffQuerySave.pageNo,

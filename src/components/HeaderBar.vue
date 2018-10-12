@@ -5,7 +5,7 @@
     </a>
     <div class="header-bar-avator-dropdown">
       <Dropdown class="header-bar-avator-dropdown-notify">
-        <Poptip trigger="hover" title="消息中心" content="暂无系统消息" width="300">
+        <Poptip trigger="hover" title="消息中心" content="暂无系统消息" >
           <Badge :count="MsgCount.all" type="primary">
             <Icon type="ios-notifications" size="30" color="#fff"></Icon>
           </Badge>
@@ -16,13 +16,13 @@
               </Badge>
               <p>系统消息</p>
             </div>
-            <div class="msg-item" @click="openMsg(1)">
+            <div v-if="hasPower('110000')" class="msg-item" @click="openMsg(1)">
               <Badge :count="MsgCount.orderNum"  class="msg-item-count">
                 <img src="../assets/icon-order-msg.png" alt="" width="34">
               </Badge>
               <p>订单消息</p>
             </div>
-            <div class="msg-item" @click="openMsg(2)">
+            <div v-if="hasPower('120000')" class="msg-item" @click="openMsg(2)">
               <Badge :count="MsgCount.carrierNum" class="msg-item-count">
                 <img src="../assets/icon-truck-msg.png" alt="" width="34">
               </Badge>
@@ -55,9 +55,11 @@
 </template>
 
 <script>
+import BaseComponent from '@/basic/BaseComponent'
 import { mapGetters } from 'vuex'
 export default {
   name: 'headerBar',
+  mixins: [BaseComponent],
   props: {
     collapsed: {
       type: Boolean,
@@ -181,6 +183,7 @@ export default {
           text-align center
           color #555555
           font-size 12px
+          min-width 80px
           &-count .ivu-badge-count
             box-shadow: none;
             margin-top 8px
