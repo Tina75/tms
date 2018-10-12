@@ -14,7 +14,7 @@
           </Col>
           <Col span="6" style="margin-right: 20px">
           <FormItem :label-width="75" label="核销时间：">
-            <DatePicker v-model="writtenOffQuery.period" :options="dateOption" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 180px" />
+            <DatePicker v-model="writtenOffQuery.period" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width: 180px" />
           </FormItem>
           </Col>
           <Col span="2" style="margin-right: 10px">
@@ -227,7 +227,7 @@ export default {
           partnerName: this.writtenOffQuerySave.name,
           orderByCreateTime: this.writtenOffQuerySave.sortDesc ? 1 : 2,
           startTime: this.writtenOffQuerySave.period[0] ? this.writtenOffQuerySave.period[0].getTime() : '',
-          endTime: this.writtenOffQuerySave.period[1] ? this.writtenOffQuerySave.period[1].getTime() : '',
+          endTime: this.writtenOffQuerySave.period[1] ? this.writtenOffQuerySave.period[1].getTime() + 86400000 : '',
           orderType: this.writtenOffQuerySave.orderType,
           orderNo: this.writtenOffQuerySave.orderNo,
           pageNo: this.writtenOffQuerySave.pageNo,

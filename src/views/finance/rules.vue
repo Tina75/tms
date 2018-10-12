@@ -482,7 +482,7 @@ export default {
       /deep/ .operation
         a
           display: none
-      /deep/ tr:hover, /deep/ .ivu-table-row-highlight
+      /deep/ tr:hover
         .operation
           a
             display: inline

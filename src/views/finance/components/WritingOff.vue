@@ -21,7 +21,7 @@
           </Col>
           <Col span="8" style="margin-right: 20px">
           <FormItem>
-            <DatePicker v-model="writingOffQuery.period" :options="dateOption" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 100%" />
+            <DatePicker v-model="writingOffQuery.period" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width: 100%" />
           </FormItem>
           </Col>
           <Col span="5">
@@ -373,7 +373,7 @@ export default {
           partnerName: this.writingOffQuerySave.name,
           dayType: this.writingOffQuerySave.periodType,
           startTime: this.writingOffQuerySave.period[0] ? this.writingOffQuerySave.period[0].getTime() : '',
-          endTime: this.writingOffQuerySave.period[1] ? this.writingOffQuerySave.period[1].getTime() : ''
+          endTime: this.writingOffQuerySave.period[1] ? this.writingOffQuerySave.period[1].getTime() + 86400000 : ''
         }
       }).then(res => {
         this.companyData = res.data.data.map(item => {
