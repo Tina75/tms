@@ -1,7 +1,7 @@
 <template>
   <Modal v-model="show" :mask-closable="false" width="360" @on-visible-change="close">
     <p slot="header" style="text-align:center">{{title}}</p>
-    <Form ref="$form" :model="form" :rules="rules" :label-width="70" style="padding:0 20px;">
+    <Form ref="$form" :model="form" :rules="rules" :label-width="80" style="padding:0 20px;">
       <FormItem label="始发地：" prop="start">
         <AreaSelect v-model="form.start" :deep="true" placeholder="请选择"/>
       </FormItem>
