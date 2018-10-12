@@ -29,7 +29,7 @@
             <Input v-model="writtenOffQuery.orderNo" :placeholder="`请输入${orderTypeMap[scene][writtenOffQuery.orderType]}`"/>
           </FormItem>
           </Col>
-          <Col span="4">
+          <Col span="5">
           <FormItem>
             <Button type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
             <Button type="default" @click="resetQuery">清除条件</Button>
