@@ -135,6 +135,8 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
+>>> .ivu-form-item-error-tip
+  width: 370px;
 .dialog
   p
     text-align center
