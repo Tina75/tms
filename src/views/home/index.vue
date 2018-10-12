@@ -301,9 +301,11 @@ export default {
   &__dropdown-footer
     padding 10px 0
     text-align center
-  &__padding-8
+  &__card-item
     padding-left 9px
     padding-right 9px
+    display list-item
+    overflow hidden
   &__header
     position relative
   &__header-row

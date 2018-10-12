@@ -1,5 +1,5 @@
 <template>
-  <div is="i-col" :span="12" class="i-mt-15 page-home__padding-8">
+  <div is="i-col" :span="12" class="i-mt-15 page-home__card-item">
     <blank-card :to="linkto" title="开单数" page-title="运营报表" tab="7">
       <ECharts v-if="xData.length" :options="options" :auto-resize="true"></ECharts>
       <no-data v-else/>

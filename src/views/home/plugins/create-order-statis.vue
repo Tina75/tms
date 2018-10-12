@@ -1,5 +1,5 @@
 <template>
-  <div is="i-col" span="6" class="i-mt-15 page-home__padding-8">
+  <div is="i-col" span="6" class="i-mt-15 page-home__card-item">
     <BlankCard to="order-management/order" page-title="订单管理">
       <div slot="title">今日订单数</div>
       <div>
