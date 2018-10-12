@@ -240,7 +240,7 @@ export default {
       priceValidate: {
         price: [
           { required: true, message: '请填写金额', trigger: 'blur' },
-          { pattern: /^(0[.]\d{1,2})|(([1-9]\d*)([.]\d{1,2})?)$/, message: '大于0且最多两位小数', trigger: 'blur' }
+          { pattern: /^((0[.]\d{1,2})|(([1-9]\d*)([.]\d{1,2})?))$/, message: '大于0且最多两位小数', trigger: 'blur' }
         ]
       }
     }
