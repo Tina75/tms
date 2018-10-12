@@ -3,8 +3,8 @@
     <Col span="24">
     <div class="searchCard">
       <Form :model="formSearch" :label-width="60" label-position="left">
-        <Col span="6" class="searchInput">
-        <FormItem label="姓名：">
+        <Col span="6">
+        <FormItem label="姓名：" class="searchInput">
           <SelectInput v-model="formSearch.name" :remote="true" :remote-method="searchName" placeholder="请输入姓名" style="min-width:200px;"></SelectInput>
         </FormItem>
         </Col>

@@ -395,7 +395,7 @@ export default {
     overflow: hidden;
   .leftMenu :hover
     max-height: calc(100% - 50px);
-    overflow-y: scroll;
+    overflow-y: auto;
   .centerBtnDiv:hover
     overflow: hidden;
   .menu:hover
@@ -404,9 +404,6 @@ export default {
     overflow: hidden;
     .configBtnItem
       display: block
-    .configBtnItem:hover
-      display: block
-      overflow: hidden;
   .menu
     margin-left: -50px;
     .menuTitle
@@ -467,6 +464,7 @@ export default {
       display: none;
       margin-right: 5px;
       background: #e3fcfc;
+      height: 20px;
     .configBtn
       color: #00A4BD;
       font-size: 12px;
