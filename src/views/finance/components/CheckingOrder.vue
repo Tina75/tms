@@ -2,28 +2,22 @@
 <template>
   <div class="checking-order">
     <div class="query-box">
-      <Form :model="checkingOrderQuery" inline>
+      <Form :model="checkingOrderQuery" label-position="left" inline>
         <Row>
-          <Col span="6">
-          <FormItem :label-width="100" :label="sceneMap[scene]">
+          <Col span="6" style="margin-right: 50px">
+          <FormItem :label-width="65" :label="sceneMap[scene] + '：'">
             <Input v-model="checkingOrderQuery.name" :placeholder="`请输入${sceneMap[scene]}名称`"/>
           </FormItem>
           </Col>
-          <Col span="8">
-          <FormItem label="创建时间" style="width: 100%">
-            <DatePicker v-model="checkingOrderQuery.period"  type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 200px" />
+          <Col span="8" style="margin-right: 20px">
+          <FormItem :label-width="75" label="创建时间：">
+            <DatePicker v-model="checkingOrderQuery.period" :options="dateOption" type="datetimerange" format="yyyy-MM-dd HH:mm" class="date-item" placeholder="开始时间-结束时间" />
           </FormItem>
           </Col>
-          <Col span="6">
+          <Col span="4">
           <FormItem>
-            <Row>
-              <Col span="12">
-              <Button type="primary" @click="startQuery">搜索</Button>
-              </Col>
-              <Col span="12">
-              <Button type="default" @click="resetQuery">清除条件</Button>
-              </Col>
-            </Row>
+            <Button type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
+            <Button type="default" @click="resetQuery">清除条件</Button>
           </FormItem>
           </Col>
         </Row>
@@ -62,6 +56,11 @@ export default {
         2: '到货日期',
         3: '回单日期'
       },
+      dateOption: {
+        disabledDate (date) {
+          return date && date.valueOf() > Date.now()
+        }
+      },
       checkingOrderQuery: {
         name: '',
         period: []
@@ -87,7 +86,7 @@ export default {
           width: 120,
           key: 'action',
           render: (h, params) => {
-            return [h('a', {
+            return [(this.scene === 1 && this.hasePower(170103)) || (this.scene === 2 && this.hasePower(170203)) || (this.scene === 3 && this.hasePower(170303)) ? h('a', {
               on: {
                 click: () => {
                   this.writeOff(params)
@@ -96,21 +95,24 @@ export default {
               style: {
                 marginRight: '10px'
               }
-            }, '核销'), h('a', {
+            }, '核销') : '', (this.scene === 1 && this.hasePower(170104)) || (this.scene === 2 && this.hasePower(170204)) || (this.scene === 3 && this.hasePower(170304)) ? h('a', {
               on: {
                 click: () => {
                   this.exportOrder(params)
                 }
               }
-            }, '导出')]
+            }, '导出') : '']
           }
         },
         {
           title: '对账批次号',
-          width: 140,
+          width: 160,
           key: 'reconcileNo',
           render: (h, params) => {
             return h('a', {
+              style: {
+                color: '#418DF9'
+              },
               on: {
                 click: () => {
                   this.toDetail(params)
@@ -175,7 +177,7 @@ export default {
         },
         methods: {
           ok () {
-            _this.loadData()
+            _this.getCheckList()
           }
         }
       })
@@ -242,16 +244,26 @@ export default {
 <style lang='stylus'>
   .checking-order
     margin: 35px 0 15px
+    /deep/ .ivu-btn
+      width: 86px
     .btns-box
       margin-bottom: 20px
     .query-box
-      padding: 20px 0
+      padding: 20px 10px
       margin-bottom: 20px
       background-color: #f9f9f9
       /deep/ .ivu-form-item
         margin-bottom: 0
+        width: 100%
+        .date-item
+          width: 100%
     .list-box
       text-align: right
       /deep/ .ivu-table-wrapper
         margin-bottom: 20px
+      /deep/ .ivu-page-item-active
+        background-color: #00a4bd
+        border-radius: 5px
+        a
+          color: #ffffff
 </style>

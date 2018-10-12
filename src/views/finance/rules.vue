@@ -7,17 +7,19 @@
     </div>
     <div class="data-container">
       <div class="operate-block">
-        <Button type="primary" @click="addRule">新增规则</Button>
+        <Button v-if="hasPower(170401)" type="primary" @click="addRule">新增规则</Button>
         <div class="query-box">
           <Form ref="rulesQuery" :model="rulesQuery" :rules="validate" inline>
             <FormItem>
               <Select v-model="rulesQuery.type">
-                <Option value="1">{{sceneMap[active]}}名称</Option>
-                <Option value="2">规则名称</Option>
+                <Option v-if="active === '1'" value="1">发货方名称</Option>
+                <Option v-if="active === '2'" value="2">承运商名称</Option>
+                <Option v-if="active === '3'" value="3">外转方名称</Option>
+                <Option value="4">规则名称</Option>
               </Select>
             </FormItem>
             <FormItem prop="queryText">
-              <Input v-model="rulesQuery.queryText" :placeholder="`请输入${sceneMap[active]}名称`" style="width: auto">
+              <Input v-model="rulesQuery.queryText" :placeholder="`请输入${sceneMap[rulesQuery.type]}名称`" :maxlength="20" style="width: auto">
               <Icon slot="suffix" type="ios-search" class="suffix-btn" @click="getRules"/>
               </Input>
             </FormItem>
@@ -27,7 +29,7 @@
       <div class="list-box">
         <Row :gutter="20">
           <Col span="7">
-          <Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showRuleDetail"></Table>
+          <Table :columns="companyColumn" :data="companyData" class="company-table" height="500" highlight-row @on-row-click="showRuleDetail"></Table>
           </Col>
           <Col span="17">
           <div v-if="!ruleDetail.ruleId" class="data-empty">
@@ -36,9 +38,9 @@
           </div>
           <div v-else class="rule-block">
             <div class="rule-basic">
-              <Form inline>
+              <Form ref="ruleBasic" :model="ruleDetail" :rules="basicValidate" inline>
                 <span>按</span>
-                <FormItem>
+                <FormItem prop="ruleType">
                   <Select v-model="ruleDetail.ruleType">
                     <Option value="1">重量</Option>
                     <Option value="2">体积</Option>
@@ -46,7 +48,7 @@
                 </FormItem>
                 <span>计算&#12288;&#12288;单位：元/{{unitMap[ruleDetail.ruleType]}}</span>
                 <span>&#12288;&#12288;&#12288;&#12288;&#12288;规则名：</span>
-                <FormItem>
+                <FormItem prop="ruleName">
                   <Input v-model="ruleDetail.ruleName" :placeholder="`请输入规则名称`" style="width: auto" />
                 </FormItem>
               </Form>
@@ -58,14 +60,23 @@
                 </div>
                 <Collapse v-model="item.showRule" class="rule-content">
                   <div class="rule-route">
-                    <Row :gutter="20">
-                      <Col span="12">
-                      <AreaSelect v-model="item.departure" placeholder="请输入始发地" class="search-input-senior" />
-                      </Col>
-                      <Col span="12">
-                      <AreaSelect v-model="item.destination" placeholder="请输入目的地" class="search-input-senior" />
-                      </Col>
-                    </Row>
+                    <Form ref="ruleRoute" :model="item" :rules="routeValidate" inline>
+                      <Row :gutter="20">
+                        <Col span="11">
+                        <FormItem prop="departure" style="width: 100%">
+                          <AreaSelect v-model="item.departure" :deep="true" placeholder="请输入始发地" class="search-input-senior" />
+                        </FormItem>
+                        </Col>
+                        <Col span="2">
+                        <i class="icon font_family icon-ico-line"></i>
+                        </Col>
+                        <Col span="11">
+                        <FormItem prop="destination" style="width: 100%">
+                          <AreaSelect v-model="item.destination" :deep="true" placeholder="请输入目的地" class="search-input-senior" />
+                        </FormItem>
+                        </Col>
+                      </Row>
+                    </Form>
                   </div>
                   <Panel :name="(index + 1) + ''">
                     <div slot></div>
@@ -111,17 +122,25 @@
                                       </div>
                                     </div>
                                   </td>
-                                  <td class="">
+                                  <td>
                                     <div class="ivu-table-cell">
-                                      <span>大于等于</span>
-                                      <Input v-model="el.base" style="width: 120px"/>
-                                      <span>{{unitMap[ruleDetail.ruleType]}}</span>
+                                      <Form ref="ruleBase" :model="el" :rules="baseValidate" inline>
+                                        <span>大于等于</span>
+                                        <FormItem prop="base" inline>
+                                          <Input v-model="el.base" style="width: 120px"/>
+                                        </FormItem>
+                                        <span>{{unitMap[ruleDetail.ruleType]}}</span>
+                                      </Form>
                                     </div>
                                   </td>
-                                  <td class="">
+                                  <td>
                                     <div class="ivu-table-cell">
-                                      <Input v-model="el.price" style="width: 120px"/>
-                                      <span>元/{{unitMap[ruleDetail.ruleType]}}</span>
+                                      <Form ref="rulePrice" :model="el" :rules="priceValidate" inline>
+                                        <FormItem prop="price" inline>
+                                          <Input v-model="el.price" style="width: 120px"/>
+                                        </FormItem>
+                                        <span>元/{{unitMap[ruleDetail.ruleType]}}</span>
+                                      </Form>
                                     </div>
                                   </td>
                                 </tr>
@@ -142,7 +161,7 @@
               </div>
             </div>
             <div class="rules-operation">
-              <Button type="primary" @click="saveRules">保存</Button>
+              <Button v-if="hasPower(170403)" type="primary" @click="saveRules">保存</Button>
             </div>
           </div>
           </Col>
@@ -165,6 +184,24 @@ export default {
   components: { AreaSelect },
   mixins: [ BasePage ],
   data () {
+    const startValidate = (rule, value, callback) => {
+      if (value === '' || value.length === 0) {
+        callback(new Error('请选择始发地'))
+      } else if (!(value === '110000' || value === '120000' || value === '210000' || value === '500000' || value[0] === '110000' || value[0] === '120000' || value[0] === '210000' || value[0] === '500000') && value.length < 2) {
+        callback(new Error('始发地至少要选择二级城市'))
+      } else {
+        callback()
+      }
+    }
+    const endValidate = (rule, value, callback) => {
+      if (!value.length) {
+        callback(new Error('请选择目的地'))
+      } else if (!(value === '110000' || value === '120000' || value === '210000' || value === '500000' || value[0] === '110000' || value[0] === '120000' || value[0] === '210000' || value[0] === '500000') && value.length < 2) {
+        callback(new Error('目的地至少要选择二级城市'))
+      } else {
+        callback()
+      }
+    }
     return {
       active: '1',
       unitMap: {
@@ -174,7 +211,8 @@ export default {
       sceneMap: {
         1: '发货方',
         2: '承运商',
-        3: '外转方'
+        3: '外转方',
+        4: '规则'
       },
       rulesQuery: {
         type: '1',
@@ -184,6 +222,26 @@ export default {
       ruleDetail: {},
       validate: {
         queryText: { type: 'string', max: 20, message: '不能超过20个字', trigger: 'blur' }
+      },
+      basicValidate: {
+        ruleType: { required: true, message: '请选择计算方案', trigger: 'change' },
+        ruleName: { required: true, message: '请填写规则名称', trigger: 'blur' }
+      },
+      routeValidate: {
+        departure: { validator: startValidate, trigger: 'change' },
+        destination: { validator: endValidate, trigger: 'change' }
+      },
+      baseValidate: {
+        base: [
+          { required: true, message: '请填写区间', trigger: 'blur' },
+          { pattern: /^[1-9]\d*(.\d{2})?$/, message: '最多精确到两位小数', trigger: 'blur' }
+        ]
+      },
+      priceValidate: {
+        price: [
+          { required: true, message: '请填写金额', trigger: 'blur' },
+          { pattern: /^[1-9]\d*(.\d{2})?$/, message: '必须为大于0的数，最多精确到两位小数', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -203,17 +261,29 @@ export default {
         {
           title: ' ',
           key: 'action',
+          className: 'operation',
           render: (h, params) => {
-            return h('a', {
+            return this.hasPower(170402) ? h('a', {
               on: {
                 click: () => {
                   this.removeRule(params)
                 }
               }
-            }, '删除')
+            }, '删除') : ''
           }
         }
       ]
+    }
+  },
+  watch: {
+    'ruleDetail.ruleType': function (val) {
+      if (val === '1') {
+        this.baseValidate.base[1].pattern = /^[1-9]\d*(.\d{2})?$/
+        this.baseValidate.base[1].message = '最多精确到两位小数'
+      } else {
+        this.baseValidate.base[1].pattern = /^[1-9]\d*(.\d)?$/
+        this.baseValidate.base[1].message = '最多精确到一位小数'
+      }
     }
   },
   mounted () {
@@ -271,8 +341,8 @@ export default {
     },
     addItem () {
       this.ruleDetail.details.push({
-        departure: '',
-        destination: '',
+        departure: [],
+        destination: [],
         showRule: (this.ruleDetail.details.length + 1) + '',
         chargeRules: [
           { base: '', price: '' }
@@ -282,8 +352,27 @@ export default {
     removeItem (index) {
       this.ruleDetail.details.splice(index, 1)
     },
-    saveRules () {
+    formValidate (ref) {
+      return new Promise((resolve, reject) => {
+        ref.validate((valid) => {
+          if (valid) {
+            resolve()
+          } else {
+            reject(new Error())
+          }
+        })
+      })
+    },
+    async saveRules () {
       const _this = this
+      await this.formValidate(this.$refs['ruleBasic'])
+      for (let i = 0; i < this.$refs['ruleRoute'].length; i++) {
+        await this.formValidate(this.$refs['ruleRoute'][i])
+      }
+      for (let j = 0; j < this.$refs['ruleBase'].length; j++) {
+        await this.formValidate(this.$refs['ruleBase'][j])
+        await this.formValidate(this.$refs['rulePrice'][j])
+      }
       this.$Modal.confirm({
         title: '提示',
         content: '确认保存该条规则吗？',
@@ -296,8 +385,8 @@ export default {
             data: Object.assign({}, _this.ruleDetail, {
               details: _this.ruleDetail.details.map(item => {
                 return {
-                  departure: item.departure[item.departure.length - 1],
-                  destination: item.destination[item.destination.length - 1],
+                  departure: typeof item.departure === 'string' ? item.departure : item.departure[item.departure.length - 1],
+                  destination: typeof item.destination === 'string' ? item.destination : item.destination[item.destination.length - 1],
                   chargeRules: item.chargeRules.map(el => {
                     return {
                       base: parseFloat(el.base) * 100,
@@ -319,7 +408,7 @@ export default {
     },
     switchTab () {
       this.rulesQuery = {
-        type: '1',
+        type: this.active,
         queryText: ''
       }
       this.getRules()
@@ -337,13 +426,15 @@ export default {
         method: 'get',
         params: {
           partnerType: this.active,
-          partnerName: this.rulesQuery.type === '1' ? this.rulesQuery.queryText : '',
-          ruleName: this.rulesQuery.type === '2' ? this.rulesQuery.queryText : ''
+          partnerName: this.rulesQuery.type !== '4' ? this.rulesQuery.queryText : '',
+          ruleName: this.rulesQuery.type === '4' ? this.rulesQuery.queryText : ''
         }
       }).then(res => {
         this.companyData = res.data.data
-        if (this.ruleDetail && this.ruleDetail.ruleId) {
+        if (this.ruleDetail && this.ruleDetail.ruleId && this.companyData.some(item => item.ruleId === this.ruleDetail.ruleId)) {
           this.showRuleDetail(this.companyData.find(item => item.ruleId === this.ruleDetail.ruleId))
+        } else {
+          this.ruleDetail = {}
         }
       }).catch(err => console.error(err))
     },
@@ -359,8 +450,8 @@ export default {
             showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
               return {
-                base: el.base / 100,
-                price: el.price / 100
+                base: el.base ? (el.base / 100) + '' : '',
+                price: el.price ? (el.price / 100) + '' : ''
               }
             })
           }
@@ -381,8 +472,20 @@ export default {
       margin-bottom 1px
       .ivu-tabs-ink-bar
         bottom 2px
+
+  .query-box
+    /deep/ .ivu-select
+      width: 100px
   .data-container
     margin: 35px 0 15px
+    .company-table
+      /deep/ .operation
+        a
+          display: none
+      /deep/ tr:hover, /deep/ .ivu-table-row-highlight
+        .operation
+          a
+            display: inline
     .operate-block
       display: flex
       justify-content space-between
@@ -427,27 +530,43 @@ export default {
               top: 10px
               left: 20px
               z-index: 101
+              .icon
+                color: #9DA1B0
+                font-size: 24px
+                line-height: 28px
           .item-remove
             width: 25px
             align-items center
             align-self: center
             .ivu-icon
               color: #EC4E4E
-              font-size: 14px
+              font-size: 18px
           .ivu-collapse
             flex: 1
+            .ivu-collapse-item
+              border-top: none
             /deep/ .ivu-collapse-header
-              height: 54px
+              height: 60px
               background-color: #ffffff
-              padding: 10px 20px
+              padding: 15px 20px 15px
               text-align: right
+              .ivu-icon
+                vertical-align: top
+                margin-top: 8px
             .ivu-table-cell
+              padding: 5px
               span
                 padding: 10px
+                display: inline-block
+                vertical-align: middle
+              .ivu-form-item
+                margin-bottom: 0
+              /deep/ .ivu-form-item-error-tip
+                position: relative
             .adjuster
               i
                 display: inline-block
-                font-size: 14px
+                font-size: 18px
                 cursor: pointer
                 &.add
                   color: #7ED321
@@ -455,6 +574,7 @@ export default {
                 &.remove
                   color: #EC4E4E
         .item-add-btn
+          margin-left: 25px
           cursor: pointer
           text-align: center
           height: 35px

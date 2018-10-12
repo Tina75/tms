@@ -511,15 +511,34 @@ export default {
   },
 
   created () {
+    let tab = this.$route.query.tab
+    console.log(tab)
     // 刷新页面停留当前tab页
     if (sessionStorage.getItem('RECEIPT_TAB_NAME')) {
       this.curStatusName = sessionStorage.getItem('RECEIPT_TAB_NAME')
       this.keyword.receiptStatus = this.statusToCode(this.curStatusName)
       this.handleTabChange(this.curStatusName) // 表头按钮状态
     } else {
-      sessionStorage.setItem('RECEIPT_TAB_NAME', '待回收')
-      this.keyword.receiptStatus = 0
-      this.handleTabChange('待回收') // 表头按钮状态
+      // 首页跳转对应tab
+      if (tab) {
+        switch (tab) {
+          case '1':
+            this.keyword.receiptStatus = 0
+            break
+          case '2':
+            this.keyword.receiptStatus = 1
+            break
+          case '3':
+            this.keyword.receiptStatus = 2
+            break
+        }
+        sessionStorage.setItem('RECEIPT_TAB_NAME', this.status[this.$route.query.tab].name)
+        this.handleTabChange(this.status[this.$route.query.tab].name) // 表头按钮状态
+      } else {
+        sessionStorage.setItem('RECEIPT_TAB_NAME', '待回收')
+        this.keyword.receiptStatus = 0
+        this.handleTabChange('待回收') // 表头按钮状态
+      }
     }
   },
 

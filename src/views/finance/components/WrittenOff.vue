@@ -2,43 +2,37 @@
 <template>
   <div class="written-off">
     <div class="btns-box">
-      <Button type="primary" @click="exportWrittenOff">导出</Button>
+      <Button v-if="(hasePower(170106) && scene === 1) || (hasePower(170206) && scene === 2) || (hasePower(170306) && scene === 3)" type="primary" @click="exportWrittenOff">导出</Button>
     </div>
     <div class="query-box">
-      <Form :model="writtenOffQuery" inline>
+      <Form :model="writtenOffQuery" label-position="left" inline>
         <Row>
-          <Col span="6">
-          <FormItem :label-width="100" :label="sceneMap[scene]">
+          <Col span="6" style="margin-right: 25px">
+          <FormItem :label-width="65" :label="sceneMap[scene] + '：'">
             <Input v-model="writtenOffQuery.name" :placeholder="`请输入${sceneMap[scene]}名称`"/>
           </FormItem>
           </Col>
-          <Col span="6">
-          <FormItem label="核销时间">
-            <DatePicker v-model="writtenOffQuery.period"  type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 180px" />
+          <Col span="6" style="margin-right: 20px">
+          <FormItem :label-width="75" label="核销时间：">
+            <DatePicker v-model="writtenOffQuery.period" :options="dateOption" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="开始时间-结束时间" style="width: 180px" />
           </FormItem>
           </Col>
-          <Col span="2">
+          <Col span="2" style="margin-right: 10px">
           <FormItem>
             <Select v-model="writtenOffQuery.orderType">
               <Option v-for="(value, key) in orderTypeMap[scene]" :key="key" :value="key">{{value}}</Option>
             </Select>
           </FormItem>
           </Col>
-          <Col span="4">
+          <Col span="4" style="margin-right: 10px">
           <FormItem>
             <Input v-model="writtenOffQuery.orderNo" :placeholder="`请输入${orderTypeMap[scene][writtenOffQuery.orderType]}`"/>
           </FormItem>
           </Col>
-          <Col span="6">
+          <Col span="4">
           <FormItem>
-            <Row>
-              <Col span="12">
-              <Button type="primary" @click="startQuery">搜索</Button>
-              </Col>
-              <Col span="12">
-              <Button type="default" @click="resetQuery">清除条件</Button>
-              </Col>
-            </Row>
+            <Button type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
+            <Button type="default" @click="resetQuery">清除条件</Button>
           </FormItem>
           </Col>
         </Row>
@@ -75,22 +69,33 @@ export default {
       orderTypeMap: {
         1: {
           1: '订单号',
-          4: '对账批次号'
+          5: '对账批次号'
         },
         2: {
           2: '运单号',
           3: '提货单号',
-          4: '对账批次号'
+          5: '对账批次号'
         },
         3: {
-          5: '外转单号',
-          4: '对账批次号'
+          4: '外转单号',
+          5: '对账批次号'
         }
       },
       defaultOrderType: {
         1: '1',
         2: '2',
-        3: '5'
+        3: '4'
+      },
+      dateOption: {
+        disabledDate (date) {
+          return date && date.valueOf() > Date.now()
+        }
+      },
+      writtenOffQuery: {
+        name: '',
+        orderType: '',
+        period: [],
+        orderNo: ''
       },
       writtenOffQuerySave: {
         name: '',
@@ -109,14 +114,6 @@ export default {
     }
   },
   computed: {
-    writtenOffQuery () {
-      return {
-        name: '',
-        orderType: this.defaultOrderType[this.scene],
-        period: [],
-        orderNo: ''
-      }
-    },
     orderColumn () {
       return [
         {
@@ -125,16 +122,19 @@ export default {
         },
         {
           title: '核销单号',
-          width: 140,
+          width: 160,
           key: 'verifyNo',
           render: (h, params) => {
-            return h('a', {
+            return (this.scene === 1 && this.hasePower(170105)) || (this.scene === 2 && this.hasePower(170205)) || (this.scene === 3 && this.hasePower(170305)) ? h('a', {
+              style: {
+                color: '#418DF9'
+              },
               on: {
                 click: () => {
                   this.toDetail(params)
                 }
               }
-            }, params.row.verifyNo)
+            }, params.row.verifyNo) : ''
           }
         },
         {
@@ -161,7 +161,13 @@ export default {
       ]
     }
   },
+  watch: {
+    scene () {
+      this.writtenOffQuery.orderType = this.defaultOrderType[this.scene]
+    }
+  },
   mounted () {
+    this.writtenOffQuery.orderType = this.defaultOrderType[this.scene]
     this.getWrittenOffList()
   },
   methods: {
@@ -173,12 +179,10 @@ export default {
       this.getWrittenOffList()
     },
     resetQuery () {
-      this.writtenOffQuery = {
-        name: '',
-        orderType: '1',
-        period: [],
-        orderNo: ''
-      }
+      this.writtenOffQuery.name = ''
+      this.writtenOffQuery.orderType = this.defaultOrderType[this.scene]
+      this.writtenOffQuery.period = []
+      this.writtenOffQuery.orderNo = ''
     },
     exportWrittenOff () {
       if (this.selectedIds.length > 0) {
@@ -186,7 +190,7 @@ export default {
           url: '/finance/verify/export',
           method: 'post',
           data: {
-            verifyIds: this.selectedIds.join(','),
+            verifyIds: this.selectedIds,
             partnerType: this.scene
           },
           fileName: '核销单'
@@ -198,7 +202,7 @@ export default {
     },
     toDetail (data) {
       this.openTab({
-        title: '核销单详情',
+        title: data.row.verifyNo,
         path: '/finance/writtenOffDetail',
         query: {
           verifyId: data.row.verifyId,
@@ -249,18 +253,24 @@ export default {
 <style lang='stylus'>
   .written-off
     margin: 35px 0 15px
+    /deep/ .ivu-btn
+      width: 86px
     .btns-box
       margin-bottom: 20px
     .query-box
-      padding: 20px 0
+      padding: 20px 10px
       margin-bottom: 20px
       background-color: #f9f9f9
       /deep/ .ivu-form-item
         margin-bottom: 0
-      /deep/ .ivu-form-item-content
-        display: grid
+        width: 100%
     .list-box
       text-align: right
       /deep/ .ivu-table-wrapper
         margin-bottom: 20px
+      /deep/ .ivu-page-item-active
+        background-color: #00a4bd
+        border-radius: 5px
+        a
+          color: #ffffff
 </style>
