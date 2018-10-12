@@ -83,7 +83,7 @@ import Vue from 'vue'
  *金额格式化
  */
 Vue.filter('moneyFormat', function (value) {
-  return value ? (value / 100).toFixed(2) : ''
+  return value ? (value / 100).toFixed(2) : '0'
 })
 
 export default {
