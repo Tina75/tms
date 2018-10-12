@@ -255,6 +255,7 @@ export default {
         method: 'get'
       }).then(({ data }) => {
         this.selectList = data.data
+        this.selectList.unshift({ id: '', name: '全部' })
       })
     },
     getStaffSelectList () {
