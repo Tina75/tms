@@ -6,15 +6,25 @@
       </div>
       <div class="right">
         <template>
-          <Select v-model="selectStatus"  style="width:120px;margin-right: 11px">
+          <Select v-model="selectStatus"  style="width:120px;margin-right: 11px" @on-change="changeState">
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
         <template v-if="selectStatus==0">
-          <Input v-model="name" :maxlength="20" class="search-input" placeholder="请输入发货方名称"    />
+          <Input v-model="name" :maxlength="20"
+                 :icon="name? 'ios-close-circle' : ''"
+                 class="search-input"
+                 placeholder="请输入发货方名称"
+                 @on-enter="searchList"
+                 @on-click="clearKeywords()"/>
         </template>
         <template v-else>
-          <Input v-model="contact" :maxlength="15" class="search-input" placeholder="请输入发货方联系人" />
+          <Input v-model="contact" :maxlength="15"
+                 :icon="contact? 'ios-close-circle' : ''"
+                 class="search-input"
+                 placeholder="请输入发货方联系人"
+                 @on-enter="searchList"
+                 @on-click="clearKeywords"/>
         </template>
         <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
@@ -270,6 +280,15 @@ export default {
         this.data1 = res.data.data.list
         this.totalCount = res.data.data.totalCount
       })
+    },
+    clearKeywords () {
+      this.name = ''
+      this.contact = ''
+      this.searchList()
+    },
+    changeState () {
+      this.name = ''
+      this.contact = ''
     },
     modaladd () {
       var _this = this
