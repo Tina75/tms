@@ -464,7 +464,7 @@ export default {
           }
         },
         {
-          title: '包装',
+          title: '包装方式',
           key: 'unit',
           render (h, params) {
             return h('Input', {
