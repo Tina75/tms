@@ -739,7 +739,6 @@ export default {
     this.resetForm()
     this.clearClients()
     this.clearOrderDetail()
-    resetCityValidator()
   },
   methods: {
     ...mapActions([
@@ -1011,6 +1010,7 @@ export default {
       this.$refs.orderForm.resetFields()
       this.clearCargoes()
       this.consignerCargoes = [new Cargo()]
+      resetCityValidator()
     },
     // 修改订单完结束后，自动关闭页面
     closeTab () {
