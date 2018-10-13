@@ -953,6 +953,7 @@ export default {
               vm.$Message.error(findError)
               vm.disabled = false
               reject(new Error(findError.message))
+              return
             }
             // 始发地遇到北京市等特殊直辖市，需要只保留第一级code
             let start = getCityCode(orderForm.start)
