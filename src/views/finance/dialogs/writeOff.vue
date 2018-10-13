@@ -91,6 +91,7 @@ export default {
     if (this.isOil) {
       this.writeOffForm.payType = '5'
     }
+    this.writeOffForm.actualFee = this.needPay
   },
   methods: {
     save () {
