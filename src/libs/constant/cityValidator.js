@@ -37,16 +37,15 @@ export const resetCityValidator = () => {
  * 校验表单始发地
  * 使用方式 { validator: FORM_VALIDATE_START }
  */
-export const FORM_VALIDATE_START = (rule, value, cb) => {
+export const FORM_VALIDATE_START = (vm, field) => (rule, value, cb) => {
   startCodes = value
-
-  const start = getCityCode(startCodes)
-  const end = getCityCode(endCodes)
 
   if (!SPECIAL_CITY_VALIDATE(value)) {
     cb(new Error('请至少选择到市一级城市'))
-  } else if ((endCodes.length > 0 && value.length > 0 && _.isEqual(endCodes, value)) || start === end) {
-    cb(new Error('始发城市不能和目的城市相同'))
+  } else if (endCodes.length > 0 && value.length > 0) {
+    // && _.isEqual(endCodes, value)) || start === end
+    vm.$refs[field].validateField('end')
+    cb()
   } else {
     cb()
   }

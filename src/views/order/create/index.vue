@@ -39,7 +39,7 @@
       </Col>
       <Col span="6">
       <FormItem label="到货时间:" prop="arriveTime">
-        <DatePicker v-model="orderForm.arriveTime" :time-picker-options="{steps: [1, 60, 60]}" format="yyyy-MM-dd HH:mm前" type="datetime" style="width:100%"></DatePicker>
+        <DatePicker v-model="orderForm.arriveTime" :time-picker-options="{steps: [1, 60, 60]}" :options="endDateOptions" format="yyyy-MM-dd HH:mm前" type="datetime" style="width:100%"></DatePicker>
       </FormItem>
       </Col>
     </Row>
@@ -238,6 +238,21 @@ export default {
   mixins: [BaseComponent, BasePage],
   data () {
     const _this = this
+    /**
+     * 发货时间校验
+     */
+    const validateDeliveryTime = (rule, value, callback) => {
+      if (_this.orderForm.arriveTime && value) {
+        // callback(new Error('发货时间需早于发货时间'))
+        this.$refs.orderForm.validateField('arriveTime')
+        callback()
+      } else {
+        callback()
+      }
+    }
+    /**
+     * 到货时间校验
+     */
     const validateArriveTime = (rule, value, callback) => {
       if (_this.orderForm.deliveryTime && value && value.valueOf() <= _this.orderForm.deliveryTime.valueOf()) {
         callback(new Error('到货时间需晚于发货时间'))
@@ -552,7 +567,7 @@ export default {
         // 其他费用
         otherFee: null,
         // 提货方式
-        pickup: 2, // 默认1：上门提货，2：直接送货
+        pickup: null, // 默认1：上门提货，2：直接送货
         // 回单数量
         receiptCount: 1,
         // 备注
@@ -566,14 +581,17 @@ export default {
         ],
         start: [
           { required: true, type: 'array', message: '请选择始发城市' },
-          { validator: FORM_VALIDATE_START, trigger: 'change' }
+          { validator: FORM_VALIDATE_START(_this, 'orderForm'), trigger: 'change' }
         ],
         end: [
           { required: true, type: 'array', message: '请选择目的城市' },
           { validator: FORM_VALIDATE_END }
         ],
+        deliveryTime: [
+          { validator: validateDeliveryTime }
+        ],
         arriveTime: [
-          { validator: validateArriveTime, trigger: 'blur' }
+          { validator: validateArriveTime }
         ],
         consignerContact: [
           { required: true, message: '请输入发货人名称' }
@@ -616,6 +634,12 @@ export default {
         volume: 0,
         cargoCost: 0,
         quantity: 0
+      },
+      // 到达时间限制
+      endDateOptions: {
+        disabledDate (date) {
+          return date && date.valueOf() < _this.orderForm.deliveryTime.valueOf()
+        }
       }
     }
   },
