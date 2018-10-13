@@ -1,5 +1,5 @@
 <template>
-  <div class="page-home">
+  <div ref="el" class="page-home">
     <div class="page-home__header">
       <Alert v-if="notice" type="warning" class="page-home__header-notice" banner closable show-icon>
         <Icon slot="icon" type="ios-bulb-outline"></Icon>
@@ -181,7 +181,7 @@ export default {
   beforeMount () {
     if ('IntersectionObserver' in window) {
       this.intersectionObserver = new IntersectionObserver(this.intersectionObserverEvent, {
-        root: this.$parent.$el || document.querySelector('.ivu-layout-content'),
+        root: this.$refs.el,
         rootMargin: '0px',
         thresholds: [0]
       })
