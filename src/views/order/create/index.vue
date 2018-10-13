@@ -961,6 +961,8 @@ export default {
                   // 保存，不打印，修改页面
                   vm.closeTab()
                 }
+                // 重新获取客户列表
+                vm.getClients()
                 resolve()
               })
               .catch((er) => {
