@@ -35,7 +35,7 @@ export default class Cargo {
     if (!this.cargoName) {
       return { success: false, message: '请输入货物名称' }
     }
-    if (!this.weight && !this.volume) {
+    if (!this.weight && this.weight !== 0 && !this.volume && this.volume !== 0) {
       return { success: false, message: '货物重量和体积至少填写一项' }
     }
     return { success: true }

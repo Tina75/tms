@@ -327,23 +327,28 @@ export default {
             ])
           },
           render (h, params) {
-            return h(SelectInput, {
-              props: {
-                value: params.row[params.column.key] || '',
-                remote: false,
-                localOptions: _this.cargoOptions,
-                transfer: true,
-                maxlength: 10
-              },
-              on: {
-                'on-blur': (value) => {
-                  _this.updateLocalCargo(setObject(params, value))
+            return h('div', [
+              h(SelectInput, {
+                props: {
+                  value: params.row[params.column.key] || '',
+                  remote: false,
+                  localOptions: _this.cargoOptions,
+                  transfer: true,
+                  maxlength: 10
                 },
-                'on-select': (name, cargoItem) => {
-                  _this.selectCargo(params, cargoItem)
+                on: {
+                  'on-blur': (value) => {
+                    _this.updateLocalCargo(setObject(params, value))
+                  },
+                  'on-select': (name, cargoItem) => {
+                    _this.selectCargo(params, cargoItem)
+                  }
                 }
-              }
-            })
+              })
+              // h('span', {
+              //   class: 'i-error'
+              // }, params.row[params.column.key] === '' ? '请输入货物名称' : '')
+            ])
           }
         },
         {
