@@ -178,15 +178,13 @@
       <Col span="6">
       <FormItem label="提货方式:" prop="pickup">
         <Select v-model="orderForm.pickup">
-          <!-- <Option value="1">上门提货</Option>
-          <Option value="2">直接送货</Option> -->
           <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="回单数量:" prop="receiptCount">
-        <InputNumber v-model="orderForm.receiptCount" :min="1" :parser="value => parseInt(value).toString()" class="order-create__input-w100">
+        <InputNumber v-model="orderForm.receiptCount" :min="0" :parser="value => parseInt(value).toString()" class="order-create__input-w100">
         </InputNumber>
       </FormItem>
       </Col>
@@ -466,7 +464,7 @@ export default {
           }
         },
         {
-          title: '包装',
+          title: '包装方式',
           key: 'unit',
           render (h, params) {
             return h('Input', {
@@ -554,7 +552,7 @@ export default {
         // 其他费用
         otherFee: null,
         // 提货方式
-        pickup: 1, // 默认上门提货，2：直接送货
+        pickup: 2, // 默认1：上门提货，2：直接送货
         // 回单数量
         receiptCount: 1,
         // 备注
@@ -611,6 +609,7 @@ export default {
         ]
 
       },
+      consignerCargoes: [new Cargo()],
       tempCargoes: {},
       statics: {
         weight: 0,
@@ -632,10 +631,26 @@ export default {
       'consigneePhones',
       'consigneeAddresses',
       'cargoes',
-      'cargoOptions',
-      'consignerCargoes',
-      'sumRow'
+      'cargoOptions'
+      //  'consignerCargoes',
+      // 'sumRow'
     ]),
+    sumRow (state, getters) {
+      return this.consignerCargoes.reduce((sum, cargo) => {
+        // 读取临时数据
+
+        sum.weight = float.round((cargo.weight || 0) + sum.weight)
+        sum.volume = float.round((cargo.volume || 0) + sum.volume, 1)
+        sum.cargoCost = float.round((cargo.cargoCost || 0) + sum.cargoCost)
+        sum.quantity = (cargo.quantity || 0) + sum.quantity
+        return sum
+      }, {
+        weight: 0,
+        volume: 0,
+        cargoCost: 0,
+        quantity: 0
+      })
+    },
     totalFee () {
       const feeList = ['freightFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
       const orderForm = this.orderForm
@@ -670,6 +685,7 @@ export default {
           for (let key in vm.orderForm) {
             vm.orderForm[key] = orderDetail[key] || vm.orderForm[key]
           }
+          this.consignerCargoes = orderDetail.orderCargoList.map((item) => new Cargo(item, true))
           // 加上id
           vm.orderForm.id = orderDetail.id
           // 分转换元
@@ -690,7 +706,7 @@ export default {
         })
     }
   },
-  destroyed () {
+  beforeDestroy () {
     this.resetForm()
     this.clearClients()
     this.clearOrderDetail()
@@ -700,10 +716,10 @@ export default {
     ...mapActions([
       'getClients',
       'getConsignerDetail',
-      'appendCargo',
-      'removeCargo',
-      'updateCargo',
-      'fullUpdateCargo',
+      // 'appendCargo',
+      // 'removeCargo',
+      // 'updateCargo',
+      // 'fullUpdateCargo',
       'clearCargoes',
       'clearOrderDetail',
       'clearClients',
@@ -787,12 +803,44 @@ export default {
       // 同步完，释放掉
       this.tempCargoes = {}
     },
+    /**
+   * 添加一行货物信息
+   * @param {*} store
+   * @param {*} index
+   */
+    appendCargo (index) {
+      this.consignerCargoes.splice(index + 1, -1, new Cargo())
+    },
+    /**
+   * 删除一行
+   * @param {*} store
+   * @param {*} index
+   */
+    removeCargo (index) {
+      if (this.consignerCargoes.length === 1) {
+        return
+      }
+      this.consignerCargoes.splice(index, 1)
+    },
+    /**
+     * 修改货物信息
+     * @param {object} item {index:0, cargo:object}
+     */
+    updateCargo (item) {
+      this.consignerCargoes[item.index] = new Cargo(Object.assign({}, this.consignerCargoes[item.index], item.cargo))
+    },
+    /**
+     * 删除后增加
+     */
+    fullUpdateCargo (item) {
+      this.consignerCargoes.splice(item.index, 1, new Cargo(item.cargo))
+    },
     // 选择客户dropdown的数据
     handleSelectConsigner (name, row) {
       const _this = this
       _this.resetForm()
       _this.getConsignerDetail(row.id).then((response) => {
-        const { consigneeList: consignees, addressList: addresses, ...consigner } = response.data
+        const { consigneeList: consignees, addressList: addresses, cargoList, ...consigner } = response.data
         // 设置发货人信息，发货联系人，手机，发货地址
         _this.orderForm.consignerContact = consigner.contact
         _this.orderForm.consignerPhone = consigner.phone
@@ -809,6 +857,11 @@ export default {
         if (settlementType) {
           _this.orderForm.settlementType = settlementType
         }
+        if (cargoList.length > 0) {
+          // 清空信息，防止信息追加到已维护的货物信息中去
+          _this.tempCargoes = {}
+          _this.consignerCargoes = [new Cargo(cargoList[0])]
+        }
       })
     },
     /**
@@ -824,7 +877,10 @@ export default {
         this.$Message.warning('请先选择客户')
         return
       }
-      if (vm.statics.weight <= 0 || vm.statics.volume <= 0) {
+      /**
+       * 重量和体积二选一，或者都填写，可以了
+       */
+      if (vm.statics.weight <= 0 && vm.statics.volume <= 0) {
         this.$Message.warning('请先填写货物必要信息')
         return
       }
@@ -905,6 +961,8 @@ export default {
                   // 保存，不打印，修改页面
                   vm.closeTab()
                 }
+                // 重新获取客户列表
+                vm.getClients()
                 resolve()
               })
               .catch((er) => {
@@ -923,6 +981,7 @@ export default {
     resetForm () {
       this.$refs.orderForm.resetFields()
       this.clearCargoes()
+      this.consignerCargoes = [new Cargo()]
     },
     // 修改订单完结束后，自动关闭页面
     closeTab () {

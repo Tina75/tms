@@ -1,16 +1,16 @@
 <template>
   <div class="temAll">
     <Col span="3">
-    <Menu active-name="修改密码" style="width: 100%; background:rgba(243,245,249,1)">
+    <Menu active-name="修改密码" class="menuList" style="width:100%">
       <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
       <p class="menuTitle">{{menu.name}}</p>
       </MenuItem>
     </Menu>
     </Col>
-    <Col span="21" style="background:#fff; padding-left:20px; height: inherit; overflow: auto;">
-    <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;margin-right: 20px;">
-      <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute; left: 20px; margin-top: 2px;border-radius:3px;"></span>
-      <span style="margin-left:35px; font-size: 16px; font-weight:600;">{{rightTitle}}</span>
+    <Col span="21" class="contentDiv">
+    <div class="borderBottomLine">
+      <span class="iconRightTitle"></span>
+      <span class="iconRightTitleP">{{rightTitle}}</span>
     </div>
     <!--密码设置-->
     <div v-if="'1' === this.rightKey" key="1" class="divSetContent">
@@ -609,7 +609,8 @@ export default {
   background: #fff;
 >>> .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
     background: #fff;
-    color: #515a6e;
+    color: #333333;
+    font-weight: bold;
 .temAll
   width: 100%
   height: 100%;
@@ -623,6 +624,31 @@ export default {
       width:300px;
     .labelClassSty
       font-weight: bold;
+.menuList
+  background:rgba(243,245,249,1);
+  color: #333;
+.contentDiv
+  background:#fff;
+  padding-left:20px;
+  height: inherit;
+  overflow: auto;
+.borderBottomLine
+  border-bottom: 1px solid #e9e9e9;
+  padding-bottom:10px;
+  margin-top: 14px;
+  margin-right: 20px;
+  .iconRightTitle
+    width: 5px;
+    height: 20px;
+    background: #00a4bd;
+    position: absolute;
+    left: 20px;
+    margin-top: 2px;
+    border-radius:3px;
+  .iconRightTitleP
+   margin-left:35px;
+   font-size: 16px;
+   font-weight:600;
 .mesDiv
   min-height: 120px;
   width: 100%;

@@ -1,5 +1,5 @@
 <template>
-  <Poptip v-model="visible" trigger="click" width="290" placement="bottom-end" word-wrap transfer>
+  <Poptip v-model="visible" trigger="click" width="290" placement="left" word-wrap transfer>
     <FontIcon type="gengduo" class="ios-list-icon" size="18" color="#00A4BD"></FontIcon>
     <div slot="title"><span>选择要显示的字段</span></div>
     <div slot="content">
@@ -66,6 +66,12 @@ export default {
   watch: {
     list (newList) {
       this.saveList(newList)
+    },
+    /**
+     *  切换路由的时候，关闭
+     */
+    $route () {
+      this.closePoptip()
     }
   },
   mounted () {
@@ -73,6 +79,9 @@ export default {
     this.saveList(this.list)
   },
   methods: {
+    closePoptip () {
+      this.visible = false
+    },
     /**
      * 固定列，不允许拖动，也不允许被其他项干扰排序位置
      */
@@ -126,17 +135,6 @@ export default {
         }
         return item
       })
-      // let newList = []
-      // this.list.forEach(item => {
-      //   let _item = {}
-      //   if (list.indexOf(item.title) !== -1) {
-      //     Object.assign(_item, item, {visible: true})
-      //   } else {
-      //     Object.assign(_item, item, {visible: false})
-      //   }
-      //   newList.push(_item)
-      // })
-      // return newList
     }
   }
 }

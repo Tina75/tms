@@ -1,5 +1,5 @@
 <template>
-  <div is="i-col" span="6" class="i-mt-15 page-home__padding-8">
+  <div is="i-col" span="6" class="i-mt-15 page-home__card-item">
     <OrderCard
       :data="data"
       :extra="total"

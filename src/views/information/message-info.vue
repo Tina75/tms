@@ -3,20 +3,20 @@
     <h1 class="title">{{messageInfo.title}}</h1>
     <p class="dateTime">{{ formatDate(messageInfo.createTime) }}
       <Button class="msgRemoveBtn" @click="removeBtn">
-        <span class="msgConfigBtn"><i class="icon font_family icon-shanchu1" style="font-size:14px;color:#9DA1B0;"></i></span>
-        <span style="margin: 0 4px;font-size:12px;color:#2F323E">删除</span>
+        <span><i class="icon font_family icon-shanchu1"></i></span>
+        <span class="msgConfigBtn">删除</span>
       </Button>
     </p>
     <pre class="msgInfo">{{messageInfo.content}}</pre>
-    <div v-if="this.messageInfo.url !== ''" class="msgInfoHrefDiv"><span style="color: #9DA1B0">活动链接：</span>
-      <a :href="messageInfo.url" style="color:#418DF9;">{{messageInfo.url}}</a>
+    <div v-if="this.messageInfo.url !== ''" class="msgInfoHrefDiv"><span class="msgInfoHrefa">活动链接：</span>
+      <a :href="messageInfo.url" class="messageInfoUrl">{{messageInfo.url}}</a>
     </div>
     <Modal v-model="visibaleRemove" type="warning" width="360">
-      <p slot="header" style="text-align:center;font-size: 16px;">
+      <p slot="header" class="modalTitle">
         <span>提示</span>
       </p>
-      <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white; color: #FFBB44;float:left;"></i>
-      <p style="margin-top:13px; margin-left:40px;">确定要删除“{{messageInfo.title}}”消息吗?</P>
+      <i class="icon font_family icon-bangzhuzhongxin"></i>
+      <p class="modalContent">确定要删除“{{messageInfo.title}}”消息吗?</P>
       <div slot="footer">
         <Button type="primary" @click="removeSubForm(messageInfo)">确定</Button>
         <Button  @click="removeCancelForm">取消</Button>
@@ -102,6 +102,13 @@ export default {
     width: 70px;
     height: 28px;
     padding: 0;
+    .icon-shanchu1
+      font-size:14px;
+      color:#9DA1B0;
+    .msgConfigBtn
+      margin: 0 4px;
+      font-size:12px;
+      color:#2F323E
   .msgInfo
     clear: both;
     margin-top: 20px;
@@ -116,4 +123,22 @@ export default {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    .msgInfoHrefa
+      color: #9DA1B0
+      .messageInfoUrl
+        color:#418DF9;
+.modalTitle
+  text-align:center;
+  font-size: 16px;
+  font-weight: bold;
+.icon-bangzhuzhongxin
+  font-size:28px;
+  background: white;
+  color: #FFBB44;
+  float:left;
+.modalContent
+  margin-top:12px;
+  margin-left:40px;
+  font-size:14px;
+  margin-bottom: 20px;
 </style>

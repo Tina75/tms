@@ -1,5 +1,5 @@
 <template>
-  <div is="i-col" :span="12" class="i-mt-15 page-home__padding-8">
+  <div is="i-col" :span="12" class="i-mt-15 page-home__card-item">
     <blank-card :to="linkto" title="货物重量 / 体积" page-title="订单管理">
       <div v-if="volumeData.length || weightData.length" class="chart">
         <ECharts :options="options" :auto-resize="true"></ECharts>
