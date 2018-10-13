@@ -401,8 +401,8 @@ export default {
   font-size: 16px;
   font-weight: bold;
 .visibaleRemoveP
-  margin-left:70px;
   margin-top: 10px;
+  margin-left:10%;
   i.icon.font_family.icon-bangzhuzhongxin
     font-size:28px;
     background: white;
@@ -410,8 +410,7 @@ export default {
     float:left;
     width:40px;
 .visibaleRemoveMessage
-  margin-top:23px;
-  margin-left:50px;
+  margin-top:21px;
   font-size: 14px;
 .modalFooter
   margin-top:20px;

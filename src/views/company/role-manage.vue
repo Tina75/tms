@@ -482,8 +482,8 @@ export default {
   font-size: 16px;
   font-weight: bold;
 .modalRemoveContend
-  margin-left:70px;
   margin-top: 10px;
+  margin-left:10%;
   i.icon.font_family.icon-bangzhuzhongxin
     font-size:28px;
     background: white;
@@ -491,9 +491,8 @@ export default {
     float:left;
     width:40px;
 .modalRemoveContendP
-  margin-top:23px;
+  margin-top:21px;
   margin-bottom:10px;
-  margin-left:50px;
   font-size: 14px;
 .formSty
   padding:20px;
