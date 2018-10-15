@@ -2,9 +2,8 @@
   <div is="i-col" span="6" class="i-mt-15 page-home__card-item">
     <BlankCard to="order-management/order" page-title="订单管理">
       <div slot="title">今日订单数</div>
-      <div>
-        <ECharts :options="options" :auto-resize="true"></ECharts>
-      </div>
+      <ECharts v-if="show" :options="options" :auto-resize="true"></ECharts>
+      <noData v-else></noData>
     </BlankCard>
   </div>
 </template>
@@ -20,6 +19,7 @@
 import BlankCard from '../components/BlankCard.vue'
 import ECharts from 'vue-echarts/components/ECharts'
 import mixin from './mixin.js'
+import noData from './noData.vue'
 
 import 'echarts/lib/chart/pie'
 import 'echarts/lib/component/tooltip'
@@ -28,7 +28,8 @@ export default {
   name: 'create-order-statis',
   components: {
     BlankCard,
-    ECharts
+    ECharts,
+    noData
   },
   mixins: [mixin],
   data () {
@@ -38,7 +39,8 @@ export default {
         { value: 0, name: '待提货', id: 'wait_pickup' },
         { value: 0, name: '在途', id: 'in_transport' },
         { value: 0, name: '已送达', id: 'arrive' }
-      ]
+      ],
+      show: false
     }
   },
   computed: {
@@ -99,13 +101,17 @@ export default {
   },
   methods: {
     load () {
-      const vm = this
       this.fetch('home/open/order/statistics')
         .then((response) => {
           const data = response.data
-          vm.data.forEach((item) => {
-            item.value = data[item.id]
-          })
+          if (data.wait_dispacth || data.wait_pickup || data.in_transport || data.arrive) {
+            this.show = true
+            const arr = this.data
+            arr.forEach((item) => {
+              item.value = data[item.id]
+            })
+            this.data = arr.filter(e => e.value !== 0)
+          }
         })
     }
   }
