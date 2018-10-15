@@ -547,4 +547,11 @@ export default {
       border-radius:4px
       a
         color: #fff
+.ivu-table-row-gray
+  td
+    background-color #f8f8f9
+.ivu-table
+  .ivu-table-row-highlight
+    td
+      background-color #ebf7ff
 </style>
