@@ -725,18 +725,24 @@ export default {
 
     // 派车
     billSendCar (id) {
-      var self = this
-      self.openDialog({
-        name: 'transport/dialog/sendCar',
-        data: {
-          id,
-          type: 'sendCar'
-        },
-        methods: {
-          complete () {
-            self.$refs.$table.fetch()
+      const self = this
+      Server({
+        url: '/waybill/check/order',
+        method: 'post',
+        data: { waybillIds: [id] }
+      }).then(() => {
+        self.openDialog({
+          name: 'transport/dialog/sendCar',
+          data: {
+            id,
+            type: 'sendCar'
+          },
+          methods: {
+            complete () {
+              self.$refs.$table.fetch()
+            }
           }
-        }
+        })
       })
     }
   }
