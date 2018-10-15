@@ -12,7 +12,7 @@
         <FormItem label="货物名称:" prop="cargoName">
           <Input v-model="validate.cargoName" :maxlength="20" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="包装单位:" class="ivu-form-item-required blank">
+        <FormItem label="包装方式:" class="ivu-form-item-required blank">
           <Input v-model="validate.unit" :maxlength="10" placeholder="请输入"/>
         </FormItem>
         <FormItem label="货值:" prop="cargoCost" class="ivu-form-item-required blank">
