@@ -103,7 +103,7 @@ export default {
                 attrs: {
                   href: params.row.fileUrl
                 }
-              }, '下载')
+              }, params.row.status ? '下载' : '下载错误报告')
             ]
             // 导入成功可以看下载
             if (params.row.status === 1) {

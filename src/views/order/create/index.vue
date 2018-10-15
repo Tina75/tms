@@ -457,7 +457,7 @@ export default {
               props: {
                 value: params.row[params.column.key] || null,
                 min: 1,
-                parser: (value) => parseInt(value).toString()
+                parser: (value) => value ? parseInt(value).toString() : value // 允许清空
               },
               on: {
                 'on-focus': () => {
@@ -467,15 +467,15 @@ export default {
                   if (params.value !== value) {
                     params.value = value
                     if (!params.focus) {
-                      _this.updateLocalCargo(setObject(params, parseInt(params.value || 1)))
+                      _this.updateLocalCargo(setObject(params, params.value ? parseInt(params.value || 1) : params.value))
                       _this.syncUpdateCargoProps(params)
                     }
                   }
                 },
                 'on-blur': () => {
                   params.focus = false
-                  if (params.value) {
-                    _this.updateLocalCargo(setObject(params, parseInt(params.value || 1)))
+                  if (params.value !== undefined) {
+                    _this.updateLocalCargo(setObject(params, params.value ? parseInt(params.value || 1) : params.value))
                     _this.syncUpdateCargoProps(params)
                   }
                 }
@@ -815,7 +815,8 @@ export default {
         if (matchCargo) {
           let syncCargo = new Cargo(matchCargo);
           ['weight', 'volume', 'cargoCost'].forEach((key) => {
-            syncCargo[key] = float.round(params.value * syncCargo[key])
+            let value = params.value || 1
+            syncCargo[key] = float.round(value * syncCargo[key])
           })
           syncCargo.quantity = params.value
           this.syncStoreCargoes()
@@ -888,7 +889,7 @@ export default {
         if (cargoList.length > 0) {
           // 清空信息，防止信息追加到已维护的货物信息中去
           _this.tempCargoes = {}
-          _this.consignerCargoes = [new Cargo(cargoList[0])]
+          _this.consignerCargoes = [new Cargo(cargoList[0], true)]
         }
       })
     },
@@ -932,6 +933,7 @@ export default {
     // 提交表单
     handleSubmit (e) {
       const vm = this
+
       vm.syncStoreCargoes()
       vm.disabled = true
       return new Promise((resolve, reject) => {

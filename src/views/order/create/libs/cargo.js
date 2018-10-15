@@ -23,7 +23,7 @@ export default class Cargo {
       }
 
       // 数量
-      this.quantity = props.quantity || 1
+      this.quantity = props.quantity || undefined
       // 包装, 10个字
       this.unit = props.unit
       // 备注 100
