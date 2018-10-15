@@ -239,10 +239,10 @@ export default {
   },
   mounted: function () {
     // modify:20181013 by 马友胜 加上第一条数据的始发城市和目的城市
-    setTimeout(() => {
-      this.send.start = this.id[0].start
-      this.send.end = this.id[0].end
-    }, 0)
+    // setTimeout(() => {
+    //   this.send.start = this.id[0].start
+    //   this.send.end = this.id[0].end
+    // }, 0)
   },
 
   methods: {
