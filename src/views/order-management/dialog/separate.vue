@@ -162,7 +162,9 @@ export default {
                 }, '取消')
               ])
             } else {
-              if (params.row.quantity <= 1) {
+              console.log(this.parentOrderCargoList)
+              console.log(params.row.weight, params.row.volume)
+              if (params.row.quantity === 1 || parseFloat(params.row.weight.toFixed(2)) === 0.01 || parseFloat(params.row.volume.toFixed(1)) === 0.1) {
                 return h('div', [
                   h('a', {
                     style: {
@@ -177,35 +179,57 @@ export default {
                   }, '拆整笔')
                 ])
               } else {
-                return h('div', [
-                  h('a', {
-                    style: {
-                      marginRight: '20px',
-                      color: '#00a4bd'
-                    },
-                    on: {
-                      click: () => {
-                        this.isSeparate = true
-                        this.currentId = params.row.id
-                        this.cargoCostVal = params.row.cargoCost
-                        this.quantityVal = params.row.quantity
-                        this.weightVal = params.row.weight
-                        this.volumeVal = params.row.volume
+                // 只有一条货物记录没有拆整笔按钮
+                if (this.parentOrderCargoList.length > 1) {
+                  return h('div', [
+                    h('a', {
+                      style: {
+                        marginRight: '20px',
+                        color: '#00a4bd'
+                      },
+                      on: {
+                        click: () => {
+                          this.isSeparate = true
+                          this.currentId = params.row.id
+                          this.cargoCostVal = params.row.cargoCost
+                          this.quantityVal = params.row.quantity
+                          this.weightVal = params.row.weight
+                          this.volumeVal = params.row.volume
+                        }
                       }
-                    }
-                  }, '拆部分'),
-                  h('a', {
-                    style: {
-                      color: '#00a4bd'
-                    },
-                    on: {
-                      click: () => {
-                        // console.log(params)
-                        this.separateWholeList(params.index)
+                    }, '拆部分'),
+                    h('a', {
+                      style: {
+                        color: '#00a4bd'
+                      },
+                      on: {
+                        click: () => {
+                          // console.log(params)
+                          this.separateWholeList(params.index)
+                        }
                       }
-                    }
-                  }, '拆整笔')
-                ])
+                    }, '拆整笔')
+                  ])
+                } else {
+                  return h('div', [
+                    h('a', {
+                      style: {
+                        marginRight: '20px',
+                        color: '#00a4bd'
+                      },
+                      on: {
+                        click: () => {
+                          this.isSeparate = true
+                          this.currentId = params.row.id
+                          this.cargoCostVal = params.row.cargoCost
+                          this.quantityVal = params.row.quantity
+                          this.weightVal = params.row.weight
+                          this.volumeVal = params.row.volume
+                        }
+                      }
+                    }, '拆部分')
+                  ])
+                }
               }
             }
           }
@@ -437,7 +461,14 @@ export default {
         method: 'get'
       }).then((res) => {
         console.log(res)
-        this.parentOrderCargoList = res.data.data.orderCargoList
+        let orderCargoList = res.data.data.orderCargoList
+        // 将返回数据列表中的''替换成0
+        orderCargoList.map((item) => {
+          item.quantity = item.quantity ? item.quantity : 0
+          item.weight = item.weight ? item.weight : 0
+          item.volume = item.volume ? item.volume : 0
+        })
+        this.parentOrderCargoList = orderCargoList
       })
     },
     // 拆整笔
