@@ -23,7 +23,7 @@
             <FormItem prop="captchaCode">
               <Input v-model="form.captchaCode" class="form-captcha-input" type="text" placeholder="输入验证码" />
               <div class="form-captcha">
-                <img :src="captchaImage" class="form-captcha-img"
+                <img v-if="captchaImage" :src="captchaImage" class="form-captcha-img"
                      @click="getCaptcha">
               </div>
             </FormItem>
@@ -185,7 +185,7 @@ export default {
             return
           }
 
-          let data = Object.assign({}, this.form)
+          let data = Object.assign({ code: this.code }, this.form)
           data.cityId = data.cityId[2]
 
           Server({

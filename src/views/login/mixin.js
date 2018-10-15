@@ -3,14 +3,13 @@ import Server from '@/libs/js/server'
 let timer
 const waitingTime = 60
 
-let captchaUrl = Server.defaults.baseURL + 'user/captcha'
-
 export default {
   replace: true,
   data () {
     return {
       captchaImage: '', // 图片验证码
       captchaEnable: true,
+      code: '',
       intervalSeconds: waitingTime
     }
   },
@@ -48,7 +47,10 @@ export default {
         Server({
           url: '/user/testCaptcha',
           method: 'get',
-          data: { captchaCode: this.form.captchaCode }
+          data: {
+            captchaCode: this.form.captchaCode,
+            code: this.code
+          }
         }).then(res => {
           console.log('图形验证码校验通过')
           resolve()
@@ -81,7 +83,19 @@ export default {
 
     // 获取图片验证码
     getCaptcha () {
-      this.captchaImage = `${captchaUrl}?${new Date().getTime()}`
+      Server({
+        url: '/user/captcha',
+        method: 'get',
+        responseType: 'arraybuffer'
+      }).then(res => {
+        const blob = new Blob([res.data], { type: 'image/png' })
+        const reader = new FileReader()
+        reader.onload = e => {
+          this.captchaImage = e.target.result
+          this.code = res.headers.captchaCode
+        }
+        reader.readAsDataURL(blob)
+      })
     },
 
     // 发送手机验证码
@@ -98,7 +112,8 @@ export default {
         .then(() => {
           const data = {
             phone: this.form.phone,
-            captchaCode: this.form.captchaCode
+            captchaCode: this.form.captchaCode,
+            code: this.code
           }
 
           Server({

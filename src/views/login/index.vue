@@ -29,7 +29,7 @@
               <i slot="prefix" :style="inputIconColor('captchaCode')" class="icon font_family icon-ico-yzm"></i>
               </Input>
               <div class="form-captcha">
-                <img :src="captchaImage" class="form-captcha-img"
+                <img v-if="captchaImage" :src="captchaImage" class="form-captcha-img"
                      @click="getCaptcha">
               </div>
             </FormItem>
@@ -156,7 +156,7 @@ export default {
         Server({
           url: '/user/login',
           method: 'post',
-          data: this.form
+          data: Object.assign({ code: this.code }, this.form)
         }).then(res => {
           if (this.rememberPW) this.localPwSave()
           else window.localStorage.removeItem('local_rememberd_pw')
