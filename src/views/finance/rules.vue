@@ -365,6 +365,10 @@ export default {
     },
     async saveRules () {
       const _this = this
+      if (!this.ruleDetail.details.length) {
+        this.$Message.error('请添加至少一条规则')
+        return
+      }
       await this.formValidate(this.$refs['ruleBasic'])
       for (let i = 0; i < this.$refs['ruleRoute'].length; i++) {
         await this.formValidate(this.$refs['ruleRoute'][i])

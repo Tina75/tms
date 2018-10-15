@@ -195,6 +195,7 @@ export default {
       }).catch(err => console.error(err))
     },
     toDetail (data) {
+      const _this = this
       this.openDialog({
         name: 'finance/dialogs/orderList',
         data: {
@@ -204,7 +205,11 @@ export default {
           partnerName: data.row.partnerName,
           scene: this.scene
         },
-        methods: {}
+        methods: {
+          ok () {
+            _this.getCheckList()
+          }
+        }
       })
     },
     resort () {
