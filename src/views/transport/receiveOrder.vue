@@ -634,17 +634,23 @@ export default {
     // 提货
     billPickup (id) {
       var self = this
-      self.openDialog({
-        name: 'transport/dialog/sendCar',
-        data: {
-          id,
-          type: 'pickUp'
-        },
-        methods: {
-          complete () {
-            self.$refs.$table.fetch()
+      Server({
+        url: '/load/bill/check/order',
+        method: 'post',
+        data: { pickUpId: id }
+      }).then(() => {
+        self.openDialog({
+          name: 'transport/dialog/sendCar',
+          data: {
+            id,
+            type: 'pickUp'
+          },
+          methods: {
+            complete () {
+              self.$refs.$table.fetch()
+            }
           }
-        }
+        })
       })
     }
   }

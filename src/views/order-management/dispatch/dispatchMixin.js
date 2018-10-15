@@ -240,15 +240,18 @@ export default {
         this.rightExpandRow = row
       }
       data.forEach(item => {
-        if (JSON.stringify(item) !== rowStr) item._expanded = false
-        else item._expanded = true
+        if (JSON.stringify(item) !== rowStr) item._expanded = item._highlight = false
+        else item._expanded = item._highlight = true
       })
-      row._expanded = true
     },
     keepLeftExpandOnly (row, status) {
       if (!status) {
         this.leftExpandRow = null
         this.leftSelection = []
+        const rowStr = JSON.stringify(row)
+        this.leftTableData.forEach(item => {
+          if (JSON.stringify(item) === rowStr) item._expanded = item._highlight = false
+        })
         return
       }
       this.keepExpandOnly(row, 'left')
@@ -260,7 +263,7 @@ export default {
         this.rightSelection = []
         const rowStr = JSON.stringify(row)
         this.rightTableData.forEach(item => {
-          if (JSON.stringify(item) === rowStr) item._expanded = false
+          if (JSON.stringify(item) === rowStr) item._expanded = item._highlight = false
         })
         return
       }
@@ -270,11 +273,13 @@ export default {
 
     // 右侧表格列选中
     rightTableRowClick (row, index) {
-      this.rightSelectRow = { row, index }
-      this.rightTableData.forEach((item, i) => {
-        if (i === index) item._highlight = true
-        else item._highlight = false
-      })
+      this.rightSelectRow = row._expanded ? null : { row, index }
+      this.keepRightExpandOnly(row, !row._expanded)
+    },
+
+    // 左侧表格列选中
+    leftTableRowClick (row) {
+      this.keepLeftExpandOnly(row, !row._expanded)
     },
 
     // 格式化城市
@@ -304,11 +309,13 @@ export default {
     heightLightNewRow (newList) {
       if (!this.rightTableExpandData.length) return newList
       const oldList = this.rightTableExpandData.map(item => item.orderId)
-      return newList.map(item => {
+      newList.map(item => {
         if (oldList.indexOf(item.orderId) === -1) item.isNew = true
         else item.isNew = false
         return item
       })
+      newList.sort((a) => a.isNew ? -1 : 0)
+      return newList
     },
 
     // 查询左侧列表数据 10-提货 20-调度
