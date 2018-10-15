@@ -206,14 +206,14 @@
 </template>
 
 <script>
-import Title from './Title.vue'
+import Title from './components/Title.vue'
 import SelectInput from '@/components/SelectInput.vue'
-import TagNumberInput from './TagNumberInput'
+import TagNumberInput from '@/components/TagNumberInput'
 import { mapGetters, mapActions } from 'vuex'
 import float from '@/libs/js/float'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
-import OrderPrint from './OrderPrint'
+import OrderPrint from './components/OrderPrint'
 import AreaSelect from '@/components/AreaSelect'
 import { getCityCode, resetCityValidator, FORM_VALIDATE_START, FORM_VALIDATE_END } from '@/libs/constant/cityValidator'
 import FontIcon from '@/components/FontIcon'
