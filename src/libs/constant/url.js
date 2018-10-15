@@ -30,10 +30,10 @@ const TMSUrl = {
   SENDER_MANAGEMENT: '/client/sender', // 发货方管理
   CARRIER_MANAGEMENT: '/client/carrier', // 承运商管理
   TRANSFER_MANAGEMENT: '/client/transfer', // 外转方管理
-  STAFF_MANAGEMENT: '/company-manage/staff-manage', // 员工管理
-  EMPLOYEE_MANAGEMENT: '/company-manage/employee-manage', // 角色管理
+  STAFF_MANAGEMENT: '/company/staff-manage', // 员工管理
+  EMPLOYEE_MANAGEMENT: '/company/role-manage', // 角色管理
   SETTING: '/set-up/index', // 设置
-  MESSAGE_CENTER: '/info/index', // 消息中心
+  MESSAGE_CENTER: '/information/index', // 消息中心
   HELP: '/helper/index' // 帮助中心
 }
 export default TMSUrl

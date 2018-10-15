@@ -14,7 +14,7 @@
                      placeholder="请选择"
                      @on-select="selectCarrierHandler" />
       </FormItem>
-      <FormItem label="车辆：" prop="carNo">
+      <FormItem label="车牌号：" prop="carNo">
         <SelectInput :carrier-id="carrierId"
                      v-model="form.carNo"
                      mode="carNo"
@@ -43,6 +43,7 @@ export default {
   components: { AreaSelect, SelectInput },
   mixins: [ BaseDialog, SelectInputMixin ],
   data () {
+    const vm = this
     return {
       show: true,
 
@@ -59,7 +60,7 @@ export default {
       rules: {
         start: [
           { required: true, type: 'array', message: '请选择始发地', trigger: 'blur' },
-          { validator: FORM_VALIDATE_START, trigger: 'change' }
+          { validator: FORM_VALIDATE_START(vm, '$form'), trigger: 'change' }
         ],
         end: [
           { required: true, type: 'array', message: '请选择目的地', trigger: 'blur' },

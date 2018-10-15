@@ -39,7 +39,7 @@
       </Col>
       <Col span="6">
       <FormItem label="到货时间:" prop="arriveTime">
-        <DatePicker v-model="orderForm.arriveTime" :time-picker-options="{steps: [1, 60, 60]}" format="yyyy-MM-dd HH:mm前" type="datetime" style="width:100%"></DatePicker>
+        <DatePicker v-model="orderForm.arriveTime" :time-picker-options="{steps: [1, 60, 60]}" :options="endDateOptions" format="yyyy-MM-dd HH:mm前" type="datetime" style="width:100%"></DatePicker>
       </FormItem>
       </Col>
     </Row>
@@ -178,15 +178,13 @@
       <Col span="6">
       <FormItem label="提货方式:" prop="pickup">
         <Select v-model="orderForm.pickup">
-          <!-- <Option value="1">上门提货</Option>
-          <Option value="2">直接送货</Option> -->
           <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="回单数量:" prop="receiptCount">
-        <InputNumber v-model="orderForm.receiptCount" :min="1" :parser="value => parseInt(value).toString()" class="order-create__input-w100">
+        <InputNumber v-model="orderForm.receiptCount" :min="0" :parser="value => parseInt(value).toString()" class="order-create__input-w100">
         </InputNumber>
       </FormItem>
       </Col>
@@ -240,6 +238,21 @@ export default {
   mixins: [BaseComponent, BasePage],
   data () {
     const _this = this
+    /**
+     * 发货时间校验
+     */
+    const validateDeliveryTime = (rule, value, callback) => {
+      if (_this.orderForm.arriveTime && value) {
+        // callback(new Error('发货时间需早于发货时间'))
+        this.$refs.orderForm.validateField('arriveTime')
+        callback()
+      } else {
+        callback()
+      }
+    }
+    /**
+     * 到货时间校验
+     */
     const validateArriveTime = (rule, value, callback) => {
       if (_this.orderForm.deliveryTime && value && value.valueOf() <= _this.orderForm.deliveryTime.valueOf()) {
         callback(new Error('到货时间需晚于发货时间'))
@@ -314,23 +327,28 @@ export default {
             ])
           },
           render (h, params) {
-            return h(SelectInput, {
-              props: {
-                value: params.row[params.column.key] || '',
-                remote: false,
-                localOptions: _this.cargoOptions,
-                transfer: true,
-                maxlength: 10
-              },
-              on: {
-                'on-blur': (value) => {
-                  _this.updateLocalCargo(setObject(params, value))
+            return h('div', [
+              h(SelectInput, {
+                props: {
+                  value: params.row[params.column.key] || '',
+                  remote: false,
+                  localOptions: _this.cargoOptions,
+                  transfer: true,
+                  maxlength: 10
                 },
-                'on-select': (name, cargoItem) => {
-                  _this.selectCargo(params, cargoItem)
+                on: {
+                  'on-blur': (value) => {
+                    _this.updateLocalCargo(setObject(params, value))
+                  },
+                  'on-select': (name, cargoItem) => {
+                    _this.selectCargo(params, cargoItem)
+                  }
                 }
-              }
-            })
+              })
+              // h('span', {
+              //   class: 'i-error'
+              // }, params.row[params.column.key] === '' ? '请输入货物名称' : '')
+            ])
           }
         },
         {
@@ -439,7 +457,7 @@ export default {
               props: {
                 value: params.row[params.column.key] || null,
                 min: 1,
-                parser: (value) => parseInt(value).toString()
+                parser: (value) => value ? parseInt(value).toString() : value // 允许清空
               },
               on: {
                 'on-focus': () => {
@@ -449,15 +467,15 @@ export default {
                   if (params.value !== value) {
                     params.value = value
                     if (!params.focus) {
-                      _this.updateLocalCargo(setObject(params, parseInt(params.value || 1)))
+                      _this.updateLocalCargo(setObject(params, params.value ? parseInt(params.value || 1) : params.value))
                       _this.syncUpdateCargoProps(params)
                     }
                   }
                 },
                 'on-blur': () => {
                   params.focus = false
-                  if (params.value) {
-                    _this.updateLocalCargo(setObject(params, parseInt(params.value || 1)))
+                  if (params.value !== undefined) {
+                    _this.updateLocalCargo(setObject(params, params.value ? parseInt(params.value || 1) : params.value))
                     _this.syncUpdateCargoProps(params)
                   }
                 }
@@ -466,7 +484,7 @@ export default {
           }
         },
         {
-          title: '包装',
+          title: '包装方式',
           key: 'unit',
           render (h, params) {
             return h('Input', {
@@ -554,7 +572,7 @@ export default {
         // 其他费用
         otherFee: null,
         // 提货方式
-        pickup: 1, // 默认上门提货，2：直接送货
+        pickup: null, // 默认1：上门提货，2：直接送货
         // 回单数量
         receiptCount: 1,
         // 备注
@@ -568,14 +586,17 @@ export default {
         ],
         start: [
           { required: true, type: 'array', message: '请选择始发城市' },
-          { validator: FORM_VALIDATE_START, trigger: 'change' }
+          { validator: FORM_VALIDATE_START(_this, 'orderForm'), trigger: 'change' }
         ],
         end: [
           { required: true, type: 'array', message: '请选择目的城市' },
           { validator: FORM_VALIDATE_END }
         ],
+        deliveryTime: [
+          { validator: validateDeliveryTime }
+        ],
         arriveTime: [
-          { validator: validateArriveTime, trigger: 'blur' }
+          { validator: validateArriveTime }
         ],
         consignerContact: [
           { required: true, message: '请输入发货人名称' }
@@ -618,6 +639,12 @@ export default {
         volume: 0,
         cargoCost: 0,
         quantity: 0
+      },
+      // 到达时间限制
+      endDateOptions: {
+        disabledDate (date) {
+          return date && date.valueOf() < _this.orderForm.deliveryTime.valueOf()
+        }
       }
     }
   },
@@ -708,11 +735,10 @@ export default {
         })
     }
   },
-  destroyed () {
+  beforeDestroy () {
     this.resetForm()
     this.clearClients()
     this.clearOrderDetail()
-    resetCityValidator()
   },
   methods: {
     ...mapActions([
@@ -789,7 +815,8 @@ export default {
         if (matchCargo) {
           let syncCargo = new Cargo(matchCargo);
           ['weight', 'volume', 'cargoCost'].forEach((key) => {
-            syncCargo[key] = float.round(params.value * syncCargo[key])
+            let value = params.value || 1
+            syncCargo[key] = float.round(value * syncCargo[key])
           })
           syncCargo.quantity = params.value
           this.syncStoreCargoes()
@@ -862,7 +889,7 @@ export default {
         if (cargoList.length > 0) {
           // 清空信息，防止信息追加到已维护的货物信息中去
           _this.tempCargoes = {}
-          _this.consignerCargoes = [new Cargo(cargoList[0])]
+          _this.consignerCargoes = [new Cargo(cargoList[0], true)]
         }
       })
     },
@@ -879,7 +906,10 @@ export default {
         this.$Message.warning('请先选择客户')
         return
       }
-      if (vm.statics.weight <= 0 || vm.statics.volume <= 0) {
+      /**
+       * 重量和体积二选一，或者都填写，可以了
+       */
+      if (vm.statics.weight <= 0 && vm.statics.volume <= 0) {
         this.$Message.warning('请先填写货物必要信息')
         return
       }
@@ -903,6 +933,7 @@ export default {
     // 提交表单
     handleSubmit (e) {
       const vm = this
+
       vm.syncStoreCargoes()
       vm.disabled = true
       return new Promise((resolve, reject) => {
@@ -924,6 +955,7 @@ export default {
               vm.$Message.error(findError)
               vm.disabled = false
               reject(new Error(findError.message))
+              return
             }
             // 始发地遇到北京市等特殊直辖市，需要只保留第一级code
             let start = getCityCode(orderForm.start)
@@ -960,6 +992,8 @@ export default {
                   // 保存，不打印，修改页面
                   vm.closeTab()
                 }
+                // 重新获取客户列表
+                vm.getClients()
                 resolve()
               })
               .catch((er) => {
@@ -979,6 +1013,7 @@ export default {
       this.$refs.orderForm.resetFields()
       this.clearCargoes()
       this.consignerCargoes = [new Cargo()]
+      resetCityValidator()
     },
     // 修改订单完结束后，自动关闭页面
     closeTab () {

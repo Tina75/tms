@@ -1,8 +1,8 @@
 <template>
   <div class="temAll">
-    <Col span="4" style="height:100%">
+    <Col span="4" class="colHeight" style="height:100%">
     <Menu :active-name="menuInitName" class="leftMenu" style="width:100%">
-      <div class="centerBtnDiv" style="border-bottom: 1px solid #e9e9e9;padding-bottom:50px;">
+      <div class="centerBtnDiv">
         <Button v-if="hasPower(140101)" type="primary" class="centerBtn" @click="createRole">新增角色</Button>
       </div>
       <div>
@@ -15,12 +15,12 @@
         </MenuItem>
       </div>
       <Modal v-model="createRoleModal" width="400">
-        <p slot="header" style="text-align:center;font-size: 16px;">
+        <p slot="header" class="modalTitle">
           <span>{{editRoleModalTitle}}</span>
         </p>
-        <Form ref="formModal" :model="formModal" :rules="rulesRole" :label-width="80" style="padding:20px;height: 70px;">
+        <Form ref="formModal" :model="formModal" :rules="rulesRole" :label-width="80" class="formSty">
           <FormItem label="角色名：" prop="name">
-            <Input :maxlength="11" v-model="formModal.name" placeholder="请输入角色名" style="width:200px;"></Input>
+            <Input :maxlength="11" v-model="formModal.name" placeholder="请输入角色名" class="inputSty"></Input>
           </FormItem>
         </Form>
         <div slot="footer">
@@ -49,12 +49,13 @@
     <Modal
       v-model="removeRoleModal"
       width="360">
-      <p slot="header" style="text-align:center;font-size: 16px;">
+      <p slot="header" class="modalTitle">
         <span>提示</span>
       </p>
-      <p style="margin-left:70px; margin-top: 10px;">
-        <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
-      </p><p style="margin-top:23px; margin-bottom:10px; margin-left:50px;">确定删除'{{rightTitle}}'?</P>
+      <p class="modalRemoveContend">
+        <i class="icon font_family icon-bangzhuzhongxin"></i>
+      </p>
+      <p class="modalRemoveContendP">确定删除'{{rightTitle}}'?</P>
       </p>
       <div slot="footer">
         <Button type="primary" @click="removeFormRole">确定</Button>
@@ -64,7 +65,7 @@
     <Modal
       v-model="removeRoleModalFail"
       width="400">
-      <p slot="header" style="text-align:center;font-size: 16px;">
+      <p slot="header" class="modalTitle">
         <span>提示</span>
       </p>
       <P style="color:gray;">有员工属于该角色，暂时不能删除,如需删除，请先将</P>
@@ -100,7 +101,7 @@ import roleTreeList from './roleTreeList.js'
 import Server from '@/libs/js/server'
 import _ from 'lodash'
 export default {
-  name: 'employee-manage',
+  name: 'role-manage',
   mixins: [ BasePage ],
   metaInfo: {
     title: '角色管理'
@@ -393,6 +394,9 @@ export default {
   .leftMenu
     height: 100%
     overflow: hidden;
+    .centerBtnDiv
+      border-bottom: 1px solid #e9e9e9;
+      padding-bottom:50px;
   .leftMenu :hover
     max-height: calc(100% - 50px);
     overflow-y: auto;
@@ -404,6 +408,8 @@ export default {
     overflow: hidden;
     .configBtnItem
       display: block
+    .configBtnItem:hover
+      overflow: hidden;
   .menu
     margin-left: -50px;
     .menuTitle
@@ -469,4 +475,28 @@ export default {
       color: #00A4BD;
       font-size: 12px;
       margin-left: 10px;
+.colHeight
+  height: 100%
+.modalTitle
+  text-align:center;
+  font-size: 16px;
+  font-weight: bold;
+.modalRemoveContend
+  margin-top: 10px;
+  margin-left:10%;
+  i.icon.font_family.icon-bangzhuzhongxin
+    font-size:28px;
+    background: white;
+    color: #FFBB44;
+    float:left;
+    width:40px;
+.modalRemoveContendP
+  margin-top:21px;
+  margin-bottom:10px;
+  font-size: 14px;
+.formSty
+  padding:20px;
+  height: 70px;
+.inputSty
+  width:200px;
 </style>

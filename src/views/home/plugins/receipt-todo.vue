@@ -29,8 +29,8 @@ export default {
   data () {
     return {
       data: [
-        { id: 'waitRecovery', name: '待回收回单数量', value: 0, tab: '1', href: TMSUrl.RECEIPT_ORDER_MANAGEMENT, title: '回单管理' },
-        { id: 'waitReturnFactory', name: '待返厂回单数量', value: 0, tab: '2', href: TMSUrl.RECEIPT_ORDER_MANAGEMENT, title: '回单管理' }
+        { id: 'waitRecovery', name: '待回收', value: 0, tab: '1', href: TMSUrl.RECEIPT_ORDER_MANAGEMENT, title: '回单管理' },
+        { id: 'waitReturnFactory', name: '待返厂', value: 0, tab: '2', href: TMSUrl.RECEIPT_ORDER_MANAGEMENT, title: '回单管理' }
       ]
     }
   },

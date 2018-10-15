@@ -25,7 +25,7 @@ export default {
     AreaCascader
   },
   props: {
-    value: [String, Array],
+    value: [String, Array, Number],
     clearable: {
       type: Boolean,
       default: true

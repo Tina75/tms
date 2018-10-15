@@ -25,8 +25,8 @@ export default {
   data () {
     return {
       data: [
-        { id: 'wait_verify', name: '外转方待核销订单数', value: 0, tab: '1', href: TMSUrl.TRANSFER_FINANCE, title: '外转方对账' },
-        { id: 'wait_reconcile', name: '外转方对账单数量', value: 0, tab: '2', href: TMSUrl.TRANSFER_FINANCE, title: '外转方对账' }
+        { id: 'wait_verify', name: '待核销', value: 0, tab: '1', href: TMSUrl.TRANSFER_FINANCE, title: '外转方对账' },
+        { id: 'wait_reconcile', name: '对账单数量', value: 0, tab: '2', href: TMSUrl.TRANSFER_FINANCE, title: '外转方对账' }
       ]
     }
   },

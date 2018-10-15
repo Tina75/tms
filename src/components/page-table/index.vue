@@ -13,6 +13,7 @@
       :highlight-row="highlightRow"
       :size="size"
       :no-data-text="noDataText"
+      :row-class-name="rowClassName"
       @on-current-change="handleCurrentChange"
       @on-select="handleSelect"
       @on-select-all="handleSelectAll"
@@ -330,7 +331,15 @@ export default {
     }
   },
   methods: {
-
+    /**
+     * 复选框选中后，背景高亮
+     */
+    rowClassName (row, index) {
+      if (this.isSelection) {
+        if (this.selected.includes(row[this.rowId])) { return 'ivu-table-row-highlight' }
+      }
+      return ''
+    },
     setLocalDataSource (data) {
       this.dataSource = this.data.slice()
       this.pagination.totalCount = this.data.length

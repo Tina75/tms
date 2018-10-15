@@ -8,7 +8,7 @@
                      placeholder="请选择"
                      @on-select="selectCarrierHandler" />
       </FormItem>
-      <FormItem label="车辆：" prop="carNo">
+      <FormItem label="车牌号：" prop="carNo">
         <SelectInput :carrier-id="carrierId"
                      v-model="form.carNo"
                      mode="carNo"

@@ -18,6 +18,10 @@ export default {
     }
   },
   beforeDestroy () {
+    // 先销毁Col组件 && 全清空时bug
+    for (let i in this.$children) {
+      this.$children[i].$destroy()
+    }
     this.eventHub.$off(`plugin:${this.$options.name}`, this.invokeLoad)
   },
 
