@@ -84,6 +84,7 @@
     </Row>
     <Title>货物信息</Title>
     <CargoTable
+      ref="cargoTable"
       :cargoes="cargoes"
       :data-source="consignerCargoes"
       :on-append="appendCargo"
@@ -408,9 +409,9 @@ export default {
     }
   },
   watch: {
-    consignerCargoes (newCargoes) {
-      this.statics = Object.assign({}, this.sumRow)
-    }
+    // consignerCargoes (newCargoes) {
+    //   this.statics = Object.assign({}, this.sumRow)
+    // }
   },
   created () {
     if (!this.$route.query.id) {
@@ -419,7 +420,7 @@ export default {
   },
   mounted () {
     const vm = this
-    this.statics = Object.assign({}, this.sumRow)
+    // this.statics = Object.assign({}, this.sumRow)
     const orderId = this.$route.query.id || undefined
     if (orderId) {
       vm.loading = true
@@ -561,10 +562,11 @@ export default {
         this.$Message.warning('请先选择客户')
         return
       }
+      const statics = vm.$refs.cargoTable.statics
       /**
        * 重量和体积二选一，或者都填写，可以了
        */
-      if (vm.statics.weight <= 0 && vm.statics.volume <= 0) {
+      if (statics.weight <= 0 && statics.volume <= 0) {
         this.$Message.warning('请先填写货物必要信息')
         return
       }
@@ -575,8 +577,8 @@ export default {
           end: getCityCode(vm.orderForm.end), // 目的城市
           partnerName: vm.orderForm.consignerName, // 客户名
           partnerType: 1, // 计算规则分类：1-发货方，2-承运商，3-外转方
-          weight: vm.statics.weight,
-          volume: vm.statics.volume
+          weight: statics.weight,
+          volume: statics.volume
         },
         methods: {
           ok (value) {
@@ -584,9 +586,6 @@ export default {
           }
         }
       })
-    },
-    handleSettle (e) {
-      console.log('focus', e)
     },
     // 提交表单
     handleSubmit (e) {
