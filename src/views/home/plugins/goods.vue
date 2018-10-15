@@ -1,6 +1,6 @@
 <template>
   <div is="i-col" :span="12" class="i-mt-15 page-home__card-item">
-    <blank-card :to="linkto" title="货物重量 / 体积" page-title="订单管理">
+    <blank-card :to="linkto" title="今日开单货物重量/体积" page-title="订单管理">
       <div v-if="volumeData.length || weightData.length" class="chart">
         <ECharts :options="options" :auto-resize="true"></ECharts>
         <div class="chart__attach">
@@ -31,7 +31,8 @@ const statusStr = {
   10: '待提货',
   20: '待调度',
   30: '在途',
-  40: '已到达'
+  40: '已到达',
+  50: '已回单'
 }
 
 export default {

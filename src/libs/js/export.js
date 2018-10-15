@@ -6,7 +6,7 @@ import { LoadingBar, Message } from 'iview'
 let fileName = ''
 
 let instance = axios.create({
-  baseURL: '/',
+  baseURL: Server.defaults.baseURL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -14,11 +14,8 @@ let instance = axios.create({
   },
   withCredentials: true,
   loading: false,
-  ignoreCode: false,
   responseType: 'arraybuffer'
 })
-
-instance.defaults.baseURL = Server.defaults.baseURL
 
 // POST传参序列化
 instance.interceptors.request.use((config) => {
@@ -39,7 +36,6 @@ instance.interceptors.request.use((config) => {
 // code状态码200判断
 instance.interceptors.response.use((res) => {
   LoadingBar.finish()
-  console.log(res)
   const tempBlob = new Blob([res.data], { type: 'application/json' })
   const reader = new FileReader()
   reader.onload = e => {
