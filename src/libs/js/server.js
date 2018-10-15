@@ -32,6 +32,8 @@ instance.interceptors.request.use((config) => {
 // code状态码200判断
 instance.interceptors.response.use((res) => {
   LoadingBar.finish()
+  if (res.config.responseType === 'arraybuffer') return res
+
   var code = Number(res.data.code)
   if (res.config.ignoreCode || code === 10000) {
     return res

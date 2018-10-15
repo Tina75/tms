@@ -171,7 +171,7 @@
       </Col>
       <Col span="6">
       <FormItem label="回单数量:" prop="receiptCount">
-        <InputNumber v-model="orderForm.receiptCount" :min="0" :parser="value => parseInt(value).toString()" class="order-create__input-w100">
+        <InputNumber v-model="orderForm.receiptCount" :min="0" :parser="value => value ?  parseInt(value).toString() : value" class="order-create__input-w100">
         </InputNumber>
       </FormItem>
       </Col>
@@ -455,11 +455,13 @@ export default {
     ['pickupSelector', 'settlementSelector'].forEach((selector) => {
       vm.$refs[selector].$refs.reference.onfocus = (e) => {
         vm.$refs[selector].toggleHeaderFocus(e)
-        setTimeout(() => {
-          if (!vm.$refs[selector].visible) {
-            vm.$refs[selector].toggleMenu(e)
-          }
-        }, 60)
+        vm.$nextTick(() => {
+          setTimeout(() => {
+            if (!vm.$refs[selector].visible) {
+              vm.$refs[selector].toggleMenu(e)
+            }
+          }, 200)
+        })
       }
     })
   },

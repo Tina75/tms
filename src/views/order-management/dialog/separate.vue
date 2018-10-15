@@ -35,6 +35,7 @@
 <script>
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
+import _ from 'lodash'
 export default {
   name: 'separate',
   mixins: [BaseDialog],
@@ -84,6 +85,9 @@ export default {
                   on: {
                     click: () => {
                       this.isSeparate = false
+                      console.log(this.quantityVal, params.row.quantity)
+                      console.log(this.weightVal, params.row.weight)
+                      console.log(this.volumeVal, params.row.volume)
                       if (this.quantityVal === null || this.weightVal === null || this.volumeVal === null) {
                         this.$Message.warning('数量、重量、体积不可为空')
                         this.isSeparate = true
@@ -96,9 +100,12 @@ export default {
                        * 部分整拆
                        * 重量、体积是小数，可能会出现1.000000000002的情况，需要转一下
                        */
-                      console.log(this.quantityVal, params.row.quantity)
-                      console.log(this.weightVal, params.row.weight)
-                      console.log(this.volumeVal, params.row.volume)
+                      if (!((params.row.quantity !== 0 && this.quantityVal === 0) || (params.row.weight !== 0 && this.weightVal === 0) || (params.row.volume !== 0 && this.volumeVal === 0))) {
+                        params.row.quantity = this.cloneData[params.index].quantity
+                        params.row.weight = this.cloneData[params.index].weight
+                        params.row.volume = this.cloneData[params.index].volume
+                        params.row.cargoCost = this.cloneData[params.index].cargoCost
+                      }
                       // 没修改过数量、重量、体积中任意一个 或 修改过数量、重量、体积跟初始值一致   部分整拆
                       if (this.quantityVal === params.row.quantity && parseFloat(this.weightVal.toFixed(2)) === parseFloat(params.row.weight.toFixed(2)) && parseFloat(this.volumeVal.toFixed(1)) === parseFloat(params.row.volume.toFixed(1))) {
                         this.separateWholeList(params.index)
@@ -158,13 +165,15 @@ export default {
                   on: {
                     click: () => {
                       this.isSeparate = false
+                      params.row.quantity = this.cloneData[params.index].quantity
+                      params.row.weight = this.cloneData[params.index].weight
+                      params.row.volume = this.cloneData[params.index].volume
+                      params.row.cargoCost = this.cloneData[params.index].cargoCost
                     }
                   }
                 }, '取消')
               ])
             } else {
-              console.log(this.parentOrderCargoList)
-              console.log(params.row.weight, params.row.volume)
               if (params.row.quantity === 1 || parseFloat(params.row.weight.toFixed(2)) === 0.01 || parseFloat(params.row.volume.toFixed(1)) === 0.1) {
                 return h('div', [
                   h('a', {
@@ -192,10 +201,10 @@ export default {
                         click: () => {
                           this.isSeparate = true
                           this.currentId = params.row.id
-                          this.cargoCostVal = params.row.cargoCost
-                          this.quantityVal = params.row.quantity
-                          this.weightVal = params.row.weight
-                          this.volumeVal = params.row.volume
+                          this.cargoCostVal = this.cloneData[params.index].cargoCost
+                          this.quantityVal = this.cloneData[params.index].quantity
+                          this.weightVal = this.cloneData[params.index].weight
+                          this.volumeVal = this.cloneData[params.index].volume
                         }
                       }
                     }, '拆部分'),
@@ -222,10 +231,10 @@ export default {
                         click: () => {
                           this.isSeparate = true
                           this.currentId = params.row.id
-                          this.cargoCostVal = params.row.cargoCost
-                          this.quantityVal = params.row.quantity
-                          this.weightVal = params.row.weight
-                          this.volumeVal = params.row.volume
+                          this.cargoCostVal = this.cloneData[params.index].cargoCost
+                          this.quantityVal = this.cloneData[params.index].quantity
+                          this.weightVal = this.cloneData[params.index].weight
+                          this.volumeVal = this.cloneData[params.index].volume
                         }
                       }
                     }, '拆部分')
@@ -250,12 +259,12 @@ export default {
           title: '数量',
           key: 'quantity',
           render: (h, params) => {
-            if (this.isSeparate && (this.currentId === params.row.id) && (params.row.quantity !== 0)) {
+            if (this.isSeparate && (this.currentId === params.row.id) && (this.cloneData[params.index].quantity !== 0)) {
               return h('div', [
                 h('InputNumber', {
                   props: {
                     min: 0,
-                    max: Number(params.row.quantity),
+                    max: Number(this.parentOrderCargoList[params.index].quantity),
                     value: Number(params.row.quantity),
                     precision: 0
                   },
@@ -264,6 +273,22 @@ export default {
                   on: {
                     'on-change': (val) => {
                       this.quantityVal = val
+                      let percent = this.quantityVal / params.row.quantity // 当前数量拆分的百分比
+                      console.log(percent)
+                      // 计算重量
+                      if (this.cloneData[params.index].weight !== 0) {
+                        params.row.weight = this.cloneData[params.index].weight * percent
+                        this.weightVal = this.cloneData[params.index].weight * percent
+                      }
+                      // 计算体积
+                      if (this.cloneData[params.index].volume !== 0) {
+                        params.row.volume = this.cloneData[params.index].volume * percent
+                        this.volumeVal = this.cloneData[params.index].volume * percent
+                      }
+                      // 计算货值
+                      if (this.cloneData[params.index].cargoCost !== 0) {
+                        params.row.cargoCost = this.cloneData[params.index].cargoCost * percent
+                      }
                     }
                   }
                 })
@@ -274,7 +299,7 @@ export default {
           }
         },
         {
-          title: '包装方式',
+          title: '单位',
           key: 'unit',
           width: 80
         },
@@ -282,12 +307,12 @@ export default {
           title: '重量（吨）',
           key: 'weight',
           render: (h, params) => {
-            if (this.isSeparate && (this.currentId === params.row.id) && (params.row.weight !== 0)) {
+            if (this.isSeparate && (this.currentId === params.row.id) && (this.cloneData[params.index].weight !== 0)) {
               return h('div', [
                 h('InputNumber', {
                   props: {
                     min: 0,
-                    max: parseFloat((params.row.weight).toFixed(2)) + 0.009, // 1.01 + 0.01 = 1.02000000002
+                    max: parseFloat((this.parentOrderCargoList[params.index].weight).toFixed(2)) + 0.004, // 1.01 + 0.01 = 1.02000000002
                     value: parseFloat((params.row.weight).toFixed(2)),
                     step: 0.01,
                     precision: 2,
@@ -297,7 +322,11 @@ export default {
                   },
                   on: {
                     'on-change': (val) => {
-                      this.weightVal = parseFloat(val.toFixed(2))
+                      if (val === null) {
+                        this.weightVal = null
+                      } else {
+                        this.weightVal = parseFloat(val.toFixed(2))
+                      }
                     }
                   }
                 })
@@ -311,12 +340,12 @@ export default {
           title: '体积（方）',
           key: 'volume',
           render: (h, params) => {
-            if (this.isSeparate && (this.currentId === params.row.id) && (params.row.volume !== 0)) {
+            if (this.isSeparate && (this.currentId === params.row.id) && (this.cloneData[params.index].volume !== 0)) {
               return h('div', [
                 h('InputNumber', {
                   props: {
                     min: 0,
-                    max: parseFloat((params.row.volume).toFixed(1)) + 0.09, // 1.1 + 0.1 = 1.2000000002
+                    max: parseFloat((this.parentOrderCargoList[params.index].volume).toFixed(1)) + 0.04, // 1.1 + 0.1 = 1.2000000002
                     value: parseFloat((params.row.volume).toFixed(1)),
                     step: 0.1,
                     precision: 1,
@@ -326,7 +355,11 @@ export default {
                   },
                   on: {
                     'on-change': (val) => {
-                      this.volumeVal = parseFloat(val.toFixed(1))
+                      if (val === null) {
+                        this.volumeVal = null
+                      } else {
+                        this.volumeVal = parseFloat(val.toFixed(1))
+                      }
                     }
                   }
                 })
@@ -405,7 +438,7 @@ export default {
           key: 'quantity'
         },
         {
-          title: '包装方式',
+          title: '单位',
           key: 'unit',
           width: 80
         },
@@ -431,7 +464,8 @@ export default {
       quantityVal: 0,
       weightVal: 0,
       volumeVal: 0,
-      cargoCostVal: 0
+      cargoCostVal: 0,
+      cloneData: [] // 复制一份货物详情数据
     }
   },
 
@@ -463,19 +497,22 @@ export default {
       }).then((res) => {
         console.log(res)
         let orderCargoList = res.data.data.orderCargoList
-        // 将返回数据列表中的''替换成0
+        // 将返回数据列表中货值、数量、重量、体积的''替换成0
         orderCargoList.map((item) => {
+          item.cargoCost = item.cargoCost ? item.cargoCost : 0
           item.quantity = item.quantity ? item.quantity : 0
           item.weight = item.weight ? item.weight : 0
           item.volume = item.volume ? item.volume : 0
         })
         this.parentOrderCargoList = orderCargoList
+        this.cloneData = _.cloneDeep(this.parentOrderCargoList)
       })
     },
     // 拆整笔
     separateWholeList (index) {
       let childList = this.parentOrderCargoList.splice(index, 1)[0]
       this.childOrderCargoList.unshift(childList)
+      this.cloneData = this.parentOrderCargoList
     },
     // 拆部分
     separatePartList (params) {
@@ -497,6 +534,7 @@ export default {
         parentData.cargoCost = (cargoCost * parentData.volume / volume)
       }
       this.$set(this.parentOrderCargoList, params.index, parentData)
+      this.$set(this.cloneData, params.index, parentData)
 
       // 生成子单数据
       let childData = { ...params.row }

@@ -30,6 +30,7 @@
 
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
+import float from '@/libs/js/float'
 
 let errorMsg = ''
 
@@ -87,10 +88,10 @@ export default {
             ruleId: rule.id,
             departure: this.start,
             destination: this.end,
-            input: (rule.ruleType === 1 ? this.weight : this.volume) * 100
+            input: float.round((rule.ruleType === 1 ? this.weight : this.volume) * 100)
           }
         }).then(res => {
-          this.charge = res.data.data / 100
+          this.charge = float.round(res.data.data / 100)
           errorMsg = ''
           this.$refs.$form.validate()
         }).catch(err => {
