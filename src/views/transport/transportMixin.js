@@ -1,4 +1,4 @@
-import { getCityCode } from '@/libs/constant/cityValidator'
+import { getCityCode } from '@/libs/js/cityValidator'
 
 let hasTabCode = false
 
