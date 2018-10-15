@@ -25,9 +25,9 @@
     >
     </InputNumber>
     <Input v-else v-model="record[col.key]" :maxlength="col.max"></Input>
-    <span v-if="record.hasError && record.errorMsg[col.key] !== ''" class="i-error">
+    <p v-if="record.hasError && record.errorMsg[col.key] !== ''" class="i-error">
       {{record.errorMsg[col.key]}}
-    </span>
+    </p>
   </div>
 </template>
 
