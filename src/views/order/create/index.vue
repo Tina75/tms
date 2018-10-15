@@ -455,11 +455,13 @@ export default {
     ['pickupSelector', 'settlementSelector'].forEach((selector) => {
       vm.$refs[selector].$refs.reference.onfocus = (e) => {
         vm.$refs[selector].toggleHeaderFocus(e)
-        setTimeout(() => {
-          if (!vm.$refs[selector].visible) {
-            vm.$refs[selector].toggleMenu(e)
-          }
-        }, 60)
+        vm.$nextTick(() => {
+          setTimeout(() => {
+            if (!vm.$refs[selector].visible) {
+              vm.$refs[selector].toggleMenu(e)
+            }
+          }, 200)
+        })
       }
     })
   },
