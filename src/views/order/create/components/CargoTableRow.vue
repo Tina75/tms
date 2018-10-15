@@ -11,6 +11,7 @@
       :maxlength="col.max"
       :transfer="true"
       :remote="false"
+      @on-blur="handleBlur(col)"
       @on-select="handleSelect"
     >
     </SelectInput>
@@ -20,9 +21,13 @@
       :min="col.min"
       :parser="handleParse"
       @on-change="handleChange(col.key)"
+      @on-blur="handleBlur(col)"
     >
     </InputNumber>
     <Input v-else v-model="record[col.key]" :maxlength="col.max"></Input>
+    <span v-if="record.hasError && record.errorMsg[col.key] !== ''" class="i-error">
+      {{record.errorMsg[col.key]}}
+    </span>
   </div>
 </template>
 
@@ -72,21 +77,38 @@ export default {
     }
   },
   methods: {
+    /**
+     * 保持小数
+     */
     handleParse (value) {
       if (this.requird) {
         return float.floor(value, this.col.point).toString()
       }
       return value ? float.floor(value, this.col.point).toString() : value
     },
+    /**
+     * 新增货物
+     */
     handleAppend () {
       // this.$emit('on-append', { index: this.index }, this.record)
       this.onAppend(this.index, this.record)
     },
-    handleRemove (no, row) {
+    /**
+     * 删除
+     */
+    handleRemove () {
       this.onRemove(this.index, this.record)
     },
+    /**
+     * 选中已维护货物
+     */
     handleSelect (no, cargo) {
       this.onSelect({ index: this.index }, cargo)
+    },
+    handleBlur (col) {
+      if (col.required) {
+        this.record.validateField(col.key)
+      }
     },
     handleChange (type) {
       if (type !== 'quantity') {
