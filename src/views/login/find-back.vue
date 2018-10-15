@@ -12,7 +12,7 @@
           <FormItem prop="captchaCode">
             <Input v-model="form.captchaCode" class="form-captcha-input" type="text" placeholder="输入验证码" />
             <div class="form-captcha">
-              <img v-if="captchaImage" :src="captchaImage" class="form-captcha-img" @click="getCaptcha">
+              <img :src="captchaImage" class="form-captcha-img" @click="getCaptcha">
             </div>
           </FormItem>
 
@@ -104,8 +104,7 @@ export default {
             phone: this.form.phone,
             smsCode: this.form.smsCode,
             password: this.form.password,
-            confirmPassword: this.form.confirmPassword,
-            code: this.code
+            confirmPassword: this.form.confirmPassword
           }
         }).then(res => {
           this.$Message.success('密码设置成功')
