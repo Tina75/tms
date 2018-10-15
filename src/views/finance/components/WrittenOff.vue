@@ -66,6 +66,11 @@ export default {
         2: '承运商',
         3: '外转方'
       },
+      orderNameMap: {
+        1: '对账批次号/订单号',
+        2: '对账批次号/运单号/提货单号',
+        3: '对账批次号/外转单号'
+      },
       orderTypeMap: {
         1: {
           1: '订单号',
@@ -136,6 +141,11 @@ export default {
               }
             }, params.row.verifyNo) : ''
           }
+        },
+        {
+          title: this.orderNameMap[this.scene],
+          width: 200,
+          key: 'orderNo'
         },
         {
           title: this.sceneMap[this.scene] + '名称',
