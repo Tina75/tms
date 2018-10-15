@@ -146,6 +146,7 @@ export default {
             }
           }).then(res => {
             _this.getOrderList()
+            _this.ok()
           }).catch(err => console.error(err))
         }
       })
