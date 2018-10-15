@@ -657,7 +657,7 @@ export default {
           return (item.receiptOrder.receiptStatus !== 0 || item.status !== 40)
         })
         if (data !== undefined) {
-          this.$Message.warning('您选择的订单不支持回收')
+          this.$Message.warning('您选择的订单还未确认到货，请先确认货物已到货')
         } else {
           this.openReturnDialog('', btn.name)
         }
@@ -676,6 +676,11 @@ export default {
     },
     // 打开回收或返厂弹窗 (支持单条、多条操作))
     openReturnDialog (params, name) {
+      console.log(name, params)
+      if (params && name === '回收' && params.row.status < 40) {
+        this.$Message.warning('您选择的订单还未确认到货，请先确认货物已到货')
+        return
+      }
       const _this = this
       const data = {
         id: this.selectOrderList,
