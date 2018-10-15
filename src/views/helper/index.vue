@@ -11,7 +11,7 @@
         {{menu.title}}
         </MenuItem>
       </Submenu>
-      <Submenu name="2">
+      <!-- <Submenu name="2">
         <template slot="title">
           <i class="icon font_family icon-shipin"></i>
           <span class="title">视频介绍</span>
@@ -19,7 +19,7 @@
         <MenuItem v-for="menu in videoMenu" :key="menu.id" :name="menu.title" class="secondTitle" @click.native="clickLeftMenuVideo(menu)">
         {{menu.title}}
           </MenuItem>
-      </Submenu>
+      </Submenu> -->
     </Menu>
     </Col>
     <Col span="20" class="contentInfoDiv">
