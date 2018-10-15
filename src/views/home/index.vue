@@ -32,7 +32,7 @@
         </Col>
       </Row>
     </div>
-    <Row :gutter="16">
+    <Row :gutter="16" type="flex" justify="left">
       <!-- 提货代办 -->
       <PickupTodo v-if="cardChecksTemp.includes('pickup-todo')"/>
       <!-- 送货代办 -->
@@ -317,7 +317,6 @@ export default {
   &__card-item
     padding-left 9px
     padding-right 9px
-    display list-item
     overflow hidden
   &__header
     position relative
