@@ -183,7 +183,6 @@ export default {
           title: '现金',
           key: 'cashAmount',
           render: (h, p) => {
-            console.log(p.row)
             return h(MoneyInput, {
               props: {
                 value: p.row.cashAmount,

@@ -97,7 +97,7 @@
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="结算方式:" prop="settlementType">
-        <Select v-model="orderForm.settlementType">
+        <Select ref="settlementSelector" v-model="orderForm.settlementType">
           <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
           <!-- <Option value="1">现付</Option>
           <Option value="2">到付</Option>
@@ -164,7 +164,7 @@
     <Row :gutter="16" class="i-mt-15">
       <Col span="6">
       <FormItem label="提货方式:" prop="pickup">
-        <Select v-model="orderForm.pickup">
+        <Select ref="pickupSelector" v-model="orderForm.pickup">
           <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
       </FormItem>
@@ -449,6 +449,21 @@ export default {
           vm.loading = false
         })
     }
+    /**
+     * focus到结算方式和提货方式等下拉框时要弹出下拉框
+     */
+    ['pickupSelector', 'settlementSelector'].forEach((selector) => {
+      vm.$refs[selector].$refs.reference.onfocus = (e) => {
+        vm.$refs[selector].toggleHeaderFocus(e)
+        vm.$nextTick(() => {
+          setTimeout(() => {
+            if (!vm.$refs[selector].visible) {
+              vm.$refs[selector].toggleMenu(e)
+            }
+          }, 200)
+        })
+      }
+    })
   },
   beforeDestroy () {
     this.resetForm()
@@ -570,11 +585,12 @@ export default {
         }
       })
     },
+    handleSettle (e) {
+      console.log('focus', e)
+    },
     // 提交表单
     handleSubmit (e) {
       const vm = this
-      console.log('cargoes', this.consignerCargoes)
-      // vm.syncStoreCargoes()
       vm.disabled = true
       return new Promise((resolve, reject) => {
         vm.$refs.orderForm.validate((valid) => {
@@ -591,6 +607,7 @@ export default {
                 break
               }
             }
+
             if (findError) {
               vm.$Message.error(findError)
               vm.disabled = false
@@ -642,7 +659,11 @@ export default {
               })
           } else {
             vm.disabled = false
-            this.$Message.error('请填写必填信息')
+            // 主动滚动到顶部
+            if (vm.orderForm.pickup) {
+              vm.$parent.$el.scrollTop = 0
+            }
+            vm.$Message.error('请填写必填信息')
             reject(new Error('请填写必填信息'))
           }
         })
