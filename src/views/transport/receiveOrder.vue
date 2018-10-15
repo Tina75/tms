@@ -135,7 +135,7 @@ export default {
   name: 'ReceiveManager',
   components: { TabHeader, PageTable, SelectInput, PrintPickup },
   mixins: [ BasePage, TransportBase, SelectInputMixin, TransportMixin ],
-  metaInfo: { title: '提货管理' },
+  metaInfo: { title: '提货单管理' },
   data () {
     return {
       tabType: 'PICKUP',
