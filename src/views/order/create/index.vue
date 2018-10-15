@@ -573,8 +573,6 @@ export default {
     // 提交表单
     handleSubmit (e) {
       const vm = this
-      console.log('cargoes', this.consignerCargoes)
-      // vm.syncStoreCargoes()
       vm.disabled = true
       return new Promise((resolve, reject) => {
         vm.$refs.orderForm.validate((valid) => {
