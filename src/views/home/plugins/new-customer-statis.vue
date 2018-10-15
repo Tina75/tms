@@ -1,7 +1,7 @@
 <template>
   <div is="i-col" span="6" class="i-mt-15 page-home__card-item">
     <BlankCard to="/client/sender" page-title="发货方管理" >
-      <div slot="title">新增客户数</div>
+      <div slot="title">今日新增客户数</div>
       <ECharts v-if="show" :options="options" :auto-resize="true"></ECharts>
       <noData v-else></noData>
     </BlankCard>
@@ -43,7 +43,7 @@ export default {
         tooltip: {
           trigger: 'item',
           position: [50, 0],
-          formatter: '{a} <br/>{b}: {c} ({d}%)'
+          formatter: '{b}: {c} ({d}%)'
         },
         legend: {
           show: false
