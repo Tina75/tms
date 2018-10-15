@@ -58,7 +58,7 @@
         "powerCode":120100
       },
       {
-        "name":"提货管理",
+        "name":"提货单管理",
         "path":"/transport/receiveOrder",
         "powerCode":120200
       },

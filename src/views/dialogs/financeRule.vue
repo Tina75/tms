@@ -41,7 +41,7 @@ export default {
     const chargeValidate = (rule, value, callback) => {
       const type = this.ruleOptions[value].ruleType
       if (errorMsg) callback(new Error(errorMsg))
-      else if ((type === 1 && !this.weight) || (type === 2 && !this.volume)) callback(new Error('未能找到相应的计费规则'))
+      else if ((type === 1 && !this.weight) || (type === 2 && !this.volume) || !type) callback(new Error('未能找到相应的计费规则'))
       else callback()
     }
 
@@ -58,6 +58,7 @@ export default {
     }
   },
   created () {
+    console.log(this.$data)
     this.fetchRules()
   },
   methods: {
