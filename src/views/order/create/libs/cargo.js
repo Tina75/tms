@@ -8,6 +8,10 @@ export default class Cargo {
   constructor (props, transfer = false) {
     this.quantity = null
     this.editable = false
+    // inputnumber 控件不会默认设置1了
+    this.cargoCost = null
+    this.weight = null
+    this.volume = null
     if (props) {
       this.id = props.id || uniqueIndex++
       this.cargoName = props.cargoName
@@ -23,7 +27,7 @@ export default class Cargo {
       }
 
       // 数量
-      this.quantity = props.quantity || undefined
+      this.quantity = props.quantity || null
       // 包装, 10个字
       this.unit = props.unit
       // 备注 100

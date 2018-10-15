@@ -83,7 +83,16 @@
       </Col>
     </Row>
     <Title>货物信息</Title>
-    <Table :columns="goodsColumn" :data="consignerCargoes" :disabled-hover="true" :highlight-row="false" stripe>
+    <CargoTable
+      :cargoes="cargoes"
+      :data-source="consignerCargoes"
+      :on-append="appendCargo"
+      :on-remove="removeCargo"
+      :on-select="selectCargo"
+    >
+
+    </CargoTable>
+    <!-- <Table :columns="goodsColumn" :data="consignerCargoes" :disabled-hover="true" :highlight-row="false" stripe>
       <div slot="footer">
         <tr class="ivu-table-row">
           <td>
@@ -105,7 +114,7 @@
           </td>
         </tr>
       </div>
-    </Table>
+    </Table> -->
     <Title class="i-mb-15 i-mt-15">应收费用</Title>
     <Row :gutter="16">
       <Col span="6">
@@ -221,6 +230,7 @@ import _ from 'lodash'
 import settlements from '@/libs/constant/settlement.js'
 import pickups from '@/libs/constant/pickup.js'
 import Cargo from './libs/cargo'
+import CargoTable from './components/CargoTable.vue'
 
 const transferFeeList = ['freightFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
 export default {
@@ -233,7 +243,8 @@ export default {
     OrderPrint,
     AreaSelect,
     SelectInput,
-    FontIcon
+    FontIcon,
+    CargoTable
   },
   mixins: [BaseComponent, BasePage],
   data () {
@@ -260,9 +271,9 @@ export default {
         callback()
       }
     }
-    const setObject = (params, value) => {
-      return { index: params.index, name: params.column.key, value }
-    }
+    // const setObject = (params, value) => {
+    //   return { index: params.index, name: params.column.key, value }
+    // }
     const validatePhone = (rule, value, callback) => {
       if (/1[0-9]{10}$/.test(value)) {
         callback()
@@ -276,7 +287,7 @@ export default {
       autoFocus: false, // 客户信息输入框自动焦点focus
       loading: false, // 查询订单详情加载状态
       disabled: false, // 保存按钮
-      goodsColumn: [
+      /* goodsColumn: [
         {
           title: ' ',
           key: 'index',
@@ -535,6 +546,7 @@ export default {
           }
         }
       ],
+      */
       orderForm: {
         // 客户，一般是公司名
         consignerName: '',
@@ -633,13 +645,13 @@ export default {
 
       },
       consignerCargoes: [new Cargo()],
-      tempCargoes: {},
-      statics: {
-        weight: 0,
-        volume: 0,
-        cargoCost: 0,
-        quantity: 0
-      },
+      // tempCargoes: {},
+      // statics: {
+      //   weight: 0,
+      //   volume: 0,
+      //   cargoCost: 0,
+      //   quantity: 0
+      // },
       // 到达时间限制
       endDateOptions: {
         disabledDate (date) {
@@ -664,22 +676,22 @@ export default {
       //  'consignerCargoes',
       // 'sumRow'
     ]),
-    sumRow (state, getters) {
-      return this.consignerCargoes.reduce((sum, cargo) => {
-        // 读取临时数据
+    // sumRow (state, getters) {
+    //   return this.consignerCargoes.reduce((sum, cargo) => {
+    //     // 读取临时数据
 
-        sum.weight = float.round((cargo.weight || 0) + sum.weight)
-        sum.volume = float.round((cargo.volume || 0) + sum.volume, 1)
-        sum.cargoCost = float.round((cargo.cargoCost || 0) + sum.cargoCost)
-        sum.quantity = (cargo.quantity || 0) + sum.quantity
-        return sum
-      }, {
-        weight: 0,
-        volume: 0,
-        cargoCost: 0,
-        quantity: 0
-      })
-    },
+    //     sum.weight = float.round((cargo.weight || 0) + sum.weight)
+    //     sum.volume = float.round((cargo.volume || 0) + sum.volume, 1)
+    //     sum.cargoCost = float.round((cargo.cargoCost || 0) + sum.cargoCost)
+    //     sum.quantity = (cargo.quantity || 0) + sum.quantity
+    //     return sum
+    //   }, {
+    //     weight: 0,
+    //     volume: 0,
+    //     cargoCost: 0,
+    //     quantity: 0
+    //   })
+    // },
     totalFee () {
       const feeList = ['freightFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
       const orderForm = this.orderForm
@@ -764,7 +776,7 @@ export default {
     selectCargo (params, cargoItem) {
       const cargo = this.cargoes.find(cg => cg.id === cargoItem.id)
       if (cargo) {
-        this.syncStoreCargoes()
+        // this.syncStoreCargoes()
         this.fullUpdateCargo({ index: params.index, cargo })
       }
     },
@@ -776,62 +788,62 @@ export default {
      * @param item {object} 当前列的参数，包含索引，row， column
      * @param type {string} update|remove，更改或删除
      */
-    updateLocalCargo (item, type = 'update') {
-      const sumFields = ['weight', 'volume', 'cargoCost', 'quantity']
-      // index, name, value
-      if (type === 'update') {
-        if (!this.tempCargoes[item.index]) {
-          this.tempCargoes[item.index] = {}
-        }
-        if (sumFields.indexOf(item.name) !== -1) {
-          if (this.tempCargoes[item.index][item.name] || this.tempCargoes[item.index][item.name] === 0) {
-            this.statics[item.name] = float.round(this.statics[item.name] - (this.tempCargoes[item.index][item.name] || 0) + item.value)
-          } else {
-            this.statics[item.name] = float.round(this.statics[item.name] - (this.consignerCargoes[item.index][item.name] || 0) + item.value)
-          }
-        }
-        this.tempCargoes[item.index][item.name] = item.value
-      } else if (type === 'remove') {
-        this.tempCargoes[item.index] = null
-        delete this.tempCargoes[item.index]
-      }
-    },
+    // updateLocalCargo (item, type = 'update') {
+    //   const sumFields = ['weight', 'volume', 'cargoCost', 'quantity']
+    //   // index, name, value
+    //   if (type === 'update') {
+    //     if (!this.tempCargoes[item.index]) {
+    //       this.tempCargoes[item.index] = {}
+    //     }
+    //     if (sumFields.indexOf(item.name) !== -1) {
+    //       if (this.tempCargoes[item.index][item.name] || this.tempCargoes[item.index][item.name] === 0) {
+    //         this.statics[item.name] = float.round(this.statics[item.name] - (this.tempCargoes[item.index][item.name] || 0) + item.value)
+    //       } else {
+    //         this.statics[item.name] = float.round(this.statics[item.name] - (this.consignerCargoes[item.index][item.name] || 0) + item.value)
+    //       }
+    //     }
+    //     this.tempCargoes[item.index][item.name] = item.value
+    //   } else if (type === 'remove') {
+    //     this.tempCargoes[item.index] = null
+    //     delete this.tempCargoes[item.index]
+    //   }
+    // },
     /**
      * 当选中已维护货物的时候，更改数量时，需要同时修改重量、体积和货值等参数
      * @param params {index:number, column: object, row: object}
      */
-    syncUpdateCargoProps (params) {
-      // 是否输入了货物名称
-      let cargoName
-      if (this.tempCargoes[params.index] && this.tempCargoes[params.index].cargoName) {
-        cargoName = this.tempCargoes[params.index].cargoName
-      } else if (this.consignerCargoes[params.index].cargoName) {
-        cargoName = this.consignerCargoes[params.index].cargoName
-      }
-      // 查找货物名称，是否是已维护的货物信息
-      if (cargoName) {
-        const matchCargo = this.cargoes.find((cargo) => cargo.cargoName === cargoName)
-        // 匹配成功
-        if (matchCargo) {
-          let syncCargo = new Cargo(matchCargo);
-          ['weight', 'volume', 'cargoCost'].forEach((key) => {
-            let value = params.value || 1
-            syncCargo[key] = float.round(value * syncCargo[key])
-          })
-          syncCargo.quantity = params.value
-          this.syncStoreCargoes()
-          this.fullUpdateCargo({ index: params.index, cargo: syncCargo })
-        }
-      }
-    },
+    // syncUpdateCargoProps (params) {
+    //   // 是否输入了货物名称
+    //   let cargoName
+    //   if (this.tempCargoes[params.index] && this.tempCargoes[params.index].cargoName) {
+    //     cargoName = this.tempCargoes[params.index].cargoName
+    //   } else if (this.consignerCargoes[params.index].cargoName) {
+    //     cargoName = this.consignerCargoes[params.index].cargoName
+    //   }
+    //   // 查找货物名称，是否是已维护的货物信息
+    //   if (cargoName) {
+    //     const matchCargo = this.cargoes.find((cargo) => cargo.cargoName === cargoName)
+    //     // 匹配成功
+    //     if (matchCargo) {
+    //       let syncCargo = new Cargo(matchCargo);
+    //       ['weight', 'volume', 'cargoCost'].forEach((key) => {
+    //         let value = params.value || 1
+    //         syncCargo[key] = float.round(value * syncCargo[key])
+    //       })
+    //       syncCargo.quantity = params.value
+    //       this.syncStoreCargoes()
+    //       this.fullUpdateCargo({ index: params.index, cargo: syncCargo })
+    //     }
+    //   }
+    // },
     // 同步当前的修改数据到vuex的store
-    syncStoreCargoes () {
-      for (let index in this.tempCargoes) {
-        this.updateCargo({ index, cargo: this.tempCargoes[index] })
-      }
-      // 同步完，释放掉
-      this.tempCargoes = {}
-    },
+    // syncStoreCargoes () {
+    //   for (let index in this.tempCargoes) {
+    //     this.updateCargo({ index, cargo: this.tempCargoes[index] })
+    //   }
+    //   // 同步完，释放掉
+    //   this.tempCargoes = {}
+    // },
     /**
    * 添加一行货物信息
    * @param {*} store
@@ -855,9 +867,9 @@ export default {
      * 修改货物信息
      * @param {object} item {index:0, cargo:object}
      */
-    updateCargo (item) {
-      this.consignerCargoes[item.index] = new Cargo(Object.assign({}, this.consignerCargoes[item.index], item.cargo))
-    },
+    // updateCargo (item) {
+    //   this.consignerCargoes[item.index] = new Cargo(Object.assign({}, this.consignerCargoes[item.index], item.cargo))
+    // },
     /**
      * 删除后增加
      */
@@ -933,8 +945,8 @@ export default {
     // 提交表单
     handleSubmit (e) {
       const vm = this
-
-      vm.syncStoreCargoes()
+      console.log('cargoes', this.consignerCargoes)
+      // vm.syncStoreCargoes()
       vm.disabled = true
       return new Promise((resolve, reject) => {
         vm.$refs.orderForm.validate((valid) => {

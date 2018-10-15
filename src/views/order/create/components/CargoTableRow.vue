@@ -19,6 +19,7 @@
       v-model="record[col.key]"
       :min="col.min"
       :parser="handleParse"
+      @on-change="handleChange(col.key)"
     >
     </InputNumber>
     <Input v-else v-model="record[col.key]" :maxlength="col.max"></Input>
@@ -35,6 +36,7 @@ export default {
   props: {
     index: Number,
     prefixClass: String,
+    cargoes: Array,
     headers: Array,
     record: Object,
     col: Object,
@@ -42,19 +44,66 @@ export default {
     onRemove: Function,
     onSelect: Function
   },
+  data () {
+    return {
+      type: null
+    }
+  },
+  computed: {
+    cargoOptions (state, getters) {
+      return this.cargoes.map(cargo => {
+        let name = [
+          cargo.cargoName,
+          `${cargo.weight}吨`,
+          `${cargo.volume}方`
+        ]
+        if (cargo.cargoCost) {
+          name.push(`${cargo.cargoCost}元`)
+        }
+        if (cargo.unit) {
+          name.push(cargo.unit)
+        }
+        return {
+          name: name.join('，'),
+          value: cargo.cargoName,
+          id: cargo.id
+        }
+      })
+    }
+  },
   methods: {
     handleParse (value) {
-      return float.floor(value).toString()
+      if (this.requird) {
+        return float.floor(value, this.col.point).toString()
+      }
+      return value ? float.floor(value, this.col.point).toString() : value
     },
     handleAppend () {
-      this.$emit('on-append', { index: this.index }, this.record)
+      // this.$emit('on-append', { index: this.index }, this.record)
+      this.onAppend(this.index, this.record)
     },
     handleRemove (no, row) {
-      this.$emit('on-remove', { index: this.index }, this.record)
+      this.onRemove(this.index, this.record)
     },
-    handleSelect (no) {
-      return (name, cargoItem) => {
-        this.$emit('on-select', { index: this.index }, this.reocrd)
+    handleSelect (no, cargo) {
+      this.onSelect({ index: this.index }, cargo)
+    },
+    handleChange (type) {
+      if (type !== 'quantity') {
+        return
+      }
+      // 是否输入了货物名称
+      let cargoName = this.record.cargoName
+      // 查找货物名称，是否是已维护的货物信息
+      if (cargoName) {
+        const matchCargo = this.cargoes.find((cargo) => cargo.cargoName === cargoName)
+        // 匹配成功
+        if (matchCargo) {
+          ['weight', 'volume', 'cargoCost'].forEach((key) => {
+            let value = this.record[this.col.key] || 1
+            this.record[key] = float.round(value * matchCargo[key])
+          })
+        }
       }
     }
   }

@@ -9,7 +9,7 @@
                 <div :class="headerColClass">
                   <span v-if="header.required" class="van-c-red">*</span>
                   <span v-text="header.title"></span>
-                  <Tooltip v-if="header.poptip" :max-width="200" content="header.poptip" placement="top" transfer>
+                  <Tooltip v-if="header.poptip" :max-width="200" :content="header.poptip" placement="top" transfer>
                     <Icon type="ios-information-circle" size="16" color="#FFBB44"></Icon>
                   </Tooltip>
                 </div>
@@ -20,13 +20,14 @@
             <tr v-for="(item, no) in dataSource" :class="`${prefixClass}-row`" :key="no">
               <td v-for="(col, index) in headers" :key="index">
                 <CargoTableRow
+                  :cargoes="cargoes"
                   :prefix-class="prefixClass"
                   :index="no"
                   :record="item"
                   :col="col"
-                  @on-append="onAppend"
-                  @on-remove="onRemove"
-                  @on-select="onSelect"
+                  :on-append="onAppend"
+                  :on-remove="onRemove"
+                  :on-select="onSelect"
                 >
                 </CargoTableRow>
               </td>
@@ -188,26 +189,6 @@ export default {
         volume: 0,
         cargoCost: 0,
         quantity: 0
-      })
-    },
-    cargoOptions (state, getters) {
-      return this.cargoes.map(cargo => {
-        let name = [
-          cargo.cargoName,
-          `${cargo.weight}吨`,
-          `${cargo.volume}方`
-        ]
-        if (cargo.cargoCost) {
-          name.push(`${cargo.cargoCost}元`)
-        }
-        if (cargo.unit) {
-          name.push(cargo.unit)
-        }
-        return {
-          name: name.join('，'),
-          value: cargo.cargoName,
-          id: cargo.id
-        }
       })
     }
   },
