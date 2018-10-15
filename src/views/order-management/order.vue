@@ -87,6 +87,7 @@
       :columns="tableColumns"
       :extra-columns="extraColumns"
       :show-filter="true"
+      :row-class-name="rowClassName"
       style="margin-top: 15px"
       @on-selection-change="handleSelectionChange"
       @on-column-change="handleColumnChange">
@@ -354,7 +355,8 @@ export default {
                 h('span', params.column.title),
                 h('Tooltip', {
                   props: {
-                    'max-width': '200',
+                    'max-width': '220',
+                    offset: -9,
                     content: '待调度订单可进行提货 / 送货调度',
                     placement: 'top-start',
                     transfer: true
@@ -1314,6 +1316,15 @@ export default {
         data,
         fileName: '订单明细'
       })
+    },
+    // 待调度
+    rowClassName (row, index) {
+      console.log(row)
+      if ((this.curStatusName === '待提货' && row.pickupStatus === 0 && row.transStatus === 0 && row.parentId === '') || (this.curStatusName === '待送货' && row.dispatchStatus === 0 && row.transStatus === 0 && row.disassembleStatus !== 1)) {
+        return 'ivu-table-row-gray'
+      } else {
+        return ''
+      }
     }
   }
 }

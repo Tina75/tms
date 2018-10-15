@@ -53,6 +53,7 @@ export default {
               h('Tooltip', {
                 props: {
                   'max-width': '200',
+                  offset: -9,
                   content: '点击“确认”后，完成货物拆分',
                   placement: 'top-start',
                   transfer: true
@@ -273,7 +274,7 @@ export default {
           }
         },
         {
-          title: '单位',
+          title: '包装方式',
           key: 'unit',
           width: 80
         },
@@ -404,7 +405,7 @@ export default {
           key: 'quantity'
         },
         {
-          title: '单位',
+          title: '包装方式',
           key: 'unit',
           width: 80
         },
