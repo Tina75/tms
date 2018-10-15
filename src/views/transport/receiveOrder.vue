@@ -633,7 +633,7 @@ export default {
 
     // 提货
     billPickup (id) {
-      var self = this
+      const self = this
       Server({
         url: '/load/bill/check/order',
         method: 'post',
