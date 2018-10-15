@@ -1,5 +1,5 @@
 <template>
-  <div :class="`${prefixClass}-cell`">
+  <div :class="classes">
     <a v-if="col.type==='operation'" href="javascript:;">
       <Icon type="ios-add-circle" size="24" color="#7ED321" @click="handleAppend"></Icon>
       <Icon type="ios-remove-circle" size="24" color="#EC4E4E" @click="handleRemove"></Icon>
@@ -25,7 +25,7 @@
     >
     </InputNumber>
     <Input v-else v-model="record[col.key]" :maxlength="col.max"></Input>
-    <p v-if="record.hasError && record.errorMsg[col.key] !== ''" class="i-error">
+    <p v-if="record.hasError && record.errorMsg[col.key] !== ''" :class="errorClass">
       {{record.errorMsg[col.key]}}
     </p>
   </div>
@@ -55,6 +55,18 @@ export default {
     }
   },
   computed: {
+    classes () {
+      return [
+        `${this.prefixClass}-cell`,
+        `${this.prefixClass}-cell-margin`
+      ]
+    },
+    errorClass () {
+      return [
+        'i-error',
+        `${this.prefixClass}-error-content`
+      ]
+    },
     cargoOptions (state, getters) {
       return this.cargoes.map(cargo => {
         let name = [
@@ -132,6 +144,11 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="stylus" scoped>
+.ivu-table-cell-margin
+  margin-top 25px
+  margin-bottom 25px
+.ivu-table-error-content
+  line-height 22px
+  position absolute
 </style>
