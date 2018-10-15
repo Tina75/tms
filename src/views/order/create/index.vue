@@ -171,7 +171,7 @@
       </Col>
       <Col span="6">
       <FormItem label="回单数量:" prop="receiptCount">
-        <InputNumber v-model="orderForm.receiptCount" :min="0" :parser="value => parseInt(value).toString()" class="order-create__input-w100">
+        <InputNumber v-model="orderForm.receiptCount" :min="0" :parser="value => value ?  parseInt(value).toString() : value" class="order-create__input-w100">
         </InputNumber>
       </FormItem>
       </Col>
