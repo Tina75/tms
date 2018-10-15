@@ -13,6 +13,13 @@
           <menu-item v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path"><font-icon :type="item.icon" :size="18"></font-icon>{{item.name}}</menu-item>
         </template>
       </template>
+      <div class="footer">
+        <font-icon type="ico-call" size="28" color="#aaa"/>
+        <span >
+          <p>客服电话</p>
+          <p style="font-size:13px">025-66606056</p>
+        </span>
+      </div>
     </Menu>
     <div v-show="collapsed" class="menu-collapsed">
       <p class="title"><font-icon type="logo-1" size="32" color="white"/></p>
@@ -37,6 +44,13 @@
           </Tooltip>
         </div>
       </template>
+      <p class="footer footer-collapsed">
+        <Tooltip content="025-66606056" transfer placement="left">
+          <div>
+            <font-icon type="ico-call" size="20" color="white"/>
+          </div>
+        </Tooltip>
+      </p>
     </div>
   </div>
 </template>
@@ -69,6 +83,7 @@ export default {
     this.openedNames = this.getopenedNames(this.activeName)
   },
   methods: {
+
     getopenedNames (activeName) {
       const matchs = activeName.split('/')
       return ['/' + matchs[1]]
@@ -119,6 +134,7 @@ export default {
 <style lang="stylus" scoped>
 .sider
   z-index 10
+  padding-bottom 50px
 .title
   font-size 20px
   color white
@@ -127,6 +143,35 @@ export default {
   height 50px
   padding 0
   margin 0
+.footer
+  border-top 1px solid rgba(255,255,255,0.1)
+  margin-left 10px
+  text-align center
+  position fixed
+  padding-top 5px
+  padding-bottom 2px
+  width 180px
+  bottom 0
+  left 0
+  color #aaa
+  background #252A2F
+  z-index 10
+  font-size 12px
+  &-collapsed
+    width 50px
+    margin-left 0
+    &>div
+      width 50px
+  span
+    text-align left
+    margin-left 10px
+    display inline-block
+    width 100px
+    p
+      line-height 1.1
+      font-size 12px
+      margin 0
+      padding 0
 .menu-collapsed
   .drop-menu-a
     padding 6px 15px
