@@ -4,6 +4,9 @@
       <Sider v-model="collapsed" :collapsed-width="50" hide-trigger collapsible style="overflow:hidden">
         <side-bar :collapsed="collapsed" :active-name="$route.path" :menu-list="menuList" @on-select="onMenuSelect"/>
       </Sider>
+      <a :class="['sider-trigger-a', collapsed ? 'collapsed' : 'uncollapsed']"  type="text" @click="collapsed = !collapsed">
+        <i class="icon font_family icon-ico-zz1"></i>
+      </a>
       <Layout>
         <Header class="header-con">
           <header-bar :collapsed.sync="collapsed" :name="UserInfo.name" @on-open-msg="onOpenMsg"/>
@@ -56,6 +59,9 @@ export default {
       this.turnToPage(route)
     })
     this.init()
+    this.$Message.config({
+      duration: 3
+    })
   },
   methods: {
     ...mapActions(['getPermissons', 'getUserInfo', 'getMessageCount']),
@@ -267,6 +273,8 @@ html, body
   color #2c3e50
   width 100%
   height 100%
+  .ivu-layout-sider-children .ivu-menu-dark .ivu-menu-item
+    max-height 49px
   .container
     height 100vh
     background #EFEFEF
@@ -284,7 +292,7 @@ html, body
       .tag-nav-wrapper
         width auto
         top 4px
-        left 30px
+        left 0
         right 185px
         position absolute
         padding 0
@@ -306,4 +314,29 @@ html, body
     min-width 85px
 .ivu-layout
   background #efefef
+.sider-trigger-a
+  position absolute
+  top 45%
+  left 200px
+  width:0;
+  height:55px;
+  border-left:11px solid #C1C6CB;
+  border-top:7px solid transparent;
+  border-bottom:7px solid transparent;
+  i
+    display inline-block
+    color #252A2F
+    margin-left -13px
+    margin-top 10px
+    font-size 14px
+    transform rotate(180deg)
+.collapsed
+  transform translateX(-150px)
+  transition transform .2s ease
+  i
+    transform rotate(0deg)
+    transition transform .2s ease
+  // left 50px
+.uncollapsed
+  // transition transform .2s ease
 </style>
