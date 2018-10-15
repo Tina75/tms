@@ -1321,7 +1321,7 @@ export default {
     rowClassName (row, index) {
       console.log(row)
       if ((this.curStatusName === '待提货' && row.pickupStatus === 0 && row.transStatus === 0 && row.parentId === '') || (this.curStatusName === '待送货' && row.dispatchStatus === 0 && row.transStatus === 0 && row.disassembleStatus !== 1)) {
-        return 'can-dispatch'
+        return 'ivu-table-row-gray'
       } else {
         return ''
       }
@@ -1362,8 +1362,4 @@ export default {
 .order-right
   .ivu-input
     height 35px
-.page-table
-  .can-dispatch
-    td
-      background-color #f8f8f9
 </style>

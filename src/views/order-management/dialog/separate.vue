@@ -274,7 +274,7 @@ export default {
           }
         },
         {
-          title: '单位',
+          title: '包装方式',
           key: 'unit',
           width: 80
         },
@@ -405,7 +405,7 @@ export default {
           key: 'quantity'
         },
         {
-          title: '单位',
+          title: '包装方式',
           key: 'unit',
           width: 80
         },
