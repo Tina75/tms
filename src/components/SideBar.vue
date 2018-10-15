@@ -155,7 +155,7 @@ export default {
   left 0
   color #aaa
   background #252A2F
-  z-index 10
+  z-index 1111
   font-size 12px
   &-collapsed
     width 50px
