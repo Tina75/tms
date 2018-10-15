@@ -349,7 +349,7 @@ export default {
       const _this = this
       this.openDialog({
         name: 'order-management/dialog/outer',
-        data: { id: order.id },
+        data: { detail: order },
         methods: {
           ok (node) {
             _this.getDetail()
@@ -458,7 +458,7 @@ export default {
           name = '待提货'
           break
         case 20:
-          name = '待调度'
+          name = '待送货'
           break
         case 30:
           name = '在途'
