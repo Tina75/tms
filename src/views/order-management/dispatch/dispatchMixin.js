@@ -244,26 +244,24 @@ export default {
         else item._expanded = item._highlight = true
       })
     },
-    keepLeftExpandOnly (row, status) {
-      if (!status) {
+    keepLeftExpandOnly (row, expand) {
+      if (expand) { // 如果当前展开则收起
         this.leftExpandRow = null
         this.leftSelection = []
-        const rowStr = JSON.stringify(row)
         this.leftTableData.forEach(item => {
-          if (JSON.stringify(item) === rowStr) item._expanded = item._highlight = false
+          item._expanded = item._highlight = false
         })
         return
       }
       this.keepExpandOnly(row, 'left')
       this.fetchLeftExpandData()
     },
-    keepRightExpandOnly (row, status) {
-      if (!status) {
+    keepRightExpandOnly (row, expand) {
+      if (expand) { // 如果当前展开则收起
         this.rightExpandRow = null
         this.rightSelection = []
-        const rowStr = JSON.stringify(row)
         this.rightTableData.forEach(item => {
-          if (JSON.stringify(item) === rowStr) item._expanded = item._highlight = false
+          item._expanded = item._highlight = false
         })
         return
       }
@@ -274,12 +272,12 @@ export default {
     // 右侧表格列选中
     rightTableRowClick (row, index) {
       this.rightSelectRow = row._expanded ? null : { row, index }
-      this.keepRightExpandOnly(row, !row._expanded)
+      this.keepRightExpandOnly(row, row._expanded)
     },
 
     // 左侧表格列选中
     leftTableRowClick (row) {
-      this.keepLeftExpandOnly(row, !row._expanded)
+      this.keepLeftExpandOnly(row, row._expanded)
     },
 
     // 格式化城市

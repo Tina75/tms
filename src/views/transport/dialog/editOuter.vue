@@ -44,7 +44,7 @@
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '../components/SelectInput.vue'
-import TagNumberInput from '@/views/order/create/TagNumberInput'
+import TagNumberInput from '@/components/TagNumberInput'
 import float from '@/libs/js/float'
 export default {
   name: 'outer',

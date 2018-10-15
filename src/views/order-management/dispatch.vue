@@ -13,8 +13,6 @@
 import DispatchFreight from './dispatch/dispatchFreight'
 import DispatchPickup from './dispatch/dispatchPickup'
 
-let hasTabCode = false
-
 export default {
   name: 'dispatch',
   metaInfo: {
@@ -23,16 +21,9 @@ export default {
   components: { DispatchFreight, DispatchPickup },
   data () {
     return {
-      current: 'dispatchFreight'
+      current: Number(this.$route.query.tab) === 2 ? 'dispatchPickup' : 'dispatchFreight'
     }
-  },
-  created () {
-    if (this.$route.query.tab && !hasTabCode) {
-      hasTabCode = true
-      this.current = Number(this.$route.query.tab) === 2 ? 'dispatchPickup' : 'dispatchFreight'
-    }
-  },
-  destroyed () { hasTabCode = false }
+  }
 }
 </script>
 
