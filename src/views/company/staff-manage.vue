@@ -351,6 +351,7 @@ export default {
     transferAuthority (params) {
       this.roleRowInit = Object.assign({}, params.row)
       this.visibaleTransfer = true
+      this.getStaffSelectList()
     },
     removeSubForm () {
       let params = {}

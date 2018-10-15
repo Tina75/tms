@@ -2,9 +2,9 @@
   <Modal v-model="visiable" :mask-closable="false" width="440" @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">{{title}}</p>
     <br>
-    <b class="dialog-title">该版本将于<a>{{expirationTime | datetime}}</a>到期，到期后您将无法使用该软件</b>
+    <b class="dialog-title">本版本将于<a>{{expirationTime | datetime}}</a>到期，到期后您将无法使用本软件</b>
 
-    <p class="i-mt-40">您可以选择延长使用该软件，延长之后，您将拥有如下权益：</p>
+    <p class="i-mt-40">您可以选择延长使用本软件，延长之后，您将拥有如下权益：</p>
     <ol class="dialog-content">
       <li>软件的使用期限将增加365天</li>
       <li>将有专人为您提供服务</li>

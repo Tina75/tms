@@ -3,7 +3,7 @@
     <p slot="header" style="text-align:center;font-size:17px">生成对账单</p>
     <div class="create-data">
       <p><label>承运方：</label><span>{{partnerName}}</span></p>
-      <p><label>订单数：</label><span>{{orderNum}}</span></p>
+      <p><label>订单数：</label><span>{{idList.length}}</span></p>
       <p><label>日期范围：</label>
         <span v-if="startTime && endTime">{{startTime|datetime('yyyy-MM-dd')}} 至 {{endTime|datetime('yyyy-MM-dd')}}</span>
         <span v-if="startTime && !endTime">从{{startTime|datetime('yyyy-MM-dd')}}开始</span>

@@ -57,10 +57,12 @@ export default class Cargo {
     }
     if (field === 'weight' || field === 'volume') {
       if (!this.volume && this.volume !== 0 && !this.weight && this.weight !== 0) {
-        this.errorMsg[field] = '货物重量和体积至少填写一项'
+        if (!this.errorMsg['weight']) {
+          this.errorMsg['weight'] = '货物重量和体积至少填写一项'
+        }
       } else {
         delete this.errorMsg['weight']
-        delete this.errorMsg['volume']
+        // delete this.errorMsg['volume']
       }
     }
     this.hasError = false

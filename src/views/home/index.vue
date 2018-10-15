@@ -32,7 +32,7 @@
         </Col>
       </Row>
     </div>
-    <Row :gutter="16">
+    <Row :gutter="16" type="flex" justify="left">
       <!-- 提货代办 -->
       <PickupTodo v-if="cardChecksTemp.includes('pickup-todo')"/>
       <!-- 送货代办 -->
@@ -169,7 +169,7 @@ export default {
         return `<strong class="van-font-14 i-pr-20">下午好，${name}</strong> &nbsp;&nbsp;相信自己，一定会有辉煌的一天。`
       } else if (now >= 17 && now < 22) {
         return `<strong class="van-font-14 i-pr-20">晚上好，${name}</strong> &nbsp;&nbsp;既然选择了远方，便只顾风雨兼程。`
-      } else if (now >= 22 && now < 5) {
+      } else if (now >= 22 || now < 5) {
         return `<strong class="van-font-14 i-pr-20">夜深了，${name}</strong> &nbsp;&nbsp;再怎么忙绿，也要注意休息哦。`
       }
     }
@@ -317,7 +317,6 @@ export default {
   &__card-item
     padding-left 9px
     padding-right 9px
-    display list-item
     overflow hidden
   &__header
     position relative

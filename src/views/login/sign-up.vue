@@ -138,11 +138,11 @@ export default {
         ],
         name: [
           { required: true, message: '公司名不能为空', trigger: 'blur' },
-          { type: 'string', min: 2, max: 10, message: '联系人不能少于2个字也不能超过10个字', trigger: 'blur' }
+          { type: 'string', max: 25, message: '公司名不能超过25个字', trigger: 'blur' }
         ],
         userName: [
           { required: true, message: '联系人不能为空', trigger: 'blur' },
-          { type: 'string', max: 25, message: '公司名不能超过25个字', trigger: 'blur' }
+          { type: 'string', min: 2, max: 10, message: '联系人不能少于2个字也不能超过10个字', trigger: 'blur' }
         ],
         address: [
           { required: true, message: '公司地址不能为空', trigger: 'blur' },

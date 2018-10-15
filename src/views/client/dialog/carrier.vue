@@ -32,7 +32,7 @@
       </FormItem>
       <FormItem label="车长:" prop="carLength">
         <Select v-model="validate.driver.carLength" >
-          <Option v-for="(item, key) in carLengthMap" :key="key" :value="key">{{item}}</Option>
+          <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
         </Select>
       </FormItem>
       <FormItem label="核定载重量:" prop="shippingWeight">
@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
+import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
 import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, CODE, CAR } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
 export default {
@@ -91,7 +91,7 @@ export default {
   data () {
     return {
       carTypeMap: CAR_TYPE1,
-      carLengthMap: CAR_LENGTH1,
+      carLengthMap: CAR_LENGTH,
       flag: 2,
       payTypeMap: {
         1: '按单付',
