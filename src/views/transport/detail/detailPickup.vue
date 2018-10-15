@@ -625,7 +625,7 @@ export default {
           },
           methods: {
             complete () {
-              self.$refs.$table.fetch()
+              self.fetchData()
             }
           }
         })
