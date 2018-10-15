@@ -1,10 +1,9 @@
 <template>
-  <div is="i-col" span="6" class="i-mt-15 page-home__padding-8">
+  <div is="i-col" span="6" class="i-mt-15 page-home__card-item">
     <BlankCard to="/client/sender" page-title="发货方管理" >
-      <div slot="title">新增顾客数</div>
-      <div>
-        <ECharts :options="options" :auto-resize="true"></ECharts>
-      </div>
+      <div slot="title">新增客户数</div>
+      <ECharts v-if="show" :options="options" :auto-resize="true"></ECharts>
+      <noData v-else></noData>
     </BlankCard>
   </div>
 </template>
@@ -14,6 +13,7 @@
 import BlankCard from '../components/BlankCard.vue'
 import ECharts from 'vue-echarts/components/ECharts'
 import mixin from './mixin.js'
+import noData from './noData.vue'
 
 import 'echarts/lib/chart/pie'
 import 'echarts/lib/component/tooltip'
@@ -22,12 +22,23 @@ export default {
   name: 'new-customer-statis',
   components: {
     BlankCard,
-    ECharts
+    ECharts,
+    noData
   },
   mixins: [mixin],
   data () {
     return {
-      options: {
+      data: [
+        { value: 10, name: '发货方', id: 'consignerCnt' },
+        { value: 20, name: '承运商', id: 'carriersCnt' },
+        { value: 30, name: '外转方', id: 'transfereeCnt' }
+      ],
+      show: false
+    }
+  },
+  computed: {
+    options () {
+      return {
         color: ['#418DF9', '#00A4BD', '#FA871E', '#FFBB44', '#FA871E', '#A7E7FF', '#79D9F0'],
         tooltip: {
           trigger: 'item',
@@ -42,7 +53,7 @@ export default {
           left: 'center',
           top: 'center',
           style: {
-            text: '0家',
+            text: `${this.data.map(e => e.value).reduce((s, e) => s + e)}家`,
             textAlign: 'center',
             fill: '#333',
             font: 'bolder 1em "Microsoft YaHei", sans-serif'
@@ -69,11 +80,7 @@ export default {
                 color: '#D9DEE8'
               }
             },
-            data: [
-              { value: 10, name: '发货方' },
-              { value: 20, name: '承运商' },
-              { value: 30, name: '外转方' }
-            ]
+            data: this.data
           }
         ]
       }
@@ -83,12 +90,15 @@ export default {
     load () {
       this.fetch('home/new/customer/cnt')
         .then((response) => {
-          const [data, res] = [response.data, []]
-          res.push({ value: data.consignerCnt, name: '发货方' })
-          res.push({ value: data.carriersCnt, name: '承运商' })
-          res.push({ value: data.transfereeCnt, name: '外转方' })
-          this.options.series[0].data = res
-          this.options.graphic.style.text = `${data.consignerCnt + data.carriersCnt + data.transfereeCnt}家`
+          const data = response.data
+          if (data.consignerCnt || data.carriersCnt || data.transfereeCnt) {
+            this.show = true
+            const arr = this.data
+            arr.forEach((item) => {
+              item.value = data[item.id]
+            })
+            this.data = arr.filter(e => e.value !== 0)
+          }
         })
     }
   }

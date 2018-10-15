@@ -65,27 +65,31 @@ export default {
           width: 60,
           key: 'action',
           render: (h, params) => {
-            return h('a', {
+            return this.orderData.list.length > 2 ? h('a', {
               on: {
                 click: () => {
                   this.removeOrder(params)
                 }
               }
-            }, '移除')
+            }, '移除') : ''
           }
         },
         {
           title: '订单号',
-          key: 'orderNo',
-          render: (h, params) => {
-            return h('a', {
-              on: {
-                click: () => {
-                  this.toDetail(params)
-                }
-              }
-            }, params.row.orderNo)
-          }
+          width: 160,
+          key: 'orderNo'
+          // render: (h, params) => {
+          //   return h('a', {
+          //     style: {
+          //       color: '#418DF9'
+          //     },
+          //     on: {
+          //       click: () => {
+          //         this.toDetail(params)
+          //       }
+          //     }
+          //   }, params.row.orderNo)
+          // }
         },
         {
           title: '始发地',
@@ -141,7 +145,7 @@ export default {
               subOrderId: data.row.id
             }
           }).then(res => {
-            _this.orderData.getOrderList()
+            _this.getOrderList()
           }).catch(err => console.error(err))
         }
       })
@@ -227,4 +231,11 @@ export default {
       vertical-align: middle
     .list-box
       text-align: right
+      /deep/ .ivu-table-wrapper
+        margin-bottom: 20px
+      /deep/ .ivu-page-item-active
+        background-color: #00a4bd
+        border-radius: 5px
+        a
+          color: #ffffff
 </style>

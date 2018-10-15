@@ -21,7 +21,7 @@ export default {
     }
   },
   data () {
-    return { money: Number(this.value) ? Number(this.value) : null }
+    return { money: (this.value !== undefined && this.value !== '' && !isNaN((this.value))) ? Number(this.value) : null }
   },
   watch: {
     value (val) {
@@ -29,19 +29,8 @@ export default {
     }
   },
   methods: {
-    // moneyFormatter (val) {
-    //   val = val.toString()
-    //   if (val.split('.')[1] && val.split('.')[1].length > 2) return Number(val).toFixed(2)
-    //   return val
-    // },
-
-    // parser (val) {
-    //   console.log(val)
-    //   return Number(val).toFixed(2)
-    // },
-
     handlerBlur () {
-      this.money = Number(this.money.toFixed(2))
+      if (typeof this.money === 'number') this.money = Number(this.money.toFixed(2))
       this.$emit('input', this.money)
       this.$emit('on-blur', this.money)
     }
@@ -53,6 +42,19 @@ export default {
   .money-input-component
     position relative
     display: inline-block;
+
+    ::-webkit-input-placeholder
+      color #c5c8ce
+      font-size 12px
+    :-moz-placeholder
+      color #c5c8ce
+      font-size 12px
+    ::-moz-placeholder
+      color #c5c8ce
+      font-size 12px
+    :-ms-input-placeholder
+      color #c5c8ce
+      font-size 12px
 
     .ivu-input-number-handler-wrap
       display none

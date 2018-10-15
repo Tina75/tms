@@ -1,14 +1,14 @@
 <template>
   <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
     <p slot="header" style="text-align:center">{{title}}</p>
-    <Form ref="$form" :model="form" :rules="rules" :label-width="70" label-position="left" style="padding:0 20px;">
+    <Form ref="$form" :model="form" :rules="rules" :label-width="80" label-position="left" style="padding:0 20px;">
       <FormItem label="承运商：" prop="carrierName">
         <SelectInput v-model="form.carrierName"
                      mode="carrier"
                      placeholder="请选择"
                      @on-select="selectCarrierHandler" />
       </FormItem>
-      <FormItem label="车辆：" prop="carNo">
+      <FormItem label="车牌号：" prop="carNo">
         <SelectInput :carrier-id="carrierId"
                      v-model="form.carNo"
                      mode="carNo"

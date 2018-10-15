@@ -1,15 +1,15 @@
 <template>
   <div class="dialog">
     <Modal v-model="visiable" :mask-closable="false" width="400" @on-visible-change="close">
-      <p slot="header" style="text-align:center;font-size: 16px;">
+      <p slot="header" class="ModalTitle">
         <span>{{title}}</span>
       </p>
-      <Form ref="formModal" :model="formModal" :rules="rulesModal" :label-width="100" label-position="left" style="padding: 25px;height: 185px;">
+      <Form ref="formModal" :model="formModal" :rules="rulesModal" :label-width="100" label-position="left" class="formModal">
         <FormItem label="员工姓名：" prop="name">
           <Input v-model="formModal.name" placeholder="请输入员工姓名" class="inputClass"></Input>
         </FormItem>
         <FormItem label="手机号：" prop="phone">
-          <Input v-model="formModal.phone" placeholder="请输入手机号" class="inputClass"></Input>
+          <Input v-model="formModal.phone" maxlength="11" placeholder="请输入手机号" class="inputClass"></Input>
         </FormItem>
         <FormItem label="角色：" prop="roleId">
           <Select v-model="formModal.roleId" clearable class="inputClass">
@@ -135,9 +135,18 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
+>>> .ivu-form-item-error-tip
+  width: 370px;
 .dialog
   p
     text-align center
+.ModalTitle
+  text-align:center;
+  font-size: 16px;
+  font-weight: bold;
+.formModal
+  padding: 15px 25px;
+  height: 185px;
 .inputClass
   width: 200px;
 </style>

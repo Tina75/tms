@@ -6,11 +6,16 @@
       </div>
       <div class="right">
         <template>
-          <Select v-model="selectStatus"  style="width:120px;margin-right: 11px">
+          <Select v-model="selectStatus" style="width:120px;margin-right: 11px"  @on-change="changeState">
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
-        <Input  v-model="keyword" :maxlength="20" :placeholder="selectStatus === 1 ? '请输入外转方名称' : '请输入负责人名称'" class="search-input" />
+        <Input  v-model="keyword" :maxlength="20"
+                :placeholder="selectStatus === 1 ? '请输入外转方名称' : '请输入负责人名称'"
+                :icon="keyword? 'ios-close-circle' : ''"
+                class="search-input"
+                @on-enter="searchList"
+                @on-click="clearKeywords()"/>
         <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
                 @click="searchList"></Button>
@@ -236,6 +241,13 @@ export default {
         this.data1 = res.data.data.transfereeList
         this.totalCount = res.data.data.total
       })
+    },
+    clearKeywords () {
+      this.keyword = ''
+      this.searchList()
+    },
+    changeState () {
+      this.keyword = ''
     },
     modaladd () {
       var _this = this

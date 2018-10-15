@@ -1,5 +1,7 @@
 import { getCityCode } from '@/libs/constant/cityValidator'
 
+let hasTabCode = false
+
 export default {
   data () {
     return {
@@ -43,7 +45,8 @@ export default {
     if (columns) this.extraColumns = JSON.parse(columns)
 
     let tab
-    if (this.$route.query.tab && this.$route.query.tab < this.tabList.length) {
+    if (this.$route.query.tab && this.$route.query.tab < this.tabList.length && !hasTabCode) {
+      hasTabCode = true
       tab = this.tabList[this.$route.query.tab].name
       window.sessionStorage.setItem('TABHEADER_' + this.tabType, tab)
     } else {
@@ -58,6 +61,10 @@ export default {
       this.currentBtns = this.btnList[1].btns
     }
     this.fetchData()
+  },
+
+  destroyed () {
+    hasTabCode = false
   },
 
   methods: {

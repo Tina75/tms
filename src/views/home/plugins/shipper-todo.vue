@@ -1,5 +1,5 @@
 <template>
-  <div is="i-col" span="6" class="i-mt-15 page-home__padding-8">
+  <div is="i-col" span="6" class="i-mt-15 page-home__card-item">
     <OrderCard
       :data="data"
       :extra="total"
@@ -25,8 +25,8 @@ export default {
   data () {
     return {
       data: [
-        { id: 'wait_verify', name: '发货方待核销订单数', value: 0, tab: '1', href: TMSUrl.SENDER_FINANCE, title: '发货方对账' },
-        { id: 'wait_reconcile', name: '发货方对账单数量', value: 0, tab: '2', href: TMSUrl.SENDER_FINANCE, title: '发货方对账' }
+        { id: 'wait_verify', name: '待核销', value: 0, tab: '1', href: TMSUrl.SENDER_FINANCE, title: '发货方对账' },
+        { id: 'wait_reconcile', name: '对账单数量', value: 0, tab: '2', href: TMSUrl.SENDER_FINANCE, title: '发货方对账' }
       ]
     }
   },

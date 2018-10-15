@@ -2,10 +2,10 @@
   <div ref="$dispatch" class="dispatch">
     <div class="dispatch-part-fix">
       <div class="dispatch-part-title">可提货订单</div>
-      <Table :width="500"
-             :columns="leftTableHeader" :data="leftTableData"
-             :loading="leftTableLoading && !leftTableData.length"
-             @on-expand="keepLeftExpandOnly"></Table>
+      <Table :width="500" :columns="leftTableHeader"
+             :data="leftTableData" :loading="leftTableLoading && !leftTableData.length"
+             highlight-row
+             @on-row-click="leftTableRowClick"></Table>
     </div>
 
     <div class="dispatch-actions">
@@ -88,12 +88,13 @@ export default {
                 color: '#418DF9'
               },
               on: {
-                click: () => {
+                click: (e) => {
                   this.openTab({
                     title: p.row.loadbillNo,
                     path: '/transport/detail/detailPickup',
                     query: { id: p.row.loadbillId }
                   })
+                  e.stopPropagation()
                 }
               }
             }, p.row.loadbillNo)

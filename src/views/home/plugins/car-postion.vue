@@ -1,5 +1,5 @@
 <template>
-  <div is="i-col" span="12" class="i-mt-15 page-home__padding-8">
+  <div is="i-col" span="12" class="i-mt-15 page-home__card-item">
     <BlankCard :padding="false" to="/transport/waybill" page-title="运单管理" tab="3">
       <div slot="title">在途车辆位置</div>
       <noData v-if="!showMap"></noData>
@@ -53,7 +53,7 @@ export default {
             const item = this.pointList[i]
             const point = new BMap.Point(item.longtitude, item.latitude)
             if (i === 0) {
-              bmap.centerAndZoom(point, 10)
+              bmap.centerAndZoom(point, 12)
             }
             points.push(point)
             const markerOverlay = new MarkerOverlay(point)

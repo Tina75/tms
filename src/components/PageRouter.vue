@@ -68,9 +68,9 @@ export default {
           Vue.component(key, tempModule)
           this.componentCache[key] = tempModule
           this.current = tempModule
-        }).catch(() => {
+        }).catch((e) => {
           this.current = noPage
-          console.error('不存在该页面', path)
+          console.error('不存在该页面', path, e)
         })
       }
     },

@@ -6,7 +6,7 @@ export default class Cargo {
    * @param {Boolean} transfer 需要除以100转换为元
    */
   constructor (props, transfer = false) {
-    this.quantity = 1
+    this.quantity = null
     this.editable = false
     if (props) {
       this.id = props.id || uniqueIndex++
@@ -23,7 +23,7 @@ export default class Cargo {
       }
 
       // 数量
-      this.quantity = props.quantity || 1
+      this.quantity = props.quantity || undefined
       // 包装, 10个字
       this.unit = props.unit
       // 备注 100
@@ -35,7 +35,7 @@ export default class Cargo {
     if (!this.cargoName) {
       return { success: false, message: '请输入货物名称' }
     }
-    if (!this.weight && !this.volume) {
+    if (!this.weight && this.weight !== 0 && !this.volume && this.volume !== 0) {
       return { success: false, message: '货物重量和体积至少填写一项' }
     }
     return { success: true }

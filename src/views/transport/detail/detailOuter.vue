@@ -115,7 +115,7 @@
           <span>应付费用</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="5">
+          <i-col span="10">
             <span class="detail-field-title-sm">外转方：</span>
             <span class="detail-field-fee">{{ payment.transfereeName }}</span>
           </i-col>

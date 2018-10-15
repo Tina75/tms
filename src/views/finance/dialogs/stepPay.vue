@@ -66,7 +66,7 @@
                   </td>
                   <td class="">
                     <div class="ivu-table-cell">
-                      <a v-if="!item.verifyStatus && !item.isEdit" @click="writeOff(item)">核销</a>
+                      <a v-if="((hasPower(170101) && scene === 1) || (hasPower(170201) && scene === 2) || (hasPower(170301) && scene === 3)) && !item.verifyStatus && !item.isEdit" @click="writeOff(item)">核销</a>
                     </div>
                   </td>
                   <td class="">
@@ -140,6 +140,7 @@ export default {
           })
         })
         if (!res.data.data.some(item => !item.verifyStatus)) {
+          this.close()
           this.ok()
         }
       }).catch(err => console.error(err))
@@ -166,7 +167,7 @@ export default {
     saveItem (item) {
       if (!item.payType) {
         this.$Message.error('请选择支付方式')
-      } else if (!/^([1-9]\d*)(.([1-9]|(0-9)\d))?$/.test(item.fee)) {
+      } else if (!/^(0|([1-9]\d*))([.]\d{1,2})?$/.test(item.fee)) {
         this.$Message.error('请输入合法的金额')
       } else {
         Server({
@@ -235,7 +236,7 @@ export default {
     .adjuster, .write-off-tip
       i
         display: inline-block
-        font-size: 14px
+        font-size: 18px
         cursor: pointer
         &.add
           color: #7ED321
@@ -243,6 +244,7 @@ export default {
         &.remove
           color: #EC4E4E
         &.alert
+          font-size: 14px
           display: inline-block
           color: #FFBB44
           margin-right: 5px
