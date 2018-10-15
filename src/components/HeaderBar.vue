@@ -1,8 +1,8 @@
 <template>
   <div class="header-bar">
-    <a :class="['sider-trigger-a', collapsed ? 'collapsed' : '']"  type="text" @click="handleChange">
+    <!-- <a :class="['sider-trigger-a', collapsed ? 'collapsed' : '']"  type="text" @click="handleChange">
       <i class="icon font_family icon-shouji"></i>
-    </a>
+    </a> -->
     <div class="header-bar-avator-dropdown">
       <Dropdown class="header-bar-avator-dropdown-notify">
         <Poptip trigger="hover" title="消息中心" content="暂无系统消息" >
@@ -37,7 +37,7 @@
       </Dropdown>
 
       <!-- <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick"> -->
-      <Poptip placement="bottom-end" title="账号信息" width="260">
+      <Poptip trigger="hover"  placement="bottom-end" title="账号信息" width="260">
         <Avatar class="avatar"  style="border:1px solid #fff"></avatar>
         <span class="user-info"><p>{{name}}</p> </span>
         <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
@@ -61,10 +61,10 @@ export default {
   name: 'headerBar',
   mixins: [BaseComponent],
   props: {
-    collapsed: {
-      type: Boolean,
-      default: true
-    },
+    // collapsed: {
+    //   type: Boolean,
+    //   default: true
+    // },
     name: {
       type: String,
       default: ''
@@ -82,9 +82,9 @@ export default {
   mounted () {
   },
   methods: {
-    handleChange () {
-      this.$emit('update:collapsed', !this.collapsed)
-    },
+    // handleChange () {
+    //   this.$emit('update:collapsed', !this.collapsed)
+    // },
     openMsg (type = 0) {
       this.$emit('on-open-msg', type)
     },
@@ -104,21 +104,23 @@ export default {
 }
 </script>
 <style lang="stylus">
-.sider-trigger-a
-  width: 25px
-  height 50px
-  display inline-block
-  text-align center
-  color #5c6b77
-  background #3A424B
-  float left
-  i
-    transition transform .2s ease
-    vertical-align top
-    color #ffffff
-.collapsed
-  transform rotateZ(180deg)
-  transition transform .2s ease
+// .sider-trigger-a
+//   width: 25px
+//   height 50px
+//   display inline-block
+//   text-align center
+//   color #5c6b77
+//   background #3A424B
+//   position absolute
+//   top 50%
+//   left 200px
+//   i
+//     transition transform .2s ease
+//     vertical-align top
+//     color #ffffff
+// .collapsed
+//   transform rotateZ(180deg)
+//   transition transform .2s ease
 .header-bar
   width 100%
   height 100%
