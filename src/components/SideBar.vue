@@ -44,16 +44,15 @@
           </Tooltip>
         </div>
       </template>
-
       <p class="footer footer-collapsed">
         <Tooltip content="025-66606056" transfer placement="left">
-          <font-icon type="ico-call" size="28" color="white"/>
+          <div>
+            <font-icon type="ico-call" size="20" color="white"/>
+          </div>
         </Tooltip>
       </p>
-
     </div>
   </div>
-
 </template>
 
 <script>
@@ -145,20 +144,24 @@ export default {
   padding 0
   margin 0
 .footer
-  height 44px
   border-top 1px solid rgba(255,255,255,0.1)
-  padding 4px 8px
+  margin-left 10px
   text-align center
   position fixed
-  width 200px
+  padding-top 5px
+  padding-bottom 2px
+  width 180px
   bottom 0
   left 0
   color #aaa
   background #252A2F
-  z-index 10
+  z-index 1111
   font-size 12px
   &-collapsed
     width 50px
+    margin-left 0
+    &>div
+      width 50px
   span
     text-align left
     margin-left 10px

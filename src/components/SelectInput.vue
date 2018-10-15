@@ -2,6 +2,7 @@
   <Dropdown
     :visible="showDropdown"
     :transfer="transfer"
+    :placement="placement"
     class="select-input__dropdown"
     trigger="custom"
     @on-click="handleSelect"
@@ -49,6 +50,10 @@ export default {
     autoFocus: {
       type: Boolean,
       default: false
+    },
+    placement: {
+      type: String,
+      default: 'bottom-start'
     },
     maxlength: Number,
     value: String,
