@@ -598,6 +598,7 @@ export default {
             }).then(res => {
               self.$Message.success('删除成功')
               self.tableSelection = []
+              self.$refs.$table.clearSelected()
               self.$refs.$table.fetch()
             }).catch(err => console.error(err))
           }
@@ -624,6 +625,7 @@ export default {
             }).then(res => {
               self.$Message.success('操作成功')
               self.tableSelection = []
+              self.$refs.$table.clearSelected()
               self.$refs.$table.fetch()
             }).catch(err => console.error(err))
           }
@@ -647,6 +649,8 @@ export default {
           },
           methods: {
             complete () {
+              self.tableSelection = []
+              self.$refs.$table.clearSelected()
               self.$refs.$table.fetch()
             }
           }
