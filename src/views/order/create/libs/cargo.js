@@ -8,6 +8,12 @@ export default class Cargo {
   constructor (props, transfer = false) {
     this.quantity = null
     this.editable = false
+    // inputnumber 控件不会默认设置1了
+    this.cargoCost = null
+    this.weight = null
+    this.volume = null
+    this.hasError = false
+    this.errorMsg = {}
     if (props) {
       this.id = props.id || uniqueIndex++
       this.cargoName = props.cargoName
@@ -23,7 +29,7 @@ export default class Cargo {
       }
 
       // 数量
-      this.quantity = props.quantity || undefined
+      this.quantity = props.quantity || null
       // 包装, 10个字
       this.unit = props.unit
       // 备注 100
@@ -41,6 +47,30 @@ export default class Cargo {
     return { success: true }
   }
 
+  validateField (field) {
+    if (field === 'cargoName') {
+      if (!this.cargoName) {
+        this.errorMsg[field] = '请输入货物名称'
+      } else {
+        delete this.errorMsg[field]
+      }
+    }
+    if (field === 'weight' || field === 'volume') {
+      if (!this.volume && this.volume !== 0 && !this.weight && this.weight !== 0) {
+        this.errorMsg[field] = '货物重量和体积至少填写一项'
+      } else {
+        delete this.errorMsg['weight']
+        delete this.errorMsg['volume']
+      }
+    }
+    this.hasError = false
+    for (let name in this.errorMsg) {
+      if (name) {
+        this.hasError = true
+        break
+      }
+    }
+  }
   toJson () {
     return {
       cargoName: this.cargoName,
