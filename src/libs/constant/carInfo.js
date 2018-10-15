@@ -10,6 +10,7 @@ export const CAR_TYPE = [
   { value: 9, label: '爬梯车' },
   { value: 10, label: '飞翼车' }
 ]
+
 export const CAR_TYPE1 = {
   1: '平板',
   2: '高栏',
@@ -41,7 +42,8 @@ export const CAR_LENGTH = [
   { value: 15, label: '15米' },
   { value: 16, label: '16米' },
   { value: 17, label: '17.5米' }
-]
+].sort((a, b) => Number(b.label.substr(0, b.label.length - 1)) - Number(a.label.substr(0, a.label.length - 1)))
+
 export const CAR_LENGTH1 = {
   17: '1.8米',
   16: '2.7米',
