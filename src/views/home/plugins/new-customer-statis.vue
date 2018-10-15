@@ -61,7 +61,7 @@ export default {
         },
         series: [
           {
-            name: '今日新增顾客数',
+            name: '今日新增客户数',
             type: 'pie',
             radius: ['42%', '62%'],
             avoidLabelOverlap: true,
