@@ -6,7 +6,6 @@ let instance = (config = {}) => {
     timeout: 10000,
     loading: true,
     ignoreCode: true,
-    fileName: '导出文件',
     responseType: 'arraybuffer'
   })).then(res => {
     const tempBlob = new Blob([res.data], { type: 'application/json' })
@@ -28,7 +27,7 @@ let instance = (config = {}) => {
         let blob = new Blob([res.data], { type: 'application/x-xls' })
         let downloadLink = document.createElement('a')
         downloadLink.href = URL.createObjectURL(blob)
-        downloadLink.download = res.config.fileName + new Date().Format('yyyy-MM-dd_hhmmss') + '.xls'
+        downloadLink.download = (res.config.fileName ? res.config.fileName : '导出文件') + new Date().Format('yyyy-MM-dd_hhmmss') + '.xls'
         downloadLink.click()
         Message.success('导出成功')
       } else {
