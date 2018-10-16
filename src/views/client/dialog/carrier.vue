@@ -139,7 +139,7 @@ export default {
         },
         driver: {
           driverName: [
-            { required: true, message: '司机名称不能为空', trigger: 'blur' }
+            { required: true, message: '司机姓名不能为空', trigger: 'blur' }
           ],
           driverPhone: [
             { required: true, message: '手机号码不能为空', trigger: 'blur' },
@@ -156,7 +156,7 @@ export default {
             { required: true, message: '车长不能为空', trigger: 'change' }
           ],
           shippingWeight: [
-            { required: true, message: '载重量不能为空', trigger: 'blur' },
+            { required: true, message: '核定载重量不能为空', trigger: 'blur' },
             { type: 'string', message: '必须为大于等于0的数字,最多两位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/, trigger: 'blur' }
           ],
           shippingVolume: [
@@ -172,7 +172,7 @@ export default {
           ],
           carrierPhone: [
             { required: true, message: '联系电话不能为空', trigger: 'blur' },
-            { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
+            { type: 'string', message: '联系电话格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
           ]
         }
       }

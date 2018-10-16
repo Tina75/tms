@@ -115,7 +115,7 @@ import { mapGetters, mapActions } from 'vuex'
 // import City from '@/libs/js/city'
 import SearchMixin from './searchMixin'
 
-let hasTab = false
+// let hasTab = false
 
 export default {
   name: 'receipt',
@@ -516,7 +516,8 @@ export default {
   created () {
     let tab = this.$route.query.tab
     // 首页跳转对应tab
-    if (tab && !hasTab) {
+    // if (tab && !hasTab) {
+    if (tab) {
       switch (tab) {
         case '1':
           this.keyword.receiptStatus = 0
@@ -528,7 +529,7 @@ export default {
           this.keyword.receiptStatus = 2
           break
       }
-      hasTab = this.$route.query.tab
+      // hasTab = this.$route.query.tab
       sessionStorage.setItem('RECEIPT_TAB_NAME', this.status[this.$route.query.tab].name)
       this.handleTabChange(this.status[this.$route.query.tab].name) // 表头按钮状态
     } else {
@@ -549,9 +550,9 @@ export default {
     this.getOrderNum()
   },
 
-  destroyed () {
-    hasTab = false
-  },
+  // destroyed () {
+  //   hasTab = false
+  // },
 
   methods: {
     ...mapActions([
@@ -697,6 +698,9 @@ export default {
           ok (node) {
             _this.$refs.pageTable.fetch() // 刷新table
             _this.getOrderNum() // 刷新tab页数量
+            _this.selectOrderList = [] // 重置当前已勾选项
+            _this.selectedId = [] // 重置当前已勾选id项
+            _this.$refs.pageTable.clearSelected() // 清空当前选项
           }
         }
       })
