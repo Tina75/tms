@@ -390,10 +390,10 @@ export default {
   .searchInput
     margin-right:40px;
     margin-left: 10px;
-  .addStaffBtn
-    margin-top:6px;
-  .searchBtn
-    width:80px;
+.addStaffBtn
+  margin-top:10px;
+.searchBtn
+  width:80px;
 .pageTable
   margin-top: 20px;
   min-height: 700px;
