@@ -12,8 +12,17 @@
         <FormItem label="货物名称:" prop="cargoName">
           <Input v-model="validate.cargoName" :maxlength="20" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="包装单位:" class="ivu-form-item-required blank">
-          <Input v-model="validate.unit" :maxlength="10" placeholder="请输入"/>
+        <FormItem label="包装方式:" class="ivu-form-item-required blank">
+          <!--<Input v-model="validate.unit" :maxlength="10" placeholder="请输入"/>-->
+          <SelectInput
+            v-model="validate.unit"
+            :local-options="getUnit"
+            :maxlength="10"
+            :remote="false"
+            :clearable="true"
+            style="width: 86%"
+          >
+          </SelectInput>
         </FormItem>
         <FormItem label="货值:" prop="cargoCost" class="ivu-form-item-required blank">
           <Input v-model="validate.cargoCost" :maxlength="60" placeholder="请输入"/>
@@ -41,9 +50,13 @@
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
+import SelectInput from '@/components/SelectInput.vue'
 import { consignerCargoAdd, consignerCargoUpdate, CODE } from '../client'
 export default {
   name: 'sender-address',
+  components: {
+    SelectInput
+  },
   mixins: [BaseDialog],
   data () {
     return {
@@ -71,7 +84,15 @@ export default {
         volume: [
           { type: 'string', message: '必须为大于等于0的数字,最多一位小数', pattern: /^(0|([1-9]\d*))([.]\d?)?$/, trigger: 'blur' }
         ]
-      }
+      },
+      getUnit: [
+        { name: '纸箱', value: '纸箱' },
+        { name: '木箱', value: '木箱' },
+        { name: '铁桶', value: '铁桶' },
+        { name: '纤袋', value: '纤袋' },
+        { name: '麻袋', value: '麻袋' },
+        { name: '木架', value: '木架' }
+      ]
     }
   },
   methods: {

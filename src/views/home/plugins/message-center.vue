@@ -1,6 +1,6 @@
 <template>
   <div is="i-col" span="6" class="i-mt-15 page-home__card-item">
-    <BlankCard to="info/index" page-title="消息">
+    <BlankCard to="/information/index" page-title="消息">
       <div slot="title">消息中心</div>
       <CellGroup v-if="data.length" @on-click="handleClick">
         <Cell v-for="(msg, index) in data" :key="index" :name="msg.type" class="message-center__message-item">
@@ -85,7 +85,7 @@ export default {
     },
     handleClick (name) {
       this.openTab({
-        path: '/info/index',
+        path: '/information/index',
         title: '消息',
         query: {
           type: name

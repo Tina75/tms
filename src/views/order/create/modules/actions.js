@@ -13,11 +13,7 @@ export default {
       server({
         method: 'get',
         url: 'consigner/list',
-        params: {
-          // pageNo: pageNo,
-          // pageSize: pageSize,
-          // name
-        }
+        params: {}
       }).then((response) => {
         // 收货人信息，包含客户信息
         const clients = response.data.data.list
@@ -25,6 +21,8 @@ export default {
         // const clientList = clients.map((user) => ({name: user.name, value: user.name, id: user.id}))
         if (clients && clients.length > 0) {
           commit(types.RECEIVE_CLIENT_LIST, clients)
+        } else {
+          commit(types.RECEIVE_CLIENT_LIST, [])
         }
         // resolve(clientList)
       }).catch((error) => {
@@ -57,11 +55,8 @@ export default {
           const transformCargoList = cargoList.map((cargo) => new Cargo(cargo, true))
           // 货物信息
           commit(types.RECEIVE_CARGO_LIST, transformCargoList)
-          // commit(types.RECEIVE_CONSIGNER_CARGO_LIST, cargoList.map((cargo) => {
-          //   return new Cargo(cargo, true)
-          // }))
           // 只复制一个
-          commit(types.RECEIVE_CONSIGNER_CARGO_LIST, transformCargoList.slice(0, 1))
+          // commit(types.RECEIVE_CONSIGNER_CARGO_LIST, transformCargoList.slice(0, 1))
         }
         if (consigneeList.length > 0) {
           // 收货方地址
@@ -74,47 +69,11 @@ export default {
     })
   },
   /**
-   * 添加一行货物信息
-   * @param {*} store
-   * @param {*} index
-   */
-  appendCargo ({ commit }, index) {
-    commit(types.APPEND_CONSIGNER_CARGO, index + 1)
-  },
-  /**
-   * 删除一行
-   * @param {*} store
-   * @param {*} index
-   */
-  removeCargo ({ state, commit }, index) {
-    if (state.order.consignerCargoes.length === 1) {
-      return
-    }
-    commit(types.REMOVE_CONSIGNER_CARGO, index)
-  },
-  /**
-   * 修改一行货物信息（部分信息修改）
-   * @param {*} store
-   * @param {*} item
-   */
-  updateCargo ({ state, commit }, item) {
-    commit(types.UPDATE_CONSIGNER_CARGO, item)
-  },
-  /**
-   * 修改一行数据，完全修改
-   * @param {*} store
-   * @param {*} item
-   */
-  fullUpdateCargo ({ commit }, item) {
-    item.cargo = new Cargo(item.cargo)
-    commit(types.UPDATE_FULL_CONSIGNER_CARGO, item)
-  },
-  /**
    * 清除货品信息
    * @param {*} store
    */
   clearCargoes (store) {
-    store.commit(types.CLEAR_CONSIGNER_CARGO_LIST)
+    // store.commit(types.CLEAR_CONSIGNER_CARGO_LIST)
     store.commit(types.RECEIVE_CARGO_LIST, [])
   },
   /**
@@ -147,9 +106,9 @@ export default {
       })
         .then((response) => {
           const { orderCargoList, ...order } = response.data.data
-          commit(types.RECEIVE_CONSIGNER_CARGO_LIST, orderCargoList.map((item) => new Cargo(item, true)))
+          // commit(types.RECEIVE_CONSIGNER_CARGO_LIST, orderCargoList.map((item) => new Cargo(item, true)))
           commit(types.RECEIVE_ORDER_DETAIL, order)
-          resolve(order)
+          resolve(response.data.data)
         })
         .catch((err) => reject(err))
     })

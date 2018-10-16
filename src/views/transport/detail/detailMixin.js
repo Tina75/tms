@@ -2,7 +2,7 @@ import MoneyInput from '../components/MoneyInput'
 import Server from '@/libs/js/server'
 import Float from '@/libs/js/float'
 import { CAR } from '@/views/client/client'
-import { validateCityies } from '@/libs/constant/cityValidator'
+import { validateCityies } from '@/libs/js/cityValidator'
 
 export default {
   data () {

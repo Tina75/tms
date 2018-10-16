@@ -135,7 +135,7 @@ export default {
   name: 'ReceiveManager',
   components: { TabHeader, PageTable, SelectInput, PrintPickup },
   mixins: [ BasePage, TransportBase, SelectInputMixin, TransportMixin ],
-  metaInfo: { title: '提货管理' },
+  metaInfo: { title: '提货单管理' },
   data () {
     return {
       tabType: 'PICKUP',
@@ -598,6 +598,7 @@ export default {
             }).then(res => {
               self.$Message.success('删除成功')
               self.tableSelection = []
+              self.$refs.$table.clearSelected()
               self.$refs.$table.fetch()
             }).catch(err => console.error(err))
           }
@@ -624,6 +625,7 @@ export default {
             }).then(res => {
               self.$Message.success('操作成功')
               self.tableSelection = []
+              self.$refs.$table.clearSelected()
               self.$refs.$table.fetch()
             }).catch(err => console.error(err))
           }
@@ -633,18 +635,26 @@ export default {
 
     // 提货
     billPickup (id) {
-      var self = this
-      self.openDialog({
-        name: 'transport/dialog/sendCar',
-        data: {
-          id,
-          type: 'pickUp'
-        },
-        methods: {
-          complete () {
-            self.$refs.$table.fetch()
+      const self = this
+      Server({
+        url: '/load/bill/check/order',
+        method: 'post',
+        data: { pickUpId: id }
+      }).then(() => {
+        self.openDialog({
+          name: 'transport/dialog/sendCar',
+          data: {
+            id,
+            type: 'pickUp'
+          },
+          methods: {
+            complete () {
+              self.tableSelection = []
+              self.$refs.$table.clearSelected()
+              self.$refs.$table.fetch()
+            }
           }
-        }
+        })
       })
     }
   }

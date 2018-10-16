@@ -87,6 +87,7 @@
       :columns="tableColumns"
       :extra-columns="extraColumns"
       :show-filter="true"
+      :row-class-name="rowClassName"
       style="margin-top: 15px"
       @on-selection-change="handleSelectionChange"
       @on-column-change="handleColumnChange">
@@ -130,7 +131,7 @@ export default {
       status: [
         { name: '全部', count: '' },
         { name: '待提货', count: '' },
-        { name: '待调度', count: '' },
+        { name: '待送货', count: '' },
         { name: '在途', count: '' },
         { name: '已到货', count: '' },
         { name: '已回单', count: '' }
@@ -348,31 +349,52 @@ export default {
           fixed: 'left',
           minWidth: 180,
           tooltip: true,
-          className: 'padding-20',
-          render: (h, params) => {
-            if (params.row.parentId !== '') {
-              return h('div', [
-                h('span', {
-                  style: {
-                    display: 'inline-block',
-                    width: '14px',
-                    height: '14px',
-                    background: '#418DF9',
-                    borderRadius: '2px',
-                    color: '#fff',
-                    lineHeight: '14px',
-                    textAlign: 'center',
-                    marginRight: '5px',
-                    marginLeft: '-19px'
+          renderHeader: (h, params) => {
+            if (this.curStatusName === '待提货' || this.curStatusName === '待送货') {
+              return h('span', [
+                h('span', params.column.title),
+                h('Tooltip', {
+                  props: {
+                    'max-width': '220',
+                    offset: -9,
+                    content: '待调度订单可进行提货 / 送货调度',
+                    placement: 'top-start',
+                    transfer: true
                   }
-                }, '子'),
+                }, [
+                  h('Icon', {
+                    props: {
+                      type: 'ios-information-circle',
+                      size: '16',
+                      color: '#FFBB44'
+                    },
+                    style: {
+                      verticalAlign: 'sub',
+                      marginLeft: '4px'
+                    }
+                  })
+                ])
+              ])
+            } else {
+              return h('span', params.column.title)
+            }
+          },
+          render: (h, params) => {
+            /**
+             * 待调度标识：
+             *  待提货（status:10）&& 未创建提货单(pickupStatus: 0) && 未外转(transStatus: 0) && 是父单(parentId：'') 可以提货调度
+             *  待送货（status:20）&& 未创建运单(dispatchStatus: 0) && 未外转(transStatus: 0) && 不是父单（disassembleStatus !== 1）可以送货调度
+            */
+            if (this.curStatusName === '待提货' && params.row.pickupStatus === 0 && params.row.transStatus === 0 && params.row.parentId === '') {
+              return h('div', [
                 h('a', {
                   props: {
                     type: 'text'
                   },
                   style: {
                     marginRight: '5px',
-                    color: '#418DF9'
+                    color: '#418DF9',
+                    display: 'block'
                   },
                   on: {
                     click: () => {
@@ -386,7 +408,148 @@ export default {
                       })
                     }
                   }
-                }, params.row.orderNo)
+                }, params.row.orderNo),
+                h('span', {
+                  style: {
+                    display: 'inline-block',
+                    height: '14px',
+                    background: 'rgba(250,135,30,1)',
+                    borderRadius: '2px',
+                    color: '#fff',
+                    lineHeight: '14px',
+                    fontSize: '9px',
+                    padding: '0 3px'
+                  }
+                }, '待调度')
+              ])
+            } else if (this.curStatusName === '待送货' && params.row.dispatchStatus === 0 && params.row.transStatus === 0 && params.row.disassembleStatus !== 1) {
+              if (params.row.parentId !== '') {
+                return h('div', [
+                  h('a', {
+                    props: {
+                      type: 'text'
+                    },
+                    style: {
+                      marginRight: '5px',
+                      color: '#418DF9',
+                      display: 'block'
+                    },
+                    on: {
+                      click: () => {
+                        this.openTab({
+                          path: '/order-management/detail',
+                          query: {
+                            id: params.row.orderNo,
+                            orderId: params.row.id,
+                            from: 'order'
+                          }
+                        })
+                      }
+                    }
+                  }, params.row.orderNo),
+                  h('span', {
+                    style: {
+                      display: 'inline-block',
+                      width: '14px',
+                      height: '14px',
+                      background: '#418DF9',
+                      borderRadius: '2px',
+                      color: '#fff',
+                      lineHeight: '14px',
+                      textAlign: 'center',
+                      marginRight: '5px',
+                      fontSize: '9px'
+                    }
+                  }, '子'),
+                  h('span', {
+                    style: {
+                      display: 'inline-block',
+                      height: '14px',
+                      background: 'rgba(250,135,30,1)',
+                      borderRadius: '2px',
+                      color: '#fff',
+                      lineHeight: '14px',
+                      fontSize: '9px',
+                      padding: '0 3px'
+                    }
+                  }, '待调度')
+                ])
+              } else {
+                return h('div', [
+                  h('a', {
+                    props: {
+                      type: 'text'
+                    },
+                    style: {
+                      marginRight: '5px',
+                      color: '#418DF9',
+                      display: 'block'
+                    },
+                    on: {
+                      click: () => {
+                        this.openTab({
+                          path: '/order-management/detail',
+                          query: {
+                            id: params.row.orderNo,
+                            orderId: params.row.id,
+                            from: 'order'
+                          }
+                        })
+                      }
+                    }
+                  }, params.row.orderNo),
+                  h('span', {
+                    style: {
+                      display: 'inline-block',
+                      height: '14px',
+                      background: 'rgba(250,135,30,1)',
+                      borderRadius: '2px',
+                      color: '#fff',
+                      lineHeight: '14px',
+                      fontSize: '9px',
+                      padding: '0 3px'
+                    }
+                  }, '待调度')
+                ])
+              }
+            } else if (params.row.parentId !== '') {
+              return h('div', [
+                h('a', {
+                  props: {
+                    type: 'text'
+                  },
+                  style: {
+                    marginRight: '5px',
+                    color: '#418DF9',
+                    display: 'block'
+                  },
+                  on: {
+                    click: () => {
+                      this.openTab({
+                        path: '/order-management/detail',
+                        query: {
+                          id: params.row.orderNo,
+                          orderId: params.row.id,
+                          from: 'order'
+                        }
+                      })
+                    }
+                  }
+                }, params.row.orderNo),
+                h('span', {
+                  style: {
+                    display: 'inline-block',
+                    width: '14px',
+                    height: '14px',
+                    background: '#418DF9',
+                    borderRadius: '2px',
+                    color: '#fff',
+                    lineHeight: '14px',
+                    textAlign: 'center',
+                    marginRight: '5px',
+                    fontSize: '9px'
+                  }
+                }, '子')
               ])
             } else {
               return [h('a', {
@@ -867,7 +1030,7 @@ export default {
           }
           if (item.dispatch !== undefined) {
             let d = {
-              name: '待调度',
+              name: '待送货',
               count: item.dispatch
             }
             arr.push(d)
@@ -930,7 +1093,7 @@ export default {
         ]
         this.keywords.status = 10
         // this.keyword = {...this.keywords}
-      } else if (val === '待调度') {
+      } else if (val === '待送货') {
         // 全部、待提货、待调度加上操作栏
         this.addOperateCol()
         this.operateValue = 1
@@ -1110,7 +1273,7 @@ export default {
         case '待提货':
           code = 10
           break
-        case '待调度':
+        case '待送货':
           code = 20
           break
         case '在途':
@@ -1153,6 +1316,14 @@ export default {
         data,
         fileName: '订单明细'
       })
+    },
+    // 待调度
+    rowClassName (row, index) {
+      if ((this.curStatusName === '待提货' && row.pickupStatus === 0 && row.transStatus === 0 && row.parentId === '') || (this.curStatusName === '待送货' && row.dispatchStatus === 0 && row.transStatus === 0 && row.disassembleStatus !== 1)) {
+        return 'ivu-table-row-gray'
+      } else {
+        return ''
+      }
     }
   }
 }
@@ -1187,9 +1358,6 @@ export default {
   .ivu-select-selected-value
     height 35px !important
     line-height 35px !important
-.padding-20
-  .ivu-table-cell
-    padding-left 20px
 .order-right
   .ivu-input
     height 35px

@@ -329,7 +329,7 @@ import SelectInput from '../components/SelectInput.vue'
 import SelectInputMixin from '../components/selectInputMixin'
 
 import Server from '@/libs/js/server'
-import { getCityCode } from '@/libs/constant/cityValidator'
+import { getCityCode } from '@/libs/js/cityValidator'
 import TMSUrl from '@/libs/constant/url'
 
 export default {
@@ -648,18 +648,24 @@ export default {
     // 按钮操作
     // 派车
     billSendCar () {
-      var self = this
-      self.openDialog({
-        name: 'transport/dialog/sendCar',
-        data: {
-          id: this.id,
-          type: 'sendCar'
-        },
-        methods: {
-          complete () {
-            self.fetchData()
+      const self = this
+      Server({
+        url: '/waybill/check/order',
+        method: 'post',
+        data: { waybillIds: [ self.id ] }
+      }).then(() => {
+        self.openDialog({
+          name: 'transport/dialog/sendCar',
+          data: {
+            id: self.id,
+            type: 'sendCar'
+          },
+          methods: {
+            complete () {
+              self.fetchData()
+            }
           }
-        }
+        })
       })
     },
     // 位置

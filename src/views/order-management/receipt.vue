@@ -114,6 +114,9 @@ import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
 // import City from '@/libs/js/city'
 import SearchMixin from './searchMixin'
+
+let hasTab = false
+
 export default {
   name: 'receipt',
 
@@ -512,28 +515,28 @@ export default {
 
   created () {
     let tab = this.$route.query.tab
-    console.log(tab)
-    // 刷新页面停留当前tab页
-    if (sessionStorage.getItem('RECEIPT_TAB_NAME')) {
-      this.curStatusName = sessionStorage.getItem('RECEIPT_TAB_NAME')
-      this.keyword.receiptStatus = this.statusToCode(this.curStatusName)
-      this.handleTabChange(this.curStatusName) // 表头按钮状态
+    // 首页跳转对应tab
+    if (tab && !hasTab) {
+      switch (tab) {
+        case '1':
+          this.keyword.receiptStatus = 0
+          break
+        case '2':
+          this.keyword.receiptStatus = 1
+          break
+        case '3':
+          this.keyword.receiptStatus = 2
+          break
+      }
+      hasTab = this.$route.query.tab
+      sessionStorage.setItem('RECEIPT_TAB_NAME', this.status[this.$route.query.tab].name)
+      this.handleTabChange(this.status[this.$route.query.tab].name) // 表头按钮状态
     } else {
-      // 首页跳转对应tab
-      if (tab) {
-        switch (tab) {
-          case '1':
-            this.keyword.receiptStatus = 0
-            break
-          case '2':
-            this.keyword.receiptStatus = 1
-            break
-          case '3':
-            this.keyword.receiptStatus = 2
-            break
-        }
-        sessionStorage.setItem('RECEIPT_TAB_NAME', this.status[this.$route.query.tab].name)
-        this.handleTabChange(this.status[this.$route.query.tab].name) // 表头按钮状态
+      // 刷新页面停留当前tab页
+      if (sessionStorage.getItem('RECEIPT_TAB_NAME')) {
+        this.curStatusName = sessionStorage.getItem('RECEIPT_TAB_NAME')
+        this.keyword.receiptStatus = this.statusToCode(this.curStatusName)
+        this.handleTabChange(this.curStatusName) // 表头按钮状态
       } else {
         sessionStorage.setItem('RECEIPT_TAB_NAME', '待回收')
         this.keyword.receiptStatus = 0
@@ -544,6 +547,10 @@ export default {
 
   mounted () {
     this.getOrderNum()
+  },
+
+  destroyed () {
+    hasTab = false
   },
 
   methods: {
@@ -650,7 +657,7 @@ export default {
           return (item.receiptOrder.receiptStatus !== 0 || item.status !== 40)
         })
         if (data !== undefined) {
-          this.$Message.warning('您选择的订单不支持回收')
+          this.$Message.warning('您选择的订单还未确认到货，请先确认货物已到货')
         } else {
           this.openReturnDialog('', btn.name)
         }
@@ -669,6 +676,11 @@ export default {
     },
     // 打开回收或返厂弹窗 (支持单条、多条操作))
     openReturnDialog (params, name) {
+      console.log(name, params)
+      if (params && name === '回收' && params.row.status < 40) {
+        this.$Message.warning('您选择的订单还未确认到货，请先确认货物已到货')
+        return
+      }
       const _this = this
       const data = {
         id: this.selectOrderList,

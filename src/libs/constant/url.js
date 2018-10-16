@@ -16,7 +16,7 @@ const TMSUrl = {
   DISPATCH_PANEL: '/order-management/dispatch', // 调度工作台
   TANSPORT_ORDER: '/transport/waybill', // 运单管理
   TRANSPORT_ORDER_DETAIL: '/transport/detail/detailFreight', // 运单详情
-  PICKUP_ORDER: '/transport/receiveOrder', // 提货管理
+  PICKUP_ORDER: '/transport/receiveOrder', // 提货单管理
   PICKUP_ORDER_DETAIL: '/transport/detail/detailPickup', // 提货单详情
   OUTER_ORDER: '/transport/outerOrder', // 外转单管理
   OUTER_ORDER_DETAIL: '/transport/detail/detailOuter', // 外转单详情
@@ -30,10 +30,10 @@ const TMSUrl = {
   SENDER_MANAGEMENT: '/client/sender', // 发货方管理
   CARRIER_MANAGEMENT: '/client/carrier', // 承运商管理
   TRANSFER_MANAGEMENT: '/client/transfer', // 外转方管理
-  STAFF_MANAGEMENT: '/company-manage/staff-manage', // 员工管理
-  EMPLOYEE_MANAGEMENT: '/company-manage/employee-manage', // 角色管理
+  STAFF_MANAGEMENT: '/company/staff-manage', // 员工管理
+  EMPLOYEE_MANAGEMENT: '/company/role-manage', // 角色管理
   SETTING: '/set-up/index', // 设置
-  MESSAGE_CENTER: '/info/index', // 消息中心
+  MESSAGE_CENTER: '/information/index', // 消息中心
   HELP: '/helper/index' // 帮助中心
 }
 export default TMSUrl

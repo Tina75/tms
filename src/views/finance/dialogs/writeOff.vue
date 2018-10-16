@@ -91,6 +91,7 @@ export default {
     if (this.isOil) {
       this.writeOffForm.payType = '5'
     }
+    this.writeOffForm.actualFee = this.needPay
   },
   methods: {
     save () {
@@ -101,7 +102,7 @@ export default {
             method: 'post',
             data: {
               id: this.id,
-              actualFee: parseInt(this.writeOffForm.actualFee) * 100,
+              actualFee: parseFloat(this.writeOffForm.actualFee) * 100,
               payType: this.writeOffForm.payType,
               account: this.writeOffForm.account,
               bankBranch: this.writeOffForm.bankBranch,

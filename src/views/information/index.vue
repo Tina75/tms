@@ -1,50 +1,50 @@
 <template>
   <div class="temAll">
     <Col span="3">
-    <Menu :active-name="typeName" style="width: 100%; background:rgba(243,245,249,1)">
+    <Menu :active-name="typeName" class="menuSty" style="width: 100%;">
       <MenuItem v-for="menu in menuList" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
       <p style="margin-left:-20px;">{{menu.name}}
-      <Badge v-if="menu.infoNum" :count="menu.infoNum" style="float:right;width:30px;"></Badge></p>
+      <Badge v-if="menu.infoNum" :count="menu.infoNum" class="menuInfoBadge"></Badge></p>
       </MenuItem>
     </Menu>
     </Col>
-    <Col span="21" style="background:#fff; padding: 0 25px 50px 25px; overflow: auto;height: inherit;">
-    <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:10px;margin-top: 14px;">
-      <span class="iconRightTitle" style="width: 5px;height: 20px;background: #00a4bd; position: absolute; left:25px;margin-top: 2px;border-radius:3px;"></span>
-      <span style="margin-left:35px; font-size: 16px; font-weight:600;">{{rightTitle}}</span>
+    <Col span="21" class="contentDiv">
+    <div class="contendBorderBttom">
+      <span class="iconRightTitle"></span>
+      <span class="rightTitleSty">{{rightTitle}}</span>
       <div v-if="batchBtnShowAll">
-        <span v-if="batchBtnShow" key="1" style="float:right; margin-top:-30px; margin-right:20px;">
+        <span v-if="batchBtnShow" key="1" class="rightConfBtnRemove">
           <Button style="margin-right:20px;" @click="removeInfoAll(searchData.type)">全部删除</Button>
           <Button @click="removeInfoSome">批量删除</Button>
         </span>
-        <span v-if="!batchBtnShow" key="2" style="float:right; margin-top:-30px; margin-right:20px;">
-          <Button style="margin-right:20px; width:86px;" @click="removeCancelBtn">取消</Button>
-          <Button :disabled="removeSubBtnDis" type="primary" style="width:86px;" @click="removeSubBtn">确定</Button>
+        <span v-if="!batchBtnShow" key="2" class="rightConfBtnRemove">
+          <Button class="configBtnCancel" @click="removeCancelBtn">取消</Button>
+          <Button :disabled="removeSubBtnDis" type="primary" class="configBtn" @click="removeSubBtn">确定</Button>
         </span>
       </div>
     </div>
     <div style="min-height:520px;">
       <!--系统消息-->
-      <div v-if="'0' === this.searchData.type" style="height:250px;">
+      <div v-if="'0' === this.searchData.type">
         <Col span="24">
         <div class="mesDivAll">
           <Checkbox
             v-if="!batchBtnShow"
             :indeterminate="indeterminate"
             :value="checkAll"
-            style="margin-left: 15px; margin-top:10px;"
+            class="checkBoxBtn"
             @click.prevent.native="handleCheckAll">
-          <span style="margin-left:10px; color:#777B89; cursor: default;">全选</span></Checkbox>
+          <span class="checkBoxMessage">全选</span></Checkbox>
           <div v-if="this.sysMessageList.length === 0" class="noneImg">
             <img src="./noneInfo.png"/>
             <p>暂无消息</p>
           </div>
           <div v-for="msg in this.sysMessageList" v-else :key="msg.id" class="megDiv">
-            <CheckboxGroup v-if="!batchBtnShow" v-model="checkAllGroup" style="float: left; margin-top: 10px;" @on-change="checkAllGroupChange">
+            <CheckboxGroup v-if="!batchBtnShow" v-model="checkAllGroup" class="checkAllGroup" @on-change="checkAllGroupChange">
               <Checkbox :label="msg.id" class="checkboxItem"></Checkbox>
             </CheckboxGroup>
             <div class="msgImg">
-              <i class="icon font_family icon-xitongxiaoxi" style="font-size:36px; background: white; color: #FFBB44;"></i>
+              <i class="icon font_family icon-xitongxiaoxi" style="color: #FFBB44;"></i>
             </div>
             <div class="msgContent" @click="clickContenInfo(msg)">
               <p class="msgContentTitle">{{msg.title}}</p>
@@ -61,26 +61,26 @@
           </Col>
       </div>
       <!--订单消息-->
-      <div v-if="'1' === this.searchData.type" style="height:250px;">
+      <div v-if="'1' === this.searchData.type">
         <Col span="24">
         <div class="mesDivAll">
           <Checkbox
             v-if="!batchBtnShow"
             :indeterminate="indeterminate"
             :value="checkAll"
-            style="margin-left: 15px; margin-top:10px;"
+            class="checkBoxBtn"
             @click.prevent.native="handleCheckAll">
-          <span style="margin-left:10px; color:#777B89; cursor: default;">全选</span></Checkbox>
+          <span class="checkBoxMessage">全选</span></Checkbox>
           <div v-if="this.orderMessageList.length === 0" class="noneImg">
             <img src="./noneInfo.png"/>
             <p>暂无消息</p>
           </div>
           <div v-for="msg in this.orderMessageList" v-else :key="msg.id" class="megDiv">
-            <CheckboxGroup v-if="!batchBtnShow" v-model="checkAllGroup" style="float: left; margin-top: 10px;" @on-change="checkAllGroupChange">
+            <CheckboxGroup v-if="!batchBtnShow" v-model="checkAllGroup" class="checkAllGroup" @on-change="checkAllGroupChange">
               <Checkbox :label="msg.id" class="checkboxItem"></Checkbox>
             </CheckboxGroup>
             <div class="msgImg">
-              <i class="icon font_family icon-dingdanxiaoxi" style="font-size:36px; background: white; color: #418DF9;"></i>
+              <i class="icon font_family icon-dingdanxiaoxi" style="color: #418DF9;"></i>
             </div>
             <div class="msgContent" @click="clickContenInfo(msg)">
               <p class="msgContentTitle">{{msg.title}}</p>
@@ -95,26 +95,26 @@
         </Col>
       </div>
       <!--运输消息-->
-      <div v-if="'2' === this.searchData.type" style="height:250px;">
+      <div v-if="'2' === this.searchData.type">
         <Col span="24">
         <div class="mesDivAll">
           <Checkbox
             v-if="!batchBtnShow"
             :indeterminate="indeterminate"
             :value="checkAll"
-            style="margin-left: 15px; margin-top:10px;"
+            class="checkBoxBtn"
             @click.prevent.native="handleCheckAll">
-          <span style="margin-left:10px; color:#777B89; cursor: default;">全选</span></Checkbox>
+          <span class="checkBoxMessage">全选</span></Checkbox>
           <div v-if="this.transportMessageList.length === 0" class="noneImg">
             <img src="./noneInfo.png"/>
             <p>暂无消息</p>
           </div>
           <div v-for="msg in this.transportMessageList" v-else :key="msg.id" class="megDiv">
-            <CheckboxGroup v-if="!batchBtnShow" v-model="checkAllGroup" style="float: left; margin-top: 10px;" @on-change="checkAllGroupChange">
+            <CheckboxGroup v-if="!batchBtnShow" v-model="checkAllGroup" class="checkAllGroup" @on-change="checkAllGroupChange">
               <Checkbox :label="msg.id" class="checkboxItem"></Checkbox>
             </CheckboxGroup>
             <div class="msgImg">
-              <i class="icon font_family icon-yunshuxiaoxi" style="font-size:36px; background: white; color: #00A4BD;"></i>
+              <i class="icon font_family icon-yunshuxiaoxi" style="color: #00A4BD;"></i>
             </div>
             <div class="msgContent" @click="clickContenInfo(msg)">
               <p class="msgContentTitle">{{msg.title}}</p>
@@ -129,12 +129,12 @@
         </Col>
       </div>
       <Modal v-model="visibaleRemove" type="warning" width="360">
-        <p slot="header" style="text-align:center;font-size: 16px;">
+        <p slot="header" class="modalTitle">
           <span>提示</span>
         </p>
-        <p style="margin-left:70px; margin-top: 10px;">
-          <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
-        </p><p style="margin-top:23px; margin-bottom:10px; margin-left:50px;">确定要删除“{{messageInit.title}}”消息吗?</P>
+        <p>
+          <i class="icon font_family icon-bangzhuzhongxin"></i>
+        </p><p class="modalMessage">确定要删除“{{messageInit.title}}”消息吗?</P>
         </p>
         <div slot="footer">
           <Button type="primary" @click="removeSubForm">确定</Button>
@@ -142,12 +142,12 @@
         </div>
       </Modal>
       <Modal v-model="visibaleRemoveSome" type="warning" width="360">
-        <p slot="header" style="text-align:center;font-size: 16px;">
+        <p slot="header" class="modalTitle">
           <span>提示</span>
         </p>
-        <p style="margin-left:70px; margin-top: 10px;">
-          <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
-        </p><p style="margin-top:23px;margin-bottom:10px; margin-left:50px;">确定要批量删除选中的消息吗?</P>
+        <p>
+          <i class="icon font_family icon-bangzhuzhongxin"></i>
+        </p><p class="modalMessage">确定要批量删除选中的消息吗?</P>
         </p>
         <div slot="footer">
           <Button type="primary" @click="removeSubFormSome">确定</Button>
@@ -155,12 +155,12 @@
         </div>
       </Modal>
       <Modal v-model="visibaleRemoveAll" type="warning" width="360">
-        <p slot="header" style="text-align:center;font-size: 16px;">
+        <p slot="header" class="modalTitle">
           <span>提示</span>
         </p>
-        <p style="margin-left:70px; margin-top: 10px;">
-          <i class="icon font_family icon-bangzhuzhongxin" style="font-size:28px; background: white;color: #FFBB44;float:left;width:40px;"></i>
-        </p><p style="margin-top:23px; margin-bottom:10px; margin-left:50px;">确定要删除所有的“{{rightTitle}}”?</P>
+        <p>
+          <i class="icon font_family icon-bangzhuzhongxin"></i>
+        </p><p class="modalMessage">确定要删除所有的“{{rightTitle}}”?</P>
         </p>
         <div slot="footer">
           <Button type="primary" @click="removeSubFormAll">确定</Button>
@@ -267,19 +267,13 @@ export default {
         this.searchData.type = '0'
     }
   },
-  updated () {
-    this.menuList[0].infoNum = this.$store.getters.MsgCount.sysNum
-    this.menuList[1].infoNum = this.$store.getters.MsgCount.orderNum
-    this.menuList[2].infoNum = this.$store.getters.MsgCount.carrierNum
-    if (!this.batchBtnShow) {
-      for (let index = 0; index < document.getElementsByClassName('checkboxItem').length; index++) {
-        document.getElementsByClassName('checkboxItem')[index].children[1].innerText = ''
-      }
-    }
-  },
   mounted: function () {
+    this.getMessageCount()
+    this.getMenuInfoNum()
     this.getMenuList(this.searchData)
-    // this.getMenuInfoNum()
+  },
+  updated () {
+    this.getMenuInfoNum()
     this.getMessageCount()
   },
   methods: {
@@ -290,16 +284,16 @@ export default {
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     },
-    // getMenuInfoNum () {
-    //   Server({
-    //     url: 'message/num',
-    //     method: 'get'
-    //   }).then(({ data }) => {
-    //     this.menuList[0].infoNum = data.data.sysNum > 99 ? '99+' : data.data.sysNum
-    //     this.menuList[1].infoNum = data.data.orderNum > 99 ? '99+' : data.data.orderNum
-    //     this.menuList[2].infoNum = data.data.carrierNum > 99 ? '99+' : data.data.carrierNum
-    //   })
-    // },
+    getMenuInfoNum () {
+      this.menuList[0].infoNum = this.$store.getters.MsgCount.sysNum
+      this.menuList[1].infoNum = this.$store.getters.MsgCount.orderNum
+      this.menuList[2].infoNum = this.$store.getters.MsgCount.carrierNum
+      if (!this.batchBtnShow) {
+        for (let index = 0; index < document.getElementsByClassName('checkboxItem').length; index++) {
+          document.getElementsByClassName('checkboxItem')[index].children[1].innerText = ''
+        }
+      }
+    },
     getMenuList (params) {
       Server({
         url: 'message/listPage',
@@ -332,9 +326,9 @@ export default {
       this.searchData.type = id
       this.searchData.pageNo = 1
       this.getMenuList(this.searchData)
-      // this.getMenuInfoNum()
-      this.getMessageCount()
       this.checkBoxGroupInit()
+      this.getMenuInfoNum()
+      this.getMessageCount()
     },
     removeInfo (id, type) {
       let params = {}
@@ -351,7 +345,6 @@ export default {
           this.visibaleRemoveSome = false
           this.visibaleRemoveAll = false
           this.getMenuList(this.searchData)
-          // this.getMenuInfoNum()
           this.getMessageCount()
         } else {
           this.$Message.success(data.msg)
@@ -386,7 +379,7 @@ export default {
         // 0系统消息4订单消息5回单消息6运单消息7提货单消息8外转单消息
         case 0:
           this.openTab({
-            path: '/info/message-info',
+            path: '/information/message-info',
             query: {
               id: msg.title,
               message: msg
@@ -414,7 +407,7 @@ export default {
         case 7:
           this.openTab({
             path: '/transport/receiveOrder',
-            title: '提货管理'
+            title: '提货单管理'
           })
           break
         case 8:
@@ -473,15 +466,11 @@ export default {
     searchInfoData (page) {
       this.searchData.pageNo = page
       this.getMenuList(this.searchData)
-      // this.getMenuInfoNum()
-      this.getMessageCount()
       this.checkBoxGroupInit()
     },
     chagePageSize (pagenum) {
       this.searchData.pageSize = pagenum
       this.getMenuList(this.searchData)
-      // this.getMenuInfoNum()
-      this.getMessageCount()
     }
   }
 }
@@ -492,7 +481,8 @@ export default {
   background: #fff;
 >>> .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
     background: #fff;
-    color: #515a6e;
+    color: #333333;
+    font-weight: bold;
 .temAll
   width: 100%;
   height: 100%;
@@ -500,9 +490,9 @@ export default {
   overflow: auto;
 .megDiv
   clear: both;
-  height: 55px;
+  height: 70px;
   margin: 20px 15px;
-  border-bottom: 1px solid #e9e9e9;
+  border-bottom: 1px dashed #e9e9e9;
   padding-bottom:10px;
   margin-top: 25px;
 .msgImg
@@ -539,4 +529,71 @@ export default {
   color: #999999;
   font-size: 16px;
   font-weight: 400;
+.menuSty
+  background:rgba(243,245,249,1);
+  color: #333;
+.menuInfoBadge
+  float:right;
+  width:30px;
+.contentDiv
+  background:#fff;
+  padding: 0 25px 50px 25px;
+  overflow: auto;
+  height: inherit;
+.contendBorderBttom
+  border-bottom: 1px solid #e9e9e9;
+  padding-bottom:10px;
+  margin-top: 14px;
+.iconRightTitle
+  width: 5px;
+  height: 20px;
+  background: #00a4bd;
+  position: absolute;
+  left:25px;
+  margin-top: 2px;
+  border-radius:3px;
+.rightTitleSty
+  margin-left:35px;
+  font-size: 16px;
+  font-weight:600;
+.rightConfBtnRemove
+  float:right;
+  margin-top:-30px;
+  margin-right:20px;
+.checkBoxBtn
+  margin-left: 15px;
+  margin-top:10px;
+.checkBoxMessage
+  margin-left:10px;
+  color:#777B89;
+  cursor: default;
+.checkAllGroup
+  float: left;
+  margin-top: 10px;
+.icon-xitongxiaoxi
+.icon-dingdanxiaoxi
+.icon-yunshuxiaoxi
+  font-size:36px;
+  background: white;
+.icon-bangzhuzhongxin
+  font-size:28px;
+  background: white;
+  color: #FFBB44;
+  float:left;
+  width:40px;
+  margin-top: 10px;
+  margin-left:10%;
+.modalMessage
+  margin-top:23px;
+  margin-bottom:10px;
+  font-size:14px;
+.configBtn
+  width: 86px;
+.configBtnCancel
+  width: 86px;
+  margin-right:20px;
+.modalTitle
+  text-align:center;
+  font-size: 16px;
+  font-weight:bold;
 </style>

@@ -161,6 +161,7 @@ export default {
     &.left-btn
       left 0px
       background #252A2F
+      border-left 1px solid #3A424B
     &.right-btn
       // right 32px
       right 0px

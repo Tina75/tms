@@ -77,19 +77,19 @@ export default {
         {
           title: '订单号',
           width: 160,
-          key: 'orderNo',
-          render: (h, params) => {
-            return h('a', {
-              style: {
-                color: '#418DF9'
-              },
-              on: {
-                click: () => {
-                  this.toDetail(params)
-                }
-              }
-            }, params.row.orderNo)
-          }
+          key: 'orderNo'
+          // render: (h, params) => {
+          //   return h('a', {
+          //     style: {
+          //       color: '#418DF9'
+          //     },
+          //     on: {
+          //       click: () => {
+          //         this.toDetail(params)
+          //       }
+          //     }
+          //   }, params.row.orderNo)
+          // }
         },
         {
           title: '始发地',
@@ -146,6 +146,7 @@ export default {
             }
           }).then(res => {
             _this.getOrderList()
+            _this.ok()
           }).catch(err => console.error(err))
         }
       })

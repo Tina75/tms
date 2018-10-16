@@ -30,6 +30,9 @@
 
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
+import float from '@/libs/js/float'
+
+let errorMsg = ''
 
 export default {
   name: 'FinanceRule',
@@ -37,8 +40,9 @@ export default {
   data () {
     const chargeValidate = (rule, value, callback) => {
       const type = this.ruleOptions[value].ruleType
-      if ((type === 1 && !this.weight) || (type === 2 && !this.volume)) callback(new Error('未能找到相应的计费规则'))
-      callback()
+      if (errorMsg) callback(new Error(errorMsg))
+      else if ((type === 1 && !this.weight) || (type === 2 && !this.volume) || !type) callback(new Error('未能找到相应的计费规则'))
+      else callback()
     }
 
     return {
@@ -54,6 +58,7 @@ export default {
     }
   },
   created () {
+    console.log(this.$data)
     this.fetchRules()
   },
   methods: {
@@ -73,19 +78,27 @@ export default {
     },
 
     ruleChanged (index) {
+      errorMsg = ''
       const rule = this.ruleOptions[index]
-      Server({
-        url: '/finance/charge/calc',
-        method: 'get',
-        data: {
-          ruleId: rule.id,
-          departure: this.start,
-          destination: this.end,
-          input: (rule.ruleType === 1 ? this.weight : this.volume) * 100
-        }
-      }).then(res => {
-        this.charge = res.data.data / 100
-        this.$refs.$form.validate()
+      this.$refs.$form.validate(valid => {
+        if (!valid) return
+        Server({
+          url: '/finance/charge/calc',
+          method: 'get',
+          data: {
+            ruleId: rule.id,
+            departure: this.start,
+            destination: this.end,
+            input: float.round((rule.ruleType === 1 ? this.weight : this.volume) * 100)
+          }
+        }).then(res => {
+          this.charge = float.round(res.data.data / 100)
+          errorMsg = ''
+          this.$refs.$form.validate()
+        }).catch(err => {
+          errorMsg = err.data.msg
+          this.$refs.$form.validate()
+        })
       })
     },
 

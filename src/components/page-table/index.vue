@@ -13,6 +13,7 @@
       :highlight-row="highlightRow"
       :size="size"
       :no-data-text="noDataText"
+      :row-class-name="rowClass"
       @on-current-change="handleCurrentChange"
       @on-select="handleSelect"
       @on-select-all="handleSelectAll"
@@ -188,6 +189,7 @@ export default {
     onSortChange: Function,
     onFilterChange: Function,
     onRowClick: Function,
+    rowClassName: Function,
     onRowDbclick: Function,
     onExpand: Function,
     onChange: Function,
@@ -330,7 +332,21 @@ export default {
     }
   },
   methods: {
-
+    /**
+     * 复选框选中后，背景高亮
+     */
+    rowClass (row, index) {
+      let classes = []
+      if (this.rowClassName && typeof this.rowClassName === 'function') {
+        classes.push(this.rowClassName(row, index))
+      }
+      if (this.isSelection) {
+        if (this.selected.includes(row[this.rowId])) {
+          classes.push('ivu-table-row-highlight')
+        }
+      }
+      return classes.join(' ')
+    },
     setLocalDataSource (data) {
       this.dataSource = this.data.slice()
       this.pagination.totalCount = this.data.length
@@ -531,4 +547,11 @@ export default {
       border-radius:4px
       a
         color: #fff
+.ivu-table-row-gray
+  td
+    background-color #f8f8f9
+.ivu-table
+  .ivu-table-row-highlight
+    td
+      background-color #ebf7ff
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div ref="el" class="page-home">
     <div class="page-home__header">
       <Alert v-if="notice" type="warning" class="page-home__header-notice" banner closable show-icon>
         <Icon slot="icon" type="ios-bulb-outline"></Icon>
@@ -32,7 +32,7 @@
         </Col>
       </Row>
     </div>
-    <Row :gutter="16">
+    <Row :gutter="16" type="flex" justify="left">
       <!-- 提货代办 -->
       <PickupTodo v-if="cardChecksTemp.includes('pickup-todo')"/>
       <!-- 送货代办 -->
@@ -160,7 +160,7 @@ export default {
     },
     greetings () {
       const now = new Date().getHours()
-      const name = this.UserInfo.name
+      const name = this.UserInfo.name || ''
       if (now >= 5 && now < 11) {
         return `<strong class="van-font-14 i-pr-20">早上好，${name}</strong> &nbsp;&nbsp;每天给自己一个希望，只为明天更美好。`
       } else if (now >= 11 && now < 14) {
@@ -169,8 +169,8 @@ export default {
         return `<strong class="van-font-14 i-pr-20">下午好，${name}</strong> &nbsp;&nbsp;相信自己，一定会有辉煌的一天。`
       } else if (now >= 17 && now < 22) {
         return `<strong class="van-font-14 i-pr-20">晚上好，${name}</strong> &nbsp;&nbsp;既然选择了远方，便只顾风雨兼程。`
-      } else if (now >= 22 && now < 5) {
-        return `<strong class="van-font-14 i-pr-20">夜深了，${name}</strong> &nbsp;&nbsp;再怎么忙绿，也要注意休息哦。`
+      } else if (now >= 22 || now < 5) {
+        return `<strong class="van-font-14 i-pr-20">夜深了，${name}</strong> &nbsp;&nbsp;再怎么忙碌，也要注意休息哦。`
       }
     }
   },
@@ -181,7 +181,7 @@ export default {
   beforeMount () {
     if ('IntersectionObserver' in window) {
       this.intersectionObserver = new IntersectionObserver(this.intersectionObserverEvent, {
-        root: this.$parent.$el || document.querySelector('.ivu-layout-content'),
+        root: this.$refs.el,
         rootMargin: '0px',
         thresholds: [0]
       })
@@ -288,7 +288,20 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
+.ivu-layout-sider-collapsed
+  .page-home
+    left 70px
 .page-home
+  -webkit-transition all .2s ease-in-out
+  transition all .2s ease-in-out
+  position absolute
+  left 218px
+  top 65px
+  right 20px
+  bottom 15px
+  overflow-y auto
+  overflow-x hidden
+  background-color #efefef;
   &__dropdown-header
     text-align center
     border-bottom 1px solid #efefef
@@ -304,7 +317,6 @@ export default {
   &__card-item
     padding-left 9px
     padding-right 9px
-    display list-item
     overflow hidden
   &__header
     position relative

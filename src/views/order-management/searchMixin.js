@@ -45,11 +45,6 @@ export default {
   },
 
   mounted () {
-    if (this.$route.path === '/order-management/order') {
-      this.keywords.status = 10
-    } else {
-      this.keywords.receiptStatus = 0
-    }
   },
 
   methods: {

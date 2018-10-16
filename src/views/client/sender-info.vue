@@ -197,7 +197,7 @@ export default {
           }
         },
         {
-          title: '收货地址',
+          title: '发货地址',
           key: 'address'
         }
       ],
@@ -284,7 +284,7 @@ export default {
           key: 'phone'
         },
         {
-          title: '发货地址',
+          title: '收货地址',
           key: 'address'
         },
         {
@@ -386,7 +386,7 @@ export default {
           tooltip: true
         },
         {
-          title: '包装单位',
+          title: '包装方式',
           key: 'unit',
           render (h, params) {
             let text = ''

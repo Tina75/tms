@@ -73,6 +73,7 @@ export default {
     $route () {
       this.closePoptip()
     }
+
   },
   mounted () {
     // 重置sort,默认从0开始

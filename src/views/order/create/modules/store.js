@@ -58,18 +58,18 @@ const mutations = {
   [types.RECEIVE_ORDER_DETAIL] ({ order }, detail) {
     order.detail = detail
   },
-  [types.APPEND_CONSIGNER_CARGO] ({ order }, index) {
-    order.consignerCargoes.splice(index, -1, new Cargo(defaultCargo))
-  },
-  [types.REMOVE_CONSIGNER_CARGO] ({ order }, index) {
-    order.consignerCargoes.splice(index, 1)
-  },
-  [types.UPDATE_CONSIGNER_CARGO] ({ order }, item) {
-    order.consignerCargoes[item.index] = new Cargo(Object.assign({}, order.consignerCargoes[item.index], item.cargo))
-  },
-  [types.UPDATE_FULL_CONSIGNER_CARGO] ({ order }, item) {
-    order.consignerCargoes.splice(item.index, 1, item.cargo)
-  },
+  // [types.APPEND_CONSIGNER_CARGO] ({ order }, index) {
+  //   order.consignerCargoes.splice(index, -1, new Cargo(defaultCargo))
+  // },
+  // [types.REMOVE_CONSIGNER_CARGO] ({ order }, index) {
+  //   order.consignerCargoes.splice(index, 1)
+  // },
+  // [types.UPDATE_CONSIGNER_CARGO] ({ order }, item) {
+  //   order.consignerCargoes[item.index] = new Cargo(Object.assign({}, order.consignerCargoes[item.index], item.cargo))
+  // },
+  // [types.UPDATE_FULL_CONSIGNER_CARGO] ({ order }, item) {
+  //   order.consignerCargoes.splice(item.index, 1, item.cargo)
+  // },
   [types.CLEAR_CONSIGNER_CARGO_LIST] ({ order }) {
     order.consignerCargoes = [new Cargo()]
   },
