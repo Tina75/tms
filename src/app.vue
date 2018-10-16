@@ -245,6 +245,8 @@ export default {
       let newList = [...list]
       // if (newList.findIndex(item => item.path === path) >= 0) {
       if (newList.findIndex(item => this.routeEqual(item, newRoute)) >= 0) {
+        // const idx = newList.findIndex(item => this.routeEqual(item, newRoute))
+        // newList.splice(idx, 1, { name, path, query, meta })
         return newList
       } else {
         // find当前tab位置并在其后面添加新tab
