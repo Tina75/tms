@@ -3,7 +3,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-10-10 18:14:49
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-10-16 16:16:44
+ * @Last Modified time: 2018-10-16 16:52:56
  */
 
 import { Cascader } from 'iview'
@@ -46,12 +46,14 @@ export default {
      * @param {*} paths
      */
     prepareLoadData (paths) {
-      let selectedArea = this.data.find((dt) => {
-        return dt.value === paths[0]
-      })
-      if (selectedArea.hasChild && selectedArea.children.length === 0) {
-        const data = this.$parent.loadNext(selectedArea.value, true)
-        selectedArea.children = data
+      if (paths && paths.length > 0) {
+        let selectedArea = this.data.find((dt) => {
+          return dt.value === paths[0]
+        })
+        if (selectedArea.hasChild && selectedArea.children.length === 0) {
+          const data = this.$parent.loadNext(selectedArea.value, true)
+          selectedArea.children = data
+        }
       }
     }
   }
