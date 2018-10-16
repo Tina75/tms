@@ -19,6 +19,10 @@ export const searchByNameForCasecader = function (name) {
       continue
     }
     let area = mapCache[code]
+    // 港澳台地区特殊处理，不加载子区
+    if (area.parent === '810000' || area.parent === '710000' || area.parent === '820000') {
+      continue
+    }
     if (area.name.match(name)) {
       matched.unshift(area)
     }

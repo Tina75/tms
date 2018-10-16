@@ -3,7 +3,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-10-10 18:14:49
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-10-16 16:52:56
+ * @Last Modified time: 2018-10-16 17:08:21
  */
 
 import { Cascader } from 'iview'
@@ -19,6 +19,10 @@ export default {
   },
   computed: {
     querySelections () {
+      // 只匹配中文
+      if (/[\d\w、，,;!?*]/.test(this.query)) {
+        return []
+      }
       let selections = searchByNameForCasecader(this.query)
       return selections.map(item => {
         item.display = item.display.replace(new RegExp(this.query, 'g'), `<span>${this.query}</span>`)
