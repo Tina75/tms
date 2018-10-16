@@ -171,7 +171,7 @@ export default {
             { required: true, message: '负责人名称不能为空', trigger: 'blur' }
           ],
           carrierPhone: [
-            { required: true, message: '承运商名称不能为空', trigger: 'blur' },
+            { required: true, message: '联系电话不能为空', trigger: 'blur' },
             { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
           ]
         }
