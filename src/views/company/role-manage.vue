@@ -98,6 +98,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import roleTreeList from './roleTreeList.js'
+import roleTreeListEdit from './roleTreeListEdit.js'
 import Server from '@/libs/js/server'
 import _ from 'lodash'
 export default {
@@ -149,7 +150,7 @@ export default {
   watch: {
     arrayCodeList (newList) {
       if (this.menuParam.type === 1) {
-        this.initTreeList(newList, 'type')
+        this.listInitTreeList = _.cloneDeep(roleTreeList)
       } else {
         this.initTreeList(newList)
       }
@@ -157,7 +158,7 @@ export default {
   },
   created () {
     this.getMenuList()
-    this.initTreeList(this.arrayCodeList, 'type')
+    this.listInitTreeList = _.cloneDeep(roleTreeList)
   },
   methods: {
     getMenuList (selectMenu) {
@@ -177,40 +178,34 @@ export default {
             if (data.data[index].type === 1) {
               this.menuParam = data.data[index]
               this.rightTitle = this.menuInitName = data.data[index].name
-              this.arrayCodeList = JSON.parse(data.data[index].codes)
             }
           }
         }
       })
     },
-    initTreeList (arrayCodeList, type) {
-      const treeList = _.cloneDeep(roleTreeList)
+    initTreeList (arrayCodeList) {
+      const treeList = _.cloneDeep(roleTreeListEdit)
       for (let key in treeList) {
-        if (type) {
-          treeList[key][0].disabled = true
-        } else {
-          treeList[key][0].disabled = false
-        }
-        this.getTreeList(arrayCodeList, treeList[key][0].children, type)
+        treeList[key][0].disabled = false
+        treeList[key][0].checked = false
+        this.getTreeList(arrayCodeList, treeList[key][0].children)
       }
       this.listInitTreeList = treeList
     },
-    getTreeList (arrayCodeList, treeData, type) {
+    getTreeList (arrayCodeList, treeData) {
       const vm = this
       treeData.forEach(element => {
+        element.disabled = false
         for (let index = 0; index < arrayCodeList.length; index++) {
-          if (arrayCodeList.includes(element.code) && type) {
-            element.disabled = true
-            if (element.children) {
-              vm.getTreeList(arrayCodeList, element.children, type)
-            } else {
-              element.checked = true
-            }
-          } else if (arrayCodeList.includes(element.code)) {
+          if (arrayCodeList.includes(element.code)) {
             if (element.children) {
               vm.getTreeList(arrayCodeList, element.children)
             } else {
               element.checked = true
+            }
+          } else {
+            if (element.children) {
+              vm.getTreeList(arrayCodeList, element.children)
             }
           }
         }
@@ -482,7 +477,7 @@ export default {
   font-size: 16px;
   font-weight: bold;
 .modalRemoveContend
-  margin-top: 10px;
+  margin-top: 5px;
   margin-left:10%;
   i.icon.font_family.icon-bangzhuzhongxin
     font-size:28px;
@@ -491,8 +486,8 @@ export default {
     float:left;
     width:40px;
 .modalRemoveContendP
-  margin-top:21px;
-  margin-bottom:10px;
+  margin-top:16px;
+  margin-bottom:20px;
   font-size: 14px;
 .formSty
   padding:20px;
