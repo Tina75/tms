@@ -96,7 +96,7 @@ export default {
       window.EMA.fire('Dialogs.push', {
         name: 'dialogs/renew',
         data: {
-          title: '提示',
+          title: '温馨提示',
           expirationTime: this.UserInfo.expirationTime
         }
       })
