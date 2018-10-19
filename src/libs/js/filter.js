@@ -1,30 +1,5 @@
 import Vue from 'vue'
 import City from './city.js'
-Vue.filter('imgType', function (value) {
-  let name = ''
-  switch (value) {
-    case 'avatarUrl':
-      name = '头像'
-      break
-    case 'idCardFrontUrl':
-      name = '身份证正面'
-      break
-    case 'idCardBackUrl':
-      name = '身份证反面'
-      break
-    case 'storeFrontUrl':
-      name = '公司门头照'
-      break
-    case 'businessLicenceUrl':
-      name = '营业执照'
-      break
-    case 'businessCardUrl':
-      name = '个人名片'
-      break
-  }
-  return name
-})
-
 /**
  * 时间格式化
  */
@@ -50,36 +25,6 @@ Vue.filter('imgFormat', function (value) {
   }
 })
 
-/**
- * 部门类型转化
- */
-Vue.filter('departTypeToName', function (value) {
-  let name = ''
-  switch (value) {
-    case 1:
-      name = '前线销售'
-      break
-    case 2:
-      name = '中台销售'
-      break
-    case 3:
-      name = '研发部门'
-      break
-    case 4:
-      name = '客服部门'
-      break
-    case 5:
-      name = '综合性部门'
-      break
-    case 6:
-      name = '职能部门'
-      break
-    default:
-      name = ''
-      break
-  }
-  return name
-})
 /**
  * 手机号码格式化
  */
