@@ -1,13 +1,14 @@
 export default {
   replace: true,
   props: {
-    visiable: Boolean
+    showDialog: Boolean
   },
   data: function () {
     return {
       // modulePowers: modulePowers,
       title: '',
-      size: 'small'
+      size: 'small',
+      visiable: this.showDialog
     }
   },
   // 组件是你刚被创建,组件属性计算前
