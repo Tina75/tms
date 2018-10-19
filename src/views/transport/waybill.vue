@@ -96,6 +96,13 @@
       </div>
     </template>
 
+    <OrderTabContent
+      v-show="!tabStatus"
+      source="transport"
+      tab-status="待送货"
+      url="/load/bill/wait/pick/list"
+      @refresh-tab="fetchTabCount" />
+
     <!-- 表格 -->
     <div v-show="tabStatus">
       <PageTable ref="$table"
@@ -131,6 +138,7 @@ import AreaSelect from '@/components/AreaSelect'
 import SelectInput from './components/SelectInput.vue'
 import SelectInputMixin from './components/selectInputMixin'
 import PrintFreight from './components/PrintFreight'
+import OrderTabContent from '@/views/order-management/components/TabContent'
 
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
@@ -138,7 +146,7 @@ import TMSUrl from '@/libs/constant/url'
 
 export default {
   name: 'WaybillManager',
-  components: { TabHeader, PageTable, AreaSelect, SelectInput, PrintFreight },
+  components: { TabHeader, PageTable, AreaSelect, SelectInput, PrintFreight, OrderTabContent },
   mixins: [ BasePage, TransportBase, SelectInputMixin, TransportMixin ],
   metaInfo: { title: '运单管理' },
   data () {
@@ -586,7 +594,7 @@ export default {
         url: '/waybill/tab/cnt',
         method: 'get'
       }).then(res => {
-        const data = res.data.data.statusCntInfo
+        const data = res.data.data
         this.tabList = [
           { name: '待调度', count: data.waitDispatchCnt || 0 },
           { name: '待派车', count: data.waitAssignCarCnt || 0 },

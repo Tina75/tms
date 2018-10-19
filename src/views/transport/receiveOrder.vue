@@ -94,6 +94,13 @@
       </div>
     </template>
 
+    <OrderTabContent
+      v-show="!tabStatus"
+      source="transport"
+      tab-status="待提货"
+      url="/load/bill/wait/pick/list"
+      @refresh-tab="fetchTabCount" />
+
     <!-- 表格 -->
     <div v-show="tabStatus">
       <PageTable ref="$table"
@@ -128,6 +135,7 @@ import PageTable from '@/components/page-table'
 import SelectInput from './components/SelectInput.vue'
 import SelectInputMixin from './components/selectInputMixin'
 import PrintPickup from './components/PrintPickup'
+import OrderTabContent from '@/views/order-management/components/TabContent'
 
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
@@ -135,7 +143,7 @@ import TMSUrl from '@/libs/constant/url'
 
 export default {
   name: 'ReceiveManager',
-  components: { TabHeader, PageTable, SelectInput, PrintPickup },
+  components: { TabHeader, PageTable, SelectInput, PrintPickup, OrderTabContent },
   mixins: [ BasePage, TransportBase, SelectInputMixin, TransportMixin ],
   metaInfo: { title: '提货管理' },
   data () {
@@ -520,7 +528,7 @@ export default {
         url: '/load/bill/tab/cnt',
         method: 'get'
       }).then(res => {
-        const data = res.data.data.statusCntInfo
+        const data = res.data.data
         this.tabList = [
           { name: '待调度', count: data.waitDispatchCnt || 0 },
           { name: '待提货', count: data.waitCnt || 0 },
