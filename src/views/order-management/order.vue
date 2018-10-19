@@ -1163,7 +1163,7 @@ export default {
         } else {
           this.openDispatchDialog(btn.name)
         }
-      } else if (btn.name === '订单还原') { // 【（是待提货或待调度状态：status < 30） && （是父单：parentId=''） && （被拆单：disassembleStatus=1） && 【规则去掉：（未被提货：pickupStatus=0） &&】 （未被调度：dispatchStatus=0） && （未外转：transStatus=0）】 可以批量操作
+      } else if (btn.name === '订单还原') { // 【（是待提货或待调度状态：status < 30） && （是父单：parentId=''） && （被拆单：disassembleStatus=1） && 【规则取消：（未被提货：pickupStatus=0） && 】（未被调度：dispatchStatus=0） && （未外转：transStatus=0）】 可以批量操作
         let data = this.selectOrderList.find((item) => {
           return (item.status > 20 || item.parentId !== '' || item.disassembleStatus !== 1 || item.dispatchStatus !== 0 || item.transStatus !== 0)
         })

@@ -17,7 +17,7 @@
 <script>
 // import area from '@/libs/js/area'
 import areas from '@/libs/js/city'
-import { requestAnimationFrame, cancelAnimationFrame } from '@/libs/js/requestAnimationFrame.js'
+// import { requestAnimationFrame, cancelAnimationFrame } from '@/libs/js/requestAnimationFrame.js'
 import AreaCascader from './AreaDropdown'
 
 export default {
@@ -66,14 +66,14 @@ export default {
       } else if (!newValue || newValue.length === 0) {
         this.selected = []
       } else if ((typeof newValue === 'number' || typeof newValue === 'string') && newValue) {
-        this.forceLoad()
+        // this.forceLoad()
         this.selected = areas.getPathByCode(newValue).map((item) => item.code)
         this.$emit('input', this.selected)
       }
     }
   },
   created () {
-    const vm = this
+    // const vm = this
     const data = areas.getAllRoots().map((item) => {
       return {
         value: item.code,
@@ -84,24 +84,24 @@ export default {
       }
     })
 
-    if (this.deep) {
-      // 先让页面渲染完，在更新数据，防止进入页面很慢
-      let length = data.length
-      const allLoad = function () {
-        let province = data[vm.rqaIndex]
-        let children = vm.loadNext(province.value, true)
-        if (children.length > 0) {
-          province.children = children
-        }
-        vm.rqaIndex++
-        if (vm.rqaIndex < length) {
-          vm.rqafId = requestAnimationFrame(allLoad)
-        } else {
-          vm.resetAnimation()
-        }
-      }
-      vm.rqafId = requestAnimationFrame(allLoad)
-    }
+    // if (this.deep) {
+    //   // 先让页面渲染完，在更新数据，防止进入页面很慢
+    //   let length = data.length
+    //   const allLoad = function () {
+    //     let province = data[vm.rqaIndex]
+    //     let children = vm.loadNext(province.value, true)
+    //     if (children.length > 0) {
+    //       province.children = children
+    //     }
+    //     vm.rqaIndex++
+    //     if (vm.rqaIndex < length) {
+    //       vm.rqafId = requestAnimationFrame(allLoad)
+    //     } else {
+    //       vm.resetAnimation()
+    //     }
+    //   }
+    //   vm.rqafId = requestAnimationFrame(allLoad)
+    // }
     this.areaData = data
   },
   mounted () {
@@ -112,24 +112,24 @@ export default {
   },
   methods: {
     // 不等延迟执行加载数据，强行加载所有数据，会有点慢
-    forceLoad () {
-      if (this.loading) {
-        // 取消执行
-        if (this.deep) {
-          cancelAnimationFrame(this.rqafId)
-        }
-        let length = this.areaData.length
-        while (this.rqaIndex < length) {
-          let province = this.areaData[this.rqaIndex]
-          let children = this.loadNext(province.value, true)
-          if (children.length > 0) {
-            province.children = children
-          }
-          this.rqaIndex++
-        }
-        this.resetAnimation()
-      }
-    },
+    // forceLoad () {
+    //   if (this.loading) {
+    //     // 取消执行
+    //     if (this.deep) {
+    //       cancelAnimationFrame(this.rqafId)
+    //     }
+    //     let length = this.areaData.length
+    //     while (this.rqaIndex < length) {
+    //       let province = this.areaData[this.rqaIndex]
+    //       let children = this.loadNext(province.value, true)
+    //       if (children.length > 0) {
+    //         province.children = children
+    //       }
+    //       this.rqaIndex++
+    //     }
+    //     this.resetAnimation()
+    //   }
+    // },
     resetAnimation () {
       this.rqaIndex = 0
       this.rqafId = null
