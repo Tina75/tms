@@ -195,7 +195,7 @@ export default {
              *    还原： 无还原按钮           //【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被提货：pickupStatus=0）】显示
              *    删除： 无删除按钮           //【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （被拆单后的父单：disassembleStatus=1）】显示
              *    编辑： 无编辑按钮           //【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
-             * 2、待调度状态下：（status: 20）
+             * 2、待送货状态下：（status: 20）
              *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）&& （未被调度：dispatchStatus=0）】显示
              *    外转：【（未外转：transStatus=0） && （不是上门提货：pickup !== 1） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被调度：dispatchStatus=0）】显示
              *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被调度：dispatchStatus=0）】显示
@@ -1163,9 +1163,9 @@ export default {
         } else {
           this.openDispatchDialog(btn.name)
         }
-      } else if (btn.name === '订单还原') { // 【（是待提货或待调度状态：status < 30） && （是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被提货：pickupStatus=0） && （未被调度：dispatchStatus=0） && （未外转：transStatus=0）】 可以批量操作
+      } else if (btn.name === '订单还原') { // 【（是待提货或待调度状态：status < 30） && （是父单：parentId=''） && （被拆单：disassembleStatus=1） && 【规则去掉：（未被提货：pickupStatus=0） &&】 （未被调度：dispatchStatus=0） && （未外转：transStatus=0）】 可以批量操作
         let data = this.selectOrderList.find((item) => {
-          return (item.status > 20 || item.parentId !== '' || item.disassembleStatus !== 1 || item.pickupStatus !== 0 || item.dispatchStatus !== 0 || item.transStatus !== 0)
+          return (item.status > 20 || item.parentId !== '' || item.disassembleStatus !== 1 || item.dispatchStatus !== 0 || item.transStatus !== 0)
         })
         if (data !== undefined) {
           this.$Message.warning('您选择的订单不支持订单还原')

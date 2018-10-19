@@ -544,6 +544,7 @@ export default {
       }).then(({ data }) => {
         if (data.code === 10000) {
           this.$Message.success('保存成功!')
+          this.msgCheckBoxListInit = _.cloneDeep(this.msgSlectCheckBox)
         } else {
           this.$Message.error(data.msg)
         }
