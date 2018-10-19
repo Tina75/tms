@@ -52,15 +52,20 @@ export default {
       checked: true,
       children: [
         { title: '页面查看', code: '110100', parentId: '110000', disabled: true },
-        { title: '送货调度', code: '110101', parentId: '110100', grandId: '110000', disabled: true },
-        { title: '提货调度', code: '110102', parentId: '110100', grandId: '110000', disabled: true },
-        { title: '拆单', code: '110103', parentId: '110100', grandId: '110000', disabled: true },
-        { title: '外转', code: '110104', parentId: '110100', grandId: '110000', disabled: true },
-        { title: '订单还原', code: '110105', parentId: '110100', grandId: '110000', disabled: true },
+        /**
+       * 20181019 注释 by mys
+       * { title: '送货调度', code: '110101', parentId: '110100', grandId: '110000', disabled: true },
+       * { title: '提货调度', code: '110102', parentId: '110100', grandId: '110000', disabled: true },
+       * { title: '拆单', code: '110103', parentId: '110100', grandId: '110000', disabled: true },
+       * { title: '外转', code: '110104', parentId: '110100', grandId: '110000', disabled: true },
+       * { title: '订单还原', code: '110105', parentId: '110100', grandId: '110000', disabled: true },
+      */
         { title: '编辑', code: '110106', parentId: '110100', grandId: '110000', disabled: true },
         { title: '删除', code: '110107', parentId: '110100', grandId: '110000', disabled: true },
         { title: '打印', code: '110108', parentId: '110100', grandId: '110000', disabled: true },
-        { title: '导出', code: '110109', parentId: '110100', grandId: '110000', disabled: true }
+        { title: '导出', code: '110109', parentId: '110100', grandId: '110000', disabled: true },
+        { title: '恢复', code: '110110', parentId: '110100', grandId: '110000', disabled: true },
+        { title: '彻底删除', code: '110111', parentId: '110100', grandId: '110000', disabled: true }
       ]
     }, {
       title: '回单管理',
@@ -91,7 +96,26 @@ export default {
     disabled: true,
     checked: true,
     children: [{
-      title: '运单管理',
+      title: '提货管理',
+      code: '120200',
+      parentId: '120000',
+      expand: true,
+      disabled: true,
+      checked: true,
+      children: [
+        { title: '页面查看', code: '120200', parentId: '120000', disabled: true },
+        { title: '提货调度', code: '120208', parentId: '120200', grandId: '120000', disabled: true },
+        { title: '外转', code: '120209', parentId: '120200', grandId: '120000', disabled: true },
+        { title: '提货', code: '120201', parentId: '120200', grandId: '120000', disabled: true },
+        { title: '打印', code: '120202', parentId: '120200', grandId: '120000', disabled: true },
+        { title: '到货', code: '120203', parentId: '120200', grandId: '120000', disabled: true },
+        { title: '删除', code: '120204', parentId: '120200', grandId: '120000', disabled: true },
+        { title: '位置', code: '120205', parentId: '120200', grandId: '120000', disabled: true },
+        { title: '编辑', code: '120206', parentId: '120200', grandId: '120000', disabled: true },
+        { title: '导出', code: '120207', parentId: '120200', grandId: '120000', disabled: true }
+      ]
+    }, {
+      title: '送货管理',
       code: '120100',
       parentId: '120000',
       expand: true,
@@ -99,6 +123,10 @@ export default {
       checked: true,
       children: [
         { title: '页面查看', code: '120100', parentId: '120000', disabled: true },
+        { title: '送货调度', code: '120109', parentId: '120100', grandId: '120000', disabled: true },
+        { title: '拆单', code: '120110', parentId: '120100', grandId: '120000', disabled: true },
+        { title: '外转', code: '120111', parentId: '120100', grandId: '120000', disabled: true },
+        { title: '订单还原', code: '120112', parentId: '120100', grandId: '120000', disabled: true },
         { title: '发运', code: '120102', parentId: '120100', grandId: '120000', disabled: true },
         { title: '派车', code: '120101', parentId: '120100', grandId: '120000', disabled: true },
         { title: '打印', code: '120103', parentId: '120100', grandId: '120000', disabled: true },
@@ -107,23 +135,6 @@ export default {
         { title: '位置', code: '120106', parentId: '120100', grandId: '120000', disabled: true },
         { title: '编辑', code: '120107', parentId: '120100', grandId: '120000', disabled: true },
         { title: '导出', code: '120108', parentId: '120100', grandId: '120000', disabled: true }
-      ]
-    }, {
-      title: '提货单管理',
-      code: '120200',
-      parentId: '120000',
-      expand: true,
-      disabled: true,
-      checked: true,
-      children: [
-        { title: '页面查看', code: '120200', parentId: '120000', disabled: true },
-        { title: '提货', code: '120201', parentId: '120200', grandId: '120000', disabled: true },
-        { title: '打印', code: '120202', parentId: '120200', grandId: '120000', disabled: true },
-        { title: '到货', code: '120203', parentId: '120200', grandId: '120000', disabled: true },
-        { title: '删除', code: '120204', parentId: '120200', grandId: '120000', disabled: true },
-        { title: '位置', code: '120205', parentId: '120200', grandId: '120000', disabled: true },
-        { title: '编辑', code: '120206', parentId: '120200', grandId: '120000', disabled: true },
-        { title: '导出', code: '120207', parentId: '120200', grandId: '120000', disabled: true }
       ]
     }, {
       title: '外转单管理',

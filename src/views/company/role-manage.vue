@@ -6,7 +6,7 @@
         <Button v-if="hasPower(140101)" type="primary" class="centerBtn" @click="createRole">新增角色</Button>
       </div>
       <div>
-        <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" class="menu" @click.native="clickLeftMenu(menu)">
+        <MenuItem v-for="menu in roles" :key="menu.id" :name="menu.name" class="menu" @click.native="clickLeftMenu(menu)">
         <p class="menuTitle">{{menu.name}}</p>
         <span v-if="menu.type !== 1" class="configBtnItem">
           <span v-if="hasPower(140102)" class="configBtn" @click="editRole(menu)">修改</span>
@@ -32,10 +32,10 @@
     </Col>
     <Col span="20" class="rightHead">
     <div>
-      <p v-if="rightTitle !== ''" class="rightTitle">{{rightTitle}}的权限</p>
+      <p class="rightTitle">{{title}}</p>
       <div v-if="hasPower(140102)" class="saveRoleBtn">
         <Button
-          v-if="menuParam.type !== 1"
+          v-if="selectRole.type !== 1"
           :disabled="disSaveBtn"
           type="primary"
           style="width:80px;"
@@ -55,7 +55,7 @@
       <p class="modalRemoveContend">
         <i class="icon font_family icon-bangzhuzhongxin"></i>
       </p>
-      <p class="modalRemoveContendP">确定删除'{{rightTitle}}'?</P>
+      <p class="modalRemoveContendP">确定删除'{{selectRole.name}}'?</P>
       </p>
       <div slot="footer">
         <Button type="primary" @click="removeFormRole">确定</Button>
@@ -85,7 +85,6 @@
           :expand="false"
           :data="treeData"
           class="treeContentDiv"
-          multiple
           show-checkbox
           @on-check-change="treeCheckBox">
         </Tree>
@@ -98,7 +97,6 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import roleTreeList from './roleTreeList.js'
-import roleTreeListEdit from './roleTreeListEdit.js'
 import Server from '@/libs/js/server'
 import _ from 'lodash'
 export default {
@@ -111,7 +109,7 @@ export default {
     let this_ = this
     var hasRoleName = function (rule, value, callback) {
       if (value) {
-        this_.menuList.forEach(e => {
+        this_.roles.forEach(e => {
           if (value === (e.name)) {
             return callback(new Error('该角色名已被使用'))
           }
@@ -123,20 +121,19 @@ export default {
     }
     return {
       single: true,
-      rightTitle: '',
       menuInitName: '',
+      selectRoleId: '', // 选中的角色id
       disSaveBtn: true,
       createRoleModal: false,
       removeRoleModal: false,
       removeRoleModalFail: false,
       editRoleModalTitle: '',
-      menuParam: {},
       removeMenuParams: {},
       formModal: {
         name: ''
       },
       listInitTreeList: {},
-      menuList: [],
+      roles: [],
       rulesRole: {
         name: [
           { required: true, message: '角色名不能为空', trigger: 'blur' },
@@ -144,12 +141,27 @@ export default {
           { type: 'string', max: 10, message: '角色名不能超过10个字', trigger: 'change' }
         ]
       },
-      arrayCodeList: []
+      roleCodeList: []
+    }
+  },
+  computed: {
+    /**
+     * 当前选中角色
+     */
+    selectRole () {
+      return this.roles.find(role => role.id === this.selectRoleId) || { name: '超级管理员' }
+    },
+    /**
+     * 右侧区域标题
+     */
+    title () {
+      return this.selectRole.name + '的权限'
     }
   },
   watch: {
-    arrayCodeList (newList) {
-      if (this.menuParam.type === 1) {
+    roleCodeList (newList) {
+      if (this.selectRole.type === 1) {
+        // 超级管理员
         this.listInitTreeList = _.cloneDeep(roleTreeList)
       } else {
         this.initTreeList(newList)
@@ -157,64 +169,53 @@ export default {
     }
   },
   created () {
-    this.getMenuList()
+    // 获取所有角色列表
+    this.getRoleList()
+    // 初始化角色树构建
     this.listInitTreeList = _.cloneDeep(roleTreeList)
   },
   methods: {
-    getMenuList (selectMenu) {
+    getRoleList () {
       Server({
         url: 'role/list',
         method: 'get'
       }).then(({ data }) => {
-        this.menuList = data.data
-        for (let index = 0; index < data.data.length; index++) {
-          if (selectMenu) {
-            if (data.data[index].id === selectMenu.id) {
-              this.menuParam = data.data[index]
-              this.rightTitle = this.menuInitName = data.data[index].name
-              this.arrayCodeList = JSON.parse(data.data[index].codes)
-            }
-          } else {
-            if (data.data[index].type === 1) {
-              this.menuParam = data.data[index]
-              this.rightTitle = this.menuInitName = data.data[index].name
-            }
-          }
-        }
+        // 全局
+        this.roles = data.data
       })
     },
-    initTreeList (arrayCodeList) {
-      const treeList = _.cloneDeep(roleTreeListEdit)
+    initTreeList (roleCodeList) {
+      // const treeList = _.cloneDeep(roleTreeList)
+      const treeList = this.listInitTreeList
       for (let key in treeList) {
         treeList[key][0].disabled = false
         treeList[key][0].checked = false
-        this.getTreeList(arrayCodeList, treeList[key][0].children)
+        this.getTreeList(roleCodeList, treeList[key][0].children)
       }
-      this.listInitTreeList = treeList
+      // this.listInitTreeList = treeList
     },
-    getTreeList (arrayCodeList, treeData) {
+    getTreeList (roleCodeList, treeData) {
       const vm = this
       treeData.forEach(element => {
+        // 默认设置false
+        element.checked = false
         element.disabled = false
-        for (let index = 0; index < arrayCodeList.length; index++) {
-          if (arrayCodeList.includes(element.code)) {
-            if (element.children) {
-              vm.getTreeList(arrayCodeList, element.children)
-            } else {
-              element.checked = true
-            }
+        if (roleCodeList.includes(element.code)) {
+          if (element.children) {
+            vm.getTreeList(roleCodeList, element.children)
           } else {
-            if (element.children) {
-              vm.getTreeList(arrayCodeList, element.children)
-            }
+            element.checked = true
+          }
+        } else {
+          if (element.children) {
+            vm.getTreeList(roleCodeList, element.children)
           }
         }
       })
     },
     clickLeftMenu (menu) {
-      this.rightTitle = menu.name
-      this.arrayCodeList = (menu.codes === '' ? [] : JSON.parse(menu.codes))
-      this.menuParam = menu
+      this.selectRoleId = menu.id
+      this.roleCodeList = (menu.codes === '' ? [] : JSON.parse(menu.codes))
       this.disSaveBtn = true
     },
     createRole () {
@@ -235,10 +236,9 @@ export default {
       this.removeRoleModal = true
     },
     saveRole () {
-      this.menuParam.codes = this.checkBrowsePage()
       let params = {}
-      params.id = this.menuParam.id
-      params.resIds = this.menuParam.codes
+      params.id = this.selectRole.id
+      params.resIds = this.checkBrowsePage()
       Server({
         url: 'role/update',
         method: 'post',
@@ -246,13 +246,15 @@ export default {
       }).then(({ data }) => {
         if (data.code === 10000) {
           this.$Message.success('角色权限修改成功!')
-          this.getMenuList(this.menuParam)
+          // this.getRoleList(this.selectRole)
+          // 同步更新本地相应角色下的权限数据
+          const role = this.roles.find(_r => _r.id === params.id)
+          if (role) {
+            role.codes = JSON.stringify(params.resIds)
+          }
         } else {
           this.$Message.error(data.msg)
         }
-      }).then(() => {
-        this.arrayCodeList = this.menuParam.codes
-        this.rightTitle = this.menuParam.name
       })
     },
     subFormRole (name) {
@@ -267,7 +269,7 @@ export default {
             }).then(({ data }) => {
               if (data.code === 10000) {
                 this.$Message.success('添加成功!')
-                this.getMenuList()
+                this.getRoleList()
               } else {
                 this.$Message.success(data.msg)
               }
@@ -280,7 +282,7 @@ export default {
             }).then(({ data }) => {
               if (data.code === 10000) {
                 this.$Message.success('修改成功!')
-                this.getMenuList()
+                this.getRoleList()
               } else {
                 this.$Message.success(data.msg)
               }
@@ -305,7 +307,7 @@ export default {
         if (data.code === 10000) {
           this.removeRoleModal = false
           this.$Message.success('删除角色成功!')
-          this.getMenuList()
+          this.getRoleList()
         } else if (data.code === 410009) {
           this.removeRoleModal = false
           this.removeRoleModalFail = true
@@ -338,7 +340,7 @@ export default {
     },
     treeCheckBox (node) {
       this.disSaveBtn = false
-      this.arrayCodeList = this.checkBrowsePage()
+      // this.roleCodeList = this.checkBrowsePage()
     }
     // renderContent (h, { root, node, data }) {
     //   if (node.nodeKey === 0) {
