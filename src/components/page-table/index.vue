@@ -1,5 +1,11 @@
 <template>
   <div class="page-table">
+    <SliderIcon
+      v-if="showFilter"
+      :list="extraColumns"
+      class="page-table__sliderIcon"
+      @on-change="customTableColumns">
+    </SliderIcon>
     <Table
       ref="table"
       :width="width"
@@ -239,28 +245,29 @@ export default {
 
         return fixedCols.concat(
           _.sortBy(normalCols, (col) => columnGroup[col.key] ? columnGroup[col.key][0].sort : 0)
-        ).concat({
-          title: 'icon',
-          width: 48,
-          fixed: 'right',
-          renderHeader (h, params) {
-            return h(SliderIcon, {
-              props: {
-                list: vm.extraColumns
-              },
-              on: {
-                'on-change': (columns) => {
-                  vm.$emit('on-column-change', columns)
-                  // vm.extraColumns = columns
-                }
-              }
-            })
-          },
-          key: 'filter-columns',
-          render: (h) => {
-            return h('span', '')
-          }
-        })
+        )
+        // .concat({
+        //   title: 'icon',
+        //   width: 48,
+        //   fixed: 'right',
+        //   renderHeader (h, params) {
+        //     return h(SliderIcon, {
+        //       props: {
+        //         list: vm.extraColumns
+        //       },
+        //       on: {
+        //         'on-change': (columns) => {
+        //           vm.$emit('on-column-change', columns)
+        //           // vm.extraColumns = columns
+        //         }
+        //       }
+        //     })
+        //   },
+        //   key: 'filter-columns',
+        //   render: (h) => {
+        //     return h('span', '')
+        //   }
+        // })
       } else {
         return this.columns
       }
@@ -527,6 +534,12 @@ export default {
      */
     clearSelected () {
       this.selectedRow = []
+    },
+    /**
+     * 更改表单列表
+     */
+    customTableColumns (columns) {
+      this.$emit('on-column-change', columns)
     }
   }
 }
@@ -536,6 +549,17 @@ export default {
 .page-table
   position: relative;
   margin-top: 0px
+  &__sliderIcon
+    position: absolute;
+    background: #f8f8f9;
+    z-index: 2;
+    right: 0px;
+    width: 50px;
+    text-align: center;
+    height: 39px;
+    line-height: 39px;
+    top: 1px;
+    box-shadow: -1px 0px 4px 0px #cfcfcf;
   &__footer-pagination
     margin: 10px;
     overflow: hidden;

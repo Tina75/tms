@@ -64,13 +64,14 @@ export default {
     })
   },
   methods: {
-    ...mapActions(['getPermissons', 'getUserInfo', 'getMessageCount']),
+    ...mapActions(['getPermissons', 'getUserInfo', 'getMessageCount', 'getTableColumns']),
     ...mapMutations(['setTabNavList', 'initTabNav']),
     async init () {
       await this.getPermissons()
       this.initTabNav()
       this.toHome()
       await this.getUserInfo()
+      await this.getTableColumns()
       this.loopMessage()
       if (sessionStorage.getItem('first_time_login') === 'true') {
         if (this.UserInfo.type === 1) this.renew()

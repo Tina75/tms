@@ -46,3 +46,16 @@ export const getMessageCount = ({ commit }) => {
     console.log(e)
   })
 }
+
+/** 获取自定义table列表信息 */
+export const getTableColumns = ({ commit }) => {
+  return Server({
+    url: '/gridHead/list',
+    method: 'get'
+  }).then(({ data }) => {
+    alert('接口通啦！！！')
+    commit('initTableColumns', data.data)
+  }).catch(e => {
+    console.log(e)
+  })
+}

@@ -17,6 +17,9 @@ export default{
     const msg = { ...payload }
     msg.all = msg.sysNum + msg.orderNum + msg.carrierNum
     state.messageCount = msg
+  },
+  initTableColumns (state, list) {
+    state.customTableColumns = [ ...list ]
   }
 }
 
