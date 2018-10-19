@@ -247,7 +247,7 @@ export default {
         url: 'message/pmd',
         method: 'get'
       }).then(res => {
-        if (res && res.data) {
+        if (res && res.data.code === 1000) {
           this.notice = res.data.data
           // this.cardChecksTemp = []
           // for (const i of data) {
