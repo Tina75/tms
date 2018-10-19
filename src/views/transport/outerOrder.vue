@@ -2,7 +2,7 @@
   <div ref="$box" class="transport-page">
     <TabHeader :tabs="tabList" :type="tabType" @on-change="tabChanged"></TabHeader>
 
-    <div style="margin-top: 30px;display: flex;justify-content: space-between;">
+    <div class="easy-search-box">
 
       <!-- 按钮组 -->
       <div class="custom-style">

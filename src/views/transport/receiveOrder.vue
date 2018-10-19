@@ -2,98 +2,107 @@
   <div ref="$box" class="transport-page">
     <TabHeader :tabs="tabList" :type="tabType" @on-change="tabChanged"></TabHeader>
 
-    <div style="margin-top: 30px;display: flex;justify-content: space-between;">
+    <template v-if="tabStatus">
+      <div class="easy-search-box">
 
-      <!-- 按钮组 -->
-      <div class="custom-style">
-        <Button v-for="(item, key) in showButtons" :key="key"
-                :type="key === 0 ? 'primary' : 'default'"
-                @click="item.func">{{ item.name }}</Button>
-      </div>
-
-      <!-- 简易搜索 -->
-      <div v-if="isEasySearch" class="right custom-style">
-        <Select v-model="easySelectMode"
-                style="width:120px; margin-right: 11px"
-                @on-change="resetEasySearch">
-          <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-        </Select>
-
-        <Input v-if="easySelectMode === 1"
-               v-model="easySearchKeyword"
-               :icon="easySearchKeyword ? 'ios-close-circle' : ''"
-               :maxlength="20"
-               placeholder="请输入提货单号"
-               class="search-input"
-               @on-click="resetEasySearch" />
-
-        <SelectInput v-if="easySelectMode === 2" v-model="easySearchKeyword"
-                     mode="carrier"
-                     placeholder="请输入承运商"
-                     clearable
-                     class="search-input"
-                     @on-select="selectCarrierHandler"
-                     @on-clear="resetEasySearch" />
-
-        <SelectInput v-if="easySelectMode === 3" v-model="easySearchKeyword"
-                     :carrier-id="carrierId"
-                     mode="carNo"
-                     placeholder="请输入车牌号"
-                     clearable
-                     class="search-input"
-                     @on-clear="resetEasySearch" />
-
-        <Button icon="ios-search" type="primary"
-                class="search-btn-easy"
-                @click="startSearch"></Button>
-
-        <Button class="senior-search"
-                type="text" size="small"
-                @click="changeSearchType">高级搜索</Button>
-      </div>
-    </div>
-
-    <!-- 高级搜索 -->
-    <div v-if="!isEasySearch" class="operate-box custom-style">
-
-      <div style="margin-bottom: 10px;">
-        <Input v-model="seniorSearchFields.pickupNo" :maxlength="20" placeholder="请输入提货单号"  class="search-input-senior" />
-        <SelectInput v-model="seniorSearchFields.carrierName"
-                     mode="carrier"
-                     placeholder="请输入承运商"
-                     class="search-input-senior"
-                     @on-select="selectCarrierHandler" />
-        <SelectInput v-model="seniorSearchFields.driverName"
-                     :carrier-id="carrierId"
-                     mode="driver"
-                     placeholder="请输入司机"
-                     class="search-input-senior" />
-        <SelectInput v-model="seniorSearchFields.carNo"
-                     :carrier-id="carrierId"
-                     mode="carNo"
-                     placeholder="请输入车牌号"
-                     class="search-input-senior" />
-      </div>
-
-      <div style="display: flex;justify-content: space-between;">
-        <div>
-          <DatePicker v-model="seniorSearchFields.dateRange" type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
+        <!-- 按钮组 -->
+        <div class="custom-style">
+          <Button v-for="(item, key) in showButtons" :key="key"
+                  :type="key === 0 ? 'primary' : 'default'"
+                  @click="item.func">{{ item.name }}</Button>
         </div>
-        <div>
-          <Button type="primary"
-                  @click="startSearch">搜索</Button>
-          <Button type="default"
-                  @click="resetSeniorSearch()">清除条件</Button>
-          <Button type="default"
-                  style="margin-right: 0;"
-                  @click="changeSearchType">简易搜索</Button>
+
+        <!-- 简易搜索 -->
+        <div v-if="isEasySearch" class="right custom-style">
+          <Select v-model="easySelectMode"
+                  style="width:120px; margin-right: 11px"
+                  @on-change="resetEasySearch">
+            <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          </Select>
+
+          <Input v-if="easySelectMode === 1"
+                 v-model="easySearchKeyword"
+                 :icon="easySearchKeyword ? 'ios-close-circle' : ''"
+                 :maxlength="20"
+                 placeholder="请输入提货单号"
+                 class="search-input"
+                 @on-click="resetEasySearch" />
+
+          <SelectInput v-if="easySelectMode === 2" v-model="easySearchKeyword"
+                       mode="carrier"
+                       placeholder="请输入承运商"
+                       clearable
+                       class="search-input"
+                       @on-select="selectCarrierHandler"
+                       @on-clear="resetEasySearch" />
+
+          <SelectInput v-if="easySelectMode === 3" v-model="easySearchKeyword"
+                       :carrier-id="carrierId"
+                       mode="carNo"
+                       placeholder="请输入车牌号"
+                       clearable
+                       class="search-input"
+                       @on-clear="resetEasySearch" />
+
+          <Button icon="ios-search" type="primary"
+                  class="search-btn-easy"
+                  @click="startSearch"></Button>
+
+          <Button class="senior-search"
+                  type="text" size="small"
+                  @click="changeSearchType">高级搜索</Button>
         </div>
       </div>
 
-    </div>
+      <!-- 高级搜索 -->
+      <div v-if="!isEasySearch" class="operate-box custom-style">
+
+        <div style="margin-bottom: 10px;">
+          <Input v-model="seniorSearchFields.pickupNo" :maxlength="20" placeholder="请输入提货单号"  class="search-input-senior" />
+          <SelectInput v-model="seniorSearchFields.carrierName"
+                       mode="carrier"
+                       placeholder="请输入承运商"
+                       class="search-input-senior"
+                       @on-select="selectCarrierHandler" />
+          <SelectInput v-model="seniorSearchFields.driverName"
+                       :carrier-id="carrierId"
+                       mode="driver"
+                       placeholder="请输入司机"
+                       class="search-input-senior" />
+          <SelectInput v-model="seniorSearchFields.carNo"
+                       :carrier-id="carrierId"
+                       mode="carNo"
+                       placeholder="请输入车牌号"
+                       class="search-input-senior" />
+        </div>
+
+        <div style="display: flex;justify-content: space-between;">
+          <div>
+            <DatePicker v-model="seniorSearchFields.dateRange" type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
+          </div>
+          <div>
+            <Button type="primary"
+                    @click="startSearch">搜索</Button>
+            <Button type="default"
+                    @click="resetSeniorSearch()">清除条件</Button>
+            <Button type="default"
+                    style="margin-right: 0;"
+                    @click="changeSearchType">简易搜索</Button>
+          </div>
+        </div>
+
+      </div>
+    </template>
+
+    <OrderTabContent
+      v-show="!tabStatus"
+      source="transport"
+      tab-status="待提货"
+      url="/load/bill/wait/pick/list"
+      @refresh-tab="fetchTabCount" />
 
     <!-- 表格 -->
-    <div>
+    <div v-show="tabStatus">
       <PageTable ref="$table"
                  :columns="tableColumns"
                  :extra-columns="extraColumns"
@@ -126,6 +135,7 @@ import PageTable from '@/components/page-table'
 import SelectInput from './components/SelectInput.vue'
 import SelectInputMixin from './components/selectInputMixin'
 import PrintPickup from './components/PrintPickup'
+import OrderTabContent from '@/views/order-management/components/TabContent'
 
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
@@ -133,15 +143,16 @@ import TMSUrl from '@/libs/constant/url'
 
 export default {
   name: 'ReceiveManager',
-  components: { TabHeader, PageTable, SelectInput, PrintPickup },
+  components: { TabHeader, PageTable, SelectInput, PrintPickup, OrderTabContent },
   mixins: [ BasePage, TransportBase, SelectInputMixin, TransportMixin ],
-  metaInfo: { title: '提货单管理' },
+  metaInfo: { title: '提货管理' },
   data () {
     return {
       tabType: 'PICKUP',
       // 标签栏
       tabList: [
-        { name: '全部', count: '' },
+        // { name: '全部', count: '' },
+        { name: '待调度', count: '' },
         { name: '待提货', count: '' },
         { name: '提货中', count: '' },
         { name: '已提货', count: '' }
@@ -149,40 +160,41 @@ export default {
 
       // 所有按钮组
       btnList: [
-        {
-          tab: '全部',
-          btns: [{
-            name: '到货',
-            code: 120203,
-            func: () => {
-              this.billArrived()
-            }
-          }, {
-            name: '打印',
-            code: 120202,
-            func: () => {
-              this.billPrint()
-            }
-          }, {
-            name: '删除',
-            code: 120204,
-            func: () => {
-              this.billDelete()
-            }
-          }, {
-            name: '位置',
-            code: 120205,
-            func: () => {
-              this.billLocation()
-            }
-          }, {
-            name: '导出',
-            code: 120207,
-            func: () => {
-              this.billExport()
-            }
-          }]
-        },
+        // {
+        //   tab: '全部',
+        //   btns: [{
+        //     name: '到货',
+        //     code: 120203,
+        //     func: () => {
+        //       this.billArrived()
+        //     }
+        //   }, {
+        //     name: '打印',
+        //     code: 120202,
+        //     func: () => {
+        //       this.billPrint()
+        //     }
+        //   }, {
+        //     name: '删除',
+        //     code: 120204,
+        //     func: () => {
+        //       this.billDelete()
+        //     }
+        //   }, {
+        //     name: '位置',
+        //     code: 120205,
+        //     func: () => {
+        //       this.billLocation()
+        //     }
+        //   }, {
+        //     name: '导出',
+        //     code: 120207,
+        //     func: () => {
+        //       this.billExport()
+        //     }
+        //   }]
+        // },
+        { tab: '待调度', btns: [] },
         {
           tab: '待提货',
           btns: [{
@@ -494,9 +506,10 @@ export default {
     // 设置标签状态
     setTabStatus (tab) {
       switch (tab) {
-        case '全部':
-          this.triggerTableActionColumn(true)
-          return
+        // case '全部':
+        //   this.triggerTableActionColumn(true)
+        //   return
+        case '待调度': return
         case '待提货':
           this.triggerTableActionColumn(true)
           return 1
@@ -510,18 +523,27 @@ export default {
       }
     },
 
+    fetchTabCount () {
+      Server({
+        url: '/load/bill/tab/cnt',
+        method: 'get'
+      }).then(res => {
+        const data = res.data.data
+        this.tabList = [
+          { name: '待调度', count: data.waitDispatchCnt || 0 },
+          { name: '待提货', count: data.waitCnt || 0 },
+          { name: '提货中', count: data.loadCnt || 0 },
+          { name: '已提货', count: data.loadedCnt || 0 }
+        ]
+      })
+    },
+
     // 数据查询
     dataOnload (res) {
       const data = res.data.data
       this.page.current = data.pageNo
       this.page.size = data.pageSize
-      this.tabList = [
-        { name: '全部', count: '' },
-        { name: '待提货', count: data.statusCntInfo.waitCnt || 0 },
-        { name: '提货中', count: data.statusCntInfo.loadCnt || 0 },
-        { name: '已提货', count: data.statusCntInfo.loadedCnt || 0 }
-      ]
-      this.$forceUpdate()
+      // this.$forceUpdate()
     },
 
     // 打印
@@ -598,6 +620,7 @@ export default {
             }).then(res => {
               self.$Message.success('删除成功')
               self.tableSelection = []
+              self.fetchTabCount()
               self.$refs.$table.clearSelected()
               self.$refs.$table.fetch()
             }).catch(err => console.error(err))
@@ -625,6 +648,7 @@ export default {
             }).then(res => {
               self.$Message.success('操作成功')
               self.tableSelection = []
+              self.fetchTabCount()
               self.$refs.$table.clearSelected()
               self.$refs.$table.fetch()
             }).catch(err => console.error(err))
@@ -650,6 +674,7 @@ export default {
           methods: {
             complete () {
               self.tableSelection = []
+              self.fetchTabCount()
               self.$refs.$table.clearSelected()
               self.$refs.$table.fetch()
             }
