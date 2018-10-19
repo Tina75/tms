@@ -203,7 +203,7 @@ import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import OrderPrint from './components/OrderPrint'
 import AreaSelect from '@/components/AreaSelect'
-import { getCityCode, resetCityValidator, FORM_VALIDATE_START, FORM_VALIDATE_END } from '@/libs/js/cityValidator'
+import { getCityCode, FORM_VALIDATE_START, FORM_VALIDATE_END } from '@/libs/js/cityValidator'
 import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
 import settlements from '@/libs/constant/settlement.js'
@@ -317,7 +317,7 @@ export default {
         ],
         start: [
           { required: true, type: 'array', message: '请选择始发城市' },
-          { validator: FORM_VALIDATE_START(_this, 'orderForm'), trigger: 'change' }
+          { validator: FORM_VALIDATE_START, trigger: 'change' }
         ],
         end: [
           { required: true, type: 'array', message: '请选择目的城市' },
@@ -673,7 +673,6 @@ export default {
       this.$refs.orderForm.resetFields()
       this.clearCargoes()
       this.consignerCargoes = [new Cargo()]
-      resetCityValidator()
     },
     // 修改订单完结束后，自动关闭页面
     closeTab () {
