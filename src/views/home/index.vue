@@ -32,7 +32,7 @@
         </Col>
       </Row>
     </div>
-    <Row :gutter="16" type="flex" justify="left">
+    <Row :gutter="16" type="flex" justify="start">
       <!-- 提货代办 -->
       <PickupTodo v-if="cardChecksTemp.includes('pickup-todo')"/>
       <!-- 送货代办 -->
