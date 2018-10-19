@@ -199,7 +199,7 @@ export default {
     return {
       rightTitle: '',
       type: '0',
-      typeName: '',
+      typeName: '0',
       messageInit: {},
       messageType: '',
       messageCheckGroupInit: [],
@@ -217,17 +217,19 @@ export default {
         name: '系统消息',
         id: '0',
         infoNum: ''
-      }, {
-        name: '订单消息',
-        id: '1',
-        infoNum: '',
-        code: 110000
-      }, {
-        name: '运输消息',
-        id: '2',
-        infoNum: '',
-        code: 120000
-      }],
+      }
+      // {
+      //   name: '订单消息',
+      //   id: '1',
+      //   infoNum: '',
+      //   code: 110000
+      // }, {
+      //   name: '运输消息',
+      //   id: '2',
+      //   infoNum: '',
+      //   code: 120000
+      // }
+      ],
       searchData: {
         type: '0',
         pageNo: 1,
@@ -286,8 +288,9 @@ export default {
     },
     getMenuInfoNum () {
       this.menuList[0].infoNum = this.$store.getters.MsgCount.sysNum
-      this.menuList[1].infoNum = this.$store.getters.MsgCount.orderNum
-      this.menuList[2].infoNum = this.$store.getters.MsgCount.carrierNum
+      // modify 20181019 by mys, 不需要订单和运输消息
+      // this.menuList[1].infoNum = this.$store.getters.MsgCount.orderNum
+      // this.menuList[2].infoNum = this.$store.getters.MsgCount.carrierNum
       if (!this.batchBtnShow) {
         for (let index = 0; index < document.getElementsByClassName('checkboxItem').length; index++) {
           document.getElementsByClassName('checkboxItem')[index].children[1].innerText = ''

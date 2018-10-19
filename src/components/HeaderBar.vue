@@ -4,7 +4,12 @@
       <i class="icon font_family icon-shouji"></i>
     </a> -->
     <div class="header-bar-avator-dropdown">
-      <Dropdown class="header-bar-avator-dropdown-notify">
+      <span class="header-bar-avator-dropdown-notify">
+        <Badge :count="MsgCount.all" type="primary">
+          <Icon type="ios-notifications" size="30" color="#fff" @click="openMsg(0)"></Icon>
+        </Badge>
+      </span>
+      <!-- <Dropdown class="header-bar-avator-dropdown-notify">
         <Poptip trigger="hover" title="消息中心" content="暂无系统消息" >
           <Badge :count="MsgCount.all" type="primary">
             <Icon type="ios-notifications" size="30" color="#fff"></Icon>
@@ -30,11 +35,7 @@
             </div>
           </div>
         </Poptip>
-        <!-- <DropdownMenu slot="list">
-          <DropdownItem name="1" >通知</DropdownItem>
-          <DropdownItem name="2" >订单</DropdownItem>
-        </DropdownMenu> -->
-      </Dropdown>
+      </Dropdown> -->
 
       <!-- <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick"> -->
       <Poptip trigger="hover"  placement="bottom-end" title="账号信息" width="260">
