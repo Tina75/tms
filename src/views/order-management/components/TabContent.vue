@@ -87,6 +87,7 @@
       :extra-columns="extraColumns"
       :show-filter="true"
       :row-class-name="rowClassName"
+      table-head-type="order_head"
       style="margin-top: 15px"
       @on-selection-change="handleSelectionChange"
       @on-column-change="handleColumnChange">

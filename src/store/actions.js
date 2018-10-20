@@ -53,7 +53,6 @@ export const getTableColumns = ({ commit }) => {
     url: '/gridHead/list',
     method: 'get'
   }).then(({ data }) => {
-    alert('接口通啦！！！')
     commit('initTableColumns', data.data)
   }).catch(e => {
     console.log(e)

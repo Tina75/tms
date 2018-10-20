@@ -19,7 +19,7 @@ export default{
     state.messageCount = msg
   },
   initTableColumns (state, list) {
-    state.customTableColumns = [ ...list ]
+    state.customTableColumns = list
   }
 }
 

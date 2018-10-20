@@ -20,6 +20,7 @@
       :size="size"
       :no-data-text="noDataText"
       :row-class-name="rowClass"
+      :table-head-type="tableHeadType"
       @on-current-change="handleCurrentChange"
       @on-select="handleSelect"
       @on-select-all="handleSelectAll"
@@ -185,6 +186,8 @@ export default {
       type: Boolean,
       default: true
     },
+    // 表单类型
+    tableHeadType: '',
     onLoad: Function, // 每次请求后，回调，返回列表搜索结果
     onCurrentChange: Function,
     onSelect: Function,
@@ -337,8 +340,20 @@ export default {
     if (this.autoload) {
       this.fetch()
     }
+    this.extraColumns = this.reconfigTableHeader(this.extraColumns, this.tableHeadType)
   },
   methods: {
+    /**
+     * 自定义table表头数据对接（页面-接口）
+     */
+    reconfigTableHeader (pageHeadData, interfaceHeadData) {
+      this.$store.getters.TableColumns[interfaceHeadData].forEach(e => {
+        const headRow = pageHeadData.find(ph => ph.key === e.k)
+        headRow.visible = e.v
+        headRow.sort = e.s
+      })
+      return pageHeadData
+    },
     /**
      * 复选框选中后，背景高亮
      */

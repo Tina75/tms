@@ -110,6 +110,7 @@
                  :extra-columns="extraColumns"
                  :show-filter="true"
                  :keywords="searchFields"
+                 table-head-type="waybill_head"
                  row-id="waybillId"
                  url="/waybill/list"
                  method="post"
