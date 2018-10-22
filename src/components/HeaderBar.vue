@@ -5,37 +5,38 @@
         <tab-nav :list="TabNavList" :value="$route" @on-close="onTabClose" @on-select="onTabSelect"/>
       </div>
       <div class="header-bar-avator-dropdown">
-        <Dropdown class="header-bar-avator-dropdown-notify">
-          <Poptip trigger="hover" title="消息中心" content="暂无系统消息" >
-            <Badge :count="MsgCount.all" type="primary">
-              <Icon type="ios-notifications" size="30" color="#fff"></Icon>
-            </Badge>
-            <div slot="content" class="msg">
-              <div class="msg-item" @click="openMsg(0)">
-                <Badge :count="MsgCount.sysNum"  class="msg-item-count">
-                  <img src="../assets/icon-system-msg.png" alt="" width="34">
-                </Badge>
-                <p>系统消息</p>
-              </div>
-              <div v-if="hasPower('110000')" class="msg-item" @click="openMsg(1)">
-                <Badge :count="MsgCount.orderNum"  class="msg-item-count">
-                  <img src="../assets/icon-order-msg.png" alt="" width="34">
-                </Badge>
-                <p>订单消息</p>
-              </div>
-              <div v-if="hasPower('120000')" class="msg-item" @click="openMsg(2)">
-                <Badge :count="MsgCount.carrierNum" class="msg-item-count">
-                  <img src="../assets/icon-truck-msg.png" alt="" width="34">
-                </Badge>
-                <p>运输消息</p>
-              </div>
+        <span class="header-bar-avator-dropdown-notify">
+          <Badge :count="MsgCount.all" type="primary">
+            <Icon type="ios-notifications" size="30" color="#fff" @click="openMsg(0)"></Icon>
+          </Badge>
+        </span>
+        <!-- <Dropdown class="header-bar-avator-dropdown-notify">
+        <Poptip trigger="hover" title="消息中心" content="暂无系统消息" >
+          <Badge :count="MsgCount.all" type="primary">
+            <Icon type="ios-notifications" size="30" color="#fff"></Icon>
+          </Badge>
+          <div slot="content" class="msg">
+            <div class="msg-item" @click="openMsg(0)">
+              <Badge :count="MsgCount.sysNum"  class="msg-item-count">
+                <img src="../assets/icon-system-msg.png" alt="" width="34">
+              </Badge>
+              <p>系统消息</p>
             </div>
-          </Poptip>
-        <!-- <DropdownMenu slot="list">
-          <DropdownItem name="1" >通知</DropdownItem>
-          <DropdownItem name="2" >订单</DropdownItem>
-        </DropdownMenu> -->
-        </Dropdown>
+            <div v-if="hasPower('110000')" class="msg-item" @click="openMsg(1)">
+              <Badge :count="MsgCount.orderNum"  class="msg-item-count">
+                <img src="../assets/icon-order-msg.png" alt="" width="34">
+              </Badge>
+              <p>订单消息</p>
+            </div>
+            <div v-if="hasPower('120000')" class="msg-item" @click="openMsg(2)">
+              <Badge :count="MsgCount.carrierNum" class="msg-item-count">
+                <img src="../assets/icon-truck-msg.png" alt="" width="34">
+              </Badge>
+              <p>运输消息</p>
+            </div>
+          </div>
+        </Poptip>
+      </Dropdown> -->
 
         <!-- <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick"> -->
         <Poptip trigger="hover"  placement="bottom-end" title="账号信息" width="260">
@@ -54,7 +55,7 @@
       </div>
     </div>
   </Header>
-</header></template>
+</template>
 
 <script>
 import BaseComponent from '@/basic/BaseComponent'
