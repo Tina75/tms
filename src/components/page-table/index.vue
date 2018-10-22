@@ -2,7 +2,7 @@
   <div class="page-table">
     <SliderIcon
       v-if="showFilter"
-      :list="extraColumnsInit"
+      :list="extraColumns"
       class="page-table__sliderIcon"
       @on-change="customTableColumns">
     </SliderIcon>
@@ -62,6 +62,7 @@
 <script>
 import server from '@/libs/js/server'
 import SliderIcon from './SliderIcon.vue'
+import { mapMutations } from 'vuex'
 import _ from 'lodash'
 /**
   * iview的table和page的组件是分开的
@@ -143,14 +144,10 @@ export default {
       required: true
     },
     // 显示或隐藏的属性
-    extraColumns: {
-      type: Array,
-      default: () => []
-    },
-    extraColumnsInit: {
-      type: Array,
-      default: () => []
-    },
+    // extraColumns: {
+    //   type: Array,
+    //   default: () => []
+    // },
     // 表数据,可能需要自己做分页
     data: {
       type: Array,
@@ -211,6 +208,8 @@ export default {
   },
   data () {
     return {
+      // 显示或隐藏的属性
+      extraColumns: [],
       isRemote: false,
       // 请求时候的加载状态
       loading: false,
@@ -232,6 +231,7 @@ export default {
     filterColumns () {
       const vm = this
       if (vm.showFilter) {
+        vm.extraColumns = vm.reconfigTableHeader('', vm.tableHeadType, 'change')
         const columnGroup = _.groupBy(vm.extraColumns, (cl) => cl.key)
         const fixedCols = []
         const normalCols = []
@@ -338,25 +338,40 @@ export default {
     this.showSlotHeader = this.$slots.header !== undefined
   },
   mounted () {
+    this.extraColumns = this.reconfigTableHeader('', this.tableHeadType, 'change')
     if (!this.isRemote) {
       this.setLocalDataSource(this.data)
     }
     if (this.autoload) {
       this.fetch()
     }
-    this.extraColumnsInit = this.reconfigTableHeader(this.extraColumns, this.tableHeadType)
   },
   methods: {
+    ...mapMutations(['updateTableColumns']),
     /**
      * 自定义table表头数据对接（页面-接口）
+     * pageHeadData,interfaceHeadData 接口与页面Data规整
+     * type 初始化页面传入SliderIcon组件
      */
-    reconfigTableHeader (pageHeadData, interfaceHeadData) {
-      this.$store.getters.TableColumns[interfaceHeadData].forEach(e => {
-        const headRow = pageHeadData.find(ph => ph.key === e.k)
-        headRow.visible = e.v
-        headRow.sort = e.s
-      })
-      return pageHeadData
+    reconfigTableHeader (pageHeadData, interfaceHeadData, type) {
+      let pageHeadDataInit = []
+      if (type && this.$store.getters.TableColumns[interfaceHeadData]) {
+        this.$store.getters.TableColumns[interfaceHeadData].forEach(e => {
+          let headRow = {}
+          headRow.key = e.k
+          headRow.visible = e.v
+          headRow.sort = e.s
+          headRow.title = e.t
+          headRow.fixed = e.f
+          pageHeadDataInit.push(headRow)
+        })
+        return pageHeadDataInit
+      } else {
+        if (this.$store.getters.TableColumns[interfaceHeadData]) {
+          this.$store.commit('updateTableColumns', { list: pageHeadData, type: interfaceHeadData })
+          return JSON.stringify(this.$store.getters.TableColumns[interfaceHeadData])
+        }
+      }
     },
     /**
      * 复选框选中后，背景高亮
@@ -558,14 +573,17 @@ export default {
      * 更改表单列表
      */
     customTableColumns (columns) {
-      this.$emit('on-column-change', columns)
+      // this.$emit('on-column-change', columns)
       // 保存自定义列表
-      // Server({
-      //   url: '',
-      //   method: 'get'
-      // }).then(({ data }) => {
-      //   this.roles = data.data
-      // })
+      let params = {}
+      params.bizCode = this.tableHeadType
+      params.propertiyList = this.reconfigTableHeader(columns, this.tableHeadType)
+      server({
+        url: '/gridHead/save',
+        method: 'post',
+        data: params
+      }).then(({ data }) => {
+      })
     }
   }
 }

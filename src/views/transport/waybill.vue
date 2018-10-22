@@ -107,7 +107,6 @@
     <div v-show="tabStatus">
       <PageTable ref="$table"
                  :columns="tableColumns"
-                 :extra-columns="extraColumns"
                  :show-filter="true"
                  :keywords="searchFields"
                  table-head-type="waybill_head"

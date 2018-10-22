@@ -331,7 +331,6 @@ export default {
               this.$Message.success('转移成功!')
               location.reload()
             } else {
-              this.$Message.error(data.msg)
               this.visibaleTransfer = false
             }
           })
@@ -366,7 +365,6 @@ export default {
           this.$Message.success('删除成功！')
           this.formSearchInit = {}
         } else {
-          this.$Message.error(data.msg)
           this.visibaleRemove = false
         }
       })

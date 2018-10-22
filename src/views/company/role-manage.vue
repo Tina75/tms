@@ -252,8 +252,6 @@ export default {
           if (role) {
             role.codes = JSON.stringify(params.resIds)
           }
-        } else {
-          this.$Message.error(data.msg)
         }
       })
     },
@@ -270,8 +268,6 @@ export default {
               if (data.code === 10000) {
                 this.$Message.success('添加成功!')
                 this.getRoleList()
-              } else {
-                this.$Message.success(data.msg)
               }
             })
           } else {
@@ -283,8 +279,6 @@ export default {
               if (data.code === 10000) {
                 this.$Message.success('修改成功!')
                 this.getRoleList()
-              } else {
-                this.$Message.success(data.msg)
               }
             })
           }
@@ -311,8 +305,6 @@ export default {
         } else if (data.code === 410009) {
           this.removeRoleModal = false
           this.removeRoleModalFail = true
-        } else {
-          this.$Message.success(data.msg)
         }
       })
     },

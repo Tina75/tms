@@ -95,7 +95,6 @@
     <div>
       <PageTable ref="$table"
                  :columns="tableColumns"
-                 :extra-columns="extraColumns"
                  :show-filter="true"
                  :keywords="searchFields"
                  table-head-type="trans_head"

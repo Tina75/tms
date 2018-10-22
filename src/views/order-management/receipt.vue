@@ -94,7 +94,6 @@
       :method="method"
       :keywords="keyword"
       :columns="tableColumns"
-      :extra-columns="extraColumns"
       :show-filter="true"
       table-head-type="receipt_head"
       style="margin-top: 15px"

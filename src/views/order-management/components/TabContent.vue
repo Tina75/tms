@@ -84,7 +84,6 @@
       :method="method"
       :keywords="keyword"
       :columns="tableColumns"
-      :extra-columns="extraColumns"
       :show-filter="true"
       :row-class-name="rowClassName"
       table-head-type="order_head"

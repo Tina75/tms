@@ -352,8 +352,6 @@ export default {
           this.visibaleRemoveAll = false
           this.getMenuList(this.searchData)
           this.getMessageCount()
-        } else {
-          this.$Message.success(data.msg)
         }
       })
     },
