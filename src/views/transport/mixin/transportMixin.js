@@ -49,7 +49,7 @@ export default {
   },
 
   methods: {
-    // 显示用户筛选过的表头数据（本地）
+    // 显示用户筛选过的表头数据（本地）-已废弃，保存在数据库
     setTableColumns () {
       const columns = window.localStorage[this.tabType + '_COLUMNS']
       if (columns) this.extraColumns = JSON.parse(columns)
@@ -75,7 +75,7 @@ export default {
         this.tabChanged(tab)
       } else {
         this.tabStatus = this.setTabStatus(this.tabList[0].name)
-        this.currentBtns = this.btnList[0].btns
+        // this.currentBtns = this.btnList[0].btns
         this.fetchData()
       }
     },
