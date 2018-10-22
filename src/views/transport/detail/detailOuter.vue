@@ -159,9 +159,14 @@
 </template>
 
 <script>
+
+/**
+ * 外转单详情
+ */
+
 import BasePage from '@/basic/BasePage'
 import TransportBase from '../mixin/transportBase'
-import DetailMixin from './detailMixin'
+import DetailMixin from '../mixin/detailMixin'
 import Server from '@/libs/js/server'
 
 export default {

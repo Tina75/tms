@@ -247,9 +247,7 @@ export default {
               data: { transIds }
             }).then(res => {
               self.$Message.success('删除成功')
-              self.tableSelection = []
-              self.$refs.$table.clearSelected()
-              self.$refs.$table.fetch()
+              self.clearSelectedAndFetch()
             }).catch(err => console.error(err))
           }
         }
@@ -280,9 +278,7 @@ export default {
               data: { transIds }
             }).then(res => {
               self.$Message.success('操作成功')
-              self.tableSelection = []
-              self.$refs.$table.clearSelected()
-              self.$refs.$table.fetch()
+              self.clearSelectedAndFetch()
             }).catch(err => console.error(err))
           }
         }
@@ -314,9 +310,7 @@ export default {
               data: { transIds }
             }).then(res => {
               self.$Message.success('操作成功')
-              self.tableSelection = []
-              self.$refs.$table.clearSelected()
-              self.$refs.$table.fetch()
+              self.clearSelectedAndFetch()
             }).catch(err => console.error(err))
           }
         }

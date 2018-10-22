@@ -24,9 +24,14 @@
 </template>
 
 <script>
+
+/**
+ * 创建提货单
+ */
+
 import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '@/views/transport/components/SelectInput.vue'
-import SelectInputMixin from '@/views/transport/components/selectInputMixin'
+import SelectInputMixin from '@/views/transport/mixin/selectInputMixin'
 import Server from '@/libs/js/server'
 import { CAR } from '@/views/client/client'
 
@@ -36,7 +41,7 @@ export default {
   mixins: [ BaseDialog, SelectInputMixin ],
   data () {
     return {
-      // select input data
+      // 下拉输入框数据
       keyFields: 'form',
       linkageFields: ['carNo'],
 
@@ -56,7 +61,6 @@ export default {
     }
   },
   methods: {
-
     create () {
       this.$refs.$form.validate(valid => {
         if (valid) {

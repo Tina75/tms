@@ -129,11 +129,11 @@
 import BasePage from '@/basic/BasePage'
 import TransportBase from './mixin/transportBase'
 import TransportMixin from './mixin/transportMixin'
+import SelectInputMixin from './mixin/selectInputMixin'
 
 import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
 import SelectInput from './components/SelectInput.vue'
-import SelectInputMixin from './components/selectInputMixin'
 import PrintPickup from './components/PrintPickup'
 import OrderTabContent from '@/views/order-management/components/TabContent'
 
@@ -308,10 +308,7 @@ export default {
               data: { pickUpIds: self.tableSelection.map(item => item.pickUpId) }
             }).then(res => {
               self.$Message.success('删除成功')
-              self.tableSelection = []
-              self.fetchTabCount()
-              self.$refs.$table.clearSelected()
-              self.$refs.$table.fetch()
+              self.clearSelectedAndFetch()
             }).catch(err => console.error(err))
           }
         }
@@ -336,10 +333,7 @@ export default {
               data: { pickUpIds: self.tableSelection.map(item => item.pickUpId) }
             }).then(res => {
               self.$Message.success('操作成功')
-              self.tableSelection = []
-              self.fetchTabCount()
-              self.$refs.$table.clearSelected()
-              self.$refs.$table.fetch()
+              self.clearSelectedAndFetch()
             }).catch(err => console.error(err))
           }
         }
@@ -355,17 +349,14 @@ export default {
         data: { pickUpId: id }
       }).then(() => {
         self.openDialog({
-          name: 'transport/dialog/sendCar',
+          name: 'transport/dialog/action',
           data: {
             id,
             type: 'pickUp'
           },
           methods: {
             complete () {
-              self.tableSelection = []
-              self.fetchTabCount()
-              self.$refs.$table.clearSelected()
-              self.$refs.$table.fetch()
+              self.clearSelectedAndFetch()
             }
           }
         })

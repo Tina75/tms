@@ -300,17 +300,22 @@
 </template>
 
 <script>
+/**
+ * 提货单详情与编辑
+ */
+
 import BasePage from '@/basic/BasePage'
 import TransportBase from '../mixin/transportBase'
-import DetailMixin from './detailMixin'
+import DetailMixin from '../mixin/detailMixin'
+import SelectInputMixin from '../mixin/selectInputMixin'
 
 import MoneyInput from '../components/MoneyInput'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '../components/SelectInput.vue'
-import SelectInputMixin from '../components/selectInputMixin'
 
 import Server from '@/libs/js/server'
 import TMSUrl from '@/libs/constant/url'
+import _ from 'lodash'
 
 export default {
   name: 'DetailFeright',
@@ -338,7 +343,7 @@ export default {
       settlementPayInfo: [
         { payType: 2, fuelCardAmount: 0, cashAmount: 0 }
       ],
-      settlementPayInfoBack: [], // 支付信息备份
+      settlementPayInfoBack: [], // 支付信息备份，使用原因见 ../dialog/action
 
       // 所有按钮组
       btnList: [
@@ -520,6 +525,7 @@ export default {
 
         this.status = this.statusFilter(data.loadbill.status)
         this.settlementType = data.loadbill.settlementType ? data.loadbill.settlementType.toString() : ''
+        // 格式化计费信息金额单位为元
         let temp = this.settlementPayInfo.map((item, i) => {
           if (!data.loadbill.settlementPayInfo[i]) return item
           else {
@@ -537,6 +543,7 @@ export default {
       }).catch(err => console.error(err))
     },
 
+    // 编辑后保存
     save () {
       if (!this.validate()) return
       Server({
@@ -550,9 +557,7 @@ export default {
             settlementType: this.settlementType,
             settlementPayInfo: this.settlementType === '1' ? this.formatPayInfo() : void 0
           },
-          cargoList: Array.from(new Set((this.detail.map(item => {
-            return item.orderId
-          }))))
+          cargoList: _.uniq(this.detail.map(item => item.orderId))
         }
       }).then(res => {
         this.$Message.success('保存成功')
@@ -618,7 +623,7 @@ export default {
         data: { pickUpId: self.id }
       }).then(() => {
         self.openDialog({
-          name: 'transport/dialog/sendCar',
+          name: 'transport/dialog/action',
           data: {
             id: self.id,
             type: 'pickUp'

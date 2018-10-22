@@ -2,6 +2,7 @@
  * 运输管理模块基础方法
  */
 
+import _ from 'lodash'
 import City from '@/libs/js/city'
 import { CAR_TYPE, CAR_LENGTH, getCarType, getCarLength } from '@/libs/constant/carInfo'
 
@@ -15,7 +16,7 @@ const FORMATTERS = {
   // 格式化城市
   cityFormatter (code) {
     if (!code) return ''
-    return Array.from(new Set(City.codeToFullNameArr(code, 3))).join('')
+    return _.uniq(City.codeToFullNameArr(code, 3)).join('')
   },
 
   // 格式化车型

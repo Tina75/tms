@@ -1,6 +1,12 @@
+/**
+ * 调度工作台公有方法
+ * @Author: xuliang
+ */
+
+import _ from 'lodash'
 import Server from '@/libs/js/server'
 import City from '@/libs/js/city'
-import tableExpand from './tableExpand'
+import tableExpand from '../dispatch/tableExpand'
 
 export default {
   components: { tableExpand },
@@ -212,23 +218,29 @@ export default {
         }
       ],
 
-      leftExpandRow: null, // 左侧展开列
-      leftSelection: [], // 左侧选中数据
-      leftTableExpandData: [], // 左侧展开数据
-      leftTableExpandLoading: false, // 左侧展开数据加载状态
-      leftTableLoading: false, // 左侧表格加载
+      leftExpandRow: null, // 左侧当前展开列
+      leftSelection: [], // 左侧当前选中数据
+      leftTableLoading: false, // 左侧表格加载状态
+      leftTableExpandData: [], // 左侧当前展开的表格数据
+      leftTableExpandLoading: false, // 左侧展开表格加载状态
 
-      rightExpandRow: null, // 右侧展开列
-      rightSelectRow: null, // 右侧选中列
-      rightSelection: [], // 右侧选中数据
+      rightExpandRow: null, // 右侧当前展开列
+      rightSelectRow: null, // 右侧当前选中列
+      rightSelection: [], // 右侧当前选中数据
       rightTableLoading: false, // 右侧表格加载
-      rightTableExpandData: [], // 右侧展开数据
-      rightTableExpandLoading: false // 右侧展开数据加载状态
+      rightTableExpandData: [], // 右侧当前展开的表格数据
+      rightTableExpandLoading: false // 右侧展开表格加载状态
     }
   },
 
   methods: {
-    // 保证只有一行展开
+    /** 表格操作 */
+
+    /**
+     * 保证只有一行展开
+     * @param {Object} row 当前操作的行
+     * @param {String} side 左侧或右侧
+     */
     keepExpandOnly (row, side) {
       let data = this.leftTableData
       const rowStr = JSON.stringify(row)
@@ -244,8 +256,9 @@ export default {
         else item._expanded = item._highlight = true
       })
     },
+    // 保证左侧只有一行展开
     keepLeftExpandOnly (row, expand) {
-      if (expand) { // 如果当前展开则收起
+      if (expand) { // 如果当前展开则收起，并且不进入下一步
         this.leftExpandRow = null
         this.leftSelection = []
         this.leftTableData.forEach(item => {
@@ -256,8 +269,9 @@ export default {
       this.keepExpandOnly(row, 'left')
       this.fetchLeftExpandData()
     },
+    // 保证右侧只有一行展开
     keepRightExpandOnly (row, expand) {
-      if (expand) { // 如果当前展开则收起
+      if (expand) { // 如果当前展开则收起，并且不进入下一步
         this.rightExpandRow = null
         this.rightSelection = []
         this.rightTableData.forEach(item => {
@@ -269,26 +283,24 @@ export default {
       this.fetchRightExpandData()
     },
 
-    // 右侧表格列选中
+    // 右侧表格列选中高亮并展开
     rightTableRowClick (row, index) {
       this.rightSelectRow = row._expanded ? null : { row, index }
       this.keepRightExpandOnly(row, row._expanded)
     },
-
-    // 左侧表格列选中
+    // 左侧表格列选中高亮并展开
     leftTableRowClick (row) {
       this.keepLeftExpandOnly(row, row._expanded)
     },
 
-    // 格式化城市
-    cityFilter (code) {
-      if (!code) return '-'
-      return Array.from(new Set(City.codeToFullNameArr(code, 3))).join('')
-    },
-
     /** 数据操作 */
 
-    // 为表格数据添加自定义字段及自定义过滤
+    /**
+     * 为表格数据添加自定义字段及自定义过滤，自定义字段的值为 false
+     * @param {Array[Object]} data 待处理的数据
+     * @param {Array[String] | String} fields 需要添加到数据项上的字段名称，值为 false
+     * @param {Function} extraRule 额外的添加规则，参数为当前的数据项，需要返回该数据项
+     */
     dataFilter (data, fields, extraRule) {
       return data.map(item => {
         if (fields instanceof Array) {
@@ -303,7 +315,7 @@ export default {
       })
     },
 
-    // 右侧展开表格新增项高亮
+    // 右侧展开表格新增项添加高亮标志字段
     heightLightNewRow (newList) {
       if (!this.rightTableExpandData.length) return newList
       const oldList = this.rightTableExpandData.map(item => item.orderId)
@@ -370,7 +382,7 @@ export default {
         url,
         method: 'post',
         data
-      }).then(res => {
+      }).then(() => {
         this.leftSelection = []
         this.fetchData()
       }).catch(err => console.error(err))
@@ -382,15 +394,26 @@ export default {
         url,
         method: 'post',
         data
-      }).then(res => {
+      }).then(() => {
         this.rightSelection = []
         this.fetchData()
       }).catch(err => console.error(err))
     },
 
-    // 表格内容渲染方法
-    // 当text内容长度大于12时截取显示...并使用tooltip
-    // 当text无内容时替换为-
+    // 格式化城市
+    cityFilter (code) {
+      if (!code) return '-'
+      return _.uniq(City.codeToFullNameArr(code, 3)).join('')
+    },
+
+    /**
+     * 表格内容渲染方法
+     * 当text内容长度大于12时截取显示...并使用tooltip
+     * 当text无内容时替换为-
+     * @param {Function} h 渲染方法
+     * @param {String} text 文本内容
+     * @param {Number} overLength 文本内容截取长度，默认12
+     */
     tableDataRender (h, text, overLength = 12) {
       text = text.toString()
       let showText = text.length > overLength ? text.substr(0, overLength) + '...' : text

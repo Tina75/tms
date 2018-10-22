@@ -1,5 +1,5 @@
 /**
- * 送货管理、提货管理、外转管理页面方法
+ * 送货管理、提货管理、外转管理页面公有方法
  */
 
 import { getCityCode } from '@/libs/js/cityValidator'
@@ -44,28 +44,42 @@ export default {
   },
 
   created () {
-    const columns = window.sessionStorage[this.tabType + '_COLUMNS']
-    if (columns) this.extraColumns = JSON.parse(columns)
-
-    let tab
-    if (this.$route.query.tab && this.$route.query.tab < this.tabList.length) {
-      tab = this.tabList[this.$route.query.tab].name
-      window.sessionStorage.setItem('TABHEADER_' + this.tabType, tab)
-    } else {
-      tab = window.sessionStorage['TABHEADER_' + this.tabType]
-    }
-
-    if (tab !== undefined) {
-      this.tabStatus = this.setTabStatus(tab)
-      this.tabChanged(tab)
-    } else {
-      this.tabStatus = this.setTabStatus(this.tabList[1].name)
-      this.currentBtns = this.btnList[1].btns
-      this.fetchData()
-    }
+    // this.setTableColumns()
+    this.setTabToCustom()
   },
 
   methods: {
+    // 显示用户筛选过的表头数据（本地）
+    setTableColumns () {
+      const columns = window.localStorage[this.tabType + '_COLUMNS']
+      if (columns) this.extraColumns = JSON.parse(columns)
+    },
+
+    /**
+     * 将tab切换到用户设置的tab页并查询数据
+     * 1. 如果从其他页面进入，则从url获取tab tag并切换
+     * 2. 如果直接打开，则从session中获取上次打开时最后切换到的tab
+     * 3. 如果session也没有，则进入第一个tab
+     */
+    setTabToCustom () {
+      let tab
+      if (this.$route.query.tab !== undefined && this.$route.query.tab < this.tabList.length) {
+        tab = this.tabList[this.$route.query.tab].name
+        window.sessionStorage.setItem('TABHEADER_' + this.tabType, tab)
+      } else {
+        tab = window.sessionStorage['TABHEADER_' + this.tabType]
+      }
+
+      if (tab !== undefined) {
+        this.tabStatus = this.setTabStatus(tab)
+        this.tabChanged(tab)
+      } else {
+        this.tabStatus = this.setTabStatus(this.tabList[0].name)
+        this.currentBtns = this.btnList[0].btns
+        this.fetchData()
+      }
+    },
+
     // 交易批量操作时是否已选择
     checkTableSelection () {
       if (!this.tableSelection.length) {
@@ -88,9 +102,17 @@ export default {
     // 查询数据
     fetchData () {
       this.tableSelection = []
-      self.$refs.$table.clearSelected() // 清空已选项
+      this.$refs.$table.clearSelected() // 清空已选项
       this.searchFields = this.setFetchParams() // 设置请求搜索字段，page table组件会自动查询
       this.fetchTabCount && this.fetchTabCount() // 如果存在查询tab数量的方法则查询
+    },
+
+    // 清空已选项并查询数据
+    clearSelectedAndFetch () {
+      this.tableSelection = []
+      this.$refs.$table.clearSelected()
+      this.$refs.$table.fetch()
+      this.fetchTabCount && this.fetchTabCount()
     },
 
     /**
@@ -171,10 +193,10 @@ export default {
     pageSizeChange (size) {
       this.page.size = size
     },
-    // 表格显示项筛选
+    // 表格显示项筛选并存储
     tableColumnsChanged (columns) {
       this.extraColumns = columns
-      window.sessionStorage.setItem(this.tabType + '_COLUMNS', JSON.stringify(columns))
+      window.localStorage.setItem(this.tabType + '_COLUMNS', JSON.stringify(columns))
     },
     // 选中的表格行
     selectionChanged (selection) {
