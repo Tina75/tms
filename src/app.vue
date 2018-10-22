@@ -1,18 +1,15 @@
 <template>
   <div id="app">
-    <Layout :class="classes">
-      <Sider v-model="collapsed" :collapsed-width="50" hide-trigger collapsible style="overflow:hidden">
-        <side-bar :collapsed="collapsed" :active-name="$route.path" :menu-list="menuList" @on-select="onMenuSelect"/>
+    <Layout class="container">
+      <Sider :collapsed-width="50" v-model="collapsed" breakpoint="md" collapsible>
+        <side-bar :collapsed="collapsed" :active-name="$route.path" @on-select="onMenuSelect"/>
+        <div slot="trigger">
+
+        </div>
       </Sider>
-      <a :class="['sider-trigger-a', collapsed ? 'collapsed' : 'uncollapsed']"  type="text" @click="collapsed = !collapsed">
-        <i class="icon font_family icon-ico-zz1"></i>
-      </a>
       <Layout>
         <Header class="header-con">
           <header-bar :collapsed.sync="collapsed" :name="UserInfo.name" @on-open-msg="onOpenMsg"/>
-          <div class="tag-nav-wrapper">
-            <tab-nav :list="TabNavList" :value="$route" @on-close="onTabClose" @on-select="onTabSelect"/>
-          </div>
         </Header>
         <Content class="content">
           <router-view />
@@ -25,39 +22,26 @@
 <script>
 import HeaderBar from '@/components/HeaderBar'
 import SideBar from '@/components/SideBar'
-import TabNav from '@/components/TabNav'
 import Dialogs from '@/components/Dialogs'
-import menuJson from '@/assets/menu.json'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import Cookies from 'js-cookie'
 
 export default {
-  components: { HeaderBar, SideBar, TabNav, Dialogs },
+  components: { HeaderBar, SideBar, Dialogs },
   data () {
     return {
-      collapsed: false,
-      menuList: menuJson
+      collapsed: false
     }
   },
   computed: {
-    ...mapGetters(['TabNavList', 'UserInfo']),
-    classes () {
-      return [
-        'container',
-        { 'ivu-layout-sider-collapsed': this.collapsed }
-      ]
-    }
+    ...mapGetters(['TabNavList', 'UserInfo'])
   },
 
   mounted () {
     window.EMA.bind('updateUserInfo', () => { this.getUserInfo() })
     window.EMA.bind('logout', (msg) => { this.logout(msg) })
     window.EMA.bind('openTab', (route) => { this.onMenuSelect(route) })
-    window.EMA.bind('closeTab', (route) => { this.onTabClose(route) })
-    window.EMA.bind('reloadTab', (route) => {
-      route.query = Object.assign({ _time: new Date().getTime() }, route.query)
-      this.turnToPage(route)
-    })
+
     this.init()
     this.$Message.config({
       duration: 3
@@ -145,34 +129,6 @@ export default {
           window.EMA.fire('openTab', { path: '/set-up/index', query: { title: '设置' } })
         }
       })
-    },
-    /**
-     * @description 关闭tab标签时调用
-     * @param {*} list 关闭后的tab页list
-     * @param {*} route 关闭的tab对象，用于查找前一个tab并置为高亮
-    */
-    onTabClose (route) {
-      // 删除cache
-      window.EMA.fire('PageRouter.remove', route.path)
-
-      console.log(route, this.$route)
-      if (this.routeEqual(route, this.$route)) {
-        // 选中前一个tab
-        const nextRoute = this.getNextRoute(this.TabNavList, route)
-        this.turnToPage(nextRoute)
-      }
-
-      // 更新store
-      let res = this.TabNavList.filter(element => element.query.title !== route.query.title)
-      this.setTabNavList(res)
-    },
-
-    /**
-     * @description 切换tab标签
-     * @param {*} item 被选中的菜单对象
-     */
-    onTabSelect (item) {
-      this.turnToPage(item)
     },
 
     /**

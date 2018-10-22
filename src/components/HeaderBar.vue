@@ -3,6 +3,9 @@
     <!-- <a :class="['sider-trigger-a', collapsed ? 'collapsed' : '']"  type="text" @click="handleChange">
       <i class="icon font_family icon-shouji"></i>
     </a> -->
+    <div class="tag-nav-wrapper">
+      <tab-nav :list="TabNavList" :value="$route" @on-close="onTabClose" @on-select="onTabSelect"/>
+    </div>
     <div class="header-bar-avator-dropdown">
       <Dropdown class="header-bar-avator-dropdown-notify">
         <Poptip trigger="hover" title="消息中心" content="暂无系统消息" >
@@ -56,9 +59,12 @@
 
 <script>
 import BaseComponent from '@/basic/BaseComponent'
-import { mapGetters } from 'vuex'
+import TabNav from '@/components/TabNav'
+
+import { mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'headerBar',
+  components: { TabNav },
   mixins: [BaseComponent],
   props: {
     // collapsed: {
@@ -77,14 +83,17 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['MsgCount', 'UserInfo'])
+    ...mapGetters(['MsgCount', 'UserInfo', 'TabNavList'])
   },
   mounted () {
+    window.EMA.bind('closeTab', (route) => { this.onTabClose(route) })
+    window.EMA.bind('reloadTab', (route) => {
+      route.query = Object.assign({ _time: new Date().getTime() }, route.query)
+      this.turnToPage(route)
+    })
   },
   methods: {
-    // handleChange () {
-    //   this.$emit('update:collapsed', !this.collapsed)
-    // },
+    ...mapMutations(['setTabNavList']),
     openMsg (type = 0) {
       this.$emit('on-open-msg', type)
     },
@@ -99,7 +108,69 @@ export default {
           expirationTime: this.UserInfo.expirationTime
         }
       })
+    },
+    /**
+     * @description 关闭tab标签时调用
+     * @param {*} list 关闭后的tab页list
+     * @param {*} route 关闭的tab对象，用于查找前一个tab并置为高亮
+    */
+    onTabClose (route) {
+      // 删除cache
+      window.EMA.fire('PageRouter.remove', route.path)
+
+      console.log(route, this.$route)
+      if (this.routeEqual(route, this.$route)) {
+        // 选中前一个tab
+        const nextRoute = this.getNextRoute(this.TabNavList, route)
+        this.turnToPage(nextRoute)
+      }
+
+      // 更新store
+      let res = this.TabNavList.filter(element => element.query.title !== route.query.title)
+      this.setTabNavList(res)
+    },
+    /**
+     * @description 切换tab标签
+     * @param {*} item 被选中的菜单对象
+     */
+    onTabSelect (item) {
+      this.turnToPage(item)
+    },
+    /**
+     * @description 切换tab标签
+     * @param {*} route 跳转目标的path或route对象
+     */
+    turnToPage (route) {
+      let { path, params, query, meta } = {}
+      if (typeof route === 'string') path = route
+      else {
+        path = route.path
+        params = route.params
+        query = route.query
+        meta = route.meta
+      }
+      this.$router.push({ path, params, query, meta })
+    },
+    getNextRoute (list, route) {
+      let res = {}
+      const index = list.findIndex(item => this.routeEqual(item, route))
+      if (index === list.length - 1) res = list[list.length - 2]
+      else res = list[index + 1]
+      return res
+    },
+    /**
+     * @description 根据name/params/query判断两个路由对象是否相等
+     * @param {*} route1 路由对象
+     * @param {*} route2 路由对象
+     */
+    routeEqual (route1, route2) {
+      const query1 = route1.query || {}
+      const query2 = route2.query || {}
+      // return (route1.name === route2.name) && this.objEqual(params1, params2) && this.objEqual(query1, query2)
+      return (route1.path === route2.path) && (query1.title === query2.title)
+      // return (route1.name === route2.name) && this.objEqual(meta1, meta2)
     }
+
   }
 }
 </script>
