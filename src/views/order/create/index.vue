@@ -481,8 +481,6 @@ export default {
       'clients',
       'orderDetail',
       'clients',
-      'consignerContacts',
-      'consignerPhones',
       'consignerAddresses',
       'consigneeContacts',
       'consigneePhones',
