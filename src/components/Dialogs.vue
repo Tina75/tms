@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-for="item in dialogs" :key="item.name">
-      <component :is="item.name" :visiable="item.visiable"></component>
+      <component :is="item.name" :show-dialog="item.visiable"></component>
     </div>
   </div>
 </template>
