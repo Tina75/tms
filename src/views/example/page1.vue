@@ -6,22 +6,31 @@
     <Alert closable>An info prompt</Alert>
     <br>
     <h3>iconfont</h3>
+    <!--<div>-->
+    <!--<i class="icon font_family icon-dingdanguanli"></i>-->
+    <!--<div class="name">订单管理</div>-->
+    <!--<div class="fontclass">.icon-dingdanguanli</div>-->
+    <!--</div>-->
+    <!--<p><Button type="danger" @click="closeTab">关闭当前tab页</Button></p>-->
+    <!--<br>-->
+    <!--<p><Button v-if="hasPower(110301)" type="primary" @click="closeTab">关闭当前tab页</Button></p>-->
+    <h3>城市插件的使用</h3>
     <div>
-      <i class="icon font_family icon-dingdanguanli"></i>
-      <div class="name">订单管理</div>
-      <div class="fontclass">.icon-dingdanguanli</div>
+      <select-input-for-city></select-input-for-city>
+      <!--<SelectInput :@focus=""></SelectInput>-->
     </div>
-    <p><Button type="danger" @click="closeTab">关闭当前tab页</Button></p>
-    <br>
-    <p><Button v-if="hasPower(110301)" type="primary" @click="closeTab">关闭当前tab页</Button></p>
   </div>
 </template>
 
 <script>
 import BasePage from '@/basic/BasePage'
+import SelectInputForCity from '@/components/SelectInputForCity'
+// import SelectInput from '@/components/SelectInput'
 export default {
   name: 'page1',
-  components: {},
+  components: {
+    SelectInputForCity
+  },
   mixins: [ BasePage ],
   metaInfo: {
     title: 'demo页面'

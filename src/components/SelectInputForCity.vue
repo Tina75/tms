@@ -24,12 +24,11 @@
         @on-focus="handleFocus"
         @on-blur="handleBlur">
       <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-input__clear-icon" @click.native.stop="handleClear"></Icon>
-      <Icon v-if="!mousehover || !isClearable" slot="suffix" type="ios-arrow-down" class="select-input__input-icon"></Icon>
-    </Input>
+      </Input>
     </div>
     <DropdownMenu ref="dropdown" slot="list" :style="{'max-height':'150px', overflow:'auto'}">
       <DropdownItem
-        v-for="(option, index) in filterOptions"
+        v-for="(option, index) in options"
         :key="option.name"
         :name="option.name"
         :class="{'ivu-select-item-focus': focusIndex === index}"
@@ -41,10 +40,11 @@
 
 <script>
 /**
- * 选择 | 输入框，
- * 支持下拉选择，也支持输入的组件
- * 同时支持请求查询服务端，显示数据
- */
+   * 选择 | 输入框，
+   * 支持下拉选择，也支持输入的组件
+   * 同时支持请求查询服务端，显示数据
+   */
+import server from '@/libs/js/server'
 export default {
   props: {
     autoFocus: {
@@ -70,15 +70,10 @@ export default {
       type: Boolean,
       default: false
     },
-    localOptions: {
-      type: Array,
-      default: () => []
+    placeholder: {
+      type: String,
+      default: '请输入中文/ 拼音'
     },
-    remote: {
-      type: Boolean,
-      default: false
-    },
-    placeholder: String,
     // 点击下拉框项
     onSelect: {
       type: Function
@@ -97,21 +92,17 @@ export default {
       focusIndex: -1,
       currentValue: this.value,
       mousehover: false,
-      lastRemoteQuery: null,
-      isRemoteCall: false,
-      options: this.localOptions.slice()
+      isRemoteCall: false, // 当前是否正在请求，防止请求太频繁
+      options: [
+        { name: '安徽', value: 1 },
+        { name: '河北', value: 1 },
+        { name: '南京', value: 1 }
+      ]
     }
   },
   computed: {
-    filterOptions () {
-      if (this.remote || !this.currentValue) {
-        return this.options
-      } else {
-        return this.options.filter(opt => opt.name.indexOf(this.currentValue) !== -1)
-      }
-    },
     showDropdown () {
-      return this.visible && this.filterOptions.length > 0 && this.isFocus
+      return this.visible && this.options.length > 0 && this.isFocus
     },
     classes () {
       return [
@@ -131,19 +122,14 @@ export default {
     value (value) {
       this.setCurrentValue(value)
     },
-    localOptions (newOptions) {
-      if (!this.remote) {
-        this.options = newOptions.slice()
-      }
-    },
     /**
-     * 主动操作滚动条，到选中的option视图
-     */
+       * 主动操作滚动条，到选中的option视图
+       */
     focusIndex (index) {
       if (index < 0) {
         return false
       }
-      const option = this.filterOptions[index]
+      const option = this.options[index]
       const dropdownInstance = this.$refs.dropdown
       const optionInstance = dropdownInstance.$children.find((child) => {
         return child.$options.propsData.name === option.value
@@ -169,7 +155,7 @@ export default {
         this.$refs.input.$refs.input.focus()
       })
     }
-    if (this.onlyChinese && this.remote) {
+    if (this.onlyChinese) {
       const originInput = this.$refs.input.$refs.input
       originInput.addEventListener('compositionstart', vm.onCompositionStart)
       originInput.addEventListener('compositionend', vm.onCompositionEnd)
@@ -180,10 +166,10 @@ export default {
       this.composing = true
     },
     /**
-     * 中文输入结束后触发搜索
-     * 绑定改事件后，不触发handleChange
-     * 所以主动调用handleChange
-     */
+       * 中文输入结束后触发搜索
+       * 绑定改事件后，不触发handleChange
+       * 所以主动调用handleChange
+       */
     onCompositionEnd (e) {
       this.composing = false
       this.handleChange(e)
@@ -225,10 +211,10 @@ export default {
     handleFocus () {
       this.visible = true
       this.isFocus = true
-      if (this.remote) {
-        // 鼠标focus的时候，需要默认查询所有
-        this.remoteCall(this.currentValue)
-      }
+      // if (this.remote) {
+      //   // 鼠标focus的时候，需要默认查询所有
+      //   this.remoteCall(this.currentValue)
+      // }
       this.$emit('on-focus')
     },
     handleBlur () {
@@ -238,19 +224,17 @@ export default {
       this.$emit('on-blur', this.currentValue)
     },
     /**
-     * 更改关键字，input onChange事件
-     */
+       * 更改关键字，input onChange事件
+       */
     handleChange (e) {
-      if (this.remote) {
-        this.remoteCall(e.target.value)
-      }
+      this.remoteCall(e.target.value)
       this.visible = true
       this.$emit('input', this.currentValue)
     },
     // 远程请求
     remoteCall (query) {
       let validQuery = this.lastRemoteQuery !== query && !this.isRemoteCall && !this.composing
-      let shouldCallRemote = this.remoteMethod && typeof this.remoteMethod === 'function' && this.remote
+      let shouldCallRemote = this.remoteMethod && typeof this.remoteMethod === 'function'
       if (validQuery && shouldCallRemote) {
         this.isRemoteCall = true
         const promise = this.remoteMethod(query)
@@ -264,6 +248,17 @@ export default {
         }
         this.lastRemoteQuery = query
       }
+      server({
+        method: 'get',
+        url: 'city/search',
+        params: {
+          text: query
+        }
+      }).then(response => {
+        const options = response.data.data
+        console.log(options)
+        this.options = options.map()
+      })
     },
     handleKeydown (e) {
       if (this.visible) {
@@ -278,7 +273,7 @@ export default {
             // 关闭菜单
             this.visible = false
           } else {
-            const selectOption = this.filterOptions[this.focusIndex]
+            const selectOption = this.options[this.focusIndex]
             if (selectOption) {
               this.handleSelect(selectOption.name)
             }
@@ -288,7 +283,7 @@ export default {
     },
     focusOption (direction) {
       let index = this.focusIndex + direction
-      const optionsLength = this.filterOptions.length - 1
+      const optionsLength = this.options.length - 1
       if (index < 0) {
         index = optionsLength
       } else if (index > optionsLength) {
@@ -306,20 +301,14 @@ export default {
 </script>
 
 <style lang="stylus">
-.select-input
-  &__dropdown
-    width 100%
-  &__input
-    &-visible
-      .select-input__input-icon
-        transform rotate(180deg)
-        -moz-transform rotate(180deg)
-        -webkit-transform rotate(180deg)
-  &__clear-icon
-    cursor pointer
-  &__input-icon
-    display none
-    transition transform 0.2s ease-in-out
-    -webkit-transition -webkit-transform 0.2s ease-in-out
-    -moz-transition  -moz-transform 0.2s ease-in-out
+  .select-input
+    &__dropdown
+      width 100%
+    &__clear-icon
+      cursor pointer
+    &__input-icon
+      display none
+      transition transform 0.2s ease-in-out
+      -webkit-transition -webkit-transform 0.2s ease-in-out
+      -moz-transition  -moz-transform 0.2s ease-in-out
 </style>

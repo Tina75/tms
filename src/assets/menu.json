@@ -178,6 +178,12 @@
     "path":"/helper/index",
     "icon":"bangzhuzhongxin",
     "powerCode":0
+  },
+  {
+    "name":"例子",
+    "path":"/example/page1",
+    "icon":"bangzhuzhongxin",
+    "powerCode":0
   }
 
 ]
