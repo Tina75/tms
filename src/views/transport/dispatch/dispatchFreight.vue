@@ -48,7 +48,7 @@
 import Server from '@/libs/js/server'
 import BasePage from '@/basic/BasePage'
 import dispatchMixin from '../mixin/dispatchMixin'
-import tableExpand from './tableExpand'
+import TableExpand from '../components/TableExpand'
 
 export default {
   name: 'DispatchFreight',
@@ -62,7 +62,7 @@ export default {
           width: 30,
           // fixed: 'left',
           render: (h, p) => {
-            return h(tableExpand, {
+            return h(TableExpand, {
               on: {
                 'on-expand-select': (selection) => {
                   this.rightSelection = selection
