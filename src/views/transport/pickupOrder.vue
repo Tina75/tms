@@ -114,7 +114,6 @@
                  method="post"
                  list-field="loadbillList"
                  style="margin-top: 15px"
-                 @on-column-change="tableColumnsChanged"
                  @on-selection-change="selectionChanged"
                  @on-sort-change="tableSort"
                  @on-change="pageChange"
@@ -140,7 +139,7 @@ import OrderTabContent from '@/views/order-management/components/TabContent'
 
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
-import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, EXTRA_COLUMNS, setTabList } from './constant/pickup'
+import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, setTabList } from './constant/pickup'
 
 export default {
   name: 'ReceiveManager',
@@ -192,8 +191,7 @@ export default {
         }
       },
 
-      tableColumns: TABLE_COLUMNS(this), // 表头
-      extraColumns: EXTRA_COLUMNS // 表头筛选
+      tableColumns: TABLE_COLUMNS(this) // 表头
     }
   },
 

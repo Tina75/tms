@@ -194,6 +194,7 @@ export default {
       this.page.size = size
     },
     // 表格显示项筛选并存储
+    // TMS1.1 18.10.22 已废弃
     tableColumnsChanged (columns) {
       this.extraColumns = columns
       window.localStorage.setItem(this.tabType + '_COLUMNS', JSON.stringify(columns))

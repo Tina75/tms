@@ -30,7 +30,8 @@ export const getCityCode = (codes) => {
 }
 
 /**
- * 重置表单校验 - 废弃，不要再使用
+ * 重置表单校验
+ * TMS1.1 18.10.18 已废弃
  * 如果需要使用下面的 FORM_VALIDATE_START FORM_VALIDATE_END 两个表单校验方法，需要在组件 created 时调用该方法
  */
 export const resetCityValidator = () => {
