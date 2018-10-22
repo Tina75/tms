@@ -30,7 +30,7 @@ export default {
   data () {
     return {
       data: [
-        { id: 'waitPickOrderCnt', name: '待调度', value: 0, tab: '2', href: TMSUrl.DISPATCH_PANEL, title: '调度工作台' },
+        { id: 'waitPickOrderCnt', name: '待调度', value: 0, tab: '0', href: TMSUrl.TANSPORT_ORDER, title: '运单管理' },
         { id: 'waitPickCnt', name: '待提货', value: 0, tab: '1', href: TMSUrl.PICKUP_ORDER, title: '提货单管理' },
         { id: 'inTransportCnt', name: '提货中', value: 0, tab: '2', href: TMSUrl.PICKUP_ORDER, title: '提货单管理' }
       ]
