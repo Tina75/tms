@@ -4,7 +4,9 @@
     <div style="display: flex;justify-content:center;">
       <Icon type="ios-information-circle" size="24" color="#FFBB44" style="margin-top: -2px;"></Icon>
       <span v-if="canRecovery">共选择了{{ id.length }}条订单，确定恢复吗？</span>
-      <span v-else>此客户已存在相同客户订单号订单，请检查订单信息</span>
+      <span v-else>
+        {{ id.length === 1 ? '此客户已存在相同客户订单号订单，请检查订单信息' :  '选中的订单中已存在客户订单号相同的订单，为避免重复，请检查订单信息' }}
+      </span>
     </div>
     <div slot="footer">
       <div v-if="canRecovery">
@@ -12,8 +14,8 @@
         <Button type="default" @click.native="close">取消</Button>
       </div>
       <div v-else>
-        <Button v-if="id.length === 1" type="primary" @click="save">去查看</Button>
-        <Button type="primary" @click.native="close">知道了</Button>
+        <Button v-if="id.length === 1" type="primary" @click="toDetail">去查看</Button>
+        <Button :type="id.length === 1 ? 'default' : 'primary'" @click.native="close">知道了</Button>
       </div>
     </div>
   </Modal>
@@ -58,6 +60,18 @@ export default {
       }).then((res) => {
         console.log(res)
       })
+    },
+    // 查看详情
+    toDetail () {
+      this.openTab({
+        path: '/order-management/detail',
+        query: {
+          id: this.id[0].orderNo,
+          orderId: this.id[0].id,
+          from: 'order'
+        }
+      })
+      this.close()
     },
     save () {
       this.doRecovery()

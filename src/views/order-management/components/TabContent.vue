@@ -241,7 +241,7 @@ export default {
               //   )
               // }
               // 外转按钮
-              if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.pickupStatus === 0 && this.hasPower(110104)) {
+              if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.pickupStatus === 0 && this.hasPower(120209)) {
                 renderBtn.push(
                   h('a', {
                     style: {
@@ -294,7 +294,7 @@ export default {
               // 需显示的按钮组
               let renderBtn = []
               // 拆单按钮
-              if (r.transStatus === 0 && r.disassembleStatus !== 1 && r.dispatchStatus === 0 && this.hasPower(110103)) {
+              if (r.transStatus === 0 && r.disassembleStatus !== 1 && r.dispatchStatus === 0 && this.hasPower(120110)) {
                 renderBtn.push(
                   h('a', {
                     style: {
@@ -310,7 +310,7 @@ export default {
                 )
               }
               // 外转按钮
-              if (r.transStatus === 0 && r.pickup !== 1 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0 && this.hasPower(110104)) {
+              if (r.transStatus === 0 && r.pickup !== 1 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0 && this.hasPower(120111)) {
                 renderBtn.push(
                   h('a', {
                     style: {
@@ -326,7 +326,7 @@ export default {
                 )
               }
               // 还原按钮
-              if (r.parentId === '' && r.disassembleStatus === 1 && r.dispatchStatus === 0 && this.hasPower(110105)) {
+              if (r.parentId === '' && r.disassembleStatus === 1 && r.dispatchStatus === 0 && this.hasPower(120112)) {
                 renderBtn.push(
                   h('a', {
                     style: {
@@ -1032,16 +1032,16 @@ export default {
       } else {
         if (val === '待提货') {
           this.btnGroup = [
-            { name: '提货调度', value: 1, code: 110102 },
-            { name: '打印', value: 5, code: 110108 },
-            { name: '导出', value: 6, code: 110109 }
+            { name: '提货调度', value: 1, code: 120208 },
+            { name: '打印', value: 5, code: 120202 },
+            { name: '导出', value: 6, code: 120207 }
           ]
           this.keywords.status = 10
         } else {
           this.btnGroup = [
-            { name: '送货调度', value: 1, code: 110101 },
-            { name: '打印', value: 5, code: 110108 },
-            { name: '导出', value: 6, code: 110109 }
+            { name: '送货调度', value: 1, code: 120109 },
+            { name: '打印', value: 5, code: 120103 },
+            { name: '导出', value: 6, code: 120108 }
           ]
           this.keywords.status = 20
         }
