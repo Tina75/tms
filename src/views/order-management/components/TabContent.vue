@@ -992,7 +992,6 @@ export default {
     ]),
     // tab状态栏切换
     handleTabChange (val) {
-      this.curStatusName = val
       this.selectOrderList = [] // 重置当前已勾选项
       this.selectedId = [] // 重置当前已勾选id项
       // 页面来源
@@ -1096,14 +1095,14 @@ export default {
           this.openResOrDelDialog('', btn.name)
         }
       } else if (btn.name === '删除') { // 【（是待提货或待调度状态：status < 30） && （未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未被调度：dispatchStatus=0） && （被拆单后的父单：disassembleStatus=1） && （待调度条件下不是上门提货（pickup !== 1））】可以批量操作
-        let data = this.selectOrderList.find((item) => {
-          return (item.status > 20 || item.pickupStatus !== 0 || item.dispatchStatus !== 0 || item.transStatus !== 0 || (item.status === 20 && item.pickup === 1))
-        })
-        if (data !== undefined) {
-          this.$Message.warning('您选择的订单不支持删除')
-        } else {
-          this.openResOrDelDialog('', btn.name)
-        }
+        // let data = this.selectOrderList.find((item) => {
+        //   return (item.status > 20 || item.pickupStatus !== 0 || item.dispatchStatus !== 0 || item.transStatus !== 0 || (item.status === 20 && item.pickup === 1))
+        // })
+        // if (data !== undefined) {
+        //   this.$Message.warning('您选择的订单不支持删除')
+        // } else {
+        // }
+        this.openResOrDelDialog('', btn.name)
       } else if (btn.name === '导出') {
         this.export()
       } else {
@@ -1257,7 +1256,7 @@ export default {
 .ivu-btn-default
   background #F9F9F9
 .high-search
-  width 36px
+  width 36px !important
   height 36px
   line-height 1.4
   letter-spacing 2px

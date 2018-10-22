@@ -20,6 +20,8 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      message: '',
+      canDelete: true // 是否可以删除
     }
   },
   computed: {
@@ -31,6 +33,34 @@ export default {
       return arr
     }
   },
+  mounted () {
+    if (this.name === '删除') {
+      if (this.id.length === 1) {
+        if (this.id[0].status === 10 && this.id[0].pickupStatus === 1) {
+          this.message = '此订单已经在提货中，为保证数据安全，不可以删除'
+          this.canDelete = false
+        }
+        if (this.id[0].status === 20 && this.id[0].dispatchStatus === 1) {
+          this.message = '此订单已经在送货中，为保证数据安全，不可以删除'
+          this.canDelete = false
+        }
+      } else {
+        if (this.id[0].status === 10) {
+          if (this.id.some(this.checkSelectList)) {
+            this.message = '您选中的订单已有订单在提货中，为保证数据安全，不可以批量删除'
+            this.canDelete = false
+          }
+        }
+        if (this.id[0].status === 20) {
+          if (this.id.some(this.checkSelectList)) {
+            this.message = '您选中的订单已有订单在送货中，为保证数据安全，不可以批量删除'
+            this.canDelete = false
+          }
+        }
+      }
+    }
+  },
+
   methods: {
     save () {
       if (this.name === '删除') {
@@ -66,6 +96,10 @@ export default {
           this.ok()
         }
       })
+    },
+    // 筛选选中项是否有不满足条件的选项
+    checkSelectList (list) {
+      return list.pickupStatus === 1
     }
   }
 
