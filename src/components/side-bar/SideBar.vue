@@ -1,7 +1,7 @@
 <template>
   <div class="sider">
     <Sider :collapsed-width="50" v-model="collapsed" breakpoint="md" collapsible style="overflow:hidden;height:100%">
-      <side-bar :collapsed="collapsed" :active-name="$route.path" @on-select="onMenuSelect"/>
+      <side-menu :collapsed="collapsed" :active-name="$route.path" @on-select="onMenuSelect"/>
       <div slot="trigger"></div>
     </Sider>
     <a :class="['sider-trigger-a', collapsed ? 'collapsed' : 'uncollapsed']"  type="text" @click="collapsed = !collapsed">
@@ -12,11 +12,11 @@
 
 <script>
 import BaseComponent from '@/basic/BaseComponent'
-import SideBar from './SideBar'
+import SideMenu from './SideMenu'
 import { mapMutations, mapGetters } from 'vuex'
 import { getNewTagList } from '@/libs/js/util'
 export default {
-  components: { SideBar },
+  components: { SideMenu },
   mixins: [ BaseComponent ],
   data () {
     return {
@@ -72,4 +72,29 @@ export default {
 <style lang='stylus'>
 .sider
   height 100%
+  .sider-trigger-a
+    position absolute
+    top 45%
+    left 200px
+    width:0;
+    height:55px;
+    border-left:11px solid #C1C6CB;
+    border-top:7px solid transparent;
+    border-bottom:7px solid transparent;
+    i
+      display inline-block
+      color #252A2F
+      margin-left -13px
+      margin-top 10px
+      font-size 14px
+      transform rotate(180deg)
+  .collapsed
+    transform translateX(-150px)
+    transition transform .2s ease
+    i
+      transform rotate(0deg)
+      transition transform .2s ease
+    // left 50px
+  .uncollapsed
+    transition transform .2s ease
 </style>

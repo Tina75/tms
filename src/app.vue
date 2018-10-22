@@ -11,17 +11,16 @@
   </div>
 </template>
 <script>
-import CHeader from '@/components/HeaderBar'
-import CDialog from '@/components/Dialogs'
-import CSider from './components/sider/Sider'
+import CSider from './components/side-bar/SideBar'
+import CHeader from './components/HeaderBar'
 import CContent from './components/Content'
+import CDialog from './components/Dialogs'
 import { mapMutations, mapActions } from 'vuex'
 import Cookies from 'js-cookie'
 
 export default {
   components: { CHeader, CDialog, CSider, CContent },
   mounted () {
-    window.EMA.bind('updateUserInfo', () => { this.getUserInfo() })
     window.EMA.bind('logout', (msg) => { this.logout(msg) })
     this.init()
   },
@@ -34,7 +33,6 @@ export default {
       })
       await this.getPermissons()
       this.initTabNav()
-      // this.toHome()
       await this.getUserInfo()
     },
 
@@ -95,23 +93,6 @@ html, body
         width auto
         display block
         margin 0 auto
-    .header-con
-      position relative
-      z-index 9
-      width 100%
-      .tag-nav-wrapper
-        width auto
-        top 4px
-        left 0
-        right 185px
-        position absolute
-        padding 0
-        height 46px
-        z-index 9
-        // background #F0F0F0
-        overflow hidden
-        .tags-nav .scroll-outer .scroll-body
-          bottom -1px
 
 .ivu-modal-footer
   border-top none
@@ -120,31 +101,5 @@ html, body
     min-width 85px
 .ivu-layout
   background #efefef
-.sider-trigger-a
-  position absolute
-  top 45%
-  left 200px
-  width:0;
-  height:55px;
-  border-left:11px solid #C1C6CB;
-  border-top:7px solid transparent;
-  border-bottom:7px solid transparent;
-  i
-    display inline-block
-    color #252A2F
-    margin-left -13px
-    margin-top 10px
-    font-size 14px
-    transform rotate(180deg)
-.collapsed
-  transform translateX(-150px)
-  transition transform .2s ease
-  i
-    transform rotate(0deg)
-    transition transform .2s ease
-  // left 50px
-.uncollapsed
-  transition transform .2s ease
-.ivu-layout
   overflow-x hidden
 </style>

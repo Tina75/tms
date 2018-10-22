@@ -192,6 +192,23 @@ export default {
 }
 </script>
 <style lang="stylus">
+.header-con
+  position relative
+  z-index 9
+  width 100%
+  .tag-nav-wrapper
+    width auto
+    top 4px
+    left 0
+    right 185px
+    position absolute
+    padding 0
+    height 46px
+    z-index 9
+    // background #F0F0F0
+    overflow hidden
+    .tags-nav .scroll-outer .scroll-body
+      bottom -1px
 .header-bar
   width 100%
   height 100%

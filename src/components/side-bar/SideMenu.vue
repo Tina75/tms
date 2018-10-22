@@ -1,3 +1,4 @@
+
 <template>
   <div class="sider">
     <Sider v-model="collapsed" :collapsed-width="50" hide-trigger collapsible style="overflow:hidden">

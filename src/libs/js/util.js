@@ -1,19 +1,3 @@
-
-// /**
-//  * @description 切换tab标签
-//  * @param {*} route 跳转目标的path或route对象
-//  */
-// var turnToPage = function (route) {
-//   let { path, params, query, meta } = {}
-//   if (typeof route === 'string') path = route
-//   else {
-//     path = route.path
-//     params = route.params
-//     query = route.query
-//     meta = route.meta
-//   }
-//   this.$router.push({ path, params, query, meta })
-// }
 /**
  * @param {*} list 现有标签导航列表
  * @param {*} newRoute 新添加的路由原信息对象
@@ -23,9 +7,12 @@ export const getNewTagList = (list, newRoute, curRoute) => {
   const { name, path, query, meta } = newRoute
   let newList = [...list]
   if (newList.findIndex(item => routeEqual(item, newRoute)) >= 0) {
+    // 已存在  替换
+    const idx = newList.findIndex(item => routeEqual(item, newRoute))
+    newList.splice(idx, 1, { name, path, query, meta })
     return newList
   } else {
-    // find当前tab位置并在其后面添加新tab
+    // 不存在 find当前tab位置并在其后面添加新tab
     const idx = newList.findIndex(item => item.path === curRoute.path)
     newList.splice(idx + 1, 0, { name, path, query, meta })
   }
