@@ -1,3 +1,8 @@
+/**
+ * 送货管理、提货管理、外转管理详情公有防范
+ */
+
+import _ from 'lodash'
 import MoneyInput from '../components/MoneyInput'
 import Server from '@/libs/js/server'
 import Float from '@/libs/js/float'
@@ -9,6 +14,7 @@ export default {
     return {
       id: this.$route.query.id,
       no: this.$route.query.no,
+
       loading: false,
       inEditing: false,
       carriers: [], // 承运商
@@ -102,7 +108,7 @@ export default {
       ],
 
       showLog: false,
-      logList: []
+      logList: [] // 操作日志
     }
   },
 
@@ -140,7 +146,7 @@ export default {
         volume: 0
       })
     },
-
+    // 根据状态及权限展示按钮组
     showButtons () {
       return this.currentBtns.filter(item => {
         return this.hasPower(item.code)
@@ -149,6 +155,7 @@ export default {
   },
 
   watch: {
+    // 编辑状态为货物列表添加操作栏
     inEditing (val) {
       if (!this.tableCanEdit) return
       if (val) {
@@ -211,7 +218,7 @@ export default {
         name: 'transport/dialog/addOrder',
         data: {
           type,
-          billHasSelected: Array.from(new Set(self.detail.map(item => item.orderId)))
+          billHasSelected: _.uniq(self.detail.map(item => item.orderId))
         },
         methods: {
           confirm (ids) {

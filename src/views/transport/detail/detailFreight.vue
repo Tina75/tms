@@ -319,18 +319,24 @@
 </template>
 
 <script>
+
+/**
+ * 运单详情与编辑
+ */
+
 import BasePage from '@/basic/BasePage'
-import TransportBase from '../transportBase'
-import DetailMixin from './detailMixin'
+import TransportBase from '../mixin/transportBase'
+import DetailMixin from '../mixin/detailMixin'
+import SelectInputMixin from '../mixin/selectInputMixin'
 
 import MoneyInput from '../components/MoneyInput'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '../components/SelectInput.vue'
-import SelectInputMixin from '../components/selectInputMixin'
 
 import Server from '@/libs/js/server'
 import { getCityCode } from '@/libs/js/cityValidator'
 import TMSUrl from '@/libs/constant/url'
+import _ from 'lodash'
 
 export default {
   name: 'DetailFeright',
@@ -587,6 +593,7 @@ export default {
       }).catch(err => console.error(err))
     },
 
+    // 保存编辑
     save () {
       if (!this.validate()) return
       Server({
@@ -600,9 +607,7 @@ export default {
             settlementType: this.settlementType,
             settlementPayInfo: this.settlementType === '1' ? this.formatPayInfo() : void 0
           },
-          cargoList: Array.from(new Set((this.detail.map(item => {
-            return item.orderId
-          }))))
+          cargoList: _.uniq(this.detail.map(item => item.orderId))
         }
       }).then(res => {
         this.$Message.success('保存成功')
@@ -655,7 +660,7 @@ export default {
         data: { waybillIds: [ self.id ] }
       }).then(() => {
         self.openDialog({
-          name: 'transport/dialog/sendCar',
+          name: 'transport/dialog/action',
           data: {
             id: self.id,
             type: 'sendCar'
@@ -715,5 +720,5 @@ export default {
 </script>
 
 <style lang='stylus'>
-  @import "./detail.styl"
+  @import "../style/detail.styl"
 </style>

@@ -396,7 +396,7 @@ export default {
             vm.dataSource = data[vm.listField] || []
           }
           if (vm.showPagination) {
-            vm.pagination.pageSize = data.pageSize
+            vm.pagination.pageSize = data.pageSize || 10
             vm.pagination.totalCount = data.totalCount || data.pageTotals
           }
           vm.$emit('on-load', response)
@@ -516,6 +516,9 @@ export default {
     },
     // pagesize变化
     handlePageSizeChange (pageSize) {
+      if (!pageSize) {
+        return
+      }
       // 重新组装数据，生成查询参数
       this.pagination.pageNo = 1
       this.pagination.pageSize = pageSize
