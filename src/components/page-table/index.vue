@@ -2,7 +2,7 @@
   <div class="page-table">
     <SliderIcon
       v-if="showFilter"
-      :list="extraColumns"
+      :list="extraColumnsInit"
       class="page-table__sliderIcon"
       @on-change="customTableColumns">
     </SliderIcon>
@@ -144,6 +144,10 @@ export default {
     },
     // 显示或隐藏的属性
     extraColumns: {
+      type: Array,
+      default: () => []
+    },
+    extraColumnsInit: {
       type: Array,
       default: () => []
     },
@@ -340,7 +344,7 @@ export default {
     if (this.autoload) {
       this.fetch()
     }
-    this.extraColumns = this.reconfigTableHeader(this.extraColumns, this.tableHeadType)
+    this.extraColumnsInit = this.reconfigTableHeader(this.extraColumns, this.tableHeadType)
   },
   methods: {
     /**
@@ -555,6 +559,13 @@ export default {
      */
     customTableColumns (columns) {
       this.$emit('on-column-change', columns)
+      // 保存自定义列表
+      // Server({
+      //   url: '',
+      //   method: 'get'
+      // }).then(({ data }) => {
+      //   this.roles = data.data
+      // })
     }
   }
 }
