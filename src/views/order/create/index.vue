@@ -37,12 +37,12 @@
         <Row>
           <Col span="12">
           <FormItem>
-            <DatePicker v-model="orderForm.deliveryTime" :options="startDateOptions" format="yyyy-MM-dd" type="date"></DatePicker>
+            <DatePicker v-model="orderForm.deliveryTime" :options="startDateOptions" format="yyyy-MM-dd" type="date" @on-change="(date) => { dateChange('START_DATE', date)}"></DatePicker>
           </FormItem>
           </Col>
           <Col span="12" style="padding-left: 5px">
           <FormItem prop="deliveryTimes">
-            <TimeInput v-model="orderForm.deliveryTimes"/>
+            <TimeInput v-model="orderForm.deliveryTimes" type="START_DATE"/>
           </FormItem>
           </Col>
         </Row>
@@ -53,12 +53,12 @@
         <Row>
           <Col span="12">
           <FormItem>
-            <DatePicker v-model="orderForm.arriveTime" :options="endDateOptions" format="yyyy-MM-dd" type="date"></DatePicker>
+            <DatePicker v-model="orderForm.arriveTime" :options="endDateOptions" format="yyyy-MM-dd" type="date" @on-change="(date) => { dateChange('END_DATE', date)}"></DatePicker>
           </FormItem>
           </Col>
           <Col span="12" style="padding-left: 5px">
           <FormItem prop="arriveTimes">
-            <TimeInput v-model="orderForm.arriveTimes"/>
+            <TimeInput v-model="orderForm.arriveTimes" type="END_DATE"/>
           </FormItem>
           </Col>
         </Row>
@@ -146,8 +146,8 @@
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="提货费用:" prop="deliveryFee">
-        <TagNumberInput :min="0" v-model="orderForm.deliveryFee" :parser="handleParseFloat">
+      <FormItem label="提货费用:" prop="pickupFee">
+        <TagNumberInput :min="0" v-model="orderForm.pickupFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
@@ -241,7 +241,7 @@ import Cargo from './libs/cargo'
 import CargoTable from './components/CargoTable.vue'
 import TimeInput from './components/TimeInput.vue'
 
-const transferFeeList = ['freightFee', 'deliveryFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
+const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
 export default {
   metaInfo: {
     title: '手动下单'
@@ -359,7 +359,7 @@ export default {
         // 运输费用
         freightFee: null,
         // 提货费
-        deliveryFee: null,
+        pickupFee: null,
         // 装货费
         loadFee: null,
         // 卸货费
@@ -424,7 +424,7 @@ export default {
           { validator: validateFee }
         ],
         // 提货费
-        deliveryFee: [
+        pickupFee: [
           { validator: validateFee }
         ],
         // 装货费用
@@ -494,7 +494,7 @@ export default {
     ]),
 
     totalFee () {
-      const feeList = ['freightFee', 'deliveryFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
+      const feeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
       const orderForm = this.orderForm
       let totalFee = 0
       for (let fee of feeList) {
@@ -537,10 +537,14 @@ export default {
           // vm.orderForm.start = areas.getPathByCode(orderDetail.start).map((item) => item.code)
           // vm.orderForm.end = areas.getPathByCode(orderDetail.end).map((item) => item.code)
           if (vm.orderForm.deliveryTime) {
-            vm.orderForm.deliveryTime = new Date(vm.orderForm.deliveryTime)
+            const deliveryTime = new Date(vm.orderForm.deliveryTime)
+            vm.orderForm.deliveryTime = deliveryTime
+            vm.orderForm.deliveryTimes = `${deliveryTime.getHours()}`
           }
           if (vm.orderForm.arriveTime) {
-            vm.orderForm.arriveTime = new Date(vm.orderForm.arriveTime)
+            const arriveTime = new Date(vm.orderForm.arriveTime)
+            vm.orderForm.arriveTime = arriveTime
+            vm.orderForm.arriveTimes = `${arriveTime.getHours()}`
           }
         })
         .catch((errorInfo) => {
@@ -793,6 +797,11 @@ export default {
             vm.closeTab()
           }
         })
+    },
+    dateChange (type, date) {
+      if (date) {
+        this.$root.$emit(type, 'show')
+      }
     }
   }
 }

@@ -32,10 +32,7 @@ export default {
   data () {
     return {
       data: [
-        { value: 0, name: '待调度', id: 'wait_dispacth' },
-        { value: 0, name: '待提货', id: 'wait_pickup' },
-        { value: 0, name: '在途', id: 'in_transport' },
-        { value: 0, name: '已送达', id: 'arrive' }
+        { value: 0, name: '今日开单数' }
       ]
     }
   },
@@ -99,14 +96,8 @@ export default {
     load () {
       this.fetch('home/open/order/statistics')
         .then((response) => {
-          const data = response.data
-          if (data.wait_dispacth || data.wait_pickup || data.in_transport || data.arrive) {
-            const arr = this.data
-            arr.forEach((item) => {
-              item.value = data[item.id]
-            })
-            this.data = arr.filter(e => e.value !== 0)
-          }
+          const data = response.data.cnt
+          this.data[0].value = data
         })
     }
   }
