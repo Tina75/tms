@@ -34,6 +34,7 @@ export default {
       await this.getPermissons()
       this.initTabNav()
       await this.getUserInfo()
+      await this.getTableColumns()
     },
 
     /**
@@ -85,5 +86,5 @@ html, body
     height 100vh
     background #EFEFEF
     flex-direction row
-
+    overflow hidden
 </style>

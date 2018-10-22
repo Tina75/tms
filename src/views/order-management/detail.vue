@@ -116,22 +116,27 @@
           <span>应收费用</span>
         </div>
         <Row>
-          <i-col span="4" style="margin-right: 30px;">
+          <i-col span="4">
             <span>运输费：</span>
             <span v-if="detail.freightFee" style="font-weight:bold;">{{detail.freightFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
-          <i-col span="4" style="margin-right: 30px;">
+          <i-col span="4">
+            <span>提货费：</span>
+            <span v-if="detail.pickupFee" style="font-weight:bold;">{{detail.pickupFee | toPoint}}元</span>
+            <span v-else>-</span>
+          </i-col>
+          <i-col span="4">
             <span>装货费：</span>
             <span v-if="detail.loadFee" style="font-weight:bold;">{{detail.loadFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
-          <i-col span="4" style="margin-right: 30px;">
+          <i-col span="4">
             <span>卸货费：</span>
             <span v-if="detail.unloadFee" style="font-weight:bold;">{{detail.unloadFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
-          <i-col span="4" style="margin-right: 30px;">
+          <i-col span="4">
             <span>保险费：</span>
             <span v-if="detail.insuranceFee" style="font-weight:bold;">{{detail.insuranceFee | toPoint}}元</span>
             <span v-else>-</span>
