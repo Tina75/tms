@@ -232,5 +232,5 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-  @import "./dispatch.styl"
+  @import "../style/dispatch.styl"
 </style>

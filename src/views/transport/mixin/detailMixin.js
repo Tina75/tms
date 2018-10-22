@@ -1,3 +1,7 @@
+/**
+ * 送货管理、提货管理、外转管理详情公有防范
+ */
+
 import _ from 'lodash'
 import MoneyInput from '../components/MoneyInput'
 import Server from '@/libs/js/server'
