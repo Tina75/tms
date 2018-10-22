@@ -107,8 +107,6 @@ export default {
                 this.$Message.success('添加成功!')
                 this.close()
                 this.ok()
-              } else {
-                this.$Message.success(data.msg)
               }
             })
           } else {
@@ -121,8 +119,6 @@ export default {
                 this.$Message.success('修改成功!')
                 this.close()
                 this.ok()
-              } else {
-                this.$Message.success(data.msg)
               }
             })
           }

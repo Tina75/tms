@@ -162,6 +162,7 @@ import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import AreaSelect from '@/components/AreaSelect'
 import _ from 'lodash'
+import { mapActions } from 'vuex'
 export default {
   name: 'set-up',
   components: {
@@ -373,6 +374,7 @@ export default {
     this.messageListInit = _.cloneDeep(this.messageList)
   },
   methods: {
+    ...mapActions(['getUserInfo']),
     getCompanyInfo () {
       Server({
         url: 'set/companyInfo',
@@ -380,15 +382,6 @@ export default {
       }).then(({ data }) => {
         this.formCompany = Object.assign({}, data.data)
         this.formCompanyInit = Object.assign({}, data.data)
-      })
-    },
-    getUserInfo () {
-      Server({
-        url: 'set/userInfo',
-        method: 'get'
-      }).then(({ data }) => {
-        this.formPersonal = Object.assign({}, data.data)
-        this.formPersonalInit = Object.assign({}, data.data)
       })
     },
     smsInfo () {
@@ -416,7 +409,8 @@ export default {
       this.rightKey = id
       switch (id) {
         case '2':
-          this.getUserInfo()
+          this.formPersonal = Object.assign({}, this.$store.getters.UserInfo)
+          this.formPersonalInit = Object.assign({}, this.$store.getters.UserInfo)
           break
         case '3':
           this.smsInfo()
@@ -439,12 +433,8 @@ export default {
             method: 'post',
             data: this.formPwd
           }).then(({ data }) => {
-            if (data.code === 10000) {
-              this.$Message.success('保存成功!')
-              this.formPwd = {}
-            } else {
-              this.$Message.info(data.msg)
-            }
+            this.$Message.success('保存成功!')
+            this.formPwd = {}
           })
         }
       })
@@ -466,10 +456,10 @@ export default {
             data: param
           }).then(({ data }) => {
             if (data.code === 10000) {
+              this.getUserInfo()
+              this.formPersonalInit.name = this.formPersonal.name
               this.$Message.success('保存成功!')
               this.formPwd = {}
-            } else {
-              this.$Message.info(data.msg)
             }
           })
         }
@@ -498,8 +488,6 @@ export default {
           }).then(({ data }) => {
             if (data.code === 10000) {
               this.$Message.success('保存成功!')
-            } else {
-              this.$Message.error(data.msg)
             }
           })
         }
@@ -546,8 +534,6 @@ export default {
           this.msgCheckBoxListInit = _.cloneDeep(this.msgSlectCheckBox)
           this.$Message.success('保存成功!')
           this.msgCheckBoxListInit = _.cloneDeep(this.msgSlectCheckBox)
-        } else {
-          this.$Message.error(data.msg)
         }
       })
     }

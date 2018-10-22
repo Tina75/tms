@@ -1,5 +1,11 @@
 <template>
   <div class="page-table">
+    <SliderIcon
+      v-if="showFilter"
+      :list="extraColumns"
+      class="page-table__sliderIcon"
+      @on-change="customTableColumns">
+    </SliderIcon>
     <Table
       ref="table"
       :width="width"
@@ -14,6 +20,7 @@
       :size="size"
       :no-data-text="noDataText"
       :row-class-name="rowClass"
+      :table-head-type="tableHeadType"
       @on-current-change="handleCurrentChange"
       @on-select="handleSelect"
       @on-select-all="handleSelectAll"
@@ -55,6 +62,7 @@
 <script>
 import server from '@/libs/js/server'
 import SliderIcon from './SliderIcon.vue'
+import { mapMutations } from 'vuex'
 import _ from 'lodash'
 /**
   * iview的table和page的组件是分开的
@@ -136,10 +144,10 @@ export default {
       required: true
     },
     // 显示或隐藏的属性
-    extraColumns: {
-      type: Array,
-      default: () => []
-    },
+    // extraColumns: {
+    //   type: Array,
+    //   default: () => []
+    // },
     // 表数据,可能需要自己做分页
     data: {
       type: Array,
@@ -179,6 +187,8 @@ export default {
       type: Boolean,
       default: true
     },
+    // 表单类型
+    tableHeadType: '',
     onLoad: Function, // 每次请求后，回调，返回列表搜索结果
     onCurrentChange: Function,
     onSelect: Function,
@@ -198,6 +208,8 @@ export default {
   },
   data () {
     return {
+      // 显示或隐藏的属性
+      extraColumns: [],
       isRemote: false,
       // 请求时候的加载状态
       loading: false,
@@ -219,6 +231,7 @@ export default {
     filterColumns () {
       const vm = this
       if (vm.showFilter) {
+        vm.extraColumns = vm.reconfigTableHeader('', vm.tableHeadType, 'change')
         const columnGroup = _.groupBy(vm.extraColumns, (cl) => cl.key)
         const fixedCols = []
         const normalCols = []
@@ -239,28 +252,29 @@ export default {
 
         return fixedCols.concat(
           _.sortBy(normalCols, (col) => columnGroup[col.key] ? columnGroup[col.key][0].sort : 0)
-        ).concat({
-          title: 'icon',
-          width: 48,
-          fixed: 'right',
-          renderHeader (h, params) {
-            return h(SliderIcon, {
-              props: {
-                list: vm.extraColumns
-              },
-              on: {
-                'on-change': (columns) => {
-                  vm.$emit('on-column-change', columns)
-                  // vm.extraColumns = columns
-                }
-              }
-            })
-          },
-          key: 'filter-columns',
-          render: (h) => {
-            return h('span', '')
-          }
-        })
+        )
+        // .concat({
+        //   title: 'icon',
+        //   width: 48,
+        //   fixed: 'right',
+        //   renderHeader (h, params) {
+        //     return h(SliderIcon, {
+        //       props: {
+        //         list: vm.extraColumns
+        //       },
+        //       on: {
+        //         'on-change': (columns) => {
+        //           vm.$emit('on-column-change', columns)
+        //           // vm.extraColumns = columns
+        //         }
+        //       }
+        //     })
+        //   },
+        //   key: 'filter-columns',
+        //   render: (h) => {
+        //     return h('span', '')
+        //   }
+        // })
       } else {
         return this.columns
       }
@@ -324,6 +338,7 @@ export default {
     this.showSlotHeader = this.$slots.header !== undefined
   },
   mounted () {
+    this.extraColumns = this.reconfigTableHeader('', this.tableHeadType, 'change')
     if (!this.isRemote) {
       this.setLocalDataSource(this.data)
     }
@@ -332,6 +347,32 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['updateTableColumns']),
+    /**
+     * 自定义table表头数据对接（页面-接口）
+     * pageHeadData,interfaceHeadData 接口与页面Data规整
+     * type 初始化页面传入SliderIcon组件
+     */
+    reconfigTableHeader (pageHeadData, interfaceHeadData, type) {
+      let pageHeadDataInit = []
+      if (type && this.$store.getters.TableColumns[interfaceHeadData]) {
+        this.$store.getters.TableColumns[interfaceHeadData].forEach(e => {
+          let headRow = {}
+          headRow.key = e.k
+          headRow.visible = e.v
+          headRow.sort = e.s
+          headRow.title = e.t
+          headRow.fixed = e.f
+          pageHeadDataInit.push(headRow)
+        })
+        return pageHeadDataInit
+      } else {
+        if (this.$store.getters.TableColumns[interfaceHeadData]) {
+          this.$store.commit('updateTableColumns', { list: pageHeadData, type: interfaceHeadData })
+          return JSON.stringify(this.$store.getters.TableColumns[interfaceHeadData])
+        }
+      }
+    },
     /**
      * 复选框选中后，背景高亮
      */
@@ -530,6 +571,22 @@ export default {
      */
     clearSelected () {
       this.selectedRow = []
+    },
+    /**
+     * 更改表单列表
+     */
+    customTableColumns (columns) {
+      // this.$emit('on-column-change', columns)
+      // 保存自定义列表
+      let params = {}
+      params.bizCode = this.tableHeadType
+      params.propertiyList = this.reconfigTableHeader(columns, this.tableHeadType)
+      server({
+        url: '/gridHead/save',
+        method: 'post',
+        data: params
+      }).then(({ data }) => {
+      })
     }
   }
 }
@@ -539,6 +596,17 @@ export default {
 .page-table
   position: relative;
   margin-top: 0px
+  &__sliderIcon
+    position: absolute;
+    background: #f8f8f9;
+    z-index: 2;
+    right: 0px;
+    width: 50px;
+    text-align: center;
+    height: 39px;
+    line-height: 39px;
+    top: 1px;
+    box-shadow: -1px 0px 4px 0px #cfcfcf;
   &__footer-pagination
     margin: 10px;
     overflow: hidden;

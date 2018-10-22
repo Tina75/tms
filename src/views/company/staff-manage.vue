@@ -331,7 +331,6 @@ export default {
               this.$Message.success('转移成功!')
               location.reload()
             } else {
-              this.$Message.error(data.msg)
               this.visibaleTransfer = false
             }
           })
@@ -366,7 +365,6 @@ export default {
           this.$Message.success('删除成功！')
           this.formSearchInit = {}
         } else {
-          this.$Message.error(data.msg)
           this.visibaleRemove = false
         }
       })
@@ -402,7 +400,7 @@ export default {
   font-size: 16px;
   font-weight: bold;
 .visibaleRemoveP
-  margin-top: 10px;
+  margin-top: 5px;
   margin-left:10%;
   i.icon.font_family.icon-bangzhuzhongxin
     font-size:28px;
@@ -411,8 +409,9 @@ export default {
     float:left;
     width:40px;
 .visibaleRemoveMessage
-  margin-top:21px;
+  margin-top:16px;
   font-size: 14px;
+  margin-bottom: 5px;
 .modalFooter
   margin-top:20px;
 .transferformModal
