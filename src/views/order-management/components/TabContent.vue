@@ -144,6 +144,11 @@ export default {
       type: String,
       default: 'order/list'
     },
+    // 导出接口url
+    exportUrl: {
+      type: String,
+      default: 'order/exportOrder'
+    },
     // 刷新tab数量的回调
     refreshTab: Function
   },
@@ -1239,7 +1244,7 @@ export default {
         exportOrderIds: this.selectedId.length > 0 ? this.selectedId : null
       })
       Export({
-        url: 'order/exportOrder',
+        url: this.exportUrl,
         method: 'post',
         data,
         fileName: '订单明细'
