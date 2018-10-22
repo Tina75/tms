@@ -17,10 +17,7 @@
         </FormItem>
         <FormItem label="付款方式：" prop="payType">
           <Select v-model="info.payType" style="width:200px">
-            <Option value="1">现付</Option>
-            <Option value="2">到付</Option>
-            <Option value="3">回单付</Option>
-            <Option value="4">月结</Option>
+            <Option v-for="item in payType" :key="item.value" :value="item.value">{{ item.name }}</Option>
           </Select>
         </FormItem>
         <FormItem label="外转运费：" prop="transFee">
@@ -51,6 +48,8 @@ import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '../components/SelectInput.vue'
 import TagNumberInput from '@/components/TagNumberInput'
 import float from '@/libs/js/float'
+import payType from '@/libs/constant/settlement'
+
 export default {
   name: 'outer',
 
@@ -63,6 +62,7 @@ export default {
   data () {
     return {
       show: true,
+      payType,
 
       info: {
         transfereeName: '',

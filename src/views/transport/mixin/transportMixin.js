@@ -102,7 +102,7 @@ export default {
     // 查询数据
     fetchData () {
       this.tableSelection = []
-      this.$refs.$table.clearSelected() // 清空已选项
+      this.$refs.$table && this.$refs.$table.clearSelected() // 清空已选项
       this.searchFields = this.setFetchParams() // 设置请求搜索字段，page table组件会自动查询
       this.fetchTabCount && this.fetchTabCount() // 如果存在查询tab数量的方法则查询
     },

@@ -99,6 +99,7 @@
       source="transport"
       tab-status="待提货"
       url="/load/bill/wait/pick/list"
+      export-url="/load/bill/pick/up/export"
       @refresh-tab="fetchTabCount" />
 
     <!-- 表格 -->
