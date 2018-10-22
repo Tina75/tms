@@ -146,8 +146,8 @@
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="提货费用:" prop="deliveryFee">
-        <TagNumberInput :min="0" v-model="orderForm.deliveryFee" :parser="handleParseFloat">
+      <FormItem label="提货费用:" prop="pickupFee">
+        <TagNumberInput :min="0" v-model="orderForm.pickupFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
@@ -241,7 +241,7 @@ import Cargo from './libs/cargo'
 import CargoTable from './components/CargoTable.vue'
 import TimeInput from './components/TimeInput.vue'
 
-const transferFeeList = ['freightFee', 'deliveryFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
+const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
 export default {
   metaInfo: {
     title: '手动下单'
@@ -359,7 +359,7 @@ export default {
         // 运输费用
         freightFee: null,
         // 提货费
-        deliveryFee: null,
+        pickupFee: null,
         // 装货费
         loadFee: null,
         // 卸货费
@@ -424,7 +424,7 @@ export default {
           { validator: validateFee }
         ],
         // 提货费
-        deliveryFee: [
+        pickupFee: [
           { validator: validateFee }
         ],
         // 装货费用
@@ -494,7 +494,7 @@ export default {
     ]),
 
     totalFee () {
-      const feeList = ['freightFee', 'deliveryFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
+      const feeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
       const orderForm = this.orderForm
       let totalFee = 0
       for (let fee of feeList) {
