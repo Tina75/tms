@@ -34,6 +34,7 @@ export default {
       await this.getPermissons()
       this.initTabNav()
       await this.getUserInfo()
+      await this.getTableColumns()
     },
 
     /**
