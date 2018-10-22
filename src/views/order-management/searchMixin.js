@@ -40,8 +40,8 @@ export default {
   },
 
   created () {
-    const columns = window.sessionStorage[this.tabType + '_COLUMNS']
-    if (columns) this.extraColumns = JSON.parse(columns)
+    // const columns = window.sessionStorage[this.tabType + '_COLUMNS']
+    // if (columns) this.extraColumns = JSON.parse(columns)
   },
 
   mounted () {
