@@ -120,7 +120,7 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '../components/SelectInput.vue'
-import SelectInputMixin from '../components/selectInputMixin'
+import SelectInputMixin from '../mixin/selectInputMixin'
 import MoneyInput from '../components/MoneyInput'
 import Server from '@/libs/js/server'
 import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
@@ -160,7 +160,9 @@ export default {
       },
       settlementType: '1',
       settlementPayInfo: [],
-      settlementPayInfoBack: [], // 支付信息备份
+      // 支付信息备份，当表格中的金额数据修改时，修改后的金额将会替换此备份中的数据，而不是 settlementPayInfo 中的数据
+      // 如果直接替换 settlementPayInfo 中的数据，会导致表格重新渲染，从而使 tab 键切换输入框失效
+      settlementPayInfoBack: [],
 
       // 支付方式表格
       tablePayment: [
@@ -229,6 +231,7 @@ export default {
     }
   },
   computed: {
+    // 计算总费用
     paymentTotal () {
       return (Number(this.payment.freightFee) +
       Number(this.payment.loadFee) +
@@ -238,6 +241,7 @@ export default {
     }
   },
   created () {
+    // 支付信息表格展示内容根据类型改变
     this.settlementPayInfo = this.type === 'sendCar' ? [
       { payType: 1, fuelCardAmount: 0, cashAmount: 0 },
       { payType: 2, fuelCardAmount: 0, cashAmount: 0 },
@@ -263,9 +267,11 @@ export default {
           ...self.financeRulesInfo
         },
         methods: {
+          // 确认收费规则时获取价格
           ok (charge) {
             self.payment.freightFee = charge || 0
           },
+          // 前往设置时关闭当前对话框
           closeParentDialog () {
             self.close()
           }
@@ -286,14 +292,13 @@ export default {
       return true
     },
 
+    // 查询数据
     fetchData () {
       this.loading = true
       Server({
         url: this.type === 'sendCar' ? '/waybill/details' : '/load/bill/details',
         method: 'post',
-        data: this.type === 'sendCar' ? { waybillId: this.id } : {
-          pickUpId: this.id
-        }
+        data: { [this.type === 'sendCar' ? 'waybillId' : 'pickUpId']: this.id }
       }).then(res => {
         const data = res.data.data
         const billInfo = this.type === 'sendCar' ? data.waybill : data.loadbill
@@ -311,6 +316,7 @@ export default {
         }
 
         this.settlementType = billInfo.settlementType ? billInfo.settlementType.toString() : '1'
+        // 将收费信息中的金额单位转为元
         let temp = this.settlementPayInfo.map((item, i) => {
           if (!billInfo.settlementPayInfo[i]) return item
           else {
@@ -341,7 +347,6 @@ export default {
     },
     // 格式化计费方式金额单位为分
     formatPayInfo () {
-      // if (this.settlementType !== '1') return
       return this.settlementPayInfoBack.map(item => {
         return {
           payType: item.payType,
@@ -419,7 +424,7 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
- @import "../detail/detail.styl"
+ @import "../style/detail.styl"
 
  .part
    padding 10px 0 20px

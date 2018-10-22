@@ -1,6 +1,6 @@
 <template>
   <div ref="$box" class="transport-page">
-    <TabHeader ref="$tab" :tabs="tabList" :type="tabType" @on-change="tabChanged"></TabHeader>
+    <TabHeader :tabs="tabList" :type="tabType" @on-change="tabChanged"></TabHeader>
 
     <template v-if="tabStatus">
       <div class="easy-search-box">
@@ -24,7 +24,7 @@
                  v-model="easySearchKeyword"
                  :icon="easySearchKeyword ? 'ios-close-circle' : ''"
                  :maxlength="20"
-                 placeholder="请输入运单号"
+                 placeholder="请输入提货单号"
                  class="search-input"
                  @on-click="resetEasySearch" />
 
@@ -58,7 +58,7 @@
       <div v-if="!isEasySearch" class="operate-box custom-style">
 
         <div style="margin-bottom: 10px;">
-          <Input v-model="seniorSearchFields.waybillNo" :maxlength="20"  placeholder="请输入运单号" class="search-input-senior" />
+          <Input v-model="seniorSearchFields.pickupNo" :maxlength="20" placeholder="请输入提货单号"  class="search-input-senior" />
           <SelectInput v-model="seniorSearchFields.carrierName"
                        mode="carrier"
                        placeholder="请输入承运商"
@@ -78,8 +78,6 @@
 
         <div style="display: flex;justify-content: space-between;">
           <div>
-            <AreaSelect v-model="seniorSearchFields.startCodes" placeholder="请输入始发地" class="search-input-senior" />
-            <AreaSelect v-model="seniorSearchFields.endCodes" placeholder="请输入目的地" class="search-input-senior" />
             <DatePicker v-model="seniorSearchFields.dateRange" type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
           </div>
           <div>
@@ -99,7 +97,7 @@
     <OrderTabContent
       v-if="!tabStatus"
       source="transport"
-      tab-status="待送货"
+      tab-status="待提货"
       url="/load/bill/wait/pick/list"
       @refresh-tab="fetchTabCount" />
 
@@ -110,10 +108,10 @@
                  :extra-columns="extraColumns"
                  :show-filter="true"
                  :keywords="searchFields"
-                 row-id="waybillId"
-                 url="/waybill/list"
+                 row-id="pickUpId"
+                 url="/load/bill/list"
                  method="post"
-                 list-field="waybillList"
+                 list-field="loadbillList"
                  style="margin-top: 15px"
                  @on-column-change="tableColumnsChanged"
                  @on-selection-change="selectionChanged"
@@ -123,7 +121,7 @@
                  @on-load="dataOnload" />
     </div>
 
-    <PrintFreight ref="$printer" :data="printData" />
+    <PrintPickup ref="$printer" :data="printData" />
   </div>
 </template>
 
@@ -135,44 +133,39 @@ import SelectInputMixin from './mixin/selectInputMixin'
 
 import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
-import AreaSelect from '@/components/AreaSelect'
 import SelectInput from './components/SelectInput.vue'
-import PrintFreight from './components/PrintFreight'
+import PrintPickup from './components/PrintPickup'
 import OrderTabContent from '@/views/order-management/components/TabContent'
 
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
-import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, EXTRA_COLUMNS, setTabList } from './constant/waybill'
+import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, EXTRA_COLUMNS, setTabList } from './constant/pickup'
 
 export default {
-  name: 'WaybillManager',
-  components: { TabHeader, PageTable, AreaSelect, SelectInput, PrintFreight, OrderTabContent },
+  name: 'ReceiveManager',
+  components: { TabHeader, PageTable, SelectInput, PrintPickup, OrderTabContent },
   mixins: [ BasePage, TransportBase, SelectInputMixin, TransportMixin ],
-  metaInfo: { title: '运单管理' },
+  metaInfo: { title: '提货管理' },
   data () {
     return {
-      tabType: 'WAYBILL',
+      tabType: 'PICKUP',
 
       tabList: TAB_LIST, // 标签栏
       btnList: BUTTON_LIST(this), // 所有按钮组
 
       // 简易搜索类型
       selectList: [
-        { value: 1, label: '运单号' },
+        { value: 1, label: '提货单号' },
         { value: 2, label: '承运商' },
         { value: 3, label: '车牌号' }
       ],
 
       // 高级搜索字段
       seniorSearchFields: {
-        waybillNo: '', // 运单号
+        pickupNo: '', // 提货单号
         carrierName: '', // 承运商
         driverName: '', // 司机
         carNo: '', // 车牌号
-        startCodes: [], // 始发地codes
-        endCodes: [], // 目的地codes
-        start: '', // 始发地
-        end: '', // 目的地
         dateRange: ['', ''], // 日期范围
         startTime: '', // 开始时间
         endTime: '' // 结束时间
@@ -186,14 +179,14 @@ export default {
         fixed: 'left',
         extra: true,
         render: (h, p) => {
-          if (p.row.status === 1 && this.hasPower(120101)) {
+          if (p.row.status === 1 && this.hasPower(120201)) {
             return h('a', {
               on: {
                 click: () => {
-                  this.billSendCar(p.row.waybillId)
+                  this.billPickup(p.row.pickUpId)
                 }
               }
-            }, '派车')
+            }, '提货')
           }
         }
       },
@@ -211,18 +204,15 @@ export default {
         //   this.triggerTableActionColumn(true)
         //   return
         case '待调度': return
-        case '待派车':
+        case '待提货':
           this.triggerTableActionColumn(true)
           return 1
-        case '待发运':
+        case '提货中':
           this.triggerTableActionColumn(false)
           return 2
-        case '在途':
+        case '已提货':
           this.triggerTableActionColumn(false)
           return 3
-        case '已到货':
-          this.triggerTableActionColumn(false)
-          return 4
         default:
       }
     },
@@ -230,14 +220,14 @@ export default {
     // 查询标签页数量
     fetchTabCount () {
       Server({
-        url: '/waybill/tab/cnt',
+        url: '/load/bill/tab/cnt',
         method: 'get'
       }).then(res => {
         this.tabList = setTabList(res.data.data)
       })
     },
 
-    // 表格数据查询完成回调
+    // 数据查询
     dataOnload (res) {
       const data = res.data.data
       this.page.current = data.pageNo
@@ -249,13 +239,55 @@ export default {
     billPrint () {
       if (!this.checkTableSelection()) return
       Server({
-        url: '/waybill/batchPrint',
+        url: '/load/bill/batchPrint',
         method: 'post',
-        data: { waybillIds: this.tableSelection.map(item => item.waybillId) }
+        data: { pickUpIds: this.tableSelection.map(item => item.pickUpId) }
       }).then(res => {
         this.printData = res.data.data
         this.$refs.$printer.print()
       })
+    },
+
+    // 导出
+    billExport () {
+      let data = this.setFetchParams()
+      data.pageNo = this.page.current
+      data.pageSize = this.page.size
+      delete data.order
+
+      if (this.tableSelection.length) {
+        data.exportType = 1
+        data.pickUpIds = this.tableSelection.map(item => item.pickUpId)
+      } else if (this.inSearching) data.exportType = 3
+      else data.exportType = 2
+
+      Export({
+        url: '/load/bill/export',
+        method: 'post',
+        data,
+        fileName: '提货单明细'
+      })
+    },
+
+    // 位置
+    billLocation () {
+      if (!this.checkTableSelection()) return
+      Server({
+        url: '/load/bill/location',
+        method: 'post',
+        data: { pickUpIds: this.tableSelection.map(item => item.pickUpId) }
+      }).then(res => {
+        const points = res.data.data.list
+        if (!points.length) {
+          this.$Message.warning('暂无位置')
+          return
+        }
+        this.openDialog({
+          name: 'transport/dialog/map',
+          data: { points },
+          methods: {}
+        })
+      }).catch(err => console.error(err))
     },
 
     // 删除
@@ -271,9 +303,9 @@ export default {
         methods: {
           confirm () {
             Server({
-              url: '/waybill/delete',
+              url: '/load/bill/delete',
               method: 'delete',
-              data: { waybillIds: self.tableSelection.map(item => item.waybillId) }
+              data: { pickUpIds: self.tableSelection.map(item => item.pickUpId) }
             }).then(res => {
               self.$Message.success('删除成功')
               self.clearSelectedAndFetch()
@@ -281,27 +313,6 @@ export default {
           }
         }
       })
-    },
-
-    // 位置
-    billLocation () {
-      if (!this.checkTableSelection()) return
-      Server({
-        url: '/waybill/location',
-        method: 'post',
-        data: { waybillIds: this.tableSelection.map(item => item.waybillId) }
-      }).then(res => {
-        const points = res.data.data.list
-        if (!points.length) {
-          this.$Message.warning('暂无位置')
-          return
-        }
-        this.openDialog({
-          name: 'transport/dialog/map',
-          data: { points },
-          methods: {}
-        })
-      }).catch(err => console.error(err))
     },
 
     // 到货
@@ -317,9 +328,9 @@ export default {
         methods: {
           confirm () {
             Server({
-              url: '/waybill/confirm/arrival',
+              url: '/load/bill/confirm/arrival',
               method: 'post',
-              data: { waybillIds: self.tableSelection.map(item => item.waybillId) }
+              data: { pickUpIds: self.tableSelection.map(item => item.pickUpId) }
             }).then(res => {
               self.$Message.success('操作成功')
               self.clearSelectedAndFetch()
@@ -329,65 +340,19 @@ export default {
       })
     },
 
-    // 发运
-    billShipment () {
-      const self = this
-      if (!this.checkTableSelection()) return
-      self.openDialog({
-        name: 'transport/dialog/confirm',
-        data: {
-          title: '发运',
-          message: '是否发运？发运以后将不能再修改运单信息'
-        },
-        methods: {
-          confirm () {
-            Server({
-              url: '/waybill/shipment',
-              method: 'post',
-              data: { waybillIds: self.tableSelection.map(item => item.waybillId) }
-            }).then(res => {
-              self.$Message.success('操作成功')
-              self.clearSelectedAndFetch()
-            }).catch(err => console.error(err))
-          }
-        }
-      })
-    },
-
-    // 导出
-    billExport () {
-      let data = this.setFetchParams()
-      data.pageNo = this.page.current
-      data.pageSize = this.page.size
-      delete data.order
-
-      if (this.tableSelection.length) {
-        data.exportType = 1
-        data.waybillIds = this.tableSelection.map(item => item.waybillId)
-      } else if (this.inSearching) data.exportType = 3
-      else data.exportType = 2
-
-      Export({
-        url: '/waybill/export',
-        method: 'post',
-        data,
-        fileName: '运单明细'
-      })
-    },
-
-    // 派车
-    billSendCar (id) {
+    // 提货
+    billPickup (id) {
       const self = this
       Server({
-        url: '/waybill/check/order',
+        url: '/load/bill/check/order',
         method: 'post',
-        data: { waybillIds: [id] }
+        data: { pickUpId: id }
       }).then(() => {
         self.openDialog({
           name: 'transport/dialog/action',
           data: {
             id,
-            type: 'sendCar'
+            type: 'pickUp'
           },
           methods: {
             complete () {

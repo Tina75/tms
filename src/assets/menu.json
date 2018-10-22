@@ -38,11 +38,6 @@
         "name":"回单管理",
         "path":"/order-management/receipt",
         "powerCode":110200
-      },
-      {
-        "name":"调度工作台",
-        "path":"/order-management/dispatch",
-        "powerCode":110300
       }
     ]
   },
@@ -53,17 +48,22 @@
     "path":"/transport",
     "children":[
       {
-        "name":"运单管理",
+        "name":"调度工作台",
+        "path":"/transport/dispatch",
+        "powerCode":110300
+      },
+      {
+        "name":"送货管理",
         "path":"/transport/waybill",
         "powerCode":120100
       },
       {
-        "name":"提货单管理",
-        "path":"/transport/receiveOrder",
+        "name":"提货管理",
+        "path":"/transport/pickupOrder",
         "powerCode":120200
       },
       {
-        "name":"外转单管理",
+        "name":"外转管理",
         "path":"/transport/outerOrder",
         "powerCode":120300
       }

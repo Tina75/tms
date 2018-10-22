@@ -9,6 +9,7 @@
 
             <FormItem prop="phone">
               <Input v-model="form.phone" :maxlength="11" placeholder="登录账号/手机号"
+                     @on-change="phoneChange"
                      @on-focus="inputFocus('phone')"
                      @on-blur="inputBlur('phone')">
               <i slot="prefix" :style="inputIconColor('phone')" class="icon font_family icon-ico-user"></i>
@@ -80,6 +81,8 @@ export default {
         captchaCode: ''
       },
 
+      rememberedPhone: '',
+
       rules: {
         phone: [
           { required: true, message: '手机号不能为空', trigger: 'blur' },
@@ -120,6 +123,13 @@ export default {
       if (this.currentFocus !== undefined) this.currentFocus = ''
     },
 
+    // 手机号码改变
+    // 如果用户记住密码后退出，修改账户，清空密码
+    phoneChange () {
+      if (!this.rememberedPhone) return
+      if (this.rememberedPhone !== this.form.phone) this.form.password = this.rememberedPhone = ''
+    },
+
     // 记住密码-解析密码
     localPwParser () {
       const encodePW = window.localStorage.local_rememberd_pw
@@ -132,6 +142,7 @@ export default {
       this.form.phone = decodePW[0]
       this.form.password = decodePW[1]
       this.rememberPW = true
+      this.rememberedPhone = decodePW[0]
     },
 
     // 记住密码-保存密码

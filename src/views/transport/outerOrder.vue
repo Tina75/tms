@@ -2,7 +2,7 @@
   <div ref="$box" class="transport-page">
     <TabHeader :tabs="tabList" :type="tabType" @on-change="tabChanged"></TabHeader>
 
-    <div style="margin-top: 30px;display: flex;justify-content: space-between;">
+    <div class="easy-search-box">
 
       <!-- 按钮组 -->
       <div class="custom-style">
@@ -116,8 +116,8 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import TransportBase from './transportBase'
-import TransportMixin from './transportMixin'
+import TransportBase from './mixin/transportBase'
+import TransportMixin from './mixin/transportMixin'
 
 import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
@@ -126,7 +126,7 @@ import SelectInput from './components/SelectInput.vue'
 
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
-import TMSUrl from '@/libs/constant/url'
+import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, EXTRA_COLUMNS, setTabList } from './constant/outer'
 
 export default {
   name: 'OuterManager',
@@ -136,93 +136,8 @@ export default {
   data () {
     return {
       tabType: 'OUTER',
-      // 标签栏
-      tabList: [
-        { name: '全部', count: '' },
-        { name: '待发运', count: '' },
-        { name: '在途', count: '' },
-        { name: '已到货', count: '' }
-      ],
-
-      // 所有按钮组
-      btnList: [
-        {
-          tab: '全部',
-          btns: [{
-            name: '发运',
-            code: 120301,
-            func: () => {
-              this.billShipment()
-            }
-          }, {
-            name: '到货',
-            code: 120302,
-            func: () => {
-              this.billArrived()
-            }
-          }, {
-            name: '删除',
-            code: 120304,
-            func: () => {
-              this.billDelete()
-            }
-          }, {
-            name: '导出',
-            code: 120305,
-            func: () => {
-              this.billExport()
-            }
-          }]
-        },
-        {
-          tab: '待发运',
-          btns: [{
-            name: '发运',
-            code: 120301,
-            func: () => {
-              this.billShipment()
-            }
-          }, {
-            name: '删除',
-            code: 120304,
-            func: () => {
-              this.billDelete()
-            }
-          }, {
-            name: '导出',
-            code: 120305,
-            func: () => {
-              this.billExport()
-            }
-          }]
-        },
-        {
-          tab: '在途',
-          btns: [{
-            name: '到货',
-            code: 120302,
-            func: () => {
-              this.billArrived()
-            }
-          }, {
-            name: '导出',
-            code: 120305,
-            func: () => {
-              this.billExport()
-            }
-          }]
-        },
-        {
-          tab: '已到货',
-          btns: [{
-            name: '导出',
-            code: 120305,
-            func: () => {
-              this.billExport()
-            }
-          }]
-        }
-      ],
+      tabList: TAB_LIST, // 标签栏
+      btnList: BUTTON_LIST(this), // 所有按钮组
 
       // 简易搜索类型
       selectList: [
@@ -247,6 +162,7 @@ export default {
         endTime: '' // 结束时间
       },
 
+      // 表格操作栏
       tableActionColumn: {
         title: '操作',
         key: 'action',
@@ -274,307 +190,8 @@ export default {
         }
       },
 
-      tableColumns: [
-        {
-          type: 'selection',
-          width: 50,
-          align: 'center',
-          fixed: 'left'
-        },
-        {
-          title: '外转单号',
-          key: 'transNo',
-          width: 180,
-          fixed: 'left',
-          render: (h, p) => {
-            return h('a', {
-              style: {
-                color: '#418DF9'
-              },
-              on: {
-                click: () => {
-                  this.openTab({
-                    title: p.row.transNo,
-                    path: TMSUrl.OUTER_ORDER_DETAIL,
-                    query: { id: p.row.transId }
-                  })
-                }
-              }
-            }, p.row.transNo)
-          }
-        },
-        {
-          title: '订单号',
-          key: 'orderNo',
-          width: 180
-        },
-        {
-          title: '外转方运单号',
-          key: 'outTransNo',
-          width: 180
-        },
-        {
-          title: '外转方名称',
-          key: 'transfereeName',
-          minWidth: 180,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.transfereeName, true)
-          }
-        },
-        {
-          title: '始发地',
-          key: 'start',
-          width: 180,
-          render: (h, p) => {
-            return this.tableDataRender(h, this.cityFormatter(p.row.start))
-          }
-        },
-        {
-          title: '目的地',
-          key: 'end',
-          width: 180,
-          render: (h, p) => {
-            return this.tableDataRender(h, this.cityFormatter(p.row.end))
-          }
-        },
-        {
-          title: '外转运费',
-          key: 'transFee',
-          width: 120,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.transFee === '' ? '' : p.row.transFee / 100)
-          }
-        },
-        {
-          title: '体积（方）',
-          key: 'volume',
-          width: 120
-        },
-        {
-          title: '重量（吨）',
-          key: 'weight',
-          width: 120
-        },
-        {
-          title: '外转时间',
-          key: 'createTimeLong',
-          sortable: 'custom',
-          width: 160,
-          render: (h, p) => {
-            return this.tableDataRender(h, this.timeFormatter(p.row.createTimeLong), true)
-          }
-        },
-        {
-          title: '客户订单号',
-          key: 'customerOrderNo',
-          width: 180
-        },
-        {
-          title: '客户名称',
-          key: 'consignerName',
-          minWidth: 180,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.consignerName)
-          }
-        },
-        {
-          title: '发货人',
-          key: 'consignerContact',
-          width: 120
-        },
-        {
-          title: '发货人手机号码',
-          key: 'consignerPhone',
-          width: 120
-        },
-        {
-          title: '收货人',
-          key: 'consigneeContact',
-          width: 120
-        },
-        {
-          title: '收货人手机号码',
-          key: 'consigneePhone',
-          width: 120
-        },
-        {
-          title: '货值',
-          key: 'cargoCost',
-          width: 120,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
-          }
-        },
-        {
-          title: '结算方式',
-          key: 'payType',
-          width: 120,
-          render: (h, p) => {
-            return this.tableDataRender(h, this.payTypeFormatter(p.row.payType, true))
-          }
-        },
-        {
-          title: '要求装货时间',
-          key: 'deliveryTimeLong',
-          width: 160,
-          render: (h, p) => {
-            return this.tableDataRender(h, this.timeFormatter(p.row.deliveryTimeLong), true)
-          }
-        },
-        {
-          title: '期望到货时间',
-          key: 'arriveTimeLong',
-          width: 160,
-          render: (h, p) => {
-            return this.tableDataRender(h, this.timeFormatter(p.row.arriveTimeLong), true)
-          }
-        },
-        {
-          title: '回单数',
-          key: 'receiptCount',
-          width: 120
-        },
-        {
-          title: '制单人',
-          key: 'createOperator',
-          width: 120
-        }
-      ],
-
-      extraColumns: [
-        {
-          title: '外转单号',
-          key: 'transNo',
-          fixed: true,
-          visible: true
-        },
-        {
-          title: '订单号',
-          key: 'orderNo',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '外转方运单号',
-          key: 'outTransNo',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '外转方名称',
-          key: 'transfereeName',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '始发地',
-          key: 'start',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '目的地',
-          key: 'end',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '外转运费',
-          key: 'transFee',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '体积（方）',
-          key: 'volume',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '重量（吨）',
-          key: 'weight',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '外转时间',
-          key: 'createTimeLong',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '客户订单号',
-          key: 'customerOrderNo',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '客户名称',
-          key: 'consignerName',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '发货人',
-          key: 'consignerContact',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '发货人手机号码',
-          key: 'consignerPhone',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '收货人',
-          key: 'consigneeContact',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '收货人手机号码',
-          key: 'consigneePhone',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '货值',
-          key: 'cargoCost',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '结算方式',
-          key: 'payType',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '要求装货时间',
-          key: 'deliveryTimeLong',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '期望到货时间',
-          key: 'arriveTimeLong',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '回单数',
-          key: 'receiptCount',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '制单人',
-          key: 'createOperator',
-          fixed: false,
-          visible: false
-        }
-      ]
+      tableColumns: TABLE_COLUMNS(this), // 表头
+      extraColumns: EXTRA_COLUMNS // 表头筛选
     }
   },
   methods: {
@@ -597,18 +214,12 @@ export default {
       }
     },
 
-    // 数据查询
+    // 表格数据查询完成回调
     dataOnload (res) {
       const data = res.data.data
       this.page.current = data.pageNo
       this.page.size = data.pageSize
-      this.tabList = [
-        { name: '全部', count: '' },
-        { name: '待发运', count: data.statusCntInfo.waitCnt || 0 },
-        { name: '在途', count: data.statusCntInfo.loadCnt || 0 },
-        { name: '已到货', count: data.statusCntInfo.loadedCnt || 0 }
-      ]
-      this.$forceUpdate()
+      this.tabList = setTabList(data)
     },
 
     // 删除
@@ -636,9 +247,7 @@ export default {
               data: { transIds }
             }).then(res => {
               self.$Message.success('删除成功')
-              self.tableSelection = []
-              self.$refs.$table.clearSelected()
-              self.$refs.$table.fetch()
+              self.clearSelectedAndFetch()
             }).catch(err => console.error(err))
           }
         }
@@ -669,9 +278,7 @@ export default {
               data: { transIds }
             }).then(res => {
               self.$Message.success('操作成功')
-              self.tableSelection = []
-              self.$refs.$table.clearSelected()
-              self.$refs.$table.fetch()
+              self.clearSelectedAndFetch()
             }).catch(err => console.error(err))
           }
         }
@@ -703,9 +310,7 @@ export default {
               data: { transIds }
             }).then(res => {
               self.$Message.success('操作成功')
-              self.tableSelection = []
-              self.$refs.$table.clearSelected()
-              self.$refs.$table.fetch()
+              self.clearSelectedAndFetch()
             }).catch(err => console.error(err))
           }
         }
@@ -737,5 +342,5 @@ export default {
 </script>
 
 <style lang='stylus'>
-  @import './transport.styl'
+  @import './style/transport.styl'
 </style>
