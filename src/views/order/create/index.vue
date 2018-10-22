@@ -537,10 +537,14 @@ export default {
           // vm.orderForm.start = areas.getPathByCode(orderDetail.start).map((item) => item.code)
           // vm.orderForm.end = areas.getPathByCode(orderDetail.end).map((item) => item.code)
           if (vm.orderForm.deliveryTime) {
-            vm.orderForm.deliveryTime = new Date(vm.orderForm.deliveryTime)
+            const deliveryTime = new Date(vm.orderForm.deliveryTime)
+            vm.orderForm.deliveryTime = deliveryTime
+            vm.orderForm.deliveryTimes = `${deliveryTime.getHours()}`
           }
           if (vm.orderForm.arriveTime) {
-            vm.orderForm.arriveTime = new Date(vm.orderForm.arriveTime)
+            const arriveTime = new Date(vm.orderForm.arriveTime)
+            vm.orderForm.arriveTime = arriveTime
+            vm.orderForm.arriveTimes = `${arriveTime.getHours()}`
           }
         })
         .catch((errorInfo) => {
