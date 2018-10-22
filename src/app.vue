@@ -85,5 +85,5 @@ html, body
     height 100vh
     background #EFEFEF
     flex-direction row
-
+    overflow hidden
 </style>

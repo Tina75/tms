@@ -311,17 +311,10 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-.ivu-layout-sider-collapsed
-  .page-home
-    left 70px
 .page-home
   -webkit-transition all .2s ease-in-out
   transition all .2s ease-in-out
-  position absolute
-  left 218px
-  top 65px
-  right 20px
-  bottom 15px
+  margin -20px -15px
   overflow-y auto
   overflow-x hidden
   background-color #efefef;
