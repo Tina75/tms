@@ -37,12 +37,12 @@
         <Row>
           <Col span="12">
           <FormItem>
-            <DatePicker v-model="orderForm.deliveryTime" :options="startDateOptions" format="yyyy-MM-dd" type="date"></DatePicker>
+            <DatePicker v-model="orderForm.deliveryTime" :options="startDateOptions" format="yyyy-MM-dd" type="date" @on-change="(date) => { dateChange('START_DATE', date)}"></DatePicker>
           </FormItem>
           </Col>
           <Col span="12" style="padding-left: 5px">
           <FormItem prop="deliveryTimes">
-            <TimeInput v-model="orderForm.deliveryTimes"/>
+            <TimeInput v-model="orderForm.deliveryTimes" type="START_DATE"/>
           </FormItem>
           </Col>
         </Row>
@@ -53,12 +53,12 @@
         <Row>
           <Col span="12">
           <FormItem>
-            <DatePicker v-model="orderForm.arriveTime" :options="endDateOptions" format="yyyy-MM-dd" type="date"></DatePicker>
+            <DatePicker v-model="orderForm.arriveTime" :options="endDateOptions" format="yyyy-MM-dd" type="date" @on-change="(date) => { dateChange('END_DATE', date)}"></DatePicker>
           </FormItem>
           </Col>
           <Col span="12" style="padding-left: 5px">
           <FormItem prop="arriveTimes">
-            <TimeInput v-model="orderForm.arriveTimes"/>
+            <TimeInput v-model="orderForm.arriveTimes" type="END_DATE"/>
           </FormItem>
           </Col>
         </Row>
@@ -794,6 +794,11 @@ export default {
             vm.closeTab()
           }
         })
+    },
+    dateChange (type, date) {
+      if (date) {
+        this.$root.$emit(type, 'show')
+      }
     }
   }
 }

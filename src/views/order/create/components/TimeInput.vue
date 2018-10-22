@@ -13,9 +13,15 @@
   </Poptip>
 </template>
 <script>
+
 export default {
   props: {
-    value: ''
+    value: {
+      type: String
+    },
+    type: {
+      type: String
+    }
   },
   data () {
     return {
@@ -37,9 +43,24 @@ export default {
       return this.value ? `${this.value}: 00前` : ''
     }
   },
+  mounted () {
+    if (this.type === 'START_DATE') {
+      this.$root.$on('START_DATE', this.changeShow)
+    } else if (this.type === 'END_DATE') {
+      this.$root.$on('END_DATE', this.changeShow)
+    }
+  },
+  beforeDestroy () {
+    this.$root.$off('START_DATE', this.changeShow)
+    this.$root.$off('END_DATE', this.changeShow)
+  },
   methods: {
     clickHandle (e) {
       this.$emit('input', e)
+      this.visible = false
+    },
+    changeShow () {
+      this.visible = true
     }
   }
 }
