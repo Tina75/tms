@@ -2,7 +2,7 @@
   <Form ref="orderForm" :label-width="80" :model="orderForm" :rules="rules">
     <Spin v-if="loading" fix></Spin>
     <Row :gutter="16">
-      <Col span="8">
+      <Col span="10">
       <FormItem label="客户:" prop="consignerName" required>
         <SelectInput
           v-model="orderForm.consignerName"
@@ -15,24 +15,24 @@
         </SelectInput>
       </FormItem>
       </Col>
-      <Col span="8">
+      <Col span="7">
       <FormItem label="始发城市:" prop="start">
         <AreaSelect v-model="orderForm.start" placeholder=""></AreaSelect>
       </FormItem>
       </Col>
-      <Col span="8">
+      <Col span="7">
       <FormItem label="目的城市:" prop="end">
         <AreaSelect v-model="orderForm.end" :adjustment="true" placeholder=""></AreaSelect>
       </FormItem>
       </Col>
     </Row>
     <Row :gutter="16">
-      <Col span="8">
+      <Col span="10">
       <FormItem label="客户订单号:" prop="customerOrderNo">
         <Input v-model="orderForm.customerOrderNo" :maxlength="30" type="text"></Input>
       </FormItem>
       </Col>
-      <Col span="8">
+      <Col span="7">
       <FormItem label="发货时间:">
         <Row>
           <Col span="12">
@@ -40,7 +40,7 @@
             <DatePicker v-model="orderForm.deliveryTime" :options="startDateOptions" format="yyyy-MM-dd" type="date"></DatePicker>
           </FormItem>
           </Col>
-          <Col span="12" style="padding-left: 10px">
+          <Col span="12" style="padding-left: 5px">
           <FormItem prop="deliveryTimes">
             <TimeInput v-model="orderForm.deliveryTimes"/>
           </FormItem>
@@ -48,7 +48,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="8">
+      <Col span="7">
       <FormItem label="到货时间:">
         <Row>
           <Col span="12">
@@ -56,7 +56,7 @@
             <DatePicker v-model="orderForm.arriveTime" :options="endDateOptions" format="yyyy-MM-dd" type="date"></DatePicker>
           </FormItem>
           </Col>
-          <Col span="12" style="padding-left: 10px">
+          <Col span="12" style="padding-left: 5px">
           <FormItem prop="arriveTimes">
             <TimeInput v-model="orderForm.arriveTimes"/>
           </FormItem>
@@ -313,11 +313,12 @@ export default {
         callback(new Error('请输入正确的手机号码'))
       }
     }
+    // 9位整数 2位小数
     const validateFee = (rule, value, callback) => {
-      if (/[0-9]{0,7}$/.test(value)) {
+      if ((value && /^[0-9]{0,9}(?:\.\d{1,2})?$/.test(value)) || !value) {
         callback()
       } else {
-        callback(new Error('最多整数位只可输入7位,小数两位'))
+        callback(new Error('最多整数位只可输入9位,小数两位'))
       }
     }
 
@@ -421,11 +422,30 @@ export default {
         settlementType: [
           { required: true, message: '请选择付款方式' }
         ],
+        // 运输费
         freightFee: [
-          { required: true, type: 'number', message: '请输入运输费用' }
+          { required: true, type: 'number', message: '请输入运输费用' },
+          { validator: validateFee }
         ],
+        // 提货费
         deliveryFee: [
-          { validator: validateFee, trigger: 'blur' }
+          { validator: validateFee }
+        ],
+        // 装货费用
+        loadFee: [
+          { validator: validateFee }
+        ],
+        // 卸货费用
+        unloadFee: [
+          { validator: validateFee }
+        ],
+        // 保险费用
+        insuranceFee: [
+          { validator: validateFee }
+        ],
+        // 其他费用
+        otherFee: [
+          { validator: validateFee }
         ],
         pickup: [
           { required: true, message: '请输入提货方式' }
