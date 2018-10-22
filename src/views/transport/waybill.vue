@@ -97,14 +97,14 @@
     </template>
 
     <OrderTabContent
-      v-show="!tabStatus"
+      v-if="!tabStatus"
       source="transport"
       tab-status="待送货"
       url="/load/bill/wait/pick/list"
       @refresh-tab="fetchTabCount" />
 
     <!-- 表格 -->
-    <div v-show="tabStatus">
+    <div v-else>
       <PageTable ref="$table"
                  :columns="tableColumns"
                  :extra-columns="extraColumns"
@@ -129,20 +129,20 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import TransportBase from './transportBase'
-import TransportMixin from './transportMixin'
+import TransportBase from './mixin/transportBase'
+import TransportMixin from './mixin/transportMixin'
+import SelectInputMixin from './mixin/selectInputMixin'
 
 import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from './components/SelectInput.vue'
-import SelectInputMixin from './components/selectInputMixin'
 import PrintFreight from './components/PrintFreight'
 import OrderTabContent from '@/views/order-management/components/TabContent'
 
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
-import TMSUrl from '@/libs/constant/url'
+import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, EXTRA_COLUMNS, setTabList } from './constant/waybill'
 
 export default {
   name: 'WaybillManager',
@@ -152,130 +152,9 @@ export default {
   data () {
     return {
       tabType: 'WAYBILL',
-      // 标签栏
-      tabList: [
-        // { name: '全部', count: '' },
-        { name: '待调度', count: '' },
-        { name: '待派车', count: '' },
-        { name: '待发运', count: '' },
-        { name: '在途', count: '' },
-        { name: '已到货', count: '' }
-      ],
 
-      // 所有按钮组
-      btnList: [
-        // {
-        //   tab: '全部',
-        //   btns: [{
-        //     name: '发运',
-        //     code: 120102,
-        //     func: () => {
-        //       this.billShipment()
-        //     }
-        //   }, {
-        //     name: '打印',
-        //     code: 120103,
-        //     func: () => {
-        //       this.billPrint()
-        //     }
-        //   }, {
-        //     name: '到货',
-        //     code: 120104,
-        //     func: () => {
-        //       this.billArrived()
-        //     }
-        //   }, {
-        //     name: '删除',
-        //     code: 120105,
-        //     func: () => {
-        //       this.billDelete()
-        //     }
-        //   }, {
-        //     name: '位置',
-        //     code: 120106,
-        //     func: () => {
-        //       this.billLocation()
-        //     }
-        //   }, {
-        //     name: '导出',
-        //     code: 120108,
-        //     func: () => {
-        //       this.billExport()
-        //     }
-        //   }]
-        // },
-        { tab: '待调度', btns: [] },
-        {
-          tab: '待派车',
-          btns: [{
-            name: '删除',
-            code: 120105,
-            func: () => {
-              this.billDelete()
-            }
-          }, {
-            name: '导出',
-            code: 120108,
-            func: () => {
-              this.billExport()
-            }
-          }]
-        },
-        {
-          tab: '待发运',
-          btns: [{
-            name: '发运',
-            code: 120102,
-            func: () => {
-              this.billShipment()
-            }
-          }, {
-            name: '打印',
-            code: 120103,
-            func: () => {
-              this.billPrint()
-            }
-          }, {
-            name: '导出',
-            code: 120108,
-            func: () => {
-              this.billExport()
-            }
-          }]
-        },
-        {
-          tab: '在途',
-          btns: [{
-            name: '到货',
-            code: 120104,
-            func: () => {
-              this.billArrived()
-            }
-          }, {
-            name: '位置',
-            code: 120106,
-            func: () => {
-              this.billLocation()
-            }
-          }, {
-            name: '导出',
-            code: 120108,
-            func: () => {
-              this.billExport()
-            }
-          }]
-        },
-        {
-          tab: '已到货',
-          btns: [{
-            name: '导出',
-            code: 120108,
-            func: () => {
-              this.billExport()
-            }
-          }]
-        }
-      ],
+      tabList: TAB_LIST, // 标签栏
+      btnList: BUTTON_LIST(this), // 所有按钮组
 
       // 简易搜索类型
       selectList: [
@@ -299,6 +178,7 @@ export default {
         endTime: '' // 结束时间
       },
 
+      // 表格操作栏
       tableActionColumn: {
         title: '操作',
         key: 'action',
@@ -318,252 +198,10 @@ export default {
         }
       },
 
-      tableColumns: [
-        {
-          type: 'selection',
-          width: 50,
-          align: 'center',
-          fixed: 'left'
-        },
-        {
-          title: '运单号',
-          key: 'waybillNo',
-          width: 180,
-          fixed: 'left',
-          render: (h, p) => {
-            return h('a', {
-              style: {
-                color: '#418DF9'
-              },
-              on: {
-                click: () => {
-                  this.openTab({
-                    title: p.row.waybillNo,
-                    path: TMSUrl.TRANSPORT_ORDER_DETAIL,
-                    query: { id: p.row.waybillId }
-                  })
-                }
-              }
-            }, p.row.waybillNo)
-          }
-        },
-        {
-          title: '始发地',
-          key: 'start',
-          minWidth: 180,
-          ellipsis: true,
-          render: (h, p) => {
-            return this.tableDataRender(h, this.cityFormatter(p.row.start))
-          }
-        },
-        {
-          title: '目的地',
-          key: 'end',
-          minWidth: 180,
-          ellipsis: true,
-          render: (h, p) => {
-            return this.tableDataRender(h, this.cityFormatter(p.row.end))
-          }
-        },
-        {
-          title: '承运商',
-          key: 'carrierName',
-          minWidth: 180,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.carrierName)
-          }
-        },
-        {
-          title: '车牌号',
-          key: 'carNo',
-          width: 120
-        },
-        {
-          title: '合计运费',
-          key: 'totalFee',
-          width: 120,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.totalFee === '' ? '' : p.row.totalFee / 100)
-          }
-        },
-        {
-          title: '体积(方)',
-          key: 'volume',
-          width: 120
-        },
-        {
-          title: '重量(吨)',
-          key: 'weight',
-          width: 120
-        },
-        {
-          title: '创建时间',
-          key: 'createTimeLong',
-          minWidth: 160,
-          sortable: 'custom',
-          render: (h, p) => {
-            return this.tableDataRender(h, this.timeFormatter(p.row.createTimeLong), true)
-          }
-        },
-        {
-          title: '制单人',
-          key: 'createOperator',
-          width: 120
-        },
-        {
-          title: '货值',
-          key: 'cargoCost',
-          width: 120,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
-          }
-        },
-        {
-          title: '结算方式',
-          key: 'settlementType',
-          width: 120,
-          render: (h, p) => {
-            return this.tableDataRender(h, this.payTypeFormatter(p.row.settlementType))
-          }
-        },
-        {
-          title: '司机',
-          key: 'driverName',
-          width: 120
-        },
-        {
-          title: '司机手机号码',
-          key: 'driverPhone',
-          width: 120
-        },
-        {
-          title: '车型',
-          key: 'carType',
-          width: 120,
-          render: (h, p) => {
-            const carType = this.carTypeFormatter(p.row.carType)
-            const carLength = this.carLengthFormatter(p.row.carLength)
-            return this.tableDataRender(h, carType || carLength ? [carType, carLength].join(' ') : '')
-          }
-        },
-        {
-          title: '订单数',
-          key: 'orderCnt',
-          width: 120
-        },
-        {
-          title: '回单数',
-          key: 'backbillCnt',
-          width: 120
-        }
-      ],
-      extraColumns: [
-        {
-          title: '运单号',
-          key: 'waybillNo',
-          fixed: true,
-          visible: true
-        },
-        {
-          title: '始发地',
-          key: 'start',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '目的地',
-          key: 'end',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '承运商',
-          key: 'carrierName',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '车牌号',
-          key: 'carNo',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '合计运费',
-          key: 'totalFee',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '体积（方）',
-          key: 'volume',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '重量（吨）',
-          key: 'weight',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '创建时间',
-          key: 'createTimeLong',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '制单人',
-          key: 'createOperator',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '货值',
-          key: 'cargoCost',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '结算方式',
-          key: 'settlementType',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '司机',
-          key: 'driverName',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '司机手机号码',
-          key: 'driverPhone',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '车型',
-          key: 'carType',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '订单数',
-          key: 'orderCnt',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '回单数',
-          key: 'backbillCnt',
-          fixed: false,
-          visible: false
-        }
-      ]
+      tableColumns: TABLE_COLUMNS(this), // 表头
+      extraColumns: EXTRA_COLUMNS // 表头筛选
     }
   },
-  created () { console.log(this.tab) },
 
   methods: {
     // 设置标签状态
@@ -589,23 +227,17 @@ export default {
       }
     },
 
+    // 查询标签页数量
     fetchTabCount () {
       Server({
         url: '/waybill/tab/cnt',
         method: 'get'
       }).then(res => {
-        const data = res.data.data
-        this.tabList = [
-          { name: '待调度', count: data.waitDispatchCnt || 0 },
-          { name: '待派车', count: data.waitAssignCarCnt || 0 },
-          { name: '待发运', count: data.waitSendCarCnt || 0 },
-          { name: '在途', count: data.inTransportCnt || 0 },
-          { name: '已到货', count: data.arrivedCnt || 0 }
-        ]
+        this.tabList = setTabList(res.data.data)
       })
     },
 
-    // 数据查询
+    // 表格数据查询完成回调
     dataOnload (res) {
       const data = res.data.data
       this.page.current = data.pageNo
@@ -644,10 +276,7 @@ export default {
               data: { waybillIds: self.tableSelection.map(item => item.waybillId) }
             }).then(res => {
               self.$Message.success('删除成功')
-              self.tableSelection = []
-              self.fetchTabCount()
-              self.$refs.$table.clearSelected()
-              self.$refs.$table.fetch()
+              self.clearSelectedAndFetch()
             }).catch(err => console.error(err))
           }
         }
@@ -693,10 +322,7 @@ export default {
               data: { waybillIds: self.tableSelection.map(item => item.waybillId) }
             }).then(res => {
               self.$Message.success('操作成功')
-              self.tableSelection = []
-              self.fetchTabCount()
-              self.$refs.$table.clearSelected()
-              self.$refs.$table.fetch()
+              self.clearSelectedAndFetch()
             }).catch(err => console.error(err))
           }
         }
@@ -721,10 +347,7 @@ export default {
               data: { waybillIds: self.tableSelection.map(item => item.waybillId) }
             }).then(res => {
               self.$Message.success('操作成功')
-              self.tableSelection = []
-              self.fetchTabCount()
-              self.$refs.$table.clearSelected()
-              self.$refs.$table.fetch()
+              self.clearSelectedAndFetch()
             }).catch(err => console.error(err))
           }
         }
@@ -761,17 +384,14 @@ export default {
         data: { waybillIds: [id] }
       }).then(() => {
         self.openDialog({
-          name: 'transport/dialog/sendCar',
+          name: 'transport/dialog/action',
           data: {
             id,
             type: 'sendCar'
           },
           methods: {
             complete () {
-              self.tableSelection = []
-              self.fetchTabCount()
-              self.$refs.$table.clearSelected()
-              self.$refs.$table.fetch()
+              self.clearSelectedAndFetch()
             }
           }
         })

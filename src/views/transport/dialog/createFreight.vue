@@ -30,13 +30,18 @@
 </template>
 
 <script>
+
+/**
+ * 创建运单
+ */
+
 import BaseDialog from '@/basic/BaseDialog'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '@/views/transport/components/SelectInput.vue'
-import SelectInputMixin from '@/views/transport/components/selectInputMixin'
+import SelectInputMixin from '@/views/transport/mixin/selectInputMixin'
 import Server from '@/libs/js/server'
 import { CAR } from '@/views/client/client'
-import { FORM_VALIDATE_START, FORM_VALIDATE_END, getCityCode, resetCityValidator } from '@/libs/js/cityValidator'
+import { FORM_VALIDATE_START, FORM_VALIDATE_END, getCityCode } from '@/libs/js/cityValidator'
 
 export default {
   name: 'CreatedFreight',
@@ -47,7 +52,7 @@ export default {
     return {
       show: true,
 
-      // select input data
+      // 下拉输入框数据
       keyFields: 'form',
       linkageFields: ['carNo'],
 
@@ -72,7 +77,6 @@ export default {
       }
     }
   },
-  created () { resetCityValidator() },
   methods: {
     create () {
       this.$refs.$form.validate(valid => {
@@ -93,10 +97,6 @@ export default {
           }).catch(err => console.error(err))
         }
       })
-    },
-
-    carrierChange (val) {
-      this.carrierId = val.value
     }
   }
 }

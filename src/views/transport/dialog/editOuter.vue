@@ -41,6 +41,11 @@
 </template>
 
 <script>
+
+/**
+ * 编辑外转单
+ */
+
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '../components/SelectInput.vue'
@@ -54,7 +59,7 @@ export default {
     TagNumberInput
   },
 
-  mixins: [BaseDialog],
+  mixins: [ BaseDialog ],
   data () {
     return {
       show: true,

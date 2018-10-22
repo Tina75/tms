@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import TransportBase from '../transportBase'
+import TransportBase from '../mixin/transportBase'
 import Printd from 'printd'
 
 export default {
