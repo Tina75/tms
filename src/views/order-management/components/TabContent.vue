@@ -144,6 +144,11 @@ export default {
       type: String,
       default: 'order/list'
     },
+    // 导出接口url
+    exportUrl: {
+      type: String,
+      default: 'order/exportOrder'
+    },
     // 刷新tab数量的回调
     refreshTab: Function
   },
@@ -977,11 +982,8 @@ export default {
     // 有导入批次号添加批次号搜索
     if (this.importId) {
       this.keywords.importId = this.importId
-      this.keywords.status = null // 默认全部状态
-      this.keyword = this.keywords
       this.handleTabChange('全部')
     } else {
-      this.keyword = this.tabKey
       this.handleTabChange(this.tabStatus)
     }
   },
@@ -992,9 +994,8 @@ export default {
     ]),
     // tab状态栏切换
     handleTabChange (val) {
-      this.curStatusName = val
-      this.selectOrderList = [] // 重置当前已勾选项
-      this.selectedId = [] // 重置当前已勾选id项
+      // this.selectOrderList = [] // 重置当前已勾选项
+      // this.selectedId = [] // 重置当前已勾选id项
       // 页面来源
       if (this.source === 'order') {
         if (val === '全部' || val === '待提货' || val === '待送货') {
@@ -1024,7 +1025,7 @@ export default {
             this.keywords.status = 30
           } else if (val === '已到货') {
             this.keywords.status = 40
-          } else {
+          } else if (val === '已回单') {
             this.keywords.status = 50
           }
         }
@@ -1096,19 +1097,25 @@ export default {
           this.openResOrDelDialog('', btn.name)
         }
       } else if (btn.name === '删除') { // 【（是待提货或待调度状态：status < 30） && （未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未被调度：dispatchStatus=0） && （被拆单后的父单：disassembleStatus=1） && （待调度条件下不是上门提货（pickup !== 1））】可以批量操作
-        let data = this.selectOrderList.find((item) => {
-          return (item.status > 20 || item.pickupStatus !== 0 || item.dispatchStatus !== 0 || item.transStatus !== 0 || (item.status === 20 && item.pickup === 1))
-        })
-        if (data !== undefined) {
-          this.$Message.warning('您选择的订单不支持删除')
-        } else {
-          this.openResOrDelDialog('', btn.name)
-        }
+        // let data = this.selectOrderList.find((item) => {
+        //   return (item.status > 20 || item.pickupStatus !== 0 || item.dispatchStatus !== 0 || item.transStatus !== 0 || (item.status === 20 && item.pickup === 1))
+        // })
+        // if (data !== undefined) {
+        //   this.$Message.warning('您选择的订单不支持删除')
+        // } else {
+        // }
+        this.openResOrDelDialog('', btn.name)
       } else if (btn.name === '导出') {
         this.export()
-      } else {
+      } else if (btn.name === '打印') {
         // 打印
         this.print()
+      } else if (btn.name === '恢复') {
+        // 恢复
+        this.recoveryDialog()
+      } else {
+        // 彻底删除
+        this.completelyDeleteDialog()
       }
     },
     // 外转
@@ -1161,7 +1168,8 @@ export default {
       const _this = this
       const data = {
         id: this.selectOrderList,
-        name: name
+        name: name,
+        tab: this.tabStatus
       }
       // params不为空时，id值为当前行
       if (params) {
@@ -1171,6 +1179,36 @@ export default {
       _this.openDialog({
         name: 'order-management/dialog/restoreOrDelete',
         data: data,
+        methods: {
+          ok (node) {
+            _this.$refs.pageTable.fetch() // 刷新table
+            _this.setSelection()
+            _this.$emit('refresh-tab') // 刷新tab页数量
+          }
+        }
+      })
+    },
+    // 恢复
+    recoveryDialog () {
+      const _this = this
+      _this.openDialog({
+        name: 'order-management/dialog/recovery',
+        data: { id: this.selectOrderList },
+        methods: {
+          ok (node) {
+            _this.$refs.pageTable.fetch() // 刷新table
+            _this.setSelection()
+            _this.$emit('refresh-tab') // 刷新tab页数量
+          }
+        }
+      })
+    },
+    // 彻底删除
+    completelyDeleteDialog () {
+      const _this = this
+      _this.openDialog({
+        name: 'order-management/dialog/completelyDelete',
+        data: { id: this.selectOrderList },
         methods: {
           ok (node) {
             _this.$refs.pageTable.fetch() // 刷新table
@@ -1206,7 +1244,7 @@ export default {
         exportOrderIds: this.selectedId.length > 0 ? this.selectedId : null
       })
       Export({
-        url: 'order/exportOrder',
+        url: this.exportUrl,
         method: 'post',
         data,
         fileName: '订单明细'
@@ -1257,7 +1295,7 @@ export default {
 .ivu-btn-default
   background #F9F9F9
 .high-search
-  width 36px
+  width 36px !important
   height 36px
   line-height 1.4
   letter-spacing 2px
