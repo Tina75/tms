@@ -34,12 +34,14 @@
       </Col>
       <Col span="6">
       <FormItem label="发货时间:" prop="deliveryTime">
-        <DatePicker v-model="orderForm.deliveryTime" :time-picker-options="{steps: [1, 60, 60]}" format="yyyy-MM-dd HH:mm前" type="datetime" style="width:100%"></DatePicker>
+        <DatePicker v-model="orderForm.deliveryTime" :time-picker-options="{steps: [1, 60, 60]}" format="yyyy-MM-dd" type="date" style="width:50%"></DatePicker>
+        <TimeInput :value="orderForm.deliveryTimes" style="width:50%; padding-left: 10px" @time-input="e => orderForm.deliveryTimes = e" />
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="到货时间:" prop="arriveTime">
-        <DatePicker v-model="orderForm.arriveTime" :time-picker-options="{steps: [1, 60, 60]}" :options="endDateOptions" format="yyyy-MM-dd HH:mm前" type="datetime" style="width:100%"></DatePicker>
+        <DatePicker v-model="orderForm.arriveTime" :time-picker-options="{steps: [1, 60, 60]}" :options="endDateOptions" format="yyyy-MM-dd" type="date" style="width:50%"></DatePicker>
+        <TimeInput :value="orderForm.arriveTimes"  style="width:50%; padding-left: 10px" @time-input="e => orderForm.arriveTimes = e"/>
       </FormItem>
       </Col>
     </Row>
@@ -124,12 +126,21 @@
       </FormItem>
       </Col>
       <Col span="6">
+      <FormItem label="提货费用:" prop="deliveryFee">
+        <TagNumberInput :min="0" v-model="orderForm.deliveryFee" :parser="handleParseFloat">
+          <span slot="suffix" class="order-create__input-suffix">元</span>
+        </TagNumberInput>
+      </FormItem>
+      </Col>
+      <Col span="6">
       <FormItem label="装货费用:" prop="loadFee">
         <TagNumberInput :min="0" v-model="orderForm.loadFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
       </Col>
+    </Row>
+    <Row :gutter="16">
       <Col span="6">
       <FormItem label="卸货费用:" prop="unloadFee">
         <TagNumberInput :min="0" v-model="orderForm.unloadFee" :parser="handleParseFloat">
@@ -137,8 +148,6 @@
         </TagNumberInput>
       </FormItem>
       </Col>
-    </Row>
-    <Row :gutter="16">
       <Col span="6">
       <FormItem label="保险费用:" prop="insuranceFee">
         <TagNumberInput :min="0" v-model="orderForm.insuranceFee" :parser="handleParseFloat">
@@ -210,8 +219,9 @@ import settlements from '@/libs/constant/settlement.js'
 import pickups from '@/libs/constant/pickup.js'
 import Cargo from './libs/cargo'
 import CargoTable from './components/CargoTable.vue'
+import TimeInput from './components/TimeInput.vue'
 
-const transferFeeList = ['freightFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
+const transferFeeList = ['freightFee', 'deliveryFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
 export default {
   metaInfo: {
     title: '手动下单'
@@ -223,7 +233,8 @@ export default {
     AreaSelect,
     SelectInput,
     FontIcon,
-    CargoTable
+    CargoTable,
+    TimeInput
   },
   mixins: [BaseComponent, BasePage],
   data () {
@@ -260,6 +271,13 @@ export default {
         callback(new Error('请输入正确的手机号码'))
       }
     }
+    const validateFee = (rule, value, callback) => {
+      if (/[0-9]{0,7}$/.test(value)) {
+        callback()
+      } else {
+        callback(new Error('最多整数位只可输入7位,小数两位'))
+      }
+    }
     return {
       settlements,
       pickups, // 提货方式
@@ -277,8 +295,10 @@ export default {
         customerOrderNo: '',
         // 发货时间
         deliveryTime: '',
+        deliveryTimes: '',
         // 到货时间
         arriveTime: '',
+        arriveTimes: '',
         // 发货联系人
         consignerContact: '',
         consignerPhone: '',
@@ -294,6 +314,8 @@ export default {
         settlementType: 4, // 默认月结，1:现付，2：到付 ，3：回付 4月结
         // 运输费用
         freightFee: null,
+        // 提货费
+        deliveryFee: null,
         // 装货费
         loadFee: null,
         // 卸货费
@@ -355,6 +377,9 @@ export default {
         freightFee: [
           { required: true, type: 'number', message: '请输入运输费用' }
         ],
+        deliveryFee: [
+          { validator: validateFee, trigger: 'blur' }
+        ],
         pickup: [
           { required: true, message: '请输入提货方式' }
         ],
@@ -397,7 +422,7 @@ export default {
     ]),
 
     totalFee () {
-      const feeList = ['freightFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
+      const feeList = ['freightFee', 'deliveryFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
       const orderForm = this.orderForm
       let totalFee = 0
       for (let fee of feeList) {

@@ -54,14 +54,14 @@ export default {
       tab = window.sessionStorage['TABHEADER_' + this.tabType]
     }
 
-    if (tab) {
+    if (tab !== undefined) {
       this.tabStatus = this.setTabStatus(tab)
       this.tabChanged(tab)
     } else {
       this.tabStatus = this.setTabStatus(this.tabList[1].name)
       this.currentBtns = this.btnList[1].btns
+      this.fetchData()
     }
-    this.fetchData()
   },
 
   methods: {
@@ -85,6 +85,7 @@ export default {
     fetchData () {
       this.tableSelection = []
       this.searchFields = this.setFetchParams()
+      this.fetchTabCount && this.fetchTabCount()
     },
 
     // 搜索
@@ -147,7 +148,8 @@ export default {
       this.resetEasySearch()
       this.resetSeniorSearch()
       // 搜索
-      this.fetchData()
+      if (this.tabStatus) this.fetchData()
+      else this.fetchTabCount && this.fetchTabCount()
     },
     // 分页切换
     pageChange (current) {
