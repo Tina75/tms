@@ -301,7 +301,7 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import TransportBase from '../transportBase'
+import TransportBase from '../mixin/transportBase'
 import DetailMixin from './detailMixin'
 
 import MoneyInput from '../components/MoneyInput'

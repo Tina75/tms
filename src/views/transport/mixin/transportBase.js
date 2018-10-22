@@ -1,3 +1,7 @@
+/**
+ * 运输管理模块基础方法
+ */
+
 import City from '@/libs/js/city'
 import { CAR_TYPE, CAR_LENGTH, getCarType, getCarLength } from '@/libs/constant/carInfo'
 

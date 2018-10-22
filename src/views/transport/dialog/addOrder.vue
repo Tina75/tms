@@ -30,7 +30,7 @@
 <script>
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
-import TransportBase from '../transportBase'
+import TransportBase from '../mixin/transportBase'
 
 export default {
   name: 'AddOrder',
