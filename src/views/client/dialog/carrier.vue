@@ -139,7 +139,7 @@ export default {
         },
         driver: {
           driverName: [
-            { required: true, message: '司机名称不能为空', trigger: 'blur' }
+            { required: true, message: '司机姓名不能为空', trigger: 'blur' }
           ],
           driverPhone: [
             { required: true, message: '手机号码不能为空', trigger: 'blur' },

@@ -6,6 +6,10 @@
     <TabPane label="提货调度" name="dispatchPickup">
       <DispatchPickup />
     </TabPane>
+    <a slot="extra">
+      <Icon type="md-arrow-dropright-circle" size="24" style="margin-top: 6px; margin-right: 10px;" />
+    </a>
+
   </Tabs>
 </template>
 

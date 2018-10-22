@@ -2,100 +2,109 @@
   <div ref="$box" class="transport-page">
     <TabHeader ref="$tab" :tabs="tabList" :type="tabType" @on-change="tabChanged"></TabHeader>
 
-    <div style="margin-top: 30px;display: flex;justify-content: space-between;">
+    <template v-if="tabStatus">
+      <div class="easy-search-box">
 
-      <!-- 按钮组 -->
-      <div class="custom-style">
-        <Button v-for="(item, key) in showButtons" :key="key"
-                :type="key === 0 ? 'primary' : 'default'"
-                @click="item.func">{{ item.name }}</Button>
-      </div>
-
-      <!-- 简易搜索 -->
-      <div v-if="isEasySearch" class="right custom-style">
-        <Select v-model="easySelectMode"
-                style="width:120px; margin-right: 11px"
-                @on-change="resetEasySearch">
-          <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-        </Select>
-
-        <Input v-if="easySelectMode === 1"
-               v-model="easySearchKeyword"
-               :icon="easySearchKeyword ? 'ios-close-circle' : ''"
-               :maxlength="20"
-               placeholder="请输入运单号"
-               class="search-input"
-               @on-click="resetEasySearch" />
-
-        <SelectInput v-if="easySelectMode === 2" v-model="easySearchKeyword"
-                     mode="carrier"
-                     placeholder="请输入承运商"
-                     clearable
-                     class="search-input"
-                     @on-select="selectCarrierHandler"
-                     @on-clear="resetEasySearch" />
-
-        <SelectInput v-if="easySelectMode === 3" v-model="easySearchKeyword"
-                     :carrier-id="carrierId"
-                     mode="carNo"
-                     placeholder="请输入车牌号"
-                     clearable
-                     class="search-input"
-                     @on-clear="resetEasySearch" />
-
-        <Button icon="ios-search" type="primary"
-                class="search-btn-easy"
-                @click="startSearch"></Button>
-
-        <Button class="senior-search"
-                type="text" size="small"
-                @click="changeSearchType">高级搜索</Button>
-      </div>
-    </div>
-
-    <!-- 高级搜索 -->
-    <div v-if="!isEasySearch" class="operate-box custom-style">
-
-      <div style="margin-bottom: 10px;">
-        <Input v-model="seniorSearchFields.waybillNo" :maxlength="20"  placeholder="请输入运单号" class="search-input-senior" />
-        <SelectInput v-model="seniorSearchFields.carrierName"
-                     mode="carrier"
-                     placeholder="请输入承运商"
-                     class="search-input-senior"
-                     @on-select="selectCarrierHandler" />
-        <SelectInput v-model="seniorSearchFields.driverName"
-                     :carrier-id="carrierId"
-                     mode="driver"
-                     placeholder="请输入司机"
-                     class="search-input-senior" />
-        <SelectInput v-model="seniorSearchFields.carNo"
-                     :carrier-id="carrierId"
-                     mode="carNo"
-                     placeholder="请输入车牌号"
-                     class="search-input-senior" />
-      </div>
-
-      <div style="display: flex;justify-content: space-between;">
-        <div>
-          <AreaSelect v-model="seniorSearchFields.startCodes" placeholder="请输入始发地" class="search-input-senior" />
-          <AreaSelect v-model="seniorSearchFields.endCodes" placeholder="请输入目的地" class="search-input-senior" />
-          <DatePicker v-model="seniorSearchFields.dateRange" type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
+        <!-- 按钮组 -->
+        <div class="custom-style">
+          <Button v-for="(item, key) in showButtons" :key="key"
+                  :type="key === 0 ? 'primary' : 'default'"
+                  @click="item.func">{{ item.name }}</Button>
         </div>
-        <div>
-          <Button type="primary"
-                  @click="startSearch">搜索</Button>
-          <Button type="default"
-                  @click="resetSeniorSearch()">清除条件</Button>
-          <Button type="default"
-                  style="margin-right: 0;"
-                  @click="changeSearchType">简易搜索</Button>
+
+        <!-- 简易搜索 -->
+        <div v-if="isEasySearch" class="right custom-style">
+          <Select v-model="easySelectMode"
+                  style="width:120px; margin-right: 11px"
+                  @on-change="resetEasySearch">
+            <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          </Select>
+
+          <Input v-if="easySelectMode === 1"
+                 v-model="easySearchKeyword"
+                 :icon="easySearchKeyword ? 'ios-close-circle' : ''"
+                 :maxlength="20"
+                 placeholder="请输入运单号"
+                 class="search-input"
+                 @on-click="resetEasySearch" />
+
+          <SelectInput v-if="easySelectMode === 2" v-model="easySearchKeyword"
+                       mode="carrier"
+                       placeholder="请输入承运商"
+                       clearable
+                       class="search-input"
+                       @on-select="selectCarrierHandler"
+                       @on-clear="resetEasySearch" />
+
+          <SelectInput v-if="easySelectMode === 3" v-model="easySearchKeyword"
+                       :carrier-id="carrierId"
+                       mode="carNo"
+                       placeholder="请输入车牌号"
+                       clearable
+                       class="search-input"
+                       @on-clear="resetEasySearch" />
+
+          <Button icon="ios-search" type="primary"
+                  class="search-btn-easy"
+                  @click="startSearch"></Button>
+
+          <Button class="senior-search"
+                  type="text" size="small"
+                  @click="changeSearchType">高级搜索</Button>
         </div>
       </div>
 
-    </div>
+      <!-- 高级搜索 -->
+      <div v-if="!isEasySearch" class="operate-box custom-style">
+
+        <div style="margin-bottom: 10px;">
+          <Input v-model="seniorSearchFields.waybillNo" :maxlength="20"  placeholder="请输入运单号" class="search-input-senior" />
+          <SelectInput v-model="seniorSearchFields.carrierName"
+                       mode="carrier"
+                       placeholder="请输入承运商"
+                       class="search-input-senior"
+                       @on-select="selectCarrierHandler" />
+          <SelectInput v-model="seniorSearchFields.driverName"
+                       :carrier-id="carrierId"
+                       mode="driver"
+                       placeholder="请输入司机"
+                       class="search-input-senior" />
+          <SelectInput v-model="seniorSearchFields.carNo"
+                       :carrier-id="carrierId"
+                       mode="carNo"
+                       placeholder="请输入车牌号"
+                       class="search-input-senior" />
+        </div>
+
+        <div style="display: flex;justify-content: space-between;">
+          <div>
+            <AreaSelect v-model="seniorSearchFields.startCodes" placeholder="请输入始发地" class="search-input-senior" />
+            <AreaSelect v-model="seniorSearchFields.endCodes" placeholder="请输入目的地" class="search-input-senior" />
+            <DatePicker v-model="seniorSearchFields.dateRange" type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
+          </div>
+          <div>
+            <Button type="primary"
+                    @click="startSearch">搜索</Button>
+            <Button type="default"
+                    @click="resetSeniorSearch()">清除条件</Button>
+            <Button type="default"
+                    style="margin-right: 0;"
+                    @click="changeSearchType">简易搜索</Button>
+          </div>
+        </div>
+
+      </div>
+    </template>
+
+    <OrderTabContent
+      v-show="!tabStatus"
+      source="transport"
+      tab-status="待送货"
+      url="/load/bill/wait/pick/list"
+      @refresh-tab="fetchTabCount" />
 
     <!-- 表格 -->
-    <div>
+    <div v-show="tabStatus">
       <PageTable ref="$table"
                  :columns="tableColumns"
                  :extra-columns="extraColumns"
@@ -129,6 +138,7 @@ import AreaSelect from '@/components/AreaSelect'
 import SelectInput from './components/SelectInput.vue'
 import SelectInputMixin from './components/selectInputMixin'
 import PrintFreight from './components/PrintFreight'
+import OrderTabContent from '@/views/order-management/components/TabContent'
 
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
@@ -136,7 +146,7 @@ import TMSUrl from '@/libs/constant/url'
 
 export default {
   name: 'WaybillManager',
-  components: { TabHeader, PageTable, AreaSelect, SelectInput, PrintFreight },
+  components: { TabHeader, PageTable, AreaSelect, SelectInput, PrintFreight, OrderTabContent },
   mixins: [ BasePage, TransportBase, SelectInputMixin, TransportMixin ],
   metaInfo: { title: '运单管理' },
   data () {
@@ -144,7 +154,8 @@ export default {
       tabType: 'WAYBILL',
       // 标签栏
       tabList: [
-        { name: '全部', count: '' },
+        // { name: '全部', count: '' },
+        { name: '待调度', count: '' },
         { name: '待派车', count: '' },
         { name: '待发运', count: '' },
         { name: '在途', count: '' },
@@ -153,46 +164,47 @@ export default {
 
       // 所有按钮组
       btnList: [
-        {
-          tab: '全部',
-          btns: [{
-            name: '发运',
-            code: 120102,
-            func: () => {
-              this.billShipment()
-            }
-          }, {
-            name: '打印',
-            code: 120103,
-            func: () => {
-              this.billPrint()
-            }
-          }, {
-            name: '到货',
-            code: 120104,
-            func: () => {
-              this.billArrived()
-            }
-          }, {
-            name: '删除',
-            code: 120105,
-            func: () => {
-              this.billDelete()
-            }
-          }, {
-            name: '位置',
-            code: 120106,
-            func: () => {
-              this.billLocation()
-            }
-          }, {
-            name: '导出',
-            code: 120108,
-            func: () => {
-              this.billExport()
-            }
-          }]
-        },
+        // {
+        //   tab: '全部',
+        //   btns: [{
+        //     name: '发运',
+        //     code: 120102,
+        //     func: () => {
+        //       this.billShipment()
+        //     }
+        //   }, {
+        //     name: '打印',
+        //     code: 120103,
+        //     func: () => {
+        //       this.billPrint()
+        //     }
+        //   }, {
+        //     name: '到货',
+        //     code: 120104,
+        //     func: () => {
+        //       this.billArrived()
+        //     }
+        //   }, {
+        //     name: '删除',
+        //     code: 120105,
+        //     func: () => {
+        //       this.billDelete()
+        //     }
+        //   }, {
+        //     name: '位置',
+        //     code: 120106,
+        //     func: () => {
+        //       this.billLocation()
+        //     }
+        //   }, {
+        //     name: '导出',
+        //     code: 120108,
+        //     func: () => {
+        //       this.billExport()
+        //     }
+        //   }]
+        // },
+        { tab: '待调度', btns: [] },
         {
           tab: '待派车',
           btns: [{
@@ -551,14 +563,16 @@ export default {
       ]
     }
   },
+  created () { console.log(this.tab) },
 
   methods: {
     // 设置标签状态
     setTabStatus (tab) {
       switch (tab) {
-        case '全部':
-          this.triggerTableActionColumn(true)
-          return
+        // case '全部':
+        //   this.triggerTableActionColumn(true)
+        //   return
+        case '待调度': return
         case '待派车':
           this.triggerTableActionColumn(true)
           return 1
@@ -575,19 +589,28 @@ export default {
       }
     },
 
+    fetchTabCount () {
+      Server({
+        url: '/waybill/tab/cnt',
+        method: 'get'
+      }).then(res => {
+        const data = res.data.data
+        this.tabList = [
+          { name: '待调度', count: data.waitDispatchCnt || 0 },
+          { name: '待派车', count: data.waitAssignCarCnt || 0 },
+          { name: '待发运', count: data.waitSendCarCnt || 0 },
+          { name: '在途', count: data.inTransportCnt || 0 },
+          { name: '已到货', count: data.arrivedCnt || 0 }
+        ]
+      })
+    },
+
     // 数据查询
     dataOnload (res) {
       const data = res.data.data
       this.page.current = data.pageNo
       this.page.size = data.pageSize
-      this.tabList = [
-        { name: '全部', count: '' },
-        { name: '待派车', count: data.statusCntInfo.waitAssignCarCnt || 0 },
-        { name: '待发运', count: data.statusCntInfo.waitSendCarCnt || 0 },
-        { name: '在途', count: data.statusCntInfo.inTransportCnt || 0 },
-        { name: '已到货', count: data.statusCntInfo.arrivedCnt || 0 }
-      ]
-      this.$forceUpdate()
+      // this.$forceUpdate()
     },
 
     // 打印
@@ -622,6 +645,7 @@ export default {
             }).then(res => {
               self.$Message.success('删除成功')
               self.tableSelection = []
+              self.fetchTabCount()
               self.$refs.$table.clearSelected()
               self.$refs.$table.fetch()
             }).catch(err => console.error(err))
@@ -670,6 +694,7 @@ export default {
             }).then(res => {
               self.$Message.success('操作成功')
               self.tableSelection = []
+              self.fetchTabCount()
               self.$refs.$table.clearSelected()
               self.$refs.$table.fetch()
             }).catch(err => console.error(err))
@@ -697,6 +722,7 @@ export default {
             }).then(res => {
               self.$Message.success('操作成功')
               self.tableSelection = []
+              self.fetchTabCount()
               self.$refs.$table.clearSelected()
               self.$refs.$table.fetch()
             }).catch(err => console.error(err))
@@ -743,6 +769,7 @@ export default {
           methods: {
             complete () {
               self.tableSelection = []
+              self.fetchTabCount()
               self.$refs.$table.clearSelected()
               self.$refs.$table.fetch()
             }

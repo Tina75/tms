@@ -14,9 +14,9 @@ const TMSUrl = {
   ORDER_DETAIL: '/order-management/detail', // 订单详情
   RECEIPT_ORDER_MANAGEMENT: '/order-management/receipt', // 回单管理
   DISPATCH_PANEL: '/order-management/dispatch', // 调度工作台
-  TANSPORT_ORDER: '/transport/waybill', // 运单管理
+  TANSPORT_ORDER: '/transport/waybill', // 送货管理
   TRANSPORT_ORDER_DETAIL: '/transport/detail/detailFreight', // 运单详情
-  PICKUP_ORDER: '/transport/receiveOrder', // 提货单管理
+  PICKUP_ORDER: '/transport/receiveOrder', // 提货管理
   PICKUP_ORDER_DETAIL: '/transport/detail/detailPickup', // 提货单详情
   OUTER_ORDER: '/transport/outerOrder', // 外转单管理
   OUTER_ORDER_DETAIL: '/transport/detail/detailOuter', // 外转单详情

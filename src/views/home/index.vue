@@ -1,9 +1,11 @@
 <template>
   <div ref="el" class="page-home">
     <div class="page-home__header">
-      <Alert v-if="notice" type="warning" class="page-home__header-notice" banner closable show-icon>
+      <Alert v-if="notice.content" type="warning" class="page-home__header-notice" banner closable show-icon>
+        <span :class="{'page-home__cursorPointer': notice.url}" @click="hrefHandle"> {{ notice.content }}</span>
         <Icon slot="icon" type="ios-bulb-outline"></Icon>
       </Alert>
+
       <Row class="page-home__header-row">
         <Col span="18">
         <span class="page-home__header-greetings" v-html="greetings"></span>
@@ -32,7 +34,7 @@
         </Col>
       </Row>
     </div>
-    <Row :gutter="16" type="flex" justify="left">
+    <Row :gutter="16" type="flex" justify="start">
       <!-- 提货代办 -->
       <PickupTodo v-if="cardChecksTemp.includes('pickup-todo')"/>
       <!-- 送货代办 -->
@@ -126,8 +128,10 @@ export default {
   data () {
     return {
       visible: false,
-      // notice: '因腾讯云服务器数据丢失，部分数据展示异常。紧急抢修中，请您耐心等待',
-      notice: null,
+      notice: {
+        content: '',
+        url: ''
+      },
       cardChecks: [],
       cardChecksTemp: [],
       cardsMap: {
@@ -189,12 +193,7 @@ export default {
   },
   mounted () {
     this.initCardList()
-    // server({
-    //   url: 'home/message',
-    //   method: 'get'
-    // }).then(res => {
-    //   this.notice = res.data.data
-    // })
+    this.initNotice()
   },
   beforeDestroy () {
     if (this.intersectionObserver) {
@@ -243,6 +242,24 @@ export default {
     unobserve (el) {
       this.intersectionObserver.unobserve(el)
     },
+    initNotice () {
+      server({
+        url: 'message/pmd',
+        method: 'get'
+      }).then(res => {
+        if (res && res.data.code === 1000) {
+          this.notice = res.data.data
+          // this.cardChecksTemp = []
+          // for (const i of data) {
+          //   if (i.valid === 1) {
+          //     this.cardChecksTemp.push(i.name)
+          //   }
+          // }
+          // this.cardsList = data
+          // this.cardChecks = this.cardChecksTemp
+        }
+      })
+    },
     // 获取card数组
     initCardList () {
       server({
@@ -282,6 +299,12 @@ export default {
     cancelAction () {
       this.visible = false
       this.cardChecks = this.cardChecksTemp
+    },
+    // 跳转链接
+    hrefHandle () {
+      if (this.notice.url) {
+        open(this.notice.url)
+      }
     }
   }
 
@@ -335,4 +358,6 @@ export default {
   &__message-item
     background-color #f3f3f3
     margin-bottom 8px
+  &__cursorPointer
+    cursor pointer
 </style>
