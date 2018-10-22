@@ -106,9 +106,9 @@
     <div v-else>
       <PageTable ref="$table"
                  :columns="tableColumns"
-                 :extra-columns="extraColumns"
                  :show-filter="true"
                  :keywords="searchFields"
+                 table-head-type="pickup_head"
                  row-id="pickUpId"
                  url="/load/bill/list"
                  method="post"

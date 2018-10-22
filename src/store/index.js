@@ -10,7 +10,8 @@ const state = {
   userInfo: {}, // 用户信息
   permissions: [], // 权限列表
   tabNavList: [], // 已展示的tab列表
-  messageCount: {} // 消息通知数量
+  messageCount: {}, // 消息通知数量
+  customTableColumns: [] // 自定义table列表信息
 }
 
 export default new Vuex.Store({

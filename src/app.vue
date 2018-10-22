@@ -25,7 +25,7 @@ export default {
     this.init()
   },
   methods: {
-    ...mapActions(['getPermissons', 'getUserInfo']),
+    ...mapActions(['getPermissons', 'getUserInfo', 'getMessageCount', 'getTableColumns']),
     ...mapMutations(['setTabNavList', 'initTabNav']),
     async init () {
       this.$Message.config({
@@ -34,6 +34,7 @@ export default {
       await this.getPermissons()
       this.initTabNav()
       await this.getUserInfo()
+      await this.getTableColumns()
     },
 
     /**

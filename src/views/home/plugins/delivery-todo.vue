@@ -31,10 +31,10 @@ export default {
   data () {
     return {
       data: [
-        { id: 'waitDispatchOrderCnt', name: '待调度', value: 0, tab: '1', href: TMSUrl.TANSPORT_ORDER, title: '调度工作台' },
-        { id: 'waitAssignCarCnt', name: '待派车', value: 0, tab: '2', href: TMSUrl.TANSPORT_ORDER, title: '运单管理' },
-        { id: 'waitSendCarCnt', name: '待发运', value: 0, tab: '3', href: TMSUrl.TANSPORT_ORDER, title: '运单管理' },
-        { id: 'inTransportCnt', name: '在途', value: 0, tab: '4', href: TMSUrl.TANSPORT_ORDER, title: '运单管理' }
+        { id: 'waitDispatchOrderCnt', name: '待调度', value: 0, tab: '0', href: TMSUrl.PICKUP_ORDER, title: '提货单管理' },
+        { id: 'waitAssignCarCnt', name: '待派车', value: 0, tab: '1', href: TMSUrl.TANSPORT_ORDER, title: '运单管理' },
+        { id: 'waitSendCarCnt', name: '待发运', value: 0, tab: '2', href: TMSUrl.TANSPORT_ORDER, title: '运单管理' },
+        { id: 'inTransportCnt', name: '在途', value: 0, tab: '3', href: TMSUrl.TANSPORT_ORDER, title: '运单管理' }
       ]
     }
   },

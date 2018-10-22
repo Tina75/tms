@@ -1,6 +1,6 @@
 <template>
   <Poptip v-model="visible" trigger="click" width="290" placement="left" word-wrap transfer>
-    <FontIcon type="gengduo" class="ios-list-icon" size="18" color="#00A4BD"></FontIcon>
+    <FontIcon type="gengduo" class="ios-list-icon" size="20" color="#00A4BD"></FontIcon>
     <div slot="title"><span>选择要显示的字段</span></div>
     <div slot="content">
       <div class="slider-icon__checkbox-list">
