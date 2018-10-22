@@ -134,8 +134,8 @@ export default {
   },
 
   /**
-   * 查询承运商列表
-   * @param {*} type
+   * 承运商列表_根据修改时间倒序
+   * @param {*} type   搜索类型 1 承运商名称 2 承运商联系人
    * @param {*} keyword
    */
   getCarriers ({ state, commit }) {
@@ -143,13 +143,12 @@ export default {
       // const { pageNo, pageSize } = state.order.pagination
       server({
         method: 'get',
-        url: 'carrier/list',
+        url: 'carrier/listOrderByUpdateTimeDesc',
         params: {
           // pageNo: pageNo,
           // pageSize: pageSize,
           type: 1,
-          keyword: null,
-          order: 'create_time,desc'
+          keyword: null
         }
       }).then((response) => {
         // 承运商信息
@@ -212,7 +211,7 @@ export default {
   },
 
   /**
-   * 外转方列表
+   * 外转方列表_按照更新时间倒序
    * @param {*} type 1 外转方名称  2 负责人
    * @param {*} keyword
    */
@@ -221,13 +220,12 @@ export default {
       // const { pageNo, pageSize } = state.order.pagination
       server({
         method: 'get',
-        url: 'transferee/list',
+        url: 'transferee/listOrderbyUpdateTimeDesc',
         params: {
           // pageNo: pageNo,
           // pageSize: pageSize,
           type: 1,
-          keyword: null,
-          order: 'update_time,desc'
+          keyword: null
         }
       }).then((response) => {
         // 外转方信息

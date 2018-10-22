@@ -977,11 +977,8 @@ export default {
     // 有导入批次号添加批次号搜索
     if (this.importId) {
       this.keywords.importId = this.importId
-      this.keywords.status = null // 默认全部状态
-      this.keyword = this.keywords
       this.handleTabChange('全部')
     } else {
-      this.keyword = this.tabKey
       this.handleTabChange(this.tabStatus)
     }
   },
@@ -992,8 +989,8 @@ export default {
     ]),
     // tab状态栏切换
     handleTabChange (val) {
-      this.selectOrderList = [] // 重置当前已勾选项
-      this.selectedId = [] // 重置当前已勾选id项
+      // this.selectOrderList = [] // 重置当前已勾选项
+      // this.selectedId = [] // 重置当前已勾选id项
       // 页面来源
       if (this.source === 'order') {
         if (val === '全部' || val === '待提货' || val === '待送货') {
@@ -1023,7 +1020,7 @@ export default {
             this.keywords.status = 30
           } else if (val === '已到货') {
             this.keywords.status = 40
-          } else {
+          } else if (val === '已回单') {
             this.keywords.status = 50
           }
         }
@@ -1105,9 +1102,15 @@ export default {
         this.openResOrDelDialog('', btn.name)
       } else if (btn.name === '导出') {
         this.export()
-      } else {
+      } else if (btn.name === '打印') {
         // 打印
         this.print()
+      } else if (btn.name === '恢复') {
+        // 恢复
+        this.recoveryDialog()
+      } else {
+        // 彻底删除
+        this.completelyDeleteDialog()
       }
     },
     // 外转
@@ -1160,7 +1163,8 @@ export default {
       const _this = this
       const data = {
         id: this.selectOrderList,
-        name: name
+        name: name,
+        tab: this.tabStatus
       }
       // params不为空时，id值为当前行
       if (params) {
@@ -1170,6 +1174,36 @@ export default {
       _this.openDialog({
         name: 'order-management/dialog/restoreOrDelete',
         data: data,
+        methods: {
+          ok (node) {
+            _this.$refs.pageTable.fetch() // 刷新table
+            _this.setSelection()
+            _this.$emit('refresh-tab') // 刷新tab页数量
+          }
+        }
+      })
+    },
+    // 恢复
+    recoveryDialog () {
+      const _this = this
+      _this.openDialog({
+        name: 'order-management/dialog/recovery',
+        data: { id: this.selectOrderList },
+        methods: {
+          ok (node) {
+            _this.$refs.pageTable.fetch() // 刷新table
+            _this.setSelection()
+            _this.$emit('refresh-tab') // 刷新tab页数量
+          }
+        }
+      })
+    },
+    // 彻底删除
+    completelyDeleteDialog () {
+      const _this = this
+      _this.openDialog({
+        name: 'order-management/dialog/completelyDelete',
+        data: { id: this.selectOrderList },
         methods: {
           ok (node) {
             _this.$refs.pageTable.fetch() // 刷新table
