@@ -641,5 +641,5 @@ export default {
 </script>
 
 <style lang='stylus'>
-  @import "./detail.styl"
+  @import "../style/detail.styl"
 </style>

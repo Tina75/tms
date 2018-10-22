@@ -1,6 +1,5 @@
 /**
  * 调度工作台公有方法
- * @Author: xuliang
  */
 
 import _ from 'lodash'

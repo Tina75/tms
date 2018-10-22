@@ -424,7 +424,7 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
- @import "../detail/detail.styl"
+ @import "../style/detail.styl"
 
  .part
    padding 10px 0 20px

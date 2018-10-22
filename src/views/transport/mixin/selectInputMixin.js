@@ -1,3 +1,7 @@
+/**
+ * 下拉输入框联动方法
+ */
+
 export default {
   data () {
     return {

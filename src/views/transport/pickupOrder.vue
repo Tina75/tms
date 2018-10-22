@@ -367,5 +367,5 @@ export default {
 </script>
 
 <style lang='stylus'>
-  @import './transport.styl'
+  @import './style/transport.styl'
 </style>

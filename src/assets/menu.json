@@ -59,7 +59,7 @@
       },
       {
         "name":"提货管理",
-        "path":"/transport/receiveOrder",
+        "path":"/transport/pickupOrder",
         "powerCode":120200
       },
       {
