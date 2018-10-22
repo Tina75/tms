@@ -95,15 +95,14 @@
     <div>
       <PageTable ref="$table"
                  :columns="tableColumns"
-                 :extra-columns="extraColumns"
                  :show-filter="true"
                  :keywords="searchFields"
+                 table-head-type="trans_head"
                  row-id="transId"
                  url="/outside/bill/list"
                  method="post"
                  list-field="list"
                  style="margin-top: 15px"
-                 @on-column-change="tableColumnsChanged"
                  @on-selection-change="selectionChanged"
                  @on-sort-change="tableSort"
                  @on-change="pageChange"
@@ -126,7 +125,7 @@ import SelectInput from './components/SelectInput.vue'
 
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
-import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, EXTRA_COLUMNS, setTabList } from './constant/outer'
+import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, setTabList } from './constant/outer'
 
 export default {
   name: 'OuterManager',
@@ -190,8 +189,7 @@ export default {
         }
       },
 
-      tableColumns: TABLE_COLUMNS(this), // 表头
-      extraColumns: EXTRA_COLUMNS // 表头筛选
+      tableColumns: TABLE_COLUMNS(this) // 表头
     }
   },
   methods: {

@@ -88,7 +88,6 @@ export default {
     picImagList () {
       for (let index = 0; index < this.picMenu.length; index++) {
         if (this.picMenu[index].urlList.includes(',')) {
-          console.dir(this.picMenu[index])
           this.picMenu[index].urlList = this.picMenu[index].urlList.split(',')
         } else {
           this.picMenu[index].urlList = [this.picMenu[index].urlList]

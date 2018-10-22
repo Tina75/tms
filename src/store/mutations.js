@@ -17,6 +17,16 @@ export default{
     const msg = { ...payload }
     msg.all = msg.sysNum + msg.orderNum + msg.carrierNum
     state.messageCount = msg
+  },
+  initTableColumns (state, list) {
+    state.customTableColumns = list
+  },
+  updateTableColumns (state, data) {
+    data.list.forEach(e => {
+      const headRow = state.customTableColumns[data.type].find(ph => ph.k === e.key)
+      headRow.v = e.visible
+      headRow.s = e.sort
+    })
   }
 }
 
