@@ -23,7 +23,7 @@
         </span>
       </div>
     </div>
-    <div style="min-height:520px;">
+    <div>
       <!--系统消息-->
       <div v-if="'0' === this.searchData.type">
         <Col span="24">
@@ -542,8 +542,7 @@ export default {
 .contentDiv
   background:#fff;
   padding: 0 25px 50px 25px;
-  overflow: auto;
-  height: inherit;
+  height: 100%;
 .contendBorderBttom
   border-bottom: 1px solid #e9e9e9;
   padding-bottom:10px;

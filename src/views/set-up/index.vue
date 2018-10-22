@@ -1,5 +1,5 @@
 <template>
-  <div class="temAll">
+  <div :style="styleHeight" class="temAll">
     <Col span="3">
     <Menu active-name="修改密码" class="menuList" style="width:100%">
       <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
@@ -370,6 +370,11 @@ export default {
       // }
     }
   },
+  computed: {
+    styleHeight () {
+      return { height: this.$parent.$el.children[0].getBoundingClientRect().height + 'px' }
+    }
+  },
   mounted: function () {
     this.messageListInit = _.cloneDeep(this.messageList)
   },
@@ -617,8 +622,7 @@ export default {
 .contentDiv
   background:#fff;
   padding-left:20px;
-  height: inherit;
-  overflow: auto;
+  height: 100%;
 .borderBottomLine
   border-bottom: 1px solid #e9e9e9;
   padding-bottom:10px;

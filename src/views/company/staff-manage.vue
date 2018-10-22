@@ -394,7 +394,6 @@ export default {
   width:80px;
 .pageTable
   margin-top: 20px;
-  min-height: 700px;
 .modalTitle
   text-align:center;
   font-size: 16px;
