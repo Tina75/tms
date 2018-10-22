@@ -72,6 +72,17 @@ export default {
       }
     }
   },
+  watch: {
+    'value.query.title' () {
+      setTimeout(() => {
+        if ((document.querySelector('.item-container.mh-10').offsetLeft + document.querySelector('.item-container.mh-10').clientWidth) < document.querySelector('.scroll-outer').clientWidth) {
+          this.tagBodyLeft = 0
+        } else {
+          this.tagBodyLeft = document.querySelector('.scroll-outer').clientWidth - (document.querySelector('.item-container.mh-10').offsetLeft + document.querySelector('.item-container.mh-10').clientWidth)
+        }
+      }, 50)
+    }
+  },
   methods: {
     handlescroll (e) {
       var type = e.type
