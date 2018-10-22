@@ -75,10 +75,18 @@ export default {
       this.turnToPage(route)
     })
     this.loopMessage()
+    this.newUserTip()
   },
   methods: {
     ...mapMutations(['setTabNavList']),
     ...mapActions(['getMessageCount']),
+    newUserTip () {
+      if (sessionStorage.getItem('first_time_login') === 'true') {
+        if (this.UserInfo.type === 1) this.renew()
+        else this.changePasswordTip()
+        sessionStorage.removeItem('first_time_login')
+      }
+    },
     loopMessage () {
       this.getMessageCount()
       setInterval(() => {
@@ -105,6 +113,19 @@ export default {
         }
       })
     },
+
+    changePasswordTip () {
+      this.$Modal.confirm({
+        title: '提示',
+        content: '<p>您的密码为初始密码，为确保账户安全，请及时修改密码</p>',
+        okText: '立即修改',
+        cancelText: '我知道了',
+        onOk: () => {
+          window.EMA.fire('openTab', { path: '/set-up/index', query: { title: '设置' } })
+        }
+      })
+    },
+
     /**
      * @description 关闭tab标签时调用
      * @param {*} list 关闭后的tab页list

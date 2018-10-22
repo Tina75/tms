@@ -30,17 +30,23 @@ export default {
 
   mounted () {
     window.EMA.bind('openTab', (route) => { this.onMenuSelect(route) })
+    // 默认打开首页
+    this.openHomeTab()
   },
 
   methods: {
     ...mapMutations(['setTabNavList']),
+    openHomeTab () {
+      const home = { path: '/home', params: { name: 'home' }, query: { title: '首页' } }
+      this.onMenuSelect(home)
+    },
     /**
      * @description 切换菜单
      * @param {*} menuItem 被选中的菜单对象
      */
     onMenuSelect (menuItem) {
       console.log('1.', JSON.stringify(menuItem))
-      this.setTabNavList(getNewTagList(this.TabNavList, menuItem))
+      this.setTabNavList(getNewTagList(this.TabNavList, menuItem, this.$route))
       this.turnToPage(menuItem)
     },
     /**

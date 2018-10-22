@@ -4,7 +4,6 @@
       <c-sider></c-sider>
       <Layout >
         <c-header/>
-
         <c-content/>
       </Layout>
     </Layout>
@@ -14,19 +13,13 @@
 <script>
 import CHeader from '@/components/HeaderBar'
 import CDialog from '@/components/Dialogs'
-import { mapMutations, mapActions } from 'vuex'
-import Cookies from 'js-cookie'
 import CSider from './components/sider/Sider'
 import CContent from './components/Content'
-// import Util from './libs/js/util.js'
+import { mapMutations, mapActions } from 'vuex'
+import Cookies from 'js-cookie'
 
 export default {
   components: { CHeader, CDialog, CSider, CContent },
-  data () {
-    return {
-    }
-  },
-
   mounted () {
     window.EMA.bind('updateUserInfo', () => { this.getUserInfo() })
     window.EMA.bind('logout', (msg) => { this.logout(msg) })
@@ -43,19 +36,6 @@ export default {
       this.initTabNav()
       // this.toHome()
       await this.getUserInfo()
-      if (sessionStorage.getItem('first_time_login') === 'true') {
-        if (this.UserInfo.type === 1) this.renew()
-        else this.changePasswordTip()
-        sessionStorage.removeItem('first_time_login')
-      }
-    },
-
-    /**
-    * @description 打开首页
-    */
-    toHome () {
-      // const home = { path: '/home', params: { name: 'home' }, query: { title: '首页' } }
-      // window.EMA.fire('openTab', home)
     },
 
     /**
@@ -81,64 +61,7 @@ export default {
         Cookies.remove('token', { path: '/tms' })
         window.location.reload()
       }
-    },
-
-    renew () {
-      window.EMA.fire('Dialogs.push', {
-        name: 'dialogs/renew',
-        data: {
-          title: '温馨提示',
-          expirationTime: this.UserInfo.expirationTime
-        }
-      })
-    },
-
-    changePasswordTip () {
-      this.$Modal.confirm({
-        title: '提示',
-        content: '<p>您的密码为初始密码，为确保账户安全，请及时修改密码</p>',
-        okText: '立即修改',
-        cancelText: '我知道了',
-        onOk: () => {
-          window.EMA.fire('openTab', { path: '/set-up/index', query: { title: '设置' } })
-        }
-      })
-    },
-
-    getNextRoute (list, route) {
-      let res = {}
-      const index = list.findIndex(item => this.routeEqual(item, route))
-      if (index === list.length - 1) res = list[list.length - 2]
-      else res = list[index + 1]
-      return res
-    },
-    /**
-     * @description 根据name/params/query判断两个路由对象是否相等
-     * @param {*} route1 路由对象
-     * @param {*} route2 路由对象
-     */
-    routeEqual (route1, route2) {
-      const query1 = route1.query || {}
-      const query2 = route2.query || {}
-      // return (route1.name === route2.name) && this.objEqual(params1, params2) && this.objEqual(query1, query2)
-      return (route1.path === route2.path) && (query1.title === query2.title)
-      // return (route1.name === route2.name) && this.objEqual(meta1, meta2)
-    },
-
-    /**
-   * @param {*} obj1 对象
-     * @param {*} obj2 对象
-     * @description 判断两个对象是否相等，这两个对象的值只能是数字或字符串
-     */
-    objEqual (obj1, obj2) {
-      const keysArr1 = Object.keys(obj1)
-      const keysArr2 = Object.keys(obj2)
-      if (keysArr1.length !== keysArr2.length) return false
-      else if (keysArr1.length === 0 && keysArr2.length === 0) return true
-      /* eslint-disable-next-line */
-      else return !keysArr1.some(key => obj1[key] != obj2[key])
     }
-
   }
 }
 </script>
@@ -222,4 +145,6 @@ html, body
   // left 50px
 .uncollapsed
   transition transform .2s ease
+.ivu-layout
+  overflow-x hidden
 </style>

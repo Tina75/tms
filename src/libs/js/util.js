@@ -19,18 +19,14 @@
  * @param {*} newRoute 新添加的路由原信息对象
  * @description 如果该newRoute已经存在则不再添加
  */
-export const getNewTagList = (list, newRoute) => {
+export const getNewTagList = (list, newRoute, curRoute) => {
   const { name, path, query, meta } = newRoute
   let newList = [...list]
-  // if (newList.findIndex(item => item.path === path) >= 0) {
   if (newList.findIndex(item => routeEqual(item, newRoute)) >= 0) {
-    // const idx = newList.findIndex(item => this.routeEqual(item, newRoute))
-    // newList.splice(idx, 1, { name, path, query, meta })
     return newList
   } else {
     // find当前tab位置并在其后面添加新tab
-    // const idx = newList.findIndex(item => item.path === this.$route.path)
-    const idx = 1
+    const idx = newList.findIndex(item => item.path === curRoute.path)
     newList.splice(idx + 1, 0, { name, path, query, meta })
   }
   return newList
