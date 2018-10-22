@@ -232,7 +232,7 @@ import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import OrderPrint from './components/OrderPrint'
 import AreaSelect from '@/components/AreaSelect'
-import { getCityCode, resetCityValidator, FORM_VALIDATE_END } from '@/libs/js/cityValidator' // FORM_VALIDATE_START
+import { getCityCode, resetCityValidator, FORM_VALIDATE_START, FORM_VALIDATE_END } from '@/libs/js/cityValidator' //
 import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
 import settlements from '@/libs/constant/settlement.js'
@@ -382,12 +382,8 @@ export default {
           { required: true, message: '请输入客户名称' }
         ],
         start: [
-          { required: true, type: 'array', message: '请选择始发城市' }
-          /*
-           * 2018-10-22 9:38 xpin
-           * 页面报错注释
-           */
-          // { validator: FORM_VALIDATE_START(_this, 'orderForm'), trigger: 'change' }
+          { required: true, type: 'array', message: '请选择始发城市' },
+          { validator: FORM_VALIDATE_START }
         ],
         end: [
           { required: true, type: 'array', message: '请选择目的城市' },
