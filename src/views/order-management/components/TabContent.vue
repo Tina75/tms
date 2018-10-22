@@ -365,7 +365,7 @@ export default {
           title: '订单号',
           key: 'orderNo',
           fixed: 'left',
-          minWidth: 180,
+          minWidth: 190,
           tooltip: true,
           className: 'padding-20',
           /*
@@ -538,7 +538,18 @@ export default {
           key: 'waybillNo',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.waybillNo ? p.row.waybillNo : '-')
+            if (p.row.waybillNo.length > 12) {
+              return h('Tooltip', {
+                props: {
+                  placement: 'bottom',
+                  content: p.row.waybillNo
+                }
+              }, [
+                h('span', this.formatterAddress(p.row.waybillNo))
+              ])
+            } else {
+              return h('span', p.row.waybillNo ? p.row.waybillNo : '-')
+            }
           }
         },
         {
