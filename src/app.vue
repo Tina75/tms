@@ -85,21 +85,5 @@ html, body
     height 100vh
     background #EFEFEF
     flex-direction row
-    .logo-con
-      height 50px
-      padding 10px
-      img
-        height 44px
-        width auto
-        display block
-        margin 0 auto
 
-.ivu-modal-footer
-  border-top none
-  text-align center
-  .ivu-btn
-    min-width 85px
-.ivu-layout
-  background #efefef
-  overflow-x hidden
 </style>
