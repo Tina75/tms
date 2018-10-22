@@ -5,10 +5,9 @@
 import _ from 'lodash'
 import Server from '@/libs/js/server'
 import City from '@/libs/js/city'
-import tableExpand from '../dispatch/tableExpand'
+import TableExpand from '../components/TableExpand'
 
 export default {
-  components: { tableExpand },
   data () {
     return {
       // 左侧表格头
@@ -17,7 +16,7 @@ export default {
           type: 'expand',
           width: 30,
           render: (h) => {
-            return h(tableExpand, {
+            return h(TableExpand, {
               on: {
                 'on-expand-select': (selection) => {
                   this.leftSelection = selection
