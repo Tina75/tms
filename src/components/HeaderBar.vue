@@ -1,87 +1,70 @@
 <template>
-  <div class="header-bar">
-    <!-- <a :class="['sider-trigger-a', collapsed ? 'collapsed' : '']"  type="text" @click="handleChange">
-      <i class="icon font_family icon-shouji"></i>
-    </a> -->
-    <div class="tag-nav-wrapper">
-      <tab-nav :list="TabNavList" :value="$route" @on-close="onTabClose" @on-select="onTabSelect"/>
-    </div>
-    <div class="header-bar-avator-dropdown">
-      <Dropdown class="header-bar-avator-dropdown-notify">
-        <Poptip trigger="hover" title="消息中心" content="暂无系统消息" >
-          <Badge :count="MsgCount.all" type="primary">
-            <Icon type="ios-notifications" size="30" color="#fff"></Icon>
-          </Badge>
-          <div slot="content" class="msg">
-            <div class="msg-item" @click="openMsg(0)">
-              <Badge :count="MsgCount.sysNum"  class="msg-item-count">
-                <img src="../assets/icon-system-msg.png" alt="" width="34">
-              </Badge>
-              <p>系统消息</p>
+  <Header class="header-con">
+    <div class="header-bar">
+      <div class="tag-nav-wrapper">
+        <tab-nav :list="TabNavList" :value="$route" @on-close="onTabClose" @on-select="onTabSelect"/>
+      </div>
+      <div class="header-bar-avator-dropdown">
+        <Dropdown class="header-bar-avator-dropdown-notify">
+          <Poptip trigger="hover" title="消息中心" content="暂无系统消息" >
+            <Badge :count="MsgCount.all" type="primary">
+              <Icon type="ios-notifications" size="30" color="#fff"></Icon>
+            </Badge>
+            <div slot="content" class="msg">
+              <div class="msg-item" @click="openMsg(0)">
+                <Badge :count="MsgCount.sysNum"  class="msg-item-count">
+                  <img src="../assets/icon-system-msg.png" alt="" width="34">
+                </Badge>
+                <p>系统消息</p>
+              </div>
+              <div v-if="hasPower('110000')" class="msg-item" @click="openMsg(1)">
+                <Badge :count="MsgCount.orderNum"  class="msg-item-count">
+                  <img src="../assets/icon-order-msg.png" alt="" width="34">
+                </Badge>
+                <p>订单消息</p>
+              </div>
+              <div v-if="hasPower('120000')" class="msg-item" @click="openMsg(2)">
+                <Badge :count="MsgCount.carrierNum" class="msg-item-count">
+                  <img src="../assets/icon-truck-msg.png" alt="" width="34">
+                </Badge>
+                <p>运输消息</p>
+              </div>
             </div>
-            <div v-if="hasPower('110000')" class="msg-item" @click="openMsg(1)">
-              <Badge :count="MsgCount.orderNum"  class="msg-item-count">
-                <img src="../assets/icon-order-msg.png" alt="" width="34">
-              </Badge>
-              <p>订单消息</p>
-            </div>
-            <div v-if="hasPower('120000')" class="msg-item" @click="openMsg(2)">
-              <Badge :count="MsgCount.carrierNum" class="msg-item-count">
-                <img src="../assets/icon-truck-msg.png" alt="" width="34">
-              </Badge>
-              <p>运输消息</p>
-            </div>
-          </div>
-        </Poptip>
+          </Poptip>
         <!-- <DropdownMenu slot="list">
           <DropdownItem name="1" >通知</DropdownItem>
           <DropdownItem name="2" >订单</DropdownItem>
         </DropdownMenu> -->
-      </Dropdown>
+        </Dropdown>
 
-      <!-- <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick"> -->
-      <Poptip trigger="hover"  placement="bottom-end" title="账号信息" width="260">
-        <Avatar class="avatar"  style="border:1px solid #fff"></avatar>
-        <span class="user-info"><p>{{name}}</p> </span>
-        <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
-        <div slot="content">
-          <p class="dropdown-line"><label for="">账户名：</label>{{UserInfo.name}} &nbsp; &nbsp; &nbsp; &nbsp;<Tag color="cyan" style="font-size:12px">{{UserInfo.roleName}}</Tag></p>
-          <p class="dropdown-line"><label for="">手机号：</label>{{UserInfo.phone}}</p>
-          <p class="dropdown-line"><label for="">公司：</label>{{UserInfo.companyName}}</p>
-          <p class="dropdown-line"><label for="">有效期至：</label>{{UserInfo.expirationTime | datetime('yyyy-MM-dd')}}</p>
-          <p class="dropdown-line"><a @click="renew">延长账号有效期</a></p>
-          <p style="text-align:center" class="i-mt-10"><Button type="default" @click="logout">&nbsp; &nbsp;退出&nbsp; &nbsp;</Button></p>
-        </div>
-      </Poptip>
+        <!-- <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick"> -->
+        <Poptip trigger="hover"  placement="bottom-end" title="账号信息" width="260">
+          <Avatar class="avatar"  style="border:1px solid #fff"></avatar>
+          <span class="user-info"><p>{{UserInfo.name}}</p> </span>
+          <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
+          <div slot="content">
+            <p class="dropdown-line"><label for="">账户名：</label>{{UserInfo.name}} &nbsp; &nbsp; &nbsp; &nbsp;<Tag color="cyan" style="font-size:12px">{{UserInfo.roleName}}</Tag></p>
+            <p class="dropdown-line"><label for="">手机号：</label>{{UserInfo.phone}}</p>
+            <p class="dropdown-line"><label for="">公司：</label>{{UserInfo.companyName}}</p>
+            <p class="dropdown-line"><label for="">有效期至：</label>{{UserInfo.expirationTime | datetime('yyyy-MM-dd')}}</p>
+            <p class="dropdown-line"><a @click="renew">延长账号有效期</a></p>
+            <p style="text-align:center" class="i-mt-10"><Button type="default" @click="logout">&nbsp; &nbsp;退出&nbsp; &nbsp;</Button></p>
+          </div>
+        </Poptip>
+      </div>
     </div>
-  </div>
-</template>
+  </Header>
+</header></template>
 
 <script>
 import BaseComponent from '@/basic/BaseComponent'
 import TabNav from '@/components/TabNav'
 
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 export default {
   name: 'headerBar',
   components: { TabNav },
   mixins: [BaseComponent],
-  props: {
-    // collapsed: {
-    //   type: Boolean,
-    //   default: true
-    // },
-    name: {
-      type: String,
-      default: ''
-    },
-    breadcrumbList: {
-      type: Array,
-      default () {
-        return []
-      }
-    }
-  },
   computed: {
     ...mapGetters(['MsgCount', 'UserInfo', 'TabNavList'])
   },
@@ -91,11 +74,24 @@ export default {
       route.query = Object.assign({ _time: new Date().getTime() }, route.query)
       this.turnToPage(route)
     })
+    this.loopMessage()
   },
   methods: {
     ...mapMutations(['setTabNavList']),
+    ...mapActions(['getMessageCount']),
+    loopMessage () {
+      this.getMessageCount()
+      setInterval(() => {
+        this.getMessageCount()
+      }, 60 * 1000)
+    },
+    /**
+    * @description 打开消息tab
+    * @param type 消息类型
+    */
     openMsg (type = 0) {
-      this.$emit('on-open-msg', type)
+      const route = { path: '/information/index', query: { type: type, title: '消息' } }
+      window.EMA.fire('openTab', route)
     },
     logout () {
       window.EMA.fire('logout')
@@ -175,23 +171,6 @@ export default {
 }
 </script>
 <style lang="stylus">
-// .sider-trigger-a
-//   width: 25px
-//   height 50px
-//   display inline-block
-//   text-align center
-//   color #5c6b77
-//   background #3A424B
-//   position absolute
-//   top 50%
-//   left 200px
-//   i
-//     transition transform .2s ease
-//     vertical-align top
-//     color #ffffff
-// .collapsed
-//   transform rotateZ(180deg)
-//   transition transform .2s ease
 .header-bar
   width 100%
   height 100%

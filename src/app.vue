@@ -1,87 +1,61 @@
 <template>
   <div id="app">
     <Layout class="container">
-      <Sider :collapsed-width="50" v-model="collapsed" breakpoint="md" collapsible>
-        <side-bar :collapsed="collapsed" :active-name="$route.path" @on-select="onMenuSelect"/>
-        <div slot="trigger">
+      <c-sider></c-sider>
+      <Layout >
+        <c-header/>
 
-        </div>
-      </Sider>
-      <Layout>
-        <Header class="header-con">
-          <header-bar :collapsed.sync="collapsed" :name="UserInfo.name" @on-open-msg="onOpenMsg"/>
-        </Header>
-        <Content class="content">
-          <router-view />
-        </Content>
+        <c-content/>
       </Layout>
     </Layout>
-    <dialogs></dialogs>
+    <c-dialog></c-dialog>
   </div>
 </template>
 <script>
-import HeaderBar from '@/components/HeaderBar'
-import SideBar from '@/components/SideBar'
-import Dialogs from '@/components/Dialogs'
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import CHeader from '@/components/HeaderBar'
+import CDialog from '@/components/Dialogs'
+import { mapMutations, mapActions } from 'vuex'
 import Cookies from 'js-cookie'
+import CSider from './components/sider/Sider'
+import CContent from './components/Content'
+// import Util from './libs/js/util.js'
 
 export default {
-  components: { HeaderBar, SideBar, Dialogs },
+  components: { CHeader, CDialog, CSider, CContent },
   data () {
     return {
-      collapsed: false
     }
-  },
-  computed: {
-    ...mapGetters(['TabNavList', 'UserInfo'])
   },
 
   mounted () {
     window.EMA.bind('updateUserInfo', () => { this.getUserInfo() })
     window.EMA.bind('logout', (msg) => { this.logout(msg) })
-    window.EMA.bind('openTab', (route) => { this.onMenuSelect(route) })
-
     this.init()
-    this.$Message.config({
-      duration: 3
-    })
   },
   methods: {
-    ...mapActions(['getPermissons', 'getUserInfo', 'getMessageCount']),
+    ...mapActions(['getPermissons', 'getUserInfo']),
     ...mapMutations(['setTabNavList', 'initTabNav']),
     async init () {
+      this.$Message.config({
+        duration: 3
+      })
       await this.getPermissons()
       this.initTabNav()
-      this.toHome()
+      // this.toHome()
       await this.getUserInfo()
-      this.loopMessage()
       if (sessionStorage.getItem('first_time_login') === 'true') {
         if (this.UserInfo.type === 1) this.renew()
         else this.changePasswordTip()
         sessionStorage.removeItem('first_time_login')
       }
     },
-    loopMessage () {
-      this.getMessageCount()
-      setInterval(() => {
-        this.getMessageCount()
-      }, 60 * 1000)
-    },
-    /**
-    * @description 打开消息tab
-    * @param type 消息类型
-    */
-    onOpenMsg (type) {
-      const route = { path: '/information/index', query: { type: type, title: '消息' } }
-      window.EMA.fire('openTab', route)
-    },
+
     /**
     * @description 打开首页
     */
     toHome () {
-      const home = { path: '/home', params: { name: 'home' }, query: { title: '首页' } }
-      this.turnToPage(home)
+      // const home = { path: '/home', params: { name: 'home' }, query: { title: '首页' } }
+      // window.EMA.fire('openTab', home)
     },
 
     /**
@@ -131,32 +105,6 @@ export default {
       })
     },
 
-    /**
-     * @description 切换菜单
-     * @param {*} menuItem 被选中的菜单对象
-     */
-    onMenuSelect (menuItem) {
-      console.log('1.', JSON.stringify(menuItem))
-
-      this.setTabNavList(this.getNewTagList(this.TabNavList, menuItem))
-      this.turnToPage(menuItem)
-    },
-
-    /**
-     * @description 切换tab标签
-     * @param {*} route 跳转目标的path或route对象
-     */
-    turnToPage (route) {
-      let { path, params, query, meta } = {}
-      if (typeof route === 'string') path = route
-      else {
-        path = route.path
-        params = route.params
-        query = route.query
-        meta = route.meta
-      }
-      this.$router.push({ path, params, query, meta })
-    },
     getNextRoute (list, route) {
       let res = {}
       const index = list.findIndex(item => this.routeEqual(item, route))
@@ -189,29 +137,8 @@ export default {
       else if (keysArr1.length === 0 && keysArr2.length === 0) return true
       /* eslint-disable-next-line */
       else return !keysArr1.some(key => obj1[key] != obj2[key])
-    },
-
-    /**
-     * @param {*} list 现有标签导航列表
-     * @param {*} newRoute 新添加的路由原信息对象
-     * @description 如果该newRoute已经存在则不再添加
-     */
-    getNewTagList  (list, newRoute) {
-      const { name, path, query, meta } = newRoute
-      let newList = [...list]
-      // if (newList.findIndex(item => item.path === path) >= 0) {
-      if (newList.findIndex(item => this.routeEqual(item, newRoute)) >= 0) {
-        // const idx = newList.findIndex(item => this.routeEqual(item, newRoute))
-        // newList.splice(idx, 1, { name, path, query, meta })
-        return newList
-      } else {
-        // find当前tab位置并在其后面添加新tab
-        const idx = newList.findIndex(item => item.path === this.$route.path)
-        // const idx = newList.findIndex(item => this.routeEqual(item, this.$route))
-        newList.splice(idx + 1, 0, { name, path, query, meta })
-      }
-      return newList
     }
+
   }
 }
 </script>
@@ -236,6 +163,7 @@ html, body
   .container
     height 100vh
     background #EFEFEF
+    flex-direction row
     .logo-con
       height 50px
       padding 10px
@@ -247,6 +175,7 @@ html, body
     .header-con
       position relative
       z-index 9
+      width 100%
       .tag-nav-wrapper
         width auto
         top 4px
@@ -260,10 +189,6 @@ html, body
         overflow hidden
         .tags-nav .scroll-outer .scroll-body
           bottom -1px
-    .content
-      padding 15px 20px
-      height 100%
-      overflow-y auto
 
 .ivu-modal-footer
   border-top none
@@ -296,5 +221,5 @@ html, body
     transition transform .2s ease
   // left 50px
 .uncollapsed
-  // transition transform .2s ease
+  transition transform .2s ease
 </style>

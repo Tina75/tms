@@ -1,51 +1,53 @@
 <template>
   <div class="sider">
-    <Menu v-show="!collapsed" ref="menu" :active-name="$route.path" :open-names="openedNames" accordion width="200" theme="dark" @on-select="handleSelect">
-      <div class="title"><font-icon type="logo-zjy1" size="24" color="white"/></div>
-      <template v-for="item in menuList">
-        <template v-if="item.children">
-          <Submenu v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path">
-            <template slot="title"><font-icon :type="item.icon" :size="18" />{{item.name}}</template>
-            <menu-item v-for="child in item.children" v-if="hasPower(child.powerCode)" :name="child.path" :key="child.path" >{{child.name}}</menu-item>
-          </Submenu>
+    <Sider v-model="collapsed" :collapsed-width="50" hide-trigger collapsible style="overflow:hidden">
+      <Menu v-show="!collapsed" ref="menu" :active-name="$route.path" :open-names="openedNames" accordion width="200" theme="dark" @on-select="handleSelect">
+        <div class="title"><font-icon type="logo-zjy1" size="24" color="white"/></div>
+        <template v-for="item in menuList">
+          <template v-if="item.children">
+            <Submenu v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path">
+              <template slot="title"><font-icon :type="item.icon" :size="18" />{{item.name}}</template>
+              <menu-item v-for="child in item.children" v-if="hasPower(child.powerCode)" :name="child.path" :key="child.path" >{{child.name}}</menu-item>
+            </Submenu>
+          </template>
+          <template v-else>
+            <menu-item v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path"><font-icon :type="item.icon" :size="18"></font-icon>{{item.name}}</menu-item>
+          </template>
         </template>
-        <template v-else>
-          <menu-item v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path"><font-icon :type="item.icon" :size="18"></font-icon>{{item.name}}</menu-item>
-        </template>
-      </template>
-      <div class="footer">
-        <font-icon type="ico-call" size="28" color="#aaa"/>
-        <span >
-          <p>客服电话</p>
-          <p style="font-size:13px">025-66606056</p>
-        </span>
-      </div>
-    </Menu>
-    <div v-show="collapsed" class="menu-collapsed">
-      <p class="title"><font-icon type="logo-1" size="32" color="white"/></p>
-      <template v-for="item in menuList" >
-        <div v-if="hasPower(item.powerCode)"  :key="item.path">
-          <Dropdown v-if="item.children" placement="right-start" transfer >
-            <a class="drop-menu-a"><font-icon :type="item.icon" :size="20" color="white"/></a>
-            <DropdownMenu slot="list" >
-              <DropdownItem v-for="child in item.children"  :key="child.path" >
-                <p v-if="hasPower(child.powerCode)" :name="child.path" :key="child.path"  @click="handleSelect(child)">{{child.name}}</p>
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-          <Tooltip v-else :content="item.name" transfer placement="left">
-            <menu-item v-if="hasPower(item.powerCode)"  :name="item.path"><a class="drop-menu-a"  @click="handleSelect(item)"><font-icon :type="item.icon" :size="20" color="white"/></a></menu-item>
-          </Tooltip>
+        <div class="footer">
+          <font-icon type="ico-call" size="28" color="#aaa"/>
+          <span >
+            <p>客服电话</p>
+            <p style="font-size:13px">025-66606056</p>
+          </span>
         </div>
-      </template>
-      <p class="footer footer-collapsed">
-        <Tooltip content="025-66606056" transfer placement="left">
-          <div>
-            <font-icon type="ico-call" size="20" color="white"/>
+      </Menu>
+      <div v-show="collapsed" class="menu-collapsed">
+        <p class="title"><font-icon type="logo-1" size="32" color="white"/></p>
+        <template v-for="item in menuList" >
+          <div v-if="hasPower(item.powerCode)"  :key="item.path">
+            <Dropdown v-if="item.children" placement="right-start" transfer >
+              <a class="drop-menu-a"><font-icon :type="item.icon" :size="20" color="white"/></a>
+              <DropdownMenu slot="list" >
+                <DropdownItem v-for="child in item.children"  :key="child.path" >
+                  <p v-if="hasPower(child.powerCode)" :name="child.path" :key="child.path"  @click="handleSelect(child)">{{child.name}}</p>
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+            <Tooltip v-else :content="item.name" transfer placement="left">
+              <menu-item v-if="hasPower(item.powerCode)"  :name="item.path"><a class="drop-menu-a"  @click="handleSelect(item)"><font-icon :type="item.icon" :size="20" color="white"/></a></menu-item>
+            </Tooltip>
           </div>
-        </Tooltip>
-      </p>
-    </div>
+        </template>
+        <p class="footer footer-collapsed">
+          <Tooltip content="025-66606056" transfer placement="left">
+            <div>
+              <font-icon type="ico-call" size="20" color="white"/>
+            </div>
+          </Tooltip>
+        </p>
+      </div>
+    </sider>
   </div>
 </template>
 
