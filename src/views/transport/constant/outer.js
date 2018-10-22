@@ -262,6 +262,7 @@ export const TABLE_COLUMNS = vm => [
   }
 ]
 
+// TMS1.1 18.10.22 已废弃
 export const EXTRA_COLUMNS = [
   {
     title: '外转单号',

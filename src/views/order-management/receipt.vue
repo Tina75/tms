@@ -94,8 +94,8 @@
       :method="method"
       :keywords="keyword"
       :columns="tableColumns"
-      :extra-columns="extraColumns"
       :show-filter="true"
+      table-head-type="receipt_head"
       style="margin-top: 15px"
       @on-selection-change="handleSelectionChange"
       @on-column-change="handleColumnChange">
@@ -385,117 +385,7 @@ export default {
           }
         }
       ],
-      operateCol: [], // 操作栏
-      extraColumns: [
-        {
-          title: '订单号',
-          key: 'orderNo',
-          fixed: true,
-          visible: true
-        },
-        {
-          title: '客户订单号',
-          key: 'customerOrderNo',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '运单号',
-          key: 'waybillNo',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '客户名称',
-          key: 'consignerName',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '始发地',
-          key: 'start',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '目的地',
-          key: 'end',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '回单数',
-          key: 'receiptCount',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '回收时间',
-          key: 'recoveryTime',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '返厂时间',
-          key: 'returnTime',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '下单时间',
-          key: 'createTime',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '发货人',
-          key: 'consignerContact',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '发货人手机号',
-          key: 'consignerPhone',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '收货人',
-          key: 'consigneeContact',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '收货人手机号',
-          key: 'consigneePhone',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '要求装货时间',
-          key: 'deliveryTime',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '期望到货时间',
-          key: 'arriveTime',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '结算方式',
-          key: 'settlementType',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '总费用',
-          key: 'totalFee',
-          fixed: false,
-          visible: false
-        }
-      ]
+      operateCol: [] // 操作栏
     }
   },
 

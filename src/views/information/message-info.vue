@@ -66,8 +66,6 @@ export default {
           this.$Message.success('删除成功!')
           this.visibaleRemove = false
           this.ema.fire('closeTab', this.$route)
-        } else {
-          this.$Message.success(data.msg)
         }
       })
     }

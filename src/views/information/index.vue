@@ -217,8 +217,8 @@ export default {
         name: '系统消息',
         id: '0',
         infoNum: ''
-      }
-      // {
+      }],
+      // }, {
       //   name: '订单消息',
       //   id: '1',
       //   infoNum: '',
@@ -228,8 +228,7 @@ export default {
       //   id: '2',
       //   infoNum: '',
       //   code: 120000
-      // }
-      ],
+      // }],
       searchData: {
         type: '0',
         pageNo: 1,
@@ -256,14 +255,14 @@ export default {
         this.rightTitle = this.typeName = '系统消息'
         this.searchData.type = '0'
         break
-      case 1:
-        this.rightTitle = this.typeName = '订单消息'
-        this.searchData.type = '1'
-        break
-      case 2:
-        this.rightTitle = this.typeName = '运输消息'
-        this.searchData.type = '2'
-        break
+      // case 1:
+      //   this.rightTitle = this.typeName = '订单消息'
+      //   this.searchData.type = '1'
+      //   break
+      // case 2:
+      //   this.rightTitle = this.typeName = '运输消息'
+      //   this.searchData.type = '2'
+      //   break
       default:
         this.rightTitle = this.typeName = '系统消息'
         this.searchData.type = '0'
@@ -288,7 +287,6 @@ export default {
     },
     getMenuInfoNum () {
       this.menuList[0].infoNum = this.$store.getters.MsgCount.sysNum
-      // modify 20181019 by mys, 不需要订单和运输消息
       // this.menuList[1].infoNum = this.$store.getters.MsgCount.orderNum
       // this.menuList[2].infoNum = this.$store.getters.MsgCount.carrierNum
       if (!this.batchBtnShow) {
@@ -303,19 +301,24 @@ export default {
         method: 'get',
         data: params
       }).then(({ data }) => {
-        if (params.type === '1') {
-          this.orderMessageList = data.data.list
-          this.searchData.type = '1'
-          this.batchBtnShowAll = data.data.list.length > 0
-        } else if (params.type === '2') {
-          this.transportMessageList = data.data.list
-          this.searchData.type = '2'
-          this.batchBtnShowAll = data.data.list.length > 0
-        } else {
+        if (params.type === '0') {
           this.sysMessageList = data.data.list
           this.searchData.type = '0'
           this.batchBtnShowAll = data.data.list.length > 0
         }
+        // if (params.type === '1') {
+        //   this.orderMessageList = data.data.list
+        //   this.searchData.type = '1'
+        //   this.batchBtnShowAll = data.data.list.length > 0
+        // } else if (params.type === '2') {
+        //   this.transportMessageList = data.data.list
+        //   this.searchData.type = '2'
+        //   this.batchBtnShowAll = data.data.list.length > 0
+        // } else {
+        //   this.sysMessageList = data.data.list
+        //   this.searchData.type = '0'
+        //   this.batchBtnShowAll = data.data.list.length > 0
+        // }
         data.data.list.forEach(element => {
           this.checkBoxListInit.push(element.id)
         })
@@ -349,8 +352,6 @@ export default {
           this.visibaleRemoveAll = false
           this.getMenuList(this.searchData)
           this.getMessageCount()
-        } else {
-          this.$Message.success(data.msg)
         }
       })
     },
@@ -584,11 +585,10 @@ export default {
   color: #FFBB44;
   float:left;
   width:40px;
-  margin-top: 10px;
-  margin-left:10%;
+  margin-top: 3px;
 .modalMessage
-  margin-top:23px;
-  margin-bottom:10px;
+  margin-top:15px;
+  margin-bottom:20px;
   font-size:14px;
 .configBtn
   width: 86px;

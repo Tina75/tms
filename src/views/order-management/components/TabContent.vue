@@ -84,9 +84,9 @@
       :method="method"
       :keywords="keyword"
       :columns="tableColumns"
-      :extra-columns="extraColumns"
       :show-filter="true"
       :row-class-name="rowClassName"
+      table-head-type="order_head"
       style="margin-top: 15px"
       @on-selection-change="handleSelectionChange"
       @on-column-change="handleColumnChange">
@@ -365,7 +365,7 @@ export default {
           title: '订单号',
           key: 'orderNo',
           fixed: 'left',
-          minWidth: 180,
+          minWidth: 190,
           tooltip: true,
           className: 'padding-20',
           /*
@@ -538,7 +538,18 @@ export default {
           key: 'waybillNo',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.waybillNo ? p.row.waybillNo : '-')
+            if (p.row.waybillNo.length > 12) {
+              return h('Tooltip', {
+                props: {
+                  placement: 'bottom',
+                  content: p.row.waybillNo
+                }
+              }, [
+                h('span', this.formatterAddress(p.row.waybillNo))
+              ])
+            } else {
+              return h('span', p.row.waybillNo ? p.row.waybillNo : '-')
+            }
           }
         },
         {
@@ -760,182 +771,6 @@ export default {
         }
       ],
       operateCol: [], // 操作列
-      extraColumns: [
-        {
-          title: '订单号',
-          key: 'orderNo',
-          fixed: true,
-          visible: true
-        },
-        {
-          title: '客户订单号',
-          key: 'customerOrderNo',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '运单号',
-          key: 'waybillNo',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '订单状态',
-          key: 'status',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '客户名称',
-          key: 'consignerName',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '始发地',
-          key: 'start',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '目的地',
-          key: 'end',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '体积（方）',
-          key: 'volume',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '重量（吨）',
-          key: 'weight',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '下单时间',
-          key: 'createTime',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '要求发货时间',
-          key: 'deliveryTime',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '期望到货时间',
-          key: 'arriveTime',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '发货人',
-          key: 'consignerContact',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '发货人手机号',
-          key: 'consignerPhone',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '发货地址',
-          key: 'consignerAddress',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '收货人',
-          key: 'consigneeContact',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '收货人手机号',
-          key: 'consigneePhone',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '收货地址',
-          key: 'consigneeAddress',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '结算方式',
-          key: 'settlementType',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '运输费',
-          key: 'freightFee',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '提货费',
-          key: 'pickupFee',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '装货费',
-          key: 'loadFee',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '卸货费',
-          key: 'unloadFee',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '保险费',
-          key: 'insuranceFee',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '其他',
-          key: 'otherFee',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '总费用',
-          key: 'totalFee',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '提货方式',
-          key: 'pickup',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '回单数量',
-          key: 'receiptCount',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '制单人',
-          key: 'creatorName',
-          fixed: false,
-          visible: false
-        }
-      ],
       orderPrint: [],
       keyword: {
         status: 10 // 默认待提货状态  传给pageTable可重新请求数据

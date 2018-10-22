@@ -77,8 +77,8 @@
       :method="method"
       :keywords="keyword"
       :columns="columns"
-      :extra-columns="extraColumns"
       :show-filter="true"
+      table-head-type="business_head"
       width="100%"
       @on-load = "onLoad"
       @on-column-change="handleColumnChange">

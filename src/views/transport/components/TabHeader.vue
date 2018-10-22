@@ -25,7 +25,7 @@ export default {
 
   data () {
     return {
-      current: this.tabs[1].name
+      current: this.tabs[0].name
     }
   },
 

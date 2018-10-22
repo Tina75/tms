@@ -108,15 +108,14 @@
     <div v-else>
       <PageTable ref="$table"
                  :columns="tableColumns"
-                 :extra-columns="extraColumns"
                  :show-filter="true"
                  :keywords="searchFields"
+                 table-head-type="waybill_head"
                  row-id="waybillId"
                  url="/waybill/list"
                  method="post"
                  list-field="waybillList"
                  style="margin-top: 15px"
-                 @on-column-change="tableColumnsChanged"
                  @on-selection-change="selectionChanged"
                  @on-sort-change="tableSort"
                  @on-change="pageChange"
@@ -143,7 +142,7 @@ import OrderTabContent from '@/views/order-management/components/TabContent'
 
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
-import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, EXTRA_COLUMNS, setTabList } from './constant/waybill'
+import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, setTabList } from './constant/waybill'
 
 export default {
   name: 'WaybillManager',
@@ -199,8 +198,7 @@ export default {
         }
       },
 
-      tableColumns: TABLE_COLUMNS(this), // 表头
-      extraColumns: EXTRA_COLUMNS // 表头筛选
+      tableColumns: TABLE_COLUMNS(this) // 表头
     }
   },
 
