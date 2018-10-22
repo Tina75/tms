@@ -199,7 +199,7 @@ export default {
     return {
       rightTitle: '',
       type: '0',
-      typeName: '',
+      typeName: '0',
       messageInit: {},
       messageType: '',
       messageCheckGroupInit: [],
@@ -410,7 +410,7 @@ export default {
           break
         case 7:
           this.openTab({
-            path: '/transport/receiveOrder',
+            path: '/transport/pickupOrder',
             title: '提货单管理'
           })
           break

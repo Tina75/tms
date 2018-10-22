@@ -96,8 +96,8 @@ export default {
     disabled: true,
     checked: true,
     children: [{
-      title: '提货管理',
-      code: '120200',
+      title: '送货管理',
+      code: '120100',
       parentId: '120000',
       expand: true,
       disabled: true,
@@ -115,8 +115,8 @@ export default {
         { title: '导出', code: '120207', parentId: '120200', grandId: '120000', disabled: true }
       ]
     }, {
-      title: '送货管理',
-      code: '120100',
+      title: '提货管理',
+      code: '120200',
       parentId: '120000',
       expand: true,
       disabled: true,

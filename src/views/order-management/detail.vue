@@ -551,7 +551,7 @@ export default {
         // 删除按钮
         if (r.transStatus === 0 && r.pickupStatus === 0 && r.parentId === '') {
           renderBtn.push(
-            { name: '删除', value: 1, code: 110107 }
+            { name: '删除', value: 1, code: 120204 }
           )
         }
         // 拆单按钮
@@ -563,7 +563,7 @@ export default {
         // 外转按钮
         if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.pickupStatus === 0) {
           renderBtn.push(
-            { name: '外转', value: 3, code: 110104 }
+            { name: '外转', value: 3, code: 120209 }
           )
         }
         // 还原按钮
@@ -575,7 +575,7 @@ export default {
         // 编辑按钮
         if (r.transStatus === 0 && r.pickupStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
           renderBtn.push(
-            { name: '编辑', value: 5, code: 110106 }
+            { name: '编辑', value: 5, code: 120206 }
           )
         }
       }
@@ -583,31 +583,31 @@ export default {
         // 删除按钮
         if (r.pickup !== 1 && r.transStatus === 0 && r.dispatchStatus === 0 && r.parentId === '') {
           renderBtn.push(
-            { name: '删除', value: 1, code: 110107 }
+            { name: '删除', value: 1, code: 120105 }
           )
         }
         // 拆单按钮
         if (r.transStatus === 0 && r.disassembleStatus !== 1 && r.dispatchStatus === 0) {
           renderBtn.push(
-            { name: '拆单', value: 2, code: 110103 }
+            { name: '拆单', value: 2, code: 120110 }
           )
         }
         // 外转按钮
         if (r.transStatus === 0 && r.pickup !== 1 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0) {
           renderBtn.push(
-            { name: '外转', value: 3, code: 110104 }
+            { name: '外转', value: 3, code: 120111 }
           )
         }
         // 还原按钮
         if (r.parentId === '' && r.disassembleStatus === 1 && r.dispatchStatus === 0) {
           renderBtn.push(
-            { name: '还原', value: 4, code: 110105 }
+            { name: '还原', value: 4, code: 120112 }
           )
         }
         // 编辑按钮
         if (r.pickup !== 1 && r.transStatus === 0 && r.dispatchStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
           renderBtn.push(
-            { name: '编辑', value: 5, code: 110106 }
+            { name: '编辑', value: 5, code: 120107 }
           )
         }
       }

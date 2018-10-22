@@ -68,18 +68,7 @@ export default {
         start: (this.cityCodes.startCodes !== null && this.cityCodes.startCodes.length) ? this.cityCodes.startCodes[this.cityCodes.startCodes.length - 1] : null,
         end: (this.cityCodes.endCodes !== null && this.cityCodes.endCodes.length) ? this.cityCodes.endCodes[this.cityCodes.endCodes.length - 1] : null
       }
-      if (this.$route.path === '/order-management/order') { // 订单列表搜索
-        key.status = this.keywords.status
-        key.startTime = this.keywords.startTime || null
-        key.endTime = this.keywords.endTime || null
-        key.importId = this.keywords.importId || null
-        // 简单搜索模式下当前搜索框值为空是默认不是搜索状态
-        if (this.simpleSearch && ((this.selectStatus === 0 && !this.keywords.consignerName) || (this.selectStatus === 1 && !this.keywords.orderNo) || (this.selectStatus === 2 && !this.keywords.waybillNo))) {
-          this.isSearching = false
-        } else {
-          this.isSearching = true
-        }
-      } else { // 回单列表搜索
+      if (this.$route.path === '/order-management/receipt') { // 回单列表搜索
         key.receiptStatus = this.keywords.receiptStatus
         key.recoveryTimeStart = this.keywords.recoveryTimeStart || null
         key.recoveryTimeEnd = this.keywords.recoveryTimeEnd || null
@@ -87,6 +76,17 @@ export default {
         key.returnTimeEnd = this.keywords.returnTimeEnd || null
         // 简单搜索模式下当前搜索框值为空是默认不是搜索状态
         if (this.simpleSearch && ((this.selectStatus === 0 && !this.keywords.consignerName) || (this.selectStatus === 1 && !this.keywords.orderNo) || (this.selectStatus === 2 && !this.keywords.customerOrderNo))) {
+          this.isSearching = false
+        } else {
+          this.isSearching = true
+        }
+      } else { // 订单列表、运输管理列表搜索
+        key.status = this.keywords.status
+        key.startTime = this.keywords.startTime || null
+        key.endTime = this.keywords.endTime || null
+        key.importId = this.keywords.importId || null
+        // 简单搜索模式下当前搜索框值为空是默认不是搜索状态
+        if (this.simpleSearch && ((this.selectStatus === 0 && !this.keywords.consignerName) || (this.selectStatus === 1 && !this.keywords.orderNo) || (this.selectStatus === 2 && !this.keywords.waybillNo))) {
           this.isSearching = false
         } else {
           this.isSearching = true
@@ -108,13 +108,7 @@ export default {
         end: '' // 目的地
       }
       // 订单列表状态字段status，回单列表状态字段receiptStatus, 时间搜索（不一致，根据路由判断）
-      if (this.$route.path === '/order-management/order') {
-        key.status = this.keywords.status
-        key.startTime = null
-        key.endTime = null
-        this.times = ['', '']
-        key.importId = this.keywords.importId // 导入批次号
-      } else {
+      if (this.$route.path === '/order-management/receipt') {
         key.receiptStatus = this.keywords.receiptStatus
         key.recoveryTimeStart = null
         key.recoveryTimeEnd = null
@@ -122,6 +116,12 @@ export default {
         key.returnTimeEnd = null
         this.recoveryTimes = ['', '']
         this.returnTimes = ['', '']
+      } else { // 判断运输管理需要使用tabContent组件
+        key.status = this.keywords.status
+        key.startTime = null
+        key.endTime = null
+        this.times = ['', '']
+        key.importId = this.keywords.importId // 导入批次号
       }
       this.keywords = key
       this.cityCodes = {

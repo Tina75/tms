@@ -11,16 +11,20 @@
 export default {
   name: 'TableExpand',
   props: {
+    // 表格家在状态
     tableLoading: {
       type: Boolean,
       default: false
     },
+    // 表头
     tableHeader: {
       type: Array,
       required: true
     },
-    tableData: Array,
-    tableDataFunc: Function
+
+    // 以下属性二选一
+    tableData: Array, // 表格数据
+    tableDataFunc: Function // 获取表格数据的方法，需要返回数据内容
   },
   data () {
     return {

@@ -700,6 +700,8 @@ export default {
             _this.getOrderNum() // 刷新tab页数量
             _this.selectOrderList = [] // 重置当前已勾选项
             _this.selectedId = [] // 重置当前已勾选id项
+            console.log(_this.$refs.pageTable)
+
             _this.$refs.pageTable.clearSelected() // 清空当前选项
           }
         }
