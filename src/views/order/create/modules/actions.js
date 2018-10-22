@@ -55,8 +55,6 @@ export default {
           const transformCargoList = cargoList.map((cargo) => new Cargo(cargo, true))
           // 货物信息
           commit(types.RECEIVE_CARGO_LIST, transformCargoList)
-          // 只复制一个
-          // commit(types.RECEIVE_CONSIGNER_CARGO_LIST, transformCargoList.slice(0, 1))
         }
         if (consigneeList.length > 0) {
           // 收货方地址
@@ -106,7 +104,6 @@ export default {
       })
         .then((response) => {
           const { orderCargoList, ...order } = response.data.data
-          // commit(types.RECEIVE_CONSIGNER_CARGO_LIST, orderCargoList.map((item) => new Cargo(item, true)))
           commit(types.RECEIVE_ORDER_DETAIL, order)
           resolve(response.data.data)
         })
