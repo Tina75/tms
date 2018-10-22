@@ -409,7 +409,7 @@ export default {
           break
         case 7:
           this.openTab({
-            path: '/transport/receiveOrder',
+            path: '/transport/pickupOrder',
             title: '提货单管理'
           })
           break

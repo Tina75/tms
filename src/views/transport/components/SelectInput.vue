@@ -12,6 +12,13 @@
 </template>
 
 <script>
+
+/**
+ * 在 @/components/SelectInput 组件基础上封装的组件
+ * 可自动查询承运商、司机、车牌号、客户、外转方
+ * 使用该组件时，如果需要联动，则需要使用 ../mixin/selectInputMixin
+ */
+
 import SelectInput from '@/components/SelectInput'
 import Server from '@/libs/js/server'
 

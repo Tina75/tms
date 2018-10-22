@@ -82,7 +82,7 @@ export default {
     code: '120000',
     expand: true,
     children: [{
-      title: '运单管理',
+      title: '送货管理',
       code: '120100',
       parentId: '120000',
       expand: true,
@@ -98,7 +98,7 @@ export default {
         { title: '导出', code: '120108', parentId: '120100', grandId: '120000' }
       ]
     }, {
-      title: '提货单管理',
+      title: '提货管理',
       code: '120200',
       parentId: '120000',
       expand: true,

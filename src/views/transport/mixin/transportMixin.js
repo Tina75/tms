@@ -1,13 +1,15 @@
-import { getCityCode } from '@/libs/js/cityValidator'
+/**
+ * 送货管理、提货管理、外转管理页面公有方法
+ */
 
-// let hasTabCode = false
+import { getCityCode } from '@/libs/js/cityValidator'
 
 export default {
   data () {
     return {
       order: 'desc', // 倒序 asc升序
 
-      // select input data
+      // 输入下拉框所需数据
       linkage: false,
       keyFields: 'seniorSearchFields',
 
@@ -16,7 +18,7 @@ export default {
         current: 1,
         size: 10
       },
-      searchFields: {},
+      searchFields: {}, // 发起请求时的搜索字段
 
       tabStatus: 1, // 当前标签页
       currentBtns: [], // 当前按钮组
@@ -28,11 +30,12 @@ export default {
 
       tableSelection: [], // 表格的选中项
 
-      printData: []
+      printData: [] // 待打印数据
     }
   },
 
   computed: {
+    // tab切换后根据tab和权限确定应展示的按钮组
     showButtons () {
       return this.currentBtns.filter(item => {
         return this.hasPower(item.code)
@@ -41,30 +44,43 @@ export default {
   },
 
   created () {
-    const columns = window.sessionStorage[this.tabType + '_COLUMNS']
-    if (columns) this.extraColumns = JSON.parse(columns)
-
-    let tab
-    // if (this.$route.query.tab && this.$route.query.tab < this.tabList.length && !hasTabCode) {
-    if (this.$route.query.tab && this.$route.query.tab < this.tabList.length) {
-      // hasTabCode = true
-      tab = this.tabList[this.$route.query.tab].name
-      window.sessionStorage.setItem('TABHEADER_' + this.tabType, tab)
-    } else {
-      tab = window.sessionStorage['TABHEADER_' + this.tabType]
-    }
-
-    if (tab !== undefined) {
-      this.tabStatus = this.setTabStatus(tab)
-      this.tabChanged(tab)
-    } else {
-      this.tabStatus = this.setTabStatus(this.tabList[1].name)
-      this.currentBtns = this.btnList[1].btns
-      this.fetchData()
-    }
+    // this.setTableColumns()
+    this.setTabToCustom()
   },
 
   methods: {
+    // 显示用户筛选过的表头数据（本地）
+    setTableColumns () {
+      const columns = window.localStorage[this.tabType + '_COLUMNS']
+      if (columns) this.extraColumns = JSON.parse(columns)
+    },
+
+    /**
+     * 将tab切换到用户设置的tab页并查询数据
+     * 1. 如果从其他页面进入，则从url获取tab tag并切换
+     * 2. 如果直接打开，则从session中获取上次打开时最后切换到的tab
+     * 3. 如果session也没有，则进入第一个tab
+     */
+    setTabToCustom () {
+      let tab
+      if (this.$route.query.tab !== undefined && this.$route.query.tab < this.tabList.length) {
+        tab = this.tabList[this.$route.query.tab].name
+        window.sessionStorage.setItem('TABHEADER_' + this.tabType, tab)
+      } else {
+        tab = window.sessionStorage['TABHEADER_' + this.tabType]
+      }
+
+      if (tab !== undefined) {
+        this.tabStatus = this.setTabStatus(tab)
+        this.tabChanged(tab)
+      } else {
+        this.tabStatus = this.setTabStatus(this.tabList[0].name)
+        this.currentBtns = this.btnList[0].btns
+        this.fetchData()
+      }
+    },
+
+    // 交易批量操作时是否已选择
     checkTableSelection () {
       if (!this.tableSelection.length) {
         this.$Message.error('请先选择后再操作')
@@ -73,6 +89,7 @@ export default {
       return true
     },
 
+    // 对没有操作的表格隐藏操作列，有操作的表格显示操作列
     triggerTableActionColumn (show) {
       const hasAction = this.tableColumns[1].key === 'action'
       if (hasAction && !show) { // 移除action
@@ -82,16 +99,28 @@ export default {
       }
     },
 
+    // 查询数据
     fetchData () {
       this.tableSelection = []
-      this.searchFields = this.setFetchParams()
+      this.$refs.$table && this.$refs.$table.clearSelected() // 清空已选项
+      this.searchFields = this.setFetchParams() // 设置请求搜索字段，page table组件会自动查询
+      this.fetchTabCount && this.fetchTabCount() // 如果存在查询tab数量的方法则查询
+    },
+
+    // 清空已选项并查询数据
+    clearSelectedAndFetch () {
+      this.tableSelection = []
+      this.$refs.$table.clearSelected()
+      this.$refs.$table.fetch()
       this.fetchTabCount && this.fetchTabCount()
     },
 
-    // 搜索
+    /**
+     * 搜索
+     * 如果是简易搜索则直接进行搜索
+     * 如果是高级搜索且存在搜索关键字则搜索
+     */
     startSearch () {
-      // if (this.isEasySearch && !this.easySearchKeyword) return
-      // else
       if (!this.isEasySearch) {
         let canSearch = false
         for (let key in this.seniorSearchFields) {
@@ -109,7 +138,7 @@ export default {
       this.resetEasySearch()
       this.resetSeniorSearch()
     },
-    // 重置搜索条件
+    // 重置简易搜索
     resetEasySearch () {
       if (this.easySearchKeyword === '') return
       this.easySearchKeyword = ''
@@ -118,6 +147,7 @@ export default {
       this.inSearching = false
       this.fetchData()
     },
+    // 重置高级搜索
     resetSeniorSearch () {
       let needReset = false
       for (let key in this.seniorSearchFields) {
@@ -134,6 +164,7 @@ export default {
       this.resetSeniorSearch()
       this.fetchData()
     },
+
     // tab切换
     tabChanged (tab) {
       // 设置当前的按钮组
@@ -143,14 +174,16 @@ export default {
           break
         }
       }
+      // 设置当前tab状态
       this.tabStatus = this.setTabStatus(tab)
       // 重置搜索条件
       this.resetEasySearch()
       this.resetSeniorSearch()
-      // 搜索
+      // 搜索与查询
       if (this.tabStatus) this.fetchData()
       else this.fetchTabCount && this.fetchTabCount()
     },
+
     // 分页切换
     pageChange (current) {
       console.log(current)
@@ -160,14 +193,13 @@ export default {
     pageSizeChange (size) {
       this.page.size = size
     },
-    // 表格显示项筛选
+    // 表格显示项筛选并存储
     tableColumnsChanged (columns) {
       this.extraColumns = columns
-      window.sessionStorage.setItem(this.tabType + '_COLUMNS', JSON.stringify(columns))
+      window.localStorage.setItem(this.tabType + '_COLUMNS', JSON.stringify(columns))
     },
     // 选中的表格行
     selectionChanged (selection) {
-      console.log(selection)
       this.tableSelection = selection
     },
     // 表格按时间排序
@@ -175,6 +207,7 @@ export default {
       this.order = order
       this.fetchData()
     },
+
     // 设置查询参数
     setFetchParams () {
       let params = {

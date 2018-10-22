@@ -26,7 +26,7 @@
       <div class="dispatch-part-title">
         未提货提货单
 
-        <Button type="primary" style="float: right;" @click="createFreight">新建提货单</Button>
+        <Button type="primary" style="float: right;" @click="createPickup">新建提货单</Button>
       </div>
       <div v-if="!rightTableData.length && !rightTableLoading" class="dispatch-empty">
         <img src="../../../assets/img-empty.png" class="dispatch-empty-img">
@@ -47,8 +47,8 @@
 <script>
 import Server from '@/libs/js/server'
 import BasePage from '@/basic/BasePage'
-import dispatchMixin from './dispatchMixin'
-import tableExpand from './tableExpand'
+import dispatchMixin from '../mixin/dispatchMixin'
+import TableExpand from '../components/TableExpand'
 
 export default {
   name: 'DispatchFreight',
@@ -62,7 +62,7 @@ export default {
           width: 30,
           // fixed: 'left',
           render: (h, p) => {
-            return h(tableExpand, {
+            return h(TableExpand, {
               on: {
                 'on-expand-select': (selection) => {
                   this.rightSelection = selection
@@ -131,7 +131,8 @@ export default {
     this.fetchData()
   },
   methods: {
-    createFreight () {
+    // 新增提货单
+    createPickup () {
       this.openDialog({
         name: 'transport/dialog/createPickup',
         data: {
@@ -145,10 +146,12 @@ export default {
       })
     },
 
+    // 查询数据
     fetchData () {
       this.fetchLeftTableData('10')
       this.fetchRightTableData('loadbillId')
     },
+
     // 查询右侧表格数据
     fetchRightTableData (id) {
       this.rightTableLoading = true
@@ -170,7 +173,8 @@ export default {
         console.error(err)
       })
     },
-    // 查询表格展开数据
+
+    // 查询表格展开项数据
     fetchLeftExpandData () {
       this.fetchLeftTableExpandData('10')
     },
@@ -191,6 +195,7 @@ export default {
         console.error(err)
       })
     },
+
     // 将左侧选中订单添加到右侧选中运单
     moveOrders2Pickup () {
       this.leftMoveToRight('/dispatch/add/order/to/loadbill', {
@@ -198,6 +203,7 @@ export default {
         orderIds: this.leftSelection
       })
     },
+
     // 从提货单移除
     removeOrdersFromPickup () {
       this.rightMoveToLeft('/dispatch/move/cargo/from/loadbill/list', {
@@ -210,5 +216,5 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-  @import "./dispatch.styl"
+  @import "../style/dispatch.styl"
 </style>

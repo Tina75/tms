@@ -47,8 +47,8 @@
 <script>
 import Server from '@/libs/js/server'
 import BasePage from '@/basic/BasePage'
-import dispatchMixin from './dispatchMixin'
-import tableExpand from './tableExpand'
+import dispatchMixin from '../mixin/dispatchMixin'
+import TableExpand from '../components/TableExpand'
 
 export default {
   name: 'DispatchFreight',
@@ -62,7 +62,7 @@ export default {
           width: 30,
           // fixed: 'left',
           render: (h, p) => {
-            return h(tableExpand, {
+            return h(TableExpand, {
               on: {
                 'on-expand-select': (selection) => {
                   this.rightSelection = selection
@@ -147,6 +147,7 @@ export default {
     this.fetchData()
   },
   methods: {
+    // 新增运单
     createFreight () {
       this.openDialog({
         name: 'transport/dialog/createFreight',
@@ -161,10 +162,12 @@ export default {
       })
     },
 
+    // 查询数据
     fetchData () {
       this.fetchLeftTableData('20')
       this.fetchRightTableData('waybillId')
     },
+
     // 查询右侧表格数据
     fetchRightTableData (id) {
       this.rightTableLoading = true
@@ -186,7 +189,8 @@ export default {
         console.error(err)
       })
     },
-    // 查询表格展开数据
+
+    // 查询表格展开项数据
     fetchLeftExpandData () {
       this.fetchLeftTableExpandData('20')
     },
@@ -207,6 +211,7 @@ export default {
         console.error(err)
       })
     },
+
     // 将左侧选中订单添加到右侧选中运单
     moveOrders2Freight () {
       this.leftMoveToRight('/dispatch/add/order/to/waybill', {
@@ -214,6 +219,7 @@ export default {
         orderIds: this.leftSelection
       })
     },
+
     // 从运单移除
     removeOrdersFromFreight () {
       this.rightMoveToLeft('/dispatch/move/cargo/from/waybill/list', {
@@ -226,5 +232,5 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-  @import "./dispatch.styl"
+  @import "../style/dispatch.styl"
 </style>
