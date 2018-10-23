@@ -107,7 +107,6 @@ export default {
   },
   computed: {
     showDropdown () {
-      debugger
       return this.visible && this.options.length > 0 && this.isFocus
     },
     classes () {
@@ -218,6 +217,7 @@ export default {
       this.isFocus = true
       if (!this.currentValue) { // 输入框为空，且获得焦点，则取历史数据
         // 鼠标focus的时候，需要默认查询所有
+        console.log('获得焦点')
         this.takeCity()
       }
       this.$emit('on-focus')
@@ -264,9 +264,9 @@ export default {
             let obj = { name: name, nameSeleced: nameSeleced }
             return Object.assign({}, item, obj)
           })
-          // this.$nextTick(() => {
-          //   this.focusIndex = 0
-          // })
+          this.$nextTick(() => {
+            this.focusIndex = 0
+          })
         }).catch(err => {
           this.isRemoteCall = false
           console.log(err)
@@ -327,30 +327,36 @@ export default {
     },
     // 存数据
     saveCity (code) {
+      let city = cityUtil.getPathByCode(code)
       let nameSelecedItem = {
-        province: cityUtil.getPathByCode(code)[0].name,
-        city: cityUtil.getPathByCode(code)[1].name,
-        area: cityUtil.getPathByCode(code)[2].name
+        province: city[0].name,
+        city: city[1].name,
+        area: city[2] ? city[2].name : ''
       }
       let nameItem = {
-        area: cityUtil.getPathByCode(code)[2].name,
-        city: cityUtil.getPathByCode(code)[1].name,
-        province: cityUtil.getPathByCode(code)[0].name
+        area: city[2] ? city[2].name : '',
+        city: city[1].name,
+        province: city[0].name
       }
       let name = this.cityShow(nameItem, 1)
       let nameSeleced = this.cityShow(nameSelecedItem, 2)
       let obj = { name: name, nameSeleced: nameSeleced, code: code }
       // 取历史数据，和5比较
-      let cityArray = JSON.parse(localStorage.getItem('cityInfo'))
+      let cityArray = localStorage.getItem('cityInfo') ? JSON.parse(localStorage.getItem('cityInfo')) : []
       if (cityArray.length >= 5) {
         cityArray.length = 4
       }
-      this.arrayReduce(cityArray.unshift(obj))
+      cityArray.unshift(obj)
+      console.log(cityArray)
+      cityArray = this.arrayReduce(cityArray)
       localStorage.setItem('cityInfo', JSON.stringify(cityArray))
     },
     // 取数据
     takeCity () {
+      console.log(JSON.parse(localStorage.getItem('cityInfo')))
+      this.visible = true
       this.options = JSON.parse(localStorage.getItem('cityInfo')) || []
+      this.focusIndex = this.options.length > 0 ? 0 : -1
     },
     // 数组去重
     arrayReduce (arr) {

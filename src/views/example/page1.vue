@@ -38,7 +38,7 @@ export default {
   },
   data () {
     return {
-      code: 959030
+      code: null
     }
   },
   watch: {
@@ -65,7 +65,7 @@ export default {
       this.ema.fire('closeTab', this.$route)
     },
     save () {
-      this.$refs.child.saveCity()
+      this.$refs.child.saveCity(this.code)
     }
   }
 }
