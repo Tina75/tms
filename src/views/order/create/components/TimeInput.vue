@@ -1,5 +1,5 @@
 <template>
-  <Poptip v-model="visible">
+  <Poptip v-model="visible" class="timeInput">
     <div slot="content" class="order-create__timeSelect">
       <Row>
         <Col v-for="(opt, index) in timeList" :key="index" span="6">
@@ -9,7 +9,7 @@
         </Col>
       </Row>
     </div>
-    <Input v-model="inputValue" placeholder="请选择时间"/>
+    <Input v-model="inputValue" placeholder="请选择时间" readonly/>
   </Poptip>
 </template>
 <script>
@@ -75,4 +75,11 @@ export default {
 .timeCell
   padding 10px 0
   cursor pointer
+</style>
+<style lang="stylus">
+.timeInput
+  .ivu-poptip-arrow
+    display none
+  .ivu-poptip-popper
+   padding-top 5px
 </style>
