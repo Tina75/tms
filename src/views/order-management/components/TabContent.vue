@@ -59,8 +59,10 @@
       </div>
       <div style="display: flex;justify-content: space-between;">
         <div>
-          <area-select v-model="cityCodes.startCodes" :deep="true" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
-          <area-select v-model="cityCodes.endCodes" :deep="true" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <!-- <area-select v-model="cityCodes.startCodes" :deep="true" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <area-select v-model="cityCodes.endCodes" :deep="true" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select> -->
+          <city-select v-model="cityCodes.startCodes" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></city-select>
+          <city-select v-model="cityCodes.endCodes" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></city-select>
           <DatePicker
             :options="timeOption"
             v-model="times"
@@ -87,7 +89,7 @@
       :show-filter="true"
       :row-class-name="rowClassName"
       :row-selection="showCheckBox"
-      table-head-type="order_head"
+      :table-head-type="tableHeadSource"
       style="margin-top: 15px"
       @on-selection-change="handleSelectionChange"
       @on-column-change="handleColumnChange">
@@ -101,7 +103,8 @@ import BasePage from '@/basic/BasePage'
 import PageTable from '@/components/page-table/'
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
-import AreaSelect from '@/components/AreaSelect'
+// import AreaSelect from '@/components/AreaSelect'
+import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput.vue'
 import OrderPrint from './OrderPrint'
 import FontIcon from '@/components/FontIcon'
@@ -115,7 +118,8 @@ export default {
 
   components: {
     PageTable,
-    AreaSelect,
+    // AreaSelect,
+    CitySelect,
     SelectInput,
     OrderPrint,
     FontIcon
@@ -154,6 +158,11 @@ export default {
     isVisiable: {
       type: Boolean,
       default: false
+    },
+    // 表头筛选字段根据来源各自展示
+    tableHeadSource: {
+      type: String,
+      default: 'order_head'
     },
     // 刷新tab数量的回调
     refreshTab: Function

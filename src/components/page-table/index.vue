@@ -392,7 +392,7 @@ export default {
         if (this.selected.includes(row[this.rowId])) {
           classes.push('ivu-table-row-highlight')
         }
-        if (row.__visible !== undefined && !row.__visible) {
+        if (row._visible !== undefined && !row._visible) {
           classes.push('ivu-table-row-hidden')
         }
       }
@@ -441,13 +441,13 @@ export default {
               if (vm.rowSelection.isVisible && typeof vm.rowSelection.isVisible === 'function') {
                 let visible = this.rowSelection.isVisible(item)
                 if (!visible) {
-                  item.__disabled = true
-                  item.__visible = visible
+                  item._disabled = true
+                  item._visible = visible
                 }
               } else if (vm.rowSelection.isDisabled && typeof vm.rowSelection.isDisabled === 'function') {
                 let disabled = vm.rowSelection.isDisabled(item)
                 if (disabled) {
-                  item.__disabled = true
+                  item._disabled = true
                 }
               }
               if (vm.selected.includes(item[vm.rowId])) {
