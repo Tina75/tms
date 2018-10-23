@@ -2,8 +2,6 @@
  * 送货管理、提货管理、外转管理页面公有方法
  */
 
-import { getCityCode } from '@/libs/js/cityValidator'
-
 export default {
   data () {
     return {
@@ -151,8 +149,8 @@ export default {
     resetSeniorSearch () {
       let needReset = false
       for (let key in this.seniorSearchFields) {
-        if (['startCodes', 'endCodes', 'dateRange'].indexOf(key) > -1) {
-          this.seniorSearchFields[key] = []
+        if (key === 'dateRange') {
+          this.seniorSearchFields.dateRange = []
         } else if (this.seniorSearchFields[key] !== '') {
           this.seniorSearchFields[key] = ''
           needReset = true
@@ -222,10 +220,6 @@ export default {
             params.keyWord = this.easySearchKeyword
           }
         } else {
-          this.seniorSearchFields.start = getCityCode(this.seniorSearchFields.startCodes)
-
-          this.seniorSearchFields.end = getCityCode(this.seniorSearchFields.endCodes)
-
           if (this.seniorSearchFields.dateRange[0]) {
             this.seniorSearchFields.startTime = this.seniorSearchFields.dateRange[0].Format('yyyy-MM-dd hh:mm:ss')
           } else this.seniorSearchFields.startTime = ''
@@ -235,8 +229,8 @@ export default {
           } else this.seniorSearchFields.endTime = ''
 
           for (let key in this.seniorSearchFields) {
-            if (['startCodes', 'endCodes', 'dateRange'].indexOf(key) > -1) continue
-            if (this.seniorSearchFields[key].length) {
+            if (key === 'dateRange') continue
+            if (this.seniorSearchFields[key]) {
               params[key] = this.seniorSearchFields[key]
             }
           }

@@ -78,8 +78,8 @@
 
         <div style="display: flex;justify-content: space-between;">
           <div>
-            <AreaSelect v-model="seniorSearchFields.startCodes" placeholder="请输入始发地" class="search-input-senior" />
-            <AreaSelect v-model="seniorSearchFields.endCodes" placeholder="请输入目的地" class="search-input-senior" />
+            <SelectInputForCity v-model="seniorSearchFields.start" placeholder="请输入始发地" class="search-input-senior" />
+            <SelectInputForCity v-model="seniorSearchFields.end" placeholder="请输入目的地" class="search-input-senior" />
             <DatePicker v-model="seniorSearchFields.dateRange" type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
           </div>
           <div>
@@ -98,6 +98,7 @@
 
     <OrderTabContent
       v-if="!tabStatus"
+      :table-head-source="dispatchHeadType"
       source="transport"
       tab-status="待送货"
       is-visiable
@@ -111,7 +112,7 @@
                  :columns="tableColumns"
                  :show-filter="true"
                  :keywords="searchFields"
-                 table-head-type="waybill_head"
+                 :table-head-type="waybillHeadType"
                  row-id="waybillId"
                  url="/waybill/list"
                  method="post"
@@ -136,7 +137,7 @@ import SelectInputMixin from './mixin/selectInputMixin'
 
 import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
-import AreaSelect from '@/components/AreaSelect'
+import SelectInputForCity from '@/components/SelectInputForCity'
 import SelectInput from './components/SelectInput.vue'
 import PrintFreight from './components/PrintFreight'
 import OrderTabContent from '@/views/order-management/components/TabContent'
@@ -144,15 +145,19 @@ import OrderTabContent from '@/views/order-management/components/TabContent'
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, setTabList } from './constant/waybill'
+import headType from '@/libs/constant/headtype'
 
 export default {
   name: 'WaybillManager',
-  components: { TabHeader, PageTable, AreaSelect, SelectInput, PrintFreight, OrderTabContent },
+  components: { TabHeader, PageTable, SelectInputForCity, SelectInput, PrintFreight, OrderTabContent },
   mixins: [ BasePage, TransportBase, SelectInputMixin, TransportMixin ],
   metaInfo: { title: '运单管理' },
   data () {
     return {
       tabType: 'WAYBILL',
+
+      waybillHeadType: headType.WAYBILL,
+      dispatchHeadType: headType.WAIT_WAYBILL,
 
       tabList: TAB_LIST, // 标签栏
       btnList: BUTTON_LIST(this), // 所有按钮组
@@ -170,10 +175,8 @@ export default {
         carrierName: '', // 承运商
         driverName: '', // 司机
         carNo: '', // 车牌号
-        startCodes: [], // 始发地codes
-        endCodes: [], // 目的地codes
-        start: '', // 始发地
-        end: '', // 目的地
+        start: void 0, // 始发地
+        end: void 0, // 目的地
         dateRange: ['', ''], // 日期范围
         startTime: '', // 开始时间
         endTime: '' // 结束时间

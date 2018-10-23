@@ -1,7 +1,7 @@
 <template>
   <div ref="el" class="page-home">
     <div class="page-home__header">
-      <Alert v-if="notice.content" type="warning" class="page-home__header-notice" banner closable show-icon>
+      <Alert v-if="notice.content" type="warning" class="page-home__header-notice" banner closable show-icon @on-close="closeNotice">
         <span :class="{'page-home__noticeBar': notice.url}" @click="hrefHandle">{{ notice.content }}</span>
         <FontIcon slot="icon" type="tongzhi-paomadeng" size="20" style="vertical-align: middle; color: #00A4BD"></FontIcon>
       </Alert>
@@ -242,6 +242,10 @@ export default {
     unobserve (el) {
       this.intersectionObserver.unobserve(el)
     },
+    /**
+     * 查询跑马灯消息
+     * 只会返回一条
+     */
     initNotice () {
       server({
         url: 'message/pmd',
@@ -258,6 +262,18 @@ export default {
           // this.cardsList = data
           // this.cardChecks = this.cardChecksTemp
         }
+      })
+    },
+    /**
+     * 关闭消息
+     */
+    closeNotice (e) {
+      server({
+        url: 'message/pmdDel',
+        method: 'get',
+        params: { id: this.notice.id }
+      }).then(() => {
+        this.notice = {}
       })
     },
     // 获取card数组

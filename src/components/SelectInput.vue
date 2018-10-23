@@ -217,12 +217,16 @@ export default {
         }
         return opt.value === name
       })
-      this.currentValue = item.value
-      this.resetSelect()
+      this.setCurrentValue(item.value)
+      this.focusIndex = -1
+      this.visible = false
       // 选中某一项
       this.$emit('on-select', item.value, item)
       this.$emit('input', item.value)
     },
+    /**
+     * 鼠标focus
+     */
     handleFocus () {
       this.visible = true
       this.isFocus = true
@@ -266,6 +270,9 @@ export default {
         this.lastRemoteQuery = query
       }
     },
+    /**
+     * 键盘上下箭头和回车事件
+     */
     handleKeydown (e) {
       if (this.visible) {
         e.preventDefault()
@@ -287,6 +294,9 @@ export default {
         }
       }
     },
+    /**
+     * 选项背景高亮
+     */
     focusOption (direction) {
       let index = this.focusIndex + direction
       const optionsLength = this.filterOptions.length - 1
@@ -297,6 +307,10 @@ export default {
       }
       this.focusIndex = index
     },
+    /**
+     * 重置参数
+     * 1. blur触发
+     */
     resetSelect () {
       this.focusIndex = -1
       this.visible = false

@@ -16,11 +16,13 @@
           </template>
         </template>
         <div class="footer">
-          <font-icon type="ico-call" size="28" color="#aaa"/>
-          <span >
-            <p>客服电话</p>
-            <p style="font-size:13px">025-66606056</p>
-          </span>
+          <div>
+            <font-icon type="ico-call" size="28" color="#aaa"/>
+            <span >
+              <p>客服电话</p>
+              <p style="font-size:13px">025-66606056</p>
+            </span>
+          </div>
         </div>
       </Menu>
       <div v-show="collapsed" class="menu-collapsed">
@@ -43,7 +45,7 @@
         <p class="footer footer-collapsed">
           <Tooltip content="025-66606056" transfer placement="left">
             <div>
-              <font-icon type="ico-call" size="20" color="white"/>
+              <font-icon type="ico-call" size="24" color="white"/>
             </div>
           </Tooltip>
         </p>
@@ -134,30 +136,46 @@ export default {
 .sider
   z-index 10
   padding-bottom 50px
-.title
-  font-size 20px
-  color white
-  text-align center
-  line-height 52px
-  height 50px
-  padding 0
-  margin 0
+  .title
+    font-size 20px
+    color white
+    text-align center
+    line-height 52px
+    text-indent -5%
+    height 50px
+    padding 0
+    margin 0
+@keyframes move_in{
+  0%{width: 40px;}
+  80%{width: 80px;}
+  100%{width: 180px;}
+  }
+
+@keyframes move_out{
+  0%{width:180px;}
+  50%{width:100px;}
+  100%{width:50px;}
+  }
+
 .footer
   border-top 1px solid rgba(255,255,255,0.1)
-  margin-left 10px
   text-align center
   position fixed
   padding-top 5px
   padding-bottom 2px
-  width 180px
+  width 200px
+  height 50px
+  overflow hidden
+  animation move_in .2s;
   bottom 0
   left 0
   color #aaa
   background #252A2F
-  z-index 1111
+  z-index 1000
   font-size 12px
   &-collapsed
     width 50px
+    animation move_out .2s;
     margin-left 0
     &>div
       width 50px

@@ -7,10 +7,12 @@
       </p>
       <Form v-if="name === '送货调度'" ref="send" :model="send" :rules="sendRules" :label-width="60" inline label-position="left">
         <FormItem label="始发地" prop="start">
-          <area-select v-model="send.start" :deep="true" style="width:180px"></area-select>
+          <!-- <area-select v-model="send.start" :deep="true" style="width:180px"></area-select> -->
+          <city-select v-model="send.start" style="width:180px"></city-select>
         </FormItem>
         <FormItem label="目的地" prop="end" style="margin-left:27px;">
-          <area-select v-model="send.end" :deep="true" style="width:180px"></area-select>
+          <!-- <area-select v-model="send.end" :deep="true" style="width:180px"></area-select> -->
+          <city-select v-model="send.end" style="width:180px"></city-select>
         </FormItem>
       </Form>
       <Form v-else ref="pick" :model="pick" :rules="pickRules" :label-width="70" inline label-position="left">
@@ -66,7 +68,8 @@
 <script>
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
-import AreaSelect from '@/components/AreaSelect'
+// import AreaSelect from '@/components/AreaSelect'
+import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
 import City from '@/libs/js/city'
@@ -75,7 +78,8 @@ export default {
   name: 'dispatch',
 
   components: {
-    AreaSelect,
+    // AreaSelect,
+    CitySelect,
     SelectInput
   },
 

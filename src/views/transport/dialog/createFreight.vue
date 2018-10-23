@@ -3,10 +3,10 @@
     <p slot="header" style="text-align:center">{{title}}</p>
     <Form ref="$form" :model="form" :rules="rules" :label-width="80" style="padding:0 20px;">
       <FormItem label="始发地：" prop="start">
-        <AreaSelect v-model="form.start" :deep="true" placeholder="请选择"/>
+        <SelectInputForCity v-model="form.start" placeholder="请输入"/>
       </FormItem>
       <FormItem label="目的地：" prop="end">
-        <AreaSelect v-model="form.end" :deep="true" placeholder="请选择"/>
+        <SelectInputForCity v-model="form.end" placeholder="请输入"/>
       </FormItem>
       <FormItem label="承运商：" prop="carrierName">
         <SelectInput v-model="form.carrierName"
@@ -36,19 +36,17 @@
  */
 
 import BaseDialog from '@/basic/BaseDialog'
-import AreaSelect from '@/components/AreaSelect'
+import SelectInputForCity from '@/components/SelectInputForCity'
 import SelectInput from '@/views/transport/components/SelectInput.vue'
 import SelectInputMixin from '@/views/transport/mixin/selectInputMixin'
 import Server from '@/libs/js/server'
 import { CAR } from '@/views/client/client'
-import { FORM_VALIDATE_START, FORM_VALIDATE_END, getCityCode } from '@/libs/js/cityValidator'
 
 export default {
   name: 'CreatedFreight',
-  components: { AreaSelect, SelectInput },
+  components: { SelectInputForCity, SelectInput },
   mixins: [ BaseDialog, SelectInputMixin ],
   data () {
-    const vm = this
     return {
       show: true,
 
@@ -57,19 +55,17 @@ export default {
       linkageFields: ['carNo'],
 
       form: {
-        start: [],
-        end: [],
+        start: void 0,
+        end: void 0,
         carrierName: '',
         carNo: ''
       },
       rules: {
         start: [
-          { required: true, type: 'array', message: '请选择始发地', trigger: 'blur' },
-          { validator: FORM_VALIDATE_START(vm, '$form'), trigger: 'change' }
+          { required: true, type: 'number', message: '请选择始发地', trigger: 'blur' }
         ],
         end: [
-          { required: true, type: 'array', message: '请选择目的地', trigger: 'blur' },
-          { validator: FORM_VALIDATE_END, trigger: 'change' }
+          { required: true, type: 'number', message: '请选择目的地', trigger: 'blur' }
         ],
         carNo: [
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
@@ -85,8 +81,8 @@ export default {
             url: '/dispatch/add/waybill',
             method: 'post',
             data: {
-              start: getCityCode(this.form.start),
-              end: getCityCode(this.form.end),
+              start: this.form.start,
+              end: this.form.end,
               carrierName: this.form.carrierName,
               carNo: this.form.carNo ? this.form.carNo : void 0
             }
