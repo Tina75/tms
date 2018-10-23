@@ -174,17 +174,18 @@ export default {
     heightlightText (text) {
       if (this.currentValue) {
         let reg = new RegExp('(' + this.currentValue + ')', 'g')
-        return text.replace(reg, '<b style="color:#ec4e4e">$1</b>')
+        return text.replace(reg, '<b style="color:#00A4BD">$1</b>')
       }
       return text
     },
     // 应对编辑时，code -> 对应省份
     setCurrentValue (code) {
       if (code === this.code) return
+      let city = cityUtil.getPathByCode(code)
       let item = {
-        province: cityUtil.getPathByCode(code)[0].name,
-        city: cityUtil.getPathByCode(code)[1].name,
-        area: cityUtil.getPathByCode(code)[2].name
+        province: city[0].name,
+        city: city[1].name,
+        area: city[2] ? city[2].name : ''
       }
       this.currentValue = this.cityShow(item, 2)
     },
@@ -205,9 +206,11 @@ export default {
         }
         return opt.value === name
       })
+      console.log('item', item)
       this.currentValue = item.nameSeleced
       this.code = item.code
-      this.resetSelect()
+      this.focusIndex = -1
+      this.visible = false
       // 选中某一项
       this.$emit('on-select', item.code, item)
       this.$emit('input', item.code)
@@ -284,9 +287,9 @@ export default {
         (item.city ? item.city + ',  ' : '') +
         (item.province ? item.province : '')
       } else {
-        return (item.province ? item.province : '') +
-          (item.city ? ',  ' + item.city : '') +
-          (item.area ? ',  ' + item.area : '')
+        return (item.area ? item.area + '  ' : '') +
+          (item.city ? item.city : '')
+          // (item.province ? item.province : '')
       }
     },
     handleKeydown (e) {
@@ -356,7 +359,9 @@ export default {
       console.log(JSON.parse(localStorage.getItem('cityInfo')))
       this.visible = true
       this.options = JSON.parse(localStorage.getItem('cityInfo')) || []
-      this.focusIndex = this.options.length > 0 ? 0 : -1
+      this.options.length > 0 ? this.$nextTick(() => {
+        this.focusIndex = 0
+      }) : this.focusIndex = -1
     },
     // 数组去重
     arrayReduce (arr) {
