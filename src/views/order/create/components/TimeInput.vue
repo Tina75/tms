@@ -1,15 +1,15 @@
 <template>
-  <Poptip v-model="visible">
+  <Poptip v-model="visible" class="timeInput">
     <div slot="content" class="order-create__timeSelect">
       <Row>
         <Col v-for="(opt, index) in timeList" :key="index" span="6">
         <div class="timeCell" @click="clickHandle(opt)">
-          {{opt}}: 00前
+          {{opt}}:00
         </div>
         </Col>
       </Row>
     </div>
-    <Input v-model="inputValue" placeholder="请选择时间"/>
+    <Input v-model="inputValue" placeholder="请选择时间" readonly/>
   </Poptip>
 </template>
 <script>
@@ -40,7 +40,7 @@ export default {
       return arr
     },
     inputValue () {
-      return this.value ? `${this.value}: 00前` : ''
+      return this.value ? `${this.value}:00` : ''
     }
   },
   mounted () {
@@ -75,4 +75,11 @@ export default {
 .timeCell
   padding 10px 0
   cursor pointer
+</style>
+<style lang="stylus">
+.timeInput
+  .ivu-poptip-arrow
+    display none
+  .ivu-poptip-popper
+   padding-top 5px
 </style>

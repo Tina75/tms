@@ -372,7 +372,7 @@ export default {
   },
   computed: {
     styleHeight () {
-      return { height: this.$parent.$el.children[0].getBoundingClientRect().height + 'px' }
+      return { height: this.$parent.$el.children[0].style.minHeight }
     }
   },
   mounted: function () {

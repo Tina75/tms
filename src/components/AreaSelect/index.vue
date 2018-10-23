@@ -106,7 +106,6 @@ export default {
   },
   mounted () {
     if (this.value && (typeof this.value === 'string' || typeof this.value === 'number')) {
-      this.forceLoad()
       this.selected = areas.getPathByCode(this.value).map((item) => item.code)
     }
   },

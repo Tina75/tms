@@ -104,11 +104,10 @@
             <div v-if="settlementType"
                  class="detail-payment-way">
               {{ settlementType === '1' ? '按单结' : '月结' }}
-              <Table v-if="settlementType === '1'"
-                     :columns="tablePayment"
-                     :data="settlementPayInfo"
-                     :loading="loading"
-                     width="350"></Table>
+              <Settlement
+                v-if="settlementType === '1'"
+                :loading="loading"
+                :data="settlementPayInfo" />
             </div>
           </i-col>
         </Row>
@@ -279,11 +278,12 @@
                 <Radio label="1">按单结</Radio>
                 <Radio label="2">月结</Radio>
               </RadioGroup>
-              <Table v-if="settlementType === '1'"
-                     :columns="tablePayment"
-                     :data="settlementPayInfo"
-                     :loading="loading"
-                     width="350"></Table>
+              <Settlement v-if="settlementType === '1'"
+                          ref="$settlement"
+                          :loading="loading"
+                          :total="paymentTotal"
+                          :data="settlementPayInfo"
+                          mode="edit" />
             </div>
           </i-col>
         </Row>
@@ -312,6 +312,7 @@ import SelectInputMixin from '../mixin/selectInputMixin'
 import MoneyInput from '../components/MoneyInput'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '../components/SelectInput.vue'
+import Settlement from '../components/Settlement'
 
 import Server from '@/libs/js/server'
 import TMSUrl from '@/libs/constant/url'
@@ -319,7 +320,7 @@ import _ from 'lodash'
 
 export default {
   name: 'DetailFeright',
-  components: { MoneyInput, SelectInput, AreaSelect },
+  components: { MoneyInput, SelectInput, AreaSelect, Settlement },
   mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
   metaInfo: { title: '提货单详情' },
   data () {
@@ -341,9 +342,8 @@ export default {
       // 支付方式
       settlementType: '',
       settlementPayInfo: [
-        { payType: 2, fuelCardAmount: 0, cashAmount: 0 }
+        { payType: 2, fuelCardAmount: '', cashAmount: '' }
       ],
-      settlementPayInfoBack: [], // 支付信息备份，使用原因见 ../dialog/action
 
       // 所有按钮组
       btnList: [
@@ -536,7 +536,6 @@ export default {
           }
         })
         this.settlementPayInfo = temp
-        this.settlementPayInfoBack = Object.assign([], temp)
 
         this.setBtnsWithStatus()
         this.loading = false
@@ -546,6 +545,7 @@ export default {
     // 编辑后保存
     save () {
       if (!this.validate()) return
+
       Server({
         url: '/load/bill/update',
         method: 'post',
@@ -555,7 +555,7 @@ export default {
             ...this.info,
             ...this.formatMoney(),
             settlementType: this.settlementType,
-            settlementPayInfo: this.settlementType === '1' ? this.formatPayInfo() : void 0
+            settlementPayInfo: this.settlementType === '1' ? this.$refs.$settlement.getSettlement() : void 0
           },
           cargoList: _.uniq(this.detail.map(item => item.orderId))
         }
