@@ -2,12 +2,14 @@ import Server from './server'
 import { Message } from 'iview'
 
 let instance = (config = {}) => {
-  Server(Object.assign(config, {
+  Server(Object.assign({
     timeout: 10000,
     loading: true,
     ignoreCode: true,
-    responseType: 'arraybuffer'
-  })).then(res => {
+    responseType: 'arraybuffer',
+    fileName: '导出文件',
+    fileType: 'application/x-xls'
+  }, config)).then(res => {
     const tempBlob = new Blob([res.data], { type: 'application/json' })
     const reader = new FileReader()
     reader.onload = e => {
@@ -24,10 +26,10 @@ let instance = (config = {}) => {
       } catch (err) {}
 
       if (!code || code === 10000) {
-        let blob = new Blob([res.data], { type: 'application/x-xls' })
+        let blob = new Blob([res.data], { type: res.config.fileType })
         let downloadLink = document.createElement('a')
         downloadLink.href = URL.createObjectURL(blob)
-        downloadLink.download = (res.config.fileName ? res.config.fileName : '导出文件') + new Date().Format('yyyy-MM-dd_hhmmss') + '.xls'
+        downloadLink.download = res.config.fileName + new Date().Format('yyyy-MM-dd_hhmmss') + '.xls'
         downloadLink.click()
         Message.success('导出成功')
       } else {

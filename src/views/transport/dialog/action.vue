@@ -100,11 +100,12 @@
               <Radio label="1">按单结</Radio>
               <Radio label="2">月结</Radio>
             </RadioGroup>
-            <Table  v-if="settlementType === '1'"
-                    :columns="tablePayment"
-                    :data="settlementPayInfo"
-                    :loading="loading"
-                    width="350"></Table>
+            <Settlement v-if="settlementType === '1'"
+                        ref="$settlement"
+                        :loading="loading"
+                        :total="paymentTotal"
+                        :data="settlementPayInfo"
+                        mode="edit" />
           </div>
         </i-col>
       </Row>
@@ -122,13 +123,14 @@ import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '../components/SelectInput.vue'
 import SelectInputMixin from '../mixin/selectInputMixin'
 import MoneyInput from '../components/MoneyInput'
+import Settlement from '../components/Settlement'
 import Server from '@/libs/js/server'
 import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
 import { CAR } from '@/views/client/client'
 
 export default {
   name: 'SendCar',
-  components: { SelectInput, MoneyInput },
+  components: { SelectInput, MoneyInput, Settlement },
   mixins: [ BaseDialog, SelectInputMixin ],
   data () {
     return {
@@ -159,75 +161,7 @@ export default {
         otherFee: 0
       },
       settlementType: '1',
-      settlementPayInfo: [],
-      // 支付信息备份，当表格中的金额数据修改时，修改后的金额将会替换此备份中的数据，而不是 settlementPayInfo 中的数据
-      // 如果直接替换 settlementPayInfo 中的数据，会导致表格重新渲染，从而使 tab 键切换输入框失效
-      settlementPayInfoBack: [],
-
-      // 支付方式表格
-      tablePayment: [
-        {
-          title: '付款方式',
-          key: 'payType',
-          align: 'center',
-          width: 100,
-          render: (h, p) => {
-            let type
-            if (p.row.payType === 1) type = '预付'
-            if (p.row.payType === 2) type = '到付'
-            if (p.row.payType === 3) type = '回付'
-            return h('span', {
-              style: { fontWeight: 'bolder' }
-            }, type)
-          }
-        },
-        {
-          title: '现金',
-          key: 'cashAmount',
-          render: (h, p) => {
-            return h(MoneyInput, {
-              props: {
-                value: p.row.cashAmount,
-                placeholder: '请输入',
-                suffix: false
-              },
-              style: {
-                width: '70px'
-              },
-              on: {
-                'on-blur': (money) => {
-                  let temp = p.row
-                  temp.cashAmount = money
-                  this.settlementPayInfoBack.splice(p.index, 1, temp)
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '油卡',
-          key: 'fuelCardAmount',
-          render: (h, p) => {
-            return h(MoneyInput, {
-              props: {
-                value: p.row.fuelCardAmount,
-                placeholder: '请输入',
-                suffix: false
-              },
-              style: {
-                width: '70px'
-              },
-              on: {
-                'on-blur': (money) => {
-                  let temp = p.row
-                  temp.fuelCardAmount = money
-                  this.settlementPayInfoBack.splice(p.index, 1, temp)
-                }
-              }
-            })
-          }
-        }
-      ]
+      settlementPayInfo: []
     }
   },
   computed: {
@@ -243,11 +177,11 @@ export default {
   created () {
     // 支付信息表格展示内容根据类型改变
     this.settlementPayInfo = this.type === 'sendCar' ? [
-      { payType: 1, fuelCardAmount: 0, cashAmount: 0 },
-      { payType: 2, fuelCardAmount: 0, cashAmount: 0 },
-      { payType: 3, fuelCardAmount: 0, cashAmount: 0 }
+      { payType: 1, fuelCardAmount: '', cashAmount: '' },
+      { payType: 2, fuelCardAmount: '', cashAmount: '' },
+      { payType: 3, fuelCardAmount: '', cashAmount: '' }
     ] : [
-      { payType: 2, fuelCardAmount: 0, cashAmount: 0 }
+      { payType: 2, fuelCardAmount: '', cashAmount: '' }
     ]
     this.fetchData()
   },
@@ -277,19 +211,6 @@ export default {
           }
         }
       })
-    },
-
-    // 校验总金额
-    checkTotalAmount () {
-      let total = 0
-      this.settlementPayInfoBack.forEach(item => {
-        total = total + Number(item.cashAmount) + Number(item.fuelCardAmount)
-      })
-      if (total !== Number(this.paymentTotal) && total !== 0) {
-        this.$Message.error('结算总额应与费用合计相等')
-        return false
-      }
-      return true
     },
 
     // 查询数据
@@ -327,7 +248,6 @@ export default {
           }
         })
         this.settlementPayInfo = temp
-        this.settlementPayInfoBack = Object.assign([], temp)
 
         this.loading = false
       }).catch(err => console.error(err))
@@ -344,16 +264,6 @@ export default {
         if (typeof temp[key] === 'number') temp[key] = temp[key] * 100
       }
       return temp
-    },
-    // 格式化计费方式金额单位为分
-    formatPayInfo () {
-      return this.settlementPayInfoBack.map(item => {
-        return {
-          payType: item.payType,
-          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? item.fuelCardAmount * 100 : void 0,
-          cashAmount: typeof item.cashAmount === 'number' ? item.cashAmount * 100 : void 0
-        }
-      })
     },
 
     // 提交前数据校验
@@ -382,7 +292,7 @@ export default {
         this.$Message.error('请输入运输费')
         return false
       }
-      if (this.settlementType === '1' && !this.checkTotalAmount()) return false
+      if (this.settlementType === '1' && !this.$refs.$settlement.validate()) return false
       return true
     },
 
@@ -398,7 +308,7 @@ export default {
         carLength: this.info.carLength ? this.info.carLength : void 0,
         ...this.formatMoney(),
         settlementType: this.settlementType,
-        settlementPayInfo: this.formatPayInfo()
+        settlementPayInfo: this.$refs.$settlement.getSettlement()
       }
       let url
       if (this.type === 'sendCar') {
