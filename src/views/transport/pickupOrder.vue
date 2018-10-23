@@ -96,9 +96,9 @@
 
     <OrderTabContent
       v-if="!tabStatus"
+      :table-head-source="pickupHeadType"
       source="transport"
       tab-status="待提货"
-      table-head-source="wait_pickup_head"
       url="/load/bill/wait/pick/list"
       export-url="/load/bill/pick/up/export"
       @refresh-tab="fetchTabCount" />
@@ -109,7 +109,7 @@
                  :columns="tableColumns"
                  :show-filter="true"
                  :keywords="searchFields"
-                 table-head-type="pickup_head"
+                 :table-head-type="dispatchHeadType"
                  row-id="pickUpId"
                  url="/load/bill/list"
                  method="post"
@@ -141,6 +141,7 @@ import OrderTabContent from '@/views/order-management/components/TabContent'
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, setTabList } from './constant/pickup'
+import headType from '@/libs/constant/headtype'
 
 export default {
   name: 'ReceiveManager',
@@ -150,6 +151,8 @@ export default {
   data () {
     return {
       tabType: 'PICKUP',
+      pickupHeadType: headType.PICKUP,
+      dispatchHeadType: headType.WAIT_PICKUP,
 
       tabList: TAB_LIST, // 标签栏
       btnList: BUTTON_LIST(this), // 所有按钮组

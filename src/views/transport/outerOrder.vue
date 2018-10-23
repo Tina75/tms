@@ -97,7 +97,7 @@
                  :columns="tableColumns"
                  :show-filter="true"
                  :keywords="searchFields"
-                 table-head-type="trans_head"
+                 :table-head-type="outerHeadType"
                  row-id="transId"
                  url="/outside/bill/list"
                  method="post"
@@ -126,6 +126,7 @@ import SelectInput from './components/SelectInput.vue'
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, setTabList } from './constant/outer'
+import headType from '@/libs/constant/headtype'
 
 export default {
   name: 'OuterManager',
@@ -135,6 +136,8 @@ export default {
   data () {
     return {
       tabType: 'OUTER',
+      outerHeadType: headType.TRANS,
+
       tabList: TAB_LIST, // 标签栏
       btnList: BUTTON_LIST(this), // 所有按钮组
 
