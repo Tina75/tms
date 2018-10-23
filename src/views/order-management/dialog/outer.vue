@@ -69,6 +69,15 @@ export default {
 
   mixins: [BaseDialog],
   data () {
+    // 9位整数 2位小数
+    const validateFee = (rule, value, callback) => {
+      if ((value && /^[0-9]{0,9}(?:\.\d{1,2})?$/.test(value)) || !value) {
+        callback()
+      } else {
+        callback(new Error('最多整数位只可输入9位,小数两位'))
+      }
+    }
+
     return {
       settlements,
       info: { transfereeName: '', outTransNo: '', payType: 4, transFee: null },
@@ -81,7 +90,8 @@ export default {
           { required: true, message: '请选择付款方式' }
         ],
         transFee: [
-          { required: true, type: 'number', message: '请填写外转运费' }
+          { required: true, type: 'number', message: '请填写外转运费' },
+          { validator: validateFee }
         ]
       }
     }
@@ -111,12 +121,12 @@ export default {
     },
     save () {
       this.$refs['info'].validate((valid) => {
-        this.info = Object.assign({}, this.info, {
-          orderId: this.detail.id,
-          payType: Number(this.info.payType),
-          transFee: Number(this.info.transFee) * 100
-        })
         if (valid) {
+          this.info = Object.assign({}, this.info, {
+            orderId: this.detail.id,
+            payType: Number(this.info.payType),
+            transFee: Number(this.info.transFee) * 100
+          })
           Server({
             url: 'outside/bill/create',
             method: 'post',

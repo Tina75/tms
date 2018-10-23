@@ -14,8 +14,13 @@
         <Button type="default" @click.native="close">取消</Button>
       </div>
       <div v-else>
-        <Button v-if="id.length === 1" type="primary" @click="toDetail">去查看</Button>
-        <Button :type="id.length === 1 ? 'default' : 'primary'" @click.native="close">知道了</Button>
+        <div v-if="id.length > 1">
+          <Button type="primary" @click.native="close">知道了</Button>
+        </div>
+        <div v-else>
+          <Button type="primary" @click="toDetail">去查看</Button>
+          <Button type="default" @click.native="close">知道了</Button>
+        </div>
       </div>
     </div>
   </Modal>
