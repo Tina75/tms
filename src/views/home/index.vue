@@ -311,7 +311,7 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
->>>.page-home
+.page-home
   -webkit-transition all .2s ease-in-out
   transition all .2s ease-in-out
   margin -20px -15px
