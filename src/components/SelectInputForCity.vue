@@ -274,6 +274,7 @@ export default {
         server({
           method: 'get',
           url: 'city/search',
+          ignoreCode: true,
           params: {
             text: query,
             codeType: this.codeType
