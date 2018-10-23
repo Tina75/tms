@@ -70,7 +70,7 @@ export default {
           this.message = '此订单已经在送货中，为保证数据安全，不可以删除'
           this.canDelete = false
         }
-        if (this.id[0].status === 10 && this.id[0].transStatus === 1) {
+        if (this.id[0].status < 30 && this.id[0].transStatus === 1) {
           this.message = '此订单已经外转处理，为保证数据安全，不可以删除'
           this.canDelete = false
         }
@@ -137,9 +137,9 @@ export default {
         }
       })
     },
-    // 筛选选中项是否有不满足条件的选项(待提货下已外转订单、待提货下已提货订单、待送货下已送货订单、status大于20的订单)
+    // 筛选选中项是否有不满足条件的选项(已外转订单、待提货下已提货订单、待送货下已送货订单、status大于20的订单)
     checkSelectList (list) {
-      if (list.status > 20 || (list.status === 10 && list.transStatus === 1) || (list.status === 10 && list.pickupStatus === 1) || (list.status === 20 && list.dispatchStatus === 1)) {
+      if (list.status > 20 || (list.status < 30 && list.transStatus === 1) || (list.status === 10 && list.pickupStatus === 1) || (list.status === 20 && list.dispatchStatus === 1)) {
         return true
       }
       return false
