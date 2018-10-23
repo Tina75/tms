@@ -310,7 +310,6 @@ import DetailMixin from '../mixin/detailMixin'
 import SelectInputMixin from '../mixin/selectInputMixin'
 
 import MoneyInput from '../components/MoneyInput'
-import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '../components/SelectInput.vue'
 import PayInfo from '../components/PayInfo'
 
@@ -320,7 +319,7 @@ import _ from 'lodash'
 
 export default {
   name: 'DetailFeright',
-  components: { MoneyInput, SelectInput, AreaSelect, PayInfo },
+  components: { MoneyInput, SelectInput, PayInfo },
   mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
   metaInfo: { title: '提货单详情' },
   data () {

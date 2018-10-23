@@ -172,13 +172,13 @@
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title detail-field-required">始发地：</span>
-            <AreaSelect v-model="startCodes"
-                        class="detail-info-input" />
+            <SelectInputForCity v-model="info.start"
+                                class="detail-info-input" />
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title detail-field-required">目的地：</span>
-            <AreaSelect v-model="endCodes"
-                        class="detail-info-input" />
+            <SelectInputForCity v-model="info.end"
+                                class="detail-info-input" />
           </i-col>
           <i-col span="10" offset="1">
             <span class="detail-field-title">承运商：</span>
@@ -331,32 +331,29 @@ import DetailMixin from '../mixin/detailMixin'
 import SelectInputMixin from '../mixin/selectInputMixin'
 
 import MoneyInput from '../components/MoneyInput'
-import AreaSelect from '@/components/AreaSelect'
+import SelectInputForCity from '@/components/SelectInputForCity'
 import SelectInput from '../components/SelectInput.vue'
 import PayInfo from '../components/PayInfo'
 
 import Server from '@/libs/js/server'
-import { getCityCode } from '@/libs/js/cityValidator'
 import TMSUrl from '@/libs/constant/url'
 import _ from 'lodash'
 
 export default {
   name: 'DetailFeright',
   metaInfo: { title: '运单详情' },
-  components: { MoneyInput, SelectInput, AreaSelect, PayInfo },
+  components: { MoneyInput, SelectInput, SelectInputForCity, PayInfo },
   mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
 
   data () {
     return {
       pageName: 'feright',
-      startCodes: '',
-      endCodes: '',
       status: '',
       // 信息
       info: {
         waybillNo: '',
-        start: '',
-        end: '',
+        start: void 0,
+        end: void 0,
         carrierName: '',
         carNo: '',
         carType: '',
@@ -529,17 +526,6 @@ export default {
     }
   },
 
-  watch: {
-    startCodes (val) {
-      if (!(val instanceof Array)) return
-      this.info.start = getCityCode(val)
-    },
-    endCodes (val) {
-      if (!(val instanceof Array)) return
-      this.info.end = getCityCode(val)
-    }
-  },
-
   methods: {
     // 将数据返回的标识映射为文字
     statusFilter (status) {
@@ -567,8 +553,6 @@ export default {
         for (let key in this.info) {
           this.info[key] = data.waybill[key]
         }
-        this.startCodes = this.info.start.toString()
-        this.endCodes = this.info.end.toString()
         for (let key in this.payment) {
           this.payment[key] = this.setMoneyUnit2Yuan(data.waybill[key])
         }

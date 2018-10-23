@@ -98,6 +98,7 @@
       v-if="!tabStatus"
       source="transport"
       tab-status="待提货"
+      table-head-source="wait_pickup_head"
       url="/load/bill/wait/pick/list"
       export-url="/load/bill/pick/up/export"
       @refresh-tab="fetchTabCount" />
