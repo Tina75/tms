@@ -87,15 +87,15 @@ export default {
 
   data () {
     return {
-      send: { start: '', end: '' },
+      send: { start: void 0, end: void 0 },
       sendRules: {
         start: [
-          { required: true, message: '请填写始发地', trigger: 'change' },
-          { required: true, message: '请填写始发地', trigger: 'blur' }
+          { required: true, type: 'number', message: '请填写始发地', trigger: 'change' },
+          { required: true, type: 'number', message: '请填写始发地', trigger: 'blur' }
         ],
         end: [
-          { required: true, message: '请填写目的地', trigger: 'change' },
-          { required: true, message: '请填写目的地', trigger: 'blur' }
+          { required: true, type: 'number', message: '请填写目的地', trigger: 'change' },
+          { required: true, type: 'number', message: '请填写目的地', trigger: 'blur' }
         ]
       },
       pick: { carrierName: '', carNo: '', driverName: '' },
