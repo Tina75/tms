@@ -25,7 +25,7 @@
           </SelectInput>
         </FormItem>
         <FormItem label="货值:" prop="cargoCost" class="ivu-form-item-required blank">
-          <Input v-model="validate.cargoCost" :maxlength="60" placeholder="请输入"/>
+          <Input v-model="validate.cargoCost" :maxlength="9" placeholder="请输入"/>
         </FormItem>
         <FormItem label="重量:" prop="weight" class="ivu-form-item-required blank">
           <Input v-model="validate.weight" :maxlength="60" placeholder="请输入"/>吨
