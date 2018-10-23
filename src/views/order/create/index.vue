@@ -277,7 +277,7 @@ export default {
       const edDate = _this.orderForm.arriveTime
       const edTime = _this.orderForm.arriveTimes
       const valids = value && stDate && edDate && edTime
-      if (valids && stDate.setHours(value) > edDate.setHours(edTime)) {
+      if (valids && stDate.setHours(value.substr(0, 2), value.substr(3, 2)) > edDate.setHours(edTime.substr(0, 2), edTime.substr(3, 2))) {
         callback(new Error('发货时间需早于发货时间'))
       } else {
         callback()
@@ -298,7 +298,7 @@ export default {
       const stTime = _this.orderForm.deliveryTimes
       const edDate = _this.orderForm.arriveTime
       const valids = value && stDate && edDate && stTime
-      if (valids && stDate.setHours(stTime) > edDate.setHours(value)) {
+      if (valids && stDate.setHours(stTime.substr(0, 2), stTime.substr(3, 2)) > edDate.setHours(value.substr(0, 2), value.substr(3, 2))) {
         callback(new Error('到货时间需晚于发货时间'))
       } else {
         callback()
@@ -536,12 +536,12 @@ export default {
           if (vm.orderForm.deliveryTime) {
             const deliveryTime = new Date(vm.orderForm.deliveryTime)
             vm.orderForm.deliveryTime = deliveryTime
-            vm.orderForm.deliveryTimes = `${deliveryTime.getHours()}`
+            vm.orderForm.deliveryTimes = `${deliveryTime.getHours() > 9 ? deliveryTime.getHours() : '0' + deliveryTime.getHours()}:${deliveryTime.getMinutes() > 9 ? deliveryTime.getMinutes() : '0' + deliveryTime.getMinutes()}`
           }
           if (vm.orderForm.arriveTime) {
             const arriveTime = new Date(vm.orderForm.arriveTime)
             vm.orderForm.arriveTime = arriveTime
-            vm.orderForm.arriveTimes = `${arriveTime.getHours()}`
+            vm.orderForm.arriveTimes = `${arriveTime.getHours() > 9 ? arriveTime.getHours() : '0' + arriveTime.getHours()}:${arriveTime.getMinutes() > 9 ? arriveTime.getMinutes() : '0' + arriveTime.getMinutes()}`
           }
         })
         .catch((errorInfo) => {
