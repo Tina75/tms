@@ -1182,6 +1182,8 @@ export default {
     margin-right 20px
 </style>
 <style lang="stylus">
+.operate-box .ivu-input-group
+  display flex
 .order-simple-select
   .ivu-select-selection
     height 35px
