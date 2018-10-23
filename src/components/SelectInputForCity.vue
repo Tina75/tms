@@ -404,6 +404,8 @@ export default {
         /deep/ .ivu-input-suffix
           z-index 10
         /deep/ .ivu-input-group-append
+          /*font-size 12px*/
+          color rgba(0,0,0,0.2);
           z-index: 100;
           position: absolute;
           background: #fff;
