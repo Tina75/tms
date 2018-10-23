@@ -2,7 +2,8 @@
   <div :class="{'money-input-component-short': suffix}" class="money-input-component">
     <InputNumber v-model="money" :min="0"
                  :placeholder="placeholder"
-                 @on-blur="handlerBlur" />
+                 @on-change="changeHandler"
+                 @on-blur="blurHandler" />
 
     <span v-if="suffix"
           class="number-input-unit">元</span>
@@ -21,15 +22,23 @@ export default {
     }
   },
   data () {
-    return { money: (this.value !== undefined && this.value !== '' && !isNaN((this.value))) ? Number(this.value) : null }
+    return { money: (this.value !== null && this.value !== '' && !isNaN(Number(this.value))) ? Number(this.value) : null }
   },
   watch: {
-    value (val) {
-      this.money = Number(val) ? Number(val) : null
+    value (value) {
+      this.money = (value !== null && value !== '' && !isNaN(Number(value))) ? Number(value) : null
     }
   },
   methods: {
-    handlerBlur () {
+    changeHandler (value) {
+      if (!value) return
+      if (value && value.toString().split('.')[0].length > 9) {
+        this.money = (this.value !== null && this.value !== '' && !isNaN(Number(this.value))) ? Number(this.value) : null
+        this.$Message.error('金额整数部分不能超过9位')
+      }
+    },
+
+    blurHandler () {
       if (typeof this.money === 'number') this.money = Number(this.money.toFixed(2))
       this.$emit('input', this.money)
       this.$emit('on-blur', this.money)

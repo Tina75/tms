@@ -9,7 +9,7 @@
 import MoneyInput from './MoneyInput'
 
 export default {
-  name: 'Settlement',
+  name: 'PayInfo',
   props: {
     loading: {
       type: Boolean,
@@ -105,7 +105,7 @@ export default {
     }
   },
   methods: {
-    getSettlement () {
+    getPayInfo () {
       return this.tableDataBack.map(item => {
         return {
           payType: item.payType,
