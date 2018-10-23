@@ -231,7 +231,7 @@ export default {
     filterColumns () {
       const vm = this
       if (vm.showFilter) {
-        vm.extraColumns = vm.reconfigTableHeader('', vm.tableHeadType, 'change')
+        // vm.extraColumns = vm.reconfigTableHeader('', vm.tableHeadType, 'change')
         const columnGroup = _.groupBy(vm.extraColumns, (cl) => cl.key)
         const fixedCols = []
         const normalCols = []
@@ -581,6 +581,7 @@ export default {
       let params = {}
       params.bizCode = this.tableHeadType
       params.propertiyList = this.reconfigTableHeader(columns, this.tableHeadType)
+      this.extraColumns = columns
       server({
         url: '/gridHead/save',
         method: 'post',
