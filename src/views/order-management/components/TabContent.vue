@@ -59,8 +59,10 @@
       </div>
       <div style="display: flex;justify-content: space-between;">
         <div>
-          <area-select v-model="cityCodes.startCodes" :deep="true" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
-          <area-select v-model="cityCodes.endCodes" :deep="true" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <!-- <area-select v-model="cityCodes.startCodes" :deep="true" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <area-select v-model="cityCodes.endCodes" :deep="true" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select> -->
+          <city-select v-model="cityCodes.startCodes" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></city-select>
+          <city-select v-model="cityCodes.endCodes" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></city-select>
           <DatePicker
             :options="timeOption"
             v-model="times"
@@ -86,7 +88,8 @@
       :columns="tableColumns"
       :show-filter="true"
       :row-class-name="rowClassName"
-      table-head-type="order_head"
+      :row-selection="showCheckBox"
+      :table-head-type="tableHeadSource"
       style="margin-top: 15px"
       @on-selection-change="handleSelectionChange"
       @on-column-change="handleColumnChange">
@@ -100,7 +103,8 @@ import BasePage from '@/basic/BasePage'
 import PageTable from '@/components/page-table/'
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
-import AreaSelect from '@/components/AreaSelect'
+// import AreaSelect from '@/components/AreaSelect'
+import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput.vue'
 import OrderPrint from './OrderPrint'
 import FontIcon from '@/components/FontIcon'
@@ -114,7 +118,8 @@ export default {
 
   components: {
     PageTable,
-    AreaSelect,
+    // AreaSelect,
+    CitySelect,
     SelectInput,
     OrderPrint,
     FontIcon
@@ -148,6 +153,16 @@ export default {
     exportUrl: {
       type: String,
       default: 'order/exportOrder'
+    },
+    // 是否需要隐藏父单的checkBox
+    isVisiable: {
+      type: Boolean,
+      default: false
+    },
+    // 表头筛选字段根据来源各自展示
+    tableHeadSource: {
+      type: String,
+      default: 'order_head'
     },
     // 刷新tab数量的回调
     refreshTab: Function
@@ -538,17 +553,24 @@ export default {
           key: 'waybillNo',
           minWidth: 160,
           render: (h, p) => {
-            if (p.row.waybillNo.length > 12) {
-              return h('Tooltip', {
-                props: {
-                  placement: 'bottom',
-                  content: p.row.waybillNo
-                }
-              }, [
-                h('span', this.formatterAddress(p.row.waybillNo))
-              ])
+            if (p.row.waybillNo) {
+              let waybillNoArr = p.row.waybillNo.split(',')
+              console.log(waybillNoArr)
+              if (waybillNoArr.length > 1) {
+                return h('Tooltip', {
+                  props: {
+                    placement: 'bottom',
+                    maxWidth: 152,
+                    content: p.row.waybillNo
+                  }
+                }, [
+                  h('span', waybillNoArr[0] + ' ...')
+                ])
+              } else {
+                return h('span', p.row.waybillNo)
+              }
             } else {
-              return h('span', p.row.waybillNo ? p.row.waybillNo : '-')
+              return h('span', '-')
             }
           }
         },
@@ -774,6 +796,20 @@ export default {
       orderPrint: [],
       keyword: {
         status: 10 // 默认待提货状态  传给pageTable可重新请求数据
+      },
+      showCheckBox: {
+        isVisible: (row) => {
+          if (this.isVisiable) { // 送货管理待调度为 true
+            // 父单隐藏checkBox
+            if (row.parentId === '' && row.disassembleStatus === 1) {
+              return false
+            } else {
+              return true
+            }
+          } else {
+            return true
+          }
+        }
       }
     }
   },

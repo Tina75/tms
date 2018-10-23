@@ -1,5 +1,5 @@
 <template>
-  <div class="temAll">
+  <div :style="styleHeight" class="temAll">
     <Col span="4">
     <Menu :open-names="['1']" style="width: 100%;" class="menuSty" accordion>
       <Submenu name="1">
@@ -59,6 +59,11 @@ export default {
       picContent: {},
       videoContent: {},
       type: 'pic'
+    }
+  },
+  computed: {
+    styleHeight () {
+      return { height: this.$parent.$el.children[0].getBoundingClientRect().height + 'px' }
     }
   },
   mounted: function () {
@@ -167,8 +172,7 @@ export default {
 .contentInfoDiv
   background:#fff;
   padding-left: 20px;
-  height: inherit;
-  overflow: auto;
+  height: 100%;
 .contentCard
   margin-top:-20px;
 </style>

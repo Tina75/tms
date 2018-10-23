@@ -1,14 +1,14 @@
 <template>
-  <div class="temAll">
-    <Col span="3">
+  <Row class="temAll">
+    <!-- <Col span="3">
     <Menu :active-name="typeName" class="menuSty" style="width: 100%;">
       <MenuItem v-for="menu in menuList" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
       <p style="margin-left:-20px;">{{menu.name}}
       <Badge v-if="menu.infoNum" :count="menu.infoNum" class="menuInfoBadge"></Badge></p>
       </MenuItem>
     </Menu>
-    </Col>
-    <Col span="21" class="contentDiv">
+    </Col> -->
+    <Col span="24" class="contentDiv">
     <div class="contendBorderBttom">
       <span class="iconRightTitle"></span>
       <span class="rightTitleSty">{{rightTitle}}</span>
@@ -23,10 +23,9 @@
         </span>
       </div>
     </div>
-    <div style="min-height:520px;">
+    <div>
       <!--系统消息-->
       <div v-if="'0' === this.searchData.type">
-        <Col span="24">
         <div class="mesDivAll">
           <Checkbox
             v-if="!batchBtnShow"
@@ -41,7 +40,9 @@
           </div>
           <div v-for="msg in this.sysMessageList" v-else :key="msg.id" class="megDiv">
             <CheckboxGroup v-if="!batchBtnShow" v-model="checkAllGroup" class="checkAllGroup" @on-change="checkAllGroupChange">
-              <Checkbox :label="msg.id" class="checkboxItem"></Checkbox>
+              <Checkbox :label="msg.id" class="checkboxItem">
+                <span></span>
+              </Checkbox>
             </CheckboxGroup>
             <div class="msgImg">
               <i class="icon font_family icon-xitongxiaoxi" style="color: #FFBB44;"></i>
@@ -58,7 +59,6 @@
             </div>
           </div>
         </div>
-          </Col>
       </div>
       <!--订单消息-->
       <div v-if="'1' === this.searchData.type">
@@ -181,12 +181,13 @@
       @on-change="searchInfoData"
       @on-page-size-change="chagePageSize"/>
     </Col>
-  </div>
+  </Row>
 </template>
 
 <script>
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
+import TMSUrl from '@/libs/constant/url'
 import { mapActions } from 'vuex'
 export default {
   name: 'info',
@@ -286,14 +287,9 @@ export default {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     },
     getMenuInfoNum () {
-      this.menuList[0].infoNum = this.$store.getters.MsgCount.sysNum
+      // this.menuList[0].infoNum = this.$store.getters.MsgCount.sysNum
       // this.menuList[1].infoNum = this.$store.getters.MsgCount.orderNum
       // this.menuList[2].infoNum = this.$store.getters.MsgCount.carrierNum
-      if (!this.batchBtnShow) {
-        for (let index = 0; index < document.getElementsByClassName('checkboxItem').length; index++) {
-          document.getElementsByClassName('checkboxItem')[index].children[1].innerText = ''
-        }
-      }
     },
     getMenuList (params) {
       Server({
@@ -383,7 +379,7 @@ export default {
         // 0系统消息4订单消息5回单消息6运单消息7提货单消息8外转单消息
         case 0:
           this.openTab({
-            path: '/information/message-info',
+            path: TMSUrl.MESSAGE_DETAIL, // '/information/message-info',
             query: {
               id: msg.title,
               message: msg
@@ -392,31 +388,31 @@ export default {
           break
         case 4:
           this.openTab({
-            path: '/order-management/order',
+            path: TMSUrl.ORDER_MANAGEMENT, // '/order-management/order',
             title: '订单管理'
           })
           break
         case 5:
           this.openTab({
-            path: '/order-management/receipt',
+            path: TMSUrl.RECEIPT_ORDER_MANAGEMENT, // '/order-management/receipt',
             title: '回单管理'
           })
           break
         case 6:
           this.openTab({
-            path: '/transport/waybill',
+            path: TMSUrl.TANSPORT_ORDER, // '/transport/waybill',
             title: '运单管理'
           })
           break
         case 7:
           this.openTab({
-            path: '/transport/pickupOrder',
+            path: TMSUrl.PICKUP_ORDER, // '/transport/pickupOrder',
             title: '提货单管理'
           })
           break
         case 8:
           this.openTab({
-            path: '/transport/outerOrder',
+            path: TMSUrl.OUTER_ORDER, // '/transport/outerOrder',
             title: '外转单管理'
           })
           break
@@ -489,7 +485,6 @@ export default {
     font-weight: bold;
 .temAll
   width: 100%;
-  height: 100%;
   background:rgba(243,245,249,1);
   overflow: auto;
 .megDiv
@@ -525,10 +520,11 @@ export default {
   cursor: pointer;
   float: right;
 .noneImg
-  position: absolute;
-  left: 50%;
-  margin-left: -110px;
-  margin-top: 100px;
+  display flex
+  flex-direction column
+  justify-content center
+  align-items center
+  margin-top: 112px;
   text-align: center;
   color: #999999;
   font-size: 16px;
@@ -542,8 +538,6 @@ export default {
 .contentDiv
   background:#fff;
   padding: 0 25px 50px 25px;
-  overflow: auto;
-  height: inherit;
 .contendBorderBttom
   border-bottom: 1px solid #e9e9e9;
   padding-bottom:10px;
@@ -557,7 +551,7 @@ export default {
   margin-top: 2px;
   border-radius:3px;
 .rightTitleSty
-  margin-left:35px;
+  margin-left:15px;
   font-size: 16px;
   font-weight:600;
 .rightConfBtnRemove

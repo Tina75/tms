@@ -187,6 +187,11 @@ export default {
       type: Boolean,
       default: true
     },
+    // 是否显示checBox
+    rowSelection: {
+      type: Object,
+      default: Object
+    },
     // 表单类型
     tableHeadType: '',
     onLoad: Function, // 每次请求后，回调，返回列表搜索结果
@@ -231,7 +236,7 @@ export default {
     filterColumns () {
       const vm = this
       if (vm.showFilter) {
-        vm.extraColumns = vm.reconfigTableHeader('', vm.tableHeadType, 'change')
+        // vm.extraColumns = vm.reconfigTableHeader('', vm.tableHeadType, 'change')
         const columnGroup = _.groupBy(vm.extraColumns, (cl) => cl.key)
         const fixedCols = []
         const normalCols = []
@@ -280,10 +285,12 @@ export default {
       }
     },
     /**
-     * 空字符串一律使用中划线【-】代替
+     * 1. 替换空字符
+     * 2. 控制checkbox
      */
     mapColumns () {
       return this.filterColumns.map((col) => {
+        // 空字符串一律使用中划线【-】代替
         if (col.key && !col.render && !col.tooltip) {
           col.render = (h, params) => {
             let value = params.row[col.key]
@@ -385,6 +392,9 @@ export default {
         if (this.selected.includes(row[this.rowId])) {
           classes.push('ivu-table-row-highlight')
         }
+        if (row._visible !== undefined && !row._visible) {
+          classes.push('ivu-table-row-hidden')
+        }
       }
       return classes.join(' ')
     },
@@ -428,6 +438,18 @@ export default {
           if (vm.isSelection) {
             // 当有复选框场景的时候，需要主动勾选上
             vm.dataSource = (data[vm.listField] || []).map((item) => {
+              if (vm.rowSelection.isVisible && typeof vm.rowSelection.isVisible === 'function') {
+                let visible = this.rowSelection.isVisible(item)
+                if (!visible) {
+                  item._disabled = true
+                  item._visible = visible
+                }
+              } else if (vm.rowSelection.isDisabled && typeof vm.rowSelection.isDisabled === 'function') {
+                let disabled = vm.rowSelection.isDisabled(item)
+                if (disabled) {
+                  item._disabled = true
+                }
+              }
               if (vm.selected.includes(item[vm.rowId])) {
                 item._checked = true
               }
@@ -581,6 +603,7 @@ export default {
       let params = {}
       params.bizCode = this.tableHeadType
       params.propertiyList = this.reconfigTableHeader(columns, this.tableHeadType)
+      this.extraColumns = columns
       server({
         url: '/gridHead/save',
         method: 'post',
@@ -625,4 +648,7 @@ export default {
   .ivu-table-row-highlight
     td
       background-color #ebf7ff
+  .ivu-table-row-hidden
+    .ivu-checkbox
+      display none
 </style>

@@ -3,11 +3,9 @@
  */
 
 import _ from 'lodash'
-import MoneyInput from '../components/MoneyInput'
 import Server from '@/libs/js/server'
 import Float from '@/libs/js/float'
 import { CAR } from '@/views/client/client'
-import { validateCityies } from '@/libs/js/cityValidator'
 
 export default {
   data () {
@@ -33,79 +31,6 @@ export default {
         otherFee: '',
         totalFee: ''
       },
-
-      // 支付方式表格
-      tablePayment: [
-        {
-          title: '付款方式',
-          key: 'payType',
-          align: 'center',
-          width: 100,
-          render: (h, p) => {
-            let type
-            if (p.row.payType === 1) type = '预付'
-            if (p.row.payType === 2) type = '到付'
-            if (p.row.payType === 3) type = '回付'
-            return h('span', {
-              style: { fontWeight: 'bolder' }
-            }, type)
-          }
-        },
-        {
-          title: '现金',
-          key: 'cashAmount',
-          render: (h, p) => {
-            if (!this.inEditing) {
-              return h('span', p.row.cashAmount)
-            } else {
-              return h(MoneyInput, {
-                props: {
-                  value: p.row.cashAmount,
-                  placeholder: '请输入',
-                  suffix: false
-                },
-                style: {
-                  width: '70px'
-                },
-                on: {
-                  'on-blur': (money) => {
-                    let temp = p.row
-                    temp.cashAmount = money
-                    this.settlementPayInfoBack.splice(p.index, 1, temp)
-                  }
-                }
-              })
-            }
-          }
-        },
-        {
-          title: '油卡',
-          key: 'fuelCardAmount',
-          render: (h, p) => {
-            if (!this.inEditing) {
-              return h('span', p.row.fuelCardAmount)
-            } else {
-              return h(MoneyInput, {
-                props: {
-                  value: p.row.fuelCardAmount,
-                  placeholder: '请输入',
-                  suffix: false
-                },
-                style: {
-                  width: '70px'
-                },
-                on: {
-                  'on-blur': (money) => {
-                    let temp = p.row
-                    temp.fuelCardAmount = money
-                    this.settlementPayInfoBack.splice(p.index, 1, temp)
-                  }
-                }
-              })
-            }
-          }
-        }
-      ],
 
       showLog: false,
       logList: [] // 操作日志
@@ -198,19 +123,6 @@ export default {
       this.fetchData()
     },
 
-    // 校验结算方式输入金额
-    checkTotalAmount () {
-      let total = 0
-      this.settlementPayInfoBack.forEach(item => {
-        total = total + Number(item.cashAmount) + Number(item.fuelCardAmount)
-      })
-      if (total !== Number(this.paymentTotal) && total !== 0) {
-        this.$Message.error('结算总额应与费用合计相等')
-        return false
-      }
-      return true
-    },
-
     // 添加订单
     addOrder (type) {
       const self = this
@@ -255,28 +167,21 @@ export default {
       }
       return temp
     },
-    // 格式化计费方式金额单位为分
-    formatPayInfo () {
-      // if (this.settlementType !== '1') return
-      return this.settlementPayInfoBack.map(item => {
-        return {
-          payType: item.payType,
-          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? item.fuelCardAmount * 100 : void 0,
-          cashAmount: typeof item.cashAmount === 'number' ? item.cashAmount * 100 : void 0
-        }
-      })
-    },
+
     // 校验
     validate () {
-      if (this.info.start !== undefined || this.info.end !== undefined) return validateCityies(this.startCodes, this.endCodes)
+      if (!this.info.start) {
+        this.$Message.error('请选择始发地')
+        return false
+      }
+      if (!this.info.end) {
+        this.$Message.error('请选择目的地')
+        return false
+      }
       if (this.pageName === 'pickup' && !this.info.carrierName) {
         this.$Message.error('请输入承运商')
         return false
       }
-      // if (!this.info.driverName) {
-      //   this.$Message.error('请输入司机')
-      //   return false
-      // }
       if (this.info.driverPhone && !(/^1\d{10}$/.test(this.info.driverPhone))) {
         this.$Message.error('司机手机号格式不正确')
         return false
@@ -289,15 +194,7 @@ export default {
         this.$Message.error('请输入正确的车牌号')
         return false
       }
-      // if (!this.payment.freightFee) {
-      //   this.$Message.error('请输入运输费')
-      //   return false
-      // }
-      // if (!this.settlementType) {
-      //   this.$Message.error('请选择结算方式')
-      //   return false
-      // }
-      if (this.settlementType === '1' && !this.checkTotalAmount()) return false
+      if (this.settlementType === '1' && !this.$refs.$settlement.validate()) return false
 
       return true
     }

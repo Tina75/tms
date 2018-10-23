@@ -198,6 +198,10 @@ export default {
           key: 'destinationName'
         },
         {
+          title: '车牌号',
+          key: 'truckNo'
+        },
+        {
           title: '合计运费',
           key: 'totalFeeText'
         },

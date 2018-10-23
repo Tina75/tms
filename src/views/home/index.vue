@@ -1,9 +1,9 @@
 <template>
   <div ref="el" class="page-home">
     <div class="page-home__header">
-      <Alert v-if="notice.content" type="warning" class="page-home__header-notice" banner closable show-icon>
-        <span :class="{'page-home__cursorPointer': notice.url}" @click="hrefHandle"> {{ notice.content }}</span>
-        <Icon slot="icon" type="ios-bulb-outline"></Icon>
+      <Alert v-if="notice.content" type="warning" class="page-home__header-notice" banner closable show-icon @on-close="closeNotice">
+        <span :class="{'page-home__noticeBar': notice.url}" @click="hrefHandle">{{ notice.content }}</span>
+        <FontIcon slot="icon" type="tongzhi-paomadeng" size="20" style="vertical-align: middle; color: #00A4BD"></FontIcon>
       </Alert>
 
       <Row class="page-home__header-row">
@@ -242,12 +242,16 @@ export default {
     unobserve (el) {
       this.intersectionObserver.unobserve(el)
     },
+    /**
+     * 查询跑马灯消息
+     * 只会返回一条
+     */
     initNotice () {
       server({
         url: 'message/pmd',
         method: 'get'
       }).then(res => {
-        if (res && res.data.code === 1000) {
+        if (res && res.data.code === 10000) {
           this.notice = res.data.data
           // this.cardChecksTemp = []
           // for (const i of data) {
@@ -258,6 +262,18 @@ export default {
           // this.cardsList = data
           // this.cardChecks = this.cardChecksTemp
         }
+      })
+    },
+    /**
+     * 关闭消息
+     */
+    closeNotice (e) {
+      server({
+        url: 'message/pmdDel',
+        method: 'get',
+        params: { id: this.notice.id }
+      }).then(() => {
+        this.notice = {}
       })
     },
     // 获取card数组
@@ -341,8 +357,10 @@ export default {
   &__header-greetings
     line-height 24px
   &__header-notice
-    z-index 10
     width 100%
+    background #fff
+    border-color #EFEFEF
+    border-radius 5px
   &__header-date
     vertical-align super
     margin-right 30px
@@ -351,6 +369,8 @@ export default {
   &__message-item
     background-color #f3f3f3
     margin-bottom 8px
-  &__cursorPointer
+  &__noticeBar
+    width 100%
     cursor pointer
+    display inline-block
 </style>

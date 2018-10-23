@@ -1,5 +1,5 @@
 <template>
-  <div class="temAll">
+  <Row :style="styleHeight" class="temAll">
     <Col span="4" class="colHeight" style="height:100%">
     <Menu :active-name="menuInitName" class="leftMenu" style="width:100%">
       <div class="centerBtnDiv">
@@ -91,7 +91,7 @@
       </Card>
     </div>
     </Col>
-  </div>
+  </Row>
 </template>
 
 <script>
@@ -156,6 +156,10 @@ export default {
      */
     title () {
       return this.selectRole.name + '的权限'
+    },
+    // 自适应高度
+    styleHeight () {
+      return { height: (document.body.clientHeight) + 'px' }
     }
   },
   watch: {
@@ -378,7 +382,7 @@ export default {
   .contentDiv
     padding-left: 20px;
     height:calc(100% - 45px);
-    overflow-y:auto;
+    // overflow-y:auto;
     padding-bottom: 80px;
   .leftMenu
     height: 100%

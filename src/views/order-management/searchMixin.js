@@ -65,8 +65,8 @@ export default {
         waybillNo: this.keywords.waybillNo || null,
         customerOrderNo: this.keywords.customerOrderNo || null,
         // 地址搜索为最后一级区号
-        start: (this.cityCodes.startCodes !== null && this.cityCodes.startCodes.length) ? this.cityCodes.startCodes[this.cityCodes.startCodes.length - 1] : null,
-        end: (this.cityCodes.endCodes !== null && this.cityCodes.endCodes.length) ? this.cityCodes.endCodes[this.cityCodes.endCodes.length - 1] : null
+        start: this.cityCodes.startCodes || null,
+        end: this.cityCodes.endCodes || null
       }
       if (this.$route.path === '/order-management/receipt') { // 回单列表搜索
         key.receiptStatus = this.keywords.receiptStatus
@@ -166,9 +166,13 @@ export default {
     handleSelectionChange () {
       // 当前选中集合
       this.selectOrderList = this.$refs.pageTable.selectedRow
+      // 将选中订单集合按时间由近及远排序
+      this.selectOrderList.sort((a, b) => {
+        return b.createTime - a.createTime
+      })
       // 当前选中项id集合
       let ids = []
-      this.$refs.pageTable.selectedRow.map((item) => {
+      this.selectOrderList.map((item) => {
         ids.push(item.id)
       })
       this.selectedId = ids
