@@ -171,8 +171,8 @@ export default {
         carrierName: '', // 承运商
         driverName: '', // 司机
         carNo: '', // 车牌号
-        start: '', // 始发地
-        end: '', // 目的地
+        start: void 0, // 始发地
+        end: void 0, // 目的地
         dateRange: ['', ''], // 日期范围
         startTime: '', // 开始时间
         endTime: '' // 结束时间

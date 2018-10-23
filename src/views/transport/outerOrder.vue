@@ -152,8 +152,8 @@ export default {
         customerOrderNo: '', // 客户订单号
         transNo: '', // 外转单号
         transfereeName: '', // 外转方名称
-        start: '', // 始发地
-        end: '', // 目的地
+        start: void 0, // 始发地
+        end: void 0, // 目的地
         dateRange: ['', ''], // 日期范围
         startTime: '', // 开始时间
         endTime: '' // 结束时间

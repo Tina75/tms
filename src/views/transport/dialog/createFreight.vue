@@ -62,10 +62,10 @@ export default {
       },
       rules: {
         start: [
-          { required: true, type: 'array', message: '请选择始发地', trigger: 'blur' }
+          { required: true, type: 'number', message: '请选择始发地', trigger: 'blur' }
         ],
         end: [
-          { required: true, type: 'array', message: '请选择目的地', trigger: 'blur' }
+          { required: true, type: 'number', message: '请选择目的地', trigger: 'blur' }
         ],
         carNo: [
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }

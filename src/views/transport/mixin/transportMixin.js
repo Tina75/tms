@@ -230,7 +230,7 @@ export default {
 
           for (let key in this.seniorSearchFields) {
             if (key === 'dateRange') continue
-            if (this.seniorSearchFields[key].length) {
+            if (this.seniorSearchFields[key]) {
               params[key] = this.seniorSearchFields[key]
             }
           }
