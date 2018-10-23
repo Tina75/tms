@@ -206,7 +206,6 @@ export default {
         }
         return opt.value === name
       })
-      console.log('item', item)
       this.currentValue = item.nameSeleced
       this.code = item.code
       this.focusIndex = -1
@@ -220,7 +219,6 @@ export default {
       this.isFocus = true
       if (!this.currentValue) { // 输入框为空，且获得焦点，则取历史数据
         // 鼠标focus的时候，需要默认查询所有
-        console.log('获得焦点')
         this.takeCity()
       }
       this.$emit('on-focus')
@@ -350,13 +348,11 @@ export default {
         cityArray.length = 4
       }
       cityArray.unshift(obj)
-      console.log(cityArray)
       cityArray = this.arrayReduce(cityArray)
       localStorage.setItem('cityInfo', JSON.stringify(cityArray))
     },
     // 取数据
     takeCity () {
-      console.log(JSON.parse(localStorage.getItem('cityInfo')))
       this.visible = true
       this.options = JSON.parse(localStorage.getItem('cityInfo')) || []
       this.options.length > 0 ? this.$nextTick(() => {
