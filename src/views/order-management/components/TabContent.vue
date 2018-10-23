@@ -86,6 +86,7 @@
       :columns="tableColumns"
       :show-filter="true"
       :row-class-name="rowClassName"
+      :row-selection="showCheckBox"
       table-head-type="order_head"
       style="margin-top: 15px"
       @on-selection-change="handleSelectionChange"
@@ -148,6 +149,11 @@ export default {
     exportUrl: {
       type: String,
       default: 'order/exportOrder'
+    },
+    // 是否需要隐藏父单的checkBox
+    isVisiable: {
+      type: Boolean,
+      default: false
     },
     // 刷新tab数量的回调
     refreshTab: Function
@@ -781,6 +787,20 @@ export default {
       orderPrint: [],
       keyword: {
         status: 10 // 默认待提货状态  传给pageTable可重新请求数据
+      },
+      showCheckBox: {
+        isVisible: (row) => {
+          if (this.isVisiable) { // 送货管理待调度为 true
+            // 父单隐藏checkBox
+            if (row.parentId === '' && row.disassembleStatus === 1) {
+              return false
+            } else {
+              return true
+            }
+          } else {
+            return true
+          }
+        }
       }
     }
   },
