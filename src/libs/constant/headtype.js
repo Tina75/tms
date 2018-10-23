@@ -9,7 +9,7 @@ const headType = {
   PICKUP: 'pickup_head', // 提货单
   TRANS: 'trans_head', // 外转单
   BUSINESS: 'business_head', // 运营报表
-  WAIT_PICKUP: 'wait_pickup_head', // 待提货
-  WAIT_WAYBILL: 'wait_waybill_head' // 待送货
+  WAIT_PICKUP: 'wait_pickup_head', // 提货-待调度
+  WAIT_WAYBILL: 'wait_waybill_head' // 送货管理-待调度
 }
 export default headType
