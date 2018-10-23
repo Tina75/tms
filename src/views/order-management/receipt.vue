@@ -251,7 +251,25 @@ export default {
           key: 'waybillNo',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.waybillNo ? p.row.waybillNo : '-')
+            if (p.row.waybillNo) {
+              let waybillNoArr = p.row.waybillNo.split(',')
+              console.log(waybillNoArr)
+              if (waybillNoArr.length > 1) {
+                return h('Tooltip', {
+                  props: {
+                    placement: 'bottom',
+                    maxWidth: 152,
+                    content: p.row.waybillNo
+                  }
+                }, [
+                  h('span', waybillNoArr[0] + ' ...')
+                ])
+              } else {
+                return h('span', p.row.waybillNo)
+              }
+            } else {
+              return h('span', '-')
+            }
           }
         },
         {
