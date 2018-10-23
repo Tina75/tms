@@ -11,7 +11,7 @@
         <Input v-model="info.phone" style="width:200px" placeholder="请输入"/>
       </FormItem>
       <FormItem label="城市" prop="city">
-        <SelectInputForCity v-model="info.code"></SelectInputForCity>
+        <SelectInputForCity v-model="info.code" :clearable="true"></SelectInputForCity>
       </FormItem>
     </Form>
     <div slot="footer">

@@ -24,6 +24,7 @@
         @on-change="handleChange"
         @on-focus="handleFocus"
       >
+      <span v-show="nameSeleced" slot="append" style="display: block;line-height: 22px; text-align: left;" @click="inputFocus">{{nameSeleced}}</span>
       <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-input__clear-icon" @click.native.stop="handleClear"></Icon>
       <Icon v-if="!mousehover || !isClearable" slot="suffix" type="ios-arrow-down" class="select-input__input-icon"></Icon>
       </Input>
@@ -104,7 +105,8 @@ export default {
       currentValueCopy: '',
       mousehover: false,
       isRemoteCall: false, // 当前是否正在请求，防止请求太频繁
-      options: []
+      options: [],
+      nameSeleced: ''
     }
   },
   computed: {
@@ -132,6 +134,7 @@ export default {
     currentValue (value) {
       if (value !== this.currentValueCopy) {
         this.code = null
+        this.nameSeleced = ''
         this.$emit('input', null)
       }
     },
@@ -203,8 +206,9 @@ export default {
         city: city[1].name,
         area: city[2] ? city[2].name : ''
       }
-      this.currentValue = this.cityShow(item, 2)
-      this.currentValueCopy = this.currentValue
+      this.currentValue = this.cityShow(item, 2).split('  ')[0]
+      this.nameSeleced = this.cityShow(item, 2).split('  ')[1]
+      this.currentValueCopy = this.cityShow(item, 2).split('  ')[0]
     },
     // 清空
     handleClear () {
@@ -223,7 +227,9 @@ export default {
         }
         return opt.value === name
       })
-      this.currentValue = item.nameSeleced
+      this.currentValue = item.nameSeleced.split('  ')[0]
+      this.nameSeleced = item.nameSeleced.split('  ')[1]
+      this.currentValueCopy = item.nameSeleced.split('  ')[0]
       this.code = item.code
       this.focusIndex = -1
       this.visible = false
@@ -302,9 +308,9 @@ export default {
         (item.city ? item.city + ',  ' : '') +
         (item.province ? item.province : '')
       } else {
-        return (item.area ? item.area + '  ' : '') +
-          (item.city ? item.city : '')
-          // (item.province ? item.province : '')
+        // this.nameSeleced = item.city ? item.city : ''
+        return (item.area ? item.area + '  ' : '') + (item.city ? item.city : '')
+        // (item.province ? item.province : '')
       }
     },
     handleKeydown (e) {
@@ -379,15 +385,28 @@ export default {
       this.options.length > 0 ? this.$nextTick(() => {
         this.focusIndex = 0
       }) : this.focusIndex = -1
+    },
+    inputFocus () {
+      this.$refs['input'].focus()
     }
   }
 }
 </script>
 
-<style lang="stylus">
+<style scoped lang="stylus">
   .select-input
     &__dropdown
       width 100%
+      .ivu-input-wrapper
+        /deep/ .ivu-input-suffix
+          z-index 10
+        /deep/ .ivu-input-group-append
+          z-index: 100;
+          position: absolute;
+          background: #fff;
+          left: 100px
+          border: none;
+          top: 1px;
     &__clear-icon
       cursor pointer
     &__input-icon
