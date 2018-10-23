@@ -2,8 +2,8 @@
   <div ref="el" class="page-home">
     <div class="page-home__header">
       <Alert v-if="notice.content" type="warning" class="page-home__header-notice" banner closable show-icon>
-        <span :class="{'page-home__cursorPointer': notice.url}" @click="hrefHandle"> {{ notice.content }}</span>
-        <Icon slot="icon" type="ios-bulb-outline"></Icon>
+        <span :class="{'page-home__noticeBar': notice.url}" @click="hrefHandle"> {{ notice.content }}</span>
+        <FontIcon slot="icon" type="tongzhi-paomadeng" size="20" style="vertical-align: middle;"></FontIcon>
       </Alert>
 
       <Row class="page-home__header-row">
@@ -247,7 +247,7 @@ export default {
         url: 'message/pmd',
         method: 'get'
       }).then(res => {
-        if (res && res.data.code === 1000) {
+        if (res && res.data.code === 10000) {
           this.notice = res.data.data
           // this.cardChecksTemp = []
           // for (const i of data) {
@@ -351,6 +351,8 @@ export default {
   &__message-item
     background-color #f3f3f3
     margin-bottom 8px
-  &__cursorPointer
+  &__noticeBar
     cursor pointer
+    display inline-block
+    width 100%
 </style>
