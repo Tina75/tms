@@ -187,6 +187,11 @@ export default {
       type: Boolean,
       default: true
     },
+    // 是否显示checBox
+    rowSelection: {
+      type: Object,
+      default: Object
+    },
     // 表单类型
     tableHeadType: '',
     onLoad: Function, // 每次请求后，回调，返回列表搜索结果
@@ -280,10 +285,26 @@ export default {
       }
     },
     /**
-     * 空字符串一律使用中划线【-】代替
+     * 1. 替换空字符
+     * 2. 控制checkbox
      */
     mapColumns () {
       return this.filterColumns.map((col) => {
+        if (this.isSelection) {
+          if (this.rowSelection.isVisible && typeof this.rowSelection.isVisible) {
+            let visible = this.rowSelection.isVisible(col)
+            if (!visible) {
+              col.__disabled = true
+              col.__visible = visible
+            }
+          } else if (this.rowSelection.isDisabled && typeof this.rowSelection.isDisabled) {
+            let disabled = this.rowSelection.isDisabled(col)
+            if (disabled) {
+              col.__disabled = true
+            }
+          }
+        }
+        // 空字符串一律使用中划线【-】代替
         if (col.key && !col.render && !col.tooltip) {
           col.render = (h, params) => {
             let value = params.row[col.key]
@@ -384,6 +405,9 @@ export default {
       if (this.isSelection) {
         if (this.selected.includes(row[this.rowId])) {
           classes.push('ivu-table-row-highlight')
+        }
+        if (!row.__visible) {
+          classes.push('ivu-table-row-hidden')
         }
       }
       return classes.join(' ')
@@ -626,4 +650,7 @@ export default {
   .ivu-table-row-highlight
     td
       background-color #ebf7ff
+  .ivu-table-row-hidden
+    .ivu-checkbox
+      display none
 </style>
