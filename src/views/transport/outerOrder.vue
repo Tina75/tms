@@ -74,8 +74,8 @@
 
       <div style="display: flex;justify-content: space-between;">
         <div>
-          <AreaSelect v-model="seniorSearchFields.startCodes" placeholder="请输入始发地" class="search-input-senior" />
-          <AreaSelect v-model="seniorSearchFields.endCodes" placeholder="请输入目的地" class="search-input-senior" />
+          <SelectInputForCity v-model="seniorSearchFields.start" placeholder="请输入始发地" class="search-input-senior" />
+          <SelectInputForCity v-model="seniorSearchFields.end" placeholder="请输入目的地" class="search-input-senior" />
           <DatePicker v-model="seniorSearchFields.dateRange" type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
         </div>
         <div>
@@ -120,7 +120,7 @@ import TransportMixin from './mixin/transportMixin'
 
 import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
-import AreaSelect from '@/components/AreaSelect'
+import SelectInputForCity from '@/components/SelectInputForCity'
 import SelectInput from './components/SelectInput.vue'
 
 import Server from '@/libs/js/server'
@@ -129,7 +129,7 @@ import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, setTabList } from './constant/out
 
 export default {
   name: 'OuterManager',
-  components: { TabHeader, PageTable, AreaSelect, SelectInput },
+  components: { TabHeader, PageTable, SelectInputForCity, SelectInput },
   mixins: [ BasePage, TransportBase, TransportMixin ],
   metaInfo: { title: '外转单管理' },
   data () {
@@ -152,8 +152,6 @@ export default {
         customerOrderNo: '', // 客户订单号
         transNo: '', // 外转单号
         transfereeName: '', // 外转方名称
-        startCodes: [], // 始发地codes
-        endCodes: [], // 目的地codes
         start: '', // 始发地
         end: '', // 目的地
         dateRange: ['', ''], // 日期范围

@@ -6,7 +6,6 @@ import _ from 'lodash'
 import Server from '@/libs/js/server'
 import Float from '@/libs/js/float'
 import { CAR } from '@/views/client/client'
-import { validateCityies } from '@/libs/js/cityValidator'
 
 export default {
   data () {
@@ -171,7 +170,14 @@ export default {
 
     // 校验
     validate () {
-      if (this.info.start !== undefined || this.info.end !== undefined) return validateCityies(this.startCodes, this.endCodes)
+      if (!this.info.start) {
+        this.$Message.error('请选择始发地')
+        return false
+      }
+      if (!this.info.end) {
+        this.$Message.error('请选择目的地')
+        return false
+      }
       if (this.pageName === 'pickup' && !this.info.carrierName) {
         this.$Message.error('请输入承运商')
         return false

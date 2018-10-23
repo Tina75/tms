@@ -78,8 +78,8 @@
 
         <div style="display: flex;justify-content: space-between;">
           <div>
-            <AreaSelect v-model="seniorSearchFields.startCodes" placeholder="请输入始发地" class="search-input-senior" />
-            <AreaSelect v-model="seniorSearchFields.endCodes" placeholder="请输入目的地" class="search-input-senior" />
+            <SelectInputForCity v-model="seniorSearchFields.start" placeholder="请输入始发地" class="search-input-senior" />
+            <SelectInputForCity v-model="seniorSearchFields.end" placeholder="请输入目的地" class="search-input-senior" />
             <DatePicker v-model="seniorSearchFields.dateRange" type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
           </div>
           <div>
@@ -100,6 +100,7 @@
       v-if="!tabStatus"
       source="transport"
       tab-status="待送货"
+      table-head-source="wait_waybill_head"
       is-visiable
       url="/load/bill/wait/pick/list"
       export-url="/load/bill/pick/up/export"
@@ -136,7 +137,7 @@ import SelectInputMixin from './mixin/selectInputMixin'
 
 import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
-import AreaSelect from '@/components/AreaSelect'
+import SelectInputForCity from '@/components/SelectInputForCity'
 import SelectInput from './components/SelectInput.vue'
 import PrintFreight from './components/PrintFreight'
 import OrderTabContent from '@/views/order-management/components/TabContent'
@@ -147,7 +148,7 @@ import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, setTabList } from './constant/way
 
 export default {
   name: 'WaybillManager',
-  components: { TabHeader, PageTable, AreaSelect, SelectInput, PrintFreight, OrderTabContent },
+  components: { TabHeader, PageTable, SelectInputForCity, SelectInput, PrintFreight, OrderTabContent },
   mixins: [ BasePage, TransportBase, SelectInputMixin, TransportMixin ],
   metaInfo: { title: '运单管理' },
   data () {
@@ -170,8 +171,6 @@ export default {
         carrierName: '', // 承运商
         driverName: '', // 司机
         carNo: '', // 车牌号
-        startCodes: [], // 始发地codes
-        endCodes: [], // 目的地codes
         start: '', // 始发地
         end: '', // 目的地
         dateRange: ['', ''], // 日期范围
