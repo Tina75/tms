@@ -44,6 +44,10 @@
           <Col span="12">运输费</Col>
           <Col span="12" class="num">{{res.orderFreightFee}}</Col>
         </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
+          <Col span="12">提货费</Col>
+          <Col span="12" class="num">{{res.orderPickupFee}}</Col>
+        </Row>
         <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
           <Col span="12">装货费</Col>
           <Col span="12" class="num">{{res.orderLoadFee}}</Col>
@@ -144,6 +148,7 @@ export default {
         orderLoadFee: '-',
         orderUnloadFee: '-',
         orderOtherFee: '-',
+        orderPickupFee: '-',
         orderInsuranceFee: '-',
         orderTotalFee: '-',
         carrierFreightFee: '-',
@@ -328,8 +333,8 @@ export default {
       background:rgba(248,248,248,1)
       font-weight bold
     .middle-height
-      height 224px
-      line-height 224px
+      height 269px
+      line-height 269px
       border 1px solid #C9CED9
     .small-height
       border 1px solid #C9CED9

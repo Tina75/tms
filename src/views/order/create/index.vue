@@ -36,7 +36,7 @@
       <FormItem label="发货时间:">
         <Row>
           <Col span="12">
-          <FormItem>
+          <FormItem prop="deliveryTime">
             <DatePicker v-model="orderForm.deliveryTime" :options="startDateOptions" format="yyyy-MM-dd" type="date" @on-change="(date) => { dateChange('START_DATE', date)}"></DatePicker>
           </FormItem>
           </Col>
@@ -52,7 +52,7 @@
       <FormItem label="到货时间:">
         <Row>
           <Col span="12">
-          <FormItem>
+          <FormItem prop="arriveTime">
             <DatePicker v-model="orderForm.arriveTime" :options="endDateOptions" format="yyyy-MM-dd" type="date" @on-change="(date) => { dateChange('END_DATE', date)}"></DatePicker>
           </FormItem>
           </Col>
