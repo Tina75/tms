@@ -2,10 +2,11 @@
   <div ref="el" class="page-home">
     <div class="page-home__header">
       <Alert v-if="notice.content" type="warning" class="page-home__header-notice" banner closable show-icon>
-        <span :class="{'page-home__noticeBar': notice.url}" @click="hrefHandle">{{ notice.content }}</span>
+        <span :class="{'page-home__noticeBar': notice.url}" @click="hrefHandle">
+          <TextMarquee :content="notice.content" :speed="30"/>
+        </span>
         <FontIcon slot="icon" type="tongzhi-paomadeng" size="20" style="vertical-align: middle; color: #00A4BD"></FontIcon>
       </Alert>
-
       <Row class="page-home__header-row">
         <Col span="18">
         <span class="page-home__header-greetings" v-html="greetings"></span>
@@ -77,6 +78,7 @@ import server from '@/libs/js/server'
 
 import OrderCard from './components/OrderCard.vue'
 import BlankCard from './components/BlankCard.vue'
+import TextMarquee from './components/TextMarquee.vue'
 import BasePage from '@/basic/BasePage'
 import FontIcon from '@/components/FontIcon'
 
@@ -104,6 +106,7 @@ export default {
   name: 'index',
   metaInfo: { title: '首页' },
   components: {
+    TextMarquee,
     OrderCard,
     FontIcon,
     BlankCard,
