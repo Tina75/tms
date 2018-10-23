@@ -100,12 +100,12 @@
               <Radio label="1">按单结</Radio>
               <Radio label="2">月结</Radio>
             </RadioGroup>
-            <Settlement v-if="settlementType === '1'"
-                        ref="$settlement"
-                        :loading="loading"
-                        :total="paymentTotal"
-                        :data="settlementPayInfo"
-                        mode="edit" />
+            <PayInfo v-if="settlementType === '1'"
+                     ref="$payInfo"
+                     :loading="loading"
+                     :total="paymentTotal"
+                     :data="settlementPayInfo"
+                     mode="edit" />
           </div>
         </i-col>
       </Row>
@@ -123,14 +123,14 @@ import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '../components/SelectInput.vue'
 import SelectInputMixin from '../mixin/selectInputMixin'
 import MoneyInput from '../components/MoneyInput'
-import Settlement from '../components/Settlement'
+import PayInfo from '../components/PayInfo'
 import Server from '@/libs/js/server'
 import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
 import { CAR } from '@/views/client/client'
 
 export default {
   name: 'SendCar',
-  components: { SelectInput, MoneyInput, Settlement },
+  components: { SelectInput, MoneyInput, PayInfo },
   mixins: [ BaseDialog, SelectInputMixin ],
   data () {
     return {
@@ -292,7 +292,7 @@ export default {
         this.$Message.error('请输入运输费')
         return false
       }
-      if (this.settlementType === '1' && !this.$refs.$settlement.validate()) return false
+      if (this.settlementType === '1' && !this.$refs.$payInfo.validate()) return false
       return true
     },
 
@@ -308,7 +308,7 @@ export default {
         carLength: this.info.carLength ? this.info.carLength : void 0,
         ...this.formatMoney(),
         settlementType: this.settlementType,
-        settlementPayInfo: this.$refs.$settlement.getSettlement()
+        settlementPayInfo: this.$refs.$payInfo.getPayInfo()
       }
       let url
       if (this.type === 'sendCar') {

@@ -113,7 +113,7 @@
                  class="detail-payment-way">
               {{ settlementType === '1' ? '按单结' : '月结' }}
 
-              <Settlement
+              <PayInfo
                 v-if="settlementType === '1'"
                 :loading="loading"
                 :data="settlementPayInfo" />
@@ -297,12 +297,12 @@
                 <Radio label="1">按单结</Radio>
                 <Radio label="2">月结</Radio>
               </RadioGroup>
-              <Settlement v-if="settlementType === '1'"
-                          ref="$settlement"
-                          :loading="loading"
-                          :total="paymentTotal"
-                          :data="settlementPayInfo"
-                          mode="edit" />
+              <PayInfo v-if="settlementType === '1'"
+                       ref="$payInfo"
+                       :loading="loading"
+                       :total="paymentTotal"
+                       :data="settlementPayInfo"
+                       mode="edit" />
             </div>
           </i-col>
         </Row>
@@ -333,7 +333,7 @@ import SelectInputMixin from '../mixin/selectInputMixin'
 import MoneyInput from '../components/MoneyInput'
 import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '../components/SelectInput.vue'
-import Settlement from '../components/Settlement'
+import PayInfo from '../components/PayInfo'
 
 import Server from '@/libs/js/server'
 import { getCityCode } from '@/libs/js/cityValidator'
@@ -343,7 +343,7 @@ import _ from 'lodash'
 export default {
   name: 'DetailFeright',
   metaInfo: { title: '运单详情' },
-  components: { MoneyInput, SelectInput, AreaSelect, Settlement },
+  components: { MoneyInput, SelectInput, AreaSelect, PayInfo },
   mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
 
   data () {
@@ -606,7 +606,7 @@ export default {
             ...this.info,
             ...this.formatMoney(),
             settlementType: this.settlementType,
-            settlementPayInfo: this.settlementType === '1' ? this.$refs.$settlement.getSettlement() : void 0
+            settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
           },
           cargoList: _.uniq(this.detail.map(item => item.orderId))
         }
