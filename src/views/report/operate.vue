@@ -78,7 +78,7 @@
       :keywords="keyword"
       :columns="columns"
       :show-filter="true"
-      table-head-type="business_head"
+      :table-head-type= "headType"
       width="100%"
       @on-load = "onLoad"
       @on-column-change="handleColumnChange">
@@ -94,6 +94,7 @@ import City from '@/libs/js/city'
 import { mapGetters, mapActions } from 'vuex'
 import Export from '@/libs/js/export'
 import { getPreMonth } from './getPerMonth'
+import tableHeadType from '@/libs/constant/headtype.js'
 export default {
   name: 'operate',
   components: {
@@ -109,6 +110,7 @@ export default {
       url: '/report/for/operating',
       method: 'POST',
       autoload: false,
+      headType: tableHeadType.BUSINESS,
       keywords: {
         consignerName: '',
         orderNo: '',
