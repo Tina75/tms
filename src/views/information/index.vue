@@ -1,5 +1,5 @@
 <template>
-  <div class="temAll">
+  <Row class="temAll">
     <!-- <Col span="3">
     <Menu :active-name="typeName" class="menuSty" style="width: 100%;">
       <MenuItem v-for="menu in menuList" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
@@ -26,7 +26,6 @@
     <div>
       <!--系统消息-->
       <div v-if="'0' === this.searchData.type">
-        <Col span="24">
         <div class="mesDivAll">
           <Checkbox
             v-if="!batchBtnShow"
@@ -60,7 +59,6 @@
             </div>
           </div>
         </div>
-          </Col>
       </div>
       <!--订单消息-->
       <div v-if="'1' === this.searchData.type">
@@ -183,7 +181,7 @@
       @on-change="searchInfoData"
       @on-page-size-change="chagePageSize"/>
     </Col>
-  </div>
+  </Row>
 </template>
 
 <script>
@@ -487,7 +485,6 @@ export default {
     font-weight: bold;
 .temAll
   width: 100%;
-  height: 100%;
   background:rgba(243,245,249,1);
   overflow: auto;
 .megDiv
@@ -523,10 +520,11 @@ export default {
   cursor: pointer;
   float: right;
 .noneImg
-  position: absolute;
-  left: 50%;
-  margin-left: -110px;
-  margin-top: 100px;
+  display flex
+  flex-direction column
+  justify-content center
+  align-items center
+  margin-top: 112px;
   text-align: center;
   color: #999999;
   font-size: 16px;
@@ -540,7 +538,6 @@ export default {
 .contentDiv
   background:#fff;
   padding: 0 25px 50px 25px;
-  height: 100%;
 .contendBorderBttom
   border-bottom: 1px solid #e9e9e9;
   padding-bottom:10px;
