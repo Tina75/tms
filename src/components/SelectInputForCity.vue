@@ -101,6 +101,7 @@ export default {
       composing: false, // 中文输入法不希望在写拼音的时候触发input，搜索；是在完成中文后再搜索,IME问题
       focusIndex: -1,
       currentValue: '',
+      currentValueCopy: '',
       mousehover: false,
       isRemoteCall: false, // 当前是否正在请求，防止请求太频繁
       options: []
@@ -127,6 +128,12 @@ export default {
   watch: {
     value (value) {
       this.setCurrentValue(value)
+    },
+    currentValue (value) {
+      if (value !== this.currentValueCopy) {
+        this.code = null
+        this.$emit('input', null)
+      }
     },
     /**
        * 主动操作滚动条，到选中的option视图
@@ -197,6 +204,7 @@ export default {
         area: city[2] ? city[2].name : ''
       }
       this.currentValue = this.cityShow(item, 2)
+      this.currentValueCopy = this.currentValue
     },
     // 清空
     handleClear () {
@@ -337,27 +345,31 @@ export default {
     },
     // 存数据
     saveCity (code) {
-      let city = cityUtil.getPathByCode(code)
-      let nameSelecedItem = {
-        province: city[0].name,
-        city: city[1].name,
-        area: city[2] ? city[2].name : ''
+      if (!code) {
+        return
       }
+      // 首先判断需要存储的code是否已经存在
+      let cityArray = localStorage.getItem('cityInfo') ? JSON.parse(localStorage.getItem('cityInfo')) : []
+      for (let i = 0; i < cityArray.length; i++) {
+        if (cityArray[i].code === code) {
+          return
+        }
+      }
+      // 此时确定code需要保存，取出对应的省份信息
+      let city = cityUtil.getPathByCode(code)
       let nameItem = {
         area: city[2] ? city[2].name : '',
         city: city[1].name,
         province: city[0].name
       }
       let name = this.cityShow(nameItem, 1)
-      let nameSeleced = this.cityShow(nameSelecedItem, 2)
+      let nameSeleced = this.cityShow(nameItem, 2)
       let obj = { name: name, nameSeleced: nameSeleced, code: code }
       // 取历史数据，和5比较
-      let cityArray = localStorage.getItem('cityInfo') ? JSON.parse(localStorage.getItem('cityInfo')) : []
       if (cityArray.length >= 5) {
         cityArray.length = 4
       }
       cityArray.unshift(obj)
-      cityArray = this.arrayReduce(cityArray)
       localStorage.setItem('cityInfo', JSON.stringify(cityArray))
     },
     // 取数据
@@ -367,19 +379,6 @@ export default {
       this.options.length > 0 ? this.$nextTick(() => {
         this.focusIndex = 0
       }) : this.focusIndex = -1
-    },
-    // 数组去重
-    arrayReduce (arr) {
-      let hash = {}
-      arr = arr.reduce((preVal, curVal) => {
-        if (!hash[curVal.code]) {
-          hash[curVal.code] = true
-          preVal.push(curVal)
-        }
-        // hash[curVal.code] ? '' : hash[curVal.code] = true && preVal.push(curVal)
-        return preVal
-      }, [])
-      return arr
     }
   }
 }

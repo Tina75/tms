@@ -64,7 +64,8 @@
                       <Row :gutter="20">
                         <Col span="11">
                         <FormItem prop="departure" style="width: 100%">
-                          <AreaSelect v-model="item.departure" :deep="true" placeholder="请输入始发地" class="search-input-senior" />
+                          <!--<AreaSelect v-model="item.departure" :deep="true" placeholder="请输入始发地" class="search-input-senior" />-->
+                          <SelectInputForCity v-model="item.departure" placeholder="请输入始发地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
                         <Col span="2">
@@ -72,7 +73,8 @@
                         </Col>
                         <Col span="11">
                         <FormItem prop="destination" style="width: 100%">
-                          <AreaSelect v-model="item.destination" :deep="true" placeholder="请输入目的地" class="search-input-senior" />
+                          <!--<AreaSelect v-model="item.destination" :deep="true" placeholder="请输入目的地" class="search-input-senior" />-->
+                          <SelectInputForCity v-model="item.destination" placeholder="请输入目的地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
                       </Row>
@@ -174,30 +176,26 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
-import AreaSelect from '@/components/AreaSelect'
-
+// import AreaSelect from '@/components/AreaSelect'
+import SelectInputForCity from '@/components/SelectInputForCity'
 export default {
   name: 'financeRules',
   metaInfo: {
     title: '计费规则'
   },
-  components: { AreaSelect },
+  components: { SelectInputForCity },
   mixins: [ BasePage ],
   data () {
     const startValidate = (rule, value, callback) => {
-      if (value === '' || value.length === 0) {
+      if (value === null) {
         callback(new Error('请选择始发地'))
-      } else if (!(value === '110000' || value === '120000' || value === '210000' || value === '500000' || value[0] === '110000' || value[0] === '120000' || value[0] === '210000' || value[0] === '500000') && value.length < 2) {
-        callback(new Error('始发地至少要选择二级城市'))
       } else {
         callback()
       }
     }
     const endValidate = (rule, value, callback) => {
-      if (!value.length) {
+      if (value === null) {
         callback(new Error('请选择目的地'))
-      } else if (!(value === '110000' || value === '120000' || value === '210000' || value === '500000' || value[0] === '110000' || value[0] === '120000' || value[0] === '210000' || value[0] === '500000') && value.length < 2) {
-        callback(new Error('目的地至少要选择二级城市'))
       } else {
         callback()
       }
@@ -240,7 +238,7 @@ export default {
       priceValidate: {
         price: [
           { required: true, message: '请填写金额', trigger: 'blur' },
-          { pattern: /^((0[.]\d{1,2})|(([1-9]\d*)([.]\d{1,2})?))$/, message: '大于0且最多两位小数', trigger: 'blur' }
+          { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/, message: '大于0且最多两位小数', trigger: 'blur' }
         ]
       }
     }
@@ -341,8 +339,8 @@ export default {
     },
     addItem () {
       this.ruleDetail.details.push({
-        departure: [],
-        destination: [],
+        departure: null,
+        destination: null,
         showRule: (this.ruleDetail.details.length + 1) + '',
         chargeRules: [
           { base: '', price: '' }
@@ -389,8 +387,8 @@ export default {
             data: Object.assign({}, _this.ruleDetail, {
               details: _this.ruleDetail.details.map(item => {
                 return {
-                  departure: typeof item.departure === 'string' ? item.departure : item.departure[item.departure.length - 1],
-                  destination: typeof item.destination === 'string' ? item.destination : item.destination[item.destination.length - 1],
+                  departure: item.departure,
+                  destination: item.destination,
                   chargeRules: item.chargeRules.map(el => {
                     return {
                       base: parseFloat(el.base) * 100,
@@ -449,8 +447,8 @@ export default {
         ruleName: data.ruleName,
         details: Object.assign([], data.detail.rules.map((item, index) => {
           return {
-            departure: item.departure + '',
-            destination: item.destination + '',
+            departure: item.departure,
+            destination: item.destination,
             showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
               return {

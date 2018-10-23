@@ -55,6 +55,7 @@
             <tr>
               <td colspan="6">
                 运输费：{{data.freightFee || 0}} 元 &nbsp;&nbsp;
+                提货费：{{data.pickupFee || 0}} 元 &nbsp;&nbsp;
                 装货费：{{data.loadFee || 0}} 元 &nbsp;&nbsp;
                 卸货费：{{data.unloadFee || 0}} 元 &nbsp;&nbsp;
                 保险费：{{data.insuranceFee || 0}} 元 &nbsp;&nbsp;
