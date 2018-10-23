@@ -233,7 +233,6 @@ import BasePage from '@/basic/BasePage'
 import OrderPrint from './components/OrderPrint'
 // import AreaSelect from '@/components/AreaSelect'
 import CitySelect from '@/components/SelectInputForCity'
-import { FORM_VALIDATE_START, FORM_VALIDATE_END } from '@/libs/js/cityValidator'
 import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
 import settlements from '@/libs/constant/settlement.js'
@@ -384,12 +383,10 @@ export default {
           { required: true, message: '请输入客户名称' }
         ],
         start: [
-          { required: true, message: '请选择始发城市' },
-          { validator: FORM_VALIDATE_START, trigger: 'change' }
+          { required: true, message: '请选择始发城市' }
         ],
         end: [
-          { required: true, message: '请选择目的城市' },
-          { validator: FORM_VALIDATE_END }
+          { required: true, message: '请选择目的城市' }
         ],
         deliveryTimes: [
           { validator: validateStart, trigger: 'change' }
@@ -692,7 +689,6 @@ export default {
     handleSubmit (e) {
       const vm = this
       vm.disabled = true
-      console.log('from', this.orderForm)
       return new Promise((resolve, reject) => {
         vm.$refs.orderForm.validate((valid) => {
           if (valid) {
