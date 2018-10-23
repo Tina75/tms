@@ -62,8 +62,8 @@
         <div>
           <!-- <area-select v-model="cityCodes.startCodes" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
           <area-select v-model="cityCodes.endCodes" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select> -->
-          <city-select v-model="cityCodes.startCodes" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></city-select>
-          <city-select v-model="cityCodes.endCodes" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></city-select>
+          <city-select v-model="keywords.start" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></city-select>
+          <city-select v-model="keywords.end" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></city-select>
           <DatePicker
             :options="timeOption"
             v-model="recoveryTimes"
