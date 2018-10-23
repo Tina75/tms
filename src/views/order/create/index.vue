@@ -621,7 +621,13 @@ export default {
     // 选择客户dropdown的数据
     handleSelectConsigner (name, row) {
       const _this = this
-      _this.resetForm()
+      /**
+       * 重置表单，除货物信息以外
+       * 1. 切换客户
+       * 2. 用户手动先输入
+       *
+       */
+      _this.$refs.orderForm.resetFields()
       _this.getConsignerDetail(row.id).then((response) => {
         const { consigneeList: consignees, addressList: addresses, cargoList, ...consigner } = response.data
         // 设置发货人信息，发货联系人，手机，发货地址
@@ -640,10 +646,15 @@ export default {
         if (settlementType) {
           _this.orderForm.settlementType = settlementType
         }
+        /**
+         * 1. 货物信息如果之前已经有数据了，就不清空
+         * 2. 如果之前是空的就赋值
+         */
         if (cargoList.length > 0) {
           // 清空信息，防止信息追加到已维护的货物信息中去
-          _this.tempCargoes = {}
-          _this.consignerCargoes = [new Cargo(cargoList[0], true)]
+          if (_this.consignerCargoes.length === 1 && (!_this.consignerCargoes[0].cargoName && (!_this.consignerCargoes[0].weight || !_this.consignerCargoes[0].volume))) {
+            _this.consignerCargoes = [new Cargo(cargoList[0], true)]
+          }
         }
       })
     },
