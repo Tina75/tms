@@ -96,7 +96,7 @@
 
     <OrderTabContent
       v-if="!tabStatus"
-      :table-head-source="pickupHeadType"
+      :table-head-source="dispatchHeadType"
       source="transport"
       tab-status="待提货"
       url="/load/bill/wait/pick/list"
@@ -109,7 +109,7 @@
                  :columns="tableColumns"
                  :show-filter="true"
                  :keywords="searchFields"
-                 :table-head-type="dispatchHeadType"
+                 :table-head-type="pickupHeadType"
                  row-id="pickUpId"
                  url="/load/bill/list"
                  method="post"
