@@ -101,6 +101,13 @@ export default {
           }
         },
         {
+          title: '提货费',
+          key: 'pickupFee',
+          render: (h, params) => {
+            return h('span', (params.row.pickupFee / 100).toFixed(2))
+          }
+        },
+        {
           title: '装卸费',
           key: 'loadFee',
           render: (h, params) => {
