@@ -20,7 +20,10 @@
 
     <footer class="login-footer">
       版权所有-南京智加云信息科技  Copyright © 2018 tms5566.com  All Rights Reserved
-      <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32010402000567" style="display:inline-block;text-decoration:none;height:20px;line-height:20px">苏ICP备18054987号<img src="./assets/copyright.jpg" style="height:16px;line-height:16px;margin:0 5px"/>苏公网安备 32010402000567号</a>
+      <a target="_blank" href="http://www.miitbeian.gov.cn">苏ICP备18054987号</a>
+      <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32010402000567">
+        <img src="./assets/copyright.jpg" style="height:16px;line-height:16px;margin:0 5px"/>苏公网安备 32010402000567号
+      </a>
     </footer>
     <Dialogs />
   </div>
