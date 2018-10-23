@@ -290,20 +290,6 @@ export default {
      */
     mapColumns () {
       return this.filterColumns.map((col) => {
-        if (this.isSelection) {
-          if (this.rowSelection.isVisible && typeof this.rowSelection.isVisible) {
-            let visible = this.rowSelection.isVisible(col)
-            if (!visible) {
-              col.__disabled = true
-              col.__visible = visible
-            }
-          } else if (this.rowSelection.isDisabled && typeof this.rowSelection.isDisabled) {
-            let disabled = this.rowSelection.isDisabled(col)
-            if (disabled) {
-              col.__disabled = true
-            }
-          }
-        }
         // 空字符串一律使用中划线【-】代替
         if (col.key && !col.render && !col.tooltip) {
           col.render = (h, params) => {
@@ -406,7 +392,7 @@ export default {
         if (this.selected.includes(row[this.rowId])) {
           classes.push('ivu-table-row-highlight')
         }
-        if (!row.__visible) {
+        if (row.__visible !== undefined && !row.__visible) {
           classes.push('ivu-table-row-hidden')
         }
       }
@@ -452,6 +438,18 @@ export default {
           if (vm.isSelection) {
             // 当有复选框场景的时候，需要主动勾选上
             vm.dataSource = (data[vm.listField] || []).map((item) => {
+              if (vm.rowSelection.isVisible && typeof vm.rowSelection.isVisible === 'function') {
+                let visible = this.rowSelection.isVisible(item)
+                if (!visible) {
+                  item.__disabled = true
+                  item.__visible = visible
+                }
+              } else if (vm.rowSelection.isDisabled && typeof vm.rowSelection.isDisabled === 'function') {
+                let disabled = vm.rowSelection.isDisabled(item)
+                if (disabled) {
+                  item.__disabled = true
+                }
+              }
               if (vm.selected.includes(item[vm.rowId])) {
                 item._checked = true
               }
