@@ -98,9 +98,9 @@
 
     <OrderTabContent
       v-if="!tabStatus"
+      :table-head-source="dispatchHeadType"
       source="transport"
       tab-status="待送货"
-      table-head-source="wait_waybill_head"
       is-visiable
       url="/load/bill/wait/pick/list"
       export-url="/load/bill/pick/up/export"
@@ -112,7 +112,7 @@
                  :columns="tableColumns"
                  :show-filter="true"
                  :keywords="searchFields"
-                 table-head-type="waybill_head"
+                 :table-head-type="waybillHeadType"
                  row-id="waybillId"
                  url="/waybill/list"
                  method="post"
@@ -145,6 +145,7 @@ import OrderTabContent from '@/views/order-management/components/TabContent'
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, setTabList } from './constant/waybill'
+import headType from '@/libs/constant/headtype'
 
 export default {
   name: 'WaybillManager',
@@ -154,6 +155,9 @@ export default {
   data () {
     return {
       tabType: 'WAYBILL',
+
+      waybillHeadType: headType.WAYBILL,
+      dispatchHeadType: headType.WAIT_WAYBILL,
 
       tabList: TAB_LIST, // 标签栏
       btnList: BUTTON_LIST(this), // 所有按钮组
