@@ -251,6 +251,9 @@ export default {
       // 设置输入框的值，不选择下拉框的选项
       // this.$emit('input', this.currentValue)
       this.$emit('on-blur', this.currentValue)
+      if (this.currentValue !== this.currentValueCopy) {
+        this.currentValue = ''
+      }
     },
     /**
        * 更改关键字，input onChange事件

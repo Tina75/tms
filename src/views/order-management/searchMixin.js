@@ -14,10 +14,12 @@ export default {
         start: '', // 始发地
         end: '' // 目的地
       },
+      /*
       cityCodes: {
         startCodes: [], // 始发地codes
         endCodes: [] // 目的地codes
       },
+      */
       times: ['', ''], // 下单开始结束时间
       recoveryTimes: ['', ''], // 回收开始结束时间
       returnTimes: ['', ''], // 返厂开始结束时间
@@ -65,8 +67,8 @@ export default {
         waybillNo: this.keywords.waybillNo || null,
         customerOrderNo: this.keywords.customerOrderNo || null,
         // 地址搜索为最后一级区号
-        start: this.cityCodes.startCodes || null,
-        end: this.cityCodes.endCodes || null
+        start: this.keywords.start || null,
+        end: this.keywords.end || null
       }
       if (this.$route.path === '/order-management/receipt') { // 回单列表搜索
         key.receiptStatus = this.keywords.receiptStatus
@@ -124,10 +126,10 @@ export default {
         key.importId = this.keywords.importId // 导入批次号
       }
       this.keywords = key
-      this.cityCodes = {
-        startCodes: '',
-        endCodes: ''
-      }
+      // this.cityCodes = {
+      //   startCodes: '',
+      //   endCodes: ''
+      // }
       if (!this.isSearching) return
       this.keyword = Object.assign({}, key, {
         start: null,
