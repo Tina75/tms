@@ -41,18 +41,23 @@ export default {
       code: null
     }
   },
-  watch: {
-    code (code) {
-      console.log(code)
-    }
-  },
+  // watch: {
+  //   code (code) {
+  //     console.log(code)
+  //   }
+  // },
   methods: {
     open () {
+      console.log(this.code)
+      console.log(typeof this.code)
       this.openDialog({
         name: 'example/dialog/demo-dialog1',
         data: {
           title: 'title',
-          other: 'something'
+          other: 'something',
+          info: {
+            code: this.code
+          }
         },
         methods: {
           ok () {

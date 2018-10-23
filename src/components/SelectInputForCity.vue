@@ -157,6 +157,9 @@ export default {
       originInput.addEventListener('compositionstart', vm.onCompositionStart)
       originInput.addEventListener('compositionend', vm.onCompositionEnd)
     }
+    if (this.value) {
+      this.setCurrentValue(this.value)
+    }
   },
   methods: {
     onCompositionStart () {
@@ -181,6 +184,11 @@ export default {
     // 应对编辑时，code -> 对应省份
     setCurrentValue (code) {
       if (code === this.code) return
+      if (!code) {
+        this.code = null
+        this.currentValue = ''
+        return
+      }
       let city = cityUtil.getPathByCode(code)
       let item = {
         province: city[0].name,
