@@ -24,13 +24,15 @@
         @on-focus="handleFocus"
         @on-blur="handleBlur">
       <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-input__clear-icon" @click.native.stop="handleClear"></Icon>
+      <Icon v-if="!mousehover || !isClearable" slot="suffix" type="ios-arrow-down" class="select-input__input-icon"></Icon>
       </Input>
     </div>
     <DropdownMenu ref="dropdown" slot="list" :style="{'max-height':'150px', overflow:'auto'}">
       <DropdownItem
         v-for="(option, index) in options"
-        :key="option.name"
+        :key="index"
         :name="option.name"
+        :disabled="option.disabled"
         :class="{'ivu-select-item-focus': focusIndex === index}"
         v-html="heightlightText(option.name)">
       </DropdownItem>
@@ -45,6 +47,7 @@
    * 同时支持请求查询服务端，显示数据
    */
 import server from '@/libs/js/server'
+import cityUtil from '@/libs/js/city'
 export default {
   props: {
     autoFocus: {
@@ -56,7 +59,12 @@ export default {
       default: 'bottom-start'
     },
     maxlength: Number,
-    value: String,
+    value: Number,
+    // 返回数据范围 1-省及省以下数据 2-市及市以下数据 3-区数据
+    codeType: {
+      type: Number,
+      default: 2
+    },
     // 中文搜索的时候，在拼音阶段不搜索
     onlyChinese: {
       type: Boolean,
@@ -87,21 +95,19 @@ export default {
   data () {
     return {
       isFocus: false,
+      code: '',
       visible: false,
       composing: false, // 中文输入法不希望在写拼音的时候触发input，搜索；是在完成中文后再搜索,IME问题
       focusIndex: -1,
-      currentValue: this.value,
+      currentValue: '',
       mousehover: false,
       isRemoteCall: false, // 当前是否正在请求，防止请求太频繁
-      options: [
-        { name: '安徽', value: 1 },
-        { name: '河北', value: 1 },
-        { name: '南京', value: 1 }
-      ]
+      options: []
     }
   },
   computed: {
     showDropdown () {
+      debugger
       return this.visible && this.options.length > 0 && this.isFocus
     },
     classes () {
@@ -132,7 +138,7 @@ export default {
       const option = this.options[index]
       const dropdownInstance = this.$refs.dropdown
       const optionInstance = dropdownInstance.$children.find((child) => {
-        return child.$options.propsData.name === option.value
+        return child.$options.propsData.name === option.name
       })
 
       let bottomDistance = optionInstance.$el.getBoundingClientRect().bottom - dropdownInstance.$el.getBoundingClientRect().bottom
@@ -147,14 +153,6 @@ export default {
   },
   mounted () {
     const vm = this
-    // 加载默认focus
-    if (this.autoFocus) {
-      this.isFocus = true
-      this.visible = true
-      this.$nextTick(() => {
-        this.$refs.input.$refs.input.focus()
-      })
-    }
     if (this.onlyChinese) {
       const originInput = this.$refs.input.$refs.input
       originInput.addEventListener('compositionstart', vm.onCompositionStart)
@@ -181,10 +179,15 @@ export default {
       }
       return text
     },
-    setCurrentValue (value) {
-      if (value === this.currentValue) return
-
-      this.currentValue = value
+    // 应对编辑时，code -> 对应省份
+    setCurrentValue (code) {
+      if (code === this.code) return
+      let item = {
+        province: cityUtil.getPathByCode(code)[0].name,
+        city: cityUtil.getPathByCode(code)[1].name,
+        area: cityUtil.getPathByCode(code)[2].name
+      }
+      this.currentValue = this.cityShow(item, 2)
     },
     // 清空
     handleClear () {
@@ -192,7 +195,8 @@ export default {
 
       this.currentValue = ''
       this.focusIndex = -1
-      this.$emit('input', this.currentValue)
+      this.code = null
+      this.$emit('input', null)
     },
     // 点击下拉框项
     handleSelect (name) {
@@ -202,19 +206,20 @@ export default {
         }
         return opt.value === name
       })
-      this.currentValue = item.value
+      this.currentValue = item.nameSeleced
+      this.code = item.code
       this.resetSelect()
       // 选中某一项
-      this.$emit('on-select', item.value, item)
-      this.$emit('input', item.value)
+      this.$emit('on-select', item.code, item)
+      this.$emit('input', item.code)
     },
     handleFocus () {
-      this.visible = true
+      // this.visible = true
       this.isFocus = true
-      // if (this.remote) {
-      //   // 鼠标focus的时候，需要默认查询所有
-      //   this.remoteCall(this.currentValue)
-      // }
+      if (!this.currentValue) { // 输入框为空，且获得焦点，则取历史数据
+        // 鼠标focus的时候，需要默认查询所有
+        this.takeCity()
+      }
       this.$emit('on-focus')
     },
     handleBlur () {
@@ -228,37 +233,61 @@ export default {
        */
     handleChange (e) {
       this.remoteCall(e.target.value)
+      if (!e.target.value) {
+        this.visible = false
+        return
+      }
       this.visible = true
-      this.$emit('input', this.currentValue)
     },
     // 远程请求
     remoteCall (query) {
-      let validQuery = this.lastRemoteQuery !== query && !this.isRemoteCall && !this.composing
-      let shouldCallRemote = this.remoteMethod && typeof this.remoteMethod === 'function'
-      if (validQuery && shouldCallRemote) {
+      let validQuery = !this.isRemoteCall && !this.composing && query
+      if (validQuery) {
         this.isRemoteCall = true
-        const promise = this.remoteMethod(query)
-        if (promise && promise.then) {
-          promise.then((options) => {
-            this.isRemoteCall = false
-            this.options = options
-          }).catch(errorInfo => {
-            this.isRemoteCall = false
+        server({
+          method: 'get',
+          url: 'city/search',
+          params: {
+            text: query,
+            codeType: this.codeType
+          }
+        }).then(response => {
+          this.isRemoteCall = false
+          const options = response.data.data
+          if (!options || options.length === 0) {
+            this.options = [{ name: '未查询到相关城市数据', disabled: true }]
+            return
+          }
+          this.options = options.map((item, index) => {
+            let name = this.cityShow(item, 1)
+            let nameSeleced = this.cityShow(item, 2)
+            let obj = { name: name, nameSeleced: nameSeleced }
+            return Object.assign({}, item, obj)
           })
-        }
-        this.lastRemoteQuery = query
+          // this.$nextTick(() => {
+          //   this.focusIndex = 0
+          // })
+        }).catch(err => {
+          this.isRemoteCall = false
+          console.log(err)
+          if (err.message && err.message.indexOf('timeout') !== -1) {
+            this.options = [{ name: '网络开小差了～请稍后重试', disabled: true }]
+            return
+          }
+          this.options = [{ name: '系统数据异常，请联系客服处理', disabled: true }]
+        })
       }
-      server({
-        method: 'get',
-        url: 'city/search',
-        params: {
-          text: query
-        }
-      }).then(response => {
-        const options = response.data.data
-        console.log(options)
-        this.options = options.map()
-      })
+    },
+    cityShow (item, type) {
+      if (type === 1) {
+        return (item.area ? item.area + ',  ' : '') +
+        (item.city ? item.city + ',  ' : '') +
+        (item.province ? item.province : '')
+      } else {
+        return (item.province ? item.province : '') +
+          (item.city ? ',  ' + item.city : '') +
+          (item.area ? ',  ' + item.area : '')
+      }
     },
     handleKeydown (e) {
       if (this.visible) {
@@ -295,6 +324,46 @@ export default {
       this.focusIndex = -1
       this.visible = false
       this.isFocus = false
+    },
+    // 存数据
+    saveCity (code) {
+      let nameSelecedItem = {
+        province: cityUtil.getPathByCode(code)[0].name,
+        city: cityUtil.getPathByCode(code)[1].name,
+        area: cityUtil.getPathByCode(code)[2].name
+      }
+      let nameItem = {
+        area: cityUtil.getPathByCode(code)[2].name,
+        city: cityUtil.getPathByCode(code)[1].name,
+        province: cityUtil.getPathByCode(code)[0].name
+      }
+      let name = this.cityShow(nameItem, 1)
+      let nameSeleced = this.cityShow(nameSelecedItem, 2)
+      let obj = { name: name, nameSeleced: nameSeleced, code: code }
+      // 取历史数据，和5比较
+      let cityArray = JSON.parse(localStorage.getItem('cityInfo'))
+      if (cityArray.length >= 5) {
+        cityArray.length = 4
+      }
+      this.arrayReduce(cityArray.unshift(obj))
+      localStorage.setItem('cityInfo', JSON.stringify(cityArray))
+    },
+    // 取数据
+    takeCity () {
+      this.options = JSON.parse(localStorage.getItem('cityInfo')) || []
+    },
+    // 数组去重
+    arrayReduce (arr) {
+      let hash = {}
+      arr = arr.reduce((preVal, curVal) => {
+        if (!hash[curVal.code]) {
+          hash[curVal.code] = true
+          preVal.push(curVal)
+        }
+        // hash[curVal.code] ? '' : hash[curVal.code] = true && preVal.push(curVal)
+        return preVal
+      }, [])
+      return arr
     }
   }
 }

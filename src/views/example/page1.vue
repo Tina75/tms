@@ -16,8 +16,9 @@
     <!--<p><Button v-if="hasPower(110301)" type="primary" @click="closeTab">关闭当前tab页</Button></p>-->
     <h3>城市插件的使用</h3>
     <div>
-      <select-input-for-city></select-input-for-city>
+      <select-input-for-city ref="child" v-model="code" :clearable="true"></select-input-for-city>
       <!--<SelectInput :@focus=""></SelectInput>-->
+      <button @click="save">提交</button>
     </div>
   </div>
 </template>
@@ -37,6 +38,12 @@ export default {
   },
   data () {
     return {
+      code: 959030
+    }
+  },
+  watch: {
+    code (code) {
+      console.log(code)
     }
   },
   methods: {
@@ -56,6 +63,9 @@ export default {
     },
     closeTab () {
       this.ema.fire('closeTab', this.$route)
+    },
+    save () {
+      this.$refs.child.saveCity()
     }
   }
 }
