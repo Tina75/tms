@@ -101,6 +101,7 @@ export default {
       composing: false, // 中文输入法不希望在写拼音的时候触发input，搜索；是在完成中文后再搜索,IME问题
       focusIndex: -1,
       currentValue: '',
+      currentValueCopy: '',
       mousehover: false,
       isRemoteCall: false, // 当前是否正在请求，防止请求太频繁
       options: []
@@ -127,6 +128,12 @@ export default {
   watch: {
     value (value) {
       this.setCurrentValue(value)
+    },
+    currentValue (value) {
+      if (value !== this.currentValueCopy) {
+        this.code = null
+        this.$emit('input', null)
+      }
     },
     /**
        * 主动操作滚动条，到选中的option视图
@@ -197,6 +204,7 @@ export default {
         area: city[2] ? city[2].name : ''
       }
       this.currentValue = this.cityShow(item, 2)
+      this.currentValueCopy = this.currentValue
     },
     // 清空
     handleClear () {
@@ -337,6 +345,9 @@ export default {
     },
     // 存数据
     saveCity (code) {
+      if (!code) {
+        return
+      }
       // 首先判断需要存储的code是否已经存在
       let cityArray = localStorage.getItem('cityInfo') ? JSON.parse(localStorage.getItem('cityInfo')) : []
       for (let i = 0; i < cityArray.length; i++) {
