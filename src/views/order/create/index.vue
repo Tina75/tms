@@ -17,12 +17,12 @@
       </Col>
       <Col span="7">
       <FormItem label="始发城市:" prop="start">
-        <AreaSelect v-model="orderForm.start" placeholder=""></AreaSelect>
+        <CitySelect ref="start" v-model="orderForm.start" placeholder=""></CitySelect>
       </FormItem>
       </Col>
       <Col span="7">
       <FormItem label="目的城市:" prop="end">
-        <AreaSelect v-model="orderForm.end" :adjustment="true" placeholder=""></AreaSelect>
+        <CitySelect ref="end" v-model="orderForm.end" placeholder=""></CitySelect>
       </FormItem>
       </Col>
     </Row>
@@ -231,8 +231,9 @@ import float from '@/libs/js/float'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import OrderPrint from './components/OrderPrint'
-import AreaSelect from '@/components/AreaSelect'
-import { getCityCode, FORM_VALIDATE_START, FORM_VALIDATE_END } from '@/libs/js/cityValidator'
+// import AreaSelect from '@/components/AreaSelect'
+import CitySelect from '@/components/SelectInputForCity'
+import { FORM_VALIDATE_START, FORM_VALIDATE_END } from '@/libs/js/cityValidator'
 import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
 import settlements from '@/libs/constant/settlement.js'
@@ -250,11 +251,12 @@ export default {
     Title,
     TagNumberInput,
     OrderPrint,
-    AreaSelect,
+    // AreaSelect,
     SelectInput,
     FontIcon,
     CargoTable,
-    TimeInput
+    TimeInput,
+    CitySelect
   },
   mixins: [BaseComponent, BasePage],
   data () {
@@ -332,9 +334,9 @@ export default {
         // 客户，一般是公司名
         consignerName: '',
         // 始发城市
-        start: [],
+        start: null,
         // 目的城市
-        end: [],
+        end: null,
         // 客户订单号
         customerOrderNo: '',
         // 发货时间
@@ -382,11 +384,11 @@ export default {
           { required: true, message: '请输入客户名称' }
         ],
         start: [
-          { required: true, type: 'array', message: '请选择始发城市' },
+          { required: true, message: '请选择始发城市' },
           { validator: FORM_VALIDATE_START, trigger: 'change' }
         ],
         end: [
-          { required: true, type: 'array', message: '请选择目的城市' },
+          { required: true, message: '请选择目的城市' },
           { validator: FORM_VALIDATE_END }
         ],
         deliveryTimes: [
@@ -672,8 +674,8 @@ export default {
       this.openDialog({
         name: 'dialogs/financeRule.vue',
         data: {
-          start: getCityCode(vm.orderForm.start), // 始发城市
-          end: getCityCode(vm.orderForm.end), // 目的城市
+          start: vm.orderForm.start, // 始发城市
+          end: vm.orderForm.end, // 目的城市
           partnerName: vm.orderForm.consignerName, // 客户名
           partnerType: 1, // 计算规则分类：1-发货方，2-承运商，3-外转方
           weight: statics.weight,
@@ -690,6 +692,7 @@ export default {
     handleSubmit (e) {
       const vm = this
       vm.disabled = true
+      console.log('from', this.orderForm)
       return new Promise((resolve, reject) => {
         vm.$refs.orderForm.validate((valid) => {
           if (valid) {
@@ -713,12 +716,12 @@ export default {
               return
             }
             // 始发地遇到北京市等特殊直辖市，需要只保留第一级code
-            let start = getCityCode(orderForm.start)
-            let end = getCityCode(orderForm.end)
+            // let start = getCityCode(orderForm.start)
+            // let end = getCityCode(orderForm.end)
             // 始发城市，目的城市，到达时间等需要额外处理
             let form = Object.assign({}, orderForm, {
-              start: start,
-              end: end,
+              // start: start,
+              // end: end,
               arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
               deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
               orderCargoList: orderCargoList.map(cargo => cargo.toJson())
@@ -726,6 +729,8 @@ export default {
 
             ['start', 'end'].forEach(field => {
               form[field] = parseInt(form[field])
+              // 保存本地记录
+              vm.$refs['start'].saveCity(form[field])
             })
             // 转换成分单位
             transferFeeList.forEach((fee) => {
