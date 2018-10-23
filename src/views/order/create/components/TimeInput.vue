@@ -4,7 +4,7 @@
       <Row>
         <Col v-for="(opt, index) in timeList" :key="index" span="6">
         <div class="timeCell" @click="clickHandle(opt)">
-          {{opt}}: 00前
+          {{opt}}:00
         </div>
         </Col>
       </Row>
@@ -40,7 +40,7 @@ export default {
       return arr
     },
     inputValue () {
-      return this.value ? `${this.value}: 00前` : ''
+      return this.value ? `${this.value}:00` : ''
     }
   },
   mounted () {
