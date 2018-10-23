@@ -100,6 +100,7 @@
       v-if="!tabStatus"
       source="transport"
       tab-status="待送货"
+      is-visiable
       url="/load/bill/wait/pick/list"
       export-url="/load/bill/pick/up/export"
       @refresh-tab="fetchTabCount" />
