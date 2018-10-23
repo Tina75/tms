@@ -17,12 +17,12 @@
       </Col>
       <Col span="7">
       <FormItem label="始发城市:" prop="start">
-        <CitySelect ref="start" v-model="orderForm.start" placeholder=""></CitySelect>
+        <CitySelect ref="start" v-model="orderForm.start"></CitySelect>
       </FormItem>
       </Col>
       <Col span="7">
       <FormItem label="目的城市:" prop="end">
-        <CitySelect ref="end" v-model="orderForm.end" placeholder=""></CitySelect>
+        <CitySelect ref="end" v-model="orderForm.end"></CitySelect>
       </FormItem>
       </Col>
     </Row>
