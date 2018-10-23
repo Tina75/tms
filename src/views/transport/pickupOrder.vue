@@ -151,8 +151,8 @@ export default {
   data () {
     return {
       tabType: 'PICKUP',
-      pickupHeadType: headType.WAIT_PICKUP,
-      dispatchHeadType: headType.PICKUP,
+      pickupHeadType: headType.PICKUP,
+      dispatchHeadType: headType.WAIT_PICKUP,
 
       tabList: TAB_LIST, // 标签栏
       btnList: BUTTON_LIST(this), // 所有按钮组
