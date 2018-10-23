@@ -55,6 +55,7 @@
             <tr>
               <td colspan="6" class="table-footer">
                 <span class="table-footer-item">运输费：{{data.freightFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">提货费：{{data.pickupFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">装货费：{{data.loadFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">卸货费：{{data.unloadFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">保险费：{{data.insuranceFee / 100 || 0}} 元</span>

@@ -87,10 +87,16 @@ export default {
 
   data () {
     return {
-      send: { start: [], end: [] },
+      send: { start: '', end: '' },
       sendRules: {
-        start: { required: true, type: 'array', min: 1, message: '请填写始发地', trigger: 'change' },
-        end: { required: true, type: 'array', min: 1, message: '请填写目的地', trigger: 'change' }
+        start: [
+          { required: true, message: '请填写始发地', trigger: 'change' },
+          { required: true, message: '请填写始发地', trigger: 'blur' }
+        ],
+        end: [
+          { required: true, message: '请填写目的地', trigger: 'change' },
+          { required: true, message: '请填写目的地', trigger: 'blur' }
+        ]
       },
       pick: { carrierName: '', carNo: '', driverName: '' },
       pickRules: {
@@ -287,8 +293,8 @@ export default {
         if (valid) {
           // 地址入参为最后一级区号
           let sendCodes = {
-            start: Number(this.send.start[this.send.start.length - 1]),
-            end: Number(this.send.end[this.send.end.length - 1])
+            start: this.send.start,
+            end: this.send.end
           }
           const data = Object.assign(sendCodes, { orderIds: this.orderIds })
           Server({
@@ -363,6 +369,8 @@ export default {
 </style>
 <style lang='stylus'>
 .dispatch-dialog
+  .ivu-input-group
+    display flex
   .ivu-modal-body
     padding 22px 40px
 </style>
