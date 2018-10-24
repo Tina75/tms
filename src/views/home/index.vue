@@ -373,7 +373,5 @@ export default {
     background-color #f3f3f3
     margin-bottom 8px
   &__noticeBar
-    width 100%
     cursor pointer
-    display inline-block
 </style>
