@@ -438,7 +438,8 @@ export default {
                           query: {
                             id: params.row.orderNo,
                             orderId: params.row.id,
-                            from: 'order'
+                            from: 'order',
+                            source: this.source
                           }
                         })
                       }
@@ -446,7 +447,7 @@ export default {
                   }, params.row.orderNo),
                   h(FontIcon, {
                     props: {
-                      type: 'chulizhong',
+                      type: 'ico-ing',
                       size: '11',
                       color: '#9DA1B0'
                     }
@@ -468,7 +469,8 @@ export default {
                         query: {
                           id: params.row.orderNo,
                           orderId: params.row.id,
-                          from: 'order'
+                          from: 'order',
+                          source: this.source
                         }
                       })
                     }
@@ -507,7 +509,8 @@ export default {
                           query: {
                             id: params.row.orderNo,
                             orderId: params.row.id,
-                            from: 'order'
+                            from: 'order',
+                            source: this.source
                           }
                         })
                       }
@@ -530,7 +533,8 @@ export default {
                         query: {
                           id: params.row.orderNo,
                           orderId: params.row.id,
-                          from: 'order'
+                          from: 'order',
+                          source: this.source
                         }
                       })
                     }
@@ -1162,14 +1166,14 @@ export default {
 .ivu-btn
   margin-right 15px
   width 80px
-  height 35px
+  height 32px
 .ivu-btn-default
   background #F9F9F9
 .high-search
   width 36px !important
   height 36px
-  line-height 1.4
-  letter-spacing 2px
+  line-height 1.2
+  letter-spacing 1px
   padding 0
   white-space normal
   margin-right 0
@@ -1184,16 +1188,7 @@ export default {
 <style lang="stylus">
 .operate-box .ivu-input-group
   display flex
-.order-simple-select
-  .ivu-select-selection
-    height 35px
-  .ivu-select-selected-value
-    height 35px !important
-    line-height 35px !important
 .padding-20
   .ivu-table-cell
     padding-left 20px
-.order-right
-  .ivu-input
-    height 35px
 </style>

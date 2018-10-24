@@ -36,7 +36,9 @@ export default {
 
   data () {
     return {
-      canRecovery: false
+      canRecovery: false,
+      orderId: '',
+      orderNo: ''
     }
   },
 
@@ -69,6 +71,8 @@ export default {
           this.canRecovery = true
         } else {
           this.canRecovery = false
+          this.orderId = res.data.data.orderId
+          this.orderNo = res.data.data.orderNo
         }
       })
     },
@@ -77,8 +81,8 @@ export default {
       this.openTab({
         path: '/order-management/detail',
         query: {
-          id: this.id[0].orderNo,
-          orderId: this.id[0].id,
+          id: this.orderNo,
+          orderId: this.orderId,
           from: 'order'
         }
       })

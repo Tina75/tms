@@ -59,7 +59,7 @@
                 <span class="table-footer-item">装货费：{{data.loadFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">卸货费：{{data.unloadFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">保险费：{{data.insuranceFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">其他：{{data.otherFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">其他运费：{{data.otherFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">合计运费: {{data.totalFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">结算方式：{{settlement(data) || 0}}</span>
               </td>
