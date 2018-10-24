@@ -103,8 +103,8 @@ export default {
         }
       })
         .then((response) => {
-          const { orderCargoList, ...order } = response.data.data
-          commit(types.RECEIVE_ORDER_DETAIL, order)
+          // const { orderCargoList, ...order } = response.data.data
+          // commit(types.RECEIVE_ORDER_DETAIL, order)
           resolve(response.data.data)
         })
         .catch((err) => reject(err))
