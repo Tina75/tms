@@ -70,7 +70,7 @@ export default {
             },
             labelLine: {
               show: true,
-              length: 15,
+              length: 5,
               length2: 10,
               lineStyle: {
                 color: '#D9DEE8'

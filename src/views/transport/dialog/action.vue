@@ -308,7 +308,7 @@ export default {
         carLength: this.info.carLength ? this.info.carLength : void 0,
         ...this.formatMoney(),
         settlementType: this.settlementType,
-        settlementPayInfo: this.$refs.$payInfo.getPayInfo()
+        settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
       }
       let url
       if (this.type === 'sendCar') {
