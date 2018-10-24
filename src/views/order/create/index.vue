@@ -567,14 +567,12 @@ export default {
   beforeDestroy () {
     this.resetForm()
     this.clearClients()
-    this.clearOrderDetail()
   },
   methods: {
     ...mapActions([
       'getClients',
       'getConsignerDetail',
       'clearCargoes',
-      'clearOrderDetail',
       'clearClients',
       'getOrderDetail',
       'submitOrder'
