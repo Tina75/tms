@@ -53,14 +53,14 @@
         "powerCode":110300
       },
       {
-        "name":"送货管理",
-        "path":"/transport/waybill",
-        "powerCode":120100
-      },
-      {
         "name":"提货管理",
         "path":"/transport/pickupOrder",
         "powerCode":120200
+      },
+      {
+        "name":"送货管理",
+        "path":"/transport/waybill",
+        "powerCode":120100
       },
       {
         "name":"外转管理",
