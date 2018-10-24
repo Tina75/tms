@@ -172,9 +172,11 @@ export default {
     // 输入框失焦
     inputBlurHandler () {
       if (this.mode === 'carNo' && this.model) { // 车牌号小写转大写
-        this.model = this.model.toUpperCase()
+        this.$nextTick(() => {
+          this.model = this.model.toUpperCase()
+          this.$emit('input', this.model)
+        })
       }
-      this.$emit('input', this.model)
     },
 
     // 清空

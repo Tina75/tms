@@ -97,7 +97,7 @@
     <OrderTabContent
       v-if="!tabStatus"
       :table-head-source="dispatchHeadType"
-      source="transport"
+      source="pickup"
       tab-status="待提货"
       url="/load/bill/wait/pick/list"
       export-url="/load/bill/pick/up/export"
