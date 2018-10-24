@@ -47,19 +47,17 @@ export default {
         const { addressList, cargoList, consigneeList, ...consigner } = response.data.data
         consigner.id = id
         commit(types.RECEIVE_CONSIGNERS_LIST, [consigner])
-        if (addressList.length > 0) {
-          // 发货地址
-          commit(types.RECEIVE_ADDRESS_LIST, addressList)
-        }
+        // 发货地址
+        commit(types.RECEIVE_ADDRESS_LIST, addressList || [])
         if (cargoList.length > 0) {
           const transformCargoList = cargoList.map((cargo) => new Cargo(cargo, true))
           // 货物信息
           commit(types.RECEIVE_CARGO_LIST, transformCargoList)
+        } else {
+          commit(types.RECEIVE_CARGO_LIST, [])
         }
-        if (consigneeList.length > 0) {
-          // 收货方地址
-          commit(types.RECEIVE_CONSIGNEES_LIST, consigneeList)
-        }
+        // 收货方地址
+        commit(types.RECEIVE_CONSIGNEES_LIST, consigneeList || [])
         resolve(response.data)
       }).catch((error) => {
         reject(error)
