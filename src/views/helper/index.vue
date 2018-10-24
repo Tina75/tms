@@ -1,5 +1,5 @@
 <template>
-  <div class="temAll">
+  <Row class="temAll">
     <Col :style="styleHeight" span="4">
     <Menu :open-names="['1']" style="width: 100%;" class="menuSty" accordion>
       <Submenu name="1">
@@ -9,17 +9,17 @@
         </template>
         <MenuItem v-for="menu in picMenu" :key="menu.id" :name="menu.title" class="secondTitle" @click.native="clickLeftMenuPic(menu)">
         {{menu.title}}
-        </MenuItem>
+          </MenuItem>
       </Submenu>
       <!-- <Submenu name="2">
-        <template slot="title">
-          <i class="icon font_family icon-shipin"></i>
-          <span class="title">视频介绍</span>
-        </template>
-        <MenuItem v-for="menu in videoMenu" :key="menu.id" :name="menu.title" class="secondTitle" @click.native="clickLeftMenuVideo(menu)">
-        {{menu.title}}
-          </MenuItem>
-      </Submenu> -->
+          <template slot="title">
+            <i class="icon font_family icon-shipin"></i>
+            <span class="title">视频介绍</span>
+          </template>
+          <MenuItem v-for="menu in videoMenu" :key="menu.id" :name="menu.title" class="secondTitle" @click.native="clickLeftMenuVideo(menu)">
+          {{menu.title}}
+            </MenuItem>
+        </Submenu> -->
     </Menu>
     </Col>
     <Col span="20" class="contentInfoDiv">
@@ -40,7 +40,7 @@
       </div>
     </Card>
     </Col>
-  </div>
+  </Row>
 </template>
 
 <script>
