@@ -1,43 +1,45 @@
 <template>
   <div class="page-table">
-    <SliderIcon
-      v-if="showFilter"
-      :list="extraColumns"
-      class="page-table__sliderIcon"
-      @on-change="customTableColumns">
-    </SliderIcon>
-    <Table
-      ref="table"
-      :width="width"
-      :height="height"
-      :data="dataList"
-      :columns="mapColumns"
-      :stripe="stripe"
-      :border="border"
-      :show-header="showHeader"
-      :loading="loading"
-      :highlight-row="highlightRow"
-      :size="size"
-      :no-data-text="noDataText"
-      :row-class-name="rowClass"
-      :table-head-type="tableHeadType"
-      @on-current-change="handleCurrentChange"
-      @on-select="handleSelect"
-      @on-select-all="handleSelectAll"
-      @on-select-cancel="handleSelectCancel"
-      @on-selection-change="handleSelectionChange"
-      @on-sort-change="handleSortChange"
-      @on-filter-change="handleFilterChange"
-      @on-row-click="handleRowClick"
-      @on-row-dbclick="handleRowDbclick"
-      @on-expand="handleExpand">
-      <div v-if="showSlotFooter" slot="footer">
-        <slot name="footer"></slot>
-      </div>
-      <div v-if="showSlotHeader" slot="header">
-        <slot name="header"></slot>
-      </div>
-    </Table>
+    <div class="page-table__wrapper">
+      <SliderIcon
+        v-if="showFilter"
+        :list="extraColumns"
+        class="page-table__sliderIcon"
+        @on-change="customTableColumns">
+      </SliderIcon>
+      <Table
+        ref="table"
+        :width="width"
+        :height="height"
+        :data="dataList"
+        :columns="mapColumns"
+        :stripe="stripe"
+        :border="border"
+        :show-header="showHeader"
+        :loading="loading"
+        :highlight-row="highlightRow"
+        :size="size"
+        :no-data-text="noDataText"
+        :row-class-name="rowClass"
+        :table-head-type="tableHeadType"
+        @on-current-change="handleCurrentChange"
+        @on-select="handleSelect"
+        @on-select-all="handleSelectAll"
+        @on-select-cancel="handleSelectCancel"
+        @on-selection-change="handleSelectionChange"
+        @on-sort-change="handleSortChange"
+        @on-filter-change="handleFilterChange"
+        @on-row-click="handleRowClick"
+        @on-row-dbclick="handleRowDbclick"
+        @on-expand="handleExpand">
+        <div v-if="showSlotFooter" slot="footer">
+          <slot name="footer"></slot>
+        </div>
+        <div v-if="showSlotHeader" slot="header">
+          <slot name="header"></slot>
+        </div>
+      </Table>
+    </div>
     <div v-if="showPagination" class="page-table__footer-pagination">
       <div class="page-table__footer-pagination-fr">
         <Page
@@ -85,6 +87,7 @@ import _ from 'lodash'
   * 7.rowId data数据的关键字编号，与下面的selected配合使用
   * 8.autoload 默认发送请求加载数据，设置成false，则不发送请求，根据关键字请求
   * 9.onCancelAll 取消选中所有的时候调用，返回selection
+  * 10. onLoad 请求完接口后回调函数，返回值是请求结果
   */
 export default {
   components: {
@@ -258,28 +261,6 @@ export default {
         return fixedCols.concat(
           _.sortBy(normalCols, (col) => columnGroup[col.key] ? columnGroup[col.key][0].sort : 0)
         )
-        // .concat({
-        //   title: 'icon',
-        //   width: 48,
-        //   fixed: 'right',
-        //   renderHeader (h, params) {
-        //     return h(SliderIcon, {
-        //       props: {
-        //         list: vm.extraColumns
-        //       },
-        //       on: {
-        //         'on-change': (columns) => {
-        //           vm.$emit('on-column-change', columns)
-        //           // vm.extraColumns = columns
-        //         }
-        //       }
-        //     })
-        //   },
-        //   key: 'filter-columns',
-        //   render: (h) => {
-        //     return h('span', '')
-        //   }
-        // })
       } else {
         return this.columns
       }
@@ -617,11 +598,12 @@ export default {
 
 <style lang="stylus">
 .page-table
-  position: relative;
   margin-top: 0px
+  &__wrapper
+    position: relative
   &__sliderIcon
-    position: absolute;
-    background: #f8f8f9;
+    position: absolute
+    background: #f8f8f9
     z-index: 2;
     right: 0px;
     width: 50px;

@@ -74,6 +74,10 @@ export default {
           this.message = '此订单已经外转处理，为保证数据安全，不可以删除'
           this.canDelete = false
         }
+        if (this.id[0].status > 20) {
+          this.message = '此订单已经在处理中，为保证数据安全，不可以删除'
+          this.canDelete = false
+        }
       } else {
         if (this.id.some(this.checkSelectList)) {
           this.canDelete = false

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="transport-detail">
     <!-- 运单号及状态 -->
     <section class="detail-header">
       <ul class="detail-header-list">

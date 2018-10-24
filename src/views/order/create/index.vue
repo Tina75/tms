@@ -567,14 +567,12 @@ export default {
   beforeDestroy () {
     this.resetForm()
     this.clearClients()
-    this.clearOrderDetail()
   },
   methods: {
     ...mapActions([
       'getClients',
       'getConsignerDetail',
       'clearCargoes',
-      'clearOrderDetail',
       'clearClients',
       'getOrderDetail',
       'submitOrder'
@@ -651,8 +649,9 @@ export default {
          * 2. 如果之前是空的就赋值
          */
         if (cargoList.length > 0) {
-          // 清空信息，防止信息追加到已维护的货物信息中去
-          if (_this.consignerCargoes.length === 1 && (!_this.consignerCargoes[0].cargoName && (!_this.consignerCargoes[0].weight || !_this.consignerCargoes[0].volume))) {
+          // 如果在货物信息中已经有数据了，就不覆盖了；如果没有货物信息，就默认添加已维护的货物
+          const confignerCargoValid = _this.consignerCargoes[0].validate()
+          if (!confignerCargoValid.success) {
             _this.consignerCargoes = [new Cargo(cargoList[0], true)]
           }
         }

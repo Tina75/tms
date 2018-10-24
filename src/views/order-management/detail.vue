@@ -150,7 +150,7 @@
         <Row>
           <i-col span="24">
             <span>费用合计：</span>
-            <span v-if="!detail.parentId" style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{FeeTotal | toPoint}} 元</span>
+            <span v-if="!detail.parentId" style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{detail.totalFee | toPoint}} 元</span>
             <span v-else>-</span>
           </i-col>
         </Row>
