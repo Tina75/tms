@@ -73,7 +73,7 @@ export default {
         yAxis: [
           {
             name: '营业额',
-            offset: 35,
+            offset: 10,
             type: 'value',
             nameTextStyle: {
               padding: [0, 0, 0, 25]
