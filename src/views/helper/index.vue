@@ -173,6 +173,7 @@ export default {
   background:#fff;
   padding-left: 20px;
   height: 100%;
+  overflow: auto;
 .contentCard
   margin-top:-20px;
 </style>

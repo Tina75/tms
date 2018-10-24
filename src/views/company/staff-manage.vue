@@ -1,5 +1,5 @@
 <template>
-  <div class="temAll">
+  <div :style="styleHeight" class="temAll">
     <Col span="24">
     <div class="searchCard">
       <Form :model="formSearch" :label-width="60" label-position="left">
@@ -231,6 +231,11 @@ export default {
           { required: true, message: '请选择角色账号', trigger: 'blur' }
         ]
       }
+    }
+  },
+  computed: {
+    styleHeight () {
+      return { height: (this.$parent.$el.children[0].getBoundingClientRect().height - 100) + 'px' }
     }
   },
   mounted: function () {
