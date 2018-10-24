@@ -177,7 +177,7 @@ export default {
       this.resetEasySearch()
       this.resetSeniorSearch()
       // 搜索与查询
-      if (this.tabStatus) this.fetchData()
+      if ((this.tabType === 'OUTER') || (this.tabType !== 'OUTER' && this.tabStatus)) this.fetchData()
       else this.fetchTabCount && this.fetchTabCount()
     },
 

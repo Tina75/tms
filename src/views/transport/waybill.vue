@@ -245,7 +245,6 @@ export default {
       const data = res.data.data
       this.page.current = data.pageNo
       this.page.size = data.pageSize
-      // this.$forceUpdate()
     },
 
     // 打印
