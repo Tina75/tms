@@ -1,13 +1,5 @@
 <template>
   <Row class="temAll">
-    <!-- <Col span="3">
-    <Menu :active-name="typeName" class="menuSty" style="width: 100%;">
-      <MenuItem v-for="menu in menuList" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
-      <p style="margin-left:-20px;">{{menu.name}}
-      <Badge v-if="menu.infoNum" :count="menu.infoNum" class="menuInfoBadge"></Badge></p>
-      </MenuItem>
-    </Menu>
-    </Col> -->
     <Col span="24" class="contentDiv">
     <div class="contendBorderBttom">
       <span class="iconRightTitle"></span>
@@ -92,7 +84,7 @@
             </div>
           </div>
         </div>
-        </Col>
+          </Col>
       </div>
       <!--运输消息-->
       <div v-if="'2' === this.searchData.type">
@@ -126,7 +118,7 @@
             </div>
           </div>
         </div>
-        </Col>
+          </Col>
       </div>
       <Modal v-model="visibaleRemove" type="warning" width="360">
         <p slot="header" class="modalTitle">
@@ -135,7 +127,7 @@
         <p>
           <i class="icon font_family icon-bangzhuzhongxin"></i>
         </p><p class="modalMessage">确定要删除“{{messageInit.title}}”消息吗?</P>
-        </p>
+          </p>
         <div slot="footer">
           <Button type="primary" @click="removeSubForm">确定</Button>
           <Button  @click="removeCancelForm">取消</Button>
@@ -148,7 +140,7 @@
         <p>
           <i class="icon font_family icon-bangzhuzhongxin"></i>
         </p><p class="modalMessage">确定要批量删除选中的消息吗?</P>
-        </p>
+          </p>
         <div slot="footer">
           <Button type="primary" @click="removeSubFormSome">确定</Button>
           <Button  @click="removeCancelFormSome">取消</Button>
@@ -161,7 +153,7 @@
         <p>
           <i class="icon font_family icon-bangzhuzhongxin"></i>
         </p><p class="modalMessage">确定要删除所有的“{{rightTitle}}”?</P>
-        </p>
+          </p>
         <div slot="footer">
           <Button type="primary" @click="removeSubFormAll">确定</Button>
           <Button  @click="removeCancelFormAll">取消</Button>

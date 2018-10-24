@@ -1,10 +1,10 @@
 <template>
-  <div :style="styleHeight" class="temAll">
+  <Row :style="styleHeight" class="temAll">
     <Col span="3">
     <Menu active-name="修改密码" class="menuList" style="width:100%">
       <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
       <p class="menuTitle">{{menu.name}}</p>
-      </MenuItem>
+        </MenuItem>
     </Menu>
     </Col>
     <Col span="21" class="contentDiv">
@@ -29,7 +29,7 @@
           <Button type="primary" style="width:86px;" @click="pwdSubmit('formPwd')">保存</Button>
         </FormItem>
       </Form>
-      </Col>
+        </Col>
     </div>
     <!--个人设置-->
     <div v-else-if="'2' === this.rightKey" key="2" class="divSetContent">
@@ -44,37 +44,11 @@
         <FormItem label="角色：" class="labelClassSty">
           <span>{{formPersonal.roleName}}</span>
         </FormItem>
-        <!-- <FormItem label="头像："> -->
-        <!--个人设置-图片相关-->
-        <!-- <div class="demo-upload-list">
-            <img :src="uploadList.url">
-          </div>
-          <Upload
-            ref="upload"
-            :show-upload-list="false"
-            :on-success="handleSuccess"
-            :format="['jpg','jpeg','png']"
-            :max-size="2048"
-            :on-format-error="handleFormatError"
-            :on-exceeded-size="handleMaxSize"
-            :before-upload="handleBeforeUpload"
-            multiple
-            type="drag"
-            action="//jsonplaceholder.typicode.com/posts/"
-            style="display: inline-block;width:58px; color:#00a4bd"
-          >
-            修改头像
-          </Upload> -->
-        <!--个人设置-图片相关-->
-        <!-- </FormItem>
-        <FormItem>
-          <p style="color:rgba(153,153,153,1);">尺寸60*60像素，大小不超过1M</p>
-        </FormItem> -->
         <FormItem>
           <Button type="primary" style="width:86px;"  @click="personalSubmit('formPersonal')">保存</Button>
         </FormItem>
       </Form>
-      </Col>
+        </Col>
     </div>
     <!--短信设置-->
     <div v-else-if="'3' === this.rightKey" key="3" style="margin-left:-125px;" class="divSetContent">
@@ -101,7 +75,7 @@
         </div>
       </Card>
       <Button type="primary" class="msgSaveBtn test111" style="width:86px;" @click="msgSaveBtn">保存</Button>
-      </Col>
+        </Col>
     </div>
     <!--公司设置-->
     <div v-else-if="'4' === this.rightKey" key="4" class="divSetContent">
@@ -122,31 +96,6 @@
         <FormItem label="公司地址：" prop="address" class="labelClassSty">
           <Input v-model="formCompany.address" placeholder="请输入公司地址" class="inputClassSty"></Input>
         </FormItem>
-        <!-- <FormItem label="公司LOGO："> -->
-        <!--公司设置-图片相关-->
-        <!-- <div class="demo-upload-list">
-            <img :src="uploadListCompany.url">
-          </div>
-          <Upload
-            ref="uploadCompany"
-            :show-upload-list="false"
-            :on-success="handleSuccessCompany"
-            :format="['jpg','jpeg','png']"
-            :max-size="2048"
-            :on-format-error="handleFormatErrorCompany"
-            :on-exceeded-size="handleMaxSizeCompany"
-            :before-upload="handleBeforeUploadCompany"
-            multiple
-            type="drag"
-            action="//jsonplaceholder.typicode.com/posts/"
-            style="display: inline-block;width:58px; color:#00a4bd">
-            点击上传
-          </Upload> -->
-        <!--公司设置-图片相关-->
-        <!-- </FormItem>
-        <FormItem>
-          <p style="color:rgba(153,153,153,1);">尺寸60*60像素，大小不超过1M</p>
-        </FormItem> -->
         <FormItem>
           <Button type="primary" style="width:86px;" @click="companySubmit('formCompany')">保存</Button>
         </FormItem>
@@ -154,7 +103,7 @@
         </Col>
     </div>
     </Col>
-  </div>
+  </Row>
 </template>
 
 <script>
