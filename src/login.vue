@@ -61,11 +61,12 @@ export default {
 
     ul
       list-style none
-    .ivu-input,
-    .ivu-btn
-      height 35px
-    .ivu-input-prefix i
-      line-height 35px
+
+    // .ivu-input,
+    // .ivu-btn
+    //   height 35px
+    // .ivu-input-prefix i
+    //   line-height 35px
 
     .icon-logo-p
       color #FFFFFF
