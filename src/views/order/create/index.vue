@@ -17,12 +17,12 @@
       </Col>
       <Col span="7">
       <FormItem label="始发城市:" prop="start">
-        <CitySelect ref="start" v-model="orderForm.start" placeholder="请输入"></CitySelect>
+        <CitySelect ref="start" v-model="orderForm.start"></CitySelect>
       </FormItem>
       </Col>
       <Col span="7">
       <FormItem label="目的城市:" prop="end">
-        <CitySelect ref="end" v-model="orderForm.end" placeholder="请输入"></CitySelect>
+        <CitySelect ref="end" v-model="orderForm.end"></CitySelect>
       </FormItem>
       </Col>
     </Row>
@@ -384,10 +384,10 @@ export default {
           { required: true, message: '请输入客户名称' }
         ],
         start: [
-          { required: true, message: '请选择始发城市' }
+          { required: true, message: '请输入始发城市' }
         ],
         end: [
-          { required: true, message: '请选择目的城市' }
+          { required: true, message: '请输入目的城市' }
         ],
         deliveryTimes: [
           { validator: validateStart, trigger: 'change' }
