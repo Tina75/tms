@@ -24,18 +24,18 @@
         @on-change="handleChange"
         @on-focus="handleFocus"
       >
-      <span v-show="nameSeleced" slot="append" style="display: block;line-height: 22px; text-align: left;" @click="inputFocus">{{nameSeleced}}</span>
+      <span v-show="nameSeleced" slot="append" :style="{paddingLeft: (currentValue.length * 12 + 10) + 'px'}" style="display: block;line-height: 22px; text-align: left;" @click="inputFocus">{{nameSeleced}}</span>
       <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-input__clear-icon" @click.native.stop="handleClear"></Icon>
       <Icon v-if="!mousehover || !isClearable" slot="suffix" type="ios-arrow-down" class="select-input__input-icon"></Icon>
       </Input>
     </div>
-    <DropdownMenu ref="dropdown" slot="list" :style="{'max-height':'150px', overflow:'auto'}">
+    <DropdownMenu ref="dropdown" slot="list"  :style="{'max-height':'150px', overflow:'auto'}">
       <DropdownItem
         v-for="(option, index) in options"
         :key="index"
         :name="option.name"
         :disabled="option.disabled"
-        :class="{'ivu-select-item-focus': focusIndex === index}"
+        :class="{'ivu-select-item-focus': focusIndex === index,'isDataNull':isDataNull}"
         v-html="heightlightText(option.name)">
       </DropdownItem>
     </DropdownMenu>
@@ -106,6 +106,7 @@ export default {
       mousehover: false,
       isRemoteCall: false, // 当前是否正在请求，防止请求太频繁
       options: [],
+      isDataNull: false, // 请求数据为空
       nameSeleced: ''
     }
   },
@@ -274,14 +275,17 @@ export default {
         server({
           method: 'get',
           url: 'city/search',
+          ignoreCode: true,
           params: {
             text: query,
             codeType: this.codeType
           }
         }).then(response => {
+          this.isDataNull = false
           this.isRemoteCall = false
           const options = response.data.data
           if (!options || options.length === 0) {
+            this.isDataNull = true
             this.options = [{ name: '未查询到相关城市数据', disabled: true }]
             return
           }
@@ -295,6 +299,7 @@ export default {
             this.focusIndex = 0
           })
         }).catch(err => {
+          this.isDataNull = true
           this.isRemoteCall = false
           console.log(err)
           if (err.message && err.message.indexOf('timeout') !== -1) {
@@ -397,6 +402,8 @@ export default {
 </script>
 
 <style scoped lang="stylus">
+  .isDataNull
+    color #FF9502
   .select-input
     &__dropdown
       width 100%
@@ -404,10 +411,13 @@ export default {
         /deep/ .ivu-input-suffix
           z-index 10
         /deep/ .ivu-input-group-append
+          /*font-size 12px*/
+          pointer-events none
           z-index: 100;
+          color: rgba(0,0,0,0.2);
           position: absolute;
-          background: #fff;
-          left: 100px
+          background: rgba(255, 255, 255, 0);
+          left: 1px
           border: none;
           top: 1px;
     &__clear-icon

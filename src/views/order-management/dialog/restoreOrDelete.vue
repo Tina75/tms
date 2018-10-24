@@ -8,7 +8,7 @@
         <div v-if="id.length === 1" style="margin-left: 5px;">{{ message }}</div>
         <div v-else>
           <div>
-            您选中的订单中有订单已经被处理了， “
+            您选中的订单中有订单已在处理中了， “
             <FontIcon type="chulizhong" size="11" color="#9DA1B0"></FontIcon>
             ” 为处理中订单，不可以批量删除
           </div>
@@ -70,8 +70,8 @@ export default {
           this.message = '此订单已经在送货中，为保证数据安全，不可以删除'
           this.canDelete = false
         }
-        if (this.id[0].status === 10 && this.id[0].transStatus === 1) {
-          this.message = '此订单已经外转，为保证数据安全，不可以删除'
+        if (this.id[0].status < 30 && this.id[0].transStatus === 1) {
+          this.message = '此订单已经外转处理，为保证数据安全，不可以删除'
           this.canDelete = false
         }
       } else {
@@ -137,9 +137,9 @@ export default {
         }
       })
     },
-    // 筛选选中项是否有不满足条件的选项(待提货下已外转订单、待提货下已提货订单、待送货下已送货订单)
+    // 筛选选中项是否有不满足条件的选项(已外转订单、待提货下已提货订单、待送货下已送货订单、status大于20的订单)
     checkSelectList (list) {
-      if ((list.status === 10 && list.transStatus === 1) || (list.status === 10 && list.pickupStatus === 1) || (list.status === 20 && list.dispatchStatus === 1)) {
+      if (list.status > 20 || (list.status < 30 && list.transStatus === 1) || (list.status === 10 && list.pickupStatus === 1) || (list.status === 20 && list.dispatchStatus === 1)) {
         return true
       }
       return false

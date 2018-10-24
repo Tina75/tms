@@ -474,6 +474,9 @@ export default {
         case 50:
           name = '已回单'
           break
+        case 100:
+          name = '已删除'
+          break
       }
       return name
     },

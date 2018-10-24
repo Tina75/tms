@@ -421,7 +421,7 @@ export default {
              * 运输管理入口：子弹需要加上子弹标识
             */
             if (this.source === 'order') {
-              if ((params.row.status === 10 && params.row.transStatus === 1) || (params.row.status === 10 && params.row.pickupStatus === 1) || (params.row.status === 20 && params.row.dispatchStatus === 1)) {
+              if ((params.row.status < 30 && params.row.transStatus === 1) || (params.row.status === 10 && params.row.pickupStatus === 1) || (params.row.status === 20 && params.row.dispatchStatus === 1)) {
                 return h('div', [
                   h('a', {
                     props: {
@@ -1182,6 +1182,8 @@ export default {
     margin-right 20px
 </style>
 <style lang="stylus">
+.operate-box .ivu-input-group
+  display flex
 .order-simple-select
   .ivu-select-selection
     height 35px
