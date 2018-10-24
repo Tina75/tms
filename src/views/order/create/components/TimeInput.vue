@@ -1,5 +1,5 @@
 <template>
-  <Poptip v-model="visible" class="timeInput">
+  <Poptip v-model="visible" class="timeInput" placement="bottom-end">
     <div slot="content" class="order-create__timeSelect">
       <Row>
         <Col v-for="(opt, index) in timeList" :key="index" span="6">
