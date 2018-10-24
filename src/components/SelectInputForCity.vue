@@ -35,7 +35,7 @@
         :key="index"
         :name="option.name"
         :disabled="option.disabled"
-        :class="{'ivu-select-item-focus': focusIndex === index,'isDataNull':isDataNull}"
+        :class="{'ivu-select-item-focus': focusIndex === index,'isDataNull':option.disabled}"
         v-html="heightlightText(option.name)">
       </DropdownItem>
     </DropdownMenu>
@@ -106,7 +106,6 @@ export default {
       mousehover: false,
       isRemoteCall: false, // 当前是否正在请求，防止请求太频繁
       options: [],
-      isDataNull: false, // 请求数据为空
       nameSeleced: ''
     }
   },
@@ -281,11 +280,9 @@ export default {
             codeType: this.codeType
           }
         }).then(response => {
-          this.isDataNull = false
           this.isRemoteCall = false
           const options = response.data.data
           if (!options || options.length === 0) {
-            this.isDataNull = true
             this.options = [{ name: '未查询到相关城市数据', disabled: true }]
             return
           }
@@ -299,7 +296,6 @@ export default {
             this.focusIndex = 0
           })
         }).catch(err => {
-          this.isDataNull = true
           this.isRemoteCall = false
           console.log(err)
           if (err.message && err.message.indexOf('timeout') !== -1) {
