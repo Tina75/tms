@@ -2,7 +2,7 @@
   <div id="app">
     <Layout class="container">
       <c-sider></c-sider>
-      <Layout >
+      <Layout class="right-con">
         <c-header/>
         <c-content/>
       </Layout>
@@ -87,4 +87,6 @@ html, body
     background #EFEFEF
     flex-direction row
     overflow hidden
+    .right-con
+      z-index 10
 </style>
