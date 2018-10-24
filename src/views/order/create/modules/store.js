@@ -3,7 +3,7 @@ import actions from './actions'
 import * as getters from './getters'
 const state = {
   order: {
-    detail: {}, // 订单详情
+    // detail: {}, // 订单详情
     clients: [], // 客户信息
     consigners: [], // 发货方信息
     addresses: [], // 发货方地址
@@ -32,9 +32,6 @@ const mutations = {
   },
   [types.RECEIVE_CARGO_LIST] ({ order }, list) {
     order.cargoes = list
-  },
-  [types.RECEIVE_ORDER_DETAIL] ({ order }, detail) {
-    order.detail = detail
   },
   [types.RECEIVE_CARRIER_LIST] ({ order }, list) {
     order.carriers = list

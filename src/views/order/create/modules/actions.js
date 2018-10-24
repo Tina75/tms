@@ -75,13 +75,6 @@ export default {
     store.commit(types.RECEIVE_CARGO_LIST, [])
   },
   /**
-   * 清除订单详情
-   * @param {*} param0
-   */
-  clearOrderDetail ({ commit }) {
-    commit(types.RECEIVE_ORDER_DETAIL, {})
-  },
-  /**
    * 清除公司列表
    * @param {*} param0
    */
