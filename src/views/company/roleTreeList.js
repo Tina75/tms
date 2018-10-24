@@ -139,7 +139,7 @@ export default {
         { title: '导出', code: '120108', parentId: '120100', grandId: '120000', disabled: true }
       ]
     }, {
-      title: '外转单管理',
+      title: '外转管理',
       code: '120300',
       parentId: '120000',
       expand: true,
