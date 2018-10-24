@@ -99,7 +99,7 @@
     <OrderTabContent
       v-if="!tabStatus"
       :table-head-source="dispatchHeadType"
-      source="transport"
+      source="waybill"
       tab-status="待送货"
       is-visiable
       url="/load/bill/wait/pick/list"

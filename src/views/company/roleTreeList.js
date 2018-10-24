@@ -80,13 +80,15 @@ export default {
         { title: '返厂', code: '110202', parentId: '110200', grandId: '110000', disabled: true },
         { title: '导出', code: '110203', parentId: '110200', grandId: '110000', disabled: true }
       ]
-    }, {
-      title: '调度工作台',
-      code: '110300',
-      disabled: true,
-      checked: true,
-      parentId: '110000'
     }]
+    // ,
+    // {
+    //   title: '调度工作台',
+    //   code: '110300',
+    //   disabled: true,
+    //   checked: true,
+    //   parentId: '110000'
+    // }
   }],
   data3: [{
     key: 'data3',
