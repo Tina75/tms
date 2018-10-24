@@ -1,12 +1,6 @@
 <template>
   <div ref="el" class="page-home">
     <div class="page-home__header">
-      <Alert v-if="notice.content" type="warning" class="page-home__header-notice" banner closable show-icon @on-close="closeNotice">
-        <span :class="{'page-home__noticeBar': notice.url}" @click="hrefHandle">
-          <TextMarquee :content="notice.content" :speed="30"/>
-        </span>
-        <FontIcon slot="icon" type="tongzhi-paomadeng" size="20" style="vertical-align: middle; color: #00A4BD"></FontIcon>
-      </Alert>
       <Row class="page-home__header-row">
         <Col span="18">
         <span class="page-home__header-greetings" v-html="greetings"></span>
@@ -34,6 +28,12 @@
         </Poptip>
         </Col>
       </Row>
+      <Alert v-if="notice.content" type="warning" class="page-home__header-notice" banner closable show-icon @on-close="closeNotice">
+        <span :class="{'page-home__noticeBar': notice.url}" @click="hrefHandle">
+          <TextMarquee :content="notice.content" :speed="30"/>
+        </span>
+        <FontIcon slot="icon" type="tongzhi-paomadeng" size="20" style="vertical-align: middle; color: #00A4BD"></FontIcon>
+      </Alert>
     </div>
     <Row :gutter="16" type="flex" justify="start">
       <!-- 提货代办 -->
@@ -333,7 +333,12 @@ export default {
 .page-home
   -webkit-transition all .2s ease-in-out
   transition all .2s ease-in-out
-  margin -20px -15px
+  position absolute
+  left 218px
+  top 65px
+  right 20px
+  bottom 15px
+  // margin -20px -15px
   overflow-y auto
   overflow-x hidden
   background-color #efefef;

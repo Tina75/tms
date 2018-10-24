@@ -42,7 +42,7 @@
           </Col>
           <Col span="12" style="padding-left: 5px">
           <FormItem prop="deliveryTimes">
-            <TimeInput v-model="orderForm.deliveryTimes" type="START_DATE"/>
+            <TimeInput v-model="orderForm.deliveryTimes" :options="startTimeOptions" type="START_DATE"/>
           </FormItem>
           </Col>
         </Row>
@@ -58,7 +58,7 @@
           </Col>
           <Col span="12" style="padding-left: 5px">
           <FormItem prop="arriveTimes">
-            <TimeInput v-model="orderForm.arriveTimes" type="END_DATE"/>
+            <TimeInput v-model="orderForm.arriveTimes" :options="endTimeOptions" type="END_DATE"/>
           </FormItem>
           </Col>
         </Row>
@@ -464,6 +464,9 @@ export default {
           return date && date > new Date(_this.orderForm.arriveTime)
         }
       },
+      startTimeOptions: {
+
+      },
       // 到达时间限制
       endDateOptions: {
         // disabledDate (date) {
@@ -472,8 +475,8 @@ export default {
         disabledDate (date) {
           return date && date < new Date(_this.orderForm.deliveryTime)
         }
-      }
-
+      },
+      endTimeOptions: {}
     }
   },
   computed: {
