@@ -117,46 +117,46 @@
         </div>
         <Row>
           <i-col span="4">
-            <span>运输费：</span>
+            <span class="fee-style">运输费：</span>
             <span v-if="detail.freightFee" style="font-weight:bold;">{{detail.freightFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
           <i-col span="4">
-            <span>提货费：</span>
+            <span class="fee-style">提货费：</span>
             <span v-if="detail.pickupFee" style="font-weight:bold;">{{detail.pickupFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
           <i-col span="4">
-            <span>装货费：</span>
+            <span class="fee-style">装货费：</span>
             <span v-if="detail.loadFee" style="font-weight:bold;">{{detail.loadFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
           <i-col span="4">
-            <span>卸货费：</span>
+            <span class="fee-style">卸货费：</span>
             <span v-if="detail.unloadFee" style="font-weight:bold;">{{detail.unloadFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
           <i-col span="4">
-            <span>保险费：</span>
+            <span class="fee-style">保险费：</span>
             <span v-if="detail.insuranceFee" style="font-weight:bold;">{{detail.insuranceFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
           <i-col span="4">
-            <span>其他：</span>
+            <span class="fee-style">其他：</span>
             <span v-if="detail.otherFee" style="font-weight:bold;">{{detail.otherFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
         </Row>
         <Row>
           <i-col span="24">
-            <span>费用合计：</span>
+            <span class="fee-style">费用合计：</span>
             <span v-if="!detail.parentId" style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{detail.totalFee | toPoint}} 元</span>
             <span v-else>-</span>
           </i-col>
         </Row>
         <Row>
           <i-col span="24">
-            <span>结算方式：</span>
+            <span class="fee-style">结算方式：</span>
             <span>{{settlementToName(detail.settlementType)}}</span>
           </i-col>
         </Row>
@@ -747,9 +747,11 @@ export default {
         &:first-child
           color #777
           display inline-block
-          width 75px
+          width 100px
         &:last-child
           color #333
+  .fee-style
+    width 72px !important
   .title
     margin-top 54px
     span
