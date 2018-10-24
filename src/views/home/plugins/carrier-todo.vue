@@ -25,8 +25,8 @@ export default {
   data () {
     return {
       data: [
-        { id: 'wait_verify', name: '待核销', value: 0, tab: '1', href: TMSUrl.CARRIER_FINANCE, title: '承运商对账' },
-        { id: 'wait_reconcile', name: '对账单数量', value: 0, tab: '2', href: TMSUrl.CARRIER_FINANCE, title: '承运商对账' }
+        { id: 'wait_verify', name: '待核销', value: 0, tab: '1', href: TMSUrl.CARRIER_FINANCE },
+        { id: 'wait_reconcile', name: '对账单数量', value: 0, tab: '2', href: TMSUrl.CARRIER_FINANCE }
       ]
     }
   },
