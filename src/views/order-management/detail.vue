@@ -179,6 +179,7 @@
         </div>
       </div>
     </section>
+    <OrderPrint ref="printer" :list="orderPrint"></OrderPrint>
   </div>
 </template>
 
@@ -186,10 +187,14 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import '@/libs/js/filter'
+import OrderPrint from './components/OrderPrint'
+import _ from 'lodash'
 export default {
   name: 'detail',
 
-  components: {},
+  components: {
+    OrderPrint
+  },
   mixins: [ BasePage ],
   metaInfo: { title: '订单详情' },
   data () {
@@ -198,6 +203,7 @@ export default {
         orderCargoList: []
       },
       from: this.$route.query.from,
+      source: this.$route.query.source, // 页面来源
       orderStatus: '',
       receiptStatus: '',
       waybillNums: [],
@@ -264,7 +270,8 @@ export default {
       currentStep: 0,
       orderLogCount: 0,
       showLog: false,
-      orderLog: []
+      orderLog: [],
+      orderPrint: []
     }
   },
 
@@ -347,6 +354,12 @@ export default {
         })
       } else if (btn.name === '回收' || btn.name === '返厂') {
         this.openReturnDialog(this.detail, btn.name)
+      } else if (btn.name === '打印') {
+        this.print(this.detail)
+      } else if (btn.name === '恢复') {
+        this.openRecoveryDialog(this.detail)
+      } else if (btn.name === '彻底删除') {
+        this.completelyDeleteDialog(this.detail)
       }
     },
     // 外转
@@ -402,6 +415,46 @@ export default {
       this.openDialog({
         name: 'order-management/dialog/return',
         data: data,
+        methods: {
+          ok (node) {
+            _this.getDetail()
+          }
+        }
+      })
+    },
+    // 打印
+    print (order) {
+      Server({
+        url: 'order/getOrderAndDetailList',
+        method: 'post',
+        data: {
+          orderIds: [order.id]
+        }
+      }).then((res) => {
+        console.log(res)
+        this.orderPrint = _.cloneDeep(res.data.data)
+        this.$refs.printer.print()
+      })
+    },
+    // 恢复
+    openRecoveryDialog (order) {
+      const _this = this
+      _this.openDialog({
+        name: 'order-management/dialog/recovery',
+        data: { id: [order] },
+        methods: {
+          ok (node) {
+            _this.getDetail()
+          }
+        }
+      })
+    },
+    // 彻底删除
+    completelyDeleteDialog (order) {
+      const _this = this
+      _this.openDialog({
+        name: 'order-management/dialog/completelyDelete',
+        data: { id: [order] },
         methods: {
           ok (node) {
             _this.getDetail()
@@ -562,6 +615,8 @@ export default {
             { name: '删除', value: 1, code: 120204 }
           )
         }
+        // 打印
+        this.checkPrintCode(renderBtn)
         // 拆单按钮
         // if (r.transStatus === 0 && r.disassembleStatus !== 1) {
         //   renderBtn.push(
@@ -594,34 +649,59 @@ export default {
             { name: '删除', value: 1, code: 120105 }
           )
         }
+        // 打印
+        this.checkPrintCode(renderBtn)
         // 拆单按钮
         if (r.transStatus === 0 && r.disassembleStatus !== 1 && r.dispatchStatus === 0) {
           renderBtn.push(
-            { name: '拆单', value: 2, code: 120110 }
+            { name: '拆单', value: 3, code: 120110 }
           )
         }
         // 外转按钮
         if (r.transStatus === 0 && r.pickup !== 1 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0) {
           renderBtn.push(
-            { name: '外转', value: 3, code: 120111 }
+            { name: '外转', value: 4, code: 120111 }
           )
         }
         // 还原按钮
         if (r.parentId === '' && r.disassembleStatus === 1 && r.dispatchStatus === 0) {
           renderBtn.push(
-            { name: '还原', value: 4, code: 120112 }
+            { name: '还原', value: 5, code: 120112 }
           )
         }
         // 编辑按钮
         if (r.pickup !== 1 && r.transStatus === 0 && r.dispatchStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
           renderBtn.push(
-            { name: '编辑', value: 5, code: 120107 }
+            { name: '编辑', value: 6, code: 120107 }
           )
         }
       }
+      if (r.status === 100) { // 回收站状态
+        renderBtn = [
+          { name: '恢复', value: 1, code: 110110 },
+          { name: '彻底删除', value: 2, code: 110111 }
+        ]
+      }
       this.btnGroup = renderBtn
-      if (this.btnGroup.length > 0) {
+      if (this.btnGroup.length > 0 && r.status !== 100) {
         this.operateValue = this.btnGroup[this.btnGroup.length - 1].value // 默认点亮最后一个按钮
+      }
+    },
+    checkPrintCode (btns) {
+      if (this.source) {
+        if (this.source === 'order') {
+          btns.push(
+            { name: '打印', value: 2, code: 110108 }
+          )
+        } else if (this.source === 'waybill') {
+          btns.push(
+            { name: '打印', value: 2, code: 120103 }
+          )
+        } else if (this.source === 'pickup') {
+          btns.push(
+            { name: '打印', value: 2, code: 120202 }
+          )
+        }
       }
     },
     // 回单详情按钮过滤   0待回收；1待返厂（已回收）；2已返厂
@@ -655,7 +735,7 @@ export default {
   .ivu-btn
     margin-left 15px
     width 80px
-    height 35px
+    height 32px
   .ivu-btn-default
     background #F9F9F9
   .ivu-row
@@ -667,7 +747,7 @@ export default {
         &:first-child
           color #777
           display inline-block
-          width 100px
+          width 75px
         &:last-child
           color #333
   .title

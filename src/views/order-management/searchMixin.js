@@ -9,8 +9,8 @@ export default {
         orderNo: null,
         waybillNo: null,
         customerOrderNo: null,
-        startTime: null,
-        endTime: null,
+        createTimeStart: null,
+        createTimeEnd: null,
         start: '', // 始发地
         end: '' // 目的地
       },
@@ -84,8 +84,8 @@ export default {
         }
       } else { // 订单列表、运输管理列表搜索
         key.status = this.keywords.status
-        key.startTime = this.keywords.startTime || null
-        key.endTime = this.keywords.endTime || null
+        key.createTimeStart = this.keywords.createTimeStart || null
+        key.createTimeEnd = this.keywords.createTimeEnd || null
         key.importId = this.keywords.importId || null
         // 简单搜索模式下当前搜索框值为空是默认不是搜索状态
         if (this.simpleSearch && ((this.selectStatus === 0 && !this.keywords.consignerName) || (this.selectStatus === 1 && !this.keywords.orderNo) || (this.selectStatus === 2 && !this.keywords.waybillNo))) {
@@ -120,8 +120,8 @@ export default {
         this.returnTimes = ['', '']
       } else { // 判断运输管理需要使用tabContent组件
         key.status = this.keywords.status
-        key.startTime = null
-        key.endTime = null
+        key.createTimeStart = null
+        key.createTimeEnd = null
         this.times = ['', '']
         key.importId = this.keywords.importId // 导入批次号
       }
@@ -146,8 +146,8 @@ export default {
     },
     // 修改下单开始结束时间
     handleTimeChange (val) {
-      this.keywords.startTime = val[0]
-      this.keywords.endTime = val[1]
+      this.keywords.createTimeStart = val[0]
+      this.keywords.createTimeEnd = val[1]
     },
     // 修改回收开始结束时间
     handleRecoveryTimeChange (val) {
