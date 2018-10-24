@@ -486,7 +486,6 @@ export default {
 .temAll
   width: 100%;
   background:rgba(243,245,249,1);
-  overflow: auto;
 .megDiv
   clear: both;
   height: 70px;
