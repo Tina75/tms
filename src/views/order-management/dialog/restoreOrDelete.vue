@@ -9,7 +9,7 @@
         <div v-else>
           <div>
             您选中的订单中有订单已在处理中了， “
-            <FontIcon type="chulizhong" size="11" color="#9DA1B0"></FontIcon>
+            <FontIcon type="ico-ing" size="11" color="#9DA1B0"></FontIcon>
             ” 为处理中订单，不可以批量删除
           </div>
           <!-- <div v-else>您选中的订单已有订单在{{ message }}，为保证数据安全，不可以批量删除</div> -->
