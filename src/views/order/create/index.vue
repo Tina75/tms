@@ -42,7 +42,7 @@
           </Col>
           <Col span="12" style="padding-left: 5px">
           <FormItem prop="deliveryTimes">
-            <TimeInput v-model="orderForm.deliveryTimes" :options="startTimeOptions" type="START_DATE"/>
+            <TimeInput v-model="orderForm.deliveryTimes" :options="startTimeOptions" :time-date="formateDate(orderForm.deliveryTime)" type="START_DATE"/>
           </FormItem>
           </Col>
         </Row>
@@ -58,7 +58,7 @@
           </Col>
           <Col span="12" style="padding-left: 5px">
           <FormItem prop="arriveTimes">
-            <TimeInput v-model="orderForm.arriveTimes" :options="endTimeOptions" type="END_DATE"/>
+            <TimeInput v-model="orderForm.arriveTimes" :options="endTimeOptions" :time-date="formateDate(orderForm.arriveTime)" type="END_DATE"/>
           </FormItem>
           </Col>
         </Row>
@@ -464,9 +464,6 @@ export default {
           return date && date > new Date(_this.orderForm.arriveTime)
         }
       },
-      startTimeOptions: {
-
-      },
       // 到达时间限制
       endDateOptions: {
         // disabledDate (date) {
@@ -475,8 +472,7 @@ export default {
         disabledDate (date) {
           return date && date < new Date(_this.orderForm.deliveryTime)
         }
-      },
-      endTimeOptions: {}
+      }
     }
   },
   computed: {
@@ -504,6 +500,16 @@ export default {
         }
       }
       return totalFee
+    },
+    startTimeOptions () {
+      const stdt = this.formateDate(this.orderForm.deliveryTime)
+      const eddt = this.formateDate(this.orderForm.arriveTime)
+      return stdt === eddt ? this.orderForm.arriveTimes : ''
+    },
+    endTimeOptions () {
+      const stdt = this.formateDate(this.orderForm.deliveryTime)
+      const eddt = this.formateDate(this.orderForm.arriveTime)
+      return stdt === eddt ? this.orderForm.deliveryTimes : ''
     }
   },
   watch: {
@@ -823,6 +829,19 @@ export default {
       if (date) {
         this.$root.$emit(type, 'show')
       }
+    },
+    formateDate (date) {
+      if (!(typeof date === 'object' && date instanceof Date)) {
+        return ''
+      }
+      const dates = new Date(date)
+      const y = dates.getFullYear()
+      const m = this.getTwoNum(dates.getMonth() + 1)
+      const d = this.getTwoNum(dates.getDate())
+      return `${y}-${m}-${d}`
+    },
+    getTwoNum (d) {
+      return d > 9 ? d : 0 + d
     }
   }
 }
