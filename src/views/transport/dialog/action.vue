@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="show" :mask-closable="false" width="1100"  @on-visible-change="close">
+  <Modal v-model="show" :mask-closable="false" class="transport-detail" width="1100"  @on-visible-change="close">
     <p slot="header" style="text-align:center">
       {{ type === 'sendCar' ? '派车' : '提货' }}
     </p>
@@ -333,7 +333,7 @@ export default {
 }
 
 </script>
-<style lang='stylus' scoped>
+<style lang='stylus'>
  @import "../style/detail.styl"
 
  .part
@@ -345,5 +345,5 @@ export default {
      padding-bottom 10px
 
   .detail-field-title-sm
-    width 75px
+    width 75px !important
 </style>
