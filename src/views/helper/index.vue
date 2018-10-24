@@ -1,6 +1,6 @@
 <template>
-  <div :style="styleHeight" class="temAll">
-    <Col span="4">
+  <div class="temAll">
+    <Col :style="styleHeight" span="4">
     <Menu :open-names="['1']" style="width: 100%;" class="menuSty" accordion>
       <Submenu name="1">
         <template slot="title">
