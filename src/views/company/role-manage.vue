@@ -12,7 +12,7 @@
           <span v-if="hasPower(140102)" class="configBtn" @click="editRole(menu)">修改</span>
           <span v-if="hasPower(140103)" type="text" class="configBtn" @click="removeRole(menu)">删除</span>
         </span>
-        </MenuItem>
+          </MenuItem>
       </div>
       <Modal v-model="createRoleModal" width="400">
         <p slot="header" class="modalTitle">
@@ -56,7 +56,7 @@
         <i class="icon font_family icon-bangzhuzhongxin"></i>
       </p>
       <p class="modalRemoveContendP">确定删除'{{selectRole.name}}'?</P>
-      </p>
+        </p>
       <div slot="footer">
         <Button type="primary" @click="removeFormRole">确定</Button>
         <Button  @click="removeCancelForm">取消</Button>
@@ -196,14 +196,12 @@ export default {
       })
     },
     initTreeList (roleCodeList) {
-      // const treeList = _.cloneDeep(roleTreeList)
       const treeList = this.listInitTreeList
       for (let key in treeList) {
         treeList[key][0].disabled = false
         treeList[key][0].checked = false
         this.getTreeList(roleCodeList, treeList[key][0].children)
       }
-      // this.listInitTreeList = treeList
     },
     getTreeList (roleCodeList, treeData) {
       const vm = this
@@ -211,7 +209,7 @@ export default {
         // 默认设置false
         element.checked = false
         element.disabled = false
-        if (roleCodeList.includes(element.code)) {
+        if (roleCodeList.includes(element.code) || roleCodeList.includes(Number(element.code))) {
           if (element.children) {
             vm.getTreeList(roleCodeList, element.children)
           } else {
@@ -257,7 +255,6 @@ export default {
       }).then(({ data }) => {
         if (data.code === 10000) {
           this.$Message.success('角色权限修改成功!')
-          // this.getRoleList(this.selectRole)
           // 同步更新本地相应角色下的权限数据
           const role = this.roles.find(_r => _r.id === params.id)
           if (role) {

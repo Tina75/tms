@@ -8,12 +8,12 @@
           <FormItem label="姓名：" class="searchInput">
             <SelectInput v-model="formSearch.name" :remote="true" :remote-method="searchName" placeholder="请输入姓名" class="minWidth"></SelectInput>
           </FormItem>
-          </Col>
+            </Col>
           <Col span="6">
           <FormItem label="账号：" class="searchInput">
             <Input v-model="formSearch.phone" placeholder="请输入账号" class="minWidth"></Input>
           </FormItem>
-          </Col>
+            </Col>
           <Col span="6">
           <FormItem label="角色：" class="searchInput">
             <Select v-model="formSearch.roleId" class="minWidth">
@@ -25,12 +25,12 @@
               </Option>
             </Select>
           </FormItem>
-          </Col>
+            </Col>
           <Col span="3">
           <FormItem>
             <Button type="primary" class="searchBtn" @click="searchBtn">搜索</Button>
           </FormItem>
-          </Col>
+            </Col>
         </Form>
       </div>
       </Col>

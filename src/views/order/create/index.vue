@@ -671,6 +671,14 @@ export default {
         this.$Message.warning('请先选择客户')
         return
       }
+      if (!vm.orderForm.start) {
+        this.$Message.warning('请先选择始发城市')
+        return
+      }
+      if (!vm.orderForm.end) {
+        this.$Message.warning('请先选择目的城市')
+        return
+      }
       const statics = vm.$refs.cargoTable.statics
       /**
        * 重量和体积二选一，或者都填写，可以了
