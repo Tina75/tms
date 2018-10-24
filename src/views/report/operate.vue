@@ -37,12 +37,14 @@
         <Row :gutter="24">
           <Col span="6">
           <div class="col">
-            <area-select v-model="keywords.start" placeholder="请输入始发地" style="width: 100%"></area-select>
+            <!--<area-select v-model="keywords.start" placeholder="请输入始发地" style="width: 100%"></area-select>-->
+            <SelectInputForCity v-model="keywords.start" placeholder="请输入始发地" style="width: 100%"></SelectInputForCity>
           </div>
         </Col>
           <Col span="6">
           <div class="col">
-            <area-select v-model="keywords.end" placeholder="请输入目的地" style="width: 100%"></area-select>
+            <!--<area-select v-model="keywords.end" placeholder="请输入目的地" style="width: 100%"></area-select>-->
+            <SelectInputForCity v-model="keywords.end" placeholder="请输入目的地" style="width: 100%"></SelectInputForCity>
           </div>
         </Col>
           <Col span="6">
@@ -88,7 +90,7 @@
 
 <script>
 import PageTable from '@/components/page-table'
-import AreaSelect from '@/components/AreaSelect'
+import SelectInputForCity from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput.vue'
 import City from '@/libs/js/city'
 import { mapGetters, mapActions } from 'vuex'
@@ -100,7 +102,7 @@ export default {
   components: {
     SelectInput,
     PageTable,
-    AreaSelect
+    SelectInputForCity
   },
   metaInfo: {
     title: '运营报表'
@@ -116,8 +118,8 @@ export default {
         orderNo: '',
         customerOrderNo: '',
         waybillNo: '',
-        start: [],
-        end: [],
+        start: null,
+        end: null,
         startTime: '',
         endTime: ''
       },
@@ -568,8 +570,8 @@ export default {
         orderNo: this.keywords.orderNo || null,
         customerOrderNo: this.keywords.customerOrderNo || null,
         waybillNo: this.keywords.waybillNo || null,
-        start: (this.keywords.start !== null && this.keywords.start.length) ? Number(this.keywords.start[this.keywords.start.length - 1]) : null,
-        end: (this.keywords.end !== null && this.keywords.end.length) ? Number(this.keywords.end[this.keywords.end.length - 1]) : null,
+        start: this.keywords.start,
+        end: this.keywords.end,
         startTime: this.keywords.startTime || null,
         endTime: this.keywords.endTime || null
       }
@@ -579,7 +581,7 @@ export default {
       /* flag返回false，则对象中值都是空 */
       let flag = false
       for (let key in this.keywords) {
-        if (this.keywords[key] && this.keywords[key].length) {
+        if (this.keywords[key]) {
           flag = true
         }
       }
@@ -591,8 +593,8 @@ export default {
         orderNo: '',
         customerOrderNo: '',
         waybillNo: '',
-        start: [],
-        end: [],
+        start: null,
+        end: null,
         startTime: '',
         endTime: ''
       }
@@ -612,8 +614,8 @@ export default {
         orderNo: this.keywords.orderNo || null,
         customerOrderNo: this.keywords.customerOrderNo || null,
         waybillNo: this.keywords.waybillNo || null,
-        start: (this.keywords.start !== null && this.keywords.start.length) ? Number(this.keywords.start[this.keywords.start.length - 1]) : null,
-        end: (this.keywords.end !== null && this.keywords.end.length) ? Number(this.keywords.end[this.keywords.end.length - 1]) : null,
+        start: this.keywords.start,
+        end: this.keywords.end,
         startTime: this.keywords.startTime || null,
         endTime: this.keywords.endTime || null
       }
@@ -666,8 +668,6 @@ export default {
     padding 13px
     .search-col
       flex 4
-      /deep/ .ivu-input
-        height 35px
       .row
         margin-bottom 12px
     .search-btn

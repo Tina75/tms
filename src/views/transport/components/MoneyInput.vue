@@ -33,7 +33,9 @@ export default {
     changeHandler (value) {
       if (!value) return
       if (value && value.toString().split('.')[0].length > 9) {
-        this.money = (this.value !== null && this.value !== '' && !isNaN(Number(this.value))) ? Number(this.value) : null
+        this.$nextTick(() => {
+          this.money = (this.value !== null && this.value !== '' && !isNaN(Number(this.value))) ? Number(this.value) : null
+        })
         this.$Message.error('金额整数部分不能超过9位')
       }
     },

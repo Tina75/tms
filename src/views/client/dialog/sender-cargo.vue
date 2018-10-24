@@ -76,7 +76,7 @@ export default {
           { required: true, message: '货物名称不能为空', trigger: 'blur' }
         ],
         cargoCost: [
-          { type: 'string', message: '必须为大于等于0的数字,最多两位小数', pattern: /^(0|([1-9]\d{0,8}))([.]\d{1,2})?$/, trigger: 'blur' }
+          { type: 'string', message: '必须为不超过9位的数,最多两位小数', pattern: /^(0|([1-9]\d{0,8}))([.]\d{1,2})?$/, trigger: 'blur' }
         ],
         weight: [
           { type: 'string', message: '必须为大于等于0的数字,最多两位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/, trigger: 'blur' }

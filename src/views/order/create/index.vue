@@ -17,12 +17,12 @@
       </Col>
       <Col span="7">
       <FormItem label="始发城市:" prop="start">
-        <CitySelect ref="start" v-model="orderForm.start"></CitySelect>
+        <CitySelect ref="start" v-model="orderForm.start" placeholder="请输入"></CitySelect>
       </FormItem>
       </Col>
       <Col span="7">
       <FormItem label="目的城市:" prop="end">
-        <CitySelect ref="end" v-model="orderForm.end"></CitySelect>
+        <CitySelect ref="end" v-model="orderForm.end" placeholder="请输入"></CitySelect>
       </FormItem>
       </Col>
     </Row>
@@ -240,6 +240,7 @@ import pickups from '@/libs/constant/pickup.js'
 import Cargo from './libs/cargo'
 import CargoTable from './components/CargoTable.vue'
 import TimeInput from './components/TimeInput.vue'
+import validator from '@/libs/js/validate'
 
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
 export default {
@@ -308,7 +309,7 @@ export default {
     //   return { index: params.index, name: params.column.key, value }
     // }
     const validatePhone = (rule, value, callback) => {
-      if (/1[0-9]{10}$/.test(value)) {
+      if (validator.phone(value)) {
         callback()
       } else {
         callback(new Error('请输入正确的手机号码'))
@@ -316,10 +317,10 @@ export default {
     }
     // 9位整数 2位小数
     const validateFee = (rule, value, callback) => {
-      if ((value && /^[0-9]{0,9}(?:\.\d{1,2})?$/.test(value)) || !value) {
+      if ((value && validator.fee(value)) || !value) {
         callback()
       } else {
-        callback(new Error('最多整数位只可输入9位,小数两位'))
+        callback(new Error('费用整数位最多输入9位'))
       }
     }
 

@@ -197,9 +197,12 @@ export default {
           title: '目的地',
           key: 'destinationName'
         },
-        {
+        this.scene === 2 ? {
           title: '车牌号',
           key: 'truckNo'
+        } : {
+          title: ' ',
+          width: 1
         },
         {
           title: '合计运费',

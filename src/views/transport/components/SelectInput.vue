@@ -50,9 +50,8 @@ export default {
   },
   watch: {
     value (val) { this.model = val },
-    carrierId () {
-      this.fetchData()
-    }
+    model (val) { this.$emit('input', val) },
+    carrierId () { this.fetchData() }
   },
   created () {
     this.fetchData()

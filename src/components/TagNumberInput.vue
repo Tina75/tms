@@ -27,9 +27,11 @@
   </div>
 </template>
 <script>
+import Emitter from 'iview/src/mixins/emitter'
 const prefixCls = 'ivu-input-number'
 export default {
   name: 'InputNumber',
+  mixins: [Emitter],
   props: {
     max: {
       type: Number,
@@ -180,6 +182,7 @@ export default {
         this.currentValue = val
         this.$emit('input', val)
         this.$emit('on-change', val)
+        this.dispatch('FormItem', 'on-form-change', val)
       })
     },
     focus (event) {
