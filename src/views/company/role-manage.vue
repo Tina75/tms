@@ -1,7 +1,7 @@
 <template>
-  <Row :style="styleHeight" class="temAll">
-    <Col span="4" class="colHeight" style="height:100%">
-    <Menu :active-name="menuInitName" class="leftMenu" style="width:100%">
+  <Row class="temAll">
+    <Col :style="styleHeight" span="4" class="colHeight">
+    <Menu :active-name="menuInitName" class="leftMenu" style="width:100%" >
       <div class="centerBtnDiv">
         <Button v-if="hasPower(140101)" type="primary" class="centerBtn" @click="createRole">新增角色</Button>
       </div>
@@ -129,6 +129,10 @@ export default {
       removeRoleModalFail: false,
       editRoleModalTitle: '',
       removeMenuParams: {},
+      initHeight: {
+        type: Number,
+        default: 0
+      },
       formModal: {
         name: ''
       },
@@ -159,7 +163,7 @@ export default {
     },
     // 自适应高度
     styleHeight () {
-      return { height: (document.body.clientHeight) + 'px' }
+      return { height: (this.initHeight + 50) + 'px' }
     }
   },
   watch: {
@@ -177,6 +181,9 @@ export default {
     this.getRoleList()
     // 初始化角色树构建
     this.listInitTreeList = _.cloneDeep(roleTreeList)
+  },
+  mounted () {
+    this.initHeight = document.getElementsByClassName('contentDiv')[0].offsetHeight
   },
   methods: {
     getRoleList () {
@@ -377,16 +384,11 @@ export default {
   color: #515a6e;
 .temAll
   width: 100%;
-  height: 100%
   overflow: hidden;
   .contentDiv
     padding-left: 20px;
-    height:calc(100% - 45px);
-    // overflow-y:auto;
-    padding-bottom: 80px;
   .leftMenu
     height: 100%
-    overflow: hidden;
     .centerBtnDiv
       border-bottom: 1px solid #e9e9e9;
       padding-bottom:50px;
