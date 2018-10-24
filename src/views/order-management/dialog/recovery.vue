@@ -36,7 +36,8 @@ export default {
 
   data () {
     return {
-      canRecovery: false
+      canRecovery: false,
+      orderId: ''
     }
   },
 
@@ -69,6 +70,7 @@ export default {
           this.canRecovery = true
         } else {
           this.canRecovery = false
+          this.orderId = res.data.data.orderId
         }
       })
     },
@@ -78,7 +80,7 @@ export default {
         path: '/order-management/detail',
         query: {
           id: this.id[0].orderNo,
-          orderId: this.id[0].id,
+          orderId: this.orderId,
           from: 'order'
         }
       })
