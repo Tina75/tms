@@ -1,9 +1,10 @@
 <template>
   <Poptip v-model="visible" class="timeInput" placement="bottom-end">
     <div slot="content" class="order-create__timeSelect">
+      <div class="order-create__timeSelectTitle" v-text="timeDate ? timeDate : '请先选择时间'"></div>
       <Row>
         <Col v-for="(opt, index) in timeList" :key="index" span="6">
-        <div class="timeCell" @click="clickHandle(opt)">
+        <div :class="{'order-create__timeCellDisable': isDisabled(opt)}" class="order-create__timeCell" @click="clickHandle(opt)">
           {{opt}}
         </div>
         </Col>
@@ -21,6 +22,14 @@ export default {
     },
     type: {
       type: String
+    },
+    timeDate: {
+      type: String,
+      default: ''
+    },
+    options: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -34,6 +43,26 @@ export default {
   computed: {
     inputValue () {
       return this.value ? `${this.value}` : ''
+    },
+    disabledArr () {
+      const arr = []
+      const opt = this.options
+      if (this.type === 'START_DATE' && opt) {
+        const t = this.getMins(opt)
+        this.timeList.forEach(e => {
+          if (this.getMins(e) >= t) {
+            arr.push(e)
+          }
+        })
+      } else if (this.type === 'END_DATE' && opt) {
+        const t = this.getMins(opt)
+        this.timeList.forEach(e => {
+          if (this.getMins(e) <= t) {
+            arr.push(e)
+          }
+        })
+      }
+      return arr
     }
   },
   mounted () {
@@ -49,11 +78,30 @@ export default {
   },
   methods: {
     clickHandle (e) {
+      if (this.isDisabled(e)) {
+        return false
+      }
       this.$emit('input', e)
       this.visible = false
     },
     changeShow () {
       this.visible = true
+    },
+    getMins (str) {
+      if (!(typeof str === 'string' && str.length === 5)) {
+        return 0
+      }
+      return Number(str.substr(0, 2) * 60 + str.substr(3, 2))
+    },
+    // 是否可点击
+    isDisabled (opt) {
+      if (!this.timeDate) {
+        return true
+      }
+      if (this.disabledArr.includes(opt)) {
+        return true
+      }
+      return false
     }
   }
 }
@@ -65,10 +113,14 @@ export default {
     width 200px
     height 170px
     line-height 17px
-.timeCell
-  padding 10px 0
-  cursor pointer
-  text-align center
+  &__timeSelectTitle
+    text-align center
+  &__timeCell
+    padding 10px 0
+    cursor pointer
+    text-align center
+  &__timeCellDisable
+    color #DCDEE2
 </style>
 <style lang="stylus">
 .timeInput
