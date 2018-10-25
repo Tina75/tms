@@ -288,10 +288,10 @@ export default {
     // 位置
     billLocation () {
       const points = [
-        { longtitude: 32.0477450000, latitude: 118.7915800000 },
-        { longtitude: 32.0557350000, latitude: 118.9010530000 },
-        { longtitude: 32.1121890000, latitude: 118.9166830000 },
-        { longtitude: 31.9447660000, latitude: 118.7988120000 }
+        { latitude: 32.0477450000, longtitude: 118.7915800000, carNo: '苏A11111' },
+        { latitude: 32.0557350000, longtitude: 118.9010530000, carNo: '苏A22222' },
+        { latitude: 32.1121890000, longtitude: 118.9166830000, carNo: '苏A33333' },
+        { latitude: 31.9447660000, longtitude: 118.7988120000, carNo: '苏A44444' }
       ]
       this.openDialog({
         name: 'transport/dialog/map',
