@@ -1,17 +1,16 @@
 import Server from '@/libs/js/server'
 
-let timer
-const waitingTime = 60
-
-let captchaUrl = Server.defaults.baseURL + 'user/captcha'
+const WAITING_TIME = 60
+const CAPTCHA_URL = process.env.VUE_APP_HOST + 'user/captcha'
 
 export default {
   replace: true,
   data () {
     return {
+      timer: void 0,
       captchaImage: '', // 图片验证码
       captchaEnable: true,
-      intervalSeconds: waitingTime
+      intervalSeconds: WAITING_TIME
     }
   },
   methods: {
@@ -81,7 +80,7 @@ export default {
 
     // 获取图片验证码
     getCaptcha () {
-      this.captchaImage = `${captchaUrl}?${new Date().getTime()}`
+      this.captchaImage = `${CAPTCHA_URL}?${new Date().getTime()}`
     },
 
     // 发送手机验证码
@@ -108,12 +107,12 @@ export default {
           }).then(res => {
             this.$Message.success('短信验证码已发送至手机，请注意查收')
             this.captchaEnable = false
-            timer = setInterval(() => {
+            this.timer = setInterval(() => {
               if (this.intervalSeconds > 1) this.intervalSeconds--
               else {
-                this.intervalSeconds = waitingTime
+                this.intervalSeconds = WAITING_TIME
                 this.captchaEnable = true
-                clearInterval(timer)
+                clearInterval(this.timer)
               }
             }, 1000)
           }).catch(err => {

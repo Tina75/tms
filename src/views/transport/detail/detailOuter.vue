@@ -100,7 +100,7 @@
         <div class="detail-part-title">
           <span>货物明细</span>
         </div>
-        <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
+        <Table :columns="tableColumns" :data="detail" :loading="loading" class="detail-field-table"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
           <span>总货值：{{ orderTotal.cargoCost }}</span>

@@ -18,26 +18,43 @@
       &-item
         display inline-block
         margin-right 28px
+        font-size 13px
 
   .detail-btn-group
     height 32px
     text-align right
-    margin 23px
+    margin 23px 0 25px
+
+  .detail-info
+    >div:nth-child(1)
+      margin-bottom 40px
+
+    >div:nth-child(2)
+      margin-bottom 54px
+
+    >div:nth-child(3)
+      margin-bottom 44px
+
+    >div:nth-child(4)
+      margin-bottom 69px
 
   .detail-btn-item
-    margin-left 15px
+    margin-left 20px
     width 80px
 
   .detail-field-group
-    font-size 13px
-    line-height 3
+    font-size 14px
+
+    >div
+      padding 5px 0
+      line-height 32px
 
   .detail-field-title
     position relative
     color #777
     display inline-block
     width 100px
-    padding-left 10px
+    height 32px
     vertical-align top
 
     &-sm
@@ -45,8 +62,14 @@
       color #777
       display inline-block
       width: 80px
-      padding-left 10px
       vertical-align top
+
+  .detail-field-table
+    margin-top 31px
+
+  .detail-field-button
+    margin 9px 0 22px
+
 
   .detail-field-fee
     font-weight bold
@@ -55,37 +78,32 @@
     content "*"
     position absolute
     width 10px
-    height 39px
+    height 32px
     left 0
     top 0
-    line-height 39px
+    line-height 32px
     text-align center
     color #EC4E4E
 
   .detail-part-title
-    margin-top 40px
+    box-sizing border-box
+    margin-bottom 15px
+    padding-bottom 16px
+    border-bottom 1px dashed rgba(203,206,211,1)
 
     span
-      height 34px
-      font-size 24px
+      font-size 20px
       font-weight bolder
-      line-height 34px
-      margin-left 18px
+      margin-left 15px
       vertical-align text-bottom
 
     &:before
       content ' '
       display inline-block
-      width 5px
-      height 25px
+      width 4px
+      height 21px
       background rgba(0,164,189,1)
       border-radius 3px
-
-    &:after
-      content ' '
-      display block
-      margin 25px 0
-      border-bottom 1px dashed rgba(203,206,211,1)
 
   .table-footer
     height 48px
@@ -116,10 +134,13 @@
     .icon-jisuanqi1
       font-size 20px
 
+  .detail-field-payinfo
+    margin 19px 0 8px
+
   .detail-log
     display flex
     justify-content flex-start
-    padding-bottom 50px
+    margin-top 25px
 
     &-icon
       width 26px
@@ -140,7 +161,7 @@
         transition all 0.3s linear
 
     &-timeline
-      height 15px
+      height 18px
       margin-top 7px
       transition all 0.3s linear
       overflow hidden
@@ -157,11 +178,14 @@
           i
             background-color #00A4BD
 
+        .ivu-timeline-item-content
+          font-size 14px
+
     &-show
       transform rotate(180deg)
 
   .detail-edit-footer
-    margin-top 50px
+    margin-top 54px
     margin-bottom 60px
     text-align: center
 

@@ -111,8 +111,7 @@ export default {
 <style lang="stylus" scoped>
 .marquee-tips
   text-align left
-  width 100%
-  margin 0 auto
+  margin-left 15px
   overflow hidden
   white-space nowrap
   box-sizing border-box
