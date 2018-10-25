@@ -44,7 +44,7 @@ export default {
   computed: {
     // 根据日志收起展开动态计算高度
     logListHeight () {
-      return { height: this.showLog ? 41 * this.logList.length + 'px' : '15px' }
+      return { height: this.showLog ? 41 * this.logList.length + 'px' : '18px' }
     },
     // 支付总额
     paymentTotal () {

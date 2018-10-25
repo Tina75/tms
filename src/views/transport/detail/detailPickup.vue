@@ -56,7 +56,7 @@
         <div class="detail-part-title">
           <span>货物明细</span>
         </div>
-        <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
+        <Table :columns="tableColumns" :data="detail" :loading="loading" class="detail-field-table"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
           <span>总货值：{{ orderTotal.cargoCost }}</span>
@@ -220,7 +220,7 @@
         <div class="detail-part-title">
           <span>货物明细</span>
         </div>
-        <Button type="primary" style="margin-bottom: 22px;"
+        <Button class="detail-field-button" type="primary"
                 @click="addOrder('pickup')">添加订单</Button>
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
