@@ -47,10 +47,15 @@ export default class LabelOverlay extends BMap.Overlay {
     map.getPanes().labelPane.appendChild(div)
     return div
   }
+
   draw () {
     const map = this._map
     var pixel = map.pointToOverlayPixel(this._point)
     this._div.style.left = (pixel.x - 30) + 'px'
     this._div.style.top = (pixel.y - 30) + 'px'
+  }
+
+  triggerShow (show = true) {
+    this._div.style.display = show ? 'none !important' : 'block'
   }
 };

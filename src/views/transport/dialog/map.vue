@@ -21,6 +21,7 @@ export default {
   mixins: [ BaseDialog ],
   data () {
     return {
+      labels: []
     }
   },
   mounted () {
@@ -35,11 +36,32 @@ export default {
 
       for (let i = 0; i < this.points.length; i++) {
         const point = new BMap.Point(this.points[i].longtitude, this.points[i].latitude)
-        if (i === 0) map.centerAndZoom(point, 16)
-        const markerOverlay = new MarkerOverlay(point)
+        // 添加标志点
+        const markerOverlay = new MarkerOverlay(point, () => {
+          for (let j = 0; j < this.labels.length; j++) {
+            if (i === j) this.labels[j].triggerShow()
+            else this.labels[j].triggerShow(false)
+          }
+        })
+        map.addOverlay(markerOverlay)
+        // 添加标签
         const labelOverlay = new LabelOverlay(point, this.points[i].carNo)
         map.addOverlay(labelOverlay)
-        map.addOverlay(markerOverlay)
+        labelOverlay.triggerShow(false)
+        this.labels.push(labelOverlay)
+
+        if (i === 0) {
+          map.centerAndZoom(point, 12)
+          labelOverlay.triggerShow()
+        } else {
+          const polyline = new BMap.Polyline([
+            new BMap.Point(this.points[i - 1].longtitude, this.points[i - 1].latitude),
+            new BMap.Point(this.points[i].longtitude, this.points[i].latitude)
+          ],
+          { strokeColor: '#00A4BD', strokeWeight: 3, strokeOpacity: 1 }
+          )
+          map.addOverlay(polyline)
+        }
       }
     }
   }
