@@ -43,7 +43,7 @@ export default {
   computed: {
     inputValue: {
       get: function () {
-        return this.value ? `${this.value}` : ''
+        return this.value ? `${this.value}前` : ''
       },
       set: function (newValue) {
         if (newValue === '') {
