@@ -163,12 +163,12 @@ export default {
     }
   },
   mounted () {
-    const vm = this
-    if (this.onlyChinese) {
-      const originInput = this.$refs.input.$refs.input
-      originInput.addEventListener('compositionstart', vm.onCompositionStart)
-      originInput.addEventListener('compositionend', vm.onCompositionEnd)
-    }
+    // const vm = this
+    // if (this.onlyChinese) {
+    //   const originInput = this.$refs.input.$refs.input
+    //   originInput.addEventListener('compositionstart', vm.onCompositionStart)
+    //   originInput.addEventListener('compositionend', vm.onCompositionEnd)
+    // }
     if (this.value) {
       this.setCurrentValue(this.value)
     }

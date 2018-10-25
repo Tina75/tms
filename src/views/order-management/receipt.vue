@@ -681,5 +681,5 @@ export default {
 </style>
 <style lang="stylus">
 .operate-box .ivu-input-group
-  display flex
+  display inline-block
 </style>

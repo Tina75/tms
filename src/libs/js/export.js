@@ -27,10 +27,13 @@ let instance = (config = {}) => {
 
       if (!code || code === 10000) {
         let blob = new Blob([res.data], { type: res.config.fileType })
+        const url = window.URL || window.webkitURL || window.mozURL
         let downloadLink = document.createElement('a')
-        downloadLink.href = URL.createObjectURL(blob)
+        downloadLink.href = url.createObjectURL(blob)
         downloadLink.download = res.config.fileName + new Date().Format('yyyy-MM-dd_hhmmss') + '.xls'
+        document.body.appendChild(downloadLink)
         downloadLink.click()
+        document.body.removeChild(downloadLink)
         Message.success('导出成功')
       } else {
         switch (code) {

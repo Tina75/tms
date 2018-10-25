@@ -4,7 +4,7 @@
       <div class="order-create__timeSelectTitle" v-text="timeDate ? timeDate : '请先选择日期'"></div>
       <Row>
         <Col v-for="(opt, index) in timeList" :key="index" span="6">
-        <div :class="{'order-create__timeCellDisable': isDisabled(opt), 'order-create__timeActive': inputValue === opt}" class="order-create__timeCell" @click="clickHandle(opt)">
+        <div :class="{'order-create__timeCellDisable': isDisabled(opt), 'order-create__timeActive': value === opt}" class="order-create__timeCell" @click="clickHandle(opt)">
           {{opt}}
         </div>
         </Col>
@@ -43,7 +43,7 @@ export default {
   computed: {
     inputValue: {
       get: function () {
-        return this.value ? `${this.value}` : ''
+        return this.value ? `${this.value}前` : ''
       },
       set: function (newValue) {
         if (newValue === '') {

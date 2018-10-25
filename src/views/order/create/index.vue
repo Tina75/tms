@@ -17,12 +17,12 @@
       </Col>
       <Col span="7">
       <FormItem label="始发城市:" prop="start">
-        <CitySelect ref="start" v-model="orderForm.start"></CitySelect>
+        <CitySelect ref="start" v-model="orderForm.start" clearable></CitySelect>
       </FormItem>
       </Col>
       <Col span="7">
       <FormItem label="目的城市:" prop="end">
-        <CitySelect ref="end" v-model="orderForm.end"></CitySelect>
+        <CitySelect ref="end" v-model="orderForm.end" clearable></CitySelect>
       </FormItem>
       </Col>
     </Row>
@@ -35,12 +35,12 @@
       <Col span="7">
       <FormItem label="发货时间:">
         <Row>
-          <Col span="12">
+          <Col span="13">
           <FormItem prop="deliveryTime">
-            <DatePicker v-model="orderForm.deliveryTime" :options="startDateOptions" format="yyyy-MM-dd" type="date" @on-change="(date) => { dateChange('START_DATE', date)}"></DatePicker>
+            <DatePicker v-model="orderForm.deliveryTime" :options="startDateOptions" format="yyyy-MM-dd" type="date" placeholder="请选择日期" @on-change="(date) => { dateChange('START_DATE', date)}"></DatePicker>
           </FormItem>
           </Col>
-          <Col span="12" style="padding-left: 5px">
+          <Col span="11" style="padding-left: 5px">
           <FormItem prop="deliveryTimes">
             <TimeInput ref="stTimeInput" v-model="orderForm.deliveryTimes" :options="startTimeOptions" :time-date="formateDate(orderForm.deliveryTime)" type="START_DATE"/>
           </FormItem>
@@ -51,12 +51,12 @@
       <Col span="7">
       <FormItem label="到货时间:">
         <Row>
-          <Col span="12">
+          <Col span="13">
           <FormItem prop="arriveTime">
-            <DatePicker v-model="orderForm.arriveTime" :options="endDateOptions" format="yyyy-MM-dd" type="date" @on-change="(date) => { dateChange('END_DATE', date)}"></DatePicker>
+            <DatePicker v-model="orderForm.arriveTime" :options="endDateOptions" format="yyyy-MM-dd" type="date" placeholder="请选择日期"  @on-change="(date) => { dateChange('END_DATE', date)}"></DatePicker>
           </FormItem>
           </Col>
-          <Col span="12" style="padding-left: 5px">
+          <Col span="11" style="padding-left: 5px">
           <FormItem prop="arriveTimes">
             <TimeInput ref="edTimeInput" v-model="orderForm.arriveTimes" :options="endTimeOptions" :time-date="formateDate(orderForm.arriveTime)" type="END_DATE"/>
           </FormItem>
