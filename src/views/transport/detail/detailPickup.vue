@@ -107,7 +107,8 @@
               <PayInfo
                 v-if="settlementType === '1'"
                 :loading="loading"
-                :data="settlementPayInfo" />
+                :data="settlementPayInfo"
+                class="detail-field-payinfo" />
             </div>
           </i-col>
         </Row>
@@ -283,6 +284,7 @@
                        :loading="loading"
                        :total="paymentTotal"
                        :data="settlementPayInfo"
+                       class="detail-field-payinfo"
                        mode="edit" />
             </div>
           </i-col>
