@@ -370,7 +370,10 @@ export default {
 <style lang='stylus'>
 .dispatch-dialog
   .ivu-input-group
-    display flex
+    display inline-block
   .ivu-modal-body
     padding 22px 40px
+  .ivu-form
+    .ivu-form-item-label
+      padding-top 12px
 </style>

@@ -1115,7 +1115,7 @@ export default {
     },
     // 导出
     export () {
-      const data = Object.assign({}, this.keywords, {
+      const data = Object.assign({}, this.keyword, {
         exportOrderIds: this.selectedId.length > 0 ? this.selectedId : null
       })
       Export({
@@ -1187,7 +1187,7 @@ export default {
 </style>
 <style lang="stylus">
 .operate-box .ivu-input-group
-  display flex
+  display inline-block
 .padding-20
   .ivu-table-cell
     padding-left 20px

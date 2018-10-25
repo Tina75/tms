@@ -11,8 +11,8 @@ export default {
         customerOrderNo: null,
         createTimeStart: null,
         createTimeEnd: null,
-        start: '', // 始发地
-        end: '' // 目的地
+        start: void 0, // 始发地
+        end: void 0 // 目的地
       },
       /*
       cityCodes: {
@@ -106,8 +106,8 @@ export default {
         orderNo: null,
         waybillNo: null,
         customerOrderNo: null,
-        start: '', // 始发地
-        end: '' // 目的地
+        start: 0, // 始发地
+        end: 0 // 目的地
       }
       // 订单列表状态字段status，回单列表状态字段receiptStatus, 时间搜索（不一致，根据路由判断）
       if (this.$route.path === '/order-management/receipt') {
