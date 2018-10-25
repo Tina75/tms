@@ -72,17 +72,17 @@ export default {
       return arr
     }
   },
-  mounted () {
-    if (this.type === 'START_DATE') {
-      this.$root.$on('START_DATE', this.changeShow)
-    } else if (this.type === 'END_DATE') {
-      this.$root.$on('END_DATE', this.changeShow)
-    }
-  },
-  beforeDestroy () {
-    this.$root.$off('START_DATE', this.changeShow)
-    this.$root.$off('END_DATE', this.changeShow)
-  },
+  // mounted () {
+  //   if (this.type === 'START_DATE') {
+  //     this.$on('START_DATE', this.changeShow)
+  //   } else if (this.type === 'END_DATE') {
+  //     this.$on('END_DATE', this.changeShow)
+  //   }
+  // },
+  // beforeDestroy () {
+  //   this.$off('START_DATE', this.changeShow)
+  //   this.$off('END_DATE', this.changeShow)
+  // },
   methods: {
     clickHandle (e) {
       if (this.isDisabled(e)) {

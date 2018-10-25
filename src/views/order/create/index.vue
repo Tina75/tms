@@ -42,7 +42,7 @@
           </Col>
           <Col span="12" style="padding-left: 5px">
           <FormItem prop="deliveryTimes">
-            <TimeInput v-model="orderForm.deliveryTimes" :options="startTimeOptions" :time-date="formateDate(orderForm.deliveryTime)" type="START_DATE"/>
+            <TimeInput ref="stTimeInput" v-model="orderForm.deliveryTimes" :options="startTimeOptions" :time-date="formateDate(orderForm.deliveryTime)" type="START_DATE"/>
           </FormItem>
           </Col>
         </Row>
@@ -58,7 +58,7 @@
           </Col>
           <Col span="12" style="padding-left: 5px">
           <FormItem prop="arriveTimes">
-            <TimeInput v-model="orderForm.arriveTimes" :options="endTimeOptions" :time-date="formateDate(orderForm.arriveTime)" type="END_DATE"/>
+            <TimeInput ref="edTimeInput" v-model="orderForm.arriveTimes" :options="endTimeOptions" :time-date="formateDate(orderForm.arriveTime)" type="END_DATE"/>
           </FormItem>
           </Col>
         </Row>
@@ -826,8 +826,10 @@ export default {
         })
     },
     dateChange (type, date) {
-      if (date) {
-        this.$root.$emit(type, 'show')
+      const refs = type === 'START_DATE' ? 'stTimeInput' : type === 'END_DATE' ? 'edTimeInput' : ''
+      if (date && refs) {
+        // this.$root.$emit(type, 'show')
+        this.$refs[refs].changeShow(type)
       }
     },
     formateDate (date) {
