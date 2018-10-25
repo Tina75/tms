@@ -192,7 +192,7 @@ export default {
        * 后端获取阿里云access token, region 参数
        * 初始化oss client，用户上传模板前需要准备好
        */
-      server({
+      return server({
         method: 'post',
         url: 'file/prepareUpload',
         data: {
@@ -211,6 +211,7 @@ export default {
             bucket: data.ossTokenDTO.bucketName,
             endpoint: data.ossTokenDTO.endpoint
           })
+          return response
         })
     },
     /**
@@ -301,14 +302,22 @@ export default {
           this.loopCheckFileProgress(notifyResult.data.data.id)
         }
       } catch (error) {
-        // console.error('导入订单', error)
-        this.$Message.error({ content: '导入订单文件失败', duration: 3 })
+        if (error.code === 'InvalidAccessKeyId' || error.code === 'InvalidBucketName') {
+          // token失效过期了
+          this.$Message.info({ content: '重新获取认证信息，文件正在上传', duration: 3 })
+          await this.initOssInstance()
+          this.handleChange(e)
+        } else {
+          // console.error('导入订单', error)
+          this.$Message.error({ content: '导入订单文件失败', duration: 3 })
+        }
       }
 
       this.$refs.pageTable.fetch()
       this.$refs.fileInput.value = null
     },
     async uploadFile (file) {
+      const vm = this
       if (this.ossClient) {
         try {
           // this.visible = true
@@ -318,13 +327,13 @@ export default {
             partSize: 1024 * 1024, // 分片大小 ,1M
             progress: function (progress, pp) {
               if (progress) {
-                this.progress = progress
+                vm.progress = progress
               }
             }
           })
           this.$nextTick(() => {
             // this.visible = false
-            this.progress = 0
+            vm.progress = 0
           })
           return result
         } catch (e) {
@@ -332,6 +341,8 @@ export default {
           if (e.code === 'ConnectionTimeoutError') {
             this.$Message.error('文件上传超时')
             // do ConnectionTimeoutError operation
+          } else if (e.code === 'RequestError') {
+            console.error('请求body格式非法')
           }
           throw e
         }
