@@ -67,7 +67,7 @@ export default {
         tab = window.sessionStorage['TABHEADER_' + this.tabType]
       }
 
-      if (this.tab !== undefined) {
+      if (tab !== undefined) {
         this.tabStatus = this.setTabStatus(tab)
         this.tabChanged(tab)
       } else {
