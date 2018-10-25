@@ -129,6 +129,7 @@ export default {
   },
   watch: {
     value (value) {
+      console.log('value:' + value + ',code' + this.code)
       this.setCurrentValue(value)
     },
     currentValue (value) {
@@ -200,6 +201,7 @@ export default {
         this.currentValue = ''
         return
       }
+      this.code = code
       let city = cityUtil.getPathByCode(code)
       let item = {
         province: city[0].name,
