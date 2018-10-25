@@ -6,7 +6,7 @@ import router from './router'
 import store from './store'
 import VueMeta from 'vue-meta'
 import EmaProxy from 'ema-proxy'
-
+require('intersection-observer')
 require('./libs/js/filter')
 require('./libs/js/date')
 require('./assets/css/iview/iview.css')
