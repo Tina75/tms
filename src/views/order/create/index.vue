@@ -830,6 +830,7 @@ export default {
       if (date && refs) {
         // this.$root.$emit(type, 'show')
         this.$refs[refs].changeShow(type)
+        this.$refs[refs].focus()
       }
     },
     formateDate (date) {
