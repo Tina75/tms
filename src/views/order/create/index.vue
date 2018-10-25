@@ -16,12 +16,12 @@
       </FormItem>
       </Col>
       <Col span="7">
-      <FormItem label="始发城市:" prop="start">
+      <FormItem label="始发城市:" prop="start" class="cityFormItem">
         <CitySelect ref="start" v-model="orderForm.start" clearable></CitySelect>
       </FormItem>
       </Col>
       <Col span="7">
-      <FormItem label="目的城市:" prop="end">
+      <FormItem label="目的城市:" prop="end" class="cityFormItem">
         <CitySelect ref="end" v-model="orderForm.end" clearable></CitySelect>
       </FormItem>
       </Col>
@@ -863,4 +863,9 @@ export default {
     color #00A4BD
     font-weight bold
     padding-right 13px
+</style>
+<style lang="stylus">
+.cityFormItem
+  .ivu-input-group
+    display inline-block
 </style>
