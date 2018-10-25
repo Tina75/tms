@@ -67,12 +67,12 @@ export default {
         tab = window.sessionStorage['TABHEADER_' + this.tabType]
       }
 
-      if (tab !== undefined) {
+      if (this.tab !== undefined) {
         this.tabStatus = this.setTabStatus(tab)
         this.tabChanged(tab)
       } else {
         this.tabStatus = this.setTabStatus(this.tabList[0].name)
-        // this.currentBtns = this.btnList[0].btns
+        if (this.tabType === 'OUTER') this.currentBtns = this.btnList[0].btns
         this.fetchData()
       }
     },
