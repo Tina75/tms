@@ -62,8 +62,12 @@ export default {
     console.log(this.tab)
     if (this.name === '删除') {
       if (this.id.length === 1) {
-        if (this.id[0].status < 30 && this.id[0].pickupStatus === 1) {
+        if (this.id[0].status === 10 && this.id[0].pickupStatus === 1) {
           this.message = '此订单已经在提货中，为保证数据安全，不可以删除'
+          this.canDelete = false
+        }
+        if (this.id[0].status === 20 && this.id[0].pickupStatus === 1) {
+          this.message = '此订单已完成提货，为保证数据安全，不可以删除'
           this.canDelete = false
         }
         if (this.id[0].status === 20 && this.id[0].dispatchStatus === 1) {
