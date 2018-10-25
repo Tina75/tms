@@ -194,7 +194,7 @@ export default {
         this.$Message.error('请输入正确的车牌号')
         return false
       }
-      if (this.settlementType === '1' && !this.$refs.$settlement.validate()) return false
+      if (this.settlementType === '1' && !this.$refs.$payInfo.validate()) return false
 
       return true
     }
