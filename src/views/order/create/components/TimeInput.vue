@@ -10,7 +10,7 @@
         </Col>
       </Row>
     </div>
-    <Input v-model="inputValue" placeholder="请选择时间" readonly/>
+    <Input v-model="inputValue" placeholder="请选择时间" readonly clearable/>
   </Poptip>
 </template>
 <script>
@@ -41,8 +41,15 @@ export default {
     }
   },
   computed: {
-    inputValue () {
-      return this.value ? `${this.value}` : ''
+    inputValue: {
+      get: function () {
+        return this.value ? `${this.value}` : ''
+      },
+      set: function (newValue) {
+        if (newValue === '') {
+          this.$emit('input', '')
+        }
+      }
     },
     disabledArr () {
       const arr = []
