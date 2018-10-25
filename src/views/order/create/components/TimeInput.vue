@@ -1,7 +1,7 @@
 <template>
   <Poptip v-model="visible" class="timeInput" placement="bottom-end">
     <div slot="content" class="order-create__timeSelect">
-      <div class="order-create__timeSelectTitle" v-text="timeDate ? timeDate : '请先选择时间'"></div>
+      <div class="order-create__timeSelectTitle" v-text="timeDate ? timeDate : '请先选择日期'"></div>
       <Row>
         <Col v-for="(opt, index) in timeList" :key="index" span="6">
         <div :class="{'order-create__timeCellDisable': isDisabled(opt), 'order-create__timeActive': inputValue === opt}" class="order-create__timeCell" @click="clickHandle(opt)">
