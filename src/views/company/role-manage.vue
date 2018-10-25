@@ -196,12 +196,13 @@ export default {
       })
     },
     initTreeList (roleCodeList) {
-      const treeList = this.listInitTreeList
+      const treeList = _.cloneDeep(roleTreeList)
       for (let key in treeList) {
         treeList[key][0].disabled = false
         treeList[key][0].checked = false
         this.getTreeList(roleCodeList, treeList[key][0].children)
       }
+      this.listInitTreeList = treeList
     },
     getTreeList (roleCodeList, treeData) {
       const vm = this
