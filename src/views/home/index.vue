@@ -386,7 +386,7 @@ export default {
     :before
       position absolute
       left 3px
-      top 0
+      // top 0px
       content ''
       display block
       width 1px
