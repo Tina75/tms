@@ -33,6 +33,7 @@
           <TextMarquee :content="notice.content" :speed="30"/>
         </span>
         <FontIcon slot="icon" type="tongzhi-paomadeng" size="20" style="vertical-align: middle; color: #00A4BD"></FontIcon>
+        <FontIcon slot="close" type="ico-fault" style="color: #9DA1B0"></FontIcon>
       </Alert>
     </div>
     <Row :gutter="16" type="flex" justify="start">
