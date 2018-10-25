@@ -287,23 +287,35 @@ export default {
 
     // 位置
     billLocation () {
-      if (!this.checkTableSelection()) return
-      Server({
-        url: '/waybill/location',
-        method: 'post',
-        data: { waybillIds: this.tableSelection.map(item => item.waybillId) }
-      }).then(res => {
-        const points = res.data.data.list
-        if (!points.length) {
-          this.$Message.warning('暂无位置')
-          return
-        }
-        this.openDialog({
-          name: 'transport/dialog/map',
-          data: { points },
-          methods: {}
-        })
-      }).catch(err => console.error(err))
+      const points = [
+        { longtitude: 32.0477450000, latitude: 118.7915800000 },
+        { longtitude: 32.0557350000, latitude: 118.9010530000 },
+        { longtitude: 32.1121890000, latitude: 118.9166830000 },
+        { longtitude: 31.9447660000, latitude: 118.7988120000 }
+      ]
+      this.openDialog({
+        name: 'transport/dialog/map',
+        data: { points },
+        methods: {}
+      })
+
+      // if (!this.checkTableSelection()) return
+      // Server({
+      //   url: '/waybill/location',
+      //   method: 'post',
+      //   data: { waybillIds: this.tableSelection.map(item => item.waybillId) }
+      // }).then(res => {
+      //   const points = res.data.data.list
+      //   if (!points.length) {
+      //     this.$Message.warning('暂无位置')
+      //     return
+      //   }
+      //   this.openDialog({
+      //     name: 'transport/dialog/map',
+      //     data: { points },
+      //     methods: {}
+      //   })
+      // }).catch(err => console.error(err))
     },
 
     // 到货
