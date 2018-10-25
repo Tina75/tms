@@ -268,17 +268,17 @@
             <MoneyInput v-model="payment.loadFee"
                         class="detail-payment-input" />
           </i-col>
-          <i-col span="4">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">卸货费：</span>
             <MoneyInput v-model="payment.unloadFee"
                         class="detail-payment-input" />
           </i-col>
-          <i-col span="4">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">保险费：</span>
             <MoneyInput v-model="payment.insuranceFee"
                         class="detail-payment-input" />
           </i-col>
-          <i-col span="4">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">其他：</span>
             <MoneyInput v-model="payment.otherFee"
                         class="detail-payment-input" />
