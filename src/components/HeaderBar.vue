@@ -41,7 +41,7 @@
         <!-- <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick"> -->
         <Poptip trigger="hover"  placement="bottom-end" title="账号信息" width="260">
           <Avatar class="avatar"  style="border:1px solid #fff"></avatar>
-          <span class="user-info"><p>{{UserInfo.name}}</p> </span>
+          <span class="user-info">{{UserInfo.name}}</span>
           <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
           <div slot="content">
             <p class="dropdown-line"><label for="">账户名：</label>{{UserInfo.name}} &nbsp; &nbsp; &nbsp; &nbsp;<Tag color="cyan" style="font-size:12px">{{UserInfo.roleName}}</Tag></p>
@@ -284,8 +284,13 @@ export default {
             padding-top 12px
 
   .user-info
-    width:60px;
+    width:65px;
     padding-left 5px
     display:inline-block;
     color white
+    text-overflow ellipsis
+    white-space nowrap
+    overflow hidden
+    line-height 1.1
+    margin-bottom -4px
 </style>
