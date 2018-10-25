@@ -1,5 +1,5 @@
 <template>
-  <div ref="el" class="page-home">
+  <div ref="el" :style="styleHeight" class="page-home">
     <div class="page-home__header">
       <Row class="page-home__header-row">
         <Col span="18">
@@ -180,6 +180,9 @@ export default {
       } else if (now >= 22 || now < 5) {
         return `<strong class="van-font-14 i-pr-20">夜深了，${name}</strong> &nbsp;&nbsp;再怎么忙碌，也要注意休息哦。`
       }
+    },
+    styleHeight () {
+      return { height: this.$parent.$parent.$el.children[0].style.minHeight }
     }
   },
   created () {
@@ -334,12 +337,7 @@ export default {
 .page-home
   -webkit-transition all .2s ease-in-out
   transition all .2s ease-in-out
-  position absolute
-  left 218px
-  top 65px
-  right 20px
-  bottom 15px
-  // margin -20px -15px
+  margin -20px -15px
   overflow-y auto
   overflow-x hidden
   background-color #efefef;
