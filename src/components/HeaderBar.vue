@@ -44,7 +44,7 @@
           <span class="user-info">{{UserInfo.name}}</span>
           <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
           <div slot="content">
-            <p class="dropdown-line"><label for="">账户名：</label>{{UserInfo.name}} &nbsp; &nbsp; &nbsp; &nbsp;<Tag color="cyan" style="font-size:12px">{{UserInfo.roleName}}</Tag></p>
+            <p class="dropdown-line"><label for="">账户名：</label><span class="content-name">{{UserInfo.name}}</span><Tag color="cyan" style="font-size:12px">{{UserInfo.roleName}}</Tag></p>
             <p class="dropdown-line"><label for="">手机号：</label>{{UserInfo.phone}}</p>
             <p class="dropdown-line"><label for="">公司：</label>{{UserInfo.companyName}}</p>
             <p class="dropdown-line"><label for="">有效期至：</label>{{UserInfo.expirationTime | datetime('yyyy-MM-dd')}}</p>
@@ -217,7 +217,12 @@ export default {
   text-align left
   background #252A2F
   color #fff
-  // border-bottom 1px solid #efefef
+  .content-name
+    width 80px
+    overflow hidden
+    display inline-block
+    text-overflow ellipsis
+    margin-bottom -6px
   .avatar
     background-image url(../assets/default-avatar.jpg)
     background-size 30px
