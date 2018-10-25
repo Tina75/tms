@@ -29,7 +29,7 @@
         </Col>
       </Row>
       <Alert v-if="notice.content" type="warning" class="page-home__header-notice" banner closable show-icon @on-close="closeNotice">
-        <span :class="{'page-home__noticeBar': notice.url}" @click="hrefHandle">
+        <span :class="{'page-home__noticeBar__Pointer': notice.url}" class="page-home__noticeBar" @click="hrefHandle">
           <TextMarquee :content="notice.content" :speed="30"/>
         </span>
         <FontIcon slot="icon" type="tongzhi-paomadeng" size="20" style="vertical-align: middle; color: #00A4BD"></FontIcon>
@@ -369,6 +369,7 @@ export default {
     background #fff
     border-color #EFEFEF
     border-radius 5px
+    margin-top 10px
   &__header-date
     vertical-align super
     margin-right 30px
@@ -378,5 +379,16 @@ export default {
     background-color #f3f3f3
     margin-bottom 8px
   &__noticeBar
-    cursor pointer
+    position relative
+    &__Pointer
+      cursor pointer
+    :before
+      position absolute
+      left 3px
+      top 0
+      content ''
+      display block
+      width 1px
+      height 16px
+      background-color #e5e7eb
 </style>
