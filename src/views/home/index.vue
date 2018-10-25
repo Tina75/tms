@@ -36,7 +36,7 @@
         <FontIcon slot="close" type="ico-fault" style="color: #9DA1B0"></FontIcon>
       </Alert>
     </div>
-    <Row :gutter="16" type="flex" justify="start" style="margin-top: -8px">
+    <Row :gutter="16" type="flex" justify="start">
       <!-- 提货代办 -->
       <PickupTodo v-if="cardChecksTemp.includes('pickup-todo')"/>
       <!-- 送货代办 -->
