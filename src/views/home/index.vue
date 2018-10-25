@@ -369,6 +369,7 @@ export default {
     border-color #EFEFEF
     border-radius 5px
     margin-top 10px
+    margin-bottom 0
   &__header-date
     vertical-align super
     margin-right 30px
