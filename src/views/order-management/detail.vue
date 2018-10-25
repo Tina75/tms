@@ -18,7 +18,7 @@
         <li>{{ from === 'order' ? '订单状态：' : '回单状态：'}}<span style="font-weight: bold;">{{ from === 'order' ? statusToName(orderStatus) : statusToName(receiptStatus) }}</span></li>
       </ul>
     </header>
-    <div style="text-align: right;margin: 25px 0;min-height: 1px;">
+    <div style="text-align: right;margin: 24px 0;min-height: 1px;">
       <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
     </div>
     <section>
@@ -62,7 +62,7 @@
             <span v-else>-</span>
           </i-col>
         </Row>
-        <Row style="margin-top:25px">
+        <Row style="margin-top:18px">
           <i-col span="7">
             <span>发货联系人：</span>
             <span>{{detail.consignerContact}}</span>
@@ -90,7 +90,7 @@
             <span>{{detail.consigneeAddress}}</span>
           </i-col>
         </Row>
-        <Row style="margin-top: 25px;">
+        <Row style="margin-top: 18px;">
           <i-col span="24">
             <span>备注：</span>
             <span>{{detail.remark}}</span>
@@ -98,10 +98,10 @@
         </Row>
       </div>
       <div v-if="from === 'order'" class="cargo-details">
-        <div class="title">
+        <div class="title" style="margin-top: 35px;">
           <span>货物明细</span>
         </div>
-        <Table :columns="tableColumns" :data="detail.orderCargoList"></Table>
+        <Table :columns="tableColumns" :data="detail.orderCargoList" style="margin-top: 30px;"></Table>
         <div class="table-footer">
           <span style="padding-right: 5px;box-sizing:border-box;">合计</span>
           <!-- <span>订单总数：{{ orderTotal }}</span> -->
@@ -115,7 +115,7 @@
         <div class="title">
           <span>应收费用</span>
         </div>
-        <Row>
+        <Row style="padding-top: 17px;">
           <i-col span="4">
             <span class="fee-style">运输费：</span>
             <span v-if="detail.freightFee" style="font-weight:bold;">{{detail.freightFee | toPoint}}元</span>
@@ -149,14 +149,14 @@
         </Row>
         <Row>
           <i-col span="24">
-            <span class="fee-style">费用合计：</span>
+            <span style="width: 72px;">费用合计：</span>
             <span v-if="!detail.parentId" style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{detail.totalFee | toPoint}} 元</span>
             <span v-else>-</span>
           </i-col>
         </Row>
         <Row>
           <i-col span="24">
-            <span class="fee-style">结算方式：</span>
+            <span style="width: 72px;">结算方式：</span>
             <span>{{settlementToName(detail.settlementType)}}</span>
           </i-col>
         </Row>
@@ -165,15 +165,15 @@
         <div class="title">
           <span>{{from === 'order' ? '订单日志' : '回单日志'}}</span>
         </div>
-        <div style="display: flex;justify-content: flex-start;min-height: 150px;">
+        <div style="display: flex;justify-content: flex-start;min-height: 150px;margin-top: 25px;">
           <div class="fold-icon" @click="showOrderLog">
             <span :class="showLog ? 'hide-log' : 'show-log'"></span>
           </div>
-          <Timeline :class="showLog ? 'show-timeline' : 'hide-timeline'" :style="{ 'height': showLog ? 42*orderLogCount + 'px' : '15px' }" style="margin-top: 7px;overflow: hidden;">
+          <Timeline :class="showLog ? 'show-timeline' : 'hide-timeline'" :style="{ 'height': showLog ? 44*orderLogCount + 'px' : '15px' }" style="margin-top: 7px;overflow: hidden;">
             <TimelineItem v-for="(item, index) in orderLog" :key="index">
               <i slot="dot"></i>
-              <span style="margin-right: 60px;color: #777;font-size: 13px;">{{item.createTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
-              <span style="color: #333;font-size: 13px;">{{'【' + item.operatorName + '】' + item.description}}</span>
+              <span style="margin-right: 60px;color: #777;font-size: 14px;">{{item.createTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
+              <span style="color: #333;font-size: 14px;">{{'【' + item.operatorName + '】' + item.description}}</span>
             </TimelineItem>
           </Timeline>
         </div>
@@ -730,6 +730,10 @@ export default {
     line-height  60px
     background rgba(233,252,255,1)
     >ul>li
+      font-size 13px
+      font-family 'PingFangSC-Regular'
+      font-weight 400
+      color #333
       display inline-block
       margin-right 100px
   .ivu-btn
@@ -751,9 +755,9 @@ export default {
         &:last-child
           color #333
   .fee-style
-    width 72px !important
+    width 60px !important
   .title
-    margin-top 54px
+    margin-top 52px
     span
       height 34px
       font-size 20px
@@ -773,7 +777,7 @@ export default {
     &:after
       content ' '
       display block
-      margin 25px 0
+      margin 15px 0
       border-bottom 1px dashed rgba(203,206,211,1)
   .table-footer
     height 48px
@@ -795,7 +799,7 @@ export default {
         height 12px
         background-color #C9CED9
         border-radius 50%
-        vertical-align middle
+        vertical-align text-bottom
       &:first-child
         i
           background-color #00A4BD

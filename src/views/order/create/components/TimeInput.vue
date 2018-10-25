@@ -1,7 +1,7 @@
 <template>
   <Poptip v-model="visible" class="timeInput" placement="bottom-end">
     <div slot="content" class="order-create__timeSelect">
-      <div class="order-create__timeSelectTitle" v-text="timeDate ? timeDate : '请先选择时间'"></div>
+      <div class="order-create__timeSelectTitle" v-text="timeDate ? timeDate : '请先选择日期'"></div>
       <Row>
         <Col v-for="(opt, index) in timeList" :key="index" span="6">
         <div :class="{'order-create__timeCellDisable': isDisabled(opt), 'order-create__timeActive': inputValue === opt}" class="order-create__timeCell" @click="clickHandle(opt)">
@@ -10,7 +10,7 @@
         </Col>
       </Row>
     </div>
-    <Input v-model="inputValue" placeholder="请选择时间" readonly/>
+    <Input v-model="inputValue" placeholder="请选择时间" readonly clearable/>
   </Poptip>
 </template>
 <script>
@@ -41,8 +41,15 @@ export default {
     }
   },
   computed: {
-    inputValue () {
-      return this.value ? `${this.value}` : ''
+    inputValue: {
+      get: function () {
+        return this.value ? `${this.value}前` : ''
+      },
+      set: function (newValue) {
+        if (newValue === '') {
+          this.$emit('input', '')
+        }
+      }
     },
     disabledArr () {
       const arr = []
@@ -65,17 +72,17 @@ export default {
       return arr
     }
   },
-  mounted () {
-    if (this.type === 'START_DATE') {
-      this.$root.$on('START_DATE', this.changeShow)
-    } else if (this.type === 'END_DATE') {
-      this.$root.$on('END_DATE', this.changeShow)
-    }
-  },
-  beforeDestroy () {
-    this.$root.$off('START_DATE', this.changeShow)
-    this.$root.$off('END_DATE', this.changeShow)
-  },
+  // mounted () {
+  //   if (this.type === 'START_DATE') {
+  //     this.$on('START_DATE', this.changeShow)
+  //   } else if (this.type === 'END_DATE') {
+  //     this.$on('END_DATE', this.changeShow)
+  //   }
+  // },
+  // beforeDestroy () {
+  //   this.$off('START_DATE', this.changeShow)
+  //   this.$off('END_DATE', this.changeShow)
+  // },
   methods: {
     clickHandle (e) {
       if (this.isDisabled(e)) {

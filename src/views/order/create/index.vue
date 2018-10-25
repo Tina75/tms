@@ -17,12 +17,12 @@
       </Col>
       <Col span="7">
       <FormItem label="始发城市:" prop="start">
-        <CitySelect ref="start" v-model="orderForm.start"></CitySelect>
+        <CitySelect ref="start" v-model="orderForm.start" clearable></CitySelect>
       </FormItem>
       </Col>
       <Col span="7">
       <FormItem label="目的城市:" prop="end">
-        <CitySelect ref="end" v-model="orderForm.end"></CitySelect>
+        <CitySelect ref="end" v-model="orderForm.end" clearable></CitySelect>
       </FormItem>
       </Col>
     </Row>
@@ -35,14 +35,14 @@
       <Col span="7">
       <FormItem label="发货时间:">
         <Row>
-          <Col span="12">
+          <Col span="13">
           <FormItem prop="deliveryTime">
             <DatePicker v-model="orderForm.deliveryTime" :options="startDateOptions" format="yyyy-MM-dd" type="date" @on-change="(date) => { dateChange('START_DATE', date)}"></DatePicker>
           </FormItem>
           </Col>
-          <Col span="12" style="padding-left: 5px">
+          <Col span="11" style="padding-left: 5px">
           <FormItem prop="deliveryTimes">
-            <TimeInput v-model="orderForm.deliveryTimes" :options="startTimeOptions" :time-date="formateDate(orderForm.deliveryTime)" type="START_DATE"/>
+            <TimeInput ref="stTimeInput" v-model="orderForm.deliveryTimes" :options="startTimeOptions" :time-date="formateDate(orderForm.deliveryTime)" type="START_DATE"/>
           </FormItem>
           </Col>
         </Row>
@@ -51,14 +51,14 @@
       <Col span="7">
       <FormItem label="到货时间:">
         <Row>
-          <Col span="12">
+          <Col span="13">
           <FormItem prop="arriveTime">
             <DatePicker v-model="orderForm.arriveTime" :options="endDateOptions" format="yyyy-MM-dd" type="date" @on-change="(date) => { dateChange('END_DATE', date)}"></DatePicker>
           </FormItem>
           </Col>
-          <Col span="12" style="padding-left: 5px">
+          <Col span="11" style="padding-left: 5px">
           <FormItem prop="arriveTimes">
-            <TimeInput v-model="orderForm.arriveTimes" :options="endTimeOptions" :time-date="formateDate(orderForm.arriveTime)" type="END_DATE"/>
+            <TimeInput ref="edTimeInput" v-model="orderForm.arriveTimes" :options="endTimeOptions" :time-date="formateDate(orderForm.arriveTime)" type="END_DATE"/>
           </FormItem>
           </Col>
         </Row>
@@ -133,7 +133,7 @@
       <FormItem label="运输费用:" prop="freightFee">
         <Row>
           <Col span="20">
-          <TagNumberInput :min="0" v-model="orderForm.freightFee" :parser="handleParseFloat">
+          <TagNumberInput :min="0" :max="999999999.99" v-model="orderForm.freightFee" :parser="handleParseFloat">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           </Col>
@@ -147,14 +147,14 @@
       </Col>
       <Col span="6">
       <FormItem label="提货费用:" prop="pickupFee">
-        <TagNumberInput :min="0" v-model="orderForm.pickupFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" :max="999999999.99" v-model="orderForm.pickupFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="装货费用:" prop="loadFee">
-        <TagNumberInput :min="0" v-model="orderForm.loadFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" :max="999999999.99" v-model="orderForm.loadFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
@@ -163,21 +163,21 @@
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="卸货费用:" prop="unloadFee">
-        <TagNumberInput :min="0" v-model="orderForm.unloadFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" :max="999999999.99" v-model="orderForm.unloadFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="保险费用:" prop="insuranceFee">
-        <TagNumberInput :min="0" v-model="orderForm.insuranceFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" :max="999999999.99" v-model="orderForm.insuranceFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="其他费用:" prop="otherFee">
-        <TagNumberInput :min="0" v-model="orderForm.otherFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" :max="999999999.99" v-model="orderForm.otherFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
@@ -826,8 +826,10 @@ export default {
         })
     },
     dateChange (type, date) {
-      if (date) {
-        this.$root.$emit(type, 'show')
+      const refs = type === 'START_DATE' ? 'stTimeInput' : type === 'END_DATE' ? 'edTimeInput' : ''
+      if (date && refs) {
+        // this.$root.$emit(type, 'show')
+        this.$refs[refs].changeShow(type)
       }
     },
     formateDate (date) {

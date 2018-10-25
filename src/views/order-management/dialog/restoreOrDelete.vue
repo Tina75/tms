@@ -3,9 +3,9 @@
     <p slot="header" class="dialog-title">{{ name }}</p>
     <div style="display: flex;justify-content:center;">
       <Icon type="ios-information-circle" size="24" color="#FFBB44" style="margin-top: -2px;margin-right: 5px;"></Icon>
-      <div v-if="canDelete" style="margin-left: 5px;">共选择了{{ id.length }}条订单，确定{{ name }}吗？</div>
+      <div v-if="canDelete">共选择了{{ id.length }}条订单，确定{{ name }}吗？</div>
       <div v-else>
-        <div v-if="id.length === 1" style="margin-left: 5px;">{{ message }}</div>
+        <div v-if="id.length === 1">{{ message }}</div>
         <div v-else>
           <div>
             您选中的订单中有订单已在处理中了， “
@@ -74,8 +74,20 @@ export default {
           this.message = '此订单已经外转处理，为保证数据安全，不可以删除'
           this.canDelete = false
         }
-        if (this.id[0].status > 20) {
-          this.message = '此订单已经在处理中，为保证数据安全，不可以删除'
+        if (this.id[0].status === 30) {
+          this.message = '此订单已经在途中，为保证数据安全，不可以删除'
+          this.canDelete = false
+        }
+        if (this.id[0].status === 40) {
+          this.message = '此订单已经到货，为保证数据安全，不可以删除'
+          this.canDelete = false
+        }
+        if (this.id[0].status === 50) {
+          this.message = '此订单已经回单，为保证数据安全，不可以删除'
+          this.canDelete = false
+        }
+        if (this.id[0].status === 100) {
+          this.message = '此订单已经删除'
           this.canDelete = false
         }
       } else {
