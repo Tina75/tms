@@ -345,9 +345,6 @@ export default {
      border-style none
      padding-bottom 10px
 
-  .detail-field-title-sm
-    width 75px !important
-
   .detail-payment-way
     width calc(100% - 100px) !important
 </style>
