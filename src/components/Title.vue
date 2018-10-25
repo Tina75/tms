@@ -5,6 +5,9 @@
       <span :style="textStyle" class="header-h3-text">
         <slot></slot>
       </span>
+      <div v-if="$slots.float" class="header-h3-float">
+        <slot name="float" ></slot>
+      </div>
     </div>
   </h3>
 </template>
@@ -32,10 +35,17 @@ export default {
   },
   computed: {
     titleStyle () {
+      /**
+       * 设置border-style
+       */
       return { borderBottomStyle: this.border }
     },
     lineStyle () {
-      return { height: this.size + 'px' }
+      /**
+       * 1. 24px字 - 25px
+       * 2. 16px字 - 20px
+       */
+      return { height: this.size === '24' ? this.size + 'px' : '20px' }
     },
     textStyle () {
       return { fontSize: this.size + 'px' }
@@ -60,4 +70,8 @@ export default {
     background #00a4bd
     border-radius 3px
     vertical-align text-bottom
+  &-float
+    float right
+    margin-right 20px
+    margin-top -5px
 </style>
