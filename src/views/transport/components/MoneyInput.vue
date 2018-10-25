@@ -76,7 +76,7 @@ export default {
     .number-input-unit
       position absolute
       right 10px
-      top 5px
+      top 2px
       height 32px
       line-height 32px
       font-size 12px

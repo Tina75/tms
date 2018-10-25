@@ -94,7 +94,7 @@
     <div class="part">
       <Row class="detail-field-group">
         <i-col span="24">
-          <span class="detail-field-title-sm detail-field-required">结算方式：</span>
+          <span class="detail-field-title detail-field-required">结算方式：</span>
           <div class="detail-payment-way">
             <RadioGroup v-model="settlementType">
               <Radio label="1">按单结</Radio>
@@ -105,6 +105,7 @@
                      :loading="loading"
                      :total="paymentTotal"
                      :data="settlementPayInfo"
+                     class="detail-field-payinfo"
                      mode="edit" />
           </div>
         </i-col>
@@ -346,4 +347,7 @@ export default {
 
   .detail-field-title-sm
     width 75px !important
+
+  .detail-payment-way
+    width calc(100% - 100px) !important
 </style>
