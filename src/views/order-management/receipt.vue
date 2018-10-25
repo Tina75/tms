@@ -660,14 +660,14 @@ export default {
 .ivu-btn
   margin-right 15px
   width 80px
-  height 35px
+  height 32px
 .ivu-btn-default
   background #F9F9F9
 .high-search
   width 36px
   height 36px
-  line-height 1.4
-  letter-spacing 2px
+  line-height 1.2
+  letter-spacing 1px
   padding 0
   white-space normal
   margin-right 0
@@ -682,13 +682,4 @@ export default {
 <style lang="stylus">
 .operate-box .ivu-input-group
   display flex
-.order-simple-select
-  .ivu-select-selection
-    height 35px
-  .ivu-select-selected-value
-    height 35px !important
-    line-height 35px !important
-.receipt-right
-  .ivu-input
-    height 35px
 </style>

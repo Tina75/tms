@@ -1,12 +1,13 @@
 <template>
   <div class="sider">
-    <Sider :collapsed-width="50" v-model="collapsed" breakpoint="md" collapsible style="overflow:hidden;height:100%">
+    <Sider :collapsed-width="50" v-model="collapsed" breakpoint="md" collapsible style="height:100%">
       <side-menu :collapsed="collapsed" :active-name="$route.path" @on-select="onMenuSelect"/>
-      <div slot="trigger"></div>
+      <div slot="trigger" >
+        <span :class="['sider-trigger', collapsed ? 'collapsed' : 'uncollapsed']" @click="collapsed = !collapsed">
+          <i :class="[collapsed ? 'collapsed' : '']" class="icon font_family icon-ico-zz1"></i>
+        </span>
+      </div>
     </Sider>
-    <a :class="['sider-trigger-a', collapsed ? 'collapsed' : 'uncollapsed']"  type="text" @click="collapsed = !collapsed">
-      <i class="icon font_family icon-ico-zz1"></i>
-    </a>
   </div>
 </template>
 
@@ -72,29 +73,29 @@ export default {
 <style lang='stylus'>
 .sider
   height 100%
-  .sider-trigger-a
-    position absolute
+  &-trigger
+    z-index 11
     top 45%
-    left 200px
+    position: absolute;
+    right: -12px;
+    text-align: center;
+    height: 55px;
+    line-height: 42px;
+    color: #252A2F;
+    cursor: pointer;
+    -webkit-transition: background .3s ease;
+    transition: background .3s ease;
     width:0;
-    height:55px;
-    border-left:11px solid #C1C6CB;
+    border-left:12px solid #C1C6CB;
     border-top:7px solid transparent;
     border-bottom:7px solid transparent;
     i
-      display inline-block
-      color #252A2F
-      margin-left -13px
-      margin-top 10px
+      position absolute
+      right -1px
       font-size 14px
       transform rotate(180deg)
   .collapsed
-    transform translateX(-150px)
-    transition transform .2s ease
     i
       transform rotate(0deg)
-      transition transform .2s ease
-    // left 50px
-  .uncollapsed
-    transition transform .2s ease
+
 </style>
