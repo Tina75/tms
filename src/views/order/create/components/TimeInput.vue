@@ -4,7 +4,7 @@
       <div class="order-create__timeSelectTitle" v-text="timeDate ? timeDate : '请先选择时间'"></div>
       <Row>
         <Col v-for="(opt, index) in timeList" :key="index" span="6">
-        <div :class="{'order-create__timeCellDisable': isDisabled(opt)}" class="order-create__timeCell" @click="clickHandle(opt)">
+        <div :class="{'order-create__timeCellDisable': isDisabled(opt), 'order-create__timeActive': inputValue === opt}" class="order-create__timeCell" @click="clickHandle(opt)">
           {{opt}}
         </div>
         </Col>
@@ -119,6 +119,8 @@ export default {
     padding 10px 0
     cursor pointer
     text-align center
+  &__timeActive
+    color #00A4BD
   &__timeCellDisable
     color #DCDEE2
 </style>
