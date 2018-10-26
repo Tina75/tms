@@ -1115,7 +1115,7 @@ export default {
     },
     // 导出
     export () {
-      const data = Object.assign({}, this.keywords, {
+      const data = Object.assign({}, this.keyword, {
         exportOrderIds: this.selectedId.length > 0 ? this.selectedId : null
       })
       Export({

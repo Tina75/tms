@@ -10,7 +10,7 @@
         </Col>
       </Row>
     </div>
-    <Input v-model="inputValue" placeholder="请选择时间" readonly clearable/>
+    <Input ref="input" v-model="inputValue" placeholder="请选择时间" readonly clearable/>
   </Poptip>
 </template>
 <script>
@@ -84,6 +84,9 @@ export default {
   //   this.$off('END_DATE', this.changeShow)
   // },
   methods: {
+    focus () {
+      this.$refs.input.$refs.input.focus()
+    },
     clickHandle (e) {
       if (this.isDisabled(e)) {
         return false

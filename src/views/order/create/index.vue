@@ -16,12 +16,12 @@
       </FormItem>
       </Col>
       <Col span="7">
-      <FormItem label="始发城市:" prop="start">
+      <FormItem label="始发城市:" prop="start" class="cityFormItem">
         <CitySelect ref="start" v-model="orderForm.start" clearable></CitySelect>
       </FormItem>
       </Col>
       <Col span="7">
-      <FormItem label="目的城市:" prop="end">
+      <FormItem label="目的城市:" prop="end" class="cityFormItem">
         <CitySelect ref="end" v-model="orderForm.end" clearable></CitySelect>
       </FormItem>
       </Col>
@@ -133,7 +133,7 @@
       <FormItem label="运输费用:" prop="freightFee">
         <Row>
           <Col span="20">
-          <TagNumberInput :min="0" :max="999999999.99" v-model="orderForm.freightFee" :parser="handleParseFloat">
+          <TagNumberInput :min="0" v-model="orderForm.freightFee" :parser="handleParseFloat">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           </Col>
@@ -147,14 +147,14 @@
       </Col>
       <Col span="6">
       <FormItem label="提货费用:" prop="pickupFee">
-        <TagNumberInput :min="0" :max="999999999.99" v-model="orderForm.pickupFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" v-model="orderForm.pickupFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="装货费用:" prop="loadFee">
-        <TagNumberInput :min="0" :max="999999999.99" v-model="orderForm.loadFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" v-model="orderForm.loadFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
@@ -163,21 +163,21 @@
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="卸货费用:" prop="unloadFee">
-        <TagNumberInput :min="0" :max="999999999.99" v-model="orderForm.unloadFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" v-model="orderForm.unloadFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="保险费用:" prop="insuranceFee">
-        <TagNumberInput :min="0" :max="999999999.99" v-model="orderForm.insuranceFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" v-model="orderForm.insuranceFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="其他费用:" prop="otherFee">
-        <TagNumberInput :min="0" :max="999999999.99" v-model="orderForm.otherFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" v-model="orderForm.otherFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
@@ -830,6 +830,7 @@ export default {
       if (date && refs) {
         // this.$root.$emit(type, 'show')
         this.$refs[refs].changeShow(type)
+        this.$refs[refs].focus()
       }
     },
     formateDate (date) {
@@ -863,4 +864,9 @@ export default {
     color #00A4BD
     font-weight bold
     padding-right 13px
+</style>
+<style lang="stylus">
+.cityFormItem
+  .ivu-input-group
+    display inline-block
 </style>
