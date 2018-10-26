@@ -9,6 +9,7 @@
         <div class="custom-style">
           <Button v-for="(item, key) in showButtons" :key="key"
                   :type="key === 0 ? 'primary' : 'default'"
+                  class="action-btn"
                   @click="item.func">{{ item.name }}</Button>
         </div>
 
@@ -84,11 +85,14 @@
           </div>
           <div>
             <Button type="primary"
+                    class="action-btn"
                     @click="startSearch">搜索</Button>
             <Button type="default"
+                    class="action-btn"
                     @click="resetSeniorSearch()">清除条件</Button>
             <Button type="default"
                     style="margin-right: 0;"
+                    class="action-btn"
                     @click="changeSearchType">简易搜索</Button>
           </div>
         </div>
@@ -287,15 +291,30 @@ export default {
 
     // 位置
     billLocation () {
-      const points = [
-        { latitude: 32.0477450000, longtitude: 118.7915800000, carNo: '苏A11111' },
-        { latitude: 32.0557350000, longtitude: 118.9010530000, carNo: '苏A22222' },
-        { latitude: 32.1121890000, longtitude: 118.9166830000, carNo: '苏A33333' },
-        { latitude: 31.9447660000, longtitude: 118.7988120000, carNo: '苏A44444' }
+      // 单点显示车辆轨迹
+      const cars = [
+        {
+          carNo: '苏A11111',
+          points: [
+            { latitude: 32.0477450000, longtitude: 118.7915800000, time: new Date().getTime(), address: '测试地址1' },
+            { latitude: 32.0557350000, longtitude: 118.9010530000, time: new Date().getTime(), address: '测试地址2' },
+            { latitude: 32.1121890000, longtitude: 118.9166830000, time: new Date().getTime(), address: '测试地址3' },
+            { latitude: 31.9447660000, longtitude: 118.7988120000, time: new Date().getTime(), address: '测试地址4' }
+          ]
+        }
       ]
+      // 多点展示车辆位置
+      // const cars = [
+      //   { carNo: '苏A11111', latitude: 32.0477450000, longtitude: 118.7915800000 },
+      //   { carNo: '苏A22222', latitude: 32.0557350000, longtitude: 118.9010530000 },
+      //   { carNo: '苏A33333', latitude: 32.1121890000, longtitude: 118.9166830000 }
+      // ]
       this.openDialog({
         name: 'transport/dialog/map',
-        data: { points },
+        data: {
+          cars,
+          multiple: cars.length !== 1
+        },
         methods: {}
       })
 
@@ -307,7 +326,7 @@ export default {
       // }).then(res => {
       //   const points = res.data.data.list
       //   if (!points.length) {
-      //     this.$Message.warning('暂无位置')
+      //     this.$Message.warning('暂无车辆位置信息')
       //     return
       //   }
       //   this.openDialog({

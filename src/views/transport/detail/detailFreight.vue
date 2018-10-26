@@ -404,7 +404,7 @@ export default {
         {
           status: '在途',
           btns: [{
-            name: '位置',
+            name: '查看车辆位置',
             code: 120106,
             func: () => {
               this.billLocation()
@@ -660,7 +660,7 @@ export default {
         })
       })
     },
-    // 位置
+    // 查看车辆位置
     billLocation () {
       Server({
         url: '/waybill/location',
@@ -669,7 +669,7 @@ export default {
       }).then(res => {
         const points = res.data.data.list
         if (!points.length) {
-          this.$Message.warning('暂无位置')
+          this.$Message.warning('暂无车辆位置信息')
           return
         }
         this.openDialog({

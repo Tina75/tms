@@ -3,10 +3,9 @@
  */
 import BMap from 'BMap'
 export default class MarkerOverlay extends BMap.Overlay {
-  constructor (point, clickCb) {
+  constructor (point) {
     super(point)
     this._point = point
-    if (clickCb) this._clickCb = clickCb
   }
 
   initialize (map) {
@@ -19,11 +18,6 @@ export default class MarkerOverlay extends BMap.Overlay {
     div.style.padding = '5px'
     div.style.MozUserSelect = 'none'
     div.style.borderRadius = '50%'
-
-    if (this._clickCb) {
-      div.style.cursor = 'pointer'
-      div.onclick = () => { this._clickCb() }
-    }
     map.getPanes().labelPane.appendChild(div)
     return div
   }
