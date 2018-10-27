@@ -6,6 +6,9 @@
       </div>
       <div class="header-bar-avator-dropdown">
         <span class="header-bar-avator-dropdown-notify">
+          <Icon type="ios-apps" size="30" color="#fff"></Icon>
+        </span>
+        <span class="header-bar-avator-dropdown-notify">
           <Badge :count="MsgCount.all" type="primary">
             <Icon type="ios-notifications" size="30" color="#fff" @click="openMsg(0)"></Icon>
           </Badge>
@@ -201,7 +204,7 @@ export default {
     width auto
     top 4px
     left 0
-    right 185px
+    right 250px
     position absolute
     padding 0
     height 46px
