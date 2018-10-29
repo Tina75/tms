@@ -23,6 +23,7 @@ export default {
   props: {
     value: String,
     maxlength: Number,
+    city: String | Number,
     localOptions: {
       type: Array,
       default: () => []
@@ -40,7 +41,7 @@ export default {
   },
   computed: {
     areaList () {
-      return this.address
+      return this.localOptions.concat(this.address)
     }
   },
   methods: {
@@ -52,10 +53,12 @@ export default {
             let arr = []
             for (let i = 0; i < results.getCurrentNumPois(); i++) {
               const item = results.getPoi(i)
+              // item.province + item.city + item.title
+              // item.title + ', ' + item.address
               arr.push({
                 id: i,
-                name: item.title + ', ' + item.address,
-                value: item.title + ', ' + item.address,
+                name: item.province + item.city + item.title,
+                value: item.province + item.city + item.title,
                 lat: item.point.lat,
                 lng: item.point.lng
               })
