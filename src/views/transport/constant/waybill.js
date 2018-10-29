@@ -168,7 +168,7 @@ export const TABLE_COLUMNS = vm => [
     minWidth: 180,
     ellipsis: true,
     render: (h, p) => {
-      return vm.tableDataRender(h, vm.cityFormatter(p.row.start))
+      return vm.tableDataRender(h, p.row.startName)
     }
   },
   {
@@ -177,7 +177,7 @@ export const TABLE_COLUMNS = vm => [
     minWidth: 180,
     ellipsis: true,
     render: (h, p) => {
-      return vm.tableDataRender(h, vm.cityFormatter(p.row.end))
+      return vm.tableDataRender(h, p.row.endName)
     }
   },
   {

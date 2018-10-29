@@ -78,7 +78,7 @@ export default {
           key: 'start',
           minWidth: 180,
           render: (h, p) => {
-            return this.tableDataRender(h, this.cityFormatter(p.row.start))
+            return this.tableDataRender(h, p.row.startName)
           }
         },
         {
@@ -87,7 +87,7 @@ export default {
           ellipsis: true,
           minWidth: 180,
           render: (h, p) => {
-            return this.tableDataRender(h, this.cityFormatter(p.row.end))
+            return this.tableDataRender(h, p.row.endName)
           }
         },
         {
