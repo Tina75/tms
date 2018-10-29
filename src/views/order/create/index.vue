@@ -3,7 +3,7 @@
     <Spin v-if="loading" fix></Spin>
     <Row :gutter="16">
       <Col span="10">
-      <FormItem label="客户:" prop="consignerName" required>
+      <FormItem label="客户:" prop="consignerName">
         <SelectInput
           v-model="orderForm.consignerName"
           :auto-focus="autoFocus"
@@ -380,7 +380,6 @@ export default {
       orderPrint: [],
       rules: {
         consignerName: [
-          // { validator: validateConsignerName, trigger: 'blur' }
           { required: true, message: '请输入客户名称' }
         ],
         start: [
