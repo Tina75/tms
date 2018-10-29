@@ -1,7 +1,10 @@
 <template>
   <div v-if="carrierType === 1" class="info-detail">
     <div class="info">
-      <div class="title">承运商信息</div>
+      <div class="title">
+        <span class="icontTitle"></span>
+        <span class="iconTitleP">承运商信息</span>
+      </div>
       <div class="list-info">
         <Row class="row">
           <Col span="8">
@@ -56,7 +59,10 @@
   </div>
   <div v-else class="info-detail">
     <div class="info">
-      <div class="title">承运商信息</div>
+      <div class="title">
+        <span class="icontTitle"></span>
+        <span class="iconTitleP">承运商信息</span>
+      </div>
       <div class="list-info">
         <Row class="row">
           <Col span="8">
@@ -104,9 +110,9 @@
     </div>
     <div class="tabs">
       <Tabs :animated="false">
-        <TabPane label="司机">
+        <TabPane :label="tabPaneLabel">
           <div class="add">
-            <Button v-if="hasPower(130204)" type="primary" @click="_carrierAddDriver">新增</Button>
+            <Button v-if="hasPower(130204)" type="primary" @click="_carrierAddDriver">新增车辆</Button>
           </div>
           <template>
             <Table :columns="columns1" :data="data1"></Table>
@@ -122,9 +128,9 @@
             </template>
           </div>
         </TabPane>
-        <TabPane label="车辆" >
+        <TabPane :label="tabPaneLabe2">
           <div class="add">
-            <Button v-if="hasPower(130207)" type="primary" @click="_carrierAddVehicle">新增</Button>
+            <Button v-if="hasPower(130207)" type="primary" @click="_carrierAddVehicle">新增记录</Button>
           </div>
           <template>
             <Table :columns="columns2" :data="data2"></Table>
@@ -149,6 +155,7 @@
 import BasePage from '@/basic/BasePage'
 import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import { CODE, carrierDetailsForDriver, carrierDetailsForCompany, carrierListDriver, carrierListCar, carrierDeleteVehicle, carrierDeleteDriver } from './client'
+import TMSUrl from '@/libs/constant/url'
 export default {
   name: 'carrier-info',
   mixins: [ BasePage ],
@@ -188,7 +195,7 @@ export default {
         {
           title: '操作',
           key: 'id',
-          width: 100,
+          width: 150,
           render: (h, params) => {
             let renderBtn = []
             if (this.hasPower(130205)) {
@@ -204,7 +211,7 @@ export default {
                     this.openDialog({
                       name: 'client/dialog/carrier-driver',
                       data: {
-                        title: '修改司机',
+                        title: '修改车辆',
                         flag: 2, // 修改
                         driverId: params.row.driverId,
                         validate: {
@@ -224,6 +231,24 @@ export default {
                 }
               }, '修改'))
             }
+            renderBtn.push(h('span', {
+              style: {
+                marginRight: '12px',
+                color: '#00A4BD',
+                cursor: 'pointer'
+              },
+              on: {
+                click: () => {
+                  this.openTab({
+                    path: TMSUrl.CARRIER_MANAGEMENT_CAEDETAILS,
+                    query: {
+                      id: '车辆详情',
+                      rowData: params.row
+                    }
+                  })
+                }
+              }
+            }, '查看'))
             if (this.hasPower(130206)) {
               renderBtn.push(h('span', {
                 style: {
@@ -261,40 +286,40 @@ export default {
           }
         },
         {
-          title: '姓名',
-          key: 'driverName'
-        },
-        {
-          title: '电话',
-          key: 'driverPhone'
-        },
-        {
-          title: '司机类型',
-          key: 'driverType',
-          render: (h, params) => {
-            let text = ''
-            if (params.row.driverType === 1) {
-              text = '合约司机 '
-            } else if (params.row.driverType === 2) {
-              text = '临时司机'
-            } else {
-              text = ''
-            }
-            return h('div', {}, text)
-          }
-        },
-        {
           title: '车牌号',
-          key: 'carNO',
-          render (h, params) {
-            let text = ''
-            if (params.row.carNO === '' || params.row.carNO === null) {
-              text = '-'
-            } else {
-              text = params.row.carNO
-            }
-            return h('span', {}, text)
-          }
+          key: 'carNO'
+        },
+        {
+          title: '合作方式',
+          key: 'driverType'
+        },
+        {
+          title: '司机姓名',
+          key: 'driverName'
+          // render: (h, params) => {
+          //   let text = ''
+          //   if (params.row.driverType === 1) {
+          //     text = '合约司机 '
+          //   } else if (params.row.driverType === 2) {
+          //     text = '临时司机'
+          //   } else {
+          //     text = ''
+          //   }
+          //   return h('div', {}, text)
+          // }
+        },
+        {
+          title: '手机号',
+          key: 'driverPhone'
+          // render (h, params) {
+          //   let text = ''
+          //   if (params.row.carNO === '' || params.row.carNO === null) {
+          //     text = '-'
+          //   } else {
+          //     text = params.row.carNO
+          //   }
+          //   return h('span', {}, text)
+          // }
         },
         {
           title: '车型',
@@ -303,13 +328,25 @@ export default {
             let text = params.row.carType ? (this.carLengthMap[params.row.carLength] + this.carTypeMap[params.row.carType]) : '-'
             return h('div', {}, text)
           }
+        },
+        {
+          title: '车长（米）',
+          key: 'carLength'
+        },
+        {
+          title: '载重（吨）',
+          key: 'shippingWeight'
+        },
+        {
+          title: '常跑线路',
+          key: 'regularLine'
         }
       ],
       columns2: [
         {
           title: '操作',
           key: 'id',
-          width: 100,
+          width: 150,
           render: (h, params) => {
             let renderBtn = []
             if (this.hasPower(130208)) {
@@ -352,6 +389,24 @@ export default {
                 }
               }, '修改'))
             }
+            renderBtn.push(h('span', {
+              style: {
+                marginRight: '12px',
+                color: '#00A4BD',
+                cursor: 'pointer'
+              },
+              on: {
+                click: () => {
+                  this.openTab({
+                    path: TMSUrl.CARRIER_MANAGEMENT_REPAIRDETAILS,
+                    query: {
+                      id: '维修详情',
+                      rowData: params.row
+                    }
+                  })
+                }
+              }
+            }, '查看'))
             if (this.hasPower(130209)) {
               renderBtn.push(h('span', {
                 style: {
@@ -393,42 +448,54 @@ export default {
           key: 'carNO'
         },
         {
-          title: '车型',
-          key: 'carType',
+          title: '维修类别',
+          key: 'repairType',
           render: (h, params) => {
             let text = params.row.carType ? (this.carLengthMap[params.row.carLength] + this.carTypeMap[params.row.carType]) : ''
             return h('div', {}, text)
           }
         },
         {
-          title: '核定重量(吨)',
-          key: 'shippingWeight'
+          title: '送修日期',
+          key: 'repairDate'
         },
         {
-          title: '车载容积(方)',
-          key: 'shippingVolume',
-          render (h, params) {
-            let text = ''
-            if (params.row.shippingVolume === '' || params.row.shippingVolume === null) {
-              text = '-'
-            } else {
-              text = params.row.shippingVolume
-            }
-            return h('span', {}, text)
-          }
+          title: '送修人',
+          key: 'repairPerson'
+          // render (h, params) {
+          //   let text = ''
+          //   if (params.row.shippingVolume === '' || params.row.shippingVolume === null) {
+          //     text = '-'
+          //   } else {
+          //     text = params.row.shippingVolume
+          //   }
+          //   return h('span', {}, text)
+          // }
         },
         {
-          title: '主司机',
-          key: 'driverName',
-          render (h, params) {
-            let text = ''
-            if (params.row.driverName === '' || params.row.driverName === null) {
-              text = '-'
-            } else {
-              text = params.row.driverName
-            }
-            return h('span', {}, text)
-          }
+          title: '送修公里数',
+          key: 'repairMile'
+          // render (h, params) {
+          //   let text = ''
+          //   if (params.row.driverName === '' || params.row.driverName === null) {
+          //     text = '-'
+          //   } else {
+          //     text = params.row.driverName
+          //   }
+          //   return h('span', {}, text)
+          // }
+        },
+        {
+          title: '维修费用',
+          key: 'repairMoney'
+        },
+        {
+          title: '已支付费用',
+          key: 'payMoney'
+        },
+        {
+          title: '未支付费用',
+          key: 'waitPayMoney'
         }
       ],
       data1: [],
@@ -441,6 +508,14 @@ export default {
       pageSize2: 10,
       totalCount2: 0, // 总条数
       pageNo2: 1
+    }
+  },
+  computed: {
+    tabPaneLabel () {
+      return '车辆信息 ' + (this.totalCount1 === 0 ? '' : this.totalCount1.toString())
+    },
+    tabPaneLabe2 () {
+      return '维修记录 ' + (this.totalCount2 === 0 ? '' : this.totalCount2.toString())
     }
   },
   mounted () {
@@ -466,7 +541,7 @@ export default {
             driverPhone: res.data.data.driverPhone,
             payType: res.data.data.payType,
             carLength: res.data.data.carLength,
-            remark: res.data.data.remark,
+            remark: res.data.data.remark === '' ? '无' : res.data.data.remark,
             shippingWeight: res.data.data.shippingWeight,
             shippingVolume: res.data.data.shippingVolume
           }
@@ -485,7 +560,7 @@ export default {
             carrierPrincipal: data.carrierInfo.carrierPrincipal,
             carrierPhone: data.carrierInfo.carrierPhone,
             payType: data.carrierInfo.payType,
-            remark: data.carrierInfo.remark
+            remark: data.carrierInfo.remark === '' ? '无' : data.carrierInfo.remark
           }
         }
       })
@@ -509,7 +584,7 @@ export default {
       this.openDialog({
         name: 'client/dialog/carrier-driver',
         data: {
-          title: '新增司机',
+          title: '新增车辆',
           flag: 1, // 新增
           carrierId: this.carrierId // carrierId
         },
@@ -549,7 +624,7 @@ export default {
       this.openDialog({
         name: 'client/dialog/carrier-vehicle',
         data: {
-          title: '新增车辆',
+          title: '新增车辆维修保养记录',
           flag: 1, // 新增
           driverId: _this.driverId,
           carrierId: _this.carrierId

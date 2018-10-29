@@ -295,7 +295,7 @@ export function carrierListDriver (data) {
 // 删除司机
 export function carrierDeleteDriver (data) {
   return server({
-    url: '/carrier/delete/driver',
+    url: '/carrier/delete/vehicle',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -304,10 +304,10 @@ export function carrierDeleteDriver (data) {
   })
 }
 
-// 添加司机
+// 添加车辆
 export function carrierAddDriver (data) {
   return server({
-    url: '/carrier/add/driver',
+    url: '/carrier/add/vehicle',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -319,7 +319,7 @@ export function carrierAddDriver (data) {
 // 修改司机
 export function carrierUpdateDriver (data) {
   return server({
-    url: '/carrier/update/driver',
+    url: '/carrier/update/vehicle',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -327,6 +327,42 @@ export function carrierUpdateDriver (data) {
     data: data
   })
 }
+
+// // 删除司机
+// export function carrierDeleteDriver (data) {
+//   return server({
+//     url: '/carrier/delete/driver',
+//     headers: {
+//       'Content-Type': 'application/json'
+//     },
+//     method: 'DELETE',
+//     params: data
+//   })
+// }
+
+// // 添加司机
+// export function carrierAddDriver (data) {
+//   return server({
+//     url: '/carrier/add/driver',
+//     headers: {
+//       'Content-Type': 'application/json'
+//     },
+//     method: 'post',
+//     data: data
+//   })
+// }
+
+// // 修改司机
+// export function carrierUpdateDriver (data) {
+//   return server({
+//     url: '/carrier/update/driver',
+//     headers: {
+//       'Content-Type': 'application/json'
+//     },
+//     method: 'post',
+//     data: data
+//   })
+// }
 
 // 根据承运商id查询其下属车辆
 export function carrierListCar (data) {
