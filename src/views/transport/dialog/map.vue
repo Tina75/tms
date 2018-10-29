@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" width="1200" @on-visible-change="close">
+  <Modal id="map-modal" v-model="visiable" :mask-closable="true" width="803" @on-visible-change="close">
     <p slot="header" style="text-align:center">查看车辆位置</p>
 
     <Row>
@@ -7,16 +7,21 @@
       <div id="map"></div>
       </Col>
       <Col v-if="!multiple" span="8">
-      <Button v-for="(item, key) in cars[0].points" :key="key"
-              :style="{ marginBottom: '10px' }" long
-              type="primary"
-              @click="showTracePoint(key)">{{ item.address }}{{currentPointIndex === key ? ' - 当前位置' : ''}}</Button>
+      <div class="map-timeline-box">
+        <Timeline>
+          <TimelineItem v-for="(item, key) in cars[0].points" :key="key">
+            <i slot="dot" class="map-timeline-dot"></i>
+            <div :class="{'info-body-active': key === currentPointIndex}" class="info-body" @click="showTracePoint(key)">
+              <p>{{ item.time | datetime }}</p>
+              <p>{{ item.address }}</p>
+            </div>
+          </TimelineItem>
+        </Timeline>
+      </div>
       </Col>
     </Row>
 
-    <div slot="footer" style="text-align: center;">
-      <Button  type="primary"  @click="close">确定</Button>
-    </div>
+    <i slot="footer"></i>
   </Modal>
 </template>
 
@@ -79,35 +84,18 @@ export default {
         const point = new BMap.Point(tempPoint.longtitude, tempPoint.latitude)
         // 添加标志点
         const markerOverlay = new MarkerOverlay(point)
-        // const markerOverlay = new MarkerOverlay(point, () => {
-        //   for (let j = 0; j < car.overlay.length; j++) {
-        //     if (i === j) {
-        //       car.overlay[j].label.show()
-        //       car.overlay[j].marker.show()
-        //     }
-        //     else {
-        //       car.overlay[j].label.hide()
-        //       car.overlay[j].marker.hide()
-        //     }
-        //   }
-        // })
         this.map.addOverlay(markerOverlay)
-        markerOverlay.hide()
 
         // 添加标签
-        const labelOverlay = new LabelOverlay(point, car.carNo)
+        const labelOverlay = new LabelOverlay(point, car.carNo.replace(/^(.{2})/, '$1 '))
         this.map.addOverlay(labelOverlay)
         labelOverlay.hide()
 
-        car.overlay.push({
-          label: labelOverlay,
-          marker: markerOverlay
-        })
+        car.overlay.push(labelOverlay)
 
         if (i === 0) {
-          this.map.centerAndZoom(point, 12)
+          this.map.centerAndZoom(point, 11)
           labelOverlay.show()
-          markerOverlay.show()
         } else {
           const polyline = new BMap.Polyline([
             new BMap.Point(car.points[i - 1].longtitude, car.points[i - 1].latitude),
@@ -125,14 +113,8 @@ export default {
       this.currentPointIndex = index
       for (let i = 0; i < this.cars[0].overlay.length; i++) {
         const overlay = this.cars[0].overlay[i]
-        console.log(overlay, index, i)
-        if (index === i) {
-          overlay.label.show()
-          overlay.marker.show()
-        } else {
-          overlay.label.hide()
-          overlay.marker.hide()
-        }
+        if (index === i) overlay.show()
+        else overlay.hide()
       }
     }
   }
@@ -140,6 +122,57 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
-  #map
-    height 60vh
+  #map, .map-timeline-box
+    height 238px
+
+  .map-timeline-box
+    padding 11px
+    overflow auto
+
+  .map-timeline-dot {
+    display inline-block
+    width 19px
+    height 19px
+    border-radius 50%
+    background rgba(0, 164, 189, .1)
+  }
+
+  .map-timeline-dot::after {
+    content ""
+    display block
+    width 5px
+    height 5px
+    margin 7px
+    border-radius 50%
+    background #00A4BD
+  }
+
+  .info-body
+    color #666666
+    cursor pointer
+
+    &-active
+      color #00A4BD
+
+    &>p:first-child
+      font-size 14px
+</style>
+
+<style lang='stylus'>
+  #map-modal
+    .ivu-modal-body
+      padding 31px 16px 5px 24px
+
+    .ivu-timeline-item-tail
+      border-left 1px solid #00A4BD
+
+    .ivu-timeline-item-head
+      background transparent
+
+    .ivu-timeline-item-head-custom
+      margin-top 3px
+      left -14px
+
+    .ivu-timeline-item-content
+      top -9px
 </style>

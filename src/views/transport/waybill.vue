@@ -299,7 +299,15 @@ export default {
       //       { latitude: 32.0477450000, longtitude: 118.7915800000, time: new Date().getTime(), address: '测试地址1' },
       //       { latitude: 32.0557350000, longtitude: 118.9010530000, time: new Date().getTime(), address: '测试地址2' },
       //       { latitude: 32.1121890000, longtitude: 118.9166830000, time: new Date().getTime(), address: '测试地址3' },
-      //       { latitude: 31.9447660000, longtitude: 118.7988120000, time: new Date().getTime(), address: '测试地址4' }
+      //       { latitude: 31.9447660000, longtitude: 118.7988120000, time: new Date().getTime(), address: '测试地址4' },
+      //       { latitude: 32.0477450000, longtitude: 118.7915800000, time: new Date().getTime(), address: '测试地址5' },
+      //       { latitude: 32.0557350000, longtitude: 118.9010530000, time: new Date().getTime(), address: '测试地址6' },
+      //       { latitude: 32.1121890000, longtitude: 118.9166830000, time: new Date().getTime(), address: '测试地址7' },
+      //       { latitude: 31.9447660000, longtitude: 118.7988120000, time: new Date().getTime(), address: '测试地址8' },
+      //       { latitude: 32.0477450000, longtitude: 118.7915800000, time: new Date().getTime(), address: '测试地址9' },
+      //       { latitude: 32.0557350000, longtitude: 118.9010530000, time: new Date().getTime(), address: '测试地址10' },
+      //       { latitude: 32.1121890000, longtitude: 118.9166830000, time: new Date().getTime(), address: '测试地址11' },
+      //       { latitude: 31.9447660000, longtitude: 118.7988120000, time: new Date().getTime(), address: '测试地址12' }
       //     ]
       //   }
       // ]
@@ -319,19 +327,33 @@ export default {
       // })
 
       if (!this.checkTableSelection()) return
+      let waybillIds = this.tableSelection.map(item => item.waybillId)
+      let data = waybillIds.length > 1 ? ({ waybillIds }) : ({ waybillId: waybillIds[0] })
       Server({
-        url: '/waybill/location',
+        url: waybillIds.length > 1 ? '/waybill/location' : '/waybill/single/location',
         method: 'post',
-        data: { waybillIds: this.tableSelection.map(item => item.waybillId) }
+        data
       }).then(res => {
-        const points = res.data.data.list
-        if (!points.length) {
-          this.$Message.warning('暂无车辆位置信息')
-          return
+        let cars
+        if (waybillIds.length > 1) {
+          if (!res.data.data.list.length) {
+            this.$Message.warning('暂无车辆位置信息')
+            return
+          }
+          cars = res.data.data.list
+        } else {
+          if (!res.data.data.points.length) {
+            this.$Message.warning('暂无车辆位置信息')
+            return
+          }
+          cars = [res.data.data]
         }
         this.openDialog({
           name: 'transport/dialog/map',
-          data: { points },
+          data: {
+            cars,
+            multiple: cars.length !== 1
+          },
           methods: {}
         })
       }).catch(err => console.error(err))
