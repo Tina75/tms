@@ -147,14 +147,14 @@ export default {
         'carrier-todo': '承运商核销待办',
         'transferfee-todo': '外转方核销待办',
         'message-center': '消息中心',
-        'order-create': '今日订单数',
-        'new-customer': '新增客户数',
+        'order-create': '今日开单数',
+        'new-customer': '今日新增客户数',
         'transport-location': '在途车辆位置',
-        'turnover-statistics': '营业额通知',
-        'dispatch-statistics': '调度订单数',
-        'order-statistics': '开单数',
-        'pay-receive': '应收款/应付款项',
-        'cargo-statistics': '货物重量/体积'
+        'turnover-statistics': '近七日订单和营业额统计',
+        'dispatch-statistics': '近七日调度订单数',
+        'order-statistics': '近七日开单数',
+        'pay-receive': '今日应收款项 / 应付款项',
+        'cargo-statistics': '今日开单货物重量 / 体积'
       },
       cardsList: [],
       intersectionObserver: null
