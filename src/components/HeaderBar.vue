@@ -5,8 +5,8 @@
         <tab-nav :list="TabNavList" :value="$route" @on-close="onTabClose" @on-select="onTabSelect"/>
       </div>
       <div class="header-bar-avator-dropdown">
-        <span class="header-bar-avator-dropdown-notify">
-          <Icon type="ios-apps" size="30" color="#fff"></Icon>
+        <span class="header-bar-avator-dropdown-notify" @click="openProcess">
+          <FontIcon type="liucheng" size="30" color="#fff"></FontIcon>
         </span>
         <span class="header-bar-avator-dropdown-notify">
           <Badge :count="MsgCount.all" type="primary">
@@ -63,11 +63,12 @@
 <script>
 import BaseComponent from '@/basic/BaseComponent'
 import TabNav from '@/components/TabNav'
-
+import FontIcon from '@/components/FontIcon'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
+import TMSUrl from '../libs/constant/url.js'
 export default {
   name: 'headerBar',
-  components: { TabNav },
+  components: { TabNav, FontIcon },
   mixins: [BaseComponent],
   computed: {
     ...mapGetters(['MsgCount', 'UserInfo', 'TabNavList'])
@@ -104,6 +105,17 @@ export default {
     openMsg (type = 0) {
       const route = { path: '/information/index', query: { type: type, title: '消息' } }
       window.EMA.fire('openTab', route)
+    },
+    /**
+     * 打开业务流程
+     */
+    openProcess () {
+      window.EMA.fire('openTab', {
+        path: TMSUrl.PROCESS,
+        query: {
+          title: '业务流程'
+        }
+      })
     },
     logout () {
       window.EMA.fire('logout')
@@ -273,6 +285,8 @@ export default {
     &-notify
       margin-top 3px
       margin-right 20px
+      .font_family
+        vertical-align middle
       .msg
         display: -webkit-flex;
         display flex

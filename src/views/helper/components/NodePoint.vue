@@ -1,8 +1,8 @@
 <template>
   <div :style="nodeStyle" class="node-point">
-    <Poptip :content="poptip" placement="top" trigger="hover" class="node-point-poptip">
-      <div class="node-point-icon" @click="jumpto">
-        <FontIcon v-if="type" :type="type" size="30" color="#00A4BD"></FontIcon>
+    <Poptip :content="content" word-wrap placement="top" trigger="hover" class="node-point-poptip">
+      <div :class="iconClass" @click="jumpto">
+        <FontIcon v-if="type" :type="type" :color="access? '#00A4BD' : '#9DA1B0'" size="30"></FontIcon>
       </div>
     </Poptip>
     <span class="node-point-text">{{text}}</span>
@@ -23,9 +23,22 @@ export default {
     y: [Number, String], // 距离顶部距离
     type: String, // icon类型
     text: String, // 文字
-    url: Object // 跳转链接
+    url: Object, // 跳转链接
+    access: { // 权限
+      type: Boolean,
+      default: false
+    }
   },
   computed: {
+    content () {
+      return this.access ? this.poptip : '你的账号没有此节点查看权限，请联系贵公司账号管理员开通'
+    },
+    iconClass () {
+      return [
+        'node-point-icon',
+        { 'node-point-icon-bg': this.access }
+      ]
+    },
     nodeStyle () {
       return {
         left: this.x,
@@ -35,7 +48,7 @@ export default {
   },
   methods: {
     jumpto (e) {
-      if (this.url) {
+      if (this.access && this.url) {
         this.openTab(this.url)
       }
     }
@@ -55,6 +68,7 @@ export default {
     width 42px
     height 42px
     cursor pointer
+  &-icon-bg
     &:hover
       box-shadow 0px 0px 0px 15px #C7E8ED inset
       -webkit-box-shadow 0px 0px 0px 15px #C7E8ED inset
