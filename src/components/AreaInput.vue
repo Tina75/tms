@@ -15,6 +15,7 @@
 </template>
 <script>
 import BMap from 'BMap'
+import cityUtil from '@/libs/js/city'
 import SelectInput from '@/components/SelectInput.vue'
 export default {
   components: {
@@ -23,7 +24,7 @@ export default {
   props: {
     value: String,
     maxlength: Number,
-    city: String | Number,
+    cityCode: String | Number,
     localOptions: {
       type: Array,
       default: () => []
@@ -42,6 +43,10 @@ export default {
   computed: {
     areaList () {
       return this.localOptions.concat(this.address)
+    },
+    areaCode () {
+      const code = this.cityCode
+      return code ? cityUtil.getPathByCode(code) : ''
     }
   },
   methods: {
@@ -57,10 +62,12 @@ export default {
               // item.title + ', ' + item.address
               arr.push({
                 id: i,
-                name: item.province + item.city + item.title,
-                value: item.province + item.city + item.title,
+                name: item.province + item.city + item.title + item.address + i,
+                value: item.province + item.city + item.title + item.address + i,
                 lat: item.point.lat,
-                lng: item.point.lng
+                lng: item.point.lng,
+                province: item.province,
+                city: item.city
               })
             }
             this.address = arr
@@ -82,7 +89,10 @@ export default {
       this.$emit('input', value)
     },
     selectChange (value, item) {
-      this.$emit('latlongt-change', item.lat, item.lng)
+      // const code = cityUtil.getFullName(item.province + item.city) '南京市'
+      const lat = item.lat
+      const lng = item.lng
+      this.$emit('latlongt-change', { lat, lng })
     }
   }
 }
