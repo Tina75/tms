@@ -95,12 +95,14 @@
     <Row :gutter="16">
       <Col span="12">
       <FormItem label="发货地址:" prop="consignerAddress">
-        <SelectInput v-model="orderForm.consignerAddress" :maxlength="60" :local-options="consignerAddresses" :remote="false"></SelectInput>
+        <AreaInput v-model="orderForm.consignerAddress" :maxlength="60" :local-options="consignerAddresses" :remote="false" @latlongt-change="(lat, lng) => latlongtChange(1, lat, lng)"/>
+        <!-- <SelectInput v-model="orderForm.consignerAddress" :maxlength="60" :local-options="consignerAddresses" :remote="false"></SelectInput> -->
       </FormItem>
       </Col>
       <Col span="12">
       <FormItem label="收货地址:" prop="consigneeAddress">
-        <SelectInput v-model="orderForm.consigneeAddress" :maxlength="60" :local-options="consigneeAddresses" :remote="false"></SelectInput>
+        <AreaInput v-model="orderForm.consigneeAddress" :maxlength="60" :local-options="consigneeAddresses" :remote="false" @latlongt-change="(lat, lng) => latlongtChange(2, lat, lng)"/>
+        <!-- <SelectInput v-model="orderForm.consigneeAddress" :maxlength="60" :local-options="consigneeAddresses" :remote="false"></SelectInput> -->
       </FormItem>
       </Col>
     </Row>
@@ -225,6 +227,7 @@
 <script>
 import Title from './components/Title.vue'
 import SelectInput from '@/components/SelectInput.vue'
+import AreaInput from '@/components/AreaInput.vue'
 import TagNumberInput from '@/components/TagNumberInput'
 import { mapGetters, mapActions } from 'vuex'
 import float from '@/libs/js/float'
@@ -253,6 +256,7 @@ export default {
     OrderPrint,
     // AreaSelect,
     SelectInput,
+    AreaInput,
     FontIcon,
     CargoTable,
     TimeInput,
@@ -350,10 +354,19 @@ export default {
         consignerPhone: '',
         // 发货地址
         consignerAddress: '',
+        // 经度
+        consignerAddressLongitude: '',
+        // 纬度
+        consignerAddressLatitude: '',
+        consignerAddressMapType: 1,
         // 收货人
         consigneeContact: '',
         consigneePhone: '',
         consigneeAddress: '',
+        // 经纬度
+        consigneeAddressLongitude: '',
+        consigneeAddressLatitude: '',
+        consigneeAddressMapType: 1,
         // 货品信息
         orderCargoList: [],
         // 付款方式
@@ -844,6 +857,15 @@ export default {
     },
     getTwoNum (d) {
       return d > 9 ? d : 0 + d
+    },
+    latlongtChange (type, lat, lng) {
+      if (type === 1) {
+        this.orderForm.consignerAddressLongitude = lat
+        this.orderForm.consignerAddressLatitude = lng
+      } else if (type === 2) {
+        this.orderForm.consigneeAddressLongitude = lat
+        this.orderForm.consigneeAddressLatitude = lng
+      }
     }
   }
 }
