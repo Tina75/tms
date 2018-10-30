@@ -864,13 +864,12 @@ export default {
     },
     latlongtChange (type, lat, lng) {
       if (type === 1) {
-        this.orderForm.consignerAddressLongitude = lat
-        this.orderForm.consignerAddressLatitude = lng
+        this.orderForm.consignerAddressLongitude = lng
+        this.orderForm.consignerAddressLatitude = lat
       } else if (type === 2) {
-        this.orderForm.consigneeAddressLongitude = lat
-        this.orderForm.consigneeAddressLatitude = lng
+        this.orderForm.consigneeAddressLongitude = lng
+        this.orderForm.consigneeAddressLatitude = lat
       }
-      // this.orderForm.start = code
     }
   }
 }
