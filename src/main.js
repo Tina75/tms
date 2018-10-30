@@ -5,6 +5,7 @@ import Login from './login.vue'
 import router from './router'
 import store from './store'
 import VueMeta from 'vue-meta'
+import './libs/js/ga.js' // GA打点统计
 import EmaProxy from 'ema-proxy'
 import Toast from '@/components/toast/index'
 

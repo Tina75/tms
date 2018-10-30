@@ -16,7 +16,7 @@
                 <div style="margin-right: 20px;">
                   <Form ref="rulesQuery" :model="rulesQuery" :rules="validate">
                     <FormItem prop="queryText">
-                      <Input v-model="rulesQuery.paramName" :placeholder="`请输入${sceneMap[active]}、规则名称`" :maxlength="20" @on-enter="getRules"  >
+                      <Input v-model="rulesQuery.paramName" :placeholder="`请输入${sceneMap[active]}、规则名称`" :maxlength="20" @on-keyup="getRules"  >
                       <Icon slot="prefix" type="ios-search" class="suffix-btn" @click="getRules"/>
                         </Input>
                     </FormItem>
@@ -29,12 +29,15 @@
               </Row>
             </div>
             <ul :style="{height: height -77  + 'px'}" class="ruleList" >
-              <li v-for="(item,index) in companyData" :class="{companyDataActive:companyDataActive === index}" :key="index" class="list" @click="showRuleDetail(item, index)">
+              <li v-for="(item,index) in companyData" :class="{companyDataActive:companyDataActive === item.ruleId}" :key="index" class="list" @click="showRuleDetail(item)">
                 <div class="icon">
                   <FontIcon slot="icon" type="ico-price" ></FontIcon>
                 </div>
                 <div class="content">
-                  <div class="ruleName">{{item.ruleName}}</div>
+                  <div v-if="item.ruleName.length<7" class="ruleName">{{item.ruleName}}</div>
+                  <Tooltip v-else :content="item.ruleName" max-width="200" class="ruleName" placement="top-start" style="display: list-item">
+                    <div >{{item.ruleName.slice(0,7)}}...</div>
+                  </Tooltip>
                   <div class="tips">{{item.partnerName}}</div>
                 </div>
                 <div class="operate">
@@ -73,7 +76,7 @@
                           <SelectInputForCity v-model="item.departure" placeholder="请输入始发地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
-                        <Col span="1">
+                        <Col span="1" style="margin: 0">
                         <i class="icon font_family icon-ico-line"></i>
                         </Col>
                         <Col span="4">
@@ -85,11 +88,11 @@
                         <div class="startPrice">
                           <span style="margin:0 10px">起步价：货物  ＜</span>
                           <FormItem prop="startNum" inline style="margin-bottom: 0;">
-                            <Input v-model="item.startNum" style="width: 80px"/>
+                            <Input v-model="item.startNum" style="width: 108px" @on-change="setItemStartNum(item)"/>
                           </FormItem>
                           <span>{{unitMap[ruleDetail.ruleType]}}，</span>
                           <FormItem prop="startPrice" inline style="margin-bottom: 0;">
-                            <Input v-model="item.startPrice" style="width: 80px"/>
+                            <Input v-model="item.startPrice" style="width: 130px"/>
                           </FormItem>
                           <span>元起</span>
                         </div>
@@ -103,82 +106,14 @@
                   <Panel :name="(index + 1) + ''">
                     <div slot></div>
                     <div slot="content">
-                      <!--<div class="ivu-table-wrapper">
-                        <div class="ivu-table ivu-table-default ivu-table-with-fixed-top">
-                          <div class="ivu-table-header">
-                            <table cellspacing="0" cellpadding="0" border="0" style="width: 100%">
-                              <colgroup>
-                                <col width="100">
-                                <col width="250">
-                                <col width="250">
-                              </colgroup>
-                              <thead>
-                                <tr>
-                                  <th class="">
-                                    <div class="ivu-table-cell"><span class="">操作</span></div>
-                                  </th>
-                                  <th class="">
-                                    <div class="ivu-table-cell"><span class="">计费区间</span></div>
-                                  </th>
-                                  <th class="">
-                                    <div class="ivu-table-cell"><span class="">计费价格</span></div>
-                                  </th>
-                                </tr>
-                              </thead>
-                            </table>
-                          </div>
-                          <div class="ivu-table-body">
-                            <table cellspacing="0" cellpadding="0" border="0" style="width: 100%">
-                              <colgroup>
-                                <col width="100">
-                                <col width="250">
-                                <col width="250">
-                              </colgroup>
-                              <tbody class="ivu-table-tbody">
-                                <tr v-for="(el, no) in item.chargeRules" :key="no" class="ivu-table-row">
-                                  <td>
-                                    <div class="ivu-table-cell">
-                                      <div class="adjuster">
-                                        <Icon class="add" type="md-add-circle" @click="addEl(index)"/>
-                                        <Icon v-if="item.chargeRules.length > 1" class="remove" type="md-remove-circle" @click="removeEl(index, no)"/>
-                                      </div>
-                                    </div>
-                                  </td>
-                                  <td>
-                                    <div class="ivu-table-cell">
-                                      <Form ref="ruleBase" :model="el" :rules="baseValidate" inline>
-                                        <span>大于等于</span>
-                                        <FormItem prop="base" inline>
-                                          <Input v-model="el.base" style="width: 120px"/>
-                                        </FormItem>
-                                        <span>{{unitMap[ruleDetail.ruleType]}}</span>
-                                      </Form>
-                                    </div>
-                                  </td>
-                                  <td>
-                                    <div class="ivu-table-cell">
-                                      <Form ref="rulePrice" :model="el" :rules="priceValidate" inline>
-                                        <FormItem prop="price" inline>
-                                          <Input v-model="el.price" style="width: 120px"/>
-                                        </FormItem>
-                                        <span>元/{{unitMap[ruleDetail.ruleType]}}</span>
-                                      </Form>
-                                    </div>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </div>-->
                       <ul class="rule-detail">
                         <li v-for="(el, no) in item.chargeRules" :key="no" class="rule-detail-item">
                           <div>
                             <span>{{ruleTypeMap[ruleDetail.ruleType]}}</span>
                             <span style="margin-left: 5px">≥</span>
                             <Form ref="ruleBase" :model="el" :rules="baseValidate" style="display: inline-block" inline>
-                              <FormItem prop="base" inline style="margin-bottom: 0">
-                                <Input v-model="el.base"/>
+                              <FormItem prop="baseAndStart" inline style="margin-bottom: 0">
+                                <Input v-model="el.base" @on-change="setElStartNum(item, el)"/>
                               </FormItem>
                               <span>{{unitMap[ruleDetail.ruleType]}}</span>
                             </Form>
@@ -211,7 +146,7 @@
               </div>
             </div>
             <div class="rules-operation">
-              <Button v-if="hasPower(170403)" type="primary" @click="saveRules">保存</Button>
+              <Button v-if="hasPower(170403)" type="primary" @click="saveRules()">保存</Button>
             </div>
           </div>
           </Col>
@@ -250,7 +185,57 @@ export default {
       }
     }
     const startNumValidate = (rule, value, callback) => {
-      console.log(value)
+      if (value === null || value === '') {
+        callback(new Error('请填写区间'))
+      } else {
+        if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
+          if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(value)) {
+            callback()
+          } else {
+            callback(new Error('最多精确到两位小数'))
+          }
+        } else if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') {
+          if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d)?))$/.test(value)) {
+            callback()
+          } else {
+            callback(new Error('最多精确到一位小数'))
+          }
+        }
+      }
+    }
+    const startPriceValidate = (rule, value, callback) => {
+      if (value === null || value === '') {
+        callback(new Error('请填写金额'))
+      } else {
+        if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(value)) {
+          callback()
+        } else {
+          callback(new Error('9位正数且最多两位小数'))
+        }
+      }
+    }
+    const baseAndStartValidate = (rule, value, callback) => {
+      let realValue = parseFloat(value.split(',')[0])
+      let startNum = parseFloat(value.split(',')[1])
+      if (realValue === null || realValue === '') {
+        callback(new Error('请填写'))
+      } else {
+        if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
+          if (!(/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(realValue))) {
+            callback(new Error('最多精确到两位小数'))
+          }
+        }
+        if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') {
+          if (!(/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d)?))$/.test(realValue))) {
+            callback(new Error('最多精确到一位小数'))
+          }
+        }
+        if (startNum >= realValue) {
+          callback(new Error('必须大于起步价'))
+        } else {
+          callback()
+        }
+      }
     }
     return {
       height: 0,
@@ -277,7 +262,7 @@ export default {
         paramName: ''
       },
       companyData: [],
-      companyDataActive: 0,
+      companyDataActive: -1,
       ruleDetail: {},
       validate: {
         paramName: { type: 'string', max: 20, message: '不能超过20个字', trigger: 'blur' }
@@ -289,16 +274,16 @@ export default {
       routeValidate: {
         departure: { validator: startValidate, trigger: 'change' },
         destination: { validator: endValidate, trigger: 'change' },
-        startNum: { validator: startNumValidate, trigger: 'change' },
+        startNum: [
+          { validator: startNumValidate, trigger: 'blur' }
+        ],
         startPrice: [
-          { required: true, message: '请填写金额', trigger: 'blur' },
-          { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/, message: '9位正数且最多两位小数', trigger: 'blur' }
+          { validator: startPriceValidate, trigger: 'blur' }
         ]
       },
       baseValidate: {
-        base: [
-          { required: true, message: '请填写区间', trigger: 'blur' },
-          { pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/, message: '最多精确到两位小数', trigger: 'blur' }
+        baseAndStart: [
+          { validator: baseAndStartValidate, trigger: 'blur' }
         ]
       },
       priceValidate: {
@@ -311,21 +296,9 @@ export default {
   },
   computed: {
   },
-  watch: {
-    'ruleDetail.ruleType': function (val) {
-      if (val === '1') {
-        this.baseValidate.base[1].pattern = /^(0|([1-9]\d*))([.]\d{1,2})?$/
-        this.baseValidate.base[1].message = '最多精确到两位小数'
-      } else {
-        this.baseValidate.base[1].pattern = /^(0|([1-9]\d*))([.]\d)?$/
-        this.baseValidate.base[1].message = '最多精确到一位小数'
-      }
-    }
-  },
   mounted () {
     this.getRules()
     this.height = document.body.clientHeight - 50 - 15 * 2 - 20 * 2 + 15 - 65
-    console.log(this.height)
   },
   methods: {
     toDetail (data) {
@@ -391,7 +364,7 @@ export default {
     },
     addEl (index) {
       console.log(index)
-      this.ruleDetail.details[index].chargeRules.push({ base: '', price: '' })
+      this.ruleDetail.details[index].chargeRules.push({ base: '', price: '', baseAndStart: '' })
     },
     removeEl (index, no) {
       this.ruleDetail.details[index].chargeRules.splice(no, 1)
@@ -404,7 +377,7 @@ export default {
         startNum: null,
         startPrice: null,
         chargeRules: [
-          { base: '', price: '' }
+          { base: '', price: '', baseAndStart: '' }
         ]
       })
     },
@@ -495,16 +468,16 @@ export default {
         }
       }).then(res => {
         this.companyData = res.data.data
-        console.log(this.companyData)
         if (this.ruleDetail && this.ruleDetail.ruleId && this.companyData.some(item => item.ruleId === this.ruleDetail.ruleId)) {
           this.showRuleDetail(this.companyData.find(item => item.ruleId === this.ruleDetail.ruleId))
         } else {
           this.ruleDetail = {}
         }
+        console.log(this.companyDataActive)
       }).catch(err => console.error(err))
     },
-    showRuleDetail (data, index) {
-      this.companyDataActive = index
+    showRuleDetail (data) {
+      this.companyDataActive = data.ruleId
       this.ruleDetail = {
         ruleId: data.ruleId,
         ruleType: data.detail.ruleType ? (data.detail.ruleType + '') : '1',
@@ -519,12 +492,21 @@ export default {
             chargeRules: item.chargeRules.map(el => {
               return {
                 base: el.base ? (el.base / 100) + '' : '0',
-                price: el.price ? (el.price / 100) + '' : '0'
+                price: el.price ? (el.price / 100) + '' : '0',
+                baseAndStart: el.base + ',' + item.startNum
               }
             })
           }
         }))
       }
+    },
+    setElStartNum (item, el) {
+      el.baseAndStart = el.base + ',' + item.startNum
+    },
+    setItemStartNum (item) {
+      item.chargeRules.forEach(el => {
+        el.baseAndStart = el.base + ',' + item.startNum
+      })
     }
   }
 }
@@ -595,7 +577,7 @@ export default {
               display: block
               position: absolute
               width: calc(100% - 80px)
-              top: 10px
+              top: 17px
               left: 20px
               z-index: 101
               .startPrice
@@ -615,14 +597,14 @@ export default {
               list-style none
               .rule-detail-item
                 display flex
-                padding 15px 16px
+                padding 18px 16px
                 height auto
                 border-bottom 1px solid #DCDEE2
                 &>div
                   flex 1
                   /deep/ .ivu-form-inline .ivu-form-item
                     vertical-align middle
-                    width 80px
+                    width 128px
                     margin-left 10px
                 &:last-child
                   border-bottom none
@@ -647,14 +629,14 @@ export default {
              /deep/ .ivu-collapse-content>.ivu-collapse-content-box
               padding 0
             /deep/ .ivu-collapse-header
-              height: 60px
+              height: 70px
               background-color: rgba(248,248,248,1)
               padding: 15px 20px 15px
               text-align: right
               border-bottom 1px solid #DCDEE2
               .ivu-icon
                 vertical-align: top
-                margin-top: 8px
+                margin-top: 13px
             .ivu-table-cell
               padding: 5px
               span
