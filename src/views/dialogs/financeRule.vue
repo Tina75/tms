@@ -86,11 +86,17 @@ export default {
         if (this.startPoint && this.endPoint && !this.distance) {
           const startPoint = new BMap.Point(this.startPoint.lng, this.startPoint.lat)
           const endPoint = new BMap.Point(this.endPoint.lng, this.endPoint.lat)
-          const route = new BMap.DrivingRoute(new BMap.Map('map-hidden'), {
-            policy: 'BMAP_DRIVING_POLICY_LEAST_DISTANCE',
+          const route = new BMap.DrivingRoute(startPoint, {
+            policy: window.BMAP_DRIVING_POLICY_LEAST_DISTANCE, // 距离最短路线
             onSearchComplete: res => {
               const plan = res.getPlan(0)
-              this.distance = plan.getDistance(false)
+              if (plan) { // 如果线路存在则获取距离
+                this.distance = plan.getDistance(false)
+              } else { // 如果不存在则清空始发和终点，不再计算
+                console.error('查询路线失败，请检查经纬度是否正确')
+                this.startPoint = void 0
+                this.endPoint = void 0
+              }
               resolve()
             }
           })
