@@ -213,7 +213,8 @@ export default {
                       data: {
                         title: '修改车辆',
                         flag: 2, // 修改
-                        validate: params.row
+                        carrierId: this.carrierId,
+                        validate: { ...params.row, purchDate: new Date(params.row.purchDate) }
                       },
                       methods: {
                         ok () {
@@ -382,7 +383,7 @@ export default {
                         carrierId: _this.carrierId,
                         driverId: params.row.driverId,
                         carId: params.row.carId,
-                        validate: params.row
+                        validate: { ...params.row, repairDate: new Date(params.row.repairDate) }
                       },
                       methods: {
                         ok () {

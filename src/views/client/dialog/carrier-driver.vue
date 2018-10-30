@@ -110,7 +110,8 @@
           <FormItem label="购买日期:">
             <Row>
               <Col span="20">
-              <DatePicker v-model="validate.purchDate" type="date" placeholder="请选择日期"></DatePicker>
+              <DatePicker v-model="validate.purchDate" format="yyyy-MM-dd" type="date" placeholder="请选择日期">
+              </DatePicker>
               </Col>
             </Row>
           </FormItem>
@@ -219,14 +220,15 @@ export default {
           { required: true, message: '车长不能为空', trigger: 'blur' }
         ],
         shippingWeight: [
-          { required: true, message: '载重不能为空', trigger: 'blur' },
-          { type: 'string', message: '必须为大于等于0的数字,最多两位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/, trigger: 'blur' }
+          { required: true, message: '载重不能为空' },
+          { message: '必须为大于等于0的数字,最多两位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/ }
         ]
       }
     }
   },
   mounted () {
     if (this.title === '修改车辆') {
+      this.validate.carrierId = this.carrierId
       this.validate.driverType = this.validate.driverType.toString()
       this.validate.carType = this.validate.carType.toString()
       this.validate.carLength = this.validate.carLength.toString()
