@@ -52,6 +52,6 @@ export default class LabelOverlay extends BMap.Overlay {
     const map = this._map
     var pixel = map.pointToOverlayPixel(this._point)
     this._div.style.left = (pixel.x - 31) + 'px'
-    this._div.style.top = (pixel.y - 35) + 'px'
+    this._div.style.top = (pixel.y - 32) + 'px'
   }
 };
