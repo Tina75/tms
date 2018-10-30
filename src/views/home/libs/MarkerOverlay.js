@@ -24,7 +24,7 @@ export default class MarkerOverlay extends BMap.Overlay {
   draw () {
     const map = this._map
     var pixel = map.pointToOverlayPixel(this._point)
-    this._div.style.left = pixel.x + 'px'
-    this._div.style.top = pixel.y + 'px'
+    this._div.style.left = pixel.x - 5 + 'px'
+    this._div.style.top = pixel.y - 5 + 'px'
   }
 };

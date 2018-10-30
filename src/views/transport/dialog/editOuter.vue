@@ -68,7 +68,7 @@ export default {
         transfereeName: '',
         outTransNo: '',
         payType: '',
-        transFee: ''
+        transFee: void 0
       },
       rules: {
         transfereeName: { required: true, message: '请填写外转方' },
@@ -84,7 +84,7 @@ export default {
 
   methods: {
     handleSelectTransferee ({ row }) {
-      if (row.payType) this.info.payType = row.payType.toString()
+      if (row.payType) this.info.payType = row.payType
     },
 
     // 保留2位小数
@@ -147,7 +147,7 @@ export default {
           this.info[key] = data.customerInfo[key]
         }
         this.info.transFee = this.info.transFee / 100
-        this.info.payType = this.info.payType.toString()
+        this.info.payType = this.info.payType
       }).catch(err => console.error(err))
     }
   }

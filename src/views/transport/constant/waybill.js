@@ -47,7 +47,7 @@ export const BUTTON_LIST = vm => [
   //       vm.billDelete()
   //     }
   //   }, {
-  //     name: '位置',
+  //     name: '查看车辆位置',
   //     code: 120106,
   //     func: () => {
   //       vm.billLocation()
@@ -108,7 +108,7 @@ export const BUTTON_LIST = vm => [
         vm.billArrived()
       }
     }, {
-      name: '位置',
+      name: '查看车辆位置',
       code: 120106,
       func: () => {
         vm.billLocation()
@@ -168,7 +168,7 @@ export const TABLE_COLUMNS = vm => [
     minWidth: 180,
     ellipsis: true,
     render: (h, p) => {
-      return vm.tableDataRender(h, vm.cityFormatter(p.row.start))
+      return vm.tableDataRender(h, p.row.startName)
     }
   },
   {
@@ -177,7 +177,7 @@ export const TABLE_COLUMNS = vm => [
     minWidth: 180,
     ellipsis: true,
     render: (h, p) => {
-      return vm.tableDataRender(h, vm.cityFormatter(p.row.end))
+      return vm.tableDataRender(h, p.row.endName)
     }
   },
   {
