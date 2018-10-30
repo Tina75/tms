@@ -15,8 +15,8 @@ export default {
   components: {
     ProcessCenter
   },
-  metaInfo: { title: '业务流程' },
-  mixins: [BasePage]
+  mixins: [BasePage],
+  metaInfo: { title: '业务流程' }
 }
 </script>
 

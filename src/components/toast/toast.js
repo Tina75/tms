@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { Button, Modal, Icon } from 'iview'
+import { Button, Modal, Icon, Row, Col } from 'iview'
 const Toast = {}
 const prefix = 'ivu-modal'
 Toast.newInstance = properties => {
@@ -126,25 +126,36 @@ Toast.newInstance = properties => {
       }
       let bodyNodes
       let icon = this.iconRender(h)
+      // 动态根据icon设置宽度比例
+      let colspan = ['2', '22']
+      if (!icon) {
+        colspan[0] = '0'
+        colspan[1] = '24'
+      }
       if (this.render) {
-        bodyNodes = h('div', {
-          attrs: {
-            class: 'ivu-modal-confirm-head'
+        bodyNodes = h(Row, {
+          class: 'ivu-modal-confirm-head',
+          props: {
+            type: 'flex'
           }
         }, [
-          h('div', {
-            attrs: {
-              class: 'ivu-modal-confirm-head-icon'
+          icon ? h(Col, {
+            class: 'ivu-modal-confirm-head-icon',
+            props: {
+              span: colspan[0]
             }
-          }, [icon]),
-          h('div', {
-            attrs: {
-              class: 'ivu-modal-confirm-head-title'
+          }, [icon]) : '',
+          h(Col, {
+            class: 'ivu-modal-confirm-head-title',
+            props: {
+              span: colspan[1]
             },
             style: {
               fontSize: '14px',
               color: '#000000',
-              fontWeight: 'normal'
+              fontWeight: 'normal',
+              marginLeft: '0px',
+              paddingLeft: '10px'
             }
           }, this.render(h))
         ])
@@ -154,25 +165,31 @@ Toast.newInstance = properties => {
             class: `${prefix}-body-inner`
           }
         }, [
-          h('div', {
-            attrs: {
-              class: 'ivu-modal-confirm-head'
+          h(Row, {
+            class: 'ivu-modal-confirm-head',
+            props: {
+              type: 'flex',
+              justify: 'start'
             }
           },
           [
-            h('div', {
-              attrs: {
-                class: 'ivu-modal-confirm-head-icon'
+            icon ? h(Col, {
+              class: 'ivu-modal-confirm-head-icon',
+              props: {
+                span: colspan[0]
               }
-            }, [icon]),
-            h('div', {
-              attrs: {
-                class: 'ivu-modal-confirm-head-title'
+            }, [icon]) : '',
+            h(Col, {
+              class: 'ivu-modal-confirm-head-title',
+              props: {
+                span: colspan[1]
               },
               style: {
                 fontSize: '14px',
                 color: '#000000',
-                fontWeight: 'normal'
+                fontWeight: 'normal',
+                marginLeft: '0px',
+                paddingLeft: '10px'
               },
               domProps: {
                 innerHTML: this.content

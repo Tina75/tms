@@ -6,7 +6,10 @@
       </div>
       <div class="header-bar-avator-dropdown">
         <span class="header-bar-avator-dropdown-notify" @click="openProcess">
-          <FontIcon type="liucheng" size="30" color="#fff"></FontIcon>
+          <Poptip v-if="processVisible" :value="processVisible" placement="bottom" content="查看业务流程点击我" trigger="click">
+            <FontIcon type="liucheng" size="30" color="#fff"></FontIcon>
+          </Poptip>
+          <FontIcon v-else type="liucheng" size="30" color="#fff"></FontIcon>
         </span>
         <span class="header-bar-avator-dropdown-notify">
           <Badge :count="MsgCount.all" type="primary">
@@ -70,6 +73,11 @@ export default {
   name: 'headerBar',
   components: { TabNav, FontIcon },
   mixins: [BaseComponent],
+  data () {
+    return {
+      processVisible: false
+    }
+  },
   computed: {
     ...mapGetters(['MsgCount', 'UserInfo', 'TabNavList'])
   },
@@ -84,12 +92,24 @@ export default {
   },
   methods: {
     ...mapMutations(['setTabNavList']),
-    ...mapActions(['getMessageCount']),
-    newUserTip () {
-      if (sessionStorage.getItem('first_time_login') === 'true') {
-        if (this.UserInfo.type === 1) this.renew()
-        else this.changePasswordTip()
-        sessionStorage.removeItem('first_time_login')
+    ...mapActions(['getMessageCount', 'getUserInfo']),
+    async newUserTip () {
+      try {
+        await this.getUserInfo()
+        if (sessionStorage.getItem('first_time_login') === 'true') {
+          if (this.UserInfo.type === 1) this.renew()
+          else this.changePasswordTip()
+          setTimeout(() => {
+            window.EMA.fire('openTab', {
+              path: TMSUrl.PROCESS,
+              query: { title: '业务流程' }
+            })
+            localStorage.setItem('first_time_login', true)
+          }, 1000)
+          sessionStorage.removeItem('first_time_login')
+        }
+      } catch (error) {
+
       }
     },
     loopMessage () {
@@ -131,7 +151,16 @@ export default {
     },
 
     changePasswordTip () {
-      this.$Modal.confirm({
+      // this.$Modal.confirm({
+      //   title: '提示',
+      //   content: '<p>您的密码为初始密码，为确保账户安全，请及时修改密码</p>',
+      //   okText: '立即修改',
+      //   cancelText: '我知道了',
+      //   onOk: () => {
+      //     window.EMA.fire('openTab', { path: '/set-up/index', query: { title: '设置' } })
+      //   }
+      // })
+      this.$Toast.confirm({
         title: '提示',
         content: '<p>您的密码为初始密码，为确保账户安全，请及时修改密码</p>',
         okText: '立即修改',
@@ -156,6 +185,14 @@ export default {
         // 选中前一个tab
         const nextRoute = this.getNextRoute(this.TabNavList, route)
         this.turnToPage(nextRoute)
+      }
+      // 提示流程图标提示
+      if (route.path === TMSUrl.PROCESS && localStorage.getItem('first_time_login')) {
+        this.processVisible = true
+        setTimeout(() => {
+          this.processVisible = false
+        }, 3000)
+        localStorage.removeItem('first_time_login')
       }
 
       // 更新store
