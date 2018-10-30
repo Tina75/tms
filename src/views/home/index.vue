@@ -202,6 +202,7 @@ export default {
   mounted () {
     this.initCardList()
     this.initNotice()
+    // 第一次登录提示流程图
     if (!window.localStorage.getItem(processNoticeKey)) {
       this.showProcess()
       window.localStorage.setItem(processNoticeKey, true)
