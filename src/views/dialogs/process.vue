@@ -23,7 +23,7 @@ export default {
   computed: {
     modalStyle () {
       return {
-        top: '15px'
+        top: '40px'
       }
     }
   },

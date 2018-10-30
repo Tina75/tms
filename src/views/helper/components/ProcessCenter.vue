@@ -28,7 +28,7 @@ export default {
     return {
       nodes: [
         /** 受理开单 */
-        { x: '74px', y: '133px', type: 'kaidan', poptip: '单个录入上游客户的订单信息', access: this.hasPower(100100), link: { path: TMSUrl.CREATE_ORDER, title: '手工下单' }, text: '手工下单' },
+        { x: '74px', y: '133px', type: 'kaidan', poptip: '单个录入上游客户的订单信息', access: this.hasPower(100100), link: { path: TMSUrl.CREATE_ORDER, title: '手工开单' }, text: '手工开单' },
         { x: '74px', y: '262px', type: 'piliangdaoru', poptip: '通过Excel批量导入上游客户的订单信息', access: this.hasPower(100200), link: { path: TMSUrl.IMPORT_ORDER, title: '批量导入' }, text: '批量导入' },
         { x: '232px', y: '199px', type: 'dingdan', poptip: '对已经录入到系统中的客户订单进行查看管理', access: this.hasPower(110100), link: { path: TMSUrl.ORDER_MANAGEMENT, title: '订单管理' }, text: '订单管理' },
         /** 提货管理 */
@@ -65,6 +65,7 @@ export default {
 <style lang="stylus" scoped>
 .process-center
   background url('../../../assets/process.png') no-repeat
+  width 1134px
   height 650px
   position relative
 </style>

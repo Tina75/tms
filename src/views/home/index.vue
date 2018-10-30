@@ -103,7 +103,7 @@ import ExteriorTodo from './plugins/exterior-todo.vue'
 import NewCustumerStatis from './plugins/new-customer-statis.vue'
 import CarPosition from './plugins/car-postion.vue'
 
-const processNoticeKey = 'tms_process_notice'
+// const processNoticeKey = 'tms_process_notice'
 export default {
   name: 'index',
   metaInfo: { title: '首页' },
@@ -202,11 +202,6 @@ export default {
   mounted () {
     this.initCardList()
     this.initNotice()
-    // 第一次登录提示流程图
-    if (!window.localStorage.getItem(processNoticeKey)) {
-      this.showProcess()
-      window.localStorage.setItem(processNoticeKey, true)
-    }
   },
   beforeDestroy () {
     if (this.intersectionObserver) {
@@ -216,14 +211,6 @@ export default {
     eventHub.$off('plugin:add', this.addChild)
   },
   methods: {
-    showProcess () {
-      this.openDialog({
-        name: 'dialogs/process',
-        data: {
-          title: '业务'
-        }
-      })
-    },
     week (day) {
       switch (day) {
         case 1:

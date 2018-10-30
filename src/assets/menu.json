@@ -12,7 +12,7 @@
     "powerCode":100000,
     "children":[
       {
-        "name":"手工下单",
+        "name":"手工开单",
         "path":"/order/create",
         "powerCode":100100
       },
@@ -176,7 +176,7 @@
   {
     "name":"业务流程",
     "path":"/helper/process",
-    "powerCode":0
+    "powerCode":-1
   },
   {
     "name":"帮助",

@@ -1,6 +1,6 @@
 <template>
   <div class="helper-process">
-    <h3 class="i-ml-15">点击流程中的节点，可以查看对应的页面信息</h3>
+    <p class="i-ml-15 van-font-14">点击流程中的节点，可以查看对应的页面信息</p>
     <ProcessCenter :has-power="hasPower" />
   </div>
 </template>
@@ -15,8 +15,8 @@ export default {
   components: {
     ProcessCenter
   },
-  metaInfo: { title: '业务流程' },
-  mixins: [BasePage]
+  mixins: [BasePage],
+  metaInfo: { title: '业务流程' }
 }
 </script>
 
