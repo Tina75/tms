@@ -13,6 +13,8 @@
  */
 import ProcessCenter from '../helper/components/ProcessCenter.vue'
 import BaseDialog from '@/basic/BaseDialog'
+import Toast from '@/components/toast/index'
+import processimg from '@/assets/process-help.png'
 export default {
   name: 'process',
   components: {
@@ -29,12 +31,17 @@ export default {
   methods: {
     handleClose () {
       this.close()
-      this.openDialog({
-        name: 'dialogs/processTip',
-        data: {
-
-        }
+      Toast.info({
+        title: '提示',
+        showIcon: false,
+        content: ' <p>您可以在页面顶部右上角继续查看了解业务流程</p><img src="' + processimg + '" alt="右上角查看业务流程" />'
       })
+      // this.openDialog({
+      //   name: 'dialogs/processTip',
+      //   data: {
+
+      //   }
+      // })
     }
   }
 }
