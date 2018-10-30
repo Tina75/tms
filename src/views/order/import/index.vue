@@ -23,7 +23,7 @@
         accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         @change="handleChange"
       />
-      <Button v-if="hasPower(100202)" :to="downloadUrl" download="下载模板" class="i-ml-10" target="_blank">下载模板</Button>
+      <a v-if="hasPower(100202)" :href="downloadUrl"  download="下载模板" class="i-ml-10 ivu-btn ivu-btn-default">下载模板</a>
     </div>
     <PageTable ref="pageTable" :columns="columns" :show-filter="false" url="order/template/getImportedOrderTemplateList" method="post" no-data-text=" " @on-load="handleLoad">
       <div ref="footer" slot="footer" class="order-import__empty-content van-center">
@@ -252,14 +252,17 @@ export default {
               }
             })
             const status = res.data.data.status
-            if (status === 1 || status === 0) {
+            // status,1成功；0失败；2正在处理；3excel文件标题行非法
+            if (status !== 2) {
               if (timer) {
                 clearTimeout(timer)
               }
               if (status === 0) {
-                vm.$Message.error({ content: `此次导入订单失败，具体失败原因下载错误报告`, duration: 3 })
+                vm.$Message.error('此次导入订单失败，具体失败原因下载错误报告')
+              } else if (status === 3) {
+                vm.$Message.error('上传文件缺少部分订单列，请重新下载模板')
               } else {
-                vm.$Message.success({ content: `导入成功，共导入${res.data.data.orderNum}条订单`, duration: 3 })
+                vm.$Message.success(`导入成功，共导入${res.data.data.orderNum}条订单`)
               }
               vm.visible = false
               vm.$refs.pageTable.fetch()
