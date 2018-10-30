@@ -154,7 +154,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
-import { CODE, carrierDetailsForDriver, carrierDetailsForCompany, carrierListCar, carrierDeleteVehicle, carrierDeleteDriver } from './client'
+import { CODE, carrierDetailsForDriver, carrierListRepairVehicle, carrierDeleteRepairVehicle, carrierDetailsForCompany, carrierListCar, carrierDeleteDriver } from './client'
 import TMSUrl from '@/libs/constant/url'
 export default {
   name: 'carrier-info',
@@ -213,12 +213,7 @@ export default {
                       data: {
                         title: '修改车辆',
                         flag: 2, // 修改
-                        driverId: params.row.driverId,
-                        validate: {
-                          driverType: params.row.driverType + '',
-                          driverName: params.row.driverName,
-                          driverPhone: params.row.driverPhone
-                        }
+                        validate: params.row
                       },
                       methods: {
                         ok () {
@@ -336,8 +331,28 @@ export default {
           title: '常跑线路',
           key: 'regularLine',
           render: (h, params) => {
-            let text = JSON.parse(params.row.regularLine)[0].sn + '—' + JSON.parse(params.row.regularLine)[0].en
-            return h('div', text)
+            let s1 = JSON.parse(params.row.regularLine)[0].sn === undefined ? '' : JSON.parse(params.row.regularLine)[0].sn
+            let n1 = JSON.parse(params.row.regularLine)[0].en === undefined ? '' : JSON.parse(params.row.regularLine)[0].en
+            let s2 = JSON.parse(params.row.regularLine)[1].sn === undefined ? '' : JSON.parse(params.row.regularLine)[1].sn
+            let n2 = JSON.parse(params.row.regularLine)[1].en === undefined ? '' : JSON.parse(params.row.regularLine)[1].en
+            return h('div', [
+              h('p', {
+                style: {
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }
+              }, s1 + '—' + n1 === '—' ? '' : s1 + '—' + n1),
+              h('p', {
+                style: {
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }
+              }, s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2)
+            ])
           }
         }
       ],
@@ -358,28 +373,20 @@ export default {
                 on: {
                   click: () => {
                     var _this = this
-                    console.log(params.row)
                     this.openDialog({
                       name: 'client/dialog/carrier-vehicle',
                       data: {
-                        title: '修改车辆',
+                        title: '修改维修记录',
                         flag: 2, // 修改
                         id: params.row.driverId,
                         carrierId: _this.carrierId,
                         driverId: params.row.driverId,
-                        driverName: params.row.driverName,
                         carId: params.row.carId,
-                        validate: {
-                          carNO: params.row.carNO,
-                          carType: params.row.carType + '',
-                          shippingWeight: params.row.shippingWeight + '',
-                          carLength: params.row.carLength + '',
-                          shippingVolume: params.row.shippingVolume + ''
-                        }
+                        validate: params.row
                       },
                       methods: {
                         ok () {
-                          _this._carrierListCar() // 刷新页面
+                          _this._carrierListRepairVehicle()
                         }
                       }
                     })
@@ -420,12 +427,12 @@ export default {
                       },
                       methods: {
                         ok () {
-                          carrierDeleteVehicle({
-                            carId: params.row.carId
+                          carrierDeleteRepairVehicle({
+                            id: params.row.id
                           }).then(res => {
                             if (res.data.code === CODE) {
                               _this.$Message.success(res.data.msg)
-                              _this._carrierListCar() // 刷新页面
+                              _this._carrierListRepairVehicle() // 刷新页面
                             } else {
                               _this.$Message.error(res.data.msg)
                             }
@@ -442,7 +449,7 @@ export default {
         },
         {
           title: '车牌号',
-          key: 'carNO'
+          key: 'carNo'
         },
         {
           title: '维修类别',
@@ -505,10 +512,10 @@ export default {
   },
   computed: {
     tabPaneLabel () {
-      return '车辆信息 ' + (this.totalCount1 === 0 ? '' : this.totalCount1.toString())
+      return '车辆信息 ' + (Number(this.totalCount1) === 0 ? '' : this.totalCount1)
     },
     tabPaneLabe2 () {
-      return '维修记录 ' + (this.totalCount2 === 0 ? '' : this.totalCount2.toString())
+      return '维修记录 ' + (Number(this.totalCount2) === 0 ? '' : this.totalCount2)
     }
   },
   mounted () {
@@ -517,6 +524,8 @@ export default {
     } else { // 类型为运输公司
       this._carrierDetailsForCompany()
       this._carrierListCar()
+      // 维修列表
+      this._carrierListRepairVehicle()
     }
   },
   methods: {
@@ -596,6 +605,20 @@ export default {
         }
       })
     },
+    // 车辆维修列表
+    _carrierListRepairVehicle () {
+      let data = {
+        carrierId: this.carrierId,
+        pageNo: this.pageNo2,
+        pageSize: this.pageSize2
+      }
+      carrierListRepairVehicle(data).then(res => {
+        if (res.data.code === CODE) {
+          this.data2 = res.data.data.list
+          this.totalCount2 = res.data.data.totalCount
+        }
+      })
+    },
     _carrierAddVehicle () {
       var _this = this
       console.log(_this.carrierId)
@@ -609,7 +632,7 @@ export default {
         },
         methods: {
           ok () {
-            _this._carrierListCar() // 刷新页面
+            _this._carrierListRepairVehicle() // 刷新页面-维修列表
           }
         }
       })
@@ -617,11 +640,11 @@ export default {
     handleChangePage2 (pageNo) {
       // 重新组装数据，生成查询参数
       this.pageNo2 = pageNo
-      this._carrierListCar()
+      this._carrierListRepairVehicle()
     },
     handleChangePageSize2 (pageSize) {
       this.pageSize2 = pageSize
-      this._carrierListCar()
+      this._carrierListRepairVehicle()
     }
   }
 }

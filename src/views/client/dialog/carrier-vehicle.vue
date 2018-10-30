@@ -12,19 +12,26 @@
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="90">
         <Row>
           <Col span="8">
-          <FormItem label="车牌号:" prop="carNO">
+          <FormItem label="车牌号:" prop="carNo">
             <Row>
               <Col span="20">
-              <Input v-model="validate.carNO" placeholder="必填"></Input>
-                </Col>
+              <Input v-model="validate.carNo" placeholder="必填"></Input>
+              </Col>
             </Row>
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem label="维修类别:" prop="reqairType">
+          <FormItem label="维修类别:" prop="repairType">
             <Row>
               <Col span="20">
-              <Input v-model="validate.reqairType" placeholder="必填"></Input>
+              <Select v-model="validate.repairType"  placeholder="必选" class="minWidth">
+                <Option
+                  v-for="item in selectList"
+                  :value="item.id"
+                  :key="item.id">
+                  {{ item.name }}
+                </Option>
+              </Select>
                 </Col>
             </Row>
           </FormItem>
@@ -45,7 +52,7 @@
             <Row>
               <Col span="20">
               <Input v-model="validate.repairPerson" placeholder="必填"></Input>
-                </Col>
+              </Col>
             </Row>
           </FormItem>
           </Col>
@@ -154,39 +161,43 @@ export default {
       carId: '', // 车辆id
       unbindedDriver: [], // 承运商下尚未被绑定车辆的司机
       validate: {},
+      selectList: [
+        { id: '1', name: '维修' },
+        { id: '2', name: '保养' }
+      ],
       ruleValidate: {
-        carNO: [
-          { required: true, message: '车牌号不能为空', trigger: 'blur' },
-          { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
+        carNo: [
+          { required: true, message: '车牌号不能为空' },
+          { type: 'string', message: '车牌号格式错误', pattern: CAR }
         ],
-        reqairType: [
-          { required: true, message: '维修类别不能为空', trigger: 'change' }
+        repairType: [
+          { required: true, message: '维修类别不能为空' }
         ],
         repairDate: [
-          { required: true, message: '送修日期不能为空', trigger: 'change' }
+          { required: true, message: '送修日期不能为空' }
         ],
         repairPerson: [
-          { required: true, message: '送修人不能为空', trigger: 'change' }
+          { required: true, message: '送修人不能为空' }
         ],
         repairMile: [
-          { required: true, message: '送修公里数不能为空', trigger: 'change' }
+          { required: true, message: '送修公里数不能为空' }
         ],
         repairMoney: [
-          { required: true, message: '维修费用不能为空', trigger: 'change' }
+          { required: true, message: '维修费用不能为空' }
         ],
         payMoney: [
-          { required: true, message: '已支付费用不能为空', trigger: 'change' }
+          { required: true, message: '已支付费用不能为空' }
         ],
         waitPayMoney: [
-          { required: true, message: '未支付费用不能为空', trigger: 'change' }
+          { required: true, message: '未支付费用不能为空' }
         ]
-        // shippingVolume: [
-        //   { type: 'string', message: '必须为大于等于0的数字,最多一位小数', pattern: /^(0|([1-9]\d*))([.]\d?)?$/, trigger: 'blur' }
-        // ]
       }
     }
   },
   created () {
+    if (this.validate) {
+      this.validate.repairType = this.validate.repairType.toString()
+    }
     let data = {
       carrierId: this.carrierId,
       driverId: this.driverId
@@ -200,6 +211,7 @@ export default {
   },
   methods: {
     save (name) {
+      this.validate.carrierId = this.carrierId
       this.$refs[name].validate((valid) => {
         if (valid) {
           if (this.flag === 1) { // 新增
@@ -213,16 +225,6 @@ export default {
     },
     add () {
       let data = this.validate
-      // {
-      //   carNO: this.validate.carNO,
-      //   carType: this.validate.carType,
-      //   shippingWeight: this.validate.shippingWeight,
-      //   carLength: this.validate.carLength,
-      //   shippingVolume: this.validate.shippingVolume,
-      //   driverId: this.driverId,
-      //   carrierId: this.carrierId
-      // }
-      Object.assign(data, { driverId: this.driverId || '' })
       carrierAddVehicle(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
@@ -233,17 +235,6 @@ export default {
     },
     update () {
       let data = this.validate
-      // {
-      //   carNO: this.validate.carNO,
-      //   carType: this.validate.carType,
-      //   shippingWeight: this.validate.shippingWeight,
-      //   carLength: this.validate.carLength,
-      //   shippingVolume: this.validate.shippingVolume,
-      //   driverId: this.driverId,
-      //   carrierId: this.carrierId,
-      //   carId: this.carId
-      // }
-      Object.assign(data, { driverId: this.driverId || '' })
       carrierUpdateVehicle(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面

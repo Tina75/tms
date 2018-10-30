@@ -10,23 +10,25 @@
           <Col span="6">
           <div>
             <span class="label">车牌号：</span>
-            {{infoData.carNO}}
+            {{infoData.carNo}}
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">维修类别：</span>
-            {{infoData.carNO}}
+            {{infoData.repairType}}
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">送修日期：</span>
+            {{infoData.repairDate}}
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">送修人：</span>
+            {{infoData.repairPerson}}
           </div>
           </Col>
         </Row>
@@ -34,21 +36,25 @@
           <Col span="6">
           <div>
             <span class="label">送修公里数：</span>
+            {{infoData.repairMile}}
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">维修费用：</span>
+            {{infoData.repairMoney}}
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">已支付费用：</span>
+            {{infoData.payMoney}}
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">未支付费用：</span>
+            {{infoData.waitPayMoney}}
           </div>
           </Col>
         </Row>
@@ -56,6 +62,7 @@
           <Col span="20">
           <div>
             <span class="label">维修单位：</span>
+            {{infoData.repairUnit}}
           </div>
           </Col>
         </Row>
@@ -63,6 +70,7 @@
           <Col span="20">
           <div>
             <span class="label">维修原因：</span>
+            {{infoData.repairReason}}
           </div>
           </Col>
         </Row>
@@ -70,6 +78,7 @@
           <Col span="20">
           <div>
             <span class="label">维修结果：</span>
+            {{infoData.repairResult}}
           </div>
           </Col>
         </Row>
@@ -77,6 +86,7 @@
           <Col span="20">
           <div>
             <span class="label">备注：</span>
+            {{infoData.remark}}
           </div>
           </Col>
         </Row>

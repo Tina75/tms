@@ -364,7 +364,7 @@ export function carrierUpdateDriver (data) {
 //   })
 // }
 
-// 根据承运商id查询其下属车辆
+// 根据承运商id查询其下属车辆 -车辆列表
 export function carrierListCar (data) {
   return server({
     url: '/carrier/list/car',
@@ -424,7 +424,19 @@ export function listUnbindedDriver (data) {
 //   })
 // }
 
-// 添加车辆维修记录
+// 车辆维修列表
+export function carrierListRepairVehicle (data) {
+  return server({
+    url: '/carrier/repair/list',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'post',
+    data: data
+  })
+}
+
+// 添加维修记录
 export function carrierAddVehicle (data) {
   return server({
     url: '/carrier/repair/add',
@@ -436,7 +448,7 @@ export function carrierAddVehicle (data) {
   })
 }
 
-// 修改车辆维修记录
+// 修改维修记录
 export function carrierUpdateVehicle (data) {
   return server({
     url: '/carrier/repair/update',

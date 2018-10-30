@@ -34,7 +34,7 @@
                   {{ item.name }}
                 </Option>
               </Select>
-                </Col>
+              </Col>
             </Row>
           </FormItem>
           </Col>
@@ -54,7 +54,7 @@
             <Row>
               <Col span="20">
               <Input v-model="validate.driverPhone" placeholder="必填"></Input>
-                </Col>
+              </Col>
             </Row>
           </FormItem>
           </Col>
@@ -65,7 +65,7 @@
               <Select v-model="validate.carType" >
                 <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
               </Select>
-                </Col>
+              </Col>
             </Row>
           </FormItem>
           </Col>
@@ -76,7 +76,7 @@
               <Select v-model="validate.carLength" >
                 <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
               </Select>
-                </Col>
+              </Col>
             </Row>
           </FormItem>
           </Col>
@@ -87,10 +87,10 @@
             <Row>
               <Col span="20">
               <Input v-model="validate.shippingWeight" placeholder="必填"></Input>
-                </Col>
+              </Col>
               <Col span="2" offset="1">
               <span>吨</span>
-                </Col>
+              </Col>
             </Row>
           </FormItem>
           </Col>
@@ -99,10 +99,10 @@
             <Row>
               <Col span="20">
               <Input v-model="validate.shippingVolume"></Input>
-                </Col>
+              </Col>
               <Col span="2" offset="1">
               <span>吨</span>
-                </Col>
+              </Col>
             </Row>
           </FormItem>
           </Col>
@@ -111,7 +111,7 @@
             <Row>
               <Col span="20">
               <DatePicker v-model="validate.purchDate" type="date" placeholder="请选择日期"></DatePicker>
-                </Col>
+              </Col>
             </Row>
           </FormItem>
           </Col>
@@ -122,7 +122,7 @@
             <Row>
               <Col span="20">
               <Input v-model="validate.carBrand" placeholder="如：东风"></Input>
-                </Col>
+              </Col>
             </Row>
           </FormItem>
           </Col>
@@ -135,7 +135,7 @@
               <CitySelect ref="start" :code-type="codeType" v-model="address1.s" clearable></CitySelect>
             </FormItem>
             </Col>
-            <Col span="8">
+            <Col span="8" style="margin-left: 25px;">
             <FormItem label="目的地1:">
               <CitySelect ref="start" :code-type="codeType" v-model="address1.e" clearable></CitySelect>
             </FormItem>
@@ -147,7 +147,7 @@
               <CitySelect ref="start" :code-type="codeType" v-model="address2.s" clearable></CitySelect>
             </FormItem>
             </Col>
-            <Col span="8">
+            <Col span="8" style="margin-left: 25px;">
             <FormItem label="目的地2:">
               <CitySelect ref="start" :code-type="codeType" v-model="address2.e" clearable></CitySelect>
             </FormItem>
@@ -173,7 +173,7 @@
 </template>
 
 <script>
-import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
+import { CAR_TYPE1, CAR_LENGTH, DRIVER_TYPE } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
 import { carrierAddDriver, carrierUpdateDriver, CODE, CAR } from '../client'
 import CitySelect from '@/components/SelectInputForCity'
@@ -194,21 +194,7 @@ export default {
       address1: {},
       address2: {},
       codeType: 1,
-      selectList: [
-        {
-          id: '1',
-          name: '合约'
-        }, {
-          id: '2',
-          name: '临时'
-        }, {
-          id: '3',
-          name: '自有'
-        }, {
-          id: '4',
-          name: '挂靠'
-        }
-      ],
+      selectList: DRIVER_TYPE,
       ruleValidate: {
         carNO: [
           { required: true, message: '车牌号不能为空', trigger: 'blur' },
@@ -237,11 +223,26 @@ export default {
       }
     }
   },
+  mounted () {
+    if (this.title === '修改车辆') {
+      this.validate.driverType = this.validate.driverType.toString()
+      this.validate.carType = this.validate.carType.toString()
+      this.validate.carLength = this.validate.carLength.toString()
+      if (this.validate.regularLine) {
+        this.address1 = JSON.parse(this.validate.regularLine)[0]
+        this.address2 = JSON.parse(this.validate.regularLine)[1]
+      }
+    }
+  },
   methods: {
     save (name) {
       this.validate.carrierId = this.carrierId
-      this.address.push(this.address1)
-      this.address.push(this.address2)
+      if (this.address1.s !== null || this.address1.n !== null) {
+        this.address.push(this.address1)
+      }
+      if (this.address2.s !== null || this.address2.n !== null) {
+        this.address.push(this.address2)
+      }
       this.validate.regularLine = JSON.stringify(this.address)
       this.$refs[name].validate((valid) => {
         if (valid) {

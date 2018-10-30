@@ -112,6 +112,7 @@
 </template>
 <script>
 import BasePage from '@/basic/BasePage'
+import { CAR_TYPE1, CAR_LENGTH1, DRIVER_TYPE } from '@/libs/constant/carInfo'
 export default {
   name: 'car-details',
   components: {},
@@ -120,7 +121,9 @@ export default {
   },
   data () {
     return {
-      infoData: {}
+      infoData: {},
+      carTypeMap: CAR_TYPE1,
+      carLengthMap: CAR_LENGTH1
     }
   },
   computed: {
@@ -129,7 +132,9 @@ export default {
   },
   mounted () {
     this.infoData = this.$route.query.rowData
-    console.dir(this.infoData)
+    this.infoData.driverType = (DRIVER_TYPE.find(e => e.id === this.infoData.driverType.toString())).name
+    this.infoData.carType = this.carTypeMap[this.infoData.carType]
+    this.infoData.carLength = this.carLengthMap[this.infoData.carLength]
   },
   methods: {
   }
