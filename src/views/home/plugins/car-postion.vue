@@ -51,7 +51,7 @@ export default {
         if (this.pointList.length > 0) {
           for (let i = 0; i < this.pointList.length; i++) {
             const item = this.pointList[i]
-            const point = new BMap.Point(item.longtitude, item.latitude)
+            const point = new BMap.Point(item.longitude, item.latitude)
             if (i === 0) {
               bmap.centerAndZoom(point, 12)
             }
