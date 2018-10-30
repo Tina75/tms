@@ -380,7 +380,6 @@ export default {
       orderPrint: [],
       rules: {
         consignerName: [
-          // { validator: validateConsignerName, trigger: 'blur' }
           { required: true, message: '请输入客户名称' }
         ],
         start: [

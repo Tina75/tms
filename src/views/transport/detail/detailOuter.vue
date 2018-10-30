@@ -45,11 +45,11 @@
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title">始发地：</span>
-            <span>{{ info.start | cityFormatter }}</span>
+            <span>{{ info.startName }}</span>
           </i-col>
           <i-col span="6">
             <span class="detail-field-title">目的地：</span>
-            <span>{{ info.end | cityFormatter }}</span>
+            <span>{{ info.endName }}</span>
           </i-col>
           <i-col span="6">
             <span class="detail-field-title">提货方式：</span>
@@ -187,6 +187,8 @@ export default {
         arriveTimeLong: '',
         start: void 0,
         end: void 0,
+        startName: '',
+        endName: '',
         pickup: '',
         receiptCount: '',
         consignerContact: '',
