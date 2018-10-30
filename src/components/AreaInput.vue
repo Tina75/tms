@@ -24,7 +24,9 @@ export default {
   props: {
     value: String,
     maxlength: Number,
+    // 城市编码
     cityCode: String | Number,
+    // 下拉数组
     localOptions: {
       type: Array,
       default: () => []
@@ -42,7 +44,7 @@ export default {
   },
   computed: {
     areaList () {
-      return this.localOptions.concat(this.address)
+      return this.localOptions.concat(this.address) // .slice(0,20)
     },
     areaCode () {
       const code = this.cityCode
