@@ -29,6 +29,8 @@ const TMSUrl = {
   PROFIT_REPORT: '/report/profit', // 利润报表,
   SENDER_MANAGEMENT: '/client/sender', // 发货方管理
   CARRIER_MANAGEMENT: '/client/carrier', // 承运商管理
+  CARRIER_MANAGEMENT_CAEDETAILS: '/client/car-details', // 承运商管理车辆详情
+  CARRIER_MANAGEMENT_REPAIRDETAILS: '/client/car-repair-details', // 承运商维修详情
   TRANSFER_MANAGEMENT: '/client/transfer', // 外转方管理
   STAFF_MANAGEMENT: '/company/staff-manage', // 员工管理
   EMPLOYEE_MANAGEMENT: '/company/role-manage', // 角色管理

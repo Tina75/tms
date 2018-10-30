@@ -53,7 +53,7 @@
           </i-col>
           <i-col span="6">
             <span class="detail-field-title">提货方式：</span>
-            <span>{{ info.pickup ? '上门提货' : '送货上门' }}</span>
+            <span>{{ info.pickup ? '小车上门提货' : '大车直送客户' }}</span>
           </i-col>
           <i-col span="6">
             <span class="detail-field-title">回单数：</span>

@@ -586,7 +586,7 @@ export default {
     margin-top: 2px;
     border-radius:3px;
   .iconRightTitleP
-   margin-left:35px;
+   margin-left:20px;
    font-size: 16px;
    font-weight:600;
 .mesDiv

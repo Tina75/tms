@@ -625,6 +625,8 @@ export default {
           volume: self.orderTotal.volume, // 货物体积
           start: self.info.start, // 始发地code
           end: self.info.end // 目的地code
+          // startPoint: {lat: 32.047745, lng: 118.791580}, // 始发地经纬度
+          // endPoint: {lat: 39.913385, lng: 116.402257} // 目的地经纬度
         },
         methods: {
           // 确认计费规则后返回金额(元)
@@ -684,6 +686,7 @@ export default {
     // 删除
     billDelete () {
       const self = this
+      // self.$Toast.info()
       self.openDialog({
         name: 'transport/dialog/confirm',
         data: {
