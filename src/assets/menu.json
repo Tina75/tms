@@ -176,7 +176,7 @@
   {
     "name":"业务流程",
     "path":"/helper/process",
-    "powerCode":0
+    "powerCode":-1
   },
   {
     "name":"帮助",
