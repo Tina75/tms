@@ -52,7 +52,7 @@
             <ul class="ruleList">
               <li v-for="(item,index) in companyData" :key="index" class="list" @click="showRuleDetail(item)">
                 <div class="icon">
-                  <FontIcon slot="icon" type="shanchu-paomadeng" ></FontIcon>
+                  <FontIcon slot="icon" type="ico-price" ></FontIcon>
                 </div>
                 <div class="content">
                   <div class="ruleName">{{item.ruleName}}</div>
@@ -280,6 +280,7 @@ export default {
       }
     }
     return {
+      clientheight: 0,
       active: '1',
       unitMap: {
         1: '吨',
@@ -330,42 +331,6 @@ export default {
     }
   },
   computed: {
-    companyColumn () {
-      return [
-        {
-          title: this.sceneMap[this.active],
-          width: 130,
-          key: 'partnerName'
-        },
-        {
-          title: '规则名',
-          width: 110,
-          key: 'ruleName'
-        },
-        {
-          title: '规则名',
-          key: 'ruleName',
-          render: (h, params) => {
-            return h('div', {
-            })
-          }
-        },
-        {
-          title: ' ',
-          key: 'action',
-          className: 'operation',
-          render: (h, params) => {
-            return this.hasPower(170402) ? h('a', {
-              on: {
-                click: () => {
-                  this.removeRule(params)
-                }
-              }
-            }, '删除') : ''
-          }
-        }
-      ]
-    }
   },
   watch: {
     'ruleDetail.ruleType': function (val) {
@@ -380,6 +345,7 @@ export default {
   },
   mounted () {
     this.getRules()
+    // this.clientheight =
   },
   methods: {
     toDetail (data) {
