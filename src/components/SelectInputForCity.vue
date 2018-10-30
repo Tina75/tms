@@ -50,9 +50,8 @@
    */
 import server from '@/libs/js/server'
 import cityUtil from '@/libs/js/city'
-import Emitter from 'iview/src/mixins/emitter'
 export default {
-  mixins: [Emitter],
+  name: 'SelectInputForCity',
   props: {
     autoFocus: {
       type: Boolean,
@@ -176,6 +175,21 @@ export default {
     }
   },
   methods: {
+    dispatch (componentName, eventName, params) {
+      let parent = this.$parent || this.$root
+      let name = parent.$options.name
+
+      while (parent && (!name || name !== componentName)) {
+        parent = parent.$parent
+
+        if (parent) {
+          name = parent.$options.name
+        }
+      }
+      if (parent) {
+        parent.$emit.apply(parent, [eventName].concat(params))
+      }
+    },
     onCompositionStart () {
       this.composing = true
     },
@@ -231,9 +245,9 @@ export default {
         }
         return opt.value === name
       })
-      this.currentValue = item.nameSeleced.split('  ')[0]
+      this.currentValue = item.name.split(',  ')[0]
       this.nameSeleced = item.nameSeleced.split('  ')[1]
-      this.currentValueCopy = item.nameSeleced.split('  ')[0]
+      this.currentValueCopy = item.name.split(',  ')[0]
       this.code = item.code
       this.focusIndex = -1
       this.visible = false

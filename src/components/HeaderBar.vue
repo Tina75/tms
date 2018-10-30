@@ -9,7 +9,7 @@
           <Poptip v-if="processVisible" :value="processVisible" placement="bottom" content="查看业务流程点击我" trigger="click">
             <FontIcon type="liucheng" size="30" color="#fff"></FontIcon>
           </Poptip>
-          <FontIcon v-else type="liucheng" size="30" color="#fff"></FontIcon>
+          <FontIcon v-else type="liucheng" size="25" color="#fff"></FontIcon>
         </span>
         <span class="header-bar-avator-dropdown-notify">
           <Badge :count="MsgCount.all" type="primary">
@@ -293,9 +293,7 @@ export default {
   &-avator-dropdown
     float right
     display inline-block
-    margin-top 8px
     vertical-align middle
-    line-height 10px
     // .dropdown-box
     //   text-align center
     .dropdown-line
