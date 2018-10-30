@@ -3,12 +3,12 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-10-09 15:36:10
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-10-29 10:03:00
+ * @Last Modified time: 2018-10-30 10:32:16
  */
 
 const TMSUrl = {
   HOME: '/home', // 首页
-  CREATE_ORDER: '/order/create', // 手工下单
+  CREATE_ORDER: '/order/create', // 手工开单
   IMPORT_ORDER: '/order/import', // 批量导入
   ORDER_MANAGEMENT: '/order-management/order', // 订单管理
   ORDER_DETAIL: '/order-management/detail', // 订单详情

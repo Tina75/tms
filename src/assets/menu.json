@@ -12,7 +12,7 @@
     "powerCode":100000,
     "children":[
       {
-        "name":"手工下单",
+        "name":"手工开单",
         "path":"/order/create",
         "powerCode":100100
       },
