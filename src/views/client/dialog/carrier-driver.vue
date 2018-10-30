@@ -156,12 +156,12 @@
         </div>
         <p class="modalTitle">证件照</p>
         <Row>
-          <!-- <Col span="5">
-            <upload title="行驶证"></upload>
+          <Col span="5">
+          <up-load></up-load>
           </Col>
           <Col span="5">
-            <upload title="驾驶证"></upload>
-          </Col> -->
+          <up-load></up-load>
+          </Col>
         </Row>
       </Form>
       <div slot="footer" class="footerSty">
@@ -177,10 +177,12 @@ import { CAR_TYPE1, CAR_LENGTH, DRIVER_TYPE } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
 import { carrierAddDriver, carrierUpdateDriver, CODE, CAR } from '../client'
 import CitySelect from '@/components/SelectInputForCity'
+import UpLoad from '@/components/upLoad/'
 export default {
   name: 'carrier-driver',
   components: {
-    CitySelect
+    CitySelect,
+    UpLoad
   },
   mixins: [BaseDialog],
   data () {

@@ -86,7 +86,7 @@
           </Col>
           <Col span="6">
           <div class="lineSpanLabel">
-            <span class="label">个体司机-个体司机</span>
+            {{infoData.regularLine}}
           </div>
           </Col>
         </Row>
