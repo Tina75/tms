@@ -1,6 +1,5 @@
 <template>
   <div>
-    <div id="container"></div>
     <SelectInput
       :value="value"
       :maxlength="maxlength"
@@ -41,7 +40,7 @@ export default {
   data () {
     return {
       address: [],
-      map: new BMap.Map('container')
+      map: new BMap.Map(null)
     }
   },
   computed: {
@@ -57,7 +56,7 @@ export default {
     search (val) {
       const options = {
         onSearchComplete: results => {
-          if (local.getStatus() === 0) {
+          if (local.getStatus() === window.BMAP_STATUS_SUCCESS) {
             // 判断状态是否正确
             let arr = []
             for (let i = 0; i < results.getCurrentNumPois(); i++) {
@@ -88,7 +87,6 @@ export default {
         this.address = []
         this.selectChange(null, { lat: '', lng: '' })
       }
-
       this.$emit('input', value)
     },
     selectChange (value, item) {
