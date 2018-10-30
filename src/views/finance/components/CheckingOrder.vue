@@ -247,7 +247,7 @@ export default {
   }
 }
 </script>
-<style lang='stylus'>
+<style lang='stylus' scoped>
   .checking-order
     margin: 35px 0 15px
     /deep/ .ivu-btn
