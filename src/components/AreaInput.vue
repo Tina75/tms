@@ -46,9 +46,9 @@ export default {
     areaList () {
       return this.localOptions.concat(this.address) // .slice(0,20)
     },
-    areaCode () {
+    areaName () {
       const code = this.cityCode
-      return code ? cityUtil.getPathByCode(code) : ''
+      return code ? cityUtil.getNameByCode(code) : this.map
     }
   },
   methods: {
@@ -60,23 +60,21 @@ export default {
             let arr = []
             for (let i = 0; i < results.getCurrentNumPois(); i++) {
               const item = results.getPoi(i)
-              // item.province + item.city + item.title
-              // item.title + ', ' + item.address
+              const pro = item.province ? item.province : ''
+              const city = item.city ? item.city : ''
               arr.push({
                 id: i,
-                name: item.province + item.city + item.title + item.address + i,
-                value: item.province + item.city + item.title + item.address + i,
+                name: pro + city + item.title + item.address,
+                value: pro + city + item.title + item.address,
                 lat: item.point.lat,
-                lng: item.point.lng,
-                province: item.province,
-                city: item.city
+                lng: item.point.lng
               })
             }
             this.address = arr
           }
         }
       }
-      const local = new BMap.LocalSearch(this.map, options)
+      const local = new BMap.LocalSearch(this.areaName, options)
       local.search(val)
     },
     inputHandle (value) {
@@ -91,9 +89,9 @@ export default {
       this.$emit('input', value)
     },
     selectChange (value, item) {
-      // const code = cityUtil.getFullName(item.province + item.city) '南京市'
-      const lat = item.lat
+      const lat = item.slat
       const lng = item.lng
+      // 经纬度改变
       this.$emit('latlongt-change', { lat, lng })
     }
   }
