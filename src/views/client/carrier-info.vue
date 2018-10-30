@@ -154,7 +154,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
-import { CODE, carrierDetailsForDriver, carrierDetailsForCompany, carrierListDriver, carrierListCar, carrierDeleteVehicle, carrierDeleteDriver } from './client'
+import { CODE, carrierDetailsForDriver, carrierDetailsForCompany, carrierListCar, carrierDeleteVehicle, carrierDeleteDriver } from './client'
 import TMSUrl from '@/libs/constant/url'
 export default {
   name: 'carrier-info',
@@ -222,7 +222,6 @@ export default {
                       },
                       methods: {
                         ok () {
-                          _this._carrierListDriver() // 刷新页面
                           _this._carrierListCar() // 车辆列表也要刷新
                         }
                       }
@@ -265,11 +264,10 @@ export default {
                       methods: {
                         ok () {
                           carrierDeleteDriver({
-                            driverId: params.row.driverId
+                            carId: params.row.carId
                           }).then(res => {
                             if (res.data.code === CODE) {
                               _this.$Message.success(res.data.msg)
-                              _this._carrierListDriver() // 刷新页面
                               _this._carrierListCar() // 车辆列表也要刷新
                             } else {
                               _this.$Message.error(res.data.msg)
@@ -291,47 +289,44 @@ export default {
         },
         {
           title: '合作方式',
-          key: 'driverType'
+          key: 'driverType',
+          render: (h, params) => {
+            let text = ''
+            if (params.row.driverType === 1) {
+              text = '合约'
+            } else if (params.row.driverType === 2) {
+              text = '临时'
+            } else if (params.row.driverType === 3) {
+              text = '自有'
+            } else if (params.row.driverType === 4) {
+              text = '挂靠'
+            }
+            return h('div', {}, text)
+          }
         },
         {
           title: '司机姓名',
           key: 'driverName'
-          // render: (h, params) => {
-          //   let text = ''
-          //   if (params.row.driverType === 1) {
-          //     text = '合约司机 '
-          //   } else if (params.row.driverType === 2) {
-          //     text = '临时司机'
-          //   } else {
-          //     text = ''
-          //   }
-          //   return h('div', {}, text)
-          // }
         },
         {
           title: '手机号',
           key: 'driverPhone'
-          // render (h, params) {
-          //   let text = ''
-          //   if (params.row.carNO === '' || params.row.carNO === null) {
-          //     text = '-'
-          //   } else {
-          //     text = params.row.carNO
-          //   }
-          //   return h('span', {}, text)
-          // }
         },
         {
           title: '车型',
           key: 'carType',
           render: (h, params) => {
-            let text = params.row.carType ? (this.carLengthMap[params.row.carLength] + this.carTypeMap[params.row.carType]) : '-'
+            let text = params.row.carType ? this.carTypeMap[params.row.carType] : '-'
             return h('div', {}, text)
           }
         },
         {
           title: '车长（米）',
-          key: 'carLength'
+          key: 'carLength',
+          render: (h, params) => {
+            let text = params.row.carLength ? this.carLengthMap[params.row.carLength] : '-'
+            return h('div', {}, text.slice(0, text.length - 1))
+          }
         },
         {
           title: '载重（吨）',
@@ -339,7 +334,11 @@ export default {
         },
         {
           title: '常跑线路',
-          key: 'regularLine'
+          key: 'regularLine',
+          render: (h, params) => {
+            let text = JSON.parse(params.row.regularLine)[0].sn + '—' + JSON.parse(params.row.regularLine)[0].en
+            return h('div', text)
+          }
         }
       ],
       columns2: [
@@ -381,7 +380,6 @@ export default {
                       methods: {
                         ok () {
                           _this._carrierListCar() // 刷新页面
-                          _this._carrierListDriver() // 车辆列表也要刷新
                         }
                       }
                     })
@@ -428,7 +426,6 @@ export default {
                             if (res.data.code === CODE) {
                               _this.$Message.success(res.data.msg)
                               _this._carrierListCar() // 刷新页面
-                              _this._carrierListDriver() // 司机列表也要刷新
                             } else {
                               _this.$Message.error(res.data.msg)
                             }
@@ -449,11 +446,7 @@ export default {
         },
         {
           title: '维修类别',
-          key: 'repairType',
-          render: (h, params) => {
-            let text = params.row.carType ? (this.carLengthMap[params.row.carLength] + this.carTypeMap[params.row.carType]) : ''
-            return h('div', {}, text)
-          }
+          key: 'repairType'
         },
         {
           title: '送修日期',
@@ -523,7 +516,6 @@ export default {
       this._carrierDetailsForDriver()
     } else { // 类型为运输公司
       this._carrierDetailsForCompany()
-      this._carrierListDriver()
       this._carrierListCar()
     }
   },
@@ -565,20 +557,6 @@ export default {
         }
       })
     },
-    // 司机列表，新增，删除，修改
-    _carrierListDriver () {
-      let data = {
-        carrierId: this.carrierId,
-        pageNo: this.pageNo1,
-        pageSize: this.pageSize1
-      }
-      carrierListDriver(data).then(res => {
-        if (res.data.code === CODE) {
-          this.data1 = res.data.data.driverList
-          this.totalCount1 = res.data.data.total
-        }
-      })
-    },
     _carrierAddDriver () {
       var _this = this
       this.openDialog({
@@ -590,7 +568,7 @@ export default {
         },
         methods: {
           ok () {
-            _this._carrierListDriver() // 刷新页面
+            _this._carrierListCar()
           }
         }
       })
@@ -598,11 +576,11 @@ export default {
     handleChangePage1 (pageNo) {
       // 重新组装数据，生成查询参数
       this.pageNo1 = pageNo
-      this._carrierListDriver()
+      this._carrierListCar()
     },
     handleChangePageSize1 (pageSize) {
       this.pageSize1 = pageSize
-      this._carrierListDriver()
+      this._carrierListCar()
     },
     // 车辆列表，新增，删除，修改
     _carrierListCar () {
@@ -613,8 +591,8 @@ export default {
       }
       carrierListCar(data).then(res => {
         if (res.data.code === CODE) {
-          this.data2 = res.data.data.carList
-          this.totalCount2 = res.data.data.total
+          this.data1 = res.data.data.carList
+          this.totalCount1 = res.data.data.total
         }
       })
     },
@@ -632,7 +610,6 @@ export default {
         methods: {
           ok () {
             _this._carrierListCar() // 刷新页面
-            _this._carrierListDriver() // 司机列表也要刷新
           }
         }
       })

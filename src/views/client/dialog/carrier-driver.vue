@@ -5,8 +5,8 @@
       v-model="visiable"
       :mask-closable="false"
       width="1020"
-      label-position="right"
-      class="modalDialog"
+      label-position="left"
+      class="modal"
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
@@ -132,24 +132,24 @@
           <Row>
             <Col span="8">
             <FormItem label="出发地1:">
-              <Input></Input>
+              <CitySelect ref="start" :code-type="codeType" v-model="address1.s" clearable></CitySelect>
             </FormItem>
             </Col>
             <Col span="8">
             <FormItem label="目的地1:">
-              <Input></Input>
+              <CitySelect ref="start" :code-type="codeType" v-model="address1.e" clearable></CitySelect>
             </FormItem>
             </Col>
           </Row>
           <Row>
             <Col span="8">
-            <FormItem label="出发地1:">
-              <Input></Input>
+            <FormItem label="出发地2:">
+              <CitySelect ref="start" :code-type="codeType" v-model="address2.s" clearable></CitySelect>
             </FormItem>
             </Col>
             <Col span="8">
-            <FormItem label="目的地1:">
-              <Input></Input>
+            <FormItem label="目的地2:">
+              <CitySelect ref="start" :code-type="codeType" v-model="address2.e" clearable></CitySelect>
             </FormItem>
             </Col>
           </Row>
@@ -176,9 +176,12 @@
 import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
 import { carrierAddDriver, carrierUpdateDriver, CODE, CAR } from '../client'
+import CitySelect from '@/components/SelectInputForCity'
 export default {
   name: 'carrier-driver',
-  components: {},
+  components: {
+    CitySelect
+  },
   mixins: [BaseDialog],
   data () {
     return {
@@ -187,6 +190,10 @@ export default {
       carrierId: '', // 承运商id
       driverId: '', // 司机id
       validate: {},
+      address: [],
+      address1: {},
+      address2: {},
+      codeType: 1,
       selectList: [
         {
           id: '1',
@@ -232,6 +239,10 @@ export default {
   },
   methods: {
     save (name) {
+      this.validate.carrierId = this.carrierId
+      this.address.push(this.address1)
+      this.address.push(this.address2)
+      this.validate.regularLine = JSON.stringify(this.address)
       this.$refs[name].validate((valid) => {
         if (valid) {
           if (this.flag === 1) { // 新增
@@ -244,7 +255,6 @@ export default {
       })
     },
     add () {
-      this.validate.carrierId = this.carrierId
       let data = this.validate
       carrierAddDriver(data).then(res => {
         if (res.data.code === CODE) {
@@ -255,7 +265,6 @@ export default {
       })
     },
     update () {
-      this.validate.carrierId = this.carrierId
       let data = this.validate
       carrierUpdateDriver(data).then(res => {
         if (res.data.code === CODE) {

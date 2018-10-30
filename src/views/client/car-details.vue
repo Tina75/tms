@@ -10,7 +10,7 @@
           <Col span="6">
           <div>
             <span class="label">姓名：</span>
-            {{infoData.driverType}}
+            {{infoData.driverName}}
           </div>
           </Col>
           <Col span="6">
@@ -22,11 +22,13 @@
           <Col span="6">
           <div>
             <span class="label">合作方式：</span>
+            {{infoData.driverType}}
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">手机号：</span>
+            {{infoData.driverPhone}}
           </div>
           </Col>
         </Row>
@@ -34,21 +36,25 @@
           <Col span="6">
           <div>
             <span class="label">车型：</span>
+            {{infoData.carType}}
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">车长：</span>
+            {{infoData.carLength}}
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">载重：</span>
+            {{infoData.shippingWeight}}
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">净空：</span>
+            {{infoData.shippingVolume}}
           </div>
           </Col>
         </Row>
@@ -56,11 +62,13 @@
           <Col span="6">
           <div>
             <span class="label">购买日期：</span>
+            {{infoData.purchDate}}
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">品牌：</span>
+            {{infoData.carBrand}}
           </div>
           </Col>
         </Row>
@@ -73,7 +81,7 @@
         <Row class="row">
           <Col span="6">
           <div class="lineSpanLabel">
-            <span class="label">个体司机-个体司机个体司机-个体司机个体司机-个体司机</span>
+            {{infoData.regularLine}}
           </div>
           </Col>
           <Col span="6">

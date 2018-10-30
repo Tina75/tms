@@ -5,8 +5,7 @@
       v-model="visiable"
       :mask-closable="false"
       width="1020"
-      label-position="right"
-      class="modalDialog"
+      class="modal"
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
