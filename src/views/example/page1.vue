@@ -16,7 +16,7 @@
     <!--<p><Button v-if="hasPower(110301)" type="primary" @click="closeTab">关闭当前tab页</Button></p>-->
     <h3>城市插件的使用</h3>
     <div>
-      <select-input-for-city ref="child" v-model="code" :clearable="true"></select-input-for-city>
+      <select-input-for-city ref="child"  v-model="code" :clearable="true"></select-input-for-city>
       <!--<SelectInput :@focus=""></SelectInput>-->
       <button @click="save">提交</button>
     </div>
