@@ -31,6 +31,7 @@
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import float from '@/libs/js/float'
+import BMap from 'BMap'
 
 let errorMsg = ''
 
@@ -51,6 +52,7 @@ export default {
       ruleOptions: [],
       ruleEmpty: false,
       charge: 0,
+      distance: 0,
       zIndex: new Date().getTime(),
       rules: {
         ruleIndex: [{ validator: chargeValidate }]
@@ -58,10 +60,11 @@ export default {
     }
   },
   created () {
-    console.log(this.$data)
     this.fetchRules()
+    this.distanceCalculate()
   },
   methods: {
+    // 查询计费规则
     fetchRules () {
       this.loading = true
       Server({
@@ -77,11 +80,32 @@ export default {
       })
     },
 
+    // 计算距离
+    distanceCalculate () {
+      return new Promise((resolve, reject) => {
+        if (this.startPoint && this.endPoint && !this.distance) {
+          const startPoint = new BMap.Point(this.startPoint.lng, this.startPoint.lat)
+          const endPoint = new BMap.Point(this.endPoint.lng, this.endPoint.lat)
+          const route = new BMap.DrivingRoute(new BMap.Map('map-hidden'), {
+            policy: 'BMAP_DRIVING_POLICY_LEAST_DISTANCE',
+            onSearchComplete: res => {
+              const plan = res.getPlan(0)
+              this.distance = plan.getDistance(false)
+              resolve()
+            }
+          })
+          route.search(startPoint, endPoint)
+        }
+        resolve()
+      })
+    },
+
     ruleChanged (index) {
       errorMsg = ''
       const rule = this.ruleOptions[index]
-      this.$refs.$form.validate(valid => {
+      this.$refs.$form.validate(async valid => {
         if (!valid) return
+        await this.distanceCalculate()
         Server({
           url: '/finance/charge/calc',
           method: 'get',
@@ -89,6 +113,7 @@ export default {
             ruleId: rule.id,
             departure: this.start,
             destination: this.end,
+            distance: this.distance,
             input: float.round((rule.ruleType === 1 ? this.weight : this.volume) * 100)
           }
         }).then(res => {
