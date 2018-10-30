@@ -44,7 +44,7 @@ export default {
   },
   computed: {
     areaList () {
-      return this.localOptions.concat(this.address) // .slice(0,20)
+      return this.localOptions.concat(this.address).slice(0, 20)
     },
     areaName () {
       const code = this.cityCode

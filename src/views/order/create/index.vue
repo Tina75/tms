@@ -655,12 +655,16 @@ export default {
         _this.orderForm.consignerPhone = consigner.phone
         if (addresses.length > 0) {
           _this.orderForm.consignerAddress = addresses[0].address
+          _this.orderForm.consignerAddressLongitude = addresses[0].longitude
+          _this.orderForm.consignerAddressLatitude = addresses[0].latitude
         }
         if (consignees.length > 0) {
           // 设置收货人信息，收货人，手机，收货地址
           _this.orderForm.consigneeContact = consignees[0].contact
           _this.orderForm.consigneePhone = consignees[0].phone
           _this.orderForm.consigneeAddress = consignees[0].address
+          _this.orderForm.consigneeAddressLongitude = consignees[0].longitude
+          _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
         }
         let settlementType = consigner.settlementType || consigner.payType
         if (settlementType) {
