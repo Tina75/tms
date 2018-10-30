@@ -62,7 +62,7 @@
           <Col span="6">
           <div>
             <span class="label">购买日期：</span>
-            {{infoData.purchDate}}
+            {{formatDate(infoData.purchDate)}}
           </div>
           </Col>
           <Col span="6">
@@ -81,12 +81,12 @@
         <Row class="row">
           <Col span="6">
           <div class="lineSpanLabel">
-            {{infoData.regularLine}}
+            {{line1}}
           </div>
           </Col>
           <Col span="6">
           <div class="lineSpanLabel">
-            {{infoData.regularLine}}
+            {{line2}}
           </div>
           </Col>
         </Row>
@@ -97,12 +97,16 @@
       </div>
       <div class="list-info">
         <Row class="row">
-          <Col span="6">
-          <div>
+          <Col span="5">
+          <div v-if="infoData.travelPhoto">
+            <img :src="infoData.travelPhoto"/>
+            <p class="uploadLabel">行驶证</p>
           </div>
           </Col>
           <Col span="6">
-          <div>
+          <div v-if="infoData.drivePhoto">
+            <img :src="infoData.drivePhoto"/>
+            <p class="uploadLabel">驾驶证</p>
           </div>
           </Col>
         </Row>
@@ -123,7 +127,9 @@ export default {
     return {
       infoData: {},
       carTypeMap: CAR_TYPE1,
-      carLengthMap: CAR_LENGTH1
+      carLengthMap: CAR_LENGTH1,
+      line1: '',
+      line2: ''
     }
   },
   computed: {
@@ -135,8 +141,15 @@ export default {
     this.infoData.driverType = (DRIVER_TYPE.find(e => e.id === this.infoData.driverType.toString())).name
     this.infoData.carType = this.carTypeMap[this.infoData.carType]
     this.infoData.carLength = this.carLengthMap[this.infoData.carLength]
+    if (this.infoData.regularLine) {
+      this.line1 = JSON.parse(this.infoData.regularLine)[0].sn + '—' + JSON.parse(this.infoData.regularLine)[0].en
+      this.line2 = JSON.parse(this.infoData.regularLine)[1].sn + '—' + JSON.parse(this.infoData.regularLine)[1].en
+    }
   },
   methods: {
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
+    }
   }
 }
 </script>

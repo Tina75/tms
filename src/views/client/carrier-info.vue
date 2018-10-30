@@ -407,7 +407,8 @@ export default {
                     path: TMSUrl.CARRIER_MANAGEMENT_REPAIRDETAILS,
                     query: {
                       id: '维修详情',
-                      rowData: params.row
+                      rowData: params.row,
+                      carrierId: this.carrierId
                     }
                   })
                 }
