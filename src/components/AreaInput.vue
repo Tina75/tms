@@ -7,6 +7,7 @@
       :local-options="areaList"
       :remote="remote"
       :clearable="true"
+      :placeholder="placeholder"
       @input="inputHandle"
       @on-select="selectChange"
     >
@@ -31,6 +32,7 @@ export default {
       type: Array,
       default: () => []
     },
+    placeholder: String,
     remote: {
       type: Boolean,
       default: false
@@ -62,10 +64,11 @@ export default {
               const item = results.getPoi(i)
               const pro = item.province ? item.province : ''
               const city = item.city ? item.city : ''
+              const addr = item.address.replace(pro, '').replace(city, '')
               arr.push({
                 id: i,
-                name: pro + city + item.title + item.address,
-                value: pro + city + item.title + item.address,
+                name: pro + city + addr + item.title,
+                value: pro + city + addr + item.title,
                 lat: item.point.lat,
                 lng: item.point.lng
               })
