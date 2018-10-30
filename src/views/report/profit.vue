@@ -36,7 +36,7 @@
         <Col span="6">费用明细</Col>
         <Col span="6">本期发生额</Col>
       </Row>
-      <Row type="flex" justify="start" class="middle-height" style="border-top: 0">
+      <Row type="flex" justify="start" class="big-height" style="border-top: 0">
         <Col span="6" style="border-right: 1px solid #C9CED9">收入</Col>
         <Col span="6">上游运费收入</Col>
         <Col span="12" >
@@ -333,7 +333,7 @@ export default {
       background:rgba(248,248,248,1)
       font-weight bold
     .middle-height
-      height 269px
+      height 224px
       line-height 269px
       border 1px solid #C9CED9
     .small-height

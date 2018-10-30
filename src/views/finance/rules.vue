@@ -6,30 +6,10 @@
       </Tabs>
     </div>
     <div class="data-container">
-      <!--<div class="operate-block">-->
-      <!--<Button v-if="hasPower(170401)" type="primary" @click="addRule">新增规则</Button>-->
-      <!--<div class="query-box">-->
-      <!--<Form ref="rulesQuery" :model="rulesQuery" :rules="validate" inline>-->
-      <!--<FormItem>-->
-      <!--<Select v-model="rulesQuery.type">-->
-      <!--<Option v-if="active === '1'" value="1">发货方名称</Option>-->
-      <!--<Option v-if="active === '2'" value="2">承运商名称</Option>-->
-      <!--<Option v-if="active === '3'" value="3">外转方名称</Option>-->
-      <!--<Option value="4">规则名称</Option>-->
-      <!--</Select>-->
-      <!--</FormItem>-->
-      <!--<FormItem prop="queryText">-->
-      <!--<Input v-model="rulesQuery.queryText" :placeholder="`请输入${sceneMap[rulesQuery.type]}名称`" :maxlength="20" style="width: auto">-->
-      <!--<Icon slot="suffix" type="ios-search" class="suffix-btn" @click="getRules"/>-->
-      <!--</Input>-->
-      <!--</FormItem>-->
-      <!--</Form>-->
-      <!--</div>-->
-      <!--</div>-->
       <div class="list-box">
         <Row type="flex">
           <Col span="5">
-          <div class="left" style="height: 800px">
+          <div :style="{height: height + 'px'}" class="left">
             <div class="left_search">
               <Row type="flex" >
                 <Col span="17">
@@ -48,9 +28,8 @@
                 </Col>
               </Row>
             </div>
-            <!--<Table :columns="companyColumn" :data="companyData" :show-header="false" class="company-table"  highlight-row @on-row-click="showRuleDetail"></Table>-->
-            <ul class="ruleList">
-              <li v-for="(item,index) in companyData" :key="index" class="list" @click="showRuleDetail(item)">
+            <ul :style="{height: height -77  + 'px'}" class="ruleList" >
+              <li v-for="(item,index) in companyData" :class="{companyDataActive:companyDataActive === index}" :key="index" class="list" @click="showRuleDetail(item, index)">
                 <div class="icon">
                   <FontIcon slot="icon" type="ico-price" ></FontIcon>
                 </div>
@@ -59,7 +38,7 @@
                   <div class="tips">{{item.partnerName}}</div>
                 </div>
                 <div class="operate">
-                  <span style="margin-right: 12px;cursor: pointer" @click.stop="editRule(item)">修改</span>
+                  <span style="margin-right: 12px;" @click.stop="editRule(item)">修改</span>
                   <span @click="removeRule(item.ruleId)">删除</span>
                 </div>
               </li>
@@ -80,25 +59,17 @@
                     <Option v-for="(value, key) in ruleTypeMap" v-if="((active === '1' || active ==='3') && (key ==='3' || key === '4')) || key ==='1' || key ==='2'" :key="key" :value="key">{{value}}</Option>
                   </Select>
                 </FormItem>
-                <!--<span>计算&#12288;&#12288;单位：元/{{unitMap[ruleDetail.ruleType]}}</span>-->
-                <!--<span>&#12288;&#12288;&#12288;&#12288;&#12288;规则名：</span>-->
-                <!--<FormItem prop="ruleName">-->
-                <!--<Input v-model="ruleDetail.ruleName" :placeholder="`请输入规则名称`" style="width: auto" />-->
-                <!--</FormItem>-->
+                <span>计算</span>
               </Form>
             </div>
-            <div class="rules-list">
+            <div :style="{height:(height - 200)+'px'}" class="rules-list">
               <div v-for="(item, index) in ruleDetail.details" :key="index" class="rule-item">
-                <!--<div class="item-remove">-->
-                <!--<Icon type="md-remove-circle" @click="removeItem(index)"/>-->
-                <!--</div>-->
                 <Collapse v-model="item.showRule" class="rule-content">
                   <div class="rule-route">
                     <Form ref="ruleRoute" :model="item" :rules="routeValidate" inline>
                       <Row :gutter="24">
                         <Col span="4">
                         <FormItem prop="departure" style="width: 100%">
-                          <!--<AreaSelect v-model="item.departure" :deep="true" placeholder="请输入始发地" class="search-input-senior" />-->
                           <SelectInputForCity v-model="item.departure" placeholder="请输入始发地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
@@ -107,13 +78,12 @@
                         </Col>
                         <Col span="4">
                         <FormItem prop="destination" style="width: 100%">
-                          <!--<AreaSelect v-model="item.destination" :deep="true" placeholder="请输入目的地" class="search-input-senior" />-->
                           <SelectInputForCity v-model="item.destination" placeholder="请输入目的地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
-                        <Col span="11" offset="1">
+                        <Col span="13" >
                         <div class="startPrice">
-                          <span style="margin:0 10px">起步价：货物  ≤</span>
+                          <span style="margin:0 10px">起步价：货物  ＜</span>
                           <FormItem prop="startNum" inline style="margin-bottom: 0;">
                             <Input v-model="item.startNum" style="width: 80px"/>
                           </FormItem>
@@ -124,7 +94,7 @@
                           <span>元起</span>
                         </div>
                         </Col>
-                        <Col span="1">
+                        <Col span="2">
                         <span class="delete_btn" @click="removeItem(index)">删除</span>
                         </Col>
                       </Row>
@@ -279,8 +249,11 @@ export default {
         callback()
       }
     }
+    const startNumValidate = (rule, value, callback) => {
+      console.log(value)
+    }
     return {
-      clientheight: 0,
+      height: 0,
       active: '1',
       unitMap: {
         1: '吨',
@@ -304,6 +277,7 @@ export default {
         paramName: ''
       },
       companyData: [],
+      companyDataActive: 0,
       ruleDetail: {},
       validate: {
         paramName: { type: 'string', max: 20, message: '不能超过20个字', trigger: 'blur' }
@@ -314,7 +288,12 @@ export default {
       },
       routeValidate: {
         departure: { validator: startValidate, trigger: 'change' },
-        destination: { validator: endValidate, trigger: 'change' }
+        destination: { validator: endValidate, trigger: 'change' },
+        startNum: { validator: startNumValidate, trigger: 'change' },
+        startPrice: [
+          { required: true, message: '请填写金额', trigger: 'blur' },
+          { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/, message: '9位正数且最多两位小数', trigger: 'blur' }
+        ]
       },
       baseValidate: {
         base: [
@@ -345,7 +324,8 @@ export default {
   },
   mounted () {
     this.getRules()
-    // this.clientheight =
+    this.height = document.body.clientHeight - 50 - 15 * 2 - 20 * 2 + 15 - 65
+    console.log(this.height)
   },
   methods: {
     toDetail (data) {
@@ -523,7 +503,8 @@ export default {
         }
       }).catch(err => console.error(err))
     },
-    showRuleDetail (data) {
+    showRuleDetail (data, index) {
+      this.companyDataActive = index
       this.ruleDetail = {
         ruleId: data.ruleId,
         ruleType: data.detail.ruleType ? (data.detail.ruleType + '') : '1',
@@ -550,6 +531,7 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .finance-rules
+  margin-bottom -20px
   .tab-box
     margin -15px
     padding 7px 15px
@@ -601,7 +583,6 @@ export default {
           line-height: 35px
           margin-right: 10px
       .rules-list
-        height: 360px
         overflow: auto
         padding: 20px 0
         border-bottom: 1px solid #C9CED9
@@ -613,14 +594,16 @@ export default {
             .rule-route
               display: block
               position: absolute
-              width: 100%
+              width: calc(100% - 80px)
               top: 10px
               left: 20px
               z-index: 101
               .startPrice
                 line-height 32px
               .delete_btn
-                line-height 40px
+                float: right
+                text-align right
+                line-height 36px
                 font-size 14px
                 color #00A4BD
                 cursor pointer
@@ -693,7 +676,6 @@ export default {
                 &.remove
                   color: #EC4E4E
         .item-add-btn
-          margin-left: 25px
           cursor: pointer
           text-align: center
           height: 35px
@@ -733,12 +715,15 @@ export default {
         flex 0 0 72px
         border-bottom 1px solid #C9CED9
       .ruleList
+        overflow auto
         flex 1
         .list
           list-style none
           height 60px
           line-height 60px
           display flex
+          &.companyDataActive
+            background #E9FCFF
         .icon
           flex 0 0 60px
           text-align center
@@ -759,6 +744,7 @@ export default {
             color #999
         .operate
           flex 0 0 80px
+          cursor pointer
           border-bottom 1px solid #DCDEE2
           color #00A4BD
 </style>
