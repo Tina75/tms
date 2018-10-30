@@ -15,6 +15,7 @@
 </template>
 <script>
 import BMap from 'BMap'
+import cityUtil from '@/libs/js/city'
 import SelectInput from '@/components/SelectInput.vue'
 export default {
   components: {
@@ -23,6 +24,9 @@ export default {
   props: {
     value: String,
     maxlength: Number,
+    // 城市编码
+    cityCode: String | Number,
+    // 下拉数组
     localOptions: {
       type: Array,
       default: () => []
@@ -40,7 +44,11 @@ export default {
   },
   computed: {
     areaList () {
-      return this.address
+      return this.localOptions.concat(this.address) // .slice(0,20)
+    },
+    areaName () {
+      const code = this.cityCode
+      return code ? cityUtil.getNameByCode(code) : this.map
     }
   },
   methods: {
@@ -52,10 +60,12 @@ export default {
             let arr = []
             for (let i = 0; i < results.getCurrentNumPois(); i++) {
               const item = results.getPoi(i)
+              const pro = item.province ? item.province : ''
+              const city = item.city ? item.city : ''
               arr.push({
                 id: i,
-                name: item.title + ', ' + item.address,
-                value: item.title + ', ' + item.address,
+                name: pro + city + item.title + item.address,
+                value: pro + city + item.title + item.address,
                 lat: item.point.lat,
                 lng: item.point.lng
               })
@@ -64,7 +74,7 @@ export default {
           }
         }
       }
-      const local = new BMap.LocalSearch(this.map, options)
+      const local = new BMap.LocalSearch(this.areaName, options)
       local.search(val)
     },
     inputHandle (value) {
@@ -79,7 +89,10 @@ export default {
       this.$emit('input', value)
     },
     selectChange (value, item) {
-      this.$emit('latlongt-change', item.lat, item.lng)
+      const lat = item.slat
+      const lng = item.lng
+      // 经纬度改变
+      this.$emit('latlongt-change', { lat, lng })
     }
   }
 }
