@@ -99,13 +99,13 @@
         <Row class="row">
           <Col span="5">
           <div v-if="infoData.travelPhoto">
-            <img :src="infoData.travelPhoto"/>
+            <img :src="infoData.travelPhoto" class="imageDiv"/>
             <p class="uploadLabel">行驶证</p>
           </div>
           </Col>
           <Col span="6">
           <div v-if="infoData.drivePhoto">
-            <img :src="infoData.drivePhoto"/>
+            <img :src="infoData.drivePhoto" class="imageDiv"/>
             <p class="uploadLabel">驾驶证</p>
           </div>
           </Col>
