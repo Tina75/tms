@@ -231,9 +231,9 @@ export default {
         }
         return opt.value === name
       })
-      this.currentValue = item.nameSeleced.split('  ')[0]
+      this.currentValue = item.name.split(',  ')[0]
       this.nameSeleced = item.nameSeleced.split('  ')[1]
-      this.currentValueCopy = item.nameSeleced.split('  ')[0]
+      this.currentValueCopy = item.name.split(',  ')[0]
       this.code = item.code
       this.focusIndex = -1
       this.visible = false
