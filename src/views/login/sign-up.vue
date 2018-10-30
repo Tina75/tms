@@ -54,7 +54,7 @@
               <Cascader :data="cities" v-model="form.cityId" placeholder="选择省/市/区"></Cascader>
             </FormItem>
             <FormItem prop="address">
-              <Input v-model="form.address" :maxlength="40" placeholder="输入公司详细地址" />
+              <AreaInput v-model="form.address" :maxlength="40" placeholder="输入公司详细地址" />
             </FormItem>
           </template>
 
@@ -96,15 +96,18 @@ import City from '@/libs/js/city'
 import mixin from './mixin'
 import { VALIDATOR_PHONE, VALIDATOR_PASSWORD, VALIDATOR_CONFIRM_PASSWORD } from './validator'
 
+import AreaInput from '@/components/AreaInput'
+
 export default {
   name: 'SignUp',
+  components: { AreaInput },
   mixins: [ BasePage, mixin ],
   metaInfo: {
     title: '注册账号'
   },
   data () {
     return {
-      step: 0,
+      step: 1,
       stepList: ['验证手机号', '填写账号信息', '注册成功'],
       protocol: true,
       showP: 0,

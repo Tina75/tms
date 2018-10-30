@@ -3,7 +3,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-10-09 15:36:10
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-10-22 18:55:29
+ * @Last Modified time: 2018-10-29 10:03:00
  */
 
 const TMSUrl = {
@@ -37,6 +37,7 @@ const TMSUrl = {
   SETTING: '/set-up/index', // 设置
   MESSAGE_CENTER: '/information/index', // 消息中心
   MESSAGE_DETAIL: '/information/message-info', // 消息详情
+  PROCESS: '/helper/process', // 业务流程
   HELP: '/helper/index' // 帮助中心
 }
 export default TMSUrl

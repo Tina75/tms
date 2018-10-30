@@ -5,6 +5,9 @@
         <tab-nav :list="TabNavList" :value="$route" @on-close="onTabClose" @on-select="onTabSelect"/>
       </div>
       <div class="header-bar-avator-dropdown">
+        <span class="header-bar-avator-dropdown-notify" @click="openProcess">
+          <FontIcon type="liucheng" size="30" color="#fff"></FontIcon>
+        </span>
         <span class="header-bar-avator-dropdown-notify">
           <Badge :count="MsgCount.all" type="primary">
             <Icon type="ios-notifications" size="30" color="#fff" @click="openMsg(0)"></Icon>
@@ -44,7 +47,7 @@
           <span class="user-info">{{UserInfo.name}}</span>
           <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
           <div slot="content">
-            <p class="dropdown-line"><label for="">账户名：</label>{{UserInfo.name}} &nbsp; &nbsp; &nbsp; &nbsp;<Tag color="cyan" style="font-size:12px">{{UserInfo.roleName}}</Tag></p>
+            <p class="dropdown-line"><label for="">账户名：</label><span class="content-name">{{UserInfo.name}}</span><Tag color="cyan" style="font-size:12px">{{UserInfo.roleName}}</Tag></p>
             <p class="dropdown-line"><label for="">手机号：</label>{{UserInfo.phone}}</p>
             <p class="dropdown-line"><label for="">公司：</label>{{UserInfo.companyName}}</p>
             <p class="dropdown-line"><label for="">有效期至：</label>{{UserInfo.expirationTime | datetime('yyyy-MM-dd')}}</p>
@@ -60,11 +63,12 @@
 <script>
 import BaseComponent from '@/basic/BaseComponent'
 import TabNav from '@/components/TabNav'
-
+import FontIcon from '@/components/FontIcon'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
+import TMSUrl from '../libs/constant/url.js'
 export default {
   name: 'headerBar',
-  components: { TabNav },
+  components: { TabNav, FontIcon },
   mixins: [BaseComponent],
   computed: {
     ...mapGetters(['MsgCount', 'UserInfo', 'TabNavList'])
@@ -101,6 +105,17 @@ export default {
     openMsg (type = 0) {
       const route = { path: '/information/index', query: { type: type, title: '消息' } }
       window.EMA.fire('openTab', route)
+    },
+    /**
+     * 打开业务流程
+     */
+    openProcess () {
+      window.EMA.fire('openTab', {
+        path: TMSUrl.PROCESS,
+        query: {
+          title: '业务流程'
+        }
+      })
     },
     logout () {
       window.EMA.fire('logout')
@@ -201,7 +216,7 @@ export default {
     width auto
     top 4px
     left 0
-    right 185px
+    right 250px
     position absolute
     padding 0
     height 46px
@@ -217,7 +232,12 @@ export default {
   text-align left
   background #252A2F
   color #fff
-  // border-bottom 1px solid #efefef
+  .content-name
+    width 80px
+    overflow hidden
+    display inline-block
+    text-overflow ellipsis
+    margin-bottom -6px
   .avatar
     background-image url(../assets/default-avatar.jpg)
     background-size 30px
@@ -265,6 +285,8 @@ export default {
     &-notify
       margin-top 3px
       margin-right 20px
+      .font_family
+        vertical-align middle
       .msg
         display: -webkit-flex;
         display flex

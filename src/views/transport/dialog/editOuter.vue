@@ -68,8 +68,9 @@ export default {
         transfereeName: '',
         outTransNo: '',
         payType: '',
-        transFee: ''
+        transFee: void 0
       },
+      points: {}, // 始发地目的地经纬度 { startPoint, endPoint }
       rules: {
         transfereeName: { required: true, message: '请填写外转方' },
         payType: { required: true, message: '请选择付款方式' },
@@ -84,7 +85,7 @@ export default {
 
   methods: {
     handleSelectTransferee ({ row }) {
-      if (row.payType) this.info.payType = row.payType.toString()
+      if (row.payType) this.info.payType = row.payType
     },
 
     // 保留2位小数
@@ -123,7 +124,8 @@ export default {
         data: {
           partnerType: 3,
           partnerName: this.info.transfereeName,
-          ...self.financeRulesInfo
+          ...self.financeRulesInfo,
+          ...self.points
         },
         methods: {
           ok (charge) {
@@ -146,8 +148,17 @@ export default {
         for (let key in this.info) {
           this.info[key] = data.customerInfo[key]
         }
+        if (data.customerInfo.consignerAddressLongitude && // 发货方纬度
+            data.customerInfo.consignerAddressLatitude && // 发货方经度
+            data.customerInfo.consigneeAddressLongitude && // 收货方纬度
+            data.customerInfo.consigneeAddressLatitude) { // 收货方经度
+          this.points = {
+            startPoint: { lng: data.customerInfo.consignerAddressLongitude, lat: data.customerInfo.consignerAddressLatitude },
+            endPoint: { lng: data.customerInfo.consigneeAddressLongitude, lat: data.customerInfo.consigneeAddressLatitude }
+          }
+        }
         this.info.transFee = this.info.transFee / 100
-        this.info.payType = this.info.payType.toString()
+        this.info.payType = this.info.payType
       }).catch(err => console.error(err))
     }
   }

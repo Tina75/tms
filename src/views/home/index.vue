@@ -1,5 +1,5 @@
 <template>
-  <div ref="el" class="page-home">
+  <div ref="el" :style="styleHeight" class="page-home">
     <div class="page-home__header">
       <Row class="page-home__header-row">
         <Col span="18">
@@ -36,7 +36,7 @@
         <FontIcon slot="close" type="ico-fault" style="color: #9DA1B0"></FontIcon>
       </Alert>
     </div>
-    <Row :gutter="16" type="flex" justify="start" style="margin-top: -8px">
+    <Row :gutter="16" type="flex" justify="start">
       <!-- 提货代办 -->
       <PickupTodo v-if="cardChecksTemp.includes('pickup-todo')"/>
       <!-- 送货代办 -->
@@ -103,6 +103,7 @@ import ExteriorTodo from './plugins/exterior-todo.vue'
 import NewCustumerStatis from './plugins/new-customer-statis.vue'
 import CarPosition from './plugins/car-postion.vue'
 
+const processNoticeKey = 'tms_process_notice'
 export default {
   name: 'index',
   metaInfo: { title: '首页' },
@@ -147,14 +148,14 @@ export default {
         'carrier-todo': '承运商核销待办',
         'transferfee-todo': '外转方核销待办',
         'message-center': '消息中心',
-        'order-create': '今日订单数',
-        'new-customer': '新增客户数',
+        'order-create': '今日开单数',
+        'new-customer': '今日新增客户数',
         'transport-location': '在途车辆位置',
-        'turnover-statistics': '营业额通知',
-        'dispatch-statistics': '调度订单数',
-        'order-statistics': '开单数',
-        'pay-receive': '应收款/应付款项',
-        'cargo-statistics': '货物重量/体积'
+        'turnover-statistics': '近七日订单和营业额统计',
+        'dispatch-statistics': '近七日调度订单数',
+        'order-statistics': '近七日开单数',
+        'pay-receive': '今日应收款项 / 应付款项',
+        'cargo-statistics': '今日开单货物重量 / 体积'
       },
       cardsList: [],
       intersectionObserver: null
@@ -180,6 +181,9 @@ export default {
       } else if (now >= 22 || now < 5) {
         return `<strong class="van-font-14 i-pr-20">夜深了，${name}</strong> &nbsp;&nbsp;再怎么忙碌，也要注意休息哦。`
       }
+    },
+    styleHeight () {
+      return { height: this.$parent.$parent.$el.children[0].style.minHeight }
     }
   },
   created () {
@@ -198,6 +202,11 @@ export default {
   mounted () {
     this.initCardList()
     this.initNotice()
+    // 第一次登录提示流程图
+    if (!window.localStorage.getItem(processNoticeKey)) {
+      this.showProcess()
+      window.localStorage.setItem(processNoticeKey, true)
+    }
   },
   beforeDestroy () {
     if (this.intersectionObserver) {
@@ -207,6 +216,14 @@ export default {
     eventHub.$off('plugin:add', this.addChild)
   },
   methods: {
+    showProcess () {
+      this.openDialog({
+        name: 'dialogs/process',
+        data: {
+          title: '业务'
+        }
+      })
+    },
     week (day) {
       switch (day) {
         case 1:
@@ -334,12 +351,7 @@ export default {
 .page-home
   -webkit-transition all .2s ease-in-out
   transition all .2s ease-in-out
-  position absolute
-  left 218px
-  top 65px
-  right 20px
-  bottom 15px
-  // margin -20px -15px
+  margin -20px -15px
   overflow-y auto
   overflow-x hidden
   background-color #efefef;
@@ -371,6 +383,7 @@ export default {
     border-color #EFEFEF
     border-radius 5px
     margin-top 10px
+    margin-bottom 0
   &__header-date
     vertical-align super
     margin-right 30px
@@ -386,7 +399,7 @@ export default {
     :before
       position absolute
       left 3px
-      top 0
+      // top 0px
       content ''
       display block
       width 1px

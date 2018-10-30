@@ -11,8 +11,8 @@ export default {
         customerOrderNo: null,
         createTimeStart: null,
         createTimeEnd: null,
-        start: '', // 始发地
-        end: '' // 目的地
+        start: void 0, // 始发地
+        end: void 0 // 目的地
       },
       /*
       cityCodes: {
@@ -106,8 +106,8 @@ export default {
         orderNo: null,
         waybillNo: null,
         customerOrderNo: null,
-        start: '', // 始发地
-        end: '' // 目的地
+        start: 0, // 始发地
+        end: 0 // 目的地
       }
       // 订单列表状态字段status，回单列表状态字段receiptStatus, 时间搜索（不一致，根据路由判断）
       if (this.$route.path === '/order-management/receipt') {
@@ -220,10 +220,10 @@ export default {
       let name
       switch (code) {
         case 1:
-          name = '上门提货'
+          name = '小车上门自提'
           break
         case 2:
-          name = '直接送货'
+          name = '大车直送客户'
           break
       }
       return name

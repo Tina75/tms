@@ -50,7 +50,9 @@
    */
 import server from '@/libs/js/server'
 import cityUtil from '@/libs/js/city'
+import Emitter from 'iview/src/mixins/emitter'
 export default {
+  mixins: [Emitter],
   props: {
     autoFocus: {
       type: Boolean,
@@ -163,12 +165,12 @@ export default {
     }
   },
   mounted () {
-    const vm = this
-    if (this.onlyChinese) {
-      const originInput = this.$refs.input.$refs.input
-      originInput.addEventListener('compositionstart', vm.onCompositionStart)
-      originInput.addEventListener('compositionend', vm.onCompositionEnd)
-    }
+    // const vm = this
+    // if (this.onlyChinese) {
+    //   const originInput = this.$refs.input.$refs.input
+    //   originInput.addEventListener('compositionstart', vm.onCompositionStart)
+    //   originInput.addEventListener('compositionend', vm.onCompositionEnd)
+    // }
     if (this.value) {
       this.setCurrentValue(this.value)
     }
@@ -238,6 +240,7 @@ export default {
       // 选中某一项
       this.$emit('on-select', item.code, item)
       this.$emit('input', item.code)
+      this.dispatch.call(this.$parent, 'FormItem', 'on-form-change', item.code)
     },
     handleFocus () {
       // this.visible = true
@@ -403,6 +406,8 @@ export default {
   .isDataNull
     color #FF9502
   .select-input
+    &__input
+      display inline-block
     &__dropdown
       width 100%
       .ivu-input-wrapper

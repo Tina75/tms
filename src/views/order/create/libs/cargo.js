@@ -1,3 +1,4 @@
+import validator from '@/libs/js/validate'
 let uniqueIndex = 0
 export default class Cargo {
   /**
@@ -51,6 +52,13 @@ export default class Cargo {
     if (field === 'cargoName') {
       if (!this.cargoName) {
         this.errorMsg[field] = '请输入货物名称'
+      } else {
+        delete this.errorMsg[field]
+      }
+    }
+    if (field === 'cargoCost' && this.cargoCost) {
+      if (!validator.fee(this.cargoCost)) {
+        this.errorMsg[field] = '费用整数位最多输入9位'
       } else {
         delete this.errorMsg[field]
       }

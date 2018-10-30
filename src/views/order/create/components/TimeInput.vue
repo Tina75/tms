@@ -4,13 +4,13 @@
       <div class="order-create__timeSelectTitle" v-text="timeDate ? timeDate : '请先选择日期'"></div>
       <Row>
         <Col v-for="(opt, index) in timeList" :key="index" span="6">
-        <div :class="{'order-create__timeCellDisable': isDisabled(opt), 'order-create__timeActive': inputValue === opt}" class="order-create__timeCell" @click="clickHandle(opt)">
+        <div :class="{'order-create__timeCellDisable': isDisabled(opt), 'order-create__timeActive': value === opt}" class="order-create__timeCell" @click="clickHandle(opt)">
           {{opt}}
         </div>
         </Col>
       </Row>
     </div>
-    <Input v-model="inputValue" placeholder="请选择时间" readonly clearable/>
+    <Input ref="input" v-model="inputValue" placeholder="请选择时间" readonly clearable/>
   </Poptip>
 </template>
 <script>
@@ -84,6 +84,9 @@ export default {
   //   this.$off('END_DATE', this.changeShow)
   // },
   methods: {
+    focus () {
+      this.$refs.input.$refs.input.focus()
+    },
     clickHandle (e) {
       if (this.isDisabled(e)) {
         return false

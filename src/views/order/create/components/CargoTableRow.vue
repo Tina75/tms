@@ -119,7 +119,7 @@ export default {
       this.onSelect({ index: this.index }, cargo)
     },
     handleBlur (col) {
-      if (col.required) {
+      if (col.required || col.key === 'cargoCost') {
         this.record.validateField(col.key)
       }
     },

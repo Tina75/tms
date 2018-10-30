@@ -1,9 +1,6 @@
 <!--  -->
 <template>
   <div class="writing-off">
-    <div class="btns-box">
-      <Button v-if="(hasPower(170102) && scene === 1) || (hasPower(170202) && scene === 2) || (hasPower(170302) && scene === 3)" type="primary" @click="createBill">生成对账单</Button>
-    </div>
     <div class="query-box">
       <Form :model="writingOffQuery" label-position="left" inline>
         <Row>
@@ -32,6 +29,9 @@
           </Col>
         </Row>
       </Form>
+    </div>
+    <div class="btns-box">
+      <Button v-if="(hasPower(170102) && scene === 1) || (hasPower(170202) && scene === 2) || (hasPower(170302) && scene === 3)" type="primary" @click="createBill">生成对账单</Button>
     </div>
     <div class="list-box">
       <Row :gutter="20">

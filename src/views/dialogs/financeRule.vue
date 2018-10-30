@@ -31,6 +31,7 @@
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import float from '@/libs/js/float'
+import BMap from 'BMap'
 
 let errorMsg = ''
 
@@ -51,6 +52,7 @@ export default {
       ruleOptions: [],
       ruleEmpty: false,
       charge: 0,
+      distance: 0,
       zIndex: new Date().getTime(),
       rules: {
         ruleIndex: [{ validator: chargeValidate }]
@@ -58,10 +60,11 @@ export default {
     }
   },
   created () {
-    console.log(this.$data)
     this.fetchRules()
+    this.distanceCalculate()
   },
   methods: {
+    // 查询计费规则
     fetchRules () {
       this.loading = true
       Server({
@@ -77,11 +80,38 @@ export default {
       })
     },
 
+    // 计算距离
+    distanceCalculate () {
+      return new Promise((resolve, reject) => {
+        if (this.startPoint && this.endPoint && !this.distance) {
+          const startPoint = new BMap.Point(this.startPoint.lng, this.startPoint.lat)
+          const endPoint = new BMap.Point(this.endPoint.lng, this.endPoint.lat)
+          const route = new BMap.DrivingRoute(startPoint, {
+            policy: window.BMAP_DRIVING_POLICY_LEAST_DISTANCE, // 距离最短路线
+            onSearchComplete: res => {
+              const plan = res.getPlan(0)
+              if (plan) { // 如果线路存在则获取距离
+                this.distance = plan.getDistance(false)
+              } else { // 如果不存在则清空始发和终点，不再计算
+                console.error('查询路线失败，请检查经纬度是否正确')
+                this.startPoint = void 0
+                this.endPoint = void 0
+              }
+              resolve()
+            }
+          })
+          route.search(startPoint, endPoint)
+        }
+        resolve()
+      })
+    },
+
     ruleChanged (index) {
       errorMsg = ''
       const rule = this.ruleOptions[index]
-      this.$refs.$form.validate(valid => {
+      this.$refs.$form.validate(async valid => {
         if (!valid) return
+        await this.distanceCalculate()
         Server({
           url: '/finance/charge/calc',
           method: 'get',
@@ -89,6 +119,7 @@ export default {
             ruleId: rule.id,
             departure: this.start,
             destination: this.end,
+            distance: this.distance,
             input: float.round((rule.ruleType === 1 ? this.weight : this.volume) * 100)
           }
         }).then(res => {

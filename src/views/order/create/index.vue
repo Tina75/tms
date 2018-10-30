@@ -3,7 +3,7 @@
     <Spin v-if="loading" fix></Spin>
     <Row :gutter="16">
       <Col span="10">
-      <FormItem label="客户:" prop="consignerName" required>
+      <FormItem label="客户:" prop="consignerName">
         <SelectInput
           v-model="orderForm.consignerName"
           :auto-focus="autoFocus"
@@ -16,12 +16,12 @@
       </FormItem>
       </Col>
       <Col span="7">
-      <FormItem label="始发城市:" prop="start">
+      <FormItem label="始发城市:" prop="start" class="cityFormItem">
         <CitySelect ref="start" v-model="orderForm.start" clearable></CitySelect>
       </FormItem>
       </Col>
       <Col span="7">
-      <FormItem label="目的城市:" prop="end">
+      <FormItem label="目的城市:" prop="end" class="cityFormItem">
         <CitySelect ref="end" v-model="orderForm.end" clearable></CitySelect>
       </FormItem>
       </Col>
@@ -37,7 +37,7 @@
         <Row>
           <Col span="13">
           <FormItem prop="deliveryTime">
-            <DatePicker v-model="orderForm.deliveryTime" :options="startDateOptions" format="yyyy-MM-dd" type="date" @on-change="(date) => { dateChange('START_DATE', date)}"></DatePicker>
+            <DatePicker v-model="orderForm.deliveryTime" :options="startDateOptions" format="yyyy-MM-dd" type="date" placeholder="请选择日期" @on-change="(date) => { dateChange('START_DATE', date)}"></DatePicker>
           </FormItem>
           </Col>
           <Col span="11" style="padding-left: 5px">
@@ -53,7 +53,7 @@
         <Row>
           <Col span="13">
           <FormItem prop="arriveTime">
-            <DatePicker v-model="orderForm.arriveTime" :options="endDateOptions" format="yyyy-MM-dd" type="date" @on-change="(date) => { dateChange('END_DATE', date)}"></DatePicker>
+            <DatePicker v-model="orderForm.arriveTime" :options="endDateOptions" format="yyyy-MM-dd" type="date" placeholder="请选择日期"  @on-change="(date) => { dateChange('END_DATE', date)}"></DatePicker>
           </FormItem>
           </Col>
           <Col span="11" style="padding-left: 5px">
@@ -95,12 +95,14 @@
     <Row :gutter="16">
       <Col span="12">
       <FormItem label="发货地址:" prop="consignerAddress">
-        <SelectInput v-model="orderForm.consignerAddress" :maxlength="60" :local-options="consignerAddresses" :remote="false"></SelectInput>
+        <AreaInput v-model="orderForm.consignerAddress" :city-code="orderForm.start" :maxlength="60" :local-options="consignerAddresses" @latlongt-change="({lat, lng}) => latlongtChange(1, lat, lng)"/>
+        <!-- <SelectInput v-model="orderForm.consignerAddress" :maxlength="60" :local-options="consignerAddresses" :remote="false"></SelectInput> -->
       </FormItem>
       </Col>
       <Col span="12">
       <FormItem label="收货地址:" prop="consigneeAddress">
-        <SelectInput v-model="orderForm.consigneeAddress" :maxlength="60" :local-options="consigneeAddresses" :remote="false"></SelectInput>
+        <AreaInput v-model="orderForm.consigneeAddress" :city-code="orderForm.end" :maxlength="60" :local-options="consigneeAddresses" @latlongt-change="({lat, lng}) => latlongtChange(2, lat, lng)"/>
+        <!-- <SelectInput v-model="orderForm.consigneeAddress" :maxlength="60" :local-options="consigneeAddresses" :remote="false"></SelectInput> -->
       </FormItem>
       </Col>
     </Row>
@@ -133,7 +135,7 @@
       <FormItem label="运输费用:" prop="freightFee">
         <Row>
           <Col span="20">
-          <TagNumberInput :min="0" :max="999999999.99" v-model="orderForm.freightFee" :parser="handleParseFloat">
+          <TagNumberInput :min="0" v-model="orderForm.freightFee" :parser="handleParseFloat">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           </Col>
@@ -147,14 +149,14 @@
       </Col>
       <Col span="6">
       <FormItem label="提货费用:" prop="pickupFee">
-        <TagNumberInput :min="0" :max="999999999.99" v-model="orderForm.pickupFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" v-model="orderForm.pickupFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="装货费用:" prop="loadFee">
-        <TagNumberInput :min="0" :max="999999999.99" v-model="orderForm.loadFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" v-model="orderForm.loadFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
@@ -163,21 +165,21 @@
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="卸货费用:" prop="unloadFee">
-        <TagNumberInput :min="0" :max="999999999.99" v-model="orderForm.unloadFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" v-model="orderForm.unloadFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="保险费用:" prop="insuranceFee">
-        <TagNumberInput :min="0" :max="999999999.99" v-model="orderForm.insuranceFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" v-model="orderForm.insuranceFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="其他费用:" prop="otherFee">
-        <TagNumberInput :min="0" :max="999999999.99" v-model="orderForm.otherFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" v-model="orderForm.otherFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
@@ -225,6 +227,7 @@
 <script>
 import Title from './components/Title.vue'
 import SelectInput from '@/components/SelectInput.vue'
+import AreaInput from '@/components/AreaInput.vue'
 import TagNumberInput from '@/components/TagNumberInput'
 import { mapGetters, mapActions } from 'vuex'
 import float from '@/libs/js/float'
@@ -253,6 +256,7 @@ export default {
     OrderPrint,
     // AreaSelect,
     SelectInput,
+    AreaInput,
     FontIcon,
     CargoTable,
     TimeInput,
@@ -350,10 +354,19 @@ export default {
         consignerPhone: '',
         // 发货地址
         consignerAddress: '',
+        // 经度
+        consignerAddressLongitude: '',
+        // 纬度
+        consignerAddressLatitude: '',
+        consignerAddressMapType: 1,
         // 收货人
         consigneeContact: '',
         consigneePhone: '',
         consigneeAddress: '',
+        // 经纬度
+        consigneeAddressLongitude: '',
+        consigneeAddressLatitude: '',
+        consigneeAddressMapType: 1,
         // 货品信息
         orderCargoList: [],
         // 付款方式
@@ -380,7 +393,6 @@ export default {
       orderPrint: [],
       rules: {
         consignerName: [
-          // { validator: validateConsignerName, trigger: 'blur' }
           { required: true, message: '请输入客户名称' }
         ],
         start: [
@@ -643,12 +655,16 @@ export default {
         _this.orderForm.consignerPhone = consigner.phone
         if (addresses.length > 0) {
           _this.orderForm.consignerAddress = addresses[0].address
+          _this.orderForm.consignerAddressLongitude = addresses[0].longitude
+          _this.orderForm.consignerAddressLatitude = addresses[0].latitude
         }
         if (consignees.length > 0) {
           // 设置收货人信息，收货人，手机，收货地址
           _this.orderForm.consigneeContact = consignees[0].contact
           _this.orderForm.consigneePhone = consignees[0].phone
           _this.orderForm.consigneeAddress = consignees[0].address
+          _this.orderForm.consigneeAddressLongitude = consignees[0].longitude
+          _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
         }
         let settlementType = consigner.settlementType || consigner.payType
         if (settlementType) {
@@ -830,6 +846,7 @@ export default {
       if (date && refs) {
         // this.$root.$emit(type, 'show')
         this.$refs[refs].changeShow(type)
+        this.$refs[refs].focus()
       }
     },
     formateDate (date) {
@@ -844,6 +861,15 @@ export default {
     },
     getTwoNum (d) {
       return d > 9 ? d : 0 + d
+    },
+    latlongtChange (type, lat, lng) {
+      if (type === 1) {
+        this.orderForm.consignerAddressLongitude = lng
+        this.orderForm.consignerAddressLatitude = lat
+      } else if (type === 2) {
+        this.orderForm.consigneeAddressLongitude = lng
+        this.orderForm.consigneeAddressLatitude = lat
+      }
     }
   }
 }
