@@ -20,17 +20,25 @@
       <!--<SelectInput :@focus=""></SelectInput>-->
       <button @click="save">提交</button>
     </div>
+    <br/>
+    <h3>图片上传插件的使用</h3>
+    <div>
+      <up-load></up-load>
+      <up-load></up-load>
+    </div>
   </div>
 </template>
 
 <script>
 import BasePage from '@/basic/BasePage'
 import SelectInputForCity from '@/components/SelectInputForCity'
+import UpLoad from '@/components/upLoad/'
 // import SelectInput from '@/components/SelectInput'
 export default {
   name: 'page1',
   components: {
-    SelectInputForCity
+    SelectInputForCity,
+    UpLoad
   },
   mixins: [ BasePage ],
   metaInfo: {

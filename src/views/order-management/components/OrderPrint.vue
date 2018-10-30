@@ -12,8 +12,8 @@
           <tbody>
             <tr>
               <td>客户：{{data.consignerName}}</td>
-              <td>始发地：{{cityFormatter(data.start)}}</td>
-              <td>目的地：{{cityFormatter(data.end)}}</td>
+              <td>始发地：{{data.startName}}</td>
+              <td>目的地：{{data.endName}}</td>
             </tr>
             <tr>
               <td>发货人：{{data.consignerContact}}</td>
