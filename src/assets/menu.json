@@ -188,7 +188,7 @@
     "name":"例子",
     "path":"/example/page1",
     "icon":"bangzhuzhongxin",
-    "powerCode":-1
+    "powerCode": 0
   }
 
 ]

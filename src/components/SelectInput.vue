@@ -320,7 +320,7 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 .select-input
   &__dropdown
     width 100%
@@ -333,7 +333,7 @@ export default {
   &__clear-icon
     cursor pointer
   &__input-icon
-    display none
+    display none !important
     transition transform 0.2s ease-in-out
     -webkit-transition -webkit-transform 0.2s ease-in-out
     -moz-transition  -moz-transform 0.2s ease-in-out
