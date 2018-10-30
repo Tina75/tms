@@ -1,16 +1,20 @@
 <template>
   <div id="uploadFile">
     <div v-if="uploadImg" class="demo-upload-list">
-      <template v-if="true">
+      <template v-if="progress">
         <img :src="uploadImg">
         <div class="demo-upload-list-cover">
           <div style="cursor: pointer;" @click="handleView">
-            <Icon type="ios-eye-outline"></Icon>
-            <div style="color: #fff;">预览大图</div>
+            <div class="eye-circle">
+              <FontIcon type="ico_see" size="16" color="#fff"></FontIcon>
+            </div>
+            <div class="icon-letter">预览大图</div>
           </div>
           <div style="position: relative;cursor: pointer">
             <div style="cursor: pointer">
-              <Icon type="ios-add-circle" size="20"></Icon>
+              <div class="eye-circle">
+                <span style="display: block;color: #fff;transform: scale(2)">+</span>
+              </div>
               <input
                 ref="fileInput"
                 :multiple="multiple"
@@ -19,12 +23,12 @@
                 accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
                 @change="doUpload">
             </div>
-            <div style="color: #fff;">重新上传</div>
+            <div class="icon-letter">重新上传</div>
           </div>
         </div>
       </template>
       <template v-else>
-        <Progress :percent="item.percentage" hide-info></Progress>
+        <Progress :percent="progress" hide-info></Progress>
       </template>
     </div>
     <div v-else class="ivu-upload" style="display: inline-block; width: 160px;">
@@ -36,8 +40,13 @@
           class="ivu-upload-input"
           accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
           @change="doUpload">
-        <div style="width: 160px;height: 90px;line-height: 90px;">
-          <Icon type="ios-camera" size="20"></Icon>
+        <div style="width: 160px;height: 90px;">
+          <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%)">
+            <div class="eye-circle">
+              <span style="display: block;color: #fff;transform: scale(2)">+</span>
+            </div>
+            <div style="color: #00A4BD;margin-top: 6px;">点击上传</div>
+          </div>
         </div>
       </div>
     </div>
@@ -49,7 +58,14 @@
 <script>
 import server from '@/libs/js/server'
 import OssClient from 'ali-oss'
+import FontIcon from '@/components/FontIcon'
 export default {
+  name: 'UpLoad',
+
+  components: {
+    FontIcon
+  },
+
   props: {
     // 图片上传最大尺寸,默认2M
     maxSize: {
@@ -160,7 +176,7 @@ export default {
           })
           this.$nextTick(() => {
             // this.visible = false
-            vm.progress = 0
+            vm.progress = 1
           })
           return result
         } catch (e) {
@@ -177,9 +193,6 @@ export default {
     },
     handleView (name) {
       this.visible = true
-    },
-    handleUploadAgain (e) {
-      this.doUpload(e)
     }
   }
 }
@@ -199,7 +212,6 @@ export default {
   height 90px
   text-align center
   line-height 90px
-  border 1px solid transparent
   border-radius 4px
   overflow hidden
   background #fff
@@ -237,6 +249,21 @@ export default {
   opacity 0
   cursor pointer
   font-size 0
+.eye-circle
+  width 20px
+  height 20px
+  margin 6px auto
+  text-align center
+  line-height 20px
+  border-radius 50%
+  background-color #00A4BD
+.icon-letter
+  height 17px
+  font-size 12px
+  font-family 'PingFangSC-Regular'
+  font-weight 400
+  color rgba(255,255,255,0.8)
+  line-height 17px
 </style>
 <style lang="stylus">
 #uploadFile .ivu-upload input[type=file]

@@ -152,7 +152,9 @@ export default {
             weight: self.detail.weight, // 货物重量
             volume: self.detail.volume, // 货物体积
             start: self.detail.start, // 始发地code
-            end: self.detail.end // 目的地code
+            end: self.detail.end, // 目的地code
+            startPoint: { lat: self.detail.consignerAddressLatitude, lng: self.detail.consignerAddressLongitude }, // 始发地经纬度
+            endPoint: { lat: self.detail.consigneeAddressLatitude, lng: self.detail.consigneeAddressLongitude } // 目的地经纬度
           },
           methods: {
             // 确认计费规则后返回金额(元)
