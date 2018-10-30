@@ -92,7 +92,7 @@ export default {
       this.$emit('input', value)
     },
     selectChange (value, item) {
-      const lat = item.slat
+      const lat = item.lat
       const lng = item.lng
       // 经纬度改变
       this.$emit('latlongt-change', { lat, lng })

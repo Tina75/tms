@@ -95,13 +95,13 @@
     <Row :gutter="16">
       <Col span="12">
       <FormItem label="发货地址:" prop="consignerAddress">
-        <AreaInput v-model="orderForm.consignerAddress" :city-code="orderForm.start" :maxlength="60" :local-options="consignerAddresses" @latlongt-change="({lat, lng, code}) => latlongtChange(1, lat, lng, code)"/>
+        <AreaInput v-model="orderForm.consignerAddress" :city-code="orderForm.start" :maxlength="60" :local-options="consignerAddresses" @latlongt-change="({lat, lng}) => latlongtChange(1, lat, lng)"/>
         <!-- <SelectInput v-model="orderForm.consignerAddress" :maxlength="60" :local-options="consignerAddresses" :remote="false"></SelectInput> -->
       </FormItem>
       </Col>
       <Col span="12">
       <FormItem label="收货地址:" prop="consigneeAddress">
-        <AreaInput v-model="orderForm.consigneeAddress" :city-code="orderForm.end" :maxlength="60" :local-options="consigneeAddresses" @latlongt-change="({lat, lng, code}) => latlongtChange(2, lat, lng, code)"/>
+        <AreaInput v-model="orderForm.consigneeAddress" :city-code="orderForm.end" :maxlength="60" :local-options="consigneeAddresses" @latlongt-change="({lat, lng}) => latlongtChange(2, lat, lng)"/>
         <!-- <SelectInput v-model="orderForm.consigneeAddress" :maxlength="60" :local-options="consigneeAddresses" :remote="false"></SelectInput> -->
       </FormItem>
       </Col>
@@ -862,7 +862,7 @@ export default {
     getTwoNum (d) {
       return d > 9 ? d : 0 + d
     },
-    latlongtChange (type, lat, lng, code) {
+    latlongtChange (type, lat, lng) {
       if (type === 1) {
         this.orderForm.consignerAddressLongitude = lat
         this.orderForm.consignerAddressLatitude = lng
