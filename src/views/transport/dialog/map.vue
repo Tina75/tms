@@ -12,8 +12,8 @@
           <TimelineItem v-for="(item, key) in cars[0].points" :key="key">
             <i slot="dot" class="map-timeline-dot"></i>
             <div :class="{'info-body-active': key === currentPointIndex}" class="info-body" @click="showTracePoint(key)">
-              <p>{{ item.time | datetime }}</p>
-              <p>{{ item.address }}</p>
+              <p>{{ item.locateTime | datetime }}</p>
+              <p>{{ item.location }}</p>
             </div>
           </TimelineItem>
         </Timeline>
@@ -65,7 +65,7 @@ export default {
     },
 
     showCar (car, cb) {
-      const point = new BMap.Point(car.longtitude, car.latitude)
+      const point = new BMap.Point(Number(car.longitude), Number(car.latitude))
       // 添加标志点
       const markerOverlay = new MarkerOverlay(point)
       this.map.addOverlay(markerOverlay)
@@ -80,8 +80,7 @@ export default {
     showCarWithTrace (car) {
       for (let i = 0; i < car.points.length; i++) {
         const tempPoint = car.points[i]
-
-        const point = new BMap.Point(tempPoint.longtitude, tempPoint.latitude)
+        const point = new BMap.Point(Number(tempPoint.longitude), Number(tempPoint.latitude))
         // 添加标志点
         const markerOverlay = new MarkerOverlay(point)
         this.map.addOverlay(markerOverlay)
@@ -98,8 +97,8 @@ export default {
           labelOverlay.show()
         } else {
           const polyline = new BMap.Polyline([
-            new BMap.Point(car.points[i - 1].longtitude, car.points[i - 1].latitude),
-            new BMap.Point(tempPoint.longtitude, tempPoint.latitude)
+            new BMap.Point(car.points[i - 1].longitude, car.points[i - 1].latitude),
+            new BMap.Point(tempPoint.longitude, tempPoint.latitude)
           ],
           { strokeColor: '#00A4BD', strokeWeight: 3, strokeOpacity: 1 }
           )

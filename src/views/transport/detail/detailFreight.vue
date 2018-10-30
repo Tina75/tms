@@ -667,18 +667,20 @@ export default {
     // 查看车辆位置
     billLocation () {
       Server({
-        url: '/waybill/location',
+        url: '/waybill/single/location',
         method: 'post',
-        data: { waybillIds: [ this.id ] }
+        data: { waybillId: this.id }
       }).then(res => {
-        const points = res.data.data.list
-        if (!points.length) {
+        if (!res.data.data.points.length) {
           this.$Message.warning('暂无车辆位置信息')
           return
         }
         this.openDialog({
           name: 'transport/dialog/map',
-          data: { points },
+          data: {
+            cars: [res.data.data],
+            multiple: false
+          },
           methods: {}
         })
       }).catch(err => console.error(err))
