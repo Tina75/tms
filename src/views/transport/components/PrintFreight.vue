@@ -9,8 +9,8 @@
           <tbody>
             <tr>
               <td>承运商：{{item.waybill.carrierName}}</td>
-              <td>始发地：{{item.waybill.start | cityFormatter}}</td>
-              <td>目的地：{{item.waybill.end | cityFormatter}}</td>
+              <td>始发地：{{item.waybill.startName}}</td>
+              <td>目的地：{{item.waybill.endName}}</td>
             </tr>
             <tr>
               <td>车牌号：{{item.waybill.carNo}}</td>

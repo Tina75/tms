@@ -8,6 +8,7 @@
       <div class="custom-style">
         <Button v-for="(item, key) in showButtons" :key="key"
                 :type="key === 0 ? 'primary' : 'default'"
+                class="action-btn"
                 @click="item.func">{{ item.name }}</Button>
       </div>
 
@@ -80,11 +81,14 @@
         </div>
         <div>
           <Button type="primary"
+                  class="action-btn"
                   @click="startSearch">搜索</Button>
           <Button type="default"
+                  class="action-btn"
                   @click="resetSeniorSearch()">清除条件</Button>
           <Button type="default"
                   style="margin-right: 0;"
+                  class="action-btn"
                   @click="changeSearchType">简易搜索</Button>
         </div>
       </div>

@@ -27,11 +27,11 @@
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title">始发地：</span>
-            <span>{{ info.start | cityFormatter }}</span>
+            <span>{{ info.startName }}</span>
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">目的地：</span>
-            <span>{{ info.end | cityFormatter }}</span>
+            <span>{{ info.endName }}</span>
           </i-col>
           <i-col span="10" offset="1">
             <span class="detail-field-title">承运商：</span>
@@ -356,6 +356,8 @@ export default {
         waybillNo: '',
         start: void 0,
         end: void 0,
+        startName: '',
+        endName: '',
         carrierName: '',
         carNo: '',
         carType: '',
@@ -404,7 +406,7 @@ export default {
         {
           status: '在途',
           btns: [{
-            name: '位置',
+            name: '查看车辆位置',
             code: 120106,
             func: () => {
               this.billLocation()
@@ -455,8 +457,8 @@ export default {
           key: 'start',
           width: 180,
           render: (h, p) => {
-            const start = this.cityFormatter(p.row.start)
-            const end = this.cityFormatter(p.row.end)
+            const start = p.row.startName
+            const end = p.row.endName
             return this.tableDataRender(h, start && end ? [start, end].join('-') : '')
           }
         },
@@ -660,7 +662,7 @@ export default {
         })
       })
     },
-    // 位置
+    // 查看车辆位置
     billLocation () {
       Server({
         url: '/waybill/location',
@@ -669,7 +671,7 @@ export default {
       }).then(res => {
         const points = res.data.data.list
         if (!points.length) {
-          this.$Message.warning('暂无位置')
+          this.$Message.warning('暂无车辆位置信息')
           return
         }
         this.openDialog({

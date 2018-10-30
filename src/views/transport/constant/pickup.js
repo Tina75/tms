@@ -39,7 +39,7 @@ export const BUTTON_LIST = vm => [
   //       vm.billDelete()
   //     }
   //   }, {
-  //     name: '位置',
+  //     name: '查看车辆位置',
   //     code: 120205,
   //     func: () => {
   //       vm.billLocation()
@@ -90,7 +90,7 @@ export const BUTTON_LIST = vm => [
         vm.billPrint()
       }
     }, {
-      name: '位置',
+      name: '查看车辆位置',
       code: 120205,
       func: () => {
         vm.billLocation()
