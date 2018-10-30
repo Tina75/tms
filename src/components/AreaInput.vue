@@ -47,7 +47,7 @@ export default {
     areaList () {
       const obj = {}
       const res = []
-      const arr = this.localOptions.concat(this.address)
+      const arr = this.value ? this.address : this.localOptions
       for (let i = 0; i < arr.length; i++) {
         const item = arr[i]
         if (!obj[item.name]) {
