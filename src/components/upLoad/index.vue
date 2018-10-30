@@ -146,6 +146,7 @@ export default {
         const uploadResult = await this.uploadFile(file)
         console.log(uploadResult.res.requestUrls[0])
         this.uploadImg = uploadResult.res.requestUrls[0]
+        this.$Message.success({ content: '上传成功', duration: 3 })
       } catch (error) {
         if (error.code === 'InvalidAccessKeyId' || error.code === 'InvalidBucketName') {
           // token失效过期了
