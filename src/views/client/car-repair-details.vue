@@ -16,13 +16,14 @@
           <Col span="6">
           <div>
             <span class="label">维修类别：</span>
-            {{infoData.repairType}}
+            {{infoData.repairType === 1 ? '维修' : null }}
+            {{infoData.repairType === 2 ? '保养' : null }}
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">送修日期：</span>
-            {{infoData.repairDate}}
+            {{formatDate(infoData.repairDate)}}
           </div>
           </Col>
           <Col span="6">
@@ -36,25 +37,25 @@
           <Col span="6">
           <div>
             <span class="label">送修公里数：</span>
-            {{infoData.repairMile}}
+            {{infoData.repairMile}}<span>公里</span>
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">维修费用：</span>
-            {{infoData.repairMoney}}
+            {{infoData.repairMoney}}<span>元</span>
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">已支付费用：</span>
-            {{infoData.payMoney}}
+            {{infoData.payMoney}}<span>元</span>
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">未支付费用：</span>
-            {{infoData.waitPayMoney}}
+            {{infoData.waitPayMoney}}<span>元</span>
           </div>
           </Col>
         </Row>
@@ -116,6 +117,9 @@ export default {
     console.dir(this.infoData)
   },
   methods: {
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
+    }
   }
 }
 </script>
