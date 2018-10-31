@@ -53,7 +53,7 @@
           <FormItem label="手机号:" prop="driverPhone">
             <Row>
               <Col span="20">
-              <Input v-model="validate.driverPhone" placeholder="必填"></Input>
+              <SelectInput v-model="validate.driverPhone" :remote="true" :remote-method="queryDriverByPhoneList" placeholder="必填"></SelectInput>
               </Col>
             </Row>
           </FormItem>
@@ -178,14 +178,16 @@
 <script>
 import { CAR_TYPE1, CAR_LENGTH, DRIVER_TYPE } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
-import { carrierAddDriver, carrierUpdateDriver, CODE, CAR } from '../client'
+import { carrierAddDriver, carrierUpdateDriver, carrierQueryDriverlist, CODE, CAR } from '../client'
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/'
+import SelectInput from '@/components/SelectInput'
 export default {
   name: 'carrier-driver',
   components: {
     CitySelect,
-    UpLoad
+    UpLoad,
+    SelectInput
   },
   mixins: [BaseDialog],
   data () {
@@ -234,27 +236,48 @@ export default {
       this.validate.driverType = this.validate.driverType.toString()
       this.validate.carType = this.validate.carType.toString()
       this.validate.carLength = this.validate.carLength.toString()
-      if (this.validate.regularLine) {
-        this.address1 = JSON.parse(this.validate.regularLine)[0]
-        this.address2 = JSON.parse(this.validate.regularLine)[1]
-      }
       this.$refs.upload1.progress = 1
       this.$refs.upload2.progress = 1
       this.$refs.upload1.uploadImg = this.validate.travelPhoto
       this.$refs.upload2.uploadImg = this.validate.drivePhoto
+      if (this.validate.regularLine && JSON.parse(this.validate.regularLine).length > 0) {
+        if (JSON.parse(this.validate.regularLine).length === 1) {
+          this.address1 = JSON.parse(this.validate.regularLine)[0]
+        } else {
+          this.address1 = JSON.parse(this.validate.regularLine)[0]
+          this.address2 = JSON.parse(this.validate.regularLine)[1]
+        }
+      }
     }
   },
   methods: {
+    checkLine () {
+      // 线路统一
+      if (this.address1 &&
+         (this.address1.s !== undefined && this.address1.e !== undefined) &&
+         (this.address1.s !== null && this.address1.e !== null)) {
+        this.address.push(this.address1)
+      } else if ((this.address1.s === undefined && this.address1.e === undefined) ||
+                 (this.address1.s === null && this.address1.e == null)) {
+      } else {
+        this.$Message.error('请完善线路信息')
+      }
+      if (this.address2 &&
+         (this.address2.s !== undefined && this.address2.e !== undefined) &&
+         (this.address2.s !== null && this.address2.e !== null)) {
+        this.address.push(this.address2)
+      } else if ((this.address2.s === undefined && this.address2.e === undefined) ||
+                 (this.address2.s === null && this.address2.e !== null)) {
+      } else {
+        this.$Message.error('请完善线路信息')
+      }
+    },
     save (name) {
+      this.address = []
       this.validate.carrierId = this.carrierId
       this.validate.travelPhoto = this.$refs.upload1.uploadImg
       this.validate.drivePhoto = this.$refs.upload2.uploadImg
-      if (this.address1.s !== null || this.address1.n !== null) {
-        this.address.push(this.address1)
-      }
-      if (this.address2.s !== null || this.address2.n !== null) {
-        this.address.push(this.address2)
-      }
+      this.checkLine()
       this.validate.regularLine = JSON.stringify(this.address)
       this.$refs[name].validate((valid) => {
         if (valid) {
@@ -285,6 +308,22 @@ export default {
         } else {
           this.$Message.error(res.data.msg)
         }
+      })
+    },
+    queryDriverByPhoneList () {
+      let data = {}
+      data.carrierId = this.carrierId
+      data.driverPhone = this.validate.driverPhone
+      if (!data.driverPhone) {
+        return Promise.resolve([])
+      }
+      carrierQueryDriverlist(data).then(res => {
+        if (res.data.code === CODE) {
+          console.dir(res.data.data)
+          return res.data.data.map(item => ({ value: item.driverName, name: item.driverName + '/' + item.driverPhone }))
+        }
+      }).catch((errorInfo) => {
+        return Promise.reject(errorInfo)
       })
     }
   }

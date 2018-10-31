@@ -27,11 +27,9 @@
   </div>
 </template>
 <script>
-import Emitter from 'iview/src/mixins/emitter'
 const prefixCls = 'ivu-input-number'
 export default {
   name: 'InputNumber',
-  mixins: [Emitter],
   props: {
     max: {
       type: Number,
@@ -164,6 +162,19 @@ export default {
   methods: {
     preventDefault (e) {
       e.preventDefault()
+    },
+    dispatch (componentName, eventName, params) {
+      let parent = this.$parent || this.$root
+      let name = parent.$options.name
+      while (parent && (!name || name !== componentName)) {
+        parent = parent.$parent
+        if (parent) {
+          name = parent.$options.name
+        }
+      }
+      if (parent) {
+        parent.$emit.apply(parent, [eventName].concat(params))
+      }
     },
     setValue (val) {
       // 如果 step 是小数，且没有设置 precision，是有问题的

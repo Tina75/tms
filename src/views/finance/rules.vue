@@ -8,7 +8,7 @@
     <div class="data-container">
       <div class="list-box">
         <Row type="flex">
-          <Col span="5">
+          <Col span="5" class="left_father">
           <div :style="{height: height + 'px'}" class="left">
             <div class="left_search">
               <Row type="flex" >
@@ -34,11 +34,14 @@
                   <FontIcon slot="icon" type="ico-price" ></FontIcon>
                 </div>
                 <div class="content">
-                  <div v-if="item.ruleName.length<7" class="ruleName">{{item.ruleName}}</div>
+                  <div v-if="item.ruleName.length<10" class="ruleName">{{item.ruleName}}</div>
                   <Tooltip v-else :content="item.ruleName" max-width="200" class="ruleName" placement="top-start" style="display: list-item">
-                    <div >{{item.ruleName.slice(0,7)}}...</div>
+                    <div >{{item.ruleName.slice(0,10)}}...</div>
                   </Tooltip>
-                  <div class="tips">{{item.partnerName}}</div>
+                  <div v-if="item.partnerName.length<10"  class="tips">{{item.partnerName}}</div>
+                  <Tooltip v-else :content="item.partnerName" max-width="200" class="tips" placement="bottom-start" style="display: list-item">
+                    <div >{{item.partnerName.slice(0,10)}}...</div>
+                  </Tooltip>
                 </div>
                 <div class="operate">
                   <span style="margin-right: 12px;" @click.stop="editRule(item)">修改</span>
@@ -48,7 +51,7 @@
             </ul>
           </div>
           </Col>
-          <Col span="19" >
+          <Col span="19" style="flex: 1">
           <div v-if="!ruleDetail.ruleId" class="data-empty">
             <img src="../../assets/img-empty.png" class="data-empty-img">
             <p>请点击左侧{{sceneMap[active]}}设置计费规则明细～</p>
@@ -88,11 +91,11 @@
                         <div class="startPrice">
                           <span style="margin:0 10px">起步价：货物  ＜</span>
                           <FormItem prop="startNum" inline style="margin-bottom: 0;">
-                            <Input v-model="item.startNum" style="width: 108px" @on-change="setItemStartNum(item)"/>
+                            <Input v-model="item.startNum" style="width: 80px" @on-change="setItemStartNum(item)"/>
                           </FormItem>
                           <span>{{unitMap[ruleDetail.ruleType]}}，</span>
                           <FormItem prop="startPrice" inline style="margin-bottom: 0;">
-                            <Input v-model="item.startPrice" style="width: 130px"/>
+                            <Input v-model="item.startPrice" style="width: 80px"/>
                           </FormItem>
                           <span>元起</span>
                         </div>
@@ -109,7 +112,7 @@
                       <ul class="rule-detail">
                         <li v-for="(el, no) in item.chargeRules" :key="no" class="rule-detail-item">
                           <div>
-                            <span>{{ruleTypeMap[ruleDetail.ruleType]}}</span>
+                            <span>{{valueTypeMap[ruleDetail.ruleType]}}</span>
                             <span style="margin-left: 5px">≥</span>
                             <Form ref="ruleBase" :model="el" :rules="baseValidate" style="display: inline-block" inline>
                               <FormItem prop="baseAndStart" inline style="margin-bottom: 0">
@@ -125,7 +128,7 @@
                               <FormItem prop="price" inline style="margin-bottom: 0">
                                 <Input v-model="el.price" />
                               </FormItem>
-                              <span>元/{{unitMap[ruleDetail.ruleType]}}</span>
+                              <span>元/{{valueMap[ruleDetail.ruleType]}}</span>
                             </Form>
                           </div>
                           <div class="add_decrease">
@@ -192,13 +195,13 @@ export default {
           if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(value)) {
             callback()
           } else {
-            callback(new Error('最多精确到两位小数'))
+            callback(new Error('最多两位小数'))
           }
         } else if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') {
           if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d)?))$/.test(value)) {
             callback()
           } else {
-            callback(new Error('最多精确到一位小数'))
+            callback(new Error('最多一位小数'))
           }
         }
       }
@@ -210,7 +213,7 @@ export default {
         if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(value)) {
           callback()
         } else {
-          callback(new Error('9位正数且最多两位小数'))
+          callback(new Error('最多两位小数'))
         }
       }
     }
@@ -222,16 +225,16 @@ export default {
       } else {
         if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
           if (!(/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(realValue))) {
-            callback(new Error('最多精确到两位小数'))
+            callback(new Error('最多两位小数'))
           }
         }
         if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') {
           if (!(/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d)?))$/.test(realValue))) {
-            callback(new Error('最多精确到一位小数'))
+            callback(new Error('最多一位小数'))
           }
         }
-        if (startNum >= realValue) {
-          callback(new Error('必须大于起步价'))
+        if (startNum > realValue) {
+          callback(new Error('计费区间与起步价冲突'))
         } else {
           callback()
         }
@@ -243,8 +246,14 @@ export default {
       unitMap: {
         1: '吨',
         2: '方',
-        3: '吨公里',
-        4: '方公里'
+        3: '吨',
+        4: '方'
+      },
+      valueMap: {
+        1: '吨',
+        2: '方',
+        3: '公里',
+        4: '公里'
       },
       sceneMap: {
         1: '发货方',
@@ -257,6 +266,12 @@ export default {
         '2': '体积',
         '3': '吨公里',
         '4': '方公里'
+      },
+      valueTypeMap: {
+        '1': '重量',
+        '2': '体积',
+        '3': '重量',
+        '4': '体积'
       },
       rulesQuery: {
         paramName: ''
@@ -579,7 +594,7 @@ export default {
               width: calc(100% - 80px)
               top: 17px
               left: 20px
-              z-index: 101
+              z-index: 8
               .startPrice
                 line-height 32px
               .delete_btn
@@ -688,6 +703,17 @@ export default {
       p
         color #999999
         text-align center
+    .left_father
+      flex 0 0 300px
+      &:after
+        content ''
+        display block
+        width 1px
+        height 20px
+        position fixed
+        bottom 15px
+        left 534px
+        border-right 1px solid #C9CED9
     .left
       display flex
       flex-direction column

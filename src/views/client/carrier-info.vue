@@ -332,10 +332,21 @@ export default {
           title: '常跑线路',
           key: 'regularLine',
           render: (h, params) => {
-            let s1 = JSON.parse(params.row.regularLine)[0].sn === undefined ? '' : JSON.parse(params.row.regularLine)[0].sn
-            let n1 = JSON.parse(params.row.regularLine)[0].en === undefined ? '' : JSON.parse(params.row.regularLine)[0].en
-            let s2 = JSON.parse(params.row.regularLine)[1].sn === undefined ? '' : JSON.parse(params.row.regularLine)[1].sn
-            let n2 = JSON.parse(params.row.regularLine)[1].en === undefined ? '' : JSON.parse(params.row.regularLine)[1].en
+            let s1 = ''
+            let n1 = ''
+            let s2 = ''
+            let n2 = ''
+            if (params.row.regularLine && JSON.parse(params.row.regularLine).length === 1) {
+              s1 = JSON.parse(params.row.regularLine)[0].sn === undefined ? '' : JSON.parse(params.row.regularLine)[0].sn
+              n1 = JSON.parse(params.row.regularLine)[0].en === undefined ? '' : JSON.parse(params.row.regularLine)[0].en
+            } else if (JSON.parse(params.row.regularLine).length === 2) {
+              s1 = JSON.parse(params.row.regularLine)[0].sn === undefined ? '' : JSON.parse(params.row.regularLine)[0].sn
+              n1 = JSON.parse(params.row.regularLine)[0].en === undefined ? '' : JSON.parse(params.row.regularLine)[0].en
+              s2 = JSON.parse(params.row.regularLine)[1].sn === undefined ? '' : JSON.parse(params.row.regularLine)[1].sn
+              n2 = JSON.parse(params.row.regularLine)[1].en === undefined ? '' : JSON.parse(params.row.regularLine)[1].en
+            } else {
+              return
+            }
             return h('div', [
               h('p', {
                 style: {
@@ -464,28 +475,10 @@ export default {
         {
           title: '送修人',
           key: 'repairPerson'
-          // render (h, params) {
-          //   let text = ''
-          //   if (params.row.shippingVolume === '' || params.row.shippingVolume === null) {
-          //     text = '-'
-          //   } else {
-          //     text = params.row.shippingVolume
-          //   }
-          //   return h('span', {}, text)
-          // }
         },
         {
           title: '送修公里数',
           key: 'repairMile'
-          // render (h, params) {
-          //   let text = ''
-          //   if (params.row.driverName === '' || params.row.driverName === null) {
-          //     text = '-'
-          //   } else {
-          //     text = params.row.driverName
-          //   }
-          //   return h('span', {}, text)
-          // }
         },
         {
           title: '维修费用',

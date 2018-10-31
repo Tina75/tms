@@ -472,6 +472,30 @@ export function carrierQueryLog (data) {
   })
 }
 
+// 根据承运商ID查询车牌号
+export function carrierQueryCarlist (data) {
+  return server({
+    url: '/carrier/carNo/list',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'post',
+    data: data
+  })
+}
+
+// 根据手机号查询司机
+export function carrierQueryDriverlist (data) {
+  return server({
+    url: '/carrier/driver/list',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'post',
+    data: data
+  })
+}
+
 // 删除车辆维修及记录
 export function carrierDeleteRepairVehicle (data) {
   return server({
