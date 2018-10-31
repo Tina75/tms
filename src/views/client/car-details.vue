@@ -6,7 +6,7 @@
         <span class="iconTitleP">基础信息</span>
         <div class="btnItem">
           <Button class="btnSty" @click="removeDriverData">删除</Button>
-          <Button type="primary" class="btnSty">修改</Button>
+          <Button type="primary" class="btnSty" @click="updateDriverData">修改</Button>
         </div>
       </div>
       <div class="list-info">
@@ -109,13 +109,33 @@
           </Col>
         </Row>
       </div>
+      <div class="title">
+        <span class="icontTitle"></span>
+        <span class="iconTitleP">维修记录</span>
+      </div>
+      <div class="list-info">
+        <div class="order-log">
+          <div style="display: flex;justify-content: flex-start;min-height: 150px;margin-top: 25px;">
+            <div class="fold-icon" @click="showOperationLog">
+              <span :class="showLog ? 'hide-log' : 'show-log'"></span>
+            </div>
+            <Timeline :class="showLog ? 'show-timeline' : 'hide-timeline'" :style="{ 'height': showLog ? 44*orderLogCount + 'px' : '15px' }" style="margin-top: 7px;overflow: hidden;">
+              <TimelineItem v-for="(item, index) in orderLog" :key="index">
+                <i slot="dot"></i>
+                <span style="margin-right: 60px;color: #777;font-size: 14px;">{{item.createTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
+                <span style="color: #333;font-size: 14px;">{{'【' + item.operatorName + '】' + item.description}}</span>
+              </TimelineItem>
+            </Timeline>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 <script>
 import BasePage from '@/basic/BasePage'
 import { CAR_TYPE1, CAR_LENGTH1, DRIVER_TYPE } from '@/libs/constant/carInfo'
-import { CODE, carrierDeleteDriver } from './client'
+import { CODE, carrierQueryLog, carrierDeleteDriver } from './client'
 export default {
   name: 'car-details',
   components: {},
@@ -125,14 +145,20 @@ export default {
   data () {
     return {
       infoData: {},
+      infoDataInit: {},
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH1,
       line1: '',
-      line2: ''
+      line2: '',
+      showLog: false,
+      orderLogCount: 0,
+      orderLog: []
     }
   },
   mounted () {
+    this.infoDataInit = Object.assign({}, this.$route.query.rowData)
     this.infoData = this.$route.query.rowData
+    this._carrierQueryLog()
     this.infoData.driverType = (DRIVER_TYPE.find(e => e.id === this.infoData.driverType.toString())).name
     this.infoData.carType = this.carTypeMap[this.infoData.carType]
     this.infoData.carLength = this.carLengthMap[this.infoData.carLength]
@@ -156,10 +182,27 @@ export default {
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
     },
+    // 日志切换显示
+    showOperationLog () {
+      this.showLog = !this.showLog
+    },
+    _carrierQueryLog () {
+      let data = {
+        carrierId: this.infoDataInit.carrierId,
+        id: this.infoDataInit.id,
+        logType: 'vehicle'
+      }
+      debugger
+      carrierQueryLog(data).then(res => {
+        this.orderLog = res.data.data.list
+        this.orderLogCount = res.data.data.list.length
+      })
+    },
     removeDriverData () {
       let _this = this
       this.openDialog({
         name: 'client/dialog/confirmDelete',
+        data: {},
         methods: {
           ok () {
             carrierDeleteDriver({
@@ -167,6 +210,7 @@ export default {
             }).then(res => {
               if (res.data.code === CODE) {
                 _this.$Message.success(res.data.msg)
+                this.ema.fire('closeTab', this.$route)
               } else {
                 _this.$Message.error(res.data.msg)
               }
@@ -174,10 +218,54 @@ export default {
           }
         }
       })
+    },
+    updateDriverData () {
+      let _this = this
+      this.openDialog({
+        name: 'client/dialog/carrier-driver',
+        data: {
+          title: '修改车辆',
+          flag: 2,
+          carrierId: _this.infoDataInit.carrierId,
+          validate: { ..._this.infoDataInit, purchDate: new Date(_this.infoDataInit.purchDate) }
+        },
+        methods: {
+          ok () {
+          }
+        }
+      })
+      this.ema.fire('closeTab', this.$route)
     }
   }
 }
 </script>
 <style lang="stylus" scoped>
 @import "client.styl"
+.order-log
+  .ivu-timeline-item
+    i
+      display inline-block
+      width 12px
+      height 12px
+      background-color #C9CED9
+      border-radius 50%
+      vertical-align text-bottom
+    &:first-child
+      i
+        background-color #00A4BD
+.fold-icon
+    width 26px
+    height 26px
+    background rgba(0,164,189,1)
+    border-radius 5px
+    margin 0 60px 0 30px
+    text-align center
+    cursor pointer
+    span
+      display block
+      width 16px
+      height 16px
+      margin 5px
+      background url(../../assets/img-icon-expand.png) no-repeat
+      background-size contain
 </style>

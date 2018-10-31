@@ -86,7 +86,7 @@
           <FormItem label="核定载重:" prop="shippingWeight">
             <Row>
               <Col span="20">
-              <Input v-model="validate.shippingWeight" placeholder="必填"></Input>
+              <Input v-model="validate.shippingWeight" :maxlength="8" placeholder="必填"></Input>
               </Col>
               <Col span="2" offset="1">
               <span>吨</span>
@@ -95,10 +95,10 @@
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem label="净空:">
+          <FormItem label="净空:" prop="shippingVolume">
             <Row>
               <Col span="20">
-              <Input v-model="validate.shippingVolume"></Input>
+              <Input v-model="validate.shippingVolume" :maxlength="8"></Input>
               </Col>
               <Col span="2" offset="1">
               <span>吨</span>
@@ -122,7 +122,7 @@
           <FormItem label="车辆品牌:">
             <Row>
               <Col span="20">
-              <Input v-model="validate.carBrand" placeholder="如：东风"></Input>
+              <Input v-model="validate.carBrand" :maxlength="20" placeholder="如：东风"></Input>
               </Col>
             </Row>
           </FormItem>
@@ -200,6 +200,7 @@ export default {
       address: [],
       address1: {},
       address2: {},
+      flagAddress: true,
       codeType: 1,
       selectList: DRIVER_TYPE,
       ruleValidate: {
@@ -225,7 +226,10 @@ export default {
         ],
         shippingWeight: [
           { required: true, message: '载重不能为空' },
-          { message: '必须为大于等于0的数字,最多两位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/ }
+          { message: '必须为大于等于0的数字,最多一位小数', pattern: /^(0|([1-9]\d*))([.]\d{1})?$/ }
+        ],
+        shippingVolume: [
+          { message: '必须为大于等于0的数字,最多一位小数', pattern: /^(0|([1-9]\d*))([.]\d{1})?$/ }
         ]
       }
     }
@@ -252,6 +256,8 @@ export default {
   },
   methods: {
     checkLine () {
+      this.address = []
+      this.flagAddress = true
       // 线路统一
       if (this.address1 &&
          (this.address1.s !== undefined && this.address1.e !== undefined) &&
@@ -260,7 +266,8 @@ export default {
       } else if ((this.address1.s === undefined && this.address1.e === undefined) ||
                  (this.address1.s === null && this.address1.e == null)) {
       } else {
-        this.$Message.error('请完善线路信息')
+        this.$Message.error('请完善常跑线路1信息')
+        this.flagAddress = false
       }
       if (this.address2 &&
          (this.address2.s !== undefined && this.address2.e !== undefined) &&
@@ -269,15 +276,18 @@ export default {
       } else if ((this.address2.s === undefined && this.address2.e === undefined) ||
                  (this.address2.s === null && this.address2.e !== null)) {
       } else {
-        this.$Message.error('请完善线路信息')
+        this.$Message.error('请完善常跑线路2信息')
+        this.flagAddress = false
       }
     },
     save (name) {
-      this.address = []
       this.validate.carrierId = this.carrierId
       this.validate.travelPhoto = this.$refs.upload1.uploadImg
       this.validate.drivePhoto = this.$refs.upload2.uploadImg
       this.checkLine()
+      if (!this.flagAddress) {
+        return
+      }
       this.validate.regularLine = JSON.stringify(this.address)
       this.$refs[name].validate((valid) => {
         if (valid) {
@@ -286,7 +296,6 @@ export default {
           } else { // 2-编辑
             this.update()
           }
-          this.close()
         }
       })
     },
@@ -295,6 +304,7 @@ export default {
       carrierAddDriver(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -305,6 +315,7 @@ export default {
       carrierUpdateDriver(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -319,7 +330,6 @@ export default {
       }
       carrierQueryDriverlist(data).then(res => {
         if (res.data.code === CODE) {
-          console.dir(res.data.data)
           return res.data.data.map(item => ({ value: item.driverName, name: item.driverName + '/' + item.driverPhone }))
         }
       }).catch((errorInfo) => {

@@ -16,7 +16,7 @@
             <Row>
               <Col span="19">
               <!-- <Input v-model="validate.carNo" placeholder="必填"></Input> -->
-              <Select v-model="validate.carNo"  placeholder="必选" class="minWidth">
+              <Select v-model="validate.carNo"  :disabled="disAbleBtn" placeholder="必选" class="minWidth">
                 <Option
                   v-for="item in carNoList"
                   :value="item.carNo"
@@ -115,6 +115,7 @@
           </FormItem>
           </Col>
         </Row>
+        <br/>
         <Row>
           <Col span="22" class="formatSty">
           <FormItem label="修理单位:">
@@ -170,6 +171,7 @@ export default {
       unbindedDriver: [], // 承运商下尚未被绑定车辆的司机
       validate: {},
       carNoList: [],
+      disAbleBtn: false,
       selectList: [
         { id: '1', name: '维修' },
         { id: '2', name: '保养' }
@@ -218,9 +220,12 @@ export default {
   },
   mounted () {
     if (this.title === '修改维修记录') {
+      this.disAbleBtn = true
       this.validate.repairType = this.validate.repairType.toString()
+      this.carNoList.push({ carNo: this.validate.carNo })
+    } else {
+      this.queryCarnoList()
     }
-    this.queryCarnoList()
   },
   methods: {
     save (name) {
@@ -232,7 +237,6 @@ export default {
           } else { // 2-编辑
             this.update()
           }
-          this.close()
         }
       })
     },
@@ -241,6 +245,7 @@ export default {
       carrierAddVehicle(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -251,6 +256,7 @@ export default {
       carrierUpdateVehicle(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
