@@ -54,14 +54,14 @@
             </tr>
             <tr>
               <td colspan="6" class="table-footer">
-                <span class="table-footer-item">运输费：{{data.freightFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">提货费：{{data.pickupFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">装货费：{{data.loadFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">卸货费：{{data.unloadFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">保险费：{{data.insuranceFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">其他运费：{{data.otherFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">合计运费: {{data.totalFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">结算方式：{{settlement(data) || 0}}</span>
+                <span class="table-footer-item">运输费：{{ data.freightFee ?  data.freightFee / 100 + '元' : '-' }}</span>
+                <span class="table-footer-item">提货费：{{ data.pickupFee ? data.pickupFee / 100 + '元' : '-' }}</span>
+                <span class="table-footer-item">装货费：{{ data.loadFee ? data.loadFee / 100 + '元' : '-' }}</span>
+                <span class="table-footer-item">卸货费：{{ data.unloadFee ? data.unloadFee / 100 + '元' : '-' }}</span>
+                <span class="table-footer-item">保险费：{{ data.insuranceFee ? data.insuranceFee / 100 + '元' : '-' }}</span>
+                <span class="table-footer-item">其他运费：{{ data.otherFee ? data.otherFee / 100 + '元' : '-' }}</span>
+                <span class="table-footer-item">合计运费: {{ data.totalFee ? data.totalFee / 100 + '元' : '-' }}</span>
+                <span class="table-footer-item">结算方式：{{settlement(data) || '-'}}</span>
               </td>
             </tr>
           </tbody>
@@ -147,7 +147,7 @@ export default {
       if (pick) {
         return pick.name
       }
-      return pickups[0].name
+      return '-'
     },
     settlement (data) {
       let type = settlements.find(item => item.value === data.settlementType)
