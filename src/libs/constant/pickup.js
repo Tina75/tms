@@ -1,4 +1,4 @@
 export default [
-  { name: '上门提货', value: 1 },
-  { name: '直接送货', value: 2 }
+  { name: '小车上门提货', value: 1 },
+  { name: '大车直送客户', value: 2 }
 ]

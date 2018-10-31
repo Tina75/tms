@@ -460,6 +460,18 @@ export function carrierUpdateVehicle (data) {
   })
 }
 
+// 查询操作日制
+export function carrierQueryLog (data) {
+  return server({
+    url: '/carrier//carrierLog/list',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'get',
+    data: data
+  })
+}
+
 // 删除车辆维修及记录
 export function carrierDeleteRepairVehicle (data) {
   return server({

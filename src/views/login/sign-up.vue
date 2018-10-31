@@ -156,8 +156,8 @@ export default {
           { type: 'string', min: 2, max: 10, message: '联系人不能少于2个字也不能超过10个字', trigger: 'blur' }
         ],
         address: [
-          { required: true, message: '公司地址不能为空', trigger: 'blur' },
-          { type: 'string', min: 5, max: 40, message: '公司地址不能少于5个字也不能超过40个字', trigger: 'blur' }
+          { required: true, message: '公司地址不能为空' },
+          { type: 'string', min: 5, max: 40, message: '公司地址不能少于5个字也不能超过40个字' }
         ],
         cityId: [{ required: true, message: '省市区不能为空' }]
       },

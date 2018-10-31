@@ -110,7 +110,8 @@
           <FormItem label="购买日期:">
             <Row>
               <Col span="20">
-              <DatePicker v-model="validate.purchDate" type="date" placeholder="请选择日期"></DatePicker>
+              <DatePicker v-model="validate.purchDate" format="yyyy-MM-dd" type="date" placeholder="请选择日期">
+              </DatePicker>
               </Col>
             </Row>
           </FormItem>
@@ -157,10 +158,12 @@
         <p class="modalTitle">证件照</p>
         <Row>
           <Col span="5">
-          <up-load></up-load>
+          <up-load ref="upload1"></up-load>
+          <p :upload-img="validate.travelPhoto" class="uploadLabel">行驶证</p>
           </Col>
           <Col span="5">
-          <up-load></up-load>
+          <up-load ref="upload2"></up-load>
+          <p :upload-img="validate.drivePhoto" class="uploadLabel">驾驶证</p>
           </Col>
         </Row>
       </Form>
@@ -219,14 +222,15 @@ export default {
           { required: true, message: '车长不能为空', trigger: 'blur' }
         ],
         shippingWeight: [
-          { required: true, message: '载重不能为空', trigger: 'blur' },
-          { type: 'string', message: '必须为大于等于0的数字,最多两位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/, trigger: 'blur' }
+          { required: true, message: '载重不能为空' },
+          { message: '必须为大于等于0的数字,最多两位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/ }
         ]
       }
     }
   },
   mounted () {
     if (this.title === '修改车辆') {
+      this.validate.carrierId = this.carrierId
       this.validate.driverType = this.validate.driverType.toString()
       this.validate.carType = this.validate.carType.toString()
       this.validate.carLength = this.validate.carLength.toString()
@@ -234,11 +238,17 @@ export default {
         this.address1 = JSON.parse(this.validate.regularLine)[0]
         this.address2 = JSON.parse(this.validate.regularLine)[1]
       }
+      this.$refs.upload1.progress = 1
+      this.$refs.upload2.progress = 1
+      this.$refs.upload1.uploadImg = this.validate.travelPhoto
+      this.$refs.upload2.uploadImg = this.validate.drivePhoto
     }
   },
   methods: {
     save (name) {
       this.validate.carrierId = this.carrierId
+      this.validate.travelPhoto = this.$refs.upload1.uploadImg
+      this.validate.drivePhoto = this.$refs.upload2.uploadImg
       if (this.address1.s !== null || this.address1.n !== null) {
         this.address.push(this.address1)
       }
