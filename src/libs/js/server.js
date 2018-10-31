@@ -24,9 +24,7 @@ instance.interceptors.request.use((config) => {
     config.data = JSON.stringify(config.data)
   }
   if (config.method === 'get') {
-    if (config.data) {
-      config.params = config.data
-    }
+    config.params = config.data || config.params || {}
     config.params._t = config.params._t || new Date().getTime()
   }
   return config
