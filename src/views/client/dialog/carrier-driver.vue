@@ -53,7 +53,7 @@
           <FormItem label="手机号:" prop="driverPhone">
             <Row>
               <Col span="20">
-              <SelectInput v-model="validate.driverPhone" :remote="true" :remote-method="queryDriverByPhoneList" placeholder="必填"></SelectInput>
+              <SelectInput v-model="validate.driverPhone" :remote="true" :remote-method="queryDriverByPhoneList" placeholder="必填" @on-select="slectDriverData"></SelectInput>
               </Col>
             </Row>
           </FormItem>
@@ -196,6 +196,7 @@ export default {
       carLengthMap: CAR_LENGTH,
       carrierId: '', // 承运商id
       driverId: '', // 司机id
+      carId: '',
       validate: {},
       address: [],
       address1: {},
@@ -216,13 +217,13 @@ export default {
         ],
         driverPhone: [
           { required: true, message: '手机号不能为空', trigger: 'blur' },
-          { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
+          { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
         ],
         carType: [
           { required: true, message: '车型不能为空', trigger: 'change' }
         ],
         carLength: [
-          { required: true, message: '车长不能为空', trigger: 'blur' }
+          { required: true, message: '车长不能为空', trigger: 'change' }
         ],
         shippingWeight: [
           { required: true, message: '载重不能为空' },
@@ -237,6 +238,7 @@ export default {
   mounted () {
     if (this.title === '修改车辆') {
       this.validate.carrierId = this.carrierId
+      this.validate.carId = this.carId
       this.validate.driverType = this.validate.driverType.toString()
       this.validate.carType = this.validate.carType.toString()
       this.validate.carLength = this.validate.carLength.toString()
@@ -264,7 +266,7 @@ export default {
          (this.address1.s !== null && this.address1.e !== null)) {
         this.address.push(this.address1)
       } else if ((this.address1.s === undefined && this.address1.e === undefined) ||
-                 (this.address1.s === null && this.address1.e == null)) {
+                 (this.address1.s === null && this.address1.e === null)) {
       } else {
         this.$Message.error('请完善常跑线路1信息')
         this.flagAddress = false
@@ -274,14 +276,16 @@ export default {
          (this.address2.s !== null && this.address2.e !== null)) {
         this.address.push(this.address2)
       } else if ((this.address2.s === undefined && this.address2.e === undefined) ||
-                 (this.address2.s === null && this.address2.e !== null)) {
+                 (this.address2.s === null && this.address2.e === null)) {
       } else {
         this.$Message.error('请完善常跑线路2信息')
         this.flagAddress = false
       }
     },
     save (name) {
+      this.flagAddress = true
       this.validate.carrierId = this.carrierId
+      this.validate.carId = this.carId
       this.validate.travelPhoto = this.$refs.upload1.uploadImg
       this.validate.drivePhoto = this.$refs.upload2.uploadImg
       this.checkLine()
@@ -303,6 +307,7 @@ export default {
       let data = this.validate
       carrierAddDriver(data).then(res => {
         if (res.data.code === CODE) {
+          this.$Message.success(res.data.msg)
           this.ok() // 刷新页面
           this.close()
         } else {
@@ -314,12 +319,17 @@ export default {
       let data = this.validate
       carrierUpdateDriver(data).then(res => {
         if (res.data.code === CODE) {
+          this.$Message.success(res.data.msg)
           this.ok() // 刷新页面
           this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
       })
+    },
+    slectDriverData (val, dirverInit) {
+      this.validate.driverName = dirverInit.driverName
+      this.validate.driverType = dirverInit.driverType.toString()
     },
     queryDriverByPhoneList () {
       let data = {}
@@ -328,9 +338,15 @@ export default {
       if (!data.driverPhone) {
         return Promise.resolve([])
       }
-      carrierQueryDriverlist(data).then(res => {
+      return carrierQueryDriverlist(data).then(res => {
         if (res.data.code === CODE) {
-          return res.data.data.map(item => ({ value: item.driverName, name: item.driverName + '/' + item.driverPhone }))
+          return res.data.data.map(item => ({
+            value: item.driverPhone,
+            name: item.driverName + '/' + item.driverPhone,
+            driverName: item.driverName,
+            driverType: item.driverType
+          }
+          ))
         }
       }).catch((errorInfo) => {
         return Promise.reject(errorInfo)
