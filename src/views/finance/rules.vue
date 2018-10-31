@@ -582,7 +582,7 @@ export default {
               width: calc(100% - 80px)
               top: 17px
               left: 20px
-              z-index: 101
+              z-index: 8
               .startPrice
                 line-height 32px
               .delete_btn
