@@ -17,7 +17,7 @@
           <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
         </FormItem>
         <FormItem label="收货地址:" prop="address">
-          <Input v-model="validate.address" :maxlength="60" placeholder="请输入"/>
+          <AreaInput v-model="validate.address" :maxlength="60" placeholder="请输入" @latlongt-change="latlongtChange"/>
         </FormItem>
         <FormItem label="备注:" class="ivu-form-item-required blank" prop="remark">
           <Input v-model="validate.remark"  placeholder="请输入"/>
@@ -34,8 +34,12 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import { consignerConsigneeAdd, consignerConsigneeUpdate, CODE } from '../client'
+import AreaInput from '@/components/AreaInput.vue'
 export default {
   name: 'sender-address',
+  components: {
+    AreaInput
+  },
   mixins: [BaseDialog],
   data () {
     return {
@@ -45,7 +49,10 @@ export default {
         contact: '',
         phone: '',
         address: '',
-        remark: ''
+        remark: '',
+        longitude: '',
+        latitude: '',
+        mapType: 1
       },
       ruleValidate: {
         contact: [
@@ -93,6 +100,11 @@ export default {
           this.$Message.error(res.data.msg)
         }
       })
+    },
+    latlongtChange ({ lat, lng }) {
+      this.validate.longitude = lng
+      this.validate.latitude = lat
+      this.validate.mapType = 1
     }
   }
 }

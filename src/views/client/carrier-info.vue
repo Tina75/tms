@@ -325,7 +325,7 @@ export default {
           }
         },
         {
-          title: '载重（吨）',
+          title: '核定载重（吨）',
           key: 'shippingWeight'
         },
         {
@@ -365,6 +365,17 @@ export default {
                 }
               }, s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2)
             ])
+          }
+        }, {
+          title: '添加人',
+          key: 'createName'
+        },
+        {
+          title: '添加时间',
+          key: 'createTime',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.createTime)
+            return h('div', { props: {} }, text)
           }
         }
       ],
@@ -466,11 +477,24 @@ export default {
         },
         {
           title: '维修类别',
-          key: 'repairType'
+          key: 'repairType',
+          render: (h, params) => {
+            let text = ''
+            if (params.row.repairType === 1) {
+              text = '维修'
+            } else if (params.row.repairType === 2) {
+              text = '保养'
+            }
+            return h('div', {}, text)
+          }
         },
         {
           title: '送修日期',
-          key: 'repairDate'
+          key: 'repairDate',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.repairDate)
+            return h('div', { props: {} }, text)
+          }
         },
         {
           title: '送修人',
@@ -524,6 +548,12 @@ export default {
     }
   },
   methods: {
+    formatDateTime (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
+    },
     _carrierDetailsForDriver () {
       let data = {
         carrierId: this.carrierId

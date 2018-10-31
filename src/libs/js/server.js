@@ -7,7 +7,9 @@ let instance = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': Cookies.get('token')
+    'Authorization': Cookies.get('token'),
+    'Cache-Control': 'no-cache', // 解决ie浏览器缓存
+    'Pragma': 'no-cache' // 解决ie浏览器缓存
   },
   withCredentials: true,
   loading: false,
@@ -22,7 +24,9 @@ instance.interceptors.request.use((config) => {
     config.data = JSON.stringify(config.data)
   }
   if (config.method === 'get' && config.data) {
+    config.data._t = new Date().getTime()
     config.params = config.data
+    // Object.assign({}, config.data, { _t: new Date().getTime() })
   }
   return config
 }, (error) => {
