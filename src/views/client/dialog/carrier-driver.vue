@@ -83,7 +83,7 @@
         </Row>
         <Row>
           <Col span="8">
-          <FormItem label="载重:" prop="shippingWeight">
+          <FormItem label="核定载重:" prop="shippingWeight">
             <Row>
               <Col span="20">
               <Input v-model="validate.shippingWeight" placeholder="必填"></Input>
@@ -208,7 +208,7 @@ export default {
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
         ],
         driverType: [
-          { required: true, message: '合作方式不能为空', trigger: 'blur' }
+          { required: true, message: '合作方式不能为空', trigger: 'change' }
         ],
         driverName: [
           { required: true, message: '司机姓名不能为空', trigger: 'blur' }
@@ -218,7 +218,7 @@ export default {
           { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
         ],
         carType: [
-          { required: true, message: '车型不能为空', trigger: 'blur' }
+          { required: true, message: '车型不能为空', trigger: 'change' }
         ],
         carLength: [
           { required: true, message: '车长不能为空', trigger: 'blur' }

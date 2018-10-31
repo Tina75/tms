@@ -53,14 +53,14 @@
             <FormItem prop="cityId">
               <Cascader :data="cities" v-model="form.cityId" :load-data="loadChildCities" placeholder="选择省/市/区"></Cascader>
             </FormItem>
-            <!-- <FormItem prop="address">
+            <FormItem prop="address">
               <AreaInput
                 v-model="form.address"
                 :city-code="cityCode"
                 :maxlength="40"
                 placeholder="输入公司详细地址"
                 @latlongt-change="addressLocationChange" />
-            </FormItem> -->
+            </FormItem>
           </template>
 
           <!-- step 3 -->

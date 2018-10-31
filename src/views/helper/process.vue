@@ -1,6 +1,6 @@
 <template>
   <div class="helper-process">
-    <p class="i-ml-15 van-font-14">点击流程中的节点，可以查看对应的页面信息</p>
+    <p class="i-ml-15 van-font-14" style="color:#666666">点击流程中的节点，可以查看对应的页面信息</p>
     <ProcessCenter :has-power="hasPower" />
   </div>
 </template>

@@ -23,17 +23,27 @@ let instance = (config = {}) => {
           code = resJson.code
           msg = resJson.msg
         }
+        console.log('resJson', resJson)
       } catch (err) {}
 
       if (!code || code === 10000) {
         let blob = new Blob([res.data], { type: res.config.fileType })
         const url = window.URL || window.webkitURL || window.mozURL
-        let downloadLink = document.createElement('a')
-        downloadLink.href = url.createObjectURL(blob)
-        downloadLink.download = res.config.fileName + new Date().Format('yyyy-MM-dd_hhmmss') + '.xls'
-        document.body.appendChild(downloadLink)
-        downloadLink.click()
-        document.body.removeChild(downloadLink)
+        const downloadHref = url.createObjectURL(blob)
+        const downloadName = res.config.fileName + new Date().Format('yyyy-MM-dd_hhmmss') + '.xls'
+
+        // 正常blob下载链接形式为 blob:http://host/xxxx
+        // IE或旧版本Edge为 blob:xxxx 会导致无法下载，使用 navigator.msSaveOrOpenBlob 进行下载
+        if (downloadHref.indexOf(window.location.host) === -1) {
+          window.navigator.msSaveOrOpenBlob(blob, downloadName)
+        } else {
+          let downloadLink = document.createElement('a')
+          downloadLink.href = downloadHref
+          downloadLink.download = downloadName
+          document.body.appendChild(downloadLink)
+          downloadLink.click()
+          document.body.removeChild(downloadLink)
+        }
         Message.success('导出成功')
       } else {
         switch (code) {

@@ -47,15 +47,15 @@ export default {
     areaList () {
       const obj = {}
       const res = []
-      const arr = this.localOptions.concat(this.address)
+      const arr = this.value ? this.address : this.localOptions
       for (let i = 0; i < arr.length; i++) {
         const item = arr[i]
-        if (!obj[item]) {
+        if (!obj[item.name]) {
           res.push(item)
-          obj[item] = 1
+          obj[item.name] = 1
         }
       }
-      return res.slice(0, 20)
+      return res
     },
     areaName () {
       const code = this.cityCode
@@ -73,7 +73,7 @@ export default {
               const item = results.getPoi(i)
               const pro = item.province ? item.province : ''
               const city = item.city ? item.city : ''
-              const addr = item.address.replace(pro, '').replace(city, '')
+              const addr = item.address ? item.address.replace(pro, '').replace(city, '') : ''
               arr.push({
                 id: i,
                 name: pro + city + addr + item.title,
@@ -90,20 +90,19 @@ export default {
       local.search(val)
     },
     inputHandle (value) {
+      this.address = []
       if (value) {
         this.search(value)
-      } else {
-        // 清空输入框
-        this.address = []
-        this.selectChange(null, { lat: '', lng: '' })
       }
       this.$emit('input', value)
+      this.selectChange(null, { lat: '', lng: '' })
     },
     selectChange (value, item) {
       const lat = item.lat
       const lng = item.lng
+      const type = item.lng && item.lat ? 1 : ''
       // 经纬度改变
-      this.$emit('latlongt-change', { lat, lng })
+      this.$emit('latlongt-change', { lat, lng, type })
     }
   }
 }

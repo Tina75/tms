@@ -189,7 +189,7 @@ export default {
           { required: true, message: '送修人不能为空' }
         ],
         repairMile: [
-          { type: 'number', required: true, message: '送修公里数不能为空' },
+          { required: true, message: '送修公里数不能为空' },
           { message: '必须为大于等于0的数字,最多两位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/ }
         ],
         repairMoney: [
