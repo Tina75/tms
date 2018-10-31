@@ -1,6 +1,6 @@
 <template>
   <div :style="nodeStyle" class="node-point">
-    <Poptip :content="content" word-wrap placement="top" trigger="hover" class="node-point-poptip">
+    <Poptip :content="poptip" word-wrap placement="top" trigger="hover" class="node-point-poptip">
       <div :class="iconClass" @click="jumpto">
         <FontIcon v-if="type" :type="type" :color="access? '#00A4BD' : '#9DA1B0'" size="30"></FontIcon>
       </div>
@@ -30,9 +30,6 @@ export default {
     }
   },
   computed: {
-    content () {
-      return this.access ? this.poptip : '你的账号没有此节点查看权限，请联系贵公司账号管理员开通'
-    },
     iconClass () {
       return [
         'node-point-icon',
@@ -50,6 +47,8 @@ export default {
     jumpto (e) {
       if (this.access && this.url) {
         this.openTab(this.url)
+      } else {
+        this.$Message.warning('你的账号没有此节点查看权限，请联系贵公司账号管理员开通')
       }
     }
   }

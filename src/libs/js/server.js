@@ -22,7 +22,7 @@ instance.interceptors.request.use((config) => {
     config.data = JSON.stringify(config.data)
   }
   if (config.method === 'get' && config.data) {
-    config.params = config.data
+    config.params = Object.assign({}, config.data, { _t: new Date().getTime() })
   }
   return config
 }, (error) => {
