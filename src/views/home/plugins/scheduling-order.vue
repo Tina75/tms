@@ -105,7 +105,7 @@ export default {
                 x2: 0,
                 y2: 1,
                 colorStops: [{
-                  offset: 0, color: '#418df957' // 0% 处的颜色
+                  offset: 0, color: '#418df9' // 0% 处的颜色
                 }, {
                   offset: 0.8, color: '#fff' // 100% 处的颜色
                 }]

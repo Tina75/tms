@@ -96,7 +96,10 @@ export default {
                           phone: params.row.phone,
                           payType: params.row.payType + '',
                           remark: params.row.remark,
-                          companyAddress: params.row.companyAddress
+                          companyAddress: params.row.companyAddress,
+                          longitude: params.row.longitude,
+                          latitude: params.row.latitude,
+                          mapType: params.row.mapType
                         }
                       },
                       methods: {

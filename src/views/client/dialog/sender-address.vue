@@ -10,7 +10,7 @@
       <p slot="header" style="text-align:center">{{title}}</p>
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122">
         <FormItem label="发货地址:" prop="address">
-          <Input v-model="validate.address" :maxlength="60" placeholder="请输入"/>
+          <AreaInput v-model="validate.address" :maxlength="60" placeholder="请输入" @latlongt-change="latlongtChange"/>
         </FormItem>
       </Form>
       <div slot="footer">
@@ -24,15 +24,22 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import { consignerAddressAdd, consignerAddressUpdate, CODE } from '../client'
+import AreaInput from '@/components/AreaInput.vue'
 export default {
   name: 'sender-address',
+  components: {
+    AreaInput
+  },
   mixins: [BaseDialog],
   data () {
     return {
       consignerId: '', // 详情传过来的id
       id: '',
       validate: {
-        address: ''
+        address: '',
+        longitude: '',
+        latitude: '',
+        mapType: 1
       },
       ruleValidate: {
         address: [
@@ -57,7 +64,10 @@ export default {
     add () {
       let data = {
         consignerId: this.consignerId,
-        address: this.validate.address
+        address: this.validate.address,
+        longitude: this.validate.longitude,
+        latitude: this.validate.latitude,
+        mapType: this.validate.mapType
       }
       consignerAddressAdd(data).then(res => {
         if (res.data.code === CODE) {
@@ -70,7 +80,10 @@ export default {
     update () {
       let data = {
         id: this.id,
-        address: this.validate.address
+        address: this.validate.address,
+        longitude: this.validate.longitude,
+        latitude: this.validate.latitude,
+        mapType: this.validate.mapType
       }
       consignerAddressUpdate(data).then(res => {
         console.log(res)
@@ -80,6 +93,11 @@ export default {
           this.$Message.error(res.data.msg)
         }
       })
+    },
+    latlongtChange ({ lat, lng }) {
+      this.validate.longitude = lng
+      this.validate.latitude = lat
+      this.validate.mapType = 1
     }
   }
 }
