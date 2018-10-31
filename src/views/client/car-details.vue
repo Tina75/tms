@@ -4,6 +4,10 @@
       <div class="title">
         <span class="icontTitle"></span>
         <span class="iconTitleP">基础信息</span>
+        <div class="btnItem">
+          <Button class="btnSty" @click="removeDriverData">删除</Button>
+          <Button type="primary" class="btnSty">修改</Button>
+        </div>
       </div>
       <div class="list-info">
         <Row class="row">
@@ -78,18 +82,12 @@
         <span class="iconTitleP">常跑线路</span>
       </div>
       <div class="list-info">
-        <Row class="row">
-          <Col span="6">
-          <div class="lineSpanLabel">
-            {{line1}}
-          </div>
-          </Col>
-          <Col span="6">
-          <div class="lineSpanLabel">
-            {{line2}}
-          </div>
-          </Col>
-        </Row>
+        <div v-if="this.line1" class="lineSpanLabel">
+          {{line1}}
+        </div>
+        <div v-if="this.line2" class="lineSpanLabel">
+          {{line2}}
+        </div>
       </div><br/>
       <div class="title">
         <span class="icontTitle"></span>
@@ -117,6 +115,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import { CAR_TYPE1, CAR_LENGTH1, DRIVER_TYPE } from '@/libs/constant/carInfo'
+import { CODE, carrierDeleteDriver } from './client'
 export default {
   name: 'car-details',
   components: {},
@@ -156,6 +155,25 @@ export default {
   methods: {
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
+    },
+    removeDriverData () {
+      let _this = this
+      this.openDialog({
+        name: 'client/dialog/confirmDelete',
+        methods: {
+          ok () {
+            carrierDeleteDriver({
+              carId: _this.infoData.carId
+            }).then(res => {
+              if (res.data.code === CODE) {
+                _this.$Message.success(res.data.msg)
+              } else {
+                _this.$Message.error(res.data.msg)
+              }
+            })
+          }
+        }
+      })
     }
   }
 }
