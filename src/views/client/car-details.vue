@@ -152,11 +152,17 @@ export default {
       line2: '',
       showLog: false,
       orderLogCount: 0,
-      orderLog: []
+      orderLog: [],
+      carrierId: '',
+      id: '',
+      carId: ''
     }
   },
   mounted () {
     this.infoDataInit = Object.assign({}, this.$route.query.rowData)
+    this.id = this.infoDataInit.id
+    this.carrierId = this.infoDataInit.carrierId
+    this.carId = this.infoDataInit.carId
     this.infoData = this.$route.query.rowData
     this._carrierQueryLog()
     this.initData()
@@ -192,8 +198,8 @@ export default {
     },
     _carrierQueryLog () {
       let data = {
-        carrierId: this.infoDataInit.carrierId,
-        id: this.infoDataInit.id,
+        carrierId: this.carrierId,
+        id: this.id,
         logType: 'vehicle'
       }
       carrierQueryLog(data).then(res => {
@@ -209,7 +215,7 @@ export default {
         methods: {
           ok () {
             carrierDeleteDriver({
-              carId: _this.infoData.carId
+              carId: _this.carId
             }).then(res => {
               if (res.data.code === CODE) {
                 _this.$Message.success(res.data.msg)
@@ -229,7 +235,7 @@ export default {
         data: {
           title: '修改车辆',
           flag: 2,
-          carrierId: _this.infoDataInit.carrierId,
+          carrierId: _this.carrierId,
           validate: { ..._this.infoDataInit, purchDate: new Date(_this.infoDataInit.purchDate) }
         },
         methods: {
@@ -242,17 +248,17 @@ export default {
     queryByIdCar () {
       let _this = this
       queryByIdCarrier({
-        id: _this.infoData.id,
-        carrierId: _this.infoDataInit.carrierId,
-        type: 'repair'
+        id: _this.id,
+        carrierId: _this.carrierId,
+        type: 'vehicle'
       }).then(res => {
         if (res.data.code === CODE) {
           _this.infoData = res.data.data
+          _this.infoDataInit = Object.assign({}, _this.infoData)
+          _this.initData()
         } else {
           _this.$Message.error(res.data.msg)
         }
-      }).then(() => {
-        _this.initData()
       })
     }
   }

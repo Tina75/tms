@@ -196,6 +196,7 @@ export default {
       carLengthMap: CAR_LENGTH,
       carrierId: '', // 承运商id
       driverId: '', // 司机id
+      carId: '',
       validate: {},
       address: [],
       address1: {},
@@ -237,6 +238,7 @@ export default {
   mounted () {
     if (this.title === '修改车辆') {
       this.validate.carrierId = this.carrierId
+      this.validate.carId = this.carId
       this.validate.driverType = this.validate.driverType.toString()
       this.validate.carType = this.validate.carType.toString()
       this.validate.carLength = this.validate.carLength.toString()
@@ -264,7 +266,7 @@ export default {
          (this.address1.s !== null && this.address1.e !== null)) {
         this.address.push(this.address1)
       } else if ((this.address1.s === undefined && this.address1.e === undefined) ||
-                 (this.address1.s === null && this.address1.e == null)) {
+                 (this.address1.s === null && this.address1.e === null)) {
       } else {
         this.$Message.error('请完善常跑线路1信息')
         this.flagAddress = false
@@ -274,14 +276,16 @@ export default {
          (this.address2.s !== null && this.address2.e !== null)) {
         this.address.push(this.address2)
       } else if ((this.address2.s === undefined && this.address2.e === undefined) ||
-                 (this.address2.s === null && this.address2.e !== null)) {
+                 (this.address2.s === null && this.address2.e === null)) {
       } else {
         this.$Message.error('请完善常跑线路2信息')
         this.flagAddress = false
       }
     },
     save (name) {
+      this.flagAddress = true
       this.validate.carrierId = this.carrierId
+      this.validate.carId = this.carId
       this.validate.travelPhoto = this.$refs.upload1.uploadImg
       this.validate.drivePhoto = this.$refs.upload2.uploadImg
       this.checkLine()
