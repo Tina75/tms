@@ -74,15 +74,24 @@ export default {
 
     &-header
       display flex
+      display -ms-flex
+      display -ms-flexbox
       align-items center
+      -ms-justify-content space-between
       justify-content space-between
+      -ms-flex-direction: column
+      flex-direction: column
       height 88px
       padding 0 43px 0 143px
       border-bottom 1px solid #3A424B
 
       &-tel
         flex none
+        -ms-flex none
+        display: -ms-flex
+        display -ms-flexbox
         display flex
+        -ms-flex-direction: column;
         flex-direction column
         color #00A4BD
 
