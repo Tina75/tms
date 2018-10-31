@@ -54,7 +54,12 @@
               <Cascader :data="cities" v-model="form.cityId" placeholder="选择省/市/区"></Cascader>
             </FormItem>
             <FormItem prop="address">
-              <AreaInput v-model="form.address" :maxlength="40" placeholder="输入公司详细地址" />
+              <AreaInput
+                v-model="form.address"
+                :city-code="cityCode"
+                :maxlength="40"
+                placeholder="输入公司详细地址"
+                @latlongt-change="addressLocationChange" />
             </FormItem>
           </template>
 
@@ -107,10 +112,9 @@ export default {
   },
   data () {
     return {
-      step: 1,
+      step: 0,
       stepList: ['验证手机号', '填写账号信息', '注册成功'],
       protocol: true,
-      showP: 0,
 
       form: {
         phone: '',
@@ -121,7 +125,10 @@ export default {
         name: '', // 公司名称
         userName: '', // 联系人姓名
         address: '', // 公司地址
-        cityId: []
+        cityId: [],
+        latitude: void 0,
+        longitude: void 0,
+        mapType: 1
       },
 
       rules: {
@@ -157,20 +164,29 @@ export default {
       cities: []
     }
   },
+  computed: {
+    cityCode () {
+      return this.form.cityId[1] || void 0
+    }
+  },
   created () {
     this.getCaptcha()
     this.getCities()
   },
   methods: {
     showProtocol (type) {
-      console.log(type)
       this.openDialog({
         name: 'login/protocol',
         data: { type }
       })
     },
+    addressLocationChange ({ lat, lng }) {
+      this.form.latitude = lat
+      this.form.longitude = lng
+    },
     // 下一步校验
     nextStep () {
+      console.log(this.form)
       this.$refs.loginForm.validate(valid => {
         if (!valid) return
 
@@ -205,11 +221,6 @@ export default {
         }
       })
     },
-
-    // companyNameRuleToast (e) {
-    //   if (e.keyCode === 8 || e.keyCode === 46) return // backspace & delete
-    //   if (this.form.name.length === 25) this.$Message.warning('公司名不能超过25个字')
-    // },
 
     // 查询城市列表
     getCities () {
