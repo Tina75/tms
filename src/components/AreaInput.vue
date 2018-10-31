@@ -90,20 +90,19 @@ export default {
       local.search(val)
     },
     inputHandle (value) {
+      this.address = []
       if (value) {
         this.search(value)
-      } else {
-        // 清空输入框
-        this.address = []
-        this.selectChange(null, { lat: '', lng: '' })
       }
       this.$emit('input', value)
+      this.selectChange(null, { lat: '', lng: '' })
     },
     selectChange (value, item) {
       const lat = item.lat
       const lng = item.lng
+      const type = item.lng && item.lat ? 1 : ''
       // 经纬度改变
-      this.$emit('latlongt-change', { lat, lng })
+      this.$emit('latlongt-change', { lat, lng, type })
     }
   }
 }
