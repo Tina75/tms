@@ -236,6 +236,7 @@ export default {
           title: '修改车辆',
           flag: 2,
           carrierId: _this.carrierId,
+          carId: _this.carId,
           validate: { ..._this.infoDataInit, purchDate: new Date(_this.infoDataInit.purchDate) }
         },
         methods: {
