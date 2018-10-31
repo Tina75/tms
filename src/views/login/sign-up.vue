@@ -51,16 +51,16 @@
               <Input v-model="form.name" :maxlength="25" placeholder="输入公司名称" />
             </FormItem>
             <FormItem prop="cityId">
-              <Cascader :data="cities" v-model="form.cityId" placeholder="选择省/市/区"></Cascader>
+              <Cascader :data="cities" v-model="form.cityId" :load-data="loadChildCities" placeholder="选择省/市/区"></Cascader>
             </FormItem>
-            <FormItem prop="address">
+            <!-- <FormItem prop="address">
               <AreaInput
                 v-model="form.address"
                 :city-code="cityCode"
                 :maxlength="40"
                 placeholder="输入公司详细地址"
                 @latlongt-change="addressLocationChange" />
-            </FormItem>
+            </FormItem> -->
           </template>
 
           <!-- step 3 -->
@@ -171,7 +171,7 @@ export default {
   },
   created () {
     this.getCaptcha()
-    this.getCities()
+    this.cities = this.getCities()
   },
   methods: {
     showProtocol (type) {
@@ -186,7 +186,6 @@ export default {
     },
     // 下一步校验
     nextStep () {
-      console.log(this.form)
       this.$refs.loginForm.validate(valid => {
         if (!valid) return
 
@@ -222,19 +221,27 @@ export default {
       })
     },
 
-    // 查询城市列表
-    getCities () {
-      this.cities = walk()
-      function walk (code) {
-        return City.getAllChild(code).map(item => {
-          let temp = {
-            value: item.code,
-            label: item.name
-          }
-          if (item.hasChild) temp.children = walk(item.code)
-          return temp
-        })
-      }
+    // 查询省市区列表
+    // TMS1.2 18.10.31 将城市数据修改为懒加载，初始化只加载省份，选择后再加载子城市，否则 IE & EDGE 上会出现严重卡顿
+    getCities (code) {
+      return City.getAllChild(code).map(item => {
+        let temp = {
+          value: item.code,
+          label: item.name
+        }
+        if (Number(item.hasChild)) {
+          temp.children = []
+          temp.loading = false
+        }
+        return temp
+      })
+    },
+    // 联级框加载更多
+    loadChildCities (item, cb) {
+      item.loading = true
+      item.children = this.getCities(item.value)
+      item.loading = false
+      cb()
     }
   }
 }
