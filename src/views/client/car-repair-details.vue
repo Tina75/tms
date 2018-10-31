@@ -6,7 +6,7 @@
         <span class="iconTitleP">维修信息</span>
         <div class="btnItem">
           <Button class="btnSty" @click="removeRepairData">删除</Button>
-          <Button type="primary" class="btnSty">修改</Button>
+          <Button type="primary" class="btnSty" @click="updateRepairData">修改</Button>
         </div>
       </div>
       <div class="list-info">
@@ -102,7 +102,7 @@
         <div class="list-info">
           <div class="order-log">
             <div style="display: flex;justify-content: flex-start;min-height: 150px;margin-top: 25px;">
-              <div class="fold-icon" @click="showOrderLog">
+              <div class="fold-icon" @click="showOperationLog">
                 <span :class="showLog ? 'hide-log' : 'show-log'"></span>
               </div>
               <Timeline :class="showLog ? 'show-timeline' : 'hide-timeline'" :style="{ 'height': showLog ? 44*orderLogCount + 'px' : '15px' }" style="margin-top: 7px;overflow: hidden;">
@@ -153,7 +153,7 @@ export default {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
     },
     // 日志切换显示
-    showOrderLog () {
+    showOperationLog () {
       this.showLog = !this.showLog
     },
     _carrierQueryLog () {
@@ -171,6 +171,7 @@ export default {
       let _this = this
       this.openDialog({
         name: 'client/dialog/confirmDelete',
+        data: {},
         methods: {
           ok () {
             carrierDeleteRepairVehicle({
@@ -178,6 +179,7 @@ export default {
             }).then(res => {
               if (res.data.code === CODE) {
                 _this.$Message.success(res.data.msg)
+                this.ema.fire('closeTab', this.$route)
               } else {
                 _this.$Message.error(res.data.msg)
               }
@@ -185,6 +187,26 @@ export default {
           }
         }
       })
+    },
+    updateRepairData () {
+      let _this = this
+      this.openDialog({
+        name: 'client/dialog/carrier-vehicle',
+        data: {
+          title: '修改维修记录',
+          flag: 2, // 修改
+          id: _this.infoData.driverId,
+          carrierId: _this.carrierId,
+          driverId: _this.infoData.driverId,
+          carId: _this.infoData.carId,
+          validate: { ..._this.infoData, repairDate: new Date(_this.infoData.repairDate) }
+        },
+        methods: {
+          ok () {
+          }
+        }
+      })
+      this.ema.fire('closeTab', this.$route)
     }
   }
 }

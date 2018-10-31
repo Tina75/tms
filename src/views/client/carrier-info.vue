@@ -409,7 +409,6 @@ export default {
                       },
                       methods: {
                         ok () {
-                          _this._carrierListRepairVehicle()
                         }
                       }
                     })
@@ -519,11 +518,11 @@ export default {
       ],
       data1: [],
       data2: [],
-      pageArray1: [10, 20, 50, 100],
+      pageArray1: [10, 20, 50],
       pageSize1: 10,
       totalCount1: 0, // 总条数
       pageNo1: 1,
-      pageArray2: [10, 20, 50, 100],
+      pageArray2: [10, 20, 50],
       pageSize2: 10,
       totalCount2: 0, // 总条数
       pageNo2: 1
@@ -681,4 +680,6 @@ export default {
     margin-top 22px
     display flex
     justify-content flex-end
+  .ivu-tabs
+    padding-bottom: 120px!important
 </style>
