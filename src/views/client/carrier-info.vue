@@ -214,6 +214,7 @@ export default {
                         title: '修改车辆',
                         flag: 2, // 修改
                         carrierId: this.carrierId,
+                        carId: params.row.carId,
                         validate: { ...params.row, purchDate: new Date(params.row.purchDate) }
                       },
                       methods: {
