@@ -77,7 +77,7 @@ export default {
       }
     },
 
-    // 交易批量操作时是否已选择
+    // 校验批量操作时是否已选择
     checkTableSelection () {
       if (!this.tableSelection.length) {
         this.$Message.error('请先选择后再操作')
