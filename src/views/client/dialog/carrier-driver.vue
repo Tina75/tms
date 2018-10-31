@@ -159,11 +159,11 @@
         <Row>
           <Col span="5">
           <up-load ref="upload1"></up-load>
-          <p class="uploadLabel">行驶证</p>
+          <p :upload-img="validate.travelPhoto" class="uploadLabel">行驶证</p>
           </Col>
           <Col span="5">
           <up-load ref="upload2"></up-load>
-          <p class="uploadLabel">驾驶证</p>
+          <p :upload-img="validate.drivePhoto" class="uploadLabel">驾驶证</p>
           </Col>
         </Row>
       </Form>
@@ -238,6 +238,10 @@ export default {
         this.address1 = JSON.parse(this.validate.regularLine)[0]
         this.address2 = JSON.parse(this.validate.regularLine)[1]
       }
+      this.$refs.upload1.progress = 1
+      this.$refs.upload2.progress = 1
+      this.$refs.upload1.uploadImg = this.validate.travelPhoto
+      this.$refs.upload2.uploadImg = this.validate.drivePhoto
     }
   },
   methods: {

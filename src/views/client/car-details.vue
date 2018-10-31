@@ -132,18 +132,18 @@ export default {
       line2: ''
     }
   },
-  computed: {
-  },
-  created () {
-  },
   mounted () {
     this.infoData = this.$route.query.rowData
     this.infoData.driverType = (DRIVER_TYPE.find(e => e.id === this.infoData.driverType.toString())).name
     this.infoData.carType = this.carTypeMap[this.infoData.carType]
     this.infoData.carLength = this.carLengthMap[this.infoData.carLength]
     if (this.infoData.regularLine) {
-      this.line1 = JSON.parse(this.infoData.regularLine)[0].sn + '—' + JSON.parse(this.infoData.regularLine)[0].en
-      this.line2 = JSON.parse(this.infoData.regularLine)[1].sn + '—' + JSON.parse(this.infoData.regularLine)[1].en
+      let s1 = JSON.parse(this.infoData.regularLine)[0].sn === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].sn
+      let n1 = JSON.parse(this.infoData.regularLine)[0].en === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].en
+      let s2 = JSON.parse(this.infoData.regularLine)[1].sn === undefined ? '' : JSON.parse(this.infoData.regularLine)[1].sn
+      let n2 = JSON.parse(this.infoData.regularLine)[1].en === undefined ? '' : JSON.parse(this.infoData.regularLine)[1].en
+      this.line1 = s1 + '—' + n1 === '—' ? '' : s1 + '—' + n1
+      this.line2 = s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2
     }
   },
   methods: {

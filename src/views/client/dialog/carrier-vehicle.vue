@@ -147,7 +147,7 @@
 <script>
 import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
-import { carrierAddVehicle, carrierUpdateVehicle, listUnbindedDriver, CODE, CAR } from '../client'
+import { carrierAddVehicle, carrierUpdateVehicle, CODE, CAR } from '../client'
 export default {
   name: 'carrier-vehicle',
   mixins: [BaseDialog],
@@ -194,20 +194,10 @@ export default {
       }
     }
   },
-  created () {
+  mounted () {
     if (this.validate) {
       this.validate.repairType = this.validate.repairType.toString()
     }
-    let data = {
-      carrierId: this.carrierId,
-      driverId: this.driverId
-    }
-    listUnbindedDriver(data).then(res => {
-      if (res.data.code === CODE) {
-        this.unbindedDriver = res.data.data
-        this.unbindedDriver.unshift({ driverId: '', driverName: '请选择' })
-      }
-    })
   },
   methods: {
     save (name) {
