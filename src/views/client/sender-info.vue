@@ -148,7 +148,10 @@ export default {
                         flag: 2, // 修改
                         id: params.row.id,
                         validate: {
-                          address: params.row.address
+                          address: params.row.address,
+                          longitude: params.row.longitude,
+                          latitude: params.row.latitude,
+                          mapType: params.row.mapType
                         }
                       },
                       methods: {
@@ -227,7 +230,10 @@ export default {
                           contact: params.row.contact,
                           phone: params.row.phone,
                           address: params.row.address,
-                          remark: params.row.remark
+                          remark: params.row.remark,
+                          longitude: params.row.longitude,
+                          latitude: params.row.latitude,
+                          mapType: params.row.mapType
                         }
                       },
                       methods: {

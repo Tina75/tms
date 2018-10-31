@@ -720,7 +720,9 @@ export default {
           partnerName: vm.orderForm.consignerName, // 客户名
           partnerType: 1, // 计算规则分类：1-发货方，2-承运商，3-外转方
           weight: statics.weight,
-          volume: statics.volume
+          volume: statics.volume,
+          startPoint: { lat: this.orderForm.consignerAddressLatitude, lng: this.orderForm.consignerAddressLongitude },
+          endPoint: { lat: this.orderForm.consigneeAddressLatitude, lng: this.orderForm.consigneeAddressLongitude }
         },
         methods: {
           ok (value) {

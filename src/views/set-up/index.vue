@@ -79,28 +79,29 @@
     </div>
     <!--公司设置-->
     <div v-else-if="'4' === this.rightKey" key="4" class="divSetContent">
-      <Col span="10" class="setConf">
-      <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="120" label-position="left">
-        <FormItem label="公司名称：" prop="name" class="labelClassSty">
-          <Input v-model="formCompany.name" :maxlength="25" placeholder="请输入公司名称" class="inputClassSty"></Input>
-        </FormItem>
-        <FormItem label="公司联系人：" prop="contact" class="labelClassSty">
-          <Input v-model="formCompany.contact" :maxlength="10" placeholder="请输入公司联系人" class="inputClassSty"></Input>
-        </FormItem>
-        <FormItem label="联系方式：" prop="contactPhone" class="labelClassSty">
-          <Input v-model="formCompany.contactPhone" :maxlength="11" placeholder="请输入联系方式" class="inputClassSty"></Input>
-        </FormItem>
-        <FormItem label="所在省市：" prop="cityId" class="labelClassSty">
-          <AreaSelect v-model="formCompany.cityId" :deep="true" class="inputClassSty"></AreaSelect>
-        </FormItem>
-        <FormItem label="公司地址：" prop="address" class="labelClassSty">
-          <Input v-model="formCompany.address" :maxlength="40" placeholder="请输入公司地址" class="inputClassSty"></Input>
-        </FormItem>
-        <FormItem>
-          <Button type="primary" style="width:86px;" @click="companySubmit('formCompany')">保存</Button>
-        </FormItem>
-      </Form>
-        </Col>
+      <div style="width: 70%;">
+        <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="120" label-position="left">
+          <FormItem label="公司名称：" prop="name" class="labelClassSty">
+            <Input v-model="formCompany.name" :maxlength="25" placeholder="请输入公司名称" class="inputClassSty"></Input>
+          </FormItem>
+          <FormItem label="公司联系人：" prop="contact" class="labelClassSty">
+            <Input v-model="formCompany.contact" :maxlength="10" placeholder="请输入公司联系人" class="inputClassSty"></Input>
+          </FormItem>
+          <FormItem label="联系方式：" prop="contactPhone" class="labelClassSty">
+            <Input v-model="formCompany.contactPhone" :maxlength="11" placeholder="请输入联系方式" class="inputClassSty"></Input>
+          </FormItem>
+          <FormItem label="所在省市：" prop="cityId" class="labelClassSty">
+            <AreaSelect v-model="formCompany.cityId" :deep="true" class="inputClassSty"></AreaSelect>
+          </FormItem>
+          <FormItem label="公司地址：" prop="address" class="labelClassSty">
+            <AreaInput v-model="formCompany.address" :city-code="formCityCode" :maxlength="60" placeholder="请输入公司地址" @latlongt-change="latlongtChange"></AreaInput>
+            <!-- <Input v-model="formCompany.address" :maxlength="40" placeholder="请输入公司地址" class="inputClassSty"></Input> -->
+          </FormItem>
+          <FormItem>
+            <Button type="primary" style="width:86px;" @click="companySubmit('formCompany')">保存</Button>
+          </FormItem>
+        </Form>
+      </div>
     </div>
     </Col>
   </Row>
@@ -110,12 +111,14 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import AreaSelect from '@/components/AreaSelect'
+import AreaInput from '@/components/AreaInput'
 import _ from 'lodash'
 import { mapActions } from 'vuex'
 export default {
   name: 'set-up',
   components: {
-    AreaSelect
+    AreaSelect,
+    AreaInput
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -164,13 +167,6 @@ export default {
     var checkNameCompany = function (rule, value, callback) {
       if (value.length > 25) {
         return callback(new Error('公司名不能超过25个字'))
-      } else {
-        callback()
-      }
-    }
-    var checkAddressCompany = function (rule, value, callback) {
-      if (value.length < 5 || value.length > 40) {
-        return callback(new Error('公司地址不能少于5个字也不能超过40个字'))
       } else {
         callback()
       }
@@ -303,8 +299,7 @@ export default {
           { required: true, message: '请选择所在省市' }
         ],
         address: [
-          { required: true, message: '请输入公司地址', trigger: 'blur' },
-          { validator: checkAddressCompany, trigger: 'blur' }
+          { required: true, message: '请输入公司地址', trigger: 'blur' }
         ]
       }
       // 图片相关-个人
@@ -322,6 +317,14 @@ export default {
   computed: {
     styleHeight () {
       return { height: this.$parent.$el.children[0].style.minHeight }
+    },
+    formCityCode () {
+      const cityCode = this.formCompany.cityId
+      if (cityCode && cityCode.length) {
+        return cityCode.length === 2 ? cityCode[0] : cityCode[cityCode.length - 1]
+      } else {
+        return ''
+      }
     }
   },
   mounted: function () {
@@ -490,6 +493,11 @@ export default {
           this.msgCheckBoxListInit = _.cloneDeep(this.msgSlectCheckBox)
         }
       })
+    },
+    latlongtChange ({ lat, lng }) {
+      this.formCompany.latitude = lat
+      this.formCompany.longitude = lng
+      this.formCompany.mapType = 1
     }
     // 图片相关 -个人
     // handleSuccess (res, file) {
