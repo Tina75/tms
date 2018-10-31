@@ -8,7 +8,7 @@
     <div class="data-container">
       <div class="list-box">
         <Row type="flex">
-          <Col span="5">
+          <Col span="5" class="left_father">
           <div :style="{height: height + 'px'}" class="left">
             <div class="left_search">
               <Row type="flex" >
@@ -34,11 +34,14 @@
                   <FontIcon slot="icon" type="ico-price" ></FontIcon>
                 </div>
                 <div class="content">
-                  <div v-if="item.ruleName.length<7" class="ruleName">{{item.ruleName}}</div>
+                  <div v-if="item.ruleName.length<10" class="ruleName">{{item.ruleName}}</div>
                   <Tooltip v-else :content="item.ruleName" max-width="200" class="ruleName" placement="top-start" style="display: list-item">
-                    <div >{{item.ruleName.slice(0,7)}}...</div>
+                    <div >{{item.ruleName.slice(0,10)}}...</div>
                   </Tooltip>
-                  <div class="tips">{{item.partnerName}}</div>
+                  <div v-if="item.partnerName.length<10"  class="tips">{{item.partnerName}}</div>
+                  <Tooltip v-else :content="item.partnerName" max-width="200" class="tips" placement="bottom-start" style="display: list-item">
+                    <div >{{item.partnerName.slice(0,10)}}...</div>
+                  </Tooltip>
                 </div>
                 <div class="operate">
                   <span style="margin-right: 12px;" @click.stop="editRule(item)">修改</span>
@@ -48,7 +51,7 @@
             </ul>
           </div>
           </Col>
-          <Col span="19" >
+          <Col span="19" style="flex: 1">
           <div v-if="!ruleDetail.ruleId" class="data-empty">
             <img src="../../assets/img-empty.png" class="data-empty-img">
             <p>请点击左侧{{sceneMap[active]}}设置计费规则明细～</p>
@@ -88,11 +91,11 @@
                         <div class="startPrice">
                           <span style="margin:0 10px">起步价：货物  ＜</span>
                           <FormItem prop="startNum" inline style="margin-bottom: 0;">
-                            <Input v-model="item.startNum" style="width: 108px" @on-change="setItemStartNum(item)"/>
+                            <Input v-model="item.startNum" style="width: 80px" @on-change="setItemStartNum(item)"/>
                           </FormItem>
                           <span>{{unitMap[ruleDetail.ruleType]}}，</span>
                           <FormItem prop="startPrice" inline style="margin-bottom: 0;">
-                            <Input v-model="item.startPrice" style="width: 130px"/>
+                            <Input v-model="item.startPrice" style="width: 80px"/>
                           </FormItem>
                           <span>元起</span>
                         </div>
@@ -192,13 +195,13 @@ export default {
           if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(value)) {
             callback()
           } else {
-            callback(new Error('最多精确到两位小数'))
+            callback(new Error('最多两位小数'))
           }
         } else if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') {
           if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d)?))$/.test(value)) {
             callback()
           } else {
-            callback(new Error('最多精确到一位小数'))
+            callback(new Error('最多一位小数'))
           }
         }
       }
@@ -210,7 +213,7 @@ export default {
         if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(value)) {
           callback()
         } else {
-          callback(new Error('9位正数且最多两位小数'))
+          callback(new Error('最多两位小数'))
         }
       }
     }
@@ -222,15 +225,15 @@ export default {
       } else {
         if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
           if (!(/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(realValue))) {
-            callback(new Error('最多精确到两位小数'))
+            callback(new Error('最多两位小数'))
           }
         }
         if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') {
           if (!(/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d)?))$/.test(realValue))) {
-            callback(new Error('最多精确到一位小数'))
+            callback(new Error('最多一位小数'))
           }
         }
-        if (startNum >= realValue) {
+        if (startNum > realValue) {
           callback(new Error('必须大于起步价'))
         } else {
           callback()
@@ -688,6 +691,17 @@ export default {
       p
         color #999999
         text-align center
+    .left_father
+      flex 0 0 300px
+      &:after
+        content ''
+        display block
+        width 1px
+        height 20px
+        position fixed
+        bottom 15px
+        left 534px
+        border-right 1px solid #C9CED9
     .left
       display flex
       flex-direction column
