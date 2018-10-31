@@ -73,7 +73,7 @@ export default {
               const item = results.getPoi(i)
               const pro = item.province ? item.province : ''
               const city = item.city ? item.city : ''
-              const addr = item.address.replace(pro, '').replace(city, '')
+              const addr = item.address ? item.address.replace(pro, '').replace(city, '') : ''
               arr.push({
                 id: i,
                 name: pro + city + addr + item.title,

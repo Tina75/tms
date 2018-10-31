@@ -171,13 +171,6 @@ export default {
         callback()
       }
     }
-    var checkAddressCompany = function (rule, value, callback) {
-      if (value.length < 5 || value.length > 40) {
-        return callback(new Error('公司地址不能少于5个字也不能超过40个字'))
-      } else {
-        callback()
-      }
-    }
     var checkPhone = function (rule, value, callback) {
       if (value) {
         if (!(/^1\d{10}$/.test(value) || /^0\d{2,3}-?\d{7,8}$/.test(value))) {
@@ -306,8 +299,7 @@ export default {
           { required: true, message: '请选择所在省市' }
         ],
         address: [
-          { required: true, message: '请输入公司地址', trigger: 'blur' },
-          { validator: checkAddressCompany, trigger: 'blur' }
+          { required: true, message: '请输入公司地址', trigger: 'blur' }
         ]
       }
       // 图片相关-个人
@@ -505,6 +497,7 @@ export default {
     latlongtChange ({ lat, lng }) {
       this.formCompany.latitude = lat
       this.formCompany.longitude = lng
+      this.formCompany.mapType = 1
     }
     // 图片相关 -个人
     // handleSuccess (res, file) {

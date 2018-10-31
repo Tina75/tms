@@ -18,7 +18,7 @@
         <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
       </FormItem>
       <FormItem label="公司地址:" prop="companyAddress">
-        <Input v-model="validate.companyAddress" :maxlength="60" placeholder="请输入"/>
+        <AreaInput v-model="validate.companyAddress" :maxlength="60" placeholder="请输入" @latlongt-change="latlongtChange"/>
       </FormItem>
       <FormItem label="支付方式:" class="ivu-form-item-required blank">
         <Select v-model="validate.payType" placeholder="请输入" clearable>
@@ -42,8 +42,12 @@
 <script>
 import { transfereeAdd, transfereeUpdate, CODE } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
+import AreaInput from '@/components/AreaInput.vue'
 export default {
   name: 'sender',
+  components: {
+    AreaInput
+  },
   mixins: [BaseDialog],
   data () {
     return {
@@ -55,7 +59,10 @@ export default {
         phone: '',
         companyAddress: '',
         payType: '',
-        remark: ''
+        remark: '',
+        longitude: '',
+        latitude: '',
+        mapType: 1
       },
       ruleValidate: {
         name: [
@@ -105,6 +112,11 @@ export default {
           this.$Message.error(res.data.msg)
         }
       })
+    },
+    latlongtChange ({ lat, lng }) {
+      this.validate.latitude = lat
+      this.validate.longitude = lng
+      this.validate.mapType = 1
     }
   }
 }
