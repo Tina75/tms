@@ -1,7 +1,7 @@
 <template>
   <div id="uploadFile">
     <div v-if="uploadImg" class="demo-upload-list">
-      <template v-if="progress">
+      <template v-if="progress === 1">
         <img :src="uploadImg">
         <div class="demo-upload-list-cover">
           <div style="cursor: pointer;" @click="handleView">
@@ -28,7 +28,7 @@
         </div>
       </template>
       <template v-else>
-        <Progress :percent="progress" hide-info></Progress>
+        <Progress :percent="progress * 100" hide-info></Progress>
       </template>
     </div>
     <div v-else class="ivu-upload" style="display: inline-block; width: 160px;">
@@ -70,7 +70,7 @@ export default {
     // 图片上传最大尺寸,默认2M
     maxSize: {
       type: [String, Number],
-      default: 2
+      default: 10
     },
     // 是否多图上传
     multiple: {
@@ -142,10 +142,12 @@ export default {
         this.$refs.fileInput.value = null
         return
       }
+      this.uploadImg = ' '
       try {
         const uploadResult = await this.uploadFile(file)
-        console.log(uploadResult.res.requestUrls[0])
-        this.uploadImg = uploadResult.res.requestUrls[0]
+        console.log(uploadResult)
+        this.uploadImg = uploadResult.res.requestUrls[0].split('?')[0]
+        this.$Message.success({ content: '上传成功', duration: 3 })
       } catch (error) {
         if (error.code === 'InvalidAccessKeyId' || error.code === 'InvalidBucketName') {
           // token失效过期了
@@ -167,16 +169,17 @@ export default {
           // 生成随机文件名 Math.floor(Math.random() *10000)
           let randomName = file.name.split('.')[0] + new Date().Format('yyyyMMddhhmmss') + '.' + file.name.split('.').pop()
           let result = await this.ossClient.multipartUpload(this.ossDir + randomName, file, {
-            partSize: 1024 * 1024, // 分片大小 ,1M
+            partSize: 1024 * 500, // 分片大小 ,500K
             progress: function (progress, pp) {
               if (progress) {
                 vm.progress = progress
+                console.log(vm.progress)
               }
             }
           })
           this.$nextTick(() => {
             // this.visible = false
-            vm.progress = 1
+            // vm.progress = 1
           })
           return result
         } catch (e) {

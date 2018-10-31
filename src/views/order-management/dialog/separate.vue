@@ -8,17 +8,17 @@
       <div>
         <div class="order-number" style="margin-bottom: 8px;">
           <Row>
-            <i-col>
+            <i-col span="12">
               订单号：{{ orderNo }}
+            </i-col>
+            <i-col span="12">
+              客户：{{ detailData.consignerName }}
             </i-col>
           </Row>
         </div>
         <div class="order-number">
           <Row>
-            <i-col span="9">
-              客户：&nbsp;&nbsp;&nbsp;{{ detailData.consignerName }}
-            </i-col>
-            <i-col span="15">
+            <i-col>
               始发地／目的地：{{ detailData.startName + ' - ' + detailData.endName }}
             </i-col>
           </Row>
@@ -505,6 +505,15 @@ export default {
 
   methods: {
     save () {
+      // 将参数中的重量体积四舍五入
+      this.parentOrderCargoList.map((item) => {
+        item.weight = parseFloat(item.weight.toFixed(2))
+        item.volume = parseFloat(item.volume.toFixed(1))
+      })
+      this.childOrderCargoList.map((item) => {
+        item.weight = parseFloat(item.weight.toFixed(2))
+        item.volume = parseFloat(item.volume.toFixed(1))
+      })
       const data = {
         id: this.id,
         orderCargoList: [[...this.parentOrderCargoList], [...this.childOrderCargoList]]

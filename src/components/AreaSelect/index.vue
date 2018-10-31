@@ -151,12 +151,12 @@ export default {
           label: item.name,
           parent: item.parent
         }
-        if (item.hasChild) {
+        if (item.hasChild && item.hasChild === '1') {
           data.children = []
           data.loading = false
           data.hasChild = true
         }
-        if (item.hasChild && deep) {
+        if (item.hasChild && item.hasChild === '1' && deep) {
           data.children = vm.loadNext(item.code)
         }
         return data

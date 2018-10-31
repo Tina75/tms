@@ -42,7 +42,7 @@ export default {
     const chargeValidate = (rule, value, callback) => {
       const type = this.ruleOptions[value].ruleType
       if (errorMsg) callback(new Error(errorMsg))
-      else if ((type === 1 && !this.weight) || (type === 2 && !this.volume) || !type) callback(new Error('未能找到相应的计费规则'))
+      else if (((type === 1 || type === 3) && !this.weight) || ((type === 2 || type === 4) && !this.volume) || !type) callback(new Error('未能找到相应的计费规则'))
       else callback()
     }
 
@@ -120,7 +120,7 @@ export default {
             departure: this.start,
             destination: this.end,
             distance: this.distance,
-            input: float.round((rule.ruleType === 1 ? this.weight : this.volume) * 100)
+            input: float.round(((rule.ruleType === 1 || rule.ruleType === 3) ? this.weight : this.volume) * 100)
           }
         }).then(res => {
           this.charge = float.round(res.data.data / 100)

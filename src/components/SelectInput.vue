@@ -221,8 +221,8 @@ export default {
       this.focusIndex = -1
       this.visible = false
       // 选中某一项
-      this.$emit('on-select', item.value, item)
       this.$emit('input', item.value)
+      this.$emit('on-select', item.value, item)
     },
     /**
      * 鼠标focus
