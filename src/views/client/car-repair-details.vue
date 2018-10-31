@@ -97,7 +97,7 @@
         </Row><br/>
         <div class="title">
           <span class="icontTitle"></span>
-          <span class="iconTitleP">维修记录</span>
+          <span class="iconTitleP">操作日志</span>
         </div>
         <div class="list-info">
           <div class="order-log">
@@ -121,7 +121,7 @@
 </template>
 <script>
 import BasePage from '@/basic/BasePage'
-import { carrierQueryLog, CODE, carrierDeleteRepairVehicle } from './client'
+import { carrierQueryLog, CODE, carrierDeleteRepairVehicle, queryByIdCarrier } from './client'
 export default {
   name: 'car-details',
   components: {},
@@ -152,6 +152,7 @@ export default {
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
     },
+    // 初始话数据
     // 日志切换显示
     showOperationLog () {
       this.showLog = !this.showLog
@@ -203,10 +204,24 @@ export default {
         },
         methods: {
           ok () {
+            _this.queryByIdReparir()
           }
         }
       })
-      this.ema.fire('closeTab', this.$route)
+    },
+    queryByIdReparir () {
+      let _this = this
+      queryByIdCarrier({
+        id: _this.infoData.id.toString(),
+        carrierId: _this.carrierId.toString(),
+        type: 'repair'
+      }).then(res => {
+        if (res.data.code === CODE) {
+          _this.infoData = res.data.data
+        } else {
+          _this.$Message.error(res.data.msg)
+        }
+      })
     }
   }
 }

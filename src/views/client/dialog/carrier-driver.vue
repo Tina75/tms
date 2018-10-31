@@ -53,7 +53,7 @@
           <FormItem label="手机号:" prop="driverPhone">
             <Row>
               <Col span="20">
-              <SelectInput v-model="validate.driverPhone" :remote="true" :remote-method="queryDriverByPhoneList" placeholder="必填"></SelectInput>
+              <SelectInput v-model="validate.driverPhone" :remote="true" :remote-method="queryDriverByPhoneList" placeholder="必填" @on-select="slectDriverData"></SelectInput>
               </Col>
             </Row>
           </FormItem>
@@ -216,13 +216,13 @@ export default {
         ],
         driverPhone: [
           { required: true, message: '手机号不能为空', trigger: 'blur' },
-          { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
+          { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
         ],
         carType: [
           { required: true, message: '车型不能为空', trigger: 'change' }
         ],
         carLength: [
-          { required: true, message: '车长不能为空', trigger: 'blur' }
+          { required: true, message: '车长不能为空', trigger: 'change' }
         ],
         shippingWeight: [
           { required: true, message: '载重不能为空' },
@@ -303,6 +303,7 @@ export default {
       let data = this.validate
       carrierAddDriver(data).then(res => {
         if (res.data.code === CODE) {
+          this.$Message.success(res.data.msg)
           this.ok() // 刷新页面
           this.close()
         } else {
@@ -314,12 +315,17 @@ export default {
       let data = this.validate
       carrierUpdateDriver(data).then(res => {
         if (res.data.code === CODE) {
+          this.$Message.success(res.data.msg)
           this.ok() // 刷新页面
           this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
       })
+    },
+    slectDriverData (val, dirverInit) {
+      this.validate.driverName = dirverInit.driverName
+      this.validate.driverType = dirverInit.driverType.toString()
     },
     queryDriverByPhoneList () {
       let data = {}
@@ -328,9 +334,15 @@ export default {
       if (!data.driverPhone) {
         return Promise.resolve([])
       }
-      carrierQueryDriverlist(data).then(res => {
+      return carrierQueryDriverlist(data).then(res => {
         if (res.data.code === CODE) {
-          return res.data.data.map(item => ({ value: item.driverName, name: item.driverName + '/' + item.driverPhone }))
+          return res.data.data.map(item => ({
+            value: item.driverPhone,
+            name: item.driverName + '/' + item.driverPhone,
+            driverName: item.driverName,
+            driverType: item.driverType
+          }
+          ))
         }
       }).catch((errorInfo) => {
         return Promise.reject(errorInfo)

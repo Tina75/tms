@@ -344,8 +344,6 @@ export default {
               n1 = JSON.parse(params.row.regularLine)[0].en === undefined ? '' : JSON.parse(params.row.regularLine)[0].en
               s2 = JSON.parse(params.row.regularLine)[1].sn === undefined ? '' : JSON.parse(params.row.regularLine)[1].sn
               n2 = JSON.parse(params.row.regularLine)[1].en === undefined ? '' : JSON.parse(params.row.regularLine)[1].en
-            } else {
-              return
             }
             return h('div', [
               h('p', {
@@ -491,7 +489,7 @@ export default {
           title: '送修日期',
           key: 'repairDate',
           render: (h, params) => {
-            let text = this.formatDate(params.row.repairDate)
+            let text = this.formatDateTime(params.row.repairDate)
             return h('div', { props: {} }, text)
           }
         },
@@ -514,6 +512,18 @@ export default {
         {
           title: '未支付费用',
           key: 'waitPayMoney'
+        },
+        {
+          title: '添加人',
+          key: 'creater'
+        },
+        {
+          title: '添加时间',
+          key: 'createTime',
+          render: (h, params) => {
+            let text = this.formatDateTime(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
         }
       ],
       data1: [],

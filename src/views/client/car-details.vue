@@ -111,7 +111,7 @@
       </div>
       <div class="title">
         <span class="icontTitle"></span>
-        <span class="iconTitleP">维修记录</span>
+        <span class="iconTitleP">操作日志</span>
       </div>
       <div class="list-info">
         <div class="order-log">
@@ -135,7 +135,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import { CAR_TYPE1, CAR_LENGTH1, DRIVER_TYPE } from '@/libs/constant/carInfo'
-import { CODE, carrierQueryLog, carrierDeleteDriver } from './client'
+import { CODE, carrierQueryLog, carrierDeleteDriver, queryByIdCarrier } from './client'
 export default {
   name: 'car-details',
   components: {},
@@ -159,28 +159,32 @@ export default {
     this.infoDataInit = Object.assign({}, this.$route.query.rowData)
     this.infoData = this.$route.query.rowData
     this._carrierQueryLog()
-    this.infoData.driverType = (DRIVER_TYPE.find(e => e.id === this.infoData.driverType.toString())).name
-    this.infoData.carType = this.carTypeMap[this.infoData.carType]
-    this.infoData.carLength = this.carLengthMap[this.infoData.carLength]
-    let s1 = ''
-    let n1 = ''
-    let s2 = ''
-    let n2 = ''
-    if (this.infoData.regularLine && JSON.parse(this.infoData.regularLine).length === 1) {
-      s1 = JSON.parse(this.infoData.regularLine)[0].sn === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].sn
-      n1 = JSON.parse(this.infoData.regularLine)[0].en === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].en
-    } else if (JSON.parse(this.infoData.regularLine).length === 2) {
-      s1 = JSON.parse(this.infoData.regularLine)[0].sn === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].sn
-      n1 = JSON.parse(this.infoData.regularLine)[0].en === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].en
-      s2 = JSON.parse(this.infoData.regularLine)[1].sn === undefined ? '' : JSON.parse(this.infoData.regularLine)[1].sn
-      n2 = JSON.parse(this.infoData.regularLine)[1].en === undefined ? '' : JSON.parse(this.infoData.regularLine)[1].en
-    }
-    this.line1 = s1 + '—' + n1 === '—' ? '' : s1 + '—' + n1
-    this.line2 = s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2
+    this.initData()
   },
   methods: {
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
+    },
+    // 初始话数据格式
+    initData () {
+      this.infoData.driverType = (DRIVER_TYPE.find(e => e.id === this.infoData.driverType.toString())).name
+      this.infoData.carType = this.carTypeMap[this.infoData.carType]
+      this.infoData.carLength = this.carLengthMap[this.infoData.carLength]
+      let s1 = ''
+      let n1 = ''
+      let s2 = ''
+      let n2 = ''
+      if (this.infoData.regularLine && JSON.parse(this.infoData.regularLine).length === 1) {
+        s1 = JSON.parse(this.infoData.regularLine)[0].sn === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].sn
+        n1 = JSON.parse(this.infoData.regularLine)[0].en === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].en
+      } else if (JSON.parse(this.infoData.regularLine).length === 2) {
+        s1 = JSON.parse(this.infoData.regularLine)[0].sn === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].sn
+        n1 = JSON.parse(this.infoData.regularLine)[0].en === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].en
+        s2 = JSON.parse(this.infoData.regularLine)[1].sn === undefined ? '' : JSON.parse(this.infoData.regularLine)[1].sn
+        n2 = JSON.parse(this.infoData.regularLine)[1].en === undefined ? '' : JSON.parse(this.infoData.regularLine)[1].en
+      }
+      this.line1 = s1 + '—' + n1 === '—' ? '' : s1 + '—' + n1
+      this.line2 = s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2
     },
     // 日志切换显示
     showOperationLog () {
@@ -192,7 +196,6 @@ export default {
         id: this.infoDataInit.id,
         logType: 'vehicle'
       }
-      debugger
       carrierQueryLog(data).then(res => {
         this.orderLog = res.data.data.list
         this.orderLogCount = res.data.data.list.length
@@ -231,10 +234,26 @@ export default {
         },
         methods: {
           ok () {
+            _this.queryByIdCar()
           }
         }
       })
-      this.ema.fire('closeTab', this.$route)
+    },
+    queryByIdCar () {
+      let _this = this
+      queryByIdCarrier({
+        id: _this.infoData.id,
+        carrierId: _this.infoDataInit.carrierId,
+        type: 'repair'
+      }).then(res => {
+        if (res.data.code === CODE) {
+          _this.infoData = res.data.data
+        } else {
+          _this.$Message.error(res.data.msg)
+        }
+      }).then(() => {
+        _this.initData()
+      })
     }
   }
 }

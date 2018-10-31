@@ -48,7 +48,7 @@
           <FormItem label="送修日期:" prop="repairDate">
             <Row>
               <Col span="19">
-              <DatePicker v-model="validate.repairDate" type="date" placeholder="请选择日期（必选）"></DatePicker>
+              <DatePicker v-model="validate.repairDate" type="date" placeholder="必选"></DatePicker>
                 </Col>
             </Row>
           </FormItem>
@@ -119,28 +119,28 @@
         <Row>
           <Col span="22" class="formatSty">
           <FormItem label="修理单位:">
-            <Input v-model="validate.repairUnit" placeholder="请输入"></Input>
+            <Input v-model="validate.repairUnit" :maxlength="50" placeholder="请输入"></Input>
           </FormItem>
           </Col>
         </Row>
         <Row>
           <Col span="22" class="formatSty">
           <FormItem label="修理原因:">
-            <Input v-model="validate.repairReason" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入" type="textarea"></Input>
+            <Input v-model="validate.repairReason" :maxlength="200" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入" type="textarea"></Input>
           </FormItem>
           </Col>
         </Row>
         <Row>
           <Col span="22" class="formatSty">
           <FormItem label="修理结果:">
-            <Input v-model="validate.repairResult" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入" type="textarea"></Input>
+            <Input v-model="validate.repairResult" :maxlength="200" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入" type="textarea"></Input>
           </FormItem>
           </Col>
         </Row>
         <Row>
           <Col span="22" class="formatSty">
           <FormItem label="备注:">
-            <Input v-model="validate.remark" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入" type="textarea"></Input>
+            <Input v-model="validate.remark" :maxlength="200" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入" type="textarea"></Input>
           </FormItem>
           </Col>
         </Row>
@@ -244,6 +244,7 @@ export default {
       let data = this.validate
       carrierAddVehicle(data).then(res => {
         if (res.data.code === CODE) {
+          this.$Message.success(res.data.msg)
           this.ok() // 刷新页面
           this.close()
         } else {
@@ -253,8 +254,10 @@ export default {
     },
     update () {
       let data = this.validate
+      delete data.creater
       carrierUpdateVehicle(data).then(res => {
         if (res.data.code === CODE) {
+          this.$Message.success(res.data.msg)
           this.ok() // 刷新页面
           this.close()
         } else {
