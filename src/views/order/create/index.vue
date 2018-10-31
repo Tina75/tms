@@ -95,14 +95,12 @@
     <Row :gutter="16">
       <Col span="12">
       <FormItem label="发货地址:" prop="consignerAddress">
-        <AreaInput v-model="orderForm.consignerAddress" :city-code="orderForm.start" :maxlength="60" :local-options="consignerAddresses" @latlongt-change="({lat, lng}) => latlongtChange(1, lat, lng)"/>
-        <!-- <SelectInput v-model="orderForm.consignerAddress" :maxlength="60" :local-options="consignerAddresses" :remote="false"></SelectInput> -->
+        <AreaInput v-model="orderForm.consignerAddress" :city-code="startCityCode" :maxlength="60" :local-options="consignerAddresses" @latlongt-change="({lat, lng}) => latlongtChange(1, lat, lng)"/>
       </FormItem>
       </Col>
       <Col span="12">
       <FormItem label="收货地址:" prop="consigneeAddress">
-        <AreaInput v-model="orderForm.consigneeAddress" :city-code="orderForm.end" :maxlength="60" :local-options="consigneeAddresses" @latlongt-change="({lat, lng}) => latlongtChange(2, lat, lng)"/>
-        <!-- <SelectInput v-model="orderForm.consigneeAddress" :maxlength="60" :local-options="consigneeAddresses" :remote="false"></SelectInput> -->
+        <AreaInput v-model="orderForm.consigneeAddress" :city-code="endCityCode" :maxlength="60" :local-options="consigneeAddresses" @latlongt-change="({lat, lng}) => latlongtChange(2, lat, lng)"/>
       </FormItem>
       </Col>
     </Row>
@@ -244,6 +242,7 @@ import Cargo from './libs/cargo'
 import CargoTable from './components/CargoTable.vue'
 import TimeInput from './components/TimeInput.vue'
 import validator from '@/libs/js/validate'
+import cityUtil from '@/libs/js/city'
 
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
 export default {
@@ -522,6 +521,14 @@ export default {
       const stdt = this.formateDate(this.orderForm.deliveryTime)
       const eddt = this.formateDate(this.orderForm.arriveTime)
       return stdt === eddt ? this.orderForm.deliveryTimes : ''
+    },
+    startCityCode () {
+      const arr = cityUtil.getPathByCode(this.orderForm.start)
+      return arr.length ? arr[1].code : ''
+    },
+    endCityCode () {
+      const arr = cityUtil.getPathByCode(this.orderForm.end)
+      return arr.length ? arr[1].code : ''
     }
   },
   watch: {
