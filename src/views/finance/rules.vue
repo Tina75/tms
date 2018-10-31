@@ -68,22 +68,22 @@
                 <span>计算</span>
               </Form>
             </div>
-            <div :style="{height:(height - 200)+'px'}" class="rules-list">
+            <div :style="{height:(height - 115)+'px'}" class="rules-list">
               <div v-for="(item, index) in ruleDetail.details" :key="index" class="rule-item">
                 <Collapse v-model="item.showRule" class="rule-content">
                   <div class="rule-route">
                     <Form ref="ruleRoute" :model="item" :rules="routeValidate" inline>
                       <Row :gutter="24">
                         <Col span="4">
-                        <FormItem prop="departure" style="width: 100%">
+                        <FormItem prop="departure" >
                           <SelectInputForCity v-model="item.departure" placeholder="请输入始发地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
-                        <Col span="1" style="margin: 0">
+                        <Col span="1" style="margin:0">
                         <i class="icon font_family icon-ico-line"></i>
                         </Col>
                         <Col span="4">
-                        <FormItem prop="destination" style="width: 100%">
+                        <FormItem prop="destination" >
                           <SelectInputForCity v-model="item.destination" placeholder="请输入目的地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
@@ -208,13 +208,16 @@ export default {
     }
     const startPriceValidate = (rule, value, callback) => {
       if (value === null || value === '') {
-        callback(new Error('请填写金额'))
-      } else {
+        callback(new Error('请填写'))
+      }
+      if (/^((0[.]\d{1,2})|(([1-9]\d*)([.]\d{1,2})?))$/.test(value)) {
         if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(value)) {
           callback()
         } else {
-          callback(new Error('最多两位小数'))
+          callback(new Error('最多9位整数'))
         }
+      } else {
+        callback(new Error('最多两位小数'))
       }
     }
     const baseAndStartValidate = (rule, value, callback) => {
@@ -252,8 +255,8 @@ export default {
       valueMap: {
         1: '吨',
         2: '方',
-        3: '公里',
-        4: '公里'
+        3: '吨公里',
+        4: '方公里'
       },
       sceneMap: {
         1: '发货方',
@@ -585,7 +588,7 @@ export default {
         border-bottom: 1px solid #C9CED9
         .rule-item
           display: flex
-          margin-bottom: 10px
+          margin-bottom: 30px
           .rule-content
             position: relative
             .rule-route
@@ -685,7 +688,7 @@ export default {
       position absolute
       left 50%
       margin-left -43px
-      bottom 30px
+      bottom 0
       text-align: center
       .ivu-btn
         padding-left: 30px
