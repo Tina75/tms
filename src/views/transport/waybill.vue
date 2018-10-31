@@ -9,6 +9,7 @@
         <div class="custom-style">
           <Button v-for="(item, key) in showButtons" :key="key"
                   :type="key === 0 ? 'primary' : 'default'"
+                  class="action-btn"
                   @click="item.func">{{ item.name }}</Button>
         </div>
 
@@ -84,11 +85,14 @@
           </div>
           <div>
             <Button type="primary"
+                    class="action-btn"
                     @click="startSearch">搜索</Button>
             <Button type="default"
+                    class="action-btn"
                     @click="resetSeniorSearch()">清除条件</Button>
             <Button type="default"
                     style="margin-right: 0;"
+                    class="action-btn"
                     @click="changeSearchType">简易搜索</Button>
           </div>
         </div>
@@ -288,19 +292,33 @@ export default {
     // 位置
     billLocation () {
       if (!this.checkTableSelection()) return
+      let waybillIds = this.tableSelection.map(item => item.waybillId)
+      let data = waybillIds.length > 1 ? ({ waybillIds }) : ({ waybillId: waybillIds[0] })
       Server({
-        url: '/waybill/location',
+        url: waybillIds.length > 1 ? '/waybill/location' : '/waybill/single/location',
         method: 'post',
-        data: { waybillIds: this.tableSelection.map(item => item.waybillId) }
+        data
       }).then(res => {
-        const points = res.data.data.list
-        if (!points.length) {
-          this.$Message.warning('暂无位置')
-          return
+        let cars
+        if (waybillIds.length > 1) {
+          if (!res.data.data.list.length) {
+            this.$Message.warning('暂无车辆位置信息')
+            return
+          }
+          cars = res.data.data.list
+        } else {
+          if (!res.data.data.points.length) {
+            this.$Message.warning('暂无车辆位置信息')
+            return
+          }
+          cars = [res.data.data]
         }
         this.openDialog({
           name: 'transport/dialog/map',
-          data: { points },
+          data: {
+            cars,
+            multiple: waybillIds.length !== 1
+          },
           methods: {}
         })
       }).catch(err => console.error(err))

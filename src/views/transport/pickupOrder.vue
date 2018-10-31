@@ -9,6 +9,7 @@
         <div class="custom-style">
           <Button v-for="(item, key) in showButtons" :key="key"
                   :type="key === 0 ? 'primary' : 'default'"
+                  class="action-btn"
                   @click="item.func">{{ item.name }}</Button>
         </div>
 
@@ -82,11 +83,14 @@
           </div>
           <div>
             <Button type="primary"
+                    class="action-btn"
                     @click="startSearch">搜索</Button>
             <Button type="default"
+                    class="action-btn"
                     @click="resetSeniorSearch()">清除条件</Button>
             <Button type="default"
                     style="margin-right: 0;"
+                    class="action-btn"
                     @click="changeSearchType">简易搜索</Button>
           </div>
         </div>
@@ -275,19 +279,33 @@ export default {
     // 位置
     billLocation () {
       if (!this.checkTableSelection()) return
+      let pickUpIds = this.tableSelection.map(item => item.pickUpId)
+      let data = pickUpIds.length > 1 ? ({ pickUpIds }) : ({ pickUpId: pickUpIds[0] })
       Server({
-        url: '/load/bill/location',
+        url: pickUpIds.length > 1 ? '/load/bill/location' : '/load/bill/single/location',
         method: 'post',
-        data: { pickUpIds: this.tableSelection.map(item => item.pickUpId) }
+        data
       }).then(res => {
-        const points = res.data.data.list
-        if (!points.length) {
-          this.$Message.warning('暂无位置')
-          return
+        let cars
+        if (pickUpIds.length > 1) {
+          if (!res.data.data.list.length) {
+            this.$Message.warning('暂无车辆位置信息')
+            return
+          }
+          cars = res.data.data.list
+        } else {
+          if (!res.data.data.points.length) {
+            this.$Message.warning('暂无车辆位置信息')
+            return
+          }
+          cars = [res.data.data]
         }
         this.openDialog({
           name: 'transport/dialog/map',
-          data: { points },
+          data: {
+            cars,
+            multiple: pickUpIds.length !== 1
+          },
           methods: {}
         })
       }).catch(err => console.error(err))

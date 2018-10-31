@@ -3,12 +3,12 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-10-09 15:36:10
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-10-22 18:55:29
+ * @Last Modified time: 2018-10-30 10:32:16
  */
 
 const TMSUrl = {
   HOME: '/home', // 首页
-  CREATE_ORDER: '/order/create', // 手工下单
+  CREATE_ORDER: '/order/create', // 手工开单
   IMPORT_ORDER: '/order/import', // 批量导入
   ORDER_MANAGEMENT: '/order-management/order', // 订单管理
   ORDER_DETAIL: '/order-management/detail', // 订单详情
@@ -29,12 +29,15 @@ const TMSUrl = {
   PROFIT_REPORT: '/report/profit', // 利润报表,
   SENDER_MANAGEMENT: '/client/sender', // 发货方管理
   CARRIER_MANAGEMENT: '/client/carrier', // 承运商管理
+  CARRIER_MANAGEMENT_CAEDETAILS: '/client/car-details', // 承运商管理车辆详情
+  CARRIER_MANAGEMENT_REPAIRDETAILS: '/client/car-repair-details', // 承运商维修详情
   TRANSFER_MANAGEMENT: '/client/transfer', // 外转方管理
   STAFF_MANAGEMENT: '/company/staff-manage', // 员工管理
   EMPLOYEE_MANAGEMENT: '/company/role-manage', // 角色管理
   SETTING: '/set-up/index', // 设置
   MESSAGE_CENTER: '/information/index', // 消息中心
   MESSAGE_DETAIL: '/information/message-info', // 消息详情
+  PROCESS: '/helper/process', // 业务流程
   HELP: '/helper/index' // 帮助中心
 }
 export default TMSUrl

@@ -7,7 +7,7 @@ export default {
     disabled: true,
     checked: true,
     children: [{
-      title: '手工下单',
+      title: '手工开单',
       expand: true,
       code: '100100',
       parentId: '100000',

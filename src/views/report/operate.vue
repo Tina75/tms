@@ -1,9 +1,8 @@
 <template>
   <div>
     <div class="search">
-      <div class="search-col">
-        <Row :gutter="24" class="row">
-          <Col span="6">
+      <div class="search-col" >
+        <div class="row-list" style="margin-bottom:12px">
           <div class="col">
             <SelectInput
               v-model="keywords.consignerName"
@@ -17,37 +16,25 @@
             >
             </SelectInput>
           </div>
-      </Col>
-          <Col span="6">
           <div class="col">
             <Input v-model="keywords.orderNo" :maxlength="20"  placeholder="请输入订单号"/>
           </div>
-      </Col>
-          <Col span="6">
           <div class="col">
             <Input v-model="keywords.customerOrderNo" :maxlength="20" placeholder="请输入客户订单号"  />
           </div>
-      </Col>
-          <Col span="6">
           <div class="col">
             <Input :maxlength="20" v-model="keywords.waybillNo" placeholder="请输入运单号"  />
           </div>
-      </Col>
-        </Row>
-        <Row :gutter="24">
-          <Col span="6">
+        </div>
+        <div class="row-list">
           <div class="col">
             <!--<area-select v-model="keywords.start" placeholder="请输入始发地" style="width: 100%"></area-select>-->
             <SelectInputForCity v-model="keywords.start" placeholder="请输入始发地" style="width: 100%"></SelectInputForCity>
           </div>
-        </Col>
-          <Col span="6">
           <div class="col">
             <!--<area-select v-model="keywords.end" placeholder="请输入目的地" style="width: 100%"></area-select>-->
             <SelectInputForCity v-model="keywords.end" placeholder="请输入目的地" style="width: 100%"></SelectInputForCity>
           </div>
-        </Col>
-          <Col span="6">
           <div class="col">
             <DatePicker
               v-model="times"
@@ -61,8 +48,9 @@
             >
             </DatePicker>
           </div>
-        </Col>
-        </Row>
+          <div class="col">
+          </div>
+        </div>
       </div>
       <div class="search-btn">
         <Button type="primary" @click="search">搜索</Button>
@@ -668,8 +656,14 @@ export default {
     padding 13px
     .search-col
       flex 4
-      .row
-        margin-bottom 12px
+      .row-list
+        display flex
+        justify-content space-between
+        .col
+          flex 1
+          margin-right 20px
+          &:last-child
+            margin-right 0
     .search-btn
       flex 1
       text-align right

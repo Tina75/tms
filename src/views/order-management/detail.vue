@@ -45,11 +45,11 @@
         <Row>
           <i-col span="7">
             <span>始发地：</span>
-            <span>{{detail.start | cityFormatter}}</span>
+            <span>{{detail.startName}}</span>
           </i-col>
           <i-col span="7">
             <span>目的地：</span>
-            <span>{{detail.end | cityFormatter}}</span>
+            <span>{{detail.endName}}</span>
           </i-col>
           <i-col span="7">
             <span>提货方式：</span>
@@ -538,10 +538,10 @@ export default {
       let name
       switch (code) {
         case 1:
-          name = '上门提货'
+          name = '小车上门自提'
           break
         case 2:
-          name = '直接送货'
+          name = '大车直送客户'
           break
       }
       return name

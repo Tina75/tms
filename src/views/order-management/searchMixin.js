@@ -220,10 +220,10 @@ export default {
       let name
       switch (code) {
         case 1:
-          name = '上门提货'
+          name = '小车上门自提'
           break
         case 2:
-          name = '直接送货'
+          name = '大车直送客户'
           break
       }
       return name

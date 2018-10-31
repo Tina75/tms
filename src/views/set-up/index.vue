@@ -39,7 +39,7 @@
           <span>{{formPersonal.phone}}</span>
         </FormItem>
         <FormItem label="姓名：" prop="name" style="margin-left: -9px;" class="labelClassSty">
-          <Input v-model="formPersonal.name" placeholder="请输入姓名" maxlength="10" style="margin-left: 9px;" class="inputClassSty"></Input>
+          <Input v-model="formPersonal.name" :maxlength="10" placeholder="请输入姓名" style="margin-left: 9px;" class="inputClassSty"></Input>
         </FormItem>
         <FormItem label="角色：" class="labelClassSty">
           <span>{{formPersonal.roleName}}</span>
@@ -82,19 +82,19 @@
       <Col span="10" class="setConf">
       <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="120" label-position="left">
         <FormItem label="公司名称：" prop="name" class="labelClassSty">
-          <Input v-model="formCompany.name" placeholder="请输入公司名称" maxlength="25" class="inputClassSty"></Input>
+          <Input v-model="formCompany.name" :maxlength="25" placeholder="请输入公司名称" class="inputClassSty"></Input>
         </FormItem>
         <FormItem label="公司联系人：" prop="contact" class="labelClassSty">
-          <Input v-model="formCompany.contact" placeholder="请输入公司联系人" maxlength="10" class="inputClassSty"></Input>
+          <Input v-model="formCompany.contact" :maxlength="10" placeholder="请输入公司联系人" class="inputClassSty"></Input>
         </FormItem>
         <FormItem label="联系方式：" prop="contactPhone" class="labelClassSty">
-          <Input v-model="formCompany.contactPhone" placeholder="请输入联系方式" maxlength="11" class="inputClassSty"></Input>
+          <Input v-model="formCompany.contactPhone" :maxlength="11" placeholder="请输入联系方式" class="inputClassSty"></Input>
         </FormItem>
         <FormItem label="所在省市：" prop="cityId" class="labelClassSty">
           <AreaSelect v-model="formCompany.cityId" :deep="true" class="inputClassSty"></AreaSelect>
         </FormItem>
         <FormItem label="公司地址：" prop="address" class="labelClassSty">
-          <Input v-model="formCompany.address" placeholder="请输入公司地址" maxlength="40" class="inputClassSty"></Input>
+          <Input v-model="formCompany.address" :maxlength="40" placeholder="请输入公司地址" class="inputClassSty"></Input>
         </FormItem>
         <FormItem>
           <Button type="primary" style="width:86px;" @click="companySubmit('formCompany')">保存</Button>
@@ -586,7 +586,7 @@ export default {
     margin-top: 2px;
     border-radius:3px;
   .iconRightTitleP
-   margin-left:35px;
+   margin-left:20px;
    font-size: 16px;
    font-weight:600;
 .mesDiv

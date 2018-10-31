@@ -598,17 +598,17 @@ export default {
           minWidth: 180,
           ellipsis: true,
           render: (h, params) => {
-            if (this.cityFormatter(params.row.start).length > 12) {
+            if (params.row.startName.length > 12) {
               return h('Tooltip', {
                 props: {
                   placement: 'bottom',
-                  content: this.cityFormatter(params.row.start)
+                  content: params.row.startName
                 }
               }, [
-                h('span', this.formatterAddress(this.cityFormatter(params.row.start)))
+                h('span', this.formatterAddress(params.row.startName))
               ])
             } else {
-              return h('span', this.cityFormatter(params.row.start))
+              return h('span', params.row.startName)
             }
           }
         },
@@ -618,17 +618,17 @@ export default {
           minWidth: 180,
           ellipsis: true,
           render: (h, params) => {
-            if (this.cityFormatter(params.row.end).length > 12) {
+            if (params.row.endName.length > 12) {
               return h('Tooltip', {
                 props: {
                   placement: 'bottom',
-                  content: this.cityFormatter(params.row.end)
+                  content: params.row.endName
                 }
               }, [
-                h('span', this.formatterAddress(this.cityFormatter(params.row.end)))
+                h('span', this.formatterAddress(params.row.endName))
               ])
             } else {
-              return h('span', this.cityFormatter(params.row.end))
+              return h('span', params.row.endName)
             }
           }
         },

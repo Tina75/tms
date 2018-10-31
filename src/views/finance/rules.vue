@@ -6,32 +6,52 @@
       </Tabs>
     </div>
     <div class="data-container">
-      <div class="operate-block">
-        <Button v-if="hasPower(170401)" type="primary" @click="addRule">新增规则</Button>
-        <div class="query-box">
-          <Form ref="rulesQuery" :model="rulesQuery" :rules="validate" inline>
-            <FormItem>
-              <Select v-model="rulesQuery.type">
-                <Option v-if="active === '1'" value="1">发货方名称</Option>
-                <Option v-if="active === '2'" value="2">承运商名称</Option>
-                <Option v-if="active === '3'" value="3">外转方名称</Option>
-                <Option value="4">规则名称</Option>
-              </Select>
-            </FormItem>
-            <FormItem prop="queryText">
-              <Input v-model="rulesQuery.queryText" :placeholder="`请输入${sceneMap[rulesQuery.type]}名称`" :maxlength="20" style="width: auto">
-              <Icon slot="suffix" type="ios-search" class="suffix-btn" @click="getRules"/>
-              </Input>
-            </FormItem>
-          </Form>
-        </div>
-      </div>
       <div class="list-box">
-        <Row :gutter="20">
-          <Col span="7">
-          <Table :columns="companyColumn" :data="companyData" class="company-table" height="500" highlight-row @on-row-click="showRuleDetail"></Table>
+        <Row type="flex">
+          <Col span="5" class="left_father">
+          <div :style="{height: height + 'px'}" class="left">
+            <div class="left_search">
+              <Row type="flex" >
+                <Col span="17">
+                <div style="margin-right: 20px;">
+                  <Form ref="rulesQuery" :model="rulesQuery" :rules="validate">
+                    <FormItem prop="queryText">
+                      <Input v-model="rulesQuery.paramName" :placeholder="`请输入${sceneMap[active]}、规则名称`" :maxlength="20" @on-keyup="getRules"  >
+                      <Icon slot="prefix" type="ios-search" class="suffix-btn" @click="getRules"/>
+                        </Input>
+                    </FormItem>
+                  </Form>
+                </div>
+                </Col>
+                <Col span="7">
+                <Button v-if="hasPower(170401)" type="primary" @click="addRule">新增</Button>
+                </Col>
+              </Row>
+            </div>
+            <ul :style="{height: height -77  + 'px'}" class="ruleList" >
+              <li v-for="(item,index) in companyData" :class="{companyDataActive:companyDataActive === item.ruleId}" :key="index" class="list" @click="showRuleDetail(item)">
+                <div class="icon">
+                  <FontIcon slot="icon" type="ico-price" ></FontIcon>
+                </div>
+                <div class="content">
+                  <div v-if="item.ruleName.length<10" class="ruleName">{{item.ruleName}}</div>
+                  <Tooltip v-else :content="item.ruleName" max-width="200" class="ruleName" placement="top-start" style="display: list-item">
+                    <div >{{item.ruleName.slice(0,10)}}...</div>
+                  </Tooltip>
+                  <div v-if="item.partnerName.length<10"  class="tips">{{item.partnerName}}</div>
+                  <Tooltip v-else :content="item.partnerName" max-width="200" class="tips" placement="bottom-start" style="display: list-item">
+                    <div >{{item.partnerName.slice(0,10)}}...</div>
+                  </Tooltip>
+                </div>
+                <div class="operate">
+                  <span style="margin-right: 12px;" @click.stop="editRule(item)">修改</span>
+                  <span @click="removeRule(item.ruleId)">删除</span>
+                </div>
+              </li>
+            </ul>
+          </div>
           </Col>
-          <Col span="17">
+          <Col span="19" style="flex: 1">
           <div v-if="!ruleDetail.ruleId" class="data-empty">
             <img src="../../assets/img-empty.png" class="data-empty-img">
             <p>请点击左侧{{sceneMap[active]}}设置计费规则明细～</p>
@@ -40,42 +60,48 @@
             <div class="rule-basic">
               <Form ref="ruleBasic" :model="ruleDetail" :rules="basicValidate" inline>
                 <span>按</span>
-                <FormItem prop="ruleType">
+                <FormItem prop="ruleType" style="width: 100px">
                   <Select v-model="ruleDetail.ruleType">
-                    <Option value="1">重量</Option>
-                    <Option value="2">体积</Option>
+                    <Option v-for="(value, key) in ruleTypeMap" v-if="((active === '1' || active ==='3') && (key ==='3' || key === '4')) || key ==='1' || key ==='2'" :key="key" :value="key">{{value}}</Option>
                   </Select>
                 </FormItem>
-                <span>计算&#12288;&#12288;单位：元/{{unitMap[ruleDetail.ruleType]}}</span>
-                <span>&#12288;&#12288;&#12288;&#12288;&#12288;规则名：</span>
-                <FormItem prop="ruleName">
-                  <Input v-model="ruleDetail.ruleName" :placeholder="`请输入规则名称`" style="width: auto" />
-                </FormItem>
+                <span>计算</span>
               </Form>
             </div>
-            <div class="rules-list">
+            <div :style="{height:(height - 200)+'px'}" class="rules-list">
               <div v-for="(item, index) in ruleDetail.details" :key="index" class="rule-item">
-                <div class="item-remove">
-                  <Icon type="md-remove-circle" @click="removeItem(index)"/>
-                </div>
                 <Collapse v-model="item.showRule" class="rule-content">
                   <div class="rule-route">
                     <Form ref="ruleRoute" :model="item" :rules="routeValidate" inline>
-                      <Row :gutter="20">
-                        <Col span="11">
+                      <Row :gutter="24">
+                        <Col span="4">
                         <FormItem prop="departure" style="width: 100%">
-                          <!--<AreaSelect v-model="item.departure" :deep="true" placeholder="请输入始发地" class="search-input-senior" />-->
                           <SelectInputForCity v-model="item.departure" placeholder="请输入始发地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
-                        <Col span="2">
+                        <Col span="1" style="margin: 0">
                         <i class="icon font_family icon-ico-line"></i>
                         </Col>
-                        <Col span="11">
+                        <Col span="4">
                         <FormItem prop="destination" style="width: 100%">
-                          <!--<AreaSelect v-model="item.destination" :deep="true" placeholder="请输入目的地" class="search-input-senior" />-->
                           <SelectInputForCity v-model="item.destination" placeholder="请输入目的地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
+                        </Col>
+                        <Col span="13" >
+                        <div class="startPrice">
+                          <span style="margin:0 10px">起步价：货物  ＜</span>
+                          <FormItem prop="startNum" inline style="margin-bottom: 0;">
+                            <Input v-model="item.startNum" style="width: 80px" @on-change="setItemStartNum(item)"/>
+                          </FormItem>
+                          <span>{{unitMap[ruleDetail.ruleType]}}，</span>
+                          <FormItem prop="startPrice" inline style="margin-bottom: 0;">
+                            <Input v-model="item.startPrice" style="width: 80px"/>
+                          </FormItem>
+                          <span>元起</span>
+                        </div>
+                        </Col>
+                        <Col span="2">
+                        <span class="delete_btn" @click="removeItem(index)">删除</span>
                         </Col>
                       </Row>
                     </Form>
@@ -83,74 +109,34 @@
                   <Panel :name="(index + 1) + ''">
                     <div slot></div>
                     <div slot="content">
-                      <div class="ivu-table-wrapper">
-                        <div class="ivu-table ivu-table-default ivu-table-with-fixed-top">
-                          <div class="ivu-table-header">
-                            <table cellspacing="0" cellpadding="0" border="0" style="width: 100%">
-                              <colgroup>
-                                <col width="100">
-                                <col width="250">
-                                <col width="250">
-                              </colgroup>
-                              <thead>
-                                <tr>
-                                  <th class="">
-                                    <div class="ivu-table-cell"><span class="">操作</span></div>
-                                  </th>
-                                  <th class="">
-                                    <div class="ivu-table-cell"><span class="">计费区间</span></div>
-                                  </th>
-                                  <th class="">
-                                    <div class="ivu-table-cell"><span class="">计费价格</span></div>
-                                  </th>
-                                </tr>
-                              </thead>
-                            </table>
+                      <ul class="rule-detail">
+                        <li v-for="(el, no) in item.chargeRules" :key="no" class="rule-detail-item">
+                          <div>
+                            <span>{{valueTypeMap[ruleDetail.ruleType]}}</span>
+                            <span style="margin-left: 5px">≥</span>
+                            <Form ref="ruleBase" :model="el" :rules="baseValidate" style="display: inline-block" inline>
+                              <FormItem prop="baseAndStart" inline style="margin-bottom: 0">
+                                <Input v-model="el.base" @on-change="setElStartNum(item, el)"/>
+                              </FormItem>
+                              <span>{{unitMap[ruleDetail.ruleType]}}</span>
+                            </Form>
                           </div>
-                          <div class="ivu-table-body">
-                            <table cellspacing="0" cellpadding="0" border="0" style="width: 100%">
-                              <colgroup>
-                                <col width="100">
-                                <col width="250">
-                                <col width="250">
-                              </colgroup>
-                              <tbody class="ivu-table-tbody">
-                                <tr v-for="(el, no) in item.chargeRules" :key="no" class="ivu-table-row">
-                                  <td>
-                                    <div class="ivu-table-cell">
-                                      <div class="adjuster">
-                                        <Icon class="add" type="md-add-circle" @click="addEl(index)"/>
-                                        <Icon v-if="item.chargeRules.length > 1" class="remove" type="md-remove-circle" @click="removeEl(index, no)"/>
-                                      </div>
-                                    </div>
-                                  </td>
-                                  <td>
-                                    <div class="ivu-table-cell">
-                                      <Form ref="ruleBase" :model="el" :rules="baseValidate" inline>
-                                        <span>大于等于</span>
-                                        <FormItem prop="base" inline>
-                                          <Input v-model="el.base" style="width: 120px"/>
-                                        </FormItem>
-                                        <span>{{unitMap[ruleDetail.ruleType]}}</span>
-                                      </Form>
-                                    </div>
-                                  </td>
-                                  <td>
-                                    <div class="ivu-table-cell">
-                                      <Form ref="rulePrice" :model="el" :rules="priceValidate" inline>
-                                        <FormItem prop="price" inline>
-                                          <Input v-model="el.price" style="width: 120px"/>
-                                        </FormItem>
-                                        <span>元/{{unitMap[ruleDetail.ruleType]}}</span>
-                                      </Form>
-                                    </div>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
+                          <div>
+                            <span>单价</span>
+                            <span style="margin-left: 5px">=</span>
+                            <Form ref="rulePrice" :model="el" :rules="priceValidate" style="display: inline-block" inline>
+                              <FormItem prop="price" inline style="margin-bottom: 0">
+                                <Input v-model="el.price" />
+                              </FormItem>
+                              <span>元/{{valueMap[ruleDetail.ruleType]}}</span>
+                            </Form>
                           </div>
-                        </div>
-                      </div>
+                          <div class="add_decrease">
+                            <span v-if="item.chargeRules.length > 1" style="margin-right: 12px"  @click="removeEl(index, no)">删除</span>
+                            <span v-if="item.chargeRules.length - 1 === no" @click="addEl(index)">新增</span>
+                          </div>
+                        </li>
+                      </ul>
                     </div>
                   </Panel>
                 </Collapse>
@@ -163,7 +149,7 @@
               </div>
             </div>
             <div class="rules-operation">
-              <Button v-if="hasPower(170403)" type="primary" @click="saveRules">保存</Button>
+              <Button v-if="hasPower(170403)" type="primary" @click="saveRules()">保存</Button>
             </div>
           </div>
           </Col>
@@ -178,12 +164,13 @@ import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 // import AreaSelect from '@/components/AreaSelect'
 import SelectInputForCity from '@/components/SelectInputForCity'
+import FontIcon from '@/components/FontIcon'
 export default {
   name: 'financeRules',
   metaInfo: {
     title: '计费规则'
   },
-  components: { SelectInputForCity },
+  components: { SelectInputForCity, FontIcon },
   mixins: [ BasePage ],
   data () {
     const startValidate = (rule, value, callback) => {
@@ -200,11 +187,73 @@ export default {
         callback()
       }
     }
+    const startNumValidate = (rule, value, callback) => {
+      if (value === null || value === '') {
+        callback(new Error('请填写区间'))
+      } else {
+        if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
+          if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(value)) {
+            callback()
+          } else {
+            callback(new Error('最多两位小数'))
+          }
+        } else if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') {
+          if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d)?))$/.test(value)) {
+            callback()
+          } else {
+            callback(new Error('最多一位小数'))
+          }
+        }
+      }
+    }
+    const startPriceValidate = (rule, value, callback) => {
+      if (value === null || value === '') {
+        callback(new Error('请填写金额'))
+      } else {
+        if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(value)) {
+          callback()
+        } else {
+          callback(new Error('最多两位小数'))
+        }
+      }
+    }
+    const baseAndStartValidate = (rule, value, callback) => {
+      let realValue = parseFloat(value.split(',')[0])
+      let startNum = parseFloat(value.split(',')[1])
+      if (realValue === null || realValue === '') {
+        callback(new Error('请填写'))
+      } else {
+        if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
+          if (!(/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(realValue))) {
+            callback(new Error('最多两位小数'))
+          }
+        }
+        if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') {
+          if (!(/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d)?))$/.test(realValue))) {
+            callback(new Error('最多一位小数'))
+          }
+        }
+        if (startNum > realValue) {
+          callback(new Error('计费区间与起步价冲突'))
+        } else {
+          callback()
+        }
+      }
+    }
     return {
+      height: 0,
       active: '1',
       unitMap: {
         1: '吨',
-        2: '方'
+        2: '方',
+        3: '吨',
+        4: '方'
+      },
+      valueMap: {
+        1: '吨',
+        2: '方',
+        3: '公里',
+        4: '公里'
       },
       sceneMap: {
         1: '发货方',
@@ -212,14 +261,26 @@ export default {
         3: '外转方',
         4: '规则'
       },
+      ruleTypeMap: {
+        '1': '重量',
+        '2': '体积',
+        '3': '吨公里',
+        '4': '方公里'
+      },
+      valueTypeMap: {
+        '1': '重量',
+        '2': '体积',
+        '3': '重量',
+        '4': '体积'
+      },
       rulesQuery: {
-        type: '1',
-        queryText: ''
+        paramName: ''
       },
       companyData: [],
+      companyDataActive: -1,
       ruleDetail: {},
       validate: {
-        queryText: { type: 'string', max: 20, message: '不能超过20个字', trigger: 'blur' }
+        paramName: { type: 'string', max: 20, message: '不能超过20个字', trigger: 'blur' }
       },
       basicValidate: {
         ruleType: { required: true, message: '请选择计算方案', trigger: 'change' },
@@ -227,12 +288,17 @@ export default {
       },
       routeValidate: {
         departure: { validator: startValidate, trigger: 'change' },
-        destination: { validator: endValidate, trigger: 'change' }
+        destination: { validator: endValidate, trigger: 'change' },
+        startNum: [
+          { validator: startNumValidate, trigger: 'blur' }
+        ],
+        startPrice: [
+          { validator: startPriceValidate, trigger: 'blur' }
+        ]
       },
       baseValidate: {
-        base: [
-          { required: true, message: '请填写区间', trigger: 'blur' },
-          { pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/, message: '最多精确到两位小数', trigger: 'blur' }
+        baseAndStart: [
+          { validator: baseAndStartValidate, trigger: 'blur' }
         ]
       },
       priceValidate: {
@@ -244,48 +310,10 @@ export default {
     }
   },
   computed: {
-    companyColumn () {
-      return [
-        {
-          title: this.sceneMap[this.active],
-          width: 130,
-          key: 'partnerName'
-        },
-        {
-          title: '规则名',
-          width: 110,
-          key: 'ruleName'
-        },
-        {
-          title: ' ',
-          key: 'action',
-          className: 'operation',
-          render: (h, params) => {
-            return this.hasPower(170402) ? h('a', {
-              on: {
-                click: () => {
-                  this.removeRule(params)
-                }
-              }
-            }, '删除') : ''
-          }
-        }
-      ]
-    }
-  },
-  watch: {
-    'ruleDetail.ruleType': function (val) {
-      if (val === '1') {
-        this.baseValidate.base[1].pattern = /^(0|([1-9]\d*))([.]\d{1,2})?$/
-        this.baseValidate.base[1].message = '最多精确到两位小数'
-      } else {
-        this.baseValidate.base[1].pattern = /^(0|([1-9]\d*))([.]\d)?$/
-        this.baseValidate.base[1].message = '最多精确到一位小数'
-      }
-    }
   },
   mounted () {
     this.getRules()
+    this.height = document.body.clientHeight - 50 - 15 * 2 - 20 * 2 + 15 - 65
   },
   methods: {
     toDetail (data) {
@@ -293,6 +321,24 @@ export default {
         name: 'accountDetail',
         params: {
           id: data.row.id
+        }
+      })
+    },
+    editRule (item) {
+      const _this = this
+      this.openDialog({
+        name: 'finance/dialogs/editRule',
+        data: {
+          scene: this.active,
+          ruleId: item.ruleId,
+          createRuleForm: {
+            ruleName: item.ruleName
+          }
+        },
+        methods: {
+          ok () {
+            _this.getRules()
+          }
         }
       })
     },
@@ -322,7 +368,7 @@ export default {
             url: '/finance/charge/deleteRule',
             method: 'post',
             data: {
-              ruleId: data.row.ruleId
+              ruleId: data
             }
           }).then(res => {
             _this.ruleDetail = {}
@@ -332,7 +378,8 @@ export default {
       })
     },
     addEl (index) {
-      this.ruleDetail.details[index].chargeRules.push({ base: '', price: '' })
+      console.log(index)
+      this.ruleDetail.details[index].chargeRules.push({ base: '', price: '', baseAndStart: '' })
     },
     removeEl (index, no) {
       this.ruleDetail.details[index].chargeRules.splice(no, 1)
@@ -342,8 +389,10 @@ export default {
         departure: null,
         destination: null,
         showRule: (this.ruleDetail.details.length + 1) + '',
+        startNum: null,
+        startPrice: null,
         chargeRules: [
-          { base: '', price: '' }
+          { base: '', price: '', baseAndStart: '' }
         ]
       })
     },
@@ -389,6 +438,8 @@ export default {
                 return {
                   departure: item.departure,
                   destination: item.destination,
+                  startNum: item.startNum,
+                  startPrice: item.startPrice,
                   chargeRules: item.chargeRules.map(el => {
                     return {
                       base: parseFloat(el.base) * 100,
@@ -428,8 +479,7 @@ export default {
         method: 'get',
         params: {
           partnerType: this.active,
-          partnerName: this.rulesQuery.type !== '4' ? this.rulesQuery.queryText : '',
-          ruleName: this.rulesQuery.type === '4' ? this.rulesQuery.queryText : ''
+          paramName: this.rulesQuery.type !== '4' ? this.rulesQuery.paramName : ''
         }
       }).then(res => {
         this.companyData = res.data.data
@@ -438,9 +488,11 @@ export default {
         } else {
           this.ruleDetail = {}
         }
+        console.log(this.companyDataActive)
       }).catch(err => console.error(err))
     },
     showRuleDetail (data) {
+      this.companyDataActive = data.ruleId
       this.ruleDetail = {
         ruleId: data.ruleId,
         ruleType: data.detail.ruleType ? (data.detail.ruleType + '') : '1',
@@ -449,22 +501,34 @@ export default {
           return {
             departure: item.departure,
             destination: item.destination,
+            startPrice: item.startPrice,
+            startNum: item.startNum,
             showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
               return {
                 base: el.base ? (el.base / 100) + '' : '0',
-                price: el.price ? (el.price / 100) + '' : '0'
+                price: el.price ? (el.price / 100) + '' : '0',
+                baseAndStart: el.base + ',' + item.startNum
               }
             })
           }
         }))
       }
+    },
+    setElStartNum (item, el) {
+      el.baseAndStart = el.base + ',' + item.startNum
+    },
+    setItemStartNum (item) {
+      item.chargeRules.forEach(el => {
+        el.baseAndStart = el.base + ',' + item.startNum
+      })
     }
   }
 }
 </script>
 <style lang="stylus" scoped>
 .finance-rules
+  margin-bottom -20px
   .tab-box
     margin -15px
     padding 7px 15px
@@ -479,7 +543,7 @@ export default {
     /deep/ .ivu-select
       width: 100px
   .data-container
-    margin: 35px 0 15px
+    margin: 15px 0 0
     .company-table
       /deep/ .operation
         a
@@ -503,9 +567,9 @@ export default {
         border-top-right-radius: 2px
         border-bottom-right-radius: 2px
     .rule-block
-      border: 1px solid #C9CED9
+      padding: 0 20px
       .rule-basic
-        padding: 20px
+        padding: 14px
         border-bottom: 1px solid #C9CED9
         .ivu-form-item
           margin-bottom: 0
@@ -516,9 +580,8 @@ export default {
           line-height: 35px
           margin-right: 10px
       .rules-list
-        height: 360px
         overflow: auto
-        padding: 20px
+        padding: 20px 0
         border-bottom: 1px solid #C9CED9
         .rule-item
           display: flex
@@ -528,14 +591,43 @@ export default {
             .rule-route
               display: block
               position: absolute
-              width: 500px
-              top: 10px
+              width: calc(100% - 80px)
+              top: 17px
               left: 20px
-              z-index: 101
+              z-index: 8
+              .startPrice
+                line-height 32px
+              .delete_btn
+                float: right
+                text-align right
+                line-height 36px
+                font-size 14px
+                color #00A4BD
+                cursor pointer
               .icon
                 color: #9DA1B0
                 font-size: 24px
                 line-height: 28px
+            .rule-detail
+              list-style none
+              .rule-detail-item
+                display flex
+                padding 18px 16px
+                height auto
+                border-bottom 1px solid #DCDEE2
+                &>div
+                  flex 1
+                  /deep/ .ivu-form-inline .ivu-form-item
+                    vertical-align middle
+                    width 128px
+                    margin-left 10px
+                &:last-child
+                  border-bottom none
+                .add_decrease
+                  line-height 32px
+                  color #00A4BD
+                  font-size 14px
+                  cursor pointer
           .item-remove
             width: 25px
             align-items center
@@ -547,14 +639,19 @@ export default {
             flex: 1
             .ivu-collapse-item
               border-top: none
+              /deep/ .ivu-collapse-content
+                padding 0
+             /deep/ .ivu-collapse-content>.ivu-collapse-content-box
+              padding 0
             /deep/ .ivu-collapse-header
-              height: 60px
-              background-color: #ffffff
+              height: 70px
+              background-color: rgba(248,248,248,1)
               padding: 15px 20px 15px
               text-align: right
+              border-bottom 1px solid #DCDEE2
               .ivu-icon
                 vertical-align: top
-                margin-top: 8px
+                margin-top: 13px
             .ivu-table-cell
               padding: 5px
               span
@@ -576,7 +673,6 @@ export default {
                 &.remove
                   color: #EC4E4E
         .item-add-btn
-          margin-left: 25px
           cursor: pointer
           text-align: center
           height: 35px
@@ -586,8 +682,10 @@ export default {
           i
             font-size: 14px
     .rules-operation
-      padding-top: 10px
-      padding-bottom: 20px
+      position absolute
+      left 50%
+      margin-left -43px
+      bottom 30px
       text-align: center
       .ivu-btn
         padding-left: 30px
@@ -598,11 +696,67 @@ export default {
       justify-content center
       align-items center
       height 500px
-      border 1px solid #dcdee2
+      /*border 1px solid #dcdee2*/
       .data-empty-img
         width 70px
         margin-bottom 12px
       p
         color #999999
         text-align center
+    .left_father
+      flex 0 0 300px
+      &:after
+        content ''
+        display block
+        width 1px
+        height 20px
+        position fixed
+        bottom 15px
+        left 534px
+        border-right 1px solid #C9CED9
+    .left
+      display flex
+      flex-direction column
+      border-right 1px solid #C9CED9
+      .left_search
+        padding-top 21px
+        flex 0 0 72px
+        border-bottom 1px solid #C9CED9
+      .ruleList
+        overflow auto
+        flex 1
+        .list
+          list-style none
+          height 60px
+          line-height 60px
+          display flex
+          &.companyDataActive
+            background #E9FCFF
+          &:hover
+            .operate
+              display block
+          .icon
+            flex 0 0 60px
+            text-align center
+          .content
+            flex 1
+            border-bottom 1px solid #DCDEE2
+            font-size 12px
+            .ruleName
+              height 30px
+              line-height 1
+              padding-top 11px
+              color #333
+              font-weight bold
+            .tips
+              height 30px
+              line-height 1
+              padding-top 6px
+              color #999
+          .operate
+            display none
+            flex 0 0 80px
+            cursor pointer
+            border-bottom 1px solid #DCDEE2
+            color #00A4BD
 </style>

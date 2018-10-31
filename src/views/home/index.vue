@@ -103,6 +103,7 @@ import ExteriorTodo from './plugins/exterior-todo.vue'
 import NewCustumerStatis from './plugins/new-customer-statis.vue'
 import CarPosition from './plugins/car-postion.vue'
 
+// const processNoticeKey = 'tms_process_notice'
 export default {
   name: 'index',
   metaInfo: { title: '首页' },
@@ -147,14 +148,14 @@ export default {
         'carrier-todo': '承运商核销待办',
         'transferfee-todo': '外转方核销待办',
         'message-center': '消息中心',
-        'order-create': '今日订单数',
-        'new-customer': '新增客户数',
+        'order-create': '今日开单数',
+        'new-customer': '今日新增客户数',
         'transport-location': '在途车辆位置',
-        'turnover-statistics': '营业额通知',
-        'dispatch-statistics': '调度订单数',
-        'order-statistics': '开单数',
-        'pay-receive': '应收款/应付款项',
-        'cargo-statistics': '货物重量/体积'
+        'turnover-statistics': '近七日订单和营业额统计',
+        'dispatch-statistics': '近七日调度订单数',
+        'order-statistics': '近七日开单数',
+        'pay-receive': '今日应收款项 / 应付款项',
+        'cargo-statistics': '今日开单货物重量 / 体积'
       },
       cardsList: [],
       intersectionObserver: null
@@ -241,7 +242,10 @@ export default {
       const vm = this
       entries.forEach((entry) => {
         if (entry.isIntersecting || entry.intersectionRatio > 0) {
-          eventHub.$emit(`plugin:${entry.target.$vm.$options.name}`)
+          // 账号过期后，不发送请求
+          if (vm.UserInfo.expirationTime > Date.now()) {
+            eventHub.$emit(`plugin:${entry.target.$vm.$options.name}`)
+          }
           vm.unobserve(entry.target)
         }
       })

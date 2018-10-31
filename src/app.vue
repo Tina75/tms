@@ -25,7 +25,7 @@ export default {
     this.init()
   },
   methods: {
-    ...mapActions(['getPermissons', 'getUserInfo', 'getMessageCount', 'getTableColumns']),
+    ...mapActions(['getPermissons', 'getMessageCount', 'getTableColumns']),
     ...mapMutations(['setTabNavList', 'initTabNav']),
     async init () {
       this.$Message.config({
@@ -33,7 +33,7 @@ export default {
       })
       await this.getPermissons()
       this.initTabNav()
-      await this.getUserInfo()
+      // await this.getUserInfo()
       await this.getTableColumns()
     },
 
@@ -54,6 +54,7 @@ export default {
         clearLocalData()
       }
       function clearLocalData () {
+        // 记住密码
         const localRememberdPW = window.localStorage.local_rememberd_pw
         localStorage.clear()
         if (localRememberdPW) window.localStorage.setItem('local_rememberd_pw', localRememberdPW)
