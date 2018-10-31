@@ -115,7 +115,6 @@ export default {
       step: 0,
       stepList: ['验证手机号', '填写账号信息', '注册成功'],
       protocol: true,
-      showP: 0,
 
       form: {
         phone: '',
@@ -167,7 +166,7 @@ export default {
   },
   computed: {
     cityCode () {
-      return this.form.cityId[2] || void 0
+      return this.form.cityId[1] || void 0
     }
   },
   created () {
@@ -222,11 +221,6 @@ export default {
         }
       })
     },
-
-    // companyNameRuleToast (e) {
-    //   if (e.keyCode === 8 || e.keyCode === 46) return // backspace & delete
-    //   if (this.form.name.length === 25) this.$Message.warning('公司名不能超过25个字')
-    // },
 
     // 查询城市列表
     getCities () {
