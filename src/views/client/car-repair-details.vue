@@ -4,6 +4,10 @@
       <div class="title">
         <span class="icontTitle"></span>
         <span class="iconTitleP">维修信息</span>
+        <div class="btnItem">
+          <Button class="btnSty" @click="removeRepairData">删除</Button>
+          <Button type="primary" class="btnSty">修改</Button>
+        </div>
       </div>
       <div class="list-info">
         <Row class="row">
@@ -117,7 +121,7 @@
 </template>
 <script>
 import BasePage from '@/basic/BasePage'
-import { carrierQueryLog } from './client'
+import { carrierQueryLog, CODE, carrierDeleteRepairVehicle } from './client'
 export default {
   name: 'car-details',
   components: {},
@@ -161,6 +165,25 @@ export default {
       carrierQueryLog(data).then(res => {
         this.orderLog = res.data.data.list
         this.orderLogCount = res.data.data.list.length
+      })
+    },
+    removeRepairData () {
+      let _this = this
+      this.openDialog({
+        name: 'client/dialog/confirmDelete',
+        methods: {
+          ok () {
+            carrierDeleteRepairVehicle({
+              id: _this.infoData.id
+            }).then(res => {
+              if (res.data.code === CODE) {
+                _this.$Message.success(res.data.msg)
+              } else {
+                _this.$Message.error(res.data.msg)
+              }
+            })
+          }
+        }
       })
     }
   }
