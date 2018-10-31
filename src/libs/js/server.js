@@ -21,10 +21,11 @@ instance.interceptors.request.use((config) => {
   if (config.method === 'post') {
     config.data = JSON.stringify(config.data)
   }
-  if (config.method === 'get' && config.data) {
-    config.data._t = new Date().getTime()
-    config.params = config.data
-    // Object.assign({}, config.data, { _t: new Date().getTime() })
+  if (config.method === 'get') {
+    if (config.data) {
+      config.params = config.data
+    }
+    config.params._t = config.params._t || new Date().getTime()
   }
   return config
 }, (error) => {
