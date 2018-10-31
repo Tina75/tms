@@ -137,14 +137,21 @@ export default {
     this.infoData.driverType = (DRIVER_TYPE.find(e => e.id === this.infoData.driverType.toString())).name
     this.infoData.carType = this.carTypeMap[this.infoData.carType]
     this.infoData.carLength = this.carLengthMap[this.infoData.carLength]
-    if (this.infoData.regularLine) {
-      let s1 = JSON.parse(this.infoData.regularLine)[0].sn === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].sn
-      let n1 = JSON.parse(this.infoData.regularLine)[0].en === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].en
-      let s2 = JSON.parse(this.infoData.regularLine)[1].sn === undefined ? '' : JSON.parse(this.infoData.regularLine)[1].sn
-      let n2 = JSON.parse(this.infoData.regularLine)[1].en === undefined ? '' : JSON.parse(this.infoData.regularLine)[1].en
-      this.line1 = s1 + '—' + n1 === '—' ? '' : s1 + '—' + n1
-      this.line2 = s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2
+    let s1 = ''
+    let n1 = ''
+    let s2 = ''
+    let n2 = ''
+    if (this.infoData.regularLine && JSON.parse(this.infoData.regularLine).length === 1) {
+      s1 = JSON.parse(this.infoData.regularLine)[0].sn === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].sn
+      n1 = JSON.parse(this.infoData.regularLine)[0].en === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].en
+    } else if (JSON.parse(this.infoData.regularLine).length === 2) {
+      s1 = JSON.parse(this.infoData.regularLine)[0].sn === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].sn
+      n1 = JSON.parse(this.infoData.regularLine)[0].en === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].en
+      s2 = JSON.parse(this.infoData.regularLine)[1].sn === undefined ? '' : JSON.parse(this.infoData.regularLine)[1].sn
+      n2 = JSON.parse(this.infoData.regularLine)[1].en === undefined ? '' : JSON.parse(this.infoData.regularLine)[1].en
     }
+    this.line1 = s1 + '—' + n1 === '—' ? '' : s1 + '—' + n1
+    this.line2 = s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2
   },
   methods: {
     formatDate (value, format) {
