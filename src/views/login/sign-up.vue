@@ -112,7 +112,7 @@ export default {
   },
   data () {
     return {
-      step: 1,
+      step: 0,
       stepList: ['验证手机号', '填写账号信息', '注册成功'],
       protocol: true,
       showP: 0,
@@ -167,7 +167,6 @@ export default {
   },
   computed: {
     cityCode () {
-      console.log(this.form.cityId[2] || void 0)
       return this.form.cityId[2] || void 0
     }
   },
