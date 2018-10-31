@@ -64,7 +64,7 @@ export default {
 
 <style lang="stylus" scoped>
 .process-center
-  background url('../../../assets/process.png') no-repeat
+  background url('../../../assets/process.svg') no-repeat
   width 1134px
   height 650px
   position relative

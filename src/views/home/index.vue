@@ -242,7 +242,10 @@ export default {
       const vm = this
       entries.forEach((entry) => {
         if (entry.isIntersecting || entry.intersectionRatio > 0) {
-          eventHub.$emit(`plugin:${entry.target.$vm.$options.name}`)
+          // 账号过期后，不发送请求
+          if (vm.UserInfo.expirationTime > Date.now()) {
+            eventHub.$emit(`plugin:${entry.target.$vm.$options.name}`)
+          }
           vm.unobserve(entry.target)
         }
       })

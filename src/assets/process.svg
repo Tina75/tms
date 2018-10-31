@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1144px" height="650px" viewBox="0 0 1144 650" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.2 (67145) - http://www.bohemiancoding.com/sketch -->
+    <title>流程背景</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M1,-1.77635684e-14 L71.8616079,-7.10542736e-15 C72.4930427,-1.17080343e-14 73.0873939,0.298189554 73.4648754,0.804369001 L80.4527587,10.1746897 C80.9980185,10.9058495 80.9795343,11.9132934 80.4078206,12.6239594 L73.4654499,21.2536386 C73.0858118,21.7255459 72.5127786,22 71.9071206,22 L1,22 L1,-1.77635684e-14 Z" id="path-1"></path>
+        <filter x="-8.8%" y="-22.7%" width="117.7%" height="163.6%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.570392219   0 0 0 0 0.570392219   0 0 0 0 0.570392219  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <path d="M1,-1.95399252e-14 L71.8616079,-8.8817842e-15 C72.4930427,-1.34843911e-14 73.0873939,0.298189554 73.4648754,0.804369001 L80.4527587,10.1746897 C80.9980185,10.9058495 80.9795343,11.9132934 80.4078206,12.6239594 L73.4654499,21.2536386 C73.0858118,21.7255459 72.5127786,22 71.9071206,22 L1,22 L1,-1.95399252e-14 Z" id="path-3"></path>
+        <filter x="-8.8%" y="-22.7%" width="117.7%" height="163.6%" filterUnits="objectBoundingBox" id="filter-4">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.570392219   0 0 0 0 0.570392219   0 0 0 0 0.570392219  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <path d="M1,-1.95399252e-14 L71.8616079,-8.8817842e-15 C72.4930427,-1.34843911e-14 73.0873939,0.298189554 73.4648754,0.804369001 L80.4527587,10.1746897 C80.9980185,10.9058495 80.9795343,11.9132934 80.4078206,12.6239594 L73.4654499,21.2536386 C73.0858118,21.7255459 72.5127786,22 71.9071206,22 L1,22 L1,-1.95399252e-14 Z" id="path-5"></path>
+        <filter x="-8.8%" y="-22.7%" width="117.7%" height="163.6%" filterUnits="objectBoundingBox" id="filter-6">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.570392219   0 0 0 0 0.570392219   0 0 0 0 0.570392219  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <path d="M1,-1.95399252e-14 L71.8616079,-8.8817842e-15 C72.4930427,-1.34843911e-14 73.0873939,0.298189554 73.4648754,0.804369001 L80.4527587,10.1746897 C80.9980185,10.9058495 80.9795343,11.9132934 80.4078206,12.6239594 L73.4654499,21.2536386 C73.0858118,21.7255459 72.5127786,22 71.9071206,22 L1,22 L1,-1.95399252e-14 Z" id="path-7"></path>
+        <filter x="-8.8%" y="-22.7%" width="117.7%" height="163.6%" filterUnits="objectBoundingBox" id="filter-8">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.570392219   0 0 0 0 0.570392219   0 0 0 0 0.570392219  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <path d="M15,491 L85.8616079,491 C86.4930427,491 87.0873939,491.29819 87.4648754,491.804369 L94.4527587,501.17469 C94.9980185,501.905849 94.9795343,502.913293 94.4078206,503.623959 L87.4654499,512.253639 C87.0858118,512.725546 86.5127786,513 85.9071206,513 L15,513 L15,491 Z" id="path-9"></path>
+        <filter x="-8.8%" y="-22.7%" width="117.7%" height="163.6%" filterUnits="objectBoundingBox" id="filter-10">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.570392219   0 0 0 0 0.570392219   0 0 0 0 0.570392219  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <path d="M1,-1.95399252e-14 L71.8616079,-8.8817842e-15 C72.4930427,-1.34843911e-14 73.0873939,0.298189554 73.4648754,0.804369001 L80.4527587,10.1746897 C80.9980185,10.9058495 80.9795343,11.9132934 80.4078206,12.6239594 L73.4654499,21.2536386 C73.0858118,21.7255459 72.5127786,22 71.9071206,22 L1,22 L1,-1.95399252e-14 Z" id="path-11"></path>
+        <filter x="-8.8%" y="-22.7%" width="117.7%" height="163.6%" filterUnits="objectBoundingBox" id="filter-12">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.570392219   0 0 0 0 0.570392219   0 0 0 0 0.570392219  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="流程中心v1.2-copy" transform="translate(-200.000000, -69.000000)">
+            <g id="流程背景" transform="translate(200.000000, 69.000000)">
+                <rect id="Rectangle-7" fill="#FFFFFF" x="0" y="0" width="1144" height="650"></rect>
+                <rect id="矩形" fill="#F9F9F9" fill-rule="nonzero" x="20" y="20" width="346" height="445"></rect>
+                <path d="M186.5,286 L186.5,156" id="直线-4" stroke="#9DA1B0" stroke-linecap="square" fill-rule="nonzero"></path>
+                <path d="M260.5,181 L259.5,82" id="直线-4-copy" stroke="#9DA1B0" stroke-linecap="square" fill-rule="nonzero"></path>
+                <path d="M259.5,385.295143 L259.5,286" id="直线-4-copy-2" stroke="#9DA1B0" stroke-linecap="square" fill-rule="nonzero"></path>
+                <path d="M186.5,286 L134,286" id="直线-5" stroke="#9DA1B0" stroke-linecap="square" fill-rule="nonzero"></path>
+                <path d="" id="直线-3" stroke="#979797" stroke-linecap="square" fill-rule="nonzero"></path>
+                <rect id="矩形-copy" fill="#F9F9F9" fill-rule="nonzero" x="386" y="20" width="500" height="135"></rect>
+                <rect id="矩形-copy-30" fill="#F9F9F9" fill-rule="nonzero" x="905.628335" y="20" width="220" height="135"></rect>
+                <rect id="矩形-copy-27" fill="#F9F9F9" fill-rule="nonzero" x="386.404147" y="175.147572" width="739.595853" height="135"></rect>
+                <rect id="矩形-copy-28" fill="#F9F9F9" fill-rule="nonzero" x="386" y="330" width="740" height="135"></rect>
+                <rect id="矩形-copy-3" fill="#F9F9F9" fill-rule="nonzero" x="20" y="485" width="346" height="135"></rect>
+                <path d="M85.5,595.004743 L85.5,581.097704" id="直线-4-copy-2" stroke="#9DA1B0" stroke-linecap="square" fill-rule="nonzero"></path>
+                <path d="M85.5,595.004743 L291,595.004743" id="直线-4-copy-6" stroke="#9DA1B0" stroke-linecap="square" fill-rule="nonzero"></path>
+                <rect id="矩形-copy-2" fill="#F9F9F9" fill-rule="nonzero" x="386" y="485" width="740" height="135"></rect>
+                <path id="直线-copy" d="M459.823331,82.5 L260.076923,82.5 L259.576923,82.5 L259.576923,81.5 L260.076923,81.5 L459.823331,81.5 L459.823331,77.5 L468.823331,82 L459.823331,86.5 L459.823331,82.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-3" d="M568.871665,82.5 L545.5,82.5 L545,82.5 L545,81.5 L545.5,81.5 L568.871665,81.5 L568.871665,77.5 L577.871665,82 L568.871665,86.5 L568.871665,82.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-21" d="M508,185.5 L508,134 L508,133.5 L509,133.5 L509,134 L509,185.5 L513,185.5 L508.5,194.5 L504,185.5 L508,185.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-4" d="M671.871665,82.5 L648.5,82.5 L648,82.5 L648,81.5 L648.5,81.5 L671.871665,81.5 L671.871665,77.5 L680.871665,82 L671.871665,86.5 L671.871665,82.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-5" d="M773.871665,82.5 L750.5,82.5 L750,82.5 L750,81.5 L750.5,81.5 L773.871665,81.5 L773.871665,77.5 L782.871665,82 L773.871665,86.5 L773.871665,82.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-18" d="M962.5,82.5 L854.5,82.5 L854,82.5 L854,81.5 L854.5,81.5 L962.5,81.5 L962.5,77.5 L971.5,82 L962.5,86.5 L962.5,82.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-8" d="M568.871665,228.5 L545.5,228.5 L545,228.5 L545,227.5 L545.5,227.5 L568.871665,227.5 L568.871665,223.5 L577.871665,228 L568.871665,232.5 L568.871665,228.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-17" d="M508.871665,296.5 L508.871665,351 L508.871665,351.5 L507.871665,351.5 L507.871665,351 L507.871665,296.5 L503.871665,296.5 L508.371665,287.5 L512.871665,296.5 L508.871665,296.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-7" d="M671.871665,228.5 L648.5,228.5 L648,228.5 L648,227.5 L648.5,227.5 L671.871665,227.5 L671.871665,223.5 L680.871665,228 L671.871665,232.5 L671.871665,228.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-6" d="M773.871665,228.5 L750.5,228.5 L750,228.5 L750,227.5 L750.5,227.5 L773.871665,227.5 L773.871665,223.5 L782.871665,228 L773.871665,232.5 L773.871665,228.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-11" d="M568.871665,384.5 L545.5,384.5 L545,384.5 L545,383.5 L545.5,383.5 L568.871665,383.5 L568.871665,379.5 L577.871665,384 L568.871665,388.5 L568.871665,384.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-15" d="M568.871665,536.5 L545.5,536.5 L545,536.5 L545,535.5 L545.5,535.5 L568.871665,535.5 L568.871665,531.5 L577.871665,536 L568.871665,540.5 L568.871665,536.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-16" d="M668.871665,536.5 L645.5,536.5 L645,536.5 L645,535.5 L645.5,535.5 L668.871665,535.5 L668.871665,531.5 L677.871665,536 L668.871665,540.5 L668.871665,536.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-19" d="M1080.5,536.5 L756.5,536.5 L756,536.5 L756,535.5 L756.5,535.5 L1080.5,535.5 L1080.5,531.5 L1089.5,536 L1080.5,540.5 L1080.5,536.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-13" d="M147.871665,536.5 L124.5,536.5 L124,536.5 L124,535.5 L124.5,535.5 L147.871665,535.5 L147.871665,531.5 L156.871665,536 L147.871665,540.5 L147.871665,536.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-22" d="M210.871665,223.5 L187.5,223.5 L187,223.5 L187,222.5 L187.5,222.5 L210.871665,222.5 L210.871665,218.5 L219.871665,223 L210.871665,227.5 L210.871665,223.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-14" d="M250.871665,536.5 L227.5,536.5 L227,536.5 L227,535.5 L227.5,535.5 L250.871665,535.5 L250.871665,531.5 L259.871665,536 L250.871665,540.5 L250.871665,536.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-20" d="M291.729463,584.983389 L291.999817,594.986491 L292.013326,595.486309 L291.013691,595.513326 L291.000183,595.013509 L290.729828,585.010406 L286.731289,585.118474 L290.986491,576.000183 L295.728003,584.87532 L291.729463,584.983389 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-10" d="M671.871665,384.5 L648.5,384.5 L648,384.5 L648,383.5 L648.5,383.5 L671.871665,383.5 L671.871665,379.5 L680.871665,384 L671.871665,388.5 L671.871665,384.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-9" d="M773.871665,384.5 L750.5,384.5 L750,384.5 L750,383.5 L750.5,383.5 L773.871665,383.5 L773.871665,379.5 L782.871665,384 L773.871665,388.5 L773.871665,384.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-12" d="M877.871665,384.5 L854.5,384.5 L854,384.5 L854,383.5 L854.5,383.5 L877.871665,383.5 L877.871665,379.5 L886.871665,384 L877.871665,388.5 L877.871665,384.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path id="直线-copy-2" d="M459.823331,386.5 L260.076923,386.5 L259.576923,386.5 L259.576923,385.5 L260.076923,385.5 L459.823331,385.5 L459.823331,381.5 L468.823331,386 L459.823331,390.5 L459.823331,386.5 Z" fill="#9DA1B0" fill-rule="nonzero"></path>
+                <path d="M134,156 L186,156" id="直线-2" stroke="#9DA1B0" stroke-linecap="square" fill-rule="nonzero"></path>
+                <path d="M961.186141,383 L1088,383" id="直线-2-copy-4" stroke="#9DA1B0" stroke-linecap="square" fill-rule="nonzero"></path>
+                <path d="M1052.12834,81 L1088.5,81" id="直线-2-copy-5" stroke="#9DA1B0" stroke-linecap="square" fill-rule="nonzero"></path>
+                <path d="M1088.5,535 L1088.5,82" id="直线-4-copy-4" stroke="#9DA1B0" stroke-linecap="square" fill-rule="nonzero"></path>
+                <path d="M854.5,229 L1088,229" id="直线-2-copy-3" stroke="#9DA1B0" stroke-linecap="square" fill-rule="nonzero"></path>
+                <g id="分组" transform="translate(14.000000, 27.000000)">
+                    <polygon id="路径-2" fill="#3A3C42" fill-rule="nonzero" points="0.993392944 21.9987946 5.95796175 25.4652605 5.95796175 21.9987946"></polygon>
+                    <g id="矩形" fill-rule="nonzero">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                        <use fill="#777B89" xlink:href="#path-1"></use>
+                    </g>
+                    <text id="受理开单" font-family="PingFangSC-Medium, PingFang SC" font-size="14" font-weight="400" fill="#FFFFFF">
+                        <tspan x="10" y="16">受理开单</tspan>
+                    </text>
+                </g>
+                <g id="分组-4" transform="translate(395.000000, 27.000000)">
+                    <polygon id="路径-2" fill="#5B5C60" fill-rule="nonzero" points="0.993392944 21.9987946 5.95796175 25.4652605 5.95796175 21.9987946"></polygon>
+                    <g id="矩形" fill-rule="nonzero">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-4)" xlink:href="#path-3"></use>
+                        <use fill="#777B89" xlink:href="#path-3"></use>
+                    </g>
+                    <text id="提货管理" font-family="PingFangSC-Medium, PingFang SC" font-size="14" font-weight="400" fill="#FFFFFF">
+                        <tspan x="10" y="16">提货管理</tspan>
+                    </text>
+                </g>
+                <g id="分组-3" transform="translate(395.000000, 181.000000)">
+                    <polygon id="路径-2" fill="#5B5C60" fill-rule="nonzero" points="0.993392944 21.9987946 5.95796175 25.4652605 5.95796175 21.9987946"></polygon>
+                    <g id="矩形" fill-rule="nonzero">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-6)" xlink:href="#path-5"></use>
+                        <use fill="#777B89" xlink:href="#path-5"></use>
+                    </g>
+                    <text id="外转管理" font-family="PingFangSC-Medium, PingFang SC" font-size="14" font-weight="400" fill="#FFFFFF">
+                        <tspan x="10" y="16">外转管理</tspan>
+                    </text>
+                </g>
+                <g id="分组-5" transform="translate(395.000000, 336.000000)">
+                    <polygon id="路径-2" fill="#5B5C60" fill-rule="nonzero" points="0.993392944 21.9987946 5.95796175 25.4652605 5.95796175 21.9987946"></polygon>
+                    <g id="矩形" fill-rule="nonzero">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-8)" xlink:href="#path-7"></use>
+                        <use fill="#777B89" xlink:href="#path-7"></use>
+                    </g>
+                    <text id="送货管理" font-family="PingFangSC-Medium, PingFang SC" font-size="14" font-weight="400" fill="#FFFFFF">
+                        <tspan x="10" y="16">送货管理</tspan>
+                    </text>
+                </g>
+                <polygon id="路径-2" fill="#5B5C60" fill-rule="nonzero" points="14.9933929 512.998795 19.9579618 516.465261 19.9579618 512.998795"></polygon>
+                <g id="矩形" fill-rule="nonzero">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-10)" xlink:href="#path-9"></use>
+                    <use fill="#777B89" xlink:href="#path-9"></use>
+                </g>
+                <text id="财务管理" font-family="PingFangSC-Medium, PingFang SC" font-size="14" font-weight="400" fill="#FFFFFF">
+                    <tspan x="24" y="507">财务管理</tspan>
+                </text>
+                <g id="分组-6" transform="translate(395.000000, 491.000000)">
+                    <polygon id="路径-2" fill="#5B5C60" fill-rule="nonzero" points="0.993392944 21.9987946 5.95796175 25.4652605 5.95796175 21.9987946"></polygon>
+                    <g id="矩形" fill-rule="nonzero">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-12)" xlink:href="#path-11"></use>
+                        <use fill="#777B89" xlink:href="#path-11"></use>
+                    </g>
+                    <text id="回单管理" font-family="PingFangSC-Medium, PingFang SC" font-size="14" font-weight="400" fill="#FFFFFF">
+                        <tspan x="10" y="16">回单管理</tspan>
+                    </text>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

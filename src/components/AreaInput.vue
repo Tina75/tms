@@ -47,15 +47,15 @@ export default {
     areaList () {
       const obj = {}
       const res = []
-      const arr = this.value ? this.address : this.localOptions
+      const arr = this.localOptions.concat(this.address)
       for (let i = 0; i < arr.length; i++) {
         const item = arr[i]
-        if (!obj[item.name]) {
+        if (!obj[item]) {
           res.push(item)
-          obj[item.name] = 1
+          obj[item] = 1
         }
       }
-      return res
+      return res.slice(0, 20)
     },
     areaName () {
       const code = this.cityCode
