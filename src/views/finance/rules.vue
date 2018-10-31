@@ -112,7 +112,7 @@
                       <ul class="rule-detail">
                         <li v-for="(el, no) in item.chargeRules" :key="no" class="rule-detail-item">
                           <div>
-                            <span>{{ruleTypeMap[ruleDetail.ruleType]}}</span>
+                            <span>{{valueTypeMap[ruleDetail.ruleType]}}</span>
                             <span style="margin-left: 5px">≥</span>
                             <Form ref="ruleBase" :model="el" :rules="baseValidate" style="display: inline-block" inline>
                               <FormItem prop="baseAndStart" inline style="margin-bottom: 0">
@@ -128,7 +128,7 @@
                               <FormItem prop="price" inline style="margin-bottom: 0">
                                 <Input v-model="el.price" />
                               </FormItem>
-                              <span>元/{{unitMap[ruleDetail.ruleType]}}</span>
+                              <span>元/{{valueMap[ruleDetail.ruleType]}}</span>
                             </Form>
                           </div>
                           <div class="add_decrease">
@@ -234,7 +234,7 @@ export default {
           }
         }
         if (startNum > realValue) {
-          callback(new Error('必须大于起步价'))
+          callback(new Error('计费区间与起步价冲突'))
         } else {
           callback()
         }
@@ -246,8 +246,14 @@ export default {
       unitMap: {
         1: '吨',
         2: '方',
-        3: '吨公里',
-        4: '方公里'
+        3: '吨',
+        4: '方'
+      },
+      valueMap: {
+        1: '吨',
+        2: '方',
+        3: '公里',
+        4: '公里'
       },
       sceneMap: {
         1: '发货方',
@@ -260,6 +266,12 @@ export default {
         '2': '体积',
         '3': '吨公里',
         '4': '方公里'
+      },
+      valueTypeMap: {
+        '1': '重量',
+        '2': '体积',
+        '3': '重量',
+        '4': '体积'
       },
       rulesQuery: {
         paramName: ''
