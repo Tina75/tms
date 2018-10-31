@@ -158,10 +158,12 @@
         <p class="modalTitle">证件照</p>
         <Row>
           <Col span="5">
-          <up-load></up-load>
+          <up-load ref="upload1"></up-load>
+          <p :upload-img="validate.travelPhoto" class="uploadLabel">行驶证</p>
           </Col>
           <Col span="5">
-          <up-load></up-load>
+          <up-load ref="upload2"></up-load>
+          <p :upload-img="validate.drivePhoto" class="uploadLabel">驾驶证</p>
           </Col>
         </Row>
       </Form>
@@ -236,11 +238,17 @@ export default {
         this.address1 = JSON.parse(this.validate.regularLine)[0]
         this.address2 = JSON.parse(this.validate.regularLine)[1]
       }
+      this.$refs.upload1.progress = 1
+      this.$refs.upload2.progress = 1
+      this.$refs.upload1.uploadImg = this.validate.travelPhoto
+      this.$refs.upload2.uploadImg = this.validate.drivePhoto
     }
   },
   methods: {
     save (name) {
       this.validate.carrierId = this.carrierId
+      this.validate.travelPhoto = this.$refs.upload1.uploadImg
+      this.validate.drivePhoto = this.$refs.upload2.uploadImg
       if (this.address1.s !== null || this.address1.n !== null) {
         this.address.push(this.address1)
       }

@@ -706,27 +706,31 @@ export default {
           display flex
           &.companyDataActive
             background #E9FCFF
-        .icon
-          flex 0 0 60px
-          text-align center
-        .content
-          flex 1
-          border-bottom 1px solid #DCDEE2
-          font-size 12px
-          .ruleName
-            height 30px
-            line-height 1
-            padding-top 11px
-            color #333
-            font-weight bold
-          .tips
-            height 30px
-            line-height 1
-            padding-top 6px
-            color #999
-        .operate
-          flex 0 0 80px
-          cursor pointer
-          border-bottom 1px solid #DCDEE2
-          color #00A4BD
+          &:hover
+            .operate
+              display block
+          .icon
+            flex 0 0 60px
+            text-align center
+          .content
+            flex 1
+            border-bottom 1px solid #DCDEE2
+            font-size 12px
+            .ruleName
+              height 30px
+              line-height 1
+              padding-top 11px
+              color #333
+              font-weight bold
+            .tips
+              height 30px
+              line-height 1
+              padding-top 6px
+              color #999
+          .operate
+            display none
+            flex 0 0 80px
+            cursor pointer
+            border-bottom 1px solid #DCDEE2
+            color #00A4BD
 </style>
