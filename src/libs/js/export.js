@@ -1,4 +1,5 @@
 import Server from './server'
+import { isIE } from './util'
 import { Message } from 'iview'
 
 let instance = (config = {}) => {
@@ -23,17 +24,29 @@ let instance = (config = {}) => {
           code = resJson.code
           msg = resJson.msg
         }
+        console.log('resJson', resJson)
       } catch (err) {}
 
       if (!code || code === 10000) {
         let blob = new Blob([res.data], { type: res.config.fileType })
         const url = window.URL || window.webkitURL || window.mozURL
         let downloadLink = document.createElement('a')
-        downloadLink.href = url.createObjectURL(blob)
-        downloadLink.download = res.config.fileName + new Date().Format('yyyy-MM-dd_hhmmss') + '.xls'
+        downloadLink.setAttribute('href', url.createObjectURL(blob))
+        downloadLink.setAttribute('download', res.config.fileName + new Date().Format('yyyy-MM-dd_hhmmss') + '.xls')
+        // downloadLink.href = url.createObjectURL(blob)
+        // downloadLink.download = res.config.fileName + new Date().Format('yyyy-MM-dd_hhmmss') + '.xls'
+        console.log(downloadLink)
+
         document.body.appendChild(downloadLink)
-        downloadLink.click()
+        if (!isIE()) {
+          downloadLink.click()
+        } else {
+          const event = document.createEvent('HTMLEvents')
+          event.initEvent('click', false, false)
+          downloadLink.dispatchEvent(event)
+        }
         document.body.removeChild(downloadLink)
+
         Message.success('导出成功')
       } else {
         switch (code) {

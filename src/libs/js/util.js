@@ -44,3 +44,8 @@ export const objEqual = function (obj1, obj2) {
   /* eslint-disable-next-line */
   else return !keysArr1.some(key => obj1[key] != obj2[key])
 }
+
+export const isIE = () => {
+  if (!!window.ActiveXObject || 'ActiveXObject' in window) return true
+  else return false
+}
