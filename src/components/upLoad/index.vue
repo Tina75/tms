@@ -168,7 +168,7 @@ export default {
           // 生成随机文件名 Math.floor(Math.random() *10000)
           let randomName = file.name.split('.')[0] + new Date().Format('yyyyMMddhhmmss') + '.' + file.name.split('.').pop()
           let result = await this.ossClient.multipartUpload(this.ossDir + randomName, file, {
-            partSize: 1024 * 1024, // 分片大小 ,1M
+            partSize: 1024 * 1024 * 100, // 分片大小 ,1M
             progress: function (progress, pp) {
               if (progress) {
                 vm.progress = progress

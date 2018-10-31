@@ -7,7 +7,9 @@ let instance = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': Cookies.get('token')
+    'Authorization': Cookies.get('token'),
+    'Cache-Control': 'no-cache', // 解决ie浏览器缓存
+    'Pragma': 'no-cache' // 解决ie浏览器缓存
   },
   withCredentials: true,
   loading: false,
