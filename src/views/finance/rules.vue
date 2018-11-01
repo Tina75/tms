@@ -75,7 +75,7 @@
                     <Form ref="ruleRoute" :model="item" :rules="routeValidate" inline>
                       <Row :gutter="24">
                         <Col span="5"  class="styleCommon">
-                        <FormItem prop="departure" >
+                        <FormItem prop="departure" style="text-align: left">
                           <SelectInputForCity :code-type = "1" v-model="item.departure" placeholder="请输入始发地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
@@ -83,7 +83,7 @@
                         <i class="icon font_family icon-ico-line"></i>
                         </Col>
                         <Col span="5" class="styleCommon">
-                        <FormItem prop="destination" >
+                        <FormItem prop="destination" style="text-align: left">
                           <SelectInputForCity :code-type = "1" v-model="item.destination" placeholder="请输入目的地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
@@ -579,7 +579,7 @@ export default {
       padding-left 10px
       .rule-basic
         padding: 14px
-        border-bottom: 1px solid #C9CED9
+        border-bottom: 1px solid #E4E7EC
         .ivu-form-item
           margin-bottom: 0
         span
@@ -591,7 +591,7 @@ export default {
       .rules-list
         overflow: auto
         padding: 20px 0
-        border-bottom: 1px solid #C9CED9
+        border-bottom: 1px solid #E4E7EC
         .rule-item
           display: flex
           margin-bottom: 30px
@@ -619,7 +619,7 @@ export default {
                 line-height: 28px
               .styleCommon
                 padding 0!important
-                text-align center!important
+                text-align center
             .rule-detail
               list-style none
               .rule-detail-item
@@ -689,7 +689,7 @@ export default {
           cursor: pointer
           text-align: center
           height: 35px
-          border: 1px dashed #c9ced9;
+          border: 1px dashed #E4E7EC
           line-height: 35px
           color: #00A4BD
           i
@@ -733,12 +733,12 @@ export default {
       .left_search
         padding-top 21px
         flex 0 0 72px
-        border-right 1px solid #C9CED9
+        border-right 1px solid #E4E7EC
       .ruleList
-        border-top 1px solid #C9CED9
+        border-top 1px solid #E4E7EC
         overflow auto
         flex 1
-        border-right 1px solid #C9CED9
+        border-right 1px solid #E4E7EC
         margin-left -20px
         margin-bottom -20px
         .list
@@ -746,7 +746,7 @@ export default {
           height 60px
           line-height 60px
           display flex
-          border-bottom 1px solid #DCDEE2
+          border-bottom 1px solid #E4E7EC
           &.companyDataActive
             background #E9FCFF
           &:hover
