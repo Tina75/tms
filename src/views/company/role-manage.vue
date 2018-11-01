@@ -417,11 +417,11 @@ export default {
         float: left;
         margin-right: 15px;
         width: 20px;
-        height: 22px;
+        height: 20px;
         background: #f9f9f9;
         border-radius: 50%;
         padding-left: 2px;
-        margin-top: -2px;
+        line-height: 20px
       .icon-ico-position:hover
         display: block;
         overflow: hidden;

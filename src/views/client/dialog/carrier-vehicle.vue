@@ -56,31 +56,10 @@
         </Row>
         <Row>
           <Col span="7">
-          <FormItem label="送修人:" prop="repairPerson">
-            <Row>
-              <Col span="19">
-              <Input v-model="validate.repairPerson" :maxlength="20" placeholder="必填"></Input>
-              </Col>
-            </Row>
-          </FormItem>
-          </Col>
-          <Col span="7">
-          <FormItem label="送修公里数:" prop="repairMile">
-            <Row>
-              <Col span="19">
-              <Input v-model="validate.repairMile" :maxlength="9" placeholder="必填"></Input>
-                </Col>
-              <Col span="4" offset="1">
-              <span>公里</span>
-                </Col>
-            </Row>
-          </FormItem>
-          </Col>
-          <Col span="7">
           <FormItem label="维修费用:" prop="repairMoney">
             <Row>
               <Col span="19">
-              <Input v-model="validate.repairMoney" :maxlength="9" placeholder="必填"></Input>
+              <Input v-model="validate.repairMoney" :maxlength="9" placeholder="必填" @on-blur="repairMoneyChange"></Input>
                 </Col>
               <Col span="4" offset="1">
               <span>元</span>
@@ -88,8 +67,6 @@
             </Row>
           </FormItem>
           </Col>
-        </Row>
-        <Row>
           <Col span="7">
           <FormItem label="已支付费用:" prop="payMoney">
             <Row>
@@ -110,6 +87,29 @@
                 </Col>
               <Col span="2" offset="1">
               <span>元</span>
+                </Col>
+            </Row>
+          </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col span="7">
+          <FormItem label="送修人:" prop="repairPerson">
+            <Row>
+              <Col span="19">
+              <Input v-model="validate.repairPerson" :maxlength="20" placeholder="必填"></Input>
+              </Col>
+            </Row>
+          </FormItem>
+          </Col>
+          <Col span="7">
+          <FormItem label="送修公里数:" prop="repairMile">
+            <Row>
+              <Col span="19">
+              <Input v-model="validate.repairMile" :maxlength="9" placeholder="必填"></Input>
+                </Col>
+              <Col span="4" offset="1">
+              <span>公里</span>
                 </Col>
             </Row>
           </FormItem>
@@ -169,7 +169,11 @@ export default {
       driverName: '', // 只有编辑需要的数据
       carId: '', // 车辆id
       unbindedDriver: [], // 承运商下尚未被绑定车辆的司机
-      validate: {},
+      validate: {
+        payMoney: null,
+        waitPayMoney: null,
+        repairMoney: null
+      },
       carNoList: [],
       disAbleBtn: true,
       selectList: [
@@ -217,15 +221,18 @@ export default {
     }
   },
   methods: {
+    repairMoneyChange () {
+      this.validate.payMoney = this.validate.repairMoney
+      this.validate.waitPayMoney = 0
+    },
     payMoneyChange () {
-      debugger
       if (this.validate.repairMoney) {
-        this.validate.waitPayMoney = Number(this.validate.repairMoney) - Number(this.validate.payMoney)
+        this.validate.waitPayMoney = parseFloat(this.validate.repairMoney) - (parseFloat(this.validate.payMoney) || 0)
       }
     },
     waitpayMoneyChange () {
       if (this.validate.repairMoney) {
-        this.validate.payMoney = Number(this.validate.repairMoney) - Number(this.validate.waitPayMoney)
+        this.validate.payMoney = parseFloat(this.validate.repairMoney) - (parseFloat(this.validate.waitPayMoney) || 0)
       }
     },
     // 修改页面初始化

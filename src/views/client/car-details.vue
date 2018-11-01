@@ -52,13 +52,13 @@
           <Col span="6">
           <div>
             <span class="label">载重：</span>
-            {{infoData.shippingWeight}}
+            {{infoData.shippingWeight}}<span>吨</span>
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">净空：</span>
-            {{infoData.shippingVolume}}
+            {{infoData.shippingVolume}}<span>方</span>
           </div>
           </Col>
         </Row>
