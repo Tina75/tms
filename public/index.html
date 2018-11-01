@@ -8,6 +8,15 @@
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <!-- <link rel="stylesheet" href="//at.alicdn.com/t/font_822911_ih7w08l3p7.css"> -->
     <title>运掌柜</title>
+    <script>
+      if ((navigator.userAgent.indexOf('MSIE') >= 0) && (navigator.userAgent.indexOf('Opera') < 0)) {
+        location.href = 'https://devstatic.yundada56.com/tms/upgrade.html'
+      }
+      // IE11
+      if(navigator.userAgent.toLowerCase().match(/rv:([\d.]+)\) like gecko/)){
+        location.href = 'https://devstatic.yundada56.com/tms/upgrade.html'
+      }
+    </script>
   </head>
   <body>
     <div id="app"></div>
