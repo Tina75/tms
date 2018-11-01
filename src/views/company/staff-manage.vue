@@ -274,16 +274,14 @@ export default {
         this.staffSelectList = Object.assign({}, data.data.list)
       })
     },
-    searchName () {
-      let params = {}
-      params.name = this.formSearch.name
-      if (!params.name) {
+    searchName (name) {
+      if (!name) {
         return Promise.resolve([])
       }
       return Server({
         url: 'employee/nameLike',
         method: 'get',
-        data: params
+        data: { name }
       }).then(({ data }) => {
         return data.data.map(item => ({ value: item.name, name: item.name + '/' + item.phone }))
       })
