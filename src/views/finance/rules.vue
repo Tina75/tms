@@ -76,7 +76,7 @@
                       <Row :gutter="24">
                         <Col span="5"  class="styleCommon">
                         <FormItem prop="departure" >
-                          <SelectInputForCity v-model="item.departure" placeholder="请输入始发地" class="search-input-senior"></SelectInputForCity>
+                          <SelectInputForCity :code-type = "1" v-model="item.departure" placeholder="请输入始发地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
                         <Col span="1" class="styleCommon">
@@ -84,7 +84,7 @@
                         </Col>
                         <Col span="5" class="styleCommon">
                         <FormItem prop="destination" >
-                          <SelectInputForCity v-model="item.destination" placeholder="请输入目的地" class="search-input-senior"></SelectInputForCity>
+                          <SelectInputForCity :code-type = "1" v-model="item.destination" placeholder="请输入目的地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
                         <Col span="11" class="styleCommon">
