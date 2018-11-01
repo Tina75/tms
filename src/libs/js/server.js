@@ -61,7 +61,7 @@ instance.interceptors.response.use((res) => {
   }
 }, (error) => {
   if (error.message.indexOf('timeout') !== -1) {
-    Message.error('接口超时')
+    Message.error('网络信号差，请稍后重试')
   }
   if (error.response && error.response.status) {
     Message.error(error.response.statusText + ' ' + error.response.status)
