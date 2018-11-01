@@ -227,12 +227,13 @@ export default {
         callback(new Error('请填写'))
       } else {
         if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
-          if (!(/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(realValue))) {
+          // /^(0|([1-9]\d*))([.]\d{1,2})?$/
+          if (!(/^(0|([1-9]\d*))([.]\d{1,2})?$/.test(realValue))) {
             callback(new Error('最多两位小数'))
           }
         }
         if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') {
-          if (!(/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d)?))$/.test(realValue))) {
+          if (!(/^(0|([1-9]\d*))([.]\d)?$/.test(realValue))) {
             callback(new Error('最多一位小数'))
           }
         }
@@ -392,8 +393,8 @@ export default {
         departure: null,
         destination: null,
         showRule: (this.ruleDetail.details.length + 1) + '',
-        startNum: null,
-        startPrice: null,
+        startNum: '',
+        startPrice: '',
         chargeRules: [
           { base: '', price: '', baseAndStart: '' }
         ]
@@ -427,8 +428,10 @@ export default {
         await this.formValidate(this.$refs['ruleBase'][j])
         await this.formValidate(this.$refs['rulePrice'][j])
       }
-      if (_this.ruleDetail.details.some((item, index, array) => {
-        return (item.startNum.length === 0 && item.startPrice === 0) || (item.startNum.length !== 0 && item.startPrice !== 0)
+      if (!_this.ruleDetail.details.every((item, index, array) => {
+        console.log(_this.ruleDetail.details)
+        console.log(((item.startNum.length === 0 && item.startPrice.length === 0)) || (item.startNum.length !== 0 && item.startPrice.length !== 0))
+        return ((item.startNum.length === 0 && item.startPrice.length === 0)) || (item.startNum.length !== 0 && item.startPrice.length !== 0)
       })) {
         this.$Message.error('请填写起步价')
         return

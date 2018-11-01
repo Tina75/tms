@@ -218,14 +218,13 @@ export default {
   },
   methods: {
     payMoneyChange () {
-      debugger
       if (this.validate.repairMoney) {
-        this.validate.waitPayMoney = Number(this.validate.repairMoney) - Number(this.validate.payMoney)
+        this.validate.waitPayMoney = parseFloat(this.validate.repairMoney) - parseFloat(this.validate.payMoney)
       }
     },
     waitpayMoneyChange () {
       if (this.validate.repairMoney) {
-        this.validate.payMoney = Number(this.validate.repairMoney) - Number(this.validate.waitPayMoney)
+        this.validate.payMoney = parseFloat(this.validate.repairMoney) - parseFloat(this.validate.waitPayMoney)
       }
     },
     // 修改页面初始化
