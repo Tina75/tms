@@ -101,7 +101,7 @@
               <Input v-model="validate.shippingVolume" :maxlength="9"></Input>
               </Col>
               <Col span="2" offset="1">
-              <span>吨</span>
+              <span>方</span>
               </Col>
             </Row>
           </FormItem>
