@@ -92,12 +92,13 @@ export default {
               const plan = res.getPlan(0)
               if (plan) { // 如果线路存在则获取距离
                 this.distance = plan.getDistance(false)
-              } else { // 如果不存在则清空始发和终点，不再计算
+              } else if (!plan && !this.distance) { // 如果不存在线路规划且距离为0，则清空始发和终点，不再计算
                 console.error('查询路线失败，请检查经纬度是否正确')
                 this.startPoint = void 0
                 this.endPoint = void 0
+              } else {
+                resolve()
               }
-              resolve()
             }
           })
           route.search(startPoint, endPoint)
@@ -111,6 +112,7 @@ export default {
       await this.distanceCalculate() // 重复执行距离计算，确保计算出距离，如果已经有计算结果，则该方法会直接返回
       const rule = this.ruleOptions[index]
       if ((rule.ruleType === 3 || rule.ruleType === 4) && this.distance === 0) errorMsg = '地址填写不够详细无法算出里程数'
+
       this.$refs.$form.validate(valid => {
         if (!valid) return
         Server({
