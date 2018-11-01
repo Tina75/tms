@@ -40,7 +40,8 @@ export default {
   data () {
     return {
       address: [],
-      map: new BMap.Map(null)
+      map: new BMap.Map(null),
+      timer: ''
     }
   },
   computed: {
@@ -64,6 +65,12 @@ export default {
   },
   methods: {
     search (val) {
+      clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
+        this.doSearch(val, true)
+      }, 200)
+    },
+    doSearch (val, forceLocal) {
       const options = {
         onSearchComplete: results => {
           if (local.getStatus() === window.BMAP_STATUS_SUCCESS) {
@@ -83,11 +90,16 @@ export default {
               })
             }
             this.address = arr
+          } else {
+            if (forceLocal) {
+              this.doSearch(val, false)
+            }
           }
         }
       }
-      const local = new BMap.LocalSearch(this.areaName, options)
-      local.search(val)
+      const area = forceLocal ? this.areaName : '全国'
+      const local = new BMap.LocalSearch(area, options)
+      local.search(val, { forceLocal })
     },
     inputHandle (value, type) {
       this.address = []
