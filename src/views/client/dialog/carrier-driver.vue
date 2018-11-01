@@ -83,7 +83,7 @@
         </Row>
         <Row>
           <Col span="8">
-          <FormItem label="核定载重:" prop="shippingWeight">
+          <FormItem label="载重:" prop="shippingWeight">
             <Row>
               <Col span="20">
               <Input v-model="validate.shippingWeight" :maxlength="9" placeholder="必填"></Input>

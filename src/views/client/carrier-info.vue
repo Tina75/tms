@@ -327,7 +327,7 @@ export default {
           }
         },
         {
-          title: '核定载重（吨）',
+          title: '载重（吨）',
           key: 'shippingWeight'
         },
         {
