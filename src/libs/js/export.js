@@ -23,7 +23,6 @@ let instance = (config = {}) => {
           code = resJson.code
           msg = resJson.msg
         }
-        console.log('resJson', resJson)
       } catch (err) {}
 
       if (!code || code === 10000) {
