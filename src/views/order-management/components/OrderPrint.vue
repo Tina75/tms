@@ -26,8 +26,8 @@
               <td>收货地址：{{data.consigneeAddress}}</td>
             </tr>
             <tr>
-              <td>提货方式：{{pickup(data)}}</td>
               <td>回单数：{{data.receiptCount}}</td>
+              <td>提货方式：{{pickup(data)}}</td>
             </tr>
           </tbody>
         </table>
