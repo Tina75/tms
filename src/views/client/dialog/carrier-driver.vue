@@ -9,7 +9,7 @@
       class="modal"
       @on-visible-change="close"
     >
-      <p slot="header" style="text-align:center">{{title}}</p>
+      <p slot="header" style="text-align:center;font-weight: bold;">{{title}}</p>
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="90">
         <p class="modalTitle">基础信息</p>
         <Row>
@@ -364,5 +364,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-  @import "../client.styl"
+@import "../client.styl"
+.modalTitle
+  font-size: 14px;
 </style>
