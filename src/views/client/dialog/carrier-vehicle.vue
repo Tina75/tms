@@ -8,7 +8,7 @@
       class="modal"
       @on-visible-change="close"
     >
-      <p slot="header" style="text-align:center">{{title}}</p>
+      <p slot="header" style="text-align:center;font-weight: bold;">{{title}}</p>
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="90">
         <Row>
           <Col span="7">

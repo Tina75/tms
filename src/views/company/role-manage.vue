@@ -412,14 +412,17 @@ export default {
       width: 75%;
       float:left;
       .icon-ico-position
-        margin-right: 15px;
+        float: left;
         margin-right: 15px;
         width: 20px;
         height: 22px;
-        background: #F9F9F9;
+        background: #f9f9f9;
         border-radius: 50%;
-        display: inline-block;
         padding-left: 2px;
+        margin-top: -3px;
+      .icon-ico-position:hover
+        display: block;
+        overflow: hidden;
   .rightHead
     border-bottom: 1px solid #DCDEE2;
     margin-top: 5px
