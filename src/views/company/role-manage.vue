@@ -7,12 +7,12 @@
       </div>
       <div>
         <MenuItem v-for="menu in roles" :key="menu.id" :name="menu.name" class="menu" @click.native="clickLeftMenu(menu)">
-        <p class="menuTitle">{{menu.name}}</p>
+        <p class="menuTitle"><i class="icon font_family icon-ico-position"></i>{{menu.name}}</p>
         <span v-if="menu.type !== 1" class="configBtnItem">
           <span v-if="hasPower(140102)" class="configBtn" @click="editRole(menu)">修改</span>
           <span v-if="hasPower(140103)" type="text" class="configBtn" @click="removeRole(menu)">删除</span>
         </span>
-          </MenuItem>
+        </MenuItem>
       </div>
       <Modal v-model="createRoleModal" width="400">
         <p slot="header" class="modalTitle">
@@ -411,6 +411,8 @@ export default {
       text-overflow: ellipsis;
       width: 75%;
       float:left;
+      .icon-ico-position
+        margin-right: 15px;
   .rightHead
     border-bottom: 1px solid #e9e9e9;
     margin-top: 5px

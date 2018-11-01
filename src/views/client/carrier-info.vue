@@ -348,22 +348,31 @@ export default {
               n2 = JSON.parse(params.row.regularLine)[1].en === undefined ? '' : JSON.parse(params.row.regularLine)[1].en
             }
             return h('div', [
-              h('p', {
-                style: {
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis'
+              h('Tooltip', {
+                props: {
+                  placement: 'top'
                 }
-              }, s1 + '—' + n1 === '—' ? '' : s1 + '—' + n1),
-              h('p', {
-                style: {
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis'
-                }
-              }, s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2)
+              }, [
+                h('div', {
+                  slot: 'content'
+                }, [h('p', {}, (s1 + '—' + n1) === '—' ? '' : s1 + '—' + n1), h('p', {}, (s2 + '—' + n2) === '—' ? '' : s2 + '—' + n2)]),
+                h('p', {
+                  style: {
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }
+                }, s1 + '—' + n1 === '—' ? '' : s1 + '—' + n1),
+                h('p', {
+                  style: {
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }
+                }, s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2)
+              ])
             ])
           }
         }, {
@@ -374,7 +383,7 @@ export default {
           title: '添加时间',
           key: 'createTime',
           render: (h, params) => {
-            let text = this.formatDate(params.row.createTime)
+            let text = this.formatDateTime(params.row.createTime)
             return h('div', { props: {} }, text)
           }
         }
@@ -409,6 +418,7 @@ export default {
                       },
                       methods: {
                         ok () {
+                          _this._carrierListRepairVehicle() // 刷新页面
                         }
                       }
                     })
@@ -505,15 +515,24 @@ export default {
         },
         {
           title: '维修费用',
-          key: 'repairMoney'
+          key: 'repairMoney',
+          render: (h, params) => {
+            return h('span', Number(params.row.repairMoney) / 100)
+          }
         },
         {
           title: '已支付费用',
-          key: 'payMoney'
+          key: 'payMoney',
+          render: (h, params) => {
+            return h('span', Number(params.row.payMoney) / 100)
+          }
         },
         {
           title: '未支付费用',
-          key: 'waitPayMoney'
+          key: 'waitPayMoney',
+          render: (h, params) => {
+            return h('span', Number(params.row.waitPayMoney) / 100)
+          }
         },
         {
           title: '添加人',
@@ -657,7 +676,6 @@ export default {
     },
     _carrierAddVehicle () {
       var _this = this
-      console.log(_this.carrierId)
       this.openDialog({
         name: 'client/dialog/carrier-vehicle',
         data: {

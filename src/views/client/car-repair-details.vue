@@ -47,19 +47,19 @@
           <Col span="6">
           <div>
             <span class="label">维修费用：</span>
-            {{infoData.repairMoney}}<span>元</span>
+            {{infoData.repairMoney / 100}}<span>元</span>
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">已支付费用：</span>
-            {{infoData.payMoney}}<span>元</span>
+            {{infoData.payMoney / 100}}<span>元</span>
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">未支付费用：</span>
-            {{infoData.waitPayMoney}}<span>元</span>
+            {{infoData.waitPayMoney / 100}}<span>元</span>
           </div>
           </Col>
         </Row>

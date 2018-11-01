@@ -86,7 +86,7 @@
           <FormItem label="核定载重:" prop="shippingWeight">
             <Row>
               <Col span="20">
-              <Input v-model="validate.shippingWeight" :maxlength="8" placeholder="必填"></Input>
+              <Input v-model="validate.shippingWeight" :maxlength="9" placeholder="必填"></Input>
               </Col>
               <Col span="2" offset="1">
               <span>吨</span>
@@ -98,7 +98,7 @@
           <FormItem class="ivu-form-item-required blank" label="净空:" prop="shippingVolume">
             <Row>
               <Col span="20">
-              <Input v-model="validate.shippingVolume" :maxlength="8"></Input>
+              <Input v-model="validate.shippingVolume" :maxlength="9"></Input>
               </Col>
               <Col span="2" offset="1">
               <span>吨</span>
@@ -227,10 +227,10 @@ export default {
         ],
         shippingWeight: [
           { required: true, message: '载重不能为空' },
-          { message: '必须为大于等于0的数字,最多一位小数', pattern: /^(0|([1-9]\d*))([.]\d{1})?$/ }
+          { message: '必须小于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ],
         shippingVolume: [
-          { message: '必须为大于等于0的数字,最多一位小数', pattern: /^(0|([1-9]\d*))([.]\d{1})?$/ }
+          { message: '必须小于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ]
       }
     }
