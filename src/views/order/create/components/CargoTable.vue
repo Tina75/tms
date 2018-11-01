@@ -125,6 +125,7 @@ export default {
           key: 'cargoCost',
           type: 'number',
           min: 0,
+          // maxLen: 999999999.99,
           point: 2
         },
         {

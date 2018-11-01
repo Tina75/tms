@@ -7,10 +7,12 @@
       </p>
       <Form v-if="name === '送货调度'" ref="send" :model="send" :rules="sendRules" :label-width="60" inline label-position="left">
         <FormItem label="始发地" prop="start">
-          <area-select v-model="send.start" :deep="true" style="width:180px"></area-select>
+          <!-- <area-select v-model="send.start" :deep="true" style="width:180px"></area-select> -->
+          <city-select v-model="send.start" style="width:180px"></city-select>
         </FormItem>
         <FormItem label="目的地" prop="end" style="margin-left:27px;">
-          <area-select v-model="send.end" :deep="true" style="width:180px"></area-select>
+          <!-- <area-select v-model="send.end" :deep="true" style="width:180px"></area-select> -->
+          <city-select v-model="send.end" style="width:180px"></city-select>
         </FormItem>
       </Form>
       <Form v-else ref="pick" :model="pick" :rules="pickRules" :label-width="70" inline label-position="left">
@@ -66,7 +68,8 @@
 <script>
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
-import AreaSelect from '@/components/AreaSelect'
+// import AreaSelect from '@/components/AreaSelect'
+import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
 import City from '@/libs/js/city'
@@ -75,7 +78,8 @@ export default {
   name: 'dispatch',
 
   components: {
-    AreaSelect,
+    // AreaSelect,
+    CitySelect,
     SelectInput
   },
 
@@ -83,10 +87,16 @@ export default {
 
   data () {
     return {
-      send: { start: [], end: [] },
+      send: { start: void 0, end: void 0 },
       sendRules: {
-        start: { required: true, type: 'array', min: 1, message: '请填写始发地', trigger: 'change' },
-        end: { required: true, type: 'array', min: 1, message: '请填写目的地', trigger: 'change' }
+        start: [
+          { required: true, type: 'number', message: '请填写始发地', trigger: 'change' },
+          { required: true, type: 'number', message: '请填写始发地', trigger: 'blur' }
+        ],
+        end: [
+          { required: true, type: 'number', message: '请填写目的地', trigger: 'change' },
+          { required: true, type: 'number', message: '请填写目的地', trigger: 'blur' }
+        ]
       },
       pick: { carrierName: '', carNo: '', driverName: '' },
       pickRules: {
@@ -154,17 +164,17 @@ export default {
           minWidth: 120,
           ellipsis: true,
           render: (h, params) => {
-            if (this.cityFormatter(params.row.start).length > 8) {
+            if (params.row.startName.length > 8) {
               return h('Tooltip', {
                 props: {
                   placement: 'bottom',
-                  content: this.cityFormatter(params.row.start)
+                  content: params.row.startName
                 }
               }, [
-                h('span', this.formatterAddress(this.cityFormatter(params.row.start)))
+                h('span', this.formatterAddress(params.row.startName))
               ])
             } else {
-              return h('span', this.cityFormatter(params.row.start))
+              return h('span', params.row.startName)
             }
           }
         },
@@ -174,17 +184,17 @@ export default {
           minWidth: 120,
           ellipsis: true,
           render: (h, params) => {
-            if (this.cityFormatter(params.row.end).length > 8) {
+            if (params.row.endName.length > 8) {
               return h('Tooltip', {
                 props: {
                   placement: 'bottom',
-                  content: this.cityFormatter(params.row.end)
+                  content: params.row.endName
                 }
               }, [
-                h('span', this.formatterAddress(this.cityFormatter(params.row.end)))
+                h('span', this.formatterAddress(params.row.endName))
               ])
             } else {
-              return h('span', this.cityFormatter(params.row.end))
+              return h('span', params.row.endName)
             }
           }
         },
@@ -238,11 +248,11 @@ export default {
 
   },
   mounted: function () {
-    // modify:20181013 by 马友胜 加上第一条数据的始发城市和目的城市
-    // setTimeout(() => {
-    //   this.send.start = this.id[0].start
-    //   this.send.end = this.id[0].end
-    // }, 0)
+    // modify:20181023 by 宣飞 加上第一条数据的始发城市和目的城市
+    setTimeout(() => {
+      this.send.start = this.id[0].start
+      this.send.end = this.id[0].end
+    }, 0)
   },
 
   methods: {
@@ -283,8 +293,8 @@ export default {
         if (valid) {
           // 地址入参为最后一级区号
           let sendCodes = {
-            start: Number(this.send.start[this.send.start.length - 1]),
-            end: Number(this.send.end[this.send.end.length - 1])
+            start: this.send.start,
+            end: this.send.end
           }
           const data = Object.assign(sendCodes, { orderIds: this.orderIds })
           Server({
@@ -359,6 +369,11 @@ export default {
 </style>
 <style lang='stylus'>
 .dispatch-dialog
+  .ivu-input-group
+    display inline-block
   .ivu-modal-body
     padding 22px 40px
+  .ivu-form
+    .ivu-form-item-label
+      padding-top 12px
 </style>

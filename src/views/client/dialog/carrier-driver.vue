@@ -4,26 +4,170 @@
     <Modal
       v-model="visiable"
       :mask-closable="false"
+      width="1020"
       label-position="left"
       class="modal"
       @on-visible-change="close"
     >
-      <p slot="header" style="text-align:center">{{title}}</p>
-      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122">
-        <FormItem label="司机类型:" prop="driverType">
-          <Select v-model="validate.driverType" placeholder="请输入">
-            <Option value= "1">合约司机</Option>
-            <Option value= "2">临时司机</Option>
-          </Select>
-        </FormItem>
-        <FormItem label="姓名:" prop="driverName">
-          <Input v-model="validate.driverName" :maxlength="15" placeholder="请输入"/>
-        </FormItem>
-        <FormItem label="手机号码:" prop="driverPhone">
-          <Input v-model="validate.driverPhone" :maxlength="11"  placeholder="请输入"/>
-        </FormItem>
+      <p slot="header" style="text-align:center;font-weight: bold;">{{title}}</p>
+      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="90">
+        <p class="modalTitle">基础信息</p>
+        <Row>
+          <Col span="8">
+          <FormItem label="车牌号:" prop="carNO">
+            <Row>
+              <Col span="20">
+              <Input v-model="validate.carNO" placeholder="必填"></Input>
+                </Col>
+            </Row>
+          </FormItem>
+          </Col>
+          <Col span="8">
+          <FormItem label="合作方式:" prop="driverType">
+            <Row>
+              <Col span="20">
+              <Select v-model="validate.driverType" class="minWidth">
+                <Option
+                  v-for="item in selectList"
+                  :value="item.id"
+                  :key="item.id">
+                  {{ item.name }}
+                </Option>
+              </Select>
+              </Col>
+            </Row>
+          </FormItem>
+          </Col>
+          <Col span="8">
+          <FormItem label="司机姓名:" prop="driverName">
+            <Row>
+              <Col span="20">
+              <Input v-model="validate.driverName" placeholder="必填"></Input>
+                </Col>
+            </Row>
+          </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col span="8">
+          <FormItem label="手机号:" prop="driverPhone">
+            <Row>
+              <Col span="20">
+              <SelectInput v-model="validate.driverPhone" :remote="true" :remote-method="queryDriverByPhoneList" placeholder="必填" @on-select="slectDriverData"></SelectInput>
+              </Col>
+            </Row>
+          </FormItem>
+          </Col>
+          <Col span="8">
+          <FormItem label="车型:" prop="carType">
+            <Row>
+              <Col span="20">
+              <Select v-model="validate.carType" >
+                <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
+              </Select>
+              </Col>
+            </Row>
+          </FormItem>
+          </Col>
+          <Col span="8">
+          <FormItem label="车长:" prop="carLength">
+            <Row>
+              <Col span="20">
+              <Select v-model="validate.carLength" >
+                <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
+              </Select>
+              </Col>
+            </Row>
+          </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col span="8">
+          <FormItem label="核定载重:" prop="shippingWeight">
+            <Row>
+              <Col span="20">
+              <Input v-model="validate.shippingWeight" :maxlength="9" placeholder="必填"></Input>
+              </Col>
+              <Col span="2" offset="1">
+              <span>吨</span>
+              </Col>
+            </Row>
+          </FormItem>
+          </Col>
+          <Col span="8">
+          <FormItem class="ivu-form-item-required blank" label="净空:" prop="shippingVolume">
+            <Row>
+              <Col span="20">
+              <Input v-model="validate.shippingVolume" :maxlength="9"></Input>
+              </Col>
+              <Col span="2" offset="1">
+              <span>吨</span>
+              </Col>
+            </Row>
+          </FormItem>
+          </Col>
+          <Col span="8">
+          <FormItem class="ivu-form-item-required blank" label="购买日期:">
+            <Row>
+              <Col span="20">
+              <DatePicker v-model="validate.purchDate" format="yyyy-MM-dd" type="date" placeholder="请选择日期">
+              </DatePicker>
+              </Col>
+            </Row>
+          </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col span="8">
+          <FormItem class="ivu-form-item-required blank" label="车辆品牌:">
+            <Row>
+              <Col span="20">
+              <Input v-model="validate.carBrand" :maxlength="20" placeholder="如：东风"></Input>
+              </Col>
+            </Row>
+          </FormItem>
+          </Col>
+        </Row>
+        <p class="modalTitle">常跑线路</p>
+        <div class="lineDiv">
+          <Row>
+            <Col span="8">
+            <FormItem label="出发地1:">
+              <CitySelect ref="start" :code-type="codeType" v-model="address1.s" clearable></CitySelect>
+            </FormItem>
+            </Col>
+            <Col span="8" style="margin-left: 25px;">
+            <FormItem label="目的地1:">
+              <CitySelect ref="start" :code-type="codeType" v-model="address1.e" clearable></CitySelect>
+            </FormItem>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="8">
+            <FormItem label="出发地2:">
+              <CitySelect ref="start" :code-type="codeType" v-model="address2.s" clearable></CitySelect>
+            </FormItem>
+            </Col>
+            <Col span="8" style="margin-left: 25px;">
+            <FormItem label="目的地2:">
+              <CitySelect ref="start" :code-type="codeType" v-model="address2.e" clearable></CitySelect>
+            </FormItem>
+            </Col>
+          </Row>
+        </div>
+        <p class="modalTitle">证件照</p>
+        <Row>
+          <Col span="5">
+          <up-load ref="upload1"></up-load>
+          <p :upload-img="validate.travelPhoto" class="uploadLabel">行驶证</p>
+          </Col>
+          <Col span="5">
+          <up-load ref="upload2"></up-load>
+          <p :upload-img="validate.drivePhoto" class="uploadLabel">驾驶证</p>
+          </Col>
+        </Row>
       </Form>
-      <div slot="footer">
+      <div slot="footer" class="footerSty">
         <Button type="primary" @click="save('validate')">确定</Button>
         <Button style="margin-left: 8px" @click.native="close"  >取消</Button>
       </div>
@@ -32,35 +176,128 @@
 </template>
 
 <script>
+import { CAR_TYPE1, CAR_LENGTH, DRIVER_TYPE } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
-import { carrierAddDriver, carrierUpdateDriver, CODE } from '../client'
+import { carrierAddDriver, carrierUpdateDriver, carrierQueryDriverlist, CODE, CAR } from '../client'
+import CitySelect from '@/components/SelectInputForCity'
+import UpLoad from '@/components/upLoad/'
+import SelectInput from '@/components/SelectInput'
 export default {
   name: 'carrier-driver',
+  components: {
+    CitySelect,
+    UpLoad,
+    SelectInput
+  },
   mixins: [BaseDialog],
   data () {
     return {
+      carTypeMap: CAR_TYPE1,
+      carLengthMap: CAR_LENGTH,
       carrierId: '', // 承运商id
       driverId: '', // 司机id
-      validate: {
-        driverType: '1',
-        driverName: '',
-        driverPhone: ''
-      },
+      carId: '',
+      validate: {},
+      address: [],
+      address1: {},
+      address2: {},
+      flagAddress: true,
+      codeType: 1,
+      selectList: DRIVER_TYPE,
       ruleValidate: {
+        carNO: [
+          { required: true, message: '车牌号不能为空', trigger: 'blur' },
+          { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
+        ],
         driverType: [
-          { required: true, message: '司机类型不能为空', trigger: 'blur' }
+          { required: true, message: '合作方式不能为空', trigger: 'change' }
         ],
         driverName: [
           { required: true, message: '司机姓名不能为空', trigger: 'blur' }
         ],
         driverPhone: [
-          { required: true, message: '手机号码不能为空', trigger: 'blur' },
-          { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }]
+          { required: true, message: '手机号不能为空', trigger: 'blur' },
+          { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
+        ],
+        carType: [
+          { required: true, message: '车型不能为空', trigger: 'change' }
+        ],
+        carLength: [
+          { required: true, message: '车长不能为空', trigger: 'change' }
+        ],
+        shippingWeight: [
+          { required: true, message: '载重不能为空' },
+          { message: '必须小于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+        ],
+        shippingVolume: [
+          { message: '必须小于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+        ]
       }
     }
   },
+  mounted () {
+    this.configData()
+  },
   methods: {
+    // 修改页面初始值更改
+    configData () {
+      if (this.title === '修改车辆') {
+        this.validate.carrierId = this.carrierId
+        this.validate.carId = this.carId
+        this.validate.driverType = this.validate.driverType.toString()
+        this.validate.carType = this.validate.carType.toString()
+        this.validate.carLength = this.validate.carLength.toString()
+        this.$refs.upload1.progress = 1
+        this.$refs.upload2.progress = 1
+        this.$refs.upload1.uploadImg = this.validate.travelPhoto
+        this.$refs.upload2.uploadImg = this.validate.drivePhoto
+        if (this.validate.regularLine && JSON.parse(this.validate.regularLine).length > 0) {
+          if (JSON.parse(this.validate.regularLine).length === 1) {
+            this.address1 = JSON.parse(this.validate.regularLine)[0]
+          } else {
+            this.address1 = JSON.parse(this.validate.regularLine)[0]
+            this.address2 = JSON.parse(this.validate.regularLine)[1]
+          }
+        }
+      }
+    },
+    // 格式常跑路线信息
+    checkLine () {
+      this.address = []
+      this.flagAddress = true
+      // 线路统一
+      if (this.address1 &&
+         (this.address1.s !== undefined && this.address1.e !== undefined) &&
+         (this.address1.s !== null && this.address1.e !== null)) {
+        this.address.push(this.address1)
+      } else if ((this.address1.s === undefined && this.address1.e === undefined) ||
+                 (this.address1.s === null && this.address1.e === null)) {
+      } else {
+        this.$Message.error('请完善常跑线路1信息')
+        this.flagAddress = false
+      }
+      if (this.address2 &&
+         (this.address2.s !== undefined && this.address2.e !== undefined) &&
+         (this.address2.s !== null && this.address2.e !== null)) {
+        this.address.push(this.address2)
+      } else if ((this.address2.s === undefined && this.address2.e === undefined) ||
+                 (this.address2.s === null && this.address2.e === null)) {
+      } else {
+        this.$Message.error('请完善常跑线路2信息')
+        this.flagAddress = false
+      }
+    },
     save (name) {
+      this.flagAddress = true
+      this.validate.carrierId = this.carrierId
+      this.validate.carId = this.carId
+      this.validate.travelPhoto = this.$refs.upload1.uploadImg
+      this.validate.drivePhoto = this.$refs.upload2.uploadImg
+      this.checkLine()
+      if (!this.flagAddress) {
+        return
+      }
+      this.validate.regularLine = JSON.stringify(this.address)
       this.$refs[name].validate((valid) => {
         if (valid) {
           if (this.flag === 1) { // 新增
@@ -68,38 +305,58 @@ export default {
           } else { // 2-编辑
             this.update()
           }
-          this.close()
         }
       })
     },
     add () {
-      let data = {
-        carrierId: this.carrierId,
-        driverType: this.validate.driverType,
-        driverName: this.validate.driverName,
-        driverPhone: this.validate.driverPhone
-      }
+      let data = this.validate
       carrierAddDriver(data).then(res => {
         if (res.data.code === CODE) {
+          this.$Message.success(res.data.msg)
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
       })
     },
     update () {
-      let data = {
-        driverId: this.driverId,
-        driverType: this.validate.driverType,
-        driverName: this.validate.driverName,
-        driverPhone: this.validate.driverPhone
-      }
+      let data = this.validate
       carrierUpdateDriver(data).then(res => {
         if (res.data.code === CODE) {
+          this.$Message.success(res.data.msg)
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
+      })
+    },
+    // 输入手机号，选中某条信息自动填充以后司机信息（姓名，合作方式。。）
+    slectDriverData (val, dirverInit) {
+      this.validate.driverName = dirverInit.driverName
+      this.validate.driverType = dirverInit.driverType.toString()
+    },
+    // 手机号输入联想
+    queryDriverByPhoneList () {
+      let data = {}
+      data.carrierId = this.carrierId
+      data.driverPhone = this.validate.driverPhone
+      if (!data.driverPhone) {
+        return Promise.resolve([])
+      }
+      return carrierQueryDriverlist(data).then(res => {
+        if (res.data.code === CODE) {
+          return res.data.data.map(item => ({
+            value: item.driverPhone,
+            name: item.driverName + '/' + item.driverPhone,
+            driverName: item.driverName,
+            driverType: item.driverType
+          }
+          ))
+        }
+      }).catch((errorInfo) => {
+        return Promise.reject(errorInfo)
       })
     }
   }
@@ -107,5 +364,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-  @import "../client.styl"
+@import "../client.styl"
+.modalTitle
+  font-size: 14px;
 </style>

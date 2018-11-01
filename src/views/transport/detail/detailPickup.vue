@@ -1,6 +1,6 @@
 <template>
   <!-- 默认状态 -->
-  <div v-if="!inEditing">
+  <div v-if="!inEditing" class="transport-detail">
     <!-- 运单号及状态 -->
     <section class="detail-header">
       <ul class="detail-header-list">
@@ -56,7 +56,7 @@
         <div class="detail-part-title">
           <span>货物明细</span>
         </div>
-        <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
+        <Table :columns="tableColumns" :data="detail" :loading="loading" class="detail-field-table"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
           <span>总货值：{{ orderTotal.cargoCost }}</span>
@@ -104,11 +104,11 @@
             <div v-if="settlementType"
                  class="detail-payment-way">
               {{ settlementType === '1' ? '按单结' : '月结' }}
-              <Table v-if="settlementType === '1'"
-                     :columns="tablePayment"
-                     :data="settlementPayInfo"
-                     :loading="loading"
-                     width="350"></Table>
+              <PayInfo
+                v-if="settlementType === '1'"
+                :loading="loading"
+                :data="settlementPayInfo"
+                class="detail-field-payinfo" />
             </div>
           </i-col>
         </Row>
@@ -142,7 +142,7 @@
   </div>
 
   <!-- 编辑状态 -->
-  <div v-else>
+  <div v-else class="transport-detail">
     <!-- 运单号及状态 -->
     <section class="detail-header">
       <ul class="detail-header-list">
@@ -221,7 +221,7 @@
         <div class="detail-part-title">
           <span>货物明细</span>
         </div>
-        <Button type="primary" style="margin-bottom: 22px;"
+        <Button class="detail-field-button" type="primary"
                 @click="addOrder('pickup')">添加订单</Button>
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
@@ -279,11 +279,13 @@
                 <Radio label="1">按单结</Radio>
                 <Radio label="2">月结</Radio>
               </RadioGroup>
-              <Table v-if="settlementType === '1'"
-                     :columns="tablePayment"
-                     :data="settlementPayInfo"
-                     :loading="loading"
-                     width="350"></Table>
+              <PayInfo v-if="settlementType === '1'"
+                       ref="$payInfo"
+                       :loading="loading"
+                       :total="paymentTotal"
+                       :data="settlementPayInfo"
+                       class="detail-field-payinfo"
+                       mode="edit" />
             </div>
           </i-col>
         </Row>
@@ -300,21 +302,26 @@
 </template>
 
 <script>
+/**
+ * 提货单详情与编辑
+ */
+
 import BasePage from '@/basic/BasePage'
-import TransportBase from '../transportBase'
-import DetailMixin from './detailMixin'
+import TransportBase from '../mixin/transportBase'
+import DetailMixin from '../mixin/detailMixin'
+import SelectInputMixin from '../mixin/selectInputMixin'
 
 import MoneyInput from '../components/MoneyInput'
-import AreaSelect from '@/components/AreaSelect'
 import SelectInput from '../components/SelectInput.vue'
-import SelectInputMixin from '../components/selectInputMixin'
+import PayInfo from '../components/PayInfo'
 
 import Server from '@/libs/js/server'
 import TMSUrl from '@/libs/constant/url'
+import _ from 'lodash'
 
 export default {
   name: 'DetailFeright',
-  components: { MoneyInput, SelectInput, AreaSelect },
+  components: { MoneyInput, SelectInput, PayInfo },
   mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
   metaInfo: { title: '提货单详情' },
   data () {
@@ -336,9 +343,8 @@ export default {
       // 支付方式
       settlementType: '',
       settlementPayInfo: [
-        { payType: 2, fuelCardAmount: 0, cashAmount: 0 }
+        { payType: 2, fuelCardAmount: '', cashAmount: '' }
       ],
-      settlementPayInfoBack: [], // 支付信息备份
 
       // 所有按钮组
       btnList: [
@@ -520,6 +526,7 @@ export default {
 
         this.status = this.statusFilter(data.loadbill.status)
         this.settlementType = data.loadbill.settlementType ? data.loadbill.settlementType.toString() : ''
+        // 格式化计费信息金额单位为元
         let temp = this.settlementPayInfo.map((item, i) => {
           if (!data.loadbill.settlementPayInfo[i]) return item
           else {
@@ -530,15 +537,16 @@ export default {
           }
         })
         this.settlementPayInfo = temp
-        this.settlementPayInfoBack = Object.assign([], temp)
 
         this.setBtnsWithStatus()
         this.loading = false
       }).catch(err => console.error(err))
     },
 
+    // 编辑后保存
     save () {
       if (!this.validate()) return
+
       Server({
         url: '/load/bill/update',
         method: 'post',
@@ -548,11 +556,9 @@ export default {
             ...this.info,
             ...this.formatMoney(),
             settlementType: this.settlementType,
-            settlementPayInfo: this.settlementType === '1' ? this.formatPayInfo() : void 0
+            settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
           },
-          cargoList: Array.from(new Set((this.detail.map(item => {
-            return item.orderId
-          }))))
+          cargoList: _.uniq(this.detail.map(item => item.orderId))
         }
       }).then(res => {
         this.$Message.success('保存成功')
@@ -618,7 +624,7 @@ export default {
         data: { pickUpId: self.id }
       }).then(() => {
         self.openDialog({
-          name: 'transport/dialog/sendCar',
+          name: 'transport/dialog/action',
           data: {
             id: self.id,
             type: 'pickUp'
@@ -636,5 +642,5 @@ export default {
 </script>
 
 <style lang='stylus'>
-  @import "./detail.styl"
+  @import "../style/detail.styl"
 </style>

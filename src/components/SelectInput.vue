@@ -6,6 +6,7 @@
     class="select-input__dropdown"
     trigger="custom"
     @on-click="handleSelect"
+    @on-clickoutside="handleBlur"
   >
     <div
       @keydown.up.prevent="handleKeydown"
@@ -22,7 +23,7 @@
         :class="classes"
         @on-change="handleChange"
         @on-focus="handleFocus"
-        @on-blur="handleBlur">
+      >
       <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-input__clear-icon" @click.native.stop="handleClear"></Icon>
       <Icon v-if="!mousehover || !isClearable" slot="suffix" type="ios-arrow-down" class="select-input__input-icon"></Icon>
     </Input>
@@ -41,7 +42,7 @@
 
 <script>
 /**
- * 选择 |输入框，
+ * 选择 | 输入框，
  * 支持下拉选择，也支持输入的组件
  * 同时支持请求查询服务端，显示数据
  */
@@ -216,12 +217,16 @@ export default {
         }
         return opt.value === name
       })
-      this.currentValue = item.value
-      this.resetSelect()
+      this.setCurrentValue(item.value)
+      this.focusIndex = -1
+      this.visible = false
       // 选中某一项
       this.$emit('on-select', item.value, item)
-      this.$emit('input', item.value)
+      this.$emit('input', item.value, 'on-select')
     },
+    /**
+     * 鼠标focus
+     */
     handleFocus () {
       this.visible = true
       this.isFocus = true
@@ -265,13 +270,16 @@ export default {
         this.lastRemoteQuery = query
       }
     },
+    /**
+     * 键盘上下箭头和回车事件
+     */
     handleKeydown (e) {
       if (this.visible) {
         e.preventDefault()
         const keyCode = e.key.toLowerCase()
-        if (keyCode === 'arrowup') {
+        if (keyCode === 'arrowup' || keyCode === 'up') {
           this.focusOption(-1)
-        } else if (keyCode === 'arrowdown') {
+        } else if (keyCode === 'arrowdown' || keyCode === 'down') {
           this.focusOption(1)
         } else if (keyCode === 'enter') {
           if (this.focusIndex === -1) {
@@ -286,6 +294,9 @@ export default {
         }
       }
     },
+    /**
+     * 选项背景高亮
+     */
     focusOption (direction) {
       let index = this.focusIndex + direction
       const optionsLength = this.filterOptions.length - 1
@@ -296,6 +307,10 @@ export default {
       }
       this.focusIndex = index
     },
+    /**
+     * 重置参数
+     * 1. blur触发
+     */
     resetSelect () {
       this.focusIndex = -1
       this.visible = false
@@ -305,7 +320,7 @@ export default {
 }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 .select-input
   &__dropdown
     width 100%
@@ -318,7 +333,7 @@ export default {
   &__clear-icon
     cursor pointer
   &__input-icon
-    display none
+    display none !important
     transition transform 0.2s ease-in-out
     -webkit-transition -webkit-transform 0.2s ease-in-out
     -moz-transition  -moz-transform 0.2s ease-in-out

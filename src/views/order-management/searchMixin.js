@@ -9,15 +9,17 @@ export default {
         orderNo: null,
         waybillNo: null,
         customerOrderNo: null,
-        startTime: null,
-        endTime: null,
-        start: '', // 始发地
-        end: '' // 目的地
+        createTimeStart: null,
+        createTimeEnd: null,
+        start: void 0, // 始发地
+        end: void 0 // 目的地
       },
+      /*
       cityCodes: {
         startCodes: [], // 始发地codes
         endCodes: [] // 目的地codes
       },
+      */
       times: ['', ''], // 下单开始结束时间
       recoveryTimes: ['', ''], // 回收开始结束时间
       returnTimes: ['', ''], // 返厂开始结束时间
@@ -40,8 +42,8 @@ export default {
   },
 
   created () {
-    const columns = window.sessionStorage[this.tabType + '_COLUMNS']
-    if (columns) this.extraColumns = JSON.parse(columns)
+    // const columns = window.sessionStorage[this.tabType + '_COLUMNS']
+    // if (columns) this.extraColumns = JSON.parse(columns)
   },
 
   mounted () {
@@ -65,21 +67,10 @@ export default {
         waybillNo: this.keywords.waybillNo || null,
         customerOrderNo: this.keywords.customerOrderNo || null,
         // 地址搜索为最后一级区号
-        start: (this.cityCodes.startCodes !== null && this.cityCodes.startCodes.length) ? this.cityCodes.startCodes[this.cityCodes.startCodes.length - 1] : null,
-        end: (this.cityCodes.endCodes !== null && this.cityCodes.endCodes.length) ? this.cityCodes.endCodes[this.cityCodes.endCodes.length - 1] : null
+        start: this.keywords.start || null,
+        end: this.keywords.end || null
       }
-      if (this.$route.path === '/order-management/order') { // 订单列表搜索
-        key.status = this.keywords.status
-        key.startTime = this.keywords.startTime || null
-        key.endTime = this.keywords.endTime || null
-        key.importId = this.keywords.importId || null
-        // 简单搜索模式下当前搜索框值为空是默认不是搜索状态
-        if (this.simpleSearch && ((this.selectStatus === 0 && !this.keywords.consignerName) || (this.selectStatus === 1 && !this.keywords.orderNo) || (this.selectStatus === 2 && !this.keywords.waybillNo))) {
-          this.isSearching = false
-        } else {
-          this.isSearching = true
-        }
-      } else { // 回单列表搜索
+      if (this.$route.path === '/order-management/receipt') { // 回单列表搜索
         key.receiptStatus = this.keywords.receiptStatus
         key.recoveryTimeStart = this.keywords.recoveryTimeStart || null
         key.recoveryTimeEnd = this.keywords.recoveryTimeEnd || null
@@ -87,6 +78,17 @@ export default {
         key.returnTimeEnd = this.keywords.returnTimeEnd || null
         // 简单搜索模式下当前搜索框值为空是默认不是搜索状态
         if (this.simpleSearch && ((this.selectStatus === 0 && !this.keywords.consignerName) || (this.selectStatus === 1 && !this.keywords.orderNo) || (this.selectStatus === 2 && !this.keywords.customerOrderNo))) {
+          this.isSearching = false
+        } else {
+          this.isSearching = true
+        }
+      } else { // 订单列表、运输管理列表搜索
+        key.status = this.keywords.status
+        key.createTimeStart = this.keywords.createTimeStart || null
+        key.createTimeEnd = this.keywords.createTimeEnd || null
+        key.importId = this.keywords.importId || null
+        // 简单搜索模式下当前搜索框值为空是默认不是搜索状态
+        if (this.simpleSearch && ((this.selectStatus === 0 && !this.keywords.consignerName) || (this.selectStatus === 1 && !this.keywords.orderNo) || (this.selectStatus === 2 && !this.keywords.waybillNo))) {
           this.isSearching = false
         } else {
           this.isSearching = true
@@ -104,17 +106,11 @@ export default {
         orderNo: null,
         waybillNo: null,
         customerOrderNo: null,
-        start: '', // 始发地
-        end: '' // 目的地
+        start: 0, // 始发地
+        end: 0 // 目的地
       }
       // 订单列表状态字段status，回单列表状态字段receiptStatus, 时间搜索（不一致，根据路由判断）
-      if (this.$route.path === '/order-management/order') {
-        key.status = this.keywords.status
-        key.startTime = null
-        key.endTime = null
-        this.times = ['', '']
-        key.importId = this.keywords.importId // 导入批次号
-      } else {
+      if (this.$route.path === '/order-management/receipt') {
         key.receiptStatus = this.keywords.receiptStatus
         key.recoveryTimeStart = null
         key.recoveryTimeEnd = null
@@ -122,12 +118,18 @@ export default {
         key.returnTimeEnd = null
         this.recoveryTimes = ['', '']
         this.returnTimes = ['', '']
+      } else { // 判断运输管理需要使用tabContent组件
+        key.status = this.keywords.status
+        key.createTimeStart = null
+        key.createTimeEnd = null
+        this.times = ['', '']
+        key.importId = this.keywords.importId // 导入批次号
       }
       this.keywords = key
-      this.cityCodes = {
-        startCodes: '',
-        endCodes: ''
-      }
+      // this.cityCodes = {
+      //   startCodes: '',
+      //   endCodes: ''
+      // }
       if (!this.isSearching) return
       this.keyword = Object.assign({}, key, {
         start: null,
@@ -144,8 +146,8 @@ export default {
     },
     // 修改下单开始结束时间
     handleTimeChange (val) {
-      this.keywords.startTime = val[0]
-      this.keywords.endTime = val[1]
+      this.keywords.createTimeStart = val[0]
+      this.keywords.createTimeEnd = val[1]
     },
     // 修改回收开始结束时间
     handleRecoveryTimeChange (val) {
@@ -166,9 +168,13 @@ export default {
     handleSelectionChange () {
       // 当前选中集合
       this.selectOrderList = this.$refs.pageTable.selectedRow
+      // 将选中订单集合按时间由近及远排序
+      this.selectOrderList.sort((a, b) => {
+        return b.createTime - a.createTime
+      })
       // 当前选中项id集合
       let ids = []
-      this.$refs.pageTable.selectedRow.map((item) => {
+      this.selectOrderList.map((item) => {
         ids.push(item.id)
       })
       this.selectedId = ids
@@ -214,10 +220,10 @@ export default {
       let name
       switch (code) {
         case 1:
-          name = '上门提货'
+          name = '小车上门自提'
           break
         case 2:
-          name = '直接送货'
+          name = '大车直送客户'
           break
       }
       return name

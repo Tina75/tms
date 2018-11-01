@@ -1,10 +1,9 @@
 <template>
   <div>
     <div class="search">
-      <div class="search-col">
-        <Row :gutter="24" class="row">
-          <Col span="6">
-          <div class="col">
+      <div class="search-col" >
+        <div class="row-list" style="margin-bottom:12px">
+          <div class="col relative">
             <SelectInput
               v-model="keywords.consignerName"
               :maxlength="20"
@@ -17,35 +16,25 @@
             >
             </SelectInput>
           </div>
-      </Col>
-          <Col span="6">
           <div class="col">
             <Input v-model="keywords.orderNo" :maxlength="20"  placeholder="请输入订单号"/>
           </div>
-      </Col>
-          <Col span="6">
           <div class="col">
             <Input v-model="keywords.customerOrderNo" :maxlength="20" placeholder="请输入客户订单号"  />
           </div>
-      </Col>
-          <Col span="6">
           <div class="col">
             <Input :maxlength="20" v-model="keywords.waybillNo" placeholder="请输入运单号"  />
           </div>
-      </Col>
-        </Row>
-        <Row :gutter="24">
-          <Col span="6">
-          <div class="col">
-            <area-select v-model="keywords.start" placeholder="请输入始发地" style="width: 100%"></area-select>
+        </div>
+        <div class="row-list">
+          <div class="col relative">
+            <!--<area-select v-model="keywords.start" placeholder="请输入始发地" style="width: 100%"></area-select>-->
+            <SelectInputForCity v-model="keywords.start" placeholder="请输入始发地" style="width: 100%"></SelectInputForCity>
           </div>
-        </Col>
-          <Col span="6">
-          <div class="col">
-            <area-select v-model="keywords.end" placeholder="请输入目的地" style="width: 100%"></area-select>
+          <div class="col relative">
+            <!--<area-select v-model="keywords.end" placeholder="请输入目的地" style="width: 100%"></area-select>-->
+            <SelectInputForCity v-model="keywords.end" placeholder="请输入目的地" style="width: 100%"></SelectInputForCity>
           </div>
-        </Col>
-          <Col span="6">
           <div class="col">
             <DatePicker
               v-model="times"
@@ -59,8 +48,9 @@
             >
             </DatePicker>
           </div>
-        </Col>
-        </Row>
+          <div class="col">
+          </div>
+        </div>
       </div>
       <div class="search-btn">
         <Button type="primary" @click="search">搜索</Button>
@@ -77,8 +67,8 @@
       :method="method"
       :keywords="keyword"
       :columns="columns"
-      :extra-columns="extraColumns"
       :show-filter="true"
+      :table-head-type= "headType"
       width="100%"
       @on-load = "onLoad"
       @on-column-change="handleColumnChange">
@@ -88,18 +78,19 @@
 
 <script>
 import PageTable from '@/components/page-table'
-import AreaSelect from '@/components/AreaSelect'
+import SelectInputForCity from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput.vue'
 import City from '@/libs/js/city'
 import { mapGetters, mapActions } from 'vuex'
 import Export from '@/libs/js/export'
 import { getPreMonth } from './getPerMonth'
+import tableHeadType from '@/libs/constant/headtype.js'
 export default {
   name: 'operate',
   components: {
     SelectInput,
     PageTable,
-    AreaSelect
+    SelectInputForCity
   },
   metaInfo: {
     title: '运营报表'
@@ -109,13 +100,14 @@ export default {
       url: '/report/for/operating',
       method: 'POST',
       autoload: false,
+      headType: tableHeadType.BUSINESS,
       keywords: {
         consignerName: '',
         orderNo: '',
         customerOrderNo: '',
         waybillNo: '',
-        start: [],
-        end: [],
+        start: null,
+        end: null,
         startTime: '',
         endTime: ''
       },
@@ -566,8 +558,8 @@ export default {
         orderNo: this.keywords.orderNo || null,
         customerOrderNo: this.keywords.customerOrderNo || null,
         waybillNo: this.keywords.waybillNo || null,
-        start: (this.keywords.start !== null && this.keywords.start.length) ? Number(this.keywords.start[this.keywords.start.length - 1]) : null,
-        end: (this.keywords.end !== null && this.keywords.end.length) ? Number(this.keywords.end[this.keywords.end.length - 1]) : null,
+        start: this.keywords.start,
+        end: this.keywords.end,
         startTime: this.keywords.startTime || null,
         endTime: this.keywords.endTime || null
       }
@@ -577,7 +569,7 @@ export default {
       /* flag返回false，则对象中值都是空 */
       let flag = false
       for (let key in this.keywords) {
-        if (this.keywords[key] && this.keywords[key].length) {
+        if (this.keywords[key]) {
           flag = true
         }
       }
@@ -589,8 +581,8 @@ export default {
         orderNo: '',
         customerOrderNo: '',
         waybillNo: '',
-        start: [],
-        end: [],
+        start: null,
+        end: null,
         startTime: '',
         endTime: ''
       }
@@ -610,8 +602,8 @@ export default {
         orderNo: this.keywords.orderNo || null,
         customerOrderNo: this.keywords.customerOrderNo || null,
         waybillNo: this.keywords.waybillNo || null,
-        start: (this.keywords.start !== null && this.keywords.start.length) ? Number(this.keywords.start[this.keywords.start.length - 1]) : null,
-        end: (this.keywords.end !== null && this.keywords.end.length) ? Number(this.keywords.end[this.keywords.end.length - 1]) : null,
+        start: this.keywords.start,
+        end: this.keywords.end,
         startTime: this.keywords.startTime || null,
         endTime: this.keywords.endTime || null
       }
@@ -664,10 +656,16 @@ export default {
     padding 13px
     .search-col
       flex 4
-      /deep/ .ivu-input
-        height 35px
-      .row
-        margin-bottom 12px
+      .row-list
+        display flex
+        justify-content space-between
+        .col
+          flex 1
+          margin-right 20px
+          &:last-child
+            margin-right 0
+        .relative
+          position relative
     .search-btn
       flex 1
       text-align right

@@ -9,6 +9,7 @@
 
             <FormItem prop="phone">
               <Input v-model="form.phone" :maxlength="11" placeholder="登录账号/手机号"
+                     @on-change="phoneChange"
                      @on-focus="inputFocus('phone')"
                      @on-blur="inputBlur('phone')">
               <i slot="prefix" :style="inputIconColor('phone')" class="icon font_family icon-ico-user"></i>
@@ -62,8 +63,8 @@ import Server from '@/libs/js/server'
 import mixin from './mixin'
 import { VALIDATOR_PHONE } from './validator'
 
-// token与记住密码过期时长
-const EXPIRES = 60 * 24 * 60 * 60 * 1000
+// token与记住密码过期时长 1年
+const EXPIRES = 365 * 24 * 60 * 60 * 1000
 
 export default {
   name: 'SignIn',
@@ -79,6 +80,8 @@ export default {
         password: '',
         captchaCode: ''
       },
+
+      rememberedPhone: '',
 
       rules: {
         phone: [
@@ -120,6 +123,13 @@ export default {
       if (this.currentFocus !== undefined) this.currentFocus = ''
     },
 
+    // 手机号码改变
+    // 如果用户记住密码后退出，修改账户，清空密码
+    phoneChange () {
+      if (!this.rememberedPhone) return
+      if (this.rememberedPhone !== this.form.phone) this.form.password = this.rememberedPhone = ''
+    },
+
     // 记住密码-解析密码
     localPwParser () {
       const encodePW = window.localStorage.local_rememberd_pw
@@ -132,6 +142,7 @@ export default {
       this.form.phone = decodePW[0]
       this.form.password = decodePW[1]
       this.rememberPW = true
+      this.rememberedPhone = decodePW[0]
     },
 
     // 记住密码-保存密码

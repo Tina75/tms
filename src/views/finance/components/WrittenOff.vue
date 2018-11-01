@@ -1,9 +1,6 @@
 <!--  -->
 <template>
   <div class="written-off">
-    <div class="btns-box">
-      <Button v-if="(hasPower(170106) && scene === 1) || (hasPower(170206) && scene === 2) || (hasPower(170306) && scene === 3)" type="primary" @click="exportWrittenOff">导出</Button>
-    </div>
     <div class="query-box">
       <Form :model="writtenOffQuery" label-position="left" inline>
         <Row>
@@ -37,6 +34,9 @@
           </Col>
         </Row>
       </Form>
+    </div>
+    <div class="btns-box">
+      <Button v-if="(hasPower(170106) && scene === 1) || (hasPower(170206) && scene === 2) || (hasPower(170306) && scene === 3)" type="primary" @click="exportWrittenOff">导出</Button>
     </div>
     <div class="list-box">
       <Table :columns="orderColumn" :data="writtenOffData.list" height="500" @on-sort-change="resort" @on-selection-change="setOrderIds"></Table>
@@ -261,7 +261,7 @@ export default {
   }
 }
 </script>
-<style lang='stylus'>
+<style lang='stylus' scoped>
   .written-off
     margin: 35px 0 15px
     /deep/ .ivu-btn

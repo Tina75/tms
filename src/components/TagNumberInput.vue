@@ -163,6 +163,19 @@ export default {
     preventDefault (e) {
       e.preventDefault()
     },
+    dispatch (componentName, eventName, params) {
+      let parent = this.$parent || this.$root
+      let name = parent.$options.name
+      while (parent && (!name || name !== componentName)) {
+        parent = parent.$parent
+        if (parent) {
+          name = parent.$options.name
+        }
+      }
+      if (parent) {
+        parent.$emit.apply(parent, [eventName].concat(params))
+      }
+    },
     setValue (val) {
       // 如果 step 是小数，且没有设置 precision，是有问题的
       if (val && !isNaN(this.precision)) val = Number(Number(val).toFixed(this.precision))
@@ -180,6 +193,7 @@ export default {
         this.currentValue = val
         this.$emit('input', val)
         this.$emit('on-change', val)
+        this.dispatch('FormItem', 'on-form-change', val)
       })
     },
     focus (event) {

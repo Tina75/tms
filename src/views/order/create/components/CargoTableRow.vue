@@ -19,6 +19,7 @@
       v-else-if="col.type==='number'"
       v-model="record[col.key]"
       :min="col.min"
+      :max="col.maxLen"
       :parser="handleParse"
       @on-change="handleChange(col.key)"
       @on-blur="handleBlur(col)"
@@ -118,7 +119,7 @@ export default {
       this.onSelect({ index: this.index }, cargo)
     },
     handleBlur (col) {
-      if (col.required) {
+      if (col.required || col.key === 'cargoCost') {
         this.record.validateField(col.key)
       }
     },

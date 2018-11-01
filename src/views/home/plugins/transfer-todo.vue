@@ -29,8 +29,8 @@ export default {
   data () {
     return {
       data: [
-        { id: 'waitSendCarCnt', name: '待发运', value: 0, tab: '1', href: TMSUrl.OUTER_ORDER, title: '外转单管理' },
-        { id: 'inTransportCnt', name: '在途', value: 0, tab: '2', href: TMSUrl.OUTER_ORDER, title: '外转单管理' }
+        { id: 'waitSendCarCnt', name: '待发运', value: 0, tab: '1', href: TMSUrl.OUTER_ORDER },
+        { id: 'inTransportCnt', name: '在途', value: 0, tab: '2', href: TMSUrl.OUTER_ORDER }
       ]
     }
   },

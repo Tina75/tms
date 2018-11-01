@@ -24,6 +24,20 @@ export const CAR_TYPE1 = {
   10: '飞翼车'
 }
 
+export const DRIVER_TYPE = [
+  { id: '1', name: '合约' },
+  { id: '2', name: '临时' },
+  { id: '3', name: '自有' },
+  { id: '4', name: '挂靠' }
+]
+
+export const DRIVER_TYPE1 = {
+  1: '合约',
+  2: '临时',
+  3: '自有',
+  4: '挂靠'
+}
+
 export const CAR_LENGTH = [
   { value: 1, label: '1.8米' },
   { value: 2, label: '2.7米' },
@@ -68,6 +82,15 @@ export function getCarType (value) {
   for (let i = 0; i < CAR_TYPE.length; i++) {
     if (value === CAR_TYPE[i].value) {
       return CAR_TYPE[i].label
+    }
+  }
+  return ''
+}
+
+export function getDriverType (value) {
+  for (let i = 0; i < DRIVER_TYPE.length; i++) {
+    if (value === DRIVER_TYPE[i].value) {
+      return DRIVER_TYPE[i].label
     }
   }
   return ''

@@ -12,7 +12,7 @@
     "powerCode":100000,
     "children":[
       {
-        "name":"手工下单",
+        "name":"手工开单",
         "path":"/order/create",
         "powerCode":100100
       },
@@ -38,11 +38,6 @@
         "name":"回单管理",
         "path":"/order-management/receipt",
         "powerCode":110200
-      },
-      {
-        "name":"调度工作台",
-        "path":"/order-management/dispatch",
-        "powerCode":110300
       }
     ]
   },
@@ -53,17 +48,22 @@
     "path":"/transport",
     "children":[
       {
-        "name":"运单管理",
+        "name":"调度工作台",
+        "path":"/transport/dispatch",
+        "powerCode":110300
+      },
+      {
+        "name":"提货管理",
+        "path":"/transport/pickupOrder",
+        "powerCode":120200
+      },
+      {
+        "name":"送货管理",
         "path":"/transport/waybill",
         "powerCode":120100
       },
       {
-        "name":"提货单管理",
-        "path":"/transport/receiveOrder",
-        "powerCode":120200
-      },
-      {
-        "name":"外转单管理",
+        "name":"外转管理",
         "path":"/transport/outerOrder",
         "powerCode":120300
       }
@@ -174,10 +174,21 @@
     "powerCode":0
   },
   {
+    "name":"业务流程",
+    "path":"/helper/process",
+    "powerCode":-1
+  },
+  {
     "name":"帮助",
     "path":"/helper/index",
     "icon":"bangzhuzhongxin",
     "powerCode":0
+  },
+  {
+    "name":"例子",
+    "path":"/example/page1",
+    "icon":"bangzhuzhongxin",
+    "powerCode": -1
   }
 
 ]

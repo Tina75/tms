@@ -1,8 +1,7 @@
 <template>
   <div is="i-col" :span="12" class="i-mt-15 page-home__card-item">
     <blank-card :to="linkto" title="近七日调度订单数" page-title="运营报表" tab="7">
-      <ECharts v-if="xData.length" :options="options" :auto-resize="true"></ECharts>
-      <no-data v-else/>
+      <ECharts :options="options" :auto-resize="true"></ECharts>
     </blank-card>
   </div>
 </template>
@@ -12,7 +11,6 @@ import BlankCard from '../components/BlankCard'
 import ECharts from 'vue-echarts/components/ECharts'
 import mixin from './mixin.js'
 import url from '@/libs/constant/url'
-import NoData from './noData'
 
 import 'echarts/lib/chart/line'
 
@@ -21,8 +19,7 @@ export default {
 
   components: {
     BlankCard,
-    ECharts,
-    NoData
+    ECharts
   },
 
   mixins: [mixin],
@@ -108,7 +105,7 @@ export default {
                 x2: 0,
                 y2: 1,
                 colorStops: [{
-                  offset: 0, color: '#418df957' // 0% 处的颜色
+                  offset: 0, color: '#418df9' // 0% 处的颜色
                 }, {
                   offset: 0.8, color: '#fff' // 100% 处的颜色
                 }]

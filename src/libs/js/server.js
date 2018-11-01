@@ -7,7 +7,9 @@ let instance = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': Cookies.get('token')
+    'Authorization': Cookies.get('token'),
+    'Cache-Control': 'no-cache', // 解决ie浏览器缓存
+    'Pragma': 'no-cache' // 解决ie浏览器缓存
   },
   withCredentials: true,
   loading: false,
@@ -21,8 +23,9 @@ instance.interceptors.request.use((config) => {
   if (config.method === 'post') {
     config.data = JSON.stringify(config.data)
   }
-  if (config.method === 'get' && config.data) {
-    config.params = config.data
+  if (config.method === 'get') {
+    config.params = config.data || config.params || {}
+    config.params._t = config.params._t || new Date().getTime()
   }
   return config
 }, (error) => {
@@ -58,7 +61,7 @@ instance.interceptors.response.use((res) => {
   }
 }, (error) => {
   if (error.message.indexOf('timeout') !== -1) {
-    Message.error('接口超时')
+    Message.error('网络信号差，请稍后重试')
   }
   if (error.response && error.response.status) {
     Message.error(error.response.statusText + ' ' + error.response.status)

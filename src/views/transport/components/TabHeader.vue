@@ -7,6 +7,8 @@
 </template>
 
 <script>
+import _ from 'lodash'
+
 export default {
   name: 'TabHeader',
   props: {
@@ -23,13 +25,13 @@ export default {
 
   data () {
     return {
-      current: this.tabs[1].name
+      current: this.tabs[0].name
     }
   },
 
   created () {
     const current = window.sessionStorage['TABHEADER_' + this.type]
-    if (current) this.current = current
+    if (current) this.current = _.findIndex(this.tabs, ['name', current]) > -1 ? current : this.tabs[0].name
   },
 
   methods: {

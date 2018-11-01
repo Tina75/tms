@@ -1,36 +1,45 @@
 <template>
   <div class="page-table">
-    <Table
-      ref="table"
-      :width="width"
-      :height="height"
-      :data="dataList"
-      :columns="mapColumns"
-      :stripe="stripe"
-      :border="border"
-      :show-header="showHeader"
-      :loading="loading"
-      :highlight-row="highlightRow"
-      :size="size"
-      :no-data-text="noDataText"
-      :row-class-name="rowClass"
-      @on-current-change="handleCurrentChange"
-      @on-select="handleSelect"
-      @on-select-all="handleSelectAll"
-      @on-select-cancel="handleSelectCancel"
-      @on-selection-change="handleSelectionChange"
-      @on-sort-change="handleSortChange"
-      @on-filter-change="handleFilterChange"
-      @on-row-click="handleRowClick"
-      @on-row-dbclick="handleRowDbclick"
-      @on-expand="handleExpand">
-      <div v-if="showSlotFooter" slot="footer">
-        <slot name="footer"></slot>
-      </div>
-      <div v-if="showSlotHeader" slot="header">
-        <slot name="header"></slot>
-      </div>
-    </Table>
+    <div class="page-table__wrapper">
+      <SliderIcon
+        v-if="showFilter"
+        :list="extraColumns"
+        class="page-table__sliderIcon"
+        @on-change="customTableColumns">
+      </SliderIcon>
+      <Table
+        ref="table"
+        :width="width"
+        :height="height"
+        :data="dataList"
+        :columns="mapColumns"
+        :stripe="stripe"
+        :border="border"
+        :show-header="showHeader"
+        :loading="loading"
+        :highlight-row="highlightRow"
+        :size="size"
+        :no-data-text="noDataText"
+        :row-class-name="rowClass"
+        :table-head-type="tableHeadType"
+        @on-current-change="handleCurrentChange"
+        @on-select="handleSelect"
+        @on-select-all="handleSelectAll"
+        @on-select-cancel="handleSelectCancel"
+        @on-selection-change="handleSelectionChange"
+        @on-sort-change="handleSortChange"
+        @on-filter-change="handleFilterChange"
+        @on-row-click="handleRowClick"
+        @on-row-dbclick="handleRowDbclick"
+        @on-expand="handleExpand">
+        <div v-if="showSlotFooter" slot="footer">
+          <slot name="footer"></slot>
+        </div>
+        <div v-if="showSlotHeader" slot="header">
+          <slot name="header"></slot>
+        </div>
+      </Table>
+    </div>
     <div v-if="showPagination" class="page-table__footer-pagination">
       <div class="page-table__footer-pagination-fr">
         <Page
@@ -55,6 +64,7 @@
 <script>
 import server from '@/libs/js/server'
 import SliderIcon from './SliderIcon.vue'
+import { mapMutations } from 'vuex'
 import _ from 'lodash'
 /**
   * iview的table和page的组件是分开的
@@ -77,6 +87,7 @@ import _ from 'lodash'
   * 7.rowId data数据的关键字编号，与下面的selected配合使用
   * 8.autoload 默认发送请求加载数据，设置成false，则不发送请求，根据关键字请求
   * 9.onCancelAll 取消选中所有的时候调用，返回selection
+  * 10. onLoad 请求完接口后回调函数，返回值是请求结果
   */
 export default {
   components: {
@@ -136,10 +147,10 @@ export default {
       required: true
     },
     // 显示或隐藏的属性
-    extraColumns: {
-      type: Array,
-      default: () => []
-    },
+    // extraColumns: {
+    //   type: Array,
+    //   default: () => []
+    // },
     // 表数据,可能需要自己做分页
     data: {
       type: Array,
@@ -179,6 +190,13 @@ export default {
       type: Boolean,
       default: true
     },
+    // 是否显示checBox
+    rowSelection: {
+      type: Object,
+      default: Object
+    },
+    // 表单类型
+    tableHeadType: '',
     onLoad: Function, // 每次请求后，回调，返回列表搜索结果
     onCurrentChange: Function,
     onSelect: Function,
@@ -198,6 +216,8 @@ export default {
   },
   data () {
     return {
+      // 显示或隐藏的属性
+      extraColumns: [],
       isRemote: false,
       // 请求时候的加载状态
       loading: false,
@@ -219,13 +239,17 @@ export default {
     filterColumns () {
       const vm = this
       if (vm.showFilter) {
+        // vm.extraColumns = vm.reconfigTableHeader('', vm.tableHeadType, 'change')
         const columnGroup = _.groupBy(vm.extraColumns, (cl) => cl.key)
         const fixedCols = []
         const normalCols = []
         vm.columns
           .filter(col => {
             if (vm.extraColumns.length > 0 && col.key && !col.extra) {
-              return columnGroup[col.key][0].visible
+              let group = columnGroup[col.key][0]
+              // title字段以接口返回为准
+              col.title = group.title
+              return group.visible
             }
             return true
           })
@@ -239,37 +263,18 @@ export default {
 
         return fixedCols.concat(
           _.sortBy(normalCols, (col) => columnGroup[col.key] ? columnGroup[col.key][0].sort : 0)
-        ).concat({
-          title: 'icon',
-          width: 48,
-          fixed: 'right',
-          renderHeader (h, params) {
-            return h(SliderIcon, {
-              props: {
-                list: vm.extraColumns
-              },
-              on: {
-                'on-change': (columns) => {
-                  vm.$emit('on-column-change', columns)
-                  // vm.extraColumns = columns
-                }
-              }
-            })
-          },
-          key: 'filter-columns',
-          render: (h) => {
-            return h('span', '')
-          }
-        })
+        )
       } else {
         return this.columns
       }
     },
     /**
-     * 空字符串一律使用中划线【-】代替
+     * 1. 替换空字符
+     * 2. 控制checkbox
      */
     mapColumns () {
       return this.filterColumns.map((col) => {
+        // 空字符串一律使用中划线【-】代替
         if (col.key && !col.render && !col.tooltip) {
           col.render = (h, params) => {
             let value = params.row[col.key]
@@ -324,6 +329,7 @@ export default {
     this.showSlotHeader = this.$slots.header !== undefined
   },
   mounted () {
+    this.extraColumns = this.reconfigTableHeader('', this.tableHeadType, 'change')
     if (!this.isRemote) {
       this.setLocalDataSource(this.data)
     }
@@ -332,6 +338,32 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['updateTableColumns']),
+    /**
+     * 自定义table表头数据对接（页面-接口）
+     * pageHeadData,interfaceHeadData 接口与页面Data规整
+     * type 初始化页面传入SliderIcon组件
+     */
+    reconfigTableHeader (pageHeadData, interfaceHeadData, type) {
+      let pageHeadDataInit = []
+      if (type && this.$store.getters.TableColumns[interfaceHeadData]) {
+        this.$store.getters.TableColumns[interfaceHeadData].forEach(e => {
+          let headRow = {}
+          headRow.key = e.k
+          headRow.visible = e.v
+          headRow.sort = e.s
+          headRow.title = e.t
+          headRow.fixed = e.f
+          pageHeadDataInit.push(headRow)
+        })
+        return pageHeadDataInit
+      } else {
+        if (this.$store.getters.TableColumns[interfaceHeadData]) {
+          this.$store.commit('updateTableColumns', { list: pageHeadData, type: interfaceHeadData })
+          return JSON.stringify(this.$store.getters.TableColumns[interfaceHeadData])
+        }
+      }
+    },
     /**
      * 复选框选中后，背景高亮
      */
@@ -343,6 +375,9 @@ export default {
       if (this.isSelection) {
         if (this.selected.includes(row[this.rowId])) {
           classes.push('ivu-table-row-highlight')
+        }
+        if (row._visible !== undefined && !row._visible) {
+          classes.push('ivu-table-row-hidden')
         }
       }
       return classes.join(' ')
@@ -387,6 +422,18 @@ export default {
           if (vm.isSelection) {
             // 当有复选框场景的时候，需要主动勾选上
             vm.dataSource = (data[vm.listField] || []).map((item) => {
+              if (vm.rowSelection.isVisible && typeof vm.rowSelection.isVisible === 'function') {
+                let visible = this.rowSelection.isVisible(item)
+                if (!visible) {
+                  item._disabled = true
+                  item._visible = visible
+                }
+              } else if (vm.rowSelection.isDisabled && typeof vm.rowSelection.isDisabled === 'function') {
+                let disabled = vm.rowSelection.isDisabled(item)
+                if (disabled) {
+                  item._disabled = true
+                }
+              }
               if (vm.selected.includes(item[vm.rowId])) {
                 item._checked = true
               }
@@ -396,7 +443,7 @@ export default {
             vm.dataSource = data[vm.listField] || []
           }
           if (vm.showPagination) {
-            vm.pagination.pageSize = data.pageSize
+            vm.pagination.pageSize = data.pageSize || 10
             vm.pagination.totalCount = data.totalCount || data.pageTotals
           }
           vm.$emit('on-load', response)
@@ -516,6 +563,9 @@ export default {
     },
     // pagesize变化
     handlePageSizeChange (pageSize) {
+      if (!pageSize) {
+        return
+      }
       // 重新组装数据，生成查询参数
       this.pagination.pageNo = 1
       this.pagination.pageSize = pageSize
@@ -527,6 +577,23 @@ export default {
      */
     clearSelected () {
       this.selectedRow = []
+    },
+    /**
+     * 更改表单列表
+     */
+    customTableColumns (columns) {
+      // this.$emit('on-column-change', columns)
+      // 保存自定义列表
+      let params = {}
+      params.bizCode = this.tableHeadType
+      params.propertiyList = this.reconfigTableHeader(columns, this.tableHeadType)
+      this.extraColumns = columns
+      server({
+        url: '/gridHead/save',
+        method: 'post',
+        data: params
+      }).then(({ data }) => {
+      })
     }
   }
 }
@@ -534,8 +601,20 @@ export default {
 
 <style lang="stylus">
 .page-table
-  position: relative;
   margin-top: 0px
+  &__wrapper
+    position: relative
+  &__sliderIcon
+    position: absolute
+    background: #f8f8f9
+    z-index: 2;
+    right: 0px;
+    width: 50px;
+    text-align: center;
+    height: 39px;
+    line-height: 39px;
+    top: 1px;
+    box-shadow: -1px 0px 4px 0px #cfcfcf;
   &__footer-pagination
     margin: 10px;
     overflow: hidden;
@@ -554,4 +633,7 @@ export default {
   .ivu-table-row-highlight
     td
       background-color #ebf7ff
+  .ivu-table-row-hidden
+    .ivu-checkbox
+      display none
 </style>

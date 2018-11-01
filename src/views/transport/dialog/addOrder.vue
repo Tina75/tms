@@ -28,9 +28,15 @@
 </template>
 
 <script>
+
+/**
+ * 运动详情与提货单详情编辑页面添加订单
+ */
+
 import Server from '@/libs/js/server'
+import _ from 'lodash'
 import BaseDialog from '@/basic/BaseDialog'
-import TransportBase from '../transportBase'
+import TransportBase from '../mixin/transportBase'
 
 export default {
   name: 'AddOrder',
@@ -72,7 +78,7 @@ export default {
           key: 'start',
           minWidth: 180,
           render: (h, p) => {
-            return this.tableDataRender(h, this.cityFormatter(p.row.start))
+            return this.tableDataRender(h, p.row.startName)
           }
         },
         {
@@ -81,7 +87,7 @@ export default {
           ellipsis: true,
           minWidth: 180,
           render: (h, p) => {
-            return this.tableDataRender(h, this.cityFormatter(p.row.end))
+            return this.tableDataRender(h, p.row.endName)
           }
         },
         {
@@ -102,13 +108,15 @@ export default {
         }
       ],
       data: [],
-      selection: [[]]
+      selection: [[]], // 已经选择过的项，翻页后需要记住之前页面已选择的项
+      flattenSelection: [] // 将 selection 转为一维后的数组，防止当 page size 改变后出现问题
     }
   },
   created () {
     this.fetchData()
   },
   methods: {
+    // 查询数据
     fetchData () {
       this.loading = true
       Server({
@@ -122,11 +130,12 @@ export default {
         }
       }).then(res => {
         this.totalCount = res.data.data.totalCount
+        // 获取到的数据如果是之前已选择的，则显示已选择
+        // 已选择的数据有当前对话框选择的数据 selection，也有已经添加到运单/提货单中的数据
         this.data = res.data.data.list.map(item => {
-          const selected = this.selection[this.pageNo - 1]
-          item._checked = false
-          if (selected.indexOf(item.id) > -1) item._checked = true
-          if (this.billHasSelected.indexOf(item.id) > -1) item._checked = true
+          item._checked = false // 为数据项添加选择字段
+          if (this.flattenSelection.indexOf(item.id) > -1) item._checked = true // 判断当前是否已选
+          if (this.billHasSelected.indexOf(item.id) > -1) item._checked = true // 判读是否已添加到运单/提货单
           return item
         })
         this.loading = false
@@ -136,33 +145,30 @@ export default {
       })
     },
 
-    selectionChange (selection) {
-      const temp = selection.map(item => item.id)
-      this.selection.splice(this.pageNo - 1, 1, temp)
-    },
-
+    // 翻页时，根据当前页向 selection 中添加用来存储当前页已选中数据的数组
     handleChangePage (page) {
       this.pageNo = page
       if (page > this.selection.length) this.selection.push([])
       this.fetchData()
     },
 
+    // 已选项改变时，修改 selection 中当前页对应的数组内容
+    selectionChange (selection) {
+      const temp = selection.map(item => item.id)
+      this.selection.splice(this.pageNo - 1, 1, temp)
+      this.flattenSelection = _.uniq(_.flatten(this.selection))
+    },
+
+    // page size 改变
     handlePageSizeChange (size) {
       this.pageNo = 1
       this.pageSize = size
       this.fetchData()
     },
 
-    getAllSelection () {
-      let all = []
-      this.selection.map(arr => {
-        all = all.concat(arr)
-      })
-      return all
-    },
-
+    // 添加完成，并将添加的订单返回给上级页面
     ok () {
-      this.confirm(this.getAllSelection())
+      this.confirm(this.flattenSelection)
       this.close()
     }
   }

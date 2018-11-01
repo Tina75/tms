@@ -14,7 +14,7 @@ export default class LabelOverlay extends BMap.Overlay {
     const div = this._div = document.createElement('div')
     div.style.position = 'absolute'
     div.style.color = '#fff'
-    div.style.width = '72px'
+    div.style.width = '75px'
     div.style.zIndex = BMap.Overlay.getZIndex(this._point.lat)
     div.style.backgroundColor = '#00A4BD'
     div.style.border = '1px solid #00A4BD'
@@ -22,16 +22,19 @@ export default class LabelOverlay extends BMap.Overlay {
     div.style.MozUserSelect = 'none'
     div.style.borderRadius = '4px'
     div.style.fontSize = '12px'
+    div.style.fontWeight = 'bolder'
     div.style.height = '22px'
     div.style.padding = '0 5px'
     div.style.lineHeight = '20px'
+    div.style.textAlign = 'center'
 
     const span = this._span = document.createElement('span')
+    span.style.display = 'block'
+    span.style.width = span.style.height = '100%'
     span.appendChild(document.createTextNode(this._text))
     div.appendChild(span)
 
     const arrow = this._arrow = document.createElement('div')
-    // arrow.style.background = 'url(http://map.baidu.com/fwmap/upload/r/map/fwmap/static/house/images/label.png) no-repeat'
     arrow.style.position = 'absolute'
     arrow.style.width = '0'
     arrow.style.height = '0'
@@ -39,7 +42,7 @@ export default class LabelOverlay extends BMap.Overlay {
     arrow.style.borderRight = '5px solid transparent'
     arrow.style.borderTop = '5px solid #00A4BD'
     arrow.style.top = '20px'
-    arrow.style.left = '29px'
+    arrow.style.left = '25px'
     arrow.style.padding = '0'
 
     div.appendChild(arrow)
@@ -50,7 +53,7 @@ export default class LabelOverlay extends BMap.Overlay {
   draw () {
     const map = this._map
     var pixel = map.pointToOverlayPixel(this._point)
-    this._div.style.left = (pixel.x - 30) + 'px'
-    this._div.style.top = (pixel.y - 30) + 'px'
+    this._div.style.left = (pixel.x - 31) + 'px'
+    this._div.style.top = (pixel.y - 32) + 'px'
   }
 };

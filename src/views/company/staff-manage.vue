@@ -1,92 +1,94 @@
 <template>
-  <div class="temAll">
-    <Col span="24">
-    <div class="searchCard">
-      <Form :model="formSearch" :label-width="60" label-position="left">
-        <Col span="6">
-        <FormItem label="姓名：" class="searchInput">
-          <SelectInput v-model="formSearch.name" :remote="true" :remote-method="searchName" placeholder="请输入姓名" class="minWidth"></SelectInput>
-        </FormItem>
-        </Col>
-        <Col span="6">
-        <FormItem label="账号：" class="searchInput">
-          <Input v-model="formSearch.phone" placeholder="请输入账号" class="minWidth"></Input>
-        </FormItem>
-        </Col>
-        <Col span="6">
-        <FormItem label="角色：" class="searchInput">
-          <Select v-model="formSearch.roleId" class="minWidth">
-            <Option
-              v-for="item in selectList"
-              :value="item.id"
-              :key="item.id">
-              {{ item.name }}
-            </Option>
-          </Select>
-        </FormItem>
-        </Col>
-        <Col span="3">
-        <FormItem>
-          <Button type="primary" class="searchBtn" @click="searchBtn">搜索</Button>
-        </FormItem>
-        </Col>
-      </Form>
-    </div>
-    </Col>
-    <Col span="24">
-    <Button v-if="hasPower(140201)" type="primary" class="addStaffBtn" @click="eaditStaff('add')">添加员工</Button>
-    </Col>
-    <Col span="24">
-    <page-table :columns="menuColumns" :keywords="formSearchInit" class="pageTable" url="employee/list" list-field="list"></page-table>
-    </Col>
-    <Modal v-model="visibaleTransfer" width="400">
-      <p slot="header" class="modalTitle">
-        <span>转移权限</span>
-      </p>
-      <Form ref="transferformModal" :model="transferformModal" :rules="rulesTransfer" :label-width="100" class="transferformModal">
-        <FormItem label="角色账号：" prop="staff">
-          <Select v-model="transferformModal.staff" clearable class="minWidth">
-            <Option
-              v-for="item in staffSelectList"
-              :value="item.phone"
-              :key="item.phone">
-              {{ item.name + '/' + item.phone}}
-            </Option>
-          </Select>
-        </FormItem>
-        <FormItem class="transferformModalForm">
-          <p>确认操作后，您将与接收该角色的人员互换角色</p>
-        </FormItem>
-      </Form>
-      <div slot="footer" class="modalFooter">
-        <Button type="primary" @click="transferFormSub('transferformModal')">确定</Button>
-        <Button  @click="transferCancelForm">取消</Button>
+  <div>
+    <Row>
+      <Col span="24">
+      <div class="searchCard">
+        <Form :model="formSearch" :label-width="60" label-position="left">
+          <Col span="6">
+          <FormItem label="姓名：" class="searchInput">
+            <SelectInput v-model="formSearch.name" :remote="true" :remote-method="searchName" placeholder="请输入姓名" class="minWidth"></SelectInput>
+          </FormItem>
+            </Col>
+          <Col span="6">
+          <FormItem label="账号：" class="searchInput">
+            <Input v-model="formSearch.phone" placeholder="请输入账号" class="minWidth"></Input>
+          </FormItem>
+            </Col>
+          <Col span="6">
+          <FormItem label="角色：" class="searchInput">
+            <Select v-model="formSearch.roleId" class="minWidth">
+              <Option
+                v-for="item in selectList"
+                :value="item.id"
+                :key="item.id">
+                {{ item.name }}
+              </Option>
+            </Select>
+          </FormItem>
+            </Col>
+          <Col span="3">
+          <FormItem>
+            <Button type="primary" class="searchBtn" @click="searchBtn">搜索</Button>
+          </FormItem>
+            </Col>
+        </Form>
       </div>
-    </Modal>
-    <Modal v-model="visibaleRemove" type="warning" width="360">
-      <p slot="header" class="modalTitle">
-        <span>提示</span>
-      </p>
-      <p class="visibaleRemoveP">
-        <i class="icon font_family icon-bangzhuzhongxin"></i>
-      </p>
-      <p class="visibaleRemoveMessage">确定要删除用户{{this.roleRowInit.name}}吗?</P>
-      </p>
-      <div slot="footer" class="modalFooter">
-        <Button type="primary" @click="removeSubForm">确定</Button>
-        <Button  @click="removeCancelForm">取消</Button>
-      </div>
-    </Modal>
-    <Modal v-model="visibaleAddStaffSuccess" width="400">
-      <p slot="header" class="modalTitle">
-        <span>提示</span>
-      </p>
-      <P>添加员工成功，员工的登录账号为手机号</P>
-      <p>初始登录密码已发送至员工手机</p>
-      <div slot="footer">
-        <Button type="primary" @click="knowCancel">我知道了</Button>
-      </div>
-    </Modal>
+      </Col>
+      <Col span="24">
+      <Button v-if="hasPower(140201)" type="primary" class="addStaffBtn" @click="eaditStaff('add')">添加员工</Button>
+      </Col>
+      <Col span="24">
+      <page-table :columns="menuColumns" :keywords="formSearchInit" class="pageTable" url="employee/list" list-field="list"></page-table>
+      </Col>
+      <Modal v-model="visibaleTransfer" width="400">
+        <p slot="header" class="modalTitle">
+          <span>转移权限</span>
+        </p>
+        <Form ref="transferformModal" :model="transferformModal" :rules="rulesTransfer" :label-width="100" class="transferformModal">
+          <FormItem label="角色账号：" prop="staff">
+            <Select v-model="transferformModal.staff" clearable class="minWidth">
+              <Option
+                v-for="item in staffSelectList"
+                :value="item.phone"
+                :key="item.phone">
+                {{ item.name + '/' + item.phone}}
+              </Option>
+            </Select>
+          </FormItem>
+          <FormItem class="transferformModalForm">
+            <p>确认操作后，您将与接收该角色的人员互换角色</p>
+          </FormItem>
+        </Form>
+        <div slot="footer" class="modalFooter">
+          <Button type="primary" @click="transferFormSub('transferformModal')">确定</Button>
+          <Button  @click="transferCancelForm">取消</Button>
+        </div>
+      </Modal>
+      <Modal v-model="visibaleRemove" type="warning" width="360">
+        <p slot="header" class="modalTitle">
+          <span>提示</span>
+        </p>
+        <p class="visibaleRemoveP">
+          <i class="icon font_family icon-bangzhuzhongxin"></i>
+        </p>
+        <p class="visibaleRemoveMessage">确定要删除用户{{this.roleRowInit.name}}吗?</P>
+        </p>
+        <div slot="footer" class="modalFooter">
+          <Button type="primary" @click="removeSubForm">确定</Button>
+          <Button  @click="removeCancelForm">取消</Button>
+        </div>
+      </Modal>
+      <Modal v-model="visibaleAddStaffSuccess" width="400">
+        <p slot="header" class="modalTitle">
+          <span>提示</span>
+        </p>
+        <P>添加员工成功，员工的登录账号为手机号</P>
+        <p>初始登录密码已发送至员工手机</p>
+        <div slot="footer">
+          <Button type="primary" @click="knowCancel">我知道了</Button>
+        </div>
+      </Modal>
+    </Row>
   </div>
 </template>
 
@@ -331,7 +333,6 @@ export default {
               this.$Message.success('转移成功!')
               location.reload()
             } else {
-              this.$Message.error(data.msg)
               this.visibaleTransfer = false
             }
           })
@@ -366,7 +367,6 @@ export default {
           this.$Message.success('删除成功！')
           this.formSearchInit = {}
         } else {
-          this.$Message.error(data.msg)
           this.visibaleRemove = false
         }
       })
@@ -379,9 +379,8 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
-.temAll
-  width: 100%
-  overflow: auto;
+.ivu-row, .ivu-col
+  position: static!important
 .searchCard
   height:70px;
   background:rgba(249,249,249,1);
@@ -396,13 +395,12 @@ export default {
   width:80px;
 .pageTable
   margin-top: 20px;
-  min-height: 700px;
 .modalTitle
   text-align:center;
   font-size: 16px;
   font-weight: bold;
 .visibaleRemoveP
-  margin-top: 10px;
+  margin-top: 5px;
   margin-left:10%;
   i.icon.font_family.icon-bangzhuzhongxin
     font-size:28px;
@@ -411,8 +409,9 @@ export default {
     float:left;
     width:40px;
 .visibaleRemoveMessage
-  margin-top:21px;
+  margin-top:16px;
   font-size: 14px;
+  margin-bottom: 5px;
 .modalFooter
   margin-top:20px;
 .transferformModal

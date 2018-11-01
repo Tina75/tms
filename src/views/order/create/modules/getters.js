@@ -3,14 +3,8 @@ export const clients = ({ order }) => order.clients.map((user) => ({ name: user.
 
 // 发货联系人
 export const consigners = ({ order }) => order.consigners
-// export const consignerContacts = ({ order }, getters) => getters.consigners.map(user => ({ name: user.contact, value: user.contact, id: user.id }))
-// export const consignerPhones = (state, getters) => getters.consigners(user => ({
-//   name: user.phone,
-//   value: user.phone,
-//   id: user.id
-// }))
 // 发货地址
-export const consignerAddresses = ({ order }) => order.addresses.map(item => ({ name: item.address, value: item.address, id: item.id }))
+export const consignerAddresses = ({ order }) => order.addresses.map(item => ({ name: item.address, value: item.address, id: item.id, lat: item.latitude, lng: item.longitude }))
 // 收货方数据，下面分拆
 export const consignees = ({ order }) => order.consignees
 // 收货方联系人列表
@@ -30,7 +24,9 @@ export const consigneePhones = (state, getters) => getters.consignees.map((user)
 export const consigneeAddresses = (state, getters) => getters.consignees.map((user) => ({
   name: user.address,
   value: user.address,
-  id: user.id
+  id: user.id,
+  lat: user.latitude,
+  lng: user.longitude
 }))
 export const cargoes = ({ order }) => order.cargoes
 
@@ -56,23 +52,6 @@ export const cargoOptions = (state, getters) => {
     }
   })
 }
-// export const sumRow = (state, getters) => {
-//   return getters.consignerCargoes.reduce((sum, cargo) => {
-//     // 读取临时数据
-
-//     sum.weight = float.round((cargo.weight || 0) + sum.weight)
-//     sum.volume = float.round((cargo.volume || 0) + sum.volume, 1)
-//     sum.cargoCost = float.round((cargo.cargoCost || 0) + sum.cargoCost)
-//     sum.quantity = (cargo.quantity || 0) + sum.quantity
-//     return sum
-//   }, {
-//     weight: 0,
-//     volume: 0,
-//     cargoCost: 0,
-//     quantity: 0
-//   })
-// }
-
 // 承运商列表
 export const carriers = ({ order }) => order.carriers.map((user) => ({ name: user.carrierName, value: user.carrierName, id: user.carrierId }))
 

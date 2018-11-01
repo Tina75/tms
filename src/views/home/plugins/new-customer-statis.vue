@@ -2,8 +2,7 @@
   <div is="i-col" span="6" class="i-mt-15 page-home__card-item">
     <BlankCard to="/client/sender" page-title="发货方管理" >
       <div slot="title">今日新增客户数</div>
-      <ECharts v-if="show" :options="options" :auto-resize="true"></ECharts>
-      <noData v-else></noData>
+      <ECharts :options="options" :auto-resize="true"></ECharts>
     </BlankCard>
   </div>
 </template>
@@ -13,7 +12,6 @@
 import BlankCard from '../components/BlankCard.vue'
 import ECharts from 'vue-echarts/components/ECharts'
 import mixin from './mixin.js'
-import noData from './noData.vue'
 
 import 'echarts/lib/chart/pie'
 import 'echarts/lib/component/tooltip'
@@ -22,18 +20,16 @@ export default {
   name: 'new-customer-statis',
   components: {
     BlankCard,
-    ECharts,
-    noData
+    ECharts
   },
   mixins: [mixin],
   data () {
     return {
       data: [
-        { value: 10, name: '发货方', id: 'consignerCnt' },
-        { value: 20, name: '承运商', id: 'carriersCnt' },
-        { value: 30, name: '外转方', id: 'transfereeCnt' }
-      ],
-      show: false
+        { value: 0, name: '发货方', id: 'consignerCnt' },
+        { value: 0, name: '承运商', id: 'carriersCnt' },
+        { value: 0, name: '外转方', id: 'transfereeCnt' }
+      ]
     }
   },
   computed: {
@@ -70,7 +66,7 @@ export default {
               fontSize: 10,
               position: 'outside',
               color: '#333',
-              formatter: '{b}\r\n({c})'
+              formatter: '{b} {c}'
             },
             labelLine: {
               show: true,

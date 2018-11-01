@@ -6,15 +6,33 @@
         <span>拆单</span>
       </p>
       <div>
+        <div class="order-number" style="margin-bottom: 8px;">
+          <Row>
+            <i-col span="12">
+              订单号：{{ orderNo }}
+            </i-col>
+            <i-col span="12">
+              客户：{{ detailData.consignerName }}
+            </i-col>
+          </Row>
+        </div>
         <div class="order-number">
-          订单号：{{ orderNo }}
+          <Row>
+            <i-col>
+              始发地／目的地：{{ detailData.startName + ' - ' + detailData.endName }}
+            </i-col>
+          </Row>
+        </div>
+        <div style="border-top: 1px dashed rgba(203,206,211,1);margin-bottom: 21px;"></div>
+        <div v-if="childOrderCargoList.length" class="order-number">
+          子订单1：{{ childOneNo }}
         </div>
         <Table :columns="columns1" :data="parentOrderCargoList"></Table>
       </div>
       <div v-if="childOrderCargoList.length">
         <div style="border-top: 1px dashed rgba(203,206,211,1);margin: 32px 0 20px;"></div>
         <div class="order-number">
-          子订单：
+          子订单2：{{ childTwoNo }}
         </div>
         <Table :columns="columns2" :data="childOrderCargoList"></Table>
       </div>
@@ -43,6 +61,131 @@ export default {
     return {
       isSeparate: false,
       columns1: [
+        {
+          title: '货物名称',
+          key: 'cargoName'
+        },
+        {
+          title: '货值',
+          key: 'cargoCost',
+          render: (h, params) => {
+            return h('div', parseFloat((params.row.cargoCost / 100).toFixed(2)))
+          }
+        },
+        {
+          title: '数量',
+          key: 'quantity',
+          render: (h, params) => {
+            if (this.isSeparate && (this.currentId === params.row.id) && (this.cloneData[params.index].quantity !== 0)) {
+              return h('div', [
+                h('InputNumber', {
+                  props: {
+                    min: 0,
+                    max: Number(this.parentOrderCargoList[params.index].quantity),
+                    value: Number(params.row.quantity),
+                    precision: 0
+                  },
+                  style: {
+                  },
+                  on: {
+                    'on-change': (val) => {
+                      this.quantityVal = val
+                      let percent = this.quantityVal / params.row.quantity // 当前数量拆分的百分比
+                      console.log(percent)
+                      // 计算重量
+                      if (this.cloneData[params.index].weight !== 0) {
+                        params.row.weight = this.cloneData[params.index].weight * percent
+                        this.weightVal = this.cloneData[params.index].weight * percent
+                      }
+                      // 计算体积
+                      if (this.cloneData[params.index].volume !== 0) {
+                        params.row.volume = this.cloneData[params.index].volume * percent
+                        this.volumeVal = this.cloneData[params.index].volume * percent
+                      }
+                      // 计算货值
+                      if (this.cloneData[params.index].cargoCost !== 0) {
+                        params.row.cargoCost = this.cloneData[params.index].cargoCost * percent
+                      }
+                    }
+                  }
+                })
+              ])
+            } else {
+              return h('div', params.row.quantity)
+            }
+          }
+        },
+        {
+          title: '单位',
+          key: 'unit',
+          width: 80
+        },
+        {
+          title: '重量（吨）',
+          key: 'weight',
+          render: (h, params) => {
+            if (this.isSeparate && (this.currentId === params.row.id) && (this.cloneData[params.index].weight !== 0)) {
+              return h('div', [
+                h('InputNumber', {
+                  props: {
+                    min: 0,
+                    max: parseFloat((this.parentOrderCargoList[params.index].weight).toFixed(2)) + 0.004, // 1.01 + 0.01 = 1.02000000002
+                    value: parseFloat((params.row.weight).toFixed(2)),
+                    step: 0.01,
+                    precision: 2,
+                    activeChange: false
+                  },
+                  style: {
+                  },
+                  on: {
+                    'on-change': (val) => {
+                      if (val === null) {
+                        this.weightVal = null
+                      } else {
+                        this.weightVal = parseFloat(val.toFixed(2))
+                      }
+                    }
+                  }
+                })
+              ])
+            } else {
+              return h('div', parseFloat((params.row.weight).toFixed(2)))
+            }
+          }
+        },
+        {
+          title: '体积（方）',
+          key: 'volume',
+          render: (h, params) => {
+            if (this.isSeparate && (this.currentId === params.row.id) && (this.cloneData[params.index].volume !== 0)) {
+              return h('div', [
+                h('InputNumber', {
+                  props: {
+                    min: 0,
+                    max: parseFloat((this.parentOrderCargoList[params.index].volume).toFixed(1)) + 0.04, // 1.1 + 0.1 = 1.2000000002
+                    value: parseFloat((params.row.volume).toFixed(1)),
+                    step: 0.1,
+                    precision: 1,
+                    activeChange: false
+                  },
+                  style: {
+                  },
+                  on: {
+                    'on-change': (val) => {
+                      if (val === null) {
+                        this.volumeVal = null
+                      } else {
+                        this.volumeVal = parseFloat(val.toFixed(1))
+                      }
+                    }
+                  }
+                })
+              ])
+            } else {
+              return h('div', parseFloat((params.row.volume).toFixed(1)))
+            }
+          }
+        },
         {
           title: '操作',
           key: 'do',
@@ -243,7 +386,9 @@ export default {
               }
             }
           }
-        },
+        }
+      ],
+      columns2: [
         {
           title: '货物名称',
           key: 'cargoName'
@@ -257,46 +402,7 @@ export default {
         },
         {
           title: '数量',
-          key: 'quantity',
-          render: (h, params) => {
-            if (this.isSeparate && (this.currentId === params.row.id) && (this.cloneData[params.index].quantity !== 0)) {
-              return h('div', [
-                h('InputNumber', {
-                  props: {
-                    min: 0,
-                    max: Number(this.parentOrderCargoList[params.index].quantity),
-                    value: Number(params.row.quantity),
-                    precision: 0
-                  },
-                  style: {
-                  },
-                  on: {
-                    'on-change': (val) => {
-                      this.quantityVal = val
-                      let percent = this.quantityVal / params.row.quantity // 当前数量拆分的百分比
-                      console.log(percent)
-                      // 计算重量
-                      if (this.cloneData[params.index].weight !== 0) {
-                        params.row.weight = this.cloneData[params.index].weight * percent
-                        this.weightVal = this.cloneData[params.index].weight * percent
-                      }
-                      // 计算体积
-                      if (this.cloneData[params.index].volume !== 0) {
-                        params.row.volume = this.cloneData[params.index].volume * percent
-                        this.volumeVal = this.cloneData[params.index].volume * percent
-                      }
-                      // 计算货值
-                      if (this.cloneData[params.index].cargoCost !== 0) {
-                        params.row.cargoCost = this.cloneData[params.index].cargoCost * percent
-                      }
-                    }
-                  }
-                })
-              ])
-            } else {
-              return h('div', params.row.quantity)
-            }
-          }
+          key: 'quantity'
         },
         {
           title: '单位',
@@ -307,70 +413,16 @@ export default {
           title: '重量（吨）',
           key: 'weight',
           render: (h, params) => {
-            if (this.isSeparate && (this.currentId === params.row.id) && (this.cloneData[params.index].weight !== 0)) {
-              return h('div', [
-                h('InputNumber', {
-                  props: {
-                    min: 0,
-                    max: parseFloat((this.parentOrderCargoList[params.index].weight).toFixed(2)) + 0.004, // 1.01 + 0.01 = 1.02000000002
-                    value: parseFloat((params.row.weight).toFixed(2)),
-                    step: 0.01,
-                    precision: 2,
-                    activeChange: false
-                  },
-                  style: {
-                  },
-                  on: {
-                    'on-change': (val) => {
-                      if (val === null) {
-                        this.weightVal = null
-                      } else {
-                        this.weightVal = parseFloat(val.toFixed(2))
-                      }
-                    }
-                  }
-                })
-              ])
-            } else {
-              return h('div', parseFloat((params.row.weight).toFixed(2)))
-            }
+            return h('div', parseFloat((params.row.weight).toFixed(2)))
           }
         },
         {
           title: '体积（方）',
           key: 'volume',
           render: (h, params) => {
-            if (this.isSeparate && (this.currentId === params.row.id) && (this.cloneData[params.index].volume !== 0)) {
-              return h('div', [
-                h('InputNumber', {
-                  props: {
-                    min: 0,
-                    max: parseFloat((this.parentOrderCargoList[params.index].volume).toFixed(1)) + 0.04, // 1.1 + 0.1 = 1.2000000002
-                    value: parseFloat((params.row.volume).toFixed(1)),
-                    step: 0.1,
-                    precision: 1,
-                    activeChange: false
-                  },
-                  style: {
-                  },
-                  on: {
-                    'on-change': (val) => {
-                      if (val === null) {
-                        this.volumeVal = null
-                      } else {
-                        this.volumeVal = parseFloat(val.toFixed(1))
-                      }
-                    }
-                  }
-                })
-              ])
-            } else {
-              return h('div', parseFloat((params.row.volume).toFixed(1)))
-            }
+            return h('div', parseFloat((params.row.volume).toFixed(1)))
           }
-        }
-      ],
-      columns2: [
+        },
         {
           title: '操作',
           key: 'do',
@@ -421,42 +473,10 @@ export default {
               }, '还原')
             ])
           }
-        },
-        {
-          title: '货物名称',
-          key: 'cargoName'
-        },
-        {
-          title: '货值',
-          key: 'cargoCost',
-          render: (h, params) => {
-            return h('div', parseFloat((params.row.cargoCost / 100).toFixed(2)))
-          }
-        },
-        {
-          title: '数量',
-          key: 'quantity'
-        },
-        {
-          title: '单位',
-          key: 'unit',
-          width: 80
-        },
-        {
-          title: '重量（吨）',
-          key: 'weight',
-          render: (h, params) => {
-            return h('div', parseFloat((params.row.weight).toFixed(2)))
-          }
-        },
-        {
-          title: '体积（方）',
-          key: 'volume',
-          render: (h, params) => {
-            return h('div', parseFloat((params.row.volume).toFixed(1)))
-          }
         }
       ],
+      detailData: {},
+      subOrderNum: void 0, // 子订单数
       parentOrderCargoList: [],
       childOrderCargoList: [],
       currentId: 0,
@@ -469,12 +489,31 @@ export default {
     }
   },
 
+  computed: {
+    childOneNo () {
+      return this.orderNo.indexOf('-') > -1 ? this.orderNo : this.orderNo + '-1'
+    },
+    childTwoNo () {
+      return this.orderNo.indexOf('-') > -1 ? this.orderNo.substring(0, this.orderNo.indexOf('-')) + '-' + (this.subOrderNum + 1) : this.orderNo + '-2'
+    }
+  },
+
   mounted: function () {
     this.getData()
+    this.getSubOrderNum()
   },
 
   methods: {
     save () {
+      // 将参数中的重量体积四舍五入
+      this.parentOrderCargoList.map((item) => {
+        item.weight = parseFloat(item.weight.toFixed(2))
+        item.volume = parseFloat(item.volume.toFixed(1))
+      })
+      this.childOrderCargoList.map((item) => {
+        item.weight = parseFloat(item.weight.toFixed(2))
+        item.volume = parseFloat(item.volume.toFixed(1))
+      })
       const data = {
         id: this.id,
         orderCargoList: [[...this.parentOrderCargoList], [...this.childOrderCargoList]]
@@ -482,11 +521,32 @@ export default {
       Server({
         url: 'order/disassemble',
         method: 'post',
-        data: data
+        data: data,
+        ignoreCode: true
       }).then((res) => {
+        if (res.data.code === 50012) {
+          this.close()
+          this.openSeparateHintDialog([]) // 重复拆单
+        } else {
+          if (this.childOneNo + this.childTwoNo === res.data.data.orderNoList.join('')) {
+            this.$Message.success('拆单成功')
+            this.close()
+          } else {
+            this.close()
+            this.openSeparateHintDialog(res.data.data.orderNoList) // 拆单过后子订单号有修改
+          }
+        }
         this.ok()
-        this.$Message.success('拆单成功')
-        this.close()
+      })
+    },
+    // 拆单完成后的弹窗提示
+    openSeparateHintDialog (list) {
+      this.openDialog({
+        name: 'order-management/dialog/separateHint',
+        data: { orderNoList: list },
+        methods: {
+          ok (node) {}
+        }
       })
     },
     // 查货物详情
@@ -496,6 +556,7 @@ export default {
         method: 'get'
       }).then((res) => {
         console.log(res)
+        this.detailData = res.data.data
         let orderCargoList = res.data.data.orderCargoList
         // 将返回数据列表中货值、数量、重量、体积的''替换成0
         orderCargoList.map((item) => {
@@ -506,6 +567,15 @@ export default {
         })
         this.parentOrderCargoList = orderCargoList
         this.cloneData = _.cloneDeep(this.parentOrderCargoList)
+      })
+    },
+    // 获取子订单数
+    getSubOrderNum () {
+      Server({
+        url: 'order/getSubOrderNum?orderId=' + this.id,
+        method: 'get'
+      }).then((res) => {
+        this.subOrderNum = res.data.data.subOrderNum
       })
     },
     // 拆整笔
@@ -559,12 +629,12 @@ export default {
   letter-spacing 1px
 .order-number
   height 20px
-  font-size 13px
+  font-size 14px
   font-family 'PingFangSC-Regular'
   font-weight 400
   color rgba(47,50,62,1)
   line-height 20px
-  margin-bottom 16px
+  margin-bottom 20px
 </style>
 <style lang='stylus'>
 .padding-left-30
@@ -573,4 +643,6 @@ export default {
 .separate-dialog
   .ivu-modal-body
     padding 20px 32px
+  .ivu-table-cell
+    padding-left 26px
 </style>

@@ -1,9 +1,6 @@
 <!--  -->
 <template>
   <div class="writing-off">
-    <div class="btns-box">
-      <Button v-if="(hasPower(170102) && scene === 1) || (hasPower(170202) && scene === 2) || (hasPower(170302) && scene === 3)" type="primary" @click="createBill">生成对账单</Button>
-    </div>
     <div class="query-box">
       <Form :model="writingOffQuery" label-position="left" inline>
         <Row>
@@ -33,12 +30,15 @@
         </Row>
       </Form>
     </div>
+    <div class="btns-box">
+      <Button v-if="(hasPower(170102) && scene === 1) || (hasPower(170202) && scene === 2) || (hasPower(170302) && scene === 3)" type="primary" @click="createBill">生成对账单</Button>
+    </div>
     <div class="list-box">
       <Row :gutter="20">
-        <Col span="8">
+        <Col span="9">
         <Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showOrderData"></Table>
         </Col>
-        <Col span="16" class="order-list">
+        <Col span="15" class="order-list">
         <div v-if="!currentPartner.partnerName || !orderData.length" class="data-empty">
           <img src="../../../assets/img-empty.png" class="data-empty-img">
           <p>请点击左侧{{sceneMap[scene]}}列表查看{{orderNameMap[scene]}}哦～</p>
@@ -135,7 +135,7 @@ export default {
       return [
         {
           title: this.sceneMap[this.scene] + '名称',
-          width: 140,
+          // width: 140,
           key: 'partnerName'
         },
         {
@@ -156,11 +156,11 @@ export default {
       return [
         {
           type: 'selection',
-          width: 50
+          width: 20
         },
         {
           title: '操作',
-          width: 60,
+          width: 40,
           key: 'action',
           render: (h, params) => {
             return (this.scene === 1 && this.hasPower(170101)) || (this.scene === 2 && this.hasPower(170201)) || (this.scene === 3 && this.hasPower(170301)) ? h('a', {
@@ -174,7 +174,7 @@ export default {
         },
         {
           title: this.orderNameMap[this.scene] + '号',
-          width: 160,
+          width: 140,
           key: 'orderNo',
           render: (h, params) => {
             return h('a', {
@@ -197,13 +197,21 @@ export default {
           title: '目的地',
           key: 'destinationName'
         },
+        this.scene === 2 ? {
+          title: '车牌号',
+          key: 'truckNo',
+          width: 80
+        } : {
+          title: ' ',
+          width: 1
+        },
         {
           title: '合计运费',
           key: 'totalFeeText'
         },
         {
           title: '结算方式',
-          width: 110,
+          width: 80,
           key: 'settleTypeDesc',
           filters: this.scene === 2 ? [
             {
@@ -237,7 +245,7 @@ export default {
         },
         {
           title: '状态',
-          width: 100,
+          width: 50,
           key: 'orderStatusDesc',
           filters: this.orderStatusMap[this.scene],
           filterMethod (value, row) {
@@ -402,7 +410,7 @@ export default {
   }
 }
 </script>
-<style lang='stylus'>
+<style lang='stylus' scoped>
   .writing-off
     margin: 35px 0 15px
     /deep/ .ivu-btn

@@ -1,7 +1,10 @@
 <template>
   <div v-if="carrierType === 1" class="info-detail">
     <div class="info">
-      <div class="title">承运商信息</div>
+      <div class="title">
+        <span class="icontTitle"></span>
+        <span class="iconTitleP">承运商信息</span>
+      </div>
       <div class="list-info">
         <Row class="row">
           <Col span="8">
@@ -56,7 +59,10 @@
   </div>
   <div v-else class="info-detail">
     <div class="info">
-      <div class="title">承运商信息</div>
+      <div class="title">
+        <span class="icontTitle"></span>
+        <span class="iconTitleP">承运商信息</span>
+      </div>
       <div class="list-info">
         <Row class="row">
           <Col span="8">
@@ -104,9 +110,9 @@
     </div>
     <div class="tabs">
       <Tabs :animated="false">
-        <TabPane label="司机">
+        <TabPane :label="tabPaneLabel">
           <div class="add">
-            <Button v-if="hasPower(130204)" type="primary" @click="_carrierAddDriver">新增</Button>
+            <Button v-if="hasPower(130204)" type="primary" @click="_carrierAddDriver">新增车辆</Button>
           </div>
           <template>
             <Table :columns="columns1" :data="data1"></Table>
@@ -122,9 +128,9 @@
             </template>
           </div>
         </TabPane>
-        <TabPane label="车辆" >
+        <TabPane :label="tabPaneLabe2">
           <div class="add">
-            <Button v-if="hasPower(130207)" type="primary" @click="_carrierAddVehicle">新增</Button>
+            <Button v-if="hasPower(130207)" type="primary" @click="_carrierAddVehicle">新增记录</Button>
           </div>
           <template>
             <Table :columns="columns2" :data="data2"></Table>
@@ -148,7 +154,8 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
-import { CODE, carrierDetailsForDriver, carrierDetailsForCompany, carrierListDriver, carrierListCar, carrierDeleteVehicle, carrierDeleteDriver } from './client'
+import { CODE, carrierDetailsForDriver, carrierListRepairVehicle, carrierDeleteRepairVehicle, carrierDetailsForCompany, carrierListCar, carrierDeleteDriver } from './client'
+import TMSUrl from '@/libs/constant/url'
 export default {
   name: 'carrier-info',
   mixins: [ BasePage ],
@@ -188,7 +195,7 @@ export default {
         {
           title: '操作',
           key: 'id',
-          width: 100,
+          width: 150,
           render: (h, params) => {
             let renderBtn = []
             if (this.hasPower(130205)) {
@@ -204,18 +211,14 @@ export default {
                     this.openDialog({
                       name: 'client/dialog/carrier-driver',
                       data: {
-                        title: '修改司机',
+                        title: '修改车辆',
                         flag: 2, // 修改
-                        driverId: params.row.driverId,
-                        validate: {
-                          driverType: params.row.driverType + '',
-                          driverName: params.row.driverName,
-                          driverPhone: params.row.driverPhone
-                        }
+                        carrierId: this.carrierId,
+                        carId: params.row.carId,
+                        validate: { ...params.row, purchDate: new Date(params.row.purchDate) }
                       },
                       methods: {
                         ok () {
-                          _this._carrierListDriver() // 刷新页面
                           _this._carrierListCar() // 车辆列表也要刷新
                         }
                       }
@@ -224,6 +227,24 @@ export default {
                 }
               }, '修改'))
             }
+            renderBtn.push(h('span', {
+              style: {
+                marginRight: '12px',
+                color: '#00A4BD',
+                cursor: 'pointer'
+              },
+              on: {
+                click: () => {
+                  this.openTab({
+                    path: TMSUrl.CARRIER_MANAGEMENT_CAEDETAILS,
+                    query: {
+                      id: '车辆详情',
+                      rowData: params.row
+                    }
+                  })
+                }
+              }
+            }, '查看'))
             if (this.hasPower(130206)) {
               renderBtn.push(h('span', {
                 style: {
@@ -240,140 +261,11 @@ export default {
                       methods: {
                         ok () {
                           carrierDeleteDriver({
-                            driverId: params.row.driverId
-                          }).then(res => {
-                            if (res.data.code === CODE) {
-                              _this.$Message.success(res.data.msg)
-                              _this._carrierListDriver() // 刷新页面
-                              _this._carrierListCar() // 车辆列表也要刷新
-                            } else {
-                              _this.$Message.error(res.data.msg)
-                            }
-                          })
-                        }
-                      }
-                    })
-                  }
-                }
-              }, '删除'))
-            }
-            return h('div', renderBtn)
-          }
-        },
-        {
-          title: '姓名',
-          key: 'driverName'
-        },
-        {
-          title: '电话',
-          key: 'driverPhone'
-        },
-        {
-          title: '司机类型',
-          key: 'driverType',
-          render: (h, params) => {
-            let text = ''
-            if (params.row.driverType === 1) {
-              text = '合约司机 '
-            } else if (params.row.driverType === 2) {
-              text = '临时司机'
-            } else {
-              text = ''
-            }
-            return h('div', {}, text)
-          }
-        },
-        {
-          title: '车牌号',
-          key: 'carNO',
-          render (h, params) {
-            let text = ''
-            if (params.row.carNO === '' || params.row.carNO === null) {
-              text = '-'
-            } else {
-              text = params.row.carNO
-            }
-            return h('span', {}, text)
-          }
-        },
-        {
-          title: '车型',
-          key: 'carType',
-          render: (h, params) => {
-            let text = params.row.carType ? (this.carLengthMap[params.row.carLength] + this.carTypeMap[params.row.carType]) : '-'
-            return h('div', {}, text)
-          }
-        }
-      ],
-      columns2: [
-        {
-          title: '操作',
-          key: 'id',
-          width: 100,
-          render: (h, params) => {
-            let renderBtn = []
-            if (this.hasPower(130208)) {
-              renderBtn.push(h('span', {
-                style: {
-                  marginRight: '12px',
-                  color: '#00A4BD',
-                  cursor: 'pointer'
-                },
-                on: {
-                  click: () => {
-                    var _this = this
-                    console.log(params.row)
-                    this.openDialog({
-                      name: 'client/dialog/carrier-vehicle',
-                      data: {
-                        title: '修改车辆',
-                        flag: 2, // 修改
-                        id: params.row.driverId,
-                        carrierId: _this.carrierId,
-                        driverId: params.row.driverId,
-                        driverName: params.row.driverName,
-                        carId: params.row.carId,
-                        validate: {
-                          carNO: params.row.carNO,
-                          carType: params.row.carType + '',
-                          shippingWeight: params.row.shippingWeight + '',
-                          carLength: params.row.carLength + '',
-                          shippingVolume: params.row.shippingVolume + ''
-                        }
-                      },
-                      methods: {
-                        ok () {
-                          _this._carrierListCar() // 刷新页面
-                          _this._carrierListDriver() // 车辆列表也要刷新
-                        }
-                      }
-                    })
-                  }
-                }
-              }, '修改'))
-            }
-            if (this.hasPower(130209)) {
-              renderBtn.push(h('span', {
-                style: {
-                  color: '#00A4BD',
-                  cursor: 'pointer'
-                },
-                on: {
-                  click: () => {
-                    let _this = this
-                    this.openDialog({
-                      name: 'client/dialog/confirmDelete',
-                      data: {
-                      },
-                      methods: {
-                        ok () {
-                          carrierDeleteVehicle({
                             carId: params.row.carId
                           }).then(res => {
                             if (res.data.code === CODE) {
                               _this.$Message.success(res.data.msg)
-                              _this._carrierListCar() // 刷新页面
-                              _this._carrierListDriver() // 司机列表也要刷新
+                              _this._carrierListCar() // 车辆列表也要刷新
                             } else {
                               _this.$Message.error(res.data.msg)
                             }
@@ -393,54 +285,296 @@ export default {
           key: 'carNO'
         },
         {
-          title: '车型',
-          key: 'carType',
+          title: '合作方式',
+          key: 'driverType',
           render: (h, params) => {
-            let text = params.row.carType ? (this.carLengthMap[params.row.carLength] + this.carTypeMap[params.row.carType]) : ''
+            let text = ''
+            if (params.row.driverType === 1) {
+              text = '合约'
+            } else if (params.row.driverType === 2) {
+              text = '临时'
+            } else if (params.row.driverType === 3) {
+              text = '自有'
+            } else if (params.row.driverType === 4) {
+              text = '挂靠'
+            }
             return h('div', {}, text)
           }
         },
         {
-          title: '核定重量(吨)',
-          key: 'shippingWeight'
+          title: '司机姓名',
+          key: 'driverName'
         },
         {
-          title: '车载容积(方)',
-          key: 'shippingVolume',
-          render (h, params) {
-            let text = ''
-            if (params.row.shippingVolume === '' || params.row.shippingVolume === null) {
-              text = '-'
-            } else {
-              text = params.row.shippingVolume
-            }
-            return h('span', {}, text)
+          title: '手机号',
+          key: 'driverPhone'
+        },
+        {
+          title: '车型',
+          key: 'carType',
+          render: (h, params) => {
+            let text = params.row.carType ? this.carTypeMap[params.row.carType] : '-'
+            return h('div', {}, text)
           }
         },
         {
-          title: '主司机',
-          key: 'driverName',
-          render (h, params) {
-            let text = ''
-            if (params.row.driverName === '' || params.row.driverName === null) {
-              text = '-'
-            } else {
-              text = params.row.driverName
+          title: '车长（米）',
+          key: 'carLength',
+          render: (h, params) => {
+            let text = params.row.carLength ? this.carLengthMap[params.row.carLength] : '-'
+            return h('div', {}, text.slice(0, text.length - 1))
+          }
+        },
+        {
+          title: '核定载重（吨）',
+          key: 'shippingWeight'
+        },
+        {
+          title: '常跑线路',
+          key: 'regularLine',
+          width: 250,
+          render: (h, params) => {
+            let s1 = ''
+            let n1 = ''
+            let s2 = ''
+            let n2 = ''
+            if (params.row.regularLine && JSON.parse(params.row.regularLine).length === 1) {
+              s1 = JSON.parse(params.row.regularLine)[0].sn === undefined ? '' : JSON.parse(params.row.regularLine)[0].sn
+              n1 = JSON.parse(params.row.regularLine)[0].en === undefined ? '' : JSON.parse(params.row.regularLine)[0].en
+            } else if (JSON.parse(params.row.regularLine).length === 2) {
+              s1 = JSON.parse(params.row.regularLine)[0].sn === undefined ? '' : JSON.parse(params.row.regularLine)[0].sn
+              n1 = JSON.parse(params.row.regularLine)[0].en === undefined ? '' : JSON.parse(params.row.regularLine)[0].en
+              s2 = JSON.parse(params.row.regularLine)[1].sn === undefined ? '' : JSON.parse(params.row.regularLine)[1].sn
+              n2 = JSON.parse(params.row.regularLine)[1].en === undefined ? '' : JSON.parse(params.row.regularLine)[1].en
             }
-            return h('span', {}, text)
+            return h('div', [
+              h('Tooltip', {
+                props: {
+                  placement: 'top'
+                }
+              }, [
+                h('span', {
+                  slot: 'content'
+                }, [h('p', {
+                  style: {
+                    whiteSpace: 'pre-wrap'
+                  }
+                }, (s1 + '—' + n1) === '—' ? '' : s1 + '—' + n1),
+                h('p', {
+                  style: {
+                    whiteSpace: 'pre-wrap'
+                  }
+                }, (s2 + '—' + n2) === '—' ? '' : s2 + '—' + n2)
+                ]),
+                h('p', {
+                  style: {
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }
+                }, s1 + '—' + n1 === '—' ? '' : s1 + '—' + n1),
+                h('p', {
+                  style: {
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }
+                }, s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2)
+              ])
+            ])
+          }
+        }, {
+          title: '添加人',
+          key: 'createName'
+        },
+        {
+          title: '添加时间',
+          key: 'createTime',
+          render: (h, params) => {
+            let text = this.formatDateTime(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
+        }
+      ],
+      columns2: [
+        {
+          title: '操作',
+          key: 'id',
+          width: 150,
+          render: (h, params) => {
+            let renderBtn = []
+            if (this.hasPower(130208)) {
+              renderBtn.push(h('span', {
+                style: {
+                  marginRight: '12px',
+                  color: '#00A4BD',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    var _this = this
+                    this.openDialog({
+                      name: 'client/dialog/carrier-vehicle',
+                      data: {
+                        title: '修改维修记录',
+                        flag: 2, // 修改
+                        id: params.row.driverId,
+                        carrierId: _this.carrierId,
+                        driverId: params.row.driverId,
+                        carId: params.row.carId,
+                        validate: { ...params.row, repairDate: new Date(params.row.repairDate) }
+                      },
+                      methods: {
+                        ok () {
+                          _this._carrierListRepairVehicle() // 刷新页面
+                        }
+                      }
+                    })
+                  }
+                }
+              }, '修改'))
+            }
+            renderBtn.push(h('span', {
+              style: {
+                marginRight: '12px',
+                color: '#00A4BD',
+                cursor: 'pointer'
+              },
+              on: {
+                click: () => {
+                  this.openTab({
+                    path: TMSUrl.CARRIER_MANAGEMENT_REPAIRDETAILS,
+                    query: {
+                      id: '维修详情',
+                      rowData: params.row,
+                      carrierId: this.carrierId
+                    }
+                  })
+                }
+              }
+            }, '查看'))
+            if (this.hasPower(130209)) {
+              renderBtn.push(h('span', {
+                style: {
+                  color: '#00A4BD',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    let _this = this
+                    this.openDialog({
+                      name: 'client/dialog/confirmDelete',
+                      data: {
+                      },
+                      methods: {
+                        ok () {
+                          carrierDeleteRepairVehicle({
+                            id: params.row.id
+                          }).then(res => {
+                            if (res.data.code === CODE) {
+                              _this.$Message.success(res.data.msg)
+                              _this._carrierListRepairVehicle() // 刷新页面
+                            } else {
+                              _this.$Message.error(res.data.msg)
+                            }
+                          })
+                        }
+                      }
+                    })
+                  }
+                }
+              }, '删除'))
+            }
+            return h('div', renderBtn)
+          }
+        },
+        {
+          title: '车牌号',
+          key: 'carNo'
+        },
+        {
+          title: '维修类别',
+          key: 'repairType',
+          render: (h, params) => {
+            let text = ''
+            if (params.row.repairType === 1) {
+              text = '维修'
+            } else if (params.row.repairType === 2) {
+              text = '保养'
+            }
+            return h('div', {}, text)
+          }
+        },
+        {
+          title: '送修日期',
+          key: 'repairDate',
+          render: (h, params) => {
+            let text = this.formatDateTime(params.row.repairDate)
+            return h('div', { props: {} }, text)
+          }
+        },
+        {
+          title: '送修人',
+          key: 'repairPerson'
+        },
+        {
+          title: '送修公里数',
+          key: 'repairMile'
+        },
+        {
+          title: '维修费用',
+          key: 'repairMoney',
+          render: (h, params) => {
+            return h('span', Number(params.row.repairMoney) / 100)
+          }
+        },
+        {
+          title: '已支付费用',
+          key: 'payMoney',
+          render: (h, params) => {
+            return h('span', Number(params.row.payMoney) / 100)
+          }
+        },
+        {
+          title: '未支付费用',
+          key: 'waitPayMoney',
+          render: (h, params) => {
+            return h('span', Number(params.row.waitPayMoney) / 100)
+          }
+        },
+        {
+          title: '添加人',
+          key: 'creater'
+        },
+        {
+          title: '添加时间',
+          key: 'createTime',
+          render: (h, params) => {
+            let text = this.formatDateTime(params.row.createTime)
+            return h('div', { props: {} }, text)
           }
         }
       ],
       data1: [],
       data2: [],
-      pageArray1: [10, 20, 50, 100],
+      pageArray1: [10, 20, 50],
       pageSize1: 10,
       totalCount1: 0, // 总条数
       pageNo1: 1,
-      pageArray2: [10, 20, 50, 100],
+      pageArray2: [10, 20, 50],
       pageSize2: 10,
       totalCount2: 0, // 总条数
       pageNo2: 1
+    }
+  },
+  computed: {
+    tabPaneLabel () {
+      return '车辆信息 ' + (Number(this.totalCount1) === 0 ? '' : this.totalCount1)
+    },
+    tabPaneLabe2 () {
+      return '维修记录 ' + (Number(this.totalCount2) === 0 ? '' : this.totalCount2)
     }
   },
   mounted () {
@@ -448,11 +582,21 @@ export default {
       this._carrierDetailsForDriver()
     } else { // 类型为运输公司
       this._carrierDetailsForCompany()
-      this._carrierListDriver()
+      // 车辆列表
       this._carrierListCar()
+      // 维修列表
+      this._carrierListRepairVehicle()
     }
   },
   methods: {
+    // 日期格式化
+    formatDateTime (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
+    },
+    // 司机个人信息查询
     _carrierDetailsForDriver () {
       let data = {
         carrierId: this.carrierId
@@ -466,13 +610,14 @@ export default {
             driverPhone: res.data.data.driverPhone,
             payType: res.data.data.payType,
             carLength: res.data.data.carLength,
-            remark: res.data.data.remark,
+            remark: res.data.data.remark === '' ? '无' : res.data.data.remark,
             shippingWeight: res.data.data.shippingWeight,
             shippingVolume: res.data.data.shippingVolume
           }
         }
       })
     },
+    // 承运商信息查询
     _carrierDetailsForCompany () {
       let data = {
         carrierId: this.carrierId
@@ -485,37 +630,24 @@ export default {
             carrierPrincipal: data.carrierInfo.carrierPrincipal,
             carrierPhone: data.carrierInfo.carrierPhone,
             payType: data.carrierInfo.payType,
-            remark: data.carrierInfo.remark
+            remark: data.carrierInfo.remark === '' ? '无' : data.carrierInfo.remark
           }
         }
       })
     },
-    // 司机列表，新增，删除，修改
-    _carrierListDriver () {
-      let data = {
-        carrierId: this.carrierId,
-        pageNo: this.pageNo1,
-        pageSize: this.pageSize1
-      }
-      carrierListDriver(data).then(res => {
-        if (res.data.code === CODE) {
-          this.data1 = res.data.data.driverList
-          this.totalCount1 = res.data.data.total
-        }
-      })
-    },
+    // 新增车辆
     _carrierAddDriver () {
       var _this = this
       this.openDialog({
         name: 'client/dialog/carrier-driver',
         data: {
-          title: '新增司机',
+          title: '新增车辆',
           flag: 1, // 新增
           carrierId: this.carrierId // carrierId
         },
         methods: {
           ok () {
-            _this._carrierListDriver() // 刷新页面
+            _this._carrierListCar()
           }
         }
       })
@@ -523,11 +655,11 @@ export default {
     handleChangePage1 (pageNo) {
       // 重新组装数据，生成查询参数
       this.pageNo1 = pageNo
-      this._carrierListDriver()
+      this._carrierListCar()
     },
     handleChangePageSize1 (pageSize) {
       this.pageSize1 = pageSize
-      this._carrierListDriver()
+      this._carrierListCar()
     },
     // 车辆列表，新增，删除，修改
     _carrierListCar () {
@@ -538,26 +670,39 @@ export default {
       }
       carrierListCar(data).then(res => {
         if (res.data.code === CODE) {
-          this.data2 = res.data.data.carList
-          this.totalCount2 = res.data.data.total
+          this.data1 = res.data.data.carList
+          this.totalCount1 = res.data.data.total
         }
       })
     },
+    // 车辆维修列表
+    _carrierListRepairVehicle () {
+      let data = {
+        carrierId: this.carrierId,
+        pageNo: this.pageNo2,
+        pageSize: this.pageSize2
+      }
+      carrierListRepairVehicle(data).then(res => {
+        if (res.data.code === CODE) {
+          this.data2 = res.data.data.list
+          this.totalCount2 = res.data.data.totalCount
+        }
+      })
+    },
+    // 打开车辆dialog弹框
     _carrierAddVehicle () {
       var _this = this
-      console.log(_this.carrierId)
       this.openDialog({
         name: 'client/dialog/carrier-vehicle',
         data: {
-          title: '新增车辆',
+          title: '新增车辆维修保养记录',
           flag: 1, // 新增
           driverId: _this.driverId,
           carrierId: _this.carrierId
         },
         methods: {
           ok () {
-            _this._carrierListCar() // 刷新页面
-            _this._carrierListDriver() // 司机列表也要刷新
+            _this._carrierListRepairVehicle() // 刷新页面-维修列表
           }
         }
       })
@@ -565,11 +710,11 @@ export default {
     handleChangePage2 (pageNo) {
       // 重新组装数据，生成查询参数
       this.pageNo2 = pageNo
-      this._carrierListCar()
+      this._carrierListRepairVehicle()
     },
     handleChangePageSize2 (pageSize) {
       this.pageSize2 = pageSize
-      this._carrierListCar()
+      this._carrierListRepairVehicle()
     }
   }
 }
@@ -581,4 +726,6 @@ export default {
     margin-top 22px
     display flex
     justify-content flex-end
+  .ivu-tabs
+    padding-bottom: 120px!important
 </style>

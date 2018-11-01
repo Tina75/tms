@@ -60,8 +60,10 @@
       </div>
       <div style="display: flex;justify-content: space-between;">
         <div>
-          <area-select v-model="cityCodes.startCodes" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
-          <area-select v-model="cityCodes.endCodes" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <!-- <area-select v-model="cityCodes.startCodes" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
+          <area-select v-model="cityCodes.endCodes" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select> -->
+          <city-select v-model="keywords.start" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></city-select>
+          <city-select v-model="keywords.end" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></city-select>
           <DatePicker
             :options="timeOption"
             v-model="recoveryTimes"
@@ -94,8 +96,8 @@
       :method="method"
       :keywords="keyword"
       :columns="tableColumns"
-      :extra-columns="extraColumns"
       :show-filter="true"
+      table-head-type="receipt_head"
       style="margin-top: 15px"
       @on-selection-change="handleSelectionChange"
       @on-column-change="handleColumnChange">
@@ -109,7 +111,8 @@ import TabHeader from '@/components/TabHeader'
 import PageTable from '@/components/page-table/'
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
-import AreaSelect from '@/components/AreaSelect'
+// import AreaSelect from '@/components/AreaSelect'
+import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
 // import City from '@/libs/js/city'
@@ -123,7 +126,8 @@ export default {
   components: {
     TabHeader,
     PageTable,
-    AreaSelect,
+    // AreaSelect,
+    CitySelect,
     SelectInput
   },
   mixins: [ BasePage, SearchMixin ],
@@ -251,7 +255,25 @@ export default {
           key: 'waybillNo',
           minWidth: 160,
           render: (h, p) => {
-            return h('span', p.row.waybillNo ? p.row.waybillNo : '-')
+            if (p.row.waybillNo) {
+              let waybillNoArr = p.row.waybillNo.split(',')
+              console.log(waybillNoArr)
+              if (waybillNoArr.length > 1) {
+                return h('Tooltip', {
+                  props: {
+                    placement: 'bottom',
+                    maxWidth: 152,
+                    content: p.row.waybillNo
+                  }
+                }, [
+                  h('span', waybillNoArr[0] + ' ...')
+                ])
+              } else {
+                return h('span', p.row.waybillNo)
+              }
+            } else {
+              return h('span', '-')
+            }
           }
         },
         {
@@ -265,17 +287,17 @@ export default {
           key: 'start',
           minWidth: 180,
           render: (h, params) => {
-            if (this.cityFormatter(params.row.start).length > 12) {
+            if (params.row.startName.length > 12) {
               return h('Tooltip', {
                 props: {
                   placement: 'bottom',
-                  content: this.cityFormatter(params.row.start)
+                  content: params.row.startName
                 }
               }, [
-                h('span', this.formatterAddress(this.cityFormatter(params.row.start)))
+                h('span', this.formatterAddress(params.row.startName))
               ])
             } else {
-              return h('span', this.cityFormatter(params.row.start))
+              return h('span', params.row.startName)
             }
           }
         },
@@ -284,17 +306,17 @@ export default {
           key: 'end',
           minWidth: 180,
           render: (h, params) => {
-            if (this.cityFormatter(params.row.end).length > 12) {
+            if (params.row.endName.length > 12) {
               return h('Tooltip', {
                 props: {
                   placement: 'bottom',
-                  content: this.cityFormatter(params.row.end)
+                  content: params.row.endName
                 }
               }, [
-                h('span', this.formatterAddress(this.cityFormatter(params.row.end)))
+                h('span', this.formatterAddress(params.row.endName))
               ])
             } else {
-              return h('span', this.cityFormatter(params.row.end))
+              return h('span', params.row.endName)
             }
           }
         },
@@ -385,117 +407,7 @@ export default {
           }
         }
       ],
-      operateCol: [], // 操作栏
-      extraColumns: [
-        {
-          title: '订单号',
-          key: 'orderNo',
-          fixed: true,
-          visible: true
-        },
-        {
-          title: '客户订单号',
-          key: 'customerOrderNo',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '运单号',
-          key: 'waybillNo',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '客户名称',
-          key: 'consignerName',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '始发地',
-          key: 'start',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '目的地',
-          key: 'end',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '回单数',
-          key: 'receiptCount',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '回收时间',
-          key: 'recoveryTime',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '返厂时间',
-          key: 'returnTime',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '下单时间',
-          key: 'createTime',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '发货人',
-          key: 'consignerContact',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '发货人手机号',
-          key: 'consignerPhone',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '收货人',
-          key: 'consigneeContact',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '收货人手机号',
-          key: 'consigneePhone',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '要求装货时间',
-          key: 'deliveryTime',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '期望到货时间',
-          key: 'arriveTime',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '结算方式',
-          key: 'settlementType',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '总费用',
-          key: 'totalFee',
-          fixed: false,
-          visible: false
-        }
-      ]
+      operateCol: [] // 操作栏
     }
   },
 
@@ -700,6 +612,8 @@ export default {
             _this.getOrderNum() // 刷新tab页数量
             _this.selectOrderList = [] // 重置当前已勾选项
             _this.selectedId = [] // 重置当前已勾选id项
+            console.log(_this.$refs.pageTable)
+
             _this.$refs.pageTable.clearSelected() // 清空当前选项
           }
         }
@@ -746,14 +660,14 @@ export default {
 .ivu-btn
   margin-right 15px
   width 80px
-  height 35px
+  height 32px
 .ivu-btn-default
   background #F9F9F9
 .high-search
   width 36px
   height 36px
-  line-height 1.4
-  letter-spacing 2px
+  line-height 1.2
+  letter-spacing 1px
   padding 0
   white-space normal
   margin-right 0
@@ -766,13 +680,6 @@ export default {
     margin-right 20px
 </style>
 <style lang="stylus">
-.order-simple-select
-  .ivu-select-selection
-    height 35px
-  .ivu-select-selected-value
-    height 35px !important
-    line-height 35px !important
-.receipt-right
-  .ivu-input
-    height 35px
+.operate-box .ivu-input-group
+  display inline-block
 </style>

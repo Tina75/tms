@@ -51,10 +51,15 @@
               <Input v-model="form.name" :maxlength="25" placeholder="输入公司名称" />
             </FormItem>
             <FormItem prop="cityId">
-              <Cascader :data="cities" v-model="form.cityId" placeholder="选择省/市/区"></Cascader>
+              <Cascader :data="cities" v-model="form.cityId" :load-data="loadChildCities" placeholder="选择省/市/区"></Cascader>
             </FormItem>
             <FormItem prop="address">
-              <Input v-model="form.address" :maxlength="40" placeholder="输入公司详细地址" />
+              <AreaInput
+                v-model="form.address"
+                :city-code="cityCode"
+                :maxlength="40"
+                placeholder="输入公司详细地址"
+                @latlongt-change="addressLocationChange" />
             </FormItem>
           </template>
 
@@ -96,8 +101,11 @@ import City from '@/libs/js/city'
 import mixin from './mixin'
 import { VALIDATOR_PHONE, VALIDATOR_PASSWORD, VALIDATOR_CONFIRM_PASSWORD } from './validator'
 
+import AreaInput from '@/components/AreaInput'
+
 export default {
   name: 'SignUp',
+  components: { AreaInput },
   mixins: [ BasePage, mixin ],
   metaInfo: {
     title: '注册账号'
@@ -107,7 +115,6 @@ export default {
       step: 0,
       stepList: ['验证手机号', '填写账号信息', '注册成功'],
       protocol: true,
-      showP: 0,
 
       form: {
         phone: '',
@@ -118,7 +125,10 @@ export default {
         name: '', // 公司名称
         userName: '', // 联系人姓名
         address: '', // 公司地址
-        cityId: []
+        cityId: [],
+        latitude: void 0,
+        longitude: void 0,
+        mapType: 1
       },
 
       rules: {
@@ -145,8 +155,8 @@ export default {
           { type: 'string', min: 2, max: 10, message: '联系人不能少于2个字也不能超过10个字', trigger: 'blur' }
         ],
         address: [
-          { required: true, message: '公司地址不能为空', trigger: 'blur' },
-          { type: 'string', min: 5, max: 40, message: '公司地址不能少于5个字也不能超过40个字', trigger: 'blur' }
+          { required: true, message: '公司地址不能为空' },
+          { type: 'string', min: 5, max: 40, message: '公司地址不能少于5个字也不能超过40个字' }
         ],
         cityId: [{ required: true, message: '省市区不能为空' }]
       },
@@ -154,17 +164,25 @@ export default {
       cities: []
     }
   },
+  computed: {
+    cityCode () {
+      return this.form.cityId[1] || void 0
+    }
+  },
   created () {
     this.getCaptcha()
-    this.getCities()
+    this.cities = this.getCities()
   },
   methods: {
     showProtocol (type) {
-      console.log(type)
       this.openDialog({
         name: 'login/protocol',
         data: { type }
       })
+    },
+    addressLocationChange ({ lat, lng }) {
+      this.form.latitude = lat
+      this.form.longitude = lng
     },
     // 下一步校验
     nextStep () {
@@ -203,24 +221,27 @@ export default {
       })
     },
 
-    // companyNameRuleToast (e) {
-    //   if (e.keyCode === 8 || e.keyCode === 46) return // backspace & delete
-    //   if (this.form.name.length === 25) this.$Message.warning('公司名不能超过25个字')
-    // },
-
-    // 查询城市列表
-    getCities () {
-      this.cities = walk()
-      function walk (code) {
-        return City.getAllChild(code).map(item => {
-          let temp = {
-            value: item.code,
-            label: item.name
-          }
-          if (item.hasChild) temp.children = walk(item.code)
-          return temp
-        })
-      }
+    // 查询省市区列表
+    // TMS1.2 18.10.31 将城市数据修改为懒加载，初始化只加载省份，选择后再加载子城市，否则 IE & EDGE 上会出现严重卡顿
+    getCities (code) {
+      return City.getAllChild(code).map(item => {
+        let temp = {
+          value: item.code,
+          label: item.name
+        }
+        if (Number(item.hasChild)) {
+          temp.children = []
+          temp.loading = false
+        }
+        return temp
+      })
+    },
+    // 联级框加载更多
+    loadChildCities (item, cb) {
+      item.loading = true
+      item.children = this.getCities(item.value)
+      item.loading = false
+      cb()
     }
   }
 }

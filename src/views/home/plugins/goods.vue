@@ -1,20 +1,19 @@
 <template>
   <div is="i-col" :span="12" class="i-mt-15 page-home__card-item">
-    <blank-card :to="linkto" title="今日开单货物重量/体积" page-title="订单管理">
-      <div v-if="volumeData.length || weightData.length" class="chart">
+    <blank-card :to="linkto" title="今日开单货物重量 / 体积" page-title="订单管理">
+      <div class="chart">
         <ECharts :options="options" :auto-resize="true"></ECharts>
         <div class="chart__attach">
-          <span v-if="weightData.length" class="chart__left">
+          <span class="chart__left">
             <span v-text="weight" />
             <small> 吨</small>
           </span>
-          <span v-if="volumeData.length" class="chart__right">
+          <span class="chart__right">
             <span v-text="volume" />
             <small> 方</small>
           </span>
         </div>
       </div>
-      <no-data v-else />
     </blank-card>
   </div>
 </template>
@@ -25,14 +24,12 @@ import ECharts from 'vue-echarts/components/ECharts'
 import mixin from './mixin.js'
 import float from '@/libs/js/float'
 import url from '@/libs/constant/url'
-import NoData from './noData'
 
 const statusStr = {
   10: '待提货',
   20: '待调度',
   30: '在途',
-  40: '已到达',
-  50: '已回单'
+  40: '已到达'
 }
 
 export default {
@@ -40,8 +37,7 @@ export default {
 
   components: {
     BlankCard,
-    ECharts,
-    NoData
+    ECharts
   },
 
   mixins: [mixin],
@@ -76,10 +72,10 @@ export default {
             label: {
               show: false
             },
-            data: this.weightData || [],
+            data: this.weightData.length ? this.weightData : [{ name: 0, value: 0 }],
             tooltip: {
               formatter: (param) => {
-                return `${statusStr[param.name]}: ${param.value} 吨`
+                return statusStr[param.name] ? `${statusStr[param.name]}:${param.value} 吨` : `${param.value} 吨`
               }
             }
           },
@@ -91,10 +87,10 @@ export default {
             label: {
               show: false
             },
-            data: this.volumeData || [],
+            data: this.volumeData.length ? this.volumeData : [{ name: 0, value: 0 }],
             tooltip: {
               formatter: (param) => {
-                return `${statusStr[param.name]}: ${param.value} 方`
+                return statusStr[param.name] ? `${statusStr[param.name]}: ${param.value} 方` : `${param.value} 方`
               }
             }
           }

@@ -1,6 +1,6 @@
 <template>
   <!-- 默认状态 -->
-  <div v-if="!inEditing">
+  <div v-if="!inEditing" class="transport-detail">
     <!-- 运单号及状态 -->
     <section class="detail-header">
       <ul class="detail-header-list">
@@ -27,11 +27,11 @@
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title">始发地：</span>
-            <span>{{ info.start | cityFormatter }}</span>
+            <span>{{ info.startName }}</span>
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">目的地：</span>
-            <span>{{ info.end | cityFormatter }}</span>
+            <span>{{ info.endName }}</span>
           </i-col>
           <i-col span="10" offset="1">
             <span class="detail-field-title">承运商：</span>
@@ -64,7 +64,7 @@
         <div class="detail-part-title">
           <span>货物明细</span>
         </div>
-        <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
+        <Table :columns="tableColumns" :data="detail" :loading="loading" class="detail-field-table"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
           <span>总货值：{{ orderTotal.cargoCost }}</span>
@@ -79,23 +79,23 @@
           <span>应付费用</span>
         </div>
         <Row class="detail-field-group">
-          <i-col span="3">
+          <i-col span="4">
             <span class="detail-field-title-sm">运输费：</span>
             <span class="detail-field-fee">{{ payment.freightFee || 0 }}元</span>
           </i-col>
-          <i-col span="3" offset="2">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">装货费：</span>
             <span class="detail-field-fee">{{ payment.loadFee || 0 }}元</span>
           </i-col>
-          <i-col span="3" offset="2">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">卸货费：</span>
             <span class="detail-field-fee">{{ payment.unloadFee || 0 }}元</span>
           </i-col>
-          <i-col span="3" offset="2">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">保险费：</span>
             <span class="detail-field-fee">{{ payment.insuranceFee || 0 }}元</span>
           </i-col>
-          <i-col span="3" offset="2">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">其他：</span>
             <span class="detail-field-fee">{{ payment.otherFee || 0 }}元</span>
           </i-col>
@@ -112,11 +112,12 @@
             <div v-if="settlementType"
                  class="detail-payment-way">
               {{ settlementType === '1' ? '按单结' : '月结' }}
-              <Table v-if="settlementType === '1'"
-                     :columns="tablePayment"
-                     :data="settlementPayInfo"
-                     :loading="loading"
-                     width="350"></Table>
+
+              <PayInfo
+                v-if="settlementType === '1'"
+                :loading="loading"
+                :data="settlementPayInfo"
+                class="detail-field-payinfo" />
             </div>
           </i-col>
         </Row>
@@ -150,7 +151,7 @@
   </div>
 
   <!-- 编辑状态 -->
-  <div v-else>
+  <div v-else class="transport-detail">
     <!-- 运单号及状态 -->
     <section class="detail-header">
       <ul class="detail-header-list">
@@ -172,13 +173,13 @@
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title detail-field-required">始发地：</span>
-            <AreaSelect v-model="startCodes"
-                        class="detail-info-input" />
+            <SelectInputForCity v-model="info.start"
+                                class="detail-info-input" />
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title detail-field-required">目的地：</span>
-            <AreaSelect v-model="endCodes"
-                        class="detail-info-input" />
+            <SelectInputForCity v-model="info.end"
+                                class="detail-info-input" />
           </i-col>
           <i-col span="10" offset="1">
             <span class="detail-field-title">承运商：</span>
@@ -239,7 +240,7 @@
         <div class="detail-part-title">
           <span>货物明细</span>
         </div>
-        <Button type="primary" style="margin-bottom: 22px;"
+        <Button class="detail-field-button" type="primary"
                 @click="addOrder('freight')">添加订单</Button>
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
@@ -267,17 +268,17 @@
             <MoneyInput v-model="payment.loadFee"
                         class="detail-payment-input" />
           </i-col>
-          <i-col span="4">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">卸货费：</span>
             <MoneyInput v-model="payment.unloadFee"
                         class="detail-payment-input" />
           </i-col>
-          <i-col span="4">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">保险费：</span>
             <MoneyInput v-model="payment.insuranceFee"
                         class="detail-payment-input" />
           </i-col>
-          <i-col span="4">
+          <i-col span="4" offset="1">
             <span class="detail-field-title-sm">其他：</span>
             <MoneyInput v-model="payment.otherFee"
                         class="detail-payment-input" />
@@ -297,11 +298,13 @@
                 <Radio label="1">按单结</Radio>
                 <Radio label="2">月结</Radio>
               </RadioGroup>
-              <Table v-if="settlementType === '1'"
-                     :columns="tablePayment"
-                     :data="settlementPayInfo"
-                     :loading="loading"
-                     width="350"></Table>
+              <PayInfo v-if="settlementType === '1'"
+                       ref="$payInfo"
+                       :loading="loading"
+                       :total="paymentTotal"
+                       :data="settlementPayInfo"
+                       class="detail-field-payinfo"
+                       mode="edit" />
             </div>
           </i-col>
         </Row>
@@ -319,36 +322,42 @@
 </template>
 
 <script>
+
+/**
+ * 运单详情与编辑
+ */
+
 import BasePage from '@/basic/BasePage'
-import TransportBase from '../transportBase'
-import DetailMixin from './detailMixin'
+import TransportBase from '../mixin/transportBase'
+import DetailMixin from '../mixin/detailMixin'
+import SelectInputMixin from '../mixin/selectInputMixin'
 
 import MoneyInput from '../components/MoneyInput'
-import AreaSelect from '@/components/AreaSelect'
+import SelectInputForCity from '@/components/SelectInputForCity'
 import SelectInput from '../components/SelectInput.vue'
-import SelectInputMixin from '../components/selectInputMixin'
+import PayInfo from '../components/PayInfo'
 
 import Server from '@/libs/js/server'
-import { getCityCode } from '@/libs/js/cityValidator'
 import TMSUrl from '@/libs/constant/url'
+import _ from 'lodash'
 
 export default {
   name: 'DetailFeright',
   metaInfo: { title: '运单详情' },
-  components: { MoneyInput, SelectInput, AreaSelect },
+  components: { MoneyInput, SelectInput, SelectInputForCity, PayInfo },
   mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
 
   data () {
     return {
       pageName: 'feright',
-      startCodes: '',
-      endCodes: '',
       status: '',
       // 信息
       info: {
         waybillNo: '',
-        start: '',
-        end: '',
+        start: void 0,
+        end: void 0,
+        startName: '',
+        endName: '',
         carrierName: '',
         carNo: '',
         carType: '',
@@ -361,11 +370,10 @@ export default {
       // 支付方式
       settlementType: '',
       settlementPayInfo: [
-        { payType: 1, fuelCardAmount: 0, cashAmount: 0 },
-        { payType: 2, fuelCardAmount: 0, cashAmount: 0 },
-        { payType: 3, fuelCardAmount: 0, cashAmount: 0 }
+        { payType: 1, fuelCardAmount: '', cashAmount: '' },
+        { payType: 2, fuelCardAmount: '', cashAmount: '' },
+        { payType: 3, fuelCardAmount: '', cashAmount: '' }
       ],
-      settlementPayInfoBack: [], // 支付方式备份
 
       // 所有按钮组
       btnList: [
@@ -398,7 +406,7 @@ export default {
         {
           status: '在途',
           btns: [{
-            name: '位置',
+            name: '查看车辆位置',
             code: 120106,
             func: () => {
               this.billLocation()
@@ -449,8 +457,8 @@ export default {
           key: 'start',
           width: 180,
           render: (h, p) => {
-            const start = this.cityFormatter(p.row.start)
-            const end = this.cityFormatter(p.row.end)
+            const start = p.row.startName
+            const end = p.row.endName
             return this.tableDataRender(h, start && end ? [start, end].join('-') : '')
           }
         },
@@ -522,17 +530,6 @@ export default {
     }
   },
 
-  watch: {
-    startCodes (val) {
-      if (!(val instanceof Array)) return
-      this.info.start = getCityCode(val)
-    },
-    endCodes (val) {
-      if (!(val instanceof Array)) return
-      this.info.end = getCityCode(val)
-    }
-  },
-
   methods: {
     // 将数据返回的标识映射为文字
     statusFilter (status) {
@@ -560,8 +557,6 @@ export default {
         for (let key in this.info) {
           this.info[key] = data.waybill[key]
         }
-        this.startCodes = this.info.start.toString()
-        this.endCodes = this.info.end.toString()
         for (let key in this.payment) {
           this.payment[key] = this.setMoneyUnit2Yuan(data.waybill[key])
         }
@@ -580,15 +575,16 @@ export default {
           }
         })
         this.settlementPayInfo = temp
-        this.settlementPayInfoBack = Object.assign([], temp)
 
         this.setBtnsWithStatus()
         this.loading = false
       }).catch(err => console.error(err))
     },
 
+    // 保存编辑
     save () {
       if (!this.validate()) return
+
       Server({
         url: '/waybill/update',
         method: 'post',
@@ -598,11 +594,9 @@ export default {
             ...this.info,
             ...this.formatMoney(),
             settlementType: this.settlementType,
-            settlementPayInfo: this.settlementType === '1' ? this.formatPayInfo() : void 0
+            settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
           },
-          cargoList: Array.from(new Set((this.detail.map(item => {
-            return item.orderId
-          }))))
+          cargoList: _.uniq(this.detail.map(item => item.orderId))
         }
       }).then(res => {
         this.$Message.success('保存成功')
@@ -631,6 +625,8 @@ export default {
           volume: self.orderTotal.volume, // 货物体积
           start: self.info.start, // 始发地code
           end: self.info.end // 目的地code
+          // startPoint: {lat: 32.047745, lng: 118.791580}, // 始发地经纬度
+          // endPoint: {lat: 39.913385, lng: 116.402257} // 目的地经纬度
         },
         methods: {
           // 确认计费规则后返回金额(元)
@@ -655,7 +651,7 @@ export default {
         data: { waybillIds: [ self.id ] }
       }).then(() => {
         self.openDialog({
-          name: 'transport/dialog/sendCar',
+          name: 'transport/dialog/action',
           data: {
             id: self.id,
             type: 'sendCar'
@@ -668,21 +664,23 @@ export default {
         })
       })
     },
-    // 位置
+    // 查看车辆位置
     billLocation () {
       Server({
-        url: '/waybill/location',
+        url: '/waybill/single/location',
         method: 'post',
-        data: { waybillIds: [ this.id ] }
+        data: { waybillId: this.id }
       }).then(res => {
-        const points = res.data.data.list
-        if (!points.length) {
-          this.$Message.warning('暂无位置')
+        if (!res.data.data.points.length) {
+          this.$Message.warning('暂无车辆位置信息')
           return
         }
         this.openDialog({
           name: 'transport/dialog/map',
-          data: { points },
+          data: {
+            cars: [res.data.data],
+            multiple: false
+          },
           methods: {}
         })
       }).catch(err => console.error(err))
@@ -690,6 +688,7 @@ export default {
     // 删除
     billDelete () {
       const self = this
+      // self.$Toast.info()
       self.openDialog({
         name: 'transport/dialog/confirm',
         data: {
@@ -715,5 +714,5 @@ export default {
 </script>
 
 <style lang='stylus'>
-  @import "./detail.styl"
+  @import "../style/detail.styl"
 </style>

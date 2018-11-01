@@ -23,7 +23,7 @@
         accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         @change="handleChange"
       />
-      <Button v-if="hasPower(100202)" :to="downloadUrl" download="下载模板" class="i-ml-10" target="_blank">下载模板</Button>
+      <a v-if="hasPower(100202)" :href="downloadUrl"  download="下载模板" class="i-ml-10 ivu-btn ivu-btn-default">下载模板</a>
     </div>
     <PageTable ref="pageTable" :columns="columns" :show-filter="false" url="order/template/getImportedOrderTemplateList" method="post" no-data-text=" " @on-load="handleLoad">
       <div ref="footer" slot="footer" class="order-import__empty-content van-center">
@@ -192,7 +192,7 @@ export default {
        * 后端获取阿里云access token, region 参数
        * 初始化oss client，用户上传模板前需要准备好
        */
-      server({
+      return server({
         method: 'post',
         url: 'file/prepareUpload',
         data: {
@@ -211,6 +211,7 @@ export default {
             bucket: data.ossTokenDTO.bucketName,
             endpoint: data.ossTokenDTO.endpoint
           })
+          return response
         })
     },
     /**
@@ -251,14 +252,17 @@ export default {
               }
             })
             const status = res.data.data.status
-            if (status === 1 || status === 0) {
+            // status,1成功；0失败；2正在处理；3excel文件标题行非法
+            if (status !== 2) {
               if (timer) {
                 clearTimeout(timer)
               }
               if (status === 0) {
-                vm.$Message.error({ content: `此次导入订单失败，具体失败原因下载错误报告`, duration: 3 })
+                vm.$Message.error('此次导入订单失败，具体失败原因下载错误报告')
+              } else if (status === 3) {
+                vm.$Message.error('上传文件缺少部分订单列，请重新下载模板')
               } else {
-                vm.$Message.success({ content: `导入成功，共导入${res.data.data.orderNum}条订单`, duration: 3 })
+                vm.$Message.success(`导入成功，共导入${res.data.data.orderNum}条订单`)
               }
               vm.visible = false
               vm.$refs.pageTable.fetch()
@@ -301,14 +305,22 @@ export default {
           this.loopCheckFileProgress(notifyResult.data.data.id)
         }
       } catch (error) {
-        // console.error('导入订单', error)
-        this.$Message.error({ content: '导入订单文件失败', duration: 3 })
+        if (error.code === 'InvalidAccessKeyId' || error.code === 'InvalidBucketName') {
+          // token失效过期了
+          this.$Message.info({ content: '重新获取认证信息，文件正在上传', duration: 3 })
+          await this.initOssInstance()
+          this.handleChange(e)
+        } else {
+          // console.error('导入订单', error)
+          this.$Message.error({ content: '导入订单文件失败', duration: 3 })
+        }
       }
 
       this.$refs.pageTable.fetch()
       this.$refs.fileInput.value = null
     },
     async uploadFile (file) {
+      const vm = this
       if (this.ossClient) {
         try {
           // this.visible = true
@@ -318,13 +330,13 @@ export default {
             partSize: 1024 * 1024, // 分片大小 ,1M
             progress: function (progress, pp) {
               if (progress) {
-                this.progress = progress
+                vm.progress = progress
               }
             }
           })
           this.$nextTick(() => {
             // this.visible = false
-            this.progress = 0
+            vm.progress = 0
           })
           return result
         } catch (e) {
@@ -332,6 +344,8 @@ export default {
           if (e.code === 'ConnectionTimeoutError') {
             this.$Message.error('文件上传超时')
             // do ConnectionTimeoutError operation
+          } else if (e.code === 'RequestError') {
+            console.error('请求body格式非法')
           }
           throw e
         }

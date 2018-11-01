@@ -1,13 +1,13 @@
 <template>
-  <div class="temAll">
-    <Col span="4" class="colHeight" style="height:100%">
-    <Menu :active-name="menuInitName" class="leftMenu" style="width:100%">
+  <Row class="temAll">
+    <Col :style="styleHeight" span="4" class="colHeight">
+    <Menu :active-name="menuInitName" class="leftMenu" style="width:100%" >
       <div class="centerBtnDiv">
         <Button v-if="hasPower(140101)" type="primary" class="centerBtn" @click="createRole">新增角色</Button>
       </div>
       <div>
-        <MenuItem v-for="menu in menuList" :key="menu.id" :name="menu.name" class="menu" @click.native="clickLeftMenu(menu)">
-        <p class="menuTitle">{{menu.name}}</p>
+        <MenuItem v-for="menu in roles" :key="menu.id" :name="menu.name" class="menu" @click.native="clickLeftMenu(menu)">
+        <p class="menuTitle"><i class="icon font_family icon-ico-position"></i>{{menu.name}}</p>
         <span v-if="menu.type !== 1" class="configBtnItem">
           <span v-if="hasPower(140102)" class="configBtn" @click="editRole(menu)">修改</span>
           <span v-if="hasPower(140103)" type="text" class="configBtn" @click="removeRole(menu)">删除</span>
@@ -32,10 +32,10 @@
     </Col>
     <Col span="20" class="rightHead">
     <div>
-      <p v-if="rightTitle !== ''" class="rightTitle">{{rightTitle}}的权限</p>
+      <p class="rightTitle">{{title}}</p>
       <div v-if="hasPower(140102)" class="saveRoleBtn">
         <Button
-          v-if="menuParam.type !== 1"
+          v-if="selectRole.type !== 1"
           :disabled="disSaveBtn"
           type="primary"
           style="width:80px;"
@@ -55,8 +55,8 @@
       <p class="modalRemoveContend">
         <i class="icon font_family icon-bangzhuzhongxin"></i>
       </p>
-      <p class="modalRemoveContendP">确定删除'{{rightTitle}}'?</P>
-      </p>
+      <p class="modalRemoveContendP">确定删除'{{selectRole.name}}'?</P>
+        </p>
       <div slot="footer">
         <Button type="primary" @click="removeFormRole">确定</Button>
         <Button  @click="removeCancelForm">取消</Button>
@@ -85,14 +85,13 @@
           :expand="false"
           :data="treeData"
           class="treeContentDiv"
-          multiple
           show-checkbox
           @on-check-change="treeCheckBox">
         </Tree>
       </Card>
     </div>
     </Col>
-  </div>
+  </Row>
 </template>
 
 <script>
@@ -110,7 +109,7 @@ export default {
     let this_ = this
     var hasRoleName = function (rule, value, callback) {
       if (value) {
-        this_.menuList.forEach(e => {
+        this_.roles.forEach(e => {
           if (value === (e.name)) {
             return callback(new Error('该角色名已被使用'))
           }
@@ -122,20 +121,23 @@ export default {
     }
     return {
       single: true,
-      rightTitle: '',
       menuInitName: '',
+      selectRoleId: '', // 选中的角色id
       disSaveBtn: true,
       createRoleModal: false,
       removeRoleModal: false,
       removeRoleModalFail: false,
       editRoleModalTitle: '',
-      menuParam: {},
       removeMenuParams: {},
+      initHeight: {
+        type: Number,
+        default: 0
+      },
       formModal: {
         name: ''
       },
       listInitTreeList: {},
-      menuList: [],
+      roles: [],
       rulesRole: {
         name: [
           { required: true, message: '角色名不能为空', trigger: 'blur' },
@@ -143,83 +145,87 @@ export default {
           { type: 'string', max: 10, message: '角色名不能超过10个字', trigger: 'change' }
         ]
       },
-      arrayCodeList: []
+      roleCodeList: []
+    }
+  },
+  computed: {
+    /**
+     * 当前选中角色
+     */
+    selectRole () {
+      return this.roles.find(role => role.id === this.selectRoleId) || { name: '超级管理员' }
+    },
+    /**
+     * 右侧区域标题
+     */
+    title () {
+      return this.selectRole.name + '的权限'
+    },
+    // 自适应高度
+    styleHeight () {
+      return { height: (this.initHeight + 50) + 'px' }
     }
   },
   watch: {
-    arrayCodeList (newList) {
-      if (this.menuParam.type === 1) {
-        this.initTreeList(newList, 'type')
+    roleCodeList (newList) {
+      if (this.selectRole.type === 1) {
+        // 超级管理员
+        this.listInitTreeList = _.cloneDeep(roleTreeList)
       } else {
         this.initTreeList(newList)
       }
     }
   },
   created () {
-    this.getMenuList()
-    this.initTreeList(this.arrayCodeList, 'type')
+    // 获取所有角色列表
+    this.getRoleList()
+    // 初始化角色树构建
+    this.listInitTreeList = _.cloneDeep(roleTreeList)
+  },
+  mounted () {
+    this.initHeight = document.getElementsByClassName('contentDiv')[0].offsetHeight
   },
   methods: {
-    getMenuList (selectMenu) {
+    getRoleList () {
       Server({
         url: 'role/list',
         method: 'get'
       }).then(({ data }) => {
-        this.menuList = data.data
-        for (let index = 0; index < data.data.length; index++) {
-          if (selectMenu) {
-            if (data.data[index].id === selectMenu.id) {
-              this.menuParam = data.data[index]
-              this.rightTitle = this.menuInitName = data.data[index].name
-              this.arrayCodeList = JSON.parse(data.data[index].codes)
-            }
-          } else {
-            if (data.data[index].type === 1) {
-              this.menuParam = data.data[index]
-              this.rightTitle = this.menuInitName = data.data[index].name
-              this.arrayCodeList = JSON.parse(data.data[index].codes)
-            }
-          }
-        }
+        // 全局
+        this.roles = data.data
       })
     },
-    initTreeList (arrayCodeList, type) {
+    initTreeList (roleCodeList) {
       const treeList = _.cloneDeep(roleTreeList)
       for (let key in treeList) {
-        if (type) {
-          treeList[key][0].disabled = true
-        } else {
-          treeList[key][0].disabled = false
-        }
-        this.getTreeList(arrayCodeList, treeList[key][0].children, type)
+        treeList[key][0].disabled = false
+        treeList[key][0].checked = false
+        this.getTreeList(roleCodeList, treeList[key][0].children)
       }
       this.listInitTreeList = treeList
     },
-    getTreeList (arrayCodeList, treeData, type) {
+    getTreeList (roleCodeList, treeData) {
       const vm = this
       treeData.forEach(element => {
-        for (let index = 0; index < arrayCodeList.length; index++) {
-          if (arrayCodeList.includes(element.code) && type) {
-            element.disabled = true
-            if (element.children) {
-              vm.getTreeList(arrayCodeList, element.children, type)
-            } else {
-              element.checked = true
-            }
-          } else if (arrayCodeList.includes(element.code)) {
-            if (element.children) {
-              vm.getTreeList(arrayCodeList, element.children)
-            } else {
-              element.checked = true
-            }
+        // 默认设置false
+        element.checked = false
+        element.disabled = false
+        if (roleCodeList.includes(element.code) || roleCodeList.includes(Number(element.code))) {
+          if (element.children) {
+            vm.getTreeList(roleCodeList, element.children)
+          } else {
+            element.checked = true
+          }
+        } else {
+          if (element.children) {
+            vm.getTreeList(roleCodeList, element.children)
           }
         }
       })
     },
     clickLeftMenu (menu) {
-      this.rightTitle = menu.name
-      this.arrayCodeList = (menu.codes === '' ? [] : JSON.parse(menu.codes))
-      this.menuParam = menu
+      this.selectRoleId = menu.id
+      this.roleCodeList = (menu.codes === '' ? [] : JSON.parse(menu.codes))
       this.disSaveBtn = true
     },
     createRole () {
@@ -240,10 +246,9 @@ export default {
       this.removeRoleModal = true
     },
     saveRole () {
-      this.menuParam.codes = this.checkBrowsePage()
       let params = {}
-      params.id = this.menuParam.id
-      params.resIds = this.menuParam.codes
+      params.id = this.selectRole.id
+      params.resIds = this.checkBrowsePage()
       Server({
         url: 'role/update',
         method: 'post',
@@ -251,13 +256,12 @@ export default {
       }).then(({ data }) => {
         if (data.code === 10000) {
           this.$Message.success('角色权限修改成功!')
-          this.getMenuList(this.menuParam)
-        } else {
-          this.$Message.error(data.msg)
+          // 同步更新本地相应角色下的权限数据
+          const role = this.roles.find(_r => _r.id === params.id)
+          if (role) {
+            role.codes = JSON.stringify(params.resIds)
+          }
         }
-      }).then(() => {
-        this.arrayCodeList = this.menuParam.codes
-        this.rightTitle = this.menuParam.name
       })
     },
     subFormRole (name) {
@@ -272,9 +276,7 @@ export default {
             }).then(({ data }) => {
               if (data.code === 10000) {
                 this.$Message.success('添加成功!')
-                this.getMenuList()
-              } else {
-                this.$Message.success(data.msg)
+                this.getRoleList()
               }
             })
           } else {
@@ -285,9 +287,7 @@ export default {
             }).then(({ data }) => {
               if (data.code === 10000) {
                 this.$Message.success('修改成功!')
-                this.getMenuList()
-              } else {
-                this.$Message.success(data.msg)
+                this.getRoleList()
               }
             })
           }
@@ -310,12 +310,10 @@ export default {
         if (data.code === 10000) {
           this.removeRoleModal = false
           this.$Message.success('删除角色成功!')
-          this.getMenuList()
+          this.getRoleList()
         } else if (data.code === 410009) {
           this.removeRoleModal = false
           this.removeRoleModalFail = true
-        } else {
-          this.$Message.success(data.msg)
         }
       })
     },
@@ -343,7 +341,6 @@ export default {
     },
     treeCheckBox (node) {
       this.disSaveBtn = false
-      this.arrayCodeList = this.checkBrowsePage()
     }
     // renderContent (h, { root, node, data }) {
     //   if (node.nodeKey === 0) {
@@ -384,18 +381,14 @@ export default {
   color: #515a6e;
 .temAll
   width: 100%;
-  height: 100%
   overflow: hidden;
+  margin-left: -15px;
   .contentDiv
     padding-left: 20px;
-    height:calc(100% - 45px);
-    overflow-y:auto;
-    padding-bottom: 80px;
   .leftMenu
     height: 100%
-    overflow: hidden;
     .centerBtnDiv
-      border-bottom: 1px solid #e9e9e9;
+      border-bottom: 1px solid #DCDEE2;
       padding-bottom:50px;
   .leftMenu :hover
     max-height: calc(100% - 50px);
@@ -418,8 +411,20 @@ export default {
       text-overflow: ellipsis;
       width: 75%;
       float:left;
+      .icon-ico-position
+        float: left;
+        margin-right: 15px;
+        width: 20px;
+        height: 22px;
+        background: #f9f9f9;
+        border-radius: 50%;
+        padding-left: 2px;
+        margin-top: -2px;
+      .icon-ico-position:hover
+        display: block;
+        overflow: hidden;
   .rightHead
-    border-bottom: 1px solid #e9e9e9;
+    border-bottom: 1px solid #DCDEE2;
     margin-top: 5px
     .rightTitle
       height: 55px;
@@ -482,7 +487,7 @@ export default {
   font-size: 16px;
   font-weight: bold;
 .modalRemoveContend
-  margin-top: 10px;
+  margin-top: 5px;
   margin-left:10%;
   i.icon.font_family.icon-bangzhuzhongxin
     font-size:28px;
@@ -491,8 +496,8 @@ export default {
     float:left;
     width:40px;
 .modalRemoveContendP
-  margin-top:21px;
-  margin-bottom:10px;
+  margin-top:16px;
+  margin-bottom:20px;
   font-size: 14px;
 .formSty
   padding:20px;

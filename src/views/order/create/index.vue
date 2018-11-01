@@ -2,8 +2,8 @@
   <Form ref="orderForm" :label-width="80" :model="orderForm" :rules="rules">
     <Spin v-if="loading" fix></Spin>
     <Row :gutter="16">
-      <Col span="12">
-      <FormItem label="客户:" prop="consignerName" required>
+      <Col span="10">
+      <FormItem label="客户:" prop="consignerName">
         <SelectInput
           v-model="orderForm.consignerName"
           :auto-focus="autoFocus"
@@ -15,31 +15,53 @@
         </SelectInput>
       </FormItem>
       </Col>
-      <Col span="6">
-      <FormItem label="始发城市:" prop="start">
-        <AreaSelect v-model="orderForm.start" placeholder=""></AreaSelect>
+      <Col span="7">
+      <FormItem label="始发城市:" prop="start" class="cityFormItem">
+        <CitySelect ref="start" v-model="orderForm.start" clearable></CitySelect>
       </FormItem>
       </Col>
-      <Col span="6">
-      <FormItem label="目的城市:" prop="end">
-        <AreaSelect v-model="orderForm.end" :adjustment="true" placeholder=""></AreaSelect>
+      <Col span="7">
+      <FormItem label="目的城市:" prop="end" class="cityFormItem">
+        <CitySelect ref="end" v-model="orderForm.end" clearable></CitySelect>
       </FormItem>
       </Col>
     </Row>
     <Row :gutter="16">
-      <Col span="12">
+      <Col span="10">
       <FormItem label="客户订单号:" prop="customerOrderNo">
         <Input v-model="orderForm.customerOrderNo" :maxlength="30" type="text"></Input>
       </FormItem>
       </Col>
-      <Col span="6">
-      <FormItem label="发货时间:" prop="deliveryTime">
-        <DatePicker v-model="orderForm.deliveryTime" :time-picker-options="{steps: [1, 60, 60]}" format="yyyy-MM-dd HH:mm前" type="datetime" style="width:100%"></DatePicker>
+      <Col span="7">
+      <FormItem label="发货时间:">
+        <Row>
+          <Col span="13">
+          <FormItem prop="deliveryTime">
+            <DatePicker v-model="orderForm.deliveryTime" :options="startDateOptions" style="width: 100%" format="yyyy-MM-dd" type="date" placeholder="请选择日期" @on-change="(date) => { dateChange('START_DATE', date)}"></DatePicker>
+          </FormItem>
+          </Col>
+          <Col span="11" style="padding-left: 5px">
+          <FormItem prop="deliveryTimes">
+            <TimeInput ref="stTimeInput" v-model="orderForm.deliveryTimes" :options="startTimeOptions" :time-date="formateDate(orderForm.deliveryTime)" type="START_DATE"/>
+          </FormItem>
+          </Col>
+        </Row>
       </FormItem>
       </Col>
-      <Col span="6">
-      <FormItem label="到货时间:" prop="arriveTime">
-        <DatePicker v-model="orderForm.arriveTime" :time-picker-options="{steps: [1, 60, 60]}" :options="endDateOptions" format="yyyy-MM-dd HH:mm前" type="datetime" style="width:100%"></DatePicker>
+      <Col span="7">
+      <FormItem label="到货时间:">
+        <Row>
+          <Col span="13">
+          <FormItem prop="arriveTime">
+            <DatePicker v-model="orderForm.arriveTime" :options="endDateOptions" style="width: 100%" format="yyyy-MM-dd" type="date" placeholder="请选择日期"  @on-change="(date) => { dateChange('END_DATE', date)}"></DatePicker>
+          </FormItem>
+          </Col>
+          <Col span="11" style="padding-left: 5px">
+          <FormItem prop="arriveTimes">
+            <TimeInput ref="edTimeInput" v-model="orderForm.arriveTimes" :options="endTimeOptions" :time-date="formateDate(orderForm.arriveTime)" type="END_DATE"/>
+          </FormItem>
+          </Col>
+        </Row>
       </FormItem>
       </Col>
     </Row>
@@ -73,12 +95,12 @@
     <Row :gutter="16">
       <Col span="12">
       <FormItem label="发货地址:" prop="consignerAddress">
-        <SelectInput v-model="orderForm.consignerAddress" :maxlength="60" :local-options="consignerAddresses" :remote="false"></SelectInput>
+        <AreaInput v-model="orderForm.consignerAddress" :city-code="startCityCode" :maxlength="60" :local-options="consignerAddresses" @latlongt-change="({lat, lng}) => latlongtChange(1, lat, lng)"/>
       </FormItem>
       </Col>
       <Col span="12">
       <FormItem label="收货地址:" prop="consigneeAddress">
-        <SelectInput v-model="orderForm.consigneeAddress" :maxlength="60" :local-options="consigneeAddresses" :remote="false"></SelectInput>
+        <AreaInput v-model="orderForm.consigneeAddress" :city-code="endCityCode" :maxlength="60" :local-options="consigneeAddresses" @latlongt-change="({lat, lng}) => latlongtChange(2, lat, lng)"/>
       </FormItem>
       </Col>
     </Row>
@@ -124,12 +146,21 @@
       </FormItem>
       </Col>
       <Col span="6">
+      <FormItem label="提货费用:" prop="pickupFee">
+        <TagNumberInput :min="0" v-model="orderForm.pickupFee" :parser="handleParseFloat">
+          <span slot="suffix" class="order-create__input-suffix">元</span>
+        </TagNumberInput>
+      </FormItem>
+      </Col>
+      <Col span="6">
       <FormItem label="装货费用:" prop="loadFee">
         <TagNumberInput :min="0" v-model="orderForm.loadFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
       </Col>
+    </Row>
+    <Row :gutter="16">
       <Col span="6">
       <FormItem label="卸货费用:" prop="unloadFee">
         <TagNumberInput :min="0" v-model="orderForm.unloadFee" :parser="handleParseFloat">
@@ -137,8 +168,6 @@
         </TagNumberInput>
       </FormItem>
       </Col>
-    </Row>
-    <Row :gutter="16">
       <Col span="6">
       <FormItem label="保险费用:" prop="insuranceFee">
         <TagNumberInput :min="0" v-model="orderForm.insuranceFee" :parser="handleParseFloat">
@@ -183,7 +212,7 @@
       </FormItem>
       </Col>
     </Row>
-    <div class="van-center">
+    <div class="van-center i-mt-20 i-mb-20">
       <Button v-if="hasPower(100101)" :disabled="disabled" type="primary" @click="handleSubmit">保存</Button>
       <Button v-if="hasPower(100102)" :disabled="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
@@ -196,22 +225,26 @@
 <script>
 import Title from './components/Title.vue'
 import SelectInput from '@/components/SelectInput.vue'
+import AreaInput from '@/components/AreaInput.vue'
 import TagNumberInput from '@/components/TagNumberInput'
 import { mapGetters, mapActions } from 'vuex'
 import float from '@/libs/js/float'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import OrderPrint from './components/OrderPrint'
-import AreaSelect from '@/components/AreaSelect'
-import { getCityCode, resetCityValidator, FORM_VALIDATE_START, FORM_VALIDATE_END } from '@/libs/js/cityValidator'
+// import AreaSelect from '@/components/AreaSelect'
+import CitySelect from '@/components/SelectInputForCity'
 import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
 import settlements from '@/libs/constant/settlement.js'
 import pickups from '@/libs/constant/pickup.js'
 import Cargo from './libs/cargo'
 import CargoTable from './components/CargoTable.vue'
+import TimeInput from './components/TimeInput.vue'
+import validator from '@/libs/js/validate'
+import cityUtil from '@/libs/js/city'
 
-const transferFeeList = ['freightFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
+const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
 export default {
   metaInfo: {
     title: '手动下单'
@@ -220,10 +253,13 @@ export default {
     Title,
     TagNumberInput,
     OrderPrint,
-    AreaSelect,
+    // AreaSelect,
     SelectInput,
+    AreaInput,
     FontIcon,
-    CargoTable
+    CargoTable,
+    TimeInput,
+    CitySelect
   },
   mixins: [BaseComponent, BasePage],
   data () {
@@ -231,11 +267,22 @@ export default {
     /**
      * 发货时间校验
      */
-    const validateDeliveryTime = (rule, value, callback) => {
-      if (_this.orderForm.arriveTime && value) {
-        // callback(new Error('发货时间需早于发货时间'))
-        this.$refs.orderForm.validateField('arriveTime')
-        callback()
+    // const validateDeliveryTime = (rule, value, callback) => {
+    //   if (_this.orderForm.arriveTime && value) {
+    //     // callback(new Error('发货时间需早于发货时间'))
+    //     this.$refs.orderForm.validateField('arriveTime')
+    //     callback()
+    //   } else {
+    //     callback()
+    //   }
+    // }
+    const validateStart = (rule, value, callback) => {
+      const stDate = _this.orderForm.deliveryTime
+      const edDate = _this.orderForm.arriveTime
+      const edTime = _this.orderForm.arriveTimes
+      const valids = value && stDate && edDate && edTime
+      if (valids && stDate.setHours(value.substr(0, 2), value.substr(3, 2)) > edDate.setHours(edTime.substr(0, 2), edTime.substr(3, 2))) {
+        callback(new Error('发货时间需早于发货时间'))
       } else {
         callback()
       }
@@ -243,8 +290,19 @@ export default {
     /**
      * 到货时间校验
      */
-    const validateArriveTime = (rule, value, callback) => {
-      if (_this.orderForm.deliveryTime && value && value.valueOf() <= _this.orderForm.deliveryTime.valueOf()) {
+    // const validateArriveTime = (rule, value, callback) => {
+    //   if (_this.orderForm.deliveryTime && value && value.valueOf() <= _this.orderForm.deliveryTime.valueOf()) {
+    //     callback(new Error('到货时间需晚于发货时间'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
+    const validateEnd = (rule, value, callback) => {
+      const stDate = _this.orderForm.deliveryTime
+      const stTime = _this.orderForm.deliveryTimes
+      const edDate = _this.orderForm.arriveTime
+      const valids = value && stDate && edDate && stTime
+      if (valids && stDate.setHours(stTime.substr(0, 2), stTime.substr(3, 2)) > edDate.setHours(value.substr(0, 2), value.substr(3, 2))) {
         callback(new Error('到货时间需晚于发货时间'))
       } else {
         callback()
@@ -254,12 +312,21 @@ export default {
     //   return { index: params.index, name: params.column.key, value }
     // }
     const validatePhone = (rule, value, callback) => {
-      if (/1[0-9]{10}$/.test(value)) {
+      if (validator.phone(value)) {
         callback()
       } else {
         callback(new Error('请输入正确的手机号码'))
       }
     }
+    // 9位整数 2位小数
+    const validateFee = (rule, value, callback) => {
+      if ((value && validator.fee(value)) || !value) {
+        callback()
+      } else {
+        callback(new Error('费用整数位最多输入9位'))
+      }
+    }
+
     return {
       settlements,
       pickups, // 提货方式
@@ -270,30 +337,43 @@ export default {
         // 客户，一般是公司名
         consignerName: '',
         // 始发城市
-        start: [],
+        start: null,
         // 目的城市
-        end: [],
+        end: null,
         // 客户订单号
         customerOrderNo: '',
         // 发货时间
         deliveryTime: '',
+        deliveryTimes: '',
         // 到货时间
         arriveTime: '',
+        arriveTimes: '',
         // 发货联系人
         consignerContact: '',
         consignerPhone: '',
         // 发货地址
         consignerAddress: '',
+        // 经度
+        consignerAddressLongitude: '',
+        // 纬度
+        consignerAddressLatitude: '',
+        consignerAddressMapType: 1,
         // 收货人
         consigneeContact: '',
         consigneePhone: '',
         consigneeAddress: '',
+        // 经纬度
+        consigneeAddressLongitude: '',
+        consigneeAddressLatitude: '',
+        consigneeAddressMapType: 1,
         // 货品信息
         orderCargoList: [],
         // 付款方式
         settlementType: 4, // 默认月结，1:现付，2：到付 ，3：回付 4月结
         // 运输费用
         freightFee: null,
+        // 提货费
+        pickupFee: null,
         // 装货费
         loadFee: null,
         // 卸货费
@@ -312,22 +392,19 @@ export default {
       orderPrint: [],
       rules: {
         consignerName: [
-          // { validator: validateConsignerName, trigger: 'blur' }
           { required: true, message: '请输入客户名称' }
         ],
         start: [
-          { required: true, type: 'array', message: '请选择始发城市' },
-          { validator: FORM_VALIDATE_START(_this, 'orderForm'), trigger: 'change' }
+          { required: true, message: '请输入始发城市' }
         ],
         end: [
-          { required: true, type: 'array', message: '请选择目的城市' },
-          { validator: FORM_VALIDATE_END }
+          { required: true, message: '请输入目的城市' }
         ],
-        deliveryTime: [
-          { validator: validateDeliveryTime }
+        deliveryTimes: [
+          { validator: validateStart, trigger: 'change' }
         ],
-        arriveTime: [
-          { validator: validateArriveTime }
+        arriveTimes: [
+          { validator: validateEnd, trigger: 'change' }
         ],
         consignerContact: [
           { required: true, message: '请输入发货人名称' }
@@ -352,8 +429,30 @@ export default {
         settlementType: [
           { required: true, message: '请选择付款方式' }
         ],
+        // 运输费
         freightFee: [
-          { required: true, type: 'number', message: '请输入运输费用' }
+          { required: true, type: 'number', message: '请输入运输费用' },
+          { validator: validateFee }
+        ],
+        // 提货费
+        pickupFee: [
+          { validator: validateFee }
+        ],
+        // 装货费用
+        loadFee: [
+          { validator: validateFee }
+        ],
+        // 卸货费用
+        unloadFee: [
+          { validator: validateFee }
+        ],
+        // 保险费用
+        insuranceFee: [
+          { validator: validateFee }
+        ],
+        // 其他费用
+        otherFee: [
+          { validator: validateFee }
         ],
         pickup: [
           { required: true, message: '请输入提货方式' }
@@ -371,10 +470,18 @@ export default {
       //   cargoCost: 0,
       //   quantity: 0
       // },
+      startDateOptions: {
+        disabledDate (date) {
+          return date && date > new Date(_this.orderForm.arriveTime)
+        }
+      },
       // 到达时间限制
       endDateOptions: {
+        // disabledDate (date) {
+        //   return date && date.valueOf() < _this.orderForm.deliveryTime.valueOf()
+        // }
         disabledDate (date) {
-          return date && date.valueOf() < _this.orderForm.deliveryTime.valueOf()
+          return date && date < new Date(_this.orderForm.deliveryTime)
         }
       }
     }
@@ -384,8 +491,6 @@ export default {
       'clients',
       'orderDetail',
       'clients',
-      'consignerContacts',
-      'consignerPhones',
       'consignerAddresses',
       'consigneeContacts',
       'consigneePhones',
@@ -397,7 +502,7 @@ export default {
     ]),
 
     totalFee () {
-      const feeList = ['freightFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
+      const feeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
       const orderForm = this.orderForm
       let totalFee = 0
       for (let fee of feeList) {
@@ -406,6 +511,24 @@ export default {
         }
       }
       return totalFee
+    },
+    startTimeOptions () {
+      const stdt = this.formateDate(this.orderForm.deliveryTime)
+      const eddt = this.formateDate(this.orderForm.arriveTime)
+      return stdt === eddt ? this.orderForm.arriveTimes : ''
+    },
+    endTimeOptions () {
+      const stdt = this.formateDate(this.orderForm.deliveryTime)
+      const eddt = this.formateDate(this.orderForm.arriveTime)
+      return stdt === eddt ? this.orderForm.deliveryTimes : ''
+    },
+    startCityCode () {
+      const arr = cityUtil.getPathByCode(this.orderForm.start)
+      return arr.length ? arr[1].code : ''
+    },
+    endCityCode () {
+      const arr = cityUtil.getPathByCode(this.orderForm.end)
+      return arr.length ? arr[1].code : ''
     }
   },
   watch: {
@@ -440,10 +563,14 @@ export default {
           // vm.orderForm.start = areas.getPathByCode(orderDetail.start).map((item) => item.code)
           // vm.orderForm.end = areas.getPathByCode(orderDetail.end).map((item) => item.code)
           if (vm.orderForm.deliveryTime) {
-            vm.orderForm.deliveryTime = new Date(vm.orderForm.deliveryTime)
+            const deliveryTime = new Date(vm.orderForm.deliveryTime)
+            vm.orderForm.deliveryTime = deliveryTime
+            vm.orderForm.deliveryTimes = `${deliveryTime.getHours() > 9 ? deliveryTime.getHours() : '0' + deliveryTime.getHours()}:${deliveryTime.getMinutes() > 9 ? deliveryTime.getMinutes() : '0' + deliveryTime.getMinutes()}`
           }
           if (vm.orderForm.arriveTime) {
-            vm.orderForm.arriveTime = new Date(vm.orderForm.arriveTime)
+            const arriveTime = new Date(vm.orderForm.arriveTime)
+            vm.orderForm.arriveTime = arriveTime
+            vm.orderForm.arriveTimes = `${arriveTime.getHours() > 9 ? arriveTime.getHours() : '0' + arriveTime.getHours()}:${arriveTime.getMinutes() > 9 ? arriveTime.getMinutes() : '0' + arriveTime.getMinutes()}`
           }
         })
         .catch((errorInfo) => {
@@ -469,14 +596,12 @@ export default {
   beforeDestroy () {
     this.resetForm()
     this.clearClients()
-    this.clearOrderDetail()
   },
   methods: {
     ...mapActions([
       'getClients',
       'getConsignerDetail',
       'clearCargoes',
-      'clearOrderDetail',
       'clearClients',
       'getOrderDetail',
       'submitOrder'
@@ -523,7 +648,13 @@ export default {
     // 选择客户dropdown的数据
     handleSelectConsigner (name, row) {
       const _this = this
-      _this.resetForm()
+      /**
+       * 重置表单，除货物信息以外
+       * 1. 切换客户
+       * 2. 用户手动先输入
+       *
+       */
+      _this.$refs.orderForm.resetFields()
       _this.getConsignerDetail(row.id).then((response) => {
         const { consigneeList: consignees, addressList: addresses, cargoList, ...consigner } = response.data
         // 设置发货人信息，发货联系人，手机，发货地址
@@ -531,21 +662,31 @@ export default {
         _this.orderForm.consignerPhone = consigner.phone
         if (addresses.length > 0) {
           _this.orderForm.consignerAddress = addresses[0].address
+          _this.orderForm.consignerAddressLongitude = addresses[0].longitude
+          _this.orderForm.consignerAddressLatitude = addresses[0].latitude
         }
         if (consignees.length > 0) {
           // 设置收货人信息，收货人，手机，收货地址
           _this.orderForm.consigneeContact = consignees[0].contact
           _this.orderForm.consigneePhone = consignees[0].phone
           _this.orderForm.consigneeAddress = consignees[0].address
+          _this.orderForm.consigneeAddressLongitude = consignees[0].longitude
+          _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
         }
         let settlementType = consigner.settlementType || consigner.payType
         if (settlementType) {
           _this.orderForm.settlementType = settlementType
         }
+        /**
+         * 1. 货物信息如果之前已经有数据了，就不清空
+         * 2. 如果之前是空的就赋值
+         */
         if (cargoList.length > 0) {
-          // 清空信息，防止信息追加到已维护的货物信息中去
-          _this.tempCargoes = {}
-          _this.consignerCargoes = [new Cargo(cargoList[0], true)]
+          // 如果在货物信息中已经有数据了，就不覆盖了；如果没有货物信息，就默认添加已维护的货物
+          const confignerCargoValid = _this.consignerCargoes[0].validate()
+          if (!confignerCargoValid.success) {
+            _this.consignerCargoes = [new Cargo(cargoList[0], true)]
+          }
         }
       })
     },
@@ -562,6 +703,14 @@ export default {
         this.$Message.warning('请先选择客户')
         return
       }
+      if (!vm.orderForm.start) {
+        this.$Message.warning('请先选择始发城市')
+        return
+      }
+      if (!vm.orderForm.end) {
+        this.$Message.warning('请先选择目的城市')
+        return
+      }
       const statics = vm.$refs.cargoTable.statics
       /**
        * 重量和体积二选一，或者都填写，可以了
@@ -573,12 +722,14 @@ export default {
       this.openDialog({
         name: 'dialogs/financeRule.vue',
         data: {
-          start: getCityCode(vm.orderForm.start), // 始发城市
-          end: getCityCode(vm.orderForm.end), // 目的城市
+          start: vm.orderForm.start, // 始发城市
+          end: vm.orderForm.end, // 目的城市
           partnerName: vm.orderForm.consignerName, // 客户名
           partnerType: 1, // 计算规则分类：1-发货方，2-承运商，3-外转方
           weight: statics.weight,
-          volume: statics.volume
+          volume: statics.volume,
+          startPoint: { lat: this.orderForm.consignerAddressLatitude, lng: this.orderForm.consignerAddressLongitude },
+          endPoint: { lat: this.orderForm.consigneeAddressLatitude, lng: this.orderForm.consigneeAddressLongitude }
         },
         methods: {
           ok (value) {
@@ -614,12 +765,12 @@ export default {
               return
             }
             // 始发地遇到北京市等特殊直辖市，需要只保留第一级code
-            let start = getCityCode(orderForm.start)
-            let end = getCityCode(orderForm.end)
+            // let start = getCityCode(orderForm.start)
+            // let end = getCityCode(orderForm.end)
             // 始发城市，目的城市，到达时间等需要额外处理
             let form = Object.assign({}, orderForm, {
-              start: start,
-              end: end,
+              // start: start,
+              // end: end,
               arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
               deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
               orderCargoList: orderCargoList.map(cargo => cargo.toJson())
@@ -627,6 +778,8 @@ export default {
 
             ['start', 'end'].forEach(field => {
               form[field] = parseInt(form[field])
+              // 保存本地记录
+              vm.$refs['start'].saveCity(form[field])
             })
             // 转换成分单位
             transferFeeList.forEach((fee) => {
@@ -673,7 +826,6 @@ export default {
       this.$refs.orderForm.resetFields()
       this.clearCargoes()
       this.consignerCargoes = [new Cargo()]
-      resetCityValidator()
     },
     // 修改订单完结束后，自动关闭页面
     closeTab () {
@@ -697,6 +849,36 @@ export default {
             vm.closeTab()
           }
         })
+    },
+    dateChange (type, date) {
+      const refs = type === 'START_DATE' ? 'stTimeInput' : type === 'END_DATE' ? 'edTimeInput' : ''
+      if (date && refs) {
+        // this.$root.$emit(type, 'show')
+        this.$refs[refs].changeShow(type)
+        this.$refs[refs].focus()
+      }
+    },
+    formateDate (date) {
+      if (!(typeof date === 'object' && date instanceof Date)) {
+        return ''
+      }
+      const dates = new Date(date)
+      const y = dates.getFullYear()
+      const m = this.getTwoNum(dates.getMonth() + 1)
+      const d = this.getTwoNum(dates.getDate())
+      return `${y}-${m}-${d}`
+    },
+    getTwoNum (d) {
+      return d > 9 ? d : 0 + d
+    },
+    latlongtChange (type, lat, lng) {
+      if (type === 1) {
+        this.orderForm.consignerAddressLongitude = lng
+        this.orderForm.consignerAddressLatitude = lat
+      } else if (type === 2) {
+        this.orderForm.consigneeAddressLongitude = lng
+        this.orderForm.consigneeAddressLatitude = lat
+      }
     }
   }
 }

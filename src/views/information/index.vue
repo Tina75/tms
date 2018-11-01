@@ -1,14 +1,6 @@
 <template>
-  <div class="temAll">
-    <Col span="3">
-    <Menu :active-name="typeName" class="menuSty" style="width: 100%;">
-      <MenuItem v-for="menu in menuList" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
-      <p style="margin-left:-20px;">{{menu.name}}
-      <Badge v-if="menu.infoNum" :count="menu.infoNum" class="menuInfoBadge"></Badge></p>
-      </MenuItem>
-    </Menu>
-    </Col>
-    <Col span="21" class="contentDiv">
+  <Row class="temAll">
+    <Col span="24" class="contentDiv">
     <div class="contendBorderBttom">
       <span class="iconRightTitle"></span>
       <span class="rightTitleSty">{{rightTitle}}</span>
@@ -23,10 +15,9 @@
         </span>
       </div>
     </div>
-    <div style="min-height:520px;">
+    <div>
       <!--系统消息-->
       <div v-if="'0' === this.searchData.type">
-        <Col span="24">
         <div class="mesDivAll">
           <Checkbox
             v-if="!batchBtnShow"
@@ -41,7 +32,9 @@
           </div>
           <div v-for="msg in this.sysMessageList" v-else :key="msg.id" class="megDiv">
             <CheckboxGroup v-if="!batchBtnShow" v-model="checkAllGroup" class="checkAllGroup" @on-change="checkAllGroupChange">
-              <Checkbox :label="msg.id" class="checkboxItem"></Checkbox>
+              <Checkbox :label="msg.id" class="checkboxItem">
+                <span></span>
+              </Checkbox>
             </CheckboxGroup>
             <div class="msgImg">
               <i class="icon font_family icon-xitongxiaoxi" style="color: #FFBB44;"></i>
@@ -58,7 +51,6 @@
             </div>
           </div>
         </div>
-          </Col>
       </div>
       <!--订单消息-->
       <div v-if="'1' === this.searchData.type">
@@ -92,7 +84,7 @@
             </div>
           </div>
         </div>
-        </Col>
+          </Col>
       </div>
       <!--运输消息-->
       <div v-if="'2' === this.searchData.type">
@@ -126,7 +118,7 @@
             </div>
           </div>
         </div>
-        </Col>
+          </Col>
       </div>
       <Modal v-model="visibaleRemove" type="warning" width="360">
         <p slot="header" class="modalTitle">
@@ -135,7 +127,7 @@
         <p>
           <i class="icon font_family icon-bangzhuzhongxin"></i>
         </p><p class="modalMessage">确定要删除“{{messageInit.title}}”消息吗?</P>
-        </p>
+          </p>
         <div slot="footer">
           <Button type="primary" @click="removeSubForm">确定</Button>
           <Button  @click="removeCancelForm">取消</Button>
@@ -148,7 +140,7 @@
         <p>
           <i class="icon font_family icon-bangzhuzhongxin"></i>
         </p><p class="modalMessage">确定要批量删除选中的消息吗?</P>
-        </p>
+          </p>
         <div slot="footer">
           <Button type="primary" @click="removeSubFormSome">确定</Button>
           <Button  @click="removeCancelFormSome">取消</Button>
@@ -161,7 +153,7 @@
         <p>
           <i class="icon font_family icon-bangzhuzhongxin"></i>
         </p><p class="modalMessage">确定要删除所有的“{{rightTitle}}”?</P>
-        </p>
+          </p>
         <div slot="footer">
           <Button type="primary" @click="removeSubFormAll">确定</Button>
           <Button  @click="removeCancelFormAll">取消</Button>
@@ -181,12 +173,13 @@
       @on-change="searchInfoData"
       @on-page-size-change="chagePageSize"/>
     </Col>
-  </div>
+  </Row>
 </template>
 
 <script>
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
+import TMSUrl from '@/libs/constant/url'
 import { mapActions } from 'vuex'
 export default {
   name: 'info',
@@ -199,7 +192,7 @@ export default {
     return {
       rightTitle: '',
       type: '0',
-      typeName: '',
+      typeName: '0',
       messageInit: {},
       messageType: '',
       messageCheckGroupInit: [],
@@ -217,17 +210,18 @@ export default {
         name: '系统消息',
         id: '0',
         infoNum: ''
-      }, {
-        name: '订单消息',
-        id: '1',
-        infoNum: '',
-        code: 110000
-      }, {
-        name: '运输消息',
-        id: '2',
-        infoNum: '',
-        code: 120000
       }],
+      // }, {
+      //   name: '订单消息',
+      //   id: '1',
+      //   infoNum: '',
+      //   code: 110000
+      // }, {
+      //   name: '运输消息',
+      //   id: '2',
+      //   infoNum: '',
+      //   code: 120000
+      // }],
       searchData: {
         type: '0',
         pageNo: 1,
@@ -254,14 +248,14 @@ export default {
         this.rightTitle = this.typeName = '系统消息'
         this.searchData.type = '0'
         break
-      case 1:
-        this.rightTitle = this.typeName = '订单消息'
-        this.searchData.type = '1'
-        break
-      case 2:
-        this.rightTitle = this.typeName = '运输消息'
-        this.searchData.type = '2'
-        break
+      // case 1:
+      //   this.rightTitle = this.typeName = '订单消息'
+      //   this.searchData.type = '1'
+      //   break
+      // case 2:
+      //   this.rightTitle = this.typeName = '运输消息'
+      //   this.searchData.type = '2'
+      //   break
       default:
         this.rightTitle = this.typeName = '系统消息'
         this.searchData.type = '0'
@@ -285,14 +279,9 @@ export default {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     },
     getMenuInfoNum () {
-      this.menuList[0].infoNum = this.$store.getters.MsgCount.sysNum
-      this.menuList[1].infoNum = this.$store.getters.MsgCount.orderNum
-      this.menuList[2].infoNum = this.$store.getters.MsgCount.carrierNum
-      if (!this.batchBtnShow) {
-        for (let index = 0; index < document.getElementsByClassName('checkboxItem').length; index++) {
-          document.getElementsByClassName('checkboxItem')[index].children[1].innerText = ''
-        }
-      }
+      // this.menuList[0].infoNum = this.$store.getters.MsgCount.sysNum
+      // this.menuList[1].infoNum = this.$store.getters.MsgCount.orderNum
+      // this.menuList[2].infoNum = this.$store.getters.MsgCount.carrierNum
     },
     getMenuList (params) {
       Server({
@@ -300,19 +289,24 @@ export default {
         method: 'get',
         data: params
       }).then(({ data }) => {
-        if (params.type === '1') {
-          this.orderMessageList = data.data.list
-          this.searchData.type = '1'
-          this.batchBtnShowAll = data.data.list.length > 0
-        } else if (params.type === '2') {
-          this.transportMessageList = data.data.list
-          this.searchData.type = '2'
-          this.batchBtnShowAll = data.data.list.length > 0
-        } else {
+        if (params.type === '0') {
           this.sysMessageList = data.data.list
           this.searchData.type = '0'
           this.batchBtnShowAll = data.data.list.length > 0
         }
+        // if (params.type === '1') {
+        //   this.orderMessageList = data.data.list
+        //   this.searchData.type = '1'
+        //   this.batchBtnShowAll = data.data.list.length > 0
+        // } else if (params.type === '2') {
+        //   this.transportMessageList = data.data.list
+        //   this.searchData.type = '2'
+        //   this.batchBtnShowAll = data.data.list.length > 0
+        // } else {
+        //   this.sysMessageList = data.data.list
+        //   this.searchData.type = '0'
+        //   this.batchBtnShowAll = data.data.list.length > 0
+        // }
         data.data.list.forEach(element => {
           this.checkBoxListInit.push(element.id)
         })
@@ -346,8 +340,6 @@ export default {
           this.visibaleRemoveAll = false
           this.getMenuList(this.searchData)
           this.getMessageCount()
-        } else {
-          this.$Message.success(data.msg)
         }
       })
     },
@@ -379,7 +371,7 @@ export default {
         // 0系统消息4订单消息5回单消息6运单消息7提货单消息8外转单消息
         case 0:
           this.openTab({
-            path: '/information/message-info',
+            path: TMSUrl.MESSAGE_DETAIL, // '/information/message-info',
             query: {
               id: msg.title,
               message: msg
@@ -388,31 +380,31 @@ export default {
           break
         case 4:
           this.openTab({
-            path: '/order-management/order',
+            path: TMSUrl.ORDER_MANAGEMENT, // '/order-management/order',
             title: '订单管理'
           })
           break
         case 5:
           this.openTab({
-            path: '/order-management/receipt',
+            path: TMSUrl.RECEIPT_ORDER_MANAGEMENT, // '/order-management/receipt',
             title: '回单管理'
           })
           break
         case 6:
           this.openTab({
-            path: '/transport/waybill',
+            path: TMSUrl.TANSPORT_ORDER, // '/transport/waybill',
             title: '运单管理'
           })
           break
         case 7:
           this.openTab({
-            path: '/transport/receiveOrder',
+            path: TMSUrl.PICKUP_ORDER, // '/transport/pickupOrder',
             title: '提货单管理'
           })
           break
         case 8:
           this.openTab({
-            path: '/transport/outerOrder',
+            path: TMSUrl.OUTER_ORDER, // '/transport/outerOrder',
             title: '外转单管理'
           })
           break
@@ -485,9 +477,7 @@ export default {
     font-weight: bold;
 .temAll
   width: 100%;
-  height: 100%;
   background:rgba(243,245,249,1);
-  overflow: auto;
 .megDiv
   clear: both;
   height: 70px;
@@ -521,10 +511,11 @@ export default {
   cursor: pointer;
   float: right;
 .noneImg
-  position: absolute;
-  left: 50%;
-  margin-left: -110px;
-  margin-top: 100px;
+  display flex
+  flex-direction column
+  justify-content center
+  align-items center
+  margin-top: 112px;
   text-align: center;
   color: #999999;
   font-size: 16px;
@@ -538,8 +529,6 @@ export default {
 .contentDiv
   background:#fff;
   padding: 0 25px 50px 25px;
-  overflow: auto;
-  height: inherit;
 .contendBorderBttom
   border-bottom: 1px solid #e9e9e9;
   padding-bottom:10px;
@@ -553,7 +542,7 @@ export default {
   margin-top: 2px;
   border-radius:3px;
 .rightTitleSty
-  margin-left:35px;
+  margin-left:15px;
   font-size: 16px;
   font-weight:600;
 .rightConfBtnRemove
@@ -581,11 +570,10 @@ export default {
   color: #FFBB44;
   float:left;
   width:40px;
-  margin-top: 10px;
-  margin-left:10%;
+  margin-top: 3px;
 .modalMessage
-  margin-top:23px;
-  margin-bottom:10px;
+  margin-top:15px;
+  margin-bottom:20px;
   font-size:14px;
 .configBtn
   width: 86px;

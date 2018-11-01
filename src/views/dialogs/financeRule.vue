@@ -26,11 +26,12 @@
 
 <script>
 
-/** 使用方式参考 /transport/detail/detailFreight.js 614行 */
+/** 使用方式参考 /transport/detail/detailFreight.js 620行 */
 
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import float from '@/libs/js/float'
+import BMap from 'BMap'
 
 let errorMsg = ''
 
@@ -41,7 +42,7 @@ export default {
     const chargeValidate = (rule, value, callback) => {
       const type = this.ruleOptions[value].ruleType
       if (errorMsg) callback(new Error(errorMsg))
-      else if ((type === 1 && !this.weight) || (type === 2 && !this.volume) || !type) callback(new Error('未能找到相应的计费规则'))
+      else if (((type === 1 || type === 3) && !this.weight) || ((type === 2 || type === 4) && !this.volume) || !type) callback(new Error('未能找到相应的计费规则'))
       else callback()
     }
 
@@ -51,6 +52,7 @@ export default {
       ruleOptions: [],
       ruleEmpty: false,
       charge: 0,
+      distance: 0,
       zIndex: new Date().getTime(),
       rules: {
         ruleIndex: [{ validator: chargeValidate }]
@@ -58,10 +60,11 @@ export default {
     }
   },
   created () {
-    console.log(this.$data)
     this.fetchRules()
+    this.distanceCalculate()
   },
   methods: {
+    // 查询计费规则
     fetchRules () {
       this.loading = true
       Server({
@@ -77,9 +80,39 @@ export default {
       })
     },
 
-    ruleChanged (index) {
+    // 计算距离
+    distanceCalculate () {
+      return new Promise((resolve, reject) => {
+        if (this.startPoint && this.endPoint && !this.distance) { // 在有定位且未计算出距离时才执行
+          const startPoint = new BMap.Point(this.startPoint.lng, this.startPoint.lat)
+          const endPoint = new BMap.Point(this.endPoint.lng, this.endPoint.lat)
+          const route = new BMap.DrivingRoute(startPoint, {
+            policy: window.BMAP_DRIVING_POLICY_LEAST_DISTANCE, // 距离最短路线
+            onSearchComplete: res => {
+              const plan = res.getPlan(0)
+              if (plan) { // 如果线路存在则获取距离
+                this.distance = plan.getDistance(false)
+              } else if (!plan && !this.distance) { // 如果不存在线路规划且距离为0，则清空始发和终点，不再计算
+                console.error('查询路线失败，请检查经纬度是否正确')
+                this.startPoint = void 0
+                this.endPoint = void 0
+              } else {
+                resolve()
+              }
+            }
+          })
+          route.search(startPoint, endPoint)
+        }
+        resolve()
+      })
+    },
+
+    async ruleChanged (index) {
       errorMsg = ''
+      await this.distanceCalculate() // 重复执行距离计算，确保计算出距离，如果已经有计算结果，则该方法会直接返回
       const rule = this.ruleOptions[index]
+      if ((rule.ruleType === 3 || rule.ruleType === 4) && this.distance === 0) errorMsg = '地址填写不够详细无法算出里程数'
+
       this.$refs.$form.validate(valid => {
         if (!valid) return
         Server({
@@ -89,7 +122,8 @@ export default {
             ruleId: rule.id,
             departure: this.start,
             destination: this.end,
-            input: float.round((rule.ruleType === 1 ? this.weight : this.volume) * 100)
+            distance: this.distance,
+            input: float.round(((rule.ruleType === 1 || rule.ruleType === 3) ? this.weight : this.volume) * 100)
           }
         }).then(res => {
           this.charge = float.round(res.data.data / 100)

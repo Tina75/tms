@@ -64,7 +64,7 @@ export default {
       keyword: '',
       order: null,
       totalCount: 0, // 总条数
-      pageArray: [10, 20, 50, 100],
+      pageArray: [10, 20, 50],
       pageNo: 1,
       pageSize: 10,
       payTypeMap: {

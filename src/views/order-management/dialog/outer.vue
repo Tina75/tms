@@ -69,6 +69,15 @@ export default {
 
   mixins: [BaseDialog],
   data () {
+    // 9位整数 2位小数
+    const validateFee = (rule, value, callback) => {
+      if ((value && /^[0-9]{0,9}(?:\.\d{1,2})?$/.test(value)) || !value) {
+        callback()
+      } else {
+        callback(new Error('最多整数位只可输入9位,小数两位'))
+      }
+    }
+
     return {
       settlements,
       info: { transfereeName: '', outTransNo: '', payType: 4, transFee: null },
@@ -81,7 +90,8 @@ export default {
           { required: true, message: '请选择付款方式' }
         ],
         transFee: [
-          { required: true, type: 'number', message: '请填写外转运费' }
+          { required: true, type: 'number', message: '请填写外转运费' },
+          { validator: validateFee }
         ]
       }
     }
@@ -111,12 +121,12 @@ export default {
     },
     save () {
       this.$refs['info'].validate((valid) => {
-        this.info = Object.assign({}, this.info, {
-          orderId: this.detail.id,
-          payType: Number(this.info.payType),
-          transFee: Number(this.info.transFee) * 100
-        })
         if (valid) {
+          this.info = Object.assign({}, this.info, {
+            orderId: this.detail.id,
+            payType: Number(this.info.payType),
+            transFee: Number(this.info.transFee) * 100
+          })
           Server({
             url: 'outside/bill/create',
             method: 'post',
@@ -142,7 +152,9 @@ export default {
             weight: self.detail.weight, // 货物重量
             volume: self.detail.volume, // 货物体积
             start: self.detail.start, // 始发地code
-            end: self.detail.end // 目的地code
+            end: self.detail.end, // 目的地code
+            startPoint: { lat: self.detail.consignerAddressLatitude, lng: self.detail.consignerAddressLongitude }, // 始发地经纬度
+            endPoint: { lat: self.detail.consigneeAddressLatitude, lng: self.detail.consigneeAddressLongitude } // 目的地经纬度
           },
           methods: {
             // 确认计费规则后返回金额(元)

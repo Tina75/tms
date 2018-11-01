@@ -1,9 +1,6 @@
 <template>
-  <div ref="el" class="page-home">
+  <div ref="el" :style="styleHeight" class="page-home">
     <div class="page-home__header">
-      <Alert v-if="notice" type="warning" class="page-home__header-notice" banner closable show-icon>
-        <Icon slot="icon" type="ios-bulb-outline"></Icon>
-      </Alert>
       <Row class="page-home__header-row">
         <Col span="18">
         <span class="page-home__header-greetings" v-html="greetings"></span>
@@ -31,6 +28,13 @@
         </Poptip>
         </Col>
       </Row>
+      <Alert v-if="notice.content" type="warning" class="page-home__header-notice" banner closable show-icon @on-close="closeNotice">
+        <span :class="{'page-home__noticeBar__Pointer': notice.url}" class="page-home__noticeBar" @click="hrefHandle">
+          <TextMarquee :content="notice.content" :speed="30"/>
+        </span>
+        <FontIcon slot="icon" type="tongzhi-paomadeng" size="20" style="vertical-align: middle; color: #00A4BD"></FontIcon>
+        <FontIcon slot="close" type="ico-fault" style="color: #9DA1B0"></FontIcon>
+      </Alert>
     </div>
     <Row :gutter="16" type="flex" justify="start">
       <!-- 提货代办 -->
@@ -75,6 +79,7 @@ import server from '@/libs/js/server'
 
 import OrderCard from './components/OrderCard.vue'
 import BlankCard from './components/BlankCard.vue'
+import TextMarquee from './components/TextMarquee.vue'
 import BasePage from '@/basic/BasePage'
 import FontIcon from '@/components/FontIcon'
 
@@ -98,10 +103,12 @@ import ExteriorTodo from './plugins/exterior-todo.vue'
 import NewCustumerStatis from './plugins/new-customer-statis.vue'
 import CarPosition from './plugins/car-postion.vue'
 
+// const processNoticeKey = 'tms_process_notice'
 export default {
   name: 'index',
   metaInfo: { title: '首页' },
   components: {
+    TextMarquee,
     OrderCard,
     FontIcon,
     BlankCard,
@@ -126,8 +133,10 @@ export default {
   data () {
     return {
       visible: false,
-      // notice: '因腾讯云服务器数据丢失，部分数据展示异常。紧急抢修中，请您耐心等待',
-      notice: null,
+      notice: {
+        content: '',
+        url: ''
+      },
       cardChecks: [],
       cardChecksTemp: [],
       cardsMap: {
@@ -139,14 +148,14 @@ export default {
         'carrier-todo': '承运商核销待办',
         'transferfee-todo': '外转方核销待办',
         'message-center': '消息中心',
-        'order-create': '今日订单数',
-        'new-customer': '新增客户数',
+        'order-create': '今日开单数',
+        'new-customer': '今日新增客户数',
         'transport-location': '在途车辆位置',
-        'turnover-statistics': '营业额通知',
-        'dispatch-statistics': '调度订单数',
-        'order-statistics': '开单数',
-        'pay-receive': '应收款/应付款项',
-        'cargo-statistics': '货物重量/体积'
+        'turnover-statistics': '近七日订单和营业额统计',
+        'dispatch-statistics': '近七日调度订单数',
+        'order-statistics': '近七日开单数',
+        'pay-receive': '今日应收款项 / 应付款项',
+        'cargo-statistics': '今日开单货物重量 / 体积'
       },
       cardsList: [],
       intersectionObserver: null
@@ -172,6 +181,9 @@ export default {
       } else if (now >= 22 || now < 5) {
         return `<strong class="van-font-14 i-pr-20">夜深了，${name}</strong> &nbsp;&nbsp;再怎么忙碌，也要注意休息哦。`
       }
+    },
+    styleHeight () {
+      return { height: this.$parent.$parent.$el.children[0].style.minHeight }
     }
   },
   created () {
@@ -189,12 +201,7 @@ export default {
   },
   mounted () {
     this.initCardList()
-    // server({
-    //   url: 'home/message',
-    //   method: 'get'
-    // }).then(res => {
-    //   this.notice = res.data.data
-    // })
+    this.initNotice()
   },
   beforeDestroy () {
     if (this.intersectionObserver) {
@@ -235,13 +242,50 @@ export default {
       const vm = this
       entries.forEach((entry) => {
         if (entry.isIntersecting || entry.intersectionRatio > 0) {
-          eventHub.$emit(`plugin:${entry.target.$vm.$options.name}`)
+          // 账号过期后，不发送请求
+          if (vm.UserInfo.expirationTime > Date.now()) {
+            eventHub.$emit(`plugin:${entry.target.$vm.$options.name}`)
+          }
           vm.unobserve(entry.target)
         }
       })
     },
     unobserve (el) {
       this.intersectionObserver.unobserve(el)
+    },
+    /**
+     * 查询跑马灯消息
+     * 只会返回一条
+     */
+    initNotice () {
+      server({
+        url: 'message/pmd',
+        method: 'get'
+      }).then(res => {
+        if (res && res.data.code === 10000) {
+          this.notice = res.data.data
+          // this.cardChecksTemp = []
+          // for (const i of data) {
+          //   if (i.valid === 1) {
+          //     this.cardChecksTemp.push(i.name)
+          //   }
+          // }
+          // this.cardsList = data
+          // this.cardChecks = this.cardChecksTemp
+        }
+      })
+    },
+    /**
+     * 关闭消息
+     */
+    closeNotice (e) {
+      server({
+        url: 'message/pmdDel',
+        method: 'get',
+        params: { id: this.notice.id }
+      }).then(() => {
+        this.notice = {}
+      })
     },
     // 获取card数组
     initCardList () {
@@ -282,23 +326,22 @@ export default {
     cancelAction () {
       this.visible = false
       this.cardChecks = this.cardChecksTemp
+    },
+    // 跳转链接
+    hrefHandle () {
+      if (this.notice.url) {
+        open(this.notice.url)
+      }
     }
   }
 
 }
 </script>
 <style lang="stylus" scoped>
-.ivu-layout-sider-collapsed
-  .page-home
-    left 70px
 .page-home
   -webkit-transition all .2s ease-in-out
   transition all .2s ease-in-out
-  position absolute
-  left 218px
-  top 65px
-  right 20px
-  bottom 15px
+  margin -20px -15px
   overflow-y auto
   overflow-x hidden
   background-color #efefef;
@@ -325,8 +368,12 @@ export default {
   &__header-greetings
     line-height 24px
   &__header-notice
-    z-index 10
     width 100%
+    background #fff
+    border-color #EFEFEF
+    border-radius 5px
+    margin-top 10px
+    margin-bottom 0
   &__header-date
     vertical-align super
     margin-right 30px
@@ -335,4 +382,17 @@ export default {
   &__message-item
     background-color #f3f3f3
     margin-bottom 8px
+  &__noticeBar
+    position relative
+    &__Pointer
+      cursor pointer
+    :before
+      position absolute
+      left 3px
+      // top 0px
+      content ''
+      display block
+      width 1px
+      height 16px
+      background-color #e5e7eb
 </style>

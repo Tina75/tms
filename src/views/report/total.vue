@@ -12,7 +12,7 @@
           type="daterange"
           format="yyyy-MM-dd"
           placeholder="开始日期-结束日期"
-          style="display: inline-block;width: 240px;height: 35px;margin-left: 20px"
+          style="display: inline-block;width: 240px;margin-left: 20px"
           @on-clear = "clearKeywords"
           @on-change="handleTimeChange"
         >
@@ -98,6 +98,13 @@ export default {
           key: 'freightFee',
           render: (h, params) => {
             return h('span', (params.row.freightFee / 100).toFixed(2))
+          }
+        },
+        {
+          title: '提货费',
+          key: 'pickupFee',
+          render: (h, params) => {
+            return h('span', (params.row.pickupFee / 100).toFixed(2))
           }
         },
         {

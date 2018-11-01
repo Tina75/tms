@@ -1,6 +1,6 @@
 <template>
-  <div class="temAll">
-    <Col span="4">
+  <Row class="temAll">
+    <Col :style="styleHeight" span="4">
     <Menu :open-names="['1']" style="width: 100%;" class="menuSty" accordion>
       <Submenu name="1">
         <template slot="title">
@@ -9,17 +9,17 @@
         </template>
         <MenuItem v-for="menu in picMenu" :key="menu.id" :name="menu.title" class="secondTitle" @click.native="clickLeftMenuPic(menu)">
         {{menu.title}}
-        </MenuItem>
+          </MenuItem>
       </Submenu>
       <!-- <Submenu name="2">
-        <template slot="title">
-          <i class="icon font_family icon-shipin"></i>
-          <span class="title">视频介绍</span>
-        </template>
-        <MenuItem v-for="menu in videoMenu" :key="menu.id" :name="menu.title" class="secondTitle" @click.native="clickLeftMenuVideo(menu)">
-        {{menu.title}}
-          </MenuItem>
-      </Submenu> -->
+          <template slot="title">
+            <i class="icon font_family icon-shipin"></i>
+            <span class="title">视频介绍</span>
+          </template>
+          <MenuItem v-for="menu in videoMenu" :key="menu.id" :name="menu.title" class="secondTitle" @click.native="clickLeftMenuVideo(menu)">
+          {{menu.title}}
+            </MenuItem>
+        </Submenu> -->
     </Menu>
     </Col>
     <Col span="20" class="contentInfoDiv">
@@ -40,7 +40,7 @@
       </div>
     </Card>
     </Col>
-  </div>
+  </Row>
 </template>
 
 <script>
@@ -59,6 +59,11 @@ export default {
       picContent: {},
       videoContent: {},
       type: 'pic'
+    }
+  },
+  computed: {
+    styleHeight () {
+      return { height: this.$parent.$el.children[0].getBoundingClientRect().height + 'px' }
     }
   },
   mounted: function () {
@@ -88,7 +93,6 @@ export default {
     picImagList () {
       for (let index = 0; index < this.picMenu.length; index++) {
         if (this.picMenu[index].urlList.includes(',')) {
-          console.dir(this.picMenu[index])
           this.picMenu[index].urlList = this.picMenu[index].urlList.split(',')
         } else {
           this.picMenu[index].urlList = [this.picMenu[index].urlList]
@@ -168,7 +172,7 @@ export default {
 .contentInfoDiv
   background:#fff;
   padding-left: 20px;
-  height: inherit;
+  height: 100%;
   overflow: auto;
 .contentCard
   margin-top:-20px;

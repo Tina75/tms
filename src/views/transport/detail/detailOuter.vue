@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="transport-detail">
     <!-- 运单号及状态 -->
     <section class="detail-header">
       <ul class="detail-header-list">
@@ -45,15 +45,15 @@
         <Row class="detail-field-group">
           <i-col span="6">
             <span class="detail-field-title">始发地：</span>
-            <span>{{ info.start | cityFormatter }}</span>
+            <span>{{ info.startName }}</span>
           </i-col>
           <i-col span="6">
             <span class="detail-field-title">目的地：</span>
-            <span>{{ info.end | cityFormatter }}</span>
+            <span>{{ info.endName }}</span>
           </i-col>
           <i-col span="6">
             <span class="detail-field-title">提货方式：</span>
-            <span>{{ info.pickup ? '上门提货' : '送货上门' }}</span>
+            <span>{{ info.pickup ? '小车上门提货' : '大车直送客户' }}</span>
           </i-col>
           <i-col span="6">
             <span class="detail-field-title">回单数：</span>
@@ -100,7 +100,7 @@
         <div class="detail-part-title">
           <span>货物明细</span>
         </div>
-        <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
+        <Table :columns="tableColumns" :data="detail" :loading="loading" class="detail-field-table"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
           <span>总货值：{{ orderTotal.cargoCost }}</span>
@@ -159,9 +159,14 @@
 </template>
 
 <script>
+
+/**
+ * 外转单详情
+ */
+
 import BasePage from '@/basic/BasePage'
-import TransportBase from '../transportBase'
-import DetailMixin from './detailMixin'
+import TransportBase from '../mixin/transportBase'
+import DetailMixin from '../mixin/detailMixin'
 import Server from '@/libs/js/server'
 
 export default {
@@ -180,8 +185,10 @@ export default {
         consignerName: '',
         deliveryTimeLong: '',
         arriveTimeLong: '',
-        start: '',
-        end: '',
+        start: void 0,
+        end: void 0,
+        startName: '',
+        endName: '',
         pickup: '',
         receiptCount: '',
         consignerContact: '',
@@ -442,5 +449,5 @@ export default {
 </script>
 
 <style lang='stylus'>
-  @import "./detail.styl"
+  @import "../style/detail.styl"
 </style>

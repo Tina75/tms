@@ -18,7 +18,7 @@
         <li>{{ from === 'order' ? '订单状态：' : '回单状态：'}}<span style="font-weight: bold;">{{ from === 'order' ? statusToName(orderStatus) : statusToName(receiptStatus) }}</span></li>
       </ul>
     </header>
-    <div style="text-align: right;margin: 25px 0;min-height: 1px;">
+    <div style="text-align: right;margin: 24px 0;min-height: 1px;">
       <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
     </div>
     <section>
@@ -45,11 +45,11 @@
         <Row>
           <i-col span="7">
             <span>始发地：</span>
-            <span>{{detail.start | cityFormatter}}</span>
+            <span>{{detail.startName}}</span>
           </i-col>
           <i-col span="7">
             <span>目的地：</span>
-            <span>{{detail.end | cityFormatter}}</span>
+            <span>{{detail.endName}}</span>
           </i-col>
           <i-col span="7">
             <span>提货方式：</span>
@@ -62,7 +62,7 @@
             <span v-else>-</span>
           </i-col>
         </Row>
-        <Row style="margin-top:25px">
+        <Row style="margin-top:18px">
           <i-col span="7">
             <span>发货联系人：</span>
             <span>{{detail.consignerContact}}</span>
@@ -90,7 +90,7 @@
             <span>{{detail.consigneeAddress}}</span>
           </i-col>
         </Row>
-        <Row style="margin-top: 25px;">
+        <Row style="margin-top: 18px;">
           <i-col span="24">
             <span>备注：</span>
             <span>{{detail.remark}}</span>
@@ -98,10 +98,10 @@
         </Row>
       </div>
       <div v-if="from === 'order'" class="cargo-details">
-        <div class="title">
+        <div class="title" style="margin-top: 35px;">
           <span>货物明细</span>
         </div>
-        <Table :columns="tableColumns" :data="detail.orderCargoList"></Table>
+        <Table :columns="tableColumns" :data="detail.orderCargoList" style="margin-top: 30px;"></Table>
         <div class="table-footer">
           <span style="padding-right: 5px;box-sizing:border-box;">合计</span>
           <!-- <span>订单总数：{{ orderTotal }}</span> -->
@@ -115,43 +115,48 @@
         <div class="title">
           <span>应收费用</span>
         </div>
-        <Row>
-          <i-col span="4" style="margin-right: 30px;">
-            <span>运输费：</span>
+        <Row style="padding-top: 17px;">
+          <i-col span="4">
+            <span class="fee-style">运输费：</span>
             <span v-if="detail.freightFee" style="font-weight:bold;">{{detail.freightFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
-          <i-col span="4" style="margin-right: 30px;">
-            <span>装货费：</span>
+          <i-col span="4">
+            <span class="fee-style">提货费：</span>
+            <span v-if="detail.pickupFee" style="font-weight:bold;">{{detail.pickupFee | toPoint}}元</span>
+            <span v-else>-</span>
+          </i-col>
+          <i-col span="4">
+            <span class="fee-style">装货费：</span>
             <span v-if="detail.loadFee" style="font-weight:bold;">{{detail.loadFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
-          <i-col span="4" style="margin-right: 30px;">
-            <span>卸货费：</span>
+          <i-col span="4">
+            <span class="fee-style">卸货费：</span>
             <span v-if="detail.unloadFee" style="font-weight:bold;">{{detail.unloadFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
-          <i-col span="4" style="margin-right: 30px;">
-            <span>保险费：</span>
+          <i-col span="4">
+            <span class="fee-style">保险费：</span>
             <span v-if="detail.insuranceFee" style="font-weight:bold;">{{detail.insuranceFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
           <i-col span="4">
-            <span>其他：</span>
+            <span class="fee-style">其他：</span>
             <span v-if="detail.otherFee" style="font-weight:bold;">{{detail.otherFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
         </Row>
         <Row>
           <i-col span="24">
-            <span>费用合计：</span>
-            <span v-if="!detail.parentId" style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{FeeTotal | toPoint}} 元</span>
+            <span style="width: 72px;">费用合计：</span>
+            <span v-if="!detail.parentId" style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{detail.totalFee | toPoint}} 元</span>
             <span v-else>-</span>
           </i-col>
         </Row>
         <Row>
           <i-col span="24">
-            <span>结算方式：</span>
+            <span style="width: 72px;">结算方式：</span>
             <span>{{settlementToName(detail.settlementType)}}</span>
           </i-col>
         </Row>
@@ -160,20 +165,21 @@
         <div class="title">
           <span>{{from === 'order' ? '订单日志' : '回单日志'}}</span>
         </div>
-        <div style="display: flex;justify-content: flex-start;min-height: 150px;">
+        <div style="display: flex;justify-content: flex-start;min-height: 150px;margin-top: 25px;">
           <div class="fold-icon" @click="showOrderLog">
             <span :class="showLog ? 'hide-log' : 'show-log'"></span>
           </div>
-          <Timeline :class="showLog ? 'show-timeline' : 'hide-timeline'" :style="{ 'height': showLog ? 42*orderLogCount + 'px' : '15px' }" style="margin-top: 7px;overflow: hidden;">
+          <Timeline :class="showLog ? 'show-timeline' : 'hide-timeline'" :style="{ 'height': showLog ? 44*orderLogCount + 'px' : '15px' }" style="margin-top: 7px;overflow: hidden;">
             <TimelineItem v-for="(item, index) in orderLog" :key="index">
               <i slot="dot"></i>
-              <span style="margin-right: 60px;color: #777;font-size: 13px;">{{item.createTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
-              <span style="color: #333;font-size: 13px;">{{'【' + item.operatorName + '】' + item.description}}</span>
+              <span style="margin-right: 60px;color: #777;font-size: 14px;">{{item.createTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
+              <span style="color: #333;font-size: 14px;">{{'【' + item.operatorName + '】' + item.description}}</span>
             </TimelineItem>
           </Timeline>
         </div>
       </div>
     </section>
+    <OrderPrint ref="printer" :list="orderPrint"></OrderPrint>
   </div>
 </template>
 
@@ -181,10 +187,14 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import '@/libs/js/filter'
+import OrderPrint from './components/OrderPrint'
+import _ from 'lodash'
 export default {
   name: 'detail',
 
-  components: {},
+  components: {
+    OrderPrint
+  },
   mixins: [ BasePage ],
   metaInfo: { title: '订单详情' },
   data () {
@@ -193,6 +203,7 @@ export default {
         orderCargoList: []
       },
       from: this.$route.query.from,
+      source: this.$route.query.source, // 页面来源
       orderStatus: '',
       receiptStatus: '',
       waybillNums: [],
@@ -259,7 +270,8 @@ export default {
       currentStep: 0,
       orderLogCount: 0,
       showLog: false,
-      orderLog: []
+      orderLog: [],
+      orderPrint: []
     }
   },
 
@@ -342,6 +354,12 @@ export default {
         })
       } else if (btn.name === '回收' || btn.name === '返厂') {
         this.openReturnDialog(this.detail, btn.name)
+      } else if (btn.name === '打印') {
+        this.print(this.detail)
+      } else if (btn.name === '恢复') {
+        this.openRecoveryDialog(this.detail)
+      } else if (btn.name === '彻底删除') {
+        this.completelyDeleteDialog(this.detail)
       }
     },
     // 外转
@@ -397,6 +415,46 @@ export default {
       this.openDialog({
         name: 'order-management/dialog/return',
         data: data,
+        methods: {
+          ok (node) {
+            _this.getDetail()
+          }
+        }
+      })
+    },
+    // 打印
+    print (order) {
+      Server({
+        url: 'order/getOrderAndDetailList',
+        method: 'post',
+        data: {
+          orderIds: [order.id]
+        }
+      }).then((res) => {
+        console.log(res)
+        this.orderPrint = _.cloneDeep(res.data.data)
+        this.$refs.printer.print()
+      })
+    },
+    // 恢复
+    openRecoveryDialog (order) {
+      const _this = this
+      _this.openDialog({
+        name: 'order-management/dialog/recovery',
+        data: { id: [order] },
+        methods: {
+          ok (node) {
+            _this.getDetail()
+          }
+        }
+      })
+    },
+    // 彻底删除
+    completelyDeleteDialog (order) {
+      const _this = this
+      _this.openDialog({
+        name: 'order-management/dialog/completelyDelete',
+        data: { id: [order] },
         methods: {
           ok (node) {
             _this.getDetail()
@@ -469,6 +527,9 @@ export default {
         case 50:
           name = '已回单'
           break
+        case 100:
+          name = '已删除'
+          break
       }
       return name
     },
@@ -477,10 +538,10 @@ export default {
       let name
       switch (code) {
         case 1:
-          name = '上门提货'
+          name = '小车上门自提'
           break
         case 2:
-          name = '直接送货'
+          name = '大车直送客户'
           break
       }
       return name
@@ -551,9 +612,11 @@ export default {
         // 删除按钮
         if (r.transStatus === 0 && r.pickupStatus === 0 && r.parentId === '') {
           renderBtn.push(
-            { name: '删除', value: 1, code: 110107 }
+            { name: '删除', value: 1, code: 120204 }
           )
         }
+        // 打印
+        this.checkPrintCode(renderBtn)
         // 拆单按钮
         // if (r.transStatus === 0 && r.disassembleStatus !== 1) {
         //   renderBtn.push(
@@ -563,7 +626,7 @@ export default {
         // 外转按钮
         if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.pickupStatus === 0) {
           renderBtn.push(
-            { name: '外转', value: 3, code: 110104 }
+            { name: '外转', value: 3, code: 120209 }
           )
         }
         // 还原按钮
@@ -575,7 +638,7 @@ export default {
         // 编辑按钮
         if (r.transStatus === 0 && r.pickupStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
           renderBtn.push(
-            { name: '编辑', value: 5, code: 110106 }
+            { name: '编辑', value: 5, code: 120206 }
           )
         }
       }
@@ -583,37 +646,62 @@ export default {
         // 删除按钮
         if (r.pickup !== 1 && r.transStatus === 0 && r.dispatchStatus === 0 && r.parentId === '') {
           renderBtn.push(
-            { name: '删除', value: 1, code: 110107 }
+            { name: '删除', value: 1, code: 120105 }
           )
         }
+        // 打印
+        this.checkPrintCode(renderBtn)
         // 拆单按钮
         if (r.transStatus === 0 && r.disassembleStatus !== 1 && r.dispatchStatus === 0) {
           renderBtn.push(
-            { name: '拆单', value: 2, code: 110103 }
+            { name: '拆单', value: 3, code: 120110 }
           )
         }
         // 外转按钮
         if (r.transStatus === 0 && r.pickup !== 1 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0) {
           renderBtn.push(
-            { name: '外转', value: 3, code: 110104 }
+            { name: '外转', value: 4, code: 120111 }
           )
         }
         // 还原按钮
         if (r.parentId === '' && r.disassembleStatus === 1 && r.dispatchStatus === 0) {
           renderBtn.push(
-            { name: '还原', value: 4, code: 110105 }
+            { name: '还原', value: 5, code: 120112 }
           )
         }
         // 编辑按钮
         if (r.pickup !== 1 && r.transStatus === 0 && r.dispatchStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
           renderBtn.push(
-            { name: '编辑', value: 5, code: 110106 }
+            { name: '编辑', value: 6, code: 120107 }
           )
         }
       }
+      if (r.status === 100) { // 回收站状态
+        renderBtn = [
+          { name: '恢复', value: 1, code: 110110 },
+          { name: '彻底删除', value: 2, code: 110111 }
+        ]
+      }
       this.btnGroup = renderBtn
-      if (this.btnGroup.length > 0) {
+      if (this.btnGroup.length > 0 && r.status !== 100) {
         this.operateValue = this.btnGroup[this.btnGroup.length - 1].value // 默认点亮最后一个按钮
+      }
+    },
+    checkPrintCode (btns) {
+      if (this.source) {
+        if (this.source === 'order') {
+          btns.push(
+            { name: '打印', value: 2, code: 110108 }
+          )
+        } else if (this.source === 'waybill') {
+          btns.push(
+            { name: '打印', value: 2, code: 120103 }
+          )
+        } else if (this.source === 'pickup') {
+          btns.push(
+            { name: '打印', value: 2, code: 120202 }
+          )
+        }
       }
     },
     // 回单详情按钮过滤   0待回收；1待返厂（已回收）；2已返厂
@@ -642,12 +730,16 @@ export default {
     line-height  60px
     background rgba(233,252,255,1)
     >ul>li
+      font-size 13px
+      font-family 'PingFangSC-Regular'
+      font-weight 400
+      color #333
       display inline-block
       margin-right 100px
   .ivu-btn
     margin-left 15px
     width 80px
-    height 35px
+    height 32px
   .ivu-btn-default
     background #F9F9F9
   .ivu-row
@@ -662,8 +754,10 @@ export default {
           width 100px
         &:last-child
           color #333
+  .fee-style
+    width 60px !important
   .title
-    margin-top 54px
+    margin-top 52px
     span
       height 34px
       font-size 20px
@@ -683,7 +777,7 @@ export default {
     &:after
       content ' '
       display block
-      margin 25px 0
+      margin 15px 0
       border-bottom 1px dashed rgba(203,206,211,1)
   .table-footer
     height 48px
@@ -705,7 +799,7 @@ export default {
         height 12px
         background-color #C9CED9
         border-radius 50%
-        vertical-align middle
+        vertical-align text-bottom
       &:first-child
         i
           background-color #00A4BD

@@ -106,7 +106,6 @@ export default {
   },
   mounted () {
     if (this.value && (typeof this.value === 'string' || typeof this.value === 'number')) {
-      this.forceLoad()
       this.selected = areas.getPathByCode(this.value).map((item) => item.code)
     }
   },
@@ -152,12 +151,12 @@ export default {
           label: item.name,
           parent: item.parent
         }
-        if (item.hasChild) {
+        if (item.hasChild && item.hasChild === '1') {
           data.children = []
           data.loading = false
           data.hasChild = true
         }
-        if (item.hasChild && deep) {
+        if (item.hasChild && item.hasChild === '1' && deep) {
           data.children = vm.loadNext(item.code)
         }
         return data

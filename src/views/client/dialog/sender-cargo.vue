@@ -25,7 +25,7 @@
           </SelectInput>
         </FormItem>
         <FormItem label="货值:" prop="cargoCost" class="ivu-form-item-required blank">
-          <Input v-model="validate.cargoCost" :maxlength="60" placeholder="请输入"/>
+          <Input v-model="validate.cargoCost"  placeholder="请输入"/>
         </FormItem>
         <FormItem label="重量:" prop="weight" class="ivu-form-item-required blank">
           <Input v-model="validate.weight" :maxlength="60" placeholder="请输入"/>吨
@@ -76,7 +76,7 @@ export default {
           { required: true, message: '货物名称不能为空', trigger: 'blur' }
         ],
         cargoCost: [
-          { type: 'string', message: '必须为大于等于0的数字,最多两位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/, trigger: 'blur' }
+          { type: 'string', message: '必须为不超过9位的数,最多两位小数', pattern: /^(0|([1-9]\d{0,8}))([.]\d{1,2})?$/, trigger: 'blur' }
         ],
         weight: [
           { type: 'string', message: '必须为大于等于0的数字,最多两位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/, trigger: 'blur' }

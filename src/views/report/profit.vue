@@ -12,7 +12,7 @@
           type="daterange"
           format="yyyy-MM-dd"
           placeholder="开始日期-结束日期"
-          style="display: inline-block;width: 240px;height: 35px;margin-left: 20px"
+          style="display: inline-block;width: 240px;margin-left: 20px"
           @on-clear = "clearKeywords"
           @on-change="handleTimeChange"
         >
@@ -36,13 +36,17 @@
         <Col span="6">费用明细</Col>
         <Col span="6">本期发生额</Col>
       </Row>
-      <Row type="flex" justify="start" class="middle-height" style="border-top: 0">
+      <Row type="flex" justify="start" class="big-height" style="border-top: 0">
         <Col span="6" style="border-right: 1px solid #C9CED9">收入</Col>
         <Col span="6">上游运费收入</Col>
         <Col span="12" >
         <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
           <Col span="12">运输费</Col>
           <Col span="12" class="num">{{res.orderFreightFee}}</Col>
+        </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
+          <Col span="12">提货费</Col>
+          <Col span="12" class="num">{{res.orderPickupFee}}</Col>
         </Row>
         <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
           <Col span="12">装货费</Col>
@@ -144,6 +148,7 @@ export default {
         orderLoadFee: '-',
         orderUnloadFee: '-',
         orderOtherFee: '-',
+        orderPickupFee: '-',
         orderInsuranceFee: '-',
         orderTotalFee: '-',
         carrierFreightFee: '-',
@@ -329,7 +334,7 @@ export default {
       font-weight bold
     .middle-height
       height 224px
-      line-height 224px
+      line-height 269px
       border 1px solid #C9CED9
     .small-height
       border 1px solid #C9CED9

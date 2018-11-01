@@ -1,10 +1,10 @@
 <template>
-  <div class="temAll">
+  <Row :style="styleHeight" class="temAll">
     <Col span="3">
     <Menu active-name="修改密码" class="menuList" style="width:100%">
       <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
       <p class="menuTitle">{{menu.name}}</p>
-      </MenuItem>
+        </MenuItem>
     </Menu>
     </Col>
     <Col span="21" class="contentDiv">
@@ -29,7 +29,7 @@
           <Button type="primary" style="width:86px;" @click="pwdSubmit('formPwd')">保存</Button>
         </FormItem>
       </Form>
-      </Col>
+        </Col>
     </div>
     <!--个人设置-->
     <div v-else-if="'2' === this.rightKey" key="2" class="divSetContent">
@@ -39,42 +39,16 @@
           <span>{{formPersonal.phone}}</span>
         </FormItem>
         <FormItem label="姓名：" prop="name" style="margin-left: -9px;" class="labelClassSty">
-          <Input v-model="formPersonal.name" placeholder="请输入姓名" style="margin-left: 9px;" class="inputClassSty"></Input>
+          <Input v-model="formPersonal.name" :maxlength="10" placeholder="请输入姓名" style="margin-left: 9px;" class="inputClassSty"></Input>
         </FormItem>
         <FormItem label="角色：" class="labelClassSty">
           <span>{{formPersonal.roleName}}</span>
         </FormItem>
-        <!-- <FormItem label="头像："> -->
-        <!--个人设置-图片相关-->
-        <!-- <div class="demo-upload-list">
-            <img :src="uploadList.url">
-          </div>
-          <Upload
-            ref="upload"
-            :show-upload-list="false"
-            :on-success="handleSuccess"
-            :format="['jpg','jpeg','png']"
-            :max-size="2048"
-            :on-format-error="handleFormatError"
-            :on-exceeded-size="handleMaxSize"
-            :before-upload="handleBeforeUpload"
-            multiple
-            type="drag"
-            action="//jsonplaceholder.typicode.com/posts/"
-            style="display: inline-block;width:58px; color:#00a4bd"
-          >
-            修改头像
-          </Upload> -->
-        <!--个人设置-图片相关-->
-        <!-- </FormItem>
-        <FormItem>
-          <p style="color:rgba(153,153,153,1);">尺寸60*60像素，大小不超过1M</p>
-        </FormItem> -->
         <FormItem>
           <Button type="primary" style="width:86px;"  @click="personalSubmit('formPersonal')">保存</Button>
         </FormItem>
       </Form>
-      </Col>
+        </Col>
     </div>
     <!--短信设置-->
     <div v-else-if="'3' === this.rightKey" key="3" style="margin-left:-125px;" class="divSetContent">
@@ -101,71 +75,50 @@
         </div>
       </Card>
       <Button type="primary" class="msgSaveBtn test111" style="width:86px;" @click="msgSaveBtn">保存</Button>
-      </Col>
+        </Col>
     </div>
     <!--公司设置-->
     <div v-else-if="'4' === this.rightKey" key="4" class="divSetContent">
-      <Col span="10" class="setConf">
-      <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="120" label-position="left">
-        <FormItem label="公司名称：" prop="name" class="labelClassSty">
-          <Input v-model="formCompany.name" placeholder="请输入公司名称" class="inputClassSty"></Input>
-        </FormItem>
-        <FormItem label="公司联系人：" prop="contact" class="labelClassSty">
-          <Input v-model="formCompany.contact" placeholder="请输入公司联系人" class="inputClassSty"></Input>
-        </FormItem>
-        <FormItem label="联系方式：" prop="contactPhone" class="labelClassSty">
-          <Input v-model="formCompany.contactPhone" placeholder="请输入联系方式" class="inputClassSty"></Input>
-        </FormItem>
-        <FormItem label="所在省市：" prop="cityId" class="labelClassSty">
-          <AreaSelect v-model="formCompany.cityId" :deep="true" class="inputClassSty"></AreaSelect>
-        </FormItem>
-        <FormItem label="公司地址：" prop="address" class="labelClassSty">
-          <Input v-model="formCompany.address" placeholder="请输入公司地址" class="inputClassSty"></Input>
-        </FormItem>
-        <!-- <FormItem label="公司LOGO："> -->
-        <!--公司设置-图片相关-->
-        <!-- <div class="demo-upload-list">
-            <img :src="uploadListCompany.url">
-          </div>
-          <Upload
-            ref="uploadCompany"
-            :show-upload-list="false"
-            :on-success="handleSuccessCompany"
-            :format="['jpg','jpeg','png']"
-            :max-size="2048"
-            :on-format-error="handleFormatErrorCompany"
-            :on-exceeded-size="handleMaxSizeCompany"
-            :before-upload="handleBeforeUploadCompany"
-            multiple
-            type="drag"
-            action="//jsonplaceholder.typicode.com/posts/"
-            style="display: inline-block;width:58px; color:#00a4bd">
-            点击上传
-          </Upload> -->
-        <!--公司设置-图片相关-->
-        <!-- </FormItem>
-        <FormItem>
-          <p style="color:rgba(153,153,153,1);">尺寸60*60像素，大小不超过1M</p>
-        </FormItem> -->
-        <FormItem>
-          <Button type="primary" style="width:86px;" @click="companySubmit('formCompany')">保存</Button>
-        </FormItem>
-      </Form>
-        </Col>
+      <div style="width: 70%;">
+        <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="120" label-position="left">
+          <FormItem label="公司名称：" prop="name" class="labelClassSty">
+            <Input v-model="formCompany.name" :maxlength="25" placeholder="请输入公司名称" class="inputClassSty"></Input>
+          </FormItem>
+          <FormItem label="公司联系人：" prop="contact" class="labelClassSty">
+            <Input v-model="formCompany.contact" :maxlength="10" placeholder="请输入公司联系人" class="inputClassSty"></Input>
+          </FormItem>
+          <FormItem label="联系方式：" prop="contactPhone" class="labelClassSty">
+            <Input v-model="formCompany.contactPhone" :maxlength="11" placeholder="请输入联系方式" class="inputClassSty"></Input>
+          </FormItem>
+          <FormItem label="所在省市：" prop="cityId" class="labelClassSty">
+            <AreaSelect v-model="formCompany.cityId" :deep="true" class="inputClassSty"></AreaSelect>
+          </FormItem>
+          <FormItem label="公司地址：" prop="address" class="labelClassSty">
+            <AreaInput v-model="formCompany.address" :city-code="formCityCode" :maxlength="60" placeholder="请输入公司地址" @latlongt-change="latlongtChange"></AreaInput>
+            <!-- <Input v-model="formCompany.address" :maxlength="40" placeholder="请输入公司地址" class="inputClassSty"></Input> -->
+          </FormItem>
+          <FormItem>
+            <Button type="primary" style="width:86px;" @click="companySubmit('formCompany')">保存</Button>
+          </FormItem>
+        </Form>
+      </div>
     </div>
     </Col>
-  </div>
+  </Row>
 </template>
 
 <script>
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import AreaSelect from '@/components/AreaSelect'
+import AreaInput from '@/components/AreaInput'
 import _ from 'lodash'
+import { mapActions } from 'vuex'
 export default {
   name: 'set-up',
   components: {
-    AreaSelect
+    AreaSelect,
+    AreaInput
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -214,13 +167,6 @@ export default {
     var checkNameCompany = function (rule, value, callback) {
       if (value.length > 25) {
         return callback(new Error('公司名不能超过25个字'))
-      } else {
-        callback()
-      }
-    }
-    var checkAddressCompany = function (rule, value, callback) {
-      if (value.length < 5 || value.length > 40) {
-        return callback(new Error('公司地址不能少于5个字也不能超过40个字'))
       } else {
         callback()
       }
@@ -353,8 +299,7 @@ export default {
           { required: true, message: '请选择所在省市' }
         ],
         address: [
-          { required: true, message: '请输入公司地址', trigger: 'blur' },
-          { validator: checkAddressCompany, trigger: 'blur' }
+          { required: true, message: '请输入公司地址', trigger: 'blur' }
         ]
       }
       // 图片相关-个人
@@ -369,10 +314,24 @@ export default {
       // }
     }
   },
+  computed: {
+    styleHeight () {
+      return { height: this.$parent.$el.children[0].style.minHeight }
+    },
+    formCityCode () {
+      const cityCode = this.formCompany.cityId
+      if (cityCode && cityCode.length) {
+        return cityCode.length === 2 ? cityCode[0] : cityCode[cityCode.length - 1]
+      } else {
+        return ''
+      }
+    }
+  },
   mounted: function () {
     this.messageListInit = _.cloneDeep(this.messageList)
   },
   methods: {
+    ...mapActions(['getUserInfo']),
     getCompanyInfo () {
       Server({
         url: 'set/companyInfo',
@@ -380,15 +339,6 @@ export default {
       }).then(({ data }) => {
         this.formCompany = Object.assign({}, data.data)
         this.formCompanyInit = Object.assign({}, data.data)
-      })
-    },
-    getUserInfo () {
-      Server({
-        url: 'set/userInfo',
-        method: 'get'
-      }).then(({ data }) => {
-        this.formPersonal = Object.assign({}, data.data)
-        this.formPersonalInit = Object.assign({}, data.data)
       })
     },
     smsInfo () {
@@ -416,7 +366,8 @@ export default {
       this.rightKey = id
       switch (id) {
         case '2':
-          this.getUserInfo()
+          this.formPersonal = Object.assign({}, this.$store.getters.UserInfo)
+          this.formPersonalInit = Object.assign({}, this.$store.getters.UserInfo)
           break
         case '3':
           this.smsInfo()
@@ -439,12 +390,8 @@ export default {
             method: 'post',
             data: this.formPwd
           }).then(({ data }) => {
-            if (data.code === 10000) {
-              this.$Message.success('保存成功!')
-              this.formPwd = {}
-            } else {
-              this.$Message.info(data.msg)
-            }
+            this.$Message.success('保存成功!')
+            this.formPwd = {}
           })
         }
       })
@@ -466,10 +413,10 @@ export default {
             data: param
           }).then(({ data }) => {
             if (data.code === 10000) {
+              this.getUserInfo()
+              this.formPersonalInit.name = this.formPersonal.name
               this.$Message.success('保存成功!')
               this.formPwd = {}
-            } else {
-              this.$Message.info(data.msg)
             }
           })
         }
@@ -498,8 +445,6 @@ export default {
           }).then(({ data }) => {
             if (data.code === 10000) {
               this.$Message.success('保存成功!')
-            } else {
-              this.$Message.error(data.msg)
             }
           })
         }
@@ -543,11 +488,16 @@ export default {
         data: params
       }).then(({ data }) => {
         if (data.code === 10000) {
+          this.msgCheckBoxListInit = _.cloneDeep(this.msgSlectCheckBox)
           this.$Message.success('保存成功!')
-        } else {
-          this.$Message.error(data.msg)
+          this.msgCheckBoxListInit = _.cloneDeep(this.msgSlectCheckBox)
         }
       })
+    },
+    latlongtChange ({ lat, lng }) {
+      this.formCompany.latitude = lat
+      this.formCompany.longitude = lng
+      this.formCompany.mapType = 1
     }
     // 图片相关 -个人
     // handleSuccess (res, file) {
@@ -615,7 +565,6 @@ export default {
   width: 100%
   height: 100%;
   background:rgba(243,245,249,1);
-  overflow: auto;
   .setConf
     margin-top: 20px;
     left: 50%;
@@ -630,8 +579,7 @@ export default {
 .contentDiv
   background:#fff;
   padding-left:20px;
-  height: inherit;
-  overflow: auto;
+  height: 100%;
 .borderBottomLine
   border-bottom: 1px solid #e9e9e9;
   padding-bottom:10px;
@@ -646,7 +594,7 @@ export default {
     margin-top: 2px;
     border-radius:3px;
   .iconRightTitleP
-   margin-left:35px;
+   margin-left:20px;
    font-size: 16px;
    font-weight:600;
 .mesDiv

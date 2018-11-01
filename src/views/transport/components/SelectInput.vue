@@ -12,6 +12,13 @@
 </template>
 
 <script>
+
+/**
+ * 在 @/components/SelectInput 组件基础上封装的组件
+ * 可自动查询承运商、司机、车牌号、客户、外转方
+ * 使用该组件时，如果需要联动，则需要使用 ../mixin/selectInputMixin
+ */
+
 import SelectInput from '@/components/SelectInput'
 import Server from '@/libs/js/server'
 
@@ -43,9 +50,8 @@ export default {
   },
   watch: {
     value (val) { this.model = val },
-    carrierId () {
-      this.fetchData()
-    }
+    model (val) { this.$emit('input', val) },
+    carrierId () { this.fetchData() }
   },
   created () {
     this.fetchData()
@@ -166,9 +172,11 @@ export default {
     // 输入框失焦
     inputBlurHandler () {
       if (this.mode === 'carNo' && this.model) { // 车牌号小写转大写
-        this.model = this.model.toUpperCase()
+        this.$nextTick(() => {
+          this.model = this.model.toUpperCase()
+          this.$emit('input', this.model)
+        })
       }
-      this.$emit('input', this.model)
     },
 
     // 清空
