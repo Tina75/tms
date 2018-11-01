@@ -419,7 +419,7 @@ export default {
         background: #f9f9f9;
         border-radius: 50%;
         padding-left: 2px;
-        margin-top: -3px;
+        margin-top: -2px;
       .icon-ico-position:hover
         display: block;
         overflow: hidden;
