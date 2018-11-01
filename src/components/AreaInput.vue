@@ -89,13 +89,15 @@ export default {
       const local = new BMap.LocalSearch(this.areaName, options)
       local.search(val)
     },
-    inputHandle (value) {
+    inputHandle (value, type) {
       this.address = []
       if (value) {
         this.search(value)
       }
       this.$emit('input', value)
-      this.selectChange(null, { lat: '', lng: '' })
+      if (type !== 'on-select') {
+        this.selectChange(null, { lat: '', lng: '' })
+      }
     },
     selectChange (value, item) {
       const lat = item.lat

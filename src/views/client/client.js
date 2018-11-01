@@ -508,6 +508,18 @@ export function carrierDeleteRepairVehicle (data) {
   })
 }
 
+// 根据ID查询车辆信息或者微信记录信息
+export function queryByIdCarrier (data) {
+  return server({
+    url: '/carrier/detail/type',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'post',
+    data: data
+  })
+}
+
 // 外转方列表
 export function transfereeList (data) {
   return server({

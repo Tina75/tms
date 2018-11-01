@@ -53,7 +53,7 @@
           <FormItem label="手机号:" prop="driverPhone">
             <Row>
               <Col span="20">
-              <SelectInput v-model="validate.driverPhone" :remote="true" :remote-method="queryDriverByPhoneList" placeholder="必填"></SelectInput>
+              <SelectInput v-model="validate.driverPhone" :remote="true" :remote-method="queryDriverByPhoneList" placeholder="必填" @on-select="slectDriverData"></SelectInput>
               </Col>
             </Row>
           </FormItem>
@@ -86,7 +86,7 @@
           <FormItem label="核定载重:" prop="shippingWeight">
             <Row>
               <Col span="20">
-              <Input v-model="validate.shippingWeight" placeholder="必填"></Input>
+              <Input v-model="validate.shippingWeight" :maxlength="8" placeholder="必填"></Input>
               </Col>
               <Col span="2" offset="1">
               <span>吨</span>
@@ -95,10 +95,10 @@
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem label="净空:">
+          <FormItem class="ivu-form-item-required blank" label="净空:" prop="shippingVolume">
             <Row>
               <Col span="20">
-              <Input v-model="validate.shippingVolume"></Input>
+              <Input v-model="validate.shippingVolume" :maxlength="8"></Input>
               </Col>
               <Col span="2" offset="1">
               <span>吨</span>
@@ -107,7 +107,7 @@
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem label="购买日期:">
+          <FormItem class="ivu-form-item-required blank" label="购买日期:">
             <Row>
               <Col span="20">
               <DatePicker v-model="validate.purchDate" format="yyyy-MM-dd" type="date" placeholder="请选择日期">
@@ -119,10 +119,10 @@
         </Row>
         <Row>
           <Col span="8">
-          <FormItem label="车辆品牌:">
+          <FormItem class="ivu-form-item-required blank" label="车辆品牌:">
             <Row>
               <Col span="20">
-              <Input v-model="validate.carBrand" placeholder="如：东风"></Input>
+              <Input v-model="validate.carBrand" :maxlength="20" placeholder="如：东风"></Input>
               </Col>
             </Row>
           </FormItem>
@@ -196,10 +196,12 @@ export default {
       carLengthMap: CAR_LENGTH,
       carrierId: '', // 承运商id
       driverId: '', // 司机id
+      carId: '',
       validate: {},
       address: [],
       address1: {},
       address2: {},
+      flagAddress: true,
       codeType: 1,
       selectList: DRIVER_TYPE,
       ruleValidate: {
@@ -215,17 +217,20 @@ export default {
         ],
         driverPhone: [
           { required: true, message: '手机号不能为空', trigger: 'blur' },
-          { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
+          { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
         ],
         carType: [
           { required: true, message: '车型不能为空', trigger: 'change' }
         ],
         carLength: [
-          { required: true, message: '车长不能为空', trigger: 'blur' }
+          { required: true, message: '车长不能为空', trigger: 'change' }
         ],
         shippingWeight: [
           { required: true, message: '载重不能为空' },
-          { message: '必须为大于等于0的数字,最多两位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/ }
+          { message: '必须为大于等于0的数字,最多一位小数', pattern: /^(0|([1-9]\d*))([.]\d{1})?$/ }
+        ],
+        shippingVolume: [
+          { message: '必须为大于等于0的数字,最多一位小数', pattern: /^(0|([1-9]\d*))([.]\d{1})?$/ }
         ]
       }
     }
@@ -233,6 +238,7 @@ export default {
   mounted () {
     if (this.title === '修改车辆') {
       this.validate.carrierId = this.carrierId
+      this.validate.carId = this.carId
       this.validate.driverType = this.validate.driverType.toString()
       this.validate.carType = this.validate.carType.toString()
       this.validate.carLength = this.validate.carLength.toString()
@@ -252,32 +258,40 @@ export default {
   },
   methods: {
     checkLine () {
+      this.address = []
+      this.flagAddress = true
       // 线路统一
       if (this.address1 &&
          (this.address1.s !== undefined && this.address1.e !== undefined) &&
          (this.address1.s !== null && this.address1.e !== null)) {
         this.address.push(this.address1)
       } else if ((this.address1.s === undefined && this.address1.e === undefined) ||
-                 (this.address1.s === null && this.address1.e == null)) {
+                 (this.address1.s === null && this.address1.e === null)) {
       } else {
-        this.$Message.error('请完善线路信息')
+        this.$Message.error('请完善常跑线路1信息')
+        this.flagAddress = false
       }
       if (this.address2 &&
          (this.address2.s !== undefined && this.address2.e !== undefined) &&
          (this.address2.s !== null && this.address2.e !== null)) {
         this.address.push(this.address2)
       } else if ((this.address2.s === undefined && this.address2.e === undefined) ||
-                 (this.address2.s === null && this.address2.e !== null)) {
+                 (this.address2.s === null && this.address2.e === null)) {
       } else {
-        this.$Message.error('请完善线路信息')
+        this.$Message.error('请完善常跑线路2信息')
+        this.flagAddress = false
       }
     },
     save (name) {
-      this.address = []
+      this.flagAddress = true
       this.validate.carrierId = this.carrierId
+      this.validate.carId = this.carId
       this.validate.travelPhoto = this.$refs.upload1.uploadImg
       this.validate.drivePhoto = this.$refs.upload2.uploadImg
       this.checkLine()
+      if (!this.flagAddress) {
+        return
+      }
       this.validate.regularLine = JSON.stringify(this.address)
       this.$refs[name].validate((valid) => {
         if (valid) {
@@ -286,7 +300,6 @@ export default {
           } else { // 2-编辑
             this.update()
           }
-          this.close()
         }
       })
     },
@@ -294,7 +307,9 @@ export default {
       let data = this.validate
       carrierAddDriver(data).then(res => {
         if (res.data.code === CODE) {
+          this.$Message.success(res.data.msg)
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -304,11 +319,17 @@ export default {
       let data = this.validate
       carrierUpdateDriver(data).then(res => {
         if (res.data.code === CODE) {
+          this.$Message.success(res.data.msg)
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
       })
+    },
+    slectDriverData (val, dirverInit) {
+      this.validate.driverName = dirverInit.driverName
+      this.validate.driverType = dirverInit.driverType.toString()
     },
     queryDriverByPhoneList () {
       let data = {}
@@ -317,10 +338,15 @@ export default {
       if (!data.driverPhone) {
         return Promise.resolve([])
       }
-      carrierQueryDriverlist(data).then(res => {
+      return carrierQueryDriverlist(data).then(res => {
         if (res.data.code === CODE) {
-          console.dir(res.data.data)
-          return res.data.data.map(item => ({ value: item.driverName, name: item.driverName + '/' + item.driverPhone }))
+          return res.data.data.map(item => ({
+            value: item.driverPhone,
+            name: item.driverName + '/' + item.driverPhone,
+            driverName: item.driverName,
+            driverType: item.driverType
+          }
+          ))
         }
       }).catch((errorInfo) => {
         return Promise.reject(errorInfo)

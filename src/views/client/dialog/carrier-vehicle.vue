@@ -16,7 +16,7 @@
             <Row>
               <Col span="19">
               <!-- <Input v-model="validate.carNo" placeholder="必填"></Input> -->
-              <Select v-model="validate.carNo"  placeholder="必选" class="minWidth">
+              <Select v-model="validate.carNo"  :disabled="disAbleBtn" placeholder="必选" class="minWidth">
                 <Option
                   v-for="item in carNoList"
                   :value="item.carNo"
@@ -48,7 +48,7 @@
           <FormItem label="送修日期:" prop="repairDate">
             <Row>
               <Col span="19">
-              <DatePicker v-model="validate.repairDate" type="date" placeholder="请选择日期（必选）"></DatePicker>
+              <DatePicker v-model="validate.repairDate" type="date" placeholder="必选"></DatePicker>
                 </Col>
             </Row>
           </FormItem>
@@ -115,31 +115,32 @@
           </FormItem>
           </Col>
         </Row>
+        <br/>
         <Row>
           <Col span="22" class="formatSty">
-          <FormItem label="修理单位:">
-            <Input v-model="validate.repairUnit" placeholder="请输入"></Input>
+          <FormItem class="ivu-form-item-required blank" label="修理单位:">
+            <Input v-model="validate.repairUnit" :maxlength="50" placeholder="请输入"></Input>
           </FormItem>
           </Col>
         </Row>
         <Row>
           <Col span="22" class="formatSty">
-          <FormItem label="修理原因:">
-            <Input v-model="validate.repairReason" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入" type="textarea"></Input>
+          <FormItem class="ivu-form-item-required blank" label="修理原因:">
+            <Input v-model="validate.repairReason" :maxlength="200" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入" type="textarea"></Input>
           </FormItem>
           </Col>
         </Row>
         <Row>
           <Col span="22" class="formatSty">
-          <FormItem label="修理结果:">
-            <Input v-model="validate.repairResult" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入" type="textarea"></Input>
+          <FormItem class="ivu-form-item-required blank" label="修理结果:">
+            <Input v-model="validate.repairResult" :maxlength="200" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入" type="textarea"></Input>
           </FormItem>
           </Col>
         </Row>
         <Row>
           <Col span="22" class="formatSty">
-          <FormItem label="备注:">
-            <Input v-model="validate.remark" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入" type="textarea"></Input>
+          <FormItem class="ivu-form-item-required blank" label="备注:">
+            <Input v-model="validate.remark" :maxlength="200" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入" type="textarea"></Input>
           </FormItem>
           </Col>
         </Row>
@@ -170,6 +171,7 @@ export default {
       unbindedDriver: [], // 承运商下尚未被绑定车辆的司机
       validate: {},
       carNoList: [],
+      disAbleBtn: false,
       selectList: [
         { id: '1', name: '维修' },
         { id: '2', name: '保养' }
@@ -218,9 +220,12 @@ export default {
   },
   mounted () {
     if (this.title === '修改维修记录') {
+      this.disAbleBtn = true
       this.validate.repairType = this.validate.repairType.toString()
+      this.carNoList.push({ carNo: this.validate.carNo })
+    } else {
+      this.queryCarnoList()
     }
-    this.queryCarnoList()
   },
   methods: {
     save (name) {
@@ -232,7 +237,6 @@ export default {
           } else { // 2-编辑
             this.update()
           }
-          this.close()
         }
       })
     },
@@ -240,7 +244,9 @@ export default {
       let data = this.validate
       carrierAddVehicle(data).then(res => {
         if (res.data.code === CODE) {
+          this.$Message.success(res.data.msg)
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -248,9 +254,12 @@ export default {
     },
     update () {
       let data = this.validate
+      delete data.creater
       carrierUpdateVehicle(data).then(res => {
         if (res.data.code === CODE) {
+          this.$Message.success(res.data.msg)
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }

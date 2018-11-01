@@ -221,8 +221,8 @@ export default {
       this.focusIndex = -1
       this.visible = false
       // 选中某一项
-      this.$emit('input', item.value)
       this.$emit('on-select', item.value, item)
+      this.$emit('input', item.value, 'on-select')
     },
     /**
      * 鼠标focus
@@ -277,9 +277,9 @@ export default {
       if (this.visible) {
         e.preventDefault()
         const keyCode = e.key.toLowerCase()
-        if (keyCode === 'arrowup') {
+        if (keyCode === 'arrowup' || keyCode === 'up') {
           this.focusOption(-1)
-        } else if (keyCode === 'arrowdown') {
+        } else if (keyCode === 'arrowdown' || keyCode === 'down') {
           this.focusOption(1)
         } else if (keyCode === 'enter') {
           if (this.focusIndex === -1) {
