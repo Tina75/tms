@@ -338,14 +338,14 @@ export default {
       this.validate.driverType = dirverInit.driverType.toString()
     },
     // 手机号输入联想
-    queryDriverByPhoneList () {
-      let data = {}
-      data.carrierId = this.carrierId
-      data.driverPhone = this.validate.driverPhone
-      if (!data.driverPhone) {
+    queryDriverByPhoneList (driverPhone) {
+      if (!driverPhone) {
         return Promise.resolve([])
       }
-      return carrierQueryDriverlist(data).then(res => {
+      return carrierQueryDriverlist({
+        driverPhone,
+        carrierId: this.carrierId
+      }).then(res => {
         if (res.data.code === CODE) {
           return res.data.data.map(item => ({
             value: item.driverPhone,
