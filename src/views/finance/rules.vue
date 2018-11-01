@@ -34,13 +34,13 @@
                   <FontIcon slot="icon" type="ico-price" ></FontIcon>
                 </div>
                 <div class="content">
-                  <div v-if="item.ruleName.length<10" class="ruleName">{{item.ruleName}}</div>
+                  <div v-if="item.ruleName.length<8" class="ruleName">{{item.ruleName}}</div>
                   <Tooltip v-else :content="item.ruleName" max-width="200" class="ruleName" placement="top-start" style="display: list-item">
-                    <div >{{item.ruleName.slice(0,10)}}...</div>
+                    <div >{{item.ruleName.slice(0,8)}}...</div>
                   </Tooltip>
-                  <div v-if="item.partnerName.length<10"  class="tips">{{item.partnerName}}</div>
+                  <div v-if="item.partnerName.length<8"  class="tips">{{item.partnerName}}</div>
                   <Tooltip v-else :content="item.partnerName" max-width="200" class="tips" placement="bottom-start" style="display: list-item">
-                    <div >{{item.partnerName.slice(0,10)}}...</div>
+                    <div >{{item.partnerName.slice(0,8)}}...</div>
                   </Tooltip>
                 </div>
                 <div class="operate">
@@ -74,20 +74,20 @@
                   <div class="rule-route">
                     <Form ref="ruleRoute" :model="item" :rules="routeValidate" inline>
                       <Row :gutter="24">
-                        <Col span="4">
+                        <Col span="5"  class="styleCommon">
                         <FormItem prop="departure" >
                           <SelectInputForCity v-model="item.departure" placeholder="请输入始发地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
-                        <Col span="1" style="margin:0">
+                        <Col span="1" class="styleCommon">
                         <i class="icon font_family icon-ico-line"></i>
                         </Col>
-                        <Col span="4">
+                        <Col span="5" class="styleCommon">
                         <FormItem prop="destination" >
                           <SelectInputForCity v-model="item.destination" placeholder="请输入目的地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
-                        <Col span="13" >
+                        <Col span="11" class="styleCommon">
                         <div class="startPrice">
                           <span style="margin:0 10px">起步价：货物  ＜</span>
                           <FormItem prop="startNum" inline style="margin-bottom: 0;">
@@ -570,7 +570,7 @@ export default {
         border-top-right-radius: 2px
         border-bottom-right-radius: 2px
     .rule-block
-      padding: 0 20px
+      padding-left 10px
       .rule-basic
         padding: 14px
         border-bottom: 1px solid #C9CED9
@@ -594,7 +594,7 @@ export default {
             .rule-route
               display: block
               position: absolute
-              width: calc(100% - 80px)
+              width: calc(100% - 55px)
               top: 17px
               left: 20px
               z-index: 8
@@ -603,7 +603,7 @@ export default {
               .delete_btn
                 float: right
                 text-align right
-                line-height 36px
+                line-height 33px
                 font-size 14px
                 color #00A4BD
                 cursor pointer
@@ -611,6 +611,9 @@ export default {
                 color: #9DA1B0
                 font-size: 24px
                 line-height: 28px
+              .styleCommon
+                padding 0!important
+                text-align center!important
             .rule-detail
               list-style none
               .rule-detail-item
@@ -650,11 +653,12 @@ export default {
               height: 70px
               background-color: rgba(248,248,248,1)
               padding: 15px 20px 15px
+              padding-right 0
               text-align: right
               border-bottom 1px solid #DCDEE2
               .ivu-icon
                 vertical-align: top
-                margin-top: 13px
+                margin-top: 12px
             .ivu-table-cell
               padding: 5px
               span
@@ -707,7 +711,7 @@ export default {
         color #999999
         text-align center
     .left_father
-      flex 0 0 300px
+      flex 0 0 275px
       &:after
         content ''
         display block
@@ -715,7 +719,7 @@ export default {
         height 20px
         position fixed
         bottom 15px
-        left 534px
+        left 509px
         border-right 1px solid #C9CED9
     .left
       display flex
