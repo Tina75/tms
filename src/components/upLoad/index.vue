@@ -13,7 +13,7 @@
           <div style="position: relative;cursor: pointer">
             <div style="cursor: pointer">
               <div class="eye-circle">
-                <span style="display: block;color: #fff;transform: scale(2)">+</span>
+                <FontIcon type="ico_add" size="12" color="#fff"></FontIcon>
               </div>
               <input
                 ref="fileInput"
@@ -43,7 +43,7 @@
         <div style="width: 160px;height: 90px;">
           <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%)">
             <div class="eye-circle">
-              <span style="display: block;color: #fff;transform: scale(2)">+</span>
+              <FontIcon type="ico_add" size="12" color="#fff"></FontIcon>
             </div>
             <div style="color: #00A4BD;margin-top: 6px;">点击上传</div>
           </div>
