@@ -210,7 +210,7 @@ export default {
       if (value === null || value === '') {
         callback(new Error('请填写'))
       }
-      if (/^((0[.]\d{1,2})|(([1-9]\d)([.]\d{1,2})?))$/.test(value)) {
+      if (/^((0[.]\d{1,2})|(([1-9]\d*)([.]\d{1,2})?))$/.test(value)) {
         if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(value)) {
           callback()
         } else {
