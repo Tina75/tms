@@ -83,7 +83,7 @@ export default {
     // 计算距离
     distanceCalculate () {
       return new Promise((resolve, reject) => {
-        if (this.startPoint && this.endPoint && !this.distance) {
+        if (this.startPoint && this.endPoint && !this.distance) { // 在有定位且未计算出距离时才执行
           const startPoint = new BMap.Point(this.startPoint.lng, this.startPoint.lat)
           const endPoint = new BMap.Point(this.endPoint.lng, this.endPoint.lat)
           const route = new BMap.DrivingRoute(startPoint, {
@@ -106,12 +106,13 @@ export default {
       })
     },
 
-    ruleChanged (index) {
+    async ruleChanged (index) {
       errorMsg = ''
+      await this.distanceCalculate() // 重复执行距离计算，确保计算出距离，如果已经有计算结果，则该方法会直接返回
       const rule = this.ruleOptions[index]
-      this.$refs.$form.validate(async valid => {
+      if ((rule.ruleType === 3 || rule.ruleType === 4) && this.distance === 0) errorMsg = '地址填写不够详细无法算出里程数'
+      this.$refs.$form.validate(valid => {
         if (!valid) return
-        await this.distanceCalculate()
         Server({
           url: '/finance/charge/calc',
           method: 'get',
