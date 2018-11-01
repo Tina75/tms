@@ -4,7 +4,7 @@ export const clients = ({ order }) => order.clients.map((user) => ({ name: user.
 // 发货联系人
 export const consigners = ({ order }) => order.consigners
 // 发货地址
-export const consignerAddresses = ({ order }) => order.addresses.map(item => ({ name: item.address, value: item.address, id: item.id }))
+export const consignerAddresses = ({ order }) => order.addresses.map(item => ({ name: item.address, value: item.address, id: item.id, lat: item.latitude, lng: item.longitude }))
 // 收货方数据，下面分拆
 export const consignees = ({ order }) => order.consignees
 // 收货方联系人列表
@@ -24,7 +24,9 @@ export const consigneePhones = (state, getters) => getters.consignees.map((user)
 export const consigneeAddresses = (state, getters) => getters.consignees.map((user) => ({
   name: user.address,
   value: user.address,
-  id: user.id
+  id: user.id,
+  lat: user.latitude,
+  lng: user.longitude
 }))
 export const cargoes = ({ order }) => order.cargoes
 

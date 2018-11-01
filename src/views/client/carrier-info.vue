@@ -214,6 +214,7 @@ export default {
                         title: '修改车辆',
                         flag: 2, // 修改
                         carrierId: this.carrierId,
+                        carId: params.row.carId,
                         validate: { ...params.row, purchDate: new Date(params.row.purchDate) }
                       },
                       methods: {
@@ -331,6 +332,7 @@ export default {
         {
           title: '常跑线路',
           key: 'regularLine',
+          width: 250,
           render: (h, params) => {
             let s1 = ''
             let n1 = ''
@@ -344,8 +346,6 @@ export default {
               n1 = JSON.parse(params.row.regularLine)[0].en === undefined ? '' : JSON.parse(params.row.regularLine)[0].en
               s2 = JSON.parse(params.row.regularLine)[1].sn === undefined ? '' : JSON.parse(params.row.regularLine)[1].sn
               n2 = JSON.parse(params.row.regularLine)[1].en === undefined ? '' : JSON.parse(params.row.regularLine)[1].en
-            } else {
-              return
             }
             return h('div', [
               h('p', {
@@ -409,7 +409,6 @@ export default {
                       },
                       methods: {
                         ok () {
-                          _this._carrierListRepairVehicle()
                         }
                       }
                     })
@@ -492,7 +491,7 @@ export default {
           title: '送修日期',
           key: 'repairDate',
           render: (h, params) => {
-            let text = this.formatDate(params.row.repairDate)
+            let text = this.formatDateTime(params.row.repairDate)
             return h('div', { props: {} }, text)
           }
         },
@@ -515,15 +514,27 @@ export default {
         {
           title: '未支付费用',
           key: 'waitPayMoney'
+        },
+        {
+          title: '添加人',
+          key: 'creater'
+        },
+        {
+          title: '添加时间',
+          key: 'createTime',
+          render: (h, params) => {
+            let text = this.formatDateTime(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
         }
       ],
       data1: [],
       data2: [],
-      pageArray1: [10, 20, 50, 100],
+      pageArray1: [10, 20, 50],
       pageSize1: 10,
       totalCount1: 0, // 总条数
       pageNo1: 1,
-      pageArray2: [10, 20, 50, 100],
+      pageArray2: [10, 20, 50],
       pageSize2: 10,
       totalCount2: 0, // 总条数
       pageNo2: 1
@@ -681,4 +692,6 @@ export default {
     margin-top 22px
     display flex
     justify-content flex-end
+  .ivu-tabs
+    padding-bottom: 120px!important
 </style>
