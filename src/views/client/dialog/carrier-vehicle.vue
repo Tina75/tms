@@ -192,7 +192,7 @@ export default {
         ],
         repairMile: [
           { required: true, message: '送修公里数不能为空' },
-          { message: '必须小于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '必须小于六位整数,不能有小数', pattern: /^[0-9]{0,6}?$/ }
         ],
         repairMoney: [
           { required: true, message: '维修费用不能为空' },
