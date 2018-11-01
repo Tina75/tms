@@ -236,27 +236,32 @@ export default {
     }
   },
   mounted () {
-    if (this.title === '修改车辆') {
-      this.validate.carrierId = this.carrierId
-      this.validate.carId = this.carId
-      this.validate.driverType = this.validate.driverType.toString()
-      this.validate.carType = this.validate.carType.toString()
-      this.validate.carLength = this.validate.carLength.toString()
-      this.$refs.upload1.progress = 1
-      this.$refs.upload2.progress = 1
-      this.$refs.upload1.uploadImg = this.validate.travelPhoto
-      this.$refs.upload2.uploadImg = this.validate.drivePhoto
-      if (this.validate.regularLine && JSON.parse(this.validate.regularLine).length > 0) {
-        if (JSON.parse(this.validate.regularLine).length === 1) {
-          this.address1 = JSON.parse(this.validate.regularLine)[0]
-        } else {
-          this.address1 = JSON.parse(this.validate.regularLine)[0]
-          this.address2 = JSON.parse(this.validate.regularLine)[1]
-        }
-      }
-    }
+    this.configData()
   },
   methods: {
+    // 修改页面初始值更改
+    configData () {
+      if (this.title === '修改车辆') {
+        this.validate.carrierId = this.carrierId
+        this.validate.carId = this.carId
+        this.validate.driverType = this.validate.driverType.toString()
+        this.validate.carType = this.validate.carType.toString()
+        this.validate.carLength = this.validate.carLength.toString()
+        this.$refs.upload1.progress = 1
+        this.$refs.upload2.progress = 1
+        this.$refs.upload1.uploadImg = this.validate.travelPhoto
+        this.$refs.upload2.uploadImg = this.validate.drivePhoto
+        if (this.validate.regularLine && JSON.parse(this.validate.regularLine).length > 0) {
+          if (JSON.parse(this.validate.regularLine).length === 1) {
+            this.address1 = JSON.parse(this.validate.regularLine)[0]
+          } else {
+            this.address1 = JSON.parse(this.validate.regularLine)[0]
+            this.address2 = JSON.parse(this.validate.regularLine)[1]
+          }
+        }
+      }
+    },
+    // 格式常跑路线信息
     checkLine () {
       this.address = []
       this.flagAddress = true
@@ -327,10 +332,12 @@ export default {
         }
       })
     },
+    // 输入手机号，选中某条信息自动填充以后司机信息（姓名，合作方式。。）
     slectDriverData (val, dirverInit) {
       this.validate.driverName = dirverInit.driverName
       this.validate.driverType = dirverInit.driverType.toString()
     },
+    // 手机号输入联想
     queryDriverByPhoneList () {
       let data = {}
       data.carrierId = this.carrierId

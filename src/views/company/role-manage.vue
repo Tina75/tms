@@ -341,7 +341,6 @@ export default {
     },
     treeCheckBox (node) {
       this.disSaveBtn = false
-      // this.roleCodeList = this.checkBrowsePage()
     }
     // renderContent (h, { root, node, data }) {
     //   if (node.nodeKey === 0) {
@@ -383,12 +382,13 @@ export default {
 .temAll
   width: 100%;
   overflow: hidden;
+  margin-left: -15px;
   .contentDiv
     padding-left: 20px;
   .leftMenu
     height: 100%
     .centerBtnDiv
-      border-bottom: 1px solid #e9e9e9;
+      border-bottom: 1px solid #DCDEE2;
       padding-bottom:50px;
   .leftMenu :hover
     max-height: calc(100% - 50px);
@@ -414,7 +414,7 @@ export default {
       .icon-ico-position
         margin-right: 15px;
   .rightHead
-    border-bottom: 1px solid #e9e9e9;
+    border-bottom: 1px solid #DCDEE2;
     margin-top: 5px
     .rightTitle
       height: 55px;

@@ -219,12 +219,13 @@ export default {
       let city = cityUtil.getPathByCode(code)
       let item = {
         province: city[0].name,
-        city: city[1].name,
+        city: city[1] ? city[1].name : '',
         area: city[2] ? city[2].name : ''
       }
-      this.currentValue = this.cityShow(item, 2).split('  ')[0]
-      this.nameSeleced = this.cityShow(item, 2).split('  ')[1]
-      this.currentValueCopy = this.cityShow(item, 2).split('  ')[0]
+      const itemName = this.cityShow(item, 1)
+      this.currentValue = itemName.split(',  ')[0]
+      this.nameSeleced = itemName.split('  ')[1]
+      this.currentValueCopy = itemName.split(',  ')[0]
     },
     // 清空
     handleClear () {

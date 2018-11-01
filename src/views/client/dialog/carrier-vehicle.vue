@@ -231,6 +231,14 @@ export default {
   },
   mounted () {
     if (this.title === '修改维修记录') {
+      this.configData()
+    } else {
+      this.queryCarnoList()
+    }
+  },
+  methods: {
+    // 修改页面初始化
+    configData () {
       this.disAbleBtn = false
       this.validate.repairType = this.validate.repairType.toString()
       this.validate.carrierId = this.carrierId
@@ -238,11 +246,7 @@ export default {
       this.validate.payMoney = this.validate.payMoney / 100
       this.validate.waitPayMoney = this.validate.waitPayMoney / 100
       this.carNoList.push({ carNo: this.validate.carNo })
-    } else {
-      this.queryCarnoList()
-    }
-  },
-  methods: {
+    },
     save (name) {
       this.validate.carrierId = this.carrierId
       this.$refs[name].validate((valid) => {
@@ -286,6 +290,7 @@ export default {
         }
       })
     },
+    // 查询车辆列表
     queryCarnoList () {
       let data = {}
       data.carrierId = this.carrierId

@@ -582,18 +582,21 @@ export default {
       this._carrierDetailsForDriver()
     } else { // 类型为运输公司
       this._carrierDetailsForCompany()
+      // 车辆列表
       this._carrierListCar()
       // 维修列表
       this._carrierListRepairVehicle()
     }
   },
   methods: {
+    // 日期格式化
     formatDateTime (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     },
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
     },
+    // 司机个人信息查询
     _carrierDetailsForDriver () {
       let data = {
         carrierId: this.carrierId
@@ -614,6 +617,7 @@ export default {
         }
       })
     },
+    // 承运商信息查询
     _carrierDetailsForCompany () {
       let data = {
         carrierId: this.carrierId
@@ -631,6 +635,7 @@ export default {
         }
       })
     },
+    // 新增车辆
     _carrierAddDriver () {
       var _this = this
       this.openDialog({
@@ -684,6 +689,7 @@ export default {
         }
       })
     },
+    // 打开车辆dialog弹框
     _carrierAddVehicle () {
       var _this = this
       this.openDialog({
