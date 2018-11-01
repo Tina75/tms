@@ -353,9 +353,19 @@ export default {
                   placement: 'top'
                 }
               }, [
-                h('div', {
+                h('span', {
                   slot: 'content'
-                }, [h('p', {}, (s1 + '—' + n1) === '—' ? '' : s1 + '—' + n1), h('p', {}, (s2 + '—' + n2) === '—' ? '' : s2 + '—' + n2)]),
+                }, [h('p', {
+                  style: {
+                    whiteSpace: 'pre-wrap'
+                  }
+                }, (s1 + '—' + n1) === '—' ? '' : s1 + '—' + n1),
+                h('p', {
+                  style: {
+                    whiteSpace: 'pre-wrap'
+                  }
+                }, (s2 + '—' + n2) === '—' ? '' : s2 + '—' + n2)
+                ]),
                 h('p', {
                   style: {
                     cursor: 'pointer',
