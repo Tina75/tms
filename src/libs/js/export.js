@@ -23,11 +23,10 @@ let instance = (config = {}) => {
           code = resJson.code
           msg = resJson.msg
         }
-        console.log('resJson', resJson)
       } catch (err) {}
 
       if (!code || code === 10000) {
-        let blob = new Blob([res.data], { type: res.config.fileType })
+        const blob = new Blob([res.data], { type: res.config.fileType })
         const url = window.URL || window.webkitURL || window.mozURL
         const downloadHref = url.createObjectURL(blob)
         const downloadName = res.config.fileName + new Date().Format('yyyy-MM-dd_hhmmss') + '.xls'

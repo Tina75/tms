@@ -332,6 +332,7 @@ export default {
         {
           title: '常跑线路',
           key: 'regularLine',
+          width: 250,
           render: (h, params) => {
             let s1 = ''
             let n1 = ''

@@ -210,7 +210,7 @@ export default {
       if (value === null || value === '') {
         callback(new Error('请填写'))
       }
-      if (/^((0[.]\d{1,2})|(([1-9]\d*)([.]\d{1,2})?))$/.test(value)) {
+      if (/^((0[.]\d{1,2})|(([1-9]\d)([.]\d{1,2})?))$/.test(value)) {
         if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(value)) {
           callback()
         } else {
@@ -441,8 +441,8 @@ export default {
                 return {
                   departure: item.departure,
                   destination: item.destination,
-                  startNum: item.startNum,
-                  startPrice: item.startPrice,
+                  startNum: parseFloat(item.startNum) * 100,
+                  startPrice: parseFloat(item.startPrice) * 100,
                   chargeRules: item.chargeRules.map(el => {
                     return {
                       base: parseFloat(el.base) * 100,
@@ -504,8 +504,8 @@ export default {
           return {
             departure: item.departure,
             destination: item.destination,
-            startPrice: item.startPrice,
-            startNum: item.startNum,
+            startPrice: item.startPrice ? (item.startPrice / 100) + '' : '0',
+            startNum: item.startNum ? (item.startNum / 100) + '' : '0',
             showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
               return {
