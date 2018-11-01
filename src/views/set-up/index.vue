@@ -321,7 +321,7 @@ export default {
     formCityCode () {
       const cityCode = this.formCompany.cityId
       if (cityCode && cityCode.length) {
-        return cityCode.length === 2 ? cityCode[0] : cityCode[cityCode.length - 1]
+        return cityCode.length > 1 ? cityCode[1] : cityCode[0]
       } else {
         return ''
       }

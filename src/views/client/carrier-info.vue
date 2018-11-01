@@ -307,7 +307,8 @@ export default {
         },
         {
           title: '手机号',
-          key: 'driverPhone'
+          key: 'driverPhone',
+          width: 120
         },
         {
           title: '车型',
@@ -326,7 +327,7 @@ export default {
           }
         },
         {
-          title: '核定载重（吨）',
+          title: '载重（吨）',
           key: 'shippingWeight'
         },
         {
@@ -351,6 +352,10 @@ export default {
               h('Tooltip', {
                 props: {
                   placement: 'top'
+                },
+                style: {
+                  width: '100%',
+                  paddingTop: '6px'
                 }
               }, [
                 h('span', {
@@ -392,6 +397,7 @@ export default {
         {
           title: '添加时间',
           key: 'createTime',
+          width: 150,
           render: (h, params) => {
             let text = this.formatDateTime(params.row.createTime)
             return h('div', { props: {} }, text)
@@ -510,8 +516,9 @@ export default {
         {
           title: '送修日期',
           key: 'repairDate',
+          width: 150,
           render: (h, params) => {
-            let text = this.formatDateTime(params.row.repairDate)
+            let text = this.formatDate(params.row.repairDate)
             return h('div', { props: {} }, text)
           }
         },
@@ -551,6 +558,7 @@ export default {
         {
           title: '添加时间',
           key: 'createTime',
+          width: 150,
           render: (h, params) => {
             let text = this.formatDateTime(params.row.createTime)
             return h('div', { props: {} }, text)

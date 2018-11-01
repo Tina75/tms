@@ -224,7 +224,7 @@ export default {
       }
       const itemName = this.cityShow(item, 1)
       this.currentValue = itemName.split(',  ')[0]
-      this.nameSeleced = itemName.split('  ')[1]
+      this.nameSeleced = this.cityShow(item, 2).split('  ')[1]
       this.currentValueCopy = itemName.split(',  ')[0]
     },
     // 清空
@@ -326,8 +326,8 @@ export default {
     },
     cityShow (item, type) {
       if (type === 1) {
-        return (item.area ? item.area + ',  ' : '') +
-        (item.city ? item.city + ',  ' : '') +
+        return (item.area ? item.area : '') + (item.area && item.city ? ',  ' : '') +
+        (item.city ? item.city : '') + (item.city && item.province ? ',  ' : '') +
         (item.province ? item.province : '')
       } else {
         // this.nameSeleced = item.city ? item.city : ''

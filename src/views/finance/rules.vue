@@ -68,23 +68,23 @@
                 <span>计算</span>
               </Form>
             </div>
-            <div :style="{height:(height - 115)+'px'}" class="rules-list">
+            <div :style="{height:(height - 115 - 20)+'px'}" class="rules-list">
               <div v-for="(item, index) in ruleDetail.details" :key="index" class="rule-item">
                 <Collapse v-model="item.showRule" class="rule-content">
                   <div class="rule-route">
                     <Form ref="ruleRoute" :model="item" :rules="routeValidate" inline>
                       <Row :gutter="24">
                         <Col span="5"  class="styleCommon">
-                        <FormItem prop="departure" >
-                          <SelectInputForCity v-model="item.departure" placeholder="请输入始发地" class="search-input-senior"></SelectInputForCity>
+                        <FormItem prop="departure" style="text-align: left">
+                          <SelectInputForCity :code-type = "1" v-model="item.departure" placeholder="请输入始发地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
                         <Col span="1" class="styleCommon">
                         <i class="icon font_family icon-ico-line"></i>
                         </Col>
                         <Col span="5" class="styleCommon">
-                        <FormItem prop="destination" >
-                          <SelectInputForCity v-model="item.destination" placeholder="请输入目的地" class="search-input-senior"></SelectInputForCity>
+                        <FormItem prop="destination" style="text-align: left">
+                          <SelectInputForCity :code-type = "1" v-model="item.destination" placeholder="请输入目的地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
                         <Col span="11" class="styleCommon">
@@ -189,7 +189,7 @@ export default {
     }
     const startNumValidate = (rule, value, callback) => {
       if (value === null || value === '') {
-        callback(new Error('请填写区间'))
+        callback()
       } else {
         if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
           if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(value)) {
@@ -208,7 +208,7 @@ export default {
     }
     const startPriceValidate = (rule, value, callback) => {
       if (value === null || value === '') {
-        callback(new Error('请填写'))
+        callback()
       }
       if (/^((0[.]\d{1,2})|(([1-9]\d*)([.]\d{1,2})?))$/.test(value)) {
         if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(value)) {
@@ -227,12 +227,13 @@ export default {
         callback(new Error('请填写'))
       } else {
         if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
-          if (!(/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(realValue))) {
+          // /^(0|([1-9]\d*))([.]\d{1,2})?$/
+          if (!(/^(0|([1-9]\d*))([.]\d{1,2})?$/.test(realValue))) {
             callback(new Error('最多两位小数'))
           }
         }
         if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') {
-          if (!(/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d)?))$/.test(realValue))) {
+          if (!(/^(0|([1-9]\d*))([.]\d)?$/.test(realValue))) {
             callback(new Error('最多一位小数'))
           }
         }
@@ -316,7 +317,7 @@ export default {
   },
   mounted () {
     this.getRules()
-    this.height = document.body.clientHeight - 50 - 15 * 2 - 20 * 2 + 15 - 65
+    this.height = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 65
   },
   methods: {
     toDetail (data) {
@@ -392,8 +393,8 @@ export default {
         departure: null,
         destination: null,
         showRule: (this.ruleDetail.details.length + 1) + '',
-        startNum: null,
-        startPrice: null,
+        startNum: '',
+        startPrice: '',
         chargeRules: [
           { base: '', price: '', baseAndStart: '' }
         ]
@@ -427,6 +428,14 @@ export default {
         await this.formValidate(this.$refs['ruleBase'][j])
         await this.formValidate(this.$refs['rulePrice'][j])
       }
+      if (!_this.ruleDetail.details.every((item, index, array) => {
+        console.log(_this.ruleDetail.details)
+        console.log(((item.startNum.length === 0 && item.startPrice.length === 0)) || (item.startNum.length !== 0 && item.startPrice.length !== 0))
+        return ((item.startNum.length === 0 && item.startPrice.length === 0)) || (item.startNum.length !== 0 && item.startPrice.length !== 0)
+      })) {
+        this.$Message.error('请填写起步价')
+        return
+      }
       this.$Modal.confirm({
         title: '提示',
         content: '确认保存该条规则吗？',
@@ -441,8 +450,8 @@ export default {
                 return {
                   departure: item.departure,
                   destination: item.destination,
-                  startNum: parseFloat(item.startNum) * 100,
-                  startPrice: parseFloat(item.startPrice) * 100,
+                  startNum: item.startNum ? parseFloat(item.startNum) * 100 : '',
+                  startPrice: item.startPrice ? parseFloat(item.startPrice) * 100 : '',
                   chargeRules: item.chargeRules.map(el => {
                     return {
                       base: parseFloat(el.base) * 100,
@@ -491,7 +500,6 @@ export default {
         } else {
           this.ruleDetail = {}
         }
-        console.log(this.companyDataActive)
       }).catch(err => console.error(err))
     },
     showRuleDetail (data) {
@@ -501,11 +509,12 @@ export default {
         ruleType: data.detail.ruleType ? (data.detail.ruleType + '') : '1',
         ruleName: data.ruleName,
         details: Object.assign([], data.detail.rules.map((item, index) => {
+          console.log(item.startPrice === 0)
           return {
             departure: item.departure,
             destination: item.destination,
-            startPrice: item.startPrice ? (item.startPrice / 100) + '' : '0',
-            startNum: item.startNum ? (item.startNum / 100) + '' : '0',
+            startPrice: item.startPrice !== 0 ? (item.startPrice / 100) + '' : '',
+            startNum: item.startNum !== 0 ? (item.startNum / 100) + '' : '',
             showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
               return {
@@ -573,7 +582,7 @@ export default {
       padding-left 10px
       .rule-basic
         padding: 14px
-        border-bottom: 1px solid #C9CED9
+        border-bottom: 1px solid #E4E7EC
         .ivu-form-item
           margin-bottom: 0
         span
@@ -585,7 +594,7 @@ export default {
       .rules-list
         overflow: auto
         padding: 20px 0
-        border-bottom: 1px solid #C9CED9
+        border-bottom: 1px solid #E4E7EC
         .rule-item
           display: flex
           margin-bottom: 30px
@@ -613,7 +622,7 @@ export default {
                 line-height: 28px
               .styleCommon
                 padding 0!important
-                text-align center!important
+                text-align center
             .rule-detail
               list-style none
               .rule-detail-item
@@ -683,7 +692,7 @@ export default {
           cursor: pointer
           text-align: center
           height: 35px
-          border: 1px dashed #c9ced9;
+          border: 1px dashed #E4E7EC
           line-height: 35px
           color: #00A4BD
           i
@@ -692,7 +701,7 @@ export default {
       position absolute
       left 50%
       margin-left -43px
-      bottom 0
+      bottom 20px
       text-align: center
       .ivu-btn
         padding-left: 30px
@@ -712,42 +721,53 @@ export default {
         text-align center
     .left_father
       flex 0 0 275px
-      &:after
-        content ''
-        display block
-        width 1px
-        height 20px
-        position fixed
-        bottom 15px
-        left 509px
-        border-right 1px solid #C9CED9
+      /*&:after*/
+        /*content ''*/
+        /*display block*/
+        /*width 1px*/
+        /*height 20px*/
+        /*position fixed*/
+        /*bottom 15px*/
+        /*left 509px*/
+        /*border-right 1px solid #C9CED9*/
     .left
       display flex
       flex-direction column
-      border-right 1px solid #C9CED9
       .left_search
         padding-top 21px
         flex 0 0 72px
-        border-bottom 1px solid #C9CED9
+        border-right 1px solid #E4E7EC
       .ruleList
+        border-top 1px solid #E4E7EC
         overflow auto
         flex 1
+        border-right 1px solid #E4E7EC
+        margin-left -20px
+        margin-bottom -20px
         .list
           list-style none
           height 60px
           line-height 60px
           display flex
+          border-bottom 1px solid #E4E7EC
           &.companyDataActive
             background #E9FCFF
           &:hover
+            background #E9FCFF
             .operate
               display block
           .icon
             flex 0 0 60px
             text-align center
+            i
+              display inline-block
+              width 30px
+              height 30px
+              background #f9f9f9
+              border-radius 50%
+              line-height 30px
           .content
             flex 1
-            border-bottom 1px solid #DCDEE2
             font-size 12px
             .ruleName
               height 30px
