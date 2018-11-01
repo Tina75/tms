@@ -63,8 +63,8 @@ import Server from '@/libs/js/server'
 import mixin from './mixin'
 import { VALIDATOR_PHONE } from './validator'
 
-// token与记住密码过期时长
-const EXPIRES = 60 * 24 * 60 * 60 * 1000
+// token与记住密码过期时长 1年
+const EXPIRES = 365 * 24 * 60 * 60 * 1000
 
 export default {
   name: 'SignIn',
