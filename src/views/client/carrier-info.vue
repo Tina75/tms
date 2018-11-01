@@ -307,7 +307,8 @@ export default {
         },
         {
           title: '手机号',
-          key: 'driverPhone'
+          key: 'driverPhone',
+          width: 120
         },
         {
           title: '车型',
@@ -396,6 +397,7 @@ export default {
         {
           title: '添加时间',
           key: 'createTime',
+          width: 150,
           render: (h, params) => {
             let text = this.formatDateTime(params.row.createTime)
             return h('div', { props: {} }, text)
@@ -514,8 +516,9 @@ export default {
         {
           title: '送修日期',
           key: 'repairDate',
+          width: 150,
           render: (h, params) => {
-            let text = this.formatDateTime(params.row.repairDate)
+            let text = this.formatDate(params.row.repairDate)
             return h('div', { props: {} }, text)
           }
         },
@@ -555,6 +558,7 @@ export default {
         {
           title: '添加时间',
           key: 'createTime',
+          width: 150,
           render: (h, params) => {
             let text = this.formatDateTime(params.row.createTime)
             return h('div', { props: {} }, text)
