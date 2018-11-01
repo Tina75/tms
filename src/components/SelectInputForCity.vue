@@ -224,7 +224,7 @@ export default {
       }
       const itemName = this.cityShow(item, 1)
       this.currentValue = itemName.split(',  ')[0]
-      this.nameSeleced = itemName.split('  ')[1]
+      this.nameSeleced = this.cityShow(item, 2).split('  ')[1]
       this.currentValueCopy = itemName.split(',  ')[0]
     },
     // 清空
