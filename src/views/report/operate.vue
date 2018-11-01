@@ -3,7 +3,7 @@
     <div class="search">
       <div class="search-col" >
         <div class="row-list" style="margin-bottom:12px">
-          <div class="col">
+          <div class="col relative">
             <SelectInput
               v-model="keywords.consignerName"
               :maxlength="20"
@@ -27,11 +27,11 @@
           </div>
         </div>
         <div class="row-list">
-          <div class="col">
+          <div class="col relative">
             <!--<area-select v-model="keywords.start" placeholder="请输入始发地" style="width: 100%"></area-select>-->
             <SelectInputForCity v-model="keywords.start" placeholder="请输入始发地" style="width: 100%"></SelectInputForCity>
           </div>
-          <div class="col">
+          <div class="col relative">
             <!--<area-select v-model="keywords.end" placeholder="请输入目的地" style="width: 100%"></area-select>-->
             <SelectInputForCity v-model="keywords.end" placeholder="请输入目的地" style="width: 100%"></SelectInputForCity>
           </div>
@@ -664,6 +664,8 @@ export default {
           margin-right 20px
           &:last-child
             margin-right 0
+        .relative
+          position relative
     .search-btn
       flex 1
       text-align right

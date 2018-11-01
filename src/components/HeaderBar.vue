@@ -6,9 +6,9 @@
       </div>
       <div class="header-bar-avator-dropdown">
         <span class="header-bar-avator-dropdown-notify" @click="openProcess">
-          <Poptip v-if="processVisible" :value="processVisible" placement="bottom" content="查看业务流程点击我" trigger="click">
-            <FontIcon type="liucheng" size="30" color="#fff"></FontIcon>
-          </Poptip>
+          <Tooltip v-if="processVisible" :value="processVisible" placement="bottom" content=" 点击我可查看业务流程" always>
+            <FontIcon type="liucheng" size="25" color="#fff"></FontIcon>
+          </Tooltip>
           <FontIcon v-else type="liucheng" size="25" color="#fff"></FontIcon>
         </span>
         <span class="header-bar-avator-dropdown-notify">
