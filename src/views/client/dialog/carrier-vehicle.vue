@@ -227,12 +227,12 @@ export default {
     },
     payMoneyChange () {
       if (this.validate.repairMoney) {
-        this.validate.waitPayMoney = parseFloat(this.validate.repairMoney) - parseFloat(this.validate.payMoney)
+        this.validate.waitPayMoney = parseFloat(this.validate.repairMoney) - (parseFloat(this.validate.payMoney) || 0)
       }
     },
     waitpayMoneyChange () {
       if (this.validate.repairMoney) {
-        this.validate.payMoney = parseFloat(this.validate.repairMoney) - parseFloat(this.validate.waitPayMoney)
+        this.validate.payMoney = parseFloat(this.validate.repairMoney) - (parseFloat(this.validate.waitPayMoney) || 0)
       }
     },
     // 修改页面初始化
