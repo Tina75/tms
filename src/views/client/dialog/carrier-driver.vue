@@ -95,7 +95,7 @@
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem label="净空:" prop="shippingVolume">
+          <FormItem class="ivu-form-item-required blank" label="净空:" prop="shippingVolume">
             <Row>
               <Col span="20">
               <Input v-model="validate.shippingVolume" :maxlength="8"></Input>
@@ -107,7 +107,7 @@
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem label="购买日期:">
+          <FormItem class="ivu-form-item-required blank" label="购买日期:">
             <Row>
               <Col span="20">
               <DatePicker v-model="validate.purchDate" format="yyyy-MM-dd" type="date" placeholder="请选择日期">
@@ -119,7 +119,7 @@
         </Row>
         <Row>
           <Col span="8">
-          <FormItem label="车辆品牌:">
+          <FormItem class="ivu-form-item-required blank" label="车辆品牌:">
             <Row>
               <Col span="20">
               <Input v-model="validate.carBrand" :maxlength="20" placeholder="如：东风"></Input>

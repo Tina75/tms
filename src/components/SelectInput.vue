@@ -277,9 +277,9 @@ export default {
       if (this.visible) {
         e.preventDefault()
         const keyCode = e.key.toLowerCase()
-        if (keyCode === 'arrowup') {
+        if (keyCode === 'arrowup' || keyCode === 'up') {
           this.focusOption(-1)
-        } else if (keyCode === 'arrowdown') {
+        } else if (keyCode === 'arrowdown' || keyCode === 'down') {
           this.focusOption(1)
         } else if (keyCode === 'enter') {
           if (this.focusIndex === -1) {
