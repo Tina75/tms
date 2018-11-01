@@ -15,7 +15,8 @@
           <FormItem label="车牌号:" prop="carNo">
             <Row>
               <Col span="19">
-              <Select v-model="validate.carNo"  :disabled="disAbleBtn" placeholder="必选" class="minWidth">
+              <span v-if="!disAbleBtn">{{ validate.carNo }}</span>
+              <Select v-if="disAbleBtn" v-model="validate.carNo" placeholder="必选" class="minWidth">
                 <Option
                   v-for="item in carNoList"
                   :value="item.carNo"
@@ -170,7 +171,7 @@ export default {
       unbindedDriver: [], // 承运商下尚未被绑定车辆的司机
       validate: {},
       carNoList: [],
-      disAbleBtn: false,
+      disAbleBtn: true,
       selectList: [
         { id: '1', name: '维修' },
         { id: '2', name: '保养' }
@@ -230,7 +231,7 @@ export default {
   },
   mounted () {
     if (this.title === '修改维修记录') {
-      this.disAbleBtn = true
+      this.disAbleBtn = false
       this.validate.repairType = this.validate.repairType.toString()
       this.validate.carrierId = this.carrierId
       this.validate.repairMoney = this.validate.repairMoney / 100
