@@ -53,7 +53,7 @@
           <FormItem label="手机号:" prop="driverPhone">
             <Row>
               <Col span="20">
-              <SelectInput v-model="validate.driverPhone" :remote="true" :remote-method="queryDriverByPhoneList" placeholder="必填" @on-select="slectDriverData"></SelectInput>
+              <SelectInput v-model="validate.driverPhone" :maxlength="11" :remote="true" :remote-method="queryDriverByPhoneList" placeholder="必填" @on-select="slectDriverData"></SelectInput>
               </Col>
             </Row>
           </FormItem>
