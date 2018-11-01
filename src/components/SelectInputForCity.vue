@@ -326,8 +326,8 @@ export default {
     },
     cityShow (item, type) {
       if (type === 1) {
-        return (item.area ? item.area + ',  ' : '') +
-        (item.city ? item.city + ',  ' : '') +
+        return (item.area ? item.area : '') + (item.area && item.city ? ',  ' : '') +
+        (item.city ? item.city : '') + (item.city && item.province ? ',  ' : '') +
         (item.province ? item.province : '')
       } else {
         // this.nameSeleced = item.city ? item.city : ''
