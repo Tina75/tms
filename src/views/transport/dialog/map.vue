@@ -1,5 +1,5 @@
 <template>
-  <Modal id="map-modal" v-model="visiable" :mask-closable="true" width="803" @on-visible-change="close">
+  <Modal id="map-modal" v-model="visiable" :mask-closable="true" width="1200" @on-visible-change="close">
     <p slot="header" style="text-align:center">查看车辆位置</p>
 
     <Row>
@@ -122,7 +122,7 @@ export default {
 </script>
 <style lang='stylus' scoped>
   #map, .map-timeline-box
-    height 238px
+    height 600px
 
   .map-timeline-box
     padding 11px
