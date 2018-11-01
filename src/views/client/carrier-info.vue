@@ -351,6 +351,10 @@ export default {
               h('Tooltip', {
                 props: {
                   placement: 'top'
+                },
+                style: {
+                  width: '100%',
+                  paddingTop: '6px'
                 }
               }, [
                 h('span', {

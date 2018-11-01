@@ -379,6 +379,8 @@ export default {
   background:rgba(248,248,248,1);
 >>> .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
   color: #515a6e;
+>>> .ivu-menu-vertical.ivu-menu-light:after
+  background: #E4E7EC;
 .temAll
   width: 100%;
   overflow: hidden;
@@ -388,7 +390,7 @@ export default {
   .leftMenu
     height: 100%
     .centerBtnDiv
-      border-bottom: 1px solid #DCDEE2;
+      border-bottom: 1px solid #E4E7EC;
       padding-bottom:50px;
   .leftMenu :hover
     max-height: calc(100% - 50px);
@@ -424,7 +426,7 @@ export default {
         display: block;
         overflow: hidden;
   .rightHead
-    border-bottom: 1px solid #DCDEE2;
+    border-bottom: 1px solid #E4E7EC;
     margin-top: 5px
     .rightTitle
       height: 55px;

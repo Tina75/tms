@@ -227,10 +227,10 @@ export default {
         ],
         shippingWeight: [
           { required: true, message: '载重不能为空' },
-          { message: '必须小于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '必须小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ],
         shippingVolume: [
-          { message: '必须小于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '必须小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ]
       }
     }

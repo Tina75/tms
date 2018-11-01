@@ -94,7 +94,7 @@
           <FormItem label="已支付费用:" prop="payMoney">
             <Row>
               <Col span="19">
-              <Input v-model="validate.payMoney" :maxlength="9" placeholder="必填"></Input>
+              <Input v-model="validate.payMoney" :maxlength="9" placeholder="必填" @on-change="payMoneyChange"></Input>
                 </Col>
               <Col span="2" offset="1">
               <span>元</span>
@@ -106,7 +106,7 @@
           <FormItem label="未支付费用:" prop="waitPayMoney">
             <Row>
               <Col span="19">
-              <Input v-model="validate.waitPayMoney" :maxlength="9" placeholder="必填"></Input>
+              <Input v-model="validate.waitPayMoney" :maxlength="9" placeholder="必填" @on-change="waitpayMoneyChange"></Input>
                 </Col>
               <Col span="2" offset="1">
               <span>元</span>
@@ -192,40 +192,20 @@ export default {
         ],
         repairMile: [
           { required: true, message: '送修公里数不能为空' },
-          { message: '必须小于六位整数,不能有小数', pattern: /^[0-9]{0,6}?$/ }
+          { message: '必须小于等于六位整数,不能有小数', pattern: /^[0-9]{0,6}?$/ }
         ],
         repairMoney: [
           { required: true, message: '维修费用不能为空' },
-          { message: '必须小于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '必须小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ],
         payMoney: [
           { required: true, message: '已支付费用不能为空' },
-          { message: '必须小于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '必须小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ],
         waitPayMoney: [
           { required: true, message: '未支付费用不能为空' },
-          { message: '必须小于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '必须小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ]
-      }
-    }
-  },
-  computed: {
-    payMoney () {
-      return this.validate.payMoney
-    },
-    waitPayMoney () {
-      return this.validate.waitPayMoney
-    }
-  },
-  watch: {
-    payMoney (n, o) {
-      if (n && this.validate.repairMoney) {
-        this.validate.waitPayMoney = Number(this.validate.repairMoney) - Number(n)
-      }
-    },
-    waitPayMoney (n, o) {
-      if (n && this.validate.repairMoney) {
-        this.validate.payMoney = Number(this.validate.repairMoney) - Number(n)
       }
     }
   },
@@ -237,6 +217,17 @@ export default {
     }
   },
   methods: {
+    payMoneyChange () {
+      debugger
+      if (this.validate.repairMoney) {
+        this.validate.waitPayMoney = Number(this.validate.repairMoney) - Number(this.validate.payMoney)
+      }
+    },
+    waitpayMoneyChange () {
+      if (this.validate.repairMoney) {
+        this.validate.payMoney = Number(this.validate.repairMoney) - Number(this.validate.waitPayMoney)
+      }
+    },
     // 修改页面初始化
     configData () {
       this.disAbleBtn = false
