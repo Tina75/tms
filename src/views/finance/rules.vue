@@ -721,15 +721,6 @@ export default {
         text-align center
     .left_father
       flex 0 0 275px
-      /*&:after*/
-        /*content ''*/
-        /*display block*/
-        /*width 1px*/
-        /*height 20px*/
-        /*position fixed*/
-        /*bottom 15px*/
-        /*left 509px*/
-        /*border-right 1px solid #C9CED9*/
     .left
       display flex
       flex-direction column
@@ -742,7 +733,7 @@ export default {
         overflow auto
         flex 1
         border-right 1px solid #E4E7EC
-        margin-left -20px
+        margin-left -15px
         margin-bottom -20px
         .list
           list-style none
@@ -759,6 +750,15 @@ export default {
           .icon
             flex 0 0 60px
             text-align center
+            position relative
+            &:after
+              position absolute
+              bottom -1px
+              content ''
+              display block
+              height 1px
+              width 15px
+              border-top  1px solid #fff
             i
               display inline-block
               width 30px
@@ -766,6 +766,8 @@ export default {
               background #f9f9f9
               border-radius 50%
               line-height 30px
+              &:after
+                border none
           .content
             flex 1
             font-size 12px
