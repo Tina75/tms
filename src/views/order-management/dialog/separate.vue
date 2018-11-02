@@ -511,12 +511,10 @@ export default {
       this.parentOrderCargoList.map((item) => {
         item.weight = parseFloat(item.weight.toFixed(2))
         item.volume = parseFloat(item.volume.toFixed(1))
-        item.cargoCost = parseInt(item.cargoCost)
       })
       this.childOrderCargoList.map((item) => {
         item.weight = parseFloat(item.weight.toFixed(2))
         item.volume = parseFloat(item.volume.toFixed(1))
-        item.cargoCost = parseInt(item.cargoCost)
       })
       const data = {
         id: this.id,
@@ -603,9 +601,9 @@ export default {
       if (params.row.quantity !== 0) {
         parentData.cargoCost = parseInt(float.round(cargoCost * parentData.quantity) / quantity)
       } else if (params.row.weight !== 0) {
-        parentData.cargoCost = (cargoCost * parentData.weight / weight)
+        parentData.cargoCost = parseInt(float.round(cargoCost * parentData.weight) / weight)
       } else {
-        parentData.cargoCost = (cargoCost * parentData.volume / volume)
+        parentData.cargoCost = parseInt(float.round(cargoCost * parentData.volume) / volume)
       }
       this.$set(this.parentOrderCargoList, params.index, parentData)
       this.$set(this.cloneData, params.index, parentData)
