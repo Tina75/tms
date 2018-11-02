@@ -117,6 +117,11 @@ export default {
   &__flex-left
     flex 0 0 275px
     border-right 1px solid #E4E7EC
+    &:after
+      content ''
+      width 1px
+      border-right 1px solid #E4E7EC
+      position absolute
   &__flex-right
     flex 1
     padding-left 10px

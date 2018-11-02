@@ -12,13 +12,8 @@
           <Input v-model="formInline.orderNo" :maxlength="30" placeholder="请输入订单号"></Input>
         </FormItem>
       </Col>
-        <Col span="7">
-        <FormItem >
-          <Select value="1">
-            <Option value="1">下单时间</Option>
-          </Select>
-        </FormItem>
-        <FormItem>
+        <Col span="6">
+        <FormItem :label-width="75" label="下单时间：">
           <DatePicker v-model="formInline.daterange" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间"></DatePicker>
         </FormItem>
       </Col>
