@@ -53,6 +53,7 @@
 <script>
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
+import float from '@/libs/js/float'
 import _ from 'lodash'
 export default {
   name: 'separate',
@@ -76,6 +77,7 @@ export default {
           title: '数量',
           key: 'quantity',
           render: (h, params) => {
+            const vm = this
             if (this.isSeparate && (this.currentId === params.row.id) && (this.cloneData[params.index].quantity !== 0)) {
               return h('div', [
                 h('InputNumber', {
@@ -94,17 +96,17 @@ export default {
                       console.log(percent)
                       // 计算重量
                       if (this.cloneData[params.index].weight !== 0) {
-                        params.row.weight = this.cloneData[params.index].weight * percent
-                        this.weightVal = this.cloneData[params.index].weight * percent
+                        params.row.weight = float.round(this.cloneData[params.index].weight * percent)
+                        this.weightVal = float.round(this.cloneData[params.index].weight * percent)
                       }
                       // 计算体积
                       if (this.cloneData[params.index].volume !== 0) {
-                        params.row.volume = this.cloneData[params.index].volume * percent
-                        this.volumeVal = this.cloneData[params.index].volume * percent
+                        params.row.volume = float.round(this.cloneData[params.index].volume * percent, 1)
+                        this.volumeVal = float.round(this.cloneData[params.index].volume * percent, 1)
                       }
                       // 计算货值
-                      if (this.cloneData[params.index].cargoCost !== 0) {
-                        params.row.cargoCost = this.cloneData[params.index].cargoCost * percent
+                      if (vm.cloneData[params.index].cargoCost !== 0) {
+                        params.row.cargoCost = vm.cloneData[params.index].cargoCost * percent
                       }
                     }
                   }
@@ -247,7 +249,7 @@ export default {
                         params.row.quantity = this.cloneData[params.index].quantity
                         params.row.weight = this.cloneData[params.index].weight
                         params.row.volume = this.cloneData[params.index].volume
-                        params.row.cargoCost = this.cloneData[params.index].cargoCost
+                        params.row.cargoCost = float.round(this.cloneData[params.index].cargoCost)
                       }
                       // 没修改过数量、重量、体积中任意一个 或 修改过数量、重量、体积跟初始值一致   部分整拆
                       if (this.quantityVal === params.row.quantity && parseFloat(this.weightVal.toFixed(2)) === parseFloat(params.row.weight.toFixed(2)) && parseFloat(this.volumeVal.toFixed(1)) === parseFloat(params.row.volume.toFixed(1))) {
@@ -509,10 +511,12 @@ export default {
       this.parentOrderCargoList.map((item) => {
         item.weight = parseFloat(item.weight.toFixed(2))
         item.volume = parseFloat(item.volume.toFixed(1))
+        item.cargoCost = parseInt(item.cargoCost)
       })
       this.childOrderCargoList.map((item) => {
         item.weight = parseFloat(item.weight.toFixed(2))
         item.volume = parseFloat(item.volume.toFixed(1))
+        item.cargoCost = parseInt(item.cargoCost)
       })
       const data = {
         id: this.id,
@@ -597,7 +601,7 @@ export default {
       parentData.volume = this.volumeVal ? params.row.volume - this.volumeVal : 0
       // 货值比例关联优先级：数量-->重量-->体积
       if (params.row.quantity !== 0) {
-        parentData.cargoCost = (cargoCost * parentData.quantity / quantity)
+        parentData.cargoCost = parseInt(float.round(cargoCost * parentData.quantity) / quantity)
       } else if (params.row.weight !== 0) {
         parentData.cargoCost = (cargoCost * parentData.weight / weight)
       } else {
@@ -608,7 +612,7 @@ export default {
 
       // 生成子单数据
       let childData = { ...params.row }
-      childData.cargoCost = cargoCost - parentData.cargoCost
+      childData.cargoCost = float.round(cargoCost - parentData.cargoCost)
       childData.quantity = this.quantityVal ? this.quantityVal : params.row.quantity
       childData.weight = this.weightVal ? this.weightVal : params.row.weight
       childData.volume = this.volumeVal ? this.volumeVal : params.row.volume
