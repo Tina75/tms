@@ -57,7 +57,7 @@ export default {
      * 搜索
      */
     handleSearch () {
-
+      console.log('form', this.formInline)
     },
     /**
      * 充值表单
