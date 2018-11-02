@@ -91,6 +91,11 @@
         "powerCode":170300
       },
       {
+        "name": "代收货款对账",
+        "path":"/finance/collectFee",
+        "powerCode": 170300
+      },
+      {
         "name":"计费规则",
         "path":"/finance/rules",
         "powerCode":170400
