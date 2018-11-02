@@ -33,8 +33,8 @@ export default {
      */
     handleClick (item) {
       if (this.activeKey) {
-        for (let i in this.$slots) {
-          let _childvm = this.$slots[i]
+        for (let i in this.$slots.default) {
+          let _childvm = this.$slots.default[i].componentInstance
           if (_childvm.item[this.listKey] === this.activeKey) {
             _childvm.toggleActive()
             break
