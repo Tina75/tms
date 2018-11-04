@@ -34,8 +34,8 @@
       <div>发货方对账列表</div>
       <Button v-if="(hasPower(170102) && scene === 1) || (hasPower(170202) && scene === 2) || (hasPower(170302) && scene === 3)" type="primary" @click="createBill">生成对账单</Button>
     </div>
-    <div  class="list-box">
-      <ul :style="{height: height -120 - 44 + 'px'}" class="leftList">
+    <div  :style="{height: height + 108 + 'px'}" class="list-box">
+      <ul class="leftList">
         <li v-for="(item,index) in companyData" :class="{companyDataActive:companyDataActive === item.partnerName}" :key="index" class="list" @click="showOrderData(item)">
           <!--<Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showOrderData"></Table>-->
           <div class="icon">
@@ -280,7 +280,7 @@ export default {
   },
   mounted () {
     this.loadData()
-    this.height = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 65
+    this.height = document.body.clientHeight - 50 - 15 * 2 - 20 * 2 + 15 - 65 - 72 - 50
   },
   methods: {
     setOrderIds (data) {
@@ -460,10 +460,12 @@ export default {
       display flex
       border-top 1px solid #C9CED9
       margin 0 -15px
+      margin-bottom -20px
       .leftList
+        height 100%
+        overflow-y auto
         flex 0 0 270px
         border-right 1px solid #E4E7EC
-        margin-bottom -20px
         .list
           list-style none
           height 60px
@@ -517,6 +519,8 @@ export default {
             color #666
             font-size 12px
       .order-list
+        height 100%
+        overflow-y auto
         flex 1
         padding 19px 20px 20px 9px
         /deep/ .ivu-table-cell
@@ -527,8 +531,7 @@ export default {
         flex-direction column
         justify-content center
         align-items center
-        min-height 500px
-        /*border 1px solid #dcdee2*/
+        min-height 426px
         .data-empty-img
           width 70px
           margin-bottom 12px
