@@ -365,6 +365,7 @@ export default {
     this.carId = this.infoDataInit.carId
     this.infoData = this.$route.query.rowData
     this.repairFormat.carrierId = this.carrierId
+    this.repairFormat.carNo = this.infoData.carNO
     this.repairFormatInit = Object.assign({}, this.repairFormat)
     this._carrierQueryLog()
     this.initData()

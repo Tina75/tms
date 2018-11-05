@@ -371,7 +371,7 @@ export function carrierListCar (data) {
     headers: {
       'Content-Type': 'application/json'
     },
-    method: 'GET',
+    method: 'POST',
     data: data
   })
 }

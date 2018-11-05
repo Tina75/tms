@@ -112,8 +112,8 @@
       <Tabs :animated="false">
         <TabPane :label="tabPaneLabel">
           <div class="add">
-            <Button v-if="hasPower(130204)" type="primary" @click="_carrierAddDriver">新增车辆</Button>
-            <Button v-if="hasPower(130204)" @click="carExport">导出</Button>
+            <Button v-if="hasPower(130207)" type="primary" @click="_carrierAddDriver">新增车辆</Button>
+            <Button v-if="hasPower(130210)" @click="carExport">导出</Button>
             <div class="rightSearch">
               <template>
                 <Select v-model="selectStatus1" style="width:120px;margin-right: 11px"  @on-change="changeState('keyword1', 1)">
@@ -128,7 +128,7 @@
                      class="search-input"
                      @on-enter="searchCarList"
                      @on-click="clearKeywords('keyword1', 1)"/>
-              <Select v-if="selectStatus1 === '2'" v-model="keyword1" class="search-input">
+              <Select v-if="selectStatus1 === '2'" v-model="keyword1" class="search-input" @on-change="searchCarList">
                 <Option
                   v-for="item in driverTypeList"
                   :value="item.id"
@@ -159,8 +159,8 @@
         </TabPane>
         <TabPane :label="tabPaneLabe2">
           <div class="add">
-            <Button v-if="hasPower(130207)" type="primary" @click="_carrierAddVehicle">新增记录</Button>
-            <Button v-if="hasPower(130207)" @click="repairExport">导出</Button>
+            <Button v-if="hasPower(130211)" type="primary" @click="_carrierAddVehicle">新增记录</Button>
+            <Button v-if="hasPower(130214)" @click="repairExport">导出</Button>
             <div class="rightSearch">
               <template>
                 <Select v-model="selectStatus2" style="width:120px;margin-right: 11px"  @on-change="changeState('keyword2', 2)">
@@ -175,7 +175,7 @@
                      class="search-input"
                      @on-enter="searchRepairList"
                      @on-click="clearKeywords('keyword2', 2)"/>
-              <Select v-if="selectStatus2 === '2'" v-model="keyword2"  class="search-input">
+              <Select v-if="selectStatus2 === '2'" v-model="keyword2" class="search-input"  @on-change="searchRepairList">
                 <Option
                   v-for="item in repairTypeList"
                   :value="item.id"
@@ -292,7 +292,7 @@ export default {
           width: 150,
           render: (h, params) => {
             let renderBtn = []
-            if (this.hasPower(130205)) {
+            if (this.hasPower(130208)) {
               renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
@@ -339,7 +339,7 @@ export default {
                 }
               }
             }, '查看'))
-            if (this.hasPower(130206)) {
+            if (this.hasPower(130209)) {
               renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
@@ -505,7 +505,7 @@ export default {
           width: 150,
           render: (h, params) => {
             let renderBtn = []
-            if (this.hasPower(130208)) {
+            if (this.hasPower(130212)) {
               renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
@@ -555,7 +555,7 @@ export default {
                 }
               }
             }, '查看'))
-            if (this.hasPower(130209)) {
+            if (this.hasPower(130213)) {
               renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
@@ -825,9 +825,17 @@ export default {
         return
       }
       let data = {
+        carrierId: this.carrierId
+      }
+      if (this.selectStatus1 === '1') {
+        data.carNO = this.keyword1
+      } else if (this.selectStatus1 === '2') {
+        data.driverType = this.keyword1
+      } else if (this.selectStatus1 === '3') {
+        data.driverPhone = this.keyword1
       }
       Export({
-        url: '/report/xxxx/xxxx/xxx',
+        url: '/carrier/carlist/export',
         method: 'post',
         data,
         fileName: '车辆信息报表'
@@ -839,9 +847,15 @@ export default {
         return
       }
       let data = {
+        carrierId: this.carrierId
+      }
+      if (this.selectStatus2 === '1') {
+        data.carNO = this.keyword2
+      } else if (this.selectStatus2 === '2') {
+        data.repairType = Number(this.keyword2)
       }
       Export({
-        url: '/report/xxxx/xxxx/xxxx',
+        url: '/carrier/carRepairList/export',
         method: 'post',
         data,
         fileName: '维修记录报表'
@@ -853,13 +867,54 @@ export default {
       } else {
         this[val] = ''
       }
+      if (flag === 1) {
+        this.searchCarList()
+      } else {
+        this.searchRepairList()
+      }
     },
     searchCarList () { // 搜索车辆信息列表
       if (this.selectStatus1 === '3' && !(/^[0-9]*$/.test(this.keyword1))) { // 手机号
         this.$Message.error('手机号格式输入错误')
+        return
       }
+      // 车辆 - 根据条件查询
+      let data = {
+        carrierId: this.carrierId,
+        pageNo: this.pageNo2,
+        pageSize: this.pageSize2
+      }
+      if (this.selectStatus1 === '1') {
+        data.carNO = this.keyword1
+      } else if (this.selectStatus1 === '2') {
+        data.driverType = Number(this.keyword1)
+      } else if (this.selectStatus1 === '3') {
+        data.driverPhone = this.keyword1
+      }
+      carrierListCar(data).then(res => {
+        if (res.data.code === CODE) {
+          this.data1 = res.data.data.carList
+          this.totalCount1 = res.data.data.total
+        }
+      })
     },
     searchRepairList () { // 搜索维修记录列表
+      let data = {
+        carrierId: this.carrierId,
+        pageNo: this.pageNo2,
+        pageSize: this.pageSize2
+      }
+      if (this.selectStatus2 === '1') {
+        data.carNo = this.keyword2
+      } else if (this.selectStatus2 === '2') {
+        data.repairType = Number(this.keyword2)
+      }
+      carrierListRepairVehicle(data).then(res => {
+        if (res.data.code === CODE) {
+          this.data2 = res.data.data.list
+          this.totalCount2 = res.data.data.totalCount
+        }
+      })
     },
     clearKeywords (val, flag) {
       this[val] = ''
