@@ -1,16 +1,16 @@
 <template>
-  <div class="wait-collect">
+  <div class="wait-pay">
     <CollectForm></CollectForm>
-    <Row class="wait-collect__operation">
+    <Row class="wait-pay__operation">
       <Col span="12">
-      <span class="wait-collect__view-title">发货方代收款列表</span>
+      <span class="wait-pay__view-title">发货方代付款列表</span>
       </Col>
       <Col span="12 van-right">
-      <Button type="primary">收款核销</Button>
+      <Button type="primary">付款核销</Button>
       </Col>
     </Row>
     <Row type="flex">
-      <Col span="6" class="wait-collect__flex-left">
+      <Col span="6" class="wait-pay__flex-left">
       <ListSender ref="senderList" :style="styles" list-key="partnerName" @on-click="handleClick">
         <ListSenderItem v-for="(item, index) in senders" :key="index" :item="item" :title="item.partnerName" :extra="item.orders" icon="ico-company">
           <p slot="supName">
@@ -18,14 +18,14 @@
               总额 {{item.totalFee}}
             </span>
             <span class="i-ml-20">
-              已收 {{item.paied}}
+              已付 {{item.paied}}
             </span>
           </p>
         </ListSenderItem>
       </ListSender>
-      <div class="wait-collect__flex-divider"></div>
+      <div class="wait-pay__flex-divider"></div>
       </Col>
-      <Col span="17" class="wait-collect__flex-right">
+      <Col span="17" class="wait-pay__flex-right">
       <div class="i-mt-20">
         <PageTable
           :autoload="false"
@@ -40,7 +40,7 @@
 
 <script>
 /**
- * 代收货款-未收
+ * 代收货款-已收未付
  */
 import CollectForm from './CollectForm.vue'
 import ListSender from './list-sender/index.vue'
@@ -79,7 +79,7 @@ export default {
           width: 60,
           key: 'action',
           render: (h, params) => {
-            return h('span', {}, '收款核销')
+            return h('span', {}, '付款核销')
           }
         },
         {
@@ -96,7 +96,8 @@ export default {
           key: 'destinationName'
         },
         {
-          title: '代收货款'
+          title: '代收货款',
+          key: 'fee'
         },
         {
           title: '承运商'
@@ -134,8 +135,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.wait-collect
-  margin-bottom -20px
+.wait-pay
   &__operation
     border-bottom 1px solid #E4E7EC
     padding-bottom 9px

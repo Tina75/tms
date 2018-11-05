@@ -1,28 +1,28 @@
 <template>
   <div class="search-form">
-    <Form ref="formInline" :model="formInline" inline>
-      <Row type="flex">
+    <Form ref="formInline" :model="formInline">
+      <Row :gutter="36">
         <Col span="6">
         <FormItem :label-width="65" label="发货方：">
           <Input v-model="formInline.sender" :maxlength="20" placeholder="请输入发货方名称"></Input>
         </FormItem>
-      </Col>
+        </Col>
         <Col span="6">
         <FormItem  :label-width="65" label="订单号：">
           <Input v-model="formInline.orderNo" :maxlength="30" placeholder="请输入订单号"></Input>
         </FormItem>
-      </Col>
-        <Col span="6">
+        </Col>
+        <Col span="8">
         <FormItem :label-width="75" label="下单时间：">
-          <DatePicker v-model="formInline.daterange" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间"></DatePicker>
+          <DatePicker v-model="formInline.daterange" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width:100%"></DatePicker>
         </FormItem>
-      </Col>
+        </Col>
         <Col span="4">
         <FormItem>
           <Button type="primary" style="margin-right: 10px" @click="handleSearch">搜索</Button>
           <Button type="default" @click="resetForm">清除条件</Button>
         </FormItem>
-      </Col>
+        </Col>
       </Row>
     </Form>
   </div>
