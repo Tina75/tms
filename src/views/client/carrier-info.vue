@@ -204,7 +204,7 @@
           </div>
         </TabPane>
         <TabPane :label="tabPaneLabe3">
-          <ruleForClient :active="'2'" :partner-name="companyList.carrierName"></ruleForClient>
+          <ruleForClient :count.sync="totalCount3" :active="'2'" :partner-name="companyList.carrierName"></ruleForClient>
         </TabPane>
       </Tabs>
     </div>
@@ -214,7 +214,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import { CAR_TYPE1, CAR_LENGTH1, DRIVER_TYPE } from '@/libs/constant/carInfo'
-import { CODE, carrierDetailsForDriver, carrierListRepairVehicle, carrierDeleteRepairVehicle, carrierDetailsForCompany, carrierListCar, carrierDeleteDriver, CAR } from './client'
+import { CODE, carrierDetailsForDriver, carrierListRepairVehicle, carrierDeleteRepairVehicle, carrierDetailsForCompany, carrierListCar, carrierDeleteDriver, getCarrierNumberCount, CAR } from './client'
 import TMSUrl from '@/libs/constant/url'
 import ruleForClient from './ruleForClient/index'
 import Export from '@/libs/js/export'
@@ -365,6 +365,7 @@ export default {
                             if (res.data.code === CODE) {
                               _this.$Message.success(res.data.msg)
                               _this._carrierListCar() // 车辆列表也要刷新
+                              _this.getCarrierNumberCount()
                             } else {
                               _this.$Message.error(res.data.msg)
                             }
@@ -581,6 +582,7 @@ export default {
                             if (res.data.code === CODE) {
                               _this.$Message.success(res.data.msg)
                               _this._carrierListRepairVehicle() // 刷新页面
+                              _this.getCarrierNumberCount()
                             } else {
                               _this.$Message.error(res.data.msg)
                             }
@@ -673,18 +675,21 @@ export default {
       pageArray2: [10, 20, 50],
       pageSize2: 10,
       totalCount2: 0, // 总条数
-      pageNo2: 1
+      pageNo2: 1,
+      totalCount3: 0,
+      totalTabCount1: 0,
+      totalTabCount2: 0
     }
   },
   computed: {
     tabPaneLabel () {
-      return '车辆信息 ' + (Number(this.totalCount1) === 0 ? '' : this.totalCount1)
+      return '车辆信息 ' + (Number(this.totalTabCount1) === 0 ? '' : this.totalTabCount1)
     },
     tabPaneLabe2 () {
-      return '维修记录 ' + (Number(this.totalCount2) === 0 ? '' : this.totalCount2)
+      return '维修记录 ' + (Number(this.totalTabCount2) === 0 ? '' : this.totalTabCount2)
     },
     tabPaneLabe3 () {
-      return '计费规则'
+      return '计费规则 ' + (Number(this.totalCount3) === 0 ? '' : this.totalCount3)
     }
   },
   mounted () {
@@ -758,6 +763,7 @@ export default {
         methods: {
           ok () {
             _this._carrierListCar()
+            _this.getCarrierNumberCount()
           }
         }
       })
@@ -813,7 +819,18 @@ export default {
         methods: {
           ok () {
             _this._carrierListRepairVehicle() // 刷新页面-维修列表
+            _this.getCarrierNumberCount()
           }
+        }
+      })
+    },
+    // 获取tab-number的数量值
+    _getCarrierNumberCount () {
+      let data = {
+        carrierId: this.carrierId
+      }
+      getCarrierNumberCount(data).then(res => {
+        if (res.data.code === CODE) {
         }
       })
     },

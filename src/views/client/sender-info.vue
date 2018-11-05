@@ -47,7 +47,7 @@
     </div>
     <div class="tabs">
       <Tabs :animated="false">
-        <TabPane label="发货地址">
+        <TabPane :label="tabPaneLabel">
           <div class="add">
             <Button v-if="hasPower(130104)"  type="primary" @click="_consignerAddressAdd">新增</Button>
           </div>
@@ -65,7 +65,7 @@
             </template>
           </div>
         </TabPane>
-        <TabPane label="收货方">
+        <TabPane :label="tabPaneLabe2">
           <div class="add">
             <Button v-if="hasPower(130107)" type="primary"  @click="_consignerConsigneeAdd">新增</Button>
           </div>
@@ -83,7 +83,7 @@
             </template>
           </div>
         </TabPane>
-        <TabPane label="常发货物">
+        <TabPane :label="tabPaneLabe3">
           <div class="add">
             <Button v-if="hasPower(130110)" type="primary" @click="_consignerCargoAdd">新增</Button>
           </div>
@@ -101,8 +101,8 @@
             </template>
           </div>
         </TabPane>
-        <TabPane label="计费规则">
-          <ruleForClient :active="'1'" :partner-name="list.name"></ruleForClient>
+        <TabPane :label="tabPaneLabe4">
+          <ruleForClient :count.sync="totalCount4" :active="'1'" :partner-name="list.name"></ruleForClient>
         </TabPane>
       </Tabs>
     </div>
@@ -485,7 +485,22 @@ export default {
       pageArray3: [10, 20, 50, 100],
       pageSize3: 10,
       totalCount3: 0, // 总条数
-      pageNo3: 1
+      pageNo3: 1,
+      totalCount4: 0
+    }
+  },
+  computed: {
+    tabPaneLabel () {
+      return '发货地址 ' + (Number(this.totalCount1) === 0 ? '' : this.totalCount1)
+    },
+    tabPaneLabe2 () {
+      return '发货方 ' + (Number(this.totalCount2) === 0 ? '' : this.totalCount2)
+    },
+    tabPaneLabe3 () {
+      return '常发货物 ' + (Number(this.totalCount3) === 0 ? '' : this.totalCount3)
+    },
+    tabPaneLabe4 () {
+      return '计费规则 ' + (Number(this.totalCount4) === 0 ? '' : this.totalCount4)
     }
   },
   mounted () {
