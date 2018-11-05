@@ -147,7 +147,7 @@
           </div>
         </TabPane>
         <TabPane label="计费规则">
-          <ruleForClient :active="2"></ruleForClient>
+          <ruleForClient :active="'2'" :partner-name="companyList.carrierName"></ruleForClient>
         </TabPane>
       </Tabs>
     </div>
@@ -159,7 +159,7 @@ import BasePage from '@/basic/BasePage'
 import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import { CODE, carrierDetailsForDriver, carrierListRepairVehicle, carrierDeleteRepairVehicle, carrierDetailsForCompany, carrierListCar, carrierDeleteDriver } from './client'
 import TMSUrl from '@/libs/constant/url'
-import ruleForClient from '@/components/ruleForClient/index'
+import ruleForClient from './ruleForClient/index'
 export default {
   name: 'carrier-info',
   components: {

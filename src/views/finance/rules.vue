@@ -328,12 +328,14 @@ export default {
       })
     },
     editRule (item) {
+      console.log(item)
       const _this = this
       this.openDialog({
         name: 'finance/dialogs/editRule',
         data: {
           scene: this.active,
           ruleId: item.ruleId,
+          ruleType: item.detail.ruleType === 0,
           createRuleForm: {
             ruleName: item.ruleName
           }
