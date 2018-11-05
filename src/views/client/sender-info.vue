@@ -101,6 +101,9 @@
             </template>
           </div>
         </TabPane>
+        <TabPane label="计费规则">
+          <ruleForClient :active="1"></ruleForClient>
+        </TabPane>
       </Tabs>
     </div>
   </div>
@@ -108,9 +111,13 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
+import ruleForClient from '@/components/ruleForClient/index'
 import { CODE, consignerDetail, consignerAddressList, consignerAddressDelete, consignerConsigneeList, consignerConsigneeDelete, consignerCargoList, consignerCargoDelete } from './client'
 export default {
   name: 'sender-info',
+  components: {
+    ruleForClient
+  },
   mixins: [ BasePage ],
   metaInfo: {
     title: '发货方详情'
@@ -635,4 +642,7 @@ export default {
     margin-top 22px
     display flex
     justify-content flex-end
+  .tabs
+    .ivu-tabs
+      overflow visible
 </style>
