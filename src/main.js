@@ -15,13 +15,7 @@ require('./libs/js/date')
 require('./assets/css/iview/iview.css')
 require('./assets/css/tms/iconfont.css')
 
-const errorHandler = (error, vm) => {
-  console.error(error)
-}
-
 Vue.config.productionTip = false
-Vue.config.errorHandler = errorHandler
-Vue.prototype.$throw = error => errorHandler(error, this)
 
 // Meta自设置
 Vue.use(VueMeta)

@@ -23,12 +23,6 @@ export default {
   mounted () {
     window.EMA.bind('logout', (msg) => { this.logout(msg) })
     this.init()
-
-    // try {
-    throw new Error('test error')
-    // } catch (err) {
-    //   console.log(err)
-    // }
   },
   methods: {
     ...mapActions(['getPermissons', 'getMessageCount', 'getTableColumns']),
