@@ -146,8 +146,8 @@
             </template>
           </div>
         </TabPane>
-        <TabPane label="计费规则">
-          <ruleForClient :active="'2'" :partner-name="companyList.carrierName"></ruleForClient>
+        <TabPane :label="tabPaneLabe3">
+          <ruleForClient :count.sync="totalCount3" :active="'2'" :partner-name="companyList.carrierName"></ruleForClient>
         </TabPane>
       </Tabs>
     </div>
@@ -581,7 +581,8 @@ export default {
       pageArray2: [10, 20, 50],
       pageSize2: 10,
       totalCount2: 0, // 总条数
-      pageNo2: 1
+      pageNo2: 1,
+      totalCount3: 0
     }
   },
   computed: {
@@ -590,6 +591,9 @@ export default {
     },
     tabPaneLabe2 () {
       return '维修记录 ' + (Number(this.totalCount2) === 0 ? '' : this.totalCount2)
+    },
+    tabPaneLabe3 () {
+      return '计费规则 ' + (Number(this.totalCount3) === 0 ? '' : this.totalCount3)
     }
   },
   mounted () {

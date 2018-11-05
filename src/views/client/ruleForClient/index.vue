@@ -486,6 +486,7 @@ export default {
         }
       }).then(res => {
         this.companyData = res.data.data
+        this.$emit('update:count', this.companyData.length ? this.companyData.length : 0)
         if (this.ruleDetail && this.ruleDetail.ruleId && this.companyData.some(item => item.ruleId === this.ruleDetail.ruleId)) {
           this.showRuleDetail(this.companyData.find(item => item.ruleId === this.ruleDetail.ruleId))
         } else {
