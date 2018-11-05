@@ -102,7 +102,7 @@
           </div>
         </TabPane>
         <TabPane label="计费规则">
-          <ruleForClient :active="1"></ruleForClient>
+          <ruleForClient :active="'1'" :partner-name="list.name"></ruleForClient>
         </TabPane>
       </Tabs>
     </div>
@@ -111,7 +111,7 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import ruleForClient from '@/components/ruleForClient/index'
+import ruleForClient from './ruleForClient/index'
 import { CODE, consignerDetail, consignerAddressList, consignerAddressDelete, consignerConsigneeList, consignerConsigneeDelete, consignerCargoList, consignerCargoDelete } from './client'
 export default {
   name: 'sender-info',
