@@ -14,7 +14,7 @@
           <Col span="6">
           <div>
             <span class="label">车牌号：</span>
-            {{infoData.carNo}}
+            {{infoData.carNO}}
           </div>
           </Col>
           <Col span="6">
@@ -255,4 +255,9 @@ export default {
       margin 5px
       background url(../../assets/img-icon-expand.png) no-repeat
       background-size contain
+  .show-log
+    transition all 0.3s linear
+  .hide-log
+    transform rotate(180deg)
+    transition all 0.3s linear
 </style>

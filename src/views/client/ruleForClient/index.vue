@@ -1,11 +1,11 @@
 <template>
   <div>
     <div class="add_btn">
-      <Button v-if="hasPower(170401)" type="primary" @click="addRule">新增规则</Button>
+      <Button v-if="(active === '1'&&hasPower(130113)) || (active === '2'&&hasPower(130215))" type="primary" @click="addRule">新增规则</Button>
     </div>
     <div  class="rule">
       <div v-if="companyData.length===0" class="data-total-empty">
-        <img src="../../assets/img-empty.png" class="data-empty-img">
+        <img src="../../../assets/img-empty.png" class="data-empty-img">
         <p>暂无计费规则，快新增一个吧~</p>
       </div>
       <ul v-if="companyData.length>0"  class="ruleList">
@@ -24,14 +24,14 @@
             </Tooltip>
           </div>
           <div class="operate">
-            <span style="margin-right: 12px;" @click.stop="editRule(item)">修改</span>
-            <span @click="removeRule(item.ruleId)">删除</span>
+            <span v-if="(active === '1'&&hasPower(130114)) || (active === '2'&&hasPower(130216))" style="margin-right: 12px;" @click.stop="editRule(item)">修改</span>
+            <span v-if="(active === '1'&&hasPower(130115)) || (active === '2'&&hasPower(130217))" @click="removeRule(item.ruleId)">删除</span>
           </div>
         </li>
       </ul>
       <div v-if="companyData.length>0"  class="ruleDetail">
         <div v-if="!ruleDetail.ruleId" class="data-empty">
-          <img src="../../assets/img-empty.png" class="data-empty-img">
+          <img src="../../../assets/img-empty.png" class="data-empty-img">
           <p>请点击左侧{{sceneMap[active]}}设置计费规则明细～</p>
         </div>
         <div v-else class="rule-block">
@@ -127,7 +127,7 @@
             </div>
           </div>
           <div class="rules-operation">
-            <Button v-if="hasPower(170403)" type="primary" @click="saveRules()">保存</Button>
+            <Button v-if="(active === '1'&&hasPower(130114)) || (active === '2'&&hasPower(130216))" type="primary" @click="saveRules()">保存</Button>
           </div>
         </div>
       </div>
@@ -151,8 +151,11 @@ export default {
        * 3外转方
      */
     active: {
-      type: [Number, String],
-      default: 0
+      type: [String]
+    },
+    partnerName: {
+      type: [String],
+      default: ''
     }
   },
   data () {
@@ -309,9 +312,13 @@ export default {
     addRule () {
       const _this = this
       this.openDialog({
-        name: 'dialogs/createRule',
+        name: 'client/ruleForClient/dialogs/createRule',
         data: {
-          scene: this.active
+          scene: this.active,
+          operateNum: 1,
+          createRuleForm: {
+            partnerName: this.partnerName
+          }
         },
         methods: {
           ok () {
@@ -451,12 +458,15 @@ export default {
     editRule (item) {
       const _this = this
       this.openDialog({
-        name: 'finance/dialogs/editRule',
+        name: 'client/ruleForClient/dialogs/createRule',
         data: {
+          operateNum: 2,
           scene: this.active,
           ruleId: item.ruleId,
+          ruleType: item.detail.ruleType,
           createRuleForm: {
-            ruleName: item.ruleName
+            ruleName: item.ruleName,
+            partnerName: this.partnerName
           }
         },
         methods: {
@@ -476,6 +486,7 @@ export default {
         }
       }).then(res => {
         this.companyData = res.data.data
+        this.$emit('update:count', this.companyData.length ? this.companyData.length : 0)
         if (this.ruleDetail && this.ruleDetail.ruleId && this.companyData.some(item => item.ruleId === this.ruleDetail.ruleId)) {
           this.showRuleDetail(this.companyData.find(item => item.ruleId === this.ruleDetail.ruleId))
         } else {
