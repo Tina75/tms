@@ -288,7 +288,7 @@ export default {
         },
         {
           title: '车牌号',
-          key: 'carNo'
+          key: 'carNO'
         },
         {
           title: '维修类别',
@@ -365,7 +365,7 @@ export default {
     this.carId = this.infoDataInit.carId
     this.infoData = this.$route.query.rowData
     this.repairFormat.carrierId = this.carrierId
-    this.repairFormat.carNo = this.infoData.carNO
+    this.repairFormat.carNO = this.infoData.carNO
     this.repairFormatInit = Object.assign({}, this.repairFormat)
     this._carrierQueryLog()
     this.initData()
@@ -489,7 +489,7 @@ export default {
           flag: 1, // 新增
           driverId: _this.driverId,
           carrierId: _this.carrierId,
-          carNo: _this.infoData.carNO
+          carNO: _this.infoData.carNO
         },
         methods: {
           ok () {

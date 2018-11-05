@@ -14,7 +14,7 @@
           <Col span="6">
           <div>
             <span class="label">车牌号：</span>
-            {{infoData.carNo}}
+            {{infoData.carNO}}
           </div>
           </Col>
           <Col span="6">

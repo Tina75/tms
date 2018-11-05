@@ -12,16 +12,16 @@
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="90">
         <Row>
           <Col span="7">
-          <FormItem label="车牌号:" prop="carNo">
+          <FormItem label="车牌号:" prop="carNO">
             <Row>
               <Col span="19">
-              <span v-if="!disAbleBtn">{{ validate.carNo }}</span>
-              <Select v-if="disAbleBtn" v-model="validate.carNo" placeholder="必选" class="minWidth">
+              <span v-if="!disAbleBtn">{{ validate.carNO }}</span>
+              <Select v-if="disAbleBtn" v-model="validate.carNO" placeholder="必选" class="minWidth">
                 <Option
                   v-for="item in carNoList"
-                  :value="item.carNo"
-                  :key="item.carNo">
-                  {{ item.carNo }}
+                  :value="item.carNO"
+                  :key="item.carNO">
+                  {{ item.carNO }}
                 </Option>
               </Select>
               </Col>
@@ -181,7 +181,7 @@ export default {
         { id: '2', name: '保养' }
       ],
       ruleValidate: {
-        carNo: [
+        carNO: [
           { required: true, message: '车牌号不能为空' },
           { type: 'string', message: '车牌号格式错误', pattern: CAR }
         ],
@@ -216,9 +216,9 @@ export default {
   mounted () {
     if (this.title === '修改维修记录') {
       this.configData()
-    } else if (this.carNo !== undefined) {
+    } else if (this.carNO !== undefined) {
       this.disAbleBtn = false
-      this.validate.carNo = this.carNo
+      this.validate.carNO = this.carNO
     } else {
       this.queryCarnoList()
     }
@@ -246,7 +246,7 @@ export default {
       this.validate.repairMoney = this.validate.repairMoney / 100
       this.validate.payMoney = this.validate.payMoney / 100
       this.validate.waitPayMoney = this.validate.waitPayMoney / 100
-      this.carNoList.push({ carNo: this.validate.carNo })
+      this.carNoList.push({ carNO: this.validate.carNO })
     },
     save (name) {
       this.validate.carrierId = this.carrierId

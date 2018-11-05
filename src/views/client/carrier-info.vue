@@ -203,7 +203,7 @@
             </template>
           </div>
         </TabPane>
-        <TabPane label="计费规则">
+        <TabPane :label="tabPaneLabe3">
           <ruleForClient :active="'2'" :partner-name="companyList.carrierName"></ruleForClient>
         </TabPane>
       </Tabs>
@@ -597,7 +597,7 @@ export default {
         },
         {
           title: '车牌号',
-          key: 'carNo'
+          key: 'carNO'
         },
         {
           title: '维修类别',
@@ -682,6 +682,9 @@ export default {
     },
     tabPaneLabe2 () {
       return '维修记录 ' + (Number(this.totalCount2) === 0 ? '' : this.totalCount2)
+    },
+    tabPaneLabe3 () {
+      return '计费规则'
     }
   },
   mounted () {
@@ -910,7 +913,7 @@ export default {
         pageSize: this.pageSize2
       }
       if (this.selectStatus2 === '1') {
-        data.carNo = this.keyword2
+        data.carNO = this.keyword2
       } else if (this.selectStatus2 === '2') {
         data.repairType = Number(this.keyword2)
       }
