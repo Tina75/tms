@@ -62,7 +62,7 @@ export default {
       default: 'bottom-start'
     },
     maxlength: Number,
-    value: Number,
+    value: [Number, String],
     // 返回数据范围 1-省及省以下数据 2-市及市以下数据 3-区数据
     codeType: {
       type: Number,

@@ -33,12 +33,14 @@
 import BasePage from '@/basic/BasePage'
 import SelectInputForCity from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/'
+// import ruleForClient from '@/components/ruleForClient/index'
 // import SelectInput from '@/components/SelectInput'
 export default {
   name: 'page1',
   components: {
     SelectInputForCity,
     UpLoad
+    // ruleForClient
   },
   mixins: [ BasePage ],
   metaInfo: {
