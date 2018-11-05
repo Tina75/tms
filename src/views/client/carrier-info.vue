@@ -365,7 +365,7 @@ export default {
                             if (res.data.code === CODE) {
                               _this.$Message.success(res.data.msg)
                               _this._carrierListCar() // 车辆列表也要刷新
-                              _this.getCarrierNumberCount()
+                              _this._getCarrierNumberCount()
                             } else {
                               _this.$Message.error(res.data.msg)
                             }
@@ -582,7 +582,7 @@ export default {
                             if (res.data.code === CODE) {
                               _this.$Message.success(res.data.msg)
                               _this._carrierListRepairVehicle() // 刷新页面
-                              _this.getCarrierNumberCount()
+                              _this._getCarrierNumberCount()
                             } else {
                               _this.$Message.error(res.data.msg)
                             }
@@ -693,6 +693,7 @@ export default {
     }
   },
   mounted () {
+    this._getCarrierNumberCount()
     if (this.carrierType === 1) { // 类型为个体司机
       this._carrierDetailsForDriver()
     } else { // 类型为运输公司
@@ -763,7 +764,7 @@ export default {
         methods: {
           ok () {
             _this._carrierListCar()
-            _this.getCarrierNumberCount()
+            _this._getCarrierNumberCount()
           }
         }
       })
@@ -819,7 +820,7 @@ export default {
         methods: {
           ok () {
             _this._carrierListRepairVehicle() // 刷新页面-维修列表
-            _this.getCarrierNumberCount()
+            _this._getCarrierNumberCount()
           }
         }
       })
@@ -831,6 +832,8 @@ export default {
       }
       getCarrierNumberCount(data).then(res => {
         if (res.data.code === CODE) {
+          this.totalTabCount1 = res.data.data.carriersCarNum
+          this.totalTabCount2 = res.data.data.carriersCarRepairNum
         }
       })
     },

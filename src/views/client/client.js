@@ -511,7 +511,7 @@ export function carrierDeleteRepairVehicle (data) {
 // 删除车辆维修及记录
 export function getCarrierNumberCount (data) {
   return server({
-    url: '/carrier/xxx/xxx',
+    url: '/carrier/getCarriersCarNumAndRepairNum',
     headers: {
       'Content-Type': 'application/json'
     },
