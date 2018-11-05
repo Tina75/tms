@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="add_btn">
-      <Button v-if="hasPower(130215)" type="primary" @click="addRule">新增规则</Button>
+      <Button v-if="(active === '1'&&hasPower(130113)) || (active === '2'&&hasPower(130215))" type="primary" @click="addRule">新增规则</Button>
     </div>
     <div  class="rule">
       <div v-if="companyData.length===0" class="data-total-empty">
@@ -24,8 +24,8 @@
             </Tooltip>
           </div>
           <div class="operate">
-            <span v-if="hasPower(130216)" style="margin-right: 12px;" @click.stop="editRule(item)">修改</span>
-            <span v-if="hasPower(130217)" @click="removeRule(item.ruleId)">删除</span>
+            <span v-if="(active === '1'&&hasPower(130114)) || (active === '2'&&hasPower(130216))" style="margin-right: 12px;" @click.stop="editRule(item)">修改</span>
+            <span v-if="(active === '1'&&hasPower(130115)) || (active === '2'&&hasPower(130217))" @click="removeRule(item.ruleId)">删除</span>
           </div>
         </li>
       </ul>
@@ -127,7 +127,7 @@
             </div>
           </div>
           <div class="rules-operation">
-            <Button v-if="hasPower(170403)" type="primary" @click="saveRules()">保存</Button>
+            <Button v-if="(active === '1'&&hasPower(130114)) || (active === '2'&&hasPower(130216))" type="primary" @click="saveRules()">保存</Button>
           </div>
         </div>
       </div>
