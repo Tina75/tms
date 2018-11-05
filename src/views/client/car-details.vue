@@ -124,20 +124,7 @@
           <span class="iconTitleP">操作日志</span>
         </div>
         <div class="list-info">
-          <div class="order-log">
-            <div style="display: flex;justify-content: flex-start;min-height: 150px;margin-top: 25px;">
-              <div class="fold-icon" @click="showOperationLog">
-                <span :class="showLog ? 'hide-log' : 'show-log'"></span>
-              </div>
-              <Timeline :class="showLog ? 'show-timeline' : 'hide-timeline'" :style="{ 'height': showLog ? 44*orderLogCount + 'px' : '15px' }" style="margin-top: 7px;overflow: hidden;">
-                <TimelineItem v-for="(item, index) in orderLog" :key="index">
-                  <i slot="dot"></i>
-                  <span style="margin-right: 60px;color: #777;font-size: 14px;">{{item.createTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
-                  <span style="color: #333;font-size: 14px;">{{'【' + item.operatorName + '】' + item.description}}</span>
-                </TimelineItem>
-              </Timeline>
-            </div>
-          </div>
+          <record-list :search-data="searchLogData" methods-url="/carrier/carrierLog/list"></record-list>
         </div>
       </div>
     </div>
@@ -160,12 +147,13 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import { CAR_TYPE1, CAR_LENGTH1, DRIVER_TYPE } from '@/libs/constant/carInfo'
-import { CODE, carrierQueryLog, carrierDeleteDriver, queryByIdCarrier, carrierDeleteRepairVehicle } from './client'
+import { CODE, carrierDeleteDriver, queryByIdCarrier, carrierDeleteRepairVehicle } from './client'
 import pageTable from '@/components/page-table'
 import TMSUrl from '@/libs/constant/url'
+import RecordList from '@/components/RecordList'
 export default {
   name: 'car-details',
-  components: { pageTable },
+  components: { pageTable, RecordList },
   mixins: [ BasePage ],
   props: {
   },
@@ -177,10 +165,8 @@ export default {
       carLengthMap: CAR_LENGTH1,
       line1: '',
       line2: '',
-      showLog: false,
-      orderLogCount: 0,
-      orderLog: [],
       carrierId: '',
+      searchLogData: {},
       id: '',
       carId: '',
       showTableOne: true,
@@ -357,6 +343,11 @@ export default {
       ]
     }
   },
+  created () {
+    this.searchLogData.carrierId = this.$route.query.rowData.carrierId
+    this.searchLogData.id = this.$route.query.rowData.id
+    this.searchLogData.logType = 'vehicle'
+  },
   mounted () {
     // 数据备份，防止在详情页面对数据进行二次编辑
     this.infoDataInit = Object.assign({}, this.$route.query.rowData)
@@ -367,7 +358,6 @@ export default {
     this.repairFormat.carrierId = this.carrierId
     this.repairFormat.carNO = this.infoData.carNO
     this.repairFormatInit = Object.assign({}, this.repairFormat)
-    this._carrierQueryLog()
     this.initData()
   },
   methods: {
@@ -406,22 +396,6 @@ export default {
       }
       this.line1 = s1 + '—' + n1 === '—' ? '' : s1 + '—' + n1
       this.line2 = s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2
-    },
-    // 日志切换显示
-    showOperationLog () {
-      this.showLog = !this.showLog
-    },
-    // 查询操作日志
-    _carrierQueryLog () {
-      let data = {
-        carrierId: this.carrierId,
-        id: this.id,
-        logType: 'vehicle'
-      }
-      carrierQueryLog(data).then(res => {
-        this.orderLog = res.data.data.list
-        this.orderLogCount = res.data.data.list.length
-      })
     },
     removeDriverData () {
       let _this = this
@@ -518,36 +492,4 @@ export default {
   margin-top: 80px;
 .btnItem
   margin-top: -40px;
-.order-log
-  .ivu-timeline-item
-    i
-      display inline-block
-      width 12px
-      height 12px
-      background-color #C9CED9
-      border-radius 50%
-      vertical-align text-bottom
-    &:first-child
-      i
-        background-color #00A4BD
-.fold-icon
-    width 26px
-    height 26px
-    background rgba(0,164,189,1)
-    border-radius 5px
-    margin 0 60px 0 30px
-    text-align center
-    cursor pointer
-    span
-      display block
-      width 16px
-      height 16px
-      margin 5px
-      background url(../../assets/img-icon-expand.png) no-repeat
-      background-size contain
-  .show-log
-    transition all 0.3s linear
-  .hide-log
-    transform rotate(180deg)
-    transition all 0.3s linear
 </style>
