@@ -113,6 +113,35 @@
         <TabPane :label="tabPaneLabel">
           <div class="add">
             <Button v-if="hasPower(130204)" type="primary" @click="_carrierAddDriver">新增车辆</Button>
+            <Button v-if="hasPower(130204)" @click="carExport">导出</Button>
+            <div class="rightSearch">
+              <template>
+                <Select v-model="selectStatus1" style="width:120px;margin-right: 11px"  @on-change="changeState('keyword1', 1)">
+                  <Option v-for="item in selectList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+              </template>
+              <Input v-if="selectStatus1 !== '2'"
+                     v-model="keyword1"
+                     :maxlength="selectStatus1 === '1' ? 7 : 11"
+                     :icon="keyword1? 'ios-close-circle' : ''"
+                     :placeholder="selectStatus1 === '1' ? '请输入车牌号搜索' : '请输入手机号搜索'"
+                     class="search-input"
+                     @on-enter="searchCarList"
+                     @on-click="clearKeywords('keyword1', 1)"/>
+              <Select v-if="selectStatus1 === '2'" v-model="keyword1" class="search-input">
+                <Option
+                  v-for="item in driverTypeList"
+                  :value="item.id"
+                  :key="item.id">
+                  {{ item.name }}
+                </Option>
+              </Select>
+              <Button icon="ios-search" type="primary"
+                      class="search-btn-easy"
+                      style="margin-top: -1px;width:41px;"
+                      @click="searchCarList">
+              </Button>
+            </div>
           </div>
           <template>
             <Table :columns="columns1" :data="data1"></Table>
@@ -131,6 +160,34 @@
         <TabPane :label="tabPaneLabe2">
           <div class="add">
             <Button v-if="hasPower(130207)" type="primary" @click="_carrierAddVehicle">新增记录</Button>
+            <Button v-if="hasPower(130207)" @click="repairExport">导出</Button>
+            <div class="rightSearch">
+              <template>
+                <Select v-model="selectStatus2" style="width:120px;margin-right: 11px"  @on-change="changeState('keyword2', 2)">
+                  <Option v-for="item in selectList2" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+              </template>
+              <Input v-if="selectStatus2 !== '2'"
+                     v-model="keyword2"
+                     :maxlength="selectStatus2 === '1' ? 7 : 11"
+                     :icon="keyword2? 'ios-close-circle' : ''"
+                     :placeholder="selectStatus2 === '1' ? '请输入车牌号搜索' : null"
+                     class="search-input"
+                     @on-enter="searchRepairList"
+                     @on-click="clearKeywords('keyword2', 2)"/>
+              <Select v-if="selectStatus2 === '2'" v-model="keyword2"  class="search-input">
+                <Option
+                  v-for="item in repairTypeList"
+                  :value="item.id"
+                  :key="item.id">
+                  {{ item.name }}
+                </Option>
+              </Select>
+              <Button icon="ios-search" type="primary"
+                      class="search-btn-easy"
+                      style="margin-top: -1px;width:41px;"
+                      @click="searchRepairList"></Button>
+            </div>
           </div>
           <template>
             <Table :columns="columns2" :data="data2"></Table>
@@ -146,6 +203,8 @@
             </template>
           </div>
         </TabPane>
+        <TabPane label="计费规则">
+        </TabPane>
       </Tabs>
     </div>
   </div>
@@ -153,9 +212,10 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
-import { CODE, carrierDetailsForDriver, carrierListRepairVehicle, carrierDeleteRepairVehicle, carrierDetailsForCompany, carrierListCar, carrierDeleteDriver } from './client'
+import { CAR_TYPE1, CAR_LENGTH1, DRIVER_TYPE } from '@/libs/constant/carInfo'
+import { CODE, carrierDetailsForDriver, carrierListRepairVehicle, carrierDeleteRepairVehicle, carrierDetailsForCompany, carrierListCar, carrierDeleteDriver, CAR } from './client'
 import TMSUrl from '@/libs/constant/url'
+import Export from '@/libs/js/export'
 export default {
   name: 'carrier-info',
   mixins: [ BasePage ],
@@ -191,6 +251,40 @@ export default {
         payType: '',
         remark: ''
       },
+      CARInit: CAR,
+      selectStatus1: '1', // 搜索条件
+      selectStatus2: '1',
+      driverTypeList: DRIVER_TYPE,
+      repairTypeList: [
+        { id: '1', name: '维修' },
+        { id: '2', name: '保养' }
+      ],
+      keyword1: '',
+      keyword2: '',
+      selectList1: [
+        {
+          value: '1',
+          label: '车牌号'
+        },
+        {
+          value: '2',
+          label: '合作方式'
+        },
+        {
+          value: '3',
+          label: '司机手机号'
+        }
+      ],
+      selectList2: [
+        {
+          value: '1',
+          label: '车牌号'
+        },
+        {
+          value: '2',
+          label: '维修类别'
+        }
+      ],
       columns1: [
         {
           title: '操作',
@@ -723,6 +817,57 @@ export default {
     handleChangePageSize2 (pageSize) {
       this.pageSize2 = pageSize
       this._carrierListRepairVehicle()
+    },
+    // 导出车辆信息
+    carExport () {
+      if (Number(this.totalCount1) < 1) {
+        this.$Message.error('导出内容为空')
+        return
+      }
+      let data = {
+      }
+      Export({
+        url: '/report/xxxx/xxxx/xxx',
+        method: 'post',
+        data,
+        fileName: '车辆信息报表'
+      })
+    },
+    repairExport () {
+      if (Number(this.totalCount2) < 1) {
+        this.$Message.error('导出内容为空')
+        return
+      }
+      let data = {
+      }
+      Export({
+        url: '/report/xxxx/xxxx/xxxx',
+        method: 'post',
+        data,
+        fileName: '维修记录报表'
+      })
+    },
+    changeState (val, flag) { // 车辆 & 维修记录 select框变动，关键字清除
+      if ((this.selectStatus1 === '2' && flag === 1) || (this.selectStatus2 === '2' && flag === 2)) {
+        this[val] = '1'
+      } else {
+        this[val] = ''
+      }
+    },
+    searchCarList () { // 搜索车辆信息列表
+      if (this.selectStatus1 === '3' && !(/^[0-9]*$/.test(this.keyword1))) { // 手机号
+        this.$Message.error('手机号格式输入错误')
+      }
+    },
+    searchRepairList () { // 搜索维修记录列表
+    },
+    clearKeywords (val, flag) {
+      this[val] = ''
+      if ((val === 'keyword1' && flag === 1)) {
+        this.searchCarList()
+      } else {
+        this.searchRepairList()
+      }
     }
   }
 }
