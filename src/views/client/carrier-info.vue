@@ -146,6 +146,9 @@
             </template>
           </div>
         </TabPane>
+        <TabPane label="计费规则">
+          <ruleForClient :active="'2'" :partner-name="companyList.carrierName"></ruleForClient>
+        </TabPane>
       </Tabs>
     </div>
   </div>
@@ -156,8 +159,12 @@ import BasePage from '@/basic/BasePage'
 import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import { CODE, carrierDetailsForDriver, carrierListRepairVehicle, carrierDeleteRepairVehicle, carrierDetailsForCompany, carrierListCar, carrierDeleteDriver } from './client'
 import TMSUrl from '@/libs/constant/url'
+import ruleForClient from './ruleForClient/index'
 export default {
   name: 'carrier-info',
+  components: {
+    ruleForClient
+  },
   mixins: [ BasePage ],
   metaInfo: {
     title: '承运商详情'
@@ -730,10 +737,13 @@ export default {
 
 <style scoped lang="stylus">
   @import "client.styl"
+  .tabs
+    .ivu-tabs
+      overflow visible
   .footer
     margin-top 22px
     display flex
     justify-content flex-end
-  .ivu-tabs
-    padding-bottom: 120px!important
+  /*.ivu-tabs*/
+    /*padding-bottom: 120px!important*/
 </style>

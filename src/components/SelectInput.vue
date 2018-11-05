@@ -88,6 +88,10 @@ export default {
     onClear: Function,
     remoteMethod: {
       type: Function
+    },
+    noFilter: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -105,7 +109,7 @@ export default {
   },
   computed: {
     filterOptions () {
-      if (this.remote || !this.currentValue) {
+      if (this.remote || !this.currentValue || this.noFilter) {
         return this.options
       } else {
         return this.options.filter(opt => opt.name.indexOf(this.currentValue) !== -1)

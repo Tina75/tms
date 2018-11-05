@@ -1,9 +1,15 @@
 <template>
   <Modal v-model="visiable" :mask-closable="true" width="440" @on-visible-change="close">
-    <p slot="header" style="text-align:center;font-size:17px">修改规则</p>
+    <p slot="header" style="text-align:center;font-size:17px">{{operateWays[operateNum]}}规则</p>
     <div class="create-rule-form">
       <Form ref="createRuleForm" :model="createRuleForm" :rules="validate" :label-width="100">
-        <FormItem label="规则名称：" prop="ruleName">
+        <FormItem :label="sceneMap[scene] + '：'" prop="partnerName">
+          <!--<Select v-model="createRuleForm.partnerName">-->
+          <!--<Option v-for="(item, index) in partnerList" :key="index" :value="item">{{item}}</Option>-->
+          <!--</Select>-->
+          <span>{{createRuleForm.partnerName}}</span>
+        </FormItem>
+        <FormItem label="规则名：" prop="ruleName">
           <Input v-model="createRuleForm.ruleName" :maxlength="30" placeholder="请输入" />
         </FormItem>
       </Form>
@@ -23,44 +29,74 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      scene: null,
+      operateNum: 1,
+      ruleType: '',
+      operateWays: {
+        1: '保存',
+        2: '修改'
+      },
       sceneMap: {
         1: '发货方',
         2: '承运商',
         3: '外转方'
       },
       createRuleForm: {
-        ruleName: ''
+        ruleName: '',
+        partnerName: ''
       },
-      ruleId: '',
-      ruleType: '',
       validate: {
         ruleName: [
           { required: true, message: '请填写规则名称', trigger: 'blur' },
           { type: 'string', max: 30, message: '不能超过30个字', trigger: 'blur' }
         ]
-      },
-      partnerList: []
+      }
     }
   },
+  // mounted () {
+  //   // this.getPartnerList()
+  //   console.log(this.sceneMap[this.scene])
+  // },
   methods: {
     save () {
       this.$refs['createRuleForm'].validate((valid) => {
         if (valid) {
-          Server({
-            url: '/finance/charge/updateRule',
-            method: 'post',
-            data: {
-              // partnerType: this.scene,
-              ruleId: this.ruleId,
-              ruleName: this.createRuleForm.ruleName,
-              ruleType: this.ruleType
-            }
-          }).then(res => {
-            this.close()
-            this.ok()
-          }).catch(err => console.error(err))
+          if (this.operateNum === 1) {
+            this.addRule()
+          } else {
+            this.editRule()
+          }
         }
       })
+    },
+    editRule () {
+      Server({
+        url: '/finance/charge/updateRule',
+        method: 'post',
+        data: {
+          // partnerType: this.scene,
+          ruleId: this.ruleId,
+          ruleName: this.createRuleForm.ruleName,
+          ruleType: this.ruleType
+        }
+      }).then(res => {
+        this.close()
+        this.ok()
+      }).catch(err => console.error(err))
+    },
+    addRule () {
+      Server({
+        url: '/finance/charge/addRule',
+        method: 'post',
+        data: {
+          partnerName: this.createRuleForm.partnerName,
+          partnerType: this.scene,
+          ruleName: this.createRuleForm.ruleName
+        }
+      }).then(res => {
+        this.close()
+        this.ok()
+      }).catch(err => console.error(err))
     }
   }
 
