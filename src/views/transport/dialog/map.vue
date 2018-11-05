@@ -12,8 +12,11 @@
           <TimelineItem v-for="(item, key) in cars[0].points" :key="key">
             <i slot="dot" class="map-timeline-dot"></i>
             <div :class="{'info-body-active': key === currentPointIndex}" class="info-body" @click="showTracePoint(key)">
-              <p>{{ item.locateTime | datetime }}</p>
-              <p>{{ item.location }}(此位置通过手机号GPS查询，若偏差较大，请联系司机XXXXXXXXXXX)</p>
+              <p>{{ item.createTime | datetime }}</p>
+              <p>
+                {{ item.location }}
+                {{Number(item.positionType) === 2 ? `(此位置通过手机号GPS查询，若偏差较大，请联系司机${item.phone})` : ''}}
+              </p>
             </div>
           </TimelineItem>
         </Timeline>
