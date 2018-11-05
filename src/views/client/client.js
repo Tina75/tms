@@ -463,7 +463,7 @@ export function carrierUpdateVehicle (data) {
 // 查询操作日制
 export function carrierQueryLog (data) {
   return server({
-    url: '/carrier//carrierLog/list',
+    url: '/carrier/carrierLog/list',
     headers: {
       'Content-Type': 'application/json'
     },
