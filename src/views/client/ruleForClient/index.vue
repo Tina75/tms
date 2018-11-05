@@ -148,7 +148,7 @@ export default {
     /* 合作方类型
        *1 发货方
        *2 承运商
-       * 3外转方
+       *3外转方
      */
     active: {
       type: [String]
