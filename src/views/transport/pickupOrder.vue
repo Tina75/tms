@@ -398,7 +398,8 @@ export default {
       self.openDialog({
         name: 'transport/dialog/abnormal',
         data: {
-          id
+          id,
+          type: 1 // 单据类型 1 提货单 2 外转单 3 运单
         },
         methods: {
           complete () {
