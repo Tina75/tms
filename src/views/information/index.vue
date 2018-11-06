@@ -41,7 +41,7 @@
             </div>
             <div class="msgContent" @click="clickContenInfo(msg)">
               <p class="msgContentTitle">{{msg.title}}</p>
-              <pre class="msgContentText">{{msg.content}}</pre>
+              <div class="msgContentDiv" v-html="msg.content"></div>
             </div>
             <div class="msgConfigDiv">
               <p style="color: #9DA1B0">{{ formatDate(msg.createTime) }}</p>
@@ -494,9 +494,13 @@ export default {
   color: "#2F323E"
   margin-bottom: 5px;
   font-size:14px;
+.msgContentDiv
+  width: 80%;
+  height: 20px;
+  overflow: hidden;
 .msgConfigDiv
   float: right;
-  margin-top: -55px;
+  margin-top: -40px;
 .msgContentText
   white-space: nowrap;
   overflow: hidden;

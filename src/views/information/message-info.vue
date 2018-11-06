@@ -7,10 +7,7 @@
         <span class="msgConfigBtn">删除</span>
       </Button>
     </p>
-    <pre class="msgInfo">{{messageInfo.content}}</pre>
-    <div v-if="this.messageInfo.url !== ''" class="msgInfoHrefDiv"><span class="msgInfoHrefa">活动链接：</span>
-      <a :href="messageInfo.url" target="_blank" class="messageInfoUrl">{{messageInfo.url}}</a>
-    </div>
+    <div v-html="messageInfo.content"></div>
     <Modal v-model="visibaleRemove" type="warning" width="360">
       <p slot="header" class="modalTitle">
         <span>提示</span>
