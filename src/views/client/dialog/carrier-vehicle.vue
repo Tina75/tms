@@ -19,9 +19,9 @@
               <Select v-if="disAbleBtn" v-model="validate.carNO" placeholder="必选" class="minWidth">
                 <Option
                   v-for="item in carNoList"
-                  :value="item.carNO"
-                  :key="item.carNO">
-                  {{ item.carNO }}
+                  :value="item.carNo"
+                  :key="item.carNo">
+                  {{ item.carNo }}
                 </Option>
               </Select>
               </Col>
@@ -157,6 +157,7 @@
 import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
 import { carrierAddVehicle, carrierUpdateVehicle, carrierQueryCarlist, CODE, CAR } from '../client'
+import float from '@/libs/js/float'
 export default {
   name: 'carrier-vehicle',
   mixins: [BaseDialog],
@@ -230,12 +231,12 @@ export default {
     },
     payMoneyChange () {
       if (this.validate.repairMoney) {
-        this.validate.waitPayMoney = parseFloat(this.validate.repairMoney) - (parseFloat(this.validate.payMoney) || 0)
+        this.validate.waitPayMoney = float.round(float.round(this.validate.repairMoney) - (float.round(this.validate.payMoney)) || 0)
       }
     },
     waitpayMoneyChange () {
       if (this.validate.repairMoney) {
-        this.validate.payMoney = parseFloat(this.validate.repairMoney) - (parseFloat(this.validate.waitPayMoney) || 0)
+        this.validate.payMoney = float.round(float.round(this.validate.repairMoney) - (float.round(this.validate.waitPayMoney)) || 0)
       }
     },
     // 修改页面初始化
