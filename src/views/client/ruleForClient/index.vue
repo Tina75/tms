@@ -5,7 +5,10 @@
     </div>
     <div  class="rule">
       <div v-if="companyData.length===0" class="data-total-empty">
-        <img src="../../../assets/img-empty.png" class="data-empty-img">
+        <!--<img src="../../../assets/img-empty.png" class="data-empty-img">-->
+        <div class="data-empty-img">
+          <FontIcon slot="icon" type="ico-price" ></FontIcon>
+        </div>
         <p>暂无计费规则，快新增一个吧~</p>
       </div>
       <ul v-if="companyData.length>0"  class="ruleList">
@@ -542,6 +545,12 @@ export default {
     text-align center
     margin-top 150px
     width 100%
+    .data-empty-img
+      i
+        font-size 100px
+        color #E9EAEC
+    p
+     color #999
   .ruleList
     height 100%
     border-right 1px solid #C9CED9
