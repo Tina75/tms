@@ -174,23 +174,47 @@ export default {
         fixed: 'left',
         extra: true,
         render: (h, p) => {
+          let renderBtn = []
           if (p.row.status === 1 && this.hasPower(120301)) {
-            return h('a', {
-              on: {
-                click: () => {
-                  this.billShipment([p.row.transId])
+            renderBtn.push(
+              h('a', {
+                style: {
+                  marginRight: '25px'
+                },
+                on: {
+                  click: () => {
+                    this.billShipment([p.row.transId])
+                  }
                 }
-              }
-            }, '发运')
-          } else if (p.row.status === 2 && this.hasPower(120302)) {
-            return h('a', {
-              on: {
-                click: () => {
-                  this.billArrived([p.row.transId])
-                }
-              }
-            }, '到货')
+              }, '发运')
+            )
           }
+          if (p.row.status === 2 && this.hasPower(120302)) {
+            renderBtn.push(
+              h('a', {
+                style: {
+                  marginRight: '25px'
+                },
+                on: {
+                  click: () => {
+                    this.billArrived([p.row.transId])
+                  }
+                }
+              }, '到货')
+            )
+          }
+          if (this.hasPower(120306)) {
+            renderBtn.push(
+              h('a', {
+                on: {
+                  click: () => {
+                    this.openAbnormalDialog(p.row.transId)
+                  }
+                }
+              }, '上报异常')
+            )
+          }
+          return h('div', renderBtn)
         }
       },
 
@@ -211,7 +235,7 @@ export default {
           this.triggerTableActionColumn(true)
           return 2
         case '已到货':
-          this.triggerTableActionColumn(false)
+          this.triggerTableActionColumn(true)
           return 3
         default:
       }
@@ -338,6 +362,23 @@ export default {
         method: 'post',
         data,
         fileName: '外转单明细'
+      })
+    },
+
+    // 上报异常
+    openAbnormalDialog (id) {
+      const self = this
+      self.openDialog({
+        name: 'transport/dialog/abnormal',
+        data: {
+          id,
+          type: 2 // 单据类型 1 提货单 2 外转单 3 运单
+        },
+        methods: {
+          complete () {
+            self.clearSelectedAndFetch()
+          }
+        }
       })
     }
   }

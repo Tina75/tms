@@ -20,7 +20,7 @@ export const BUTTON_LIST = vm => [
     tab: '全部',
     btns: [{
       name: '导出',
-      code: 120207,
+      code: 120403,
       func: () => {
         vm.billExport()
       }
@@ -30,7 +30,7 @@ export const BUTTON_LIST = vm => [
     tab: '未处理',
     btns: [{
       name: '导出',
-      code: 120207,
+      code: 120403,
       func: () => {
         vm.billExport()
       }
@@ -40,7 +40,7 @@ export const BUTTON_LIST = vm => [
     tab: '已处理',
     btns: [{
       name: '导出',
-      code: 120207,
+      code: 120403,
       func: () => {
         vm.billExport()
       }
@@ -56,7 +56,7 @@ export const TABLE_COLUMNS = vm => [
   },
   {
     title: '单据号',
-    key: 'pickupNo',
+    key: 'billNo',
     render: (h, p) => {
       return h('a', {
         style: {
@@ -65,22 +65,28 @@ export const TABLE_COLUMNS = vm => [
         on: {
           click: () => {
             vm.openTab({
-              title: p.row.pickupNo,
-              path: TMSUrl.PICKUP_ORDER_DETAIL,
-              query: { id: p.row.pickUpId }
+              title: p.row.billNo,
+              path: p.row.billType === 1 ? TMSUrl.PICKUP_ORDER_DETAIL : (p.row.billType === 2 ? TMSUrl.OUTER_ORDER_DETAIL : TMSUrl.TRANSPORT_ORDER_DETAIL),
+              query: {
+                id: p.row.billId,
+                abnormal: 1
+              }
             })
           }
         }
-      }, p.row.pickupNo)
+      }, p.row.billNo)
     }
   },
   {
     title: '单据类型',
-    key: 'carNo'
+    key: 'billType',
+    render: (h, p) => {
+      return vm.tableDataRender(h, vm.billTypeToName(p.row.billType))
+    }
   },
   {
     title: '异常次数',
-    key: 'carNo'
+    key: 'abnormalCnt'
   },
   {
     title: '承运商',
@@ -95,14 +101,16 @@ export const TABLE_COLUMNS = vm => [
   },
   {
     title: '是否修改运费',
-    key: 'volume'
+    key: 'updateFee',
+    render: (h, p) => {
+      return vm.tableDataRender(h, p.row.updateFee === 1 ? '是' : '否')
+    }
   },
   {
     title: '创建时间',
-    key: 'createTimeLong',
-    sortable: 'custom',
+    key: 'createTime',
     render: (h, p) => {
-      return vm.tableDataRender(h, vm.timeFormatter(p.row.createTimeLong), true)
+      return vm.tableDataRender(h, vm.timeFormatter(p.row.createTime), true)
     }
   }
 ]
