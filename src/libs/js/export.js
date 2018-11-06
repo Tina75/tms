@@ -23,7 +23,9 @@ let instance = (config = {}) => {
           code = resJson.code
           msg = resJson.msg
         }
-      } catch (err) {}
+      } catch (err) {
+        // 此处异常为无法将字符串转为JSON，说明返回的数据是一个二进制流文件，不需要处理该异常
+      }
 
       if (!code || code === 10000) {
         const blob = new Blob([res.data], { type: res.config.fileType })
