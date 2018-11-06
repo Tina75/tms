@@ -6,10 +6,9 @@ Toast.newInstance = properties => {
   const _data = Object.assign({}, {
     visible: false,
     width: 416,
-    title: '提示',
-    content: '',
-    // iconType: '', // 不同颜色的icon
-    // iconName: '', // icon名称
+    title: '提示', // 头部标题
+    content: '', // 紧靠icon的标题内容
+    description: '', // 更多内容
     okText: '确定',
     cancelText: '取消',
     showCancel: false,
@@ -134,66 +133,60 @@ Toast.newInstance = properties => {
         colspan[0] = '0'
         colspan[1] = '24'
       }
+
+      const contentBody = [
+        h('div', {
+          class: 'ivu-modal-confirm-head',
+          style: {
+            textAlign: 'center'
+          }
+        }, [
+          icon ? h('div', {
+            class: 'ivu-modal-confirm-head-icon'
+          }, [icon]) : '',
+          h('div', {
+            class: 'ivu-modal-confirm-head-title',
+            style: {
+              fontSize: '14px',
+              color: '#000000',
+              fontWeight: 'normal',
+              marginLeft: '0px',
+              paddingLeft: '10px'
+            },
+            domProps: {
+              innerHTML: this.content
+            }
+          })
+        ])
+      ]
       if (this.render) {
         bodyNodes = h('div', {
           class: `${prefix}-body-inner`
-        }, [
+        }, contentBody.concat([
           h('div', {
-            class: 'ivu-modal-confirm-head',
+            class: 'ivu-modal-confirm-body',
             style: {
               textAlign: 'center'
             }
-          }, [
-            icon ? h('div', {
-              class: 'ivu-modal-confirm-head-icon',
-              props: {
-                span: colspan[0]
-              }
-            }, [icon]) : '',
-            h('div', {
-              class: 'ivu-modal-confirm-head-title',
-              style: {
-                fontSize: '14px',
-                color: '#000000',
-                fontWeight: 'normal',
-                marginLeft: '0px',
-                paddingLeft: '10px'
-              }
-            }, [this.render(h)])
-          ])
-        ])
+          }, [this.render(h)])
+        ]))
       } else {
         bodyNodes = h('div', {
           attrs: {
             class: `${prefix}-body-inner`
           }
-        }, [
+        }, this.description ? contentBody.concat([
           h('div', {
-            class: 'ivu-modal-confirm-head',
+            class: 'ivu-modal-confirm-body',
             style: {
               textAlign: 'center'
+            },
+            domProps: {
+              innerHTML: this.description
             }
-          },
-          [
-            icon ? h('div', {
-              class: 'ivu-modal-confirm-head-icon'
-            }, [icon]) : '',
-            h('div', {
-              class: 'ivu-modal-confirm-head-title',
-              style: {
-                fontSize: '14px',
-                color: '#000000',
-                fontWeight: 'normal',
-                marginLeft: '0px',
-                paddingLeft: '10px'
-              },
-              domProps: {
-                innerHTML: this.content
-              }
-            })
-          ])
-
-        ])
+          })
+        ]) : contentBody
+        )
       }
 
       return h(Modal, {
