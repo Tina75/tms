@@ -33,7 +33,18 @@ export default {
       },
 
       showLog: false,
-      logList: [] // 操作日志
+      logList: [], // 操作日志
+      exceptionCount: 0,
+      // 异常详情label
+      expLabel: (h) => {
+        return h('div', [
+          h('span', {
+            domProps: {
+              innerHTML: `异常详情  ${this.exceptionCount}`
+            }
+          })
+        ])
+      }
     }
   },
 
@@ -197,6 +208,11 @@ export default {
       if (this.settlementType === '1' && !this.$refs.$payInfo.validate()) return false
 
       return true
+    },
+
+    // 上传按钮
+    updateExcept () {
+      console.log('上传异常')
     }
   }
 }
