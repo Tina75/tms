@@ -197,6 +197,11 @@ export default {
       if (this.settlementType === '1' && !this.$refs.$payInfo.validate()) return false
 
       return true
+    },
+
+    // 上传按钮
+    updateExcept () {
+      console.log('上传异常')
     }
   }
 }

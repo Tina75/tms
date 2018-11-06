@@ -138,8 +138,8 @@
           </div>
         </section>
       </TabPane>
-      <TabPane :label="expLabel" name="exception">
-        <Exception />
+      <TabPane :label="expLabel" :disabled="exceptionCount == 0" name="exception">
+        <Exception ref="exception" :pickup-id="this.id" :cnt="exceptionCount"/>
       </TabPane>
     </Tabs>
   </div>
@@ -373,6 +373,12 @@ export default {
             func: () => {
               this.inEditing = true
             }
+          }, {
+            name: '上报异常',
+            code: 120210,
+            func: () => {
+              this.updateExcept()
+            }
           }]
         },
         {
@@ -429,7 +435,6 @@ export default {
           key: 'unit',
           width: 120,
           render: (h, p) => {
-            console.log(p.row.unit)
             return this.tableDataRender(h, p.row.unit)
           }
         },
@@ -498,7 +503,7 @@ export default {
           }
         }
       ],
-      exceptionCount: 3,
+      exceptionCount: 0,
       // 异常详情label
       expLabel: (h) => {
         return h('div', [
@@ -555,6 +560,11 @@ export default {
         this.settlementPayInfo = temp
 
         this.setBtnsWithStatus()
+        // 异常个数
+        this.exceptionCount = data.abnormalCnt
+        if (this.exceptionCount) {
+          this.$refs['exception'] && this.$refs['exception'].initDate()
+        }
         this.loading = false
       }).catch(err => console.error(err))
     },

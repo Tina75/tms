@@ -1,24 +1,62 @@
 <template>
   <div class="exception">
-    <ExpRecord />
-    <ExpRecord />
-    <ExpRecord />
-    <ExpTimeLine />
+    <template v-for="(item,index) in errorInfoList">
+      <ExpRecord :data="item" :key="index" :types="billObj.billStatus" :no="billObj.billNo"/>
+    </template>
+    <ExpTimeLine :data="errorLogs"/>
   </div>
 </template>
 <script>
 import ExpRecord from '../components/ExpRecord.vue'
 import ExpTimeLine from '../components/ExpTimeLine.vue'
+import Server from '@/libs/js/server'
 export default {
   name: 'exception',
   components: {
     ExpRecord,
     ExpTimeLine
   },
-  data () {
-    return {}
+  props: {
+    pickupId: {
+      type: Number
+    },
+    cnt: {
+      type: Number
+    }
   },
-  mounted () {},
-  methods: {}
+  data () {
+    return {
+      errorInfoList: [],
+      errorLogs: [],
+      billObj: {
+        billNo: '',
+        billType: '',
+        billStatus: '',
+        billTypeDesc: ''
+      }
+    }
+  },
+  methods: {
+    initDate () {
+      Server({
+        url: '/abnormal/detail',
+        method: 'post',
+        data: {
+          billId: this.pickupId,
+          billType: 1 // 1 提货单 2 外转单 3 运单
+        }
+      }).then(res => {
+        const data = res.data.data
+        this.errorInfoList = data.abnormalList
+        this.billObj = {
+          billNo: data.billNo,
+          billType: data.billType,
+          billStatus: data.billStatus,
+          billTypeDesc: data.billTypeDesc
+        }
+        this.errorLogs = data.operaterLog
+      })
+    }
+  }
 }
 </script>

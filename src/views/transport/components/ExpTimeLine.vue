@@ -4,7 +4,7 @@
       <span>异常处理日志</span>
     </div>
     <div class="detail-log">
-      <div class="detail-log-icon" @click="showLog = !showLog">
+      <div class="detail-log-icon" @click="showList">
         <i :class="{'detail-log-show': showLog}"></i>
       </div>
       <Timeline class="detail-log-timeline">
@@ -19,33 +19,26 @@
 </template>
 <script>
 export default {
+  props: {
+    data: {
+      type: Array,
+      default: () => []
+    }
+  },
   data () {
     return {
-      showLog: false,
-      logList: [{
-        'id': 5806,
-        'orderId': 2540,
-        'operatorId': 176,
-        'operatorName': '徐斌',
-        'code': '52001',
-        'description': '创建订单成功',
-        'createTime': 1540989941000
-      },
-      {
-        'id': 5809,
-        'orderId': 2540,
-        'operatorId': 174,
-        'operatorName': '徐斌haha',
-        'code': '520101',
-        'description': '创建订单成功',
-        'createTime': 1540989941123
-      }]
+      showLog: false
+    }
+  },
+  computed: {
+    logList () {
+      return !this.showLog ? this.data.slice(0, 1) : this.data
     }
   },
   methods: {
+    showList () {
+      this.showLog = !this.showLog
+    }
   }
 }
 </script>
-<style>
-
-</style>
