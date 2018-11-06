@@ -72,7 +72,7 @@ export default {
         this.tabChanged(tab)
       } else {
         this.tabStatus = this.setTabStatus(this.tabList[0].name)
-        if (this.tabType === 'OUTER') this.currentBtns = this.btnList[0].btns
+        if (this.tabType === 'OUTER' || this.tabType === 'ABNORMAL') this.currentBtns = this.btnList[0].btns
         this.fetchData()
       }
     },
@@ -177,7 +177,7 @@ export default {
       this.resetEasySearch()
       this.resetSeniorSearch()
       // 搜索与查询
-      if ((this.tabType === 'OUTER') || (this.tabType !== 'OUTER' && this.tabStatus)) this.fetchData()
+      if ((this.tabType === 'ABNORMAL') || (this.tabType === 'OUTER') || (this.tabType !== 'OUTER' && this.tabStatus)) this.fetchData()
       else this.fetchTabCount && this.fetchTabCount()
     },
 

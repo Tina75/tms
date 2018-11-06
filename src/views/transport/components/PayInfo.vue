@@ -51,7 +51,7 @@ export default {
           title: '现金',
           key: 'cashAmount',
           render: (h, p) => {
-            if (this.mode === 'watch') return h('span', p.row.cashAmount || 0)
+            if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isDisabled)) return h('span', p.row.cashAmount || 0)
 
             return h(MoneyInput, {
               props: {
@@ -74,7 +74,7 @@ export default {
           title: '油卡',
           key: 'fuelCardAmount',
           render: (h, p) => {
-            if (this.mode === 'watch') return h('span', p.row.fuelCardAmount || 0)
+            if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isDisabled)) return h('span', p.row.fuelCardAmount || 0)
 
             return h(MoneyInput, {
               props: {
