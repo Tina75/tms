@@ -96,6 +96,12 @@ export default {
     async newUserTip () {
       try {
         await this.getUserInfo()
+
+        // 添加GA配置属性
+        this.$ga.set('phone', this.UserInfo.phone)
+        this.$ga.set('roleName', this.UserInfo.roleName)
+        this.$ga.set('id', this.UserInfo.id)
+
         if (sessionStorage.getItem('first_time_login') === 'true') {
           if (this.UserInfo.type === 1) this.renew()
           else this.changePasswordTip()
