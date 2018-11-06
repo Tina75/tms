@@ -20,7 +20,7 @@
     </div>
 
     <Tabs value="detail">
-      <TabPane label="运单详情" name="detail">
+      <TabPane label="提单详情" name="detail">
         <section class="detail-info">
           <!-- 提货单信息 -->
           <div>
@@ -138,8 +138,8 @@
           </div>
         </section>
       </TabPane>
-      <TabPane :label="expLabel" name="exception">
-        <Exception />
+      <TabPane :label="expLabel" :disabled="exceptionCount == 0" name="exception">
+        <Exception ref="exception" :pickup-id="this.id" :cnt="exceptionCount" :bill-type="1"/>
       </TabPane>
     </Tabs>
   </div>
@@ -325,7 +325,7 @@ import _ from 'lodash'
 import Exception from './exception.vue'
 
 export default {
-  name: 'DetailFeright',
+  name: 'detailPickup',
   components: { MoneyInput, SelectInput, PayInfo, Exception },
   mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
   metaInfo: { title: '提货单详情' },
@@ -372,6 +372,12 @@ export default {
             code: 120206,
             func: () => {
               this.inEditing = true
+            }
+          }, {
+            name: '上报异常',
+            code: 120210,
+            func: () => {
+              this.updateExcept()
             }
           }]
         },
@@ -429,7 +435,6 @@ export default {
           key: 'unit',
           width: 120,
           render: (h, p) => {
-            console.log(p.row.unit)
             return this.tableDataRender(h, p.row.unit)
           }
         },
@@ -497,18 +502,7 @@ export default {
             return this.tableDataRender(h, p.row.consignerAddress)
           }
         }
-      ],
-      exceptionCount: 3,
-      // 异常详情label
-      expLabel: (h) => {
-        return h('div', [
-          h('span', {
-            domProps: {
-              innerHTML: `异常详情  ${this.exceptionCount}`
-            }
-          })
-        ])
-      }
+      ]
     }
   },
 
@@ -555,6 +549,11 @@ export default {
         this.settlementPayInfo = temp
 
         this.setBtnsWithStatus()
+        // 异常个数
+        this.exceptionCount = data.abnormalCnt
+        if (this.exceptionCount) {
+          this.$refs['exception'] && this.$refs['exception'].initDate()
+        }
         this.loading = false
       }).catch(err => console.error(err))
     },
