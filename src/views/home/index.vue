@@ -254,26 +254,55 @@ export default {
       this.intersectionObserver.unobserve(el)
     },
     /**
-     * 查询跑马灯消息
-     * 只会返回一条
+     * 查询跑马灯,系统更新消息
+     * 跑马灯只会返回一条
      */
     initNotice () {
-      server({
-        url: 'message/pmd',
-        method: 'get'
-      }).then(res => {
-        if (res && res.data.code === 10000) {
-          this.notice = res.data.data
-          // this.cardChecksTemp = []
-          // for (const i of data) {
-          //   if (i.valid === 1) {
-          //     this.cardChecksTemp.push(i.name)
-          //   }
-          // }
-          // this.cardsList = data
-          // this.cardChecks = this.cardChecksTemp
-        }
-      })
+      // 用户是否登录
+      if (this.UserInfo.id) {
+        // 查询跑马灯
+        server({
+          url: 'message/pmd',
+          method: 'get'
+        }).then(res => {
+          if (res && res.data.code === 10000) {
+            this.notice = res.data.data
+          }
+        })
+
+        // 查询系统更新消息
+        server({
+          url: 'message/sysSms',
+          method: 'get'
+        }).then((res) => {
+          if (res && res.data.code === 10000) {
+            const upgradeMessage = res.data.data
+            if (!upgradeMessage.id) {
+              return
+            }
+            // 弹出更新消息窗口
+            this.openDialog({
+              name: 'home/dialogs/upgrade',
+              data: {
+                title: upgradeMessage.title,
+                content: upgradeMessage.content
+              },
+              methods: {
+                ok () {
+                  // 删除系统更新消息
+                  server({
+                    url: 'message/sysSmsDel',
+                    method: 'get',
+                    params: {
+                      id: upgradeMessage.id
+                    }
+                  })
+                }
+              }
+            })
+          }
+        })
+      }
     },
     /**
      * 关闭消息
