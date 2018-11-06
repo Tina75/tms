@@ -9,7 +9,7 @@
         <Button type="default" style="margin: 0 10px" @click="clickHandle">处理</Button>
         <Button type="primary" @click="editBtn">编辑</Button>
         <div class="detail-log-icon" @click="showDetail">
-          <i :class="{'detail-log-show': hideDetail}"></i>
+          <i :class="{'detail-log-show': !hideDetail}"></i>
         </div>
       </div>
     </div>
@@ -25,11 +25,11 @@
         </i-col>
         <i-col span="6">
           <label class="label-bar">上报时间：</label>
-          <span>{{data.createTime}}</span>
+          <span>{{data.createTime | timeFormatter}}</span>
         </i-col>
         <i-col span="6">
           <label class="label-bar">处理时间：</label>
-          <span>{{data.disposeTime}}</span>
+          <span>{{(data.disposeTime | timeFormatter) || '-'}}</span>
         </i-col>
       </Row>
       <div :class="{'except-record-list-hide': hideDetail}">
@@ -79,7 +79,7 @@
             </div>
           </i-col>
           <i-col span="12" style="display: flex">
-            <label>修改后运费：</label>
+            <label class="label-bar">修改后运费：</label>
             <div class="flex-bar">
               <Row>
                 <i-col span="8">
@@ -111,7 +111,7 @@
         </Row>
         <Row class="mgbt20">
           <i-col span="24">
-            <label>处理备注：</label>
+            <label class="label-bar">处理备注：</label>
             <span>{{data.disposeDesc}}</span>
           </i-col>
         </Row>
@@ -121,9 +121,10 @@
 </template>
 <script>
 import BasePage from '@/basic/BasePage'
+import TransportBase from '../mixin/transportBase'
 export default {
   name: 'except-record',
-  mixins: [ BasePage ],
+  mixins: [ BasePage, TransportBase ],
   props: {
     data: {
       type: Object,
@@ -214,7 +215,7 @@ export default {
       this.openDialog({
         name: 'transport/dialog/abnormal',
         data: {
-          recordId: this.pickupId,
+          recordId: this.data.recordId,
           type: this.billType
         },
         methods: {
@@ -262,12 +263,12 @@ export default {
     display inline-block
     width 160px
     height 90px
-    margin 0 10px
+    margin 0 10px 0 0
     overflow hidden
     vertical-align: top;
     img
       display block
-      margin auto
+      // margin auto
       max-width 100%
       max-height 100%
   .label-bar
