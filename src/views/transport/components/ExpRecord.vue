@@ -134,11 +134,15 @@ export default {
     no: {
       type: String,
       default: ''
+    },
+    show: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {
-      hideDetail: false,
+      hideDetail: !this.show,
       columns: [
         {
           title: '付款方式',

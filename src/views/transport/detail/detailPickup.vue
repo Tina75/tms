@@ -20,7 +20,7 @@
     </div>
 
     <Tabs value="detail">
-      <TabPane label="运单详情" name="detail">
+      <TabPane label="提单详情" name="detail">
         <section class="detail-info">
           <!-- 提货单信息 -->
           <div>
@@ -139,7 +139,7 @@
         </section>
       </TabPane>
       <TabPane :label="expLabel" :disabled="exceptionCount == 0" name="exception">
-        <Exception ref="exception" :pickup-id="this.id" :cnt="exceptionCount"/>
+        <Exception ref="exception" :pickup-id="this.id" :cnt="exceptionCount" :bill-type="1"/>
       </TabPane>
     </Tabs>
   </div>
@@ -325,7 +325,7 @@ import _ from 'lodash'
 import Exception from './exception.vue'
 
 export default {
-  name: 'DetailFeright',
+  name: 'detailPickup',
   components: { MoneyInput, SelectInput, PayInfo, Exception },
   mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
   metaInfo: { title: '提货单详情' },
@@ -502,18 +502,7 @@ export default {
             return this.tableDataRender(h, p.row.consignerAddress)
           }
         }
-      ],
-      exceptionCount: 0,
-      // 异常详情label
-      expLabel: (h) => {
-        return h('div', [
-          h('span', {
-            domProps: {
-              innerHTML: `异常详情  ${this.exceptionCount}`
-            }
-          })
-        ])
-      }
+      ]
     }
   },
 

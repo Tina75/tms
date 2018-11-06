@@ -33,7 +33,18 @@ export default {
       },
 
       showLog: false,
-      logList: [] // 操作日志
+      logList: [], // 操作日志
+      exceptionCount: 0,
+      // 异常详情label
+      expLabel: (h) => {
+        return h('div', [
+          h('span', {
+            domProps: {
+              innerHTML: `异常详情  ${this.exceptionCount}`
+            }
+          })
+        ])
+      }
     }
   },
 

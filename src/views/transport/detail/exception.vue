@@ -1,7 +1,7 @@
 <template>
   <div class="exception">
     <template v-for="(item,index) in errorInfoList">
-      <ExpRecord :data="item" :key="index" :types="billObj.billStatus" :no="billObj.billNo"/>
+      <ExpRecord :data="item" :key="index" :types="billObj.billStatus" :no="billObj.billNo" :show="showDetail(index)"/>
     </template>
     <ExpTimeLine :data="errorLogs"/>
   </div>
@@ -22,6 +22,10 @@ export default {
     },
     cnt: {
       type: Number
+    },
+    billType: {
+      type: Number,
+      default: 0
     }
   },
   data () {
@@ -43,7 +47,7 @@ export default {
         method: 'post',
         data: {
           billId: this.pickupId,
-          billType: 1 // 1 提货单 2 外转单 3 运单
+          billType: this.billType // 1 提货单 2 外转单 3 运单
         }
       }).then(res => {
         const data = res.data.data
@@ -56,6 +60,9 @@ export default {
         }
         this.errorLogs = data.operaterLog
       })
+    },
+    showDetail () {
+      return this.errorInfoList.length === 1 // || (this.errorInfoList.length > 1 && index === 0)
     }
   }
 }
