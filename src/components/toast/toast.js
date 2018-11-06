@@ -34,6 +34,9 @@ Toast.newInstance = properties => {
                 type: 'ios-information-circle',
                 color: '#26B2FA',
                 size: 28
+              },
+              style: {
+                verticalAlign: 'top'
               }
             })
           case 'success':
@@ -42,6 +45,9 @@ Toast.newInstance = properties => {
                 type: 'ios-checkmark-circle',
                 color: '#00C185',
                 size: 28
+              },
+              style: {
+                verticalAlign: 'top'
               }
             })
           case 'warning':
@@ -50,14 +56,22 @@ Toast.newInstance = properties => {
                 type: 'ios-alert',
                 color: '#FF9502',
                 size: 28
+              },
+              style: {
+                verticalAlign: 'top'
               }
+
             })
           case 'error':
             return h(Icon, {
               props: {
                 type: 'ios-close-circle',
                 color: '#F75B5C',
-                size: 28
+                size: 28,
+                verticalAlign: 'top'
+              },
+              style: {
+                verticalAlign: 'top'
               }
             })
           case 'confirm':
@@ -65,7 +79,11 @@ Toast.newInstance = properties => {
               props: {
                 type: 'ios-help-circle',
                 color: '#FF9502',
-                size: 28
+                size: 28,
+                verticalAlign: 'top'
+              },
+              style: {
+                verticalAlign: 'top'
               }
             })
         }

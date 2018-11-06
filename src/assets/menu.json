@@ -66,6 +66,11 @@
         "name":"外转管理",
         "path":"/transport/outerOrder",
         "powerCode":120300
+      },
+      {
+        "name":"异常管理",
+        "path":"/transport/abnormalOrder",
+        "powerCode":0
       }
     ]
   },
@@ -89,11 +94,6 @@
         "name":"外转方对账",
         "path":"/finance/transfer",
         "powerCode":170300
-      },
-      {
-        "name": "代收货款对账",
-        "path":"/finance/collectFee",
-        "powerCode": 170300
       },
       {
         "name":"计费规则",

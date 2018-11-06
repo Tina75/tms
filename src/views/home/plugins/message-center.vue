@@ -10,7 +10,7 @@
             {{formatTime(msg.createTime)}}
           </span>
           <span class="message-center__title">
-            {{msg.content}}
+            {{msg.content | removeHtml}}
           </span>
         </Cell>
       </CellGroup>
@@ -45,6 +45,12 @@ export default {
     BlankCard,
     FontIcon,
     NoData
+  },
+  filters: {
+    removeHtml (value) {
+      // 去除所有html标签
+      return value.replace(/<(\S*?)[^>]*>/g, '')
+    }
   },
   mixins: [mixin, BasePage],
   data () {
