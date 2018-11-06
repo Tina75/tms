@@ -117,22 +117,18 @@ export default {
             } else if (res.data.data && res.data.data.operateCode === 1) {
               this.$Toast.warning({
                 title: '核销',
+                content: '以下订单存在异常，无法核销',
                 render: (h) => {
                   const list = res.data.data.orderNos.map(item => {
                     return h('p', item)
                   })
                   return h('div', [
-                    h('p', '以下订单存在异常，无法核销'),
                     ...list
                     // h('p', '原因：' + res.data.data.desc)
                   ])
                 },
-                // content: `<p>以下订单存在异常，无法核销</p><p>${res.data.data.orderNos.join('</p><p>')}</p>`,
                 okText: '确认',
                 cancelText: '取消'
-                // onOk: () => {
-                //   this.close()
-                // }
               })
             }
           }).catch(err => console.error(err))
