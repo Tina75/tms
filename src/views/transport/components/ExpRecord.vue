@@ -2,14 +2,14 @@
   <div class="except-record">
     <div class="except-record-title">
       <span>
-        上报信息 第一笔 【已处理】
+        上报信息 第一笔 【{{types === 10 ? '已处理' : types === 20 ? '未处理' : ''}}】
       </span>
-      <span>记录号：YC2018110123478</span>
+      <span>记录号：{{no}}</span>
       <div class="except-record-btn-group">
-        <Button type="default" style="margin: 0 10px">处理</Button>
-        <Button type="primary" @click="clickHandle">编辑</Button>
-        <div class="detail-log-icon" @click="hideDetail = !hideDetail">
-          <i class="detail-log-show"></i>
+        <Button type="default" style="margin: 0 10px" @click="clickHandle">处理</Button>
+        <Button type="primary" @click="editBtn">编辑</Button>
+        <div class="detail-log-icon" @click="showDetail">
+          <i :class="{'detail-log-show': hideDetail}"></i>
         </div>
       </div>
     </div>
@@ -17,36 +17,33 @@
       <Row class="mgbt20">
         <i-col span="6">
           <label class="label-bar">异常环节：</label>
-          <span>装货环节</span>
+          <span>{{data.abnormalTimingDesc}}</span>
         </i-col>
         <i-col span="6">
           <label class="label-bar">异常类型：</label>
-          <span>少货</span>
+          <span>{{data.abnormalTypeDesc}}</span>
         </i-col>
         <i-col span="6">
           <label class="label-bar">上报时间：</label>
-          <span>2018-06-26 09:00</span>
+          <span>{{data.createTime}}</span>
         </i-col>
         <i-col span="6">
           <label class="label-bar">处理时间：</label>
-          <span>-</span>
+          <span>{{data.disposeTime}}</span>
         </i-col>
       </Row>
       <div :class="{'except-record-list-hide': hideDetail}">
         <Row class="mgbt20">
           <i-col span="24">
             <label class="label-bar">异常描述：</label>
-            <span>少货</span>
+            <span>{{data.abnormalDesc}}</span>
           </i-col>
         </Row>
         <Row class="mgbt20">
           <i-col span="24">
             <label class="label-bar">图片：</label>
-            <span class="img-bar">
-              <img src="../../../assets/logo.png" alt="">
-            </span>
-            <span class="img-bar">
-              <img src="../../../assets/logo.png" alt="">
+            <span v-for="(item, index) in data.fileUrls" :key="index" class="img-bar">
+              <img :src="item" alt="">
             </span>
           </i-col>
         </Row>
@@ -57,28 +54,28 @@
               <Row>
                 <i-col span="6">
                   <label>运输费：</label>
-                  <span>700元</span>
+                  <span>{{data.beforeFeeInfo.freightFee}}元</span>
                 </i-col>
                 <i-col span="6">
                   <label>装货费：</label>
-                  <span>200元</span>
+                  <span>{{data.beforeFeeInfo.loadFee}}元</span>
                 </i-col>
                 <i-col span="6">
                   <label>卸货费：</label>
-                  <span>0元</span>
+                  <span>{{data.beforeFeeInfo.unloadFee}}元</span>
                 </i-col>
                 <i-col span="6">
                   <label>保险费：</label>
-                  <span>0元</span>
+                  <span>{{data.beforeFeeInfo.insuranceFee}}元</span>
                 </i-col>
                 <i-col span="6">
-                  <label>其他：</label>
-                  <span>0元</span>
+                  <label>其&emsp;他：</label>
+                  <span>{{data.beforeFeeInfo.otherFee}}元</span>
                 </i-col>
               </Row>
               <Table
                 :columns="columns"
-                :data="tableData"></Table>
+                :data="data.beforeFeeInfo.abnormalPayInfos"></Table>
             </div>
           </i-col>
           <i-col span="12" style="display: flex">
@@ -87,35 +84,35 @@
               <Row>
                 <i-col span="6">
                   <label>运输费：</label>
-                  <span>700元</span>
+                  <span>{{data.afterFeeInfo.freightFee}}元</span>
                 </i-col>
                 <i-col span="6">
                   <label>装货费：</label>
-                  <span>200元</span>
+                  <span>{{data.afterFeeInfo.loadFee}}元</span>
                 </i-col>
                 <i-col span="6">
                   <label>卸货费：</label>
-                  <span>0元</span>
+                  <span>{{data.afterFeeInfo.unloadFee}}元</span>
                 </i-col>
                 <i-col span="6">
                   <label>保险费：</label>
-                  <span>0元</span>
+                  <span>{{data.afterFeeInfo.insuranceFee}}元</span>
                 </i-col>
                 <i-col span="6">
-                  <label>其他：</label>
-                  <span>0元</span>
+                  <label>其&emsp;他：</label>
+                  <span>{{data.afterFeeInfo.otherFee}}元</span>
                 </i-col>
               </Row>
               <Table
                 :columns="columns"
-                :data="tableData"></Table>
+                :data="data.afterFeeInfo.abnormalPayInfos"></Table>
             </div>
           </i-col>
         </Row>
         <Row class="mgbt20">
           <i-col span="24">
             <label>处理备注：</label>
-            <span>运费已扣</span>
+            <span>{{data.disposeDesc}}</span>
           </i-col>
         </Row>
       </div>
@@ -125,35 +122,63 @@
 <script>
 export default {
   name: 'except-record',
+  props: {
+    data: {
+      type: Object,
+      default: () => {}
+    },
+    types: {
+      type: Number,
+      default: 0
+    },
+    no: {
+      type: String,
+      default: ''
+    },
+    show: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
-      hideDetail: false,
+      hideDetail: !this.show,
       columns: [
         {
-          title: 'Name',
-          key: 'name'
+          title: '付款方式',
+          key: 'payType',
+          render: (h, params) => {
+            // 1 预付 2 到付 3 回付
+            let txt = ''
+            switch (params.row.payType) {
+              case 1:
+                txt = '预付'
+                break
+              case 2:
+                txt = '到付'
+                break
+              case 3:
+                txt = '回付'
+                break
+              default:
+            }
+            return h('div', txt)
+          }
         },
         {
-          title: 'Age',
-          key: 'age'
+          title: '现金',
+          key: 'cashAmount'
         },
         {
-          title: 'Address',
-          key: 'address'
+          title: '油卡',
+          key: 'fuelCardAmount'
         }
       ],
       tableData: [
         {
-          name: 'John Brown',
-          age: 18,
-          address: 'New York',
-          date: '2016-10-03'
-        },
-        {
-          name: 'Jim Green',
-          age: 24,
-          address: 'London No.',
-          date: '2016-10-01'
+          payType: '到付',
+          cash: 18,
+          oilCard: 0
         }
       ]
     }
@@ -161,11 +186,14 @@ export default {
   methods: {
     // 处理对话框
     clickHandle (e) {
-      console.log(e)
+      console.log('处理对话框')
     },
     // 编辑对话框
     editBtn (e) {
-      console.log(e)
+      console.log('编辑对话框')
+    },
+    showDetail () {
+      this.hideDetail = !this.hideDetail
     }
   }
 }
@@ -204,8 +232,9 @@ export default {
     vertical-align: top;
     img
       display block
-      width 100%
-      height 100%
+      margin auto
+      max-width 100%
+      max-height 100%
   .label-bar
     display inline-block
     width 84px

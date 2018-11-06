@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { Button, Modal, Icon, Row, Col } from 'iview'
+import { Button, Modal, Icon } from 'iview'
 const Toast = {}
 const prefix = 'ivu-modal'
 Toast.newInstance = properties => {
@@ -34,9 +34,6 @@ Toast.newInstance = properties => {
                 type: 'ios-information-circle',
                 color: '#26B2FA',
                 size: 28
-              },
-              style: {
-                verticalAlign: 'top'
               }
             })
           case 'success':
@@ -45,9 +42,6 @@ Toast.newInstance = properties => {
                 type: 'ios-checkmark-circle',
                 color: '#00C185',
                 size: 28
-              },
-              style: {
-                verticalAlign: 'top'
               }
             })
           case 'warning':
@@ -56,11 +50,7 @@ Toast.newInstance = properties => {
                 type: 'ios-alert',
                 color: '#FF9502',
                 size: 28
-              },
-              style: {
-                verticalAlign: 'top'
               }
-
             })
           case 'error':
             return h(Icon, {
@@ -68,9 +58,6 @@ Toast.newInstance = properties => {
                 type: 'ios-close-circle',
                 color: '#F75B5C',
                 size: 28,
-                verticalAlign: 'top'
-              },
-              style: {
                 verticalAlign: 'top'
               }
             })
@@ -80,9 +67,6 @@ Toast.newInstance = properties => {
                 type: 'ios-help-circle',
                 color: '#FF9502',
                 size: 28,
-                verticalAlign: 'top'
-              },
-              style: {
                 verticalAlign: 'top'
               }
             })
@@ -151,31 +135,32 @@ Toast.newInstance = properties => {
         colspan[1] = '24'
       }
       if (this.render) {
-        bodyNodes = h(Row, {
-          class: 'ivu-modal-confirm-head',
-          props: {
-            type: 'flex'
-          }
+        bodyNodes = h('div', {
+          class: `${prefix}-body-inner`
         }, [
-          icon ? h(Col, {
-            class: 'ivu-modal-confirm-head-icon',
-            props: {
-              span: colspan[0]
-            }
-          }, [icon]) : '',
-          h(Col, {
-            class: 'ivu-modal-confirm-head-title',
-            props: {
-              span: colspan[1]
-            },
+          h('div', {
+            class: 'ivu-modal-confirm-head',
             style: {
-              fontSize: '14px',
-              color: '#000000',
-              fontWeight: 'normal',
-              marginLeft: '0px',
-              paddingLeft: '10px'
+              textAlign: 'center'
             }
-          }, this.render(h))
+          }, [
+            icon ? h('div', {
+              class: 'ivu-modal-confirm-head-icon',
+              props: {
+                span: colspan[0]
+              }
+            }, [icon]) : '',
+            h('div', {
+              class: 'ivu-modal-confirm-head-title',
+              style: {
+                fontSize: '14px',
+                color: '#000000',
+                fontWeight: 'normal',
+                marginLeft: '0px',
+                paddingLeft: '10px'
+              }
+            }, [this.render(h)])
+          ])
         ])
       } else {
         bodyNodes = h('div', {
@@ -183,25 +168,18 @@ Toast.newInstance = properties => {
             class: `${prefix}-body-inner`
           }
         }, [
-          h(Row, {
+          h('div', {
             class: 'ivu-modal-confirm-head',
-            props: {
-              type: 'flex',
-              justify: 'start'
+            style: {
+              textAlign: 'center'
             }
           },
           [
-            icon ? h(Col, {
-              class: 'ivu-modal-confirm-head-icon',
-              props: {
-                span: colspan[0]
-              }
+            icon ? h('div', {
+              class: 'ivu-modal-confirm-head-icon'
             }, [icon]) : '',
-            h(Col, {
+            h('div', {
               class: 'ivu-modal-confirm-head-title',
-              props: {
-                span: colspan[1]
-              },
               style: {
                 fontSize: '14px',
                 color: '#000000',
