@@ -6,3 +6,5 @@ export const JsDependencies = 'jsDependencies'
 export const DomRender = 'domRender'
 // 代码性能耗时分类
 export const Performance = 'performance'
+// 用户相关事件和耗时分类
+export const UserInfo = 'userInfo'

@@ -97,6 +97,7 @@ export default {
       try {
         await this.getUserInfo()
 
+        // 添加GA配置属性
         this.$ga.set('phone', this.UserInfo.phone)
         this.$ga.set('roleName', this.UserInfo.roleName)
         this.$ga.set('id', this.UserInfo.id)
