@@ -7,6 +7,7 @@
       :remote="remote"
       :clearable="true"
       :placeholder="placeholder"
+      :no-filter="true"
       @input="inputHandle"
       @on-select="selectChange"
     >

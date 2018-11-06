@@ -15,9 +15,10 @@
       })(window,document,'script','https://www.google-analytics.com/analytics.js','ga')
       ga('create', 'UA-128241354-1', 'auto')
       if ((navigator.userAgent.indexOf('MSIE') >= 0) && (navigator.userAgent.indexOf('Opera') < 0)) {
-        ga('send', 'event', '不兼容跳转', '不兼容', navigator.userAgent)
+        // 上报不兼容情况并跳转升级浏览器页面
+        ga('send', 'event', 'userInfo', 'incompatible', navigator.userAgent)
         setTimeout(function () {
-          location.href = 'https://devstatic.yundada56.com/tms/upgrade.html'
+          location.href = 'https://www.tms5566.com/upgrade.html'
         }, 20)
       }
     </script>
