@@ -159,7 +159,7 @@ Toast.newInstance = properties => {
                 marginLeft: '0px',
                 paddingLeft: '10px'
               }
-            }, this.render(h))
+            }, [this.render(h)])
           ])
         ])
       } else {
