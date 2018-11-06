@@ -26,10 +26,7 @@
     <Card dis-hover class="contentCard">
       <div v-if="'pic' === this.type">
         <p slot="title" class="rightDivTitle">{{picContent.title}}</p>
-        <pre class="preText">{{picContent.content}}</pre>
-        <div v-for="url in picContent.urlList" :key="url.index">
-          <img :src="url" class="imgInfo" />
-        </div>
+        <div v-html="picContent.content"></div>
       </div>
       <div v-if="'video' === this.type">
         <p slot="title" class="rightDivTitle">{{videoContent.title}}</p>
