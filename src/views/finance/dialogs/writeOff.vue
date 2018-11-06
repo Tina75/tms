@@ -129,10 +129,10 @@ export default {
                 },
                 // content: `<p>以下订单存在异常，无法核销</p><p>${res.data.data.orderNos.join('</p><p>')}</p>`,
                 okText: '确认',
-                cancelText: '取消',
-                onOk: () => {
-                  this.close()
-                }
+                cancelText: '取消'
+                // onOk: () => {
+                //   this.close()
+                // }
               })
             }
           }).catch(err => console.error(err))
