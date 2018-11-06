@@ -3,7 +3,7 @@
     <p slot="header" style="text-align:center">
       处理异常
     </p>
-    <p style="text-align: center; font-size: 14px"><Icon type="ico-ask" style="font-size: 20px;color: #FFBB44;vertical-align: bottom;" />是否确定已处理该异常</p>
+    <p style="text-align: center; font-size: 14px"><FontIcon type="ico-ask" style="vertical-align: sub;margin-right: 5px" size="20" color="#FFBB44"/>是否确定已处理该异常</p>
     <div style="width: 100%; margin: 10px">
       <Input v-model="errorMsg" :autosize="{minRows: 3, maxRows: 5}" :maxlength="500" type="textarea" placeholder="请填写备注信息（非必填）"></Input>
     </div>
@@ -16,8 +16,10 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
+import FontIcon from '@/components/FontIcon'
 export default {
   name: 'errorDialog',
+  components: { FontIcon },
   mixins: [ BaseDialog ],
   data () {
     return {
