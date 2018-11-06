@@ -190,7 +190,7 @@ export default {
       tableActionColumn: {
         title: '操作',
         key: 'action',
-        width: 60,
+        width: 80,
         fixed: 'left',
         extra: true,
         render: (h, p) => {
@@ -202,6 +202,14 @@ export default {
                 }
               }
             }, '派车')
+          } else if (p.row.status > 1 && this.hasPower(120113)) {
+            return h('a', {
+              on: {
+                click: () => {
+                  this.openAbnormalDialog(p.row.waybillId)
+                }
+              }
+            }, '上报异常')
           }
         }
       },
@@ -222,13 +230,13 @@ export default {
           this.triggerTableActionColumn(true)
           return 1
         case '待发运':
-          this.triggerTableActionColumn(false)
+          this.triggerTableActionColumn(true)
           return 2
         case '在途':
-          this.triggerTableActionColumn(false)
+          this.triggerTableActionColumn(true)
           return 3
         case '已到货':
-          this.triggerTableActionColumn(false)
+          this.triggerTableActionColumn(true)
           return 4
         default:
       }
@@ -415,6 +423,23 @@ export default {
             }
           }
         })
+      })
+    },
+
+    // 上报异常
+    openAbnormalDialog (id) {
+      const self = this
+      self.openDialog({
+        name: 'transport/dialog/abnormal',
+        data: {
+          id,
+          type: 3 // 单据类型 1 提货单 2 外转单 3 运单
+        },
+        methods: {
+          complete () {
+            self.clearSelectedAndFetch()
+          }
+        }
       })
     }
   }

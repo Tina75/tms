@@ -7,13 +7,13 @@
     <div>
       <Row class="abnormal-header">
         <i-col span="7">
-          运单号：{{ details.billNo }}
+          {{ (details.billType === 1 ? '提货单号：' : (details.billType === 2 ? '外转单号：' : '运单号：')) + details.billNo }}
         </i-col>
         <i-col span="8">
-          承运商：{{ details.carrierName }}
+          {{ details.billType === 2 ? '外转方：' : '承运商：' + details.carrierName }}
         </i-col>
         <i-col span="9">
-          车牌号：{{ details.carNo }}
+          车牌号：{{ details.carNo || '-' }}
         </i-col>
       </Row>
     </div>
@@ -49,19 +49,19 @@
         </div>
         <div>
           <span class="detail-field-title-sm" style="width: 70px;">装货费：</span>
-          <MoneyInput v-model="payment.loadFee" :is-disabled="isDisabled" class="detail-payment-input" />
+          <MoneyInput v-model="payment.loadFee" :is-disabled="isDisabled || details.billType === 2" class="detail-payment-input" />
         </div>
         <div>
           <span class="detail-field-title-sm" style="width: 70px;">卸货费：</span>
-          <MoneyInput v-model="payment.unloadFee" :is-disabled="isDisabled" class="detail-payment-input" />
+          <MoneyInput v-model="payment.unloadFee" :is-disabled="isDisabled || details.billType === 2" class="detail-payment-input" />
         </div>
         <div>
           <span class="detail-field-title-sm" style="width: 70px;">保险费：</span>
-          <MoneyInput v-model="payment.insuranceFee" :is-disabled="isDisabled" class="detail-payment-input" />
+          <MoneyInput v-model="payment.insuranceFee" :is-disabled="isDisabled || details.billType === 2" class="detail-payment-input" />
         </div>
         <div>
           <span class="detail-field-title-sm">其他费用：</span>
-          <MoneyInput v-model="payment.otherFee" :is-disabled="isDisabled" class="detail-payment-input" />
+          <MoneyInput v-model="payment.otherFee" :is-disabled="isDisabled || details.billType === 2" class="detail-payment-input" />
         </div>
       </div>
 
@@ -72,7 +72,7 @@
         </i-col>
       </Row>
 
-      <PayInfo v-if="isChangeFee === 1"
+      <PayInfo v-if="isChangeFee === 1 && details.abnormalPayInfos.length > 0"
                ref="$payInfo"
                :loading="loading"
                :total="paymentTotal"
@@ -191,7 +191,6 @@ export default {
         this.canUpdateFee = this.details.canUpdateFee // 多条异常记录只有最后一条可以修改运费
         this.isChangeFee = this.details.updateFee // 判断是否修改运费radio初始状态
         this.handleCheckFee(this.isChangeFee)
-        this.handleChangeLinks(this.abnormalTiming) // 默认自动填充第一条环节对应的异常类型,和多段支付联动
 
         // 编辑异常需要带出上次上传的图片
         if (this.details.fileUrls.length > 0) {
@@ -221,6 +220,8 @@ export default {
           }
         })
         this.settlementPayInfo = temp
+
+        this.handleChangeLinks(this.abnormalTiming) // 默认自动填充第一条环节对应的异常类型,和多段支付联动
 
         this.loading = false
 
@@ -273,10 +274,10 @@ export default {
 
     // 异常环节修改后，异常类型、多段支付联动
     handleChangeLinks (val) {
-      console.log(val)
       this.abnormalTypeCode = ''
       this.abnormalTypeCodes = ABNORMAL_TYPE_CODES[val.toString()]
       if (this.changeFeeType === 1 && this.canUpdateFee === 1) {
+        console.log(val)
         switch (val) {
           case 1: // 装货环节： 预付、到付、回付这三段都可以修改
             this.settlementPayInfo.map((item) => {
