@@ -24,7 +24,7 @@
                v-model="easySearchKeyword"
                :icon="easySearchKeyword ? 'ios-close-circle' : ''"
                :maxlength="20"
-               placeholder="请输入提货单号"
+               placeholder="请输入运单号/提货单号/外转单号"
                class="search-input"
                @on-click="resetEasySearch" />
 
@@ -58,7 +58,7 @@
     <div v-if="!isEasySearch" class="operate-box custom-style">
 
       <div style="margin-bottom: 10px;">
-        <Input v-model="seniorSearchFields.pickupNo" :maxlength="20" placeholder="请输入提货单号"  class="search-input-senior" />
+        <Input v-model="seniorSearchFields.billNo" :maxlength="20" placeholder="请输入运单号/提货单号/外转单号"  class="search-input-senior" />
         <SelectInput v-model="seniorSearchFields.carrierName"
                      mode="carrier"
                      placeholder="请输入承运商"
@@ -74,6 +74,9 @@
                      mode="carNo"
                      placeholder="请输入车牌号"
                      class="search-input-senior" />
+        <Select v-model="seniorSearchFields.billType" style="width:190px;" placeholder="请选择单据类型">
+          <Option v-for="item in billTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+        </Select>
       </div>
 
       <div style="display: flex;justify-content: space-between;">
@@ -102,7 +105,7 @@
                  :columns="tableColumns"
                  :show-filter="false"
                  :keywords="searchFields"
-                 row-id="pickUpId"
+                 row-id="abnormalId"
                  url="/abnormal/list"
                  method="post"
                  list-field="list"
@@ -144,20 +147,28 @@ export default {
 
       // 简易搜索类型
       selectList: [
-        { value: 1, label: '提货单号' },
+        { value: 1, label: '单据号' },
         { value: 2, label: '承运商' },
         { value: 3, label: '车牌号' }
       ],
 
+      // 单据类型
+      billTypeList: [
+        { value: 1, label: '提货单' },
+        { value: 2, label: '外转单' },
+        { value: 3, label: '运单' }
+      ],
+
       // 高级搜索字段
       seniorSearchFields: {
-        pickupNo: '', // 提货单号
+        billNo: '', // 提货单号
         carrierName: '', // 承运商
         driverName: '', // 司机
         carNo: '', // 车牌号
         dateRange: ['', ''], // 日期范围
         startTime: '', // 开始时间
-        endTime: '' // 结束时间
+        endTime: '', // 结束时间
+        billType: '' // 单据类型 1 提货单 2 外转单 3 运单
       },
 
       // 表格操作栏
@@ -170,7 +181,7 @@ export default {
           return h('a', {
             on: {
               click: () => {
-                this.openAbnormalDialog(p.row.pickUpId)
+                // this.openAbnormalDialog(p.row.abnormalId)
               }
             }
           }, '处理')
@@ -189,16 +200,33 @@ export default {
         //   this.triggerTableActionColumn(true)
         //   return
         case '全部':
-          this.triggerTableActionColumn(true)
+          this.triggerTableActionColumn(false)
           return
         case '未处理':
-          this.triggerTableActionColumn(true)
-          return 1
+          this.triggerTableActionColumn(false)
+          return 10
         case '已处理':
           this.triggerTableActionColumn(false)
-          return 2
+          return 20
         default:
       }
+    },
+
+    // 单据类型code转name
+    billTypeToName (code) {
+      let name
+      switch (code) {
+        case 1:
+          name = '提货单'
+          break
+        case 2:
+          name = '外转单'
+          break
+        case 3:
+          name = '运单'
+          break
+      }
+      return name
     },
 
     // 查询标签页数量
@@ -226,17 +254,19 @@ export default {
       data.pageSize = this.page.size
       delete data.order
 
-      if (this.tableSelection.length) {
-        data.exportType = 1
-        data.pickUpIds = this.tableSelection.map(item => item.pickUpId)
-      } else if (this.inSearching) data.exportType = 3
-      else data.exportType = 2
+      // if (this.tableSelection.length) {
+      //   data.exportType = 1
+      //   data.abnormalIds = this.tableSelection.map(item => item.abnormalId)
+      // } else if (this.inSearching) data.exportType = 3
+      // else data.exportType = 2
+
+      data.abnormalIds = this.tableSelection.map(item => item.abnormalId)
 
       Export({
-        url: '/load/bill/export',
+        url: '/abnormal/export',
         method: 'post',
         data,
-        fileName: '提货单明细'
+        fileName: '异常单明细'
       })
     },
 
