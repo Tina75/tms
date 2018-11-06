@@ -61,7 +61,7 @@ export default {
       } else {
         for (let i = 0; i < this.cars.length; i++) {
           this.showCar(this.cars[i], point => {
-            if (i === 0) this.map.centerAndZoom(point, 12)
+            if (i === 0) this.map.centerAndZoom(point, 6)
           })
         }
       }
@@ -173,7 +173,7 @@ export default {
 
     .ivu-timeline-item-head-custom
       margin-top 3px
-      left -13px
+      left -14px
 
     .ivu-timeline-item-content
       top -9px

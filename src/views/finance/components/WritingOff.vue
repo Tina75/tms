@@ -31,10 +31,10 @@
       </Form>
     </div>
     <div class="btns-box">
-      <div>发货方对账列表</div>
+      <div>{{sceneMap[scene]}}对账列表</div>
       <Button v-if="(hasPower(170102) && scene === 1) || (hasPower(170202) && scene === 2) || (hasPower(170302) && scene === 3)" type="primary" @click="createBill">生成对账单</Button>
     </div>
-    <div  :style="{height: height + 108 + 'px'}" class="list-box">
+    <div  :style="{height: height - 20 + 'px'}" class="list-box">
       <ul class="leftList">
         <li v-for="(item,index) in companyData" :class="{companyDataActive:companyDataActive === item.partnerName}" :key="index" class="list" @click="showOrderData(item)">
           <!--<Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showOrderData"></Table>-->
@@ -531,7 +531,7 @@ export default {
         flex-direction column
         justify-content center
         align-items center
-        min-height 426px
+        min-height 416px
         .data-empty-img
           width 70px
           margin-bottom 12px
