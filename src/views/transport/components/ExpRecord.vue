@@ -2,7 +2,7 @@
   <div class="except-record">
     <div class="except-record-title">
       <span>
-        上报信息 第一笔 【{{types === 10 ? '已处理' : types === 20 ? '未处理' : ''}}】
+        上报信息 第一笔 【{{statusCode === 10 ? '已处理' : statusCode === 20 ? '未处理' : ''}}】
       </span>
       <span>记录号：{{no}}</span>
       <div class="except-record-btn-group">
@@ -52,23 +52,23 @@
             <label class="label-bar">修改前运费：</label>
             <div class="flex-bar">
               <Row>
-                <i-col span="6">
+                <i-col span="8">
                   <label>运输费：</label>
                   <span>{{data.beforeFeeInfo.freightFee}}元</span>
                 </i-col>
-                <i-col span="6">
+                <i-col span="8">
                   <label>装货费：</label>
                   <span>{{data.beforeFeeInfo.loadFee}}元</span>
                 </i-col>
-                <i-col span="6">
+                <i-col span="8">
                   <label>卸货费：</label>
                   <span>{{data.beforeFeeInfo.unloadFee}}元</span>
                 </i-col>
-                <i-col span="6">
+                <i-col span="8">
                   <label>保险费：</label>
                   <span>{{data.beforeFeeInfo.insuranceFee}}元</span>
                 </i-col>
-                <i-col span="6">
+                <i-col span="8">
                   <label>其&emsp;他：</label>
                   <span>{{data.beforeFeeInfo.otherFee}}元</span>
                 </i-col>
@@ -82,25 +82,25 @@
             <label>修改后运费：</label>
             <div class="flex-bar">
               <Row>
-                <i-col span="6">
+                <i-col span="8">
                   <label>运输费：</label>
-                  <span>{{data.afterFeeInfo.freightFee}}元</span>
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.freightFee, data.afterFeeInfo.freightFee)}">{{data.afterFeeInfo.freightFee}}</span>元
                 </i-col>
-                <i-col span="6">
+                <i-col span="8">
                   <label>装货费：</label>
-                  <span>{{data.afterFeeInfo.loadFee}}元</span>
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.loadFee, data.afterFeeInfo.loadFee)}">{{data.afterFeeInfo.loadFee}}</span>元
                 </i-col>
-                <i-col span="6">
+                <i-col span="8">
                   <label>卸货费：</label>
-                  <span>{{data.afterFeeInfo.unloadFee}}元</span>
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.unloadFee, data.afterFeeInfo.unloadFee)}">{{data.afterFeeInfo.unloadFee}}</span>元
                 </i-col>
-                <i-col span="6">
+                <i-col span="8">
                   <label>保险费：</label>
-                  <span>{{data.afterFeeInfo.insuranceFee}}元</span>
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.insuranceFee, data.afterFeeInfo.insuranceFee)}">{{data.afterFeeInfo.insuranceFee}}</span>元
                 </i-col>
-                <i-col span="6">
+                <i-col span="8">
                   <label>其&emsp;他：</label>
-                  <span>{{data.afterFeeInfo.otherFee}}元</span>
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.otherFee, data.afterFeeInfo.otherFee)}">{{data.afterFeeInfo.otherFee}}</span>元
                 </i-col>
               </Row>
               <Table
@@ -120,14 +120,16 @@
   </div>
 </template>
 <script>
+import BasePage from '@/basic/BasePage'
 export default {
   name: 'except-record',
+  mixins: [ BasePage ],
   props: {
     data: {
       type: Object,
       default: () => {}
     },
-    types: {
+    statusCode: {
       type: Number,
       default: 0
     },
@@ -138,6 +140,13 @@ export default {
     show: {
       type: Boolean,
       default: false
+    },
+    // 单据类型 1 提货单 2 外转单 3 运单
+    billType: {
+      type: Number
+    },
+    pickupId: {
+      type: Number
     }
   },
   data () {
@@ -186,14 +195,40 @@ export default {
   methods: {
     // 处理对话框
     clickHandle (e) {
-      console.log('处理对话框')
+      const self = this
+      this.openDialog({
+        name: 'transport/dialog/errorDetail',
+        data: {
+          id: this.data.recordId,
+          type: this.billType
+        },
+        methods: {
+          complete () {
+            self.$parent.initData()
+          }
+        }
+      })
     },
     // 编辑对话框
     editBtn (e) {
-      console.log('编辑对话框')
+      this.openDialog({
+        name: 'transport/dialog/abnormal',
+        data: {
+          recordId: this.pickupId,
+          type: this.billType
+        },
+        methods: {
+          complete () {
+            self.$parent.initData()
+          }
+        }
+      })
     },
     showDetail () {
       this.hideDetail = !this.hideDetail
+    },
+    compareFee (b, a) {
+      return b !== a
     }
   }
 }
@@ -246,4 +281,6 @@ export default {
   .mgbt20
     margin-top 10px
     margin-bottom  10px
+  .red-col
+    color red
 </style>

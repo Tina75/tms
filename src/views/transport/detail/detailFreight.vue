@@ -19,7 +19,7 @@
       </Button>
     </div>
 
-    <Tabs value="detail">
+    <Tabs :value="isAbnomal ? 'detail' : 'exception'">
       <TabPane label="运单详情" name="detail">
         <section class="detail-info">
           <!-- 运单信息 -->
@@ -580,7 +580,7 @@ export default {
         // 异常个数
         this.exceptionCount = data.abnormalCnt
         if (this.exceptionCount) {
-          this.$refs['exception'] && this.$refs['exception'].initDate()
+          this.$refs['exception'] && this.$refs['exception'].initData()
         }
         this.setBtnsWithStatus()
         this.loading = false

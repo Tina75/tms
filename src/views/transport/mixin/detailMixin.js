@@ -87,6 +87,9 @@ export default {
       return this.currentBtns.filter(item => {
         return this.hasPower(item.code)
       })
+    },
+    isAbnomal () {
+      return this.$route.query.abnomal === 1
     }
   },
 

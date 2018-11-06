@@ -20,7 +20,7 @@
         @click="item.func">{{ item.name }}</Button>
     </div>
 
-    <Tabs value="detail">
+    <Tabs :value="isAbnomal ? 'detail' : 'exception'">
       <TabPane label="外转单详情" name="detail">
         <section class="detail-info">
           <!-- 客户信息 -->
@@ -351,7 +351,7 @@ export default {
         this.setBtnsWithStatus()
         this.exceptionCount = data.abnormalCnt
         if (this.exceptionCount) {
-          this.$refs['exception'] && this.$refs['exception'].initDate()
+          this.$refs['exception'] && this.$refs['exception'].initData()
         }
         this.loading = false
       }).catch(err => console.error(err))
