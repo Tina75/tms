@@ -442,7 +442,7 @@ export default {
             if (params.row.regularLine && JSON.parse(params.row.regularLine).length === 1) {
               s1 = JSON.parse(params.row.regularLine)[0].sn === undefined ? '' : JSON.parse(params.row.regularLine)[0].sn
               n1 = JSON.parse(params.row.regularLine)[0].en === undefined ? '' : JSON.parse(params.row.regularLine)[0].en
-            } else if (JSON.parse(params.row.regularLine).length === 2) {
+            } else if (params.row.regularLine && JSON.parse(params.row.regularLine).length === 2) {
               s1 = JSON.parse(params.row.regularLine)[0].sn === undefined ? '' : JSON.parse(params.row.regularLine)[0].sn
               n1 = JSON.parse(params.row.regularLine)[0].en === undefined ? '' : JSON.parse(params.row.regularLine)[0].en
               s2 = JSON.parse(params.row.regularLine)[1].sn === undefined ? '' : JSON.parse(params.row.regularLine)[1].sn
