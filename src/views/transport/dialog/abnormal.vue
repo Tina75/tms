@@ -29,7 +29,7 @@
         <i-col span="7" style="margin-right: 15px;">
           <span class="detail-field-title-sm detail-field-required">异常类型：</span>
           <Select v-model="abnormalTypeCode" style="width:160px">
-            <Option v-for="item in abnormalTypeCodes" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            <Option v-for="item in abnormalTypeCodes" :value="item.abnormalTypeCode" :key="item.abnormalTypeCode">{{ item.abnormalTypeDesc }}</Option>
           </Select>
         </i-col>
         <i-col span="9">
@@ -97,7 +97,7 @@
         <i-col span="24" style="display: flex;">
           <span class="detail-field-title-sm" style="vertical-align: unset;padding-left: 8px;width: 90px;line-height: 1.6;">图片上传：</span>
           <div style="width: 100%;">
-            <up-load ref="upLoads" :multiple="true" max-size="2"></up-load>
+            <up-load ref="upLoads" :multiple="true" max-size="10"></up-load>
             <p style="color: #999;font-family:PingFangSC-Regular;font-weight:400;line-height: 1.2;">图片格式必须为jpeg、jpg、gif、png，且最多上传6张，每张不能超过2MB！</p>
           </div>
         </i-col>
@@ -117,7 +117,7 @@ import MoneyInput from '../components/MoneyInput'
 import Server from '@/libs/js/server'
 import PayInfo from '../components/PayInfo'
 import UpLoad from '@/components/upLoad/'
-import { ABNORMAL_TYPE_CODES } from '../constant/abnormal.js'
+// import { ABNORMAL_TYPE_CODES } from '../constant/abnormal.js'
 import _ from 'lodash'
 export default {
   name: 'SendCar',
@@ -196,8 +196,9 @@ export default {
       }).then(res => {
         _this.details = res.data.data
         console.log(_this.details)
-        _this.abnormalTimings = _this.details.abnormalLinks
-        _this.abnormalTiming = _this.details.abnormalLinks[0].abnormalTiming // 默认自动填充第一条环节
+
+        this.autoAbnormalLinks('selected', 1) // 自动带出selected=1的异常环节,和selected=1的异常类型
+
         _this.canUpdateFee = _this.details.canUpdateFee // 多条异常记录只有最后一条可以修改运费
         _this.isChangeFee = _this.details.updateFee // 判断是否修改运费radio初始状态
 
@@ -238,6 +239,21 @@ export default {
 
         _this.loading = false
       }).catch(err => console.error(err))
+    },
+
+    // 自动带出selected=1的异常环节,和selected=1的异常类型
+    autoAbnormalLinks (key, value) {
+      const _this = this
+      _this.abnormalTimings = _this.details.abnormalLinks
+      let abnormalLink = _.find(_this.abnormalTimings, [key, value])
+      _this.abnormalTiming = abnormalLink.abnormalTiming // 默认自动选择selected=1的项
+      _this.abnormalTypeCodes = abnormalLink.abnormalTypes // 带出selected=1的项的异常类型列表
+      let abnormalType = _.find(_this.abnormalTypeCodes, ['selected', 1])
+      if (abnormalType) {
+        _this.abnormalTypeCode = abnormalType.abnormalTypeCode // 带出selected=1的项的异常类型列表对应selected=1的值
+      } else {
+        _this.abnormalTypeCode = _this.abnormalTypeCodes[0].abnormalTypeCode
+      }
     },
 
     // 检查是否可修改运费
@@ -282,7 +298,7 @@ export default {
     // 多条异常记录只有最后一条可以修改运费
     checkUpdateFee () {
       if (this.canUpdateFee === 2) {
-        this.$Message.warning('多条异常记录只有最后一条可以修改运费')
+        // this.$Message.warning('多条异常记录只有最后一条可以修改运费')
         this.canotChangeFee()
       }
     },
@@ -297,8 +313,9 @@ export default {
 
     // 异常环节修改后，异常类型、多段支付联动
     handleChangeLinks (val) {
-      this.abnormalTypeCode = ''
-      this.abnormalTypeCodes = ABNORMAL_TYPE_CODES[val.toString()]
+      // this.abnormalTypeCode = ''
+      // this.abnormalTypeCodes = ABNORMAL_TYPE_CODES[val.toString()]
+      this.autoAbnormalLinks('abnormalTiming', val)
       if (this.changeFeeType === 1 && this.canUpdateFee === 1) {
         console.log(val)
         switch (val) {
