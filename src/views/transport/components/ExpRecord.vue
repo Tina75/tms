@@ -56,23 +56,27 @@
               <Row>
                 <i-col span="8">
                   <label>运输费：</label>
-                  <span>{{data.beforeFeeInfo.freightFee}}元</span>
+                  <span>{{data.beforeFeeInfo.freightFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
                   <label>装货费：</label>
-                  <span>{{data.beforeFeeInfo.loadFee}}元</span>
+                  <span>{{data.beforeFeeInfo.loadFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
                   <label>卸货费：</label>
-                  <span>{{data.beforeFeeInfo.unloadFee}}元</span>
+                  <span>{{data.beforeFeeInfo.unloadFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
                   <label>保险费：</label>
-                  <span>{{data.beforeFeeInfo.insuranceFee}}元</span>
+                  <span>{{data.beforeFeeInfo.insuranceFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
                   <label>其&emsp;他：</label>
-                  <span>{{data.beforeFeeInfo.otherFee}}元</span>
+                  <span>{{data.beforeFeeInfo.otherFee | Money}}元</span>
+                </i-col>
+                <i-col span="8">
+                  <label>费用合计：</label>
+                  <span>{{data.beforeFeeInfo.totalFee | Money}}元</span>
                 </i-col>
               </Row>
               <Table
@@ -86,23 +90,27 @@
               <Row>
                 <i-col span="8">
                   <label>运输费：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.freightFee, data.afterFeeInfo.freightFee)}">{{data.afterFeeInfo.freightFee}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.freightFee, data.afterFeeInfo.freightFee)}">{{data.afterFeeInfo.freightFee | Money}}</span>元
                 </i-col>
                 <i-col span="8">
                   <label>装货费：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.loadFee, data.afterFeeInfo.loadFee)}">{{data.afterFeeInfo.loadFee}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.loadFee, data.afterFeeInfo.loadFee)}">{{data.afterFeeInfo.loadFee | Money}}</span>元
                 </i-col>
                 <i-col span="8">
                   <label>卸货费：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.unloadFee, data.afterFeeInfo.unloadFee)}">{{data.afterFeeInfo.unloadFee}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.unloadFee, data.afterFeeInfo.unloadFee)}">{{data.afterFeeInfo.unloadFee | Money}}</span>元
                 </i-col>
                 <i-col span="8">
                   <label>保险费：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.insuranceFee, data.afterFeeInfo.insuranceFee)}">{{data.afterFeeInfo.insuranceFee}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.insuranceFee, data.afterFeeInfo.insuranceFee)}">{{data.afterFeeInfo.insuranceFee | Money}}</span>元
                 </i-col>
                 <i-col span="8">
                   <label>其&emsp;他：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.otherFee, data.afterFeeInfo.otherFee)}">{{data.afterFeeInfo.otherFee}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.otherFee, data.afterFeeInfo.otherFee)}">{{data.afterFeeInfo.otherFee | Money}}</span>元
+                </i-col>
+                <i-col span="8">
+                  <label>费用合计：</label>
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.totalFee, data.afterFeeInfo.totalFee)}">{{data.afterFeeInfo.totalFee | Money}}</span>元
                 </i-col>
               </Row>
               <Table
@@ -124,23 +132,24 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import TransportBase from '../mixin/transportBase'
+const moneyFormate = (fee) => {
+  if (!fee) return 0
+  return fee / 100
+}
 export default {
   name: 'except-record',
   filters: {
     timeFormatter (timestamp) {
       if (!timestamp) return '-'
       return new Date(timestamp).Format('yyyy-MM-dd hh:mm')
-    }
+    },
+    Money: moneyFormate
   },
   mixins: [ BasePage, TransportBase ],
   props: {
     data: {
       type: Object,
       default: () => {}
-    },
-    no: {
-      type: String,
-      default: ''
     },
     show: {
       type: Boolean,
@@ -178,11 +187,13 @@ export default {
         },
         {
           title: '现金',
-          key: 'cashAmount'
+          key: 'cashAmount',
+          render: (h, params) => h('span', moneyFormate(params.row.cashAmount))
         },
         {
           title: '油卡',
-          key: 'fuelCardAmount'
+          key: 'fuelCardAmount',
+          render: (h, params) => h('span', moneyFormate(params.row.fuelCardAmount))
         }
       ],
       columnsAfter: [
@@ -215,7 +226,7 @@ export default {
             const bfFee = bfArr[params.index] && bfArr[params.index].cashAmount
             return h('span', {
               domProps: {
-                innerHTML: params.row.cashAmount
+                innerHTML: moneyFormate(params.row.cashAmount)
               },
               style: {
                 color: bfFee && bfFee !== params.row.cashAmount ? 'red' : ''
@@ -231,7 +242,7 @@ export default {
             const bfFee = bfArr[params.index] && bfArr[params.index].fuelCardAmount
             return h('span', {
               domProps: {
-                innerHTML: params.row.fuelCardAmount
+                innerHTML: moneyFormate(params.row.fuelCardAmount)
               },
               style: {
                 color: bfFee && bfFee !== params.row.fuelCardAmount ? 'red' : ''
