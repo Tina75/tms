@@ -203,13 +203,13 @@ export default {
               }
             }, '派车')
           } else if (p.row.status > 1 && this.hasPower(120113)) {
-            return h('a', {
-              on: {
-                click: () => {
-                  this.openAbnormalDialog(p.row.waybillId)
-                }
-              }
-            }, '上报异常')
+            // return h('a', {
+            //   on: {
+            //     click: () => {
+            //       this.openAbnormalDialog(p.row.waybillId)
+            //     }
+            //   }
+            // }, '上报异常')
           }
         }
       },
@@ -230,13 +230,13 @@ export default {
           this.triggerTableActionColumn(true)
           return 1
         case '待发运':
-          this.triggerTableActionColumn(true)
+          this.triggerTableActionColumn(false)
           return 2
         case '在途':
-          this.triggerTableActionColumn(true)
+          this.triggerTableActionColumn(false)
           return 3
         case '已到货':
-          this.triggerTableActionColumn(true)
+          this.triggerTableActionColumn(false)
           return 4
         default:
       }
