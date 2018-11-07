@@ -195,7 +195,7 @@ export default {
                 }
               }
             }, '提货')
-          } else if (p.row.status > 1) {
+          } else if (p.row.status > 1 && this.hasPower(120210)) {
             return h('a', {
               on: {
                 click: () => {

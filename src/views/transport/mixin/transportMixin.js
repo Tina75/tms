@@ -140,7 +140,7 @@ export default {
       if (this.easySearchKeyword === '') return
       this.easySearchKeyword = ''
       if (!this.inSearching) return
-      this.page.current = 1
+      this.page.currentcurrent = 1
       this.inSearching = false
       this.fetchData()
     },
@@ -215,8 +215,18 @@ export default {
       if (this.inSearching) {
         if (this.isEasySearch) {
           if (this.easySearchKeyword) {
-            params.type = this.easySelectMode
-            params.keyWord = this.easySearchKeyword
+            if (this.$route.path === '/transport/abnormalOrder') { // 区别异常管理和其他页面简单搜索
+              if (this.easySelectMode === 1) {
+                params.billNo = this.easySearchKeyword
+              } else if (this.easySelectMode === 2) {
+                params.carrierName = this.easySearchKeyword
+              } else if (this.easySelectMode === 3) {
+                params.carNo = this.easySearchKeyword
+              }
+            } else {
+              params.type = this.easySelectMode
+              params.keyWord = this.easySearchKeyword
+            }
           }
         } else {
           if (this.seniorSearchFields.dateRange[0]) {

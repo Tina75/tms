@@ -19,7 +19,7 @@
         @click="item.func">{{ item.name }}</Button>
     </div>
 
-    <Tabs value="detail">
+    <Tabs :value="!isAbnomal ? 'detail' : 'exception'">
       <TabPane label="提单详情" name="detail">
         <section class="detail-info">
           <!-- 提货单信息 -->
@@ -373,12 +373,6 @@ export default {
             func: () => {
               this.inEditing = true
             }
-          }, {
-            name: '上报异常',
-            code: 120210,
-            func: () => {
-              this.updateExcept()
-            }
           }]
         },
         {
@@ -389,11 +383,23 @@ export default {
             func: () => {
               this.billArrived()
             }
+          }, {
+            name: '上报异常',
+            code: 120210,
+            func: () => {
+              this.updateExcept({ id: this.id, type: 1 })
+            }
           }]
         },
         {
           status: '已提货',
-          btns: []
+          btns: [{
+            name: '上报异常',
+            code: 120210,
+            func: () => {
+              this.updateExcept({ id: this.id, type: 1 })
+            }
+          }]
         }
       ],
 
@@ -552,7 +558,7 @@ export default {
         // 异常个数
         this.exceptionCount = data.abnormalCnt
         if (this.exceptionCount) {
-          this.$refs['exception'] && this.$refs['exception'].initDate()
+          this.$refs['exception'] && this.$refs['exception'].initData()
         }
         this.loading = false
       }).catch(err => console.error(err))

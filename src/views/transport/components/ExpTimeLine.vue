@@ -7,10 +7,10 @@
       <div class="detail-log-icon" @click="showList">
         <i :class="{'detail-log-show': showLog}"></i>
       </div>
-      <Timeline class="detail-log-timeline">
+      <Timeline class="detail-log-timeline" style="height: auto">
         <TimelineItem v-for="(item, key) in logList" :key="key" class="detail-log-timeline-item">
           <i slot="dot"></i>
-          <span style="margin-right: 60px;color: #777;">{{item.createTimeLong}}</span>
+          <span style="margin-right: 60px;color: #777;">{{item.createTime | timeFormatter}}</span>
           <span style="color: #333;">{{'【' + item.operatorName + '】' + item.description}}</span>
         </TimelineItem>
       </Timeline>
@@ -18,7 +18,9 @@
   </div>
 </template>
 <script>
+import TransportBase from '../mixin/transportBase'
 export default {
+  mixins: [ TransportBase ],
   props: {
     data: {
       type: Array,

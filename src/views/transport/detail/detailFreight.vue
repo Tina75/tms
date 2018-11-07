@@ -18,8 +18,7 @@
         @click="item.func">{{ item.name }}
       </Button>
     </div>
-
-    <Tabs value="detail">
+    <Tabs :value="!isAbnomal ? 'detail' : 'exception'">
       <TabPane label="运单详情" name="detail">
         <section class="detail-info">
           <!-- 运单信息 -->
@@ -402,7 +401,13 @@ export default {
         },
         {
           status: '待发运',
-          btns: []
+          btns: [{
+            name: '上报异常',
+            code: 120210,
+            func: () => {
+              this.updateExcept({ id: this.id, type: 3 })
+            }
+          }]
         },
         {
           status: '在途',
@@ -412,11 +417,23 @@ export default {
             func: () => {
               this.billLocation()
             }
+          }, {
+            name: '上报异常',
+            code: 120210,
+            func: () => {
+              this.updateExcept({ id: this.id, type: 3 })
+            }
           }]
         },
         {
           status: '已到货',
-          btns: []
+          btns: [{
+            name: '上报异常',
+            code: 120210,
+            func: () => {
+              this.updateExcept({ id: this.id, type: 3 })
+            }
+          }]
         }
       ],
 
@@ -580,7 +597,7 @@ export default {
         // 异常个数
         this.exceptionCount = data.abnormalCnt
         if (this.exceptionCount) {
-          this.$refs['exception'] && this.$refs['exception'].initDate()
+          this.$refs['exception'] && this.$refs['exception'].initData()
         }
         this.setBtnsWithStatus()
         this.loading = false

@@ -70,7 +70,7 @@
       {
         "name":"异常管理",
         "path":"/transport/abnormalOrder",
-        "powerCode":0
+        "powerCode":120400
       }
     ]
   },

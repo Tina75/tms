@@ -1,7 +1,7 @@
 <template>
   <div class="exception">
     <template v-for="(item,index) in errorInfoList">
-      <ExpRecord :data="item" :key="index" :types="billObj.billStatus" :no="billObj.billNo" :show="showDetail(index)"/>
+      <ExpRecord :data="item" :key="index" :show="showDetail(index)" :bill-type="billType" :pickup-id="pickupId"/>
     </template>
     <ExpTimeLine :data="errorLogs"/>
   </div>
@@ -41,7 +41,7 @@ export default {
     }
   },
   methods: {
-    initDate () {
+    initData () {
       Server({
         url: '/abnormal/detail',
         method: 'post',
