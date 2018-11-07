@@ -104,7 +104,7 @@
                 </i-col>
               </Row>
               <Table
-                :columns="columns"
+                :columns="columnsAfter"
                 :data="data.afterFeeInfo.abnormalPayInfos"></Table>
             </div>
           </i-col>
@@ -184,11 +184,59 @@ export default {
           key: 'fuelCardAmount'
         }
       ],
-      tableData: [
+      columnsAfter: [
         {
-          payType: '到付',
-          cash: 18,
-          oilCard: 0
+          title: '付款方式',
+          key: 'payType',
+          render: (h, params) => {
+            // 1 预付 2 到付 3 回付
+            let txt = ''
+            switch (params.row.payType) {
+              case 1:
+                txt = '预付'
+                break
+              case 2:
+                txt = '到付'
+                break
+              case 3:
+                txt = '回付'
+                break
+              default:
+            }
+            return h('div', txt)
+          }
+        },
+        {
+          title: '现金',
+          key: 'cashAmount',
+          render: (h, params) => {
+            const bfArr = this.data.beforeFeeInfo.abnormalPayInfos
+            const bfFee = bfArr[params.index].cashAmount
+            return h('span', {
+              domProps: {
+                innerHTML: params.row.cashAmount
+              },
+              style: {
+                color: bfFee !== params.row.cashAmount ? 'red' : ''
+              }
+            })
+          }
+        },
+        {
+          title: '油卡',
+          key: 'fuelCardAmount',
+          render: (h, params) => {
+            const bfArr = this.data.beforeFeeInfo.abnormalPayInfos
+            const bfFee = bfArr[params.index].fuelCardAmount
+            return h('span', {
+              domProps: {
+                innerHTML: params.row.fuelCardAmount
+              },
+              style: {
+                color: bfFee !== params.row.fuelCardAmount ? 'red' : ''
+              }
+            })
+          }
         }
       ]
     }

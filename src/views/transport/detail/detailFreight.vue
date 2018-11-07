@@ -401,7 +401,13 @@ export default {
         },
         {
           status: '待发运',
-          btns: []
+          btns: [{
+            name: '上报异常',
+            code: 120210,
+            func: () => {
+              this.updateExcept(3)
+            }
+          }]
         },
         {
           status: '在途',
@@ -411,11 +417,23 @@ export default {
             func: () => {
               this.billLocation()
             }
+          }, {
+            name: '上报异常',
+            code: 120210,
+            func: () => {
+              this.updateExcept(3)
+            }
           }]
         },
         {
           status: '已到货',
-          btns: []
+          btns: [{
+            name: '上报异常',
+            code: 120210,
+            func: () => {
+              this.updateExcept(3)
+            }
+          }]
         }
       ],
 
