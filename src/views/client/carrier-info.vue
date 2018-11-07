@@ -382,11 +382,13 @@ export default {
         },
         {
           title: '车牌号',
-          key: 'carNO'
+          key: 'carNO',
+          width: 100
         },
         {
           title: '合作方式',
           key: 'driverType',
+          width: 100,
           render: (h, params) => {
             let text = ''
             if (params.row.driverType === 1) {
@@ -403,7 +405,8 @@ export default {
         },
         {
           title: '司机姓名',
-          key: 'driverName'
+          key: 'driverName',
+          width: 100
         },
         {
           title: '手机号',
@@ -413,6 +416,7 @@ export default {
         {
           title: '车型',
           key: 'carType',
+          width: 100,
           render: (h, params) => {
             let text = params.row.carType ? this.carTypeMap[params.row.carType] : '-'
             return h('div', {}, text)
@@ -421,6 +425,7 @@ export default {
         {
           title: '车长（米）',
           key: 'carLength',
+          width: 100,
           render: (h, params) => {
             let text = params.row.carLength ? this.carLengthMap[params.row.carLength] : '-'
             return h('div', {}, text.slice(0, text.length - 1))
@@ -428,7 +433,8 @@ export default {
         },
         {
           title: '载重（吨）',
-          key: 'shippingWeight'
+          key: 'shippingWeight',
+          width: 100
         },
         {
           title: '常跑线路',
@@ -492,7 +498,8 @@ export default {
           }
         }, {
           title: '添加人',
-          key: 'createName'
+          key: 'createName',
+          width: 100
         },
         {
           title: '添加时间',
