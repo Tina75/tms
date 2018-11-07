@@ -1,7 +1,10 @@
 <template>
   <div class="info-detail">
     <div class="info">
-      <div class="title">发货方信息</div>
+      <div class="title">
+        <span class="icontTitle"></span>
+        <span class="iconTitleP">发货方信息</span>
+      </div>
       <div class="list-info">
         <Row class="row">
           <Col span="8">

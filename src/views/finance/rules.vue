@@ -745,11 +745,12 @@ export default {
         border-right 1px solid #E4E7EC
       .ruleList
         border-top 1px solid #E4E7EC
-        overflow auto
+        overflow hidden
         flex 1
         border-right 1px solid #E4E7EC
         margin-left -15px
-        margin-bottom -20px
+        &:hover
+          overflow auto
         .list
           list-style none
           height 60px
