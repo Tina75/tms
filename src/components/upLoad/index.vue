@@ -98,6 +98,7 @@
     <Modal v-model="visible" title="查看图片">
       <img v-if="multiple" :src="curImg" style="width: 100%">
       <img v-else :src="uploadImg" style="width: 100%">
+      <div slot="footer" style="text-align: center;"></div>
     </Modal>
   </div>
 </template>
