@@ -151,9 +151,9 @@ export default {
       type: Object,
       default: () => {}
     },
-    show: {
-      type: Boolean,
-      default: false
+    listLength: {
+      type: Number,
+      default: 0
     },
     // 单据类型 1 提货单 2 外转单 3 运单
     billType: {
@@ -165,7 +165,7 @@ export default {
   },
   data () {
     return {
-      hideDetail: !this.show,
+      hideDetail: this.listLength > 1,
       columns: [
         {
           title: '付款方式',
@@ -264,12 +264,11 @@ export default {
       this.openDialog({
         name: 'transport/dialog/errorDetail',
         data: {
-          id: this.data.recordId,
-          type: this.billType
+          id: this.data.recordId
         },
         methods: {
           complete () {
-            self.showDetail = false
+            self.hideDetail = true
             self.$parent.initData()
           }
         }
@@ -277,6 +276,7 @@ export default {
     },
     // 编辑对话框
     editBtn (e) {
+      const self = this
       this.openDialog({
         name: 'transport/dialog/abnormal',
         data: {
@@ -286,7 +286,7 @@ export default {
         },
         methods: {
           complete () {
-            self.showDetail = false
+            self.hideDetail = true
             self.$parent.initData()
           }
         }
