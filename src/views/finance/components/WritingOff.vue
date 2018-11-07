@@ -418,6 +418,7 @@ export default {
       }).catch(err => console.error(err))
     },
     showOrderData (data) {
+      console.log(data)
       this.companyDataActive = data.partnerName
       this.currentPartner = data
       this.orderData = data.orderInfos.map(item => {
