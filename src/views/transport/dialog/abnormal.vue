@@ -162,10 +162,12 @@ export default {
     }
   },
   created () {
-    this.settlementPayInfo = [
+    this.settlementPayInfo = this.type === 3 ? [
       { payType: 1, fuelCardAmount: '', cashAmount: '', isDisabled: false },
       { payType: 2, fuelCardAmount: '', cashAmount: '', isDisabled: false },
       { payType: 3, fuelCardAmount: '', cashAmount: '', isDisabled: false }
+    ] : [
+      { payType: 2, fuelCardAmount: '', cashAmount: '', isDisabled: false }
     ]
     this.fetchData()
   },
@@ -174,10 +176,12 @@ export default {
     // 查询数据
     fetchData () {
       this.loading = true
-      const data = {
-        billId: this.id,
-        billType: this.type,
-        recordId: this.recordId || null
+      const data = {}
+      if (this.recordId) {
+        data.recordId = this.recordId
+      } else {
+        data.billId = this.id
+        data.billType = this.type
       }
       Server({
         url: '/abnormal/report/page',
@@ -253,6 +257,8 @@ export default {
             this.canotChangeFee()
           }
         }).catch(err => console.error(err))
+      } else {
+        this.payment = this.clonePayment
       }
     },
 
@@ -289,10 +295,14 @@ export default {
               item.isDisabled = (item.payType === 1)
             })
             break
-          case 3: // 卸货环节： 只有回付这段都可以修改
+          case 3: // 卸货环节： 提货只能改到付，送货只能改回付
             this.settlementPayInfo.map((item) => {
-              item.isDisabled = (item.payType === 3)
-              item.isDisabled = !item.isDisabled
+              if (this.type === 1) {
+                item.isDisabled = false
+              } else {
+                item.isDisabled = (item.payType === 3)
+                item.isDisabled = !item.isDisabled
+              }
             })
             break
           default:
@@ -315,7 +325,7 @@ export default {
         this.$Message.error('请输入运输费')
         return false
       }
-      if (this.details.abnormalPayInfos.length > 0 && !this.$refs.$payInfo.validate()) return false
+      if (this.details.abnormalPayInfos.length > 0 && this.isChangeFee === 1 && !this.$refs.$payInfo.validate()) return false
       return true
     },
 
@@ -357,19 +367,17 @@ export default {
             delete item.isDisabled
           })
         } else {
-          this.settlementPayInfo.map((item) => {
+          this.cloneSettlementPayInfo.map((item) => {
             item.cashAmount = item.cashAmount * 100 || null
             item.fuelCardAmount = item.fuelCardAmount * 100 || null
             delete item.isDisabled
           })
-          tableData = this.settlementPayInfo
+          tableData = this.cloneSettlementPayInfo
         }
       } else {
         tableData = []
       }
       let data = {
-        billId: this.id,
-        billType: this.type,
         ...this.formatMoney(),
         totalFee: this.paymentTotal * 100,
         fileUrls: fileUrls,
@@ -379,9 +387,15 @@ export default {
         abnormalDesc: this.details.abnormalDesc,
         updateFee: this.isChangeSubmitFee() ? 2 : 1
       }
+      if (this.recordId) {
+        data.recordId = this.recordId
+      } else {
+        data.billId = this.id
+        data.billType = this.type
+      }
       console.log(data)
       Server({
-        url: '/abnormal/create',
+        url: this.recordId ? '/abnormal/update' : '/abnormal/create',
         method: 'post',
         data: data
       }).then(res => {

@@ -170,7 +170,7 @@ export default {
       tableActionColumn: {
         title: '操作',
         key: 'action',
-        width: 120,
+        width: 80,
         fixed: 'left',
         extra: true,
         render: (h, p) => {
@@ -203,17 +203,18 @@ export default {
               }, '到货')
             )
           }
-          if (this.hasPower(120306)) {
-            renderBtn.push(
-              h('a', {
-                on: {
-                  click: () => {
-                    this.openAbnormalDialog(p.row.transId)
-                  }
-                }
-              }, '上报异常')
-            )
-          }
+          // 隐藏上报异常按钮
+          // if (this.hasPower(120306)) {
+          //   renderBtn.push(
+          //     h('a', {
+          //       on: {
+          //         click: () => {
+          //           this.openAbnormalDialog(p.row.transId)
+          //         }
+          //       }
+          //     }, '上报异常')
+          //   )
+          // }
           return h('div', renderBtn)
         }
       },
@@ -235,7 +236,7 @@ export default {
           this.triggerTableActionColumn(true)
           return 2
         case '已到货':
-          this.triggerTableActionColumn(true)
+          this.triggerTableActionColumn(false)
           return 3
         default:
       }

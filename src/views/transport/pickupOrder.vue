@@ -196,13 +196,13 @@ export default {
               }
             }, '提货')
           } else if (p.row.status > 1 && this.hasPower(120210)) {
-            return h('a', {
-              on: {
-                click: () => {
-                  this.openAbnormalDialog(p.row.pickUpId)
-                }
-              }
-            }, '上报异常')
+            // return h('a', {
+            //   on: {
+            //     click: () => {
+            //       this.openAbnormalDialog(p.row.pickUpId)
+            //     }
+            //   }
+            // }, '上报异常')
           }
         }
       },
@@ -223,10 +223,10 @@ export default {
           this.triggerTableActionColumn(true)
           return 1
         case '提货中':
-          this.triggerTableActionColumn(true)
+          this.triggerTableActionColumn(false)
           return 2
         case '已提货':
-          this.triggerTableActionColumn(true)
+          this.triggerTableActionColumn(false)
           return 3
         default:
       }

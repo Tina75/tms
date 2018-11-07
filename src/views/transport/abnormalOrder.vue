@@ -262,6 +262,10 @@ export default {
 
       data.abnormalIds = this.tableSelection.map(item => item.abnormalId)
 
+      if (data.abnormalIds.length <= 0) {
+        data.abnormalIds = null
+      }
+
       Export({
         url: '/abnormal/export',
         method: 'post',
