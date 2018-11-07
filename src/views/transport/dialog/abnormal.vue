@@ -10,7 +10,7 @@
           {{ (details.billType === 1 ? '提货单号：' : (details.billType === 2 ? '外转单号：' : '运单号：')) + details.billNo }}
         </i-col>
         <i-col span="8">
-          {{ details.billType === 2 ? '外转方：' : '承运商：' + details.carrierName }}
+          {{ (details.billType === 2 ? '外转方：' : '承运商：') + details.carrierName }}
         </i-col>
         <i-col span="9">
           车牌号：{{ details.carNo || '-' }}
@@ -117,7 +117,6 @@ import PayInfo from '../components/PayInfo'
 import UpLoad from '@/components/upLoad/'
 import { ABNORMAL_TYPE_CODES } from '../constant/abnormal.js'
 import _ from 'lodash'
-
 export default {
   name: 'SendCar',
   components: { MoneyInput, PayInfo, UpLoad },
@@ -237,13 +236,19 @@ export default {
     // 检查是否可修改运费
     handleCheckFee (val) {
       if (val === 1) {
+        const data = {
+          billId: this.id,
+          billType: this.type
+        }
+        // if (this.recordId) {
+        //   data.recordId = this.recordId
+        // } else {
+        //   data.billId = this.id
+        // }
         Server({
           url: '/abnormal/check/update/fee',
           method: 'post',
-          data: {
-            billId: this.id,
-            billType: this.type
-          }
+          data: data
         }).then(res => {
           console.log(res)
           this.changeFeeType = res.data.data
@@ -350,7 +355,6 @@ export default {
     },
     // 创建异常单
     doSubmit () {
-      const _this = this
       let fileUrls = []
       this.$refs.upLoads.uploadImgList.map((item) => {
         fileUrls.push(item.url)
@@ -403,18 +407,7 @@ export default {
         this.complete()
         this.close()
         if (res.data.data <= 0) {
-          _this.$Toast.success({
-            title: '上报异常',
-            content: '<p>异常信息上报成功，将会在异常管理菜单 下生成异常单，是否去查看异常单？</p>',
-            okText: '是',
-            cancelText: '否',
-            onOk: () => {
-              this.openTab({
-                title: '异常管理',
-                path: '/transport/abnormalOrder'
-              })
-            }
-          })
+          this.openAbnormalSuccessDialog()
         } else {
           this.$Message.success('创建成功')
         }
@@ -454,6 +447,20 @@ export default {
         if (typeof temp[key] === 'number') temp[key] = temp[key] * 100
       }
       return temp
+    },
+
+    // 上报异常成功跳转弹窗
+    openAbnormalSuccessDialog () {
+      const self = this
+      self.openDialog({
+        name: 'transport/dialog/abnormalSuccess',
+        data: {},
+        methods: {
+          complete () {
+            // self.clearSelectedAndFetch()
+          }
+        }
+      })
     }
   }
 }
