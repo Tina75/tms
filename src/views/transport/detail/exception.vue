@@ -1,7 +1,7 @@
 <template>
   <div class="exception">
     <template v-for="(item,index) in errorInfoList">
-      <ExpRecord :data="item" :key="index" :show="showDetail(index)" :bill-type="billType" :pickup-id="pickupId"/>
+      <ExpRecord :data="item" :key="index" :show="showDetail" :bill-type="billType" :pickup-id="pickupId"/>
     </template>
     <ExpTimeLine :data="errorLogs"/>
   </div>
@@ -40,6 +40,11 @@ export default {
       }
     }
   },
+  computed: {
+    showDetail () {
+      return this.errorInfoList.length === 1
+    }
+  },
   methods: {
     initData () {
       Server({
@@ -60,9 +65,6 @@ export default {
         }
         this.errorLogs = data.operaterLog
       })
-    },
-    showDetail () {
-      return this.errorInfoList.length === 1 // || (this.errorInfoList.length > 1 && index === 0)
     }
   }
 }
