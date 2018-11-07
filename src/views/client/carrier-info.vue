@@ -624,7 +624,7 @@ export default {
         {
           title: '送修日期',
           key: 'repairDate',
-          width: 150,
+          width: 100,
           render: (h, params) => {
             let text = this.formatDate(params.row.repairDate)
             return h('div', { props: {} }, text)
