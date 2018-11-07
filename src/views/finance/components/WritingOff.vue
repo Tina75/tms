@@ -34,7 +34,7 @@
       <div>{{sceneMap[scene]}}对账列表</div>
       <Button v-if="(hasPower(170102) && scene === 1) || (hasPower(170202) && scene === 2) || (hasPower(170302) && scene === 3)" type="primary" @click="createBill">生成对账单</Button>
     </div>
-    <div  :style="{height: height - 20 + 'px'}" class="list-box">
+    <div  :style="{height: height - 20 +'px'}" class="list-box">
       <ul class="leftList">
         <li v-for="(item,index) in companyData" :class="{companyDataActive:companyDataActive === item.partnerName}" :key="index" class="list" @click="showOrderData(item)">
           <!--<Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showOrderData"></Table>-->
@@ -154,36 +154,16 @@ export default {
     }
   },
   computed: {
-    companyColumn () {
-      return [
-        {
-          title: this.sceneMap[this.scene] + '名称',
-          // width: 140,
-          key: 'partnerName'
-        },
-        {
-          title: '总单数',
-          key: 'orderNum'
-        },
-        {
-          title: this.scene === 1 ? '应收总额' : '应付总额',
-          key: 'calcTotalFeeText'
-        },
-        {
-          title: '已结款',
-          key: 'verifiedFeeText'
-        }
-      ]
-    },
     orderColumn () {
       return [
         {
           type: 'selection',
-          width: 40
+          width: 20
         },
         {
           title: '操作',
           key: 'action',
+          width: 40,
           render: (h, params) => {
             return (this.scene === 1 && this.hasPower(170101)) || (this.scene === 2 && this.hasPower(170201)) || (this.scene === 3 && this.hasPower(170301)) ? h('a', {
               on: {
@@ -220,6 +200,7 @@ export default {
         },
         this.scene === 2 ? {
           title: '车牌号',
+          width: 80,
           key: 'truckNo'
         } : {
           title: ' ',
@@ -227,10 +208,12 @@ export default {
         },
         {
           title: '合计运费',
+          width: 75,
           key: 'totalFeeText'
         },
         {
           title: '结算方式',
+          width: 75,
           key: 'settleTypeDesc',
           filters: this.scene === 2 ? [
             {
@@ -264,6 +247,7 @@ export default {
         },
         {
           title: '状态',
+          width: 60,
           key: 'orderStatusDesc',
           filters: this.orderStatusMap[this.scene],
           filterMethod (value, row) {
@@ -461,9 +445,12 @@ export default {
       margin-bottom -20px
       .leftList
         height 100%
-        overflow-y auto
+        overflow-y hidden
         flex 0 0 270px
-        border-right 1px solid #E4E7EC
+        border-right 1px solid #C9CED9
+        &:hover
+          height 100%
+          overflow-y auto
         .list
           list-style none
           height 60px
@@ -517,18 +504,22 @@ export default {
             font-size 12px
       .order-list
         height 100%
-        overflow-y auto
+        overflow-y hidden
         flex 1
         padding 19px 20px 20px 9px
         /deep/ .ivu-table-cell
           padding-left: 5px
           padding-right: 5px
+        &:hover
+          height 100%
+          overflow-y auto
       .data-empty
         display flex
         flex-direction column
         justify-content center
         align-items center
-        min-height 416px
+        margin-top 200px
+        /*min-height 416px*/
         .data-empty-img
           width 70px
           margin-bottom 12px
