@@ -1,6 +1,8 @@
 <template>
   <Form ref="orderForm" :label-width="80" :model="orderForm" :rules="rules">
-    <Spin v-if="loading" fix></Spin>
+    <Spin fix>
+      <img src="../../../assets/loading.gif" width="24" height="24" alt="加载中">
+    </Spin>
     <Row :gutter="16">
       <Col span="10">
       <FormItem label="客户:" prop="consignerName">
