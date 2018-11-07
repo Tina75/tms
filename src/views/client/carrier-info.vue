@@ -122,7 +122,7 @@
               </template>
               <Input v-if="selectStatus1 !== '2'"
                      v-model="keyword1"
-                     :maxlength="selectStatus1 === '1' ? 7 : 11"
+                     :maxlength="selectStatus1 === '1' ? 8 : 11"
                      :icon="keyword1? 'ios-close-circle' : ''"
                      :placeholder="selectStatus1 === '1' ? '请输入车牌号搜索' : '请输入手机号搜索'"
                      class="search-input"
@@ -169,7 +169,7 @@
               </template>
               <Input v-if="selectStatus2 !== '2'"
                      v-model="keyword2"
-                     :maxlength="selectStatus2 === '1' ? 7 : 11"
+                     :maxlength="selectStatus2 === '1' ? 8 : 11"
                      :icon="keyword2? 'ios-close-circle' : ''"
                      :placeholder="selectStatus2 === '1' ? '请输入车牌号搜索' : null"
                      class="search-input"
@@ -383,12 +383,11 @@ export default {
         {
           title: '车牌号',
           key: 'carNO',
-          width: 100
+          width: 80
         },
         {
           title: '合作方式',
           key: 'driverType',
-          width: 100,
           render: (h, params) => {
             let text = ''
             if (params.row.driverType === 1) {
@@ -405,13 +404,11 @@ export default {
         },
         {
           title: '司机姓名',
-          key: 'driverName',
-          width: 100
+          key: 'driverName'
         },
         {
           title: '手机号',
-          key: 'driverPhone',
-          width: 120
+          key: 'driverPhone'
         },
         {
           title: '车型',
@@ -424,7 +421,6 @@ export default {
         {
           title: '车长（米）',
           key: 'carLength',
-          width: 100,
           render: (h, params) => {
             let text = params.row.carLength ? this.carLengthMap[params.row.carLength] : '-'
             return h('div', {}, text.slice(0, text.length - 1))
@@ -432,13 +428,11 @@ export default {
         },
         {
           title: '载重（吨）',
-          key: 'shippingWeight',
-          width: 100
+          key: 'shippingWeight'
         },
         {
           title: '常跑线路',
           key: 'regularLine',
-          width: 250,
           render: (h, params) => {
             let s1 = ''
             let n1 = ''
@@ -502,7 +496,6 @@ export default {
         {
           title: '添加时间',
           key: 'createTime',
-          width: 150,
           render: (h, params) => {
             let text = this.formatDateTime(params.row.createTime)
             return h('div', { props: {} }, text)
