@@ -488,7 +488,6 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'clients',
       'orderDetail',
       'clients',
       'consignerAddresses',
@@ -655,6 +654,7 @@ export default {
        *
        */
       _this.$refs.orderForm.resetFields()
+      // 设置编号，计费规则需要
       _this.getConsignerDetail(row.id).then((response) => {
         const { consigneeList: consignees, addressList: addresses, cargoList, ...consigner } = response.data
         // 设置发货人信息，发货联系人，手机，发货地址
@@ -703,12 +703,24 @@ export default {
         this.$Message.warning('请先选择客户')
         return
       }
+
       if (!vm.orderForm.start) {
         this.$Message.warning('请先选择始发城市')
         return
       }
       if (!vm.orderForm.end) {
         this.$Message.warning('请先选择目的城市')
+        return
+      }
+
+      const clientItem = this.clients.find(client => client.value === vm.orderForm.consignerName)
+      if (!clientItem) {
+        this.$Message.warning('您选择的客户没有维护的计费规则')
+        return
+      }
+      let clientId = clientItem.id
+      if (!clientId) {
+        this.$Message.warning('您选择的客户没有维护的计费规则')
         return
       }
       const statics = vm.$refs.cargoTable.statics
@@ -724,6 +736,7 @@ export default {
         data: {
           start: vm.orderForm.start, // 始发城市
           end: vm.orderForm.end, // 目的城市
+          partnerId: clientId, // 客户编号
           partnerName: vm.orderForm.consignerName, // 客户名
           partnerType: 1, // 计算规则分类：1-发货方，2-承运商，3-外转方
           weight: statics.weight,
