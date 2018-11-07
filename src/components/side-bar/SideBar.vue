@@ -73,6 +73,7 @@ export default {
 <style lang='stylus'>
 .sider
   height 100%
+  z-index 12
   &-trigger
     z-index 11
     top 45%

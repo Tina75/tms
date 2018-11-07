@@ -2,7 +2,7 @@
   <div class="except-record">
     <div class="except-record-title">
       <span>
-        上报信息 第一笔 【{{data.status == 10 ? '未处理' : data.status == 20 ? '已处理' : ''}}】
+        上报信息 第{{index | numFormat}}笔 【{{data.status == 10 ? '未处理' : data.status == 20 ? '已处理' : ''}}】
       </span>
       <span>记录号：{{data.recordNo}}</span>
       <div class="except-record-btn-group">
@@ -80,6 +80,7 @@
                 </i-col>
               </Row>
               <Table
+                v-if="billType != 2"
                 :columns="columns"
                 :data="data.beforeFeeInfo.abnormalPayInfos"></Table>
             </div>
@@ -114,6 +115,7 @@
                 </i-col>
               </Row>
               <Table
+                v-if="billType != 2"
                 :columns="columnsAfter"
                 :data="data.afterFeeInfo.abnormalPayInfos"></Table>
             </div>
@@ -143,7 +145,10 @@ export default {
       if (!timestamp) return '-'
       return new Date(timestamp).Format('yyyy-MM-dd hh:mm')
     },
-    Money: moneyFormate
+    Money: moneyFormate,
+    numFormat (num) {
+      return num + 1
+    }
   },
   mixins: [ BasePage, TransportBase ],
   props: {
@@ -160,6 +165,9 @@ export default {
       type: Number
     },
     pickupId: {
+      type: Number
+    },
+    index: {
       type: Number
     }
   },
@@ -227,13 +235,12 @@ export default {
           render: (h, params) => {
             const bfArr = this.data.beforeFeeInfo.abnormalPayInfos
             const bfFee = bfArr[params.index] && bfArr[params.index].cashAmount
-            // console.log('异常详情'+ bfFee && bfFee !== params.row.cashAmount)
             return h('span', {
               domProps: {
                 innerHTML: moneyFormate(params.row.cashAmount)
               },
               style: {
-                color: bfFee && bfFee !== params.row.cashAmount ? 'red' : ''
+                color: moneyFormate(bfFee) !== moneyFormate(params.row.cashAmount) ? 'red' : ''
               }
             })
           }
@@ -249,7 +256,7 @@ export default {
                 innerHTML: moneyFormate(params.row.fuelCardAmount)
               },
               style: {
-                color: bfFee && bfFee !== params.row.fuelCardAmount ? 'red' : ''
+                color: moneyFormate(bfFee) !== moneyFormate(params.row.fuelCardAmount) ? 'red' : ''
               }
             })
           }
