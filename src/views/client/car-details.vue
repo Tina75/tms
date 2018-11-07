@@ -86,8 +86,8 @@
             </div>
             </Col>
           </Row>
-        </div><br/>
-        <div class="title">
+        </div>
+        <div class="title" style="margin-top: 40px;">
           <span class="icontTitle"></span>
           <span class="iconTitleP">常跑线路</span>
         </div>
@@ -98,8 +98,8 @@
           <div v-if="this.line2" class="lineSpanLabel">
             {{line2}}
           </div>
-        </div><br/>
-        <div class="title">
+        </div>
+        <div class="title" style="margin-top: 40px;">
           <span class="icontTitle"></span>
           <span class="iconTitleP">证件照片</span>
         </div>
@@ -119,7 +119,7 @@
             </Col>
           </Row>
         </div>
-        <div class="title">
+        <div class="title" style="margin-top: 40px;">
           <span class="icontTitle"></span>
           <span class="iconTitleP">操作日志</span>
         </div>
