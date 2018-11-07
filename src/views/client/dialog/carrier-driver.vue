@@ -17,8 +17,8 @@
           <FormItem label="车牌号:" prop="carNO">
             <Row>
               <Col span="20">
-              <Input v-model="validate.carNO" placeholder="必填"></Input>
-                </Col>
+              <Input v-model="validate.carNO" :maxlength="7" placeholder="必填"></Input>
+              </Col>
             </Row>
           </FormItem>
           </Col>
@@ -42,8 +42,8 @@
           <FormItem label="司机姓名:" prop="driverName">
             <Row>
               <Col span="20">
-              <Input v-model="validate.driverName" placeholder="必填"></Input>
-                </Col>
+              <Input v-model="validate.driverName" :maxlength="20" placeholder="必填"></Input>
+              </Col>
             </Row>
           </FormItem>
           </Col>

@@ -227,7 +227,11 @@ export default {
   methods: {
     repairMoneyChange () {
       this.validate.payMoney = this.validate.repairMoney
-      this.validate.waitPayMoney = 0
+      if (!this.validate.repairMoney) {
+        this.validate.waitPayMoney = ''
+      } else {
+        this.validate.waitPayMoney = 0
+      }
     },
     payMoneyChange () {
       if (this.validate.repairMoney) {

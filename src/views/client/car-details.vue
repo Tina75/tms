@@ -356,8 +356,6 @@ export default {
     this.carId = this.infoDataInit.carId
     this.infoData = this.$route.query.rowData
     this.repairFormat.carrierId = this.carrierId
-    this.repairFormat.carNO = this.infoData.carNO
-    this.repairFormatInit = Object.assign({}, this.repairFormat)
     this.initData()
   },
   methods: {
@@ -378,6 +376,8 @@ export default {
     },
     // 初始化数据格式
     initData () {
+      this.repairFormat.carNO = this.infoData.carNO
+      this.repairFormatInit = Object.assign({}, this.repairFormat)
       this.infoData.driverType = (DRIVER_TYPE.find(e => e.id === this.infoData.driverType.toString())).name
       this.infoData.carType = this.carTypeMap[this.infoData.carType]
       this.infoData.carLength = this.carLengthMap[this.infoData.carLength]
