@@ -183,7 +183,7 @@ export default {
       tableActionColumn: {
         title: '操作',
         key: 'action',
-        width: 60,
+        width: 80,
         fixed: 'left',
         extra: true,
         render: (h, p) => {
@@ -195,6 +195,14 @@ export default {
                 }
               }
             }, '提货')
+          } else if (p.row.status > 1 && this.hasPower(120210)) {
+            // return h('a', {
+            //   on: {
+            //     click: () => {
+            //       this.openAbnormalDialog(p.row.pickUpId)
+            //     }
+            //   }
+            // }, '上报异常')
           }
         }
       },
@@ -381,6 +389,23 @@ export default {
             }
           }
         })
+      })
+    },
+
+    // 上报异常
+    openAbnormalDialog (id) {
+      const self = this
+      self.openDialog({
+        name: 'transport/dialog/abnormal',
+        data: {
+          id,
+          type: 1 // 单据类型 1 提货单 2 外转单 3 运单
+        },
+        methods: {
+          complete () {
+            self.clearSelectedAndFetch()
+          }
+        }
       })
     }
   }

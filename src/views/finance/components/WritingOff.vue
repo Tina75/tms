@@ -31,21 +31,38 @@
       </Form>
     </div>
     <div class="btns-box">
+      <div>{{sceneMap[scene]}}对账列表</div>
       <Button v-if="(hasPower(170102) && scene === 1) || (hasPower(170202) && scene === 2) || (hasPower(170302) && scene === 3)" type="primary" @click="createBill">生成对账单</Button>
     </div>
-    <div class="list-box">
-      <Row :gutter="20">
-        <Col span="9">
-        <Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showOrderData"></Table>
-        </Col>
-        <Col span="15" class="order-list">
+    <div  :style="{height: height - 20 + 'px'}" class="list-box">
+      <ul class="leftList">
+        <li v-for="(item,index) in companyData" :class="{companyDataActive:companyDataActive === item.partnerName}" :key="index" class="list" @click="showOrderData(item)">
+          <!--<Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showOrderData"></Table>-->
+          <div class="icon">
+            <FontIcon slot="icon" type="ico-price" ></FontIcon>
+          </div>
+          <div class="content">
+            <div v-if="item.partnerName.length<8" class="ruleName">{{item.partnerName}}</div>
+            <Tooltip v-else :content="item.partnerName" max-width="200" class="ruleName" placement="top-start" style="display: list-item">
+              <div >{{item.partnerName.slice(0,8)}}...</div>
+            </Tooltip>
+            <div class="tips">
+              <span style="margin-right: 30px">应付 {{item.calcTotalFeeText}}</span>
+              <span>已结 {{item.verifiedFeeText}}</span>
+            </div>
+          </div>
+          <div class="num">
+            {{item.orderNum}}单
+          </div>
+        </li>
+      </ul>
+      <div class="order-list">
         <div v-if="!currentPartner.partnerName || !orderData.length" class="data-empty">
           <img src="../../../assets/img-empty.png" class="data-empty-img">
           <p>请点击左侧{{sceneMap[scene]}}列表查看{{orderNameMap[scene]}}哦～</p>
         </div>
-        <Table v-else :columns="orderColumn" :data="orderData" height="500" @on-selection-change="setOrderIds"></Table>
-        </Col>
-      </Row>
+        <Table v-else :columns="orderColumn" :data="orderData"  @on-selection-change="setOrderIds"></Table>
+      </div>
     </div>
   </div>
 </template>
@@ -53,9 +70,13 @@
 <script>
 import BaseComponent from '@/basic/BaseComponent'
 import Server from '@/libs/js/server'
+import FontIcon from '@/components/FontIcon'
 
 export default {
   name: 'writingOff',
+  components: {
+    FontIcon
+  },
   mixins: [ BaseComponent ],
   props: {
     scene: {
@@ -65,6 +86,8 @@ export default {
   },
   data () {
     return {
+      height: 0,
+      companyDataActive: -1,
       sceneMap: {
         1: '发货方',
         2: '承运商',
@@ -257,6 +280,7 @@ export default {
   },
   mounted () {
     this.loadData()
+    this.height = document.body.clientHeight - 50 - 15 * 2 - 20 * 2 + 15 - 65 - 72 - 50
   },
   methods: {
     setOrderIds (data) {
@@ -399,6 +423,7 @@ export default {
       }).catch(err => console.error(err))
     },
     showOrderData (data) {
+      this.companyDataActive = data.partnerName
       this.currentPartner = data
       this.orderData = data.orderInfos.map(item => {
         return Object.assign({}, item, {
@@ -412,11 +437,18 @@ export default {
 </script>
 <style lang='stylus' scoped>
   .writing-off
-    margin: 35px 0 15px
+    margin-top: 35px
     /deep/ .ivu-btn
       width: 86px
     .btns-box
-      margin-bottom: 20px
+      line-height 32px
+      display flex
+      justify-content space-between
+      padding 9px 0
+      div
+        color #333
+        font-weight 500
+        font-size 14px
     .query-box
       padding: 20px 10px
       margin-bottom: 20px
@@ -424,21 +456,86 @@ export default {
       /deep/ .ivu-form-item
         margin-bottom: 0
         width: 100%
-    .order-list
-      /deep/ .ivu-table-cell
-        padding-left: 5px
-        padding-right: 5px
-    .data-empty
+    .list-box
       display flex
-      flex-direction column
-      justify-content center
-      align-items center
-      height 500px
-      border 1px solid #dcdee2
-      .data-empty-img
-        width 70px
-        margin-bottom 12px
-      p
-        color #999999
-        text-align center
+      border-top 1px solid #C9CED9
+      margin 0 -15px
+      margin-bottom -20px
+      .leftList
+        height 100%
+        overflow-y auto
+        flex 0 0 270px
+        border-right 1px solid #E4E7EC
+        .list
+          list-style none
+          height 60px
+          line-height 60px
+          display flex
+          border-bottom 1px solid #E4E7EC
+          &.companyDataActive
+            background #E9FCFF
+          &:hover
+            background #E9FCFF
+          .icon
+            flex 0 0 60px
+            text-align center
+            position relative
+            &:after
+              position absolute
+              bottom -1px
+              content ''
+              display block
+              height 1px
+              width 15px
+              border-top  1px solid #fff
+            i
+              display inline-block
+              width 30px
+              height 30px
+              background #f9f9f9
+              border-radius 50%
+              line-height 30px
+              &:after
+                border none
+          .content
+            flex 1
+            font-size 12px
+            .ruleName
+              height 30px
+              line-height 1
+              padding-top 11px
+              color #333
+              font-weight bold
+            .tips
+              height 30px
+              line-height 1
+              padding-top 6px
+              color #999
+          .num
+            flex 0 0 40px
+            height 30px
+            line-height 30px
+            margin-right 5px
+            color #666
+            font-size 12px
+      .order-list
+        height 100%
+        overflow-y auto
+        flex 1
+        padding 19px 20px 20px 9px
+        /deep/ .ivu-table-cell
+          padding-left: 5px
+          padding-right: 5px
+      .data-empty
+        display flex
+        flex-direction column
+        justify-content center
+        align-items center
+        min-height 416px
+        .data-empty-img
+          width 70px
+          margin-bottom 12px
+        p
+          color #999999
+          text-align center
 </style>

@@ -128,20 +128,53 @@ export const TABLE_COLUMNS = vm => [
     width: 180,
     fixed: 'left',
     render: (h, p) => {
-      return h('a', {
-        style: {
-          color: '#418DF9'
-        },
-        on: {
-          click: () => {
-            vm.openTab({
-              title: p.row.pickupNo,
-              path: TMSUrl.PICKUP_ORDER_DETAIL,
-              query: { id: p.row.pickUpId }
-            })
+      if (p.row.status > 1 && p.row.abnormalLabel === 2) {
+        return h('div', [
+          h('a', {
+            style: {
+              color: '#418DF9'
+            },
+            on: {
+              click: () => {
+                vm.openTab({
+                  title: p.row.pickupNo,
+                  path: TMSUrl.PICKUP_ORDER_DETAIL,
+                  query: { id: p.row.pickUpId }
+                })
+              }
+            }
+          }, p.row.pickupNo),
+          h('span', {
+            style: {
+              display: 'block',
+              width: '14px',
+              height: '14px',
+              background: '#EE2018',
+              borderRadius: '2px',
+              color: '#fff',
+              lineHeight: '14px',
+              textAlign: 'center',
+              marginRight: '5px',
+              fontSize: '11px'
+            }
+          }, '异')
+        ])
+      } else {
+        return h('a', {
+          style: {
+            color: '#418DF9'
+          },
+          on: {
+            click: () => {
+              vm.openTab({
+                title: p.row.pickupNo,
+                path: TMSUrl.PICKUP_ORDER_DETAIL,
+                query: { id: p.row.pickUpId }
+              })
+            }
           }
-        }
-      }, p.row.pickupNo)
+        }, p.row.pickupNo)
+      }
     }
   },
   {

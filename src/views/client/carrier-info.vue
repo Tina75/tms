@@ -112,7 +112,36 @@
       <Tabs :animated="false">
         <TabPane :label="tabPaneLabel">
           <div class="add">
-            <Button v-if="hasPower(130204)" type="primary" @click="_carrierAddDriver">新增车辆</Button>
+            <Button v-if="hasPower(130207)" type="primary" @click="_carrierAddDriver">新增车辆</Button>
+            <Button v-if="hasPower(130210)" @click="carExport">导出</Button>
+            <div class="rightSearch">
+              <template>
+                <Select v-model="selectStatus1" style="width:120px;margin-right: 11px"  @on-change="changeState('keyword1', 1)">
+                  <Option v-for="item in selectList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+              </template>
+              <Input v-if="selectStatus1 !== '2'"
+                     v-model="keyword1"
+                     :maxlength="selectStatus1 === '1' ? 7 : 11"
+                     :icon="keyword1? 'ios-close-circle' : ''"
+                     :placeholder="selectStatus1 === '1' ? '请输入车牌号搜索' : '请输入手机号搜索'"
+                     class="search-input"
+                     @on-enter="searchCarList"
+                     @on-click="clearKeywords('keyword1', 1)"/>
+              <Select v-if="selectStatus1 === '2'" v-model="keyword1" class="search-input" @on-change="searchCarList">
+                <Option
+                  v-for="item in driverTypeList"
+                  :value="item.id"
+                  :key="item.id">
+                  {{ item.name }}
+                </Option>
+              </Select>
+              <Button icon="ios-search" type="primary"
+                      class="search-btn-easy"
+                      style="margin-top: -1px;width:41px;"
+                      @click="searchCarList">
+              </Button>
+            </div>
           </div>
           <template>
             <Table :columns="columns1" :data="data1"></Table>
@@ -130,7 +159,35 @@
         </TabPane>
         <TabPane :label="tabPaneLabe2">
           <div class="add">
-            <Button v-if="hasPower(130207)" type="primary" @click="_carrierAddVehicle">新增记录</Button>
+            <Button v-if="hasPower(130211)" type="primary" @click="_carrierAddVehicle">新增记录</Button>
+            <Button v-if="hasPower(130214)" @click="repairExport">导出</Button>
+            <div class="rightSearch">
+              <template>
+                <Select v-model="selectStatus2" style="width:120px;margin-right: 11px"  @on-change="changeState('keyword2', 2)">
+                  <Option v-for="item in selectList2" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+              </template>
+              <Input v-if="selectStatus2 !== '2'"
+                     v-model="keyword2"
+                     :maxlength="selectStatus2 === '1' ? 7 : 11"
+                     :icon="keyword2? 'ios-close-circle' : ''"
+                     :placeholder="selectStatus2 === '1' ? '请输入车牌号搜索' : null"
+                     class="search-input"
+                     @on-enter="searchRepairList"
+                     @on-click="clearKeywords('keyword2', 2)"/>
+              <Select v-if="selectStatus2 === '2'" v-model="keyword2" class="search-input"  @on-change="searchRepairList">
+                <Option
+                  v-for="item in repairTypeList"
+                  :value="item.id"
+                  :key="item.id">
+                  {{ item.name }}
+                </Option>
+              </Select>
+              <Button icon="ios-search" type="primary"
+                      class="search-btn-easy"
+                      style="margin-top: -1px;width:41px;"
+                      @click="searchRepairList"></Button>
+            </div>
           </div>
           <template>
             <Table :columns="columns2" :data="data2"></Table>
@@ -146,6 +203,9 @@
             </template>
           </div>
         </TabPane>
+        <TabPane :label="tabPaneLabe3">
+          <ruleForClient :count.sync="totalCount3" :active="'2'" :partner-name="companyList.carrierName"></ruleForClient>
+        </TabPane>
       </Tabs>
     </div>
   </div>
@@ -153,11 +213,16 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
-import { CODE, carrierDetailsForDriver, carrierListRepairVehicle, carrierDeleteRepairVehicle, carrierDetailsForCompany, carrierListCar, carrierDeleteDriver } from './client'
+import { CAR_TYPE1, CAR_LENGTH1, DRIVER_TYPE } from '@/libs/constant/carInfo'
+import { CODE, carrierDetailsForDriver, carrierListRepairVehicle, carrierDeleteRepairVehicle, carrierDetailsForCompany, carrierListCar, carrierDeleteDriver, getCarrierNumberCount, CAR } from './client'
 import TMSUrl from '@/libs/constant/url'
+import ruleForClient from './ruleForClient/index'
+import Export from '@/libs/js/export'
 export default {
   name: 'carrier-info',
+  components: {
+    ruleForClient
+  },
   mixins: [ BasePage ],
   metaInfo: {
     title: '承运商详情'
@@ -191,6 +256,40 @@ export default {
         payType: '',
         remark: ''
       },
+      CARInit: CAR,
+      selectStatus1: '1', // 搜索条件
+      selectStatus2: '1',
+      driverTypeList: DRIVER_TYPE,
+      repairTypeList: [
+        { id: '1', name: '维修' },
+        { id: '2', name: '保养' }
+      ],
+      keyword1: '',
+      keyword2: '',
+      selectList1: [
+        {
+          value: '1',
+          label: '车牌号'
+        },
+        {
+          value: '2',
+          label: '合作方式'
+        },
+        {
+          value: '3',
+          label: '司机手机号'
+        }
+      ],
+      selectList2: [
+        {
+          value: '1',
+          label: '车牌号'
+        },
+        {
+          value: '2',
+          label: '维修类别'
+        }
+      ],
       columns1: [
         {
           title: '操作',
@@ -198,7 +297,7 @@ export default {
           width: 150,
           render: (h, params) => {
             let renderBtn = []
-            if (this.hasPower(130205)) {
+            if (this.hasPower(130208)) {
               renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
@@ -245,7 +344,7 @@ export default {
                 }
               }
             }, '查看'))
-            if (this.hasPower(130206)) {
+            if (this.hasPower(130209)) {
               renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
@@ -266,6 +365,7 @@ export default {
                             if (res.data.code === CODE) {
                               _this.$Message.success(res.data.msg)
                               _this._carrierListCar() // 车辆列表也要刷新
+                              _this._getCarrierNumberCount()
                             } else {
                               _this.$Message.error(res.data.msg)
                             }
@@ -282,11 +382,13 @@ export default {
         },
         {
           title: '车牌号',
-          key: 'carNO'
+          key: 'carNO',
+          width: 100
         },
         {
           title: '合作方式',
           key: 'driverType',
+          width: 100,
           render: (h, params) => {
             let text = ''
             if (params.row.driverType === 1) {
@@ -303,15 +405,18 @@ export default {
         },
         {
           title: '司机姓名',
-          key: 'driverName'
+          key: 'driverName',
+          width: 100
         },
         {
           title: '手机号',
-          key: 'driverPhone'
+          key: 'driverPhone',
+          width: 120
         },
         {
           title: '车型',
           key: 'carType',
+          width: 100,
           render: (h, params) => {
             let text = params.row.carType ? this.carTypeMap[params.row.carType] : '-'
             return h('div', {}, text)
@@ -320,14 +425,16 @@ export default {
         {
           title: '车长（米）',
           key: 'carLength',
+          width: 100,
           render: (h, params) => {
             let text = params.row.carLength ? this.carLengthMap[params.row.carLength] : '-'
             return h('div', {}, text.slice(0, text.length - 1))
           }
         },
         {
-          title: '核定载重（吨）',
-          key: 'shippingWeight'
+          title: '载重（吨）',
+          key: 'shippingWeight',
+          width: 100
         },
         {
           title: '常跑线路',
@@ -341,7 +448,7 @@ export default {
             if (params.row.regularLine && JSON.parse(params.row.regularLine).length === 1) {
               s1 = JSON.parse(params.row.regularLine)[0].sn === undefined ? '' : JSON.parse(params.row.regularLine)[0].sn
               n1 = JSON.parse(params.row.regularLine)[0].en === undefined ? '' : JSON.parse(params.row.regularLine)[0].en
-            } else if (JSON.parse(params.row.regularLine).length === 2) {
+            } else if (params.row.regularLine && JSON.parse(params.row.regularLine).length === 2) {
               s1 = JSON.parse(params.row.regularLine)[0].sn === undefined ? '' : JSON.parse(params.row.regularLine)[0].sn
               n1 = JSON.parse(params.row.regularLine)[0].en === undefined ? '' : JSON.parse(params.row.regularLine)[0].en
               s2 = JSON.parse(params.row.regularLine)[1].sn === undefined ? '' : JSON.parse(params.row.regularLine)[1].sn
@@ -351,6 +458,10 @@ export default {
               h('Tooltip', {
                 props: {
                   placement: 'top'
+                },
+                style: {
+                  width: '100%',
+                  paddingTop: '6px'
                 }
               }, [
                 h('span', {
@@ -387,11 +498,13 @@ export default {
           }
         }, {
           title: '添加人',
-          key: 'createName'
+          key: 'createName',
+          width: 100
         },
         {
           title: '添加时间',
           key: 'createTime',
+          width: 150,
           render: (h, params) => {
             let text = this.formatDateTime(params.row.createTime)
             return h('div', { props: {} }, text)
@@ -405,7 +518,7 @@ export default {
           width: 150,
           render: (h, params) => {
             let renderBtn = []
-            if (this.hasPower(130208)) {
+            if (this.hasPower(130212)) {
               renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
@@ -455,7 +568,7 @@ export default {
                 }
               }
             }, '查看'))
-            if (this.hasPower(130209)) {
+            if (this.hasPower(130213)) {
               renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
@@ -476,6 +589,7 @@ export default {
                             if (res.data.code === CODE) {
                               _this.$Message.success(res.data.msg)
                               _this._carrierListRepairVehicle() // 刷新页面
+                              _this._getCarrierNumberCount()
                             } else {
                               _this.$Message.error(res.data.msg)
                             }
@@ -492,7 +606,7 @@ export default {
         },
         {
           title: '车牌号',
-          key: 'carNo'
+          key: 'carNO'
         },
         {
           title: '维修类别',
@@ -510,8 +624,9 @@ export default {
         {
           title: '送修日期',
           key: 'repairDate',
+          width: 100,
           render: (h, params) => {
-            let text = this.formatDateTime(params.row.repairDate)
+            let text = this.formatDate(params.row.repairDate)
             return h('div', { props: {} }, text)
           }
         },
@@ -551,6 +666,7 @@ export default {
         {
           title: '添加时间',
           key: 'createTime',
+          width: 150,
           render: (h, params) => {
             let text = this.formatDateTime(params.row.createTime)
             return h('div', { props: {} }, text)
@@ -566,18 +682,25 @@ export default {
       pageArray2: [10, 20, 50],
       pageSize2: 10,
       totalCount2: 0, // 总条数
-      pageNo2: 1
+      pageNo2: 1,
+      totalCount3: 0,
+      totalTabCount1: 0,
+      totalTabCount2: 0
     }
   },
   computed: {
     tabPaneLabel () {
-      return '车辆信息 ' + (Number(this.totalCount1) === 0 ? '' : this.totalCount1)
+      return '车辆信息 ' + (Number(this.totalTabCount1) === 0 ? '' : this.totalTabCount1)
     },
     tabPaneLabe2 () {
-      return '维修记录 ' + (Number(this.totalCount2) === 0 ? '' : this.totalCount2)
+      return '维修记录 ' + (Number(this.totalTabCount2) === 0 ? '' : this.totalTabCount2)
+    },
+    tabPaneLabe3 () {
+      return '计费规则 ' + (Number(this.totalCount3) === 0 ? '' : this.totalCount3)
     }
   },
   mounted () {
+    this._getCarrierNumberCount()
     if (this.carrierType === 1) { // 类型为个体司机
       this._carrierDetailsForDriver()
     } else { // 类型为运输公司
@@ -648,6 +771,7 @@ export default {
         methods: {
           ok () {
             _this._carrierListCar()
+            _this._getCarrierNumberCount()
           }
         }
       })
@@ -703,7 +827,20 @@ export default {
         methods: {
           ok () {
             _this._carrierListRepairVehicle() // 刷新页面-维修列表
+            _this._getCarrierNumberCount()
           }
+        }
+      })
+    },
+    // 获取tab-number的数量值
+    _getCarrierNumberCount () {
+      let data = {
+        carrierId: this.carrierId
+      }
+      getCarrierNumberCount(data).then(res => {
+        if (res.data.code === CODE) {
+          this.totalTabCount1 = res.data.data.carriersCarNum
+          this.totalTabCount2 = res.data.data.carriersCarRepairNum
         }
       })
     },
@@ -715,6 +852,112 @@ export default {
     handleChangePageSize2 (pageSize) {
       this.pageSize2 = pageSize
       this._carrierListRepairVehicle()
+    },
+    // 导出车辆信息
+    carExport () {
+      if (Number(this.totalCount1) < 1) {
+        this.$Message.error('导出内容为空')
+        return
+      }
+      let data = {
+        carrierId: this.carrierId
+      }
+      if (this.selectStatus1 === '1') {
+        data.carNO = this.keyword1
+      } else if (this.selectStatus1 === '2') {
+        data.driverType = this.keyword1
+      } else if (this.selectStatus1 === '3') {
+        data.driverPhone = this.keyword1
+      }
+      Export({
+        url: '/carrier/carlist/export',
+        method: 'post',
+        data,
+        fileName: '车辆信息报表'
+      })
+    },
+    repairExport () {
+      if (Number(this.totalCount2) < 1) {
+        this.$Message.error('导出内容为空')
+        return
+      }
+      let data = {
+        carrierId: this.carrierId
+      }
+      if (this.selectStatus2 === '1') {
+        data.carNO = this.keyword2
+      } else if (this.selectStatus2 === '2') {
+        data.repairType = Number(this.keyword2)
+      }
+      Export({
+        url: '/carrier/carRepairList/export',
+        method: 'post',
+        data,
+        fileName: '维修记录报表'
+      })
+    },
+    changeState (val, flag) { // 车辆 & 维修记录 select框变动，关键字清除
+      if ((this.selectStatus1 === '2' && flag === 1) || (this.selectStatus2 === '2' && flag === 2)) {
+        this[val] = '1'
+      } else {
+        this[val] = ''
+      }
+      if (flag === 1) {
+        this.searchCarList()
+      } else {
+        this.searchRepairList()
+      }
+    },
+    searchCarList () { // 搜索车辆信息列表
+      if (this.selectStatus1 === '3' && !(/^[0-9]*$/.test(this.keyword1))) { // 手机号
+        this.$Message.error('手机号格式输入错误')
+        return
+      }
+      // 车辆 - 根据条件查询
+      let data = {
+        carrierId: this.carrierId,
+        pageNo: this.pageNo2,
+        pageSize: this.pageSize2
+      }
+      if (this.selectStatus1 === '1') {
+        data.carNO = this.keyword1
+      } else if (this.selectStatus1 === '2') {
+        data.driverType = Number(this.keyword1)
+      } else if (this.selectStatus1 === '3') {
+        data.driverPhone = this.keyword1
+      }
+      carrierListCar(data).then(res => {
+        if (res.data.code === CODE) {
+          this.data1 = res.data.data.carList
+          this.totalCount1 = res.data.data.total
+        }
+      })
+    },
+    searchRepairList () { // 搜索维修记录列表
+      let data = {
+        carrierId: this.carrierId,
+        pageNo: this.pageNo2,
+        pageSize: this.pageSize2
+      }
+      if (this.selectStatus2 === '1') {
+        data.carNO = this.keyword2
+      } else if (this.selectStatus2 === '2') {
+        data.repairType = Number(this.keyword2)
+      }
+      carrierListRepairVehicle(data).then(res => {
+        if (res.data.code === CODE) {
+          this.data2 = res.data.data.list
+          this.totalCount2 = res.data.data.totalCount
+        }
+      })
+    },
+    clearKeywords (val, flag) {
+      this[val] = ''
+      if ((val === 'keyword1' && flag === 1)) {
+        this.searchCarList()
+      } else {
+        this.searchRepairList()
+      }
     }
   }
 }
@@ -722,10 +965,13 @@ export default {
 
 <style scoped lang="stylus">
   @import "client.styl"
+  .tabs
+    .ivu-tabs
+      overflow visible
   .footer
     margin-top 22px
     display flex
     justify-content flex-end
-  .ivu-tabs
-    padding-bottom: 120px!important
+  /*.ivu-tabs*/
+    /*padding-bottom: 120px!important*/
 </style>

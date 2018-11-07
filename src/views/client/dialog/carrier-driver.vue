@@ -53,7 +53,7 @@
           <FormItem label="手机号:" prop="driverPhone">
             <Row>
               <Col span="20">
-              <SelectInput v-model="validate.driverPhone" :remote="true" :remote-method="queryDriverByPhoneList" placeholder="必填" @on-select="slectDriverData"></SelectInput>
+              <SelectInput v-model="validate.driverPhone" :maxlength="11" :remote="true" :remote-method="queryDriverByPhoneList" placeholder="必填" @on-select="slectDriverData"></SelectInput>
               </Col>
             </Row>
           </FormItem>
@@ -83,7 +83,7 @@
         </Row>
         <Row>
           <Col span="8">
-          <FormItem label="核定载重:" prop="shippingWeight">
+          <FormItem label="载重:" prop="shippingWeight">
             <Row>
               <Col span="20">
               <Input v-model="validate.shippingWeight" :maxlength="9" placeholder="必填"></Input>
@@ -101,7 +101,7 @@
               <Input v-model="validate.shippingVolume" :maxlength="9"></Input>
               </Col>
               <Col span="2" offset="1">
-              <span>吨</span>
+              <span>方</span>
               </Col>
             </Row>
           </FormItem>
@@ -227,10 +227,10 @@ export default {
         ],
         shippingWeight: [
           { required: true, message: '载重不能为空' },
-          { message: '必须小于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '必须小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ],
         shippingVolume: [
-          { message: '必须小于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '必须小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ]
       }
     }
@@ -293,6 +293,7 @@ export default {
       this.validate.carId = this.carId
       this.validate.travelPhoto = this.$refs.upload1.uploadImg
       this.validate.drivePhoto = this.$refs.upload2.uploadImg
+      this.validate.purchDate = new Date(this.validate.purchDate).Format('yyyy-MM-dd hh:mm:ss')
       this.checkLine()
       if (!this.flagAddress) {
         return
@@ -338,14 +339,14 @@ export default {
       this.validate.driverType = dirverInit.driverType.toString()
     },
     // 手机号输入联想
-    queryDriverByPhoneList () {
-      let data = {}
-      data.carrierId = this.carrierId
-      data.driverPhone = this.validate.driverPhone
-      if (!data.driverPhone) {
+    queryDriverByPhoneList (driverPhone) {
+      if (!driverPhone) {
         return Promise.resolve([])
       }
-      return carrierQueryDriverlist(data).then(res => {
+      return carrierQueryDriverlist({
+        driverPhone,
+        carrierId: this.carrierId
+      }).then(res => {
         if (res.data.code === CODE) {
           return res.data.data.map(item => ({
             value: item.driverPhone,

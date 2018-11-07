@@ -12,11 +12,11 @@
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="90">
         <Row>
           <Col span="7">
-          <FormItem label="车牌号:" prop="carNo">
+          <FormItem label="车牌号:" prop="carNO">
             <Row>
               <Col span="19">
-              <span v-if="!disAbleBtn">{{ validate.carNo }}</span>
-              <Select v-if="disAbleBtn" v-model="validate.carNo" placeholder="必选" class="minWidth">
+              <span v-if="!disAbleBtn">{{ validate.carNO }}</span>
+              <Select v-if="disAbleBtn" v-model="validate.carNO" placeholder="必选" class="minWidth">
                 <Option
                   v-for="item in carNoList"
                   :value="item.carNo"
@@ -56,6 +56,44 @@
         </Row>
         <Row>
           <Col span="7">
+          <FormItem label="维修费用:" prop="repairMoney">
+            <Row>
+              <Col span="19">
+              <Input v-model="validate.repairMoney" :maxlength="9" placeholder="必填" @on-blur="repairMoneyChange"></Input>
+                </Col>
+              <Col span="4" offset="1">
+              <span>元</span>
+                </Col>
+            </Row>
+          </FormItem>
+          </Col>
+          <Col span="7">
+          <FormItem label="已支付费用:" prop="payMoney">
+            <Row>
+              <Col span="19">
+              <Input v-model="validate.payMoney" :maxlength="9" placeholder="必填" @on-change="payMoneyChange"></Input>
+                </Col>
+              <Col span="2" offset="1">
+              <span>元</span>
+                </Col>
+            </Row>
+          </FormItem>
+          </Col>
+          <Col span="7">
+          <FormItem label="未支付费用:" prop="waitPayMoney">
+            <Row>
+              <Col span="19">
+              <Input v-model="validate.waitPayMoney" :maxlength="9" placeholder="必填" @on-change="waitpayMoneyChange"></Input>
+                </Col>
+              <Col span="2" offset="1">
+              <span>元</span>
+                </Col>
+            </Row>
+          </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col span="7">
           <FormItem label="送修人:" prop="repairPerson">
             <Row>
               <Col span="19">
@@ -72,44 +110,6 @@
                 </Col>
               <Col span="4" offset="1">
               <span>公里</span>
-                </Col>
-            </Row>
-          </FormItem>
-          </Col>
-          <Col span="7">
-          <FormItem label="维修费用:" prop="repairMoney">
-            <Row>
-              <Col span="19">
-              <Input v-model="validate.repairMoney" :maxlength="9" placeholder="必填"></Input>
-                </Col>
-              <Col span="4" offset="1">
-              <span>元</span>
-                </Col>
-            </Row>
-          </FormItem>
-          </Col>
-        </Row>
-        <Row>
-          <Col span="7">
-          <FormItem label="已支付费用:" prop="payMoney">
-            <Row>
-              <Col span="19">
-              <Input v-model="validate.payMoney" :maxlength="9" placeholder="必填"></Input>
-                </Col>
-              <Col span="2" offset="1">
-              <span>元</span>
-                </Col>
-            </Row>
-          </FormItem>
-          </Col>
-          <Col span="7">
-          <FormItem label="未支付费用:" prop="waitPayMoney">
-            <Row>
-              <Col span="19">
-              <Input v-model="validate.waitPayMoney" :maxlength="9" placeholder="必填"></Input>
-                </Col>
-              <Col span="2" offset="1">
-              <span>元</span>
                 </Col>
             </Row>
           </FormItem>
@@ -157,6 +157,7 @@
 import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
 import { carrierAddVehicle, carrierUpdateVehicle, carrierQueryCarlist, CODE, CAR } from '../client'
+import float from '@/libs/js/float'
 export default {
   name: 'carrier-vehicle',
   mixins: [BaseDialog],
@@ -169,7 +170,11 @@ export default {
       driverName: '', // 只有编辑需要的数据
       carId: '', // 车辆id
       unbindedDriver: [], // 承运商下尚未被绑定车辆的司机
-      validate: {},
+      validate: {
+        payMoney: null,
+        waitPayMoney: null,
+        repairMoney: null
+      },
       carNoList: [],
       disAbleBtn: true,
       selectList: [
@@ -177,7 +182,7 @@ export default {
         { id: '2', name: '保养' }
       ],
       ruleValidate: {
-        carNo: [
+        carNO: [
           { required: true, message: '车牌号不能为空' },
           { type: 'string', message: '车牌号格式错误', pattern: CAR }
         ],
@@ -192,51 +197,48 @@ export default {
         ],
         repairMile: [
           { required: true, message: '送修公里数不能为空' },
-          { message: '必须小于六位整数,不能有小数', pattern: /^[0-9]{0,6}?$/ }
+          { message: '必须小于等于六位整数,不能有小数', pattern: /^[0-9]{0,6}?$/ }
         ],
         repairMoney: [
           { required: true, message: '维修费用不能为空' },
-          { message: '必须小于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '必须小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ],
         payMoney: [
           { required: true, message: '已支付费用不能为空' },
-          { message: '必须小于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '必须小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ],
         waitPayMoney: [
           { required: true, message: '未支付费用不能为空' },
-          { message: '必须小于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '必须小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ]
-      }
-    }
-  },
-  computed: {
-    payMoney () {
-      return this.validate.payMoney
-    },
-    waitPayMoney () {
-      return this.validate.waitPayMoney
-    }
-  },
-  watch: {
-    payMoney (n, o) {
-      if (n && this.validate.repairMoney) {
-        this.validate.waitPayMoney = Number(this.validate.repairMoney) - Number(n)
-      }
-    },
-    waitPayMoney (n, o) {
-      if (n && this.validate.repairMoney) {
-        this.validate.payMoney = Number(this.validate.repairMoney) - Number(n)
       }
     }
   },
   mounted () {
     if (this.title === '修改维修记录') {
       this.configData()
+    } else if (this.carNO !== undefined) {
+      this.disAbleBtn = false
+      this.validate.carNO = this.carNO
     } else {
       this.queryCarnoList()
     }
   },
   methods: {
+    repairMoneyChange () {
+      this.validate.payMoney = this.validate.repairMoney
+      this.validate.waitPayMoney = 0
+    },
+    payMoneyChange () {
+      if (this.validate.repairMoney) {
+        this.validate.waitPayMoney = float.round(float.round(this.validate.repairMoney) - (float.round(this.validate.payMoney)) || 0)
+      }
+    },
+    waitpayMoneyChange () {
+      if (this.validate.repairMoney) {
+        this.validate.payMoney = float.round(float.round(this.validate.repairMoney) - (float.round(this.validate.waitPayMoney)) || 0)
+      }
+    },
     // 修改页面初始化
     configData () {
       this.disAbleBtn = false
@@ -245,10 +247,11 @@ export default {
       this.validate.repairMoney = this.validate.repairMoney / 100
       this.validate.payMoney = this.validate.payMoney / 100
       this.validate.waitPayMoney = this.validate.waitPayMoney / 100
-      this.carNoList.push({ carNo: this.validate.carNo })
+      this.carNoList.push({ carNO: this.validate.carNO })
     },
     save (name) {
       this.validate.carrierId = this.carrierId
+      this.validate.repairDate = new Date(this.validate.repairDate).Format('yyyy-MM-dd hh:mm:ss')
       this.$refs[name].validate((valid) => {
         if (valid) {
           if (this.flag === 1) { // 新增
@@ -290,7 +293,7 @@ export default {
         }
       })
     },
-    // 查询车辆列表
+    // 查询车辆列表-下拉框需要
     queryCarnoList () {
       let data = {}
       data.carrierId = this.carrierId

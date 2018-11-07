@@ -33,7 +33,18 @@ export default {
       },
 
       showLog: false,
-      logList: [] // 操作日志
+      logList: [], // 操作日志
+      exceptionCount: 0,
+      // 异常详情label
+      expLabel: (h) => {
+        return h('div', [
+          h('span', {
+            domProps: {
+              innerHTML: `异常详情  ${this.exceptionCount}`
+            }
+          })
+        ])
+      }
     }
   },
 
@@ -76,6 +87,9 @@ export default {
       return this.currentBtns.filter(item => {
         return this.hasPower(item.code)
       })
+    },
+    isAbnomal () {
+      return this.$route.query.abnormal === 1
     }
   },
 
@@ -197,6 +211,25 @@ export default {
       if (this.settlementType === '1' && !this.$refs.$payInfo.validate()) return false
 
       return true
+    },
+
+    // 上传按钮
+    updateExcept (data) {
+      // data: {
+      //   id: this.id,
+      //   type: type // 单据类型 1 提货单 2 外转单 3 运单
+      // }
+      console.log('编辑对话', data)
+      const self = this
+      this.openDialog({
+        name: 'transport/dialog/abnormal',
+        data,
+        methods: {
+          complete () {
+            self.fetchData()
+          }
+        }
+      })
     }
   }
 }

@@ -12,8 +12,11 @@
           <TimelineItem v-for="(item, key) in cars[0].points" :key="key">
             <i slot="dot" class="map-timeline-dot"></i>
             <div :class="{'info-body-active': key === currentPointIndex}" class="info-body" @click="showTracePoint(key)">
-              <p>{{ item.locateTime | datetime }}</p>
-              <p>{{ item.location }}</p>
+              <p>{{ item.createTime | datetime }}</p>
+              <p>
+                {{ item.location }}
+                {{Number(item.positionType) === 2 ? `(此位置通过手机号GPS查询，若偏差较大，请联系司机${item.phone})` : ''}}
+              </p>
             </div>
           </TimelineItem>
         </Timeline>
@@ -58,7 +61,7 @@ export default {
       } else {
         for (let i = 0; i < this.cars.length; i++) {
           this.showCar(this.cars[i], point => {
-            if (i === 0) this.map.centerAndZoom(point, 12)
+            if (i === 0) this.map.centerAndZoom(point, 6)
           })
         }
       }
@@ -170,7 +173,7 @@ export default {
 
     .ivu-timeline-item-head-custom
       margin-top 3px
-      left -13px
+      left -14px
 
     .ivu-timeline-item-content
       top -9px

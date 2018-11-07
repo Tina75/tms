@@ -32,6 +32,7 @@ export default {
         ruleName: ''
       },
       ruleId: '',
+      ruleType: '',
       validate: {
         ruleName: [
           { required: true, message: '请填写规则名称', trigger: 'blur' },
@@ -52,7 +53,7 @@ export default {
               // partnerType: this.scene,
               ruleId: this.ruleId,
               ruleName: this.createRuleForm.ruleName,
-              ruleType: 1
+              ruleType: this.ruleType
             }
           }).then(res => {
             this.close()
