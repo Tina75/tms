@@ -71,6 +71,7 @@ export default {
         method: 'get',
         url: '/finance/charge/getRulesByPartner',
         params: {
+          partnerId: this.partnerId,
           partnerType: this.partnerType,
           partnerName: this.partnerName
         }
