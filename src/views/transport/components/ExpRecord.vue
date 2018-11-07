@@ -80,6 +80,7 @@
                 </i-col>
               </Row>
               <Table
+                v-if="billType != 2"
                 :columns="columns"
                 :data="data.beforeFeeInfo.abnormalPayInfos"></Table>
             </div>
@@ -114,6 +115,7 @@
                 </i-col>
               </Row>
               <Table
+                v-if="billType != 2"
                 :columns="columnsAfter"
                 :data="data.afterFeeInfo.abnormalPayInfos"></Table>
             </div>
@@ -227,13 +229,12 @@ export default {
           render: (h, params) => {
             const bfArr = this.data.beforeFeeInfo.abnormalPayInfos
             const bfFee = bfArr[params.index] && bfArr[params.index].cashAmount
-            // console.log('异常详情'+ bfFee && bfFee !== params.row.cashAmount)
             return h('span', {
               domProps: {
                 innerHTML: moneyFormate(params.row.cashAmount)
               },
               style: {
-                color: bfFee && bfFee !== params.row.cashAmount ? 'red' : ''
+                color: moneyFormate(bfFee) !== moneyFormate(params.row.cashAmount) ? 'red' : ''
               }
             })
           }
@@ -249,7 +250,7 @@ export default {
                 innerHTML: moneyFormate(params.row.fuelCardAmount)
               },
               style: {
-                color: bfFee && bfFee !== params.row.fuelCardAmount ? 'red' : ''
+                color: moneyFormate(bfFee) !== moneyFormate(params.row.fuelCardAmount) ? 'red' : ''
               }
             })
           }
