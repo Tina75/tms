@@ -1,5 +1,5 @@
 <template>
-  <div class="messageDivAll">
+  <div class="ql-editor messageDivAll">
     <h1 class="title">{{messageInfo.title}}</h1>
     <p class="dateTime">{{ formatDate(messageInfo.createTime) }}
       <Button class="msgRemoveBtn" @click="removeBtn">

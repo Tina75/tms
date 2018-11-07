@@ -1,5 +1,5 @@
 <template>
-  <Row class="temAll">
+  <Row class="ql-editor temAll">
     <Col :style="styleHeight" span="4">
     <Menu :open-names="['1']" style="width: 100%;" class="menuSty" accordion>
       <Submenu name="1">
