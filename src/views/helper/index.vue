@@ -1,5 +1,5 @@
 <template>
-  <Row class="ql-editor temAll">
+  <Row class="temAll">
     <Col :style="styleHeight" span="4">
     <Menu :open-names="['1']" style="width: 100%;" class="menuSty" accordion>
       <Submenu name="1">
@@ -26,7 +26,9 @@
     <Card dis-hover class="contentCard">
       <div v-if="'pic' === this.type">
         <p slot="title" class="rightDivTitle">{{picContent.title}}</p>
-        <div v-html="picContent.content"></div>
+        <div class="ql-editor">
+          <div v-html="picContent.content"></div>
+        </div>
       </div>
       <div v-if="'video' === this.type">
         <p slot="title" class="rightDivTitle">{{videoContent.title}}</p>

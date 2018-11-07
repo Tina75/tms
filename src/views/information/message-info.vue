@@ -1,5 +1,5 @@
 <template>
-  <div class="ql-editor messageDivAll">
+  <div class="messageDivAll">
     <h1 class="title">{{messageInfo.title}}</h1>
     <p class="dateTime">{{ formatDate(messageInfo.createTime) }}
       <Button class="msgRemoveBtn" @click="removeBtn">
@@ -7,7 +7,9 @@
         <span class="msgConfigBtn">删除</span>
       </Button>
     </p>
-    <div v-html="messageInfo.content"></div>
+    <div class="ql-editor">
+      <div v-html="messageInfo.content"></div>
+    </div>
     <Modal v-model="visibaleRemove" type="warning" width="360">
       <p slot="header" class="modalTitle">
         <span>提示</span>
