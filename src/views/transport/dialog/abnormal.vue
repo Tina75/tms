@@ -438,7 +438,7 @@ export default {
         if (res.data.data <= 0) {
           this.openAbnormalSuccessDialog()
         } else {
-          this.$Message.success('创建成功')
+          this.$Message.success(this.recordId ? '编辑成功' : '创建成功')
         }
       }).catch(err => console.error(err))
     },
