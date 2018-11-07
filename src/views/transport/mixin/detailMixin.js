@@ -89,7 +89,7 @@ export default {
       })
     },
     isAbnomal () {
-      return this.$route.query.abnomal === 1
+      return this.$route.query.abnormal === 1
     }
   },
 
@@ -214,8 +214,20 @@ export default {
     },
 
     // 上传按钮
-    updateExcept () {
-      console.log('上传异常')
+    updateExcept (type) {
+      const self = this
+      this.openDialog({
+        name: 'transport/dialog/abnormal',
+        data: {
+          id: this.id,
+          type: type // 单据类型 1 提货单 2 外转单 3 运单
+        },
+        methods: {
+          complete () {
+            self.fetchData()
+          }
+        }
+      })
     }
   }
 }

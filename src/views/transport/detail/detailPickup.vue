@@ -373,12 +373,6 @@ export default {
             func: () => {
               this.inEditing = true
             }
-          }, {
-            name: '上报异常',
-            code: 120210,
-            func: () => {
-              this.updateExcept()
-            }
           }]
         },
         {
@@ -389,11 +383,23 @@ export default {
             func: () => {
               this.billArrived()
             }
+          }, {
+            name: '上报异常',
+            code: 120210,
+            func: () => {
+              this.updateExcept(1)
+            }
           }]
         },
         {
           status: '已提货',
-          btns: []
+          btns: [{
+            name: '上报异常',
+            code: 120210,
+            func: () => {
+              this.updateExcept(1)
+            }
+          }]
         }
       ],
 
