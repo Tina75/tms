@@ -416,7 +416,6 @@ export default {
         {
           title: '车型',
           key: 'carType',
-          width: 100,
           render: (h, params) => {
             let text = params.row.carType ? this.carTypeMap[params.row.carType] : '-'
             return h('div', {}, text)
@@ -498,8 +497,7 @@ export default {
           }
         }, {
           title: '添加人',
-          key: 'createName',
-          width: 100
+          key: 'createName'
         },
         {
           title: '添加时间',
