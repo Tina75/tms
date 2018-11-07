@@ -300,9 +300,18 @@ export default {
       }
     }
   },
-  mounted () {
-    this.getRules()
+  watch: {
+    partnerName (val) {
+      if (val) {
+        this.getRules()
+      }
+    }
   },
+  // mounted () {
+  //   this.getRules()
+  //   console.log('名称')
+  //   console.log(this.partnerName)
+  // },
   methods: {
     toDetail (data) {
       this.$router.push({
@@ -352,7 +361,6 @@ export default {
       })
     },
     addEl (index) {
-      console.log(index)
       this.ruleDetail.details[index].chargeRules.push({ base: '', price: '', baseAndStart: '' })
     },
     removeEl (index, no) {
@@ -409,8 +417,6 @@ export default {
         await this.formValidate(this.$refs['rulePrice'][j])
       }
       if (!_this.ruleDetail.details.every((item, index, array) => {
-        console.log(_this.ruleDetail.details)
-        console.log(((item.startNum.length === 0 && item.startPrice.length === 0)) || (item.startNum.length !== 0 && item.startPrice.length !== 0))
         return ((item.startNum.length === 0 && item.startPrice.length === 0)) || (item.startNum.length !== 0 && item.startPrice.length !== 0)
       })) {
         this.$Message.error('请填写起步价')
@@ -485,7 +491,7 @@ export default {
         method: 'get',
         params: {
           partnerType: this.active,
-          paramName: '' // 没有搜索功能，从参数不用传
+          paramName: this.partnerName // 没有搜索功能，从参数不用传
         }
       }).then(res => {
         this.companyData = res.data.data
