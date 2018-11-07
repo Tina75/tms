@@ -158,6 +158,9 @@ export default {
     // 单据类型 1 提货单 2 外转单 3 运单
     billType: {
       type: Number
+    },
+    pickupId: {
+      type: Number
     }
   },
   data () {
@@ -224,6 +227,7 @@ export default {
           render: (h, params) => {
             const bfArr = this.data.beforeFeeInfo.abnormalPayInfos
             const bfFee = bfArr[params.index] && bfArr[params.index].cashAmount
+            // console.log('异常详情'+ bfFee && bfFee !== params.row.cashAmount)
             return h('span', {
               domProps: {
                 innerHTML: moneyFormate(params.row.cashAmount)
@@ -265,6 +269,7 @@ export default {
         },
         methods: {
           complete () {
+            self.showDetail = false
             self.$parent.initData()
           }
         }
@@ -276,10 +281,12 @@ export default {
         name: 'transport/dialog/abnormal',
         data: {
           recordId: this.data.recordId,
-          type: this.billType
+          type: this.billType,
+          id: this.pickupId
         },
         methods: {
           complete () {
+            self.showDetail = false
             self.$parent.initData()
           }
         }
