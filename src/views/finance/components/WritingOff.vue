@@ -39,7 +39,7 @@
         <li v-for="(item,index) in companyData" :class="{companyDataActive:companyDataActive === item.partnerName}" :key="index" class="list" @click="showOrderData(item)">
           <!--<Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showOrderData"></Table>-->
           <div class="icon">
-            <FontIcon slot="icon" type="ico-price" ></FontIcon>
+            <FontIcon slot="icon" type="ico-company" ></FontIcon>
           </div>
           <div class="content">
             <div v-if="item.partnerName.length<8" class="ruleName">{{item.partnerName}}</div>
@@ -47,7 +47,7 @@
               <div >{{item.partnerName.slice(0,8)}}...</div>
             </Tooltip>
             <div class="tips">
-              <span style="margin-right: 30px">应付 {{item.calcTotalFeeText}}</span>
+              <span>应付 {{item.calcTotalFeeText}}</span>
               <span>已结 {{item.verifiedFeeText}}</span>
             </div>
           </div>
@@ -61,7 +61,7 @@
           <img src="../../../assets/img-empty.png" class="data-empty-img">
           <p>请点击左侧{{sceneMap[scene]}}列表查看{{orderNameMap[scene]}}哦～</p>
         </div>
-        <Table v-else :columns="orderColumn" :data="orderData"  @on-selection-change="setOrderIds"></Table>
+        <Table v-else :columns="orderColumn" :data="orderData" class="tableList"  @on-selection-change="setOrderIds"></Table>
       </div>
     </div>
   </div>
@@ -179,11 +179,10 @@ export default {
       return [
         {
           type: 'selection',
-          width: 20
+          width: 40
         },
         {
           title: '操作',
-          width: 40,
           key: 'action',
           render: (h, params) => {
             return (this.scene === 1 && this.hasPower(170101)) || (this.scene === 2 && this.hasPower(170201)) || (this.scene === 3 && this.hasPower(170301)) ? h('a', {
@@ -197,7 +196,6 @@ export default {
         },
         {
           title: this.orderNameMap[this.scene] + '号',
-          width: 140,
           key: 'orderNo',
           render: (h, params) => {
             return h('a', {
@@ -222,8 +220,7 @@ export default {
         },
         this.scene === 2 ? {
           title: '车牌号',
-          key: 'truckNo',
-          width: 80
+          key: 'truckNo'
         } : {
           title: ' ',
           width: 1
@@ -234,7 +231,6 @@ export default {
         },
         {
           title: '结算方式',
-          width: 80,
           key: 'settleTypeDesc',
           filters: this.scene === 2 ? [
             {
@@ -268,7 +264,6 @@ export default {
         },
         {
           title: '状态',
-          width: 50,
           key: 'orderStatusDesc',
           filters: this.orderStatusMap[this.scene],
           filterMethod (value, row) {
@@ -436,6 +431,8 @@ export default {
 }
 </script>
 <style lang='stylus' scoped>
+  .tableList /deep/ .ivu-checkbox-inner
+    left 1px
   .writing-off
     margin-top: 35px
     /deep/ .ivu-btn
@@ -512,10 +509,9 @@ export default {
               padding-top 6px
               color #999
           .num
-            flex 0 0 40px
+            flex 0 0 35px
             height 30px
             line-height 30px
-            margin-right 5px
             color #666
             font-size 12px
       .order-list
