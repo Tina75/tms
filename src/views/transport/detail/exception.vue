@@ -1,7 +1,7 @@
 <template>
   <div class="exception">
     <template v-for="(item,index) in errorInfoList">
-      <ExpRecord :data="item" :key="index" :status-code="billObj.billStatus" :no="billObj.billNo" :show="showDetail(index)" :bill-type="billType" :pickup-id="pickupId"/>
+      <ExpRecord :data="item" :key="index" :show="showDetail(index)" :bill-type="billType" :pickup-id="pickupId"/>
     </template>
     <ExpTimeLine :data="errorLogs"/>
   </div>

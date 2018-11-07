@@ -405,7 +405,7 @@ export default {
             name: '上报异常',
             code: 120210,
             func: () => {
-              this.updateExcept(3)
+              this.updateExcept({ id: this.id, type: 3 })
             }
           }]
         },
@@ -421,7 +421,7 @@ export default {
             name: '上报异常',
             code: 120210,
             func: () => {
-              this.updateExcept(3)
+              this.updateExcept({ id: this.id, type: 3 })
             }
           }]
         },
@@ -431,7 +431,7 @@ export default {
             name: '上报异常',
             code: 120210,
             func: () => {
-              this.updateExcept(3)
+              this.updateExcept({ id: this.id, type: 3 })
             }
           }]
         }

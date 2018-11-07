@@ -2,12 +2,14 @@
   <div class="except-record">
     <div class="except-record-title">
       <span>
-        上报信息 第一笔 【{{statusCode === 10 ? '已处理' : statusCode === 20 ? '未处理' : ''}}】
+        上报信息 第一笔 【{{data.status == 10 ? '未处理' : data.status == 20 ? '已处理' : ''}}】
       </span>
-      <span>记录号：{{no}}</span>
+      <span>记录号：{{data.recordNo}}</span>
       <div class="except-record-btn-group">
-        <Button type="default" style="margin: 0 10px" @click="clickHandle">处理</Button>
-        <Button type="primary" @click="editBtn">编辑</Button>
+        <template v-if="data.status == 10">
+          <Button type="default" style="margin: 0 10px" @click="clickHandle">处理</Button>
+          <Button type="primary" @click="editBtn">编辑</Button>
+        </template>
         <div class="detail-log-icon" @click="showDetail">
           <i :class="{'detail-log-show': !hideDetail}"></i>
         </div>
@@ -29,7 +31,8 @@
         </i-col>
         <i-col span="6">
           <label class="label-bar">处理时间：</label>
-          <span>{{(data.disposeTime | timeFormatter) || '-'}}</span>
+          <!-- || '-' -->
+          <span>{{(data.disposeTime | timeFormatter)}}</span>
         </i-col>
       </Row>
       <div :class="{'except-record-list-hide': hideDetail}">
@@ -130,10 +133,6 @@ export default {
       type: Object,
       default: () => {}
     },
-    statusCode: {
-      type: Number,
-      default: 0
-    },
     no: {
       type: String,
       default: ''
@@ -144,9 +143,6 @@ export default {
     },
     // 单据类型 1 提货单 2 外转单 3 运单
     billType: {
-      type: Number
-    },
-    pickupId: {
       type: Number
     }
   },
@@ -211,13 +207,13 @@ export default {
           key: 'cashAmount',
           render: (h, params) => {
             const bfArr = this.data.beforeFeeInfo.abnormalPayInfos
-            const bfFee = bfArr[params.index].cashAmount
+            const bfFee = bfArr[params.index] && bfArr[params.index].cashAmount
             return h('span', {
               domProps: {
                 innerHTML: params.row.cashAmount
               },
               style: {
-                color: bfFee !== params.row.cashAmount ? 'red' : ''
+                color: bfFee && bfFee !== params.row.cashAmount ? 'red' : ''
               }
             })
           }
@@ -227,13 +223,13 @@ export default {
           key: 'fuelCardAmount',
           render: (h, params) => {
             const bfArr = this.data.beforeFeeInfo.abnormalPayInfos
-            const bfFee = bfArr[params.index].fuelCardAmount
+            const bfFee = bfArr[params.index] && bfArr[params.index].fuelCardAmount
             return h('span', {
               domProps: {
                 innerHTML: params.row.fuelCardAmount
               },
               style: {
-                color: bfFee !== params.row.fuelCardAmount ? 'red' : ''
+                color: bfFee && bfFee !== params.row.fuelCardAmount ? 'red' : ''
               }
             })
           }

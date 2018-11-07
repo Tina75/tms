@@ -214,14 +214,16 @@ export default {
     },
 
     // 上传按钮
-    updateExcept (type) {
+    updateExcept (data) {
+      // data: {
+      //   id: this.id,
+      //   type: type // 单据类型 1 提货单 2 外转单 3 运单
+      // }
+      console.log('编辑对话', data)
       const self = this
       this.openDialog({
         name: 'transport/dialog/abnormal',
-        data: {
-          id: this.id,
-          type: type // 单据类型 1 提货单 2 外转单 3 运单
-        },
+        data,
         methods: {
           complete () {
             self.fetchData()
