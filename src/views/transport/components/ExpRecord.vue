@@ -2,7 +2,7 @@
   <div class="except-record">
     <div class="except-record-title">
       <span>
-        上报信息 第一笔 【{{data.status == 10 ? '未处理' : data.status == 20 ? '已处理' : ''}}】
+        上报信息 第{{index | numFormat}}笔 【{{data.status == 10 ? '未处理' : data.status == 20 ? '已处理' : ''}}】
       </span>
       <span>记录号：{{data.recordNo}}</span>
       <div class="except-record-btn-group">
@@ -145,7 +145,10 @@ export default {
       if (!timestamp) return '-'
       return new Date(timestamp).Format('yyyy-MM-dd hh:mm')
     },
-    Money: moneyFormate
+    Money: moneyFormate,
+    numFormat (num) {
+      return num + 1
+    }
   },
   mixins: [ BasePage, TransportBase ],
   props: {
@@ -162,6 +165,9 @@ export default {
       type: Number
     },
     pickupId: {
+      type: Number
+    },
+    index: {
       type: Number
     }
   },
