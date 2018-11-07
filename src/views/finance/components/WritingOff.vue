@@ -440,14 +440,14 @@ export default {
         width: 100%
     .list-box
       display flex
-      border-top 1px solid #C9CED9
+      border-top 1px solid #E4E7EC
       margin 0 -15px
       margin-bottom -20px
       .leftList
         height 100%
         overflow-y hidden
         flex 0 0 270px
-        border-right 1px solid #C9CED9
+        border-right 1px solid #E4E7EC
         &:hover
           height 100%
           overflow-y auto
