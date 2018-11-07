@@ -65,6 +65,8 @@
         </div>
       </div>
 
+      <div v-if="isChangeFee === 1" class="err-message">存在多个异常记录未处理，只能修改最后一次上报的异常记录的运费。</div>
+
       <Row v-if="isChangeFee === 1" class="detail-field-group" style="margin-bottom: 10px">
         <i-col span="24">
           <span class="detail-field-title-sm" style="vertical-align: unset;padding-left: 8px;">费用合计：</span>
@@ -168,77 +170,83 @@ export default {
     ] : [
       { payType: 2, fuelCardAmount: '', cashAmount: '', isDisabled: false }
     ]
+  },
+
+  mounted () {
     this.fetchData()
   },
+
   methods: {
 
     // 查询数据
     fetchData () {
-      this.loading = true
+      const _this = this
+      _this.loading = true
       const data = {}
-      if (this.recordId) {
-        data.recordId = this.recordId
+      if (_this.recordId) {
+        data.recordId = _this.recordId
       } else {
-        data.billId = this.id
-        data.billType = this.type
+        data.billId = _this.id
+        data.billType = _this.type
       }
       Server({
         url: '/abnormal/report/page',
         method: 'post',
         data: data
       }).then(res => {
-        this.details = res.data.data
-        console.log(this.details)
-        this.abnormalTimings = this.details.abnormalLinks
-        this.abnormalTiming = this.details.abnormalLinks[0].abnormalTiming // 默认自动填充第一条环节
-        this.canUpdateFee = this.details.canUpdateFee // 多条异常记录只有最后一条可以修改运费
-        this.isChangeFee = this.details.updateFee // 判断是否修改运费radio初始状态
-        this.handleCheckFee(this.isChangeFee)
+        _this.details = res.data.data
+        console.log(_this.details)
+        _this.abnormalTimings = _this.details.abnormalLinks
+        _this.abnormalTiming = _this.details.abnormalLinks[0].abnormalTiming // 默认自动填充第一条环节
+        _this.canUpdateFee = _this.details.canUpdateFee // 多条异常记录只有最后一条可以修改运费
+        _this.isChangeFee = _this.details.updateFee // 判断是否修改运费radio初始状态
 
         // 编辑异常需要带出上次上传的图片
-        if (this.details.fileUrls.length > 0) {
+        if (_this.details.fileUrls.length > 0) {
           let fileUrls = []
-          this.details.fileUrls.map((item) => {
+          _this.details.fileUrls.map((item) => {
             fileUrls.push({
               url: item,
               progress: 1
             })
           })
-          this.$refs.upLoads.uploadImgList = fileUrls
+          _this.$refs.upLoads.uploadImgList = fileUrls
         }
 
-        for (let key in this.payment) {
-          this.payment[key] = this.setMoneyUnit2Yuan(this.details[key])
+        for (let key in _this.payment) {
+          _this.payment[key] = _this.setMoneyUnit2Yuan(_this.details[key])
         }
 
         // this.settlementType = billInfo.settlementType ? billInfo.settlementType.toString() : '1'
         // 将收费信息中的金额单位转为元
-        let temp = this.settlementPayInfo.map((item, i) => {
-          if (!this.details.abnormalPayInfos[i]) return item // 后台只返回预付、到付、回付有的那一项数据，前端需要都展示，保持数据同步
+        let temp = _this.settlementPayInfo.map((item, i) => {
+          if (!_this.details.abnormalPayInfos[i]) return item // 后台只返回预付、到付、回付有的那一项数据，前端需要都展示，保持数据同步
           else {
-            const temp = this.details.abnormalPayInfos[i]
-            temp.fuelCardAmount = this.setMoneyUnit2Yuan(temp.fuelCardAmount)
-            temp.cashAmount = this.setMoneyUnit2Yuan(temp.cashAmount)
+            const temp = _this.details.abnormalPayInfos[i]
+            temp.fuelCardAmount = _this.setMoneyUnit2Yuan(temp.fuelCardAmount)
+            temp.cashAmount = _this.setMoneyUnit2Yuan(temp.cashAmount)
             return Object.assign(item, temp)
           }
         })
-        this.settlementPayInfo = temp
+        _this.settlementPayInfo = temp
 
-        this.handleChangeLinks(this.abnormalTiming) // 默认自动填充第一条环节对应的异常类型,和多段支付联动
+        _this.clonePayment = _.cloneDeep(_this.payment)
+        _this.cloneSettlementPayInfo = _.cloneDeep(_this.settlementPayInfo)
 
-        this.loading = false
+        _this.handleChangeLinks(_this.abnormalTiming) // 默认自动填充第一条环节对应的异常类型,和多段支付联动
+        _this.handleCheckFee(_this.isChangeFee)
 
-        this.clonePayment = _.cloneDeep(this.payment)
-        this.cloneSettlementPayInfo = _.cloneDeep(this.settlementPayInfo)
+        _this.loading = false
       }).catch(err => console.error(err))
     },
 
     // 检查是否可修改运费
     handleCheckFee (val) {
+      const _this = this
       if (val === 1) {
         const data = {
-          billId: this.id,
-          billType: this.type
+          billId: _this.id,
+          billType: _this.type
         }
         // if (this.recordId) {
         //   data.recordId = this.recordId
@@ -251,19 +259,23 @@ export default {
           data: data
         }).then(res => {
           console.log(res)
-          this.changeFeeType = res.data.data
-          if (this.changeFeeType === 1) {
-            this.checkUpdateFee()
-          } else if (this.changeFeeType === 2) {
-            this.$Message.warning('此单运费已核销，不能修改')
-            this.canotChangeFee()
-          } else if (this.changeFeeType === 3) {
-            this.$Message.warning('运单已经开始对账，运费不能修改')
-            this.canotChangeFee()
+          _this.changeFeeType = res.data.data
+          if (_this.changeFeeType === 1) {
+            _this.checkUpdateFee()
+          } else if (_this.changeFeeType === 2) {
+            _this.$Message.warning('此单运费已核销，不能修改')
+            _this.canotChangeFee()
+          } else if (_this.changeFeeType === 3) {
+            _this.$Message.warning('运单已经开始对账，运费不能修改')
+            _this.canotChangeFee()
           }
         }).catch(err => console.error(err))
       } else {
-        this.payment = this.clonePayment
+        // 将payment 设置为初始值
+        for (let key in _this.clonePayment) {
+          _this.payment[key] = _this.clonePayment[key]
+        }
+        console.log(_this.payment)
       }
     },
 
@@ -497,4 +509,11 @@ export default {
       vertical-align top
       .ivu-radio
         margin-right 16px
+</style>
+<style lang='stylus' scoped>
+  .err-message
+    color #EC4E4E
+    font-size 14px
+    font-family 'PingFangSC-Regular'
+    margin-left 82px
 </style>
