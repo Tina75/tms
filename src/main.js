@@ -14,7 +14,7 @@ require('./libs/js/filter')
 require('./libs/js/date')
 require('./assets/css/iview/iview.css')
 require('./assets/css/tms/iconfont.css')
-
+require('./assets/css/quill/quill.core.css')
 const errorHandler = (error, vm) => {
   if (process.env.NODE_ENV !== 'production') console.error(error)
   vm.$ga.exception(`msg: ${error.message}, userAgent: ${window.navigator.userAgent}`)

@@ -1,6 +1,6 @@
 <template>
   <Form ref="orderForm" :label-width="80" :model="orderForm" :rules="rules">
-    <Spin fix>
+    <Spin v-if="loading" fix>
       <img src="../../../assets/loading.gif" width="24" height="24" alt="加载中">
     </Spin>
     <Row :gutter="16">
