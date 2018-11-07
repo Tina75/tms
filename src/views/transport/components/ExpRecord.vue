@@ -31,8 +31,7 @@
         </i-col>
         <i-col span="6">
           <label class="label-bar">处理时间：</label>
-          <!-- || '-' -->
-          <span>{{(data.disposeTime | timeFormatter)}}</span>
+          <span>{{data.disposeTime | timeFormatter}}</span>
         </i-col>
       </Row>
       <div :class="{'except-record-list-hide': hideDetail}">
@@ -127,6 +126,12 @@ import BasePage from '@/basic/BasePage'
 import TransportBase from '../mixin/transportBase'
 export default {
   name: 'except-record',
+  filters: {
+    timeFormatter (timestamp) {
+      if (!timestamp) return '-'
+      return new Date(timestamp).Format('yyyy-MM-dd hh:mm')
+    }
+  },
   mixins: [ BasePage, TransportBase ],
   props: {
     data: {
