@@ -35,11 +35,11 @@
         </i-col>
       </Row>
       <div :class="{'except-record-list-hide': hideDetail}" class="except-record-list-show">
-        <div class="mgbt20" style="display: flex">
+        <div style="display: flex; margin-bottom: 10px; margin-top: 10px">
           <label class="label-bar">异常描述：</label>
           <span class="flexBox colorGrey">{{data.abnormalDesc}}</span>
         </div>
-        <div class="mgbt20" style="display: flex">
+        <div style="display: flex; margin-bottom: 10px; margin-top: 10px">
           <label class="label-bar">图片：</label>
           <div class="flexBox">
             <span v-for="(item, index) in data.fileUrls" :key="index" class="img-bar" @click="showImg(item)">
@@ -124,7 +124,8 @@
               <Table
                 v-if="billType != 2"
                 :data="data.afterFeeInfo.abnormalPayInfos"
-                :columns="columnsAfter"></Table>
+                :columns="columnsAfter"
+                width="350"></Table>
             </div>
           </i-col>
         </Row>
