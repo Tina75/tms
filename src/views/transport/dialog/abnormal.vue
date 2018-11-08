@@ -43,25 +43,25 @@
 
       <div v-if="isChangeFee === 1" class="detail-field-group row-fee">
         <div>
-          <span class="detail-field-title-sm detail-field-required">运输费：</span>
+          <span class="detail-field-title-sm detail-field-required">{{ details.billType === 2 ? '外转运费：' : '运输费：' }}</span>
           <MoneyInput v-model="payment.freightFee" :is-disabled="isDisabled" class="detail-payment-input" />
           <!-- <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a> -->
         </div>
-        <div>
+        <div v-if="details.billType !== 2">
           <span class="detail-field-title-sm" style="width: 70px;">装货费：</span>
-          <MoneyInput v-model="payment.loadFee" :is-disabled="isDisabled || details.billType === 2" class="detail-payment-input" />
+          <MoneyInput v-model="payment.loadFee" :is-disabled="isDisabled" class="detail-payment-input" />
         </div>
-        <div>
+        <div v-if="details.billType !== 2">
           <span class="detail-field-title-sm" style="width: 70px;">卸货费：</span>
-          <MoneyInput v-model="payment.unloadFee" :is-disabled="isDisabled || details.billType === 2" class="detail-payment-input" />
+          <MoneyInput v-model="payment.unloadFee" :is-disabled="isDisabled" class="detail-payment-input" />
         </div>
-        <div>
+        <div v-if="details.billType !== 2">
           <span class="detail-field-title-sm" style="width: 70px;">保险费：</span>
-          <MoneyInput v-model="payment.insuranceFee" :is-disabled="isDisabled || details.billType === 2" class="detail-payment-input" />
+          <MoneyInput v-model="payment.insuranceFee" :is-disabled="isDisabled" class="detail-payment-input" />
         </div>
-        <div>
+        <div v-if="details.billType !== 2">
           <span class="detail-field-title-sm">其他费用：</span>
-          <MoneyInput v-model="payment.otherFee" :is-disabled="isDisabled || details.billType === 2" class="detail-payment-input" />
+          <MoneyInput v-model="payment.otherFee" :is-disabled="isDisabled" class="detail-payment-input" />
         </div>
       </div>
 
@@ -98,7 +98,7 @@
           <span class="detail-field-title-sm" style="vertical-align: unset;padding-left: 8px;width: 90px;line-height: 1.6;">图片上传：</span>
           <div style="width: 100%;">
             <up-load ref="upLoads" :multiple="true" max-size="10"></up-load>
-            <p style="color: #999;font-family:PingFangSC-Regular;font-weight:400;line-height: 1.2;">图片格式必须为jpeg、jpg、gif、png，且最多上传6张，每张不能超过2MB！</p>
+            <p style="color: #999;font-family:PingFangSC-Regular;font-weight:400;line-height: 1.2;">图片格式必须为jpeg、jpg、gif、png，且最多上传6张，每张不能超过10MB！</p>
           </div>
         </i-col>
       </Row>

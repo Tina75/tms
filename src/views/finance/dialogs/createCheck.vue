@@ -53,11 +53,11 @@ export default {
           this.$Toast.warning({
             title: '对账',
             render: (h) => {
-              const list = res.data.data.orderNos.map(item => {
+              const list = res.data.data.orderNos.length > 0 ? res.data.data.orderNos.map(item => {
                 return h('p', item)
-              })
+              }) : []
               return h('div', [
-                h('p', '以下订单存在异常，无法对账单'),
+                h('p', '以下单据存在异常，无法对账单'),
                 ...list
               ])
             },

@@ -335,7 +335,7 @@ export default {
         data: {
           scene: this.active,
           ruleId: item.ruleId,
-          ruleType: item.detail.ruleType === 0,
+          ruleType: item.detail.ruleType,
           createRuleForm: {
             ruleName: item.ruleName
           }
