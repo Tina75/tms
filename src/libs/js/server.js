@@ -89,7 +89,7 @@ instance.interceptors.response.use((res) => {
   if (error.response && error.response.status) {
     Message.error(error.response.statusText + ' ' + error.response.status)
   }
-  Vue.$ga.exception(`msg: ${error.message}, url: ${reportData.url}`)
+  Vue.$ga.exception(`msg: ${error.message} || url: ${reportData.url}`)
   return Promise.reject(error)
 })
 
