@@ -105,7 +105,7 @@
           </div>
         </TabPane>
         <TabPane :label="tabPaneLabe4">
-          <ruleForClient :count.sync="totalCount4" :active="'1'" :partner-name="list.name"></ruleForClient>
+          <ruleForClient :count.sync="totalCount4" :active="'1'" :partner-id="list.id"  :partner-name="list.name"></ruleForClient>
         </TabPane>
       </Tabs>
     </div>
@@ -133,7 +133,8 @@ export default {
         contact: '',
         phone: '',
         payType: '',
-        remark: ''
+        remark: '',
+        id: null
       },
       columns1: [
         {
@@ -517,7 +518,9 @@ export default {
       consignerDetail(data).then(res => {
         if (res.data.code === CODE) {
           let data = res.data.data
+          console.log(res.data.data)
           this.list = {
+            id: data.id,
             name: data.name,
             contact: data.contact,
             phone: data.phone,

@@ -123,7 +123,7 @@ export default {
                     return h('p', item)
                   })
                   return h('div', [
-                    h('p', '以下订单存在异常，无法核销'),
+                    h('p', '以下单据存在异常，无法核销'),
                     ...list
                   ])
                 },

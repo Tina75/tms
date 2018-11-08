@@ -43,7 +43,8 @@ export default {
       },
       createRuleForm: {
         ruleName: '',
-        partnerName: ''
+        partnerName: '',
+        partnerId: ''
       },
       validate: {
         ruleName: [
@@ -91,7 +92,8 @@ export default {
         data: {
           partnerName: this.createRuleForm.partnerName,
           partnerType: this.scene,
-          ruleName: this.createRuleForm.ruleName
+          ruleName: this.createRuleForm.ruleName,
+          partnerId: this.createRuleForm.partnerId
         }
       }).then(res => {
         this.close()
