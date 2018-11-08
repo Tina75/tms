@@ -65,7 +65,7 @@
         </div>
       </div>
 
-      <div v-if="isChangeFee === 1" class="err-message">存在多个异常记录未处理，只能修改最后一次上报的异常记录的运费。</div>
+      <div v-if="isChangeFee === 1 && canUpdateFee === 2 && changeFeeType === 1" class="err-message">存在多个异常记录未处理，只能修改最后一次上报的异常记录的运费。</div>
 
       <Row v-if="isChangeFee === 1" class="detail-field-group" style="margin-bottom: 10px">
         <i-col span="24">
@@ -367,7 +367,7 @@ export default {
     submit () {
       const _this = this
       if (!_this.validate()) return
-      if (_this.isChangeSubmitFee()) {
+      if (_this.isChangeSubmitFee() && _this.changeFeeType === 1 && _this.canUpdateFee === 1) {
         _this.$Toast.confirm({
           title: '提示',
           content: '<p>运费未修改，是否保存？</p>',
