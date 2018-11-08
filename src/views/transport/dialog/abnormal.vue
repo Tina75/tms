@@ -282,7 +282,7 @@ export default {
             _this.$Message.warning('此单运费已核销，不能修改')
             _this.canotChangeFee()
           } else if (_this.changeFeeType === 3) {
-            _this.$Message.warning('运单已经开始对账，运费不能修改')
+            _this.$Message.warning('此单已经加入对账单，运费不能修改')
             _this.canotChangeFee()
           }
         }).catch(err => console.error(err))
