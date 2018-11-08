@@ -152,6 +152,7 @@
                     :current.sync="pageNo1" :page-size-opts="pageArray1"
                     size="small"
                     show-sizer
+                    placement="top"
                     show-elevator show-total @on-change="handleChangePage1"
                     @on-page-size-change="handleChangePageSize1"/>
             </template>
@@ -198,6 +199,7 @@
                     :current.sync="pageNo2" :page-size-opts="pageArray2"
                     size="small"
                     show-sizer
+                    placement="top"
                     show-elevator show-total @on-change="handleChangePage2"
                     @on-page-size-change="handleChangePageSize2"/>
             </template>
