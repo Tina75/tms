@@ -498,7 +498,7 @@ export default {
       return '发货地址 ' + (Number(this.totalCount1) === 0 ? '' : this.totalCount1)
     },
     tabPaneLabe2 () {
-      return '发货方 ' + (Number(this.totalCount2) === 0 ? '' : this.totalCount2)
+      return '收货方 ' + (Number(this.totalCount2) === 0 ? '' : this.totalCount2)
     },
     tabPaneLabe3 () {
       return '常发货物 ' + (Number(this.totalCount3) === 0 ? '' : this.totalCount3)
