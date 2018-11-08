@@ -109,7 +109,7 @@
       </div>
     </div>
     <div class="tabs">
-      <Tabs :animated="false">
+      <Tabs :animated="false" style="position:static">
         <TabPane :label="tabPaneLabel">
           <div class="add">
             <Button v-if="hasPower(130207)" type="primary" @click="_carrierAddDriver">新增车辆</Button>
