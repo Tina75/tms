@@ -230,7 +230,14 @@ Toast.newInstance = properties => {
     show (props) {
       toast.$parent.showCancel = props.showCancel
       toast.$parent.onRemove = props.onRemove
+      // 防止缓存
+      if ('content' in props) {
+        toast.$parent.content = props.content
+      }
 
+      if ('description' in props) {
+        toast.$parent.description = props.description
+      }
       if ('onCancel' in props) {
         toast.$parent.onCancel = props.onCancel
       }
