@@ -5,7 +5,8 @@ import Login from './login.vue'
 import router from './router'
 import store from './store'
 import VueMeta from 'vue-meta'
-import './libs/js/ga.js' // GA打点统计
+import './libs/js/ga.js' // GA打点统计配置
+import './libs/js/report' // 打点上报方法封装
 import EmaProxy from 'ema-proxy'
 import Toast from '@/components/toast/index'
 
@@ -16,8 +17,7 @@ require('./assets/css/iview/iview.css')
 require('./assets/css/tms/iconfont.css')
 require('./assets/css/quill/quill.core.css')
 const errorHandler = (error, vm) => {
-  if (process.env.NODE_ENV !== 'production') console.error(error)
-  vm.$ga.exception(`msg: ${error.message}, userAgent: ${window.navigator.userAgent}`)
+  vm.$reportError(error)
 }
 
 Vue.config.productionTip = false
