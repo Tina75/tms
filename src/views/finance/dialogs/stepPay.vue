@@ -168,7 +168,7 @@ export default {
       Server({
         url: '/finance/verify/checkOrder',
         method: 'post',
-        params: {
+        data: {
           id: item.id,
           verifyType: 2
         }
