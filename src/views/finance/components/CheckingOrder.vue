@@ -187,7 +187,7 @@ export default {
       Server({
         url: '/finance/verify/checkOrder',
         method: 'post',
-        params: {
+        data: {
           id: data.row.reconcileId,
           verifyType: 3
         }
