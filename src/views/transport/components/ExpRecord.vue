@@ -1,6 +1,6 @@
 <template>
   <div class="except-record">
-    <div class="except-record-title">
+    <div class="except-record-title wigtFont">
       <span>
         上报信息 第{{index | numFormat}}笔 【{{data.status == 10 ? '未处理' : data.status == 20 ? '已处理' : ''}}】
       </span>
@@ -34,7 +34,7 @@
           <span>{{data.disposeTime | timeFormatter}}</span>
         </i-col>
       </Row>
-      <div :class="{'except-record-list-hide': hideDetail}">
+      <div :class="{'except-record-list-hide': hideDetail}" class="except-record-list-show">
         <div class="mgbt20" style="display: flex">
           <label class="label-bar">异常描述：</label>
           <span class="flexBox">{{data.abnormalDesc}}</span>
@@ -42,14 +42,14 @@
         <div class="mgbt20" style="display: flex">
           <label class="label-bar">图片：</label>
           <div class="flexBox">
-            <span v-for="(item, index) in data.fileUrls" :key="index" class="img-bar">
+            <span v-for="(item, index) in data.fileUrls" :key="index" class="img-bar" @click="showImg(item)">
               <img :src="item" alt="异常图片">
             </span>
           </div>
         </div>
         <Row class="mgbt20">
           <i-col span="12" style="display: flex">
-            <label class="label-bar">修改前运费：</label>
+            <label class="label-bar wigtFont">修改前运费：</label>
             <div class="flex-bar">
               <Row v-if="billType != 2">
                 <i-col span="8">
@@ -83,12 +83,13 @@
               </Row>
               <Table
                 v-if="billType != 2"
+                :data="data.beforeFeeInfo.abnormalPayInfos"
                 :columns="columns"
-                :data="data.beforeFeeInfo.abnormalPayInfos"></Table>
+                width="350"></Table>
             </div>
           </i-col>
           <i-col span="12" style="display: flex">
-            <label class="label-bar">修改后运费：</label>
+            <label class="label-bar wigtFont">修改后运费：</label>
             <div class="flex-bar">
               <Row v-if="billType != 2">
                 <i-col span="8">
@@ -118,12 +119,12 @@
               </Row>
               <Row v-else>
                 <label>外转运费：</label>
-                <span :class="{'red-col': compareFee(data.beforeFeeInfo.loadFee, data.afterFeeInfo.loadFee)}">{{data.beforeFeeInfo.freightFee | Money}}元</span>
+                <span :class="{'red-col': compareFee(data.beforeFeeInfo.freightFee, data.afterFeeInfo.freightFee)}">{{data.afterFeeInfo.freightFee | Money}}元</span>
               </Row>
               <Table
                 v-if="billType != 2"
-                :columns="columnsAfter"
-                :data="data.afterFeeInfo.abnormalPayInfos"></Table>
+                :data="data.afterFeeInfo.abnormalPayInfos"
+                :columns="columnsAfter"></Table>
             </div>
           </i-col>
         </Row>
@@ -133,6 +134,10 @@
         </div>
       </div>
     </div>
+    <Modal v-model="visible" title="查看图片">
+      <img :src="curImg" style="width: 100%">
+      <div slot="footer" style="text-align: center;"></div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -265,7 +270,9 @@ export default {
             })
           }
         }
-      ]
+      ],
+      visible: false,
+      curImg: ''
     }
   },
   methods: {
@@ -306,6 +313,10 @@ export default {
     },
     compareFee (b, a) {
       return b !== a
+    },
+    showImg (src) {
+      this.visible = true
+      this.curImg = src
     }
   }
 }
@@ -318,7 +329,6 @@ export default {
   &-title
     padding 16px 20px 16px 20px
     font-size 16px
-    color #333
     background #f8f8f8
     span
       line-height 30px
@@ -332,9 +342,12 @@ export default {
     font-size 14px
     line-height 20px
     padding 10px 20px
+    color #666
     border-top 1px solid #d4d5dc
     &-hide
       display none
+      .mgbt20
+        margin-bottom 35px
   .img-bar
     display inline-block
     width 160px
@@ -342,11 +355,12 @@ export default {
     margin 0 5px 5px 0
     overflow hidden
     vertical-align: top;
+    cursor pointer
     img
       display block
       // margin auto
-      max-width 100%
-      max-height 100%
+      width 100%
+      height 100%
   .label-bar
     display inline-block
     width 90px
@@ -363,4 +377,10 @@ export default {
   .flexBox
     display inline-block
     flex 1
+  .wigtFont
+    font-weight 600
+    color #333
+  &-list-show
+    .mgbt20
+      margin-top 35px
 </style>
