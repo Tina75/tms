@@ -26,7 +26,7 @@
     <Card dis-hover class="contentCard">
       <div v-if="'pic' === this.type">
         <p slot="title" class="rightDivTitle">{{picContent.title}}</p>
-        <div class="ql-editor">
+        <div class="ql-editor" style="line-height:1.8;width:800px;">
           <div v-html="picContent.content"></div>
         </div>
       </div>
