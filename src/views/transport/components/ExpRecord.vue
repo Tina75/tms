@@ -42,8 +42,10 @@
         <div style="display: flex; margin-bottom: 10px; margin-top: 10px">
           <label class="label-bar">图片：</label>
           <div class="flexBox">
-            <span v-for="(item, index) in data.fileUrls" :key="index" class="img-bar" @click="showImg(item)">
-              <img :src="item" alt="异常图片">
+            <span v-for="(item, index) in data.fileUrls"
+                  :key="index" :style="`background-image: url(${item}) `"
+                  style="background-position: center; background-size: 100%; background-repeat: no-repeat;"
+                  class="img-bar" @click="showImg(item)">
             </span>
           </div>
         </div>
