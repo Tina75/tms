@@ -3,7 +3,7 @@
     <div class="add_btn">
       <Button v-if="(active === '1'&&hasPower(130113)) || (active === '2'&&hasPower(130215))" type="primary" @click="addRule">新增规则</Button>
     </div>
-    <div  class="rule">
+    <div  :style="{height: height > 600 ? height+'px' : 600+'px'}" class="rule">
       <div v-if="companyData.length===0" class="data-total-empty">
         <!--<img src="../../../assets/img-empty.png" class="data-empty-img">-->
         <div class="data-empty-img">
@@ -161,6 +161,10 @@ export default {
       default: ''
     },
     partnerId: {
+      type: [Number],
+      default: 0
+    },
+    height: {
       type: [Number],
       default: 0
     }
@@ -550,7 +554,6 @@ export default {
   border-bottom 1px solid #E4E7EC
 .rule
   display flex
-  height 600px
   margin-bottom -20px
   .data-total-empty
     text-align center
@@ -564,7 +567,7 @@ export default {
      color #999
   .ruleList
     height 100%
-    border-right 1px solid #C9CED9
+    border-right 1px solid #e4e7ec
     flex 0 0 270px
     margin-left -15px
     margin-bottom -20px
@@ -632,7 +635,7 @@ export default {
       flex-direction column
       justify-content center
       align-items center
-      height 500px
+      margin-top 150px
       /*border 1px solid #dcdee2*/
       .data-empty-img
         width 70px
