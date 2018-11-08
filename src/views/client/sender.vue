@@ -118,10 +118,22 @@ export default {
                 }
               }, '修改'))
             }
+            renderBtn.push(h('span', {
+              style: {
+                marginRight: '12px',
+                color: '#00A4BD',
+                cursor: 'pointer'
+              },
+              on: {
+                click: () => {
+                  this.openTab({ path: '/client/sender-info', title: '发货方详情', query: { id: params.row.id }
+                  })
+                }
+              }
+            }, '查看'))
             if (this.hasPower(130103)) {
               renderBtn.push(h('span', {
                 style: {
-                  marginRight: '12px',
                   color: '#00A4BD',
                   cursor: 'pointer'
                 },
@@ -151,18 +163,6 @@ export default {
                 }
               }, '删除'))
             }
-            renderBtn.push(h('span', {
-              style: {
-                color: '#00A4BD',
-                cursor: 'pointer'
-              },
-              on: {
-                click: () => {
-                  this.openTab({ path: '/client/sender-info', title: '发货方详情', query: { id: params.row.id }
-                  })
-                }
-              }
-            }, '查看'))
             return h('div', renderBtn)
           }
         },
