@@ -138,7 +138,7 @@
               </Select>
               <Button icon="ios-search" type="primary"
                       class="search-btn-easy"
-                      style="margin-top: -1px;width:41px;"
+                      style="float: right;width:41px;"
                       @click="searchCarList">
               </Button>
             </div>
@@ -185,7 +185,7 @@
               </Select>
               <Button icon="ios-search" type="primary"
                       class="search-btn-easy"
-                      style="margin-top: -1px;width:41px;"
+                      style="float: right;width:41px;"
                       @click="searchRepairList"></Button>
             </div>
           </div>
