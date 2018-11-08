@@ -28,7 +28,13 @@ export default {
 
       tableSelection: [], // 表格的选中项
 
-      printData: [] // 待打印数据
+      printData: [], // 待打印数据
+
+      timeOption: {
+        disabledDate (date) {
+          return date && date.valueOf() > Date.now() // 过滤当前日期之后的日期
+        }
+      }
     }
   },
 
