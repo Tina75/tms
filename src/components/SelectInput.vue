@@ -31,7 +31,7 @@
     <DropdownMenu ref="dropdown" slot="list" :style="{'max-height':'150px', overflow:'auto'}">
       <DropdownItem
         v-for="(option, index) in filterOptions"
-        :key="option.name"
+        :key="index"
         :name="option.name"
         :class="{'ivu-select-item-focus': focusIndex === index}"
         v-html="heightlightText(option.name)">

@@ -71,7 +71,7 @@
                   <span class="colorGrey">{{data.beforeFeeInfo.insuranceFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
-                  <label class="feeLabel">其&emsp;他：</label>
+                  <label class="feeLabel">其他：</label>
                   <span class="colorGrey">{{data.beforeFeeInfo.otherFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
@@ -111,7 +111,7 @@
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.insuranceFee, data.afterFeeInfo.insuranceFee)}" class="colorGrey">{{data.afterFeeInfo.insuranceFee | Money}}</span>元
                 </i-col>
                 <i-col span="8">
-                  <label class="feeLabel">其&emsp;他：</label>
+                  <label class="feeLabel">其他：</label>
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.otherFee, data.afterFeeInfo.otherFee)}" class="colorGrey">{{data.afterFeeInfo.otherFee | Money}}</span>元
                 </i-col>
                 <i-col span="8">
