@@ -115,6 +115,7 @@ export default {
               this.ok()
               this.close()
             } else if (res.data.data && res.data.data.operateCode === 1) {
+              // 存在异常
               this.$Toast.warning({
                 title: '核销',
                 content: '以下订单存在异常，无法核销',
@@ -124,7 +125,6 @@ export default {
                   })
                   return h('div', [
                     ...list
-                    // h('p', '原因：' + res.data.data.desc)
                   ])
                 },
                 okText: '确认',

@@ -17,6 +17,7 @@ Vue.use(VueAnalytics, {
     debug: {
       enabled: process.env.NODE_ENV !== 'production'
     },
+    // 优化tab切换与相同query的PV计算方式
     shouldRouterUpdate (to, from) {
       // 将当前的tabsCache备份并更新当前tabsCache
       const tabsCacheTemp = Object.assign([], tabsCache)

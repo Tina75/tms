@@ -2,7 +2,7 @@
   <div class="except-record">
     <div class="except-record-title">
       <span>
-        上报信息 第一笔 【{{data.status == 10 ? '未处理' : data.status == 20 ? '已处理' : ''}}】
+        上报信息 第{{index | numFormat}}笔 【{{data.status == 10 ? '未处理' : data.status == 20 ? '已处理' : ''}}】
       </span>
       <span>记录号：{{data.recordNo}}</span>
       <div class="except-record-btn-group">
@@ -35,20 +35,18 @@
         </i-col>
       </Row>
       <div :class="{'except-record-list-hide': hideDetail}">
-        <Row class="mgbt20">
-          <i-col span="24">
-            <label class="label-bar">异常描述：</label>
-            <span>{{data.abnormalDesc}}</span>
-          </i-col>
-        </Row>
-        <Row class="mgbt20">
-          <i-col span="24">
-            <label class="label-bar">图片：</label>
+        <div class="mgbt20" style="display: flex">
+          <label class="label-bar">异常描述：</label>
+          <span class="flexBox">{{data.abnormalDesc}}</span>
+        </div>
+        <div class="mgbt20" style="display: flex">
+          <label class="label-bar">图片：</label>
+          <div class="flexBox">
             <span v-for="(item, index) in data.fileUrls" :key="index" class="img-bar">
-              <img :src="item" alt="">
+              <img :src="item" alt="异常图片">
             </span>
-          </i-col>
-        </Row>
+          </div>
+        </div>
         <Row class="mgbt20">
           <i-col span="12" style="display: flex">
             <label class="label-bar">修改前运费：</label>
@@ -80,6 +78,7 @@
                 </i-col>
               </Row>
               <Table
+                v-if="billType != 2"
                 :columns="columns"
                 :data="data.beforeFeeInfo.abnormalPayInfos"></Table>
             </div>
@@ -114,17 +113,16 @@
                 </i-col>
               </Row>
               <Table
+                v-if="billType != 2"
                 :columns="columnsAfter"
                 :data="data.afterFeeInfo.abnormalPayInfos"></Table>
             </div>
           </i-col>
         </Row>
-        <Row class="mgbt20">
-          <i-col span="24">
-            <label class="label-bar">处理备注：</label>
-            <span>{{data.disposeDesc}}</span>
-          </i-col>
-        </Row>
+        <div class="mgbt20" style="display: flex">
+          <label class="label-bar">处理备注：</label>
+          <span class="flexBox">{{data.disposeDesc}}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -143,7 +141,10 @@ export default {
       if (!timestamp) return '-'
       return new Date(timestamp).Format('yyyy-MM-dd hh:mm')
     },
-    Money: moneyFormate
+    Money: moneyFormate,
+    numFormat (num) {
+      return num + 1
+    }
   },
   mixins: [ BasePage, TransportBase ],
   props: {
@@ -160,6 +161,9 @@ export default {
       type: Number
     },
     pickupId: {
+      type: Number
+    },
+    index: {
       type: Number
     }
   },
@@ -227,13 +231,12 @@ export default {
           render: (h, params) => {
             const bfArr = this.data.beforeFeeInfo.abnormalPayInfos
             const bfFee = bfArr[params.index] && bfArr[params.index].cashAmount
-            // console.log('异常详情'+ bfFee && bfFee !== params.row.cashAmount)
             return h('span', {
               domProps: {
                 innerHTML: moneyFormate(params.row.cashAmount)
               },
               style: {
-                color: bfFee && bfFee !== params.row.cashAmount ? 'red' : ''
+                color: moneyFormate(bfFee) !== moneyFormate(params.row.cashAmount) ? 'red' : ''
               }
             })
           }
@@ -249,7 +252,7 @@ export default {
                 innerHTML: moneyFormate(params.row.fuelCardAmount)
               },
               style: {
-                color: bfFee && bfFee !== params.row.fuelCardAmount ? 'red' : ''
+                color: moneyFormate(bfFee) !== moneyFormate(params.row.fuelCardAmount) ? 'red' : ''
               }
             })
           }
@@ -268,7 +271,6 @@ export default {
         },
         methods: {
           complete () {
-            self.hideDetail = true
             self.$parent.initData()
           }
         }
@@ -286,7 +288,6 @@ export default {
         },
         methods: {
           complete () {
-            self.hideDetail = true
             self.$parent.initData()
           }
         }
@@ -330,7 +331,7 @@ export default {
     display inline-block
     width 160px
     height 90px
-    margin 0 10px 0 0
+    margin 0 5px 5px 0
     overflow hidden
     vertical-align: top;
     img
@@ -340,7 +341,7 @@ export default {
       max-height 100%
   .label-bar
     display inline-block
-    width 84px
+    width 90px
   .flex-bar
     display inline-block
     flex 1
@@ -351,4 +352,7 @@ export default {
     margin-bottom  10px
   .red-col
     color red
+  .flexBox
+    display inline-block
+    flex 1
 </style>

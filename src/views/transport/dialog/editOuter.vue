@@ -6,7 +6,7 @@
       </p>
       <Form ref="info" :model="info" :rules="rules" :label-width="100" label-position="left">
         <FormItem label="外转方：" prop="transfereeName">
-          <SelectInput v-model="info.transfereeName"
+          <SelectInput ref="transInput" v-model="info.transfereeName"
                        mode="transferee"
                        placeholder="请输入"
                        style="width:200px"
@@ -116,14 +116,25 @@ export default {
     showChargeRules () {
       const self = this
       if (!self.info.transfereeName) {
-        this.$Message.error('请先选择外转方')
+        this.$Message.error('请先选择或输入外转方')
+        return
+      }
+      const transfereeItem = this.$refs.transInput.options.find(transferee => transferee.name === self.info.transfereeName)
+      if (!transfereeItem) {
+        this.$Message.warning('您选择或输入的外转方没有维护的计费规则')
+        return
+      }
+      let transfereeId = transfereeItem.id
+      if (!transfereeId) {
+        this.$Message.warning('您选择或输入的外转方没有维护的计费规则')
         return
       }
       this.openDialog({
         name: 'dialogs/financeRule',
         data: {
+          partnerId: transfereeId,
           partnerType: 3,
-          partnerName: this.info.transfereeName,
+          partnerName: self.info.transfereeName,
           ...self.financeRulesInfo,
           ...self.points
         },
@@ -139,26 +150,27 @@ export default {
     },
 
     fetchData () {
+      const vm = this
       Server({
         url: '/outside/bill/detail',
         method: 'post',
-        data: { transId: this.id }
+        data: { transId: vm.id }
       }).then(res => {
         const data = res.data.data
-        for (let key in this.info) {
-          this.info[key] = data.customerInfo[key]
+        for (let key in vm.info) {
+          vm.info[key] = data.customerInfo[key]
         }
         if (data.customerInfo.consignerAddressLongitude && // 发货方纬度
             data.customerInfo.consignerAddressLatitude && // 发货方经度
             data.customerInfo.consigneeAddressLongitude && // 收货方纬度
             data.customerInfo.consigneeAddressLatitude) { // 收货方经度
-          this.points = {
+          vm.points = {
             startPoint: { lng: data.customerInfo.consignerAddressLongitude, lat: data.customerInfo.consignerAddressLatitude },
             endPoint: { lng: data.customerInfo.consigneeAddressLongitude, lat: data.customerInfo.consigneeAddressLatitude }
           }
         }
-        this.info.transFee = this.info.transFee / 100
-        this.info.payType = this.info.payType
+        vm.info.transFee = vm.info.transFee / 100
+        vm.info.payType = vm.info.payType
       }).catch(err => console.error(err))
     }
   }

@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visible" :width="width" :mask-closable="false"  class="system-upgrade" @on-visible-change="close">
+  <Modal v-model="visible" :width="width" :mask-closable="false"  class="system-upgrade" @on-visible-change="handleClose">
     <div slot="header" class="system-upgrade__title">
       <div class="system-upgrade__title-bg">
         <div class="system-upgrade__title-text">
@@ -40,8 +40,11 @@ export default {
   },
   methods: {
     save () {
-      this.ok()
       this.visible = false
+    },
+    handleClose () {
+      this.ok()
+      this.close()
     }
   }
 

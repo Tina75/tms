@@ -563,7 +563,9 @@ export default {
     flex 0 0 270px
     margin-left -15px
     margin-bottom -20px
-    overflow auto
+    overflow hidden
+    &:hover
+      overflow auto
     .list
       list-style none
       height 60px
