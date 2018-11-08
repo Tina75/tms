@@ -159,6 +159,10 @@ export default {
     partnerName: {
       type: [String],
       default: ''
+    },
+    partnerId: {
+      type: [Number],
+      default: 0
     }
   },
   data () {
@@ -329,7 +333,8 @@ export default {
           scene: this.active,
           operateNum: 1,
           createRuleForm: {
-            partnerName: this.partnerName
+            partnerName: this.partnerName,
+            partnerId: this.partnerId
           }
         },
         methods: {

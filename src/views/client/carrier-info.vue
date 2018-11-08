@@ -204,7 +204,7 @@
           </div>
         </TabPane>
         <TabPane :label="tabPaneLabe3">
-          <ruleForClient :count.sync="totalCount3" :active="'2'" :partner-name="companyList.carrierName"></ruleForClient>
+          <ruleForClient :count.sync="totalCount3" :active="'2'" :partner-id="companyList.carrierId" :partner-name="companyList.carrierName"></ruleForClient>
         </TabPane>
       </Tabs>
     </div>
@@ -250,6 +250,7 @@ export default {
         shippingVolume: ''
       },
       companyList: {
+        carrierId: null,
         carrierName: '',
         carrierPrincipal: '',
         carrierPhone: '',
@@ -740,6 +741,7 @@ export default {
         if (res.data.code === CODE) {
           let data = res.data.data
           this.companyList = {
+            carrierId: data.carrierInfo.carrierId,
             carrierName: data.carrierInfo.carrierName,
             carrierPrincipal: data.carrierInfo.carrierPrincipal,
             carrierPhone: data.carrierInfo.carrierPhone,
