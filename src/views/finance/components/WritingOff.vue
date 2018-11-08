@@ -47,7 +47,7 @@
               <div >{{item.partnerName.slice(0,8)}}...</div>
             </Tooltip>
             <div class="tips">
-              <span>应付 {{item.calcTotalFeeText}}</span>
+              <span style="margin-right: 10px">应付 {{item.calcTotalFeeText}}</span>
               <span>已结 {{item.verifiedFeeText}}</span>
             </div>
           </div>
