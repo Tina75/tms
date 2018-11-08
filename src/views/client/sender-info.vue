@@ -105,7 +105,7 @@
           </div>
         </TabPane>
         <TabPane :label="tabPaneLabe4">
-          <ruleForClient :count.sync="totalCount4" :active="'1'" :partner-id="list.id"  :partner-name="list.name"></ruleForClient>
+          <ruleForClient :count.sync="totalCount4" :height="ruleHeight" :active="'1'" :partner-id="list.id"  :partner-name="list.name"></ruleForClient>
         </TabPane>
       </Tabs>
     </div>
@@ -128,6 +128,7 @@ export default {
   data () {
     return {
       id: this.$route.query.id, // 发货方id
+      ruleHeight: 0,
       list: {
         name: '',
         contact: '',
@@ -509,6 +510,7 @@ export default {
   },
   mounted () {
     this._consignerDetail()
+    this.ruleHeight = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 174 - 32 - 39 - 16 - 44
   },
   methods: {
     _consignerDetail () {

@@ -204,7 +204,7 @@
           </div>
         </TabPane>
         <TabPane :label="tabPaneLabe3">
-          <ruleForClient :count.sync="totalCount3" :active="'2'" :partner-id="companyList.carrierId" :partner-name="companyList.carrierName"></ruleForClient>
+          <ruleForClient :count.sync="totalCount3" :height="ruleHeight" :active="'2'" :partner-id="companyList.carrierId" :partner-name="companyList.carrierName"></ruleForClient>
         </TabPane>
       </Tabs>
     </div>
@@ -229,6 +229,7 @@ export default {
   },
   data () {
     return {
+      ruleHeight: 0,
       carrierId: this.$route.query.id, // carrierId 承运商id
       carrierType: this.$route.query.carrierType,
       carTypeMap: CAR_TYPE1,
@@ -692,6 +693,7 @@ export default {
     }
   },
   mounted () {
+    this.ruleHeight = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 174 - 32 - 39 - 16 - 44
     this._getCarrierNumberCount()
     if (this.carrierType === 1) { // 类型为个体司机
       this._carrierDetailsForDriver()
