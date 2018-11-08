@@ -125,7 +125,7 @@ export default {
 </script>
 <style lang='stylus' scoped>
   #map, .map-timeline-box
-    height 600px
+    height 500px
 
   .map-timeline-box
     padding 11px
