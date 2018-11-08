@@ -51,7 +51,7 @@
           <i-col span="12" style="display: flex">
             <label class="label-bar">修改前运费：</label>
             <div class="flex-bar">
-              <Row>
+              <Row v-if="billType != 2">
                 <i-col span="8">
                   <label>运输费：</label>
                   <span>{{data.beforeFeeInfo.freightFee | Money}}元</span>
@@ -77,6 +77,10 @@
                   <span>{{data.beforeFeeInfo.totalFee | Money}}元</span>
                 </i-col>
               </Row>
+              <Row v-else>
+                <label>外转运费：</label>
+                <span>{{data.beforeFeeInfo.freightFee | Money}}元</span>
+              </Row>
               <Table
                 v-if="billType != 2"
                 :columns="columns"
@@ -86,7 +90,7 @@
           <i-col span="12" style="display: flex">
             <label class="label-bar">修改后运费：</label>
             <div class="flex-bar">
-              <Row>
+              <Row v-if="billType != 2">
                 <i-col span="8">
                   <label>运输费：</label>
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.freightFee, data.afterFeeInfo.freightFee)}">{{data.afterFeeInfo.freightFee | Money}}</span>元
@@ -111,6 +115,10 @@
                   <label>费用合计：</label>
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.totalFee, data.afterFeeInfo.totalFee)}">{{data.afterFeeInfo.totalFee | Money}}</span>元
                 </i-col>
+              </Row>
+              <Row v-else>
+                <label>外转运费：</label>
+                <span :class="{'red-col': compareFee(data.beforeFeeInfo.loadFee, data.afterFeeInfo.loadFee)}">{{data.beforeFeeInfo.freightFee | Money}}元</span>
               </Row>
               <Table
                 v-if="billType != 2"
