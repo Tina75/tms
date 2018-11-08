@@ -306,6 +306,7 @@ export default {
     writeOff (data) {
       const _this = this
       if (data.row.isMultiPay) {
+        // 多段付
         this.openDialog({
           name: 'finance/dialogs/stepPay',
           data: {
@@ -321,6 +322,7 @@ export default {
           }
         })
       } else {
+        // 单笔核销
         this.openDialog({
           name: 'finance/dialogs/writeOff',
           data: {
