@@ -16,6 +16,7 @@ require('./libs/js/date')
 require('./assets/css/iview/iview.css')
 require('./assets/css/tms/iconfont.css')
 require('./assets/css/quill/quill.core.css')
+
 const errorHandler = (error, vm) => {
   vm.$reportError(error)
 }
