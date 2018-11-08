@@ -12,11 +12,11 @@
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="90">
         <Row>
           <Col span="7">
-          <FormItem label="车牌号:" prop="carNo">
+          <FormItem label="车牌号:" prop="carNO">
             <Row>
               <Col span="19">
-              <span v-if="!disAbleBtn">{{ validate.carNo }}</span>
-              <Select v-if="disAbleBtn" v-model="validate.carNo" placeholder="必选" class="minWidth">
+              <span v-if="!disAbleBtn">{{ validate.carNO }}</span>
+              <Select v-if="disAbleBtn" v-model="validate.carNO" placeholder="必选" class="minWidth">
                 <Option
                   v-for="item in carNoList"
                   :value="item.carNo"
@@ -157,6 +157,7 @@
 import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
 import { carrierAddVehicle, carrierUpdateVehicle, carrierQueryCarlist, CODE, CAR } from '../client'
+import float from '@/libs/js/float'
 export default {
   name: 'carrier-vehicle',
   mixins: [BaseDialog],
@@ -181,7 +182,7 @@ export default {
         { id: '2', name: '保养' }
       ],
       ruleValidate: {
-        carNo: [
+        carNO: [
           { required: true, message: '车牌号不能为空' },
           { type: 'string', message: '车牌号格式错误', pattern: CAR }
         ],
@@ -216,6 +217,9 @@ export default {
   mounted () {
     if (this.title === '修改维修记录') {
       this.configData()
+    } else if (this.carNO !== undefined) {
+      this.disAbleBtn = false
+      this.validate.carNO = this.carNO
     } else {
       this.queryCarnoList()
     }
@@ -223,16 +227,20 @@ export default {
   methods: {
     repairMoneyChange () {
       this.validate.payMoney = this.validate.repairMoney
-      this.validate.waitPayMoney = 0
+      if (!this.validate.repairMoney) {
+        this.validate.waitPayMoney = ''
+      } else {
+        this.validate.waitPayMoney = 0
+      }
     },
     payMoneyChange () {
       if (this.validate.repairMoney) {
-        this.validate.waitPayMoney = parseFloat(this.validate.repairMoney) - (parseFloat(this.validate.payMoney) || 0)
+        this.validate.waitPayMoney = float.round(float.round(this.validate.repairMoney) - (float.round(this.validate.payMoney)) || 0)
       }
     },
     waitpayMoneyChange () {
       if (this.validate.repairMoney) {
-        this.validate.payMoney = parseFloat(this.validate.repairMoney) - (parseFloat(this.validate.waitPayMoney) || 0)
+        this.validate.payMoney = float.round(float.round(this.validate.repairMoney) - (float.round(this.validate.waitPayMoney)) || 0)
       }
     },
     // 修改页面初始化
@@ -243,10 +251,11 @@ export default {
       this.validate.repairMoney = this.validate.repairMoney / 100
       this.validate.payMoney = this.validate.payMoney / 100
       this.validate.waitPayMoney = this.validate.waitPayMoney / 100
-      this.carNoList.push({ carNo: this.validate.carNo })
+      this.carNoList.push({ carNO: this.validate.carNO })
     },
     save (name) {
       this.validate.carrierId = this.carrierId
+      this.validate.repairDate = new Date(this.validate.repairDate).Format('yyyy-MM-dd hh:mm:ss')
       this.$refs[name].validate((valid) => {
         if (valid) {
           if (this.flag === 1) { // 新增
@@ -288,7 +297,7 @@ export default {
         }
       })
     },
-    // 查询车辆列表
+    // 查询车辆列表-下拉框需要
     queryCarnoList () {
       let data = {}
       data.carrierId = this.carrierId

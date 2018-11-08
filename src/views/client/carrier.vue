@@ -76,7 +76,7 @@ export default {
         {
           title: '操作',
           key: 'id',
-          width: 100,
+          width: 120,
           render: (h, params) => {
             let renderBtn = []
             if (this.hasPower(130202)) {
@@ -158,6 +158,7 @@ export default {
             if (this.hasPower(130203)) {
               renderBtn.push(h('span', {
                 style: {
+                  marginRight: '12px',
                   color: '#00A4BD',
                   cursor: 'pointer'
                 },
@@ -187,6 +188,18 @@ export default {
                 }
               }, '删除'))
             }
+            renderBtn.push(h('span', {
+              style: {
+                color: '#00A4BD',
+                cursor: 'pointer'
+              },
+              on: {
+                click: () => {
+                  this.openTab({ path: '/client/carrier-info', title: '承运商详情', query: { id: params.row.carrierId, carrierType: params.row.carrierType }
+                  })
+                }
+              }
+            }, '查看'))
             return h('div', renderBtn)
           }
         },
@@ -206,16 +219,6 @@ export default {
                   }
                 }, [
                   h('span', {
-                    style: {
-                      color: '#418DF9',
-                      cursor: 'pointer'
-                    },
-                    on: {
-                      click: () => {
-                        this.openTab({ path: '/client/carrier-info', title: '承运商详情', query: { id: params.row.carrierId, carrierType: params.row.carrierType }
-                        })
-                      }
-                    }
                   }, text),
                   h('div', {
                     slot: 'content',
@@ -227,16 +230,6 @@ export default {
               ])
             } else {
               return h('span', {
-                style: {
-                  color: '#418DF9',
-                  cursor: 'pointer'
-                },
-                on: {
-                  click: () => {
-                    this.openTab({ path: '/client/carrier-info', title: '承运商详情', query: { id: params.row.carrierId, carrierType: params.row.carrierType }
-                    })
-                  }
-                }
               }, params.row.carrierName)
             }
           }

@@ -22,13 +22,12 @@
         </Submenu> -->
     </Menu>
     </Col>
-    <Col span="20" class="contentInfoDiv">
+    <Col :style="minStyleHeight" span="20" class="contentInfoDiv">
     <Card dis-hover class="contentCard">
       <div v-if="'pic' === this.type">
         <p slot="title" class="rightDivTitle">{{picContent.title}}</p>
-        <pre class="preText">{{picContent.content}}</pre>
-        <div v-for="url in picContent.urlList" :key="url.index">
-          <img :src="url" class="imgInfo" />
+        <div class="ql-editor">
+          <div v-html="picContent.content"></div>
         </div>
       </div>
       <div v-if="'video' === this.type">
@@ -63,7 +62,10 @@ export default {
   },
   computed: {
     styleHeight () {
-      return { height: this.$parent.$el.children[0].getBoundingClientRect().height + 'px' }
+      return { height: (this.$parent.$el.children[0].getBoundingClientRect().height) + 'px' }
+    },
+    minStyleHeight () {
+      return { minHeight: (this.$parent.$el.children[0].getBoundingClientRect().height) + 'px' }
     }
   },
   mounted: function () {

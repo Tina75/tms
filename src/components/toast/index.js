@@ -7,6 +7,18 @@ function getModalInstance (options) {
 
   return modalInstance
 }
+/**
+ *
+ * @param {object} props
+ */
+function preset (props) {
+  if (!('showIcon' in props)) {
+    props.showIcon = true
+  }
+  if (!('showCancel' in props)) {
+    props.showCancel = false
+  }
+}
 
 function confirm (options) {
   if (!options.showIcon) {
@@ -23,47 +35,33 @@ function confirm (options) {
 }
 
 Toast.info = function (props = {}) {
-  if (!('showIcon' in props)) {
-    props.showIcon = true
-  }
+  preset(props)
   props.icon = 'info'
-  props.showCancel = false
   return confirm(props)
 }
 
 Toast.success = function (props = {}) {
-  if (!('showIcon' in props)) {
-    props.showIcon = true
-  }
+  preset(props)
   props.icon = 'success'
-  props.showCancel = false
   return confirm(props)
 }
 
 Toast.warning = function (props = {}) {
-  if (!('showIcon' in props)) {
-    props.showIcon = true
-  }
+  preset(props)
   props.icon = 'warning'
-  props.showCancel = false
   return confirm(props)
 }
 
 Toast.error = function (props = {}) {
-  if (!('showIcon' in props)) {
-    props.showIcon = true
-  }
+  preset(props)
   props.icon = 'error'
-  props.showCancel = false
   return confirm(props)
 }
 
 Toast.confirm = function (props = {}) {
-  if (!('showIcon' in props)) {
-    props.showIcon = true
-  }
-  props.icon = 'confirm'
+  preset(props)
   props.showCancel = true
+  props.icon = 'confirm'
   return confirm(props)
 }
 

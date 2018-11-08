@@ -81,7 +81,7 @@
           <div>
             <SelectInputForCity v-model="seniorSearchFields.start" placeholder="请输入始发地" class="search-input-senior" />
             <SelectInputForCity v-model="seniorSearchFields.end" placeholder="请输入目的地" class="search-input-senior" />
-            <DatePicker v-model="seniorSearchFields.dateRange" type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
+            <DatePicker v-model="seniorSearchFields.dateRange" :options="timeOption" type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
           </div>
           <div>
             <Button type="primary"
@@ -190,7 +190,7 @@ export default {
       tableActionColumn: {
         title: '操作',
         key: 'action',
-        width: 60,
+        width: 80,
         fixed: 'left',
         extra: true,
         render: (h, p) => {
@@ -202,6 +202,14 @@ export default {
                 }
               }
             }, '派车')
+          } else if (p.row.status > 1 && this.hasPower(120113)) {
+            // return h('a', {
+            //   on: {
+            //     click: () => {
+            //       this.openAbnormalDialog(p.row.waybillId)
+            //     }
+            //   }
+            // }, '上报异常')
           }
         }
       },
@@ -415,6 +423,23 @@ export default {
             }
           }
         })
+      })
+    },
+
+    // 上报异常
+    openAbnormalDialog (id) {
+      const self = this
+      self.openDialog({
+        name: 'transport/dialog/abnormal',
+        data: {
+          id,
+          type: 3 // 单据类型 1 提货单 2 外转单 3 运单
+        },
+        methods: {
+          complete () {
+            self.clearSelectedAndFetch()
+          }
+        }
       })
     }
   }

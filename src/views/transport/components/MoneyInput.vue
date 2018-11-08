@@ -2,6 +2,7 @@
   <div :class="{'money-input-component-short': suffix}" class="money-input-component">
     <InputNumber v-model="money" :min="0"
                  :placeholder="placeholder"
+                 :disabled="isDisabled"
                  @on-change="changeHandler"
                  @on-blur="blurHandler" />
 
@@ -15,6 +16,10 @@ export default {
   name: 'MoneyInput',
   props: {
     value: [ Number, String ],
+    isDisabled: {
+      type: Boolean,
+      default: false
+    },
     placeholder: String,
     suffix: {
       type: Boolean,

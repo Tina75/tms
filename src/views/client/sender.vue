@@ -81,7 +81,7 @@ export default {
         {
           title: '操作',
           key: 'id',
-          width: 100,
+          width: 120,
           render: (h, params) => {
             let renderBtn = []
             if (this.hasPower(130102)) {
@@ -121,6 +121,7 @@ export default {
             if (this.hasPower(130103)) {
               renderBtn.push(h('span', {
                 style: {
+                  marginRight: '12px',
                   color: '#00A4BD',
                   cursor: 'pointer'
                 },
@@ -150,6 +151,18 @@ export default {
                 }
               }, '删除'))
             }
+            renderBtn.push(h('span', {
+              style: {
+                color: '#00A4BD',
+                cursor: 'pointer'
+              },
+              on: {
+                click: () => {
+                  this.openTab({ path: '/client/sender-info', title: '发货方详情', query: { id: params.row.id }
+                  })
+                }
+              }
+            }, '查看'))
             return h('div', renderBtn)
           }
         },
@@ -168,17 +181,7 @@ export default {
                     transfer: false
                   }
                 }, [
-                  h('a', {
-                    style: {
-                      color: '#418DF9',
-                      cursor: 'pointer'
-                    },
-                    on: {
-                      click: () => {
-                        this.openTab({ path: '/client/sender-info', title: '发货方详情', query: { id: params.row.id }
-                        })
-                      }
-                    }
+                  h('div', {
                   }, text),
                   h('div', {
                     slot: 'content',
@@ -190,18 +193,8 @@ export default {
               ])
             } else {
               return h('div', [
-                h('a', {
-                  style: {
-                    color: '#418DF9',
-                    cursor: 'pointer'
-                  },
-                  title: params.row.name,
-                  on: {
-                    click: () => {
-                      this.openTab({ path: '/client/sender-info', title: '发货方详情', query: { id: params.row.id }
-                      })
-                    }
-                  }
+                h('div', {
+                  title: params.row.name
                 }, params.row.name)
               ])
             }

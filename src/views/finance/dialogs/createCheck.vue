@@ -45,8 +45,26 @@ export default {
           partnerName: this.partnerName
         }
       }).then(res => {
-        this.ok()
-        this.close()
+        if (res.data.data === '') {
+          this.ok()
+          this.close()
+        } else if (res.data.data && res.data.data.operateCode === 1) {
+          // 存在异常
+          this.$Toast.warning({
+            title: '对账',
+            content: '以下单据存在异常，无法生成对账单',
+            render: (h) => {
+              const list = res.data.data.orderNos.length > 0 ? res.data.data.orderNos.map(item => {
+                return h('p', item)
+              }) : []
+              return h('div', [
+                ...list
+              ])
+            },
+            okText: '确认',
+            cancelText: '取消'
+          })
+        }
       }).catch(err => console.error(err))
     }
   }

@@ -1,6 +1,13 @@
+import Vue from 'vue'
 import axios from 'axios'
 import { LoadingBar, Message } from 'iview'
 import Cookies from 'js-cookie'
+
+let reportData = {
+  startTime: 0,
+  endTime: 0,
+  url: ''
+}
 
 let instance = axios.create({
   baseURL: process.env.VUE_APP_HOST,
@@ -13,11 +20,18 @@ let instance = axios.create({
   },
   withCredentials: true,
   loading: false,
-  ignoreCode: false
+  ignoreCode: false,
+  ignoreReport: false // 是否忽略该请求耗时，不进行上报
 })
 
 // POST传参序列化
 instance.interceptors.request.use((config) => {
+  // 设置上报参数
+  if (!config.ignoreReport) {
+    reportData.startTime = new Date().getTime()
+    reportData.url = config.url
+  }
+
   // Loading判断
   config.loading && LoadingBar.start()
   if (config.method === 'post') {
@@ -34,6 +48,15 @@ instance.interceptors.request.use((config) => {
 
 // code状态码200判断
 instance.interceptors.response.use((res) => {
+  // 上报接口耗时-ms
+  if (!res.config.ignoreReport) {
+    Vue.$ga.time({
+      timingCategory: 'apiRequest',
+      timingVar: reportData.url,
+      timingValue: Number(reportData.endTime - reportData.startTime)
+    })
+  }
+
   LoadingBar.finish()
   if (res.config.responseType === 'arraybuffer') return res
 
@@ -66,6 +89,7 @@ instance.interceptors.response.use((res) => {
   if (error.response && error.response.status) {
     Message.error(error.response.statusText + ' ' + error.response.status)
   }
+  Vue.$ga.exception(`msg: ${error.message}, url: ${reportData.url}`)
   return Promise.reject(error)
 })
 

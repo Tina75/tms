@@ -162,7 +162,6 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
-// import AreaSelect from '@/components/AreaSelect'
 import SelectInputForCity from '@/components/SelectInputForCity'
 import FontIcon from '@/components/FontIcon'
 export default {
@@ -329,12 +328,14 @@ export default {
       })
     },
     editRule (item) {
+      console.log(item)
       const _this = this
       this.openDialog({
         name: 'finance/dialogs/editRule',
         data: {
           scene: this.active,
           ruleId: item.ruleId,
+          ruleType: item.detail.ruleType,
           createRuleForm: {
             ruleName: item.ruleName
           }
@@ -401,7 +402,17 @@ export default {
       })
     },
     removeItem (index) {
-      this.ruleDetail.details.splice(index, 1)
+      // this.ruleDetail.details.splice(index, 1)
+      let _this = this
+      this.$Modal.confirm({
+        title: '提示',
+        content: '确认删除该条规则吗？',
+        okText: '确认',
+        cancelText: '取消',
+        onOk () {
+          _this.ruleDetail.details.splice(index, 1)
+        }
+      })
     },
     formValidate (ref) {
       return new Promise((resolve, reject) => {
@@ -595,6 +606,10 @@ export default {
         overflow: auto
         padding: 20px 0
         border-bottom: 1px solid #E4E7EC
+        margin-right -15px
+        margin-left -11px
+        padding-left 11px
+        padding-right 15px
         .rule-item
           display: flex
           margin-bottom: 30px
@@ -721,15 +736,6 @@ export default {
         text-align center
     .left_father
       flex 0 0 275px
-      /*&:after*/
-        /*content ''*/
-        /*display block*/
-        /*width 1px*/
-        /*height 20px*/
-        /*position fixed*/
-        /*bottom 15px*/
-        /*left 509px*/
-        /*border-right 1px solid #C9CED9*/
     .left
       display flex
       flex-direction column
@@ -739,11 +745,12 @@ export default {
         border-right 1px solid #E4E7EC
       .ruleList
         border-top 1px solid #E4E7EC
-        overflow auto
+        overflow hidden
         flex 1
         border-right 1px solid #E4E7EC
-        margin-left -20px
-        margin-bottom -20px
+        margin-left -15px
+        &:hover
+          overflow auto
         .list
           list-style none
           height 60px
@@ -759,6 +766,15 @@ export default {
           .icon
             flex 0 0 60px
             text-align center
+            position relative
+            &:after
+              position absolute
+              bottom -1px
+              content ''
+              display block
+              height 1px
+              width 15px
+              border-top  1px solid #fff
             i
               display inline-block
               width 30px
@@ -766,6 +782,8 @@ export default {
               background #f9f9f9
               border-radius 50%
               line-height 30px
+              &:after
+                border none
           .content
             flex 1
             font-size 12px

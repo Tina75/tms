@@ -77,7 +77,7 @@
         <div>
           <SelectInputForCity v-model="seniorSearchFields.start" placeholder="请输入始发地" class="search-input-senior" />
           <SelectInputForCity v-model="seniorSearchFields.end" placeholder="请输入目的地" class="search-input-senior" />
-          <DatePicker v-model="seniorSearchFields.dateRange" type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
+          <DatePicker v-model="seniorSearchFields.dateRange" :options="timeOption" type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
         </div>
         <div>
           <Button type="primary"
@@ -170,27 +170,52 @@ export default {
       tableActionColumn: {
         title: '操作',
         key: 'action',
-        width: 120,
+        width: 80,
         fixed: 'left',
         extra: true,
         render: (h, p) => {
+          let renderBtn = []
           if (p.row.status === 1 && this.hasPower(120301)) {
-            return h('a', {
-              on: {
-                click: () => {
-                  this.billShipment([p.row.transId])
+            renderBtn.push(
+              h('a', {
+                style: {
+                  marginRight: '25px'
+                },
+                on: {
+                  click: () => {
+                    this.billShipment([p.row.transId])
+                  }
                 }
-              }
-            }, '发运')
-          } else if (p.row.status === 2 && this.hasPower(120302)) {
-            return h('a', {
-              on: {
-                click: () => {
-                  this.billArrived([p.row.transId])
-                }
-              }
-            }, '到货')
+              }, '发运')
+            )
           }
+          if (p.row.status === 2 && this.hasPower(120302)) {
+            renderBtn.push(
+              h('a', {
+                style: {
+                  marginRight: '25px'
+                },
+                on: {
+                  click: () => {
+                    this.billArrived([p.row.transId])
+                  }
+                }
+              }, '到货')
+            )
+          }
+          // 隐藏上报异常按钮
+          // if (this.hasPower(120306)) {
+          //   renderBtn.push(
+          //     h('a', {
+          //       on: {
+          //         click: () => {
+          //           this.openAbnormalDialog(p.row.transId)
+          //         }
+          //       }
+          //     }, '上报异常')
+          //   )
+          // }
+          return h('div', renderBtn)
         }
       },
 
@@ -338,6 +363,23 @@ export default {
         method: 'post',
         data,
         fileName: '外转单明细'
+      })
+    },
+
+    // 上报异常
+    openAbnormalDialog (id) {
+      const self = this
+      self.openDialog({
+        name: 'transport/dialog/abnormal',
+        data: {
+          id,
+          type: 2 // 单据类型 1 提货单 2 外转单 3 运单
+        },
+        methods: {
+          complete () {
+            self.clearSelectedAndFetch()
+          }
+        }
       })
     }
   }

@@ -371,7 +371,7 @@ export function carrierListCar (data) {
     headers: {
       'Content-Type': 'application/json'
     },
-    method: 'GET',
+    method: 'POST',
     data: data
   })
 }
@@ -463,7 +463,7 @@ export function carrierUpdateVehicle (data) {
 // 查询操作日制
 export function carrierQueryLog (data) {
   return server({
-    url: '/carrier//carrierLog/list',
+    url: '/carrier/carrierLog/list',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -500,6 +500,18 @@ export function carrierQueryDriverlist (data) {
 export function carrierDeleteRepairVehicle (data) {
   return server({
     url: '/carrier/repair/del',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'post',
+    data: data
+  })
+}
+
+// 删除车辆维修及记录
+export function getCarrierNumberCount (data) {
+  return server({
+    url: '/carrier/getCarriersCarNumAndRepairNum',
     headers: {
       'Content-Type': 'application/json'
     },

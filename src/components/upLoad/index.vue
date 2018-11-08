@@ -1,57 +1,104 @@
 <template>
   <div id="uploadFile">
-    <div v-if="uploadImg" class="demo-upload-list">
-      <template v-if="progress === 1">
-        <img :src="uploadImg">
-        <div class="demo-upload-list-cover">
-          <div style="cursor: pointer;" @click="handleView">
-            <div class="eye-circle">
-              <FontIcon type="ico_see" size="16" color="#fff"></FontIcon>
+    <div v-if="multiple" style="width: 500px;">
+      <div v-for="(pic, index) in uploadImgList" :key="index" class="demo-upload-list">
+        <template v-if="pic.progress === 1">
+          <img :src="pic.url">
+          <div class="demo-upload-list-cover">
+            <div style="cursor: pointer;" @click="handleView(index)">
+              <div class="eye-circle">
+                <FontIcon type="ico_see" size="16" color="#fff"></FontIcon>
+              </div>
+              <div class="icon-letter">预览大图</div>
             </div>
-            <div class="icon-letter">预览大图</div>
+            <div style="cursor: pointer;" @click="handleRemove(index)">
+              <div class="eye-circle">
+                <FontIcon type="ico_see" size="16" color="#fff"></FontIcon>
+              </div>
+              <div class="icon-letter">删除</div>
+            </div>
           </div>
-          <div style="position: relative;cursor: pointer">
-            <div style="cursor: pointer">
+        </template>
+        <template v-else>
+          <Progress :percent="pic.progress * 100" hide-info></Progress>
+        </template>
+      </div>
+      <div v-if="uploadImgList.length < 6" class="ivu-upload" style="display: inline-block; width: 160px;">
+        <div class="ivu-upload ivu-upload-drag">
+          <input
+            ref="fileInput"
+            :multiple="multiple"
+            type="file"
+            class="ivu-upload-input"
+            accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
+            @change="doUpload">
+          <div style="width: 160px;height: 90px;">
+            <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%)">
               <div class="eye-circle">
                 <FontIcon type="ico_add2" size="14" color="#fff"></FontIcon>
               </div>
-              <input
-                ref="fileInput"
-                :multiple="multiple"
-                type="file"
-                class="ivu-upload-input-icon"
-                accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
-                @change="doUpload">
+              <div class="icon-letter" style="color: #00A4BD;">点击上传</div>
             </div>
-            <div class="icon-letter">重新上传</div>
           </div>
         </div>
-      </template>
-      <template v-else>
-        <Progress :percent="progress * 100" hide-info></Progress>
-      </template>
+      </div>
     </div>
-    <div v-else class="ivu-upload" style="display: inline-block; width: 160px;">
-      <div class="ivu-upload ivu-upload-drag">
-        <input
-          ref="fileInput"
-          :multiple="multiple"
-          type="file"
-          class="ivu-upload-input"
-          accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
-          @change="doUpload">
-        <div style="width: 160px;height: 90px;">
-          <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%)">
-            <div class="eye-circle">
-              <FontIcon type="ico_add2" size="14" color="#fff"></FontIcon>
+    <div v-else>
+      <div v-if="uploadImg" class="demo-upload-list">
+        <template v-if="progress === 1">
+          <img :src="uploadImg">
+          <div class="demo-upload-list-cover">
+            <div style="cursor: pointer;" @click="handleView">
+              <div class="eye-circle">
+                <FontIcon type="ico_see" size="16" color="#fff"></FontIcon>
+              </div>
+              <div class="icon-letter">预览大图</div>
             </div>
-            <div style="color: #00A4BD;margin-top: 6px;">点击上传</div>
+            <div style="position: relative;cursor: pointer">
+              <div style="cursor: pointer">
+                <div class="eye-circle">
+                  <FontIcon type="ico_add2" size="14" color="#fff"></FontIcon>
+                </div>
+                <input
+                  ref="fileInput"
+                  :multiple="multiple"
+                  type="file"
+                  class="ivu-upload-input-icon"
+                  accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
+                  @change="doUpload">
+              </div>
+              <div class="icon-letter">重新上传</div>
+            </div>
+          </div>
+        </template>
+        <template v-else>
+          <Progress :percent="progress * 100" hide-info></Progress>
+        </template>
+      </div>
+      <div v-else class="ivu-upload" style="display: inline-block; width: 160px;">
+        <div class="ivu-upload ivu-upload-drag">
+          <input
+            ref="fileInput"
+            :multiple="multiple"
+            type="file"
+            class="ivu-upload-input"
+            accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
+            @change="doUpload">
+          <div style="width: 160px;height: 90px;">
+            <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%)">
+              <div class="eye-circle">
+                <FontIcon type="ico_add2" size="14" color="#fff"></FontIcon>
+              </div>
+              <div class="icon-letter" style="color: #00A4BD;">点击上传</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
     <Modal v-model="visible" title="查看图片">
-      <img :src="uploadImg" style="width: 100%">
+      <img v-if="multiple" :src="curImg" style="width: 100%">
+      <img v-else :src="uploadImg" style="width: 100%">
+      <div slot="footer" style="text-align: center;"></div>
     </Modal>
   </div>
 </template>
@@ -83,7 +130,9 @@ export default {
       ossClient: null,
       ossDir: '',
       progress: 0,
-      uploadImg: '',
+      uploadImg: '', // 单图上传
+      uploadImgList: [], // 多图上传
+      curImg: '', // 当前操作的图片
       visible: false,
       viewUrl: ''
     }
@@ -127,39 +176,15 @@ export default {
     },
     async doUpload (e) {
       const files = e.target.files
+      console.log(files)
       if (!files || files.length === 0) {
         return false
       }
-      const file = files[0]
-      if (file.name.length > 58) {
-        this.$Message.warning('上传文件名长度请勿超过58位')
-        this.$refs.fileInput.value = null
-        return
+      if (this.multiple) {
+        await this.multipleUpload(e, files)
+      } else {
+        await this.singleUpload(e, files)
       }
-      console.log(file)
-      if (file.size > this.maxSize * 1024 * 1024) {
-        this.$Message.warning(`图片大小不能超过${this.maxSize}M`)
-        this.$refs.fileInput.value = null
-        return
-      }
-      this.uploadImg = ' '
-      try {
-        const uploadResult = await this.uploadFile(file)
-        console.log(uploadResult)
-        this.uploadImg = uploadResult.res.requestUrls[0].split('?')[0]
-        this.$Message.success({ content: '上传成功', duration: 3 })
-      } catch (error) {
-        if (error.code === 'InvalidAccessKeyId' || error.code === 'InvalidBucketName') {
-          // token失效过期了
-          this.$Message.info({ content: '重新获取认证信息，正在上传', duration: 3 })
-          await this.initOssInstance()
-          this.doUpload(e)
-        } else {
-          // console.error('导入订单', error)
-          this.$Message.error({ content: '上传图片失败', duration: 3 })
-        }
-      }
-      this.$refs.fileInput.value = null
     },
     async uploadFile (file) {
       const vm = this
@@ -194,8 +219,85 @@ export default {
         }
       }
     },
-    handleView (name) {
+    // 单图上传
+    async singleUpload (e, files) {
+      const file = files[0]
+      if (file.name.length > 58) {
+        this.$Message.warning('上传文件名长度请勿超过58位')
+        this.$refs.fileInput.value = null
+        return
+      }
+      console.log(file)
+      if (file.size > this.maxSize * 1024 * 1024) {
+        this.$Message.warning(`图片大小不能超过${this.maxSize}M`)
+        this.$refs.fileInput.value = null
+        return
+      }
+      this.uploadImg = ' '
+      try {
+        const uploadResult = await this.uploadFile(file)
+        console.log(uploadResult)
+        this.uploadImg = uploadResult.res.requestUrls[0].split('?')[0]
+        this.$Message.success({ content: '上传成功', duration: 3 })
+      } catch (error) {
+        if (error.code === 'InvalidAccessKeyId' || error.code === 'InvalidBucketName') {
+          // token失效过期了
+          this.$Message.info({ content: '重新获取认证信息，正在上传', duration: 3 })
+          await this.initOssInstance()
+          this.doUpload(e)
+        } else {
+          // console.error('导入订单', error)
+          this.$Message.error({ content: '上传图片失败', duration: 3 })
+        }
+      }
+      this.$refs.fileInput.value = null
+    },
+    // 多图上传
+    async multipleUpload (e, files) {
+      if ((files.length + this.uploadImgList.length) > 6) {
+        this.$Message.warning('图片最多上传6张')
+        this.$refs.fileInput.value = null
+        return
+      }
+      for (let i = 0; i < files.length; i++) {
+        if (files[i].name.length > 58) {
+          this.$Message.warning('上传文件名长度请勿超过58位')
+          this.$refs.fileInput.value = null
+          return
+        }
+        if (files[i].size > this.maxSize * 1024 * 1024) {
+          this.$Message.warning(`图片大小不能超过${this.maxSize}M`)
+          this.$refs.fileInput.value = null
+          return
+        }
+        try {
+          const uploadResult = await this.uploadFile(files[i])
+          console.log(uploadResult)
+          this.uploadImgList.push({ url: uploadResult.res.requestUrls[0].split('?')[0], progress: this.progress })
+          this.$Message.success({ content: '上传成功', duration: 3 })
+          // this.$refs.fileInput.value = null
+        } catch (error) {
+          if (error.code === 'InvalidAccessKeyId' || error.code === 'InvalidBucketName') {
+            // token失效过期了
+            this.$Message.info({ content: '重新获取认证信息，正在上传', duration: 3 })
+            await this.initOssInstance()
+            this.doUpload(e)
+          } else {
+            // console.error('导入订单', error)
+            this.$Message.error({ content: '上传图片失败', duration: 3 })
+          }
+        }
+      }
+      this.$refs.fileInput.value = null
+    },
+    // 预览
+    handleView (i) {
       this.visible = true
+      this.multiple && (this.curImg = this.uploadImgList[i].url)
+    },
+    // 删除
+    handleRemove (i) {
+      this.uploadImgList.splice(i, 1)
     }
   }
 }
@@ -261,12 +363,12 @@ export default {
   border-radius 50%
   background-color #00A4BD
 .icon-letter
-  height 17px
+  height 22px
   font-size 12px
   font-family 'PingFangSC-Regular'
   font-weight 400
   color rgba(255,255,255,0.8)
-  line-height 17px
+  line-height 22px
 </style>
 <style lang="stylus">
 #uploadFile .ivu-upload input[type=file]

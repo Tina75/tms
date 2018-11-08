@@ -658,7 +658,7 @@ export default {
           )
         }
         // 外转按钮
-        if (r.transStatus === 0 && r.pickup !== 1 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0) {
+        if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0) {
           renderBtn.push(
             { name: '外转', value: 4, code: 120111 }
           )

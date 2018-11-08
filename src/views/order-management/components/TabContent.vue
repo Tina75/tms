@@ -230,7 +230,7 @@ export default {
              *    编辑： 无编辑按钮           //【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
              * 2、待调度状态下：（status: 20）
              *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）&& （未被调度：dispatchStatus=0）】显示
-             *    外转：【（未外转：transStatus=0） && （不是上门提货：pickup !== 1） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被调度：dispatchStatus=0）】显示
+             *    外转：【（未外转：transStatus=0） && （不是上门提货：pickup !== 1）备注：v1.3版本 上门提货完可以外转 && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被调度：dispatchStatus=0）】显示
              *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被调度：dispatchStatus=0）】显示
              *    删除：【（不是上门提货：pickup !== 1） && （未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （被拆单后的父单：disassembleStatus=1）】显示
              *    编辑：【（未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
@@ -325,7 +325,7 @@ export default {
                 )
               }
               // 外转按钮
-              if (r.transStatus === 0 && r.pickup !== 1 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0 && this.hasPower(120111)) {
+              if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0 && this.hasPower(120111)) {
                 renderBtn.push(
                   h('a', {
                     style: {

@@ -28,7 +28,13 @@ export default {
 
       tableSelection: [], // 表格的选中项
 
-      printData: [] // 待打印数据
+      printData: [], // 待打印数据
+
+      timeOption: {
+        disabledDate (date) {
+          return date && date.valueOf() > Date.now() // 过滤当前日期之后的日期
+        }
+      }
     }
   },
 
@@ -72,7 +78,7 @@ export default {
         this.tabChanged(tab)
       } else {
         this.tabStatus = this.setTabStatus(this.tabList[0].name)
-        if (this.tabType === 'OUTER') this.currentBtns = this.btnList[0].btns
+        if (this.tabType === 'OUTER' || this.tabType === 'ABNORMAL') this.currentBtns = this.btnList[0].btns
         this.fetchData()
       }
     },
@@ -140,7 +146,7 @@ export default {
       if (this.easySearchKeyword === '') return
       this.easySearchKeyword = ''
       if (!this.inSearching) return
-      this.page.current = 1
+      this.page.currentcurrent = 1
       this.inSearching = false
       this.fetchData()
     },
@@ -177,7 +183,7 @@ export default {
       this.resetEasySearch()
       this.resetSeniorSearch()
       // 搜索与查询
-      if ((this.tabType === 'OUTER') || (this.tabType !== 'OUTER' && this.tabStatus)) this.fetchData()
+      if ((this.tabType === 'ABNORMAL') || (this.tabType === 'OUTER') || (this.tabType !== 'OUTER' && this.tabStatus)) this.fetchData()
       else this.fetchTabCount && this.fetchTabCount()
     },
 
@@ -215,8 +221,18 @@ export default {
       if (this.inSearching) {
         if (this.isEasySearch) {
           if (this.easySearchKeyword) {
-            params.type = this.easySelectMode
-            params.keyWord = this.easySearchKeyword
+            if (this.$route.path === '/transport/abnormalOrder') { // 区别异常管理和其他页面简单搜索
+              if (this.easySelectMode === 1) {
+                params.billNo = this.easySearchKeyword
+              } else if (this.easySelectMode === 2) {
+                params.carrierName = this.easySearchKeyword
+              } else if (this.easySelectMode === 3) {
+                params.carNo = this.easySearchKeyword
+              }
+            } else {
+              params.type = this.easySelectMode
+              params.keyWord = this.easySearchKeyword
+            }
           }
         } else {
           if (this.seniorSearchFields.dateRange[0]) {

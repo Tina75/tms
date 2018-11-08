@@ -35,6 +35,11 @@
         <div v-if="showSlotFooter" slot="footer">
           <slot name="footer"></slot>
         </div>
+        <div slot="loading">
+          <Spin>
+            <img src="../../assets/loading.gif" width="24" height="24" alt="加载中">
+          </Spin>
+        </div>
         <div v-if="showSlotHeader" slot="header">
           <slot name="header"></slot>
         </div>
@@ -104,11 +109,6 @@ export default {
       type: String,
       default: 'id'
     },
-    // 已经选中的数据 id 列表，会根据上面给的rowid参数，判断数据是否选中
-    // selected: {
-    //   type: Array,
-    //   default: () => []
-    // },
     // 请求的地址
     url: String,
     // 部分接口查询方法可能是post
