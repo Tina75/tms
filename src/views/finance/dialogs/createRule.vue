@@ -8,7 +8,7 @@
         </FormItem>
         <FormItem :label="sceneMap[scene] + '：'" prop="partnerName">
           <Select v-model="createRuleForm.partnerName">
-            <Option v-for="(item, index) in partnerList" :key="index" :value="item">{{item}}</Option>
+            <Option v-for="(item, index) in partnerList" :key="index" :value="item.name">{{item.name}}</Option>
           </Select>
         </FormItem>
       </Form>
@@ -69,6 +69,14 @@ export default {
         this.partnerList = res.data.data
       }).catch(err => console.error(err))
     },
+    takePartnerId (value) {
+      for (let i = 0; i < this.partnerList.length; i++) {
+        if (value === this.partnerList[i].name) {
+          return this.partnerList[i].id
+        }
+      }
+      return ''
+    },
     save () {
       this.$refs['createRuleForm'].validate((valid) => {
         if (valid) {
@@ -77,6 +85,7 @@ export default {
             method: 'post',
             data: {
               partnerName: this.createRuleForm.partnerName,
+              partnerId: this.takePartnerId(this.createRuleForm.partnerName),
               partnerType: this.scene,
               ruleName: this.createRuleForm.ruleName
             }

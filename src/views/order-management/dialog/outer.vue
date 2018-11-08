@@ -143,10 +143,21 @@ export default {
     showChargeRules () {
       const self = this
       if (self.info.transfereeName) {
+        const transfereeItem = this.transferees.find(transferee => transferee.value === self.info.transfereeName)
+        if (!transfereeItem) {
+          this.$Message.warning('您选择或输入的外转方没有维护的计费规则')
+          return
+        }
+        let transfereeId = transfereeItem.id
+        if (!transfereeId) {
+          this.$Message.warning('您选择或输入的外转方没有维护的计费规则')
+          return
+        }
         this.openDialog({
           name: 'dialogs/financeRule',
           data: {
             partnerName: self.info.transfereeName,
+            partnerId: transfereeId, // 客户编号
             // 以下数据必传
             partnerType: 3, // 计费规则分类 - 发货方1 承运商2 外转方3
             weight: self.detail.weight, // 货物重量
@@ -168,7 +179,7 @@ export default {
           }
         })
       } else {
-        this.$Message.warning('请先选择外转方')
+        this.$Message.warning('请先选择或输入外转方')
       }
     }
   }

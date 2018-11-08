@@ -7,7 +7,9 @@
         <span class="msgConfigBtn">删除</span>
       </Button>
     </p>
-    <div v-html="messageInfo.content"></div>
+    <div class="ql-editor">
+      <div v-html="messageInfo.content"></div>
+    </div>
     <Modal v-model="visibaleRemove" type="warning" width="360">
       <p slot="header" class="modalTitle">
         <span>提示</span>

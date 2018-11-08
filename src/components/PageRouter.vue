@@ -51,7 +51,7 @@ export default {
   methods: {
     loadPage: function (data, noCache) {
       var path = this.getPath()
-      let key = `${pagePrex}${path.replace('/', '-')}`
+      let key = `${pagePrex}${path.replace(/\//g, '-')}`
       if (this.componentCache[key] && !noCache) {
         console.log('from cache ' + key)
         this.current = this.componentCache[key]

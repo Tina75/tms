@@ -181,7 +181,7 @@
           </i-col>
           <i-col span="10" offset="1">
             <span class="detail-field-title">承运商：</span>
-            <SelectInput v-model="info.carrierName"
+            <SelectInput ref="carrierInput" v-model="info.carrierName"
                          class="detail-info-input"
                          mode="carrier"
                          @on-select="selectCarrierHandler" />
@@ -631,17 +631,28 @@ export default {
     showChargeRules () {
       const self = this
       if (!self.info.carrierName) {
-        this.$Message.error('请先选择承运商')
+        this.$Message.error('请先选择或输入承运商')
         return
       }
       if (!self.detail.length) {
         this.$Message.error('请先添加订单')
         return
       }
+      const carrierItem = this.$refs.carrierInput.options.find(carrier => carrier.carrierName === self.info.carrierName)
+      if (!carrierItem) {
+        this.$Message.warning('您选择或输入的承运商没有维护的计费规则')
+        return
+      }
+      let carrierId = carrierItem.id
+      if (!carrierId) {
+        this.$Message.warning('您选择或输入的承运商没有维护的计费规则')
+        return
+      }
       this.openDialog({
         name: 'dialogs/financeRule',
         data: {
           // 以下数据必传
+          partnerId: carrierId,
           partnerType: 2, // 计费规则分类 - 发货方1 承运商2 外转方3
           partnerName: self.info.carrierName, // 名称
           weight: self.orderTotal.weight, // 货物重量

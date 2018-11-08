@@ -10,7 +10,7 @@
         </Col>
       </Row>
     </div>
-    <Input ref="input" v-model="inputValue" placeholder="请选择时间" readonly clearable/>
+    <Input ref="input" v-model="inputValue" placeholder="请选择时间" readonly clearable @keydown.tab.native="visible = false"/>
   </Poptip>
 </template>
 <script>
