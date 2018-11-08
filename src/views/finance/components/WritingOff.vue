@@ -376,9 +376,10 @@ export default {
     writeOff (data) {
       Server({
         url: '/finance/verify/checkOrder',
-        method: 'get',
+        method: 'post',
         params: {
-          orderId: data.row.id
+          id: data.row.id,
+          verifyType: 1
         }
       }).then(res => {
         if (res.data.data === '') {
