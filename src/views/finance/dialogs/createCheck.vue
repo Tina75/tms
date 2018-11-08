@@ -52,12 +52,12 @@ export default {
           // 存在异常
           this.$Toast.warning({
             title: '对账',
+            content: '以下单据存在异常，无法生成对账单',
             render: (h) => {
               const list = res.data.data.orderNos.length > 0 ? res.data.data.orderNos.map(item => {
                 return h('p', item)
               }) : []
               return h('div', [
-                h('p', '以下单据存在异常，无法对账单'),
                 ...list
               ])
             },
