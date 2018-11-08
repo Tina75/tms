@@ -81,6 +81,8 @@ html, body
   color #2c3e50
   width 100%
   height 100%
+  .sider
+    float: left
   .ivu-layout-sider-children .ivu-menu-dark .ivu-menu-item
     max-height 49px
   .container
@@ -88,6 +90,7 @@ html, body
     background #EFEFEF
     flex-direction row
     overflow hidden
+    float: left
     .right-con
       z-index 10
 </style>
