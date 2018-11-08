@@ -265,27 +265,58 @@ export default {
     setOrderIds (data) {
       this.selectedIds = data.map(item => item.id)
     },
-    createBill () {
+    createBillOk () {
       const _this = this
+      this.openDialog({
+        name: 'finance/dialogs/createCheck',
+        data: {
+          idList: this.selectedIds,
+          partnerName: this.currentPartner.partnerName,
+          orderNum: this.currentPartner.orderNum,
+          dayType: this.writingOffQuerySave.periodType,
+          startTime: this.writingOffQuerySave.startTime || '',
+          endTime: this.writingOffQuerySave.endTime || '',
+          partnerType: this.scene
+        },
+        methods: {
+          ok () {
+            this.$Message.success('创建成功')
+            _this.loadData()
+          }
+        }
+      })
+    },
+    createBill () {
       if (this.selectedIds.length > 1) {
-        this.openDialog({
-          name: 'finance/dialogs/createCheck',
+        Server({
+          url: '/finance/reconcile/checkReconcile',
+          method: 'post',
           data: {
             idList: this.selectedIds,
-            partnerName: this.currentPartner.partnerName,
-            orderNum: this.currentPartner.orderNum,
-            dayType: this.writingOffQuerySave.periodType,
-            startTime: this.writingOffQuerySave.startTime || '',
-            endTime: this.writingOffQuerySave.endTime || '',
-            partnerType: this.scene
-          },
-          methods: {
-            ok () {
-              this.$Message.success('创建成功')
-              _this.loadData()
-            }
+            partnerType: this.scene,
+            partnerName: this.currentPartner.partnerName
           }
-        })
+        }).then(res => {
+          if (res.data.data === '') {
+            this.createBillOk()
+          } else if (res.data.data && res.data.data.operateCode === 1) {
+            // 存在异常
+            this.$Toast.warning({
+              title: '对账',
+              content: '以下单据存在异常，无法生成对账单',
+              render: (h) => {
+                const list = res.data.data.orderNos.length > 0 ? res.data.data.orderNos.map(item => {
+                  return h('p', item)
+                }) : []
+                return h('div', [
+                  ...list
+                ])
+              },
+              okText: '确认',
+              cancelText: '取消'
+            })
+          }
+        }).catch(err => console.error(err))
       } else {
         this.$Message.warning('请选择2条以上的数据')
       }
@@ -303,7 +334,7 @@ export default {
       }
       this.startQuery()
     },
-    writeOff (data) {
+    writeOffOk (data) {
       const _this = this
       if (data.row.isMultiPay) {
         // 多段付
@@ -341,6 +372,22 @@ export default {
           }
         })
       }
+    },
+    writeOff (data) {
+      Server({
+        url: '/finance/verify/checkOrder',
+        method: 'get',
+        params: {
+          orderId: data.row.id
+        }
+      }).then(res => {
+        if (res.data.data === '') {
+          this.writeOffOk(data)
+        } else if (res.data.data && res.data.data.operateCode === 1) {
+          // 存在异常
+          this.$Message.error('此单存在异常不能核销')
+        }
+      })
     },
     toDetail (data) {
       switch (data.row.orderType) {

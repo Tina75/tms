@@ -802,6 +802,5 @@ export default {
             display none
             flex 0 0 80px
             cursor pointer
-            border-bottom 1px solid #DCDEE2
             color #00A4BD
 </style>
