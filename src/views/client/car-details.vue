@@ -107,13 +107,13 @@
           <Row class="row">
             <Col span="5">
             <div v-if="infoData.travelPhoto">
-              <img :src="infoData.travelPhoto" class="imageDiv"/>
+              <img :style="'height: 90px;background-image: url(' + infoData.travelPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv"/>
               <p class="uploadLabel">行驶证</p>
             </div>
             </Col>
             <Col span="6">
             <div v-if="infoData.drivePhoto">
-              <img :src="infoData.drivePhoto" class="imageDiv"/>
+              <img :style="'height: 90px;background-image: url(' + infoData.drivePhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv"/>
               <p class="uploadLabel">驾驶证</p>
             </div>
             </Col>
