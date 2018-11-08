@@ -119,7 +119,7 @@
               </Row>
               <Row v-else>
                 <label>外转运费：</label>
-                <span :class="{'red-col': compareFee(data.beforeFeeInfo.loadFee, data.afterFeeInfo.loadFee)}">{{data.afterFeeInfo.freightFee | Money}}元</span>
+                <span :class="{'red-col': compareFee(data.beforeFeeInfo.freightFee, data.afterFeeInfo.freightFee)}">{{data.afterFeeInfo.freightFee | Money}}元</span>
               </Row>
               <Table
                 v-if="billType != 2"
