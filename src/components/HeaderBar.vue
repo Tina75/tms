@@ -12,7 +12,7 @@
           <FontIcon v-else type="liucheng" size="25" color="#fff"></FontIcon>
         </span>
         <span class="header-bar-avator-dropdown-notify">
-          <Badge :count="MsgCount.all" type="primary">
+          <Badge :count="MsgCount.all" :offset="[5,1]" type="primary">
             <Icon type="ios-notifications" size="30" color="#fff" @click="openMsg(0)"></Icon>
           </Badge>
         </span>
