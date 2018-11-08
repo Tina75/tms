@@ -14,7 +14,7 @@
             </div>
             <div style="cursor: pointer;" @click="handleRemove(index)">
               <div class="eye-circle">
-                <FontIcon type="ico_see" size="16" color="#fff"></FontIcon>
+                <FontIcon type="ico_delete" size="16" color="#fff"></FontIcon>
               </div>
               <div class="icon-letter">删除</div>
             </div>
