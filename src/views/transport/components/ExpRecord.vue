@@ -315,7 +315,7 @@ export default {
       this.hideDetail = !this.hideDetail
     },
     compareFee (b, a) {
-      return b !== a
+      return moneyFormate(b) !== moneyFormate(a)
     },
     showImg (src) {
       this.visible = true
