@@ -3,7 +3,8 @@
     <div v-if="multiple" style="width: 500px;">
       <div v-for="(pic, index) in uploadImgList" :key="index" class="demo-upload-list">
         <template v-if="pic.progress === 1">
-          <img :src="pic.url">
+          <!-- <img :src="pic.url"> -->
+          <div :style="'height: 90px;background-image: url(' + pic.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"></div>
           <div class="demo-upload-list-cover">
             <div style="cursor: pointer;" @click="handleView(index)">
               <div class="eye-circle">
@@ -46,7 +47,8 @@
     <div v-else>
       <div v-if="uploadImg" class="demo-upload-list">
         <template v-if="progress === 1">
-          <img :src="uploadImg">
+          <!-- <img :src="uploadImg"> -->
+          <div :style="'height: 90px;background-image: url(' + uploadImg + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"></div>
           <div class="demo-upload-list-cover">
             <div style="cursor: pointer;" @click="handleView">
               <div class="eye-circle">
