@@ -98,7 +98,7 @@
           <span class="detail-field-title-sm" style="vertical-align: unset;padding-left: 8px;width: 90px;line-height: 1.6;">图片上传：</span>
           <div style="width: 100%;">
             <up-load ref="upLoads" :multiple="true" max-size="10"></up-load>
-            <p style="color: #999;font-family:PingFangSC-Regular;font-weight:400;line-height: 1.2;">图片格式必须为jpeg、jpg、gif、png，且最多上传6张，每张不能超过2MB！</p>
+            <p style="color: #999;font-family:PingFangSC-Regular;font-weight:400;line-height: 1.2;">图片格式必须为jpeg、jpg、gif、png，且最多上传6张，每张不能超过10MB！</p>
           </div>
         </i-col>
       </Row>
