@@ -7,7 +7,7 @@
       </p>
       <div style="display: flex;">
         <Icon type="ios-checkmark-circle" color="#00c185" size="28" style="margin-top: -3px;margin-right: 10px"></Icon>
-        <p class="content">异常信息上报成功，将会在异常管理菜单 下生成异常单，是否去查看异常单？</p>
+        <p class="content">异常信息上报成功，将会在异常管理菜单下生成异常单，是否去查看异常单？</p>
       </div>
       <div slot="footer">
         <Button  type="primary"  @click="save">是</Button>
@@ -32,10 +32,17 @@ export default {
 
   methods: {
     save () {
+      if (!this.hasPower(120400)) {
+        this.$Message.warning('您没有异常管理菜单权限，请联系系统管理员开通')
+        return
+      }
       this.close()
       this.openTab({
         title: '异常管理',
-        path: '/transport/abnormalOrder'
+        path: '/transport/abnormalOrder',
+        query: {
+          tab: 1
+        }
       })
     }
   }
