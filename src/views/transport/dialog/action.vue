@@ -8,7 +8,7 @@
       <Row class="detail-field-group">
         <i-col span="7">
           <span class="detail-field-title detail-field-required">承运商：</span>
-          <SelectInput v-model="info.carrierName"
+          <SelectInput ref="carrierInput" v-model="info.carrierName"
                        class="detail-info-input"
                        mode="carrier"
                        @on-select="selectCarrierHandler" />
@@ -191,12 +191,23 @@ export default {
     showChargeRules () {
       const self = this
       if (!self.info.carrierName) {
-        this.$Message.error('请先选择承运商')
+        this.$Message.error('请先选择或输入承运商')
+        return
+      }
+      const carrierItem = this.$refs.carrierInput.options.find(carrier => carrier.carrierName === self.info.carrierName)
+      if (!carrierItem) {
+        this.$Message.warning('您选择或输入的承运商没有维护的计费规则')
+        return
+      }
+      let carrierId = carrierItem.id
+      if (!carrierId) {
+        this.$Message.warning('您选择或输入的承运商没有维护的计费规则')
         return
       }
       this.openDialog({
         name: 'dialogs/financeRule',
         data: {
+          partnerId: carrierId,
           partnerType: 2,
           partnerName: self.info.carrierName,
           ...self.financeRulesInfo
