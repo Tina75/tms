@@ -41,7 +41,7 @@
             </div>
             <div class="msgContent" @click="clickContenInfo(msg)">
               <p class="msgContentTitle">{{msg.title}}</p>
-              <div class="msgContentDiv" v-html="msg.content"></div>
+              <div class="msgContentDiv" v-html="fiterContent(msg.content)"></div>
             </div>
             <div class="msgConfigDiv">
               <p style="color: #9DA1B0">{{ formatDate(msg.createTime) }}</p>
@@ -463,6 +463,9 @@ export default {
     chagePageSize (pagenum) {
       this.searchData.pageSize = pagenum
       this.getMenuList(this.searchData)
+    },
+    fiterContent (value) {
+      return value.replace(/<(\S*?)[^>]*>/g, '').trim() ? value.replace(/<(\S*?)[^>]*>/g, '') : '点击查看详情'
     }
   }
 }
