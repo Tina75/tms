@@ -254,7 +254,7 @@ export default {
         params: {
           partnerType: this.scene,
           partnerName: this.checkingOrderQuerySave.name,
-          orderByCreateTime: this.checkingOrderQuerySave.sortDesc ? 1 : 2,
+          orderByCreateTime: this.checkingOrderQuerySave.sortDesc ? 2 : 1,
           startTime: this.checkingOrderQuerySave.period[0] ? this.checkingOrderQuerySave.period[0].getTime() : '',
           endTime: this.checkingOrderQuerySave.period[1] ? this.checkingOrderQuerySave.period[1].getTime() + 86400000 : '',
           pageNo: this.checkingOrderQuerySave.pageNo,
