@@ -7,7 +7,7 @@
           <p>{{settleTypeDesc}}</p>
         </FormItem>
         <FormItem :label="scene === 1 ? '应收金额：' : '应付金额：'">
-          <p><span>{{needPay}}</span>元</p>
+          <p><span class="writeOffFormFee">{{needPay}}</span>元</p>
         </FormItem>
         <FormItem :label="scene === 1 ? '实收金额：' : '实付金额：'" prop="actualFee">
           <Input v-model="writeOffForm.actualFee" placeholder="请输入" />
@@ -130,6 +130,11 @@ export default {
 .write-off-form
   /deep/ textarea.ivu-input
     font-size: 12px
+  .writeOffFormFee
+    font-size 20px
+    color #00A4BD
+    font-weight 600
+    margin-right 3px
 .dialog-footer
   text-align center
   margin-top 30px

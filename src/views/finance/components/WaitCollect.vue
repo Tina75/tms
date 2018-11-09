@@ -57,7 +57,7 @@ export default {
             return this.hasPower(170501) ? h('a', {
               on: {
                 click: () => {
-                  this.checkOrder(params.row)
+                  this.writeOff(params.row)
                 }
               }
             }, '收款核销') : ''

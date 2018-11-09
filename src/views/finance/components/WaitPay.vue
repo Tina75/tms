@@ -1,9 +1,9 @@
 <template>
   <div class="wait-pay">
     <CollectForm  @on-search="handleSearch"></CollectForm>
-    <ReconcileLayout :columns="orderColumns" :data-source="orderList" title="发货方待付货款列表" empty-content="请点击左侧发货方列表查看待付货款列表哦～">
+    <ReconcileLayout :columns="orderColumns" :data-source="orderList" title="发货方代收款列表" empty-content="请点击左侧发货方列表查看待付货款列表哦～">
       <div slot="operation">
-        <Button type="primary">付款核销</Button>
+        <Button type="primary" @click="batchWriteOff">付款核销</Button>
       </div>
       <ListSender ref="senderList" :style="styles" list-key="partnerName" @on-click="handleClick">
         <ListSenderItem v-for="(item, name) in datas" :key="name" :item="item" :title="item.partnerName" :extra="item.orderNum" icon="ico-company">
@@ -57,7 +57,7 @@ export default {
             return this.hasPower(170502) ? h('a', {
               on: {
                 click: () => {
-                  this.checkOrder(params.row)
+                  this.writeOff(params.row)
                 }
               }
             }, '付款核销') : ''

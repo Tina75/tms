@@ -3,7 +3,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-11-09 16:48:31
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-11-09 17:58:09
+ * @Last Modified time: 2018-11-09 18:14:09
  */
 import _ from 'lodash'
 import server from '@/libs/js/server'
@@ -81,7 +81,7 @@ export default {
      * 核销
      * @param {} data
      */
-    writeOffOk (data) {
+    writeOff (data) {
       // 单笔核销
       this.openDialog({
         name: 'finance/dialogs/cargoFeeVerify',
@@ -96,41 +96,6 @@ export default {
             this.$Message.success('核销成功')
             this.fetch()
           }
-        }
-      })
-    },
-    /**
-     * 核销校验
-     */
-    checkOrder (data) {
-      server({
-        url: '/finance/verify/checkOrder',
-        method: 'post',
-        data: {
-          id: data.id,
-          verifyType: this.verifyType
-        }
-      }).then(res => {
-        if (res.data.data === '') {
-          this.writeOffOk(data)
-        } else if (res.data.data && res.data.data.operateCode === 1) {
-          // 存在异常
-          console.log(res.data.data.orderNos)
-          this.$Toast.warning({
-            title: '核销',
-            content: '以下单据存在异常，无法核销',
-            render: (h) => {
-              const list = res.data.data.orderNos.length > 0 ? res.data.data.orderNos.map(item => {
-                return h('p', item)
-              }) : []
-              console.log(list)
-              return h('div', [
-                ...list
-              ])
-            },
-            okText: '确认',
-            cancelText: '取消'
-          })
         }
       })
     },

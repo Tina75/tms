@@ -7,7 +7,7 @@
           <p>{{orderNum}}</p>
         </FormItem>
         <FormItem :label="verifyType === 1 ? '应收货款：' : '应付货款：'">
-          <p><span>{{needPay}}</span>元</p>
+          <p><span class="writeOffFormFee">{{needPay}}</span>元</p>
         </FormItem>
         <FormItem :label="verifyType === 1 ? '实收货款：' : '实付货款：'" prop="actualFee">
           <Input v-model="writeOffForm.actualFee" placeholder="请输入" />
@@ -128,6 +128,11 @@ export default {
 .write-off-form
   /deep/ textarea.ivu-input
     font-size: 12px
+  .writeOffFormFee
+    font-size 20px
+    color #00A4BD
+    font-weight 600
+    margin-right 3px
 .dialog-footer
   text-align center
   margin-top 30px
