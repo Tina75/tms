@@ -4,71 +4,169 @@
     :mask-closable="false"
     label-position="left"
     class="modal"
+    width="1020"
     @on-visible-change="close"
   >
     <p slot="header" style="text-align:center">{{title}}</p>
     <Form :model="validate.type" :rules="ruleValidate.type" :label-width="122">
-      <FormItem  label="类型:" prop="selectStatus">
-        <Select v-model="validate.type.selectStatus" :disabled="flag===2">
-          <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-        </Select>
+      <FormItem  label="承运商类型:" prop="selectStatus">
+        <RadioGroup v-model="validate.type.selectStatus">
+          <Radio label="1">
+            <span>个体司机</span>
+          </Radio>
+          <Radio label="2" style="margin-left: 35px;">
+            <span>运输公司</span>
+          </Radio>
+        </RadioGroup>
       </FormItem>
     </Form>
     <!--个体司机-->
     <Form v-show="validate.type.selectStatus == 1" ref="validateDriver" :model="validate.driver" :rules="ruleValidate.driver" :label-width="122">
-      <FormItem label="司机姓名:" prop="driverName">
-        <Input v-model="validate.driver.driverName" :maxlength="15" placeholder="请输入"/>
-      </FormItem>
-      <FormItem label="手机号码" prop="driverPhone">
-        <Input v-model="validate.driver.driverPhone" :maxlength="11" placeholder="请输入"/>
-      </FormItem>
-      <FormItem label="车牌号" prop="carNO">
-        <Input v-model="validate.driver.carNO" placeholder="请输入"/>
-      </FormItem>
-      <FormItem label="车型:" prop="carType">
-        <Select v-model="validate.driver.carType" >
-          <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
-        </Select>
-      </FormItem>
-      <FormItem label="车长:" prop="carLength">
-        <Select v-model="validate.driver.carLength" >
-          <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
-        </Select>
-      </FormItem>
-      <FormItem label="核定载重量:" prop="shippingWeight">
-        <Input v-model="validate.driver.shippingWeight" placeholder="请输入"/>吨
-      </FormItem>
-      <FormItem label="车载容积:" class="ivu-form-item-required blank" prop="shippingVolume">
-        <Input v-model="validate.driver.shippingVolume" placeholder="请输入"/>方
-      </FormItem>
-      <FormItem label="结算方式:" class="ivu-form-item-required blank">
-        <Select v-model="validate.driver.payType" clearable>
-          <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
-        </Select>
-      </FormItem>
-      <FormItem label="备注:" class="ivu-form-item-required blank">
-        <Input v-model="validate.driver.remark" :autosize="{minRows: 2,maxRows: 5}" :maxlength="100" type="textarea"  placeholder="请输入"/>
-      </FormItem>
+      <p class="modalTitle">基础信息</p>
+      <Row>
+        <Col :span="8">
+        <FormItem label="司机姓名:" prop="driverName">
+          <Input v-model="validate.driver.driverName" :maxlength="15" placeholder="请输入"/>
+        </FormItem>
+        </Col>
+        <Col :span="8">
+        <FormItem label="手机号" prop="driverPhone">
+          <Input v-model="validate.driver.driverPhone" :maxlength="11" placeholder="请输入"/>
+        </FormItem>
+        </Col>
+        <Col :span="8">
+        <FormItem label="车牌号" prop="carNO">
+          <Input v-model="validate.driver.carNO" :maxlength="8" placeholder="请输入"/>
+        </FormItem>
+        </Col>
+      </Row>
+      <Row>
+        <Col :span="8">
+        <FormItem label="车型:" prop="carType">
+          <Select v-model="validate.driver.carType" >
+            <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
+          </Select>
+        </FormItem>
+        </Col>
+        <Col :span="8">
+        <FormItem label="车长:" prop="carLength">
+          <Select v-model="validate.driver.carLength" >
+            <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
+          </Select>
+        </FormItem>
+        </Col>
+        <Col :span="8">
+        <FormItem label="载重:" prop="shippingWeight">
+          <Input v-model="validate.driver.shippingWeight" :maxlength="9" placeholder="请输入"/>吨
+        </FormItem>
+        </Col>
+      </Row>
+      <Row>
+        <Col :span="8">
+        <FormItem label="净空:" class="ivu-form-item-required blank" prop="shippingVolume">
+          <Input v-model="validate.driver.shippingVolume" :maxlength="9" placeholder="请输入"/>方
+        </FormItem>
+        </Col>
+        <Col :span="8">
+        <FormItem label="车辆品牌:" class="ivu-form-item-required blank">
+          <Input v-model="validate.carBrand" :maxlength="20" placeholder="如：东风"></Input>
+        </FormItem>
+        </Col>
+        <Col :span="8">
+        <FormItem label="结算方式:" class="ivu-form-item-required blank">
+          <Select v-model="validate.driver.payType" clearable>
+            <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
+          </Select>
+        </FormItem>
+        </Col>
+      </Row>
+      <p class="modalTitle">常跑线路</p>
+      <div class="lineDiv">
+        <Row>
+          <Col span="8">
+          <FormItem label="出发地1:">
+            <CitySelect ref="start" :code-type="codeType" v-model="address1.s" clearable></CitySelect>
+          </FormItem>
+          </Col>
+          <Col span="8" style="margin-left: 25px;">
+          <FormItem label="目的地1:">
+            <CitySelect ref="start" :code-type="codeType" v-model="address1.e" clearable></CitySelect>
+          </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col span="8">
+          <FormItem label="出发地2:">
+            <CitySelect ref="start" :code-type="codeType" v-model="address2.s" clearable></CitySelect>
+          </FormItem>
+          </Col>
+          <Col span="8" style="margin-left: 25px;">
+          <FormItem label="目的地2:">
+            <CitySelect ref="start" :code-type="codeType" v-model="address2.e" clearable></CitySelect>
+          </FormItem>
+          </Col>
+        </Row>
+      </div>
+      <p class="modalTitle">证件照</p>
+      <Row>
+        <Col span="5">
+        <up-load ref="upload1"></up-load>
+        <p :upload-img="validate.travelPhoto" class="uploadLabel">行驶证</p>
+        </Col>
+        <Col span="5">
+        <up-load ref="upload2"></up-load>
+        <p :upload-img="validate.drivePhoto" class="uploadLabel">驾驶证</p>
+        </Col>
+      </Row><br/>
+      <Row>
+        <p class="modalTitle">备注</p>
+        <Col :span="24">
+        <Input v-model="validate.driver.remark"
+               :autosize="{minRows: 2,maxRows: 5}"
+               :maxlength="100"
+               style="width:100%"
+               type="textarea"
+               placeholder="请输入"/>
+        </Col>
+      </Row>
     </Form>
     <!--运输公司-->
     <Form v-show="validate.type.selectStatus == 2" ref="validateCompany" :model="validate.company" :rules="ruleValidate.company" :label-width="122">
-      <FormItem label="承运商名称:" prop="carrierName">
-        <Input v-model="validate.company.carrierName" :maxlength="20" placeholder="请输入"/>
-      </FormItem>
-      <FormItem label="负责人:" prop="carrierPrincipal">
-        <Input v-model="validate.company.carrierPrincipal" :maxlength="15" placeholder="请输入"/>
-      </FormItem>
-      <FormItem label="联系电话:" prop="carrierPhone">
-        <Input v-model="validate.company.carrierPhone" :maxlength="11" placeholder="请输入"/>
-      </FormItem>
-      <FormItem label="结算方式:">
-        <Select v-model="validate.company.payType" clearable>
-          <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
-        </Select>
-      </FormItem>
-      <FormItem label="备注:" >
-        <Input v-model="validate.company.remark" :autosize="{minRows: 2,maxRows: 5}" :maxlength="100" type="textarea"  placeholder="请输入"/>
-      </FormItem>
+      <p class="modalTitle">基础信息</p>
+      <Row>
+        <Col span="8">
+        <FormItem label="承运商名称:" prop="carrierName">
+          <Input v-model="validate.company.carrierName" :maxlength="20" placeholder="请输入"/>
+        </FormItem>
+        </Col>
+        <Col span="8">
+        <FormItem label="负责人:" prop="carrierPrincipal">
+          <Input v-model="validate.company.carrierPrincipal" :maxlength="15" placeholder="请输入"/>
+        </FormItem>
+        </Col>
+        <Col span="8">
+        <FormItem label="联系电话:" prop="carrierPhone">
+          <Input v-model="validate.company.carrierPhone" :maxlength="11" placeholder="请输入"/>
+        </FormItem>
+        </Col>
+      </Row>
+      <Row>
+        <Col span="8">
+        <FormItem label="结算方式:">
+          <Select v-model="validate.company.payType" clearable>
+            <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
+          </Select>
+        </FormItem>
+        </Col>
+      </Row>
+      <p class="modalTitle">备注</p>
+      <Input
+        v-model="validate.company.remark"
+        :autosize="{minRows: 2,maxRows: 5}"
+        :maxlength="100"
+        style="width:100%"
+        type="textarea"
+        placeholder="请输入"/>
     </Form>
     <div v-if="validate.type.selectStatus == 1" slot="footer">
       <Button type="primary" @click="save('validateDriver')">确定</Button>
@@ -80,19 +178,25 @@
     </div>
   </Modal>
 </template>
-
 <script>
 import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
 import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, CODE, CAR } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
+import CitySelect from '@/components/SelectInputForCity'
+import UpLoad from '@/components/upLoad/'
 export default {
   name: 'carrier',
+  components: { CitySelect, UpLoad },
   mixins: [BaseDialog],
   data () {
     return {
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH,
       flag: 2,
+      codeType: 1,
+      address: [],
+      address1: {},
+      address2: {},
       payTypeMap: {
         1: '按单付',
         2: '月结'
@@ -110,7 +214,7 @@ export default {
       id: '',
       validate: {
         type: {
-          selectStatus: 1
+          selectStatus: '1'
         },
         driver: { // 1 个体司机
           driverName: '',
@@ -156,11 +260,11 @@ export default {
             { required: true, message: '车长不能为空', trigger: 'change' }
           ],
           shippingWeight: [
-            { required: true, message: '核定载重量不能为空', trigger: 'blur' },
-            { type: 'string', message: '必须为大于等于0的数字,最多两位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/, trigger: 'blur' }
+            { required: true, message: '载重不能为空' },
+            { message: '必须小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
           ],
           shippingVolume: [
-            { type: 'string', message: '必须为大于等于0的数字,最多两位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/, trigger: 'blur' }
+            { message: '必须小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
           ]
         },
         company: {
@@ -278,8 +382,10 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-  @import "../client.styl"
-  .ivu-input-wrapper,.ivu-select
-    width: 86%
-    margin-right 8px
+@import "../client.styl"
+.ivu-input-wrapper,.ivu-select
+  width: 86%
+  margin-right 8px
+.modalTitle
+  font-size: 14px;
 </style>

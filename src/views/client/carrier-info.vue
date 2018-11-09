@@ -1,61 +1,6 @@
 <template>
   <div v-if="carrierType === 1" class="info-detail">
-    <div class="info">
-      <div class="title">
-        <span class="icontTitle"></span>
-        <span class="iconTitleP">承运商信息</span>
-      </div>
-      <div class="list-info">
-        <Row class="row">
-          <Col span="8">
-          <div>
-            <span class="label">类型：</span>
-            个体司机
-          </div>
-          </Col>
-          <Col span="8">
-          <div>
-            <span class="label">司机姓名：</span>
-            {{driverList.driverName}}
-          </div>
-          </Col>
-          <Col span="8">
-          <div>
-            <span class="label">联系电话：</span>
-            {{driverList.driverPhone}}
-          </div>
-          </Col>
-        </Row>
-        <Row class="row">
-          <Col span="8">
-          <div>
-            <span class="label">车牌号：</span>
-            {{driverList.carNO}}
-          </div>
-          </Col>
-          <Col span="8">
-          <div>
-            <span class="label">车型：</span>
-            <span>{{carTypeMap[driverList.carType]}}{{carLengthMap[driverList.carLength]}}</span>
-          </div>
-          </Col>
-          <Col span="8">
-          <div>
-            <span class="label">付款方式：</span>
-            <span>{{payTypeMap[driverList.payType]}}</span>
-          </div>
-          </Col>
-        </Row>
-        <Row class="row">
-          <Col span="24">
-          <div>
-            <span class="label">备注：</span>
-            {{driverList.remark}}
-          </div>
-          </Col>
-        </Row>
-      </div>
-    </div>
+    <driver-details></driver-details>
   </div>
   <div v-else class="info-detail">
     <div class="info">
@@ -214,14 +159,16 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import { CAR_TYPE1, CAR_LENGTH1, DRIVER_TYPE } from '@/libs/constant/carInfo'
-import { CODE, carrierDetailsForDriver, carrierListRepairVehicle, carrierDeleteRepairVehicle, carrierDetailsForCompany, carrierListCar, carrierDeleteDriver, getCarrierNumberCount, CAR } from './client'
+import { CODE, carrierListRepairVehicle, carrierDeleteRepairVehicle, carrierDetailsForCompany, carrierListCar, carrierDeleteDriver, getCarrierNumberCount, CAR } from './client'
 import TMSUrl from '@/libs/constant/url'
 import ruleForClient from './ruleForClient/index'
+import driverDetails from './driver-details'
 import Export from '@/libs/js/export'
 export default {
   name: 'carrier-info',
   components: {
-    ruleForClient
+    ruleForClient,
+    driverDetails
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -693,11 +640,12 @@ export default {
     }
   },
   mounted () {
-    this.ruleHeight = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 174 - 32 - 39 - 16 - 44
-    this._getCarrierNumberCount()
-    if (this.carrierType === 1) { // 类型为个体司机
-      this._carrierDetailsForDriver()
-    } else { // 类型为运输公司
+    if (this.carrierType === 2) { // 类型为运输公司
+      // 获取计费规则的高度
+      this.ruleHeight = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 174 - 32 - 39 - 16 - 44
+      // 获取车辆&维修记录的tab-number
+      this._getCarrierNumberCount()
+      // 承运商信息
       this._carrierDetailsForCompany()
       // 车辆列表
       this._carrierListCar()
@@ -712,27 +660,6 @@ export default {
     },
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
-    },
-    // 司机个人信息查询
-    _carrierDetailsForDriver () {
-      let data = {
-        carrierId: this.carrierId
-      }
-      carrierDetailsForDriver(data).then(res => {
-        if (res.data.code === CODE) {
-          this.driverList = {
-            driverName: res.data.data.driverName,
-            carNO: res.data.data.carNO,
-            carType: res.data.data.carType,
-            driverPhone: res.data.data.driverPhone,
-            payType: res.data.data.payType,
-            carLength: res.data.data.carLength,
-            remark: res.data.data.remark === '' ? '无' : res.data.data.remark,
-            shippingWeight: res.data.data.shippingWeight,
-            shippingVolume: res.data.data.shippingVolume
-          }
-        }
-      })
     },
     // 承运商信息查询
     _carrierDetailsForCompany () {
