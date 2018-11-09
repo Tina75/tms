@@ -1,17 +1,17 @@
 <template>
   <div class="paied">
-    <CollectForm></CollectForm>
+    <CollectForm @on-search="handleSearch"></CollectForm>
     <Row class="paied__operation">
       <Col span="12">
-      <Button type="primary">导出</Button>
+      <Button type="primary" style="width:86px">导出</Button>
       </Col>
     </Row>
     <Row>
       <Col span="24">
       <PageTable
-        :autoload="false"
+        :keywords="keywords"
         :columns="orderColumns"
-        :show-pagination="false"
+        url="/finance/collection/paid/query"
       />
       </Col>
     </Row>
@@ -22,6 +22,7 @@
 /**
  * 代收货款-已付款
  */
+import BaseComponent from '@/basic/BaseComponent'
 import CollectForm from './CollectForm.vue'
 import PageTable from '@/components/page-table/index'
 export default {
@@ -29,22 +30,15 @@ export default {
     CollectForm,
     PageTable
   },
+  mixins: [BaseComponent],
   data () {
     return {
-      senders: [
-        {
-          partnerName: '创世纪科技公司',
-          totalFee: 200,
-          paied: 100,
-          orders: 12
-        },
-        {
-          partnerName: '斑马科技有限公司',
-          totalFee: 1200,
-          paied: 1000,
-          orders: 100
-        }
-      ],
+      keywords: {
+        partnerName: void 0,
+        orderNo: void 0,
+        startTime: void 0,
+        endTime: void 0
+      },
       orderColumns: [
         {
           type: 'selection',
@@ -55,7 +49,13 @@ export default {
           width: 60,
           key: 'action',
           render: (h, params) => {
-            return h('span', {}, '付款核销')
+            return this.hasPower(170503) ? h('a', {
+              on: {
+                click: () => {
+                  console.log('查看记录')
+                }
+              }
+            }, '查看') : ''
           }
         },
         {
@@ -64,7 +64,8 @@ export default {
           key: 'orderNo'
         },
         {
-          title: '发货方名称'
+          title: '发货方名称',
+          key: 'partnerName'
         },
         {
           title: '始发地',
@@ -76,28 +77,37 @@ export default {
         },
         {
           title: '代收货款',
-          key: 'fee'
+          key: 'collectionFee'
         },
         {
-          title: '承运商'
+          title: '承运商',
+          key: 'carrierName'
         },
         {
           title: '车牌号',
           key: 'truckNo'
         },
         {
-          title: '订单状态'
+          title: '订单状态',
+          key: 'statusDesc'
         },
         {
-          title: '收款时间'
+          title: '收款时间',
+          key: 'collectionTime'
         },
         {
-          title: '付款时间'
+          title: '付款时间',
+          key: 'paymentTime'
         }
       ]
     }
   },
   methods: {
+    handleSearch (params) {
+      this.keywords = {
+        ...params
+      }
+    },
     /**
      * 选中发货方
      */

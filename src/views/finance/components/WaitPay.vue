@@ -1,40 +1,23 @@
 <template>
   <div class="wait-pay">
-    <CollectForm></CollectForm>
-    <Row class="wait-pay__operation">
-      <Col span="12">
-      <span class="wait-pay__view-title">发货方代付款列表</span>
-      </Col>
-      <Col span="12 van-right">
-      <Button type="primary">付款核销</Button>
-      </Col>
-    </Row>
-    <Row type="flex">
-      <Col span="6" class="wait-pay__flex-left">
+    <CollectForm  @on-search="handleSearch"></CollectForm>
+    <ReconcileLayout :columns="orderColumns" :data-source="orderList" title="发货方待付货款列表" empty-content="请点击左侧发货方列表查看待付货款列表哦～">
+      <div slot="operation">
+        <Button type="primary">付款核销</Button>
+      </div>
       <ListSender ref="senderList" :style="styles" list-key="partnerName" @on-click="handleClick">
-        <ListSenderItem v-for="(item, index) in senders" :key="index" :item="item" :title="item.partnerName" :extra="item.orders" icon="ico-company">
+        <ListSenderItem v-for="(item, name) in datas" :key="name" :item="item" :title="item.partnerName" :extra="item.orderNum" icon="ico-company">
           <p slot="supName">
             <span>
-              总额 {{item.totalFee}}
+              总额 {{item.calcTotalFee}}
             </span>
             <span class="i-ml-20">
-              已付 {{item.paied}}
+              已付 {{item.verifiedFee}}
             </span>
           </p>
         </ListSenderItem>
       </ListSender>
-      <div class="wait-pay__flex-divider"></div>
-      </Col>
-      <Col span="17" class="wait-pay__flex-right">
-      <div class="i-mt-20">
-        <PageTable
-          :autoload="false"
-          :columns="orderColumns"
-          :show-pagination="false"
-        />
-      </div>
-      </Col>
-    </Row>
+    </ReconcileLayout>
   </div>
 </template>
 
@@ -42,33 +25,25 @@
 /**
  * 代收货款-已收未付
  */
+import BaseComponent from '@/basic/BaseComponent'
 import CollectForm from './CollectForm.vue'
 import ListSender from './list-sender/index.vue'
 import ListSenderItem from './list-sender/SenderItem.vue'
-import PageTable from '@/components/page-table/index'
+import ReconcileLayout from './ReconcileLayout.vue'
+import cargoFeeMixin from '../mixins/cargoFeeMixin.js'
 export default {
   components: {
     CollectForm,
     ListSender,
     ListSenderItem,
-    PageTable
+    ReconcileLayout
   },
+  mixins: [BaseComponent, cargoFeeMixin],
   data () {
     return {
-      senders: [
-        {
-          partnerName: '创世纪科技公司',
-          totalFee: 200,
-          paied: 100,
-          orders: 12
-        },
-        {
-          partnerName: '斑马科技有限公司',
-          totalFee: 1200,
-          paied: 1000,
-          orders: 100
-        }
-      ],
+      selectedRows: [],
+      verifyType: 2,
+      commonStatus: 1,
       orderColumns: [
         {
           type: 'selection',
@@ -79,7 +54,13 @@ export default {
           width: 60,
           key: 'action',
           render: (h, params) => {
-            return h('span', {}, '付款核销')
+            return this.hasPower(170502) ? h('a', {
+              on: {
+                click: () => {
+                  this.checkOrder(params.row)
+                }
+              }
+            }, '付款核销') : ''
           }
         },
         {
@@ -97,17 +78,22 @@ export default {
         },
         {
           title: '代收货款',
-          key: 'fee'
+          key: 'collectionFee',
+          render (h, params) {
+            return h('span', {}, params.row['collectionFee'] / 100)
+          }
         },
         {
-          title: '承运商'
+          title: '承运商',
+          key: 'carrierName'
         },
         {
           title: '车牌号',
           key: 'truckNo'
         },
         {
-          title: '订单状态'
+          title: '订单状态',
+          key: 'orderStatusDesc'
         }
       ],
       styles: {
@@ -115,39 +101,22 @@ export default {
       }
     }
   },
-  mounted () {
-    this.$nextTick(() => {
-      let height = this.$parent.$parent.$el.parentNode.clientHeight - this.$refs.senderList.$el.getBoundingClientRect().top + this.$parent.$parent.$el.getBoundingClientRect().top
-      this.styles = {
-        height: (height) + 'px'
-      }
-    })
-  },
   methods: {
     /**
-     * 选中发货方
+     * 批量核销
      */
-    handleClick (item) {
-      console.log('item', item)
+    batchWriteOff () {
+      if (this.selectedRows.length === 0) {
+        this.$Message.warning('请选择待收款核销的订单')
+        return
+      }
+      this.writeOff()
     }
+
   }
 }
 </script>
 
 <style lang="stylus" scoped>
-.wait-pay
-  &__operation
-    border-bottom 1px solid #E4E7EC
-    padding-bottom 9px
-  &__flex-divider
-    position absolute
-  &__flex-left
-    flex 0 0 275px
-    border-right 1px solid #E4E7EC
-  &__flex-right
-    flex 1
-    padding-left 10px
-  &__view-title
-    font-size 14px
-    color #333
+
 </style>

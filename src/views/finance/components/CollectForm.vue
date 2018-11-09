@@ -3,17 +3,17 @@
     <Form ref="formInline" :model="formInline">
       <Row :gutter="36">
         <Col span="6">
-        <FormItem :label-width="65" label="发货方：">
-          <Input v-model="formInline.sender" :maxlength="20" placeholder="请输入发货方名称"></Input>
+        <FormItem :label-width="65" label="发货方：" prop="partnerName">
+          <Input v-model="formInline.partnerName" :maxlength="20" placeholder="请输入发货方名称"></Input>
         </FormItem>
         </Col>
         <Col span="6">
-        <FormItem  :label-width="65" label="订单号：">
+        <FormItem  :label-width="65" label="订单号：" prop="orderNo">
           <Input v-model="formInline.orderNo" :maxlength="30" placeholder="请输入订单号"></Input>
         </FormItem>
         </Col>
         <Col span="8">
-        <FormItem :label-width="75" label="下单时间：">
+        <FormItem :label-width="75" label="下单日期：" prop="daterange">
           <DatePicker v-model="formInline.daterange" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width:100%"></DatePicker>
         </FormItem>
         </Col>
@@ -33,7 +33,7 @@ export default {
   data () {
     return {
       formInline: {
-        sender: '',
+        partnerName: '',
         orderNo: '',
         daterange: []
       },
@@ -53,6 +53,13 @@ export default {
      */
     handleSearch () {
       console.log('form', this.formInline)
+      let params = {
+        partnerName: this.formInline.partnerName || void 0,
+        orderNo: this.formInline.orderNo || void 0,
+        startTime: this.formInline.daterange[0] ? this.formInline.daterange[0].valueOf() : void 0,
+        endTime: this.formInline.daterange[1] ? this.formInline.daterange[1].valueOf() : void 0
+      }
+      this.$emit('on-search', params)
     },
     /**
      * 充值表单
@@ -70,4 +77,6 @@ export default {
   padding 20px 15px
   margin-bottom 20px
   background-color #f9f9f9
+  .ivu-form-item
+    margin-bottom: 0
 </style>
