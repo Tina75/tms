@@ -5,8 +5,7 @@ import Login from './login.vue'
 import router from './router'
 import store from './store'
 import VueMeta from 'vue-meta'
-import './libs/js/ga.js' // GA打点统计配置
-import './libs/js/report' // 打点上报方法封装
+import './libs/js/ga.js' // GA打点统计配置与上报方法封装
 import EmaProxy from 'ema-proxy'
 import Toast from '@/components/toast/index'
 
