@@ -1,6 +1,6 @@
 <template>
   <div class="except-record">
-    <div class="except-record-title">
+    <div class="except-record-title wigtFont">
       <span>
         上报信息 第{{index | numFormat}}笔 【{{data.status == 10 ? '未处理' : data.status == 20 ? '已处理' : ''}}】
       </span>
@@ -19,120 +19,126 @@
       <Row class="mgbt20">
         <i-col span="6">
           <label class="label-bar">异常环节：</label>
-          <span>{{data.abnormalTimingDesc}}</span>
+          <span class="colorGrey">{{data.abnormalTimingDesc}}</span>
         </i-col>
         <i-col span="6">
           <label class="label-bar">异常类型：</label>
-          <span>{{data.abnormalTypeDesc}}</span>
+          <span class="colorGrey">{{data.abnormalTypeDesc}}</span>
         </i-col>
         <i-col span="6">
           <label class="label-bar">上报时间：</label>
-          <span>{{data.createTime | timeFormatter}}</span>
+          <span class="colorGrey">{{data.createTime | timeFormatter}}</span>
         </i-col>
         <i-col span="6">
           <label class="label-bar">处理时间：</label>
-          <span>{{data.disposeTime | timeFormatter}}</span>
+          <span class="colorGrey">{{data.disposeTime | timeFormatter}}</span>
         </i-col>
       </Row>
-      <div :class="{'except-record-list-hide': hideDetail}">
-        <div class="mgbt20" style="display: flex">
+      <div :class="{'except-record-list-hide': hideDetail}" class="except-record-list-show">
+        <div style="display: flex; margin-bottom: 10px; margin-top: 10px">
           <label class="label-bar">异常描述：</label>
-          <span class="flexBox">{{data.abnormalDesc}}</span>
+          <span class="flexBox colorGrey">{{data.abnormalDesc}}</span>
         </div>
-        <div class="mgbt20" style="display: flex">
+        <div style="display: flex; margin-bottom: 10px; margin-top: 10px">
           <label class="label-bar">图片：</label>
           <div class="flexBox">
-            <span v-for="(item, index) in data.fileUrls" :key="index" class="img-bar">
+            <span v-for="(item, index) in data.fileUrls" :key="index" class="img-bar" @click="showImg(item)">
               <img :src="item" alt="异常图片">
             </span>
           </div>
         </div>
         <Row class="mgbt20">
           <i-col span="12" style="display: flex">
-            <label class="label-bar">修改前运费：</label>
+            <label class="label-bar wigtFont">修改前运费：</label>
             <div class="flex-bar">
               <Row v-if="billType != 2">
                 <i-col span="8">
                   <label>运输费：</label>
-                  <span>{{data.beforeFeeInfo.freightFee | Money}}元</span>
+                  <span class="colorGrey">{{data.beforeFeeInfo.freightFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
                   <label>装货费：</label>
-                  <span>{{data.beforeFeeInfo.loadFee | Money}}元</span>
+                  <span class="colorGrey">{{data.beforeFeeInfo.loadFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
                   <label>卸货费：</label>
-                  <span>{{data.beforeFeeInfo.unloadFee | Money}}元</span>
+                  <span class="colorGrey">{{data.beforeFeeInfo.unloadFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
                   <label>保险费：</label>
-                  <span>{{data.beforeFeeInfo.insuranceFee | Money}}元</span>
+                  <span class="colorGrey">{{data.beforeFeeInfo.insuranceFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
                   <label>其&emsp;他：</label>
-                  <span>{{data.beforeFeeInfo.otherFee | Money}}元</span>
+                  <span class="colorGrey">{{data.beforeFeeInfo.otherFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
                   <label>费用合计：</label>
-                  <span>{{data.beforeFeeInfo.totalFee | Money}}元</span>
+                  <span class="colorGrey">{{data.beforeFeeInfo.totalFee | Money}}元</span>
                 </i-col>
               </Row>
               <Row v-else>
                 <label>外转运费：</label>
-                <span>{{data.beforeFeeInfo.freightFee | Money}}元</span>
+                <span class="colorGrey">{{data.beforeFeeInfo.freightFee | Money}}元</span>
               </Row>
               <Table
                 v-if="billType != 2"
+                :data="data.beforeFeeInfo.abnormalPayInfos"
                 :columns="columns"
-                :data="data.beforeFeeInfo.abnormalPayInfos"></Table>
+                width="350"></Table>
             </div>
           </i-col>
           <i-col span="12" style="display: flex">
-            <label class="label-bar">修改后运费：</label>
+            <label class="label-bar wigtFont">修改后运费：</label>
             <div class="flex-bar">
               <Row v-if="billType != 2">
                 <i-col span="8">
                   <label>运输费：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.freightFee, data.afterFeeInfo.freightFee)}">{{data.afterFeeInfo.freightFee | Money}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.freightFee, data.afterFeeInfo.freightFee)}" class="colorGrey">{{data.afterFeeInfo.freightFee | Money}}</span>元
                 </i-col>
                 <i-col span="8">
                   <label>装货费：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.loadFee, data.afterFeeInfo.loadFee)}">{{data.afterFeeInfo.loadFee | Money}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.loadFee, data.afterFeeInfo.loadFee)}" class="colorGrey">{{data.afterFeeInfo.loadFee | Money}}</span>元
                 </i-col>
                 <i-col span="8">
                   <label>卸货费：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.unloadFee, data.afterFeeInfo.unloadFee)}">{{data.afterFeeInfo.unloadFee | Money}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.unloadFee, data.afterFeeInfo.unloadFee)}" class="colorGrey">{{data.afterFeeInfo.unloadFee | Money}}</span>元
                 </i-col>
                 <i-col span="8">
                   <label>保险费：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.insuranceFee, data.afterFeeInfo.insuranceFee)}">{{data.afterFeeInfo.insuranceFee | Money}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.insuranceFee, data.afterFeeInfo.insuranceFee)}" class="colorGrey">{{data.afterFeeInfo.insuranceFee | Money}}</span>元
                 </i-col>
                 <i-col span="8">
                   <label>其&emsp;他：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.otherFee, data.afterFeeInfo.otherFee)}">{{data.afterFeeInfo.otherFee | Money}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.otherFee, data.afterFeeInfo.otherFee)}" class="colorGrey">{{data.afterFeeInfo.otherFee | Money}}</span>元
                 </i-col>
                 <i-col span="8">
                   <label>费用合计：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.totalFee, data.afterFeeInfo.totalFee)}">{{data.afterFeeInfo.totalFee | Money}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.totalFee, data.afterFeeInfo.totalFee)}" class="colorGrey">{{data.afterFeeInfo.totalFee | Money}}</span>元
                 </i-col>
               </Row>
               <Row v-else>
                 <label>外转运费：</label>
-                <span :class="{'red-col': compareFee(data.beforeFeeInfo.loadFee, data.afterFeeInfo.loadFee)}">{{data.beforeFeeInfo.freightFee | Money}}元</span>
+                <span :class="{'red-col': compareFee(data.beforeFeeInfo.freightFee, data.afterFeeInfo.freightFee)}" class="colorGrey">{{data.afterFeeInfo.freightFee | Money}}元</span>
               </Row>
               <Table
                 v-if="billType != 2"
+                :data="data.afterFeeInfo.abnormalPayInfos"
                 :columns="columnsAfter"
-                :data="data.afterFeeInfo.abnormalPayInfos"></Table>
+                width="350"></Table>
             </div>
           </i-col>
         </Row>
         <div class="mgbt20" style="display: flex">
           <label class="label-bar">处理备注：</label>
-          <span class="flexBox">{{data.disposeDesc}}</span>
+          <span class="flexBox colorGrey">{{data.disposeDesc}}</span>
         </div>
       </div>
     </div>
+    <Modal v-model="visible" title="查看图片">
+      <img :src="curImg" style="width: 100%">
+      <div slot="footer" style="text-align: center;"></div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -265,7 +271,9 @@ export default {
             })
           }
         }
-      ]
+      ],
+      visible: false,
+      curImg: ''
     }
   },
   methods: {
@@ -306,6 +314,10 @@ export default {
     },
     compareFee (b, a) {
       return b !== a
+    },
+    showImg (src) {
+      this.visible = true
+      this.curImg = src
     }
   }
 }
@@ -318,7 +330,6 @@ export default {
   &-title
     padding 16px 20px 16px 20px
     font-size 16px
-    color #333
     background #f8f8f8
     span
       line-height 30px
@@ -332,9 +343,12 @@ export default {
     font-size 14px
     line-height 20px
     padding 10px 20px
+    color #666
     border-top 1px solid #d4d5dc
     &-hide
       display none
+      .mgbt20
+        margin-bottom 35px
   .img-bar
     display inline-block
     width 160px
@@ -342,11 +356,12 @@ export default {
     margin 0 5px 5px 0
     overflow hidden
     vertical-align: top;
+    cursor pointer
     img
       display block
       // margin auto
-      max-width 100%
-      max-height 100%
+      width 100%
+      height 100%
   .label-bar
     display inline-block
     width 90px
@@ -359,8 +374,16 @@ export default {
     margin-top 10px
     margin-bottom  10px
   .red-col
-    color red
+    color red!important
   .flexBox
     display inline-block
     flex 1
+  .wigtFont
+    font-weight 600
+    color #333
+  &-list-show
+    .mgbt20
+      margin-top 35px
+  .colorGrey
+    color #333
 </style>

@@ -236,7 +236,7 @@ export default {
         params: {
           partnerType: this.scene,
           partnerName: this.writtenOffQuerySave.name,
-          orderByCreateTime: this.writtenOffQuerySave.sortDesc ? 1 : 2,
+          orderByCreateTime: this.writtenOffQuerySave.sortDesc ? 2 : 1,
           startTime: this.writtenOffQuerySave.period[0] ? this.writtenOffQuerySave.period[0].getTime() : '',
           endTime: this.writtenOffQuerySave.period[1] ? this.writtenOffQuerySave.period[1].getTime() + 86400000 : '',
           orderType: this.writtenOffQuerySave.orderType,
