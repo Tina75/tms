@@ -36,67 +36,47 @@
 </template>
 
 <script>
+/**
+ * 代收货款核销窗口
+ */
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
-
+import verifyMixin from '../mixins/verifyMixin.js'
 export default {
   name: 'writeOff',
-  mixins: [BaseDialog],
+  mixins: [BaseDialog, verifyMixin],
   data () {
     return {
       verifyType: 1,
       orderNum: 0,
-      needPay: 0,
-      payTypeMap: {
-        1: '现金',
-        2: '银行卡',
-        3: '微信',
-        4: '支付宝'
-      },
-      accountMap: {
-        2: '银行卡卡号：',
-        3: '微信号：',
-        4: '支付宝账号：',
-        5: '油卡卡号：'
-      },
-      writeOffForm: {
-        actualFee: '',
-        payType: '2',
-        account: '',
-        bankBranch: '',
-        remark: ''
-      },
-      validate: {
-        actualFee: [
-          { required: true, message: '请填写金额', trigger: 'blur' },
-          { pattern: /^(0|([1-9]\d{0,8}))([.]\d{1,2})?$/, message: '必须为不超过9位的正数，最多精确到两位小数', trigger: 'blur' }
-        ],
-        payType: { required: true, message: '请选择付款方式', trigger: 'change' },
-        account: { type: 'string', max: 30, message: '不能超过30个字', trigger: 'blur' },
-        bankBranch: { type: 'string', max: 30, message: '不能超过30个字', trigger: 'blur' },
-        remark: { type: 'string', max: 100, message: '不能超过100个字', trigger: 'blur' }
-      }
+      needPay: 0
     }
-  },
-  mounted () {
-    this.writeOffForm.actualFee = this.needPay
   },
   methods: {
     save () {
       this.$refs['writeOffForm'].validate((valid) => {
+        const data = {
+          actualFee: parseFloat(this.writeOffForm.actualFee) * 100,
+          payType: this.writeOffForm.payType,
+          account: this.writeOffForm.account,
+          bankBranch: this.writeOffForm.bankBranch,
+          remark: this.writeOffForm.remark,
+          verifyType: this.verifyType
+        }
+        // 单个核销接口
+        let url = '/finance/verify/commonVerify'
+        if (this.orderNum !== 0) {
+          // 批量核销
+          url = '/finance/verify/batchCommonVerify'
+          data.ids = this.id
+        } else {
+          data.id = this.id
+        }
         if (valid) {
           Server({
-            url: '/finance/verify/commonVerify',
+            url,
             method: 'post',
-            data: {
-              id: this.id,
-              actualFee: parseFloat(this.writeOffForm.actualFee) * 100,
-              payType: this.writeOffForm.payType,
-              account: this.writeOffForm.account,
-              bankBranch: this.writeOffForm.bankBranch,
-              remark: this.writeOffForm.remark,
-              verifyType: this.verifyType
-            }
+            data
           }).then(res => {
             console.log(res)
             if (res.data.data === '') {

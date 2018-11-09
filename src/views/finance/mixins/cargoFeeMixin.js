@@ -3,7 +3,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-11-09 16:48:31
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-11-09 17:06:33
+ * @Last Modified time: 2018-11-09 17:58:09
  */
 import _ from 'lodash'
 import server from '@/libs/js/server'
@@ -47,6 +47,37 @@ export default {
       this.fetch()
     },
     /**
+     * 批量核销
+     */
+    batchWriteOff () {
+      if (this.selectedRows.length === 0) {
+        this.$Message.warning('请选择待收款核销的订单')
+        return
+      }
+      const ids = []
+      const needPay = this.selectedRows.reduce((total, item) => {
+        ids.push(item.id)
+        total += item.collectionFee
+        return total
+      }, 0)
+      // 单笔核销
+      this.openDialog({
+        name: 'finance/dialogs/cargoFeeVerify',
+        data: {
+          id: ids,
+          verifyType: this.verifyType,
+          needPay: needPay / 100,
+          orderNum: this.selectedRows.length
+        },
+        methods: {
+          ok () {
+            this.$Message.success('核销成功')
+            this.fetch()
+          }
+        }
+      })
+    },
+    /**
      * 核销
      * @param {} data
      */
@@ -57,7 +88,8 @@ export default {
         data: {
           id: data.id,
           verifyType: this.verifyType,
-          needPay: data.collectionFee / 100
+          needPay: data.collectionFee / 100,
+          orderNum: 0
         },
         methods: {
           ok () {

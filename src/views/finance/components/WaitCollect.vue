@@ -42,7 +42,6 @@ export default {
   mixins: [BaseComponent, cargoFeeMixin],
   data () {
     return {
-      selectedRows: [],
       commonStatus: 0, // 0-未收 1-已收未付 2-已付
       verifyType: 1, // 1-代收货款已收未付，2-代收货款已付款，3-返现运费'
       orderColumns: [
@@ -100,16 +99,7 @@ export default {
     }
   },
   methods: {
-    /**
-     * 批量核销
-     */
-    batchWriteOff () {
-      if (this.selectedRows.length === 0) {
-        this.$Message.warning('请选择待收款核销的订单')
-        return
-      }
-      this.writeOff()
-    }
+
   }
 }
 </script>

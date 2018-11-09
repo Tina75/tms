@@ -102,16 +102,6 @@ export default {
     }
   },
   methods: {
-    /**
-     * 批量核销
-     */
-    batchWriteOff () {
-      if (this.selectedRows.length === 0) {
-        this.$Message.warning('请选择待收款核销的订单')
-        return
-      }
-      this.writeOff()
-    }
 
   }
 }

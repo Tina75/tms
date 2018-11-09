@@ -3,15 +3,17 @@
     <CollectForm @on-search="handleSearch"></CollectForm>
     <Row class="paied__operation">
       <Col span="12">
-      <Button type="primary" style="width:86px">导出</Button>
+      <Button v-if="hasPower(170504)" type="primary" style="width:86px" @click="handleExport">导出</Button>
       </Col>
     </Row>
     <Row>
       <Col span="24">
       <PageTable
+        ref="pageTable"
         :keywords="keywords"
         :columns="orderColumns"
         url="/finance/collection/paid/query"
+        @on-selection-change="handleSelectionChange"
       />
       </Col>
     </Row>
@@ -25,6 +27,7 @@
 import BaseComponent from '@/basic/BaseComponent'
 import CollectForm from './CollectForm.vue'
 import PageTable from '@/components/page-table/index'
+import Export from '@/libs/js/export'
 export default {
   components: {
     CollectForm,
@@ -39,6 +42,7 @@ export default {
         startTime: void 0,
         endTime: void 0
       },
+      selected: [],
       orderColumns: [
         {
           type: 'selection',
@@ -108,11 +112,27 @@ export default {
         ...params
       }
     },
+    handleSelectionChange (selected) {
+      this.selected = selected
+    },
     /**
-     * 选中发货方
+     * 导出
+     * 选择一单或多单，点击导出按钮，可以导出核销单
      */
-    handleClick (item) {
-      console.log('item', item)
+    handleExport () {
+      if (this.selected.length === 0) {
+        this.$Message.warning('请选择需要导出的已付货款记录')
+        return
+      }
+      const data = { id: this.selected.map(item => item.id) }
+      Export({
+        url: 'order/exportReceiptOrder',
+        method: 'post',
+        data,
+        fileName: '回单明细'
+      })
+      this.$refs.pageTable.clearSelected()
+      this.selected = []
     }
   }
 }
