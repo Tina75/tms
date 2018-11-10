@@ -89,7 +89,13 @@
             </div>
           </div>
           <template>
-            <Table :columns="columns1" :data="data1"></Table>
+            <Table :columns="columns1" :loading="loading" :data="data1">
+              <div slot="loading">
+                <Spin>
+                  <img src="../../assets/loading.gif" width="24" height="24" alt="加载中">
+                </Spin>
+              </div>
+            </Table>
           </template>
           <div class="footer">
             <template>
@@ -135,7 +141,13 @@
             </div>
           </div>
           <template>
-            <Table :columns="columns2" :data="data2"></Table>
+            <Table :columns="columns2" :loading="loading" :data="data2">
+              <div slot="loading">
+                <Spin>
+                  <img src="../../assets/loading.gif" width="24" height="24" alt="加载中">
+                </Spin>
+              </div>
+            </Table>
           </template>
           <div class="footer">
             <template>
@@ -176,6 +188,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       ruleHeight: 0,
       carrierId: this.$route.query.id, // carrierId 承运商id
       carrierType: this.$route.query.carrierType,
@@ -714,10 +727,12 @@ export default {
         pageNo: this.pageNo2,
         pageSize: this.pageSize2
       }
+      this.loading = true
       carrierListCar(data).then(res => {
         if (res.data.code === CODE) {
           this.data1 = res.data.data.carList
           this.totalCount1 = res.data.data.total
+          this.loading = false
         }
       })
     },
@@ -728,10 +743,12 @@ export default {
         pageNo: this.pageNo2,
         pageSize: this.pageSize2
       }
+      this.loading = true
       carrierListRepairVehicle(data).then(res => {
         if (res.data.code === CODE) {
           this.data2 = res.data.data.list
           this.totalCount2 = res.data.data.totalCount
+          this.loading = false
         }
       })
     },
@@ -848,10 +865,12 @@ export default {
       } else if (this.selectStatus1 === '3') {
         data.driverPhone = this.keyword1
       }
+      this.loading = true
       carrierListCar(data).then(res => {
         if (res.data.code === CODE) {
           this.data1 = res.data.data.carList
           this.totalCount1 = res.data.data.total
+          this.loading = false
         }
       })
     },
@@ -866,10 +885,12 @@ export default {
       } else if (this.selectStatus2 === '2') {
         data.repairType = Number(this.keyword2)
       }
+      this.loading = true
       carrierListRepairVehicle(data).then(res => {
         if (res.data.code === CODE) {
           this.data2 = res.data.data.list
           this.totalCount2 = res.data.data.totalCount
+          this.loading = false
         }
       })
     },
