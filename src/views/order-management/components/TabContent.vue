@@ -1132,31 +1132,6 @@ export default {
       // } else {
       //   return ''
       // }
-    },
-    // 状态码转名称
-    statusToName (code) {
-      let name
-      switch (code) {
-        case 10:
-          name = '待提货'
-          break
-        case 20:
-          name = '待送货'
-          break
-        case 30:
-          name = '在途'
-          break
-        case 40:
-          name = '已到货'
-          break
-        case 50:
-          name = '已回单'
-          break
-        case 100:
-          name = '已删除'
-          break
-      }
-      return name
     }
   }
 }

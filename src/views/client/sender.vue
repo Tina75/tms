@@ -32,9 +32,13 @@
       </div>
     </div>
     <div>
-      <template>
-        <Table :columns="columns1" :data="data1" @on-sort-change = "timeSort"></Table>
-      </template>
+      <Table :columns="columns1" :loading="loading" :data="data1" @on-sort-change = "timeSort">
+        <div slot="loading">
+          <Spin>
+            <img src="../../assets/loading.gif" width="24" height="24" alt="加载中">
+          </Spin>
+        </div>
+      </Table>
     </div>
     <div class="footer">
       <template>
@@ -59,6 +63,8 @@ export default {
   },
   data () {
     return {
+      // 请求时候的加载状态
+      loading: false,
       selectStatus: 0,
       selectList: [
         {
@@ -269,7 +275,9 @@ export default {
         contact: this.contact,
         order: this.order
       }
+      this.loading = true
       consignerList(data).then(res => {
+        this.loading = false
         this.data1 = res.data.data.list
         this.totalCount = res.data.data.totalCount
       })
