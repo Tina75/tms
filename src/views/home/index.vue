@@ -183,7 +183,7 @@ export default {
       }
     },
     styleHeight () {
-      return { height: this.$parent.$parent.$el.children[0].style.minHeight }
+      return { minHeight: this.$parent.$parent.$el.children[0].style.minHeight }
     }
   },
   created () {
