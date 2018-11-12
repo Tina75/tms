@@ -278,6 +278,7 @@ import validator from '@/libs/js/validate'
 import cityUtil from '@/libs/js/city'
 import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
+import distance from '@/libs/js/distance'
 
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
 export default {
@@ -892,6 +893,27 @@ export default {
         this.orderForm.consigneeAddressLongitude = lng
         this.orderForm.consigneeAddressLatitude = lat
       }
+      this.distanceCp()
+    },
+    distanceCp () {
+      const p1 = {
+        lng: this.orderForm.consignerAddressLongitude,
+        lat: this.orderForm.consignerAddressLatitude
+      }
+      const p2 = {
+        lng: this.orderForm.consigneeAddressLongitude,
+        lat: this.orderForm.consigneeAddressLatitude
+      }
+      if (p1.lng && p1.lat && p2.lng && p2.lat) {
+        this.cpmtDistance(p1, p2)
+      }
+    },
+    // 距离计算
+    cpmtDistance (p1, p2) {
+      // { lng: 118.795264, lat: 32.027003 }
+      distance(p1, p2).then(res => {
+        this.orderForm.mileage = res / 1000
+      })
     }
   }
 }
