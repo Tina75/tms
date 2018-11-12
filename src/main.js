@@ -33,9 +33,9 @@ Vue.prototype.$Toast = Toast
 window.EMA = new EmaProxy()
 var appData = { router, store }
 var islogin = localStorage.getItem('tms_is_login')
-if (islogin) {
-  appData.render = h => h(App)
-} else {
+if (window.location.hash === '#/?mode=signup' || !islogin) {
   appData.render = h => h(Login)
+} else {
+  appData.render = h => h(App)
 }
 new Vue(appData).$mount('#app')
