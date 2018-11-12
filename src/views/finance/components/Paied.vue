@@ -198,7 +198,7 @@ export default {
         this.$Message.warning('请选择需要导出的已付货款记录')
         return
       }
-      const data = { id: this.selected.map(item => item.id) }
+      const data = { ids: this.selected.map(item => item.id) }
       Export({
         url: 'finance/collection/paid/export',
         method: 'post',

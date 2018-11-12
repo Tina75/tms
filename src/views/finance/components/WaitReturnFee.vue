@@ -177,6 +177,7 @@ export default {
      * 批量核销
      */
     batchWriteOff () {
+      const vm = this
       if (this.selectedOrders.length === 0) {
         this.$Message.warning('请选择返现核销的订单')
         return
@@ -192,13 +193,14 @@ export default {
         name: 'finance/dialogs/returnFeeVerify',
         data: {
           id: ids,
-          needPay: needPay / 100,
+          needPay: (needPay / 100).toFixed(2),
           orderNum: ids.length
         },
         methods: {
           ok () {
-            this.$Message.success('核销成功')
-            this.fetch()
+            vm.$Message.success('核销成功')
+            vm.selectedOrders = []
+            vm.fetch()
           }
         }
       })
@@ -207,18 +209,20 @@ export default {
      * 核销
      */
     writeOff (data) {
+      const vm = this
       // 单笔核销
       this.openDialog({
         name: 'finance/dialogs/returnFeeVerify',
         data: {
           id: data.id,
-          needPay: data.totalFee / 100,
+          needPay: (data.totalFee / 100).toFixed(2),
           orderNum: 0
         },
         methods: {
           ok () {
-            this.$Message.success('核销成功')
-            this.fetch()
+            vm.$Message.success('核销成功')
+            vm.selectedOrders = []
+            vm.fetch()
           }
         }
       })
@@ -227,6 +231,7 @@ export default {
      * 查询代收货款
      */
     fetch () {
+      const vm = this
       server({
         url: '/cashback/getUnverify',
         method: 'post',
@@ -240,9 +245,17 @@ export default {
           for (let name in groupDrivers) {
             drivers[name] = groupDrivers[name][0]
           }
+          if (vm.activeDriver) {
+            // 当前选中的发货方，正好在核销之后没有可核销的单子，从列表中移除，那么当前选中的就移除
+            let findActiveDriver = res.data.data.find((item) => item.partnerName === vm.activeSender.partnerName)
+            if (!findActiveDriver) {
+              vm.activeDriver = null
+            }
+          }
           this.drivers = drivers
         } else {
           this.drivers = []
+          this.activeDriver = null
         }
       })
     }

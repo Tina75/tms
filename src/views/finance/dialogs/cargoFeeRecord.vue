@@ -3,7 +3,7 @@
     <p slot="header" style="text-align:center">{{title}}</p>
     <div>
       <Title size="14" border="none">收款记录</Title>
-      <Form v-for="(record, index) in receiptRecords" :key="index">
+      <Form v-for="record in receiptRecords" :key="record.id">
         <Row>
           <Col span="6">
           <FormItem label="核销时间：">
@@ -17,12 +17,12 @@
           </Col>
           <Col span="6">
           <FormItem label="应收货款：">
-            {{record.calcFee}}&nbsp;元
+            {{transferFee(record.calcFee)}}&nbsp;元
           </FormItem>
           </Col>
           <Col span="6">
           <FormItem label="实收货款：">
-            {{record.actualFee}}&nbsp;元
+            {{transferFee(record.actualFee)}}&nbsp;元
           </FormItem>
           </Col>
         </Row>
@@ -32,8 +32,8 @@
             {{record.payTypeDesc}}
           </FormItem>
           </Col>
-          <Col span="6">
-          <FormItem :label="verifyAccountType[2]">
+          <Col v-if="record.payType !== 1" span="6">
+          <FormItem :label="verifyAccountType[record.payType]">
             {{record.account}}
           </FormItem>
           </Col>
@@ -53,7 +53,7 @@
       </Form>
 
       <Title size="14" border="none">付款记录</Title>
-      <Form  v-for="(record, index) in paymentRecords" :key="index">
+      <Form  v-for="record in paymentRecords" :key="record.id">
         <Row>
           <Col span="6">
           <FormItem label="核销时间：">
@@ -67,12 +67,12 @@
           </Col>
           <Col span="6">
           <FormItem label="应付货款：">
-            {{record.calcFee}}&nbsp;元
+            {{transferFee(record.calcFee)}}&nbsp;元
           </FormItem>
           </Col>
           <Col span="6">
           <FormItem label="实付货款：">
-            {{record.actualFee}}&nbsp;元
+            {{transferFee(record.actualFee)}}&nbsp;元
           </FormItem>
           </Col>
         </Row>
@@ -83,7 +83,7 @@
           </FormItem>
           </Col>
           <Col span="6">
-          <FormItem :label="verifyAccountType[2]">
+          <FormItem  v-if="record.payType !== 1" :label="verifyAccountType[2]">
             {{record.account}}
           </FormItem>
           </Col>
@@ -129,6 +129,12 @@ export default {
     }
   },
   methods: {
+    transferFee (value) {
+      if (value) {
+        return value / 100
+      }
+      return value || 0
+    },
     save () {
       this.$refs['info'].validate((valid) => {
         console.log(this.code)

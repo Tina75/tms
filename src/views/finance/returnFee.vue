@@ -173,8 +173,9 @@ export default {
     handleExport () {
       if (this.selectedOrders.length === 0) {
         this.$Message.warning('请选择需要导出的订单')
+        return
       }
-      const data = { id: this.selectedOrders.map(item => item.id) }
+      const data = { ids: this.selectedOrders.map(item => item.id) }
       Export({
         url: 'cashback/export',
         method: 'post',
