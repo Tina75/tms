@@ -45,7 +45,7 @@
       </Dropdown> -->
 
         <!-- <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick"> -->
-        <Poptip trigger="hover"  placement="bottom-end" title="账号信息" width="260">
+        <Poptip trigger="hover"  placement="bottom-end" title="账号信息" width="260" style="cursor: default">
           <Avatar class="avatar"  style="border:1px solid #fff"></avatar>
           <span class="user-info">{{UserInfo.name}}</span>
           <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
