@@ -142,11 +142,14 @@
       <FormItem label="结算方式:" prop="settlementType">
         <Select ref="settlementSelector" v-model="orderForm.settlementType">
           <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
-          <!-- <Option value="1">现付</Option>
-          <Option value="2">到付</Option>
-          <Option value="3">回付</Option>
-          <Option value="4">月结</Option> -->
         </Select>
+      </FormItem>
+      </Col>
+      <Col span="6">
+      <FormItem label="计算里程:" prop="mileage">
+        <TagNumberInput :min="0" v-model="orderForm.mileage" :parser="handleParseFloat">
+          <span slot="suffix" class="order-create__input-suffix">公里</span>
+        </TagNumberInput>
       </FormItem>
       </Col>
       <Col span="6">
@@ -172,6 +175,8 @@
         </TagNumberInput>
       </FormItem>
       </Col>
+    </Row>
+    <Row :gutter="16">
       <Col span="6">
       <FormItem label="装货费用:" prop="loadFee">
         <TagNumberInput :min="0" v-model="orderForm.loadFee" :parser="handleParseFloat">
@@ -179,8 +184,6 @@
         </TagNumberInput>
       </FormItem>
       </Col>
-    </Row>
-    <Row :gutter="16">
       <Col span="6">
       <FormItem label="卸货费用:" prop="unloadFee">
         <TagNumberInput :min="0" v-model="orderForm.unloadFee" :parser="handleParseFloat">
@@ -230,6 +233,12 @@
           <span>份</span>
           </Col>
         </Row>
+      </FormItem>
+      </Col>
+      <Col span="6">
+      <FormItem label="代收货款:" prop="collectionMoney">
+        <InputNumber v-model="orderForm.collectionMoney" :min="1" :parser="value => value ?  parseInt(value).toString() : value" class="order-create__input-w100">
+        </InputNumber>
       </FormItem>
       </Col>
       <Col span="12">
@@ -289,9 +298,7 @@ export default {
   mixins: [BaseComponent, BasePage],
   data () {
     const _this = this
-    /**
-     * 发货时间校验
-     */
+    // 发货时间校验
     const validateStart = (rule, value, callback) => {
       const stDate = _this.orderForm.deliveryTime
       const edDate = _this.orderForm.arriveTime
@@ -303,9 +310,7 @@ export default {
         callback()
       }
     }
-    /**
-     * 到货时间校验
-     */
+    // 到货时间校验
     const validateEnd = (rule, value, callback) => {
       const stDate = _this.orderForm.deliveryTime
       const stTime = _this.orderForm.deliveryTimes
@@ -376,6 +381,8 @@ export default {
         orderCargoList: [],
         // 付款方式
         settlementType: 4, // 默认月结，1:现付，2：到付 ，3：回付 4月结
+        // 计算里程
+        mileage: null,
         // 运输费用
         freightFee: null,
         // 提货费
@@ -392,6 +399,7 @@ export default {
         pickup: null, // 默认1：上门提货，2：直接送货
         // 回单数量
         receiptCount: 1,
+        collectionMoney: null,
         // 备注
         remark: ''
       },
