@@ -97,7 +97,7 @@ export default {
         }
       }).then(res => {
         this.close()
-        this.ok()
+        this.ok(parseInt(res.data.data))
       }).catch(err => console.error(err))
     }
   }
