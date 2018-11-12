@@ -1,7 +1,7 @@
 <template>
   <div class="search-form">
     <Form ref="formInline" :model="formInline">
-      <Row :gutter="36">
+      <Row :gutter="16">
         <Col span="6">
         <FormItem :label-width="101" label="外转方/承运商：" prop="partnerName">
           <Input v-model="formInline.partnerName" :maxlength="20" placeholder="请输入发货方名称"></Input>
@@ -29,12 +29,12 @@
           </Col>
         </Row>
         </Col>
-        <Col v-if="scene==='2'" span="8">
+        <Col v-if="scene==='2'" span="7">
         <FormItem :label-width="75" label="核销日期：" prop="daterange">
           <DatePicker v-model="formInline.daterange" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width:100%"></DatePicker>
         </FormItem>
         </Col>
-        <Col span="4">
+        <Col span="5">
         <FormItem>
           <Button type="primary" style="margin-right: 10px" @click="handleSearch">搜索</Button>
           <Button type="default" @click="resetForm">清除条件</Button>
@@ -83,10 +83,17 @@ export default {
     handleSearch () {
       console.log('form', this.formInline)
       let params = {
-        partnerName: this.formInline.partnerName || void 0,
-        orderNo: this.formInline.orderNo || void 0,
+        partnerName: this.formInline.partnerName || void 0, // 外转方/承运商名字
+        orderNo: this.formInline.orderNo || void 0, // 单据号
+        dayType: this.formInline.dayType, // 下单时间/到货时间
         startTime: this.formInline.daterange[0] ? this.formInline.daterange[0].valueOf() : void 0,
         endTime: this.formInline.daterange[1] ? this.formInline.daterange[1].valueOf() : void 0
+      }
+
+      if (this.scene === '1') {
+        delete params['orderNo']
+      } else {
+        delete params['dayType']
       }
       this.$emit('on-search', params)
     },
@@ -108,4 +115,6 @@ export default {
   background-color #f9f9f9
   .ivu-form-item
     margin-bottom: 0
+  .ivu-btn
+    width 86px
 </style>

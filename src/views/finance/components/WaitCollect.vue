@@ -122,6 +122,9 @@ export default {
       ]
     }
   },
+  mounted () {
+    this.fetch()
+  },
   methods: {
 
   }

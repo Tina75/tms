@@ -1,6 +1,6 @@
 <template>
   <div class="wait-verify">
-    <ReturnFeeForm scene="1"></ReturnFeeForm>
+    <ReturnFeeForm scene="1" @on-search="handleSearch"></ReturnFeeForm>
     <ReconcileLayout :columns="orderColumns" :data-source="orderList" title="外转方/承运商返现对账列表" empty-content="请点击左侧外转方/承运商查看返现对账列表哦～">
       <div slot="operation">
         <Button type="primary" @click="batchWriteOff">核销</Button>
@@ -30,6 +30,8 @@ import TMSUrl from '@/libs/constant/url'
 import ReturnFeeForm from './ReturnFeeForm.vue'
 import _ from 'lodash'
 import server from '@/libs/js/server'
+import returnFeeMixin from '../mixins/returnFeeMixin.js'
+import settlement from '@/libs/constant/settlement'
 export default {
   components: {
     ReconcileLayout,
@@ -37,12 +39,24 @@ export default {
     ListSenderItem,
     ReturnFeeForm
   },
-  mixins: [BaseComponent],
+  mixins: [BaseComponent, returnFeeMixin],
   data () {
+    const settlementFilters = settlement.map((item) => {
+      return {
+        label: item.name,
+        value: item.name
+      }
+    })
     return {
       activeDriver: null,
-      drivers: [],
+      drivers: {},
       selectedOrders: [],
+      searchForm: {
+        partnerName: void 0,
+        dayType: 1,
+        startTime: void 0,
+        endTime: void 0
+      },
       orderColumns: [
         {
           type: 'selection',
@@ -101,7 +115,11 @@ export default {
         {
           title: '结算方式',
           width: 75,
-          key: 'settleTypeDesc'
+          key: 'settleTypeDesc',
+          filters: settlementFilters,
+          filterMethod (value, row) {
+            return row.settleTypeDesc === value
+          }
         }
       ],
       styles: {
@@ -126,8 +144,13 @@ export default {
         height: (height) + 'px'
       }
     })
+    this.fetch()
   },
   methods: {
+
+    handleSearch (form) {
+      this.searchForm = form
+    },
     /**
      * 左侧外转方和承运商列表切换
      */
@@ -138,15 +161,51 @@ export default {
      * 批量核销
      */
     batchWriteOff () {
-      if (this.selectedVerifyOrders.length === 0) {
-        this.$Message.warning('请选择待收款核销的订单')
+      if (this.selectedOrders.length === 0) {
+        this.$Message.warning('请选择返现核销的订单')
+        return
       }
+      const ids = []
+      const needPay = this.selectedOrders.reduce((total, item) => {
+        ids.push(item.id)
+        total += item.totalFee
+        return total
+      }, 0)
+      // 单笔核销
+      this.openDialog({
+        name: 'finance/dialogs/returnFeeVerify',
+        data: {
+          id: ids,
+          needPay: needPay / 100,
+          orderNum: ids.length
+        },
+        methods: {
+          ok () {
+            this.$Message.success('核销成功')
+            this.fetch()
+          }
+        }
+      })
     },
     /**
      * 核销
      */
     writeOff (data) {
-
+      // 单笔核销
+      this.openDialog({
+        name: 'finance/dialogs/returnFeeVerify',
+        data: {
+          id: data.id,
+          needPay: data.collectionFee / 100,
+          orderNum: 0
+        },
+        methods: {
+          ok () {
+            this.$Message.success('核销成功')
+            this.fetch()
+          }
+        }
+      })
     },
     /**
      * 查看订单详情
@@ -168,12 +227,14 @@ export default {
     fetch () {
       server({
         url: '/cashback/getUnverify',
-        method: 'get',
+        method: 'post',
         data: {
-
+          ...this.searchForm
         }
       }).then((res) => {
-        this.datas = _.groupBy(this.res.data.data, (item) => item.partnerName)
+        if (res.data && res.data.length > 0) {
+          this.drivers = _.groupBy(res.data.data, (item) => item.partnerName)
+        }
       })
     }
   }

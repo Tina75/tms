@@ -1,7 +1,7 @@
 <template>
   <div class="search-form">
     <Form ref="formInline" :model="formInline">
-      <Row :gutter="36">
+      <Row :gutter="18">
         <Col span="6">
         <FormItem :label-width="65" label="发货方：" prop="partnerName">
           <Input v-model="formInline.partnerName" :maxlength="20" placeholder="请输入发货方名称"></Input>
@@ -12,12 +12,12 @@
           <Input v-model="formInline.orderNo" :maxlength="30" placeholder="请输入订单号"></Input>
         </FormItem>
         </Col>
-        <Col span="8">
+        <Col span="7">
         <FormItem :label-width="75" label="下单日期：" prop="daterange">
           <DatePicker v-model="formInline.daterange" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width:100%"></DatePicker>
         </FormItem>
         </Col>
-        <Col span="4">
+        <Col span="5">
         <FormItem>
           <Button type="primary" style="margin-right: 10px" @click="handleSearch">搜索</Button>
           <Button type="default" @click="resetForm">清除条件</Button>
@@ -79,4 +79,6 @@ export default {
   background-color #f9f9f9
   .ivu-form-item
     margin-bottom: 0
+  .ivu-btn
+    width 86px
 </style>

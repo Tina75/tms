@@ -3,7 +3,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-11-09 16:48:31
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-11-10 14:53:03
+ * @Last Modified time: 2018-11-12 14:39:58
  */
 import _ from 'lodash'
 import server from '@/libs/js/server'
@@ -126,7 +126,7 @@ export default {
           commonStatus: this.commonStatus
         }
       }).then((res) => {
-        this.datas = _.groupBy(this.res.data.data, (item) => item.partnerName)
+        this.datas = _.groupBy(res.data.data, (item) => item.partnerName)
       })
     }
   }
