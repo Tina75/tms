@@ -380,6 +380,12 @@ export default {
           visible: true
         },
         {
+          title: '计费里程',
+          key: 'distance',
+          fixed: false,
+          visible: true
+        },
+        {
           title: '体积（方）',
           key: 'volume',
           fixed: false,
