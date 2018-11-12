@@ -1,6 +1,6 @@
 <template>
   <div id="uploadFile">
-    <div v-if="multiple" style="width: 500px;">
+    <div v-if="multiple" style="width: 550px;">
       <div v-for="(pic, index) in uploadImgList" :key="index" class="demo-upload-list">
         <template v-if="pic.progress === 1">
           <!-- <img :src="pic.url"> -->
@@ -24,7 +24,7 @@
           <Progress :percent="pic.progress * 100" hide-info></Progress>
         </template>
       </div>
-      <div v-if="uploadImgList.length < 6" class="ivu-upload" style="display: inline-block; width: 160px;">
+      <div v-if="uploadImgList.length < maxCount" class="ivu-upload" style="display: inline-block; width: 160px;">
         <div class="ivu-upload ivu-upload-drag">
           <input
             ref="fileInput"
@@ -120,6 +120,11 @@ export default {
     maxSize: {
       type: [String, Number],
       default: 10
+    },
+    // 图片上传最大张数, 默认6张
+    maxCount: {
+      type: [String, Number],
+      default: 6
     },
     // 是否多图上传
     multiple: {
@@ -256,8 +261,8 @@ export default {
     },
     // 多图上传
     async multipleUpload (e, files) {
-      if ((files.length + this.uploadImgList.length) > 6) {
-        this.$Message.warning('图片最多上传6张')
+      if ((files.length + this.uploadImgList.length) > this.maxCount) {
+        this.$Message.warning(`图片最多上传${this.maxCount}张`)
         this.$refs.fileInput.value = null
         return
       }
@@ -324,7 +329,7 @@ export default {
   background #fff
   position relative
   box-shadow 0 1px 1px rgba(0,0,0,.2)
-  margin-right 4px
+  margin-right 20px
 .demo-upload-list img
   width 100%
   height 100%

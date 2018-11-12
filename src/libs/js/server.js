@@ -53,7 +53,7 @@ instance.interceptors.response.use((res) => {
     Vue.$ga.time({
       timingCategory: 'apiRequest',
       timingVar: reportData.url,
-      timingValue: Number(reportData.endTime - reportData.startTime)
+      timingValue: Number(new Date().getTime() - reportData.startTime)
     })
   }
 
