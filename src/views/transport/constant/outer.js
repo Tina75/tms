@@ -192,6 +192,13 @@ export const TABLE_COLUMNS = vm => [
     }
   },
   {
+    title: '计费里程',
+    key: 'distance',
+    render: (h, p) => {
+      return vm.tableDataRender(h, p.row.distance)
+    }
+  },
+  {
     title: '外转运费',
     key: 'transFee',
     width: 120,
