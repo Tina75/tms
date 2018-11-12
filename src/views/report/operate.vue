@@ -195,7 +195,7 @@ export default {
         {
           title: '计费里程',
           key: 'distance',
-          width: 250
+          width: 150
         },
         {
           title: '体积（方）',
