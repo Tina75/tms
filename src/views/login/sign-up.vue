@@ -212,6 +212,7 @@ export default {
             data
           }).then(res => {
             this.$Message.success('注册成功')
+            window.localStorage.removeItem('tms_is_login')
             window.sessionStorage.setItem('signup_phone', data.phone)
             setTimeout(() => {
               this.changeMode('signin')
