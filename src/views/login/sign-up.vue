@@ -170,6 +170,7 @@ export default {
     }
   },
   created () {
+    this.$reportEvent('signup enter', '进入注册页面', undefined, 'loginTransport')
     this.getCaptcha()
     this.cities = this.getCities()
   },
@@ -193,9 +194,11 @@ export default {
           this.imCheckPhone()
             .then(this.imCheckSMSCode)
             .then(() => {
+              this.$reportEvent('signup step1 finish', '完成注册页面步骤1', undefined, 'loginTransport')
               this.step++
             })
         } else if (this.step === 1) {
+          this.$reportEvent('signup step2 finish', '完成注册页面步骤2', undefined, 'loginTransport')
           this.step++
         } else {
           if (!this.protocol) {
@@ -211,6 +214,7 @@ export default {
             method: 'post',
             data
           }).then(res => {
+            this.$reportEvent('signup success', '注册成功', undefined, 'loginTransport')
             this.$Message.success('注册成功')
             window.localStorage.removeItem('tms_is_login')
             setTimeout(() => {
