@@ -70,15 +70,25 @@
                       </Col>
                       <Col span="11" class="styleCommon">
                       <div class="startPrice">
-                        <span style="margin:0 10px">起步价：货物  ＜</span>
+                        <FormItem prop="startType" style="width: 100px">
+                          <Select v-model="item.startType">
+                            <Option v-for="(value, key) in startTypeMap"  :key="key" :value="key">{{value}}</Option>
+                          </Select>
+                        </FormItem>
+                        <span style="margin:0 10px">：货物  ＜</span>
                         <FormItem prop="startNum" inline style="margin-bottom: 0;">
                           <Input v-model="item.startNum" style="width: 80px" @on-change="setItemStartNum(item)"/>
                         </FormItem>
                         <span>{{unitMap[ruleDetail.ruleType]}}，</span>
-                        <FormItem prop="startPrice" inline style="margin-bottom: 0;">
-                          <Input v-model="item.startPrice" style="width: 80px"/>
-                        </FormItem>
-                        <span>元起</span>
+                        <!--起步价 startType 1-->
+                        <div v-if="item.startType === '1'" style="display: inline-block">
+                          <FormItem prop="startPrice" inline style="margin-bottom: 0;">
+                            <Input v-model="item.startPrice" style="width: 80px"/>
+                          </FormItem>
+                          <span>元起</span>
+                        </div>
+                        <!--起送量 startType 2-->
+                        <div v-if="item.startType === '2'" style="display: inline-block">按<span style="padding: 0 10px">{{item.startNum}}</span>{{unitMap[ruleDetail.ruleType]}}计算</div>
                       </div>
                       </Col>
                       <Col span="2">
@@ -275,6 +285,10 @@ export default {
         '3': '重量',
         '4': '体积'
       },
+      startTypeMap: {
+        1: '起步价',
+        2: '起送量'
+      },
       rulesQuery: {
         paramName: ''
       },
@@ -288,6 +302,7 @@ export default {
       routeValidate: {
         departure: { validator: startValidate, trigger: 'change' },
         destination: { validator: endValidate, trigger: 'change' },
+        startType: { required: true, message: '请选择起送量', trigger: 'change' },
         startNum: [
           { validator: startNumValidate, trigger: 'blur' }
         ],
@@ -342,8 +357,12 @@ export default {
           }
         },
         methods: {
-          ok () {
-            _this.getRules()
+          ok (ruleId) {
+            _this.getRules().then((companyData) => {
+              _this.showRuleDetail(companyData.find(item => {
+                return item.ruleId === ruleId
+              }))
+            })
           }
         }
       })
@@ -382,6 +401,7 @@ export default {
         showRule: (this.ruleDetail.details.length + 1) + '',
         startNum: '',
         startPrice: '',
+        startType: '2',
         chargeRules: [
           { base: '', price: '', baseAndStart: '' }
         ]
@@ -425,12 +445,14 @@ export default {
         await this.formValidate(this.$refs['ruleBase'][j])
         await this.formValidate(this.$refs['rulePrice'][j])
       }
+      // if (this.ruleDetail.startType !== '2') { // 此时起步价不需要填写，无需判断
       if (!_this.ruleDetail.details.every((item, index, array) => {
-        return ((item.startNum.length === 0 && item.startPrice.length === 0)) || (item.startNum.length !== 0 && item.startPrice.length !== 0)
+        return (item.startType === '2' || (item.startNum.length === 0 && item.startPrice.length === 0)) || (item.startNum.length !== 0 && item.startPrice.length !== 0)
       })) {
         this.$Message.error('请填写起步价')
         return
       }
+      // }
       this.$Modal.confirm({
         title: '提示',
         content: '确认保存该条规则吗？',
@@ -445,8 +467,10 @@ export default {
                 return {
                   departure: item.departure,
                   destination: item.destination,
+                  startType: item.startType,
                   startNum: item.startNum ? parseFloat(item.startNum) * 100 : '',
-                  startPrice: item.startPrice ? parseFloat(item.startPrice) * 100 : '',
+                  // 选择起步量的时候，startPrice的值传startNum的值
+                  startPrice: item.startType === '1' ? (item.startPrice ? parseFloat(item.startPrice) * 100 : '') : (item.startNum ? parseFloat(item.startNum) * 100 : ''),
                   chargeRules: item.chargeRules.map(el => {
                     return {
                       base: parseFloat(el.base) * 100,
@@ -474,6 +498,7 @@ export default {
       })
     },
     editRule (item) {
+      console.log(item)
       const _this = this
       this.openDialog({
         name: 'client/ruleForClient/dialogs/createRule',
@@ -495,12 +520,12 @@ export default {
       })
     },
     getRules () {
-      Server({
+      return Server({
         url: '/finance/charge/listRules',
         method: 'get',
         params: {
           partnerType: this.active,
-          paramName: this.partnerName // 没有搜索功能，从参数不用传
+          paramName: this.partnerName
         }
       }).then(res => {
         this.companyData = res.data.data
@@ -510,9 +535,11 @@ export default {
         } else {
           this.ruleDetail = {}
         }
+        return res.data.data
       }).catch(err => console.error(err))
     },
     showRuleDetail (data) {
+      // 详情在此处
       this.companyDataActive = data.ruleId
       this.ruleDetail = {
         ruleId: data.ruleId,
@@ -524,6 +551,7 @@ export default {
             destination: item.destination,
             startPrice: item.startPrice !== 0 ? (item.startPrice / 100) + '' : '',
             startNum: item.startNum !== 0 ? (item.startNum / 100) + '' : '',
+            startType: item.startType ? item.startType + '' : '2',
             showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
               return {
