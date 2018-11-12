@@ -5,8 +5,8 @@
       <WaitReturnFee v-if="activeTab === 'WAIT_VERIFY'"></WaitReturnFee>
       <div v-if="activeTab === 'VERIFIED'" class="return-fee__verified">
         <ReturnFeeForm scene="2" @on-search="handleSearch"></ReturnFeeForm>
-        <div>
-          <Button type="primary" @click="handleExport">导出</Button>
+        <div class="return-fee__export">
+          <Button v-if="hasPower(170603)" type="primary" @click="handleExport">导出</Button>
         </div>
         <PageTable
           ref="pageTable"
@@ -15,6 +15,7 @@
           method="post"
           url="/cashback/getVerify"
           @on-selection-change="handleSelectionChange"
+          @on-sort-change="handleSortChange"
         ></PageTable>
       </div>
     </div>
@@ -43,6 +44,7 @@ export default {
   },
   mixins: [BasePage, returnFeeMixin],
   data () {
+    const vm = this
     const settlementFilters = settlement.map((item) => {
       return {
         label: item.name,
@@ -81,7 +83,7 @@ export default {
         },
         {
           title: '订单号',
-          width: 140,
+          width: 150,
           key: 'orderNo',
           render: (h, params) => {
             return h('a', {
@@ -114,18 +116,21 @@ export default {
         },
         {
           title: '结算方式',
-          width: 75,
+          width: 90,
           key: 'settleTypeDesc',
           filters: settlementFilters,
           filterMultiple: true,
-          filterRemote (value, row) {
-            return row.settleTypeDesc === value
+          filterRemote (filters, key, row) {
+            vm.keywords['settleTypes'] = filters
           }
         },
         {
           title: '核销时间',
           key: 'verifyTime',
-          sortable: true
+          sortable: 'custom',
+          render (h, params) {
+            return h('span', {}, new Date(params.row['verifyTime']).Format('yyyy-MM-dd hh:mm:ss'))
+          }
         }
       ]
 
@@ -154,6 +159,15 @@ export default {
       this.selectedOrders = selected
     },
     /**
+     * 排序时候有效，排序时回调
+     * @param {object} column 当前列数据
+     * @param {string} key 列名称,对应columns的key
+     * @param {string} order ,值：asc|desc
+     */
+    handleSortChange (sorter) {
+
+    },
+    /**
      * 导出
      */
     handleExport () {
@@ -165,7 +179,7 @@ export default {
         url: 'cashback/export',
         method: 'post',
         data,
-        fileName: '回单明细'
+        fileName: '核销明细'
       })
       this.$refs.pageTable.clearSelected()
       this.selectedOrders = []
@@ -180,4 +194,9 @@ export default {
   margin-bottom -20px
   &__content
     margin 35px 0 0
+  &__export
+    padding 9px 0
+    line-height 32px
+  .ivu-btn
+    width 86px
 </style>

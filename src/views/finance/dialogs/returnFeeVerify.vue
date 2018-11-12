@@ -6,8 +6,11 @@
         <FormItem v-if="orderNum" label="单据数：">
           <p>{{orderNum}}</p>
         </FormItem>
-        <FormItem :label="应收返现运费">
+        <FormItem label="应收返现运费：">
           <p><span class="writeOffFormFee">{{needPay}}</span>元</p>
+        </FormItem>
+        <FormItem label="实收返现运费：" prop="actualFee">
+          <Input v-model="writeOffForm.actualFee" placeholder="请输入" />
         </FormItem>
         <FormItem label="付款方式：" prop="payType">
           <RadioGroup v-model="writeOffForm.payType">

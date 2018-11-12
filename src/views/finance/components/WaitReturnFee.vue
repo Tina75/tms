@@ -1,7 +1,13 @@
 <template>
   <div class="wait-verify">
     <ReturnFeeForm scene="1" @on-search="handleSearch"></ReturnFeeForm>
-    <ReconcileLayout :columns="orderColumns" :data-source="orderList" title="外转方/承运商返现对账列表" empty-content="请点击左侧外转方/承运商查看返现对账列表哦～">
+    <ReconcileLayout
+      :columns="orderColumns"
+      :data-source="orderList"
+      title="外转方/承运商返现对账列表"
+      empty-content="请点击左侧外转方/承运商查看返现对账列表哦～"
+      @on-selection-change="handleSelectionChange"
+    >
       <div slot="operation">
         <Button type="primary" @click="batchWriteOff">核销</Button>
       </div>
@@ -9,7 +15,7 @@
         <ListSenderItem v-for="(item, name) in drivers" :key="name" :item="item" :title="item.partnerName" :extra="item.orderNum" icon="ico-company">
           <p slot="supName">
             <span>
-              返现总额 {{item.calcTotalFee / 100 }}
+              返现总额 {{(item.calcTotalFee / 100).toFixed(2) }}
             </span>
           </p>
         </ListSenderItem>
@@ -26,7 +32,6 @@ import ReconcileLayout from './ReconcileLayout.vue'
 import ListSender from './list-sender/index.vue'
 import ListSenderItem from './list-sender/SenderItem.vue'
 import BaseComponent from '@/basic/BaseComponent'
-import TMSUrl from '@/libs/constant/url'
 import ReturnFeeForm from './ReturnFeeForm.vue'
 import _ from 'lodash'
 import server from '@/libs/js/server'
@@ -114,7 +119,7 @@ export default {
         },
         {
           title: '结算方式',
-          width: 75,
+          width: 90,
           key: 'settleTypeDesc',
           filters: settlementFilters,
           filterMethod (value, row) {
@@ -134,7 +139,7 @@ export default {
       if (!this.activeDriver) {
         return []
       }
-      return this.drivers[this.activeDriver.partnerName][0].itemList
+      return this.drivers[this.activeDriver.partnerName].orderInfos
     }
   },
   mounted () {
@@ -150,12 +155,23 @@ export default {
 
     handleSearch (form) {
       this.searchForm = form
+      this.activeDriver = null
+      this.fetch()
     },
     /**
      * 左侧外转方和承运商列表切换
      */
     handleClick (item) {
       this.activeDriver = item
+      if (this.selectedOrders.length > 0) {
+        this.selectedOrders = []
+      }
+    },
+    /**
+     * 选择回调
+     */
+    handleSelectionChange (selected) {
+      this.selectedOrders = selected
     },
     /**
      * 批量核销
@@ -196,7 +212,7 @@ export default {
         name: 'finance/dialogs/returnFeeVerify',
         data: {
           id: data.id,
-          needPay: data.collectionFee / 100,
+          needPay: data.totalFee / 100,
           orderNum: 0
         },
         methods: {
@@ -204,20 +220,6 @@ export default {
             this.$Message.success('核销成功')
             this.fetch()
           }
-        }
-      })
-    },
-    /**
-     * 查看订单详情
-     */
-    toDetail (data) {
-      this.openTab({
-        path: TMSUrl.ORDER_DETAIL,
-        title: data.orderNo,
-        query: {
-          id: data.orderNo,
-          orderId: data.orderId,
-          from: 'order'
         }
       })
     },
@@ -232,8 +234,15 @@ export default {
           ...this.searchForm
         }
       }).then((res) => {
-        if (res.data && res.data.length > 0) {
-          this.drivers = _.groupBy(res.data.data, (item) => item.partnerName)
+        if (res.data.data && res.data.data.length > 0) {
+          const groupDrivers = _.groupBy(res.data.data, (item) => item.partnerName)
+          const drivers = {}
+          for (let name in groupDrivers) {
+            drivers[name] = groupDrivers[name][0]
+          }
+          this.drivers = drivers
+        } else {
+          this.drivers = []
         }
       })
     }
@@ -241,6 +250,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="stylus" scoped>
+.wait-verify
+  .ivu-btn
+    width 86px
 </style>
