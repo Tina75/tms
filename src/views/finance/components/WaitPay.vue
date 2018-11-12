@@ -31,6 +31,8 @@ import ListSender from './list-sender/index.vue'
 import ListSenderItem from './list-sender/SenderItem.vue'
 import ReconcileLayout from './ReconcileLayout.vue'
 import cargoFeeMixin from '../mixins/cargoFeeMixin.js'
+
+import { ORDER_STATUS } from '@/libs/constant/order'
 export default {
   components: {
     CollectForm,
@@ -40,6 +42,12 @@ export default {
   },
   mixins: [BaseComponent, cargoFeeMixin],
   data () {
+    const statusText = ORDER_STATUS.map(status => {
+      return {
+        label: status.label,
+        value: status.label
+      }
+    })
     return {
       selectedRows: [],
       verifyType: 2,
@@ -66,7 +74,19 @@ export default {
         {
           title: '订单号',
           width: 140,
-          key: 'orderNo'
+          key: 'orderNo',
+          render: (h, params) => {
+            return h('a', {
+              style: {
+                color: '#418DF9'
+              },
+              on: {
+                click: () => {
+                  this.toDetail(params.row)
+                }
+              }
+            }, params.row.orderNo)
+          }
         },
         {
           title: '始发地',
@@ -93,7 +113,11 @@ export default {
         },
         {
           title: '订单状态',
-          key: 'orderStatusDesc'
+          key: 'orderStatusDesc',
+          filters: statusText,
+          filterMethod (value, row) {
+            return row.orderStatusDesc === value
+          }
         }
       ],
       styles: {

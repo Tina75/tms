@@ -101,6 +101,11 @@
         "powerCode":170500
       },
       {
+        "name":"返现对账",
+        "path":"/finance/returnFee",
+        "powerCode":170600
+      },
+      {
         "name":"计费规则",
         "path":"/finance/rules",
         "powerCode":170400

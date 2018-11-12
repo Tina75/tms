@@ -3,10 +3,11 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-11-09 16:48:31
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-11-09 18:14:09
+ * @Last Modified time: 2018-11-10 14:53:03
  */
 import _ from 'lodash'
 import server from '@/libs/js/server'
+import TMSUrl from '@/libs/constant/url'
 export default {
   data () {
     return {
@@ -36,12 +37,26 @@ export default {
     })
   },
   methods: {
+    toDetail (data) {
+      this.openTab({
+        path: TMSUrl.ORDER_DETAIL,
+        title: data.orderNo,
+        query: {
+          id: data.orderNo,
+          orderId: data.orderId,
+          from: 'order'
+        }
+      })
+    },
     /**
      * 选中发货方
      */
     handleClick (item) {
       this.activeSender = item
     },
+    /**
+     * 搜索
+     */
     handleSearch (searchParam) {
       this.searchForm = { ...searchParam }
       this.fetch()
