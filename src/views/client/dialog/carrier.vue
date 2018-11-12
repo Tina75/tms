@@ -11,10 +11,10 @@
     <Form :model="validate.type" :rules="ruleValidate.type" :label-width="122">
       <FormItem  label="承运商类型:" prop="selectStatus">
         <RadioGroup v-model="validate.type.selectStatus">
-          <Radio label="1">
+          <Radio :disabled="radioDisabled" label="1">
             <span>个体司机</span>
           </Radio>
-          <Radio label="2" style="margin-left: 35px;">
+          <Radio :disabled="radioDisabled" label="2" style="margin-left: 35px;">
             <span>运输公司</span>
           </Radio>
         </RadioGroup>
@@ -69,7 +69,7 @@
         </Col>
         <Col :span="8">
         <FormItem label="车辆品牌:" class="ivu-form-item-required blank">
-          <Input v-model="validate.carBrand" :maxlength="20" placeholder="如：东风"></Input>
+          <Input v-model="validate.driver.carBrand" :maxlength="20" placeholder="如：东风"></Input>
         </FormItem>
         </Col>
         <Col :span="8">
@@ -111,22 +111,23 @@
       <Row>
         <Col span="5">
         <up-load ref="upload1"></up-load>
-        <p :upload-img="validate.travelPhoto" class="uploadLabel">行驶证</p>
+        <p :upload-img="validate.driver.travelPhoto" class="uploadLabel">行驶证</p>
         </Col>
         <Col span="5">
         <up-load ref="upload2"></up-load>
-        <p :upload-img="validate.drivePhoto" class="uploadLabel">驾驶证</p>
+        <p :upload-img="validate.driver.drivePhoto" class="uploadLabel">驾驶证</p>
         </Col>
       </Row><br/>
       <Row>
         <p class="modalTitle">备注</p>
         <Col :span="24">
-        <Input v-model="validate.driver.remark"
-               :autosize="{minRows: 2,maxRows: 5}"
-               :maxlength="100"
-               style="width:100%"
-               type="textarea"
-               placeholder="请输入"/>
+        <Input
+          v-model="validate.driver.remark"
+          :autosize="{minRows: 2,maxRows: 5}"
+          :maxlength="100"
+          style="width:100%"
+          type="textarea"
+          placeholder="请输入"/>
         </Col>
       </Row>
     </Form>
@@ -197,6 +198,8 @@ export default {
       address: [],
       address1: {},
       address2: {},
+      flagAddress: true,
+      radioDisabled: false,
       payTypeMap: {
         1: '按单付',
         2: '月结'
@@ -282,18 +285,33 @@ export default {
       }
     }
   },
+  mounted () {
+    // 修改中。。
+    if (this.validate.type.selectStatus === 1) {
+      this.radioDisabled = true
+      this.validate.type.selectStatus = '1'
+    } else if (this.validate.type.selectStatus === 2) {
+      this.radioDisabled = true
+      this.validate.type.selectStatus = '2'
+    }
+  },
   methods: {
     save (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          // 常用线路校验
+          this.checkLine()
+          if (!this.flagAddress) {
+            return
+          }
           if (this.flag === 1) { // 新增
-            if (this.validate.type.selectStatus === 1) { // 司机
+            if (this.validate.type.selectStatus === '1') { // 司机
               this._carrierAddForDriver()
             } else {
               this._carrierAddForCompany()
             }
           } else { // 2-编辑
-            if (this.validate.type.selectStatus === 1) { // 司机
+            if (this.validate.type.selectStatus === '1') { // 司机
               this._carrierForDriverUpdate()
             } else {
               this._carrierForCompanyUpdate()
@@ -313,10 +331,19 @@ export default {
         shippingWeight: Math.floor(this.validate.driver.shippingWeight * 100) / 100,
         shippingVolume: Math.floor(this.validate.driver.shippingVolume * 10) / 10,
         remark: this.validate.driver.remark,
-        payType: this.validate.driver.payType
+        payType: this.validate.driver.payType,
+        carBrand: this.validate.driver.carBrand,
+        travelPhoto: this.validate.driver.travelPhoto,
+        drivePhoto: this.validate.driver.drivePhoto,
+        regularLine: JSON.stringify(this.address)
       }
       carrierAddForDriver(data).then(res => {
         if (res.data.code === CODE) {
+          this.openTab({
+            path: '/client/carrier-info',
+            title: '承运商详情',
+            query: { id: res.data.data, carrierType: 1 }
+          })
           this.ok() // 刷新页面
         } else {
           this.$Message.error(res.data.msg)
@@ -333,6 +360,11 @@ export default {
       }
       carrierAddForCompany(data).then(res => {
         if (res.data.code === CODE) {
+          this.openTab({
+            path: '/client/carrier-info',
+            title: '承运商详情',
+            query: { id: res.data.data, carrierType: 2 }
+          })
           this.ok() // 刷新页面
         } else {
           this.$Message.error(res.data.msg)
@@ -350,7 +382,11 @@ export default {
         shippingVolume: Math.floor(this.validate.driver.shippingVolume * 10) / 10,
         remark: this.validate.driver.remark,
         payType: this.validate.driver.payType,
-        carrierId: this.id
+        carrierId: this.id,
+        carBrand: this.validate.driver.carBrand,
+        travelPhoto: this.validate.driver.travelPhoto,
+        drivePhoto: this.validate.driver.drivePhoto,
+        regularLine: JSON.stringify(this.address)
       }
       carrierForDriverUpdate(data).then(res => {
         if (res.data.code === CODE) {
@@ -376,6 +412,32 @@ export default {
           this.$Message.error(res.data.msg)
         }
       })
+    },
+    // 格式常跑路线信息
+    checkLine () {
+      this.address = []
+      this.flagAddress = true
+      // 线路统一
+      if (this.address1 &&
+         (this.address1.s !== undefined && this.address1.e !== undefined) &&
+         (this.address1.s !== null && this.address1.e !== null)) {
+        this.address.push(this.address1)
+      } else if ((this.address1.s === undefined && this.address1.e === undefined) ||
+                 (this.address1.s === null && this.address1.e === null)) {
+      } else {
+        this.$Message.error('请完善常跑线路1信息')
+        this.flagAddress = false
+      }
+      if (this.address2 &&
+         (this.address2.s !== undefined && this.address2.e !== undefined) &&
+         (this.address2.s !== null && this.address2.e !== null)) {
+        this.address.push(this.address2)
+      } else if ((this.address2.s === undefined && this.address2.e === undefined) ||
+                 (this.address2.s === null && this.address2.e === null)) {
+      } else {
+        this.$Message.error('请完善常跑线路2信息')
+        this.flagAddress = false
+      }
     }
   }
 }

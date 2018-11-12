@@ -35,25 +35,25 @@
         <Col span="6">
         <div>
           <span class="label">车型：</span>
-          <span>{{carTypeMap[driverList.carType]}}{{carLengthMap[driverList.carLength]}}</span>
+          <span>{{carTypeMap[driverList.carType]}}</span>
         </div>
         </Col>
         <Col span="6">
         <div>
           <span class="label">车长：</span>
-          <span></span>
+          {{carLengthMap[driverList.carLength]}}
         </div>
         </Col>
         <Col span="6">
         <div>
           <span class="label">载重：</span>
-          <span></span>
+          {{driverList.shippingWeight}}
         </div>
         </Col>
         <Col span="6">
         <div>
           <span class="label">净空：</span>
-          <span></span>
+          {{driverList.shippingVolume}}
         </div>
         </Col>
       </Row>
@@ -61,29 +61,15 @@
         <Col span="6">
         <div>
           <span class="label">品牌：</span>
-          <span></span>
+          {{driverList.carBrand}}
         </div>
         </Col>
         <Col span="6">
         <div>
           <span class="label">结算方式：</span>
-          <span></span>
+          {{payTypeMap[driverList.payType]}}
         </div>
         </Col>
-        </Col>
-      </Row>
-      <Row class="row">
-        <Col span="24">
-        <div>
-          <span class="label">备注：</span>
-          {{driverList.remark}}
-        </div>
-        </Col>
-        <Col span="8">
-        <div>
-          <span class="label">结算方式：</span>
-          <span>{{payTypeMap[driverList.payType]}}</span>
-        </div>
         </Col>
       </Row>
     </div>
@@ -128,10 +114,8 @@
       <span class="iconTitleP">备注</span>
     </div>
     <div class="list-info">
-      <p>sssssssssssssssssssssssssssssssssssssssss
-      sssssssssssssssssssssssssssssssssssssssss
-      sssssssssssssssssssssssssssssssssssssssss
-      sssssssssssssssssssssssssssssssssssssssss
+      <p>
+        {{driverList.remark}}
       </p>
     </div>
     <Modal v-model="visible" title="查看图片">

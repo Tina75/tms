@@ -1,8 +1,25 @@
-export const CHECK_PWD = function (rule, value, callback) {
+export const CHECK_PWD = function (rule, value, cb) {
+  let str = value.replace(/(^\s*)|(\s*$)/g, '')
+  let repeat = new RegExp('(\\w)\\1{' + (str.length - 1) + '}')
+  let series1 = 'abcdefghijklmnopqrstuvwxyz'
+  let series2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  let series3 = '0123456789'
   if (!(/^[0-9A-Za-z].{5,16}$/.test(value))) {
-    return callback(new Error('密码只能包含数字、大小写字母，至少为6位，至多为16位'))
+    return cb(new Error('密码只支持数字、大小写字母，至少为6位，至多为16位'))
+  } else if (repeat.test(str)) {
+    if (/^[1-9]+[0-9]*]*$/.test(value)) {
+      return cb(new Error('密码不可设置为全部重复的数字'))
+    } else {
+      return cb(new Error('密码不可设置为全部重复的字母'))
+    }
+  } else if (series1.indexOf(str) >= 0 || series2.indexOf(str) >= 0 || series3.indexOf(str) >= 0) {
+    if (/^[1-9]+[0-9]*]*$/.test(value)) {
+      return cb(new Error('密码不可设置为连续的数字'))
+    } else {
+      return cb(new Error('密码不可设置为连续的字母'))
+    }
   } else {
-    callback()
+    cb()
   }
 }
 export const CHECK_PWD_SAME = function (rule, value, callback) {
