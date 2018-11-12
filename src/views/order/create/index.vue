@@ -4,8 +4,8 @@
       <img src="../../../assets/loading.gif" width="24" height="24" alt="加载中">
     </Spin>
     <Row :gutter="16">
-      <Col span="10">
-      <FormItem label="客户:" prop="consignerName">
+      <Col span="6">
+      <FormItem label="客户名称:" prop="consignerName">
         <SelectInput
           v-model="orderForm.consignerName"
           :auto-focus="autoFocus"
@@ -17,24 +17,12 @@
         </SelectInput>
       </FormItem>
       </Col>
-      <Col span="7">
-      <FormItem label="始发城市:" prop="start" class="cityFormItem">
-        <CitySelect ref="start" v-model="orderForm.start" clearable></CitySelect>
-      </FormItem>
-      </Col>
-      <Col span="7">
-      <FormItem label="目的城市:" prop="end" class="cityFormItem">
-        <CitySelect ref="end" v-model="orderForm.end" clearable></CitySelect>
-      </FormItem>
-      </Col>
-    </Row>
-    <Row :gutter="16">
-      <Col span="10">
-      <FormItem label="客户订单号:" prop="customerOrderNo">
+      <Col span="6">
+      <FormItem label="客户单号:" prop="customerOrderNo">
         <Input v-model="orderForm.customerOrderNo" :maxlength="30" type="text"></Input>
       </FormItem>
       </Col>
-      <Col span="7">
+      <Col span="6">
       <FormItem label="发货时间:">
         <Row>
           <Col span="13">
@@ -50,7 +38,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="7">
+      <Col span="6">
       <FormItem label="到货时间:">
         <Row>
           <Col span="13">
@@ -96,13 +84,45 @@
     </Row>
     <Row :gutter="16">
       <Col span="12">
-      <FormItem label="发货地址:" prop="consignerAddress">
-        <AreaInput v-model="orderForm.consignerAddress" :city-code="startCityCode" :maxlength="60" :local-options="consignerAddresses" @latlongt-change="({lat, lng}) => latlongtChange(1, lat, lng)"/>
+      <FormItem label="发货地址:">
+        <Row>
+          <Col span="11">
+          <FormItem prop="start">
+            <CitySelect ref="start" v-model="orderForm.start" :code-type="4" clearable></CitySelect>
+          </FormItem>
+          </Col>
+          <Col span="13" style="padding-left: 5px">
+          <FormItem prop="consignerAddress">
+            <AreaInput
+              v-model="orderForm.consignerAddress"
+              :city-code="startCityCode"
+              :local-options="consignerAddresses"
+              :disabled="true"
+              @latlongt-change="({lat, lng}) => latlongtChange(1, lat, lng)"/>
+          </FormItem>
+          </Col>
+        </Row>
       </FormItem>
       </Col>
       <Col span="12">
-      <FormItem label="收货地址:" prop="consigneeAddress">
-        <AreaInput v-model="orderForm.consigneeAddress" :city-code="endCityCode" :maxlength="60" :local-options="consigneeAddresses" @latlongt-change="({lat, lng}) => latlongtChange(2, lat, lng)"/>
+      <FormItem label="收货地址:">
+        <Row>
+          <Col span="11">
+          <FormItem prop="end">
+            <CitySelect ref="end" v-model="orderForm.end" :code-type="4" clearable></CitySelect>
+          </FormItem>
+          </Col>
+          <Col span="13" style="padding-left: 5px">
+          <FormItem prop="consigneeAddress">
+            <AreaInput
+              v-model="orderForm.consigneeAddress"
+              :city-code="endCityCode"
+              :local-options="consigneeAddresses"
+              :disabled="true"
+              @latlongt-change="({lat, lng}) => latlongtChange(2, lat, lng)"/>
+          </FormItem>
+          </Col>
+        </Row>
       </FormItem>
       </Col>
     </Row>
@@ -113,9 +133,7 @@
       :data-source="consignerCargoes"
       :on-append="appendCargo"
       :on-remove="removeCargo"
-      :on-select="selectCargo"
-    >
-
+      :on-select="selectCargo">
     </CargoTable>
 
     <Title class="i-mb-15 i-mt-15">应收费用</Title>
@@ -124,11 +142,14 @@
       <FormItem label="结算方式:" prop="settlementType">
         <Select ref="settlementSelector" v-model="orderForm.settlementType">
           <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
-          <!-- <Option value="1">现付</Option>
-          <Option value="2">到付</Option>
-          <Option value="3">回付</Option>
-          <Option value="4">月结</Option> -->
         </Select>
+      </FormItem>
+      </Col>
+      <Col span="6">
+      <FormItem label="计算里程:" prop="mileage">
+        <TagNumberInput :min="0" v-model="orderForm.mileage" :parser="handleParseFloat">
+          <span slot="suffix" class="order-create__input-suffix">公里</span>
+        </TagNumberInput>
       </FormItem>
       </Col>
       <Col span="6">
@@ -154,6 +175,8 @@
         </TagNumberInput>
       </FormItem>
       </Col>
+    </Row>
+    <Row :gutter="16">
       <Col span="6">
       <FormItem label="装货费用:" prop="loadFee">
         <TagNumberInput :min="0" v-model="orderForm.loadFee" :parser="handleParseFloat">
@@ -161,8 +184,6 @@
         </TagNumberInput>
       </FormItem>
       </Col>
-    </Row>
-    <Row :gutter="16">
       <Col span="6">
       <FormItem label="卸货费用:" prop="unloadFee">
         <TagNumberInput :min="0" v-model="orderForm.unloadFee" :parser="handleParseFloat">
@@ -203,7 +224,20 @@
       </Col>
       <Col span="6">
       <FormItem label="回单数量:" prop="receiptCount">
-        <InputNumber v-model="orderForm.receiptCount" :min="0" :parser="value => value ?  parseInt(value).toString() : value" class="order-create__input-w100">
+        <Row>
+          <Col span="20">
+          <InputNumber v-model="orderForm.receiptCount" :min="0" :parser="value => value ?  parseInt(value).toString() : value" class="order-create__input-w100">
+          </InputNumber>
+          </Col>
+          <Col span="4" style="text-align: center">
+          <span>份</span>
+          </Col>
+        </Row>
+      </FormItem>
+      </Col>
+      <Col span="6">
+      <FormItem label="代收货款:" prop="collectionMoney">
+        <InputNumber v-model="orderForm.collectionMoney" :min="1" :parser="value => value ?  parseInt(value).toString() : value" class="order-create__input-w100">
         </InputNumber>
       </FormItem>
       </Col>
@@ -227,15 +261,12 @@
 <script>
 import Title from './components/Title.vue'
 import SelectInput from '@/components/SelectInput.vue'
-import AreaInput from '@/components/AreaInput.vue'
 import TagNumberInput from '@/components/TagNumberInput'
 import { mapGetters, mapActions } from 'vuex'
 import float from '@/libs/js/float'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import OrderPrint from './components/OrderPrint'
-// import AreaSelect from '@/components/AreaSelect'
-import CitySelect from '@/components/SelectInputForCity'
 import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
 import settlements from '@/libs/constant/settlement.js'
@@ -245,6 +276,9 @@ import CargoTable from './components/CargoTable.vue'
 import TimeInput from './components/TimeInput.vue'
 import validator from '@/libs/js/validate'
 import cityUtil from '@/libs/js/city'
+import CitySelect from '@/components/SelectInputForCity'
+import AreaInput from '@/components/AreaInput.vue'
+import distance from '@/libs/js/distance'
 
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
 export default {
@@ -255,29 +289,17 @@ export default {
     Title,
     TagNumberInput,
     OrderPrint,
-    // AreaSelect,
     SelectInput,
-    AreaInput,
     FontIcon,
     CargoTable,
     TimeInput,
-    CitySelect
+    CitySelect,
+    AreaInput
   },
   mixins: [BaseComponent, BasePage],
   data () {
     const _this = this
-    /**
-     * 发货时间校验
-     */
-    // const validateDeliveryTime = (rule, value, callback) => {
-    //   if (_this.orderForm.arriveTime && value) {
-    //     // callback(new Error('发货时间需早于发货时间'))
-    //     this.$refs.orderForm.validateField('arriveTime')
-    //     callback()
-    //   } else {
-    //     callback()
-    //   }
-    // }
+    // 发货时间校验
     const validateStart = (rule, value, callback) => {
       const stDate = _this.orderForm.deliveryTime
       const edDate = _this.orderForm.arriveTime
@@ -289,16 +311,7 @@ export default {
         callback()
       }
     }
-    /**
-     * 到货时间校验
-     */
-    // const validateArriveTime = (rule, value, callback) => {
-    //   if (_this.orderForm.deliveryTime && value && value.valueOf() <= _this.orderForm.deliveryTime.valueOf()) {
-    //     callback(new Error('到货时间需晚于发货时间'))
-    //   } else {
-    //     callback()
-    //   }
-    // }
+    // 到货时间校验
     const validateEnd = (rule, value, callback) => {
       const stDate = _this.orderForm.deliveryTime
       const stTime = _this.orderForm.deliveryTimes
@@ -310,9 +323,6 @@ export default {
         callback()
       }
     }
-    // const setObject = (params, value) => {
-    //   return { index: params.index, name: params.column.key, value }
-    // }
     const validatePhone = (rule, value, callback) => {
       if (validator.phone(value)) {
         callback()
@@ -372,6 +382,8 @@ export default {
         orderCargoList: [],
         // 付款方式
         settlementType: 4, // 默认月结，1:现付，2：到付 ，3：回付 4月结
+        // 计算里程
+        mileage: null,
         // 运输费用
         freightFee: null,
         // 提货费
@@ -388,6 +400,7 @@ export default {
         pickup: null, // 默认1：上门提货，2：直接送货
         // 回单数量
         receiptCount: 1,
+        collectionMoney: null,
         // 备注
         remark: ''
       },
@@ -415,9 +428,6 @@ export default {
           { required: true, message: '请输入发货人手机号' },
           { validator: validatePhone, trigger: 'blur' }
         ],
-        consignerAddress: [
-          { required: true, message: '请输入发货地址' }
-        ],
         consigneeContact: [
           { required: true, message: '请输入收货人名称' }
         ],
@@ -425,8 +435,11 @@ export default {
           { required: true, message: '请输入收货人手机号' },
           { validator: validatePhone, trigger: 'blur' }
         ],
+        consignerAddress: [
+          { required: true, message: '请输入详细地址' }
+        ],
         consigneeAddress: [
-          { required: true, message: '请输入收货地址' }
+          { required: true, message: '请输入详细地址' }
         ],
         settlementType: [
           { required: true, message: '请选择付款方式' }
@@ -465,13 +478,6 @@ export default {
 
       },
       consignerCargoes: [new Cargo()],
-      // tempCargoes: {},
-      // statics: {
-      //   weight: 0,
-      //   volume: 0,
-      //   cargoCost: 0,
-      //   quantity: 0
-      // },
       startDateOptions: {
         disabledDate (date) {
           return date && date > new Date(_this.orderForm.arriveTime)
@@ -479,9 +485,6 @@ export default {
       },
       // 到达时间限制
       endDateOptions: {
-        // disabledDate (date) {
-        //   return date && date.valueOf() < _this.orderForm.deliveryTime.valueOf()
-        // }
         disabledDate (date) {
           return date && date < new Date(_this.orderForm.deliveryTime)
         }
@@ -498,10 +501,7 @@ export default {
       'consigneeAddresses',
       'cargoes',
       'cargoOptions'
-      //  'consignerCargoes',
-      // 'sumRow'
     ]),
-
     totalFee () {
       const feeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
       const orderForm = this.orderForm
@@ -544,7 +544,6 @@ export default {
   },
   mounted () {
     const vm = this
-    // this.statics = Object.assign({}, this.sumRow)
     const orderId = this.$route.query.id || undefined
     if (orderId) {
       vm.loading = true
@@ -894,6 +893,27 @@ export default {
         this.orderForm.consigneeAddressLongitude = lng
         this.orderForm.consigneeAddressLatitude = lat
       }
+      this.distanceCp()
+    },
+    distanceCp () {
+      const p1 = {
+        lng: this.orderForm.consignerAddressLongitude,
+        lat: this.orderForm.consignerAddressLatitude
+      }
+      const p2 = {
+        lng: this.orderForm.consigneeAddressLongitude,
+        lat: this.orderForm.consigneeAddressLatitude
+      }
+      if (p1.lng && p1.lat && p2.lng && p2.lat) {
+        this.cpmtDistance(p1, p2)
+      }
+    },
+    // 距离计算
+    cpmtDistance (p1, p2) {
+      // { lng: 118.795264, lat: 32.027003 }
+      distance(p1, p2).then(res => {
+        this.orderForm.mileage = res / 1000
+      })
     }
   }
 }

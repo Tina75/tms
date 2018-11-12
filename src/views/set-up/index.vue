@@ -112,6 +112,7 @@ import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import AreaSelect from '@/components/AreaSelect'
 import AreaInput from '@/components/AreaInput'
+import { CHECK_PWD, CHECK_PWD_SAME, CHECK_NAME, CHECK_NAME_COMPANY, CHECK_PHONE } from './validator'
 import _ from 'lodash'
 import { mapActions } from 'vuex'
 export default {
@@ -125,7 +126,6 @@ export default {
     title: '设置'
   },
   data () {
-    let this_ = this
     var pswRight = function (rule, value, callback) {
       if (value) {
         let params = {}
@@ -139,44 +139,6 @@ export default {
         }).catch(() => {
           return callback(new Error('原始密码错误，请重输'))
         })
-      } else {
-        callback()
-      }
-    }
-    var checkPwd = function (rule, value, callback) {
-      if (!(/^[0-9A-Za-z].{5,16}$/.test(value))) {
-        return callback(new Error('密码只能包含数字、大小写字母，至少为6位，至多为16位'))
-      } else {
-        callback()
-      }
-    }
-    var checkPwdSame = function (rule, value, callback) {
-      if (value !== this_.formPwd.password) {
-        return callback(new Error('两次密码不一致，请重输'))
-      } else {
-        callback()
-      }
-    }
-    var checkName = function (rule, value, callback) {
-      if (value.length < 2 || value.length > 10) {
-        return callback(new Error('姓名不能小于2个字且不能多于10个字'))
-      } else {
-        callback()
-      }
-    }
-    var checkNameCompany = function (rule, value, callback) {
-      if (value.length > 25) {
-        return callback(new Error('公司名不能超过25个字'))
-      } else {
-        callback()
-      }
-    }
-    var checkPhone = function (rule, value, callback) {
-      if (value) {
-        if (!(/^1\d{10}$/.test(value) || /^0\d{2,3}-?\d{7,8}$/.test(value))) {
-          return callback(new Error('联系方式格式不正确'))
-        }
-        callback()
       } else {
         callback()
       }
@@ -266,34 +228,34 @@ export default {
         ],
         password: [
           { required: true, message: '请输入新密码', trigger: 'blur' },
-          { validator: checkPwd, trigger: 'blur' }
+          { validator: CHECK_PWD, trigger: 'blur' }
         ],
         confirmPassword: [
           { required: true, message: '请再次输入新密码', trigger: 'blur' },
-          { validator: checkPwd, trigger: 'blur' },
-          { validator: checkPwdSame, trigger: 'blur' }
+          { validator: CHECK_PWD, trigger: 'blur' },
+          { validator: CHECK_PWD_SAME, trigger: 'blur', vm: this }
         ]
       },
       // 个人
       rulePersonal: {
         name: [
           { required: true, message: '请输入姓名', trigger: 'blur' },
-          { validator: checkName, trigger: 'blur' }
+          { validator: CHECK_NAME, trigger: 'blur' }
         ]
       },
       // 公司
       ruleCompany: {
         name: [
           { required: true, message: '请输入公司名称', trigger: 'blur' },
-          { validator: checkNameCompany, trigger: 'blur' }
+          { validator: CHECK_NAME_COMPANY, trigger: 'blur' }
         ],
         contact: [
           { required: true, message: '请输入公司联系人', trigger: 'blur' },
-          { validator: checkName, trigger: 'blur' }
+          { validator: CHECK_NAME, trigger: 'blur' }
         ],
         contactPhone: [
           { required: true, message: '请输入联系方式', trigger: 'blur' },
-          { validator: checkPhone, trigger: 'blur' }
+          { validator: CHECK_PHONE, trigger: 'blur' }
         ],
         cityId: [
           { required: true, message: '请选择所在省市' }
@@ -302,16 +264,6 @@ export default {
           { required: true, message: '请输入公司地址', trigger: 'blur' }
         ]
       }
-      // 图片相关-个人
-      // uploadList: {
-      //   'name': 'bc7521e033abdd1e92222d733590f104',
-      //   'url': 'https://o5wwk8baw.qnssl.com/bc7521e033abdd1e92222d733590f104/avatar'
-      // },
-      // // 图片相关-公司
-      // uploadListCompany: {
-      //   'name': 'a42bdcc1178e62b4694c830f028db5c0',
-      //   'url': 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'
-      // }
     }
   },
   computed: {
@@ -499,58 +451,6 @@ export default {
       this.formCompany.longitude = lng
       this.formCompany.mapType = 1
     }
-    // 图片相关 -个人
-    // handleSuccess (res, file) {
-    //   file.url = 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'
-    //   file.name = 'a42bdcc1178e62b4694c830f028db5c0'
-    // },
-    // handleFormatError (file) {
-    //   this.$Notice.warning({
-    //     title: 'The file format is incorrect',
-    //     desc: 'File format of ' + file.name + ' is incorrect, please select jpg or png.'
-    //   })
-    // },
-    // handleMaxSize (file) {
-    //   this.$Notice.warning({
-    //     title: 'Exceeding file size limit',
-    //     desc: 'File  ' + file.name + ' is too large, no more than 2M.'
-    //   })
-    // },
-    // handleBeforeUpload (file) {
-    //   const check = this.uploadList.length < 5
-    //   if (!check) {
-    //     this.$Notice.warning({
-    //       title: 'Up to five pictures can be uploaded.'
-    //     })
-    //   }
-    //   return check
-    // },
-    // 图片相关 -公司
-    // handleSuccessCompany (res, file) {
-    //   file.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar'
-    //   file.name = '7eb99afb9d5f317c912f08b5212fd69a'
-    // },
-    // handleFormatErrorCompany (file) {
-    //   this.$Notice.warning({
-    //     title: 'The file format is incorrect',
-    //     desc: 'File format of ' + file.name + ' is incorrect, please select jpg or png.'
-    //   })
-    // },
-    // handleMaxSizeCompany (file) {
-    //   this.$Notice.warning({
-    //     title: 'Exceeding file size limit',
-    //     desc: 'File  ' + file.name + ' is too large, no more than 2M.'
-    //   })
-    // },
-    // handleBeforeUploadCompany () {
-    //   const check = this.uploadListCompany.length < 5
-    //   if (!check) {
-    //     this.$Notice.warning({
-    //       title: 'Up to five pictures can be uploaded.'
-    //     })
-    //   }
-    //   return check
-    // }
   }
 }
 </script>

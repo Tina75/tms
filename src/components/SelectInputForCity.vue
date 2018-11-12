@@ -83,7 +83,7 @@ export default {
     },
     placeholder: {
       type: String,
-      default: '请输入中文/ 拼音'
+      default: '请输入城市中文/拼音'
     },
     // 点击下拉框项
     onSelect: {
