@@ -19,7 +19,13 @@
       </ul>
     </header>
     <div style="text-align: right;margin: 24px 0;min-height: 1px;">
-      <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
+      <Button
+        v-for="(btn, index) in btnGroup"
+        v-if="hasPower(btn.code)"
+        :key="index"
+        :type="btn.value === operateValue ? 'primary' : 'default'"
+        :style="(btn.name === '上传回单照片' || btn.name === '修改回单照片') && 'width: 102px;'"
+        @click="handleOperateClick(btn)">{{ btn.name }}</Button>
     </div>
     <section>
       <div>
@@ -161,6 +167,19 @@
           </i-col>
         </Row>
       </div>
+      <div v-if="from === 'receipt' && receiptStatus > 0">
+        <div class="title">
+          <span>回单照片</span>
+        </div>
+        <div v-if="detail.receiptOrder.receiptUrl.length > 0" style="width: 900px;margin-top: 31px;">
+          <div
+            v-for="(item, index) in detail.receiptOrder.receiptUrl"
+            :key="index"
+            :style="'cursor: pointer;display: inline-block;width: 160px;margin-right: 16px;height: 90px;background-image: url(' + item + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+            @click="handleView(index)">
+          </div>
+        </div>
+      </div>
       <div class="order-log">
         <div class="title">
           <span>{{from === 'order' ? '订单日志' : '回单日志'}}</span>
@@ -179,6 +198,10 @@
         </div>
       </div>
     </section>
+    <Modal v-model="visible" title="查看图片">
+      <img :src="curImg" style="width: 100%">
+      <div slot="footer" style="text-align: center;"></div>
+    </Modal>
     <OrderPrint ref="printer" :list="orderPrint"></OrderPrint>
   </div>
 </template>
@@ -202,6 +225,8 @@ export default {
       detail: {
         orderCargoList: []
       },
+      curImg: '', // 当前图片src
+      visible: false, // 图片预览模态框
       from: this.$route.query.from,
       source: this.$route.query.source, // 页面来源
       orderStatus: '',
@@ -360,6 +385,8 @@ export default {
         this.openRecoveryDialog(this.detail)
       } else if (btn.name === '彻底删除') {
         this.completelyDeleteDialog(this.detail)
+      } else if (btn.name === '上传回单照片' || btn.name === '修改回单照片') {
+        this.openUploadDialog(this.detail)
       }
     },
     // 外转
@@ -462,6 +489,22 @@ export default {
         }
       })
     },
+    // 打开上传和修改回单弹窗
+    openUploadDialog (order) {
+      const _this = this
+      _this.openDialog({
+        name: 'order-management/dialog/upload',
+        data: {
+          params: order,
+          name: order.receiptOrder.receiptUrl.length > 0 ? '修改' : '上传'
+        },
+        methods: {
+          ok (node) {
+            _this.getDetail()
+          }
+        }
+      })
+    },
     // 日志切换显示
     showOrderLog () {
       this.showLog = !this.showLog
@@ -503,6 +546,9 @@ export default {
     statusToName (code) {
       let name
       switch (code) {
+        case -1:
+          name = '待签收'
+          break
         case 0:
           name = '待回收'
           break
@@ -713,12 +759,23 @@ export default {
         this.operateValue = 1
       } else if (this.detail.receiptOrder.receiptStatus === 1) {
         this.btnGroup = [
-          { name: '返厂', value: 1, code: 110202 }
+          { name: this.detail.receiptOrder.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: this.detail.receiptOrder.receiptUrl.length > 0 ? 110205 : 110204 },
+          { name: '返厂', value: 2, code: 110202 }
+        ]
+        this.operateValue = 2
+      } else if (this.detail.receiptOrder.receiptStatus === 2) {
+        this.btnGroup = [
+          { name: this.detail.receiptOrder.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: this.detail.receiptOrder.receiptUrl.length > 0 ? 110205 : 110204 }
         ]
         this.operateValue = 1
       } else {
         this.btnGroup = []
       }
+    },
+    // 预览
+    handleView (i) {
+      this.visible = true
+      this.curImg = this.detail.receiptOrder.receiptUrl[i]
     }
   }
 }
@@ -828,6 +885,10 @@ export default {
   .hide-timeline
      height 15px
      transition height 0.3s linear
+  .receipt-image
+    width 160px
+    height 90px
+    margin-right 16px
 </style>
 <style lang='stylus'>
   .detail-header
