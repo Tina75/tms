@@ -16,8 +16,23 @@
         <FormItem label="联系电话:" prop="phone">
           <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="收货地址:" prop="address">
-          <AreaInput v-model="validate.address" :maxlength="60" placeholder="请输入" @latlongt-change="latlongtChange"/>
+        <FormItem label="收货地址:" prop="">
+          <Row>
+            <Col span="11">
+            <FormItem prop="city">
+              <CitySelect v-model="validate.city" :code-type="4" clearable></CitySelect>
+            </FormItem>
+            </Col>
+            <Col span="13" style="padding-left: 5px">
+            <FormItem prop="address">
+              <AreaInput
+                v-model="validate.address"
+                :city-code="cityCode"
+                :disabled="true"
+                @latlongt-change="latlongtChange"/>
+            </FormItem>
+            </Col>
+          </Row>
         </FormItem>
         <FormItem label="备注:" class="ivu-form-item-required blank" prop="remark">
           <Input v-model="validate.remark"  placeholder="请输入"/>
@@ -34,11 +49,14 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import { consignerConsigneeAdd, consignerConsigneeUpdate, CODE } from '../client'
-import AreaInput from '@/components/AreaInput.vue'
+import cityUtil from '@/libs/js/city'
+import AreaInput from '@/components/AreaInput'
+import CitySelect from '@/components/SelectInputForCity'
 export default {
   name: 'sender-address',
   components: {
-    AreaInput
+    AreaInput,
+    CitySelect
   },
   mixins: [BaseDialog],
   data () {
@@ -52,7 +70,8 @@ export default {
         remark: '',
         longitude: '',
         latitude: '',
-        mapType: 1
+        mapType: 1,
+        city: ''
       },
       ruleValidate: {
         contact: [
@@ -66,6 +85,12 @@ export default {
           { required: true, message: '收货地址不能为空', trigger: 'blur' }
         ]
       }
+    }
+  },
+  computed: {
+    cityCode () {
+      const arr = cityUtil.getPathByCode(this.validate.city)
+      return arr.length ? arr[1].code : ''
     }
   },
   methods: {
