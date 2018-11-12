@@ -40,6 +40,7 @@ export default {
   components: { Dialogs, Signin, Signup, FindBack },
   data () {
     return {
+      phone: '',
       mode: ['signin', 'signup', 'findback'].indexOf(this.$route.query.mode) > -1 ? this.$route.query.mode : 'signin'
     }
   },

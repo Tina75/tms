@@ -3,18 +3,14 @@
     <p slot="header" style="text-align:center;font-size:17px">核销</p>
     <div class="write-off-form">
       <Form ref="writeOffForm" :model="writeOffForm" :rules="validate" :label-width="100">
-        <FormItem v-if="settleTypeDesc" label="结算方式：">
-          <p>{{settleTypeDesc}}</p>
+        <FormItem v-if="orderNum" label="单据数：">
+          <p>{{orderNum}}</p>
         </FormItem>
-        <FormItem :label="scene === 1 ? '应收金额：' : '应付金额：'">
+        <FormItem :label="应收返现运费">
           <p><span class="writeOffFormFee">{{needPay}}</span>元</p>
         </FormItem>
-        <FormItem :label="scene === 1 ? '实收金额：' : '实付金额：'" prop="actualFee">
-          <Input v-model="writeOffForm.actualFee" placeholder="请输入" />
-        </FormItem>
         <FormItem label="付款方式：" prop="payType">
-          <p v-if="isOil">油卡</p>
-          <RadioGroup v-else v-model="writeOffForm.payType">
+          <RadioGroup v-model="writeOffForm.payType">
             <Radio v-for="(value, key) in payTypeMap" :key="key" :label="key">{{value}}</Radio>
           </RadioGroup>
         </FormItem>
@@ -37,6 +33,9 @@
 </template>
 
 <script>
+/**
+ * 代收货款核销窗口
+ */
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import verifyMixin from '../mixins/verifyMixin.js'
@@ -45,40 +44,36 @@ export default {
   mixins: [BaseDialog, verifyMixin],
   data () {
     return {
-      scene: 0,
-      settleTypeDesc: '',
-      isOil: false,
+      verifyType: 1,
+      orderNum: 0,
       needPay: 0
-    }
-  },
-  watch: {
-    isOil (val) {
-      if (val) {
-        this.writeOffForm.payType = '5'
-      }
-    }
-  },
-  mounted () {
-    if (this.isOil) {
-      this.writeOffForm.payType = '5'
     }
   },
   methods: {
     save () {
       this.$refs['writeOffForm'].validate((valid) => {
+        const data = {
+          actualFee: parseFloat(this.writeOffForm.actualFee) * 100,
+          payType: this.writeOffForm.payType,
+          account: this.writeOffForm.account,
+          bankBranch: this.writeOffForm.bankBranch,
+          remark: this.writeOffForm.remark,
+          verifyType: this.verifyType
+        }
+        // 单个核销接口
+        let url = '/finance/verify/commonVerify'
+        if (this.orderNum !== 0) {
+          // 批量核销
+          url = '/finance/verify/batchCommonVerify'
+          data.ids = this.id
+        } else {
+          data.id = this.id
+        }
         if (valid) {
           Server({
-            url: '/finance/verify/verifyOrder',
+            url,
             method: 'post',
-            data: {
-              id: this.id,
-              actualFee: parseFloat(this.writeOffForm.actualFee) * 100,
-              payType: this.writeOffForm.payType,
-              account: this.writeOffForm.account,
-              bankBranch: this.writeOffForm.bankBranch,
-              remark: this.writeOffForm.remark,
-              verifyType: this.verifyType
-            }
+            data
           }).then(res => {
             console.log(res)
             if (res.data.data === '') {

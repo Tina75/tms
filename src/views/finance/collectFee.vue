@@ -20,7 +20,7 @@ import TabHeader from './components/TabHeader'
 import WaitCollect from './components/WaitCollect.vue'
 import WaitPay from './components/WaitPay.vue'
 import Paied from './components/Paied.vue'
-import { CollectTabs, CollectTabMap } from './constant/tabs.js'
+import { CollectTabs } from './constant/tabs.js'
 
 export default {
   components: {
@@ -45,10 +45,10 @@ export default {
      */
     handleChangeTab (activeName) {
       this.activeTab = activeName
-      if (CollectTabMap.WAIT_COLLECT === activeName) {
-        // 未收
-        console.log(activeName)
-      }
+      // if (CollectTabMap.WAIT_COLLECT === activeName) {
+      //   // 未收
+      //   console.log(activeName)
+      // }
     }
   }
 }

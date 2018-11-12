@@ -467,7 +467,7 @@ export default {
 
     // 设置金额单位为元
     setMoneyUnit2Yuan (money) {
-      return typeof money === 'number' ? money / 100 : null
+      return (typeof money === 'number' && money !== 0) ? money / 100 : null
     },
     // 格式化金额单位为分
     formatMoney () {

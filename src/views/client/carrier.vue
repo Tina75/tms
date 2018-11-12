@@ -24,7 +24,13 @@
     </div>
     <div>
       <template>
-        <Table :columns="columns1" :data="data1" @on-sort-change = "timeSort"></Table>
+        <Table :columns="columns1" :loading="loading" :data="data1" @on-sort-change = "timeSort">
+          <div slot="loading">
+            <Spin>
+              <img src="../../assets/loading.gif" width="24" height="24" alt="加载中">
+            </Spin>
+          </div>
+        </Table>
       </template>
     </div>
     <div class="footer">
@@ -50,6 +56,7 @@ export default {
   mixins: [ BasePage ],
   data () {
     return {
+      loading: false,
       selectStatus: 1,
       selectList: [
         {
@@ -110,7 +117,11 @@ export default {
                                 shippingWeight: _this.driver.shippingWeight + '',
                                 shippingVolume: _this.driver.shippingVolume + '',
                                 remark: _this.driver.remark,
-                                payType: _this.driver.payType + ''
+                                payType: _this.driver.payType + '',
+                                carBrand: _this.driver.carBrand,
+                                travelPhoto: _this.driver.travelPhoto,
+                                drivePhoto: _this.driver.drivePhoto,
+                                regularLine: _this.driver.regularLine
                               }
                             }
                           },
@@ -123,7 +134,6 @@ export default {
                       })
                     } else {
                       this._carrierDetailsForCompany(params.row.carrierId, () => {
-                        console.log(_this.company)
                         _this.openDialog({
                           name: 'client/dialog/carrier',
                           data: {
@@ -239,7 +249,7 @@ export default {
           key: 'carrierType',
           render: (h, params) => {
             let text = ''
-            if (params.row.carrierType === 1) {
+            if (params.row.carrierType === 1 || params.row.carrierType === '1') {
               text = '个体司机'
             } else {
               text = '运输公司'
@@ -294,7 +304,11 @@ export default {
         shippingWeight: '',
         shippingVolume: '',
         remark: '',
-        payType: ''
+        payType: '',
+        carBrand: '',
+        travelPhoto: '',
+        drivePhoto: '',
+        regularLine: ''
       },
       company: {
         carrierName: '',
@@ -317,11 +331,12 @@ export default {
         keyword: this.keyword,
         order: this.order
       }
+      this.loading = true
       carrierList(data).then(res => {
         if (res.data.code === CODE) {
-          console.log(res)
           this.data1 = res.data.data.carrierList
           this.totalCount = res.data.data.total
+          this.loading = false
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -363,7 +378,6 @@ export default {
         carrierId: carrierId
       }
       carrierDetailsForCompany(data).then(res => {
-        console.log(res)
         if (res.data.code === CODE) {
           this.company = {
             carrierName: res.data.data.carrierInfo.carrierName,
@@ -382,17 +396,7 @@ export default {
       }
       carrierDetailsForDriver(data).then(res => {
         if (res.data.code === CODE) {
-          this.driver = {
-            driverName: res.data.data.driverName,
-            driverPhone: res.data.data.driverPhone,
-            carNO: res.data.data.carNO,
-            carType: res.data.data.carType,
-            carLength: res.data.data.carLength,
-            shippingWeight: res.data.data.shippingWeight,
-            shippingVolume: res.data.data.shippingVolume,
-            remark: res.data.data.remark,
-            payType: res.data.data.payType
-          }
+          this.driver = res.data.data
           fn()
         }
       })

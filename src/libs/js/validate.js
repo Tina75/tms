@@ -12,6 +12,11 @@ const validator = {
    */
   fee (value) {
     return /^[0-9]{0,9}(?:\.\d{1,2})?$/.test(value)
+  },
+  /**
+   * 校验密码
+   */
+  checkPwd (value) {
   }
 }
 
