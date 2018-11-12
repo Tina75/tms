@@ -193,6 +193,11 @@ export default {
           }
         },
         {
+          title: '计费里程',
+          key: 'distance',
+          width: 250
+        },
+        {
           title: '体积（方）',
           key: 'volume',
           width: 150
