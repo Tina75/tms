@@ -3,6 +3,10 @@
     <div class="title">
       <span class="icontTitle"></span>
       <span class="iconTitleP">基础信息</span>
+      <div class="btnItem">
+        <Button class="btnSty" @click="removeDriverData">删除</Button>
+        <Button type="primary" class="btnSty" @click="updateDriverData">修改</Button>
+      </div>
     </div>
     <div class="list-info">
       <Row class="row">
@@ -47,13 +51,13 @@
         <Col span="6">
         <div>
           <span class="label">载重：</span>
-          {{driverList.shippingWeight}}
+          {{driverList.shippingWeight}}<span>吨</span>
         </div>
         </Col>
         <Col span="6">
         <div>
           <span class="label">净空：</span>
-          {{driverList.shippingVolume}}
+          {{driverList.shippingVolume}}<span>方</span>
         </div>
         </Col>
       </Row>
@@ -128,7 +132,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
-import { CODE, carrierDetailsForDriver } from './client'
+import { CODE, carrierDelete, carrierDetailsForDriver } from './client'
 export default {
   name: 'driver-details',
   components: {},
@@ -152,7 +156,11 @@ export default {
         carLength: '',
         remark: '',
         shippingWeight: '',
-        shippingVolume: ''
+        shippingVolume: '',
+        carBrand: '',
+        travelPhoto: '',
+        drivePhoto: '',
+        regularLine: ''
       },
       line1: '',
       line2: '',
@@ -165,7 +173,7 @@ export default {
   },
   mounted () {
     this._carrierDetailsForDriver()
-    // this.initData()
+    this.initData()
   },
   methods: {
     // 司机个人信息查询
@@ -175,46 +183,90 @@ export default {
       }
       carrierDetailsForDriver(data).then(res => {
         if (res.data.code === CODE) {
-          this.driverList = {
-            driverName: res.data.data.driverName,
-            carNO: res.data.data.carNO,
-            carType: res.data.data.carType,
-            driverPhone: res.data.data.driverPhone,
-            payType: res.data.data.payType,
-            carLength: res.data.data.carLength,
-            remark: res.data.data.remark === '' ? '无' : res.data.data.remark,
-            shippingWeight: res.data.data.shippingWeight,
-            shippingVolume: res.data.data.shippingVolume
-          }
+          this.driverList = res.data.data
+          this.initData()
         }
       })
     },
     // 初始化数据格式
-    // initData () {
-    //   this.repairFormat.carNO = this.infoData.carNO
-    //   this.repairFormatInit = Object.assign({}, this.repairFormat)
-    //   this.infoData.driverType = (DRIVER_TYPE.find(e => e.id === this.infoData.driverType.toString())).name
-    //   this.infoData.carType = this.carTypeMap[this.infoData.carType]
-    //   this.infoData.carLength = this.carLengthMap[this.infoData.carLength]
-    //   let s1 = ''
-    //   let n1 = ''
-    //   let s2 = ''
-    //   let n2 = ''
-    //   if (this.infoData.regularLine && JSON.parse(this.infoData.regularLine).length === 1) {
-    //     s1 = JSON.parse(this.infoData.regularLine)[0].sn === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].sn
-    //     n1 = JSON.parse(this.infoData.regularLine)[0].en === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].en
-    //   } else if (JSON.parse(this.infoData.regularLine).length === 2) {
-    //     s1 = JSON.parse(this.infoData.regularLine)[0].sn === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].sn
-    //     n1 = JSON.parse(this.infoData.regularLine)[0].en === undefined ? '' : JSON.parse(this.infoData.regularLine)[0].en
-    //     s2 = JSON.parse(this.infoData.regularLine)[1].sn === undefined ? '' : JSON.parse(this.infoData.regularLine)[1].sn
-    //     n2 = JSON.parse(this.infoData.regularLine)[1].en === undefined ? '' : JSON.parse(this.infoData.regularLine)[1].en
-    //   }
-    //   this.line1 = s1 + '—' + n1 === '—' ? '' : s1 + '—' + n1
-    //   this.line2 = s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2
-    // },
+    initData () {
+      let s1 = ''
+      let n1 = ''
+      let s2 = ''
+      let n2 = ''
+      if (this.driverList.regularLine && JSON.parse(this.driverList.regularLine).length === 1) {
+        s1 = JSON.parse(this.driverList.regularLine)[0].sn === undefined ? '' : JSON.parse(this.driverList.regularLine)[0].sn
+        n1 = JSON.parse(this.driverList.regularLine)[0].en === undefined ? '' : JSON.parse(this.driverList.regularLine)[0].en
+      } else if (this.driverList.regularLine && JSON.parse(this.driverList.regularLine).length === 2) {
+        s1 = JSON.parse(this.driverList.regularLine)[0].sn === undefined ? '' : JSON.parse(this.driverList.regularLine)[0].sn
+        n1 = JSON.parse(this.driverList.regularLine)[0].en === undefined ? '' : JSON.parse(this.driverList.regularLine)[0].en
+        s2 = JSON.parse(this.driverList.regularLine)[1].sn === undefined ? '' : JSON.parse(this.driverList.regularLine)[1].sn
+        n2 = JSON.parse(this.driverList.regularLine)[1].en === undefined ? '' : JSON.parse(this.driverList.regularLine)[1].en
+      }
+      this.line1 = s1 + '—' + n1 === '—' ? '' : s1 + '—' + n1
+      this.line2 = s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2
+    },
     handleView (imagePath) {
       this.visible = true
       this.imagePath = imagePath
+    },
+    removeDriverData () {
+      let _this = this
+      this.openDialog({
+        name: 'client/dialog/confirmDelete',
+        data: {
+        },
+        methods: {
+          ok () {
+            carrierDelete({
+              carrierId: _this.carrierId
+            }).then(res => {
+              if (res.data.code === CODE) {
+                _this.$Message.success(res.data.msg)
+                _this.ema.fire('closeTab', _this.$route)
+              } else {
+                _this.$Message.error(res.data.msg)
+              }
+            })
+          }
+        }
+      })
+    },
+    updateDriverData () {
+      let _this = this
+      _this.openDialog({
+        name: 'client/dialog/carrier',
+        data: {
+          title: '修改承运商',
+          flag: 2, // 编辑
+          id: _this.carrierId,
+          validate: {
+            type: {
+              selectStatus: 1
+            },
+            driver: { // 1 个体司机
+              driverName: _this.driverList.driverName,
+              driverPhone: _this.driverList.driverPhone,
+              carNO: _this.driverList.carNO,
+              carType: _this.driverList.carType + '',
+              carLength: _this.driverList.carLength + '',
+              shippingWeight: _this.driverList.shippingWeight + '',
+              shippingVolume: _this.driverList.shippingVolume + '',
+              remark: _this.driverList.remark,
+              payType: _this.driverList.payType + '',
+              carBrand: _this.driverList.carBrand,
+              travelPhoto: _this.driverList.travelPhoto,
+              drivePhoto: _this.driverList.drivePhoto,
+              regularLine: _this.driverList.regularLine
+            }
+          }
+        },
+        methods: {
+          ok () {
+            _this._carrierDetailsForDriver()
+          }
+        }
+      })
     }
   }
 }

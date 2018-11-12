@@ -228,7 +228,11 @@ export default {
           shippingWeight: '',
           shippingVolume: '',
           remark: '',
-          payType: '' // 付款方式 1：现付 2：到付 3：回单付 4：月结 5 预付+到付 6 预付+回付 7 到付+回付 8 三段付
+          payType: '', // 付款方式 1：现付 2：到付 3：回单付 4：月结 5 预付+到付 6 预付+回付 7 到付+回付 8 三段付
+          carBrand: '',
+          travelPhoto: '',
+          drivePhoto: '',
+          regularLine: ''
         },
         company: {
           carrierName: '',
@@ -264,10 +268,10 @@ export default {
           ],
           shippingWeight: [
             { required: true, message: '载重不能为空' },
-            { message: '必须小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+            { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
           ],
           shippingVolume: [
-            { message: '必须小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+            { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
           ]
         },
         company: {
@@ -286,10 +290,22 @@ export default {
     }
   },
   mounted () {
-    // 修改中。。
-    if (this.validate.type.selectStatus === 1) {
+    // 修改
+    if (this.validate.type.selectStatus === 1) { // 个人司机
       this.radioDisabled = true
       this.validate.type.selectStatus = '1'
+      this.$refs.upload1.progress = 1
+      this.$refs.upload2.progress = 1
+      this.$refs.upload1.uploadImg = this.validate.driver.travelPhoto
+      this.$refs.upload2.uploadImg = this.validate.driver.drivePhoto
+      if (this.validate.driver.regularLine && JSON.parse(this.validate.driver.regularLine).length > 0) {
+        if (JSON.parse(this.validate.driver.regularLine).length === 1) {
+          this.address1 = JSON.parse(this.validate.driver.regularLine)[0]
+        } else {
+          this.address1 = JSON.parse(this.validate.driver.regularLine)[0]
+          this.address2 = JSON.parse(this.validate.driver.regularLine)[1]
+        }
+      }
     } else if (this.validate.type.selectStatus === 2) {
       this.radioDisabled = true
       this.validate.type.selectStatus = '2'
@@ -299,6 +315,10 @@ export default {
     save (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          this.$refs.upload1.progress = 1
+          this.$refs.upload2.progress = 1
+          this.validate.driver.travelPhoto = this.$refs.upload1.uploadImg
+          this.validate.driver.drivePhoto = this.$refs.upload2.uploadImg
           // 常用线路校验
           this.checkLine()
           if (!this.flagAddress) {

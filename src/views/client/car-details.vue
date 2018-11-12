@@ -14,10 +14,10 @@
         <div class="title">
           <span class="icontTitle"></span>
           <span class="iconTitleP">基础信息</span>
-          <!-- <div class="btnItem">
+          <div class="btnItem">
             <Button class="btnSty" @click="removeDriverData">删除</Button>
             <Button type="primary" class="btnSty" @click="updateDriverData">修改</Button>
-          </div> -->
+          </div>
         </div>
         <div class="list-info">
           <Row class="row">
