@@ -3,7 +3,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-11-09 16:48:31
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-11-12 18:56:59
+ * @Last Modified time: 2018-11-12 20:15:30
  */
 import _ from 'lodash'
 import server from '@/libs/js/server'
@@ -70,6 +70,7 @@ export default {
     handleSearch (searchParam) {
       this.searchForm = { ...searchParam }
       this.activeSender = null
+      this.selectedRows = []
       this.fetch()
     },
     /**

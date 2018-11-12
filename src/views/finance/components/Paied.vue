@@ -60,7 +60,7 @@ export default {
             return this.hasPower(170503) ? h('a', {
               on: {
                 click: () => {
-                  this.showDetail(params.row)
+                  this.showDetailRecord(params.row)
                 }
               }
             }, '查看') : ''
@@ -153,8 +153,10 @@ export default {
         }
       })
     },
-
-    showDetail (data) {
+    /**
+     * 查看收付款详情记录
+     */
+    showDetailRecord (data) {
       const vm = this
       Server({
         url: 'finance/collection/order/verify/detail',
@@ -185,6 +187,7 @@ export default {
       this.keywords = {
         ...params
       }
+      this.selected = []
     },
     handleSelectionChange (selected) {
       this.selected = selected
@@ -198,7 +201,7 @@ export default {
         this.$Message.warning('请选择需要导出的已付货款记录')
         return
       }
-      const data = { ids: this.selected.map(item => item.id) }
+      const data = { ids: this.selected.map(item => Number(item.id)) }
       Export({
         url: 'finance/collection/paid/export',
         method: 'post',

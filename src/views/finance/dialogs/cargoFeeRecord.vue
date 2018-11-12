@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" width="1000" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" width="1000" class="cargo-verify-record-dialog" @on-visible-change="close">
     <p slot="header" style="text-align:center">{{title}}</p>
     <div>
       <Title size="14" border="none">收款记录</Title>
@@ -52,8 +52,8 @@
         </Row>
       </Form>
 
-      <Title size="14" border="none">付款记录</Title>
-      <Form  v-for="record in paymentRecords" :key="record.id">
+      <Title v-if="isPayment" size="14" border="none">付款记录</Title>
+      <Form v-for="record in paymentRecords"   v-if="isPayment" :key="record.id">
         <Row>
           <Col span="6">
           <FormItem label="核销时间：">
@@ -128,6 +128,11 @@ export default {
       paymentRecords: []
     }
   },
+  computed: {
+    isPayment () {
+      return this.paymentRecords.length > 0
+    }
+  },
   methods: {
     transferFee (value) {
       if (value) {
@@ -154,6 +159,12 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="stylus">
+.cargo-verify-record-dialog
+  font-size 14px
+  .ivu-form-item-label
+    color #777
+    font-size 14px
+  .ivu-form-item-content
+    font-size 14px
 </style>

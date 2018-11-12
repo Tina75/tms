@@ -83,6 +83,9 @@ export default {
         startTime: this.formInline.daterange[0] ? this.formInline.daterange[0].valueOf() : void 0,
         endTime: this.formInline.daterange[1] ? this.formInline.daterange[1].valueOf() + 86400000 : void 0
       }
+      if (this.scene === '2') {
+        params.dateType = this.formInline.dateType
+      }
       this.$emit('on-search', params)
     },
     /**

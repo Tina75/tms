@@ -35,6 +35,7 @@ import PageTable from '@/components/page-table/index'
 import returnFeeMixin from './mixins/returnFeeMixin.js'
 import settlement from '@/libs/constant/settlement'
 import Export from '@/libs/js/export'
+import Server from '@/libs/js/server'
 export default {
   components: {
     TabHeader,
@@ -60,7 +61,9 @@ export default {
         partnerName: void 0,
         orderNo: void 0,
         startTime: void 0,
-        endTime: void 0
+        endTime: void 0,
+        orderByCreateTime: 2,
+        settlementTypes: void 0
       },
       columns: [
         {
@@ -75,7 +78,7 @@ export default {
             return this.hasPower(170602) ? h('a', {
               on: {
                 click: () => {
-                  // this.writeOff(params.row)
+                  this.showDetailRecord(params.row)
                 }
               }
             }, '查看') : ''
@@ -121,7 +124,13 @@ export default {
           filters: settlementFilters,
           filterMultiple: true,
           filterRemote (filters, key, row) {
-            vm.keywords['settleTypes'] = filters
+            if (!vm.keywords['settlementTypes'] || filters.length) {
+              vm.keywords['settlementTypes'] = filters
+            } else {
+              if (vm.keywords['settlementTypes']) {
+                vm.keywords['settlementTypes'] = void 0
+              }
+            }
           }
         },
         {
@@ -150,10 +159,37 @@ export default {
       this.activeTab = activeName
     },
     /**
+     * 查看核销详情
+     */
+    showDetailRecord (data) {
+      const vm = this
+      Server({
+        url: 'finance/collection/order/verify/detail',
+        method: 'get',
+        data: {
+          id: data.id
+        }
+      }).then((res) => {
+        vm.openDialog({
+          name: 'finance/dialogs/cargoFeeRecord',
+          data: {
+            title: '核销记录详情',
+            receiptRecords: res.data.data.receiptRecords
+          },
+          methods: {
+            ok () {
+
+            }
+          }
+        })
+      })
+    },
+    /**
      * 搜索
      */
     handleSearch (params) {
-      this.keywords = params
+      Object.assign(this.keywords, params)
+      this.selectedOrders = []
     },
     handleSelectionChange (selected) {
       this.selectedOrders = selected
@@ -165,7 +201,7 @@ export default {
      * @param {string} order ,值：asc|desc
      */
     handleSortChange (sorter) {
-
+      this.keywords['orderByCreateTime'] = sorter.order === 'asc' ? 1 : 2
     },
     /**
      * 导出

@@ -152,10 +152,13 @@ export default {
     this.fetch()
   },
   methods: {
-
+    /**
+     * 搜索
+     */
     handleSearch (form) {
       this.searchForm = form
       this.activeDriver = null
+      this.selectedOrders = []
       this.fetch()
     },
     /**
