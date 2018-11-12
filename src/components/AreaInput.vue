@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="area-input">
     <SelectInput
       :value="value"
       :maxlength="maxlength"
@@ -8,6 +8,7 @@
       :clearable="true"
       :placeholder="placeholder"
       :no-filter="true"
+      :disabled="inputDisabled"
       @input="inputHandle"
       @on-select="selectChange"
     >
@@ -24,7 +25,10 @@ export default {
   },
   props: {
     value: String,
-    maxlength: Number,
+    maxlength: {
+      type: Number,
+      default: 60
+    },
     // 城市编码
     cityCode: String | Number,
     // 下拉数组
@@ -32,8 +36,15 @@ export default {
       type: Array,
       default: () => []
     },
-    placeholder: String,
+    placeholder: {
+      type: String,
+      default: '请输入详细地址'
+    },
     remote: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
       type: Boolean,
       default: false
     }
@@ -62,6 +73,12 @@ export default {
     areaName () {
       const code = this.cityCode
       return code ? cityUtil.getNameByCode(code) : this.map
+    },
+    inputDisabled () {
+      if (this.disabled && !this.cityCode) {
+        return true
+      }
+      return false
     }
   },
   methods: {

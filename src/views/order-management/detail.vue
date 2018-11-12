@@ -123,6 +123,11 @@
         </div>
         <Row style="padding-top: 17px;">
           <i-col span="4">
+            <span style="width: 72px;">计费里程：</span>
+            <span v-if="detail.distance" style="font-weight:bold;">{{detail.distance}}公里</span>
+            <span v-else>-</span>
+          </i-col>
+          <i-col span="4">
             <span class="fee-style">运输费：</span>
             <span v-if="detail.freightFee" style="font-weight:bold;">{{detail.freightFee | toPoint}}元</span>
             <span v-else>-</span>

@@ -21,6 +21,7 @@
         :placeholder="placeholder"
         :maxlength="maxlength"
         :class="classes"
+        :disabled="disabled"
         @on-change="handleChange"
         @on-focus="handleFocus"
       >
@@ -90,6 +91,10 @@ export default {
       type: Function
     },
     noFilter: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
       type: Boolean,
       default: false
     }
