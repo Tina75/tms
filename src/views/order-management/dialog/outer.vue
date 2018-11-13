@@ -69,15 +69,13 @@ import float from '@/libs/js/float'
 import settlements from '@/libs/constant/settlement.js'
 import FontIcon from '@/components/FontIcon'
 import { mapGetters, mapActions } from 'vuex'
-import BMap from '@/libs/js/distance'
 export default {
   name: 'outer',
 
   components: {
     SelectInput,
     TagNumberInput,
-    FontIcon,
-    BMap
+    FontIcon
   },
 
   mixins: [BaseDialog],
@@ -119,17 +117,8 @@ export default {
   },
 
   mounted: function () {
-    // 根据经纬度获取公里数
-    let startAddress = {}
-    let endAddress = {}
-    startAddress.lng = this.detail.consigneeAddressLatitude
-    startAddress.lat = this.detail.consigneeAddressLongitude
-    endAddress.lng = this.detail.consignerAddressLatitude
-    endAddress.lat = this.detail.consignerAddressLongitude
-    let this_ = this
-    BMap(startAddress, endAddress).then((result) => {
-      this_.mileage = result
-    })
+    // 公里数
+    this.info.mileage = this.detail.mileage
   },
 
   methods: {

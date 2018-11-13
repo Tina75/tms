@@ -58,3 +58,8 @@ export const getTableColumns = ({ commit }) => {
     console.log(e)
   })
 }
+
+/** 获取自定义table列表信息 */
+export const setDocumentHeight = ({ commit }, height) => {
+  commit('updateDocumentHeight', height - 80)
+}

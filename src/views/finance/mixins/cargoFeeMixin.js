@@ -3,7 +3,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-11-09 16:48:31
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-11-13 14:05:21
+ * @Last Modified time: 2018-11-13 19:25:17
  */
 import _ from 'lodash'
 import server from '@/libs/js/server'
@@ -71,6 +71,7 @@ export default {
       this.searchForm = { ...searchParam }
       this.activeSender = null
       this.selectedRows = []
+      this.$refs.senderList.clearActiveKey()
       this.fetch()
     },
     /**
@@ -155,6 +156,7 @@ export default {
             let findActiveSender = res.data.data.find((item) => item.partnerName === vm.activeSender.partnerName)
             if (!findActiveSender) {
               vm.activeSender = null
+              vm.$refs.senderList.clearActiveKey()
             }
           }
 

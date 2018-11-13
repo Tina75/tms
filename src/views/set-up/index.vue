@@ -114,7 +114,7 @@ import AreaSelect from '@/components/AreaSelect'
 import AreaInput from '@/components/AreaInput'
 import { CHECK_PWD, CHECK_PWD_SAME, CHECK_NAME, CHECK_NAME_COMPANY, CHECK_PHONE } from './validator'
 import _ from 'lodash'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'set-up',
   components: {
@@ -267,8 +267,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['DocumentHeight']),
     styleHeight () {
-      return { height: this.$parent.$el.children[0].style.minHeight }
+      return { height: this.DocumentHeight + 'px' }
     },
     formCityCode () {
       const cityCode = this.formCompany.cityId
