@@ -255,7 +255,8 @@ export default {
                           remark: params.row.remark,
                           longitude: params.row.longitude,
                           latitude: params.row.latitude,
-                          mapType: params.row.mapType
+                          mapType: params.row.mapType,
+                          cityCode: params.row.cityCode
                         }
                       },
                       methods: {

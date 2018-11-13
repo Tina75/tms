@@ -634,7 +634,7 @@ export default {
         },
         {
           title: '计算里程（公里）',
-          // key: 'mileage',
+          key: 'mileage',
           minWidth: 180,
           ellipsis: true
         },
