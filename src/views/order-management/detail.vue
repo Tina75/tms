@@ -49,7 +49,7 @@
           </i-col>
           <i-col v-if="from === 'order'" span="3">
             <span>代收货款：</span>
-            <span v-if="detail.collectionMoney">{{detail.collectionMoney}}</span>
+            <span v-if="detail.collectionMoney">{{detail.collectionMoney / 100}}</span>
             <span v-else>-</span>
           </i-col>
         </Row>
@@ -129,7 +129,7 @@
         <Row style="padding-top: 17px;">
           <i-col span="4">
             <span style="width: 72px;">计费里程：</span>
-            <span v-if="detail.mileage" style="font-weight:bold;">{{detail.mileage}}公里</span>
+            <span v-if="detail.mileage" style="font-weight:bold;">{{detail.mileage / 1000}}公里</span>
             <span v-else>-</span>
           </i-col>
           <i-col span="4">

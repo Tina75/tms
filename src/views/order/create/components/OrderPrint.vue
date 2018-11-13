@@ -12,8 +12,8 @@
           <tbody>
             <tr>
               <td>客户：{{data.consignerName}}</td>
-              <td>始发地：{{startCity(data)}}</td>
-              <td>目的地：{{endCity(data)}}</td>
+              <td>始发地：{{getCity(data.start)}}</td>
+              <td>目的地：{{getCity(data.end)}}</td>
             </tr>
             <tr>
               <td>发货人：{{data.consignerContact}}</td>
@@ -28,6 +28,7 @@
             <tr>
               <td>提货方式：{{pickup(data)}}</td>
               <td>回单数：{{data.receiptCount}}</td>
+              <td>代收货款：{{data.collectionMoney / 100}}</td>
             </tr>
           </tbody>
         </table>
@@ -122,11 +123,9 @@ export default {
     this.printer = new Printd()
   },
   methods: {
-    startCity (data) {
-      return data.start && data.start.length > 0 ? areas.getPathByCode(data.start[data.start.length - 1]).map(item => item.name).join('') : ''
-    },
-    endCity (data) {
-      return data.end && data.end.length > 0 ? areas.getPathByCode(data.end[data.end.length - 1]).map(item => item.name).join('') : ''
+    getCity (code) {
+      const res = areas.getNameByCode(code) ? areas.getNameByCode(code) : ''
+      return res
     },
     pickup (data) {
       let pick = pickups.find(item => item.value === data.pickup)
