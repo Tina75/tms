@@ -194,7 +194,7 @@ export default {
         },
         {
           title: '计费里程',
-          key: 'distance',
+          key: 'mileage',
           width: 150
         },
         {
@@ -381,7 +381,7 @@ export default {
         },
         {
           title: '计费里程',
-          key: 'distance',
+          key: 'mileage',
           fixed: false,
           visible: true
         },

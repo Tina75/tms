@@ -84,7 +84,7 @@
     </Row>
     <Row :gutter="16">
       <Col span="12">
-      <FormItem label="发货地址:">
+      <FormItem label="发货地址:" class="consig-address">
         <Row>
           <Col span="11">
           <FormItem prop="start">
@@ -106,7 +106,7 @@
       </FormItem>
       </Col>
       <Col span="12">
-      <FormItem label="收货地址:">
+      <FormItem label="收货地址:" class="consig-address">
         <Row>
           <Col span="11">
           <FormItem prop="end">
@@ -475,8 +475,10 @@ export default {
         ],
         receiptCount: [
           { required: true, type: 'number', message: '请输入回单数量' }
+        ],
+        collectionMoney: [
+          { validator: validateFee }
         ]
-
       },
       consignerCargoes: [new Cargo()],
       startDateOptions: {
@@ -791,7 +793,8 @@ export default {
               // end: end,
               arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
               deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
-              orderCargoList: orderCargoList.map(cargo => cargo.toJson())
+              orderCargoList: orderCargoList.map(cargo => cargo.toJson()),
+              collectionMoney: orderForm.collectionMoney * 100
             });
 
             ['start', 'end'].forEach(field => {
@@ -937,4 +940,15 @@ export default {
     color #00A4BD
     font-weight bold
     padding-right 13px
+</style>
+<style lang="stylus">
+.consig-address
+  .ivu-form-item-label:before
+    content '*'
+    display inline-block
+    margin-right 4px
+    line-height 1
+    font-family SimSun
+    font-size 12px
+    color #ed4014
 </style>

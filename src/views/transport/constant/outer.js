@@ -292,14 +292,6 @@ export const TABLE_COLUMNS = vm => [
     }
   },
   {
-    title: '代收货款',
-    key: 'collectionMoney',
-    width: 120,
-    render: (h, p) => {
-      return vm.tableDataRender(h, p.row.collectionMoney === '' ? '' : p.row.collectionMoney / 100)
-    }
-  },
-  {
     title: '要求装货时间',
     key: 'deliveryTimeLong',
     width: 160,
