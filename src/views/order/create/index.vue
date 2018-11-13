@@ -285,7 +285,7 @@ import AreaInput from '@/components/AreaInput.vue'
 import distance from '@/libs/js/distance'
 import { money2chinese } from '@/libs/js/util'
 
-const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee', 'collectionMoney']
+const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
 export default {
   metaInfo: {
     title: '手动下单'
@@ -582,6 +582,7 @@ export default {
           transferFeeList.forEach((fee) => {
             vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
           })
+          vm.orderForm.collectionMoney = vm.orderForm.collectionMoney ? vm.orderForm.collectionMoney / 100 : null
           if (vm.orderForm.deliveryTime) {
             const deliveryTime = new Date(vm.orderForm.deliveryTime)
             vm.orderForm.deliveryTime = deliveryTime
@@ -593,7 +594,7 @@ export default {
             vm.orderForm.arriveTimes = `${arriveTime.getHours() > 9 ? arriveTime.getHours() : '0' + arriveTime.getHours()}:${arriveTime.getMinutes() > 9 ? arriveTime.getMinutes() : '0' + arriveTime.getMinutes()}`
           }
           // 里程除以 1000
-          vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 100 : 0
+          vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
         })
         .catch((errorInfo) => {
           vm.loading = false
@@ -834,6 +835,7 @@ export default {
             transferFeeList.forEach((fee) => {
               form[fee] = form[fee] ? form[fee] * 100 : 0
             })
+            form.collectionMoney = form.collectionMoney ? form.collectionMoney * 100 : 0
             vm.submitOrder(form)
               .then((response) => {
                 if (!form.id) {
