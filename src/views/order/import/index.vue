@@ -382,7 +382,7 @@ export default {
               vm.updateProgress(importId, percent)
               checkProgress()
             }
-          }, 1000)
+          }, 2000)
         } catch (error) {
           if (timer) {
             clearTimeout(timer)
