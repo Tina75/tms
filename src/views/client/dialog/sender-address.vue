@@ -22,6 +22,7 @@
                 v-model="validate.address"
                 :disabled="true"
                 :city-code="cityCode"
+                :filter-city="true"
                 @latlongt-change="latlongtChange"/>
             </FormItem>
             </Col>

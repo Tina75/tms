@@ -14,7 +14,9 @@ export const consigneeContacts = (state, getters) => getters.consignees.map((use
   phone: user.phone,
   id: user.id,
   address: user.address,
-  cityCode: user.cityCode
+  cityCode: user.cityCode,
+  latitude: user.latitude,
+  longitude: user.longitude
 }))
 // 收货方手机
 export const consigneePhones = (state, getters) => getters.consignees.map((user) => ({
