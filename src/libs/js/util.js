@@ -58,6 +58,8 @@ export const money2chinese = (number) => {
   number = Number(number)
   if ((typeof number !== 'number') || isNaN(number) || number > 999999999) return ''
 
+  if (number === 0) return '零元'
+
   let resultArr = ['元']
   const numStr = number.toString()
   let intStr = numStr
