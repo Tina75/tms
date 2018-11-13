@@ -12,7 +12,11 @@ export const consigneeContacts = (state, getters) => getters.consignees.map((use
   name: user.contact + ',' + user.phone,
   value: user.contact,
   phone: user.phone,
-  id: user.id
+  id: user.id,
+  address: user.address,
+  cityCode: user.cityCode,
+  latitude: user.latitude,
+  longitude: user.longitude
 }))
 // 收货方手机
 export const consigneePhones = (state, getters) => getters.consignees.map((user) => ({

@@ -22,6 +22,7 @@
                 v-model="validate.address"
                 :disabled="true"
                 :city-code="cityCode"
+                :filter-city="true"
                 @latlongt-change="latlongtChange"/>
             </FormItem>
             </Col>
@@ -93,7 +94,8 @@ export default {
         address: this.validate.address,
         longitude: this.validate.longitude,
         latitude: this.validate.latitude,
-        mapType: this.validate.mapType
+        mapType: this.validate.mapType,
+        cityCode: this.validate.city
       }
       consignerAddressAdd(data).then(res => {
         if (res.data.code === CODE) {
@@ -109,7 +111,8 @@ export default {
         address: this.validate.address,
         longitude: this.validate.longitude,
         latitude: this.validate.latitude,
-        mapType: this.validate.mapType
+        mapType: this.validate.mapType,
+        cityCode: this.validate.city
       }
       consignerAddressUpdate(data).then(res => {
         console.log(res)

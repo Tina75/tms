@@ -98,6 +98,7 @@
               :city-code="startCityCode"
               :local-options="consignerAddresses"
               :disabled="true"
+              :filter-city="true"
               @latlongt-change="({lat, lng}) => latlongtChange(1, lat, lng)"/>
           </FormItem>
           </Col>
@@ -119,6 +120,7 @@
               :city-code="endCityCode"
               :local-options="consigneeAddresses"
               :disabled="true"
+              :filter-city="true"
               @latlongt-change="({lat, lng}) => latlongtChange(2, lat, lng)"/>
           </FormItem>
           </Col>
@@ -146,7 +148,7 @@
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="计算里程:" prop="mileage">
+      <FormItem label="计费里程:" prop="mileage">
         <TagNumberInput :min="0" v-model="orderForm.mileage" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">公里</span>
         </TagNumberInput>
@@ -259,16 +261,16 @@
 </template>
 
 <script>
+import _ from 'lodash'
+import { mapGetters, mapActions } from 'vuex'
 import Title from './components/Title.vue'
 import SelectInput from '@/components/SelectInput.vue'
 import TagNumberInput from '@/components/TagNumberInput'
-import { mapGetters, mapActions } from 'vuex'
 import float from '@/libs/js/float'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import OrderPrint from './components/OrderPrint'
 import FontIcon from '@/components/FontIcon'
-import _ from 'lodash'
 import settlements from '@/libs/constant/settlement.js'
 import pickups from '@/libs/constant/pickup.js'
 import Cargo from './libs/cargo'
@@ -338,7 +340,6 @@ export default {
         callback(new Error('费用整数位最多输入9位'))
       }
     }
-
     return {
       settlements,
       pickups, // 提货方式
@@ -532,11 +533,6 @@ export default {
       return arr.length ? arr[1].code : ''
     }
   },
-  watch: {
-    // consignerCargoes (newCargoes) {
-    //   this.statics = Object.assign({}, this.sumRow)
-    // }
-  },
   created () {
     if (!this.$route.query.id) {
       this.autoFocus = true
@@ -610,9 +606,7 @@ export default {
     handleParseFloat (value) {
       return float.floor(value).toString()
     },
-    /**
-     * 货物名称选择下拉项目时触发
-     */
+    // 货物名称选择下拉项目时触发
     selectCargo (params, cargoItem) {
       const cargo = this.cargoes.find(cg => cg.id === cargoItem.id)
       if (cargo) {
@@ -665,6 +659,9 @@ export default {
           _this.orderForm.consignerAddress = addresses[0].address
           _this.orderForm.consignerAddressLongitude = addresses[0].longitude
           _this.orderForm.consignerAddressLatitude = addresses[0].latitude
+          _this.orderForm.start = addresses[0].cityCode
+          _this.orderForm.consignerAddressLatitude = addresses[0].latitude
+          _this.orderForm.consignerAddressLongitude = addresses[0].longitude
         }
         if (consignees.length > 0) {
           // 设置收货人信息，收货人，手机，收货地址
@@ -673,6 +670,9 @@ export default {
           _this.orderForm.consigneeAddress = consignees[0].address
           _this.orderForm.consigneeAddressLongitude = consignees[0].longitude
           _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
+          _this.orderForm.end = consignees[0].cityCode
+          _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
+          _this.orderForm.consigneeAddressLongitude = consignees[0].longitude
         }
         let settlementType = consigner.settlementType || consigner.payType
         if (settlementType) {
@@ -696,6 +696,10 @@ export default {
      */
     handleSelectConsignee (name, row) {
       this.orderForm.consigneePhone = row.phone
+      this.orderForm.end = row.cityCode
+      this.orderForm.consigneeAddress = row.address
+      this.orderForm.consigneeAddressLatitude = row.latitude
+      this.orderForm.consigneeAddressLongitude = row.longitude
     },
     // 显示计费规则
     showCounter () {

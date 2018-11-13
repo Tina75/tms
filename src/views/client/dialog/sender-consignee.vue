@@ -19,16 +19,17 @@
         <FormItem label="收货地址:" prop="">
           <Row>
             <Col span="11">
-            <FormItem prop="city">
-              <CitySelect v-model="validate.city" :code-type="4" clearable></CitySelect>
+            <FormItem prop="cityCode">
+              <CitySelect v-model="validate.cityCode" :code-type="4" clearable></CitySelect>
             </FormItem>
             </Col>
             <Col span="13" style="padding-left: 5px">
             <FormItem prop="address">
               <AreaInput
                 v-model="validate.address"
-                :city-code="cityCode"
+                :city-code="city"
                 :disabled="true"
+                :filter-city="true"
                 @latlongt-change="latlongtChange"/>
             </FormItem>
             </Col>
@@ -71,7 +72,7 @@ export default {
         longitude: '',
         latitude: '',
         mapType: 1,
-        city: ''
+        cityCode: ''
       },
       ruleValidate: {
         contact: [
@@ -88,8 +89,8 @@ export default {
     }
   },
   computed: {
-    cityCode () {
-      const arr = cityUtil.getPathByCode(this.validate.city)
+    city () {
+      const arr = cityUtil.getPathByCode(this.validate.cityCode)
       return arr.length ? arr[1].code : ''
     }
   },
