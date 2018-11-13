@@ -3,7 +3,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-11-09 16:48:31
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-11-12 20:15:30
+ * @Last Modified time: 2018-11-13 14:05:21
  */
 import _ from 'lodash'
 import server from '@/libs/js/server'
@@ -94,7 +94,7 @@ export default {
         data: {
           id: ids,
           verifyType: this.verifyType,
-          needPay: needPay / 100,
+          needPay: (needPay / 100).toFixed(2),
           orderNum: this.selectedRows.length
         },
         methods: {

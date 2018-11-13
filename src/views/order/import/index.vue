@@ -116,7 +116,8 @@ export default {
             const actions = [
               h('a', {
                 attrs: {
-                  href: params.row.fileUrl
+                  href: params.row.fileUrl,
+                  download: '下载模板'
                 }
               }, params.row.status ? '下载' : '下载错误报告')
             ]
@@ -381,7 +382,7 @@ export default {
               vm.updateProgress(importId, percent)
               checkProgress()
             }
-          }, 3000)
+          }, 1000)
         } catch (error) {
           if (timer) {
             clearTimeout(timer)

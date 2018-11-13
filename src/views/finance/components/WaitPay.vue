@@ -1,7 +1,13 @@
 <template>
   <div class="wait-pay">
     <CollectForm  @on-search="handleSearch"></CollectForm>
-    <ReconcileLayout :columns="orderColumns" :data-source="orderList" title="发货方代收款列表" empty-content="请点击左侧发货方列表查看待付货款列表哦～">
+    <ReconcileLayout
+      :columns="orderColumns"
+      :data-source="orderList"
+      title="发货方代收款列表"
+      empty-content="请点击左侧发货方列表查看待付货款列表哦～"
+      @on-selection-change="handleSelectionChange"
+    >
       <div slot="operation">
         <Button type="primary" @click="batchWriteOff">付款核销</Button>
       </div>
