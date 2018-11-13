@@ -14,7 +14,7 @@
             <div>
               <div class="icon-box">
                 <i v-if="Number(item.positionType) !== 2" class="icon font_family icon-beidoudingwei"></i>
-                <Tooltip v-else :content="`此位置通过司机手机号查询，若偏差较大，请联系司机 ${item.phone}`" placement="top-start" max-width="200">
+                <Tooltip v-else :content="`此位置通过司机手机号查询，若偏差较大，请联系司机 ${item.phone}`" placement="right-start" max-width="200">
                   <i class="icon font_family icon-shoujidingwei"></i>
                 </Tooltip>
               </div>
@@ -138,7 +138,7 @@ export default {
 
   .map-timeline-box
     padding 11px
-    // overflow auto
+    overflow auto
 
   .map-timeline-dot {
     display inline-block
@@ -198,5 +198,5 @@ export default {
       top -9px
 
     .ivu-tooltip-popper
-      left 25px !important
+      top 0 !important
 </style>
