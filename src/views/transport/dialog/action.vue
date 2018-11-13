@@ -318,7 +318,7 @@ export default {
         this.$Message.error('请输入运输费')
         return false
       }
-      if (typeof this.cashBack === 'number' && this.cashBack <= 0) {
+      if (this.type === 'sendCar' && typeof this.cashBack === 'number' && this.cashBack <= 0) {
         this.$Message.error('返现运费必须大于0')
         return false
       }

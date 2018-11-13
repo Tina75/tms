@@ -24,9 +24,6 @@ export default {
       activeKey: ''
     }
   },
-  mounted () {
-
-  },
   methods: {
     /**
      * 点击某一个发货方
@@ -34,10 +31,12 @@ export default {
     handleClick (item) {
       if (this.activeKey) {
         for (let i in this.$slots.default) {
-          let _childvm = this.$slots.default[i].componentInstance
-          if (_childvm.item[this.listKey] === this.activeKey) {
-            _childvm.toggleActive()
-            break
+          if (typeof this.$slots.default[i] === 'object') {
+            let _childvm = this.$slots.default[i].componentInstance
+            if (_childvm.item[this.listKey] === this.activeKey) {
+              _childvm.toggleActive()
+              break
+            }
           }
         }
       }

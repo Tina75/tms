@@ -246,6 +246,10 @@ export default {
         vm.columns
           .filter(col => {
             if (vm.extraColumns.length > 0 && col.key && !col.extra) {
+              // extracolumns 没有该值，就直接忽略，防止异常
+              if (!columnGroup[col.key]) {
+                return false
+              }
               let group = columnGroup[col.key][0]
               // title字段以接口返回为准
               col.title = group.title

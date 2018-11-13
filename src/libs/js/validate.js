@@ -13,6 +13,9 @@ const validator = {
   fee (value) {
     return /^[0-9]{0,9}(?:\.\d{1,2})?$/.test(value)
   },
+  mileage (value) {
+    return /^[0-9]{0,6}(?:\.\d{1})?$/.test(value)
+  },
   /**
    * 校验密码
    */

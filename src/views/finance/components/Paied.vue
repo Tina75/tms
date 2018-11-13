@@ -25,6 +25,7 @@
 <script>
 /**
  * 代收货款-已付款
+ * 显示已经把代收货款付给发货方的订单
  */
 import BaseComponent from '@/basic/BaseComponent'
 import CollectForm from './CollectForm.vue'
@@ -32,6 +33,7 @@ import PageTable from '@/components/page-table/index'
 import Export from '@/libs/js/export'
 import TMSUrl from '@/libs/constant/url'
 import Server from '@/libs/js/server'
+import { renderFee } from '@/libs/js/util'
 export default {
   components: {
     CollectForm,
@@ -104,7 +106,24 @@ export default {
           key: 'collectionFee',
           width: 100,
           render (h, params) {
-            return h('span', {}, params.row['collectionFee'] ? (params.row['collectionFee'] / 100).toFixed(2) : 0)
+            return renderFee(h, params.row['collectionFee'])
+            // return h('span', {}, params.row['collectionFee'] ? (params.row['collectionFee'] / 100).toFixed(2) : 0)
+          }
+        },
+        {
+          title: '实收货款',
+          key: 'collFee',
+          width: 100,
+          render (h, params) {
+            return renderFee(h, params.row['collFee'])
+          }
+        },
+        {
+          title: '实付货款',
+          key: 'payFee',
+          width: 100,
+          render (h, params) {
+            return renderFee(h, params.row['payFee'])
           }
         },
         {
@@ -217,6 +236,7 @@ export default {
 
 <style lang="stylus" scoped>
 .paied
+  min-height 385px
   &__operation
     border-bottom 1px solid #E4E7EC
     padding-bottom 9px

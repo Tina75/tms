@@ -131,6 +131,7 @@ import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, setTabList } from './constant/outer'
 import headType from '@/libs/constant/headtype'
+import _ from 'lodash'
 
 export default {
   name: 'OuterManager',
@@ -197,7 +198,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.billArrived([p.row.transId])
+                    this.billArrived(p.row)
                   }
                 }
               }, '到货')
@@ -283,34 +284,114 @@ export default {
     },
 
     // 到货
-    billArrived (ids) {
+    billArrived (row) {
       const self = this
       let transIds
-      if (ids && ids.length) transIds = ids
+      console.log(row)
+      if (row) transIds = [row.transId]
       else if (this.tableSelection.length) transIds = this.tableSelection.map(item => item.transId)
       else {
         this.$Message.error('请先选择后再操作')
         return
       }
-      self.openDialog({
-        name: 'transport/dialog/confirm',
-        data: {
-          title: '到货确认',
-          message: '是否确认到货？'
-        },
-        methods: {
-          confirm () {
-            Server({
-              url: '/outside/bill/confirm/arrival',
-              method: 'post',
-              data: { transIds }
-            }).then(res => {
-              self.$Message.success('操作成功')
-              self.clearSelectedAndFetch()
-            }).catch(err => console.error(err))
-          }
-        }
+      let tableSelection = _.cloneDeep(this.tableSelection)
+      let cashBackList = _.remove(tableSelection, (i) => {
+        return i.cashBack > 0
       })
+      console.log(cashBackList)
+      if (!row && this.tableSelection.length > 1 && cashBackList.length > 0) {
+        self.openDialog({
+          name: 'transport/dialog/cashBackWarn',
+          data: {
+            title: '操作提醒',
+            cashBack: cashBackList,
+            type: 'outer'
+          },
+          methods: {
+            confirm () {}
+          }
+        })
+        return
+      }
+      if (row) {
+        if (row.cashBack > 0) {
+          self.openDialog({
+            name: 'transport/dialog/cashBack',
+            data: {
+              url: '/outside/bill/confirm/arrival',
+              title: '到货确认',
+              type: 'outer',
+              cashBack: row.cashBack / 100,
+              transIds: transIds
+            },
+            methods: {
+              confirm () {
+                self.$Message.success('操作成功')
+                self.clearSelectedAndFetch()
+              }
+            }
+          })
+        } else {
+          self.openDialog({
+            name: 'transport/dialog/confirm',
+            data: {
+              title: '到货确认',
+              message: '是否确认到货？'
+            },
+            methods: {
+              confirm () {
+                Server({
+                  url: '/outside/bill/confirm/arrival',
+                  method: 'post',
+                  data: { transIds }
+                }).then(res => {
+                  self.$Message.success('操作成功')
+                  self.clearSelectedAndFetch()
+                }).catch(err => console.error(err))
+              }
+            }
+          })
+        }
+      } else {
+        if (self.tableSelection[0].cashBack > 0) {
+          self.openDialog({
+            name: 'transport/dialog/cashBack',
+            data: {
+              url: '/outside/bill/confirm/arrival',
+              title: '到货确认',
+              type: 'outer',
+              cashBack: self.tableSelection[0].cashBack / 100,
+              transIds: [self.tableSelection[0].transId]
+            },
+            methods: {
+              confirm () {
+                self.$Message.success('操作成功')
+                self.clearSelectedAndFetch()
+              }
+            }
+          })
+        } else {
+          self.openDialog({
+            name: 'transport/dialog/confirm',
+            data: {
+              title: '到货确认',
+              message: '是否确认到货？'
+            },
+            methods: {
+              confirm () {
+                Server({
+                  url: '/outside/bill/confirm/arrival',
+                  method: 'post',
+                  data: { transIds }
+                }).then(res => {
+                  self.$Message.success('操作成功')
+                  self.clearSelectedAndFetch()
+                }).catch(err => console.error(err))
+              }
+            }
+          })
+        }
+      }
     },
 
     // 发运

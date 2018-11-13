@@ -83,7 +83,7 @@ export default {
         },
         {
           title: '订单号',
-          width: 140,
+          width: 150,
           key: 'orderNo',
           render: (h, params) => {
             return h('a', {
@@ -197,6 +197,7 @@ export default {
         data: {
           id: ids,
           needPay: (needPay / 100).toFixed(2),
+          verifyType: 3, // 1-代收货款已收未付，2-代收货款已付款，3-返现运费'
           orderNum: ids.length
         },
         methods: {
@@ -219,6 +220,7 @@ export default {
         data: {
           id: data.id,
           needPay: (data.totalFee / 100).toFixed(2),
+          verifyType: 3, // 1-代收货款已收未付，2-代收货款已付款，3-返现运费'
           orderNum: 0
         },
         methods: {

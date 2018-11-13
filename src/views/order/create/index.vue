@@ -84,7 +84,7 @@
     </Row>
     <Row :gutter="16">
       <Col span="12">
-      <FormItem label="发货地址:">
+      <FormItem label="发货地址:" class="consig-address">
         <Row>
           <Col span="11">
           <FormItem prop="start">
@@ -106,7 +106,7 @@
       </FormItem>
       </Col>
       <Col span="12">
-      <FormItem label="收货地址:">
+      <FormItem label="收货地址:" class="consig-address">
         <Row>
           <Col span="11">
           <FormItem prop="end">
@@ -149,7 +149,7 @@
       </Col>
       <Col span="6">
       <FormItem label="计费里程:" prop="mileage">
-        <TagNumberInput :min="0" v-model="orderForm.mileage" :parser="handleParseFloat">
+        <TagNumberInput :min="0" v-model="orderForm.mileage" :parser="handleParseFloats">
           <span slot="suffix" class="order-create__input-suffix">公里</span>
         </TagNumberInput>
       </FormItem>
@@ -168,6 +168,7 @@
           </span>
           </Col>
         </Row>
+        <p class="foramte-num">{{formateNum(orderForm.freightFee)}}</p>
       </FormItem>
       </Col>
       <Col span="6">
@@ -281,6 +282,7 @@ import cityUtil from '@/libs/js/city'
 import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
 import distance from '@/libs/js/distance'
+import { money2chinese } from '@/libs/js/util'
 
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
 export default {
@@ -338,6 +340,14 @@ export default {
         callback()
       } else {
         callback(new Error('费用整数位最多输入9位'))
+      }
+    }
+    // 6位整数 1位小数
+    const validateMile = (rule, value, callback) => {
+      if ((value && validator.mileage(value)) || !value) {
+        callback()
+      } else {
+        callback(new Error('距离整数位最多输入6位,小数1位'))
       }
     }
     return {
@@ -475,8 +485,15 @@ export default {
         ],
         receiptCount: [
           { required: true, type: 'number', message: '请输入回单数量' }
+        ],
+        // 代收货款
+        collectionMoney: [
+          { validator: validateFee }
+        ],
+        // 计费里程
+        mileage: [
+          { validator: validateMile }
         ]
-
       },
       consignerCargoes: [new Cargo()],
       startDateOptions: {
@@ -605,6 +622,10 @@ export default {
     // 保留2位小数
     handleParseFloat (value) {
       return float.floor(value).toString()
+    },
+    // 保留1位小数
+    handleParseFloats (value) {
+      return float.floor(value, 1).toString()
     },
     // 货物名称选择下拉项目时触发
     selectCargo (params, cargoItem) {
@@ -791,7 +812,9 @@ export default {
               // end: end,
               arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
               deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
-              orderCargoList: orderCargoList.map(cargo => cargo.toJson())
+              orderCargoList: orderCargoList.map(cargo => cargo.toJson()),
+              collectionMoney: orderForm.collectionMoney * 100,
+              mileage: orderForm.mileage * 1000
             });
 
             ['start', 'end'].forEach(field => {
@@ -918,6 +941,11 @@ export default {
       distance(p1, p2).then(res => {
         this.orderForm.mileage = res / 1000
       })
+    },
+    formateNum (value) {
+      if (value && value > 9999.99) {
+        return money2chinese(value)
+      }
     }
   }
 }
@@ -937,4 +965,18 @@ export default {
     color #00A4BD
     font-weight bold
     padding-right 13px
+</style>
+<style lang="stylus">
+.consig-address
+  .ivu-form-item-label:before
+    content '*'
+    display inline-block
+    margin-right 4px
+    line-height 1
+    font-family SimSun
+    font-size 12px
+    color #ed4014
+.foramte-num
+  font-size 12px
+  line-height 14px
 </style>

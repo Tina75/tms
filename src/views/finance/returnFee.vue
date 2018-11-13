@@ -36,12 +36,16 @@ import returnFeeMixin from './mixins/returnFeeMixin.js'
 import settlement from '@/libs/constant/settlement'
 import Export from '@/libs/js/export'
 import Server from '@/libs/js/server'
+import { renderFee } from '@/libs/js/util'
 export default {
   components: {
     TabHeader,
     PageTable,
     WaitReturnFee,
     ReturnFeeForm
+  },
+  metaInfo: {
+    title: '返现对账'
   },
   mixins: [BasePage, returnFeeMixin],
   data () {
@@ -103,19 +107,41 @@ export default {
         },
         {
           title: '承运商/外转方',
-          key: 'partnerName'
+          key: 'partnerName',
+          width: 180
         },
         {
           title: '始发地',
-          key: 'departureName'
+          key: 'departureName',
+          width: 180
         },
         {
           title: '目的地',
-          key: 'destinationName'
+          key: 'destinationName',
+          width: 180
+        },
+        {
+          title: '应收返现运费',
+          key: 'cashBack',
+          width: 100,
+          render (h, params) {
+            return renderFee(h, params.row['cashBack'])
+            // return h('span', {}, params.row['cashBack'] ? (params.row['cashBack'] / 100).toFixed(2) : 0)
+          }
+        },
+        {
+          title: '实收返现运费',
+          key: 'actualFee',
+          width: 100,
+          render (h, params) {
+            return renderFee(h, params.row['actualFee'])
+            // return h('span', {}, params.row['actualFee'] ? (params.row['actualFee'] / 100).toFixed(2) : 0)
+          }
         },
         {
           title: '车牌号',
-          key: 'truckNo'
+          key: 'truckNo',
+          width: 80
         },
         {
           title: '结算方式',
@@ -137,6 +163,7 @@ export default {
           title: '核销时间',
           key: 'verifyTime',
           sortable: 'custom',
+          width: 150,
           render (h, params) {
             return h('span', {}, new Date(params.row['verifyTime']).Format('yyyy-MM-dd hh:mm:ss'))
           }
@@ -229,6 +256,7 @@ export default {
 <style lang="stylus" scoped>
 .return-fee
   margin-bottom -20px
+  min-height 415px
   &__content
     margin 35px 0 0
   &__export
