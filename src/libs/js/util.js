@@ -48,6 +48,7 @@ export const objEqual = function (obj1, obj2) {
 const numberMap = '零一二三四五六七八九'.split('') // 数字映射
 const baseUnit = ['', '十', '百', '千'] // 基础单位
 const sectionUnit = ['', '万', '亿'] // 每4位的分组单位
+const floatUnit = ['角', '分'] // 小数单位
 /**
  * 金额（9位及以下）转汉字
  * @param {Number | String} number 金额
@@ -58,9 +59,7 @@ export const money2chinese = (number) => {
   if ((typeof number !== 'number') || isNaN(number) || number > 999999999) return ''
 
   let resultArr = ['元']
-
   const numStr = number.toString()
-  const floatUnit = ['角', '分']
   let intStr = numStr
 
   // 小数部分转换
@@ -119,7 +118,8 @@ export const money2chinese = (number) => {
     resultArr.splice(i, 0, transferedResult[i] ? transferedResult[i] + sectionUnit[transferedResult.length - i - 1] : transferedResult[i])
   }
 
-  // 口语化
+  // 口语化，如果头两位为”一十“，则只保留”十“
+  // 一十一 => 十一
   if (resultArr[0].substr(0, 2) === '一十') resultArr[0] = resultArr[0].substr(1, resultArr[0].length)
 
   return resultArr.join('')
