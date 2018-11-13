@@ -328,18 +328,12 @@ export default {
         name: 'transport/dialog/shipping',
         data: {
           title: '发运',
-          message: '是否发运？发运以后将不能再修改外转单信息'
+          message: '是否发运？发运以后将不能再修改外转单信息',
+          transIds: transIds
         },
         methods: {
           confirm () {
-            Server({
-              url: '/outside/bill/send',
-              method: 'post',
-              data: { transIds }
-            }).then(res => {
-              self.$Message.success('操作成功')
-              self.clearSelectedAndFetch()
-            }).catch(err => console.error(err))
+            self.clearSelectedAndFetch()
           }
         }
       })
@@ -381,6 +375,40 @@ export default {
           }
         }
       })
+    },
+    // 获取车辆位置
+    billLocation () {
+      if (!this.checkTableSelection()) return
+      let transIds = this.tableSelection.map(item => item.transId)
+      let data = transIds.length > 1 ? ({ transIds }) : ({ transId: transIds[0] })
+      Server({
+        url: transIds.length > 1 ? '/outside/bill/location' : '/outside/bill/single/location',
+        method: 'post',
+        data
+      }).then(res => {
+        let cars
+        if (transIds.length > 1) {
+          if (!res.data.data.list.length) {
+            this.$Message.warning('暂无车辆位置信息')
+            return
+          }
+          cars = res.data.data.list
+        } else {
+          if (!res.data.data.points.length) {
+            this.$Message.warning('暂无车辆位置信息')
+            return
+          }
+          cars = [res.data.data]
+        }
+        this.openDialog({
+          name: 'transport/dialog/map',
+          data: {
+            cars,
+            multiple: transIds.length !== 1
+          },
+          methods: {}
+        })
+      }).catch(err => console.error(err))
     }
   }
 }

@@ -76,6 +76,12 @@ export const BUTTON_LIST = vm => [
         vm.billArrived()
       }
     }, {
+      name: '查看车辆位置',
+      // code: 120302,
+      func: () => {
+        vm.billLocation()
+      }
+    }, {
       name: '导出',
       code: 120305,
       func: () => {
@@ -192,10 +198,11 @@ export const TABLE_COLUMNS = vm => [
     }
   },
   {
-    title: '计费里程',
-    key: 'distance',
+    title: '计费里程（公里）',
+    key: 'mileage',
+    width: 120,
     render: (h, p) => {
-      return vm.tableDataRender(h, p.row.distance)
+      return vm.tableDataRender(h, p.row.mileage === '' ? '' : p.row.mileage)
     }
   },
   {
@@ -272,6 +279,22 @@ export const TABLE_COLUMNS = vm => [
     width: 120,
     render: (h, p) => {
       return vm.tableDataRender(h, vm.payTypeFormatter(p.row.payType, true))
+    }
+  },
+  {
+    title: '返现运费',
+    key: 'cashBack',
+    width: 120,
+    render: (h, p) => {
+      return vm.tableDataRender(h, p.row.cashBack === '' ? '' : p.row.cashBack / 100)
+    }
+  },
+  {
+    title: '代收货款',
+    key: 'collectionMoney',
+    width: 120,
+    render: (h, p) => {
+      return vm.tableDataRender(h, p.row.collectionMoney === '' ? '' : p.row.collectionMoney / 100)
     }
   },
   {
