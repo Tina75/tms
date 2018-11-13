@@ -56,7 +56,7 @@ const floatUnit = ['角', '分'] // 小数单位
  */
 export const money2chinese = (number) => {
   number = Number(number)
-  if ((typeof number !== 'number') || isNaN(number) || number > 999999999) return ''
+  if ((typeof number !== 'number') || isNaN(number) || number > 999999999 || number < 0) return ''
 
   if (number === 0 || number < 0.01) return '零元'
 
