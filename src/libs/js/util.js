@@ -44,3 +44,79 @@ export const objEqual = function (obj1, obj2) {
   /* eslint-disable-next-line */
   else return !keysArr1.some(key => obj1[key] != obj2[key])
 }
+
+const numberMap = '零一二三四五六七八九'.split('')
+const baseUnit = ['', '十', '百', '千']
+const sectionUnit = ['', '万', '亿']
+
+export const number2chinese = (number) => {
+  number = Number(number)
+  if ((typeof number !== 'number') || isNaN(number) || number.toString().length > 9) return ''
+
+  let resultArr = ['元']
+
+  const numStr = number.toString()
+  const floatUnit = ['角', '分']
+  let intStr = numStr
+
+  // 小数部分转换
+  if (numStr.indexOf('.') > -1) {
+    const temp = numStr.split('.')
+    const floatStr = temp[1]
+    intStr = temp[0]
+    let transferedFloatStr = ''
+    const length = floatStr.length > 2 ? 2 : floatStr.length
+    for (let i = 0; i < length; i++) {
+      if (Number(floatStr.charAt(i))) {
+        transferedFloatStr += (numberMap[Number(floatStr.charAt(i))] + floatUnit[i])
+      }
+    }
+    resultArr = resultArr.concat(transferedFloatStr)
+  }
+
+  // 对整数部分每4位一组进行分组
+  const intSectionArr = []
+  let item = ''
+  for (let i = intStr.length - 1; i > -1; i--) {
+    item = intStr.charAt(i) + item
+    if (item.length === 4 || i === 0) {
+      intSectionArr.unshift(item)
+      item = ''
+    }
+  }
+
+  // 对每一个分组进行转换
+  let transferedResult = []
+  for (let i = 0; i < intSectionArr.length; i++) {
+    let tempResult = []
+    const currentArr = intSectionArr[i].split('')
+    let currentArrLength = currentArr.length
+    let canAddZero = true // 是否可以补零，防止出现连续多个0
+    while (currentArrLength) {
+      const num = Number(currentArr[0])
+      if (num) {
+        canAddZero = true
+        tempResult.push(numberMap[num] + baseUnit[currentArrLength - 1])
+      }
+      if (!num && canAddZero) {
+        canAddZero = false
+        tempResult.push('零')
+      }
+
+      currentArr.shift()
+      currentArrLength = currentArr.length
+    }
+    if (tempResult[tempResult.length - 1] === '零') tempResult.pop()
+    transferedResult.push(tempResult.join(''))
+  }
+
+  // 为每一个分组添加单位
+  for (let i = 0; i < transferedResult.length; i++) {
+    resultArr.splice(i, 0, transferedResult[i] ? transferedResult[i] + sectionUnit[transferedResult.length - i - 1] : transferedResult[i])
+  }
+
+  // 口语化
+  if (resultArr[0].substr(0, 2) === '一十') resultArr[0] = resultArr[0].substr(1, resultArr[0].length)
+
+  return resultArr.join('')
+}

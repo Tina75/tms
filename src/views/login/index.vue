@@ -99,7 +99,6 @@ export default {
     }
   },
   created () {
-    this.$reportEvent('login success', '用户登录成功', undefined, 'loginTransport')
     this.localPwParser()
     this.getCaptcha()
   },
@@ -165,7 +164,6 @@ export default {
           method: 'post',
           data: this.form
         }).then(res => {
-          this.$reportEvent('login success', '进入登录页面', undefined, 'login transport')
           if (this.rememberPW) this.localPwSave()
           else window.localStorage.removeItem('local_rememberd_pw')
           window.localStorage.setItem('tms_is_login', true)
