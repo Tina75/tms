@@ -59,15 +59,15 @@
       <NewCustumerStatis v-if="cardChecksTemp.includes('new-customer')"/>
       <!-- 在途车辆信息 -->
       <CarPosition v-if="cardChecksTemp.includes('transport-location')"/>
-
+      <!-- 近七日订单和营业额统计 -->
       <Turnover v-if="cardChecksTemp.includes('turnover-statistics')" />
-
+      <!-- 近七日调度订单数 -->
       <SchedulingOrder v-if="cardChecksTemp.includes('dispatch-statistics')"/>
-
+      <!-- 近七日开单数 -->
       <Billing v-if="cardChecksTemp.includes('order-statistics')"/>
-
+      <!-- 今日应收款项 / 应付款项 -->
       <ReceiptsPayments v-if="cardChecksTemp.includes('pay-receive')"/>
-
+      <!-- 今日开单货物重量 / 体积 -->
       <Goods v-if="cardChecksTemp.includes('cargo-statistics')"/>
     </Row>
   </div>

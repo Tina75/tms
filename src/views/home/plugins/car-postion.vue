@@ -2,7 +2,7 @@
   <div is="i-col" span="12" class="i-mt-15 page-home__card-item">
     <BlankCard :padding="false" to="/transport/waybill" page-title="运单管理" tab="3">
       <div slot="title">在途车辆位置</div>
-      <noData v-if="!showMap"></noData>
+      <noData v-if="!showMap" msg="暂无车辆位置信息～" type="location"></noData>
       <div v-else ref="positionMap" style="height:238px"></div>
     </BlankCard>
   </div>
