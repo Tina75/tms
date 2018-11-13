@@ -158,7 +158,7 @@ export default {
     },
     noDataText: {
       type: String,
-      default: '暂无数据'
+      default: '<span><i class="icon font_family icon-ico-nodata"></i>&nbsp;暂无数据~</span>'
     },
     // 斑马纹
     stripe: {

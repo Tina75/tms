@@ -42,9 +42,14 @@
             <span v-if="detail.deliveryTime">{{detail.deliveryTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
             <span v-else>-</span>
           </i-col>
-          <i-col span="10">
+          <i-col span="7">
             <span>期望到货时间：</span>
             <span v-if="detail.arriveTime">{{detail.arriveTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
+            <span v-else>-</span>
+          </i-col>
+          <i-col v-if="from === 'order'" span="3">
+            <span>代收货款：</span>
+            <span v-if="detail.collectionMoney">{{detail.collectionMoney}}</span>
             <span v-else>-</span>
           </i-col>
         </Row>
@@ -122,6 +127,11 @@
           <span>应收费用</span>
         </div>
         <Row style="padding-top: 17px;">
+          <i-col span="4">
+            <span style="width: 72px;">计费里程：</span>
+            <span v-if="detail.mileage" style="font-weight:bold;">{{detail.mileage}}公里</span>
+            <span v-else>-</span>
+          </i-col>
           <i-col span="4">
             <span class="fee-style">运输费：</span>
             <span v-if="detail.freightFee" style="font-weight:bold;">{{detail.freightFee | toPoint}}元</span>

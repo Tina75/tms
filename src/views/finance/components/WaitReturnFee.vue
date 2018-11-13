@@ -1,7 +1,13 @@
 <template>
   <div class="wait-verify">
     <ReturnFeeForm scene="1" @on-search="handleSearch"></ReturnFeeForm>
-    <ReconcileLayout :columns="orderColumns" :data-source="orderList" title="外转方/承运商返现对账列表" empty-content="请点击左侧外转方/承运商查看返现对账列表哦～">
+    <ReconcileLayout
+      :columns="orderColumns"
+      :data-source="orderList"
+      title="外转方/承运商返现对账列表"
+      empty-content="请点击左侧外转方/承运商查看返现对账列表哦～"
+      @on-selection-change="handleSelectionChange"
+    >
       <div slot="operation">
         <Button type="primary" @click="batchWriteOff">核销</Button>
       </div>
@@ -9,7 +15,7 @@
         <ListSenderItem v-for="(item, name) in drivers" :key="name" :item="item" :title="item.partnerName" :extra="item.orderNum" icon="ico-company">
           <p slot="supName">
             <span>
-              返现总额 {{item.calcTotalFee / 100 }}
+              返现总额 {{(item.calcTotalFee / 100).toFixed(2) }}
             </span>
           </p>
         </ListSenderItem>
@@ -26,7 +32,6 @@ import ReconcileLayout from './ReconcileLayout.vue'
 import ListSender from './list-sender/index.vue'
 import ListSenderItem from './list-sender/SenderItem.vue'
 import BaseComponent from '@/basic/BaseComponent'
-import TMSUrl from '@/libs/constant/url'
 import ReturnFeeForm from './ReturnFeeForm.vue'
 import _ from 'lodash'
 import server from '@/libs/js/server'
@@ -78,7 +83,7 @@ export default {
         },
         {
           title: '订单号',
-          width: 140,
+          width: 150,
           key: 'orderNo',
           render: (h, params) => {
             return h('a', {
@@ -114,7 +119,7 @@ export default {
         },
         {
           title: '结算方式',
-          width: 75,
+          width: 90,
           key: 'settleTypeDesc',
           filters: settlementFilters,
           filterMethod (value, row) {
@@ -134,7 +139,7 @@ export default {
       if (!this.activeDriver) {
         return []
       }
-      return this.drivers[this.activeDriver.partnerName][0].itemList
+      return this.drivers[this.activeDriver.partnerName].orderInfos
     }
   },
   mounted () {
@@ -147,20 +152,35 @@ export default {
     this.fetch()
   },
   methods: {
-
+    /**
+     * 搜索
+     */
     handleSearch (form) {
       this.searchForm = form
+      this.activeDriver = null
+      this.selectedOrders = []
+      this.fetch()
     },
     /**
      * 左侧外转方和承运商列表切换
      */
     handleClick (item) {
       this.activeDriver = item
+      if (this.selectedOrders.length > 0) {
+        this.selectedOrders = []
+      }
+    },
+    /**
+     * 选择回调
+     */
+    handleSelectionChange (selected) {
+      this.selectedOrders = selected
     },
     /**
      * 批量核销
      */
     batchWriteOff () {
+      const vm = this
       if (this.selectedOrders.length === 0) {
         this.$Message.warning('请选择返现核销的订单')
         return
@@ -176,13 +196,15 @@ export default {
         name: 'finance/dialogs/returnFeeVerify',
         data: {
           id: ids,
-          needPay: needPay / 100,
+          needPay: (needPay / 100).toFixed(2),
+          verifyType: 3, // 1-代收货款已收未付，2-代收货款已付款，3-返现运费'
           orderNum: ids.length
         },
         methods: {
           ok () {
-            this.$Message.success('核销成功')
-            this.fetch()
+            vm.$Message.success('核销成功')
+            vm.selectedOrders = []
+            vm.fetch()
           }
         }
       })
@@ -191,33 +213,22 @@ export default {
      * 核销
      */
     writeOff (data) {
+      const vm = this
       // 单笔核销
       this.openDialog({
         name: 'finance/dialogs/returnFeeVerify',
         data: {
           id: data.id,
-          needPay: data.collectionFee / 100,
+          needPay: (data.totalFee / 100).toFixed(2),
+          verifyType: 3, // 1-代收货款已收未付，2-代收货款已付款，3-返现运费'
           orderNum: 0
         },
         methods: {
           ok () {
-            this.$Message.success('核销成功')
-            this.fetch()
+            vm.$Message.success('核销成功')
+            vm.selectedOrders = []
+            vm.fetch()
           }
-        }
-      })
-    },
-    /**
-     * 查看订单详情
-     */
-    toDetail (data) {
-      this.openTab({
-        path: TMSUrl.ORDER_DETAIL,
-        title: data.orderNo,
-        query: {
-          id: data.orderNo,
-          orderId: data.orderId,
-          from: 'order'
         }
       })
     },
@@ -225,6 +236,7 @@ export default {
      * 查询代收货款
      */
     fetch () {
+      const vm = this
       server({
         url: '/cashback/getUnverify',
         method: 'post',
@@ -232,8 +244,23 @@ export default {
           ...this.searchForm
         }
       }).then((res) => {
-        if (res.data && res.data.length > 0) {
-          this.drivers = _.groupBy(res.data.data, (item) => item.partnerName)
+        if (res.data.data && res.data.data.length > 0) {
+          const groupDrivers = _.groupBy(res.data.data, (item) => item.partnerName)
+          const drivers = {}
+          for (let name in groupDrivers) {
+            drivers[name] = groupDrivers[name][0]
+          }
+          if (vm.activeDriver) {
+            // 当前选中的发货方，正好在核销之后没有可核销的单子，从列表中移除，那么当前选中的就移除
+            let findActiveDriver = res.data.data.find((item) => item.partnerName === vm.activeSender.partnerName)
+            if (!findActiveDriver) {
+              vm.activeDriver = null
+            }
+          }
+          this.drivers = drivers
+        } else {
+          this.drivers = []
+          this.activeDriver = null
         }
       })
     }
@@ -241,6 +268,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="stylus" scoped>
+.wait-verify
+  .ivu-btn
+    width 86px
 </style>

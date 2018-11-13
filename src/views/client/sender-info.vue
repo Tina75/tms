@@ -65,12 +65,14 @@
           </template>
           <div class="footer">
             <template>
-              <Page :total="totalCount1"
-                    :current.sync="pageNo1" :page-size-opts="pageArray1"
-                    size="small"
-                    show-sizer
-                    show-elevator show-total @on-change="handleChangePage1"
-                    @on-page-size-change="handleChangePageSize1"/>
+              <Page
+                :total="totalCount1"
+                :current.sync="pageNo1"
+                :page-size-opts="pageArray1"
+                size="small"
+                show-sizer
+                show-elevator show-total @on-change="handleChangePage1"
+                @on-page-size-change="handleChangePageSize1"/>
             </template>
           </div>
         </TabPane>
@@ -170,7 +172,8 @@ export default {
                           address: params.row.address,
                           longitude: params.row.longitude,
                           latitude: params.row.latitude,
-                          mapType: params.row.mapType
+                          mapType: params.row.mapType,
+                          city: params.row.cityCode
                         }
                       },
                       methods: {
@@ -252,7 +255,8 @@ export default {
                           remark: params.row.remark,
                           longitude: params.row.longitude,
                           latitude: params.row.latitude,
-                          mapType: params.row.mapType
+                          mapType: params.row.mapType,
+                          cityCode: params.row.cityCode
                         }
                       },
                       methods: {

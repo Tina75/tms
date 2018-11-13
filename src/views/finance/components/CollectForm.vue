@@ -1,7 +1,7 @@
 <template>
   <div class="search-form">
     <Form ref="formInline" :model="formInline">
-      <Row :gutter="18">
+      <Row :gutter="12">
         <Col span="6">
         <FormItem :label-width="65" label="发货方：" prop="partnerName">
           <Input v-model="formInline.partnerName" :maxlength="20" placeholder="请输入发货方名称"></Input>
@@ -12,10 +12,27 @@
           <Input v-model="formInline.orderNo" :maxlength="30" placeholder="请输入订单号"></Input>
         </FormItem>
         </Col>
-        <Col span="7">
+        <Col v-if="scene === '1'" span="7">
         <FormItem :label-width="75" label="下单日期：" prop="daterange">
           <DatePicker v-model="formInline.daterange" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width:100%"></DatePicker>
         </FormItem>
+        </Col>
+        <Col v-if="scene === '2'" span="7">
+        <Row >
+          <Col span="10" offset="0">
+          <FormItem prop="dayType">
+            <Select v-model="formInline.dateType" style="width:120px">
+              <Option :value="1">下单日期</Option>
+              <Option :value="2">到货日期</Option>
+            </Select>
+          </FormItem>
+          </Col>
+          <Col span="14">
+          <FormItem  prop="daterange">
+            <DatePicker v-model="formInline.daterange" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width:100%"></DatePicker>
+          </FormItem>
+          </Col>
+        </Row>
         </Col>
         <Col span="5">
         <FormItem>
@@ -30,12 +47,19 @@
 
 <script>
 export default {
+  props: {
+    scene: {
+      type: String,
+      default: '1' // 1.未收，已收未付，2.已付款
+    }
+  },
   data () {
     return {
       formInline: {
         partnerName: '',
         orderNo: '',
-        daterange: []
+        daterange: [],
+        dateType: 2
       },
       /**
      * 日期条件
@@ -57,7 +81,10 @@ export default {
         partnerName: this.formInline.partnerName || void 0,
         orderNo: this.formInline.orderNo || void 0,
         startTime: this.formInline.daterange[0] ? this.formInline.daterange[0].valueOf() : void 0,
-        endTime: this.formInline.daterange[1] ? this.formInline.daterange[1].valueOf() : void 0
+        endTime: this.formInline.daterange[1] ? this.formInline.daterange[1].valueOf() + 86400000 : void 0
+      }
+      if (this.scene === '2') {
+        params.dateType = this.formInline.dateType
       }
       this.$emit('on-search', params)
     },

@@ -4,24 +4,25 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-11-09 18:02:39
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-11-09 18:05:29
+ * @Last Modified time: 2018-11-12 19:38:00
  */
-
+export const verifyPayType = {
+  1: '现金',
+  2: '银行卡',
+  3: '微信',
+  4: '支付宝'
+}
+export const verifyAccountType = {
+  2: '银行卡号：',
+  3: '微信号：',
+  4: '支付宝账号：',
+  5: '油卡卡号：'
+}
 export default {
   data () {
     return {
-      payTypeMap: {
-        1: '现金',
-        2: '银行卡',
-        3: '微信',
-        4: '支付宝'
-      },
-      accountMap: {
-        2: '银行卡卡号：',
-        3: '微信号：',
-        4: '支付宝账号：',
-        5: '油卡卡号：'
-      },
+      payTypeMap: verifyPayType,
+      accountMap: verifyAccountType,
       writeOffForm: {
         actualFee: '',
         payType: '2',

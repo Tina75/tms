@@ -220,7 +220,7 @@ export default {
         val = this.parser(val)
       }
 
-      const isEmptyString = val.length === 0
+      const isEmptyString = !val ? true : val.length === 0
       if (isEmptyString) {
         this.setValue(null)
         return

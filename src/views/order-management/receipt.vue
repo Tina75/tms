@@ -295,14 +295,14 @@ export default {
             }
           }
         },
-        // {
-        //   title: '回单状态',
-        //   key: 'receiptStatus',
-        //   minWidth: 120,
-        //   render: (h, p) => {
-        //     return h('span', this.statusToName(p.row.receiptOrder.receiptStatus))
-        //   }
-        // },
+        {
+          title: '回单状态',
+          key: 'status',
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', this.statusToName(p.row.receiptOrder.receiptStatus))
+          }
+        },
         {
           title: '客户名称',
           key: 'consignerName',

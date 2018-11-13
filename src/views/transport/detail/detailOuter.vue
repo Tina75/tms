@@ -43,6 +43,11 @@
                       style="width: 120px;">期望到货时间：</span>
                 <span>{{ info.arriveTimeLong | timeFormatter }}</span>
               </i-col>
+              <i-col span="6">
+                <span class="detail-field-title">代收货款：</span>
+                <span v-if="collectionMoney">{{collectionMoney}}</span>
+                <span v-else>-</span>
+              </i-col>
             </Row>
             <Row class="detail-field-group">
               <i-col span="6">
@@ -117,9 +122,13 @@
               <span>应付费用</span>
             </div>
             <Row class="detail-field-group">
-              <i-col span="10">
+              <i-col span="5">
                 <span class="detail-field-title-sm">外转方：</span>
                 <span class="detail-field-fee">{{ payment.transfereeName }}</span>
+              </i-col>
+              <i-col span="5">
+                <span class="detail-field-title-sm">计费里程：</span>
+                <span v-if="payment.mileage" class="detail-field-fee">{{ payment.mileage }}公里</span>
               </i-col>
               <i-col span="5" offset="2">
                 <span class="detail-field-title-sm">外转费用：</span>
@@ -202,11 +211,12 @@ export default {
         consigneeAddress: '',
         remark: ''
       },
-
+      collectionMoney: 0,
       payment: {
         transfereeName: '',
         transFee: '',
-        payType: ''
+        payType: '',
+        mileage: ''
       },
 
       // 所有按钮组
@@ -246,6 +256,12 @@ export default {
             code: 120302,
             func: () => {
               this.billArrived()
+            }
+          }, {
+            name: '查看车辆位置',
+            // code: 120210,
+            func: () => {
+              this.billLocation()
             }
           }, {
             name: '上报异常',
@@ -355,7 +371,7 @@ export default {
         data: { transId: this.id }
       }).then(res => {
         const data = res.data.data
-
+        this.collectionMoney = data.customerInfo.collectionMoney // 代收货款
         for (let key in this.info) {
           this.info[key] = data.customerInfo[key]
         }
@@ -468,6 +484,31 @@ export default {
           }
         }
       })
+    },
+    // 位置
+    billLocation () {
+      let data = {}
+      data.transId = this.id
+      Server({
+        url: '/outside/bill/single/location',
+        method: 'post',
+        data
+      }).then(res => {
+        let cars
+        if (!res.data.data.points.length) {
+          this.$Message.warning('暂无车辆位置信息')
+          return
+        }
+        cars = [res.data.data]
+        this.openDialog({
+          name: 'transport/dialog/map',
+          data: {
+            cars,
+            multiple: data.transId.length !== 1
+          },
+          methods: {}
+        })
+      }).catch(err => console.error(err))
     }
   }
 }

@@ -1,7 +1,13 @@
 <template>
   <div class="wait-pay">
     <CollectForm  @on-search="handleSearch"></CollectForm>
-    <ReconcileLayout :columns="orderColumns" :data-source="orderList" title="发货方代收款列表" empty-content="请点击左侧发货方列表查看待付货款列表哦～">
+    <ReconcileLayout
+      :columns="orderColumns"
+      :data-source="orderList"
+      title="发货方代收款列表"
+      empty-content="请点击左侧发货方列表查看待付货款列表哦～"
+      @on-selection-change="handleSelectionChange"
+    >
       <div slot="operation">
         <Button type="primary" @click="batchWriteOff">付款核销</Button>
       </div>
@@ -24,6 +30,7 @@
 <script>
 /**
  * 代收货款-已收未付
+ * 此tab下显示已经收回代收货款但是没有付给发货方的订单
  */
 import BaseComponent from '@/basic/BaseComponent'
 import CollectForm from './CollectForm.vue'
@@ -59,7 +66,7 @@ export default {
         },
         {
           title: '操作',
-          width: 60,
+          width: 80,
           key: 'action',
           render: (h, params) => {
             return this.hasPower(170502) ? h('a', {
@@ -73,7 +80,7 @@ export default {
         },
         {
           title: '订单号',
-          width: 140,
+          width: 150,
           key: 'orderNo',
           render: (h, params) => {
             return h('a', {
@@ -124,6 +131,9 @@ export default {
         height: 'auto'
       }
     }
+  },
+  mounted () {
+    this.fetch()
   },
   methods: {
 

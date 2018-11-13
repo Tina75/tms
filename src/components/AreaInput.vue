@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="area-input">
     <SelectInput
       :value="value"
       :maxlength="maxlength"
@@ -8,6 +8,7 @@
       :clearable="true"
       :placeholder="placeholder"
       :no-filter="true"
+      :disabled="inputDisabled"
       @input="inputHandle"
       @on-select="selectChange"
     >
@@ -24,7 +25,10 @@ export default {
   },
   props: {
     value: String,
-    maxlength: Number,
+    maxlength: {
+      type: Number,
+      default: 60
+    },
     // 城市编码
     cityCode: String | Number,
     // 下拉数组
@@ -32,8 +36,20 @@ export default {
       type: Array,
       default: () => []
     },
-    placeholder: String,
+    placeholder: {
+      type: String,
+      default: '请输入详细地址'
+    },
     remote: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    // 过滤掉省市信息
+    filterCity: {
       type: Boolean,
       default: false
     }
@@ -62,6 +78,12 @@ export default {
     areaName () {
       const code = this.cityCode
       return code ? cityUtil.getNameByCode(code) : this.map
+    },
+    inputDisabled () {
+      if (this.disabled && !this.cityCode) {
+        return true
+      }
+      return false
     }
   },
   methods: {
@@ -84,8 +106,8 @@ export default {
               const addr = item.address ? item.address.replace(pro, '').replace(city, '') : ''
               arr.push({
                 id: i,
-                name: pro + city + addr + item.title,
-                value: pro + city + addr + item.title,
+                name: this.filterCity ? addr + item.title : pro + city + addr + item.title,
+                value: this.filterCity ? addr + item.title : pro + city + addr + item.title,
                 lat: item.point.lat,
                 lng: item.point.lng
               })

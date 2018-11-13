@@ -150,6 +150,7 @@ import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, setTabList } from './constant/waybill'
 import headType from '@/libs/constant/headtype'
+import _ from 'lodash'
 
 export default {
   name: 'WaybillManager',
@@ -336,25 +337,63 @@ export default {
     billArrived () {
       const self = this
       if (!this.checkTableSelection()) return
-      self.openDialog({
-        name: 'transport/dialog/confirm',
-        data: {
-          title: '到货确认',
-          message: '是否确认到货？'
-        },
-        methods: {
-          confirm () {
-            Server({
-              url: '/waybill/confirm/arrival',
-              method: 'post',
-              data: { waybillIds: self.tableSelection.map(item => item.waybillId) }
-            }).then(res => {
+      let tableSelection = _.cloneDeep(this.tableSelection)
+      let cashBackList = _.remove(tableSelection, (i) => {
+        return i.cashBack > 0
+      })
+      console.log(cashBackList)
+      if (this.tableSelection.length > 1 && cashBackList.length > 0) {
+        self.openDialog({
+          name: 'transport/dialog/cashBackWarn',
+          data: {
+            title: '操作提醒',
+            cashBack: cashBackList,
+            type: 'waybill'
+          },
+          methods: {
+            confirm () {}
+          }
+        })
+        return
+      }
+      if (self.tableSelection[0].cashBack > 0) {
+        self.openDialog({
+          name: 'transport/dialog/cashBack',
+          data: {
+            url: '/waybill/confirm/arrival',
+            type: 'waybill',
+            title: '到货确认',
+            cashBack: self.tableSelection[0].cashBack / 100,
+            waybillIds: [self.tableSelection[0].waybillId]
+          },
+          methods: {
+            confirm () {
               self.$Message.success('操作成功')
               self.clearSelectedAndFetch()
-            }).catch(err => console.error(err))
+            }
           }
-        }
-      })
+        })
+      } else {
+        self.openDialog({
+          name: 'transport/dialog/confirm',
+          data: {
+            title: '到货确认',
+            message: '是否确认到货？'
+          },
+          methods: {
+            confirm () {
+              Server({
+                url: '/waybill/confirm/arrival',
+                method: 'post',
+                data: { waybillIds: self.tableSelection.map(item => item.waybillId) }
+              }).then(res => {
+                self.$Message.success('操作成功')
+                self.clearSelectedAndFetch()
+              }).catch(err => console.error(err))
+            }
+          }
+        })
+      }
     },
 
     // 发运

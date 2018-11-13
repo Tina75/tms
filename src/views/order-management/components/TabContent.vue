@@ -108,6 +108,7 @@ import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput.vue'
 import OrderPrint from './OrderPrint'
 import FontIcon from '@/components/FontIcon'
+import IconLabel from '@/components/IconLabel'
 import _ from 'lodash'
 import { mapGetters, mapActions } from 'vuex'
 // import City from '@/libs/js/city'
@@ -310,19 +311,42 @@ export default {
               let renderBtn = []
               // 拆单按钮
               if (r.transStatus === 0 && r.disassembleStatus !== 1 && r.dispatchStatus === 0 && this.hasPower(120110)) {
-                renderBtn.push(
-                  h('a', {
-                    style: {
-                      marginRight: '25px',
-                      color: '#00a4bd'
-                    },
-                    on: {
-                      click: () => {
-                        this.openSeparateDialog(params)
+                if (r.collectionMoney > 0) {
+                  renderBtn.push(
+                    h('Tooltip', {
+                      props: {
+                        maxWidth: '200',
+                        offset: -9,
+                        content: '有代收货款的订单不允许拆单',
+                        placement: 'top-start',
+                        transfer: true
                       }
-                    }
-                  }, '拆单')
-                )
+                    }, [
+                      h('a', {
+                        style: {
+                          marginRight: '25px',
+                          color: '#B6E4EC'
+                        },
+                        on: {
+                        }
+                      }, '拆单')
+                    ])
+                  )
+                } else {
+                  renderBtn.push(
+                    h('a', {
+                      style: {
+                        marginRight: '25px',
+                        color: '#00a4bd'
+                      },
+                      on: {
+                        click: () => {
+                          this.openSeparateDialog(params)
+                        }
+                      }
+                    }, '拆单')
+                  )
+                }
               }
               // 外转按钮
               if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0 && this.hasPower(120111)) {
@@ -419,32 +443,35 @@ export default {
             /**
              * 订单管理入口: 没有子单标识，处理中(已外转、已提货、已送货)的单子加上沙漏标记
              * 运输管理入口：子弹需要加上子弹标识
+             * 所有入口加上需判断代收货款标记
             */
+            let renderHtml = [
+              h('a', {
+                props: {
+                  type: 'text'
+                },
+                style: {
+                  marginRight: '5px',
+                  color: '#418DF9'
+                },
+                on: {
+                  click: () => {
+                    this.openTab({
+                      path: '/order-management/detail',
+                      query: {
+                        id: params.row.orderNo,
+                        orderId: params.row.id,
+                        from: 'order',
+                        source: this.source
+                      }
+                    })
+                  }
+                }
+              }, params.row.orderNo)
+            ]
             if (this.source === 'order') {
               if ((params.row.status < 30 && params.row.transStatus === 1) || (params.row.status === 10 && params.row.pickupStatus === 1) || (params.row.status === 20 && params.row.dispatchStatus === 1)) {
-                return h('div', [
-                  h('a', {
-                    props: {
-                      type: 'text'
-                    },
-                    style: {
-                      marginRight: '5px',
-                      color: '#418DF9'
-                    },
-                    on: {
-                      click: () => {
-                        this.openTab({
-                          path: '/order-management/detail',
-                          query: {
-                            id: params.row.orderNo,
-                            orderId: params.row.id,
-                            from: 'order',
-                            source: this.source
-                          }
-                        })
-                      }
-                    }
-                  }, params.row.orderNo),
+                renderHtml.push(
                   h(FontIcon, {
                     props: {
                       type: 'ico-ing',
@@ -452,96 +479,34 @@ export default {
                       color: '#9DA1B0'
                     }
                   })
-                ])
-              } else {
-                return h('a', {
-                  props: {
-                    type: 'text'
-                  },
-                  style: {
-                    marginRight: '5px',
-                    color: '#418DF9'
-                  },
-                  on: {
-                    click: () => {
-                      this.openTab({
-                        path: '/order-management/detail',
-                        query: {
-                          id: params.row.orderNo,
-                          orderId: params.row.id,
-                          from: 'order',
-                          source: this.source
-                        }
-                      })
-                    }
-                  }
-                }, params.row.orderNo)
+                )
               }
             } else {
               if (params.row.parentId !== '') {
-                return h('div', [
-                  h('span', {
-                    style: {
-                      display: 'inline-block',
-                      width: '14px',
-                      height: '14px',
-                      background: '#418DF9',
-                      borderRadius: '2px',
-                      color: '#fff',
-                      lineHeight: '14px',
-                      textAlign: 'center',
-                      marginRight: '5px',
-                      fontSize: '11px'
-                    }
-                  }, '子'),
-                  h('a', {
+                renderHtml.unshift(
+                  h(IconLabel, {
                     props: {
-                      type: 'text'
-                    },
-                    style: {
-                      marginRight: '5px',
-                      color: '#418DF9'
-                    },
-                    on: {
-                      click: () => {
-                        this.openTab({
-                          path: '/order-management/detail',
-                          query: {
-                            id: params.row.orderNo,
-                            orderId: params.row.id,
-                            from: 'order',
-                            source: this.source
-                          }
-                        })
-                      }
+                      text: '子',
+                      background: '#418DF9'
                     }
-                  }, params.row.orderNo)
-                ])
-              } else {
-                return h('a', {
-                  props: {
-                    type: 'text'
-                  },
-                  style: {
-                    marginRight: '5px',
-                    color: '#418DF9'
-                  },
-                  on: {
-                    click: () => {
-                      this.openTab({
-                        path: '/order-management/detail',
-                        query: {
-                          id: params.row.orderNo,
-                          orderId: params.row.id,
-                          from: 'order',
-                          source: this.source
-                        }
-                      })
-                    }
-                  }
-                }, params.row.orderNo)
+                  })
+                )
               }
             }
+            if (params.row.collectionMoney > 0) { // 代收货款标记
+              renderHtml.push(
+                h(IconLabel, {
+                  props: {
+                    text: '代',
+                    background: '#FA8C15'
+                  },
+                  style: {
+                    display: 'block'
+                  }
+                })
+              )
+            }
+            return h('div', renderHtml)
           }
         },
         {
@@ -631,6 +596,12 @@ export default {
               return h('span', params.row.endName)
             }
           }
+        },
+        {
+          title: '计算里程（公里）',
+          key: 'mileage',
+          minWidth: 180,
+          ellipsis: true
         },
         {
           title: '体积（方）',
@@ -787,6 +758,14 @@ export default {
           minWidth: 120,
           tooltip: true
         },
+        // {
+        //   title: '代收货款',
+        //   key: 'collectionMoney',
+        //   minWidth: 120,
+        //   render: (h, params) => {
+        //     return h('span', params.row.collectionMoney ? (params.row.collectionMoney / 100).toFixed(2) : '-')
+        //   }
+        // },
         {
           title: '制单人',
           key: 'creatorName',
@@ -860,6 +839,27 @@ export default {
       this.handleTabChange('全部')
     } else {
       this.handleTabChange(this.tabStatus)
+    }
+  },
+
+  mounted () {
+    console.log(this.source)
+    // 订单、运单代收货款字段放在回单数量后面
+    if (this.source === 'order' || this.source === 'waybill') {
+      let index
+      this.tableColumns.find((item, idx) => {
+        item.title === '回单数量' && (index = idx)
+      })
+      if (index) {
+        this.tableColumns.splice(index + 1, 1, {
+          title: '代收货款',
+          key: 'collectionMoney',
+          minWidth: 120,
+          render: (h, params) => {
+            return h('span', params.row.collectionMoney ? (params.row.collectionMoney / 100).toFixed(2) : '-')
+          }
+        })
+      }
     }
   },
 
