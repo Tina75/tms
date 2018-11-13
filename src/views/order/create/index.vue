@@ -148,7 +148,7 @@
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="计算里程:" prop="mileage">
+      <FormItem label="计费里程:" prop="mileage">
         <TagNumberInput :min="0" v-model="orderForm.mileage" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">公里</span>
         </TagNumberInput>
