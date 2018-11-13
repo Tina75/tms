@@ -90,16 +90,6 @@ export default {
         callback(new Error('最多整数位只可输入9位,小数两位'))
       }
     }
-    // 9位整数 2位小数,必须大于0
-    const validateCashBack = (rule, value, callback) => {
-      if ((value && /^[0-9]{0,9}(?:\.\d{1,2})?$/.test(value)) || !value) {
-        callback()
-      } else if (value <= 0) {
-        callback(new Error('返现运费必须大于0'))
-      } else {
-        callback(new Error('最多整数位只可输入9位,小数两位'))
-      }
-    }
     return {
       settlements,
       info: { transfereeName: '', outTransNo: '', payType: 4, transFee: null, cashBack: null, mileage: null },
@@ -116,7 +106,7 @@ export default {
           { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
         ],
         cashBack: [
-          { validator: validateCashBack }
+          { validator: validateFee }
         ]
       }
     }
@@ -162,7 +152,7 @@ export default {
             payType: Number(this.info.payType),
             transFee: Number(this.info.transFee) * 100
           })
-          this.info.cashBack *= 100
+          this.info.cashBack = this.info.cashBack * 100 || null
           Server({
             url: 'outside/bill/create',
             method: 'post',
