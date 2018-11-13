@@ -45,13 +45,17 @@ export const objEqual = function (obj1, obj2) {
   else return !keysArr1.some(key => obj1[key] != obj2[key])
 }
 
-const numberMap = '零一二三四五六七八九'.split('')
-const baseUnit = ['', '十', '百', '千']
-const sectionUnit = ['', '万', '亿']
-
-export const number2chinese = (number) => {
+const numberMap = '零一二三四五六七八九'.split('') // 数字映射
+const baseUnit = ['', '十', '百', '千'] // 基础单位
+const sectionUnit = ['', '万', '亿'] // 每4位的分组单位
+/**
+ * 金额（9位及以下）转汉字
+ * @param {Number | String} number 金额
+ * @returns {String} 汉字金额
+ */
+export const money2chinese = (number) => {
   number = Number(number)
-  if ((typeof number !== 'number') || isNaN(number) || number.toString().length > 9) return ''
+  if ((typeof number !== 'number') || isNaN(number) || number > 999999999) return ''
 
   let resultArr = ['元']
 

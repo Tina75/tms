@@ -8,20 +8,6 @@ import VueMeta from 'vue-meta'
 import './libs/js/ga.js' // GA打点统计配置与上报方法封装
 import EmaProxy from 'ema-proxy'
 import Toast from '@/components/toast/index'
-import { number2chinese } from '@/libs/js/util'
-
-number2chinese(1203000.456)
-number2chinese(120309850)
-number2chinese(120300850)
-number2chinese(100000010)
-number2chinese(10001)
-number2chinese(11111)
-number2chinese(111111)
-number2chinese(11111.11)
-number2chinese(11.01)
-number2chinese(11.10)
-number2chinese(11.00)
-number2chinese(11)
 
 require('intersection-observer')
 require('./libs/js/filter')
