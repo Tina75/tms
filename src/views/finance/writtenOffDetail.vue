@@ -247,7 +247,7 @@ export default {
   .written-off-detail
     padding 10px 0
     .case-info
-      background-color: #E9FCFF
+      background-color: #E5FFF3
       padding: 20px
       font-size: 14px
       color: #333333
