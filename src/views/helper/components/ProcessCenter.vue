@@ -68,4 +68,5 @@ export default {
   width 1134px
   height 650px
   position relative
+  margin 0 auto
 </style>
