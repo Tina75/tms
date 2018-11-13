@@ -168,6 +168,7 @@
           </span>
           </Col>
         </Row>
+        <p class="foramte-num">{{formateNum(orderForm.freightFee)}}</p>
       </FormItem>
       </Col>
       <Col span="6">
@@ -281,6 +282,7 @@ import cityUtil from '@/libs/js/city'
 import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
 import distance from '@/libs/js/distance'
+import { money2chinese } from '@/libs/js/util'
 
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
 export default {
@@ -939,6 +941,11 @@ export default {
       distance(p1, p2).then(res => {
         this.orderForm.mileage = res / 1000
       })
+    },
+    formateNum (value) {
+      if (value && value > 9999.99) {
+        return money2chinese(value)
+      }
     }
   }
 }
@@ -969,4 +976,7 @@ export default {
     font-family SimSun
     font-size 12px
     color #ed4014
+.foramte-num
+  font-size 12px
+  line-height 14px
 </style>
