@@ -25,6 +25,7 @@
 <script>
 /**
  * 代收货款-已付款
+ * 显示已经把代收货款付给发货方的订单
  */
 import BaseComponent from '@/basic/BaseComponent'
 import CollectForm from './CollectForm.vue'
@@ -217,6 +218,7 @@ export default {
 
 <style lang="stylus" scoped>
 .paied
+  min-height 385px
   &__operation
     border-bottom 1px solid #E4E7EC
     padding-bottom 9px

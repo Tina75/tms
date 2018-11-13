@@ -229,6 +229,7 @@ export default {
 <style lang="stylus" scoped>
 .return-fee
   margin-bottom -20px
+  min-height 415px
   &__content
     margin 35px 0 0
   &__export

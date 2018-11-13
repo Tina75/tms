@@ -426,7 +426,7 @@ export default {
       }
       try {
         const uploadResult = await this.uploadFile(file)
-        const notifyResult = await this.notifyBackend(file.name, uploadResult.res.requestUrls[0])
+        const notifyResult = await this.notifyBackend(file.name, uploadResult.res.requestUrls[0].substring(0, uploadResult.res.requestUrls[0].indexOf('?uploadId')))
         if (notifyResult.data.code === 10000) {
           // this.$Message.success({content: '导入文件完成，后台正在处理中，请稍后查看结果', duration: 3})
           // 20181113-mys 不显示弹窗，需要在进度条挂载表格里的导入结果列

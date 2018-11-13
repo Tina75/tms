@@ -30,6 +30,7 @@
 <script>
 /**
  * 代收货款-已收未付
+ * 此tab下显示已经收回代收货款但是没有付给发货方的订单
  */
 import BaseComponent from '@/basic/BaseComponent'
 import CollectForm from './CollectForm.vue'
