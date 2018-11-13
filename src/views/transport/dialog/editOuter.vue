@@ -28,6 +28,19 @@
             <a @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1" style="font-size: 26px; vertical-align: middle; margin-left: 4px;"></i></a>
           </div>
         </FormItem>
+        <FormItem label="返现运费:" prop="cashBack" class="ivu-form-item-required blank">
+          <TagNumberInput v-model="info.cashBack" :parser="handleParseFloat" style="width:165px">
+          </TagNumberInput>
+          <span>
+            <Tooltip
+              style="margin-left: 5px;"
+              max-width="200"
+              transfer
+              content="返现运费是指在实际运输过程中存在某一段运输没有执行，需要将提前支付的运费返还">
+              <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;" />
+            </Tooltip>
+          </span>
+        </FormItem>
       </Form>
       <div slot="footer">
         <Button  type="primary"  @click="save">确定</Button>
@@ -60,6 +73,14 @@ export default {
 
   mixins: [ BaseDialog ],
   data () {
+    // 9位整数 2位小数
+    const validateFee = (rule, value, callback) => {
+      if ((value && /^[0-9]{0,9}(?:\.\d{1,2})?$/.test(value)) || !value) {
+        callback()
+      } else {
+        callback(new Error('最多整数位只可输入9位,小数两位'))
+      }
+    }
     return {
       show: true,
       payType,
@@ -68,13 +89,28 @@ export default {
         transfereeName: '',
         outTransNo: '',
         payType: '',
-        transFee: void 0
+        transFee: void 0,
+        cashBack: null
       },
       points: {}, // 始发地目的地经纬度 { startPoint, endPoint }
       rules: {
-        transfereeName: { required: true, message: '请填写外转方' },
-        payType: { required: true, message: '请选择付款方式' },
-        transFee: { required: true, type: 'number', message: '请填写外转运费', trigger: 'blur' }
+        transfereeName: [
+          { required: true, message: '请填写外转方', trigger: 'blur' },
+          { required: true, message: '请填写外转方', trigger: 'change' }
+        ],
+        payType: [
+          { required: true, message: '请选择付款方式' }
+        ],
+        transFee: [
+          { required: true, type: 'number', message: '请填写外转运费' },
+          { validator: validateFee }
+        ],
+        mileage: [
+          { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
+        ],
+        cashBack: [
+          { validator: validateFee }
+        ]
       }
     }
   },
@@ -90,23 +126,25 @@ export default {
 
     // 保留2位小数
     handleParseFloat (value) {
-      return float.floor(value)
+      return float.floor(value) || null
     },
 
     save () {
-      this.$refs['info'].validate((valid) => {
+      const self = this
+      self.$refs['info'].validate((valid) => {
         if (valid) {
-          const data = Object.assign({}, this.info)
+          const data = Object.assign({}, self.info)
           data.transFee = data.transFee * 100
+          data.cashBack = data.cashBack * 100 || 0
 
           Server({
             url: '/outside/bill/update',
             method: 'post',
             data
           }).then((res) => {
-            this.$Message.success('操作成功')
-            this.close()
-            this.complete()
+            self.$Message.success('操作成功')
+            self.close()
+            self.complete()
           })
         }
       })
@@ -170,6 +208,7 @@ export default {
           }
         }
         vm.info.transFee = vm.info.transFee / 100
+        vm.info.cashBack = vm.info.cashBack / 100 || null
         vm.info.payType = vm.info.payType
       }).catch(err => console.error(err))
     }

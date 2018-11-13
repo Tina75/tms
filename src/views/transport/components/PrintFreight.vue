@@ -20,7 +20,7 @@
             <tr>
               <td>车型：{{item.waybill.carType|carTypeFormatter}} {{item.waybill.carLength|carLengthFormatter}}</td>
               <td>回单数：{{item.waybill.backbillCnt}}</td>
-              <td>代收货款：{{item.waybill.collectionMoney || '-'}}</td>
+              <td>代收货款：{{item.waybill.collectionMoney / 100 || '-'}}</td>
             </tr>
           </tbody>
         </table>
