@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="reconcile-layout">
     <Row class="reconcile-layout__operation">
       <Col span="12">
       <slot name="title">
@@ -86,18 +86,21 @@ export default {
 <style lang="stylus" scoped>
 .reconcile-layout
   margin-bottom -20px
+  margin-left -15px
+  margin-right -15px
   &__operation
     border-bottom 1px solid #E4E7EC
-    padding 9px 0
-    line-height 32px
+    padding 9px 15px
+    line-height 31px
   &__flex-divider
     position absolute
   &__flex-left
-    flex 0 0 275px
+    flex 0 0 269px
     border-right 1px solid #E4E7EC
   &__flex-right
     flex 1
     padding-left 10px
+    padding-right 15px
   &__view-title
     font-size 14px
     color #333

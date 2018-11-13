@@ -73,13 +73,15 @@ export default {
   padding 8px
   border-bottom 1px solid #E4E7EC
   cursor pointer
+  height 60px
   &:hover, &__active
       background-color #E9FCFF
   &__ll
     position relative
   &__icon
     float left
-    margin-left 5px
+    margin-left 7px
+    margin-top 5px
     display inline-block
     background-color #F9F9F9
     width 30px
@@ -90,8 +92,8 @@ export default {
     -webkit-border-radius 50%
     -moz-border-radius 50%
   &__content
-    width 213px
-    margin-left 42px
+    width 209px
+    margin-left 52px
   &__extra
     color #666666
     position absolute
@@ -103,7 +105,9 @@ export default {
     overflow hidden
     text-overflow ellipsis
     white-space nowrap
+    font-weight 500
   &__content-sup-name
     color #999
-    line-height 24px
+    line-height 25px
+    margin-top 2px
 </style>

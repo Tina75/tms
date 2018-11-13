@@ -38,6 +38,7 @@ import server from '@/libs/js/server'
 import returnFeeMixin from '../mixins/returnFeeMixin.js'
 import settlement from '@/libs/constant/settlement'
 import { renderFee } from '@/libs/js/util'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     ReconcileLayout,
@@ -135,6 +136,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['DocumentHeight']),
     // 右侧订单列表
     orderList () {
       if (!this.activeDriver) {
@@ -145,7 +147,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      let height = this.$parent.$parent.$el.parentNode.clientHeight - this.$refs.driversList.$el.getBoundingClientRect().top + this.$parent.$parent.$el.getBoundingClientRect().top
+      let height = this.DocumentHeight - this.$refs.driversList.$el.getBoundingClientRect().top + this.$parent.$parent.$el.getBoundingClientRect().top
       this.styles = {
         height: (height) + 'px'
       }

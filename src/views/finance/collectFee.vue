@@ -56,7 +56,6 @@ export default {
 
 <style lang="stylus" scoped>
 .collect-fee
-  margin-bottom -20px
   &__content
     margin 35px 0 0
 </style>

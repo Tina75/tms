@@ -15,10 +15,10 @@
         <ListSenderItem v-for="(item, name) in datas" :key="name" :item="item" :title="item.partnerName" :extra="item.orderNum" icon="ico-company">
           <p slot="supName">
             <span>
-              总额 {{item.calcTotalFee}}
+              总额 {{(item.calcTotalFee / 100).toFixed(2)}}
             </span>
             <span class="i-ml-20">
-              已付 {{item.verifiedFee}}
+              已付 {{(item.verifiedFee / 100).toFixed(2)}}
             </span>
           </p>
         </ListSenderItem>
