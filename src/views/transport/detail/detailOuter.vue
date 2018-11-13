@@ -43,6 +43,11 @@
                       style="width: 120px;">期望到货时间：</span>
                 <span>{{ info.arriveTimeLong | timeFormatter }}</span>
               </i-col>
+              <i-col span="6">
+                <span class="detail-field-title">代收货款：</span>
+                <span v-if="collectionMoney">{{collectionMoney}}</span>
+                <span v-else>-</span>
+              </i-col>
             </Row>
             <Row class="detail-field-group">
               <i-col span="6">
@@ -206,7 +211,7 @@ export default {
         consigneeAddress: '',
         remark: ''
       },
-
+      collectionMoney: 0,
       payment: {
         transfereeName: '',
         transFee: '',
@@ -366,7 +371,7 @@ export default {
         data: { transId: this.id }
       }).then(res => {
         const data = res.data.data
-
+        this.collectionMoney = data.customerInfo.collectionMoney // 代收货款
         for (let key in this.info) {
           this.info[key] = data.customerInfo[key]
         }

@@ -184,6 +184,16 @@ export const TABLE_COLUMNS = vm => [
           })
         )
       }
+      if (p.row.collectionMoney > 0) {
+        renderHtml.push(
+          h(IconLabel, {
+            props: {
+              text: '代',
+              background: '#FA8C15'
+            }
+          })
+        )
+      }
       return h('div', renderHtml)
     }
   },
@@ -303,6 +313,14 @@ export const TABLE_COLUMNS = vm => [
     title: '回单数',
     key: 'backbillCnt',
     width: 120
+  },
+  {
+    title: '代收货款',
+    key: 'collectionMoney',
+    minWidth: 120,
+    render: (h, params) => {
+      return h('span', params.row.collectionMoney ? (params.row.collectionMoney / 100).toFixed(2) : '-')
+    }
   }
 ]
 

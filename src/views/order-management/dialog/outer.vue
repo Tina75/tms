@@ -38,8 +38,8 @@
             <FontIcon type="jisuanqi" size="22" color="#00a4bd" class="i-ml-5" style="vertical-align: middle;"></FontIcon>
           </span>
         </FormItem>
-        <FormItem label="返现运费:" class="ivu-form-item-required blank">
-          <TagNumberInput :min="0" v-model="info.cashBack" :parser="handleParseFloat" style="width:175px">
+        <FormItem label="返现运费:" prop="cashBack" class="ivu-form-item-required blank">
+          <TagNumberInput v-model="info.cashBack" :parser="handleParseFloat" style="width:175px">
           </TagNumberInput>
           <span>
             <Tooltip
@@ -90,6 +90,16 @@ export default {
         callback(new Error('最多整数位只可输入9位,小数两位'))
       }
     }
+    // 9位整数 2位小数,必须大于0
+    const validateCashBack = (rule, value, callback) => {
+      if ((value && /^[0-9]{0,9}(?:\.\d{1,2})?$/.test(value)) || !value) {
+        callback()
+      } else if (value <= 0) {
+        callback(new Error('返现运费必须大于0'))
+      } else {
+        callback(new Error('最多整数位只可输入9位,小数两位'))
+      }
+    }
     return {
       settlements,
       info: { transfereeName: '', outTransNo: '', payType: 4, transFee: null, cashBack: null, mileage: null },
@@ -104,6 +114,9 @@ export default {
         ],
         mileage: [
           { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
+        ],
+        cashBack: [
+          { validator: validateCashBack }
         ]
       }
     }
@@ -135,7 +148,7 @@ export default {
     ]),
     // 保留2位小数
     handleParseFloat (value) {
-      return float.floor(value)
+      return float.floor(value) || null
     },
     // 选择已维护外转方后操作
     handleSelectTransferee (name, row) {
@@ -149,6 +162,7 @@ export default {
             payType: Number(this.info.payType),
             transFee: Number(this.info.transFee) * 100
           })
+          this.info.cashBack *= 100
           Server({
             url: 'outside/bill/create',
             method: 'post',
@@ -222,8 +236,6 @@ export default {
 .outer-dialog .ivu-form
   .ivu-form-item-label
     padding 10px 10px 10px 15px
-  .ivu-form-item-content
-    margin-left 110px !important
 .blank
   /deep/ .ivu-form-item-label:before
     visibility: hidden

@@ -49,9 +49,14 @@
                 <span class="detail-field-title">车型：</span>
                 <span>{{ info.carType|carTypeFormatter }} {{ info.carLength|carLengthFormatter }}</span>
               </i-col>
-              <i-col span="10" offset="1">
+              <i-col span="6" offset="1">
                 <span class="detail-field-title">司机：</span>
                 <span>{{ (info.driverName || '') + ' ' + (info.driverPhone || '') }}</span>
+              </i-col>
+              <i-col span="4">
+                <span class="detail-field-title">代收货款：</span>
+                <span v-if="collectionMoney">{{collectionMoney}}</span>
+                <span v-else>-</span>
               </i-col>
             </Row>
             <Row class="detail-field-group">
@@ -366,7 +371,7 @@ export default {
         driverPhone: '',
         remark: ''
       },
-
+      collectionMoney: 0, // 代收货款
       // 支付方式
       settlementType: '',
       settlementPayInfo: [
@@ -570,7 +575,7 @@ export default {
         }
       }).then(res => {
         const data = res.data.data
-
+        this.collectionMoney = data.waybill.collectionMoney // 代收货款
         this.id = data.waybill.waybillId
         for (let key in this.info) {
           this.info[key] = data.waybill[key]

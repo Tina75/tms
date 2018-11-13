@@ -347,7 +347,8 @@ export default {
           name: 'transport/dialog/cashBackWarn',
           data: {
             title: '操作提醒',
-            cashBack: cashBackList
+            cashBack: cashBackList,
+            type: 'waybill'
           },
           methods: {
             confirm () {}
@@ -359,6 +360,8 @@ export default {
         self.openDialog({
           name: 'transport/dialog/cashBack',
           data: {
+            url: '/waybill/confirm/arrival',
+            type: 'waybill',
             title: '到货确认',
             cashBack: self.tableSelection[0].cashBack / 100,
             waybillIds: [self.tableSelection[0].waybillId]

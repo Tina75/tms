@@ -42,9 +42,14 @@
             <span v-if="detail.deliveryTime">{{detail.deliveryTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
             <span v-else>-</span>
           </i-col>
-          <i-col span="10">
+          <i-col span="7">
             <span>期望到货时间：</span>
             <span v-if="detail.arriveTime">{{detail.arriveTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
+            <span v-else>-</span>
+          </i-col>
+          <i-col v-if="from === 'order'" span="3">
+            <span>代收货款：</span>
+            <span v-if="detail.collectionMoney">{{detail.collectionMoney}}</span>
             <span v-else>-</span>
           </i-col>
         </Row>
