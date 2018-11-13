@@ -3,11 +3,12 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-11-09 16:48:31
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-11-13 19:25:17
+ * @Last Modified time: 2018-11-13 20:31:31
  */
 import _ from 'lodash'
 import server from '@/libs/js/server'
 import TMSUrl from '@/libs/constant/url'
+import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
@@ -21,6 +22,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['DocumentHeight']),
     // 右侧订单列表
     orderList () {
       if (!this.activeSender) {
@@ -31,7 +33,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      let height = this.$parent.$parent.$el.parentNode.clientHeight - this.$refs.senderList.$el.getBoundingClientRect().top + this.$parent.$parent.$el.getBoundingClientRect().top
+      let height = this.DocumentHeight - this.$refs.senderList.$el.getBoundingClientRect().top + this.$parent.$parent.$el.getBoundingClientRect().top
       this.styles = {
         height: (height) + 'px'
       }
