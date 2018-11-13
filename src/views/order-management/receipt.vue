@@ -557,9 +557,7 @@ export default {
         this.deleteOperateCol()
         this.operateValue = 1
         this.btnGroup = [
-          { name: '回收', value: 1, code: 110201 },
-          { name: '返厂', value: 2, code: 110202 },
-          { name: '导出', value: 3, code: 110203 }
+          { name: '导出', value: 1, code: 110203 }
         ]
         this.keywords.receiptStatus = null
       } else if (val === '待签收') {
