@@ -659,6 +659,7 @@ export default {
           volume: self.orderTotal.volume, // 货物体积
           start: self.info.start, // 始发地code
           end: self.info.end // 目的地code
+          // distance: 100000, // 从外部传入已经计算好的距离（单位：米），如果传入则不再根据startPoint endPoint计算距离
           // startPoint: {lat: 32.047745, lng: 118.791580}, // 始发地经纬度
           // endPoint: {lat: 39.913385, lng: 116.402257} // 目的地经纬度
         },
