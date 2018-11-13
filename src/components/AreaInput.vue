@@ -47,6 +47,11 @@ export default {
     disabled: {
       type: Boolean,
       default: false
+    },
+    // 过滤掉省市信息
+    filterCity: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -101,8 +106,8 @@ export default {
               const addr = item.address ? item.address.replace(pro, '').replace(city, '') : ''
               arr.push({
                 id: i,
-                name: pro + city + addr + item.title,
-                value: pro + city + addr + item.title,
+                name: this.filterCity ? addr + item.title : pro + city + addr + item.title,
+                value: this.filterCity ? addr + item.title : pro + city + addr + item.title,
                 lat: item.point.lat,
                 lng: item.point.lng
               })
