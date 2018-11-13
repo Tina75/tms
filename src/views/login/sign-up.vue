@@ -253,10 +253,12 @@ export default {
   .form-body
     width 800px
     height 540px
-    left 50%
-    top 50%
-    transform translate(-50%, -50%)
-
+    position: absolute
+    margin: auto
+    top: 0
+    right: 0
+    bottom: 0
+    left 0
     .form-content
       width 300px
       margin auto
@@ -264,7 +266,7 @@ export default {
     .form-step
       position relative
       display flex
-      align-items space-between
+      display: -ms-flexbox
       width 500px
       margin 30px auto
 
@@ -281,16 +283,20 @@ export default {
 
       &-item
         flex 1
-        display flex
+        -ms-flex: 1
         flex-direction column
+        -ms-flex-direction column
         align-items center
+        -ms-flex-align center
         position relative
         z-index 1
+        text-align: center
 
         &-circle
           width 50px
           height 50px
           background #FFFFFF
+          display: inline-block
 
           span
             display block
@@ -312,6 +318,9 @@ export default {
         &-tip
           font-size 12px
           color #9DA1B0
+          display: inline-block
+          width: 100%
+          text-align: center
 
           &-active
             color #00A4BD

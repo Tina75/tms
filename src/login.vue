@@ -74,15 +74,17 @@ export default {
 
     &-header
       display flex
+      display -ms-flexbox
       align-items center
+      -ms-flex-align center
       justify-content space-between
+      -ms-flex-pack justify
       height 88px
       padding 0 43px 0 143px
       border-bottom 1px solid #3A424B
 
       &-tel
         flex none
-        display flex
         flex-direction column
         color #00A4BD
 
@@ -104,12 +106,9 @@ export default {
       background #1c2125
 
     &-body
-      display flex
-      align-items center
-      justify-content center
       position relative
       min-height 552px
-      height calc( 100% - 216px )
+      height calc( 100% - 246px )
 
     &-bg
       background url("./assets/bg-tms-login.png") no-repeat

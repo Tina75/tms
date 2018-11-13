@@ -1,45 +1,47 @@
 <template>
-  <Row class="temAll">
-    <Col :style="styleHeight" span="4">
-    <Menu :open-names="['1']" style="width: 100%;" class="menuSty" accordion>
-      <Submenu name="1">
-        <template slot="title">
-          <i class="icon font_family icon-tupian"></i>
-          <span class="title">图文介绍</span>
-        </template>
-        <MenuItem v-for="menu in picMenu" :key="menu.id" :name="menu.title" class="secondTitle" @click.native="clickLeftMenuPic(menu)">
-        {{menu.title}}
-          </MenuItem>
-      </Submenu>
-      <!-- <Submenu name="2">
+  <div id="help-info" class="helper-info">
+    <Row class="temAll">
+      <Col :style="styleHeight" span="4">
+      <Menu :open-names="['1']" style="width: 100%;" class="menuSty" accordion>
+        <Submenu name="1">
           <template slot="title">
-            <i class="icon font_family icon-shipin"></i>
-            <span class="title">视频介绍</span>
+            <i class="icon font_family icon-tupian"></i>
+            <span class="title">图文介绍</span>
           </template>
-          <MenuItem v-for="menu in videoMenu" :key="menu.id" :name="menu.title" class="secondTitle" @click.native="clickLeftMenuVideo(menu)">
+          <MenuItem v-for="menu in picMenu" :key="menu.id" :name="menu.title" class="secondTitle" @click.native="clickLeftMenuPic(menu)">
           {{menu.title}}
             </MenuItem>
-        </Submenu> -->
-    </Menu>
-    </Col>
-    <Col :style="minStyleHeight" span="20" class="contentInfoDiv">
-    <Card dis-hover class="contentCard">
-      <div v-if="'pic' === this.type">
-        <p slot="title" class="rightDivTitle">{{picContent.title}}</p>
-        <div class="ql-editor" style="line-height:1.8;width:800px;">
-          <div v-html="picContent.content"></div>
+        </Submenu>
+        <!-- <Submenu name="2">
+            <template slot="title">
+              <i class="icon font_family icon-shipin"></i>
+              <span class="title">视频介绍</span>
+            </template>
+            <MenuItem v-for="menu in videoMenu" :key="menu.id" :name="menu.title" class="secondTitle" @click.native="clickLeftMenuVideo(menu)">
+            {{menu.title}}
+              </MenuItem>
+          </Submenu> -->
+      </Menu>
+      </Col>
+      <Col :style="minStyleHeight" span="20" class="contentInfoDiv">
+      <Card dis-hover class="contentCard">
+        <div v-if="'pic' === this.type">
+          <p slot="title" class="rightDivTitle">{{picContent.title}}</p>
+          <div class="ql-editor" style="line-height:1.8;width:800px;">
+            <div v-html="picContent.content"></div>
+          </div>
         </div>
-      </div>
-      <div v-if="'video' === this.type">
-        <p slot="title" class="rightDivTitle">{{videoContent.title}}</p>
-        <video width="100%" height="240" class="contentCard" controls>
-          <source :src="videoContent.urlList">
-          您的浏览器不支持 video 标签。
-        </video>
-      </div>
-    </Card>
-    </Col>
-  </Row>
+        <div v-if="'video' === this.type">
+          <p slot="title" class="rightDivTitle">{{videoContent.title}}</p>
+          <video width="100%" height="240" class="contentCard" controls>
+            <source :src="videoContent.urlList">
+            您的浏览器不支持 video 标签。
+          </video>
+        </div>
+      </Card>
+      </Col>
+    </Row>
+  </div>
 </template>
 
 <script>
@@ -70,6 +72,9 @@ export default {
   },
   mounted: function () {
     this.getMenuList()
+    if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
+      document.getElementById('help-info').style.maxHeight = (document.body.clientHeight - 80) + 'px'
+    }
   },
   methods: {
     getMenuList () {
@@ -114,6 +119,8 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
+.help-info
+  overflow: auto;
 >>> .ivu-menu-vertical.ivu-menu-light:after
   background: #fff;
   height: 30px;

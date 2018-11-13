@@ -124,9 +124,12 @@ export default {
   .form-body
     width 800px
     height 530px
-    left 50%
-    top 50%
-    transform translate(-50%, -50%)
+    position: absolute
+    margin: auto
+    top: 0
+    right: 0
+    bottom: 0
+    left 0
 
     .form-content
       width 300px

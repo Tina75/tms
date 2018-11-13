@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <div :style="{'min-height':height +'px'}" class="content-main">
+    <div id="content-main" :style="{'min-height':height +'px'}" class="content-main">
       <router-view />
     </div>
   </div>
@@ -14,6 +14,7 @@ export default {
     }
   },
   mounted () {
+    window.document.getElementById('content-main').style.minHeight = (document.body.clientHeight - 80) + 'px'
     this.height = document.body.clientHeight - 80
   }
 }
@@ -23,6 +24,8 @@ export default {
 .content
   padding 15px 20px
   overflow-y auto
+  width: 100%
   &-main
+    height: auto
     background white
 </style>

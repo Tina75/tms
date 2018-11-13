@@ -1,5 +1,5 @@
 <template>
-  <div class="messageDivAll">
+  <div id="message-detail-container" class="messageDivAll">
     <h1 class="title">{{messageInfo.title}}</h1>
     <p class="dateTime">{{ formatDate(messageInfo.createTime) }}
       <Button class="msgRemoveBtn" @click="removeBtn">
@@ -42,6 +42,9 @@ export default {
   },
   mounted: function () {
     this.messageInfo = this.$route.query.message
+    if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
+      document.getElementById('message-detail-container').style.maxHeight = (document.body.clientHeight - 80) + 'px'
+    }
   },
   methods: {
     formatDate (value, format) {

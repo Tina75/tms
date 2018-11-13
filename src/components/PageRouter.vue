@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div id="content-wrapper" class="wrapper">
     <keep-alive>
       <component :is="current"></component>
     </keep-alive>
@@ -10,7 +10,7 @@
     padding 20px 15px
     background white
     height 100%
-    overflow: auto;
+    overflow: auto
 </style>
 <script>
 import Vue from 'vue'
@@ -47,6 +47,9 @@ export default {
         this.componentCache[key] = undefined
       }
     })
+    if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
+      document.getElementById('content-wrapper').style.maxHeight = (document.body.clientHeight - 80) + 'px'
+    }
   },
   methods: {
     loadPage: function (data, noCache) {

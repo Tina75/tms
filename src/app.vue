@@ -90,7 +90,7 @@ html, body
     background #EFEFEF
     flex-direction row
     overflow hidden
-    float: left
+    float: left\9
     .right-con
       z-index 10
 </style>
