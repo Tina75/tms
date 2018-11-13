@@ -598,6 +598,16 @@ export default {
           }
         },
         // {
+        //   title: '计算里程（公里）',
+        //   key: 'mileage',
+        //   minWidth: 180,
+        //   ellipsis: true,
+        //   render: (h, p) => {
+        //     const value = p.row.mileage / 1000 ? p.row.mileage / 1000 : ''
+        //     return h('span', value)
+        //   }
+        // },
+        // {
         //   title: '计费里程（公里）',
         //   key: 'mileage',
         //   minWidth: 180,
@@ -856,7 +866,7 @@ export default {
           key: 'mileage',
           width: 120,
           render: (h, params) => {
-            return h('span', params.row.mileage ? params.row.mileage : '-')
+            return h('span', params.row.mileage / 1000 ? params.row.mileage / 1000 : '-')
           }
         })
       }

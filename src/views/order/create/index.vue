@@ -149,7 +149,7 @@
       </Col>
       <Col span="6">
       <FormItem label="计费里程:" prop="mileage">
-        <TagNumberInput :min="0" v-model="orderForm.mileage" :parser="handleParseFloat">
+        <TagNumberInput :min="0" v-model="orderForm.mileage" :parser="handleParseFloats">
           <span slot="suffix" class="order-create__input-suffix">公里</span>
         </TagNumberInput>
       </FormItem>
@@ -340,6 +340,14 @@ export default {
         callback(new Error('费用整数位最多输入9位'))
       }
     }
+    // 6位整数 1位小数
+    const validateMile = (rule, value, callback) => {
+      if ((value && validator.mileage(value)) || !value) {
+        callback()
+      } else {
+        callback(new Error('距离整数位最多输入6位,小数1位'))
+      }
+    }
     return {
       settlements,
       pickups, // 提货方式
@@ -476,8 +484,13 @@ export default {
         receiptCount: [
           { required: true, type: 'number', message: '请输入回单数量' }
         ],
+        // 代收货款
         collectionMoney: [
           { validator: validateFee }
+        ],
+        // 计费里程
+        mileage: [
+          { validator: validateMile }
         ]
       },
       consignerCargoes: [new Cargo()],
@@ -607,6 +620,10 @@ export default {
     // 保留2位小数
     handleParseFloat (value) {
       return float.floor(value).toString()
+    },
+    // 保留1位小数
+    handleParseFloats (value) {
+      return float.floor(value, 1).toString()
     },
     // 货物名称选择下拉项目时触发
     selectCargo (params, cargoItem) {
@@ -794,7 +811,8 @@ export default {
               arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
               deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
               orderCargoList: orderCargoList.map(cargo => cargo.toJson()),
-              collectionMoney: orderForm.collectionMoney * 100
+              collectionMoney: orderForm.collectionMoney * 100,
+              mileage: orderForm.mileage * 1000
             });
 
             ['start', 'end'].forEach(field => {
