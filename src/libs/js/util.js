@@ -56,7 +56,9 @@ const floatUnit = ['角', '分'] // 小数单位
  */
 export const money2chinese = (number) => {
   number = Number(number)
-  if ((typeof number !== 'number') || isNaN(number) || number > 999999999) return ''
+  if ((typeof number !== 'number') || isNaN(number) || number > 999999999 || number < 0) return ''
+
+  if (number === 0 || number < 0.01) return '零元'
 
   let resultArr = ['元']
   const numStr = number.toString()
@@ -118,9 +120,11 @@ export const money2chinese = (number) => {
     resultArr.splice(i, 0, transferedResult[i] ? transferedResult[i] + sectionUnit[transferedResult.length - i - 1] : transferedResult[i])
   }
 
-  // 口语化，如果头两位为”一十“，则只保留”十“
-  // 一十一 => 十一
+  // 口语化
+  // 如果头两位为”一十“，则只保留”十“，如 一十一 => 十一
   if (resultArr[0].substr(0, 2) === '一十') resultArr[0] = resultArr[0].substr(1, resultArr[0].length)
+  // 如果金额不足一元，则只展示小数部分，如 0.2 => 二角
+  if (resultArr[0] === '' && resultArr[1] === '元') resultArr = resultArr.slice(2, resultArr.length)
 
   return resultArr.join('')
 }

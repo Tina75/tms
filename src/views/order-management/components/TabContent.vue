@@ -597,16 +597,22 @@ export default {
             }
           }
         },
-        {
-          title: '计算里程（公里）',
-          key: 'mileage',
-          minWidth: 180,
-          ellipsis: true,
-          render: (h, p) => {
-            const value = p.row.mileage / 1000 ? p.row.mileage / 1000 : ''
-            return h('span', value)
-          }
-        },
+        // {
+        //   title: '计算里程（公里）',
+        //   key: 'mileage',
+        //   minWidth: 180,
+        //   ellipsis: true,
+        //   render: (h, p) => {
+        //     const value = p.row.mileage / 1000 ? p.row.mileage / 1000 : ''
+        //     return h('span', value)
+        //   }
+        // },
+        // {
+        //   title: '计费里程（公里）',
+        //   key: 'mileage',
+        //   minWidth: 180,
+        //   ellipsis: true
+        // },
         {
           title: '体积（方）',
           key: 'volume',
@@ -762,14 +768,14 @@ export default {
           minWidth: 120,
           tooltip: true
         },
-        // {
-        //   title: '代收货款',
-        //   key: 'collectionMoney',
-        //   minWidth: 120,
-        //   render: (h, params) => {
-        //     return h('span', params.row.collectionMoney ? (params.row.collectionMoney / 100).toFixed(2) : '-')
-        //   }
-        // },
+        {
+          title: '代收货款',
+          key: 'collectionMoney',
+          minWidth: 120,
+          render: (h, params) => {
+            return h('span', params.row.collectionMoney ? (params.row.collectionMoney / 100).toFixed(2) : '-')
+          }
+        },
         {
           title: '制单人',
           key: 'creatorName',
@@ -849,18 +855,18 @@ export default {
   mounted () {
     console.log(this.source)
     // 订单、运单代收货款字段放在回单数量后面
-    if (this.source === 'order' || this.source === 'waybill') {
+    if (this.source === 'order') {
       let index
       this.tableColumns.find((item, idx) => {
-        item.title === '回单数量' && (index = idx)
+        item.title === '目的地' && (index = idx)
       })
       if (index) {
         this.tableColumns.splice(index + 1, 1, {
-          title: '代收货款',
-          key: 'collectionMoney',
-          minWidth: 120,
+          title: '计费里程（公里）',
+          key: 'mileage',
+          width: 120,
           render: (h, params) => {
-            return h('span', params.row.collectionMoney ? (params.row.collectionMoney / 100).toFixed(2) : '-')
+            return h('span', params.row.mileage / 1000 ? params.row.mileage / 1000 : '-')
           }
         })
       }
