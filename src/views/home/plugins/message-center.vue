@@ -14,7 +14,7 @@
           </span>
         </Cell>
       </CellGroup>
-      <NoData v-else></NoData>
+      <NoData v-else msg="暂无信息～" type="msg"></NoData>
     </BlankCard>
   </div>
 </template>
