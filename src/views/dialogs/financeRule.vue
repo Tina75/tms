@@ -26,7 +26,7 @@
 
 <script>
 
-/** 使用方式参考 /transport/detail/detailFreight.js 620行 */
+/** 使用方式参考 /transport/detail/detailFreight.js 651行 */
 
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
