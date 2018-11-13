@@ -325,7 +325,7 @@ export default {
 
       const self = this
       self.openDialog({
-        name: 'transport/dialog/confirm',
+        name: 'transport/dialog/shipping',
         data: {
           title: '发运',
           message: '是否发运？发运以后将不能再修改外转单信息'

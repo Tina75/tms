@@ -90,6 +90,11 @@ export default {
         })
     },
     handleClick (name) {
+      // path: TMSUrl.MESSAGE_DETAIL, // '/information/message-info',
+      // query: {
+      //   id: msg.title,
+      //   message: msg
+      // }
       this.openTab({
         path: '/information/index',
         title: '消息',

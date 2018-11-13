@@ -26,7 +26,7 @@
         <Empty v-show="!showTable">
           {{emptyContent}}
         </Empty>
-        <Table v-show="showTable" :columns="columns" :data="dataSource"></Table>
+        <Table v-show="showTable" :columns="columns" :data="dataSource" @on-selection-change="handleSelectionChange"></Table>
       </div>
       </Col>
     </Row>
@@ -60,11 +60,14 @@ export default {
     columns: {
       type: Array,
       required: true
+    },
+    dataSource: {
+      type: Array,
+      default: () => []
     }
   },
   data () {
     return {
-      dataSource: []
     }
   },
   computed: {
@@ -73,7 +76,9 @@ export default {
     }
   },
   methods: {
-
+    handleSelectionChange (selected) {
+      this.$emit('on-selection-change', selected)
+    }
   }
 }
 </script>

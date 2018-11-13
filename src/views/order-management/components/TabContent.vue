@@ -633,6 +633,12 @@ export default {
           }
         },
         {
+          title: '计算里程（公里）',
+          // key: 'mileage',
+          minWidth: 180,
+          ellipsis: true
+        },
+        {
           title: '体积（方）',
           key: 'volume',
           minWidth: 100,
