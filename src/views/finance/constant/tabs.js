@@ -13,7 +13,7 @@ export const CollectTabs = [
     count: ''
   },
   {
-    label: '已付',
+    label: '已付款',
     name: 'PAIED',
     count: ''
   }
