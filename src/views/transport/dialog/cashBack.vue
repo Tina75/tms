@@ -33,14 +33,19 @@ export default {
   },
   methods: {
     ok () {
+      const data = {
+        cashBack: this.cashBack * 100 || 0,
+        confirmBack: 1
+      }
+      if (this.type === 'waybill') {
+        data.waybillIds = this.waybillIds // 运单到货
+      } else {
+        data.transIds = this.transIds // 外转单到货
+      }
       Server({
-        url: '/waybill/confirm/arrival',
+        url: this.url,
         method: 'post',
-        data: {
-          waybillIds: this.waybillIds,
-          cashBack: this.cashBack * 100 || 0,
-          confirmBack: 1
-        }
+        data: data
       }).then(res => {
         this.confirm()
         this.close()
