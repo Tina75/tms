@@ -33,6 +33,7 @@ import PageTable from '@/components/page-table/index'
 import Export from '@/libs/js/export'
 import TMSUrl from '@/libs/constant/url'
 import Server from '@/libs/js/server'
+import { renderFee } from '@/libs/js/util'
 export default {
   components: {
     CollectForm,
@@ -105,7 +106,24 @@ export default {
           key: 'collectionFee',
           width: 100,
           render (h, params) {
-            return h('span', {}, params.row['collectionFee'] ? (params.row['collectionFee'] / 100).toFixed(2) : 0)
+            return renderFee(h, params.row['collectionFee'])
+            // return h('span', {}, params.row['collectionFee'] ? (params.row['collectionFee'] / 100).toFixed(2) : 0)
+          }
+        },
+        {
+          title: '实收货款',
+          key: 'collFee',
+          width: 100,
+          render (h, params) {
+            return renderFee(h, params.row['collFee'])
+          }
+        },
+        {
+          title: '实付货款',
+          key: 'payFee',
+          width: 100,
+          render (h, params) {
+            return renderFee(h, params.row['payFee'])
           }
         },
         {

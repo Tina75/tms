@@ -36,6 +36,7 @@ import returnFeeMixin from './mixins/returnFeeMixin.js'
 import settlement from '@/libs/constant/settlement'
 import Export from '@/libs/js/export'
 import Server from '@/libs/js/server'
+import { renderFee } from '@/libs/js/util'
 export default {
   components: {
     TabHeader,
@@ -112,6 +113,22 @@ export default {
         {
           title: '目的地',
           key: 'destinationName'
+        },
+        {
+          title: '应收返现运费',
+          key: 'cashBack',
+          render (h, params) {
+            return renderFee(h, params.row['cashBack'])
+            // return h('span', {}, params.row['cashBack'] ? (params.row['cashBack'] / 100).toFixed(2) : 0)
+          }
+        },
+        {
+          title: '实收返现运费',
+          key: 'actualFee',
+          render (h, params) {
+            return renderFee(h, params.row['actualFee'])
+            // return h('span', {}, params.row['actualFee'] ? (params.row['actualFee'] / 100).toFixed(2) : 0)
+          }
         },
         {
           title: '车牌号',
