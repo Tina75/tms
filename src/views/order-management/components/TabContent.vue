@@ -601,7 +601,11 @@ export default {
           title: '计算里程（公里）',
           key: 'mileage',
           minWidth: 180,
-          ellipsis: true
+          ellipsis: true,
+          render: (h, p) => {
+            const value = p.row.mileage / 1000 ? p.row.mileage / 1000 : ''
+            return h('span', value)
+          }
         },
         {
           title: '体积（方）',
