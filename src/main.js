@@ -9,9 +9,6 @@ import './libs/js/ga.js' // GA打点统计配置与上报方法封装
 import EmaProxy from 'ema-proxy'
 import Toast from '@/components/toast/index'
 
-import { money2chinese } from '@/libs/js/util'
-console.log(money2chinese(0))
-
 require('intersection-observer')
 require('./libs/js/filter')
 require('./libs/js/date')
