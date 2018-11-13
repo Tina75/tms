@@ -1,20 +1,30 @@
 <template>
   <div class="content">
-    <div :style="{'min-height':height +'px'}" class="content-main">
+    <div :style="{'min-height':DocumentHeight +'px'}" class="content-main">
       <router-view />
     </div>
   </div>
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
 export default {
   data () {
     return {
       height: 500
     }
   },
+  computed: {
+    ...mapGetters(['DocumentHeight'])
+  },
   mounted () {
-    this.height = document.body.clientHeight - 80
+    this.setDocumentHeight(document.body.clientHeight)
+    window.onresize = () => {
+      this.setDocumentHeight(document.body.clientHeight)
+    }
+  },
+  methods: {
+    ...mapActions(['setDocumentHeight'])
   }
 }
 
