@@ -1,7 +1,13 @@
 <template>
   <div class="wait-collect">
     <CollectForm @on-search="handleSearch"></CollectForm>
-    <ReconcileLayout :columns="orderColumns" :data-source="orderList" title="发货方代收款列表" empty-content="请点击左侧发货方列表查看代收货款列表哦～">
+    <ReconcileLayout
+      :columns="orderColumns"
+      :data-source="orderList"
+      title="发货方代收款列表"
+      empty-content="请点击左侧发货方列表查看代收货款列表哦～"
+      @on-selection-change="handleSelectionChange"
+    >
       <div slot="operation">
         <Button type="primary" @click="batchWriteOff">收款核销</Button>
       </div>
@@ -9,10 +15,10 @@
         <ListSenderItem v-for="(item, name) in datas" :key="name" :item="item" :title="item.partnerName" :extra="item.orderNum" icon="ico-company">
           <p slot="supName">
             <span>
-              总额 {{item.calcTotalFee / 100 }}
+              总额 {{(item.calcTotalFee / 100).toFixed(2) }}
             </span>
             <span class="i-ml-20">
-              已收 {{item.verifiedFee / 100}}
+              已收 {{(item.verifiedFee / 100).toFixed(2)}}
             </span>
           </p>
         </ListSenderItem>
@@ -59,7 +65,7 @@ export default {
         },
         {
           title: '操作',
-          width: 60,
+          width: 80,
           key: 'action',
           render: (h, params) => {
             return this.hasPower(170501) ? h('a', {
@@ -73,7 +79,7 @@ export default {
         },
         {
           title: '订单号',
-          width: 140,
+          width: 150,
           key: 'orderNo',
           render: (h, params) => {
             return h('a', {
@@ -126,7 +132,6 @@ export default {
     this.fetch()
   },
   methods: {
-
   }
 }
 </script>

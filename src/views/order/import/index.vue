@@ -14,7 +14,7 @@
         style="display:inline-block">
         <Button type="primary">导入文件</Button>
       </Upload> -->
-      <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入文件</Button>
+      <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入订单</Button>
       <input
         ref="fileInput"
         name="file"
@@ -24,6 +24,7 @@
         @change="handleChange"
       />
       <a v-if="hasPower(100202)" :href="downloadUrl"  download="下载模板" class="i-ml-10 ivu-btn ivu-btn-default">下载模板</a>
+      <Button class="i-ml-10" @click="clearAll">清空导入记录</Button>
     </div>
     <PageTable ref="pageTable" :columns="columns" :show-filter="false" url="order/template/getImportedOrderTemplateList" method="post" no-data-text=" " @on-load="handleLoad">
       <div ref="footer" slot="footer" class="order-import__empty-content van-center">
@@ -52,7 +53,7 @@
       </Row>
       <Row>
         <Col span="24" class="van-center i-primary i-mt-10">
-        <span>导入订单正在紧急处理中..</span>
+        <span>正在导入订单..</span>
         </Col>
       </Row>
 
@@ -88,6 +89,7 @@ export default {
     return {
       downloadUrl: '',
       visible: false,
+      totalCount: 0,
       progress: 0,
       ossClient: null,
       ossDir: '',
@@ -124,6 +126,20 @@ export default {
                 }
               }, '查看导入订单'))
             }
+            // 添加删除操作
+            actions.push(
+              h('a', {
+                class: 'i-ml-10',
+                attrs: {
+                  href: 'javascript:;'
+                },
+                on: {
+                  click: () => {
+                    vm.deleteById(params.row)
+                  }
+                }
+              }, '删除')
+            )
             return h('div', actions)
           }
         },
@@ -186,6 +202,53 @@ export default {
     }
   },
   methods: {
+    /**
+     * 清空导入记录了
+     */
+    clearAll () {
+      const vm = this
+      if (this.totalCount === 0) {
+        this.$Message.info('当前没有可清空的导入记录')
+        return
+      }
+      this.$Toast.confirm({
+        content: '确定清空导入记录，清空导入记录后无法恢复',
+        description: '清空导入记录不会删除已导入的订单数据。',
+        onOk () {
+          server({
+            url: '/order/template/clearOrderTemplateImportRecord',
+            method: 'post',
+            data: {}
+          }).then((res) => {
+            vm.$refs.pageTable.fetch()
+          })
+        }
+      })
+    },
+    /**
+     * 单个删除记录
+     */
+    deleteById (data) {
+      const vm = this
+      this.$Toast.confirm({
+        content: '确定删除词条导入记录，删除后将无法恢复',
+        description: '删除记录不会删除已导入的订单数据。',
+        onOk () {
+          server({
+            url: 'order/template/deleteOrderTemplateImportRecord',
+            method: 'post',
+            data: {
+              id: data.id
+            }
+          }).then((res) => {
+            vm.$refs.pageTable.fetch()
+          })
+        }
+      })
+    },
+    /**
+     * 初始化oss
+     */
     initOssInstance () {
       const vm = this
       /**
@@ -226,12 +289,16 @@ export default {
         this.downloadUrl = response.data.data.fileUrl
       })
     },
+    /**
+     * 下载完后回调
+     */
     handleLoad (response) {
       // response.data.msg !== 10000
       if (!response.data.data || response.data.data.list.length === 0) {
         this.$refs.footer.parentElement.parentElement.style['display'] = 'block'
       } else {
         this.$refs.footer.parentElement.parentElement.style['display'] = 'none'
+        this.totalCount = response.data.data.list.length
       }
     },
     // 主动触发上传

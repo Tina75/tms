@@ -3,7 +3,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-11-09 16:48:31
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-11-12 14:39:58
+ * @Last Modified time: 2018-11-12 20:15:30
  */
 import _ from 'lodash'
 import server from '@/libs/js/server'
@@ -11,6 +11,7 @@ import TMSUrl from '@/libs/constant/url'
 export default {
   data () {
     return {
+      selectedRows: [],
       activeSender: null,
       datas: [],
       searchForm: {},
@@ -25,7 +26,7 @@ export default {
       if (!this.activeSender) {
         return []
       }
-      return this.datas[this.activeSender.partnerName][0].itemList
+      return this.datas[this.activeSender.partnerName].orderInfos
     }
   },
   mounted () {
@@ -53,18 +54,30 @@ export default {
      */
     handleClick (item) {
       this.activeSender = item
+      if (this.selectedRows.length > 0) {
+        this.selectedRows = []
+      }
+    },
+    /**
+     * 选择订单记录核销
+     */
+    handleSelectionChange (selected) {
+      this.selectedRows = selected
     },
     /**
      * 搜索
      */
     handleSearch (searchParam) {
       this.searchForm = { ...searchParam }
+      this.activeSender = null
+      this.selectedRows = []
       this.fetch()
     },
     /**
      * 批量核销
      */
     batchWriteOff () {
+      const vm = this
       if (this.selectedRows.length === 0) {
         this.$Message.warning('请选择待收款核销的订单')
         return
@@ -86,8 +99,9 @@ export default {
         },
         methods: {
           ok () {
-            this.$Message.success('核销成功')
-            this.fetch()
+            vm.$Message.success('核销成功')
+            vm.selectedRows = []
+            vm.fetch()
           }
         }
       })
@@ -97,19 +111,21 @@ export default {
      * @param {} data
      */
     writeOff (data) {
+      const vm = this
       // 单笔核销
       this.openDialog({
         name: 'finance/dialogs/cargoFeeVerify',
         data: {
           id: data.id,
           verifyType: this.verifyType,
-          needPay: data.collectionFee / 100,
+          needPay: (data.collectionFee / 100).toFixed(2),
           orderNum: 0
         },
         methods: {
           ok () {
-            this.$Message.success('核销成功')
-            this.fetch()
+            vm.$Message.success('核销成功')
+            vm.selectedRows = []
+            vm.fetch()
           }
         }
       })
@@ -118,6 +134,7 @@ export default {
      * 查询代收货款
      */
     fetch () {
+      const vm = this
       server({
         url: '/finance/collection/order/query',
         method: 'get',
@@ -126,7 +143,26 @@ export default {
           commonStatus: this.commonStatus
         }
       }).then((res) => {
-        this.datas = _.groupBy(res.data.data, (item) => item.partnerName)
+        // this.datas = _.groupBy(res.data.data, (item) => item.partnerName)
+        if (res.data.data && res.data.data.length > 0) {
+          const groupData = _.groupBy(res.data.data, (item) => item.partnerName)
+          const datas = {}
+          for (let name in groupData) {
+            datas[name] = groupData[name][0]
+          }
+          if (vm.activeSender) {
+            // 当前选中的发货方，正好在核销之后没有可核销的单子，从列表中移除，那么当前选中的就移除
+            let findActiveSender = res.data.data.find((item) => item.partnerName === vm.activeSender.partnerName)
+            if (!findActiveSender) {
+              vm.activeSender = null
+            }
+          }
+
+          this.datas = datas
+        } else {
+          this.datas = []
+          this.activeSender = null
+        }
       })
     }
   }

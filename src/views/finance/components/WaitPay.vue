@@ -59,7 +59,7 @@ export default {
         },
         {
           title: '操作',
-          width: 60,
+          width: 80,
           key: 'action',
           render: (h, params) => {
             return this.hasPower(170502) ? h('a', {
@@ -73,7 +73,7 @@ export default {
         },
         {
           title: '订单号',
-          width: 140,
+          width: 150,
           key: 'orderNo',
           render: (h, params) => {
             return h('a', {
@@ -124,6 +124,9 @@ export default {
         height: 'auto'
       }
     }
+  },
+  mounted () {
+    this.fetch()
   },
   methods: {
 
