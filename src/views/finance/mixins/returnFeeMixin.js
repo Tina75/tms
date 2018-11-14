@@ -8,7 +8,7 @@ export default {
           this.openTab({
             title: data.orderNo,
             path: TMSUrl.TRANSPORT_ORDER_DETAIL,
-            query: { id: data.orderId || data.id } // id 或 no 二选一
+            query: { id: data.billId || data.id } // id 或 no 二选一
           })
           break
         case 4:
@@ -16,7 +16,7 @@ export default {
           this.openTab({
             title: data.orderNo,
             path: TMSUrl.OUTER_ORDER_DETAIL,
-            query: { id: data.orderId || data.id }
+            query: { id: data.billId || data.id }
           })
           break
       }
