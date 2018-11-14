@@ -22,7 +22,7 @@
           <Input v-model="info.outTransNo" :maxlength="20" style="width:200px"/>
         </FormItem>
         <FormItem label="付款方式:" prop="payType">
-          <Select v-model="info.payType" style="width:200px" clearable>
+          <Select v-model="info.payType" style="width:200px">
             <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
           </Select>
         </FormItem>
