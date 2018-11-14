@@ -132,7 +132,10 @@ export default {
 
     // 保留2位小数
     handleParseFloat (value) {
-      return float.floor(value) || null
+      if (!value) {
+        return value
+      }
+      return float.floor(value).toString()
     },
 
     save () {
