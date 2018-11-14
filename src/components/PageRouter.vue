@@ -40,11 +40,12 @@ export default {
   },
   // components: { 'page-noPage': noPage, 'page-noPowerPage': noPowerPage },
   mounted: function () {
+    const vm = this
     this.loadPage(this.$route.params)
     window.EMA.bind('PageRouter.remove', (path) => {
       let key = `page${path.replace(/\//g, '-')}`
-      if (this.componentCache[key]) {
-        this.componentCache[key] = undefined
+      if (vm.componentCache[key]) {
+        vm.componentCache[key] = undefined
       }
     })
   },

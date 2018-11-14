@@ -6,8 +6,7 @@
       <Button v-if="hasPower(170504)" type="primary" style="width:86px" @click="handleExport">导出</Button>
       </Col>
     </Row>
-    <Row>
-      <Col span="24">
+    <div>
       <PageTable
         ref="pageTable"
         :keywords="keywords"
@@ -17,8 +16,7 @@
         url="/finance/collection/paid/query"
         @on-selection-change="handleSelectionChange"
       />
-      </Col>
-    </Row>
+    </div>
   </div>
 </template>
 

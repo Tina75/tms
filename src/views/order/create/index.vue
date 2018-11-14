@@ -176,6 +176,7 @@
         <TagNumberInput :min="0" v-model="orderForm.pickupFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
+        <p class="foramte-num">{{formateNum(orderForm.pickupFee)}}</p>
       </FormItem>
       </Col>
     </Row>
@@ -185,6 +186,7 @@
         <TagNumberInput :min="0" v-model="orderForm.loadFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
+        <p class="foramte-num">{{formateNum(orderForm.loadFee)}}</p>
       </FormItem>
       </Col>
       <Col span="6">
@@ -192,6 +194,7 @@
         <TagNumberInput :min="0" v-model="orderForm.unloadFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
+        <p class="foramte-num">{{formateNum(orderForm.unloadFee)}}</p>
       </FormItem>
       </Col>
       <Col span="6">
@@ -199,6 +202,7 @@
         <TagNumberInput :min="0" v-model="orderForm.insuranceFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
+        <p class="foramte-num">{{formateNum(orderForm.insuranceFee)}}</p>
       </FormItem>
       </Col>
       <Col span="6">
@@ -206,6 +210,7 @@
         <TagNumberInput :min="0" v-model="orderForm.otherFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
+        <p class="foramte-num">{{formateNum(orderForm.otherFee)}}</p>
       </FormItem>
       </Col>
     </Row>
@@ -285,7 +290,7 @@ import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
 import distance from '@/libs/js/distance'
 import { money2chinese } from '@/libs/js/util'
-
+import api from './libs/api'
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee', 'collectionMoney']
 export default {
   metaInfo: {
@@ -521,7 +526,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'orderDetail',
+      // 'orderDetail',
       'clients',
       'consignerAddresses',
       'consigneeContacts',
@@ -562,7 +567,7 @@ export default {
     const orderId = this.$route.query.id || undefined
     if (orderId) {
       vm.loading = true
-      this.getOrderDetail(orderId)
+      api.getOrderDetail(orderId)
         .then((orderDetail) => {
           vm.loading = false
           for (let key in vm.orderForm) {
@@ -618,9 +623,7 @@ export default {
       'getClients',
       'getConsignerDetail',
       'clearCargoes',
-      'clearClients',
-      'getOrderDetail',
-      'submitOrder'
+      'clearClients'
     ]),
     // 保留2位小数
     handleParseFloat (value) {
@@ -832,7 +835,7 @@ export default {
             transferFeeList.forEach((fee) => {
               form[fee] = form[fee] ? form[fee] * 100 : 0
             })
-            vm.submitOrder(form)
+            api.submitOrder(form)
               .then((response) => {
                 if (!form.id) {
                   this.$Message.success('创建订单成功')
@@ -951,7 +954,7 @@ export default {
     },
     formateNum (value) {
       if (value && value > 9999.99) {
-        return money2chinese(value)
+        return money2chinese(parseInt(value))
       }
     }
   }
