@@ -42,7 +42,7 @@
             <div>您还没有导入订单，去下载模板导入订单吧！</div>
           </div>
           <div class="i-mt-10">
-            <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入文件</Button>
+            <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入订单</Button>
           </div>
         </div>
       </div>

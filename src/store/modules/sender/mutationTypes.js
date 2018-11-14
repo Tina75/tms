@@ -1,0 +1,5 @@
+export const RECEIVE_CLIENT_LIST = 'RECEIVE_CLIENT_LIST' // 公司客户信息列表
+export const RECEIVE_CONTACT_LIST = 'RECEIVE_CONTACT_LIST' // 发货方列表
+export const RECEIVE_ADDRESS_LIST = 'RECEIVE_ADDRESS_LIST' // 发货地址列表
+export const RECEIVE_CONSIGNEES_LIST = 'RECEIVE_CONSIGNEES_LIST' // 收货方列表
+export const RECEIVE_CARGO_LIST = 'RECEIVE_CARGO_LIST' // 已维护的货物列表

@@ -145,6 +145,17 @@ export default {
       return this.drivers[this.activeDriver.partnerName].orderInfos
     }
   },
+  watch: {
+    drivers (newDatas) {
+      if (this.activeDriver) {
+        // 当前选中的发货方，正好在核销之后没有可核销的单子，从列表中移除，那么当前选中的就移除
+        if (!newDatas[this.activeDriver.partnerName]) {
+          this.$refs.driversList.clearActiveKey()
+          this.activeDriver = null
+        }
+      }
+    }
+  },
   mounted () {
     this.$nextTick(() => {
       let height = this.DocumentHeight - this.$refs.driversList.$el.getBoundingClientRect().top + this.$parent.$parent.$el.getBoundingClientRect().top
@@ -160,9 +171,9 @@ export default {
      */
     handleSearch (form) {
       this.searchForm = form
-      this.activeDriver = null
+      // this.activeDriver = null
       this.selectedOrders = []
-      this.$refs.driversList.clearActiveKey()
+      // this.$refs.driversList.clearActiveKey()
       this.fetch()
     },
     /**
@@ -254,18 +265,11 @@ export default {
           for (let name in groupDrivers) {
             drivers[name] = groupDrivers[name][0]
           }
-          if (vm.activeDriver) {
-            // 当前选中的发货方，正好在核销之后没有可核销的单子，从列表中移除，那么当前选中的就移除
-            let findActiveDriver = res.data.data.find((item) => item.partnerName === vm.activeDriver.partnerName)
-            if (!findActiveDriver) {
-              vm.$refs.driversList.clearActiveKey()
-              vm.activeDriver = null
-            }
-          }
-          this.drivers = drivers
+
+          vm.drivers = drivers
         } else {
-          this.drivers = []
-          this.activeDriver = null
+          vm.drivers = {}
+          vm.activeDriver = null
         }
       })
     }
