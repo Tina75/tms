@@ -342,7 +342,7 @@ export default {
       if ((value && validator.fee(value)) || !value) {
         callback()
       } else {
-        callback(new Error('费用整数位最多输入9位'))
+        callback(new Error('费用整数位最多输入9位,小数2位'))
       }
     }
     // 6位整数 1位小数
