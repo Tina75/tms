@@ -91,7 +91,7 @@ export default {
     search (val) {
       clearTimeout(this.timer)
       this.timer = setTimeout(() => {
-        this.doSearch(val, true)
+        this.doSearch(val, this.areaName !== '全国')
       }, 200)
     },
     doSearch (val, forceLocal) {
