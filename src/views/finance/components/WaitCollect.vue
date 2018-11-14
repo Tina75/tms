@@ -58,6 +58,7 @@ export default {
     return {
       commonStatus: 0, // 0-未收 1-已收未付 2-已付
       verifyType: 1, // 1-代收货款已收未付，2-代收货款已付款，3-返现运费'
+      verifyTitle: '收款核销',
       orderColumns: [
         {
           type: 'selection',

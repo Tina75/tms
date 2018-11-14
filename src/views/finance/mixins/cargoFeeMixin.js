@@ -3,7 +3,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-11-09 16:48:31
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-11-14 14:03:11
+ * @Last Modified time: 2018-11-14 17:40:54
  */
 import _ from 'lodash'
 import server from '@/libs/js/server'
@@ -107,6 +107,7 @@ export default {
         name: 'finance/dialogs/cargoFeeVerify',
         data: {
           id: ids,
+          title: this.verifyTitle,
           verifyType: this.verifyType,
           needPay: (needPay / 100).toFixed(2),
           orderNum: this.selectedRows.length
@@ -131,6 +132,7 @@ export default {
         name: 'finance/dialogs/cargoFeeVerify',
         data: {
           id: data.id,
+          title: this.verifyTitle,
           verifyType: this.verifyType,
           needPay: (data.collectionFee / 100).toFixed(2),
           orderNum: 0
