@@ -21,8 +21,8 @@
         <FormItem label="外转方运单号:" class="ivu-form-item-required blank">
           <Input v-model="info.outTransNo" :maxlength="20" style="width:200px"/>
         </FormItem>
-        <FormItem label="付款方式:" class="ivu-form-item-required blank">
-          <Select v-model="info.payType" style="width:200px">
+        <FormItem label="付款方式:" prop="payType">
+          <Select v-model="info.payType" style="width:200px" clearable>
             <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
           </Select>
         </FormItem>
@@ -101,6 +101,9 @@ export default {
         transFee: [
           { required: true, type: 'number', message: '请填写外转运费' },
           { validator: validateFee }
+        ],
+        payType: [
+          { required: true, message: '请选择付款方式' }
         ],
         mileage: [
           { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
