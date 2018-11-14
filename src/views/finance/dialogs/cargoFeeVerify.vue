@@ -1,6 +1,6 @@
 <template>
   <Modal v-model="visiable" :mask-closable="true" width="440" @on-visible-change="close">
-    <p slot="header" style="text-align:center;font-size:17px">核销</p>
+    <p slot="header" style="text-align:center;font-size:17px">{{title}}</p>
     <div class="write-off-form">
       <Form ref="writeOffForm" :model="writeOffForm" :rules="validate" :label-width="100">
         <FormItem v-if="orderNum" label="订单数：">
@@ -47,6 +47,7 @@ export default {
   mixins: [BaseDialog, verifyMixin],
   data () {
     return {
+      title: '核销',
       verifyType: 1,
       orderNum: 0,
       needPay: 0

@@ -153,8 +153,12 @@ export default {
           key: 'partnerName'
         },
         {
-          title: '合计运费',
+          title: '应收运费',
           key: 'totalFeeText'
+        },
+        {
+          title: '实收运费',
+          key: 'payFeeText'
         },
         {
           title: '单数',
@@ -249,7 +253,8 @@ export default {
         this.writtenOffData.totalCount = res.data.data.totalCount
         this.writtenOffData.list = res.data.data.dataList.map(item => {
           return Object.assign({}, item, {
-            totalFeeText: (item.totalFee / 100).toFixed(2)
+            totalFeeText: ((item.totalFee || 0) / 100).toFixed(2),
+            payFeeText: ((item.payFee || 0) / 100).toFixed(2)
           })
         })
       }).catch(err => console.error(err))

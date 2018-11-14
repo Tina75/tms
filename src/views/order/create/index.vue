@@ -293,6 +293,7 @@ import { money2chinese } from '@/libs/js/util'
 import api from './libs/api'
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee', 'collectionMoney']
 export default {
+  name: 'order-crete',
   metaInfo: {
     title: '手动下单'
   },
@@ -777,6 +778,7 @@ export default {
           partnerType: 1, // 计算规则分类：1-发货方，2-承运商，3-外转方
           weight: statics.weight,
           volume: statics.volume,
+          distance: this.orderForm.mileage ? this.orderForm.mileage * 1000 : 0,
           startPoint: { lat: this.orderForm.consignerAddressLatitude, lng: this.orderForm.consignerAddressLongitude },
           endPoint: { lat: this.orderForm.consigneeAddressLatitude, lng: this.orderForm.consigneeAddressLongitude }
         },

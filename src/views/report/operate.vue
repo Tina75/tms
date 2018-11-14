@@ -195,7 +195,10 @@ export default {
         {
           title: '计费里程',
           key: 'mileage',
-          width: 150
+          width: 150,
+          render: (h, params) => {
+            return h('span', (params.row.mileage / 1000).toFixed(1))
+          }
         },
         {
           title: '体积（方）',

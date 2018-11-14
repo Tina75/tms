@@ -96,8 +96,8 @@ export default {
                       console.log(percent)
                       // 计算重量
                       if (this.cloneData[params.index].weight !== 0) {
-                        params.row.weight = float.round(this.cloneData[params.index].weight * percent)
-                        this.weightVal = float.round(this.cloneData[params.index].weight * percent)
+                        params.row.weight = float.round(this.cloneData[params.index].weight * percent, 2)
+                        this.weightVal = float.round(this.cloneData[params.index].weight * percent, 2)
                       }
                       // 计算体积
                       if (this.cloneData[params.index].volume !== 0) {
@@ -334,25 +334,27 @@ export default {
                   }, '拆整笔')
                 ])
               } else {
+                let renderBtn = [
+                  h('a', {
+                    style: {
+                      marginRight: '20px',
+                      color: '#00a4bd'
+                    },
+                    on: {
+                      click: () => {
+                        this.isSeparate = true
+                        this.currentId = params.row.id
+                        this.cargoCostVal = this.cloneData[params.index].cargoCost
+                        this.quantityVal = this.cloneData[params.index].quantity
+                        this.weightVal = this.cloneData[params.index].weight
+                        this.volumeVal = this.cloneData[params.index].volume
+                      }
+                    }
+                  }, '拆部分')
+                ]
                 // 只有一条货物记录没有拆整笔按钮
                 if (this.parentOrderCargoList.length > 1) {
-                  return h('div', [
-                    h('a', {
-                      style: {
-                        marginRight: '20px',
-                        color: '#00a4bd'
-                      },
-                      on: {
-                        click: () => {
-                          this.isSeparate = true
-                          this.currentId = params.row.id
-                          this.cargoCostVal = this.cloneData[params.index].cargoCost
-                          this.quantityVal = this.cloneData[params.index].quantity
-                          this.weightVal = this.cloneData[params.index].weight
-                          this.volumeVal = this.cloneData[params.index].volume
-                        }
-                      }
-                    }, '拆部分'),
+                  renderBtn.push(
                     h('a', {
                       style: {
                         color: '#00a4bd'
@@ -364,27 +366,9 @@ export default {
                         }
                       }
                     }, '拆整笔')
-                  ])
-                } else {
-                  return h('div', [
-                    h('a', {
-                      style: {
-                        marginRight: '20px',
-                        color: '#00a4bd'
-                      },
-                      on: {
-                        click: () => {
-                          this.isSeparate = true
-                          this.currentId = params.row.id
-                          this.cargoCostVal = this.cloneData[params.index].cargoCost
-                          this.quantityVal = this.cloneData[params.index].quantity
-                          this.weightVal = this.cloneData[params.index].weight
-                          this.volumeVal = this.cloneData[params.index].volume
-                        }
-                      }
-                    }, '拆部分')
-                  ])
+                  )
                 }
+                return h('div', renderBtn)
               }
             }
           }
@@ -440,9 +424,6 @@ export default {
                   click: () => {
                     // console.log(params)
                     this.isSeparate = false
-                    // this.quantityVal = params.row.quantity
-                    // this.weightVal = params.row.weight
-                    // this.volumeVal = params.row.volume
                     if (!this.parentOrderCargoList.length) {
                       let restoreData = this.childOrderCargoList.splice(params.index, 1)
                       this.parentOrderCargoList.push(restoreData[0])
