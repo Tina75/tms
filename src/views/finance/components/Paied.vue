@@ -136,7 +136,7 @@ export default {
         },
         {
           title: '订单状态',
-          key: 'statusDesc',
+          key: 'orderStatusDesc',
           width: 100
         },
         {
