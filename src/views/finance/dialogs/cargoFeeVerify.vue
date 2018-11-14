@@ -9,7 +9,7 @@
         <FormItem :label="verifyType === 1 ? '应收货款：' : '应付货款：'">
           <p><span class="writeOffFormFee">{{needPay}}</span>元</p>
         </FormItem>
-        <FormItem :label="verifyType === 1 ? '实收货款：' : '实付货款：'" prop="actualFee">
+        <FormItem v-if="orderNum === 0" :label="verifyType === 1 ? '实收货款：' : '实付货款：'" prop="actualFee">
           <Input v-model="writeOffForm.actualFee" placeholder="请输入" />
         </FormItem>
         <FormItem label="付款方式：" prop="payType">

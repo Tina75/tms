@@ -956,7 +956,7 @@ export default {
     },
     formateNum (value) {
       if (value && value > 9999.99) {
-        return money2chinese(parseInt(value))
+        return money2chinese(value)
       }
     }
   }
