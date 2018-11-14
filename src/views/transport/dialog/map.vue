@@ -83,7 +83,7 @@ export default {
       this.map.addOverlay(markerOverlay)
 
       // 添加标签
-      const labelOverlay = new LabelOverlay(point, car.carNo)
+      const labelOverlay = new LabelOverlay(point, car.carNo === '' ? car.phone : car.carNo)
       this.map.addOverlay(labelOverlay)
 
       cb && cb(point)
@@ -96,9 +96,8 @@ export default {
         // 添加标志点
         const markerOverlay = new MarkerOverlay(point)
         this.map.addOverlay(markerOverlay)
-
         // 添加标签
-        const labelOverlay = new LabelOverlay(point, car.carNo.replace(/^(.{2})/, '$1 '))
+        const labelOverlay = new LabelOverlay(point, car.carNo.length === 11 ? car.carNo : car.carNo.replace(/^(.{2})/, '$1 '))
         this.map.addOverlay(labelOverlay)
         labelOverlay.hide()
 

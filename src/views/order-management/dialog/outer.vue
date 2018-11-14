@@ -143,9 +143,9 @@ export default {
         if (valid) {
           this.info = Object.assign({}, this.info, {
             orderId: this.detail.id,
-            payType: Math.floor(this.info.payType),
-            transFee: Math.floor(this.info.transFee) * 100,
-            mileage: Math.floor(this.info.mileage) * 1000
+            payType: Number(this.info.payType),
+            transFee: Number(this.info.transFee) * 100,
+            mileage: Number(this.info.mileage) * 1000
           })
           this.info.cashBack = this.info.cashBack * 100 || null
           Server({
