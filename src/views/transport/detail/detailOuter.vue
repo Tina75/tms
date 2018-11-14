@@ -504,7 +504,7 @@ export default {
           name: 'transport/dialog/map',
           data: {
             cars,
-            multiple: data.transId.length !== 1
+            multiple: false
           },
           methods: {}
         })
