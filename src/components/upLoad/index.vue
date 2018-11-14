@@ -1,9 +1,10 @@
 <template>
   <div id="uploadFile">
-    <div v-if="multiple" style="width: 500px;">
+    <div v-if="multiple" style="width: 550px;">
       <div v-for="(pic, index) in uploadImgList" :key="index" class="demo-upload-list">
         <template v-if="pic.progress === 1">
-          <img :src="pic.url">
+          <!-- <img :src="pic.url"> -->
+          <div :style="'height: 90px;background-image: url(' + pic.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"></div>
           <div class="demo-upload-list-cover">
             <div style="cursor: pointer;" @click="handleView(index)">
               <div class="eye-circle">
@@ -13,7 +14,7 @@
             </div>
             <div style="cursor: pointer;" @click="handleRemove(index)">
               <div class="eye-circle">
-                <FontIcon type="ico_see" size="16" color="#fff"></FontIcon>
+                <FontIcon type="ico_delete" size="16" color="#fff"></FontIcon>
               </div>
               <div class="icon-letter">删除</div>
             </div>
@@ -23,7 +24,7 @@
           <Progress :percent="pic.progress * 100" hide-info></Progress>
         </template>
       </div>
-      <div v-if="uploadImgList.length < 6" class="ivu-upload" style="display: inline-block; width: 160px;">
+      <div v-if="uploadImgList.length < maxCount" class="ivu-upload" style="display: inline-block; width: 160px;">
         <div class="ivu-upload ivu-upload-drag">
           <input
             ref="fileInput"
@@ -46,7 +47,8 @@
     <div v-else>
       <div v-if="uploadImg" class="demo-upload-list">
         <template v-if="progress === 1">
-          <img :src="uploadImg">
+          <!-- <img :src="uploadImg"> -->
+          <div :style="'height: 90px;background-image: url(' + uploadImg + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"></div>
           <div class="demo-upload-list-cover">
             <div style="cursor: pointer;" @click="handleView">
               <div class="eye-circle">
@@ -118,6 +120,11 @@ export default {
     maxSize: {
       type: [String, Number],
       default: 10
+    },
+    // 图片上传最大张数, 默认6张
+    maxCount: {
+      type: [String, Number],
+      default: 6
     },
     // 是否多图上传
     multiple: {
@@ -254,8 +261,8 @@ export default {
     },
     // 多图上传
     async multipleUpload (e, files) {
-      if ((files.length + this.uploadImgList.length) > 6) {
-        this.$Message.warning('图片最多上传6张')
+      if ((files.length + this.uploadImgList.length) > this.maxCount) {
+        this.$Message.warning(`图片最多上传${this.maxCount}张`)
         this.$refs.fileInput.value = null
         return
       }
@@ -322,7 +329,7 @@ export default {
   background #fff
   position relative
   box-shadow 0 1px 1px rgba(0,0,0,.2)
-  margin-right 4px
+  margin-right 20px
 .demo-upload-list img
   width 100%
   height 100%

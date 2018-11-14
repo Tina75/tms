@@ -5,33 +5,52 @@
         <span>编辑</span>
       </p>
       <Form ref="info" :model="info" :rules="rules" :label-width="100" label-position="left">
-        <FormItem label="外转方：" prop="transfereeName">
+        <FormItem label="外转方:" prop="transfereeName">
           <SelectInput ref="transInput" v-model="info.transfereeName"
                        mode="transferee"
                        placeholder="请输入"
                        style="width:200px"
                        @on-select="handleSelectTransferee" />
         </FormItem>
-        <FormItem label="外转方运单号：">
+        <FormItem label="外转方运单号:" class="ivu-form-item-required blank">
           <Input v-model="info.outTransNo" :maxlength="20" style="width:200px" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="付款方式：" prop="payType">
+        <FormItem label="付款方式:" prop="payType">
           <Select v-model="info.payType" style="width:200px">
             <Option v-for="item in payType" :key="item.value" :value="item.value">{{ item.name }}</Option>
           </Select>
         </FormItem>
-        <FormItem label="外转运费：" prop="transFee">
+        <FormItem label="公里数:" prop="mileage" class="ivu-form-item-required blank">
+          <TagNumberInput :min="0" v-model="info.mileage" :parser="handleParseFloat" style="width:200px">
+            <span slot="suffix" class="order-create__input-suffix">公里</span>
+          </TagNumberInput>
+        </FormItem>
+        <FormItem label="外转运费:" prop="transFee">
           <div style="width:200px">
-            <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" style="width:170px">
+            <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" style="width:165px">
               <span slot="suffix" class="order-create__input-suffix">元</span>
             </TagNumberInput>
             <a @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1" style="font-size: 26px; vertical-align: middle; margin-left: 4px;"></i></a>
           </div>
         </FormItem>
+        <FormItem label="返现运费:" prop="cashBack" class="ivu-form-item-required blank">
+          <TagNumberInput v-model="info.cashBack" :parser="handleParseFloat" style="width:165px">
+            <span slot="suffix" class="order-create__input-suffix">元</span>
+          </TagNumberInput>
+          <span>
+            <Tooltip
+              style="margin-left: 5px;"
+              max-width="200"
+              transfer
+              content="返现运费是指在实际运输过程中存在某一段运输没有执行，需要将提前支付的运费返还">
+              <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;" />
+            </Tooltip>
+          </span>
+        </FormItem>
       </Form>
       <div slot="footer">
-        <Button  type="primary"  @click="save">确定</Button>
-        <Button  type="default"  @click="close">取消</Button>
+        <Button type="primary"  @click="save">确定</Button>
+        <Button type="default"  @click="close">取消</Button>
       </div>
     </Modal>
   </div>
@@ -60,6 +79,14 @@ export default {
 
   mixins: [ BaseDialog ],
   data () {
+    // 9位整数 2位小数
+    const validateFee = (rule, value, callback) => {
+      if ((value && /^[0-9]{0,9}(?:\.\d{1,2})?$/.test(value)) || !value) {
+        callback()
+      } else {
+        callback(new Error('最多整数位只可输入9位,小数两位'))
+      }
+    }
     return {
       show: true,
       payType,
@@ -68,17 +95,32 @@ export default {
         transfereeName: '',
         outTransNo: '',
         payType: '',
-        transFee: void 0
+        transFee: void 0,
+        cashBack: null,
+        mileage: null
       },
       points: {}, // 始发地目的地经纬度 { startPoint, endPoint }
       rules: {
-        transfereeName: { required: true, message: '请填写外转方' },
-        payType: { required: true, message: '请选择付款方式' },
-        transFee: { required: true, type: 'number', message: '请填写外转运费', trigger: 'blur' }
+        transfereeName: [
+          { required: true, message: '请填写外转方', trigger: 'blur' },
+          { required: true, message: '请填写外转方', trigger: 'change' }
+        ],
+        transFee: [
+          { required: true, type: 'number', message: '请填写外转运费' },
+          { validator: validateFee }
+        ],
+        payType: [
+          { required: true, message: '请选择付款方式' }
+        ],
+        mileage: [
+          { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
+        ],
+        cashBack: [
+          { validator: validateFee }
+        ]
       }
     }
   },
-
   created: function () {
     this.fetchData()
   },
@@ -90,23 +132,26 @@ export default {
 
     // 保留2位小数
     handleParseFloat (value) {
-      return float.floor(value)
+      return float.floor(value) || null
     },
 
     save () {
-      this.$refs['info'].validate((valid) => {
+      const self = this
+      self.$refs['info'].validate((valid) => {
         if (valid) {
-          const data = Object.assign({}, this.info)
+          const data = Object.assign({}, self.info)
           data.transFee = data.transFee * 100
+          data.mileage = Number(data.mileage) * 1000
+          data.cashBack = Number(data.cashBack) * 100
 
           Server({
             url: '/outside/bill/update',
             method: 'post',
             data
           }).then((res) => {
-            this.$Message.success('操作成功')
-            this.close()
-            this.complete()
+            self.$Message.success('操作成功')
+            self.close()
+            self.complete()
           })
         }
       })
@@ -170,7 +215,9 @@ export default {
           }
         }
         vm.info.transFee = vm.info.transFee / 100
+        vm.info.cashBack = vm.info.cashBack / 100 || null
         vm.info.payType = vm.info.payType
+        vm.info.mileage = Number(vm.info.mileage) / 1000
       }).catch(err => console.error(err))
     }
   }
@@ -179,7 +226,10 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
-  .dialog
-    p
-      text-align center
+.dialog
+  p
+    text-align center
+.blank
+  /deep/ .ivu-form-item-label:before
+    visibility: hidden
 </style>

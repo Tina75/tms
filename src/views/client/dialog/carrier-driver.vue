@@ -227,10 +227,10 @@ export default {
         ],
         shippingWeight: [
           { required: true, message: '载重不能为空' },
-          { message: '必须小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ],
         shippingVolume: [
-          { message: '必须小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
         ]
       }
     }
@@ -251,6 +251,7 @@ export default {
         this.$refs.upload2.progress = 1
         this.$refs.upload1.uploadImg = this.validate.travelPhoto
         this.$refs.upload2.uploadImg = this.validate.drivePhoto
+        this.validate.carBrand = this.validate.carBrand
         if (this.validate.regularLine && JSON.parse(this.validate.regularLine).length > 0) {
           if (JSON.parse(this.validate.regularLine).length === 1) {
             this.address1 = JSON.parse(this.validate.regularLine)[0]

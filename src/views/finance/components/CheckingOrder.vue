@@ -165,7 +165,7 @@ export default {
       }
       this.startQuery()
     },
-    writeOff (data) {
+    writeOffOk (data) {
       let _this = this
       this.openDialog({
         name: 'finance/dialogs/writeOff',
@@ -180,6 +180,36 @@ export default {
           ok () {
             _this.getCheckList()
           }
+        }
+      })
+    },
+    writeOff (data) {
+      Server({
+        url: '/finance/verify/checkOrder',
+        method: 'post',
+        data: {
+          id: data.row.reconcileId,
+          verifyType: 3
+        }
+      }).then(res => {
+        if (res.data.data === '') {
+          this.writeOffOk(data)
+        } else if (res.data.data && res.data.data.operateCode === 1) {
+          // 存在异常
+          this.$Toast.warning({
+            title: '核销',
+            content: '以下单据存在异常，无法核销',
+            render: (h) => {
+              const list = res.data.data.orderNos.length > 0 ? res.data.data.orderNos.map(item => {
+                return h('p', item)
+              }) : []
+              return h('div', [
+                ...list
+              ])
+            },
+            okText: '确认',
+            cancelText: '取消'
+          })
         }
       })
     },

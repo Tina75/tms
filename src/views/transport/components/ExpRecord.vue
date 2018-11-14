@@ -42,8 +42,10 @@
         <div style="display: flex; margin-bottom: 10px; margin-top: 10px">
           <label class="label-bar">图片：</label>
           <div class="flexBox">
-            <span v-for="(item, index) in data.fileUrls" :key="index" class="img-bar" @click="showImg(item)">
-              <img :src="item" alt="异常图片">
+            <span v-for="(item, index) in data.fileUrls"
+                  :key="index" :style="`background-image: url(${item}) `"
+                  style="background-position: center; background-size: 100%; background-repeat: no-repeat;"
+                  class="img-bar" @click="showImg(item)">
             </span>
           </div>
         </div>
@@ -53,27 +55,27 @@
             <div class="flex-bar">
               <Row v-if="billType != 2">
                 <i-col span="8">
-                  <label>运输费：</label>
+                  <label class="feeLabel">运输费：</label>
                   <span class="colorGrey">{{data.beforeFeeInfo.freightFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
-                  <label>装货费：</label>
+                  <label class="feeLabel">装货费：</label>
                   <span class="colorGrey">{{data.beforeFeeInfo.loadFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
-                  <label>卸货费：</label>
+                  <label class="feeLabel">卸货费：</label>
                   <span class="colorGrey">{{data.beforeFeeInfo.unloadFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
-                  <label>保险费：</label>
+                  <label class="feeLabel">保险费：</label>
                   <span class="colorGrey">{{data.beforeFeeInfo.insuranceFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
-                  <label>其&emsp;他：</label>
+                  <label class="feeLabel">其他：</label>
                   <span class="colorGrey">{{data.beforeFeeInfo.otherFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
-                  <label>费用合计：</label>
+                  <label class="feeLabel">费用合计：</label>
                   <span class="colorGrey">{{data.beforeFeeInfo.totalFee | Money}}元</span>
                 </i-col>
               </Row>
@@ -93,27 +95,27 @@
             <div class="flex-bar">
               <Row v-if="billType != 2">
                 <i-col span="8">
-                  <label>运输费：</label>
+                  <label class="feeLabel">运输费：</label>
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.freightFee, data.afterFeeInfo.freightFee)}" class="colorGrey">{{data.afterFeeInfo.freightFee | Money}}</span>元
                 </i-col>
                 <i-col span="8">
-                  <label>装货费：</label>
+                  <label class="feeLabel">装货费：</label>
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.loadFee, data.afterFeeInfo.loadFee)}" class="colorGrey">{{data.afterFeeInfo.loadFee | Money}}</span>元
                 </i-col>
                 <i-col span="8">
-                  <label>卸货费：</label>
+                  <label class="feeLabel">卸货费：</label>
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.unloadFee, data.afterFeeInfo.unloadFee)}" class="colorGrey">{{data.afterFeeInfo.unloadFee | Money}}</span>元
                 </i-col>
                 <i-col span="8">
-                  <label>保险费：</label>
+                  <label class="feeLabel">保险费：</label>
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.insuranceFee, data.afterFeeInfo.insuranceFee)}" class="colorGrey">{{data.afterFeeInfo.insuranceFee | Money}}</span>元
                 </i-col>
                 <i-col span="8">
-                  <label>其&emsp;他：</label>
+                  <label class="feeLabel">其他：</label>
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.otherFee, data.afterFeeInfo.otherFee)}" class="colorGrey">{{data.afterFeeInfo.otherFee | Money}}</span>元
                 </i-col>
                 <i-col span="8">
-                  <label>费用合计：</label>
+                  <label class="feeLabel">费用合计：</label>
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.totalFee, data.afterFeeInfo.totalFee)}" class="colorGrey">{{data.afterFeeInfo.totalFee | Money}}</span>元
                 </i-col>
               </Row>
@@ -313,7 +315,7 @@ export default {
       this.hideDetail = !this.hideDetail
     },
     compareFee (b, a) {
-      return b !== a
+      return moneyFormate(b) !== moneyFormate(a)
     },
     showImg (src) {
       this.visible = true
@@ -386,4 +388,7 @@ export default {
       margin-top 35px
   .colorGrey
     color #333
+  .feeLabel
+    display inline-block
+    width 70px
 </style>

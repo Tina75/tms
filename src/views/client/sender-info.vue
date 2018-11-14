@@ -55,16 +55,24 @@
             <Button v-if="hasPower(130104)"  type="primary" @click="_consignerAddressAdd">新增</Button>
           </div>
           <template>
-            <Table :columns="columns1" :data="data1"></Table>
+            <Table :columns="columns1" :loading="loading" :data="data1">
+              <div slot="loading">
+                <Spin>
+                  <img src="../../assets/loading.gif" width="24" height="24" alt="加载中">
+                </Spin>
+              </div>
+            </Table>
           </template>
           <div class="footer">
             <template>
-              <Page :total="totalCount1"
-                    :current.sync="pageNo1" :page-size-opts="pageArray1"
-                    size="small"
-                    show-sizer
-                    show-elevator show-total @on-change="handleChangePage1"
-                    @on-page-size-change="handleChangePageSize1"/>
+              <Page
+                :total="totalCount1"
+                :current.sync="pageNo1"
+                :page-size-opts="pageArray1"
+                size="small"
+                show-sizer
+                show-elevator show-total @on-change="handleChangePage1"
+                @on-page-size-change="handleChangePageSize1"/>
             </template>
           </div>
         </TabPane>
@@ -127,6 +135,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       id: this.$route.query.id, // 发货方id
       ruleHeight: 0,
       list: {
@@ -163,7 +172,8 @@ export default {
                           address: params.row.address,
                           longitude: params.row.longitude,
                           latitude: params.row.latitude,
-                          mapType: params.row.mapType
+                          mapType: params.row.mapType,
+                          city: params.row.cityCode
                         }
                       },
                       methods: {
@@ -245,7 +255,8 @@ export default {
                           remark: params.row.remark,
                           longitude: params.row.longitude,
                           latitude: params.row.latitude,
-                          mapType: params.row.mapType
+                          mapType: params.row.mapType,
+                          cityCode: params.row.cityCode
                         }
                       },
                       methods: {
@@ -517,10 +528,10 @@ export default {
       let data = {
         id: this.id
       }
+      this.loading = true
       consignerDetail(data).then(res => {
         if (res.data.code === CODE) {
           let data = res.data.data
-          console.log(res.data.data)
           this.list = {
             id: data.id,
             name: data.name,
@@ -529,6 +540,7 @@ export default {
             payType: data.payType,
             remark: data.remark
           }
+          this.loading = false
           this.data1 = data.addressList.list
           this.totalCount1 = data.addressList.totalCount
           this.data2 = data.consigneeList.list

@@ -110,6 +110,18 @@
           </div>
         </i-col>
       </Row>
+
+      <Row v-if="type === 'sendCar'" class="detail-field-group" style="margin-top: 15px;">
+        <i-col span="24">
+          <span class="detail-field-title" style="padding-left: 10px;">返现运费：</span>
+          <MoneyInput v-model="cashBack"
+                      class="detail-payment-input"
+                      style="width: 180px;"/>
+          <Tooltip placement="right" content="返现运费是指在实际运输过程中存在某一段运输没有执行，需要将提前支付的运费返还。" max-width="500">
+            <Icon type="ios-alert" size="20" color="#FFBB44" style="margin-left: 14px;"/>
+          </Tooltip>
+        </i-col>
+      </Row>
     </div>
 
     <div slot="footer" style="text-align: center;">
@@ -148,6 +160,7 @@ export default {
         carType: '',
         carLength: ''
       },
+      cashBack: 0, // 返现运费
       financeRulesInfo: {
         start: void 0,
         end: void 0,
@@ -243,6 +256,7 @@ export default {
           for (let key in this.financeRulesInfo) {
             this.financeRulesInfo[key] = billInfo[key]
           }
+          this.cashBack = this.setMoneyUnit2Yuan(billInfo.cashBack)
         }
         for (let key in this.payment) {
           this.payment[key] = this.setMoneyUnit2Yuan(billInfo[key])
@@ -304,6 +318,10 @@ export default {
         this.$Message.error('请输入运输费')
         return false
       }
+      if (this.type === 'sendCar' && typeof this.cashBack === 'number' && this.cashBack <= 0) {
+        this.$Message.error('返现运费必须大于0')
+        return false
+      }
       if (this.settlementType === '1' && !this.$refs.$payInfo.validate()) return false
       return true
     },
@@ -325,6 +343,7 @@ export default {
       let url
       if (this.type === 'sendCar') {
         data.waybillId = this.id
+        data.cashBack = this.cashBack * 100 || null
         url = '/waybill/assign/vehicle'
       } else {
         data.pickUpId = this.id

@@ -158,7 +158,7 @@ export default {
     },
     noDataText: {
       type: String,
-      default: '暂无数据'
+      default: '<span><i class="icon font_family icon-ico-nodata"></i>&nbsp;暂无数据~</span>'
     },
     // 斑马纹
     stripe: {
@@ -246,6 +246,10 @@ export default {
         vm.columns
           .filter(col => {
             if (vm.extraColumns.length > 0 && col.key && !col.extra) {
+              // extracolumns 没有该值，就直接忽略，防止异常
+              if (!columnGroup[col.key]) {
+                return false
+              }
               let group = columnGroup[col.key][0]
               // title字段以接口返回为准
               col.title = group.title

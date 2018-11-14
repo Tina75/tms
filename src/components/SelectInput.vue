@@ -21,6 +21,7 @@
         :placeholder="placeholder"
         :maxlength="maxlength"
         :class="classes"
+        :disabled="disabled"
         @on-change="handleChange"
         @on-focus="handleFocus"
       >
@@ -31,7 +32,7 @@
     <DropdownMenu ref="dropdown" slot="list" :style="{'max-height':'150px', overflow:'auto'}">
       <DropdownItem
         v-for="(option, index) in filterOptions"
-        :key="option.name"
+        :key="index"
         :name="option.name"
         :class="{'ivu-select-item-focus': focusIndex === index}"
         v-html="heightlightText(option.name)">
@@ -90,6 +91,10 @@ export default {
       type: Function
     },
     noFilter: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
       type: Boolean,
       default: false
     }

@@ -57,10 +57,9 @@
         </li>
       </ul>
       <div class="order-list">
-        <div v-if="!currentPartner.partnerName || !orderData.length" class="data-empty">
-          <img src="../../../assets/img-empty.png" class="data-empty-img">
-          <p>请点击左侧{{sceneMap[scene]}}列表查看{{orderNameMap[scene]}}哦～</p>
-        </div>
+        <Empty v-if="!currentPartner.partnerName || !orderData.length">
+          {{emptyContent}}
+        </Empty>
         <Table v-else :columns="orderColumn" :data="orderData" class="tableList"  @on-selection-change="setOrderIds"></Table>
       </div>
     </div>
@@ -71,11 +70,12 @@
 import BaseComponent from '@/basic/BaseComponent'
 import Server from '@/libs/js/server'
 import FontIcon from '@/components/FontIcon'
-
+import Empty from './Empty.vue'
 export default {
   name: 'writingOff',
   components: {
-    FontIcon
+    FontIcon,
+    Empty
   },
   mixins: [ BaseComponent ],
   props: {
@@ -154,6 +154,9 @@ export default {
     }
   },
   computed: {
+    emptyContent () {
+      return `请点击左侧${this.sceneMap[this.scene]}列表查看${this.orderNameMap[this.scene]}哦～`
+    },
     orderColumn () {
       return [
         {
@@ -376,9 +379,10 @@ export default {
     writeOff (data) {
       Server({
         url: '/finance/verify/checkOrder',
-        method: 'get',
-        params: {
-          orderId: data.row.id
+        method: 'post',
+        data: {
+          id: data.row.id,
+          verifyType: 1
         }
       }).then(res => {
         if (res.data.data === '') {

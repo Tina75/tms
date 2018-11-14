@@ -5,8 +5,7 @@ import Login from './login.vue'
 import router from './router'
 import store from './store'
 import VueMeta from 'vue-meta'
-import './libs/js/ga.js' // GA打点统计配置
-import './libs/js/report' // 打点上报方法封装
+import './libs/js/ga.js' // GA打点统计配置与上报方法封装
 import EmaProxy from 'ema-proxy'
 import Toast from '@/components/toast/index'
 
@@ -16,6 +15,14 @@ require('./libs/js/date')
 require('./assets/css/iview/iview.css')
 require('./assets/css/tms/iconfont.css')
 require('./assets/css/quill/quill.core.css')
+
+if ((navigator.userAgent.indexOf('MSIE') >= 0) && (navigator.userAgent.indexOf('Opera') < 0)) {
+  // 上报不兼容情况并跳转升级浏览器页面
+  Vue.$reportUser('incompatible', navigator.userAgent)
+  setTimeout(function () {
+    // location.href = 'https://www.tms5566.com/upgrade.html'
+  }, 20)
+}
 
 const errorHandler = (error, vm) => {
   vm.$reportError(error)
@@ -34,9 +41,9 @@ Vue.prototype.$Toast = Toast
 window.EMA = new EmaProxy()
 var appData = { router, store }
 var islogin = localStorage.getItem('tms_is_login')
-if (islogin) {
-  appData.render = h => h(App)
-} else {
+if (window.location.hash === '#/?mode=signup' || !islogin) {
   appData.render = h => h(Login)
+} else {
+  appData.render = h => h(App)
 }
 new Vue(appData).$mount('#app')

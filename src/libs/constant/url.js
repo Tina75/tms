@@ -3,7 +3,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-10-09 15:36:10
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-10-30 10:32:16
+ * @Last Modified time: 2018-11-09 13:50:13
  */
 
 const TMSUrl = {
@@ -23,6 +23,7 @@ const TMSUrl = {
   SENDER_FINANCE: '/finance/sender', // 发货方对账
   CARRIER_FINANCE: '/finance/carrier', // 承运商对账
   TRANSFER_FINANCE: '/finance/transfer', // 外转方对账
+  COLLECT_FEE_FINANCE: '/finace/collectFee', // 代收货款
   RULES_FINANCE: '/finance/rules', // 计费规则
   OPERATE_REPORT: '/report/operate', // 运营报表
   TOTAL_REPORT: '/report/total', // 营业额汇总表

@@ -193,6 +193,14 @@ export default {
           }
         },
         {
+          title: '计费里程',
+          key: 'mileage',
+          width: 150,
+          render: (h, params) => {
+            return h('span', (params.row.mileage / 1000).toFixed(1))
+          }
+        },
+        {
           title: '体积（方）',
           key: 'volume',
           width: 150
@@ -371,6 +379,12 @@ export default {
         {
           title: '目的地',
           key: 'end',
+          fixed: false,
+          visible: true
+        },
+        {
+          title: '计费里程',
+          key: 'mileage',
           fixed: false,
           visible: true
         },

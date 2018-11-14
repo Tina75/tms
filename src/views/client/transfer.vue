@@ -23,7 +23,13 @@
     </div>
     <div>
       <template>
-        <Table :columns="columns1" :data="data1" @on-sort-change = "timeSort"></Table>
+        <Table :columns="columns1" :data="data1" :loading="loading"  @on-sort-change = "timeSort">
+          <div slot="loading">
+            <Spin>
+              <img src="../../assets/loading.gif" width="24" height="24" alt="加载中">
+            </Spin>
+          </div>
+        </Table>
       </template>
     </div>
     <div class="footer">
@@ -50,6 +56,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       selectStatus: 1,
       selectList: [
         {
@@ -240,9 +247,11 @@ export default {
         keyword: this.keyword,
         order: this.order
       }
+      this.loading = true
       transfereeList(data).then(res => {
         this.data1 = res.data.data.transfereeList
         this.totalCount = res.data.data.total
+        this.loading = false
       })
     },
     clearKeywords () {

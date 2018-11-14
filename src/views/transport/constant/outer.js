@@ -1,4 +1,5 @@
 import TMSUrl from '@/libs/constant/url'
+import IconLabel from '@/components/IconLabel'
 
 export const TAB_LIST = [
   { name: '全部', count: '' },
@@ -76,6 +77,12 @@ export const BUTTON_LIST = vm => [
         vm.billArrived()
       }
     }, {
+      name: '查看车辆位置',
+      code: 120309,
+      func: () => {
+        vm.billLocation()
+      }
+    }, {
       name: '导出',
       code: 120305,
       func: () => {
@@ -108,41 +115,11 @@ export const TABLE_COLUMNS = vm => [
     width: 180,
     fixed: 'left',
     render: (h, p) => {
-      if (p.row.status >= 1 && p.row.abnormalLabel === 2) {
-        return h('div', [
-          h('a', {
-            style: {
-              color: '#418DF9'
-            },
-            on: {
-              click: () => {
-                vm.openTab({
-                  title: p.row.transNo,
-                  path: TMSUrl.OUTER_ORDER_DETAIL,
-                  query: { id: p.row.transId }
-                })
-              }
-            }
-          }, p.row.transNo),
-          h('span', {
-            style: {
-              display: 'block',
-              width: '14px',
-              height: '14px',
-              background: '#EE2018',
-              borderRadius: '2px',
-              color: '#fff',
-              lineHeight: '14px',
-              textAlign: 'center',
-              marginRight: '5px',
-              fontSize: '11px'
-            }
-          }, '异')
-        ])
-      } else {
-        return h('a', {
+      let renderHtml = [
+        h('a', {
           style: {
-            color: '#418DF9'
+            color: '#418DF9',
+            display: 'block'
           },
           on: {
             click: () => {
@@ -154,7 +131,38 @@ export const TABLE_COLUMNS = vm => [
             }
           }
         }, p.row.transNo)
+      ]
+      if (p.row.status >= 1 && p.row.abnormalLabel === 2) {
+        renderHtml.push(
+          h(IconLabel, {
+            props: {
+              text: '异',
+              background: '#EE2018'
+            }
+          })
+        )
       }
+      if (p.row.cashBack > 0) {
+        renderHtml.push(
+          h(IconLabel, {
+            props: {
+              text: '返',
+              background: '#00A4BD'
+            }
+          })
+        )
+      }
+      if (p.row.collectionMoney > 0) {
+        renderHtml.push(
+          h(IconLabel, {
+            props: {
+              text: '代',
+              background: '#FA8C15'
+            }
+          })
+        )
+      }
+      return h('div', renderHtml)
     }
   },
   {
@@ -189,6 +197,14 @@ export const TABLE_COLUMNS = vm => [
     width: 180,
     render: (h, p) => {
       return vm.tableDataRender(h, p.row.endName)
+    }
+  },
+  {
+    title: '计费里程（公里）',
+    key: 'mileage',
+    width: 120,
+    render: (h, p) => {
+      return vm.tableDataRender(h, p.row.mileage === '' ? '' : Math.floor(p.row.mileage) / 1000)
     }
   },
   {
@@ -268,6 +284,14 @@ export const TABLE_COLUMNS = vm => [
     }
   },
   {
+    title: '返现运费',
+    key: 'cashBack',
+    width: 120,
+    render: (h, p) => {
+      return vm.tableDataRender(h, p.row.cashBack ? p.row.cashBack / 100 : '-')
+    }
+  },
+  {
     title: '要求装货时间',
     key: 'deliveryTimeLong',
     width: 160,
@@ -287,6 +311,14 @@ export const TABLE_COLUMNS = vm => [
     title: '回单数',
     key: 'receiptCount',
     width: 120
+  },
+  {
+    title: '代收货款',
+    key: 'collectionMoney',
+    minWidth: 120,
+    render: (h, params) => {
+      return h('span', params.row.collectionMoney ? (params.row.collectionMoney / 100).toFixed(2) : '-')
+    }
   },
   {
     title: '制单人',

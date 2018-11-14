@@ -99,11 +99,6 @@ export default {
     }
   },
   created () {
-    const signupPhone = window.sessionStorage.getItem('signup_phone')
-    if (signupPhone) {
-      this.form.phone = signupPhone
-      window.sessionStorage.removeItem('signup_phone')
-    }
     this.localPwParser()
     this.getCaptcha()
   },

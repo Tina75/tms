@@ -2,11 +2,11 @@
   <!-- 默认状态 -->
   <div v-if="!inEditing" class="transport-detail">
     <!-- 运单号及状态 -->
-    <section class="detail-header">
+    <section :class="themeBarColor(status)" class="detail-header">
       <ul class="detail-header-list">
         <li class="detail-header-list-item">运单号：{{ info.waybillNo }}</li>
         <li class="detail-header-list-item">订单状态：
-          <span style="font-weight: bold;">{{ status }}</span>
+          <span :class="themeStatusColor(status)" style="font-weight: bold;">{{ status }}</span>
         </li>
       </ul>
     </section>
@@ -49,9 +49,14 @@
                 <span class="detail-field-title">车型：</span>
                 <span>{{ info.carType|carTypeFormatter }} {{ info.carLength|carLengthFormatter }}</span>
               </i-col>
-              <i-col span="10" offset="1">
+              <i-col span="6" offset="1">
                 <span class="detail-field-title">司机：</span>
                 <span>{{ (info.driverName || '') + ' ' + (info.driverPhone || '') }}</span>
+              </i-col>
+              <i-col span="4">
+                <span class="detail-field-title">代收货款：</span>
+                <span v-if="collectionMoney">{{collectionMoney / 100}}元</span>
+                <span v-else>-</span>
               </i-col>
             </Row>
             <Row class="detail-field-group">
@@ -151,11 +156,11 @@
   <!-- 编辑状态 -->
   <div v-else class="transport-detail">
     <!-- 运单号及状态 -->
-    <section class="detail-header">
+    <section :class="themeBarColor(status)" class="detail-header">
       <ul class="detail-header-list">
         <li class="detail-header-list-item">运单号：{{ info.waybillNo }}</li>
         <li class="detail-header-list-item">订单状态：
-          <span style="font-weight: bold;">{{ status }}</span>
+          <span :class="themeStatusColor(status)" style="font-weight: bold;">{{ status }}</span>
         </li>
       </ul>
     </section>
@@ -366,7 +371,7 @@ export default {
         driverPhone: '',
         remark: ''
       },
-
+      collectionMoney: 0, // 代收货款
       // 支付方式
       settlementType: '',
       settlementPayInfo: [
@@ -570,7 +575,7 @@ export default {
         }
       }).then(res => {
         const data = res.data.data
-
+        this.collectionMoney = data.waybill.collectionMoney // 代收货款
         this.id = data.waybill.waybillId
         for (let key in this.info) {
           this.info[key] = data.waybill[key]
@@ -659,6 +664,7 @@ export default {
           volume: self.orderTotal.volume, // 货物体积
           start: self.info.start, // 始发地code
           end: self.info.end // 目的地code
+          // distance: 100000, // 从外部传入已经计算好的距离（单位：米），如果传入则不再根据startPoint endPoint计算距离
           // startPoint: {lat: 32.047745, lng: 118.791580}, // 始发地经纬度
           // endPoint: {lat: 39.913385, lng: 116.402257} // 目的地经纬度
         },
@@ -742,6 +748,43 @@ export default {
           }
         }
       })
+    },
+    themeBarColor (code) {
+      let barClass
+      switch (code) {
+        case '待派车':
+          barClass = 'i-bar-warning'
+          break
+        case '待发运':
+          barClass = 'i-bar-warning'
+          break
+        case '在途':
+          barClass = 'i-bar-info'
+          break
+        case '已到货':
+          barClass = 'i-bar-success'
+          break
+      }
+      return barClass
+    },
+    // 每种状态对应各自主题色
+    themeStatusColor (code) {
+      let statusClass
+      switch (code) {
+        case '待派车':
+          statusClass = 'i-status-warning'
+          break
+        case '待发运':
+          statusClass = 'i-status-warning'
+          break
+        case '在途':
+          statusClass = 'i-status-info'
+          break
+        case '已到货':
+          statusClass = 'i-status-success'
+          break
+      }
+      return statusClass
     }
   }
 }

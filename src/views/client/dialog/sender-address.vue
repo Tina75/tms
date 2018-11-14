@@ -9,9 +9,26 @@
     >
       <p slot="header" style="text-align:center">{{title}}</p>
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122">
-        <FormItem label="发货地址:" prop="address">
-          <AreaInput v-model="validate.address" :maxlength="60" placeholder="请输入" @latlongt-change="latlongtChange"/>
+        <FormItem label="发货地址:">
+          <Row>
+            <Col span="11">
+            <FormItem prop="city">
+              <CitySelect v-model="validate.city" :code-type="4" clearable></CitySelect>
+            </FormItem>
+            </Col>
+            <Col span="13" style="padding-left: 5px">
+            <FormItem prop="address">
+              <AreaInput
+                v-model="validate.address"
+                :disabled="true"
+                :city-code="cityCode"
+                :filter-city="true"
+                @latlongt-change="latlongtChange"/>
+            </FormItem>
+            </Col>
+          </Row>
         </FormItem>
+
       </Form>
       <div slot="footer">
         <Button type="primary" @click="save('validate')">确定</Button>
@@ -24,11 +41,14 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import { consignerAddressAdd, consignerAddressUpdate, CODE } from '../client'
-import AreaInput from '@/components/AreaInput.vue'
+import cityUtil from '@/libs/js/city'
+import AreaInput from '@/components/AreaInput'
+import CitySelect from '@/components/SelectInputForCity'
 export default {
   name: 'sender-address',
   components: {
-    AreaInput
+    AreaInput,
+    CitySelect
   },
   mixins: [BaseDialog],
   data () {
@@ -36,6 +56,7 @@ export default {
       consignerId: '', // 详情传过来的id
       id: '',
       validate: {
+        city: '',
         address: '',
         longitude: '',
         latitude: '',
@@ -46,6 +67,12 @@ export default {
           { required: true, message: '发货地址不能为空', trigger: 'blur' }
         ]
       }
+    }
+  },
+  computed: {
+    cityCode () {
+      const arr = cityUtil.getPathByCode(this.validate.city)
+      return arr.length ? arr[1].code : ''
     }
   },
   methods: {
@@ -67,7 +94,8 @@ export default {
         address: this.validate.address,
         longitude: this.validate.longitude,
         latitude: this.validate.latitude,
-        mapType: this.validate.mapType
+        mapType: this.validate.mapType,
+        cityCode: this.validate.city
       }
       consignerAddressAdd(data).then(res => {
         if (res.data.code === CODE) {
@@ -83,7 +111,8 @@ export default {
         address: this.validate.address,
         longitude: this.validate.longitude,
         latitude: this.validate.latitude,
-        mapType: this.validate.mapType
+        mapType: this.validate.mapType,
+        cityCode: this.validate.city
       }
       consignerAddressUpdate(data).then(res => {
         console.log(res)

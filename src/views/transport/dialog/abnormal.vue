@@ -393,16 +393,16 @@ export default {
         if (this.isChangeFee === 1) {
           tableData = _.cloneDeep(this.$refs.$payInfo.tableDataBack)
           tableData.map((item) => {
-            item.cashAmount = item.cashAmount * 100 || null
-            item.fuelCardAmount = item.fuelCardAmount * 100 || null
+            item.cashAmount = item.cashAmount * 100 || 0
+            item.fuelCardAmount = item.fuelCardAmount * 100 || 0
             delete item._index
             delete item._rowKey
             delete item.isDisabled
           })
         } else {
           this.cloneSettlementPayInfo.map((item) => {
-            item.cashAmount = item.cashAmount * 100 || null
-            item.fuelCardAmount = item.fuelCardAmount * 100 || null
+            item.cashAmount = item.cashAmount * 100 || 0
+            item.fuelCardAmount = item.fuelCardAmount * 100 || 0
             delete item.isDisabled
           })
           tableData = this.cloneSettlementPayInfo
@@ -467,13 +467,17 @@ export default {
 
     // 设置金额单位为元
     setMoneyUnit2Yuan (money) {
-      return typeof money === 'number' ? money / 100 : null
+      return (typeof money === 'number' && money !== 0) ? money / 100 : null
     },
     // 格式化金额单位为分
     formatMoney () {
       let temp = Object.assign({}, this.payment)
       for (let key in temp) {
-        if (typeof temp[key] === 'number') temp[key] = temp[key] * 100
+        if (typeof temp[key] === 'number') {
+          temp[key] = temp[key] * 100
+        } else {
+          temp[key] = 0
+        }
       }
       return temp
     },

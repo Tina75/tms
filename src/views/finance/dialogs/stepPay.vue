@@ -145,7 +145,7 @@ export default {
         }
       }).catch(err => console.error(err))
     },
-    writeOff (item) {
+    writeOffOk (item) {
       const _this = this
       this.openDialog({
         name: 'finance/dialogs/writeOff',
@@ -161,6 +161,23 @@ export default {
           ok () {
             _this.loadData()
           }
+        }
+      })
+    },
+    writeOff (item) {
+      Server({
+        url: '/finance/verify/checkOrder',
+        method: 'post',
+        data: {
+          id: item.id,
+          verifyType: 2
+        }
+      }).then(res => {
+        if (res.data.data === '') {
+          this.writeOffOk(item)
+        } else if (res.data.data && res.data.data.operateCode === 1) {
+          // 存在异常
+          this.$Message.error('此单存在异常不能核销')
         }
       })
     },

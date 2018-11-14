@@ -28,7 +28,7 @@ export default {
     border: {
       type: String,
       validator (value) {
-        return ['solid', 'dashed', 'ridge', 'double', 'dotted', 'inset', 'unset'].indexOf(value) > -1
+        return ['none', 'solid', 'dashed', 'ridge', 'double', 'dotted', 'inset', 'unset'].indexOf(value) > -1
       },
       default: 'dashed'
     }

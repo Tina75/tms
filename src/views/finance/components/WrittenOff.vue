@@ -39,7 +39,7 @@
       <Button v-if="(hasPower(170106) && scene === 1) || (hasPower(170206) && scene === 2) || (hasPower(170306) && scene === 3)" type="primary" @click="exportWrittenOff">导出</Button>
     </div>
     <div class="list-box">
-      <Table :columns="orderColumn" :data="writtenOffData.list" height="500" @on-sort-change="resort" @on-selection-change="setOrderIds"></Table>
+      <Table :columns="orderColumn" :data="writtenOffData.list" :no-data-text="noDataText" height="500" @on-sort-change="resort" @on-selection-change="setOrderIds"></Table>
       <Page :current.sync="writtenOffQuerySave.pageNo" :total="writtenOffData.totalCount" :page-size="writtenOffQuerySave.pageSize"  size="small" show-elevator show-total show-sizer @on-change="getWrittenOffList" @on-page-size-change="resetPageSize"/>
     </div>
   </div>
@@ -61,6 +61,7 @@ export default {
   },
   data () {
     return {
+      noDataText: '<span><i class="icon font_family icon-ico-nodata"></i>&nbsp;暂无数据~</span>',
       sceneMap: {
         1: '发货方',
         2: '承运商',
@@ -152,8 +153,12 @@ export default {
           key: 'partnerName'
         },
         {
-          title: '合计运费',
+          title: '应收运费',
           key: 'totalFeeText'
+        },
+        {
+          title: '实收运费',
+          key: 'payFeeText'
         },
         {
           title: '单数',
@@ -248,7 +253,8 @@ export default {
         this.writtenOffData.totalCount = res.data.data.totalCount
         this.writtenOffData.list = res.data.data.dataList.map(item => {
           return Object.assign({}, item, {
-            totalFeeText: (item.totalFee / 100).toFixed(2)
+            totalFeeText: ((item.totalFee || 0) / 100).toFixed(2),
+            payFeeText: ((item.payFee || 0) / 100).toFixed(2)
           })
         })
       }).catch(err => console.error(err))

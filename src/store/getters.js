@@ -8,3 +8,5 @@ export const UserInfo = state => state.userInfo
 export const MsgCount = (state) => state.messageCount
 /** 自定义table列表信息 */
 export const TableColumns = (state) => state.customTableColumns
+/** document-body的高度 */
+export const DocumentHeight = (state) => state.documentHeight
