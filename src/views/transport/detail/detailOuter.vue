@@ -128,7 +128,7 @@
               </i-col>
               <i-col span="5">
                 <span class="detail-field-title-sm">计费里程：</span>
-                <span v-if="payment.mileage" class="detail-field-fee">{{ payment.mileage }}公里</span>
+                <span v-if="payment.mileage" class="detail-field-fee">{{ Math.floor(payment.mileage) / 1000 }}公里</span>
               </i-col>
               <i-col span="5" offset="2">
                 <span class="detail-field-title-sm">外转费用：</span>

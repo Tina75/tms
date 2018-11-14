@@ -33,6 +33,7 @@
         </FormItem>
         <FormItem label="外转运费:" prop="transFee">
           <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" placeholder="请填写外转运费" style="width:175px">
+            <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           <span @click="showChargeRules">
             <FontIcon type="jisuanqi" size="22" color="#00a4bd" class="i-ml-5" style="vertical-align: middle;"></FontIcon>
@@ -40,6 +41,7 @@
         </FormItem>
         <FormItem label="返现运费:" prop="cashBack" class="ivu-form-item-required blank">
           <TagNumberInput v-model="info.cashBack" :parser="handleParseFloat" style="width:175px">
+            <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           <span>
             <Tooltip
@@ -138,8 +140,9 @@ export default {
         if (valid) {
           this.info = Object.assign({}, this.info, {
             orderId: this.detail.id,
-            payType: Number(this.info.payType),
-            transFee: Number(this.info.transFee) * 100
+            payType: Math.floor(this.info.payType),
+            transFee: Math.floor(this.info.transFee) * 100,
+            mileage: Math.floor(this.info.mileage) * 1000
           })
           this.info.cashBack = this.info.cashBack * 100 || null
           Server({

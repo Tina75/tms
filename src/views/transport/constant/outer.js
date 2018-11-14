@@ -204,7 +204,7 @@ export const TABLE_COLUMNS = vm => [
     key: 'mileage',
     width: 120,
     render: (h, p) => {
-      return vm.tableDataRender(h, p.row.mileage === '' ? '' : p.row.mileage)
+      return vm.tableDataRender(h, p.row.mileage === '' ? '' : Math.floor(p.row.mileage) / 1000)
     }
   },
   {
