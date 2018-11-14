@@ -83,7 +83,7 @@
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem  v-if="record.payType !== 1" :label="verifyAccountType[2]">
+          <FormItem  v-if="record.payType !== 1" :label="verifyAccountType[record.payType]">
             {{record.account}}
           </FormItem>
           </Col>

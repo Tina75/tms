@@ -232,7 +232,6 @@ export default {
         ],
         confirmPassword: [
           { required: true, message: '请再次输入新密码', trigger: 'blur' },
-          { validator: CHECK_PWD, trigger: 'blur' },
           { validator: CHECK_PWD_SAME, trigger: 'blur', vm: this }
         ]
       },
