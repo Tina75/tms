@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <keep-alive>
+    <keep-alive :max="10" :include="include">
       <component :is="current"></component>
     </keep-alive>
   </div>
@@ -23,7 +23,8 @@ export default {
   data: function () {
     return {
       current: '',
-      componentCache: {}
+      componentCache: {},
+      include: []
     }
   },
   watch: {
@@ -45,6 +46,9 @@ export default {
     window.EMA.bind('PageRouter.remove', (path) => {
       let key = `page${path.replace(/\//g, '-')}`
       if (vm.componentCache[key]) {
+        if (vm.componentCache[key].options.name) {
+          vm.include = vm.include.filter(name => name !== vm.componentCache[key].options.name)
+        }
         vm.componentCache[key] = undefined
       }
     })
@@ -69,6 +73,9 @@ export default {
           Vue.component(key, tempModule)
           this.componentCache[key] = tempModule
           this.current = tempModule
+          if (this.componentCache[key].options.name) {
+            this.include.push(this.componentCache[key].options.name)
+          }
         }).catch((e) => {
           this.current = noPage
           console.error('不存在该页面', path, e)
