@@ -5,24 +5,29 @@
         <span>编辑</span>
       </p>
       <Form ref="info" :model="info" :rules="rules" :label-width="100" label-position="left">
-        <FormItem label="外转方：" prop="transfereeName">
+        <FormItem label="外转方:" prop="transfereeName">
           <SelectInput ref="transInput" v-model="info.transfereeName"
                        mode="transferee"
                        placeholder="请输入"
                        style="width:200px"
                        @on-select="handleSelectTransferee" />
         </FormItem>
-        <FormItem label="外转方运单号：">
+        <FormItem label="外转方运单号:" class="ivu-form-item-required blank">
           <Input v-model="info.outTransNo" :maxlength="20" style="width:200px" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="付款方式：" prop="payType">
+        <FormItem label="付款方式:" class="ivu-form-item-required blank">
           <Select v-model="info.payType" style="width:200px">
             <Option v-for="item in payType" :key="item.value" :value="item.value">{{ item.name }}</Option>
           </Select>
         </FormItem>
-        <FormItem label="外转运费：" prop="transFee">
+        <FormItem label="公里数:" prop="mileage" class="ivu-form-item-required blank">
+          <TagNumberInput :min="0" v-model="info.mileage" :parser="handleParseFloat" style="width:200px">
+            <span slot="suffix" class="order-create__input-suffix">公里</span>
+          </TagNumberInput>
+        </FormItem>
+        <FormItem label="外转运费:" prop="transFee">
           <div style="width:200px">
-            <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" style="width:170px">
+            <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" style="width:165px">
               <span slot="suffix" class="order-create__input-suffix">元</span>
             </TagNumberInput>
             <a @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1" style="font-size: 26px; vertical-align: middle; margin-left: 4px;"></i></a>
@@ -30,6 +35,7 @@
         </FormItem>
         <FormItem label="返现运费:" prop="cashBack" class="ivu-form-item-required blank">
           <TagNumberInput v-model="info.cashBack" :parser="handleParseFloat" style="width:165px">
+            <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           <span>
             <Tooltip
@@ -43,8 +49,8 @@
         </FormItem>
       </Form>
       <div slot="footer">
-        <Button  type="primary"  @click="save">确定</Button>
-        <Button  type="default"  @click="close">取消</Button>
+        <Button type="primary"  @click="save">确定</Button>
+        <Button type="default"  @click="close">取消</Button>
       </div>
     </Modal>
   </div>
@@ -90,16 +96,14 @@ export default {
         outTransNo: '',
         payType: '',
         transFee: void 0,
-        cashBack: null
+        cashBack: null,
+        mileage: null
       },
       points: {}, // 始发地目的地经纬度 { startPoint, endPoint }
       rules: {
         transfereeName: [
           { required: true, message: '请填写外转方', trigger: 'blur' },
           { required: true, message: '请填写外转方', trigger: 'change' }
-        ],
-        payType: [
-          { required: true, message: '请选择付款方式' }
         ],
         transFee: [
           { required: true, type: 'number', message: '请填写外转运费' },
@@ -114,7 +118,6 @@ export default {
       }
     }
   },
-
   created: function () {
     this.fetchData()
   },
@@ -135,7 +138,8 @@ export default {
         if (valid) {
           const data = Object.assign({}, self.info)
           data.transFee = data.transFee * 100
-          data.cashBack = data.cashBack * 100 || 0
+          data.mileage = Number(data.mileage) * 1000
+          data.cashBack = Number(data.cashBack) * 100
 
           Server({
             url: '/outside/bill/update',
@@ -210,6 +214,7 @@ export default {
         vm.info.transFee = vm.info.transFee / 100
         vm.info.cashBack = vm.info.cashBack / 100 || null
         vm.info.payType = vm.info.payType
+        vm.info.mileage = Number(vm.info.mileage) / 1000
       }).catch(err => console.error(err))
     }
   }
@@ -218,7 +223,10 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
-  .dialog
-    p
-      text-align center
+.dialog
+  p
+    text-align center
+.blank
+  /deep/ .ivu-form-item-label:before
+    visibility: hidden
 </style>

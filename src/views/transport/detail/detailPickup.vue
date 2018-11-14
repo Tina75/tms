@@ -2,11 +2,11 @@
   <!-- 默认状态 -->
   <div v-if="!inEditing" class="transport-detail">
     <!-- 运单号及状态 -->
-    <section class="detail-header">
+    <section :class="themeBarColor(status)" class="detail-header">
       <ul class="detail-header-list">
         <li class="detail-header-list-item">提货单单号：{{ info.pickupNo }}</li>
         <li class="detail-header-list-item">提货单状态：
-          <span style="font-weight: bold;">{{ status }}</span>
+          <span :class="themeStatusColor(status)" style="font-weight: bold;">{{ status }}</span>
         </li>
       </ul>
     </section>
@@ -147,11 +147,11 @@
   <!-- 编辑状态 -->
   <div v-else class="transport-detail">
     <!-- 运单号及状态 -->
-    <section class="detail-header">
+    <section :class="themeBarColor(status)" class="detail-header">
       <ul class="detail-header-list">
         <li class="detail-header-list-item">运单号：{{ info.pickupNo }}</li>
         <li class="detail-header-list-item">订单状态：
-          <span style="font-weight: bold;">{{ status }}</span>
+          <span :class="themeStatusColor(status)" style="font-weight: bold;">{{ status }}</span>
         </li>
       </ul>
     </section>
@@ -657,6 +657,38 @@ export default {
           }
         })
       })
+    },
+
+    themeBarColor (code) {
+      let barClass
+      switch (code) {
+        case '待提货':
+          barClass = 'i-bar-warning'
+          break
+        case '提货中':
+          barClass = 'i-bar-info'
+          break
+        case '已提货':
+          barClass = 'i-bar-success'
+          break
+      }
+      return barClass
+    },
+    // 每种状态对应各自主题色
+    themeStatusColor (code) {
+      let statusClass
+      switch (code) {
+        case '待提货':
+          statusClass = 'i-status-warning'
+          break
+        case '提货中':
+          statusClass = 'i-status-info'
+          break
+        case '已提货':
+          statusClass = 'i-status-success'
+          break
+      }
+      return statusClass
     }
   }
 }
