@@ -4,7 +4,10 @@ import mutations from './mutations'
 import * as actions from './actions'
 import * as getters from './getters'
 import login from '@/views/login/modules/store'
-import order from '@/views/order/create/modules/store'
+// import order from '@/views/order/create/modules/store'
+import carrier from './modules/carrier/store'
+import sender from './modules/sender/store'
+import transfer from './modules/transfer/store'
 Vue.use(Vuex)
 
 const state = {
@@ -24,6 +27,8 @@ export default new Vuex.Store({
   mutations,
   modules: {
     login,
-    order
+    transfer,
+    carrier,
+    sender
   }
 })

@@ -3,7 +3,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-11-09 16:48:31
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-11-13 20:31:31
+ * @Last Modified time: 2018-11-14 14:03:11
  */
 import _ from 'lodash'
 import server from '@/libs/js/server'
@@ -14,10 +14,21 @@ export default {
     return {
       selectedRows: [],
       activeSender: null,
-      datas: [],
+      datas: {},
       searchForm: {},
       styles: {
         height: 'auto'
+      }
+    }
+  },
+  watch: {
+    datas (newDatas) {
+      if (this.activeSender) {
+        // 当前选中的发货方，正好在核销之后没有可核销的单子，从列表中移除，那么当前选中的就移除
+        if (!newDatas[this.activeSender.partnerName]) {
+          this.activeSender = null
+          this.$refs.senderList.clearActiveKey()
+        }
       }
     }
   },
@@ -71,9 +82,9 @@ export default {
      */
     handleSearch (searchParam) {
       this.searchForm = { ...searchParam }
-      this.activeSender = null
+      // this.activeSender = null
       this.selectedRows = []
-      this.$refs.senderList.clearActiveKey()
+      // this.$refs.senderList.clearActiveKey()
       this.fetch()
     },
     /**
@@ -153,19 +164,10 @@ export default {
           for (let name in groupData) {
             datas[name] = groupData[name][0]
           }
-          if (vm.activeSender) {
-            // 当前选中的发货方，正好在核销之后没有可核销的单子，从列表中移除，那么当前选中的就移除
-            let findActiveSender = res.data.data.find((item) => item.partnerName === vm.activeSender.partnerName)
-            if (!findActiveSender) {
-              vm.activeSender = null
-              vm.$refs.senderList.clearActiveKey()
-            }
-          }
-
-          this.datas = datas
+          vm.datas = datas
         } else {
-          this.datas = []
-          this.activeSender = null
+          vm.datas = {}
+          vm.activeSender = null
         }
       })
     }
