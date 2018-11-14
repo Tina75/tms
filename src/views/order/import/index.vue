@@ -83,6 +83,7 @@ import { Progress } from 'iview'
  */
 const MAX_UPLOAD_FILES = 3
 export default {
+  name: 'order-import',
   metaInfo: {
     title: '批量导入'
   },

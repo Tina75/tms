@@ -293,6 +293,7 @@ import { money2chinese } from '@/libs/js/util'
 import api from './libs/api'
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee', 'collectionMoney']
 export default {
+  name: 'order-crete',
   metaInfo: {
     title: '手动下单'
   },
