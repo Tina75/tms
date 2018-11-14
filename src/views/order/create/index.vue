@@ -240,10 +240,13 @@
       </Col>
       <Col span="6">
       <FormItem label="代收货款:" prop="collectionMoney">
-        <InputNumber v-model="orderForm.collectionMoney" :min="1" :parser="value => value ?  parseInt(value).toString() : value" class="order-create__input-w100">
-        </InputNumber>
+        <TagNumberInput :min="0" v-model="orderForm.collectionMoney" :parser="handleParseFloat">
+          <span slot="suffix" class="order-create__input-suffix">元</span>
+        </TagNumberInput>
       </FormItem>
       </Col>
+    </Row>
+    <Row>
       <Col span="12">
       <FormItem label="备注:" prop="remark">
         <Input v-model="orderForm.remark" :maxlength="100" type="text">
@@ -284,7 +287,7 @@ import AreaInput from '@/components/AreaInput.vue'
 import distance from '@/libs/js/distance'
 import { money2chinese } from '@/libs/js/util'
 
-const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
+const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee', 'collectionMoney']
 export default {
   metaInfo: {
     title: '手动下单'
@@ -339,7 +342,7 @@ export default {
       if ((value && validator.fee(value)) || !value) {
         callback()
       } else {
-        callback(new Error('费用整数位最多输入9位'))
+        callback(new Error('费用整数位最多输入9位,小数2位'))
       }
     }
     // 6位整数 1位小数
@@ -350,6 +353,14 @@ export default {
         callback(new Error('距离整数位最多输入6位,小数1位'))
       }
     }
+    // 代收付款
+    // const validateCollectFee = (rule, value, callback) => {
+    //   if ((value && validator.fee(value)) || !value === null || value === '') {
+    //     callback()
+    //   } else {
+    //     callback(new Error('费用整数位最多输入9位且大于0'))
+    //   }
+    // }
     return {
       settlements,
       pickups, // 提货方式
@@ -573,8 +584,7 @@ export default {
           transferFeeList.forEach((fee) => {
             vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
           })
-          // vm.orderForm.start = areas.getPathByCode(orderDetail.start).map((item) => item.code)
-          // vm.orderForm.end = areas.getPathByCode(orderDetail.end).map((item) => item.code)
+          // vm.orderForm.collectionMoney = vm.orderForm.collectionMoney ? vm.orderForm.collectionMoney / 100 : null
           if (vm.orderForm.deliveryTime) {
             const deliveryTime = new Date(vm.orderForm.deliveryTime)
             vm.orderForm.deliveryTime = deliveryTime
@@ -585,6 +595,8 @@ export default {
             vm.orderForm.arriveTime = arriveTime
             vm.orderForm.arriveTimes = `${arriveTime.getHours() > 9 ? arriveTime.getHours() : '0' + arriveTime.getHours()}:${arriveTime.getMinutes() > 9 ? arriveTime.getMinutes() : '0' + arriveTime.getMinutes()}`
           }
+          // 里程除以 1000
+          vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
         })
         .catch((errorInfo) => {
           vm.loading = false
@@ -813,7 +825,6 @@ export default {
               arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
               deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
               orderCargoList: orderCargoList.map(cargo => cargo.toJson()),
-              collectionMoney: orderForm.collectionMoney * 100,
               mileage: orderForm.mileage * 1000
             });
 
@@ -939,7 +950,8 @@ export default {
     cpmtDistance (p1, p2) {
       // { lng: 118.795264, lat: 32.027003 }
       distance(p1, p2).then(res => {
-        this.orderForm.mileage = res / 1000
+        const num = float.floor(res / 1000, 1)
+        this.orderForm.mileage = Number(num)
       })
     },
     formateNum (value) {

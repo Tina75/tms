@@ -288,7 +288,7 @@ export const TABLE_COLUMNS = vm => [
     key: 'cashBack',
     width: 120,
     render: (h, p) => {
-      return vm.tableDataRender(h, p.row.cashBack === '' ? '' : p.row.cashBack / 100)
+      return vm.tableDataRender(h, p.row.cashBack ? p.row.cashBack / 100 : '-')
     }
   },
   {

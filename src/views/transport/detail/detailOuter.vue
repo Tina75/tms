@@ -45,7 +45,7 @@
               </i-col>
               <i-col span="6">
                 <span class="detail-field-title">代收货款：</span>
-                <span v-if="collectionMoney">{{collectionMoney}}</span>
+                <span v-if="collectionMoney">{{collectionMoney / 100}}</span>
                 <span v-else>-</span>
               </i-col>
             </Row>

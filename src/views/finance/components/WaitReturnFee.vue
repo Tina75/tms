@@ -37,6 +37,8 @@ import _ from 'lodash'
 import server from '@/libs/js/server'
 import returnFeeMixin from '../mixins/returnFeeMixin.js'
 import settlement from '@/libs/constant/settlement'
+import { renderFee } from '@/libs/js/util'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     ReconcileLayout,
@@ -110,7 +112,7 @@ export default {
           title: '返现用费',
           key: 'totalFee',
           render (h, params) {
-            return h('span', {}, params.row['totalFee'] / 100)
+            return renderFee(h, params.row['totalFee'])
           }
         },
         {
@@ -134,6 +136,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['DocumentHeight']),
     // 右侧订单列表
     orderList () {
       if (!this.activeDriver) {
@@ -144,7 +147,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      let height = this.$parent.$parent.$el.parentNode.clientHeight - this.$refs.driversList.$el.getBoundingClientRect().top + this.$parent.$parent.$el.getBoundingClientRect().top
+      let height = this.DocumentHeight - this.$refs.driversList.$el.getBoundingClientRect().top + this.$parent.$parent.$el.getBoundingClientRect().top
       this.styles = {
         height: (height) + 'px'
       }
@@ -159,6 +162,7 @@ export default {
       this.searchForm = form
       this.activeDriver = null
       this.selectedOrders = []
+      this.$refs.driversList.clearActiveKey()
       this.fetch()
     },
     /**
@@ -252,8 +256,9 @@ export default {
           }
           if (vm.activeDriver) {
             // 当前选中的发货方，正好在核销之后没有可核销的单子，从列表中移除，那么当前选中的就移除
-            let findActiveDriver = res.data.data.find((item) => item.partnerName === vm.activeSender.partnerName)
+            let findActiveDriver = res.data.data.find((item) => item.partnerName === vm.activeDriver.partnerName)
             if (!findActiveDriver) {
+              vm.$refs.driversList.clearActiveKey()
               vm.activeDriver = null
             }
           }

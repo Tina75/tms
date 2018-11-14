@@ -5,7 +5,7 @@
       :maxlength="maxlength"
       :local-options="areaList"
       :remote="remote"
-      :clearable="true"
+      :clearable="inputDisabled ? false : true"
       :placeholder="placeholder"
       :no-filter="true"
       :disabled="inputDisabled"

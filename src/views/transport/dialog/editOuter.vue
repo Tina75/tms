@@ -79,6 +79,14 @@ export default {
 
   mixins: [ BaseDialog ],
   data () {
+    // 9位整数 2位小数
+    const validateFee = (rule, value, callback) => {
+      if ((value && /^[0-9]{0,9}(?:\.\d{1,2})?$/.test(value)) || !value) {
+        callback()
+      } else {
+        callback(new Error('最多整数位只可输入9位,小数两位'))
+      }
+    }
     return {
       show: true,
       payType,
@@ -93,8 +101,20 @@ export default {
       },
       points: {}, // 始发地目的地经纬度 { startPoint, endPoint }
       rules: {
-        transfereeName: { required: true, message: '请填写外转方' },
-        transFee: { required: true, type: 'number', message: '请填写外转运费', trigger: 'blur' }
+        transfereeName: [
+          { required: true, message: '请填写外转方', trigger: 'blur' },
+          { required: true, message: '请填写外转方', trigger: 'change' }
+        ],
+        transFee: [
+          { required: true, type: 'number', message: '请填写外转运费' },
+          { validator: validateFee }
+        ],
+        mileage: [
+          { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
+        ],
+        cashBack: [
+          { validator: validateFee }
+        ]
       }
     }
   },
@@ -109,13 +129,14 @@ export default {
 
     // 保留2位小数
     handleParseFloat (value) {
-      return float.floor(value)
+      return float.floor(value) || null
     },
 
     save () {
-      this.$refs['info'].validate((valid) => {
+      const self = this
+      self.$refs['info'].validate((valid) => {
         if (valid) {
-          const data = Object.assign({}, this.info)
+          const data = Object.assign({}, self.info)
           data.transFee = data.transFee * 100
           data.mileage = Number(data.mileage) * 1000
           data.cashBack = Number(data.cashBack) * 100
@@ -125,9 +146,9 @@ export default {
             method: 'post',
             data
           }).then((res) => {
-            this.$Message.success('操作成功')
-            this.close()
-            this.complete()
+            self.$Message.success('操作成功')
+            self.close()
+            self.complete()
           })
         }
       })
@@ -191,9 +212,9 @@ export default {
           }
         }
         vm.info.transFee = vm.info.transFee / 100
+        vm.info.cashBack = vm.info.cashBack / 100 || null
         vm.info.payType = vm.info.payType
         vm.info.mileage = Number(vm.info.mileage) / 1000
-        vm.info.cashBack = Number(vm.info.cashBack) / 100
       }).catch(err => console.error(err))
     }
   }
@@ -202,7 +223,10 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
-  .dialog
-    p
-      text-align center
+.dialog
+  p
+    text-align center
+.blank
+  /deep/ .ivu-form-item-label:before
+    visibility: hidden
 </style>

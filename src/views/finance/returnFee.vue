@@ -25,6 +25,7 @@
 <script>
 /**
  * 返现对账
+ * 到货确认以后，所有未核销的运单或外转单。
  */
 import BasePage from '@/basic/BasePage'
 import TabHeader from './components/TabHeader'
@@ -255,7 +256,6 @@ export default {
 
 <style lang="stylus" scoped>
 .return-fee
-  margin-bottom -20px
   min-height 415px
   &__content
     margin 35px 0 0
