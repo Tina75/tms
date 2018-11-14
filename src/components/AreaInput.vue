@@ -4,7 +4,7 @@
       :value="value"
       :maxlength="maxlength"
       :local-options="areaList"
-      :remote="remote"
+      :remote="false"
       :clearable="inputDisabled ? false : true"
       :placeholder="placeholder"
       :no-filter="true"
@@ -36,11 +36,14 @@ export default {
       type: Array,
       default: () => []
     },
-    placeholder: {
-      type: String,
-      default: '请输入详细地址'
+    // 城市组件 过滤掉省市信息
+    filterCity: {
+      type: Boolean,
+      default: false
     },
-    remote: {
+    // 强制城市搜索
+    // 默认 当前城市搜索再搜全国
+    forceCity: {
       type: Boolean,
       default: false
     },
@@ -48,16 +51,14 @@ export default {
       type: Boolean,
       default: false
     },
-    // 过滤掉省市信息
-    filterCity: {
-      type: Boolean,
-      default: false
+    placeholder: {
+      type: String,
+      default: '请输入详细地址'
     }
   },
   data () {
     return {
       address: [],
-      map: new BMap.Map(null),
       timer: ''
     }
   },
@@ -77,7 +78,7 @@ export default {
     },
     areaName () {
       const code = this.cityCode
-      return code ? cityUtil.getNameByCode(code) : this.map
+      return code ? cityUtil.getNameByCode(code) : '全国'
     },
     inputDisabled () {
       if (this.disabled && !this.cityCode) {
@@ -94,6 +95,7 @@ export default {
       }, 200)
     },
     doSearch (val, forceLocal) {
+      const area = forceLocal ? this.areaName : '全国'
       const options = {
         onSearchComplete: results => {
           if (local.getStatus() === window.BMAP_STATUS_SUCCESS) {
@@ -114,13 +116,12 @@ export default {
             }
             this.address = arr
           } else {
-            if (forceLocal) {
+            if (forceLocal && !this.forceCity) {
               this.doSearch(val, false)
             }
           }
         }
       }
-      const area = forceLocal ? this.areaName : '全国'
       const local = new BMap.LocalSearch(area, options)
       local.search(val, { forceLocal })
     },

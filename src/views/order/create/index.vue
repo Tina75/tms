@@ -176,6 +176,7 @@
         <TagNumberInput :min="0" v-model="orderForm.pickupFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
+        <p class="foramte-num">{{formateNum(orderForm.pickupFee)}}</p>
       </FormItem>
       </Col>
     </Row>
@@ -185,6 +186,7 @@
         <TagNumberInput :min="0" v-model="orderForm.loadFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
+        <p class="foramte-num">{{formateNum(orderForm.loadFee)}}</p>
       </FormItem>
       </Col>
       <Col span="6">
@@ -192,6 +194,7 @@
         <TagNumberInput :min="0" v-model="orderForm.unloadFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
+        <p class="foramte-num">{{formateNum(orderForm.unloadFee)}}</p>
       </FormItem>
       </Col>
       <Col span="6">
@@ -199,6 +202,7 @@
         <TagNumberInput :min="0" v-model="orderForm.insuranceFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
+        <p class="foramte-num">{{formateNum(orderForm.insuranceFee)}}</p>
       </FormItem>
       </Col>
       <Col span="6">
@@ -206,6 +210,7 @@
         <TagNumberInput :min="0" v-model="orderForm.otherFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
+        <p class="foramte-num">{{formateNum(orderForm.otherFee)}}</p>
       </FormItem>
       </Col>
     </Row>
@@ -951,7 +956,7 @@ export default {
     },
     formateNum (value) {
       if (value && value > 9999.99) {
-        return money2chinese(value)
+        return money2chinese(parseInt(value))
       }
     }
   }
