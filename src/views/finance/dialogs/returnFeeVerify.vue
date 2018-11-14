@@ -1,6 +1,6 @@
 <template>
   <Modal v-model="visiable" :mask-closable="true" width="440" @on-visible-change="close">
-    <p slot="header" style="text-align:center;font-size:17px">核销</p>
+    <p slot="header" style="text-align:center;font-size:17px">返现核销</p>
     <div class="write-off-form">
       <Form ref="writeOffForm" :model="writeOffForm" :rules="validate" :label-width="120">
         <FormItem v-if="orderNum" label="单据数：">
@@ -9,7 +9,7 @@
         <FormItem label="应收返现运费：">
           <p><span class="writeOffFormFee">{{needPay}}</span>元</p>
         </FormItem>
-        <FormItem label="实收返现运费：" prop="actualFee">
+        <FormItem v-if="orderNum === 0" label="实收返现运费：" prop="actualFee">
           <Input v-model="writeOffForm.actualFee" placeholder="请输入" />
         </FormItem>
         <FormItem label="付款方式：" prop="payType">

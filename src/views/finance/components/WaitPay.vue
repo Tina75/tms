@@ -59,6 +59,7 @@ export default {
       selectedRows: [],
       verifyType: 2,
       commonStatus: 1,
+      verifyTitle: '付款核销',
       orderColumns: [
         {
           type: 'selection',

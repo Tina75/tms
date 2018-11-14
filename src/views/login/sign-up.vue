@@ -15,7 +15,7 @@
 
         <Form ref="loginForm" :model="form" :rules="rules" @submit.native.prevent>
           <!-- step 1 -->
-          <template v-if="step === 0">
+          <div v-if="step === 0" :key="0">
             <FormItem prop="phone">
               <Input v-model="form.phone" :maxlength="11" placeholder="输入手机号" />
             </FormItem>
@@ -39,10 +39,10 @@
                 </Col>
               </Row>
             </FormItem>
-          </template>
+          </div>
 
           <!-- step 2 -->
-          <template v-if="step === 1">
+          <div v-if="step === 1" :key="1">
             <FormItem prop="userName">
               <Input v-model="form.userName" :maxlength="10"
                      placeholder="输入联系人姓名" />
@@ -61,10 +61,10 @@
                 placeholder="输入公司详细地址"
                 @latlongt-change="addressLocationChange" />
             </FormItem>
-          </template>
+          </div>
 
           <!-- step 3 -->
-          <template v-if="step === 2">
+          <div v-if="step === 2" :key="2">
             <FormItem prop="password">
               <Tooltip content="密码只支持6-16位的数字、大小写字母" style="width: 100%;" placement="top">
                 <Input v-model="form.password" :maxlength="16" type="password" placeholder="设置登录密码" />
@@ -73,8 +73,8 @@
             <FormItem prop="confirmPassword">
               <Input v-model="form.confirmPassword" :maxlength="16" type="password" placeholder="再次输入密码" />
             </FormItem>
-          </template>
-
+          </div>
+          <br/>
           <FormItem>
             <Checkbox v-model="protocol" style="line-height: 1.5;">
               我已阅读并同意

@@ -7,13 +7,13 @@ export const CHECK_PWD = function (rule, value, cb) {
   if (!(/^[0-9A-Za-z].{5,16}$/.test(value))) {
     return cb(new Error('密码只支持数字、大小写字母，至少为6位，至多为16位'))
   } else if (repeat.test(str)) {
-    if (/^[1-9]+[0-9]*]*$/.test(value)) {
+    if (/^[0-9]+[0-9]*]*$/.test(value)) {
       return cb(new Error('密码不可设置为全部重复的数字'))
     } else {
       return cb(new Error('密码不可设置为全部重复的字母'))
     }
   } else if (series1.indexOf(str) >= 0 || series2.indexOf(str) >= 0 || series3.indexOf(str) >= 0) {
-    if (/^[1-9]+[0-9]*]*$/.test(value)) {
+    if (/^[0-9]+[0-9]*]*$/.test(value)) {
       return cb(new Error('密码不可设置为连续的数字'))
     } else {
       return cb(new Error('密码不可设置为连续的字母'))

@@ -628,10 +628,16 @@ export default {
     ]),
     // 保留2位小数
     handleParseFloat (value) {
+      if (!value) {
+        return value
+      }
       return float.floor(value).toString()
     },
     // 保留1位小数
     handleParseFloats (value) {
+      if (!value) {
+        return value
+      }
       return float.floor(value, 1).toString()
     },
     // 货物名称选择下拉项目时触发
@@ -956,7 +962,7 @@ export default {
     },
     formateNum (value) {
       if (value && value > 9999.99) {
-        return money2chinese(parseInt(value))
+        return money2chinese(value)
       }
     }
   }

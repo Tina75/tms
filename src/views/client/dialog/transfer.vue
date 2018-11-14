@@ -44,7 +44,7 @@ import { transfereeAdd, transfereeUpdate, CODE } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
 import AreaInput from '@/components/AreaInput.vue'
 export default {
-  name: 'sender',
+  name: 'transfer',
   components: {
     AreaInput
   },
