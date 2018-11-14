@@ -164,7 +164,8 @@ export default {
         { title: '导出', code: '120305', parentId: '120300', grandId: '120000', disabled: true },
         { title: '上报异常', code: '120306', parentId: '120100', grandId: '120000', disabled: true },
         { title: '处理', code: '120307', parentId: '120100', grandId: '120000', disabled: true },
-        { title: '编辑异常', code: '120308', parentId: '120100', grandId: '120000', disabled: true }
+        { title: '编辑异常', code: '120308', parentId: '120100', grandId: '120000', disabled: true },
+        { title: '查看车辆位置', code: '120309', parentId: '120100', grandId: '120000', disabled: true }
       ]
     }, {
       title: '异常管理',
