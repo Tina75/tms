@@ -14,7 +14,7 @@ export default class LabelOverlay extends BMap.Overlay {
     const div = this._div = document.createElement('div')
     div.style.position = 'absolute'
     div.style.color = '#fff'
-    div.style.width = '75px'
+    div.style.width = (this._text.length === 11 ? 100 : 75) + 'px'
     div.style.zIndex = BMap.Overlay.getZIndex(this._point.lat)
     div.style.backgroundColor = '#00A4BD'
     div.style.border = '1px solid #00A4BD'
