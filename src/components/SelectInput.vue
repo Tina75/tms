@@ -1,7 +1,7 @@
 <template>
   <Dropdown
     :visible="showDropdown"
-    :transfer="transfer"
+    :transfer="transfer || selfTransfer"
     :placement="placement"
     class="select-input__dropdown"
     trigger="custom"
@@ -101,6 +101,7 @@ export default {
       composing: false, // 中文输入法不希望在写拼音的时候触发input，搜索；是在完成中文后再搜索,IME问题
       focusIndex: -1,
       currentValue: this.value,
+      selfTransfer: false,
       mousehover: false,
       lastRemoteQuery: null,
       isRemoteCall: false,
@@ -178,6 +179,9 @@ export default {
       const originInput = this.$refs.input.$refs.input
       originInput.addEventListener('compositionstart', vm.onCompositionStart)
       originInput.addEventListener('compositionend', vm.onCompositionEnd)
+    }
+    if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
+      this.selfTransfer = true
     }
   },
   methods: {

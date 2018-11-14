@@ -474,7 +474,9 @@ export default {
     .btns-box
       line-height 32px
       display flex
+      display -ms-flexbox
       justify-content space-between
+      -ms-flex-pack justify
       padding 9px 0
       div
         color #333
@@ -489,12 +491,14 @@ export default {
         width: 100%
     .list-box
       display flex
+      display -ms-flexbox
       border-top 1px solid #E4E7EC
       margin 0 -15px
       margin-bottom -20px
       .leftList
         height 100%
         overflow-y hidden
+        width 270px
         flex 0 0 270px
         border-right 1px solid #E4E7EC
         &:hover
@@ -555,6 +559,7 @@ export default {
         height 100%
         overflow-y hidden
         flex 1
+        -ms-flex 1
         padding 19px 20px 20px 9px
         /deep/ .ivu-table-cell
           padding-left: 5px
@@ -563,15 +568,11 @@ export default {
           height 100%
           overflow-y auto
       .data-empty
-        display flex
-        flex-direction column
-        justify-content center
-        align-items center
-        margin-top 200px
-        /*min-height 416px*/
         .data-empty-img
+          display: block
           width 70px
-          margin-bottom 12px
+          height: auto
+          margin 100px auto 12px
         p
           color #999999
           text-align center

@@ -7,7 +7,7 @@
           <Input v-model="createRuleForm.ruleName" :maxlength="30" placeholder="请输入" />
         </FormItem>
         <FormItem :label="sceneMap[scene] + '：'" prop="partnerName">
-          <Select v-model="createRuleForm.partnerName">
+          <Select v-model="createRuleForm.partnerName" transfer>
             <Option v-for="(item, index) in partnerList" :key="index" :value="item.name">{{item.name}}</Option>
           </Select>
         </FormItem>

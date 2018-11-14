@@ -737,16 +737,16 @@ export default {
     .left_father
       flex 0 0 275px
     .left
-      display flex
-      flex-direction column
       .left_search
         padding-top 21px
         flex 0 0 72px
+        -ms-flex 0 0 72px
         border-right 1px solid #E4E7EC
       .ruleList
         border-top 1px solid #E4E7EC
         overflow hidden
         flex 1
+        -ms-flex 1
         border-right 1px solid #E4E7EC
         margin-left -15px
         &:hover
@@ -756,6 +756,7 @@ export default {
           height 60px
           line-height 60px
           display flex
+          display -ms-flexbox
           border-bottom 1px solid #E4E7EC
           &.companyDataActive
             background #E9FCFF
@@ -765,6 +766,7 @@ export default {
               display block
           .icon
             flex 0 0 60px
+            width unquote('60px'\9)
             text-align center
             position relative
             &:after
@@ -786,6 +788,7 @@ export default {
                 border none
           .content
             flex 1
+            -ms-flex 1
             font-size 12px
             .ruleName
               height 30px
