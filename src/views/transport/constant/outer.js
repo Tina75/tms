@@ -78,7 +78,7 @@ export const BUTTON_LIST = vm => [
       }
     }, {
       name: '查看车辆位置',
-      // code: 120302,
+      code: 120309,
       func: () => {
         vm.billLocation()
       }
