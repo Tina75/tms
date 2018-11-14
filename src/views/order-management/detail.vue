@@ -49,7 +49,7 @@
           </i-col>
           <i-col v-if="from === 'order'" span="3">
             <span>代收货款：</span>
-            <span v-if="detail.collectionMoney">{{detail.collectionMoney / 100}}</span>
+            <span v-if="detail.collectionMoney">{{detail.collectionMoney / 100}}元</span>
             <span v-else>-</span>
           </i-col>
         </Row>

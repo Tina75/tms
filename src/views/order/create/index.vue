@@ -245,6 +245,8 @@
         </TagNumberInput>
       </FormItem>
       </Col>
+    </Row>
+    <Row>
       <Col span="12">
       <FormItem label="备注:" prop="remark">
         <Input v-model="orderForm.remark" :maxlength="100" type="text">
@@ -285,7 +287,7 @@ import AreaInput from '@/components/AreaInput.vue'
 import distance from '@/libs/js/distance'
 import { money2chinese } from '@/libs/js/util'
 
-const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
+const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee', 'collectionMoney']
 export default {
   metaInfo: {
     title: '手动下单'
@@ -352,13 +354,13 @@ export default {
       }
     }
     // 代收付款
-    const validateCollectFee = (rule, value, callback) => {
-      if ((value && validator.fee(value)) || value === null || value === '') {
-        callback()
-      } else {
-        callback(new Error('费用整数位最多输入9位且大于0'))
-      }
-    }
+    // const validateCollectFee = (rule, value, callback) => {
+    //   if ((value && validator.fee(value)) || !value === null || value === '') {
+    //     callback()
+    //   } else {
+    //     callback(new Error('费用整数位最多输入9位且大于0'))
+    //   }
+    // }
     return {
       settlements,
       pickups, // 提货方式
@@ -497,7 +499,7 @@ export default {
         ],
         // 代收货款
         collectionMoney: [
-          { validator: validateCollectFee }
+          { validator: validateFee }
         ],
         // 计费里程
         mileage: [
@@ -582,7 +584,7 @@ export default {
           transferFeeList.forEach((fee) => {
             vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
           })
-          vm.orderForm.collectionMoney = vm.orderForm.collectionMoney ? vm.orderForm.collectionMoney / 100 : null
+          // vm.orderForm.collectionMoney = vm.orderForm.collectionMoney ? vm.orderForm.collectionMoney / 100 : null
           if (vm.orderForm.deliveryTime) {
             const deliveryTime = new Date(vm.orderForm.deliveryTime)
             vm.orderForm.deliveryTime = deliveryTime
@@ -835,7 +837,6 @@ export default {
             transferFeeList.forEach((fee) => {
               form[fee] = form[fee] ? form[fee] * 100 : 0
             })
-            form.collectionMoney = form.collectionMoney ? form.collectionMoney * 100 : 0
             vm.submitOrder(form)
               .then((response) => {
                 if (!form.id) {
