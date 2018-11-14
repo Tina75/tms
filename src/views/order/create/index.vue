@@ -698,6 +698,8 @@ export default {
           _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
           _this.orderForm.consigneeAddressLongitude = consignees[0].longitude
         }
+        // 计费里程
+        _this.distanceCp()
         let settlementType = consigner.settlementType || consigner.payType
         if (settlementType) {
           _this.orderForm.settlementType = settlementType
@@ -724,6 +726,8 @@ export default {
       this.orderForm.consigneeAddress = row.address
       this.orderForm.consigneeAddressLatitude = row.latitude
       this.orderForm.consigneeAddressLongitude = row.longitude
+      // 计费里程
+      this.distanceCp()
     },
     // 显示计费规则
     showCounter () {
