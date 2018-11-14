@@ -19,13 +19,14 @@
       </ul>
     </header>
     <div style="text-align: right;margin: 24px 0;min-height: 1px;">
-      <Button
-        v-for="(btn, index) in btnGroup"
-        v-if="hasPower(btn.code)"
-        :key="index"
-        :type="btn.value === operateValue ? 'primary' : 'default'"
-        :style="(btn.name === '上传回单照片' || btn.name === '修改回单照片') && 'width: 102px;'"
-        @click="handleOperateClick(btn)">{{ btn.name }}</Button>
+      <Tooltip v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :disabled="!btn.disabled" :content="btn.content" :offset="10" placement="top">
+        <Button
+          v-if="hasPower(btn.code)"
+          :disabled="btn.disabled"
+          :type="btn.value === operateValue ? 'primary' : 'default'"
+          :style="(btn.name === '上传回单照片' || btn.name === '修改回单照片') && 'width: 102px;'"
+          @click="handleOperateClick(btn)">{{ btn.name }}</Button>
+      </Tooltip>
     </div>
     <section>
       <div>
@@ -49,7 +50,7 @@
           </i-col>
           <i-col v-if="from === 'order'" span="3">
             <span>代收货款：</span>
-            <span v-if="detail.collectionMoney">{{detail.collectionMoney / 100}}</span>
+            <span v-if="detail.collectionMoney">{{detail.collectionMoney / 100}}元</span>
             <span v-else>-</span>
           </i-col>
         </Row>
@@ -709,9 +710,15 @@ export default {
         this.checkPrintCode(renderBtn)
         // 拆单按钮
         if (r.transStatus === 0 && r.disassembleStatus !== 1 && r.dispatchStatus === 0) {
-          renderBtn.push(
-            { name: '拆单', value: 3, code: 120110 }
-          )
+          if (r.collectionMoney > 0) {
+            renderBtn.push(
+              { name: '拆单', value: 3, code: 120110, disabled: true, content: '有代收货款的订单不允许拆单' }
+            )
+          } else {
+            renderBtn.push(
+              { name: '拆单', value: 3, code: 120110 }
+            )
+          }
         }
         // 外转按钮
         if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0) {
