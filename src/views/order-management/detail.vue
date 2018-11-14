@@ -1,6 +1,6 @@
 <template>
   <div>
-    <header class="detail-header">
+    <header :class="from === 'order' ? themeBarColor(orderStatus) : themeBarColor(receiptStatus)" class="detail-header">
       <ul>
         <li>订单号：{{detail.orderNo}}</li>
         <li>客户订单号：{{detail.customerOrderNo || '-' }}</li>
@@ -15,7 +15,7 @@
             </ul>
           </Poptip>
         </li>
-        <li>{{ from === 'order' ? '订单状态：' : '回单状态：'}}<span style="font-weight: bold;">{{ from === 'order' ? statusToName(orderStatus) : statusToName(receiptStatus) }}</span></li>
+        <li>{{ from === 'order' ? '订单状态：' : '回单状态：'}}<span :class="from === 'order' ? themeStatusColor(orderStatus) : themeStatusColor(receiptStatus)" style="font-weight: bold;">{{ from === 'order' ? statusToName(orderStatus) : statusToName(receiptStatus) }}</span></li>
       </ul>
     </header>
     <div style="text-align: right;margin: 24px 0;min-height: 1px;">
@@ -49,7 +49,7 @@
           </i-col>
           <i-col v-if="from === 'order'" span="3">
             <span>代收货款：</span>
-            <span v-if="detail.collectionMoney">{{detail.collectionMoney / 100}}</span>
+            <span v-if="detail.collectionMoney">{{detail.collectionMoney / 100}}元</span>
             <span v-else>-</span>
           </i-col>
         </Row>
@@ -786,6 +786,80 @@ export default {
     handleView (i) {
       this.visible = true
       this.curImg = this.detail.receiptOrder.receiptUrl[i]
+    },
+    // 每种状态对应各自主题色
+    themeBarColor (code) {
+      let barClass
+      switch (code) {
+        case -1:
+          barClass = 'i-bar-warning'
+          break
+        case 0:
+          barClass = 'i-bar-warning'
+          break
+        case 1:
+          barClass = 'i-bar-warning'
+          break
+        case 2:
+          barClass = 'i-bar-success'
+          break
+        case 10:
+          barClass = 'i-bar-warning'
+          break
+        case 20:
+          barClass = 'i-bar-warning'
+          break
+        case 30:
+          barClass = 'i-bar-info'
+          break
+        case 40:
+          barClass = 'i-bar-success'
+          break
+        case 50:
+          barClass = 'i-bar-success'
+          break
+        case 100:
+          barClass = 'i-bar-danger'
+          break
+      }
+      return barClass
+    },
+    // 每种状态对应各自主题色
+    themeStatusColor (code) {
+      let statusClass
+      switch (code) {
+        case -1:
+          statusClass = 'i-status-warning'
+          break
+        case 0:
+          statusClass = 'i-status-warning'
+          break
+        case 1:
+          statusClass = 'i-status-warning'
+          break
+        case 2:
+          statusClass = 'i-status-success'
+          break
+        case 10:
+          statusClass = 'i-status-warning'
+          break
+        case 20:
+          statusClass = 'i-status-warning'
+          break
+        case 30:
+          statusClass = 'i-status-info'
+          break
+        case 40:
+          statusClass = 'i-status-success'
+          break
+        case 50:
+          statusClass = 'i-status-success'
+          break
+        case 100:
+          statusClass = 'i-status-danger'
+          break
+      }
+      return statusClass
     }
   }
 }
@@ -795,7 +869,6 @@ export default {
     height 60px
     padding-left 24px
     line-height  60px
-    background rgba(233,252,255,1)
     >ul>li
       font-size 13px
       font-family 'PingFangSC-Regular'

@@ -245,6 +245,8 @@
         </TagNumberInput>
       </FormItem>
       </Col>
+    </Row>
+    <Row>
       <Col span="12">
       <FormItem label="备注:" prop="remark">
         <Input v-model="orderForm.remark" :maxlength="100" type="text">
@@ -340,7 +342,7 @@ export default {
       if ((value && validator.fee(value)) || !value) {
         callback()
       } else {
-        callback(new Error('费用整数位最多输入9位'))
+        callback(new Error('费用整数位最多输入9位,小数2位'))
       }
     }
     // 6位整数 1位小数
@@ -352,13 +354,13 @@ export default {
       }
     }
     // 代收付款
-    const validateCollectFee = (rule, value, callback) => {
-      if ((value && validator.fee(value)) || value === null || value === '') {
-        callback()
-      } else {
-        callback(new Error('费用整数位最多输入9位且大于0'))
-      }
-    }
+    // const validateCollectFee = (rule, value, callback) => {
+    //   if ((value && validator.fee(value)) || !value === null || value === '') {
+    //     callback()
+    //   } else {
+    //     callback(new Error('费用整数位最多输入9位且大于0'))
+    //   }
+    // }
     return {
       settlements,
       pickups, // 提货方式
@@ -497,7 +499,7 @@ export default {
         ],
         // 代收货款
         collectionMoney: [
-          { validator: validateCollectFee }
+          { validator: validateFee }
         ],
         // 计费里程
         mileage: [
@@ -582,6 +584,7 @@ export default {
           transferFeeList.forEach((fee) => {
             vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
           })
+          // vm.orderForm.collectionMoney = vm.orderForm.collectionMoney ? vm.orderForm.collectionMoney / 100 : null
           if (vm.orderForm.deliveryTime) {
             const deliveryTime = new Date(vm.orderForm.deliveryTime)
             vm.orderForm.deliveryTime = deliveryTime
@@ -593,7 +596,7 @@ export default {
             vm.orderForm.arriveTimes = `${arriveTime.getHours() > 9 ? arriveTime.getHours() : '0' + arriveTime.getHours()}:${arriveTime.getMinutes() > 9 ? arriveTime.getMinutes() : '0' + arriveTime.getMinutes()}`
           }
           // 里程除以 1000
-          vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 100 : 0
+          vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
         })
         .catch((errorInfo) => {
           vm.loading = false
