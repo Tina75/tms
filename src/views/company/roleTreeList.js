@@ -32,7 +32,9 @@ export default {
         { title: '导入文件', code: '100201', parentId: '100200', grandId: '100000', disabled: true },
         { title: '下载模板', code: '100202', parentId: '100200', grandId: '100000', disabled: true },
         { title: '下载（列表上）', code: '100203', parentId: '100200', grandId: '100000', disabled: true },
-        { title: '查看订单', code: '100204', parentId: '100200', grandId: '100000', disabled: true }
+        { title: '查看订单', code: '100204', parentId: '100200', grandId: '100000', disabled: true },
+        { title: '删除记录', code: '100205', parentId: '100200', grandId: '100000', disabled: true },
+        { title: '清空记录', code: '100206', parentId: '100200', grandId: '100000', disabled: true }
       ]
     }]
   }],
