@@ -1,14 +1,14 @@
 <template>
   <div class="transport-detail">
     <!-- 运单号及状态 -->
-    <section class="detail-header">
+    <section :class="themeBarColor(status)" class="detail-header">
       <ul class="detail-header-list">
         <li class="detail-header-list-item">订单号：{{ info.orderNo }}</li>
         <li class="detail-header-list-item">客户订单号：{{ info.customerOrderNo || '-' }}</li>
         <li class="detail-header-list-item">外转单号：{{ info.transNo }}</li>
         <li class="detail-header-list-item">外转方运单号：{{ info.outTransNo || '-' }}</li>
         <li class="detail-header-list-item">外转单状态：
-          <span style="font-weight: bold;">{{ status }}</span>
+          <span :class="themeStatusColor(status)" style="font-weight: bold;">{{ status }}</span>
         </li>
       </ul>
     </section>
@@ -45,7 +45,7 @@
               </i-col>
               <i-col span="6">
                 <span class="detail-field-title">代收货款：</span>
-                <span v-if="collectionMoney">{{collectionMoney / 100}}</span>
+                <span v-if="collectionMoney">{{collectionMoney / 100}}元</span>
                 <span v-else>-</span>
               </i-col>
             </Row>
@@ -128,7 +128,7 @@
               </i-col>
               <i-col span="5">
                 <span class="detail-field-title-sm">计费里程：</span>
-                <span v-if="payment.mileage" class="detail-field-fee">{{ payment.mileage }}公里</span>
+                <span v-if="payment.mileage" class="detail-field-fee">{{ Math.floor(payment.mileage) / 1000 }}公里</span>
               </i-col>
               <i-col span="5" offset="2">
                 <span class="detail-field-title-sm">外转费用：</span>
@@ -504,11 +504,42 @@ export default {
           name: 'transport/dialog/map',
           data: {
             cars,
-            multiple: data.transId.length !== 1
+            multiple: false
           },
           methods: {}
         })
       }).catch(err => console.error(err))
+    },
+    themeBarColor (code) {
+      let barClass
+      switch (code) {
+        case '待发运':
+          barClass = 'i-bar-warning'
+          break
+        case '在途':
+          barClass = 'i-bar-info'
+          break
+        case '已到货':
+          barClass = 'i-bar-success'
+          break
+      }
+      return barClass
+    },
+    // 每种状态对应各自主题色
+    themeStatusColor (code) {
+      let statusClass
+      switch (code) {
+        case '待发运':
+          statusClass = 'i-status-warning'
+          break
+        case '在途':
+          statusClass = 'i-status-info'
+          break
+        case '已到货':
+          statusClass = 'i-status-success'
+          break
+      }
+      return statusClass
     }
   }
 }

@@ -21,7 +21,7 @@
         <FormItem label="外转方运单号:" class="ivu-form-item-required blank">
           <Input v-model="info.outTransNo" :maxlength="20" style="width:200px"/>
         </FormItem>
-        <FormItem label="付款方式:" class="ivu-form-item-required blank">
+        <FormItem label="付款方式:" prop="payType">
           <Select v-model="info.payType" style="width:200px">
             <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
           </Select>
@@ -33,6 +33,7 @@
         </FormItem>
         <FormItem label="外转运费:" prop="transFee">
           <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" placeholder="请填写外转运费" style="width:175px">
+            <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           <span @click="showChargeRules">
             <FontIcon type="jisuanqi" size="22" color="#00a4bd" class="i-ml-5" style="vertical-align: middle;"></FontIcon>
@@ -40,6 +41,7 @@
         </FormItem>
         <FormItem label="返现运费:" prop="cashBack" class="ivu-form-item-required blank">
           <TagNumberInput v-model="info.cashBack" :parser="handleParseFloat" style="width:175px">
+            <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           <span>
             <Tooltip
@@ -100,6 +102,9 @@ export default {
           { required: true, type: 'number', message: '请填写外转运费' },
           { validator: validateFee }
         ],
+        payType: [
+          { required: true, message: '请选择付款方式' }
+        ],
         mileage: [
           { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
         ],
@@ -118,7 +123,7 @@ export default {
 
   mounted: function () {
     // 公里数
-    this.info.mileage = this.detail.mileage
+    this.info.mileage = this.detail.mileage === 0 ? '' : Number(this.detail.mileage) / 1000
   },
 
   methods: {
@@ -138,8 +143,9 @@ export default {
         if (valid) {
           this.info = Object.assign({}, this.info, {
             orderId: this.detail.id,
-            payType: Number(this.info.payType),
-            transFee: Number(this.info.transFee) * 100
+            payType: Math.floor(this.info.payType),
+            transFee: Math.floor(this.info.transFee) * 100,
+            mileage: Math.floor(this.info.mileage) * 1000
           })
           this.info.cashBack = this.info.cashBack * 100 || null
           Server({

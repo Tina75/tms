@@ -21,7 +21,7 @@
       </FormItem>
     </Form>
     <!--个体司机-->
-    <Form v-show="validate.type.selectStatus == 1" ref="validateDriver" :model="validate.driver" :rules="ruleValidate.driver" :label-width="122">
+    <Form v-show="validate.type.selectStatus == 1" ref="validateDriver" :model="validate.driver" :rules="ruleValidate.driver" :label-width="90">
       <p class="modalTitle">基础信息</p>
       <Row>
         <Col :span="8">
@@ -30,12 +30,12 @@
         </FormItem>
         </Col>
         <Col :span="8">
-        <FormItem label="手机号" prop="driverPhone">
+        <FormItem label="手机号:" prop="driverPhone">
           <Input v-model="validate.driver.driverPhone" :maxlength="11" placeholder="请输入"/>
         </FormItem>
         </Col>
         <Col :span="8">
-        <FormItem label="车牌号" prop="carNO">
+        <FormItem label="车牌号:" prop="carNO">
           <Input v-model="validate.driver.carNO" :maxlength="8" placeholder="请输入"/>
         </FormItem>
         </Col>
@@ -132,7 +132,7 @@
       </Row>
     </Form>
     <!--运输公司-->
-    <Form v-show="validate.type.selectStatus == 2" ref="validateCompany" :model="validate.company" :rules="ruleValidate.company" :label-width="122">
+    <Form v-show="validate.type.selectStatus == 2" ref="validateCompany" :model="validate.company" :rules="ruleValidate.company" :label-width="90">
       <p class="modalTitle">基础信息</p>
       <Row>
         <Col span="8">
@@ -153,7 +153,7 @@
       </Row>
       <Row>
         <Col span="8">
-        <FormItem label="结算方式:">
+        <FormItem label="结算方式:" class="ivu-form-item-required blank">
           <Select v-model="validate.company.payType" clearable>
             <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
           </Select>
@@ -268,7 +268,7 @@ export default {
           ],
           shippingWeight: [
             { required: true, message: '载重不能为空' },
-            { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
+            { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
           ],
           shippingVolume: [
             { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
