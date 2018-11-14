@@ -95,7 +95,7 @@
           <FormItem prop="consignerAddress">
             <AreaInput
               v-model="orderForm.consignerAddress"
-              :city-code="startCityCode"
+              :city-code="orderForm.start"
               :local-options="consignerAddresses"
               :disabled="true"
               :filter-city="true"
@@ -117,7 +117,7 @@
           <FormItem prop="consigneeAddress">
             <AreaInput
               v-model="orderForm.consigneeAddress"
-              :city-code="endCityCode"
+              :city-code="orderForm.end"
               :local-options="consigneeAddresses"
               :disabled="true"
               :filter-city="true"
@@ -281,7 +281,6 @@ import Cargo from './libs/cargo'
 import CargoTable from './components/CargoTable.vue'
 import TimeInput from './components/TimeInput.vue'
 import validator from '@/libs/js/validate'
-import cityUtil from '@/libs/js/city'
 import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
 import distance from '@/libs/js/distance'
@@ -551,14 +550,6 @@ export default {
       const stdt = this.formateDate(this.orderForm.deliveryTime)
       const eddt = this.formateDate(this.orderForm.arriveTime)
       return stdt === eddt ? this.orderForm.deliveryTimes : ''
-    },
-    startCityCode () {
-      const arr = cityUtil.getPathByCode(this.orderForm.start)
-      return arr.length ? arr[1].code : ''
-    },
-    endCityCode () {
-      const arr = cityUtil.getPathByCode(this.orderForm.end)
-      return arr.length ? arr[1].code : ''
     }
   },
   created () {

@@ -130,7 +130,6 @@ export default {
   },
   watch: {
     value (value) {
-      console.log('value:' + value + ',code' + this.code)
       this.setCurrentValue(value)
     },
     currentValue (value) {
