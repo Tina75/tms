@@ -23,6 +23,7 @@ import Paied from './components/Paied.vue'
 import { CollectTabs } from './constant/tabs.js'
 
 export default {
+  name: 'finance-collect-fee',
   components: {
     TabHeader,
     WaitCollect, // 未收

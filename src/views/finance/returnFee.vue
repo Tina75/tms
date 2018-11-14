@@ -39,6 +39,7 @@ import Export from '@/libs/js/export'
 import Server from '@/libs/js/server'
 import { renderFee } from '@/libs/js/util'
 export default {
+  name: 'finance-return-fee',
   components: {
     TabHeader,
     PageTable,
