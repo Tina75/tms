@@ -18,13 +18,13 @@
           </RadioGroup>
         </FormItem>
         <FormItem v-if="writeOffForm.payType !== '1'" :label="accountMap[writeOffForm.payType]" prop="account">
-          <Input v-model="writeOffForm.account" placeholder="请输入" />
+          <Input v-model="writeOffForm.account" :maxlength="30" placeholder="请输入" />
         </FormItem>
         <FormItem v-if="writeOffForm.payType === '2'" label="开户行：" prop="bankBranch">
-          <Input v-model="writeOffForm.bankBranch" placeholder="请输入" />
+          <Input v-model="writeOffForm.bankBranch" :maxlength="30" placeholder="请输入" />
         </FormItem>
         <FormItem label="备注：" prop="remark">
-          <Input v-model="writeOffForm.remark" type="textarea" placeholder="请输入" />
+          <Input v-model="writeOffForm.remark" :maxlength="100" type="textarea" placeholder="请输入" />
         </FormItem>
       </Form>
     </div>
