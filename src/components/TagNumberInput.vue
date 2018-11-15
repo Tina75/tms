@@ -280,8 +280,9 @@ export default {
     width 100%
   &-fee-chinese
     position absolute
-    top 32px
+    top 34px
     line-height 17px
+    white-space nowrap
   &-input-wrap
     height 30px
 </style>

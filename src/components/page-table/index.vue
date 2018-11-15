@@ -158,7 +158,7 @@ export default {
     },
     noDataText: {
       type: String,
-      default: '<span><i class="icon font_family icon-ico-nodata"></i>&nbsp;暂无数据~</span>'
+      default: '<span><i class="icon font_family icon-ico-nodata page-table__middle"></i>&nbsp;暂无数据~</span>'
     },
     // 斑马纹
     stripe: {
@@ -606,6 +606,8 @@ export default {
 <style lang="stylus">
 .page-table
   margin-top: 0px
+  &__middle
+    vertical-align middle
   &__wrapper
     position: relative
   &__sliderIcon
