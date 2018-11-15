@@ -6,14 +6,18 @@
       </div>
       <div class="header-bar-avator-dropdown">
         <span class="header-bar-avator-dropdown-notify" @click="openProcess">
-          <Tooltip v-if="processVisible" :value="processVisible" placement="bottom" content=" 点击我可查看业务流程" always>
+          <Tooltip v-if="processVisible" :value="processVisible"  placement="bottom" content=" 业务流程" always>
             <FontIcon type="liucheng" size="25" color="#fff"></FontIcon>
           </Tooltip>
-          <FontIcon v-else type="liucheng" size="25" color="#fff"></FontIcon>
+          <Tooltip v-else content=" 业务流程">
+            <FontIcon  type="liucheng" size="25" color="#fff" ></FontIcon>
+          </Tooltip>
         </span>
         <span class="header-bar-avator-dropdown-notify">
           <Badge :count="MsgCount.all" :offset="[5,1]" type="primary">
-            <Icon type="ios-notifications" size="30" color="#fff" @click="openMsg(0)"></Icon>
+            <Tooltip content=" 消息">
+              <Icon type="ios-notifications" size="30" color="#fff" @click="openMsg(0)"></Icon>
+            </Tooltip>
           </Badge>
         </span>
         <!-- <Dropdown class="header-bar-avator-dropdown-notify">
