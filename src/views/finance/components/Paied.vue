@@ -12,7 +12,7 @@
         :keywords="keywords"
         :columns="orderColumns"
         method="post"
-        list-field="dataList"
+        list-field="list"
         url="/finance/collection/paid/query"
         @on-selection-change="handleSelectionChange"
       />
