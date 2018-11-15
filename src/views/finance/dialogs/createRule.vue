@@ -4,11 +4,11 @@
     <div class="create-rule-form">
       <Form ref="createRuleForm" :model="createRuleForm" :rules="validate" :label-width="100">
         <FormItem label="规则名称：" prop="ruleName">
-          <Input v-model="createRuleForm.ruleName" :maxlength="30" autofocus="" placeholder="请输入" />
+          <Input v-focus v-model="createRuleForm.ruleName" :maxlength="30" :autofocus="true" placeholder="请输入" />
         </FormItem>
         <FormItem :label="sceneMap[scene] + '：'" prop="partnerName">
           <Select v-model="createRuleForm.partnerName">
-            <Option v-for="(item, index) in partnerList" :key="index" :value="item.name">{{item.name}}</Option>
+            <Option  v-for="(item, index) in partnerList" :key="index" :value="item.name">{{item.name}}</Option>
           </Select>
         </FormItem>
       </Form>
@@ -23,8 +23,18 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
+import Vue from 'vue'
 export default {
   name: 'createRule',
+  directives: {
+    focus: {
+      inserted (el) {
+        Vue.nextTick(() => {
+          el.querySelector('input').focus()
+        })
+      }
+    }
+  },
   mixins: [BaseDialog],
   data () {
     const partnerNameValidate = (rule, value, callback) => {

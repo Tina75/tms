@@ -85,7 +85,7 @@
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="发货地址:" class="consig-address" prop="start">
-        <CitySelect ref="start" v-model="orderForm.start" :code-type="4" clearable></CitySelect>
+        <CitySelect ref="start" v-model="orderForm.start" clearable></CitySelect>
       </FormItem>
       </Col>
       <Col span="6">
@@ -101,7 +101,7 @@
       </Col>
       <Col span="6">
       <FormItem prop="end" label="收货地址:" class="consig-address">
-        <CitySelect ref="end" v-model="orderForm.end" :code-type="4" clearable></CitySelect>
+        <CitySelect ref="end" v-model="orderForm.end" clearable></CitySelect>
       </FormItem>
       </Col>
       <Col span="6">
