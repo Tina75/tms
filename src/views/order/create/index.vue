@@ -149,7 +149,7 @@
       </Col>
       <Col span="6">
       <FormItem label="计费里程:" prop="mileage">
-        <TagNumberInput :min="0" v-model="orderForm.mileage" :parser="handleParseFloats">
+        <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.mileage" :parser="handleParseFloats">
           <span slot="suffix" class="order-create__input-suffix">公里</span>
         </TagNumberInput>
       </FormItem>
@@ -168,7 +168,6 @@
           </span>
           </Col>
         </Row>
-        <p class="foramte-num">{{formateNum(orderForm.freightFee)}}</p>
       </FormItem>
       </Col>
       <Col span="6">
@@ -176,7 +175,6 @@
         <TagNumberInput :min="0" v-model="orderForm.pickupFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
-        <p class="foramte-num">{{formateNum(orderForm.pickupFee)}}</p>
       </FormItem>
       </Col>
     </Row>
@@ -186,7 +184,6 @@
         <TagNumberInput :min="0" v-model="orderForm.loadFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
-        <p class="foramte-num">{{formateNum(orderForm.loadFee)}}</p>
       </FormItem>
       </Col>
       <Col span="6">
@@ -194,7 +191,6 @@
         <TagNumberInput :min="0" v-model="orderForm.unloadFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
-        <p class="foramte-num">{{formateNum(orderForm.unloadFee)}}</p>
       </FormItem>
       </Col>
       <Col span="6">
@@ -202,7 +198,6 @@
         <TagNumberInput :min="0" v-model="orderForm.insuranceFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
-        <p class="foramte-num">{{formateNum(orderForm.insuranceFee)}}</p>
       </FormItem>
       </Col>
       <Col span="6">
@@ -210,7 +205,6 @@
         <TagNumberInput :min="0" v-model="orderForm.otherFee" :parser="handleParseFloat">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
-        <p class="foramte-num">{{formateNum(orderForm.otherFee)}}</p>
       </FormItem>
       </Col>
     </Row>
@@ -289,7 +283,6 @@ import validator from '@/libs/js/validate'
 import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
 import distance from '@/libs/js/distance'
-import { money2chinese } from '@/libs/js/util'
 import api from './libs/api'
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee', 'collectionMoney']
 export default {
@@ -959,11 +952,6 @@ export default {
         const num = float.floor(res / 1000, 1)
         this.orderForm.mileage = Number(num)
       })
-    },
-    formateNum (value) {
-      if (value && value > 9999.99) {
-        return money2chinese(value)
-      }
     }
   }
 }
