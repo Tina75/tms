@@ -11,7 +11,7 @@ export const VALIDATOR_PASSWORD = (rule, value, cb) => {
   let series2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
   let series3 = '0123456789'
   if (!(/^[0-9A-Za-z].{5,16}$/.test(value))) {
-    return cb(new Error('密码只支持数字、大小写字母，至少为6位，至多为16位'))
+    return cb(new Error('请输入6-16位非连续重复的数字、大小写字母'))
   } else if (repeat.test(str)) {
     if (/^[0-9]+[0-9]*]*$/.test(value)) {
       return cb(new Error('密码不可设置为全部重复的数字'))

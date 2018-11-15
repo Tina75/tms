@@ -232,7 +232,8 @@ export default {
     },
     change (event) {
       if (event.type === 'input' && !this.activeChange) return
-      let val = event.target.value.trim()
+      // 限制20位，超出24位时候为NaN
+      let val = event.target.value.trim().substring(0, 20)
       if (this.parser) {
         val = this.parser(val)
       }

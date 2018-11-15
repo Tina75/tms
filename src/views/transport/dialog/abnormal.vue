@@ -46,35 +46,35 @@
           <!-- <span class="detail-field-title-sm detail-field-required">{{ details.billType === 2 ? '外转运费：' : '运输费：' }}</span>
           <MoneyInput v-model="payment.freightFee" :is-disabled="isDisabled" class="detail-payment-input" />
           <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a> -->
-          <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" :parser="handleParseFloat" class="detail-payment-input">
+          <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" class="detail-payment-input">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
         </FormItem>
         <FormItem v-if="details.billType !== 2" label="装货费：" prop="loadFee">
           <!-- <span class="detail-field-title-sm" style="width: 70px;">装货费：</span>
           <MoneyInput v-model="payment.loadFee" :is-disabled="isDisabled" class="detail-payment-input" /> -->
-          <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" :parser="handleParseFloat" class="detail-payment-input">
+          <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
         </FormItem>
         <FormItem v-if="details.billType !== 2" label="卸货费：" prop="unloadFee">
           <!-- <span class="detail-field-title-sm" style="width: 70px;">卸货费：</span>
           <MoneyInput v-model="payment.unloadFee" :is-disabled="isDisabled" class="detail-payment-input" /> -->
-          <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" :parser="handleParseFloat" class="detail-payment-input">
+          <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
         </FormItem>
         <FormItem v-if="details.billType !== 2" label="保险费：" prop="insuranceFee">
           <!-- <span class="detail-field-title-sm" style="width: 70px;">保险费：</span>
           <MoneyInput v-model="payment.insuranceFee" :is-disabled="isDisabled" class="detail-payment-input" /> -->
-          <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" :parser="handleParseFloat" class="detail-payment-input">
+          <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
         </FormItem>
         <FormItem v-if="details.billType !== 2" label="其他费用：" prop="otherFee">
           <!-- <span class="detail-field-title-sm">其他费用：</span>
           <MoneyInput v-model="payment.otherFee" :is-disabled="isDisabled" class="detail-payment-input" /> -->
-          <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" :parser="handleParseFloat" class="detail-payment-input">
+          <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
         </FormItem>
@@ -131,7 +131,6 @@ import BaseDialog from '@/basic/BaseDialog'
 import MoneyInput from '../components/MoneyInput'
 import TagNumberInput from '@/components/TagNumberInput'
 import validator from '@/libs/js/validate'
-import float from '@/libs/js/float'
 import Server from '@/libs/js/server'
 import PayInfo from '../components/PayInfo'
 import UpLoad from '@/components/upLoad/'
@@ -226,16 +225,6 @@ export default {
   },
 
   methods: {
-    // 保留2位小数
-    handleParseFloat (value) {
-      if (!value) {
-        return value
-      }
-      if (parseFloat(value) === 0) {
-        return null
-      }
-      return float.floor(value).toString()
-    },
     // 查询数据
     fetchData () {
       const _this = this

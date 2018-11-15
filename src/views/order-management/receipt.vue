@@ -215,19 +215,36 @@ export default {
               )
             }
             if (params.row.receiptOrder.receiptStatus > 0) {
-              renderBtn.push(
-                h('a', {
-                  style: {
-                    marginRight: '25px',
-                    color: '#00a4bd'
-                  },
-                  on: {
-                    click: () => {
-                      this.openUploadDialog(params.row, params.row.receiptOrder.receiptUrl.length > 0 ? '修改' : '上传')
+              if (params.row.receiptOrder.receiptUrl.length > 0 && this.hasPower(110205)) { // 修改回单
+                renderBtn.push(
+                  h('a', {
+                    style: {
+                      marginRight: '25px',
+                      color: '#00a4bd'
+                    },
+                    on: {
+                      click: () => {
+                        this.openUploadDialog(params.row, '修改')
+                      }
                     }
-                  }
-                }, params.row.receiptOrder.receiptUrl.length > 0 ? '修改回单' : '上传回单')
-              )
+                  }, '修改回单')
+                )
+              }
+              if (params.row.receiptOrder.receiptUrl.length <= 0 && this.hasPower(110204)) { // 上传回单
+                renderBtn.push(
+                  h('a', {
+                    style: {
+                      marginRight: '25px',
+                      color: '#00a4bd'
+                    },
+                    on: {
+                      click: () => {
+                        this.openUploadDialog(params.row, '上传')
+                      }
+                    }
+                  }, '上传回单')
+                )
+              }
             }
             return h('div', renderBtn)
           }
