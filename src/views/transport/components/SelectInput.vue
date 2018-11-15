@@ -64,7 +64,7 @@ export default {
           this.getCarriers()
           return
         case 'driver':
-          this.maxLength = 5
+          this.maxLength = 15
           this.getDrivers()
           return
         case 'carNo':
