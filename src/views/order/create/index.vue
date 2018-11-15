@@ -379,7 +379,7 @@ export default {
         start: null,
         // 目的城市
         end: null,
-        // 客户订单号
+        // 客户单号
         customerOrderNo: '',
         // 发货时间
         deliveryTime: '',

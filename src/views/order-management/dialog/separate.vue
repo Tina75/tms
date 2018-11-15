@@ -1,53 +1,50 @@
 <template>
-  <div>
-    <Modal v-model="visiable" :mask-closable="false" class="separate-dialog" width="850" @on-visible-change="close">
-      <p slot="header" class="dialog-title">
-        <!-- <Icon type="ios-information-circle"></Icon> -->
-        <span>拆单</span>
-      </p>
-      <div>
-        <div class="order-number" style="margin-bottom: 8px;">
-          <Row>
-            <i-col span="12">
-              订单号：{{ orderNo }}
-            </i-col>
-            <i-col span="12">
-              客户：{{ detailData.consignerName }}
-            </i-col>
-          </Row>
-        </div>
-        <div class="order-number">
-          <Row>
-            <i-col>
-              始发地／目的地：{{ detailData.startName + ' - ' + detailData.endName }}
-            </i-col>
-          </Row>
-        </div>
-        <div style="border-top: 1px dashed rgba(203,206,211,1);margin-bottom: 21px;"></div>
-        <div v-if="childOrderCargoList.length" class="order-number">
-          子订单1：{{ childOneNo }}
-        </div>
-        <Table :columns="columns1" :data="parentOrderCargoList"></Table>
+  <Modal v-model="visiable" :mask-closable="false" class="separate-dialog" width="850" @on-visible-change="close">
+    <p slot="header" class="dialog-title">
+      <!-- <Icon type="ios-information-circle"></Icon> -->
+      <span>拆单</span>
+    </p>
+    <div>
+      <div class="order-number" style="margin-bottom: 8px;">
+        <Row>
+          <i-col span="12">
+            订单号：{{ orderNo }}
+          </i-col>
+          <i-col span="12">
+            客户：{{ detailData.consignerName }}
+          </i-col>
+        </Row>
       </div>
-      <div v-if="childOrderCargoList.length">
-        <div style="border-top: 1px dashed rgba(203,206,211,1);margin: 32px 0 20px;"></div>
-        <div class="order-number">
-          子订单2：{{ childTwoNo }}
-        </div>
-        <Table :columns="columns2" :data="childOrderCargoList"></Table>
+      <div class="order-number">
+        <Row>
+          <i-col>
+            始发地／目的地：{{ detailData.startName + ' - ' + detailData.endName }}
+          </i-col>
+        </Row>
       </div>
-      <div slot="footer">
-        <Button
-          :disabled="!(parentOrderCargoList.length && childOrderCargoList.length)"
-          :style="(parentOrderCargoList.length && childOrderCargoList.length) || 'background-color: rgba(0,164,189,0.3);color: #fff;'"
-          type="primary"
-          @click="save">
-          确定
-        </Button>
-        <Button  type="default"  @click="close">取消</Button>
+      <div style="border-top: 1px dashed rgba(203,206,211,1);margin-bottom: 21px;"></div>
+      <div v-if="childOrderCargoList.length" class="order-number">
+        子订单1：{{ childOneNo }}
       </div>
-    </Modal>
-  </div>
+      <Table :columns="columns1" :data="parentOrderCargoList"></Table>
+    </div>
+    <div v-if="childOrderCargoList.length">
+      <div style="border-top: 1px dashed rgba(203,206,211,1);margin: 32px 0 20px;"></div>
+      <div class="order-number">
+        子订单2：{{ childTwoNo }}
+      </div>
+      <Table :columns="columns2" :data="childOrderCargoList"></Table>
+    </div>
+    <div slot="footer">
+      <Button
+        :disabled="!(parentOrderCargoList.length && childOrderCargoList.length)"
+        type="primary"
+        @click="save">
+        确定
+      </Button>
+      <Button  type="default"  @click="close">取消</Button>
+    </div>
+  </Modal>
 </template>
 
 <script>
@@ -618,6 +615,9 @@ export default {
   color rgba(47,50,62,1)
   line-height 20px
   margin-bottom 20px
+.ivu-btn-primary[disabled]
+  background-color rgba(0,164,189,0.3)
+  color #fff
 </style>
 <style lang='stylus'>
 .padding-left-30

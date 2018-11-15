@@ -135,6 +135,9 @@ export default {
       if (!value) {
         return value
       }
+      if (parseFloat(value) === 0) {
+        return null
+      }
       return float.floor(value).toString()
     },
 
