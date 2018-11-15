@@ -50,23 +50,22 @@
             <FormItem prop="name">
               <Input v-model="form.name" :maxlength="25" placeholder="输入公司名称" />
             </FormItem>
-            <FormItem prop="cityId">
-              <Cascader :data="cities" v-model="form.cityId" :load-data="loadChildCities" placeholder="选择省/市/区"></Cascader>
-            </FormItem>
             <FormItem prop="address">
-              <AreaInput
-                v-model="form.address"
-                :city-code="cityCode"
-                :maxlength="40"
-                placeholder="输入公司详细地址"
-                @latlongt-change="addressLocationChange" />
+              <Row>
+                <Col :span="8">
+                <CitySelect v-model="form.cityId" :code-type="4" placeholder="选择省/市/区" clearable></CitySelect>
+                </Col>
+                <Col :span="16" class="areaRight">
+                <AreaInput v-model="form.address" :city-code="cityCode" :maxlength="40" placeholder="输入公司详细地址" @latlongt-change="addressLocationChange"></AreaInput>
+                </Col>
+              </Row>
             </FormItem>
           </div>
 
           <!-- step 3 -->
           <div v-if="step === 2" :key="2">
             <FormItem prop="password">
-              <Tooltip content="密码只支持6-16位的数字、大小写字母" style="width: 100%;" placement="top">
+              <Tooltip content="请输入6-16位非连续重复的数字、大小写字母" style="width: 100%;" placement="top">
                 <Input v-model="form.password" :maxlength="16" type="password" placeholder="设置登录密码" />
               </Tooltip>
             </FormItem>
@@ -102,10 +101,11 @@ import mixin from './mixin'
 import { VALIDATOR_PHONE, VALIDATOR_PASSWORD, VALIDATOR_CONFIRM_PASSWORD } from './validator'
 
 import AreaInput from '@/components/AreaInput'
+import CitySelect from '@/components/SelectInputForCity'
 
 export default {
   name: 'SignUp',
-  components: { AreaInput },
+  components: { AreaInput, CitySelect },
   mixins: [ BasePage, mixin ],
   metaInfo: {
     title: '注册账号'
@@ -125,7 +125,7 @@ export default {
         name: '', // 公司名称
         userName: '', // 联系人姓名
         address: '', // 公司地址
-        cityId: [],
+        cityId: void 0,
         latitude: void 0,
         longitude: void 0,
         mapType: 1
@@ -166,7 +166,7 @@ export default {
   },
   computed: {
     cityCode () {
-      return this.form.cityId[1] || void 0
+      return this.form.cityId
     }
   },
   created () {
@@ -204,7 +204,6 @@ export default {
           }
 
           let data = Object.assign({}, this.form)
-          data.cityId = data.cityId[2]
 
           Server({
             url: '/user/register',
@@ -258,7 +257,7 @@ export default {
     transform translate(-50%, -50%)
 
     .form-content
-      width 300px
+      width 450px
       margin auto
 
     .form-step
@@ -315,4 +314,7 @@ export default {
 
           &-active
             color #00A4BD
+  .areaRight
+    padding-left: 15px
+    margin-top:1px
 </style>
