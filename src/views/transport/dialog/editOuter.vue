@@ -21,20 +21,20 @@
           </Select>
         </FormItem>
         <FormItem label="公里数:" prop="mileage" class="ivu-form-item-required blank">
-          <TagNumberInput :min="0" v-model="info.mileage" :parser="handleParseFloat" style="width:200px">
+          <TagNumberInput :min="0" v-model="info.mileage" style="width:200px">
             <span slot="suffix" class="order-create__input-suffix">公里</span>
           </TagNumberInput>
         </FormItem>
         <FormItem label="外转运费:" prop="transFee">
           <div style="width:200px">
-            <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" style="width:165px">
+            <TagNumberInput :min="0" v-model="info.transFee" style="width:165px">
               <span slot="suffix" class="order-create__input-suffix">元</span>
             </TagNumberInput>
             <a @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1" style="font-size: 26px; vertical-align: middle; margin-left: 4px;"></i></a>
           </div>
         </FormItem>
         <FormItem label="返现运费:" prop="cashBack" class="ivu-form-item-required blank">
-          <TagNumberInput v-model="info.cashBack" :parser="handleParseFloat" style="width:165px">
+          <TagNumberInput v-model="info.cashBack" style="width:165px">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           <span>
@@ -66,7 +66,6 @@ import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '../components/SelectInput.vue'
 import TagNumberInput from '@/components/TagNumberInput'
-import float from '@/libs/js/float'
 import payType from '@/libs/constant/settlement'
 
 export default {
@@ -128,17 +127,6 @@ export default {
   methods: {
     handleSelectTransferee ({ row }) {
       if (row.payType) this.info.payType = row.payType
-    },
-
-    // 保留2位小数
-    handleParseFloat (value) {
-      if (!value) {
-        return value
-      }
-      if (parseFloat(value) === 0) {
-        return null
-      }
-      return float.floor(value).toString()
     },
 
     save () {
