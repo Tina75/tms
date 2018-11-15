@@ -75,7 +75,6 @@ export default {
           } else { // 2-编辑
             this._consignerUpdate()
           }
-          this.close()
         }
       })
     },
@@ -88,6 +87,7 @@ export default {
             title: '发货方详情',
             query: { id: res.data.data }
           })
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -98,6 +98,7 @@ export default {
       consignerUpdate(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }

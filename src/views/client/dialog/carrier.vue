@@ -377,6 +377,7 @@ export default {
             query: { id: res.data.data, carrierType: 1 }
           })
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -398,6 +399,7 @@ export default {
             query: { id: res.data.data, carrierType: 2 }
           })
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
