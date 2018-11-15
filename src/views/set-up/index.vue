@@ -93,7 +93,7 @@
           <FormItem label="公司地址：" prop="address" class="labelClassSty">
             <Row>
               <Col :span="6">
-              <CitySelect v-model="formCompany.cityId" :code-type="4" clearable></CitySelect>
+              <CitySelect v-model="formCompany.cityId" clearable></CitySelect>
                </Col>
               <Col :span="18" class="areaRight">
               <AreaInput v-model="formCompany.address" :city-code="formCityCode" :maxlength="60" placeholder="请输入公司地址" @latlongt-change="latlongtChange"></AreaInput>

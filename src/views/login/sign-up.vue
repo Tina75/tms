@@ -53,7 +53,7 @@
             <FormItem prop="address">
               <Row>
                 <Col :span="8">
-                <CitySelect v-model="form.cityId" :code-type="4" placeholder="选择省/市/区" clearable></CitySelect>
+                <CitySelect v-model="form.cityId" clearable></CitySelect>
                 </Col>
                 <Col :span="16" class="areaRight">
                 <AreaInput v-model="form.address" :city-code="cityCode" :maxlength="40" placeholder="输入公司详细地址" @latlongt-change="addressLocationChange"></AreaInput>
