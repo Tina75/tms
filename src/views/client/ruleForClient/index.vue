@@ -218,6 +218,7 @@ export default {
               _this.showRuleDetail(companyData.find(item => {
                 return item.ruleId === ruleId
               }))
+              _this.addItem()
             })
           }
         }

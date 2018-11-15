@@ -28,7 +28,7 @@
             <tr>
               <td>提货方式：{{pickup(data)}}</td>
               <td>回单数：{{data.receiptCount}}</td>
-              <td>代收货款：{{data.collectionMoney / 100 || 0}}元</td>
+              <td>代收货款：{{data.collectionMoney || 0}}元</td>
             </tr>
           </tbody>
         </table>

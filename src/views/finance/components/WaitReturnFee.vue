@@ -9,7 +9,7 @@
       @on-selection-change="handleSelectionChange"
     >
       <div slot="operation">
-        <Button type="primary" @click="batchWriteOff">核销</Button>
+        <Button v-if="hasPower(170601)" type="primary" @click="batchWriteOff">核销</Button>
       </div>
       <ListSender ref="driversList" :style="styles" list-key="partnerName" @on-click="handleClick">
         <ListSenderItem v-for="(item, name) in drivers" :key="name" :item="item" :title="item.partnerName" :extra="item.orderNum" icon="ico-company">
