@@ -933,10 +933,13 @@ export default {
     },
     // 距离计算
     cpmtDistance (p1, p2) {
-      // { lng: 118.795264, lat: 32.027003 }
+      // { lng: 43.4907612, lat: 87.6334585 }
+      // { lng: 43.4812632, lat: 87.5605997 }
       distance(p1, p2).then(res => {
-        const num = float.floor(res / 1000, 1)
-        this.orderForm.mileage = Number(num)
+        if (res) {
+          const num = float.floor(res / 1000, 1)
+          this.orderForm.mileage = Number(num)
+        }
       })
     }
   }
