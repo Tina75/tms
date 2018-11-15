@@ -62,7 +62,7 @@
               <!-- <span class="detail-field-title-sm detail-field-required">运输费：</span>
               <MoneyInput v-model="payment.freightFee"
                           class="detail-payment-input" /> -->
-              <TagNumberInput v-model="payment.freightFee" :parser="handleParseFloat" class="detail-payment-input">
+              <TagNumberInput v-model="payment.freightFee" class="detail-payment-input">
                 <span slot="suffix" class="order-create__input-suffix">元</span>
               </TagNumberInput>
               <a v-if="type === 'sendCar'" class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
@@ -73,7 +73,7 @@
               <!-- <span class="detail-field-title-sm">装货费：</span>
               <MoneyInput v-model="payment.loadFee"
                           class="detail-payment-input" /> -->
-              <TagNumberInput v-model="payment.loadFee" :parser="handleParseFloat" class="detail-payment-input">
+              <TagNumberInput v-model="payment.loadFee" class="detail-payment-input">
                 <span slot="suffix" class="order-create__input-suffix">元</span>
               </TagNumberInput>
             </FormItem>
@@ -83,7 +83,7 @@
               <!-- <span class="detail-field-title-sm">卸货费：</span>
               <MoneyInput v-model="payment.unloadFee"
                           class="detail-payment-input" /> -->
-              <TagNumberInput v-model="payment.unloadFee" :parser="handleParseFloat" class="detail-payment-input">
+              <TagNumberInput v-model="payment.unloadFee" class="detail-payment-input">
                 <span slot="suffix" class="order-create__input-suffix">元</span>
               </TagNumberInput>
             </FormItem>
@@ -93,7 +93,7 @@
               <!-- <span class="detail-field-title-sm">保险费：</span>
               <MoneyInput v-model="payment.insuranceFee"
                           class="detail-payment-input" /> -->
-              <TagNumberInput v-model="payment.insuranceFee" :parser="handleParseFloat" class="detail-payment-input">
+              <TagNumberInput v-model="payment.insuranceFee" class="detail-payment-input">
                 <span slot="suffix" class="order-create__input-suffix">元</span>
               </TagNumberInput>
             </FormItem>
@@ -103,7 +103,7 @@
               <!-- <span class="detail-field-title-sm">其他：</span>
               <MoneyInput v-model="payment.otherFee"
                           class="detail-payment-input" /> -->
-              <TagNumberInput v-model="payment.otherFee" :parser="handleParseFloat" class="detail-payment-input">
+              <TagNumberInput v-model="payment.otherFee" class="detail-payment-input">
                 <span slot="suffix" class="order-create__input-suffix">元</span>
               </TagNumberInput>
             </FormItem>
@@ -145,7 +145,7 @@
               <MoneyInput v-model="cashBack"
                           class="detail-payment-input"
                           style="width: 180px;"/> -->
-              <TagNumberInput v-model="payment.cashBack" :parser="handleParseFloat" class="detail-payment-input" style="width: 180px;">
+              <TagNumberInput v-model="payment.cashBack" class="detail-payment-input" style="width: 180px;">
                 <span slot="suffix" class="order-create__input-suffix">元</span>
               </TagNumberInput>
               <Tooltip placement="right" content="返现运费是指在实际运输过程中存在某一段运输没有执行，需要将提前支付的运费返还。" max-width="500">
@@ -171,7 +171,6 @@ import SelectInputMixin from '../mixin/selectInputMixin'
 import MoneyInput from '../components/MoneyInput'
 import TagNumberInput from '@/components/TagNumberInput'
 import validator from '@/libs/js/validate'
-import float from '@/libs/js/float'
 import PayInfo from '../components/PayInfo'
 import Server from '@/libs/js/server'
 import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
@@ -271,16 +270,6 @@ export default {
     this.fetchData()
   },
   methods: {
-    // 保留2位小数
-    handleParseFloat (value) {
-      if (!value) {
-        return value
-      }
-      if (parseFloat(value) === 0) {
-        return null
-      }
-      return float.floor(value).toString()
-    },
     // 计费规则
     showChargeRules () {
       const self = this

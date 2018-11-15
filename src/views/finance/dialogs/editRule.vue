@@ -4,7 +4,7 @@
     <div class="create-rule-form">
       <Form ref="createRuleForm" :model="createRuleForm" :rules="validate" :label-width="100">
         <FormItem label="规则名称：" prop="ruleName">
-          <Input v-model="createRuleForm.ruleName" :maxlength="30" placeholder="请输入" />
+          <Input v-model="createRuleForm.ruleName" :maxlength="30" placeholder="请输入" autofocus=""/>
         </FormItem>
       </Form>
     </div>
