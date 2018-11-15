@@ -21,42 +21,37 @@
                 @click="searchList"></Button>
       </div>
     </div>
-    <div>
-      <template>
-        <Table :columns="columns1" :data="data1" :loading="loading"  @on-sort-change = "timeSort">
-          <div slot="loading">
-            <Spin>
-              <img src="../../assets/loading.gif" width="24" height="24" alt="加载中">
-            </Spin>
-          </div>
-        </Table>
-      </template>
-    </div>
-    <div class="footer">
-      <template>
-        <Page :total="totalCount"
-              :current.sync="pageNo" :page-size-opts="pageArray"
-              size="small"
-              show-sizer
-              show-elevator show-total @on-change="handleChangePage"
-              @on-page-size-change="handleChangePageSize"/>
-      </template>
-    </div>
+    <page-table
+      :keywords="queryWords"
+      :method="method"
+      :url="url"
+      :columns="columns1"
+      list-field="transfereeList"
+      @on-sort-change = "timeSort"
+    ></page-table>
   </div>
 </template>
 
 <script>
-import { transfereeList, transfereeDelete, CODE } from './client'
+import PageTable from '@/components/page-table'
+import { transfereeDelete, CODE } from './client'
 import BasePage from '@/basic/BasePage'
 export default {
   name: 'transfer',
+  components: {
+    PageTable
+  },
   mixins: [ BasePage ],
   metaInfo: {
     title: '外转方列表'
   },
   data () {
     return {
-      loading: false,
+      url: '/transferee/list',
+      method: 'GET',
+      queryWords: {
+        type: 1
+      },
       selectStatus: 1,
       selectList: [
         {
@@ -68,12 +63,8 @@ export default {
           label: '负责人'
         }
       ],
-      keyword: '',
+      keyword: undefined,
       order: null,
-      totalCount: 0, // 总条数
-      pageArray: [10, 20, 50, 100],
-      pageNo: 1,
-      pageSize: 10,
       columns1: [
         {
           title: '操作',
@@ -231,28 +222,16 @@ export default {
             ])
           }
         }
-      ],
-      data1: []
+      ]
     }
-  },
-  mounted () {
-    this.searchList()
   },
   methods: {
     searchList () {
-      let data = {
-        pageNo: this.pageNo,
-        pageSize: this.pageSize,
+      this.queryWords = {
         type: this.selectStatus,
         keyword: this.keyword,
         order: this.order
       }
-      this.loading = true
-      transfereeList(data).then(res => {
-        this.data1 = res.data.data.transfereeList
-        this.totalCount = res.data.data.total
-        this.loading = false
-      })
     },
     clearKeywords () {
       this.keyword = ''

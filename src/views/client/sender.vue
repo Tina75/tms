@@ -31,40 +31,33 @@
                 @click="searchList"></Button>
       </div>
     </div>
-    <div>
-      <Table :columns="columns1" :loading="loading" :data="data1" @on-sort-change = "timeSort">
-        <div slot="loading">
-          <Spin>
-            <img src="../../assets/loading.gif" width="24" height="24" alt="加载中">
-          </Spin>
-        </div>
-      </Table>
-    </div>
-    <div class="footer">
-      <template>
-        <Page :total="totalCount"
-              :current.sync="pageNo" :page-size-opts="pageArray"
-              size="small"
-              show-sizer
-              show-elevator show-total @on-change="handleChangePage"
-              @on-page-size-change="handleChangePageSize"/>
-      </template>
-    </div>
+    <page-table
+      :keywords="keyword"
+      :method="method"
+      :url="url"
+      :columns="columns1"
+      @on-sort-change = "timeSort"
+    ></page-table>
   </div>
 </template>
 <script>
-import { consignerList, consignerDelete, CODE } from './client'
+import PageTable from '@/components/page-table'
+import { consignerDelete, CODE } from './client'
 import BasePage from '@/basic/BasePage'
 export default {
   name: 'sender',
+  components: {
+    PageTable
+  },
   mixins: [ BasePage ],
   metaInfo: {
     title: '发货方列表'
   },
   data () {
     return {
-      // 请求时候的加载状态
-      loading: false,
+      url: '/consigner/page',
+      method: 'GET',
+      keyword: {},
       selectStatus: 0,
       selectList: [
         {
@@ -79,10 +72,6 @@ export default {
       name: '',
       contact: '',
       order: '',
-      totalCount: 0, // 总条数
-      pageArray: [10, 20, 50, 100],
-      pageNo: 1,
-      pageSize: 10,
       columns1: [
         {
           title: '操作',
@@ -258,29 +247,17 @@ export default {
             return h('div', { props: {} }, text)
           }
         }
-      ],
-      data1: []
+      ]
     }
-  },
-  mounted () {
-    this.searchList()
   },
   methods: {
     searchList () {
       this.selectStatus === 0 ? this.contact = '' : this.name = ''
-      let data = {
-        pageNo: this.pageNo,
-        pageSize: this.pageSize,
+      this.keyword = {
         name: this.name,
         contact: this.contact,
         order: this.order
       }
-      this.loading = true
-      consignerList(data).then(res => {
-        this.loading = false
-        this.data1 = res.data.data.list
-        this.totalCount = res.data.data.totalCount
-      })
     },
     clearKeywords () {
       this.name = ''
