@@ -77,13 +77,10 @@ export default {
       return res
     },
     areaName () {
-      const code = this.cityCode
-      return code ? cityUtil.getNameByCode(code) : '全国'
+      const arr = cityUtil.getPathByCode(this.cityCode)
+      return arr.length ? arr[1].name : '全国'
     },
     inputDisabled () {
-      // if (this.disabled) {
-      //   return true
-      // }
       return false
     }
   },

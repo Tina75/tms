@@ -13,7 +13,7 @@
           <Row>
             <Col span="11">
             <FormItem prop="city">
-              <CitySelect v-model="validate.city" :code-type="4" clearable></CitySelect>
+              <CitySelect v-model="validate.city" clearable></CitySelect>
             </FormItem>
             </Col>
             <Col span="13" style="padding-left: 5px">

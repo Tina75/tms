@@ -20,7 +20,7 @@
           <Row>
             <Col span="11">
             <FormItem prop="cityCode">
-              <CitySelect v-model="validate.cityCode" :code-type="4" clearable></CitySelect>
+              <CitySelect v-model="validate.cityCode" clearable></CitySelect>
             </FormItem>
             </Col>
             <Col span="13" style="padding-left: 5px">
