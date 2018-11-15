@@ -180,7 +180,7 @@ export default {
           title: '操作',
           key: 'do',
           fixed: 'left',
-          width: 130,
+          width: 140,
           extra: true,
           render: (h, params) => {
             let renderBtn = []
