@@ -18,7 +18,7 @@ export default {
   },
   props: {
     pickupId: {
-      type: Number
+      type: Number | String
     },
     cnt: {
       type: Number
@@ -51,7 +51,7 @@ export default {
         url: '/abnormal/detail',
         method: 'post',
         data: {
-          billId: this.pickupId,
+          billId: Number(this.pickupId),
           billType: this.billType // 1 提货单 2 外转单 3 运单
         }
       }).then(res => {

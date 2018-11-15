@@ -123,7 +123,7 @@ export default {
 
   mounted: function () {
     // 公里数
-    this.info.mileage = this.detail.mileage === 0 ? '' : Number(this.detail.mileage) / 1000
+    this.info.mileage = this.detail.mileage === 0 ? null : Number(this.detail.mileage) / 1000
   },
 
   methods: {

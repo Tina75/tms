@@ -997,4 +997,5 @@ export default {
 .foramte-num
   font-size 12px
   line-height 14px
+  color #999
 </style>
