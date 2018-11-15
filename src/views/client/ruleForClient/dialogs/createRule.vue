@@ -10,7 +10,7 @@
           <span>{{createRuleForm.partnerName}}</span>
         </FormItem>
         <FormItem label="规则名：" prop="ruleName">
-          <Input v-model="createRuleForm.ruleName" :maxlength="30" placeholder="请输入" />
+          <Input v-model="createRuleForm.ruleName" :maxlength="30" autofocus="" placeholder="请输入" />
         </FormItem>
       </Form>
     </div>
@@ -33,7 +33,7 @@ export default {
       operateNum: 1,
       ruleType: '',
       operateWays: {
-        1: '保存',
+        1: '新增',
         2: '修改'
       },
       sceneMap: {
