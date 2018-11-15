@@ -65,7 +65,7 @@
       <Row>
         <Col :span="8">
         <FormItem label="净空:" class="ivu-form-item-required blank" prop="shippingVolume">
-          <Input v-model="validate.driver.shippingVolume" :maxlength="9" placeholder="必填"/>方
+          <Input v-model="validate.driver.shippingVolume" :maxlength="9" placeholder="请输入"/>方
         </FormItem>
         </Col>
         <Col :span="8">
