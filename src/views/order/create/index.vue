@@ -83,48 +83,36 @@
       </Col>
     </Row>
     <Row :gutter="16">
-      <Col span="12">
-      <FormItem label="发货地址:" class="consig-address">
-        <Row>
-          <Col span="11">
-          <FormItem prop="start">
-            <CitySelect ref="start" v-model="orderForm.start" :code-type="4" clearable></CitySelect>
-          </FormItem>
-          </Col>
-          <Col span="13" style="padding-left: 5px">
-          <FormItem prop="consignerAddress">
-            <AreaInput
-              v-model="orderForm.consignerAddress"
-              :city-code="orderForm.start"
-              :local-options="consignerAddresses"
-              :disabled="true"
-              :filter-city="true"
-              @latlongt-change="({lat, lng}) => latlongtChange(1, lat, lng)"/>
-          </FormItem>
-          </Col>
-        </Row>
+      <Col span="6">
+      <FormItem label="发货地址:" class="consig-address" prop="start">
+        <CitySelect ref="start" v-model="orderForm.start" :code-type="4" clearable></CitySelect>
       </FormItem>
       </Col>
-      <Col span="12">
-      <FormItem label="收货地址:" class="consig-address">
-        <Row>
-          <Col span="11">
-          <FormItem prop="end">
-            <CitySelect ref="end" v-model="orderForm.end" :code-type="4" clearable></CitySelect>
-          </FormItem>
-          </Col>
-          <Col span="13" style="padding-left: 5px">
-          <FormItem prop="consigneeAddress">
-            <AreaInput
-              v-model="orderForm.consigneeAddress"
-              :city-code="orderForm.end"
-              :local-options="consigneeAddresses"
-              :disabled="true"
-              :filter-city="true"
-              @latlongt-change="({lat, lng}) => latlongtChange(2, lat, lng)"/>
-          </FormItem>
-          </Col>
-        </Row>
+      <Col span="6">
+      <FormItem :label-width="0" prop="consignerAddress">
+        <AreaInput
+          v-model="orderForm.consignerAddress"
+          :city-code="orderForm.start"
+          :local-options="consignerAddresses"
+          :disabled="true"
+          :filter-city="true"
+          @latlongt-change="({lat, lng}) => latlongtChange(1, lat, lng)"/>
+      </FormItem>
+      </Col>
+      <Col span="6">
+      <FormItem prop="end" label="收货地址:" class="consig-address">
+        <CitySelect ref="end" v-model="orderForm.end" :code-type="4" clearable></CitySelect>
+      </FormItem>
+      </Col>
+      <Col span="6">
+      <FormItem :label-width="0" prop="consigneeAddress">
+        <AreaInput
+          v-model="orderForm.consigneeAddress"
+          :city-code="orderForm.end"
+          :local-options="consigneeAddresses"
+          :disabled="true"
+          :filter-city="true"
+          @latlongt-change="({lat, lng}) => latlongtChange(2, lat, lng)"/>
       </FormItem>
       </Col>
     </Row>
@@ -246,7 +234,7 @@
       </Col>
     </Row>
     <Row>
-      <Col span="12">
+      <Col span="18">
       <FormItem label="备注:" prop="remark">
         <Input v-model="orderForm.remark" :maxlength="100" type="text">
           </Input>

@@ -81,9 +81,9 @@ export default {
       return code ? cityUtil.getNameByCode(code) : '全国'
     },
     inputDisabled () {
-      if (this.disabled && !this.cityCode) {
-        return true
-      }
+      // if (this.disabled) {
+      //   return true
+      // }
       return false
     }
   },
