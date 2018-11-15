@@ -98,7 +98,7 @@
           <FormItem class="ivu-form-item-required blank" label="净空:" prop="shippingVolume">
             <Row>
               <Col span="20">
-              <Input v-model="validate.shippingVolume" :maxlength="9"></Input>
+              <Input v-model="validate.shippingVolume" :maxlength="9" placeholder="请输入"></Input>
               </Col>
               <Col span="2" offset="1">
               <span>方</span>
