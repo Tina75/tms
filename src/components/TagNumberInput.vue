@@ -24,9 +24,13 @@
         @mouseup="preventDefault"
         @change="change">
     </div>
+    <span v-if="showChinese" class="ivu-input-number-fee-chinese">
+      {{transform2Chinese(currentValue)}}
+    </span>
   </div>
 </template>
 <script>
+import { money2chinese } from '@/libs/js/util'
 const prefixCls = 'ivu-input-number'
 export default {
   name: 'InputNumber',
@@ -98,6 +102,11 @@ export default {
     suffix: {
       type: String,
       default: ''
+    },
+    // 显示中文提示，一万二千..，通常费用需要显示
+    showChinese: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -246,11 +255,25 @@ export default {
         this.upDisabled = true
         this.downDisabled = true
       }
+    },
+    transform2Chinese (value) {
+      if (value && value > 9999.99) {
+        return money2chinese(value)
+      }
+      return ''
     }
   }
 }
 </script>
-<style lang="stylus">
-.ivu-input-number-w100
-  width 100%
+<style lang="stylus" scoped>
+.ivu-input-number
+  overflow visible
+  &-w100
+    width 100%
+  &-fee-chinese
+    position absolute
+    top 32px
+    line-height 17px
+  &-input-wrap
+    height 30px
 </style>
