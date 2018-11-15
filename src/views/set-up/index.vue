@@ -92,10 +92,10 @@
           </FormItem>
           <FormItem label="公司地址：" prop="address" class="labelClassSty">
             <Row>
-              <Col :span="6">
+              <Col :span="8">
               <CitySelect v-model="formCompany.cityId" :code-type="4" clearable></CitySelect>
                </Col>
-              <Col :span="18" class="areaRight">
+              <Col :span="16" class="areaRight">
               <AreaInput v-model="formCompany.address" :city-code="formCityCode" :maxlength="60" placeholder="请输入公司地址" @latlongt-change="latlongtChange"></AreaInput>
                </Col>
             </Row>
