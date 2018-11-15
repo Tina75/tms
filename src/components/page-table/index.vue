@@ -37,7 +37,7 @@
         </div>
         <div slot="loading">
           <Spin>
-            <img src="../../assets/loading.gif" width="24" height="24" alt="加载中">
+            <img src="../../assets/loading.gif" width="36" height="36" alt="加载中">
           </Spin>
         </div>
         <div v-if="showSlotHeader" slot="header">
