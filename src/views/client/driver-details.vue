@@ -64,7 +64,7 @@
       <Row class="row">
         <Col span="6">
         <div>
-          <span class="label">品牌：</span>
+          <span class="label">车辆品牌：</span>
           {{driverList.carBrand}}
         </div>
         </Col>

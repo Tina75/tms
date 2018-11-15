@@ -81,7 +81,7 @@
             </Col>
             <Col span="6">
             <div>
-              <span class="label">品牌：</span>
+              <span class="label">车辆品牌：</span>
               {{infoData.carBrand}}
             </div>
             </Col>
