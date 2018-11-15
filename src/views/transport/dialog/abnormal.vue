@@ -42,11 +42,11 @@
       </Row>
 
       <Form v-if="isChangeFee === 1" ref="payment" :label-width="82" :model="payment" :rules="rules" label-position="left" class="detail-field-group row-fee">
-        <FormItem :label="details.billType === 2 ? '外转运费：' : '运输费：'" prop="freightFee">
+        <FormItem :label="details.billType === 2 ? '外转运费：' : '运输费：'" :class="details.billType === 2 ? 'waizhuan-label' : ''" prop="freightFee">
           <!-- <span class="detail-field-title-sm detail-field-required">{{ details.billType === 2 ? '外转运费：' : '运输费：' }}</span>
           <MoneyInput v-model="payment.freightFee" :is-disabled="isDisabled" class="detail-payment-input" />
           <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a> -->
-          <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" class="detail-payment-input">
+          <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" :style="details.billType === 2 && 'width: 158px;'" class="detail-payment-input">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
         </FormItem>
@@ -583,6 +583,9 @@ export default {
       justify-content space-between
       align-items center
       margin-bottom 10px
+    .waizhuan-label
+      .ivu-form-item-label
+        padding-right 0
   .abnormal-header
       font-size 14px
       font-family 'PingFangSC-Regular'
