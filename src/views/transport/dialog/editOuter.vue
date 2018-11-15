@@ -220,7 +220,7 @@ export default {
         vm.info.transFee = vm.info.transFee / 100
         vm.info.cashBack = vm.info.cashBack / 100 || null
         vm.info.payType = vm.info.payType
-        vm.info.mileage = Number(vm.info.mileage) / 1000
+        vm.info.mileage = Number(vm.info.mileage) / 1000 || null
       }).catch(err => console.error(err))
     }
   }
