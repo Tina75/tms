@@ -39,7 +39,7 @@
         <li v-for="(item,index) in companyData" :class="{companyDataActive:companyDataActive === item.partnerName}" :key="index" class="list" @click="showOrderData(item)">
           <!--<Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showOrderData"></Table>-->
           <div class="icon">
-            <FontIcon slot="icon" type="ico-company" ></FontIcon>
+            <FontIcon slot="icon" :type="iconType" ></FontIcon>
           </div>
           <div class="content">
             <div v-if="item.partnerName.length<8" class="ruleName">{{item.partnerName}}</div>
@@ -156,6 +156,20 @@ export default {
   computed: {
     emptyContent () {
       return `请点击左侧${this.sceneMap[this.scene]}列表查看${this.orderNameMap[this.scene]}哦～`
+    },
+    /**
+     * 图标类型
+     * 1: 外转方
+     * 2： 承运商
+     * 3：外转方
+     */
+    iconType () {
+      if (this.scene === 2) {
+        return 'ico-cys'
+      } else if (this.scene === 3) {
+        return 'ico-wz'
+      }
+      return 'ico-company'
     },
     orderColumn () {
       return [
