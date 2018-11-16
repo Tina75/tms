@@ -245,6 +245,7 @@
       <Button v-if="hasPower(100101)" :disabled="disabled" type="primary" @click="handleSubmit">保存</Button>
       <Button v-if="hasPower(100102)" :disabled="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
+      <Button class="i-ml-10" @click="immediShip">立即发运</Button>
     </div>
     <OrderPrint ref="printer" :list="orderPrint">
     </OrderPrint>
@@ -928,6 +929,24 @@ export default {
           const num = float.floor(res / 1000, 1)
           this.orderForm.mileage = Number(num)
         }
+      })
+    },
+    // 立即发运
+    immediShip () {
+      const id = 700
+      api.immediShip(id).then(data => {
+        this.openDialog({
+          name: 'transport/dialog/action',
+          data: {
+            id,
+            type: 'sendCar'
+          },
+          methods: {
+            complete () {
+              console.log('弹框完成')
+            }
+          }
+        })
       })
     }
   }

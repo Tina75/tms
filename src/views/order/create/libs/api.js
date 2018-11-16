@@ -38,5 +38,19 @@ export default {
         .then((response) => resolve(response))
         .catch((err) => reject(err))
     })
+  },
+  // 立即发运
+  immediShip (id) {
+    return new Promise((resolve, reject) => {
+      server({
+        method: 'post',
+        url: '/waybill/check/order',
+        data: {
+          waybillIds: [id]
+        }
+      }).then((response) => {
+        resolve(response.data.data)
+      }).catch(err => reject(err))
+    })
   }
 }
