@@ -48,6 +48,7 @@ export const objEqual = function (obj1, obj2) {
 const numberMap = '零一二三四五六七八九'.split('') // 数字映射
 const baseUnit = ['', '十', '百', '千'] // 基础单位
 const sectionUnit = ['', '万', '亿'] // 每4位的分组单位
+const floatUnit = ['角', '分'] // 小数单位
 /**
  * 金额（9位及以下）转汉字
  * @param {Number | String} number 金额
@@ -55,12 +56,12 @@ const sectionUnit = ['', '万', '亿'] // 每4位的分组单位
  */
 export const money2chinese = (number) => {
   number = Number(number)
-  if ((typeof number !== 'number') || isNaN(number) || number > 999999999) return ''
+  if ((typeof number !== 'number') || isNaN(number) || number > 999999999 || number < 0) return ''
+
+  if (number === 0 || number < 0.01) return '零元'
 
   let resultArr = ['元']
-
   const numStr = number.toString()
-  const floatUnit = ['角', '分']
   let intStr = numStr
 
   // 小数部分转换
@@ -120,7 +121,18 @@ export const money2chinese = (number) => {
   }
 
   // 口语化
+  // 如果头两位为”一十“，则只保留”十“，如 一十一 => 十一
   if (resultArr[0].substr(0, 2) === '一十') resultArr[0] = resultArr[0].substr(1, resultArr[0].length)
+  // 如果金额不足一元，则只展示小数部分，如 0.2 => 二角
+  if (resultArr[0] === '' && resultArr[1] === '元') resultArr = resultArr.slice(2, resultArr.length)
 
   return resultArr.join('')
+}
+/**
+ * 列表中费用格式化
+ * @param {*} h
+ * @param {*} value
+ */
+export const renderFee = (h, value) => {
+  return h('span', {}, value ? (value / 100).toFixed(2) : '0.00')
 }

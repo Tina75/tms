@@ -3,7 +3,7 @@
     <BlankCard to="/information/index" page-title="消息">
       <div slot="title">消息中心</div>
       <CellGroup v-if="data.length" @on-click="handleClick">
-        <Cell v-for="(msg, index) in data" :key="index" :name="msg.type" class="message-center__message-item">
+        <Cell v-for="(msg, index) in data" :key="index" :name="index" class="message-center__message-item">
           <FontIcon slot="icon" :type="getIcon(msg.type)" :color="getColor(msg.type)" size="26">
           </FontIcon>
           <span slot="label" class="message-center__label">
@@ -14,7 +14,7 @@
           </span>
         </Cell>
       </CellGroup>
-      <NoData v-else></NoData>
+      <NoData v-else msg="暂无信息～" type="msg"></NoData>
     </BlankCard>
   </div>
 </template>
@@ -39,6 +39,7 @@ import FontIcon from '@/components/FontIcon'
 import mixin from './mixin.js'
 import BasePage from '@/basic/BasePage'
 import NoData from './noData'
+import TMSUrl from '@/libs/constant/url'
 export default {
   name: 'message-center',
   components: {
@@ -89,19 +90,50 @@ export default {
           vm.data = response.data
         })
     },
-    handleClick (name) {
-      // path: TMSUrl.MESSAGE_DETAIL, // '/information/message-info',
-      // query: {
-      //   id: msg.title,
-      //   message: msg
-      // }
-      this.openTab({
-        path: '/information/index',
-        title: '消息',
-        query: {
-          type: name
-        }
-      })
+    handleClick (index) {
+      const msg = this.data[index]
+      switch (msg.type) {
+        // 0系统消息4订单消息5回单消息6运单消息7提货单消息8外转单消息
+        case 0:
+          this.openTab({
+            path: TMSUrl.MESSAGE_DETAIL, // '/information/message-info',
+            query: {
+              id: msg.title,
+              message: msg
+            }
+          })
+          break
+        case 4:
+          this.openTab({
+            path: TMSUrl.ORDER_MANAGEMENT, // '/order-management/order',
+            title: '订单管理'
+          })
+          break
+        case 5:
+          this.openTab({
+            path: TMSUrl.RECEIPT_ORDER_MANAGEMENT, // '/order-management/receipt',
+            title: '回单管理'
+          })
+          break
+        case 6:
+          this.openTab({
+            path: TMSUrl.TANSPORT_ORDER, // '/transport/waybill',
+            title: '运单管理'
+          })
+          break
+        case 7:
+          this.openTab({
+            path: TMSUrl.PICKUP_ORDER, // '/transport/pickupOrder',
+            title: '提货单管理'
+          })
+          break
+        case 8:
+          this.openTab({
+            path: TMSUrl.OUTER_ORDER, // '/transport/outerOrder',
+            title: '外转单管理'
+          })
+          break
+      }
     }
   }
 }

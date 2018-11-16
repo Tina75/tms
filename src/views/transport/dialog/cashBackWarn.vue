@@ -6,7 +6,7 @@
       <!-- <Icon type="ios-close-circle" size="28" color="#EE2017" style="margin-top: -2px;margin-right: 10px;"></Icon> -->
       <div style="margin-left: 10px;">
         <div style="text-align: center;">以下单据存在返现运费，需要单独操作。</div>
-        <div :style="cashBack.length > 1 ? 'margin-left: 18px;' : 'text-align: center;'" style="font-size: 13px;line-height: 2;margin-top: 10px;">{{ waybillNos }}</div>
+        <div :style="cashBack.length > 1 ? 'margin-left: 18px;' : 'text-align: center;'" style="font-size: 13px;line-height: 2;margin-top: 10px;">{{ billNos }}</div>
       </div>
     </div>
 
@@ -23,17 +23,21 @@ export default {
   mixins: [ BaseDialog ],
   data () {
     return {
-      waybillNos: ''
+      billNos: ''
     }
   },
 
   created () {
     console.log(this.cashBack)
-    let waybillNoArr = []
+    let billNoArr = []
     this.cashBack.map((i) => {
-      waybillNoArr.push(i.waybillNo)
+      if (this.type === 'waybill') {
+        billNoArr.push(i.waybillNo)
+      } else {
+        billNoArr.push(i.transNo)
+      }
     })
-    this.waybillNos = waybillNoArr.join('; ')
+    this.billNos = billNoArr.join('; ')
   },
 
   methods: {

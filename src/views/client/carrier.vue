@@ -22,41 +22,36 @@
                 @click="searchList"></Button>
       </div>
     </div>
-    <div>
-      <template>
-        <Table :columns="columns1" :loading="loading" :data="data1" @on-sort-change = "timeSort">
-          <div slot="loading">
-            <Spin>
-              <img src="../../assets/loading.gif" width="24" height="24" alt="加载中">
-            </Spin>
-          </div>
-        </Table>
-      </template>
-    </div>
-    <div class="footer">
-      <template>
-        <Page :total="totalCount"
-              :current.sync="pageNo" :page-size-opts="pageArray"
-              size="small"
-              show-sizer
-              show-elevator show-total @on-change="handleChangePage"
-              @on-page-size-change="handleChangePageSize"/>
-      </template>
-    </div>
+    <page-table
+      :keywords="queryWords"
+      :method="method"
+      :url="url"
+      :columns="columns1"
+      list-field="carrierList"
+      @on-sort-change = "timeSort"
+    ></page-table>
   </div>
 </template>
 <script>
-import { carrierList, carrierDelete, CODE, carrierDetailsForDriver, carrierDetailsForCompany } from './client'
+import PageTable from '@/components/page-table'
+import { carrierDelete, CODE, carrierDetailsForDriver, carrierDetailsForCompany } from './client'
 import BasePage from '@/basic/BasePage'
 export default {
   name: 'carrier',
+  components: {
+    PageTable
+  },
   metaInfo: {
     title: '运掌柜承运商列表'
   },
   mixins: [ BasePage ],
   data () {
     return {
-      loading: false,
+      url: '/carrier/list',
+      method: 'GET',
+      queryWords: {
+        type: 1
+      },
       selectStatus: 1,
       selectList: [
         {
@@ -70,10 +65,6 @@ export default {
       ],
       keyword: '',
       order: null,
-      totalCount: 0, // 总条数
-      pageArray: [10, 20, 50],
-      pageNo: 1,
-      pageSize: 10,
       payTypeMap: {
         1: '按单付',
         2: '月结',
@@ -319,28 +310,30 @@ export default {
       }
     }
   },
-  mounted () {
-    this.searchList()
-  },
   methods: {
     searchList () {
-      let data = {
-        pageNo: this.pageNo,
-        pageSize: this.pageSize,
+      // let data = {
+      //   pageNo: this.pageNo,
+      //   pageSize: this.pageSize,
+      //   type: this.selectStatus,
+      //   keyword: this.keyword,
+      //   order: this.order
+      // }
+      this.queryWords = {
         type: this.selectStatus,
         keyword: this.keyword,
         order: this.order
       }
-      this.loading = true
-      carrierList(data).then(res => {
-        if (res.data.code === CODE) {
-          this.data1 = res.data.data.carrierList
-          this.totalCount = res.data.data.total
-          this.loading = false
-        } else {
-          this.$Message.error(res.data.msg)
-        }
-      })
+      // this.loading = true
+      // carrierList(data).then(res => {
+      //   if (res.data.code === CODE) {
+      //     this.data1 = res.data.data.carrierList
+      //     this.totalCount = res.data.data.total
+      //     this.loading = false
+      //   } else {
+      //     this.$Message.error(res.data.msg)
+      //   }
+      // })
     },
     clearKeywords () {
       this.keyword = ''

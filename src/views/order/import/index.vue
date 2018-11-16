@@ -42,7 +42,7 @@
             <div>您还没有导入订单，去下载模板导入订单吧！</div>
           </div>
           <div class="i-mt-10">
-            <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入文件</Button>
+            <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入订单</Button>
           </div>
         </div>
       </div>
@@ -83,6 +83,7 @@ import { Progress } from 'iview'
  */
 const MAX_UPLOAD_FILES = 3
 export default {
+  name: 'order-import',
   metaInfo: {
     title: '批量导入'
   },
@@ -382,7 +383,7 @@ export default {
               vm.updateProgress(importId, percent)
               checkProgress()
             }
-          }, 1000)
+          }, 2000)
         } catch (error) {
           if (timer) {
             clearTimeout(timer)
@@ -426,7 +427,11 @@ export default {
       }
       try {
         const uploadResult = await this.uploadFile(file)
-        const notifyResult = await this.notifyBackend(file.name, uploadResult.res.requestUrls[0].substring(0, uploadResult.res.requestUrls[0].indexOf('?uploadId')))
+        let fileUrl = uploadResult.res.requestUrls[0]
+        if (fileUrl.indexOf('?upload') !== -1) {
+          fileUrl = fileUrl.substring(0, fileUrl.indexOf('?upload'))
+        }
+        const notifyResult = await this.notifyBackend(file.name, fileUrl)
         if (notifyResult.data.code === 10000) {
           // this.$Message.success({content: '导入文件完成，后台正在处理中，请稍后查看结果', duration: 3})
           // 20181113-mys 不显示弹窗，需要在进度条挂载表格里的导入结果列

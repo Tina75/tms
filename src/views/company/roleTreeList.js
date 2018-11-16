@@ -32,7 +32,9 @@ export default {
         { title: '导入文件', code: '100201', parentId: '100200', grandId: '100000', disabled: true },
         { title: '下载模板', code: '100202', parentId: '100200', grandId: '100000', disabled: true },
         { title: '下载（列表上）', code: '100203', parentId: '100200', grandId: '100000', disabled: true },
-        { title: '查看订单', code: '100204', parentId: '100200', grandId: '100000', disabled: true }
+        { title: '查看订单', code: '100204', parentId: '100200', grandId: '100000', disabled: true },
+        { title: '删除记录', code: '100205', parentId: '100200', grandId: '100000', disabled: true },
+        { title: '清空记录', code: '100206', parentId: '100200', grandId: '100000', disabled: true }
       ]
     }]
   }],
@@ -114,7 +116,7 @@ export default {
         { title: '打印', code: '120202', parentId: '120200', grandId: '120000', disabled: true },
         { title: '到货', code: '120203', parentId: '120200', grandId: '120000', disabled: true },
         { title: '删除', code: '120204', parentId: '120200', grandId: '120000', disabled: true },
-        { title: '位置', code: '120205', parentId: '120200', grandId: '120000', disabled: true },
+        { title: '查看车辆位置', code: '120205', parentId: '120200', grandId: '120000', disabled: true },
         { title: '编辑', code: '120206', parentId: '120200', grandId: '120000', disabled: true },
         { title: '导出', code: '120207', parentId: '120200', grandId: '120000', disabled: true },
         { title: '上报异常', code: '120210', parentId: '120100', grandId: '120000', disabled: true },
@@ -139,7 +141,7 @@ export default {
         { title: '打印', code: '120103', parentId: '120100', grandId: '120000', disabled: true },
         { title: '到货', code: '120104', parentId: '120100', grandId: '120000', disabled: true },
         { title: '删除', code: '120105', parentId: '120100', grandId: '120000', disabled: true },
-        { title: '位置', code: '120106', parentId: '120100', grandId: '120000', disabled: true },
+        { title: '查看车辆位置', code: '120106', parentId: '120100', grandId: '120000', disabled: true },
         { title: '编辑', code: '120107', parentId: '120100', grandId: '120000', disabled: true },
         { title: '导出', code: '120108', parentId: '120100', grandId: '120000', disabled: true },
         { title: '上报异常', code: '120113', parentId: '120100', grandId: '120000', disabled: true },
@@ -162,7 +164,8 @@ export default {
         { title: '导出', code: '120305', parentId: '120300', grandId: '120000', disabled: true },
         { title: '上报异常', code: '120306', parentId: '120100', grandId: '120000', disabled: true },
         { title: '处理', code: '120307', parentId: '120100', grandId: '120000', disabled: true },
-        { title: '编辑异常', code: '120308', parentId: '120100', grandId: '120000', disabled: true }
+        { title: '编辑异常', code: '120308', parentId: '120100', grandId: '120000', disabled: true },
+        { title: '查看车辆位置', code: '120309', parentId: '120100', grandId: '120000', disabled: true }
       ]
     }, {
       title: '异常管理',

@@ -64,7 +64,7 @@
       <Row class="row">
         <Col span="6">
         <div>
-          <span class="label">品牌：</span>
+          <span class="label">车辆品牌：</span>
           {{driverList.carBrand}}
         </div>
         </Col>
@@ -97,13 +97,13 @@
       <Row class="row">
         <Col span="5">
         <div v-if="driverList.travelPhoto">
-          <img :style="'height: 90px;background-image: url(' + driverList.travelPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(driverList.travelPhoto)"/>
+          <div :style="'height: 90px;background-image: url(' + driverList.travelPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(driverList.travelPhoto)"></div>
           <p class="uploadLabel">行驶证</p>
         </div>
         </Col>
         <Col span="6">
         <div v-if="driverList.drivePhoto">
-          <img :style="'height: 90px;background-image: url(' + driverList.drivePhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(driverList.drivePhoto)"/>
+          <div :style="'height: 90px;background-image: url(' + driverList.drivePhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(driverList.drivePhoto)"></div>
           <p class="uploadLabel">驾驶证</p>
         </div>
         </Col>

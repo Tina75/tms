@@ -11,13 +11,22 @@
         <Timeline>
           <TimelineItem v-for="(item, key) in cars[0].points" :key="key">
             <i slot="dot" class="map-timeline-dot"></i>
-            <div :class="{'info-body-active': key === currentPointIndex}" class="info-body" @click="showTracePoint(key)">
-              <p>{{ item.createTime | datetime }}</p>
-              <p>
-                {{ item.location }}
-                {{Number(item.positionType) === 2 ? `(此位置通过手机号GPS查询，若偏差较大，请联系司机${item.phone})` : ''}}
-              </p>
+            <div>
+              <div class="icon-box">
+                <i v-if="Number(item.positionType) !== 2" class="icon font_family icon-beidoudingwei"></i>
+                <Tooltip v-else :content="`此位置通过司机手机号查询，若偏差较大，请联系司机 ${item.phone}`" placement="right-start" max-width="200">
+                  <i class="icon font_family icon-shoujidingwei"></i>
+                </Tooltip>
+              </div>
+
+              <div :class="{'info-body-active': key === currentPointIndex}" class="info-body" @click="showTracePoint(key)">
+                <p>{{ item.createTime | datetime }}</p>
+                <p>
+                  {{ item.location }}
+                </p>
+              </div>
             </div>
+
           </TimelineItem>
         </Timeline>
       </div>
@@ -74,7 +83,7 @@ export default {
       this.map.addOverlay(markerOverlay)
 
       // 添加标签
-      const labelOverlay = new LabelOverlay(point, car.carNo)
+      const labelOverlay = new LabelOverlay(point, car.carNo === '' ? car.phone : car.carNo)
       this.map.addOverlay(labelOverlay)
 
       cb && cb(point)
@@ -87,9 +96,8 @@ export default {
         // 添加标志点
         const markerOverlay = new MarkerOverlay(point)
         this.map.addOverlay(markerOverlay)
-
         // 添加标签
-        const labelOverlay = new LabelOverlay(point, car.carNo.replace(/^(.{2})/, '$1 '))
+        const labelOverlay = new LabelOverlay(point, car.carNo.length === 11 ? car.carNo : car.carNo.replace(/^(.{2})/, '$1 '))
         this.map.addOverlay(labelOverlay)
         labelOverlay.hide()
 
@@ -150,6 +158,7 @@ export default {
   }
 
   .info-body
+    margin-left 60px
     color #666666
     cursor pointer
 
@@ -158,6 +167,15 @@ export default {
 
     &>p:first-child
       font-size 14px
+
+  .icon-box
+    float left
+    margin-top -11px
+    margin-left 8px
+
+    .icon
+      font-size 35px
+      color #9DA1B0
 </style>
 
 <style lang='stylus'>
@@ -173,8 +191,11 @@ export default {
 
     .ivu-timeline-item-head-custom
       margin-top 3px
-      left -14px
+      left -13px
 
     .ivu-timeline-item-content
       top -9px
+
+    .ivu-tooltip-popper
+      top 0 !important
 </style>

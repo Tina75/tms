@@ -3,24 +3,37 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-11-09 16:48:31
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-11-13 14:05:21
+ * @Last Modified time: 2018-11-14 17:40:54
  */
 import _ from 'lodash'
 import server from '@/libs/js/server'
 import TMSUrl from '@/libs/constant/url'
+import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
       selectedRows: [],
       activeSender: null,
-      datas: [],
+      datas: {},
       searchForm: {},
       styles: {
         height: 'auto'
       }
     }
   },
+  watch: {
+    datas (newDatas) {
+      if (this.activeSender) {
+        // 当前选中的发货方，正好在核销之后没有可核销的单子，从列表中移除，那么当前选中的就移除
+        if (!newDatas[this.activeSender.partnerName]) {
+          this.activeSender = null
+          this.$refs.senderList.clearActiveKey()
+        }
+      }
+    }
+  },
   computed: {
+    ...mapGetters(['DocumentHeight']),
     // 右侧订单列表
     orderList () {
       if (!this.activeSender) {
@@ -31,7 +44,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      let height = this.$parent.$parent.$el.parentNode.clientHeight - this.$refs.senderList.$el.getBoundingClientRect().top + this.$parent.$parent.$el.getBoundingClientRect().top
+      let height = this.DocumentHeight - this.$refs.senderList.$el.getBoundingClientRect().top + this.$parent.$parent.$el.getBoundingClientRect().top
       this.styles = {
         height: (height) + 'px'
       }
@@ -69,8 +82,9 @@ export default {
      */
     handleSearch (searchParam) {
       this.searchForm = { ...searchParam }
-      this.activeSender = null
+      // this.activeSender = null
       this.selectedRows = []
+      // this.$refs.senderList.clearActiveKey()
       this.fetch()
     },
     /**
@@ -93,6 +107,7 @@ export default {
         name: 'finance/dialogs/cargoFeeVerify',
         data: {
           id: ids,
+          title: this.verifyTitle,
           verifyType: this.verifyType,
           needPay: (needPay / 100).toFixed(2),
           orderNum: this.selectedRows.length
@@ -117,6 +132,7 @@ export default {
         name: 'finance/dialogs/cargoFeeVerify',
         data: {
           id: data.id,
+          title: this.verifyTitle,
           verifyType: this.verifyType,
           needPay: (data.collectionFee / 100).toFixed(2),
           orderNum: 0
@@ -150,18 +166,10 @@ export default {
           for (let name in groupData) {
             datas[name] = groupData[name][0]
           }
-          if (vm.activeSender) {
-            // 当前选中的发货方，正好在核销之后没有可核销的单子，从列表中移除，那么当前选中的就移除
-            let findActiveSender = res.data.data.find((item) => item.partnerName === vm.activeSender.partnerName)
-            if (!findActiveSender) {
-              vm.activeSender = null
-            }
-          }
-
-          this.datas = datas
+          vm.datas = datas
         } else {
-          this.datas = []
-          this.activeSender = null
+          vm.datas = {}
+          vm.activeSender = null
         }
       })
     }

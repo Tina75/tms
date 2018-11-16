@@ -24,9 +24,14 @@
         @mouseup="preventDefault"
         @change="change">
     </div>
+    <span v-if="showChinese" class="ivu-input-number-fee-chinese">
+      {{transform2Chinese(currentValue)}}
+    </span>
   </div>
 </template>
 <script>
+import float from '../libs/js/float.js'
+import { money2chinese } from '@/libs/js/util'
 const prefixCls = 'ivu-input-number'
 export default {
   name: 'InputNumber',
@@ -79,8 +84,10 @@ export default {
     name: {
       type: String
     },
+    // 小数点精度
     precision: {
-      type: Number
+      type: Number,
+      default: 2
     },
     elementId: {
       type: String
@@ -98,6 +105,11 @@ export default {
     suffix: {
       type: String,
       default: ''
+    },
+    // 显示中文提示，一万二千..，通常费用需要显示
+    showChinese: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -130,13 +142,18 @@ export default {
     precisionValue () {
       // can not display 1.0
       if (!this.currentValue) return this.currentValue
-      return this.precision ? this.currentValue.toFixed(this.precision) : this.currentValue
+      return float.floor(this.currentValue, this.precision)
     },
     formatterValue () {
-      if (this.formatter && this.precisionValue !== null) {
-        return this.formatter(this.precisionValue)
+      // if (this.formatter && this.precisionValue !== null) {
+      //   return this.formatter(this.precisionValue.toString())
+      // } else {
+      //   return this.precisionValue
+      // }
+      if (this.formatter) {
+        return this.formatter(this.currentValue.toString())
       } else {
-        return this.precisionValue
+        return this.currentValue
       }
     }
   },
@@ -178,7 +195,7 @@ export default {
     },
     setValue (val) {
       // 如果 step 是小数，且没有设置 precision，是有问题的
-      if (val && !isNaN(this.precision)) val = Number(Number(val).toFixed(this.precision))
+      if (val && !isNaN(this.precision)) val = float.floor(val, this.precision)
 
       const { min, max } = this
       if (val !== null) {
@@ -220,7 +237,7 @@ export default {
         val = this.parser(val)
       }
 
-      const isEmptyString = val.length === 0
+      const isEmptyString = (val === null || val === '') ? true : val.length === 0
       if (isEmptyString) {
         this.setValue(null)
         return
@@ -246,11 +263,26 @@ export default {
         this.upDisabled = true
         this.downDisabled = true
       }
+    },
+    transform2Chinese (value) {
+      if (value && value > 9999.99) {
+        return money2chinese(value)
+      }
+      return ''
     }
   }
 }
 </script>
-<style lang="stylus">
-.ivu-input-number-w100
-  width 100%
+<style lang="stylus" scoped>
+.ivu-input-number
+  overflow visible
+  &-w100
+    width 100%
+  &-fee-chinese
+    position absolute
+    top 34px
+    line-height 17px
+    white-space nowrap
+  &-input-wrap
+    height 30px
 </style>

@@ -182,6 +182,7 @@ import { carrierAddDriver, carrierUpdateDriver, carrierQueryDriverlist, CODE, CA
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/'
 import SelectInput from '@/components/SelectInput'
+import _ from 'lodash'
 export default {
   name: 'carrier-driver',
   components: {
@@ -227,7 +228,7 @@ export default {
         ],
         shippingWeight: [
           { required: true, message: '载重不能为空' },
-          { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
+          { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ],
         shippingVolume: [
           { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
@@ -267,22 +268,16 @@ export default {
       this.address = []
       this.flagAddress = true
       // 线路统一
-      if (this.address1 &&
-         (this.address1.s !== undefined && this.address1.e !== undefined) &&
-         (this.address1.s !== null && this.address1.e !== null)) {
+      if (!_.isNil(this.address1) && (!_.isNil(this.address1.s) && !_.isNil(this.address1.e))) {
         this.address.push(this.address1)
-      } else if ((this.address1.s === undefined && this.address1.e === undefined) ||
-                 (this.address1.s === null && this.address1.e === null)) {
+      } else if (_.isNil(this.address1.s) && _.isNil(this.address1.e)) {
       } else {
         this.$Message.error('请完善常跑线路1信息')
         this.flagAddress = false
       }
-      if (this.address2 &&
-         (this.address2.s !== undefined && this.address2.e !== undefined) &&
-         (this.address2.s !== null && this.address2.e !== null)) {
+      if (!_.isNil(this.address2) && (!_.isNil(this.address2.s) && !_.isNil(this.address2.e))) {
         this.address.push(this.address2)
-      } else if ((this.address2.s === undefined && this.address2.e === undefined) ||
-                 (this.address2.s === null && this.address2.e === null)) {
+      } else if (_.isNil(this.address2.s) && _.isNil(this.address2.e)) {
       } else {
         this.$Message.error('请完善常跑线路2信息')
         this.flagAddress = false

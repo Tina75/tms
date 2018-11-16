@@ -38,7 +38,7 @@ import ReconcileLayout from './ReconcileLayout.vue'
 import ListSender from './list-sender/index.vue'
 import ListSenderItem from './list-sender/SenderItem.vue'
 import cargoFeeMixin from '../mixins/cargoFeeMixin.js'
-
+import { renderFee } from '@/libs/js/util'
 import { ORDER_STATUS } from '@/libs/constant/order'
 export default {
   components: {
@@ -58,6 +58,7 @@ export default {
     return {
       commonStatus: 0, // 0-未收 1-已收未付 2-已付
       verifyType: 1, // 1-代收货款已收未付，2-代收货款已付款，3-返现运费'
+      verifyTitle: '收款核销',
       orderColumns: [
         {
           type: 'selection',
@@ -106,7 +107,8 @@ export default {
           title: '代收货款',
           key: 'collectionFee',
           render (h, params) {
-            return h('span', {}, params.row['collectionFee'] / 100)
+            return renderFee(h, params.row['collectionFee'])
+            // return h('span', {}, params.row['collectionFee'] / 100)
           }
         },
         {

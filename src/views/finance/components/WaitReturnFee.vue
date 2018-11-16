@@ -9,7 +9,7 @@
       @on-selection-change="handleSelectionChange"
     >
       <div slot="operation">
-        <Button type="primary" @click="batchWriteOff">核销</Button>
+        <Button v-if="hasPower(170601)" type="primary" @click="batchWriteOff">核销</Button>
       </div>
       <ListSender ref="driversList" :style="styles" list-key="partnerName" @on-click="handleClick">
         <ListSenderItem v-for="(item, name) in drivers" :key="name" :item="item" :title="item.partnerName" :extra="item.orderNum" icon="ico-company">
@@ -37,6 +37,8 @@ import _ from 'lodash'
 import server from '@/libs/js/server'
 import returnFeeMixin from '../mixins/returnFeeMixin.js'
 import settlement from '@/libs/constant/settlement'
+import { renderFee } from '@/libs/js/util'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     ReconcileLayout,
@@ -110,7 +112,7 @@ export default {
           title: '返现用费',
           key: 'totalFee',
           render (h, params) {
-            return h('span', {}, params.row['totalFee'] / 100)
+            return renderFee(h, params.row['totalFee'])
           }
         },
         {
@@ -134,6 +136,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['DocumentHeight']),
     // 右侧订单列表
     orderList () {
       if (!this.activeDriver) {
@@ -142,9 +145,20 @@ export default {
       return this.drivers[this.activeDriver.partnerName].orderInfos
     }
   },
+  watch: {
+    drivers (newDatas) {
+      if (this.activeDriver) {
+        // 当前选中的发货方，正好在核销之后没有可核销的单子，从列表中移除，那么当前选中的就移除
+        if (!newDatas[this.activeDriver.partnerName]) {
+          this.$refs.driversList.clearActiveKey()
+          this.activeDriver = null
+        }
+      }
+    }
+  },
   mounted () {
     this.$nextTick(() => {
-      let height = this.$parent.$parent.$el.parentNode.clientHeight - this.$refs.driversList.$el.getBoundingClientRect().top + this.$parent.$parent.$el.getBoundingClientRect().top
+      let height = this.DocumentHeight - this.$refs.driversList.$el.getBoundingClientRect().top + this.$parent.$parent.$el.getBoundingClientRect().top
       this.styles = {
         height: (height) + 'px'
       }
@@ -157,8 +171,9 @@ export default {
      */
     handleSearch (form) {
       this.searchForm = form
-      this.activeDriver = null
+      // this.activeDriver = null
       this.selectedOrders = []
+      // this.$refs.driversList.clearActiveKey()
       this.fetch()
     },
     /**
@@ -197,6 +212,7 @@ export default {
         data: {
           id: ids,
           needPay: (needPay / 100).toFixed(2),
+          verifyType: 3, // 1-代收货款已收未付，2-代收货款已付款，3-返现运费'
           orderNum: ids.length
         },
         methods: {
@@ -219,6 +235,7 @@ export default {
         data: {
           id: data.id,
           needPay: (data.totalFee / 100).toFixed(2),
+          verifyType: 3, // 1-代收货款已收未付，2-代收货款已付款，3-返现运费'
           orderNum: 0
         },
         methods: {
@@ -248,17 +265,11 @@ export default {
           for (let name in groupDrivers) {
             drivers[name] = groupDrivers[name][0]
           }
-          if (vm.activeDriver) {
-            // 当前选中的发货方，正好在核销之后没有可核销的单子，从列表中移除，那么当前选中的就移除
-            let findActiveDriver = res.data.data.find((item) => item.partnerName === vm.activeSender.partnerName)
-            if (!findActiveDriver) {
-              vm.activeDriver = null
-            }
-          }
-          this.drivers = drivers
+
+          vm.drivers = drivers
         } else {
-          this.drivers = []
-          this.activeDriver = null
+          vm.drivers = {}
+          vm.activeDriver = null
         }
       })
     }

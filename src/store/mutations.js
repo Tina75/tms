@@ -27,6 +27,9 @@ export default{
       headRow.v = e.visible
       headRow.s = e.sort
     })
+  },
+  updateDocumentHeight (state, payload) {
+    state.documentHeight = payload
   }
 }
 

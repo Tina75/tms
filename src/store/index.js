@@ -4,7 +4,10 @@ import mutations from './mutations'
 import * as actions from './actions'
 import * as getters from './getters'
 import login from '@/views/login/modules/store'
-import order from '@/views/order/create/modules/store'
+// import order from '@/views/order/create/modules/store'
+import carrier from './modules/carrier/store'
+import sender from './modules/sender/store'
+import transfer from './modules/transfer/store'
 Vue.use(Vuex)
 
 const state = {
@@ -12,7 +15,8 @@ const state = {
   permissions: [], // 权限列表
   tabNavList: [], // 已展示的tab列表
   messageCount: {}, // 消息通知数量
-  customTableColumns: [] // 自定义table列表信息
+  customTableColumns: [], // 自定义table列表信息
+  documentHeight: '' // documentBody高度
 }
 
 export default new Vuex.Store({
@@ -23,6 +27,8 @@ export default new Vuex.Store({
   mutations,
   modules: {
     login,
-    order
+    transfer,
+    carrier,
+    sender
   }
 })

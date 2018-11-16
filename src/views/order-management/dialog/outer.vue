@@ -21,25 +21,27 @@
         <FormItem label="外转方运单号:" class="ivu-form-item-required blank">
           <Input v-model="info.outTransNo" :maxlength="20" style="width:200px"/>
         </FormItem>
-        <FormItem label="付款方式:" class="ivu-form-item-required blank">
+        <FormItem label="付款方式:" prop="payType">
           <Select v-model="info.payType" style="width:200px">
             <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
           </Select>
         </FormItem>
         <FormItem label="公里数:" prop="mileage" class="ivu-form-item-required blank">
-          <TagNumberInput :min="0" v-model="info.mileage" :parser="handleParseFloat" style="width:200px">
+          <TagNumberInput :min="0" v-model="info.mileage" style="width:200px">
             <span slot="suffix" class="order-create__input-suffix">公里</span>
           </TagNumberInput>
         </FormItem>
         <FormItem label="外转运费:" prop="transFee">
-          <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" placeholder="请填写外转运费" style="width:175px">
+          <TagNumberInput :min="0" v-model="info.transFee" placeholder="请填写外转运费" style="width:175px">
+            <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           <span @click="showChargeRules">
             <FontIcon type="jisuanqi" size="22" color="#00a4bd" class="i-ml-5" style="vertical-align: middle;"></FontIcon>
           </span>
         </FormItem>
-        <FormItem label="返现运费:" class="ivu-form-item-required blank">
-          <TagNumberInput :min="0" v-model="info.cashBack" :parser="handleParseFloat" style="width:175px">
+        <FormItem label="返现运费:" prop="cashBack" class="ivu-form-item-required blank">
+          <TagNumberInput v-model="info.cashBack" style="width:175px">
+            <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           <span>
             <Tooltip
@@ -65,19 +67,16 @@ import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '@/components/SelectInput.vue'
 import TagNumberInput from '@/components/TagNumberInput'
-import float from '@/libs/js/float'
 import settlements from '@/libs/constant/settlement.js'
 import FontIcon from '@/components/FontIcon'
 import { mapGetters, mapActions } from 'vuex'
-import BMap from '@/libs/js/distance'
 export default {
   name: 'outer',
 
   components: {
     SelectInput,
     TagNumberInput,
-    FontIcon,
-    BMap
+    FontIcon
   },
 
   mixins: [BaseDialog],
@@ -102,8 +101,14 @@ export default {
           { required: true, type: 'number', message: '请填写外转运费' },
           { validator: validateFee }
         ],
+        payType: [
+          { required: true, message: '请选择付款方式' }
+        ],
         mileage: [
           { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
+        ],
+        cashBack: [
+          { validator: validateFee }
         ]
       }
     }
@@ -116,27 +121,14 @@ export default {
   },
 
   mounted: function () {
-    // 根据经纬度获取公里数
-    let startAddress = {}
-    let endAddress = {}
-    startAddress.lng = this.detail.consigneeAddressLatitude
-    startAddress.lat = this.detail.consigneeAddressLongitude
-    endAddress.lng = this.detail.consignerAddressLatitude
-    endAddress.lat = this.detail.consignerAddressLongitude
-    let this_ = this
-    BMap(startAddress, endAddress).then((result) => {
-      this_.mileage = result
-    })
+    // 公里数
+    this.info.mileage = this.detail.mileage === 0 ? null : Number(this.detail.mileage) / 1000
   },
 
   methods: {
     ...mapActions([
       'getTransferees'
     ]),
-    // 保留2位小数
-    handleParseFloat (value) {
-      return float.floor(value)
-    },
     // 选择已维护外转方后操作
     handleSelectTransferee (name, row) {
       this.info.payType = row.payType
@@ -147,8 +139,10 @@ export default {
           this.info = Object.assign({}, this.info, {
             orderId: this.detail.id,
             payType: Number(this.info.payType),
-            transFee: Number(this.info.transFee) * 100
+            transFee: Number(this.info.transFee) * 100,
+            mileage: Number(this.info.mileage) * 1000
           })
+          this.info.cashBack = this.info.cashBack * 100 || null
           Server({
             url: 'outside/bill/create',
             method: 'post',
@@ -222,8 +216,6 @@ export default {
 .outer-dialog .ivu-form
   .ivu-form-item-label
     padding 10px 10px 10px 15px
-  .ivu-form-item-content
-    margin-left 110px !important
 .blank
   /deep/ .ivu-form-item-label:before
     visibility: hidden

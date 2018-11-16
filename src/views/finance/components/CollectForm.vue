@@ -17,13 +17,13 @@
           <DatePicker v-model="formInline.daterange" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width:100%"></DatePicker>
         </FormItem>
         </Col>
-        <Col v-if="scene === '2'" span="7">
-        <Row >
+        <Col v-if="scene === '2'" span="7" class="van-right">
+        <Row :gutter="12">
           <Col span="10" offset="0">
           <FormItem prop="dayType">
-            <Select v-model="formInline.dateType" style="width:120px">
-              <Option :value="1">下单日期</Option>
-              <Option :value="2">到货日期</Option>
+            <Select v-model="formInline.dayType" style="width:120px" class="van-left">
+              <Option :value="1">收款日期</Option>
+              <Option :value="2">付款日期</Option>
             </Select>
           </FormItem>
           </Col>
@@ -59,7 +59,7 @@ export default {
         partnerName: '',
         orderNo: '',
         daterange: [],
-        dateType: 2
+        dayType: 2
       },
       /**
      * 日期条件
@@ -84,7 +84,7 @@ export default {
         endTime: this.formInline.daterange[1] ? this.formInline.daterange[1].valueOf() + 86400000 : void 0
       }
       if (this.scene === '2') {
-        params.dateType = this.formInline.dateType
+        params.dayType = this.formInline.dayType
       }
       this.$emit('on-search', params)
     },

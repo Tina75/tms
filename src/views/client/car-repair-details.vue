@@ -111,7 +111,7 @@ import BasePage from '@/basic/BasePage'
 import { CODE, carrierDeleteRepairVehicle, queryByIdCarrier } from './client'
 import RecordList from '@/components/RecordList'
 export default {
-  name: 'car-details',
+  name: 'car-repair-details',
   components: { RecordList },
   mixins: [ BasePage ],
   props: {
