@@ -2,6 +2,10 @@
   <Row class="temAll">
     <Col :style="styleHeight" span="4">
     <Menu :open-names="['1']" style="width: 100%;" class="menuSty" accordion>
+      <MenuItem name="0" @click.native="clickLeftMenuExplore">
+      <i class="icon font_family icon-tupian top"></i>
+      <span class="title">探索运掌柜</span>
+      </MenuItem>
       <Submenu name="1">
         <template slot="title">
           <i class="icon font_family icon-tupian"></i>
@@ -45,6 +49,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
+import TMSUrl from '@/libs/constant/url'
 export default {
   name: 'help',
   mixins: [ BasePage ],
@@ -105,9 +110,18 @@ export default {
       this.picContent = Object.assign({}, menu)
       this.type = 'pic'
     },
-    clickLeftMenuVideo (menu) {
-      this.videoContent = Object.assign({}, menu)
-      this.type = 'video'
+    // clickLeftMenuVideo (menu) {
+    //   this.videoContent = Object.assign({}, menu)
+    //   this.type = 'video'
+    // },
+    // 探索运掌柜
+    clickLeftMenuExplore () {
+      this.openTab({
+        path: TMSUrl.EXPLORE,
+        query: {
+          id: '探索运掌柜'
+        }
+      })
     }
   }
 }
@@ -166,6 +180,8 @@ export default {
   overflow: hidden;
   width: 20px;
   font-size: 19px;
+.icon-tupian.top
+  margin-top -6px
 .icon-shipin
   color: #418DF9;
   overflow: hidden;
