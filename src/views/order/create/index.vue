@@ -794,8 +794,6 @@ export default {
             // let end = getCityCode(orderForm.end)
             // 始发城市，目的城市，到达时间等需要额外处理
             let form = Object.assign({}, orderForm, {
-              // start: start,
-              // end: end,
               arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
               deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
               orderCargoList: orderCargoList.map(cargo => cargo.toJson()),
