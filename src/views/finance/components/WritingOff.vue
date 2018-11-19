@@ -4,9 +4,19 @@
     <div class="query-box">
       <Form :model="writingOffQuery" label-position="left" inline>
         <Row>
-          <Col span="6" style="margin-right: 50px">
+          <Col span="5" style="margin-right: 50px">
           <FormItem :label-width="65" :label="sceneMap[scene] + '：'">
-            <Input v-model="writingOffQuery.name" :placeholder="`请输入${sceneMap[scene]}名称`"/>
+            <Input v-model="writingOffQuery.name" :placeholder="`请输入${sceneMap[scene]}名称`" :maxlength="20"/>
+          </FormItem>
+          </Col>
+          <Col span="5" style="margin-right: 50px">
+          <FormItem :label-width="65" :label="orderNoMap[scene] + '：'">
+            <Input v-model="writingOffQuery.orderNo" :placeholder="`${orderNoPlaceholder[scene]}`" :maxlength="20"/>
+          </FormItem>
+          </Col>
+          <Col v-if="scene === 2" span="5" style="margin-right: 50px">
+          <FormItem :label-width="65" label="车牌号：">
+            <Input v-model="writingOffQuery.truckNo" :maxlength="15" placeholder="请输入车牌号"/>
           </FormItem>
           </Col>
           <Col span="2" style="margin-right: 10px">
@@ -16,12 +26,12 @@
             </Select>
           </FormItem>
           </Col>
-          <Col span="8" style="margin-right: 20px">
+          <Col span="4" style="margin-right: 20px">
           <FormItem>
             <DatePicker v-model="writingOffQuery.period" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width: 100%" />
           </FormItem>
           </Col>
-          <Col span="5">
+          <Col  :class="{ mediaClass : scene ===2}" span="5">
           <FormItem>
             <Button type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
             <Button type="default" @click="resetQuery">清除条件</Button>
@@ -71,6 +81,7 @@ import BaseComponent from '@/basic/BaseComponent'
 import Server from '@/libs/js/server'
 import FontIcon from '@/components/FontIcon'
 import Empty from './Empty.vue'
+import _ from 'lodash'
 export default {
   name: 'writingOff',
   components: {
@@ -92,6 +103,16 @@ export default {
         1: '发货方',
         2: '承运商',
         3: '外转方'
+      },
+      orderNoMap: {
+        1: '订单号',
+        2: '单据号',
+        3: '单据号'
+      },
+      orderNoPlaceholder: {
+        1: '请输入订单号',
+        2: '请输入运单/提货单号',
+        3: '请输外转单号/订单号'
       },
       orderNameMap: {
         1: '订单',
@@ -135,11 +156,15 @@ export default {
       writingOffQuery: {
         name: '',
         periodType: '1',
+        orderNo: '',
+        truckNo: '',
         period: []
       },
       writingOffQuerySave: {
         name: '',
         periodType: '1',
+        orderNo: '',
+        truckNo: '',
         period: []
       },
       periodTypeMap: {
@@ -340,7 +365,7 @@ export default {
     },
     startQuery () {
       this.orderData = []
-      this.writingOffQuerySave = this.writingOffQuery
+      this.writingOffQuerySave = _.cloneDeep(this.writingOffQuery)
       this.loadData()
     },
     resetQuery () {
@@ -378,7 +403,7 @@ export default {
             verifyType: 1,
             isOil: 0,
             scene: this.scene,
-            needPay: data.row.totalFeeText,
+            needPay: parseFloat(data.row.totalFeeText),
             settleTypeDesc: data.row.settleTypeDesc
           },
           methods: {
@@ -451,6 +476,8 @@ export default {
           partnerType: this.scene,
           partnerName: this.writingOffQuerySave.name,
           dayType: this.writingOffQuerySave.periodType,
+          orderNo: this.writingOffQuerySave.orderNo,
+          truckNo: this.writingOffQuerySave.truckNo,
           startTime: this.writingOffQuerySave.period[0] ? this.writingOffQuerySave.period[0].getTime() : '',
           endTime: this.writingOffQuerySave.period[1] ? this.writingOffQuerySave.period[1].getTime() + 86400000 : ''
         }
@@ -505,6 +532,9 @@ export default {
       /deep/ .ivu-form-item
         margin-bottom: 0
         width: 100%
+      .mediaClass
+        margin-left 65px
+        margin-top 22px
     .list-box
       display flex
       border-top 1px solid #E4E7EC

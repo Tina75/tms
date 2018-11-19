@@ -174,7 +174,7 @@ export default {
           scene: this.scene,
           verifyType: 3,
           isOil: 0,
-          needPay: data.row.totalFeeText
+          needPay: parseFloat(data.row.totalFeeText)
         },
         methods: {
           ok () {

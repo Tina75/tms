@@ -10,7 +10,8 @@
           <p><span class="writeOffFormFee">{{needPay}}</span>元</p>
         </FormItem>
         <FormItem :label="scene === 1 ? '实收金额：' : '实付金额：'" prop="actualFee">
-          <Input v-model="writeOffForm.actualFee" placeholder="请输入" />
+          <tagNumberInput v-model="writeOffForm.actualFee" placeholder="请输入"></tagNumberInput>
+          <!--<Input v-model="writeOffForm.actualFee" placeholder="请输入" />-->
         </FormItem>
         <FormItem label="付款方式：" prop="payType">
           <p v-if="isOil">油卡</p>
@@ -40,8 +41,12 @@
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import verifyMixin from '../mixins/verifyMixin.js'
+import tagNumberInput from '@/components/TagNumberInput'
 export default {
   name: 'writeOff',
+  components: {
+    tagNumberInput
+  },
   mixins: [BaseDialog, verifyMixin],
   data () {
     return {
@@ -59,6 +64,7 @@ export default {
     }
   },
   mounted () {
+    console.log(this.writeOffForm)
     if (this.isOil) {
       this.writeOffForm.payType = '5'
     }

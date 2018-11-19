@@ -24,7 +24,7 @@ export default {
       payTypeMap: verifyPayType,
       accountMap: verifyAccountType,
       writeOffForm: {
-        actualFee: '',
+        actualFee: undefined,
         payType: '2',
         account: '',
         bankBranch: '',
@@ -32,7 +32,7 @@ export default {
       },
       validate: {
         actualFee: [
-          { required: true, message: '请填写金额', trigger: 'blur' },
+          { required: true, message: '请填写金额', trigger: 'blur', type: 'number' },
           { pattern: /^(0|([1-9]\d{0,8}))([.]\d{1,2})?$/, message: '必须为不超过9位的正数，最多精确到两位小数', trigger: 'blur' }
         ],
         payType: { required: true, message: '请选择付款方式', trigger: 'change' },

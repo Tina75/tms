@@ -21,29 +21,30 @@
           </Select>
         </FormItem>
         <FormItem label="公里数:" prop="mileage" class="ivu-form-item-required blank">
-          <TagNumberInput :min="0" v-model="info.mileage" style="width:200px">
-            <span slot="suffix" class="order-create__input-suffix">公里</span>
+          <TagNumberInput :min="0" v-model="info.mileage" style="width:145px">
           </TagNumberInput>
+          <span class="unitSpan">公里</span>
         </FormItem>
         <FormItem label="外转运费:" prop="transFee">
           <div style="width:200px">
-            <TagNumberInput :min="0" v-model="info.transFee" style="width:165px">
-              <span slot="suffix" class="order-create__input-suffix">元</span>
+            <TagNumberInput :min="0" v-model="info.transFee" style="width:145px">
             </TagNumberInput>
-            <a @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1" style="font-size: 26px; vertical-align: middle; margin-left: 4px;"></i></a>
+            <span class="unitSpan">元</span>
+            <a @click.prevent="showChargeRules">
+              <FontIcon type="jisuanqi" size="22" color="#00a4bd" class="i-ml-5" style="vertical-align: middle;"></FontIcon>
+            </a>
           </div>
         </FormItem>
         <FormItem label="返现运费:" prop="cashBack" class="ivu-form-item-required blank">
-          <TagNumberInput v-model="info.cashBack" style="width:165px">
-            <span slot="suffix" class="order-create__input-suffix">元</span>
+          <TagNumberInput v-model="info.cashBack" style="width:145px">
           </TagNumberInput>
+          <span class="unitSpan">元</span>
           <span>
             <Tooltip
-              style="margin-left: 5px;"
               max-width="200"
               transfer
               content="返现运费是指在实际运输过程中存在某一段运输没有执行，需要将提前支付的运费返还">
-              <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;" />
+              <Icon type="ios-alert" class="ios-alert" />
             </Tooltip>
           </span>
         </FormItem>
@@ -67,13 +68,15 @@ import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '../components/SelectInput.vue'
 import TagNumberInput from '@/components/TagNumberInput'
 import payType from '@/libs/constant/settlement'
+import FontIcon from '@/components/FontIcon'
 
 export default {
   name: 'outer',
 
   components: {
     SelectInput,
-    TagNumberInput
+    TagNumberInput,
+    FontIcon
   },
 
   mixins: [ BaseDialog ],
@@ -226,4 +229,10 @@ export default {
 .blank
   /deep/ .ivu-form-item-label:before
     visibility: hidden
+.unitSpan
+  margin-left 5px
+.ios-alert
+  font-size 20px
+  color #FFBB44
+  margin -3px 0 0 5px
 </style>
