@@ -12,11 +12,13 @@ const openPhotoSwipe = (index = 0, items, options = {}) => {
   let SwipeInstance = new Vue({
     mixins: [SwipeComponent]
   })
-
+  options.history = false
+  options.focus = false
   let component = SwipeInstance.$mount()
   document.body.appendChild(component.$el)
   const photoSwipeOptions = {
-    index
+    index,
+    ...options
   }
   const gallery = new PhotoSwipe(
     component.$el.children[0],
