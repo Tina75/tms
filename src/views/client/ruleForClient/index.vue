@@ -42,7 +42,7 @@
             <Form ref="ruleBasic" :model="ruleDetail" :rules="basicValidate" inline>
               <span>按</span>
               <FormItem prop="ruleType" style="width: 100px">
-                <Select v-model="ruleDetail.ruleType">
+                <Select v-model="ruleDetail.ruleType" @on-change="ruleTypeChange">
                   <Option v-for="(value, key) in ruleTypeMap" v-if="((active === '1' || active ==='3') && (key ==='3' || key === '4')) || key ==='1' || key ==='2'" :key="key" :value="key">{{value}}</Option>
                 </Select>
               </FormItem>
@@ -77,13 +77,15 @@
                         </FormItem>
                         <span style="margin:0 10px">：货物  ＜</span>
                         <FormItem prop="startNum" inline style="margin-bottom: 0;">
-                          <Input v-model="item.startNum" style="width: 80px" @on-change="setItemStartNum(item)"/>
+                          <!--<Input v-model="item.startNum" style="width: 80px" @on-change="setItemStartNum(item)"/>-->
+                          <TagNumberInput v-model="item.startNum" :show-chinese="false" :precision="precision" style="width: 80px" @on-change="setItemStartNum(item)"></TagNumberInput>
                         </FormItem>
                         <span>{{unitMap[ruleDetail.ruleType]}}，</span>
                         <!--起步价 startType 1-->
                         <div v-if="item.startType === '1'" style="display: inline-block">
                           <FormItem prop="startPrice" inline style="margin-bottom: 0;">
-                            <Input v-model="item.startPrice" style="width: 80px"/>
+                            <!--<Input v-model="item.startPrice" style="width: 80px"/>-->
+                            <TagNumberInput v-model="item.startPrice" :show-chinese="false"  style="width: 80px"></TagNumberInput>
                           </FormItem>
                           <span>元起</span>
                         </div>
@@ -110,7 +112,8 @@
                           <span style="margin-left: 5px">≥</span>
                           <Form ref="ruleBase" :model="el" :rules="baseValidate" style="display: inline-block" inline>
                             <FormItem prop="baseAndStart" inline style="margin-bottom: 0">
-                              <Input v-model="el.base" @on-change="setElStartNum(item, el)"/>
+                              <!--<Input v-model="el.base" @on-change="setElStartNum(item, el)"/>-->
+                              <TagNumberInput v-model="el.base" :precision="precision" :show-chinese="false" @on-change="setElStartNum(item, el)"></TagNumberInput>
                             </FormItem>
                             <span>{{unitMap[ruleDetail.ruleType]}}</span>
                           </Form>
@@ -120,7 +123,8 @@
                           <span style="margin-left: 5px">=</span>
                           <Form ref="rulePrice" :model="el" :rules="priceValidate" style="display: inline-block" inline>
                             <FormItem prop="price" inline style="margin-bottom: 0">
-                              <Input v-model="el.price" />
+                              <!--<Input v-model="el.price" />-->
+                              <TagNumberInput v-model="el.price" :show-chinese="false"></TagNumberInput>
                             </FormItem>
                             <span>元/{{valueMap[ruleDetail.ruleType]}}</span>
                           </Form>
@@ -156,10 +160,11 @@ import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import SelectInputForCity from '@/components/SelectInputForCity'
 import FontIcon from '@/components/FontIcon'
+import TagNumberInput from '@/components/TagNumberInput'
 import mixin from './mixin'
 export default {
   name: 'rule-index',
-  components: { SelectInputForCity, FontIcon },
+  components: { SelectInputForCity, FontIcon, TagNumberInput },
   mixins: [ BasePage, mixin ],
   props: {
     /* 合作方类型
