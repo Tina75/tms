@@ -459,8 +459,8 @@ export default {
     loadData () {
       Server({
         url: '/finance/getUnverify',
-        method: 'get',
-        params: {
+        method: 'post',
+        data: {
           partnerType: this.scene,
           partnerName: this.writingOffQuerySave.name,
           dayType: this.writingOffQuerySave.periodType,
