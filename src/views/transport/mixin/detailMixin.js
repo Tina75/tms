@@ -3,9 +3,9 @@
  */
 
 import _ from 'lodash'
-import Server from '@/libs/js/server'
 import Float from '@/libs/js/float'
 import { CAR } from '@/views/client/client'
+import { mapActions } from 'vuex'
 
 export default {
   data () {
@@ -124,6 +124,8 @@ export default {
   },
 
   methods: {
+    ...mapActions([ 'getCargoDetail' ]),
+
     // 根据状态设置按钮
     setBtnsWithStatus () {
       for (let i = 0; i < this.btnList.length; i++) {
@@ -151,24 +153,16 @@ export default {
         },
         methods: {
           confirm (ids) {
-            self.fetchOrderDetail(ids)
+            // 查询货物详情
+            self.getCargoDetail(ids).then(list => {
+              console.log(list)
+              list.forEach(item => {
+                self.detail.push(item)
+              })
+            })
           }
         }
       })
-    },
-
-    // 查询订单详情
-    fetchOrderDetail (ids) {
-      if (!ids.length) return
-      Server({
-        url: '/order/cargo/detail',
-        method: 'post',
-        data: { orderIds: ids }
-      }).then(res => {
-        res.data.data.cargoList.forEach(item => {
-          this.detail.push(item)
-        })
-      }).catch(err => console.error(err))
     },
 
     // 设置金额单位为元
