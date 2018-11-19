@@ -8,7 +8,7 @@
       <p class="askLabel">若有任何疑问，请联系您的专属客户经理哦~</P>
     </div>
     <Steps :current="4" class="stepDiv">
-      <step v-for="btnItem in stepList" :key="btnItem.id">
+      <step v-for="btnItem in stepList" :key="btnItem.id" icon="md-radio-button-on">
         <div class="ivu-steps-content">
           <div class="configDiv">
             <label class="configlabel">{{btnItem.name}}</label><br/>
