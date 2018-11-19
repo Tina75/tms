@@ -30,7 +30,7 @@
       </Row>
       <Alert v-if="notice.content" type="warning" class="page-home__header-notice" banner closable show-icon @on-close="closeNotice">
         <span :class="{'page-home__noticeBar__Pointer': notice.url}" class="page-home__noticeBar" @click="hrefHandle">
-          <TextMarquee :content="notice.content" :speed="30"/>
+          <TextMarquee :content="notice.content"/>
         </span>
         <FontIcon slot="icon" type="tongzhi-paomadeng" size="20" style="vertical-align: middle; color: #00A4BD"></FontIcon>
         <FontIcon slot="close" type="ico-fault" style="color: #9DA1B0"></FontIcon>
