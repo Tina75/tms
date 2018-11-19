@@ -1,7 +1,7 @@
 <template>
   <Row class="temAll">
     <Col :style="styleHeight" span="4">
-    <Menu :open-names="['1']" style="width: 100%;" class="menuSty" accordion>
+    <Menu :active-name="descover" :open-names="['1']" style="width: 100%;" class="menuSty" accordion>
       <MenuItem name="0" @click.native="clickLeftMenuExplore">
       <i class="icon font_family icon-ico-discovery"></i>
       <span class="title">探索运掌柜</span>
@@ -41,7 +41,7 @@
           您的浏览器不支持 video 标签。
         </video>
       </div> -->
-      <div v-if="'explore' === this.type">
+      <div v-if="'descover' === this.type">
         <Explore></Explore>
       </div>
     </Card>
@@ -70,7 +70,8 @@ export default {
       videoMenu: [],
       picContent: {},
       videoContent: {},
-      type: 'pic'
+      type: 'pic',
+      descover: null
     }
   },
   computed: {
@@ -82,6 +83,8 @@ export default {
     }
   },
   mounted: function () {
+    this.descover = this.$route.query.descover
+    if (this.descover) this.type = 'descover'
     this.getMenuList()
   },
   methods: {
@@ -124,7 +127,7 @@ export default {
     // },
     // 探索运掌柜
     clickLeftMenuExplore () {
-      this.type = 'explore'
+      this.type = 'descover'
     }
   }
 }

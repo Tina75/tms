@@ -44,7 +44,7 @@ export default {
         }
       }).then((response) => {
         // 承运商车辆信息
-        const carrierCars = response.data.data.carList
+        const carrierCars = response.data.data.list
         commit(types.RECEIVE_CARRIER_CAR_LIST, carrierCars)
         resolve(carrierCars)
       }).catch((error) => {

@@ -88,7 +88,7 @@ export default {
         method: 'get',
         data: { type: 1 }
       }).then(res => {
-        this.options = res.data.data.carrierList.map(item => {
+        this.options = res.data.data.list.map(item => {
           item.name = item.carrierName
           item.value = item.carrierName
           return item
@@ -124,7 +124,7 @@ export default {
         method: 'get',
         data: { carrierId: this.carrierId }
       }).then(res => {
-        this.options = res.data.data.carList.map(item => {
+        this.options = res.data.data.list.map(item => {
           item.name = item.carNO
           item.value = item.carNO
           item.carNo = item.carNO

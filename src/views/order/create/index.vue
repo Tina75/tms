@@ -245,6 +245,7 @@
       <Button v-if="hasPower(100101)" :disabled="disabled" type="primary" @click="handleSubmit">保存</Button>
       <Button v-if="hasPower(100102)" :disabled="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
+      <Button class="i-ml-10" @click="shipImmedite">立即发运</Button>
     </div>
     <OrderPrint ref="printer" :list="orderPrint">
     </OrderPrint>
@@ -793,8 +794,6 @@ export default {
             // let end = getCityCode(orderForm.end)
             // 始发城市，目的城市，到达时间等需要额外处理
             let form = Object.assign({}, orderForm, {
-              // start: start,
-              // end: end,
               arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
               deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
               orderCargoList: orderCargoList.map(cargo => cargo.toJson()),
@@ -928,6 +927,141 @@ export default {
           const num = float.floor(res / 1000, 1)
           this.orderForm.mileage = Number(num)
         }
+      })
+    },
+    // 立即发运
+    shipImmedite (e = 'orderCreate') {
+      const self = this
+      this.validateForm().then(form => {
+        if (form.pickup === 1) {
+          // 小车上门 提货权限
+          if (this.hasPower(120201)) {
+            this.openDialog({
+              name: 'transport/dialog/action',
+              data: {
+                type: 'pickUp',
+                actionOrigin: 'orderCreate'
+              },
+              methods: {
+                complete (data) {
+                  const param = {
+                    createOrder: form,
+                    createLoadbill: {},
+                    loadbillPickup: data
+                  }
+                  api.immediShip(param).then(res => {
+                    if (!form.id) {
+                      this.$Message.success('创建订单成功')
+                    } else {
+                      this.$Message.success('修改订单成功')
+                    }
+                    self.resetForm()
+                    // 重新获取客户列表
+                    self.getClients()
+                  })
+                }
+              }
+            })
+          } else {
+            this.openDialog({
+              name: 'order/create/components/OrderTip',
+              data: {
+                tipMsg: '提货管理'
+              }
+            })
+          }
+        } else if (form.pickup === 2) {
+          // 大车直送 派车权限
+          if (this.hasPower(120101)) {
+            this.openDialog({
+              name: 'transport/dialog/action',
+              data: {
+                type: 'sendCar',
+                actionOrigin: 'orderCreate'
+              },
+              methods: {
+                complete (data) {
+                  const param = {
+                    createOrder: form,
+                    createWaybill: {},
+                    waybillAssignVehicle: data
+                  }
+                  param.waybillAssignVehicle.cashBack = param.waybillAssignVehicle.cashBack || null
+                  api.immediShip(param).then(res => {
+                    if (!form.id) {
+                      this.$Message.success('创建订单成功')
+                    } else {
+                      this.$Message.success('修改订单成功')
+                    }
+                    self.resetForm()
+                    // 重新获取客户列表
+                    self.getClients()
+                  })
+                }
+              }
+            })
+          } else {
+            this.openDialog({
+              name: 'order/create/components/OrderTip',
+              data: {
+                tipMsg: '送货管理'
+              }
+            })
+          }
+        }
+      })
+    },
+    validateForm () {
+      const vm = this
+      // vm.disabled = true
+      return new Promise((resolve, reject) => {
+        vm.$refs.orderForm.validate((valid) => {
+          if (valid) {
+            const orderCargoList = vm.consignerCargoes
+            const orderForm = vm.orderForm
+            let findError = null
+            // 校验货物信息
+            for (let index in orderCargoList) {
+              let cargo = orderCargoList[index]
+              let info = cargo.validate()
+              if (!info.success) {
+                findError = info.message
+                break
+              }
+            }
+            if (findError) {
+              vm.$Message.error(findError)
+              // vm.disabled = false
+              reject(new Error(findError.message))
+              return
+            }
+            let form = Object.assign({}, orderForm, {
+              arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
+              deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
+              orderCargoList: orderCargoList.map(cargo => cargo.toJson()),
+              mileage: orderForm.mileage * 1000
+            });
+
+            ['start', 'end'].forEach(field => {
+              form[field] = parseInt(form[field])
+              // 保存本地记录
+              vm.$refs['start'].saveCity(form[field])
+            })
+            // 转换成分单位
+            transferFeeList.forEach((fee) => {
+              form[fee] = form[fee] ? form[fee] * 100 : 0
+            })
+            resolve(form)
+          } else {
+            // vm.disabled = false
+            // 主动滚动到顶部
+            if (vm.orderForm.pickup) {
+              vm.$parent.$el.scrollTop = 0
+            }
+            vm.$Message.error('请填写必填信息')
+            reject(new Error('请填写必填信息'))
+          }
+        })
       })
     }
   }

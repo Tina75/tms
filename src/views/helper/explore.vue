@@ -8,7 +8,7 @@
       <p class="askLabel">若有任何疑问，请联系您的专属客户经理哦~</P>
     </div>
     <Steps :current="4" class="stepDiv">
-      <step v-for="btnItem in stepList" :key="btnItem.id">
+      <step v-for="btnItem in stepList" :key="btnItem.id" icon="md-radio-button-on">
         <div class="ivu-steps-content">
           <div class="configDiv">
             <label class="configlabel">{{btnItem.name}}</label><br/>
@@ -31,11 +31,9 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
+import TMSUrl from '@/libs/constant/url.js'
 export default {
   name: 'explore',
-  components: {
-    Server
-  },
   mixins: [ BasePage ],
   metaInfo: {
     title: '探索运掌柜'
@@ -48,71 +46,7 @@ export default {
       btnNum: 0,
       circleBtnClicked: 'circleBtnClicked',
       circleBtn: 'circleBtn',
-      stepBtnList: [
-        {
-          'id': 206,
-          'name': '首次点击',
-          'code': '100001',
-          'role': 1,
-          'click': 0
-        },
-        {
-          'id': 207,
-          'name': '查看业务流程',
-          'code': '100002',
-          'role': 1,
-          'click': 0
-        },
-        {
-          'id': 208,
-          'name': '配置角色权限',
-          'code': '140100',
-          'role': 1,
-          'click': 0
-        },
-        {
-          'id': 209,
-          'name': '新增员工账号',
-          'code': '140200',
-          'role': 1,
-          'click': 0
-        },
-        {
-          'id': 210,
-          'name': '新增发货方',
-          'code': '130100',
-          'role': 1,
-          'click': 0
-        },
-        {
-          'id': 211,
-          'name': '新增承运商',
-          'code': '130200',
-          'role': 1,
-          'click': 0
-        },
-        {
-          'id': 212,
-          'name': '新增外转方',
-          'code': '130300',
-          'role': 1,
-          'click': 1
-        },
-        {
-          'id': 213,
-          'name': '批量导入',
-          'code': '100200',
-          'role': 1,
-          'click': 0
-        },
-        {
-          'id': 214,
-          'name': '手工开单',
-          'code': '100100',
-          'role': 1,
-          'click': 0
-        }
-      ]
+      stepBtnList: []
     }
   },
   computed: {
@@ -121,35 +55,73 @@ export default {
     }
   },
   mounted () {
-    // this.getBtnList()
-    this.isPreview()
-    this.setGroupBtn()
-    this.percentNumber()
+    this.getBtnList()
   },
   methods: {
-    // 是否第一次浏览探索运掌柜
-    isPreview () {
-      const btn = this.stepBtnList.find(b => b.code === '100001' && b.click !== 1)
-      if (btn) {
-        this.previewed(btn.id, 'first')
-      }
-    },
-    previewed (id, first) {
+    previewed (id) {
       const btn = this.stepBtnList.find(b => b.id === id && b.click !== 1)
-      if (!first && btn) {
-        this.btnClickedNum++
-      }
       if (btn) {
-        btn.click = 1
-        // let params = {}
-        // params.id = id
-        // Server({
-        //   url: '/discover/look',
-        //   method: 'get',
-        //   data: params
-        // }).then(({ data }) => {
-        //   console.table(data)
-        // })
+        let params = {}
+        params.id = id
+        Server({
+          url: '/discover/look',
+          method: 'post',
+          data: params
+        }).then(({ data }) => {
+          this.btnClickedNum++
+          btn.click = 1
+        })
+      }
+      // 根据id打开具体tab页面
+      switch (id) {
+        case 207:
+          this.openTab({
+            path: TMSUrl.PROCESS,
+            query: { id: '业务流程' }
+          })
+          break
+        case 208:
+          this.openTab({
+            path: TMSUrl.EMPLOYEE_MANAGEMENT,
+            query: { id: '角色管理' }
+          })
+          break
+        case 209:
+          this.openTab({
+            path: TMSUrl.STAFF_MANAGEMENT,
+            query: { id: '员工管理' }
+          })
+          break
+        case 210:
+          this.openTab({
+            path: TMSUrl.SENDER_MANAGEMENT,
+            query: { id: '发货方管理' }
+          })
+          break
+        case 211:
+          this.openTab({
+            path: TMSUrl.CARRIER_MANAGEMENT,
+            query: { id: '承运商管理' }
+          })
+          break
+        case 212:
+          this.openTab({
+            path: TMSUrl.TRANSFER_MANAGEMENT,
+            query: { id: '外转方管理' }
+          })
+          break
+        case 213:
+          this.openTab({
+            path: TMSUrl.IMPORT_ORDER,
+            query: { id: '批量导入' }
+          })
+          break
+        case 214:
+          this.openTab({
+            path: TMSUrl.CREATE_ORDER,
+            query: { id: '手工开单' }
+          })
+          break
       }
     },
     // 获取按钮集合（后端接口传入9个按钮，第一个在第一次进入页面标记作用）
@@ -158,10 +130,13 @@ export default {
         url: '/discover/list',
         method: 'get'
       }).then(({ data }) => {
-        console.table(data)
-        // this.stepBtnList = data.data.list
+        this.stepBtnList = data.data
+      }).then(() => {
+        this.setGroupBtn()
+        this.percentNumber()
       })
     },
+    // 获取百分比分子分母
     percentNumber () {
       this.stepBtnList.forEach(element => {
         if (element.click === 1 && element.role === 1 && element.code !== '100001') this.btnClickedNum++

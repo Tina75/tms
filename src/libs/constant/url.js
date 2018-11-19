@@ -39,7 +39,6 @@ const TMSUrl = {
   MESSAGE_CENTER: '/information/index', // 消息中心
   MESSAGE_DETAIL: '/information/message-info', // 消息详情
   PROCESS: '/helper/process', // 业务流程
-  HELP: '/helper/index', // 帮助中心
-  EXPLORE: '/helper/explore' // 探索运掌柜
+  HELP: '/helper/index' // 帮助中心
 }
 export default TMSUrl
