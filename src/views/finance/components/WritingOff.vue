@@ -358,6 +358,8 @@ export default {
       this.writingOffQuery = {
         name: '',
         periodType: '1',
+        orderNo: '',
+        truckNo: '',
         period: []
       }
       this.startQuery()
