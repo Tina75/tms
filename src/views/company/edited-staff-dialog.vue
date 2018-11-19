@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visiable" :mask-closable="false" width="400" @on-visible-change="close">
+    <Modal v-model="visiable" :mask-closable="false" transfer width="400" @on-visible-change="close">
       <p slot="header" class="ModalTitle">
         <span>{{title}}</span>
       </p>
@@ -12,7 +12,7 @@
           <Input v-model="formModal.phone" maxlength="11" placeholder="请输入手机号" class="inputClass"></Input>
         </FormItem>
         <FormItem label="角色：" prop="roleId">
-          <Select v-model="formModal.roleId" clearable class="inputClass">
+          <Select v-model="formModal.roleId" transfer clearable class="inputClass">
             <Option
               v-for="item in selectList"
               :value="item.id"

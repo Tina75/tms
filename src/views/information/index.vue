@@ -27,7 +27,7 @@
               class="checkBoxBtn"
               @click.prevent.native="handleCheckAll">
             <span class="checkBoxMessage">全选</span></Checkbox>
-            <div v-if="this.sysMessageList.length === 0" class="noneImg">
+            <div v-if="this.sysMessageList.length === 0" style="flex-direction: column; -ms-flex-direction: column;" class="noneImg">
               <img src="./noneInfo.png"/>
               <p>暂无消息</p>
             </div>
@@ -64,7 +64,7 @@
               class="checkBoxBtn"
               @click.prevent.native="handleCheckAll">
             <span class="checkBoxMessage">全选</span></Checkbox>
-            <div v-if="this.orderMessageList.length === 0" class="noneImg">
+            <div v-if="this.orderMessageList.length === 0" style="flex-direction: column; -ms-flex-direction: column;" class="noneImg">
               <img src="./noneInfo.png"/>
               <p>暂无消息</p>
             </div>
@@ -98,7 +98,7 @@
               class="checkBoxBtn"
               @click.prevent.native="handleCheckAll">
             <span class="checkBoxMessage">全选</span></Checkbox>
-            <div v-if="this.transportMessageList.length === 0" class="noneImg">
+            <div v-if="this.transportMessageList.length === 0" style="flex-direction: column; -ms-flex-direction: column;" class="noneImg">
               <img src="./noneInfo.png"/>
               <p>暂无消息</p>
             </div>
@@ -121,40 +121,40 @@
           </div>
             </Col>
         </div>
-        <Modal v-model="visibaleRemove" type="warning" width="360">
+        <Modal v-model="visibaleRemove" transfer type="warning" width="360">
           <p slot="header" class="modalTitle">
             <span>提示</span>
           </p>
           <p>
             <i class="icon font_family icon-bangzhuzhongxin"></i>
-          </p><p class="modalMessage">确定要删除“{{messageInit.title}}”消息吗?</P>
-            </p>
+          </p>
+          <p class="modalMessage">确定要删除“{{messageInit.title}}”消息吗?</p>
           <div slot="footer">
             <Button type="primary" @click="removeSubForm">确定</Button>
             <Button  @click="removeCancelForm">取消</Button>
           </div>
         </Modal>
-        <Modal v-model="visibaleRemoveSome" type="warning" width="360">
+        <Modal v-model="visibaleRemoveSome" transfer type="warning" width="360">
           <p slot="header" class="modalTitle">
             <span>提示</span>
           </p>
           <p>
             <i class="icon font_family icon-bangzhuzhongxin"></i>
-          </p><p class="modalMessage">确定要批量删除选中的消息吗?</P>
-            </p>
+          </p>
+          <p class="modalMessage">确定要批量删除选中的消息吗?</p>
           <div slot="footer">
             <Button type="primary" @click="removeSubFormSome">确定</Button>
             <Button  @click="removeCancelFormSome">取消</Button>
           </div>
         </Modal>
-        <Modal v-model="visibaleRemoveAll" type="warning" width="360">
+        <Modal v-model="visibaleRemoveAll" transfer type="warning" width="360">
           <p slot="header" class="modalTitle">
             <span>提示</span>
           </p>
           <p>
             <i class="icon font_family icon-bangzhuzhongxin"></i>
-          </p><p class="modalMessage">确定要删除所有的“{{rightTitle}}”?</P>
-            </p>
+          </p>
+          <p class="modalMessage">确定要删除所有的“{{rightTitle}}”?</p>
           <div slot="footer">
             <Button type="primary" @click="removeSubFormAll">确定</Button>
             <Button  @click="removeCancelFormAll">取消</Button>
@@ -526,9 +526,12 @@ export default {
   float: right;
 .noneImg
   display flex
+  display -ms-flexbox
   flex-direction column
   justify-content center
+  -ms-flex-pack center
   align-items center
+  -ms-flex-align center
   margin-top: 112px;
   text-align: center;
   color: #999999;

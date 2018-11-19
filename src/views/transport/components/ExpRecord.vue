@@ -35,11 +35,11 @@
         </i-col>
       </Row>
       <div :class="{'except-record-list-hide': hideDetail}" class="except-record-list-show">
-        <div style="display: flex; margin-bottom: 10px; margin-top: 10px">
+        <div class="exception-distribution">
           <label class="label-bar">异常描述：</label>
           <span class="flexBox colorGrey">{{data.abnormalDesc}}</span>
         </div>
-        <div style="display: flex; margin-bottom: 10px; margin-top: 10px">
+        <div class="exception-distribution">
           <label class="label-bar">图片：</label>
           <div class="flexBox">
             <span v-for="(item, index) in data.fileUrls"
@@ -50,7 +50,7 @@
           </div>
         </div>
         <Row class="mgbt20">
-          <i-col span="12" style="display: flex">
+          <i-col span="12" class="handle-info">
             <label class="label-bar wigtFont">修改前运费：</label>
             <div class="flex-bar">
               <Row v-if="billType != 2">
@@ -90,7 +90,7 @@
                 width="350"></Table>
             </div>
           </i-col>
-          <i-col span="12" style="display: flex">
+          <i-col span="12" class="handle-info">
             <label class="label-bar wigtFont">修改后运费：</label>
             <div class="flex-bar">
               <Row v-if="billType != 2">
@@ -131,13 +131,13 @@
             </div>
           </i-col>
         </Row>
-        <div class="mgbt20" style="display: flex">
+        <div class="mgbt20 handle-info">
           <label class="label-bar">处理备注：</label>
           <span class="flexBox colorGrey">{{data.disposeDesc}}</span>
         </div>
       </div>
     </div>
-    <Modal v-model="visible" title="查看图片">
+    <Modal v-model="visible" transfer title="查看图片">
       <img :src="curImg" style="width: 100%">
       <div slot="footer" style="text-align: center;"></div>
     </Modal>
@@ -349,6 +349,11 @@ export default {
     border-top 1px solid #d4d5dc
     &-hide
       display none
+      .exception-distribution
+        display: flex;
+        display -ms-flexbox
+        margin-bottom: 10px;
+        margin-top: 10px
       .mgbt20
         margin-bottom 35px
   .img-bar
@@ -370,6 +375,7 @@ export default {
   .flex-bar
     display inline-block
     flex 1
+    -ms-flex 1
     .ivu-col
       margin-bottom  10px
   .mgbt20
@@ -380,6 +386,7 @@ export default {
   .flexBox
     display inline-block
     flex 1
+    -ms-flex 1
   .wigtFont
     font-weight 600
     color #333
@@ -391,4 +398,7 @@ export default {
   .feeLabel
     display inline-block
     width 70px
+  .handle-info
+    display: flex
+    display -ms-flexbox
 </style>

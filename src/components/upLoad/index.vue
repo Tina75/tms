@@ -97,7 +97,7 @@
         </div>
       </div>
     </div>
-    <Modal v-model="visible" title="查看图片">
+    <Modal v-model="visible" transfer title="查看图片">
       <img v-if="multiple" :src="curImg" style="width: 100%">
       <img v-else :src="uploadImg" style="width: 100%">
       <div slot="footer" style="text-align: center;"></div>
@@ -343,8 +343,11 @@ export default {
   background rgba(0,0,0,.6)
 .demo-upload-list:hover .demo-upload-list-cover
   display flex
+  display: -ms-flexbox
   justify-content space-evenly
+  -ms-flex-pack justify
   align-items center
+  -ms-flex-align center
   line-height 2
 .demo-upload-list-cover i
   color #fff

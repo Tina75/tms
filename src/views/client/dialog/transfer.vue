@@ -2,6 +2,7 @@
   <Modal
     v-model="visiable"
     :mask-closable="false"
+    transfer
     label-position="left"
     class="modal"
     @on-visible-change="close"
@@ -21,7 +22,7 @@
         <AreaInput v-model="validate.companyAddress" :maxlength="60" placeholder="请输入" @latlongt-change="latlongtChange"/>
       </FormItem>
       <FormItem label="支付方式:" class="ivu-form-item-required blank">
-        <Select v-model="validate.payType" placeholder="请输入" clearable>
+        <Select v-model="validate.payType" placeholder="请输入" transfer clearable>
           <Option value="1">现付</Option>
           <Option value="2">到付</Option>
           <Option value="3">回单付</Option>

@@ -27,7 +27,7 @@
         <Row>
           <Col span="13">
           <FormItem prop="deliveryTime">
-            <DatePicker v-model="orderForm.deliveryTime" :options="startDateOptions" style="width: 100%" format="yyyy-MM-dd" type="date" placeholder="请选择日期" @on-change="(date) => { dateChange('START_DATE', date)}"></DatePicker>
+            <DatePicker v-model="orderForm.deliveryTime" :options="startDateOptions" transfer style="width: 100%" format="yyyy-MM-dd" type="date" placeholder="请选择日期" @on-change="(date) => { dateChange('START_DATE', date)}"></DatePicker>
           </FormItem>
           </Col>
           <Col span="11" style="padding-left: 5px">
@@ -43,7 +43,7 @@
         <Row>
           <Col span="13">
           <FormItem prop="arriveTime">
-            <DatePicker v-model="orderForm.arriveTime" :options="endDateOptions" style="width: 100%" format="yyyy-MM-dd" type="date" placeholder="请选择日期"  @on-change="(date) => { dateChange('END_DATE', date)}"></DatePicker>
+            <DatePicker v-model="orderForm.arriveTime" :options="endDateOptions" transfer style="width: 100%" format="yyyy-MM-dd" type="date" placeholder="请选择日期"  @on-change="(date) => { dateChange('END_DATE', date)}"></DatePicker>
           </FormItem>
           </Col>
           <Col span="11" style="padding-left: 5px">

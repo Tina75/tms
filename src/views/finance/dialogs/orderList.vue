@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="true" width="880" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="true" transfer width="880" @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">对账单明细</p>
     <div class="order-list">
       <Row>

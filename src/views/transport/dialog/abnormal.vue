@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="show" :mask-closable="false" class="transport-detail" width="980"  @on-visible-change="close">
+  <Modal v-model="show" :mask-closable="false" transfer class="transport-detail" width="980"  @on-visible-change="close">
     <p slot="header" style="text-align:center">
       上报异常
     </p>
@@ -22,13 +22,13 @@
       <Row class="detail-field-group" style="margin-bottom: 10px">
         <i-col span="7" style="margin-right: 15px;">
           <span class="detail-field-title-sm detail-field-required">异常环节：</span>
-          <Select v-model="abnormalTiming" style="width:160px" @on-change="handleChangeLinks">
+          <Select v-model="abnormalTiming" style="width:160px" transfer @on-change="handleChangeLinks">
             <Option v-for="item in abnormalTimings" :value="item.abnormalTiming" :key="item.abnormalTiming">{{ item.abnormalTimingDesc }}</Option>
           </Select>
         </i-col>
         <i-col span="7" style="margin-right: 15px;">
           <span class="detail-field-title-sm detail-field-required">异常类型：</span>
-          <Select v-model="abnormalTypeCode" style="width:160px">
+          <Select v-model="abnormalTypeCode" style="width:160px" transfer>
             <Option v-for="item in abnormalTypeCodes" :value="item.abnormalTypeCode" :key="item.abnormalTypeCode">{{ item.abnormalTypeDesc }}</Option>
           </Select>
         </i-col>
@@ -98,7 +98,7 @@
                mode="edit" />
 
       <Row class="detail-field-group" style="margin: 25px 0 10px;">
-        <i-col span="24" style="display: flex;">
+        <i-col span="24" class="exception-distribution">
           <span class="detail-field-title-sm" style="vertical-align: unset;padding-left: 8px;width: 90px;line-height: 1.6;">异常描述：</span>
           <!-- <Input :autosize="{minRows: 3, maxRows: 5}" :maxlength="500" type="textarea"></Input> -->
           <div style="width: 100%;">
@@ -109,7 +109,7 @@
       </Row>
 
       <Row class="detail-field-group" style="margin-bottom: 10px">
-        <i-col span="24" style="display: flex;">
+        <i-col span="24" class="exception-distribution">
           <span class="detail-field-title-sm" style="vertical-align: unset;padding-left: 8px;width: 90px;line-height: 1.6;">图片上传：</span>
           <div style="width: 100%;">
             <up-load ref="upLoads" :multiple="true" max-size="10"></up-load>
@@ -580,8 +580,11 @@ export default {
       width calc(100% - 100px) !important
     .row-fee
       display flex
+      display: -ms-flexbox;
       justify-content space-between
+      -ms-flex-pack justify
       align-items center
+      -ms-flex-align center
       margin-bottom 10px
     .waizhuan-label
       .ivu-form-item-label
@@ -599,6 +602,9 @@ export default {
       vertical-align top
       .ivu-radio
         margin-right 16px
+  .exception-distribution
+    display: flex
+    display: -ms-flexbox
 </style>
 <style lang='stylus' scoped>
   .err-message

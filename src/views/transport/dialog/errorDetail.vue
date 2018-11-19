@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="show" :mask-closable="false" @on-visible-change="close">
+  <Modal v-model="show" :mask-closable="false" transfer @on-visible-change="close">
     <p slot="header" style="text-align:center">
       处理异常
     </p>

@@ -1,5 +1,5 @@
 <template>
-  <div class="data-empty">
+  <div style="flex-direction: column; -ms-flex-direction: column;" class="data-empty">
     <img src="../../../assets/img-empty.png" class="data-empty-img">
     <p><slot></slot></p>
   </div>
@@ -14,9 +14,11 @@ export default {
 <style lang="stylus" scoped>
 .data-empty
   display flex
-  flex-direction column
+  display -ms-flexbox
   justify-content center
+  -ms-flex-pack center
   align-items center
+  -ms-flex-align center
   margin-top 200px
   /*min-height 416px*/
   .data-empty-img

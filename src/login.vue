@@ -2,7 +2,7 @@
   <div id="app" class="login">
     <header class="login-header">
       <i class="icon font_family icon-logo-p"></i>
-      <div class="login-header-tel">
+      <div style="flex-direction: column; -ms-flex-direction: column;" class="login-header-tel">
         <p>025-66606056</p>
         <p>客服电话</p>
       </div>
@@ -86,6 +86,7 @@ export default {
 
       &-tel
         flex none
+        -ms-flex none
         flex-direction column
         color #00A4BD
 

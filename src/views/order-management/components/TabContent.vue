@@ -5,7 +5,7 @@
         <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
       </div>
       <div v-if="simpleSearch" class="order-right">
-        <Select v-model="selectStatus" class="order-simple-select" style="width:120px;margin-top: 1px;margin-right: 11px" @on-change="handleChangeSearchStatus">
+        <Select v-model="selectStatus" class="order-simple-select" transfer style="width:120px;margin-top: 1px;margin-right: 11px" @on-change="handleChangeSearchStatus">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
         <SelectInput
@@ -57,7 +57,7 @@
         <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户单号" style="width: 200px" />
         <Input v-if="source !== 'transport'" v-model="keywords.waybillNo" :maxlength="30" placeholder="请输入运单号" style="width: 200px" />
       </div>
-      <div style="display: flex;justify-content: space-between;">
+      <div class="complex-query">
         <div>
           <!-- <area-select v-model="cityCodes.startCodes" :deep="true" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
           <area-select v-model="cityCodes.endCodes" :deep="true" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select> -->
@@ -66,6 +66,7 @@
           <DatePicker
             :options="timeOption"
             v-model="times"
+            transfer
             type="daterange"
             format="yyyy-MM-dd"
             placeholder="开始日期-结束日期"
@@ -1144,6 +1145,11 @@ export default {
   margin-top: 30px;
   display: flex;
   display: -ms-flexbox
+  justify-content: space-between;
+  -ms-flex-pack justify
+.complex-query
+  display: flex;
+  display -ms-flexbox
   justify-content: space-between;
   -ms-flex-pack justify
 .ivu-btn

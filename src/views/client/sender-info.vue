@@ -652,7 +652,9 @@ export default {
   .footer
     margin-top 22px
     display flex
+    display -ms-flexbox
     justify-content flex-end
+    -ms-flex-pack end
   .tabs
     .ivu-tabs
       overflow visible

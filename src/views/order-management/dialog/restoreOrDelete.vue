@@ -1,7 +1,7 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="true" class="delete-dialog" width="360" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="true" transfer class="delete-dialog" width="360" @on-visible-change="close">
     <p slot="header" class="dialog-title">{{ name }}</p>
-    <div style="display: flex;justify-content:center;">
+    <div class="tip-text">
       <Icon type="ios-information-circle" size="24" color="#FFBB44" style="margin-top: -2px;margin-right: 5px;"></Icon>
       <div v-if="canDelete" style="display: inline">共选择了{{ id.length }}条订单，确定{{ name }}吗？</div>
       <div v-else>
@@ -173,6 +173,11 @@ export default {
     font-weight 700
     color rgba(47,50,62,1)
     letter-spacing 1px
+  .tip-text
+    display: flex;
+    display -ms-flexbox
+    justify-content:center;
+    -ms-flex-pack center
 </style>
 <style lang='stylus'>
   .delete-dialog

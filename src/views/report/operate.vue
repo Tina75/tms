@@ -40,6 +40,7 @@
               v-model="times"
               :options="options"
               :start-date="perMonth"
+              transfer
               type="daterange"
               format="yyyy-MM-dd"
               placeholder="开始日期-结束日期"

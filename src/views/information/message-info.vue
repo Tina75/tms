@@ -10,7 +10,7 @@
     <div class="ql-editor" style="line-height:1.8;width:800px;">
       <div v-html="messageInfo.content"></div>
     </div>
-    <Modal v-model="visibaleRemove" type="warning" width="360">
+    <Modal v-model="visibaleRemove" transfer type="warning" width="360">
       <p slot="header" class="modalTitle">
         <span>提示</span>
       </p>

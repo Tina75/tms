@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" width="1000" class="cargo-verify-record-dialog" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" transfer width="1000" class="cargo-verify-record-dialog" @on-visible-change="close">
     <p slot="header" style="text-align:center">{{title}}</p>
     <div>
       <Title size="14" border="none">收款记录</Title>

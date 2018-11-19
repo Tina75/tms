@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="true" width="440" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="true" transfer width="440" @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">{{operateWays[operateNum]}}规则</p>
     <div class="create-rule-form">
       <Form ref="createRuleForm" :model="createRuleForm" :rules="validate" :label-width="100">

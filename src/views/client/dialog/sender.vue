@@ -2,8 +2,8 @@
   <Modal
     v-model="visiable"
     :mask-closable="false"
-    label-position="left"
     transfer
+    label-position="left"
     class="modal"
     @on-visible-change="close"
   >

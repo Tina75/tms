@@ -23,6 +23,7 @@
         :class="classes"
         @on-change="handleChange"
         @on-focus="handleFocus"
+        @on-blur="handleBlur"
       >
       <span v-show="nameSeleced" slot="append" :style="{paddingLeft: (currentValue.length * 12 + 10) + 'px'}" style="display: block;line-height: 24px; text-align: left;" @click="inputFocus">{{nameSeleced}}</span>
       <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-input__clear-icon" @click.native.stop="handleClear"></Icon>
@@ -79,7 +80,7 @@ export default {
     },
     transfer: {
       type: Boolean,
-      default: false
+      default: true
     },
     placeholder: {
       type: String,

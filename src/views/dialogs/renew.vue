@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" width="440" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" transfer width="440" @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">{{title}}</p>
     <br>
     <b class="dialog-title">您当前账户将于<a>{{expirationTime | datetime('yyyy-MM-dd')}}</a>到期，到期后如需继续使用，请联系我们咨询购买。</b>

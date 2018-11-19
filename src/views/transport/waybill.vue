@@ -16,6 +16,7 @@
         <!-- 简易搜索 -->
         <div v-if="isEasySearch" class="right custom-style">
           <Select v-model="easySelectMode"
+                  transfer
                   style="width:120px; margin-right: 11px"
                   @on-change="resetEasySearch">
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -77,11 +78,11 @@
                        class="search-input-senior" />
         </div>
 
-        <div style="display: flex;justify-content: space-between;">
+        <div class="complex-query">
           <div>
             <SelectInputForCity v-model="seniorSearchFields.start" placeholder="请输入始发地" class="search-input-senior" />
             <SelectInputForCity v-model="seniorSearchFields.end" placeholder="请输入目的地" class="search-input-senior" />
-            <DatePicker v-model="seniorSearchFields.dateRange" :options="timeOption" type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
+            <DatePicker v-model="seniorSearchFields.dateRange" :options="timeOption" transfer type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
           </div>
           <div>
             <Button type="primary"

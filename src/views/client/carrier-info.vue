@@ -914,7 +914,9 @@ export default {
   .footer
     margin-top 22px
     display flex
+    display -ms-flexbox
     justify-content flex-end
+    -ms-flex-pack end
   /*.ivu-tabs*/
     /*padding-bottom: 120px!important*/
 </style>

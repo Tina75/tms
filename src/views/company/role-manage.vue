@@ -15,7 +15,7 @@
           </span>
         </div>
       </div>
-      <Modal v-model="createRoleModal" width="400">
+      <Modal v-model="createRoleModal" transfer width="400">
         <p slot="header" class="modalTitle">
           <span>{{editRoleModalTitle}}</span>
         </p>
@@ -49,6 +49,7 @@
     <Col span="20" class="contentDiv">
     <Modal
       v-model="removeRoleModal"
+      transfer
       width="360">
       <p slot="header" class="modalTitle">
         <span>提示</span>

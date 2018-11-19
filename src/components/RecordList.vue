@@ -1,6 +1,6 @@
 <template>
   <div class="order-log">
-    <div style="display: flex;justify-content: flex-start;min-height: 150px;margin-top: 25px;">
+    <div class="order-log-list">
       <div class="fold-icon" @click="showOperationLog">
         <span :class="showLog ? 'hide-log' : 'show-log'"></span>
       </div>
@@ -68,6 +68,13 @@ export default {
 </script>
 <style lang='stylus' scoped>
 .order-log
+  .order-log-list
+    display: flex;
+    display -ms-flexbox
+    justify-content: flex-start;
+    -ms-flex-pack start
+    min-height: 150px;
+    margin-top: 25px;
   .ivu-timeline-item
     i
       display inline-block

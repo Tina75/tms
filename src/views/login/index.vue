@@ -238,4 +238,5 @@ export default {
 
       &-item
         flex 1
+        -ms-flex 1
 </style>

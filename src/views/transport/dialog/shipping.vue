@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" width="350" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" transfer width="350" @on-visible-change="close">
     <p slot="header" style="text-align:center">{{ title }}</p>
     <p>
       <i class="icon font_family icon-bangzhuzhongxin"></i>

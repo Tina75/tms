@@ -6,16 +6,16 @@
       </div>
       <div class="header-bar-avator-dropdown">
         <span class="header-bar-avator-dropdown-notify" @click="openProcess">
-          <Tooltip v-if="processVisible" :value="processVisible"  placement="bottom" content=" 业务流程" always>
+          <Tooltip v-if="processVisible" :value="processVisible" transfer  placement="bottom" content=" 业务流程" always>
             <FontIcon type="liucheng" size="25" color="#fff"></FontIcon>
           </Tooltip>
-          <Tooltip v-else content=" 业务流程">
+          <Tooltip v-else transfer content=" 业务流程">
             <FontIcon  type="liucheng" size="25" color="#fff" ></FontIcon>
           </Tooltip>
         </span>
         <span class="header-bar-avator-dropdown-notify">
           <Badge :count="MsgCount.all" :offset="[5,1]" type="primary">
-            <Tooltip content=" 消息">
+            <Tooltip transfer content=" 消息">
               <Icon type="ios-notifications" size="30" color="#fff" @click="openMsg(0)"></Icon>
             </Tooltip>
           </Badge>
@@ -346,9 +346,11 @@ export default {
       .msg
         display: -webkit-flex;
         display flex
+        display -ms-flexbox
         &-item
           display inline-block
           flex 1
+          -ms-flex 1
           text-align center
           color #555555
           font-size 12px

@@ -30,7 +30,7 @@
           </FormItem>
 
           <FormItem prop="password">
-            <Tooltip content="请输入6-16位非连续重复的数字、大小写字母" style="width: 100%;" placement="top">
+            <Tooltip content="请输入6-16位非连续重复的数字、大小写字母" transfer style="width: 100%;" placement="top">
               <Input v-model="form.password" :maxlength="16" type="password" placeholder="密码" />
             </Tooltip>
           </FormItem>

@@ -11,7 +11,7 @@
           </Col>
           <Col span="8" style="margin-right: 20px">
           <FormItem :label-width="75" label="创建时间：">
-            <DatePicker v-model="checkingOrderQuery.period" :options="dateOption" type="daterange" format="yyyy-MM-dd" class="date-item" placeholder="开始时间-结束时间" />
+            <DatePicker v-model="checkingOrderQuery.period" :options="dateOption" transfer type="daterange" format="yyyy-MM-dd" class="date-item" placeholder="开始时间-结束时间" />
           </FormItem>
           </Col>
           <Col span="5">

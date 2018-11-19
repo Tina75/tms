@@ -2,6 +2,7 @@
   <Modal
     v-model="visiable"
     :mask-closable="false"
+    transfer
     label-position="left"
     class="modal"
     width="1020"

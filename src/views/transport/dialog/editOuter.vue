@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <Modal v-model="show" :mask-closable="false" width="360" @on-visible-change="close">
+    <Modal v-model="show" :mask-closable="false" transfer width="360" @on-visible-change="close">
       <p slot="header" style="text-align:center">
         <span>编辑</span>
       </p>
@@ -16,7 +16,7 @@
           <Input v-model="info.outTransNo" :maxlength="20" style="width:200px" placeholder="请输入"/>
         </FormItem>
         <FormItem label="付款方式:" prop="payType">
-          <Select v-model="info.payType" style="width:200px">
+          <Select v-model="info.payType" style="width:200px" transfer>
             <Option v-for="item in payType" :key="item.value" :value="item.value">{{ item.name }}</Option>
           </Select>
         </FormItem>

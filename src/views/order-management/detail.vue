@@ -5,7 +5,7 @@
         <li>订单号：{{detail.orderNo}}</li>
         <li>客户单号：{{detail.customerOrderNo || '-' }}</li>
         <li>运单号：{{detail.waybillNo || '-'}} &nbsp;&nbsp;&nbsp;
-          <Poptip v-if="waybillNums.length > 0" placement="bottom" @on-popper-show="showPoptip" @on-popper-hide="hidePoptip">
+          <Poptip v-if="waybillNums.length > 0" placement="bottom" transfer @on-popper-show="showPoptip" @on-popper-hide="hidePoptip">
             <a>{{ show ? '收起全部' : '展开全部' }}</a>
             <div slot="title" style="color:rgba(51,51,51,1);text-align: center;">全部运单号</div>
             <ul slot="content">
@@ -19,7 +19,7 @@
       </ul>
     </header>
     <div style="text-align: right;margin: 24px 0;min-height: 1px;">
-      <Tooltip v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :disabled="!btn.disabled" :content="btn.content" :offset="10" placement="top">
+      <Tooltip v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :disabled="!btn.disabled" :content="btn.content" :offset="10" transfer placement="top">
         <Button
           v-if="hasPower(btn.code)"
           :disabled="btn.disabled"
@@ -209,7 +209,7 @@
         </div>
       </div>
     </section>
-    <Modal v-model="visible" title="查看图片">
+    <Modal v-model="visible" transfer title="查看图片">
       <img :src="curImg" style="width: 100%">
       <div slot="footer" style="text-align: center;"></div>
     </Modal>

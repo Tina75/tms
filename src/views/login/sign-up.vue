@@ -5,7 +5,7 @@
 
       <ul class="form-step">
         <li v-for="(item, key) in stepList"
-            :key="key" class="form-step-item">
+            :key="key" style="flex-direction: column; -ms-flex-direction: column" class="form-step-item">
           <div :class="{'form-step-item-circle-active': step === key}" class="form-step-item-circle"><span>{{ key + 1 }}</span></div>
           <p :class="{'form-step-item-tip-active': step === key}" class="form-step-item-tip">{{item}}</p>
         </li>
@@ -65,7 +65,7 @@
           <!-- step 3 -->
           <div v-if="step === 2" :key="2">
             <FormItem prop="password">
-              <Tooltip content="请输入6-16位非连续重复的数字、大小写字母" style="width: 100%;" placement="top">
+              <Tooltip content="请输入6-16位非连续重复的数字、大小写字母" style="width: 100%;" transfer placement="top">
                 <Input v-model="form.password" :maxlength="16" type="password" placeholder="设置登录密码" />
               </Tooltip>
             </FormItem>

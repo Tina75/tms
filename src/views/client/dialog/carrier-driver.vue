@@ -4,6 +4,7 @@
     <Modal
       v-model="visiable"
       :mask-closable="false"
+      transfer
       width="1020"
       label-position="left"
       class="modal"
@@ -26,7 +27,7 @@
           <FormItem label="合作方式:" prop="driverType">
             <Row>
               <Col span="20">
-              <Select v-model="validate.driverType" class="minWidth">
+              <Select v-model="validate.driverType" transfer class="minWidth">
                 <Option
                   v-for="item in selectList"
                   :value="item.id"
@@ -62,7 +63,7 @@
           <FormItem label="车型:" prop="carType">
             <Row>
               <Col span="20">
-              <Select v-model="validate.carType" >
+              <Select v-model="validate.carType" transfer >
                 <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
               </Select>
               </Col>
@@ -73,7 +74,7 @@
           <FormItem label="车长:" prop="carLength">
             <Row>
               <Col span="20">
-              <Select v-model="validate.carLength" >
+              <Select v-model="validate.carLength" transfer >
                 <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
               </Select>
               </Col>
@@ -110,7 +111,7 @@
           <FormItem class="ivu-form-item-required blank" label="购买日期:">
             <Row>
               <Col span="20">
-              <DatePicker v-model="validate.purchDate" format="yyyy-MM-dd" type="date" placeholder="请选择日期">
+              <DatePicker v-model="validate.purchDate" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
               </DatePicker>
               </Col>
             </Row>

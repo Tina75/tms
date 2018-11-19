@@ -1,5 +1,5 @@
 <template>
-  <Poptip v-model="visible" class="timeInput" placement="bottom-end">
+  <Poptip v-model="visible" transfer class="timeInput" placement="bottom-end">
     <div slot="content" class="order-create__timeSelect">
       <div class="order-create__timeSelectTitle" v-text="timeDate ? timeDate : '请先选择日期'"></div>
       <Row>
