@@ -27,7 +27,7 @@
       :method="method"
       :url="url"
       :columns="columns1"
-      list-field="carrierList"
+      list-field="list"
       @on-sort-change = "timeSort"
     ></page-table>
   </div>
