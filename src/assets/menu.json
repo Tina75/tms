@@ -20,6 +20,11 @@
         "name":"批量导入",
         "path":"/order/import",
         "powerCode":100200
+      },
+      {
+        "name": "订单管理",
+        "path": "/order-management/order",
+        "powerCode":100300
       }
     ]
   },
@@ -71,6 +76,11 @@
         "name":"异常管理",
         "path":"/transport/abnormalOrder",
         "powerCode":120400
+      },
+      {
+        "name":"回单管理",
+        "path":"/order-management/receipt",
+        "powerCode":120500
       }
     ]
   },

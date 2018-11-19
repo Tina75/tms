@@ -741,8 +741,8 @@ export default {
       }
       if (r.status === 100) { // 回收站状态
         renderBtn = [
-          { name: '恢复', value: 1, code: 110110 },
-          { name: '彻底删除', value: 2, code: 110111 }
+          { name: '恢复', value: 1, code: 100305 },
+          { name: '彻底删除', value: 2, code: 100306 }
         ]
       }
       this.btnGroup = renderBtn
@@ -754,7 +754,7 @@ export default {
       if (this.source) {
         if (this.source === 'order') {
           btns.push(
-            { name: '打印', value: 2, code: 110108 }
+            { name: '打印', value: 2, code: 100303 }
           )
         } else if (this.source === 'waybill') {
           btns.push(
@@ -771,18 +771,18 @@ export default {
     filterReceiptButton () {
       if (this.detail.receiptOrder.receiptStatus === 0 && this.detail.status === 40) {
         this.btnGroup = [
-          { name: '回收', value: 1, code: 110201 }
+          { name: '回收', value: 1, code: 120501 }
         ]
         this.operateValue = 1
       } else if (this.detail.receiptOrder.receiptStatus === 1) {
         this.btnGroup = [
-          { name: this.detail.receiptOrder.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: this.detail.receiptOrder.receiptUrl.length > 0 ? 110205 : 110204 },
-          { name: '返厂', value: 2, code: 110202 }
+          { name: this.detail.receiptOrder.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: this.detail.receiptOrder.receiptUrl.length > 0 ? 120505 : 120504 },
+          { name: '返厂', value: 2, code: 120502 }
         ]
         this.operateValue = 2
       } else if (this.detail.receiptOrder.receiptStatus === 2) {
         this.btnGroup = [
-          { name: this.detail.receiptOrder.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: this.detail.receiptOrder.receiptUrl.length > 0 ? 110205 : 110204 }
+          { name: this.detail.receiptOrder.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: this.detail.receiptOrder.receiptUrl.length > 0 ? 120505 : 120504 }
         ]
         this.operateValue = 1
       } else {

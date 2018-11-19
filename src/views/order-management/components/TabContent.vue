@@ -877,9 +877,9 @@ export default {
       if (this.source === 'order') {
         if (val === '全部' || val === '待提货' || val === '待送货') {
           this.btnGroup = [
-            { name: '导出', value: 6, code: 110109 },
-            { name: '打印', value: 5, code: 110108 },
-            { name: '删除', value: 4, code: 110107 }
+            { name: '导出', value: 6, code: 100304 },
+            { name: '打印', value: 5, code: 100303 },
+            { name: '删除', value: 4, code: 100302 }
           ]
           if (val === '全部') {
             this.keywords.status = null
@@ -890,13 +890,13 @@ export default {
           }
         } else if (val === '回收站') {
           this.btnGroup = [
-            { name: '恢复', value: 7, code: 110110 },
-            { name: '彻底删除', value: 8, code: 110111 }
+            { name: '恢复', value: 7, code: 100305 },
+            { name: '彻底删除', value: 8, code: 100306 }
           ]
           this.keywords.status = 100
         } else {
           this.btnGroup = [
-            { name: '导出', value: 6, code: 110109 }
+            { name: '导出', value: 6, code: 100304 }
           ]
           if (val === '在途') {
             this.keywords.status = 30

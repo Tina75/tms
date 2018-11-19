@@ -197,6 +197,10 @@ Toast.newInstance = properties => {
         on: {
           input: (status) => {
             this.visible = status
+            if (!status) {
+              // 点击右上角差差
+              this.cancel()
+            }
           }
         }
       }, [
