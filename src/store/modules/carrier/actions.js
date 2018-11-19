@@ -20,7 +20,7 @@ export default {
         }
       }).then((response) => {
         // 承运商信息
-        const carriers = response.data.data.carrierList
+        const carriers = response.data.data.list
         commit(types.RECEIVE_CARRIER_LIST, carriers)
       }).catch((error) => {
         reject(error)
@@ -44,7 +44,7 @@ export default {
         }
       }).then((response) => {
         // 承运商车辆信息
-        const carrierCars = response.data.data.carList
+        const carrierCars = response.data.data.list
         commit(types.RECEIVE_CARRIER_CAR_LIST, carrierCars)
         resolve(carrierCars)
       }).catch((error) => {
@@ -69,7 +69,7 @@ export default {
         }
       }).then((response) => {
         // 承运商车辆信息
-        const carrierDrivers = response.data.data.driverList
+        const carrierDrivers = response.data.data.list
         commit(types.RECEIVE_CARRIER_DRIVER_LIST, carrierDrivers)
         resolve(carrierDrivers)
       }).catch((error) => {

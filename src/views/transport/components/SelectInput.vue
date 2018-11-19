@@ -88,7 +88,7 @@ export default {
         method: 'get',
         data: { type: 1 }
       }).then(res => {
-        this.options = res.data.data.carrierList.map(item => {
+        this.options = res.data.data.list.map(item => {
           item.name = item.carrierName
           item.value = item.carrierName
           return item
@@ -105,7 +105,7 @@ export default {
         url: 'carrier/list/driver',
         data: { carrierId: this.carrierId }
       }).then((res) => {
-        this.options = res.data.data.driverList.map(item => {
+        this.options = res.data.data.list.map(item => {
           item.name = item.driverName
           item.value = item.driverName
           item.carNo = item.carNO
@@ -124,7 +124,7 @@ export default {
         method: 'get',
         data: { carrierId: this.carrierId }
       }).then(res => {
-        this.options = res.data.data.carList.map(item => {
+        this.options = res.data.data.list.map(item => {
           item.name = item.carNO
           item.value = item.carNO
           item.carNo = item.carNO
@@ -155,7 +155,7 @@ export default {
         method: 'get',
         data: { type: 1 }
       }).then(res => {
-        this.options = res.data.data.transfereeList.map(item => {
+        this.options = res.data.data.list.map(item => {
           item.value = item.name
           return item
         })
