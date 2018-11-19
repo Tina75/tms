@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import PageRouter from './components/PageRouter.vue'
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'hash',
   base: __dirname,
   routes: [
@@ -66,3 +66,10 @@ export default new Router({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (window.localStorage.tms_is_login || to.path === '/') next()
+  else next('/')
+})
+
+export default router
