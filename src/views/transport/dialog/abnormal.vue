@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="show" :mask-closable="false" class="transport-detail" width="980"  @on-visible-change="close">
+  <Modal v-model="show" :mask-closable="false" class="transport-detail" width="1100"  @on-visible-change="close">
     <p slot="header" style="text-align:center">
       上报异常
     </p>
@@ -41,44 +41,83 @@
         </i-col>
       </Row>
 
-      <Form v-if="isChangeFee === 1" ref="payment" :label-width="82" :model="payment" :rules="rules" label-position="left" class="detail-field-group row-fee">
-        <FormItem :label="details.billType === 2 ? '外转运费：' : '运输费：'" :class="details.billType === 2 ? 'waizhuan-label' : ''" prop="freightFee">
-          <!-- <span class="detail-field-title-sm detail-field-required">{{ details.billType === 2 ? '外转运费：' : '运输费：' }}</span>
-          <MoneyInput v-model="payment.freightFee" :is-disabled="isDisabled" class="detail-payment-input" />
-          <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a> -->
-          <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" :style="details.billType === 2 && 'width: 158px;'" class="detail-payment-input">
-            <span slot="suffix" class="order-create__input-suffix">元</span>
-          </TagNumberInput>
-        </FormItem>
-        <FormItem v-if="details.billType !== 2" label="装货费：" prop="loadFee">
-          <!-- <span class="detail-field-title-sm" style="width: 70px;">装货费：</span>
-          <MoneyInput v-model="payment.loadFee" :is-disabled="isDisabled" class="detail-payment-input" /> -->
-          <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input">
-            <span slot="suffix" class="order-create__input-suffix">元</span>
-          </TagNumberInput>
-        </FormItem>
-        <FormItem v-if="details.billType !== 2" label="卸货费：" prop="unloadFee">
-          <!-- <span class="detail-field-title-sm" style="width: 70px;">卸货费：</span>
-          <MoneyInput v-model="payment.unloadFee" :is-disabled="isDisabled" class="detail-payment-input" /> -->
-          <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input">
-            <span slot="suffix" class="order-create__input-suffix">元</span>
-          </TagNumberInput>
-        </FormItem>
-        <FormItem v-if="details.billType !== 2" label="保险费：" prop="insuranceFee">
-          <!-- <span class="detail-field-title-sm" style="width: 70px;">保险费：</span>
-          <MoneyInput v-model="payment.insuranceFee" :is-disabled="isDisabled" class="detail-payment-input" /> -->
-          <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input">
-            <span slot="suffix" class="order-create__input-suffix">元</span>
-          </TagNumberInput>
-        </FormItem>
-        <FormItem v-if="details.billType !== 2" label="其他费用：" prop="otherFee">
-          <!-- <span class="detail-field-title-sm">其他费用：</span>
-          <MoneyInput v-model="payment.otherFee" :is-disabled="isDisabled" class="detail-payment-input" /> -->
-          <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input">
-            <span slot="suffix" class="order-create__input-suffix">元</span>
-          </TagNumberInput>
-        </FormItem>
-      </Form>
+      <div v-if="details.billType === 3">
+        <Form v-if="isChangeFee === 1" ref="payment" :label-width="72" :model="payment" :rules="rules" label-position="left" class="detail-field-group row-fee">
+          <Row>
+            <i-col span="6">
+              <FormItem label="运输费：" class="require-fee" prop="freightFee">
+                <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" class="detail-payment-input-send">
+                </TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+            <i-col span="6">
+              <FormItem label="装货费：" prop="loadFee">
+                <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input-send">
+                </TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+            <i-col span="6">
+              <FormItem label="卸货费：" prop="unloadFee">
+                <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input-send">
+                </TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+            <i-col span="6">
+              <FormItem label="路桥费：" prop="tollFee">
+                <TagNumberInput v-model="payment.tollFee" :disabled="isDisabled" class="detail-payment-input-send">
+                </TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+            <i-col span="6">
+              <FormItem label="保险费：" prop="insuranceFee">
+                <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input-send">
+                </TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+            <i-col span="6">
+              <FormItem label="其他费：" prop="otherFee">
+                <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input-send">
+                </TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+          </Row>
+        </Form>
+      </div>
+      <div v-else>
+        <Form v-if="isChangeFee === 1" ref="payment" :label-width="72" :model="payment" :rules="rules" label-position="left" class="detail-field-group row-fee">
+          <FormItem :label="details.billType === 2 ? '外转运费：' : '运输费：'" :class="details.billType === 2 ? 'waizhuan-label' : ''" class="require-fee" prop="freightFee">
+            <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" :style="details.billType === 2 && 'width: 158px;'" class="detail-payment-input">
+            </TagNumberInput>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+          <FormItem v-if="details.billType !== 2" label="装货费：" prop="loadFee">
+            <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input">
+            </TagNumberInput>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+          <FormItem v-if="details.billType !== 2" label="卸货费：" prop="unloadFee">
+            <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input">
+            </TagNumberInput>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+          <FormItem v-if="details.billType !== 2" label="保险费：" prop="insuranceFee">
+            <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input">
+            </TagNumberInput>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+          <FormItem v-if="details.billType !== 2" label="其他费用：" prop="otherFee">
+            <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input">
+            </TagNumberInput>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+        </Form>
+      </div>
 
       <div v-if="isChangeFee === 1 && canUpdateFee === 2 && changeFeeType === 1" class="err-message">存在多个异常记录未处理，只能修改最后一次上报的异常记录的运费。</div>
 
@@ -157,7 +196,8 @@ export default {
         loadFee: 0,
         unloadFee: 0,
         insuranceFee: 0,
-        otherFee: 0
+        otherFee: 0,
+        tollFee: 0
       },
       rules: {
         // 运输费
@@ -179,6 +219,10 @@ export default {
         ],
         // 其他费用
         otherFee: [
+          { validator: validateFee }
+        ],
+        // 路桥费用
+        tollFee: [
           { validator: validateFee }
         ]
       },
@@ -203,11 +247,14 @@ export default {
   computed: {
     // 计算总费用
     paymentTotal () {
-      return parseFloat((Number(this.payment.freightFee) +
-      Number(this.payment.loadFee) +
-      Number(this.payment.unloadFee) +
-      Number(this.payment.insuranceFee) +
-      Number(this.payment.otherFee)).toFixed(2))
+      let total
+      total = Number(this.payment.freightFee) +
+              Number(this.payment.loadFee) +
+              Number(this.payment.unloadFee) +
+              Number(this.payment.insuranceFee) +
+              Number(this.payment.otherFee)
+      if (this.type === 3) total += Number(this.payment.tollFee)
+      return parseFloat(total.toFixed(2))
     }
   },
   created () {
@@ -263,6 +310,10 @@ export default {
 
         for (let key in _this.payment) {
           _this.payment[key] = _this.setMoneyUnit2Yuan(_this.details[key])
+        }
+
+        if (this.type !== 3) {
+          delete this.payment.tollFee // 去掉路桥费
         }
 
         // this.settlementType = billInfo.settlementType ? billInfo.settlementType.toString() : '1'
@@ -583,9 +634,19 @@ export default {
       justify-content space-between
       align-items center
       margin-bottom 10px
-    .waizhuan-label
       .ivu-form-item-label
+        padding 10px 0
+        text-align center
+      .require-fee
+        .ivu-form-item-label
+          text-align left
+    .waizhuan-label
+      width 300px
+      .ivu-form-item-label
+        width 82px !important
         padding-right 0
+      .ivu-form-item-content
+        margin-left 82px !important
   .abnormal-header
       font-size 14px
       font-family 'PingFangSC-Regular'
@@ -605,5 +666,7 @@ export default {
     color #EC4E4E
     font-size 14px
     font-family 'PingFangSC-Regular'
-    margin-left 82px
+    margin-left 72px
+  .ivu-col-span-6
+    height 68px
 </style>
