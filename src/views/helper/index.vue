@@ -3,7 +3,7 @@
     <Col :style="styleHeight" span="4">
     <Menu :open-names="['1']" style="width: 100%;" class="menuSty" accordion>
       <MenuItem name="0" @click.native="clickLeftMenuExplore">
-      <i class="icon font_family icon-tupian top"></i>
+      <i class="icon font_family icon-ico-discovery"></i>
       <span class="title">探索运掌柜</span>
       </MenuItem>
       <Submenu name="1">
@@ -34,12 +34,15 @@
           <div v-html="picContent.content"></div>
         </div>
       </div>
-      <div v-if="'video' === this.type">
+      <!-- <div v-if="'video' === this.type">
         <p slot="title" class="rightDivTitle">{{videoContent.title}}</p>
         <video width="100%" height="240" class="contentCard" controls>
           <source :src="videoContent.urlList">
           您的浏览器不支持 video 标签。
         </video>
+      </div> -->
+      <div v-if="'explore' === this.type">
+        <Explore></Explore>
       </div>
     </Card>
     </Col>
@@ -49,9 +52,14 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
-import TMSUrl from '@/libs/constant/url'
+import FontIcon from '@/components/FontIcon'
+import Explore from './explore'
 export default {
   name: 'help',
+  components: {
+    FontIcon,
+    Explore
+  },
   mixins: [ BasePage ],
   metaInfo: {
     title: '帮助'
@@ -116,12 +124,7 @@ export default {
     // },
     // 探索运掌柜
     clickLeftMenuExplore () {
-      this.openTab({
-        path: TMSUrl.EXPLORE,
-        query: {
-          id: '探索运掌柜'
-        }
-      })
+      this.type = 'explore'
     }
   }
 }
@@ -180,8 +183,11 @@ export default {
   overflow: hidden;
   width: 20px;
   font-size: 19px;
-.icon-tupian.top
-  margin-top -6px
+.icon-ico-discovery
+  color #00A4BD
+  overflow hidden;
+  width 20px;
+  font-size 19px;
 .icon-shipin
   color: #418DF9;
   overflow: hidden;
