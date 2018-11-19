@@ -409,6 +409,7 @@ export default {
         methods: {
           ok (node) {
             _this.getDetail()
+            _this.ema.fire('closeTab', _this.$route) // 关闭tab页
           }
         }
       })
@@ -526,8 +527,11 @@ export default {
       // 订单详情  from: order   回单详情 from: receipt
       if (this.from === 'order') {
         Server({
-          url: 'order/detail?id=' + this.$route.query.orderId,
-          method: 'get'
+          url: 'order/detail',
+          method: 'get',
+          data: {
+            id: this.$route.query.orderId
+          }
         }).then((res) => {
           console.log(res)
           this.detail = res.data.data
@@ -540,8 +544,11 @@ export default {
         })
       } else { // 回单详情
         Server({
-          url: 'order/getReceiptOrderDetail?id=' + this.$route.query.orderId,
-          method: 'get'
+          url: 'order/getReceiptOrderDetail',
+          method: 'get',
+          data: {
+            id: this.$route.query.orderId
+          }
         }).then((res) => {
           console.log(res)
           this.detail = res.data.data
@@ -656,7 +663,7 @@ export default {
        *    编辑：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
        * 2、待调度状态下：（status: 20）
        *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）&& （未被调度：dispatchStatus=0）】显示
-       *    外转：【（未外转：transStatus=0） && （不是上门提货：pickup !== 1） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被调度：dispatchStatus=0）】显示
+       *    外转：【（未外转：transStatus=0） && （不是上门提货：pickup !== 1） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）/ 备注：v1.05版本 子单可以外转 / && （未被调度：dispatchStatus=0）】显示
        *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被调度：dispatchStatus=0）】显示
        *    删除：
        *          订单列表里显示：【（不是上门提货：pickup !== 1） && （未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （被拆单后的父单：disassembleStatus=1）】
@@ -721,7 +728,7 @@ export default {
           }
         }
         // 外转按钮
-        if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0) {
+        if (r.transStatus === 0 && r.disassembleStatus === 0 && r.dispatchStatus === 0) {
           renderBtn.push(
             { name: '外转', value: 4, code: 120111 }
           )
