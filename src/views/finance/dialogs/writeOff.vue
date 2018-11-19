@@ -21,10 +21,22 @@
           </RadioGroup>
         </FormItem>
         <FormItem v-if="writeOffForm.payType !== '1'" :label="accountMap[writeOffForm.payType]" prop="account">
-          <Input v-model="writeOffForm.account" :maxlength="30" placeholder="请输入" @on-keyup="cardFormat"/>
+          <!--<Input v-model="writeOffForm.account" :maxlength="30" placeholder="请输入" @on-keyup="cardFormat"/>-->
+          <SelectInput v-model="writeOffForm.account"
+                       :remote="false"
+                       :maxlength="30"
+                       :local-options="diffAcount"
+                       placeholder="请输入"
+                       @on-select="cardSetBank"
+          ></SelectInput>
         </FormItem>
         <FormItem v-if="writeOffForm.payType === '2'" label="开户行：" prop="bankBranch">
-          <Input v-model="writeOffForm.bankBranch" :maxlength="30" placeholder="请输入" />
+          <!--<Input v-model="writeOffForm.bankBranch" :maxlength="30" placeholder="请输入" />-->
+          <SelectInput v-model="writeOffForm.bankBranch"
+                       :maxlength="30"
+                       :remote="false"
+                       :local-options="diffBankBranch"
+                       placeholder="请输入"></SelectInput>
         </FormItem>
         <FormItem label="备注：" prop="remark">
           <Input v-model="writeOffForm.remark" :maxlength="100" type="textarea" placeholder="请输入" />
@@ -42,13 +54,16 @@
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import verifyMixin from '../mixins/verifyMixin.js'
+import writeOffMixin from '../mixins/writeOffMixin.js'
 import tagNumberInput from '@/components/TagNumberInput'
+// import SelectInput from '@/components/SelectInput'
 export default {
   name: 'writeOff',
   components: {
     tagNumberInput
+    // SelectInput
   },
-  mixins: [BaseDialog, verifyMixin],
+  mixins: [BaseDialog, verifyMixin, writeOffMixin],
   data () {
     return {
       scene: 0,
@@ -65,7 +80,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.writeOffForm)
     if (this.isOil) {
       this.writeOffForm.payType = '5'
     }
@@ -81,7 +95,7 @@ export default {
               id: this.id,
               actualFee: parseFloat(this.writeOffForm.actualFee) * 100,
               payType: this.writeOffForm.payType,
-              account: this.writeOffForm.account,
+              account: this.writeOffForm.account.replace(/\s+/g, ''),
               bankBranch: this.writeOffForm.bankBranch,
               remark: this.writeOffForm.remark,
               verifyType: this.verifyType
@@ -89,11 +103,11 @@ export default {
           }).then(res => {
             console.log(res)
             if (res.data.data === '') {
+              this.saveAccount(this.writeOffForm.account, this.writeOffForm.bankBranch)
               this.ok()
               this.close()
             } else if (res.data.data && res.data.data.operateCode === 1) {
               // 存在异常
-              console.log(res.data.data.orderNos)
               this.$Toast.warning({
                 title: '核销',
                 content: '以下单据存在异常，无法核销',
@@ -113,17 +127,6 @@ export default {
           }).catch(err => console.error(err))
         }
       })
-    },
-    cardFormat (e) {
-      console.log(e.keyCode)
-      let value = this.writeOffForm.account
-      if (this.writeOffForm.payType === '2') { // 银行卡号
-        if (value.split(' ').join('').length % 4 === 0 && e.keyCode !== 8 && value.length < 31) {
-          this.$nextTick(() => {
-            this.writeOffForm.account += ' '
-          })
-        }
-      }
     }
   }
 
