@@ -101,7 +101,6 @@ export default {
               verifyType: this.verifyType
             }
           }).then(res => {
-            console.log(res)
             if (res.data.data === '') {
               this.saveAccount(this.writeOffForm.account, this.writeOffForm.bankBranch)
               this.ok()
