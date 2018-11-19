@@ -86,23 +86,27 @@
               <span>应付费用</span>
             </div>
             <Row class="detail-field-group">
-              <i-col span="4">
+              <i-col span="6">
                 <span class="detail-field-title-sm">运输费：</span>
                 <span class="detail-field-fee">{{ payment.freightFee || 0 }}元</span>
               </i-col>
-              <i-col span="4" offset="1">
+              <i-col span="6">
                 <span class="detail-field-title-sm">装货费：</span>
                 <span class="detail-field-fee">{{ payment.loadFee || 0 }}元</span>
               </i-col>
-              <i-col span="4" offset="1">
+              <i-col span="6">
                 <span class="detail-field-title-sm">卸货费：</span>
                 <span class="detail-field-fee">{{ payment.unloadFee || 0 }}元</span>
               </i-col>
-              <i-col span="4" offset="1">
+              <i-col span="6">
+                <span class="detail-field-title-sm">路桥费：</span>
+                <span class="detail-field-fee">{{ payment.tollFee || 0 }}元</span>
+              </i-col>
+              <i-col span="6">
                 <span class="detail-field-title-sm">保险费：</span>
                 <span class="detail-field-fee">{{ payment.insuranceFee || 0 }}元</span>
               </i-col>
-              <i-col span="4" offset="1">
+              <i-col span="6">
                 <span class="detail-field-title-sm">其他：</span>
                 <span class="detail-field-fee">{{ payment.otherFee || 0 }}元</span>
               </i-col>
@@ -259,34 +263,48 @@
         <div class="detail-part-title">
           <span>应付费用</span>
         </div>
-        <Row class="detail-field-group">
-          <i-col span="5">
-            <span class="detail-field-title-sm">运输费：</span>
-            <MoneyInput v-model="payment.freightFee"
-                        class="detail-payment-input" />
-            <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
-          </i-col>
-          <i-col span="4">
-            <span class="detail-field-title-sm">装货费：</span>
-            <MoneyInput v-model="payment.loadFee"
-                        class="detail-payment-input" />
-          </i-col>
-          <i-col span="4" offset="1">
-            <span class="detail-field-title-sm">卸货费：</span>
-            <MoneyInput v-model="payment.unloadFee"
-                        class="detail-payment-input" />
-          </i-col>
-          <i-col span="4" offset="1">
-            <span class="detail-field-title-sm">保险费：</span>
-            <MoneyInput v-model="payment.insuranceFee"
-                        class="detail-payment-input" />
-          </i-col>
-          <i-col span="4" offset="1">
-            <span class="detail-field-title-sm">其他：</span>
-            <MoneyInput v-model="payment.otherFee"
-                        class="detail-payment-input" />
-          </i-col>
-        </Row>
+        <Form ref="payment" :label-width="82" :model="payment" :rules="rules" label-position="left">
+          <Row class="detail-field-group detail-form-label">
+            <i-col span="6">
+              <FormItem label="运输费：" prop="freightFee">
+                <TagNumberInput v-model="payment.freightFee" class="detail-payment-input-send"></TagNumberInput>
+                <span class="unit-yuan">元</span>
+                <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
+              </FormItem>
+            </i-col>
+            <i-col span="6">
+              <FormItem label="装货费：" prop="loadFee">
+                <TagNumberInput v-model="payment.loadFee" class="detail-payment-input-send"></TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+            <i-col span="6">
+              <FormItem label="卸货费：" prop="unloadFee">
+                <TagNumberInput v-model="payment.unloadFee" class="detail-payment-input-send"></TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+            <i-col span="6">
+              <FormItem label="路桥费：" prop="tollFee">
+                <TagNumberInput v-model="payment.tollFee" class="detail-payment-input-send">
+                </TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+            <i-col span="6">
+              <FormItem label="保险费：" prop="insuranceFee">
+                <TagNumberInput v-model="payment.insuranceFee" class="detail-payment-input-send"></TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+            <i-col span="6">
+              <FormItem label="其他：" prop="otherFee">
+                <TagNumberInput v-model="payment.otherFee" class="detail-payment-input-send"></TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+          </Row>
+        </Form>
         <Row class="detail-field-group">
           <i-col span="24">
             <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
@@ -336,6 +354,8 @@ import DetailMixin from '../mixin/detailMixin'
 import SelectInputMixin from '../mixin/selectInputMixin'
 
 import MoneyInput from '../components/MoneyInput'
+import TagNumberInput from '@/components/TagNumberInput'
+import validator from '@/libs/js/validate'
 import SelectInputForCity from '@/components/SelectInputForCity'
 import SelectInput from '../components/SelectInput.vue'
 import PayInfo from '../components/PayInfo'
@@ -349,10 +369,18 @@ import Exception from './exception.vue'
 export default {
   name: 'detailFeright',
   metaInfo: { title: '运单详情' },
-  components: { MoneyInput, SelectInput, SelectInputForCity, PayInfo, Exception },
+  components: { TagNumberInput, MoneyInput, SelectInput, SelectInputForCity, PayInfo, Exception },
   mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
 
   data () {
+    // 9位整数 2位小数
+    const validateFee = (rule, value, callback) => {
+      if ((value && validator.fee(value)) || !value) {
+        callback()
+      } else {
+        callback(new Error('费用整数位最多输入9位,小数2位'))
+      }
+    }
     return {
       pageName: 'feright',
       status: '',
@@ -370,6 +398,42 @@ export default {
         driverName: '',
         driverPhone: '',
         remark: ''
+      },
+      payment: {
+        freightFee: '',
+        loadFee: '',
+        unloadFee: '',
+        insuranceFee: '',
+        otherFee: '',
+        totalFee: '',
+        tollFee: 0 // 路桥费
+      },
+      rules: {
+        // 运输费
+        freightFee: [
+          { required: true, type: 'number', message: '请输入运输费用' },
+          { validator: validateFee }
+        ],
+        // 装货费用
+        loadFee: [
+          { validator: validateFee }
+        ],
+        // 卸货费用
+        unloadFee: [
+          { validator: validateFee }
+        ],
+        // 保险费用
+        insuranceFee: [
+          { validator: validateFee }
+        ],
+        // 其他费用
+        otherFee: [
+          { validator: validateFee }
+        ],
+        // 路桥费用
+        tollFee: [
+          { validator: validateFee }
+        ]
       },
       collectionMoney: 0, // 代收货款
       // 支付方式
@@ -612,24 +676,27 @@ export default {
     // 保存编辑
     save () {
       if (!this.validate()) return
-
-      Server({
-        url: '/waybill/update',
-        method: 'post',
-        data: {
-          waybill: {
-            waybillId: this.id,
-            ...this.info,
-            ...this.formatMoney(),
-            settlementType: this.settlementType,
-            settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
-          },
-          cargoList: _.uniq(this.detail.map(item => item.orderId))
+      this.$refs.payment.validate((valid) => {
+        if (valid) {
+          Server({
+            url: '/waybill/update',
+            method: 'post',
+            data: {
+              waybill: {
+                waybillId: this.id,
+                ...this.info,
+                ...this.formatMoney(),
+                settlementType: this.settlementType,
+                settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
+              },
+              cargoList: _.uniq(this.detail.map(item => item.orderId))
+            }
+          }).then(res => {
+            this.$Message.success('保存成功')
+            this.cancelEdit()
+          }).catch(err => console.error(err))
         }
-      }).then(res => {
-        this.$Message.success('保存成功')
-        this.cancelEdit()
-      }).catch(err => console.error(err))
+      })
     },
 
     // 计费规则
