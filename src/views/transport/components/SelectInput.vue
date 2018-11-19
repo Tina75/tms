@@ -155,7 +155,7 @@ export default {
         method: 'get',
         data: { type: 1 }
       }).then(res => {
-        this.options = res.data.data.transfereeList.map(item => {
+        this.options = res.data.data.list.map(item => {
           item.value = item.name
           return item
         })
