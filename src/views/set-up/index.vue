@@ -91,12 +91,15 @@
             <FormItem label="联系方式：" prop="contactPhone" class="labelClassSty">
               <Input v-model="formCompany.contactPhone" :maxlength="11" placeholder="请输入联系方式" class="inputClassSty"></Input>
             </FormItem>
-            <FormItem label="所在省市：" prop="cityId" class="labelClassSty">
-              <AreaSelect v-model="formCompany.cityId" :deep="true" class="inputClassSty"></AreaSelect>
-            </FormItem>
             <FormItem label="公司地址：" prop="address" class="labelClassSty">
+              <Row>
+              <Col :span="8">
+              <CitySelect v-model="formCompany.cityId" clearable></CitySelect>
+            </Col>
+            <Col :span="16" class="areaRight">
               <AreaInput v-model="formCompany.address" :city-code="formCityCode" :maxlength="60" placeholder="请输入公司地址" @latlongt-change="latlongtChange"></AreaInput>
-              <!-- <Input v-model="formCompany.address" :maxlength="40" placeholder="请输入公司地址" class="inputClassSty"></Input> -->
+              </Col>
+            </Row>
             </FormItem>
             <FormItem>
               <Button type="primary" style="width:86px;" @click="companySubmit('formCompany')">保存</Button>
@@ -112,16 +115,16 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
-import AreaSelect from '@/components/AreaSelect'
 import AreaInput from '@/components/AreaInput'
 import { CHECK_PWD, CHECK_PWD_SAME, CHECK_NAME, CHECK_NAME_COMPANY, CHECK_PHONE } from './validator'
 import _ from 'lodash'
 import { mapActions, mapGetters } from 'vuex'
+import CitySelect from '@/components/SelectInputForCity'
 export default {
   name: 'set-up',
   components: {
-    AreaSelect,
-    AreaInput
+    AreaInput,
+    CitySelect
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -273,12 +276,7 @@ export default {
       return { height: this.DocumentHeight + 'px' }
     },
     formCityCode () {
-      const cityCode = this.formCompany.cityId
-      if (cityCode && cityCode.length) {
-        return cityCode.length > 1 ? cityCode[1] : cityCode[0]
-      } else {
-        return ''
-      }
+      return this.formCompany.cityId
     }
   },
   mounted: function () {
@@ -389,12 +387,10 @@ export default {
               this.formCompany.id === this.formCompanyInit.id &&
               this.formCompany.logoUrl === this.formCompanyInit.logoUrl &&
               this.formCompany.name === this.formCompanyInit.name &&
-              Number(this.formCompany.cityId[this.formCompany.cityId.length - 1]) === Number(this.formCompanyInit.cityId)) {
+              Number(this.formCompany.cityId) === Number(this.formCompanyInit.cityId)) {
             this.$Message.info('您还未变更任何信息，无需保存')
-            return
           }
           let params = Object.assign({}, this.formCompany)
-          params.cityId = params.cityId.length === 2 ? params.cityId[0] : params.cityId[params.cityId.length - 1]
           Server({
             url: 'set/company',
             method: 'post',
@@ -557,4 +553,7 @@ export default {
   margin-top:40px;
   left: 15%;
   position: absolute;
+.areaRight
+  padding-left: 15px
+  margin-top:1px
 </style>

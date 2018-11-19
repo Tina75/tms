@@ -11,7 +11,7 @@
           </colgroup>
           <tbody>
             <tr>
-              <td>客户：{{data.consignerName}}</td>
+              <td>客户名称：{{data.consignerName}}</td>
               <td>始发地：{{getCity(data.start)}}</td>
               <td>目的地：{{getCity(data.end)}}</td>
             </tr>
@@ -28,7 +28,7 @@
             <tr>
               <td>提货方式：{{pickup(data)}}</td>
               <td>回单数：{{data.receiptCount}}</td>
-              <td>代收货款：{{data.collectionMoney / 100 || 0}}元</td>
+              <td>代收货款：{{data.collectionMoney || 0}}元</td>
             </tr>
           </tbody>
         </table>

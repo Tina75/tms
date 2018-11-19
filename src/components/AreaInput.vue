@@ -77,13 +77,10 @@ export default {
       return res
     },
     areaName () {
-      const code = this.cityCode
-      return code ? cityUtil.getNameByCode(code) : '全国'
+      const arr = cityUtil.getPathByCode(this.cityCode)
+      return arr.length ? arr[1].name : '全国'
     },
     inputDisabled () {
-      if (this.disabled && !this.cityCode) {
-        return true
-      }
       return false
     }
   },
@@ -106,10 +103,11 @@ export default {
               const pro = item.province ? item.province : ''
               const city = item.city ? item.city : ''
               const addr = item.address ? item.address.replace(pro, '').replace(city, '') : ''
+              const names = this.filterCity ? addr + item.title : pro === city ? pro + addr + item.title : pro + city + addr + item.title
               arr.push({
                 id: i,
-                name: this.filterCity ? addr + item.title : pro + city + addr + item.title,
-                value: this.filterCity ? addr + item.title : pro + city + addr + item.title,
+                name: names,
+                value: names,
                 lat: item.point.lat,
                 lng: item.point.lng
               })

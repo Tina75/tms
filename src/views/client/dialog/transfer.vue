@@ -44,7 +44,7 @@ import { transfereeAdd, transfereeUpdate, CODE } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
 import AreaInput from '@/components/AreaInput.vue'
 export default {
-  name: 'sender',
+  name: 'transfer',
   components: {
     AreaInput
   },
@@ -90,7 +90,6 @@ export default {
           } else { // 2-编辑
             this._transfereeUpdate()
           }
-          this.close()
         }
       })
     },
@@ -98,6 +97,7 @@ export default {
       transfereeAdd(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -108,6 +108,7 @@ export default {
       transfereeUpdate(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }

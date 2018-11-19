@@ -20,23 +20,24 @@
         </RadioGroup>
       </FormItem>
     </Form>
+    <div class="list-info"></div>
     <!--个体司机-->
     <Form v-show="validate.type.selectStatus == 1" ref="validateDriver" :model="validate.driver" :rules="ruleValidate.driver" :label-width="90">
       <p class="modalTitle">基础信息</p>
       <Row>
         <Col :span="8">
         <FormItem label="司机姓名:" prop="driverName">
-          <Input v-model="validate.driver.driverName" :maxlength="15" placeholder="请输入"/>
+          <Input v-model="validate.driver.driverName" :maxlength="15" placeholder="必填"/>
         </FormItem>
         </Col>
         <Col :span="8">
         <FormItem label="手机号:" prop="driverPhone">
-          <Input v-model="validate.driver.driverPhone" :maxlength="11" placeholder="请输入"/>
+          <Input v-model="validate.driver.driverPhone" :maxlength="11" placeholder="必填"/>
         </FormItem>
         </Col>
         <Col :span="8">
         <FormItem label="车牌号:" prop="carNO">
-          <Input v-model="validate.driver.carNO" :maxlength="8" placeholder="请输入"/>
+          <Input v-model="validate.driver.carNO" :maxlength="8" placeholder="必填"/>
         </FormItem>
         </Col>
       </Row>
@@ -57,7 +58,7 @@
         </Col>
         <Col :span="8">
         <FormItem label="载重:" prop="shippingWeight">
-          <Input v-model="validate.driver.shippingWeight" :maxlength="9" placeholder="请输入"/>吨
+          <Input v-model="validate.driver.shippingWeight" :maxlength="9" placeholder="必填"/>吨
         </FormItem>
         </Col>
       </Row>
@@ -185,6 +186,7 @@ import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carr
 import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/'
+import _ from 'lodash'
 export default {
   name: 'carrier',
   components: { CitySelect, UpLoad },
@@ -294,10 +296,7 @@ export default {
     if (this.validate.type.selectStatus === 1) { // 个人司机
       this.radioDisabled = true
       this.validate.type.selectStatus = '1'
-      this.$refs.upload1.progress = 1
-      this.$refs.upload2.progress = 1
-      this.$refs.upload1.uploadImg = this.validate.driver.travelPhoto
-      this.$refs.upload2.uploadImg = this.validate.driver.drivePhoto
+      this.getImageDate()
       if (this.validate.driver.regularLine && JSON.parse(this.validate.driver.regularLine).length > 0) {
         if (JSON.parse(this.validate.driver.regularLine).length === 1) {
           this.address1 = JSON.parse(this.validate.driver.regularLine)[0]
@@ -312,13 +311,41 @@ export default {
     }
   },
   methods: {
+    // 图片传入赋值data
+    setImageDate () {
+      this.$refs.upload1.progress = 1
+      this.$refs.upload2.progress = 1
+      this.validate.driver.travelPhoto = this.$refs.upload1.uploadImg
+      this.validate.driver.drivePhoto = this.$refs.upload2.uploadImg
+    },
+    getImageDate () {
+      this.$refs.upload1.progress = 1
+      this.$refs.upload2.progress = 1
+      this.$refs.upload1.uploadImg = this.validate.driver.travelPhoto
+      this.$refs.upload2.uploadImg = this.validate.driver.drivePhoto
+    },
+    initRequestParam () {
+      return {
+        carrierId: this.id,
+        driverName: this.validate.driver.driverName,
+        driverPhone: this.validate.driver.driverPhone,
+        carNO: this.validate.driver.carNO,
+        carType: this.validate.driver.carType,
+        carLength: this.validate.driver.carLength,
+        shippingWeight: Math.floor(this.validate.driver.shippingWeight * 100) / 100,
+        shippingVolume: Math.floor(this.validate.driver.shippingVolume * 10) / 10,
+        remark: this.validate.driver.remark,
+        payType: this.validate.driver.payType,
+        carBrand: this.validate.driver.carBrand,
+        travelPhoto: this.validate.driver.travelPhoto,
+        drivePhoto: this.validate.driver.drivePhoto,
+        regularLine: JSON.stringify(this.address)
+      }
+    },
     save (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          this.$refs.upload1.progress = 1
-          this.$refs.upload2.progress = 1
-          this.validate.driver.travelPhoto = this.$refs.upload1.uploadImg
-          this.validate.driver.drivePhoto = this.$refs.upload2.uploadImg
+          this.setImageDate()
           // 常用线路校验
           this.checkLine()
           if (!this.flagAddress) {
@@ -337,26 +364,11 @@ export default {
               this._carrierForCompanyUpdate()
             }
           }
-          this.close()
         }
       })
     },
     _carrierAddForDriver () {
-      let data = {
-        driverName: this.validate.driver.driverName,
-        driverPhone: this.validate.driver.driverPhone,
-        carNO: this.validate.driver.carNO,
-        carType: this.validate.driver.carType,
-        carLength: this.validate.driver.carLength,
-        shippingWeight: Math.floor(this.validate.driver.shippingWeight * 100) / 100,
-        shippingVolume: Math.floor(this.validate.driver.shippingVolume * 10) / 10,
-        remark: this.validate.driver.remark,
-        payType: this.validate.driver.payType,
-        carBrand: this.validate.driver.carBrand,
-        travelPhoto: this.validate.driver.travelPhoto,
-        drivePhoto: this.validate.driver.drivePhoto,
-        regularLine: JSON.stringify(this.address)
-      }
+      let data = this.initRequestParam()
       carrierAddForDriver(data).then(res => {
         if (res.data.code === CODE) {
           this.openTab({
@@ -365,6 +377,7 @@ export default {
             query: { id: res.data.data, carrierType: 1 }
           })
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -386,31 +399,18 @@ export default {
             query: { id: res.data.data, carrierType: 2 }
           })
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
       })
     },
     _carrierForDriverUpdate () {
-      let data = {
-        driverName: this.validate.driver.driverName,
-        driverPhone: this.validate.driver.driverPhone,
-        carNO: this.validate.driver.carNO,
-        carType: this.validate.driver.carType,
-        carLength: this.validate.driver.carLength,
-        shippingWeight: Math.floor(this.validate.driver.shippingWeight * 100) / 100,
-        shippingVolume: Math.floor(this.validate.driver.shippingVolume * 10) / 10,
-        remark: this.validate.driver.remark,
-        payType: this.validate.driver.payType,
-        carrierId: this.id,
-        carBrand: this.validate.driver.carBrand,
-        travelPhoto: this.validate.driver.travelPhoto,
-        drivePhoto: this.validate.driver.drivePhoto,
-        regularLine: JSON.stringify(this.address)
-      }
+      let data = this.initRequestParam()
       carrierForDriverUpdate(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -428,6 +428,7 @@ export default {
       carrierForCompanyUpdate(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -438,22 +439,16 @@ export default {
       this.address = []
       this.flagAddress = true
       // 线路统一
-      if (this.address1 &&
-         (this.address1.s !== undefined && this.address1.e !== undefined) &&
-         (this.address1.s !== null && this.address1.e !== null)) {
+      if (!_.isNil(this.address1) && (!_.isNil(this.address1.s) && !_.isNil(this.address1.e))) {
         this.address.push(this.address1)
-      } else if ((this.address1.s === undefined && this.address1.e === undefined) ||
-                 (this.address1.s === null && this.address1.e === null)) {
+      } else if (_.isNil(this.address1.s) && _.isNil(this.address1.e)) {
       } else {
         this.$Message.error('请完善常跑线路1信息')
         this.flagAddress = false
       }
-      if (this.address2 &&
-         (this.address2.s !== undefined && this.address2.e !== undefined) &&
-         (this.address2.s !== null && this.address2.e !== null)) {
+      if (!_.isNil(this.address2) && (!_.isNil(this.address2.s) && !_.isNil(this.address2.e))) {
         this.address.push(this.address2)
-      } else if ((this.address2.s === undefined && this.address2.e === undefined) ||
-                 (this.address2.s === null && this.address2.e === null)) {
+      } else if (_.isNil(this.address2.s) && _.isNil(this.address2.e)) {
       } else {
         this.$Message.error('请完善常跑线路2信息')
         this.flagAddress = false
@@ -470,4 +465,8 @@ export default {
   margin-right 8px
 .modalTitle
   font-size: 14px;
+.list-info
+  border-top 1px dashed #cbced3
+  padding-top 20px
+  margin-top -10px
 </style>

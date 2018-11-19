@@ -235,7 +235,7 @@ export const TABLE_COLUMNS = vm => [
     }
   },
   {
-    title: '客户订单号',
+    title: '客户单号',
     key: 'customerOrderNo',
     width: 180
   },
@@ -292,7 +292,7 @@ export const TABLE_COLUMNS = vm => [
     }
   },
   {
-    title: '要求装货时间',
+    title: '发货时间',
     key: 'deliveryTimeLong',
     width: 160,
     render: (h, p) => {
@@ -300,7 +300,7 @@ export const TABLE_COLUMNS = vm => [
     }
   },
   {
-    title: '期望到货时间',
+    title: '到货时间',
     key: 'arriveTimeLong',
     width: 160,
     render: (h, p) => {
@@ -390,7 +390,7 @@ export const EXTRA_COLUMNS = [
     visible: true
   },
   {
-    title: '客户订单号',
+    title: '客户单号',
     key: 'customerOrderNo',
     fixed: false,
     visible: false
@@ -438,13 +438,13 @@ export const EXTRA_COLUMNS = [
     visible: false
   },
   {
-    title: '要求装货时间',
+    title: '发货时间',
     key: 'deliveryTimeLong',
     fixed: false,
     visible: false
   },
   {
-    title: '期望到货时间',
+    title: '到货时间',
     key: 'arriveTimeLong',
     fixed: false,
     visible: false

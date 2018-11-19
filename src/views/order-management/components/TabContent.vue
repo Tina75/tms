@@ -54,7 +54,7 @@
           @on-focus.once="getClients">
         </SelectInput>
         <Input v-model="keywords.orderNo" :maxlength="30" placeholder="请输入订单号" style="width: 200px" />
-        <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户订单号" style="width: 200px" />
+        <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户单号" style="width: 200px" />
         <Input v-if="source !== 'transport'" v-model="keywords.waybillNo" :maxlength="30" placeholder="请输入运单号" style="width: 200px" />
       </div>
       <div style="display: flex;justify-content: space-between;">
@@ -510,7 +510,7 @@ export default {
           }
         },
         {
-          title: '客户订单号',
+          title: '客户单号',
           key: 'customerOrderNo',
           minWidth: 160,
           render: (h, p) => {
@@ -630,7 +630,7 @@ export default {
           }
         },
         {
-          title: '要求发货时间',
+          title: '发货时间',
           key: 'deliveryTime',
           minWidth: 150,
           render: (h, params) => {
@@ -638,7 +638,7 @@ export default {
           }
         },
         {
-          title: '期望到货时间',
+          title: '到货时间',
           key: 'arriveTime',
           minWidth: 150,
           render: (h, params) => {

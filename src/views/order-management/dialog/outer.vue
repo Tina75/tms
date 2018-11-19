@@ -27,12 +27,12 @@
           </Select>
         </FormItem>
         <FormItem label="公里数:" prop="mileage" class="ivu-form-item-required blank">
-          <TagNumberInput :min="0" v-model="info.mileage" :parser="handleParseFloat" style="width:200px">
+          <TagNumberInput :min="0" v-model="info.mileage" style="width:200px">
             <span slot="suffix" class="order-create__input-suffix">公里</span>
           </TagNumberInput>
         </FormItem>
         <FormItem label="外转运费:" prop="transFee">
-          <TagNumberInput :min="0" v-model="info.transFee" :parser="handleParseFloat" placeholder="请填写外转运费" style="width:175px">
+          <TagNumberInput :min="0" v-model="info.transFee" placeholder="请填写外转运费" style="width:175px">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           <span @click="showChargeRules">
@@ -40,7 +40,7 @@
           </span>
         </FormItem>
         <FormItem label="返现运费:" prop="cashBack" class="ivu-form-item-required blank">
-          <TagNumberInput v-model="info.cashBack" :parser="handleParseFloat" style="width:175px">
+          <TagNumberInput v-model="info.cashBack" style="width:175px">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           <span>
@@ -67,7 +67,6 @@ import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '@/components/SelectInput.vue'
 import TagNumberInput from '@/components/TagNumberInput'
-import float from '@/libs/js/float'
 import settlements from '@/libs/constant/settlement.js'
 import FontIcon from '@/components/FontIcon'
 import { mapGetters, mapActions } from 'vuex'
@@ -123,17 +122,13 @@ export default {
 
   mounted: function () {
     // 公里数
-    this.info.mileage = this.detail.mileage === 0 ? '' : Number(this.detail.mileage) / 1000
+    this.info.mileage = this.detail.mileage === 0 ? null : Number(this.detail.mileage) / 1000
   },
 
   methods: {
     ...mapActions([
       'getTransferees'
     ]),
-    // 保留2位小数
-    handleParseFloat (value) {
-      return float.floor(value) || null
-    },
     // 选择已维护外转方后操作
     handleSelectTransferee (name, row) {
       this.info.payType = row.payType

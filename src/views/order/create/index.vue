@@ -83,48 +83,36 @@
       </Col>
     </Row>
     <Row :gutter="16">
-      <Col span="12">
-      <FormItem label="发货地址:" class="consig-address">
-        <Row>
-          <Col span="11">
-          <FormItem prop="start">
-            <CitySelect ref="start" v-model="orderForm.start" :code-type="4" clearable></CitySelect>
-          </FormItem>
-          </Col>
-          <Col span="13" style="padding-left: 5px">
-          <FormItem prop="consignerAddress">
-            <AreaInput
-              v-model="orderForm.consignerAddress"
-              :city-code="orderForm.start"
-              :local-options="consignerAddresses"
-              :disabled="true"
-              :filter-city="true"
-              @latlongt-change="({lat, lng}) => latlongtChange(1, lat, lng)"/>
-          </FormItem>
-          </Col>
-        </Row>
+      <Col span="6">
+      <FormItem label="发货地址:" class="consig-address" prop="start">
+        <CitySelect ref="start" v-model="orderForm.start" clearable></CitySelect>
       </FormItem>
       </Col>
-      <Col span="12">
-      <FormItem label="收货地址:" class="consig-address">
-        <Row>
-          <Col span="11">
-          <FormItem prop="end">
-            <CitySelect ref="end" v-model="orderForm.end" :code-type="4" clearable></CitySelect>
-          </FormItem>
-          </Col>
-          <Col span="13" style="padding-left: 5px">
-          <FormItem prop="consigneeAddress">
-            <AreaInput
-              v-model="orderForm.consigneeAddress"
-              :city-code="orderForm.end"
-              :local-options="consigneeAddresses"
-              :disabled="true"
-              :filter-city="true"
-              @latlongt-change="({lat, lng}) => latlongtChange(2, lat, lng)"/>
-          </FormItem>
-          </Col>
-        </Row>
+      <Col span="6">
+      <FormItem :label-width="0" prop="consignerAddress">
+        <AreaInput
+          v-model="orderForm.consignerAddress"
+          :city-code="orderForm.start"
+          :local-options="consignerAddresses"
+          :disabled="true"
+          :filter-city="true"
+          @latlongt-change="({lat, lng}) => latlongtChange(1, lat, lng)"/>
+      </FormItem>
+      </Col>
+      <Col span="6">
+      <FormItem prop="end" label="收货地址:" class="consig-address">
+        <CitySelect ref="end" v-model="orderForm.end" clearable></CitySelect>
+      </FormItem>
+      </Col>
+      <Col span="6">
+      <FormItem :label-width="0" prop="consigneeAddress">
+        <AreaInput
+          v-model="orderForm.consigneeAddress"
+          :city-code="orderForm.end"
+          :local-options="consigneeAddresses"
+          :disabled="true"
+          :filter-city="true"
+          @latlongt-change="({lat, lng}) => latlongtChange(2, lat, lng)"/>
       </FormItem>
       </Col>
     </Row>
@@ -139,7 +127,7 @@
     </CargoTable>
 
     <Title class="i-mb-15 i-mt-15">应收费用</Title>
-    <Row :gutter="16">
+    <Row :gutter="16" style="margin-bottom: 10px">
       <Col span="6">
       <FormItem label="结算方式:" prop="settlementType">
         <Select ref="settlementSelector" v-model="orderForm.settlementType">
@@ -149,7 +137,7 @@
       </Col>
       <Col span="6">
       <FormItem label="计费里程:" prop="mileage">
-        <TagNumberInput :min="0" v-model="orderForm.mileage" :parser="handleParseFloats">
+        <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.mileage" :precision="1">
           <span slot="suffix" class="order-create__input-suffix">公里</span>
         </TagNumberInput>
       </FormItem>
@@ -158,7 +146,7 @@
       <FormItem label="运输费用:" prop="freightFee">
         <Row>
           <Col span="20">
-          <TagNumberInput :min="0" v-model="orderForm.freightFee" :parser="handleParseFloat">
+          <TagNumberInput :min="0" v-model="orderForm.freightFee">
             <span slot="suffix" class="order-create__input-suffix">元</span>
           </TagNumberInput>
           </Col>
@@ -168,49 +156,43 @@
           </span>
           </Col>
         </Row>
-        <p class="foramte-num">{{formateNum(orderForm.freightFee)}}</p>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="提货费用:" prop="pickupFee">
-        <TagNumberInput :min="0" v-model="orderForm.pickupFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" v-model="orderForm.pickupFee">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
-        <p class="foramte-num">{{formateNum(orderForm.pickupFee)}}</p>
       </FormItem>
       </Col>
     </Row>
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="装货费用:" prop="loadFee">
-        <TagNumberInput :min="0" v-model="orderForm.loadFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" v-model="orderForm.loadFee">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
-        <p class="foramte-num">{{formateNum(orderForm.loadFee)}}</p>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="卸货费用:" prop="unloadFee">
-        <TagNumberInput :min="0" v-model="orderForm.unloadFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" v-model="orderForm.unloadFee">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
-        <p class="foramte-num">{{formateNum(orderForm.unloadFee)}}</p>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="保险费用:" prop="insuranceFee">
-        <TagNumberInput :min="0" v-model="orderForm.insuranceFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" v-model="orderForm.insuranceFee">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
-        <p class="foramte-num">{{formateNum(orderForm.insuranceFee)}}</p>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="其他费用:" prop="otherFee">
-        <TagNumberInput :min="0" v-model="orderForm.otherFee" :parser="handleParseFloat">
+        <TagNumberInput :min="0" v-model="orderForm.otherFee">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
-        <p class="foramte-num">{{formateNum(orderForm.otherFee)}}</p>
       </FormItem>
       </Col>
     </Row>
@@ -245,14 +227,14 @@
       </Col>
       <Col span="6">
       <FormItem label="代收货款:" prop="collectionMoney">
-        <TagNumberInput :min="0" v-model="orderForm.collectionMoney" :parser="handleParseFloat">
+        <TagNumberInput :min="0" v-model="orderForm.collectionMoney">
           <span slot="suffix" class="order-create__input-suffix">元</span>
         </TagNumberInput>
       </FormItem>
       </Col>
     </Row>
     <Row>
-      <Col span="12">
+      <Col span="18">
       <FormItem label="备注:" prop="remark">
         <Input v-model="orderForm.remark" :maxlength="100" type="text">
           </Input>
@@ -289,7 +271,6 @@ import validator from '@/libs/js/validate'
 import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
 import distance from '@/libs/js/distance'
-import { money2chinese } from '@/libs/js/util'
 import api from './libs/api'
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee', 'collectionMoney']
 export default {
@@ -379,7 +360,7 @@ export default {
         start: null,
         // 目的城市
         end: null,
-        // 客户订单号
+        // 客户单号
         customerOrderNo: '',
         // 发货时间
         deliveryTime: '',
@@ -626,14 +607,6 @@ export default {
       'clearCargoes',
       'clearClients'
     ]),
-    // 保留2位小数
-    handleParseFloat (value) {
-      return float.floor(value).toString()
-    },
-    // 保留1位小数
-    handleParseFloats (value) {
-      return float.floor(value, 1).toString()
-    },
     // 货物名称选择下拉项目时触发
     selectCargo (params, cargoItem) {
       const cargo = this.cargoes.find(cg => cg.id === cargoItem.id)
@@ -948,16 +921,14 @@ export default {
     },
     // 距离计算
     cpmtDistance (p1, p2) {
-      // { lng: 118.795264, lat: 32.027003 }
+      // { lng: 43.4907612, lat: 87.6334585 }
+      // { lng: 43.4812632, lat: 87.5605997 }
       distance(p1, p2).then(res => {
-        const num = float.floor(res / 1000, 1)
-        this.orderForm.mileage = Number(num)
+        if (res) {
+          const num = float.floor(res / 1000, 1)
+          this.orderForm.mileage = Number(num)
+        }
       })
-    },
-    formateNum (value) {
-      if (value && value > 9999.99) {
-        return money2chinese(value)
-      }
     }
   }
 }
@@ -991,4 +962,5 @@ export default {
 .foramte-num
   font-size 12px
   line-height 14px
+  color #999
 </style>

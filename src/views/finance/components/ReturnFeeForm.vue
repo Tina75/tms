@@ -4,7 +4,7 @@
       <Row :gutter="16">
         <Col span="7">
         <FormItem :label-width="101" label="外转方/承运商：" prop="partnerName">
-          <Input v-model="formInline.partnerName" :maxlength="20" placeholder="请输入发货方名称"></Input>
+          <Input v-model="formInline.partnerName" :maxlength="20" placeholder="请输入"></Input>
         </FormItem>
         </Col>
         <Col v-if="scene==='2'" span="6">

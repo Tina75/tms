@@ -3,7 +3,7 @@
     <header :class="from === 'order' ? themeBarColor(orderStatus) : themeBarColor(receiptStatus)" class="detail-header">
       <ul>
         <li>订单号：{{detail.orderNo}}</li>
-        <li>客户订单号：{{detail.customerOrderNo || '-' }}</li>
+        <li>客户单号：{{detail.customerOrderNo || '-' }}</li>
         <li>运单号：{{detail.waybillNo || '-'}} &nbsp;&nbsp;&nbsp;
           <Poptip v-if="waybillNums.length > 0" placement="bottom" @on-popper-show="showPoptip" @on-popper-hide="hidePoptip">
             <a>{{ show ? '收起全部' : '展开全部' }}</a>
@@ -39,12 +39,12 @@
             <span>{{detail.consignerName}}</span>
           </i-col>
           <i-col span="7">
-            <span>要求发货时间：</span>
+            <span>发货时间：</span>
             <span v-if="detail.deliveryTime">{{detail.deliveryTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
             <span v-else>-</span>
           </i-col>
           <i-col span="7">
-            <span>期望到货时间：</span>
+            <span>到货时间：</span>
             <span v-if="detail.arriveTime">{{detail.arriveTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
             <span v-else>-</span>
           </i-col>

@@ -217,7 +217,8 @@ export default {
      * 搜索
      */
     handleSearch (params) {
-      Object.assign(this.keywords, params)
+      this.keywords = Object.assign({}, this.keywords, params)
+
       this.selectedOrders = []
     },
     handleSelectionChange (selected) {

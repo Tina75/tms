@@ -158,7 +158,7 @@ import SelectInputForCity from '@/components/SelectInputForCity'
 import FontIcon from '@/components/FontIcon'
 import mixin from './mixin'
 export default {
-  name: 'index',
+  name: 'rule-index',
   components: { SelectInputForCity, FontIcon },
   mixins: [ BasePage, mixin ],
   props: {
@@ -218,6 +218,7 @@ export default {
               _this.showRuleDetail(companyData.find(item => {
                 return item.ruleId === ruleId
               }))
+              _this.addItem()
             })
           }
         }

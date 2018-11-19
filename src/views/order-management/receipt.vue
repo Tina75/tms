@@ -35,7 +35,7 @@
           v-model.lazy="keywords.customerOrderNo"
           :maxlength="30"
           :icon="keywords.customerOrderNo ? 'ios-close-circle' : ''"
-          placeholder="请输入客户订单号"
+          placeholder="请输入客户单号"
           style="width: 200px"
           @on-enter="searchList"
           @on-click="clearKeywords"/>
@@ -55,7 +55,7 @@
           @on-focus.once="getClients">
         </SelectInput>
         <Input v-model="keywords.orderNo" :maxlength="30" placeholder="请输入订单号" style="width: 200px" />
-        <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户订单号" style="width: 200px" />
+        <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户单号" style="width: 200px" />
         <Input v-model="keywords.waybillNo" :maxlength="30" placeholder="请输入运单号" style="width: 200px" />
       </div>
       <div style="display: flex;justify-content: space-between;">
@@ -144,7 +144,7 @@ export default {
         { name: '待返厂', count: '' },
         { name: '已返厂', count: '' }
       ],
-      selectStatus: 0, // 当前搜索状态   0：客户名称   1：订单号  2：客户订单号
+      selectStatus: 0, // 当前搜索状态   0：客户名称   1：订单号  2：客户单号
       selectList: [
         {
           value: 0,
@@ -156,7 +156,7 @@ export default {
         },
         {
           value: 2,
-          label: '客户订单号'
+          label: '客户单号'
         }
       ],
       keyword: {
@@ -180,7 +180,7 @@ export default {
           title: '操作',
           key: 'do',
           fixed: 'left',
-          width: 130,
+          width: 140,
           extra: true,
           render: (h, params) => {
             let renderBtn = []
@@ -215,19 +215,36 @@ export default {
               )
             }
             if (params.row.receiptOrder.receiptStatus > 0) {
-              renderBtn.push(
-                h('a', {
-                  style: {
-                    marginRight: '25px',
-                    color: '#00a4bd'
-                  },
-                  on: {
-                    click: () => {
-                      this.openUploadDialog(params.row, params.row.receiptOrder.receiptUrl.length > 0 ? '修改' : '上传')
+              if (params.row.receiptOrder.receiptUrl.length > 0 && this.hasPower(110205)) { // 修改回单
+                renderBtn.push(
+                  h('a', {
+                    style: {
+                      marginRight: '25px',
+                      color: '#00a4bd'
+                    },
+                    on: {
+                      click: () => {
+                        this.openUploadDialog(params.row, '修改')
+                      }
                     }
-                  }
-                }, params.row.receiptOrder.receiptUrl.length > 0 ? '修改回单' : '上传回单')
-              )
+                  }, '修改回单')
+                )
+              }
+              if (params.row.receiptOrder.receiptUrl.length <= 0 && this.hasPower(110204)) { // 上传回单
+                renderBtn.push(
+                  h('a', {
+                    style: {
+                      marginRight: '25px',
+                      color: '#00a4bd'
+                    },
+                    on: {
+                      click: () => {
+                        this.openUploadDialog(params.row, '上传')
+                      }
+                    }
+                  }, '上传回单')
+                )
+              }
             }
             return h('div', renderBtn)
           }
@@ -262,7 +279,7 @@ export default {
           }
         },
         {
-          title: '客户订单号',
+          title: '客户单号',
           key: 'customerOrderNo',
           minWidth: 160,
           render: (h, p) => {
@@ -402,7 +419,7 @@ export default {
           tooltip: true
         },
         {
-          title: '要求装货时间',
+          title: '发货时间',
           key: 'deliveryTime',
           minWidth: 150,
           render: (h, params) => {
@@ -410,7 +427,7 @@ export default {
           }
         },
         {
-          title: '期望到货时间',
+          title: '到货时间',
           key: 'arriveTime',
           minWidth: 150,
           render: (h, params) => {

@@ -4,7 +4,7 @@
     <section :class="themeBarColor(status)" class="detail-header">
       <ul class="detail-header-list">
         <li class="detail-header-list-item">订单号：{{ info.orderNo }}</li>
-        <li class="detail-header-list-item">客户订单号：{{ info.customerOrderNo || '-' }}</li>
+        <li class="detail-header-list-item">客户单号：{{ info.customerOrderNo || '-' }}</li>
         <li class="detail-header-list-item">外转单号：{{ info.transNo }}</li>
         <li class="detail-header-list-item">外转方运单号：{{ info.outTransNo || '-' }}</li>
         <li class="detail-header-list-item">外转单状态：
@@ -35,12 +35,12 @@
               </i-col>
               <i-col span="6">
                 <span class="detail-field-title"
-                      style="width: 120px;">要求发货时间：</span>
+                      style="width: 120px;">发货时间：</span>
                 <span>{{ info.deliveryTimeLong | timeFormatter }}</span>
               </i-col>
               <i-col span="6">
                 <span class="detail-field-title"
-                      style="width: 120px;">期望到货时间：</span>
+                      style="width: 120px;">到货时间：</span>
                 <span>{{ info.arriveTimeLong | timeFormatter }}</span>
               </i-col>
               <i-col span="6">

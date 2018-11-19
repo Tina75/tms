@@ -41,29 +41,44 @@
         </i-col>
       </Row>
 
-      <div v-if="isChangeFee === 1" class="detail-field-group row-fee">
-        <div>
-          <span class="detail-field-title-sm detail-field-required">{{ details.billType === 2 ? '外转运费：' : '运输费：' }}</span>
+      <Form v-if="isChangeFee === 1" ref="payment" :label-width="82" :model="payment" :rules="rules" label-position="left" class="detail-field-group row-fee">
+        <FormItem :label="details.billType === 2 ? '外转运费：' : '运输费：'" :class="details.billType === 2 ? 'waizhuan-label' : ''" prop="freightFee">
+          <!-- <span class="detail-field-title-sm detail-field-required">{{ details.billType === 2 ? '外转运费：' : '运输费：' }}</span>
           <MoneyInput v-model="payment.freightFee" :is-disabled="isDisabled" class="detail-payment-input" />
-          <!-- <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a> -->
-        </div>
-        <div v-if="details.billType !== 2">
-          <span class="detail-field-title-sm" style="width: 70px;">装货费：</span>
-          <MoneyInput v-model="payment.loadFee" :is-disabled="isDisabled" class="detail-payment-input" />
-        </div>
-        <div v-if="details.billType !== 2">
-          <span class="detail-field-title-sm" style="width: 70px;">卸货费：</span>
-          <MoneyInput v-model="payment.unloadFee" :is-disabled="isDisabled" class="detail-payment-input" />
-        </div>
-        <div v-if="details.billType !== 2">
-          <span class="detail-field-title-sm" style="width: 70px;">保险费：</span>
-          <MoneyInput v-model="payment.insuranceFee" :is-disabled="isDisabled" class="detail-payment-input" />
-        </div>
-        <div v-if="details.billType !== 2">
-          <span class="detail-field-title-sm">其他费用：</span>
-          <MoneyInput v-model="payment.otherFee" :is-disabled="isDisabled" class="detail-payment-input" />
-        </div>
-      </div>
+          <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a> -->
+          <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" :style="details.billType === 2 && 'width: 158px;'" class="detail-payment-input">
+            <span slot="suffix" class="order-create__input-suffix">元</span>
+          </TagNumberInput>
+        </FormItem>
+        <FormItem v-if="details.billType !== 2" label="装货费：" prop="loadFee">
+          <!-- <span class="detail-field-title-sm" style="width: 70px;">装货费：</span>
+          <MoneyInput v-model="payment.loadFee" :is-disabled="isDisabled" class="detail-payment-input" /> -->
+          <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input">
+            <span slot="suffix" class="order-create__input-suffix">元</span>
+          </TagNumberInput>
+        </FormItem>
+        <FormItem v-if="details.billType !== 2" label="卸货费：" prop="unloadFee">
+          <!-- <span class="detail-field-title-sm" style="width: 70px;">卸货费：</span>
+          <MoneyInput v-model="payment.unloadFee" :is-disabled="isDisabled" class="detail-payment-input" /> -->
+          <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input">
+            <span slot="suffix" class="order-create__input-suffix">元</span>
+          </TagNumberInput>
+        </FormItem>
+        <FormItem v-if="details.billType !== 2" label="保险费：" prop="insuranceFee">
+          <!-- <span class="detail-field-title-sm" style="width: 70px;">保险费：</span>
+          <MoneyInput v-model="payment.insuranceFee" :is-disabled="isDisabled" class="detail-payment-input" /> -->
+          <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input">
+            <span slot="suffix" class="order-create__input-suffix">元</span>
+          </TagNumberInput>
+        </FormItem>
+        <FormItem v-if="details.billType !== 2" label="其他费用：" prop="otherFee">
+          <!-- <span class="detail-field-title-sm">其他费用：</span>
+          <MoneyInput v-model="payment.otherFee" :is-disabled="isDisabled" class="detail-payment-input" /> -->
+          <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input">
+            <span slot="suffix" class="order-create__input-suffix">元</span>
+          </TagNumberInput>
+        </FormItem>
+      </Form>
 
       <div v-if="isChangeFee === 1 && canUpdateFee === 2 && changeFeeType === 1" class="err-message">存在多个异常记录未处理，只能修改最后一次上报的异常记录的运费。</div>
 
@@ -114,6 +129,8 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import MoneyInput from '../components/MoneyInput'
+import TagNumberInput from '@/components/TagNumberInput'
+import validator from '@/libs/js/validate'
 import Server from '@/libs/js/server'
 import PayInfo from '../components/PayInfo'
 import UpLoad from '@/components/upLoad/'
@@ -121,9 +138,17 @@ import UpLoad from '@/components/upLoad/'
 import _ from 'lodash'
 export default {
   name: 'SendCar',
-  components: { MoneyInput, PayInfo, UpLoad },
+  components: { TagNumberInput, MoneyInput, PayInfo, UpLoad },
   mixins: [ BaseDialog ],
   data () {
+    // 9位整数 2位小数
+    const validateFee = (rule, value, callback) => {
+      if ((value && validator.fee(value)) || !value) {
+        callback()
+      } else {
+        callback(new Error('费用整数位最多输入9位,小数2位'))
+      }
+    }
     return {
       show: true,
       loading: false,
@@ -133,6 +158,29 @@ export default {
         unloadFee: 0,
         insuranceFee: 0,
         otherFee: 0
+      },
+      rules: {
+        // 运输费
+        freightFee: [
+          { required: true, type: 'number', message: '请输入运输费用' },
+          { validator: validateFee }
+        ],
+        // 装货费用
+        loadFee: [
+          { validator: validateFee }
+        ],
+        // 卸货费用
+        unloadFee: [
+          { validator: validateFee }
+        ],
+        // 保险费用
+        insuranceFee: [
+          { validator: validateFee }
+        ],
+        // 其他费用
+        otherFee: [
+          { validator: validateFee }
+        ]
       },
       clonePayment: {}, // 复制一份费用数据，用来比较有没有修改费用
       settlementType: '1',
@@ -177,7 +225,6 @@ export default {
   },
 
   methods: {
-
     // 查询数据
     fetchData () {
       const _this = this
@@ -323,14 +370,28 @@ export default {
             this.settlementPayInfo.map((item) => {
               item.isDisabled = false
             })
+            this.cloneSettlementPayInfo.map((item) => {
+              item.isDisabled = false
+            })
             break
           case 2: // 送货环节： 到付、回付这两段都可以修改
             this.settlementPayInfo.map((item) => {
               item.isDisabled = (item.payType === 1)
             })
+            this.cloneSettlementPayInfo.map((item) => {
+              item.isDisabled = (item.payType === 1)
+            })
             break
           case 3: // 卸货环节： 提货只能改到付，送货只能改回付
             this.settlementPayInfo.map((item) => {
+              if (this.type === 1) {
+                item.isDisabled = false
+              } else {
+                item.isDisabled = (item.payType === 3)
+                item.isDisabled = !item.isDisabled
+              }
+            })
+            this.cloneSettlementPayInfo.map((item) => {
               if (this.type === 1) {
                 item.isDisabled = false
               } else {
@@ -355,10 +416,6 @@ export default {
         this.$Message.error('请选择异常类型')
         return false
       }
-      if (typeof this.payment.freightFee !== 'number') {
-        this.$Message.error('请输入运输费')
-        return false
-      }
       if (this.details.abnormalPayInfos.length > 0 && this.isChangeFee === 1 && !this.$refs.$payInfo.validate()) return false
       return true
     },
@@ -368,14 +425,18 @@ export default {
       const _this = this
       if (!_this.validate()) return
       if (_this.isChangeSubmitFee() && _this.changeFeeType === 1 && _this.canUpdateFee === 1) {
-        _this.$Toast.confirm({
-          title: '提示',
-          content: '<p>运费未修改，是否保存？</p>',
-          okText: '是',
-          cancelText: '否',
-          onOk: () => {
-            console.log('保存')
-            _this.doSubmit()
+        this.$refs.payment.validate((valid) => {
+          if (valid) {
+            _this.$Toast.confirm({
+              title: '提示',
+              content: '<p>运费未修改，是否保存？</p>',
+              okText: '是',
+              cancelText: '否',
+              onOk: () => {
+                console.log('保存')
+                _this.doSubmit()
+              }
+            })
           }
         })
       } else {
@@ -459,6 +520,7 @@ export default {
           delete item._rowKey
         })
         console.log(this.cloneSettlementPayInfo, tableDate)
+        console.log(this.payment, this.clonePayment)
         return _.isEqual(this.payment, this.clonePayment) && _.isEqual(this.cloneSettlementPayInfo, tableDate) // 费用输入框和多段付
       } else {
         return _.isEqual(this.payment, this.clonePayment)
@@ -506,6 +568,10 @@ export default {
     padding 27px 0 20px 12px
     border-bottom 1px dashed #CBCED3
 
+    .ivu-form-item-label
+      color #777
+      font-size 14px
+
     &:last-child
       border-style none
       padding-bottom 10px
@@ -517,6 +583,9 @@ export default {
       justify-content space-between
       align-items center
       margin-bottom 10px
+    .waizhuan-label
+      .ivu-form-item-label
+        padding-right 0
   .abnormal-header
       font-size 14px
       font-family 'PingFangSC-Regular'

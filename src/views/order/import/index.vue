@@ -247,8 +247,8 @@ export default {
         return
       }
       this.$Toast.confirm({
-        content: '确定清空导入记录，清空导入记录后无法恢复',
-        description: '清空导入记录不会删除已导入的订单数据。',
+        content: '导入记录清空后将无法恢复',
+        description: '清空记录不会删除已导入的订单数据。',
         onOk () {
           server({
             url: '/order/template/clearOrderTemplateImportRecord',
@@ -266,7 +266,7 @@ export default {
     deleteById (data) {
       const vm = this
       this.$Toast.confirm({
-        content: '确定删除该导入记录，删除后将无法恢复',
+        content: '导入记录删除后将无法恢复',
         description: '删除记录不会删除已导入的订单数据。',
         onOk () {
           server({
