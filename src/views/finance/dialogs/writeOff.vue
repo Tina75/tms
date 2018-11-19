@@ -1,3 +1,4 @@
+<!--核销弹框-->
 <template>
   <Modal v-model="visiable" :mask-closable="true" width="440" @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">核销</p>
@@ -20,7 +21,7 @@
           </RadioGroup>
         </FormItem>
         <FormItem v-if="writeOffForm.payType !== '1'" :label="accountMap[writeOffForm.payType]" prop="account">
-          <Input v-model="writeOffForm.account" :maxlength="30" placeholder="请输入" />
+          <Input v-model="writeOffForm.account" :maxlength="30" placeholder="请输入" @on-keyup="cardFormat"/>
         </FormItem>
         <FormItem v-if="writeOffForm.payType === '2'" label="开户行：" prop="bankBranch">
           <Input v-model="writeOffForm.bankBranch" :maxlength="30" placeholder="请输入" />
@@ -112,6 +113,17 @@ export default {
           }).catch(err => console.error(err))
         }
       })
+    },
+    cardFormat (e) {
+      console.log(e.keyCode)
+      let value = this.writeOffForm.account
+      if (this.writeOffForm.payType === '2') { // 银行卡号
+        if (value.split(' ').join('').length % 4 === 0 && e.keyCode !== 8 && value.length < 31) {
+          this.$nextTick(() => {
+            this.writeOffForm.account += ' '
+          })
+        }
+      }
     }
   }
 

@@ -13,10 +13,10 @@
 import BMap from 'BMap'
 import mixin from './mixin.js'
 import BlankCard from '../components/BlankCard.vue'
-import MarkerOverlay from '../libs/MarkerOverlay.js'
+// import MarkerOverlay from '../libs/MarkerOverlay.js'
 import LabelOverlay from '../libs/LabelOverlay.js'
 import noData from './noData.vue'
-
+import truckMarker from '../libs/getTruckMarker.js'
 export default {
   name: 'car-position',
   components: {
@@ -47,6 +47,7 @@ export default {
     renderCarPosition () {
       this.$nextTick(() => {
         const bmap = new BMap.Map(this.$refs.positionMap)
+        const getTruckMarker = truckMarker(bmap)
         const points = []
         if (this.pointList.length > 0) {
           for (let i = 0; i < this.pointList.length; i++) {
@@ -56,10 +57,12 @@ export default {
               bmap.centerAndZoom(point, 12)
             }
             points.push(point)
-            const markerOverlay = new MarkerOverlay(point)
+            // const markerOverlay = new MarkerOverlay(point)
             const labelOverlay = new LabelOverlay(point, item.carNo)
-            bmap.addOverlay(markerOverlay)
+            const truckMarker = getTruckMarker(point)
+            // bmap.addOverlay(markerOverlay)
             bmap.addOverlay(labelOverlay)
+            bmap.addOverlay(truckMarker)
           }
           // 左上角，添加比例尺
           const topLeftControl = new BMap.ScaleControl({ anchor: 'BMAP_ANCHOR_TOP_LEFT' })
