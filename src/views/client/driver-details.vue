@@ -97,13 +97,13 @@
       <Row class="row">
         <Col span="5">
         <div v-if="driverList.travelPhoto">
-          <div :style="'height: 90px;background-image: url(' + driverList.travelPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(driverList.travelPhoto)"></div>
+          <div :style="'height: 90px;background-image: url(' + driverList.travelPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(0)"></div>
           <p class="uploadLabel">行驶证</p>
         </div>
         </Col>
         <Col span="6">
         <div v-if="driverList.drivePhoto">
-          <div :style="'height: 90px;background-image: url(' + driverList.drivePhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(driverList.drivePhoto)"></div>
+          <div :style="'height: 90px;background-image: url(' + driverList.drivePhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(1)"></div>
           <p class="uploadLabel">驾驶证</p>
         </div>
         </Col>
@@ -131,6 +131,7 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
+import openSwipe from '@/components/swipe/index'
 import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import { CODE, carrierDelete, carrierDetailsForDriver } from './client'
 export default {
@@ -171,6 +172,26 @@ export default {
       }
     }
   },
+  computed: {
+    imageItems () {
+      return [
+        {
+          title: '行驶证',
+          src: this.driverList.travelPhoto,
+          msrc: this.driverList.travelPhoto,
+          w: 600,
+          h: 400
+        },
+        {
+          title: '驾驶证',
+          src: this.driverList.drivePhoto,
+          msrc: this.driverList.drivePhoto,
+          w: 600,
+          h: 400
+        }
+      ]
+    }
+  },
   mounted () {
     this._carrierDetailsForDriver()
     this.initData()
@@ -206,9 +227,10 @@ export default {
       this.line1 = s1 + '—' + n1 === '—' ? '' : s1 + '—' + n1
       this.line2 = s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2
     },
-    handleView (imagePath) {
-      this.visible = true
-      this.imagePath = imagePath
+    handleView (index) {
+      openSwipe(index, this.imageItems)
+      // this.visible = true
+      // this.imagePath = imagePath
     },
     removeDriverData () {
       let _this = this
