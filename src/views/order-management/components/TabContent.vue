@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="margin-top: 30px;display: flex;justify-content: space-between;">
+    <div class="query-box">
       <div>
         <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
       </div>
@@ -1140,6 +1140,12 @@ export default {
 </script>
 
 <style lang='stylus' scoped>
+.query-box
+  margin-top: 30px;
+  display: flex;
+  display: -ms-flexbox
+  justify-content: space-between;
+  -ms-flex-pack justify
 .ivu-btn
   margin-right 15px
   width 80px

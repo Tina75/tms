@@ -3,7 +3,7 @@
     <p slot="header" class="dialog-title">{{ name }}</p>
     <div style="display: flex;justify-content:center;">
       <Icon type="ios-information-circle" size="24" color="#FFBB44" style="margin-top: -2px;margin-right: 5px;"></Icon>
-      <div v-if="canDelete">共选择了{{ id.length }}条订单，确定{{ name }}吗？</div>
+      <div v-if="canDelete" style="display: inline">共选择了{{ id.length }}条订单，确定{{ name }}吗？</div>
       <div v-else>
         <div v-if="id.length === 1">{{ message }}</div>
         <div v-else>

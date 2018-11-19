@@ -9,7 +9,7 @@
       <div class="list-box">
         <Row type="flex">
           <Col span="5" class="left_father">
-          <div :style="{height: height + 'px'}" class="left">
+          <div :style="{height: height + 'px'}" style="{'-ms-flex-direction: column;flex-direction: column;'}" class="left">
             <div class="left_search">
               <Row type="flex" >
                 <Col span="17">
@@ -447,7 +447,11 @@ export default {
         text-align center
     .left_father
       flex 0 0 275px
+      -ms-flex 0 0 275px
     .left
+      display flex
+      display -ms-flexbox
+      flex-direction: column
       .left_search
         padding-top 21px
         flex 0 0 72px

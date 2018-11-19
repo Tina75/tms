@@ -1,18 +1,19 @@
 <template>
   <Row class="temAll">
     <Col :style="styleHeight" span="4" class="colHeight">
-    <Menu :active-name="menuInitName" class="leftMenu" style="width:100%" >
+    <div :active-name="menuInitName" class="leftMenu" style="width:100%">
       <div class="centerBtnDiv">
         <Button v-if="hasPower(140101)" type="primary" class="centerBtn" @click="createRole">新增角色</Button>
       </div>
       <div>
-        <MenuItem v-for="menu in roles" :key="menu.id" :name="menu.name" class="menu" @click.native="clickLeftMenu(menu)">
-        <p class="menuTitle"><i class="icon font_family icon-ico-position"></i>{{menu.name}}</p>
-        <span v-if="menu.type !== 1" class="configBtnItem">
-          <span v-if="hasPower(140102)" class="configBtn" @click="editRole(menu)">修改</span>
-          <span v-if="hasPower(140103)" type="text" class="configBtn" @click="removeRole(menu)">删除</span>
-        </span>
-        </MenuItem>
+        <div v-for="menu in roles" :key="menu.id" :name="menu.name" :class="{'active': selectRoleId === menu.id}" class="menu-item" @click="clickLeftMenu(menu)">
+          <i class="icon font_family icon-ico-position"></i>
+          <span class="menuTitle">{{menu.name}}</span>
+          <span v-if="menu.type !== 1" class="configBtnItem">
+            <a v-if="hasPower(140102)" class="configBtn" @click="editRole(menu)">修改</a>
+            <a v-if="hasPower(140103)" type="text" class="configBtn" @click="removeRole(menu)">删除</a>
+          </span>
+        </div>
       </div>
       <Modal v-model="createRoleModal" width="400">
         <p slot="header" class="modalTitle">
@@ -28,7 +29,7 @@
           <Button  @click="cancelFormRole">取消</Button>
         </div>
       </Modal>
-    </Menu>
+    </div>
     </Col>
     <Col span="20" class="rightHead">
     <div>
@@ -55,8 +56,7 @@
       <p class="modalRemoveContend">
         <i class="icon font_family icon-bangzhuzhongxin"></i>
       </p>
-      <p class="modalRemoveContendP">确定删除'{{selectRole.name}}'?</P>
-        </p>
+      <p class="modalRemoveContendP">确定删除'{{selectRole.name}}'?</p>
       <div slot="footer">
         <Button type="primary" @click="removeFormRole">确定</Button>
         <Button  @click="removeCancelForm">取消</Button>
@@ -389,42 +389,59 @@ export default {
     padding-left: 20px;
   .leftMenu
     height: 100%
+    padding-left: 10px;
+    border-right: 1px solid #E4E7EC;
     .centerBtnDiv
       border-bottom: 1px solid #E4E7EC;
       padding-bottom:50px;
-  .leftMenu :hover
+  .leftMenu:hover
     max-height: calc(100% - 50px);
     overflow-y: auto;
   .centerBtnDiv:hover
     overflow: hidden;
-  .menu:hover
-    background: #e3fcfc;
-    color: #515a6e;
-    overflow: hidden;
-    .configBtnItem
+  .menu-item
+    height: 45px
+    position: relative
+    display flex
+    display: -ms-flexbox;
+    align-items center
+    -ms-flex-align center
+    .icon-ico-position
+      margin-right: 15px;
+      width: 20px;
+      height: 20px;
+      background: #f9f9f9;
+      border-radius: 50%;
+      padding-left: 2px;
       display: block
-    .configBtnItem:hover
-      overflow: hidden;
-  .menu
-    margin-left: -50px;
     .menuTitle
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      width: 75%;
-      float:left;
-      .icon-ico-position
-        float: left;
-        margin-right: 15px;
-        width: 20px;
-        height: 20px;
-        background: #f9f9f9;
-        border-radius: 50%;
-        padding-left: 2px;
-        line-height: 20px
-      .icon-ico-position:hover
-        display: block;
-        overflow: hidden;
+      flex 1
+      -ms-flex 1
+      display: block
+      color: #333333
+      font-size: 12px
+      line-height: 26px;
+    .configBtnItem
+      position: absolute
+      right: 0;
+      top: 0
+      font-size: 12px
+      line-height: 45px;
+      padding-left: 4px;
+      display: none
+      background-color: #ffffff
+      z-index: 2;
+      a
+        padding-right: 15px;
+    &:hover
+      background-color: #E9FCFF;
+      .configBtnItem
+        display: block
+        background-color: #E9FCFF;
+    &.active
+      background-color: #E9FCFF;
+      .configBtnItem
+        background-color: #E9FCFF;
   .rightHead
     border-bottom: 1px solid #E4E7EC;
     margin-top: 5px
@@ -469,19 +486,6 @@ export default {
     height:35px;
     background:rgba(0,164,189,1);
     border-radius:2px;
-  .centerBtn:hover
-    overflow: hidden;
-  .configBtnItem
-      float: right;
-      margin-top: -20px;
-      display: none;
-      margin-right: 5px;
-      background: #e3fcfc;
-      height: 20px;
-    .configBtn
-      color: #00A4BD;
-      font-size: 12px;
-      margin-left: 10px;
 .colHeight
   height: 100%
 .modalTitle

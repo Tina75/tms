@@ -195,7 +195,7 @@
         <div class="title">
           <span>{{from === 'order' ? '订单日志' : '回单日志'}}</span>
         </div>
-        <div style="display: flex;justify-content: flex-start;min-height: 150px;margin-top: 25px;">
+        <div class="log-list">
           <div class="fold-icon" @click="showOrderLog">
             <span :class="showLog ? 'hide-log' : 'show-log'"></span>
           </div>
@@ -988,4 +988,11 @@ export default {
       top 118px !important
   .cargo-details .padding-left-45
     padding-left 45px !important
+  .log-list
+    display: flex;
+    display -ms-flexbox;
+    justify-content: flex-start;
+    -ms-flex-pack: start;
+    min-height: 150px;
+    margin-top: 25px;
 </style>

@@ -666,15 +666,20 @@ export default {
     height 35px
   .search
     display flex
+    display -ms-flexbox
     background #F9F9F9
     padding 13px
     .search-col
       flex 4
+      -ms-flex 4
       .row-list
         display flex
+        display -ms-flexbox
         justify-content space-between
+        -ms-flex-pack justify
         .col
           flex 1
+          -ms-flex 1
           margin-right 20px
           &:last-child
             margin-right 0
@@ -682,6 +687,7 @@ export default {
           position relative
     .search-btn
       flex 1
+      -ms-flex 1
       text-align right
       margin-top 44px
 </style>

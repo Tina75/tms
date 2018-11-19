@@ -45,7 +45,7 @@
       </Dropdown> -->
 
         <!-- <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick"> -->
-        <Poptip trigger="hover"  placement="bottom-end" title="账号信息" width="260" style="cursor: default">
+        <Poptip trigger="hover" transfer placement="bottom-end" popper-class="dropdown-info" title="账号信息" width="260" style="cursor: default">
           <Avatar class="avatar"  style="border:1px solid #fff"></avatar>
           <span class="user-info">{{UserInfo.name}}</span>
           <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
@@ -255,6 +255,24 @@ export default {
 }
 </script>
 <style lang="stylus">
+.dropdown-info
+  .dropdown-line
+    padding 5px 0px
+    color #555555
+    white-space nowrap
+    overflow hidden
+    text-overflow ellipsis
+    max-width 230px
+    .content-name
+      width 80px
+      overflow hidden
+      display inline-block
+      text-overflow ellipsis
+      margin-bottom -6px
+    label
+      min-width 60px
+      text-align left
+      display inline-block
 .header-con
   position relative
   z-index 9
@@ -306,17 +324,6 @@ export default {
     vertical-align middle
     // .dropdown-box
     //   text-align center
-    .dropdown-line
-      padding 5px 0px
-      color #555555
-      white-space nowrap
-      overflow hidden
-      text-overflow ellipsis
-      max-width 230px
-      label
-        min-width 60px
-        text-align left
-        display inline-block
     .ivu-badge-count
       top: -2px;
       right: 4px;
