@@ -316,7 +316,10 @@ export default {
     ] : [
       { payType: 2, fuelCardAmount: '', cashAmount: '' }
     ]
-    this.fetchData()
+    // 受理开单 不请求
+    if (this.actionOrigin !== 'orderCreate') {
+      this.fetchData()
+    }
   },
   methods: {
     // 计费规则
@@ -458,24 +461,28 @@ export default {
             settlementType: this.settlementType,
             settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
           }
-          let url
-          if (this.type === 'sendCar') {
-            data.waybillId = this.id
-            url = '/waybill/assign/vehicle'
+          if (this.actionOrigin !== 'orderCreate') {
+            let url
+            if (this.type === 'sendCar') {
+              data.waybillId = this.id || ''
+              url = '/waybill/assign/vehicle'
+            } else {
+              data.pickUpId = this.id || ''
+              url = '/load/bill/pick/up'
+            }
+            Server({
+              url,
+              method: 'post',
+              data
+            }).then(res => {
+              this.$Message.success('操作成功')
+              this.complete()
+              this.close()
+            }).catch(err => console.error(err))
           } else {
-            data.pickUpId = this.id
-            url = '/load/bill/pick/up'
-          }
-
-          Server({
-            url,
-            method: 'post',
-            data
-          }).then(res => {
-            this.$Message.success('操作成功')
-            this.complete()
+            this.complete(data)
             this.close()
-          }).catch(err => console.error(err))
+          }
         }
       })
     }
