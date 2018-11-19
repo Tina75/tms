@@ -105,7 +105,7 @@ export default {
         url: 'carrier/list/driver',
         data: { carrierId: this.carrierId }
       }).then((res) => {
-        this.options = res.data.data.driverList.map(item => {
+        this.options = res.data.data.list.map(item => {
           item.name = item.driverName
           item.value = item.driverName
           item.carNo = item.carNO
