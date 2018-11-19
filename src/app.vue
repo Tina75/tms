@@ -59,7 +59,7 @@ export default {
         localStorage.clear()
         if (localRememberdPW) window.localStorage.setItem('local_rememberd_pw', localRememberdPW)
         Cookies.remove('token', { path: '/tms' })
-        window.location.reload()
+        window.location = '/'
       }
     }
   }

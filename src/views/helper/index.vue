@@ -2,9 +2,9 @@
   <Row class="temAll">
     <Col :style="styleHeight" span="4">
     <Menu :active-name="descover" :open-names="['1']" style="width: 100%;" class="menuSty" accordion>
-      <MenuItem name="0" @click.native="clickLeftMenuExplore">
+      <MenuItem name="0" style="height:50px;line-height:50px" @click.native="clickLeftMenuExplore">
       <i class="icon font_family icon-ico-discovery"></i>
-      <span class="title">探索运掌柜</span>
+      <div class="title" style="margin-top: -4px">探索运掌柜</div>
       </MenuItem>
       <Submenu name="1">
         <template slot="title">
@@ -191,6 +191,7 @@ export default {
   overflow hidden;
   width 20px;
   font-size 19px;
+  margin-top: -8px
 .icon-shipin
   color: #418DF9;
   overflow: hidden;
