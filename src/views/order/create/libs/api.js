@@ -40,14 +40,13 @@ export default {
     })
   },
   // 立即发运
-  immediShip (id) {
+  immediShip (param) {
     return new Promise((resolve, reject) => {
+      const data = Object.assign({}, param)
       server({
         method: 'post',
-        url: '/waybill/check/order',
-        data: {
-          waybillIds: [id]
-        }
+        url: '/order/shipImmediately',
+        data
       }).then((response) => {
         resolve(response.data.data)
       }).catch(err => reject(err))

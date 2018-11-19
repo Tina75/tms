@@ -245,7 +245,7 @@
       <Button v-if="hasPower(100101)" :disabled="disabled" type="primary" @click="handleSubmit">保存</Button>
       <Button v-if="hasPower(100102)" :disabled="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
-      <Button class="i-ml-10" @click="immediShip">立即发运</Button>
+      <Button class="i-ml-10" @click="shipImmedite">立即发运</Button>
     </div>
     <OrderPrint ref="printer" :list="orderPrint">
     </OrderPrint>
@@ -930,34 +930,84 @@ export default {
       })
     },
     // 立即发运
-    immediShip () {
+    shipImmedite (e = 'orderCreate') {
+      const self = this
       this.validateForm().then(form => {
         if (form.pickup === 1) {
-          // 小车上门
-          this.openDialog({
-            name: 'transport/dialog/action',
-            data: {
-              type: 'pickUp'
-            },
-            methods: {
-              complete () {
-                console.log('弹框完成')
+          // 小车上门 提货权限
+          if (this.hasPower(120201)) {
+            this.openDialog({
+              name: 'transport/dialog/action',
+              data: {
+                type: 'pickUp',
+                actionOrigin: 'orderCreate'
+              },
+              methods: {
+                complete (data) {
+                  const param = {
+                    createOrder: form,
+                    createLoadbill: {},
+                    loadbillPickup: data
+                  }
+                  api.immediShip(param).then(res => {
+                    if (!form.id) {
+                      this.$Message.success('创建订单成功')
+                    } else {
+                      this.$Message.success('修改订单成功')
+                    }
+                    self.resetForm()
+                    // 重新获取客户列表
+                    self.getClients()
+                  })
+                }
               }
-            }
-          })
+            })
+          } else {
+            this.openDialog({
+              name: 'order/create/components/OrderTip',
+              data: {
+                tipMsg: '提货管理'
+              }
+            })
+          }
         } else if (form.pickup === 2) {
-          // 大车直送
-          this.openDialog({
-            name: 'transport/dialog/action',
-            data: {
-              type: 'sendCar'
-            },
-            methods: {
-              complete () {
-                console.log('弹框完成')
+          // 大车直送 派车权限
+          if (this.hasPower(120101)) {
+            this.openDialog({
+              name: 'transport/dialog/action',
+              data: {
+                type: 'sendCar',
+                actionOrigin: 'orderCreate'
+              },
+              methods: {
+                complete (data) {
+                  const param = {
+                    createOrder: form,
+                    createWaybill: {},
+                    waybillAssignVehicle: data
+                  }
+                  param.waybillAssignVehicle.cashBack = param.waybillAssignVehicle.cashBack || null
+                  api.immediShip(param).then(res => {
+                    if (!form.id) {
+                      this.$Message.success('创建订单成功')
+                    } else {
+                      this.$Message.success('修改订单成功')
+                    }
+                    self.resetForm()
+                    // 重新获取客户列表
+                    self.getClients()
+                  })
+                }
               }
-            }
-          })
+            })
+          } else {
+            this.openDialog({
+              name: 'order/create/components/OrderTip',
+              data: {
+                tipMsg: '送货管理'
+              }
+            })
+          }
         }
       })
     },
