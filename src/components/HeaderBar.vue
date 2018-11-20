@@ -162,7 +162,8 @@ export default {
       // })
       this.$Toast.confirm({
         title: '提示',
-        content: '<p>您的密码为初始密码，为确保账户安全，请及时修改密码</p>',
+        showIcon: false,
+        content: '<i class="ivu-icon ivu-icon-ios-help-circle" style="color:#ff9502;font-size:28px"></i>&nbsp;您的密码为初始密码，为确保账户安全，请及时修改密码',
         okText: '立即修改',
         cancelText: '我知道了',
         onOk: () => {
