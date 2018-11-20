@@ -264,7 +264,7 @@
       <Button v-if="hasPower(100101)" :disabled="disabled" type="primary" @click="handleSubmit">保存</Button>
       <Button v-if="hasPower(100102)" :disabled="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
-      <Button class="i-ml-10" @click="shipImmedite">立即发运</Button>
+      <Button v-if="hasPower(100104)" class="i-ml-10" @click="shipImmedite">立即发运</Button>
     </div>
     <OrderPrint ref="printer" :list="orderPrint">
     </OrderPrint>
@@ -896,7 +896,6 @@ export default {
     dateChange (type, date) {
       const refs = type === 'START_DATE' ? 'stTimeInput' : type === 'END_DATE' ? 'edTimeInput' : ''
       if (date && refs) {
-        // this.$root.$emit(type, 'show')
         this.$refs[refs].changeShow(type)
         this.$refs[refs].focus()
       }

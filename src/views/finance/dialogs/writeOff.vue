@@ -54,7 +54,7 @@
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import verifyMixin from '../mixins/verifyMixin.js'
-import writeOffMixin from '../mixins/writeOffMixin.js'
+// import writeOffMixin from '../mixins/writeOffMixin.js'
 import tagNumberInput from '@/components/TagNumberInput'
 // import SelectInput from '@/components/SelectInput'
 export default {
@@ -63,7 +63,7 @@ export default {
     tagNumberInput
     // SelectInput
   },
-  mixins: [BaseDialog, verifyMixin, writeOffMixin],
+  mixins: [BaseDialog, verifyMixin],
   data () {
     return {
       scene: 0,

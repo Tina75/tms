@@ -1,7 +1,7 @@
 <template>
-  <div id="help-info" class="helper-info">
-    <Row class="temAll">
-      <Col :style="styleHeight" span="4">
+  <div id="help-info" class="helper-info temAll">
+    <Row>
+      <Col :style="{'min-height':DocumentHeight +'px'}" span="4">
       <Menu :active-name="descover" :open-names="['1']" style="width: 100%;" class="menuSty" accordion>
         <MenuItem name="0" style="height:50px;line-height:50px" @click.native="clickLeftMenuExplore">
         <i class="icon font_family icon-ico-discovery"></i>
@@ -28,7 +28,7 @@
           </Submenu> -->
       </Menu>
       </Col>
-      <Col :style="minStyleHeight" span="20" class="contentInfoDiv">
+      <Col :style="{'min-height':DocumentHeight +'px'}" span="20" class="contentInfoDiv">
       <Card dis-hover class="contentCard">
         <div v-if="'pic' === this.type">
           <p slot="title" class="rightDivTitle">{{picContent.title}}</p>
@@ -57,6 +57,7 @@ import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import FontIcon from '@/components/FontIcon'
 import Explore from './explore'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'help',
@@ -79,12 +80,7 @@ export default {
     }
   },
   computed: {
-    styleHeight () {
-      return { height: (this.$parent.$el.children[0].getBoundingClientRect().height) + 'px' }
-    },
-    minStyleHeight () {
-      return { minHeight: (this.$parent.$el.children[0].getBoundingClientRect().height) + 'px' }
-    }
+    ...mapGetters(['DocumentHeight'])
   },
   mounted: function () {
     this.descover = this.$route.query.descover
