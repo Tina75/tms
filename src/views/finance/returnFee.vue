@@ -78,7 +78,7 @@ export default {
         },
         {
           title: '操作',
-          width: 60,
+          width: 100,
           key: 'action',
           render: (h, params) => {
             return this.hasPower(170602) ? h('a', {
@@ -92,7 +92,7 @@ export default {
         },
         {
           title: '订单号',
-          width: 150,
+          width: 200,
           key: 'orderNo',
           render: (h, params) => {
             return h('a', {
@@ -110,7 +110,7 @@ export default {
         {
           title: '承运商/外转方',
           key: 'partnerName',
-          width: 180
+          width: 200
         },
         {
           title: '始发地',
@@ -125,7 +125,7 @@ export default {
         {
           title: '应收返现运费',
           key: 'cashBack',
-          width: 100,
+          width: 140,
           render (h, params) {
             return renderFee(h, params.row['cashBack'])
             // return h('span', {}, params.row['cashBack'] ? (params.row['cashBack'] / 100).toFixed(2) : 0)
@@ -134,7 +134,7 @@ export default {
         {
           title: '实收返现运费',
           key: 'actualFee',
-          width: 100,
+          width: 150,
           render (h, params) {
             return renderFee(h, params.row['actualFee'])
             // return h('span', {}, params.row['actualFee'] ? (params.row['actualFee'] / 100).toFixed(2) : 0)
@@ -143,11 +143,11 @@ export default {
         {
           title: '车牌号',
           key: 'truckNo',
-          width: 80
+          width: 150
         },
         {
           title: '结算方式',
-          width: 90,
+          width: 150,
           key: 'settleTypeDesc',
           filters: settlementFilters,
           filterMultiple: true,
