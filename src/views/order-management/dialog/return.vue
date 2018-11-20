@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
+    <Modal v-model="visiable" :mask-closable="false" transfer width="360" @on-visible-change="close">
       <p slot="header" class="dialog-title">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>{{name}}</span>

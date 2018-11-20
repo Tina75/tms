@@ -1,11 +1,11 @@
 <template>
-  <Poptip v-model="visible" trigger="click" width="290" placement="left" word-wrap transfer>
+  <Poptip v-model="visible" trigger="click" width="290" placement="left" transfer word-wrap>
     <FontIcon type="gengduo" class="ios-list-icon" size="20" color="#00A4BD"></FontIcon>
     <div slot="title"><span>选择要显示的字段</span></div>
     <div slot="content">
       <div class="slider-icon__checkbox-list">
         <CheckboxGroup v-model="checkList">
-          <draggable v-model="sortArray" :options="options" :move="checkMove" class="slider-icon__draggable-column">
+          <draggable v-model="sortArray" :options="options" :move="checkMove" transfer class="slider-icon__draggable-column">
             <Checkbox v-for="item in sortArray" :disabled="item.fixed" :data-key="item.key" :key="item.key" :label="item.title" :class="itemClass(item)">
               <span>{{item.title}}</span>
               <FontIcon v-if="!item.fixed" type="tuodong"></FontIcon>

@@ -21,14 +21,14 @@
           </Col>
           <Col span="2" style="margin-right: 10px">
           <FormItem>
-            <Select v-model="writingOffQuery.periodType">
+            <Select v-model="writingOffQuery.periodType" transfer>
               <Option v-for="(value, key) in periodTypeMap" v-if="key === '1' || key === '2' || (scene === 1 && key === '3')" :key="key" :value="key">{{value}}</Option>
             </Select>
           </FormItem>
           </Col>
           <Col span="4" style="margin-right: 20px">
           <FormItem>
-            <DatePicker v-model="writingOffQuery.period" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width: 100%" />
+            <DatePicker v-model="writingOffQuery.period" :options="dateOption" transfer type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width: 100%" />
           </FormItem>
           </Col>
           <Col  :class="{ mediaClass : scene ===2}" span="5">
@@ -53,7 +53,7 @@
           </div>
           <div class="content">
             <div v-if="item.partnerName.length<8" class="ruleName">{{item.partnerName}}</div>
-            <Tooltip v-else :content="item.partnerName" max-width="200" class="ruleName" placement="top-start" style="display: list-item">
+            <Tooltip v-else :content="item.partnerName" max-width="200" transfer class="ruleName" placement="top-start" style="display: list-item">
               <div >{{item.partnerName.slice(0,8)}}...</div>
             </Tooltip>
             <div class="tips">
@@ -67,9 +67,9 @@
         </li>
       </ul>
       <div class="order-list">
-        <Empty v-if="!currentPartner.partnerName || !orderData.length">
+        <DataEmpty v-if="!currentPartner.partnerName || !orderData.length">
           {{emptyContent}}
-        </Empty>
+        </DataEmpty>
         <Table v-else :columns="orderColumn" :data="orderData" class="tableList"  @on-selection-change="setOrderIds"></Table>
       </div>
     </div>
@@ -80,13 +80,13 @@
 import BaseComponent from '@/basic/BaseComponent'
 import Server from '@/libs/js/server'
 import FontIcon from '@/components/FontIcon'
-import Empty from './Empty.vue'
+import DataEmpty from '@/components/DataEmpty'
 import _ from 'lodash'
 export default {
   name: 'writingOff',
   components: {
     FontIcon,
-    Empty
+    DataEmpty
   },
   mixins: [ BaseComponent ],
   props: {
@@ -521,7 +521,9 @@ export default {
     .btns-box
       line-height 32px
       display flex
+      display -ms-flexbox
       justify-content space-between
+      -ms-flex-pack justify
       padding 9px 0
       div
         color #333
@@ -539,13 +541,16 @@ export default {
         margin-top 22px
     .list-box
       display flex
+      display -ms-flexbox
       border-top 1px solid #E4E7EC
       margin 0 -15px
       margin-bottom -20px
       .leftList
         height 100%
         overflow-y hidden
+        width 270px
         flex 0 0 270px
+        -ms-flex 0 0 270px
         border-right 1px solid #E4E7EC
         &:hover
           height 100%
@@ -555,6 +560,7 @@ export default {
           height 60px
           line-height 60px
           display flex
+          display -ms-flexbox
           border-bottom 1px solid #E4E7EC
           &.companyDataActive
             background #E9FCFF
@@ -562,6 +568,7 @@ export default {
             background #E9FCFF
           .icon
             flex 0 0 60px
+            -ms-flex 0 0 60px
             text-align center
             position relative
             &:after
@@ -583,6 +590,7 @@ export default {
                 border none
           .content
             flex 1
+            -ms-flex 1
             font-size 12px
             .ruleName
               height 30px
@@ -597,6 +605,7 @@ export default {
               color #999
           .num
             flex 0 0 35px
+            -ms-flex 0 0 35px
             height 30px
             line-height 30px
             color #666
@@ -605,6 +614,7 @@ export default {
         height 100%
         overflow-y hidden
         flex 1
+        -ms-flex 1
         padding 19px 20px 20px 9px
         /deep/ .ivu-table-cell
           padding-left: 5px
@@ -613,15 +623,11 @@ export default {
           height 100%
           overflow-y auto
       .data-empty
-        display flex
-        flex-direction column
-        justify-content center
-        align-items center
-        margin-top 200px
-        /*min-height 416px*/
         .data-empty-img
+          display: block
           width 70px
-          margin-bottom 12px
+          height: auto
+          margin 100px auto 12px
         p
           color #999999
           text-align center

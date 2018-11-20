@@ -2,7 +2,7 @@
   <div id="app" class="login">
     <header class="login-header">
       <i class="icon font_family icon-logo-p"></i>
-      <div class="login-header-tel">
+      <div style="flex-direction: column; -ms-flex-direction: column;" class="login-header-tel">
         <p>025-66606056</p>
         <p>客服电话</p>
       </div>
@@ -75,15 +75,18 @@ export default {
 
     &-header
       display flex
+      display -ms-flexbox
       align-items center
+      -ms-flex-align center
       justify-content space-between
+      -ms-flex-pack justify
       height 88px
       padding 0 43px 0 143px
       border-bottom 1px solid #3A424B
 
       &-tel
         flex none
-        display flex
+        -ms-flex none
         flex-direction column
         color #00A4BD
 
@@ -105,12 +108,9 @@ export default {
       background #1c2125
 
     &-body
-      display flex
-      align-items center
-      justify-content center
       position relative
       min-height 552px
-      height calc( 100% - 216px )
+      height calc( 100% - 246px )
 
     &-bg
       background url("./assets/bg-tms-login.png") no-repeat

@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="show" :mask-closable="false" width="360" @on-visible-change="close">
+  <Modal v-model="show" :mask-closable="false" transfer width="360" @on-visible-change="close">
     <p slot="header" style="text-align:center">{{title}}</p>
     <Form ref="$form" :model="form" :rules="rules" :label-width="80" style="padding:0 20px;">
       <FormItem label="始发地：" prop="start">

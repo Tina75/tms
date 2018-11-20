@@ -6,16 +6,16 @@
       </div>
       <div class="header-bar-avator-dropdown">
         <span class="header-bar-avator-dropdown-notify" @click="openProcess">
-          <Tooltip v-if="processVisible" :value="processVisible"  placement="bottom" content=" 业务流程" always>
+          <Tooltip v-if="processVisible" :value="processVisible" transfer  placement="bottom" content=" 业务流程" always>
             <FontIcon type="liucheng" size="25" color="#fff"></FontIcon>
           </Tooltip>
-          <Tooltip v-else content=" 业务流程">
+          <Tooltip v-else transfer content=" 业务流程">
             <FontIcon  type="liucheng" size="25" color="#fff" ></FontIcon>
           </Tooltip>
         </span>
         <span class="header-bar-avator-dropdown-notify">
           <Badge :count="MsgCount.all" :offset="[5,1]" type="primary">
-            <Tooltip content=" 消息">
+            <Tooltip transfer content=" 消息">
               <Icon type="ios-notifications" size="30" color="#fff" @click="openMsg(0)"></Icon>
             </Tooltip>
           </Badge>
@@ -49,7 +49,7 @@
       </Dropdown> -->
 
         <!-- <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick"> -->
-        <Poptip trigger="hover"  placement="bottom-end" title="账号信息" width="260" style="cursor: default">
+        <Poptip trigger="hover" transfer placement="bottom-end" popper-class="dropdown-info" title="账号信息" width="260" style="cursor: default">
           <Avatar class="avatar"  style="border:1px solid #fff"></avatar>
           <span class="user-info">{{UserInfo.name}}</span>
           <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
@@ -303,6 +303,24 @@ export default {
 }
 </script>
 <style lang="stylus">
+.dropdown-info
+  .dropdown-line
+    padding 5px 0px
+    color #555555
+    white-space nowrap
+    overflow hidden
+    text-overflow ellipsis
+    max-width 230px
+    .content-name
+      width 80px
+      overflow hidden
+      display inline-block
+      text-overflow ellipsis
+      margin-bottom -6px
+    label
+      min-width 60px
+      text-align left
+      display inline-block
 .header-con
   position relative
   z-index 9
@@ -354,17 +372,6 @@ export default {
     vertical-align middle
     // .dropdown-box
     //   text-align center
-    .dropdown-line
-      padding 5px 0px
-      color #555555
-      white-space nowrap
-      overflow hidden
-      text-overflow ellipsis
-      max-width 230px
-      label
-        min-width 60px
-        text-align left
-        display inline-block
     .ivu-badge-count
       top: -2px;
       right: 4px;
@@ -383,9 +390,11 @@ export default {
       .msg
         display: -webkit-flex;
         display flex
+        display -ms-flexbox
         &-item
           display inline-block
           flex 1
+          -ms-flex 1
           text-align center
           color #555555
           font-size 12px

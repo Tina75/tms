@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" width="400" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" transfer width="400" @on-visible-change="close">
     <p slot="header" style="text-align:center">{{title}}</p>
 
     <div style="text-align: center;font-size: 14px;font-family: PingFangSC-Regular;color: #000;">

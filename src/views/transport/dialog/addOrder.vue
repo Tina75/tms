@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" width="1036" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" transfer width="1036" @on-visible-change="close">
     <p slot="header" style="text-align:center">添加订单</p>
 
     <Table :columns="columns"

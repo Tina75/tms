@@ -8,7 +8,7 @@
         </Col>
         <Col span="6" class="van-right">
         <span class="page-home__header-date">{{today}}</span>
-        <Poptip v-model="visible" trigger="click" placement="bottom-end" style="height:21px">
+        <Poptip v-model="visible" transfer trigger="click" placement="bottom-end" style="height:21px">
           <FontIcon type="shouye" size="20" class="page-home__setting-icon" />
           <div slot="content">
             <div class="page-home__dropdown-header">选择显示面板</div>

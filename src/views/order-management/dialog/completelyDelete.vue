@@ -1,7 +1,7 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="true" class="recovery-dialog" width="360" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="true" transfer class="recovery-dialog" width="360" @on-visible-change="close">
     <p slot="header" class="dialog-title">彻底删除</p>
-    <div style="display: flex;justify-content:center;">
+    <div class="tip-text">
       <Icon type="ios-information-circle" size="24" color="#FFBB44" style="margin-top: -2px;margin-right: 5px;"></Icon>
       <span>订单彻底删除后，将不可找回!</span>
     </div>
@@ -75,6 +75,11 @@ export default {
     font-weight 700
     color rgba(47,50,62,1)
     letter-spacing 1px
+  .tip-text
+    display: flex;
+    display -ms-flexbox
+    justify-content:center;
+    -ms-flex-pack center
 </style>
 <style lang='stylus'>
   .recovery-dialog

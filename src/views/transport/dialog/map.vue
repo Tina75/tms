@@ -1,5 +1,5 @@
 <template>
-  <Modal id="map-modal" v-model="visiable" :mask-closable="true" width="1200" @on-visible-change="close">
+  <Modal id="map-modal" v-model="visiable" :mask-closable="true" transfer width="1200" @on-visible-change="close">
     <p slot="header" style="text-align:center">查看车辆位置</p>
 
     <Row>
@@ -14,7 +14,7 @@
             <div>
               <div class="icon-box">
                 <i v-if="Number(item.positionType) !== 2" class="icon font_family icon-beidoudingwei"></i>
-                <Tooltip v-else :content="`此位置通过司机手机号查询，若偏差较大，请联系司机 ${item.phone}`" placement="right-start" max-width="200">
+                <Tooltip v-else :content="`此位置通过司机手机号查询，若偏差较大，请联系司机 ${item.phone}`" transfer placement="right-start" max-width="200">
                   <i class="icon font_family icon-shoujidingwei"></i>
                 </Tooltip>
               </div>

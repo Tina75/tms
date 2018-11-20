@@ -23,9 +23,9 @@
       </Col>
       <Col span="17" class="reconcile-layout__flex-right">
       <div class="i-mt-20">
-        <Empty v-show="!showTable">
+        <data-empty v-show="!showTable">
           {{emptyContent}}
-        </Empty>
+        </data-empty>
         <Table v-show="showTable" :columns="columns" :data="dataSource" @on-selection-change="handleSelectionChange"></Table>
       </div>
       </Col>
@@ -41,10 +41,10 @@
  */
 import ListSender from './list-sender/index.vue'
 import ListSenderItem from './list-sender/SenderItem.vue'
-import Empty from './Empty.vue'
+import DataEmpty from '@/components/DataEmpty'
 export default {
   components: {
-    Empty,
+    DataEmpty,
     ListSender,
     ListSenderItem
   },

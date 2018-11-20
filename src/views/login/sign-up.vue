@@ -5,7 +5,7 @@
 
       <ul class="form-step">
         <li v-for="(item, key) in stepList"
-            :key="key" class="form-step-item">
+            :key="key" style="flex-direction: column; -ms-flex-direction: column" class="form-step-item">
           <div :class="{'form-step-item-circle-active': step === key}" class="form-step-item-circle"><span>{{ key + 1 }}</span></div>
           <p :class="{'form-step-item-tip-active': step === key}" class="form-step-item-tip">{{item}}</p>
         </li>
@@ -65,7 +65,7 @@
           <!-- step 3 -->
           <div v-if="step === 2" :key="2">
             <FormItem prop="password">
-              <Tooltip content="请输入6-16位非连续重复的数字、大小写字母" style="width: 100%;" placement="top">
+              <Tooltip content="请输入6-16位非连续重复的数字、大小写字母" style="width: 100%;" transfer placement="top">
                 <Input v-model="form.password" :maxlength="16" type="password" placeholder="设置登录密码" />
               </Tooltip>
             </FormItem>
@@ -252,10 +252,12 @@ export default {
   .form-body
     width 800px
     height 540px
-    left 50%
-    top 50%
-    transform translate(-50%, -50%)
-
+    position: absolute
+    margin: auto
+    top: 0
+    right: 0
+    bottom: 0
+    left 0
     .form-content
       width 450px
       margin auto
@@ -263,7 +265,7 @@ export default {
     .form-step
       position relative
       display flex
-      align-items space-between
+      display: -ms-flexbox
       width 500px
       margin 30px auto
 
@@ -280,16 +282,20 @@ export default {
 
       &-item
         flex 1
-        display flex
+        -ms-flex: 1
         flex-direction column
+        -ms-flex-direction column
         align-items center
+        -ms-flex-align center
         position relative
         z-index 1
+        text-align: center
 
         &-circle
           width 50px
           height 50px
           background #FFFFFF
+          display: inline-block
 
           span
             display block
@@ -311,6 +317,9 @@ export default {
         &-tip
           font-size 12px
           color #9DA1B0
+          display: inline-block
+          width: 100%
+          text-align: center
 
           &-active
             color #00A4BD

@@ -1,11 +1,11 @@
 <template>
   <div>
-    <Modal v-model="visiable" :mask-closable="false" class="abnormal-success-dialog" width="460" @on-visible-change="close">
+    <Modal v-model="visiable" :mask-closable="false" transfer class="abnormal-success-dialog" width="460" @on-visible-change="close">
       <p slot="header" class="dialog-title">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>上报异常</span>
       </p>
-      <div style="display: flex;">
+      <div class="tip-text">
         <Icon type="ios-checkmark-circle" color="#00c185" size="28" style="margin-top: -3px;margin-right: 10px"></Icon>
         <p class="content">异常信息上报成功，将会在异常管理菜单下生成异常单，是否去查看异常单？</p>
       </div>
@@ -63,6 +63,9 @@ export default {
   font-weight 400
   color rgba(0,0,0,1)
   line-height 20px
+.tip-text
+  display: flex;
+  display -ms-flexbox
 </style>
 <style lang='stylus'>
 .abnormal-success-dialog

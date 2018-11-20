@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" width="440" footer-hide @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" transfer width="440" footer-hide @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">核销</p>
     <div class="step-pay-data">
       <div class="total-data">
@@ -72,7 +72,7 @@
                   </td>
                   <td class="">
                     <div class="ivu-table-cell">
-                      <Select v-if="item.isEdit" v-model="item.payType">
+                      <Select v-if="item.isEdit" v-model="item.payType" transfer>
                         <Option v-for="(value, key) in payTypeMap" :value="key" :key="key">{{ value }}</Option>
                       </Select>
                       <span v-else>{{item.payTypeDesc}}</span>

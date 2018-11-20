@@ -4,6 +4,7 @@
     <Modal
       v-model="visiable"
       :mask-closable="false"
+      transfer
       width="1020"
       class="modal"
       @on-visible-change="close"
@@ -16,7 +17,7 @@
             <Row>
               <Col span="19">
               <span v-if="!disAbleBtn">{{ validate.carNO }}</span>
-              <Select v-if="disAbleBtn" v-model="validate.carNO" placeholder="必选" class="minWidth">
+              <Select v-if="disAbleBtn" v-model="validate.carNO" transfer placeholder="必选" class="minWidth">
                 <Option
                   v-for="item in carNoList"
                   :value="item.carNo"
@@ -32,7 +33,7 @@
           <FormItem label="维修类别:" prop="repairType">
             <Row>
               <Col span="19">
-              <Select v-model="validate.repairType"  placeholder="必选" class="minWidth">
+              <Select v-model="validate.repairType"  placeholder="必选" class="minWidth" transfer>
                 <Option
                   v-for="item in selectList"
                   :value="item.id"
@@ -48,7 +49,7 @@
           <FormItem label="送修日期:" prop="repairDate">
             <Row>
               <Col span="19">
-              <DatePicker v-model="validate.repairDate" type="date" placeholder="必选"></DatePicker>
+              <DatePicker v-model="validate.repairDate" transfer type="date" placeholder="必选"></DatePicker>
                 </Col>
             </Row>
           </FormItem>

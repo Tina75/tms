@@ -16,7 +16,7 @@
         <Row >
           <Col span="9" offset="0">
           <FormItem prop="dayType">
-            <Select v-model="formInline.dayType" style="width:120px">
+            <Select v-model="formInline.dayType" style="width:120px" transfer>
               <Option :value="1">下单日期</Option>
               <Option :value="2">到货日期</Option>
             </Select>
@@ -24,14 +24,14 @@
           </Col>
           <Col span="13">
           <FormItem  prop="daterange">
-            <DatePicker v-model="formInline.daterange" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width:100%"></DatePicker>
+            <DatePicker v-model="formInline.daterange" :options="dateOption" transfer type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width:100%"></DatePicker>
           </FormItem>
           </Col>
         </Row>
         </Col>
         <Col v-if="scene==='2'" span="6">
         <FormItem :label-width="75" label="核销日期：" prop="daterange">
-          <DatePicker v-model="formInline.daterange" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width:100%"></DatePicker>
+          <DatePicker v-model="formInline.daterange" :options="dateOption" transfer type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width:100%"></DatePicker>
         </FormItem>
         </Col>
         <Col span="5">

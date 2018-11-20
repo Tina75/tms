@@ -11,12 +11,12 @@
           </Col>
           <Col span="5" style="margin-right: 20px">
           <FormItem :label-width="75" label="核销时间：">
-            <DatePicker v-model="writtenOffQuery.period" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width: 100%" />
+            <DatePicker v-model="writtenOffQuery.period" :options="dateOption" transfer type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width: 100%" />
           </FormItem>
           </Col>
           <Col span="2" style="margin-right: 10px">
           <FormItem>
-            <Select v-model="writtenOffQuery.orderType">
+            <Select v-model="writtenOffQuery.orderType" transfer>
               <Option v-for="(value, key) in orderTypeMap[scene]" :key="key" :value="key">{{value}}</Option>
             </Select>
           </FormItem>
