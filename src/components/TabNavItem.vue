@@ -1,6 +1,6 @@
 <template>
   <div :class="['item-container',checked?'mh-10':'']">
-    <i v-show="checked" class="icon font_family icon-you2 icon-left" style=""></i>
+    <i v-show="checked" class="icon font_family icon-you2 border-icon-left" style=""></i>
     <div :class="['tab-item',checked?'tab-item__checked':'']">
       <span style="display:inline-block;min-width:18px">
         <Icon v-show="checked" class="tab-item__icon " type="ios-refresh" size="20" @click.stop="$emit('on-refresh')"/>
@@ -10,7 +10,7 @@
         <Icon v-show="closeable" :style="checked?'visibility:visible':'visibility:hidden'" class="tab-item__icon close-icon" type="ios-close" size="20" @click.stop="$emit('on-close')"/>
       </span>
     </div>
-    <i v-show="checked" class="icon font_family icon-you2 icon-right" ></i>
+    <i v-show="checked" class="icon font_family icon-you2 border-icon-right" ></i>
   </div>
 </template>
 
@@ -50,7 +50,7 @@ export default {
   padding-left 3px
 .mh-10
   padding 0 5px
-.icon-left
+.border-icon-left
   color #EFEFEF
   position:absolute;
   -webkit-transform: rotate(-90deg);
@@ -58,7 +58,7 @@ export default {
   left -3px
   font-size 10px
   bottom -11px
-.icon-right
+.border-icon-right
   color #EFEFEF
   position absolute
   right -3px
