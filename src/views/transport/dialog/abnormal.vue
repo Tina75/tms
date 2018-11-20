@@ -172,7 +172,7 @@ import TagNumberInput from '@/components/TagNumberInput'
 import validator from '@/libs/js/validate'
 import Server from '@/libs/js/server'
 import PayInfo from '../components/PayInfo'
-import UpLoad from '@/components/upLoad/'
+import UpLoad from '@/components/upLoad/index.vue'
 // import { ABNORMAL_TYPE_CODES } from '../constant/abnormal.js'
 import _ from 'lodash'
 export default {
