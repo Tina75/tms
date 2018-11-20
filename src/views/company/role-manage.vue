@@ -407,6 +407,8 @@ export default {
     display: -ms-flexbox;
     align-items center
     -ms-flex-align center
+    margin-left: -15px
+    padding-left: 15px
     .icon-ico-position
       margin-right: 15px;
       width: 20px;
@@ -415,6 +417,7 @@ export default {
       border-radius: 50%;
       padding-left: 2px;
       display: block
+      line-height: 18px;
     .menuTitle
       flex 1
       -ms-flex 1
