@@ -59,7 +59,7 @@ export default {
   position:absolute;
   bottom:0;
   left:0;
-  background: #00A4BD;
+  background: #08b3ce;
   .wave
     background: url(../../../assets/wave.png) repeat-x top center;
     position: absolute;
