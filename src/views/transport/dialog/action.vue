@@ -108,9 +108,6 @@
         <Row class="detail-field-group">
           <i-col span="5">
             <FormItem label="运输费：" prop="freightFee">
-              <!-- <span class="detail-field-title-sm detail-field-required">运输费：</span>
-              <MoneyInput v-model="payment.freightFee"
-                          class="detail-payment-input" /> -->
               <TagNumberInput v-model="payment.freightFee" class="detail-payment-input"></TagNumberInput>
               <span class="unit-yuan">元</span>
               <a v-if="type === 'sendCar'" class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
@@ -118,36 +115,24 @@
           </i-col>
           <i-col span="4">
             <FormItem label="装货费：" prop="loadFee">
-              <!-- <span class="detail-field-title-sm">装货费：</span>
-              <MoneyInput v-model="payment.loadFee"
-                          class="detail-payment-input" /> -->
               <TagNumberInput v-model="payment.loadFee" class="detail-payment-input"></TagNumberInput>
               <span class="unit-yuan">元</span>
             </FormItem>
           </i-col>
           <i-col span="4" offset="1">
             <FormItem label="卸货费：" prop="unloadFee">
-              <!-- <span class="detail-field-title-sm">卸货费：</span>
-              <MoneyInput v-model="payment.unloadFee"
-                          class="detail-payment-input" /> -->
               <TagNumberInput v-model="payment.unloadFee" class="detail-payment-input"></TagNumberInput>
               <span class="unit-yuan">元</span>
             </FormItem>
           </i-col>
           <i-col span="4" offset="1">
             <FormItem label="保险费：" prop="insuranceFee">
-              <!-- <span class="detail-field-title-sm">保险费：</span>
-              <MoneyInput v-model="payment.insuranceFee"
-                          class="detail-payment-input" /> -->
               <TagNumberInput v-model="payment.insuranceFee" class="detail-payment-input"></TagNumberInput>
               <span class="unit-yuan">元</span>
             </FormItem>
           </i-col>
           <i-col span="4" offset="1">
             <FormItem label="其他费用：" prop="otherFee">
-              <!-- <span class="detail-field-title-sm">其他：</span>
-              <MoneyInput v-model="payment.otherFee"
-                          class="detail-payment-input" /> -->
               <TagNumberInput v-model="payment.otherFee" class="detail-payment-input"></TagNumberInput>
               <span class="unit-yuan">元</span>
             </FormItem>

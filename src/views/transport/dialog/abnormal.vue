@@ -265,9 +265,6 @@ export default {
     ] : [
       { payType: 2, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
     ]
-  },
-
-  mounted () {
     this.fetchData()
   },
 

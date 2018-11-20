@@ -759,7 +759,9 @@ export default {
           title: '回单数量',
           key: 'receiptCount',
           minWidth: 120,
-          tooltip: true
+          render: (h, p) => {
+            return h('span', p.row.receiptCount ? p.row.receiptCount : '-')
+          }
         },
         {
           title: '代收货款',
