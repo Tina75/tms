@@ -116,7 +116,12 @@ export default {
         totalCount: 100,
         list: []
       },
-      selectedIds: []
+      selectedIds: [],
+      totalFeeMap: {
+        1: '收',
+        2: '付',
+        3: '付'
+      }
     }
   },
   computed: {
@@ -153,11 +158,11 @@ export default {
           key: 'partnerName'
         },
         {
-          title: '应收运费',
+          title: `应${this.totalFeeMap[this.scene]}运费`,
           key: 'totalFeeText'
         },
         {
-          title: '实收运费',
+          title: `实${this.totalFeeMap[this.scene]}运费`,
           key: 'payFeeText'
         },
         {
