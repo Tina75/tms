@@ -31,6 +31,8 @@ for num in (1..10)
   float left
 .van-pull-right
   float right
+.van-left
+  text-align left
 .van-center
   text-align center
 .van-right
@@ -141,3 +143,29 @@ for num in (8..30)
 .ivu-layout
   background #efefef
   overflow-x hidden
+// 表格悬浮样式
+.ivu-table
+  tr.ivu-table-row-hover
+    td
+      background-color #F2FDFF
+// input number输入框placeholder的文字颜色和text input 不一致
+.ivu-input-number-input::-webkit-input-placeholder
+  color #c5c8ce
+
+.i-bar-warning
+  background: #FFF7E6
+.i-bar-info
+  background: #E9FCFF
+.i-bar-success
+  background: #E5FFF3
+.i-bar-danger
+  background: #FFF1F0
+
+.i-status-warning
+  color: #FA8C15
+.i-status-info
+  color: #00A4BD
+.i-status-success
+  color: #00C185
+.i-status-danger
+  color: #EE2017

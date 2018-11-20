@@ -81,7 +81,7 @@
             </Col>
             <Col span="6">
             <div>
-              <span class="label">品牌：</span>
+              <span class="label">车辆品牌：</span>
               {{infoData.carBrand}}
             </div>
             </Col>
@@ -107,16 +107,20 @@
           <Row class="row">
             <Col span="5">
             <div v-if="infoData.travelPhoto">
-              <img :style="'height: 90px;background-image: url(' + infoData.travelPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv"/>
+              <div :style="'height: 90px;background-image: url(' + infoData.travelPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(infoData.travelPhoto)"></div>
               <p class="uploadLabel">行驶证</p>
             </div>
             </Col>
             <Col span="6">
             <div v-if="infoData.drivePhoto">
-              <img :style="'height: 90px;background-image: url(' + infoData.drivePhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv"/>
+              <div :style="'height: 90px;background-image: url(' + infoData.drivePhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(infoData.drivePhoto)"></div>
               <p class="uploadLabel">驾驶证</p>
             </div>
             </Col>
+            <Modal v-model="visible" title="查看图片">
+              <img :src="imagePath" style="width: 100%">
+              <div slot="footer" style="text-align: center;"></div>
+            </Modal>
           </Row>
         </div>
         <div class="title" style="margin-top: 40px;">
@@ -172,6 +176,8 @@ export default {
       showTableOne: true,
       repairFormat: {},
       repairFormatInit: {},
+      visible: false,
+      imagePath: '',
       status: [
         { name: '全部', count: '' },
         { name: '待回收', count: '' },
@@ -471,6 +477,10 @@ export default {
           }
         }
       })
+    },
+    handleView (imagePath) {
+      this.visible = true
+      this.imagePath = imagePath
     }
   }
 }

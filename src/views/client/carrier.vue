@@ -22,34 +22,36 @@
                 @click="searchList"></Button>
       </div>
     </div>
-    <div>
-      <template>
-        <Table :columns="columns1" :data="data1" @on-sort-change = "timeSort"></Table>
-      </template>
-    </div>
-    <div class="footer">
-      <template>
-        <Page :total="totalCount"
-              :current.sync="pageNo" :page-size-opts="pageArray"
-              size="small"
-              show-sizer
-              show-elevator show-total @on-change="handleChangePage"
-              @on-page-size-change="handleChangePageSize"/>
-      </template>
-    </div>
+    <page-table
+      :keywords="queryWords"
+      :method="method"
+      :url="url"
+      :columns="columns1"
+      list-field="carrierList"
+      @on-sort-change = "timeSort"
+    ></page-table>
   </div>
 </template>
 <script>
-import { carrierList, carrierDelete, CODE, carrierDetailsForDriver, carrierDetailsForCompany } from './client'
+import PageTable from '@/components/page-table'
+import { carrierDelete, CODE, carrierDetailsForDriver, carrierDetailsForCompany } from './client'
 import BasePage from '@/basic/BasePage'
 export default {
   name: 'carrier',
+  components: {
+    PageTable
+  },
   metaInfo: {
     title: '运掌柜承运商列表'
   },
   mixins: [ BasePage ],
   data () {
     return {
+      url: '/carrier/list',
+      method: 'GET',
+      queryWords: {
+        type: 1
+      },
       selectStatus: 1,
       selectList: [
         {
@@ -63,10 +65,6 @@ export default {
       ],
       keyword: '',
       order: null,
-      totalCount: 0, // 总条数
-      pageArray: [10, 20, 50],
-      pageNo: 1,
-      pageSize: 10,
       payTypeMap: {
         1: '按单付',
         2: '月结',
@@ -110,7 +108,11 @@ export default {
                                 shippingWeight: _this.driver.shippingWeight + '',
                                 shippingVolume: _this.driver.shippingVolume + '',
                                 remark: _this.driver.remark,
-                                payType: _this.driver.payType + ''
+                                payType: _this.driver.payType + '',
+                                carBrand: _this.driver.carBrand,
+                                travelPhoto: _this.driver.travelPhoto,
+                                drivePhoto: _this.driver.drivePhoto,
+                                regularLine: _this.driver.regularLine
                               }
                             }
                           },
@@ -123,7 +125,6 @@ export default {
                       })
                     } else {
                       this._carrierDetailsForCompany(params.row.carrierId, () => {
-                        console.log(_this.company)
                         _this.openDialog({
                           name: 'client/dialog/carrier',
                           data: {
@@ -239,7 +240,7 @@ export default {
           key: 'carrierType',
           render: (h, params) => {
             let text = ''
-            if (params.row.carrierType === 1) {
+            if (params.row.carrierType === 1 || params.row.carrierType === '1') {
               text = '个体司机'
             } else {
               text = '运输公司'
@@ -294,7 +295,11 @@ export default {
         shippingWeight: '',
         shippingVolume: '',
         remark: '',
-        payType: ''
+        payType: '',
+        carBrand: '',
+        travelPhoto: '',
+        drivePhoto: '',
+        regularLine: ''
       },
       company: {
         carrierName: '',
@@ -305,27 +310,30 @@ export default {
       }
     }
   },
-  mounted () {
-    this.searchList()
-  },
   methods: {
     searchList () {
-      let data = {
-        pageNo: this.pageNo,
-        pageSize: this.pageSize,
+      // let data = {
+      //   pageNo: this.pageNo,
+      //   pageSize: this.pageSize,
+      //   type: this.selectStatus,
+      //   keyword: this.keyword,
+      //   order: this.order
+      // }
+      this.queryWords = {
         type: this.selectStatus,
         keyword: this.keyword,
         order: this.order
       }
-      carrierList(data).then(res => {
-        if (res.data.code === CODE) {
-          console.log(res)
-          this.data1 = res.data.data.carrierList
-          this.totalCount = res.data.data.total
-        } else {
-          this.$Message.error(res.data.msg)
-        }
-      })
+      // this.loading = true
+      // carrierList(data).then(res => {
+      //   if (res.data.code === CODE) {
+      //     this.data1 = res.data.data.carrierList
+      //     this.totalCount = res.data.data.total
+      //     this.loading = false
+      //   } else {
+      //     this.$Message.error(res.data.msg)
+      //   }
+      // })
     },
     clearKeywords () {
       this.keyword = ''
@@ -363,7 +371,6 @@ export default {
         carrierId: carrierId
       }
       carrierDetailsForCompany(data).then(res => {
-        console.log(res)
         if (res.data.code === CODE) {
           this.company = {
             carrierName: res.data.data.carrierInfo.carrierName,
@@ -382,17 +389,7 @@ export default {
       }
       carrierDetailsForDriver(data).then(res => {
         if (res.data.code === CODE) {
-          this.driver = {
-            driverName: res.data.data.driverName,
-            driverPhone: res.data.data.driverPhone,
-            carNO: res.data.data.carNO,
-            carType: res.data.data.carType,
-            carLength: res.data.data.carLength,
-            shippingWeight: res.data.data.shippingWeight,
-            shippingVolume: res.data.data.shippingVolume,
-            remark: res.data.data.remark,
-            payType: res.data.data.payType
-          }
+          this.driver = res.data.data
           fn()
         }
       })

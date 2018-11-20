@@ -13,7 +13,7 @@ export const CollectTabs = [
     count: ''
   },
   {
-    label: '已付',
+    label: '已付款',
     name: 'PAIED',
     count: ''
   }
@@ -26,3 +26,18 @@ export const CollectTabMap = CollectTabs.reduce((map, item) => {
   map[item.name] = item.name
   return map
 }, {})
+/**
+ * 返现头部tab
+ */
+export const ReturnTabs = [
+  {
+    label: '待核销',
+    name: 'WAIT_VERIFY',
+    count: ''
+  },
+  {
+    label: '已核销',
+    name: 'VERIFIED',
+    count: ''
+  }
+]

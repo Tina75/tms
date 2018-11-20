@@ -6,7 +6,6 @@
     class="select-input__dropdown"
     trigger="custom"
     @on-click="handleSelect"
-    @on-clickoutside="handleBlur"
   >
     <div
       @keydown.up.prevent="handleKeydown"
@@ -21,8 +20,10 @@
         :placeholder="placeholder"
         :maxlength="maxlength"
         :class="classes"
+        :disabled="disabled"
         @on-change="handleChange"
         @on-focus="handleFocus"
+        @on-blur="handleBlur"
       >
       <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-input__clear-icon" @click.native.stop="handleClear"></Icon>
       <Icon v-if="!mousehover || !isClearable" slot="suffix" type="ios-arrow-down" class="select-input__input-icon"></Icon>
@@ -90,6 +91,10 @@ export default {
       type: Function
     },
     noFilter: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
       type: Boolean,
       default: false
     }

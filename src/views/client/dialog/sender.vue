@@ -75,7 +75,6 @@ export default {
           } else { // 2-编辑
             this._consignerUpdate()
           }
-          this.close()
         }
       })
     },
@@ -83,6 +82,12 @@ export default {
       consignerAdd(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.openTab({
+            path: '/client/sender-info',
+            title: '发货方详情',
+            query: { id: res.data.data }
+          })
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -90,10 +95,10 @@ export default {
     },
     _consignerUpdate () {
       Object.assign(this.validate, { id: this.id })
-      console.log(this.validate)
       consignerUpdate(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }

@@ -64,7 +64,7 @@
                      class="search-input-senior" />
 
         <Input v-model="seniorSearchFields.orderNo" :maxlength="20" placeholder="请输入订单号" class="search-input-senior" />
-        <Input v-model="seniorSearchFields.customerOrderNo" :maxlength="20" placeholder="请输入客户订单号" class="search-input-senior" />
+        <Input v-model="seniorSearchFields.customerOrderNo" :maxlength="20" placeholder="请输入客户单号" class="search-input-senior" />
         <Input v-model="seniorSearchFields.transNo" :maxlength="20" placeholder="请输入外转单号" class="search-input-senior" />
 
         <SelectInput v-model="seniorSearchFields.transfereeName"
@@ -131,6 +131,7 @@ import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, setTabList } from './constant/outer'
 import headType from '@/libs/constant/headtype'
+import _ from 'lodash'
 
 export default {
   name: 'OuterManager',
@@ -156,7 +157,7 @@ export default {
       seniorSearchFields: {
         consignerName: '', // 客户名称
         orderNo: '', // 订单号
-        customerOrderNo: '', // 客户订单号
+        customerOrderNo: '', // 客户单号
         transNo: '', // 外转单号
         transfereeName: '', // 外转方名称
         start: void 0, // 始发地
@@ -197,7 +198,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.billArrived([p.row.transId])
+                    this.billArrived(p.row)
                   }
                 }
               }, '到货')
@@ -283,34 +284,114 @@ export default {
     },
 
     // 到货
-    billArrived (ids) {
+    billArrived (row) {
       const self = this
       let transIds
-      if (ids && ids.length) transIds = ids
+      console.log(row)
+      if (row) transIds = [row.transId]
       else if (this.tableSelection.length) transIds = this.tableSelection.map(item => item.transId)
       else {
         this.$Message.error('请先选择后再操作')
         return
       }
-      self.openDialog({
-        name: 'transport/dialog/confirm',
-        data: {
-          title: '到货确认',
-          message: '是否确认到货？'
-        },
-        methods: {
-          confirm () {
-            Server({
-              url: '/outside/bill/confirm/arrival',
-              method: 'post',
-              data: { transIds }
-            }).then(res => {
-              self.$Message.success('操作成功')
-              self.clearSelectedAndFetch()
-            }).catch(err => console.error(err))
-          }
-        }
+      let tableSelection = _.cloneDeep(this.tableSelection)
+      let cashBackList = _.remove(tableSelection, (i) => {
+        return i.cashBack > 0
       })
+      console.log(cashBackList)
+      if (!row && this.tableSelection.length > 1 && cashBackList.length > 0) {
+        self.openDialog({
+          name: 'transport/dialog/cashBackWarn',
+          data: {
+            title: '操作提醒',
+            cashBack: cashBackList,
+            type: 'outer'
+          },
+          methods: {
+            confirm () {}
+          }
+        })
+        return
+      }
+      if (row) {
+        if (row.cashBack > 0) {
+          self.openDialog({
+            name: 'transport/dialog/cashBack',
+            data: {
+              url: '/outside/bill/confirm/arrival',
+              title: '到货确认',
+              type: 'outer',
+              cashBack: row.cashBack / 100,
+              transIds: transIds
+            },
+            methods: {
+              confirm () {
+                self.$Message.success('操作成功')
+                self.clearSelectedAndFetch()
+              }
+            }
+          })
+        } else {
+          self.openDialog({
+            name: 'transport/dialog/confirm',
+            data: {
+              title: '到货确认',
+              message: '是否确认到货？'
+            },
+            methods: {
+              confirm () {
+                Server({
+                  url: '/outside/bill/confirm/arrival',
+                  method: 'post',
+                  data: { transIds }
+                }).then(res => {
+                  self.$Message.success('操作成功')
+                  self.clearSelectedAndFetch()
+                }).catch(err => console.error(err))
+              }
+            }
+          })
+        }
+      } else {
+        if (self.tableSelection[0].cashBack > 0) {
+          self.openDialog({
+            name: 'transport/dialog/cashBack',
+            data: {
+              url: '/outside/bill/confirm/arrival',
+              title: '到货确认',
+              type: 'outer',
+              cashBack: self.tableSelection[0].cashBack / 100,
+              transIds: [self.tableSelection[0].transId]
+            },
+            methods: {
+              confirm () {
+                self.$Message.success('操作成功')
+                self.clearSelectedAndFetch()
+              }
+            }
+          })
+        } else {
+          self.openDialog({
+            name: 'transport/dialog/confirm',
+            data: {
+              title: '到货确认',
+              message: '是否确认到货？'
+            },
+            methods: {
+              confirm () {
+                Server({
+                  url: '/outside/bill/confirm/arrival',
+                  method: 'post',
+                  data: { transIds }
+                }).then(res => {
+                  self.$Message.success('操作成功')
+                  self.clearSelectedAndFetch()
+                }).catch(err => console.error(err))
+              }
+            }
+          })
+        }
+      }
     },
 
     // 发运
@@ -325,21 +406,15 @@ export default {
 
       const self = this
       self.openDialog({
-        name: 'transport/dialog/confirm',
+        name: 'transport/dialog/shipping',
         data: {
           title: '发运',
-          message: '是否发运？发运以后将不能再修改外转单信息'
+          message: '是否发运？发运以后将不能再修改外转单信息',
+          transIds: transIds
         },
         methods: {
           confirm () {
-            Server({
-              url: '/outside/bill/send',
-              method: 'post',
-              data: { transIds }
-            }).then(res => {
-              self.$Message.success('操作成功')
-              self.clearSelectedAndFetch()
-            }).catch(err => console.error(err))
+            self.clearSelectedAndFetch()
           }
         }
       })
@@ -381,6 +456,40 @@ export default {
           }
         }
       })
+    },
+    // 获取车辆位置
+    billLocation () {
+      if (!this.checkTableSelection()) return
+      let transIds = this.tableSelection.map(item => item.transId)
+      let data = transIds.length > 1 ? ({ transIds }) : ({ transId: transIds[0] })
+      Server({
+        url: transIds.length > 1 ? '/outside/bill/location' : '/outside/bill/single/location',
+        method: 'post',
+        data
+      }).then(res => {
+        let cars
+        if (transIds.length > 1) {
+          if (!res.data.data.list.length) {
+            this.$Message.warning('暂无车辆位置信息')
+            return
+          }
+          cars = res.data.data.list
+        } else {
+          if (!res.data.data.points.length) {
+            this.$Message.warning('暂无车辆位置信息')
+            return
+          }
+          cars = [res.data.data]
+        }
+        this.openDialog({
+          name: 'transport/dialog/map',
+          data: {
+            cars,
+            multiple: transIds.length !== 1
+          },
+          methods: {}
+        })
+      }).catch(err => console.error(err))
     }
   }
 }

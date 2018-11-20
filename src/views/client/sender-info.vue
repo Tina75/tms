@@ -55,54 +55,36 @@
             <Button v-if="hasPower(130104)"  type="primary" @click="_consignerAddressAdd">新增</Button>
           </div>
           <template>
-            <Table :columns="columns1" :data="data1"></Table>
+            <page-table
+              :columns="columns1"
+              :data="data1"
+              list-field="list">
+            </page-table>
           </template>
-          <div class="footer">
-            <template>
-              <Page :total="totalCount1"
-                    :current.sync="pageNo1" :page-size-opts="pageArray1"
-                    size="small"
-                    show-sizer
-                    show-elevator show-total @on-change="handleChangePage1"
-                    @on-page-size-change="handleChangePageSize1"/>
-            </template>
-          </div>
         </TabPane>
         <TabPane :label="tabPaneLabe2">
           <div class="add">
             <Button v-if="hasPower(130107)" type="primary"  @click="_consignerConsigneeAdd">新增</Button>
           </div>
           <template>
-            <Table :columns="columns2" :data="data2"></Table>
+            <page-table
+              :columns="columns2"
+              :data="data2"
+              list-field="list">
+            </page-table>
           </template>
-          <div class="footer">
-            <template>
-              <Page :total="totalCount2"
-                    :current.sync="pageNo2" :page-size-opts="pageArray2"
-                    size="small"
-                    show-sizer
-                    show-elevator show-total @on-change="handleChangePage2"
-                    @on-page-size-change="handleChangePageSize2"/>
-            </template>
-          </div>
         </TabPane>
         <TabPane :label="tabPaneLabe3">
           <div class="add">
             <Button v-if="hasPower(130110)" type="primary" @click="_consignerCargoAdd">新增</Button>
           </div>
           <template>
-            <Table :columns="columns3" :data="data3"></Table>
+            <page-table
+              :columns="columns3"
+              :data="data3"
+              list-field="list">
+            </page-table>
           </template>
-          <div class="footer">
-            <template>
-              <Page :total="totalCount3"
-                    :current.sync="pageNo3" :page-size-opts="pageArray3"
-                    size="small"
-                    show-sizer
-                    show-elevator show-total @on-change="handleChangePage3"
-                    @on-page-size-change="handleChangePageSize3"/>
-            </template>
-          </div>
         </TabPane>
         <TabPane :label="tabPaneLabe4">
           <ruleForClient :count.sync="totalCount4" :height="ruleHeight" :active="'1'" :partner-id="list.id"  :partner-name="list.name"></ruleForClient>
@@ -116,10 +98,12 @@
 import BasePage from '@/basic/BasePage'
 import ruleForClient from './ruleForClient/index'
 import { CODE, consignerDetail, consignerAddressList, consignerAddressDelete, consignerConsigneeList, consignerConsigneeDelete, consignerCargoList, consignerCargoDelete } from './client'
+import pageTable from '@/components/page-table'
 export default {
   name: 'sender-info',
   components: {
-    ruleForClient
+    ruleForClient,
+    pageTable
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -127,6 +111,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       id: this.$route.query.id, // 发货方id
       ruleHeight: 0,
       list: {
@@ -163,7 +148,8 @@ export default {
                           address: params.row.address,
                           longitude: params.row.longitude,
                           latitude: params.row.latitude,
-                          mapType: params.row.mapType
+                          mapType: params.row.mapType,
+                          city: params.row.cityCode
                         }
                       },
                       methods: {
@@ -245,7 +231,8 @@ export default {
                           remark: params.row.remark,
                           longitude: params.row.longitude,
                           latitude: params.row.latitude,
-                          mapType: params.row.mapType
+                          mapType: params.row.mapType,
+                          cityCode: params.row.cityCode
                         }
                       },
                       methods: {
@@ -517,10 +504,10 @@ export default {
       let data = {
         id: this.id
       }
+      this.loading = true
       consignerDetail(data).then(res => {
         if (res.data.code === CODE) {
           let data = res.data.data
-          console.log(res.data.data)
           this.list = {
             id: data.id,
             name: data.name,
@@ -529,6 +516,7 @@ export default {
             payType: data.payType,
             remark: data.remark
           }
+          this.loading = false
           this.data1 = data.addressList.list
           this.totalCount1 = data.addressList.totalCount
           this.data2 = data.consigneeList.list

@@ -13,8 +13,12 @@ export default {
       intervalSeconds: WAITING_TIME
     }
   },
+  created () {
+    this.form.phone = this.$store.getters.phone
+  },
   methods: {
     changeMode (mode) {
+      this.$store.commit('USER_PHONE', this.form.phone)
       this.$emit('on-change', mode)
     },
 

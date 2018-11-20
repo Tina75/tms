@@ -24,8 +24,9 @@ function confirm (options) {
   if (!options.showIcon) {
     options.icon = ''
   }
+  let { onOk, onCancel, ...rest } = options
   // const render = ('render' in options) ? options.render : undefined
-  let instance = getModalInstance(options)
+  let instance = getModalInstance(rest)
 
   options.onRemove = function () {
     modalInstance = null

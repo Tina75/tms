@@ -1,9 +1,9 @@
 <template>
   <div>
-    <header class="detail-header">
+    <header :class="from === 'order' ? themeBarColor(orderStatus) : themeBarColor(receiptStatus)" class="detail-header">
       <ul>
         <li>订单号：{{detail.orderNo}}</li>
-        <li>客户订单号：{{detail.customerOrderNo || '-' }}</li>
+        <li>客户单号：{{detail.customerOrderNo || '-' }}</li>
         <li>运单号：{{detail.waybillNo || '-'}} &nbsp;&nbsp;&nbsp;
           <Poptip v-if="waybillNums.length > 0" placement="bottom" @on-popper-show="showPoptip" @on-popper-hide="hidePoptip">
             <a>{{ show ? '收起全部' : '展开全部' }}</a>
@@ -15,11 +15,18 @@
             </ul>
           </Poptip>
         </li>
-        <li>{{ from === 'order' ? '订单状态：' : '回单状态：'}}<span style="font-weight: bold;">{{ from === 'order' ? statusToName(orderStatus) : statusToName(receiptStatus) }}</span></li>
+        <li>{{ from === 'order' ? '订单状态：' : '回单状态：'}}<span :class="from === 'order' ? themeStatusColor(orderStatus) : themeStatusColor(receiptStatus)" style="font-weight: bold;">{{ from === 'order' ? statusToName(orderStatus) : statusToName(receiptStatus) }}</span></li>
       </ul>
     </header>
     <div style="text-align: right;margin: 24px 0;min-height: 1px;">
-      <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
+      <Tooltip v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :disabled="!btn.disabled" :content="btn.content" :offset="10" placement="top">
+        <Button
+          v-if="hasPower(btn.code)"
+          :disabled="btn.disabled"
+          :type="btn.value === operateValue ? 'primary' : 'default'"
+          :style="(btn.name === '上传回单照片' || btn.name === '修改回单照片') && 'width: 102px;'"
+          @click="handleOperateClick(btn)">{{ btn.name }}</Button>
+      </Tooltip>
     </div>
     <section>
       <div>
@@ -32,13 +39,18 @@
             <span>{{detail.consignerName}}</span>
           </i-col>
           <i-col span="7">
-            <span>要求发货时间：</span>
+            <span>发货时间：</span>
             <span v-if="detail.deliveryTime">{{detail.deliveryTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
             <span v-else>-</span>
           </i-col>
-          <i-col span="10">
-            <span>期望到货时间：</span>
+          <i-col span="7">
+            <span>到货时间：</span>
             <span v-if="detail.arriveTime">{{detail.arriveTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
+            <span v-else>-</span>
+          </i-col>
+          <i-col v-if="from === 'order'" span="3">
+            <span>代收货款：</span>
+            <span v-if="detail.collectionMoney">{{detail.collectionMoney / 100}}元</span>
             <span v-else>-</span>
           </i-col>
         </Row>
@@ -117,6 +129,11 @@
         </div>
         <Row style="padding-top: 17px;">
           <i-col span="4">
+            <span style="width: 72px;">计费里程：</span>
+            <span v-if="detail.mileage" style="font-weight:bold;">{{detail.mileage / 1000}}公里</span>
+            <span v-else>-</span>
+          </i-col>
+          <i-col span="4">
             <span class="fee-style">运输费：</span>
             <span v-if="detail.freightFee" style="font-weight:bold;">{{detail.freightFee | toPoint}}元</span>
             <span v-else>-</span>
@@ -161,6 +178,19 @@
           </i-col>
         </Row>
       </div>
+      <div v-if="from === 'receipt' && receiptStatus > 0">
+        <div class="title">
+          <span>回单照片</span>
+        </div>
+        <div v-if="detail.receiptOrder.receiptUrl.length > 0" style="width: 900px;margin-top: 31px;">
+          <div
+            v-for="(item, index) in detail.receiptOrder.receiptUrl"
+            :key="index"
+            :style="'cursor: pointer;display: inline-block;width: 160px;margin-right: 16px;height: 90px;background-image: url(' + item + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+            @click="handleView(index)">
+          </div>
+        </div>
+      </div>
       <div class="order-log">
         <div class="title">
           <span>{{from === 'order' ? '订单日志' : '回单日志'}}</span>
@@ -179,6 +209,10 @@
         </div>
       </div>
     </section>
+    <Modal v-model="visible" title="查看图片">
+      <img :src="curImg" style="width: 100%">
+      <div slot="footer" style="text-align: center;"></div>
+    </Modal>
     <OrderPrint ref="printer" :list="orderPrint"></OrderPrint>
   </div>
 </template>
@@ -202,6 +236,8 @@ export default {
       detail: {
         orderCargoList: []
       },
+      curImg: '', // 当前图片src
+      visible: false, // 图片预览模态框
       from: this.$route.query.from,
       source: this.$route.query.source, // 页面来源
       orderStatus: '',
@@ -360,6 +396,8 @@ export default {
         this.openRecoveryDialog(this.detail)
       } else if (btn.name === '彻底删除') {
         this.completelyDeleteDialog(this.detail)
+      } else if (btn.name === '上传回单照片' || btn.name === '修改回单照片') {
+        this.openUploadDialog(this.detail)
       }
     },
     // 外转
@@ -462,6 +500,22 @@ export default {
         }
       })
     },
+    // 打开上传和修改回单弹窗
+    openUploadDialog (order) {
+      const _this = this
+      _this.openDialog({
+        name: 'order-management/dialog/upload',
+        data: {
+          params: order,
+          name: order.receiptOrder.receiptUrl.length > 0 ? '修改' : '上传'
+        },
+        methods: {
+          ok (node) {
+            _this.getDetail()
+          }
+        }
+      })
+    },
     // 日志切换显示
     showOrderLog () {
       this.showLog = !this.showLog
@@ -503,6 +557,9 @@ export default {
     statusToName (code) {
       let name
       switch (code) {
+        case -1:
+          name = '待签收'
+          break
         case 0:
           name = '待回收'
           break
@@ -653,9 +710,15 @@ export default {
         this.checkPrintCode(renderBtn)
         // 拆单按钮
         if (r.transStatus === 0 && r.disassembleStatus !== 1 && r.dispatchStatus === 0) {
-          renderBtn.push(
-            { name: '拆单', value: 3, code: 120110 }
-          )
+          if (r.collectionMoney > 0) {
+            renderBtn.push(
+              { name: '拆单', value: 3, code: 120110, disabled: true, content: '有代收货款的订单不允许拆单' }
+            )
+          } else {
+            renderBtn.push(
+              { name: '拆单', value: 3, code: 120110 }
+            )
+          }
         }
         // 外转按钮
         if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0) {
@@ -713,12 +776,97 @@ export default {
         this.operateValue = 1
       } else if (this.detail.receiptOrder.receiptStatus === 1) {
         this.btnGroup = [
-          { name: '返厂', value: 1, code: 110202 }
+          { name: this.detail.receiptOrder.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: this.detail.receiptOrder.receiptUrl.length > 0 ? 110205 : 110204 },
+          { name: '返厂', value: 2, code: 110202 }
+        ]
+        this.operateValue = 2
+      } else if (this.detail.receiptOrder.receiptStatus === 2) {
+        this.btnGroup = [
+          { name: this.detail.receiptOrder.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: this.detail.receiptOrder.receiptUrl.length > 0 ? 110205 : 110204 }
         ]
         this.operateValue = 1
       } else {
         this.btnGroup = []
       }
+    },
+    // 预览
+    handleView (i) {
+      this.visible = true
+      this.curImg = this.detail.receiptOrder.receiptUrl[i]
+    },
+    // 每种状态对应各自主题色
+    themeBarColor (code) {
+      let barClass
+      switch (code) {
+        case -1:
+          barClass = 'i-bar-warning'
+          break
+        case 0:
+          barClass = 'i-bar-warning'
+          break
+        case 1:
+          barClass = 'i-bar-warning'
+          break
+        case 2:
+          barClass = 'i-bar-success'
+          break
+        case 10:
+          barClass = 'i-bar-warning'
+          break
+        case 20:
+          barClass = 'i-bar-warning'
+          break
+        case 30:
+          barClass = 'i-bar-info'
+          break
+        case 40:
+          barClass = 'i-bar-success'
+          break
+        case 50:
+          barClass = 'i-bar-success'
+          break
+        case 100:
+          barClass = 'i-bar-danger'
+          break
+      }
+      return barClass
+    },
+    // 每种状态对应各自主题色
+    themeStatusColor (code) {
+      let statusClass
+      switch (code) {
+        case -1:
+          statusClass = 'i-status-warning'
+          break
+        case 0:
+          statusClass = 'i-status-warning'
+          break
+        case 1:
+          statusClass = 'i-status-warning'
+          break
+        case 2:
+          statusClass = 'i-status-success'
+          break
+        case 10:
+          statusClass = 'i-status-warning'
+          break
+        case 20:
+          statusClass = 'i-status-warning'
+          break
+        case 30:
+          statusClass = 'i-status-info'
+          break
+        case 40:
+          statusClass = 'i-status-success'
+          break
+        case 50:
+          statusClass = 'i-status-success'
+          break
+        case 100:
+          statusClass = 'i-status-danger'
+          break
+      }
+      return statusClass
     }
   }
 }
@@ -728,7 +876,6 @@ export default {
     height 60px
     padding-left 24px
     line-height  60px
-    background rgba(233,252,255,1)
     >ul>li
       font-size 13px
       font-family 'PingFangSC-Regular'
@@ -828,6 +975,10 @@ export default {
   .hide-timeline
      height 15px
      transition height 0.3s linear
+  .receipt-image
+    width 160px
+    height 90px
+    margin-right 16px
 </style>
 <style lang='stylus'>
   .detail-header

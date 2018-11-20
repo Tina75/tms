@@ -1,13 +1,14 @@
 <template>
-  <div>
+  <div class="area-input">
     <SelectInput
       :value="value"
       :maxlength="maxlength"
       :local-options="areaList"
-      :remote="remote"
-      :clearable="true"
+      :remote="false"
+      :clearable="inputDisabled ? false : true"
       :placeholder="placeholder"
       :no-filter="true"
+      :disabled="inputDisabled"
       @input="inputHandle"
       @on-select="selectChange"
     >
@@ -24,7 +25,10 @@ export default {
   },
   props: {
     value: String,
-    maxlength: Number,
+    maxlength: {
+      type: Number,
+      default: 60
+    },
     // 城市编码
     cityCode: String | Number,
     // 下拉数组
@@ -32,16 +36,29 @@ export default {
       type: Array,
       default: () => []
     },
-    placeholder: String,
-    remote: {
+    // 城市组件 过滤掉省市信息
+    filterCity: {
       type: Boolean,
       default: false
+    },
+    // 强制城市搜索
+    // 默认 当前城市搜索再搜全国
+    forceCity: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    placeholder: {
+      type: String,
+      default: '请输入详细地址'
     }
   },
   data () {
     return {
       address: [],
-      map: new BMap.Map(null),
       timer: ''
     }
   },
@@ -60,18 +77,22 @@ export default {
       return res
     },
     areaName () {
-      const code = this.cityCode
-      return code ? cityUtil.getNameByCode(code) : this.map
+      const arr = cityUtil.getPathByCode(this.cityCode)
+      return arr.length ? arr[1].name : '全国'
+    },
+    inputDisabled () {
+      return false
     }
   },
   methods: {
     search (val) {
       clearTimeout(this.timer)
       this.timer = setTimeout(() => {
-        this.doSearch(val, true)
+        this.doSearch(val, this.areaName !== '全国')
       }, 200)
     },
     doSearch (val, forceLocal) {
+      const area = forceLocal ? this.areaName : '全国'
       const options = {
         onSearchComplete: results => {
           if (local.getStatus() === window.BMAP_STATUS_SUCCESS) {
@@ -82,23 +103,23 @@ export default {
               const pro = item.province ? item.province : ''
               const city = item.city ? item.city : ''
               const addr = item.address ? item.address.replace(pro, '').replace(city, '') : ''
+              const names = this.filterCity ? addr + item.title : pro === city ? pro + addr + item.title : pro + city + addr + item.title
               arr.push({
                 id: i,
-                name: pro + city + addr + item.title,
-                value: pro + city + addr + item.title,
+                name: names,
+                value: names,
                 lat: item.point.lat,
                 lng: item.point.lng
               })
             }
             this.address = arr
           } else {
-            if (forceLocal) {
+            if (forceLocal && !this.forceCity) {
               this.doSearch(val, false)
             }
           }
         }
       }
-      const area = forceLocal ? this.areaName : '全国'
       const local = new BMap.LocalSearch(area, options)
       local.search(val, { forceLocal })
     },

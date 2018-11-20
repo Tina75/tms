@@ -6,14 +6,18 @@
       </div>
       <div class="header-bar-avator-dropdown">
         <span class="header-bar-avator-dropdown-notify" @click="openProcess">
-          <Tooltip v-if="processVisible" :value="processVisible" placement="bottom" content=" 点击我可查看业务流程" always>
+          <Tooltip v-if="processVisible" :value="processVisible"  placement="bottom" content=" 业务流程" always>
             <FontIcon type="liucheng" size="25" color="#fff"></FontIcon>
           </Tooltip>
-          <FontIcon v-else type="liucheng" size="25" color="#fff"></FontIcon>
+          <Tooltip v-else content=" 业务流程">
+            <FontIcon  type="liucheng" size="25" color="#fff" ></FontIcon>
+          </Tooltip>
         </span>
         <span class="header-bar-avator-dropdown-notify">
           <Badge :count="MsgCount.all" :offset="[5,1]" type="primary">
-            <Icon type="ios-notifications" size="30" color="#fff" @click="openMsg(0)"></Icon>
+            <Tooltip content=" 消息">
+              <Icon type="ios-notifications" size="30" color="#fff" @click="openMsg(0)"></Icon>
+            </Tooltip>
           </Badge>
         </span>
         <!-- <Dropdown class="header-bar-avator-dropdown-notify">
@@ -45,12 +49,12 @@
       </Dropdown> -->
 
         <!-- <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick"> -->
-        <Poptip trigger="hover"  placement="bottom-end" title="账号信息" width="260">
+        <Poptip trigger="hover"  placement="bottom-end" title="账号信息" width="260" style="cursor: default">
           <Avatar class="avatar"  style="border:1px solid #fff"></avatar>
           <span class="user-info">{{UserInfo.name}}</span>
           <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
           <div slot="content">
-            <p class="dropdown-line"><label for="">账户名：</label><span class="content-name">{{UserInfo.name}}</span><Tag color="cyan" style="font-size:12px">{{UserInfo.roleName}}</Tag></p>
+            <p class="dropdown-line"><label for="">账户名：</label><span class="content-name">{{UserInfo.name}}</span><Tag color="cyan" style="font-size:12px;cursor: default">{{UserInfo.roleName}}</Tag></p>
             <p class="dropdown-line"><label for="">手机号：</label>{{UserInfo.phone}}</p>
             <p class="dropdown-line"><label for="">公司：</label>{{UserInfo.companyName}}</p>
             <p class="dropdown-line"><label for="">有效期至：</label>{{UserInfo.expirationTime | datetime('yyyy-MM-dd')}}</p>

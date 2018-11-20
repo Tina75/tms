@@ -1,20 +1,7 @@
 <template>
   <div class="order-import">
     <div class="i-mb-10 ivu-upload">
-      <!-- <Upload
-        ref="uploader"
-        :format="['xlsx','xls']"
-        :show-upload-list="false"
-        :with-credentials="true"
-        :on-success="handleSuccess"
-        :on-error="handleError"
-        name="file"
-        action="//yapi.yundada56.com/mock/214/order/template/import"
-        accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        style="display:inline-block">
-        <Button type="primary">导入文件</Button>
-      </Upload> -->
-      <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入文件</Button>
+      <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入订单</Button>
       <input
         ref="fileInput"
         name="file"
@@ -24,8 +11,17 @@
         @change="handleChange"
       />
       <a v-if="hasPower(100202)" :href="downloadUrl"  download="下载模板" class="i-ml-10 ivu-btn ivu-btn-default">下载模板</a>
+      <Button class="i-ml-10" @click="clearAll">清空导入记录</Button>
     </div>
-    <PageTable ref="pageTable" :columns="columns" :show-filter="false" url="order/template/getImportedOrderTemplateList" method="post" no-data-text=" " @on-load="handleLoad">
+    <!-- <PageTable
+      ref="pageTable"
+      :columns="columns"
+      :show-filter="false"
+      url="order/template/getImportedOrderTemplateList"
+      method="post"
+      no-data-text=" "
+      @on-load="handleLoad"
+    >
       <div ref="footer" slot="footer" class="order-import__empty-content van-center">
         <div class="order-import__empty-content-wrap">
           <div>
@@ -37,27 +33,36 @@
           </div>
         </div>
       </div>
-    </PageTable>
-    <Modal
-      :value="visible"
-      :closable="false"
-      :mask-closable="false"
-      title="导入订单结果"
-    >
-      <Row>
-        <Col span="24" class="van-center i-mt-10">
-        <Spin fix>
-        </Spin>
-      </Col>
-      </Row>
-      <Row>
-        <Col span="24" class="van-center i-primary i-mt-10">
-        <span>导入订单正在紧急处理中..</span>
-        </Col>
-      </Row>
-
-      <div slot="footer"></div>
-    </Modal>
+    </PageTable> -->
+    <Table :columns="columns" :data="dataSource" no-data-text=" ">
+      <div ref="footer" slot="footer" class="order-import__empty-content van-center">
+        <div class="order-import__empty-content-wrap">
+          <div>
+            <img src="../assets/empty-order.png" />
+            <div>您还没有导入订单，去下载模板导入订单吧！</div>
+          </div>
+          <div class="i-mt-10">
+            <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入订单</Button>
+          </div>
+        </div>
+      </div>
+    </Table>
+    <div  v-if="pagination.totalCount !==0" class="order-import__footer-pagination">
+      <div class="order-import__footer-pagination-fr">
+        <Page
+          :current="pagination.pageNo"
+          :total="pagination.totalCount"
+          :show-sizer="true"
+          :page-size-opts="[10,20,50]"
+          show-total
+          size="small"
+          class="order-import__pagination-bar"
+          @on-change="handlePageChange"
+          @on-page-size-change="handlePageSizeChange"
+        >
+        </Page>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -70,12 +75,15 @@ import BasePage from '@/basic/BasePage'
 import server from '@/libs/js/server'
 import jsCookie from 'js-cookie'
 import TMSUrl from '@/libs/constant/url.js'
+import { Progress } from 'iview'
 /**
  * 批量导入
  * 1.文件类型
  * 2.文件大小
  */
+const MAX_UPLOAD_FILES = 3
 export default {
+  name: 'order-import',
   metaInfo: {
     title: '批量导入'
   },
@@ -87,11 +95,19 @@ export default {
     const vm = this
     return {
       downloadUrl: '',
-      visible: false,
-      progress: 0,
+      // visible: false,
+      // totalCount: 0,
+      dataSource: [],
+      pagination: {
+        pageNo: 1,
+        pageSize: 10,
+        totalCount: 0
+      },
+      // progress: 0,
       ossClient: null,
       ossDir: '',
       timer: null,
+      queue: [], // 上传进度队列
       columns: [
         {
           title: '操作',
@@ -101,7 +117,8 @@ export default {
             const actions = [
               h('a', {
                 attrs: {
-                  href: params.row.fileUrl
+                  href: params.row.fileUrl,
+                  download: '下载模板'
                 }
               }, params.row.status ? '下载' : '下载错误报告')
             ]
@@ -124,12 +141,27 @@ export default {
                 }
               }, '查看导入订单'))
             }
+            // 添加删除操作
+            actions.push(
+              h('a', {
+                class: 'i-ml-10',
+                attrs: {
+                  href: 'javascript:;'
+                },
+                on: {
+                  click: () => {
+                    vm.deleteById(params.row)
+                  }
+                }
+              }, '删除')
+            )
             return h('div', actions)
           }
         },
         {
-          title: '导入日期',
+          title: '导入时间',
           key: 'createTime',
+          width: 150,
           render (h, params) {
             let time = params.row.createTime
             return time ? h('span', new Date(time).Format('yyyy-MM-dd hh:mm:ss')) : h('span', '-')
@@ -142,7 +174,7 @@ export default {
         {
           title: '导入结果',
           key: 'status',
-          width: 100,
+          width: 180,
           render: (h, params) => {
             if (params.row.status === 1) {
               return h('span', '导入成功')
@@ -150,25 +182,43 @@ export default {
               return h('span', {
                 class: 'i-error'
               }, '导入失败')
+            } else {
+              return h(Progress, {
+                props: {
+                  strokeWidth: 6,
+                  percent: params.row.progress || 0,
+                  status: 'active'
+                }
+              })
             }
-            return h('span', '正在处理')
+            // return h('span', '正在处理')
           }
         },
         {
-          title: '导入订单数',
+          title: '成功导入订单数',
           key: 'orderCount',
-          width: 100
+          width: 120,
+          render (h, params) {
+            return h('span', {}, params.row['orderCount'] ? params.row['orderCount'] : 0)
+          }
         },
         {
           title: '操作人',
           key: 'operatorName',
-          width: 120
+          width: 150
         }
       ]
     }
   },
   computed: {
-    ...mapGetters(['UserInfo'])
+    ...mapGetters(['UserInfo']),
+    queueNum () {
+      // 上传队列里的
+      return this.queue.length
+    },
+    canUpload () {
+      return MAX_UPLOAD_FILES > this.queueNum
+    }
   },
   created () {
     this.initOssInstance()
@@ -176,9 +226,10 @@ export default {
   },
   mounted () {
     if (this.$refs.footer) {
-      this.$refs.footer.parentElement.parentElement.style['min-height'] = '180px'
-      this.$refs.footer.parentElement.parentElement.style['display'] = 'none'
+      this.$refs.footer.parentElement.style['min-height'] = '180px'
+      this.$refs.footer.parentElement.style['display'] = 'none'
     }
+    this.fetch()
   },
   beforeDestroy () {
     if (this.timer) {
@@ -186,6 +237,53 @@ export default {
     }
   },
   methods: {
+    /**
+     * 清空导入记录了
+     */
+    clearAll () {
+      const vm = this
+      if (this.pagination.totalCount === 0) {
+        this.$Message.info('当前没有可清空的导入记录')
+        return
+      }
+      this.$Toast.confirm({
+        content: '导入记录清空后将无法恢复',
+        description: '清空记录不会删除已导入的订单数据。',
+        onOk () {
+          server({
+            url: '/order/template/clearOrderTemplateImportRecord',
+            method: 'post',
+            data: {}
+          }).then((res) => {
+            vm.fetch()
+          })
+        }
+      })
+    },
+    /**
+     * 单个删除记录
+     */
+    deleteById (data) {
+      const vm = this
+      this.$Toast.confirm({
+        content: '导入记录删除后将无法恢复',
+        description: '删除记录不会删除已导入的订单数据。',
+        onOk () {
+          server({
+            url: 'order/template/deleteOrderTemplateImportRecord',
+            method: 'post',
+            data: {
+              id: data.id
+            }
+          }).then((res) => {
+            vm.fetch()
+          })
+        }
+      })
+    },
+    /**
+     * 初始化oss
+     */
     initOssInstance () {
       const vm = this
       /**
@@ -226,21 +324,31 @@ export default {
         this.downloadUrl = response.data.data.fileUrl
       })
     },
+    /**
+     * 下载完后回调
+     */
     handleLoad (response) {
       // response.data.msg !== 10000
       if (!response.data.data || response.data.data.list.length === 0) {
-        this.$refs.footer.parentElement.parentElement.style['display'] = 'block'
+        // this.$refs.footer.parentElement.parentElement.style['display'] = 'block'
+        this.$refs.footer.parentElement.style['display'] = 'block'
       } else {
-        this.$refs.footer.parentElement.parentElement.style['display'] = 'none'
+        // this.$refs.footer.parentElement.parentElement.style['display'] = 'none'
+        this.$refs.footer.parentElement.style['display'] = 'none'
+        // this.totalCount = response.data.data.list.length
       }
     },
     // 主动触发上传
     handleClick (e) {
       this.$refs.fileInput.click()
     },
+    /**
+     * 定时轮询接口，查看进度
+     */
     loopCheckFileProgress (importId) {
       const vm = this
       let timer = null
+      vm.queue.push(importId)
       function checkProgress () {
         try {
           timer = setTimeout(async () => {
@@ -251,7 +359,7 @@ export default {
                 importId
               }
             })
-            const status = res.data.data.status
+            const { status, percent } = res.data.data
             // status,1成功；0失败；2正在处理；3excel文件标题行非法
             if (status !== 2) {
               if (timer) {
@@ -264,12 +372,18 @@ export default {
               } else {
                 vm.$Message.success(`导入成功，共导入${res.data.data.orderNum}条订单`)
               }
-              vm.visible = false
-              vm.$refs.pageTable.fetch()
+              // vm.visible = false
+              vm.fetch()
+              // 导入成功后，删除该条记录
+              vm.$nextTick(() => {
+                vm.queue = vm.queue.filter(id => id !== importId)
+              })
             } else {
+              // vm.queue[importId] = percent
+              vm.updateProgress(importId, percent)
               checkProgress()
             }
-          }, 3000)
+          }, 2000)
         } catch (error) {
           if (timer) {
             clearTimeout(timer)
@@ -282,12 +396,27 @@ export default {
       checkProgress()
     },
     /**
+     * 更新上传文件进度
+     */
+    updateProgress (id, percent) {
+      const record = this.dataSource.find((item) => item.id === id)
+      if (record) {
+        record.progress = percent
+      }
+    },
+    /**
      * 文件上传后，回调
      */
     async handleChange (e) {
       const files = e.target.files
 
       if (!files || files.length === 0) {
+        return false
+      }
+      if (!this.canUpload) {
+        this.$Toast.warning({
+          content: '最多只支持3个表格同时导入哦~'
+        })
         return false
       }
       const file = files[0]
@@ -298,11 +427,21 @@ export default {
       }
       try {
         const uploadResult = await this.uploadFile(file)
-        const notifyResult = await this.notifyBackend(file.name, uploadResult.res.requestUrls[0])
+        let fileUrl = uploadResult.res.requestUrls[0]
+        if (fileUrl.indexOf('?upload') !== -1) {
+          fileUrl = fileUrl.substring(0, fileUrl.indexOf('?upload'))
+        }
+        const notifyResult = await this.notifyBackend(file.name, fileUrl)
         if (notifyResult.data.code === 10000) {
           // this.$Message.success({content: '导入文件完成，后台正在处理中，请稍后查看结果', duration: 3})
-          this.visible = true
-          this.loopCheckFileProgress(notifyResult.data.data.id)
+          // 20181113-mys 不显示弹窗，需要在进度条挂载表格里的导入结果列
+          // this.visible = true
+          // 刷新列表后查询进度
+          this.fetch()
+            .then((res) => {
+              this.$refs.fileInput.value = null
+              this.loopCheckFileProgress(notifyResult.data.data.id)
+            })
         }
       } catch (error) {
         if (error.code === 'InvalidAccessKeyId' || error.code === 'InvalidBucketName') {
@@ -315,9 +454,6 @@ export default {
           this.$Message.error({ content: '导入订单文件失败', duration: 3 })
         }
       }
-
-      this.$refs.pageTable.fetch()
-      this.$refs.fileInput.value = null
     },
     async uploadFile (file) {
       const vm = this
@@ -371,35 +507,54 @@ export default {
         throw error
       }
     },
-    // !废弃，暂时不用
-    handleSuccess (res, file) {
-      // const vm = this
-      if (res.code === 1000) {
-        this.$Message.success('导入成功')
-      }
+    handlePageChange (pageNo) {
+      this.pagination.pageNo = pageNo
+      this.fetch()
     },
-    // !废弃，暂时不用
-    handleError (errorInfo, file, fileList) {
+    // pagesize变化
+    handlePageSizeChange (pageSize) {
+      if (!pageSize) {
+        return
+      }
+      // 重新组装数据，生成查询参数
+      this.pagination.pageNo = 1
+      this.pagination.pageSize = pageSize
+      this.fetch()
+    },
+    /**
+     * 查询列表
+     */
+    fetch () {
       const vm = this
-      this.openDialog({
-        name: 'order/import/ErrorDialog.vue',
+      return server({
+        url: 'order/template/getImportedOrderTemplateList',
+        method: 'post',
         data: {
-          value: 0,
-          download: 'javascript:;'
-        },
-        methods: {
-          ok () {
-            vm.$refs.pageTable.fetch()
-          }
+          ...vm.pagination
         }
+      }).then((res) => {
+        const { list, ...pagination } = res.data.data
+        vm.dataSource = list.map((item) => {
+          if (item.status !== 1 && item.status !== 0) {
+            item.progress = 0
+          }
+          return item
+        })
+        // Object.assign(vm.pagination, pagination)
+        vm.pagination.pageSize = pagination.pageSize || 10
+        vm.pagination.totalCount = pagination.totalCount
+        vm.handleLoad(res)
+        return res
+      }).catch((error) => {
+        vm.$refs.footer.parentElement.style['display'] = 'block'
+        throw error
       })
-      // this.$Message.error('上传文件失败')
     }
   }
 }
 </script>
 
-<style lang="stylus" scoped>
+<style lang="stylus">
 .order-import
   &__empty-content
     margin 0
@@ -412,4 +567,15 @@ export default {
       background-color #fff
       line-height 28px
       top -20px
+  &__footer-pagination
+    margin: 10px;
+    overflow: hidden;
+    &-fr
+      float: right;
+  &__pagination-bar
+    .ivu-page-item-active
+      background-color: #00A4BD
+      border-radius:4px
+      a
+        color: #fff
 </style>

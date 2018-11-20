@@ -2,7 +2,7 @@
   <Modal v-model="visiable" :mask-closable="false" width="440" @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">{{title}}</p>
     <br>
-    <b class="dialog-title">您当前账户免费试用期将于<a>{{expirationTime | datetime('yyyy-MM-dd')}}</a>截止，到期后如需继续使用，请联系我们咨询购买。</b>
+    <b class="dialog-title">您当前账户将于<a>{{expirationTime | datetime('yyyy-MM-dd')}}</a>到期，到期后如需继续使用，请联系我们咨询购买。</b>
 
     <p class="i-mt-40">购买软件后，您即可享受以下保障：</p>
     <ol class="dialog-content">

@@ -35,7 +35,7 @@
           v-model.lazy="keywords.customerOrderNo"
           :maxlength="30"
           :icon="keywords.customerOrderNo ? 'ios-close-circle' : ''"
-          placeholder="请输入客户订单号"
+          placeholder="请输入客户单号"
           style="width: 200px"
           @on-enter="searchList"
           @on-click="clearKeywords"/>
@@ -55,7 +55,7 @@
           @on-focus.once="getClients">
         </SelectInput>
         <Input v-model="keywords.orderNo" :maxlength="30" placeholder="请输入订单号" style="width: 200px" />
-        <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户订单号" style="width: 200px" />
+        <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户单号" style="width: 200px" />
         <Input v-model="keywords.waybillNo" :maxlength="30" placeholder="请输入运单号" style="width: 200px" />
       </div>
       <div style="display: flex;justify-content: space-between;">
@@ -139,11 +139,12 @@ export default {
       method: 'post',
       status: [
         { name: '全部', count: '' },
+        { name: '待签收', count: '' },
         { name: '待回收', count: '' },
         { name: '待返厂', count: '' },
         { name: '已返厂', count: '' }
       ],
-      selectStatus: 0, // 当前搜索状态   0：客户名称   1：订单号  2：客户订单号
+      selectStatus: 0, // 当前搜索状态   0：客户名称   1：订单号  2：客户单号
       selectList: [
         {
           value: 0,
@@ -155,7 +156,7 @@ export default {
         },
         {
           value: 2,
-          label: '客户订单号'
+          label: '客户单号'
         }
       ],
       keyword: {
@@ -179,11 +180,12 @@ export default {
           title: '操作',
           key: 'do',
           fixed: 'left',
-          width: 70,
+          width: 140,
           extra: true,
           render: (h, params) => {
+            let renderBtn = []
             if (params.row.receiptOrder.receiptStatus === 0 && params.row.status === 40 && this.hasPower(110201)) {
-              return h('div', [
+              renderBtn.push(
                 h('a', {
                   style: {
                     marginRight: '25px',
@@ -195,9 +197,10 @@ export default {
                     }
                   }
                 }, '回收')
-              ])
-            } else if (params.row.receiptOrder.receiptStatus === 1 && this.hasPower(110202)) {
-              return h('div', [
+              )
+            }
+            if (params.row.receiptOrder.receiptStatus === 1 && this.hasPower(110202)) {
+              renderBtn.push(
                 h('a', {
                   style: {
                     marginRight: '25px',
@@ -209,8 +212,41 @@ export default {
                     }
                   }
                 }, '返厂')
-              ])
+              )
             }
+            if (params.row.receiptOrder.receiptStatus > 0) {
+              if (params.row.receiptOrder.receiptUrl.length > 0 && this.hasPower(110205)) { // 修改回单
+                renderBtn.push(
+                  h('a', {
+                    style: {
+                      marginRight: '25px',
+                      color: '#00a4bd'
+                    },
+                    on: {
+                      click: () => {
+                        this.openUploadDialog(params.row, '修改')
+                      }
+                    }
+                  }, '修改回单')
+                )
+              }
+              if (params.row.receiptOrder.receiptUrl.length <= 0 && this.hasPower(110204)) { // 上传回单
+                renderBtn.push(
+                  h('a', {
+                    style: {
+                      marginRight: '25px',
+                      color: '#00a4bd'
+                    },
+                    on: {
+                      click: () => {
+                        this.openUploadDialog(params.row, '上传')
+                      }
+                    }
+                  }, '上传回单')
+                )
+              }
+            }
+            return h('div', renderBtn)
           }
         },
         {
@@ -243,7 +279,7 @@ export default {
           }
         },
         {
-          title: '客户订单号',
+          title: '客户单号',
           key: 'customerOrderNo',
           minWidth: 160,
           render: (h, p) => {
@@ -274,6 +310,14 @@ export default {
             } else {
               return h('span', '-')
             }
+          }
+        },
+        {
+          title: '回单状态',
+          key: 'status',
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', this.statusToName(p.row.receiptOrder.receiptStatus))
           }
         },
         {
@@ -375,7 +419,7 @@ export default {
           tooltip: true
         },
         {
-          title: '要求装货时间',
+          title: '发货时间',
           key: 'deliveryTime',
           minWidth: 150,
           render: (h, params) => {
@@ -383,7 +427,7 @@ export default {
           }
         },
         {
-          title: '期望到货时间',
+          title: '到货时间',
           key: 'arriveTime',
           minWidth: 150,
           render: (h, params) => {
@@ -487,6 +531,13 @@ export default {
             }
             arr.unshift(t)
           }
+          if (item.waiting_sign !== undefined) {
+            let p = {
+              name: '待签收',
+              count: item.waiting_sign
+            }
+            arr.push(p)
+          }
           if (item.waiting_recovery !== undefined) {
             let p = {
               name: '待回收',
@@ -520,14 +571,19 @@ export default {
       this.selectedId = [] // 重置当前已勾选id项
       if (val === '全部') {
         // 全部、待回收、待返厂加上操作栏
-        this.addOperateCol()
+        this.deleteOperateCol()
         this.operateValue = 1
         this.btnGroup = [
-          { name: '回收', value: 1, code: 110201 },
-          { name: '返厂', value: 2, code: 110202 },
-          { name: '导出', value: 3, code: 110203 }
+          { name: '导出', value: 1, code: 110203 }
         ]
         this.keywords.receiptStatus = null
+      } else if (val === '待签收') {
+        this.deleteOperateCol()
+        this.operateValue = 1
+        this.btnGroup = [
+          { name: '导出', value: 1, code: 110203 }
+        ]
+        this.keywords.receiptStatus = -1
       } else if (val === '待回收') {
         // 全部、待回收、待返厂加上操作栏
         this.addOperateCol()
@@ -548,7 +604,7 @@ export default {
         this.keywords.receiptStatus = 1
       } else {
         // 已返厂取消操作栏
-        this.deleteOperateCol()
+        this.addOperateCol()
         this.operateValue = 1
         this.btnGroup = [
           { name: '导出', value: 1, code: 110203 }
@@ -606,6 +662,28 @@ export default {
       _this.openDialog({
         name: 'order-management/dialog/return',
         data: data,
+        methods: {
+          ok (node) {
+            _this.$refs.pageTable.fetch() // 刷新table
+            _this.getOrderNum() // 刷新tab页数量
+            _this.selectOrderList = [] // 重置当前已勾选项
+            _this.selectedId = [] // 重置当前已勾选id项
+            console.log(_this.$refs.pageTable)
+
+            _this.$refs.pageTable.clearSelected() // 清空当前选项
+          }
+        }
+      })
+    },
+    // 打开上传和修改回单弹窗
+    openUploadDialog (params, name) {
+      const _this = this
+      _this.openDialog({
+        name: 'order-management/dialog/upload',
+        data: {
+          params,
+          name
+        },
         methods: {
           ok (node) {
             _this.$refs.pageTable.fetch() // 刷新table

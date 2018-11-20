@@ -20,7 +20,7 @@
             <Input v-model="keywords.orderNo" :maxlength="20"  placeholder="请输入订单号"/>
           </div>
           <div class="col">
-            <Input v-model="keywords.customerOrderNo" :maxlength="20" placeholder="请输入客户订单号"  />
+            <Input v-model="keywords.customerOrderNo" :maxlength="20" placeholder="请输入客户单号"  />
           </div>
           <div class="col">
             <Input :maxlength="20" v-model="keywords.waybillNo" placeholder="请输入运单号"  />
@@ -162,7 +162,7 @@ export default {
           width: 150
         },
         {
-          title: '客户订单号',
+          title: '客户单号',
           key: 'customerOrderNo',
           width: 150
         },
@@ -190,6 +190,14 @@ export default {
           width: 250,
           render: (h, params) => {
             return h('span', City.codeToFullNameArr(params.row.end))
+          }
+        },
+        {
+          title: '计费里程',
+          key: 'mileage',
+          width: 150,
+          render: (h, params) => {
+            return h('span', (params.row.mileage / 1000).toFixed(1))
           }
         },
         {
@@ -351,7 +359,7 @@ export default {
           visible: true
         },
         {
-          title: '客户订单号',
+          title: '客户单号',
           key: 'customerOrderNo',
           fixed: false,
           visible: true
@@ -371,6 +379,12 @@ export default {
         {
           title: '目的地',
           key: 'end',
+          fixed: false,
+          visible: true
+        },
+        {
+          title: '计费里程',
+          key: 'mileage',
           fixed: false,
           visible: true
         },
