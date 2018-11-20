@@ -12,8 +12,10 @@
           <tbody>
             <tr>
               <td>客户：{{data.consignerName}}</td>
-              <td>始发地：{{data.startName}}</td>
-              <td>目的地：{{data.endName}}</td>
+              <td v-if="source === 'order'">始发地：{{data.startName}}</td>
+              <td v-else>始发地：{{ cityFormatter(data.start) }}</td>
+              <td v-if="source === 'order'">目的地：{{data.endName}}</td>
+              <td v-else>始发地：{{ cityFormatter(data.end) }}</td>
             </tr>
             <tr>
               <td>发货人：{{data.consignerContact}}</td>
@@ -28,7 +30,8 @@
             <tr>
               <td>回单数：{{data.receiptCount}}</td>
               <td>提货方式：{{pickup(data)}}</td>
-              <td>代收货款：{{data.collectionMoney ? data.collectionMoney / 100 + '元' : '-'}}</td>
+              <td v-if="source === 'order'">代收货款：{{data.collectionMoney ? data.collectionMoney / 100 + '元' : '-'}}</td>
+              <td v-else>代收货款：{{data.collectionMoney ? data.collectionMoney + '元' : '-'}}</td>
             </tr>
           </tbody>
         </table>
@@ -48,13 +51,14 @@
             <tr v-for="(cargo, index) in data.orderCargoList" :key="index" class="table-content">
               <td>{{cargo.cargoName}}</td>
               <td>{{cargo.unit}}</td>
-              <td>{{cargo.quantity}}</td>
-              <td>{{cargo.cargoCost / 100}}</td>
-              <td>{{cargo.weight}}</td>
-              <td>{{cargo.volume}}</td>
+              <td>{{cargo.quantity || 0}}</td>
+              <td v-if="source === 'order'">{{cargo.cargoCost / 100}}</td>
+              <td v-else>{{cargo.cargoCost / 1}}</td>
+              <td>{{cargo.weight || 0}}</td>
+              <td>{{cargo.volume || 0}}</td>
             </tr>
             <tr>
-              <td colspan="6" class="table-footer">
+              <td v-if="source === 'order'" colspan="6" class="table-footer">
                 <span class="table-footer-item">运输费：{{ data.freightFee ?  data.freightFee / 100 + '元' : '-' }}</span>
                 <span class="table-footer-item">提货费：{{ data.pickupFee ? data.pickupFee / 100 + '元' : '-' }}</span>
                 <span class="table-footer-item">装货费：{{ data.loadFee ? data.loadFee / 100 + '元' : '-' }}</span>
@@ -62,6 +66,16 @@
                 <span class="table-footer-item">保险费：{{ data.insuranceFee ? data.insuranceFee / 100 + '元' : '-' }}</span>
                 <span class="table-footer-item">其他运费：{{ data.otherFee ? data.otherFee / 100 + '元' : '-' }}</span>
                 <span class="table-footer-item">合计运费: {{ data.totalFee ? data.totalFee / 100 + '元' : '-' }}</span>
+                <span class="table-footer-item">结算方式：{{settlement(data) || '-'}}</span>
+              </td>
+              <td v-else colspan="6" class="table-footer">
+                <span class="table-footer-item">运输费：{{ data.freightFee ?  data.freightFee + '元' : '-' }}</span>
+                <span class="table-footer-item">提货费：{{ data.pickupFee ? data.pickupFee + '元' : '-' }}</span>
+                <span class="table-footer-item">装货费：{{ data.loadFee ? data.loadFee + '元' : '-' }}</span>
+                <span class="table-footer-item">卸货费：{{ data.unloadFee ? data.unloadFee + '元' : '-' }}</span>
+                <span class="table-footer-item">保险费：{{ data.insuranceFee ? data.insuranceFee + '元' : '-' }}</span>
+                <span class="table-footer-item">其他运费：{{ data.otherFee ? data.otherFee + '元' : '-' }}</span>
+                <span class="table-footer-item">合计运费: {{ data.totalFee ? data.totalFee + '元' : '-' }}</span>
                 <span class="table-footer-item">结算方式：{{settlement(data) || '-'}}</span>
               </td>
             </tr>
@@ -94,6 +108,10 @@ export default {
     list: {
       type: Array,
       default: () => []
+    },
+    source: {
+      type: String,
+      default: 'order'
     }
   },
   data () {
