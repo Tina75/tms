@@ -260,7 +260,7 @@ export default {
             setTimeout(() => {
               window.EMA.fire('openTab', {
                 path: TMSUrl.HELP,
-                query: { title: '探索运掌柜', descover: '0' }
+                query: { title: '帮助', descover: '0' }
               })
             }, 1000)
           } else {

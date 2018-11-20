@@ -68,7 +68,28 @@ export default {
       else if (newList.length === 3) setpLeft = '23%'
       else if (newList.length === 4) setpLeft = '18%'
       this.stepMarginLeft = 'padding-left:' + setpLeft
+    },
+    $route (to, from) {
+      if (to.path === '/helper/index' && localStorage.percent) {
+        this.$Toast.success({
+          content: '恭喜您完成运掌柜的探索',
+          render (h) {
+            return h('div', {
+              style: {
+                color: '#666666',
+                fontSize: '12px'
+              }
+            }, '若还有任何疑问，还可以联系您专属客户经理咨询哦')
+          }
+        })
+        localStorage.removeItem('percent')
+      }
     }
+    // percent (newValue) {
+    //   if (newValue === 100) {
+    //     localStorage.percent = true
+    //   }
+    // }
   },
   mounted () {
     this.getBtnList()
@@ -86,6 +107,10 @@ export default {
         }).then(({ data }) => {
           this.btnClickedNum++
           btn.click = 1
+        }).then(() => {
+          if (parseInt(this.btnClickedNum / this.btnNum * 100) === 100 && this.percent === 100) {
+            localStorage.percent = true
+          }
         })
       }
       // 根据id打开具体tab页面
@@ -200,6 +225,8 @@ export default {
 }
 </script>
 <style lang='stylus' scoped>
+>>>.ivu-steps .ivu-steps-head-inner>.ivu-steps-icon.ivu-icon
+  color: #00A4BD
 .ivu-chart-circle
   margin-left: calc(50% - 70px);
 .contenAll
