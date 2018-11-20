@@ -29,24 +29,6 @@
     ]
   },
   {
-    "name":"订单管理",
-    "icon":"dingdanguanli",
-    "path":"/order-management",
-    "powerCode":110000,
-    "children":[
-      {
-        "name":"订单管理",
-        "path":"/order-management/order",
-        "powerCode":110100
-      },
-      {
-        "name":"回单管理",
-        "path":"/order-management/receipt",
-        "powerCode":110200
-      }
-    ]
-  },
-  {
     "name":"运输管理",
     "powerCode":120000,
     "icon":"huoyuanguanli",
