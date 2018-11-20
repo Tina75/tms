@@ -96,8 +96,8 @@ export default {
       })
     },
     modeWithDriver () {
-      if (!this.carrierId) return
       this.maxLength = 15
+      if (!this.carrierId) return
       this.getCarrierDrivers(this.carrierId).then(list => {
         this.options = list.map(item => {
           item.name = item.driverName
@@ -110,8 +110,8 @@ export default {
       })
     },
     modeWithCar () {
-      if (!this.carrierId) return
       this.maxLength = 8
+      if (!this.carrierId) return
       this.getCarrierCars(this.carrierId).then(list => {
         this.options = list.map(item => {
           item.name = item.carNO

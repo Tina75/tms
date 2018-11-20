@@ -229,7 +229,7 @@ export default {
       'getWaybillPrintData',
       'deleteWaybills',
       'getWaybillLocation',
-      'waybillSendCar',
+      'waybillSendCarCheck',
       'waybillShipment',
       'waybillArrival',
       'getwaybillTabCount'
@@ -439,7 +439,7 @@ export default {
     // 派车
     billSendCar (id) {
       const self = this
-      self.waybillSendCar([id]).then(() => {
+      self.waybillSendCarCheck([id]).then(() => {
         self.openDialog({
           name: 'transport/dialog/action',
           data: {
