@@ -1,113 +1,115 @@
 <template>
-  <Row :style="styleHeight" class="temAll">
-    <Col span="3">
-    <Menu active-name="修改密码" class="menuList" style="width:100%">
-      <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
-      <p class="menuTitle">{{menu.name}}</p>
-        </MenuItem>
-    </Menu>
-    </Col>
-    <Col span="21" class="contentDiv">
-    <div class="borderBottomLine">
-      <span class="iconRightTitle"></span>
-      <span class="iconRightTitleP">{{rightTitle}}</span>
-    </div>
-    <!--密码设置-->
-    <div v-if="'1' === this.rightKey" key="1" class="divSetContent">
-      <Col span="10" class="setConf">
-      <Form ref="formPwd" :model="formPwd" :rules="rulePwd" :label-width="90" label-position="left">
-        <FormItem label="原始密码：" prop="oldPassword" class="labelClassSty">
-          <Input v-model="formPwd.oldPassword" type="password" placeholder="请输入原始密码" class="inputClassSty"></Input>
-        </FormItem>
-        <FormItem label="新密码：" prop="password" class="labelClassSty">
-          <Input v-model="formPwd.password" type="password" placeholder="请输入新密码" class="inputClassSty"></Input>
-        </FormItem>
-        <FormItem label="确认密码：" prop="confirmPassword" class="labelClassSty">
-          <Input v-model="formPwd.confirmPassword" type="password" placeholder="请再次输入新密码" class="inputClassSty"></Input>
-        </FormItem>
-        <FormItem>
-          <Button type="primary" style="width:86px;" @click="pwdSubmit('formPwd')">保存</Button>
-        </FormItem>
-      </Form>
-        </Col>
-    </div>
-    <!--个人设置-->
-    <div v-else-if="'2' === this.rightKey" key="2" class="divSetContent">
-      <Col span="10" class="setConf">
-      <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="90" label-position="left">
-        <FormItem label="账号：" class="labelClassSty">
-          <span>{{formPersonal.phone}}</span>
-        </FormItem>
-        <FormItem label="姓名：" prop="name" style="margin-left: -9px;" class="labelClassSty">
-          <Input v-model="formPersonal.name" :maxlength="10" placeholder="请输入姓名" style="margin-left: 9px;" class="inputClassSty"></Input>
-        </FormItem>
-        <FormItem label="角色：" class="labelClassSty">
-          <span>{{formPersonal.roleName}}</span>
-        </FormItem>
-        <FormItem>
-          <Button type="primary" style="width:86px;"  @click="personalSubmit('formPersonal')">保存</Button>
-        </FormItem>
-      </Form>
-        </Col>
-    </div>
-    <!--短信设置-->
-    <div v-else-if="'3' === this.rightKey" key="3" style="margin-left:-125px;" class="divSetContent">
-      <Col span="20" class="setConf">
-      <Card dis-hover>
-        <div solt="title" class="msgCardTitle">
-          开启短信提醒
-          <i-switch v-model="switchMsg" style="margin-left:20px;" @on-change="changeCheckBoxGroup" />
-        </div>
-        <div v-for="msg in this.messageList" :key="msg.title" class="mesDiv">
-          <p style="font-weight: bold">{{msg.title}}</p>
-          <p>{{msg.messageTitle}}<span style="margin-left:12px;">{{msg.message}}</span></p>
-          <p>{{msg.messageReturn}}</p>
-          <p>接收人：
-            <Checkbox
-              v-for="checkBtn in msg.checkBox"
-              :key="checkBtn.index"
-              v-model="checkBtn.model"
-              style="margin-left:5px;"
-              @on-change="checkBtnBox()">
-              {{checkBtn.label}}
-            </Checkbox>
-          </p>
-        </div>
-      </Card>
-      <Button type="primary" class="msgSaveBtn test111" style="width:86px;" @click="msgSaveBtn">保存</Button>
-        </Col>
-    </div>
-    <!--公司设置-->
-    <div v-else-if="'4' === this.rightKey" key="4" class="divSetContent">
-      <div style="width: 70%;">
-        <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="120" label-position="left">
-          <FormItem label="公司名称：" prop="name" class="labelClassSty">
-            <Input v-model="formCompany.name" :maxlength="25" placeholder="请输入公司名称" class="inputClassSty"></Input>
+  <div id="set-up-container" class="set-up-container">
+    <Row id="temAll" :style="styleHeight" class="temAll">
+      <Col span="3">
+      <Menu active-name="修改密码" class="menuList" style="width:100%">
+        <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
+        <p class="menuTitle">{{menu.name}}</p>
+          </MenuItem>
+      </Menu>
+      </Col>
+      <Col span="21" class="contentDiv">
+      <div class="borderBottomLine">
+        <span class="iconRightTitle"></span>
+        <span class="iconRightTitleP">{{rightTitle}}</span>
+      </div>
+      <!--密码设置-->
+      <div v-if="'1' === this.rightKey" key="1" class="divSetContent">
+        <Col span="10" class="setConf">
+        <Form ref="formPwd" :model="formPwd" :rules="rulePwd" :label-width="90" label-position="left">
+          <FormItem label="原始密码：" prop="oldPassword" class="labelClassSty">
+            <Input v-model="formPwd.oldPassword" type="password" placeholder="请输入原始密码" class="inputClassSty"></Input>
           </FormItem>
-          <FormItem label="公司联系人：" prop="contact" class="labelClassSty">
-            <Input v-model="formCompany.contact" :maxlength="10" placeholder="请输入公司联系人" class="inputClassSty"></Input>
+          <FormItem label="新密码：" prop="password" class="labelClassSty">
+            <Input v-model="formPwd.password" type="password" placeholder="请输入新密码" class="inputClassSty"></Input>
           </FormItem>
-          <FormItem label="联系方式：" prop="contactPhone" class="labelClassSty">
-            <Input v-model="formCompany.contactPhone" :maxlength="11" placeholder="请输入联系方式" class="inputClassSty"></Input>
-          </FormItem>
-          <FormItem label="公司地址：" prop="address" class="labelClassSty">
-            <Row>
-              <Col :span="8">
-              <CitySelect v-model="formCompany.cityId" clearable></CitySelect>
-               </Col>
-              <Col :span="16" class="areaRight">
-              <AreaInput v-model="formCompany.address" :city-code="formCityCode" :maxlength="60" placeholder="请输入公司地址" @latlongt-change="latlongtChange"></AreaInput>
-               </Col>
-            </Row>
+          <FormItem label="确认密码：" prop="confirmPassword" class="labelClassSty">
+            <Input v-model="formPwd.confirmPassword" type="password" placeholder="请再次输入新密码" class="inputClassSty"></Input>
           </FormItem>
           <FormItem>
-            <Button type="primary" style="width:86px;" @click="companySubmit('formCompany')">保存</Button>
+            <Button type="primary" style="width:86px;" @click="pwdSubmit('formPwd')">保存</Button>
           </FormItem>
         </Form>
+          </Col>
       </div>
-    </div>
-    </Col>
-  </Row>
+      <!--个人设置-->
+      <div v-else-if="'2' === this.rightKey" key="2" class="divSetContent">
+        <Col span="10" class="setConf">
+        <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="90" label-position="left">
+          <FormItem label="账号：" class="labelClassSty">
+            <span>{{formPersonal.phone}}</span>
+          </FormItem>
+          <FormItem label="姓名：" prop="name" style="margin-left: -9px;" class="labelClassSty">
+            <Input v-model="formPersonal.name" :maxlength="10" placeholder="请输入姓名" style="margin-left: 9px;" class="inputClassSty"></Input>
+          </FormItem>
+          <FormItem label="角色：" class="labelClassSty">
+            <span>{{formPersonal.roleName}}</span>
+          </FormItem>
+          <FormItem>
+            <Button type="primary" style="width:86px;"  @click="personalSubmit('formPersonal')">保存</Button>
+          </FormItem>
+        </Form>
+          </Col>
+      </div>
+      <!--短信设置-->
+      <div v-else-if="'3' === this.rightKey" key="3" style="margin-left:-125px;" class="divSetContent">
+        <Col span="20" class="setConf">
+        <Card dis-hover>
+          <div solt="title" class="msgCardTitle">
+            开启短信提醒
+            <i-switch v-model="switchMsg" style="margin-left:20px;" @on-change="changeCheckBoxGroup" />
+          </div>
+          <div v-for="msg in this.messageList" :key="msg.title" class="mesDiv">
+            <p style="font-weight: bold">{{msg.title}}</p>
+            <p>{{msg.messageTitle}}<span style="margin-left:12px;">{{msg.message}}</span></p>
+            <p>{{msg.messageReturn}}</p>
+            <p>接收人：
+              <Checkbox
+                v-for="checkBtn in msg.checkBox"
+                :key="checkBtn.index"
+                v-model="checkBtn.model"
+                style="margin-left:5px;"
+                @on-change="checkBtnBox()">
+                {{checkBtn.label}}
+              </Checkbox>
+            </p>
+          </div>
+        </Card>
+        <Button type="primary" class="msgSaveBtn test111" style="width:86px;" @click="msgSaveBtn">保存</Button>
+          </Col>
+      </div>
+      <!--公司设置-->
+      <div v-else-if="'4' === this.rightKey" key="4" class="divSetContent">
+        <div style="width: 70%;">
+          <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="120" label-position="left">
+            <FormItem label="公司名称：" prop="name" class="labelClassSty">
+              <Input v-model="formCompany.name" :maxlength="25" placeholder="请输入公司名称" class="inputClassSty"></Input>
+            </FormItem>
+            <FormItem label="公司联系人：" prop="contact" class="labelClassSty">
+              <Input v-model="formCompany.contact" :maxlength="10" placeholder="请输入公司联系人" class="inputClassSty"></Input>
+            </FormItem>
+            <FormItem label="联系方式：" prop="contactPhone" class="labelClassSty">
+              <Input v-model="formCompany.contactPhone" :maxlength="11" placeholder="请输入联系方式" class="inputClassSty"></Input>
+            </FormItem>
+            <FormItem label="公司地址：" prop="address" class="labelClassSty">
+              <Row>
+                <Col :span="8">
+                <CitySelect v-model="formCompany.cityId" clearable></CitySelect>
+                </Col>
+                <Col :span="16" class="areaRight">
+                <AreaInput v-model="formCompany.address" :city-code="formCityCode" :maxlength="60" placeholder="请输入公司地址" @latlongt-change="latlongtChange"></AreaInput>
+                </Col>
+              </Row>
+            </FormItem>
+            <FormItem>
+              <Button type="primary" style="width:86px;" @click="companySubmit('formCompany')">保存</Button>
+            </FormItem>
+          </Form>
+        </div>
+      </div>
+      </Col>
+    </Row>
+  </div>
 </template>
 
 <script>
@@ -279,6 +281,9 @@ export default {
   },
   mounted: function () {
     this.messageListInit = _.cloneDeep(this.messageList)
+    if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
+      document.getElementById('set-up-container').style.maxHeight = (document.body.clientHeight - 80) + 'px'
+    }
   },
   methods: {
     ...mapActions(['getUserInfo']),
@@ -451,6 +456,8 @@ export default {
 }
 </script>
 <style lang='stylus' scoped>
+.set-up-container
+  overflow auto
 >>> .ivu-menu-vertical.ivu-menu-light:after
   background: #fff;
 >>> .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)

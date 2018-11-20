@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visible" @on-cancel="visible=false">
+  <Modal v-model="visible" transfer @on-cancel="visible=false">
     <div ref="htmlContent">
       <div v-for="(item, key) in data" ref="$part"
            :key="key"

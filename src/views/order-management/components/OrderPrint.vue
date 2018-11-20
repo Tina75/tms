@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visible" @on-cancel="visible=false">
+  <Modal v-model="visible" transfer @on-cancel="visible=false">
     <div ref="htmlContent">
       <div v-for="(data, index) in list" :key="index" class="order-detail">
         <h3 class="van-center i-mb-20">{{data.consignerName}}公司托运单</h3>

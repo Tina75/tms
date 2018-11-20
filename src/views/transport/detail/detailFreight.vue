@@ -208,11 +208,13 @@
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型/车长：</span>
             <Select v-model="info.carType"
+                    transfer
                     class="detail-info-input-half"
                     style="margin-right: 12px;">
               <Option v-for="item in carType" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
             <Select v-model="info.carLength"
+                    transfer
                     class="detail-info-input-half">
               <Option v-for="item in carLength" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>

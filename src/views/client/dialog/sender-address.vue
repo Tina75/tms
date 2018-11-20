@@ -3,6 +3,7 @@
     <Modal
       v-model="visiable"
       :mask-closable="false"
+      transfer
       label-position="left"
       class="modal"
       @on-visible-change="close"

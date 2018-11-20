@@ -1,6 +1,6 @@
 <template>
   <div :style="nodeStyle" class="node-point">
-    <Poptip v-model="visible" :content="poptip" word-wrap placement="top" trigger="hover" class="node-point-poptip">
+    <Poptip v-model="visible" :content="poptip" transfer word-wrap placement="top" trigger="hover" class="node-point-poptip">
       <div :class="iconClass" @click="jumpto">
         <FontIcon v-if="type" :type="type" :color="access? '#00A4BD' : '#9DA1B0'" size="30"></FontIcon>
       </div>

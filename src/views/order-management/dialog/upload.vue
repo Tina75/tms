@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visiable" :mask-closable="false"  class="receipt-upload-dialog" width="970" @on-visible-change="close">
+    <Modal v-model="visiable" :mask-closable="false" transfer class="receipt-upload-dialog" width="970" @on-visible-change="close">
       <p slot="header" class="dialog-title">
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>{{name + '回单照片'}}</span>
@@ -27,7 +27,7 @@
           </i-col>
         </Row>
         <Row>
-          <i-col span="24" style="display: flex;">
+          <i-col span="24" class="tip-text">
             <span class="label">{{ name + '回单照片：' }}</span>
             <div>
               <up-load ref="upLoads" :multiple="true" max-size="10" max-count="10"></up-load>
@@ -106,6 +106,9 @@ export default {
 .receipt-upload-content
   font-size 14px
   font-family 'PingFangSC-Regular'
+.tip-text
+  display: flex;
+  display -ms-flexbox
 .label
   display inline-block
   width 100px

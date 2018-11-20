@@ -16,6 +16,7 @@
       <div v-if="isEasySearch" class="right custom-style">
         <Select v-model="easySelectMode"
                 style="width:120px; margin-right: 11px"
+                transfer
                 @on-change="resetEasySearch">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
@@ -74,14 +75,14 @@
                      mode="carNo"
                      placeholder="请输入车牌号"
                      class="search-input-senior" />
-        <Select v-model="seniorSearchFields.billType" style="width:190px;" placeholder="请选择单据类型">
+        <Select v-model="seniorSearchFields.billType" transfer style="width:190px;" placeholder="请选择单据类型">
           <Option v-for="item in billTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </div>
 
-      <div style="display: flex;justify-content: space-between;">
+      <div class="complex-query">
         <div>
-          <DatePicker v-model="seniorSearchFields.dateRange" :options="timeOption" type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
+          <DatePicker v-model="seniorSearchFields.dateRange" :options="timeOption" transfer type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
         </div>
         <div>
           <Button type="primary"

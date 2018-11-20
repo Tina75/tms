@@ -1,5 +1,5 @@
 <template>
-  <div class="page-home-empty">
+  <div class="page-home-empty" style="flex-direction: column; -ms-flex-direction: column;">
     <img v-if="type == 'location'" src="../../../assets/location.svg">
     <img v-else-if="type == 'msg'" src="../../../assets/ico-ms.svg">
     <img v-else src="../../../assets/img-empty.png">
@@ -24,9 +24,12 @@ export default {
 <style lang="stylus" scoped>
 .page-home-empty
     display flex
+    display -ms-flexbox
     flex-direction column
     justify-content center
+    -ms-flex-pack center
     align-items center
+    -ms-flex-align center
     font-size 12px
     height calc( 100% - 60px )
     img

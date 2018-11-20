@@ -8,12 +8,10 @@
         </Col>
         <Col span="6" class="van-right">
         <span class="page-home__header-date">{{today}}</span>
-        <Poptip v-model="visible" trigger="click" placement="bottom-end" style="height:21px">
+        <Poptip v-model="visible" transfer trigger="click" placement="bottom-end" style="height:21px">
           <FontIcon type="shouye" size="20" class="page-home__setting-icon" />
           <div slot="content">
-            <div class="page-home__dropdown-header">
-              选择显示面板
-            </div>
+            <div class="page-home__dropdown-header">选择显示面板</div>
             <CheckboxGroup v-model="cardChecks" class="page-home__dropdown-body">
               <div v-for="(item, index) in cardsList" :key="index" class="page-home__dropdown-checkbox">
                 <Checkbox :label="item.name">
@@ -38,6 +36,7 @@
         <FontIcon slot="close" type="ico-fault" style="color: #9DA1B0"></FontIcon>
       </Alert>
     </div>
+    <!-- 组件列表 -->
     <Row :gutter="16" type="flex" justify="start">
       <div v-for="(i, index) in componentList" v-if="cardChecksTemp.includes(i.value)" :key="index" :is="i.name" ></div>
     </Row>
@@ -105,42 +104,24 @@ export default {
       },
       cardChecks: [],
       cardChecksTemp: [],
-      cardsMap: {
-        'pickup-todo': '提货待办',
-        'delivery-todo': '送货待办',
-        'trans-todo': '外转待办',
-        'receipt-todo': '回单待办',
-        'consigner-todo': '发货方核销待办',
-        'carrier-todo': '承运商核销待办',
-        'transferfee-todo': '外转方核销待办',
-        'message-center': '消息中心',
-        'order-create': '今日开单数',
-        'new-customer': '今日新增客户数',
-        'transport-location': '在途车辆位置',
-        'turnover-statistics': '近七日订单和营业额统计',
-        'dispatch-statistics': '近七日调度订单数',
-        'order-statistics': '近七日开单数',
-        'pay-receive': '今日应收款项 / 应付款项',
-        'cargo-statistics': '今日开单货物重量 / 体积'
-      },
       cardsList: [],
       componentList: [
-        { name: 'PickupTodo', value: 'pickup-todo' },
-        { name: 'DeliveryTodo', value: 'delivery-todo' },
-        { name: 'TransferTodo', value: 'trans-todo' },
-        { name: 'ReceiptTodo', value: 'receipt-todo' },
-        { name: 'MessageCenter', value: 'message-center' },
-        { name: 'ShipperTodo', value: 'consigner-todo' },
-        { name: 'CarrierTodo', value: 'carrier-todo' },
-        { name: 'ExteriorTodo', value: 'transferfee-todo' },
-        { name: 'CreateOrderStatis', value: 'order-create' },
-        { name: 'NewCustumerStatis', value: 'new-customer' },
-        { name: 'CarPosition', value: 'transport-location' },
-        { name: 'Turnover', value: 'turnover-statistics' },
-        { name: 'SchedulingOrder', value: 'dispatch-statistics' },
-        { name: 'Billing', value: 'order-statistics' },
-        { name: 'ReceiptsPayments', value: 'pay-receive' },
-        { name: 'Goods', value: 'cargo-statistics' }
+        { name: 'PickupTodo', value: 'pickup-todo', nkname: '提货待办' },
+        { name: 'DeliveryTodo', value: 'delivery-todo', nkname: '送货待办' },
+        { name: 'TransferTodo', value: 'trans-todo', nkname: '外转待办' },
+        { name: 'ReceiptTodo', value: 'receipt-todo', nkname: '回单待办' },
+        { name: 'MessageCenter', value: 'message-center', nkname: '消息中心' },
+        { name: 'ShipperTodo', value: 'consigner-todo', nkname: '发货方核销待办' },
+        { name: 'CarrierTodo', value: 'carrier-todo', nkname: '承运商核销待办' },
+        { name: 'ExteriorTodo', value: 'transferfee-todo', nkname: '外转方核销待办' },
+        { name: 'CreateOrderStatis', value: 'order-create', nkname: '今日开单数' },
+        { name: 'NewCustumerStatis', value: 'new-customer', nkname: '今日新增客户数' },
+        { name: 'CarPosition', value: 'transport-location', nkname: '在途车辆位置' },
+        { name: 'Turnover', value: 'turnover-statistics', nkname: '近七日订单和营业额统计' },
+        { name: 'SchedulingOrder', value: 'dispatch-statistics', nkname: '近七日调度订单数' },
+        { name: 'Billing', value: 'order-statistics', nkname: '近七日开单数' },
+        { name: 'ReceiptsPayments', value: 'pay-receive', nkname: '今日应收款项 / 应付款项' },
+        { name: 'Goods', value: 'cargo-statistics', nkname: '今日开单货物重量 / 体积' }
       ],
       intersectionObserver: null
     }
@@ -168,6 +149,13 @@ export default {
     },
     styleHeight () {
       return { minHeight: this.$parent.$parent.$el.children[0].style.minHeight }
+    },
+    cardsMap () {
+      const objMap = {}
+      this.componentList.map(el => {
+        objMap[el.value] = el.nkname
+      })
+      return objMap
     }
   },
   created () {
@@ -401,7 +389,6 @@ export default {
     :before
       position absolute
       left 3px
-      // top 0px
       content ''
       display block
       width 1px

@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" transfer width="360" @on-visible-change="close">
     <p slot="header" style="text-align:center">{{title}}</p>
     <p slot="header" style="text-align:center">{{info.code}}</p>
     <Form ref="info" :model="info" :rules="rules" :label-width="80">

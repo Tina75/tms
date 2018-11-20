@@ -9,7 +9,7 @@
       <div class="list-box">
         <Row type="flex">
           <Col span="5" class="left_father">
-          <div :style="{height: height + 'px'}" class="left">
+          <div :style="{height: height + 'px'}" style="{'-ms-flex-direction: column;flex-direction: column;'}" class="left">
             <div class="left_search">
               <Row type="flex" >
                 <Col span="17">
@@ -35,11 +35,11 @@
                 </div>
                 <div class="content">
                   <div v-if="item.ruleName.length<8" class="ruleName">{{item.ruleName}}</div>
-                  <Tooltip v-else :content="item.ruleName" max-width="200" class="ruleName" placement="top-start" style="display: list-item">
+                  <Tooltip v-else :content="item.ruleName" max-width="200" class="ruleName" transfer placement="top-start" style="display: list-item">
                     <div >{{item.ruleName.slice(0,8)}}...</div>
                   </Tooltip>
                   <div v-if="item.partnerName.length<8"  class="tips">{{item.partnerName}}</div>
-                  <Tooltip v-else :content="item.partnerName" max-width="200" class="tips" placement="bottom-start" style="display: list-item">
+                  <Tooltip v-else :content="item.partnerName" max-width="200" class="tips" transfer placement="bottom-start" style="display: list-item">
                     <div >{{item.partnerName.slice(0,8)}}...</div>
                   </Tooltip>
                 </div>
@@ -51,17 +51,14 @@
             </ul>
           </div>
           </Col>
-          <Col span="19" style="flex: 1">
-          <div v-if="!ruleDetail.ruleId" class="data-empty">
-            <img src="../../assets/img-empty.png" class="data-empty-img">
-            <p>请点击左侧{{sceneMap[active]}}设置计费规则明细～</p>
-          </div>
+          <Col span="19" style="flex: 1; -ms-flex: 1">
+          <data-empty v-if="!ruleDetail.ruleId">请点击左侧{{sceneMap[active]}}设置计费规则明细～</data-empty>
           <div v-else class="rule-block">
             <div class="rule-basic">
               <Form ref="ruleBasic" :model="ruleDetail" :rules="basicValidate" inline>
                 <span>按</span>
                 <FormItem prop="ruleType" style="width: 100px">
-                  <Select v-model="ruleDetail.ruleType" @on-change="ruleTypeChange">
+                  <Select v-model="ruleDetail.ruleType" transfer @on-change="ruleTypeChange">
                     <Option v-for="(value, key) in ruleTypeMap" v-if="((active === '1' || active ==='3') && (key ==='3' || key === '4')) || key ==='1' || key ==='2'" :key="key" :value="key">{{value}}</Option>
                   </Select>
                 </FormItem>
@@ -90,7 +87,7 @@
                         <Col span="11" class="styleCommon">
                         <div class="startPrice">
                           <FormItem prop="startType" style="width: 80px">
-                            <Select v-model="item.startType" @on-change="startTypeChange(item)">
+                            <Select v-model="item.startType" transfer @on-change="startTypeChange(item)">
                               <Option v-for="(value, key) in startTypeMap" :key="key"  :value="key" >{{value}}</Option>
                             </Select>
                           </FormItem>
@@ -179,13 +176,14 @@ import Server from '@/libs/js/server'
 import SelectInputForCity from '@/components/SelectInputForCity'
 import TagNumberInput from '@/components/TagNumberInput'
 import FontIcon from '@/components/FontIcon'
+import DataEmpty from '@/components/DataEmpty'
 import mixin from '../../views/client/ruleForClient/mixin'
 export default {
   name: 'financeRules',
   metaInfo: {
     title: '计费规则'
   },
-  components: { SelectInputForCity, FontIcon, TagNumberInput },
+  components: { SelectInputForCity, FontIcon, TagNumberInput, DataEmpty },
   mixins: [ BasePage, mixin ],
   data () {
     return {
@@ -294,7 +292,9 @@ export default {
             display: inline
     .operate-block
       display: flex
+      display: -ms-flexbox
       justify-content space-between
+      -ms-flex-pack justify
       margin-bottom: 20px
       height: 35px
       .ivu-btn
@@ -329,6 +329,7 @@ export default {
         padding-right 15px
         .rule-item
           display: flex
+          display: -ms-flexbox
           margin-bottom: 30px
           .rule-content
             position: relative
@@ -359,11 +360,13 @@ export default {
               list-style none
               .rule-detail-item
                 display flex
+                display -ms-flexbox
                 padding 18px 16px
                 height auto
                 border-bottom 1px solid #DCDEE2
                 &>div
                   flex 1
+                  -ms-flex 1
                   /deep/ .ivu-form-inline .ivu-form-item
                     vertical-align middle
                     width 128px
@@ -378,12 +381,15 @@ export default {
           .item-remove
             width: 25px
             align-items center
+            -ms-flex-align center
             align-self: center
+            -ms-flex-item-align: center
             .ivu-icon
               color: #EC4E4E
               font-size: 18px
           .ivu-collapse
             flex: 1
+            -ms-flex 1
             .ivu-collapse-item
               border-top: none
               /deep/ .ivu-collapse-content
@@ -438,32 +444,23 @@ export default {
       .ivu-btn
         padding-left: 30px
         padding-right: 30px
-    .data-empty
-      display flex
-      flex-direction column
-      justify-content center
-      align-items center
-      height 500px
-      /*border 1px solid #dcdee2*/
-      .data-empty-img
-        width 70px
-        margin-bottom 12px
-      p
-        color #999999
-        text-align center
     .left_father
       flex 0 0 275px
+      -ms-flex 0 0 275px
     .left
       display flex
-      flex-direction column
+      display -ms-flexbox
+      flex-direction: column
       .left_search
         padding-top 21px
         flex 0 0 72px
+        -ms-flex 0 0 72px
         border-right 1px solid #E4E7EC
       .ruleList
         border-top 1px solid #E4E7EC
         overflow hidden
         flex 1
+        -ms-flex 1
         border-right 1px solid #E4E7EC
         margin-left -15px
         &:hover
@@ -473,6 +470,7 @@ export default {
           height 60px
           line-height 60px
           display flex
+          display -ms-flexbox
           border-bottom 1px solid #E4E7EC
           &.companyDataActive
             background #E9FCFF
@@ -482,6 +480,8 @@ export default {
               display block
           .icon
             flex 0 0 60px
+            -ms-flex 0 0 60px
+            width unquote('60px'\9)
             text-align center
             position relative
             &:after
@@ -503,6 +503,7 @@ export default {
                 border none
           .content
             flex 1
+            -ms-flex 1
             font-size 12px
             .ruleName
               height 30px
@@ -518,6 +519,7 @@ export default {
           .operate
             display none
             flex 0 0 80px
+            -ms-flex 0 0 80px
             cursor pointer
             color #00A4BD
 </style>

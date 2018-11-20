@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" width="850" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" transfer width="850" @on-visible-change="close">
     <p slot="header" style="text-align:center">
       {{type === 1 ? '运掌柜服务协议' : '运掌柜隐私协议'}}
     </p>

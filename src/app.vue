@@ -81,6 +81,8 @@ html, body
   color #2c3e50
   width 100%
   height 100%
+  .sider
+    float: unquote(left\9)
   .ivu-layout-sider-children .ivu-menu-dark .ivu-menu-item
     max-height 49px
   .container

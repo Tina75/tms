@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="show" :mask-closable="false" class="transport-detail" width="1100"  @on-visible-change="close">
+  <Modal v-model="show" :mask-closable="false" transfer class="transport-detail" width="1100"  @on-visible-change="close">
     <p slot="header" style="text-align:center">
       {{ type === 'sendCar' ? '派车' : '提货' }}
     </p>
@@ -42,11 +42,13 @@
         <i-col span="7" offset="1">
           <span class="detail-field-title" style="padding-left: 10px;">车型：</span>
           <Select v-model="info.carType"
+                  transfer
                   class="detail-info-input-half"
                   style="margin-right: 12px;">
             <Option v-for="item in carType" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
           <Select v-model="info.carLength"
+                  transfer
                   class="detail-info-input-half">
             <Option v-for="item in carLength" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
@@ -189,7 +191,7 @@
                           style="width: 180px;"/> -->
               <TagNumberInput v-model="payment.cashBack" class="detail-payment-input" style="width: 180px;"></TagNumberInput>
               <span class="unit-yuan">元</span>
-              <Tooltip placement="right" content="返现运费是指在实际运输过程中存在某一段运输没有执行，需要将提前支付的运费返还。" max-width="500">
+              <Tooltip placement="right" transfer content="返现运费是指在实际运输过程中存在某一段运输没有执行，需要将提前支付的运费返还。" max-width="500">
                 <Icon type="ios-alert" size="20" color="#FFBB44" style="margin-left: 14px;"/>
               </Tooltip>
             </FormItem>

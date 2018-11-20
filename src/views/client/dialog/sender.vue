@@ -2,6 +2,7 @@
   <Modal
     v-model="visiable"
     :mask-closable="false"
+    transfer
     label-position="left"
     class="modal"
     @on-visible-change="close"
@@ -26,7 +27,7 @@
         </Select>
       </FormItem>
       <FormItem class="ivu-form-item-required blank" label="备注:" >
-        <Input v-model="validate.remark" :maxlength="100" :autosize="{minRows: 2,maxRows: 5}" type="textarea"  placeholder="请输入"/>
+        <Input v-model="validate.remark" :maxlength="100" :rows="2" :autosize="{minRows: 2,maxRows: 5}" type="textarea"  placeholder="请输入"/>
       </FormItem>
     </Form>
     <div slot="footer">

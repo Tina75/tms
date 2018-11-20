@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <div :style="{'min-height':DocumentHeight +'px'}" class="content-main">
+    <div id="content-main" :style="{'min-height':DocumentHeight +'px'}" class="content-main">
       <router-view />
     </div>
   </div>
@@ -18,6 +18,8 @@ export default {
     ...mapGetters(['DocumentHeight'])
   },
   mounted () {
+    window.document.getElementById('content-main').style.minHeight = (document.body.clientHeight - 80) + 'px'
+    this.height = document.body.clientHeight - 80
     this.setDocumentHeight(document.body.clientHeight)
     window.onresize = () => {
       this.setDocumentHeight(document.body.clientHeight)
@@ -33,6 +35,8 @@ export default {
 .content
   padding 15px 20px
   overflow-y auto
+  width: 100%
   &-main
+    height: auto
     background white
 </style>
