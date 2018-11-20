@@ -266,7 +266,7 @@
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
       <Button v-if="hasPower(100104)" class="i-ml-10" @click="shipImmedite">立即发运</Button>
     </div>
-    <OrderPrint ref="printer" :list="orderPrint">
+    <OrderPrint ref="printer" :list="orderPrint" source="create">
     </OrderPrint>
   </Form>
 </template>
@@ -280,7 +280,7 @@ import TagNumberInput from '@/components/TagNumberInput'
 import float from '@/libs/js/float'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
-import OrderPrint from './components/OrderPrint'
+import OrderPrint from '@/views/order-management/components/OrderPrint'
 import FontIcon from '@/components/FontIcon'
 import settlements from '@/libs/constant/settlement.js'
 import pickups from '@/libs/constant/pickup.js'
@@ -835,6 +835,7 @@ export default {
           orderPrint.totalFee = vm.totalFee
 
           vm.orderPrint = [orderPrint]
+          console.log(vm.orderPrint)
           vm.$refs.printer.print()
           if (!orderPrint.id) {
             // 创建订单页面
