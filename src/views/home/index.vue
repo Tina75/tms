@@ -1,6 +1,7 @@
 <template>
   <div ref="el" :style="styleHeight" class="page-home">
     <div class="page-home__header">
+      <!-- 菜单面板 -->
       <Row class="page-home__header-row">
         <Col span="18">
         <span class="page-home__header-greetings" v-html="greetings"></span>
@@ -28,6 +29,7 @@
         </Poptip>
         </Col>
       </Row>
+      <!-- 跑马灯 -->
       <Alert v-if="notice.content" type="warning" class="page-home__header-notice" banner closable show-icon @on-close="closeNotice">
         <span :class="{'page-home__noticeBar__Pointer': notice.url}" class="page-home__noticeBar" @click="hrefHandle">
           <TextMarquee :content="notice.content"/>
@@ -37,38 +39,7 @@
       </Alert>
     </div>
     <Row :gutter="16" type="flex" justify="start">
-      <!-- 提货代办 -->
-      <PickupTodo v-if="cardChecksTemp.includes('pickup-todo')"/>
-      <!-- 送货代办 -->
-      <DeliveryTodo v-if="cardChecksTemp.includes('delivery-todo')"/>
-      <!-- 外转代办 -->
-      <TransferTodo v-if="cardChecksTemp.includes('trans-todo')"/>
-      <!-- 回单代办 -->
-      <ReceiptTodo v-if="cardChecksTemp.includes('receipt-todo')" />
-      <!-- 消息中心 -->
-      <MessageCenter v-if="cardChecksTemp.includes('message-center')"/>
-      <!-- 发货方核销代办 -->
-      <ShipperTodo v-if="cardChecksTemp.includes('consigner-todo')"/>
-      <!-- 承运商核销代办 -->
-      <CarrierTodo v-if="cardChecksTemp.includes('carrier-todo')"/>
-      <!-- 外转方核销代办 -->
-      <ExteriorTodo  v-if="cardChecksTemp.includes('transferfee-todo')"/>
-      <!-- 今日订单数 -->
-      <CreateOrderStatis v-if="cardChecksTemp.includes('order-create')"/>
-      <!-- 新增顾客数 -->
-      <NewCustumerStatis v-if="cardChecksTemp.includes('new-customer')"/>
-      <!-- 在途车辆信息 -->
-      <CarPosition v-if="cardChecksTemp.includes('transport-location')"/>
-      <!-- 近七日订单和营业额统计 -->
-      <Turnover v-if="cardChecksTemp.includes('turnover-statistics')" />
-      <!-- 近七日调度订单数 -->
-      <SchedulingOrder v-if="cardChecksTemp.includes('dispatch-statistics')"/>
-      <!-- 近七日开单数 -->
-      <Billing v-if="cardChecksTemp.includes('order-statistics')"/>
-      <!-- 今日应收款项 / 应付款项 -->
-      <ReceiptsPayments v-if="cardChecksTemp.includes('pay-receive')"/>
-      <!-- 今日开单货物重量 / 体积 -->
-      <Goods v-if="cardChecksTemp.includes('cargo-statistics')"/>
+      <div v-for="(i, index) in componentList" v-if="cardChecksTemp.includes(i.value)" :key="index" :is="i.name" ></div>
     </Row>
   </div>
 </template>
@@ -77,11 +48,10 @@
 import { mapGetters } from 'vuex'
 import server from '@/libs/js/server'
 
-import OrderCard from './components/OrderCard.vue'
-import BlankCard from './components/BlankCard.vue'
 import TextMarquee from './components/TextMarquee.vue'
 import BasePage from '@/basic/BasePage'
 import FontIcon from '@/components/FontIcon'
+import { eventHub } from './plugins/mixin.js'
 
 import PickupTodo from './plugins/pickup-todo.vue'
 import DeliveryTodo from './plugins/delivery-todo.vue'
@@ -95,7 +65,6 @@ import SchedulingOrder from './plugins/scheduling-order'
 import Billing from './plugins/billing'
 import ReceiptsPayments from './plugins/receipts-payments'
 import Goods from './plugins/goods'
-import { eventHub } from './plugins/mixin.js'
 
 import ShipperTodo from './plugins/shipper-todo.vue'
 import CarrierTodo from './plugins/carrier-todo.vue'
@@ -103,15 +72,12 @@ import ExteriorTodo from './plugins/exterior-todo.vue'
 import NewCustumerStatis from './plugins/new-customer-statis.vue'
 import CarPosition from './plugins/car-postion.vue'
 
-// const processNoticeKey = 'tms_process_notice'
 export default {
   name: 'index',
   metaInfo: { title: '首页' },
   components: {
     TextMarquee,
-    OrderCard,
     FontIcon,
-    BlankCard,
     PickupTodo,
     DeliveryTodo,
     TransferTodo,
@@ -158,6 +124,24 @@ export default {
         'cargo-statistics': '今日开单货物重量 / 体积'
       },
       cardsList: [],
+      componentList: [
+        { name: 'PickupTodo', value: 'pickup-todo' },
+        { name: 'DeliveryTodo', value: 'delivery-todo' },
+        { name: 'TransferTodo', value: 'trans-todo' },
+        { name: 'ReceiptTodo', value: 'receipt-todo' },
+        { name: 'MessageCenter', value: 'message-center' },
+        { name: 'ShipperTodo', value: 'consigner-todo' },
+        { name: 'CarrierTodo', value: 'carrier-todo' },
+        { name: 'ExteriorTodo', value: 'transferfee-todo' },
+        { name: 'CreateOrderStatis', value: 'order-create' },
+        { name: 'NewCustumerStatis', value: 'new-customer' },
+        { name: 'CarPosition', value: 'transport-location' },
+        { name: 'Turnover', value: 'turnover-statistics' },
+        { name: 'SchedulingOrder', value: 'dispatch-statistics' },
+        { name: 'Billing', value: 'order-statistics' },
+        { name: 'ReceiptsPayments', value: 'pay-receive' },
+        { name: 'Goods', value: 'cargo-statistics' }
+      ],
       intersectionObserver: null
     }
   },
@@ -338,8 +322,7 @@ export default {
     // 确认请求
     confirmAction () {
       const data = this.cardsList.map(el => {
-        const status = this.cardChecks.includes(el.name)
-        status ? el.valid = 1 : el.valid = 0
+        el.valid = this.cardChecks.includes(el.name) ? 1 : 0
         return el
       })
       server({
