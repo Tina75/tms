@@ -186,7 +186,7 @@ import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
 import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, CODE, CAR } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
-import UpLoad from '@/components/upLoad/'
+import UpLoad from '@/components/upLoad/index.vue'
 import _ from 'lodash'
 export default {
   name: 'carrier',
