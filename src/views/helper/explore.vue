@@ -1,9 +1,6 @@
 <template>
   <div class="contenAll">
-    <!-- <i-circle :percent="percent">
-      <span class="demo-circle-inner" style="font-size:24px">{{ percent }}%</span>
-    </i-circle> -->
-    <WaveProcess class="ivu-chart-circle"></WaveProcess>
+    <WaveProcess :process="percent" class="ivu-chart-circle"></WaveProcess>
     <div class="contentLabel">
       <p class="finallyLabel">恭喜您完成运掌柜探索</p>
       <p class="askLabel">若有任何疑问，请联系您的专属客户经理哦~</P>
@@ -202,7 +199,7 @@ export default {
 }
 </script>
 <style lang='stylus' scoped>
->>>.ivu-chart-circle
+.ivu-chart-circle
   margin-left: calc(50% - 60px);
 .contenAll
   padding-top 100px
