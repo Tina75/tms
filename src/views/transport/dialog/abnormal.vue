@@ -119,7 +119,7 @@
         </Form>
       </div>
 
-      <div v-if="isChangeFee === 1 && canUpdateFee === 2 && changeFeeType === 1" class="err-message">存在多个异常记录未处理，只能修改最后一次上报的异常记录的运费。</div>
+      <div v-if="isChangeFee === 1 && canUpdateFee === 2 && (changeFeeType === 0 || changeFeeType === 2)" class="err-message">存在多个异常记录未处理，只能修改最后一次上报的异常记录的运费。</div>
 
       <Row v-if="isChangeFee === 1" class="detail-field-group" style="margin-bottom: 10px">
         <i-col span="24">
@@ -239,7 +239,7 @@ export default {
       // abnormalDesc: '', // 异常描述
       fileUrls: [], // 图片url列表
       isDisabled: false,
-      changeFeeType: 1, // 1 可以修改运费 2 已核销 3 已对账
+      changeFeeType: 0, // 0 可以修改运费 10 已对账 11 已核销 2 部分修改运费
       canUpdateFee: 0 // 判断多条异常记录只有最后一条可以修改运费
     }
   },
@@ -259,11 +259,11 @@ export default {
   },
   created () {
     this.settlementPayInfo = this.type === 3 ? [
-      { payType: 1, fuelCardAmount: '', cashAmount: '', isDisabled: false },
-      { payType: 2, fuelCardAmount: '', cashAmount: '', isDisabled: false },
-      { payType: 3, fuelCardAmount: '', cashAmount: '', isDisabled: false }
+      { payType: 1, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 },
+      { payType: 2, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 },
+      { payType: 3, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
     ] : [
-      { payType: 2, fuelCardAmount: '', cashAmount: '', isDisabled: false }
+      { payType: 2, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
     ]
   },
 
@@ -373,15 +373,38 @@ export default {
           data: data
         }).then(res => {
           console.log(res)
-          _this.changeFeeType = res.data.data
-          if (_this.changeFeeType === 1) {
+          _this.changeFeeType = res.data.data.status
+          if (_this.changeFeeType === 0) {
             _this.checkUpdateFee()
-          } else if (_this.changeFeeType === 2) {
+          } else if (_this.changeFeeType === 20) {
             _this.$Message.warning('此单运费已核销，不能修改')
             _this.canotChangeFee()
-          } else if (_this.changeFeeType === 3) {
+          } else if (_this.changeFeeType === 10) {
             _this.$Message.warning('此单已经加入对账单，运费不能修改')
             _this.canotChangeFee()
+          } else if (_this.changeFeeType === 2) {
+            if (_this.canUpdateFee === 2) {
+              // this.$Message.warning('多条异常记录只有最后一条可以修改运费')
+              _this.canotChangeFee()
+            } else {
+              let statusDetail = res.data.data.statusDetail
+              // 校验多段付哪些部分已核销，修改payInfo组件赋值
+              _this.settlementPayInfo.map((item, i) => {
+                if (item.payType === 1) {
+                  item.isCardDisabled = statusDetail.prepaidFuel
+                  item.isCashDisabled = statusDetail.prepaidCash
+                }
+                if (item.payType === 2) {
+                  item.isCardDisabled = statusDetail.arrivePaidFuel
+                  item.isCashDisabled = statusDetail.arrivePaidCash
+                }
+                if (item.payType === 3) {
+                  item.isCardDisabled = statusDetail.receiptPaidFule
+                  item.isCashDisabled = statusDetail.receiptPaidCash
+                }
+              })
+              console.log(_this.settlementPayInfo)
+            }
           }
         }).catch(err => console.error(err))
       } else {
@@ -405,15 +428,18 @@ export default {
     canotChangeFee () {
       this.isDisabled = true
       this.settlementPayInfo.map((item) => {
-        item.isDisabled = true
+        item.isCardDisabled = true
+        item.isCashDisabled = true
       })
     },
 
-    // 异常环节修改后，异常类型、多段支付联动
+    // 异常环节修改后，异常类型联动
     handleChangeLinks (val) {
       // this.abnormalTypeCode = ''
       // this.abnormalTypeCodes = ABNORMAL_TYPE_CODES[val.toString()]
       this.autoAbnormalLinks('abnormalTiming', val)
+      /**
+       * v1.05多段付联动只跟核销走
       if (this.changeFeeType === 1 && this.canUpdateFee === 1) {
         console.log(val)
         switch (val) {
@@ -455,6 +481,7 @@ export default {
             break
         }
       }
+      */
     },
 
     // 提交前数据校验
@@ -475,19 +502,23 @@ export default {
     submit () {
       const _this = this
       if (!_this.validate()) return
-      if (_this.isChangeSubmitFee() && _this.changeFeeType === 1 && _this.canUpdateFee === 1) {
+      if (_this.isChangeFee !== 2 && (_this.changeFeeType === 0 || _this.changeFeeType === 2) && _this.canUpdateFee === 1) {
         this.$refs.payment.validate((valid) => {
           if (valid) {
-            _this.$Toast.confirm({
-              title: '提示',
-              content: '<p>运费未修改，是否保存？</p>',
-              okText: '是',
-              cancelText: '否',
-              onOk: () => {
-                console.log('保存')
-                _this.doSubmit()
-              }
-            })
+            if (_this.isChangeSubmitFee()) {
+              _this.$Toast.confirm({
+                title: '提示',
+                content: '<p>运费未修改，是否保存？</p>',
+                okText: '是',
+                cancelText: '否',
+                onOk: () => {
+                  console.log('保存')
+                  _this.doSubmit()
+                }
+              })
+            } else {
+              _this.doSubmit()
+            }
           }
         })
       } else {
@@ -496,85 +527,98 @@ export default {
     },
     // 创建异常单
     doSubmit () {
+      const z = this
       let fileUrls = []
-      this.$refs.upLoads.uploadImgList.map((item) => {
+      z.$refs.upLoads.uploadImgList.map((item) => {
         fileUrls.push(item.url)
       })
-      let tableData
-      if (this.details.abnormalPayInfos.length > 0) {
-        if (this.isChangeFee === 1) {
-          tableData = _.cloneDeep(this.$refs.$payInfo.tableDataBack)
-          tableData.map((item) => {
-            item.cashAmount = item.cashAmount * 100 || 0
-            item.fuelCardAmount = item.fuelCardAmount * 100 || 0
-            delete item._index
-            delete item._rowKey
-            delete item.isDisabled
+      let tableData = []
+      if (z.details.abnormalPayInfos.length > 0) {
+        if (z.isChangeFee === 1) {
+          // tableData = _.cloneDeep(z.$refs.$payInfo.tableDataBack)
+          z.$refs.$payInfo.tableDataBack.map((item, i) => {
+            tableData.push({
+              payType: item.payType,
+              cashAmount: item.cashAmount * 100 || 0,
+              fuelCardAmount: item.fuelCardAmount * 100 || 0
+            })
           })
         } else {
-          this.cloneSettlementPayInfo.map((item) => {
-            item.cashAmount = item.cashAmount * 100 || 0
-            item.fuelCardAmount = item.fuelCardAmount * 100 || 0
-            delete item.isDisabled
+          z.cloneSettlementPayInfo.map((item, i) => {
+            tableData.push({
+              payType: item.payType,
+              cashAmount: item.cashAmount * 100 || 0,
+              fuelCardAmount: item.fuelCardAmount * 100 || 0
+            })
           })
-          tableData = this.cloneSettlementPayInfo
         }
       } else {
         tableData = []
       }
       let data = {
-        ...this.formatMoney(),
-        totalFee: this.paymentTotal * 100,
+        ...z.formatMoney(),
+        totalFee: z.paymentTotal * 100,
         fileUrls: fileUrls,
         abnormalPayInfos: tableData,
-        abnormalTiming: this.abnormalTiming,
-        abnormalTypeCode: this.abnormalTypeCode,
-        abnormalDesc: this.details.abnormalDesc,
-        updateFee: this.isChangeSubmitFee() ? 2 : 1
+        abnormalTiming: z.abnormalTiming,
+        abnormalTypeCode: z.abnormalTypeCode,
+        abnormalDesc: z.details.abnormalDesc,
+        updateFee: z.isChangeSubmitFee() ? 2 : 1
       }
-      if (this.recordId) {
+      if (z.recordId) {
         data.recordId = this.recordId
       } else {
-        data.billId = this.id
-        data.billType = this.type
+        data.billId = z.id
+        data.billType = z.type
       }
       console.log(data)
       Server({
-        url: this.recordId ? '/abnormal/update' : '/abnormal/create',
+        url: z.recordId ? '/abnormal/update' : '/abnormal/create',
         method: 'post',
         data: data
       }).then(res => {
         console.log(res)
-        this.complete()
-        this.close()
+        z.complete()
+        z.close()
         if (res.data.data <= 0) {
-          this.openAbnormalSuccessDialog()
+          z.openAbnormalSuccessDialog()
         } else {
-          this.$Message.success(this.recordId ? '编辑成功' : '创建成功')
+          z.$Message.success(z.recordId ? '编辑成功' : '创建成功')
         }
       }).catch(err => console.error(err))
     },
 
     // 如果是修改运费状态，提交时需判断有没有修改运费
     isChangeSubmitFee () {
-      if (this.isChangeFee === 2) return false
-      if (this.details.abnormalPayInfos.length > 0) {
-        this.cloneSettlementPayInfo.map((item) => {
-          item.cashAmount = item.cashAmount || null
-          item.fuelCardAmount = item.fuelCardAmount || null
+      const z = this
+      if (z.isChangeFee === 2) return false
+      if (z.details.abnormalPayInfos.length > 0) {
+        let cloneTableData = []
+        z.cloneSettlementPayInfo.map((item, i) => {
+          cloneTableData.push({
+            payType: item.payType,
+            cashAmount: item.cashAmount || null,
+            fuelCardAmount: item.fuelCardAmount || null
+          })
+          // item.cashAmount = item.cashAmount || null
+          // item.fuelCardAmount = item.fuelCardAmount || null
         })
-        let tableDate = _.cloneDeep(this.$refs.$payInfo.tableDataBack)
-        tableDate.map((item) => {
-          item.cashAmount = item.cashAmount || null
-          item.fuelCardAmount = item.fuelCardAmount || null
-          delete item._index
-          delete item._rowKey
+        let tableDate = []
+        z.$refs.$payInfo.tableDataBack.map((item, i) => {
+          tableDate.push({
+            payType: item.payType,
+            cashAmount: item.cashAmount || null,
+            fuelCardAmount: item.fuelCardAmount || null
+          })
+          // item.cashAmount = item.cashAmount || null
+          // item.fuelCardAmount = item.fuelCardAmount || null
+          // delete item._index
+          // delete item._rowKey
         })
-        console.log(this.cloneSettlementPayInfo, tableDate)
-        console.log(this.payment, this.clonePayment)
-        return _.isEqual(this.payment, this.clonePayment) && _.isEqual(this.cloneSettlementPayInfo, tableDate) // 费用输入框和多段付
+        console.log(cloneTableData, tableDate)
+        return _.isEqual(z.payment, z.clonePayment) && _.isEqual(cloneTableData, tableDate) // 费用输入框和多段付
       } else {
-        return _.isEqual(this.payment, this.clonePayment)
+        return _.isEqual(z.payment, z.clonePayment)
       }
     },
 
@@ -633,7 +677,6 @@ export default {
       display flex
       justify-content space-between
       align-items center
-      margin-bottom 10px
       .ivu-form-item-label
         padding 10px 0
         text-align center
@@ -667,6 +710,7 @@ export default {
     font-size 14px
     font-family 'PingFangSC-Regular'
     margin-left 72px
+    margin-top -15px
   .ivu-col-span-6
     height 68px
 </style>

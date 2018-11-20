@@ -1,8 +1,9 @@
 <template>
   <div class="contenAll">
-    <i-circle :percent="percent">
+    <!-- <i-circle :percent="percent">
       <span class="demo-circle-inner" style="font-size:24px">{{ percent }}%</span>
-    </i-circle>
+    </i-circle> -->
+    <WaveProcess class="ivu-chart-circle"></WaveProcess>
     <div class="contentLabel">
       <p class="finallyLabel">恭喜您完成运掌柜探索</p>
       <p class="askLabel">若有任何疑问，请联系您的专属客户经理哦~</P>
@@ -34,8 +35,12 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import TMSUrl from '@/libs/constant/url.js'
+import WaveProcess from './components/WaveProcess.vue'
 export default {
   name: 'explore',
+  components: {
+    WaveProcess
+  },
   mixins: [ BasePage ],
   metaInfo: {
     title: '探索运掌柜'
