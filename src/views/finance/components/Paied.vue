@@ -101,10 +101,10 @@ export default {
         },
         {
           title: '代收货款',
-          key: 'collectionFee',
+          key: 'collectionMoney',
           width: 100,
           render (h, params) {
-            return renderFee(h, params.row['collectionFee'])
+            return renderFee(h, params.row['collectionMoney'])
             // return h('span', {}, params.row['collectionFee'] ? (params.row['collectionFee'] / 100).toFixed(2) : 0)
           }
         },

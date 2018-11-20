@@ -106,9 +106,9 @@ export default {
         },
         {
           title: '代收货款',
-          key: 'collectionFee',
+          key: 'collectionMoney',
           render (h, params) {
-            return renderFee(h, params.row['collectionFee'])
+            return renderFee(h, params.row['collectionMoney'])
             // return h('span', {}, params.row['collectionFee'] / 100)
           }
         },
