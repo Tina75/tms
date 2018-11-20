@@ -20,8 +20,9 @@ const prepareOpenPhotoSwipe = (items) => {
     let img = new Image()
     img.src = item.src
     img.onload = function () {
-      item.w = img.naturalWidth
-      item.h = img.naturalHeight
+      item.w = img.naturalWidth || img.width
+      item.h = img.naturalHeight || img.height
+      img = null
     }
   })
   return (index = 0, options = {}) => {
