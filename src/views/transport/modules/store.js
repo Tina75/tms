@@ -5,14 +5,12 @@ import actions from './actions'
 import { TAB_LIST } from '../constant/waybill'
 
 const state = {
-  transport: {
-    waybillTabCount: TAB_LIST
-  }
+  waybillTabCount: TAB_LIST
 }
 
 const mutations = {
-  [types.WAYBILL_TAB_COUNT] ({ transport }, tabCount) {
-    transport.waybillTabCount = tabCount
+  [types.WAYBILL_TAB_COUNT] (state, tabCount) {
+    state.waybillTabCount = tabCount
   }
 }
 

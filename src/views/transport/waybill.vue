@@ -1,6 +1,6 @@
 <template>
   <div ref="$box" class="transport-page">
-    <TabHeader ref="$tab" :tabs="waybillTabCount" :type="tabType" @on-change="tabChanged"></TabHeader>
+    <TabHeader ref="$tab" :tabs="tabList" :type="tabType" @on-change="tabChanged"></TabHeader>
 
     <template v-if="tabStatus">
       <div class="easy-search-box">
@@ -219,7 +219,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters([ 'waybillTabCount' ])
+    ...mapGetters({
+      tabList: 'waybillTabCount'
+    })
   },
 
   methods: {
