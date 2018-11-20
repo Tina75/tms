@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="show" :mask-closable="false" transfer class="transport-detail" width="980"  @on-visible-change="close">
+  <Modal v-model="show" :mask-closable="false" transfer class="transport-detail" width="1100"  @on-visible-change="close">
     <p slot="header" style="text-align:center">
       上报异常
     </p>
@@ -41,46 +41,85 @@
         </i-col>
       </Row>
 
-      <Form v-if="isChangeFee === 1" ref="payment" :label-width="82" :model="payment" :rules="rules" label-position="left" class="detail-field-group row-fee">
-        <FormItem :label="details.billType === 2 ? '外转运费：' : '运输费：'" :class="details.billType === 2 ? 'waizhuan-label' : ''" prop="freightFee">
-          <!-- <span class="detail-field-title-sm detail-field-required">{{ details.billType === 2 ? '外转运费：' : '运输费：' }}</span>
-          <MoneyInput v-model="payment.freightFee" :is-disabled="isDisabled" class="detail-payment-input" />
-          <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a> -->
-          <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" :style="details.billType === 2 && 'width: 158px;'" class="detail-payment-input">
-            <span slot="suffix" class="order-create__input-suffix">元</span>
-          </TagNumberInput>
-        </FormItem>
-        <FormItem v-if="details.billType !== 2" label="装货费：" prop="loadFee">
-          <!-- <span class="detail-field-title-sm" style="width: 70px;">装货费：</span>
-          <MoneyInput v-model="payment.loadFee" :is-disabled="isDisabled" class="detail-payment-input" /> -->
-          <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input">
-            <span slot="suffix" class="order-create__input-suffix">元</span>
-          </TagNumberInput>
-        </FormItem>
-        <FormItem v-if="details.billType !== 2" label="卸货费：" prop="unloadFee">
-          <!-- <span class="detail-field-title-sm" style="width: 70px;">卸货费：</span>
-          <MoneyInput v-model="payment.unloadFee" :is-disabled="isDisabled" class="detail-payment-input" /> -->
-          <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input">
-            <span slot="suffix" class="order-create__input-suffix">元</span>
-          </TagNumberInput>
-        </FormItem>
-        <FormItem v-if="details.billType !== 2" label="保险费：" prop="insuranceFee">
-          <!-- <span class="detail-field-title-sm" style="width: 70px;">保险费：</span>
-          <MoneyInput v-model="payment.insuranceFee" :is-disabled="isDisabled" class="detail-payment-input" /> -->
-          <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input">
-            <span slot="suffix" class="order-create__input-suffix">元</span>
-          </TagNumberInput>
-        </FormItem>
-        <FormItem v-if="details.billType !== 2" label="其他费用：" prop="otherFee">
-          <!-- <span class="detail-field-title-sm">其他费用：</span>
-          <MoneyInput v-model="payment.otherFee" :is-disabled="isDisabled" class="detail-payment-input" /> -->
-          <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input">
-            <span slot="suffix" class="order-create__input-suffix">元</span>
-          </TagNumberInput>
-        </FormItem>
-      </Form>
+      <div v-if="details.billType === 3">
+        <Form v-if="isChangeFee === 1" ref="payment" :label-width="72" :model="payment" :rules="rules" label-position="left" class="detail-field-group row-fee">
+          <Row>
+            <i-col span="6">
+              <FormItem label="运输费：" class="require-fee" prop="freightFee">
+                <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" class="detail-payment-input-send">
+                </TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+            <i-col span="6">
+              <FormItem label="装货费：" prop="loadFee">
+                <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input-send">
+                </TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+            <i-col span="6">
+              <FormItem label="卸货费：" prop="unloadFee">
+                <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input-send">
+                </TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+            <i-col span="6">
+              <FormItem label="路桥费：" prop="tollFee">
+                <TagNumberInput v-model="payment.tollFee" :disabled="isDisabled" class="detail-payment-input-send">
+                </TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+            <i-col span="6">
+              <FormItem label="保险费：" prop="insuranceFee">
+                <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input-send">
+                </TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+            <i-col span="6">
+              <FormItem label="其他费：" prop="otherFee">
+                <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input-send">
+                </TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+          </Row>
+        </Form>
+      </div>
+      <div v-else>
+        <Form v-if="isChangeFee === 1" ref="payment" :label-width="72" :model="payment" :rules="rules" label-position="left" class="detail-field-group row-fee">
+          <FormItem :label="details.billType === 2 ? '外转运费：' : '运输费：'" :class="details.billType === 2 ? 'waizhuan-label' : ''" class="require-fee" prop="freightFee">
+            <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" :style="details.billType === 2 && 'width: 158px;'" class="detail-payment-input">
+            </TagNumberInput>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+          <FormItem v-if="details.billType !== 2" label="装货费：" prop="loadFee">
+            <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input">
+            </TagNumberInput>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+          <FormItem v-if="details.billType !== 2" label="卸货费：" prop="unloadFee">
+            <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input">
+            </TagNumberInput>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+          <FormItem v-if="details.billType !== 2" label="保险费：" prop="insuranceFee">
+            <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input">
+            </TagNumberInput>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+          <FormItem v-if="details.billType !== 2" label="其他费用：" prop="otherFee">
+            <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input">
+            </TagNumberInput>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+        </Form>
+      </div>
 
-      <div v-if="isChangeFee === 1 && canUpdateFee === 2 && changeFeeType === 1" class="err-message">存在多个异常记录未处理，只能修改最后一次上报的异常记录的运费。</div>
+      <div v-if="isChangeFee === 1 && canUpdateFee === 2 && (changeFeeType === 0 || changeFeeType === 2)" class="err-message">存在多个异常记录未处理，只能修改最后一次上报的异常记录的运费。</div>
 
       <Row v-if="isChangeFee === 1" class="detail-field-group" style="margin-bottom: 10px">
         <i-col span="24">
@@ -157,7 +196,8 @@ export default {
         loadFee: 0,
         unloadFee: 0,
         insuranceFee: 0,
-        otherFee: 0
+        otherFee: 0,
+        tollFee: 0
       },
       rules: {
         // 运输费
@@ -180,6 +220,10 @@ export default {
         // 其他费用
         otherFee: [
           { validator: validateFee }
+        ],
+        // 路桥费用
+        tollFee: [
+          { validator: validateFee }
         ]
       },
       clonePayment: {}, // 复制一份费用数据，用来比较有没有修改费用
@@ -195,7 +239,7 @@ export default {
       // abnormalDesc: '', // 异常描述
       fileUrls: [], // 图片url列表
       isDisabled: false,
-      changeFeeType: 1, // 1 可以修改运费 2 已核销 3 已对账
+      changeFeeType: 0, // 0 可以修改运费 10 已对账 11 已核销 2 部分修改运费
       canUpdateFee: 0 // 判断多条异常记录只有最后一条可以修改运费
     }
   },
@@ -203,20 +247,23 @@ export default {
   computed: {
     // 计算总费用
     paymentTotal () {
-      return parseFloat((Number(this.payment.freightFee) +
-      Number(this.payment.loadFee) +
-      Number(this.payment.unloadFee) +
-      Number(this.payment.insuranceFee) +
-      Number(this.payment.otherFee)).toFixed(2))
+      let total
+      total = Number(this.payment.freightFee) +
+              Number(this.payment.loadFee) +
+              Number(this.payment.unloadFee) +
+              Number(this.payment.insuranceFee) +
+              Number(this.payment.otherFee)
+      if (this.type === 3) total += Number(this.payment.tollFee)
+      return parseFloat(total.toFixed(2))
     }
   },
   created () {
     this.settlementPayInfo = this.type === 3 ? [
-      { payType: 1, fuelCardAmount: '', cashAmount: '', isDisabled: false },
-      { payType: 2, fuelCardAmount: '', cashAmount: '', isDisabled: false },
-      { payType: 3, fuelCardAmount: '', cashAmount: '', isDisabled: false }
+      { payType: 1, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 },
+      { payType: 2, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 },
+      { payType: 3, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
     ] : [
-      { payType: 2, fuelCardAmount: '', cashAmount: '', isDisabled: false }
+      { payType: 2, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
     ]
   },
 
@@ -263,6 +310,10 @@ export default {
 
         for (let key in _this.payment) {
           _this.payment[key] = _this.setMoneyUnit2Yuan(_this.details[key])
+        }
+
+        if (this.type !== 3) {
+          delete this.payment.tollFee // 去掉路桥费
         }
 
         // this.settlementType = billInfo.settlementType ? billInfo.settlementType.toString() : '1'
@@ -322,15 +373,38 @@ export default {
           data: data
         }).then(res => {
           console.log(res)
-          _this.changeFeeType = res.data.data
-          if (_this.changeFeeType === 1) {
+          _this.changeFeeType = res.data.data.status
+          if (_this.changeFeeType === 0) {
             _this.checkUpdateFee()
-          } else if (_this.changeFeeType === 2) {
+          } else if (_this.changeFeeType === 20) {
             _this.$Message.warning('此单运费已核销，不能修改')
             _this.canotChangeFee()
-          } else if (_this.changeFeeType === 3) {
+          } else if (_this.changeFeeType === 10) {
             _this.$Message.warning('此单已经加入对账单，运费不能修改')
             _this.canotChangeFee()
+          } else if (_this.changeFeeType === 2) {
+            if (_this.canUpdateFee === 2) {
+              // this.$Message.warning('多条异常记录只有最后一条可以修改运费')
+              _this.canotChangeFee()
+            } else {
+              let statusDetail = res.data.data.statusDetail
+              // 校验多段付哪些部分已核销，修改payInfo组件赋值
+              _this.settlementPayInfo.map((item, i) => {
+                if (item.payType === 1) {
+                  item.isCardDisabled = statusDetail.prepaidFuel
+                  item.isCashDisabled = statusDetail.prepaidCash
+                }
+                if (item.payType === 2) {
+                  item.isCardDisabled = statusDetail.arrivePaidFuel
+                  item.isCashDisabled = statusDetail.arrivePaidCash
+                }
+                if (item.payType === 3) {
+                  item.isCardDisabled = statusDetail.receiptPaidFule
+                  item.isCashDisabled = statusDetail.receiptPaidCash
+                }
+              })
+              console.log(_this.settlementPayInfo)
+            }
           }
         }).catch(err => console.error(err))
       } else {
@@ -354,15 +428,18 @@ export default {
     canotChangeFee () {
       this.isDisabled = true
       this.settlementPayInfo.map((item) => {
-        item.isDisabled = true
+        item.isCardDisabled = true
+        item.isCashDisabled = true
       })
     },
 
-    // 异常环节修改后，异常类型、多段支付联动
+    // 异常环节修改后，异常类型联动
     handleChangeLinks (val) {
       // this.abnormalTypeCode = ''
       // this.abnormalTypeCodes = ABNORMAL_TYPE_CODES[val.toString()]
       this.autoAbnormalLinks('abnormalTiming', val)
+      /**
+       * v1.05多段付联动只跟核销走
       if (this.changeFeeType === 1 && this.canUpdateFee === 1) {
         console.log(val)
         switch (val) {
@@ -404,6 +481,7 @@ export default {
             break
         }
       }
+      */
     },
 
     // 提交前数据校验
@@ -424,19 +502,23 @@ export default {
     submit () {
       const _this = this
       if (!_this.validate()) return
-      if (_this.isChangeSubmitFee() && _this.changeFeeType === 1 && _this.canUpdateFee === 1) {
+      if (_this.isChangeFee !== 2 && (_this.changeFeeType === 0 || _this.changeFeeType === 2) && _this.canUpdateFee === 1) {
         this.$refs.payment.validate((valid) => {
           if (valid) {
-            _this.$Toast.confirm({
-              title: '提示',
-              content: '<p>运费未修改，是否保存？</p>',
-              okText: '是',
-              cancelText: '否',
-              onOk: () => {
-                console.log('保存')
-                _this.doSubmit()
-              }
-            })
+            if (_this.isChangeSubmitFee()) {
+              _this.$Toast.confirm({
+                title: '提示',
+                content: '<p>运费未修改，是否保存？</p>',
+                okText: '是',
+                cancelText: '否',
+                onOk: () => {
+                  console.log('保存')
+                  _this.doSubmit()
+                }
+              })
+            } else {
+              _this.doSubmit()
+            }
           }
         })
       } else {
@@ -445,85 +527,98 @@ export default {
     },
     // 创建异常单
     doSubmit () {
+      const z = this
       let fileUrls = []
-      this.$refs.upLoads.uploadImgList.map((item) => {
+      z.$refs.upLoads.uploadImgList.map((item) => {
         fileUrls.push(item.url)
       })
-      let tableData
-      if (this.details.abnormalPayInfos.length > 0) {
-        if (this.isChangeFee === 1) {
-          tableData = _.cloneDeep(this.$refs.$payInfo.tableDataBack)
-          tableData.map((item) => {
-            item.cashAmount = item.cashAmount * 100 || 0
-            item.fuelCardAmount = item.fuelCardAmount * 100 || 0
-            delete item._index
-            delete item._rowKey
-            delete item.isDisabled
+      let tableData = []
+      if (z.details.abnormalPayInfos.length > 0) {
+        if (z.isChangeFee === 1) {
+          // tableData = _.cloneDeep(z.$refs.$payInfo.tableDataBack)
+          z.$refs.$payInfo.tableDataBack.map((item, i) => {
+            tableData.push({
+              payType: item.payType,
+              cashAmount: item.cashAmount * 100 || 0,
+              fuelCardAmount: item.fuelCardAmount * 100 || 0
+            })
           })
         } else {
-          this.cloneSettlementPayInfo.map((item) => {
-            item.cashAmount = item.cashAmount * 100 || 0
-            item.fuelCardAmount = item.fuelCardAmount * 100 || 0
-            delete item.isDisabled
+          z.cloneSettlementPayInfo.map((item, i) => {
+            tableData.push({
+              payType: item.payType,
+              cashAmount: item.cashAmount * 100 || 0,
+              fuelCardAmount: item.fuelCardAmount * 100 || 0
+            })
           })
-          tableData = this.cloneSettlementPayInfo
         }
       } else {
         tableData = []
       }
       let data = {
-        ...this.formatMoney(),
-        totalFee: this.paymentTotal * 100,
+        ...z.formatMoney(),
+        totalFee: z.paymentTotal * 100,
         fileUrls: fileUrls,
         abnormalPayInfos: tableData,
-        abnormalTiming: this.abnormalTiming,
-        abnormalTypeCode: this.abnormalTypeCode,
-        abnormalDesc: this.details.abnormalDesc,
-        updateFee: this.isChangeSubmitFee() ? 2 : 1
+        abnormalTiming: z.abnormalTiming,
+        abnormalTypeCode: z.abnormalTypeCode,
+        abnormalDesc: z.details.abnormalDesc,
+        updateFee: z.isChangeSubmitFee() ? 2 : 1
       }
-      if (this.recordId) {
+      if (z.recordId) {
         data.recordId = this.recordId
       } else {
-        data.billId = this.id
-        data.billType = this.type
+        data.billId = z.id
+        data.billType = z.type
       }
       console.log(data)
       Server({
-        url: this.recordId ? '/abnormal/update' : '/abnormal/create',
+        url: z.recordId ? '/abnormal/update' : '/abnormal/create',
         method: 'post',
         data: data
       }).then(res => {
         console.log(res)
-        this.complete()
-        this.close()
+        z.complete()
+        z.close()
         if (res.data.data <= 0) {
-          this.openAbnormalSuccessDialog()
+          z.openAbnormalSuccessDialog()
         } else {
-          this.$Message.success(this.recordId ? '编辑成功' : '创建成功')
+          z.$Message.success(z.recordId ? '编辑成功' : '创建成功')
         }
       }).catch(err => console.error(err))
     },
 
     // 如果是修改运费状态，提交时需判断有没有修改运费
     isChangeSubmitFee () {
-      if (this.isChangeFee === 2) return false
-      if (this.details.abnormalPayInfos.length > 0) {
-        this.cloneSettlementPayInfo.map((item) => {
-          item.cashAmount = item.cashAmount || null
-          item.fuelCardAmount = item.fuelCardAmount || null
+      const z = this
+      if (z.isChangeFee === 2) return false
+      if (z.details.abnormalPayInfos.length > 0) {
+        let cloneTableData = []
+        z.cloneSettlementPayInfo.map((item, i) => {
+          cloneTableData.push({
+            payType: item.payType,
+            cashAmount: item.cashAmount || null,
+            fuelCardAmount: item.fuelCardAmount || null
+          })
+          // item.cashAmount = item.cashAmount || null
+          // item.fuelCardAmount = item.fuelCardAmount || null
         })
-        let tableDate = _.cloneDeep(this.$refs.$payInfo.tableDataBack)
-        tableDate.map((item) => {
-          item.cashAmount = item.cashAmount || null
-          item.fuelCardAmount = item.fuelCardAmount || null
-          delete item._index
-          delete item._rowKey
+        let tableDate = []
+        z.$refs.$payInfo.tableDataBack.map((item, i) => {
+          tableDate.push({
+            payType: item.payType,
+            cashAmount: item.cashAmount || null,
+            fuelCardAmount: item.fuelCardAmount || null
+          })
+          // item.cashAmount = item.cashAmount || null
+          // item.fuelCardAmount = item.fuelCardAmount || null
+          // delete item._index
+          // delete item._rowKey
         })
-        console.log(this.cloneSettlementPayInfo, tableDate)
-        console.log(this.payment, this.clonePayment)
-        return _.isEqual(this.payment, this.clonePayment) && _.isEqual(this.cloneSettlementPayInfo, tableDate) // 费用输入框和多段付
+        console.log(cloneTableData, tableDate)
+        return _.isEqual(z.payment, z.clonePayment) && _.isEqual(cloneTableData, tableDate) // 费用输入框和多段付
       } else {
-        return _.isEqual(this.payment, this.clonePayment)
+        return _.isEqual(z.payment, z.clonePayment)
       }
     },
 
@@ -586,9 +681,19 @@ export default {
       align-items center
       -ms-flex-align center
       margin-bottom 10px
-    .waizhuan-label
       .ivu-form-item-label
+        padding 10px 0
+        text-align center
+      .require-fee
+        .ivu-form-item-label
+          text-align left
+    .waizhuan-label
+      width 300px
+      .ivu-form-item-label
+        width 82px !important
         padding-right 0
+      .ivu-form-item-content
+        margin-left 82px !important
   .abnormal-header
       font-size 14px
       font-family 'PingFangSC-Regular'
@@ -611,5 +716,8 @@ export default {
     color #EC4E4E
     font-size 14px
     font-family 'PingFangSC-Regular'
-    margin-left 82px
+    margin-left 72px
+    margin-top -15px
+  .ivu-col-span-6
+    height 68px
 </style>

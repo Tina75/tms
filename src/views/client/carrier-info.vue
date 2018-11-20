@@ -730,8 +730,8 @@ export default {
       this.loading = true
       carrierListCar(data).then(res => {
         if (res.data.code === CODE) {
-          this.data1 = res.data.data.carList
-          this.totalCount1 = res.data.data.total
+          this.data1 = res.data.data.list
+          this.totalCount1 = res.data.data.totalCount
           this.loading = false
         }
       })
@@ -868,8 +868,8 @@ export default {
       this.loading = true
       carrierListCar(data).then(res => {
         if (res.data.code === CODE) {
-          this.data1 = res.data.data.carList
-          this.totalCount1 = res.data.data.total
+          this.data1 = res.data.data.list
+          this.totalCount1 = res.data.data.totalCount
           this.loading = false
         }
       })

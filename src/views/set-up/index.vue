@@ -468,6 +468,7 @@ export default {
   width: 100%
   height: 100%;
   background:rgba(243,245,249,1);
+  margin: -20px -15px;
   .setConf
     margin-top: 20px;
     left: 50%;

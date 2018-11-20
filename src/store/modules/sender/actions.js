@@ -30,8 +30,10 @@ export default {
         // const clientList = clients.map((user) => ({name: user.name, value: user.name, id: user.id}))
         if (clients && clients.length > 0) {
           commit(types.RECEIVE_CLIENT_LIST, clients)
+          resolve(clients)
         } else {
           commit(types.RECEIVE_CLIENT_LIST, [])
+          resolve([])
         }
         // resolve(clientList)
       }).catch((error) => {

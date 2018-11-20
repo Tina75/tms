@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import float from '@/libs/js/float'
+
 export default {
   name: 'MoneyInput',
   props: {
@@ -42,11 +44,14 @@ export default {
           this.money = (this.value !== null && this.value !== '' && !isNaN(Number(this.value))) ? Number(this.value) : null
         })
         this.$Message.error('金额整数部分不能超过9位')
+      } else {
+        this.$nextTick(() => {
+          this.money = float.floor(value, 2)
+        })
       }
     },
 
     blurHandler () {
-      if (typeof this.money === 'number') this.money = Number(this.money.toFixed(2))
       this.$emit('input', this.money)
       this.$emit('on-blur', this.money)
     }

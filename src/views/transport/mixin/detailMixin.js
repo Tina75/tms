@@ -3,9 +3,9 @@
  */
 
 import _ from 'lodash'
-import Server from '@/libs/js/server'
 import Float from '@/libs/js/float'
 import { CAR } from '@/views/client/client'
+import { mapActions } from 'vuex'
 
 export default {
   data () {
@@ -59,11 +59,14 @@ export default {
     },
     // 支付总额
     paymentTotal () {
-      return Float.round(Number(this.payment.freightFee) +
-      Number(this.payment.loadFee) +
-      Number(this.payment.unloadFee) +
-      Number(this.payment.insuranceFee ? this.payment.insuranceFee : 0) +
-      Number(this.payment.otherFee))
+      let total
+      total = Number(this.payment.freightFee) +
+              Number(this.payment.loadFee) +
+              Number(this.payment.unloadFee) +
+              Number(this.payment.insuranceFee) +
+              Number(this.payment.otherFee)
+      if (this.pageName === 'feright') total += Number(this.payment.tollFee)
+      return parseFloat(total.toFixed(2))
     },
     // 货物总计
     orderTotal () {
@@ -121,6 +124,8 @@ export default {
   },
 
   methods: {
+    ...mapActions([ 'getCargoDetail' ]),
+
     // 根据状态设置按钮
     setBtnsWithStatus () {
       for (let i = 0; i < this.btnList.length; i++) {
@@ -148,47 +153,45 @@ export default {
         },
         methods: {
           confirm (ids) {
-            self.fetchOrderDetail(ids)
+            // 查询货物详情
+            self.getCargoDetail(ids).then(list => {
+              console.log(list)
+              list.forEach(item => {
+                self.detail.push(item)
+              })
+            })
           }
         }
       })
     },
 
-    // 查询订单详情
-    fetchOrderDetail (ids) {
-      if (!ids.length) return
-      Server({
-        url: '/order/cargo/detail',
-        method: 'post',
-        data: { orderIds: ids }
-      }).then(res => {
-        res.data.data.cargoList.forEach(item => {
-          this.detail.push(item)
-        })
-      }).catch(err => console.error(err))
-    },
-
     // 设置金额单位为元
     setMoneyUnit2Yuan (money) {
-      return typeof money === 'number' ? money / 100 : null
+      // return typeof money === 'number' ? money / 100 : null
+      return (typeof money === 'number' && money !== 0) ? money / 100 : null
     },
 
     // 格式化金额单位为分
     formatMoney () {
       let temp = Object.assign({}, this.payment)
       for (let key in temp) {
-        if (typeof temp[key] === 'number') temp[key] = temp[key] * 100
+        // if (typeof temp[key] === 'number') temp[key] = temp[key] * 100
+        if (typeof temp[key] === 'number') {
+          temp[key] = temp[key] * 100
+        } else {
+          temp[key] = 0
+        }
       }
       return temp
     },
 
     // 校验
     validate () {
-      if (!this.info.start) {
+      if (this.pageName === 'feright' && !this.info.start) {
         this.$Message.error('请选择始发地')
         return false
       }
-      if (!this.info.end) {
+      if (this.pageName === 'feright' && !this.info.end) {
         this.$Message.error('请选择目的地')
         return false
       }

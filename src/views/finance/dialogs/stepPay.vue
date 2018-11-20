@@ -4,10 +4,10 @@
     <div class="step-pay-data">
       <div class="total-data">
         <Row>
-          <Col span="10">
+          <Col span="8">
           <p><label>结算方式：</label><span>{{settleTypeDesc}}</span></p>
           </Col>
-          <Col span="10">
+          <Col span="14">
           <p><label>应付金额：</label><i>{{needPay}}</i><span>元</span></p>
           </Col>
         </Row>
@@ -57,11 +57,12 @@
                 <tr v-for="(item, index) in payItems" :key="index" class="ivu-table-row">
                   <td class="" @mouseover="item.showAdjuster = true" @mouseleave="item.showAdjuster = false">
                     <div class="ivu-table-cell">
-                      <span v-if="!item.showAdjuster">{{index + 1}}</span>
-                      <div v-else class="adjuster">
-                        <Icon v-if="index === payItems.length - 1" class="add" type="md-add-circle" @click="addItem(index)"/>
-                        <Icon v-if="!item.verifyStatus && payItems.length > 1" class="remove" type="md-remove-circle" @click="removeItem(item, index)"/>
-                      </div>
+                      <span>{{index + 1}}</span>
+                      <!--<span v-if="!item.showAdjuster">{{index + 1}}</span>-->
+                      <!--<div v-else class="adjuster">-->
+                      <!--<Icon v-if="index === payItems.length - 1" class="add" type="md-add-circle" @click="addItem(index)"/>-->
+                      <!--<Icon v-if="!item.verifyStatus && payItems.length > 1" class="remove" type="md-remove-circle" @click="removeItem(item, index)"/>-->
+                      <!--</div>-->
                     </div>
                   </td>
                   <td class="">
@@ -154,7 +155,7 @@ export default {
           scene: this.scene,
           verifyType: 2,
           isOil: item.payType === 2 || item.payType === 4 || item.payType === 6,
-          needPay: item.feeText,
+          needPay: parseFloat(item.feeText),
           settleTypeDesc: this.settleTypeDesc
         },
         methods: {

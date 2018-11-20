@@ -76,6 +76,7 @@ export default {
     backgroundLinear () {
       return {
         'background': [
+          this.range[0],
           `-webkit-linear-gradient(left, ${this.range[0]} , ${this.range[1]})`,
           `-o-linear-gradient(right, ${this.range[0]}, ${this.range[1]})`,
           `-moz-linear-gradient(right, ${this.range[0]}, ${this.range[1]})`,

@@ -88,6 +88,18 @@ export default {
           tooltip: true
         },
         {
+          title: '重量',
+          key: 'weight',
+          ellipsis: true,
+          tooltip: true
+        },
+        {
+          title: '体积',
+          key: 'volume',
+          ellipsis: true,
+          tooltip: true
+        },
+        {
           title: '保险费',
           key: 'insuranceFee',
           render: (h, params) => {

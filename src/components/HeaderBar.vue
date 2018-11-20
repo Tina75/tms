@@ -73,6 +73,7 @@ import TabNav from '@/components/TabNav'
 import FontIcon from '@/components/FontIcon'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import TMSUrl from '../libs/constant/url.js'
+import Server from '@/libs/js/server'
 export default {
   name: 'headerBar',
   components: { TabNav, FontIcon },
@@ -105,23 +106,8 @@ export default {
         this.$ga.set('phone', this.UserInfo.phone)
         this.$ga.set('roleName', this.UserInfo.roleName)
         this.$ga.set('id', this.UserInfo.id)
-        /**
-         * 用户首次注册登录系统
-         * 1. 超级管理员提示系统有效期，同时打开流程图标签
-         * 2. 非管理员，提示初始化密码，同时打开流程图标签
-         */
-        if (sessionStorage.getItem('first_time_login') === 'true') {
-          if (this.UserInfo.type === 1) this.renew()
-          else this.changePasswordTip()
-          setTimeout(() => {
-            window.EMA.fire('openTab', {
-              path: TMSUrl.PROCESS,
-              query: { title: '业务流程' }
-            })
-            localStorage.setItem('first_time_login', true)
-          }, 1000)
-          sessionStorage.removeItem('first_time_login')
-        }
+        // 探索运掌柜
+        this.isPreviewDiscover()
       } catch (error) {
 
       }
@@ -253,8 +239,66 @@ export default {
       // return (route1.name === route2.name) && this.objEqual(params1, params2) && this.objEqual(query1, query2)
       return (route1.path === route2.path) && (query1.title === query2.title)
       // return (route1.name === route2.name) && this.objEqual(meta1, meta2)
-    }
+    },
 
+    // 是否第一次探索运掌柜
+    isPreviewDiscover () {
+      let vm = this
+      let firstBtn = {}
+      let roleBtnNum = 0
+      Server({
+        url: '/discover/list',
+        method: 'get'
+      }).then(({ data }) => {
+        if (data.code === 10000) {
+          firstBtn = data.data.find(b => b.code === '100001' && b.click !== 1)
+          data.data.forEach(element => {
+            if (element.role === 1) roleBtnNum++
+          })
+          // roleBtnNum > 2 （按钮集合中有一个是初次登录标识按钮）
+          if (firstBtn && roleBtnNum > 2) {
+            window.EMA.fire('openTab', {
+              path: TMSUrl.HELP,
+              query: { title: '探索运掌柜', descover: '0' }
+            })
+          } else {
+            vm.isOpenProcess()
+          }
+        }
+      }).then(() => {
+        if (firstBtn) vm.previewedDiscover({ id: firstBtn.id })
+      })
+    },
+
+    // 探索一次后将不再探索
+    previewedDiscover (params) {
+      Server({
+        url: '/discover/look',
+        method: 'post',
+        data: params
+      }).then(({ data }) => {
+      })
+    },
+
+    /**
+     * 用户首次注册登录系统
+     * 1. 超级管理员提示系统有效期，同时打开流程图标签
+     * 2. 非管理员，提示初始化密码，同时打开流程图标签
+     */
+    isOpenProcess () {
+      if (sessionStorage.getItem('first_time_login') === 'true') {
+        if (this.UserInfo.type === 1) this.renew()
+        else this.changePasswordTip()
+        setTimeout(() => {
+          window.EMA.fire('openTab', {
+            path: TMSUrl.PROCESS,
+            query: { title: '业务流程' }
+          })
+          localStorage.setItem('first_time_login', true)
+        }, 1000)
+        sessionStorage.removeItem('first_time_login')
+      }
+    }
   }
 }
 </script>
