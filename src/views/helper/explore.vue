@@ -57,7 +57,7 @@ export default {
   },
   computed: {
     percent () {
-      return parseInt(this.btnClickedNum / this.btnNum * 100)
+      return Math.ceil(this.btnClickedNum / this.btnNum * 100)
     }
   },
   watch: {
@@ -85,11 +85,6 @@ export default {
         localStorage.removeItem('percent')
       }
     }
-    // percent (newValue) {
-    //   if (newValue === 100) {
-    //     localStorage.percent = true
-    //   }
-    // }
   },
   mounted () {
     this.getBtnList()
@@ -108,7 +103,7 @@ export default {
           this.btnClickedNum++
           btn.click = 1
         }).then(() => {
-          if (parseInt(this.btnClickedNum / this.btnNum * 100) === 100 && this.percent === 100) {
+          if (Math.ceil(this.btnClickedNum / this.btnNum * 100) === 100 && this.percent === 100) {
             localStorage.percent = true
           }
         })
@@ -118,49 +113,49 @@ export default {
         case 207:
           this.openTab({
             path: TMSUrl.PROCESS,
-            query: { id: '业务流程' }
+            title: '业务流程'
           })
           break
         case 208:
           this.openTab({
             path: TMSUrl.EMPLOYEE_MANAGEMENT,
-            query: { id: '角色管理' }
+            title: '角色管理'
           })
           break
         case 209:
           this.openTab({
             path: TMSUrl.STAFF_MANAGEMENT,
-            query: { id: '员工管理' }
+            title: '员工管理'
           })
           break
         case 210:
           this.openTab({
             path: TMSUrl.SENDER_MANAGEMENT,
-            query: { id: '发货方管理' }
+            title: '发货方管理'
           })
           break
         case 211:
           this.openTab({
             path: TMSUrl.CARRIER_MANAGEMENT,
-            query: { id: '承运商管理' }
+            title: '承运商管理'
           })
           break
         case 212:
           this.openTab({
             path: TMSUrl.TRANSFER_MANAGEMENT,
-            query: { id: '外转方管理' }
+            title: '外转方管理'
           })
           break
         case 213:
           this.openTab({
             path: TMSUrl.IMPORT_ORDER,
-            query: { id: '批量导入' }
+            title: '批量导入'
           })
           break
         case 214:
           this.openTab({
             path: TMSUrl.CREATE_ORDER,
-            query: { id: '手工开单' }
+            title: '手工开单'
           })
           break
       }
