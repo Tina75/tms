@@ -1,3 +1,4 @@
+// 用于存储银行号，微信，支付宝号
 import SelectInput from '@/components/SelectInput'
 export default {
   components: {
