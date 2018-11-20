@@ -50,7 +50,7 @@
           <!-- <img :src="uploadImg"> -->
           <div :style="'height: 90px;background-image: url(' + uploadImg + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"></div>
           <div class="demo-upload-list-cover">
-            <div style="cursor: pointer;" @click="handleView">
+            <div style="cursor: pointer;" @click="handleView(0)">
               <div class="eye-circle">
                 <FontIcon type="ico_see" size="16" color="#fff"></FontIcon>
               </div>
@@ -108,6 +108,7 @@
 import server from '@/libs/js/server'
 import OssClient from 'ali-oss'
 import FontIcon from '@/components/FontIcon'
+import openSwipe from '@/components/swipe/index'
 export default {
   name: 'UpLoad',
 
@@ -299,8 +300,23 @@ export default {
     },
     // 预览
     handleView (i) {
-      this.visible = true
-      this.multiple && (this.curImg = this.uploadImgList[i].url)
+      // this.visible = true
+      // this.multiple && (this.curImg = this.uploadImgList[i].url)
+      let imageItems = []
+      if (this.multiple) {
+        this.uploadImgList.map((i) => {
+          imageItems.push({
+            src: i.url,
+            msrc: i.url
+          })
+        })
+      } else {
+        imageItems.push({
+          src: this.uploadImg,
+          msrc: this.uploadImg
+        })
+      }
+      openSwipe(i, imageItems)
     },
     // 删除
     handleRemove (i) {

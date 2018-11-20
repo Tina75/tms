@@ -222,6 +222,7 @@ import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import '@/libs/js/filter'
 import OrderPrint from './components/OrderPrint'
+import openSwipe from '@/components/swipe/index'
 import _ from 'lodash'
 export default {
   name: 'detail',
@@ -798,8 +799,16 @@ export default {
     },
     // 预览
     handleView (i) {
-      this.visible = true
-      this.curImg = this.detail.receiptOrder.receiptUrl[i]
+      // this.visible = true
+      // this.curImg = this.detail.receiptOrder.receiptUrl[i]
+      let imageItems = []
+      this.detail.receiptOrder.receiptUrl.map((item) => {
+        imageItems.push({
+          src: item,
+          msrc: item
+        })
+      })
+      openSwipe(i, imageItems)
     },
     // 每种状态对应各自主题色
     themeBarColor (code) {
