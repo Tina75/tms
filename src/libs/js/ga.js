@@ -73,8 +73,11 @@ const install = (Vue) => {
   let timers = {}
 
   function getComponentNameOrRoutePath (vm) {
-    if (!vm.$options) return
-    return vm.$options.name ? ('component: ' + vm.$options.name) : ('route: ' + vm.$route.path)
+    if (!vm.$options) {
+      return 'route: ' + window.location.hash.split('?')[0].replace('#', '')
+    } else {
+      return vm.$options.name ? ('component: ' + vm.$options.name) : ('route: ' + vm.$route.path)
+    }
   }
 
   Vue.mixin({
@@ -155,7 +158,7 @@ const install = (Vue) => {
     const timerName = [this.$options ? this.$options.name : '', name].join('__')
     if (!timers[timerName]) return
     if (!isProdEnv) {
-      console.log(`execute time: ${name} —> ${endTimestamp - timers[name]}`)
+      console.log(`execute time: ${name} —> ${endTimestamp - timers[timerName]}`)
     }
     this.$ga.time(
       isUserInfo ? 'userInfo' : 'performance',
