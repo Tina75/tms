@@ -787,80 +787,31 @@ export default {
       const vm = this
       vm.disabled = true
       return new Promise((resolve, reject) => {
-        vm.$refs.orderForm.validate((valid) => {
-          if (valid) {
-            const orderCargoList = vm.consignerCargoes
-            const orderForm = vm.orderForm
-            let findError = null
-            // 校验货物信息
-            for (let index in orderCargoList) {
-              let cargo = orderCargoList[index]
-              let info = cargo.validate()
-              if (!info.success) {
-                findError = info.message
-                break
+        this.validateForm().then(form => {
+          api.submitOrder(form)
+            .then(() => {
+              if (!form.id) {
+                this.$Message.success('创建订单成功')
+              } else {
+                this.$Message.success('修改订单成功')
               }
-            }
-
-            if (findError) {
-              vm.$Message.error(findError)
+              if (e && !form.id) {
+                // 保存不打印，创建订单
+                vm.resetForm()
+              }
               vm.disabled = false
-              reject(new Error(findError.message))
-              return
-            }
-            // 始发地遇到北京市等特殊直辖市，需要只保留第一级code
-            // let start = getCityCode(orderForm.start)
-            // let end = getCityCode(orderForm.end)
-            // 始发城市，目的城市，到达时间等需要额外处理
-            let form = Object.assign({}, orderForm, {
-              arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
-              deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
-              orderCargoList: orderCargoList.map(cargo => cargo.toJson()),
-              mileage: orderForm.mileage * 1000
-            });
-
-            ['start', 'end'].forEach(field => {
-              form[field] = parseInt(form[field])
-              // 保存本地记录
-              vm.$refs['start'].saveCity(form[field])
+              if (e && form.id) {
+                // 保存，不打印，修改页面
+                vm.closeTab()
+              }
+              // 重新获取客户列表
+              vm.getClients()
+              resolve()
             })
-            // 转换成分单位
-            transferFeeList.forEach((fee) => {
-              form[fee] = form[fee] ? form[fee] * 100 : 0
+            .catch((er) => {
+              vm.disabled = false
+              reject(er)
             })
-            api.submitOrder(form)
-              .then((response) => {
-                if (!form.id) {
-                  this.$Message.success('创建订单成功')
-                } else {
-                  this.$Message.success('修改订单成功')
-                }
-                if (e && !form.id) {
-                  // 保存不打印，创建订单
-                  vm.resetForm()
-                }
-                vm.disabled = false
-                if (e && form.id) {
-                  // 保存，不打印，修改页面
-                  vm.closeTab()
-                }
-                // 重新获取客户列表
-                vm.getClients()
-                resolve()
-              })
-              .catch((er) => {
-                vm.disabled = false
-                reject(er)
-              })
-          } else {
-            vm.disabled = false
-            // 主动滚动到顶部
-            if (vm.orderForm.pickup) {
-              vm.$parent.$el.scrollTop = 0
-            }
-            vm.$Message.error('请填写必填信息')
-            reject(new Error('请填写必填信息'))
-          }
         })
       })
     },
@@ -951,6 +902,7 @@ export default {
     shipImmedite (e = 'orderCreate') {
       const self = this
       this.validateForm().then(form => {
+        this.disabled = false
         if (form.pickup === 1) {
           // 小车上门 提货权限
           if (this.hasPower(120201)) {
@@ -1031,7 +983,7 @@ export default {
     },
     validateForm () {
       const vm = this
-      // vm.disabled = true
+      vm.disabled = true
       return new Promise((resolve, reject) => {
         vm.$refs.orderForm.validate((valid) => {
           if (valid) {
@@ -1049,10 +1001,11 @@ export default {
             }
             if (findError) {
               vm.$Message.error(findError)
-              // vm.disabled = false
+              vm.disabled = false
               reject(new Error(findError.message))
               return
             }
+            // 始发城市，目的城市，到达时间等需要额外处理
             let form = Object.assign({}, orderForm, {
               arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
               deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
@@ -1071,7 +1024,7 @@ export default {
             })
             resolve(form)
           } else {
-            // vm.disabled = false
+            vm.disabled = false
             // 主动滚动到顶部
             if (vm.orderForm.pickup) {
               vm.$parent.$el.scrollTop = 0
