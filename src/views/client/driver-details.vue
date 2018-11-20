@@ -131,7 +131,7 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import openSwipe from '@/components/swipe/index'
+import prepareOpenSwipe from '@/components/swipe/index'
 import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import { CODE, carrierDelete, carrierDetailsForDriver } from './client'
 export default {
@@ -178,16 +178,12 @@ export default {
         {
           title: '行驶证',
           src: this.driverList.travelPhoto,
-          msrc: this.driverList.travelPhoto,
-          w: 600,
-          h: 400
+          msrc: this.driverList.travelPhoto
         },
         {
           title: '驾驶证',
           src: this.driverList.drivePhoto,
-          msrc: this.driverList.drivePhoto,
-          w: 600,
-          h: 400
+          msrc: this.driverList.drivePhoto
         }
       ]
     }
@@ -206,6 +202,7 @@ export default {
         if (res.data.code === CODE) {
           this.driverList = res.data.data
           this.initData()
+          this.openSwipe = prepareOpenSwipe(this.imageItems)
         }
       })
     },
@@ -228,7 +225,7 @@ export default {
       this.line2 = s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2
     },
     handleView (index) {
-      openSwipe(index, this.imageItems)
+      this.openSwipe(index)
       // this.visible = true
       // this.imagePath = imagePath
     },
