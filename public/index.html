@@ -19,14 +19,15 @@
       'https://www.google-analytics.com/analytics.js',
       'ga')
       ga('create', 'UA-128241354-1', 'auto')
-      if ((navigator.userAgent.indexOf('MSIE') >= 0) && (navigator.userAgent.indexOf('Opera') < 0)) {
-        // 上报不兼容情况并跳转升级浏览器页面
-        ga('send', 'event', 'userInfo', 'incompatible', navigator.userAgent)
-        setTimeout(function () {
-          location.href = 'https://www.tms5566.com/upgrade.html'
-        }, 20)
-      }
     </script>
+    <!--[if lte IE 9]>
+    <script>
+      ga('send', 'event', 'userInfo', 'incompatible', navigator.userAgent)
+      setTimeout(function () {
+        location.href = 'https://www.tms5566.com/upgrade.html'
+      }, 20)
+    </script>
+    <![endif]-->
   </head>
   <body>
     <div id="app"></div>
