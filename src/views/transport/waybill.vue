@@ -437,7 +437,7 @@ export default {
     // 派车
     billSendCar (id) {
       const self = this
-      self.sendCar([id]).then(() => {
+      self.waybillSendCar([id]).then(() => {
         self.openDialog({
           name: 'transport/dialog/action',
           data: {
