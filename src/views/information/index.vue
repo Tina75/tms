@@ -1,6 +1,6 @@
 <template>
-  <div id="message-list-container" class="message-list-container">
-    <Row :style="{'min-height':DocumentHeight +'px'}" class="temAll">
+  <div id="message-list-container" class="message-list-container temAll">
+    <Row :style="{'min-height':DocumentHeight +'px'}">
       <Col span="24" class="contentDiv">
       <div class="contendBorderBttom">
         <span class="iconRightTitle"></span>

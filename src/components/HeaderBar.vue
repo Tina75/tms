@@ -257,10 +257,12 @@ export default {
           })
           // roleBtnNum > 2 （按钮集合中有一个是初次登录标识按钮）
           if (firstBtn && roleBtnNum > 2) {
-            window.EMA.fire('openTab', {
-              path: TMSUrl.HELP,
-              query: { title: '探索运掌柜', descover: '0' }
-            })
+            setTimeout(() => {
+              window.EMA.fire('openTab', {
+                path: TMSUrl.HELP,
+                query: { title: '探索运掌柜', descover: '0' }
+              })
+            }, 1000)
           } else {
             vm.isOpenProcess()
           }

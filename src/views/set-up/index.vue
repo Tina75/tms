@@ -1,6 +1,6 @@
 <template>
-  <div id="set-up-container" class="set-up-container">
-    <Row id="temAll" :style="styleHeight" class="temAll">
+  <div id="set-up-container" class="set-up-container temAll">
+    <Row id="temAll" :style="styleHeight">
       <Col span="3">
       <Menu active-name="修改密码" class="menuList" style="width:100%">
         <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
