@@ -72,7 +72,7 @@
       :table-head-type= "headType"
       width="100%"
       @on-load = "onLoad"
-      @on-column-change="handleColumnChange">
+    >
     </page-table>
   </div>
 </template>
@@ -679,10 +679,10 @@ export default {
         fileName: '运单报表'
       })
     },
-    // 筛选列表显示字段
-    handleColumnChange (val) {
-      this.extraColumns = val
-    },
+    // // 筛选列表显示字段
+    // handleColumnChange (val) {
+    //   this.extraColumns = val
+    // },
     handleTimeChange (val) {
       this.keywords.startTime = val[0]
       this.keywords.endTime = val[1]
