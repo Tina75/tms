@@ -45,15 +45,18 @@ export default {
           this.diffAcount = this.dataHandle(accountObj['alipay'])
           break
         default:
+          this.diffAcount = []
           break
       }
     }
   },
   mounted () {
     // 初始为银行卡号，先给银行卡号赋初始值
-    let accountObj = this.getAccount()
-    this.diffAcount = this.dataHandle(accountObj['card'])
-    this.diffBankBranch = this.dataHandle(accountObj['bankBranch'])
+    if (this.writeOffForm.payType === '2') {
+      let accountObj = this.getAccount()
+      this.diffAcount = this.dataHandle(accountObj['card'])
+      this.diffBankBranch = this.dataHandle(accountObj['bankBranch'])
+    }
   },
   methods: {
     isExist (key, value) {

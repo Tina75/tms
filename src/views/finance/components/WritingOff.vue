@@ -46,7 +46,7 @@
     </div>
     <div  :style="{height: height - 20 +'px'}" class="list-box">
       <ul class="leftList">
-        <li v-for="(item,index) in companyData" :class="{companyDataActive:companyDataActive === item.partnerName}" :key="index" class="list" @click="showOrderData(item)">
+        <li v-for="(item,index) in companyData" :class="{companyDataActive:companyDataActive === item.id}" :key="index" class="list" @click="showOrderData(item)">
           <!--<Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showOrderData"></Table>-->
           <div class="icon">
             <FontIcon slot="icon" :type="iconType" ></FontIcon>
@@ -484,13 +484,14 @@ export default {
           endTime: this.writingOffQuerySave.period[1] ? this.writingOffQuerySave.period[1].getTime() + 86400000 : ''
         }
       }).then(res => {
-        this.companyData = res.data.data.map(item => {
+        this.companyData = res.data.data.map((item, index) => {
           return Object.assign({}, item, {
             calcTotalFeeText: (item.calcTotalFee / 100).toFixed(2),
-            verifiedFeeText: (item.verifiedFee / 100).toFixed(2)
+            verifiedFeeText: (item.verifiedFee / 100).toFixed(2),
+            id: item.partnerName + index
           })
         })
-        if (this.currentPartner.partnerName && this.companyData.some(item => item.partnerName === this.currentPartner.partnerName)) {
+        if (this.currentPartner.partnerName && this.companyData.some(item => item.id === this.currentPartner.id)) {
           this.showOrderData(this.companyData.find(item => this.currentPartner.partnerName === item.partnerName))
         } else {
           this.orderData = []
@@ -498,8 +499,7 @@ export default {
       }).catch(err => console.error(err))
     },
     showOrderData (data) {
-      console.log(data)
-      this.companyDataActive = data.partnerName
+      this.companyDataActive = data.id
       this.currentPartner = data
       this.orderData = data.orderInfos.map(item => {
         return Object.assign({}, item, {
