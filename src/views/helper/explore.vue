@@ -1,14 +1,11 @@
 <template>
   <div class="contenAll">
-    <!-- <i-circle :percent="percent">
-      <span class="demo-circle-inner" style="font-size:24px">{{ percent }}%</span>
-    </i-circle> -->
-    <WaveProcess class="ivu-chart-circle"></WaveProcess>
+    <WaveProcess :process="percent" class="ivu-chart-circle"></WaveProcess>
     <div class="contentLabel">
       <p class="finallyLabel">恭喜您完成运掌柜探索</p>
       <p class="askLabel">若有任何疑问，请联系您的专属客户经理哦~</P>
     </div>
-    <Steps :current="4" class="stepDiv">
+    <Steps :current="-1" :style="stepMarginLeft" class="stepDiv">
       <step v-for="btnItem in stepList" :key="btnItem.id" icon="md-radio-button-on">
         <div class="ivu-steps-content">
           <div class="configDiv">
@@ -19,7 +16,9 @@
                 :class="btn.click === 0 ? circleBtnClicked : circleBtn"
                 shape="circle"
                 @click="previewed(btn.id)">{{btn.name}}
-                <span v-if="btn.click > 0">√</span>
+                <span v-if="btn.click > 0">
+                  <Icon type="md-checkmark" />
+                </span>
               </Button>
             </div>
           </div>
@@ -51,12 +50,23 @@ export default {
       btnNum: 0,
       circleBtnClicked: 'circleBtnClicked',
       circleBtn: 'circleBtn',
-      stepBtnList: []
+      stepBtnList: [],
+      stepMarginLeft: ''
     }
   },
   computed: {
     percent () {
       return parseInt(this.btnClickedNum / this.btnNum * 100)
+    }
+  },
+  watch: {
+    stepList (newList) {
+      let setpLeft = ''
+      if (newList.length === 1) setpLeft = '49%'
+      else if (newList.length === 2) setpLeft = '32%'
+      else if (newList.length === 3) setpLeft = '23%'
+      else if (newList.length === 4) setpLeft = '18%'
+      this.stepMarginLeft = 'padding-left:' + setpLeft
     }
   },
   mounted () {
@@ -189,7 +199,7 @@ export default {
 }
 </script>
 <style lang='stylus' scoped>
->>>.ivu-chart-circle
+.ivu-chart-circle
   margin-left: calc(50% - 60px);
 .contenAll
   padding-top 100px
@@ -223,5 +233,4 @@ export default {
   color #FFFFFF
 .stepDiv
   margin-top 60px
-  margin-left 80px
 </style>

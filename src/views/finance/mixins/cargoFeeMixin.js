@@ -99,7 +99,7 @@ export default {
       const ids = []
       const needPay = this.selectedRows.reduce((total, item) => {
         ids.push(item.id)
-        total += item.collectionFee
+        total += item.collectionMoney
         return total
       }, 0)
       // 单笔核销
@@ -134,7 +134,7 @@ export default {
           id: data.id,
           title: this.verifyTitle,
           verifyType: this.verifyType,
-          needPay: (data.collectionFee / 100).toFixed(2),
+          needPay: (data.collectionMoney / 100).toFixed(2),
           orderNum: 0
         },
         methods: {

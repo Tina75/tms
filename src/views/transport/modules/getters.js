@@ -1,1 +1,1 @@
-export const waybillTabCount = ({ transport }) => transport.waybillTabCount
+export const waybillTabCount = state => state.waybillTabCount

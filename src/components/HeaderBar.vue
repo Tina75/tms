@@ -108,23 +108,6 @@ export default {
         this.$ga.set('id', this.UserInfo.id)
         // 探索运掌柜
         this.isPreviewDiscover()
-        /**
-         * 用户首次注册登录系统
-         * 1. 超级管理员提示系统有效期，同时打开流程图标签
-         * 2. 非管理员，提示初始化密码，同时打开流程图标签
-         */
-        if (sessionStorage.getItem('first_time_login') === 'true') {
-          if (this.UserInfo.type === 1) this.renew()
-          else this.changePasswordTip()
-          setTimeout(() => {
-            window.EMA.fire('openTab', {
-              path: TMSUrl.PROCESS,
-              query: { title: '业务流程' }
-            })
-            localStorage.setItem('first_time_login', true)
-          }, 1000)
-          sessionStorage.removeItem('first_time_login')
-        }
       } catch (error) {
 
       }
@@ -262,17 +245,23 @@ export default {
     isPreviewDiscover () {
       let vm = this
       let firstBtn = {}
+      let roleBtnNum = 0
       Server({
         url: '/discover/list',
         method: 'get'
       }).then(({ data }) => {
         if (data.code === 10000) {
           firstBtn = data.data.find(b => b.code === '100001' && b.click !== 1)
-          if (firstBtn) {
+          data.data.forEach(element => {
+            if (element.role === 1) roleBtnNum++
+          })
+          if (firstBtn && roleBtnNum > 2) {
             window.EMA.fire('openTab', {
               path: TMSUrl.HELP,
               query: { title: '探索运掌柜', descover: '0' }
             })
+          } else {
+            vm.isOpenProcess()
           }
         }
       }).then(() => {
@@ -288,6 +277,26 @@ export default {
         data: params
       }).then(({ data }) => {
       })
+    },
+
+    /**
+     * 用户首次注册登录系统
+     * 1. 超级管理员提示系统有效期，同时打开流程图标签
+     * 2. 非管理员，提示初始化密码，同时打开流程图标签
+     */
+    isOpenProcess () {
+      if (sessionStorage.getItem('first_time_login') === 'true') {
+        if (this.UserInfo.type === 1) this.renew()
+        else this.changePasswordTip()
+        setTimeout(() => {
+          window.EMA.fire('openTab', {
+            path: TMSUrl.PROCESS,
+            query: { title: '业务流程' }
+          })
+          localStorage.setItem('first_time_login', true)
+        }, 1000)
+        sessionStorage.removeItem('first_time_login')
+      }
     }
   }
 }

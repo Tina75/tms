@@ -19,6 +19,10 @@ export default {
     })
   },
 
+  /**
+   * 送货管理
+   */
+
   // 删除运单
   deleteWaybills (store, waybillIds) {
     return new Promise((resolve, reject) => {
@@ -115,7 +119,8 @@ export default {
     })
   },
 
-  getwaybillTabCount ({ state, commit }) {
+  // 获取运单列表tab count
+  getwaybillTabCount ({ commit }) {
     Server({
       url: '/waybill/tab/cnt',
       method: 'get'

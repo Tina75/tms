@@ -1,11 +1,19 @@
 <template>
   <div class="wave-process">
     <!-- <canvas></canvas> -->
-    <div :style="styles" class="ocean">
-      <div class="wave"></div>
-      <div class="wave"></div>
+    <div v-if="process !== 0">
+      <div :style="styles" class="ocean">
+        <div class="wave"></div>
+        <div class="wave"></div>
+      </div>
       <div class="wave-text">
         <span>{{process}}%</span>
+      </div>
+    </div>
+    <div v-else>
+      <div class="wave-logo">
+        <i class="icon font_family icon-logo-1"></i><br/>
+        <i class="icon font_family icon-ico-text"></i>
       </div>
     </div>
   </div>
@@ -65,15 +73,27 @@ export default {
     top: -7px;
     animation: wave 8s cubic-bezier( 0.5, 0.32, 0.49, 0.66) -.125s infinite, swell 6s ease -1.25s infinite;
     opacity: 1;
-  .wave-text
-    position absolute
-    top -88px
-    left 0px
-    text-align center
-    width 140px
-    span
-      font-size 24px
-      color #333
+.wave-text
+  position absolute
+  top 50px
+  width 140px
+  text-align center
+  span
+    font-size 24px
+    color #333
+.wave-logo
+  position absolute
+  width 140px
+  text-align center
+  .icon-ico-text
+    color #199BB1
+    font-size 30px
+    position: absolute
+    top 80px
+    left 23px
+  .icon-logo-1
+    color #199BB1
+    font-size: 75px;
 @keyframes wave {
   0% {
     margin-left: 0;
