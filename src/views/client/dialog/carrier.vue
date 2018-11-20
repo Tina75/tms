@@ -10,7 +10,7 @@
   >
     <p slot="header" style="text-align:center">{{title}}</p>
     <Form :model="validate.type" :rules="ruleValidate.type" :label-width="122" label-position="left">
-      <FormItem  label="承运商类型:" prop="selectStatus">
+      <FormItem  label="承运商类型：" prop="selectStatus">
         <RadioGroup v-model="validate.type.selectStatus">
           <Radio :disabled="radioDisabled" label="1">
             <span>个体司机</span>
@@ -112,12 +112,12 @@
       <p class="modalTitle">证件照</p>
       <Row>
         <Col span="5">
-        <up-load ref="upload1"  :upload-img="validate.driver.travelPhoto"></up-load>
-        <p class="uploadLabel">行驶证</p>
+        <up-load ref="upload1"></up-load>
+        <p :upload-img="validate.driver.travelPhoto" class="uploadLabel">行驶证</p>
         </Col>
         <Col span="5">
-        <up-load ref="upload2" :upload-img="validate.driver.drivePhoto"></up-load>
-        <p  class="uploadLabel">驾驶证</p>
+        <up-load ref="upload2"></up-load>
+        <p :upload-img="validate.driver.drivePhoto" class="uploadLabel">驾驶证</p>
         </Col>
       </Row><br/>
       <Row>
@@ -186,7 +186,7 @@ import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
 import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, CODE, CAR } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
-import UpLoad from '@/components/upLoad/index.vue'
+import UpLoad from '@/components/upLoad/'
 import _ from 'lodash'
 export default {
   name: 'carrier',
