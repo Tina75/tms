@@ -255,6 +255,7 @@ export default {
           data.data.forEach(element => {
             if (element.role === 1) roleBtnNum++
           })
+          // roleBtnNum > 2 （按钮集合中有一个是初次登录标识按钮）
           if (firstBtn && roleBtnNum > 2) {
             window.EMA.fire('openTab', {
               path: TMSUrl.HELP,

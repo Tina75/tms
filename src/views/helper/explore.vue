@@ -2,7 +2,8 @@
   <div class="contenAll">
     <WaveProcess :process="percent" class="ivu-chart-circle"></WaveProcess>
     <div class="contentLabel">
-      <p class="finallyLabel">恭喜您完成运掌柜探索</p>
+      <p v-if="percent !== 100" class="finallyLabel">欢迎探索运掌柜</p>
+      <p v-else class="finallyLabel">恭喜您完成运掌柜探索</p>
       <p class="askLabel">若有任何疑问，请联系您的专属客户经理哦~</P>
     </div>
     <Steps :current="-1" :style="stepMarginLeft" class="stepDiv">
@@ -200,7 +201,7 @@ export default {
 </script>
 <style lang='stylus' scoped>
 .ivu-chart-circle
-  margin-left: calc(50% - 60px);
+  margin-left: calc(50% - 70px);
 .contenAll
   padding-top 100px
   margin 0 auto

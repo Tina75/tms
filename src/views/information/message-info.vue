@@ -80,6 +80,7 @@ export default {
   overflow: auto;
   background: #fff;
   padding: 20px 200px;
+  margin: -20px -15px;
   .title
     font-weight:500;
     text-align:left;

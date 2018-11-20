@@ -152,6 +152,7 @@ export default {
   height: 100%;
   background:rgba(243,245,249,1);
   overflow: auto;
+  margin: -20px -15px;
   .title
     font-size:16px;
     font-weight:bold;

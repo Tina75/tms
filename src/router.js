@@ -33,22 +33,6 @@ const router = new Router({
     //   component: () => import('@/views/home/index')
     // },
     {
-      path: '/set-up/index',
-      component: () => import('@/views/set-up/index')
-    },
-    {
-      path: '/information/index',
-      component: () => import('@/views/information/index')
-    },
-    {
-      path: '/information/message-info',
-      component: () => import('@/views/information/message-info')
-    },
-    {
-      path: '/helper/index',
-      component: () => import('@/views/helper/index')
-    },
-    {
       path: '/:name/:name1/:name2',
       component: PageRouter
     },
