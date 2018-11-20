@@ -308,7 +308,8 @@ export default {
       orderLogCount: 0,
       showLog: false,
       orderLog: [],
-      orderPrint: []
+      orderPrint: [],
+      imgViewFunc: null
     }
   },
 
@@ -558,6 +559,14 @@ export default {
           this.filterReceiptButton()
           this.orderLog = res.data.data.receiptOrderLogs // 回单日志
           this.orderLogCount = res.data.data.receiptOrderLogs.length // 回单日志数量
+          let imageItems = []
+          this.detail.receiptOrder.receiptUrl.map((item) => {
+            imageItems.push({
+              src: item,
+              msrc: item
+            })
+          })
+          this.imgViewFunc = openSwipe(imageItems)
         })
       }
     },
@@ -801,14 +810,7 @@ export default {
     handleView (i) {
       // this.visible = true
       // this.curImg = this.detail.receiptOrder.receiptUrl[i]
-      let imageItems = []
-      this.detail.receiptOrder.receiptUrl.map((item) => {
-        imageItems.push({
-          src: item,
-          msrc: item
-        })
-      })
-      openSwipe(i, imageItems)
+      this.imgViewFunc(i)
     },
     // 每种状态对应各自主题色
     themeBarColor (code) {
