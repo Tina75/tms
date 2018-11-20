@@ -9,7 +9,7 @@
     @on-visible-change="close"
   >
     <p slot="header" style="text-align:center">{{title}}</p>
-    <Form :model="validate.type" :rules="ruleValidate.type" :label-width="122">
+    <Form :model="validate.type" :rules="ruleValidate.type" :label-width="122" label-position="left">
       <FormItem  label="承运商类型:" prop="selectStatus">
         <RadioGroup v-model="validate.type.selectStatus">
           <Radio :disabled="radioDisabled" label="1">
@@ -23,59 +23,59 @@
     </Form>
     <div class="list-info"></div>
     <!--个体司机-->
-    <Form v-show="validate.type.selectStatus == 1" ref="validateDriver" :model="validate.driver" :rules="ruleValidate.driver" :label-width="90">
+    <Form v-show="validate.type.selectStatus == 1" ref="validateDriver" :model="validate.driver" :rules="ruleValidate.driver" :label-width="90" label-position="right">
       <p class="modalTitle">基础信息</p>
       <Row>
         <Col :span="8">
-        <FormItem label="司机姓名:" prop="driverName">
+        <FormItem label="司机姓名：" prop="driverName">
           <Input v-model="validate.driver.driverName" :maxlength="15" placeholder="必填"/>
         </FormItem>
         </Col>
         <Col :span="8">
-        <FormItem label="手机号:" prop="driverPhone">
+        <FormItem label="手机号：" prop="driverPhone">
           <Input v-model="validate.driver.driverPhone" :maxlength="11" placeholder="必填"/>
         </FormItem>
         </Col>
         <Col :span="8">
-        <FormItem label="车牌号:" prop="carNO">
+        <FormItem label="车牌号：" prop="carNO">
           <Input v-model="validate.driver.carNO" :maxlength="8" placeholder="必填"/>
         </FormItem>
         </Col>
       </Row>
       <Row>
         <Col :span="8">
-        <FormItem label="车型:" prop="carType">
+        <FormItem label="车型：" prop="carType">
           <Select v-model="validate.driver.carType" >
             <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
           </Select>
         </FormItem>
         </Col>
         <Col :span="8">
-        <FormItem label="车长:" prop="carLength">
+        <FormItem label="车长：" prop="carLength">
           <Select v-model="validate.driver.carLength" >
             <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
           </Select>
         </FormItem>
         </Col>
         <Col :span="8">
-        <FormItem label="载重:" prop="shippingWeight">
+        <FormItem label="载重：" prop="shippingWeight">
           <Input v-model="validate.driver.shippingWeight" :maxlength="9" placeholder="必填"/>吨
         </FormItem>
         </Col>
       </Row>
       <Row>
         <Col :span="8">
-        <FormItem label="净空:" class="ivu-form-item-required blank" prop="shippingVolume">
+        <FormItem label="净空：" class="ivu-form-item-required blank" prop="shippingVolume">
           <Input v-model="validate.driver.shippingVolume" :maxlength="9" placeholder="请输入"/>方
         </FormItem>
         </Col>
         <Col :span="8">
-        <FormItem label="车辆品牌:" class="ivu-form-item-required blank">
+        <FormItem label="车辆品牌：" class="ivu-form-item-required blank">
           <Input v-model="validate.driver.carBrand" :maxlength="20" placeholder="如：东风"></Input>
         </FormItem>
         </Col>
         <Col :span="8">
-        <FormItem label="结算方式:" class="ivu-form-item-required blank">
+        <FormItem label="结算方式：" class="ivu-form-item-required blank">
           <Select v-model="validate.driver.payType" clearable>
             <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
           </Select>
@@ -86,24 +86,24 @@
       <div class="lineDiv">
         <Row>
           <Col span="8">
-          <FormItem label="出发地1:">
+          <FormItem label="出发地1：">
             <CitySelect ref="start" :code-type="codeType" v-model="address1.s" clearable></CitySelect>
           </FormItem>
           </Col>
           <Col span="8" style="margin-left: 25px;">
-          <FormItem label="目的地1:">
+          <FormItem label="目的地1：">
             <CitySelect ref="start" :code-type="codeType" v-model="address1.e" clearable></CitySelect>
           </FormItem>
           </Col>
         </Row>
         <Row>
           <Col span="8">
-          <FormItem label="出发地2:">
+          <FormItem label="出发地2：">
             <CitySelect ref="start" :code-type="codeType" v-model="address2.s" clearable></CitySelect>
           </FormItem>
           </Col>
           <Col span="8" style="margin-left: 25px;">
-          <FormItem label="目的地2:">
+          <FormItem label="目的地2：">
             <CitySelect ref="start" :code-type="codeType" v-model="address2.e" clearable></CitySelect>
           </FormItem>
           </Col>
@@ -134,7 +134,7 @@
       </Row>
     </Form>
     <!--运输公司-->
-    <Form v-show="validate.type.selectStatus == 2" ref="validateCompany" :model="validate.company" :rules="ruleValidate.company" :label-width="90">
+    <Form v-show="validate.type.selectStatus == 2" ref="validateCompany" :model="validate.company" :rules="ruleValidate.company" :label-width="90" label-position="right">
       <p class="modalTitle">基础信息</p>
       <Row>
         <Col span="8">

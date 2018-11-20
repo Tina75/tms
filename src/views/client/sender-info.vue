@@ -621,7 +621,7 @@ export default {
     _consignerCargoAdd () {
       var _this = this
       this.openDialog({
-        name: 'client/dialog/sender-cargo',
+        name: 'client/dialog/[sender-cargo]',
         data: {
           title: '新增货品资料',
           flag: 1, // 新增

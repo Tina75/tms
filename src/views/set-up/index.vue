@@ -16,7 +16,7 @@
       <!--密码设置-->
       <div v-if="'1' === this.rightKey" key="1" class="divSetContent">
         <Col span="10" class="setConf">
-        <Form ref="formPwd" :model="formPwd" :rules="rulePwd" :label-width="90" label-position="left">
+        <Form ref="formPwd" :model="formPwd" :rules="rulePwd" :label-width="90" label-position="right">
           <FormItem label="原始密码：" prop="oldPassword" class="labelClassSty">
             <Input v-model="formPwd.oldPassword" type="password" placeholder="请输入原始密码" class="inputClassSty"></Input>
           </FormItem>
@@ -35,7 +35,7 @@
       <!--个人设置-->
       <div v-else-if="'2' === this.rightKey" key="2" class="divSetContent">
         <Col span="10" class="setConf">
-        <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="90" label-position="left">
+        <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="90" label-position="right">
           <FormItem label="账号：" class="labelClassSty">
             <span>{{formPersonal.phone}}</span>
           </FormItem>
@@ -81,7 +81,7 @@
       <!--公司设置-->
       <div v-else-if="'4' === this.rightKey" key="4" class="divSetContent">
         <div style="width: 70%;">
-          <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="120" label-position="left">
+          <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="110" label-position="right">
             <FormItem label="公司名称：" prop="name" class="labelClassSty">
               <Input v-model="formCompany.name" :maxlength="25" placeholder="请输入公司名称" class="inputClassSty"></Input>
             </FormItem>

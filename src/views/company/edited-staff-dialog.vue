@@ -4,7 +4,7 @@
       <p slot="header" class="ModalTitle">
         <span>{{title}}</span>
       </p>
-      <Form ref="formModal" :model="formModal" :rules="rulesModal" :label-width="100" label-position="left" class="formModal">
+      <Form ref="formModal" :model="formModal" :rules="rulesModal" :label-width="90" label-position="right" class="formModal">
         <FormItem label="员工姓名：" prop="name">
           <Input v-model="formModal.name" placeholder="请输入员工姓名" class="inputClass"></Input>
         </FormItem>
