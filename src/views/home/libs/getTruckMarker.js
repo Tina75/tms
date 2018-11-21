@@ -20,8 +20,8 @@ const truckerMarker = (bmap) => {
       let endPixel = bmap.pointToPixel(endPoint)
       let deg = 0
 
-      let disx = endPixel.x - startPixel.x
-      let disy = endPixel.y - startPixel.y
+      let disx = startPixel.x - endPixel.x
+      let disy = startPixel.y - endPixel.y
       deg = 360 * Math.atan2(disy, disx) / (2 * Math.PI) + 90
       marker.setRotation(deg)
     } else {
