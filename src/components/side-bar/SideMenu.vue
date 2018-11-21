@@ -86,6 +86,17 @@ export default {
   methods: {
 
     getopenedNames (activeName) {
+      /**
+       * 订单管理菜单分割
+       * 1. 订单管理合并到受理开单
+       * 2. 回单管理合并到运输管理
+       */
+      if (activeName.indexOf('order-management') !== -1) {
+        if (activeName.indexOf('receipt') !== -1) {
+          return ['/transport']
+        }
+        return ['/order']
+      }
       const matchs = activeName.split('/')
       return ['/' + matchs[1]]
     },

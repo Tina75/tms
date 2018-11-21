@@ -1,6 +1,6 @@
 <template>
-  <div id="message-list-container" class="message-list-container">
-    <Row class="temAll">
+  <div id="message-list-container" class="message-list-container temAll">
+    <Row :style="{'min-height':DocumentHeight +'px'}">
       <Col span="24" class="contentDiv">
       <div class="contendBorderBttom">
         <span class="iconRightTitle"></span>
@@ -182,7 +182,7 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import TMSUrl from '@/libs/constant/url'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'info',
   components: {},
@@ -234,6 +234,9 @@ export default {
       orderMessageList: [],
       transportMessageList: []
     }
+  },
+  computed: {
+    ...mapGetters(['DocumentHeight'])
   },
   watch: {
     checkAllGroup (newVal) {
@@ -487,7 +490,8 @@ export default {
     font-weight: bold;
 .temAll
   width: 100%;
-  background:rgba(243,245,249,1);
+  background: #fff
+  margin: -20px -15px;
 .megDiv
   clear: both;
   height: 70px;

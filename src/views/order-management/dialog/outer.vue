@@ -5,8 +5,8 @@
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>订单外转</span>
       </p>
-      <Form ref="info" :model="info" :rules="rules" :label-width="120" label-position="left">
-        <FormItem label="外转方:" prop="transfereeName">
+      <Form ref="info" :model="info" :rules="rules" :label-width="120" label-position="right">
+        <FormItem label="外转方：" prop="transfereeName">
           <SelectInput
             v-model="info.transfereeName"
             :maxlength="20"
@@ -18,38 +18,38 @@
             @on-select="handleSelectTransferee">
           </SelectInput>
         </FormItem>
-        <FormItem label="外转方运单号:" class="ivu-form-item-required blank">
+        <FormItem label="外转方运单号：">
           <Input v-model="info.outTransNo" :maxlength="20" style="width:200px"/>
         </FormItem>
-        <FormItem label="付款方式:" prop="payType">
+        <FormItem label="付款方式：" prop="payType">
           <Select v-model="info.payType" transfer style="width:200px">
             <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
           </Select>
         </FormItem>
-        <FormItem label="公里数:" prop="mileage" class="ivu-form-item-required blank">
-          <TagNumberInput :min="0" v-model="info.mileage" style="width:200px">
-            <span slot="suffix" class="order-create__input-suffix">公里</span>
+        <FormItem label="公里数：" prop="mileage">
+          <TagNumberInput :min="0" v-model="info.mileage" style="width:150px">
           </TagNumberInput>
+          <span class="unitSpan">公里</span>
         </FormItem>
-        <FormItem label="外转运费:" prop="transFee">
-          <TagNumberInput :min="0" v-model="info.transFee" placeholder="请填写外转运费" style="width:175px">
-            <span slot="suffix" class="order-create__input-suffix">元</span>
+        <FormItem label="外转运费：" prop="transFee">
+          <TagNumberInput :min="0" v-model="info.transFee" placeholder="请填写外转运费" style="width:150px">
           </TagNumberInput>
+          <span class="unitSpan">元</span>
           <span @click="showChargeRules">
             <FontIcon type="jisuanqi" size="22" color="#00a4bd" class="i-ml-5" style="vertical-align: middle;"></FontIcon>
           </span>
         </FormItem>
-        <FormItem label="返现运费:" prop="cashBack" class="ivu-form-item-required blank">
-          <TagNumberInput v-model="info.cashBack" style="width:175px">
-            <span slot="suffix" class="order-create__input-suffix">元</span>
+        <FormItem label="返现运费：" prop="cashBack">
+          <TagNumberInput v-model="info.cashBack" style="width:150px">
           </TagNumberInput>
+          <span class="unitSpan">元</span>
           <span>
             <Tooltip
-              style="margin-left: 5px;"
+              class="unitSpan"
               max-width="200"
               transfer
               content="返现运费是指在实际运输过程中存在某一段运输没有执行，需要将提前支付的运费返还">
-              <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;" />
+              <Icon type="ios-alert" class="ios-alert"/>
             </Tooltip>
           </span>
         </FormItem>
@@ -219,4 +219,10 @@ export default {
 .blank
   /deep/ .ivu-form-item-label:before
     visibility: hidden
+.unitSpan
+  margin-left 5px
+.ios-alert
+ font-size 20px
+ color #FFBB44
+ margin-top -3px
 </style>

@@ -10,7 +10,7 @@
     >
       <p slot="header" style="text-align:center">{{title}}</p>
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122">
-        <FormItem label="发货地址:">
+        <FormItem label="发货地址：">
           <Row>
             <Col span="11">
             <FormItem prop="city">

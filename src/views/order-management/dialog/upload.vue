@@ -46,7 +46,7 @@
 <script>
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
-import UpLoad from '@/components/upLoad/'
+import UpLoad from '@/components/upLoad/index.vue'
 export default {
   name: 'uploadOrUpdate',
 

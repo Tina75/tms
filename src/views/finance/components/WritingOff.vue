@@ -4,9 +4,14 @@
     <div class="query-box">
       <Form :model="writingOffQuery" label-position="left" inline>
         <Row>
-          <Col span="6" style="margin-right: 50px">
-          <FormItem :label-width="65" :label="sceneMap[scene] + '：'">
-            <Input v-model="writingOffQuery.name" :placeholder="`请输入${sceneMap[scene]}名称`"/>
+          <Col :span="scene === 2 ? 6:5" style="margin-right: 40px">
+          <FormItem :label-width="60" :label="sceneMap[scene] + '：'">
+            <Input v-model="writingOffQuery.name" :placeholder="`请输入${sceneMap[scene]}名称`" :maxlength="20"/>
+          </FormItem>
+          </Col>
+          <Col :span="scene === 2 ? 6:5" style="margin-right: 40px">
+          <FormItem :label-width="65" :label="orderNoMap[scene] + '：'">
+            <Input v-model="writingOffQuery.orderNo" :placeholder="`${orderNoPlaceholder[scene]}`" :maxlength="20"/>
           </FormItem>
           </Col>
           <Col span="2" style="margin-right: 10px">
@@ -16,12 +21,25 @@
             </Select>
           </FormItem>
           </Col>
-          <Col span="8" style="margin-right: 20px">
+          <Col :span="scene === 2 ? 6:4" style="margin-right: 40px">
           <FormItem>
             <DatePicker v-model="writingOffQuery.period" :options="dateOption" transfer type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width: 100%" />
           </FormItem>
           </Col>
-          <Col span="5">
+          <Col  v-if="scene !== 2" span="5">
+          <FormItem>
+            <Button type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
+            <Button type="default" @click="resetQuery">清除条件</Button>
+          </FormItem>
+          </Col>
+        </Row>
+        <Row v-if="scene === 2" class="mediaClass">
+          <Col span="6" style="margin-right: 40px">
+          <FormItem :label-width="60" label="车牌号：">
+            <Input v-model="writingOffQuery.truckNo" :maxlength="15" placeholder="请输入车牌号"/>
+          </FormItem>
+          </Col>
+          <Col  span="5">
           <FormItem>
             <Button type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
             <Button type="default" @click="resetQuery">清除条件</Button>
@@ -36,10 +54,10 @@
     </div>
     <div  :style="{height: height - 20 +'px'}" class="list-box">
       <ul class="leftList">
-        <li v-for="(item,index) in companyData" :class="{companyDataActive:companyDataActive === item.partnerName}" :key="index" class="list" @click="showOrderData(item)">
+        <li v-for="(item,index) in companyData" :class="{companyDataActive:companyDataActive === item.id}" :key="index" class="list" @click="showOrderData(item)">
           <!--<Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showOrderData"></Table>-->
           <div class="icon">
-            <FontIcon slot="icon" type="ico-company" ></FontIcon>
+            <FontIcon slot="icon" :type="iconType" ></FontIcon>
           </div>
           <div class="content">
             <div v-if="item.partnerName.length<8" class="ruleName">{{item.partnerName}}</div>
@@ -71,6 +89,7 @@ import BaseComponent from '@/basic/BaseComponent'
 import Server from '@/libs/js/server'
 import FontIcon from '@/components/FontIcon'
 import DataEmpty from '@/components/DataEmpty'
+import _ from 'lodash'
 export default {
   name: 'writingOff',
   components: {
@@ -92,6 +111,16 @@ export default {
         1: '发货方',
         2: '承运商',
         3: '外转方'
+      },
+      orderNoMap: {
+        1: '订单号',
+        2: '单据号',
+        3: '单据号'
+      },
+      orderNoPlaceholder: {
+        1: '请输入订单号',
+        2: '请输入运单/提货单号',
+        3: '请输外转单号/订单号'
       },
       orderNameMap: {
         1: '订单',
@@ -135,11 +164,15 @@ export default {
       writingOffQuery: {
         name: '',
         periodType: '1',
+        orderNo: '',
+        truckNo: '',
         period: []
       },
       writingOffQuerySave: {
         name: '',
         periodType: '1',
+        orderNo: '',
+        truckNo: '',
         period: []
       },
       periodTypeMap: {
@@ -156,6 +189,20 @@ export default {
   computed: {
     emptyContent () {
       return `请点击左侧${this.sceneMap[this.scene]}列表查看${this.orderNameMap[this.scene]}哦～`
+    },
+    /**
+     * 图标类型
+     * 1: 外转方
+     * 2： 承运商
+     * 3：外转方
+     */
+    iconType () {
+      if (this.scene === 2) {
+        return 'ico-cys'
+      } else if (this.scene === 3) {
+        return 'ico-wz'
+      }
+      return 'ico-company'
     },
     orderColumn () {
       return [
@@ -326,13 +373,15 @@ export default {
     },
     startQuery () {
       this.orderData = []
-      this.writingOffQuerySave = this.writingOffQuery
+      this.writingOffQuerySave = _.cloneDeep(this.writingOffQuery)
       this.loadData()
     },
     resetQuery () {
       this.writingOffQuery = {
         name: '',
         periodType: '1',
+        orderNo: '',
+        truckNo: '',
         period: []
       }
       this.startQuery()
@@ -364,7 +413,7 @@ export default {
             verifyType: 1,
             isOil: 0,
             scene: this.scene,
-            needPay: data.row.totalFeeText,
+            needPay: parseFloat(data.row.totalFeeText),
             settleTypeDesc: data.row.settleTypeDesc
           },
           methods: {
@@ -432,22 +481,25 @@ export default {
     loadData () {
       Server({
         url: '/finance/getUnverify',
-        method: 'get',
-        params: {
+        method: 'post',
+        data: {
           partnerType: this.scene,
           partnerName: this.writingOffQuerySave.name,
           dayType: this.writingOffQuerySave.periodType,
+          orderNo: this.writingOffQuerySave.orderNo,
+          truckNo: this.writingOffQuerySave.truckNo,
           startTime: this.writingOffQuerySave.period[0] ? this.writingOffQuerySave.period[0].getTime() : '',
           endTime: this.writingOffQuerySave.period[1] ? this.writingOffQuerySave.period[1].getTime() + 86400000 : ''
         }
       }).then(res => {
-        this.companyData = res.data.data.map(item => {
+        this.companyData = res.data.data.map((item, index) => {
           return Object.assign({}, item, {
             calcTotalFeeText: (item.calcTotalFee / 100).toFixed(2),
-            verifiedFeeText: (item.verifiedFee / 100).toFixed(2)
+            verifiedFeeText: (item.verifiedFee / 100).toFixed(2),
+            id: item.partnerName + index
           })
         })
-        if (this.currentPartner.partnerName && this.companyData.some(item => item.partnerName === this.currentPartner.partnerName)) {
+        if (this.currentPartner.partnerName && this.companyData.some(item => item.id === this.currentPartner.id)) {
           this.showOrderData(this.companyData.find(item => this.currentPartner.partnerName === item.partnerName))
         } else {
           this.orderData = []
@@ -455,8 +507,7 @@ export default {
       }).catch(err => console.error(err))
     },
     showOrderData (data) {
-      console.log(data)
-      this.companyDataActive = data.partnerName
+      this.companyDataActive = data.id
       this.currentPartner = data
       this.orderData = data.orderInfos.map(item => {
         return Object.assign({}, item, {
@@ -493,6 +544,8 @@ export default {
       /deep/ .ivu-form-item
         margin-bottom: 0
         width: 100%
+      .mediaClass
+        margin-top 22px
     .list-box
       display flex
       display -ms-flexbox

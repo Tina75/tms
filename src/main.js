@@ -16,14 +16,6 @@ require('./assets/css/iview/iview.css')
 require('./assets/css/tms/iconfont.css')
 require('./assets/css/quill/quill.core.css')
 
-if ((navigator.userAgent.indexOf('MSIE') >= 0) && (navigator.userAgent.indexOf('Opera') < 0)) {
-  // 上报不兼容情况并跳转升级浏览器页面
-  Vue.$reportUser('incompatible', navigator.userAgent)
-  setTimeout(function () {
-    // location.href = 'https://www.tms5566.com/upgrade.html'
-  }, 20)
-}
-
 const errorHandler = (error, vm) => {
   vm.$reportError(error)
 }

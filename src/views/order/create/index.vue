@@ -66,8 +66,8 @@
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="手机号:" prop="consignerPhone">
-        <Input v-model="orderForm.consignerPhone" :maxlength="11"></Input>
+      <FormItem label="联系号码:" prop="consignerPhone">
+        <SelectInput v-model="orderForm.consignerPhone" :parser="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号"></SelectInput>
       </FormItem>
       </Col>
       <Col span="6">
@@ -77,8 +77,8 @@
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="手机号:" prop="consigneePhone">
-        <SelectInput v-model="orderForm.consigneePhone" :maxlength="11" :local-options="consigneePhones" :remote="false"></SelectInput>
+      <FormItem label="联系号码:" prop="consigneePhone">
+        <SelectInput v-model="orderForm.consigneePhone" :parser="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号"></SelectInput>
       </FormItem>
       </Col>
     </Row>
@@ -137,22 +137,25 @@
       </Col>
       <Col span="6">
       <FormItem label="计费里程:" prop="mileage">
-        <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.mileage" :precision="1">
-          <span slot="suffix" class="order-create__input-suffix">公里</span>
-        </TagNumberInput>
+        <Row>
+          <Col span="19">
+          <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.mileage" :precision="1">
+          </TagNumberInput>
+          </Col>
+          <Col span="5" class="order-create__input-unit">公里</Col>
+        </Row>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="运输费用:" prop="freightFee">
         <Row>
-          <Col span="20">
-          <TagNumberInput :min="0" v-model="orderForm.freightFee">
-            <span slot="suffix" class="order-create__input-suffix">元</span>
-          </TagNumberInput>
+          <Col span="19">
+          <TagNumberInput :min="0" v-model="orderForm.freightFee"></TagNumberInput>
           </Col>
-          <Col span="4">
+          <Col span="5" class="order-create__input-unit">
+          <span style="vertical-align:middle">元</span>
           <span @click="showCounter">
-            <FontIcon type="jisuanqi" size="20" color="#00a4bd" class="i-ml-5"></FontIcon>
+            <FontIcon type="jisuanqi" size="20" color="#00a4bd" style="vertical-align:middle"></FontIcon>
           </span>
           </Col>
         </Row>
@@ -160,39 +163,54 @@
       </Col>
       <Col span="6">
       <FormItem label="提货费用:" prop="pickupFee">
-        <TagNumberInput :min="0" v-model="orderForm.pickupFee">
-          <span slot="suffix" class="order-create__input-suffix">元</span>
-        </TagNumberInput>
+        <Row>
+          <Col span="19">
+          <TagNumberInput :min="0" v-model="orderForm.pickupFee"></TagNumberInput>
+          </Col>
+          <Col span="5" class="order-create__input-unit">元</Col>
+        </Row>
       </FormItem>
       </Col>
     </Row>
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="装货费用:" prop="loadFee">
-        <TagNumberInput :min="0" v-model="orderForm.loadFee">
-          <span slot="suffix" class="order-create__input-suffix">元</span>
-        </TagNumberInput>
+        <Row>
+          <Col span="19">
+          <TagNumberInput :min="0" v-model="orderForm.loadFee"></TagNumberInput>
+          </Col>
+          <Col span="5" class="order-create__input-unit">元</Col>
+        </Row>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="卸货费用:" prop="unloadFee">
-        <TagNumberInput :min="0" v-model="orderForm.unloadFee">
-          <span slot="suffix" class="order-create__input-suffix">元</span>
-        </TagNumberInput>
+        <Row>
+          <Col span="19">
+          <TagNumberInput :min="0" v-model="orderForm.unloadFee"></TagNumberInput>
+          </Col>
+          <Col span="5" class="order-create__input-unit">元</Col>
+        </Row>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="保险费用:" prop="insuranceFee">
-        <TagNumberInput :min="0" v-model="orderForm.insuranceFee">
-          <span slot="suffix" class="order-create__input-suffix">元</span>
-        </TagNumberInput>
+        <Row>
+          <Col span="19">
+          <TagNumberInput :min="0" v-model="orderForm.insuranceFee"></TagNumberInput>
+          </Col>
+          <Col span="4" class="order-create__input-unit">元</Col>
+        </Row>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="其他费用:" prop="otherFee">
-        <TagNumberInput :min="0" v-model="orderForm.otherFee">
-          <span slot="suffix" class="order-create__input-suffix">元</span>
-        </TagNumberInput>
+        <Row>
+          <Col span="19">
+          <TagNumberInput :min="0" v-model="orderForm.otherFee"></TagNumberInput>
+          </Col>
+          <Col span="5" class="order-create__input-unit">元</Col>
+        </Row>
       </FormItem>
       </Col>
     </Row>
@@ -219,17 +237,18 @@
           <InputNumber v-model="orderForm.receiptCount" :min="0" :parser="value => value ?  parseInt(value).toString() : value" class="order-create__input-w100">
           </InputNumber>
           </Col>
-          <Col span="4" style="text-align: center">
-          <span>份</span>
-          </Col>
+          <Col span="4" class="order-create__input-unit">份</Col>
         </Row>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="代收货款:" prop="collectionMoney">
-        <TagNumberInput :min="0" v-model="orderForm.collectionMoney">
-          <span slot="suffix" class="order-create__input-suffix">元</span>
-        </TagNumberInput>
+        <Row>
+          <Col span="19">
+          <TagNumberInput :min="0" v-model="orderForm.collectionMoney"></TagNumberInput>
+          </Col>
+          <Col span="5" class="order-create__input-unit">元</Col>
+        </Row>
       </FormItem>
       </Col>
     </Row>
@@ -245,8 +264,9 @@
       <Button v-if="hasPower(100101)" :disabled="disabled" type="primary" @click="handleSubmit">保存</Button>
       <Button v-if="hasPower(100102)" :disabled="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
+      <Button v-if="hasPower(100104)" class="i-ml-10" @click="shipImmedite">立即发运</Button>
     </div>
-    <OrderPrint ref="printer" :list="orderPrint">
+    <OrderPrint ref="printer" :list="orderPrint" source="create">
     </OrderPrint>
   </Form>
 </template>
@@ -260,7 +280,7 @@ import TagNumberInput from '@/components/TagNumberInput'
 import float from '@/libs/js/float'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
-import OrderPrint from './components/OrderPrint'
+import OrderPrint from '@/views/order-management/components/OrderPrint'
 import FontIcon from '@/components/FontIcon'
 import settlements from '@/libs/constant/settlement.js'
 import pickups from '@/libs/constant/pickup.js'
@@ -317,10 +337,11 @@ export default {
       }
     }
     const validatePhone = (rule, value, callback) => {
-      if (validator.phone(value)) {
+      value = value.replace(/\s/g, '')
+      if (validator.phone(value) || validator.telphone(value)) {
         callback()
       } else {
-        callback(new Error('请输入正确的手机号码'))
+        callback(new Error('请输入正确的手机号或座机号'))
       }
     }
     // 9位整数 2位小数
@@ -433,14 +454,14 @@ export default {
           { required: true, message: '请输入发货人名称' }
         ],
         consignerPhone: [
-          { required: true, message: '请输入发货人手机号' },
+          { required: true, message: '请输入发货人联系号码' },
           { validator: validatePhone, trigger: 'blur' }
         ],
         consigneeContact: [
           { required: true, message: '请输入收货人名称' }
         ],
         consigneePhone: [
-          { required: true, message: '请输入收货人手机号' },
+          { required: true, message: '请输入收货人联系号码' },
           { validator: validatePhone, trigger: 'blur' }
         ],
         consignerAddress: [
@@ -695,7 +716,7 @@ export default {
       })
     },
     /**
-     * 选中收货人，手机号一起设置
+     * 选中收货人，联系号码一起设置
      */
     handleSelectConsignee (name, row) {
       this.orderForm.consigneePhone = row.phone
@@ -767,82 +788,31 @@ export default {
       const vm = this
       vm.disabled = true
       return new Promise((resolve, reject) => {
-        vm.$refs.orderForm.validate((valid) => {
-          if (valid) {
-            const orderCargoList = vm.consignerCargoes
-            const orderForm = vm.orderForm
-            let findError = null
-            // 校验货物信息
-            for (let index in orderCargoList) {
-              let cargo = orderCargoList[index]
-              let info = cargo.validate()
-              if (!info.success) {
-                findError = info.message
-                break
+        this.validateForm().then(form => {
+          api.submitOrder(form)
+            .then(() => {
+              if (!form.id) {
+                this.$Message.success('创建订单成功')
+              } else {
+                this.$Message.success('修改订单成功')
               }
-            }
-
-            if (findError) {
-              vm.$Message.error(findError)
+              if (e && !form.id) {
+                // 保存不打印，创建订单
+                vm.resetForm()
+              }
               vm.disabled = false
-              reject(new Error(findError.message))
-              return
-            }
-            // 始发地遇到北京市等特殊直辖市，需要只保留第一级code
-            // let start = getCityCode(orderForm.start)
-            // let end = getCityCode(orderForm.end)
-            // 始发城市，目的城市，到达时间等需要额外处理
-            let form = Object.assign({}, orderForm, {
-              // start: start,
-              // end: end,
-              arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
-              deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
-              orderCargoList: orderCargoList.map(cargo => cargo.toJson()),
-              mileage: orderForm.mileage * 1000
-            });
-
-            ['start', 'end'].forEach(field => {
-              form[field] = parseInt(form[field])
-              // 保存本地记录
-              vm.$refs['start'].saveCity(form[field])
+              if (e && form.id) {
+                // 保存，不打印，修改页面
+                vm.closeTab()
+              }
+              // 重新获取客户列表
+              vm.getClients()
+              resolve()
             })
-            // 转换成分单位
-            transferFeeList.forEach((fee) => {
-              form[fee] = form[fee] ? form[fee] * 100 : 0
+            .catch((er) => {
+              vm.disabled = false
+              reject(er)
             })
-            api.submitOrder(form)
-              .then((response) => {
-                if (!form.id) {
-                  this.$Message.success('创建订单成功')
-                } else {
-                  this.$Message.success('修改订单成功')
-                }
-                if (e && !form.id) {
-                  // 保存不打印，创建订单
-                  vm.resetForm()
-                }
-                vm.disabled = false
-                if (e && form.id) {
-                  // 保存，不打印，修改页面
-                  vm.closeTab()
-                }
-                // 重新获取客户列表
-                vm.getClients()
-                resolve()
-              })
-              .catch((er) => {
-                vm.disabled = false
-                reject(er)
-              })
-          } else {
-            vm.disabled = false
-            // 主动滚动到顶部
-            if (vm.orderForm.pickup) {
-              vm.$parent.$el.scrollTop = 0
-            }
-            vm.$Message.error('请填写必填信息')
-            reject(new Error('请填写必填信息'))
-          }
         })
       })
     },
@@ -864,8 +834,8 @@ export default {
           let orderPrint = _.cloneDeep(vm.orderForm)
           orderPrint.orderCargoList = _.cloneDeep(vm.consignerCargoes)
           orderPrint.totalFee = vm.totalFee
-
           vm.orderPrint = [orderPrint]
+
           vm.$refs.printer.print()
           if (!orderPrint.id) {
             // 创建订单页面
@@ -878,7 +848,6 @@ export default {
     dateChange (type, date) {
       const refs = type === 'START_DATE' ? 'stTimeInput' : type === 'END_DATE' ? 'edTimeInput' : ''
       if (date && refs) {
-        // this.$root.$emit(type, 'show')
         this.$refs[refs].changeShow(type)
         this.$refs[refs].focus()
       }
@@ -929,6 +898,168 @@ export default {
           this.orderForm.mileage = Number(num)
         }
       })
+    },
+    // 立即发运
+    shipImmedite (e = 'orderCreate') {
+      const self = this
+      const statics = this.$refs.cargoTable.statics
+      this.validateForm().then(form => {
+        this.disabled = false
+        if (form.pickup === 1) {
+          // 小车上门 提货权限
+          api.validPermit({ type: 2 }).then(res => {
+            if (res) {
+              this.openDialog({
+                name: 'transport/dialog/action',
+                data: {
+                  type: 'pickUp',
+                  actionOrigin: 'orderCreate',
+                  orderCreate: {
+                    distance: form.mileage,
+                    weight: statics.weight,
+                    volume: statics.volume,
+                    start: form.start,
+                    end: form.end
+                  }
+                },
+                methods: {
+                  complete (data) {
+                    const param = {
+                      createOrder: form,
+                      createLoadbill: {},
+                      loadbillPickup: data
+                    }
+                    api.immediShip(param).then(res => {
+                      this.$Message.success('提货成功')
+                      self.resetForm()
+                      // 重新获取客户列表
+                      self.getClients()
+                    })
+                  }
+                }
+              })
+            } else {
+              this.openDialog({
+                name: 'order/create/components/OrderTip',
+                data: {
+                  tipMsg: '提货管理'
+                }
+              })
+            }
+          })
+        } else if (form.pickup === 2) {
+          // 大车直送 派车权限
+          api.validPermit({ type: 1 }).then(res => {
+            if (res) {
+              this.openDialog({
+                name: 'transport/dialog/action',
+                data: {
+                  type: 'sendCar',
+                  actionOrigin: 'orderCreate',
+                  orderCreate: {
+                    distance: form.mileage,
+                    weight: statics.weight,
+                    volume: statics.volume,
+                    start: form.start,
+                    end: form.end
+                  }
+                },
+                methods: {
+                  complete (data) {
+                    const param = {
+                      createOrder: form,
+                      createWaybill: {},
+                      waybillAssignVehicle: data
+                    }
+                    param.waybillAssignVehicle.cashBack = param.waybillAssignVehicle.cashBack || null
+                    api.immediShip(param).then(res => {
+                      this.$Message.success('发运成功')
+                      self.resetForm()
+                      // 重新获取客户列表
+                      self.getClients()
+                    })
+                  }
+                }
+              })
+            } else {
+              this.openDialog({
+                name: 'order/create/components/OrderTip',
+                data: {
+                  tipMsg: '送货管理'
+                }
+              })
+            }
+          })
+        }
+      })
+    },
+    validateForm () {
+      const vm = this
+      vm.disabled = true
+      return new Promise((resolve, reject) => {
+        vm.$refs.orderForm.validate((valid) => {
+          if (valid) {
+            const orderCargoList = vm.consignerCargoes
+            const orderForm = vm.orderForm
+            let findError = null
+            // 校验货物信息
+            for (let index in orderCargoList) {
+              let cargo = orderCargoList[index]
+              let info = cargo.validate()
+              if (!info.success) {
+                findError = info.message
+                break
+              }
+            }
+            if (findError) {
+              vm.$Message.error(findError)
+              vm.disabled = false
+              reject(new Error(findError.message))
+              return
+            }
+            // 始发城市，目的城市，到达时间等需要额外处理
+            let form = Object.assign({}, orderForm, {
+              arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
+              deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
+              orderCargoList: orderCargoList.map(cargo => cargo.toJson()),
+              mileage: orderForm.mileage * 1000
+            });
+
+            ['start', 'end'].forEach(field => {
+              form[field] = parseInt(form[field])
+              // 保存本地记录
+              vm.$refs['start'].saveCity(form[field])
+            })
+            // 转换成分单位
+            transferFeeList.forEach((fee) => {
+              form[fee] = form[fee] ? form[fee] * 100 : 0
+            })
+            resolve(form)
+          } else {
+            vm.disabled = false
+            // 主动滚动到顶部
+            if (vm.orderForm.pickup) {
+              vm.$parent.$el.scrollTop = 0
+            }
+            vm.$Message.error('请填写必填信息')
+            reject(new Error('请填写必填信息'))
+          }
+        })
+      })
+    },
+    formatePhoneNum (temp) {
+      if (/^1/.test(temp)) {
+        let str = temp.replace(/\s/g, '')
+        if (temp.length > 3 && temp.length < 8) {
+          temp = str.substr(0, 3) + ' ' + str.substr(3, 4)
+        } else if (temp.length >= 8) {
+          temp = [str.substr(0, 3), str.substr(3, 4), str.substr(7, 4)].join(' ')
+        }
+      }
+      return temp
+    },
+    phoneLength (value) {
+      return /^1/.test(value) ? 13 : 128
     }
   }
 }
@@ -936,8 +1067,8 @@ export default {
 
 <style lang="stylus" scoped>
 .order-create
-  &__input-suffix
-    line-height 32px
+  &__input-unit
+    text-align center
   &__input-w100
     width 100%
   &__cell-no-padding

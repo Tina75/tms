@@ -232,7 +232,7 @@ export default {
              *    编辑： 无编辑按钮           //【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
              * 2、待调度状态下：（status: 20）
              *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）&& （未被调度：dispatchStatus=0）】显示
-             *    外转：【（未外转：transStatus=0） && （不是上门提货：pickup !== 1）备注：v1.3版本 上门提货完可以外转 && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被调度：dispatchStatus=0）】显示
+             *    外转：【（未外转：transStatus=0） && （不是上门提货：pickup !== 1）备注：v1.3版本 上门提货完可以外转 && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）/ 备注：v1.05版本 子单可以外转 / && （未被调度：dispatchStatus=0）】显示
              *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被调度：dispatchStatus=0）】显示
              *    删除：【（不是上门提货：pickup !== 1） && （未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （被拆单后的父单：disassembleStatus=1）】显示
              *    编辑：【（未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
@@ -350,7 +350,7 @@ export default {
                 }
               }
               // 外转按钮
-              if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0 && this.hasPower(120111)) {
+              if (r.transStatus === 0 && r.disassembleStatus === 0 && r.dispatchStatus === 0 && this.hasPower(120111)) {
                 renderBtn.push(
                   h('a', {
                     style: {
@@ -759,7 +759,9 @@ export default {
           title: '回单数量',
           key: 'receiptCount',
           minWidth: 120,
-          tooltip: true
+          render: (h, p) => {
+            return h('span', p.row.receiptCount ? p.row.receiptCount : '-')
+          }
         },
         {
           title: '代收货款',
@@ -878,9 +880,9 @@ export default {
       if (this.source === 'order') {
         if (val === '全部' || val === '待提货' || val === '待送货') {
           this.btnGroup = [
-            { name: '导出', value: 6, code: 110109 },
-            { name: '打印', value: 5, code: 110108 },
-            { name: '删除', value: 4, code: 110107 }
+            { name: '导出', value: 6, code: 100304 },
+            { name: '打印', value: 5, code: 100303 },
+            { name: '删除', value: 4, code: 100302 }
           ]
           if (val === '全部') {
             this.keywords.status = null
@@ -891,13 +893,13 @@ export default {
           }
         } else if (val === '回收站') {
           this.btnGroup = [
-            { name: '恢复', value: 7, code: 110110 },
-            { name: '彻底删除', value: 8, code: 110111 }
+            { name: '恢复', value: 7, code: 100305 },
+            { name: '彻底删除', value: 8, code: 100306 }
           ]
           this.keywords.status = 100
         } else {
           this.btnGroup = [
-            { name: '导出', value: 6, code: 110109 }
+            { name: '导出', value: 6, code: 100304 }
           ]
           if (val === '在途') {
             this.keywords.status = 30

@@ -20,7 +20,7 @@
  */
 
 import SelectInput from '@/components/SelectInput'
-import Server from '@/libs/js/server'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'InputWithSelect',
@@ -57,38 +57,37 @@ export default {
     this.fetchData()
   },
   methods: {
+    ...mapActions([
+      'getCarriers',
+      'getCarrierDrivers',
+      'getCarrierCars',
+      'getClients',
+      'getTransferees'
+    ]),
+
     fetchData () {
       switch (this.mode) {
         case 'carrier':
-          this.maxLength = 20
-          this.getCarriers()
+          this.modeWithCarrier()
           return
         case 'driver':
-          this.maxLength = 15
-          this.getDrivers()
+          this.modeWithDriver()
           return
         case 'carNo':
-          this.maxLength = 8
-          this.getCars()
+          this.modeWithCar()
           return
         case 'consigner':
-          this.maxLength = 20
-          this.getConsigners()
+          this.modeWithConsigner()
           return
         case 'transferee':
-          this.maxLength = 20
-          this.getTransferees()
+          this.modeWithTransferee()
       }
     },
 
-    // 查询承运商
-    getCarriers () {
-      Server({
-        url: '/carrier/listOrderByUpdateTimeDesc',
-        method: 'get',
-        data: { type: 1 }
-      }).then(res => {
-        this.options = res.data.data.carrierList.map(item => {
+    modeWithCarrier () {
+      this.maxLength = 20
+      this.getCarriers().then(list => {
+        this.options = list.map(item => {
           item.name = item.carrierName
           item.value = item.carrierName
           return item
@@ -96,16 +95,11 @@ export default {
         this.$emit('on-option-loaded', this.options)
       })
     },
-
-    // 查询司机
-    getDrivers () {
+    modeWithDriver () {
+      this.maxLength = 15
       if (!this.carrierId) return
-      Server({
-        method: 'get',
-        url: 'carrier/list/driver',
-        data: { carrierId: this.carrierId }
-      }).then((res) => {
-        this.options = res.data.data.driverList.map(item => {
+      this.getCarrierDrivers(this.carrierId).then(list => {
+        this.options = list.map(item => {
           item.name = item.driverName
           item.value = item.driverName
           item.carNo = item.carNO
@@ -115,16 +109,11 @@ export default {
         this.$emit('on-option-loaded', this.options)
       })
     },
-
-    // 查询车牌号
-    getCars () {
+    modeWithCar () {
+      this.maxLength = 8
       if (!this.carrierId) return
-      Server({
-        url: '/carrier/list/carOrderByUpdateTimeDesc',
-        method: 'get',
-        data: { carrierId: this.carrierId }
-      }).then(res => {
-        this.options = res.data.data.carList.map(item => {
+      this.getCarrierCars(this.carrierId).then(list => {
+        this.options = list.map(item => {
           item.name = item.carNO
           item.value = item.carNO
           item.carNo = item.carNO
@@ -134,28 +123,19 @@ export default {
         this.$emit('on-option-loaded', this.options)
       })
     },
-
-    // 查询客户
-    getConsigners () {
-      Server({
-        url: '/consigner/list',
-        method: 'get'
-      }).then(res => {
-        this.options = res.data.data.list.map(item => {
+    modeWithConsigner () {
+      this.maxLength = 20
+      this.getClients().then(list => {
+        this.options = list.map(item => {
           item.value = item.name
           return item
         })
       })
     },
-
-    // 查询外装方
-    getTransferees () {
-      Server({
-        url: '/transferee/listOrderbyUpdateTimeDesc',
-        method: 'get',
-        data: { type: 1 }
-      }).then(res => {
-        this.options = res.data.data.transfereeList.map(item => {
+    modeWithTransferee () {
+      this.maxLength = 20
+      this.getTransferees().then(list => {
+        this.options = list.map(item => {
           item.value = item.name
           return item
         })

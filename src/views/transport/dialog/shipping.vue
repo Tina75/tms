@@ -5,14 +5,14 @@
       <i class="icon font_family icon-bangzhuzhongxin"></i>
     </p><p class="titleP">是否发运？发运以后将不能再修改外转单信息</p>
     </p><br/>
-    <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="80" label-position="left">
-      <FormItem label="车牌号:" prop="carNo">
+    <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="80" label-position="right">
+      <FormItem label="车牌号：" prop="carNo">
         <Input v-model="validate.carNo" :maxlength="8" @on-change="inputChange"></Input>
       </FormItem>
-      <FormItem label="司机姓名:">
+      <FormItem label="司机姓名：">
         <Input v-model="validate.driverName" :maxlength="20" @on-change="inputChange" ></Input>
       </FormItem>
-      <FormItem label="手机号:" prop="driverPhone">
+      <FormItem label="手机号：" prop="driverPhone">
         <Input v-model="validate.driverPhone" :maxlength="11" @on-change="inputChange" ></Input>
       </FormItem>
     </Form>
