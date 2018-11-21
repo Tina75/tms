@@ -239,7 +239,7 @@ export default {
     // 点击下拉框项
     handleSelect (name) {
       const item = this.options.find((opt) => {
-        if (opt.name) {
+        if (opt.name && !opt.disabled) {
           return opt.name === name
         }
         return opt.value === name
