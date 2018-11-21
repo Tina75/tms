@@ -1059,7 +1059,7 @@ export default {
       return temp
     },
     phoneLength (value) {
-      return /^1/.test(value) ? 13 : 128
+      return /^1/.test(value) ? 13 : 30
     }
   }
 }
