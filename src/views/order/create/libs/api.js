@@ -39,6 +39,17 @@ export default {
         .catch((err) => reject(err))
     })
   },
+  validPermit (data) {
+    return new Promise((resolve, reject) => {
+      server({
+        method: 'get',
+        url: 'permission/validDirectSend',
+        data
+      }).then(response => {
+        resolve(response.data.data)
+      }).catch(err => reject(err))
+    })
+  },
   // 立即发运
   immediShip (param) {
     return new Promise((resolve, reject) => {

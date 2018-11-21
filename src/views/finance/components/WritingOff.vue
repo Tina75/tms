@@ -4,18 +4,18 @@
     <div class="query-box">
       <Form :model="writingOffQuery" label-position="left" inline>
         <Row>
-          <Col span="5" style="margin-right: 50px">
-          <FormItem :label-width="65" :label="sceneMap[scene] + '：'">
+          <Col span="5" style="margin-right: 30px">
+          <FormItem :label-width="60" :label="sceneMap[scene] + '：'">
             <Input v-model="writingOffQuery.name" :placeholder="`请输入${sceneMap[scene]}名称`" :maxlength="20"/>
           </FormItem>
           </Col>
-          <Col span="5" style="margin-right: 50px">
+          <Col span="5" style="margin-right: 30px">
           <FormItem :label-width="65" :label="orderNoMap[scene] + '：'">
             <Input v-model="writingOffQuery.orderNo" :placeholder="`${orderNoPlaceholder[scene]}`" :maxlength="20"/>
           </FormItem>
           </Col>
-          <Col v-if="scene === 2" span="5" style="margin-right: 50px">
-          <FormItem :label-width="65" label="车牌号：">
+          <Col v-if="scene === 2" span="5" style="margin-right: 20px">
+          <FormItem :label-width="60" label="车牌号：">
             <Input v-model="writingOffQuery.truckNo" :maxlength="15" placeholder="请输入车牌号"/>
           </FormItem>
           </Col>
@@ -26,7 +26,7 @@
             </Select>
           </FormItem>
           </Col>
-          <Col span="4" style="margin-right: 20px">
+          <Col span="4" style="margin-right: 40px">
           <FormItem>
             <DatePicker v-model="writingOffQuery.period" :options="dateOption" transfer type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width: 100%" />
           </FormItem>
