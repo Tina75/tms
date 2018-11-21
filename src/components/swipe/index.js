@@ -29,8 +29,16 @@ const prepareOpenPhotoSwipe = (items) => {
     let SwipeInstance = new Vue({
       mixins: [SwipeComponent]
     })
-    options.history = false
-    options.focus = false
+    Object.assign(options, {
+      history: false,
+      focus: false,
+      tapToClose: false,
+      clickToClose: false,
+      closeOnScroll: false,
+      closeOnVerticalDrag: false,
+      clickToCloseNonZoomable: false,
+      closeElClasses: []
+    })
     let component = SwipeInstance.$mount()
     document.body.appendChild(component.$el)
     const photoSwipeOptions = {
