@@ -74,7 +74,7 @@
                   <div class="rule-route">
                     <Form ref="ruleRoute" :model="item" :rules="routeValidate" inline>
                       <Row :gutter="24">
-                        <Col span="5"  class="styleCommon">
+                        <Col span="4"  class="styleCommon">
                         <FormItem prop="departure" style="text-align: left">
                           <SelectInputForCity :code-type = "1" v-model="item.departure" placeholder="请输入始发地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
@@ -82,19 +82,19 @@
                         <Col span="1" class="styleCommon">
                         <i class="icon font_family icon-ico-line"></i>
                         </Col>
-                        <Col span="5" class="styleCommon">
+                        <Col span="4" class="styleCommon">
                         <FormItem prop="destination" style="text-align: left">
                           <SelectInputForCity :code-type = "1" v-model="item.destination" placeholder="请输入目的地" class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
-                        <Col span="11" class="styleCommon">
+                        <Col span="13" class="styleCommon">
                         <div class="startPrice">
-                          <FormItem prop="startType" style="width: 80px">
+                          <FormItem prop="startType" style="width: 70px">
                             <Select v-model="item.startType" @on-change="startTypeChange(item)">
                               <Option v-for="(value, key) in startTypeMap" :key="key"  :value="key" >{{value}}</Option>
                             </Select>
                           </FormItem>
-                          <span style="margin:0 10px">：货物  ＜</span>
+                          <span style="margin:0 10px 0 0">：货物  ＜</span>
                           <FormItem prop="startNum" inline style="margin-bottom: 0;">
                             <!--<Input v-model="item.startNum" style="width: 80px" @on-change="setItemStartNum(item)"/>-->
                             <TagNumberInput v-model="item.startNum" :show-chinese="false" :precision="precision" style="width: 80px" @on-change="setItemStartNum(item)"></TagNumberInput>
