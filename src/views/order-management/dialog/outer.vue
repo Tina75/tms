@@ -19,7 +19,7 @@
           </SelectInput>
         </FormItem>
         <FormItem label="外转方运单号：">
-          <Input v-model="info.outTransNo" :maxlength="20" style="width:200px"/>
+          <Input v-model="info.outTransNo" :maxlength="20" style="width:200px" placeholder="请输入"/>
         </FormItem>
         <FormItem label="付款方式：" prop="payType">
           <Select v-model="info.payType" transfer style="width:200px">
@@ -27,7 +27,7 @@
           </Select>
         </FormItem>
         <FormItem label="公里数：" prop="mileage">
-          <TagNumberInput :min="0" v-model="info.mileage" placeholder="ss"  style="width:150px">
+          <TagNumberInput :min="0" v-model="info.mileage" style="width:150px">
           </TagNumberInput>
           <span class="unitSpan">公里</span>
         </FormItem>
