@@ -51,6 +51,7 @@
                 <span class="table-footer-item">运输费：{{item.waybill.freightFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">装货费：{{item.waybill.loadFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">卸货费：{{item.waybill.unloadFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">路桥费：{{item.waybill.tollFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">保险费：{{item.waybill.insuranceFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">其他：{{item.waybill.otherFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">合计运费: {{item.waybill.totalFee / 100 || 0}} 元</span>

@@ -65,4 +65,12 @@ export default {
 <style>
 @import "~photoswipe/dist/photoswipe.css";
 @import "~photoswipe/dist/default-skin/default-skin.css";
+.pswp__button--arrow--left:before,
+.pswp__button--arrow--right:before{
+  background-color:#C6C6C6;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+}
 </style>
