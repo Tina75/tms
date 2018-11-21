@@ -306,6 +306,16 @@ export default {
     // 受理开单 不请求
     if (this.actionOrigin !== 'orderCreate') {
       this.fetchData()
+    } else {
+      for (let key in this.payment) {
+        this.payment[key] = this.setMoneyUnit2Yuan(this.payment[key])
+      }
+      if (this.type === 'pickUp') {
+        delete this.payment.cashBack // 提货去掉返现运费
+        delete this.payment.tollFee // 提货去掉路桥费
+      } else {
+        this.financeRulesInfo = this.orderCreate // 送货计费规则参数同步
+      }
     }
   },
   methods: {
