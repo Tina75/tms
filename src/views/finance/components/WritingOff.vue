@@ -4,19 +4,14 @@
     <div class="query-box">
       <Form :model="writingOffQuery" label-position="left" inline>
         <Row>
-          <Col span="5" style="margin-right: 30px">
+          <Col :span="scene === 2 ? 6:5" style="margin-right: 40px">
           <FormItem :label-width="60" :label="sceneMap[scene] + '：'">
             <Input v-model="writingOffQuery.name" :placeholder="`请输入${sceneMap[scene]}名称`" :maxlength="20"/>
           </FormItem>
           </Col>
-          <Col span="5" style="margin-right: 30px">
+          <Col :span="scene === 2 ? 6:5" style="margin-right: 40px">
           <FormItem :label-width="65" :label="orderNoMap[scene] + '：'">
             <Input v-model="writingOffQuery.orderNo" :placeholder="`${orderNoPlaceholder[scene]}`" :maxlength="20"/>
-          </FormItem>
-          </Col>
-          <Col v-if="scene === 2" span="5" style="margin-right: 20px">
-          <FormItem :label-width="60" label="车牌号：">
-            <Input v-model="writingOffQuery.truckNo" :maxlength="15" placeholder="请输入车牌号"/>
           </FormItem>
           </Col>
           <Col span="2" style="margin-right: 10px">
@@ -26,12 +21,25 @@
             </Select>
           </FormItem>
           </Col>
-          <Col span="4" style="margin-right: 40px">
+          <Col :span="scene === 2 ? 6:4" style="margin-right: 40px">
           <FormItem>
             <DatePicker v-model="writingOffQuery.period" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width: 100%" />
           </FormItem>
           </Col>
-          <Col  :class="{ mediaClass : scene ===2}" span="5">
+          <Col  v-if="scene !== 2" span="5">
+          <FormItem>
+            <Button type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
+            <Button type="default" @click="resetQuery">清除条件</Button>
+          </FormItem>
+          </Col>
+        </Row>
+        <Row v-if="scene === 2" class="mediaClass">
+          <Col span="6" style="margin-right: 40px">
+          <FormItem :label-width="60" label="车牌号：">
+            <Input v-model="writingOffQuery.truckNo" :maxlength="15" placeholder="请输入车牌号"/>
+          </FormItem>
+          </Col>
+          <Col  span="5">
           <FormItem>
             <Button type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
             <Button type="default" @click="resetQuery">清除条件</Button>
@@ -521,7 +529,6 @@ export default {
         margin-bottom: 0
         width: 100%
       .mediaClass
-        margin-left 65px
         margin-top 22px
     .list-box
       display flex
