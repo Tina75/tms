@@ -7,7 +7,7 @@
         <div class="wave"></div>
       </div>
       <div class="wave-text">
-        <span>{{process}}%</span>
+        <span :class="process === 100 ? 'whiteCls' : 'blackCls'">{{process}}%</span>
       </div>
     </div>
     <div v-else>
@@ -30,6 +30,12 @@ export default {
   },
   computed: {
     styles () {
+      if (this.process === 100) {
+        return {
+          height: '110%',
+          background: 'linear-gradient(#00D1E0, #00A4BD)'
+        }
+      }
       return {
         height: this.process + '%'
       }
@@ -59,13 +65,13 @@ export default {
   position:absolute;
   bottom:0;
   left:0;
-  background: #08b3ce;
+  background: #00b3c7;
   .wave
     background: url(../../../assets/wave.png) repeat-x top center;
     position: absolute;
     top: -10px;
     width: 968px;
-    height: 10px;
+    height: 25px;
     animation: wave 5s cubic-bezier( 0.36, 0.45, 0.63, 0.53) infinite;
     transform: translate3d(0, 0, 0);
     opacity: 0.3
@@ -78,7 +84,10 @@ export default {
   top 50px
   width 140px
   text-align center
-  span
+  .whiteCls
+    font-size 24px
+    color #fff
+  .blackCls
     font-size 24px
     color #333
 .wave-logo

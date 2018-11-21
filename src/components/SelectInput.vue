@@ -3,9 +3,10 @@
     :visible="showDropdown"
     :transfer="transfer || selfTransfer"
     :placement="placement"
-    class="select-input__dropdown"
     trigger="custom"
+    class="select-input__dropdown"
     @on-click="handleSelect"
+    @on-clickoutside="handleBlur"
   >
     <div
       @keydown.up.prevent="handleKeydown"
@@ -16,14 +17,13 @@
     >
       <Input
         ref="input"
-        v-model="currentValue"
+        v-model="parsedValue"
         :placeholder="placeholder"
         :maxlength="maxlength"
         :class="classes"
         :disabled="disabled"
         @on-change="handleChange"
         @on-focus="handleFocus"
-        @on-blur="handleBlur"
       >
       <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-input__clear-icon" @click.native.stop="handleClear"></Icon>
       <Icon v-if="!mousehover || !isClearable" slot="suffix" type="ios-arrow-down" class="select-input__input-icon"></Icon>
@@ -46,8 +46,13 @@
  * 选择 | 输入框，
  * 支持下拉选择，也支持输入的组件
  * 同时支持请求查询服务端，显示数据
+ * 关于blur事件
+ * 1. 如果挂靠在input输入框，ie11兼容性问题，鼠标拖动滚动条下拉框消失
+ * 2. 如果挂靠在dropdown，在没有下拉框的时候，没法触发blur；比如：车牌号大小写问题
+ * 3. 如果外面包一层div，问题更严重，会不断触发同一页面其他selectinput组件的blur事件
  */
 export default {
+  name: 'SelectInput',
   props: {
     autoFocus: {
       type: Boolean,
@@ -97,7 +102,8 @@ export default {
     disabled: {
       type: Boolean,
       default: false
-    }
+    },
+    parser: Function
   },
   data () {
     return {
@@ -114,6 +120,30 @@ export default {
     }
   },
   computed: {
+    /**
+     * input输入框编辑的时候顺序
+     * 1. 输入值，开始set函数，需要trim，过滤空格,
+     * 2. 走onChange 回调事件，emit currentvalue
+     * 3. 最后输入框读取值，调用get函数，再进行parser
+     */
+    parsedValue: {
+      get () {
+        if (this.parser) {
+          return this.parser(this.currentValue)
+        }
+        return this.currentValue
+      },
+      set (value) {
+        this.currentValue = value.trim()
+      }
+
+    },
+    /**
+     * 过滤下拉框选项
+     * 可以通过noFilter参数不过滤
+     * 1. 远程请求的结果不过滤
+     * 2. 本地的需要过滤
+     */
     filterOptions () {
       if (this.remote || !this.currentValue || this.noFilter) {
         return this.options
@@ -121,6 +151,7 @@ export default {
         return this.options.filter(opt => opt.name.indexOf(this.currentValue) !== -1)
       }
     },
+    // 显示下拉框
     showDropdown () {
       return this.visible && this.filterOptions.length > 0 && this.isFocus
     },
