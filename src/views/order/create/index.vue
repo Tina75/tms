@@ -130,7 +130,7 @@
     <Row :gutter="16" style="margin-bottom: 10px">
       <Col span="6">
       <FormItem label="结算方式:" prop="settlementType">
-        <Select ref="settlementSelector" v-model="orderForm.settlementType">
+        <Select ref="settlementSelector" v-model="orderForm.settlementType" transfer>
           <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
       </FormItem>
@@ -225,7 +225,7 @@
     <Row :gutter="16" class="i-mt-15">
       <Col span="6">
       <FormItem label="提货方式:" prop="pickup">
-        <Select ref="pickupSelector" v-model="orderForm.pickup">
+        <Select ref="pickupSelector" v-model="orderForm.pickup" transfer>
           <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
       </FormItem>
@@ -906,79 +906,83 @@ export default {
         this.disabled = false
         if (form.pickup === 1) {
           // 小车上门 提货权限
-          if (this.hasPower(120201)) {
-            this.openDialog({
-              name: 'transport/dialog/action',
-              data: {
-                type: 'pickUp',
-                actionOrigin: 'orderCreate'
-              },
-              methods: {
-                complete (data) {
-                  const param = {
-                    createOrder: form,
-                    createLoadbill: {},
-                    loadbillPickup: data
-                  }
-                  api.immediShip(param).then(res => {
-                    if (!form.id) {
-                      this.$Message.success('创建订单成功')
-                    } else {
-                      this.$Message.success('修改订单成功')
+          api.validPermit({ type: 2 }).then(res => {
+            if (res) {
+              this.openDialog({
+                name: 'transport/dialog/action',
+                data: {
+                  type: 'pickUp',
+                  actionOrigin: 'orderCreate'
+                },
+                methods: {
+                  complete (data) {
+                    const param = {
+                      createOrder: form,
+                      createLoadbill: {},
+                      loadbillPickup: data
                     }
-                    self.resetForm()
-                    // 重新获取客户列表
-                    self.getClients()
-                  })
+                    api.immediShip(param).then(res => {
+                      if (!form.id) {
+                        this.$Message.success('创建订单成功')
+                      } else {
+                        this.$Message.success('修改订单成功')
+                      }
+                      self.resetForm()
+                      // 重新获取客户列表
+                      self.getClients()
+                    })
+                  }
                 }
-              }
-            })
-          } else {
-            this.openDialog({
-              name: 'order/create/components/OrderTip',
-              data: {
-                tipMsg: '提货管理'
-              }
-            })
-          }
+              })
+            } else {
+              this.openDialog({
+                name: 'order/create/components/OrderTip',
+                data: {
+                  tipMsg: '提货管理'
+                }
+              })
+            }
+          })
         } else if (form.pickup === 2) {
           // 大车直送 派车权限
-          if (this.hasPower(120101)) {
-            this.openDialog({
-              name: 'transport/dialog/action',
-              data: {
-                type: 'sendCar',
-                actionOrigin: 'orderCreate'
-              },
-              methods: {
-                complete (data) {
-                  const param = {
-                    createOrder: form,
-                    createWaybill: {},
-                    waybillAssignVehicle: data
-                  }
-                  param.waybillAssignVehicle.cashBack = param.waybillAssignVehicle.cashBack || null
-                  api.immediShip(param).then(res => {
-                    if (!form.id) {
-                      this.$Message.success('创建订单成功')
-                    } else {
-                      this.$Message.success('修改订单成功')
+          api.validPermit({ type: 1 }).then(res => {
+            if (res) {
+              this.openDialog({
+                name: 'transport/dialog/action',
+                data: {
+                  type: 'sendCar',
+                  actionOrigin: 'orderCreate'
+                },
+                methods: {
+                  complete (data) {
+                    const param = {
+                      createOrder: form,
+                      createWaybill: {},
+                      waybillAssignVehicle: data
                     }
-                    self.resetForm()
-                    // 重新获取客户列表
-                    self.getClients()
-                  })
+                    param.waybillAssignVehicle.cashBack = param.waybillAssignVehicle.cashBack || null
+                    api.immediShip(param).then(res => {
+                      if (!form.id) {
+                        this.$Message.success('创建订单成功')
+                      } else {
+                        this.$Message.success('修改订单成功')
+                      }
+                      self.resetForm()
+                      // 重新获取客户列表
+                      self.getClients()
+                    })
+                  }
                 }
-              }
-            })
-          } else {
-            this.openDialog({
-              name: 'order/create/components/OrderTip',
-              data: {
-                tipMsg: '送货管理'
-              }
-            })
-          }
+              })
+            } else {
+              this.openDialog({
+                name: 'order/create/components/OrderTip',
+                data: {
+                  tipMsg: '送货管理'
+                }
+              })
+            }
+          })
         }
       })
     },
