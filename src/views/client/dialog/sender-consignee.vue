@@ -10,7 +10,7 @@
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
-      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122">
+      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122" label-position="right">
         <FormItem label="收货联系人：" prop="contact">
           <Input v-model="validate.contact" :maxlength="15" placeholder="请输入"/>
         </FormItem>
@@ -35,7 +35,7 @@
             </Col>
           </Row>
         </FormItem>
-        <FormItem label="备注：" class="ivu-form-item-required blank" prop="remark">
+        <FormItem label="备注：" prop="remark">
           <Input v-model="validate.remark"  placeholder="请输入"/>
         </FormItem>
       </Form>

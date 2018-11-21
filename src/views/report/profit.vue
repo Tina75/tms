@@ -44,7 +44,7 @@
           <Col>上游运费收入</Col>
         </Row>
         <Row class="small-height border-top-none border-right-none border-bottom-none">
-          <Col>外转运费支出</Col>
+          <Col>返现运费收入</Col>
         </Row>
         </Col>
         <Col span="12" >

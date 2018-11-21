@@ -65,17 +65,17 @@
       </Row>
       <Row>
         <Col :span="8">
-        <FormItem label="净空：" class="ivu-form-item-required blank" prop="shippingVolume">
+        <FormItem label="净空：" prop="shippingVolume">
           <Input v-model="validate.driver.shippingVolume" :maxlength="9" placeholder="请输入"/>方
         </FormItem>
         </Col>
         <Col :span="8">
-        <FormItem label="车辆品牌：" class="ivu-form-item-required blank">
+        <FormItem label="车辆品牌：">
           <Input v-model="validate.driver.carBrand" :maxlength="20" placeholder="如：东风"></Input>
         </FormItem>
         </Col>
         <Col :span="8">
-        <FormItem label="结算方式：" class="ivu-form-item-required blank">
+        <FormItem label="结算方式：">
           <Select v-model="validate.driver.payType" transfer clearable>
             <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
           </Select>
@@ -134,28 +134,28 @@
       </Row>
     </Form>
     <!--运输公司-->
-    <Form v-show="validate.type.selectStatus == 2" ref="validateCompany" :model="validate.company" :rules="ruleValidate.company" :label-width="90" label-position="right">
+    <Form v-show="validate.type.selectStatus == 2" ref="validateCompany" :model="validate.company" :rules="ruleValidate.company" :label-width="120" label-position="right">
       <p class="modalTitle">基础信息</p>
       <Row>
         <Col span="8">
-        <FormItem label="承运商名称:" prop="carrierName">
+        <FormItem label="承运商名称：" prop="carrierName">
           <Input v-model="validate.company.carrierName" :maxlength="20" placeholder="请输入"/>
         </FormItem>
         </Col>
         <Col span="8">
-        <FormItem label="负责人:" prop="carrierPrincipal">
+        <FormItem label="负责人：" prop="carrierPrincipal">
           <Input v-model="validate.company.carrierPrincipal" :maxlength="15" placeholder="请输入"/>
         </FormItem>
         </Col>
         <Col span="8">
-        <FormItem label="联系电话:" prop="carrierPhone">
+        <FormItem label="联系电话：" prop="carrierPhone">
           <Input v-model="validate.company.carrierPhone" :maxlength="11" placeholder="请输入"/>
         </FormItem>
         </Col>
       </Row>
       <Row>
         <Col span="8">
-        <FormItem label="结算方式:" class="ivu-form-item-required blank">
+        <FormItem label="结算方式：">
           <Select v-model="validate.company.payType" transfer clearable>
             <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
           </Select>

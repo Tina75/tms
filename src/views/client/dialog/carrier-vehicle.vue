@@ -119,28 +119,28 @@
         <br/>
         <Row>
           <Col span="22" class="formatSty">
-          <FormItem class="ivu-form-item-required blank" label="修理单位：">
+          <FormItem label="修理单位：">
             <Input v-model="validate.repairUnit" :maxlength="50" placeholder="请输入"></Input>
           </FormItem>
           </Col>
         </Row>
         <Row>
           <Col span="22" class="formatSty">
-          <FormItem class="ivu-form-item-required blank" label="修理原因：">
+          <FormItem label="修理原因：">
             <Input v-model="validate.repairReason" :maxlength="200" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入" type="textarea"></Input>
           </FormItem>
           </Col>
         </Row>
         <Row>
           <Col span="22" class="formatSty">
-          <FormItem class="ivu-form-item-required blank" label="修理结果：">
+          <FormItem label="修理结果：">
             <Input v-model="validate.repairResult" :maxlength="200" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入" type="textarea"></Input>
           </FormItem>
           </Col>
         </Row>
         <Row>
           <Col span="22" class="formatSty">
-          <FormItem class="ivu-form-item-required blank" label="备注：">
+          <FormItem label="备注：">
             <Input v-model="validate.remark" :maxlength="200" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入" type="textarea"></Input>
           </FormItem>
           </Col>
