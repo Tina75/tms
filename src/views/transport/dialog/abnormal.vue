@@ -140,7 +140,7 @@
         <i-col span="24" class="exception-distribution">
           <span class="detail-field-title-sm" style="vertical-align: unset;padding-left: 8px;width: 90px;line-height: 1.6;">异常描述：</span>
           <!-- <Input :autosize="{minRows: 3, maxRows: 5}" :maxlength="500" type="textarea"></Input> -->
-          <div style="width: 100%;">
+          <div style="width: calc(100% - 80px);">
             <Input v-model="details.abnormalDesc" :autosize="{minRows: 3, maxRows: 5}" :maxlength="500" type="textarea"></Input>
             <p style="color: #999;font-family:PingFangSC-Regular;font-weight:400;line-height: 40px;">注意：问题描述最多输入500个汉字</p>
           </div>
