@@ -19,7 +19,7 @@
           </SelectInput>
         </FormItem>
         <FormItem label="外转方运单号：">
-          <Input v-model="info.outTransNo" :maxlength="20" style="width:200px"/>
+          <Input v-model="info.outTransNo" :maxlength="20" style="width:200px" placeholder="请输入"/>
         </FormItem>
         <FormItem label="付款方式：" prop="payType">
           <Select v-model="info.payType" transfer style="width:200px">
