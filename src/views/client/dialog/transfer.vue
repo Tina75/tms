@@ -8,7 +8,7 @@
     @on-visible-change="close"
   >
     <p slot="header" style="text-align:center">{{title}}</p>
-    <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122">
+    <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122" label-position="right">
       <FormItem label="外转方名称：" prop="name">
         <Input v-model="validate.name" :maxlength="20" placeholder="请输入"/>
       </FormItem>
@@ -21,7 +21,7 @@
       <FormItem label="公司地址：" prop="companyAddress">
         <AreaInput v-model="validate.companyAddress" :maxlength="60" placeholder="请输入" @latlongt-change="latlongtChange"/>
       </FormItem>
-      <FormItem label="支付方式：" class="ivu-form-item-required blank">
+      <FormItem label="支付方式：">
         <Select v-model="validate.payType" placeholder="请输入" transfer clearable>
           <Option value="1">现付</Option>
           <Option value="2">到付</Option>
@@ -29,7 +29,7 @@
           <Option value="4">月结</Option>
         </Select>
       </FormItem>
-      <FormItem label="备注：" class="ivu-form-item-required blank">
+      <FormItem label="备注：">
         <Input v-model="validate.remark" :autosize="{minRows: 2,maxRows: 5}" :maxlength="100"  type="textarea"  placeholder="请输入"/>
       </FormItem>
     </Form>

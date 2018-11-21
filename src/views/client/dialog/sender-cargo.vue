@@ -9,11 +9,11 @@
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
-      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122">
+      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122" label-position="right">
         <FormItem label="货物名称：" prop="cargoName">
           <Input v-model="validate.cargoName" :maxlength="20" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="包装方式：" class="ivu-form-item-required blank">
+        <FormItem label="包装方式：">
           <!--<Input v-model="validate.unit" :maxlength="10" placeholder="请输入"/>-->
           <SelectInput
             v-model="validate.unit"
@@ -25,19 +25,19 @@
           >
           </SelectInput>
         </FormItem>
-        <FormItem label="货值：" prop="cargoCost" class="ivu-form-item-required blank">
+        <FormItem label="货值：" prop="cargoCost">
           <Input v-model="validate.cargoCost"  placeholder="请输入"/>
         </FormItem>
-        <FormItem label="重量：" prop="weight" class="ivu-form-item-required blank">
+        <FormItem label="重量：" prop="weight">
           <Input v-model="validate.weight" :maxlength="60" placeholder="请输入"/>吨
         </FormItem>
-        <FormItem label="体积：" prop="volume" class="ivu-form-item-required blank">
+        <FormItem label="体积：" prop="volume">
           <Input v-model="validate.volume" :maxlength="60" placeholder="请输入"/>方
         </FormItem>
-        <FormItem label="备注1：" class="ivu-form-item-required blank">
+        <FormItem label="备注1：">
           <Input v-model="validate.remark1" :maxlength="100" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="备注2：" class="ivu-form-item-required blank">
+        <FormItem label="备注2：">
           <Input v-model="validate.remark2" :maxlength="100" placeholder="请输入"/>
         </FormItem>
       </Form>
