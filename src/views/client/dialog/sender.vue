@@ -19,7 +19,7 @@
         <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
       </FormItem>
       <FormItem class="ivu-form-item-required blank" label="支付方式:" >
-        <Select v-model="validate.payType" clearable placeholder="请输入">
+        <Select v-model="validate.payType" transfer clearable placeholder="请输入">
           <Option value="1">现付</Option>
           <Option value="2">到付</Option>
           <Option value="3">回单付</Option>
