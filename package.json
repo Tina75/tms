@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "ali-oss": "^6.0.1",
-    "area-data": "^5.0.6",
     "axios": "^0.18.0",
     "ema-proxy": "^1.0.1",
     "intersection-observer": "^0.5.1",

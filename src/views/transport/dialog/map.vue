@@ -79,8 +79,11 @@ export default {
     showCar (car, cb) {
       const point = new BMap.Point(Number(car.longitude), Number(car.latitude))
       // 添加标志点
-      const markerOverlay = new MarkerOverlay(point)
-      this.map.addOverlay(markerOverlay)
+      // const markerOverlay = new MarkerOverlay(point)
+      // this.map.addOverlay(markerOverlay)
+      const getTruckMarker = truckMarker(this.map)
+      const marker = getTruckMarker(point)
+      this.map.addOverlay(marker)
 
       // 添加标签
       const labelOverlay = new LabelOverlay(point, car.carNo === '' ? car.phone : car.carNo)
@@ -110,14 +113,13 @@ export default {
           if (length === 1) {
             const marker = getTruckMarker(point)
             this.map.addOverlay(marker)
+          } else {
+            const marker = getTruckMarker(
+              point,
+              new BMap.Point(car.points[i + 1].longitude, car.points[i + 1].latitude)
+            )
+            this.map.addOverlay(marker)
           }
-        } else if (i === 1 && length > 1) {
-          // 如果多个点，就调整卡车方向
-          const marker = getTruckMarker(
-            point,
-            new BMap.Point(car.points[i - 1].longitude, car.points[i - 1].latitude)
-          )
-          this.map.addOverlay(marker)
         } else {
           // 添加标志点
           const markerOverlay = new MarkerOverlay(point)
