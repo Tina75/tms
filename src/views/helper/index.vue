@@ -44,6 +44,7 @@
           </video>
       </div> -->
         <div v-if="'descover' === this.type">
+          <p slot="title" class="rightDivTitle">探索运掌柜</p>
           <Explore></Explore>
         </div>
       </Card>

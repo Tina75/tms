@@ -223,12 +223,14 @@ export default {
 <style lang='stylus' scoped>
 >>>.ivu-steps .ivu-steps-head-inner>.ivu-steps-icon.ivu-icon
   color: #00A4BD
+>>>.ivu-steps .ivu-steps-tail>i
+  height 2px
 .ivu-chart-circle
   margin-left: calc(50% - 70px);
 .contenAll
-  padding-top 100px
+  padding-top 60px
   margin 0 auto
-  width 800px
+  width 900px
   font-family PingFangSC-Medium
 .contentLabel
   text-align center
@@ -255,6 +257,7 @@ export default {
   width 120px
   background #00A4BD
   color #FFFFFF
+  border #00A4BD
 .stepDiv
   margin-top 60px
 </style>
