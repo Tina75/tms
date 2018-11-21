@@ -221,7 +221,6 @@ export default {
                 renderBtn.push(
                   h('a', {
                     style: {
-                      marginRight: '25px',
                       color: '#00a4bd'
                     },
                     on: {
@@ -236,7 +235,6 @@ export default {
                 renderBtn.push(
                   h('a', {
                     style: {
-                      marginRight: '25px',
                       color: '#00a4bd'
                     },
                     on: {
