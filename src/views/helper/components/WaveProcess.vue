@@ -7,7 +7,7 @@
         <div class="wave"></div>
       </div>
       <div class="wave-text">
-        <span>{{process}}%</span>
+        <span :class="process === 100 ? 'whiteCls' : 'blackCls'">{{process}}%</span>
       </div>
     </div>
     <div v-else>
@@ -30,6 +30,12 @@ export default {
   },
   computed: {
     styles () {
+      if (this.process === 100) {
+        return {
+          height: '110%',
+          background: 'linear-gradient(#00D1E0, #00A4BD)'
+        }
+      }
       return {
         height: this.process + '%'
       }
@@ -78,7 +84,10 @@ export default {
   top 50px
   width 140px
   text-align center
-  span
+  .whiteCls
+    font-size 24px
+    color #fff
+  .blackCls
     font-size 24px
     color #333
 .wave-logo
