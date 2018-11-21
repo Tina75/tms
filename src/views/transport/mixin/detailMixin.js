@@ -32,6 +32,7 @@ export default {
         totalFee: ''
       },
 
+      activeTab: 'detail',
       showLog: false,
       logList: [], // 操作日志
       exceptionCount: 0,
@@ -117,6 +118,9 @@ export default {
       } else {
         this.tableColumns.shift()
       }
+    },
+    isAbnomal (val) {
+      this.activeTab = val ? 'detail' : 'exception'
     }
   },
 

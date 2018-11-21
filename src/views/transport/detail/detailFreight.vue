@@ -18,7 +18,7 @@
         @click="item.func">{{ item.name }}
       </Button>
     </div>
-    <Tabs :value="!isAbnomal ? 'detail' : 'exception'">
+    <Tabs :value="activeTab">
       <TabPane label="运单详情" name="detail">
         <section class="detail-info">
           <!-- 运单信息 -->
