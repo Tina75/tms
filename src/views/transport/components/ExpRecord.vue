@@ -67,6 +67,10 @@
                   <span class="colorGrey">{{data.beforeFeeInfo.unloadFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
+                  <label class="feeLabel">路桥费：</label>
+                  <span class="colorGrey">{{data.beforeFeeInfo.tollFee | Money}}元</span>
+                </i-col>
+                <i-col span="8">
                   <label class="feeLabel">保险费：</label>
                   <span class="colorGrey">{{data.beforeFeeInfo.insuranceFee | Money}}元</span>
                 </i-col>
@@ -105,6 +109,10 @@
                 <i-col span="8">
                   <label class="feeLabel">卸货费：</label>
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.unloadFee, data.afterFeeInfo.unloadFee)}" class="colorGrey">{{data.afterFeeInfo.unloadFee | Money}}</span>元
+                </i-col>
+                <i-col span="8">
+                  <label class="feeLabel">路桥费：</label>
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.tollFee, data.afterFeeInfo.tollFee)}" class="colorGrey">{{data.afterFeeInfo.tollFee | Money}}</span>元
                 </i-col>
                 <i-col span="8">
                   <label class="feeLabel">保险费：</label>

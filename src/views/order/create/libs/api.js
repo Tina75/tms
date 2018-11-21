@@ -38,5 +38,29 @@ export default {
         .then((response) => resolve(response))
         .catch((err) => reject(err))
     })
+  },
+  validPermit (data) {
+    return new Promise((resolve, reject) => {
+      server({
+        method: 'get',
+        url: 'permission/validDirectSend',
+        data
+      }).then(response => {
+        resolve(response.data.data)
+      }).catch(err => reject(err))
+    })
+  },
+  // 立即发运
+  immediShip (param) {
+    return new Promise((resolve, reject) => {
+      const data = Object.assign({}, param)
+      server({
+        method: 'post',
+        url: '/order/shipImmediately',
+        data
+      }).then((response) => {
+        resolve(response.data.data)
+      }).catch(err => reject(err))
+    })
   }
 }

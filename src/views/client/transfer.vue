@@ -26,7 +26,7 @@
       :method="method"
       :url="url"
       :columns="columns1"
-      list-field="transfereeList"
+      list-field="list"
       @on-sort-change = "timeSort"
     ></page-table>
   </div>

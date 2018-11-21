@@ -166,9 +166,9 @@ export default {
       },
       curStatusName: '待回收',
       btnGroup: [
-        { name: '回收', value: 1, code: 110201 },
-        { name: '返厂', value: 2, code: 110202 },
-        { name: '导出', value: 3, code: 110203 }
+        { name: '回收', value: 1, code: 120501 },
+        { name: '返厂', value: 2, code: 120502 },
+        { name: '导出', value: 3, code: 120503 }
       ],
       operateValue: 1,
       tableColumns: [
@@ -186,7 +186,7 @@ export default {
           extra: true,
           render: (h, params) => {
             let renderBtn = []
-            if (params.row.receiptOrder.receiptStatus === 0 && params.row.status === 40 && this.hasPower(110201)) {
+            if (params.row.receiptOrder.receiptStatus === 0 && params.row.status === 40 && this.hasPower(120501)) {
               renderBtn.push(
                 h('a', {
                   style: {
@@ -201,7 +201,7 @@ export default {
                 }, '回收')
               )
             }
-            if (params.row.receiptOrder.receiptStatus === 1 && this.hasPower(110202)) {
+            if (params.row.receiptOrder.receiptStatus === 1 && this.hasPower(120502)) {
               renderBtn.push(
                 h('a', {
                   style: {
@@ -217,7 +217,7 @@ export default {
               )
             }
             if (params.row.receiptOrder.receiptStatus > 0) {
-              if (params.row.receiptOrder.receiptUrl.length > 0 && this.hasPower(110205)) { // 修改回单
+              if (params.row.receiptOrder.receiptUrl.length > 0 && this.hasPower(120505)) { // 修改回单
                 renderBtn.push(
                   h('a', {
                     style: {
@@ -232,7 +232,7 @@ export default {
                   }, '修改回单')
                 )
               }
-              if (params.row.receiptOrder.receiptUrl.length <= 0 && this.hasPower(110204)) { // 上传回单
+              if (params.row.receiptOrder.receiptUrl.length <= 0 && this.hasPower(120504)) { // 上传回单
                 renderBtn.push(
                   h('a', {
                     style: {
@@ -576,14 +576,14 @@ export default {
         this.deleteOperateCol()
         this.operateValue = 1
         this.btnGroup = [
-          { name: '导出', value: 1, code: 110203 }
+          { name: '导出', value: 1, code: 120503 }
         ]
         this.keywords.receiptStatus = null
       } else if (val === '待签收') {
         this.deleteOperateCol()
         this.operateValue = 1
         this.btnGroup = [
-          { name: '导出', value: 1, code: 110203 }
+          { name: '导出', value: 1, code: 120503 }
         ]
         this.keywords.receiptStatus = -1
       } else if (val === '待回收') {
@@ -591,8 +591,8 @@ export default {
         this.addOperateCol()
         this.operateValue = 1
         this.btnGroup = [
-          { name: '回收', value: 1, code: 110201 },
-          { name: '导出', value: 2, code: 110203 }
+          { name: '回收', value: 1, code: 120501 },
+          { name: '导出', value: 2, code: 120503 }
         ]
         this.keywords.receiptStatus = 0
       } else if (val === '待返厂') {
@@ -600,8 +600,8 @@ export default {
         this.addOperateCol()
         this.operateValue = 1
         this.btnGroup = [
-          { name: '返厂', value: 1, code: 110202 },
-          { name: '导出', value: 2, code: 110203 }
+          { name: '返厂', value: 1, code: 120502 },
+          { name: '导出', value: 2, code: 120503 }
         ]
         this.keywords.receiptStatus = 1
       } else {
@@ -609,7 +609,7 @@ export default {
         this.addOperateCol()
         this.operateValue = 1
         this.btnGroup = [
-          { name: '导出', value: 1, code: 110203 }
+          { name: '导出', value: 1, code: 120503 }
         ]
         this.keywords.receiptStatus = 2
       }

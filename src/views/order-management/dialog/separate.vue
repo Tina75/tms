@@ -552,8 +552,11 @@ export default {
     // 获取子订单数
     getSubOrderNum () {
       Server({
-        url: 'order/getSubOrderNum?orderId=' + this.id,
-        method: 'get'
+        url: 'order/getSubOrderNum',
+        method: 'get',
+        data: {
+          orderId: this.id
+        }
       }).then((res) => {
         this.subOrderNum = res.data.data.subOrderNum
       })

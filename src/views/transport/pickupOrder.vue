@@ -143,10 +143,10 @@ import SelectInput from './components/SelectInput.vue'
 import PrintPickup from './components/PrintPickup'
 import OrderTabContent from '@/views/order-management/components/TabContent'
 
-import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
-import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, setTabList } from './constant/pickup'
+import { BUTTON_LIST, TABLE_COLUMNS } from './constant/pickup'
 import headType from '@/libs/constant/headtype'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'ReceiveManager',
@@ -159,7 +159,6 @@ export default {
       pickupHeadType: headType.PICKUP,
       dispatchHeadType: headType.WAIT_PICKUP,
 
-      tabList: TAB_LIST, // 标签栏
       btnList: BUTTON_LIST(this), // 所有按钮组
 
       // 简易搜索类型
@@ -212,7 +211,22 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters({
+      tabList: 'pickupTabCount'
+    })
+  },
+
   methods: {
+    ...mapActions([
+      'deletePickupOrders',
+      'getPickupOrderPrintData',
+      'getPickupOrderLocation',
+      'pickupOrderCheck',
+      'pickupOrderArrival',
+      'getPickupOrderTabCount'
+    ]),
+
     // 设置标签状态
     setTabStatus (tab) {
       switch (tab) {
@@ -235,12 +249,7 @@ export default {
 
     // 查询标签页数量
     fetchTabCount () {
-      Server({
-        url: '/load/bill/tab/cnt',
-        method: 'get'
-      }).then(res => {
-        this.tabList = setTabList(res.data.data)
-      })
+      this.getPickupOrderTabCount()
     },
 
     // 数据查询
@@ -248,20 +257,16 @@ export default {
       const data = res.data.data
       this.page.current = data.pageNo
       this.page.size = data.pageSize
-      // this.$forceUpdate()
     },
 
     // 打印
     billPrint () {
       if (!this.checkTableSelection()) return
-      Server({
-        url: '/load/bill/batchPrint',
-        method: 'post',
-        data: { pickUpIds: this.tableSelection.map(item => item.pickUpId) }
-      }).then(res => {
-        this.printData = res.data.data
-        this.$refs.$printer.print()
-      })
+      this.getPickupOrderPrintData(this.tableSelection.map(item => item.pickUpId))
+        .then(res => {
+          this.printData = res
+          this.$refs.$printer.print()
+        })
     },
 
     // 导出
@@ -289,35 +294,31 @@ export default {
     billLocation () {
       if (!this.checkTableSelection()) return
       let pickUpIds = this.tableSelection.map(item => item.pickUpId)
-      let data = pickUpIds.length > 1 ? ({ pickUpIds }) : ({ pickUpId: pickUpIds[0] })
-      Server({
-        url: pickUpIds.length > 1 ? '/load/bill/location' : '/load/bill/single/location',
-        method: 'post',
-        data
-      }).then(res => {
-        let cars
-        if (pickUpIds.length > 1) {
-          if (!res.data.data.list.length) {
-            this.$Message.warning('暂无车辆位置信息')
-            return
+      this.getPickupOrderLocation(pickUpIds)
+        .then(res => {
+          let cars
+          if (pickUpIds.length > 1) {
+            if (!res.list.length) {
+              this.$Message.warning('暂无车辆位置信息')
+              return
+            }
+            cars = res.list
+          } else {
+            if (!res.points.length) {
+              this.$Message.warning('暂无车辆位置信息')
+              return
+            }
+            cars = [res]
           }
-          cars = res.data.data.list
-        } else {
-          if (!res.data.data.points.length) {
-            this.$Message.warning('暂无车辆位置信息')
-            return
-          }
-          cars = [res.data.data]
-        }
-        this.openDialog({
-          name: 'transport/dialog/map',
-          data: {
-            cars,
-            multiple: pickUpIds.length !== 1
-          },
-          methods: {}
+          this.openDialog({
+            name: 'transport/dialog/map',
+            data: {
+              cars,
+              multiple: pickUpIds.length !== 1
+            },
+            methods: {}
+          })
         })
-      }).catch(err => console.error(err))
     },
 
     // 删除
@@ -332,14 +333,11 @@ export default {
         },
         methods: {
           confirm () {
-            Server({
-              url: '/load/bill/delete',
-              method: 'delete',
-              data: { pickUpIds: self.tableSelection.map(item => item.pickUpId) }
-            }).then(res => {
-              self.$Message.success('删除成功')
-              self.clearSelectedAndFetch()
-            }).catch(err => console.error(err))
+            self.deletePickupOrders(self.tableSelection.map(item => item.pickUpId))
+              .then(() => {
+                self.$Message.success('删除成功')
+                self.clearSelectedAndFetch()
+              })
           }
         }
       })
@@ -357,14 +355,11 @@ export default {
         },
         methods: {
           confirm () {
-            Server({
-              url: '/load/bill/confirm/arrival',
-              method: 'post',
-              data: { pickUpIds: self.tableSelection.map(item => item.pickUpId) }
-            }).then(res => {
-              self.$Message.success('操作成功')
-              self.clearSelectedAndFetch()
-            }).catch(err => console.error(err))
+            self.pickupOrderArrival(self.tableSelection.map(item => item.pickUpId))
+              .then(() => {
+                self.$Message.success('操作成功')
+                self.clearSelectedAndFetch()
+              })
           }
         }
       })
@@ -373,24 +368,21 @@ export default {
     // 提货
     billPickup (id) {
       const self = this
-      Server({
-        url: '/load/bill/check/order',
-        method: 'post',
-        data: { pickUpId: id }
-      }).then(() => {
-        self.openDialog({
-          name: 'transport/dialog/action',
-          data: {
-            id,
-            type: 'pickUp'
-          },
-          methods: {
-            complete () {
-              self.clearSelectedAndFetch()
+      self.pickupOrderCheck(id)
+        .then(() => {
+          self.openDialog({
+            name: 'transport/dialog/action',
+            data: {
+              id,
+              type: 'pickUp'
+            },
+            methods: {
+              complete () {
+                self.clearSelectedAndFetch()
+              }
             }
-          }
+          })
         })
-      })
     },
 
     // 上报异常

@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import PageRouter from './components/PageRouter.vue'
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'hash',
   base: __dirname,
   routes: [
@@ -33,22 +33,6 @@ export default new Router({
     //   component: () => import('@/views/home/index')
     // },
     {
-      path: '/set-up/index',
-      component: () => import('@/views/set-up/index')
-    },
-    {
-      path: '/information/index',
-      component: () => import('@/views/information/index')
-    },
-    {
-      path: '/information/message-info',
-      component: () => import('@/views/information/message-info')
-    },
-    {
-      path: '/helper/index',
-      component: () => import('@/views/helper/index')
-    },
-    {
       path: '/:name/:name1/:name2',
       component: PageRouter
     },
@@ -66,3 +50,10 @@ export default new Router({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (window.localStorage.tms_is_login || to.path === '/') next()
+  else next('/')
+})
+
+export default router
