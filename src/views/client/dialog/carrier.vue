@@ -45,14 +45,14 @@
       <Row>
         <Col :span="8">
         <FormItem label="车型：" prop="carType">
-          <Select v-model="validate.driver.carType" >
+          <Select v-model="validate.driver.carType" transfer >
             <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
           </Select>
         </FormItem>
         </Col>
         <Col :span="8">
         <FormItem label="车长：" prop="carLength">
-          <Select v-model="validate.driver.carLength" >
+          <Select v-model="validate.driver.carLength" transfer >
             <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
           </Select>
         </FormItem>
@@ -76,7 +76,7 @@
         </Col>
         <Col :span="8">
         <FormItem label="结算方式：" class="ivu-form-item-required blank">
-          <Select v-model="validate.driver.payType" clearable>
+          <Select v-model="validate.driver.payType" transfer clearable>
             <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
           </Select>
         </FormItem>
@@ -156,7 +156,7 @@
       <Row>
         <Col span="8">
         <FormItem label="结算方式:" class="ivu-form-item-required blank">
-          <Select v-model="validate.company.payType" clearable>
+          <Select v-model="validate.company.payType" transfer clearable>
             <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
           </Select>
         </FormItem>
