@@ -351,6 +351,7 @@ export default {
     return {
       pageName: 'pickup',
       status: '',
+      activeTab: 'detail',
       // 信息
       info: {
         pickupNo: '',
