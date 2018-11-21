@@ -65,13 +65,13 @@ export default {
   position:absolute;
   bottom:0;
   left:0;
-  background: #08b3ce;
+  background: #00b3c7;
   .wave
     background: url(../../../assets/wave.png) repeat-x top center;
     position: absolute;
     top: -10px;
     width: 968px;
-    height: 10px;
+    height: 25px;
     animation: wave 5s cubic-bezier( 0.36, 0.45, 0.63, 0.53) infinite;
     transform: translate3d(0, 0, 0);
     opacity: 0.3

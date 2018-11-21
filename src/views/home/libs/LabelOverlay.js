@@ -7,11 +7,12 @@ export default class LabelOverlay extends BMap.Overlay {
     super(point)
     this._point = point
     this._text = text
+    this._div = document.createElement('div')
   }
 
   initialize (map) {
     this._map = map
-    const div = this._div = document.createElement('div')
+    const div = this._div
     div.style.position = 'absolute'
     div.style.color = '#fff'
     div.style.width = (this._text.length === 11 ? 100 : 75) + 'px'
@@ -55,5 +56,11 @@ export default class LabelOverlay extends BMap.Overlay {
     var pixel = map.pointToOverlayPixel(this._point)
     this._div.style.left = (pixel.x - 31) + 'px'
     this._div.style.top = (pixel.y - 42) + 'px'
+  }
+  show () {
+    this._div.style.display = 'block'
+  }
+  hide () {
+    this._div.style.display = 'none'
   }
 };
