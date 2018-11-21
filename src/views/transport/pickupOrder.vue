@@ -298,17 +298,17 @@ export default {
         .then(res => {
           let cars
           if (pickUpIds.length > 1) {
-            if (!res.data.data.list.length) {
+            if (!res.list.length) {
               this.$Message.warning('暂无车辆位置信息')
               return
             }
-            cars = res.data.data.list
+            cars = res.list
           } else {
-            if (!res.data.data.points.length) {
+            if (!res.points.length) {
               this.$Message.warning('暂无车辆位置信息')
               return
             }
-            cars = [res.data.data]
+            cars = [res]
           }
           this.openDialog({
             name: 'transport/dialog/map',
