@@ -28,7 +28,7 @@
 
         <Button type="primary" style="float: right;" @click="createFreight">新建运单</Button>
       </div>
-      <div v-if="!rightTableData.length && !rightTableLoading" class="dispatch-empty">
+      <div v-if="!rightTableData.length && !rightTableLoading" style="flex-direction: column;-ms-flex-direction: column" class="dispatch-empty">
         <img src="../../../assets/img-empty.png" class="dispatch-empty-img">
         <p>暂无未发运运单，赶快创建新的运单吧～</p>
       </div>

@@ -1,10 +1,10 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="true" width="440" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="true" transfer width="440" @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">修改规则</p>
     <div class="create-rule-form">
       <Form ref="createRuleForm" :model="createRuleForm" :rules="validate" :label-width="100">
         <FormItem label="规则名称：" prop="ruleName">
-          <Input v-model="createRuleForm.ruleName" :maxlength="30" placeholder="请输入" autofocus=""/>
+          <Input v-focus ref="ruleName" v-model="createRuleForm.ruleName" :maxlength="30" :autofocus="true" placeholder="请输入"/>
         </FormItem>
       </Form>
     </div>
@@ -18,8 +18,19 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
+import Vue from 'vue'
 export default {
   name: 'createRule',
+  directives: {
+    focus: {
+      // 指令的定义
+      inserted: function (el) {
+        Vue.nextTick(() => {
+          el.querySelector('input').focus()
+        })
+      }
+    }
+  },
   mixins: [BaseDialog],
   data () {
     return {

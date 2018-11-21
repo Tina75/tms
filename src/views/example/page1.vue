@@ -32,7 +32,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import SelectInputForCity from '@/components/SelectInputForCity'
-import UpLoad from '@/components/upLoad/'
+import UpLoad from '@/components/upLoad/index.vue'
 // import ruleForClient from '@/components/ruleForClient/index'
 // import SelectInput from '@/components/SelectInput'
 export default {

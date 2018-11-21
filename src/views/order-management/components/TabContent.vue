@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div style="margin-top: 30px;display: flex;justify-content: space-between;">
+    <div class="query-box">
       <div>
         <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
       </div>
       <div v-if="simpleSearch" class="order-right">
-        <Select v-model="selectStatus" class="order-simple-select" style="width:120px;margin-top: 1px;margin-right: 11px" @on-change="handleChangeSearchStatus">
+        <Select v-model="selectStatus" class="order-simple-select" transfer style="width:120px;margin-top: 1px;margin-right: 11px" @on-change="handleChangeSearchStatus">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
         <SelectInput
@@ -57,7 +57,7 @@
         <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户单号" style="width: 200px" />
         <Input v-if="source !== 'transport'" v-model="keywords.waybillNo" :maxlength="30" placeholder="请输入运单号" style="width: 200px" />
       </div>
-      <div style="display: flex;justify-content: space-between;">
+      <div class="complex-query">
         <div>
           <!-- <area-select v-model="cityCodes.startCodes" :deep="true" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
           <area-select v-model="cityCodes.endCodes" :deep="true" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select> -->
@@ -66,6 +66,7 @@
           <DatePicker
             :options="timeOption"
             v-model="times"
+            transfer
             type="daterange"
             format="yyyy-MM-dd"
             placeholder="开始日期-结束日期"
@@ -231,7 +232,7 @@ export default {
              *    编辑： 无编辑按钮           //【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
              * 2、待调度状态下：（status: 20）
              *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）&& （未被调度：dispatchStatus=0）】显示
-             *    外转：【（未外转：transStatus=0） && （不是上门提货：pickup !== 1）备注：v1.3版本 上门提货完可以外转 && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被调度：dispatchStatus=0）】显示
+             *    外转：【（未外转：transStatus=0） && （不是上门提货：pickup !== 1）备注：v1.3版本 上门提货完可以外转 && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）/ 备注：v1.05版本 子单可以外转 / && （未被调度：dispatchStatus=0）】显示
              *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被调度：dispatchStatus=0）】显示
              *    删除：【（不是上门提货：pickup !== 1） && （未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （被拆单后的父单：disassembleStatus=1）】显示
              *    编辑：【（未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
@@ -349,7 +350,7 @@ export default {
                 }
               }
               // 外转按钮
-              if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0 && this.hasPower(120111)) {
+              if (r.transStatus === 0 && r.disassembleStatus === 0 && r.dispatchStatus === 0 && this.hasPower(120111)) {
                 renderBtn.push(
                   h('a', {
                     style: {
@@ -758,7 +759,9 @@ export default {
           title: '回单数量',
           key: 'receiptCount',
           minWidth: 120,
-          tooltip: true
+          render: (h, p) => {
+            return h('span', p.row.receiptCount ? p.row.receiptCount : '-')
+          }
         },
         {
           title: '代收货款',
@@ -877,9 +880,9 @@ export default {
       if (this.source === 'order') {
         if (val === '全部' || val === '待提货' || val === '待送货') {
           this.btnGroup = [
-            { name: '导出', value: 6, code: 110109 },
-            { name: '打印', value: 5, code: 110108 },
-            { name: '删除', value: 4, code: 110107 }
+            { name: '导出', value: 6, code: 100304 },
+            { name: '打印', value: 5, code: 100303 },
+            { name: '删除', value: 4, code: 100302 }
           ]
           if (val === '全部') {
             this.keywords.status = null
@@ -890,13 +893,13 @@ export default {
           }
         } else if (val === '回收站') {
           this.btnGroup = [
-            { name: '恢复', value: 7, code: 110110 },
-            { name: '彻底删除', value: 8, code: 110111 }
+            { name: '恢复', value: 7, code: 100305 },
+            { name: '彻底删除', value: 8, code: 100306 }
           ]
           this.keywords.status = 100
         } else {
           this.btnGroup = [
-            { name: '导出', value: 6, code: 110109 }
+            { name: '导出', value: 6, code: 100304 }
           ]
           if (val === '在途') {
             this.keywords.status = 30
@@ -1140,6 +1143,17 @@ export default {
 </script>
 
 <style lang='stylus' scoped>
+.query-box
+  margin-top: 30px;
+  display: flex;
+  display: -ms-flexbox
+  justify-content: space-between;
+  -ms-flex-pack justify
+.complex-query
+  display: flex;
+  display -ms-flexbox
+  justify-content: space-between;
+  -ms-flex-pack justify
 .ivu-btn
   margin-right 15px
   width 80px

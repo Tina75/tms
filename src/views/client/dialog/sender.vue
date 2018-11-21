@@ -2,31 +2,32 @@
   <Modal
     v-model="visiable"
     :mask-closable="false"
+    transfer
     label-position="left"
     class="modal"
     @on-visible-change="close"
   >
     <p slot="header" style="text-align:center">{{title}}</p>
     <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122">
-      <FormItem label="发货方名称:" prop="name">
+      <FormItem label="发货方名称：" prop="name">
         <Input v-model="validate.name" :maxlength="20" placeholder="请输入"/>
       </FormItem>
-      <FormItem label="发货方联系人:" prop="contact">
+      <FormItem label="发货方联系人：" prop="contact">
         <Input v-model="validate.contact" :maxlength="15" placeholder="请输入"/>
       </FormItem>
-      <FormItem label="联系电话:" prop="phone">
+      <FormItem label="联系电话：" prop="phone">
         <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
       </FormItem>
-      <FormItem class="ivu-form-item-required blank" label="支付方式:" >
-        <Select v-model="validate.payType" clearable placeholder="请输入">
+      <FormItem class="ivu-form-item-required blank" label="支付方式：" >
+        <Select v-model="validate.payType" transfer clearable placeholder="请输入">
           <Option value="1">现付</Option>
           <Option value="2">到付</Option>
           <Option value="3">回单付</Option>
           <Option value="4">月结</Option>
         </Select>
       </FormItem>
-      <FormItem class="ivu-form-item-required blank" label="备注:" >
-        <Input v-model="validate.remark" :maxlength="100" :autosize="{minRows: 2,maxRows: 5}" type="textarea"  placeholder="请输入"/>
+      <FormItem class="ivu-form-item-required blank" label="备注：" >
+        <Input v-model="validate.remark" :maxlength="100" :rows="2" :autosize="{minRows: 2,maxRows: 5}" type="textarea"  placeholder="请输入"/>
       </FormItem>
     </Form>
     <div slot="footer">
@@ -75,7 +76,6 @@ export default {
           } else { // 2-编辑
             this._consignerUpdate()
           }
-          this.close()
         }
       })
     },
@@ -88,6 +88,7 @@ export default {
             title: '发货方详情',
             query: { id: res.data.data }
           })
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -98,6 +99,7 @@ export default {
       consignerUpdate(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }

@@ -1,13 +1,13 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" width="440" footer-hide @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" transfer width="440" footer-hide @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">核销</p>
     <div class="step-pay-data">
       <div class="total-data">
         <Row>
-          <Col span="10">
+          <Col span="8">
           <p><label>结算方式：</label><span>{{settleTypeDesc}}</span></p>
           </Col>
-          <Col span="10">
+          <Col span="14">
           <p><label>应付金额：</label><i>{{needPay}}</i><span>元</span></p>
           </Col>
         </Row>
@@ -57,11 +57,12 @@
                 <tr v-for="(item, index) in payItems" :key="index" class="ivu-table-row">
                   <td class="" @mouseover="item.showAdjuster = true" @mouseleave="item.showAdjuster = false">
                     <div class="ivu-table-cell">
-                      <span v-if="!item.showAdjuster">{{index + 1}}</span>
-                      <div v-else class="adjuster">
-                        <Icon v-if="index === payItems.length - 1" class="add" type="md-add-circle" @click="addItem(index)"/>
-                        <Icon v-if="!item.verifyStatus && payItems.length > 1" class="remove" type="md-remove-circle" @click="removeItem(item, index)"/>
-                      </div>
+                      <span>{{index + 1}}</span>
+                      <!--<span v-if="!item.showAdjuster">{{index + 1}}</span>-->
+                      <!--<div v-else class="adjuster">-->
+                      <!--<Icon v-if="index === payItems.length - 1" class="add" type="md-add-circle" @click="addItem(index)"/>-->
+                      <!--<Icon v-if="!item.verifyStatus && payItems.length > 1" class="remove" type="md-remove-circle" @click="removeItem(item, index)"/>-->
+                      <!--</div>-->
                     </div>
                   </td>
                   <td class="">
@@ -71,7 +72,7 @@
                   </td>
                   <td class="">
                     <div class="ivu-table-cell">
-                      <Select v-if="item.isEdit" v-model="item.payType">
+                      <Select v-if="item.isEdit" v-model="item.payType" transfer>
                         <Option v-for="(value, key) in payTypeMap" :value="key" :key="key">{{ value }}</Option>
                       </Select>
                       <span v-else>{{item.payTypeDesc}}</span>
@@ -154,7 +155,7 @@ export default {
           scene: this.scene,
           verifyType: 2,
           isOil: item.payType === 2 || item.payType === 4 || item.payType === 6,
-          needPay: item.feeText,
+          needPay: parseFloat(item.feeText),
           settleTypeDesc: this.settleTypeDesc
         },
         methods: {

@@ -1,18 +1,18 @@
 <template>
   <div class="dialog">
-    <Modal v-model="visiable" :mask-closable="false" width="400" @on-visible-change="close">
+    <Modal v-model="visiable" :mask-closable="false" transfer width="400" @on-visible-change="close">
       <p slot="header" class="ModalTitle">
         <span>{{title}}</span>
       </p>
-      <Form ref="formModal" :model="formModal" :rules="rulesModal" :label-width="100" label-position="left" class="formModal">
+      <Form ref="formModal" :model="formModal" :rules="rulesModal" :label-width="90" label-position="right" class="formModal">
         <FormItem label="员工姓名：" prop="name">
           <Input v-model="formModal.name" placeholder="请输入员工姓名" class="inputClass"></Input>
         </FormItem>
         <FormItem label="手机号：" prop="phone">
-          <Input v-model="formModal.phone" maxlength="11" placeholder="请输入手机号" class="inputClass"></Input>
+          <Input v-model="formModal.phone" :maxlength="11" placeholder="请输入手机号" class="inputClass"></Input>
         </FormItem>
         <FormItem label="角色：" prop="roleId">
-          <Select v-model="formModal.roleId" clearable class="inputClass">
+          <Select v-model="formModal.roleId" transfer clearable class="inputClass">
             <Option
               v-for="item in selectList"
               :value="item.id"

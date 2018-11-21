@@ -1,5 +1,5 @@
 <template>
-  <Modal>
+  <Modal transfer>
     <div slot="title">
       核销记录单详情
     </div>

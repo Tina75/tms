@@ -5,7 +5,7 @@
 
       <ul class="form-step">
         <li v-for="(item, key) in stepList"
-            :key="key" class="form-step-item">
+            :key="key" style="flex-direction: column; -ms-flex-direction: column" class="form-step-item">
           <div :class="{'form-step-item-circle-active': step === key}" class="form-step-item-circle"><span>{{ key + 1 }}</span></div>
           <p :class="{'form-step-item-tip-active': step === key}" class="form-step-item-tip">{{item}}</p>
         </li>
@@ -50,23 +50,22 @@
             <FormItem prop="name">
               <Input v-model="form.name" :maxlength="25" placeholder="输入公司名称" />
             </FormItem>
-            <FormItem prop="cityId">
-              <Cascader :data="cities" v-model="form.cityId" :load-data="loadChildCities" placeholder="选择省/市/区"></Cascader>
-            </FormItem>
             <FormItem prop="address">
-              <AreaInput
-                v-model="form.address"
-                :city-code="cityCode"
-                :maxlength="40"
-                placeholder="输入公司详细地址"
-                @latlongt-change="addressLocationChange" />
+              <Row>
+                <Col :span="8">
+                <CitySelect v-model="form.cityId" clearable></CitySelect>
+                </Col>
+                <Col :span="16" class="areaRight">
+                <AreaInput v-model="form.address" :city-code="cityCode" :maxlength="40" placeholder="输入公司详细地址" @latlongt-change="addressLocationChange"></AreaInput>
+                </Col>
+              </Row>
             </FormItem>
           </div>
 
           <!-- step 3 -->
           <div v-if="step === 2" :key="2">
             <FormItem prop="password">
-              <Tooltip content="密码只支持6-16位的数字、大小写字母" style="width: 100%;" placement="top">
+              <Tooltip content="请输入6-16位非连续重复的数字、大小写字母" style="width: 100%;" transfer placement="top">
                 <Input v-model="form.password" :maxlength="16" type="password" placeholder="设置登录密码" />
               </Tooltip>
             </FormItem>
@@ -102,10 +101,11 @@ import mixin from './mixin'
 import { VALIDATOR_PHONE, VALIDATOR_PASSWORD, VALIDATOR_CONFIRM_PASSWORD } from './validator'
 
 import AreaInput from '@/components/AreaInput'
+import CitySelect from '@/components/SelectInputForCity'
 
 export default {
   name: 'SignUp',
-  components: { AreaInput },
+  components: { AreaInput, CitySelect },
   mixins: [ BasePage, mixin ],
   metaInfo: {
     title: '注册账号'
@@ -125,7 +125,7 @@ export default {
         name: '', // 公司名称
         userName: '', // 联系人姓名
         address: '', // 公司地址
-        cityId: [],
+        cityId: void 0,
         latitude: void 0,
         longitude: void 0,
         mapType: 1
@@ -166,7 +166,7 @@ export default {
   },
   computed: {
     cityCode () {
-      return this.form.cityId[1] || void 0
+      return this.form.cityId
     }
   },
   created () {
@@ -204,7 +204,6 @@ export default {
           }
 
           let data = Object.assign({}, this.form)
-          data.cityId = data.cityId[2]
 
           Server({
             url: '/user/register',
@@ -253,18 +252,20 @@ export default {
   .form-body
     width 800px
     height 540px
-    left 50%
-    top 50%
-    transform translate(-50%, -50%)
-
+    position: absolute
+    margin: auto
+    top: 0
+    right: 0
+    bottom: 0
+    left 0
     .form-content
-      width 300px
+      width 450px
       margin auto
 
     .form-step
       position relative
       display flex
-      align-items space-between
+      display: -ms-flexbox
       width 500px
       margin 30px auto
 
@@ -281,16 +282,20 @@ export default {
 
       &-item
         flex 1
-        display flex
+        -ms-flex: 1
         flex-direction column
+        -ms-flex-direction column
         align-items center
+        -ms-flex-align center
         position relative
         z-index 1
+        text-align: center
 
         &-circle
           width 50px
           height 50px
           background #FFFFFF
+          display: inline-block
 
           span
             display block
@@ -312,7 +317,13 @@ export default {
         &-tip
           font-size 12px
           color #9DA1B0
+          display: inline-block
+          width: 100%
+          text-align: center
 
           &-active
             color #00A4BD
+  .areaRight
+    padding-left: 15px
+    margin-top:1px
 </style>

@@ -1,15 +1,15 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="true" width="880" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="true" transfer width="900" @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">对账单明细</p>
     <div class="order-list">
       <Row>
-        <Col span="8">
+        <Col span="7">
         <p><label>对账批次号：</label><span>{{reconcileNo}}</span></p>
         </Col>
-        <Col span="8">
+        <Col span="7">
         <p><label>对账日期：</label><span>{{dateRange}}</span></p>
         </Col>
-        <Col span="8">
+        <Col span="10">
         <p><label>{{sceneMap[scene]}}：</label><span>{{partnerName}}</span></p>
         </Col>
       </Row>

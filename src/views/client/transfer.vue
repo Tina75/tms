@@ -6,7 +6,7 @@
       </div>
       <div class="right">
         <template>
-          <Select v-model="selectStatus" style="width:120px;margin-right: 11px"  @on-change="changeState">
+          <Select v-model="selectStatus" style="width:120px;margin-right: 11px" transfer @on-change="changeState">
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
@@ -26,7 +26,7 @@
       :method="method"
       :url="url"
       :columns="columns1"
-      list-field="transfereeList"
+      list-field="list"
       @on-sort-change = "timeSort"
     ></page-table>
   </div>

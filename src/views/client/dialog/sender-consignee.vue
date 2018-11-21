@@ -4,23 +4,24 @@
     <Modal
       v-model="visiable"
       :mask-closable="false"
+      transfer
       label-position="left"
       class="modal"
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122">
-        <FormItem label="收货联系人:" prop="contact">
+        <FormItem label="收货联系人：" prop="contact">
           <Input v-model="validate.contact" :maxlength="15" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="联系电话:" prop="phone">
+        <FormItem label="联系电话：" prop="phone">
           <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="收货地址:" prop="">
+        <FormItem label="收货地址：" prop="">
           <Row>
             <Col span="11">
             <FormItem prop="cityCode">
-              <CitySelect v-model="validate.cityCode" :code-type="4" clearable></CitySelect>
+              <CitySelect v-model="validate.cityCode" clearable></CitySelect>
             </FormItem>
             </Col>
             <Col span="13" style="padding-left: 5px">
@@ -34,7 +35,7 @@
             </Col>
           </Row>
         </FormItem>
-        <FormItem label="备注:" class="ivu-form-item-required blank" prop="remark">
+        <FormItem label="备注：" class="ivu-form-item-required blank" prop="remark">
           <Input v-model="validate.remark"  placeholder="请输入"/>
         </FormItem>
       </Form>

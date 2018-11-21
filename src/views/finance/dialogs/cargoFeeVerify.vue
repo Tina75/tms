@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="true" width="440" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="true" transfer width="440" @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">{{title}}</p>
     <div class="write-off-form">
       <Form ref="writeOffForm" :model="writeOffForm" :rules="validate" :label-width="100">
@@ -10,7 +10,8 @@
           <p><span class="writeOffFormFee">{{needPay}}</span>元</p>
         </FormItem>
         <FormItem v-if="orderNum === 0" :label="verifyType === 1 ? '实收货款：' : '实付货款：'" prop="actualFee">
-          <Input v-model="writeOffForm.actualFee" placeholder="请输入" />
+          <!--<Input v-model="writeOffForm.actualFee" placeholder="请输入" />-->
+          <tagNumberInput v-model="writeOffForm.actualFee" placeholder="请输入"></tagNumberInput>
         </FormItem>
         <FormItem :label="verifyType === 1 ? '收款方式：' : '付款方式：'" prop="payType">
           <RadioGroup v-model="writeOffForm.payType">
@@ -18,10 +19,22 @@
           </RadioGroup>
         </FormItem>
         <FormItem v-if="writeOffForm.payType !== '1'" :label="accountMap[writeOffForm.payType]" prop="account">
-          <Input v-model="writeOffForm.account" :maxlength="30" placeholder="请输入" />
+          <!--<Input v-model="writeOffForm.account" :maxlength="30" placeholder="请输入" />-->
+          <SelectInput v-model="writeOffForm.account"
+                       :remote="false"
+                       :maxlength="30"
+                       :local-options="diffAcount"
+                       placeholder="请输入"
+                       @on-select="cardSetBank"
+          ></SelectInput>
         </FormItem>
         <FormItem v-if="writeOffForm.payType === '2'" label="开户行：" prop="bankBranch">
-          <Input v-model="writeOffForm.bankBranch" :maxlength="30" placeholder="请输入" />
+          <!--<Input v-model="writeOffForm.bankBranch" :maxlength="30" placeholder="请输入" />-->
+          <SelectInput v-model="writeOffForm.bankBranch"
+                       :maxlength="30"
+                       :remote="false"
+                       :local-options="diffBankBranch"
+                       placeholder="请输入"></SelectInput>
         </FormItem>
         <FormItem label="备注：" prop="remark">
           <Input v-model="writeOffForm.remark" :maxlength="100" type="textarea" placeholder="请输入" />
@@ -42,8 +55,13 @@
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import verifyMixin from '../mixins/verifyMixin.js'
+import tagNumberInput from '@/components/TagNumberInput'
 export default {
   name: 'writeOff',
+  components: {
+    tagNumberInput
+    // SelectInput
+  },
   mixins: [BaseDialog, verifyMixin],
   data () {
     return {
@@ -59,7 +77,7 @@ export default {
         const data = {
           actualFee: parseFloat(this.writeOffForm.actualFee) * 100,
           payType: this.writeOffForm.payType,
-          account: this.writeOffForm.account,
+          account: this.writeOffForm.account.replace(/\s+/g, ''),
           bankBranch: this.writeOffForm.bankBranch,
           remark: this.writeOffForm.remark,
           verifyType: this.verifyType
@@ -81,6 +99,7 @@ export default {
           }).then(res => {
             console.log(res)
             if (res.data.data === '') {
+              this.saveAccount(this.writeOffForm.account, this.writeOffForm.bankBranch)
               this.ok()
               this.close()
             } else if (res.data.data && res.data.data.operateCode === 1) {

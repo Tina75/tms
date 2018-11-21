@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" width="360" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" transfer width="360" @on-visible-change="close">
     <p slot="header" style="text-align:center">删除</p>
     <div style="text-align: center;">
       <Icon type="ios-information-circle" size="24" color="#FFBB44"></Icon>

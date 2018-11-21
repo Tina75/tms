@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="show" :mask-closable="false" class="transport-detail" width="1100"  @on-visible-change="close">
+  <Modal v-model="show" :mask-closable="false" transfer class="transport-detail" width="1100"  @on-visible-change="close">
     <p slot="header" style="text-align:center">
       {{ type === 'sendCar' ? '派车' : '提货' }}
     </p>
@@ -42,11 +42,13 @@
         <i-col span="7" offset="1">
           <span class="detail-field-title" style="padding-left: 10px;">车型：</span>
           <Select v-model="info.carType"
+                  transfer
                   class="detail-info-input-half"
                   style="margin-right: 12px;">
             <Option v-for="item in carType" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
           <Select v-model="info.carLength"
+                  transfer
                   class="detail-info-input-half">
             <Option v-for="item in carLength" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
@@ -54,58 +56,85 @@
       </Row>
     </div>
 
-    <Form ref="payment" :label-width="82" :model="payment" :rules="rules" label-position="left">
-      <div class="part">
+    <Form ref="payment" :label-width="72" :model="payment" :rules="rules" label-position="left">
+      <div v-if="type === 'sendCar'" class="part">
+        <Row class="detail-field-group">
+          <i-col span="6">
+            <FormItem label="运输费：" prop="freightFee">
+              <TagNumberInput v-model="payment.freightFee" class="detail-payment-input-send"></TagNumberInput>
+              <span class="unit-yuan">元</span>
+              <a v-if="type === 'sendCar'" class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
+            </FormItem>
+          </i-col>
+          <i-col span="6">
+            <FormItem label="装货费：" prop="loadFee">
+              <TagNumberInput v-model="payment.loadFee" class="detail-payment-input-send"></TagNumberInput>
+              <span class="unit-yuan">元</span>
+            </FormItem>
+          </i-col>
+          <i-col span="6">
+            <FormItem label="卸货费：" prop="unloadFee">
+              <TagNumberInput v-model="payment.unloadFee" class="detail-payment-input-send"></TagNumberInput>
+              <span class="unit-yuan">元</span>
+            </FormItem>
+          </i-col>
+          <i-col span="6">
+            <FormItem label="路桥费：" prop="tollFee">
+              <TagNumberInput v-model="payment.tollFee" class="detail-payment-input-send"></TagNumberInput>
+              <span class="unit-yuan">元</span>
+            </FormItem>
+          </i-col>
+          <i-col span="6">
+            <FormItem label="保险费：" prop="insuranceFee" class="insurance-fee">
+              <TagNumberInput v-model="payment.insuranceFee" class="detail-payment-input-send"></TagNumberInput>
+              <span class="unit-yuan">元</span>
+            </FormItem>
+          </i-col>
+          <i-col span="6">
+            <FormItem label="其他费用：" prop="otherFee">
+              <TagNumberInput v-model="payment.otherFee" class="detail-payment-input-send"></TagNumberInput>
+              <span class="unit-yuan">元</span>
+            </FormItem>
+          </i-col>
+        </Row>
+        <Row class="detail-field-group">
+          <i-col span="24">
+            <span class="detail-field-title-sm" style="vertical-align: unset;margin-left: 10px;">费用合计：</span>
+            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
+          </i-col>
+        </Row>
+      </div>
+      <div v-else class="part">
         <Row class="detail-field-group">
           <i-col span="5">
-            <FormItem label="运输费用:" prop="freightFee">
-              <!-- <span class="detail-field-title-sm detail-field-required">运输费：</span>
-              <MoneyInput v-model="payment.freightFee"
-                          class="detail-payment-input" /> -->
-              <TagNumberInput v-model="payment.freightFee" class="detail-payment-input">
-                <span slot="suffix" class="order-create__input-suffix">元</span>
-              </TagNumberInput>
+            <FormItem label="运输费：" prop="freightFee">
+              <TagNumberInput v-model="payment.freightFee" class="detail-payment-input"></TagNumberInput>
+              <span class="unit-yuan">元</span>
               <a v-if="type === 'sendCar'" class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
             </FormItem>
           </i-col>
           <i-col span="4">
-            <FormItem label="装货费用:" prop="loadFee">
-              <!-- <span class="detail-field-title-sm">装货费：</span>
-              <MoneyInput v-model="payment.loadFee"
-                          class="detail-payment-input" /> -->
-              <TagNumberInput v-model="payment.loadFee" class="detail-payment-input">
-                <span slot="suffix" class="order-create__input-suffix">元</span>
-              </TagNumberInput>
+            <FormItem label="装货费：" prop="loadFee">
+              <TagNumberInput v-model="payment.loadFee" class="detail-payment-input"></TagNumberInput>
+              <span class="unit-yuan">元</span>
             </FormItem>
           </i-col>
           <i-col span="4" offset="1">
-            <FormItem label="卸货费用:" prop="unloadFee">
-              <!-- <span class="detail-field-title-sm">卸货费：</span>
-              <MoneyInput v-model="payment.unloadFee"
-                          class="detail-payment-input" /> -->
-              <TagNumberInput v-model="payment.unloadFee" class="detail-payment-input">
-                <span slot="suffix" class="order-create__input-suffix">元</span>
-              </TagNumberInput>
+            <FormItem label="卸货费：" prop="unloadFee">
+              <TagNumberInput v-model="payment.unloadFee" class="detail-payment-input"></TagNumberInput>
+              <span class="unit-yuan">元</span>
             </FormItem>
           </i-col>
           <i-col span="4" offset="1">
-            <FormItem label="保险费用:" prop="insuranceFee">
-              <!-- <span class="detail-field-title-sm">保险费：</span>
-              <MoneyInput v-model="payment.insuranceFee"
-                          class="detail-payment-input" /> -->
-              <TagNumberInput v-model="payment.insuranceFee" class="detail-payment-input">
-                <span slot="suffix" class="order-create__input-suffix">元</span>
-              </TagNumberInput>
+            <FormItem label="保险费：" prop="insuranceFee">
+              <TagNumberInput v-model="payment.insuranceFee" class="detail-payment-input"></TagNumberInput>
+              <span class="unit-yuan">元</span>
             </FormItem>
           </i-col>
           <i-col span="4" offset="1">
-            <FormItem label="其他费用:" prop="otherFee">
-              <!-- <span class="detail-field-title-sm">其他：</span>
-              <MoneyInput v-model="payment.otherFee"
-                          class="detail-payment-input" /> -->
-              <TagNumberInput v-model="payment.otherFee" class="detail-payment-input">
-                <span slot="suffix" class="order-create__input-suffix">元</span>
-              </TagNumberInput>
+            <FormItem label="其他费用：" prop="otherFee">
+              <TagNumberInput v-model="payment.otherFee" class="detail-payment-input"></TagNumberInput>
+              <span class="unit-yuan">元</span>
             </FormItem>
           </i-col>
         </Row>
@@ -138,17 +167,16 @@
           </i-col>
         </Row>
 
-        <Row v-if="type === 'sendCar'" class="detail-field-group" style="margin-top: 15px;">
+        <Row v-if="type === 'sendCar'" class="detail-field-group" style="margin-top: 15px;margin-left: 10px;">
           <i-col span="24">
             <FormItem label="返现运费：" prop="cashBack">
               <!-- <span class="detail-field-title" style="padding-left: 10px;">返现运费：</span>
               <MoneyInput v-model="cashBack"
                           class="detail-payment-input"
                           style="width: 180px;"/> -->
-              <TagNumberInput v-model="payment.cashBack" class="detail-payment-input" style="width: 180px;">
-                <span slot="suffix" class="order-create__input-suffix">元</span>
-              </TagNumberInput>
-              <Tooltip placement="right" content="返现运费是指在实际运输过程中存在某一段运输没有执行，需要将提前支付的运费返还。" max-width="500">
+              <TagNumberInput v-model="payment.cashBack" class="detail-payment-input" style="width: 180px;"></TagNumberInput>
+              <span class="unit-yuan">元</span>
+              <Tooltip placement="right" transfer content="返现运费是指在实际运输过程中存在某一段运输没有执行，需要将提前支付的运费返还。" max-width="500">
                 <Icon type="ios-alert" size="20" color="#FFBB44" style="margin-left: 14px;"/>
               </Tooltip>
             </FormItem>
@@ -215,7 +243,8 @@ export default {
         unloadFee: 0,
         insuranceFee: 0,
         otherFee: 0,
-        cashBack: 0 // 返现运费
+        cashBack: 0, // 返现运费
+        tollFee: 0 // 路桥费
       },
       rules: {
         // 运输费
@@ -242,6 +271,10 @@ export default {
         // 返现费用
         cashBack: [
           { validator: validateFee }
+        ],
+        // 路桥费用
+        tollFee: [
+          { validator: validateFee }
         ]
       },
       settlementType: '1',
@@ -251,11 +284,14 @@ export default {
   computed: {
     // 计算总费用
     paymentTotal () {
-      return parseFloat((Number(this.payment.freightFee) +
-      Number(this.payment.loadFee) +
-      Number(this.payment.unloadFee) +
-      Number(this.payment.insuranceFee) +
-      Number(this.payment.otherFee)).toFixed(2))
+      let total
+      total = Number(this.payment.freightFee) +
+              Number(this.payment.loadFee) +
+              Number(this.payment.unloadFee) +
+              Number(this.payment.insuranceFee) +
+              Number(this.payment.otherFee)
+      if (this.type === 'sendCar') total += Number(this.payment.tollFee)
+      return parseFloat(total.toFixed(2))
     }
   },
   created () {
@@ -267,7 +303,10 @@ export default {
     ] : [
       { payType: 2, fuelCardAmount: '', cashAmount: '' }
     ]
-    this.fetchData()
+    // 受理开单 不请求
+    if (this.actionOrigin !== 'orderCreate') {
+      this.fetchData()
+    }
   },
   methods: {
     // 计费规则
@@ -331,8 +370,9 @@ export default {
           this.payment[key] = this.setMoneyUnit2Yuan(billInfo[key])
         }
 
-        if (this.type === 'pickUp') { // 提货去掉返现运费
-          delete this.payment.cashBack
+        if (this.type === 'pickUp') {
+          delete this.payment.cashBack // 提货去掉返现运费
+          delete this.payment.tollFee // 提货去掉路桥费
         }
 
         this.settlementType = billInfo.settlementType ? billInfo.settlementType.toString() : '1'
@@ -354,7 +394,8 @@ export default {
 
     // 设置金额单位为元
     setMoneyUnit2Yuan (money) {
-      return typeof money === 'number' ? money / 100 : null
+      // return typeof money === 'number' ? money / 100 : null
+      return (typeof money === 'number' && money !== 0) ? money / 100 : null
     },
     // 格式化金额单位为分
     formatMoney () {
@@ -407,24 +448,28 @@ export default {
             settlementType: this.settlementType,
             settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
           }
-          let url
-          if (this.type === 'sendCar') {
-            data.waybillId = this.id
-            url = '/waybill/assign/vehicle'
+          if (this.actionOrigin !== 'orderCreate') {
+            let url
+            if (this.type === 'sendCar') {
+              data.waybillId = this.id || ''
+              url = '/waybill/assign/vehicle'
+            } else {
+              data.pickUpId = this.id || ''
+              url = '/load/bill/pick/up'
+            }
+            Server({
+              url,
+              method: 'post',
+              data
+            }).then(res => {
+              this.$Message.success('操作成功')
+              this.complete()
+              this.close()
+            }).catch(err => console.error(err))
           } else {
-            data.pickUpId = this.id
-            url = '/load/bill/pick/up'
-          }
-
-          Server({
-            url,
-            method: 'post',
-            data
-          }).then(res => {
-            this.$Message.success('操作成功')
-            this.complete()
+            this.complete(data)
             this.close()
-          }).catch(err => console.error(err))
+          }
         }
       })
     }
@@ -446,6 +491,11 @@ export default {
    .ivu-form-item-label
      color #777
      font-size 14px
+     padding 10px 0
+
+   .insurance-fee
+    .ivu-form-item-label
+      padding-left 10px
 
   .detail-payment-way
     width calc(100% - 100px) !important

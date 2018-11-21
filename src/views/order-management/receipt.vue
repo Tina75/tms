@@ -1,12 +1,12 @@
 <template>
   <div>
     <tab-header :name="curStatusName" :tabs="status" @tabChange="handleTabChange"></tab-header>
-    <div style="margin-top: 30px;display: flex;justify-content: space-between;">
+    <div class="receipt-container">
       <div>
         <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
       </div>
       <div v-if="simpleSearch" class="receipt-right">
-        <Select v-model="selectStatus" class="order-simple-select" style="width:120px;margin-top: 1px;margin-right: 11px" @on-change="handleChangeSearchStatus">
+        <Select v-model="selectStatus" class="order-simple-select" style="width:120px;margin-top: 1px;margin-right: 11px" transfer @on-change="handleChangeSearchStatus">
           <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
         <SelectInput
@@ -58,7 +58,7 @@
         <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户单号" style="width: 200px" />
         <Input v-model="keywords.waybillNo" :maxlength="30" placeholder="请输入运单号" style="width: 200px" />
       </div>
-      <div style="display: flex;justify-content: space-between;">
+      <div class="complex-query">
         <div>
           <!-- <area-select v-model="cityCodes.startCodes" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
           <area-select v-model="cityCodes.endCodes" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select> -->
@@ -67,6 +67,7 @@
           <DatePicker
             :options="timeOption"
             v-model="recoveryTimes"
+            transfer
             type="daterange"
             format="yyyy-MM-dd"
             placeholder="回收开始日期-回收结束日期"
@@ -76,6 +77,7 @@
           <DatePicker
             :options="timeOption"
             v-model="returnTimes"
+            transfer
             type="daterange"
             format="yyyy-MM-dd"
             placeholder="返厂开始日期-返厂结束日期"
@@ -164,9 +166,9 @@ export default {
       },
       curStatusName: '待回收',
       btnGroup: [
-        { name: '回收', value: 1, code: 110201 },
-        { name: '返厂', value: 2, code: 110202 },
-        { name: '导出', value: 3, code: 110203 }
+        { name: '回收', value: 1, code: 120501 },
+        { name: '返厂', value: 2, code: 120502 },
+        { name: '导出', value: 3, code: 120503 }
       ],
       operateValue: 1,
       tableColumns: [
@@ -184,7 +186,7 @@ export default {
           extra: true,
           render: (h, params) => {
             let renderBtn = []
-            if (params.row.receiptOrder.receiptStatus === 0 && params.row.status === 40 && this.hasPower(110201)) {
+            if (params.row.receiptOrder.receiptStatus === 0 && params.row.status === 40 && this.hasPower(120501)) {
               renderBtn.push(
                 h('a', {
                   style: {
@@ -199,7 +201,7 @@ export default {
                 }, '回收')
               )
             }
-            if (params.row.receiptOrder.receiptStatus === 1 && this.hasPower(110202)) {
+            if (params.row.receiptOrder.receiptStatus === 1 && this.hasPower(120502)) {
               renderBtn.push(
                 h('a', {
                   style: {
@@ -215,7 +217,7 @@ export default {
               )
             }
             if (params.row.receiptOrder.receiptStatus > 0) {
-              if (params.row.receiptOrder.receiptUrl.length > 0 && this.hasPower(110205)) { // 修改回单
+              if (params.row.receiptOrder.receiptUrl.length > 0 && this.hasPower(120505)) { // 修改回单
                 renderBtn.push(
                   h('a', {
                     style: {
@@ -230,7 +232,7 @@ export default {
                   }, '修改回单')
                 )
               }
-              if (params.row.receiptOrder.receiptUrl.length <= 0 && this.hasPower(110204)) { // 上传回单
+              if (params.row.receiptOrder.receiptUrl.length <= 0 && this.hasPower(120504)) { // 上传回单
                 renderBtn.push(
                   h('a', {
                     style: {
@@ -574,14 +576,14 @@ export default {
         this.deleteOperateCol()
         this.operateValue = 1
         this.btnGroup = [
-          { name: '导出', value: 1, code: 110203 }
+          { name: '导出', value: 1, code: 120503 }
         ]
         this.keywords.receiptStatus = null
       } else if (val === '待签收') {
         this.deleteOperateCol()
         this.operateValue = 1
         this.btnGroup = [
-          { name: '导出', value: 1, code: 110203 }
+          { name: '导出', value: 1, code: 120503 }
         ]
         this.keywords.receiptStatus = -1
       } else if (val === '待回收') {
@@ -589,8 +591,8 @@ export default {
         this.addOperateCol()
         this.operateValue = 1
         this.btnGroup = [
-          { name: '回收', value: 1, code: 110201 },
-          { name: '导出', value: 2, code: 110203 }
+          { name: '回收', value: 1, code: 120501 },
+          { name: '导出', value: 2, code: 120503 }
         ]
         this.keywords.receiptStatus = 0
       } else if (val === '待返厂') {
@@ -598,8 +600,8 @@ export default {
         this.addOperateCol()
         this.operateValue = 1
         this.btnGroup = [
-          { name: '返厂', value: 1, code: 110202 },
-          { name: '导出', value: 2, code: 110203 }
+          { name: '返厂', value: 1, code: 120502 },
+          { name: '导出', value: 2, code: 120503 }
         ]
         this.keywords.receiptStatus = 1
       } else {
@@ -607,7 +609,7 @@ export default {
         this.addOperateCol()
         this.operateValue = 1
         this.btnGroup = [
-          { name: '导出', value: 1, code: 110203 }
+          { name: '导出', value: 1, code: 120503 }
         ]
         this.keywords.receiptStatus = 2
       }
@@ -735,6 +737,17 @@ export default {
 }
 </script>
 <style lang='stylus' scoped>
+.receipt-container
+  margin-top: 30px;
+  display: flex;
+  display: -ms-flexbox;
+  justify-content: space-between;
+  -ms-flex-pack justify
+.complex-query
+  display: flex;
+  display -ms-flexbox
+  justify-content: space-between;
+  -ms-flex-pack justify
 .ivu-btn
   margin-right 15px
   width 80px

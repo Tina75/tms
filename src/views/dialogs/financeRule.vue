@@ -1,9 +1,9 @@
 <template>
-  <Modal v-model="visiable" :z-index="zIndex" :mask-closable="false" width="360" @on-visible-change="close">
+  <Modal v-model="visiable" :z-index="zIndex" :mask-closable="false" transfer width="360" @on-visible-change="close">
     <p slot="header" style="text-align:center">计费规则</p>
     <Form v-if="!ruleEmpty" ref="$form" :model="ruleForm" :rules="rules" :label-width="80">
       <FormItem label="计费规则：" prop="ruleIndex">
-        <Select v-model="ruleForm.ruleIndex" @on-change="ruleChanged">
+        <Select v-model="ruleForm.ruleIndex" transfer @on-change="ruleChanged">
           <Option v-for="(item, key) in ruleOptions" :key="key" :value="key">{{ item.name }}</Option>
         </Select>
       </FormItem>

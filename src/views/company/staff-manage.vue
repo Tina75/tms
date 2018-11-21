@@ -16,7 +16,7 @@
             </Col>
           <Col span="6">
           <FormItem label="角色：" class="searchInput">
-            <Select v-model="formSearch.roleId" class="minWidth">
+            <Select v-model="formSearch.roleId" class="minWidth" transfer>
               <Option
                 v-for="item in selectList"
                 :value="item.id"
@@ -40,13 +40,13 @@
       <Col span="24">
       <page-table :columns="menuColumns" :keywords="formSearchInit" class="pageTable" url="employee/list" list-field="list"></page-table>
       </Col>
-      <Modal v-model="visibaleTransfer" width="400">
+      <Modal v-model="visibaleTransfer" transfer width="400">
         <p slot="header" class="modalTitle">
           <span>转移权限</span>
         </p>
         <Form ref="transferformModal" :model="transferformModal" :rules="rulesTransfer" :label-width="100" class="transferformModal">
           <FormItem label="角色账号：" prop="staff">
-            <Select v-model="transferformModal.staff" clearable class="minWidth">
+            <Select v-model="transferformModal.staff" transfer clearable class="minWidth">
               <Option
                 v-for="item in staffSelectList"
                 :value="item.phone"
@@ -64,7 +64,7 @@
           <Button  @click="transferCancelForm">取消</Button>
         </div>
       </Modal>
-      <Modal v-model="visibaleRemove" type="warning" width="360">
+      <Modal v-model="visibaleRemove" transfer type="warning" width="360">
         <p slot="header" class="modalTitle">
           <span>提示</span>
         </p>
@@ -78,7 +78,7 @@
           <Button  @click="removeCancelForm">取消</Button>
         </div>
       </Modal>
-      <Modal v-model="visibaleAddStaffSuccess" width="400">
+      <Modal v-model="visibaleAddStaffSuccess" transfer width="400">
         <p slot="header" class="modalTitle">
           <span>提示</span>
         </p>

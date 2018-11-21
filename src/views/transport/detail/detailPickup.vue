@@ -185,11 +185,13 @@
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型/车长：</span>
             <Select v-model="info.carType"
+                    transfer
                     class="detail-info-input-half"
                     style="margin-right: 12px;">
               <Option v-for="item in carType" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
             <Select v-model="info.carLength"
+                    transfer
                     class="detail-info-input-half">
               <Option v-for="item in carLength" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
@@ -240,34 +242,40 @@
         <div class="detail-part-title">
           <span>应付费用</span>
         </div>
-        <Row class="detail-field-group">
-          <i-col span="4">
-            <span class="detail-field-title-sm">运输费：</span>
-            <MoneyInput v-model="payment.freightFee"
-                        class="detail-payment-input" />
-                        <!-- <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a> -->
-          </i-col>
-          <i-col span="4" offset="1">
-            <span class="detail-field-title-sm">装货费：</span>
-            <MoneyInput v-model="payment.loadFee"
-                        class="detail-payment-input" />
-          </i-col>
-          <i-col span="4" offset="1">
-            <span class="detail-field-title-sm">卸货费：</span>
-            <MoneyInput v-model="payment.unloadFee"
-                        class="detail-payment-input" />
-          </i-col>
-          <i-col span="4" offset="1">
-            <span class="detail-field-title-sm">保险费：</span>
-            <MoneyInput v-model="payment.insuranceFee"
-                        class="detail-payment-input" />
-          </i-col>
-          <i-col span="4" offset="1">
-            <span class="detail-field-title-sm">其他：</span>
-            <MoneyInput v-model="payment.otherFee"
-                        class="detail-payment-input" />
-          </i-col>
-        </Row>
+        <Form ref="payment" :label-width="82" :model="payment" :rules="rules" label-position="left">
+          <Row class="detail-field-group detail-form-label">
+            <i-col span="4">
+              <FormItem label="运输费：" prop="freightFee">
+                <TagNumberInput v-model="payment.freightFee" class="detail-payment-input-send"></TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+            <i-col span="4" offset="1">
+              <FormItem label="装货费：" prop="loadFee">
+                <TagNumberInput v-model="payment.loadFee" class="detail-payment-input-send"></TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+            <i-col span="4" offset="1">
+              <FormItem label="卸货费：" prop="unloadFee">
+                <TagNumberInput v-model="payment.unloadFee" class="detail-payment-input-send"></TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+            <i-col span="4" offset="1">
+              <FormItem label="保险费：" prop="insuranceFee">
+                <TagNumberInput v-model="payment.insuranceFee" class="detail-payment-input-send"></TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+            <i-col span="4" offset="1">
+              <FormItem label="其他：" prop="otherFee">
+                <TagNumberInput v-model="payment.otherFee" class="detail-payment-input-send"></TagNumberInput>
+                <span class="unit-yuan">元</span>
+              </FormItem>
+            </i-col>
+          </Row>
+        </Form>
         <Row class="detail-field-group">
           <i-col span="24">
             <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
@@ -315,6 +323,8 @@ import DetailMixin from '../mixin/detailMixin'
 import SelectInputMixin from '../mixin/selectInputMixin'
 
 import MoneyInput from '../components/MoneyInput'
+import TagNumberInput from '@/components/TagNumberInput'
+import validator from '@/libs/js/validate'
 import SelectInput from '../components/SelectInput.vue'
 import PayInfo from '../components/PayInfo'
 
@@ -326,10 +336,18 @@ import Exception from './exception.vue'
 
 export default {
   name: 'detailPickup',
-  components: { MoneyInput, SelectInput, PayInfo, Exception },
+  components: { TagNumberInput, MoneyInput, SelectInput, PayInfo, Exception },
   mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
   metaInfo: { title: '提货单详情' },
   data () {
+    // 9位整数 2位小数
+    const validateFee = (rule, value, callback) => {
+      if ((value && validator.fee(value)) || !value) {
+        callback()
+      } else {
+        callback(new Error('费用整数位最多输入9位,小数2位'))
+      }
+    }
     return {
       pageName: 'pickup',
       status: '',
@@ -344,7 +362,29 @@ export default {
         driverPhone: '',
         remark: ''
       },
-
+      rules: {
+        // 运输费
+        freightFee: [
+          { required: true, type: 'number', message: '请输入运输费用' },
+          { validator: validateFee }
+        ],
+        // 装货费用
+        loadFee: [
+          { validator: validateFee }
+        ],
+        // 卸货费用
+        unloadFee: [
+          { validator: validateFee }
+        ],
+        // 保险费用
+        insuranceFee: [
+          { validator: validateFee }
+        ],
+        // 其他费用
+        otherFee: [
+          { validator: validateFee }
+        ]
+      },
       // 支付方式
       settlementType: '',
       settlementPayInfo: [
@@ -567,24 +607,27 @@ export default {
     // 编辑后保存
     save () {
       if (!this.validate()) return
-
-      Server({
-        url: '/load/bill/update',
-        method: 'post',
-        data: {
-          loadbill: {
-            pickUpId: this.id,
-            ...this.info,
-            ...this.formatMoney(),
-            settlementType: this.settlementType,
-            settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
-          },
-          cargoList: _.uniq(this.detail.map(item => item.orderId))
+      this.$refs.payment.validate((valid) => {
+        if (valid) {
+          Server({
+            url: '/load/bill/update',
+            method: 'post',
+            data: {
+              loadbill: {
+                pickUpId: this.id,
+                ...this.info,
+                ...this.formatMoney(),
+                settlementType: this.settlementType,
+                settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
+              },
+              cargoList: _.uniq(this.detail.map(item => item.orderId))
+            }
+          }).then(res => {
+            this.$Message.success('保存成功')
+            this.cancelEdit()
+          }).catch(err => console.error(err))
         }
-      }).then(res => {
-        this.$Message.success('保存成功')
-        this.cancelEdit()
-      }).catch(err => console.error(err))
+      })
     },
 
     // 按钮操作

@@ -39,9 +39,9 @@
   /deep/ .ivu-form-item-label:before
     visibility: hidden
 
-.modal
-  /deep/ .ivu-form  .ivu-form-item-label
-    text-align left!important
+// .modal
+//   /deep/ .ivu-form  .ivu-form-item-label
+//     text-align left!important
 //  /deep/ .ivu-modal-body
 //    padding 16px 30px
  /*字体大小修改*/
@@ -61,12 +61,24 @@
 //  三个页面公共样式
 .header
   display flex
+  display -ms-flexbox
   justify-content space-between
+  -ms-flex-pack justify
   margin-bottom 14px
 .footer
   margin-top 22px
   display flex
+  display -ms-flexbox
   justify-content flex-end
+  -ms-flex-pack end
+  text-align: right
+  /deep/ .ivu-table-wrapper
+    margin-bottom: 20px
+  /deep/ .ivu-page-item-active
+    background-color: #00a4bd
+    border-radius: 5px
+    a
+      color: #ffffff
 
 //  搜搜样式
 .search-input

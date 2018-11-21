@@ -1,6 +1,17 @@
 /* 用于客户管理和财务的计费规则 */
 import Server from '@/libs/js/server'
 export default {
+  computed: {
+    precision () {
+      if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
+        return 2
+      } else if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') {
+        return 1
+      } else {
+        return 2
+      }
+    }
+  },
   data () {
     const startValidate = (rule, value, callback) => {
       if (value === null) {
@@ -20,14 +31,18 @@ export default {
       if (value === null || value === '') {
         callback()
       } else {
+        if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d*)?))$/.test(String(value))) {
+          callback()
+        } else {
+          callback(new Error('最多九位正数'))
+        }
         if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
-          if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(value)) {
-            callback()
+          if (/^((0[.]\d{1,2})|(([1-9]\d*)([.]\d{1,2})?))$/.test(String(value))) {
           } else {
             callback(new Error('最多两位小数'))
           }
         } else if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') {
-          if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d)?))$/.test(value)) {
+          if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d)?))$/.test(String(value))) {
             callback()
           } else {
             callback(new Error('最多一位小数'))
@@ -39,8 +54,8 @@ export default {
       if (value === null || value === '') {
         callback()
       }
-      if (/^((0[.]\d{1,2})|(([1-9]\d*)([.]\d{1,2})?))$/.test(value)) {
-        if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(value)) {
+      if (/^((0[.]\d{1,2})|(([1-9]\d*)([.]\d{1,2})?))$/.test(String(value))) {
+        if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(String(value))) {
           callback()
         } else {
           callback(new Error('最多9位整数'))
@@ -55,14 +70,15 @@ export default {
       if (realValue === null || realValue === '') {
         callback(new Error('请填写'))
       } else {
+        // 小数判断
         if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
           // /^(0|([1-9]\d*))([.]\d{1,2})?$/
-          if (!(/^(0|([1-9]\d*))([.]\d{1,2})?$/.test(realValue))) {
+          if (!(/^(0|([1-9]\d*))([.]\d{1,2})?$/.test(String(realValue)))) {
             callback(new Error('最多两位小数'))
           }
         }
         if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') {
-          if (!(/^(0|([1-9]\d*))([.]\d)?$/.test(realValue))) {
+          if (!(/^(0|([1-9]\d*))([.]\d)?$/.test(String(realValue)))) {
             callback(new Error('最多一位小数'))
           }
         }
@@ -126,20 +142,20 @@ export default {
         destination: { validator: endValidate, trigger: 'change' },
         startType: { required: true, message: '请选择起送量', trigger: 'change' },
         startNum: [
-          { validator: startNumValidate, trigger: 'blur' }
+          { validator: startNumValidate, trigger: 'change' }
         ],
         startPrice: [
-          { validator: startPriceValidate, trigger: 'blur' }
+          { validator: startPriceValidate, trigger: 'change' }
         ]
       },
       baseValidate: {
         baseAndStart: [
-          { validator: baseAndStartValidate, trigger: 'blur' }
+          { validator: baseAndStartValidate, trigger: 'change' }
         ]
       },
       priceValidate: {
         price: [
-          { required: true, message: '请填写金额', trigger: 'blur' },
+          { required: true, message: '请填写金额', trigger: 'change', type: 'number' },
           { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/, message: '9位正数且最多两位小数', trigger: 'blur' }
         ]
       }
@@ -176,7 +192,7 @@ export default {
       })
     },
     addEl (index) {
-      this.ruleDetail.details[index].chargeRules.push({ base: '', price: '', baseAndStart: '' })
+      this.ruleDetail.details[index].chargeRules.push({ base: null, price: null, baseAndStart: '' })
     },
     removeEl (index, no) {
       this.ruleDetail.details[index].chargeRules.splice(no, 1)
@@ -220,7 +236,7 @@ export default {
         await this.formValidate(this.$refs['rulePrice'][j])
       }
       if (!_this.ruleDetail.details.every((item, index, array) => {
-        return (item.startType === '2' || (item.startNum.length === 0 && item.startPrice.length === 0)) || (item.startNum.length !== 0 && item.startPrice.length !== 0)
+        return (item.startType === '2' || (item.startNum === null && item.startPrice === null)) || (item.startNum && item.startPrice)
       })) {
         this.$Message.error('请填写起步价')
         return
@@ -274,11 +290,11 @@ export default {
         departure: null,
         destination: null,
         showRule: (this.ruleDetail.details.length + 1) + '',
-        startNum: '',
-        startPrice: '',
+        startNum: null,
+        startPrice: null,
         startType: '2',
         chargeRules: [
-          { base: '', price: '', baseAndStart: '' }
+          { base: null, price: null, baseAndStart: '' }
         ]
       })
     },
@@ -301,14 +317,14 @@ export default {
           return {
             departure: item.departure,
             destination: item.destination,
-            startPrice: item.startPrice !== 0 ? (item.startPrice / 100) + '' : '',
-            startNum: item.startNum !== 0 ? (item.startNum / 100) + '' : '',
+            startPrice: item.startPrice !== 0 ? (item.startPrice / 100) : null,
+            startNum: item.startNum !== 0 ? (item.startNum / 100) : null,
             startType: item.startType ? item.startType + '' : '2',
             showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
               return {
-                base: el.base ? (el.base / 100) + '' : '0',
-                price: el.price ? (el.price / 100) + '' : '0',
+                base: el.base ? (el.base / 100) : '0',
+                price: el.price ? (el.price / 100) : '0',
                 baseAndStart: el.base + ',' + item.startNum
               }
             })
@@ -318,7 +334,17 @@ export default {
     },
     startTypeChange (item) {
       console.log(item)
-      item.startPrice = ''
+      item.startPrice = null
+    },
+    async ruleTypeChange () {
+      await this.formValidate(this.$refs['ruleBasic'])
+      for (let i = 0; i < this.$refs['ruleRoute'].length; i++) {
+        await this.formValidate(this.$refs['ruleRoute'][i])
+      }
+      for (let j = 0; j < this.$refs['ruleBase'].length; j++) {
+        await this.formValidate(this.$refs['ruleBase'][j])
+        await this.formValidate(this.$refs['rulePrice'][j])
+      }
     }
   }
 }

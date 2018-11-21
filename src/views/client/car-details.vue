@@ -117,7 +117,7 @@
               <p class="uploadLabel">驾驶证</p>
             </div>
             </Col>
-            <Modal v-model="visible" title="查看图片">
+            <Modal v-model="visible" transfer title="查看图片">
               <img :src="imagePath" style="width: 100%">
               <div slot="footer" style="text-align: center;"></div>
             </Modal>

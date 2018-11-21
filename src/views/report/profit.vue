@@ -9,6 +9,7 @@
           v-model="times"
           :options="options"
           :start-date="perMonth"
+          transfer
           type="daterange"
           format="yyyy-MM-dd"
           placeholder="开始日期-结束日期"
@@ -17,7 +18,7 @@
           @on-change="handleTimeChange"
         >
         </DatePicker>
-        <Tooltip max-width="200" style="margin-left: 18px" content="利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
+        <Tooltip max-width="200" style="margin-left: 18px" transfer content="利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
           <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;" />
         </Tooltip>
       </div>
@@ -37,8 +38,15 @@
         <Col span="6">本期发生额</Col>
       </Row>
       <Row type="flex" justify="start" class="big-height" style="border-top: 0">
-        <Col span="6" style="border-right: 1px solid #C9CED9">收入</Col>
-        <Col span="6">上游运费收入</Col>
+        <Col span="6">收入</Col>
+        <Col span="6">
+        <Row class="middle-height border-top-none border-right-none">
+          <Col>上游运费收入</Col>
+        </Row>
+        <Row class="small-height border-top-none border-right-none border-bottom-none">
+          <Col>外转运费支出</Col>
+        </Row>
+        </Col>
         <Col span="12" >
         <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
           <Col span="12">运输费</Col>
@@ -60,9 +68,13 @@
           <Col span="12">保险费</Col>
           <Col span="12" class="num">{{res.orderInsuranceFee}}</Col>
         </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-bottom-none border-right-none">
+        <Row type="flex" justify="start" class="small-height border-top-none">
           <Col span="12">其他费用</Col>
           <Col span="12" class="num">{{res.orderOtherFee}}</Col>
+        </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-bottom-none border-right-none">
+          <Col span="12">返现运费</Col>
+          <Col span="12" class="num">{{res.orderCashBack}}</Col>
         </Row>
         </Col>
       </Row>
@@ -75,7 +87,7 @@
         <Row class="middle-height border-top-none border-right-none">
           <Col>承运商运费支出</Col>
         </Row>
-        <Row class="small-height border-top-none border-right-none">
+        <Row class="small-height border-top-none border-right-none border-bottom-none">
           <Col>外转运费支出</Col>
         </Row>
         </Col>
@@ -95,6 +107,10 @@
         <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
           <Col span="12">保险费</Col>
           <Col span="12" class="num">{{res.carrierInsuranceFee}}</Col>
+        </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+          <Col span="12">路桥费</Col>
+          <Col span="12" class="num">{{res.carrierTollFee}}</Col>
         </Row>
         <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
           <Col span="12">其他费用</Col>
@@ -158,7 +174,9 @@ export default {
         carrierInsuranceFee: '-',
         carrierTotalFee: '-',
         transbillTransFee: '-',
-        profits: '-'
+        profits: '-',
+        carrierTollFee: '-',
+        orderCashBack: '-'
       },
       options: {
         disabledDate (date) {
@@ -305,7 +323,9 @@ export default {
     height 35px
   .search
     display flex
+    display -ms-flexbox
     justify-content space-between
+    -ms-flex-pack justify
     background #F9F9F9
     padding 13px
     .search-list
@@ -333,8 +353,8 @@ export default {
       background:rgba(248,248,248,1)
       font-weight bold
     .middle-height
-      height 224px
-      line-height 269px
+      height 270px
+      line-height 314px
       border 1px solid #C9CED9
     .small-height
       border 1px solid #C9CED9
@@ -342,6 +362,6 @@ export default {
       line-height 45px
     .big-height
       border 1px solid #C9CED9
-      height 269px
-      line-height 269px
+      height 314px
+      line-height 314px
 </style>

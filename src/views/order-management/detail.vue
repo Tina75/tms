@@ -5,7 +5,7 @@
         <li>订单号：{{detail.orderNo}}</li>
         <li>客户单号：{{detail.customerOrderNo || '-' }}</li>
         <li>运单号：{{detail.waybillNo || '-'}} &nbsp;&nbsp;&nbsp;
-          <Poptip v-if="waybillNums.length > 0" placement="bottom" @on-popper-show="showPoptip" @on-popper-hide="hidePoptip">
+          <Poptip v-if="waybillNums.length > 0" placement="bottom" transfer @on-popper-show="showPoptip" @on-popper-hide="hidePoptip">
             <a>{{ show ? '收起全部' : '展开全部' }}</a>
             <div slot="title" style="color:rgba(51,51,51,1);text-align: center;">全部运单号</div>
             <ul slot="content">
@@ -19,7 +19,7 @@
       </ul>
     </header>
     <div style="text-align: right;margin: 24px 0;min-height: 1px;">
-      <Tooltip v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :disabled="!btn.disabled" :content="btn.content" :offset="10" placement="top">
+      <Tooltip v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :disabled="!btn.disabled" :content="btn.content" :offset="10" transfer placement="top">
         <Button
           v-if="hasPower(btn.code)"
           :disabled="btn.disabled"
@@ -195,7 +195,7 @@
         <div class="title">
           <span>{{from === 'order' ? '订单日志' : '回单日志'}}</span>
         </div>
-        <div style="display: flex;justify-content: flex-start;min-height: 150px;margin-top: 25px;">
+        <div class="log-list">
           <div class="fold-icon" @click="showOrderLog">
             <span :class="showLog ? 'hide-log' : 'show-log'"></span>
           </div>
@@ -209,7 +209,7 @@
         </div>
       </div>
     </section>
-    <Modal v-model="visible" title="查看图片">
+    <Modal v-model="visible" transfer title="查看图片">
       <img :src="curImg" style="width: 100%">
       <div slot="footer" style="text-align: center;"></div>
     </Modal>
@@ -222,6 +222,7 @@ import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import '@/libs/js/filter'
 import OrderPrint from './components/OrderPrint'
+import openSwipe from '@/components/swipe/index'
 import _ from 'lodash'
 export default {
   name: 'detail',
@@ -307,7 +308,8 @@ export default {
       orderLogCount: 0,
       showLog: false,
       orderLog: [],
-      orderPrint: []
+      orderPrint: [],
+      imgViewFunc: null
     }
   },
 
@@ -409,6 +411,7 @@ export default {
         methods: {
           ok (node) {
             _this.getDetail()
+            _this.ema.fire('closeTab', _this.$route) // 关闭tab页
           }
         }
       })
@@ -526,8 +529,11 @@ export default {
       // 订单详情  from: order   回单详情 from: receipt
       if (this.from === 'order') {
         Server({
-          url: 'order/detail?id=' + this.$route.query.orderId,
-          method: 'get'
+          url: 'order/detail',
+          method: 'get',
+          data: {
+            id: this.$route.query.orderId
+          }
         }).then((res) => {
           console.log(res)
           this.detail = res.data.data
@@ -540,8 +546,11 @@ export default {
         })
       } else { // 回单详情
         Server({
-          url: 'order/getReceiptOrderDetail?id=' + this.$route.query.orderId,
-          method: 'get'
+          url: 'order/getReceiptOrderDetail',
+          method: 'get',
+          data: {
+            id: this.$route.query.orderId
+          }
         }).then((res) => {
           console.log(res)
           this.detail = res.data.data
@@ -550,6 +559,14 @@ export default {
           this.filterReceiptButton()
           this.orderLog = res.data.data.receiptOrderLogs // 回单日志
           this.orderLogCount = res.data.data.receiptOrderLogs.length // 回单日志数量
+          let imageItems = []
+          this.detail.receiptOrder.receiptUrl.map((item) => {
+            imageItems.push({
+              src: item,
+              msrc: item
+            })
+          })
+          this.imgViewFunc = openSwipe(imageItems)
         })
       }
     },
@@ -656,7 +673,7 @@ export default {
        *    编辑：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
        * 2、待调度状态下：（status: 20）
        *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）&& （未被调度：dispatchStatus=0）】显示
-       *    外转：【（未外转：transStatus=0） && （不是上门提货：pickup !== 1） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被调度：dispatchStatus=0）】显示
+       *    外转：【（未外转：transStatus=0） && （不是上门提货：pickup !== 1） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）/ 备注：v1.05版本 子单可以外转 / && （未被调度：dispatchStatus=0）】显示
        *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被调度：dispatchStatus=0）】显示
        *    删除：
        *          订单列表里显示：【（不是上门提货：pickup !== 1） && （未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （被拆单后的父单：disassembleStatus=1）】
@@ -721,7 +738,7 @@ export default {
           }
         }
         // 外转按钮
-        if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.dispatchStatus === 0) {
+        if (r.transStatus === 0 && r.disassembleStatus === 0 && r.dispatchStatus === 0) {
           renderBtn.push(
             { name: '外转', value: 4, code: 120111 }
           )
@@ -741,8 +758,8 @@ export default {
       }
       if (r.status === 100) { // 回收站状态
         renderBtn = [
-          { name: '恢复', value: 1, code: 110110 },
-          { name: '彻底删除', value: 2, code: 110111 }
+          { name: '恢复', value: 1, code: 100305 },
+          { name: '彻底删除', value: 2, code: 100306 }
         ]
       }
       this.btnGroup = renderBtn
@@ -754,7 +771,7 @@ export default {
       if (this.source) {
         if (this.source === 'order') {
           btns.push(
-            { name: '打印', value: 2, code: 110108 }
+            { name: '打印', value: 2, code: 100303 }
           )
         } else if (this.source === 'waybill') {
           btns.push(
@@ -771,18 +788,18 @@ export default {
     filterReceiptButton () {
       if (this.detail.receiptOrder.receiptStatus === 0 && this.detail.status === 40) {
         this.btnGroup = [
-          { name: '回收', value: 1, code: 110201 }
+          { name: '回收', value: 1, code: 120501 }
         ]
         this.operateValue = 1
       } else if (this.detail.receiptOrder.receiptStatus === 1) {
         this.btnGroup = [
-          { name: this.detail.receiptOrder.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: this.detail.receiptOrder.receiptUrl.length > 0 ? 110205 : 110204 },
-          { name: '返厂', value: 2, code: 110202 }
+          { name: this.detail.receiptOrder.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: this.detail.receiptOrder.receiptUrl.length > 0 ? 120505 : 120504 },
+          { name: '返厂', value: 2, code: 120502 }
         ]
         this.operateValue = 2
       } else if (this.detail.receiptOrder.receiptStatus === 2) {
         this.btnGroup = [
-          { name: this.detail.receiptOrder.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: this.detail.receiptOrder.receiptUrl.length > 0 ? 110205 : 110204 }
+          { name: this.detail.receiptOrder.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: this.detail.receiptOrder.receiptUrl.length > 0 ? 120505 : 120504 }
         ]
         this.operateValue = 1
       } else {
@@ -791,8 +808,9 @@ export default {
     },
     // 预览
     handleView (i) {
-      this.visible = true
-      this.curImg = this.detail.receiptOrder.receiptUrl[i]
+      // this.visible = true
+      // this.curImg = this.detail.receiptOrder.receiptUrl[i]
+      this.imgViewFunc(i)
     },
     // 每种状态对应各自主题色
     themeBarColor (code) {
@@ -988,4 +1006,11 @@ export default {
       top 118px !important
   .cargo-details .padding-left-45
     padding-left 45px !important
+  .log-list
+    display: flex;
+    display -ms-flexbox;
+    justify-content: flex-start;
+    -ms-flex-pack: start;
+    min-height: 150px;
+    margin-top: 25px;
 </style>

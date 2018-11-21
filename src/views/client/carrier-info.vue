@@ -61,7 +61,7 @@
             <Button v-if="hasPower(130210)" @click="carExport">导出</Button>
             <div class="rightSearch">
               <template>
-                <Select v-model="selectStatus1" style="width:120px;margin-right: 11px"  @on-change="changeState('keyword1', 1)">
+                <Select v-model="selectStatus1" style="width:120px;margin-right: 11px" transfer @on-change="changeState('keyword1', 1)">
                   <Option v-for="item in selectList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
               </template>
@@ -73,7 +73,7 @@
                      class="search-input"
                      @on-enter="searchCarList"
                      @on-click="clearKeywords('keyword1', 1)"/>
-              <Select v-if="selectStatus1 === '2'" v-model="keyword1" class="search-input" @on-change="searchCarList">
+              <Select v-if="selectStatus1 === '2'" v-model="keyword1" class="search-input" transfer @on-change="searchCarList">
                 <Option
                   v-for="item in driverTypeList"
                   :value="item.id"
@@ -114,7 +114,7 @@
             <Button v-if="hasPower(130214)" @click="repairExport">导出</Button>
             <div class="rightSearch">
               <template>
-                <Select v-model="selectStatus2" style="width:120px;margin-right: 11px"  @on-change="changeState('keyword2', 2)">
+                <Select v-model="selectStatus2" style="width:120px;margin-right: 11px" transfer @on-change="changeState('keyword2', 2)">
                   <Option v-for="item in selectList2" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
               </template>
@@ -126,7 +126,7 @@
                      class="search-input"
                      @on-enter="searchRepairList"
                      @on-click="clearKeywords('keyword2', 2)"/>
-              <Select v-if="selectStatus2 === '2'" v-model="keyword2" class="search-input"  @on-change="searchRepairList">
+              <Select v-if="selectStatus2 === '2'" v-model="keyword2" class="search-input" transfer @on-change="searchRepairList">
                 <Option
                   v-for="item in repairTypeList"
                   :value="item.id"
@@ -730,8 +730,8 @@ export default {
       this.loading = true
       carrierListCar(data).then(res => {
         if (res.data.code === CODE) {
-          this.data1 = res.data.data.carList
-          this.totalCount1 = res.data.data.total
+          this.data1 = res.data.data.list
+          this.totalCount1 = res.data.data.totalCount
           this.loading = false
         }
       })
@@ -868,8 +868,8 @@ export default {
       this.loading = true
       carrierListCar(data).then(res => {
         if (res.data.code === CODE) {
-          this.data1 = res.data.data.carList
-          this.totalCount1 = res.data.data.total
+          this.data1 = res.data.data.list
+          this.totalCount1 = res.data.data.totalCount
           this.loading = false
         }
       })
@@ -914,7 +914,9 @@ export default {
   .footer
     margin-top 22px
     display flex
+    display -ms-flexbox
     justify-content flex-end
+    -ms-flex-pack end
   /*.ivu-tabs*/
     /*padding-bottom: 120px!important*/
 </style>

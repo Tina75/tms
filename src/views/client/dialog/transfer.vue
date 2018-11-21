@@ -2,33 +2,34 @@
   <Modal
     v-model="visiable"
     :mask-closable="false"
+    transfer
     label-position="left"
     class="modal"
     @on-visible-change="close"
   >
     <p slot="header" style="text-align:center">{{title}}</p>
     <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122">
-      <FormItem label="外转方名称:" prop="name">
+      <FormItem label="外转方名称：" prop="name">
         <Input v-model="validate.name" :maxlength="20" placeholder="请输入"/>
       </FormItem>
-      <FormItem label="联系人:" prop="contact">
+      <FormItem label="联系人：" prop="contact">
         <Input v-model="validate.contact" :maxlength="15" placeholder="请输入"/>
       </FormItem>
-      <FormItem label="联系电话:" prop="phone">
+      <FormItem label="联系电话：" prop="phone">
         <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
       </FormItem>
-      <FormItem label="公司地址:" prop="companyAddress">
+      <FormItem label="公司地址：" prop="companyAddress">
         <AreaInput v-model="validate.companyAddress" :maxlength="60" placeholder="请输入" @latlongt-change="latlongtChange"/>
       </FormItem>
-      <FormItem label="支付方式:" class="ivu-form-item-required blank">
-        <Select v-model="validate.payType" placeholder="请输入" clearable>
+      <FormItem label="支付方式：" class="ivu-form-item-required blank">
+        <Select v-model="validate.payType" placeholder="请输入" transfer clearable>
           <Option value="1">现付</Option>
           <Option value="2">到付</Option>
           <Option value="3">回单付</Option>
           <Option value="4">月结</Option>
         </Select>
       </FormItem>
-      <FormItem label="备注:" class="ivu-form-item-required blank">
+      <FormItem label="备注：" class="ivu-form-item-required blank">
         <Input v-model="validate.remark" :autosize="{minRows: 2,maxRows: 5}" :maxlength="100"  type="textarea"  placeholder="请输入"/>
       </FormItem>
     </Form>
@@ -90,7 +91,6 @@ export default {
           } else { // 2-编辑
             this._transfereeUpdate()
           }
-          this.close()
         }
       })
     },
@@ -98,6 +98,7 @@ export default {
       transfereeAdd(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -108,6 +109,7 @@ export default {
       transfereeUpdate(this.validate).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }

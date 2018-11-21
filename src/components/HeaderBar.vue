@@ -6,16 +6,16 @@
       </div>
       <div class="header-bar-avator-dropdown">
         <span class="header-bar-avator-dropdown-notify" @click="openProcess">
-          <Tooltip v-if="processVisible" :value="processVisible"  placement="bottom" content=" 业务流程" always>
+          <Tooltip v-if="processVisible" :value="processVisible" transfer  placement="bottom" content=" 业务流程" always>
             <FontIcon type="liucheng" size="25" color="#fff"></FontIcon>
           </Tooltip>
-          <Tooltip v-else content=" 业务流程">
+          <Tooltip v-else transfer content=" 业务流程">
             <FontIcon  type="liucheng" size="25" color="#fff" ></FontIcon>
           </Tooltip>
         </span>
         <span class="header-bar-avator-dropdown-notify">
           <Badge :count="MsgCount.all" :offset="[5,1]" type="primary">
-            <Tooltip content=" 消息">
+            <Tooltip transfer content=" 消息">
               <Icon type="ios-notifications" size="30" color="#fff" @click="openMsg(0)"></Icon>
             </Tooltip>
           </Badge>
@@ -49,7 +49,7 @@
       </Dropdown> -->
 
         <!-- <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick"> -->
-        <Poptip trigger="hover"  placement="bottom-end" title="账号信息" width="260" style="cursor: default">
+        <Poptip trigger="hover" transfer placement="bottom-end" popper-class="dropdown-info" title="账号信息" width="260" style="cursor: default">
           <Avatar class="avatar"  style="border:1px solid #fff"></avatar>
           <span class="user-info">{{UserInfo.name}}</span>
           <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
@@ -73,6 +73,7 @@ import TabNav from '@/components/TabNav'
 import FontIcon from '@/components/FontIcon'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import TMSUrl from '../libs/constant/url.js'
+import Server from '@/libs/js/server'
 export default {
   name: 'headerBar',
   components: { TabNav, FontIcon },
@@ -105,23 +106,8 @@ export default {
         this.$ga.set('phone', this.UserInfo.phone)
         this.$ga.set('roleName', this.UserInfo.roleName)
         this.$ga.set('id', this.UserInfo.id)
-        /**
-         * 用户首次注册登录系统
-         * 1. 超级管理员提示系统有效期，同时打开流程图标签
-         * 2. 非管理员，提示初始化密码，同时打开流程图标签
-         */
-        if (sessionStorage.getItem('first_time_login') === 'true') {
-          if (this.UserInfo.type === 1) this.renew()
-          else this.changePasswordTip()
-          setTimeout(() => {
-            window.EMA.fire('openTab', {
-              path: TMSUrl.PROCESS,
-              query: { title: '业务流程' }
-            })
-            localStorage.setItem('first_time_login', true)
-          }, 1000)
-          sessionStorage.removeItem('first_time_login')
-        }
+        // 探索运掌柜
+        this.isPreviewDiscover()
       } catch (error) {
 
       }
@@ -176,7 +162,8 @@ export default {
       // })
       this.$Toast.confirm({
         title: '提示',
-        content: '<p>您的密码为初始密码，为确保账户安全，请及时修改密码</p>',
+        showIcon: false,
+        content: '<i class="ivu-icon ivu-icon-ios-help-circle" style="color:#ff9502;font-size:28px"></i>&nbsp;您的密码为初始密码，为确保账户安全，请及时修改密码',
         okText: '立即修改',
         cancelText: '我知道了',
         onOk: () => {
@@ -253,12 +240,90 @@ export default {
       // return (route1.name === route2.name) && this.objEqual(params1, params2) && this.objEqual(query1, query2)
       return (route1.path === route2.path) && (query1.title === query2.title)
       // return (route1.name === route2.name) && this.objEqual(meta1, meta2)
-    }
+    },
 
+    // 是否第一次探索运掌柜
+    isPreviewDiscover () {
+      let vm = this
+      let firstBtn = {}
+      let roleBtnNum = 0
+      Server({
+        url: '/discover/list',
+        method: 'get'
+      }).then(({ data }) => {
+        if (data.code === 10000) {
+          firstBtn = data.data.find(b => b.code === '100001' && b.click !== 1)
+          data.data.forEach(element => {
+            if (element.role === 1) roleBtnNum++
+          })
+          // roleBtnNum > 2 （按钮集合中有一个是初次登录标识按钮）
+          if (firstBtn && roleBtnNum > 2) {
+            setTimeout(() => {
+              window.EMA.fire('openTab', {
+                path: TMSUrl.HELP,
+                query: { title: '帮助', descover: '0' }
+              })
+            }, 1000)
+          } else {
+            vm.isOpenProcess()
+          }
+        }
+      }).then(() => {
+        if (firstBtn) vm.previewedDiscover({ id: firstBtn.id })
+      })
+    },
+
+    // 探索一次后将不再探索
+    previewedDiscover (params) {
+      Server({
+        url: '/discover/look',
+        method: 'post',
+        data: params
+      }).then(({ data }) => {
+      })
+    },
+
+    /**
+     * 用户首次注册登录系统
+     * 1. 超级管理员提示系统有效期，同时打开流程图标签
+     * 2. 非管理员，提示初始化密码，同时打开流程图标签
+     */
+    isOpenProcess () {
+      if (sessionStorage.getItem('first_time_login') === 'true') {
+        if (this.UserInfo.type === 1) this.renew()
+        else this.changePasswordTip()
+        setTimeout(() => {
+          window.EMA.fire('openTab', {
+            path: TMSUrl.PROCESS,
+            query: { title: '业务流程' }
+          })
+          localStorage.setItem('first_time_login', true)
+        }, 1000)
+        sessionStorage.removeItem('first_time_login')
+      }
+    }
   }
 }
 </script>
 <style lang="stylus">
+.dropdown-info
+  .dropdown-line
+    padding 5px 0px
+    color #555555
+    white-space nowrap
+    overflow hidden
+    text-overflow ellipsis
+    max-width 230px
+    .content-name
+      width 80px
+      overflow hidden
+      display inline-block
+      text-overflow ellipsis
+      margin-bottom -6px
+    label
+      min-width 60px
+      text-align left
+      display inline-block
 .header-con
   position relative
   z-index 9
@@ -310,17 +375,6 @@ export default {
     vertical-align middle
     // .dropdown-box
     //   text-align center
-    .dropdown-line
-      padding 5px 0px
-      color #555555
-      white-space nowrap
-      overflow hidden
-      text-overflow ellipsis
-      max-width 230px
-      label
-        min-width 60px
-        text-align left
-        display inline-block
     .ivu-badge-count
       top: -2px;
       right: 4px;
@@ -339,9 +393,11 @@ export default {
       .msg
         display: -webkit-flex;
         display flex
+        display -ms-flexbox
         &-item
           display inline-block
           flex 1
+          -ms-flex 1
           text-align center
           color #555555
           font-size 12px

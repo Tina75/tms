@@ -11,12 +11,12 @@
           </Col>
           <Col span="5" style="margin-right: 20px">
           <FormItem :label-width="75" label="核销时间：">
-            <DatePicker v-model="writtenOffQuery.period" :options="dateOption" type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width: 100%" />
+            <DatePicker v-model="writtenOffQuery.period" :options="dateOption" transfer type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width: 100%" />
           </FormItem>
           </Col>
           <Col span="2" style="margin-right: 10px">
           <FormItem>
-            <Select v-model="writtenOffQuery.orderType">
+            <Select v-model="writtenOffQuery.orderType" transfer>
               <Option v-for="(value, key) in orderTypeMap[scene]" :key="key" :value="key">{{value}}</Option>
             </Select>
           </FormItem>
@@ -116,7 +116,12 @@ export default {
         totalCount: 100,
         list: []
       },
-      selectedIds: []
+      selectedIds: [],
+      totalFeeMap: {
+        1: '收',
+        2: '付',
+        3: '付'
+      }
     }
   },
   computed: {
@@ -153,11 +158,11 @@ export default {
           key: 'partnerName'
         },
         {
-          title: '应收运费',
+          title: `应${this.totalFeeMap[this.scene]}运费`,
           key: 'totalFeeText'
         },
         {
-          title: '实收运费',
+          title: `实${this.totalFeeMap[this.scene]}运费`,
           key: 'payFeeText'
         },
         {

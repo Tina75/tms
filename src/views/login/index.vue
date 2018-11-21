@@ -1,6 +1,6 @@
 <template>
   <div class="login-signin">
-    <img class="login-img" src="@/assets/img-tms-login.png"></img>
+    <img class="login-img" src="@/assets/img-tms-login.png" />
     <div class="form-body">
       <Card :bordered="false">
         <div class="form-title">运掌柜账号登录</div>
@@ -185,8 +185,11 @@ export default {
 
   .login-signin
     display flex
+    display -ms-flexbox
     align-items center
+    -ms-flex-align center
     justify-content center
+    -ms-flex-pack justify
     margin-right 11vw
 
     // &:before, &:after
@@ -210,15 +213,12 @@ export default {
 
   .login-img
     display block
-    position relative
     width 48vw
     margin-right 4vw
-    z-index 1
+    height: 100%\9 !important
 
   .form-body
-    position relative
     width 380px
-    z-index 1
 
     .form-content
       margin-bottom 0
@@ -232,8 +232,11 @@ export default {
 
     .form-action
       display flex
+      display -ms-flexbox
       align-items space-between
+      -ms-flex-pack justify
 
       &-item
         flex 1
+        -ms-flex 1
 </style>

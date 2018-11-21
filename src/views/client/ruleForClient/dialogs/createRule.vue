@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="true" width="440" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="true" transfer width="440" @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">{{operateWays[operateNum]}}规则</p>
     <div class="create-rule-form">
       <Form ref="createRuleForm" :model="createRuleForm" :rules="validate" :label-width="100">
@@ -10,7 +10,7 @@
           <span>{{createRuleForm.partnerName}}</span>
         </FormItem>
         <FormItem label="规则名：" prop="ruleName">
-          <Input v-model="createRuleForm.ruleName" :maxlength="30" autofocus="" placeholder="请输入" />
+          <Input v-focus ref="input" v-model="createRuleForm.ruleName" :maxlength="30" autofocus="" placeholder="请输入" />
         </FormItem>
       </Form>
     </div>
@@ -24,8 +24,19 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
+import Vue from 'vue'
 export default {
   name: 'createRule',
+  directives: {
+    focus: {
+      // 指令的定义
+      inserted: function (el) {
+        Vue.nextTick(() => {
+          el.querySelector('input').focus()
+        })
+      }
+    }
+  },
   mixins: [BaseDialog],
   data () {
     return {
@@ -54,10 +65,6 @@ export default {
       }
     }
   },
-  // mounted () {
-  //   // this.getPartnerList()
-  //   console.log(this.sceneMap[this.scene])
-  // },
   methods: {
     save () {
       this.$refs['createRuleForm'].validate((valid) => {

@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visible" :width="width" :mask-closable="false"  class="system-upgrade" @on-visible-change="handleClose">
+  <Modal v-model="visible" :width="width" :mask-closable="false" transfer class="system-upgrade" @on-visible-change="handleClose">
     <div slot="header" class="system-upgrade__title">
       <div class="system-upgrade__title-bg">
         <div class="system-upgrade__title-text">

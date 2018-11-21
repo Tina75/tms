@@ -4,6 +4,7 @@ import mutations from './mutations'
 import * as actions from './actions'
 import * as getters from './getters'
 import login from '@/views/login/modules/store'
+import transport from '@/views/transport/modules/store'
 // import order from '@/views/order/create/modules/store'
 import carrier from './modules/carrier/store'
 import sender from './modules/sender/store'
@@ -27,6 +28,7 @@ export default new Vuex.Store({
   mutations,
   modules: {
     login,
+    transport,
     transfer,
     carrier,
     sender

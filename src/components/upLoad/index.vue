@@ -50,7 +50,7 @@
           <!-- <img :src="uploadImg"> -->
           <div :style="'height: 90px;background-image: url(' + uploadImg + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"></div>
           <div class="demo-upload-list-cover">
-            <div style="cursor: pointer;" @click="handleView">
+            <div style="cursor: pointer;" @click="handleView(0)">
               <div class="eye-circle">
                 <FontIcon type="ico_see" size="16" color="#fff"></FontIcon>
               </div>
@@ -97,7 +97,7 @@
         </div>
       </div>
     </div>
-    <Modal v-model="visible" title="查看图片">
+    <Modal v-model="visible" transfer title="查看图片">
       <img v-if="multiple" :src="curImg" style="width: 100%">
       <img v-else :src="uploadImg" style="width: 100%">
       <div slot="footer" style="text-align: center;"></div>
@@ -105,9 +105,9 @@
   </div>
 </template>
 <script>
-import server from '@/libs/js/server'
-import OssClient from 'ali-oss'
 import FontIcon from '@/components/FontIcon'
+import openSwipe from '@/components/swipe/index'
+import initOssInstance from './index.js'
 export default {
   name: 'UpLoad',
 
@@ -141,45 +141,42 @@ export default {
       uploadImgList: [], // 多图上传
       curImg: '', // 当前操作的图片
       visible: false,
-      viewUrl: ''
+      viewUrl: '',
+      imgViewFunc: null // 图片预览方法
     }
   },
-
-  created () {
-    this.initOssInstance()
+  watch: {
+    // 多图已上传图片回显
+    uploadImgList (val) {
+      this.setUploadImgList()
+    },
+    // 单图已上传图片回显
+    uploadImg () {
+      this.setUploadImg()
+    }
   },
-
-  mounted () {
+  created () {
+    initOssInstance(this)
   },
 
   methods: {
-    initOssInstance () {
-      const vm = this
-      /**
-       * 后端获取阿里云access token, region 参数
-       * 初始化oss client，用户上传模板前需要准备好
-       */
-      return server({
-        method: 'post',
-        url: 'file/prepareUpload',
-        data: {
-          bizType: 'order',
-          fileCount: 1,
-          fileSuffix: 'jpg'
+    setUploadImgList () {
+      let imageItems = this.uploadImgList.map((i) => {
+        return {
+          src: i.url,
+          msrc: i.url
         }
       })
-        .then((response) => {
-          const { data } = response.data
-          vm.ossDir = data.ossKeys[0]
-          vm.ossClient = new OssClient({
-            accessKeyId: data.ossTokenDTO.stsAccessId,
-            accessKeySecret: data.ossTokenDTO.stsAccessKey,
-            stsToken: data.ossTokenDTO.stsToken,
-            bucket: data.ossTokenDTO.bucketName,
-            endpoint: data.ossTokenDTO.endpoint
-          })
-          return response
-        })
+      console.log(imageItems)
+      this.imgViewFunc = openSwipe(imageItems)
+    },
+    setUploadImg () {
+      let imageItems = []
+      imageItems.push({
+        src: this.uploadImg,
+        msrc: this.uploadImg
+      })
+      this.imgViewFunc = openSwipe(imageItems)
     },
     async doUpload (e) {
       const files = e.target.files
@@ -246,6 +243,7 @@ export default {
         console.log(uploadResult)
         this.uploadImg = uploadResult.res.requestUrls[0].split('?')[0]
         this.$Message.success({ content: '上传成功', duration: 3 })
+        this.setUploadImg()
       } catch (error) {
         if (error.code === 'InvalidAccessKeyId' || error.code === 'InvalidBucketName') {
           // token失效过期了
@@ -282,6 +280,7 @@ export default {
           console.log(uploadResult)
           this.uploadImgList.push({ url: uploadResult.res.requestUrls[0].split('?')[0], progress: this.progress })
           this.$Message.success({ content: '上传成功', duration: 3 })
+          this.setUploadImgList()
           // this.$refs.fileInput.value = null
         } catch (error) {
           if (error.code === 'InvalidAccessKeyId' || error.code === 'InvalidBucketName') {
@@ -299,8 +298,9 @@ export default {
     },
     // 预览
     handleView (i) {
-      this.visible = true
-      this.multiple && (this.curImg = this.uploadImgList[i].url)
+      // this.visible = true
+      // this.multiple && (this.curImg = this.uploadImgList[i].url)
+      this.imgViewFunc(i)
     },
     // 删除
     handleRemove (i) {
@@ -343,8 +343,11 @@ export default {
   background rgba(0,0,0,.6)
 .demo-upload-list:hover .demo-upload-list-cover
   display flex
+  display: -ms-flexbox
   justify-content space-evenly
+  -ms-flex-pack justify
   align-items center
+  -ms-flex-align center
   line-height 2
 .demo-upload-list-cover i
   color #fff

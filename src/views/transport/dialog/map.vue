@@ -1,5 +1,5 @@
 <template>
-  <Modal id="map-modal" v-model="visiable" :mask-closable="true" width="1200" @on-visible-change="close">
+  <Modal id="map-modal" v-model="visiable" :mask-closable="true" transfer width="1200" @on-visible-change="close">
     <p slot="header" style="text-align:center">查看车辆位置</p>
 
     <Row>
@@ -14,7 +14,7 @@
             <div>
               <div class="icon-box">
                 <i v-if="Number(item.positionType) !== 2" class="icon font_family icon-beidoudingwei"></i>
-                <Tooltip v-else :content="`此位置通过司机手机号查询，若偏差较大，请联系司机 ${item.phone}`" placement="right-start" max-width="200">
+                <Tooltip v-else :content="`此位置通过司机手机号查询，若偏差较大，请联系司机 ${item.phone}`" transfer placement="right-start" max-width="200">
                   <i class="icon font_family icon-shoujidingwei"></i>
                 </Tooltip>
               </div>
@@ -42,7 +42,7 @@ import BaseDialog from '@/basic/BaseDialog'
 import BMap from 'BMap'
 import MarkerOverlay from '../../home/libs/MarkerOverlay.js'
 import LabelOverlay from '../../home/libs/LabelOverlay.js'
-
+import truckMarker from '../../home/libs/getTruckMarker.js'
 export default {
   name: 'Confirm',
   mixins: [ BaseDialog ],
@@ -90,12 +90,12 @@ export default {
     },
 
     showCarWithTrace (car) {
-      for (let i = 0; i < car.points.length; i++) {
+      const getTruckMarker = truckMarker(this.map)
+      const length = car.points.length
+      for (let i = 0; i < length; i++) {
         const tempPoint = car.points[i]
         const point = new BMap.Point(Number(tempPoint.longitude), Number(tempPoint.latitude))
-        // 添加标志点
-        const markerOverlay = new MarkerOverlay(point)
-        this.map.addOverlay(markerOverlay)
+
         // 添加标签
         const labelOverlay = new LabelOverlay(point, car.carNo.length === 11 ? car.carNo : car.carNo.replace(/^(.{2})/, '$1 '))
         this.map.addOverlay(labelOverlay)
@@ -106,7 +106,22 @@ export default {
         if (i === 0) {
           this.map.centerAndZoom(point, 11)
           labelOverlay.show()
+          // 替换为卡车图标
+          if (length === 1) {
+            const marker = getTruckMarker(point)
+            this.map.addOverlay(marker)
+          }
+        } else if (i === 1 && length > 1) {
+          // 如果多个点，就调整卡车方向
+          const marker = getTruckMarker(
+            point,
+            new BMap.Point(car.points[i - 1].longitude, car.points[i - 1].latitude)
+          )
+          this.map.addOverlay(marker)
         } else {
+          // 添加标志点
+          const markerOverlay = new MarkerOverlay(point)
+          this.map.addOverlay(markerOverlay)
           const polyline = new BMap.Polyline([
             new BMap.Point(car.points[i - 1].longitude, car.points[i - 1].latitude),
             new BMap.Point(tempPoint.longitude, tempPoint.latitude)

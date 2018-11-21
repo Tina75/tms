@@ -16,6 +16,7 @@
         <!-- 简易搜索 -->
         <div v-if="isEasySearch" class="right custom-style">
           <Select v-model="easySelectMode"
+                  transfer
                   style="width:120px; margin-right: 11px"
                   @on-change="resetEasySearch">
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -77,11 +78,11 @@
                        class="search-input-senior" />
         </div>
 
-        <div style="display: flex;justify-content: space-between;">
+        <div class="complex-query">
           <div>
             <SelectInputForCity v-model="seniorSearchFields.start" placeholder="请输入始发地" class="search-input-senior" />
             <SelectInputForCity v-model="seniorSearchFields.end" placeholder="请输入目的地" class="search-input-senior" />
-            <DatePicker v-model="seniorSearchFields.dateRange" :options="timeOption" type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
+            <DatePicker v-model="seniorSearchFields.dateRange" :options="timeOption" transfer type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
           </div>
           <div>
             <Button type="primary"
@@ -146,11 +147,11 @@ import SelectInput from './components/SelectInput.vue'
 import PrintFreight from './components/PrintFreight'
 import OrderTabContent from '@/views/order-management/components/TabContent'
 
-import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
-import { TAB_LIST, BUTTON_LIST, TABLE_COLUMNS, setTabList } from './constant/waybill'
+import { BUTTON_LIST, TABLE_COLUMNS } from './constant/waybill'
 import headType from '@/libs/constant/headtype'
 import _ from 'lodash'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'WaybillManager',
@@ -164,7 +165,6 @@ export default {
       waybillHeadType: headType.WAYBILL,
       dispatchHeadType: headType.WAIT_WAYBILL,
 
-      tabList: TAB_LIST, // 标签栏
       btnList: BUTTON_LIST(this), // 所有按钮组
 
       // 简易搜索类型
@@ -219,7 +219,23 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters({
+      tabList: 'waybillTabCount'
+    })
+  },
+
   methods: {
+    ...mapActions([
+      'getWaybillPrintData',
+      'deleteWaybills',
+      'getWaybillLocation',
+      'waybillSendCarCheck',
+      'waybillShipment',
+      'waybillArrival',
+      'getwaybillTabCount'
+    ]),
+
     // 设置标签状态
     setTabStatus (tab) {
       switch (tab) {
@@ -245,12 +261,7 @@ export default {
 
     // 查询标签页数量
     fetchTabCount () {
-      Server({
-        url: '/waybill/tab/cnt',
-        method: 'get'
-      }).then(res => {
-        this.tabList = setTabList(res.data.data)
-      })
+      this.getwaybillTabCount()
     },
 
     // 表格数据查询完成回调
@@ -263,14 +274,11 @@ export default {
     // 打印
     billPrint () {
       if (!this.checkTableSelection()) return
-      Server({
-        url: '/waybill/batchPrint',
-        method: 'post',
-        data: { waybillIds: this.tableSelection.map(item => item.waybillId) }
-      }).then(res => {
-        this.printData = res.data.data
-        this.$refs.$printer.print()
-      })
+      this.getWaybillPrintData(this.tableSelection.map(item => item.waybillId))
+        .then(res => {
+          this.printData = res
+          this.$refs.$printer.print()
+        })
     },
 
     // 删除
@@ -285,14 +293,11 @@ export default {
         },
         methods: {
           confirm () {
-            Server({
-              url: '/waybill/delete',
-              method: 'delete',
-              data: { waybillIds: self.tableSelection.map(item => item.waybillId) }
-            }).then(res => {
-              self.$Message.success('删除成功')
-              self.clearSelectedAndFetch()
-            }).catch(err => console.error(err))
+            self.deleteWaybills(self.tableSelection.map(item => item.waybillId))
+              .then(() => {
+                self.$Message.success('删除成功')
+                self.clearSelectedAndFetch()
+              })
           }
         }
       })
@@ -302,35 +307,31 @@ export default {
     billLocation () {
       if (!this.checkTableSelection()) return
       let waybillIds = this.tableSelection.map(item => item.waybillId)
-      let data = waybillIds.length > 1 ? ({ waybillIds }) : ({ waybillId: waybillIds[0] })
-      Server({
-        url: waybillIds.length > 1 ? '/waybill/location' : '/waybill/single/location',
-        method: 'post',
-        data
-      }).then(res => {
-        let cars
-        if (waybillIds.length > 1) {
-          if (!res.data.data.list.length) {
-            this.$Message.warning('暂无车辆位置信息')
-            return
+      this.getWaybillLocation(waybillIds)
+        .then(res => {
+          let cars
+          if (waybillIds.length > 1) {
+            if (!res.list.length) {
+              this.$Message.warning('暂无车辆位置信息')
+              return
+            }
+            cars = res.list
+          } else {
+            if (!res.points.length) {
+              this.$Message.warning('暂无车辆位置信息')
+              return
+            }
+            cars = [res]
           }
-          cars = res.data.data.list
-        } else {
-          if (!res.data.data.points.length) {
-            this.$Message.warning('暂无车辆位置信息')
-            return
-          }
-          cars = [res.data.data]
-        }
-        this.openDialog({
-          name: 'transport/dialog/map',
-          data: {
-            cars,
-            multiple: waybillIds.length !== 1
-          },
-          methods: {}
-        })
-      }).catch(err => console.error(err))
+          this.openDialog({
+            name: 'transport/dialog/map',
+            data: {
+              cars,
+              multiple: waybillIds.length !== 1
+            },
+            methods: {}
+          })
+        }).catch(err => console.error(err))
     },
 
     // 到货
@@ -382,14 +383,11 @@ export default {
           },
           methods: {
             confirm () {
-              Server({
-                url: '/waybill/confirm/arrival',
-                method: 'post',
-                data: { waybillIds: self.tableSelection.map(item => item.waybillId) }
-              }).then(res => {
-                self.$Message.success('操作成功')
-                self.clearSelectedAndFetch()
-              }).catch(err => console.error(err))
+              self.waybillArrival(self.tableSelection.map(item => item.waybillId))
+                .then(() => {
+                  self.$Message.success('操作成功')
+                  self.clearSelectedAndFetch()
+                })
             }
           }
         })
@@ -408,14 +406,11 @@ export default {
         },
         methods: {
           confirm () {
-            Server({
-              url: '/waybill/shipment',
-              method: 'post',
-              data: { waybillIds: self.tableSelection.map(item => item.waybillId) }
-            }).then(res => {
-              self.$Message.success('操作成功')
-              self.clearSelectedAndFetch()
-            }).catch(err => console.error(err))
+            self.waybillShipment(self.tableSelection.map(item => item.waybillId))
+              .then(() => {
+                self.$Message.success('操作成功')
+                self.clearSelectedAndFetch()
+              })
           }
         }
       })
@@ -445,11 +440,7 @@ export default {
     // 派车
     billSendCar (id) {
       const self = this
-      Server({
-        url: '/waybill/check/order',
-        method: 'post',
-        data: { waybillIds: [id] }
-      }).then(() => {
+      self.waybillSendCarCheck([id]).then(() => {
         self.openDialog({
           name: 'transport/dialog/action',
           data: {

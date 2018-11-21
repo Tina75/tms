@@ -4,19 +4,20 @@
     <Modal
       v-model="visiable"
       :mask-closable="false"
+      transfer
       width="1020"
       class="modal"
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center;font-weight: bold;">{{title}}</p>
-      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="90">
+      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="120">
         <Row>
           <Col span="7">
-          <FormItem label="车牌号:" prop="carNO">
+          <FormItem label="车牌号：" prop="carNO">
             <Row>
               <Col span="19">
               <span v-if="!disAbleBtn">{{ validate.carNO }}</span>
-              <Select v-if="disAbleBtn" v-model="validate.carNO" placeholder="必选" class="minWidth">
+              <Select v-if="disAbleBtn" v-model="validate.carNO" transfer placeholder="必选" class="minWidth">
                 <Option
                   v-for="item in carNoList"
                   :value="item.carNo"
@@ -29,10 +30,10 @@
           </FormItem>
           </Col>
           <Col span="7">
-          <FormItem label="维修类别:" prop="repairType">
+          <FormItem label="维修类别：" prop="repairType">
             <Row>
               <Col span="19">
-              <Select v-model="validate.repairType"  placeholder="必选" class="minWidth">
+              <Select v-model="validate.repairType"  placeholder="必选" class="minWidth" transfer>
                 <Option
                   v-for="item in selectList"
                   :value="item.id"
@@ -45,10 +46,10 @@
           </FormItem>
           </Col>
           <Col span="7">
-          <FormItem label="送修日期:" prop="repairDate">
+          <FormItem label="送修日期：" prop="repairDate">
             <Row>
               <Col span="19">
-              <DatePicker v-model="validate.repairDate" type="date" placeholder="必选"></DatePicker>
+              <DatePicker v-model="validate.repairDate" transfer type="date" placeholder="必选"></DatePicker>
                 </Col>
             </Row>
           </FormItem>
@@ -56,7 +57,7 @@
         </Row>
         <Row>
           <Col span="7">
-          <FormItem label="维修费用:" prop="repairMoney">
+          <FormItem label="维修费用：" prop="repairMoney">
             <Row>
               <Col span="19">
               <Input v-model="validate.repairMoney" :maxlength="9" placeholder="必填" @on-blur="repairMoneyChange"></Input>
@@ -68,7 +69,7 @@
           </FormItem>
           </Col>
           <Col span="7">
-          <FormItem label="已支付费用:" prop="payMoney">
+          <FormItem label="已支付费用：" prop="payMoney">
             <Row>
               <Col span="19">
               <Input v-model="validate.payMoney" :maxlength="9" placeholder="必填" @on-change="payMoneyChange"></Input>
@@ -80,7 +81,7 @@
           </FormItem>
           </Col>
           <Col span="7">
-          <FormItem label="未支付费用:" prop="waitPayMoney">
+          <FormItem label="未支付费用：" prop="waitPayMoney">
             <Row>
               <Col span="19">
               <Input v-model="validate.waitPayMoney" :maxlength="9" placeholder="必填" @on-change="waitpayMoneyChange"></Input>
@@ -94,7 +95,7 @@
         </Row>
         <Row>
           <Col span="7">
-          <FormItem label="送修人:" prop="repairPerson">
+          <FormItem label="送修人：" prop="repairPerson">
             <Row>
               <Col span="19">
               <Input v-model="validate.repairPerson" :maxlength="20" placeholder="必填"></Input>
@@ -103,7 +104,7 @@
           </FormItem>
           </Col>
           <Col span="7">
-          <FormItem label="送修公里数:" prop="repairMile">
+          <FormItem label="送修公里数：" prop="repairMile">
             <Row>
               <Col span="19">
               <Input v-model="validate.repairMile" :maxlength="9" placeholder="必填"></Input>
@@ -118,28 +119,28 @@
         <br/>
         <Row>
           <Col span="22" class="formatSty">
-          <FormItem class="ivu-form-item-required blank" label="修理单位:">
+          <FormItem class="ivu-form-item-required blank" label="修理单位：">
             <Input v-model="validate.repairUnit" :maxlength="50" placeholder="请输入"></Input>
           </FormItem>
           </Col>
         </Row>
         <Row>
           <Col span="22" class="formatSty">
-          <FormItem class="ivu-form-item-required blank" label="修理原因:">
+          <FormItem class="ivu-form-item-required blank" label="修理原因：">
             <Input v-model="validate.repairReason" :maxlength="200" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入" type="textarea"></Input>
           </FormItem>
           </Col>
         </Row>
         <Row>
           <Col span="22" class="formatSty">
-          <FormItem class="ivu-form-item-required blank" label="修理结果:">
+          <FormItem class="ivu-form-item-required blank" label="修理结果：">
             <Input v-model="validate.repairResult" :maxlength="200" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入" type="textarea"></Input>
           </FormItem>
           </Col>
         </Row>
         <Row>
           <Col span="22" class="formatSty">
-          <FormItem class="ivu-form-item-required blank" label="备注:">
+          <FormItem class="ivu-form-item-required blank" label="备注：">
             <Input v-model="validate.remark" :maxlength="200" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入" type="textarea"></Input>
           </FormItem>
           </Col>

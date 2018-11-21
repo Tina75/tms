@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" class="separate-dialog" width="850" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" transfer class="separate-dialog" width="850" @on-visible-change="close">
     <p slot="header" class="dialog-title">
       <!-- <Icon type="ios-information-circle"></Icon> -->
       <span>拆单</span>
@@ -552,8 +552,11 @@ export default {
     // 获取子订单数
     getSubOrderNum () {
       Server({
-        url: 'order/getSubOrderNum?orderId=' + this.id,
-        method: 'get'
+        url: 'order/getSubOrderNum',
+        method: 'get',
+        data: {
+          orderId: this.id
+        }
       }).then((res) => {
         this.subOrderNum = res.data.data.subOrderNum
       })

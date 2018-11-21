@@ -9,6 +9,7 @@
           v-model="times"
           :options="options"
           :start-date="perMonth"
+          transfer
           type="daterange"
           format="yyyy-MM-dd"
           placeholder="开始日期-结束日期"
@@ -17,7 +18,7 @@
           @on-change="handleTimeChange"
         >
         </DatePicker>
-        <Tooltip max-width="200" style="margin-left: 18px" content="营业额汇总报表：按照订单的下单日期提取数据">
+        <Tooltip max-width="200" style="margin-left: 18px" transfer content="营业额汇总报表：按照订单的下单日期提取数据">
           <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;" />
         </Tooltip>
       </div>
@@ -83,6 +84,18 @@ export default {
         {
           title: '订单数',
           key: 'orderNum',
+          ellipsis: true,
+          tooltip: true
+        },
+        {
+          title: '重量',
+          key: 'weight',
+          ellipsis: true,
+          tooltip: true
+        },
+        {
+          title: '体积',
+          key: 'volume',
           ellipsis: true,
           tooltip: true
         },
@@ -291,7 +304,9 @@ export default {
     height 35px
   .search
     display flex
+    display: -ms-flexbox;
     justify-content space-between
+    -ms-flex-pack justify
     background #F9F9F9
     padding 13px
     .search-list

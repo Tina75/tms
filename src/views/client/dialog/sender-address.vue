@@ -3,17 +3,18 @@
     <Modal
       v-model="visiable"
       :mask-closable="false"
+      transfer
       label-position="left"
       class="modal"
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122">
-        <FormItem label="发货地址:">
+        <FormItem label="发货地址：">
           <Row>
             <Col span="11">
             <FormItem prop="city">
-              <CitySelect v-model="validate.city" :code-type="4" clearable></CitySelect>
+              <CitySelect v-model="validate.city" clearable></CitySelect>
             </FormItem>
             </Col>
             <Col span="13" style="padding-left: 5px">

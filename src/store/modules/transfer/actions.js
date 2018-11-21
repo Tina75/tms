@@ -20,8 +20,9 @@ export default {
         }
       }).then((response) => {
         // 外转方信息
-        const transferees = response.data.data.transfereeList
+        const transferees = response.data.data.list
         commit(types.RECEIVE_TRANSFEREE_LIST, transferees)
+        resolve(transferees)
       }).catch((error) => {
         reject(error)
       })

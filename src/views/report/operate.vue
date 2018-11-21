@@ -40,6 +40,7 @@
               v-model="times"
               :options="options"
               :start-date="perMonth"
+              transfer
               type="daterange"
               format="yyyy-MM-dd"
               placeholder="开始日期-结束日期"
@@ -71,7 +72,7 @@
       :table-head-type= "headType"
       width="100%"
       @on-load = "onLoad"
-      @on-column-change="handleColumnChange">
+    >
     </page-table>
   </div>
 </template>
@@ -227,6 +228,14 @@ export default {
           }
         },
         {
+          title: '代收货款',
+          key: 'collectionMoney',
+          width: 150,
+          render: (h, params) => {
+            return h('span', (params.row.collectionMoney / 100).toFixed(2))
+          }
+        },
+        {
           title: '订单状态',
           key: 'orderStatus',
           width: 150,
@@ -266,6 +275,11 @@ export default {
           width: 150
         },
         {
+          title: '提货司机号码',
+          key: 'loadbillDriverPhone',
+          width: 150
+        },
+        {
           title: '提货单车牌号',
           key: 'loadbillCarNo',
           width: 150
@@ -302,6 +316,11 @@ export default {
           width: 150
         },
         {
+          title: '送货司机号码',
+          key: 'waybillDriverPhone',
+          width: 150
+        },
+        {
           title: '运单车牌号',
           key: 'waybillCarNo',
           width: 150
@@ -333,6 +352,14 @@ export default {
           }
         },
         {
+          title: '返现运费',
+          key: 'cashBack',
+          width: 150,
+          render: (h, params) => {
+            return h('span', (params.row.cashBack / 100).toFixed(2))
+          }
+        },
+        {
           title: '外转方',
           key: 'transfereeName',
           width: 150
@@ -350,195 +377,219 @@ export default {
             return h('span', params.row.receiptStatus ? this.receiptStatusMap[params.row.receiptStatus] : '-')
           }
         }
-      ],
-      extraColumns: [
-        {
-          title: '订单号',
-          key: 'orderNo',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '客户单号',
-          key: 'customerOrderNo',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '客户名称',
-          key: 'consignerName',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '始发地',
-          key: 'start',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '目的地',
-          key: 'end',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '计费里程',
-          key: 'mileage',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '体积（方）',
-          key: 'volume',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '重量（吨）',
-          key: 'weight',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '合计运费',
-          key: 'orderTotalFee',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '下单时间',
-          key: 'orderCreateTime',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '订单状态',
-          key: 'orderStatus',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '提货单号',
-          key: 'loadbillNo',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '提货单状态',
-          key: 'loadbillStatus',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '提货总费用',
-          key: 'loadbillTotalFee',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '提货承运商',
-          key: 'loadbillCarrierName',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '提货单司机',
-          key: 'loadbillDriver',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '提货单车牌号',
-          key: 'loadbillCarNo',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '提货单车辆信息',
-          key: 'loadbillCarInfo',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '运单号',
-          key: 'waybillNo',
-          fixed: false,
-          visible: true
-        },
-        {
-          title: '运单状态',
-          key: 'waybillStatus',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '送货总费用',
-          key: 'waybillTotalFee',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '送货承运商',
-          key: 'waybillCarrierName',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '运单司机',
-          key: 'waybillDriver',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '运单车牌号',
-          key: 'waybillCarNo',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '运单车辆信息',
-          key: 'waybillCarInfo',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '外转单号',
-          key: 'transbillNo',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '外转单状态',
-          key: 'transbillStatus',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '外转方费用',
-          key: 'transbillTotalFee',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '外转方',
-          key: 'transfereeName',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '回单号',
-          key: 'receiptNo',
-          fixed: false,
-          visible: false
-        },
-        {
-          title: '回单状态',
-          key: 'receiptStatus',
-          fixed: false,
-          visible: false
-        }
       ]
+      // extraColumns: [
+      //   {
+      //     title: '订单号',
+      //     key: 'orderNo',
+      //     fixed: false,
+      //     visible: true
+      //   },
+      //   {
+      //     title: '客户单号',
+      //     key: 'customerOrderNo',
+      //     fixed: false,
+      //     visible: true
+      //   },
+      //   {
+      //     title: '客户名称',
+      //     key: 'consignerName',
+      //     fixed: false,
+      //     visible: true
+      //   },
+      //   {
+      //     title: '始发地',
+      //     key: 'start',
+      //     fixed: false,
+      //     visible: true
+      //   },
+      //   {
+      //     title: '目的地',
+      //     key: 'end',
+      //     fixed: false,
+      //     visible: true
+      //   },
+      //   {
+      //     title: '计费里程',
+      //     key: 'mileage',
+      //     fixed: false,
+      //     visible: true
+      //   },
+      //   {
+      //     title: '体积（方）',
+      //     key: 'volume',
+      //     fixed: false,
+      //     visible: true
+      //   },
+      //   {
+      //     title: '重量（吨）',
+      //     key: 'weight',
+      //     fixed: false,
+      //     visible: true
+      //   },
+      //   {
+      //     title: '合计运费',
+      //     key: 'orderTotalFee',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '代收货款',
+      //     key: 'collectionMoney',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '下单时间',
+      //     key: 'orderCreateTime',
+      //     fixed: false,
+      //     visible: true
+      //   },
+      //   {
+      //     title: '订单状态',
+      //     key: 'orderStatus',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '提货单号',
+      //     key: 'loadbillNo',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '提货单状态',
+      //     key: 'loadbillStatus',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '提货总费用',
+      //     key: 'loadbillTotalFee',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '提货承运商',
+      //     key: 'loadbillCarrierName',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '提货单司机',
+      //     key: 'loadbillDriver',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '提货司机号码',
+      //     key: 'loadbillDriverPhone',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '提货单车牌号',
+      //     key: 'loadbillCarNo',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '提货单车辆信息',
+      //     key: 'loadbillCarInfo',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '运单号',
+      //     key: 'waybillNo',
+      //     fixed: false,
+      //     visible: true
+      //   },
+      //   {
+      //     title: '运单状态',
+      //     key: 'waybillStatus',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '送货总费用',
+      //     key: 'waybillTotalFee',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '送货承运商',
+      //     key: 'waybillCarrierName',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '运单司机',
+      //     key: 'waybillDriver',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '送货司机号码',
+      //     key: 'waybillDriverPhone',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '运单车牌号',
+      //     key: 'waybillCarNo',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '运单车辆信息',
+      //     key: 'waybillCarInfo',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '外转单号',
+      //     key: 'transbillNo',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '外转单状态',
+      //     key: 'transbillStatus',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '外转方费用',
+      //     key: 'transbillTotalFee',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '返现运费',
+      //     key: 'cashBack',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '外转方',
+      //     key: 'transfereeName',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '回单号',
+      //     key: 'receiptNo',
+      //     fixed: false,
+      //     visible: false
+      //   },
+      //   {
+      //     title: '回单状态',
+      //     key: 'receiptStatus',
+      //     fixed: false,
+      //     visible: false
+      //   }
+      // ]
     }
   },
   computed: {
@@ -628,10 +679,10 @@ export default {
         fileName: '运单报表'
       })
     },
-    // 筛选列表显示字段
-    handleColumnChange (val) {
-      this.extraColumns = val
-    },
+    // // 筛选列表显示字段
+    // handleColumnChange (val) {
+    //   this.extraColumns = val
+    // },
     handleTimeChange (val) {
       this.keywords.startTime = val[0]
       this.keywords.endTime = val[1]
@@ -666,15 +717,20 @@ export default {
     height 35px
   .search
     display flex
+    display -ms-flexbox
     background #F9F9F9
     padding 13px
     .search-col
       flex 4
+      -ms-flex 4
       .row-list
         display flex
+        display -ms-flexbox
         justify-content space-between
+        -ms-flex-pack justify
         .col
           flex 1
+          -ms-flex 1
           margin-right 20px
           &:last-child
             margin-right 0
@@ -682,6 +738,7 @@ export default {
           position relative
     .search-btn
       flex 1
+      -ms-flex 1
       text-align right
       margin-top 44px
 </style>
