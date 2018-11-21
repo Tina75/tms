@@ -66,8 +66,8 @@
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="手机号:" prop="consignerPhone">
-        <Input v-model="orderForm.consignerPhone" :maxlength="11"></Input>
+      <FormItem label="联系号码:" prop="consignerPhone">
+        <SelectInput v-model="orderForm.consignerPhone" :parser="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号"></SelectInput>
       </FormItem>
       </Col>
       <Col span="6">
@@ -77,8 +77,8 @@
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="手机号:" prop="consigneePhone">
-        <SelectInput v-model="orderForm.consigneePhone" :maxlength="11" :local-options="consigneePhones" :remote="false"></SelectInput>
+      <FormItem label="联系号码:" prop="consigneePhone">
+        <SelectInput v-model="orderForm.consigneePhone" :parser="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号"></SelectInput>
       </FormItem>
       </Col>
     </Row>
@@ -264,7 +264,7 @@
       <Button v-if="hasPower(100101)" :disabled="disabled" type="primary" @click="handleSubmit">保存</Button>
       <Button v-if="hasPower(100102)" :disabled="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
-      <Button v-if="hasPower(100104)" class="i-ml-10" @click="shipImmedite">立即发运</Button>
+      <Button v-if="hasPower(100104) && !orderId" class="i-ml-10" @click="shipImmedite">立即发运</Button>
     </div>
     <OrderPrint ref="printer" :list="orderPrint" source="create">
     </OrderPrint>
@@ -337,10 +337,11 @@ export default {
       }
     }
     const validatePhone = (rule, value, callback) => {
-      if (validator.phone(value)) {
+      value = value.replace(/\s/g, '')
+      if (validator.phone(value) || validator.telphone(value)) {
         callback()
       } else {
-        callback(new Error('请输入正确的手机号码'))
+        callback(new Error('请输入正确的手机号或座机号'))
       }
     }
     // 9位整数 2位小数
@@ -453,14 +454,14 @@ export default {
           { required: true, message: '请输入发货人名称' }
         ],
         consignerPhone: [
-          { required: true, message: '请输入发货人手机号' },
+          { required: true, message: '请输入发货人联系号码' },
           { validator: validatePhone, trigger: 'blur' }
         ],
         consigneeContact: [
           { required: true, message: '请输入收货人名称' }
         ],
         consigneePhone: [
-          { required: true, message: '请输入收货人手机号' },
+          { required: true, message: '请输入收货人联系号码' },
           { validator: validatePhone, trigger: 'blur' }
         ],
         consignerAddress: [
@@ -557,6 +558,9 @@ export default {
       const stdt = this.formateDate(this.orderForm.deliveryTime)
       const eddt = this.formateDate(this.orderForm.arriveTime)
       return stdt === eddt ? this.orderForm.deliveryTimes : ''
+    },
+    orderId () {
+      return this.$route.query.id || undefined
     }
   },
   created () {
@@ -566,7 +570,7 @@ export default {
   },
   mounted () {
     const vm = this
-    const orderId = this.$route.query.id || undefined
+    const orderId = this.orderId
     if (orderId) {
       vm.loading = true
       api.getOrderDetail(orderId)
@@ -715,7 +719,7 @@ export default {
       })
     },
     /**
-     * 选中收货人，手机号一起设置
+     * 选中收货人，联系号码一起设置
      */
     handleSelectConsignee (name, row) {
       this.orderForm.consigneePhone = row.phone
@@ -929,12 +933,7 @@ export default {
                       loadbillPickup: data
                     }
                     api.immediShip(param).then(res => {
-                      if (!form.id) {
-                        this.$Message.success('创建订单成功')
-                      } else {
-                        this.$Message.success('修改订单成功')
-                      }
-                      this.$Message.success('小车提货成功')
+                      this.$Message.success('提货成功')
                       self.resetForm()
                       // 重新获取客户列表
                       self.getClients()
@@ -977,11 +976,6 @@ export default {
                     }
                     param.waybillAssignVehicle.cashBack = param.waybillAssignVehicle.cashBack || null
                     api.immediShip(param).then(res => {
-                      if (!form.id) {
-                        this.$Message.success('创建订单成功')
-                      } else {
-                        this.$Message.success('修改订单成功')
-                      }
                       this.$Message.success('发运成功')
                       self.resetForm()
                       // 重新获取客户列表
@@ -1055,6 +1049,20 @@ export default {
           }
         })
       })
+    },
+    formatePhoneNum (temp) {
+      if (/^1/.test(temp)) {
+        let str = temp.replace(/\s/g, '')
+        if (temp.length > 3 && temp.length < 8) {
+          temp = str.substr(0, 3) + ' ' + str.substr(3, 4)
+        } else if (temp.length >= 8) {
+          temp = [str.substr(0, 3), str.substr(3, 4), str.substr(7, 4)].join(' ')
+        }
+      }
+      return temp
+    },
+    phoneLength (value) {
+      return /^1/.test(value) ? 13 : 30
     }
   }
 }

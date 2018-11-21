@@ -7,8 +7,8 @@
       <span>记录号：{{data.recordNo}}</span>
       <div class="except-record-btn-group">
         <template v-if="data.status == 10">
-          <Button type="default" style="margin: 0 10px" @click="clickHandle">处理</Button>
-          <Button type="primary" @click="editBtn">编辑</Button>
+          <Button v-if="hasPower(120401) || (billType === 1 && hasPower(120211)) || (billType === 2 && hasPower(120307)) || (billType === 3 && hasPower(120114))" type="default" style="margin: 0 10px" @click="clickHandle">处理</Button>
+          <Button v-if="hasPower(120402) || (billType === 1 && hasPower(120212)) || (billType === 2 && hasPower(120308)) || (billType === 3 && hasPower(120115))" type="primary" @click="editBtn">编辑</Button>
         </template>
         <div class="detail-log-icon" @click="showDetail">
           <i :class="{'detail-log-show': !hideDetail}"></i>

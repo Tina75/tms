@@ -345,7 +345,7 @@ export default {
   display flex
   display: -ms-flexbox
   justify-content space-evenly
-  -ms-flex-pack justify
+  -ms-flex-pack:distribute;
   align-items center
   -ms-flex-align center
   line-height 2
