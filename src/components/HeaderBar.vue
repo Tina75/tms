@@ -92,6 +92,13 @@ export default {
       route.query = Object.assign({ _time: new Date().getTime() }, route.query)
       this.turnToPage(route)
     })
+    if (sessionStorage.getItem('first_time_login') === 'true') {
+      if (this.UserInfo.type === 1) this.renew()
+      else this.changePasswordTip()
+      sessionStorage.removeItem('first_time_login')
+    }
+    // 探索运掌柜
+    this.isPreviewDiscover()
     this.loopMessage()
     this.newUserTip()
   },
@@ -106,8 +113,6 @@ export default {
         this.$ga.set('phone', this.UserInfo.phone)
         this.$ga.set('roleName', this.UserInfo.roleName)
         this.$ga.set('id', this.UserInfo.id)
-        // 探索运掌柜
-        this.isPreviewDiscover()
       } catch (error) {
 
       }
@@ -264,8 +269,9 @@ export default {
                 query: { title: '帮助', descover: '0' }
               })
             }, 1000)
-            vm.changePasswordTip()
-          } else {
+          } else if (firstBtn && firstBtn.click !== 1) {
+            // 打开流程=点击打开，计入click数
+            vm.previewedDiscover({ id: '207' })
             vm.isOpenProcess()
           }
         }
@@ -290,18 +296,13 @@ export default {
      * 2. 非管理员，提示初始化密码，同时打开流程图标签
      */
     isOpenProcess () {
-      if (sessionStorage.getItem('first_time_login') === 'true') {
-        if (this.UserInfo.type === 1) this.renew()
-        else this.changePasswordTip()
-        setTimeout(() => {
-          window.EMA.fire('openTab', {
-            path: TMSUrl.PROCESS,
-            query: { title: '业务流程' }
-          })
-          localStorage.setItem('first_time_login', true)
-        }, 1000)
-        sessionStorage.removeItem('first_time_login')
-      }
+      setTimeout(() => {
+        window.EMA.fire('openTab', {
+          path: TMSUrl.PROCESS,
+          query: { title: '业务流程' }
+        })
+        localStorage.setItem('first_time_login', true)
+      }, 1000)
     }
   }
 }
