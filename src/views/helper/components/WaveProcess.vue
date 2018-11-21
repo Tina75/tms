@@ -32,7 +32,7 @@ export default {
     styles () {
       if (this.process === 100) {
         return {
-          height: '110%',
+          height: '120%',
           background: 'linear-gradient(#00D1E0, #00A4BD)'
         }
       }
