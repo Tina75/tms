@@ -833,9 +833,8 @@ export default {
           let orderPrint = _.cloneDeep(vm.orderForm)
           orderPrint.orderCargoList = _.cloneDeep(vm.consignerCargoes)
           orderPrint.totalFee = vm.totalFee
-
           vm.orderPrint = [orderPrint]
-          console.log(vm.orderPrint)
+
           vm.$refs.printer.print()
           if (!orderPrint.id) {
             // 创建订单页面

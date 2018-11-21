@@ -44,13 +44,12 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import server from '@/libs/js/server'
-
-import TextMarquee from './components/TextMarquee.vue'
 import BasePage from '@/basic/BasePage'
 import FontIcon from '@/components/FontIcon'
+import TextMarquee from './components/TextMarquee.vue'
 import { eventHub } from './plugins/mixin.js'
+import { mapGetters } from 'vuex'
 
 import PickupTodo from './plugins/pickup-todo.vue'
 import DeliveryTodo from './plugins/delivery-todo.vue'
