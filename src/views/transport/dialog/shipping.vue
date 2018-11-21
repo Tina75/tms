@@ -5,7 +5,7 @@
       <i class="icon font_family icon-bangzhuzhongxin"></i>
     </p><p class="titleP">是否发运？发运以后将不能再修改外转单信息</p>
     </p><br/>
-    <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="80" label-position="left">
+    <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="80" label-position="right">
       <FormItem label="车牌号:" prop="carNo">
         <Input v-model="validate.carNo" :maxlength="8" @on-change="inputChange"></Input>
       </FormItem>

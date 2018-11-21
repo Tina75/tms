@@ -1,31 +1,31 @@
 <template>
   <div class="dialog">
-    <Modal v-model="show" :mask-closable="false" transfer width="360" @on-visible-change="close">
+    <Modal v-model="show" :mask-closable="false" transfer width="400" @on-visible-change="close">
       <p slot="header" style="text-align:center">
         <span>编辑</span>
       </p>
-      <Form ref="info" :model="info" :rules="rules" :label-width="100" label-position="left">
-        <FormItem label="外转方:" prop="transfereeName">
+      <Form ref="info" :model="info" :rules="rules" :label-width="110" label-position="right">
+        <FormItem label="外转方：" prop="transfereeName">
           <SelectInput ref="transInput" v-model="info.transfereeName"
                        mode="transferee"
                        placeholder="请输入"
                        style="width:200px"
                        @on-select="handleSelectTransferee" />
         </FormItem>
-        <FormItem label="外转方运单号:" class="ivu-form-item-required blank">
+        <FormItem label="外转方运单号：">
           <Input v-model="info.outTransNo" :maxlength="20" style="width:200px" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="付款方式:" prop="payType">
+        <FormItem label="付款方式：" prop="payType">
           <Select v-model="info.payType" style="width:200px" transfer>
             <Option v-for="item in payType" :key="item.value" :value="item.value">{{ item.name }}</Option>
           </Select>
         </FormItem>
-        <FormItem label="公里数:" prop="mileage" class="ivu-form-item-required blank">
+        <FormItem label="公里数：" prop="mileage">
           <TagNumberInput :min="0" v-model="info.mileage" style="width:145px">
           </TagNumberInput>
           <span class="unitSpan">公里</span>
         </FormItem>
-        <FormItem label="外转运费:" prop="transFee">
+        <FormItem label="外转运费：" prop="transFee">
           <div style="width:200px">
             <TagNumberInput :min="0" v-model="info.transFee" style="width:145px">
             </TagNumberInput>
@@ -35,7 +35,7 @@
             </a>
           </div>
         </FormItem>
-        <FormItem label="返现运费:" prop="cashBack" class="ivu-form-item-required blank">
+        <FormItem label="返现运费：" prop="cashBack">
           <TagNumberInput v-model="info.cashBack" style="width:145px">
           </TagNumberInput>
           <span class="unitSpan">元</span>
