@@ -901,6 +901,7 @@ export default {
     // 立即发运
     shipImmedite (e = 'orderCreate') {
       const self = this
+      const statics = this.$refs.cargoTable.statics
       this.validateForm().then(form => {
         this.disabled = false
         if (form.pickup === 1) {
@@ -911,7 +912,14 @@ export default {
                 name: 'transport/dialog/action',
                 data: {
                   type: 'pickUp',
-                  actionOrigin: 'orderCreate'
+                  actionOrigin: 'orderCreate',
+                  orderCreate: {
+                    distance: form.mileage,
+                    weight: statics.weight,
+                    volume: statics.volume,
+                    start: form.start,
+                    end: form.end
+                  }
                 },
                 methods: {
                   complete (data) {
@@ -926,6 +934,7 @@ export default {
                       } else {
                         this.$Message.success('修改订单成功')
                       }
+                      this.$Message.success('小车提货成功')
                       self.resetForm()
                       // 重新获取客户列表
                       self.getClients()
@@ -950,7 +959,14 @@ export default {
                 name: 'transport/dialog/action',
                 data: {
                   type: 'sendCar',
-                  actionOrigin: 'orderCreate'
+                  actionOrigin: 'orderCreate',
+                  orderCreate: {
+                    distance: form.mileage,
+                    weight: statics.weight,
+                    volume: statics.volume,
+                    start: form.start,
+                    end: form.end
+                  }
                 },
                 methods: {
                   complete (data) {
@@ -966,6 +982,7 @@ export default {
                       } else {
                         this.$Message.success('修改订单成功')
                       }
+                      this.$Message.success('发运成功')
                       self.resetForm()
                       // 重新获取客户列表
                       self.getClients()
