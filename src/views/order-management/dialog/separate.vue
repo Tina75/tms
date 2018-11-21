@@ -1,11 +1,10 @@
 <template>
   <Modal v-model="visiable" :mask-closable="false" transfer class="separate-dialog" width="850" @on-visible-change="close">
     <p slot="header" class="dialog-title">
-      <!-- <Icon type="ios-information-circle"></Icon> -->
       <span>拆单</span>
     </p>
     <div>
-      <div class="order-number" style="margin-bottom: 8px;">
+      <div class="order-number first-line">
         <Row>
           <i-col span="12">
             订单号：{{ orderNo }}
@@ -22,14 +21,14 @@
           </i-col>
         </Row>
       </div>
-      <div style="border-top: 1px dashed rgba(203,206,211,1);margin-bottom: 21px;"></div>
+      <div class="border-dashed margin-bottom-21"></div>
       <div v-if="childOrderCargoList.length" class="order-number">
         子订单1：{{ childOneNo }}
       </div>
       <Table :columns="columns1" :data="parentOrderCargoList"></Table>
     </div>
     <div v-if="childOrderCargoList.length">
-      <div style="border-top: 1px dashed rgba(203,206,211,1);margin: 32px 0 20px;"></div>
+      <div class="border-dashed margin-dashed-two"></div>
       <div class="order-number">
         子订单2：{{ childTwoNo }}
       </div>
@@ -67,7 +66,7 @@ export default {
           title: '货值',
           key: 'cargoCost',
           render: (h, params) => {
-            return h('div', parseFloat((params.row.cargoCost / 100).toFixed(2)))
+            return h('div', float.round(params.row.cargoCost / 100))
           }
         },
         {
@@ -84,22 +83,20 @@ export default {
                     value: Number(params.row.quantity),
                     precision: 0
                   },
-                  style: {
-                  },
                   on: {
                     'on-change': (val) => {
                       this.quantityVal = val
                       let percent = this.quantityVal / params.row.quantity // 当前数量拆分的百分比
-                      console.log(percent)
+                      let cloneData = this.cloneData[params.index]
                       // 计算重量
-                      if (this.cloneData[params.index].weight !== 0) {
-                        params.row.weight = float.round(this.cloneData[params.index].weight * percent, 2)
-                        this.weightVal = float.round(this.cloneData[params.index].weight * percent, 2)
+                      if (cloneData.weight !== 0) {
+                        params.row.weight = float.round(cloneData.weight * percent)
+                        this.weightVal = params.row.weight
                       }
                       // 计算体积
-                      if (this.cloneData[params.index].volume !== 0) {
-                        params.row.volume = float.round(this.cloneData[params.index].volume * percent, 1)
-                        this.volumeVal = float.round(this.cloneData[params.index].volume * percent, 1)
+                      if (cloneData.volume !== 0) {
+                        params.row.volume = float.round(cloneData.volume * percent, 1)
+                        this.volumeVal = params.row.volume
                       }
                       // 计算货值
                       if (vm.cloneData[params.index].cargoCost !== 0) {
@@ -307,10 +304,11 @@ export default {
                   on: {
                     click: () => {
                       this.isSeparate = false
-                      params.row.quantity = this.cloneData[params.index].quantity
-                      params.row.weight = this.cloneData[params.index].weight
-                      params.row.volume = this.cloneData[params.index].volume
-                      params.row.cargoCost = this.cloneData[params.index].cargoCost
+                      let cloneData = this.cloneData[params.index]
+                      params.row.quantity = cloneData.quantity
+                      params.row.weight = cloneData.weight
+                      params.row.volume = cloneData.volume
+                      params.row.cargoCost = cloneData.cargoCost
                     }
                   }
                 }, '取消')
@@ -341,10 +339,11 @@ export default {
                       click: () => {
                         this.isSeparate = true
                         this.currentId = params.row.id
-                        this.cargoCostVal = this.cloneData[params.index].cargoCost
-                        this.quantityVal = this.cloneData[params.index].quantity
-                        this.weightVal = this.cloneData[params.index].weight
-                        this.volumeVal = this.cloneData[params.index].volume
+                        let cloneData = this.cloneData[params.index]
+                        this.cargoCostVal = cloneData.cargoCost
+                        this.quantityVal = cloneData.quantity
+                        this.weightVal = cloneData.weight
+                        this.volumeVal = cloneData.volume
                       }
                     }
                   }, '拆部分')
@@ -618,6 +617,14 @@ export default {
   color rgba(47,50,62,1)
   line-height 20px
   margin-bottom 20px
+.first-line
+  margin-bottom 8px
+.border-dashed
+  border-top 1px dashed rgba(203,206,211,1)
+.margin-bottom-21
+  margin-bottom 21px
+.margin-dashed-two
+  margin 32px 0 20px
 .ivu-btn-primary[disabled]
   background-color rgba(0,164,189,0.3)
   color #fff
