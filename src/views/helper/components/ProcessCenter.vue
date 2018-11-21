@@ -30,7 +30,7 @@ export default {
         /** 受理开单 */
         { x: '74px', y: '133px', type: 'kaidan', poptip: '单个录入上游客户的订单信息', access: this.hasPower(100100), link: { path: TMSUrl.CREATE_ORDER, title: '手工开单' }, text: '手工开单' },
         { x: '74px', y: '262px', type: 'piliangdaoru', poptip: '通过Excel批量导入上游客户的订单信息', access: this.hasPower(100200), link: { path: TMSUrl.IMPORT_ORDER, title: '批量导入' }, text: '批量导入' },
-        { x: '232px', y: '199px', type: 'dingdan', poptip: '对已经录入到系统中的客户订单进行查看管理', access: this.hasPower(110100), link: { path: TMSUrl.ORDER_MANAGEMENT, title: '订单管理' }, text: '订单管理' },
+        { x: '232px', y: '199px', type: 'dingdan', poptip: '对已经录入到系统中的客户订单进行查看管理', access: this.hasPower(100300), link: { path: TMSUrl.ORDER_MANAGEMENT, title: '订单管理' }, text: '订单管理' },
         /** 提货管理 */
         { x: '479px', y: '60px', type: 'tihuotiaodu', poptip: '对上门提货的客户订单，安排承运商或外转方去提货', access: this.hasPower(120200), link: { path: TMSUrl.PICKUP_ORDER, query: { tab: 0 }, title: '提货管理' }, text: '提货调度' },
         { x: '585px', y: '60px', type: 'paiche', poptip: '填写承运商费用信息，确认提货', access: this.hasPower(120200), link: { path: TMSUrl.PICKUP_ORDER, query: { tab: 1 }, title: '提货管理' }, text: '派车' },
@@ -53,9 +53,9 @@ export default {
         { x: '166px', y: '514px', type: 'duizhangdan', poptip: '生成对账单，可批量对账核销', access: this.hasPower(170100), link: { path: TMSUrl.SENDER_FINANCE, query: { tab: '2' }, title: '发货方对账' }, text: '对账单' },
         { x: '267px', y: '514px', type: 'hexiao', poptip: '查看已核销完成订单', access: this.hasPower(170100), link: { path: TMSUrl.SENDER_FINANCE, query: { tab: '3' }, title: '发货方对账' }, text: '核销' },
         /** 回单管理 */
-        { x: '479px', y: '514px', type: 'huidanfanchang', poptip: '查看待司机送回回单的订单，可确认已收到回单', access: this.hasPower(110200), link: { path: TMSUrl.RECEIPT_ORDER_MANAGEMENT, query: { tab: 3 }, title: '回单管理' }, text: '回单返厂' },
-        { x: '585px', y: '514px', type: 'huidanjisong', poptip: '查看待客户接收回单的订单，可确认客户已经收到回单', access: this.hasPower(110200), link: { path: TMSUrl.RECEIPT_ORDER_MANAGEMENT, query: { tab: 2 }, title: '回单管理' }, text: '回单寄送' },
-        { x: '691px', y: '514px', type: 'huidanhuishou', poptip: '查看客户已经接收到回单的订单', access: this.hasPower(110200), link: { path: TMSUrl.RECEIPT_ORDER_MANAGEMENT, query: { tab: 1 }, title: '回单管理' }, text: '回单回收' }
+        { x: '479px', y: '514px', type: 'huidanfanchang', poptip: '查看待司机送回回单的订单，可确认已收到回单', access: this.hasPower(120500), link: { path: TMSUrl.RECEIPT_ORDER_MANAGEMENT, query: { tab: 3 }, title: '回单管理' }, text: '回单返厂' },
+        { x: '585px', y: '514px', type: 'huidanjisong', poptip: '查看待客户接收回单的订单，可确认客户已经收到回单', access: this.hasPower(120500), link: { path: TMSUrl.RECEIPT_ORDER_MANAGEMENT, query: { tab: 2 }, title: '回单管理' }, text: '回单寄送' },
+        { x: '691px', y: '514px', type: 'huidanhuishou', poptip: '查看客户已经接收到回单的订单', access: this.hasPower(120500), link: { path: TMSUrl.RECEIPT_ORDER_MANAGEMENT, query: { tab: 1 }, title: '回单管理' }, text: '回单回收' }
       ]
     }
   }
