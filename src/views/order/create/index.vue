@@ -66,7 +66,6 @@
       </FormItem>
       </Col>
       <Col span="6">
-      {{orderForm.consignerPhone}}
       <FormItem label="联系号码:" prop="consignerPhone">
         <SelectInput v-model="orderForm.consignerPhone" :parser="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号"></SelectInput>
       </FormItem>
