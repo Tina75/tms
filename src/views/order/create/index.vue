@@ -130,7 +130,7 @@
     <Row :gutter="16" style="margin-bottom: 10px">
       <Col span="6">
       <FormItem label="结算方式:" prop="settlementType">
-        <Select ref="settlementSelector" v-model="orderForm.settlementType">
+        <Select ref="settlementSelector" v-model="orderForm.settlementType" transfer>
           <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
       </FormItem>
@@ -207,7 +207,7 @@
     <Row :gutter="16" class="i-mt-15">
       <Col span="6">
       <FormItem label="提货方式:" prop="pickup">
-        <Select ref="pickupSelector" v-model="orderForm.pickup">
+        <Select ref="pickupSelector" v-model="orderForm.pickup" transfer>
           <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
       </FormItem>
