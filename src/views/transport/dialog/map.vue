@@ -103,12 +103,11 @@ export default {
         const labelOverlay = new LabelOverlay(point, car.carNo.length === 11 ? car.carNo : car.carNo.replace(/^(.{2})/, '$1 '))
         this.map.addOverlay(labelOverlay)
         labelOverlay.hide()
-
         car.overlay.push(labelOverlay)
 
         if (i === 0) {
-          this.map.centerAndZoom(point, 11)
           labelOverlay.show()
+          this.map.centerAndZoom(point, 11)
           // 替换为卡车图标
           if (length === 1) {
             const marker = getTruckMarker(point)
@@ -124,6 +123,7 @@ export default {
           // 添加标志点
           const markerOverlay = new MarkerOverlay(point)
           this.map.addOverlay(markerOverlay)
+          // 添加连接线
           const polyline = new BMap.Polyline([
             new BMap.Point(car.points[i - 1].longitude, car.points[i - 1].latitude),
             new BMap.Point(tempPoint.longitude, tempPoint.latitude)
