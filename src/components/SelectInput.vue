@@ -199,6 +199,11 @@ export default {
       } else if (topDistance < 0) {
         dropdownInstance.$el.scrollTop += topDistance
       }
+    },
+    $route () {
+      if (this.visible) {
+        this.resetSelect()
+      }
     }
   },
   mounted () {

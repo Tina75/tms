@@ -686,7 +686,7 @@ export default {
         // 删除按钮
         if (r.transStatus === 0 && r.pickupStatus === 0 && r.parentId === '') {
           renderBtn.push(
-            { name: '删除', value: 1, code: 120204 }
+            { name: '删除', value: 1, code: 100302 }
           )
         }
         // 打印
@@ -712,7 +712,7 @@ export default {
         // 编辑按钮
         if (r.transStatus === 0 && r.pickupStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
           renderBtn.push(
-            { name: '编辑', value: 5, code: 120206 }
+            { name: '编辑', value: 5, code: 100301 }
           )
         }
       }
@@ -720,7 +720,7 @@ export default {
         // 删除按钮
         if (r.pickup !== 1 && r.transStatus === 0 && r.dispatchStatus === 0 && r.parentId === '') {
           renderBtn.push(
-            { name: '删除', value: 1, code: 120105 }
+            { name: '删除', value: 1, code: 100302 }
           )
         }
         // 打印
@@ -752,7 +752,7 @@ export default {
         // 编辑按钮
         if (r.pickup !== 1 && r.transStatus === 0 && r.dispatchStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
           renderBtn.push(
-            { name: '编辑', value: 6, code: 120107 }
+            { name: '编辑', value: 6, code: 100301 }
           )
         }
       }
