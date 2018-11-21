@@ -264,6 +264,7 @@ export default {
                 query: { title: '帮助', descover: '0' }
               })
             }, 1000)
+            vm.changePasswordTip()
           } else {
             vm.isOpenProcess()
           }

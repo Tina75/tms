@@ -11,7 +11,7 @@
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center;font-weight: bold;">{{title}}</p>
-      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="90">
+      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="90" label-position="right">
         <p class="modalTitle">基础信息</p>
         <Row>
           <Col span="8">
@@ -96,7 +96,7 @@
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem class="ivu-form-item-required blank" label="净空：" prop="shippingVolume">
+          <FormItem label="净空：" prop="shippingVolume">
             <Row>
               <Col span="20">
               <Input v-model="validate.shippingVolume" :maxlength="9" placeholder="请输入"></Input>
@@ -108,7 +108,7 @@
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem class="ivu-form-item-required blank" label="购买日期：">
+          <FormItem label="购买日期：">
             <Row>
               <Col span="20">
               <DatePicker v-model="validate.purchDate" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
@@ -120,7 +120,7 @@
         </Row>
         <Row>
           <Col span="8">
-          <FormItem class="ivu-form-item-required blank" label="车辆品牌：">
+          <FormItem label="车辆品牌：">
             <Row>
               <Col span="20">
               <Input v-model="validate.carBrand" :maxlength="20" placeholder="如：东风"></Input>
