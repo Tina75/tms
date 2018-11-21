@@ -3,8 +3,9 @@
     <WaveProcess :process="percent" class="ivu-chart-circle"></WaveProcess>
     <div class="contentLabel">
       <p v-if="percent !== 100" class="finallyLabel">欢迎探索运掌柜</p>
-      <p v-else class="finallyLabel">恭喜您完成运掌柜探索</p>
-      <p class="askLabel">若有任何疑问，请联系您的专属客户经理哦~</P>
+      <p v-if="percent !== 100" class="askLabel">完善以下相关信息，以便于您更好的管理业务哦~</p>
+      <p v-if="percent === 100" class="finallyLabel">恭喜您完成运掌柜探索</p>
+      <p v-if="percent === 100" class="askLabel">若有任何疑问，请联系您的专属客户经理哦~</P>
     </div>
     <Steps :current="-1" :style="stepMarginLeft" class="stepDiv">
       <step v-for="btnItem in stepList" :key="btnItem.id" icon="md-radio-button-on">
