@@ -58,7 +58,7 @@ export default {
   },
   computed: {
     percent () {
-      return Math.ceil(this.btnClickedNum / this.btnNum * 100)
+      return Math.round(this.btnClickedNum / this.btnNum * 100)
     }
   },
   watch: {
@@ -104,7 +104,7 @@ export default {
           this.btnClickedNum++
           btn.click = 1
         }).then(() => {
-          if (Math.ceil(this.btnClickedNum / this.btnNum * 100) === 100 && this.percent === 100) {
+          if (Math.round(this.btnClickedNum / this.btnNum * 100) === 100 && this.percent === 100) {
             localStorage.percent = true
           }
         })
