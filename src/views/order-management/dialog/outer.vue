@@ -27,12 +27,12 @@
           </Select>
         </FormItem>
         <FormItem label="公里数：" prop="mileage">
-          <TagNumberInput :min="0" v-model="info.mileage" style="width:150px">
+          <TagNumberInput :min="0" v-model="info.mileage" placeholder="ss"  style="width:150px">
           </TagNumberInput>
           <span class="unitSpan">公里</span>
         </FormItem>
         <FormItem label="外转运费：" prop="transFee">
-          <TagNumberInput :min="0" v-model="info.transFee" placeholder="请填写外转运费" style="width:150px">
+          <TagNumberInput :min="0" v-model="info.transFee" style="width:150px">
           </TagNumberInput>
           <span class="unitSpan">元</span>
           <span @click="showChargeRules">
