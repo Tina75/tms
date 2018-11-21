@@ -348,7 +348,7 @@ export default {
             this.visible = false
           } else {
             const selectOption = this.options[this.focusIndex]
-            if (selectOption) {
+            if (selectOption && !selectOption.disabled) {
               this.handleSelect(selectOption.name)
             }
           }
