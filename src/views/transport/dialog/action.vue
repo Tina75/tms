@@ -84,6 +84,8 @@
               <span class="unit-yuan">元</span>
             </FormItem>
           </i-col>
+        </Row>
+        <Row class="detail-field-group">
           <i-col span="6">
             <FormItem label="保险费：" prop="insuranceFee" class="insurance-fee">
               <TagNumberInput v-model="payment.insuranceFee" class="detail-payment-input-send"></TagNumberInput>

@@ -197,15 +197,20 @@ export default {
           // this.visible = true
           // 生成随机文件名 Math.floor(Math.random() *10000)
           let randomName = file.name.split('.')[0] + new Date().Format('yyyyMMddhhmmss') + '.' + file.name.split('.').pop()
-          let result = await this.ossClient.multipartUpload(this.ossDir + randomName, file, {
-            partSize: 1024 * 500, // 分片大小 ,500K
-            progress: function (progress, pp) {
-              if (progress) {
-                vm.progress = progress
-                console.log(vm.progress)
+          let result
+          if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
+            result = await this.ossClient.put(this.ossDir + randomName, file)
+          } else {
+            result = await this.ossClient.multipartUpload(this.ossDir + randomName, file, {
+              partSize: 1024 * 500, // 分片大小 ,500K
+              progress: function (progress, pp) {
+                if (progress) {
+                  vm.progress = progress
+                  console.log(vm.progress)
+                }
               }
-            }
-          })
+            })
+          }
           this.$nextTick(() => {
             // this.visible = false
             // vm.progress = 1
@@ -278,7 +283,7 @@ export default {
         try {
           const uploadResult = await this.uploadFile(files[i])
           console.log(uploadResult)
-          this.uploadImgList.push({ url: uploadResult.res.requestUrls[0].split('?')[0], progress: this.progress })
+          this.uploadImgList.push({ url: uploadResult.res.requestUrls[0].split('?')[0], progress: navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0 ? 1 : this.progress })
           this.$Message.success({ content: '上传成功', duration: 3 })
           this.setUploadImgList()
           // this.$refs.fileInput.value = null

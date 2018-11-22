@@ -20,7 +20,7 @@
         @click="item.func">{{ item.name }}</Button>
     </div>
 
-    <Tabs :value="activeTab">
+    <Tabs :value="activeTab" :animated="false">
       <TabPane label="外转单详情" name="detail">
         <section class="detail-info">
           <!-- 客户信息 -->
