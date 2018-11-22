@@ -270,7 +270,7 @@ export default {
             }, 1000)
           } else if (firstBtn && firstBtn.click !== 1) {
             // 打开流程=点击打开，计入click数
-            vm.previewedDiscover({ id: '207' })
+            vm.previewedDiscover({ id: data.data.find(b => b.code === '100002').id })
             vm.isOpenProcess()
           }
         }
