@@ -462,7 +462,7 @@ export default {
           // this.visible = true
           // 生成随机文件名 Math.floor(Math.random() *10000)
           let result = null
-          let randomName = file.name.split('.')[0] + new Date().Format('yyyyMMddhhmmss') + '.' + file.name.split('.').pop()
+          let randomName = new Date().getTime() * Math.random() + '.' + file.name.split('.').pop()
           if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
             result = await this.ossClient.put(this.ossDir + randomName, file)
           } else {
