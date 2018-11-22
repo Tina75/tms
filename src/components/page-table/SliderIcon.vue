@@ -1,5 +1,5 @@
 <template>
-  <Poptip v-model="visible" trigger="click" width="290" placement="left" transfer word-wrap>
+  <Poptip v-model="visible" trigger="click" width="300" placement="left" transfer word-wrap>
     <FontIcon type="gengduo" class="ios-list-icon" size="20" color="#00A4BD"></FontIcon>
     <div slot="title"><span>选择要显示的字段</span></div>
     <div slot="content">
@@ -87,9 +87,9 @@ export default {
      * 固定列，不允许拖动，也不允许被其他项干扰排序位置
      */
     checkMove (evt) {
-      const srckey = evt.dragged.dataset.key
+      const srckey = evt.dragged.getAttribute('data-key')
       const srcItem = this.sortData.find(dt => dt.key === srckey)
-      const targetKey = evt.related.dataset.key
+      const targetKey = evt.related.getAttribute('data-key')
       const targetItem = this.sortData.find(dt => dt.key === targetKey)
       if (srcItem.fixed || targetItem.fixed) {
         return false
@@ -152,7 +152,6 @@ export default {
     -webkit-column-gap: 6px
     -moz-column-gap: 6px
     column-gap: 6px
-
   &__checkbox
     display: inline-block
     padding: 8px 0
@@ -184,4 +183,12 @@ export default {
 .ios-list-icon {
     cursor: pointer;
   }
+</style>
+<style lang="stylus">
+// ie 10兼容
+// .slider-icon
+//   &__checkbox
+//     .ivu-checkbox
+//       display inline
+//       vertical-align sub
 </style>

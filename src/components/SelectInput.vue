@@ -51,6 +51,7 @@
  * 2. 如果挂靠在dropdown，在没有下拉框的时候，没法触发blur；比如：车牌号大小写问题
  * 3. 如果外面包一层div，问题更严重，会不断触发同一页面其他selectinput组件的blur事件
  */
+import browser from '@/libs/js/browser'
 export default {
   name: 'SelectInput',
   props: {
@@ -103,7 +104,16 @@ export default {
       type: Boolean,
       default: false
     },
-    parser: Function
+    /**
+     * 显示时候的值，回调函数
+     * 比如：手机号，银行卡号，间隔显示，但是最终的值不保留间隔
+     */
+    parser: Function,
+    /**
+     * 输入框的值，经过该函数，值发生变化
+     * 比如：车牌号大写
+     */
+    formatter: Function
   },
   data () {
     return {
@@ -134,6 +144,12 @@ export default {
         return this.currentValue
       },
       set (value) {
+        /**
+         * formatter函数影响中文输入法
+         */
+        if (this.formatter && !this.composing) {
+          value = this.formatter(value)
+        }
         this.currentValue = value.trim()
       }
 
@@ -199,11 +215,6 @@ export default {
       } else if (topDistance < 0) {
         dropdownInstance.$el.scrollTop += topDistance
       }
-    },
-    $route () {
-      if (this.visible) {
-        this.resetSelect()
-      }
     }
   },
   mounted () {
@@ -216,13 +227,26 @@ export default {
         this.$refs.input.$refs.input.focus()
       })
     }
-    if (this.onlyChinese && this.remote) {
+    /**
+     * formatter 函数在输入中文的时候也会执行，影响中文输入法
+     */
+    if (this.onlyChinese && (this.remote || this.formatter)) {
       const originInput = this.$refs.input.$refs.input
       originInput.addEventListener('compositionstart', vm.onCompositionStart)
       originInput.addEventListener('compositionend', vm.onCompositionEnd)
     }
-    if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
+    if (browser.ie && browser.ie10Compat) {
       this.selfTransfer = true
+      this.unwatch = this.$watch('$route', () => {
+        if (vm.visible) {
+          vm.resetSelect()
+        }
+      })
+    }
+  },
+  beforeDestroy () {
+    if (this.unwatch) {
+      this.unwatch()
     }
   },
   methods: {
