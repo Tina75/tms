@@ -157,6 +157,11 @@ export default {
       return objMap
     }
   },
+  watch: {
+    $route () {
+      this.visible = false
+    }
+  },
   created () {
     // 监控卡片卡片
     eventHub.$on('plugin:add', this.addChild)
