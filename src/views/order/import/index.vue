@@ -563,24 +563,24 @@ export default {
 </script>
 
 <style lang="stylus">
-  .order-import
-    &__empty-content
-      margin 0
-      min-height 120px
-      position relative
-      &-wrap
-        display block
-        width 100%
-        position absolute
-        background-color #fff
-        line-height 28px
-        top -20px
-    &__footer-pagination
-      margin: 10px;
-      overflow: hidden;
-      &-fr
-        float: right;
-    &__pagination-bar
+.order-import
+  &__empty-content
+    margin 0
+    min-height 120px
+    position relative
+    &-wrap
+      display block
+      width 100%
+      position absolute
+      background-color #fff
+      line-height 28px
+      top -20px
+  &__footer-pagination
+    margin: 10px;
+    overflow: hidden;
+    &-fr
+      float: right;
+  &__pagination-bar
     .ivu-page-item-active
       background-color: #00A4BD
       border-radius: 4px

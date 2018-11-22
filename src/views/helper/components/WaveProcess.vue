@@ -3,8 +3,8 @@
     <!-- <canvas></canvas> -->
     <div v-if="process !== 0">
       <div :style="styles" class="ocean">
-        <div class="wave"></div>
-        <div class="wave"></div>
+        <div :style="waveStyle" class="wave"></div>
+        <div :style="waveStyle" class="wave"></div>
       </div>
       <div class="wave-text">
         <span :class="process === 100 ? 'whiteCls' : 'blackCls'">{{process}}%</span>
@@ -21,6 +21,7 @@
 
 <script>
 // import { requestAnimationFrame } from '@/libs/js/requestAnimationFrame.js'
+import browser from '@/libs/js/browser'
 export default {
   props: {
     process: {
@@ -39,6 +40,16 @@ export default {
       return {
         height: this.process + '%'
       }
+    },
+    waveStyle () {
+      if (browser.chrome) {
+        if (parseFloat(navigator.userAgent.toLowerCase().match(/chrome\/(\d+\.\d)/i)[1]) < 56) {
+          return {
+            background: 'none'
+          }
+        }
+      }
+      return {}
     }
   },
   mounted () {
