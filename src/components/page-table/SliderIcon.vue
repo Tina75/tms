@@ -149,11 +149,9 @@ export default {
     -webkit-column-width: 116px
     -moz-column-width: 116px
     column-width: 116px
-    -ms-column-width: 116px
     -webkit-column-gap: 6px
     -moz-column-gap: 6px
     column-gap: 6px
-    -ms-column-gap: 6px
   &__checkbox
     display: inline-block
     padding: 8px 0
@@ -185,4 +183,12 @@ export default {
 .ios-list-icon {
     cursor: pointer;
   }
+</style>
+<style lang="stylus">
+// ie 10兼容
+// .slider-icon
+//   &__checkbox
+//     .ivu-checkbox
+//       display inline
+//       vertical-align sub
 </style>
