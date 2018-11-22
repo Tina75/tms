@@ -295,9 +295,7 @@ export default {
     }
   },
   mounted () {
-    if (!this.hideDetail) {
-      this.showImgFn = openSwipe(this.imageItems)
-    }
+    this.showImgFn = openSwipe(this.imageItems)
   },
   methods: {
     // 处理对话框
@@ -334,9 +332,6 @@ export default {
     },
     showDetail () {
       this.hideDetail = !this.hideDetail
-      if (!this.hideDetail) {
-        this.showImgFn = openSwipe(this.imageItems)
-      }
     },
     compareFee (b, a) {
       return moneyFormate(b) !== moneyFormate(a)

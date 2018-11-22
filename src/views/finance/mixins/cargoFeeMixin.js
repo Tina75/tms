@@ -3,7 +3,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-11-09 16:48:31
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-11-14 17:40:54
+ * @Last Modified time: 2018-11-22 16:50:02
  */
 import _ from 'lodash'
 import server from '@/libs/js/server'
@@ -40,6 +40,9 @@ export default {
         return []
       }
       return this.datas[this.activeSender.partnerName].orderInfos
+    },
+    isEmptyList () {
+      return Object.keys(this.datas).length === 0
     }
   },
   mounted () {

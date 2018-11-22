@@ -15,7 +15,7 @@
       </Col>
     </Row>
     <Row type="flex">
-      <Col span="6" class="reconcile-layout__flex-left">
+      <Col v-show="!isEmptyList" span="6" class="reconcile-layout__flex-left">
       <slot>
         <!-- 左侧列表区域 -->
       </slot>
@@ -23,8 +23,11 @@
       </Col>
       <Col span="17" class="reconcile-layout__flex-right">
       <div class="i-mt-20">
-        <data-empty v-show="!showTable">
+        <data-empty v-show="!showTable && !isEmptyList">
           {{emptyContent}}
+        </data-empty>
+        <data-empty v-if="isEmptyList">
+          暂无数据~
         </data-empty>
         <Table v-show="showTable" :columns="columns" :data="dataSource" @on-selection-change="handleSelectionChange"></Table>
       </div>
@@ -51,6 +54,11 @@ export default {
   props: {
     // 列表名称
     title: String,
+    // 左侧区域内容为空
+    isEmptyList: {
+      type: Boolean,
+      default: true
+    },
     emptyContent: {
       default: '请点击左侧列表查看更多信息~',
       type: String,

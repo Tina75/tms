@@ -4,6 +4,7 @@
     <ReconcileLayout
       :columns="orderColumns"
       :data-source="orderList"
+      :is-empty-list="isEmptyList"
       title="发货方代收款列表"
       empty-content="请点击左侧发货方列表查看待付货款列表哦～"
       @on-selection-change="handleSelectionChange"
