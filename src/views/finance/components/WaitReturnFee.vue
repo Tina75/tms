@@ -4,6 +4,7 @@
     <ReconcileLayout
       :columns="orderColumns"
       :data-source="orderList"
+      :is-empty-list="isEmptyList"
       title="外转方/承运商返现对账列表"
       empty-content="请点击左侧外转方/承运商查看返现对账列表哦～"
       @on-selection-change="handleSelectionChange"
@@ -143,6 +144,9 @@ export default {
         return []
       }
       return this.drivers[this.activeDriver.partnerName].orderInfos
+    },
+    isEmptyList () {
+      return Object.keys(this.drivers).length === 0
     }
   },
   watch: {
