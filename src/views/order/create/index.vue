@@ -264,7 +264,7 @@
       <Button v-if="hasPower(100101)" :disabled="disabled" type="primary" @click="handleSubmit">保存</Button>
       <Button v-if="hasPower(100102)" :disabled="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
-      <Button v-if="hasPower(100104)" class="i-ml-10" @click="shipImmedite">立即发运</Button>
+      <Button v-if="hasPower(100104) && !orderId" class="i-ml-10" @click="shipImmedite">立即发运</Button>
     </div>
     <OrderPrint ref="printer" :list="orderPrint" source="create">
     </OrderPrint>
@@ -558,6 +558,9 @@ export default {
       const stdt = this.formateDate(this.orderForm.deliveryTime)
       const eddt = this.formateDate(this.orderForm.arriveTime)
       return stdt === eddt ? this.orderForm.deliveryTimes : ''
+    },
+    orderId () {
+      return this.$route.query.id || undefined
     }
   },
   created () {
@@ -567,7 +570,7 @@ export default {
   },
   mounted () {
     const vm = this
-    const orderId = this.$route.query.id || undefined
+    const orderId = this.orderId
     if (orderId) {
       vm.loading = true
       api.getOrderDetail(orderId)
@@ -1059,7 +1062,7 @@ export default {
       return temp
     },
     phoneLength (value) {
-      return /^1/.test(value) ? 13 : 128
+      return /^1/.test(value) ? 13 : 30
     }
   }
 }

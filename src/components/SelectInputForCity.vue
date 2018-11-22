@@ -23,7 +23,6 @@
         :class="classes"
         @on-change="handleChange"
         @on-focus="handleFocus"
-        @on-blur="handleBlur"
       >
       <span v-show="nameSeleced" slot="append" :style="{paddingLeft: (currentValue.length * 12 + 10) + 'px'}" style="display: block;line-height: 24px; text-align: left;" @click="inputFocus">{{nameSeleced}}</span>
       <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-input__clear-icon" @click.native.stop="handleClear"></Icon>
@@ -161,6 +160,11 @@ export default {
       } else if (topDistance < 0) {
         dropdownInstance.$el.scrollTop += topDistance
       }
+    },
+    $route () {
+      if (this.visible) {
+        this.resetSelect()
+      }
     }
   },
   mounted () {
@@ -239,7 +243,7 @@ export default {
     // 点击下拉框项
     handleSelect (name) {
       const item = this.options.find((opt) => {
-        if (opt.name) {
+        if (opt.name && !opt.disabled) {
           return opt.name === name
         }
         return opt.value === name
