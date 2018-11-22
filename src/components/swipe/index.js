@@ -32,8 +32,6 @@ const prepareOpenPhotoSwipe = (items) => {
     Object.assign(options, {
       history: false,
       focus: false,
-      tapToClose: false,
-      clickToClose: false,
       closeOnScroll: false,
       closeOnVerticalDrag: false,
       clickToCloseNonZoomable: false,

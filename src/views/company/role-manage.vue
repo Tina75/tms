@@ -424,7 +424,8 @@ export default {
       display: block
       color: #333333
       font-size: 12px
-      line-height: 26px;
+      line-height: 26px
+      cursor pointer
     .configBtnItem
       position: absolute
       right: 0;
