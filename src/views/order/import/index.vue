@@ -10,7 +10,7 @@
         accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         @change="handleChange"
       />
-      <a v-if="hasPower(100202)" :href="downloadUrl"  download="下载模板" class="i-ml-10 ivu-btn ivu-btn-default">下载模板</a>
+      <a v-if="hasPower(100202)" :href="downloadUrl" download="下载模板" class="i-ml-10 ivu-btn ivu-btn-default">下载模板</a>
       <Button class="i-ml-10" @click="clearAll">清空导入记录</Button>
     </div>
     <!-- <PageTable
@@ -38,7 +38,7 @@
       <div ref="footer" slot="footer" class="order-import__empty-content van-center">
         <div class="order-import__empty-content-wrap">
           <div>
-            <img src="../assets/empty-order.png" />
+            <img src="../assets/empty-order.png"/>
             <div>您还没有导入订单，去下载模板导入订单吧！</div>
           </div>
           <div class="i-mt-10">
@@ -47,7 +47,7 @@
         </div>
       </div>
     </Table>
-    <div  v-if="pagination.totalCount !==0" class="order-import__footer-pagination">
+    <div v-if="pagination.totalCount !==0" class="order-import__footer-pagination">
       <div class="order-import__footer-pagination-fr">
         <Page
           :current="pagination.pageNo"
@@ -76,6 +76,7 @@ import server from '@/libs/js/server'
 import jsCookie from 'js-cookie'
 import TMSUrl from '@/libs/constant/url.js'
 import { Progress } from 'iview'
+
 /**
  * 批量导入
  * 1.文件类型
@@ -349,6 +350,7 @@ export default {
       const vm = this
       let timer = null
       vm.queue.push(importId)
+
       function checkProgress () {
         try {
           timer = setTimeout(async () => {
@@ -393,6 +395,7 @@ export default {
           return error
         }
       }
+
       checkProgress()
     },
     /**
@@ -560,27 +563,27 @@ export default {
 </script>
 
 <style lang="stylus">
-.order-import
-  &__empty-content
-    margin 0
-    min-height 120px
-    position relative
-    &-wrap
-      display block
-      width 100%
-      position absolute
-      background-color #fff
-      line-height 28px
-      top -20px
-  &__footer-pagination
-    margin: 10px;
-    overflow: hidden;
-    &-fr
-      float: right;
-  &__pagination-bar
+  .order-import
+    &__empty-content
+      margin 0
+      min-height 120px
+      position relative
+      &-wrap
+        display block
+        width 100%
+        position absolute
+        background-color #fff
+        line-height 28px
+        top -20px
+    &__footer-pagination
+      margin: 10px;
+      overflow: hidden;
+      &-fr
+        float: right;
+    &__pagination-bar
     .ivu-page-item-active
       background-color: #00A4BD
-      border-radius:4px
+      border-radius: 4px
       a
         color: #fff
 </style>
