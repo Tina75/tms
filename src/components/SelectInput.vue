@@ -148,9 +148,9 @@ export default {
          * formatter函数影响中文输入法
          */
         if (this.formatter && !this.composing) {
-          value = this.formatter(value)
+          value = this.formatter(value) || ''
         }
-        if (value) this.currentValue = value.trim()
+        this.currentValue = value.trim()
       }
 
     },

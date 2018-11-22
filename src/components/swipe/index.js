@@ -22,7 +22,6 @@ const prepareOpenPhotoSwipe = (items) => {
     img.onload = function () {
       item.w = img.naturalWidth || img.width
       item.h = img.naturalHeight || img.height
-      img = null
     }
   })
   return (index = 0, options = {}) => {
