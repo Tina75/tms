@@ -150,7 +150,7 @@ export default {
         if (this.formatter && !this.composing) {
           value = this.formatter(value)
         }
-        this.currentValue = value.trim()
+        if (value) this.currentValue = value.trim()
       }
 
     },

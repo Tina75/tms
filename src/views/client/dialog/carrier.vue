@@ -38,7 +38,7 @@
         </Col>
         <Col :span="8">
         <FormItem label="车牌号：" prop="carNO">
-          <Input v-model="validate.driver.carNO" :maxlength="8" placeholder="必填"/>
+          <SelectInput v-model="validate.driver.carNO" :maxlength="8" :formatter="formatterCarNo" placeholder="必填"></SelectInput>
         </FormItem>
         </Col>
       </Row>
@@ -183,14 +183,15 @@
 </template>
 <script>
 import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
-import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, CODE, CAR } from '../client'
+import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, formatterCarNo, CODE, CAR } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
+import SelectInput from '@/components/SelectInput'
 import UpLoad from '@/components/upLoad/index.vue'
 import _ from 'lodash'
 export default {
   name: 'carrier',
-  components: { CitySelect, UpLoad },
+  components: { CitySelect, UpLoad, SelectInput },
   mixins: [BaseDialog],
   data () {
     return {
@@ -203,6 +204,7 @@ export default {
       address2: {},
       flagAddress: true,
       radioDisabled: false,
+      formatterCarNo: formatterCarNo, // 车牌号大写转换
       payTypeMap: {
         1: '按单付',
         2: '月结'
