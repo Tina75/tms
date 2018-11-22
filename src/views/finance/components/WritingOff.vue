@@ -52,7 +52,7 @@
       <div>{{sceneMap[scene]}}对账列表</div>
       <Button v-if="(hasPower(170102) && scene === 1) || (hasPower(170202) && scene === 2) || (hasPower(170302) && scene === 3)" type="primary" @click="createBill">生成对账单</Button>
     </div>
-    <div  :style="{height: height - 20 +'px'}" class="list-box">
+    <div  v-if="companyData.length>0" :style="{height: height - 20 +'px'}" class="list-box">
       <ul class="leftList">
         <li v-for="(item,index) in companyData" :class="{companyDataActive:companyDataActive === item.id}" :key="index" class="list" @click="showOrderData(item)">
           <!--<Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showOrderData"></Table>-->
@@ -80,6 +80,11 @@
         </DataEmpty>
         <Table v-else :columns="orderColumn" :data="orderData" class="tableList"  @on-selection-change="setOrderIds"></Table>
       </div>
+    </div>
+    <div v-if="companyData.length===0" class="dataNone">
+      <DataEmpty v-if="!currentPartner.partnerName || !orderData.length">
+        暂无数据
+      </DataEmpty>
     </div>
   </div>
 </template>
@@ -533,6 +538,7 @@ export default {
       justify-content space-between
       -ms-flex-pack justify
       padding 9px 0
+      border-bottom 1px solid #E4E7EC
       div
         color #333
         font-weight 500
@@ -549,7 +555,6 @@ export default {
     .list-box
       display flex
       display -ms-flexbox
-      border-top 1px solid #E4E7EC
       margin 0 -15px
       margin-bottom -20px
       .leftList
