@@ -92,13 +92,6 @@ export default {
       route.query = Object.assign({ _time: new Date().getTime() }, route.query)
       this.turnToPage(route)
     })
-    if (sessionStorage.getItem('first_time_login') === 'true') {
-      if (this.UserInfo.type === 1) this.renew()
-      else this.changePasswordTip()
-      sessionStorage.removeItem('first_time_login')
-    }
-    // 探索运掌柜
-    this.isPreviewDiscover()
     this.loopMessage()
     this.newUserTip()
   },
@@ -108,7 +101,13 @@ export default {
     async newUserTip () {
       try {
         await this.getUserInfo()
-
+        if (sessionStorage.getItem('first_time_login') === 'true') {
+          if (this.UserInfo.type === 1) this.renew()
+          else this.changePasswordTip()
+          sessionStorage.removeItem('first_time_login')
+        }
+        // 探索运掌柜
+        await this.isPreviewDiscover()
         // 添加GA配置属性
         this.$ga.set('phone', this.UserInfo.phone)
         this.$ga.set('roleName', this.UserInfo.roleName)
