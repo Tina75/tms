@@ -151,7 +151,7 @@ export default {
 
     // 车牌号小写转大写
     characterToUpperCase (val) {
-      if (this.mode === 'carNo' && val) { // 车牌号小写转大写
+      if (this.mode === 'carNo' && val) {
         val = val.toUpperCase()
         this.$emit('input', val)
       }
