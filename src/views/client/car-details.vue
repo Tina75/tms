@@ -107,13 +107,13 @@
           <Row class="row">
             <Col span="5">
             <div v-if="infoData.travelPhoto">
-              <div :style="'height: 90px;background-image: url(' + infoData.travelPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(infoData.travelPhoto)"></div>
+              <div :style="'height: 90px;background-image: url(' + infoData.travelPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(0)"></div>
               <p class="uploadLabel">行驶证</p>
             </div>
             </Col>
             <Col span="6">
             <div v-if="infoData.drivePhoto">
-              <div :style="'height: 90px;background-image: url(' + infoData.drivePhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(infoData.drivePhoto)"></div>
+              <div :style="'height: 90px;background-image: url(' + infoData.drivePhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(1)"></div>
               <p class="uploadLabel">驾驶证</p>
             </div>
             </Col>
@@ -155,9 +155,10 @@ import { CODE, carrierDeleteDriver, queryByIdCarrier, carrierDeleteRepairVehicle
 import pageTable from '@/components/page-table'
 import TMSUrl from '@/libs/constant/url'
 import RecordList from '@/components/RecordList'
+import prepareOpenSwipe from '@/components/swipe/index'
 export default {
   name: 'car-details',
-  components: { pageTable, RecordList },
+  components: { pageTable, RecordList, prepareOpenSwipe },
   mixins: [ BasePage ],
   props: {
   },
@@ -349,6 +350,22 @@ export default {
       ]
     }
   },
+  computed: {
+    imageItems () {
+      return [
+        {
+          title: '行驶证',
+          src: this.infoData.travelPhoto,
+          msrc: this.infoData.travelPhoto
+        },
+        {
+          title: '驾驶证',
+          src: this.infoData.drivePhoto,
+          msrc: this.infoData.drivePhoto
+        }
+      ]
+    }
+  },
   created () {
     this.searchLogData.carrierId = this.$route.query.rowData.carrierId
     this.searchLogData.id = this.$route.query.rowData.id
@@ -363,6 +380,7 @@ export default {
     this.infoData = this.$route.query.rowData
     this.repairFormat.carrierId = this.carrierId
     this.initData()
+    this.openSwipe = prepareOpenSwipe(this.imageItems)
   },
   methods: {
     // 切换头部tab
@@ -478,9 +496,10 @@ export default {
         }
       })
     },
-    handleView (imagePath) {
-      this.visible = true
-      this.imagePath = imagePath
+    handleView (index) {
+      this.openSwipe(index)
+      // this.visible = true
+      // this.imagePath = imagePath
     }
   }
 }
