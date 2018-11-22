@@ -156,6 +156,7 @@ export default {
     display: inline-block
     padding: 8px 0
     width: 116px
+    overflow auto
   &__draggable-item
     margin: 0
     position: relative
@@ -183,12 +184,4 @@ export default {
 .ios-list-icon {
     cursor: pointer;
   }
-</style>
-<style lang="stylus">
-// ie 10兼容
-// .slider-icon
-//   &__checkbox
-//     .ivu-checkbox
-//       display inline
-//       vertical-align sub
 </style>
