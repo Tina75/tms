@@ -6,7 +6,7 @@
     :clearable="clearable"
     :maxlength="maxLength"
     :local-options="options"
-    :formatter="characterToUpperCase"
+    :formatter="contentFormatter"
     @on-select="selectHandler"
     @on-clear="clearHandler" />
 </template>
@@ -149,9 +149,8 @@ export default {
       this.$emit('on-select', { name, row })
     },
 
-    // 车牌号小写转大写
-    characterToUpperCase (val) {
-      if (this.mode === 'carNo' && val) {
+    contentFormatter (val) {
+      if (this.mode === 'carNo' && val) { // 车牌号小写转大写
         val = val.toUpperCase()
         this.$emit('input', val)
       }
