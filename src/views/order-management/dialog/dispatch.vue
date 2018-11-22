@@ -34,9 +34,9 @@
             :maxlength="20"
             :remote="false"
             :local-options="carrierCars"
+            :formatter="handleCarNoToUp"
             placeholder="请输入"
-            style="width:180px"
-            @on-blur="handleCarNoBlur">
+            style="width:180px">
           </SelectInput>
         </FormItem>
         <FormItem label="司机" prop="driverName" style="margin-left:27px;">
@@ -334,8 +334,9 @@ export default {
       return str.replace(dot, ' ...')
     },
     // 车牌号小写转大写
-    handleCarNoBlur (val) {
+    handleCarNoToUp (val) {
       this.pick.carNo = val.toUpperCase()
+      return this.pick.carNo
     },
     // 格式化城市
     cityFormatter (code) {

@@ -6,8 +6,8 @@
     :clearable="clearable"
     :maxlength="maxLength"
     :local-options="options"
+    :formatter="inputBlurHandler"
     @on-select="selectHandler"
-    @on-blur="inputBlurHandler"
     @on-clear="clearHandler" />
 </template>
 
@@ -150,12 +150,11 @@ export default {
     },
 
     // 输入框失焦
-    inputBlurHandler () {
-      if (this.mode === 'carNo' && this.model) { // 车牌号小写转大写
-        this.$nextTick(() => {
-          this.model = this.model.toUpperCase()
-          this.$emit('input', this.model)
-        })
+    inputBlurHandler (val) {
+      if (this.mode === 'carNo' && val) { // 车牌号小写转大写
+        val = val.toUpperCase()
+        this.$emit('input', val)
+        return val
       }
     },
 
