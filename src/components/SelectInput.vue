@@ -51,6 +51,7 @@
  * 2. 如果挂靠在dropdown，在没有下拉框的时候，没法触发blur；比如：车牌号大小写问题
  * 3. 如果外面包一层div，问题更严重，会不断触发同一页面其他selectinput组件的blur事件
  */
+import browser from '@/libs/js/browser'
 export default {
   name: 'SelectInput',
   props: {
@@ -199,11 +200,6 @@ export default {
       } else if (topDistance < 0) {
         dropdownInstance.$el.scrollTop += topDistance
       }
-    },
-    $route () {
-      if (this.visible) {
-        this.resetSelect()
-      }
     }
   },
   mounted () {
@@ -221,8 +217,18 @@ export default {
       originInput.addEventListener('compositionstart', vm.onCompositionStart)
       originInput.addEventListener('compositionend', vm.onCompositionEnd)
     }
-    if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
+    if (browser.ie && browser.ie10Compat) {
       this.selfTransfer = true
+      this.unwatch = this.$watch('$route', () => {
+        if (vm.visible) {
+          vm.resetSelect()
+        }
+      })
+    }
+  },
+  beforeDestroy () {
+    if (this.unwatch) {
+      this.unwatch()
     }
   },
   methods: {
