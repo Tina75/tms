@@ -51,7 +51,7 @@
             </ul>
           </div>
           </Col>
-          <Col span="19" style="flex: 1; -ms-flex: 1">
+          <Col :style="{height: height + 'px'}" span="19" style="flex: 1; -ms-flex: 1" >
           <data-empty v-if="!ruleDetail.ruleId">请点击左侧{{sceneMap[active]}}设置计费规则明细～</data-empty>
           <div v-else class="rule-block">
             <div class="rule-basic">

@@ -421,6 +421,7 @@ export default {
                 border-bottom 1px solid #DCDEE2
                 &>div
                   flex 1
+                  -ms-flex 1
                   /deep/ .ivu-form-inline .ivu-form-item
                     vertical-align middle
                     width 128px
