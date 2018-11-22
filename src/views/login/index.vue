@@ -215,7 +215,7 @@ export default {
     display block
     width 48vw
     margin-right 4vw
-    height: unquote('100%'\9) !important
+    height: unquote('100%\9')
 
   .form-body
     width 380px
