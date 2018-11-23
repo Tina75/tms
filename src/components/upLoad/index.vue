@@ -62,7 +62,7 @@
                 </div>
                 <input
                   ref="fileInput"
-                  :multiple="multiple"
+                  :multiple="multiple && !crop"
                   type="file"
                   class="ivu-upload-input-icon"
                   accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
@@ -80,7 +80,7 @@
         <div class="ivu-upload ivu-upload-drag">
           <input
             ref="fileInput"
-            :multiple="multiple"
+            :multiple="multiple && !crop"
             type="file"
             class="ivu-upload-input"
             accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
