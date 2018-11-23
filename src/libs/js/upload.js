@@ -14,11 +14,17 @@ export default class Upload {
     if (props) {
       this.maxSize = props.maxSize
       this.multiple = props.multiple
+
+      /**
+       * 上传前的处理 - 20181123
+       * 可以在这边对文件进行操作，如图片剪裁等
+       * 参数是文件对象，需要返回处理完成后的文件对象或blob对象，如果不存在则使用原先的文件
+       */
+      props.beforeUpload === 'function' && (this.beforeUpload = props.beforeUpload)
     }
   }
 
   initOssInstance () {
-    const vm = this
     /**
      * 后端获取阿里云access token, region 参数
      * 初始化oss client，用户上传模板前需要准备好
@@ -34,8 +40,8 @@ export default class Upload {
     })
       .then((response) => {
         const { data } = response.data
-        vm.ossDir = data.ossKeys[0]
-        vm.ossClient = new OssClient({
+        this.ossDir = data.ossKeys[0]
+        this.ossClient = new OssClient({
           accessKeyId: data.ossTokenDTO.stsAccessId,
           accessKeySecret: data.ossTokenDTO.stsAccessKey,
           stsToken: data.ossTokenDTO.stsToken,
@@ -51,7 +57,7 @@ export default class Upload {
     if (!files || files.length === 0) {
       return false
     }
-    const file = files[0]
+    let file = files[0]
     if (file.name.length > 58) {
       this.$Message.warning('上传文件名长度请勿超过58位')
       this.$refs.fileInput.value = null
@@ -64,8 +70,10 @@ export default class Upload {
       return
     }
     try {
+      // 对图片进行上传前处理
+      if (this.beforeUpload) file = this.beforeUpload(file) || file
       const uploadResult = await this.uploadFile(file)
-      console.log(uploadResult.res.requestUrls[0])
+
       this.uploadImg = uploadResult.res.requestUrls[0]
       this.$Message.success({ content: '上传成功', duration: 3 })
     } catch (error) {

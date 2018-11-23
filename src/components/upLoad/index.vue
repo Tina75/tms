@@ -1,6 +1,6 @@
 <template>
   <div id="uploadFile">
-    <div v-if="multiple" style="width: 550px;">
+    <div v-if="multiple && !crop" style="width: 550px;">
       <div v-for="(pic, index) in uploadImgList" :key="index" class="demo-upload-list">
         <template v-if="pic.progress === 1">
           <!-- <img :src="pic.url"> -->
@@ -32,7 +32,7 @@
             type="file"
             class="ivu-upload-input"
             accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
-            @change="doUpload">
+            @change="inputChanged">
           <div style="width: 160px;height: 90px;">
             <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%)">
               <div class="eye-circle">
@@ -45,9 +45,8 @@
       </div>
     </div>
     <div v-else>
-      <div v-if="uploadImg" class="demo-upload-list">
+      <div v-if="showPreview" class="demo-upload-list">
         <template v-if="progress === 1">
-          <!-- <img :src="uploadImg"> -->
           <div :style="'height: 90px;background-image: url(' + uploadImg + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"></div>
           <div class="demo-upload-list-cover">
             <div style="cursor: pointer;" @click="handleView(0)">
@@ -63,11 +62,11 @@
                 </div>
                 <input
                   ref="fileInput"
-                  :multiple="multiple"
+                  :multiple="multiple && !crop"
                   type="file"
                   class="ivu-upload-input-icon"
                   accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
-                  @change="doUpload">
+                  @change="inputChanged">
               </div>
               <div class="icon-letter">重新上传</div>
             </div>
@@ -81,11 +80,11 @@
         <div class="ivu-upload ivu-upload-drag">
           <input
             ref="fileInput"
-            :multiple="multiple"
+            :multiple="multiple && !crop"
             type="file"
             class="ivu-upload-input"
             accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
-            @change="doUpload">
+            @change="inputChanged">
           <div style="width: 160px;height: 90px;">
             <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%)">
               <div class="eye-circle">
@@ -105,9 +104,10 @@
   </div>
 </template>
 <script>
+// import ImageCropper from './ImageCropper'
 import FontIcon from '@/components/FontIcon'
 import openSwipe from '@/components/swipe/index'
-import initOssInstance from './index.js'
+import { initOssInstance, showCropper } from './index.js'
 export default {
   name: 'UpLoad',
 
@@ -116,6 +116,10 @@ export default {
   },
 
   props: {
+    crop: {
+      type: Boolean,
+      default: false
+    },
     // 图片上传最大尺寸,默认2M
     maxSize: {
       type: [String, Number],
@@ -137,8 +141,9 @@ export default {
       ossClient: null,
       ossDir: '',
       progress: 0,
-      uploadImg: '', // 单图上传
-      uploadImgList: [], // 多图上传
+      showPreview: false, // 单图展示预览
+      uploadImg: '', // 单图上传回显
+      uploadImgList: [], // 多图上传回显
       curImg: '', // 当前操作的图片
       visible: false,
       viewUrl: '',
@@ -167,7 +172,6 @@ export default {
           msrc: i.url
         }
       })
-      console.log(imageItems)
       this.imgViewFunc = openSwipe(imageItems)
     },
     setUploadImg () {
@@ -178,133 +182,113 @@ export default {
       })
       this.imgViewFunc = openSwipe(imageItems)
     },
-    async doUpload (e) {
+
+    inputChanged (e) {
       const files = e.target.files
-      console.log(files)
-      if (!files || files.length === 0) {
-        return false
-      }
-      if (this.multiple) {
-        await this.multipleUpload(e, files)
+      if (!files || files.length === 0) return
+      if (this.crop) {
+        this.cropImage(files[0]) // 处理剪裁
+      } else if (!this.multiple) {
+        this.singleUpload(files[0]) // 单图上传
       } else {
-        await this.singleUpload(e, files)
+        this.multipleUpload(files) // 多图上传
       }
     },
+
     async uploadFile (file) {
-      const vm = this
       if (this.ossClient) {
         try {
-          // this.visible = true
-          // 生成随机文件名 Math.floor(Math.random() *10000)
-          let randomName = new Date().getTime() * Math.random() + '.' + file.name.split('.').pop()
+          let mime = file.name ? file.name.split('.').pop() : file.type.split('/').pop()
+          let randomName = new Date().getTime() * Math.random() + '.' + mime
           let result
           if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
             result = await this.ossClient.put(this.ossDir + randomName, file)
           } else {
             result = await this.ossClient.multipartUpload(this.ossDir + randomName, file, {
               partSize: 1024 * 500, // 分片大小 ,500K
-              progress: function (progress, pp) {
+              progress: (progress, pp) => {
                 if (progress) {
-                  vm.progress = progress
-                  console.log(vm.progress)
+                  this.progress = progress
                 }
               }
             })
           }
-          this.$nextTick(() => {
-            // this.visible = false
-            // vm.progress = 1
-          })
           return result
-        } catch (e) {
+        } catch (error) {
           // 捕获超时异常
-          if (e.code === 'ConnectionTimeoutError') {
+          if (error.code === 'ConnectionTimeoutError') {
             this.$Message.error('图片上传超时')
-            // do ConnectionTimeoutError operation
-          } else if (e.code === 'RequestError') {
+          } else if (error.code === 'RequestError') {
             console.error('请求body格式非法')
+          } else if (error.code === 'InvalidAccessKeyId' || error.code === 'InvalidBucketName') {
+            this.$Message.info({ content: '重新获取认证信息，正在上传', duration: 3 })
+            await this.initOssInstance()
+            this.uploadFile(file)
+          } else {
+            this.$Message.error({ content: '上传图片失败', duration: 3 })
           }
-          throw e
         }
       }
     },
-    // 单图上传
-    async singleUpload (e, files) {
-      const file = files[0]
-      if (file.name.length > 58) {
+
+    validateImageFile (file) {
+      if (file.name && file.name.length > 58) {
         this.$Message.warning('上传文件名长度请勿超过58位')
         this.$refs.fileInput.value = null
-        return
+        return false
       }
-      console.log(file)
       if (file.size > this.maxSize * 1024 * 1024) {
         this.$Message.warning(`图片大小不能超过${this.maxSize}M`)
         this.$refs.fileInput.value = null
-        return
+        return false
       }
-      this.uploadImg = ' '
-      try {
-        const uploadResult = await this.uploadFile(file)
-        console.log(uploadResult)
-        this.uploadImg = uploadResult.res.requestUrls[0].split('?')[0]
-        this.$Message.success({ content: '上传成功', duration: 3 })
-        this.setUploadImg()
-      } catch (error) {
-        if (error.code === 'InvalidAccessKeyId' || error.code === 'InvalidBucketName') {
-          // token失效过期了
-          this.$Message.info({ content: '重新获取认证信息，正在上传', duration: 3 })
-          await this.initOssInstance()
-          this.doUpload(e)
-        } else {
-          // console.error('导入订单', error)
-          this.$Message.error({ content: '上传图片失败', duration: 3 })
-        }
-      }
-      this.$refs.fileInput.value = null
+      return true
+    },
+
+    // 单图上传
+    async singleUpload (file) {
+      if (!this.validateImageFile(file)) return
+
+      this.showPreview = true
+      const uploadResult = await this.uploadFile(file)
+      this.uploadImg = uploadResult.res.requestUrls[0].split('?')[0]
+      this.$Message.success({ content: '上传成功', duration: 3 })
+      this.setUploadImg()
     },
     // 多图上传
-    async multipleUpload (e, files) {
+    async multipleUpload (files) {
       if ((files.length + this.uploadImgList.length) > this.maxCount) {
         this.$Message.warning(`图片最多上传${this.maxCount}张`)
         this.$refs.fileInput.value = null
         return
       }
       for (let i = 0; i < files.length; i++) {
-        if (files[i].name.length > 58) {
-          this.$Message.warning('上传文件名长度请勿超过58位')
-          this.$refs.fileInput.value = null
-          return
-        }
-        if (files[i].size > this.maxSize * 1024 * 1024) {
-          this.$Message.warning(`图片大小不能超过${this.maxSize}M`)
-          this.$refs.fileInput.value = null
-          return
-        }
-        try {
-          const uploadResult = await this.uploadFile(files[i])
-          console.log(uploadResult)
-          this.uploadImgList.push({ url: uploadResult.res.requestUrls[0].split('?')[0], progress: navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0 ? 1 : this.progress })
-          this.$Message.success({ content: '上传成功', duration: 3 })
-          this.setUploadImgList()
-          // this.$refs.fileInput.value = null
-        } catch (error) {
-          if (error.code === 'InvalidAccessKeyId' || error.code === 'InvalidBucketName') {
-            // token失效过期了
-            this.$Message.info({ content: '重新获取认证信息，正在上传', duration: 3 })
-            await this.initOssInstance()
-            this.doUpload(e)
-          } else {
-            // console.error('导入订单', error)
-            this.$Message.error({ content: '上传图片失败', duration: 3 })
-          }
-        }
+        if (!this.validateImageFile(files[i])) return
+
+        const uploadResult = await this.uploadFile(files[i])
+        this.uploadImgList.push({
+          url: uploadResult.res.requestUrls[0].split('?')[0],
+          progress: navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0 ? 1 : this.progress
+        })
+        this.$Message.success({ content: '上传成功', duration: 3 })
+        this.setUploadImgList()
       }
+
       this.$refs.fileInput.value = null
     },
+
+    // 剪裁图片
+    cropImage (file) {
+      showCropper({
+        file,
+        cropEnsure: file => {
+          this.singleUpload(file)
+        }
+      })
+    },
+
     // 预览
     handleView (i) {
-      // this.visible = true
-      // this.multiple && (this.curImg = this.uploadImgList[i].url)
       this.imgViewFunc(i)
     },
     // 删除
