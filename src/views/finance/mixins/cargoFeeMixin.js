@@ -3,7 +3,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-11-09 16:48:31
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-11-22 16:50:02
+ * @Last Modified time: 2018-11-23 11:54:48
  */
 import _ from 'lodash'
 import server from '@/libs/js/server'
@@ -34,6 +34,12 @@ export default {
   },
   computed: {
     ...mapGetters(['DocumentHeight']),
+    title () {
+      if (!this.activeSender) {
+        return ''
+      }
+      return this.activeSender.partnerName
+    },
     // 右侧订单列表
     orderList () {
       if (!this.activeSender) {
