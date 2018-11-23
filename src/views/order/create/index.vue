@@ -58,7 +58,7 @@
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="对接业务员:" >
-        <select-input></select-input>
+        <select-input :local-options="salesmanList"></select-input>
       </FormItem>
       </Col>
     </Row>
@@ -551,6 +551,11 @@ export default {
       isBillingList: [
         { name: '是', value: 1 },
         { name: '否', value: 2 }
+      ],
+      salesmanList: [
+        { name: '全部', value: '全部' },
+        { name: '小王', value: '小王' },
+        { name: '小张', value: '小张' }
       ]
     }
   },
