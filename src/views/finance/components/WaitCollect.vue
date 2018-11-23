@@ -5,7 +5,7 @@
       :columns="orderColumns"
       :data-source="orderList"
       :is-empty-list="isEmptyList"
-      title="发货方代收款列表"
+      :title="title"
       empty-content="请点击左侧发货方列表查看代收货款列表哦～"
       @on-selection-change="handleSelectionChange"
     >

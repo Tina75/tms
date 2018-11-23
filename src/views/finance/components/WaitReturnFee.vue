@@ -5,7 +5,7 @@
       :columns="orderColumns"
       :data-source="orderList"
       :is-empty-list="isEmptyList"
-      title="外转方/承运商返现对账列表"
+      :title="title"
       empty-content="请点击左侧外转方/承运商查看返现对账列表哦～"
       @on-selection-change="handleSelectionChange"
     >
@@ -138,6 +138,12 @@ export default {
   },
   computed: {
     ...mapGetters(['DocumentHeight']),
+    title () {
+      if (!this.activeDriver) {
+        return ''
+      }
+      return this.activeDriver.partnerName
+    },
     // 右侧订单列表
     orderList () {
       if (!this.activeDriver) {
