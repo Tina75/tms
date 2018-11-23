@@ -313,6 +313,7 @@ export default {
         ruleId: data.ruleId,
         ruleType: data.detail.ruleType ? (data.detail.ruleType + '') : '1',
         ruleName: data.ruleName,
+        partnerName: data.partnerName,
         details: Object.assign([], data.detail.rules.map((item, index) => {
           return {
             departure: item.departure,
