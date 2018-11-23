@@ -55,6 +55,13 @@
       </FormItem>
       </Col>
     </Row>
+    <Row :gutter="16">
+      <Col span="6">
+      <FormItem label="对接业务员:" >
+        <select-input></select-input>
+      </FormItem>
+      </Col>
+    </Row>
     <Row :gutter="16" class="i-mb-15">
       <Col span="12"><Title>发货人</Title></Col>
       <Col span="12"><Title>收货人</Title></Col>
@@ -242,6 +249,24 @@
       </FormItem>
       </Col>
       <Col span="6">
+      <FormItem label="是否开票:">
+        <select-input :local-options="isBillingList"></select-input>
+      </FormItem>
+      </Col>
+      <Col span="6">
+      <FormItem label="开票税率:">
+        <Row>
+          <Col span="20">
+          <InputNumber :min="0" class="order-create__input-w100">
+          </InputNumber>
+          </Col>
+          <Col span="4" class="order-create__input-unit">%</Col>
+        </Row>
+      </FormItem>
+      </Col>
+    </Row>
+    <Row>
+      <Col span="6">
       <FormItem label="代收货款:" prop="collectionMoney">
         <Row>
           <Col span="19">
@@ -251,8 +276,6 @@
         </Row>
       </FormItem>
       </Col>
-    </Row>
-    <Row>
       <Col span="18">
       <FormItem label="备注:" prop="remark">
         <Input v-model="orderForm.remark" :maxlength="100" type="text">
@@ -524,7 +547,11 @@ export default {
         disabledDate (date) {
           return date && date < new Date(_this.orderForm.deliveryTime)
         }
-      }
+      },
+      isBillingList: [
+        { name: '是', value: 1 },
+        { name: '否', value: 2 }
+      ]
     }
   },
   computed: {
