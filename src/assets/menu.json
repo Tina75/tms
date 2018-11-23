@@ -83,11 +83,6 @@
         "powerCode":170200
       },
       {
-        "name":"外转方对账",
-        "path":"/finance/transfer",
-        "powerCode":170300
-      },
-      {
         "name":"代收货款对账",
         "path":"/finance/collectFee",
         "powerCode":170500
