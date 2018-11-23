@@ -1,6 +1,6 @@
 <template>
   <div id="uploadFile">
-    <div v-if="multiple" style="width: 550px;">
+    <div v-if="multiple" :style="multipleWidth" >
       <div v-for="(pic, index) in uploadImgList" :key="index" class="demo-upload-list">
         <template v-if="pic.progress === 1">
           <!-- <img :src="pic.url"> -->
@@ -130,6 +130,10 @@ export default {
     multiple: {
       type: Boolean,
       default: false
+    },
+    multipleWidth: {
+      type: String,
+      default: 'width: 550px;'
     }
   },
   data () {

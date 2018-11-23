@@ -1,6 +1,6 @@
 <template>
   <div id="set-up-container" class="set-up-container temAll">
-    <div id="temAll" :style="styleHeight">
+    <div id="temAll">
       <!--公司设置-->
       <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="140" label-position="right">
         <div class="borderBottomLine">
@@ -8,14 +8,33 @@
           <span class="iconRightTitleP">基本信息</span>
         </div>
         <span class="rightConfBtn">
-          <Button class="buttonSty">分享</Button>
+          <Button class="buttonSty" @click="shareBtn">分享</Button>
           <Button type="primary" class="buttonSty" @click="editCompanyInfo">编辑</Button>
         </span>
         <Row>
           <Col :span="8">
-          <FormItem label="公司名称：" prop="name">
+          <FormItem label="公司全称：" prop="name">
             <Input v-if="isEdit" v-model="formCompany.name" :maxlength="25" placeholder="请输入公司名称"></Input>
             <span v-else>{{formCompany.name}}</span>
+          </FormItem>
+          </Col>
+          <Col :span="8">
+          <FormItem label="公司简称：" prop="contactPhone">
+            <Row v-if="isEdit">
+              <Col :span="18">
+              <Input v-model="formCompany.contactPhone" :maxlength="11" placeholder="请输入联系方式"></Input>
+              </Col>
+              <Col :span="4">
+              <Tooltip
+                class="unitSpan"
+                max-width="220"
+                transfer
+                content="简称将用于短信推广、品牌展示等">
+                <Icon type="ios-alert" class="ios-alert"/>
+              </Tooltip>
+              </Col>
+            </Row>
+            <span v-else>{{formCompany.contactPhone}}</span>
           </FormItem>
           </Col>
           <Col :span="8">
@@ -24,14 +43,14 @@
             <span v-else>{{formCompany.contact}}</span>
           </FormItem>
           </Col>
+        </Row>
+        <Row>
           <Col :span="8">
           <FormItem label="联系方式：" prop="contactPhone">
             <Input v-if="isEdit" v-model="formCompany.contactPhone" :maxlength="11" placeholder="请输入联系方式"></Input>
             <span v-else>{{formCompany.contactPhone}}</span>
           </FormItem>
           </Col>
-        </Row>
-        <Row>
           <Col :span="16">
           <FormItem label="公司地址：" prop="address">
             <Col v-if="isEdit" :span="8">
@@ -66,7 +85,7 @@
           <span class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过2MB</span>
         </FormItem>
         <FormItem>
-          <!-- <up-load ref="uploadLogo"></up-load> -->
+          <up-load ref="upLoads" :multiple="true" max-count="10" multiple-width="style='width:100%'"></up-load>
         </FormItem>
           <!-- 图片集合 -->
         </FormItem>
@@ -83,7 +102,6 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import AreaInput from '@/components/AreaInput'
-import { mapGetters } from 'vuex'
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/index.vue'
 import { CHECK_NAME_COMPANY, CHECK_NAME, CHECK_PHONE } from './validator'
@@ -128,10 +146,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['DocumentHeight']),
-    styleHeight () {
-      return { height: this.DocumentHeight + 'px' }
-    },
     formCityCode () {
       return this.formCompany.cityId
     }
@@ -141,15 +155,24 @@ export default {
   },
   methods: {
     getCompanyInfo () {
+      let vm = this
       Server({
         url: 'set/companyInfo',
         method: 'get'
       }).then(({ data }) => {
-        this.formCompany = Object.assign({}, data.data)
-        this.formCompanyInit = Object.assign({}, data.data)
+        vm.formCompany = Object.assign({}, data.data)
+        vm.formCompanyInit = Object.assign({}, data.data)
       }).then(() => {
-        this.$refs.uploadLogo.progress = 1
-        this.$refs.uploadLogo.uploadImg = this.formCompany.logoUrl
+        // LOGO
+        vm.$refs.uploadLogo.progress = 1
+        vm.$refs.uploadLogo.uploadImg = vm.formCompany.logoUrl
+        // 公司其他照片
+        let fileUrls = []
+        fileUrls.push({
+          url: vm.formCompany.logoUrl,
+          progress: 1
+        })
+        vm.$refs.upLoads.uploadImgList = fileUrls
       }).then(() => {
         // 图片样式修改，LOGO必须为正方形
         let imageDiv = document.getElementsByClassName('demo-upload-list')[0]
@@ -185,12 +208,29 @@ export default {
         }
       })
     },
-    //
+    // 点击取消做数据还原操作
     companyCancel () {
+      this.formCompany = Object.assign({}, this.formCompanyInit)
+      this.$refs.formCompany.resetFields()
       this.isEdit = false
     },
+    // 编辑
     editCompanyInfo () {
       this.isEdit = true
+    },
+    // 分享
+    shareBtn () {
+      const vm = this
+      vm.openDialog({
+        name: 'company/dialog/share',
+        data: {
+          title: '获取链接成功，复制链接分享给朋友吧'
+        },
+        methods: {
+          ok (node) {
+          }
+        }
+      })
     },
     latlongtChange ({ lat, lng }) {
       this.formCompany.latitude = lat
@@ -202,7 +242,7 @@ export default {
 </script>
 <style lang='stylus' scoped>
 >>>.imageLogo .demo-upload-list
->>>.ivu-upload .ivu-upload-drag
+>>>.imageLogo .ivu-upload .ivu-upload-drag
   width 100px
   height 100px
 .temAll
@@ -218,9 +258,9 @@ export default {
     width: 5px;
     height: 20px;
     background: #00a4bd;
-    position: absolute;
-    margin-top: 2px;
+    margin-top: 1px;
     border-radius:3px;
+    float: left
   .iconRightTitleP
    margin-left:20px
    font-size: 16px
@@ -237,7 +277,14 @@ export default {
   width 86px
 .configBtn
   text-align: center
+  margin-bottom 30px
 .imageTips
   color #999999
   font-size 13px
+.unitSpan
+  margin-left 5px
+.ios-alert
+  font-size 20px
+  color #FFBB44
+  margin-top -3px
 </style>
