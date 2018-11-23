@@ -106,7 +106,7 @@ export default {
       sceneMap: {
         1: '发货方',
         2: '承运商',
-        3: '外转方',
+        // 3: '外转方',
         4: '规则'
       },
       ruleTypeMap: {

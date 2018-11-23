@@ -59,7 +59,6 @@
                 <FormItem prop="ruleType" style="width: 100px">
                   <Select v-model="ruleDetail.ruleType" transfer @on-change="ruleTypeChange">
                     <Option v-for="(value, key) in ruleTypeMap"
-                            v-if="((active === '1' || active ==='3') && (key ==='3' || key === '4')) || key ==='1' || key ==='2'"
                             :key="key" :value="key">{{value}}
                     </Option>
                   </Select>
