@@ -34,7 +34,7 @@
             :maxlength="20"
             :remote="false"
             :local-options="carrierCars"
-            :formatter="handleCarNoToUp"
+            :parser="handleCarNoToUp"
             placeholder="请输入"
             style="width:180px">
           </SelectInput>

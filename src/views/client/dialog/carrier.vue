@@ -38,7 +38,7 @@
         </Col>
         <Col :span="8">
         <FormItem label="车牌号：" prop="carNO">
-          <SelectInput v-model="validate.driver.carNO" :maxlength="8" :formatter="formatterCarNo" placeholder="必填"></SelectInput>
+          <SelectInput v-model="validate.driver.carNO" :maxlength="8" :parser="formatterCarNo" placeholder="必填"></SelectInput>
         </FormItem>
         </Col>
       </Row>

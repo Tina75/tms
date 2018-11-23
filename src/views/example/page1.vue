@@ -23,7 +23,7 @@
     <br/>
     <h3>图片上传插件的使用</h3>
     <div>
-      <up-load></up-load>
+      <up-load crop></up-load>
       <up-load></up-load>
     </div>
   </div>
