@@ -337,7 +337,7 @@ export default {
       }
       this.visible = true
       this.$emit('input', this.currentValue)
-      // this.dispatch.call(this.$parent, 'FormItem', 'on-form-change', this.currentValue)
+      this.dispatch.call(this.$parent, 'FormItem', 'on-form-change', this.currentValue)
     },
     // 远程请求
     remoteCall (query) {

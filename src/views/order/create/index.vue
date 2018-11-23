@@ -1025,7 +1025,9 @@ export default {
               arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
               deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
               orderCargoList: orderCargoList.map(cargo => cargo.toJson()),
-              mileage: orderForm.mileage * 1000
+              mileage: orderForm.mileage * 1000,
+              consignerPhone: orderForm.consignerPhone.replace(/\s/g, ''),
+              consigneePhone: orderForm.consigneePhone.replace(/\s/g, '')
             });
 
             ['start', 'end'].forEach(field => {
