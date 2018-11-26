@@ -157,6 +157,7 @@ export default {
     },
     // 单图已上传图片回显
     uploadImg () {
+      this.showPreview = true
       this.setUploadImg()
     }
   },
@@ -248,8 +249,7 @@ export default {
     // 单图上传
     async singleUpload (file) {
       if (!this.validateImageFile(file)) return
-
-      this.showPreview = true
+      this.progress = 0
       const uploadResult = await this.uploadFile(file)
       this.uploadImg = uploadResult.res.requestUrls[0].split('?')[0]
       this.$Message.success({ content: '上传成功', duration: 3 })
