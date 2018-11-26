@@ -62,5 +62,23 @@ export default {
         resolve(response.data.data)
       }).catch(err => reject(err))
     })
+  },
+  // 下拉业务员
+  getBusineList () {
+    return new Promise((resolve, reject) => {
+      const data = [
+        { name: '小王', value: 121 },
+        { name: '小张', value: 122 }
+      ]
+      resolve(data)
+    })
+  },
+  // 业务员权限
+  businePermit (param) {
+    return new Promise((resolve, reject) => {
+      const data = Object.assign({}, param.businer)
+      console.log(data)
+      resolve(param.form)
+    })
   }
 }
