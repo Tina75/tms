@@ -40,11 +40,11 @@ import TransportBase from '../mixin/transportBase'
 import { getCarType, getCarLength } from '@/libs/constant/carInfo'
 
 const moneyFormate = (fee) => {
-  if (!fee) return ''
+  if (!fee) return '-'
   return fee / 100
 }
 const mileageFormate = (mileage) => {
-  if (!mileage) return ''
+  if (!mileage) return '-'
   return mileage / 1000
 }
 export default {
@@ -212,7 +212,7 @@ export default {
       let list = []
       for (let key in this.data) {
         if (this.changeList[key] && this.changeList[key].type === 'info') {
-          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, this.data[key]) : this.data[key] })
+          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, this.data[key]) : (this.data[key] ? this.data[key] : '-') })
         }
       }
       return list
@@ -221,7 +221,7 @@ export default {
       let list = []
       for (let key in this.data) {
         if (this.changeList[key] && this.changeList[key].type === 'fee') {
-          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, this.data[key]) : this.data[key] })
+          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, this.data[key]) : (this.data[key] ? this.data[key] : '-') })
         }
       }
       return list
