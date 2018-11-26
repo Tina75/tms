@@ -114,6 +114,15 @@ export default {
         }
       })
     },
+    getPayInfo_change () {
+      return this.tableDataBack.map(item => {
+        return {
+          payType: item.payType,
+          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? item.fuelCardAmount * 100 : 0,
+          cashAmount: typeof item.cashAmount === 'number' ? item.cashAmount * 100 : 0
+        }
+      })
+    },
 
     validate () {
       let total = 0
