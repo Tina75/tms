@@ -2,6 +2,7 @@
   <Table :columns="columns"
          :data="tableData"
          :loading="loading"
+         class="payment-info-table"
          width="350"></Table>
 </template>
 
@@ -129,3 +130,8 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+  .payment-info-table .ivu-input-number
+    border-style none
+</style>
