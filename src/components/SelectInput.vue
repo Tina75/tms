@@ -17,7 +17,7 @@
     >
       <Input
         ref="input"
-        v-model="parsedValue"
+        :value="formatterValue"
         :placeholder="placeholder"
         :maxlength="maxlength"
         :class="classes"
@@ -51,6 +51,7 @@
  * 2. 如果挂靠在dropdown，在没有下拉框的时候，没法触发blur；比如：车牌号大小写问题
  * 3. 如果外面包一层div，问题更严重，会不断触发同一页面其他selectinput组件的blur事件
  */
+import browser from '@/libs/js/browser'
 export default {
   name: 'SelectInput',
   props: {
@@ -103,7 +104,16 @@ export default {
       type: Boolean,
       default: false
     },
-    parser: Function
+    /**
+     * 显示时候的值，回调函数
+     * 比如：手机号，银行卡号，间隔显示，但是最终的值不保留间隔
+     */
+    parser: Function,
+    /**
+     * 输入框的值，经过该函数，值发生变化
+     * 比如：车牌号大写
+     */
+    formatter: Function
   },
   data () {
     return {
@@ -126,17 +136,14 @@ export default {
      * 2. 走onChange 回调事件，emit currentvalue
      * 3. 最后输入框读取值，调用get函数，再进行parser
      */
-    parsedValue: {
-      get () {
-        if (this.parser) {
-          return this.parser(this.currentValue)
-        }
-        return this.currentValue
-      },
-      set (value) {
-        this.currentValue = value.trim()
+    parsedValue () {
+      return this.currentValue
+    },
+    formatterValue () {
+      if (this.formatter && !this.composing) {
+        return this.formatter(this.parsedValue)
       }
-
+      return this.parsedValue
     },
     /**
      * 过滤下拉框选项
@@ -171,7 +178,7 @@ export default {
   },
   watch: {
     value (value) {
-      this.setCurrentValue(value)
+      this.currentValue = value
     },
     localOptions (newOptions) {
       if (!this.remote) {
@@ -211,16 +218,42 @@ export default {
         this.$refs.input.$refs.input.focus()
       })
     }
-    if (this.onlyChinese && this.remote) {
+    /**
+     * formatter 函数在输入中文的时候也会执行，影响中文输入法
+     */
+    if (this.onlyChinese && (this.remote || this.parser)) {
       const originInput = this.$refs.input.$refs.input
       originInput.addEventListener('compositionstart', vm.onCompositionStart)
       originInput.addEventListener('compositionend', vm.onCompositionEnd)
     }
-    if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
+    if (browser.ie && browser.ie10Compat) {
       this.selfTransfer = true
+      this.unwatch = this.$watch('$route', () => {
+        if (vm.visible) {
+          vm.resetSelect()
+        }
+      })
+    }
+  },
+  beforeDestroy () {
+    if (this.unwatch) {
+      this.unwatch()
     }
   },
   methods: {
+    dispatch (componentName, eventName, params) {
+      let parent = this.$parent || this.$root
+      let name = parent.$options.name
+      while (parent && (!name || name !== componentName)) {
+        parent = parent.$parent
+        if (parent) {
+          name = parent.$options.name
+        }
+      }
+      if (parent) {
+        parent.$emit.apply(parent, [eventName].concat(params))
+      }
+    },
     onCompositionStart () {
       this.composing = true
     },
@@ -243,7 +276,11 @@ export default {
     setCurrentValue (value) {
       if (value === this.currentValue) return
 
-      this.currentValue = value
+      this.$nextTick(() => {
+        this.currentValue = value
+        this.$emit('input', value)
+        this.dispatch.call(this.$parent, 'FormItem', 'on-form-change', value)
+      })
     },
     // 清空
     handleClear () {
@@ -290,11 +327,15 @@ export default {
      * 更改关键字，input onChange事件
      */
     handleChange (e) {
-      if (this.remote) {
-        this.remoteCall(e.target.value)
+      let val = e.target.value.trim().replace(/\s/g, '')
+      if (this.parser && !this.composing) {
+        val = this.parser(val)
       }
+      if (this.remote) {
+        this.remoteCall(val)
+      }
+      this.setCurrentValue(val)
       this.visible = true
-      this.$emit('input', this.currentValue)
     },
     // 远程请求
     remoteCall (query) {

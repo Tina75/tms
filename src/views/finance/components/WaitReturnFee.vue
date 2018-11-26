@@ -4,7 +4,8 @@
     <ReconcileLayout
       :columns="orderColumns"
       :data-source="orderList"
-      title="外转方/承运商返现对账列表"
+      :is-empty-list="isEmptyList"
+      :title="title"
       empty-content="请点击左侧外转方/承运商查看返现对账列表哦～"
       @on-selection-change="handleSelectionChange"
     >
@@ -137,12 +138,21 @@ export default {
   },
   computed: {
     ...mapGetters(['DocumentHeight']),
+    title () {
+      if (!this.activeDriver) {
+        return ''
+      }
+      return this.activeDriver.partnerName
+    },
     // 右侧订单列表
     orderList () {
       if (!this.activeDriver) {
         return []
       }
       return this.drivers[this.activeDriver.partnerName].orderInfos
+    },
+    isEmptyList () {
+      return Object.keys(this.drivers).length === 0
     }
   },
   watch: {

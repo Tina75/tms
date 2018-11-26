@@ -67,7 +67,7 @@
       </Col>
       <Col span="6">
       <FormItem label="联系号码:" prop="consignerPhone">
-        <SelectInput v-model="orderForm.consignerPhone" :parser="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号"></SelectInput>
+        <SelectInput v-model="orderForm.consignerPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号"></SelectInput>
       </FormItem>
       </Col>
       <Col span="6">
@@ -78,7 +78,7 @@
       </Col>
       <Col span="6">
       <FormItem label="联系号码:" prop="consigneePhone">
-        <SelectInput v-model="orderForm.consigneePhone" :parser="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号"></SelectInput>
+        <SelectInput v-model="orderForm.consigneePhone" :formatter="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号"></SelectInput>
       </FormItem>
       </Col>
     </Row>
@@ -264,7 +264,7 @@
       <Button v-if="hasPower(100101)" :disabled="disabled" type="primary" @click="handleSubmit">保存</Button>
       <Button v-if="hasPower(100102)" :disabled="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
-      <Button v-if="hasPower(100104)" class="i-ml-10" @click="shipImmedite">立即发运</Button>
+      <Button v-if="hasPower(100104) && !orderId" class="i-ml-10" @click="shipImmedite">立即发运</Button>
     </div>
     <OrderPrint ref="printer" :list="orderPrint" source="create">
     </OrderPrint>
@@ -558,6 +558,9 @@ export default {
       const stdt = this.formateDate(this.orderForm.deliveryTime)
       const eddt = this.formateDate(this.orderForm.arriveTime)
       return stdt === eddt ? this.orderForm.deliveryTimes : ''
+    },
+    orderId () {
+      return this.$route.query.id || undefined
     }
   },
   created () {
@@ -567,7 +570,7 @@ export default {
   },
   mounted () {
     const vm = this
-    const orderId = this.$route.query.id || undefined
+    const orderId = this.orderId
     if (orderId) {
       vm.loading = true
       api.getOrderDetail(orderId)
@@ -1022,7 +1025,9 @@ export default {
               arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
               deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
               orderCargoList: orderCargoList.map(cargo => cargo.toJson()),
-              mileage: orderForm.mileage * 1000
+              mileage: orderForm.mileage * 1000,
+              consignerPhone: orderForm.consignerPhone.replace(/\s/g, ''),
+              consigneePhone: orderForm.consigneePhone.replace(/\s/g, '')
             });
 
             ['start', 'end'].forEach(field => {
@@ -1059,7 +1064,7 @@ export default {
       return temp
     },
     phoneLength (value) {
-      return /^1/.test(value) ? 13 : 128
+      return /^1/.test(value) ? 13 : 30
     }
   }
 }

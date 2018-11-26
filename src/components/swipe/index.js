@@ -12,8 +12,11 @@ import PhotoSwipeUIDefault from 'photoswipe/dist/photoswipe-ui-default'
  */
 
 const prepareOpenPhotoSwipe = (items) => {
+  // 等图片宽高获取后，在弹窗
+  let isComplete = false
+  const length = items.length
   // 设置宽高
-  items.forEach((item) => {
+  items.forEach((item, index) => {
     if (!item.src) {
       throw new Error('图片src参数错误')
     }
@@ -22,7 +25,9 @@ const prepareOpenPhotoSwipe = (items) => {
     img.onload = function () {
       item.w = img.naturalWidth || img.width
       item.h = img.naturalHeight || img.height
-      img = null
+      if (length === (index + 1)) {
+        isComplete = true
+      }
     }
   })
   return (index = 0, options = {}) => {
@@ -32,8 +37,6 @@ const prepareOpenPhotoSwipe = (items) => {
     Object.assign(options, {
       history: false,
       focus: false,
-      tapToClose: false,
-      clickToClose: false,
       closeOnScroll: false,
       closeOnVerticalDrag: false,
       clickToCloseNonZoomable: false,
@@ -45,18 +48,30 @@ const prepareOpenPhotoSwipe = (items) => {
       index,
       ...options
     }
-
-    const gallery = new PhotoSwipe(
-      component.$el.children[0],
-      PhotoSwipeUIDefault,
-      items,
-      photoSwipeOptions
-    )
-    gallery.init()
-    gallery.listen('close', function () {
-      document.body.removeChild(component.$el)
-      SwipeInstance = null
-    })
+    const initSwiper = function () {
+      const gallery = new PhotoSwipe(
+        component.$el.children[0],
+        PhotoSwipeUIDefault,
+        items,
+        photoSwipeOptions
+      )
+      gallery.init()
+      gallery.listen('close', function () {
+        document.body.removeChild(component.$el)
+        SwipeInstance = null
+      })
+    }
+    if (isComplete) {
+      initSwiper()
+    } else {
+      let timer = setInterval(() => {
+        if (isComplete) {
+          clearInterval(timer)
+          timer = null
+          initSwiper()
+        }
+      }, 500)
+    }
   }
 }
 

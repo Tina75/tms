@@ -42,12 +42,16 @@
           </div>
           <button
             class="pswp__button pswp__button--arrow--left"
-            title="Previous (arrow left)"
-          ></button>
+            title="上一张"
+          >
+            <FontIcon type="left"></FontIcon>
+          </button>
           <button
             class="pswp__button pswp__button--arrow--right"
-            title="Next (arrow right)"
-          ></button>
+            title="下一张"
+          >
+            <FontIcon type="right"></FontIcon>
+          </button>
           <div class="pswp__caption">
             <div class="pswp__caption__center"></div>
           </div>
@@ -58,19 +62,28 @@
 </template>
 
 <script>
+import FontIcon from '@/components/FontIcon'
 export default {
+  components: {
+    FontIcon
+  }
 }
 </script>
 
 <style>
 @import "~photoswipe/dist/photoswipe.css";
 @import "~photoswipe/dist/default-skin/default-skin.css";
+.pswp{
+  z-index: 1570;
+}
 .pswp__button--arrow--left:before,
 .pswp__button--arrow--right:before{
-  background-color:#C6C6C6;
-  border-radius: 50%;
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  -ms-border-radius: 50%;
+  background: none;
+  width: 50px;
+  height: 52px;
+}
+.pswp__button .font_family{
+  font-size: 50px;
+  color: #fff;
 }
 </style>

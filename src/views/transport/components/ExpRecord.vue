@@ -7,8 +7,8 @@
       <span>记录号：{{data.recordNo}}</span>
       <div class="except-record-btn-group">
         <template v-if="data.status == 10">
-          <Button type="default" style="margin: 0 10px" @click="clickHandle">处理</Button>
-          <Button type="primary" @click="editBtn">编辑</Button>
+          <Button v-if="hasPower(120401) || (billType === 1 && hasPower(120211)) || (billType === 2 && hasPower(120307)) || (billType === 3 && hasPower(120114))" type="default" style="margin: 0 10px" @click="clickHandle">处理</Button>
+          <Button v-if="hasPower(120402) || (billType === 1 && hasPower(120212)) || (billType === 2 && hasPower(120308)) || (billType === 3 && hasPower(120115))" type="primary" @click="editBtn">编辑</Button>
         </template>
         <div class="detail-log-icon" @click="showDetail">
           <i :class="{'detail-log-show': !hideDetail}"></i>
@@ -45,7 +45,7 @@
             <span v-for="(item, index) in data.fileUrls"
                   :key="index" :style="`background-image: url(${item}) `"
                   style="background-position: center; background-size: 100%; background-repeat: no-repeat;"
-                  class="img-bar" @click="showImg(item)">
+                  class="img-bar" @click="showImg(index)">
             </span>
           </div>
         </div>
@@ -145,15 +145,13 @@
         </div>
       </div>
     </div>
-    <Modal v-model="visible" transfer title="查看图片">
-      <img :src="curImg" style="width: 100%">
-      <div slot="footer" style="text-align: center;"></div>
-    </Modal>
   </div>
 </template>
 <script>
 import BasePage from '@/basic/BasePage'
 import TransportBase from '../mixin/transportBase'
+import openSwipe from '@/components/swipe/index'
+
 const moneyFormate = (fee) => {
   if (!fee) return 0
   return fee / 100
@@ -282,9 +280,22 @@ export default {
           }
         }
       ],
-      visible: false,
-      curImg: ''
+      showImgFn: null
     }
+  },
+  computed: {
+    imageItems () {
+      const arr = this.data.fileUrls.map(item => {
+        return {
+          src: item,
+          msrc: item
+        }
+      })
+      return arr
+    }
+  },
+  mounted () {
+    this.showImgFn = openSwipe(this.imageItems)
   },
   methods: {
     // 处理对话框
@@ -325,9 +336,10 @@ export default {
     compareFee (b, a) {
       return moneyFormate(b) !== moneyFormate(a)
     },
-    showImg (src) {
-      this.visible = true
-      this.curImg = src
+    showImg (index) {
+      if (this.showImgFn) {
+        this.showImgFn(index)
+      }
     }
   }
 }

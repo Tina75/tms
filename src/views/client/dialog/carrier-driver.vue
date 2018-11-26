@@ -18,7 +18,7 @@
           <FormItem label="车牌号：" prop="carNO">
             <Row>
               <Col span="20">
-              <Input v-model="validate.carNO" :maxlength="8" placeholder="必填"></Input>
+              <SelectInput v-model="validate.carNO" :maxlength="8" :parser="formatterCarNo" placeholder="必填"></SelectInput>
               </Col>
             </Row>
           </FormItem>
@@ -179,7 +179,7 @@
 <script>
 import { CAR_TYPE1, CAR_LENGTH, DRIVER_TYPE } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
-import { carrierAddDriver, carrierUpdateDriver, carrierQueryDriverlist, CODE, CAR } from '../client'
+import { carrierAddDriver, carrierUpdateDriver, carrierQueryDriverlist, formatterCarNo, CODE, CAR } from '../client'
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/index.vue'
 import SelectInput from '@/components/SelectInput'
@@ -206,6 +206,7 @@ export default {
       flagAddress: true,
       codeType: 1,
       selectList: DRIVER_TYPE,
+      formatterCarNo: formatterCarNo, // 车牌号大写转换
       ruleValidate: {
         carNO: [
           { required: true, message: '车牌号不能为空', trigger: 'blur' },

@@ -208,7 +208,7 @@ export default {
 
     .ivu-timeline-item-head-custom
       margin-top 3px
-      left -13px
+      left -13.5px
 
     .ivu-timeline-item-content
       top -9px

@@ -3,8 +3,8 @@
     <!-- <canvas></canvas> -->
     <div v-if="process !== 0">
       <div :style="styles" class="ocean">
-        <div class="wave"></div>
-        <div class="wave"></div>
+        <div :style="waveStyle" class="wave"></div>
+        <div :style="waveStyle" class="wave"></div>
       </div>
       <div class="wave-text">
         <span :class="process === 100 ? 'whiteCls' : 'blackCls'">{{process}}%</span>
@@ -21,6 +21,7 @@
 
 <script>
 // import { requestAnimationFrame } from '@/libs/js/requestAnimationFrame.js'
+import browser from '@/libs/js/browser'
 export default {
   props: {
     process: {
@@ -32,13 +33,23 @@ export default {
     styles () {
       if (this.process === 100) {
         return {
-          height: '110%',
+          height: '120%',
           background: 'linear-gradient(#00D1E0, #00A4BD)'
         }
       }
       return {
         height: this.process + '%'
       }
+    },
+    waveStyle () {
+      if (browser.chrome) {
+        if (parseFloat(navigator.userAgent.toLowerCase().match(/chrome\/(\d+\.\d)/i)[1]) < 56) {
+          return {
+            background: 'none'
+          }
+        }
+      }
+      return {}
     }
   },
   mounted () {
@@ -58,7 +69,7 @@ export default {
   -moz-border-radius 50%
   -ms-border-radius 50%
   overflow hidden
-  border 1px dashed #00A4BD
+  border 3px dashed #D2EFF3
 .ocean
   height: 5%;
   width:968px;
@@ -98,11 +109,14 @@ export default {
     color #199BB1
     font-size 30px
     position: absolute
-    top 80px
-    left 23px
+    top 70px
+    left 20px
   .icon-logo-1
     color #199BB1
-    font-size: 75px;
+    font-size 70px
+    position absolute
+    left 32px
+    top -5px
 @keyframes wave {
   0% {
     margin-left: 0;

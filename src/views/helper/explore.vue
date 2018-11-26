@@ -109,51 +109,58 @@ export default {
           }
         })
       }
-      // 根据id打开具体tab页面
-      switch (id) {
-        case 207:
+      // 根据code打开具体tab页面
+      let code = this.stepBtnList.find(b => b.id === id).code
+      switch (code) {
+        case '100002':
           this.openTab({
             path: TMSUrl.PROCESS,
             title: '业务流程'
           })
           break
-        case 208:
+        case '140100':
           this.openTab({
             path: TMSUrl.EMPLOYEE_MANAGEMENT,
             title: '角色管理'
           })
           break
-        case 209:
+        case '140200':
           this.openTab({
             path: TMSUrl.STAFF_MANAGEMENT,
             title: '员工管理'
           })
           break
-        case 210:
+        case '140300':
+          this.openTab({
+            path: TMSUrl.COMPANY_SETTING,
+            title: '公司设置'
+          })
+          break
+        case '130100':
           this.openTab({
             path: TMSUrl.SENDER_MANAGEMENT,
             title: '发货方管理'
           })
           break
-        case 211:
+        case '130200':
           this.openTab({
             path: TMSUrl.CARRIER_MANAGEMENT,
             title: '承运商管理'
           })
           break
-        case 212:
+        case '130300':
           this.openTab({
             path: TMSUrl.TRANSFER_MANAGEMENT,
             title: '外转方管理'
           })
           break
-        case 213:
+        case '100200':
           this.openTab({
             path: TMSUrl.IMPORT_ORDER,
             title: '批量导入'
           })
           break
-        case 214:
+        case '100100':
           this.openTab({
             path: TMSUrl.CREATE_ORDER,
             title: '手工开单'
@@ -189,7 +196,8 @@ export default {
       }
 
       let busList = { id: 2, name: '完善公司信息', BtnList: [] }
-      if (this.getBtn('140100') || this.getBtn('140200')) {
+      if (this.getBtn('140300') || this.getBtn('140100') || this.getBtn('140200')) {
+        busList.BtnList.push(this.getBtn('140300'))
         busList.BtnList.push(this.getBtn('140100'))
         busList.BtnList.push(this.getBtn('140200'))
         busList.BtnList = busList.BtnList.filter(Boolean)
