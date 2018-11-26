@@ -296,25 +296,26 @@
 
 <script>
 import _ from 'lodash'
+import api from './libs/api'
+import distance from '@/libs/js/distance'
+import validator from '@/libs/js/validate'
+import pickups from '@/libs/constant/pickup.js'
+import settlements from '@/libs/constant/settlement.js'
 import { mapGetters, mapActions } from 'vuex'
+import BasePage from '@/basic/BasePage'
+import BaseComponent from '@/basic/BaseComponent'
+import FontIcon from '@/components/FontIcon'
 import Title from './components/Title.vue'
 import SelectInput from '@/components/SelectInput.vue'
 import TagNumberInput from '@/components/TagNumberInput'
 import float from '@/libs/js/float'
-import BaseComponent from '@/basic/BaseComponent'
-import BasePage from '@/basic/BasePage'
 import OrderPrint from '@/views/order-management/components/OrderPrint'
-import FontIcon from '@/components/FontIcon'
-import settlements from '@/libs/constant/settlement.js'
-import pickups from '@/libs/constant/pickup.js'
 import Cargo from './libs/cargo'
 import CargoTable from './components/CargoTable.vue'
 import TimeInput from './components/TimeInput.vue'
-import validator from '@/libs/js/validate'
 import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
-import distance from '@/libs/js/distance'
-import api from './libs/api'
+
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee', 'collectionMoney']
 export default {
   name: 'order-crete',
@@ -383,14 +384,6 @@ export default {
         callback(new Error('距离整数位最多输入6位,小数1位'))
       }
     }
-    // 代收付款
-    // const validateCollectFee = (rule, value, callback) => {
-    //   if ((value && validator.fee(value)) || !value === null || value === '') {
-    //     callback()
-    //   } else {
-    //     callback(new Error('费用整数位最多输入9位且大于0'))
-    //   }
-    // }
     return {
       settlements,
       pickups, // 提货方式
@@ -552,16 +545,11 @@ export default {
         { name: '是', value: 1 },
         { name: '否', value: 2 }
       ],
-      salesmanList: [
-        { name: '全部', value: '全部' },
-        { name: '小王', value: '小王' },
-        { name: '小张', value: '小张' }
-      ]
+      salesmanList: []
     }
   },
   computed: {
     ...mapGetters([
-      // 'orderDetail',
       'clients',
       'consignerAddresses',
       'consigneeContacts',
@@ -592,7 +580,7 @@ export default {
       return stdt === eddt ? this.orderForm.deliveryTimes : ''
     },
     orderId () {
-      return this.$route.query.id || undefined
+      return this.$route.query.id
     }
   },
   created () {
@@ -636,9 +624,7 @@ export default {
           vm.loading = false
         })
     }
-    /**
-     * focus到结算方式和提货方式等下拉框时要弹出下拉框
-     */
+    // focus到结算方式和提货方式等下拉框时要弹出下拉框
     ['pickupSelector', 'settlementSelector'].forEach((selector) => {
       vm.$refs[selector].$refs.reference.onfocus = (e) => {
         vm.$refs[selector].toggleHeaderFocus(e)
@@ -651,6 +637,7 @@ export default {
         })
       }
     })
+    vm.initBusineList()
   },
   beforeDestroy () {
     this.resetForm()
@@ -663,6 +650,13 @@ export default {
       'clearCargoes',
       'clearClients'
     ]),
+    initBusineList () {
+      this.loading = true
+      api.getBusineList().then(res => {
+        this.loading = false
+        this.salesmanList = res
+      })
+    },
     // 货物名称选择下拉项目时触发
     selectCargo (params, cargoItem) {
       const cargo = this.cargoes.find(cg => cg.id === cargoItem.id)
@@ -703,7 +697,6 @@ export default {
        * 重置表单，除货物信息以外
        * 1. 切换客户
        * 2. 用户手动先输入
-       *
        */
       _this.$refs.orderForm.resetFields()
       // 设置编号，计费规则需要
@@ -790,9 +783,7 @@ export default {
         return
       }
       const statics = vm.$refs.cargoTable.statics
-      /**
-       * 重量和体积二选一，或者都填写，可以了
-       */
+      // 重量和体积二选一，或者都填写，可以了
       if (statics.weight <= 0 && statics.volume <= 0) {
         this.$Message.warning('请先填写货物必要信息')
         return
@@ -824,6 +815,8 @@ export default {
       vm.disabled = true
       return new Promise((resolve, reject) => {
         this.validateForm().then(form => {
+          return api.businePermit({ businer: { name: 'xpin', age: 28 }, form })
+        }).then(form => {
           api.submitOrder(form)
             .then(() => {
               if (!form.id) {
