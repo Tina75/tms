@@ -81,15 +81,15 @@
       <Row type="flex" justify="start" class="small-height bg border-top-none">
         <Col span="6" offset="18" style="text-align: right">主营业务收入合计<span class="money">{{res.orderTotalFee}}</span></Col>
       </Row>
-      <Row type="flex" justify="start" class="big-height" style="border-top: 0">
+      <Row type="flex" justify="start"  class="big-height" style="border-top: 0;height: 269px;line-height: 269px">
         <Col span="6">支出</Col>
         <Col span="6">
-        <Row class="middle-height border-top-none border-right-none">
+        <Row class="middle-height border-top-none border-right-none border-bottom-none">
           <Col>承运商运费支出</Col>
         </Row>
-        <Row class="small-height border-top-none border-right-none border-bottom-none">
-          <Col>外转运费支出</Col>
-        </Row>
+        <!--<Row class="small-height border-top-none border-right-none border-bottom-none">-->
+          <!--<Col>外转运费支出</Col>-->
+        <!--</Row>-->
         </Col>
         <Col span="12" >
         <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
@@ -112,14 +112,14 @@
           <Col span="12">路桥费</Col>
           <Col span="12" class="num">{{res.carrierTollFee}}</Col>
         </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none border-bottom-none">
           <Col span="12">其他费用</Col>
           <Col span="12" class="num">{{res.carrierOtherFee}}</Col>
         </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-bottom-none border-right-none">
-          <Col span="12">外转费</Col>
-          <Col span="12" class="num">{{res.transbillTransFee}}</Col>
-        </Row>
+        <!--<Row type="flex" justify="start" class="small-height border-top-none border-bottom-none border-right-none">-->
+          <!--<Col span="12">外转费</Col>-->
+          <!--<Col span="12" class="num">{{res.transbillTransFee}}</Col>-->
+        <!--</Row>-->
         </Col>
       </Row>
       <Row type="flex" justify="start" class="small-height bg border-top-none">

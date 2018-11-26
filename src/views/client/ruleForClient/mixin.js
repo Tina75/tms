@@ -106,7 +106,7 @@ export default {
       sceneMap: {
         1: '发货方',
         2: '承运商',
-        3: '外转方',
+        // 3: '外转方',
         4: '规则'
       },
       ruleTypeMap: {
@@ -313,6 +313,7 @@ export default {
         ruleId: data.ruleId,
         ruleType: data.detail.ruleType ? (data.detail.ruleType + '') : '1',
         ruleName: data.ruleName,
+        partnerName: data.partnerName,
         details: Object.assign([], data.detail.rules.map((item, index) => {
           return {
             departure: item.departure,
