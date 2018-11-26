@@ -58,7 +58,9 @@
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="对接业务员:" >
-        <select-input :local-options="salesmanList"></select-input>
+        <Select v-model="orderForm.salesmanId" transfer>
+          <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.value">{{opt.name}}</Option>
+        </Select>
       </FormItem>
       </Col>
     </Row>
@@ -250,14 +252,16 @@
       </Col>
       <Col span="6">
       <FormItem label="是否开票:">
-        <select-input :local-options="isBillingList"></select-input>
+        <Select v-model="orderForm.isInvoice" transfer>
+          <Option v-for="opt in invoiceList" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+        </Select>
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="开票税率:">
+      <FormItem v-if="orderForm.isInvoice === 1" label="开票税率:" prop="invoiceRate">
         <Row>
           <Col span="20">
-          <InputNumber :min="0" class="order-create__input-w100">
+          <InputNumber v-model="orderForm.invoiceRate" :show-chinese="false" :min="0" :max="100" :precision="2" class="order-create__input-w100">
           </InputNumber>
           </Col>
           <Col span="4" class="order-create__input-unit">%</Col>
@@ -301,6 +305,7 @@ import distance from '@/libs/js/distance'
 import validator from '@/libs/js/validate'
 import pickups from '@/libs/constant/pickup.js'
 import settlements from '@/libs/constant/settlement.js'
+import { invoiceList } from '@/libs/constant/orderCreate.js'
 import { mapGetters, mapActions } from 'vuex'
 import BasePage from '@/basic/BasePage'
 import BaseComponent from '@/basic/BaseComponent'
@@ -387,6 +392,7 @@ export default {
     return {
       settlements,
       pickups, // 提货方式
+      invoiceList,
       autoFocus: false, // 客户信息输入框自动焦点focus
       loading: false, // 查询订单详情加载状态
       disabled: false, // 保存按钮
@@ -399,6 +405,7 @@ export default {
         end: null,
         // 客户单号
         customerOrderNo: '',
+        salesmanId: '',
         // 发货时间
         deliveryTime: '',
         deliveryTimes: '',
@@ -446,6 +453,8 @@ export default {
         // 回单数量
         receiptCount: 1,
         collectionMoney: null,
+        isInvoice: 0,
+        invoiceRate: null,
         // 备注
         remark: ''
       },
@@ -524,6 +533,9 @@ export default {
         collectionMoney: [
           { validator: validateFee }
         ],
+        invoiceRate: [
+          { required: true, message: '请填写开票税率' }
+        ],
         // 计费里程
         mileage: [
           { validator: validateMile }
@@ -541,10 +553,6 @@ export default {
           return date && date < new Date(_this.orderForm.deliveryTime)
         }
       },
-      isBillingList: [
-        { name: '是', value: 1 },
-        { name: '否', value: 2 }
-      ],
       salesmanList: []
     }
   },

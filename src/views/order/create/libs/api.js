@@ -67,9 +67,8 @@ export default {
   getBusineList () {
     return new Promise((resolve, reject) => {
       const data = [
-        { name: '全部', value: '全部' },
-        { name: '小王', value: '小王' },
-        { name: '小张', value: '小张' }
+        { name: '小王', value: 121 },
+        { name: '小张', value: 122 }
       ]
       resolve(data)
     })
