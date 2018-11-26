@@ -221,7 +221,7 @@ export default {
     /**
      * formatter 函数在输入中文的时候也会执行，影响中文输入法
      */
-    if (this.onlyChinese && (this.remote || this.formatter)) {
+    if (this.onlyChinese && (this.remote || this.parser)) {
       const originInput = this.$refs.input.$refs.input
       originInput.addEventListener('compositionstart', vm.onCompositionStart)
       originInput.addEventListener('compositionend', vm.onCompositionEnd)
@@ -328,7 +328,7 @@ export default {
      */
     handleChange (e) {
       let val = e.target.value.trim().replace(/\s/g, '')
-      if (this.parser) {
+      if (this.parser && !this.composing) {
         val = this.parser(val)
       }
       if (this.remote) {
