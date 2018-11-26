@@ -78,11 +78,11 @@ export default {
       hideDetail: this.listLength > 1,
       showImgFn: null,
       changeList: {
-        'start': {
+        'startName': {
           'type': 'info', // info 运单信息
           'description': '始发地'
         },
-        'end': {
+        'endName': {
           'type': 'info',
           'description': '目的地'
         },
@@ -151,11 +151,11 @@ export default {
           'description': '保险费用',
           'ways': 1
         },
-        'cashBack': {
-          'type': 'fee',
-          'description': '返现费用',
-          'ways': 1
-        },
+        // 'cashBack': {
+        //   'type': 'fee',
+        //   'description': '返现费用',
+        //   'ways': 1
+        // },
         'tollFee': {
           'type': 'fee',
           'description': '路桥费',
