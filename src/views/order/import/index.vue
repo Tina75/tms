@@ -73,6 +73,7 @@ import PageTable from '@/components/page-table/index'
 import BaseComponent from '@/basic/BaseComponent'
 import BasePage from '@/basic/BasePage'
 import server from '@/libs/js/server'
+import { clearFileInput } from '@/libs/js/util'
 import jsCookie from 'js-cookie'
 import TMSUrl from '@/libs/constant/url.js'
 import { Progress } from 'iview'
@@ -425,7 +426,7 @@ export default {
       const file = files[0]
       if (file.name.length > 58) {
         this.$Message.warning('上传文件名长度请勿超过58位')
-        this.$refs.fileInput.value = null
+        clearFileInput(this.$refs.fileInput)
         return
       }
       try {
@@ -442,7 +443,7 @@ export default {
           // 刷新列表后查询进度
           this.fetch()
             .then((res) => {
-              this.$refs.fileInput.value = null
+              clearFileInput(this.$refs.fileInput)
               this.loopCheckFileProgress(notifyResult.data.data.id)
             })
         }

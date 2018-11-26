@@ -136,3 +136,30 @@ export const money2chinese = (number) => {
 export const renderFee = (h, value) => {
   return h('span', {}, value ? (value / 100).toFixed(2) : '0.00')
 }
+
+/**
+ * 清空文件上传INPUT
+ * @param {*} input
+ */
+export const clearFileInput = function (input) {
+  if (!input) {
+    return
+  }
+
+  // standard way - works for IE 11+, Chrome, Firefox, webkit Opera
+  input.value = null
+
+  if (input.files && input.files.length && input.parentNode) {
+    // workaround for IE 10 and lower, pre-webkit Opera
+
+    let form = document.createElement('form')
+    input.parentNode.insertBefore(form, input)
+
+    form.appendChild(input)
+    form.reset()
+
+    form.parentNode.insertBefore(input, form)
+    input.parentNode.removeChild(form)
+  }
+
+}

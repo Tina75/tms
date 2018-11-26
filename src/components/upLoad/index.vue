@@ -107,6 +107,7 @@
 <script>
 import FontIcon from '@/components/FontIcon'
 import openSwipe from '@/components/swipe/index'
+import { clearFileInput } from '@/libs/js/util'
 import initOssInstance from './index.js'
 export default {
   name: 'UpLoad',
@@ -233,13 +234,13 @@ export default {
       const file = files[0]
       if (file.name.length > 58) {
         this.$Message.warning('上传文件名长度请勿超过58位')
-        this.$refs.fileInput.value = null
+        clearFileInput(this.$refs.fileInput)
         return
       }
       console.log(file)
       if (file.size > this.maxSize * 1024 * 1024) {
         this.$Message.warning(`图片大小不能超过${this.maxSize}M`)
-        this.$refs.fileInput.value = null
+        clearFileInput(this.$refs.fileInput)
         return
       }
       this.uploadImg = ' '
@@ -260,24 +261,24 @@ export default {
           this.$Message.error({ content: '上传图片失败', duration: 3 })
         }
       }
-      this.$refs.fileInput.value = null
+      clearFileInput(this.$refs.fileInput)
     },
     // 多图上传
     async multipleUpload (e, files) {
       if ((files.length + this.uploadImgList.length) > this.maxCount) {
         this.$Message.warning(`图片最多上传${this.maxCount}张`)
-        this.$refs.fileInput.value = null
+        clearFileInput(this.$refs.fileInput)
         return
       }
       for (let i = 0; i < files.length; i++) {
         if (files[i].name.length > 58) {
           this.$Message.warning('上传文件名长度请勿超过58位')
-          this.$refs.fileInput.value = null
+          clearFileInput(this.$refs.fileInput)
           return
         }
         if (files[i].size > this.maxSize * 1024 * 1024) {
           this.$Message.warning(`图片大小不能超过${this.maxSize}M`)
-          this.$refs.fileInput.value = null
+          clearFileInput(this.$refs.fileInput)
           return
         }
         try {
@@ -299,7 +300,7 @@ export default {
           }
         }
       }
-      this.$refs.fileInput.value = null
+      clearFileInput(this.$refs.fileInput)
     },
     // 预览
     handleView (i) {
