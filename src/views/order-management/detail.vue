@@ -74,6 +74,20 @@
             <span v-else>-</span>
           </i-col>
         </Row>
+        <Row>
+          <i-col span="7">
+            <span>对接业务员：</span>
+            <span>{{detail.salesmanName}}</span>
+          </i-col>
+          <i-col span="7">
+            <span>是否开票：</span>
+            <span>{{detail.isInvoice}}</span>
+          </i-col>
+          <i-col v-if="detail.isInvoice" span="7">
+            <span>开票税率：</span>
+            <span>{{detail.invoiceRate}}</span>
+          </i-col>
+        </Row>
         <Row style="margin-top:18px">
           <i-col span="7">
             <span>发货联系人：</span>
@@ -472,7 +486,6 @@ export default {
           orderIds: [order.id]
         }
       }).then((res) => {
-        console.log(res)
         this.orderPrint = _.cloneDeep(res.data.data)
         this.$refs.printer.print()
       })
@@ -522,7 +535,6 @@ export default {
     // 日志切换显示
     showOrderLog () {
       this.showLog = !this.showLog
-      console.log(this.showLog)
     },
     // 拉取table数据
     getDetail () {
@@ -535,7 +547,6 @@ export default {
             id: this.$route.query.orderId
           }
         }).then((res) => {
-          console.log(res)
           this.detail = res.data.data
           this.orderStatus = res.data.data.status
           // 过滤订单详情页操作按钮
@@ -552,7 +563,6 @@ export default {
             id: this.$route.query.orderId
           }
         }).then((res) => {
-          console.log(res)
           this.detail = res.data.data
           this.receiptStatus = res.data.data.receiptOrder.receiptStatus
           // 过滤回单详情页操作按钮
@@ -641,7 +651,6 @@ export default {
     },
     // 点击展开的运单子单
     handleWaybillNo (no) {
-      console.log(no)
       this.openTab({
         title: no,
         path: '/transport/detail/detailFreight',
