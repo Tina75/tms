@@ -13,6 +13,7 @@
   "dependencies": {
     "ali-oss": "^6.0.1",
     "axios": "^0.18.0",
+    "clipboard": "^2.0.4",
     "ema-proxy": "^1.0.1",
     "intersection-observer": "^0.5.1",
     "iview": "^3.0.0",

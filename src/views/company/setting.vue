@@ -78,7 +78,7 @@
         </FormItem>
         <FormItem>
           <div class="imageLogo">
-            <up-load ref="uploadLogo"></up-load>
+            <up-load ref="uploadLogo" crop></up-load>
           </div>
         </FormItem>
         <FormItem label="其他照片：">

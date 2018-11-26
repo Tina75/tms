@@ -6,15 +6,18 @@
       </p>
       <Row>
         <Col :span="18">
-        <Input v-model="shareUrl" disabled="true"></Input>
+        <Input id="shareUrl" v-model="shareUrl" disabled></Input>
         </Col>
         <Col :span="4">
-        <Button type="primary" class="copyBtn" @click="copyBtn">复制</Button>
+        <Button type="primary" class="copyBtn" data-clipboard-target = "#shareUrl" @click="copyBtn">复制</Button>
         </Col>
       </Row>
       <div class="shareFont">
         <span>分享至：</span>
-        <span>QQ  weixin</span>
+        <i class="icon font_family icon-weixin"></i>
+        <i class="icon font_family icon-qq"></i>
+        <span>微信</span>
+        <span>QQ</span>
       </div>
       <div slot="footer">
         <Button type="primary" @click="save">查看分享</Button>
@@ -27,6 +30,7 @@
 <script>
 // import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
+import Clipboard from 'clipboard'
 export default {
   name: 'shareCompany',
   mixins: [BaseDialog],
@@ -42,9 +46,17 @@ export default {
       this.close()
     },
     copyBtn () {
+      let clipboard = new Clipboard('.copyBtn')
+      clipboard.on('success', e => {
+        this.$Message.success('复制成功')
+        clipboard.destroy() //  使用destroy可以清楚缓存
+      })
+      clipboard.on('error', e => {
+        this.$Message.error('复制失败')
+        clipboard.destroy()
+      })
     }
   }
-
 }
 
 </script>
