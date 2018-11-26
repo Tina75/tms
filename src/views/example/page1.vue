@@ -23,8 +23,8 @@
     <br/>
     <h3>图片上传插件的使用</h3>
     <div>
-      <up-load></up-load>
-      <up-load></up-load>
+      <up-load ref="$upload" crop></up-load>
+      <up-load ref="$mutipulUpload" multiple></up-load>
     </div>
   </div>
 </template>
