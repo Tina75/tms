@@ -6,7 +6,7 @@
       </p>
       <Row>
         <Col :span="18">
-        <Input id="shareUrl" v-model="shareUrl" disabled></Input>
+        <Input id="shareUrl" :value="shareUrl" disabled></Input>
         </Col>
         <Col :span="4">
         <Button type="primary" class="copyBtn" data-clipboard-target = "#shareUrl" @click="copyBtn">复制</Button>
@@ -14,10 +14,15 @@
       </Row>
       <div class="shareFont">
         <span>分享至：</span>
-        <i class="icon font_family icon-weixin"></i>
-        <i class="icon font_family icon-qq"></i>
-        <span>微信</span>
-        <span>QQ</span>
+        <div class="fontIconItems">
+          <span @click="weixinShare"><FontIcon type="weixin" size="35" color="#04D102" class="weixinIcon"></FontIcon></span>
+          <span @click="QQShare"><FontIcon type="qq" size="35" class="qqIcon" color="#08A2DF"></FontIcon></span>
+        </div>
+      </div>
+      <div v-show="qrcodeShow" class="weixinShareDiv">
+        <div id="qrcodeDom" ref="qrcode"></div>
+        <p>打开微信扫一扫</p>
+        <p>打开网页后点击右上角分享按钮</p>
       </div>
       <div slot="footer">
         <Button type="primary" @click="save">查看分享</Button>
@@ -31,30 +36,54 @@
 // import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 import Clipboard from 'clipboard'
+import FontIcon from '@/components/FontIcon'
+import QRCode from 'qrcodejs2'
 export default {
   name: 'shareCompany',
+  components: { FontIcon, Clipboard, QRCode },
   mixins: [BaseDialog],
   data () {
     return {
-      shareUrl: 'www.tmssdfsafd.com'
+      shareUrl: 'https://yzg.tms5566.com',
+      clipboard: null,
+      qrcodeInit: null,
+      qrcodeShow: false,
+      isQrcodeShow: false,
+      urlPath: 'https://yzg.tms5566.com/'
     }
   },
   mounted () {
+    this.clipboard = new Clipboard('.copyBtn')
   },
   methods: {
     save () {
+      window.open('http://localhost:8080/#/company')
       this.close()
     },
     copyBtn () {
-      let clipboard = new Clipboard('.copyBtn')
-      clipboard.on('success', e => {
+      this.clipboard.on('success', e => {
         this.$Message.success('复制成功')
-        clipboard.destroy() //  使用destroy可以清楚缓存
+        this.clipboard.destroy() //  使用destroy可以清楚缓存
       })
-      clipboard.on('error', e => {
+      this.clipboard.on('error', e => {
         this.$Message.error('复制失败')
-        clipboard.destroy()
+        this.clipboard.destroy()
       })
+    },
+    weixinShare () {
+      this.qrcodeShow = true
+      if (this.isQrcodeShow) return
+      this.qrcodeInit = new QRCode('qrcodeDom', {
+        width: 125, // 设置宽度
+        height: 125, // 设置高度
+        text: this.urlPath,
+        src: 'http://pic1.cxtuku.com/00/07/42/b03695caf529.jpg',
+        background: 'red'
+      })
+      this.isQrcodeShow = true
+    },
+    QQShare () {
+      window.open('http://connect.qq.com/widget/shareqq/index.html?url=' + this.urlPath)
     }
   }
 }
@@ -80,4 +109,19 @@ export default {
   line-height 20px
   margin-top 30px
   margin-bottom 20px
+  .fontIconItems
+    margin -10px 0 0 65px
+    .qqIcon
+      margin-left 10px
+      cursor pointer
+    .weixinIcon
+      cursor pointer
+.weixinShareDiv
+  text-align center
+  #qrcodeDom
+    margin-left calc(50% - 62px)
+    margin-bottom 10px
+  p
+    color #333333
+    font-size 14px
 </style>
