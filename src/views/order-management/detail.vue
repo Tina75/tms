@@ -43,12 +43,12 @@
             <span v-if="detail.deliveryTime">{{detail.deliveryTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
             <span v-else>-</span>
           </i-col>
-          <i-col span="7">
+          <i-col span="6">
             <span>到货时间：</span>
             <span v-if="detail.arriveTime">{{detail.arriveTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
             <span v-else>-</span>
           </i-col>
-          <i-col v-if="from === 'order'" span="3">
+          <i-col v-if="from === 'order'" span="4">
             <span>代收货款：</span>
             <span v-if="detail.collectionMoney">{{detail.collectionMoney / 100}}元</span>
             <span v-else>-</span>
@@ -63,12 +63,12 @@
             <span>目的地：</span>
             <span>{{detail.endName}}</span>
           </i-col>
-          <i-col span="7">
+          <i-col span="6">
             <span>提货方式：</span>
             <span v-if="detail.pickup">{{pickupToName(detail.pickup)}}</span>
             <span v-else>-</span>
           </i-col>
-          <i-col span="3">
+          <i-col span="4">
             <span>回单数：</span>
             <span v-if="detail.receiptCount">{{detail.receiptCount}}</span>
             <span v-else>-</span>
@@ -106,6 +106,33 @@
           <i-col span="24">
             <span>备注：</span>
             <span>{{detail.remark}}</span>
+          </i-col>
+        </Row>
+      </div>
+      <div v-if="from === 'receipt'">
+        <div class="title" style="margin-top: 35px;">
+          <span>承运商信息</span>
+        </div>
+        <Row>
+          <i-col span="7">
+            <span>承运商：</span>
+            <span v-if="detail.carrierName">{{detail.carrierName}}</span>
+            <span v-else>-</span>
+          </i-col>
+          <i-col span="7">
+            <span>司机姓名：</span>
+            <span v-if="detail.driverName">{{detail.driverName}}</span>
+            <span v-else>-</span>
+          </i-col>
+          <i-col span="6">
+            <span>司机手机号：</span>
+            <span v-if="detail.driverPhone">{{detail.driverPhone}}</span>
+            <span v-else>-</span>
+          </i-col>
+          <i-col span="4">
+            <span>车牌号：</span>
+            <span v-if="detail.carNo">{{detail.carNo}}</span>
+            <span v-else>-</span>
           </i-col>
         </Row>
       </div>
@@ -400,6 +427,8 @@ export default {
         this.completelyDeleteDialog(this.detail)
       } else if (btn.name === '上传回单照片' || btn.name === '修改回单照片') {
         this.openUploadDialog(this.detail)
+      } else if (btn.name === '分享') {
+        this.openShareDialog(this.detail)
       }
     },
     // 外转
@@ -516,6 +545,17 @@ export default {
           ok (node) {
             _this.getDetail()
           }
+        }
+      })
+    },
+    // 分享
+    openShareDialog (order) {
+      const _this = this
+      _this.openDialog({
+        name: 'order-management/dialog/share',
+        data: { id: [order] },
+        methods: {
+          ok (node) {}
         }
       })
     },
@@ -665,7 +705,7 @@ export default {
        * 展示按钮：拆单、外转、还原、删除、编辑（详情页独有）
        * 1、待提货状态下：（status: 10）
        *    拆单： 无拆单按钮            //【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）】显示
-       *    外转：【（未外转：transStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被提货：pickupStatus=0）】显示
+       *    外转：（v1.06删除外转）【（未外转：transStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被提货：pickupStatus=0）】显示
        *    还原： 无还原按钮            //【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被提货：pickupStatus=0）】显示
        *    删除： 无删除按钮            //
        *          订单列表里显示：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （被拆单后的父单：disassembleStatus=1）】
@@ -673,7 +713,7 @@ export default {
        *    编辑：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
        * 2、待调度状态下：（status: 20）
        *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）&& （未被调度：dispatchStatus=0）】显示
-       *    外转：【（未外转：transStatus=0） && （不是上门提货：pickup !== 1） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）/ 备注：v1.05版本 子单可以外转 / && （未被调度：dispatchStatus=0）】显示
+       *    外转：（v1.06删除外转）【（未外转：transStatus=0） && （不是上门提货：pickup !== 1） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）/ 备注：v1.05版本 子单可以外转 / && （未被调度：dispatchStatus=0）】显示
        *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被调度：dispatchStatus=0）】显示
        *    删除：
        *          订单列表里显示：【（不是上门提货：pickup !== 1） && （未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （被拆单后的父单：disassembleStatus=1）】
@@ -682,6 +722,10 @@ export default {
        */
       let r = this.detail
       let renderBtn = []
+      // 子单不展示分享按钮
+      if (!r.parentId) {
+        renderBtn.push({ name: '分享', value: 9, code: 100302 })
+      }
       if (r.status === 10) { // 待提货状态
         // 删除按钮
         if (r.transStatus === 0 && r.pickupStatus === 0 && r.parentId === '') {
@@ -698,11 +742,11 @@ export default {
         //   )
         // }
         // 外转按钮
-        if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.pickupStatus === 0) {
-          renderBtn.push(
-            { name: '外转', value: 3, code: 120209 }
-          )
-        }
+        // if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.pickupStatus === 0) {
+        //   renderBtn.push(
+        //     { name: '外转', value: 3, code: 120209 }
+        //   )
+        // }
         // 还原按钮
         // if (r.parentId === '' && r.disassembleStatus === 1 && r.pickupStatus === 0) {
         //   renderBtn.push(
@@ -738,11 +782,11 @@ export default {
           }
         }
         // 外转按钮
-        if (r.transStatus === 0 && r.disassembleStatus === 0 && r.dispatchStatus === 0) {
-          renderBtn.push(
-            { name: '外转', value: 4, code: 120111 }
-          )
-        }
+        // if (r.transStatus === 0 && r.disassembleStatus === 0 && r.dispatchStatus === 0) {
+        //   renderBtn.push(
+        //     { name: '外转', value: 4, code: 120111 }
+        //   )
+        // }
         // 还原按钮
         if (r.parentId === '' && r.disassembleStatus === 1 && r.dispatchStatus === 0) {
           renderBtn.push(
@@ -757,10 +801,10 @@ export default {
         }
       }
       if (r.status === 100) { // 回收站状态
-        renderBtn = [
+        renderBtn.push(
           { name: '恢复', value: 1, code: 100305 },
           { name: '彻底删除', value: 2, code: 100306 }
-        ]
+        )
       }
       this.btnGroup = renderBtn
       if (this.btnGroup.length > 0 && r.status !== 100) {
