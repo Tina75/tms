@@ -947,32 +947,30 @@ export default {
         if (this.feeStatus === 2) { //  部分修改运费
           let statusDetail = data.statusDetail
           this.settlementPayInfo.map(item => {
-            if (item.type === 1 && statusDetail.prepaidCash === 1) {
+            item.type = 'change'
+            if (item.payType === 1 && statusDetail.prepaidCash === 1) {
               item.isCashDisabled = true
             }
-            if (item.type === 1 && statusDetail.prepaidFuel === 1) {
+            if (item.payType === 1 && statusDetail.prepaidFuel === 1) {
               item.isCardDisabled = true
             }
-            if (item.type === 2 && statusDetail.arrivePaidCash === 1) {
+            if (item.payType === 2 && statusDetail.arrivePaidCash === 1) {
               item.isCashDisabled = true
             }
-            if (item.type === 2 && statusDetail.arrivePaidFuel === 1) {
+            if (item.payType === 2 && statusDetail.arrivePaidFuel === 1) {
               item.isCardDisabled = true
             }
-            if (item.type === 3 && statusDetail.receiptPaidCash === 1) {
+            if (item.payType === 3 && statusDetail.receiptPaidCash === 1) {
               item.isCashDisabled = true
             }
-            if (item.type === 3 && statusDetail.receiptPaidFule === 1) {
+            if (item.payType === 3 && statusDetail.receiptPaidFule === 1) {
               item.isCardDisabled = true
             }
           })
         }
         if (this.feeStatus === 10 || this.feeStatus === 20 || this.feeStatus === 30) {
           this.settlementPayInfo.map(item => {
-            item.isCashDisabled = true
-            item.isCardDisabled = true
-            item.isCashDisabled = true
-            item.isCardDisabled = true
+            item.type = 'change'
             item.isCashDisabled = true
             item.isCardDisabled = true
           })
