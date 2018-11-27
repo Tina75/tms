@@ -76,9 +76,14 @@ export default {
   // 业务员权限
   businePermit (param) {
     return new Promise((resolve, reject) => {
-      const data = Object.assign({}, param.businer)
-      console.log(data)
-      resolve(param.form)
+      const data = { salesmanId: param.salesmanId }
+      server({
+        method: 'get',
+        url: 'permission/validDirectSend',
+        data
+      }).then(() => {
+        resolve(param.form)
+      }).catch(err => reject(err))
     })
   }
 }
