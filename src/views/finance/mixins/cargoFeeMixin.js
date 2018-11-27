@@ -3,7 +3,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-11-09 16:48:31
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-11-23 11:54:48
+ * @Last Modified time: 2018-11-27 14:33:05
  */
 import _ from 'lodash'
 import server from '@/libs/js/server'
@@ -60,6 +60,9 @@ export default {
     })
   },
   methods: {
+    formatFee (fee) {
+      return ((fee || 0) / 100).toFixed(2)
+    },
     toDetail (data) {
       this.openTab({
         path: TMSUrl.ORDER_DETAIL,

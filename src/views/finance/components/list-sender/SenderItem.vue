@@ -110,4 +110,8 @@ export default {
     color #999
     line-height 25px
     margin-top 2px
+    white-space nowrap
+    text-overflow ellipsis
+    overflow hidden
+
 </style>

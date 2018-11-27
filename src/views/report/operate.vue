@@ -330,27 +330,27 @@ export default {
           key: 'waybillCarInfo',
           width: 150
         },
-        {
-          title: '外转单号',
-          key: 'transbillNo',
-          width: 150
-        },
-        {
-          title: '外转单状态',
-          key: 'transbillStatus',
-          width: 150,
-          render: (h, params) => {
-            return h('span', params.row.transbillStatus ? this.transbillStatusMap[params.row.transbillStatus] : '-')
-          }
-        },
-        {
-          title: '外转方费用',
-          key: 'transbillTotalFee',
-          width: 150,
-          render: (h, params) => {
-            return h('span', (params.row.transbillTotalFee / 100).toFixed(2))
-          }
-        },
+        // {
+        //   title: '外转单号',
+        //   key: 'transbillNo',
+        //   width: 150
+        // },
+        // {
+        //   title: '外转单状态',
+        //   key: 'transbillStatus',
+        //   width: 150,
+        //   render: (h, params) => {
+        //     return h('span', params.row.transbillStatus ? this.transbillStatusMap[params.row.transbillStatus] : '-')
+        //   }
+        // },
+        // {
+        //   title: '外转方费用',
+        //   key: 'transbillTotalFee',
+        //   width: 150,
+        //   render: (h, params) => {
+        //     return h('span', (params.row.transbillTotalFee / 100).toFixed(2))
+        //   }
+        // },
         {
           title: '返现运费',
           key: 'cashBack',
@@ -359,11 +359,11 @@ export default {
             return h('span', (params.row.cashBack / 100).toFixed(2))
           }
         },
-        {
-          title: '外转方',
-          key: 'transfereeName',
-          width: 150
-        },
+        // {
+        //   title: '外转方',
+        //   key: 'transfereeName',
+        //   width: 150
+        // },
         {
           title: '回单号',
           key: 'receiptNo',

@@ -86,7 +86,7 @@ export default {
       this.map.addOverlay(marker)
 
       // 添加标签
-      const labelOverlay = new LabelOverlay(point, car.carNo === '' ? car.phone : car.carNo)
+      const labelOverlay = new LabelOverlay(point, car.truckNo === '' ? car.phone : car.truckNo)
       this.map.addOverlay(labelOverlay)
 
       cb && cb(point)

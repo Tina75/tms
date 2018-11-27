@@ -376,13 +376,13 @@ import validator from '@/libs/js/validate'
 import SelectInputForCity from '@/components/SelectInputForCity'
 import SelectInput from '../components/SelectInput.vue'
 import PayInfo from '../components/PayInfo'
+import Exception from './exception.vue'
+import change from './change.vue'
 
 import Server from '@/libs/js/server'
 import TMSUrl from '@/libs/constant/url'
 import _ from 'lodash'
-
-import Exception from './exception.vue'
-import change from './change.vue'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'detailFeright',
@@ -661,6 +661,10 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      'getWaybillLocation'
+    ]),
+
     // 将数据返回的标识映射为文字
     statusFilter (status) {
       switch (status) {
@@ -852,24 +856,40 @@ export default {
     },
     // 查看车辆位置
     billLocation () {
-      Server({
-        url: '/waybill/single/location',
-        method: 'post',
-        data: { waybillId: this.id }
-      }).then(res => {
-        if (!res.data.data.points.length) {
-          this.$Message.warning('暂无车辆位置信息')
-          return
-        }
-        this.openDialog({
-          name: 'transport/dialog/map',
-          data: {
-            cars: [res.data.data],
-            multiple: false
-          },
-          methods: {}
+      this.getWaybillLocation([this.id])
+        .then(res => {
+          if (res.limitTip) {
+            this.$Toast.warning({
+              title: '提示',
+              showIcon: false,
+              content: res.limitTip
+            })
+            return
+          }
+
+          if (!res.points.length) {
+            this.$Message.warning('暂无车辆位置信息')
+            return
+          }
+
+          this.openDialog({
+            name: 'transport/dialog/map',
+            data: {
+              cars: [res],
+              multiple: false
+            },
+            methods: {}
+          })
+        }).catch(err => {
+          console.error(err)
+          if (err.limitTip) {
+            this.$Toast.warning({
+              title: '提示',
+              showIcon: false,
+              content: err.limitTip
+            })
+          }
         })
-      }).catch(err => console.error(err))
     },
     // 删除
     billDelete () {
@@ -947,32 +967,30 @@ export default {
         if (this.feeStatus === 2) { //  部分修改运费
           let statusDetail = data.statusDetail
           this.settlementPayInfo.map(item => {
-            if (item.type === 1 && statusDetail.prepaidCash === 1) {
+            item.type = 'change'
+            if (item.payType === 1 && statusDetail.prepaidCash === 1) {
               item.isCashDisabled = true
             }
-            if (item.type === 1 && statusDetail.prepaidFuel === 1) {
+            if (item.payType === 1 && statusDetail.prepaidFuel === 1) {
               item.isCardDisabled = true
             }
-            if (item.type === 2 && statusDetail.arrivePaidCash === 1) {
+            if (item.payType === 2 && statusDetail.arrivePaidCash === 1) {
               item.isCashDisabled = true
             }
-            if (item.type === 2 && statusDetail.arrivePaidFuel === 1) {
+            if (item.payType === 2 && statusDetail.arrivePaidFuel === 1) {
               item.isCardDisabled = true
             }
-            if (item.type === 3 && statusDetail.receiptPaidCash === 1) {
+            if (item.payType === 3 && statusDetail.receiptPaidCash === 1) {
               item.isCashDisabled = true
             }
-            if (item.type === 3 && statusDetail.receiptPaidFule === 1) {
+            if (item.payType === 3 && statusDetail.receiptPaidFule === 1) {
               item.isCardDisabled = true
             }
           })
         }
         if (this.feeStatus === 10 || this.feeStatus === 20 || this.feeStatus === 30) {
           this.settlementPayInfo.map(item => {
-            item.isCashDisabled = true
-            item.isCardDisabled = true
-            item.isCashDisabled = true
-            item.isCardDisabled = true
+            item.type = 'change'
             item.isCashDisabled = true
             item.isCardDisabled = true
           })
