@@ -87,6 +87,10 @@
             </div>
             <Row class="detail-field-group">
               <i-col span="6">
+                <span class="detail-field-title-sm">计费里程：</span>
+                <span class="detail-field-fee">{{ payment.mileage || 0 }}公里</span>
+              </i-col>
+              <i-col span="6">
                 <span class="detail-field-title-sm">运输费：</span>
                 <span class="detail-field-fee">{{ payment.freightFee || 0 }}元</span>
               </i-col>
@@ -158,6 +162,8 @@
         <Exception ref="exception" :pickup-id="this.id" :cnt="exceptionCount" :bill-type="3"/>
       </TabPane>
     </Tabs>
+
+    <PrintFreight ref="$printer" :data="printData" />
   </div>
 
   <!-- 编辑和改单状态 -->
@@ -271,6 +277,12 @@
         <Form ref="payment" :label-width="82" :model="payment" :rules="rules" label-position="left">
           <Row class="detail-field-group detail-form-label">
             <i-col span="6">
+              <FormItem label="计费里程：" prop="mileage">
+                <TagNumberInput :show-chinese="false" :min="0" v-model="payment.mileage" :precision="1" class="detail-payment-input-send"></TagNumberInput>
+                <span class="unit-yuan">公里</span>
+              </FormItem>
+            </i-col>
+            <i-col span="6">
               <FormItem label="运输费：" prop="freightFee">
                 <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
                   <TagNumberInput v-model="payment.freightFee" :disabled="feeStatusTip? true: false"  class="detail-payment-input-send"></TagNumberInput>
@@ -378,6 +390,7 @@ import SelectInput from '../components/SelectInput.vue'
 import PayInfo from '../components/PayInfo'
 import Exception from './exception.vue'
 import change from './change.vue'
+import PrintFreight from '../components/PrintFreight'
 
 import Server from '@/libs/js/server'
 import TMSUrl from '@/libs/constant/url'
@@ -387,7 +400,7 @@ import { mapActions } from 'vuex'
 export default {
   name: 'detailFeright',
   metaInfo: { title: '运单详情' },
-  components: { TagNumberInput, MoneyInput, SelectInput, SelectInputForCity, PayInfo, Exception, change },
+  components: { TagNumberInput, MoneyInput, SelectInput, SelectInputForCity, PrintFreight, PayInfo, Exception, change },
   mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
 
   data () {
@@ -397,6 +410,14 @@ export default {
         callback()
       } else {
         callback(new Error('费用整数位最多输入9位,小数2位'))
+      }
+    }
+    // 6位整数 1位小数
+    const validateMile = (rule, value, callback) => {
+      if ((value && validator.mileage(value)) || !value) {
+        callback()
+      } else {
+        callback(new Error('距离整数位最多输入6位,小数1位'))
       }
     }
     return {
@@ -424,12 +445,12 @@ export default {
         insuranceFee: '',
         otherFee: '',
         totalFee: '',
-        tollFee: 0 // 路桥费
+        tollFee: 0, // 路桥费
+        mileage: void 0 // 计费里程 v1.06 新增
       },
       rules: {
         // 运输费
         freightFee: [
-          { required: true, type: 'number', message: '请输入运输费用' },
           { validator: validateFee }
         ],
         // 装货费用
@@ -451,6 +472,10 @@ export default {
         // 路桥费用
         tollFee: [
           { validator: validateFee }
+        ],
+        // 计费里程
+        mileage: [
+          { validator: validateMile }
         ]
       },
       collectionMoney: 0, // 代收货款
@@ -490,10 +515,34 @@ export default {
         {
           status: '待发运',
           btns: [{
+            name: '打印',
+            code: 120103,
+            func: () => {
+              this.billPrint()
+            }
+          }, {
+            name: '删除',
+            code: 120105,
+            func: () => {
+              this.billDelete()
+            }
+          }, {
             name: '上报异常',
             code: 120210,
             func: () => {
               this.updateExcept({ id: this.id, type: 3 })
+            }
+          }, {
+            name: '编辑',
+            code: 120107,
+            func: () => {
+              this.inEditing = true
+            }
+          }, {
+            name: '发运',
+            code: 120102,
+            func: () => {
+              this.billShipment()
             }
           }]
         },
@@ -652,7 +701,8 @@ export default {
       ],
       // 改单运费能否修改
       feeStatus: 0, // 0 可以修改运费 10 已对账 20 已核销 30 存在异常记录且修改了运费未处理 2 部分修改运费
-      changeStr: ''
+      changeStr: '',
+      printData: [] // 待打印数据
     }
   },
   computed: {
@@ -677,9 +727,10 @@ export default {
   },
   methods: {
     ...mapActions([
-      'getWaybillLocation'
+      'getWaybillLocation',
+      'waybillShipment',
+      'getWaybillPrintData'
     ]),
-
     // 将数据返回的标识映射为文字
     statusFilter (status) {
       switch (status) {
@@ -708,6 +759,9 @@ export default {
         }
         for (let key in this.payment) {
           this.payment[key] = this.setMoneyUnit2Yuan(data.waybill[key])
+          if (key === 'mileage') {
+            this.payment[key] = data.waybill[key] / 1000 || null
+          }
         }
         this.detail = data.cargoList
         this.logList = data.operaterLog
@@ -923,6 +977,40 @@ export default {
           }
         }
       })
+    },
+    // 发运
+    billShipment () {
+      const self = this
+      if (!self.info.carrierName) {
+        this.$Message.warning('承运商未填写，不能发运')
+        return
+      }
+      self.openDialog({
+        name: 'transport/dialog/confirm',
+        data: {
+          title: '发运',
+          message: '是否发运？'
+        },
+        methods: {
+          confirm () {
+            self.waybillShipment([ self.id ])
+              .then(() => {
+                self.$Message.success('操作成功')
+                self.fetchData()
+              })
+          }
+        }
+      })
+    },
+    // 打印
+    billPrint () {
+      const self = this
+      self.getWaybillPrintData([ self.id ])
+        .then(res => {
+          console.log(self.$refs.$printer)
+          self.printData = res
+          self.$refs.$printer.print()
+        })
     },
     themeBarColor (code) {
       let barClass
