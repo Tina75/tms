@@ -534,6 +534,8 @@ export default {
             code: 120210,
             func: () => {
               this.inEditing = 'change'
+              // let data = _.cloneDeep(this.changeParams)
+              this.changeStr = JSON.stringify(_.cloneDeep(this.changeParams))
               this.changeState({ id: this.id, type: 3 })
             }
           }]
@@ -659,6 +661,18 @@ export default {
       else if (this.feeStatus === 20) return '此单已核销，不允许修改'
       else if (this.feeStatus === 30) return '存在异常未处理，不能修改运单'
       else return ''
+    },
+    changeParams () {
+      return {
+        waybill: {
+          waybillId: this.id,
+          ...this.info,
+          ...this.formatMoney(),
+          settlementType: this.settlementType,
+          settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
+        },
+        cargoList: _.uniq(this.detail.map(item => item.orderId))
+      }
     }
   },
   methods: {
@@ -743,33 +757,14 @@ export default {
     },
     // 改单
     changeBill () {
-      let data = {
-        waybill: {
-          waybillId: this.id,
-          ...this.info,
-          ...this.formatMoney(),
-          settlementType: this.settlementType,
-          settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo_change() : void 0
-        },
-        cargoList: _.uniq(this.detail.map(item => item.orderId))
-      }
-      if (JSON.stringify(data) === this.changeStr) {
+      if (JSON.stringify(_.cloneDeep(this.changeParams)) === this.changeStr) {
         this.$Message.error('您并未做修改')
         return
       }
       Server({
         url: '/waybill/modify',
         method: 'post',
-        data: {
-          waybill: {
-            waybillId: this.id,
-            ...this.info,
-            ...this.formatMoney(),
-            settlementType: this.settlementType,
-            settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo_change() : void 0
-          },
-          cargoList: _.uniq(this.detail.map(item => item.orderId))
-        }
+        data: this.changeParams
       }).then(res => {
         this.$Message.success(res.data.msg)
         this.cancelEdit()
@@ -784,17 +779,6 @@ export default {
           if (this.inEditing === 'edit') {
             this.edit()
           } else if (this.inEditing === 'change') {
-            let data = {
-              waybill: {
-                waybillId: this.id,
-                ...this.info,
-                ...this.formatMoney(),
-                settlementType: this.settlementType,
-                settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo_change() : void 0
-              },
-              cargoList: _.uniq(this.detail.map(item => item.orderId))
-            }
-            this.changeStr = JSON.stringify(data)
             this.changeBill()
           } else {
             return false
