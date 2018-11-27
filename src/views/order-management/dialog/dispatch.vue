@@ -64,7 +64,7 @@
           <i-switch v-model="sendCar" size="small" />
           <p v-if="!sendCar" class="send_car_tip">此处未派车可以在生成运单后，在运单详情里点【编辑】进行派车操作。</p>
         </div>
-        <send-car v-if="sendCar" ref="sendCarComp" :order-list="id"></send-car>
+        <send-car v-if="sendCar" ref="sendCarComp" :order-list="id" :mileage="mileage"></send-car>
       </div>
       <div slot="footer">
         <Button  type="primary"  @click="save">确定</Button>
@@ -84,6 +84,7 @@ import SendCar from '@/views/transport/components/SendCar.vue'
 import { mapGetters, mapActions } from 'vuex'
 import City from '@/libs/js/city'
 import { CAR } from '@/views/client/client'
+import _ from 'lodash'
 export default {
   name: 'dispatch',
 
@@ -222,7 +223,8 @@ export default {
           minWidth: 100,
           tooltip: true
         }
-      ]
+      ],
+      mileage: null
     }
   },
   computed: {
@@ -257,7 +259,15 @@ export default {
     }
   },
   created () {
-
+    let orderList = _.cloneDeep(this.id)
+    orderList = orderList.filter((item) => {
+      return (item.consigneeAddressLatitude !== '' && item.consigneeAddressLongitude !== '' && item.consignerAddressLatitude !== '' && item.consignerAddressLongitude !== '')
+    })
+    console.log(orderList)
+    console.log(this.isAllEqual(orderList))
+    if (this.isAllEqual(orderList)) {
+      this.mileage = orderList[0].mileage / 1000
+    }
   },
   mounted: function () {
     // modify:20181023 by 宣飞 加上第一条数据的始发城市和目的城市
@@ -271,6 +281,19 @@ export default {
     ...mapActions([
       'getCarriers'
     ]),
+    // 判断勾选项始发地和目的地经纬度是否一样
+    isAllEqual (array) {
+      if (array.length > 0) {
+        return !array.some((item, index) => {
+          return (item.consigneeAddressLatitude !== array[0].consigneeAddressLatitude ||
+                  item.consigneeAddressLongitude !== array[0].consigneeAddressLongitude ||
+                  item.consignerAddressLatitude !== array[0].consignerAddressLatitude ||
+                  item.consignerAddressLongitude !== array[0].consignerAddressLongitude)
+        })
+      } else {
+        return false
+      }
+    },
     // 选择承运商dropdown的数据
     handleSelectCarrier (name, row) {
       console.log(name, row)
@@ -307,11 +330,19 @@ export default {
           // })
           if (z.sendCar && !z.$refs.sendCarComp.validate()) return
           // 地址入参为最后一级区号
-          let sendCodes = {
+          let data = {
             start: z.send.start,
-            end: z.send.end
+            end: z.send.end,
+            orderIds: z.orderIds,
+            assignCar: z.sendCar ? 1 : 0
           }
-          const data = Object.assign(sendCodes, { orderIds: z.orderIds })
+          if (z.sendCar) {
+            let sendComp = z.$refs.sendCarComp
+            data = Object.assign(data, sendComp.formatMoney(), {
+              settlementType: sendComp.settlementType,
+              settlementPayInfo: sendComp.getSettlementPayInfo()
+            })
+          }
           Server({
             url: 'waybill/create',
             method: 'post',

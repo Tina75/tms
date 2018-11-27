@@ -909,7 +909,7 @@ export default {
             this.keywords.status = 50
           }
         }
-        this.btnGroup.push({ name: '分享', value: 9, code: 100302 })
+        this.btnGroup.push({ name: '分享', value: 9, code: 100307 })
       } else {
         if (val === '待提货') {
           this.btnGroup = [
@@ -947,15 +947,16 @@ export default {
           this.$Message.warning('一次最多选择20条订单')
           return
         }
-        let data = this.selectOrderList.find((item) => {
-          return (item.status !== 20 || item.dispatchStatus !== 0 || item.transStatus !== 0 || item.disassembleStatus === 1)
-        })
-        if (data !== undefined) {
-          console.log(this.selectOrderList)
-          this.$Message.warning('您选择的订单不支持送货调度')
-        } else {
-          this.openDispatchDialog(btn.name)
-        }
+        // let data = this.selectOrderList.find((item) => {
+        //   return (item.status !== 20 || item.dispatchStatus !== 0 || item.transStatus !== 0 || item.disassembleStatus === 1)
+        // })
+        // if (data !== undefined) {
+        //   console.log(this.selectOrderList)
+        //   this.$Message.warning('您选择的订单不支持送货调度')
+        // } else {
+        //   this.openDispatchDialog(btn.name)
+        // }
+        this.openDispatchDialog(btn.name)
       } else if (btn.name === '提货调度') { // 待提货（status:10）且未创建提货单(pickupStatus: 0)且未外转(transStatus: 0)且是父单(parentId：'') 可以批量操作
         if (this.selectOrderList.length > 20) { // 一次最多选择20条订单
           this.$Message.warning('一次最多选择20条订单')
@@ -1111,7 +1112,10 @@ export default {
       }
       _this.openDialog({
         name: 'order-management/dialog/share',
-        data: { id: _this.selectOrderList },
+        data: {
+          id: _this.selectOrderList,
+          suffix: ''
+        },
         methods: {
           ok (node) {}
         }
@@ -1131,7 +1135,9 @@ export default {
     openShareConfirmDialog () {
       this.openDialog({
         name: 'order-management/dialog/shareConfirm',
-        data: { id: this.selectOrderList },
+        data: {
+          id: this.selectOrderList
+        },
         methods: {
           ok (node) {}
         }

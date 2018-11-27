@@ -3,17 +3,20 @@
     <Tabs v-model="shareType" @on-click="handleTabChange">
       <TabPane label="普通分享">
         <p class="share-tip">无需密码，拥有链接的客户都可以直接查看</p>
-        <div class="share-info">客户名称： <span class="value">{{ id[0].consignerName }}</span></div>
+        <div class="share-info">客户名称： <span class="value">{{ id[0].consignerName + suffix }}</span></div>
         <div class="share-info share-margin">订单数量： <span class="value">{{ id.length }}单</span></div>
         <div>
-          <Tooltip :transfer="true" max-width="450" content="https://yzg.tms5566.com/#/order-management/detail?noCache=truehttps://yzg.tms5566.com/#/order-management/detail?noCache=true" placement="bottom">
+          <Tooltip :transfer="true" max-width="450" placement="bottom">
             <p class="share-url common">
               <span class="label">链接：</span>
-              <span>https://yzg.tms5566.com/#/order-management/detail?noCache=true</span>
+              <span>{{ disencrypt.message }}</span>
             </p>
+            <div slot="content" class="share-tooltip">
+              {{ disencrypt.message }}
+            </div>
           </Tooltip>
           <Button
-            v-clipboard:copy="message"
+            v-clipboard:copy="disencrypt.message"
             v-clipboard:success="onCopy"
             v-clipboard:error="onError"
             :disabled="isDisabled"
@@ -22,21 +25,24 @@
       </TabPane>
       <TabPane label="加密分享">
         <p class="share-tip">查看需要输入密码，更加隐私安全！</p>
-        <div class="share-info">客户名称： <span class="value">{{ id[0].consignerName }}</span></div>
+        <div class="share-info">客户名称： <span class="value">{{ id[0].consignerName + suffix }}</span></div>
         <div class="share-info share-margin">订单数量： <span class="value">{{ id.length }}单</span></div>
         <div>
-          <Tooltip :transfer="true" max-width="340" content="https://yzg.tms5566.com/#/order-management/detail?noCache=truehttps://yzg.tms5566.com/#/order-management/detail?noCache=true" placement="bottom">
+          <Tooltip :transfer="true" max-width="340" placement="bottom">
             <p class="share-url encrypt">
               <span class="label">链接：</span>
-              <span>https://yzg.tms5566.com/#/order-management/detail?noCache=true</span>
+              <span>{{ encrypt.message }}</span>
             </p>
+            <div slot="content" class="share-tooltip">
+              {{ disencrypt.message }}
+            </div>
           </Tooltip>
           <p class="share-url password">
             <span class="label">密码：</span>
-            <span>2457</span>
+            <span>{{ encrypt.password }}</span>
           </p>
           <Button
-            v-clipboard:copy="message"
+            v-clipboard:copy="encrypt.messageAndPwd"
             v-clipboard:success="onCopy"
             v-clipboard:error="onError"
             :disabled="isDisabled"
@@ -55,7 +61,7 @@
 </template>
 
 <script>
-// import Server from '@/libs/js/server'
+import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 import Vue from 'vue'
 import VueClipboard from 'vue-clipboard2'
@@ -69,8 +75,16 @@ export default {
   data () {
     return {
       shareType: 0,
-      message: '',
-      password: '1234',
+      encrypt: {
+        message: '',
+        messageAndPwd: '',
+        password: '',
+        sharecode: ''
+      },
+      disencrypt: {
+        message: '',
+        sharecode: ''
+      },
       isDisabled: false
     }
   },
@@ -85,9 +99,20 @@ export default {
     }
   },
 
+  created () {
+    if (this.id.length > 1) {
+      this.encrypt.message = process.env.VUE_APP_SHARE + 'order-detail.html'
+      this.disencrypt.message = process.env.VUE_APP_SHARE + 'order-list.html'
+    } else {
+      this.encrypt.message = process.env.VUE_APP_SHARE + 'order-detail.html'
+      this.disencrypt.message = process.env.VUE_APP_SHARE + 'order-detail.html'
+    }
+  },
+
   mounted () {
     console.log(this.id)
-    this.message = 'https://yzg.tms5566.com/#/order-management/detail?noCache=true'
+    this.createShare(0)
+    this.createShare(1)
   },
 
   methods: {
@@ -96,11 +121,6 @@ export default {
     },
     handleTabChange (val) {
       this.isDisabled = false
-      if (val === 1) {
-        this.message = 'https://yzg.tms5566.com/#/order-management/detail?noCache=true' + '  密码：' + this.password
-      } else {
-        this.message = 'https://yzg.tms5566.com/#/order-management/detail?noCache=true'
-      }
     },
     onCopy (e) {
       console.log('You just copied: ' + e.text)
@@ -112,6 +132,25 @@ export default {
     },
     onError (e) {
       this.$Message.error('复制失败，请使用Ctrl-C手动复制')
+    },
+    createShare (type) {
+      Server({
+        url: 'order/createshare',
+        method: 'post',
+        data: {
+          orderIds: this.orderIds,
+          shareType: type // 分享形式：1有查看密码；0无查看密码
+        }
+      }).then((res) => {
+        console.log(res.data.data)
+        if (type) {
+          this.encrypt.password = res.data.data.password
+          this.encrypt.message = this.encrypt.message + '?sharecode=' + res.data.data.shareOutNo + '&encrypt=true'
+          this.encrypt.messageAndPwd = this.encrypt.message + '    密码：' + this.encrypt.password
+        } else {
+          this.disencrypt.message = this.disencrypt.message + '?sharecode=' + res.data.data.shareOutNo
+        }
+      })
     }
   }
 
@@ -172,6 +211,9 @@ export default {
   .ivu-btn-primary[disabled]
     background-color #00C185
     color #fff
+  .share-tooltip
+    white-space normal
+    word-break break-all
 </style>
 <style lang='stylus'>
   .share-dialog
@@ -187,4 +229,6 @@ export default {
           padding 10px 16px 12px
     .ivu-modal-footer
       padding 0 40px 31px 30px
+    .ivu-tooltip-inner-with-width
+      white-space normal
 </style>

@@ -553,7 +553,10 @@ export default {
       const _this = this
       _this.openDialog({
         name: 'order-management/dialog/share',
-        data: { id: [order] },
+        data: {
+          id: [order],
+          suffix: ''
+        },
         methods: {
           ok (node) {}
         }
@@ -724,7 +727,7 @@ export default {
       let renderBtn = []
       // 子单不展示分享按钮
       if (!r.parentId) {
-        renderBtn.push({ name: '分享', value: 9, code: 100302 })
+        renderBtn.push({ name: '分享', value: 9, code: 100307 })
       }
       if (r.status === 10) { // 待提货状态
         // 删除按钮

@@ -158,7 +158,7 @@ import SelectInputMixin from '../mixin/selectInputMixin'
 import TagNumberInput from '@/components/TagNumberInput'
 import validator from '@/libs/js/validate'
 import PayInfo from './PayInfo'
-import Server from '@/libs/js/server'
+// import Server from '@/libs/js/server'
 import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
 import { CAR } from '@/views/client/client'
 
@@ -169,6 +169,10 @@ export default {
   props: {
     orderList: {
       type: Array
+    },
+    mileage: {
+      type: [Number, String],
+      default: null
     }
   },
   data () {
@@ -289,6 +293,7 @@ export default {
       { payType: 2, fuelCardAmount: '', cashAmount: '' },
       { payType: 3, fuelCardAmount: '', cashAmount: '' }
     ]
+    this.info.mileage = this.mileage
   },
   methods: {
     // 计费规则
@@ -328,60 +333,17 @@ export default {
         }
       })
     },
-
-    // 查询数据
-    fetchData () {
-      Server({
-        url: this.type === 'sendCar' ? '/waybill/details' : '/load/bill/details',
-        method: 'post',
-        data: { [this.type === 'sendCar' ? 'waybillId' : 'pickUpId']: this.id }
-      }).then(res => {
-        const data = res.data.data
-        const billInfo = this.type === 'sendCar' ? data.waybill : data.loadbill
-
-        for (let key in this.info) {
-          this.info[key] = billInfo[key] ? billInfo[key] : ''
-        }
-        if (this.type === 'sendCar') {
-          for (let key in this.financeRulesInfo) {
-            this.financeRulesInfo[key] = billInfo[key]
-          }
-        }
-        for (let key in this.payment) {
-          this.payment[key] = this.setMoneyUnit2Yuan(billInfo[key])
-        }
-
-        if (this.type === 'pickUp') {
-          delete this.payment.cashBack // 提货去掉返现运费
-          delete this.payment.tollFee // 提货去掉路桥费
-        }
-
-        this.settlementType = billInfo.settlementType ? billInfo.settlementType.toString() : '1'
-        // 将收费信息中的金额单位转为元
-        let temp = this.settlementPayInfo.map((item, i) => {
-          if (!billInfo.settlementPayInfo[i]) return item
-          else {
-            const temp = billInfo.settlementPayInfo[i]
-            temp.fuelCardAmount = this.setMoneyUnit2Yuan(temp.fuelCardAmount)
-            temp.cashAmount = this.setMoneyUnit2Yuan(temp.cashAmount)
-            return Object.assign(item, temp)
-          }
-        })
-        this.settlementPayInfo = temp
-      }).catch(err => console.error(err))
-    },
-
-    // 设置金额单位为元
-    setMoneyUnit2Yuan (money) {
-      // return typeof money === 'number' ? money / 100 : null
-      return (typeof money === 'number' && money !== 0) ? money / 100 : null
-    },
     // 格式化金额单位为分
     formatMoney () {
-      let temp = Object.assign({}, this.payment)
-      for (let key in temp) {
-        if (typeof temp[key] === 'number') temp[key] = temp[key] * 100
-      }
+      let temp = Object.assign({}, this.info)
+      temp.freightFee = temp.freightFee * 100 || null
+      temp.loadFee = temp.loadFee * 100 || null
+      temp.unloadFee = temp.unloadFee * 100 || null
+      temp.insuranceFee = temp.insuranceFee * 100 || null
+      temp.otherFee = temp.otherFee * 100 || null
+      temp.tollFee = temp.tollFee * 100 || null
+      temp.cashBack = temp.cashBack * 100 || null
+      temp.mileage = temp.mileage * 1000 || null
       return temp
     },
     // payInfo组件数据校验
@@ -389,6 +351,9 @@ export default {
       // console.log(this.$refs.$payInfo, this.$refs.$payInfo.validate())
       if (this.settlementType === '1' && !this.$refs.$payInfo.validate()) return false
       return true
+    },
+    getSettlementPayInfo () {
+      return this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
     },
     // 派车模块数据校验
     validate () {

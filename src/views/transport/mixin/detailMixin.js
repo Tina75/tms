@@ -181,7 +181,11 @@ export default {
       for (let key in temp) {
         // if (typeof temp[key] === 'number') temp[key] = temp[key] * 100
         if (typeof temp[key] === 'number') {
-          temp[key] = temp[key] * 100
+          if (key === 'mileage') {
+            temp[key] = temp[key] * 1000
+          } else {
+            temp[key] = temp[key] * 100
+          }
         } else {
           temp[key] = 0
         }

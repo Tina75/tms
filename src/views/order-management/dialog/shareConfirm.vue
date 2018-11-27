@@ -37,7 +37,10 @@ export default {
       _this.close()
       _this.openDialog({
         name: 'order-management/dialog/share',
-        data: { id: _this.id },
+        data: {
+          id: _this.id,
+          suffix: '等' // 多个客户名称需要在末尾加‘等’
+        },
         methods: {
           ok (node) {}
         }
