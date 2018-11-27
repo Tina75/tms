@@ -60,12 +60,22 @@ export default {
   getWaybillLocation (store, waybillIds) {
     return new Promise((resolve, reject) => {
       if (!waybillIds.length) reject(new Error('miss waybillIds'))
+      const multipul = waybillIds.length > 1
       Server({
-        url: waybillIds.length > 1 ? '/waybill/location' : '/waybill/single/location',
+        url: multipul ? '/waybill/location' : '/waybill/single/location',
         method: 'post',
-        data: waybillIds.length > 1 ? ({ waybillIds }) : ({ waybillId: waybillIds[0] })
+        data: multipul ? ({ waybillIds }) : ({ waybillId: waybillIds[0] })
       }).then(res => {
-        resolve(res.data.data)
+        const data = res.data.data
+        if (multipul) {
+          resolve(
+            data.limit && data.limit.overLimit ? { limitTip: data.limit.overLimitTip } : data
+          )
+        } else {
+          resolve(
+            data.overLimit ? { limitTip: data.overLimitTip } : data
+          )
+        }
       }).catch(err => {
         reject(err)
       })
@@ -166,16 +176,26 @@ export default {
     })
   },
 
-  // 查询运单车辆位置
+  // 查询提货单车辆位置
   getPickupOrderLocation (store, pickUpIds) {
     return new Promise((resolve, reject) => {
       if (!pickUpIds.length) reject(new Error('miss pickUpIds'))
+      const multipul = pickUpIds.length > 1
       Server({
-        url: pickUpIds.length > 1 ? '/load/bill/location' : '/load/bill/single/location',
+        url: multipul ? '/load/bill/location' : '/load/bill/single/location',
         method: 'post',
-        data: pickUpIds.length > 1 ? ({ pickUpIds }) : ({ pickUpId: pickUpIds[0] })
+        data: multipul ? ({ pickUpIds }) : ({ pickUpId: pickUpIds[0] })
       }).then(res => {
-        resolve(res.data.data)
+        const data = res.data.data
+        if (multipul) {
+          resolve(
+            data.limit && data.limit.overLimit ? { limitTip: data.limit.overLimitTip } : data
+          )
+        } else {
+          resolve(
+            data.overLimit ? { limitTip: data.overLimitTip } : data
+          )
+        }
       }).catch(err => {
         reject(err)
       })
