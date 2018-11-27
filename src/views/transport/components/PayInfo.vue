@@ -52,8 +52,24 @@ export default {
           title: '现金',
           key: 'cashAmount',
           render: (h, p) => {
+            if (this.mode === 'edit' && p.row.isCashDisabled && p.row.type === 'change') {
+              let str = ''
+              if (p.row.payType === 1) str = '预付' + p.column.title
+              if (p.row.payType === 2) str = '到付' + p.column.title
+              if (p.row.payType === 3) str = '回付' + p.column.title
+              return h('Tooltip', {
+                props: {
+                  placeholder: 'bottom',
+                  transfer: false
+                }
+              }, [h('span', {}, p.row.cashAmount || 0), h('div', {
+                slot: 'content',
+                style: {
+                  whiteSpace: 'normal'
+                }
+              }, str + '已核销,不能修改')])
+            }
             if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) return h('span', p.row.cashAmount || 0)
-
             return h(MoneyInput, {
               props: {
                 value: p.row.cashAmount,
@@ -75,6 +91,23 @@ export default {
           title: '油卡',
           key: 'fuelCardAmount',
           render: (h, p) => {
+            if (this.mode === 'edit' && p.row.isCashDisabled && p.row.type === 'change') {
+              let str = ''
+              if (p.row.payType === 1) str = '预付' + p.column.title
+              if (p.row.payType === 2) str = '到付' + p.column.title
+              if (p.row.payType === 3) str = '回付' + p.column.title
+              return h('Tooltip', {
+                props: {
+                  placeholder: 'bottom',
+                  transfer: false
+                }
+              }, [h('span', {}, p.row.cashAmount || 0), h('div', {
+                slot: 'content',
+                style: {
+                  whiteSpace: 'normal'
+                }
+              }, str + '已核销,不能修改')])
+            }
             if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCardDisabled)) return h('span', p.row.fuelCardAmount || 0)
 
             return h(MoneyInput, {

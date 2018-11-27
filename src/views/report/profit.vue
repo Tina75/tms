@@ -40,7 +40,7 @@
       <Row type="flex" justify="start" class="big-height" style="border-top: 0">
         <Col span="6">收入</Col>
         <Col span="6">
-        <Row class="middle-height border-top-none border-right-none">
+        <Row style="height: 315px;line-height: 359px" class="middle-height border-top-none border-right-none">
           <Col>上游运费收入</Col>
         </Row>
         <Row class="small-height border-top-none border-right-none border-bottom-none">
@@ -55,6 +55,10 @@
         <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
           <Col span="12">提货费</Col>
           <Col span="12" class="num">{{res.orderPickupFee}}</Col>
+        </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
+          <Col span="12">开票税费</Col>
+          <Col span="12" class="num">{{res.orderInvoiceFee}}</Col>
         </Row>
         <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
           <Col span="12">装货费</Col>
@@ -173,10 +177,11 @@ export default {
         carrierOtherFee: '-',
         carrierInsuranceFee: '-',
         carrierTotalFee: '-',
-        transbillTransFee: '-',
+        // transbillTransFee: '-',
         profits: '-',
         carrierTollFee: '-',
-        orderCashBack: '-'
+        orderCashBack: '-',
+        orderInvoiceFee: '-'
       },
       options: {
         disabledDate (date) {
@@ -362,6 +367,6 @@ export default {
       line-height 45px
     .big-height
       border 1px solid #C9CED9
-      height 314px
-      line-height 314px
+      height 359px
+      line-height 359px
 </style>
