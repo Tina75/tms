@@ -9,16 +9,24 @@
       empty-content="请点击左侧外转方/承运商查看返现对账列表哦～"
       @on-selection-change="handleSelectionChange"
     >
+      <div slot="title">
+        <p class="wait-verify__view-title">{{title}}</p>
+        <p class="wait-verify__view-supName">
+          <span>
+            返现总额 {{activeDriver ? (activeDriver.calcTotalFee / 100).toFixed(2) : 0}}
+          </span>
+        </p>
+      </div>
       <div slot="operation">
         <Button v-if="hasPower(170601)" type="primary" @click="batchWriteOff">核销</Button>
       </div>
       <ListSender ref="driversList" :style="styles" list-key="partnerName" @on-click="handleClick">
         <ListSenderItem v-for="(item, name) in drivers" :key="name" :item="item" :title="item.partnerName" :extra="item.orderNum" icon="ico-company">
-          <p slot="supName">
+          <template slot="supName">
             <span>
               返现总额 {{(item.calcTotalFee / 100).toFixed(2) }}
             </span>
-          </p>
+          </template>
         </ListSenderItem>
       </ListSender>
     </ReconcileLayout>
@@ -291,4 +299,13 @@ export default {
 .wait-verify
   .ivu-btn
     width 86px
+  &__view-title
+    line-height 22px
+    font-size 14px
+    color #333333
+    font-weight 500
+  &__view-supName
+    line-height 22px
+    font-size 12px
+    color #999999
 </style>
