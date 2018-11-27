@@ -514,9 +514,10 @@ export default {
           },
           {
             name: '改单',
-            code: 120210,
+            code: 120116,
             func: () => {
               this.inEditing = 'change'
+              this.changeStr = JSON.stringify(_.cloneDeep(this.changeParams))
               this.changeState({ id: this.id, type: 3 })
             }
           }]
@@ -531,10 +532,9 @@ export default {
             }
           }, {
             name: '改单',
-            code: 120210,
+            code: 120116,
             func: () => {
               this.inEditing = 'change'
-              // let data = _.cloneDeep(this.changeParams)
               this.changeStr = JSON.stringify(_.cloneDeep(this.changeParams))
               this.changeState({ id: this.id, type: 3 })
             }
