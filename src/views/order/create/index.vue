@@ -59,7 +59,7 @@
       <Col span="6">
       <FormItem label="对接业务员:" prop="salesmanId">
         <Select v-model="orderForm.salesmanId" transfer clearable>
-          <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.value">{{opt.name}}</Option>
+          <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.id">{{opt.name}}</Option>
         </Select>
       </FormItem>
       </Col>
@@ -662,7 +662,7 @@ export default {
       this.loading = true
       api.getBusineList().then(res => {
         this.loading = false
-        this.salesmanList = res
+        this.salesmanList = res.data
       })
     },
     // 货物名称选择下拉项目时触发
@@ -749,6 +749,10 @@ export default {
             _this.consignerCargoes = [new Cargo(cargoList[0], true)]
           }
         }
+        _this.orderForm.pickup = consigner.pickUp
+        _this.orderForm.salesmanId = consigner.salesmanId
+        _this.orderForm.isInvoice = consigner.isInvoice
+        _this.orderForm.invoiceRate = consigner.invoiceRate
       })
     },
     /**
@@ -819,22 +823,21 @@ export default {
     },
     // 提交表单
     handleSubmit (e) {
-      this.disabled = true
       return new Promise((resolve, reject) => {
-        this.validateForm().then(form => {
-          return form.salesmanId ? api.businePermit(form) : form
-        }).then(form => {
-          return api.submitOrder(form)
-        }).then(form => {
-          this.refreshForm(form, e)
-          resolve(form)
-        }).catch(err => {
-          this.disabled = false
-          reject(err)
-        })
+        this.validPermit()
+          .then(form => {
+            return api.submitOrder(form)
+          }).then(() => {
+            this.refreshForm(e)
+            resolve()
+          }).catch(err => {
+            this.disabled = false
+            reject(err)
+          })
       })
     },
-    refreshForm (form, e) {
+    refreshForm (e) {
+      const form = this.orderForm
       if (!form.id) {
         this.$Message.success('创建订单成功')
       } else {
@@ -921,6 +924,7 @@ export default {
         lng: this.orderForm.consigneeAddressLongitude,
         lat: this.orderForm.consigneeAddressLatitude
       }
+      console.log(p1, p2)
       if (p1.lng && p1.lat && p2.lng && p2.lat) {
         this.cpmtDistance(p1, p2)
       }
@@ -934,21 +938,21 @@ export default {
           const num = float.floor(res / 1000, 1)
           this.orderForm.mileage = Number(num)
         }
+      }).catch(err => {
+        console.log(err)
       })
     },
     // 立即发运
     shipImmedite (e = 'orderCreate') {
       const self = this
       const statics = this.$refs.cargoTable.statics
-      this.validateForm()
+      this.validPermit()
         .then(form => {
-          return form.salesmanId ? api.businePermit(form) : form
-        }).then(form => {
           this.disabled = false
           if (form.pickup === 1) {
             // 小车上门 提货权限
-            api.validPermit({ type: 2 }).then(res => {
-              if (res) {
+            api.validPermit(form).then(({ permit }) => {
+              if (permit) {
                 this.openDialog({
                   name: 'transport/dialog/action',
                   data: {
@@ -989,8 +993,8 @@ export default {
             })
           } else if (form.pickup === 2) {
             // 大车直送 派车权限
-            api.validPermit({ type: 1 }).then(res => {
-              if (res) {
+            api.validPermit(form).then(({ permit }) => {
+              if (permit) {
                 this.openDialog({
                   name: 'transport/dialog/action',
                   data: {
@@ -1081,12 +1085,29 @@ export default {
           } else {
             vm.disabled = false
             // 主动滚动到顶部
-            if (vm.orderForm.pickup) {
-              vm.$parent.$el.scrollTop = 0
-            }
+            // if (vm.orderForm.pickup) {
+            //   vm.$parent.$el.scrollTop = 0
+            // }
             vm.$Message.error('请填写必填信息')
             reject(new Error('请填写必填信息'))
           }
+        })
+      })
+    },
+    validPermit () {
+      return new Promise((resolve, reject) => {
+        this.validateForm().then(form => {
+          return form.salesmanId ? api.validPermit(form, form.salesmanId) : { form, permit: true }
+        }).then(({ form, permit }) => {
+          if (!permit) {
+            const errMsg = form.pickup === 1 ? '选择的业务员，没有提货调度或送货调度权限，不可上门提货'
+              : form.pickup === 2 ? '选择的业务员，没有送货调度权限，不可直送客户' : '权限错误'
+            this.$Message.error(errMsg)
+            return reject(errMsg)
+          }
+          resolve(form)
+        }).catch(err => {
+          reject(err)
         })
       })
     },

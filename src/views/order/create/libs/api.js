@@ -39,14 +39,18 @@ export default {
         .catch((err) => reject(err))
     })
   },
-  validPermit (data) {
+  validPermit (form, salesmanId) {
+    const data = {
+      type: form.pickup === 1 ? 2 : form.pickup === 2 ? 1 : '',
+      salesmanId
+    }
     return new Promise((resolve, reject) => {
       server({
         method: 'get',
         url: 'permission/validDirectSend',
         data
       }).then(response => {
-        resolve(response.data.data)
+        resolve({ permit: response.data.data, form })
       }).catch(err => reject(err))
     })
   },
@@ -66,23 +70,11 @@ export default {
   // 下拉业务员
   getBusineList () {
     return new Promise((resolve, reject) => {
-      const data = [
-        { name: '小王', value: 121 },
-        { name: '小张', value: 122 }
-      ]
-      resolve(data)
-    })
-  },
-  // 业务员权限
-  businePermit (param) {
-    return new Promise((resolve, reject) => {
-      const data = { salesmanId: param.salesmanId }
       server({
         method: 'get',
-        url: 'permission/validDirectSend',
-        data
-      }).then(() => {
-        resolve(param.form)
+        url: '/permission/buttOperator'
+      }).then((response) => {
+        resolve(response.data)
       }).catch(err => reject(err))
     })
   }

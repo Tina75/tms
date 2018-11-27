@@ -303,7 +303,6 @@ export default {
       this.visible = false
       // 选中某一项
       this.$emit('on-select', item.value, item)
-      this.$emit('input', item.value, 'on-select')
     },
     /**
      * 鼠标focus

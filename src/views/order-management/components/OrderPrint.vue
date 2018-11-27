@@ -34,8 +34,8 @@
               <td v-else>代收货款：{{data.collectionMoney ? data.collectionMoney + '元' : '-'}}</td>
             </tr>
             <tr>
-              <td>业务员：{{data.salesmanId}}</td>
-              <td>是否开票：{{data.isInvoice}}</td>
+              <td>业务员：{{salesmanMap[data.salesmanId]}}</td>
+              <td>是否开票：{{data.isInvoice == 0 ? `否` : `是`}}</td>
               <td v-if="data.isInvoice">开票税率：{{data.invoiceRate}}%</td>
             </tr>
           </tbody>
@@ -108,6 +108,7 @@ import Printd from 'printd'
 import City from '@/libs/js/city'
 import settlements from '@/libs/constant/settlement.js'
 import pickups from '@/libs/constant/pickup.js'
+import server from '@/libs/js/server'
 export default {
   props: {
     list: {
@@ -154,13 +155,26 @@ export default {
           margin-right: 50px
         }
       `,
-      visible: false
+      visible: false,
+      salesmanMap: {}
     }
   },
   mounted () {
     this.printer = new Printd()
+    this.initBusineList()
   },
   methods: {
+    initBusineList () {
+      server({
+        method: 'get',
+        url: '/permission/buttOperator'
+      }).then((response) => {
+        const data = response.data.data
+        data.map(el => {
+          this.salesmanMap[el.id] = el.name
+        })
+      })
+    },
     // 格式化城市
     cityFormatter (code) {
       if (!code) return ''

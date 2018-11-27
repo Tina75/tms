@@ -19,7 +19,7 @@
         <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
       </FormItem>
       <FormItem label="提货方式：">
-        <Select v-model="validate.pickup" transfer clearable placeholder="请输入">
+        <Select v-model="validate.pickUp" transfer clearable placeholder="请输入">
           <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
       </FormItem>
@@ -57,7 +57,7 @@
           </Tooltip>
         </label>
         <Select v-model="validate.salesmanId" transfer clearable placeholder="请选择对接此客户的业务员">
-          <Option v-for="(opt, index) in salesmans" :key="index" :value="opt.value">{{opt.name}}</Option>
+          <Option v-for="(opt, index) in salesmans" :key="index" :value="opt.id">{{opt.name}}</Option>
         </Select>
       </FormItem>
       <FormItem label="备注：" >
@@ -77,7 +77,7 @@ import BaseDialog from '@/basic/BaseDialog'
 import pickups from '@/libs/constant/pickup.js'
 import { invoiceList } from '@/libs/constant/orderCreate.js'
 import TagNumberInput from '@/components/TagNumberInput'
-
+import server from '@/libs/js/server'
 export default {
   name: 'sender',
   components: {
@@ -88,11 +88,7 @@ export default {
     return {
       pickups, // 提货方式
       invoiceList,
-      salesmans: [
-        { name: '小王', value: 121 },
-        { name: '校长', value: 122 },
-        { name: '小张', value: 123 }
-      ],
+      salesmans: [],
       id: '',
       validate: {
         name: '',
@@ -100,7 +96,7 @@ export default {
         phone: '',
         payType: '',
         remark: '',
-        pickup: '', // 提货方式
+        pickUp: '', // 提货方式
         isInvoice: 0, // 是否开票
         invoiceRate: null, // 开票税率
         salesmanId: '' // 业务员
@@ -121,6 +117,9 @@ export default {
         ]
       }
     }
+  },
+  mounted () {
+    this.initSaleMan()
   },
   methods: {
     save (name) {
@@ -158,6 +157,14 @@ export default {
         } else {
           this.$Message.error(res.data.msg)
         }
+      })
+    },
+    initSaleMan () {
+      server({
+        method: 'get',
+        url: '/permission/buttOperator'
+      }).then((response) => {
+        this.salesmans = response.data.data
       })
     }
   }
