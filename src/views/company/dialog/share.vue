@@ -76,9 +76,7 @@ export default {
       this.qrcodeInit = new QRCode('qrcodeDom', {
         width: 125, // 设置宽度
         height: 125, // 设置高度
-        text: this.urlPath,
-        src: 'http://pic1.cxtuku.com/00/07/42/b03695caf529.jpg',
-        background: 'red'
+        text: this.urlPath
       })
       this.isQrcodeShow = true
     },
