@@ -649,7 +649,8 @@ export default {
         }
       ],
       // 改单运费能否修改
-      feeStatus: 0 // 0 可以修改运费 10 已对账 20 已核销 30 存在异常记录且修改了运费未处理 2 部分修改运费
+      feeStatus: 0, // 0 可以修改运费 10 已对账 20 已核销 30 存在异常记录且修改了运费未处理 2 部分修改运费
+      changeStr: ''
     }
   },
   computed: {
@@ -742,7 +743,20 @@ export default {
     },
     // 改单
     changeBill () {
-      console.log(this.formatMoney())
+      let data = {
+        waybill: {
+          waybillId: this.id,
+          ...this.info,
+          ...this.formatMoney(),
+          settlementType: this.settlementType,
+          settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo_change() : void 0
+        },
+        cargoList: _.uniq(this.detail.map(item => item.orderId))
+      }
+      if (JSON.stringify(data) === this.changeStr) {
+        this.$Message.error('您并未做修改')
+        return
+      }
       Server({
         url: '/waybill/modify',
         method: 'post',
@@ -770,6 +784,17 @@ export default {
           if (this.inEditing === 'edit') {
             this.edit()
           } else if (this.inEditing === 'change') {
+            let data = {
+              waybill: {
+                waybillId: this.id,
+                ...this.info,
+                ...this.formatMoney(),
+                settlementType: this.settlementType,
+                settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo_change() : void 0
+              },
+              cargoList: _.uniq(this.detail.map(item => item.orderId))
+            }
+            this.changeStr = JSON.stringify(data)
             this.changeBill()
           } else {
             return false
