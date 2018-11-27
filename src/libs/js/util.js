@@ -161,5 +161,4 @@ export const clearFileInput = function (input) {
     form.parentNode.insertBefore(input, form)
     input.parentNode.removeChild(form)
   }
-
 }
