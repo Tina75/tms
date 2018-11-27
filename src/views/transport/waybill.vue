@@ -309,6 +309,14 @@ export default {
       let waybillIds = this.tableSelection.map(item => item.waybillId)
       this.getWaybillLocation(waybillIds)
         .then(res => {
+          if (res.limitTip) {
+            this.$Toast.warning({
+              title: '提示',
+              showIcon: false,
+              content: res.limitTip
+            })
+            return
+          }
           let cars
           if (waybillIds.length > 1) {
             if (!res.list.length) {
@@ -331,7 +339,7 @@ export default {
             },
             methods: {}
           })
-        }).catch(err => console.error(err))
+        })
     },
 
     // 到货
