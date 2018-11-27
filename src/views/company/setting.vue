@@ -70,13 +70,13 @@
           <span class="iconRightTitleP">公司介绍</span>
         </div>
         <FormItem label="公司简介：" class="labelClassSty">
-          <Input v-if="isEdit" v-model="formCompany.companyProfile" :maxlength="500" type="textarea" placeholder="请输入公司简介"></Input>
-          <span v-else>{{formCompany.companyProfile}}</span>
+          <Input v-if="isEdit" :rows="5" v-model="formCompany.companyProfile" :maxlength="500" type="textarea" placeholder="请输入公司简介"></Input>
+          <pre v-else class="companyProfileSty">{{formCompany.companyProfile}}</pre>
         </FormItem>
         <FormItem label="公司LOGO：">
           <span v-if="isEdit" class="imageTips">尺寸100*100像素，大小不超过10M</span>
         </FormItem>
-        <FormItem>
+        <FormItem class="imageFontItem">
           <div class="imageLogo">
             <up-load v-show="isEdit" ref="uploadLogo" max-size="10" crop></up-load>
             <div
@@ -90,15 +90,22 @@
         <FormItem label="其他照片：">
           <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
         </FormItem>
-        <FormItem>
-          <up-load v-show="isEdit" ref="upLoads" :multiple="true" max-count="10" max-size="10" multiple-width="style='width:100%'"></up-load>
-          <div v-for="(img,index) in infoImageList" v-show="!isEdit" :key="img.key">
+        <FormItem class="imageFontItem">
+          <up-load
+            v-show="isEdit"
+            ref="upLoads"
+            :multiple="true"
+            max-count="10"
+            max-size="10"
+            multiple-width="style='width:100%'">
+          </up-load>
+          <div v-for="(img,index) in infoImageList" v-show="!isEdit" :key="img.key" class="infoImage">
             <div
               :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
               class="fileImage"
               @click="handleView(index)">
             </div>
-            <Input :maxlength="6" class="titleInput" placeholder="请输入标题"></Input>
+            <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
           </div>
         </FormItem>
           <!-- 图片集合 -->
@@ -136,6 +143,7 @@ export default {
     return {
       isEdit: false,
       fileUrls: [],
+      shareOutNo: '',
       // 公司
       formCompany: {},
       formCompanyInit: {},
@@ -177,6 +185,13 @@ export default {
       ]
     }
   },
+  updated () {
+    // 图片样式修改，LOGO必须为正方形
+    setTimeout(() => {
+      let imageDiv = document.getElementsByClassName('demo-upload-list')[0]
+      if (imageDiv) imageDiv.children[0].style.height = '110px'
+    }, 10)
+  },
   mounted () {
     this.getCompanyInfo()
   },
@@ -196,11 +211,6 @@ export default {
         element.src = element.url
         this.infoImageList.push(element)
       }
-      // 图片样式修改，LOGO必须为正方形
-      setTimeout(() => {
-        let imageDiv = document.getElementsByClassName('demo-upload-list')[0]
-        if (imageDiv) imageDiv.children[0].style.height = '110px'
-      }, 10)
     },
     getCompanyInfo () {
       let vm = this
@@ -245,6 +255,7 @@ export default {
             if (data.code === 10000) {
               this.$Message.success('保存成功!')
               this.isEdit = false
+              this.getCompanyInfo()
             }
           })
         }
@@ -264,15 +275,25 @@ export default {
     // 分享
     shareBtn () {
       const vm = this
-      vm.openDialog({
-        name: 'company/dialog/share',
-        data: {
-          title: '获取链接成功，复制链接分享给朋友吧'
-        },
-        methods: {
-          ok (node) {
-          }
+      Server({
+        url: '/set/sharecompany',
+        method: 'post'
+      }).then(({ data }) => {
+        if (data.code === 10000) {
+          vm.shareOutNo = data.data.shareOutNo
         }
+      }).then(() => {
+        vm.openDialog({
+          name: 'company/dialog/share',
+          data: {
+            title: '获取链接成功，复制链接分享给朋友吧',
+            shareOutNo: vm.shareOutNo
+          },
+          methods: {
+            ok (node) {
+            }
+          }
+        })
       })
     },
     // 查看大图LOGO
@@ -345,4 +366,16 @@ export default {
   float left
   margin-right 15px
   cursor pointer
+.infoImage
+  float left
+  text-align center
+.titleInput
+  width 160px
+  display block
+  line-height 36px
+.companyProfileSty
+  font-family PingFangSC-Regular
+  margin-top 0
+.imageFontItem
+  margin-top -20px
 </style>
