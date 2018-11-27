@@ -58,7 +58,7 @@
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="对接业务员:" prop="salesmanId">
-        <Select v-model="orderForm.salesmanId" transfer>
+        <Select v-model="orderForm.salesmanId" transfer clearable>
           <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.value">{{opt.name}}</Option>
         </Select>
       </FormItem>
@@ -878,6 +878,8 @@ export default {
           } else {
             this.closeTab()
           }
+        }).catch(err => {
+          console.log(err)
         })
     },
     dateChange (type, date) {

@@ -33,6 +33,11 @@
               <td v-if="source === 'order'">代收货款：{{data.collectionMoney ? data.collectionMoney / 100 + '元' : '-'}}</td>
               <td v-else>代收货款：{{data.collectionMoney ? data.collectionMoney + '元' : '-'}}</td>
             </tr>
+            <tr>
+              <td>业务员：{{data.salesmanId}}</td>
+              <td>是否开票：{{data.isInvoice}}</td>
+              <td v-if="data.isInvoice">开票税率：{{data.invoiceRate}}%</td>
+            </tr>
           </tbody>
         </table>
 
