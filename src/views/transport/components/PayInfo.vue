@@ -132,6 +132,11 @@ export default {
 </script>
 
 <style lang="stylus">
-  .payment-info-table .ivu-input-number
-    border-style none
+  .payment-info-table
+    .ivu-table-cell
+      overflow inherit
+
+    .ivu-input-number
+      border-style none
+
 </style>
