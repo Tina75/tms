@@ -80,7 +80,7 @@
           <div class="imageLogo">
             <up-load v-show="isEdit" ref="uploadLogo" max-size="10" crop></up-load>
             <div
-              v-show="!isEdit"
+              v-if="formCompany.logoUrl"
               :style="'height: 100px;width: 100px;background-image: url(' + formCompany.logoUrl + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;cursor: pointer;'"
               class="imageLogoDiv"
               @click="handleView(0, 'logo')">
@@ -202,14 +202,20 @@ export default {
       this.$refs.uploadLogo.uploadImg = this.formCompany.logoUrl
       // 公司其他照片
       // 编辑状态
-      let infoImageListInit = JSON.parse(this.formCompany.otherInfo)
-      this.$refs.upLoads.uploadImgList = infoImageListInit
-      // 预览状态
-      this.infoImageList = []
-      for (let index = 0; index < infoImageListInit.length; index++) {
-        const element = infoImageListInit[index]
-        element.src = element.url
-        this.infoImageList.push(element)
+      if (this.formCompany.otherInfo) {
+        let infoImageListInit = JSON.parse(this.formCompany.otherInfo)
+        this.$refs.upLoads.uploadImgList = infoImageListInit
+        // 预览状态
+        this.infoImageList = []
+        for (let index = 0; index < infoImageListInit.length; index++) {
+          const element = infoImageListInit[index]
+          element.src = element.url
+          this.infoImageList.push(element)
+        }
+        setTimeout(() => {
+          this.openSwipeLogo = prepareOpenSwipe(this.imageLogo)
+          this.openSwipeInfo = prepareOpenSwipe(this.infoImageList)
+        }, 1000)
       }
     },
     getCompanyInfo () {
@@ -222,10 +228,6 @@ export default {
         vm.formCompanyInit = Object.assign({}, data.data)
       }).then(() => {
         vm.initImage()
-        setTimeout(() => {
-          vm.openSwipeLogo = prepareOpenSwipe(vm.imageLogo)
-          vm.openSwipeInfo = prepareOpenSwipe(vm.infoImageList)
-        }, 100)
       })
     },
     // 公司
