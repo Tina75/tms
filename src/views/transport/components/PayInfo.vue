@@ -2,6 +2,7 @@
   <Table :columns="columns"
          :data="tableData"
          :loading="loading"
+         class="payment-info-table"
          width="350"></Table>
 </template>
 
@@ -114,6 +115,15 @@ export default {
         }
       })
     },
+    getPayInfo_change () {
+      return this.tableDataBack.map(item => {
+        return {
+          payType: item.payType,
+          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? item.fuelCardAmount * 100 : 0,
+          cashAmount: typeof item.cashAmount === 'number' ? item.cashAmount * 100 : 0
+        }
+      })
+    },
 
     validate () {
       let total = 0
@@ -129,3 +139,13 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+  .payment-info-table
+    .ivu-table-cell
+      overflow inherit
+
+    .ivu-input-number
+      border-style none
+
+</style>

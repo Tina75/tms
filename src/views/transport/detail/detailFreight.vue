@@ -1,6 +1,6 @@
 <template>
   <!-- 默认状态 -->
-  <div v-if="!inEditing" class="transport-detail">
+  <div v-if="inEditing === 'no'" class="transport-detail">
     <!-- 运单号及状态 -->
     <section :class="themeBarColor(status)" class="detail-header">
       <ul class="detail-header-list">
@@ -151,13 +151,16 @@
           </div>
         </section>
       </TabPane>
+      <TabPane :label="changelabel"  :disabled="changeCount == 0" name="change">
+        <change ref="change" :pickup-id="this.id" :cnt="changeCount" :bill-type="3"/>
+      </TabPane>
       <TabPane :label="expLabel" :disabled="exceptionCount == 0" name="exception">
         <Exception ref="exception" :pickup-id="this.id" :cnt="exceptionCount" :bill-type="3"/>
       </TabPane>
     </Tabs>
   </div>
 
-  <!-- 编辑状态 -->
+  <!-- 编辑和改单状态 -->
   <div v-else class="transport-detail">
     <!-- 运单号及状态 -->
     <section :class="themeBarColor(status)" class="detail-header">
@@ -189,7 +192,7 @@
                                 class="detail-info-input" />
           </i-col>
           <i-col span="10" offset="1">
-            <span class="detail-field-title">承运商：</span>
+            <span :class="{'detail-field-required':inEditing==='change'}" class="detail-field-title">承运商：</span>
             <SelectInput ref="carrierInput" v-model="info.carrierName"
                          class="detail-info-input"
                          mode="carrier"
@@ -249,8 +252,8 @@
         <div class="detail-part-title">
           <span>货物明细</span>
         </div>
-        <Button class="detail-field-button" type="primary"
-                @click="addOrder('freight')">添加订单</Button>
+        <!--<Button class="detail-field-button" type="primary"-->
+        <!--@click="addOrder('freight')">添加订单</Button>-->
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
@@ -269,39 +272,51 @@
           <Row class="detail-field-group detail-form-label">
             <i-col span="6">
               <FormItem label="运输费：" prop="freightFee">
-                <TagNumberInput v-model="payment.freightFee" class="detail-payment-input-send"></TagNumberInput>
+                <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+                  <TagNumberInput v-model="payment.freightFee" :disabled="feeStatusTip? true: false"  class="detail-payment-input-send"></TagNumberInput>
+                </Tooltip>
                 <span class="unit-yuan">元</span>
                 <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
               </FormItem>
             </i-col>
             <i-col span="6">
               <FormItem label="装货费：" prop="loadFee">
-                <TagNumberInput v-model="payment.loadFee" class="detail-payment-input-send"></TagNumberInput>
+                <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+                  <TagNumberInput v-model="payment.loadFee" :disabled="feeStatusTip? true: false" class="detail-payment-input-send"></TagNumberInput>
+                </Tooltip>
                 <span class="unit-yuan">元</span>
               </FormItem>
             </i-col>
             <i-col span="6">
               <FormItem label="卸货费：" prop="unloadFee">
-                <TagNumberInput v-model="payment.unloadFee" class="detail-payment-input-send"></TagNumberInput>
+                <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+                  <TagNumberInput v-model="payment.unloadFee" :disabled="feeStatusTip? true: false" class="detail-payment-input-send"></TagNumberInput>
+                </Tooltip>
                 <span class="unit-yuan">元</span>
               </FormItem>
             </i-col>
             <i-col span="6">
               <FormItem label="路桥费：" prop="tollFee">
-                <TagNumberInput v-model="payment.tollFee" class="detail-payment-input-send">
-                </TagNumberInput>
+                <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+                  <TagNumberInput v-model="payment.tollFee" :disabled="feeStatusTip? true: false" class="detail-payment-input-send">
+                  </TagNumberInput>
+                </Tooltip>
                 <span class="unit-yuan">元</span>
               </FormItem>
             </i-col>
             <i-col span="6">
               <FormItem label="保险费：" prop="insuranceFee">
-                <TagNumberInput v-model="payment.insuranceFee" class="detail-payment-input-send"></TagNumberInput>
+                <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+                  <TagNumberInput v-model="payment.insuranceFee" :disabled="feeStatusTip? true: false" class="detail-payment-input-send"></TagNumberInput>
+                </Tooltip>
                 <span class="unit-yuan">元</span>
               </FormItem>
             </i-col>
             <i-col span="6">
               <FormItem label="其他：" prop="otherFee">
-                <TagNumberInput v-model="payment.otherFee" class="detail-payment-input-send"></TagNumberInput>
+                <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+                  <TagNumberInput v-model="payment.otherFee" :disabled="feeStatusTip? true: false" class="detail-payment-input-send"></TagNumberInput>
+                </Tooltip>
                 <span class="unit-yuan">元</span>
               </FormItem>
             </i-col>
@@ -318,8 +333,8 @@
             <span class="detail-field-title-sm">结算方式：</span>
             <div class="detail-payment-way">
               <RadioGroup v-model="settlementType">
-                <Radio label="1">按单结</Radio>
-                <Radio label="2">月结</Radio>
+                <Radio :disabled="feeStatus === 0 ? false :true" label="1">按单结</Radio>
+                <Radio :disabled="feeStatus === 0 ? false :true" label="2">月结</Radio>
               </RadioGroup>
               <PayInfo v-if="settlementType === '1'"
                        ref="$payInfo"
@@ -367,11 +382,12 @@ import TMSUrl from '@/libs/constant/url'
 import _ from 'lodash'
 
 import Exception from './exception.vue'
+import change from './change.vue'
 
 export default {
   name: 'detailFeright',
   metaInfo: { title: '运单详情' },
-  components: { TagNumberInput, MoneyInput, SelectInput, SelectInputForCity, PayInfo, Exception },
+  components: { TagNumberInput, MoneyInput, SelectInput, SelectInputForCity, PayInfo, Exception, change },
   mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
 
   data () {
@@ -441,9 +457,9 @@ export default {
       // 支付方式
       settlementType: '',
       settlementPayInfo: [
-        { payType: 1, fuelCardAmount: '', cashAmount: '' },
-        { payType: 2, fuelCardAmount: '', cashAmount: '' },
-        { payType: 3, fuelCardAmount: '', cashAmount: '' }
+        { payType: 1, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false },
+        { payType: 2, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false },
+        { payType: 3, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false }
       ],
 
       // 所有按钮组
@@ -456,7 +472,8 @@ export default {
             func: () => {
               this.billDelete()
             }
-          }, {
+          },
+          {
             name: '派车',
             code: 120101,
             func: () => {
@@ -466,7 +483,7 @@ export default {
             name: '编辑',
             code: 120107,
             func: () => {
-              this.inEditing = true
+              this.inEditing = 'edit'
             }
           }]
         },
@@ -494,6 +511,14 @@ export default {
             func: () => {
               this.updateExcept({ id: this.id, type: 3 })
             }
+          },
+          {
+            name: '改单',
+            code: 120210,
+            func: () => {
+              this.inEditing = 'change'
+              this.changeState({ id: this.id, type: 3 })
+            }
           }]
         },
         {
@@ -503,6 +528,13 @@ export default {
             code: 120210,
             func: () => {
               this.updateExcept({ id: this.id, type: 3 })
+            }
+          }, {
+            name: '改单',
+            code: 120210,
+            func: () => {
+              this.inEditing = 'change'
+              this.changeState({ id: this.id, type: 3 })
             }
           }]
         }
@@ -615,10 +647,19 @@ export default {
             return this.tableDataRender(h, p.row.remark2)
           }
         }
-      ]
+      ],
+      // 改单运费能否修改
+      feeStatus: 0 // 0 可以修改运费 10 已对账 20 已核销 30 存在异常记录且修改了运费未处理 2 部分修改运费
     }
   },
-
+  computed: {
+    feeStatusTip () {
+      if (this.feeStatus === 10) return '此单已对账，不允许修改'
+      else if (this.feeStatus === 20) return '此单已核销，不允许修改'
+      else if (this.feeStatus === 30) return '存在异常未处理，不能修改运单'
+      else return ''
+    }
+  },
   methods: {
     // 将数据返回的标识映射为文字
     statusFilter (status) {
@@ -670,8 +711,54 @@ export default {
         if (this.exceptionCount) {
           this.$refs['exception'] && this.$refs['exception'].initData()
         }
+        // 改单个数
+        this.changeCount = data.modifyCnt || 0
+        if (this.changeCount) {
+          this.$refs['change'] && this.$refs['change'].initData()
+        }
         this.setBtnsWithStatus()
         this.loading = false
+      }).catch(err => console.error(err))
+    },
+    // 编辑
+    edit () {
+      Server({
+        url: '/waybill/update',
+        method: 'post',
+        data: {
+          waybill: {
+            waybillId: this.id,
+            ...this.info,
+            ...this.formatMoney(),
+            settlementType: this.settlementType,
+            settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
+          },
+          cargoList: _.uniq(this.detail.map(item => item.orderId))
+        }
+      }).then(res => {
+        this.$Message.success('保存成功')
+        this.cancelEdit()
+      }).catch(err => console.error(err))
+    },
+    // 改单
+    changeBill () {
+      console.log(this.formatMoney())
+      Server({
+        url: '/waybill/modify',
+        method: 'post',
+        data: {
+          waybill: {
+            waybillId: this.id,
+            ...this.info,
+            ...this.formatMoney(),
+            settlementType: this.settlementType,
+            settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo_change() : void 0
+          },
+          cargoList: _.uniq(this.detail.map(item => item.orderId))
+        }
+      }).then(res => {
+        this.$Message.success(res.data.msg)
+        this.cancelEdit()
       }).catch(err => console.error(err))
     },
 
@@ -680,23 +767,13 @@ export default {
       if (!this.validate()) return
       this.$refs.payment.validate((valid) => {
         if (valid) {
-          Server({
-            url: '/waybill/update',
-            method: 'post',
-            data: {
-              waybill: {
-                waybillId: this.id,
-                ...this.info,
-                ...this.formatMoney(),
-                settlementType: this.settlementType,
-                settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
-              },
-              cargoList: _.uniq(this.detail.map(item => item.orderId))
-            }
-          }).then(res => {
-            this.$Message.success('保存成功')
-            this.cancelEdit()
-          }).catch(err => console.error(err))
+          if (this.inEditing === 'edit') {
+            this.edit()
+          } else if (this.inEditing === 'change') {
+            this.changeBill()
+          } else {
+            return false
+          }
         }
       })
     },
@@ -854,6 +931,53 @@ export default {
           break
       }
       return statusClass
+    },
+    // 对应运费改单状态
+    changeState (data) {
+      Server({
+        url: '/waybill/check/update/fee',
+        method: 'post',
+        data: {
+          billId: data.id,
+          billType: data.type // 单据类型 1 提货单 2 外转单 3 运单
+        }
+      }).then(res => {
+        let data = res.data.data
+        this.feeStatus = data.status
+        if (this.feeStatus === 2) { //  部分修改运费
+          let statusDetail = data.statusDetail
+          this.settlementPayInfo.map(item => {
+            if (item.type === 1 && statusDetail.prepaidCash === 1) {
+              item.isCashDisabled = true
+            }
+            if (item.type === 1 && statusDetail.prepaidFuel === 1) {
+              item.isCardDisabled = true
+            }
+            if (item.type === 2 && statusDetail.arrivePaidCash === 1) {
+              item.isCashDisabled = true
+            }
+            if (item.type === 2 && statusDetail.arrivePaidFuel === 1) {
+              item.isCardDisabled = true
+            }
+            if (item.type === 3 && statusDetail.receiptPaidCash === 1) {
+              item.isCashDisabled = true
+            }
+            if (item.type === 3 && statusDetail.receiptPaidFule === 1) {
+              item.isCardDisabled = true
+            }
+          })
+        }
+        if (this.feeStatus === 10 || this.feeStatus === 20 || this.feeStatus === 30) {
+          this.settlementPayInfo.map(item => {
+            item.isCashDisabled = true
+            item.isCardDisabled = true
+            item.isCashDisabled = true
+            item.isCardDisabled = true
+            item.isCashDisabled = true
+            item.isCardDisabled = true
+          })
+        }
+      }).catch(err => console.error(err))
     }
   }
 }
