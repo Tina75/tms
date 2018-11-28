@@ -536,7 +536,7 @@ export default {
             name: '编辑',
             code: 120107,
             func: () => {
-              this.inEditing = true
+              this.inEditing = 'edit'
             }
           }, {
             name: '发运',
@@ -713,13 +713,20 @@ export default {
       else return ''
     },
     changeParams () {
+      let settlementPayInfo = this.settlementPayInfo.map(item => {
+        return {
+          payType: item.payType,
+          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? item.fuelCardAmount * 100 : 0,
+          cashAmount: typeof item.cashAmount === 'number' ? item.cashAmount * 100 : 0
+        }
+      })
       return {
         waybill: {
           waybillId: this.id,
           ...this.info,
           ...this.formatMoney(),
           settlementType: this.settlementType,
-          settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
+          settlementPayInfo: this.settlementType === '1' ? settlementPayInfo : void 0
         },
         cargoList: _.uniq(this.detail.map(item => item.orderId))
       }
@@ -815,14 +822,26 @@ export default {
     },
     // 改单
     changeBill () {
-      if (JSON.stringify(_.cloneDeep(this.changeParams)) === this.changeStr) {
+      let data = {
+        waybill: {
+          waybillId: this.id,
+          ...this.info,
+          ...this.formatMoney(),
+          settlementType: this.settlementType,
+          settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo_change() : void 0
+        },
+        cargoList: _.uniq(this.detail.map(item => item.orderId))
+      }
+      console.log(JSON.stringify(data))
+      console.log(this.changeStr)
+      if (JSON.stringify(data) === this.changeStr) {
         this.$Message.error('您并未做修改')
         return
       }
       Server({
         url: '/waybill/modify',
         method: 'post',
-        data: this.changeParams
+        data: data
       }).then(res => {
         this.$Message.success(res.data.msg)
         this.cancelEdit()
@@ -831,13 +850,15 @@ export default {
 
     // 保存编辑
     save () {
-      if (!this.validate()) return
-      this.$refs.payment.validate((valid) => {
+      const _this = this
+      if (!_this.validate()) return
+      _this.$refs.payment.validate((valid) => {
         if (valid) {
-          if (this.inEditing === 'edit') {
-            this.edit()
-          } else if (this.inEditing === 'change') {
-            this.changeBill()
+          console.log(_this.inEditing)
+          if (_this.inEditing === 'edit') {
+            _this.edit()
+          } else if (_this.inEditing === 'change') {
+            _this.changeBill()
           } else {
             return false
           }

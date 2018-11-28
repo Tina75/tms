@@ -176,7 +176,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      let height = this.DocumentHeight - this.$refs.driversList.$el.getBoundingClientRect().top + this.$parent.$parent.$el.getBoundingClientRect().top
+      let height = this.DocumentHeight - 249 + this.$parent.$parent.$el.getBoundingClientRect().top
       this.styles = {
         height: (height) + 'px'
       }

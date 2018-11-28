@@ -2,7 +2,7 @@
   <div>
     <Modal v-model="visiable" :mask-closable="false" transfer width="570" @on-visible-change="close">
       <p slot="header" class="ModalTitle">
-        {{title}}
+        {{ title }}
       </p>
       <Row>
         <Col :span="18">
@@ -20,12 +20,14 @@
         </div>
       </div>
       <div v-show="qrcodeShow" class="weixinShareDiv">
-        <div id="qrcodeDom" ref="qrcode"></div>
+        <div id="qrcodeDom" ref="qrcode">
+          <img class="imagLogo" src="https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/841d2559-62ec-4f40-862c-cd10f3a1faa4/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_2018111316525120181113165302.jpg"/>
+        </div>
         <p>打开微信扫一扫</p>
         <p>打开网页后点击右上角分享按钮</p>
       </div>
       <div slot="footer">
-        <Button type="primary" @click="save">查看分享</Button>
+        <Button type="primary" @click="viewShare">查看分享</Button>
         <Button type="default" @click="close">关闭</Button>
       </div>
     </Modal>
@@ -44,20 +46,22 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
-      shareUrl: 'https://yzg.tms5566.com',
+      shareUrl: '',
       clipboard: null,
       qrcodeInit: null,
       qrcodeShow: false,
       isQrcodeShow: false,
-      urlPath: 'https://yzg.tms5566.com/'
+      urlPath: ''
     }
   },
   mounted () {
+    this.shareUrl = window.location.origin + '/company-pc.html?shareOutNo=' + this.shareOutNo
+    this.urlPath = window.location.origin
     this.clipboard = new Clipboard('.copyBtn')
   },
   methods: {
-    save () {
-      window.open('http://localhost:8080/#/company')
+    viewShare () {
+      window.open(this.shareUrl)
       this.close()
     },
     copyBtn () {
@@ -76,9 +80,7 @@ export default {
       this.qrcodeInit = new QRCode('qrcodeDom', {
         width: 125, // 设置宽度
         height: 125, // 设置高度
-        text: this.urlPath,
-        src: 'http://pic1.cxtuku.com/00/07/42/b03695caf529.jpg',
-        background: 'red'
+        text: window.location.origin + '/company-phone.html?shareOutNo=' + this.shareOutNo
       })
       this.isQrcodeShow = true
     },
@@ -121,6 +123,9 @@ export default {
   #qrcodeDom
     margin-left calc(50% - 62px)
     margin-bottom 10px
+    .imagLogo
+      width 30px
+      height 30px
   p
     color #333333
     font-size 14px
