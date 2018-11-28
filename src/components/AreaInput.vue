@@ -59,7 +59,8 @@ export default {
   data () {
     return {
       address: [],
-      timer: ''
+      timer: '',
+      selectItem: null
     }
   },
   computed: {
@@ -125,11 +126,16 @@ export default {
     },
     inputHandle (value, type) {
       this.address = []
+      this.$emit('input', value)
+      if (this.selectItem && this.selectItem.value === value) {
+        return
+      }
       if (value) {
         this.search(value)
       }
-      this.$emit('input', value)
-      if (type !== 'on-select') {
+
+      if (this.selectItem && this.selectItem.value !== value) {
+        this.selectItem = null
         this.selectChange(null, { lat: '', lng: '' })
       }
     },
@@ -138,6 +144,7 @@ export default {
       const lng = item.lng
       const type = item.lng && item.lat ? 1 : ''
       // 经纬度改变
+      this.selectItem = item
       this.$emit('latlongt-change', { lat, lng, type })
     }
   }

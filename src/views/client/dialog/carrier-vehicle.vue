@@ -201,15 +201,15 @@ export default {
           { message: '小于等于六位整数,不能有小数', pattern: /^[0-9]{0,6}?$/ }
         ],
         repairMoney: [
-          { required: true, message: '维修费用不能为空', trigger: 'blur' },
+          { required: true, message: '维修费用不能为空' },
           { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ],
         payMoney: [
-          { required: true, message: '已支付费用不能为空', trigger: 'blur' },
+          { required: true, message: '已支付费用不能为空' },
           { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ],
         waitPayMoney: [
-          { required: true, message: '未支付费用不能为空', trigger: 'blur' },
+          { required: true, message: '未支付费用不能为空' },
           { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ]
       }

@@ -296,6 +296,14 @@ export default {
       let pickUpIds = this.tableSelection.map(item => item.pickUpId)
       this.getPickupOrderLocation(pickUpIds)
         .then(res => {
+          if (res.limitTip) {
+            this.$Toast.warning({
+              title: '提示',
+              showIcon: false,
+              content: res.limitTip
+            })
+            return
+          }
           let cars
           if (pickUpIds.length > 1) {
             if (!res.list.length) {
@@ -318,6 +326,15 @@ export default {
             },
             methods: {}
           })
+        }).catch(err => {
+          console.error(err)
+          if (err.limitTip) {
+            this.$Toast.warning({
+              title: '提示',
+              showIcon: false,
+              content: err.limitTip
+            })
+          }
         })
     },
 

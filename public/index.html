@@ -21,22 +21,22 @@
       'ga')
       ga('create', 'UA-128241354-1', 'auto')
     </script>
-    <!--&lt;!&ndash;[if lte IE 9]>-->
-    <!--<script>-->
-      <!--ga('send', 'event', 'userInfo', 'incompatible', navigator.userAgent)-->
-      <!--setTimeout(function () {-->
-        <!--location.href = 'https://www.tms5566.com/upgrade.html'-->
-      <!--}, 20)-->
-    <!--</script>-->
-    <!--<![endif]&ndash;&gt;-->
+    <!--[if lte IE 9]>
     <script>
+      ga('send', 'event', 'userInfo', 'incompatible', navigator.userAgent)
+      setTimeout(function () {
+        location.href = 'https://www.tms5566.com/upgrade.html'
+      }, 20)
+    </script>
+    <![endif]-->
+    <!--<script>
       if (navigator.appVersion.match(/MSIE [0-9]+/)) {
         ga('send', 'event', 'userInfo', 'incompatible', navigator.userAgent)
         setTimeout(function () {
           location.href = 'https://www.tms5566.com/upgrade.html'
         }, 20)
       }
-    </script>
+    </script>-->
   </head>
   <body>
     <div id="app"></div>

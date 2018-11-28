@@ -2,6 +2,7 @@
   <Table :columns="columns"
          :data="tableData"
          :loading="loading"
+         class="payment-info-table"
          width="350"></Table>
 </template>
 
@@ -159,10 +160,11 @@ export default {
 
     validate () {
       let total = 0
+      console.log(this.tableDataBack)
       this.tableDataBack.forEach(item => {
         total = total + Number(item.cashAmount) + Number(item.fuelCardAmount)
       })
-      if (total !== Number(this.total) && total !== 0) {
+      if (total !== Number(this.total)) {
         this.$Message.error('结算总额应与费用合计相等')
         return false
       }
@@ -171,3 +173,10 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+  .payment-info-table
+    .ivu-table-cell
+      overflow inherit
+
+</style>

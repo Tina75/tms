@@ -50,11 +50,6 @@
         "powerCode":120100
       },
       {
-        "name":"外转管理",
-        "path":"/transport/outerOrder",
-        "powerCode":120300
-      },
-      {
         "name":"异常管理",
         "path":"/transport/abnormalOrder",
         "powerCode":120400
@@ -159,6 +154,11 @@
       {
         "name":"角色管理",
         "path":"/company/role-manage",
+        "powerCode":140100
+      },
+      {
+        "name":"公司设置",
+        "path":"/company/setting",
         "powerCode":140100
       }
     ]
