@@ -3,7 +3,7 @@
     <FontIcon type="gengduo" class="ios-list-icon" size="20" color="#00A4BD"></FontIcon>
     <div slot="title"><span>选择要显示的字段</span></div>
     <div slot="content">
-      <div class="slider-icon__checkbox-list">
+      <div id="slider-icon__checkbox-list" class="slider-icon__checkbox-list">
         <CheckboxGroup v-model="checkList">
           <draggable v-model="sortArray" :options="options" :move="checkMove" transfer class="slider-icon__draggable-column">
             <Checkbox v-for="item in sortArray" :disabled="item.fixed" :data-key="item.key" :key="item.key" :label="item.title" :class="itemClass(item)">
@@ -78,6 +78,9 @@ export default {
   mounted () {
     // 重置sort,默认从0开始
     this.saveList(this.list)
+    if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
+      document.getElementById('slider-icon__checkbox-list').style.maxHeight = (document.body.clientHeight - 100) + 'px'
+    }
   },
   methods: {
     closePoptip () {
