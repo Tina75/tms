@@ -34,7 +34,7 @@
               <span>{{ encrypt.message }}</span>
             </p>
             <div slot="content" class="share-tooltip">
-              {{ disencrypt.message }}
+              {{ encrypt.message }}
             </div>
           </Tooltip>
           <p class="share-url password">
@@ -121,6 +121,7 @@ export default {
     },
     handleTabChange (val) {
       this.isDisabled = false
+      console.log(this.encrypt.message)
     },
     onCopy (e) {
       console.log('You just copied: ' + e.text)
@@ -142,13 +143,14 @@ export default {
           shareType: type // 分享形式：1有查看密码；0无查看密码
         }
       }).then((res) => {
-        console.log(res.data.data)
         if (type) {
           this.encrypt.password = res.data.data.password
-          this.encrypt.message = this.encrypt.message + '?sharecode=' + res.data.data.shareOutNo + '&encrypt=true'
+          this.encrypt.sharecode = res.data.data.shareOutNo
+          this.encrypt.message = this.encrypt.message + '?sharecode=' + this.encrypt.sharecode + '&encrypt=true'
           this.encrypt.messageAndPwd = this.encrypt.message + '    密码：' + this.encrypt.password
         } else {
-          this.disencrypt.message = this.disencrypt.message + '?sharecode=' + res.data.data.shareOutNo
+          this.disencrypt.sharecode = res.data.data.shareOutNo
+          this.disencrypt.message = this.disencrypt.message + '?sharecode=' + this.disencrypt.sharecode
         }
       })
     }

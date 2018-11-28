@@ -1,6 +1,6 @@
 <template>
   <Form ref="sendInfo" :label-width="82" :model="info" :rules="rules" class="transport-detail" label-position="left">
-    <div class="sub-title">承运商：</div>
+    <div class="sub-title">派车：</div>
     <div class="part" style="padding-bottom: 10px;">
       <Row class="detail-field-group">
         <i-col span="8">
