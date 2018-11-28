@@ -944,7 +944,8 @@ export default {
             this.$Toast.warning({
               title: '提示',
               showIcon: false,
-              content: res.limitTip
+              content: res.limitTip,
+              okText: '我知道了'
             })
             return
           }
@@ -964,19 +965,11 @@ export default {
           })
         }).catch(err => {
           console.error(err)
-          if (err.limitTip) {
-            this.$Toast.warning({
-              title: '提示',
-              showIcon: false,
-              content: err.limitTip
-            })
-          }
         })
     },
     // 删除
     billDelete () {
       const self = this
-      // self.$Toast.info()
       self.openDialog({
         name: 'transport/dialog/confirm',
         data: {
