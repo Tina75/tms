@@ -126,13 +126,14 @@ export default {
     },
     inputHandle (value, type) {
       this.address = []
+      this.$emit('input', value)
       if (this.selectItem && this.selectItem.value === value) {
         return
       }
       if (value) {
         this.search(value)
       }
-      this.$emit('input', value)
+
       if (this.selectItem && this.selectItem.value !== value) {
         this.selectItem = null
         this.selectChange(null, { lat: '', lng: '' })
