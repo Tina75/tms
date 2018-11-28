@@ -79,7 +79,7 @@
         </Col>
       </Row>
       <Row type="flex" justify="start" class="small-height bg border-top-none">
-        <Col span="6" offset="18" style="text-align: right">主营业务收入合计<span class="money">{{res.orderTotalFee}}</span></Col>
+        <Col span="24"  style="text-align: right">主营业务收入合计<span class="money">{{res.orderTotalFee}}</span></Col>
       </Row>
       <Row type="flex" justify="start"  class="big-height border-top-none">
         <Col span="6">支出</Col>
@@ -123,10 +123,10 @@
         </Col>
       </Row>
       <Row type="flex" justify="start" class="small-height bg border-top-none">
-        <Col span="6" offset="18" style="text-align: right">主营业务支出合计<span class="money">{{res.carrierTotalFee}}</span></Col>
+        <Col span="24"  style="text-align: right">主营业务支出合计<span class="money">{{res.carrierTotalFee}}</span></Col>
       </Row>
       <Row type="flex" justify="start" class="small-height bg border-top-none">
-        <Col span="6" offset="18" style="text-align: right">利润<span class="money">{{res.profits}}</span></Col>
+        <Col span="24"  style="text-align: right">利润<span class="money">{{res.profits}}</span></Col>
       </Row>
     </div>
   </div>
@@ -343,7 +343,7 @@ export default {
       color #00A4BD
       margin-left 5%
       text-align right
-      padding-right 46%
+      padding-right 11.5%
     .border-bottom-none
       border-bottom none!important
     .border-top-none
