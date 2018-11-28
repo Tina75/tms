@@ -58,7 +58,7 @@
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="对接业务员:" prop="salesmanId">
-        <Select v-model="orderForm.salesmanId" transfer clearable>
+        <Select v-model="orderForm.salesmanId" transfer clearable placeholder="全部">
           <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.id">{{opt.name}}</Option>
         </Select>
       </FormItem>
@@ -924,7 +924,6 @@ export default {
         lng: this.orderForm.consigneeAddressLongitude,
         lat: this.orderForm.consigneeAddressLatitude
       }
-      console.log(p1, p2)
       if (p1.lng && p1.lat && p2.lng && p2.lat) {
         this.cpmtDistance(p1, p2)
       }
@@ -1103,6 +1102,7 @@ export default {
             const errMsg = form.pickup === 1 ? '选择的业务员，没有提货调度或送货调度权限，不可上门提货'
               : form.pickup === 2 ? '选择的业务员，没有送货调度权限，不可直送客户' : '权限错误'
             this.$Message.error(errMsg)
+            this.$refs['pickupSelector'].$refs.reference.focus()
             return reject(errMsg)
           }
           resolve(form)

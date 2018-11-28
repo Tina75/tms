@@ -100,19 +100,17 @@
 </template>
 
 <script>
+import _ from 'lodash'
+import { mapGetters, mapActions } from 'vuex'
 import BasePage from '@/basic/BasePage'
 import PageTable from '@/components/page-table/'
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
-// import AreaSelect from '@/components/AreaSelect'
 import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput.vue'
 import OrderPrint from './OrderPrint'
 import FontIcon from '@/components/FontIcon'
 import IconLabel from '@/components/IconLabel'
-import _ from 'lodash'
-import { mapGetters, mapActions } from 'vuex'
-// import City from '@/libs/js/city'
 import SearchMixin from '../searchMixin'
 // import jsCookie from 'js-cookie'
 export default {
@@ -120,7 +118,6 @@ export default {
 
   components: {
     PageTable,
-    // AreaSelect,
     CitySelect,
     SelectInput,
     OrderPrint,
@@ -560,7 +557,7 @@ export default {
         },
         {
           title: '对接业务员',
-          key: 'salesmanName',
+          key: 'salesmanId',
           minWidth: 180,
           render: (h, params) => {
             return h('span', params.row.salesmanName || '-')
@@ -784,7 +781,7 @@ export default {
           key: 'isInvoice',
           minWidth: 180,
           render: (h, params) => {
-            return h('span', params.row.isInvoice === 0 ? '否' : '是')
+            return h('span', params.row.isInvoice === 1 ? '是' : '否')
           }
         },
         {
