@@ -81,14 +81,14 @@
       <Row type="flex" justify="start" class="small-height bg border-top-none">
         <Col span="6" offset="18" style="text-align: right">主营业务收入合计<span class="money">{{res.orderTotalFee}}</span></Col>
       </Row>
-      <Row type="flex" justify="start" class="big-height" style="border-top: 0">
+      <Row type="flex" justify="start"  class="big-height border-top-none">
         <Col span="6">支出</Col>
         <Col span="6">
-        <Row class="middle-height border-top-none border-right-none">
+        <Row class="middle-height border-top-none border-right-none border-bottom-none">
           <Col>承运商运费支出</Col>
         </Row>
-        <Row class="small-height border-top-none border-right-none border-bottom-none">
-          <Col>外转运费支出</Col>
+        <Row class="small-height border-right-none border-bottom-none">
+          <Col>开票税费</Col>
         </Row>
         </Col>
         <Col span="12" >
@@ -112,13 +112,13 @@
           <Col span="12">路桥费</Col>
           <Col span="12" class="num">{{res.carrierTollFee}}</Col>
         </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none border-bottom-none">
           <Col span="12">其他费用</Col>
           <Col span="12" class="num">{{res.carrierOtherFee}}</Col>
         </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-bottom-none border-right-none">
-          <Col span="12">外转费</Col>
-          <Col span="12" class="num">{{res.transbillTransFee}}</Col>
+        <Row type="flex" justify="start" class="small-height  border-bottom-none border-right-none">
+          <Col span="12">开票税费</Col>
+          <Col span="12" class="num">{{res.orderInvoiceFee}}</Col>
         </Row>
         </Col>
       </Row>
@@ -173,10 +173,11 @@ export default {
         carrierOtherFee: '-',
         carrierInsuranceFee: '-',
         carrierTotalFee: '-',
-        transbillTransFee: '-',
+        // transbillTransFee: '-',
         profits: '-',
         carrierTollFee: '-',
-        orderCashBack: '-'
+        orderCashBack: '-',
+        orderInvoiceFee: '-'
       },
       options: {
         disabledDate (date) {

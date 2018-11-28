@@ -160,11 +160,11 @@
         <Row>
           <Col span="5">
           <up-load ref="upload1"></up-load>
-          <p :upload-img="validate.travelPhoto" class="uploadLabel">行驶证</p>
+          <p class="uploadLabel">行驶证</p>
           </Col>
           <Col span="5">
           <up-load ref="upload2"></up-load>
-          <p :upload-img="validate.drivePhoto" class="uploadLabel">驾驶证</p>
+          <p class="uploadLabel">驾驶证</p>
           </Col>
         </Row>
       </Form>

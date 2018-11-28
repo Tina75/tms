@@ -302,7 +302,7 @@ export default {
       }
       const _this = this
       this.openDialog({
-        name: 'company/edited-staff-dialog',
+        name: 'company/dialog/edited-staff-dialog',
         data: {
           title: this.visibaleMoadlTitle,
           formData: params.row

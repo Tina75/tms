@@ -5,18 +5,19 @@
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>{{name}}</span>
       </p>
-      <Form v-if="name === '送货调度'" ref="send" :model="send" :rules="sendRules" :label-width="60" inline label-position="left">
-        <FormItem label="始发地" prop="start">
+      <Form v-if="name === '送货调度'" ref="send" :model="send" :rules="sendRules" :label-width="92" inline label-position="left">
+        <FormItem label="始发地：" prop="start">
           <!-- <area-select v-model="send.start" :deep="true" style="width:180px"></area-select> -->
           <city-select v-model="send.start" style="width:180px"></city-select>
         </FormItem>
-        <FormItem label="目的地" prop="end" style="margin-left:27px;">
+        <FormItem label="目的地：" prop="end" style="margin-left:27px;">
           <!-- <area-select v-model="send.end" :deep="true" style="width:180px"></area-select> -->
           <city-select v-model="send.end" style="width:180px"></city-select>
         </FormItem>
+        <div class="sub-title">承运订单：</div>
       </Form>
-      <Form v-else ref="pick" :model="pick" :rules="pickRules" :label-width="70" inline label-position="left">
-        <FormItem label="承运商" prop="carrierName">
+      <Form v-else ref="pick" :model="pick" :rules="pickRules" :label-width="78" inline label-position="left">
+        <FormItem label="承运商：" prop="carrierName">
           <SelectInput
             v-model="pick.carrierName"
             :maxlength="20"
@@ -28,7 +29,7 @@
             @on-select="handleSelectCarrier">
           </SelectInput>
         </FormItem>
-        <FormItem label="车牌号" prop="carNo" style="margin-left:27px;">
+        <FormItem label="车牌号：" prop="carNo" style="margin-left:27px;">
           <SelectInput
             v-model="pick.carNo"
             :maxlength="20"
@@ -39,7 +40,7 @@
             style="width:180px">
           </SelectInput>
         </FormItem>
-        <FormItem label="司机" prop="driverName" style="margin-left:27px;">
+        <FormItem label="司机：" prop="driverName" style="margin-left:27px;">
           <SelectInput
             v-model="pick.driverName"
             :maxlength="15"
@@ -57,6 +58,14 @@
         <span>总体积：{{ volumeTotal }}</span>
         <span>总重量：{{ weightTotal }}</span>
       </div>
+      <div v-if="name === '送货调度'">
+        <div class="send_car">
+          <span style="margin-right: 24px;">直接派车</span>
+          <i-switch v-model="sendCar" size="small" />
+          <p v-if="!sendCar" class="send_car_tip">此处未派车可以在生成运单后，在运单详情里点【编辑】进行派车操作。</p>
+        </div>
+        <send-car v-if="sendCar" ref="sendCarComp" :order-list="id" :mileage="mileage"></send-car>
+      </div>
       <div slot="footer">
         <Button  type="primary"  @click="save">确定</Button>
         <Button  type="default"  @click="close">取消</Button>
@@ -71,16 +80,19 @@ import BaseDialog from '@/basic/BaseDialog'
 // import AreaSelect from '@/components/AreaSelect'
 import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput.vue'
+import SendCar from '@/views/transport/components/SendCar.vue'
 import { mapGetters, mapActions } from 'vuex'
 import City from '@/libs/js/city'
 import { CAR } from '@/views/client/client'
+import _ from 'lodash'
 export default {
   name: 'dispatch',
 
   components: {
     // AreaSelect,
     CitySelect,
-    SelectInput
+    SelectInput,
+    SendCar
   },
 
   mixins: [BaseDialog],
@@ -98,6 +110,7 @@ export default {
           { required: true, type: 'number', message: '请填写目的地', trigger: 'blur' }
         ]
       },
+      sendCar: false,
       pick: { carrierName: '', carNo: '', driverName: '' },
       pickRules: {
         carrierName: [
@@ -210,7 +223,8 @@ export default {
           minWidth: 100,
           tooltip: true
         }
-      ]
+      ],
+      mileage: null
     }
   },
   computed: {
@@ -245,7 +259,15 @@ export default {
     }
   },
   created () {
-
+    let orderList = _.cloneDeep(this.id)
+    orderList = orderList.filter((item) => {
+      return (item.consigneeAddressLatitude !== '' && item.consigneeAddressLongitude !== '' && item.consignerAddressLatitude !== '' && item.consignerAddressLongitude !== '')
+    })
+    console.log(orderList)
+    console.log(this.isAllEqual(orderList))
+    if (this.isAllEqual(orderList)) {
+      this.mileage = orderList[0].mileage / 1000
+    }
   },
   mounted: function () {
     // modify:20181023 by 宣飞 加上第一条数据的始发城市和目的城市
@@ -259,6 +281,19 @@ export default {
     ...mapActions([
       'getCarriers'
     ]),
+    // 判断勾选项始发地和目的地经纬度是否一样
+    isAllEqual (array) {
+      if (array.length > 0) {
+        return !array.some((item, index) => {
+          return (item.consigneeAddressLatitude !== array[0].consigneeAddressLatitude ||
+                  item.consigneeAddressLongitude !== array[0].consigneeAddressLongitude ||
+                  item.consignerAddressLatitude !== array[0].consignerAddressLatitude ||
+                  item.consignerAddressLongitude !== array[0].consignerAddressLongitude)
+        })
+      } else {
+        return false
+      }
+    },
     // 选择承运商dropdown的数据
     handleSelectCarrier (name, row) {
       console.log(name, row)
@@ -287,24 +322,35 @@ export default {
     },
     // 送货调度  创建运单
     doSendDispatch () {
-      this.$refs['send'].validate((valid) => {
-        console.log(valid)
-        console.log(this.send)
+      const z = this
+      z.$refs['send'].validate((valid) => {
         if (valid) {
+          // z.$nextTick(() => {
+          //   console.log(z.$refs.sendCarComp.validate())
+          // })
+          if (z.sendCar && !z.$refs.sendCarComp.validate()) return
           // 地址入参为最后一级区号
-          let sendCodes = {
-            start: this.send.start,
-            end: this.send.end
+          let data = {
+            start: z.send.start,
+            end: z.send.end,
+            orderIds: z.orderIds,
+            assignCar: z.sendCar ? 1 : 0
           }
-          const data = Object.assign(sendCodes, { orderIds: this.orderIds })
+          if (z.sendCar) {
+            let sendComp = z.$refs.sendCarComp
+            data = Object.assign(data, sendComp.formatMoney(), {
+              settlementType: sendComp.settlementType,
+              settlementPayInfo: sendComp.getSettlementPayInfo()
+            })
+          }
           Server({
             url: 'waybill/create',
             method: 'post',
             data: data
           }).then(() => {
-            this.ok()
-            this.$Message.success('创建运单成功')
-            this.close()
+            z.ok()
+            z.$Message.success('创建运单成功')
+            z.close()
           })
         }
       })
@@ -356,6 +402,23 @@ export default {
   font-weight 700
   color rgba(47,50,62,1)
   letter-spacing 1px
+.sub-title
+  font-size 14px
+  font-family 'PingFangSC-Medium'
+  font-weight 500
+  color rgba(51,51,51,1)
+  padding 17px 0 18px 0
+  border-top 1px dashed rgba(203,206,211,1)
+.send_car
+  font-size 14px
+  font-family 'PingFangSC-Medium'
+  font-weight 500
+  color rgba(51,51,51,1)
+  margin-top 29px
+  &_tip
+    font-size 12px
+    color #666
+    margin-top 7px
 .table-footer
   height 48px
   border 1px solid #dcdee2
@@ -376,5 +439,7 @@ export default {
     padding 22px 40px
   .ivu-form
     .ivu-form-item-label
-      padding-top 12px
+      font-size 14px
+      font-family 'PingFangSC-Regular'
+      color #777
 </style>

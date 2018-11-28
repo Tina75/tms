@@ -41,12 +41,13 @@ export default {
     ])
   },
 
-  created () {
-    // const columns = window.sessionStorage[this.tabType + '_COLUMNS']
-    // if (columns) this.extraColumns = JSON.parse(columns)
-  },
-
   mounted () {
+    if (this.$route.path === '/order-management/receipt') { // v1.6 回单动态新增承运商搜索
+      this.$set(this.keywords, 'carrierName', null)
+      this.$set(this.keywords, 'driverName', null)
+      this.$set(this.keywords, 'driverPhone', null)
+      this.$set(this.keywords, 'carNo', null)
+    }
   },
 
   methods: {
@@ -76,8 +77,20 @@ export default {
         key.recoveryTimeEnd = this.keywords.recoveryTimeEnd || null
         key.returnTimeStart = this.keywords.returnTimeStart || null
         key.returnTimeEnd = this.keywords.returnTimeEnd || null
+        key.carrierName = this.keywords.carrierName || null
+        key.driverName = this.keywords.driverName || null
+        key.driverPhone = this.keywords.driverPhone || null
+        key.carNo = this.keywords.carNo || null
         // 简单搜索模式下当前搜索框值为空是默认不是搜索状态
-        if (this.simpleSearch && ((this.selectStatus === 0 && !this.keywords.consignerName) || (this.selectStatus === 1 && !this.keywords.orderNo) || (this.selectStatus === 2 && !this.keywords.customerOrderNo))) {
+        if (this.simpleSearch && (
+          (this.selectStatus === 0 && !this.keywords.consignerName) ||
+          (this.selectStatus === 1 && !this.keywords.orderNo) ||
+          (this.selectStatus === 2 && !this.keywords.customerOrderNo) ||
+          (this.selectStatus === 3 && !this.keywords.carrierName) ||
+          (this.selectStatus === 4 && !this.keywords.driverName) ||
+          (this.selectStatus === 5 && !this.keywords.driverPhone) ||
+          (this.selectStatus === 6 && !this.keywords.carNo)
+        )) {
           this.isSearching = false
         } else {
           this.isSearching = true
@@ -116,6 +129,10 @@ export default {
         key.recoveryTimeEnd = null
         key.returnTimeStart = null
         key.returnTimeEnd = null
+        key.carrierName = null
+        key.driverName = null
+        key.driverPhone = null
+        key.carNo = null
         this.recoveryTimes = ['', '']
         this.returnTimes = ['', '']
       } else { // 判断运输管理需要使用tabContent组件

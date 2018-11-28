@@ -38,15 +38,9 @@
                 </div>
                 <div class="content">
                   <div v-if="item.ruleName.length<8" class="ruleName">{{item.ruleName}}</div>
-                  <Tooltip v-else :content="item.ruleName" max-width="200" class="ruleName" transfer
-                           placement="top-start" style="display: list-item">
-                    <div>{{item.ruleName.slice(0,8)}}...</div>
-                  </Tooltip>
+                  <div v-else class="ruleName">{{item.ruleName.slice(0,8)}}...</div>
                   <div v-if="item.partnerName.length<8" class="tips">{{item.partnerName}}</div>
-                  <Tooltip v-else :content="item.partnerName" max-width="200" class="tips" transfer
-                           placement="bottom-start" style="display: list-item">
-                    <div>{{item.partnerName.slice(0,8)}}...</div>
-                  </Tooltip>
+                  <div v-else class="tips">{{item.partnerName.slice(0,8)}}...</div>
                 </div>
                 <div class="operate">
                   <span style="margin-right: 12px;" @click.stop="editRule(item)">修改</span>
@@ -60,18 +54,21 @@
           <data-empty v-if="!ruleDetail.ruleId">请点击左侧{{sceneMap[active]}}设置计费规则明细～</data-empty>
           <div v-else class="rule-block">
             <div class="rule-basic">
-              <Form ref="ruleBasic" :model="ruleDetail" :rules="basicValidate" inline>
+              <Form ref="ruleBasic" :model="ruleDetail" :rules="basicValidate" class="ruleBasic" inline>
                 <span>按</span>
                 <FormItem prop="ruleType" style="width: 100px">
                   <Select v-model="ruleDetail.ruleType" transfer @on-change="ruleTypeChange">
                     <Option v-for="(value, key) in ruleTypeMap"
-                            v-if="((active === '1' || active ==='3') && (key ==='3' || key === '4')) || key ==='1' || key ==='2'"
                             :key="key" :value="key">{{value}}
                     </Option>
                   </Select>
                 </FormItem>
                 <span>计算</span>
               </Form>
+              <div class="title">
+                <div class="ruleName">{{ruleDetail.ruleName}}</div>
+                <div class="tips">{{ruleDetail.partnerName}}</div>
+              </div>
             </div>
             <div :style="{height:(height - 115 - 20)+'px'}" class="rules-list">
               <div v-for="(item, index) in ruleDetail.details" :key="index" class="rule-item">
@@ -330,6 +327,23 @@ export default {
         .rule-basic
           padding: 14px
           border-bottom: 1px solid #E4E7EC
+          overflow hidden
+          .ruleBasic
+            float left
+          .title
+            float right
+            /*flex 1*/
+            /*-ms-flex 1*/
+            font-size 12px
+            text-align right
+            .ruleName
+              margin-bottom 5px
+              color #333
+              font-weight bold
+            .tips
+              /*height 30px*/
+              /*line-height 1*/
+              color #999
           .ivu-form-item
             margin-bottom: 0
           span
