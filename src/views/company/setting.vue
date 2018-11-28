@@ -92,14 +92,14 @@
           <span v-if="!isEdit && infoImageList.length < 1" class="imageTips">82%的企业上传了公司照片，提高了客户的信任感</span>
         </FormItem>
         <FormItem class="imageFontItem">
-          <up-load
+          <image-title
             v-show="isEdit"
             ref="upLoads"
             :multiple="true"
             max-count="10"
             max-size="10"
             multiple-width="style='width:100%'">
-          </up-load>
+          </image-title>
           <div v-for="(img,index) in infoImageList" v-show="!isEdit" :key="img.key" class="infoImage">
             <div
               :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
@@ -126,6 +126,7 @@ import Server from '@/libs/js/server'
 import AreaInput from '@/components/AreaInput'
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/index.vue'
+import ImageTitle from '@/components/upLoad/ImageTitle.vue'
 import { CHECK_NAME_COMPANY, CHECK_NAME, CHECK_PHONE } from './validator'
 import prepareOpenSwipe from '@/components/swipe/index'
 export default {
@@ -134,7 +135,8 @@ export default {
     AreaInput,
     CitySelect,
     UpLoad,
-    prepareOpenSwipe
+    prepareOpenSwipe,
+    ImageTitle
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -238,7 +240,7 @@ export default {
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.formCompany.logoUrl = this.$refs.uploadLogo.uploadImg
-          this.formCompany.otherInfo = JSON.stringify(this.$refs.upLoads.uploadImgList)
+          this.formCompany.otherInfo = JSON.stringify(this.$refs.upLoads.getImageList())
           if (this.formCompany.address === this.formCompanyInit.address &&
               this.formCompany.contact === this.formCompanyInit.contact &&
               this.formCompany.contactPhone === this.formCompanyInit.contactPhone &&
