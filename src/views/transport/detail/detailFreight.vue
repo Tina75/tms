@@ -1006,6 +1006,10 @@ export default {
         this.$Message.warning('承运商未填写，不能发运')
         return
       }
+      if (self.detail.length <= 0) {
+        this.$Message.warning('此运单未加入订单，不能发运')
+        return
+      }
       self.openDialog({
         name: 'transport/dialog/confirm',
         data: {

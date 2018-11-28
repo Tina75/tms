@@ -127,25 +127,25 @@
         <div class="title" style="margin-top: 35px;">
           <span>承运商信息</span>
         </div>
-        <Row>
+        <Row v-for="(item, index) in detail.receiptOrder.carrierInfos" :key="index">
           <i-col span="7">
             <span>承运商：</span>
-            <span v-if="detail.carrierName">{{detail.carrierName}}</span>
+            <span v-if="item.carrierName">{{item.carrierName}}</span>
             <span v-else>-</span>
           </i-col>
           <i-col span="7">
             <span>司机姓名：</span>
-            <span v-if="detail.driverName">{{detail.driverName}}</span>
+            <span v-if="item.driverName">{{item.driverName}}</span>
             <span v-else>-</span>
           </i-col>
           <i-col span="6">
             <span>司机手机号：</span>
-            <span v-if="detail.driverPhone">{{detail.driverPhone}}</span>
+            <span v-if="item.driverPhone">{{item.driverPhone}}</span>
             <span v-else>-</span>
           </i-col>
           <i-col span="4">
             <span>车牌号：</span>
-            <span v-if="detail.carNo">{{detail.carNo}}</span>
+            <span v-if="item.carNo">{{item.carNo}}</span>
             <span v-else>-</span>
           </i-col>
         </Row>
