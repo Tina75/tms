@@ -21,7 +21,7 @@
       </div>
       <div v-show="qrcodeShow" class="weixinShareDiv">
         <div id="qrcodeDom" ref="qrcode">
-          <img :src="imagLogoSrc" class="imagLogo"/>
+          <img v-if="imagLogoSrc" :src="imagLogoSrc" class="imagLogo"/>
         </div>
         <p>打开微信扫一扫</p>
         <p>打开网页后点击右上角分享按钮</p>
