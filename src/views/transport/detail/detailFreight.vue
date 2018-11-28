@@ -41,17 +41,17 @@
               </i-col>
             </Row>
             <Row class="detail-field-group">
-              <i-col span="6">
-                <span class="detail-field-title">车牌号：</span>
-                <span>{{ info.carNo }}</span>
+              <i-col span="6" >
+                <span class="detail-field-title">司机：</span>
+                <span>{{ (info.driverName || '') + ' ' + (info.driverPhone || '') }}</span>
               </i-col>
               <i-col span="6" offset="1">
                 <span class="detail-field-title">车型：</span>
                 <span>{{ info.carType|carTypeFormatter }} {{ info.carLength|carLengthFormatter }}</span>
               </i-col>
               <i-col span="6" offset="1">
-                <span class="detail-field-title">司机：</span>
-                <span>{{ (info.driverName || '') + ' ' + (info.driverPhone || '') }}</span>
+                <span class="detail-field-title">车牌号：</span>
+                <span>{{ info.carNo }}</span>
               </i-col>
               <i-col span="4">
                 <span class="detail-field-title">代收货款：</span>
@@ -206,13 +206,14 @@
           </i-col>
         </Row>
         <Row class="detail-field-group">
-          <i-col span="6">
-            <span class="detail-field-title">车牌号：</span>
+          <i-col span="6" >
+            <span class="detail-field-title">司机：</span>
             <SelectInput :carrier-id="carrierId"
-                         v-model="info.carNo"
+                         v-model="info.driverName"
                          class="detail-info-input"
-                         mode="carNo"
-                         @on-select="autoComplete" />
+                         mode="driver"
+                         @on-select="autoComplete"
+                         @on-option-loaded="driverOptionLoaded" />
           </i-col>
           <i-col span="6" offset="1">
             <span class="detail-field-title">车型/车长：</span>
@@ -228,16 +229,15 @@
               <Option v-for="item in carLength" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
           </i-col>
-          <i-col span="4" offset="1">
-            <span class="detail-field-title">司机：</span>
+          <i-col span="5" offset="1" >
+            <span class="detail-field-title">车牌号：</span>
             <SelectInput :carrier-id="carrierId"
-                         v-model="info.driverName"
+                         v-model="info.carNo"
                          class="detail-info-input"
-                         mode="driver"
-                         @on-select="autoComplete"
-                         @on-option-loaded="driverOptionLoaded" />
+                         mode="carNo"
+                         @on-select="autoComplete" />
           </i-col>
-          <i-col span="5" offset="1">
+          <i-col span="4"  style="margin-left: 3%;width: 17.8%">
             <span class="detail-field-title">司机手机号：</span>
             <Input v-model="info.driverPhone"
                    :maxlength="11"
@@ -283,7 +283,7 @@
               </FormItem>
             </i-col>
             <i-col span="6">
-              <FormItem label="运输费：" prop="freightFee">
+              <FormItem :required="status==='在途' || status==='已到货'" label="运输费：" prop="freightFee">
                 <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
                   <TagNumberInput v-model="payment.freightFee" :disabled="feeStatusTip? true: false"  class="detail-payment-input-send"></TagNumberInput>
                 </Tooltip>
@@ -404,8 +404,20 @@ export default {
   mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
 
   data () {
+    let _this = this
     // 9位整数 2位小数
     const validateFee = (rule, value, callback) => {
+      if ((value && validator.fee(value)) || !value) {
+        callback()
+      } else {
+        callback(new Error('费用整数位最多输入9位,小数2位'))
+      }
+    }
+    // 验证运费
+    const validateFreightFee = (rule, value, callback) => {
+      if (value === '' && (_this.status === '在途' || '已到货')) {
+        callback(new Error('费用不能为空'))
+      }
       if ((value && validator.fee(value)) || !value) {
         callback()
       } else {
@@ -451,7 +463,7 @@ export default {
       rules: {
         // 运输费
         freightFee: [
-          { validator: validateFee }
+          { validator: validateFreightFee }
         ],
         // 装货费用
         loadFee: [
@@ -1113,6 +1125,9 @@ export default {
             item.isCardDisabled = true
           })
         }
+        this.$nextTick(() => {
+          console.log(this.settlementPayInfo)
+        })
       }).catch(err => console.error(err))
     }
   }

@@ -101,7 +101,7 @@ export default {
                   placeholder: 'bottom',
                   transfer: false
                 }
-              }, [h('span', {}, p.row.cashAmount || 0), h('div', {
+              }, [h('span', {}, p.row.fuelCardAmount || 0), h('div', {
                 slot: 'content',
                 style: {
                   whiteSpace: 'normal'

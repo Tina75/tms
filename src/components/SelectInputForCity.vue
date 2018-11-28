@@ -248,7 +248,6 @@ export default {
         }
         return opt.value === name
       })
-      console.log(item)
       this.currentValue = item.nameSeleced
       // this.nameSeleced = item.nameSeleced.split('  ')[1]
       this.currentValueCopy = item.nameSeleced
@@ -335,6 +334,9 @@ export default {
         (item.city ? item.city : '') + (item.city && item.province ? ',  ' : '') +
         (item.province ? item.province : '')
       } else {
+        if (item.province === item.city) {
+          item.province = ''
+        }
         return (item.province ? item.province : '') +
           (item.city ? ' ' + item.city : '') +
           (item.area ? ' ' + item.area : '')
