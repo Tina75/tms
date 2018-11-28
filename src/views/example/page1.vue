@@ -26,6 +26,9 @@
       <up-load ref="$upload" crop></up-load>
       <up-load ref="$mutipulUpload" multiple></up-load>
     </div>
+    <div>
+      <image-title></image-title>
+    </div>
   </div>
 </template>
 
@@ -33,13 +36,15 @@
 import BasePage from '@/basic/BasePage'
 import SelectInputForCity from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/index.vue'
+import ImageTitle from '@/components/upLoad/ImageTitle.vue'
 // import ruleForClient from '@/components/ruleForClient/index'
 // import SelectInput from '@/components/SelectInput'
 export default {
   name: 'page1',
   components: {
     SelectInputForCity,
-    UpLoad
+    UpLoad,
+    ImageTitle
     // ruleForClient
   },
   mixins: [ BasePage ],

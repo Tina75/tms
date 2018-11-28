@@ -176,7 +176,7 @@ export default {
   data () {
     return {
       tabType: 'RECEIPT',
-      url: 'order/getReceiptOrderList',
+      url: 'order/getReceiptOrderListNew',
       method: 'post',
       status: [
         { name: '全部', count: '' },
