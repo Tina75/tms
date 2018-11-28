@@ -124,10 +124,10 @@ export default {
     margin-left calc(50% - 62px)
     margin-bottom 10px
     .imagLogo
-      width 30px
-      height 30px
+      width 40px
+      height 40px
       position absolute
-      margin 45px
+      margin 40px 0 0 45px
       display block
   p
     color #333333

@@ -32,6 +32,9 @@ export default {
       return this.changeList.length
     }
   },
+  mounted () {
+    this.initData()
+  },
   methods: {
     initData () {
       Server({
