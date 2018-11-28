@@ -155,7 +155,7 @@
           </div>
         </section>
       </TabPane>
-      <TabPane v-if="status === '在途' || status === '已到货'"  :label="changelabel" :disabled="changeCount == 0" name="change">
+      <TabPane v-show="status === '在途' || status === '已到货'"  :label="changelabel" :disabled="changeCount === 0" name="change">
         <change ref="change" :pickup-id="this.id" :cnt="changeCount" :bill-type="3"/>
       </TabPane>
       <TabPane :label="expLabel" :disabled="exceptionCount == 0" name="exception">
