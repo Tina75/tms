@@ -60,7 +60,7 @@
             <AreaInput v-model="formCompany.address" :city-code="formCityCode" :maxlength="60" placeholder="请输入公司地址" @latlongt-change="latlongtChange"></AreaInput>
             </Col>
             <Col v-if="!isEdit" :span="24">
-            <span>{{formCompany.address}}</span>
+            <span>{{ formCompany.address }}</span>
             </Col>
           </FormItem>
           </Col>
@@ -80,7 +80,7 @@
           <span class="imageLogo">
             <up-load v-show="isEdit" ref="uploadLogo" max-size="10" crop></up-load>
             <div
-              :style="(formCompany.logoUrl && !isEdit) ? 'height: 100px;width: 100px;background-image: url(' + formCompany.logoUrl + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;' : ''"
+              :style="(formCompany.logoUrl && !isEdit) ? 'height: 100px;width: 100px;background-image: url(' + formCompany.logoUrl + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position:center;cursor:pointer;' : ''"
               class="imageLogoDiv"
               @click="handleView(0, 'logo')">
             </div>
@@ -184,13 +184,13 @@ export default {
       ]
     }
   },
-  updated () {
-    // 图片样式修改，LOGO必须为正方形
-    setTimeout(() => {
-      let imageDiv = document.getElementsByClassName('demo-upload-list')[0]
-      if (imageDiv) imageDiv.children[0].style.height = '110px'
-    }, 10)
-  },
+  // updated () {
+  //   // 图片样式修改，LOGO必须为正方形
+  //   setTimeout(() => {
+  //     let imageDiv = document.getElementsByClassName('demo-upload-list')[0]
+  //     if (imageDiv) imageDiv.children[0].style.height = '100px'
+  //   }, 10)
+  // },
   mounted () {
     this.getCompanyInfo()
   },
@@ -290,7 +290,8 @@ export default {
           name: 'company/dialog/share',
           data: {
             title: '获取链接成功，复制链接分享给朋友吧',
-            shareOutNo: vm.shareOutNo
+            shareOutNo: vm.shareOutNo,
+            imagLogoSrc: vm.formCompany.logoUrl
           },
           methods: {
             ok (node) {
@@ -320,7 +321,7 @@ export default {
 >>>.imageLogo .demo-upload-list
 >>>.imageLogo .ivu-upload .ivu-upload-drag
   width 100px
-  height 100px
+  height 90px
 .temAll
   margin -20px -15px
   padding 0 40px
