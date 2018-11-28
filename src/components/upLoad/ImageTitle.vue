@@ -21,7 +21,7 @@
               </div>
             </div>
           </div>
-          <Input placeholder="请输入标题" style="width: 160px;margin: 8px 0;" />
+          <Input v-bind:value="'title'+ index" placeholder="请输入标题" style="width: 160px;margin: 8px 0;" />
         </div>
       </div>
       <div v-if="uploadImgList.length < maxCount" class="ivu-upload" style="display: inline-block; width: 160px;">
@@ -93,7 +93,17 @@ export default {
       curImg: '', // 当前操作的图片
       visible: false,
       viewUrl: '',
-      imgViewFunc: null // 图片预览方法
+      imgViewFunc: null, // 图片预览方法
+      title0: '',
+      title1: '',
+      title2: '',
+      title3: '',
+      title4: '',
+      title5: '',
+      title6: '',
+      title7: '',
+      title8: '',
+      title9: ''
     }
   },
   watch: {
