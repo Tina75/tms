@@ -261,8 +261,8 @@
       <FormItem v-if="orderForm.isInvoice === 1" label="开票税率:" prop="invoiceRate">
         <Row>
           <Col span="20">
-          <InputNumber v-model="orderForm.invoiceRate" :show-chinese="false" :min="0" :max="100" :precision="2" class="order-create__input-w100">
-          </InputNumber>
+          <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :min="0" :max="100">
+          </TagNumberInput>
           </Col>
           <Col span="4" class="order-create__input-unit">%</Col>
         </Row>
