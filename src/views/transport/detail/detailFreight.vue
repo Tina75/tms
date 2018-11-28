@@ -1116,6 +1116,9 @@ export default {
             item.isCardDisabled = true
           })
         }
+        this.$nextTick(() => {
+          console.log(this.settlementPayInfo)
+        })
       }).catch(err => console.error(err))
     }
   }
