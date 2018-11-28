@@ -210,7 +210,7 @@ export default {
           title: '操作',
           key: 'do',
           fixed: 'left',
-          width: 120,
+          width: 80,
           extra: true,
           render: (h, params) => {
             /**
@@ -226,13 +226,13 @@ export default {
              * 展示按钮：拆单、外转、还原、删除、编辑（详情页独有）
              * 1、待提货状态下：（status: 10）
              *    拆单： 无拆单按钮           //【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）】显示
-             *    外转：【（未外转：transStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被提货：pickupStatus=0）】显示
+             *    外转：（v1.06删除外转）【（未外转：transStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被提货：pickupStatus=0）】显示
              *    还原： 无还原按钮           //【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被提货：pickupStatus=0）】显示
              *    删除： 无删除按钮           //【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （被拆单后的父单：disassembleStatus=1）】显示
              *    编辑： 无编辑按钮           //【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
              * 2、待调度状态下：（status: 20）
              *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）&& （未被调度：dispatchStatus=0）】显示
-             *    外转：【（未外转：transStatus=0） && （不是上门提货：pickup !== 1）备注：v1.3版本 上门提货完可以外转 && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）/ 备注：v1.05版本 子单可以外转 / && （未被调度：dispatchStatus=0）】显示
+             *    外转：（v1.06删除外转）【（未外转：transStatus=0） && （不是上门提货：pickup !== 1）备注：v1.3版本 上门提货完可以外转 && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）/ 备注：v1.05版本 子单可以外转 / && （未被调度：dispatchStatus=0）】显示
              *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被调度：dispatchStatus=0）】显示
              *    删除：【（不是上门提货：pickup !== 1） && （未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （被拆单后的父单：disassembleStatus=1）】显示
              *    编辑：【（未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
@@ -258,21 +258,21 @@ export default {
               //   )
               // }
               // 外转按钮
-              if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.pickupStatus === 0 && this.hasPower(120209)) {
-                renderBtn.push(
-                  h('a', {
-                    style: {
-                      marginRight: '25px',
-                      color: '#00a4bd'
-                    },
-                    on: {
-                      click: () => {
-                        this.openOuterDialog(params)
-                      }
-                    }
-                  }, '外转')
-                )
-              }
+              // if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.pickupStatus === 0 && this.hasPower(120209)) {
+              //   renderBtn.push(
+              //     h('a', {
+              //       style: {
+              //         marginRight: '25px',
+              //         color: '#00a4bd'
+              //       },
+              //       on: {
+              //         click: () => {
+              //           this.openOuterDialog(params)
+              //         }
+              //       }
+              //     }, '外转')
+              //   )
+              // }
               // 还原按钮
               // if (r.parentId === '' && r.disassembleStatus === 1 && r.pickupStatus === 0 && this.hasPower(110105)) {
               //   renderBtn.push(
@@ -350,21 +350,21 @@ export default {
                 }
               }
               // 外转按钮
-              if (r.transStatus === 0 && r.disassembleStatus === 0 && r.dispatchStatus === 0 && this.hasPower(120111)) {
-                renderBtn.push(
-                  h('a', {
-                    style: {
-                      marginRight: '25px',
-                      color: '#00a4bd'
-                    },
-                    on: {
-                      click: () => {
-                        this.openOuterDialog(params)
-                      }
-                    }
-                  }, '外转')
-                )
-              }
+              // if (r.transStatus === 0 && r.disassembleStatus === 0 && r.dispatchStatus === 0 && this.hasPower(120111)) {
+              //   renderBtn.push(
+              //     h('a', {
+              //       style: {
+              //         marginRight: '25px',
+              //         color: '#00a4bd'
+              //       },
+              //       on: {
+              //         click: () => {
+              //           this.openOuterDialog(params)
+              //         }
+              //       }
+              //     }, '外转')
+              //   )
+              // }
               // 还原按钮
               if (r.parentId === '' && r.disassembleStatus === 1 && r.dispatchStatus === 0 && this.hasPower(120112)) {
                 renderBtn.push(
@@ -933,14 +933,16 @@ export default {
             this.keywords.status = 50
           }
         }
+        this.btnGroup.push({ name: '分享', value: 9, code: 100307 })
       } else {
         if (val === '待提货') {
           this.btnGroup = [
-            { name: '提货调度', value: 1, code: 120208 },
+            { name: '提货调度', value: 2, code: 120208 },
             { name: '打印', value: 5, code: 120202 },
             { name: '导出', value: 6, code: 120207 }
           ]
           this.keywords.status = 10
+          this.deleteOperateCol() //  去掉操作栏
         } else {
           this.btnGroup = [
             { name: '送货调度', value: 1, code: 120109 },
@@ -969,15 +971,16 @@ export default {
           this.$Message.warning('一次最多选择20条订单')
           return
         }
-        let data = this.selectOrderList.find((item) => {
-          return (item.status !== 20 || item.dispatchStatus !== 0 || item.transStatus !== 0 || item.disassembleStatus === 1)
-        })
-        if (data !== undefined) {
-          console.log(this.selectOrderList)
-          this.$Message.warning('您选择的订单不支持送货调度')
-        } else {
-          this.openDispatchDialog(btn.name)
-        }
+        // let data = this.selectOrderList.find((item) => {
+        //   return (item.status !== 20 || item.dispatchStatus !== 0 || item.transStatus !== 0 || item.disassembleStatus === 1)
+        // })
+        // if (data !== undefined) {
+        //   console.log(this.selectOrderList)
+        //   this.$Message.warning('您选择的订单不支持送货调度')
+        // } else {
+        //   this.openDispatchDialog(btn.name)
+        // }
+        this.openDispatchDialog(btn.name)
       } else if (btn.name === '提货调度') { // 待提货（status:10）且未创建提货单(pickupStatus: 0)且未外转(transStatus: 0)且是父单(parentId：'') 可以批量操作
         if (this.selectOrderList.length > 20) { // 一次最多选择20条订单
           this.$Message.warning('一次最多选择20条订单')
@@ -1017,9 +1020,11 @@ export default {
       } else if (btn.name === '恢复') {
         // 恢复
         this.recoveryDialog()
-      } else {
+      } else if (btn.name === '彻底删除') {
         // 彻底删除
         this.completelyDeleteDialog()
+      } else if (btn.name === '分享') {
+        this.openShareDialog()
       }
     },
     // 外转
@@ -1119,6 +1124,46 @@ export default {
             _this.setSelection()
             _this.$emit('refresh-tab') // 刷新tab页数量
           }
+        }
+      })
+    },
+    // 分享
+    openShareDialog () {
+      const _this = this
+      if (!_this.isAllEqual(_this.selectOrderList)) {
+        _this.openShareConfirmDialog()
+        return
+      }
+      _this.openDialog({
+        name: 'order-management/dialog/share',
+        data: {
+          id: _this.selectOrderList,
+          suffix: ''
+        },
+        methods: {
+          ok (node) {}
+        }
+      })
+    },
+    // 判断勾选项客户名称是否一样
+    isAllEqual (array) {
+      if (array.length > 0) {
+        return !array.some((item, index) => {
+          return item.consignerName !== array[0].consignerName
+        })
+      } else {
+        return true
+      }
+    },
+    // 分享确认弹窗
+    openShareConfirmDialog () {
+      this.openDialog({
+        name: 'order-management/dialog/shareConfirm',
+        data: {
+          id: this.selectOrderList
+        },
+        methods: {
+          ok (node) {}
         }
       })
     },
