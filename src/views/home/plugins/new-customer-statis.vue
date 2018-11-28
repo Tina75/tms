@@ -27,8 +27,8 @@ export default {
     return {
       data: [
         { value: 0, name: '发货方', id: 'consignerCnt' },
-        { value: 0, name: '承运商', id: 'carriersCnt' },
-        { value: 0, name: '外转方', id: 'transfereeCnt' }
+        { value: 0, name: '承运商', id: 'carriersCnt' }
+        // { value: 0, name: '外转方', id: 'transfereeCnt' }
       ]
     }
   },

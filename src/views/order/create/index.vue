@@ -872,6 +872,11 @@ export default {
           let orderPrint = _.cloneDeep(this.orderForm)
           orderPrint.orderCargoList = _.cloneDeep(this.consignerCargoes)
           orderPrint.totalFee = this.totalFee
+          this.salesmanList.map(el => {
+            if (el.id === orderPrint.salesmanId) {
+              orderPrint.salesmanName = el.name
+            }
+          })
           this.orderPrint = [orderPrint]
 
           this.$refs.printer.print()
