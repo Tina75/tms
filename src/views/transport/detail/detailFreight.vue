@@ -536,7 +536,7 @@ export default {
             name: '编辑',
             code: 120107,
             func: () => {
-              this.inEditing = true
+              this.inEditing = 'edit'
             }
           }, {
             name: '发运',
@@ -831,13 +831,15 @@ export default {
 
     // 保存编辑
     save () {
-      if (!this.validate()) return
-      this.$refs.payment.validate((valid) => {
+      const _this = this
+      if (!_this.validate()) return
+      _this.$refs.payment.validate((valid) => {
         if (valid) {
-          if (this.inEditing === 'edit') {
-            this.edit()
-          } else if (this.inEditing === 'change') {
-            this.changeBill()
+          console.log(_this.inEditing)
+          if (_this.inEditing === 'edit') {
+            _this.edit()
+          } else if (_this.inEditing === 'change') {
+            _this.changeBill()
           } else {
             return false
           }

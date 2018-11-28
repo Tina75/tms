@@ -6,11 +6,11 @@
         <span>{{name}}</span>
       </p>
       <Form v-if="name === '送货调度'" ref="send" :model="send" :rules="sendRules" :label-width="92" inline label-position="left">
-        <FormItem label="发货城市：" prop="start">
+        <FormItem label="始发地：" prop="start">
           <!-- <area-select v-model="send.start" :deep="true" style="width:180px"></area-select> -->
           <city-select v-model="send.start" style="width:180px"></city-select>
         </FormItem>
-        <FormItem label="收货城市：" prop="end" style="margin-left:27px;">
+        <FormItem label="目的地：" prop="end" style="margin-left:27px;">
           <!-- <area-select v-model="send.end" :deep="true" style="width:180px"></area-select> -->
           <city-select v-model="send.end" style="width:180px"></city-select>
         </FormItem>
