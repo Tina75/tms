@@ -20,7 +20,9 @@
         </div>
       </div>
       <div v-show="qrcodeShow" class="weixinShareDiv">
-        <div id="qrcodeDom" ref="qrcode"></div>
+        <div id="qrcodeDom" ref="qrcode">
+          <img class="imagLogo" src="https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/841d2559-62ec-4f40-862c-cd10f3a1faa4/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_2018111316525120181113165302.jpg"/>
+        </div>
         <p>打开微信扫一扫</p>
         <p>打开网页后点击右上角分享按钮</p>
       </div>
@@ -121,6 +123,9 @@ export default {
   #qrcodeDom
     margin-left calc(50% - 62px)
     margin-bottom 10px
+    .imagLogo
+      width 30px
+      height 30px
   p
     color #333333
     font-size 14px

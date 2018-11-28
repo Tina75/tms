@@ -8,7 +8,7 @@
           <span class="iconRightTitleP">基本信息</span>
         </div>
         <span class="rightConfBtn">
-          <Button class="buttonSty" @click="shareBtn">分享</Button>
+          <Button v-if="!isEdit" class="buttonSty" @click="shareBtn">分享</Button>
           <Button type="primary" class="buttonSty" @click="editCompanyInfo">编辑</Button>
         </span>
         <Row>
@@ -22,7 +22,7 @@
           <FormItem label="公司简称：">
             <Row v-if="isEdit">
               <Col :span="18">
-              <Input v-model="formCompany.shortName" :maxlength="6" placeholder="请输入公司简称"></Input>
+              <Input v-model="formCompany.shortName" :maxlength="6" placeholder="请输入公司简称，最多6个字"></Input>
               </Col>
               <Col :span="4">
               <Tooltip
@@ -77,15 +77,14 @@
           <span v-if="isEdit" class="imageTips">尺寸100*100像素，大小不超过10M</span>
         </FormItem>
         <FormItem class="imageFontItem">
-          <div class="imageLogo">
+          <span class="imageLogo">
             <up-load v-show="isEdit" ref="uploadLogo" max-size="10" crop></up-load>
             <div
-              v-if="formCompany.logoUrl"
-              :style="'height: 100px;width: 100px;background-image: url(' + formCompany.logoUrl + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;cursor: pointer;'"
+              :style="(formCompany.logoUrl && !isEdit) ? 'height: 100px;width: 100px;background-image: url(' + formCompany.logoUrl + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;' : ''"
               class="imageLogoDiv"
               @click="handleView(0, 'logo')">
             </div>
-          </div>
+          </span>
         </FormItem>
         <FormItem label="其他照片：">
           <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
@@ -196,6 +195,7 @@ export default {
     this.getCompanyInfo()
   },
   methods: {
+    // 图片初始化
     initImage () {
       // LOGO
       this.$refs.uploadLogo.progress = 1
@@ -218,6 +218,7 @@ export default {
         }, 1000)
       }
     },
+    // 获取公司信息
     getCompanyInfo () {
       let vm = this
       Server({
@@ -234,20 +235,21 @@ export default {
     companySubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          // if (this.formCompany.address === this.formCompanyInit.address &&
-          //     this.formCompany.contact === this.formCompanyInit.contact &&
-          //     this.formCompany.contactPhone === this.formCompanyInit.contactPhone &&
-          //     this.formCompany.id === this.formCompanyInit.id &&
-          //     this.formCompany.logoUrl === this.formCompanyInit.logoUrl &&
-          //     this.formCompany.name === this.formCompanyInit.name &&
-          //     this.formCompany.companyProfile === this.formCompanyInit.companyProfile &&
-          //     this.formCompany.shortName === this.formCompanyInit.shortName &&
-          //     Number(this.formCompany.cityId) === Number(this.formCompanyInit.cityId)) {
-          //   this.$Message.info('您还未变更任何信息，无需保存')
-          //   return
-          // }
           this.formCompany.logoUrl = this.$refs.uploadLogo.uploadImg
           this.formCompany.otherInfo = JSON.stringify(this.$refs.upLoads.uploadImgList)
+          if (this.formCompany.address === this.formCompanyInit.address &&
+              this.formCompany.contact === this.formCompanyInit.contact &&
+              this.formCompany.contactPhone === this.formCompanyInit.contactPhone &&
+              this.formCompany.id === this.formCompanyInit.id &&
+              this.formCompany.logoUrl === this.formCompanyInit.logoUrl &&
+              this.formCompany.name === this.formCompanyInit.name &&
+              this.formCompany.companyProfile === this.formCompanyInit.companyProfile &&
+              this.formCompany.shortName === this.formCompanyInit.shortName &&
+              Number(this.formCompany.cityId) === Number(this.formCompanyInit.cityId) &&
+              this.formCompany.otherInfo === this.formCompanyInit.otherInfo) {
+            this.$Message.info('您还未变更任何信息，无需保存')
+            return
+          }
           let params = Object.assign({}, this.formCompany)
           Server({
             url: 'set/company',
@@ -265,7 +267,6 @@ export default {
     },
     // 点击取消做数据还原操作
     companyCancel () {
-      // this.formCompany = Object.assign({}, this.formCompanyInit)
       this.getCompanyInfo()
       this.$refs.formCompany.resetFields()
       this.isEdit = false
