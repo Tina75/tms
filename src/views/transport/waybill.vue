@@ -313,7 +313,8 @@ export default {
             this.$Toast.warning({
               title: '提示',
               showIcon: false,
-              content: res.limitTip
+              content: res.limitTip,
+              okText: '我知道了'
             })
             return
           }
