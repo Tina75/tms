@@ -774,8 +774,6 @@ export default {
         },
         cargoList: _.uniq(this.detail.map(item => item.orderId))
       }
-      console.log(JSON.stringify(data))
-      console.log(this.changeStr)
       if (JSON.stringify(data) === this.changeStr) {
         this.$Message.error('您并未做修改')
         return
@@ -995,6 +993,7 @@ export default {
               item.isCardDisabled = true
             }
           })
+          console.log(this.settlementPayInfo)
         }
         if (this.feeStatus === 10 || this.feeStatus === 20 || this.feeStatus === 30) {
           this.settlementPayInfo.map(item => {
