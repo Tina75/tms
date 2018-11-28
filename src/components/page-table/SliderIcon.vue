@@ -149,16 +149,16 @@ export default {
   &__checkbox-list
     overflow-y: auto
   &__draggable-column
-    -webkit-column-width: 116px
-    -moz-column-width: 116px
-    column-width: 116px
+    -webkit-column-width: 114px
+    -moz-column-width: 114px
+    column-width: 114px
     -webkit-column-gap: 6px
     -moz-column-gap: 6px
     column-gap: 6px
   &__checkbox
     display: inline-block
     padding: 8px 0
-    width: 116px
+    width: 114px
     overflow auto
   &__draggable-item
     margin: 0
