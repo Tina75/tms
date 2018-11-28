@@ -232,45 +232,45 @@ export default {
     }
   },
   computed: {
-    infoListOld () { // 修改运单信息
-      let list = []
-      let data = this.data.old
-      for (let key in data) {
-        if (this.changeList[key] && this.changeList[key].type === 'info') {
-          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
-        }
-      }
-      return list
+    infoListOld () {
+      // let list = []
+      // let data = this.data.old
+      // for (let key in data) {
+      //   if (this.changeList[key] && this.changeList[key].type === 'info') {
+      //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
+      //   }
+      // }
+      return this.getList(this.data.old, 'info')
     },
-    infoListNew () { // 修改运单信息
-      let list = []
-      let data = this.data.new
-      for (let key in data) {
-        if (this.changeList[key] && this.changeList[key].type === 'info') {
-          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
-        }
-      }
-      return list
+    infoListNew () {
+      // let list = []
+      // let data = this.data.new
+      // for (let key in data) {
+      //   if (this.changeList[key] && this.changeList[key].type === 'info') {
+      //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
+      //   }
+      // }
+      return this.getList(this.data.new, 'info')
     },
-    feeListOld () { // 修改运费信息
-      let list = []
-      let data = this.data.old
-      for (let key in data) {
-        if (this.changeList[key] && this.changeList[key].type === 'fee') {
-          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
-        }
-      }
-      return list
+    feeListOld () {
+      // let list = []
+      // let data = this.data.old
+      // for (let key in data) {
+      //   if (this.changeList[key] && this.changeList[key].type === 'fee') {
+      //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
+      //   }
+      // }
+      return this.getList(this.data.old, 'fee')
     },
-    feeListNew () { // 修改运费信息
-      let list = []
-      let data = this.data.new
-      for (let key in data) {
-        if (this.changeList[key] && this.changeList[key].type === 'fee') {
-          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
-        }
-      }
-      return list
+    feeListNew () {
+      // let list = []
+      // let data = this.data.new
+      // for (let key in data) {
+      //   if (this.changeList[key] && this.changeList[key].type === 'fee') {
+      //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
+      //   }
+      // }
+      return this.getList(this.data.new, 'fee')
     }
   },
   mounted () {
@@ -302,6 +302,15 @@ export default {
     },
     showDetail () {
       this.hideDetail = !this.hideDetail
+    },
+    getList (obj, type) {
+      let list = []
+      for (let key in obj) {
+        if (this.changeList[key] && this.changeList[key].type === type) {
+          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, obj[key]) : (obj[key] ? obj[key] : '-') })
+        }
+      }
+      return list
     }
   }
 }
