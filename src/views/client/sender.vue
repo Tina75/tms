@@ -100,7 +100,11 @@ export default {
                           contact: params.row.contact,
                           phone: params.row.phone,
                           payType: params.row.payType + '',
-                          remark: params.row.remark
+                          remark: params.row.remark,
+                          pickUp: params.row.pickUp,
+                          isInvoice: params.row.isInvoice,
+                          invoiceRate: params.row.invoiceRate,
+                          salesmanId: params.row.salesmanId
                         }
                       },
                       methods: {

@@ -109,30 +109,30 @@ export default {
   },
 
   watch: {
-    // 编辑状态为货物列表添加操作栏
-    // inEditing (val) {
-    //   if (!this.tableCanEdit) return
-    //   if (val) {
-    //     this.tableColumns.unshift({
-    //       title: '操作',
-    //       key: 'action',
-    //       width: 60,
-    //       render: (h, p) => {
-    //         return h('a', {
-    //           on: {
-    //             click: () => {
-    //               const id = p.row.orderId
-    //               const temp = this.detail.filter(item => item.orderId !== id)
-    //               this.detail = temp
-    //             }
-    //           }
-    //         }, '移出')
-    //       }
-    //     })
-    //   } else {
-    //     this.tableColumns.shift()
-    //   }
-    // },
+    // 编辑状态且为待发运为货物列表添加操作栏
+    inEditing (val) {
+      if (!this.tableCanEdit) return
+      if (val === 'edit' && this.status === '待发运') {
+        this.tableColumns.unshift({
+          title: '操作',
+          key: 'action',
+          width: 60,
+          render: (h, p) => {
+            return h('a', {
+              on: {
+                click: () => {
+                  const id = p.row.orderId
+                  const temp = this.detail.filter(item => item.orderId !== id)
+                  this.detail = temp
+                }
+              }
+            }, '移出')
+          }
+        })
+      } else {
+        this.tableColumns.shift()
+      }
+    },
     isAbnomal (val) {
       this.activeTab = val ? 'detail' : 'exception'
     }
@@ -192,7 +192,11 @@ export default {
       for (let key in temp) {
         // if (typeof temp[key] === 'number') temp[key] = temp[key] * 100
         if (typeof temp[key] === 'number') {
-          temp[key] = temp[key] * 100
+          if (key === 'mileage') {
+            temp[key] = temp[key] * 1000
+          } else {
+            temp[key] = temp[key] * 100
+          }
         } else {
           temp[key] = 0
         }

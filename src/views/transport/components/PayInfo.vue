@@ -91,7 +91,7 @@ export default {
           title: '油卡',
           key: 'fuelCardAmount',
           render: (h, p) => {
-            if (this.mode === 'edit' && p.row.isCashDisabled && p.row.type === 'change') {
+            if (this.mode === 'edit' && p.row.isCardDisabled && p.row.type === 'change') {
               let str = ''
               if (p.row.payType === 1) str = '预付' + p.column.title
               if (p.row.payType === 2) str = '到付' + p.column.title
@@ -160,10 +160,11 @@ export default {
 
     validate () {
       let total = 0
+      console.log(this.tableDataBack)
       this.tableDataBack.forEach(item => {
         total = total + Number(item.cashAmount) + Number(item.fuelCardAmount)
       })
-      if (total !== Number(this.total) && total !== 0) {
+      if (total !== Number(this.total)) {
         this.$Message.error('结算总额应与费用合计相等')
         return false
       }
@@ -177,8 +178,5 @@ export default {
   .payment-info-table
     .ivu-table-cell
       overflow inherit
-
-    .ivu-input-number
-      border-style none
 
 </style>

@@ -2,7 +2,7 @@
   <div>
     <Modal v-model="visiable" :mask-closable="false" transfer width="570" @on-visible-change="close">
       <p slot="header" class="ModalTitle">
-        {{title}}
+        {{ title }}
       </p>
       <Row>
         <Col :span="18">
@@ -20,12 +20,14 @@
         </div>
       </div>
       <div v-show="qrcodeShow" class="weixinShareDiv">
-        <div id="qrcodeDom" ref="qrcode"></div>
+        <div id="qrcodeDom" ref="qrcode">
+          <img :src="imagLogoSrc" class="imagLogo"/>
+        </div>
         <p>打开微信扫一扫</p>
         <p>打开网页后点击右上角分享按钮</p>
       </div>
       <div slot="footer">
-        <Button type="primary" @click="save">查看分享</Button>
+        <Button type="primary" @click="viewShare">查看分享</Button>
         <Button type="default" @click="close">关闭</Button>
       </div>
     </Modal>
@@ -44,20 +46,22 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
-      shareUrl: 'https://yzg.tms5566.com',
+      shareUrl: '',
+      basePath: '',
       clipboard: null,
       qrcodeInit: null,
       qrcodeShow: false,
-      isQrcodeShow: false,
-      urlPath: 'https://yzg.tms5566.com/'
+      isQrcodeShow: false
     }
   },
   mounted () {
+    this.basePath = 'http:' + process.env.VUE_APP_SHARE
+    this.shareUrl = this.basePath + 'company-pc.html?shareOutNo=' + this.shareOutNo
     this.clipboard = new Clipboard('.copyBtn')
   },
   methods: {
-    save () {
-      window.open('http://localhost:8080/#/company')
+    viewShare () {
+      window.open(this.shareUrl)
       this.close()
     },
     copyBtn () {
@@ -76,14 +80,12 @@ export default {
       this.qrcodeInit = new QRCode('qrcodeDom', {
         width: 125, // 设置宽度
         height: 125, // 设置高度
-        text: this.urlPath,
-        src: 'http://pic1.cxtuku.com/00/07/42/b03695caf529.jpg',
-        background: 'red'
+        text: this.basePath + '/company-phone.html?shareOutNo=' + this.shareOutNo
       })
       this.isQrcodeShow = true
     },
     QQShare () {
-      window.open('http://connect.qq.com/widget/shareqq/index.html?url=' + this.urlPath)
+      window.open('http://connect.qq.com/widget/shareqq/index.html?url=' + this.shareUrl)
     }
   }
 }
@@ -121,6 +123,12 @@ export default {
   #qrcodeDom
     margin-left calc(50% - 62px)
     margin-bottom 10px
+    .imagLogo
+      width 30px
+      height 30px
+      position absolute
+      margin 45px
+      display block
   p
     color #333333
     font-size 14px

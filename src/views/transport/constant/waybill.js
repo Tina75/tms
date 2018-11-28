@@ -4,7 +4,7 @@ import IconLabel from '@/components/IconLabel'
 export const TAB_LIST = [
   // { name: '全部', count: '' },
   { name: '待调度', count: '' },
-  { name: '待派车', count: '' },
+  // { name: '待派车', count: '' },
   { name: '待发运', count: '' },
   { name: '在途', count: '' },
   { name: '已到货', count: '' }
@@ -13,7 +13,7 @@ export const TAB_LIST = [
 export function setTabList (data) {
   return [
     { name: '待调度', count: data.waitDispatchCnt || 0 },
-    { name: '待派车', count: data.waitAssignCarCnt || 0 },
+    // { name: '待派车', count: data.waitAssignCarCnt || 0 },
     { name: '待发运', count: data.waitSendCarCnt || 0 },
     { name: '在途', count: data.inTransportCnt || 0 },
     { name: '已到货', count: data.arrivedCnt || 0 }
@@ -62,22 +62,22 @@ export const BUTTON_LIST = vm => [
   //   }]
   // },
   { tab: '待调度', btns: [] },
-  {
-    tab: '待派车',
-    btns: [{
-      name: '删除',
-      code: 120105,
-      func: () => {
-        vm.billDelete()
-      }
-    }, {
-      name: '导出',
-      code: 120108,
-      func: () => {
-        vm.billExport()
-      }
-    }]
-  },
+  // {
+  //   tab: '待派车',
+  //   btns: [{
+  //     name: '删除',
+  //     code: 120105,
+  //     func: () => {
+  //       vm.billDelete()
+  //     }
+  //   }, {
+  //     name: '导出',
+  //     code: 120108,
+  //     func: () => {
+  //       vm.billExport()
+  //     }
+  //   }]
+  // },
   {
     tab: '待发运',
     btns: [{
@@ -91,6 +91,12 @@ export const BUTTON_LIST = vm => [
       code: 120103,
       func: () => {
         vm.billPrint()
+      }
+    }, {
+      name: '删除',
+      code: 120105,
+      func: () => {
+        vm.billDelete()
       }
     }, {
       name: '导出',
@@ -227,6 +233,14 @@ export const TABLE_COLUMNS = vm => [
     title: '车牌号',
     key: 'carNo',
     width: 120
+  },
+  {
+    title: '计费里程（公里）',
+    key: 'mileage',
+    width: 120,
+    render: (h, p) => {
+      return vm.tableDataRender(h, p.row.mileage === '' ? '' : Math.floor(p.row.mileage) / 1000)
+    }
   },
   {
     title: '合计运费',

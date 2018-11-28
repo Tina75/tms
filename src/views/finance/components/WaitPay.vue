@@ -9,30 +9,40 @@
       empty-content="请点击左侧发货方列表查看待付货款列表哦～"
       @on-selection-change="handleSelectionChange"
     >
+      <div slot="title">
+        <p class="wait-pay__view-title">{{title}}</p>
+        <p class="wait-pay__view-supName">
+          <span>
+            总额 {{formatFee(activeSender ? activeSender.calcTotalFee : 0)}}
+          </span>
+          <span class="i-ml-20">
+            已付 {{formatFee(activeSender ? activeSender.verifiedFee : 0)}}
+          </span>
+        </p>
+      </div>
       <div slot="operation">
         <Button type="primary" @click="batchWriteOff">付款核销</Button>
       </div>
       <ListSender ref="senderList" :style="styles" list-key="partnerName" @on-click="handleClick">
         <ListSenderItem v-for="(item, name) in datas" :key="name" :item="item" :title="item.partnerName" :extra="item.orderNum" icon="ico-company">
-          <p slot="supName">
+          <template slot="supName">
             <span>
-              总额 {{(item.calcTotalFee / 100).toFixed(2)}}
+              总额 {{formatFee(item.calcTotalFee)}}
             </span>
             <span class="i-ml-20">
-              已付 {{(item.verifiedFee / 100).toFixed(2)}}
+              已付 {{formatFee(item.verifiedFee)}}
             </span>
-          </p>
+          </template>
         </ListSenderItem>
       </ListSender>
     </ReconcileLayout>
   </div>
 </template>
-
 <script>
 /**
- * 代收货款-已收未付
- * 此tab下显示已经收回代收货款但是没有付给发货方的订单
- */
+    * 代收货款-已收未付
+    * 此tab下显示已经收回代收货款但是没有付给发货方的订单
+    */
 import BaseComponent from '@/basic/BaseComponent'
 import CollectForm from './CollectForm.vue'
 import ListSender from './list-sender/index.vue'
@@ -145,5 +155,14 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-
+.wait-pay
+  &__view-title
+    line-height 22px
+    font-size 14px
+    color #333333
+    font-weight 500
+  &__view-supName
+    line-height 22px
+    font-size 12px
+    color #999999
 </style>
