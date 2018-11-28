@@ -91,7 +91,7 @@ export default {
           title: '油卡',
           key: 'fuelCardAmount',
           render: (h, p) => {
-            if (this.mode === 'edit' && p.row.isCashDisabled && p.row.type === 'change') {
+            if (this.mode === 'edit' && p.row.isCardDisabled && p.row.type === 'change') {
               let str = ''
               if (p.row.payType === 1) str = '预付' + p.column.title
               if (p.row.payType === 2) str = '到付' + p.column.title
