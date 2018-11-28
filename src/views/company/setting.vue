@@ -75,6 +75,7 @@
         </FormItem>
         <FormItem label="公司LOGO：">
           <span v-if="isEdit" class="imageTips">尺寸100*100像素，大小不超过10M</span>
+          <span v-if="!isEdit && !formCompany.logoUrl" class="imageTips">上传公司LOGO照片，有利于宣传公司品牌哦</span>
         </FormItem>
         <FormItem class="imageFontItem">
           <span class="imageLogo">
@@ -88,6 +89,7 @@
         </FormItem>
         <FormItem label="其他照片：">
           <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
+          <span v-if="!isEdit && infoImageList.length < 1" class="imageTips">82%的企业上传了公司照片，提高了客户的信任感</span>
         </FormItem>
         <FormItem class="imageFontItem">
           <up-load
@@ -213,8 +215,8 @@ export default {
           this.infoImageList.push(element)
         }
         setTimeout(() => {
-          this.openSwipeLogo = prepareOpenSwipe(this.imageLogo)
-          this.openSwipeInfo = prepareOpenSwipe(this.infoImageList)
+          if (this.imageLogo.src) this.openSwipeLogo = prepareOpenSwipe(this.imageLogo)
+          if (this.infoImageList.length > 0) this.openSwipeInfo = prepareOpenSwipe(this.infoImageList)
         }, 1000)
       }
     },
@@ -379,7 +381,10 @@ export default {
   line-height 36px
 .companyProfileSty
   font-family PingFangSC-Regular
-  margin-top 0
+  margin-top 5px
+  line-height 22px
+  white-space pre-wrap
+  word-wrap break-word
 .imageFontItem
-  margin-top -20px
+  margin-top -25px
 </style>
