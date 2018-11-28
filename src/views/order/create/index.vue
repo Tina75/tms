@@ -389,6 +389,13 @@ export default {
         callback(new Error('距离整数位最多输入6位,小数1位'))
       }
     }
+    const rate = (rule, value, callback) => {
+      if ((value && validator.fee(value) && value <= 100) || !value) {
+        callback()
+      } else {
+        callback(new Error('税率在0-100之间,小数2位'))
+      }
+    }
     return {
       settlements,
       pickups, // 提货方式
@@ -534,7 +541,8 @@ export default {
           { validator: validateFee }
         ],
         invoiceRate: [
-          { required: true, message: '请填写开票税率' }
+          { required: true, message: '请填写开票税率' },
+          { validator: rate }
         ],
         // 计费里程
         mileage: [
@@ -627,6 +635,7 @@ export default {
           }
           // 里程除以 1000
           vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
+          vm.orderForm.invoiceRate = vm.orderForm.invoiceRate * 100 || null
         })
         .catch((errorInfo) => {
           vm.loading = false
@@ -752,7 +761,7 @@ export default {
         _this.orderForm.pickup = consigner.pickUp
         _this.orderForm.salesmanId = consigner.salesmanId
         _this.orderForm.isInvoice = consigner.isInvoice
-        _this.orderForm.invoiceRate = consigner.invoiceRate
+        _this.orderForm.invoiceRate = consigner.invoiceRate * 100 || null
       })
     },
     /**
@@ -1073,7 +1082,8 @@ export default {
               orderCargoList: orderCargoList.map(cargo => cargo.toJson()),
               mileage: orderForm.mileage * 1000,
               consignerPhone: orderForm.consignerPhone.replace(/\s/g, ''),
-              consigneePhone: orderForm.consigneePhone.replace(/\s/g, '')
+              consigneePhone: orderForm.consigneePhone.replace(/\s/g, ''),
+              invoiceRate: orderForm.invoiceRate / 100 || null
             });
 
             ['start', 'end'].forEach(field => {
