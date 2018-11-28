@@ -34,7 +34,7 @@
               <span>{{ encrypt.message }}</span>
             </p>
             <div slot="content" class="share-tooltip">
-              {{ disencrypt.message }}
+              {{ encrypt.message }}
             </div>
           </Tooltip>
           <p class="share-url password">
@@ -53,7 +53,7 @@
     <div slot="footer" class="share-footer">
       <div>您可以复制链接，在QQ、微信上发送给您的客户</div>
       <div>
-        <a href="javacript:void(0);" style="margin-right: 20px;" @click="save">查看分享</a>
+        <a :href="shareType ? encrypt.message : disencrypt.message" target="_blank" style="margin-right: 20px;">查看分享</a>
         <a href="javacript:void(0);" @click="close">取消分享</a>
       </div>
     </div>
@@ -101,7 +101,7 @@ export default {
 
   created () {
     if (this.id.length > 1) {
-      this.encrypt.message = process.env.VUE_APP_SHARE + 'order-detail.html'
+      this.encrypt.message = process.env.VUE_APP_SHARE + 'order-list.html'
       this.disencrypt.message = process.env.VUE_APP_SHARE + 'order-list.html'
     } else {
       this.encrypt.message = process.env.VUE_APP_SHARE + 'order-detail.html'
@@ -116,11 +116,17 @@ export default {
   },
 
   methods: {
-    save () {
+    checkShare () {
       console.log('分享')
+      if (this.shareType) {
+        window.location.href = this.encrypt.message
+      } else {
+        window.location.href = this.disencrypt.message
+      }
     },
     handleTabChange (val) {
       this.isDisabled = false
+      console.log(this.encrypt.message)
     },
     onCopy (e) {
       console.log('You just copied: ' + e.text)
@@ -142,13 +148,14 @@ export default {
           shareType: type // 分享形式：1有查看密码；0无查看密码
         }
       }).then((res) => {
-        console.log(res.data.data)
         if (type) {
           this.encrypt.password = res.data.data.password
-          this.encrypt.message = this.encrypt.message + '?sharecode=' + res.data.data.shareOutNo + '&encrypt=true'
+          this.encrypt.sharecode = res.data.data.shareOutNo
+          this.encrypt.message = this.encrypt.message + '?sharecode=' + this.encrypt.sharecode + '&encrypt=true'
           this.encrypt.messageAndPwd = this.encrypt.message + '    密码：' + this.encrypt.password
         } else {
-          this.disencrypt.message = this.disencrypt.message + '?sharecode=' + res.data.data.shareOutNo
+          this.disencrypt.sharecode = res.data.data.shareOutNo
+          this.disencrypt.message = this.disencrypt.message + '?sharecode=' + this.disencrypt.sharecode
         }
       })
     }

@@ -16,7 +16,7 @@
           <Col span="12">
           <div class="title">修改前运单信息:</div>
           <Row>
-            <Col v-for="item in infoListOld" :key="item.name" span="8" style="margin-bottom: 10px">
+            <Col v-for="item in infoListOld" :key="item.name" :span="item.span" class="labelContent">
             <span class="label">{{item.name}}:</span>
             <span class="content">{{item.value}}</span>
               </Col>
@@ -25,7 +25,7 @@
           <Col span="12">
           <div class="title">修改后运费信息:</div>
           <Row >
-            <Col v-for="item in infoListNew" :key="item.name" span="8" style="margin-bottom: 10px">
+            <Col v-for="item in infoListNew" :key="item.name" :span="item.span" class="labelContent">
             <span class="label">{{item.name}}:</span>
             <span class="content after">{{item.value}}</span>
               </Col>
@@ -38,7 +38,7 @@
           <Col span="12">
           <div class="title">修改前运费:</div>
           <Row>
-            <Col v-for="item in feeListOld" :key="item.name" span="8" style="margin-bottom: 10px">
+            <Col v-for="item in feeListOld"  :key="item.name" :span="item.span" class="labelContent">
             <span class="label">{{item.name}}:</span>
             <span class="content">{{item.value}}</span>
               </Col>
@@ -47,7 +47,7 @@
           <Col span="12">
           <div class="title">修改后运费:</div>
           <Row >
-            <Col v-for="item in feeListNew" :key="item.name" span="8" style="margin-bottom: 10px">
+            <Col v-for="item in feeListNew" :key="item.name" :span="item.span" class="labelContent">
             <span class="label">{{item.name}}:</span>
             <span class="content after">{{item.value}}</span>
               </Col>
@@ -62,6 +62,7 @@
 import BasePage from '@/basic/BasePage'
 import TransportBase from '../mixin/transportBase'
 import { getCarType, getCarLength } from '@/libs/constant/carInfo'
+import _ from 'lodash'
 
 const moneyFormate = (fee) => {
   if (!fee) return '-'
@@ -104,76 +105,102 @@ export default {
       changeList: {
         'startName': {
           'type': 'info', // info 运单信息
-          'description': '始发地'
+          'description': '始发地',
+          'order': 1,
+          'span': 24
         },
         'endName': {
           'type': 'info',
-          'description': '目的地'
+          'description': '目的地',
+          'order': 2,
+          'span': 24
         },
         'carrierName': {
           'type': 'info',
-          'description': '承运商'
+          'description': '承运商',
+          'order': 3,
+          'span': 24
         },
         'carNo': {
           'type': 'info',
-          'description': '车牌号'
+          'description': '车牌号',
+          'order': 4,
+          'span': 12
         },
         'carLength': {
           'type': 'info',
           'description': '车长',
-          'ways': 4
+          'ways': 4,
+          'order': 5,
+          'span': 12
         },
         'carType': {
           'type': 'info',
           'description': '车型',
-          'ways': 5
+          'ways': 5,
+          'order': 6,
+          'span': 12
         },
         'driverName': {
           'type': 'info',
-          'description': '司机'
-        },
-        'remark': {
-          'type': 'info',
-          'description': '备注'
+          'description': '司机',
+          'order': 7,
+          'span': 12
         },
         'driverPhone': {
           'type': 'info',
-          'description': '司机手机号'
+          'description': '司机手机号',
+          'order': 8,
+          'span': 12
         },
         'settlementType': {
           'type': 'fee',
           'description': '结算方式',
-          'ways': 3
+          'ways': 3,
+          'order': 9,
+          'span': 12
         },
         'freightFee': {
           'type': 'fee',
           'description': '运输费用',
-          'ways': 1
+          'ways': 1,
+          'order': 10,
+          'span': 12
         },
         'loadFee': {
           'type': 'fee',
           'description': '装货费',
-          'ways': 1
+          'ways': 1,
+          'order': 11,
+          'span': 12
         },
         'unloadFee': {
           'type': 'fee',
           'description': '卸货费',
-          'ways': 1
+          'ways': 1,
+          'order': 12,
+          'span': 12
         },
         'otherFee': {
           'type': 'fee',
           'description': '其他费用',
-          'ways': 1
+          'ways': 1,
+          'order': 13,
+          'span': 12
         },
         'totalFee': {
           'type': 'fee',
           'description': '合计费用',
-          'ways': 1
+          'ways': 1,
+          'order': 14,
+          'span': 12
         },
         'insuranceFee': {
           'type': 'fee',
           'description': '保险费用',
-          'ways': 1
+          'ways': 1,
+          'order': 15,
+          'span': 12
         },
         // 'cashBack': {
         //   'type': 'fee',
@@ -183,42 +210,64 @@ export default {
         'tollFee': {
           'type': 'fee',
           'description': '路桥费',
-          'ways': 1
+          'ways': 1,
+          'order': 16,
+          'span': 12
         },
         'mileage': {
           'type': 'fee',
           'description': '公里数',
-          'ways': 2
+          'ways': 2,
+          'order': 17,
+          'span': 12
         },
         'prepaidCash': {
           'type': 'fee',
           'description': '预付现金',
-          'ways': 1
+          'ways': 1,
+          'order': 18,
+          'span': 12
         },
         'prepaidFuel': {
           'type': 'fee',
           'description': '预付油卡',
-          'ways': 1
+          'ways': 1,
+          'order': 19,
+          'span': 12
         },
         'arrivePaidCash': {
           'type': 'fee',
           'description': '到付现金',
-          'ways': 1
+          'ways': 1,
+          'order': 20,
+          'span': 12
         },
         'arrivePaidFuel': {
           'type': 'fee',
           'description': '到付油卡',
-          'ways': 1
+          'ways': 1,
+          'order': 21,
+          'span': 12
         },
         'receiptPaidCash': {
           'type': 'fee',
           'description': '回付现金',
-          'ways': 1
+          'ways': 1,
+          'order': 22,
+          'span': 12
         },
         'receiptPaidFule': {
           'type': 'fee',
           'description': '回付油卡',
-          'ways': 1
+          'ways': 1,
+          'order': 23,
+          'span': 12
+        },
+        'remark': {
+          'type': 'info',
+          'description': '备注',
+          'order': 24,
+          'span': 24
         },
         'operatorName': {
           'type': 'base',
@@ -232,45 +281,45 @@ export default {
     }
   },
   computed: {
-    infoListOld () { // 修改运单信息
-      let list = []
-      let data = this.data.old
-      for (let key in data) {
-        if (this.changeList[key] && this.changeList[key].type === 'info') {
-          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
-        }
-      }
-      return list
+    infoListOld () {
+      // let list = []
+      // let data = this.data.old
+      // for (let key in data) {
+      //   if (this.changeList[key] && this.changeList[key].type === 'info') {
+      //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
+      //   }
+      // }
+      return this.getList(this.data.old, 'info')
     },
-    infoListNew () { // 修改运单信息
-      let list = []
-      let data = this.data.new
-      for (let key in data) {
-        if (this.changeList[key] && this.changeList[key].type === 'info') {
-          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
-        }
-      }
-      return list
+    infoListNew () {
+      // let list = []
+      // let data = this.data.new
+      // for (let key in data) {
+      //   if (this.changeList[key] && this.changeList[key].type === 'info') {
+      //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
+      //   }
+      // }
+      return this.getList(this.data.new, 'info')
     },
-    feeListOld () { // 修改运费信息
-      let list = []
-      let data = this.data.old
-      for (let key in data) {
-        if (this.changeList[key] && this.changeList[key].type === 'fee') {
-          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
-        }
-      }
-      return list
+    feeListOld () {
+      // let list = []
+      // let data = this.data.old
+      // for (let key in data) {
+      //   if (this.changeList[key] && this.changeList[key].type === 'fee') {
+      //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
+      //   }
+      // }
+      return this.getList(this.data.old, 'fee')
     },
-    feeListNew () { // 修改运费信息
-      let list = []
-      let data = this.data.new
-      for (let key in data) {
-        if (this.changeList[key] && this.changeList[key].type === 'fee') {
-          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
-        }
-      }
-      return list
+    feeListNew () {
+      // let list = []
+      // let data = this.data.new
+      // for (let key in data) {
+      //   if (this.changeList[key] && this.changeList[key].type === 'fee') {
+      //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
+      //   }
+      // }
+      return this.getList(this.data.new, 'fee')
     }
   },
   mounted () {
@@ -302,6 +351,21 @@ export default {
     },
     showDetail () {
       this.hideDetail = !this.hideDetail
+    },
+    getList (obj, type) {
+      let list = []
+      for (let key in obj) {
+        if (this.changeList[key] && this.changeList[key].type === type) {
+          list.push({
+            name: this.changeList[key].description,
+            order: this.changeList[key].order,
+            span: this.changeList[key].span,
+            value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, obj[key]) : (obj[key] ? obj[key] : '-') })
+        }
+      }
+      list = _.sortBy(list, (item) => { return item.order })
+      console.log(list)
+      return list
     }
   }
 }
@@ -358,10 +422,19 @@ export default {
       color #333
       font-weight 500
       margin-bottom 20px
-    .label
-      display inline-block
-      color #777
-      width 80px
-    .after.content
-      color #EC4E4E
+    .labelContent
+      margin-bottom 10px
+      .label
+        color #777
+        display inline-block
+        width 80px
+      .after.content
+        color #EC4E4E
+    .labelContent.ivu-col-span-24
+      overflow hidden
+      .label
+        float left
+      .content
+        float left
+        width 80%
 </style>
