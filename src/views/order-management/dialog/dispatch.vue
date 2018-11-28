@@ -64,7 +64,7 @@
           <i-switch v-model="sendCar" size="small" />
           <p v-if="!sendCar" class="send_car_tip">此处未派车可以在生成运单后，在运单详情里点【编辑】进行派车操作。</p>
         </div>
-        <send-car v-if="sendCar" ref="sendCarComp" :order-list="id" :mileage="mileage"></send-car>
+        <send-car v-if="sendCar" ref="sendCarComp" :order-list="id" :mileage="mileage" :finance-rules-info="financeRulesInfo" :start="send.start"></send-car>
       </div>
       <div slot="footer">
         <Button  type="primary"  @click="save">确定</Button>
@@ -85,6 +85,7 @@ import { mapGetters, mapActions } from 'vuex'
 import City from '@/libs/js/city'
 import { CAR } from '@/views/client/client'
 import _ from 'lodash'
+import float from '@/libs/js/float'
 export default {
   name: 'dispatch',
 
@@ -227,6 +228,7 @@ export default {
       mileage: null
     }
   },
+
   computed: {
     ...mapGetters([
       'carriers',
@@ -241,14 +243,22 @@ export default {
       this.id.map((item) => {
         total += item.volume
       })
-      return total.toFixed(1)
+      return float.round(total, 1)
     },
     weightTotal () {
       let total = 0
       this.id.map((item) => {
         total += item.weight
       })
-      return total.toFixed(2)
+      return float.round(total)
+    },
+    financeRulesInfo () {
+      return {
+        start: this.send.start,
+        end: this.send.end,
+        weight: this.weightTotal,
+        volume: this.volumeTotal
+      }
     },
     orderIds () {
       let arr = []
@@ -258,13 +268,12 @@ export default {
       return arr
     }
   },
+
   created () {
     let orderList = _.cloneDeep(this.id)
     orderList = orderList.filter((item) => {
       return (item.consigneeAddressLatitude !== '' && item.consigneeAddressLongitude !== '' && item.consignerAddressLatitude !== '' && item.consignerAddressLongitude !== '')
     })
-    console.log(orderList)
-    console.log(this.isAllEqual(orderList))
     if (this.isAllEqual(orderList)) {
       this.mileage = orderList[0].mileage / 1000
     }
@@ -274,6 +283,7 @@ export default {
     setTimeout(() => {
       this.send.start = this.id[0].start
       this.send.end = this.id[0].end
+      // 计费规则
     }, 0)
   },
 

@@ -87,7 +87,7 @@
             </div>
           </span>
         </FormItem>
-        <FormItem label="其他照片：">
+        <FormItem label="公司照片：">
           <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
           <span v-if="!isEdit && infoImageList.length < 1" class="imageTips">82%的企业上传了公司照片，提高了客户的信任感</span>
         </FormItem>

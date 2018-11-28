@@ -80,7 +80,13 @@
         </DataEmpty>
         <div v-else>
           <div class="title">
-            <span class="text">{{orderData[0].title}}</span>
+            <div class="text">
+              <p class="desc_title">{{orderData[0].title}}</p>
+              <p class="desc_money">
+                <span style="margin-right: 30px">应付 {{orderData[0].calcTotalFeeText}}</span>
+                <span>已结 {{orderData[0].verifiedFeeText}}</span>
+              </p>
+            </div>
             <Button v-if="(hasPower(170102) && scene === 1) || (hasPower(170202) && scene === 2) || (hasPower(170302) && scene === 3)" class="btn" type="primary" @click="createBill">生成对账单</Button>
           </div>
           <Table :columns="orderColumn" :data="orderData" class="tableList"  @on-selection-change="setOrderIds"></Table>
@@ -525,7 +531,9 @@ export default {
         return Object.assign({}, item, {
           totalFeeText: (item.totalFee / 100).toFixed(2),
           _disabled: !!item.isMultiPay,
-          title: data.partnerName
+          title: data.partnerName,
+          calcTotalFeeText: data.calcTotalFeeText,
+          verifiedFeeText: data.verifiedFeeText
         })
       })
       console.log(this.orderData)
@@ -577,6 +585,7 @@ export default {
           height 100%
           overflow-y auto
         .list
+          position relative
           list-style none
           height 60px
           line-height 60px
@@ -610,8 +619,8 @@ export default {
               &:after
                 border none
           .content
-            flex 1
-            -ms-flex 1
+            /*flex 1*/
+            /*-ms-flex 1*/
             font-size 12px
             .ruleName
               height 30px
@@ -620,13 +629,20 @@ export default {
               color #333
               font-weight bold
             .tips
+              width 200px
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
               height 30px
               line-height 1
               padding-top 6px
               color #999
           .num
-            flex 0 0 35px
-            -ms-flex 0 0 35px
+            /*flex 0 0 35px*/
+            /*-ms-flex 0 0 35px*/
+            position absolute
+            top 5px
+            right 10px
             height 30px
             line-height 30px
             color #666
@@ -644,16 +660,22 @@ export default {
           height 100%
           overflow-y auto
         .title
-          padding-bottom 20px
+          padding-bottom 10px
           margin-bottom 20px
           overflow hidden
           border-bottom 1px solid #e4e7ec
           .text
             float left
-            font-size 14px
-            line-height 32px
-            color #333
-            font-weight bold
+            padding-left 10px
+            .desc_title
+              line-height: 22px
+              font-size: 14px
+              color: #333
+              font-weight: 500
+            .desc_money
+              line-height: 22px
+              font-size: 12px
+              color: #999
           .btn
             float right
       .data-empty

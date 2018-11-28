@@ -173,6 +173,13 @@ export default {
     mileage: {
       type: [Number, String],
       default: null
+    },
+    // 计费规则传入start、end、weight、volume
+    financeRulesInfo: {
+      type: Object
+    },
+    start: {
+      type: Number
     }
   },
   data () {
@@ -211,12 +218,6 @@ export default {
         cashBack: null, // 返现运费
         tollFee: null, // 路桥费
         mileage: null // 计费里程
-      },
-      financeRulesInfo: {
-        start: void 0,
-        end: void 0,
-        weight: void 0,
-        volume: void 0
       },
       payment: {
         freightFee: 0,
@@ -286,7 +287,19 @@ export default {
       return parseFloat(total.toFixed(2))
     }
   },
+  watch: {
+    financeRulesInfo: {
+      handler (newval, oldval) {
+        console.log(newval)
+      },
+      deep: true
+    },
+    start (val) {
+      console.log(val)
+    }
+  },
   created () {
+    console.log(this.financeRulesInfo)
     // 支付信息表格展示内容根据类型改变
     this.settlementPayInfo = [
       { payType: 1, fuelCardAmount: '', cashAmount: '' },
@@ -299,6 +312,15 @@ export default {
     // 计费规则
     showChargeRules () {
       const self = this
+      console.log(self.financeRulesInfo)
+      if (!self.financeRulesInfo.start) {
+        self.$Message.error('请先输入始发地')
+        return
+      }
+      if (!self.financeRulesInfo.end) {
+        self.$Message.error('请先输入目的地')
+        return
+      }
       if (!self.info.carrierName) {
         self.$Message.error('请先选择或输入承运商')
         return
@@ -324,7 +346,7 @@ export default {
         methods: {
           // 确认收费规则时获取价格
           ok (charge) {
-            self.payment.freightFee = charge || 0
+            self.info.freightFee = charge || 0
           },
           // 前往设置时关闭当前对话框
           closeParentDialog () {
