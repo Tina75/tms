@@ -60,7 +60,7 @@
             <AreaInput v-model="formCompany.address" :city-code="formCityCode" :maxlength="60" placeholder="请输入公司地址" @latlongt-change="latlongtChange"></AreaInput>
             </Col>
             <Col v-if="!isEdit" :span="24">
-            <span>{{formCompany.address}}</span>
+            <span>{{ formCompany.address }}</span>
             </Col>
           </FormItem>
           </Col>
@@ -75,12 +75,13 @@
         </FormItem>
         <FormItem label="公司LOGO：">
           <span v-if="isEdit" class="imageTips">尺寸100*100像素，大小不超过10M</span>
+          <span v-if="!isEdit && !formCompany.logoUrl" class="imageTips">上传公司LOGO照片，有利于宣传公司品牌哦</span>
         </FormItem>
         <FormItem class="imageFontItem">
           <span class="imageLogo">
             <up-load v-show="isEdit" ref="uploadLogo" max-size="10" crop></up-load>
             <div
-              :style="(formCompany.logoUrl && !isEdit) ? 'height: 100px;width: 100px;background-image: url(' + formCompany.logoUrl + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;' : ''"
+              :style="(formCompany.logoUrl && !isEdit) ? 'height: 100px;width: 100px;background-image: url(' + formCompany.logoUrl + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position:center;cursor:pointer;' : ''"
               class="imageLogoDiv"
               @click="handleView(0, 'logo')">
             </div>
@@ -88,6 +89,7 @@
         </FormItem>
         <FormItem label="其他照片：">
           <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
+          <span v-if="!isEdit && infoImageList.length < 1" class="imageTips">82%的企业上传了公司照片，提高了客户的信任感</span>
         </FormItem>
         <FormItem class="imageFontItem">
           <up-load
@@ -184,13 +186,13 @@ export default {
       ]
     }
   },
-  updated () {
-    // 图片样式修改，LOGO必须为正方形
-    setTimeout(() => {
-      let imageDiv = document.getElementsByClassName('demo-upload-list')[0]
-      if (imageDiv) imageDiv.children[0].style.height = '110px'
-    }, 10)
-  },
+  // updated () {
+  //   // 图片样式修改，LOGO必须为正方形
+  //   setTimeout(() => {
+  //     let imageDiv = document.getElementsByClassName('demo-upload-list')[0]
+  //     if (imageDiv) imageDiv.children[0].style.height = '100px'
+  //   }, 10)
+  // },
   mounted () {
     this.getCompanyInfo()
   },
@@ -213,8 +215,8 @@ export default {
           this.infoImageList.push(element)
         }
         setTimeout(() => {
-          this.openSwipeLogo = prepareOpenSwipe(this.imageLogo)
-          this.openSwipeInfo = prepareOpenSwipe(this.infoImageList)
+          if (this.imageLogo.src) this.openSwipeLogo = prepareOpenSwipe(this.imageLogo)
+          if (this.infoImageList.length > 0) this.openSwipeInfo = prepareOpenSwipe(this.infoImageList)
         }, 1000)
       }
     },
@@ -290,7 +292,8 @@ export default {
           name: 'company/dialog/share',
           data: {
             title: '获取链接成功，复制链接分享给朋友吧',
-            shareOutNo: vm.shareOutNo
+            shareOutNo: vm.shareOutNo,
+            imagLogoSrc: vm.formCompany.logoUrl
           },
           methods: {
             ok (node) {
@@ -320,7 +323,7 @@ export default {
 >>>.imageLogo .demo-upload-list
 >>>.imageLogo .ivu-upload .ivu-upload-drag
   width 100px
-  height 100px
+  height 90px
 .temAll
   margin -20px -15px
   padding 0 40px
@@ -378,7 +381,10 @@ export default {
   line-height 36px
 .companyProfileSty
   font-family PingFangSC-Regular
-  margin-top 0
+  margin-top 5px
+  line-height 22px
+  white-space pre-wrap
+  word-wrap break-word
 .imageFontItem
-  margin-top -20px
+  margin-top -25px
 </style>

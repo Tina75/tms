@@ -19,7 +19,7 @@
       </Button>
     </div>
     <Tabs :value="activeTab" :animated="false">
-      <TabPane label="运单详情" name="detail">
+      <TabPane  label="运单详情" name="detail">
         <section class="detail-info">
           <!-- 运单信息 -->
           <div>
@@ -155,10 +155,10 @@
           </div>
         </section>
       </TabPane>
-      <TabPane :label="changelabel"  :disabled="changeCount == 0" name="change">
+      <TabPane   :label="changelabel" :disabled="changeCount === 0" name="change">
         <change ref="change" :pickup-id="this.id" :cnt="changeCount" :bill-type="3"/>
       </TabPane>
-      <TabPane :label="expLabel" :disabled="exceptionCount == 0" name="exception">
+      <TabPane  :label="expLabel" :disabled="exceptionCount == 0" name="exception">
         <Exception ref="exception" :pickup-id="this.id" :cnt="exceptionCount" :bill-type="3"/>
       </TabPane>
     </Tabs>
@@ -258,8 +258,8 @@
         <div class="detail-part-title">
           <span>货物明细</span>
         </div>
-        <!--<Button class="detail-field-button" type="primary"-->
-        <!--@click="addOrder('freight')">添加订单</Button>-->
+        <Button v-if="status === '待发运'" class="detail-field-button" type="primary"
+                @click="addOrder('freight')">添加订单</Button>
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
@@ -793,9 +793,13 @@ export default {
         }
         // 改单个数
         this.changeCount = data.modifyCnt || 0
-        if (this.changeCount) {
-          this.$refs['change'] && this.$refs['change'].initData()
-        }
+        // if (this.changeCount) {
+        //   console.log('改单记录需要展示')
+        //   this.$nextTick(() => {
+        //     console.log(this.$refs['change'] && this.$refs['change'])
+        //     this.$refs['change'] && this.$refs['change'].initData()
+        //   })
+        // }
         this.setBtnsWithStatus()
         this.loading = false
       }).catch(err => console.error(err))
@@ -832,8 +836,6 @@ export default {
         },
         cargoList: _.uniq(this.detail.map(item => item.orderId))
       }
-      console.log(JSON.stringify(data))
-      console.log(this.changeStr)
       if (JSON.stringify(data) === this.changeStr) {
         this.$Message.error('您并未做修改')
         return
@@ -1105,6 +1107,7 @@ export default {
               item.isCardDisabled = true
             }
           })
+          console.log(this.settlementPayInfo)
         }
         if (this.feeStatus === 10 || this.feeStatus === 20 || this.feeStatus === 30) {
           this.settlementPayInfo.map(item => {

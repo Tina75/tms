@@ -21,7 +21,7 @@
       </div>
       <div v-show="qrcodeShow" class="weixinShareDiv">
         <div id="qrcodeDom" ref="qrcode">
-          <img class="imagLogo" src="https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/841d2559-62ec-4f40-862c-cd10f3a1faa4/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_2018111316525120181113165302.jpg"/>
+          <img :src="imagLogoSrc" class="imagLogo"/>
         </div>
         <p>打开微信扫一扫</p>
         <p>打开网页后点击右上角分享按钮</p>
@@ -47,16 +47,16 @@ export default {
   data () {
     return {
       shareUrl: '',
+      basePath: '',
       clipboard: null,
       qrcodeInit: null,
       qrcodeShow: false,
-      isQrcodeShow: false,
-      urlPath: ''
+      isQrcodeShow: false
     }
   },
   mounted () {
-    this.shareUrl = window.location.origin + '/company-pc.html?shareOutNo=' + this.shareOutNo
-    this.urlPath = window.location.origin
+    this.basePath = 'http:' + process.env.VUE_APP_SHARE
+    this.shareUrl = this.basePath + 'company-pc.html?shareOutNo=' + this.shareOutNo
     this.clipboard = new Clipboard('.copyBtn')
   },
   methods: {
@@ -80,12 +80,12 @@ export default {
       this.qrcodeInit = new QRCode('qrcodeDom', {
         width: 125, // 设置宽度
         height: 125, // 设置高度
-        text: window.location.origin + '/company-phone.html?shareOutNo=' + this.shareOutNo
+        text: this.basePath + '/company-phone.html?shareOutNo=' + this.shareOutNo
       })
       this.isQrcodeShow = true
     },
     QQShare () {
-      window.open('http://connect.qq.com/widget/shareqq/index.html?url=' + this.urlPath)
+      window.open('http://connect.qq.com/widget/shareqq/index.html?url=' + this.shareUrl)
     }
   }
 }
@@ -124,8 +124,11 @@ export default {
     margin-left calc(50% - 62px)
     margin-bottom 10px
     .imagLogo
-      width 30px
-      height 30px
+      width 40px
+      height 40px
+      position absolute
+      margin 40px 0 0 45px
+      display block
   p
     color #333333
     font-size 14px
