@@ -215,9 +215,9 @@ export default {
           this.infoImageList.push(element)
         }
         setTimeout(() => {
-          if (this.imageLogo.src) this.openSwipeLogo = prepareOpenSwipe(this.imageLogo)
+          if (this.formCompany.logoUrl) this.openSwipeLogo = prepareOpenSwipe(this.imageLogo)
           if (this.infoImageList.length > 0) this.openSwipeInfo = prepareOpenSwipe(this.infoImageList)
-        }, 1000)
+        }, 10)
       }
     },
     // 获取公司信息

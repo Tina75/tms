@@ -57,7 +57,11 @@ export default {
     return {
       url: '/consigner/page',
       method: 'GET',
-      keyword: {},
+      keyword: {
+        name: this.name,
+        contact: this.contact,
+        order: this.order
+      },
       selectStatus: 0,
       selectList: [
         {
