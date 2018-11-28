@@ -130,7 +130,7 @@ export default {
         if (data.data) {
           this.$Toast.warning({
             showIcon: false,
-            content: data.data.msg
+            content: data.data.content
           })
         }
       })
