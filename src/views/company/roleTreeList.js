@@ -147,7 +147,7 @@ export default {
         // { title: '外转', code: '120111', parentId: '120100', grandId: '120000', disabled: true },
         { title: '订单还原', code: '120112', parentId: '120100', grandId: '120000', disabled: true },
         { title: '发运', code: '120102', parentId: '120100', grandId: '120000', disabled: true },
-        { title: '派车', code: '120101', parentId: '120100', grandId: '120000', disabled: true },
+        // { title: '派车', code: '120101', parentId: '120100', grandId: '120000', disabled: true },
         { title: '打印', code: '120103', parentId: '120100', grandId: '120000', disabled: true },
         { title: '到货', code: '120104', parentId: '120100', grandId: '120000', disabled: true },
         { title: '删除', code: '120105', parentId: '120100', grandId: '120000', disabled: true },
