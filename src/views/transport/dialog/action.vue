@@ -14,7 +14,7 @@
                        @on-select="selectCarrierHandler" />
         </i-col>
         <i-col span="7" offset="1">
-          <span class="detail-field-title detail-field-required">司机：</span>
+          <span :class="type === 'sendCar' ? 'detail-padding-label' : 'detail-field-required'" class="detail-field-title">司机：</span>
           <SelectInput :carrier-id="carrierId"
                        v-model="info.driverName"
                        class="detail-info-input"
@@ -32,7 +32,7 @@
 
       <Row class="detail-field-group">
         <i-col span="7">
-          <span class="detail-field-title detail-field-required">车牌号：</span>
+          <span :class="type === 'sendCar' ? 'detail-padding-label' : 'detail-field-required'" class="detail-field-title">车牌号：</span>
           <SelectInput :carrier-id="carrierId"
                        v-model="info.carNo"
                        class="detail-info-input"
@@ -56,14 +56,20 @@
       </Row>
     </div>
 
-    <Form ref="payment" :label-width="72" :model="payment" :rules="rules" label-position="left">
+    <Form ref="payment" :label-width="type === 'sendCar' ? 82 : 72" :model="payment" :rules="rules" label-position="left">
       <div v-if="type === 'sendCar'" class="part">
         <Row class="detail-field-group">
+          <i-col span="6">
+            <FormItem label="计费里程：" prop="mileage" class="padding-left-label">
+              <TagNumberInput :show-chinese="false" :min="0" v-model="payment.mileage" :precision="1" class="detail-payment-input-send"></TagNumberInput>
+              <span class="unit-yuan">公里</span>
+            </FormItem>
+          </i-col>
           <i-col span="6">
             <FormItem label="运输费：" prop="freightFee">
               <TagNumberInput v-model="payment.freightFee" class="detail-payment-input-send"></TagNumberInput>
               <span class="unit-yuan">元</span>
-              <a v-if="type === 'sendCar'" class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
+              <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
             </FormItem>
           </i-col>
           <i-col span="6">
@@ -79,13 +85,11 @@
             </FormItem>
           </i-col>
           <i-col span="6">
-            <FormItem label="路桥费：" prop="tollFee">
+            <FormItem label="路桥费：" prop="tollFee" class="padding-left-label">
               <TagNumberInput v-model="payment.tollFee" class="detail-payment-input-send"></TagNumberInput>
               <span class="unit-yuan">元</span>
             </FormItem>
           </i-col>
-        </Row>
-        <Row class="detail-field-group">
           <i-col span="6">
             <FormItem label="保险费：" prop="insuranceFee" class="insurance-fee">
               <TagNumberInput v-model="payment.insuranceFee" class="detail-payment-input-send"></TagNumberInput>
@@ -112,7 +116,6 @@
             <FormItem label="运输费：" prop="freightFee">
               <TagNumberInput v-model="payment.freightFee" class="detail-payment-input"></TagNumberInput>
               <span class="unit-yuan">元</span>
-              <a v-if="type === 'sendCar'" class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
             </FormItem>
           </i-col>
           <i-col span="4">
@@ -142,7 +145,7 @@
         </Row>
         <Row class="detail-field-group">
           <i-col span="24">
-            <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
+            <span class="detail-field-title-sm" style="vertical-align: unset;margin-left: 10px;">费用合计：</span>
             <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
           </i-col>
         </Row>
@@ -219,6 +222,14 @@ export default {
         callback(new Error('费用整数位最多输入9位,小数2位'))
       }
     }
+    // 6位整数 1位小数
+    const validateMile = (rule, value, callback) => {
+      if ((value && validator.mileage(value)) || !value) {
+        callback()
+      } else {
+        callback(new Error('距离整数位最多输入6位,小数1位'))
+      }
+    }
     return {
       show: true,
       loading: false,
@@ -246,7 +257,8 @@ export default {
         insuranceFee: 0,
         otherFee: 0,
         cashBack: 0, // 返现运费
-        tollFee: 0 // 路桥费
+        tollFee: 0, // 路桥费
+        mileage: void 0 // 计费里程 v1.06 新增
       },
       rules: {
         // 运输费
@@ -277,6 +289,10 @@ export default {
         // 路桥费用
         tollFee: [
           { validator: validateFee }
+        ],
+        // 计费里程
+        mileage: [
+          { validator: validateMile }
         ]
       },
       settlementType: '1',
@@ -311,10 +327,14 @@ export default {
     } else {
       for (let key in this.payment) {
         this.payment[key] = this.setMoneyUnit2Yuan(this.payment[key])
+        if (key === 'mileage') {
+          this.payment[key] = (this.orderCreate.distance ? this.orderCreate.distance : this.payment[key]) / 1000 || null
+        }
       }
       if (this.type === 'pickUp') {
         delete this.payment.cashBack // 提货去掉返现运费
         delete this.payment.tollFee // 提货去掉路桥费
+        delete this.payment.mileage // 提货去掉计费里程
       } else {
         this.financeRulesInfo = this.orderCreate // 送货计费规则参数同步
       }
@@ -380,6 +400,9 @@ export default {
         }
         for (let key in this.payment) {
           this.payment[key] = this.setMoneyUnit2Yuan(billInfo[key])
+          if (key === 'mileage') {
+            this.payment[key] = billInfo[key] / 1000 || null
+          }
         }
 
         if (this.type === 'pickUp') {
@@ -413,7 +436,13 @@ export default {
     formatMoney () {
       let temp = Object.assign({}, this.payment)
       for (let key in temp) {
-        if (typeof temp[key] === 'number') temp[key] = temp[key] * 100
+        if (typeof temp[key] === 'number') {
+          if (key === 'mileage') {
+            temp[key] = temp[key] * 1000
+          } else {
+            temp[key] = temp[key] * 100
+          }
+        }
       }
       return temp
     },
@@ -424,7 +453,7 @@ export default {
         this.$Message.error('请输入承运商')
         return false
       }
-      if (!this.info.driverName) {
+      if (this.type === 'pickUp' && !this.info.driverName) {
         this.$Message.error('请输入司机')
         return false
       }
@@ -432,11 +461,11 @@ export default {
         this.$Message.error('司机手机号格式不正确')
         return false
       }
-      if (!this.info.carNo) {
+      if (this.type === 'pickUp' && !this.info.carNo) {
         this.$Message.error('请输入车牌号')
         return false
       }
-      if (!CAR.test(this.info.carNo)) {
+      if (this.info.carNo && !CAR.test(this.info.carNo)) {
         this.$Message.error('请输入正确的车牌号')
         return false
       }
@@ -504,6 +533,10 @@ export default {
      color #777
      font-size 14px
      padding 10px 0
+
+   .padding-left-label
+    .ivu-form-item-label
+      padding-left 10px
 
    .insurance-fee
     .ivu-form-item-label
