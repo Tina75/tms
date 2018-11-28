@@ -155,7 +155,7 @@
           </div>
         </section>
       </TabPane>
-      <TabPane :label="changelabel"  :disabled="changeCount == 0" name="change">
+      <TabPane v-if="status === '在途' || status === '已到货'"  :label="changelabel" :disabled="changeCount == 0" name="change">
         <change ref="change" :pickup-id="this.id" :cnt="changeCount" :bill-type="3"/>
       </TabPane>
       <TabPane :label="expLabel" :disabled="exceptionCount == 0" name="exception">
@@ -832,8 +832,6 @@ export default {
         },
         cargoList: _.uniq(this.detail.map(item => item.orderId))
       }
-      console.log(JSON.stringify(data))
-      console.log(this.changeStr)
       if (JSON.stringify(data) === this.changeStr) {
         this.$Message.error('您并未做修改')
         return
@@ -1105,6 +1103,7 @@ export default {
               item.isCardDisabled = true
             }
           })
+          console.log(this.settlementPayInfo)
         }
         if (this.feeStatus === 10 || this.feeStatus === 20 || this.feeStatus === 30) {
           this.settlementPayInfo.map(item => {
