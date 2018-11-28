@@ -8,7 +8,7 @@
           <span class="iconRightTitleP">基本信息</span>
         </div>
         <span class="rightConfBtn">
-          <Button class="buttonSty" @click="shareBtn">分享</Button>
+          <Button v-if="!isEdit" class="buttonSty" @click="shareBtn">分享</Button>
           <Button type="primary" class="buttonSty" @click="editCompanyInfo">编辑</Button>
         </span>
         <Row>
@@ -19,10 +19,10 @@
           </FormItem>
           </Col>
           <Col :span="8">
-          <FormItem label="公司简称：" prop="contactPhone">
+          <FormItem label="公司简称：">
             <Row v-if="isEdit">
               <Col :span="18">
-              <Input v-model="formCompany.contactPhone" :maxlength="11" placeholder="请输入联系方式"></Input>
+              <Input v-model="formCompany.shortName" :maxlength="6" placeholder="请输入公司简称，最多6个字"></Input>
               </Col>
               <Col :span="4">
               <Tooltip
@@ -34,7 +34,7 @@
               </Tooltip>
               </Col>
             </Row>
-            <span v-else>{{formCompany.contactPhone}}</span>
+            <span v-else>{{formCompany.shortName}}</span>
           </FormItem>
           </Col>
           <Col :span="8">
@@ -69,23 +69,43 @@
           <span class="iconRightTitle"></span>
           <span class="iconRightTitleP">公司介绍</span>
         </div>
-        <FormItem label="公司简介：" prop="contact" class="labelClassSty">
-          <Input v-if="isEdit" v-model="formCompany.contact" :maxlength="200" type="textarea" placeholder="请输入公司简介"></Input>
-          <span v-else>{{formCompany.contact}}</span>
+        <FormItem label="公司简介：" class="labelClassSty">
+          <Input v-if="isEdit" :rows="5" v-model="formCompany.companyProfile" :maxlength="500" type="textarea" placeholder="请输入公司简介"></Input>
+          <pre v-else class="companyProfileSty">{{formCompany.companyProfile}}</pre>
         </FormItem>
         <FormItem label="公司LOGO：">
-          <span class="imageTips">尺寸80*80像素，大小不超过1M</span>
+          <span v-if="isEdit" class="imageTips">尺寸100*100像素，大小不超过10M</span>
         </FormItem>
-        <FormItem>
-          <div class="imageLogo">
-            <up-load ref="uploadLogo" crop></up-load>
-          </div>
+        <FormItem class="imageFontItem">
+          <span class="imageLogo">
+            <up-load v-show="isEdit" ref="uploadLogo" max-size="10" crop></up-load>
+            <div
+              :style="(formCompany.logoUrl && !isEdit) ? 'height: 100px;width: 100px;background-image: url(' + formCompany.logoUrl + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;' : ''"
+              class="imageLogoDiv"
+              @click="handleView(0, 'logo')">
+            </div>
+          </span>
         </FormItem>
         <FormItem label="其他照片：">
-          <span class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过2MB</span>
+          <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
         </FormItem>
-        <FormItem>
-          <up-load ref="upLoads" :multiple="true" max-count="10" multiple-width="style='width:100%'"></up-load>
+        <FormItem class="imageFontItem">
+          <up-load
+            v-show="isEdit"
+            ref="upLoads"
+            :multiple="true"
+            max-count="10"
+            max-size="10"
+            multiple-width="style='width:100%'">
+          </up-load>
+          <div v-for="(img,index) in infoImageList" v-show="!isEdit" :key="img.key" class="infoImage">
+            <div
+              :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+              class="fileImage"
+              @click="handleView(index)">
+            </div>
+            <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
+          </div>
         </FormItem>
           <!-- 图片集合 -->
         </FormItem>
@@ -105,12 +125,14 @@ import AreaInput from '@/components/AreaInput'
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/index.vue'
 import { CHECK_NAME_COMPANY, CHECK_NAME, CHECK_PHONE } from './validator'
+import prepareOpenSwipe from '@/components/swipe/index'
 export default {
   name: 'companySetting',
   components: {
     AreaInput,
     CitySelect,
-    UpLoad
+    UpLoad,
+    prepareOpenSwipe
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -119,6 +141,8 @@ export default {
   data () {
     return {
       isEdit: false,
+      fileUrls: [],
+      shareOutNo: '',
       // 公司
       formCompany: {},
       formCompanyInit: {},
@@ -142,18 +166,59 @@ export default {
         address: [
           { required: true, message: '请输入公司地址', trigger: 'blur' }
         ]
-      }
+      },
+      infoImageList: []
     }
   },
   computed: {
     formCityCode () {
       return this.formCompany.cityId
+    },
+    imageLogo () {
+      return [
+        {
+          title: 'LOGO',
+          src: this.formCompany.logoUrl,
+          msrc: this.formCompany.logoUrl
+        }
+      ]
     }
+  },
+  updated () {
+    // 图片样式修改，LOGO必须为正方形
+    setTimeout(() => {
+      let imageDiv = document.getElementsByClassName('demo-upload-list')[0]
+      if (imageDiv) imageDiv.children[0].style.height = '110px'
+    }, 10)
   },
   mounted () {
     this.getCompanyInfo()
   },
   methods: {
+    // 图片初始化
+    initImage () {
+      // LOGO
+      this.$refs.uploadLogo.progress = 1
+      this.$refs.uploadLogo.uploadImg = this.formCompany.logoUrl
+      // 公司其他照片
+      // 编辑状态
+      if (this.formCompany.otherInfo) {
+        let infoImageListInit = JSON.parse(this.formCompany.otherInfo)
+        this.$refs.upLoads.uploadImgList = infoImageListInit
+        // 预览状态
+        this.infoImageList = []
+        for (let index = 0; index < infoImageListInit.length; index++) {
+          const element = infoImageListInit[index]
+          element.src = element.url
+          this.infoImageList.push(element)
+        }
+        setTimeout(() => {
+          this.openSwipeLogo = prepareOpenSwipe(this.imageLogo)
+          this.openSwipeInfo = prepareOpenSwipe(this.infoImageList)
+        }, 1000)
+      }
+    },
+    // 获取公司信息
     getCompanyInfo () {
       let vm = this
       Server({
@@ -163,20 +228,7 @@ export default {
         vm.formCompany = Object.assign({}, data.data)
         vm.formCompanyInit = Object.assign({}, data.data)
       }).then(() => {
-        // LOGO
-        vm.$refs.uploadLogo.progress = 1
-        vm.$refs.uploadLogo.uploadImg = vm.formCompany.logoUrl
-        // 公司其他照片
-        let fileUrls = []
-        fileUrls.push({
-          url: vm.formCompany.logoUrl,
-          progress: 1
-        })
-        vm.$refs.upLoads.uploadImgList = fileUrls
-      }).then(() => {
-        // 图片样式修改，LOGO必须为正方形
-        let imageDiv = document.getElementsByClassName('demo-upload-list')[0]
-        if (imageDiv) imageDiv.children[0].style.height = '110px'
+        vm.initImage()
       })
     },
     // 公司
@@ -184,13 +236,17 @@ export default {
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.formCompany.logoUrl = this.$refs.uploadLogo.uploadImg
+          this.formCompany.otherInfo = JSON.stringify(this.$refs.upLoads.uploadImgList)
           if (this.formCompany.address === this.formCompanyInit.address &&
               this.formCompany.contact === this.formCompanyInit.contact &&
               this.formCompany.contactPhone === this.formCompanyInit.contactPhone &&
               this.formCompany.id === this.formCompanyInit.id &&
               this.formCompany.logoUrl === this.formCompanyInit.logoUrl &&
               this.formCompany.name === this.formCompanyInit.name &&
-              Number(this.formCompany.cityId) === Number(this.formCompanyInit.cityId)) {
+              this.formCompany.companyProfile === this.formCompanyInit.companyProfile &&
+              this.formCompany.shortName === this.formCompanyInit.shortName &&
+              Number(this.formCompany.cityId) === Number(this.formCompanyInit.cityId) &&
+              this.formCompany.otherInfo === this.formCompanyInit.otherInfo) {
             this.$Message.info('您还未变更任何信息，无需保存')
             return
           }
@@ -203,6 +259,7 @@ export default {
             if (data.code === 10000) {
               this.$Message.success('保存成功!')
               this.isEdit = false
+              this.getCompanyInfo()
             }
           })
         }
@@ -210,7 +267,7 @@ export default {
     },
     // 点击取消做数据还原操作
     companyCancel () {
-      this.formCompany = Object.assign({}, this.formCompanyInit)
+      this.getCompanyInfo()
       this.$refs.formCompany.resetFields()
       this.isEdit = false
     },
@@ -221,17 +278,36 @@ export default {
     // 分享
     shareBtn () {
       const vm = this
-      vm.openDialog({
-        name: 'company/dialog/share',
-        data: {
-          title: '获取链接成功，复制链接分享给朋友吧'
-        },
-        methods: {
-          ok (node) {
-          }
+      Server({
+        url: '/set/sharecompany',
+        method: 'post'
+      }).then(({ data }) => {
+        if (data.code === 10000) {
+          vm.shareOutNo = data.data.shareOutNo
         }
+      }).then(() => {
+        vm.openDialog({
+          name: 'company/dialog/share',
+          data: {
+            title: '获取链接成功，复制链接分享给朋友吧',
+            shareOutNo: vm.shareOutNo
+          },
+          methods: {
+            ok (node) {
+            }
+          }
+        })
       })
     },
+    // 查看大图LOGO
+    handleView (index, type) {
+      if (type) {
+        this.openSwipeLogo(index)
+      } else {
+        this.openSwipeInfo(index)
+      }
+    },
+    // 省市区位置获取
     latlongtChange ({ lat, lng }) {
       this.formCompany.latitude = lat
       this.formCompany.longitude = lng
@@ -287,4 +363,22 @@ export default {
   font-size 20px
   color #FFBB44
   margin-top -3px
+.fileImage
+  width 160px
+  height 90px
+  float left
+  margin-right 15px
+  cursor pointer
+.infoImage
+  float left
+  text-align center
+.titleInput
+  width 160px
+  display block
+  line-height 36px
+.companyProfileSty
+  font-family PingFangSC-Regular
+  margin-top 0
+.imageFontItem
+  margin-top -20px
 </style>

@@ -559,6 +559,14 @@ export default {
           tooltip: true
         },
         {
+          title: '对接业务员',
+          key: 'salesmanName',
+          minWidth: 180,
+          render: (h, params) => {
+            return h('span', params.row.salesmanName || '-')
+          }
+        },
+        {
           title: '始发地',
           key: 'start',
           minWidth: 180,
@@ -603,7 +611,7 @@ export default {
           key: 'mileage',
           width: 120,
           render: (h, params) => {
-            return h('span', params.row.mileage / 1000 ? params.row.mileage / 1000 : '-')
+            return h('span', params.row.mileage / 1000 || '-')
           }
         },
         {
@@ -769,6 +777,22 @@ export default {
           minWidth: 120,
           render: (h, params) => {
             return h('span', params.row.collectionMoney ? (params.row.collectionMoney / 100).toFixed(2) : '-')
+          }
+        },
+        {
+          title: '是否开票',
+          key: 'isInvoice',
+          minWidth: 180,
+          render: (h, params) => {
+            return h('span', params.row.isInvoice === 0 ? '否' : '是')
+          }
+        },
+        {
+          title: '开票税率',
+          key: 'invoiceRate',
+          minWidth: 180,
+          render: (h, params) => {
+            return h('span', params.row.invoiceRate || '-')
           }
         },
         {
