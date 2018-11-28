@@ -58,7 +58,7 @@ export default {
             }
             points.push(point)
             // const markerOverlay = new MarkerOverlay(point)
-            const labelOverlay = new LabelOverlay(point, item.carNo)
+            const labelOverlay = new LabelOverlay(point, item.truckNo)
             const truckMarker = getTruckMarker(point)
             // bmap.addOverlay(markerOverlay)
             bmap.addOverlay(labelOverlay)

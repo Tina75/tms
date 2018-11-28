@@ -11,26 +11,50 @@
       </div>
     </div>
     <div :class="{'except-record-list-hide': hideDetail}" class="change-list">
-      <Row>
-        <Col span="12">
-        <div class="title">修改运单信息:</div>
+      <div v-if="infoListOld.length>0" :class="{'no-bottom':feeListOld.length===0}" class="info">
         <Row>
-          <Col v-for="item in infoList" :key="item.name" span="8" style="margin-bottom: 10px">
-          <span class="label">{{item.name}}:</span>
-          <span class="content">{{item.value}}</span>
+          <Col span="12">
+          <div class="title">修改前运单信息:</div>
+          <Row>
+            <Col v-for="item in infoListOld" :key="item.name" span="8" style="margin-bottom: 10px">
+            <span class="label">{{item.name}}:</span>
+            <span class="content">{{item.value}}</span>
+              </Col>
+          </Row>
+          </Col>
+          <Col span="12">
+          <div class="title">修改后运费信息:</div>
+          <Row >
+            <Col v-for="item in infoListNew" :key="item.name" span="8" style="margin-bottom: 10px">
+            <span class="label">{{item.name}}:</span>
+            <span class="content after">{{item.value}}</span>
+              </Col>
+          </Row>
           </Col>
         </Row>
-        </Col>
-        <Col span="12">
-        <div class="title">修改运费:</div>
-        <Row >
-          <Col v-for="item in feeList" :key="item.name" span="8" style="margin-bottom: 10px">
-          <span class="label">{{item.name}}:</span>
-          <span class="content">{{item.value}}</span>
-            </Col>
+      </div>
+      <div v-if="feeListOld.length>0"  class="fee">
+        <Row>
+          <Col span="12">
+          <div class="title">修改前运费:</div>
+          <Row>
+            <Col v-for="item in feeListOld" :key="item.name" span="8" style="margin-bottom: 10px">
+            <span class="label">{{item.name}}:</span>
+            <span class="content">{{item.value}}</span>
+              </Col>
+          </Row>
+          </Col>
+          <Col span="12">
+          <div class="title">修改后运费:</div>
+          <Row >
+            <Col v-for="item in feeListNew" :key="item.name" span="8" style="margin-bottom: 10px">
+            <span class="label">{{item.name}}:</span>
+            <span class="content after">{{item.value}}</span>
+              </Col>
+          </Row>
+          </Col>
         </Row>
-        </Col>
-      </Row>
+      </div>
     </div>
   </div>
 </template>
@@ -208,27 +232,49 @@ export default {
     }
   },
   computed: {
-    infoList () { // 修改运单信息
+    infoListOld () { // 修改运单信息
       let list = []
-      for (let key in this.data) {
+      let data = this.data.old
+      for (let key in data) {
         if (this.changeList[key] && this.changeList[key].type === 'info') {
-          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, this.data[key]) : (this.data[key] ? this.data[key] : '-') })
+          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
         }
       }
       return list
     },
-    feeList () { // 修改运费信息
+    infoListNew () { // 修改运单信息
       let list = []
-      for (let key in this.data) {
+      let data = this.data.new
+      for (let key in data) {
+        if (this.changeList[key] && this.changeList[key].type === 'info') {
+          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
+        }
+      }
+      return list
+    },
+    feeListOld () { // 修改运费信息
+      let list = []
+      let data = this.data.old
+      for (let key in data) {
         if (this.changeList[key] && this.changeList[key].type === 'fee') {
-          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, this.data[key]) : (this.data[key] ? this.data[key] : '-') })
+          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
+        }
+      }
+      return list
+    },
+    feeListNew () { // 修改运费信息
+      let list = []
+      let data = this.data.new
+      for (let key in data) {
+        if (this.changeList[key] && this.changeList[key].type === 'fee') {
+          list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
         }
       }
       return list
     }
   },
   mounted () {
-    console.log(this.data)
+    // console.log(this.data)
   },
   methods: {
     /* ways:
@@ -300,8 +346,14 @@ export default {
   .colorGrey
     color #333
   .change-list
-    padding 28px 17px
+    padding 28px 17px 0 17px
     font-size 14px
+    .info
+      border-bottom 1px dashed #d4d5dc
+      padding-bottom 20px
+    .fee
+      padding-top 20px
+      padding-bottom 20px
     .title
       color #333
       font-weight 500
@@ -310,6 +362,6 @@ export default {
       display inline-block
       color #777
       width 80px
-    .content
+    .after.content
       color #EC4E4E
 </style>
