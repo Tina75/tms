@@ -21,7 +21,7 @@
               </div>
             </div>
           </div>
-          <Input placeholder="请输入标题" style="width: 160px;margin: 8px 0;" />
+          <Input v-model="pic.title" placeholder="请输入标题" style="width: 160px;margin: 8px 0;" @on-change="handleChange(pic)"/>
         </div>
       </div>
       <div v-if="uploadImgList.length < maxCount" class="ivu-upload" style="display: inline-block; width: 160px;">
@@ -116,7 +116,9 @@ export default {
       })
       this.imgViewFunc = openSwipe(imageItems)
     },
-
+    handleChange (item) {
+      console.log(this.uploadImgList)
+    },
     inputChanged (e) {
       const files = e.target.files
       if (!files || files.length === 0) return
@@ -186,8 +188,8 @@ export default {
         const uploadResult = await this.uploadFile(files[i])
         this.uploadImgList.push({
           url: uploadResult.res.requestUrls[0].split('?')[0],
-          progress: navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0 ? 1 : this.progress
-          // title:
+          progress: navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0 ? 1 : this.progress,
+          title: ''
         })
         this.$Message.success({ content: '上传成功', duration: 3 })
         this.setUploadImgList()
@@ -203,6 +205,15 @@ export default {
     // 删除
     handleRemove (i) {
       this.uploadImgList.splice(i, 1)
+    },
+
+    getImageList () {
+      return this.uploadImgList.map((item) => {
+        return {
+          url: item.url,
+          title: item.title
+        }
+      })
     }
   }
 }

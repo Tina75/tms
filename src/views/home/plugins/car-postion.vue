@@ -35,7 +35,9 @@ export default {
       this.fetch('home/transport/location')
         .then((response) => {
           const data = response.data
-          this.pointList = data.list
+          this.pointList = data.list.filter(el => {
+            return el.truckNo
+          })
           if (this.pointList.length > 0) {
             if (!this.showMap) {
               this.showMap = true

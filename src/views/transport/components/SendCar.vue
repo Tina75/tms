@@ -313,6 +313,14 @@ export default {
     showChargeRules () {
       const self = this
       console.log(self.financeRulesInfo)
+      if (!self.financeRulesInfo.start) {
+        self.$Message.error('请先输入始发地')
+        return
+      }
+      if (!self.financeRulesInfo.end) {
+        self.$Message.error('请先输入目的地')
+        return
+      }
       if (!self.info.carrierName) {
         self.$Message.error('请先选择或输入承运商')
         return
@@ -338,7 +346,7 @@ export default {
         methods: {
           // 确认收费规则时获取价格
           ok (charge) {
-            self.payment.freightFee = charge || 0
+            self.info.freightFee = charge || 0
           },
           // 前往设置时关闭当前对话框
           closeParentDialog () {
