@@ -179,7 +179,4 @@ export default {
     .ivu-table-cell
       overflow inherit
 
-    .ivu-input-number
-      border-style none
-
 </style>
