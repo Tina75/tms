@@ -27,7 +27,7 @@
           </Col>
         </Row>
         <Row class="row">
-          <Col span="24">
+          <Col span="8">
           <div>
             <span class="label">结算方式：</span>
             <span v-if="list.payType===1">现付</span>
@@ -35,6 +35,18 @@
             <span v-else-if="list.payType===3">回单付</span>
             <span v-else-if="list.payType===4">月结</span>
             <span v-else></span>
+          </div>
+          </Col>
+          <Col span="8">
+          <div>
+            <span class="label">对接业务员：</span>
+            <span v-text="list.salesName"></span>
+          </div>
+          </Col>
+          <Col span="8">
+          <div>
+            <span class="label">是否开票：</span>
+            <span v-text="list.isInvoice === 1 ? `是（${list.invoiceRate * 100}%）` : '否'">现付</span>
           </div>
           </Col>
         </Row>
