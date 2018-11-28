@@ -112,6 +112,7 @@ import OrderPrint from './OrderPrint'
 import FontIcon from '@/components/FontIcon'
 import IconLabel from '@/components/IconLabel'
 import SearchMixin from '../searchMixin'
+import float from '@/libs/js/float'
 // import jsCookie from 'js-cookie'
 export default {
   name: 'TabContent',
@@ -789,7 +790,7 @@ export default {
           key: 'invoiceRate',
           minWidth: 180,
           render: (h, params) => {
-            return h('span', params.row.invoiceRate || '-')
+            return h('span', float.floor(params.row.invoiceRate * 100, 2) || '-')
           }
         },
         {

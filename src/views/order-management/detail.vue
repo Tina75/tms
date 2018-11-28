@@ -81,11 +81,7 @@
           </i-col>
           <i-col span="7">
             <span>是否开票：</span>
-            <span>{{detail.isInvoice}}</span>
-          </i-col>
-          <i-col v-if="detail.isInvoice" span="7">
-            <span>开票税率：</span>
-            <span>{{detail.invoiceRate}}</span>
+            <span>{{detail.isInvoice === 1 ? `是（${detail.invoiceRate * 100}）` : '否'}}</span>
           </i-col>
         </Row>
         <Row style="margin-top:18px">

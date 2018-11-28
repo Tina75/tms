@@ -103,7 +103,7 @@ export default {
                           remark: params.row.remark,
                           pickUp: params.row.pickUp,
                           isInvoice: params.row.isInvoice,
-                          invoiceRate: params.row.invoiceRate,
+                          invoiceRate: params.row.invoiceRate * 100 || null,
                           salesmanId: params.row.salesmanId
                         }
                       },

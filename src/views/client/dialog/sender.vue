@@ -134,7 +134,8 @@ export default {
       })
     },
     _consignerAdd () {
-      consignerAdd(this.validate).then(res => {
+      const param = Object.assign({}, this.validate, { invoiceRate: this.validate.invoiceRate / 100 || null })
+      consignerAdd(param).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
           this.openTab({
@@ -149,8 +150,8 @@ export default {
       })
     },
     _consignerUpdate () {
-      Object.assign(this.validate, { id: this.id })
-      consignerUpdate(this.validate).then(res => {
+      const param = Object.assign({}, this.validate, { id: this.id, invoiceRate: this.validate.invoiceRate / 100 || null })
+      consignerUpdate(param).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
           this.close()

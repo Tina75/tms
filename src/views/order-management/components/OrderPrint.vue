@@ -36,7 +36,7 @@
             <tr>
               <td>业务员：{{data.salesmanName}}</td>
               <td>是否开票：{{data.isInvoice == 0 ? `否` : `是`}}</td>
-              <td v-if="data.isInvoice">开票税率：{{data.invoiceRate}}%</td>
+              <td v-if="data.isInvoice">开票税率：{{data.invoiceRate * 100}}%</td>
             </tr>
           </tbody>
         </table>
