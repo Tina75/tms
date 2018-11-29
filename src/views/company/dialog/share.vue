@@ -55,7 +55,7 @@ export default {
     }
   },
   mounted () {
-    this.basePath = 'http:' + process.env.VUE_APP_SHARE
+    this.basePath = process.env.VUE_APP_SHARE
     this.shareUrl = this.basePath + 'company-pc.html?shareOutNo=' + this.shareOutNo
     this.clipboard = new Clipboard('.copyBtn')
   },
@@ -80,7 +80,7 @@ export default {
       this.qrcodeInit = new QRCode('qrcodeDom', {
         width: 125, // 设置宽度
         height: 125, // 设置高度
-        text: this.basePath + '/company-phone.html?shareOutNo=' + this.shareOutNo
+        text: this.basePath + 'company-phone.html?shareOutNo=' + this.shareOutNo
       })
       this.isQrcodeShow = true
     },

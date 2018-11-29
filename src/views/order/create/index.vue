@@ -233,7 +233,7 @@
     <Title>其他</Title>
     <Row :gutter="16" class="i-mt-15">
       <Col span="6">
-      <FormItem label="提货方式:" prop="pickup">
+      <FormItem :class="{'ivu-form-item-error': highLight}" label="提货方式:" prop="pickup">
         <Select ref="pickupSelector" v-model="orderForm.pickup" transfer>
           <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
@@ -320,7 +320,14 @@ import CargoTable from './components/CargoTable.vue'
 import TimeInput from './components/TimeInput.vue'
 import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
-
+const rate = {
+  set (value) {
+    return float.floor(value / 100, 4) || null
+  },
+  get (value) {
+    return float.floor(value * 100, 2) || null
+  }
+}
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee', 'collectionMoney']
 export default {
   name: 'order-crete',
@@ -561,7 +568,8 @@ export default {
           return date && date < new Date(_this.orderForm.deliveryTime)
         }
       },
-      salesmanList: []
+      salesmanList: [],
+      highLight: false
     }
   },
   computed: {
@@ -635,7 +643,7 @@ export default {
           }
           // 里程除以 1000
           vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
-          vm.orderForm.invoiceRate = float.floor(vm.orderForm.invoiceRate * 100, 2)
+          vm.orderForm.invoiceRate = rate.get(vm.orderForm.invoiceRate)
         })
         .catch((errorInfo) => {
           vm.loading = false
@@ -761,7 +769,7 @@ export default {
         _this.orderForm.pickup = consigner.pickUp
         _this.orderForm.salesmanId = consigner.salesmanId
         _this.orderForm.isInvoice = consigner.isInvoice
-        _this.orderForm.invoiceRate = float.floor(consigner.invoiceRate * 100, 2) || null
+        _this.orderForm.invoiceRate = rate.get(consigner.invoiceRate)
       })
     },
     /**
@@ -866,6 +874,7 @@ export default {
     },
     // 清空重置表单
     resetForm () {
+      this.highLight = false
       this.$refs.orderForm.resetFields()
       this.clearCargoes()
       this.consignerCargoes = [new Cargo()]
@@ -1055,6 +1064,7 @@ export default {
     validateForm () {
       const vm = this
       vm.disabled = true
+      vm.highLight = false
       return new Promise((resolve, reject) => {
         vm.$refs.orderForm.validate((valid) => {
           if (valid) {
@@ -1083,7 +1093,7 @@ export default {
               mileage: orderForm.mileage * 1000,
               consignerPhone: orderForm.consignerPhone.replace(/\s/g, ''),
               consigneePhone: orderForm.consigneePhone.replace(/\s/g, ''),
-              invoiceRate: orderForm.invoiceRate / 100 || null
+              invoiceRate: rate.set(orderForm.invoiceRate)
             });
 
             ['start', 'end'].forEach(field => {
@@ -1117,7 +1127,8 @@ export default {
             const errMsg = form.pickup === 1 ? '选择的业务员，没有提货调度或送货调度权限，不可上门提货'
               : form.pickup === 2 ? '选择的业务员，没有送货调度权限，不可直送客户' : '权限错误'
             this.$Message.error(errMsg)
-            this.$refs['pickupSelector'].$refs.reference.focus()
+            this.disabled = false
+            this.highLight = true
             return reject(errMsg)
           }
           resolve(form)

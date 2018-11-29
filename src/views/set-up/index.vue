@@ -61,8 +61,8 @@
           </div>
           <div v-for="msg in this.messageList" :key="msg.title" class="mesDiv">
             <p style="font-weight: bold">{{msg.title}}</p>
-            <p>{{msg.messageTitle}}<span style="margin-left:12px;">{{msg.message}}</span></p>
-            <p>{{msg.messageReturn}}</p>
+            <p v-if="msg.messageTitle">{{msg.messageTitle}}<span style="margin-left:12px;">{{msg.message}}</span></p>
+            <p v-if="msg.messageReturn">{{msg.messageReturn}}</p>
             <p>接收人：
               <Checkbox
                 v-for="checkBtn in msg.checkBox"
@@ -153,7 +153,7 @@ export default {
         title: '发运提醒',
         messageTitle: '运单：',
         message: '【运掌柜TMS】您的货物已由xx公司安排送货，由车牌号XXXX司机姓名XXXX司机电话XXXX派送；',
-        messageReturn: '外转单：【运掌柜TMS】您的xxx货物已由xx公司安排送货。',
+        // messageReturn: '外转单：【运掌柜TMS】您的xxx货物已由xx公司安排送货。',
         checkBox: [{
           label: '发货人',
           model: '1',
@@ -167,7 +167,7 @@ export default {
         title: '到货提醒',
         messageTitle: '运单：',
         message: '【运掌柜TMS】您的货物已签收，由车牌号XXX司机姓名XXX司机电话XXXX完成配送；',
-        messageReturn: '外转单：【运掌柜TMS】您的xxx货物已签收。',
+        // messageReturn: '外转单：【运掌柜TMS】您的xxx货物已签收。',
         checkBox: [{
           label: '发货人',
           model: '3',
@@ -179,8 +179,8 @@ export default {
         }]
       }, {
         title: '指派司机提醒',
-        messageTitle: '运单：',
-        message: '【运掌柜TMS】XX公司给您指派了新的运单，请尽快装货；',
+        // messageTitle: '运单：',
+        // message: '【运掌柜TMS】XX公司给您指派了新的运单，请尽快装货；',
         messageReturn: '提货单：【运掌柜TMS】XX公司给您指派了新的提货单，请尽快提货。',
         checkBox: [{
           label: '司机',
