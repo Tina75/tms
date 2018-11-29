@@ -28,6 +28,10 @@ export default {
       type: String,
       default: 'watch',
       validator: (val) => ['watch', 'edit'].indexOf(val) > -1
+    },
+    feeStatusTip: { // 改单提示语
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -53,10 +57,7 @@ export default {
           key: 'cashAmount',
           render: (h, p) => {
             if (this.mode === 'edit' && p.row.isCashDisabled && p.row.type === 'change') {
-              let str = ''
-              if (p.row.payType === 1) str = '预付' + p.column.title
-              if (p.row.payType === 2) str = '到付' + p.column.title
-              if (p.row.payType === 3) str = '回付' + p.column.title
+              let str = this.getTips(p)
               return h('Tooltip', {
                 props: {
                   placeholder: 'bottom',
@@ -67,7 +68,7 @@ export default {
                 style: {
                   whiteSpace: 'normal'
                 }
-              }, str + '已核销,不能修改')])
+              }, str)])
             }
             if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) return h('span', p.row.cashAmount || 0)
             return h(MoneyInput, {
@@ -92,10 +93,7 @@ export default {
           key: 'fuelCardAmount',
           render: (h, p) => {
             if (this.mode === 'edit' && p.row.isCardDisabled && p.row.type === 'change') {
-              let str = ''
-              if (p.row.payType === 1) str = '预付' + p.column.title
-              if (p.row.payType === 2) str = '到付' + p.column.title
-              if (p.row.payType === 3) str = '回付' + p.column.title
+              let str = this.getTips(p)
               return h('Tooltip', {
                 props: {
                   placeholder: 'bottom',
@@ -106,7 +104,7 @@ export default {
                 style: {
                   whiteSpace: 'normal'
                 }
-              }, str + '已核销,不能修改')])
+              }, str)])
             }
             if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCardDisabled)) return h('span', p.row.fuelCardAmount || 0)
 
@@ -157,7 +155,6 @@ export default {
         }
       })
     },
-
     validate () {
       let total = 0
       console.log(this.tableDataBack)
@@ -169,6 +166,18 @@ export default {
         return false
       }
       return true
+    },
+    getTips (p) {
+      let str = ''
+      if (!this.feeStatusTip) {
+        if (p.row.payType === 1) str = '预付' + p.column.title
+        if (p.row.payType === 2) str = '到付' + p.column.title
+        if (p.row.payType === 3) str = '回付' + p.column.title
+        str += '已核销,不能修改'
+      } else {
+        str = this.feeStatusTip
+      }
+      return str
     }
   }
 }
