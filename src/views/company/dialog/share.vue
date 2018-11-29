@@ -127,7 +127,7 @@ export default {
       width 40px
       height 40px
       position absolute
-      margin 40px 0 0 45px
+      margin 42.5px
       display block
   p
     color #333333
