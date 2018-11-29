@@ -84,6 +84,8 @@
               <span class="unit-yuan">元</span>
             </FormItem>
           </i-col>
+        </Row>
+        <Row class="detail-field-group">
           <i-col span="6">
             <FormItem label="路桥费：" prop="tollFee" class="padding-left-label">
               <TagNumberInput v-model="payment.tollFee" class="detail-payment-input-send"></TagNumberInput>
