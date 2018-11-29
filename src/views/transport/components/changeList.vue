@@ -43,6 +43,14 @@
             <span class="content">{{item.value}}</span>
               </Col>
           </Row>
+          <Row>
+            <Col>
+            <PayInfo
+              v-if="settlementTypeOld.length>0"
+              :data="settlementTypeOld"
+              class="detail-field-payinfo" />
+            </Col>
+          </Row>
           </Col>
           <Col span="12">
           <div class="title">修改后运费:</div>
@@ -50,6 +58,14 @@
             <Col v-for="item in feeListNew" :key="item.name" :span="item.span" class="labelContent">
             <span class="label">{{item.name}}:</span>
             <span class="content after">{{item.value}}</span>
+              </Col>
+          </Row>
+          <Row>
+            <Col>
+            <PayInfo
+              v-if="settlementTypeNew.length>0"
+              :data="settlementTypeNew"
+              class="detail-field-payinfo payinfoAfter" />
               </Col>
           </Row>
           </Col>
@@ -61,6 +77,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import TransportBase from '../mixin/transportBase'
+import PayInfo from '../components/PayInfo'
 import { getCarType, getCarLength } from '@/libs/constant/carInfo'
 import _ from 'lodash'
 
@@ -74,6 +91,7 @@ const mileageFormate = (mileage) => {
 }
 export default {
   name: 'except-record',
+  components: { PayInfo },
   filters: {
     timeFormatter (timestamp) {
       if (!timestamp) return '-'
@@ -153,53 +171,46 @@ export default {
           'order': 8,
           'span': 12
         },
-        'settlementType': {
-          'type': 'fee',
-          'description': '结算方式',
-          'ways': 3,
-          'order': 9,
-          'span': 12
-        },
         'freightFee': {
           'type': 'fee',
           'description': '运输费用',
           'ways': 1,
-          'order': 10,
+          'order': 9,
           'span': 12
         },
         'loadFee': {
           'type': 'fee',
           'description': '装货费',
           'ways': 1,
-          'order': 11,
+          'order': 10,
           'span': 12
         },
         'unloadFee': {
           'type': 'fee',
           'description': '卸货费',
           'ways': 1,
-          'order': 12,
+          'order': 11,
           'span': 12
         },
         'otherFee': {
           'type': 'fee',
           'description': '其他费用',
           'ways': 1,
-          'order': 13,
+          'order': 12,
           'span': 12
         },
         'totalFee': {
           'type': 'fee',
           'description': '合计费用',
           'ways': 1,
-          'order': 14,
+          'order': 13,
           'span': 12
         },
         'insuranceFee': {
           'type': 'fee',
           'description': '保险费用',
           'ways': 1,
-          'order': 15,
+          'order': 14,
           'span': 12
         },
         // 'cashBack': {
@@ -211,62 +222,27 @@ export default {
           'type': 'fee',
           'description': '路桥费',
           'ways': 1,
-          'order': 16,
+          'order': 15,
           'span': 12
         },
         'mileage': {
           'type': 'fee',
           'description': '公里数',
           'ways': 2,
-          'order': 17,
-          'span': 12
-        },
-        'prepaidCash': {
-          'type': 'fee',
-          'description': '预付现金',
-          'ways': 1,
-          'order': 18,
-          'span': 12
-        },
-        'prepaidFuel': {
-          'type': 'fee',
-          'description': '预付油卡',
-          'ways': 1,
-          'order': 19,
-          'span': 12
-        },
-        'arrivePaidCash': {
-          'type': 'fee',
-          'description': '到付现金',
-          'ways': 1,
-          'order': 20,
-          'span': 12
-        },
-        'arrivePaidFuel': {
-          'type': 'fee',
-          'description': '到付油卡',
-          'ways': 1,
-          'order': 21,
-          'span': 12
-        },
-        'receiptPaidCash': {
-          'type': 'fee',
-          'description': '回付现金',
-          'ways': 1,
-          'order': 22,
-          'span': 12
-        },
-        'receiptPaidFule': {
-          'type': 'fee',
-          'description': '回付油卡',
-          'ways': 1,
-          'order': 23,
+          'order': 16,
           'span': 12
         },
         'remark': {
           'type': 'info',
           'description': '备注',
-          'order': 24,
+          'order': 17,
+          'span': 24
+        },
+        'settlementType': {
+          'type': 'fee',
+          'description': '结算方式',
+          'ways': 3,
+          'order': 18,
           'span': 24
         },
         'operatorName': {
@@ -276,8 +252,43 @@ export default {
         'createTime': {
           'type': 'base',
           'description': '修改时间'
+        },
+        'prepaidCash': {
+          'type': 'fee',
+          'description': '预付现金',
+          'settlementType': 1
+        },
+        'prepaidFuel': {
+          'type': 'fee',
+          'description': '预付油卡',
+          'settlementType': 1
+        },
+        'arrivePaidCash': {
+          'type': 'fee',
+          'description': '到付现金',
+          'settlementType': 1
+        },
+        'arrivePaidFuel': {
+          'type': 'fee',
+          'description': '到付油卡',
+          'settlementType': 1
+        },
+        'receiptPaidCash': {
+          'type': 'fee',
+          'description': '回付现金',
+          'settlementType': 1
+        },
+        'receiptPaidFule': {
+          'type': 'fee',
+          'description': '回付油卡',
+          'settlementType': 1
         }
-      }
+      },
+      settlementPayInfo: [
+        { payType: 1, fuelCardAmount: '', cashAmount: '' },
+        { payType: 2, fuelCardAmount: '', cashAmount: '' },
+        { payType: 3, fuelCardAmount: '', cashAmount: '' }
+      ]
     }
   },
   computed: {
@@ -320,6 +331,12 @@ export default {
       //   }
       // }
       return this.getList(this.data.new, 'fee')
+    },
+    settlementTypeOld () {
+      return this.getSettlementType(this.data.old)
+    },
+    settlementTypeNew () {
+      return this.getSettlementType(this.data.new)
     }
   },
   mounted () {
@@ -336,7 +353,6 @@ export default {
     waysSwitch (num, value) {
       switch (num) {
         case 1:
-          console.log(moneyFormate(value))
           return moneyFormate(value)
         case 2: return mileageFormate(value)
         case 3: if (value === 1) {
@@ -355,7 +371,7 @@ export default {
     getList (obj, type) {
       let list = []
       for (let key in obj) {
-        if (this.changeList[key] && this.changeList[key].type === type) {
+        if (this.changeList[key] && this.changeList[key].type === type && this.changeList[key].settlementType !== 1) {
           list.push({
             name: this.changeList[key].description,
             order: this.changeList[key].order,
@@ -364,13 +380,52 @@ export default {
         }
       }
       list = _.sortBy(list, (item) => { return item.order })
-      console.log(list)
+      return list
+    },
+    getSettlementType (obj) {
+      let list = []
+      for (let i = 0, item = this.settlementPayInfo; i < item.length; i++) {
+        let mid = {}
+        for (let key in obj) {
+          if (this.changeList[key] && obj.settlementType === 1 && this.changeList[key].settlementType === 1) {
+            if (i === 0 && (key === 'prepaidCash' || key === 'prepaidFuel')) {
+              mid = {
+                payType: item[i].payType,
+                fuelCardAmount: typeof obj.prepaidFuel === 'number' ? obj.prepaidFuel / 100 : 0,
+                cashAmount: typeof obj.prepaidCash === 'number' ? obj.prepaidCash / 100 : 0
+              }
+            }
+            if (i === 1 && (key === 'arrivePaidCash' || key === 'arrivePaidFuel')) {
+              mid = {
+                payType: item[i].payType,
+                fuelCardAmount: typeof obj.arrivePaidFuel === 'number' ? obj.arrivePaidFuel / 100 : 0,
+                cashAmount: typeof obj.arrivePaidCash === 'number' ? obj.arrivePaidCash / 100 : 0
+              }
+            }
+            if (i === 2 && (key === 'receiptPaidCash' || key === 'receiptPaidFule')) {
+              mid = {
+                payType: item[i].payType,
+                fuelCardAmount: typeof obj.receiptPaidFule === 'number' ? obj.receiptPaidFule / 100 : 0,
+                cashAmount: typeof obj.receiptPaidCash === 'number' ? obj.receiptPaidCash / 100 : 0
+              }
+            }
+          }
+        }
+        if (JSON.stringify(mid) !== '{}') {
+          list.push(mid)
+        }
+      }
       return list
     }
   }
 }
 </script>
 <style lang="stylus" scoped>
+.payinfoAfter
+  /deep/ tr
+    td:not(:first-child)
+      span
+        color red
 .no-bottom
   border-bottom none!important
 .except-record
