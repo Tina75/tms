@@ -353,6 +353,7 @@
                        :loading="loading"
                        :total="paymentTotal"
                        :data="settlementPayInfo"
+                       :fee-status-tip="feeStatusTip"
                        class="detail-field-payinfo"
                        mode="edit" />
             </div>
