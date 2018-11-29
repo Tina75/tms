@@ -140,6 +140,11 @@ export default {
             showAdjuster: false
           })
         })
+        this.needPay = 0
+        this.payItems.map(item => {
+          this.needPay += Number(item.fee)
+        })
+        this.needPay = (this.needPay / 100).toFixed(2)
         if (!res.data.data.some(item => !item.verifyStatus)) {
           this.close()
           this.ok()
