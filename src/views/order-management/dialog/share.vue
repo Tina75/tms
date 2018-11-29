@@ -54,7 +54,7 @@
       <div>您可以复制链接，在QQ、微信上发送给您的客户</div>
       <div>
         <a :href="shareType ? encrypt.message : disencrypt.message" target="_blank" style="margin-right: 20px;">查看分享</a>
-        <a href="javacript:void(0);" @click="close">关闭</a>
+        <a @click="close">关闭</a>
       </div>
     </div>
   </Modal>
