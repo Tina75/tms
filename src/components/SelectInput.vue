@@ -105,13 +105,13 @@ export default {
       default: false
     },
     /**
-     * 显示时候的值，回调函数
-     * 比如：手机号，银行卡号，间隔显示，但是最终的值不保留间隔
+     * 输入框的值，经过该函数，值发生变化
+     * 比如：车牌号大写
      */
     parser: Function,
     /**
-     * 输入框的值，经过该函数，值发生变化
-     * 比如：车牌号大写
+     * 显示时候的值，回调函数
+     * 比如：手机号，银行卡号，间隔显示，但是最终的值不保留间隔
      */
     formatter: Function
   },
@@ -268,7 +268,8 @@ export default {
     },
     heightlightText (text) {
       if (this.currentValue) {
-        let reg = new RegExp('(' + this.currentValue + ')', 'g')
+        let value = this.currentValue.replace(/([()+?.*-])/g, '\\$1')
+        let reg = new RegExp('(' + value + ')', 'g')
         return text.replace(reg, '<b style="color:#ec4e4e">$1</b>')
       }
       return text
