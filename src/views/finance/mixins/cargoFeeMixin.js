@@ -45,7 +45,17 @@ export default {
       if (!this.activeSender) {
         return []
       }
-      return this.datas[this.activeSender.partnerName].orderInfos
+      console.log(this.datas[this.activeSender.partnerName].orderInfos)
+      return this.datas[this.activeSender.partnerName].orderInfos.map(item => {
+        return Object.assign({}, item, {
+          carrierName: item.carrierName ? item.carrierName : '-',
+          departureName: item.departureName ? item.departureName : '-',
+          destinationName: item.destinationName ? item.destinationName : '-',
+          truckNo: item.truckNo ? item.truckNo : '-',
+          orderNo: item.orderNo ? item.orderNo : '-',
+          orderStatusDesc: item.orderStatusDesc ? item.orderStatusDesc : '-'
+        })
+      })
     },
     isEmptyList () {
       return Object.keys(this.datas).length === 0
