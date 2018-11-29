@@ -10,7 +10,7 @@
               <div class="eye-circle">
                 <FontIcon type="ico_see" size="16" color="#fff"></FontIcon>
               </div>
-              <div class="icon-letter">预览大图</div>
+              <div class="icon-letter">预览</div>
             </div>
             <div style="cursor: pointer;" @click="handleRemove(index)">
               <div class="eye-circle">
@@ -56,7 +56,7 @@
               <div class="eye-circle">
                 <FontIcon type="ico_see" size="16" color="#fff"></FontIcon>
               </div>
-              <div class="icon-letter">预览大图</div>
+              <div class="icon-letter">预览</div>
             </div>
             <div style="position: relative;cursor: pointer">
               <div style="cursor: pointer">
@@ -74,7 +74,7 @@
                     @change="inputChanged">
                 </label>
               </div>
-              <div class="icon-letter">重新上传</div>
+              <div class="icon-letter">修改</div>
             </div>
           </div>
         </template>

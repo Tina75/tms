@@ -6,10 +6,16 @@
       </p>
       <Row>
         <Col :span="18">
-        <Input id="shareUrl" :value="shareUrl" disabled></Input>
+        <Input id="shareUrl" v-model="shareUrl" disabled></Input>
         </Col>
         <Col :span="4">
-        <Button type="primary" class="copyBtn" data-clipboard-target = "#shareUrl" @click="copyBtn">复制</Button>
+        <Button
+          v-clipboard:copy="shareUrl"
+          v-clipboard:success="copyBtn"
+          v-clipboard:error="onError"
+          class="copyBtn"
+          type="primary">复制
+        </Button>
         </Col>
       </Row>
       <div class="shareFont">
@@ -37,12 +43,15 @@
 <script>
 // import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
-import Clipboard from 'clipboard'
+import VueClipboard from 'vue-clipboard2'
 import FontIcon from '@/components/FontIcon'
 import QRCode from 'qrcodejs2'
+import Vue from 'vue'
+
+Vue.use(VueClipboard)
 export default {
   name: 'shareCompany',
-  components: { FontIcon, Clipboard, QRCode },
+  components: { FontIcon, QRCode },
   mixins: [BaseDialog],
   data () {
     return {
@@ -57,22 +66,17 @@ export default {
   mounted () {
     this.basePath = process.env.VUE_APP_SHARE
     this.shareUrl = this.basePath + 'company-pc.html?shareOutNo=' + this.shareOutNo
-    this.clipboard = new Clipboard('.copyBtn')
   },
   methods: {
     viewShare () {
       window.open(this.shareUrl)
       this.close()
     },
-    copyBtn () {
-      this.clipboard.on('success', e => {
-        this.$Message.success('复制成功')
-        this.clipboard.destroy() //  使用destroy可以清楚缓存
-      })
-      this.clipboard.on('error', e => {
-        this.$Message.error('复制失败')
-        this.clipboard.destroy()
-      })
+    copyBtn (e) {
+      this.$Message.success('复制成功')
+    },
+    onError (e) {
+      this.$Message.error('复制失败，请使用Ctrl-C手动复制')
     },
     weixinShare () {
       this.qrcodeShow = true
@@ -127,7 +131,7 @@ export default {
       width 40px
       height 40px
       position absolute
-      margin 40px 0 0 45px
+      margin 42.5px
       display block
   p
     color #333333
