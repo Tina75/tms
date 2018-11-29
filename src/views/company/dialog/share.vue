@@ -55,7 +55,7 @@ export default {
     }
   },
   mounted () {
-    this.basePath = 'http:' + process.env.VUE_APP_SHARE
+    this.basePath = process.env.VUE_APP_SHARE
     this.shareUrl = this.basePath + 'company-pc.html?shareOutNo=' + this.shareOutNo
     this.clipboard = new Clipboard('.copyBtn')
   },
