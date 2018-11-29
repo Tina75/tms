@@ -78,9 +78,6 @@ export default {
   mounted () {
     // 重置sort,默认从0开始
     this.saveList(this.list)
-    if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
-      document.getElementById('slider-icon__checkbox-list').style.maxHeight = (document.body.clientHeight - 100) + 'px'
-    }
   },
   methods: {
     closePoptip () {
@@ -157,7 +154,7 @@ export default {
     column-gap: 6px
   &__checkbox
     display: inline-block
-    padding: 8px 0
+    padding: 6px 0
     width: 114px
     overflow auto
   &__draggable-item
