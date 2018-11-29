@@ -966,8 +966,7 @@ export default {
                 return h('p', {
                   style: {
                     textAlign: 'left',
-                    marginLeft: '-20px',
-                    textIndent: '1.5em'
+                    marginLeft: '-20px'
                   }
                 }, res.limitTip)
               }
