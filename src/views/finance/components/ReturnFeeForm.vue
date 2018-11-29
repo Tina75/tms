@@ -3,7 +3,7 @@
     <Form ref="formInline" :model="formInline">
       <Row :gutter="16">
         <Col span="7">
-        <FormItem :label-width="101" label="外转方/承运商：" prop="partnerName">
+        <FormItem :label-width="101" label="承运商：" prop="partnerName">
           <Input v-model="formInline.partnerName" :maxlength="20" placeholder="请输入"></Input>
         </FormItem>
         </Col>

@@ -6,7 +6,7 @@
       :data-source="orderList"
       :is-empty-list="isEmptyList"
       :title="title"
-      empty-content="请点击左侧外转方/承运商查看返现对账列表哦～"
+      empty-content="请点击左侧承运商查看返现对账列表哦～"
       @on-selection-change="handleSelectionChange"
     >
       <div slot="title">
