@@ -131,7 +131,14 @@ export default {
           this.$Toast.warning({
             showIcon: false,
             okText: '我知道了',
-            content: data.data.content
+            render (h) {
+              return h('p', {
+                style: {
+                  textAlign: 'left',
+                  marginLeft: '-20px'
+                }
+              }, data.data.content)
+            }
           })
         }
       })

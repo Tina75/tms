@@ -264,8 +264,7 @@ export default {
       this.selectStatus === 0 ? this.contact = '' : this.name = ''
       this.keyword = {
         name: this.name,
-        contact: this.contact,
-        order: this.order
+        contact: this.contact
       }
     },
     clearKeywords () {
@@ -303,7 +302,12 @@ export default {
     },
     timeSort (column) {
       this.order = (column.order === 'normal' ? '' : column.order)
-      this.searchList()
+      this.selectStatus === 0 ? this.contact = '' : this.name = ''
+      this.keyword = {
+        name: this.name,
+        contact: this.contact,
+        order: this.order
+      }
     },
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
