@@ -338,6 +338,7 @@ export default {
 .demo-upload-list:hover .demo-upload-list-cover
   display flex
   display: -ms-flexbox
+  -webkit-justify-content space-around
   justify-content space-evenly
   -ms-flex-pack:distribute;
   align-items center
