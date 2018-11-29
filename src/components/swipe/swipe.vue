@@ -74,7 +74,7 @@ export default {
 @import "~photoswipe/dist/photoswipe.css";
 @import "~photoswipe/dist/default-skin/default-skin.css";
 .pswp{
-  z-index: 1570;
+  z-index: 9970;
 }
 .pswp__button--arrow--left:before,
 .pswp__button--arrow--right:before{

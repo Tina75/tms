@@ -11,7 +11,7 @@
                 <div class="eye-circle">
                   <FontIcon type="ico_see" size="16" color="#fff"></FontIcon>
                 </div>
-                <div class="icon-letter">预览大图</div>
+                <div class="icon-letter">预览</div>
               </div>
               <div style="cursor: pointer;" @click="handleRemove(index)">
                 <div class="eye-circle">
