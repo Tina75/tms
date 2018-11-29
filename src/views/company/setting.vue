@@ -85,7 +85,7 @@
           <span class="imageLogo">
             <up-load v-show="isEdit" ref="uploadLogo" max-size="10" crop></up-load>
             <div
-              :style="(formCompany.logoUrl && !isEdit) ? 'height: 80px;width: 80px;background-image: url(' + formCompany.logoUrl + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position:center;cursor:pointer;' : ''"
+              :style="(formCompany.logoUrl && !isEdit) ? 'height: 90px;width: 96px;background-image: url(' + formCompany.logoUrl + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position:center;cursor:pointer;' : ''"
               class="imageLogoDiv"
               @click="handleView(0, 'logo')">
             </div>
@@ -329,8 +329,8 @@ export default {
 >>>.imageLogo .demo-upload-list
 >>>.imageLogo .ivu-upload .ivu-upload-drag
 >>>.imageLogo .ivu-upload .ivu-upload-input
-  width 80px
-  height 80px
+  width 96px
+  height 90px
 .temAll
   margin -20px -15px
   padding 0 40px
