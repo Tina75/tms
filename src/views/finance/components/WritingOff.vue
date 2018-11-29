@@ -280,7 +280,7 @@ export default {
         },
         {
           title: '结算方式',
-          width: 75,
+          width: 80,
           key: 'settleTypeDesc',
           filters: this.scene === 2 ? [
             {
@@ -649,16 +649,16 @@ export default {
             font-size 12px
       .order-list
         height 100%
-        overflow-y hidden
+        overflow-y auto
         flex 1
         -ms-flex 1
         padding 19px 20px 20px 9px
         /deep/ .ivu-table-cell
           padding-left: 5px
           padding-right: 5px
-        &:hover
-          height 100%
-          overflow-y auto
+        /*&:hover*/
+          /*height 100%*/
+          /*overflow-y auto*/
         .title
           padding-bottom 10px
           margin-bottom 20px
