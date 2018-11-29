@@ -70,7 +70,7 @@ export default {
       orderNameMap: {
         1: '对账批次号/订单号',
         2: '对账批次号/运单号/提货单号',
-        3: '对账批次号/外转单号'
+        3: '对账批次号单号'
       },
       orderTypeMap: {
         1: {

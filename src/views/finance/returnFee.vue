@@ -108,7 +108,7 @@ export default {
           }
         },
         {
-          title: '承运商/外转方',
+          title: '承运商',
           key: 'partnerName',
           width: 200
         },
