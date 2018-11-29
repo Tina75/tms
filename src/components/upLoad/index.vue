@@ -26,21 +26,24 @@
       </div>
       <div v-if="uploadImgList.length < maxCount" class="ivu-upload" style="display: inline-block; width: 160px;">
         <div class="ivu-upload ivu-upload-drag">
-          <input
-            ref="fileInput"
-            :multiple="multiple"
-            type="file"
-            class="ivu-upload-input"
-            accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
-            @change="inputChanged">
-          <div style="width: 160px;height: 90px;">
-            <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%)">
-              <div class="eye-circle">
-                <FontIcon type="ico_add2" size="14" color="#fff"></FontIcon>
+          <label class="ivu-upload-input">
+            <input
+              ref="fileInput"
+              :multiple="multiple"
+              type="file"
+              class="ivu-upload-input"
+              style="display: none;"
+              accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
+              @change="inputChanged">
+            <div style="width: 160px;height: 90px;">
+              <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%)">
+                <div class="eye-circle">
+                  <FontIcon type="ico_add2" size="14" color="#fff"></FontIcon>
+                </div>
+                <div class="icon-letter" style="color: #00A4BD;">点击上传</div>
               </div>
-              <div class="icon-letter" style="color: #00A4BD;">点击上传</div>
             </div>
-          </div>
+          </label>
         </div>
       </div>
     </div>
@@ -60,13 +63,16 @@
                 <div class="eye-circle">
                   <FontIcon type="ico_add2" size="14" color="#fff"></FontIcon>
                 </div>
-                <input
-                  ref="fileInput"
-                  :multiple="multiple && !crop"
-                  type="file"
-                  class="ivu-upload-input-icon"
-                  accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
-                  @change="inputChanged">
+                <label class="ivu-upload-input-icon">
+                  <input
+                    ref="fileInput"
+                    :multiple="multiple && !crop"
+                    type="file"
+                    class="ivu-upload-input-icon"
+                    style="display: none;"
+                    accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
+                    @change="inputChanged">
+                </label>
               </div>
               <div class="icon-letter">重新上传</div>
             </div>
@@ -78,21 +84,24 @@
       </div>
       <div v-else class="ivu-upload" style="display: inline-block; width: 160px;">
         <div class="ivu-upload ivu-upload-drag">
-          <input
-            ref="fileInput"
-            :multiple="multiple && !crop"
-            type="file"
-            class="ivu-upload-input"
-            accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
-            @change="inputChanged">
-          <div style="width: 160px;height: 90px;">
-            <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%)">
-              <div class="eye-circle">
-                <FontIcon type="ico_add2" size="14" color="#fff"></FontIcon>
+          <label class="ivu-upload-input">
+            <input
+              ref="fileInput"
+              :multiple="multiple && !crop"
+              type="file"
+              class="ivu-upload-input"
+              style="display: none;"
+              accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
+              @change="inputChanged">
+            <div style="width: 160px;height: 90px;">
+              <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%)">
+                <div class="eye-circle">
+                  <FontIcon type="ico_add2" size="14" color="#fff"></FontIcon>
+                </div>
+                <div class="icon-letter" style="color: #00A4BD;">点击上传</div>
               </div>
-              <div class="icon-letter" style="color: #00A4BD;">点击上传</div>
             </div>
-          </div>
+          </label>
         </div>
       </div>
     </div>
@@ -312,6 +321,14 @@ export default {
     z-index 100
     opacity 0
     cursor pointer
+.ivu-upload-input
+  width 160px
+  height 90px
+  position absolute
+  cursor pointer
+.ivu-upload-drag
+  height 90px
+  text-align left
 .demo-upload-list
   display inline-block
   width 160px
