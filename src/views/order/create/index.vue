@@ -635,7 +635,7 @@ export default {
           }
           // 里程除以 1000
           vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
-          vm.orderForm.invoiceRate = vm.orderForm.invoiceRate * 100 || null
+          vm.orderForm.invoiceRate = float.floor(vm.orderForm.invoiceRate * 100, 2)
         })
         .catch((errorInfo) => {
           vm.loading = false
@@ -761,7 +761,7 @@ export default {
         _this.orderForm.pickup = consigner.pickUp
         _this.orderForm.salesmanId = consigner.salesmanId
         _this.orderForm.isInvoice = consigner.isInvoice
-        _this.orderForm.invoiceRate = consigner.invoiceRate * 100 || null
+        _this.orderForm.invoiceRate = float.floor(consigner.invoiceRate * 100, 2) || null
       })
     },
     /**

@@ -44,6 +44,7 @@
 import PageTable from '@/components/page-table'
 import { consignerDelete, CODE } from './client'
 import BasePage from '@/basic/BasePage'
+import float from '@/libs/js/float'
 export default {
   name: 'sender',
   components: {
@@ -107,7 +108,7 @@ export default {
                           remark: params.row.remark,
                           pickUp: params.row.pickUp,
                           isInvoice: params.row.isInvoice,
-                          invoiceRate: params.row.invoiceRate * 100 || null,
+                          invoiceRate: float.floor(params.row.invoiceRate * 100, 2),
                           salesmanId: params.row.salesmanId
                         }
                       },

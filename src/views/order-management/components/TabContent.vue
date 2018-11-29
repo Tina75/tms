@@ -523,7 +523,6 @@ export default {
           render: (h, p) => {
             if (p.row.waybillNo) {
               let waybillNoArr = p.row.waybillNo.split(',')
-              console.log(waybillNoArr)
               if (waybillNoArr.length > 1) {
                 return h('Tooltip', {
                   props: {
@@ -832,7 +831,6 @@ export default {
 
   watch: {
     tabStatus (val) {
-      console.log(val)
       this.handleTabChange(val)
     }
   },
@@ -1082,7 +1080,6 @@ export default {
       if (params) {
         data.id = [params.row]
       }
-      console.log(this.selectOrderList)
       _this.openDialog({
         name: 'order-management/dialog/restoreOrDelete',
         data: data,
@@ -1180,8 +1177,8 @@ export default {
           orderIds: this.selectedId
         }
       }).then((res) => {
-        console.log(res)
         this.orderPrint = _.cloneDeep(res.data.data)
+        this.orderPrint.invoiceRate = float.floor(this.orderPrint.invoiceRate * 100, 2)
         this.$refs.printer.print()
       })
     },
