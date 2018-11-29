@@ -528,8 +528,15 @@ export default {
       this.companyDataActive = data.id
       this.currentPartner = data
       this.orderData = data.orderInfos.map(item => {
+        console.log(item)
         return Object.assign({}, item, {
-          totalFeeText: (item.totalFee / 100).toFixed(2),
+          departureName: item.departureName ? item.departureName : '-',
+          destinationName: item.destinationName ? item.destinationName : '-',
+          orderNo: item.orderNo ? item.orderNo : '-',
+          truckNo: item.truckNo ? item.truckNo : '-',
+          totalFeeText: item.totalFee ? (item.totalFee / 100).toFixed(2) : '-',
+          settleTypeDesc: item.settleTypeDesc ? item.settleTypeDesc : '-',
+          orderStatusDesc: item.orderStatusDesc ? item.orderStatusDesc : '-',
           _disabled: !!item.isMultiPay,
           title: data.partnerName,
           calcTotalFeeText: data.calcTotalFeeText,

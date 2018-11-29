@@ -25,7 +25,7 @@
                v-model="easySearchKeyword"
                :icon="easySearchKeyword ? 'ios-close-circle' : ''"
                :maxlength="20"
-               placeholder="请输入运单号/提货单号/外转单号"
+               placeholder="请输入运单号/提货单号"
                class="search-input"
                @on-click="resetEasySearch" />
 
@@ -59,7 +59,7 @@
     <div v-if="!isEasySearch" class="operate-box custom-style">
 
       <div style="margin-bottom: 10px;">
-        <Input v-model="seniorSearchFields.billNo" :maxlength="20" placeholder="请输入运单号/提货单号/外转单号"  class="search-input-senior" />
+        <Input v-model="seniorSearchFields.billNo" :maxlength="20" placeholder="请输入运单号/提货单号"  class="search-input-senior" />
         <SelectInput v-model="seniorSearchFields.carrierName"
                      mode="carrier"
                      placeholder="请输入承运商"
@@ -156,7 +156,7 @@ export default {
       // 单据类型
       billTypeList: [
         { value: 1, label: '提货单' },
-        { value: 2, label: '外转单' },
+        // { value: 2, label: '外转单' },
         { value: 3, label: '运单' }
       ],
 

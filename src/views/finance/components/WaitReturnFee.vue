@@ -6,7 +6,7 @@
       :data-source="orderList"
       :is-empty-list="isEmptyList"
       :title="title"
-      empty-content="请点击左侧外转方/承运商查看返现对账列表哦～"
+      empty-content="请点击左侧承运商查看返现对账列表哦～"
       @on-selection-change="handleSelectionChange"
     >
       <div slot="title">
@@ -157,7 +157,15 @@ export default {
       if (!this.activeDriver) {
         return []
       }
-      return this.drivers[this.activeDriver.partnerName].orderInfos
+      return this.drivers[this.activeDriver.partnerName].orderInfos.map((item) => {
+        return Object.assign({}, item, {
+          orderNo: item.orderNo ? item.orderNo : '-',
+          departureName: item.departureName ? item.departureName : '-',
+          destinationName: item.destinationName ? item.destinationName : '-',
+          truckNo: item.truckNo ? item.truckNo : '-',
+          orderStatusDesc: item.orderStatusDesc ? item.orderStatusDesc : '-'
+        })
+      })
     },
     isEmptyList () {
       return Object.keys(this.drivers).length === 0
