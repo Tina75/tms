@@ -666,7 +666,6 @@ export default {
           border-bottom 1px solid #e4e7ec
           .text
             float left
-            padding-left 10px
             .desc_title
               line-height: 22px
               font-size: 14px
