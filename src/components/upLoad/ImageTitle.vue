@@ -21,7 +21,7 @@
               </div>
             </div>
           </div>
-          <Input v-model="pic.title" placeholder="请输入标题" style="width: 160px;margin: 8px 0;" @on-change="handleChange(pic)"/>
+          <Input v-model="pic.title" :maxlength="10" placeholder="标题必填" style="width: 160px;margin: 8px 0;" @on-change="handleChange(pic)"/>
         </div>
       </div>
       <div v-if="uploadImgList.length < maxCount" class="ivu-upload" style="display: inline-block; width: 160px;">
