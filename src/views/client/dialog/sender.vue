@@ -83,8 +83,10 @@ import { invoiceList } from '@/libs/constant/orderCreate.js'
 import TagNumberInput from '@/components/TagNumberInput'
 import server from '@/libs/js/server'
 import float from '@/libs/js/float'
-const rate = (value) => {
-  return float.floor(value / 100, 4) || null
+const rate = {
+  set (value) {
+    return value ? float.floor(value / 100, 4) : value
+  }
 }
 export default {
   name: 'sender',
@@ -142,7 +144,7 @@ export default {
       })
     },
     _consignerAdd () {
-      const param = Object.assign({}, this.validate, { invoiceRate: rate(this.validate.invoiceRate) })
+      const param = Object.assign({}, this.validate, { invoiceRate: this.validate.isInvoice === 1 ? rate.set(this.validate.invoiceRate) : null })
       consignerAdd(param).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
@@ -158,7 +160,7 @@ export default {
       })
     },
     _consignerUpdate () {
-      const param = Object.assign({}, this.validate, { id: this.id, invoiceRate: rate(this.validate.invoiceRate) })
+      const param = Object.assign({}, this.validate, { id: this.id, invoiceRate: this.validate.isInvoice === 1 ? rate.set(this.validate.invoiceRate) : null })
       consignerUpdate(param).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面

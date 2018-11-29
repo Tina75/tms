@@ -322,10 +322,10 @@ import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
 const rate = {
   set (value) {
-    return float.floor(value / 100, 4) || null
+    return value ? float.floor(value / 100, 4) : value
   },
   get (value) {
-    return float.floor(value * 100, 2) || null
+    return value ? float.floor(value * 100, 2) : value === 0 ? value : null
   }
 }
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee', 'collectionMoney']
@@ -1093,7 +1093,7 @@ export default {
               mileage: orderForm.mileage * 1000,
               consignerPhone: orderForm.consignerPhone.replace(/\s/g, ''),
               consigneePhone: orderForm.consigneePhone.replace(/\s/g, ''),
-              invoiceRate: rate.set(orderForm.invoiceRate)
+              invoiceRate: orderForm.isInvoice === 1 ? rate.set(orderForm.invoiceRate) : null
             });
 
             ['start', 'end'].forEach(field => {

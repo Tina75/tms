@@ -45,6 +45,11 @@ import PageTable from '@/components/page-table'
 import { consignerDelete, CODE } from './client'
 import BasePage from '@/basic/BasePage'
 import float from '@/libs/js/float'
+const rate = {
+  get (value) {
+    return value ? float.floor(value * 100, 2) : value === 0 ? value : null
+  }
+}
 export default {
   name: 'sender',
   components: {
@@ -108,7 +113,7 @@ export default {
                           remark: params.row.remark,
                           pickUp: params.row.pickUp,
                           isInvoice: params.row.isInvoice,
-                          invoiceRate: float.floor(params.row.invoiceRate * 100, 2),
+                          invoiceRate: rate.get(params.row.invoiceRate),
                           salesmanId: params.row.salesmanId
                         }
                       },

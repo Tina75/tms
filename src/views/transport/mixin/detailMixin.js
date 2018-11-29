@@ -112,6 +112,7 @@ export default {
     // 编辑状态且为待发运为货物列表添加操作栏
     inEditing (val) {
       if (!this.tableCanEdit) return
+      if (this.status === '在途' || this.status === '已到货') return
       if (val === 'edit' && this.status === '待发运') {
         this.tableColumns.unshift({
           title: '操作',
