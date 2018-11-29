@@ -127,12 +127,6 @@ Toast.newInstance = properties => {
       }
       let bodyNodes
       let icon = this.iconRender(h)
-      // 动态根据icon设置宽度比例
-      let colspan = ['2', '22']
-      if (!icon) {
-        colspan[0] = '0'
-        colspan[1] = '24'
-      }
 
       const contentBody = [
         h('div', {
@@ -144,7 +138,7 @@ Toast.newInstance = properties => {
           icon ? h('div', {
             class: 'ivu-modal-confirm-head-icon'
           }, [icon]) : '',
-          h('div', {
+          this.content ? h('div', {
             class: 'ivu-modal-confirm-head-title',
             style: {
               fontSize: '14px',
@@ -156,7 +150,7 @@ Toast.newInstance = properties => {
             domProps: {
               innerHTML: this.content
             }
-          })
+          }) : ''
         ])
       ]
       if (this.render) {

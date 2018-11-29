@@ -53,15 +53,19 @@
           </Col>
           <Col :span="16">
           <FormItem label="公司地址：" prop="address">
-            <Col v-if="isEdit" :span="8">
-            <CitySelect v-model="formCompany.cityId" clearable></CitySelect>
+            <Row v-if="isEdit">
+              <Col :span="8">
+              <CitySelect v-model="formCompany.cityId" clearable></CitySelect>
+              </Col>
+              <Col :span="16" class="areaRight">
+              <AreaInput v-model="formCompany.address" :city-code="formCityCode" :maxlength="60" placeholder="请输入公司地址" @latlongt-change="latlongtChange"></AreaInput>
+              </Col>
+            </Row>
+            <Row v-if="!isEdit">
+              <Col :span="24">
+              <span>{{ formCompany.address }}</span>
             </Col>
-            <Col v-if="isEdit" :span="16" class="areaRight">
-            <AreaInput v-model="formCompany.address" :city-code="formCityCode" :maxlength="60" placeholder="请输入公司地址" @latlongt-change="latlongtChange"></AreaInput>
-            </Col>
-            <Col v-if="!isEdit" :span="24">
-            <span>{{ formCompany.address }}</span>
-            </Col>
+            </Row>
           </FormItem>
           </Col>
         </Row>
@@ -92,14 +96,14 @@
           <span v-if="!isEdit && infoImageList.length < 1" class="imageTips">82%的企业上传了公司照片，提高了客户的信任感</span>
         </FormItem>
         <FormItem class="imageFontItem">
-          <up-load
+          <image-title
             v-show="isEdit"
             ref="upLoads"
             :multiple="true"
             max-count="10"
             max-size="10"
             multiple-width="style='width:100%'">
-          </up-load>
+          </image-title>
           <div v-for="(img,index) in infoImageList" v-show="!isEdit" :key="img.key" class="infoImage">
             <div
               :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
@@ -126,6 +130,7 @@ import Server from '@/libs/js/server'
 import AreaInput from '@/components/AreaInput'
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/index.vue'
+import ImageTitle from '@/components/upLoad/ImageTitle.vue'
 import { CHECK_NAME_COMPANY, CHECK_NAME, CHECK_PHONE } from './validator'
 import prepareOpenSwipe from '@/components/swipe/index'
 export default {
@@ -134,7 +139,8 @@ export default {
     AreaInput,
     CitySelect,
     UpLoad,
-    prepareOpenSwipe
+    prepareOpenSwipe,
+    ImageTitle
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -151,22 +157,22 @@ export default {
       // 公司
       ruleCompany: {
         name: [
-          { required: true, message: '请输入公司名称', trigger: 'blur' },
-          { validator: CHECK_NAME_COMPANY, trigger: 'blur' }
+          { required: true, message: '请输入公司名称' },
+          { validator: CHECK_NAME_COMPANY }
         ],
         contact: [
-          { required: true, message: '请输入公司联系人', trigger: 'blur' },
-          { validator: CHECK_NAME, trigger: 'blur' }
+          { required: true, message: '请输入公司联系人' },
+          { validator: CHECK_NAME }
         ],
         contactPhone: [
-          { required: true, message: '请输入联系方式', trigger: 'blur' },
+          { required: true, message: '请输入联系方式' },
           { validator: CHECK_PHONE, trigger: 'blur' }
         ],
         cityId: [
           { required: true, message: '请选择所在省市' }
         ],
         address: [
-          { required: true, message: '请输入公司地址', trigger: 'blur' }
+          { required: true, message: '请输入公司地址' }
         ]
       },
       infoImageList: []
@@ -238,7 +244,7 @@ export default {
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.formCompany.logoUrl = this.$refs.uploadLogo.uploadImg
-          this.formCompany.otherInfo = JSON.stringify(this.$refs.upLoads.uploadImgList)
+          this.formCompany.otherInfo = JSON.stringify(this.$refs.upLoads.getImageList())
           if (this.formCompany.address === this.formCompanyInit.address &&
               this.formCompany.contact === this.formCompanyInit.contact &&
               this.formCompany.contactPhone === this.formCompanyInit.contactPhone &&
@@ -322,6 +328,7 @@ export default {
 <style lang='stylus' scoped>
 >>>.imageLogo .demo-upload-list
 >>>.imageLogo .ivu-upload .ivu-upload-drag
+>>>.imageLogo .ivu-upload .ivu-upload-input
   width 100px
   height 90px
 .temAll

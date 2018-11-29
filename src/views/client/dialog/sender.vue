@@ -43,11 +43,15 @@
             <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
           </Tooltip>
         </label>
-        <div class="numbrtBar">
+        <Row>
+          <Col :span="22">
           <TagNumberInput v-model="validate.invoiceRate" :show-chinese="false" :min="0" :max="100" :precision="2">
           </TagNumberInput>
-          <span>%</span>
-        </div>
+          </Col>
+          <Col :span="2" >
+          <span>&nbsp;%</span>
+          </Col>
+        </Row>
       </FormItem>
       <FormItem label="">
         <label slot="label">

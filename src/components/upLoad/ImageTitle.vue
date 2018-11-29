@@ -21,26 +21,29 @@
               </div>
             </div>
           </div>
-          <Input v-model="pic.title" placeholder="请输入标题" style="width: 160px;margin: 8px 0;" @on-change="handleChange(pic)"/>
+          <Input v-model="pic.title" :maxlength="10" placeholder="标题必填" style="width: 160px;margin: 8px 0;" @on-change="handleChange(pic)"/>
         </div>
       </div>
       <div v-if="uploadImgList.length < maxCount" class="ivu-upload" style="display: inline-block; width: 160px;">
         <div class="ivu-upload ivu-upload-drag">
-          <input
-            ref="fileInput"
-            :multiple="multiple"
-            type="file"
-            class="ivu-upload-input"
-            accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
-            @change="inputChanged">
-          <div style="width: 160px;height: 90px;">
-            <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%)">
-              <div class="eye-circle">
-                <FontIcon type="ico_add2" size="14" color="#fff"></FontIcon>
+          <label class="ivu-upload-input">
+            <input
+              ref="fileInput"
+              :multiple="multiple"
+              type="file"
+              class="ivu-upload-input"
+              style="display: none;"
+              accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"
+              @change="inputChanged">
+            <div style="width: 160px;height: 90px;">
+              <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%)">
+                <div class="eye-circle">
+                  <FontIcon type="ico_add2" size="14" color="#fff"></FontIcon>
+                </div>
+                <div class="icon-letter" style="color: #00A4BD;">点击上传</div>
               </div>
-              <div class="icon-letter" style="color: #00A4BD;">点击上传</div>
             </div>
-          </div>
+          </label>
         </div>
       </div>
     </div>
@@ -227,6 +230,14 @@ export default {
     z-index 100
     opacity 0
     cursor pointer
+.ivu-upload-input
+  width 160px
+  height 90px
+  position absolute
+  cursor pointer
+.ivu-upload-drag
+  height 90px
+  text-align left
 .demo-upload-list
   display inline-block
   width 160px
