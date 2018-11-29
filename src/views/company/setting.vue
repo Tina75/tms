@@ -328,6 +328,7 @@ export default {
 <style lang='stylus' scoped>
 >>>.imageLogo .demo-upload-list
 >>>.imageLogo .ivu-upload .ivu-upload-drag
+>>>.imageLogo .ivu-upload .ivu-upload-input
   width 100px
   height 90px
 .temAll
