@@ -341,6 +341,7 @@ export default {
           partnerId: carrierId,
           partnerType: 2,
           partnerName: self.info.carrierName,
+          distance: this.info.mileage ? this.info.mileage * 1000 : 0,
           ...self.financeRulesInfo
         },
         methods: {

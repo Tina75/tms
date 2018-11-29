@@ -358,12 +358,14 @@ export default {
         this.$Message.warning('您选择或输入的承运商没有维护的计费规则')
         return
       }
+      console.log(self.payment.mileage)
       this.openDialog({
         name: 'dialogs/financeRule',
         data: {
           partnerId: carrierId,
           partnerType: 2,
           partnerName: self.info.carrierName,
+          distance: self.payment.mileage ? self.payment.mileage * 1000 : 0,
           ...self.financeRulesInfo
         },
         methods: {

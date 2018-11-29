@@ -1,6 +1,6 @@
 <template>
   <!-- 默认状态 -->
-  <div v-if="!inEditing" class="transport-detail">
+  <div v-if="inEditing === 'no'" class="transport-detail">
     <!-- 运单号及状态 -->
     <section :class="themeBarColor(status)" class="detail-header">
       <ul class="detail-header-list">
@@ -412,7 +412,7 @@ export default {
             name: '编辑',
             code: 120206,
             func: () => {
-              this.inEditing = true
+              this.inEditing = 'edit'
             }
           }]
         },

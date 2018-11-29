@@ -53,15 +53,19 @@
           </Col>
           <Col :span="16">
           <FormItem label="公司地址：" prop="address">
-            <Col v-if="isEdit" :span="8">
-            <CitySelect v-model="formCompany.cityId" clearable></CitySelect>
+            <Row v-if="isEdit">
+              <Col :span="8">
+              <CitySelect v-model="formCompany.cityId" clearable></CitySelect>
+              </Col>
+              <Col :span="16" class="areaRight">
+              <AreaInput v-model="formCompany.address" :city-code="formCityCode" :maxlength="60" placeholder="请输入公司地址" @latlongt-change="latlongtChange"></AreaInput>
+              </Col>
+            </Row>
+            <Row v-if="!isEdit">
+              <Col :span="24">
+              <span>{{ formCompany.address }}</span>
             </Col>
-            <Col v-if="isEdit" :span="16" class="areaRight">
-            <AreaInput v-model="formCompany.address" :city-code="formCityCode" :maxlength="60" placeholder="请输入公司地址" @latlongt-change="latlongtChange"></AreaInput>
-            </Col>
-            <Col v-if="!isEdit" :span="24">
-            <span>{{ formCompany.address }}</span>
-            </Col>
+            </Row>
           </FormItem>
           </Col>
         </Row>
@@ -153,22 +157,22 @@ export default {
       // 公司
       ruleCompany: {
         name: [
-          { required: true, message: '请输入公司名称', trigger: 'blur' },
-          { validator: CHECK_NAME_COMPANY, trigger: 'blur' }
+          { required: true, message: '请输入公司名称' },
+          { validator: CHECK_NAME_COMPANY }
         ],
         contact: [
-          { required: true, message: '请输入公司联系人', trigger: 'blur' },
-          { validator: CHECK_NAME, trigger: 'blur' }
+          { required: true, message: '请输入公司联系人' },
+          { validator: CHECK_NAME }
         ],
         contactPhone: [
-          { required: true, message: '请输入联系方式', trigger: 'blur' },
+          { required: true, message: '请输入联系方式' },
           { validator: CHECK_PHONE, trigger: 'blur' }
         ],
         cityId: [
           { required: true, message: '请选择所在省市' }
         ],
         address: [
-          { required: true, message: '请输入公司地址', trigger: 'blur' }
+          { required: true, message: '请输入公司地址' }
         ]
       },
       infoImageList: []

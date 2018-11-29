@@ -5,7 +5,7 @@
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>{{name}}</span>
       </p>
-      <Form v-if="name === '送货调度'" ref="send" :model="send" :rules="sendRules" :label-width="92" inline label-position="left">
+      <Form v-if="name === '送货调度'" ref="send" :model="send" :rules="sendRules" :label-width="85" inline label-position="left">
         <FormItem label="始发地：" prop="start">
           <!-- <area-select v-model="send.start" :deep="true" style="width:180px"></area-select> -->
           <city-select v-model="send.start" style="width:180px"></city-select>
@@ -16,7 +16,7 @@
         </FormItem>
         <div class="sub-title">承运订单：</div>
       </Form>
-      <Form v-else ref="pick" :model="pick" :rules="pickRules" :label-width="78" inline label-position="left">
+      <Form v-else ref="pick" :model="pick" :rules="pickRules" :label-width="85" inline label-position="left">
         <FormItem label="承运商：" prop="carrierName">
           <SelectInput
             v-model="pick.carrierName"
