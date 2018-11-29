@@ -320,7 +320,14 @@ import CargoTable from './components/CargoTable.vue'
 import TimeInput from './components/TimeInput.vue'
 import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
-
+const rate = {
+  set (value) {
+    return float.floor(value / 100, 4) || null
+  },
+  get (value) {
+    return float.floor(value * 100, 2) || null
+  }
+}
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee', 'collectionMoney']
 export default {
   name: 'order-crete',
@@ -636,7 +643,7 @@ export default {
           }
           // 里程除以 1000
           vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
-          vm.orderForm.invoiceRate = float.floor(vm.orderForm.invoiceRate * 100, 2)
+          vm.orderForm.invoiceRate = rate.get(vm.orderForm.invoiceRate)
         })
         .catch((errorInfo) => {
           vm.loading = false
@@ -762,7 +769,7 @@ export default {
         _this.orderForm.pickup = consigner.pickUp
         _this.orderForm.salesmanId = consigner.salesmanId
         _this.orderForm.isInvoice = consigner.isInvoice
-        _this.orderForm.invoiceRate = float.floor(consigner.invoiceRate * 100, 2) || null
+        _this.orderForm.invoiceRate = rate.get(consigner.invoiceRate)
       })
     },
     /**
@@ -1086,7 +1093,7 @@ export default {
               mileage: orderForm.mileage * 1000,
               consignerPhone: orderForm.consignerPhone.replace(/\s/g, ''),
               consigneePhone: orderForm.consigneePhone.replace(/\s/g, ''),
-              invoiceRate: orderForm.invoiceRate / 100 || null
+              invoiceRate: rate.set(orderForm.invoiceRate)
             });
 
             ['start', 'end'].forEach(field => {
