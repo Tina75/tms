@@ -80,7 +80,7 @@ export default {
       this.qrcodeInit = new QRCode('qrcodeDom', {
         width: 125, // 设置宽度
         height: 125, // 设置高度
-        text: this.basePath + '/company-phone.html?shareOutNo=' + this.shareOutNo
+        text: this.basePath + 'company-phone.html?shareOutNo=' + this.shareOutNo
       })
       this.isQrcodeShow = true
     },
