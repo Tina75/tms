@@ -24,7 +24,7 @@
         @on-change="handleChange"
         @on-focus="handleFocus"
       >
-      <span v-show="nameSeleced" slot="append" :style="{paddingLeft: (currentValue.length * 12 + 10) + 'px'}" style="display: block;line-height: 24px; text-align: left;" @click="inputFocus">{{nameSeleced}}</span>
+      <!--<span v-show="nameSeleced" slot="append" :style="{paddingLeft: (currentValue.length * 12 + 10) + 'px'}" style="display: block;line-height: 24px; text-align: left;" @click="inputFocus">{{nameSeleced}}</span>-->
       <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-input__clear-icon" @click.native.stop="handleClear"></Icon>
       <Icon v-if="!mousehover || !isClearable" slot="suffix" type="ios-arrow-down" class="select-input__input-icon"></Icon>
       </Input>
@@ -106,8 +106,8 @@ export default {
       currentValueCopy: '',
       mousehover: false,
       isRemoteCall: false, // 当前是否正在请求，防止请求太频繁
-      options: [],
-      nameSeleced: ''
+      options: []
+      // nameSeleced: ''
     }
   },
   computed: {
@@ -135,7 +135,7 @@ export default {
     currentValue (value) {
       if (value !== this.currentValueCopy) {
         this.code = null
-        this.nameSeleced = ''
+        // this.nameSeleced = ''
         this.$emit('input', null)
       }
     },
@@ -226,10 +226,10 @@ export default {
         city: city[1] ? city[1].name : '',
         area: city[2] ? city[2].name : ''
       }
-      const itemName = this.cityShow(item, 1)
-      this.currentValue = itemName.split(',  ')[0]
-      this.nameSeleced = this.cityShow(item, 2).split('  ')[1]
-      this.currentValueCopy = itemName.split(',  ')[0]
+      // const itemName = this.cityShow(item, 1)
+      this.currentValue = this.cityShow(item, 2)
+      // this.nameSeleced = this.cityShow(item, 2).split('  ')[1]
+      this.currentValueCopy = this.cityShow(item, 2)
     },
     // 清空
     handleClear () {
@@ -248,9 +248,9 @@ export default {
         }
         return opt.value === name
       })
-      this.currentValue = item.name.split(',  ')[0]
-      this.nameSeleced = item.nameSeleced.split('  ')[1]
-      this.currentValueCopy = item.name.split(',  ')[0]
+      this.currentValue = item.nameSeleced
+      // this.nameSeleced = item.nameSeleced.split('  ')[1]
+      this.currentValueCopy = item.nameSeleced
       this.code = item.code
       this.focusIndex = -1
       this.visible = false
@@ -334,9 +334,12 @@ export default {
         (item.city ? item.city : '') + (item.city && item.province ? ',  ' : '') +
         (item.province ? item.province : '')
       } else {
-        // this.nameSeleced = item.city ? item.city : ''
-        return (item.area ? item.area + '  ' : '') + (item.city ? item.city : '')
-        // (item.province ? item.province : '')
+        if (item.province === item.city) {
+          item.province = ''
+        }
+        return (item.province ? item.province : '') +
+          (item.city ? ' ' + item.city : '') +
+          (item.area ? ' ' + item.area : '')
       }
     },
     handleKeydown (e) {

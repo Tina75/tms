@@ -6,7 +6,7 @@
     :clearable="clearable"
     :maxlength="maxLength"
     :local-options="options"
-    :formatter="contentFormatter"
+    :parser="contentFormatter"
     @on-select="selectHandler"
     @on-clear="clearHandler" />
 </template>

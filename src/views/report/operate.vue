@@ -26,6 +26,52 @@
             <Input :maxlength="20" v-model="keywords.waybillNo" placeholder="请输入运单号"  />
           </div>
         </div>
+        <div class="row-list" style="margin-bottom:12px">
+          <div class="col relative">
+            <SelectInput
+              v-model="keywords.carrierName"
+              :maxlength="20"
+              :remote="false"
+              :clearable="true"
+              :local-options="carriers"
+              placeholder="请选择或输入承运商名称"
+              style="width: 100%"
+              @on-focus.once="getCarriers"
+              @on-select = "getCarriersId"
+            >
+            </SelectInput>
+          </div>
+          <div class="col relative">
+            <SelectInput
+              v-model="keywords.carNo"
+              :maxlength="15"
+              :remote="false"
+              :clearable="true"
+              :local-options="carrierCars"
+              placeholder="请选择或输入车牌号"
+              style="width: 100%"
+              @on-focus="getCarrierCarsList"
+            >
+            </SelectInput>
+          </div>
+          <div class="col relative">
+            <SelectInput
+              v-model="keywords.driverName"
+              :maxlength="15"
+              :remote="false"
+              :clearable="true"
+              :local-options="carrierDrivers"
+              placeholder="请选择或输入司机名称"
+              style="width: 100%"
+              @on-focus="getCarrierDriversList"
+              @on-select = "getCarriersPhone"
+            >
+            </SelectInput>
+          </div>
+          <div class="col">
+            <Input :maxlength="20" v-model="keywords.driverPhone" placeholder="请输入司机号码"  />
+          </div>
+        </div>
         <div class="row-list">
           <div class="col relative">
             <!--<area-select v-model="keywords.start" placeholder="请输入始发地" style="width: 100%"></area-select>-->
@@ -110,7 +156,11 @@ export default {
         start: null,
         end: null,
         startTime: '',
-        endTime: ''
+        endTime: '',
+        carrierName: '',
+        carNo: '',
+        driverName: '',
+        driverPhone: ''
       },
       keyword: {
         type: 1
@@ -330,27 +380,27 @@ export default {
           key: 'waybillCarInfo',
           width: 150
         },
-        {
-          title: '外转单号',
-          key: 'transbillNo',
-          width: 150
-        },
-        {
-          title: '外转单状态',
-          key: 'transbillStatus',
-          width: 150,
-          render: (h, params) => {
-            return h('span', params.row.transbillStatus ? this.transbillStatusMap[params.row.transbillStatus] : '-')
-          }
-        },
-        {
-          title: '外转方费用',
-          key: 'transbillTotalFee',
-          width: 150,
-          render: (h, params) => {
-            return h('span', (params.row.transbillTotalFee / 100).toFixed(2))
-          }
-        },
+        // {
+        //   title: '外转单号',
+        //   key: 'transbillNo',
+        //   width: 150
+        // },
+        // {
+        //   title: '外转单状态',
+        //   key: 'transbillStatus',
+        //   width: 150,
+        //   render: (h, params) => {
+        //     return h('span', params.row.transbillStatus ? this.transbillStatusMap[params.row.transbillStatus] : '-')
+        //   }
+        // },
+        // {
+        //   title: '外转方费用',
+        //   key: 'transbillTotalFee',
+        //   width: 150,
+        //   render: (h, params) => {
+        //     return h('span', (params.row.transbillTotalFee / 100).toFixed(2))
+        //   }
+        // },
         {
           title: '返现运费',
           key: 'cashBack',
@@ -359,11 +409,11 @@ export default {
             return h('span', (params.row.cashBack / 100).toFixed(2))
           }
         },
-        {
-          title: '外转方',
-          key: 'transfereeName',
-          width: 150
-        },
+        // {
+        //   title: '外转方',
+        //   key: 'transfereeName',
+        //   width: 150
+        // },
         {
           title: '回单号',
           key: 'receiptNo',
@@ -377,219 +427,8 @@ export default {
             return h('span', params.row.receiptStatus ? this.receiptStatusMap[params.row.receiptStatus] : '-')
           }
         }
-      ]
-      // extraColumns: [
-      //   {
-      //     title: '订单号',
-      //     key: 'orderNo',
-      //     fixed: false,
-      //     visible: true
-      //   },
-      //   {
-      //     title: '客户单号',
-      //     key: 'customerOrderNo',
-      //     fixed: false,
-      //     visible: true
-      //   },
-      //   {
-      //     title: '客户名称',
-      //     key: 'consignerName',
-      //     fixed: false,
-      //     visible: true
-      //   },
-      //   {
-      //     title: '始发地',
-      //     key: 'start',
-      //     fixed: false,
-      //     visible: true
-      //   },
-      //   {
-      //     title: '目的地',
-      //     key: 'end',
-      //     fixed: false,
-      //     visible: true
-      //   },
-      //   {
-      //     title: '计费里程',
-      //     key: 'mileage',
-      //     fixed: false,
-      //     visible: true
-      //   },
-      //   {
-      //     title: '体积（方）',
-      //     key: 'volume',
-      //     fixed: false,
-      //     visible: true
-      //   },
-      //   {
-      //     title: '重量（吨）',
-      //     key: 'weight',
-      //     fixed: false,
-      //     visible: true
-      //   },
-      //   {
-      //     title: '合计运费',
-      //     key: 'orderTotalFee',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '代收货款',
-      //     key: 'collectionMoney',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '下单时间',
-      //     key: 'orderCreateTime',
-      //     fixed: false,
-      //     visible: true
-      //   },
-      //   {
-      //     title: '订单状态',
-      //     key: 'orderStatus',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '提货单号',
-      //     key: 'loadbillNo',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '提货单状态',
-      //     key: 'loadbillStatus',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '提货总费用',
-      //     key: 'loadbillTotalFee',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '提货承运商',
-      //     key: 'loadbillCarrierName',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '提货单司机',
-      //     key: 'loadbillDriver',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '提货司机号码',
-      //     key: 'loadbillDriverPhone',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '提货单车牌号',
-      //     key: 'loadbillCarNo',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '提货单车辆信息',
-      //     key: 'loadbillCarInfo',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '运单号',
-      //     key: 'waybillNo',
-      //     fixed: false,
-      //     visible: true
-      //   },
-      //   {
-      //     title: '运单状态',
-      //     key: 'waybillStatus',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '送货总费用',
-      //     key: 'waybillTotalFee',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '送货承运商',
-      //     key: 'waybillCarrierName',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '运单司机',
-      //     key: 'waybillDriver',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '送货司机号码',
-      //     key: 'waybillDriverPhone',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '运单车牌号',
-      //     key: 'waybillCarNo',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '运单车辆信息',
-      //     key: 'waybillCarInfo',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '外转单号',
-      //     key: 'transbillNo',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '外转单状态',
-      //     key: 'transbillStatus',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '外转方费用',
-      //     key: 'transbillTotalFee',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '返现运费',
-      //     key: 'cashBack',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '外转方',
-      //     key: 'transfereeName',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '回单号',
-      //     key: 'receiptNo',
-      //     fixed: false,
-      //     visible: false
-      //   },
-      //   {
-      //     title: '回单状态',
-      //     key: 'receiptStatus',
-      //     fixed: false,
-      //     visible: false
-      //   }
-      // ]
+      ],
+      carriersId: null
     }
   },
   computed: {
@@ -597,7 +436,10 @@ export default {
       return getPreMonth()
     },
     ...mapGetters([
-      'clients'
+      'clients',
+      'carriers',
+      'carrierCars',
+      'carrierDrivers'
     ])
   },
   mounted () {
@@ -607,8 +449,21 @@ export default {
   },
   methods: {
     ...mapActions([
-      'getClients'
+      'getClients',
+      'getCarriers',
+      'getCarrierCars',
+      'getCarrierDrivers'
     ]),
+    getCarrierCarsList () {
+      if (this.carriersId) {
+        this.getCarrierCars(this.carriersId)
+      }
+    },
+    getCarrierDriversList () {
+      if (this.carriersId) {
+        this.getCarrierDrivers(this.carriersId)
+      }
+    },
     search () {
       // 输入框都为空，type=1,搜索数据清空
       if (!this.isEmpty()) {
@@ -626,7 +481,11 @@ export default {
         start: this.keywords.start,
         end: this.keywords.end,
         startTime: this.keywords.startTime || null,
-        endTime: this.keywords.endTime || null
+        endTime: this.keywords.endTime || null,
+        carrierName: this.keywords.carrierName || null,
+        carNo: this.keywords.carNo || null,
+        driverName: this.keywords.driverName || null,
+        driverPhone: this.keywords.driverPhone || null
       }
     },
     // 判断搜索条件是不是都是空，为空则key = 1
@@ -649,7 +508,11 @@ export default {
         start: null,
         end: null,
         startTime: '',
-        endTime: ''
+        endTime: '',
+        carrierName: '',
+        carNo: '',
+        driverName: '',
+        driverPhone: ''
       }
       this.times = ['', '']
       this.keyword = {
@@ -670,7 +533,11 @@ export default {
         start: this.keywords.start,
         end: this.keywords.end,
         startTime: this.keywords.startTime || null,
-        endTime: this.keywords.endTime || null
+        endTime: this.keywords.endTime || null,
+        carrierName: this.keywords.carrierName || null,
+        carNo: this.keywords.carNo || null,
+        driverName: this.keywords.driverName || null,
+        driverPhone: this.keywords.driverPhone || null
       }
       Export({
         url: '/report/for/operating/export',
@@ -706,6 +573,12 @@ export default {
       } else {
         this.isExport = false
       }
+    },
+    getCarriersId (name, obj) {
+      this.carriersId = obj.id
+    },
+    getCarriersPhone (name, obj) {
+      this.keywords.driverPhone = obj.driverPhone
     }
   }
 }
@@ -740,5 +613,5 @@ export default {
       flex 1
       -ms-flex 1
       text-align right
-      margin-top 44px
+      margin-top 82px
 </style>

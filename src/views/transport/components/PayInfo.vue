@@ -2,6 +2,7 @@
   <Table :columns="columns"
          :data="tableData"
          :loading="loading"
+         class="payment-info-table"
          width="350"></Table>
 </template>
 
@@ -51,8 +52,24 @@ export default {
           title: '现金',
           key: 'cashAmount',
           render: (h, p) => {
+            if (this.mode === 'edit' && p.row.isCashDisabled && p.row.type === 'change') {
+              let str = ''
+              if (p.row.payType === 1) str = '预付' + p.column.title
+              if (p.row.payType === 2) str = '到付' + p.column.title
+              if (p.row.payType === 3) str = '回付' + p.column.title
+              return h('Tooltip', {
+                props: {
+                  placeholder: 'bottom',
+                  transfer: false
+                }
+              }, [h('span', {}, p.row.cashAmount || 0), h('div', {
+                slot: 'content',
+                style: {
+                  whiteSpace: 'normal'
+                }
+              }, str + '已核销,不能修改')])
+            }
             if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) return h('span', p.row.cashAmount || 0)
-
             return h(MoneyInput, {
               props: {
                 value: p.row.cashAmount,
@@ -74,6 +91,23 @@ export default {
           title: '油卡',
           key: 'fuelCardAmount',
           render: (h, p) => {
+            if (this.mode === 'edit' && p.row.isCardDisabled && p.row.type === 'change') {
+              let str = ''
+              if (p.row.payType === 1) str = '预付' + p.column.title
+              if (p.row.payType === 2) str = '到付' + p.column.title
+              if (p.row.payType === 3) str = '回付' + p.column.title
+              return h('Tooltip', {
+                props: {
+                  placeholder: 'bottom',
+                  transfer: false
+                }
+              }, [h('span', {}, p.row.fuelCardAmount || 0), h('div', {
+                slot: 'content',
+                style: {
+                  whiteSpace: 'normal'
+                }
+              }, str + '已核销,不能修改')])
+            }
             if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCardDisabled)) return h('span', p.row.fuelCardAmount || 0)
 
             return h(MoneyInput, {
@@ -114,13 +148,23 @@ export default {
         }
       })
     },
+    getPayInfo_change () {
+      return this.tableDataBack.map(item => {
+        return {
+          payType: item.payType,
+          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? item.fuelCardAmount * 100 : 0,
+          cashAmount: typeof item.cashAmount === 'number' ? item.cashAmount * 100 : 0
+        }
+      })
+    },
 
     validate () {
       let total = 0
+      console.log(this.tableDataBack)
       this.tableDataBack.forEach(item => {
         total = total + Number(item.cashAmount) + Number(item.fuelCardAmount)
       })
-      if (total !== Number(this.total) && total !== 0) {
+      if (total !== Number(this.total)) {
         this.$Message.error('结算总额应与费用合计相等')
         return false
       }
@@ -129,3 +173,10 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+  .payment-info-table
+    .ivu-table-cell
+      overflow inherit
+
+</style>

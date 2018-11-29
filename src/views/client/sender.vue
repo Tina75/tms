@@ -44,6 +44,7 @@
 import PageTable from '@/components/page-table'
 import { consignerDelete, CODE } from './client'
 import BasePage from '@/basic/BasePage'
+import float from '@/libs/js/float'
 export default {
   name: 'sender',
   components: {
@@ -57,7 +58,11 @@ export default {
     return {
       url: '/consigner/page',
       method: 'GET',
-      keyword: {},
+      keyword: {
+        name: this.name,
+        contact: this.contact,
+        order: this.order
+      },
       selectStatus: 0,
       selectList: [
         {
@@ -100,7 +105,11 @@ export default {
                           contact: params.row.contact,
                           phone: params.row.phone,
                           payType: params.row.payType + '',
-                          remark: params.row.remark
+                          remark: params.row.remark,
+                          pickUp: params.row.pickUp,
+                          isInvoice: params.row.isInvoice,
+                          invoiceRate: float.floor(params.row.invoiceRate * 100, 2),
+                          salesmanId: params.row.salesmanId
                         }
                       },
                       methods: {
@@ -255,8 +264,7 @@ export default {
       this.selectStatus === 0 ? this.contact = '' : this.name = ''
       this.keyword = {
         name: this.name,
-        contact: this.contact,
-        order: this.order
+        contact: this.contact
       }
     },
     clearKeywords () {
@@ -294,7 +302,12 @@ export default {
     },
     timeSort (column) {
       this.order = (column.order === 'normal' ? '' : column.order)
-      this.searchList()
+      this.selectStatus === 0 ? this.contact = '' : this.name = ''
+      this.keyword = {
+        name: this.name,
+        contact: this.contact,
+        order: this.order
+      }
     },
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }

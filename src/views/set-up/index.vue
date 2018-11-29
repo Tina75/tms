@@ -39,7 +39,7 @@
           <FormItem label="账号：" class="labelClassSty">
             <span>{{formPersonal.phone}}</span>
           </FormItem>
-          <FormItem label="姓名：" prop="name" style="margin-left: -9px;" class="labelClassSty">
+          <FormItem label="姓名：" prop="name">
             <Input v-model="formPersonal.name" :maxlength="10" placeholder="请输入姓名" style="margin-left: 9px;" class="inputClassSty"></Input>
           </FormItem>
           <FormItem label="角色：" class="labelClassSty">
@@ -61,8 +61,8 @@
           </div>
           <div v-for="msg in this.messageList" :key="msg.title" class="mesDiv">
             <p style="font-weight: bold">{{msg.title}}</p>
-            <p>{{msg.messageTitle}}<span style="margin-left:12px;">{{msg.message}}</span></p>
-            <p>{{msg.messageReturn}}</p>
+            <p v-if="msg.messageTitle">{{msg.messageTitle}}<span style="margin-left:12px;">{{msg.message}}</span></p>
+            <p v-if="msg.messageReturn">{{msg.messageReturn}}</p>
             <p>接收人：
               <Checkbox
                 v-for="checkBtn in msg.checkBox"
@@ -76,36 +76,7 @@
           </div>
         </Card>
         <Button type="primary" class="msgSaveBtn test111" style="width:86px;" @click="msgSaveBtn">保存</Button>
-          </Col>
-      </div>
-      <!--公司设置-->
-      <div v-else-if="'4' === this.rightKey" key="4" class="divSetContent">
-        <div style="width: 70%;">
-          <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="110" label-position="right">
-            <FormItem label="公司名称：" prop="name" class="labelClassSty">
-              <Input v-model="formCompany.name" :maxlength="25" placeholder="请输入公司名称" class="inputClassSty"></Input>
-            </FormItem>
-            <FormItem label="公司联系人：" prop="contact" class="labelClassSty">
-              <Input v-model="formCompany.contact" :maxlength="10" placeholder="请输入公司联系人" class="inputClassSty"></Input>
-            </FormItem>
-            <FormItem label="联系方式：" prop="contactPhone" class="labelClassSty">
-              <Input v-model="formCompany.contactPhone" :maxlength="11" placeholder="请输入联系方式" class="inputClassSty"></Input>
-            </FormItem>
-            <FormItem label="公司地址：" prop="address" class="labelClassSty">
-              <Row>
-                <Col :span="8">
-                <CitySelect v-model="formCompany.cityId" clearable></CitySelect>
-                </Col>
-                <Col :span="16" class="areaRight">
-                <AreaInput v-model="formCompany.address" :city-code="formCityCode" :maxlength="60" placeholder="请输入公司地址" @latlongt-change="latlongtChange"></AreaInput>
-                </Col>
-              </Row>
-            </FormItem>
-            <FormItem>
-              <Button type="primary" style="width:86px;" @click="companySubmit('formCompany')">保存</Button>
-            </FormItem>
-          </Form>
-        </div>
+        </Col>
       </div>
       </Col>
     </Row>
@@ -159,10 +130,6 @@ export default {
         name: '短信设置',
         id: '3',
         code: '150200'
-      }, {
-        name: '公司设置',
-        id: '4',
-        code: '150100'
       }],
       rightTitle: '修改密码',
       rightKey: '1',
@@ -175,9 +142,6 @@ export default {
       // 个人
       formPersonal: {},
       formPersonalInit: {},
-      // 公司
-      formCompany: {},
-      formCompanyInit: {},
       // 短信
       switchMsg: false,
       checkNum: 0,
@@ -189,7 +153,7 @@ export default {
         title: '发运提醒',
         messageTitle: '运单：',
         message: '【运掌柜TMS】您的货物已由xx公司安排送货，由车牌号XXXX司机姓名XXXX司机电话XXXX派送；',
-        messageReturn: '外转单：【运掌柜TMS】您的xxx货物已由xx公司安排送货。',
+        // messageReturn: '外转单：【运掌柜TMS】您的xxx货物已由xx公司安排送货。',
         checkBox: [{
           label: '发货人',
           model: '1',
@@ -203,7 +167,7 @@ export default {
         title: '到货提醒',
         messageTitle: '运单：',
         message: '【运掌柜TMS】您的货物已签收，由车牌号XXX司机姓名XXX司机电话XXXX完成配送；',
-        messageReturn: '外转单：【运掌柜TMS】您的xxx货物已签收。',
+        // messageReturn: '外转单：【运掌柜TMS】您的xxx货物已签收。',
         checkBox: [{
           label: '发货人',
           model: '3',
@@ -215,8 +179,8 @@ export default {
         }]
       }, {
         title: '指派司机提醒',
-        messageTitle: '运单：',
-        message: '【运掌柜TMS】XX公司给您指派了新的运单，请尽快装货；',
+        // messageTitle: '运单：',
+        // message: '【运掌柜TMS】XX公司给您指派了新的运单，请尽快装货；',
         messageReturn: '提货单：【运掌柜TMS】XX公司给您指派了新的提货单，请尽快提货。',
         checkBox: [{
           label: '司机',
@@ -287,15 +251,6 @@ export default {
   },
   methods: {
     ...mapActions(['getUserInfo']),
-    getCompanyInfo () {
-      Server({
-        url: 'set/companyInfo',
-        method: 'get'
-      }).then(({ data }) => {
-        this.formCompany = Object.assign({}, data.data)
-        this.formCompanyInit = Object.assign({}, data.data)
-      })
-    },
     smsInfo () {
       this.messageList = _.cloneDeep(this.messageListInit)
       Server({
@@ -326,9 +281,6 @@ export default {
           break
         case '3':
           this.smsInfo()
-          break
-        case '4':
-          this.getCompanyInfo()
           break
       }
     },
@@ -377,32 +329,6 @@ export default {
         }
       })
     },
-    // 公司
-    companySubmit (name) {
-      this.$refs[name].validate((valid) => {
-        if (valid) {
-          if (this.formCompany.address === this.formCompanyInit.address &&
-              this.formCompany.contact === this.formCompanyInit.contact &&
-              this.formCompany.contactPhone === this.formCompanyInit.contactPhone &&
-              this.formCompany.id === this.formCompanyInit.id &&
-              this.formCompany.logoUrl === this.formCompanyInit.logoUrl &&
-              this.formCompany.name === this.formCompanyInit.name &&
-              Number(this.formCompany.cityId) === Number(this.formCompanyInit.cityId)) {
-            this.$Message.info('您还未变更任何信息，无需保存')
-          }
-          let params = Object.assign({}, this.formCompany)
-          Server({
-            url: 'set/company',
-            method: 'post',
-            data: params
-          }).then(({ data }) => {
-            if (data.code === 10000) {
-              this.$Message.success('保存成功!')
-            }
-          })
-        }
-      })
-    },
     // 短信
     changeCheckBoxGroup (status) {
       for (const checkList of this.messageList) {
@@ -446,11 +372,6 @@ export default {
           this.msgCheckBoxListInit = _.cloneDeep(this.msgSlectCheckBox)
         }
       })
-    },
-    latlongtChange ({ lat, lng }) {
-      this.formCompany.latitude = lat
-      this.formCompany.longitude = lng
-      this.formCompany.mapType = 1
     }
   }
 }
@@ -554,7 +475,4 @@ export default {
   margin-top:40px;
   left: 15%;
   position: absolute;
-.areaRight
-  padding-left: 15px
-  margin-top:1px
 </style>

@@ -14,7 +14,7 @@ export default {
       no: this.$route.query.no,
 
       loading: false,
-      inEditing: false,
+      inEditing: 'no', // no - 无状态 edit - 编辑状态 change - 改单状态
       carriers: [], // 承运商
       carrierDrivers: [], // 司机
       carrierCars: [], // 车辆
@@ -36,12 +36,23 @@ export default {
       showLog: false,
       logList: [], // 操作日志
       exceptionCount: 0,
+      changeCount: 0,
       // 异常详情label
       expLabel: (h) => {
         return h('div', [
           h('span', {
             domProps: {
               innerHTML: `异常详情  ${this.exceptionCount}`
+            }
+          })
+        ])
+      },
+      // 改单详情label
+      changelabel: (h) => {
+        return h('div', [
+          h('span', {
+            domProps: {
+              innerHTML: `改单记录  ${this.changeCount}`
             }
           })
         ])
@@ -98,10 +109,10 @@ export default {
   },
 
   watch: {
-    // 编辑状态为货物列表添加操作栏
+    // 编辑状态且为待发运为货物列表添加操作栏
     inEditing (val) {
       if (!this.tableCanEdit) return
-      if (val) {
+      if (val === 'edit' && this.status === '待发运') {
         this.tableColumns.unshift({
           title: '操作',
           key: 'action',
@@ -142,7 +153,7 @@ export default {
 
     // 取消编辑
     cancelEdit () {
-      this.inEditing = false
+      this.inEditing = 'no'
       this.fetchData()
     },
 
@@ -181,7 +192,11 @@ export default {
       for (let key in temp) {
         // if (typeof temp[key] === 'number') temp[key] = temp[key] * 100
         if (typeof temp[key] === 'number') {
-          temp[key] = temp[key] * 100
+          if (key === 'mileage') {
+            temp[key] = temp[key] * 1000
+          } else {
+            temp[key] = temp[key] * 100
+          }
         } else {
           temp[key] = 0
         }
@@ -197,6 +212,10 @@ export default {
       }
       if (this.pageName === 'feright' && !this.info.end) {
         this.$Message.error('请选择目的地')
+        return false
+      }
+      if (this.pageName === 'feright' && !this.info.carrierName && this.inEditing === 'change') { // 改单时承运商不能为空
+        this.$Message.error('请输入承运商')
         return false
       }
       if (this.pageName === 'pickup' && !this.info.carrierName) {

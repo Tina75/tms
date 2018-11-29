@@ -1,19 +1,5 @@
 <template>
   <div class="reconcile-layout">
-    <Row class="reconcile-layout__operation">
-      <Col span="12">
-      <slot name="title">
-        <!-- 标题 -->
-        <span class="reconcile-layout__view-title">{{title}}</span>
-      </slot>
-      </Col>
-      <Col span="12 van-right">
-      <!-- 按钮区，核单，生成对账单 -->
-      <slot name="operation">
-        <Button type="primary">收款核销</Button>
-      </slot>
-      </Col>
-    </Row>
     <Row type="flex">
       <Col v-show="!isEmptyList" span="6" class="reconcile-layout__flex-left">
       <slot>
@@ -22,6 +8,20 @@
       <div class="reconcile-layout__flex-divider"></div>
       </Col>
       <Col span="17" class="reconcile-layout__flex-right">
+      <Row v-show="showTable" class="reconcile-layout__operation">
+        <Col span="12">
+        <slot name="title">
+          <!-- 标题 -->
+          <span class="reconcile-layout__view-title">{{title || '&nbsp;'}}</span>
+        </slot>
+      </Col>
+        <Col span="12 van-right">
+        <!-- 按钮区，核单，生成对账单 -->
+        <slot name="operation">
+          <Button type="primary">收款核销</Button>
+        </slot>
+      </Col>
+      </Row>
       <div class="i-mt-20">
         <data-empty v-show="!showTable && !isEmptyList">
           {{emptyContent}}
@@ -96,9 +96,10 @@ export default {
   margin-bottom -20px
   margin-left -15px
   margin-right -15px
+  border-top 1px solid #E4E7EC
   &__operation
     border-bottom 1px solid #E4E7EC
-    padding 9px 15px
+    padding 9px 15px 5px
     line-height 31px
   &__flex-divider
     position absolute
@@ -107,7 +108,7 @@ export default {
     border-right 1px solid #E4E7EC
   &__flex-right
     flex 1
-    padding-left 10px
+    padding-left 15px
     padding-right 15px
   &__view-title
     font-size 14px

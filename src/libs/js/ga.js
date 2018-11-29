@@ -11,12 +11,12 @@ Vue.use(VueAnalytics, {
   id: 'UA-128241354-1',
   router,
   set: [ { field: 'hostname', value: window.location.origin } ],
+  debug: {
+    sendHitTask: isProdEnv
+  },
   autoTracking: {
     exception: true, // 对于没有被vue errorHandler捕获的异常进行上报
     exceptionLogs: !isProdEnv, // 异常log打印
-    debug: {
-      sendHitTask: isProdEnv
-    },
     // 优化tab切换与相同query的PV计算方式
     shouldRouterUpdate (to, from) {
       // 将当前的tabsCache备份并更新当前tabsCache

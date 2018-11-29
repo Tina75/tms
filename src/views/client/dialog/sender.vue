@@ -18,12 +18,50 @@
       <FormItem label="联系电话：" prop="phone">
         <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
       </FormItem>
+      <FormItem label="提货方式：">
+        <Select v-model="validate.pickUp" transfer clearable placeholder="请输入">
+          <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+        </Select>
+      </FormItem>
       <FormItem label="支付方式：" >
         <Select v-model="validate.payType" transfer clearable placeholder="请输入">
           <Option value="1">现付</Option>
           <Option value="2">到付</Option>
           <Option value="3">回单付</Option>
           <Option value="4">月结</Option>
+        </Select>
+      </FormItem>
+      <FormItem label="是否开票：">
+        <Select v-model="validate.isInvoice" transfer clearable placeholder="请输入">
+          <Option v-for="opt in invoiceList" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+        </Select>
+      </FormItem>
+      <FormItem v-if="validate.isInvoice === 1" prop="invoiceRate">
+        <label slot="label">
+          <span class="vermiddle"></span>开票税率：
+          <Tooltip :max-width="200" :content="`开票税费将计入成本统计`" placement="top" transfer>
+            <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+          </Tooltip>
+        </label>
+        <Row>
+          <Col :span="22">
+          <TagNumberInput v-model="validate.invoiceRate" :show-chinese="false" :min="0" :max="100" :precision="2">
+          </TagNumberInput>
+          </Col>
+          <Col :span="2" >
+          <span>&nbsp;%</span>
+          </Col>
+        </Row>
+      </FormItem>
+      <FormItem label="">
+        <label slot="label">
+          <span class="vermiddle">对接业务员：</span>
+          <Tooltip :max-width="200" :content="`只可选择配置了提货调度和送货调度权限的员工账号`" placement="top" transfer>
+            <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+          </Tooltip>
+        </label>
+        <Select v-model="validate.salesmanId" transfer clearable placeholder="请选择对接此客户的业务员">
+          <Option v-for="(opt, index) in salesmans" :key="index" :value="opt.id">{{opt.name}}</Option>
         </Select>
       </FormItem>
       <FormItem label="备注：" >
@@ -40,18 +78,32 @@
 <script>
 import { consignerAdd, consignerUpdate, CODE } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
+import pickups from '@/libs/constant/pickup.js'
+import { invoiceList } from '@/libs/constant/orderCreate.js'
+import TagNumberInput from '@/components/TagNumberInput'
+import server from '@/libs/js/server'
 export default {
   name: 'sender',
+  components: {
+    TagNumberInput
+  },
   mixins: [BaseDialog],
   data () {
     return {
+      pickups, // 提货方式
+      invoiceList,
+      salesmans: [],
       id: '',
       validate: {
         name: '',
         contact: '',
         phone: '',
         payType: '',
-        remark: ''
+        remark: '',
+        pickUp: '', // 提货方式
+        isInvoice: 0, // 是否开票
+        invoiceRate: null, // 开票税率
+        salesmanId: '' // 业务员
       },
       ruleValidate: {
         name: [
@@ -63,9 +115,15 @@ export default {
         phone: [
           { required: true, message: '联系电话不能为空', trigger: 'blur' },
           { type: 'string', message: '电话号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
+        ],
+        invoiceRate: [
+          { required: true, message: '请填写开票税率' }
         ]
       }
     }
+  },
+  mounted () {
+    this.initSaleMan()
   },
   methods: {
     save (name) {
@@ -80,7 +138,8 @@ export default {
       })
     },
     _consignerAdd () {
-      consignerAdd(this.validate).then(res => {
+      const param = Object.assign({}, this.validate, { invoiceRate: this.validate.invoiceRate / 100 || null })
+      consignerAdd(param).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
           this.openTab({
@@ -95,14 +154,22 @@ export default {
       })
     },
     _consignerUpdate () {
-      Object.assign(this.validate, { id: this.id })
-      consignerUpdate(this.validate).then(res => {
+      const param = Object.assign({}, this.validate, { id: this.id, invoiceRate: this.validate.invoiceRate / 100 || null })
+      consignerUpdate(param).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
           this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
+      })
+    },
+    initSaleMan () {
+      server({
+        method: 'get',
+        url: '/permission/buttOperator'
+      }).then((response) => {
+        this.salesmans = response.data.data
       })
     }
   }
