@@ -74,7 +74,7 @@
             <span v-else>-</span>
           </i-col>
         </Row>
-        <Row>
+        <Row v-if="from === 'order'">
           <i-col span="7">
             <span>对接业务员：</span>
             <span>{{detail.salesmanName}}</span>
