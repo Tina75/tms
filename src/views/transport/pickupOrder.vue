@@ -300,8 +300,17 @@ export default {
             this.$Toast.warning({
               title: '提示',
               showIcon: false,
-              content: res.limitTip,
-              okText: '我知道了'
+              // content: res.limitTip,
+              okText: '我知道了',
+              render (h) {
+                return h('p', {
+                  style: {
+                    textAlign: 'left',
+                    marginLeft: '-20px',
+                    textIndent: '1.5em'
+                  }
+                }, res.limitTip)
+              }
             })
             return
           }
