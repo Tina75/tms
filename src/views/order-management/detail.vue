@@ -273,7 +273,10 @@ export default {
   data () {
     return {
       detail: {
-        orderCargoList: []
+        orderCargoList: [], // 初始化货物列表
+        receiptOrder: {
+          carrierInfos: [] // 初始化承运商列表
+        }
       },
       curImg: '', // 当前图片src
       visible: false, // 图片预览模态框
