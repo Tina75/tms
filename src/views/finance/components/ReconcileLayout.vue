@@ -99,7 +99,7 @@ export default {
   border-top 1px solid #E4E7EC
   &__operation
     border-bottom 1px solid #E4E7EC
-    padding 9px 15px 5px
+    padding 9px 0px 5px
     line-height 31px
   &__flex-divider
     position absolute

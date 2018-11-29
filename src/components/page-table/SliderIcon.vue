@@ -3,7 +3,7 @@
     <FontIcon type="gengduo" class="ios-list-icon" size="20" color="#00A4BD"></FontIcon>
     <div slot="title"><span>选择要显示的字段</span></div>
     <div slot="content">
-      <div id="slider-icon__checkbox-list" class="slider-icon__checkbox-list">
+      <div id="slider-icon__checkbox-list" :style="scrollStyle" class="slider-icon__checkbox-list">
         <CheckboxGroup v-model="checkList">
           <draggable v-model="sortArray" :options="options" :move="checkMove" transfer class="slider-icon__draggable-column">
             <Checkbox v-for="item in sortArray" :disabled="item.fixed" :data-key="item.key" :key="item.key" :label="item.title" :class="itemClass(item)">
@@ -25,6 +25,7 @@
 import draggable from 'vuedraggable'
 import _ from 'lodash'
 import FontIcon from '../FontIcon.vue'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     draggable,
@@ -51,6 +52,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['DocumentHeight']),
     sortArray: {
       get () {
         return _.sortBy(this.sortData, (dt) => dt.sort)
@@ -61,6 +63,14 @@ export default {
           return item
         })
       }
+    },
+    scrollStyle () {
+      if (this.DocumentHeight < 600) {
+        return {
+          maxHeight: (this.DocumentHeight - 85) + 'px'
+        }
+      }
+      return ''
     }
   },
   watch: {
