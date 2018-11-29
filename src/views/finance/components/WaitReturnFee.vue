@@ -157,7 +157,15 @@ export default {
       if (!this.activeDriver) {
         return []
       }
-      return this.drivers[this.activeDriver.partnerName].orderInfos
+      return this.drivers[this.activeDriver.partnerName].orderInfos.map((item) => {
+        return Object.assign({}, item, {
+          orderNo: item.orderNo ? item.orderNo : '-',
+          departureName: item.departureName ? item.departureName : '-',
+          destinationName: item.destinationName ? item.destinationName : '-',
+          truckNo: item.truckNo ? item.truckNo : '-',
+          orderStatusDesc: item.orderStatusDesc ? item.orderStatusDesc : '-'
+        })
+      })
     },
     isEmptyList () {
       return Object.keys(this.drivers).length === 0
