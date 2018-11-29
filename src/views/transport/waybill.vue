@@ -195,7 +195,7 @@ export default {
         fixed: 'left',
         extra: true,
         render: (h, p) => {
-          if (p.row.status === 2 && this.hasPower(120101)) {
+          if (p.row.status === 2 && this.hasPower(120101) && p.row.carrierName === '') {
             return h('a', {
               on: {
                 click: () => {
