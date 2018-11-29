@@ -179,8 +179,8 @@ export default {
         }]
       }, {
         title: '指派司机提醒',
-        // messageTitle: '运单：',
-        // message: '【运掌柜TMS】XX公司给您指派了新的运单，请尽快装货；',
+        messageTitle: '运单：',
+        message: '【运掌柜TMS】XX公司给您指派了新的运单，请尽快装货；',
         messageReturn: '提货单：【运掌柜TMS】XX公司给您指派了新的提货单，请尽快提货。',
         checkBox: [{
           label: '司机',
