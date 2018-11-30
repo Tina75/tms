@@ -195,7 +195,7 @@ export default {
         fixed: 'left',
         extra: true,
         render: (h, p) => {
-          if (p.row.status === 1 && this.hasPower(120101)) {
+          if (p.row.status === 2 && this.hasPower(120101) && p.row.carrierName === '') {
             return h('a', {
               on: {
                 click: () => {
@@ -247,7 +247,7 @@ export default {
           this.triggerTableActionColumn(true)
           return 1
         case '待发运':
-          this.triggerTableActionColumn(false)
+          this.triggerTableActionColumn(true)
           return 2
         case '在途':
           this.triggerTableActionColumn(false)
