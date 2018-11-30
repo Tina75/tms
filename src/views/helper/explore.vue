@@ -136,6 +136,18 @@ export default {
             title: '公司设置'
           })
           break
+        case '190100':
+          this.openTab({
+            path: TMSUrl.OWNER_DRIVER_MANAGEMENT,
+            title: '新增司机'
+          })
+          break
+        case '190200':
+          this.openTab({
+            path: TMSUrl.OWNER_CAR_MANAGEMENT,
+            title: '新增车辆'
+          })
+          break
         case '130100':
           this.openTab({
             path: TMSUrl.SENDER_MANAGEMENT,
@@ -204,11 +216,18 @@ export default {
         this.stepList.push(busList)
       }
 
+      let carList = { id: 5, name: '录入自有车资料', BtnList: [] }
+      if (this.getBtn('190100') || this.getBtn('190200')) {
+        carList.BtnList.push(this.getBtn('190100'))
+        carList.BtnList.push(this.getBtn('190200'))
+        carList.BtnList = carList.BtnList.filter(Boolean)
+        this.stepList.push(carList)
+      }
       let infoList = { id: 3, name: '录入客户资料', BtnList: [] }
-      if (this.getBtn('130100') || this.getBtn('130200') || this.getBtn('130300')) {
+      if (this.getBtn('130100') || this.getBtn('130200')) {
         infoList.BtnList.push(this.getBtn('130100'))
         infoList.BtnList.push(this.getBtn('130200'))
-        infoList.BtnList.push(this.getBtn('130300'))
+        // infoList.BtnList.push(this.getBtn('130300'))
         infoList.BtnList = infoList.BtnList.filter(Boolean)
         this.stepList.push(infoList)
       }
