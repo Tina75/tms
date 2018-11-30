@@ -4,8 +4,6 @@
       <Tabs :animated="false" @on-click="clickTitleTab">
         <TabPane label="车辆信息详情" name="car">
         </TabPane>
-        <TabPane label="维修记录汇总" name="repair">
-        </TabPane>
       </Tabs>
     </div>
     <!-- 车辆信息详情 -->
@@ -132,33 +130,17 @@
         </div>
       </div>
     </div>
-    <!-- 维修记录汇总 -->
-    <div v-if="!showTableOne">
-      <div class="addRepair">
-        <Button type="primary" @click="_carrierAddVehicle">新增记录</Button>
-      </div>
-      <page-table
-        :columns="menuColumns"
-        :keywords="repairFormatInit"
-        class="addRepairTable"
-        method="post"
-        url="/carrier/repair/list"
-        list-field="list">
-      </page-table>
-    </div>
   </div>
 </template>
 <script>
 import BasePage from '@/basic/BasePage'
 import { CAR_TYPE1, CAR_LENGTH1, DRIVER_TYPE } from '@/libs/constant/carInfo'
-import { CODE, carrierDeleteDriver, queryByIdCarrier, carrierDeleteRepairVehicle } from './client'
-import pageTable from '@/components/page-table'
-import TMSUrl from '@/libs/constant/url'
+import { CODE, carrierDeleteDriver, queryByIdCarrier } from './client'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
 export default {
   name: 'car-details',
-  components: { pageTable, RecordList, prepareOpenSwipe },
+  components: { RecordList, prepareOpenSwipe },
   mixins: [ BasePage ],
   props: {
   },
@@ -175,179 +157,8 @@ export default {
       id: '',
       carId: '',
       showTableOne: true,
-      repairFormat: {},
-      repairFormatInit: {},
       visible: false,
-      imagePath: '',
-      status: [
-        { name: '全部', count: '' },
-        { name: '待回收', count: '' },
-        { name: '待返厂', count: '' },
-        { name: '已返厂', count: '' }
-      ],
-      menuColumns: [
-        {
-          title: '操作',
-          key: 'id',
-          width: 150,
-          render: (h, params) => {
-            let renderBtn = []
-            if (this.hasPower(130208)) {
-              renderBtn.push(h('span', {
-                style: {
-                  marginRight: '12px',
-                  color: '#00A4BD',
-                  cursor: 'pointer'
-                },
-                on: {
-                  click: () => {
-                    var _this = this
-                    this.openDialog({
-                      name: 'client/dialog/carrier-vehicle',
-                      data: {
-                        title: '修改维修记录',
-                        flag: 2, // 修改
-                        id: params.row.driverId,
-                        carrierId: _this.carrierId,
-                        driverId: params.row.driverId,
-                        carId: params.row.carId,
-                        validate: { ...params.row, repairDate: new Date(params.row.repairDate) }
-                      },
-                      methods: {
-                        ok () {
-                          // 更新table
-                          _this.repairFormatInit = Object.assign({}, _this.repairFormat)
-                        }
-                      }
-                    })
-                  }
-                }
-              }, '修改'))
-            }
-            renderBtn.push(h('span', {
-              style: {
-                marginRight: '12px',
-                color: '#00A4BD',
-                cursor: 'pointer'
-              },
-              on: {
-                click: () => {
-                  this.openTab({
-                    path: TMSUrl.CARRIER_MANAGEMENT_REPAIRDETAILS,
-                    query: {
-                      id: '维修详情',
-                      rowData: params.row,
-                      carrierId: this.carrierId
-                    }
-                  })
-                }
-              }
-            }, '查看'))
-            if (this.hasPower(130209)) {
-              renderBtn.push(h('span', {
-                style: {
-                  color: '#00A4BD',
-                  cursor: 'pointer'
-                },
-                on: {
-                  click: () => {
-                    let _this = this
-                    this.openDialog({
-                      name: 'client/dialog/confirmDelete',
-                      data: {
-                      },
-                      methods: {
-                        ok () {
-                          carrierDeleteRepairVehicle({
-                            id: params.row.id
-                          }).then(res => {
-                            if (res.data.code === CODE) {
-                              _this.$Message.success(res.data.msg)
-                              // 更新table
-                              _this.repairFormatInit = Object.assign({}, _this.repairFormat)
-                            } else {
-                              _this.$Message.error(res.data.msg)
-                            }
-                          })
-                        }
-                      }
-                    })
-                  }
-                }
-              }, '删除'))
-            }
-            return h('div', renderBtn)
-          }
-        },
-        {
-          title: '车牌号',
-          key: 'carNO'
-        },
-        {
-          title: '维修类别',
-          key: 'repairType',
-          render: (h, params) => {
-            let text = ''
-            if (params.row.repairType === 1) {
-              text = '维修'
-            } else if (params.row.repairType === 2) {
-              text = '保养'
-            }
-            return h('div', {}, text)
-          }
-        },
-        {
-          title: '送修日期',
-          key: 'repairDate',
-          width: 150,
-          render: (h, params) => {
-            let text = this.formatDate(params.row.repairDate)
-            return h('div', { props: {} }, text)
-          }
-        },
-        {
-          title: '送修人',
-          key: 'repairPerson'
-        },
-        {
-          title: '送修公里数',
-          key: 'repairMile'
-        },
-        {
-          title: '维修费用',
-          key: 'repairMoney',
-          render: (h, params) => {
-            return h('span', Number(params.row.repairMoney) / 100)
-          }
-        },
-        {
-          title: '已支付费用',
-          key: 'payMoney',
-          render: (h, params) => {
-            return h('span', Number(params.row.payMoney) / 100)
-          }
-        },
-        {
-          title: '未支付费用',
-          key: 'waitPayMoney',
-          render: (h, params) => {
-            return h('span', Number(params.row.waitPayMoney) / 100)
-          }
-        },
-        {
-          title: '添加人',
-          key: 'creater'
-        },
-        {
-          title: '添加时间',
-          key: 'createTime',
-          width: 150,
-          render: (h, params) => {
-            let text = this.formatDateTime(params.row.createTime)
-            return h('div', { props: {} }, text)
-          }
-        }
-      ]
+      imagePath: ''
     }
   },
   computed: {
@@ -378,7 +189,6 @@ export default {
     this.carrierId = this.infoDataInit.carrierId
     this.carId = this.infoDataInit.carId
     this.infoData = this.$route.query.rowData
-    this.repairFormat.carrierId = this.carrierId
     this.initData()
     this.openSwipe = prepareOpenSwipe(this.imageItems)
   },
@@ -400,8 +210,6 @@ export default {
     },
     // 初始化数据格式
     initData () {
-      this.repairFormat.carNO = this.infoData.carNO
-      this.repairFormatInit = Object.assign({}, this.repairFormat)
       this.infoData.driverType = (DRIVER_TYPE.find(e => e.id === this.infoData.driverType.toString())).name
       this.infoData.carType = this.carTypeMap[this.infoData.carType]
       this.infoData.carLength = this.carLengthMap[this.infoData.carLength]
@@ -477,29 +285,8 @@ export default {
         }
       })
     },
-    // 新增车辆维修记录
-    _carrierAddVehicle () {
-      var _this = this
-      this.openDialog({
-        name: 'client/dialog/carrier-vehicle',
-        data: {
-          title: '新增车辆维修保养记录',
-          flag: 1, // 新增
-          driverId: _this.driverId,
-          carrierId: _this.carrierId,
-          carNO: _this.infoData.carNO
-        },
-        methods: {
-          ok () {
-            _this.repairFormatInit = Object.assign({}, _this.repairFormat)
-          }
-        }
-      })
-    },
     handleView (index) {
       this.openSwipe(index)
-      // this.visible = true
-      // this.imagePath = imagePath
     }
   }
 }
