@@ -68,6 +68,7 @@ export default {
       else if (newList.length === 2) setpLeft = '32%'
       else if (newList.length === 3) setpLeft = '23%'
       else if (newList.length === 4) setpLeft = '18%'
+      else if (newList.length === 4) setpLeft = '8%'
       this.stepMarginLeft = 'padding-left:' + setpLeft
     },
     $route (to, from) {
@@ -138,13 +139,13 @@ export default {
           break
         case '190100':
           this.openTab({
-            path: TMSUrl.OWNER_DRIVER_MANAGEMENT,
+            path: TMSUrl.OWNEDVEHICLE_DRIVER,
             title: '新增司机'
           })
           break
         case '190200':
           this.openTab({
-            path: TMSUrl.OWNER_CAR_MANAGEMENT,
+            path: TMSUrl.OWNEDVEHICLE_CAR,
             title: '新增车辆'
           })
           break

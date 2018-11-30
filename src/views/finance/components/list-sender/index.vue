@@ -64,6 +64,10 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="stylus" scoped>
+.list-sender
+  width 269px
+  overflow-y hidden
+  &:hover
+    overflow-y auto
 </style>

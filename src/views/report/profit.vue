@@ -81,17 +81,21 @@
       <Row type="flex" justify="start" class="small-height bg border-top-none">
         <Col span="24"  style="text-align: right">主营业务收入合计<span class="money">{{res.orderTotalFee}}</span></Col>
       </Row>
-      <Row type="flex" justify="start"  class="big-height border-top-none">
+      <Row type="flex" justify="start"  class="big-height-2 border-top-none">
         <Col span="6">支出</Col>
         <Col span="6">
-        <Row class="middle-height border-top-none border-right-none border-bottom-none">
+        <Row class="middle-height border-top-none border-right-none">
           <Col>承运商运费支出</Col>
+        </Row>
+        <Row class="middle-height-2 border-top-none border-bottom-none border-right-none">
+          <Col>自有车运费支出</Col>
         </Row>
         <Row class="small-height border-right-none border-bottom-none">
           <Col>开票税费</Col>
         </Row>
         </Col>
         <Col span="12" >
+        <!-- 承运商运费支出 -->
         <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
           <Col span="12">运输费</Col>
           <Col span="12" class="num">{{res.carrierFreightFee}}</Col>
@@ -112,10 +116,36 @@
           <Col span="12">路桥费</Col>
           <Col span="12" class="num">{{res.carrierTollFee}}</Col>
         </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none border-bottom-none">
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
           <Col span="12">其他费用</Col>
           <Col span="12" class="num">{{res.carrierOtherFee}}</Col>
         </Row>
+        <!-- 自有车运费支出 -->
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
+          <Col span="12">油费</Col>
+          <Col span="12" class="num">{{res.ownerOilFee}}</Col>
+        </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+          <Col span="12">路桥费</Col>
+          <Col span="12" class="num">{{res.ownerTollFee}}</Col>
+        </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+          <Col span="12">装货费</Col>
+          <Col span="12" class="num">{{res.ownerLoadFee}}</Col>
+        </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+          <Col span="12">卸货费</Col>
+          <Col span="12" class="num">{{res.ownerUnloadFee}}</Col>
+        </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+          <Col span="12">保险费</Col>
+          <Col span="12" class="num">{{res.ownerInsuranceFee}}</Col>
+        </Row>
+        <Row type="flex" justify="start" class="small-height border-top-none border-right-none border-bottom-none">
+          <Col span="12">其他费用</Col>
+          <Col span="12" class="num">{{res.ownerOtherFee}}</Col>
+        </Row>
+        <!-- 开票税费 -->
         <Row type="flex" justify="start" class="small-height  border-bottom-none border-right-none">
           <Col span="12">开票税费</Col>
           <Col span="12" class="num">{{res.orderInvoiceFee}}</Col>
@@ -167,12 +197,18 @@ export default {
         orderPickupFee: '-',
         orderInsuranceFee: '-',
         orderTotalFee: '-',
-        carrierFreightFee: '-',
+        carrierFreightFee: '-', // 承运商
         carrierLoadFee: '-',
         carrierUnloadFee: '-',
         carrierOtherFee: '-',
         carrierInsuranceFee: '-',
         carrierTotalFee: '-',
+        ownerOilFee: '-', // 自有车
+        ownerTollFee: '-',
+        ownerInsuranceFee: '-',
+        ownerLoadFee: '-',
+        ownerUnloadFee: '-',
+        ownerOtherFee: '-',
         // transbillTransFee: '-',
         profits: '-',
         carrierTollFee: '-',
@@ -357,6 +393,10 @@ export default {
       height 270px
       line-height 314px
       border 1px solid #C9CED9
+    .middle-height-2
+      height 270px
+      line-height 270px
+      border 1px solid #C9CED9
     .small-height
       border 1px solid #C9CED9
       height 45px
@@ -365,4 +405,8 @@ export default {
       border 1px solid #C9CED9
       height 314px
       line-height 314px
+    .big-height-2
+      border 1px solid #C9CED9
+      height 585px
+      line-height 585px
 </style>
