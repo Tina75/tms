@@ -27,8 +27,8 @@ export default {
     return {
       data: [
         { value: 0, name: '发货方', id: 'consignerCnt' },
-        { value: 0, name: '承运商', id: 'carriersCnt' },
-        { value: 0, name: '外转方', id: 'transfereeCnt' }
+        { value: 0, name: '承运商', id: 'carriersCnt' }
+        // { value: 0, name: '外转方', id: 'transfereeCnt' }
       ]
     }
   },
@@ -70,8 +70,8 @@ export default {
             },
             labelLine: {
               show: true,
-              length: 5,
-              length2: 10,
+              length: 2,
+              length2: 2,
               lineStyle: {
                 color: '#D9DEE8'
               }

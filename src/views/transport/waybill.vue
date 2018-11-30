@@ -195,7 +195,7 @@ export default {
         fixed: 'left',
         extra: true,
         render: (h, p) => {
-          if (p.row.status === 1 && this.hasPower(120101)) {
+          if (p.row.status === 2 && this.hasPower(120101) && p.row.carrierName === '') {
             return h('a', {
               on: {
                 click: () => {
@@ -247,7 +247,7 @@ export default {
           this.triggerTableActionColumn(true)
           return 1
         case '待发运':
-          this.triggerTableActionColumn(false)
+          this.triggerTableActionColumn(true)
           return 2
         case '在途':
           this.triggerTableActionColumn(false)
@@ -309,6 +309,23 @@ export default {
       let waybillIds = this.tableSelection.map(item => item.waybillId)
       this.getWaybillLocation(waybillIds)
         .then(res => {
+          if (res.limitTip) {
+            this.$Toast.warning({
+              title: '提示',
+              showIcon: false,
+              // content: res.limitTip,
+              okText: '我知道了',
+              render (h) {
+                return h('p', {
+                  style: {
+                    textAlign: 'left',
+                    marginLeft: '-20px'
+                  }
+                }, res.limitTip)
+              }
+            })
+            return
+          }
           let cars
           if (waybillIds.length > 1) {
             if (!res.list.length) {
@@ -331,7 +348,7 @@ export default {
             },
             methods: {}
           })
-        }).catch(err => console.error(err))
+        })
     },
 
     // 到货
@@ -349,6 +366,7 @@ export default {
           data: {
             title: '操作提醒',
             cashBack: cashBackList,
+            message: '以下单据存在返现运费，需要单独操作。',
             type: 'waybill'
           },
           methods: {
@@ -398,11 +416,60 @@ export default {
     billShipment () {
       const self = this
       if (!this.checkTableSelection()) return
+      let tableSelection = _.cloneDeep(this.tableSelection)
+      // 运单发运前判断运单有无填写承运商
+      let carrierNameList = _.remove(tableSelection, (i) => {
+        return i.carrierName === ''
+      })
+      console.log(carrierNameList)
+      if (carrierNameList.length > 0) {
+        if (this.tableSelection.length > 1) {
+          self.openDialog({
+            name: 'transport/dialog/cashBackWarn',
+            data: {
+              title: '操作提醒',
+              cashBack: carrierNameList,
+              message: '以下单据承运商未填写，不能发运。',
+              type: 'waybill'
+            },
+            methods: {
+              confirm () {}
+            }
+          })
+        } else {
+          this.$Message.warning('承运商未填写，不能发运')
+        }
+        return
+      }
+      // 运单发运前判断运单有无订单
+      let cargoList = _.remove(tableSelection, (i) => {
+        return i.orderCnt === 0
+      })
+      console.log(cargoList)
+      if (cargoList.length > 0) {
+        if (this.tableSelection.length > 1) {
+          self.openDialog({
+            name: 'transport/dialog/cashBackWarn',
+            data: {
+              title: '操作提醒',
+              cashBack: cargoList,
+              message: '以下单据没有加入订单，不能发运。',
+              type: 'waybill'
+            },
+            methods: {
+              confirm () {}
+            }
+          })
+        } else {
+          this.$Message.warning('此运单里没有加入订单，不能发运')
+        }
+        return
+      }
       self.openDialog({
         name: 'transport/dialog/confirm',
         data: {
           title: '发运',
-          message: '是否发运？发运以后将不能再修改运单信息'
+          message: '是否发运？'
         },
         methods: {
           confirm () {

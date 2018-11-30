@@ -23,9 +23,18 @@
     <br/>
     <h3>图片上传插件的使用</h3>
     <div>
-      <up-load></up-load>
-      <up-load></up-load>
+      <up-load ref="$upload" crop></up-load>
+      <up-load ref="$mutipulUpload" multiple></up-load>
     </div>
+    <div>
+      <image-title></image-title>
+    </div>
+    <h3>输入框展示组件</h3>
+    <show-input
+      prepend="链接："
+      message="http://qastatic.yundada56.com/tms-share/order-list.html?sharecode=FAH5E6J7BU"
+      width="400">
+    </show-input>
   </div>
 </template>
 
@@ -33,13 +42,17 @@
 import BasePage from '@/basic/BasePage'
 import SelectInputForCity from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/index.vue'
+import ImageTitle from '@/components/upLoad/ImageTitle.vue'
+import ShowInput from '@/components/ShowInput.vue'
 // import ruleForClient from '@/components/ruleForClient/index'
 // import SelectInput from '@/components/SelectInput'
 export default {
   name: 'page1',
   components: {
     SelectInputForCity,
-    UpLoad
+    UpLoad,
+    ImageTitle,
+    ShowInput
     // ruleForClient
   },
   mixins: [ BasePage ],

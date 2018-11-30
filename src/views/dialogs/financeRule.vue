@@ -16,7 +16,7 @@
       </span>
     </div>
 
-    <div slot="footer" style="text-align: center;">
+    <div slot="footer">
       <Button v-if="ruleEmpty" type="primary" @click="gotoSetRules">去设置</Button>
       <Button v-else type="primary" @click="save">确定</Button>
       <Button type="default" class="i-ml-10" @click.native="close">取消</Button>
@@ -83,34 +83,23 @@ export default {
 
     // 计算距离
     distanceCalculate () {
-      return new Promise((resolve, reject) => {
-        if (this.startPoint && this.endPoint && !this.distance) { // 在有定位且未计算出距离时才执行
-          const startPoint = new BMap.Point(this.startPoint.lng, this.startPoint.lat)
-          const endPoint = new BMap.Point(this.endPoint.lng, this.endPoint.lat)
-          const route = new BMap.DrivingRoute(startPoint, {
-            policy: window.BMAP_DRIVING_POLICY_LEAST_DISTANCE, // 距离最短路线
-            onSearchComplete: res => {
-              const plan = res.getPlan(0)
-              if (plan) { // 如果线路存在则获取距离
-                this.distance = plan.getDistance(false)
-              } else if (!plan && !this.distance) { // 如果不存在线路规划且距离为0，则清空始发和终点，不再计算
-                console.error('查询路线失败，请检查经纬度是否正确')
-                this.startPoint = void 0
-                this.endPoint = void 0
-              } else {
-                resolve()
-              }
-            }
-          })
-          route.search(startPoint, endPoint)
-        }
-        resolve()
-      })
+      if (this.startPoint && this.endPoint && !this.distance) { // 在有定位且未计算出距离时才执行
+        const startPoint = new BMap.Point(this.startPoint.lng, this.startPoint.lat)
+        const endPoint = new BMap.Point(this.endPoint.lng, this.endPoint.lat)
+        const route = new BMap.DrivingRoute(startPoint, {
+          policy: window.BMAP_DRIVING_POLICY_LEAST_DISTANCE, // 距离最短路线
+          onSearchComplete: res => {
+            const plan = res.getPlan(0)
+            if (plan) this.distance = plan.getDistance(false)
+            else this.$Message.error('线路查询失败，无法获取距离信息')
+          }
+        })
+        route.search(startPoint, endPoint)
+      }
     },
 
     async ruleChanged (index) {
       errorMsg = ''
-      await this.distanceCalculate() // 重复执行距离计算，确保计算出距离，如果已经有计算结果，则该方法会直接返回
       const rule = this.ruleOptions[index]
       if ((rule.ruleType === 3 || rule.ruleType === 4) && this.distance === 0) errorMsg = '地址填写不够详细无法算出里程数'
 

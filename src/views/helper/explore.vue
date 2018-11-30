@@ -130,6 +130,12 @@ export default {
             title: '员工管理'
           })
           break
+        case '140300':
+          this.openTab({
+            path: TMSUrl.COMPANY_SETTING,
+            title: '公司设置'
+          })
+          break
         case '130100':
           this.openTab({
             path: TMSUrl.SENDER_MANAGEMENT,
@@ -190,7 +196,8 @@ export default {
       }
 
       let busList = { id: 2, name: '完善公司信息', BtnList: [] }
-      if (this.getBtn('140100') || this.getBtn('140200')) {
+      if (this.getBtn('140300') || this.getBtn('140100') || this.getBtn('140200')) {
+        busList.BtnList.push(this.getBtn('140300'))
         busList.BtnList.push(this.getBtn('140100'))
         busList.BtnList.push(this.getBtn('140200'))
         busList.BtnList = busList.BtnList.filter(Boolean)

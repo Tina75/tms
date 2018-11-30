@@ -5,20 +5,28 @@
       :columns="orderColumns"
       :data-source="orderList"
       :is-empty-list="isEmptyList"
-      title="外转方/承运商返现对账列表"
-      empty-content="请点击左侧外转方/承运商查看返现对账列表哦～"
+      :title="title"
+      empty-content="请点击左侧承运商查看返现对账列表哦～"
       @on-selection-change="handleSelectionChange"
     >
+      <div slot="title">
+        <p class="wait-verify__view-title">{{title}}</p>
+        <p class="wait-verify__view-supName">
+          <span>
+            返现总额 {{activeDriver ? (activeDriver.calcTotalFee / 100).toFixed(2) : 0}}
+          </span>
+        </p>
+      </div>
       <div slot="operation">
         <Button v-if="hasPower(170601)" type="primary" @click="batchWriteOff">核销</Button>
       </div>
       <ListSender ref="driversList" :style="styles" list-key="partnerName" @on-click="handleClick">
         <ListSenderItem v-for="(item, name) in drivers" :key="name" :item="item" :title="item.partnerName" :extra="item.orderNum" icon="ico-company">
-          <p slot="supName">
+          <template slot="supName">
             <span>
               返现总额 {{(item.calcTotalFee / 100).toFixed(2) }}
             </span>
-          </p>
+          </template>
         </ListSenderItem>
       </ListSender>
     </ReconcileLayout>
@@ -138,12 +146,26 @@ export default {
   },
   computed: {
     ...mapGetters(['DocumentHeight']),
+    title () {
+      if (!this.activeDriver) {
+        return ''
+      }
+      return this.activeDriver.partnerName
+    },
     // 右侧订单列表
     orderList () {
       if (!this.activeDriver) {
         return []
       }
-      return this.drivers[this.activeDriver.partnerName].orderInfos
+      return this.drivers[this.activeDriver.partnerName].orderInfos.map((item) => {
+        return Object.assign({}, item, {
+          orderNo: item.orderNo ? item.orderNo : '-',
+          departureName: item.departureName ? item.departureName : '-',
+          destinationName: item.destinationName ? item.destinationName : '-',
+          truckNo: item.truckNo ? item.truckNo : '-',
+          orderStatusDesc: item.orderStatusDesc ? item.orderStatusDesc : '-'
+        })
+      })
     },
     isEmptyList () {
       return Object.keys(this.drivers).length === 0
@@ -162,7 +184,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      let height = this.DocumentHeight - this.$refs.driversList.$el.getBoundingClientRect().top + this.$parent.$parent.$el.getBoundingClientRect().top
+      let height = this.DocumentHeight - 249 + this.$parent.$parent.$el.getBoundingClientRect().top
       this.styles = {
         height: (height) + 'px'
       }
@@ -285,4 +307,13 @@ export default {
 .wait-verify
   .ivu-btn
     width 86px
+  &__view-title
+    line-height 22px
+    font-size 14px
+    color #333333
+    font-weight 500
+  &__view-supName
+    line-height 22px
+    font-size 12px
+    color #999999
 </style>

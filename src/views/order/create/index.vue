@@ -1,8 +1,9 @@
 <template>
-  <Form ref="orderForm" :label-width="80" :model="orderForm" :rules="rules">
+  <Form ref="orderForm" :label-width="80" :model="orderForm" :rules="rules" style="position: relative;">
     <Spin v-if="loading" fix>
       <img src="../../../assets/loading.gif" width="24" height="24" alt="加载中">
     </Spin>
+
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="客户名称:" prop="consignerName">
@@ -55,6 +56,15 @@
       </FormItem>
       </Col>
     </Row>
+    <Row :gutter="16">
+      <Col span="6">
+      <FormItem label="对接业务员:" prop="salesmanId">
+        <Select v-model="orderForm.salesmanId" transfer clearable placeholder="全部">
+          <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.id">{{opt.name}}</Option>
+        </Select>
+      </FormItem>
+      </Col>
+    </Row>
     <Row :gutter="16" class="i-mb-15">
       <Col span="12"><Title>发货人</Title></Col>
       <Col span="12"><Title>收货人</Title></Col>
@@ -67,7 +77,7 @@
       </Col>
       <Col span="6">
       <FormItem label="联系号码:" prop="consignerPhone">
-        <SelectInput v-model="orderForm.consignerPhone" :parser="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号"></SelectInput>
+        <SelectInput v-model="orderForm.consignerPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号"></SelectInput>
       </FormItem>
       </Col>
       <Col span="6">
@@ -78,7 +88,7 @@
       </Col>
       <Col span="6">
       <FormItem label="联系号码:" prop="consigneePhone">
-        <SelectInput v-model="orderForm.consigneePhone" :parser="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号"></SelectInput>
+        <SelectInput v-model="orderForm.consigneePhone" :formatter="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号"></SelectInput>
       </FormItem>
       </Col>
     </Row>
@@ -224,7 +234,7 @@
     <Title>其他</Title>
     <Row :gutter="16" class="i-mt-15">
       <Col span="6">
-      <FormItem label="提货方式:" prop="pickup">
+      <FormItem :class="{'ivu-form-item-error': highLight}" label="提货方式:" prop="pickup">
         <Select ref="pickupSelector" v-model="orderForm.pickup" transfer>
           <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
@@ -242,6 +252,26 @@
       </FormItem>
       </Col>
       <Col span="6">
+      <FormItem label="是否开票:" prop="isInvoice">
+        <Select v-model="orderForm.isInvoice" transfer>
+          <Option v-for="opt in invoiceList" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+        </Select>
+      </FormItem>
+      </Col>
+      <Col span="6">
+      <FormItem v-if="orderForm.isInvoice === 1" label="开票税率:" prop="invoiceRate">
+        <Row>
+          <Col span="20">
+          <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :min="0" :max="100">
+          </TagNumberInput>
+          </Col>
+          <Col span="4" class="order-create__input-unit">%</Col>
+        </Row>
+      </FormItem>
+      </Col>
+    </Row>
+    <Row>
+      <Col span="6">
       <FormItem label="代收货款:" prop="collectionMoney">
         <Row>
           <Col span="19">
@@ -251,8 +281,6 @@
         </Row>
       </FormItem>
       </Col>
-    </Row>
-    <Row>
       <Col span="18">
       <FormItem label="备注:" prop="remark">
         <Input v-model="orderForm.remark" :maxlength="100" type="text">
@@ -273,25 +301,34 @@
 
 <script>
 import _ from 'lodash'
+import api from './libs/api'
+import distance from '@/libs/js/distance'
+import validator from '@/libs/js/validate'
+import pickups from '@/libs/constant/pickup.js'
+import settlements from '@/libs/constant/settlement.js'
+import { invoiceList } from '@/libs/constant/orderCreate.js'
 import { mapGetters, mapActions } from 'vuex'
+import BasePage from '@/basic/BasePage'
+import BaseComponent from '@/basic/BaseComponent'
+import FontIcon from '@/components/FontIcon'
 import Title from './components/Title.vue'
 import SelectInput from '@/components/SelectInput.vue'
 import TagNumberInput from '@/components/TagNumberInput'
 import float from '@/libs/js/float'
-import BaseComponent from '@/basic/BaseComponent'
-import BasePage from '@/basic/BasePage'
 import OrderPrint from '@/views/order-management/components/OrderPrint'
-import FontIcon from '@/components/FontIcon'
-import settlements from '@/libs/constant/settlement.js'
-import pickups from '@/libs/constant/pickup.js'
 import Cargo from './libs/cargo'
 import CargoTable from './components/CargoTable.vue'
 import TimeInput from './components/TimeInput.vue'
-import validator from '@/libs/js/validate'
 import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
-import distance from '@/libs/js/distance'
-import api from './libs/api'
+const rate = {
+  set (value) {
+    return value ? float.floor(value / 100, 4) : value
+  },
+  get (value) {
+    return value ? float.floor(value * 100, 2) : value === 0 ? value : null
+  }
+}
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee', 'collectionMoney']
 export default {
   name: 'order-crete',
@@ -360,17 +397,17 @@ export default {
         callback(new Error('距离整数位最多输入6位,小数1位'))
       }
     }
-    // 代收付款
-    // const validateCollectFee = (rule, value, callback) => {
-    //   if ((value && validator.fee(value)) || !value === null || value === '') {
-    //     callback()
-    //   } else {
-    //     callback(new Error('费用整数位最多输入9位且大于0'))
-    //   }
-    // }
+    const rate = (rule, value, callback) => {
+      if ((value && validator.fee(value) && value <= 100) || !value) {
+        callback()
+      } else {
+        callback(new Error('税率在0-100之间,小数2位'))
+      }
+    }
     return {
       settlements,
       pickups, // 提货方式
+      invoiceList,
       autoFocus: false, // 客户信息输入框自动焦点focus
       loading: false, // 查询订单详情加载状态
       disabled: false, // 保存按钮
@@ -383,6 +420,7 @@ export default {
         end: null,
         // 客户单号
         customerOrderNo: '',
+        salesmanId: '',
         // 发货时间
         deliveryTime: '',
         deliveryTimes: '',
@@ -430,6 +468,8 @@ export default {
         // 回单数量
         receiptCount: 1,
         collectionMoney: null,
+        isInvoice: 0,
+        invoiceRate: null,
         // 备注
         remark: ''
       },
@@ -508,6 +548,10 @@ export default {
         collectionMoney: [
           { validator: validateFee }
         ],
+        invoiceRate: [
+          { required: true, message: '请填写开票税率' },
+          { validator: rate }
+        ],
         // 计费里程
         mileage: [
           { validator: validateMile }
@@ -524,12 +568,13 @@ export default {
         disabledDate (date) {
           return date && date < new Date(_this.orderForm.deliveryTime)
         }
-      }
+      },
+      salesmanList: [],
+      highLight: false
     }
   },
   computed: {
     ...mapGetters([
-      // 'orderDetail',
       'clients',
       'consignerAddresses',
       'consigneeContacts',
@@ -560,7 +605,7 @@ export default {
       return stdt === eddt ? this.orderForm.deliveryTimes : ''
     },
     orderId () {
-      return this.$route.query.id || undefined
+      return this.$route.query.id
     }
   },
   created () {
@@ -599,14 +644,13 @@ export default {
           }
           // 里程除以 1000
           vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
+          vm.orderForm.invoiceRate = rate.get(vm.orderForm.invoiceRate)
         })
         .catch((errorInfo) => {
           vm.loading = false
         })
     }
-    /**
-     * focus到结算方式和提货方式等下拉框时要弹出下拉框
-     */
+    // focus到结算方式和提货方式等下拉框时要弹出下拉框
     ['pickupSelector', 'settlementSelector'].forEach((selector) => {
       vm.$refs[selector].$refs.reference.onfocus = (e) => {
         vm.$refs[selector].toggleHeaderFocus(e)
@@ -619,6 +663,7 @@ export default {
         })
       }
     })
+    this.initBusineList()
   },
   beforeDestroy () {
     this.resetForm()
@@ -631,6 +676,13 @@ export default {
       'clearCargoes',
       'clearClients'
     ]),
+    initBusineList () {
+      this.loading = true
+      api.getBusineList().then(res => {
+        this.loading = false
+        this.salesmanList = res.data
+      })
+    },
     // 货物名称选择下拉项目时触发
     selectCargo (params, cargoItem) {
       const cargo = this.cargoes.find(cg => cg.id === cargoItem.id)
@@ -671,7 +723,6 @@ export default {
        * 重置表单，除货物信息以外
        * 1. 切换客户
        * 2. 用户手动先输入
-       *
        */
       _this.$refs.orderForm.resetFields()
       // 设置编号，计费规则需要
@@ -716,6 +767,10 @@ export default {
             _this.consignerCargoes = [new Cargo(cargoList[0], true)]
           }
         }
+        _this.orderForm.pickup = consigner.pickUp
+        _this.orderForm.salesmanId = consigner.salesmanId
+        _this.orderForm.isInvoice = consigner.isInvoice
+        _this.orderForm.invoiceRate = rate.get(consigner.invoiceRate)
       })
     },
     /**
@@ -758,9 +813,7 @@ export default {
         return
       }
       const statics = vm.$refs.cargoTable.statics
-      /**
-       * 重量和体积二选一，或者都填写，可以了
-       */
+      // 重量和体积二选一，或者都填写，可以了
       if (statics.weight <= 0 && statics.volume <= 0) {
         this.$Message.warning('请先填写货物必要信息')
         return
@@ -788,39 +841,41 @@ export default {
     },
     // 提交表单
     handleSubmit (e) {
-      const vm = this
-      vm.disabled = true
       return new Promise((resolve, reject) => {
-        this.validateForm().then(form => {
-          api.submitOrder(form)
-            .then(() => {
-              if (!form.id) {
-                this.$Message.success('创建订单成功')
-              } else {
-                this.$Message.success('修改订单成功')
-              }
-              if (e && !form.id) {
-                // 保存不打印，创建订单
-                vm.resetForm()
-              }
-              vm.disabled = false
-              if (e && form.id) {
-                // 保存，不打印，修改页面
-                vm.closeTab()
-              }
-              // 重新获取客户列表
-              vm.getClients()
-              resolve()
-            })
-            .catch((er) => {
-              vm.disabled = false
-              reject(er)
-            })
-        })
+        this.validPermit()
+          .then(form => {
+            return api.submitOrder(form)
+          }).then(() => {
+            this.refreshForm(e)
+            resolve()
+          }).catch(err => {
+            this.disabled = false
+            reject(err)
+          })
       })
+    },
+    refreshForm (e) {
+      const form = this.orderForm
+      if (!form.id) {
+        this.$Message.success('创建订单成功')
+      } else {
+        this.$Message.success('修改订单成功')
+      }
+      if (e && !form.id) {
+        // 保存不打印，创建订单
+        this.resetForm()
+      }
+      this.disabled = false
+      if (e && form.id) {
+        // 保存，不打印，修改页面
+        this.closeTab()
+      }
+      // 重新获取客户列表
+      this.getClients()
     },
     // 清空重置表单
     resetForm () {
+      this.highLight = false
       this.$refs.orderForm.resetFields()
       this.clearCargoes()
       this.consignerCargoes = [new Cargo()]
@@ -831,21 +886,27 @@ export default {
     },
     // 打印
     print () {
-      const vm = this
       this.handleSubmit()
         .then(() => {
-          let orderPrint = _.cloneDeep(vm.orderForm)
-          orderPrint.orderCargoList = _.cloneDeep(vm.consignerCargoes)
-          orderPrint.totalFee = vm.totalFee
-          vm.orderPrint = [orderPrint]
+          let orderPrint = _.cloneDeep(this.orderForm)
+          orderPrint.orderCargoList = _.cloneDeep(this.consignerCargoes)
+          orderPrint.totalFee = this.totalFee
+          this.salesmanList.map(el => {
+            if (el.id === orderPrint.salesmanId) {
+              orderPrint.salesmanName = el.name
+            }
+          })
+          this.orderPrint = [orderPrint]
 
-          vm.$refs.printer.print()
+          this.$refs.printer.print()
           if (!orderPrint.id) {
             // 创建订单页面
-            vm.resetForm()
+            this.resetForm()
           } else {
-            vm.closeTab()
+            this.closeTab()
           }
+        }).catch(err => {
+          console.log(err)
         })
     },
     dateChange (type, date) {
@@ -900,105 +961,111 @@ export default {
           const num = float.floor(res / 1000, 1)
           this.orderForm.mileage = Number(num)
         }
+      }).catch(err => {
+        console.log(err)
       })
     },
     // 立即发运
     shipImmedite (e = 'orderCreate') {
       const self = this
       const statics = this.$refs.cargoTable.statics
-      this.validateForm().then(form => {
-        this.disabled = false
-        if (form.pickup === 1) {
-          // 小车上门 提货权限
-          api.validPermit({ type: 2 }).then(res => {
-            if (res) {
-              this.openDialog({
-                name: 'transport/dialog/action',
-                data: {
-                  type: 'pickUp',
-                  actionOrigin: 'orderCreate',
-                  orderCreate: {
-                    distance: form.mileage,
-                    weight: statics.weight,
-                    volume: statics.volume,
-                    start: form.start,
-                    end: form.end
-                  }
-                },
-                methods: {
-                  complete (data) {
-                    const param = {
-                      createOrder: form,
-                      createLoadbill: {},
-                      loadbillPickup: data
+      this.validPermit()
+        .then(form => {
+          this.disabled = false
+          if (form.pickup === 1) {
+            // 小车上门 提货权限
+            api.validPermit(form).then(({ permit }) => {
+              if (permit) {
+                this.openDialog({
+                  name: 'transport/dialog/action',
+                  data: {
+                    type: 'pickUp',
+                    actionOrigin: 'orderCreate',
+                    orderCreate: {
+                      distance: form.mileage,
+                      weight: statics.weight,
+                      volume: statics.volume,
+                      start: form.start,
+                      end: form.end
                     }
-                    api.immediShip(param).then(res => {
-                      this.$Message.success('提货成功')
-                      self.resetForm()
-                      // 重新获取客户列表
-                      self.getClients()
-                    })
-                  }
-                }
-              })
-            } else {
-              this.openDialog({
-                name: 'order/create/components/OrderTip',
-                data: {
-                  tipMsg: '提货管理'
-                }
-              })
-            }
-          })
-        } else if (form.pickup === 2) {
-          // 大车直送 派车权限
-          api.validPermit({ type: 1 }).then(res => {
-            if (res) {
-              this.openDialog({
-                name: 'transport/dialog/action',
-                data: {
-                  type: 'sendCar',
-                  actionOrigin: 'orderCreate',
-                  orderCreate: {
-                    distance: form.mileage,
-                    weight: statics.weight,
-                    volume: statics.volume,
-                    start: form.start,
-                    end: form.end
-                  }
-                },
-                methods: {
-                  complete (data) {
-                    const param = {
-                      createOrder: form,
-                      createWaybill: {},
-                      waybillAssignVehicle: data
+                  },
+                  methods: {
+                    complete (data) {
+                      const param = {
+                        createOrder: form,
+                        createLoadbill: {},
+                        loadbillPickup: data
+                      }
+                      api.immediShip(param).then(res => {
+                        this.$Message.success('提货成功')
+                        self.resetForm()
+                        // 重新获取客户列表
+                        self.getClients()
+                      })
                     }
-                    param.waybillAssignVehicle.cashBack = param.waybillAssignVehicle.cashBack || null
-                    api.immediShip(param).then(res => {
-                      this.$Message.success('发运成功')
-                      self.resetForm()
-                      // 重新获取客户列表
-                      self.getClients()
-                    })
                   }
-                }
-              })
-            } else {
-              this.openDialog({
-                name: 'order/create/components/OrderTip',
-                data: {
-                  tipMsg: '送货管理'
-                }
-              })
-            }
-          })
-        }
-      })
+                })
+              } else {
+                this.openDialog({
+                  name: 'order/create/components/OrderTip',
+                  data: {
+                    tipMsg: '提货管理'
+                  }
+                })
+              }
+            })
+          } else if (form.pickup === 2) {
+            // 大车直送 派车权限
+            api.validPermit(form).then(({ permit }) => {
+              if (permit) {
+                this.openDialog({
+                  name: 'transport/dialog/action',
+                  data: {
+                    type: 'sendCar',
+                    actionOrigin: 'orderCreate',
+                    orderCreate: {
+                      distance: form.mileage,
+                      weight: statics.weight,
+                      volume: statics.volume,
+                      start: form.start,
+                      end: form.end
+                    }
+                  },
+                  methods: {
+                    complete (data) {
+                      const param = {
+                        createOrder: form,
+                        createWaybill: {},
+                        waybillAssignVehicle: data
+                      }
+                      param.waybillAssignVehicle.cashBack = param.waybillAssignVehicle.cashBack || null
+                      api.immediShip(param).then(res => {
+                        this.$Message.success('发运成功')
+                        self.resetForm()
+                        // 重新获取客户列表
+                        self.getClients()
+                      })
+                    }
+                  }
+                })
+              } else {
+                this.openDialog({
+                  name: 'order/create/components/OrderTip',
+                  data: {
+                    tipMsg: '送货管理'
+                  }
+                })
+              }
+            })
+          }
+        }).catch(err => {
+          console.log(err)
+        })
     },
     validateForm () {
       const vm = this
       vm.disabled = true
+      vm.highLight = false
       return new Promise((resolve, reject) => {
         vm.$refs.orderForm.validate((valid) => {
           if (valid) {
@@ -1017,15 +1084,17 @@ export default {
             if (findError) {
               vm.$Message.error(findError)
               vm.disabled = false
-              reject(new Error(findError.message))
-              return
+              return reject(new Error(findError.message))
             }
             // 始发城市，目的城市，到达时间等需要额外处理
             let form = Object.assign({}, orderForm, {
               arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
               deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
               orderCargoList: orderCargoList.map(cargo => cargo.toJson()),
-              mileage: orderForm.mileage * 1000
+              mileage: orderForm.mileage * 1000,
+              consignerPhone: orderForm.consignerPhone.replace(/\s/g, ''),
+              consigneePhone: orderForm.consigneePhone.replace(/\s/g, ''),
+              invoiceRate: orderForm.isInvoice === 1 ? rate.set(orderForm.invoiceRate) : null
             });
 
             ['start', 'end'].forEach(field => {
@@ -1041,12 +1110,31 @@ export default {
           } else {
             vm.disabled = false
             // 主动滚动到顶部
-            if (vm.orderForm.pickup) {
-              vm.$parent.$el.scrollTop = 0
-            }
+            // if (vm.orderForm.pickup) {
+            //   vm.$parent.$el.scrollTop = 0
+            // }
             vm.$Message.error('请填写必填信息')
             reject(new Error('请填写必填信息'))
           }
+        })
+      })
+    },
+    validPermit () {
+      return new Promise((resolve, reject) => {
+        this.validateForm().then(form => {
+          return form.salesmanId ? api.validPermit(form, form.salesmanId) : { form, permit: true }
+        }).then(({ form, permit }) => {
+          if (!permit) {
+            const errMsg = form.pickup === 1 ? '选择的业务员，没有提货调度或送货调度权限，不可上门提货'
+              : form.pickup === 2 ? '选择的业务员，没有送货调度权限，不可直送客户' : '权限错误'
+            this.$Message.error(errMsg)
+            this.disabled = false
+            this.highLight = true
+            return reject(errMsg)
+          }
+          resolve(form)
+        }).catch(err => {
+          reject(err)
         })
       })
     },

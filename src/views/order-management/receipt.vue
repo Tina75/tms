@@ -31,11 +31,50 @@
           @on-enter="searchList"
           @on-click="clearKeywords"/>
         <Input
-          v-else
+          v-else-if="selectStatus === 2"
           v-model.lazy="keywords.customerOrderNo"
           :maxlength="30"
           :icon="keywords.customerOrderNo ? 'ios-close-circle' : ''"
           placeholder="请输入客户单号"
+          style="width: 200px"
+          @on-enter="searchList"
+          @on-click="clearKeywords"/>
+        <SelectInput
+          v-else-if="selectStatus === 3"
+          v-model="keywords.carrierName"
+          :maxlength="20"
+          :remote="false"
+          :clearable="true"
+          :local-options="carriers"
+          placeholder="请选择或输入承运商名称"
+          style="width:200px"
+          @on-focus.once="getCarriers"
+          @on-clear="clearKeywords">
+        </SelectInput>
+        <Input
+          v-else-if="selectStatus === 4"
+          v-model.lazy="keywords.driverName"
+          :maxlength="15"
+          :icon="keywords.driverName ? 'ios-close-circle' : ''"
+          placeholder="请输入司机姓名"
+          style="width: 200px"
+          @on-enter="searchList"
+          @on-click="clearKeywords"/>
+        <Input
+          v-else-if="selectStatus === 5"
+          v-model.lazy="keywords.driverPhone"
+          :maxlength="11"
+          :icon="keywords.driverPhone ? 'ios-close-circle' : ''"
+          placeholder="请输入司机手机号"
+          style="width: 200px"
+          @on-enter="searchList"
+          @on-click="clearKeywords"/>
+        <Input
+          v-else-if="selectStatus === 6"
+          v-model.lazy="keywords.carNo"
+          :maxlength="20"
+          :icon="keywords.carNo ? 'ios-close-circle' : ''"
+          placeholder="请输入车牌号"
           style="width: 200px"
           @on-enter="searchList"
           @on-click="clearKeywords"/>
@@ -137,7 +176,7 @@ export default {
   data () {
     return {
       tabType: 'RECEIPT',
-      url: 'order/getReceiptOrderList',
+      url: 'order/getReceiptOrderListNew',
       method: 'post',
       status: [
         { name: '全部', count: '' },
@@ -159,6 +198,22 @@ export default {
         {
           value: 2,
           label: '客户单号'
+        },
+        {
+          value: 3,
+          label: '承运商名称'
+        },
+        {
+          value: 4,
+          label: '司机姓名'
+        },
+        {
+          value: 5,
+          label: '司机手机号'
+        },
+        {
+          value: 6,
+          label: '车牌号'
         }
       ],
       keyword: {
@@ -457,7 +512,8 @@ export default {
 
   computed: {
     ...mapGetters([
-      'clients'
+      'clients',
+      'carriers'
     ]),
     // 回单id集合
     receiptOrderIds () {
@@ -512,7 +568,8 @@ export default {
 
   methods: {
     ...mapActions([
-      'getClients'
+      'getClients',
+      'getCarriers'
     ]),
     // 获取各状态订单数目
     getOrderNum () {

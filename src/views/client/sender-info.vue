@@ -27,7 +27,7 @@
           </Col>
         </Row>
         <Row class="row">
-          <Col span="24">
+          <Col span="8">
           <div>
             <span class="label">结算方式：</span>
             <span v-if="list.payType===1">现付</span>
@@ -35,6 +35,18 @@
             <span v-else-if="list.payType===3">回单付</span>
             <span v-else-if="list.payType===4">月结</span>
             <span v-else></span>
+          </div>
+          </Col>
+          <Col span="8">
+          <div>
+            <span class="label">对接业务员：</span>
+            <span v-text="list.salesName"></span>
+          </div>
+          </Col>
+          <Col span="8">
+          <div>
+            <span class="label">是否开票：</span>
+            <span v-text="list.isInvoice === 1 ? `是（${rate(list.invoiceRate)}%）` : '否'">现付</span>
           </div>
           </Col>
         </Row>
@@ -99,6 +111,7 @@ import BasePage from '@/basic/BasePage'
 import ruleForClient from './ruleForClient/index'
 import { CODE, consignerDetail, consignerAddressList, consignerAddressDelete, consignerConsigneeList, consignerConsigneeDelete, consignerCargoList, consignerCargoDelete } from './client'
 import pageTable from '@/components/page-table'
+import float from '@/libs/js/float'
 export default {
   name: 'sender-info',
   components: {
@@ -514,7 +527,10 @@ export default {
             contact: data.contact,
             phone: data.phone,
             payType: data.payType,
-            remark: data.remark
+            remark: data.remark,
+            invoiceRate: data.invoiceRate,
+            isInvoice: data.isInvoice,
+            salesName: data.salesName
           }
           this.loading = false
           this.data1 = data.addressList.list
@@ -642,6 +658,9 @@ export default {
     handleChangePageSize3 (pageSize) {
       this.pageSize3 = pageSize
       this._consignerCargoList()
+    },
+    rate (value) {
+      return float.floor(value * 100, 2)
     }
   }
 }

@@ -35,7 +35,9 @@ export default {
       this.fetch('home/transport/location')
         .then((response) => {
           const data = response.data
-          this.pointList = data.list
+          this.pointList = data.list.filter(el => {
+            return el.truckNo
+          })
           if (this.pointList.length > 0) {
             if (!this.showMap) {
               this.showMap = true
@@ -58,7 +60,7 @@ export default {
             }
             points.push(point)
             // const markerOverlay = new MarkerOverlay(point)
-            const labelOverlay = new LabelOverlay(point, item.carNo)
+            const labelOverlay = new LabelOverlay(point, item.truckNo)
             const truckMarker = getTruckMarker(point)
             // bmap.addOverlay(markerOverlay)
             bmap.addOverlay(labelOverlay)

@@ -35,6 +35,7 @@ export default {
 .content
   padding 15px 20px
   overflow-y auto
+  overflow-x hidden
   width: 100%
   &-main
     height: auto

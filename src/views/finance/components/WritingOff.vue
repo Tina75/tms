@@ -48,22 +48,22 @@
         </Row>
       </Form>
     </div>
-    <div class="btns-box">
-      <div>{{sceneMap[scene]}}对账列表</div>
-      <Button v-if="(hasPower(170102) && scene === 1) || (hasPower(170202) && scene === 2) || (hasPower(170302) && scene === 3)" type="primary" @click="createBill">生成对账单</Button>
-    </div>
+    <!--<div class="btns-box">-->
+    <!--<div>{{sceneMap[scene]}}对账列表</div>-->
+    <!--<Button v-if="(hasPower(170102) && scene === 1) || (hasPower(170202) && scene === 2) || (hasPower(170302) && scene === 3)" type="primary" @click="createBill">生成对账单</Button>-->
+    <!--</div>-->
     <div  v-if="companyData.length>0" :style="{height: height - 20 +'px'}" class="list-box">
       <ul class="leftList">
         <li v-for="(item,index) in companyData" :class="{companyDataActive:companyDataActive === item.id}" :key="index" class="list" @click="showOrderData(item)">
-          <!--<Table :columns="companyColumn" :data="companyData" height="500" highlight-row @on-row-click="showOrderData"></Table>-->
           <div class="icon">
             <FontIcon slot="icon" :type="iconType" ></FontIcon>
           </div>
           <div class="content">
-            <div v-if="item.partnerName.length<8" class="ruleName">{{item.partnerName}}</div>
-            <Tooltip v-else :content="item.partnerName" max-width="200" transfer class="ruleName" placement="top-start" style="display: list-item">
-              <div >{{item.partnerName.slice(0,8)}}...</div>
-            </Tooltip>
+            <div v-if="item.partnerName.length<12" class="ruleName">{{item.partnerName}}</div>
+            <div v-else class="ruleName">{{item.partnerName.slice(0,12)}}...</div>
+            <!--<Tooltip v-else :content="item.partnerName" max-width="200" transfer class="ruleName" placement="top-start" style="display: list-item">-->
+            <!--<div >{{item.partnerName.slice(0,8)}}...</div>-->
+            <!--</Tooltip>-->
             <div class="tips">
               <span style="margin-right: 10px">应付 {{item.calcTotalFeeText}}</span>
               <span>已结 {{item.verifiedFeeText}}</span>
@@ -78,7 +78,19 @@
         <DataEmpty v-if="!currentPartner.partnerName || !orderData.length">
           {{emptyContent}}
         </DataEmpty>
-        <Table v-else :columns="orderColumn" :data="orderData" class="tableList"  @on-selection-change="setOrderIds"></Table>
+        <div v-else>
+          <div class="title">
+            <div class="text">
+              <p class="desc_title">{{orderData[0].title}}</p>
+              <p class="desc_money">
+                <span style="margin-right: 30px">应付 {{orderData[0].calcTotalFeeText}}</span>
+                <span>已结 {{orderData[0].verifiedFeeText}}</span>
+              </p>
+            </div>
+            <Button v-if="(hasPower(170102) && scene === 1) || (hasPower(170202) && scene === 2) || (hasPower(170302) && scene === 3)" class="btn" type="primary" @click="createBill">生成对账单</Button>
+          </div>
+          <Table :columns="orderColumn" :data="orderData" class="tableList"  @on-selection-change="setOrderIds"></Table>
+        </div>
       </div>
     </div>
     <div v-if="companyData.length===0" class="dataNone">
@@ -268,7 +280,7 @@ export default {
         },
         {
           title: '结算方式',
-          width: 75,
+          width: 80,
           key: 'settleTypeDesc',
           filters: this.scene === 2 ? [
             {
@@ -512,14 +524,26 @@ export default {
       }).catch(err => console.error(err))
     },
     showOrderData (data) {
+      console.log(data)
       this.companyDataActive = data.id
       this.currentPartner = data
       this.orderData = data.orderInfos.map(item => {
+        console.log(item)
         return Object.assign({}, item, {
-          totalFeeText: (item.totalFee / 100).toFixed(2),
-          _disabled: !!item.isMultiPay
+          departureName: item.departureName ? item.departureName : '-',
+          destinationName: item.destinationName ? item.destinationName : '-',
+          orderNo: item.orderNo ? item.orderNo : '-',
+          truckNo: item.truckNo ? item.truckNo : '-',
+          totalFeeText: item.totalFee ? (item.totalFee / 100).toFixed(2) : '-',
+          settleTypeDesc: item.settleTypeDesc ? item.settleTypeDesc : '-',
+          orderStatusDesc: item.orderStatusDesc ? item.orderStatusDesc : '-',
+          _disabled: !!item.isMultiPay,
+          title: data.partnerName,
+          calcTotalFeeText: data.calcTotalFeeText,
+          verifiedFeeText: data.verifiedFeeText
         })
       })
+      console.log(this.orderData)
     }
   }
 }
@@ -538,7 +562,6 @@ export default {
       justify-content space-between
       -ms-flex-pack justify
       padding 9px 0
-      border-bottom 1px solid #E4E7EC
       div
         color #333
         font-weight 500
@@ -557,6 +580,7 @@ export default {
       display -ms-flexbox
       margin 0 -15px
       margin-bottom -20px
+      border-top 1px solid #E4E7EC
       .leftList
         height 100%
         overflow-y hidden
@@ -568,6 +592,7 @@ export default {
           height 100%
           overflow-y auto
         .list
+          position relative
           list-style none
           height 60px
           line-height 60px
@@ -601,8 +626,8 @@ export default {
               &:after
                 border none
           .content
-            flex 1
-            -ms-flex 1
+            /*flex 1*/
+            /*-ms-flex 1*/
             font-size 12px
             .ruleName
               height 30px
@@ -611,29 +636,54 @@ export default {
               color #333
               font-weight bold
             .tips
+              width 200px
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
               height 30px
               line-height 1
               padding-top 6px
               color #999
           .num
-            flex 0 0 35px
-            -ms-flex 0 0 35px
+            /*flex 0 0 35px*/
+            /*-ms-flex 0 0 35px*/
+            position absolute
+            top 5px
+            right 10px
             height 30px
             line-height 30px
             color #666
             font-size 12px
       .order-list
         height 100%
-        overflow-y hidden
+        overflow-y auto
         flex 1
         -ms-flex 1
         padding 19px 20px 20px 9px
         /deep/ .ivu-table-cell
           padding-left: 5px
           padding-right: 5px
-        &:hover
-          height 100%
-          overflow-y auto
+        /*&:hover*/
+          /*height 100%*/
+          /*overflow-y auto*/
+        .title
+          padding-bottom 10px
+          margin-bottom 20px
+          overflow hidden
+          border-bottom 1px solid #e4e7ec
+          .text
+            float left
+            .desc_title
+              line-height: 22px
+              font-size: 14px
+              color: #333
+              font-weight: 500
+            .desc_money
+              line-height: 22px
+              font-size: 12px
+              color: #999
+          .btn
+            float right
       .data-empty
         .data-empty-img
           display: block

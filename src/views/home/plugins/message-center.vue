@@ -71,6 +71,8 @@ export default {
           return 'dingdanxiaoxi'
         case 2:
           return 'yunshuxiaoxi'
+        default:
+          return 'xitongxiaoxi'
       }
     },
     getColor (type) {
@@ -81,6 +83,8 @@ export default {
           return '#418DF9'
         case 2:
           return '#00A4BD'
+        default:
+          return '#FFBB44'
       }
     },
     load () {
@@ -131,6 +135,15 @@ export default {
           this.openTab({
             path: TMSUrl.OUTER_ORDER, // '/transport/outerOrder',
             title: '外转单管理'
+          })
+          break
+        default:
+          this.openTab({
+            path: TMSUrl.MESSAGE_DETAIL, // '/information/message-info',
+            query: {
+              id: msg.title,
+              message: msg
+            }
           })
           break
       }

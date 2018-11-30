@@ -3,7 +3,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-11-09 16:48:31
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-11-22 16:50:02
+ * @Last Modified time: 2018-11-28 11:19:14
  */
 import _ from 'lodash'
 import server from '@/libs/js/server'
@@ -34,12 +34,28 @@ export default {
   },
   computed: {
     ...mapGetters(['DocumentHeight']),
+    title () {
+      if (!this.activeSender) {
+        return ''
+      }
+      return this.activeSender.partnerName
+    },
     // 右侧订单列表
     orderList () {
       if (!this.activeSender) {
         return []
       }
-      return this.datas[this.activeSender.partnerName].orderInfos
+      console.log(this.datas[this.activeSender.partnerName].orderInfos)
+      return this.datas[this.activeSender.partnerName].orderInfos.map(item => {
+        return Object.assign({}, item, {
+          carrierName: item.carrierName ? item.carrierName : '-',
+          departureName: item.departureName ? item.departureName : '-',
+          destinationName: item.destinationName ? item.destinationName : '-',
+          truckNo: item.truckNo ? item.truckNo : '-',
+          orderNo: item.orderNo ? item.orderNo : '-',
+          orderStatusDesc: item.orderStatusDesc ? item.orderStatusDesc : '-'
+        })
+      })
     },
     isEmptyList () {
       return Object.keys(this.datas).length === 0
@@ -47,13 +63,16 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      let height = this.DocumentHeight - this.$refs.senderList.$el.getBoundingClientRect().top + this.$parent.$parent.$el.getBoundingClientRect().top
+      let height = this.DocumentHeight - 249 + this.$parent.$parent.$el.getBoundingClientRect().top
       this.styles = {
         height: (height) + 'px'
       }
     })
   },
   methods: {
+    formatFee (fee) {
+      return ((fee || 0) / 100).toFixed(2)
+    },
     toDetail (data) {
       this.openTab({
         path: TMSUrl.ORDER_DETAIL,

@@ -66,7 +66,7 @@ export const TABLE_COLUMNS = vm => [
           click: () => {
             vm.openTab({
               title: p.row.billNo,
-              path: p.row.billType === 1 ? TMSUrl.PICKUP_ORDER_DETAIL : (p.row.billType === 2 ? TMSUrl.OUTER_ORDER_DETAIL : TMSUrl.TRANSPORT_ORDER_DETAIL),
+              path: p.row.billType === 1 ? TMSUrl.PICKUP_ORDER_DETAIL : TMSUrl.TRANSPORT_ORDER_DETAIL,
               query: {
                 id: p.row.billId,
                 abnormal: 1

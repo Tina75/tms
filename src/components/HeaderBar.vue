@@ -105,6 +105,9 @@ export default {
           if (this.UserInfo.type === 1) this.renew()
           else this.changePasswordTip()
           sessionStorage.removeItem('first_time_login')
+        } else {
+          // 短信是否超过次数
+          this.isMessageBeyond()
         }
         // 探索运掌柜
         await this.isPreviewDiscover()
@@ -115,6 +118,30 @@ export default {
       } catch (error) {
 
       }
+    },
+    /**
+     * 超过短信上限
+     */
+    isMessageBeyond () {
+      Server({
+        url: 'message/beyondLimt',
+        method: 'get'
+      }).then(({ data }) => {
+        if (data.data) {
+          this.$Toast.warning({
+            showIcon: false,
+            okText: '我知道了',
+            render (h) {
+              return h('p', {
+                style: {
+                  textAlign: 'left',
+                  marginLeft: '-20px'
+                }
+              }, data.data.content)
+            }
+          })
+        }
+      })
     },
     loopMessage () {
       this.getMessageCount()
