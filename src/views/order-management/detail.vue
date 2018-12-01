@@ -806,7 +806,7 @@ export default {
           )
         }
         // 编辑按钮
-        if (r.pickup !== 1 && r.transStatus === 0 && r.dispatchStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
+        if (r.transStatus === 0 && r.dispatchStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
           renderBtn.push(
             { name: '编辑', value: 6, code: 100301 }
           )

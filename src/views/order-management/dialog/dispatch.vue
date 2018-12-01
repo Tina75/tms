@@ -51,6 +51,7 @@
           </SelectInput>
         </FormItem>
       </Form>
+
       <Table :columns="tableColumns" :data="id" :height="id.length > 10 ? 520 : id.length * 48 + 40"></Table>
       <div class="table-footer">
         <span style="padding-right: 5px;box-sizing:border-box;margin-left:-12px;">合计</span>
@@ -58,14 +59,19 @@
         <span>总体积：{{ volumeTotal }}</span>
         <span>总重量：{{ weightTotal }}</span>
       </div>
-      <div v-if="name === '送货调度'">
+
+      <div>
         <div class="send_car">
           <span style="margin-right: 24px;">直接派车</span>
           <i-switch v-model="sendCar" size="small" />
-          <p v-if="!sendCar" class="send_car_tip">此处未派车可以在生成运单后，在运单详情里点【编辑】进行派车操作。</p>
+          <p v-if="!sendCar" class="send_car_tip">此处未派车可以在生成运单后，在运单列表点击【派车】进行操作</p>
         </div>
-        <send-car v-if="sendCar" ref="sendCarComp" :order-list="id" :mileage="mileage" :finance-rules-info="financeRulesInfo" :start="send.start"></send-car>
+        <div v-if="sendCar" style="margin-top: 25px;">
+          <send-car v-if="name === '送货调度'" ref="sendCarComp" :order-list="id" :mileage="mileage" :finance-rules-info="financeRulesInfo"></send-car>
+          <pick-up v-else ref="pickUpComp"></pick-up>
+        </div>
       </div>
+
       <div slot="footer">
         <Button  type="primary"  @click="save">确定</Button>
         <Button  type="default"  @click="close">取消</Button>
@@ -81,6 +87,7 @@ import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput.vue'
 import SendCar from '@/views/transport/components/SendCar.vue'
+import PickUp from '@/views/transport/components/PickUp.vue'
 import { mapGetters, mapActions } from 'vuex'
 import City from '@/libs/js/city'
 import { CAR } from '@/views/client/client'
@@ -93,7 +100,8 @@ export default {
     // AreaSelect,
     CitySelect,
     SelectInput,
-    SendCar
+    SendCar,
+    PickUp
   },
 
   mixins: [BaseDialog],
@@ -335,10 +343,7 @@ export default {
       const z = this
       z.$refs['send'].validate((valid) => {
         if (valid) {
-          // z.$nextTick(() => {
-          //   console.log(z.$refs.sendCarComp.validate())
-          // })
-          if (z.sendCar && !z.$refs.sendCarComp.validate()) return
+          if (z.sendCar && !z.$refs.sendCarComp.checkValidate()) return
           // 地址入参为最后一级区号
           let data = {
             start: z.send.start,
@@ -348,9 +353,9 @@ export default {
           }
           if (z.sendCar) {
             let sendComp = z.$refs.sendCarComp
-            data = Object.assign(data, sendComp.formatMoney(), {
+            data = Object.assign(data, sendComp.getformatMoney(), sendComp.getCarrierInfo(), {
               settlementType: sendComp.settlementType,
-              settlementPayInfo: sendComp.getSettlementPayInfo()
+              settlementPayInfo: sendComp.getSettlementPayInfos()
             })
           }
           Server({
@@ -367,19 +372,19 @@ export default {
     },
     // 提货调度  创建提货单
     doPickDispatch () {
-      this.$refs['pick'].validate((valid) => {
-        console.log(valid)
-        console.log(this.pick)
+      const z = this
+      z.$refs['pick'].validate((valid) => {
+        if (z.sendCar && !z.$refs.pickUpComp.checkValidate()) return
         if (valid) {
-          const data = Object.assign(this.pick, { orderIds: this.orderIds })
+          const data = Object.assign(z.pick, { orderIds: z.orderIds })
           Server({
             url: 'load/bill/create',
             method: 'post',
             data: data
           }).then(() => {
-            this.ok()
-            this.$Message.success('创建提货单成功')
-            this.close()
+            z.ok()
+            z.$Message.success('创建提货单成功')
+            z.close()
           })
         }
       })
@@ -412,13 +417,6 @@ export default {
   font-weight 700
   color rgba(47,50,62,1)
   letter-spacing 1px
-.sub-title
-  font-size 14px
-  font-family 'PingFangSC-Medium'
-  font-weight 500
-  color rgba(51,51,51,1)
-  padding 17px 0 18px 0
-  border-top 1px dashed rgba(203,206,211,1)
 .send_car
   font-size 14px
   font-family 'PingFangSC-Medium'

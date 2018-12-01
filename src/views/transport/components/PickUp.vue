@@ -10,11 +10,7 @@
     </div>
     <div v-if="sendWay === '2'">
       <send-carrier-info ref="SendCarrierInfo"></send-carrier-info>
-      <send-fee
-        ref="sendFee"
-        :mileage="mileage"
-        :finance-rules-info="financeRulesInfo">
-      </send-fee>
+      <pickup-fee ref="pickupFee"></pickup-fee>
     </div>
   </div>
 </template>
@@ -24,27 +20,15 @@ import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from './SelectInput.vue'
 import SelectInputMixin from '../mixin/selectInputMixin'
 import TagNumberInput from '@/components/TagNumberInput'
-import SendFee from './SendFee'
+import PickupFee from './PickupFee'
 import SendCarrierInfo from './SendCarrierInfo'
 // import Server from '@/libs/js/server'
 
 export default {
-  name: 'SendCarComponent',
-  components: { SelectInput, SendFee, TagNumberInput, SendCarrierInfo },
+  name: 'PickUpComponent',
+  components: { SelectInput, PickupFee, TagNumberInput, SendCarrierInfo },
   mixins: [ BaseDialog, SelectInputMixin ],
-  props: {
-    orderList: {
-      type: Array
-    },
-    mileage: {
-      type: [Number, String],
-      default: null
-    },
-    // 计费规则传入start、end、weight、volume
-    financeRulesInfo: {
-      type: Object
-    }
-  },
+
   data () {
     return {
       sendWay: '2'
@@ -58,15 +42,15 @@ export default {
     },
     // 格式化金额单位为分
     getformatMoney () {
-      return this.$refs.sendFee.formatMoney()
+      return this.$refs.pickupFee.formatMoney()
     },
     // 多段付传参
     getSettlementPayInfos () {
-      return this.$refs.sendFee.getSettlementPayInfo()
+      return this.$refs.pickupFee.getSettlementPayInfo()
     },
     // 派车模块数据校验
     checkValidate () {
-      if (this.getCheckCarrierInfo() && this.$refs.sendFee.validate()) {
+      if (this.getCheckCarrierInfo() && this.$refs.pickupFee.validate()) {
         return true
       }
       return false

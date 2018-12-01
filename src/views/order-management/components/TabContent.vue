@@ -933,7 +933,7 @@ export default {
       } else {
         if (val === '待提货') {
           this.btnGroup = [
-            { name: '提货调度', value: 2, code: 120208 },
+            { name: '提货调度', value: 1, code: 120208 },
             { name: '打印', value: 5, code: 120202 },
             { name: '导出', value: 6, code: 120207 }
           ]
