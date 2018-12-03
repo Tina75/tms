@@ -28,6 +28,7 @@
       class="pageTable"
       url="employee/list"
       list-field="list"
+      @on-load="handleLoad"
       @on-sort-change = "timeSort">
     </page-table>
   </div>
@@ -37,6 +38,7 @@ import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
+import Server from '@/libs/js/server'
 export default {
   name: 'owned-car',
   components: {
@@ -54,6 +56,7 @@ export default {
         carNo: '',
         driverName: ''
       },
+      exportFile: true,
       menuColumns: [
         {
           title: '操作',
@@ -70,7 +73,6 @@ export default {
                 },
                 on: {
                   click: () => {
-                    var _this = this
                     this.openDialog({
                       name: 'owned-vehicle/dialog/edit-car',
                       data: {
@@ -82,7 +84,6 @@ export default {
                       },
                       methods: {
                         ok () {
-                          _this._carrierListCar() // 车辆列表也要刷新
                         }
                       }
                     })
@@ -122,6 +123,15 @@ export default {
                       },
                       methods: {
                         ok () {
+                          Server({
+                            url: 'owerCar/deleteDriver',
+                            method: 'post',
+                            data: { id: params.row.id }
+                          }).then(({ data }) => {
+                            if (data.code === 10000) {
+                              this.$Message.success('删除成功！')
+                            }
+                          })
                         }
                       }
                     })
@@ -241,6 +251,10 @@ export default {
     }
   },
   methods: {
+    // 导出判空
+    handleLoad (response) {
+      if (response.data.data.list.length < 1) this.exportFile = false
+    },
     // 导出车辆信息
     carExport () {
       // if (Number(this.totalCount1) < 1) {
@@ -267,7 +281,6 @@ export default {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     },
     editCar () {
-      var _this = this
       this.openDialog({
         name: 'owned-vehicle/dialog/edit-car',
         data: {
@@ -277,8 +290,6 @@ export default {
         },
         methods: {
           ok () {
-            _this._carrierListCar()
-            _this._getCarrierNumberCount()
           }
         }
       })

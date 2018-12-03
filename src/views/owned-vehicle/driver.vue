@@ -29,6 +29,7 @@
       class="pageTable"
       url="employee/list"
       list-field="list"
+      @on-load="handleLoad"
       @on-sort-change = "timeSort">
     </page-table>
   </div>
@@ -38,6 +39,7 @@ import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
+import Server from '@/libs/js/server'
 export default {
   name: 'owned-car',
   components: {
@@ -56,6 +58,7 @@ export default {
       },
       selectStatus: '',
       keyword: '',
+      exportFile: true,
       menuColumns: [
         {
           title: '操作',
@@ -72,9 +75,8 @@ export default {
                 },
                 on: {
                   click: () => {
-                    var _this = this
                     this.openDialog({
-                      name: 'owned-vehicle/dialog/edit-driver',
+                      name: 'dialogs/edit-driver',
                       data: {
                         title: '修改司机',
                         flag: 2, // 修改
@@ -84,7 +86,6 @@ export default {
                       },
                       methods: {
                         ok () {
-                          _this._carrierListCar() // 车辆列表也要刷新
                         }
                       }
                     })
@@ -124,15 +125,15 @@ export default {
                       },
                       methods: {
                         ok () {
-                          // Server({
-                          //   url: '',
-                          //   method: 'post',
-                          //   data: ''
-                          // }).then(({ data }) => {
-                          //   if (data.code === 10000) {
-                          //     this.$Message.success('删除成功！')
-                          //   }
-                          // })
+                          Server({
+                            url: 'owerCar/deleteDriver',
+                            method: 'post',
+                            data: { id: params.row.id }
+                          }).then(({ data }) => {
+                            if (data.code === 10000) {
+                              this.$Message.success('删除成功！')
+                            }
+                          })
                         }
                       }
                     })
@@ -170,8 +171,16 @@ export default {
     }
   },
   methods: {
+    // 导出判空
+    handleLoad (response) {
+      if (response.data.data.list.length < 1) this.exportFile = false
+    },
     // 导出司机信息
     carExport () {
+      if (!this.exportFile) {
+        this.$Message.error('导出内容为空')
+        return
+      }
       // if (Number(this.totalCount1) < 1) {
       //   this.$Message.error('导出内容为空')
       //   return
@@ -193,7 +202,7 @@ export default {
     },
     editDriver () {
       this.openDialog({
-        name: 'owned-vehicle/dialog/edit-driver',
+        name: 'dialogs/edit-driver',
         data: {
           title: '新增司机',
           flag: 1 // 新增
