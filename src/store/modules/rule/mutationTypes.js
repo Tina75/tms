@@ -1,1 +1,2 @@
-export const RECEIVE_RULE_LIST = 'RECEIVE_RULE_LIST' // 规则信息
+export const CARRIES_RULE_LIST = 'CARRIES_RULE_LIST' // 承运商规则信息
+export const SENDER_RULE_LIST = 'SENDER_RULE_LIST' // 发货方规则信息
