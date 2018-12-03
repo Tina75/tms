@@ -36,6 +36,9 @@ const TMSUrl = {
   OWNEDVEHICLE_DRIVER: '/owned-vehicle/driver', // 自有车-司机管理
   OWNEDVEHICLE_CAR: '/owned-vehicle/car', // 自有车-车辆管理
   OWNEDVEHICLE_REPAIR: '/owned-vehicle/repair', // 自有车-维修保养
+  OWNEDVEHICLE_DRIVERINFO: '/owned-vehicle/driver-details', // 自有车-司机详情
+  OWNEDVEHICLE_CAEDETAILS: '/owned-vehicle/car-details', // 自有车-车辆详情
+  OWNEDVEHICLE_REPAIRDETAILS: '/owned-vehicle/car-repair-details', // 自有车-维修详情
   STAFF_MANAGEMENT: '/company/staff-manage', // 员工管理
   EMPLOYEE_MANAGEMENT: '/company/role-manage', // 角色管理
   SETTING: '/set-up/index', // 设置

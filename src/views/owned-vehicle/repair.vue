@@ -4,19 +4,19 @@
       <Button v-if="hasPower(130211)" type="primary" @click="editRepair">新增记录</Button>
       <div class="rightSearch">
         <template>
-          <Select v-model="selectStatus2" style="width:120px;margin-right: 11px" transfer @on-change="changeState('keyword2', 2)">
+          <Select v-model="selectStatus" class="conditionSty" transfer @on-change="changeState('keyword', 1)">
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
-        <Input v-if="selectStatus2 !== '2'"
-               v-model="keyword2"
-               :maxlength="selectStatus2 === '1' ? 8 : 11"
-               :icon="keyword2? 'ios-close-circle' : ''"
-               :placeholder="selectStatus2 === '1' ? '请输入车牌号搜索' : null"
+        <Input v-if="selectStatus !== '1'"
+               v-model="keyword"
+               :maxlength="selectStatus === '1' ? 8 : 11"
+               :icon="keyword? 'ios-close-circle' : ''"
+               :placeholder="selectStatus === '1' ? '请输入车牌号搜索' : null"
                class="search-input"
                @on-enter="searchRepairList"
-               @on-click="clearKeywords('keyword2', 2)"/>
-        <Select v-if="selectStatus2 === '2'" v-model="keyword2" class="search-input" transfer @on-change="searchRepairList">
+               @on-click="clearKeywords('keyword', 1)"/>
+        <Select v-if="selectStatus === '1'" v-model="keyword" class="search-input" transfer @on-change="searchRepairList">
           <Option
             v-for="item in repairTypeList"
             :value="item.id"
@@ -54,6 +54,9 @@ export default {
   mixins: [ BasePage ],
   data () {
     return {
+      selectStatus: '',
+      keyword: '',
+      formSearchInit: '',
       menuColumns: [
         {
           title: '操作',
@@ -101,7 +104,7 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
-                    path: TMSUrl.CARRIER_MANAGEMENT_REPAIRDETAILS,
+                    path: TMSUrl.OWNEDVEHICLE_REPAIRDETAILS,
                     query: {
                       id: '维修详情',
                       rowData: params.row,
@@ -217,6 +220,13 @@ export default {
     }
   },
   methods: {
+    // 日期格式化
+    formatDateTime (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
+    },
     editRepair () {
       var _this = this
       this.openDialog({
@@ -233,6 +243,10 @@ export default {
         }
       })
     }
+  },
+  searchRepairList () {
+  },
+  clearKeywords () {
   }
 }
 </script>

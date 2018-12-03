@@ -4,19 +4,19 @@
       <Button v-if="hasPower(130207)" type="primary" @click="editCar">新增车辆</Button>
       <div class="rightSearch">
         <template>
-          <Select v-model="selectStatus1" style="width:120px;margin-right: 11px" transfer @on-change="changeState('keyword1', 1)">
+          <Select v-model="selectStatus" class="conditionSty" transfer @on-change="changeState('keyword', 1)">
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
-        <Input v-if="selectStatus1 !== '2'"
-               v-model="keyword1"
-               :maxlength="selectStatus1 === '1' ? 8 : 11"
-               :icon="keyword1? 'ios-close-circle' : ''"
-               :placeholder="selectStatus1 === '1' ? '请输入车牌号搜索' : '请输入手机号搜索'"
+        <Input v-if="selectStatus !== '2'"
+               v-model="keyword"
+               :maxlength="selectStatus === '1' ? 8 : 11"
+               :icon="keyword? 'ios-close-circle' : ''"
+               :placeholder="selectStatus === '1' ? '请输入车牌号搜索' : '请输入手机号搜索'"
                class="search-input"
                @on-enter="searchCarList"
-               @on-click="clearKeywords('keyword1', 1)"/>
-        <Select v-if="selectStatus1 === '2'" v-model="keyword1" class="search-input" transfer @on-change="searchCarList">
+               @on-click="clearKeywords('keyword', 1)"/>
+        <Select v-if="selectStatus === '2'" v-model="keyword" class="search-input" transfer @on-change="searchCarList">
           <Option
             v-for="item in driverTypeList"
             :value="item.id"
@@ -55,6 +55,9 @@ export default {
   mixins: [ BasePage ],
   data () {
     return {
+      selectStatus: '',
+      keyword: '',
+      formSearchInit: '',
       menuColumns: [
         {
           title: '操作',
@@ -100,7 +103,7 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
-                    path: TMSUrl.CARRIER_MANAGEMENT_CAEDETAILS,
+                    path: TMSUrl.OWNEDVEHICLE_CAEDETAILS,
                     query: {
                       id: '车辆详情',
                       rowData: params.row
@@ -272,6 +275,10 @@ export default {
     }
   },
   methods: {
+    // 日期格式化
+    formatDateTime (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
     editCar () {
       var _this = this
       this.openDialog({
@@ -288,8 +295,11 @@ export default {
           }
         }
       })
+    },
+    clearKeywords () {
+    },
+    searchCarList () {
     }
-
   }
 }
 </script>
