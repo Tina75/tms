@@ -12,7 +12,7 @@ Vue.use(VueAnalytics, {
   router,
   set: [ { field: 'hostname', value: window.location.origin } ],
   debug: {
-    sendHitTask: isProdEnv
+    sendHitTask: !isProdEnv
   },
   autoTracking: {
     exception: false,
@@ -202,18 +202,15 @@ const install = (Vue) => {
 
   /**
    * 上报异常
-   * @param {Error | String} error 异常对象或错误描述
+   * @param {Error} error
    */
   Vue.prototype.$reportError = Vue.$reportError = function (error) {
-    const msg = (typeof error === 'string')
-      ? error
-      : (error instanceof Error)
-        ? error.message
-        : void 0
-    if (!msg) return
-    const stack = error instanceof Error ? error.stack.toString() : void 0
+    if (!(error instanceof Error)) {
+      console.warn('上报异常请传入一个Error对象')
+      return
+    }
     const temp = getComponentNameOrRoutePath(this)
-    this.$ga.exception(`msg: ${msg}${stack ? (' || stack: ' + stack) : ''} || userAgent: ${window.navigator.userAgent}${temp ? (' || ' + temp) : ''}`)
+    this.$ga.exception(`msg: ${error.message} || stack: ${error.stack.toString()} || userAgent: ${window.navigator.userAgent}${temp ? (' || ' + temp) : ''}`)
   }
 }
 

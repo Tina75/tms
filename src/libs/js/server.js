@@ -3,11 +3,7 @@ import axios from 'axios'
 import { LoadingBar, Message } from 'iview'
 import Cookies from 'js-cookie'
 
-let reportData = {
-  startTime: 0,
-  endTime: 0,
-  url: ''
-}
+let reportData = {}
 
 let instance = axios.create({
   baseURL: process.env.VUE_APP_HOST,
@@ -28,8 +24,10 @@ let instance = axios.create({
 instance.interceptors.request.use((config) => {
   // 设置上报参数
   if (!config.ignoreReport) {
-    reportData.startTime = new Date().getTime()
-    reportData.url = config.url
+    // 防止同时产生多个请求，后面的请求覆盖前面的请求上报信息
+    // 为当前上报生成一个随机名称，在上报完成后移除这一条上报信息
+    config.reportName = Math.random().toString(32).substr(2, 10)
+    reportData[config.reportName] = new Date().getTime()
   }
 
   // Loading判断
@@ -50,11 +48,13 @@ instance.interceptors.request.use((config) => {
 instance.interceptors.response.use((res) => {
   // 上报接口耗时-ms
   if (!res.config.ignoreReport) {
+    const name = res.config.reportName
     Vue.$ga.time({
       timingCategory: 'apiRequest',
-      timingVar: reportData.url,
-      timingValue: Number(new Date().getTime() - reportData.startTime)
+      timingVar: res.config.url,
+      timingValue: Number(new Date().getTime() - reportData[name])
     })
+    delete reportData[name]
   }
 
   LoadingBar.finish()
