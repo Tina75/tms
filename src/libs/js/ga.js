@@ -12,7 +12,7 @@ Vue.use(VueAnalytics, {
   router,
   set: [ { field: 'hostname', value: window.location.origin } ],
   debug: {
-    sendHitTask: isProdEnv
+    sendHitTask: !isProdEnv
   },
   autoTracking: {
     exception: false,
