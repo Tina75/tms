@@ -1,8 +1,8 @@
 <template>
   <div>
-    <Row :gutter="16">
+    <Row>
       <Col span="7" offset="1">
-      <FormItem :label-width="82" :rules="rule" label="车牌号：" prop="carNo" required>
+      <FormItem :rules="rule" label="车牌号：" prop="carNo" required>
         <CarSelect v-model="form.carNo" @on-change="handleSelect">
         </CarSelect>
       </FormItem>
@@ -11,7 +11,7 @@
       <OwnDriverInputs :form="form" @on-create="switchAddView"></OwnDriverInputs>
     </Col>
     </Row>
-    <Row :gutter="16">
+    <Row>
       <Col span="6" offset="2">
       <div class="own-car__label">
         <label>车型：</label>
