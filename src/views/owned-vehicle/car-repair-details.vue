@@ -114,7 +114,8 @@ export default {
   name: 'car-repair-details',
   components: { RecordList },
   mixins: [ BasePage ],
-  props: {
+  metaInfo: {
+    title: '维修保养详情'
   },
   data () {
     return {

@@ -119,7 +119,8 @@ export default {
   name: 'car-details',
   components: { RecordList, prepareOpenSwipe },
   mixins: [ BasePage ],
-  props: {
+  metaInfo: {
+    title: '车辆详情'
   },
   data () {
     return {

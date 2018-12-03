@@ -46,7 +46,7 @@ export default {
     PageTable
   },
   metaInfo: {
-    title: '自有车-车辆管理'
+    title: '司机管理'
   },
   mixins: [ BasePage ],
   data () {
@@ -56,7 +56,7 @@ export default {
         driverPhone: '',
         order: ''
       },
-      selectStatus: '',
+      selectStatus: '1',
       keyword: '',
       exportFile: true,
       menuColumns: [
@@ -173,7 +173,11 @@ export default {
   methods: {
     // 导出判空
     handleLoad (response) {
-      if (response.data.data.list.length < 1) this.exportFile = false
+      try {
+        if (response.data.data.list.length < 1) this.exportFile = false
+      } catch (error) {
+        this.exportFile = false
+      }
     },
     // 导出司机信息
     carExport () {

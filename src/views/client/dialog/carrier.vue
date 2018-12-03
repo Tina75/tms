@@ -44,14 +44,14 @@
       </Row>
       <Row>
         <Col :span="8">
-        <FormItem label="车型：" prop="carType">
+        <FormItem label="车型：">
           <Select v-model="validate.driver.carType" transfer >
             <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
           </Select>
         </FormItem>
         </Col>
         <Col :span="8">
-        <FormItem label="车长：" prop="carLength">
+        <FormItem label="车长：">
           <Select v-model="validate.driver.carLength" transfer >
             <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
           </Select>
@@ -265,14 +265,7 @@ export default {
             { required: true, message: '车牌号不能为空', trigger: 'blur' },
             { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
           ],
-          carType: [
-            { required: true, message: '车型不能为空', trigger: 'change' }
-          ],
-          carLength: [
-            { required: true, message: '车长不能为空', trigger: 'change' }
-          ],
           shippingWeight: [
-            { required: true, message: '载重不能为空' },
             { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
           ],
           shippingVolume: [

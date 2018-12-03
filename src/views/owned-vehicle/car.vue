@@ -46,14 +46,14 @@ export default {
     PageTable
   },
   metaInfo: {
-    title: '自有车-车辆管理'
+    title: '车辆管理'
   },
   mixins: [ BasePage ],
   data () {
     return {
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH,
-      selectStatus: '',
+      selectStatus: '1',
       keyword: '',
       formSearchInit: {
         carNo: '',
@@ -256,7 +256,11 @@ export default {
   methods: {
     // 导出判空
     handleLoad (response) {
-      if (response.data.data.list.length < 1) this.exportFile = false
+      try {
+        if (response.data.data.list.length < 1) this.exportFile = false
+      } catch (error) {
+        this.exportFile = false
+      }
     },
     // 导出车辆信息
     carExport () {

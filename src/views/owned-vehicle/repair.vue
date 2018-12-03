@@ -53,12 +53,12 @@ export default {
     PageTable
   },
   metaInfo: {
-    title: '自有车-车辆管理'
+    title: '维修保养'
   },
   mixins: [ BasePage ],
   data () {
     return {
-      selectStatus: '',
+      selectStatus: '1',
       keyword: '',
       formSearchInit: {
       },
@@ -242,7 +242,11 @@ export default {
   methods: {
     // 导出判空
     handleLoad (response) {
-      if (response.data.data.list.length < 1) this.exportFile = false
+      try {
+        if (response.data.data.list.length < 1) this.exportFile = false
+      } catch (error) {
+        this.exportFile = false
+      }
     },
     // 导出维修信息
     carExport () {

@@ -57,10 +57,17 @@
               <p class="uploadLabel">驾驶证</p>
             </div>
             </Col>
-            <Modal v-model="visible" transfer title="查看图片">
-              <img :src="imagePath" style="width: 100%">
-              <div slot="footer" style="text-align: center;"></div>
-            </Modal>
+          </Row>
+        </div>
+        <div class="title" style="margin-top: 40px;">
+          <span class="icontTitle"></span>
+          <span class="iconTitleP">备注</span>
+        </div>
+        <div class="list-info">
+          <Row class="row">
+            <Col span="20">
+            {{infoData.remark}}
+            </Col>
           </Row>
         </div>
       </div>
@@ -76,6 +83,9 @@ export default {
   components: { RecordList, prepareOpenSwipe },
   mixins: [ BasePage ],
   props: {
+  },
+  metaInfo: {
+    title: '司机详情'
   },
   data () {
     return {
@@ -199,8 +209,4 @@ export default {
     margin-bottom 1px
     .ivu-tabs-ink-bar
       bottom 2px
-.info-detail
-  margin-top: 80px;
-.btnItem
-  margin-top: -40px;
 </style>
