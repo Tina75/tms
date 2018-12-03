@@ -1,13 +1,10 @@
 <template>
-  <Select ref="$select" :value="currentValue" not-found-text="暂无此人，请新增司机" @on-change="handleChange">
-    <Option v-for="(opt, index) in data" :key="index" :label="opt.value" :value="opt.value">
-      {{opt.name}}
-      <span class="select-driver__option">{{opt.driverPhone}}</span>
-    </Option>
-    <Option key="extra" value="extra" class="select-driver__extra-option" disabled>
-      <span class="select-driver__text" @click.prevent="handleClick">
-        <Icon type="ios-add" size="20" class="select-driver__icon"></Icon>
-        新增司机
+  <Select ref="$select" :value="currentValue" placeholder="请选择" not-found-text="暂无此车，请新增车辆" @on-change="handleChange">
+    <Option v-for="car in ownCars" :key="car.id" :value="car.value">{{car.name}}</Option>
+    <Option key="extra" value="extra" class="select-car__option" disabled>
+      <span class="select-car__text" @click.prevent="handleClick">
+        <Icon type="ios-add" size="20" class="select-car__icon"></Icon>
+        新增车辆
       </span>
     </Option>
   </Select>
@@ -17,26 +14,33 @@
 /**
  * 司机选择框
  */
+import { mapGetters, mapActions } from 'vuex'
 export default {
-  name: 'driver-select',
+  name: 'car-select',
   components: {
   },
   props: {
     value: String,
-    data: {
-      type: Array,
-      default: () => []
-    },
-    onClick: Function
+    onCreate: Function
   },
   data () {
     return {
       currentValue: this.value || ''
     }
   },
+  computed: {
+    ...mapGetters(['ownCars'])
+  },
+  mounted () {
+    this.getOwnCars()
+      .then((res) => {
+        console.log(res)
+      })
+  },
   methods: {
+    ...mapActions(['getOwnCars']),
     handleClick (e) {
-      this.$emit('on-click', e)
+      this.$emit('on-create', e)
       this.$refs.$select.hideMenu()
     },
     handleChange (value) {
@@ -47,17 +51,15 @@ export default {
       }
       this.currentValue = value
       this.$emit('input', value)
+      this.$emit('on-change', value)
     }
   }
 }
 </script>
 
 <style lang="stylus" scoped>
-.select-driver
+.select-car
   &__option
-    color #999999
-    margin-left 10px
-  &__extra-option
     text-align center
     border-top 1px solid #f8f8f8
     padding 0
