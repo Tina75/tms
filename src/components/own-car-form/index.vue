@@ -2,13 +2,13 @@
   <div>
     <Row :gutter="16">
       <Col span="7" offset="1">
-      <FormItem :label-width="82" label="车牌号：" prop="carNo" required>
+      <FormItem :label-width="82" :rules="rule" label="车牌号：" prop="carNo" required>
         <CarSelect v-model="form.carNo" @on-change="handleSelect">
         </CarSelect>
       </FormItem>
     </Col>
       <Col span="16">
-      <OwnDriverInputs :form="form" @on-add="switchAddView"></OwnDriverInputs>
+      <OwnDriverInputs :form="form" @on-create="switchAddView"></OwnDriverInputs>
     </Col>
     </Row>
     <Row :gutter="16">
@@ -54,7 +54,9 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      formName: 'carForm'
+      rule: {
+        required: true, message: '请选择车辆'
+      }
     }
   },
   computed: {
