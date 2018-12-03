@@ -39,14 +39,14 @@ export default {
     mainDrivers () {
       if (this.form.assistantDriverName) {
         let filterName = this.form.assistantDriverName
-        return this.ownDrivers.filter((user) => user.driverName !== filterName)
+        return this.ownDrivers.filter((user) => user.name !== filterName)
       }
       return this.ownDrivers
     },
     assitantDrivers () {
       if (this.form.driverName) {
         let filterName = this.form.driverName
-        return this.ownDrivers.filter((user) => user.driverName !== filterName)
+        return this.ownDrivers.filter((user) => user.name !== filterName)
       }
       return this.ownDrivers
     }

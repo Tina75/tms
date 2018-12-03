@@ -1,6 +1,4 @@
 
-import _ from 'lodash'
-
 export default {
   props: {
     form: {
@@ -19,18 +17,6 @@ export default {
       }
     },
     onCreate: Object
-  },
-  watch: {
-    form (newForm) {
-      if (newForm && !_.isEmpty(newForm)) {
-        let selfForm = this[this.formName]
-        for (let key in selfForm) {
-          if (selfForm.hasOwnProperty(key)) {
-            selfForm[key] = newForm[key]
-          }
-        }
-      }
-    }
   },
   mounted () {
     // console.log('viewmode: ', this.viewMode)
