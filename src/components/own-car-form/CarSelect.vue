@@ -31,6 +31,13 @@ export default {
   computed: {
     ...mapGetters(['ownCars'])
   },
+  watch: {
+    value (newValue) {
+      if (newValue !== this.currentValue) {
+        this.currentValue = newValue
+      }
+    }
+  },
   mounted () {
     this.getOwnCars()
       .then((res) => {

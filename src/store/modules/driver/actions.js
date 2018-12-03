@@ -9,11 +9,11 @@ export default {
   getOwnCars ({ state, commit }) {
     return new Promise((resolve, reject) => {
       server({
-        url: 'http://yapi.yundada56.com/mock/214/owerCar/listCar',
+        url: 'http://yapi.yundada56.com/mock/214/owerCar/findCarList',
         method: 'get'
       })
         .then((response) => {
-          const cars = response.data.data.list
+          const cars = response.data.data
           commit(types.RECEIVE_OWN_CAR_LIST, cars)
           resolve(cars)
         })
@@ -29,11 +29,11 @@ export default {
   getOwnDrivers ({ state, commit }) {
     return new Promise((resolve, reject) => {
       server({
-        url: 'http://yapi.yundada56.com/mock/214/owerCar/listDriver',
-        method: 'post'
+        url: 'http://yapi.yundada56.com/mock/214/owerCar/listDriverList',
+        method: 'get'
       })
         .then((response) => {
-          const drivers = response.data.data.list
+          const drivers = response.data.data
           commit(types.RECEIVE_OWN_DRIVER_LIST, drivers)
           resolve(drivers)
         })

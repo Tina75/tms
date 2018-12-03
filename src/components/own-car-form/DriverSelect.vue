@@ -19,19 +19,25 @@
  */
 export default {
   name: 'driver-select',
-  components: {
-  },
   props: {
     value: String,
     data: {
       type: Array,
       default: () => []
     },
-    onClick: Function
+    onClick: Function,
+    onChange: Function
   },
   data () {
     return {
       currentValue: this.value || ''
+    }
+  },
+  watch: {
+    value (newValue) {
+      if (newValue !== this.currentValue) {
+        this.currentValue = newValue
+      }
     }
   },
   methods: {
@@ -41,12 +47,11 @@ export default {
     },
     handleChange (value) {
       if (value === 'extra') {
-        // this.currentValue = ''
-        // this.$emit('input', '')
         return
       }
       this.currentValue = value
       this.$emit('input', value)
+      this.$emit('on-change', value)
     }
   }
 }
