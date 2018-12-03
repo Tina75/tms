@@ -17,12 +17,15 @@ require('./assets/css/tms/iconfont.css')
 require('./assets/css/quill/quill.core.css')
 
 const errorHandler = (error, vm) => {
-  vm.$reportError(error)
+  vm ? vm.$reportError(error) : Vue.$reportError(error)
 }
 
 Vue.config.productionTip = false
 Vue.config.errorHandler = errorHandler
 Vue.prototype.$throw = error => errorHandler(error, this)
+window.addEventListener('error', e => {
+  errorHandler(e.error)
+})
 
 // Meta自设置
 Vue.use(VueMeta)

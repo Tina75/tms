@@ -15,8 +15,7 @@ Vue.use(VueAnalytics, {
     sendHitTask: isProdEnv
   },
   autoTracking: {
-    exception: true, // 对于没有被vue errorHandler捕获的异常进行上报
-    exceptionLogs: !isProdEnv, // 异常log打印
+    exception: false,
     // 优化tab切换与相同query的PV计算方式
     shouldRouterUpdate (to, from) {
       // 将当前的tabsCache备份并更新当前tabsCache
@@ -206,7 +205,6 @@ const install = (Vue) => {
    * @param {Error | String} error 异常对象或错误描述
    */
   Vue.prototype.$reportError = Vue.$reportError = function (error) {
-    if (!isProdEnv) console.error(error)
     const msg = (typeof error === 'string')
       ? error
       : (error instanceof Error)
