@@ -1104,6 +1104,13 @@ export default {
       }).then(res => {
         let data = res.data.data
         this.feeStatus = data.status
+        if (this.feeStatus === 0) { // 允许改单
+          this.settlementPayInfo.map(item => {
+            item.type = ''
+            item.isCashDisabled = false
+            item.isCardDisabled = false
+          })
+        }
         if (this.feeStatus === 2) { //  部分修改运费
           let statusDetail = data.statusDetail
           this.settlementPayInfo.map(item => {
@@ -1136,9 +1143,6 @@ export default {
             item.isCardDisabled = true
           })
         }
-        this.$nextTick(() => {
-          console.log(this.settlementPayInfo)
-        })
       }).catch(err => console.error(err))
     }
   }
