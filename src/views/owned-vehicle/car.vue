@@ -2,28 +2,19 @@
   <div>
     <div class="add">
       <Button v-if="hasPower(130207)" type="primary" @click="editCar">新增车辆</Button>
+      <Button v-if="hasPower(130210)" @click="carExport">导出</Button>
       <div class="rightSearch">
         <template>
-          <Select v-model="selectStatus1" style="width:120px;margin-right: 11px" transfer @on-change="changeState('keyword1', 1)">
+          <Select v-model="selectStatus" class="conditionSty" transfer @on-change="changeState">
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
-        <Input v-if="selectStatus1 !== '2'"
-               v-model="keyword1"
-               :maxlength="selectStatus1 === '1' ? 8 : 11"
-               :icon="keyword1? 'ios-close-circle' : ''"
-               :placeholder="selectStatus1 === '1' ? '请输入车牌号搜索' : '请输入手机号搜索'"
+        <Input v-model="keyword"
+               :maxlength="selectStatus === '1' ? 8 : 11"
+               :icon="keyword? 'ios-close-circle' : ''"
+               :placeholder="selectStatus === '1' ? '请输入车牌号搜索' : '请输入手机号搜索'"
                class="search-input"
-               @on-enter="searchCarList"
-               @on-click="clearKeywords('keyword1', 1)"/>
-        <Select v-if="selectStatus1 === '2'" v-model="keyword1" class="search-input" transfer @on-change="searchCarList">
-          <Option
-            v-for="item in driverTypeList"
-            :value="item.id"
-            :key="item.id">
-            {{ item.name }}
-          </Option>
-        </Select>
+               @on-enter="searchCarList"/>
         <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
                 style="float: right;width:41px;"
@@ -35,15 +26,20 @@
       :columns="menuColumns"
       :keywords="formSearchInit"
       class="pageTable"
-      url="employee/list"
-      list-field="list">
+      url="/owerCar/listCar"
+      list-field="list"
+      @on-load="handleLoad"
+      @on-sort-change = "timeSort">
     </page-table>
   </div>
 </template>
 <script>
+import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
 import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import TMSUrl from '@/libs/constant/url'
+import Export from '@/libs/js/export'
+import Server from '@/libs/js/server'
 export default {
   name: 'owned-car',
   components: {
@@ -55,6 +51,15 @@ export default {
   mixins: [ BasePage ],
   data () {
     return {
+      carTypeMap: CAR_TYPE1,
+      carLengthMap: CAR_LENGTH,
+      selectStatus: '',
+      keyword: '',
+      formSearchInit: {
+        carNo: '',
+        driverName: ''
+      },
+      exportFile: true,
       menuColumns: [
         {
           title: '操作',
@@ -71,7 +76,6 @@ export default {
                 },
                 on: {
                   click: () => {
-                    var _this = this
                     this.openDialog({
                       name: 'owned-vehicle/dialog/edit-car',
                       data: {
@@ -83,7 +87,6 @@ export default {
                       },
                       methods: {
                         ok () {
-                          _this._carrierListCar() // 车辆列表也要刷新
                         }
                       }
                     })
@@ -100,7 +103,7 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
-                    path: TMSUrl.CARRIER_MANAGEMENT_CAEDETAILS,
+                    path: TMSUrl.OWNEDVEHICLE_CAEDETAILS,
                     query: {
                       id: '车辆详情',
                       rowData: params.row
@@ -123,6 +126,15 @@ export default {
                       },
                       methods: {
                         ok () {
+                          Server({
+                            url: 'owerCar/deleteCar',
+                            method: 'post',
+                            data: { id: params.row.id }
+                          }).then(({ data }) => {
+                            if (data.code === 10000) {
+                              this.$Message.success('删除成功！')
+                            }
+                          })
                         }
                       }
                     })
@@ -139,49 +151,20 @@ export default {
           width: 80
         },
         {
-          title: '合作方式',
-          key: 'driverType',
-          render: (h, params) => {
-            let text = ''
-            if (params.row.driverType === 1) {
-              text = '合约'
-            } else if (params.row.driverType === 2) {
-              text = '临时'
-            } else if (params.row.driverType === 3) {
-              text = '自有'
-            } else if (params.row.driverType === 4) {
-              text = '挂靠'
-            }
-            return h('div', {}, text)
-          }
-        },
-        {
-          title: '司机姓名',
-          key: 'driverName'
-        },
-        {
-          title: '手机号',
-          key: 'driverPhone'
-        },
-        {
           title: '车型',
           key: 'carType',
           render: (h, params) => {
-            let text = params.row.carType ? this.carTypeMap[params.row.carType] : '-'
+            let text = this.carTypeMap[params.row.carType] + this.carLengthMap[params.row.carLength]
             return h('div', {}, text)
-          }
-        },
-        {
-          title: '车长（米）',
-          key: 'carLength',
-          render: (h, params) => {
-            let text = params.row.carLength ? this.carLengthMap[params.row.carLength] : '-'
-            return h('div', {}, text.slice(0, text.length - 1))
           }
         },
         {
           title: '载重（吨）',
           key: 'shippingWeight'
+        },
+        {
+          title: '净空（方）',
+          key: 'shippingVolume'
         },
         {
           title: '常跑线路',
@@ -243,12 +226,15 @@ export default {
             ])
           }
         }, {
-          title: '添加人',
-          key: 'createName'
-        },
-        {
-          title: '添加时间',
+          title: '主司机',
+          key: 'createTime'
+        }, {
+          title: '副司机',
+          key: 'createTime'
+        }, {
+          title: '创建时间',
           key: 'createTime',
+          sortable: 'custom',
           render: (h, params) => {
             let text = this.formatDateTime(params.row.createTime)
             return h('div', { props: {} }, text)
@@ -262,18 +248,46 @@ export default {
         },
         {
           value: '2',
-          label: '合作方式'
-        },
-        {
-          value: '3',
           label: '司机手机号'
         }
       ]
     }
   },
   methods: {
+    // 导出判空
+    handleLoad (response) {
+      if (response.data.data.list.length < 1) this.exportFile = false
+    },
+    // 导出车辆信息
+    carExport () {
+      if (!this.exportFile) {
+        this.$Message.error('导出内容为空')
+        return
+      }
+      // if (Number(this.totalCount1) < 1) {
+      //   this.$Message.error('导出内容为空')
+      //   return
+      // }
+      // let data = {
+      //   carrierId: this.carrierId
+      // }
+      // if (this.selectStatus1 === '1') {
+      //   data.carNO = this.keyword1
+      // } else if (this.selectStatus1 === '2') {
+      //   data.driverType = this.keyword1
+      // }
+      Export({
+        url: '/ownerCar/exportCarn',
+        method: 'post',
+        data: '',
+        fileName: '导出车辆列表'
+      })
+    },
+    // 日期格式化
+    formatDateTime (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
     editCar () {
-      var _this = this
       this.openDialog({
         name: 'owned-vehicle/dialog/edit-car',
         data: {
@@ -283,13 +297,25 @@ export default {
         },
         methods: {
           ok () {
-            _this._carrierListCar()
-            _this._getCarrierNumberCount()
           }
         }
       })
+    },
+    searchCarList () {
+      if (this.selectStatus === '1') {
+        this.formSearchInit.carNo = ''
+        this.formSearchInit.driverName = this.keyword
+      } else {
+        this.formSearchInit.driverName = ''
+        this.formSearchInit.carNo = this.keyword
+      }
+    },
+    changeState () {
+      this.keyword = ''
+    },
+    timeSort (column) {
+      this.formSearchInit.order = (column.order === 'normal' ? '' : column.order)
     }
-
   }
 }
 </script>

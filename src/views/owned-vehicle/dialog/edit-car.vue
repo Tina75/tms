@@ -24,42 +24,6 @@
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem label="合作方式：" prop="driverType">
-            <Row>
-              <Col span="20">
-              <Select v-model="validate.driverType" transfer class="minWidth">
-                <Option
-                  v-for="item in selectList"
-                  :value="item.id"
-                  :key="item.id">
-                  {{ item.name }}
-                </Option>
-              </Select>
-              </Col>
-            </Row>
-          </FormItem>
-          </Col>
-          <Col span="8">
-          <FormItem label="司机姓名：" prop="driverName">
-            <Row>
-              <Col span="20">
-              <Input v-model="validate.driverName" :maxlength="20" placeholder="必填"></Input>
-              </Col>
-            </Row>
-          </FormItem>
-          </Col>
-        </Row>
-        <Row>
-          <Col span="8">
-          <FormItem label="手机号：" prop="driverPhone">
-            <Row>
-              <Col span="20">
-              <SelectInput v-model="validate.driverPhone" :maxlength="11" :remote="true" :remote-method="queryDriverByPhoneList" placeholder="必填" @on-select="slectDriverData"></SelectInput>
-              </Col>
-            </Row>
-          </FormItem>
-          </Col>
-          <Col span="8">
           <FormItem label="车型：" prop="carType">
             <Row>
               <Col span="20">
@@ -108,6 +72,17 @@
           </FormItem>
           </Col>
           <Col span="8">
+          <FormItem label="车辆品牌：">
+            <Row>
+              <Col span="20">
+              <Input v-model="validate.carBrand" :maxlength="20" placeholder="如：东风"></Input>
+              </Col>
+            </Row>
+          </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col span="8">
           <FormItem label="购买日期：">
             <Row>
               <Col span="20">
@@ -117,17 +92,29 @@
             </Row>
           </FormItem>
           </Col>
-        </Row>
-        <Row>
-          <Col span="8">
-          <FormItem label="车辆品牌：">
+          <Col span="16">
+          <driver-Inputs></driver-Inputs>
+          </Col>
+        <!-- <Col span="8">
+          <FormItem label="主司机：">
             <Row>
               <Col span="20">
-              <Input v-model="validate.carBrand" :maxlength="20" placeholder="如：东风"></Input>
+              <DatePicker v-model="validate.purchDate" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
+              </DatePicker>
               </Col>
             </Row>
           </FormItem>
           </Col>
+          <Col span="8">
+          <FormItem label="副司机：">
+            <Row>
+              <Col span="20">
+              <DatePicker v-model="validate.purchDate" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
+              </DatePicker>
+              </Col>
+            </Row>
+          </FormItem>
+          </Col> -->
         </Row>
         <p class="modalTitle">常跑线路</p>
         <div class="lineDiv">
@@ -164,9 +151,11 @@
           </Col>
           <Col span="5">
           <up-load ref="upload2"></up-load>
-          <p class="uploadLabel">驾驶证</p>
+          <p class="uploadLabelID">道路运输证</p>
           </Col>
         </Row>
+        <p class="modalTitle">备注</p>
+        <Input v-model="validate.remark" :maxlength="100" type="textarea" placeholder="请输入"></Input>
       </Form>
       <div slot="footer" class="footerSty">
         <Button type="primary" @click="save('validate')">确定</Button>
@@ -177,26 +166,27 @@
 </template>
 
 <script>
-import { CAR_TYPE1, CAR_LENGTH, DRIVER_TYPE } from '@/libs/constant/carInfo'
+import { CAR_TYPE1, CAR_LENGTH, DRIVER_TYPE, formatterCarNo } from '@/libs/constant/carInfo'
+import { CAR } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
-import { carrierAddDriver, carrierUpdateDriver, carrierQueryDriverlist, formatterCarNo, CODE, CAR } from '../client'
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/index.vue'
 import SelectInput from '@/components/SelectInput'
+import DriverInputs from '@/components/own-car-form/OwnDriverInputs'
 import _ from 'lodash'
 export default {
   name: 'carrier-driver',
   components: {
     CitySelect,
     UpLoad,
-    SelectInput
+    SelectInput,
+    DriverInputs
   },
   mixins: [BaseDialog],
   data () {
     return {
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH,
-      carrierId: '', // 承运商id
       driverId: '', // 司机id
       carId: '',
       validate: {},
@@ -215,9 +205,9 @@ export default {
         driverType: [
           { required: true, message: '合作方式不能为空', trigger: 'change' }
         ],
-        driverName: [
-          { required: true, message: '司机姓名不能为空', trigger: 'blur' }
-        ],
+        // driverName: [
+        //   { required: true, message: '司机姓名不能为空', trigger: 'blur' }
+        // ],
         driverPhone: [
           { required: true, message: '手机号不能为空', trigger: 'blur' },
           { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
@@ -229,7 +219,6 @@ export default {
           { required: true, message: '车长不能为空', trigger: 'change' }
         ],
         shippingWeight: [
-          { required: true, message: '载重不能为空' },
           { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ],
         shippingVolume: [
@@ -245,7 +234,6 @@ export default {
     // 修改页面初始值更改
     configData () {
       if (this.title === '修改车辆') {
-        this.validate.carrierId = this.carrierId
         this.validate.carId = this.carId
         this.validate.driverType = this.validate.driverType.toString()
         this.validate.carType = this.validate.carType.toString()
@@ -287,7 +275,6 @@ export default {
     },
     save (name) {
       this.flagAddress = true
-      this.validate.carrierId = this.carrierId
       this.validate.carId = this.carId
       this.validate.travelPhoto = this.$refs.upload1.uploadImg
       this.validate.drivePhoto = this.$refs.upload2.uploadImg
@@ -310,56 +297,36 @@ export default {
       })
     },
     add () {
-      let data = this.validate
-      carrierAddDriver(data).then(res => {
-        if (res.data.code === CODE) {
-          this.$Message.success(res.data.msg)
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(res.data.msg)
-        }
-      })
     },
     update () {
-      let data = this.validate
-      carrierUpdateDriver(data).then(res => {
-        if (res.data.code === CODE) {
-          this.$Message.success(res.data.msg)
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(res.data.msg)
-        }
-      })
     },
     // 输入手机号，选中某条信息自动填充以后司机信息（姓名，合作方式。。）
     slectDriverData (val, dirverInit) {
       this.validate.driverName = dirverInit.driverName
       this.validate.driverType = dirverInit.driverType.toString()
-    },
-    // 手机号输入联想
-    queryDriverByPhoneList (driverPhone) {
-      if (!driverPhone) {
-        return Promise.resolve([])
-      }
-      return carrierQueryDriverlist({
-        driverPhone,
-        carrierId: this.carrierId
-      }).then(res => {
-        if (res.data.code === CODE) {
-          return res.data.data.map(item => ({
-            value: item.driverPhone,
-            name: item.driverName + '/' + item.driverPhone,
-            driverName: item.driverName,
-            driverType: item.driverType
-          }
-          ))
-        }
-      }).catch((errorInfo) => {
-        return Promise.reject(errorInfo)
-      })
     }
+    // 手机号输入联想
+    // queryDriverByPhoneList (driverPhone) {
+    //   if (!driverPhone) {
+    //     return Promise.resolve([])
+    //   }
+    //   return carrierQueryDriverlist({
+    //     driverPhone,
+    //     carrierId: this.carrierId
+    //   }).then(res => {
+    //     if (res.data.code === CODE) {
+    //       return res.data.data.map(item => ({
+    //         value: item.driverPhone,
+    //         name: item.driverName + '/' + item.driverPhone,
+    //         driverName: item.driverName,
+    //         driverType: item.driverType
+    //       }
+    //       ))
+    //     }
+    //   }).catch((errorInfo) => {
+    //     return Promise.reject(errorInfo)
+    //   })
+    // }
   }
 }
 </script>

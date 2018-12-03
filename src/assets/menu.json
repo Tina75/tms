@@ -142,7 +142,7 @@
   },
   {
     "name":"自有车管理",
-    "icon":"yonghuguanli",
+    "icon":"ico-truck",
     "path":"/owned-vehicle",
     "powerCode":130000,
     "children":[

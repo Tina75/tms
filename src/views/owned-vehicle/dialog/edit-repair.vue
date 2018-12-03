@@ -222,7 +222,7 @@ export default {
       this.disAbleBtn = false
       this.validate.carNO = this.carNO
     } else {
-      this.queryCarnoList()
+      // this.queryCarnoList()
     }
   },
   methods: {
