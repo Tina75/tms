@@ -1,34 +1,33 @@
 <template>
   <div>
     <Row :gutter="16">
-      <Col span="8">
-      <FormItem label="车牌号：" prop="carNo" required>
-        <Select v-model="carForm.carNo" placeholder="请选择" @on-change="handleSelect">
-          <Option v-for="car in ownCars" :key="car.id" :value="car.carNo">{{car.carNo}}</Option>
-        </Select>
+      <Col span="7" offset="1">
+      <FormItem :label-width="82" label="车牌号：" prop="carNo" required>
+        <CarSelect v-model="form.carNo" @on-change="handleSelect">
+        </CarSelect>
       </FormItem>
     </Col>
       <Col span="16">
-      <OwnDriverInputs :form="carForm" :view-mode="viewMode" @on-add="switchAddView"></OwnDriverInputs>
+      <OwnDriverInputs :form="form" @on-add="switchAddView"></OwnDriverInputs>
     </Col>
     </Row>
     <Row :gutter="16">
-      <Col span="8">
+      <Col span="6" offset="2">
       <div class="own-car__label">
         <label>车型：</label>
         <span>{{carTypeText}} &nbsp; {{carLengthText}}</span>
       </div>
       </Col>
-      <Col span="8">
+      <Col span="7" offset="1">
       <div class="own-car__label">
         <label>主司机手机号：</label>
-        <span>{{carForm.driverName}}</span>
+        <span>{{form.driverPhone}}</span>
       </div>
       </Col>
-      <Col span="8">
+      <Col span="7" offset="1">
       <div class="own-car__label">
         <label>副司机手机号：</label>
-        <span>{{carForm.assistantDriverName}}</span>
+        <span>{{form.assistantDriverPhone}}</span>
       </div>
       </Col>
     </Row>
@@ -42,28 +41,20 @@
  * 司机可以新增
  */
 import OwnDriverInputs from './OwnDriverInputs.vue'
+import CarSelect from './CarSelect.vue'
 import { mapGetters, mapActions } from 'vuex'
 import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import mixin from './mixin.js'
 export default {
   name: 'own-car-form',
   components: {
+    CarSelect,
     OwnDriverInputs
   },
   mixins: [mixin],
   data () {
     return {
-      formName: 'carForm',
-      carForm: {
-        carNo: '', // 车牌号
-        carType: '', // 车型
-        carLength: '', // 车长
-        driverName: '', // 主司机姓名
-        driverPhone: '', // 主司机手机号
-        assistantDriverName: '', // 副司机姓名
-        assistantDriverPhone: '' // 副司机手机号
-
-      }
+      formName: 'carForm'
     }
   },
   computed: {
@@ -73,8 +64,8 @@ export default {
      */
     carTypeText () {
       let str = ''
-      if (this.carForm.carType) {
-        str = CAR_TYPE1[this.carForm.carType]
+      if (this.form.carType) {
+        str = CAR_TYPE1[this.form.carType]
       }
       return str
     },
@@ -83,8 +74,8 @@ export default {
      */
     carLengthText () {
       let str = ''
-      if (this.carForm.carLength) {
-        str = CAR_LENGTH1[this.carForm.carLength]
+      if (this.form.carLength) {
+        str = CAR_LENGTH1[this.form.carLength]
       }
       return str
     }
@@ -95,27 +86,27 @@ export default {
      * 选中车辆
      * @param {string} carNo 车牌号
      */
-    handleSelect (carNo) {
-      let car = this.ownCars.find((item) => item.carNo === carNo)
+    handleSelect (value) {
+      let car = this.ownCars.find((item) => item.value === value)
       /**
        * 选中了车辆信息，就自动代入车辆相关的信息
        */
       if (car) {
-        this.carForm.carType = car.carType
-        this.carForm.carLength = car.carLength
+        this.form.carType = car.carType
+        this.form.carLength = car.carLength
         if (car.driverName) {
-          this.carForm.driverName = car.driverName
-          this.carForm.driverPhone = car.driverPhone
+          this.form.driverName = car.driverName
+          this.form.driverPhone = car.driverPhone
         } else {
-          this.carForm.driverName = ''
-          this.carForm.driverPhone = ''
+          this.form.driverName = ''
+          this.form.driverPhone = ''
         }
-        if (this.car.assistantDriverName) {
-          this.carForm.assistantDriverName = car.assistantDriverName
-          this.carForm.assistantDriverPhone = car.assistantDriverPhone
+        if (car.assistantDriverName) {
+          this.form.assistantDriverName = car.assistantDriverName
+          this.form.assistantDriverPhone = car.assistantDriverPhone
         } else {
-          this.carForm.assistantDriverName = ''
-          this.carForm.assistantDriverPhone = ''
+          this.form.assistantDriverName = ''
+          this.form.assistantDriverPhone = ''
         }
       }
     },
@@ -134,4 +125,6 @@ export default {
       color #666666
     span
       color #333333
+  &__label-select
+    margin-left 82px
 </style>

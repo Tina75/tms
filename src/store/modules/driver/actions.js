@@ -9,7 +9,7 @@ export default {
   getOwnCars ({ state, commit }) {
     return new Promise((resolve, reject) => {
       server({
-        url: 'owerCar/listCar',
+        url: 'http://yapi.yundada56.com/mock/214/owerCar/listCar',
         method: 'get'
       })
         .then((response) => {
@@ -29,8 +29,8 @@ export default {
   getOwnDrivers ({ state, commit }) {
     return new Promise((resolve, reject) => {
       server({
-        url: 'owerCar/listDriver',
-        method: 'get'
+        url: 'http://yapi.yundada56.com/mock/214/owerCar/listDriver',
+        method: 'post'
       })
         .then((response) => {
           const drivers = response.data.data.list

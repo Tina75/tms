@@ -1,17 +1,24 @@
 
 import _ from 'lodash'
-export const ViewMode = {
-  SLIDER: 'slider',
-  MODAL: 'modal'
-}
+
 export default {
   props: {
-    form: Object,
-    onCreate: Object,
-    viewMode: {
-      type: String,
-      default: ViewMode.MODAL
-    }
+    form: {
+      type: Object,
+      default: () => {
+        return {
+          carNo: '', // 车牌号
+          carType: '', // 车型
+          carLength: '', // 车长
+          driverName: '', // 主司机姓名
+          driverPhone: '', // 主司机手机号
+          assistantDriverName: '', // 副司机姓名
+          assistantDriverPhone: '' // 副司机手机号
+
+        }
+      }
+    },
+    onCreate: Object
   },
   watch: {
     form (newForm) {

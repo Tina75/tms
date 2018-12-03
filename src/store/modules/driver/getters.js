@@ -19,8 +19,9 @@ export const ownCars = (state) => state.cars.map((car) => {
  */
 export const ownDrivers = (state) => state.drivers.map((driver) => {
   return {
-    name: driver.driverName + ' ' + driver.driverPhone,
+    name: driver.driverName,
     value: driver.driverName,
+    driverPhone: driver.driverPhone,
     id: driver.id
   }
 })
