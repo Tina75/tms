@@ -1,37 +1,47 @@
 <template>
   <div>
-    <div class="sub-title" style="margin-bottom: 10px;">
-      <div class="send-label">派车：</div>
+    <div :style="source === 'action' && 'border-top: none;'" class="sub-title">
+      <div class="send-label">派车方式：</div>
       <RadioGroup v-model="sendWay">
-        <Radio label="1">自送</Radio>
-        <Radio label="2">外转</Radio>
-        <Radio label="3">下发承运商</Radio>
+        <Radio label="2">自提</Radio>
+        <Radio label="1">外转</Radio>
+        <!-- <Radio label="3">下发承运商</Radio> -->
       </RadioGroup>
     </div>
-    <div v-if="sendWay === '2'">
+    <div v-if="sendWay === '1'">
       <send-carrier-info ref="SendCarrierInfo"></send-carrier-info>
       <pickup-fee ref="pickupFee"></pickup-fee>
+    </div>
+    <div v-else>
+      <own-send-info ref="ownSendInfo"></own-send-info>
+      <pickup-fee ref="pickupFee" send-way="2"></pickup-fee>
     </div>
   </div>
 </template>
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
-import SelectInput from './SelectInput.vue'
-import SelectInputMixin from '../mixin/selectInputMixin'
-import TagNumberInput from '@/components/TagNumberInput'
 import PickupFee from './PickupFee'
 import SendCarrierInfo from './SendCarrierInfo'
+import OwnSendInfo from './ownSendInfo'
 // import Server from '@/libs/js/server'
 
 export default {
   name: 'PickUpComponent',
-  components: { SelectInput, PickupFee, TagNumberInput, SendCarrierInfo },
-  mixins: [ BaseDialog, SelectInputMixin ],
+  components: { PickupFee, SendCarrierInfo, OwnSendInfo },
+  mixins: [ BaseDialog ],
+
+  props: {
+    // 页面来源
+    source: {
+      type: String,
+      default: 'dispatch'
+    }
+  },
 
   data () {
     return {
-      sendWay: '2'
+      sendWay: '1'
     }
   },
 

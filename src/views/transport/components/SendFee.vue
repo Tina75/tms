@@ -9,10 +9,10 @@
           </FormItem>
         </i-col>
         <i-col span="6">
-          <FormItem label="运输费：" prop="freightFee" class="padding-left-label">
+          <FormItem :label="sendWay === '1' ? '运输费：': '油费：'" prop="freightFee" class="padding-left-label">
             <TagNumberInput v-model="payment.freightFee" class="detail-payment-input-send"></TagNumberInput>
             <span class="unit-yuan">元</span>
-            <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
+            <a v-if="sendWay === '1'" class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
           </FormItem>
         </i-col>
         <i-col span="6">
@@ -56,7 +56,7 @@
       </Row>
     </div>
 
-    <div class="part">
+    <div v-if="sendWay === '1'" class="part">
       <Row class="detail-field-group">
         <i-col span="24">
           <span class="detail-field-title detail-field-required" style="width: 92px;">结算方式：</span>
@@ -111,6 +111,11 @@ export default {
     // 计费规则传入start、end、weight、volume
     financeRulesInfo: {
       type: Object
+    },
+    // 1 外转 2 自送 自送不显示多段付和返现
+    sendWay: {
+      type: String,
+      default: '1'
     }
   },
   data () {
@@ -276,6 +281,9 @@ export default {
       // console.log(this.$refs.$payInfo, this.$refs.$payInfo.validate())
       if (this.settlementType === '1' && !this.$refs.$payInfo.validate()) return false
       return true
+    },
+    getSettlementType () {
+      return this.settlementType
     },
     getSettlementPayInfo () {
       return this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0

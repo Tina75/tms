@@ -1,14 +1,14 @@
 <template>
   <div>
-    <div class="sub-title" style="margin-bottom: 10px;">
-      <div class="send-label">派车：</div>
+    <div :style="source === 'action' && 'border-top: none;'" class="sub-title">
+      <div class="send-label">派车方式：</div>
       <RadioGroup v-model="sendWay">
-        <Radio label="1">自送</Radio>
-        <Radio label="2">外转</Radio>
-        <Radio label="3">下发承运商</Radio>
+        <Radio label="2">自送</Radio>
+        <Radio label="1">外转</Radio>
+        <!-- <Radio label="3">下发承运商</Radio> -->
       </RadioGroup>
     </div>
-    <div v-if="sendWay === '2'">
+    <div v-if="sendWay === '1'">
       <send-carrier-info ref="SendCarrierInfo"></send-carrier-info>
       <send-fee
         ref="sendFee"
@@ -16,22 +16,26 @@
         :finance-rules-info="financeRulesInfo">
       </send-fee>
     </div>
+    <div v-else>
+      <own-send-info ref="ownSendInfo"></own-send-info>
+      <send-fee
+        ref="sendFee"
+        send-way="2"></send-fee>
+    </div>
   </div>
 </template>
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
-import SelectInput from './SelectInput.vue'
-import SelectInputMixin from '../mixin/selectInputMixin'
-import TagNumberInput from '@/components/TagNumberInput'
 import SendFee from './SendFee'
 import SendCarrierInfo from './SendCarrierInfo'
+import OwnSendInfo from './ownSendInfo'
 // import Server from '@/libs/js/server'
 
 export default {
   name: 'SendCarComponent',
-  components: { SelectInput, SendFee, TagNumberInput, SendCarrierInfo },
-  mixins: [ BaseDialog, SelectInputMixin ],
+  components: { SendFee, SendCarrierInfo, OwnSendInfo },
+  mixins: [ BaseDialog ],
   props: {
     orderList: {
       type: Array
@@ -43,22 +47,35 @@ export default {
     // 计费规则传入start、end、weight、volume
     financeRulesInfo: {
       type: Object
+    },
+    // 页面来源
+    source: {
+      type: String,
+      default: 'dispatch'
     }
   },
   data () {
     return {
-      sendWay: '2'
+      sendWay: '1'
     }
   },
 
   methods: {
-    // 承运商info传参
+    // 外转info传参
     getCarrierInfo () {
       return this.$refs.SendCarrierInfo.getCarrierInfo()
+    },
+    // 自送info传参
+    getOwnSend () {
+      return this.$refs.ownSendInfo.getOwnSendInfo()
     },
     // 格式化金额单位为分
     getformatMoney () {
       return this.$refs.sendFee.formatMoney()
+    },
+    // 多段付类型
+    getSettlementType () {
+      return this.$refs.sendFee.getSettlementType()
     },
     // 多段付传参
     getSettlementPayInfos () {
@@ -66,7 +83,10 @@ export default {
     },
     // 派车模块数据校验
     checkValidate () {
-      if (this.getCheckCarrierInfo() && this.$refs.sendFee.validate()) {
+      if (this.sendWay === '1' && this.getCheckCarrierInfo() && this.$refs.sendFee.validate()) {
+        return true
+      }
+      if (this.sendWay === '2' && this.getCheckOwnSendInfo()) {
         return true
       }
       return false
@@ -74,6 +94,10 @@ export default {
     // 承运商信息校验
     getCheckCarrierInfo () {
       return this.$refs.SendCarrierInfo.checkCarrierInfo()
+    },
+    // 自送info信息校验
+    getCheckOwnSendInfo () {
+      return this.$refs.ownSendInfo.checkOwnSendInfo()
     }
   }
 }

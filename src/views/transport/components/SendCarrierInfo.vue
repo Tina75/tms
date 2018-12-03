@@ -1,7 +1,7 @@
 <template>
   <div>
     <Form ref="sendInfo" :label-width="82" :model="info" :rules="rules" class="transport-detail" label-position="left">
-      <div class="part">
+      <div :style="source === 'detail' && 'margin-bottom: 0;border-bottom: none;'" class="part">
         <Row class="detail-field-group">
           <i-col span="8">
             <FormItem label="承运商：" prop="carrierName">
@@ -9,27 +9,27 @@
                 ref="carrierInput"
                 v-model="info.carrierName"
                 mode="carrier"
-                style="width: 220px;"
+                style="width: 200px;"
                 @on-select="selectCarrierHandler" />
             </FormItem>
           </i-col>
-          <i-col span="7" offset="1">
+          <i-col span="8">
             <FormItem label="司机：">
               <SelectInput
                 :carrier-id="carrierId"
                 v-model="info.driverName"
                 mode="driver"
-                style="width: 180px;"
+                style="width: 200px;"
                 @on-select="autoComplete"
                 @on-option-loaded="driverOptionLoaded" />
             </FormItem>
           </i-col>
-          <i-col span="7" offset="1">
+          <i-col span="8">
             <FormItem label="司机手机号：" prop="driverPhone" class="label-width">
               <Input
                 v-model="info.driverPhone"
                 :maxlength="11"
-                style="width: 180px;"/>
+                style="width: 200px;"/>
             </FormItem>
           </i-col>
         </Row>
@@ -41,11 +41,11 @@
                 :carrier-id="carrierId"
                 v-model="info.carNo"
                 mode="carNo"
-                style="width: 180px;"
+                style="width: 200px;"
                 @on-select="autoComplete" />
             </FormItem>
           </i-col>
-          <i-col span="7" offset="1">
+          <i-col span="8">
             <span class="detail-field-title" style="width: 82px;">车型：</span>
             <Select v-model="info.carType"
                     transfer
@@ -80,6 +80,11 @@ export default {
   components: { SelectInput, TagNumberInput },
   mixins: [ BaseDialog, SelectInputMixin ],
   props: {
+    // 引用页面来源
+    source: {
+      type: String,
+      default: 'dispatch' // detail: 详情页，dispatch：调度弹窗，action：提货或派车弹窗
+    }
   },
   data () {
     return {

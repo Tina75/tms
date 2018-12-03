@@ -3,7 +3,7 @@
     <div class="part" style="padding-bottom: 5px;">
       <Row class="detail-field-group">
         <i-col span="5">
-          <FormItem label="运输费：" prop="freightFee" class="fee-fix">
+          <FormItem :label="sendWay === '1' ? '运输费：': '油费：'" prop="freightFee" class="fee-fix">
             <TagNumberInput v-model="payment.freightFee" class="detail-payment-input"></TagNumberInput>
             <span class="unit-yuan">元</span>
           </FormItem>
@@ -41,7 +41,7 @@
       </Row>
     </div>
 
-    <div class="part">
+    <div v-if="sendWay === '1'" class="part">
       <Row class="detail-field-group">
         <i-col span="24">
           <span class="detail-field-title detail-field-required" style="width: 92px;">结算方式：</span>
@@ -74,7 +74,13 @@ export default {
   name: 'PickupFeeComponent',
   components: { TagNumberInput, PayInfo },
   mixins: [ BaseDialog ],
-
+  props: {
+    //  1 外转 2 自送 自送不显示多段付
+    sendWay: {
+      type: String,
+      default: '1'
+    }
+  },
   data () {
     // 9位整数 2位小数
     const validateFee = (rule, value, callback) => {

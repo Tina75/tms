@@ -16,7 +16,7 @@
         </FormItem>
         <div class="sub-title">承运订单：</div>
       </Form>
-      <Form v-else ref="pick" :model="pick" :rules="pickRules" :label-width="85" inline label-position="left">
+      <!-- <Form v-else ref="pick" :model="pick" :rules="pickRules" :label-width="85" inline label-position="left">
         <FormItem label="承运商：" prop="carrierName">
           <SelectInput
             v-model="pick.carrierName"
@@ -50,7 +50,8 @@
             style="width:180px">
           </SelectInput>
         </FormItem>
-      </Form>
+      </Form> -->
+      <div v-else class="sub-title" style="border-top: none;padding-top: 0;">承运订单：</div>
 
       <Table :columns="tableColumns" :data="id" :height="id.length > 10 ? 520 : id.length * 48 + 40"></Table>
       <div class="table-footer">
@@ -64,7 +65,7 @@
         <div class="send_car">
           <span style="margin-right: 24px;">直接派车</span>
           <i-switch v-model="sendCar" size="small" />
-          <p v-if="!sendCar" class="send_car_tip">此处未派车可以在生成运单后，在运单列表点击【派车】进行操作</p>
+          <span v-if="!sendCar" class="send_car_tip">此处可以直接派车哦～</span>
         </div>
         <div v-if="sendCar" style="margin-top: 25px;">
           <send-car v-if="name === '送货调度'" ref="sendCarComp" :order-list="id" :mileage="mileage" :finance-rules-info="financeRulesInfo"></send-car>
@@ -343,7 +344,8 @@ export default {
       const z = this
       z.$refs['send'].validate((valid) => {
         if (valid) {
-          if (z.sendCar && !z.$refs.sendCarComp.checkValidate()) return
+          let sendComp = z.$refs.sendCarComp
+          if (z.sendCar && !sendComp.checkValidate()) return
           // 地址入参为最后一级区号
           let data = {
             start: z.send.start,
@@ -351,13 +353,20 @@ export default {
             orderIds: z.orderIds,
             assignCar: z.sendCar ? 1 : 0
           }
+          console.log(data)
           if (z.sendCar) {
-            let sendComp = z.$refs.sendCarComp
-            data = Object.assign(data, sendComp.getformatMoney(), sendComp.getCarrierInfo(), {
-              settlementType: sendComp.settlementType,
-              settlementPayInfo: sendComp.getSettlementPayInfos()
-            })
+            data.assignCarType = sendComp.sendWay
+            if (data.assignCarType === '1') { // 外转
+              data = Object.assign(data, sendComp.getformatMoney(), sendComp.getCarrierInfo(), {
+                settlementType: sendComp.getSettlementType(),
+                settlementPayInfo: sendComp.getSettlementPayInfos()
+              })
+            } else if (data.assignCarType === '2') { // 自送
+              console.log(sendComp.getformatMoney())
+              data = Object.assign(data, sendComp.getformatMoney(), sendComp.getOwnSend())
+            }
           }
+          console.log(data)
           Server({
             url: 'waybill/create',
             method: 'post',
@@ -417,6 +426,13 @@ export default {
   font-weight 700
   color rgba(47,50,62,1)
   letter-spacing 1px
+.sub-title
+  font-size 14px
+  font-family 'PingFangSC-Medium'
+  font-weight 500
+  color rgba(51,51,51,1)
+  padding 17px 0 18px 0
+  border-top 1px dashed rgba(203,206,211,1)
 .send_car
   font-size 14px
   font-family 'PingFangSC-Medium'
@@ -426,7 +442,7 @@ export default {
   &_tip
     font-size 12px
     color #666
-    margin-top 7px
+    margin-left 25px
 .table-footer
   height 48px
   border 1px solid #dcdee2
