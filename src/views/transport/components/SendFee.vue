@@ -105,17 +105,54 @@ export default {
   mixins: [ BaseDialog ],
   props: {
     mileage: {
-      type: [Number, String],
-      default: null
+      type: [String, Number]
     },
     // 计费规则传入start、end、weight、volume
     financeRulesInfo: {
-      type: Object
+      type: Object,
+      default: () => {
+        return {
+          start: null,
+          end: null,
+          weight: null,
+          volume: null
+        }
+      }
     },
     // 1 外转 2 自送 自送不显示多段付和返现
     sendWay: {
       type: String,
       default: '1'
+    },
+    // 费用
+    payment: {
+      type: Object,
+      default: () => {
+        return {
+          freightFee: null,
+          loadFee: null,
+          unloadFee: null,
+          insuranceFee: null,
+          otherFee: null,
+          cashBack: null, // 返现运费
+          tollFee: null, // 路桥费
+          mileage: null // 计费里程
+        }
+      }
+    },
+    // 多段付类型
+    settlementType: {
+      type: String,
+      default: '1'
+    },
+    // 多段付信息
+    settlementPayInfo: {
+      type: Array,
+      default: () => [
+        { payType: 1, fuelCardAmount: '', cashAmount: '' },
+        { payType: 2, fuelCardAmount: '', cashAmount: '' },
+        { payType: 3, fuelCardAmount: '', cashAmount: '' }
+      ]
     }
   },
   data () {
@@ -136,16 +173,16 @@ export default {
       }
     }
     return {
-      payment: {
-        freightFee: null,
-        loadFee: null,
-        unloadFee: null,
-        insuranceFee: null,
-        otherFee: null,
-        cashBack: null, // 返现运费
-        tollFee: null, // 路桥费
-        mileage: null // 计费里程
-      },
+      // payment: {
+      //   freightFee: null,
+      //   loadFee: null,
+      //   unloadFee: null,
+      //   insuranceFee: null,
+      //   otherFee: null,
+      //   cashBack: null, // 返现运费
+      //   tollFee: null, // 路桥费
+      //   mileage: null // 计费里程
+      // },
       rules: {
         // 运输费
         freightFee: [
@@ -181,8 +218,8 @@ export default {
           { validator: validateMile }
         ]
       },
-      settlementType: '1',
-      settlementPayInfo: [],
+      // settlementType: '1',
+      // settlementPayInfo: [],
       carrierName: ''
     }
   },
@@ -204,12 +241,12 @@ export default {
   },
   created () {
     // 支付信息表格展示内容根据类型改变
-    this.settlementPayInfo = [
-      { payType: 1, fuelCardAmount: '', cashAmount: '' },
-      { payType: 2, fuelCardAmount: '', cashAmount: '' },
-      { payType: 3, fuelCardAmount: '', cashAmount: '' }
-    ]
-    this.payment.mileage = this.mileage
+    // this.settlementPayInfo = [
+    //   { payType: 1, fuelCardAmount: '', cashAmount: '' },
+    //   { payType: 2, fuelCardAmount: '', cashAmount: '' },
+    //   { payType: 3, fuelCardAmount: '', cashAmount: '' }
+    // ]
+    // this.payment.mileage = this.mileage
     // 获取SendCarrierInfo组件传入的carrierName
     $bus.$on('carrierNameChange', carrierName => {
       this.carrierName = carrierName

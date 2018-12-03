@@ -242,7 +242,11 @@
             </RadioGroup>
           </div>
           <own-send-info v-if="sendWay === '2'" source="detail"></own-send-info>
-          <send-carrier-info v-else ref="SendCarrierInfo" source="detail"></send-carrier-info>
+          <send-carrier-info
+            v-else
+            ref="SendCarrierInfo"
+            :carrier-info="carrierInfo"
+            source="detail"></send-carrier-info>
 
           <Row class="detail-field-group">
             <i-col span="24">
@@ -276,7 +280,9 @@
         </div>
         <send-fee
           ref="sendFee"
-          :mileage="mileage"
+          :payment="payment"
+          :settlement-type="settlementType"
+          :settlement-pay-info="settlementPayInfo"
           :finance-rules-info="financeRulesInfo"
           :send-way="sendWay">
         </send-fee>
@@ -364,15 +370,23 @@ export default {
         assistantDriverName: '', // 副司机名称  V1.07新增
         assistantDriverPhone: '' // 副司机电话  V1.07新增
       },
+      carrierInfo: {
+        carrierName: '',
+        driverName: '',
+        driverPhone: '',
+        carNo: '',
+        carType: '',
+        carLength: ''
+      },
       payment: {
-        freightFee: '',
-        loadFee: '',
-        unloadFee: '',
-        insuranceFee: '',
-        otherFee: '',
-        totalFee: '',
-        tollFee: 0, // 路桥费
-        mileage: void 0 // 计费里程 v1.06 新增
+        freightFee: null,
+        loadFee: null,
+        unloadFee: null,
+        insuranceFee: null,
+        otherFee: null,
+        cashBack: null,
+        tollFee: null, // 路桥费
+        mileage: null // 计费里程 v1.06 新增
       },
       rules: {
         start: [
@@ -391,6 +405,13 @@ export default {
         { payType: 2, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false },
         { payType: 3, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false }
       ],
+      // 计费规则
+      financeRulesInfo: {
+        start: null,
+        end: null,
+        weight: null,
+        volume: null
+      },
 
       // 所有按钮组
       btnList: [
@@ -669,6 +690,10 @@ export default {
         for (let key in this.info) {
           this.info[key] = data.waybill[key]
         }
+        // 将承运商信息赋值给子组件
+        for (let key in this.carrierInfo) {
+          this.carrierInfo[key] = data.waybill[key]
+        }
         for (let key in this.payment) {
           this.payment[key] = this.setMoneyUnit2Yuan(data.waybill[key])
           if (key === 'mileage') {
@@ -679,7 +704,7 @@ export default {
         this.logList = data.operaterLog
 
         this.status = this.statusFilter(data.waybill.status)
-        this.settlementType = data.waybill.settlementType ? data.waybill.settlementType.toString() : ''
+        this.settlementType = data.waybill.settlementType ? data.waybill.settlementType.toString() : '1'
         let temp = this.settlementPayInfo.map((item, i) => {
           if (!data.waybill.settlementPayInfo[i]) return item
           else {
@@ -690,6 +715,15 @@ export default {
           }
         })
         this.settlementPayInfo = temp
+
+        // 计费规则
+        this.financeRulesInfo = {
+          start: this.info.start,
+          end: this.info.end,
+          weight: this.orderTotal.weight,
+          volume: this.orderTotal.volume
+        }
+        console.log(this.financeRulesInfo)
 
         // 异常个数
         this.exceptionCount = data.abnormalCnt

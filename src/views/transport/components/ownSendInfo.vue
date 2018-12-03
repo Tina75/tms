@@ -28,7 +28,7 @@
             <FormItem label="副司机：">
               <SelectInput
                 :carrier-id="carrierId"
-                v-model="info.driverName"
+                v-model="info.assistantDriverName"
                 mode="driver"
                 style="width: 200px;"
                 @on-select="autoComplete"
@@ -40,16 +40,15 @@
         <Row class="own-send-info">
           <i-col span="8">
             <span class="own-send-info-label">车型：</span>
-            <span>厢货 </span>
-            <span>17.5米</span>
+            <span>{{ info.carType|carTypeFormatter }} {{ info.carLength|carLengthFormatter }}</span>
           </i-col>
           <i-col span="8">
             <span class="own-send-info-label">主司机手机号：</span>
-            <span>18751986780</span>
+            <span>{{ info.driverPhone }}</span>
           </i-col>
           <i-col span="8">
             <span class="own-send-info-label" style="padding-left: 0;">副司机手机号：</span>
-            <span>18751986780</span>
+            <span>{{ info.assistantDriverPhone }}</span>
           </i-col>
         </Row>
       </div>
@@ -59,6 +58,7 @@
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
+import TransportBase from '../mixin/transportBase'
 import SelectInput from './SelectInput.vue'
 import SelectInputMixin from '../mixin/selectInputMixin'
 // import Server from '@/libs/js/server'
@@ -68,7 +68,7 @@ import { CAR } from '@/views/client/client'
 export default {
   name: 'OwnSendInfoComponent',
   components: { SelectInput },
-  mixins: [ BaseDialog, SelectInputMixin ],
+  mixins: [ BaseDialog, SelectInputMixin, TransportBase ],
   props: {
     // 引用页面来源
     source: {

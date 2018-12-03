@@ -362,8 +362,8 @@ export default {
                 settlementPayInfo: sendComp.getSettlementPayInfos()
               })
             } else if (data.assignCarType === '2') { // 自送
-              console.log(sendComp.getformatMoney())
               data = Object.assign(data, sendComp.getformatMoney(), sendComp.getOwnSend())
+              delete data.cashBack // 自送没有返现
             }
           }
           console.log(data)
