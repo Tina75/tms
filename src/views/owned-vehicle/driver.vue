@@ -5,26 +5,17 @@
       <Button v-if="hasPower(130210)" @click="carExport">导出</Button>
       <div class="rightSearch">
         <template>
-          <Select v-model="selectStatus" class="conditionSty" transfer @on-change="changeState('keyword', 1)">
+          <Select v-model="selectStatus" class="conditionSty" transfer @on-change="changeState">
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
-        <Input v-if="selectStatus !== '2'"
-               v-model="keyword"
-               :maxlength="selectStatus === '1' ? 8 : 11"
-               :icon="keyword ? 'ios-close-circle' : ''"
-               :placeholder="selectStatus === '1' ? '请输入车牌号搜索' : '请输入手机号搜索'"
-               class="search-input"
-               @on-enter="searchList"
-               @on-click="clearKeywords('keyword', 1)"/>
-        <Select v-if="selectStatus === '2'" v-model="keyword" class="search-input" transfer @on-change="searchList">
-          <Option
-            v-for="item in driverTypeList"
-            :value="item.id"
-            :key="item.id">
-            {{ item.name }}
-          </Option>
-        </Select>
+        <Input
+          v-model="keyword"
+          :maxlength="selectStatus === '1' ? 8 : 11"
+          :icon="keyword ? 'ios-close-circle' : ''"
+          :placeholder="selectStatus === '1' ? '请输入司机姓名' : '请输入手机号搜索'"
+          class="search-input"
+          @on-enter="searchList"/>
         <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
                 style="float: right;width:41px;"
@@ -37,7 +28,8 @@
       :keywords="formSearchInit"
       class="pageTable"
       url="employee/list"
-      list-field="list">
+      list-field="list"
+      @on-sort-change = "timeSort">
     </page-table>
   </div>
 </template>
@@ -57,7 +49,11 @@ export default {
   mixins: [ BasePage ],
   data () {
     return {
-      formSearchInit: {},
+      formSearchInit: {
+        driverName: '',
+        driverPhone: '',
+        order: ''
+      },
       selectStatus: '',
       keyword: '',
       menuColumns: [
@@ -128,6 +124,15 @@ export default {
                       },
                       methods: {
                         ok () {
+                          // Server({
+                          //   url: '',
+                          //   method: 'post',
+                          //   data: ''
+                          // }).then(({ data }) => {
+                          //   if (data.code === 10000) {
+                          //     this.$Message.success('删除成功！')
+                          //   }
+                          // })
                         }
                       }
                     })
@@ -201,6 +206,19 @@ export default {
     },
     // 搜索
     searchList () {
+      if (this.selectStatus === '1') {
+        this.formSearchInit.driverPhone = ''
+        this.formSearchInit.driverName = this.keyword
+      } else {
+        this.formSearchInit.driverName = ''
+        this.formSearchInit.driverPhone = this.keyword
+      }
+    },
+    timeSort (column) {
+      this.formSearchInit.order = (column.order === 'normal' ? '' : column.order)
+    },
+    changeState () {
+      this.keyword = ''
     }
   }
 }

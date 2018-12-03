@@ -2,21 +2,21 @@
   <div>
     <div class="add">
       <Button v-if="hasPower(130211)" type="primary" @click="editRepair">新增记录</Button>
+      <Button v-if="hasPower(130210)" @click="carExport">导出</Button>
       <div class="rightSearch">
         <template>
-          <Select v-model="selectStatus" class="conditionSty" transfer @on-change="changeState('keyword', 1)">
+          <Select v-model="selectStatus" class="conditionSty" transfer @on-change="changeState">
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
-        <Input v-if="selectStatus !== '1'"
+        <Input v-if="selectStatus !== '2'"
                v-model="keyword"
-               :maxlength="selectStatus === '1' ? 8 : 11"
+               :maxlength="8"
                :icon="keyword? 'ios-close-circle' : ''"
                :placeholder="selectStatus === '1' ? '请输入车牌号搜索' : null"
                class="search-input"
-               @on-enter="searchRepairList"
-               @on-click="clearKeywords('keyword', 1)"/>
-        <Select v-if="selectStatus === '1'" v-model="keyword" class="search-input" transfer @on-change="searchRepairList">
+               @on-enter="searchRepairList"/>
+        <Select v-if="selectStatus === '2'" v-model="keyword" class="search-input" transfer @on-change="searchRepairList">
           <Option
             v-for="item in repairTypeList"
             :value="item.id"
@@ -35,7 +35,8 @@
       :keywords="formSearchInit"
       class="pageTable"
       url="employee/list"
-      list-field="list">
+      list-field="list"
+      @on-sort-change = "timeSort">
     </page-table>
   </div>
 </template>
@@ -43,6 +44,7 @@
 import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import TMSUrl from '@/libs/constant/url'
+import Export from '@/libs/js/export'
 export default {
   name: 'owned-car',
   components: {
@@ -200,6 +202,7 @@ export default {
         {
           title: '添加时间',
           key: 'createTime',
+          sortable: 'custom',
           width: 150,
           render: (h, params) => {
             let text = this.formatDateTime(params.row.createTime)
@@ -216,10 +219,35 @@ export default {
           value: '2',
           label: '维修类别'
         }
+      ],
+      repairTypeList: [
+        { id: '1', name: '维修' },
+        { id: '2', name: '保养' }
       ]
     }
   },
   methods: {
+    // 导出维修信息
+    carExport () {
+      // if (Number(this.totalCount1) < 1) {
+      //   this.$Message.error('导出内容为空')
+      //   return
+      // }
+      // let data = {
+      //   carrierId: this.carrierId
+      // }
+      // if (this.selectStatus1 === '1') {
+      //   data.carNO = this.keyword1
+      // } else if (this.selectStatus1 === '2') {
+      //   data.driverType = this.keyword1
+      // }
+      Export({
+        url: '/ownerCar/repair/export',
+        method: 'post',
+        data: '',
+        fileName: '导出维修列表'
+      })
+    },
     // 日期格式化
     formatDateTime (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
@@ -242,11 +270,22 @@ export default {
           }
         }
       })
+    },
+    searchRepairList () {
+      if (this.selectStatus === '1') {
+        this.formSearchInit.carNo = ''
+        this.formSearchInit.reqairType = this.keyword
+      } else {
+        this.formSearchInit.reqairType = ''
+        this.formSearchInit.carNo = this.keyword
+      }
+    },
+    changeState () {
+      this.keyword = ''
+    },
+    timeSort (column) {
+      this.formSearchInit.order = (column.order === 'normal' ? '' : column.order)
     }
-  },
-  searchRepairList () {
-  },
-  clearKeywords () {
   }
 }
 </script>

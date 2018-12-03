@@ -60,7 +60,7 @@
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem label="车型：" prop="carType">
+          <FormItem label="车型：">
             <Row>
               <Col span="20">
               <Select v-model="validate.carType" transfer >
@@ -71,7 +71,7 @@
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem label="车长：" prop="carLength">
+          <FormItem label="车长：">
             <Row>
               <Col span="20">
               <Select v-model="validate.carLength" transfer >
@@ -222,14 +222,7 @@ export default {
           { required: true, message: '手机号不能为空', trigger: 'blur' },
           { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
         ],
-        carType: [
-          { required: true, message: '车型不能为空', trigger: 'change' }
-        ],
-        carLength: [
-          { required: true, message: '车长不能为空', trigger: 'change' }
-        ],
         shippingWeight: [
-          { required: true, message: '载重不能为空' },
           { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ],
         shippingVolume: [

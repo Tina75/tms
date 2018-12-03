@@ -68,7 +68,7 @@
           </Col>
         </Row>
         <p class="modalTitle">备注</p>
-        <Input v-model="validate.remark" :maxlength="100" type="textarea" placeholder="必填"></Input>
+        <Input v-model="validate.remark" :maxlength="100" type="textarea" placeholder="请输入"></Input>
       </Form>
       <div slot="footer" class="footerSty">
         <Button type="primary" @click="save('validate')">确定</Button>

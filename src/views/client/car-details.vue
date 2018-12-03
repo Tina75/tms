@@ -1,135 +1,124 @@
 <template>
-  <div>
-    <div class="tab-head">
-      <Tabs :animated="false" @on-click="clickTitleTab">
-        <TabPane label="车辆信息详情" name="car">
-        </TabPane>
-      </Tabs>
-    </div>
-    <!-- 车辆信息详情 -->
-    <div v-if="showTableOne" class="info-detail">
-      <div class="info">
-        <div class="title">
-          <span class="icontTitle"></span>
-          <span class="iconTitleP">基础信息</span>
-          <div class="btnItem">
-            <Button class="btnSty" @click="removeDriverData">删除</Button>
-            <Button type="primary" class="btnSty" @click="updateDriverData">修改</Button>
-          </div>
-        </div>
-        <div class="list-info">
-          <Row class="row">
-            <Col span="6">
-            <div>
-              <span class="label">姓名：</span>
-              {{infoData.driverName}}
-            </div>
-            </Col>
-            <Col span="6">
-            <div>
-              <span class="label">车牌号：</span>
-              {{infoData.carNO}}
-            </div>
-            </Col>
-            <Col span="6">
-            <div>
-              <span class="label">合作方式：</span>
-              {{infoData.driverType}}
-            </div>
-            </Col>
-            <Col span="6">
-            <div>
-              <span class="label">手机号：</span>
-              {{infoData.driverPhone}}
-            </div>
-            </Col>
-          </Row>
-          <Row class="row">
-            <Col span="6">
-            <div>
-              <span class="label">车型：</span>
-              {{infoData.carType}}
-            </div>
-            </Col>
-            <Col span="6">
-            <div>
-              <span class="label">车长：</span>
-              {{infoData.carLength}}
-            </div>
-            </Col>
-            <Col span="6">
-            <div>
-              <span class="label">载重：</span>
-              {{infoData.shippingWeight}}<span>吨</span>
-            </div>
-            </Col>
-            <Col span="6">
-            <div>
-              <span class="label">净空：</span>
-              {{infoData.shippingVolume}}<span>方</span>
-            </div>
-            </Col>
-          </Row>
-          <Row class="row">
-            <Col span="6">
-            <div>
-              <span class="label">购买日期：</span>
-              {{formatDate(infoData.purchDate)}}
-            </div>
-            </Col>
-            <Col span="6">
-            <div>
-              <span class="label">车辆品牌：</span>
-              {{infoData.carBrand}}
-            </div>
-            </Col>
-          </Row>
-        </div>
-        <div class="title" style="margin-top: 40px;">
-          <span class="icontTitle"></span>
-          <span class="iconTitleP">常跑线路</span>
-        </div>
-        <div class="list-info">
-          <div v-if="this.line1" class="lineSpanLabel">
-            {{line1}}
-          </div>
-          <div v-if="this.line2" class="lineSpanLabel">
-            {{line2}}
-          </div>
-        </div>
-        <div class="title" style="margin-top: 40px;">
-          <span class="icontTitle"></span>
-          <span class="iconTitleP">证件照片</span>
-        </div>
-        <div class="list-info">
-          <Row class="row">
-            <Col span="5">
-            <div v-if="infoData.travelPhoto">
-              <div :style="'height: 90px;background-image: url(' + infoData.travelPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(0)"></div>
-              <p class="uploadLabel">行驶证</p>
-            </div>
-            </Col>
-            <Col span="6">
-            <div v-if="infoData.drivePhoto">
-              <div :style="'height: 90px;background-image: url(' + infoData.drivePhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(1)"></div>
-              <p class="uploadLabel">驾驶证</p>
-            </div>
-            </Col>
-            <Modal v-model="visible" transfer title="查看图片">
-              <img :src="imagePath" style="width: 100%">
-              <div slot="footer" style="text-align: center;"></div>
-            </Modal>
-          </Row>
-        </div>
-        <div class="title" style="margin-top: 40px;">
-          <span class="icontTitle"></span>
-          <span class="iconTitleP">操作日志</span>
-        </div>
-        <div class="list-info">
-          <record-list :search-data="searchLogData" methods-url="/carrier/carrierLog/list"></record-list>
+  <!-- 车辆信息详情 -->
+  <div class="info-detail">
+    <div class="info">
+      <div class="title">
+        <span class="icontTitle"></span>
+        <span class="iconTitleP">基础信息</span>
+        <div class="btnItem">
+          <Button class="btnSty" @click="removeDriverData">删除</Button>
+          <Button type="primary" class="btnSty" @click="updateDriverData">修改</Button>
         </div>
       </div>
+      <div class="list-info">
+        <Row class="row">
+          <Col span="6">
+          <div>
+            <span class="label">姓名：</span>
+            {{infoData.driverName}}
+          </div>
+            </Col>
+          <Col span="6">
+          <div>
+            <span class="label">车牌号：</span>
+            {{infoData.carNO}}
+          </div>
+            </Col>
+          <Col span="6">
+          <div>
+            <span class="label">合作方式：</span>
+            {{infoData.driverType}}
+          </div>
+            </Col>
+          <Col span="6">
+          <div>
+            <span class="label">手机号：</span>
+            {{infoData.driverPhone}}
+          </div>
+            </Col>
+        </Row>
+        <Row class="row">
+          <Col span="6">
+          <div>
+            <span class="label">车型：</span>
+            {{infoData.carType}}
+          </div>
+            </Col>
+          <Col span="6">
+          <div>
+            <span class="label">车长：</span>
+            {{infoData.carLength}}
+          </div>
+            </Col>
+          <Col span="6">
+          <div>
+            <span class="label">载重：</span>
+            {{infoData.shippingWeight}}<span>吨</span>
+          </div>
+            </Col>
+          <Col span="6">
+          <div>
+            <span class="label">净空：</span>
+            {{infoData.shippingVolume}}<span>方</span>
+          </div>
+            </Col>
+        </Row>
+        <Row class="row">
+          <Col span="6">
+          <div>
+            <span class="label">购买日期：</span>
+            {{formatDate(infoData.purchDate)}}
+          </div>
+            </Col>
+          <Col span="6">
+          <div>
+            <span class="label">车辆品牌：</span>
+            {{infoData.carBrand}}
+          </div>
+            </Col>
+        </Row>
+      </div>
+      <div class="title" style="margin-top: 40px;">
+        <span class="icontTitle"></span>
+        <span class="iconTitleP">常跑线路</span>
+      </div>
+      <div class="list-info">
+        <div v-if="this.line1" class="lineSpanLabel">
+          {{line1}}
+        </div>
+        <div v-if="this.line2" class="lineSpanLabel">
+          {{line2}}
+        </div>
+      </div>
+      <div class="title" style="margin-top: 40px;">
+        <span class="icontTitle"></span>
+        <span class="iconTitleP">证件照片</span>
+      </div>
+      <div class="list-info">
+        <Row class="row">
+          <Col span="5">
+          <div v-if="infoData.travelPhoto">
+            <div :style="'height: 90px;background-image: url(' + infoData.travelPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(0)"></div>
+            <p class="uploadLabel">行驶证</p>
+          </div>
+            </Col>
+          <Col span="6">
+          <div v-if="infoData.drivePhoto">
+            <div :style="'height: 90px;background-image: url(' + infoData.drivePhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(1)"></div>
+            <p class="uploadLabel">驾驶证</p>
+          </div>
+            </Col>
+        </Row>
+      </div>
+      <div class="title" style="margin-top: 40px;">
+        <span class="icontTitle"></span>
+        <span class="iconTitleP">操作日志</span>
+      </div>
+      <div class="list-info">
+        <record-list :search-data="searchLogData" methods-url="/carrier/carrierLog/list"></record-list>
+      </div>
     </div>
+  </div>
   </div>
 </template>
 <script>
@@ -156,9 +145,7 @@ export default {
       searchLogData: {},
       id: '',
       carId: '',
-      showTableOne: true,
-      visible: false,
-      imagePath: ''
+      showTableOne: true
     }
   },
   computed: {
@@ -193,14 +180,6 @@ export default {
     this.openSwipe = prepareOpenSwipe(this.imageItems)
   },
   methods: {
-    // 切换头部tab
-    clickTitleTab (val) {
-      if (val === 'car') {
-        this.showTableOne = true
-      } else {
-        this.showTableOne = false
-      }
-    },
     // 日期格式化
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
@@ -304,8 +283,4 @@ export default {
     margin-bottom 1px
     .ivu-tabs-ink-bar
       bottom 2px
-.info-detail
-  margin-top: 80px;
-.btnItem
-  margin-top: -40px;
 </style>
