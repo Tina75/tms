@@ -15,10 +15,12 @@
  * 司机选择框
  */
 import { mapGetters, mapActions } from 'vuex'
+import BaseComponent from '@/basic/BaseComponent'
 export default {
   name: 'car-select',
   components: {
   },
+  mixins: [BaseComponent],
   props: {
     value: String,
     onCreate: Function
@@ -40,15 +42,13 @@ export default {
   },
   mounted () {
     this.getOwnCars()
-      .then((res) => {
-        console.log(res)
-      })
   },
   methods: {
     ...mapActions(['getOwnCars']),
     handleClick (e) {
       this.$emit('on-create', e)
       this.$refs.$select.hideMenu()
+      this.popModal()
     },
     handleChange (value) {
       if (value === 'extra') {
@@ -59,6 +59,22 @@ export default {
       this.currentValue = value
       this.$emit('input', value)
       this.$emit('on-change', value)
+    },
+    /**
+     * 显示添加车辆窗口
+     */
+    popModal () {
+      const vm = this
+      this.openDialog({
+        name: 'owned-vehicle/dialog/edit-car',
+        data: {},
+        methods: {
+          ok () {
+            // 查看所有车辆
+            vm.getOwnCars()
+          }
+        }
+      })
     }
   }
 }

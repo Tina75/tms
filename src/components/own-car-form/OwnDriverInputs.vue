@@ -1,15 +1,23 @@
 <template>
-  <Row :gutter="16">
-    <Col span="10" offset="2">
-    <FormItem :label-width="82"  label-position="left" label="主司机：" prop="driverName">
-      <DriverSelect v-model="form.driverName" :data="mainDrivers" @on-change="changeDriver" @on-click="switchAddView">
-      </DriverSelect>
+  <Row>
+    <Col span="12">
+    <FormItem  label="主司机：" prop="driverName">
+      <Row>
+        <Col span="20">
+        <DriverSelect v-model="form.driverName" :data="mainDrivers" @on-change="changeDriver" @on-click="switchAddView">
+        </DriverSelect>
+        </Col>
+      </Row>
     </FormItem>
     </Col>
-    <Col span="10" offset="2">
-    <FormItem :label-width="82" label="副司机：" prop="assistantDriverName">
-      <DriverSelect v-model="form.assistantDriverName" :data="assitantDrivers" @on-change="changeAssitantDriver"  @on-click="switchAddView">
-      </DriverSelect>
+    <Col span="12">
+    <FormItem label="副司机：" prop="assistantDriverName">
+      <Row>
+        <Col span="20">
+        <DriverSelect v-model="form.assistantDriverName" :data="assitantDrivers" @on-change="changeAssitantDriver"  @on-click="switchAddView">
+        </DriverSelect>
+        </Col>
+      </Row>
     </FormItem>
     </Col>
   </Row>
@@ -89,14 +97,19 @@ export default {
       this.$emit('on-create')
       this.popModal()
     },
+    /**
+     * 弹窗显示司机框，完成后回调
+     */
     popModal () {
+      const vm = this
       // 弹窗显示新增司机
       this.openDialog({
-        name: 'dialogs/messageTip',
+        name: 'dialogs/edit-driver',
         data: {},
         methods: {
           ok () {
             // 查询司机列表
+            vm.getOwnDrivers()
           }
         }
       })
