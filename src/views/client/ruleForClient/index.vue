@@ -153,12 +153,13 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import Server from '@/libs/js/server'
+// import Server from '@/libs/js/server'
 import SelectInputForCity from '@/components/SelectInputForCity'
 import FontIcon from '@/components/FontIcon'
 import TagNumberInput from '@/components/TagNumberInput'
 import DataEmpty from '@/components/DataEmpty'
 import mixin from './mixin'
+import { mapActions } from 'vuex'
 export default {
   name: 'rule-index',
   components: { SelectInputForCity, FontIcon, TagNumberInput, DataEmpty },
@@ -189,6 +190,20 @@ export default {
     return {
     }
   },
+  computed: {
+    // ...mapGetters(['carriesRule']),
+    companyData () {
+      let params = {
+        paramName: this.rulesQuery.type !== '4' ? this.rulesQuery.paramName : '',
+        partnerId: this.partnerId
+      }
+      if (this.active === '1') { // 发货方列表查询
+        return this.$store.getters.senderRuleSearch(params)
+      } else {
+        return this.$store.getters.carriesRuleSearch(params)
+      }
+    }
+  },
   watch: {
     partnerName (val) {
       if (val) {
@@ -202,6 +217,15 @@ export default {
   //   console.log(this.partnerName)
   // },
   methods: {
+    ...mapActions(['getSenderRules', 'getCarriesRules']),
+    async getRules () {
+      if (this.active === '1') {
+        await this.getSenderRules()
+      } else {
+        await this.getCarriesRules()
+      }
+      this.$emit('update:count', this.companyData.length ? this.companyData.length : 0)
+    },
     addRule () {
       const _this = this
       this.openDialog({
@@ -215,13 +239,11 @@ export default {
           }
         },
         methods: {
-          ok (ruleId) {
-            _this.getRules().then((companyData) => {
-              _this.showRuleDetail(companyData.find(item => {
-                return item.ruleId === ruleId
-              }))
-              _this.addItem()
-            })
+          async ok (ruleId) {
+            await _this.getRules()
+            _this.showRuleDetail(_this.companyData.find(item => {
+              return item.ruleId === ruleId
+            }))
           }
         }
       })
@@ -246,26 +268,26 @@ export default {
           }
         }
       })
-    },
-    getRules () {
-      return Server({
-        url: '/finance/charge/listRules',
-        method: 'get',
-        params: {
-          partnerType: this.active,
-          paramName: this.partnerName
-        }
-      }).then(res => {
-        this.companyData = res.data.data
-        this.$emit('update:count', this.companyData.length ? this.companyData.length : 0)
-        if (this.ruleDetail && this.ruleDetail.ruleId && this.companyData.some(item => item.ruleId === this.ruleDetail.ruleId)) {
-          this.showRuleDetail(this.companyData.find(item => item.ruleId === this.ruleDetail.ruleId))
-        } else {
-          this.ruleDetail = {}
-        }
-        return res.data.data
-      }).catch(err => console.error(err))
     }
+    // getRules () {
+    //   return Server({
+    //     url: '/finance/charge/listRules',
+    //     method: 'get',
+    //     params: {
+    //       partnerType: this.active,
+    //       paramName: this.partnerName
+    //     }
+    //   }).then(res => {
+    //     this.companyData = res.data.data
+    //     this.$emit('update:count', this.companyData.length ? this.companyData.length : 0)
+    //     if (this.ruleDetail && this.ruleDetail.ruleId && this.companyData.some(item => item.ruleId === this.ruleDetail.ruleId)) {
+    //       this.showRuleDetail(this.companyData.find(item => item.ruleId === this.ruleDetail.ruleId))
+    //     } else {
+    //       this.ruleDetail = {}
+    //     }
+    //     return res.data.data
+    //   }).catch(err => console.error(err))
+    // }
   }
 }
 </script>

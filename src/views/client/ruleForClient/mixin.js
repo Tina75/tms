@@ -90,7 +90,7 @@ export default {
       }
     }
     return {
-      companyData: [],
+      // companyData: [],
       unitMap: {
         1: '吨',
         2: '方',
@@ -331,6 +331,9 @@ export default {
             })
           }
         }))
+      }
+      if (this.ruleDetail.details.length === 0) {
+        this.addItem()
       }
     },
     startTypeChange (item) {

@@ -9,6 +9,8 @@ import transport from '@/views/transport/modules/store'
 import carrier from './modules/carrier/store'
 import sender from './modules/sender/store'
 import transfer from './modules/transfer/store'
+import rule from './modules/rule/store'
+
 Vue.use(Vuex)
 
 const state = {
@@ -31,6 +33,7 @@ export default new Vuex.Store({
     transport,
     transfer,
     carrier,
-    sender
+    sender,
+    rule
   }
 })
