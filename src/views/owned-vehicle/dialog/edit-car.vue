@@ -92,7 +92,10 @@
             </Row>
           </FormItem>
           </Col>
-          <Col span="8">
+          <Col span="16">
+          <driver-Inputs></driver-Inputs>
+          </Col>
+        <!-- <Col span="8">
           <FormItem label="主司机：">
             <Row>
               <Col span="20">
@@ -111,7 +114,7 @@
               </Col>
             </Row>
           </FormItem>
-          </Col>
+          </Col> -->
         </Row>
         <p class="modalTitle">常跑线路</p>
         <div class="lineDiv">
@@ -163,26 +166,27 @@
 </template>
 
 <script>
-import { CAR_TYPE1, CAR_LENGTH, DRIVER_TYPE } from '@/libs/constant/carInfo'
+import { CAR_TYPE1, CAR_LENGTH, DRIVER_TYPE, formatterCarNo } from '@/libs/constant/carInfo'
+import { CAR } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
-import { carrierAddDriver, carrierUpdateDriver, carrierQueryDriverlist, formatterCarNo, CODE, CAR } from '../client'
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/index.vue'
 import SelectInput from '@/components/SelectInput'
+import DriverInputs from '@/components/own-car-form/OwnDriverInputs'
 import _ from 'lodash'
 export default {
   name: 'carrier-driver',
   components: {
     CitySelect,
     UpLoad,
-    SelectInput
+    SelectInput,
+    DriverInputs
   },
   mixins: [BaseDialog],
   data () {
     return {
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH,
-      carrierId: '', // 承运商id
       driverId: '', // 司机id
       carId: '',
       validate: {},
@@ -201,9 +205,9 @@ export default {
         driverType: [
           { required: true, message: '合作方式不能为空', trigger: 'change' }
         ],
-        driverName: [
-          { required: true, message: '司机姓名不能为空', trigger: 'blur' }
-        ],
+        // driverName: [
+        //   { required: true, message: '司机姓名不能为空', trigger: 'blur' }
+        // ],
         driverPhone: [
           { required: true, message: '手机号不能为空', trigger: 'blur' },
           { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
@@ -230,7 +234,6 @@ export default {
     // 修改页面初始值更改
     configData () {
       if (this.title === '修改车辆') {
-        this.validate.carrierId = this.carrierId
         this.validate.carId = this.carId
         this.validate.driverType = this.validate.driverType.toString()
         this.validate.carType = this.validate.carType.toString()
@@ -272,7 +275,6 @@ export default {
     },
     save (name) {
       this.flagAddress = true
-      this.validate.carrierId = this.carrierId
       this.validate.carId = this.carId
       this.validate.travelPhoto = this.$refs.upload1.uploadImg
       this.validate.drivePhoto = this.$refs.upload2.uploadImg
@@ -295,56 +297,36 @@ export default {
       })
     },
     add () {
-      let data = this.validate
-      carrierAddDriver(data).then(res => {
-        if (res.data.code === CODE) {
-          this.$Message.success(res.data.msg)
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(res.data.msg)
-        }
-      })
     },
     update () {
-      let data = this.validate
-      carrierUpdateDriver(data).then(res => {
-        if (res.data.code === CODE) {
-          this.$Message.success(res.data.msg)
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(res.data.msg)
-        }
-      })
     },
     // 输入手机号，选中某条信息自动填充以后司机信息（姓名，合作方式。。）
     slectDriverData (val, dirverInit) {
       this.validate.driverName = dirverInit.driverName
       this.validate.driverType = dirverInit.driverType.toString()
-    },
-    // 手机号输入联想
-    queryDriverByPhoneList (driverPhone) {
-      if (!driverPhone) {
-        return Promise.resolve([])
-      }
-      return carrierQueryDriverlist({
-        driverPhone,
-        carrierId: this.carrierId
-      }).then(res => {
-        if (res.data.code === CODE) {
-          return res.data.data.map(item => ({
-            value: item.driverPhone,
-            name: item.driverName + '/' + item.driverPhone,
-            driverName: item.driverName,
-            driverType: item.driverType
-          }
-          ))
-        }
-      }).catch((errorInfo) => {
-        return Promise.reject(errorInfo)
-      })
     }
+    // 手机号输入联想
+    // queryDriverByPhoneList (driverPhone) {
+    //   if (!driverPhone) {
+    //     return Promise.resolve([])
+    //   }
+    //   return carrierQueryDriverlist({
+    //     driverPhone,
+    //     carrierId: this.carrierId
+    //   }).then(res => {
+    //     if (res.data.code === CODE) {
+    //       return res.data.data.map(item => ({
+    //         value: item.driverPhone,
+    //         name: item.driverName + '/' + item.driverPhone,
+    //         driverName: item.driverName,
+    //         driverType: item.driverType
+    //       }
+    //       ))
+    //     }
+    //   }).catch((errorInfo) => {
+    //     return Promise.reject(errorInfo)
+    //   })
+    // }
   }
 }
 </script>

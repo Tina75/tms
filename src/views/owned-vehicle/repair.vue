@@ -246,6 +246,10 @@ export default {
     },
     // 导出维修信息
     carExport () {
+      if (!this.exportFile) {
+        this.$Message.error('导出内容为空')
+        return
+      }
       // if (Number(this.totalCount1) < 1) {
       //   this.$Message.error('导出内容为空')
       //   return

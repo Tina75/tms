@@ -26,7 +26,7 @@
       :columns="menuColumns"
       :keywords="formSearchInit"
       class="pageTable"
-      url="employee/list"
+      url="/owerCar/listCar"
       list-field="list"
       @on-load="handleLoad"
       @on-sort-change = "timeSort">
@@ -34,6 +34,7 @@
   </div>
 </template>
 <script>
+import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
 import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import TMSUrl from '@/libs/constant/url'
@@ -50,6 +51,8 @@ export default {
   mixins: [ BasePage ],
   data () {
     return {
+      carTypeMap: CAR_TYPE1,
+      carLengthMap: CAR_LENGTH,
       selectStatus: '',
       keyword: '',
       formSearchInit: {
@@ -124,7 +127,7 @@ export default {
                       methods: {
                         ok () {
                           Server({
-                            url: 'owerCar/deleteDriver',
+                            url: 'owerCar/deleteCar',
                             method: 'post',
                             data: { id: params.row.id }
                           }).then(({ data }) => {
@@ -257,6 +260,10 @@ export default {
     },
     // 导出车辆信息
     carExport () {
+      if (!this.exportFile) {
+        this.$Message.error('导出内容为空')
+        return
+      }
       // if (Number(this.totalCount1) < 1) {
       //   this.$Message.error('导出内容为空')
       //   return
