@@ -123,27 +123,27 @@
         <!-- 自有车运费支出 -->
         <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
           <Col span="12">油费</Col>
-          <Col span="12" class="num">{{res.ownerOilFee}}</Col>
+          <Col span="12" class="num">{{res.myFuelFee}}</Col>
         </Row>
         <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
           <Col span="12">路桥费</Col>
-          <Col span="12" class="num">{{res.ownerTollFee}}</Col>
+          <Col span="12" class="num">{{res.myTollFee}}</Col>
         </Row>
         <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
           <Col span="12">装货费</Col>
-          <Col span="12" class="num">{{res.ownerLoadFee}}</Col>
+          <Col span="12" class="num">{{res.myLoadFee}}</Col>
         </Row>
         <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
           <Col span="12">卸货费</Col>
-          <Col span="12" class="num">{{res.ownerUnloadFee}}</Col>
+          <Col span="12" class="num">{{res.myUnloadFee}}</Col>
         </Row>
         <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
           <Col span="12">保险费</Col>
-          <Col span="12" class="num">{{res.ownerInsuranceFee}}</Col>
+          <Col span="12" class="num">{{res.myInsuranceFee}}</Col>
         </Row>
         <Row type="flex" justify="start" class="small-height border-top-none border-right-none border-bottom-none">
           <Col span="12">其他费用</Col>
-          <Col span="12" class="num">{{res.ownerOtherFee}}</Col>
+          <Col span="12" class="num">{{res.myOtherFee}}</Col>
         </Row>
         <!-- 开票税费 -->
         <Row type="flex" justify="start" class="small-height  border-bottom-none border-right-none">
@@ -203,12 +203,12 @@ export default {
         carrierOtherFee: '-',
         carrierInsuranceFee: '-',
         carrierTotalFee: '-',
-        ownerOilFee: '-', // 自有车
-        ownerTollFee: '-',
-        ownerInsuranceFee: '-',
-        ownerLoadFee: '-',
-        ownerUnloadFee: '-',
-        ownerOtherFee: '-',
+        myFuelFee: '-', // 自有车
+        myTollFee: '-',
+        myLoadFee: '-',
+        myUnloadFee: '-',
+        myInsuranceFee: '-',
+        myOtherFee: '-',
         // transbillTransFee: '-',
         profits: '-',
         carrierTollFee: '-',

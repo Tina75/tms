@@ -5,7 +5,7 @@
     <div slot="content">
       <div id="slider-icon__checkbox-list" :style="scrollStyle" class="slider-icon__checkbox-list">
         <CheckboxGroup v-model="checkList">
-          <draggable v-model="sortArray" :options="options" :move="checkMove" transfer class="slider-icon__draggable-column">
+          <draggable v-model="sortArray" :options="options" :move="checkMove" :style="heightStyle" :class="draggleClass" transfer>
             <Checkbox v-for="item in sortArray" :disabled="item.fixed" :data-key="item.key" :key="item.key" :label="item.title" :class="itemClass(item)">
               <span>{{item.title}}</span>
               <FontIcon v-if="!item.fixed" type="tuodong"></FontIcon>
@@ -23,6 +23,7 @@
 
 <script>
 import draggable from 'vuedraggable'
+import browser from '@/libs/js/browser'
 import _ from 'lodash'
 import FontIcon from '../FontIcon.vue'
 import { mapGetters } from 'vuex'
@@ -71,6 +72,25 @@ export default {
         }
       }
       return ''
+    },
+    draggleClass () {
+      return [
+        'slider-icon__draggable-column',
+        {
+          'slider-icon__draggable-column-ie': browser.ie && browser.ie10Compat
+        }
+      ]
+    },
+    // 动态设置高度，可以排序到下一列
+    heightStyle () {
+      if (browser.ie && browser.ie10Compat) {
+        return {
+          height: 'auto'
+        }
+      }
+      return {
+        height: (Math.ceil(this.sortArray.length / 2) * 32) + 'px'
+      }
     }
   },
   watch: {
@@ -154,19 +174,39 @@ export default {
 <style lang="stylus" scoped>
 .slider-icon
   &__checkbox-list
-    overflow-y: auto
+    overflow-y auto
+    overflow-x hidden
   &__draggable-column
-    -webkit-column-width: 114px
-    -moz-column-width: 114px
-    column-width: 114px
+    width 251px
+    padding 0
+    margin 0
+    display -ms-flexbox
+    display -webkit-box
+    display flex
+    -ms-flex-direction column
+    flex-direction column
+    -ms-flex-pack start
+    -webkit-box-pack start
+    justify-content flex-start
+    align-items flex-start
+    -ms-flex-wrap wrap
+    flex-wrap wrap
+  &__draggable-column.slider-icon__draggable-column-ie
+    -webkit-column-width: 118px
+    -moz-column-width: 118px
+    column-width: 118px
     -webkit-column-gap: 6px
     -moz-column-gap: 6px
     column-gap: 6px
   &__checkbox
     display: inline-block
-    padding: 6px 0
-    width: 114px
+    line-height 1
+    padding: 8px 0 7px
+    width: 118px
     overflow auto
+    -webkit-box-flex 0
+    -ms-flex 0 0 auto
+    flex 0 0 auto
   &__draggable-item
     margin: 0
     position: relative

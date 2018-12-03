@@ -68,7 +68,7 @@ export default {
       else if (newList.length === 2) setpLeft = '32%'
       else if (newList.length === 3) setpLeft = '23%'
       else if (newList.length === 4) setpLeft = '18%'
-      else if (newList.length === 4) setpLeft = '8%'
+      else if (newList.length === 5) setpLeft = '6%'
       this.stepMarginLeft = 'padding-left:' + setpLeft
     },
     $route (to, from) {
