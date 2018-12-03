@@ -213,8 +213,9 @@ const install = (Vue) => {
         ? error.message
         : void 0
     if (!msg) return
+    const stack = error instanceof Error ? error.stack.toString() : void 0
     const temp = getComponentNameOrRoutePath(this)
-    this.$ga.exception(`msg: ${msg} || userAgent: ${window.navigator.userAgent}${temp ? (' || ' + temp) : ''}`)
+    this.$ga.exception(`msg: ${msg}${stack ? (' || stack: ' + stack) : ''} || userAgent: ${window.navigator.userAgent}${temp ? (' || ' + temp) : ''}`)
   }
 }
 
