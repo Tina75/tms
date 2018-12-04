@@ -167,8 +167,6 @@ export default {
     return {
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH,
-      driverId: '', // 司机id
-      carId: '',
       validate: {
         driverId: '',
         driverName: '',
@@ -186,13 +184,6 @@ export default {
         carNo: [
           { required: true, message: '车牌号不能为空', trigger: 'blur' },
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
-        ],
-        driverType: [
-          { required: true, message: '合作方式不能为空', trigger: 'change' }
-        ],
-        driverPhone: [
-          { required: true, message: '手机号不能为空', trigger: 'blur' },
-          { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
         ],
         carType: [
           { required: true, message: '车型不能为空', trigger: 'change' }
@@ -215,15 +206,14 @@ export default {
   methods: {
     // 修改页面初始值更改
     configData () {
-      if (this.title === '修改车辆') {
-        this.validate.carId = this.carId
-        this.validate.driverType = this.validate.driverType.toString()
+      if (this.flag === 2) {
+        this.validate.purchDate = this.validate.purchDate
         this.validate.carType = this.validate.carType.toString()
         this.validate.carLength = this.validate.carLength.toString()
         this.$refs.upload1.progress = 1
         this.$refs.upload2.progress = 1
         this.$refs.upload1.uploadImg = this.validate.travelPhoto
-        this.$refs.upload2.uploadImg = this.validate.drivePhoto
+        this.$refs.upload2.uploadImg = this.validate.roadTransPhoto
         this.validate.carBrand = this.validate.carBrand
         if (this.validate.regularLine && JSON.parse(this.validate.regularLine).length > 0) {
           if (JSON.parse(this.validate.regularLine).length === 1) {
@@ -257,9 +247,8 @@ export default {
     },
     save (name) {
       this.flagAddress = true
-      this.validate.carId = this.carId
       this.validate.travelPhoto = this.$refs.upload1.uploadImg
-      this.validate.drivePhoto = this.$refs.upload2.uploadImg
+      this.validate.roadTransPhoto = this.$refs.upload2.uploadImg
       if (this.validate.purchDate) {
         this.validate.purchDate = new Date(this.validate.purchDate).Format('yyyy-MM-dd hh:mm:ss')
       }
@@ -279,47 +268,33 @@ export default {
       })
     },
     add () {
+      let vm = this
       Server({
         url: '/ownerCar/addCar',
         method: 'post',
         data: this.validate
       }).then(({ data }) => {
+        if (data.code === 10000) {
+          vm.ok()
+          vm.$Message.success(data.msg)
+          vm.close()
+        }
       })
     },
     update () {
+      let vm = this
       Server({
         url: '/ownerCar/updateCar',
         method: 'post',
         data: this.validate
       }).then(({ data }) => {
+        if (data.code === 10000) {
+          vm.ok()
+          vm.$Message.success(data.msg)
+          vm.close()
+        }
       })
-    },
-    // 输入手机号，选中某条信息自动填充以后司机信息（姓名，合作方式）
-    slectDriverData (val, dirverInit) {
-      this.validate.driverName = dirverInit.driverName
     }
-    // 手机号输入联想
-    // queryDriverByPhoneList (driverPhone) {
-    //   if (!driverPhone) {
-    //     return Promise.resolve([])
-    //   }
-    //   return carrierQueryDriverlist({
-    //     driverPhone,
-    //     carrierId: this.carrierId
-    //   }).then(res => {
-    //     if (res.data.code === CODE) {
-    //       return res.data.data.map(item => ({
-    //         value: item.driverPhone,
-    //         name: item.driverName + '/' + item.driverPhone,
-    //         driverName: item.driverName,
-    //         driverType: item.driverType
-    //       }
-    //       ))
-    //     }
-    //   }).catch((errorInfo) => {
-    //     return Promise.reject(errorInfo)
-    //   })
-    // }
   }
 }
 </script>

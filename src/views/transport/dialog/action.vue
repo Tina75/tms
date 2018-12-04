@@ -3,196 +3,42 @@
     <p slot="header" style="text-align:center">
       {{ type === 'sendCar' ? '派车' : '提货' }}
     </p>
-
-    <!-- <div class="part">
-      <Row class="detail-field-group">
-        <i-col span="7">
-          <span class="detail-field-title detail-field-required">承运商：</span>
-          <SelectInput ref="carrierInput" v-model="info.carrierName"
-                       class="detail-info-input"
-                       mode="carrier"
-                       @on-select="selectCarrierHandler" />
-        </i-col>
-        <i-col span="7" offset="1">
-          <span :class="type === 'sendCar' ? 'detail-padding-label' : 'detail-field-required'" class="detail-field-title">司机：</span>
-          <SelectInput :carrier-id="carrierId"
-                       v-model="info.driverName"
-                       class="detail-info-input"
-                       mode="driver"
-                       @on-select="autoComplete"
-                       @on-option-loaded="driverOptionLoaded" />
-        </i-col>
-        <i-col span="7" offset="1">
-          <span class="detail-field-title">司机手机号：</span>
-          <Input v-model="info.driverPhone"
-                 :maxlength="11"
-                 class="detail-info-input" />
-        </i-col>
-      </Row>
-
-      <Row class="detail-field-group">
-        <i-col span="7">
-          <span :class="type === 'sendCar' ? 'detail-padding-label' : 'detail-field-required'" class="detail-field-title">车牌号：</span>
-          <SelectInput :carrier-id="carrierId"
-                       v-model="info.carNo"
-                       class="detail-info-input"
-                       mode="carNo"
-                       @on-select="autoComplete" />
-        </i-col>
-        <i-col span="7" offset="1">
-          <span class="detail-field-title" style="padding-left: 10px;">车型：</span>
-          <Select v-model="info.carType"
-                  transfer
-                  class="detail-info-input-half"
-                  style="margin-right: 12px;">
-            <Option v-for="item in carType" :value="item.value" :key="item.value">{{ item.label }}</Option>
-          </Select>
-          <Select v-model="info.carLength"
-                  transfer
-                  class="detail-info-input-half">
-            <Option v-for="item in carLength" :value="item.value" :key="item.value">{{ item.label }}</Option>
-          </Select>
-        </i-col>
-      </Row>
+    <div class="sub-title">
+      <div class="send-label">派车方式：</div>
+      <RadioGroup v-model="sendWay">
+        <Radio label="2">自送</Radio>
+        <Radio label="1">外转</Radio>
+        <!-- <Radio label="3">下发承运商</Radio> -->
+      </RadioGroup>
     </div>
-
-    <Form ref="payment" :label-width="type === 'sendCar' ? 82 : 72" :model="payment" :rules="rules" label-position="left">
-      <div v-if="type === 'sendCar'" class="part">
-        <Row class="detail-field-group">
-          <i-col span="6">
-            <FormItem label="计费里程：" prop="mileage" class="padding-left-label">
-              <TagNumberInput :show-chinese="false" :min="0" v-model="payment.mileage" :precision="1" class="detail-payment-input-send"></TagNumberInput>
-              <span class="unit-yuan">公里</span>
-            </FormItem>
-          </i-col>
-          <i-col span="6">
-            <FormItem label="运输费：" prop="freightFee">
-              <TagNumberInput v-model="payment.freightFee" class="detail-payment-input-send"></TagNumberInput>
-              <span class="unit-yuan">元</span>
-              <a class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
-            </FormItem>
-          </i-col>
-          <i-col span="6">
-            <FormItem label="装货费：" prop="loadFee">
-              <TagNumberInput v-model="payment.loadFee" class="detail-payment-input-send"></TagNumberInput>
-              <span class="unit-yuan">元</span>
-            </FormItem>
-          </i-col>
-          <i-col span="6">
-            <FormItem label="卸货费：" prop="unloadFee">
-              <TagNumberInput v-model="payment.unloadFee" class="detail-payment-input-send"></TagNumberInput>
-              <span class="unit-yuan">元</span>
-            </FormItem>
-          </i-col>
-        </Row>
-        <Row class="detail-field-group">
-          <i-col span="6">
-            <FormItem label="路桥费：" prop="tollFee" class="padding-left-label">
-              <TagNumberInput v-model="payment.tollFee" class="detail-payment-input-send"></TagNumberInput>
-              <span class="unit-yuan">元</span>
-            </FormItem>
-          </i-col>
-          <i-col span="6">
-            <FormItem label="保险费：" prop="insuranceFee" class="insurance-fee">
-              <TagNumberInput v-model="payment.insuranceFee" class="detail-payment-input-send"></TagNumberInput>
-              <span class="unit-yuan">元</span>
-            </FormItem>
-          </i-col>
-          <i-col span="6">
-            <FormItem label="其他费用：" prop="otherFee">
-              <TagNumberInput v-model="payment.otherFee" class="detail-payment-input-send"></TagNumberInput>
-              <span class="unit-yuan">元</span>
-            </FormItem>
-          </i-col>
-        </Row>
-        <Row class="detail-field-group">
-          <i-col span="24">
-            <span class="detail-field-title-sm" style="vertical-align: unset;margin-left: 10px;">费用合计：</span>
-            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
-          </i-col>
-        </Row>
-      </div>
-      <div v-else class="part">
-        <Row class="detail-field-group">
-          <i-col span="5">
-            <FormItem label="运输费：" prop="freightFee">
-              <TagNumberInput v-model="payment.freightFee" class="detail-payment-input"></TagNumberInput>
-              <span class="unit-yuan">元</span>
-            </FormItem>
-          </i-col>
-          <i-col span="4">
-            <FormItem label="装货费：" prop="loadFee">
-              <TagNumberInput v-model="payment.loadFee" class="detail-payment-input"></TagNumberInput>
-              <span class="unit-yuan">元</span>
-            </FormItem>
-          </i-col>
-          <i-col span="4" offset="1">
-            <FormItem label="卸货费：" prop="unloadFee">
-              <TagNumberInput v-model="payment.unloadFee" class="detail-payment-input"></TagNumberInput>
-              <span class="unit-yuan">元</span>
-            </FormItem>
-          </i-col>
-          <i-col span="4" offset="1">
-            <FormItem label="保险费：" prop="insuranceFee">
-              <TagNumberInput v-model="payment.insuranceFee" class="detail-payment-input"></TagNumberInput>
-              <span class="unit-yuan">元</span>
-            </FormItem>
-          </i-col>
-          <i-col span="4" offset="1">
-            <FormItem label="其他费用：" prop="otherFee">
-              <TagNumberInput v-model="payment.otherFee" class="detail-payment-input"></TagNumberInput>
-              <span class="unit-yuan">元</span>
-            </FormItem>
-          </i-col>
-        </Row>
-        <Row class="detail-field-group">
-          <i-col span="24">
-            <span class="detail-field-title-sm" style="vertical-align: unset;margin-left: 10px;">费用合计：</span>
-            <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
-          </i-col>
-        </Row>
-      </div>
-
-      <div class="part">
-        <Row class="detail-field-group">
-          <i-col span="24">
-            <span class="detail-field-title detail-field-required">结算方式：</span>
-            <div class="detail-payment-way">
-              <RadioGroup v-model="settlementType">
-                <Radio label="1">按单结</Radio>
-                <Radio label="2">月结</Radio>
-              </RadioGroup>
-              <PayInfo
-                v-if="settlementType === '1'"
-                ref="$payInfo"
-                :loading="loading"
-                :total="paymentTotal"
-                :data="settlementPayInfo"
-                class="detail-field-payinfo"
-                mode="edit" />
-            </div>
-          </i-col>
-        </Row>
-
-        <Row v-if="type === 'sendCar'" class="detail-field-group" style="margin-top: 15px;margin-left: 10px;">
-          <i-col span="24">
-            <FormItem label="返现运费：" prop="cashBack">
-              <TagNumberInput v-model="payment.cashBack" class="detail-payment-input" style="width: 180px;"></TagNumberInput>
-              <span class="unit-yuan">元</span>
-              <Tooltip placement="right" transfer content="返现运费是指在实际运输过程中存在某一段运输没有执行，需要将提前支付的运费返还。" max-width="500">
-                <Icon type="ios-alert" size="20" color="#FFBB44" style="margin-left: 14px;"/>
-              </Tooltip>
-            </FormItem>
-          </i-col>
-        </Row>
-      </div>
-    </Form> -->
-    <send-car
-      v-if="type === 'sendCar'"
-      :mileage="mileage"
-      :finance-rules-info="financeRulesInfo"
-      source="action"></send-car>
-    <pick-up v-else source="action"></pick-up>
+    <div v-if="type === 'sendCar'">
+      <send-carrier-info
+        v-if="sendWay === '1'"
+        ref="SendCarrierInfo"
+        :carrier-info="carrierInfo"></send-carrier-info>
+      <own-send-info v-else ref="ownSendInfo"></own-send-info>
+      <send-fee
+        ref="sendFee"
+        :payment="payment"
+        :settlement-type="settlementType"
+        :settlement-pay-info="settlementPayInfo"
+        :finance-rules-info="financeRulesInfo"
+        :send-way="sendWay">
+      </send-fee>
+    </div>
+    <div v-else>
+      <send-carrier-info
+        v-if="sendWay === '1'"
+        ref="SendCarrierInfo"
+        :carrier-info="carrierInfo"></send-carrier-info>
+      <own-send-info v-else ref="ownSendInfo"></own-send-info>
+      <pickup-fee
+        ref="pickupFee"
+        :payment="payment"
+        :settlement-type="settlementType"
+        :settlement-pay-info="settlementPayInfo"
+        :send-way="sendWay"></pickup-fee>
+    </div>
 
     <div slot="footer" style="text-align: center;">
       <Button type="primary" @click="submit">确定</Button>
@@ -203,39 +49,84 @@
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
-import SendCar from '../components/SendCar'
-import PickUp from '../components/PickUp'
+// import SendCar from '../components/SendCar'
+// import PickUp from '../components/PickUp'
+
+import SendFee from '../components/SendFee'
+import SendCarrierInfo from '../components/SendCarrierInfo'
+import OwnSendInfo from '../components/ownSendInfo'
+import PickupFee from '../components/PickupFee'
+
 import Server from '@/libs/js/server'
 
 export default {
   name: 'SendOrPickAction',
-  components: { SendCar, PickUp },
+  components: { SendFee, SendCarrierInfo, OwnSendInfo, PickupFee },
   mixins: [ BaseDialog ],
+
   data () {
     return {
       show: true,
       loading: false,
-      financeRulesInfo: {}
+      financeRulesInfo: {
+        start: null,
+        end: null,
+        weight: null,
+        volume: null
+      },
+      sendWay: '1',
+      // 外转赋值给子组件
+      carrierInfo: {
+        carrierName: '',
+        driverName: '',
+        driverPhone: '',
+        carNo: '',
+        carType: '',
+        carLength: ''
+      },
+      // 自送赋值给子组件
+      ownInfo: {},
+      payment: {
+        freightFee: null,
+        loadFee: null,
+        unloadFee: null,
+        insuranceFee: null,
+        otherFee: null,
+        cashBack: null,
+        tollFee: null, // 路桥费
+        mileage: null // 计费里程 v1.06 新增
+      },
+      settlementType: '',
+      settlementPayInfo: []
     }
   },
   created () {
+    if (this.type === 'sendCar') {
+      this.settlementPayInfo = [
+        { payType: 1, fuelCardAmount: '', cashAmount: '' },
+        { payType: 2, fuelCardAmount: '', cashAmount: '' },
+        { payType: 3, fuelCardAmount: '', cashAmount: '' }
+      ]
+    } else {
+      this.settlementPayInfo = [
+        { payType: 2, fuelCardAmount: '', cashAmount: '' }
+      ]
+    }
     // 受理开单 不请求
     if (this.actionOrigin !== 'orderCreate') {
-      // this.fetchData()
+      this.fetchData()
     } else {
-      // for (let key in this.payment) {
-      //   this.payment[key] = this.setMoneyUnit2Yuan(this.payment[key])
-      //   if (key === 'mileage') {
-      //     this.payment[key] = (this.orderCreate.distance ? this.orderCreate.distance : this.payment[key]) / 1000 || null
-      //   }
-      // }
-      // if (this.type === 'pickUp') {
-      //   delete this.payment.cashBack // 提货去掉返现运费
-      //   delete this.payment.tollFee // 提货去掉路桥费
-      //   delete this.payment.mileage // 提货去掉计费里程
-      // } else {
-      this.financeRulesInfo = this.orderCreate // 送货计费规则参数同步
-      this.mileage = this.orderCreate.distance // 送货计费规则参数同步
+      this.settlementType = '1'
+      if (this.type === 'pickUp') {
+        delete this.payment.cashBack // 提货去掉返现运费
+        delete this.payment.tollFee // 提货去掉路桥费
+        delete this.payment.mileage // 提货去掉计费里程
+      } else {
+        for (let key in this.financeRulesInfo) {
+          this.financeRulesInfo[key] = this.orderCreate[key]
+        }
+        this.payment.mileage = this.orderCreate.distance ? this.orderCreate.distance / 1000 : null // 送货计费规则参数同步
+      }
     }
   },
   methods: {
@@ -251,14 +142,25 @@ export default {
         const data = res.data.data
         const billInfo = this.type === 'sendCar' ? data.waybill : data.loadbill
 
-        for (let key in this.info) {
-          this.info[key] = billInfo[key] ? billInfo[key] : ''
+        // 派车方式
+        this.sendWay = billInfo.assignCarType.toString()
+        // 将承运商信息赋值给子组件
+        if (this.sendWay === '1') { // 外转
+          for (let key in this.carrierInfo) {
+            this.carrierInfo[key] = billInfo[key]
+          }
+        } else { // 自送
+          for (let key in this.ownInfo) {
+            this.ownInfo[key] = billInfo[key]
+          }
         }
+
         if (this.type === 'sendCar') {
           for (let key in this.financeRulesInfo) {
             this.financeRulesInfo[key] = billInfo[key]
           }
         }
+
         for (let key in this.payment) {
           this.payment[key] = this.setMoneyUnit2Yuan(billInfo[key])
           if (key === 'mileage') {
@@ -269,6 +171,7 @@ export default {
         if (this.type === 'pickUp') {
           delete this.payment.cashBack // 提货去掉返现运费
           delete this.payment.tollFee // 提货去掉路桥费
+          delete this.payment.tollFee // 提货去掉计费里程
         }
 
         this.settlementType = billInfo.settlementType ? billInfo.settlementType.toString() : '1'
@@ -308,72 +211,136 @@ export default {
       return temp
     },
 
-    // 提交前数据校验
-    // validate () {
-    //   if (!this.info.carrierName) {
-    //     this.$Message.error('请输入承运商')
-    //     return false
-    //   }
-    //   if (this.type === 'pickUp' && !this.info.driverName) {
-    //     this.$Message.error('请输入司机')
-    //     return false
-    //   }
-    //   if (this.info.driverPhone && !(/^1\d{10}$/.test(this.info.driverPhone))) {
-    //     this.$Message.error('司机手机号格式不正确')
-    //     return false
-    //   }
-    //   if (this.type === 'pickUp' && !this.info.carNo) {
-    //     this.$Message.error('请输入车牌号')
-    //     return false
-    //   }
-    //   if (this.info.carNo && !CAR.test(this.info.carNo)) {
-    //     this.$Message.error('请输入正确的车牌号')
-    //     return false
-    //   }
-    //   if (this.settlementType === '1' && !this.$refs.$payInfo.validate()) return false
-    //   return true
-    // },
-
     submit () {
-      if (!this.validate()) return
-
-      this.$refs.payment.validate((valid) => {
-        if (valid) {
-          let data = {
-            carrierName: this.info.carrierName,
-            driverName: this.info.driverName,
-            driverPhone: this.info.driverPhone ? this.info.driverPhone : void 0,
-            carNo: this.info.carNo,
-            carType: this.info.carType ? this.info.carType : void 0,
-            carLength: this.info.carLength ? this.info.carLength : void 0,
-            ...this.formatMoney(),
-            settlementType: this.settlementType,
-            settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
-          }
-          if (this.actionOrigin !== 'orderCreate') {
-            let url
-            if (this.type === 'sendCar') {
-              data.waybillId = this.id || ''
-              url = '/waybill/assign/vehicle'
-            } else {
-              data.pickUpId = this.id || ''
-              url = '/load/bill/pick/up'
-            }
-            Server({
-              url,
-              method: 'post',
-              data
-            }).then(res => {
-              this.$Message.success('操作成功')
-              this.complete()
-              this.close()
-            }).catch(err => console.error(err))
-          } else {
-            this.complete(data)
-            this.close()
-          }
+      if (this.actionOrigin !== 'orderCreate') {
+        if (this.type === 'sendCar') {
+          this.doSendAction()
+        } else {
+          this.doPickAction()
         }
-      })
+      } else {
+        this.doImmediately()
+      }
+    },
+
+    // 派车模块数据校验
+    checkSendValidate () {
+      const z = this
+      let sendFeeComp = z.$refs.sendFee
+      let carrierInfoComp = z.$refs.SendCarrierInfo
+      let ownSendInfo = z.$refs.ownSendInfo
+      if (z.sendWay === '1' && carrierInfoComp.checkCarrierInfo() && sendFeeComp.validate()) {
+        return true
+      }
+      if (z.sendWay === '2' && ownSendInfo.checkOwnSendInfo() && sendFeeComp.validate()) {
+        return true
+      }
+      return false
+    },
+    // 派车
+    doSendAction () {
+      const z = this
+      if (!z.checkSendValidate()) return
+      let data = {
+        waybillId: this.id || '',
+        assignCarType: z.sendWay
+      }
+      if (z.sendWay === '1') { // 外转
+        data = Object.assign(data, z.$refs.sendFee.formatMoney(), z.$refs.SendCarrierInfo.getCarrierInfo(), {
+          settlementType: z.$refs.sendFee.getSettlementType(),
+          settlementPayInfo: z.$refs.sendFee.getSettlementPayInfo()
+        })
+      } else if (z.sendWay === '2') { // 自送
+        data = Object.assign(data, z.$refs.sendFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
+        delete data.cashBack // 自送没有返现
+      }
+      Server({
+        url: '/waybill/assign/vehicle',
+        method: 'post',
+        data
+      }).then(res => {
+        this.$Message.success('操作成功')
+        this.complete()
+        this.close()
+      }).catch(err => console.error(err))
+    },
+
+    // 提货模块数据校验
+    checkPickValidate () {
+      const z = this
+      let pickFeeComp = z.$refs.pickupFee
+      let carrierInfoComp = z.$refs.SendCarrierInfo
+      let ownSendInfo = z.$refs.ownSendInfo
+      if (z.sendWay === '1' && carrierInfoComp.checkCarrierInfo() && pickFeeComp.validate()) {
+        return true
+      }
+      if (z.sendWay === '2' && ownSendInfo.checkOwnSendInfo() && pickFeeComp.validate()) {
+        return true
+      }
+      return false
+    },
+
+    // 提货
+    doPickAction () {
+      const z = this
+      if (!z.checkPickValidate()) return
+      let data = {
+        pickUpId: this.id || '',
+        assignCarType: z.sendWay
+      }
+      if (z.sendWay === '1') { // 外转
+        data = Object.assign(data, z.$refs.pickupFee.formatMoney(), z.$refs.SendCarrierInfo.getCarrierInfo(), {
+          settlementType: z.$refs.pickupFee.getSettlementType(),
+          settlementPayInfo: z.$refs.pickupFee.getSettlementPayInfo()
+        })
+      } else if (z.sendWay === '2') { // 自送
+        data = Object.assign(data, z.$refs.pickupFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
+      }
+      delete data.mileage // 提货去掉里程数
+      Server({
+        url: '/load/bill/pick/up',
+        method: 'post',
+        data
+      }).then(res => {
+        this.$Message.success('操作成功')
+        this.complete()
+        this.close()
+      }).catch(err => console.error(err))
+    },
+
+    // 立即发运
+    doImmediately () {
+      const z = this
+      let data = {
+        assignCarType: z.sendWay
+      }
+      if (this.type === 'sendCar') {
+        if (!z.checkSendValidate()) return
+        if (z.sendWay === '1') { // 外转
+          data = Object.assign(data, z.$refs.sendFee.formatMoney(), z.$refs.SendCarrierInfo.getCarrierInfo(), {
+            settlementType: z.$refs.sendFee.getSettlementType(),
+            settlementPayInfo: z.$refs.sendFee.getSettlementPayInfo()
+          })
+        } else if (z.sendWay === '2') { // 自送
+          data = Object.assign(data, z.$refs.sendFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
+          delete data.cashBack // 自送没有返现
+        }
+        this.complete(data)
+        this.close()
+      } else if (this.type === 'pickUp') {
+        if (!z.checkPickValidate()) return
+        if (z.sendWay === '1') { // 外转
+          data = Object.assign(data, z.$refs.pickupFee.formatMoney(), z.$refs.SendCarrierInfo.getCarrierInfo(), {
+            settlementType: z.$refs.pickupFee.getSettlementType(),
+            settlementPayInfo: z.$refs.pickupFee.getSettlementPayInfo()
+          })
+        } else if (z.sendWay === '2') { // 自送
+          data = Object.assign(data, z.$refs.pickupFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
+        }
+        delete data.mileage // 提货去掉里程数
+        this.complete(data)
+        this.close()
+      }
     }
   }
 }
@@ -385,4 +352,18 @@ export default {
   .ivu-modal-body
     padding 10px 40px 16px 30px
 
+</style>
+<style lang='stylus' scoped>
+.sub-title
+    font-size 14px
+    font-family 'PingFangSC-Medium'
+    font-weight 500
+    color rgba(51,51,51,1)
+    padding 17px 0 18px 0
+    .send-label
+      display inline-block
+      margin-right 20px
+      vertical-align middle
+    .ivu-radio-group-item
+        margin-right 41px
 </style>

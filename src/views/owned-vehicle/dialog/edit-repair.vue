@@ -17,14 +17,15 @@
             <Row>
               <Col span="19">
               <span v-if="disAbleBtn">{{ validate.carNo }}</span>
-              <Select v-if="!disAbleBtn" v-model="validate.carNo" transfer placeholder="必选" class="minWidth">
+              <!-- <Select v-if="!disAbleBtn" v-model="validate.carNo" transfer placeholder="必选" class="minWidth">
                 <Option
                   v-for="item in carNoList"
                   :value="item.carNo"
                   :key="item.carNo">
                   {{ item.carNo }}
                 </Option>
-              </Select>
+              </Select> -->
+              <CarSelect v-if="!disAbleBtn" v-model="validate.carNo"></CarSelect>
               </Col>
             </Row>
           </FormItem>
@@ -160,8 +161,10 @@ import BaseDialog from '@/basic/BaseDialog'
 import { CODE, CAR } from '../client'
 import float from '@/libs/js/float'
 import Server from '@/libs/js/server'
+import CarSelect from '@/components/own-car-form/CarSelect'
 export default {
   name: 'carrier-vehicle',
+  components: { CarSelect },
   mixins: [BaseDialog],
   data () {
     return {
@@ -221,7 +224,6 @@ export default {
       this.configData()
     } else if (this.carNo === undefined) {
       this.disAbleBtn = false
-      this.queryCarnoList()
     }
   },
   methods: {
@@ -302,17 +304,6 @@ export default {
           this.close()
         } else {
           this.$Message.error(data.data.msg)
-        }
-      })
-    },
-    // 查询车辆列表-下拉框需要
-    queryCarnoList () {
-      Server({
-        url: '/ownerCar/findCarList',
-        method: 'get'
-      }).then(({ data }) => {
-        if (data.data.code === CODE) {
-          this.carNoList = data.data.data
         }
       })
     }

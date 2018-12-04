@@ -36,7 +36,7 @@
   </div>
 </template>
 <script>
-import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
+import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import TMSUrl from '@/libs/constant/url'
@@ -54,7 +54,7 @@ export default {
   data () {
     return {
       carTypeMap: CAR_TYPE1,
-      carLengthMap: CAR_LENGTH,
+      carLengthMap: CAR_LENGTH1,
       selectStatus: '1',
       keyword: '',
       formSearchInit: {
@@ -78,6 +78,7 @@ export default {
                 },
                 on: {
                   click: () => {
+                    let vm = this
                     this.openDialog({
                       name: 'owned-vehicle/dialog/edit-car',
                       data: {
@@ -87,7 +88,7 @@ export default {
                       },
                       methods: {
                         ok () {
-                          this.formSearchInit = { carNo: '', driverName: '' }
+                          vm.formSearchInit = {}
                         }
                       }
                     })
@@ -121,6 +122,7 @@ export default {
                 },
                 on: {
                   click: () => {
+                    let vm = this
                     this.openDialog({
                       name: 'owned-vehicle/dialog/confirmDelete',
                       data: {
@@ -128,12 +130,13 @@ export default {
                       methods: {
                         ok () {
                           Server({
-                            url: 'owerCar/deleteCar',
-                            method: 'post',
+                            url: '/ownerCar/deleteCar',
+                            method: 'get',
                             data: { id: params.row.id }
                           }).then(({ data }) => {
                             if (data.code === 10000) {
-                              this.$Message.success('删除成功！')
+                              vm.$Message.success('删除成功！')
+                              vm.formSearchInit = {}
                             }
                           })
                         }
@@ -148,15 +151,14 @@ export default {
         },
         {
           title: '车牌号',
-          key: 'carNO',
+          key: 'carNo',
           width: 80
         },
         {
           title: '车型',
           key: 'carType',
           render: (h, params) => {
-            debugger
-            let text = this.carLengthMap[params.row.carLength]
+            let text = this.carTypeMap[params.row.carType] + this.carLengthMap[params.row.carLength]
             return h('div', {}, text)
           }
         },
@@ -229,10 +231,10 @@ export default {
           }
         }, {
           title: '主司机',
-          key: 'createTime'
+          key: 'driverName'
         }, {
           title: '副司机',
-          key: 'createTime'
+          key: 'assistantDriverName'
         }, {
           title: '创建时间',
           key: 'createTime',
@@ -292,18 +294,18 @@ export default {
         },
         methods: {
           ok () {
-            this.formSearchInit = { carNo: '', driverName: '' }
+            this.formSearchInit = {}
           }
         }
       })
     },
     searchCarList () {
       if (this.selectStatus === '1') {
-        this.formSearchInit.carNo = ''
-        this.formSearchInit.driverName = this.keyword
-      } else {
-        this.formSearchInit.driverName = ''
         this.formSearchInit.carNo = this.keyword
+        this.formSearchInit.driverName = ''
+      } else {
+        this.formSearchInit.driverName = this.keyword
+        this.formSearchInit.carNo = ''
       }
     },
     clearKeywords () {
@@ -314,6 +316,7 @@ export default {
       this.keyword = ''
     },
     timeSort (column) {
+      this.formSearchInit = {}
       this.formSearchInit.order = (column.order === 'normal' ? '' : column.order)
     }
   }

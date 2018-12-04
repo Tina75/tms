@@ -1,13 +1,13 @@
 <template>
   <div>
-    <Form ref="sendInfo" :label-width="82" :model="info" :rules="rules" class="transport-detail" label-position="left">
+    <Form ref="sendInfo" :label-width="82" :model="carrierInfo" :rules="rules" class="transport-detail" label-position="left">
       <div :style="source === 'detail' && 'margin-bottom: 0;border-bottom: none;'" class="part">
         <Row class="detail-field-group">
           <i-col span="8">
             <FormItem label="承运商：" prop="carrierName">
               <SelectInput
                 ref="carrierInput"
-                v-model="info.carrierName"
+                v-model="carrierInfo.carrierName"
                 mode="carrier"
                 style="width: 200px;"
                 @on-select="selectCarrierHandler" />
@@ -17,7 +17,7 @@
             <FormItem label="司机：">
               <SelectInput
                 :carrier-id="carrierId"
-                v-model="info.driverName"
+                v-model="carrierInfo.driverName"
                 mode="driver"
                 style="width: 200px;"
                 @on-select="autoComplete"
@@ -27,7 +27,7 @@
           <i-col span="8">
             <FormItem label="司机手机号：" prop="driverPhone" class="label-width">
               <Input
-                v-model="info.driverPhone"
+                v-model="carrierInfo.driverPhone"
                 :maxlength="11"
                 style="width: 200px;"/>
             </FormItem>
@@ -39,7 +39,7 @@
             <FormItem label="车牌号：" prop="carNo" class="padding-left-label">
               <SelectInput
                 :carrier-id="carrierId"
-                v-model="info.carNo"
+                v-model="carrierInfo.carNo"
                 mode="carNo"
                 style="width: 200px;"
                 @on-select="autoComplete" />
@@ -47,13 +47,13 @@
           </i-col>
           <i-col span="8">
             <span class="detail-field-title" style="width: 82px;">车型：</span>
-            <Select v-model="info.carType"
+            <Select v-model="carrierInfo.carType"
                     transfer
                     class="detail-info-input-half"
                     style="margin-right: 12px;">
               <Option v-for="item in carType" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
-            <Select v-model="info.carLength"
+            <Select v-model="carrierInfo.carLength"
                     transfer
                     class="detail-info-input-half">
               <Option v-for="item in carLength" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -84,6 +84,19 @@ export default {
     source: {
       type: String,
       default: 'dispatch' // detail: 详情页，dispatch：调度弹窗，action：提货或派车弹窗
+    },
+    carrierInfo: {
+      type: Object,
+      default: () => {
+        return {
+          carrierName: '',
+          driverName: '',
+          driverPhone: '',
+          carNo: '',
+          carType: '',
+          carLength: ''
+        }
+      }
     }
   },
   data () {
@@ -91,14 +104,14 @@ export default {
       carType: CAR_TYPE,
       carLength: CAR_LENGTH,
 
-      info: {
-        carrierName: '',
-        driverName: '',
-        driverPhone: '',
-        carNo: '',
-        carType: '',
-        carLength: ''
-      },
+      // info: {
+      //   carrierName: '',
+      //   driverName: '',
+      //   driverPhone: '',
+      //   carNo: '',
+      //   carType: '',
+      //   carLength: ''
+      // },
       rules: {
         carrierName: [
           { required: true, message: '请填写承运商', trigger: 'blur' },
@@ -113,7 +126,7 @@ export default {
 
   computed: {
     carrierName () {
-      return this.info.carrierName
+      return this.carrierInfo.carrierName
     }
   },
 
@@ -123,10 +136,16 @@ export default {
     }
   },
 
+  created () {
+    this.$nextTick(() => {
+      $bus.$emit('carrierNameChange', this.carrierInfo.carrierName)
+    })
+  },
+
   methods: {
     // 承运商info传参
     getCarrierInfo () {
-      return this.info
+      return this.carrierInfo
     },
     // 承运商信息校验
     checkCarrierInfo () {
