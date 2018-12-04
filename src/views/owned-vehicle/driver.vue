@@ -15,7 +15,8 @@
           :icon="keyword ? 'ios-close-circle' : ''"
           :placeholder="selectStatus === '1' ? '请输入司机姓名' : '请输入手机号搜索'"
           class="search-input"
-          @on-enter="searchList"/>
+          @on-enter="searchList"
+          @on-click="clearKeywords"/>
         <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
                 style="float: right;width:41px;"
@@ -75,16 +76,17 @@ export default {
                 },
                 on: {
                   click: () => {
+                    let vm = this
                     this.openDialog({
                       name: 'dialogs/edit-driver',
                       data: {
                         title: '修改司机',
                         flag: 2, // 修改
-                        validate: { ...params.row, purchDate: new Date(params.row.purchDate) }
+                        validate: params.row
                       },
                       methods: {
                         ok () {
-                          this.formSearchInit = { driverName: '', driverPhone: '' }
+                          vm.formSearchInit = {}
                         }
                       }
                     })
@@ -118,6 +120,7 @@ export default {
                 },
                 on: {
                   click: () => {
+                    let vm = this
                     this.openDialog({
                       name: 'owned-vehicle/dialog/confirmDelete',
                       data: {
@@ -125,12 +128,13 @@ export default {
                       methods: {
                         ok () {
                           Server({
-                            url: 'ownerCar/deleteDriver',
+                            url: '/ownerCar/deleteDriver',
                             method: 'post',
                             data: { id: params.row.id }
                           }).then(({ data }) => {
                             if (data.code === 10000) {
-                              this.$Message.success('删除成功！')
+                              vm.$Message.success('删除成功！')
+                              vm.formSearchInit = {}
                             }
                           })
                         }
@@ -201,15 +205,13 @@ export default {
       })
     },
     editDriver () {
+      let vm = this
       this.openDialog({
         name: 'dialogs/edit-driver',
-        data: {
-          title: '新增司机',
-          flag: 1 // 新增
-        },
+        data: {},
         methods: {
           ok () {
-            this.formSearchInit = { driverName: '', driverPhone: '' }
+            vm.formSearchInit = {}
           }
         }
       })
@@ -223,6 +225,10 @@ export default {
         this.formSearchInit.driverName = ''
         this.formSearchInit.driverPhone = this.keyword
       }
+    },
+    clearKeywords () {
+      this.keyword = ''
+      this.searchList()
     },
     timeSort (column) {
       this.formSearchInit.order = (column.order === 'normal' ? '' : column.order)

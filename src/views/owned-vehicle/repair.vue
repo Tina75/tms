@@ -16,7 +16,8 @@
           :maxlength="8"
           v-model="keyword"
           class="search-input"
-          @on-enter="searchRepairList"/>
+          @on-enter="searchRepairList"
+          @on-click="clearKeywords"/>
         <Select v-if="selectStatus === '2'" v-model="keyword" class="search-input" transfer @on-change="searchRepairList">
           <Option
             v-for="item in repairTypeList"
@@ -299,6 +300,10 @@ export default {
         this.formSearchInit.reqairType = ''
         this.formSearchInit.carNo = this.keyword
       }
+    },
+    clearKeywords () {
+      this.keyword = ''
+      this.searchRepairList()
     },
     changeState () {
       this.keyword = ''

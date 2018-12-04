@@ -10,7 +10,7 @@
       class="modal"
       @on-visible-change="close"
     >
-      <p slot="header" style="text-align:center;font-weight: bold;">{{title}}</p>
+      <p slot="header" style="text-align:center;font-weight: bold;">{{title ? title : '新增司机'}}</p>
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="90" label-position="right">
         <p class="modalTitle">基础信息</p>
         <Row>
@@ -66,7 +66,7 @@
           <up-load ref="upload3"></up-load>
           <p class="uploadLabelID">身份证反面</p>
           </Col>
-        </Row>
+        </Row><br/>
         <p class="modalTitle">备注</p>
         <Input v-model="validate.remark" :maxlength="100" type="textarea" placeholder="请输入"></Input>
       </Form>
@@ -118,13 +118,11 @@ export default {
   methods: {
     // 修改页面初始值更改
     configData () {
-      debugger
       if (this.flag === 2) {
-        this.validate.carLength = this.validate.carLength.toString()
         this.$refs.upload1.progress = 1
         this.$refs.upload2.progress = 1
         this.$refs.upload3.progress = 1
-        this.$refs.upload1.uploadImg = this.validate.travelPhoto
+        this.$refs.upload1.uploadImg = this.validate.driverPhoto
         this.$refs.upload2.uploadImg = this.validate.identityFront
         this.$refs.upload3.uploadImg = this.validate.identityBack
         this.validate.carBrand = this.validate.carBrand
@@ -160,7 +158,7 @@ export default {
     },
     save (name) {
       this.flagAddress = true
-      this.validate.travelPhoto = this.$refs.upload1.uploadImg
+      this.validate.driverPhoto = this.$refs.upload1.uploadImg
       this.validate.identityFront = this.$refs.upload2.uploadImg
       this.validate.identityBack = this.$refs.upload3.uploadImg
       this.checkLine()
@@ -170,7 +168,7 @@ export default {
       this.validate.regularLine = JSON.stringify(this.address)
       this.$refs[name].validate((valid) => {
         if (valid) {
-          if (this.flag === 1) { // 新增
+          if (this.flag !== 2) { // 新增
             this.add()
           } else { // 2-编辑
             this.update()
@@ -186,20 +184,23 @@ export default {
         data: vm.validate
       }).then(({ data }) => {
         if (data.code === 10000) {
+          vm.ok()
           vm.$Message.success(data.msg)
           vm.close()
         }
       })
     },
     update () {
+      let vm = this
       Server({
         url: 'ownerCar/updateDriver',
         method: 'post',
-        data: this.validate
+        data: vm.validate
       }).then(({ data }) => {
         if (data.code === 10000) {
-          this.$Message.success(data.msg)
-          this.close()
+          vm.ok()
+          vm.$Message.success(data.msg)
+          vm.close()
         }
       })
     }

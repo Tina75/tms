@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 车辆信息详情 -->
-    <div v-if="showTableOne" class="info-detail">
+    <div class="info-detail">
       <div class="info">
         <div class="title">
           <span class="icontTitle"></span>
@@ -52,9 +52,15 @@
             </div>
             </Col>
             <Col span="6">
-            <div v-if="infoData.driverPhoto">
-              <div :style="'height: 90px;background-image: url(' + infoData.driverPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(1)"></div>
-              <p class="uploadLabel">驾驶证</p>
+            <div v-if="infoData.identityFront">
+              <div :style="'height: 90px;background-image: url(' + infoData.identityFront + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(1)"></div>
+              <p class="uploadLabel">身份证正面</p>
+            </div>
+            </Col>
+            <Col span="6">
+            <div v-if="infoData.identityBack">
+              <div :style="'height: 90px;background-image: url(' + infoData.identityBack + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(2)"></div>
+              <p class="uploadLabel">身份证反面</p>
             </div>
             </Col>
           </Row>
@@ -78,6 +84,7 @@
 import BasePage from '@/basic/BasePage'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
+import Server from '@/libs/js/server'
 export default {
   name: 'car-details',
   components: { RecordList, prepareOpenSwipe },
@@ -92,45 +99,35 @@ export default {
       infoData: {},
       infoDataInit: {},
       line1: '',
-      line2: '',
-      carrierId: '',
-      searchLogData: {},
-      id: '',
-      carId: '',
-      showTableOne: true,
-      visible: false,
-      imagePath: ''
+      line2: ''
     }
   },
   computed: {
     imageItems () {
       return [
         {
-          title: '行驶证',
+          title: '驾驶证',
           src: this.infoData.driverPhoto,
           msrc: this.infoData.driverPhoto
         },
         {
-          title: '驾驶证',
-          src: this.infoData.driverPhoto,
-          msrc: this.infoData.driverPhoto
+          title: '身份证正面',
+          src: this.infoData.identityFront,
+          msrc: this.infoData.identityFront
+        },
+        {
+          title: '身份证反面',
+          src: this.infoData.identityBack,
+          msrc: this.infoData.identityBack
         }
       ]
     }
   },
-  created () {
-    this.searchLogData.carrierId = this.$route.query.rowData.carrierId
-    this.searchLogData.id = this.$route.query.rowData.id
-    this.searchLogData.logType = 'vehicle'
-  },
   mounted () {
-    debugger
     // 数据备份，防止在详情页面对数据进行二次编辑
     this.infoDataInit = Object.assign({}, this.$route.query.rowData)
-    this.id = this.infoDataInit.id
-    this.carrierId = this.infoDataInit.carrierId
     this.infoData = this.$route.query.rowData
-    this.initDataLine()
+    this.initData()
     this.openSwipe = prepareOpenSwipe(this.imageItems)
   },
   methods: {
@@ -142,7 +139,7 @@ export default {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     },
     // 初始化数据格式
-    initDataLine () {
+    initData () {
       let s1 = ''
       let n1 = ''
       let s2 = ''
@@ -160,25 +157,46 @@ export default {
       this.line2 = s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2
     },
     removeDriverData () {
+      let vm = this
       this.openDialog({
         name: 'owned-vehicle/dialog/confirmDelete',
         data: {},
         methods: {
           ok () {
+            Server({
+              url: '/ownerCar/deleteDriver',
+              method: 'post',
+              data: { id: vm.infoDataInit.id }
+            }).then(({ data }) => {
+              if (data.code === 10000) {
+                vm.$Message.success('删除成功！')
+                vm.ema.fire('closeTab', vm.$route)
+              }
+            })
           }
         }
       })
     },
     updateDriverData () {
+      let vm = this
       this.openDialog({
         name: 'dialogs/edit-driver',
         data: {
           title: '修改司机',
           flag: 2, // 修改
-          validate: { ...this.infoData, purchDate: new Date(this.infoData.purchDate) }
+          validate: vm.infoData
         },
         methods: {
           ok () {
+            Server({
+              url: '/ownerCar/queryCarDetail',
+              method: 'get',
+              data: { id: vm.infoData.id }
+            }).then(({ data }) => {
+              if (data.code === 10000) {
+                vm.infoData = data.data
+              }
+            })
           }
         }
       })

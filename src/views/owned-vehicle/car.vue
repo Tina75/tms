@@ -14,7 +14,8 @@
                :icon="keyword? 'ios-close-circle' : ''"
                :placeholder="selectStatus === '1' ? '请输入车牌号搜索' : '请输入手机号搜索'"
                class="search-input"
-               @on-enter="searchCarList"/>
+               @on-enter="searchCarList"
+               @on-click="clearKeywords"/>
         <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
                 style="float: right;width:41px;"
@@ -154,7 +155,8 @@ export default {
           title: '车型',
           key: 'carType',
           render: (h, params) => {
-            let text = this.carTypeMap[params.row.carType] + this.carLengthMap[params.row.carLength]
+            debugger
+            let text = this.carLengthMap[params.row.carLength]
             return h('div', {}, text)
           }
         },
@@ -303,6 +305,10 @@ export default {
         this.formSearchInit.driverName = ''
         this.formSearchInit.carNo = this.keyword
       }
+    },
+    clearKeywords () {
+      this.keyword = ''
+      this.searchCarList()
     },
     changeState () {
       this.keyword = ''
