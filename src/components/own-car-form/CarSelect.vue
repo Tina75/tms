@@ -41,7 +41,7 @@ export default {
     }
   },
   mounted () {
-    this.getOwnCars()
+    // this.getOwnCars()
   },
   methods: {
     ...mapActions(['getOwnCars']),

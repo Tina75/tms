@@ -195,7 +195,8 @@ export default {
         fixed: 'left',
         extra: true,
         render: (h, p) => {
-          if (p.row.status === 2 && this.hasPower(120101) && p.row.carrierName === '') {
+          let record = p.row
+          if (record.status === 2 && this.hasPower(120101) && record.carrierName === '' && record.assignCarType === 1) {
             return h('a', {
               on: {
                 click: () => {
@@ -419,7 +420,7 @@ export default {
       let tableSelection = _.cloneDeep(this.tableSelection)
       // 运单发运前判断运单有无填写承运商
       let carrierNameList = _.remove(tableSelection, (i) => {
-        return i.carrierName === ''
+        return i.carrierName === '' && i.assignCarType === 1
       })
       console.log(carrierNameList)
       if (carrierNameList.length > 0) {
@@ -429,7 +430,7 @@ export default {
             data: {
               title: '操作提醒',
               cashBack: carrierNameList,
-              message: '以下单据承运商未填写，不能发运。',
+              message: '以下单据未派车，不能发运。',
               type: 'waybill'
             },
             methods: {
