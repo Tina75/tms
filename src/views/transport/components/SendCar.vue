@@ -86,7 +86,7 @@ export default {
       if (this.sendWay === '1' && this.getCheckCarrierInfo() && this.$refs.sendFee.validate()) {
         return true
       }
-      if (this.sendWay === '2' && this.getCheckOwnSendInfo()) {
+      if (this.sendWay === '2' && this.getCheckOwnSendInfo() && this.$refs.sendFee.validate()) {
         return true
       }
       return false

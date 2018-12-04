@@ -90,8 +90,6 @@ import SelectInput from '@/components/SelectInput.vue'
 import SendCar from '@/views/transport/components/SendCar.vue'
 import PickUp from '@/views/transport/components/PickUp.vue'
 import { mapGetters, mapActions } from 'vuex'
-import City from '@/libs/js/city'
-import { CAR } from '@/views/client/client'
 import _ from 'lodash'
 import float from '@/libs/js/float'
 export default {
@@ -121,22 +119,6 @@ export default {
         ]
       },
       sendCar: false,
-      pick: { carrierName: '', carNo: '', driverName: '' },
-      pickRules: {
-        carrierName: [
-          { required: true, message: '请填写承运商', trigger: 'blur' },
-          { required: true, message: '请填写承运商', trigger: 'change' }
-        ],
-        carNo: [
-          { required: true, message: '请填写车牌号', trigger: 'blur' },
-          { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' },
-          { required: true, message: '请填写车牌号', trigger: 'change' }
-        ],
-        driverName: [
-          { required: true, message: '请填写司机姓名', trigger: 'blur' },
-          { required: true, message: '请填写司机姓名', trigger: 'change' }
-        ]
-      },
       tableColumns: [
         {
           title: '操作',
@@ -382,39 +364,41 @@ export default {
     // 提货调度  创建提货单
     doPickDispatch () {
       const z = this
-      z.$refs['pick'].validate((valid) => {
-        if (z.sendCar && !z.$refs.pickUpComp.checkValidate()) return
-        if (valid) {
-          const data = Object.assign(z.pick, { orderIds: z.orderIds })
-          Server({
-            url: 'load/bill/create',
-            method: 'post',
-            data: data
-          }).then(() => {
-            z.ok()
-            z.$Message.success('创建提货单成功')
-            z.close()
+      if (z.sendCar && !z.$refs.pickUpComp.checkValidate()) return
+      let pickUpComp = z.$refs.pickUpComp
+      let data = {
+        orderIds: z.orderIds,
+        assignCar: z.sendCar ? 1 : 0
+      }
+      if (z.sendCar) {
+        data.assignCarType = pickUpComp.sendWay
+        if (data.assignCarType === '1') { // 外转
+          data = Object.assign(data, pickUpComp.getformatMoney(), pickUpComp.getCarrierInfo(), {
+            settlementType: pickUpComp.getSettlementTypes(),
+            settlementPayInfo: pickUpComp.getSettlementPayInfos()
           })
+        } else if (data.assignCarType === '2') { // 自送
+          data = Object.assign(data, pickUpComp.getformatMoney(), pickUpComp.getOwnSend())
+          delete data.cashBack // 自送没有返现
         }
+      }
+      console.log(data)
+      Server({
+        url: 'load/bill/create',
+        method: 'post',
+        data: data
+      }).then(() => {
+        z.ok()
+        z.$Message.success('创建提货单成功')
+        z.close()
       })
     },
     // 将地址字符串8位后的替换成...
     formatterAddress (str) {
       let dot = str.substring(8)
       return str.replace(dot, ' ...')
-    },
-    // 车牌号小写转大写
-    handleCarNoToUp (val) {
-      this.pick.carNo = val.toUpperCase()
-      return this.pick.carNo
-    },
-    // 格式化城市
-    cityFormatter (code) {
-      if (!code) return ''
-      return Array.from(new Set(City.codeToFullNameArr(code, 3))).join('')
     }
   }
-
 }
 
 </script>

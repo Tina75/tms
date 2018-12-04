@@ -61,12 +61,12 @@
         <i-col span="24">
           <span class="detail-field-title detail-field-required" style="width: 92px;">结算方式：</span>
           <div class="detail-payment-way">
-            <RadioGroup v-model="settlementType">
+            <RadioGroup v-model="settlementTypeFee">
               <Radio label="1">按单结</Radio>
               <Radio label="2">月结</Radio>
             </RadioGroup>
             <PayInfo
-              v-if="settlementType === '1'"
+              v-if="settlementTypeFee === '1'"
               ref="$payInfo"
               :total="paymentTotal"
               :data="settlementPayInfo"
@@ -173,16 +173,6 @@ export default {
       }
     }
     return {
-      // payment: {
-      //   freightFee: null,
-      //   loadFee: null,
-      //   unloadFee: null,
-      //   insuranceFee: null,
-      //   otherFee: null,
-      //   cashBack: null, // 返现运费
-      //   tollFee: null, // 路桥费
-      //   mileage: null // 计费里程
-      // },
       rules: {
         // 运输费
         freightFee: [
@@ -218,7 +208,7 @@ export default {
           { validator: validateMile }
         ]
       },
-      // settlementType: '1',
+      settlementTypeFee: '1',
       // settlementPayInfo: [],
       carrierName: ''
     }
@@ -239,14 +229,14 @@ export default {
       return parseFloat(total.toFixed(2))
     }
   },
+  watch: {
+    settlementType (val) {
+      this.settlementTypeFee = val
+    }
+  },
   created () {
-    // 支付信息表格展示内容根据类型改变
-    // this.settlementPayInfo = [
-    //   { payType: 1, fuelCardAmount: '', cashAmount: '' },
-    //   { payType: 2, fuelCardAmount: '', cashAmount: '' },
-    //   { payType: 3, fuelCardAmount: '', cashAmount: '' }
-    // ]
-    // this.payment.mileage = this.mileage
+    this.mileage && (this.payment.mileage = this.mileage)
+    this.settlementTypeFee = this.settlementType
     // 获取SendCarrierInfo组件传入的carrierName
     $bus.$on('carrierNameChange', carrierName => {
       this.carrierName = carrierName
@@ -256,7 +246,7 @@ export default {
     // 计费规则
     showChargeRules () {
       const self = this
-      // console.log(this.financeRulesInfo, this.payment.mileage, this.carrierName)
+      console.log(this.financeRulesInfo, this.payment.mileage, this.carrierName)
       if (!self.financeRulesInfo.start) {
         self.$Message.error('请先输入始发地')
         return
@@ -303,31 +293,32 @@ export default {
     // 格式化金额单位为分
     formatMoney () {
       let temp = Object.assign({}, this.payment)
-      temp.freightFee = temp.freightFee * 100 || null
-      temp.loadFee = temp.loadFee * 100 || null
-      temp.unloadFee = temp.unloadFee * 100 || null
-      temp.insuranceFee = temp.insuranceFee * 100 || null
-      temp.otherFee = temp.otherFee * 100 || null
-      temp.tollFee = temp.tollFee * 100 || null
-      temp.cashBack = temp.cashBack * 100 || null
-      temp.mileage = temp.mileage * 1000 || null
+      temp.freightFee = temp.freightFee * 100
+      temp.loadFee = temp.loadFee * 100
+      temp.unloadFee = temp.unloadFee * 100
+      temp.insuranceFee = temp.insuranceFee * 100
+      temp.otherFee = temp.otherFee * 100
+      temp.tollFee = temp.tollFee * 100
+      temp.cashBack = temp.cashBack * 100
+      temp.mileage = temp.mileage * 1000
+      temp.totalFee = this.paymentTotal * 100
       return temp
     },
     // payInfo组件数据校验
     payInfoValid () {
       // console.log(this.$refs.$payInfo, this.$refs.$payInfo.validate())
-      if (this.settlementType === '1' && !this.$refs.$payInfo.validate()) return false
+      if (this.settlementTypeFee === '1' && !this.$refs.$payInfo.validate()) return false
       return true
     },
     getSettlementType () {
-      return this.settlementType
+      return this.settlementTypeFee
     },
     getSettlementPayInfo () {
-      return this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
+      return this.settlementTypeFee === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
     },
     // 派车模块数据校验
     validate () {
-      if (!this.payInfoValid()) return
+      if (this.sendWay === '1' && !this.payInfoValid()) return
       let check
       this.$refs.sendFeeForm.validate((valid) => {
         check = valid

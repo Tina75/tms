@@ -21,7 +21,7 @@ export default {
       type: Number | String
     },
     cnt: {
-      type: Number
+      type: Number | String
     },
     billType: {
       type: Number,

@@ -50,9 +50,17 @@ export default {
     getCarrierInfo () {
       return this.$refs.SendCarrierInfo.getCarrierInfo()
     },
+    // 自送info传参
+    getOwnSend () {
+      return this.$refs.ownSendInfo.getOwnSendInfo()
+    },
     // 格式化金额单位为分
     getformatMoney () {
       return this.$refs.pickupFee.formatMoney()
+    },
+    // 多段付类型
+    getSettlementTypes () {
+      return this.$refs.pickupFee.getSettlementType()
     },
     // 多段付传参
     getSettlementPayInfos () {
@@ -60,7 +68,10 @@ export default {
     },
     // 派车模块数据校验
     checkValidate () {
-      if (this.getCheckCarrierInfo() && this.$refs.pickupFee.validate()) {
+      if (this.sendWay === '1' && this.getCheckCarrierInfo() && this.$refs.pickupFee.validate()) {
+        return true
+      }
+      if (this.sendWay === '2' && this.getCheckOwnSendInfo() && this.$refs.pickupFee.validate()) {
         return true
       }
       return false
@@ -68,6 +79,10 @@ export default {
     // 承运商信息校验
     getCheckCarrierInfo () {
       return this.$refs.SendCarrierInfo.checkCarrierInfo()
+    },
+    // 自送info信息校验
+    getCheckOwnSendInfo () {
+      return this.$refs.ownSendInfo.checkOwnSendInfo()
     }
   }
 }

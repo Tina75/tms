@@ -136,6 +136,12 @@ export default {
     }
   },
 
+  created () {
+    this.$nextTick(() => {
+      $bus.$emit('carrierNameChange', this.carrierInfo.carrierName)
+    })
+  },
+
   methods: {
     // 承运商info传参
     getCarrierInfo () {
