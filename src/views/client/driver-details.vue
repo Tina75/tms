@@ -95,22 +95,12 @@
     </div>
     <div class="list-info">
       <Row class="row">
-        <Col span="5">
-        <div v-if="driverList.travelPhoto">
-          <div :style="'height: 90px;background-image: url(' + driverList.travelPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(0)"></div>
-          <p class="uploadLabel">行驶证</p>
+        <Col v-for="img in imageItems" :key="img.count" span="6">
+        <div :v-if="img.src">
+          <div :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(img.count)"></div>
+          <p class="uploadLabel">{{img.title}}</p>
         </div>
         </Col>
-        <Col span="6">
-        <div v-if="driverList.drivePhoto">
-          <div :style="'height: 90px;background-image: url(' + driverList.drivePhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(1)"></div>
-          <p class="uploadLabel">驾驶证</p>
-        </div>
-        </Col>
-        <Modal v-model="visible" transfer title="查看图片">
-          <img :src="imagePath" style="width: 100%">
-          <div slot="footer" style="text-align: center;"></div>
-        </Modal>
       </Row>
     </div>
     <div class="title" style="margin-top: 40px;">
@@ -169,23 +159,8 @@ export default {
         1: '按单付',
         2: '月结',
         '': ''
-      }
-    }
-  },
-  computed: {
-    imageItems () {
-      return [
-        {
-          title: '行驶证',
-          src: this.driverList.travelPhoto,
-          msrc: this.driverList.travelPhoto
-        },
-        {
-          title: '驾驶证',
-          src: this.driverList.drivePhoto,
-          msrc: this.driverList.drivePhoto
-        }
-      ]
+      },
+      imageItems: []
     }
   },
   mounted () {
@@ -208,6 +183,17 @@ export default {
     },
     // 初始化数据格式
     initData () {
+      let count = 0
+      for (const key in this.driverList) {
+        if (key === 'travelPhoto' && this.driverList[key]) {
+          this.imageItems.push({ title: '行驶证', src: this.driverList.travelPhoto, count: count })
+          count++
+        }
+        if (key === 'drivePhoto' && this.driverList[key]) {
+          this.imageItems.push({ title: '驾驶证', src: this.driverList.drivePhoto, count: count })
+          count++
+        }
+      }
       let s1 = ''
       let n1 = ''
       let s2 = ''

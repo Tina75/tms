@@ -14,7 +14,7 @@
           <Col span="6">
           <div>
             <span class="label">车牌号：</span>
-            {{infoData.carNO}}
+            {{infoData.carNo}}
           </div>
           </Col>
           <Col span="6">
@@ -109,6 +109,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import RecordList from '@/components/RecordList'
+import Server from '@/libs/js/server'
 export default {
   name: 'car-repair-details',
   components: { RecordList },
@@ -141,48 +142,49 @@ export default {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
     },
     removeRepairData () {
+      let vm = this
       this.openDialog({
         name: 'owned-vehicle/dialog/confirmDelete',
         data: {},
         methods: {
           ok () {
+            Server({
+              url: '/ownerCar/repair/del',
+              method: 'post',
+              data: { id: vm.infoData.id }
+            }).then(({ data }) => {
+              if (data.code === 10000) {
+                vm.$Message.success('删除成功！')
+                vm.ema.fire('closeTab', vm.$route)
+              }
+            })
           }
         }
       })
     },
     updateRepairData () {
-      let _this = this
+      let vm = this
       this.openDialog({
         name: 'owned-vehicle/dialog/edit-repair',
         data: {
           title: '修改维修记录',
           flag: 2, // 修改
-          id: _this.infoData.driverId,
-          carrierId: _this.carrierId,
-          driverId: _this.infoData.driverId,
-          carId: _this.infoData.carId,
-          validate: { ..._this.infoData, repairDate: new Date(_this.infoData.repairDate) }
+          validate: { ...vm.infoData, repairDate: new Date(vm.infoData.repairDate) }
         },
         methods: {
           ok () {
-            _this.queryByIdReparir()
+            Server({
+              url: '/ownerCar/queryRepairDetail',
+              method: 'get',
+              data: { repairId: vm.infoData.id }
+            }).then(({ data }) => {
+              if (data.code === 10000) {
+                vm.infoData = data.data
+              }
+            })
           }
         }
       })
-    },
-    queryByIdReparir () {
-      // let _this = this
-      // queryByIdCarrier({
-      //   id: _this.infoData.id.toString(),
-      //   carrierId: _this.carrierId.toString(),
-      //   type: 'repair'
-      // }).then(res => {
-      //   if (res.data.code === CODE) {
-      //     _this.infoData = res.data.data
-      //   } else {
-      //     _this.$Message.error(res.data.msg)
-      //   }
-      // })
     }
   }
 }

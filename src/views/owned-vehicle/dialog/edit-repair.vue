@@ -170,7 +170,6 @@ export default {
     return {
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH,
-      carrierId: '', // 承运商id
       driverId: 0, // 司机id
       driverName: '', // 只有编辑需要的数据
       carId: '', // 车辆id
@@ -249,14 +248,12 @@ export default {
     configData () {
       this.disAbleBtn = false
       this.validate.repairType = this.validate.repairType.toString()
-      this.validate.carrierId = this.carrierId
       this.validate.repairMoney = this.validate.repairMoney / 100
       this.validate.payMoney = this.validate.payMoney / 100
       this.validate.waitPayMoney = this.validate.waitPayMoney / 100
       this.carNoList.push({ carNo: this.validate.carNo })
     },
     save (name) {
-      this.validate.carrierId = this.carrierId
       this.validate.repairDate = new Date(this.validate.repairDate).Format('yyyy-MM-dd hh:mm:ss')
       this.$refs[name].validate((valid) => {
         if (valid) {
@@ -278,12 +275,12 @@ export default {
         method: 'post',
         data: params
       }).then(({ data }) => {
-        if (data.data.code === CODE) {
-          this.$Message.success(data.data.msg)
+        if (data.code === CODE) {
+          this.$Message.success(data.msg)
           this.ok() // 刷新页面
           this.close()
         } else {
-          this.$Message.error(data.data.msg)
+          this.$Message.error(data.msg)
         }
       })
     },

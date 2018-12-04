@@ -45,24 +45,24 @@
         </div>
         <div class="list-info">
           <Row class="row">
-            <Col span="5">
-            <div v-if="infoData.driverPhoto">
-              <div :style="'height: 90px;background-image: url(' + infoData.driverPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(0)"></div>
-              <p class="uploadLabel">行驶证</p>
+            <Col v-for="img in imageItems" :key="img.count" span="6">
+            <div :v-if="img.src">
+              <div :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(img.count)"></div>
+              <p class="uploadLabel">{{img.title}}</p>
             </div>
             </Col>
-            <Col span="6">
+          <!-- <Col span="6">
             <div v-if="infoData.identityFront">
               <div :style="'height: 90px;background-image: url(' + infoData.identityFront + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(1)"></div>
-              <p class="uploadLabel">身份证正面</p>
+              <p class="uploadLabelID">身份证正面</p>
             </div>
             </Col>
             <Col span="6">
             <div v-if="infoData.identityBack">
               <div :style="'height: 90px;background-image: url(' + infoData.identityBack + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(2)"></div>
-              <p class="uploadLabel">身份证反面</p>
+              <p class="uploadLabelID">身份证反面</p>
             </div>
-            </Col>
+            </Col>-->
           </Row>
         </div>
         <div class="title" style="margin-top: 40px;">
@@ -99,28 +99,8 @@ export default {
       infoData: {},
       infoDataInit: {},
       line1: '',
-      line2: ''
-    }
-  },
-  computed: {
-    imageItems () {
-      return [
-        {
-          title: '驾驶证',
-          src: this.infoData.driverPhoto,
-          msrc: this.infoData.driverPhoto
-        },
-        {
-          title: '身份证正面',
-          src: this.infoData.identityFront,
-          msrc: this.infoData.identityFront
-        },
-        {
-          title: '身份证反面',
-          src: this.infoData.identityBack,
-          msrc: this.infoData.identityBack
-        }
-      ]
+      line2: '',
+      imageItems: []
     }
   },
   mounted () {
@@ -140,6 +120,21 @@ export default {
     },
     // 初始化数据格式
     initData () {
+      let count = 0
+      for (const key in this.infoData) {
+        if (key === 'driverPhoto' && this.infoData[key]) {
+          this.imageItems.push({ title: '驾驶证', src: this.infoData.driverPhoto, count: count })
+          count++
+        }
+        if (key === 'identityFront' && this.infoData[key]) {
+          this.imageItems.push({ title: '身份证正面', src: this.infoData.identityFront, count: count })
+          count++
+        }
+        if (key === 'identityBack' && this.infoData[key]) {
+          this.imageItems.push({ title: '身份证反面', src: this.infoData.identityBack, count: count })
+          count++
+        }
+      }
       let s1 = ''
       let n1 = ''
       let s2 = ''
@@ -189,9 +184,9 @@ export default {
         methods: {
           ok () {
             Server({
-              url: '/ownerCar/queryCarDetail',
+              url: '/ownerCar/queryDriverDetail',
               method: 'get',
-              data: { id: vm.infoData.id }
+              data: { driverId: vm.infoData.id }
             }).then(({ data }) => {
               if (data.code === 10000) {
                 vm.infoData = data.data
