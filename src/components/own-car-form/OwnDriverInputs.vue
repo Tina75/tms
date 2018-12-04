@@ -76,6 +76,7 @@ export default {
         let driver = this.getDriverByName(name)
         if (driver) {
           this.form.driverPhone = driver.driverPhone
+          this.form.driverId = driver.id
         }
       }
     },
@@ -87,6 +88,7 @@ export default {
         let driver = this.getDriverByName(name)
         if (driver) {
           this.form.assistantDriverPhone = driver.driverPhone
+          this.form.assistantDriverId = driver.id
         }
       }
     },
