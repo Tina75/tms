@@ -231,6 +231,7 @@ export default {
       this.searchList()
     },
     timeSort (column) {
+      this.formSearchInit = {}
       this.formSearchInit.order = (column.order === 'normal' ? '' : column.order)
     },
     changeState () {
