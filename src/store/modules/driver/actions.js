@@ -10,7 +10,8 @@ export default {
     return new Promise((resolve, reject) => {
       server({
         url: 'ownerCar/findCarList',
-        method: 'get'
+        method: 'get',
+        data: {}
       })
         .then((response) => {
           const cars = response.data.data
@@ -30,7 +31,8 @@ export default {
     return new Promise((resolve, reject) => {
       server({
         url: 'ownerCar/listDriverList',
-        method: 'get'
+        method: 'post',
+        data: {}
       })
         .then((response) => {
           const drivers = response.data.data

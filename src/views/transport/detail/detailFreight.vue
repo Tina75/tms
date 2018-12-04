@@ -241,7 +241,7 @@
               <!-- <Radio label="3">下发承运商</Radio> -->
             </RadioGroup>
           </div>
-          <own-send-info v-if="sendWay === '2'" source="detail"></own-send-info>
+          <own-send-info v-if="sendWay === '2'" :form="info" source="detail"></own-send-info>
           <send-carrier-info v-else ref="SendCarrierInfo" source="detail"></send-carrier-info>
 
           <Row class="detail-field-group">
@@ -276,8 +276,8 @@
         </div>
         <send-fee
           ref="sendFee"
-          :mileage="mileage"
-          :finance-rules-info="financeRulesInfo"
+          :mileage="payment.mileage"
+          :finance-rules-info="payment"
           :send-way="sendWay">
         </send-fee>
       </div>
@@ -358,6 +358,7 @@ export default {
         driverName: '',
         driverPhone: '',
         remark: '',
+        status: 1,
         collectionMoney: 0, // 代收货款
         cashBack: 0, // 返现运费
         assignCarType: 1, // 派车类型 1 外转 2 自送 V1.07新增
