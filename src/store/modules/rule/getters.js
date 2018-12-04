@@ -1,55 +1,34 @@
 // 发货方规则列表
 export const senderRuleSearch = (state, getters) => (data) => {
-  if (!data.partnerId && !data.paramName) {
-    return state.senderRule
-  }
-  if (data.partnerId && data.paramName) {
-    let mid = []
-    mid = state.senderRule.filter(item => {
-      return item.partnerId === data.partnerId
-    })
-    mid = mid.filter(item => {
-      return item.ruleName.includes(data.paramName) || item.partnerName.includes(data.paramName)
-    })
-    return mid
-  }
-  if (data.partnerId) {
-    return state.senderRule.filter(item => {
-      return item.partnerId === data.partnerId
-    })
-  }
-  if (data.paramName) {
-    return state.senderRule.filter(item => {
-      // console.log(item.ruleName.includes(data.paramName) || item.partnerName.includes(data.paramName))
-      return item.ruleName.includes(data.paramName) || item.partnerName.includes(data.paramName)
-    })
-  }
+  return ruleList(state, data, 'senderRule')
 }
 
 // 承运商规则列表
 export const carriesRuleSearch = (state, getters) => (data) => {
-  if (!data.partnerId && !data.paramName) {
-    return state.carriesRule
-  }
-  if (data.partnerId && data.paramName) {
-    let mid = []
-    mid = state.carriesRule.filter(item => {
-      return item.partnerId === data.partnerId
-    })
-    mid = mid.filter(item => {
-      return item.ruleName.includes(data.paramName) || item.partnerName.includes(data.paramName)
-    })
-    return mid
-  }
+  return ruleList(state, data, 'carriesRule')
+}
+
+function ruleList (state, data, type) {
+  let mid = []
   if (data.partnerId) {
-    return state.carriesRule.filter(item => {
+    /* 将符合partnerId的匹配出来 */
+    mid = state[type].filter(item => {
       return item.partnerId === data.partnerId
     })
+    /* 在partnerId匹配中的模糊搜索 - 此时没有场景 */
+    if (data.paramName) {
+      mid = mid.filter(item => {
+        return item.ruleName.includes(data.paramName) || item.partnerName.includes(data.paramName)
+      })
+    }
+  } else {
+    mid = state[type]
+    /* 在所有数据中模糊搜索 */
+    if (data.paramName) {
+      mid = mid.filter(item => {
+        return item.ruleName.includes(data.paramName) || item.partnerName.includes(data.paramName)
+      })
+    }
   }
-  if (data.paramName) {
-    return state.carriesRule.filter(item => {
-      // console.log(item.ruleName.includes(data.paramName) || item.partnerName.includes(data.paramName))
-      return item.ruleName.includes(data.paramName) || item.partnerName.includes(data.paramName)
-    })
-  }
+  return mid
 }

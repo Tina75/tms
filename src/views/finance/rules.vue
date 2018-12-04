@@ -234,6 +234,11 @@ export default {
       } else {
         await this.getCarriesRules()
       }
+      if (this.ruleDetail && this.ruleDetail.ruleId && this.companyData.some(item => item.ruleId === this.ruleDetail.ruleId)) {
+        this.showRuleDetail(this.companyData.find(item => item.ruleId === this.ruleDetail.ruleId))
+      } else {
+        this.ruleDetail = {}
+      }
     },
     editRule (item) {
       const _this = this

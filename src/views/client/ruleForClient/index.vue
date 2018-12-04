@@ -224,6 +224,11 @@ export default {
       } else {
         await this.getCarriesRules()
       }
+      if (this.ruleDetail && this.ruleDetail.ruleId && this.companyData.some(item => item.ruleId === this.ruleDetail.ruleId)) {
+        this.showRuleDetail(this.companyData.find(item => item.ruleId === this.ruleDetail.ruleId))
+      } else {
+        this.ruleDetail = {}
+      }
       this.$emit('update:count', this.companyData.length ? this.companyData.length : 0)
     },
     addRule () {
@@ -269,25 +274,6 @@ export default {
         }
       })
     }
-    // getRules () {
-    //   return Server({
-    //     url: '/finance/charge/listRules',
-    //     method: 'get',
-    //     params: {
-    //       partnerType: this.active,
-    //       paramName: this.partnerName
-    //     }
-    //   }).then(res => {
-    //     this.companyData = res.data.data
-    //     this.$emit('update:count', this.companyData.length ? this.companyData.length : 0)
-    //     if (this.ruleDetail && this.ruleDetail.ruleId && this.companyData.some(item => item.ruleId === this.ruleDetail.ruleId)) {
-    //       this.showRuleDetail(this.companyData.find(item => item.ruleId === this.ruleDetail.ruleId))
-    //     } else {
-    //       this.ruleDetail = {}
-    //     }
-    //     return res.data.data
-    //   }).catch(err => console.error(err))
-    // }
   }
 }
 </script>
