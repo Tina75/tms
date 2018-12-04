@@ -207,7 +207,7 @@
               <!-- <Radio label="3">下发承运商</Radio> -->
             </RadioGroup>
           </div>
-          <own-send-info v-if="sendWay === '2'" source="detail"></own-send-info>
+          <own-send-info v-if="sendWay === '2'" :form="info" source="detail"></own-send-info>
           <send-carrier-info v-else ref="SendCarrierInfo" source="detail"></send-carrier-info>
 
           <Row class="detail-field-group">
