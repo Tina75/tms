@@ -14,8 +14,10 @@
             </tr>
             <tr>
               <td>车牌号：{{item.waybill.carNo}}</td>
-              <td>司机：{{item.waybill.driverName}}</td>
-              <td>手机号码：{{item.waybill.driverPhone}}</td>
+              <td v-if="item.waybill.assignCarType === 1">司机：{{item.waybill.driverName}}</td>
+              <td v-if="item.waybill.assignCarType === 1">手机号码：{{item.waybill.driverPhone}}</td>
+              <td v-if="item.waybill.assignCarType === 2">主司机：{{getDriver(item.waybill)}}</td>
+              <td v-if="item.waybill.assignCarType === 2">副司机：{{getAssistantDriver(item.waybill)}}</td>
             </tr>
             <tr>
               <td>车型：{{item.waybill.carType|carTypeFormatter}} {{item.waybill.carLength|carLengthFormatter}}</td>
@@ -48,7 +50,7 @@
             </tr>
             <tr>
               <td colspan="6" class="table-footer">
-                <span class="table-footer-item">运输费：{{item.waybill.freightFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">{{item.waybill.assignCarType === 1 ? '运输费':'油费'}}：{{item.waybill.freightFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">装货费：{{item.waybill.loadFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">卸货费：{{item.waybill.unloadFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">路桥费：{{item.waybill.tollFee / 100 || 0}} 元</span>
@@ -129,6 +131,18 @@ export default {
     this.printer = new Printd()
   },
   methods: {
+    getDriver (item) {
+      if (item.driverName) {
+        return `${item.driverName}  ${item.driverPhone}`
+      }
+      return ''
+    },
+    getAssistantDriver (item) {
+      if (item.assistantDriverName) {
+        return `${item.assistantDriverName}  ${item.assistantDriverPhone}`
+      }
+      return ''
+    },
     print () {
       this.$nextTick(() => {
         this.printer.print(this.$refs.htmlContent, this.cssText)

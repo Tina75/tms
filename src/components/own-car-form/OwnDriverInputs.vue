@@ -35,6 +35,7 @@ export default {
   },
   mixins: [BaseComponent, mixin],
   data () {
+    console.log('this.form', this.form)
     return {
     }
   },
@@ -61,7 +62,7 @@ export default {
   },
   mounted () {
     // 获取所有自有司机
-    this.getOwnDrivers()
+    // this.getOwnDrivers()
   },
   methods: {
     ...mapActions(['getOwnDrivers']),

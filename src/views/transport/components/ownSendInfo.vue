@@ -1,8 +1,8 @@
 <template>
   <div>
-    <Form ref="ownSendInfos" :label-width="82" :model="form" :rules="rules" label-position="left">
+    <Form ref="ownSendInfos" :label-width="82" :model="ownForm" :rules="rules" label-position="left">
       <div>
-        <OwnCarForm :form="form" :class="formClass"></OwnCarForm>
+        <OwnCarForm :form="ownForm" :class="formClass"></OwnCarForm>
       </div>
     </Form>
   </div>
@@ -12,9 +12,17 @@
 import BaseDialog from '@/basic/BaseDialog'
 import SelectInputMixin from '../mixin/selectInputMixin'
 // import Server from '@/libs/js/server'
-import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
 import { CAR } from '@/views/client/client'
 import OwnCarForm from '@/components/own-car-form'
+const defaultFormValue = {
+  driverName: '', // 主司机姓名
+  driverPhone: '', // 主司机电话
+  assistantDriverName: '', // 副司机姓名
+  assistantDriverPhone: '', // 副司机电话
+  carNo: '',
+  carType: '',
+  carLength: ''
+}
 export default {
   name: 'OwnSendInfoComponent',
   components: { OwnCarForm },
@@ -27,21 +35,19 @@ export default {
     },
     form: {
       type: Object,
-      default: () => ({
-        driverName: '', // 主司机姓名
-        driverPhone: '', // 主司机电话
-        assistantDriverName: '', // 副司机姓名
-        assistantDriverPhone: '', // 副司机电话
-        carNo: '',
-        carType: '',
-        carLength: ''
-      })
+      default: () => ({ ...defaultFormValue })
     }
   },
   data () {
+    /**
+     * 派车类型为自有的时候，才会从props的form表单里读取值,否则就默认值
+     */
+    let ownForm = { ...defaultFormValue }
+    if (this.form.assignCarType === 2) {
+      Object.assign(ownForm, this.form)
+    }
     return {
-      carType: CAR_TYPE,
-      carLength: CAR_LENGTH
+      ownForm
     }
   },
   computed: {
@@ -81,7 +87,7 @@ export default {
   methods: {
     // 承运商info传参
     getOwnSendInfo () {
-      return this.form
+      return this.ownForm
     },
     // 承运商信息校验
     checkOwnSendInfo () {
