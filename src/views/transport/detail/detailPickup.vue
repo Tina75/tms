@@ -49,13 +49,15 @@
                 </i-col>
                 <i-col span="8" >
                   <span class="detail-field-title">{{ info.assignCarType === 1 ? '司机：' : '主司机：' }}</span>
-                  <span>{{ (info.driverName || '') + ' ' + (info.driverPhone || '') }}</span>
+                  <span v-if="info.driverName">{{ (info.driverName || '') + ' ' + (info.driverPhone || '') }}</span>
+                  <span v-else>-</span>
                 </i-col>
                 <i-col v-if="info.assignCarType === 2" span="8">
                   <span class="detail-field-title">副司机：</span>
-                  <span>王小鹏 18751986780</span>
+                  <span v-if="info.assistantDriverName">{{ (info.assistantDriverName || '') + ' ' + (info.assistantDriverPhone || '') }}</span>
+                  <span v-else>-</span>
                 </i-col>
-                <i-col span="8">
+                <i-col v-if="info.assignCarType === 1" span="8">
                   <span class="detail-field-title">车型：</span>
                   <span v-if="info.carType">{{ info.carType|carTypeFormatter }} {{ info.carLength|carLengthFormatter }}</span>
                   <span v-else>-</span>
@@ -135,7 +137,7 @@
                 <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
               </i-col>
             </Row>
-            <Row class="detail-field-group">
+            <Row v-if="info.assignCarType === 1" class="detail-field-group">
               <i-col span="24">
                 <span class="detail-field-title-sm">结算方式：</span>
                 <div v-if="settlementType" class="detail-payment-way">
@@ -207,8 +209,12 @@
               <!-- <Radio label="3">下发承运商</Radio> -->
             </RadioGroup>
           </div>
-          <own-send-info v-if="sendWay === '2'" :form="info" source="detail"></own-send-info>
-          <send-carrier-info v-else ref="SendCarrierInfo" source="detail"></send-carrier-info>
+          <own-send-info v-if="sendWay === '2'" ref="ownSendInfo" :form="info" source="detail"></own-send-info>
+          <send-carrier-info
+            v-else
+            ref="SendCarrierInfo"
+            :carrier-info="carrierInfo"
+            source="detail"></send-carrier-info>
 
           <Row class="detail-field-group">
             <i-col span="24">
@@ -240,7 +246,12 @@
         <div class="detail-part-title">
           <span>应付费用</span>
         </div>
-        <pickup-fee ref="pickupFee" :send-way="sendWay"></pickup-fee>
+        <pickup-fee
+          ref="pickupFee"
+          :payment="payment"
+          :settlement-type="settlementType"
+          :settlement-pay-info="settlementPayInfo"
+          :send-way="sendWay"></pickup-fee>
       </div>
     </section>
 
@@ -299,6 +310,24 @@ export default {
         assignCarType: 1, // 派车类型 1 外转 2 自送 V1.07新增
         assistantDriverName: '', // 副司机名称  V1.07新增
         assistantDriverPhone: '' // 副司机电话  V1.07新增
+      },
+      // 外转赋值给子组件
+      carrierInfo: {
+        carrierName: '',
+        driverName: '',
+        driverPhone: '',
+        carNo: '',
+        carType: '',
+        carLength: ''
+      },
+      // 自送赋值给子组件
+      ownInfo: {},
+      payment: {
+        freightFee: null,
+        loadFee: null,
+        unloadFee: null,
+        insuranceFee: null,
+        otherFee: null
       },
       // 支付方式
       settlementType: '',
@@ -491,6 +520,20 @@ export default {
         for (let key in this.info) {
           this.info[key] = data.loadbill[key]
         }
+
+        // 派车方式
+        this.sendWay = data.loadbill.assignCarType.toString()
+        // 将承运商信息赋值给子组件
+        if (this.sendWay === '1') { // 外转
+          for (let key in this.carrierInfo) {
+            this.carrierInfo[key] = data.loadbill[key]
+          }
+        } else { // 自送
+          for (let key in this.ownInfo) {
+            this.ownInfo[key] = data.loadbill[key]
+          }
+        }
+
         for (let key in this.payment) {
           this.payment[key] = this.setMoneyUnit2Yuan(data.loadbill[key])
         }
@@ -498,7 +541,7 @@ export default {
         this.logList = data.loadBillLogs
 
         this.status = this.statusFilter(data.loadbill.status)
-        this.settlementType = data.loadbill.settlementType ? data.loadbill.settlementType.toString() : ''
+        this.settlementType = data.loadbill.settlementType ? data.loadbill.settlementType.toString() : '1'
         // 格式化计费信息金额单位为元
         let temp = this.settlementPayInfo.map((item, i) => {
           if (!data.loadbill.settlementPayInfo[i]) return item
@@ -521,30 +564,50 @@ export default {
       }).catch(err => console.error(err))
     },
 
+    // 提货模块数据校验
+    checkDetailValidate () {
+      const z = this
+      let pickFeeComp = z.$refs.pickupFee
+      let carrierInfoComp = z.$refs.SendCarrierInfo
+      let ownSendInfo = z.$refs.ownSendInfo
+      if (z.sendWay === '1' && carrierInfoComp.checkCarrierInfo() && pickFeeComp.validate()) {
+        return true
+      }
+      if (z.sendWay === '2' && ownSendInfo.checkOwnSendInfo() && pickFeeComp.validate()) {
+        return true
+      }
+      return false
+    },
+
     // 编辑后保存
     save () {
-      if (!this.validate()) return
-      this.$refs.payment.validate((valid) => {
-        if (valid) {
-          Server({
-            url: '/load/bill/update',
-            method: 'post',
-            data: {
-              loadbill: {
-                pickUpId: this.id,
-                ...this.info,
-                ...this.formatMoney(),
-                settlementType: this.settlementType,
-                settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
-              },
-              cargoList: _.uniq(this.detail.map(item => item.orderId))
-            }
-          }).then(res => {
-            this.$Message.success('保存成功')
-            this.cancelEdit()
-          }).catch(err => console.error(err))
-        }
-      })
+      const z = this
+      if (!z.checkDetailValidate()) return
+      let data = {
+        loadbill: {
+          pickUpId: z.id,
+          remark: z.info.remark,
+          assignCarType: z.sendWay
+        },
+        cargoList: _.uniq(this.detail.map(item => item.orderId))
+      }
+      if (z.sendWay === '1') {
+        data.loadbill = Object.assign(data.loadbill, z.$refs.pickupFee.formatMoney(), z.$refs.SendCarrierInfo.getCarrierInfo(), {
+          settlementType: z.$refs.pickupFee.getSettlementType(),
+          settlementPayInfo: z.$refs.pickupFee.getSettlementPayInfo()
+        })
+      } else if (z.sendWay === '2') { // 自送
+        data.loadbill = Object.assign(data.loadbill, z.$refs.pickupFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
+      }
+      console.log(data)
+      Server({
+        url: '/load/bill/update',
+        method: 'post',
+        data: data
+      }).then(res => {
+        this.$Message.success('保存成功')
+        this.cancelEdit()
+      }).catch(err => console.error(err))
     },
 
     // 按钮操作

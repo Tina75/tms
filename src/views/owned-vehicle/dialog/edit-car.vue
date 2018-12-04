@@ -93,7 +93,7 @@
           </FormItem>
           </Col>
           <Col span="16">
-          <driver-Inputs></driver-Inputs>
+          <driver-Inputs :form="validate"></driver-Inputs>
           </Col>
         </Row>
         <p class="modalTitle">常跑线路</p>
@@ -167,7 +167,12 @@ export default {
     return {
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH,
-      validate: {},
+      validate: {
+        driverId: '',
+        driverName: '',
+        assistantDriverName: '',
+        assistantDriverId: ''
+      },
       address: [],
       address1: {},
       address2: {},

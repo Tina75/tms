@@ -46,12 +46,12 @@
         <i-col span="24">
           <span class="detail-field-title detail-field-required" style="width: 92px;">结算方式：</span>
           <div class="detail-payment-way">
-            <RadioGroup v-model="settlementType">
+            <RadioGroup v-model="settlementTypeFee">
               <Radio label="1">按单结</Radio>
               <Radio label="2">月结</Radio>
             </RadioGroup>
             <PayInfo
-              v-if="settlementType === '1'"
+              v-if="settlementTypeFee === '1'"
               ref="$payInfo"
               :total="paymentTotal"
               :data="settlementPayInfo"
@@ -79,6 +79,31 @@ export default {
     sendWay: {
       type: String,
       default: '1'
+    },
+    // 费用
+    payment: {
+      type: Object,
+      default: () => {
+        return {
+          freightFee: null,
+          loadFee: null,
+          unloadFee: null,
+          insuranceFee: null,
+          otherFee: null
+        }
+      }
+    },
+    // 多段付类型
+    settlementType: {
+      type: String,
+      default: '1'
+    },
+    // 多段付信息
+    settlementPayInfo: {
+      type: Array,
+      default: () => [
+        { payType: 2, fuelCardAmount: '', cashAmount: '' }
+      ]
     }
   },
   data () {
@@ -91,13 +116,6 @@ export default {
       }
     }
     return {
-      payment: {
-        freightFee: null,
-        loadFee: null,
-        unloadFee: null,
-        insuranceFee: null,
-        otherFee: null
-      },
       rules: {
         // 运输费
         freightFee: [
@@ -121,8 +139,7 @@ export default {
           { validator: validateFee }
         ]
       },
-      settlementType: '1',
-      settlementPayInfo: []
+      settlementTypeFee: '1'
     }
   },
   computed: {
@@ -137,35 +154,41 @@ export default {
       return parseFloat(total.toFixed(2))
     }
   },
+  watch: {
+    settlementType (val) {
+      this.settlementTypeFee = val
+    }
+  },
   created () {
-    // 支付信息表格展示内容根据类型改变
-    this.settlementPayInfo = [
-      { payType: 2, fuelCardAmount: '', cashAmount: '' }
-    ]
+    this.settlementTypeFee = this.settlementType
   },
   methods: {
     // 格式化金额单位为分
     formatMoney () {
       let temp = Object.assign({}, this.payment)
-      temp.freightFee = temp.freightFee * 100 || null
-      temp.loadFee = temp.loadFee * 100 || null
-      temp.unloadFee = temp.unloadFee * 100 || null
-      temp.insuranceFee = temp.insuranceFee * 100 || null
-      temp.otherFee = temp.otherFee * 100 || null
+      temp.freightFee = temp.freightFee * 100
+      temp.loadFee = temp.loadFee * 100
+      temp.unloadFee = temp.unloadFee * 100
+      temp.insuranceFee = temp.insuranceFee * 100
+      temp.otherFee = temp.otherFee * 100
+      temp.totalFee = this.paymentTotal * 100
       return temp
     },
     // payInfo组件数据校验
     payInfoValid () {
       // console.log(this.$refs.$payInfo, this.$refs.$payInfo.validate())
-      if (this.settlementType === '1' && !this.$refs.$payInfo.validate()) return false
+      if (this.settlementTypeFee === '1' && !this.$refs.$payInfo.validate()) return false
       return true
     },
+    getSettlementType () {
+      return this.settlementTypeFee
+    },
     getSettlementPayInfo () {
-      return this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
+      return this.settlementTypeFee === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
     },
     // 派车模块数据校验
     validate () {
-      if (!this.payInfoValid()) return
+      if (this.sendWay === '1' && !this.payInfoValid()) return
       let check
       this.$refs.pickUpFeeForm.validate((valid) => {
         check = valid

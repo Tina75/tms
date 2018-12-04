@@ -56,13 +56,15 @@
                 </i-col>
                 <i-col span="8" >
                   <span class="detail-field-title">{{ info.assignCarType === 1 ? '司机：' : '主司机：' }}</span>
-                  <span>{{ (info.driverName || '') + ' ' + (info.driverPhone || '') }}</span>
+                  <span v-if="info.driverName">{{ (info.driverName || '') + ' ' + (info.driverPhone || '') }}</span>
+                  <span v-else>-</span>
                 </i-col>
                 <i-col v-if="info.assignCarType === 2" span="8">
                   <span class="detail-field-title">副司机：</span>
-                  <span>王小鹏 18751986780</span>
+                  <span v-if="info.assistantDriverName">{{ (info.assistantDriverName || '') + ' ' + (info.assistantDriverPhone || '') }}</span>
+                  <span v-else>-</span>
                 </i-col>
-                <i-col span="8">
+                <i-col v-if="info.assignCarType === 1" span="8">
                   <span class="detail-field-title">车型：</span>
                   <span v-if="info.carType">{{ info.carType|carTypeFormatter }} {{ info.carLength|carLengthFormatter }}</span>
                   <span v-else>-</span>
@@ -123,7 +125,7 @@
                 <span class="detail-field-fee">{{ payment.mileage || 0 }}公里</span>
               </i-col>
               <i-col span="6">
-                <span class="detail-field-title-sm">运输费：</span>
+                <span class="detail-field-title-sm">{{ info.assignCarType === 1 ? '运输费：' : '油费：' }}</span>
                 <span class="detail-field-fee">{{ payment.freightFee || 0 }}元</span>
               </i-col>
               <i-col span="6">
@@ -153,7 +155,7 @@
                 <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
               </i-col>
             </Row>
-            <Row class="detail-field-group">
+            <Row v-if="info.assignCarType === 1" class="detail-field-group">
               <i-col span="24">
                 <span class="detail-field-title-sm">结算方式：</span>
                 <div v-if="settlementType" class="detail-payment-way">
@@ -241,8 +243,12 @@
               <!-- <Radio label="3">下发承运商</Radio> -->
             </RadioGroup>
           </div>
-          <own-send-info v-if="sendWay === '2'" :form="info" source="detail"></own-send-info>
-          <send-carrier-info v-else ref="SendCarrierInfo" source="detail"></send-carrier-info>
+          <own-send-info v-if="sendWay === '2'" ref="ownSendInfo" :form="info" source="detail"></own-send-info>
+          <send-carrier-info
+            v-else
+            ref="SendCarrierInfo"
+            :carrier-info="carrierInfo"
+            source="detail"></send-carrier-info>
 
           <Row class="detail-field-group">
             <i-col span="24">
@@ -276,8 +282,10 @@
         </div>
         <send-fee
           ref="sendFee"
-          :mileage="payment.mileage"
-          :finance-rules-info="payment"
+          :payment="payment"
+          :settlement-type="settlementType"
+          :settlement-pay-info="settlementPayInfo"
+          :finance-rules-info="financeRulesInfo"
           :send-way="sendWay">
         </send-fee>
       </div>
@@ -346,6 +354,7 @@ export default {
       status: '',
       // 信息
       info: {
+        status: void 0,
         waybillNo: '',
         start: void 0,
         end: void 0,
@@ -358,22 +367,32 @@ export default {
         driverName: '',
         driverPhone: '',
         remark: '',
-        status: 1,
         collectionMoney: 0, // 代收货款
         cashBack: 0, // 返现运费
         assignCarType: 1, // 派车类型 1 外转 2 自送 V1.07新增
         assistantDriverName: '', // 副司机名称  V1.07新增
         assistantDriverPhone: '' // 副司机电话  V1.07新增
       },
+      // 外转赋值给子组件
+      carrierInfo: {
+        carrierName: '',
+        driverName: '',
+        driverPhone: '',
+        carNo: '',
+        carType: '',
+        carLength: ''
+      },
+      // 自送赋值给子组件
+      ownInfo: {},
       payment: {
-        freightFee: '',
-        loadFee: '',
-        unloadFee: '',
-        insuranceFee: '',
-        otherFee: '',
-        totalFee: '',
-        tollFee: 0, // 路桥费
-        mileage: void 0 // 计费里程 v1.06 新增
+        freightFee: null,
+        loadFee: null,
+        unloadFee: null,
+        insuranceFee: null,
+        otherFee: null,
+        cashBack: null,
+        tollFee: null, // 路桥费
+        mileage: null // 计费里程 v1.06 新增
       },
       rules: {
         start: [
@@ -637,6 +656,14 @@ export default {
         },
         cargoList: _.uniq(this.detail.map(item => item.orderId))
       }
+    },
+    financeRulesInfo () {
+      return {
+        start: this.info.start,
+        end: this.info.end,
+        weight: this.orderTotal.weight,
+        volume: this.orderTotal.volume
+      }
     }
   },
   methods: {
@@ -670,6 +697,18 @@ export default {
         for (let key in this.info) {
           this.info[key] = data.waybill[key]
         }
+        // 派车方式
+        this.sendWay = data.waybill.assignCarType.toString()
+        // 将承运商信息赋值给子组件
+        if (this.sendWay === '1') { // 外转
+          for (let key in this.carrierInfo) {
+            this.carrierInfo[key] = data.waybill[key]
+          }
+        } else { // 自送
+          for (let key in this.ownInfo) {
+            this.ownInfo[key] = data.waybill[key]
+          }
+        }
         for (let key in this.payment) {
           this.payment[key] = this.setMoneyUnit2Yuan(data.waybill[key])
           if (key === 'mileage') {
@@ -680,7 +719,7 @@ export default {
         this.logList = data.operaterLog
 
         this.status = this.statusFilter(data.waybill.status)
-        this.settlementType = data.waybill.settlementType ? data.waybill.settlementType.toString() : ''
+        this.settlementType = data.waybill.settlementType ? data.waybill.settlementType.toString() : '1'
         let temp = this.settlementPayInfo.map((item, i) => {
           if (!data.waybill.settlementPayInfo[i]) return item
           else {
@@ -699,51 +738,71 @@ export default {
         }
         // 改单个数
         this.changeCount = data.modifyCnt || 0
-        // if (this.changeCount) {
-        //   console.log('改单记录需要展示')
-        //   this.$nextTick(() => {
-        //     console.log(this.$refs['change'] && this.$refs['change'])
-        //     this.$refs['change'] && this.$refs['change'].initData()
-        //   })
-        // }
         this.setBtnsWithStatus()
         this.loading = false
       }).catch(err => console.error(err))
     },
     // 编辑
     edit () {
+      const z = this
+      let data = {
+        waybill: {
+          waybillId: z.id,
+          waybillNo: z.info.waybillNo,
+          start: z.info.start,
+          end: z.info.end,
+          status: z.info.status,
+          remark: z.info.remark,
+          assignCarType: z.sendWay
+        },
+        cargoList: _.uniq(z.detail.map(item => item.orderId))
+      }
+      if (z.sendWay === '1') {
+        data.waybill = Object.assign(data.waybill, z.$refs.sendFee.formatMoney(), z.$refs.SendCarrierInfo.getCarrierInfo(), {
+          settlementType: z.$refs.sendFee.getSettlementType(),
+          settlementPayInfo: z.$refs.sendFee.getSettlementPayInfo()
+        })
+      } else if (z.sendWay === '2') { // 自送
+        data.waybill = Object.assign(data.waybill, z.$refs.sendFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
+        delete data.waybill.cashBack // 自送没有返现
+      }
+      console.log(data)
       Server({
         url: '/waybill/update',
         method: 'post',
-        data: {
-          waybill: {
-            waybillId: this.id,
-            ...this.info,
-            ...this.formatMoney(),
-            settlementType: this.settlementType,
-            settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo() : void 0
-          },
-          cargoList: _.uniq(this.detail.map(item => item.orderId))
-        }
+        data: data
       }).then(res => {
-        this.$Message.success('保存成功')
-        this.cancelEdit()
+        z.$Message.success('保存成功')
+        z.cancelEdit()
       }).catch(err => console.error(err))
     },
     // 改单
     changeBill () {
+      const z = this
       let data = {
         waybill: {
-          waybillId: this.id,
-          ...this.info,
-          ...this.formatMoney(),
-          settlementType: this.settlementType,
-          settlementPayInfo: this.settlementType === '1' ? this.$refs.$payInfo.getPayInfo_change() : void 0
+          waybillId: z.id,
+          waybillNo: z.info.waybillNo,
+          start: z.info.start,
+          end: z.info.end,
+          status: z.info.status,
+          remark: z.info.remark,
+          assignCarType: z.sendWay
         },
-        cargoList: _.uniq(this.detail.map(item => item.orderId))
+        cargoList: _.uniq(z.detail.map(item => item.orderId))
       }
-      if (JSON.stringify(data) === this.changeStr) {
-        this.$Message.error('您并未做修改')
+      if (z.sendWay === '1') {
+        data.waybill = Object.assign(data.waybill, z.$refs.sendFee.formatMoney(), z.$refs.SendCarrierInfo.getCarrierInfo(), {
+          settlementType: z.$refs.sendFee.getSettlementType(),
+          settlementPayInfo: z.$refs.sendFee.getSettlementPayInfo()
+        })
+      } else if (z.sendWay === '2') { // 自送
+        data.waybill = Object.assign(data.waybill, z.$refs.sendFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
+        delete data.waybill.cashBack // 自送没有返现
+      }
+      console.log(data)
+      if (JSON.stringify(data) === z.changeStr) {
+        z.$Message.error('您并未做修改')
         return
       }
       Server({
@@ -751,22 +810,22 @@ export default {
         method: 'post',
         data: data
       }).then(res => {
-        this.$Message.success(res.data.msg)
-        this.cancelEdit()
+        z.$Message.success(res.data.msg)
+        z.cancelEdit()
       }).catch(err => console.error(err))
     },
 
     // 保存编辑
     save () {
-      const _this = this
-      if (!_this.validate()) return
-      _this.$refs.payment.validate((valid) => {
+      const z = this
+      // if (!_this.validate()) return
+      z.$refs['send'].validate((valid) => {
         if (valid) {
-          console.log(_this.inEditing)
-          if (_this.inEditing === 'edit') {
-            _this.edit()
-          } else if (_this.inEditing === 'change') {
-            _this.changeBill()
+          if (!z.checkDetailValidate()) return
+          if (z.inEditing === 'edit') {
+            z.edit()
+          } else if (z.inEditing === 'change') {
+            z.changeBill()
           } else {
             return false
           }
@@ -774,6 +833,20 @@ export default {
       })
     },
 
+    // 派车模块数据校验
+    checkDetailValidate () {
+      const z = this
+      let sendFeeComp = z.$refs.sendFee
+      let carrierInfoComp = z.$refs.SendCarrierInfo
+      let ownSendInfo = z.$refs.ownSendInfo
+      if (z.sendWay === '1' && carrierInfoComp.checkCarrierInfo() && sendFeeComp.validate()) {
+        return true
+      }
+      if (z.sendWay === '2' && ownSendInfo.checkOwnSendInfo() && sendFeeComp.validate()) {
+        return true
+      }
+      return false
+    },
     // 计费规则
     showChargeRules () {
       const self = this
