@@ -76,7 +76,7 @@ export default {
           width: 150,
           render: (h, params) => {
             let renderBtn = []
-            if (this.hasPower(130212)) {
+            if (this.hasPower(130210)) {
               renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
@@ -85,21 +85,17 @@ export default {
                 },
                 on: {
                   click: () => {
-                    var _this = this
+                    var vm = this
                     this.openDialog({
                       name: 'owned-vehicle/dialog/edit-repair',
                       data: {
                         title: '修改维修记录',
                         flag: 2, // 修改
-                        id: params.row.driverId,
-                        carrierId: _this.carrierId,
-                        driverId: params.row.driverId,
-                        carId: params.row.carId,
                         validate: { ...params.row, repairDate: new Date(params.row.repairDate) }
                       },
                       methods: {
                         ok () {
-                          this.formSearchInit = { carNo: '', reqairType: '' }
+                          vm.formSearchInit = {}
                         }
                       }
                     })
@@ -126,7 +122,7 @@ export default {
                 }
               }
             }, '查看'))
-            if (this.hasPower(130213)) {
+            if (this.hasPower(130210)) {
               renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
@@ -134,6 +130,7 @@ export default {
                 },
                 on: {
                   click: () => {
+                    let vm = this
                     this.openDialog({
                       name: 'owned-vehicle/dialog/confirmDelete',
                       data: {
@@ -141,12 +138,13 @@ export default {
                       methods: {
                         ok () {
                           Server({
-                            url: 'owerCar/deleteDriver',
+                            url: '/ownerCar/repair/del',
                             method: 'post',
                             data: { id: params.row.id }
                           }).then(({ data }) => {
                             if (data.code === 10000) {
-                              this.$Message.success('删除成功！')
+                              vm.$Message.success('删除成功！')
+                              vm.formSearchInit = {}
                             }
                           })
                         }
@@ -161,7 +159,7 @@ export default {
         },
         {
           title: '车牌号',
-          key: 'carNO'
+          key: 'carNo'
         },
         {
           title: '维修类别',
@@ -276,18 +274,16 @@ export default {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
     },
     editRepair () {
-      var _this = this
+      var vm = this
       this.openDialog({
         name: 'owned-vehicle/dialog/edit-repair',
         data: {
           title: '新增车辆维修保养记录',
-          flag: 1, // 新增
-          driverId: _this.driverId,
-          carrierId: _this.carrierId
+          flag: 1 // 新增
         },
         methods: {
           ok () {
-            this.formSearchInit = { carNo: '', reqairType: '' }
+            vm.formSearchInit = {}
           }
         }
       })
@@ -309,6 +305,7 @@ export default {
       this.keyword = ''
     },
     timeSort (column) {
+      this.formSearchInit = {}
       this.formSearchInit.order = (column.order === 'normal' ? '' : column.order)
     }
   }

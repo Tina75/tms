@@ -91,16 +91,10 @@
         </div>
         <div class="list-info">
           <Row class="row">
-            <Col span="5">
-            <div v-if="infoData.travelPhoto">
-              <div :style="'height: 90px;background-image: url(' + infoData.travelPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(0)"></div>
-              <p class="uploadLabel">行驶证</p>
-            </div>
-            </Col>
-            <Col span="6">
-            <div v-if="infoData.roadTransPhoto">
-              <div :style="'height: 90px;background-image: url(' + infoData.roadTransPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(1)"></div>
-              <p class="uploadLabelID">道路运输证</p>
+            <Col v-for="img in imageItems" :key="img.count" span="6">
+            <div :v-if="img.src">
+              <div :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(img.count)"></div>
+              <p class="uploadLabel">{{img.title}}</p>
             </div>
             </Col>
           </Row>
@@ -131,23 +125,8 @@ export default {
       line1: '',
       line2: '',
       searchLogData: {},
-      showTableOne: true
-    }
-  },
-  computed: {
-    imageItems () {
-      return [
-        {
-          title: '行驶证',
-          src: this.infoData.travelPhoto,
-          msrc: this.infoData.travelPhoto
-        },
-        {
-          title: '道路运输证',
-          src: this.infoData.roadTransPhoto,
-          msrc: this.infoData.roadTransPhoto
-        }
-      ]
+      showTableOne: true,
+      imageItems: []
     }
   },
   mounted () {
@@ -167,6 +146,17 @@ export default {
     },
     // 初始化数据格式
     initData () {
+      let count = 0
+      for (const key in this.infoData) {
+        if (key === 'travelPhoto' && this.infoData[key]) {
+          this.imageItems.push({ title: '行驶证', src: this.infoData.travelPhoto, count: count })
+          count++
+        }
+        if (key === 'roadTransPhoto' && this.infoData[key]) {
+          this.imageItems.push({ title: '道路运输证', src: this.infoData.roadTransPhoto, count: count })
+          count++
+        }
+      }
       this.infoData.carType = this.carTypeMap[this.infoData.carType]
       this.infoData.carLength = this.carLengthMap[this.infoData.carLength]
       let s1 = ''
@@ -217,13 +207,18 @@ export default {
         },
         methods: {
           ok () {
-            vm.queryByIdCar()
+            Server({
+              url: '/ownerCar/queryCarDetail',
+              method: 'get',
+              data: { carId: vm.infoData.id }
+            }).then(({ data }) => {
+              if (data.code === 10000) {
+                vm.infoData = data.data
+              }
+            })
           }
         }
       })
-    },
-    // 修改完进行数据更新
-    queryByIdCar () {
     },
     handleView (index) {
       this.openSwipe(index)

@@ -51,7 +51,7 @@
           <FormItem label="载重：" prop="shippingWeight">
             <Row>
               <Col span="20">
-              <Input v-model="validate.shippingWeight" :maxlength="9" placeholder="必填"></Input>
+              <Input v-model="validate.shippingWeight" :maxlength="9" placeholder="请输入"></Input>
               </Col>
               <Col span="2" offset="1">
               <span>吨</span>
@@ -218,6 +218,8 @@ export default {
             this.address2 = JSON.parse(this.validate.regularLine)[1]
           }
         }
+      } else {
+        this.title = '新增车辆'
       }
     },
     // 格式常跑路线信息
