@@ -46,14 +46,14 @@
         <div class="list-info">
           <Row class="row">
             <Col span="5">
-            <div v-if="infoData.travelPhoto">
-              <div :style="'height: 90px;background-image: url(' + infoData.travelPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(0)"></div>
+            <div v-if="infoData.driverPhoto">
+              <div :style="'height: 90px;background-image: url(' + infoData.driverPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(0)"></div>
               <p class="uploadLabel">行驶证</p>
             </div>
             </Col>
             <Col span="6">
-            <div v-if="infoData.drivePhoto">
-              <div :style="'height: 90px;background-image: url(' + infoData.drivePhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(1)"></div>
+            <div v-if="infoData.driverPhoto">
+              <div :style="'height: 90px;background-image: url(' + infoData.driverPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(1)"></div>
               <p class="uploadLabel">驾驶证</p>
             </div>
             </Col>
@@ -107,13 +107,13 @@ export default {
       return [
         {
           title: '行驶证',
-          src: this.infoData.travelPhoto,
-          msrc: this.infoData.travelPhoto
+          src: this.infoData.driverPhoto,
+          msrc: this.infoData.driverPhoto
         },
         {
           title: '驾驶证',
-          src: this.infoData.drivePhoto,
-          msrc: this.infoData.drivePhoto
+          src: this.infoData.driverPhoto,
+          msrc: this.infoData.driverPhoto
         }
       ]
     }
@@ -124,24 +124,16 @@ export default {
     this.searchLogData.logType = 'vehicle'
   },
   mounted () {
+    debugger
     // 数据备份，防止在详情页面对数据进行二次编辑
     this.infoDataInit = Object.assign({}, this.$route.query.rowData)
     this.id = this.infoDataInit.id
     this.carrierId = this.infoDataInit.carrierId
-    this.carId = this.infoDataInit.carId
     this.infoData = this.$route.query.rowData
-    this.initData()
+    this.initDataLine()
     this.openSwipe = prepareOpenSwipe(this.imageItems)
   },
   methods: {
-    // 切换头部tab
-    clickTitleTab (val) {
-      if (val === 'car') {
-        this.showTableOne = true
-      } else {
-        this.showTableOne = false
-      }
-    },
     // 日期格式化
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
@@ -150,9 +142,7 @@ export default {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     },
     // 初始化数据格式
-    initData () {
-      this.infoData.carType = this.carTypeMap[this.infoData.carType]
-      this.infoData.carLength = this.carLengthMap[this.infoData.carLength]
+    initDataLine () {
       let s1 = ''
       let n1 = ''
       let s2 = ''
@@ -181,8 +171,11 @@ export default {
     },
     updateDriverData () {
       this.openDialog({
-        name: 'owned-vehicle/dialog/edit-driver',
+        name: 'dialogs/edit-driver',
         data: {
+          title: '修改司机',
+          flag: 2, // 修改
+          validate: { ...this.infoData, purchDate: new Date(this.infoData.purchDate) }
         },
         methods: {
           ok () {

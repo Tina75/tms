@@ -86,7 +86,7 @@ import SelectInput from '@/components/SelectInput'
 import _ from 'lodash'
 import Server from '@/libs/js/server'
 export default {
-  name: 'carrier-driver',
+  name: 'owned-driver',
   components: {
     CitySelect,
     UpLoad,
@@ -118,13 +118,15 @@ export default {
   methods: {
     // 修改页面初始值更改
     configData () {
-      if (this.title === '修改车辆') {
+      debugger
+      if (this.flag === 2) {
         this.validate.carLength = this.validate.carLength.toString()
         this.$refs.upload1.progress = 1
         this.$refs.upload2.progress = 1
         this.$refs.upload3.progress = 1
         this.$refs.upload1.uploadImg = this.validate.travelPhoto
-        this.$refs.upload2.uploadImg = this.validate.drivePhoto
+        this.$refs.upload2.uploadImg = this.validate.identityFront
+        this.$refs.upload3.uploadImg = this.validate.identityBack
         this.validate.carBrand = this.validate.carBrand
         if (this.validate.regularLine && JSON.parse(this.validate.regularLine).length > 0) {
           if (JSON.parse(this.validate.regularLine).length === 1) {
@@ -159,8 +161,8 @@ export default {
     save (name) {
       this.flagAddress = true
       this.validate.travelPhoto = this.$refs.upload1.uploadImg
-      this.validate.drivePhoto = this.$refs.upload2.uploadImg
-      this.validate.drivePhoto = this.$refs.upload3.uploadImg
+      this.validate.identityFront = this.$refs.upload2.uploadImg
+      this.validate.identityBack = this.$refs.upload3.uploadImg
       this.checkLine()
       if (!this.flagAddress) {
         return
@@ -177,17 +179,28 @@ export default {
       })
     },
     add () {
+      let vm = this
       Server({
-        url: 'owerCar/addDriver',
-        method: 'post'
+        url: 'ownerCar/addDriver',
+        method: 'post',
+        data: vm.validate
       }).then(({ data }) => {
+        if (data.code === 10000) {
+          vm.$Message.success(data.msg)
+          vm.close()
+        }
       })
     },
     update () {
       Server({
-        url: 'owerCar/updateDriver',
-        method: 'post'
+        url: 'ownerCar/updateDriver',
+        method: 'post',
+        data: this.validate
       }).then(({ data }) => {
+        if (data.code === 10000) {
+          this.$Message.success(data.msg)
+          this.close()
+        }
       })
     }
   }

@@ -15,10 +15,10 @@
         <p class="modalTitle">基础信息</p>
         <Row>
           <Col span="8">
-          <FormItem label="车牌号：" prop="carNO">
+          <FormItem label="车牌号：" prop="carNo">
             <Row>
               <Col span="20">
-              <SelectInput v-model="validate.carNO" :maxlength="8" :parser="formatterCarNo" placeholder="必填"></SelectInput>
+              <SelectInput v-model="validate.carNo" :maxlength="8" :parser="formatterCarNo" placeholder="必填"></SelectInput>
               </Col>
             </Row>
           </FormItem>
@@ -95,26 +95,6 @@
           <Col span="16">
           <driver-Inputs></driver-Inputs>
           </Col>
-        <!-- <Col span="8">
-          <FormItem label="主司机：">
-            <Row>
-              <Col span="20">
-              <DatePicker v-model="validate.purchDate" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
-              </DatePicker>
-              </Col>
-            </Row>
-          </FormItem>
-          </Col>
-          <Col span="8">
-          <FormItem label="副司机：">
-            <Row>
-              <Col span="20">
-              <DatePicker v-model="validate.purchDate" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
-              </DatePicker>
-              </Col>
-            </Row>
-          </FormItem>
-          </Col> -->
         </Row>
         <p class="modalTitle">常跑线路</p>
         <div class="lineDiv">
@@ -164,16 +144,16 @@
     </Modal>
   </div>
 </template>
-
 <script>
-import { CAR_TYPE1, CAR_LENGTH, DRIVER_TYPE, formatterCarNo } from '@/libs/constant/carInfo'
-import { CAR } from '../client'
+import { CAR_TYPE1, CAR_LENGTH, DRIVER_TYPE } from '@/libs/constant/carInfo'
+import { CAR, formatterCarNo } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/index.vue'
 import SelectInput from '@/components/SelectInput'
 import DriverInputs from '@/components/own-car-form/OwnDriverInputs'
 import _ from 'lodash'
+import Server from '@/libs/js/server'
 export default {
   name: 'carrier-driver',
   components: {
@@ -198,16 +178,13 @@ export default {
       selectList: DRIVER_TYPE,
       formatterCarNo: formatterCarNo, // 车牌号大写转换
       ruleValidate: {
-        carNO: [
+        carNo: [
           { required: true, message: '车牌号不能为空', trigger: 'blur' },
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
         ],
         driverType: [
           { required: true, message: '合作方式不能为空', trigger: 'change' }
         ],
-        // driverName: [
-        //   { required: true, message: '司机姓名不能为空', trigger: 'blur' }
-        // ],
         driverPhone: [
           { required: true, message: '手机号不能为空', trigger: 'blur' },
           { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
@@ -297,13 +274,24 @@ export default {
       })
     },
     add () {
+      Server({
+        url: '/ownerCar/addCar',
+        method: 'post',
+        data: this.validate
+      }).then(({ data }) => {
+      })
     },
     update () {
+      Server({
+        url: '/ownerCar/updateCar',
+        method: 'post',
+        data: this.validate
+      }).then(({ data }) => {
+      })
     },
-    // 输入手机号，选中某条信息自动填充以后司机信息（姓名，合作方式。。）
+    // 输入手机号，选中某条信息自动填充以后司机信息（姓名，合作方式）
     slectDriverData (val, dirverInit) {
       this.validate.driverName = dirverInit.driverName
-      this.validate.driverType = dirverInit.driverType.toString()
     }
     // 手机号输入联想
     // queryDriverByPhoneList (driverPhone) {

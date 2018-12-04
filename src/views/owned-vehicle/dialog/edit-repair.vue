@@ -13,11 +13,11 @@
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="120">
         <Row>
           <Col span="7">
-          <FormItem label="车牌号：" prop="carNO">
+          <FormItem label="车牌号：" prop="carNo">
             <Row>
               <Col span="19">
-              <span v-if="!disAbleBtn">{{ validate.carNO }}</span>
-              <Select v-if="disAbleBtn" v-model="validate.carNO" transfer placeholder="必选" class="minWidth">
+              <span v-if="disAbleBtn">{{ validate.carNo }}</span>
+              <Select v-if="!disAbleBtn" v-model="validate.carNo" transfer placeholder="必选" class="minWidth">
                 <Option
                   v-for="item in carNoList"
                   :value="item.carNo"
@@ -157,8 +157,9 @@
 <script>
 import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
-import { carrierAddVehicle, carrierUpdateVehicle, carrierQueryCarlist, CODE, CAR } from '../client'
+import { CODE, CAR } from '../client'
 import float from '@/libs/js/float'
+import Server from '@/libs/js/server'
 export default {
   name: 'carrier-vehicle',
   mixins: [BaseDialog],
@@ -183,7 +184,7 @@ export default {
         { id: '2', name: '保养' }
       ],
       ruleValidate: {
-        carNO: [
+        carNo: [
           { required: true, message: '车牌号不能为空' },
           { type: 'string', message: '车牌号格式错误', pattern: CAR }
         ],
@@ -218,11 +219,9 @@ export default {
   mounted () {
     if (this.title === '修改维修记录') {
       this.configData()
-    } else if (this.carNO !== undefined) {
+    } else if (this.carNo === undefined) {
       this.disAbleBtn = false
-      this.validate.carNO = this.carNO
-    } else {
-      // this.queryCarnoList()
+      this.queryCarnoList()
     }
   },
   methods: {
@@ -252,7 +251,7 @@ export default {
       this.validate.repairMoney = this.validate.repairMoney / 100
       this.validate.payMoney = this.validate.payMoney / 100
       this.validate.waitPayMoney = this.validate.waitPayMoney / 100
-      this.carNoList.push({ carNO: this.validate.carNO })
+      this.carNoList.push({ carNo: this.validate.carNo })
     },
     save (name) {
       this.validate.carrierId = this.carrierId
@@ -268,17 +267,21 @@ export default {
       })
     },
     add () {
-      let data = Object.assign({}, this.validate)
-      data.repairMoney = this.validate.repairMoney * 100
-      data.payMoney = this.validate.payMoney * 100
-      data.waitPayMoney = this.validate.waitPayMoney * 100
-      carrierAddVehicle(data).then(res => {
-        if (res.data.code === CODE) {
-          this.$Message.success(res.data.msg)
+      let params = Object.assign({}, this.validate)
+      params.repairMoney = this.validate.repairMoney * 100
+      params.payMoney = this.validate.payMoney * 100
+      params.waitPayMoney = this.validate.waitPayMoney * 100
+      Server({
+        url: '/ownerCar/repair/add',
+        method: 'post',
+        data: params
+      }).then(({ data }) => {
+        if (data.data.code === CODE) {
+          this.$Message.success(data.data.msg)
           this.ok() // 刷新页面
           this.close()
         } else {
-          this.$Message.error(res.data.msg)
+          this.$Message.error(data.data.msg)
         }
       })
     },
@@ -288,23 +291,28 @@ export default {
       data.payMoney = this.validate.payMoney * 100
       data.waitPayMoney = this.validate.waitPayMoney * 100
       delete data.creater
-      carrierUpdateVehicle(data).then(res => {
-        if (res.data.code === CODE) {
-          this.$Message.success(res.data.msg)
+      Server({
+        url: '/ownerCar/repair/update',
+        method: 'post',
+        data: this.validate
+      }).then(({ data }) => {
+        if (data.data.code === CODE) {
+          this.$Message.success(data.data.msg)
           this.ok() // 刷新页面
           this.close()
         } else {
-          this.$Message.error(res.data.msg)
+          this.$Message.error(data.data.msg)
         }
       })
     },
     // 查询车辆列表-下拉框需要
     queryCarnoList () {
-      let data = {}
-      data.carrierId = this.carrierId
-      carrierQueryCarlist(data).then(res => {
-        if (res.data.code === CODE) {
-          this.carNoList = res.data.data
+      Server({
+        url: '/ownerCar/findCarList',
+        method: 'get'
+      }).then(({ data }) => {
+        if (data.data.code === CODE) {
+          this.carNoList = data.data.data
         }
       })
     }

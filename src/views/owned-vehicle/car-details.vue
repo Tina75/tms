@@ -112,7 +112,6 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import { CAR_TYPE1, CAR_LENGTH1, DRIVER_TYPE } from '@/libs/constant/carInfo'
-import { CODE, carrierDeleteDriver, queryByIdCarrier } from './client'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
 export default {
@@ -198,22 +197,12 @@ export default {
       this.line2 = s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2
     },
     removeDriverData () {
-      let _this = this
+      // let _this = this
       this.openDialog({
-        name: 'client/dialog/confirmDelete',
+        name: 'owned-vehicle/dialog/confirmDelete',
         data: {},
         methods: {
           ok () {
-            carrierDeleteDriver({
-              carId: _this.carId
-            }).then(res => {
-              if (res.data.code === CODE) {
-                _this.$Message.success(res.data.msg)
-                this.ema.fire('closeTab', this.$route)
-              } else {
-                _this.$Message.error(res.data.msg)
-              }
-            })
           }
         }
       })
@@ -221,7 +210,7 @@ export default {
     updateDriverData () {
       let _this = this
       this.openDialog({
-        name: 'client/dialog/carrier-driver',
+        name: 'owned-vehicle/dialog/edit-driver',
         data: {
           title: '修改车辆',
           flag: 2,
@@ -238,20 +227,20 @@ export default {
     },
     // 修改完进行数据更新
     queryByIdCar () {
-      let _this = this
-      queryByIdCarrier({
-        id: _this.id,
-        carrierId: _this.carrierId,
-        type: 'vehicle'
-      }).then(res => {
-        if (res.data.code === CODE) {
-          _this.infoData = res.data.data
-          _this.infoDataInit = Object.assign({}, _this.infoData)
-          _this.initData()
-        } else {
-          _this.$Message.error(res.data.msg)
-        }
-      })
+      // let _this = this
+      // queryByIdCarrier({
+      //   id: _this.id,
+      //   carrierId: _this.carrierId,
+      //   type: 'vehicle'
+      // }).then(res => {
+      //   if (res.data.code === CODE) {
+      //     _this.infoData = res.data.data
+      //     _this.infoDataInit = Object.assign({}, _this.infoData)
+      //     _this.initData()
+      //   } else {
+      //     _this.$Message.error(res.data.msg)
+      //   }
+      // })
     },
     handleView (index) {
       this.openSwipe(index)

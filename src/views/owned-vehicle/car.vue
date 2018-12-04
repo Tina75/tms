@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="add">
-      <Button v-if="hasPower(130207)" type="primary" @click="editCar">新增车辆</Button>
-      <Button v-if="hasPower(130210)" @click="carExport">导出</Button>
+      <Button type="primary" @click="editCar">新增车辆</Button>
+      <Button @click="carExport">导出</Button>
       <div class="rightSearch">
         <template>
           <Select v-model="selectStatus" class="conditionSty" transfer @on-change="changeState">
@@ -26,8 +26,9 @@
       :columns="menuColumns"
       :keywords="formSearchInit"
       class="pageTable"
-      url="/owerCar/listCar"
+      url="/ownerCar/listCar"
       list-field="list"
+      method="post"
       @on-load="handleLoad"
       @on-sort-change = "timeSort">
     </page-table>
@@ -81,12 +82,11 @@ export default {
                       data: {
                         title: '修改车辆',
                         flag: 2, // 修改
-                        carrierId: this.carrierId,
-                        carId: params.row.carId,
                         validate: { ...params.row, purchDate: new Date(params.row.purchDate) }
                       },
                       methods: {
                         ok () {
+                          this.formSearchInit = { carNo: '', driverName: '' }
                         }
                       }
                     })
@@ -248,7 +248,7 @@ export default {
         },
         {
           value: '2',
-          label: '司机手机号'
+          label: '司机姓名'
         }
       ]
     }
@@ -268,22 +268,11 @@ export default {
         this.$Message.error('导出内容为空')
         return
       }
-      // if (Number(this.totalCount1) < 1) {
-      //   this.$Message.error('导出内容为空')
-      //   return
-      // }
-      // let data = {
-      //   carrierId: this.carrierId
-      // }
-      // if (this.selectStatus1 === '1') {
-      //   data.carNO = this.keyword1
-      // } else if (this.selectStatus1 === '2') {
-      //   data.driverType = this.keyword1
-      // }
+      let params = this.formSearchInit
       Export({
-        url: '/ownerCar/exportCarn',
+        url: '/owerCar/exportCar',
         method: 'post',
-        data: '',
+        data: params,
         fileName: '导出车辆列表'
       })
     },
@@ -301,6 +290,7 @@ export default {
         },
         methods: {
           ok () {
+            this.formSearchInit = { carNo: '', driverName: '' }
           }
         }
       })

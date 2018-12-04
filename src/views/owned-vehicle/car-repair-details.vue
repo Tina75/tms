@@ -100,7 +100,7 @@
           <span class="iconTitleP">操作日志</span>
         </div>
         <div class="list-info">
-          <record-list :search-data="searchLogData" methods-url="/carrier/carrierLog/list"></record-list>
+          <record-list :search-data="searchLogData" methods-url="/ownerCar/carrierLog/list"></record-list>
         </div>
       </div>
     </div>
@@ -108,7 +108,6 @@
 </template>
 <script>
 import BasePage from '@/basic/BasePage'
-import { CODE, carrierDeleteRepairVehicle, queryByIdCarrier } from './client'
 import RecordList from '@/components/RecordList'
 export default {
   name: 'car-repair-details',
@@ -142,22 +141,11 @@ export default {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
     },
     removeRepairData () {
-      let _this = this
       this.openDialog({
-        name: 'client/dialog/confirmDelete',
+        name: 'owned-vehicle/dialog/confirmDelete',
         data: {},
         methods: {
           ok () {
-            carrierDeleteRepairVehicle({
-              id: _this.infoData.id
-            }).then(res => {
-              if (res.data.code === CODE) {
-                _this.$Message.success(res.data.msg)
-                this.ema.fire('closeTab', this.$route)
-              } else {
-                _this.$Message.error(res.data.msg)
-              }
-            })
           }
         }
       })
@@ -165,7 +153,7 @@ export default {
     updateRepairData () {
       let _this = this
       this.openDialog({
-        name: 'client/dialog/carrier-vehicle',
+        name: 'owned-vehicle/dialog/edit-repair',
         data: {
           title: '修改维修记录',
           flag: 2, // 修改
@@ -183,18 +171,18 @@ export default {
       })
     },
     queryByIdReparir () {
-      let _this = this
-      queryByIdCarrier({
-        id: _this.infoData.id.toString(),
-        carrierId: _this.carrierId.toString(),
-        type: 'repair'
-      }).then(res => {
-        if (res.data.code === CODE) {
-          _this.infoData = res.data.data
-        } else {
-          _this.$Message.error(res.data.msg)
-        }
-      })
+      // let _this = this
+      // queryByIdCarrier({
+      //   id: _this.infoData.id.toString(),
+      //   carrierId: _this.carrierId.toString(),
+      //   type: 'repair'
+      // }).then(res => {
+      //   if (res.data.code === CODE) {
+      //     _this.infoData = res.data.data
+      //   } else {
+      //     _this.$Message.error(res.data.msg)
+      //   }
+      // })
     }
   }
 }

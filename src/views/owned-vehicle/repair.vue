@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="add">
-      <Button v-if="hasPower(130211)" type="primary" @click="editRepair">新增记录</Button>
+      <Button type="primary" @click="editRepair">新增记录</Button>
       <Button v-if="hasPower(130210)" @click="carExport">导出</Button>
       <div class="rightSearch">
         <template>
@@ -9,13 +9,14 @@
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
-        <Input v-if="selectStatus !== '2'"
-               v-model="keyword"
-               :maxlength="8"
-               :icon="keyword? 'ios-close-circle' : ''"
-               :placeholder="selectStatus === '1' ? '请输入车牌号搜索' : null"
-               class="search-input"
-               @on-enter="searchRepairList"/>
+        <Input
+          v-if="selectStatus !== '2'"
+          :placeholder="selectStatus === '1' ? '请输入车牌号搜索' : null"
+          :icon="keyword? 'ios-close-circle' : ''"
+          :maxlength="8"
+          v-model="keyword"
+          class="search-input"
+          @on-enter="searchRepairList"/>
         <Select v-if="selectStatus === '2'" v-model="keyword" class="search-input" transfer @on-change="searchRepairList">
           <Option
             v-for="item in repairTypeList"
@@ -27,15 +28,17 @@
         <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
                 style="float: right;width:41px;"
-                @click="searchRepairList"></Button>
+                @click="searchRepairList">
+        </Button>
       </div>
     </div>
     <page-table
       :columns="menuColumns"
       :keywords="formSearchInit"
       class="pageTable"
-      url="employee/list"
+      url="/ownerCar/repair/list"
       list-field="list"
+      method="post"
       @on-load="handleLoad"
       @on-sort-change = "timeSort">
     </page-table>
@@ -61,6 +64,8 @@ export default {
       selectStatus: '1',
       keyword: '',
       formSearchInit: {
+        carNo: '',
+        reqairType: ''
       },
       exportFile: true,
       menuColumns: [
@@ -93,7 +98,7 @@ export default {
                       },
                       methods: {
                         ok () {
-                          _this._carrierListRepairVehicle() // 刷新页面
+                          this.formSearchInit = { carNo: '', reqairType: '' }
                         }
                       }
                     })
@@ -254,22 +259,11 @@ export default {
         this.$Message.error('导出内容为空')
         return
       }
-      // if (Number(this.totalCount1) < 1) {
-      //   this.$Message.error('导出内容为空')
-      //   return
-      // }
-      // let data = {
-      //   carrierId: this.carrierId
-      // }
-      // if (this.selectStatus1 === '1') {
-      //   data.carNO = this.keyword1
-      // } else if (this.selectStatus1 === '2') {
-      //   data.driverType = this.keyword1
-      // }
+      let params = this.formSearchInit
       Export({
         url: '/ownerCar/repair/export',
         method: 'post',
-        data: '',
+        data: params,
         fileName: '导出维修列表'
       })
     },
@@ -292,6 +286,7 @@ export default {
         },
         methods: {
           ok () {
+            this.formSearchInit = { carNo: '', reqairType: '' }
           }
         }
       })

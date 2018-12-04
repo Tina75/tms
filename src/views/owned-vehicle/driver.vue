@@ -27,7 +27,8 @@
       :columns="menuColumns"
       :keywords="formSearchInit"
       class="pageTable"
-      url="employee/list"
+      method="post"
+      url="/ownerCar/listDriver"
       list-field="list"
       @on-load="handleLoad"
       @on-sort-change = "timeSort">
@@ -53,8 +54,7 @@ export default {
     return {
       formSearchInit: {
         driverName: '',
-        driverPhone: '',
-        order: ''
+        driverPhone: ''
       },
       selectStatus: '1',
       keyword: '',
@@ -80,12 +80,11 @@ export default {
                       data: {
                         title: '修改司机',
                         flag: 2, // 修改
-                        carrierId: this.carrierId,
-                        carId: params.row.carId,
                         validate: { ...params.row, purchDate: new Date(params.row.purchDate) }
                       },
                       methods: {
                         ok () {
+                          this.formSearchInit = { driverName: '', driverPhone: '' }
                         }
                       }
                     })
@@ -126,7 +125,7 @@ export default {
                       methods: {
                         ok () {
                           Server({
-                            url: 'owerCar/deleteDriver',
+                            url: 'ownerCar/deleteDriver',
                             method: 'post',
                             data: { id: params.row.id }
                           }).then(({ data }) => {
@@ -146,16 +145,20 @@ export default {
         },
         {
           title: '司机姓名',
-          key: 'carNO'
+          key: 'driverName'
         },
         {
           title: '手机号',
-          key: 'driverType'
+          key: 'driverPhone'
         },
         {
           title: '创建时间',
           key: 'driverName',
-          sortable: 'custom'
+          sortable: 'custom',
+          render: (h, params) => {
+            let text = this.formatDateTime(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
         }
       ],
       selectList: [
@@ -171,6 +174,10 @@ export default {
     }
   },
   methods: {
+    // 日期格式化
+    formatDateTime (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
     // 导出判空
     handleLoad (response) {
       try {
@@ -185,22 +192,11 @@ export default {
         this.$Message.error('导出内容为空')
         return
       }
-      // if (Number(this.totalCount1) < 1) {
-      //   this.$Message.error('导出内容为空')
-      //   return
-      // }
-      // let data = {
-      //   carrierId: this.carrierId
-      // }
-      // if (this.selectStatus1 === '1') {
-      //   data.carNO = this.keyword1
-      // } else if (this.selectStatus1 === '2') {
-      //   data.driverType = this.keyword1
-      // }
+      let params = this.formSearchInit
       Export({
-        url: '/owerCar/exportDriver',
+        url: '/ownerCar/exportDriver',
         method: 'post',
-        data: '',
+        data: params,
         fileName: '导出司机列表'
       })
     },
@@ -213,6 +209,7 @@ export default {
         },
         methods: {
           ok () {
+            this.formSearchInit = { driverName: '', driverPhone: '' }
           }
         }
       })
