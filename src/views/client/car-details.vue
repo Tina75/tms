@@ -96,7 +96,7 @@
       </div>
       <div class="list-info">
         <Row class="row">
-          <Col v-for="img in imageItems" :key="img.count" span="6">
+          <Col v-for="img in imageItems" :key="img.count" span="5">
           <div :v-if="img.src">
             <div :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(img.count)"></div>
             <p class="uploadLabel">{{img.title}}</p>
@@ -168,6 +168,7 @@ export default {
     },
     // 初始化数据格式
     initData () {
+      this.imageItems = []
       let count = 0
       for (const key in this.infoData) {
         if (key === 'travelPhoto' && this.infoData[key]) {

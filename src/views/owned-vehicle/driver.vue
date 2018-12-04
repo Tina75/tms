@@ -42,6 +42,7 @@ import BasePage from '@/basic/BasePage'
 import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
 import Server from '@/libs/js/server'
+import { mapActions } from 'vuex'
 export default {
   name: 'owned-car',
   components: {
@@ -86,6 +87,7 @@ export default {
                       },
                       methods: {
                         ok () {
+                          vm.getOwnDrivers()
                           vm.formSearchInit = {}
                         }
                       }
@@ -156,8 +158,68 @@ export default {
           key: 'driverPhone'
         },
         {
+          title: '常跑线路',
+          key: 'regularLine',
+          render: (h, params) => {
+            let s1 = ''
+            let n1 = ''
+            let s2 = ''
+            let n2 = ''
+            if (params.row.regularLine && JSON.parse(params.row.regularLine).length === 1) {
+              s1 = JSON.parse(params.row.regularLine)[0].sn === undefined ? '' : JSON.parse(params.row.regularLine)[0].sn
+              n1 = JSON.parse(params.row.regularLine)[0].en === undefined ? '' : JSON.parse(params.row.regularLine)[0].en
+            } else if (params.row.regularLine && JSON.parse(params.row.regularLine).length === 2) {
+              s1 = JSON.parse(params.row.regularLine)[0].sn === undefined ? '' : JSON.parse(params.row.regularLine)[0].sn
+              n1 = JSON.parse(params.row.regularLine)[0].en === undefined ? '' : JSON.parse(params.row.regularLine)[0].en
+              s2 = JSON.parse(params.row.regularLine)[1].sn === undefined ? '' : JSON.parse(params.row.regularLine)[1].sn
+              n2 = JSON.parse(params.row.regularLine)[1].en === undefined ? '' : JSON.parse(params.row.regularLine)[1].en
+            }
+            return h('div', [
+              h('Tooltip', {
+                props: {
+                  placement: 'top'
+                },
+                style: {
+                  width: '100%',
+                  paddingTop: '6px'
+                }
+              }, [
+                h('span', {
+                  slot: 'content'
+                }, [h('p', {
+                  style: {
+                    whiteSpace: 'pre-wrap'
+                  }
+                }, (s1 + '—' + n1) === '—' ? '' : s1 + '—' + n1),
+                h('p', {
+                  style: {
+                    whiteSpace: 'pre-wrap'
+                  }
+                }, (s2 + '—' + n2) === '—' ? '' : s2 + '—' + n2)
+                ]),
+                h('p', {
+                  style: {
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }
+                }, s1 + '—' + n1 === '—' ? '' : s1 + '—' + n1),
+                h('p', {
+                  style: {
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }
+                }, s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2)
+              ])
+            ])
+          }
+        },
+        {
           title: '创建时间',
-          key: 'driverName',
+          key: 'createTime',
           sortable: 'custom',
           render: (h, params) => {
             let text = this.formatDateTime(params.row.createTime)
@@ -178,6 +240,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['getOwnDrivers']),
     // 日期格式化
     formatDateTime (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
@@ -211,6 +274,7 @@ export default {
         data: {},
         methods: {
           ok () {
+            vm.getOwnDrivers()
             vm.formSearchInit = {}
           }
         }
@@ -232,7 +296,7 @@ export default {
     },
     timeSort (column) {
       this.formSearchInit = {}
-      this.formSearchInit.order = (column.order === 'normal' ? '' : column.order)
+      this.formSearchInit.order = (column.order === 'normal' ? '' : 'create_time ' + column.order)
     },
     changeState () {
       this.keyword = ''

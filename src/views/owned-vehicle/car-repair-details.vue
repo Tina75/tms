@@ -120,8 +120,6 @@ export default {
   data () {
     return {
       infoData: {},
-      id: '',
-      carrierId: '',
       searchLogData: {}
     }
   },
@@ -134,10 +132,21 @@ export default {
   },
   mounted () {
     this.infoData = this.$route.query.rowData
-    this.id = this.$route.query.rowData.id
-    this.carrierId = this.$route.query.carrierId
+    this.queryById()
   },
   methods: {
+    queryById () {
+      let vm = this
+      Server({
+        url: '/ownerCar/queryRepairDetail',
+        method: 'get',
+        data: { repairId: vm.infoData.id }
+      }).then(({ data }) => {
+        if (data.code === 10000) {
+          vm.infoData = data.data
+        }
+      })
+    },
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
     },
@@ -173,15 +182,7 @@ export default {
         },
         methods: {
           ok () {
-            Server({
-              url: '/ownerCar/queryRepairDetail',
-              method: 'get',
-              data: { repairId: vm.infoData.id }
-            }).then(({ data }) => {
-              if (data.code === 10000) {
-                vm.infoData = data.data
-              }
-            })
+            vm.queryById()
           }
         }
       })

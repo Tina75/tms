@@ -45,24 +45,12 @@
         </div>
         <div class="list-info">
           <Row class="row">
-            <Col v-for="img in imageItems" :key="img.count" span="6">
+            <Col v-for="img in imageItems" :key="img.count" span="5">
             <div :v-if="img.src">
               <div :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(img.count)"></div>
               <p class="uploadLabel">{{img.title}}</p>
             </div>
             </Col>
-          <!-- <Col span="6">
-            <div v-if="infoData.identityFront">
-              <div :style="'height: 90px;background-image: url(' + infoData.identityFront + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(1)"></div>
-              <p class="uploadLabelID">身份证正面</p>
-            </div>
-            </Col>
-            <Col span="6">
-            <div v-if="infoData.identityBack">
-              <div :style="'height: 90px;background-image: url(' + infoData.identityBack + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(2)"></div>
-              <p class="uploadLabelID">身份证反面</p>
-            </div>
-            </Col>-->
           </Row>
         </div>
         <div class="title" style="margin-top: 40px;">
@@ -97,20 +85,30 @@ export default {
   data () {
     return {
       infoData: {},
-      infoDataInit: {},
       line1: '',
       line2: '',
       imageItems: []
     }
   },
   mounted () {
-    // 数据备份，防止在详情页面对数据进行二次编辑
-    this.infoDataInit = Object.assign({}, this.$route.query.rowData)
     this.infoData = this.$route.query.rowData
-    this.initData()
+    this.queryById()
     this.openSwipe = prepareOpenSwipe(this.imageItems)
   },
   methods: {
+    queryById () {
+      let vm = this
+      Server({
+        url: '/ownerCar/queryDriverDetail',
+        method: 'get',
+        data: { driverId: vm.infoData.id }
+      }).then(({ data }) => {
+        if (data.code === 10000) {
+          vm.infoData = data.data
+          vm.initData()
+        }
+      })
+    },
     // 日期格式化
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
@@ -121,6 +119,7 @@ export default {
     // 初始化数据格式
     initData () {
       let count = 0
+      this.imageItems = []
       for (const key in this.infoData) {
         if (key === 'driverPhoto' && this.infoData[key]) {
           this.imageItems.push({ title: '驾驶证', src: this.infoData.driverPhoto, count: count })
@@ -161,7 +160,7 @@ export default {
             Server({
               url: '/ownerCar/deleteDriver',
               method: 'post',
-              data: { id: vm.infoDataInit.id }
+              data: { id: vm.infoData.id }
             }).then(({ data }) => {
               if (data.code === 10000) {
                 vm.$Message.success('删除成功！')
@@ -183,15 +182,7 @@ export default {
         },
         methods: {
           ok () {
-            Server({
-              url: '/ownerCar/queryDriverDetail',
-              method: 'get',
-              data: { driverId: vm.infoData.id }
-            }).then(({ data }) => {
-              if (data.code === 10000) {
-                vm.infoData = data.data
-              }
-            })
+            vm.queryById()
           }
         }
       })

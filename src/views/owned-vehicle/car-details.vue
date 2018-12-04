@@ -16,19 +16,19 @@
             <Col span="6">
             <div>
               <span class="label">车牌号：</span>
-              {{infoData.carNO}}
+              {{infoData.carNo}}
             </div>
             </Col>
             <Col span="6">
             <div>
               <span class="label">车型：</span>
-              {{infoData.carType}}
+              {{infoData.carTypeInit}}
             </div>
             </Col>
             <Col span="6">
             <div>
               <span class="label">车长：</span>
-              {{infoData.carLength}}
+              {{infoData.carLengthInit}}
             </div>
             </Col>
             <Col span="6">
@@ -54,13 +54,13 @@
             <Col span="6">
             <div>
               <span class="label">主司机：</span>
-              {{infoData.driverId}}
+              {{infoData.driverName}}
             </div>
             </Col>
             <Col span="6">
             <div>
               <span class="label">副司机：</span>
-              {{infoData.assistDriver}}
+              {{infoData.assistantDriverName}}
             </div>
             </Col>
           </Row>
@@ -91,11 +91,22 @@
         </div>
         <div class="list-info">
           <Row class="row">
-            <Col v-for="img in imageItems" :key="img.count" span="6">
+            <Col v-for="img in imageItems" :key="img.count" span="5">
             <div :v-if="img.src">
               <div :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(img.count)"></div>
               <p class="uploadLabel">{{img.title}}</p>
             </div>
+            </Col>
+          </Row>
+        </div>
+        <div class="title" style="margin-top: 40px;">
+          <span class="icontTitle"></span>
+          <span class="iconTitleP">备注</span>
+        </div>
+        <div class="list-info">
+          <Row class="row">
+            <Col span="20">
+            {{infoData.remark}}
             </Col>
           </Row>
         </div>
@@ -119,7 +130,6 @@ export default {
   data () {
     return {
       infoData: {},
-      infoDataInit: {},
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH1,
       line1: '',
@@ -131,12 +141,24 @@ export default {
   },
   mounted () {
     // 数据备份，防止在详情页面对数据进行二次编辑
-    this.infoDataInit = Object.assign({}, this.$route.query.rowData)
     this.infoData = this.$route.query.rowData
-    this.initData()
+    this.queryById()
     this.openSwipe = prepareOpenSwipe(this.imageItems)
   },
   methods: {
+    queryById () {
+      let vm = this
+      Server({
+        url: '/ownerCar/queryCarDetail',
+        method: 'get',
+        data: { carId: vm.infoData.id }
+      }).then(({ data }) => {
+        if (data.code === 10000) {
+          vm.infoData = data.data
+          vm.initData()
+        }
+      })
+    },
     // 日期格式化
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
@@ -146,6 +168,7 @@ export default {
     },
     // 初始化数据格式
     initData () {
+      this.imageItems = []
       let count = 0
       for (const key in this.infoData) {
         if (key === 'travelPhoto' && this.infoData[key]) {
@@ -157,8 +180,8 @@ export default {
           count++
         }
       }
-      this.infoData.carType = this.carTypeMap[this.infoData.carType]
-      this.infoData.carLength = this.carLengthMap[this.infoData.carLength]
+      this.infoData.carTypeInit = this.carTypeMap[this.infoData.carType]
+      this.infoData.carLengthInit = this.carLengthMap[this.infoData.carLength]
       let s1 = ''
       let n1 = ''
       let s2 = ''
@@ -185,7 +208,7 @@ export default {
             Server({
               url: '/ownerCar/deleteCar',
               method: 'get',
-              data: { id: vm.infoData.id }
+              data: { carId: vm.infoData.id }
             }).then(({ data }) => {
               if (data.code === 10000) {
                 vm.$Message.success('删除成功！')
@@ -203,19 +226,11 @@ export default {
         data: {
           title: '修改车辆',
           flag: 2,
-          validate: { ...vm.infoDataInit, purchDate: new Date(vm.infoDataInit.purchDate) }
+          validate: { ...vm.infoData, purchDate: new Date(vm.infoData.purchDate) }
         },
         methods: {
           ok () {
-            Server({
-              url: '/ownerCar/queryCarDetail',
-              method: 'get',
-              data: { carId: vm.infoData.id }
-            }).then(({ data }) => {
-              if (data.code === 10000) {
-                vm.infoData = data.data
-              }
-            })
+            vm.queryById()
           }
         }
       })

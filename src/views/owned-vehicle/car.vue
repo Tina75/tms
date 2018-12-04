@@ -42,6 +42,7 @@ import BasePage from '@/basic/BasePage'
 import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
 import Server from '@/libs/js/server'
+import { mapActions } from 'vuex'
 export default {
   name: 'owned-car',
   components: {
@@ -88,6 +89,7 @@ export default {
                       },
                       methods: {
                         ok () {
+                          vm.getOwnCars()
                           vm.formSearchInit = {}
                         }
                       }
@@ -132,7 +134,7 @@ export default {
                           Server({
                             url: '/ownerCar/deleteCar',
                             method: 'get',
-                            data: { id: params.row.id }
+                            data: { carId: params.row.id }
                           }).then(({ data }) => {
                             if (data.code === 10000) {
                               vm.$Message.success('删除成功！')
@@ -169,6 +171,10 @@ export default {
         {
           title: '净空（方）',
           key: 'shippingVolume'
+        },
+        {
+          title: '品牌',
+          key: 'carBrand'
         },
         {
           title: '常跑线路',
@@ -258,6 +264,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['getOwnCars']),
     // 导出判空
     handleLoad (response) {
       try {
@@ -274,7 +281,7 @@ export default {
       }
       let params = this.formSearchInit
       Export({
-        url: '/owerCar/exportCar',
+        url: '/ownerCar/exportCar',
         method: 'post',
         data: params,
         fileName: '导出车辆列表'
@@ -285,16 +292,17 @@ export default {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     },
     editCar () {
+      let vm = this
       this.openDialog({
         name: 'owned-vehicle/dialog/edit-car',
         data: {
           title: '新增车辆',
-          flag: 1, // 新增
-          carrierId: this.carrierId // carrierId
+          flag: 1 // 新增
         },
         methods: {
           ok () {
-            this.formSearchInit = {}
+            vm.getOwnCars()
+            vm.formSearchInit = {}
           }
         }
       })
@@ -317,7 +325,7 @@ export default {
     },
     timeSort (column) {
       this.formSearchInit = {}
-      this.formSearchInit.order = (column.order === 'normal' ? '' : column.order)
+      this.formSearchInit.order = (column.order === 'normal' ? '' : 'create_time ' + column.order)
     }
   }
 }

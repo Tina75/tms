@@ -40,8 +40,7 @@
       url="/ownerCar/repair/list"
       list-field="list"
       method="post"
-      @on-load="handleLoad"
-      @on-sort-change = "timeSort">
+      @on-load="handleLoad">
     </page-table>
   </div>
 </template>
@@ -66,7 +65,7 @@ export default {
       keyword: '',
       formSearchInit: {
         carNo: '',
-        reqairType: ''
+        repairType: ''
       },
       exportFile: true,
       menuColumns: [
@@ -219,7 +218,6 @@ export default {
         {
           title: '添加时间',
           key: 'createTime',
-          sortable: 'custom',
           width: 150,
           render: (h, params) => {
             let text = this.formatDateTime(params.row.createTime)
@@ -290,11 +288,11 @@ export default {
     },
     searchRepairList () {
       if (this.selectStatus === '1') {
-        this.formSearchInit.carNo = ''
-        this.formSearchInit.reqairType = this.keyword
-      } else {
-        this.formSearchInit.reqairType = ''
         this.formSearchInit.carNo = this.keyword
+        this.formSearchInit.repairType = ''
+      } else {
+        this.formSearchInit.repairType = this.keyword
+        this.formSearchInit.carNo = ''
       }
     },
     clearKeywords () {
@@ -302,11 +300,11 @@ export default {
       this.searchRepairList()
     },
     changeState () {
-      this.keyword = ''
-    },
-    timeSort (column) {
-      this.formSearchInit = {}
-      this.formSearchInit.order = (column.order === 'normal' ? '' : column.order)
+      if (this.selectStatus === '2') {
+        this.keyword = '1'
+      } else {
+        this.keyword = ''
+      }
     }
   }
 }
