@@ -60,10 +60,25 @@ export default {
     },
     // 派车模块数据校验
     checkValidate () {
-      if (this.getCheckCarrierInfo() && this.$refs.pickupFee.validate()) {
-        return true
+      if (this.sendWay === '1') {
+        // 外转
+        if (this.getCheckCarrierInfo() && this.$refs.pickupFee.validate()) {
+          return true
+        }
+      } else if (this.sendWay === '2') {
+        // 自有
+        if (this.validateOwnSendForm() && this.$refs.pickupFee.validate()) {
+          return true
+        }
       }
       return false
+    },
+    /**
+     * 自有车表单校验
+     * 车号和司机
+     */
+    validateOwnSendForm () {
+      return this.$refs.ownSendInfo.checkOwnSendInfo()
     },
     // 承运商信息校验
     getCheckCarrierInfo () {
