@@ -103,16 +103,16 @@ export default {
           width: 180
         },
         {
-          required: true,
+          required: false,
           title: '重量（吨）',
           key: 'weight',
-          poptip: '为了方便您计算价格，重量和体积必须填写一项',
+          // poptip: '为了方便您计算价格，重量和体积必须填写一项',
           type: 'number',
           min: 0,
           point: 2
         },
         {
-          required: true,
+          required: false,
           title: '体积（方）',
           key: 'volume',
           type: 'number',
