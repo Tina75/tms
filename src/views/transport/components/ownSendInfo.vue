@@ -1,57 +1,8 @@
 <template>
   <div>
     <Form ref="ownSendInfos" :label-width="82" :model="info" :rules="rules" label-position="left">
-      <div :style="source === 'detail' && 'margin-bottom: 0;border-bottom: none;'" class="part">
-        <Row class="detail-field-group">
-          <i-col span="8">
-            <FormItem label="车牌号：" prop="carNo">
-              <SelectInput
-                :carrier-id="carrierId"
-                v-model="info.carNo"
-                mode="carNo"
-                style="width: 200px;"
-                @on-select="autoComplete" />
-            </FormItem>
-          </i-col>
-          <i-col span="8">
-            <FormItem label="主司机：" prop="driverName">
-              <SelectInput
-                :carrier-id="carrierId"
-                v-model="info.driverName"
-                mode="driver"
-                style="width: 200px;"
-                @on-select="autoComplete"
-                @on-option-loaded="driverOptionLoaded" />
-            </FormItem>
-          </i-col>
-          <i-col span="8">
-            <FormItem label="副司机：">
-              <SelectInput
-                :carrier-id="carrierId"
-                v-model="info.driverName"
-                mode="driver"
-                style="width: 200px;"
-                @on-select="autoComplete"
-                @on-option-loaded="driverOptionLoaded" />
-            </FormItem>
-          </i-col>
-        </Row>
-
-        <Row class="own-send-info">
-          <i-col span="8">
-            <span class="own-send-info-label">车型：</span>
-            <span>厢货 </span>
-            <span>17.5米</span>
-          </i-col>
-          <i-col span="8">
-            <span class="own-send-info-label">主司机手机号：</span>
-            <span>18751986780</span>
-          </i-col>
-          <i-col span="8">
-            <span class="own-send-info-label" style="padding-left: 0;">副司机手机号：</span>
-            <span>18751986780</span>
-          </i-col>
-        </Row>
+      <div :style="source === 'detail' && 'margin-bottom: 0;border-bottom: none;'">
+        <OwnCarForm :form="info" class="detail-field-group"></OwnCarForm>
       </div>
     </Form>
   </div>
@@ -64,10 +15,10 @@ import SelectInputMixin from '../mixin/selectInputMixin'
 // import Server from '@/libs/js/server'
 import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
 import { CAR } from '@/views/client/client'
-
+import OwnCarForm from '@/components/own-car-form'
 export default {
   name: 'OwnSendInfoComponent',
-  components: { SelectInput },
+  components: { SelectInput, OwnCarForm },
   mixins: [ BaseDialog, SelectInputMixin ],
   props: {
     // 引用页面来源
@@ -125,16 +76,8 @@ export default {
 </style>
 <style lang='stylus' scoped>
   .detail-field-group
-    >div
-      padding 5px 0
-      line-height 32px
-  .own-send-info
-    font-size 14px
-    color #333
-    margin-bottom 25px
-    &-label
-      width 82px
-      padding-left 10px
-      color #666
-      padding-right 30px
+    margin-top 12px
+    padding-bottom 24px
+    margin-bottom 15px
+    border-bottom 1px dashed #cbced3
 </style>
