@@ -99,7 +99,7 @@ export default {
           title: '货物名称',
           key: 'cargoName',
           type: 'select',
-          max: 10,
+          max: 200,
           width: 180
         },
         {
@@ -130,18 +130,18 @@ export default {
         },
         {
           required: false,
-          title: '数量',
-          key: 'quantity',
-          type: 'number',
-          min: 1,
-          point: 0
-        },
-        {
-          required: false,
           title: '包装方式',
           key: 'unit',
           type: 'text',
           max: 10
+        },
+        {
+          required: false,
+          title: '包装数量',
+          key: 'quantity',
+          type: 'number',
+          min: 1,
+          point: 0
         },
         {
           required: false,
