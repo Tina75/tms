@@ -18,7 +18,7 @@
                   <Form ref="rulesQuery" :model="rulesQuery" :rules="validate">
                     <FormItem prop="queryText">
                       <Input v-model="rulesQuery.paramName" :placeholder="`请输入${sceneMap[active]}、规则名称`"
-                             :maxlength="20" @on-keyup="getRules">
+                             :maxlength="20">
                       <Icon slot="prefix" type="ios-search" class="suffix-btn" @click="getRules"/>
                       </Input>
                     </FormItem>
@@ -188,13 +188,13 @@
 
 <script>
 import BasePage from '@/basic/BasePage'
-import Server from '@/libs/js/server'
+// import Server from '@/libs/js/server'
 import SelectInputForCity from '@/components/SelectInputForCity'
 import TagNumberInput from '@/components/TagNumberInput'
 import FontIcon from '@/components/FontIcon'
 import DataEmpty from '@/components/DataEmpty'
 import mixin from '../../views/client/ruleForClient/mixin'
-
+import { mapActions } from 'vuex'
 export default {
   name: 'financeRules',
   metaInfo: {
@@ -208,12 +208,38 @@ export default {
       active: '1'
     }
   },
-  computed: {},
+  computed: {
+    // ...mapGetters(['carriesRule']),
+    companyData () {
+      let params = {
+        paramName: this.rulesQuery.type !== '4' ? this.rulesQuery.paramName : '',
+        partnerId: ''
+      }
+      if (this.active === '1') { // 发货方列表查询
+        return this.$store.getters.senderRuleSearch(params)
+      } else {
+        return this.$store.getters.carriesRuleSearch(params)
+      }
+    }
+  },
   mounted () {
     this.getRules()
     this.height = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 65
   },
   methods: {
+    ...mapActions(['getSenderRules', 'getCarriesRules']),
+    async getRules () {
+      if (this.active === '1') {
+        await this.getSenderRules()
+      } else {
+        await this.getCarriesRules()
+      }
+      if (this.ruleDetail && this.ruleDetail.ruleId && this.companyData.some(item => item.ruleId === this.ruleDetail.ruleId)) {
+        this.showRuleDetail(this.companyData.find(item => item.ruleId === this.ruleDetail.ruleId))
+      } else {
+        this.ruleDetail = {}
+      }
+    },
     editRule (item) {
       const _this = this
       this.openDialog({
@@ -241,13 +267,11 @@ export default {
           scene: this.active
         },
         methods: {
-          ok (ruleId) {
-            _this.getRules().then((companyData) => {
-              _this.showRuleDetail(companyData.find(item => {
-                return item.ruleId === ruleId
-              }))
-              _this.addItem()
-            })
+          async ok (ruleId) {
+            await _this.getRules()
+            _this.showRuleDetail(_this.companyData.find(item => {
+              return item.ruleId === ruleId
+            }))
           }
         }
       })
@@ -255,28 +279,28 @@ export default {
     switchTab () {
       this.rulesQuery = {
         type: this.active,
-        queryText: ''
+        paramName: ''
       }
       this.getRules()
-    },
-    getRules () {
-      return Server({
-        url: '/finance/charge/listRules',
-        method: 'get',
-        params: {
-          partnerType: this.active,
-          paramName: this.rulesQuery.type !== '4' ? this.rulesQuery.paramName : ''
-        }
-      }).then(res => {
-        this.companyData = res.data.data
-        if (this.ruleDetail && this.ruleDetail.ruleId && this.companyData.some(item => item.ruleId === this.ruleDetail.ruleId)) {
-          this.showRuleDetail(this.companyData.find(item => item.ruleId === this.ruleDetail.ruleId))
-        } else {
-          this.ruleDetail = {}
-        }
-        return res.data.data
-      }).catch(err => console.error(err))
     }
+    // getRules () {
+    //   return Server({
+    //     url: '/finance/charge/listRules',
+    //     method: 'get',
+    //     params: {
+    //       partnerType: this.active,
+    //       paramName: this.rulesQuery.type !== '4' ? this.rulesQuery.paramName : ''
+    //     }
+    //   }).then(res => {
+    //     this.companyData = res.data.data
+    //     if (this.ruleDetail && this.ruleDetail.ruleId && this.companyData.some(item => item.ruleId === this.ruleDetail.ruleId)) {
+    //       this.showRuleDetail(this.companyData.find(item => item.ruleId === this.ruleDetail.ruleId))
+    //     } else {
+    //       this.ruleDetail = {}
+    //     }
+    //     return res.data.data
+    //   }).catch(err => console.error(err))
+    // }
   }
 }
 </script>

@@ -1,10 +1,14 @@
 <template>
   <div>
     <Row>
-      <Col span="7" offset="1">
-      <FormItem :rules="rule" label="车牌号：" prop="carNo" required>
-        <CarSelect v-model="form.carNo" @on-change="handleSelect">
-        </CarSelect>
+      <Col span="8">
+      <FormItem label="车牌号：" prop="carNo">
+        <Row>
+          <Col span="20">
+          <CarSelect v-model="form.carNo" @on-change="handleSelect">
+          </CarSelect>
+          </Col>
+        </Row>
       </FormItem>
     </Col>
       <Col span="16">
@@ -12,19 +16,19 @@
     </Col>
     </Row>
     <Row>
-      <Col span="6" offset="2">
+      <Col span="8">
       <div class="own-car__label">
         <label>车型：</label>
         <span>{{carTypeText}} &nbsp; {{carLengthText}}</span>
       </div>
       </Col>
-      <Col span="7" offset="1">
+      <Col span="8">
       <div class="own-car__label">
         <label>主司机手机号：</label>
         <span>{{form.driverPhone}}</span>
       </div>
       </Col>
-      <Col span="7" offset="1">
+      <Col span="8">
       <div class="own-car__label">
         <label>副司机手机号：</label>
         <span>{{form.assistantDriverPhone}}</span>
