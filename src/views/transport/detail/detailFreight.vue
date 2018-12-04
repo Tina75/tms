@@ -237,7 +237,7 @@
 
           <div class="sub-title">
             <div class="send-label">派车方式：</div>
-            <RadioGroup v-model="sendWay">
+            <RadioGroup v-model="sendWay" @on-change="changeAssignCar">
               <Radio label="2">自送</Radio>
               <Radio label="1">外转</Radio>
               <!-- <Radio label="3">下发承运商</Radio> -->
@@ -635,7 +635,7 @@ export default {
     feeStatusTip () {
       if (this.feeStatus === 10) return '此单已对账，不允许修改'
       else if (this.feeStatus === 20) return '此单已核销，不允许修改'
-      else if (this.feeStatus === 30) return '存在异常未处理，不能修改运单'
+      else if (this.feeStatus === 30) return '存在异常未处理，不允许修改'
       else return ''
     },
     changeParams () {
@@ -742,19 +742,25 @@ export default {
         this.loading = false
       }).catch(err => console.error(err))
     },
+    /**
+     * 修改派车方式
+     */
+    changeAssignCar (type) {
+      if (type === '2') {
+        // 外转 切换 到 自送
+        if (this.feeStatus !== 0) {
+          this.$Message.warning(this.feeStatusTip)
+          this.$nextTick(() => {
+            this.sendWay = '1'
+          })
+        }
+      }
+    },
     // 编辑
     edit () {
       const z = this
       let data = {
-        waybill: {
-          waybillId: z.id,
-          waybillNo: z.info.waybillNo,
-          start: z.info.start,
-          end: z.info.end,
-          status: z.info.status,
-          remark: z.info.remark,
-          assignCarType: z.sendWay
-        },
+        waybill: {},
         cargoList: _.uniq(z.detail.map(item => item.orderId))
       }
       if (z.sendWay === '1') {
@@ -766,6 +772,15 @@ export default {
         data.waybill = Object.assign(data.waybill, z.$refs.sendFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
         delete data.waybill.cashBack // 自送没有返现
       }
+      Object.assign(data.waybill, {
+        waybillId: z.id,
+        waybillNo: z.info.waybillNo,
+        start: z.info.start,
+        end: z.info.end,
+        status: z.info.status,
+        remark: z.info.remark,
+        assignCarType: z.sendWay
+      })
       console.log(data)
       Server({
         url: '/waybill/update',
@@ -780,15 +795,7 @@ export default {
     changeBill () {
       const z = this
       let data = {
-        waybill: {
-          waybillId: z.id,
-          waybillNo: z.info.waybillNo,
-          start: z.info.start,
-          end: z.info.end,
-          status: z.info.status,
-          remark: z.info.remark,
-          assignCarType: z.sendWay
-        },
+        waybill: {},
         cargoList: _.uniq(z.detail.map(item => item.orderId))
       }
       if (z.sendWay === '1') {
@@ -800,10 +807,18 @@ export default {
         data.waybill = Object.assign(data.waybill, z.$refs.sendFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
         delete data.waybill.cashBack // 自送没有返现
       }
+      Object.assign(data.waybill, {
+        waybillId: z.id,
+        waybillNo: z.info.waybillNo,
+        start: z.info.start,
+        end: z.info.end,
+        status: z.info.status,
+        remark: z.info.remark,
+        assignCarType: z.sendWay
+      })
       console.log(data)
       if (JSON.stringify(data) === z.changeStr) {
         z.$Message.error('您并未做修改')
-        return
       }
       Server({
         url: '/waybill/modify',
