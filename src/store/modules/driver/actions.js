@@ -10,7 +10,7 @@ export default {
     return new Promise((resolve, reject) => {
       server({
         url: 'ownerCar/findCarList',
-        method: 'get',
+        method: 'post',
         data: {}
       })
         .then((response) => {

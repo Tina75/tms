@@ -96,18 +96,12 @@
       </div>
       <div class="list-info">
         <Row class="row">
-          <Col span="5">
-          <div v-if="infoData.travelPhoto">
-            <div :style="'height: 90px;background-image: url(' + infoData.travelPhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(0)"></div>
-            <p class="uploadLabel">行驶证</p>
+          <Col v-for="img in imageItems" :key="img.count" span="6">
+          <div :v-if="img.src">
+            <div :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(img.count)"></div>
+            <p class="uploadLabel">{{img.title}}</p>
           </div>
-            </Col>
-          <Col span="6">
-          <div v-if="infoData.drivePhoto">
-            <div :style="'height: 90px;background-image: url(' + infoData.drivePhoto + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(1)"></div>
-            <p class="uploadLabel">驾驶证</p>
-          </div>
-            </Col>
+          </Col>
         </Row>
       </div>
       <div class="title" style="margin-top: 40px;">
@@ -145,23 +139,8 @@ export default {
       searchLogData: {},
       id: '',
       carId: '',
-      showTableOne: true
-    }
-  },
-  computed: {
-    imageItems () {
-      return [
-        {
-          title: '行驶证',
-          src: this.infoData.travelPhoto,
-          msrc: this.infoData.travelPhoto
-        },
-        {
-          title: '驾驶证',
-          src: this.infoData.drivePhoto,
-          msrc: this.infoData.drivePhoto
-        }
-      ]
+      showTableOne: true,
+      imageItems: []
     }
   },
   created () {
@@ -189,6 +168,17 @@ export default {
     },
     // 初始化数据格式
     initData () {
+      let count = 0
+      for (const key in this.infoData) {
+        if (key === 'travelPhoto' && this.infoData[key]) {
+          this.imageItems.push({ title: '行驶证', src: this.infoData.travelPhoto, count: count })
+          count++
+        }
+        if (key === 'drivePhoto' && this.infoData[key]) {
+          this.imageItems.push({ title: '驾驶证', src: this.infoData.drivePhoto, count: count })
+          count++
+        }
+      }
       this.infoData.driverType = (DRIVER_TYPE.find(e => e.id === this.infoData.driverType.toString())).name
       this.infoData.carType = this.carTypeMap[this.infoData.carType]
       this.infoData.carLength = this.carLengthMap[this.infoData.carLength]

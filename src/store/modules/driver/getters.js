@@ -10,7 +10,9 @@ export const ownCars = (state) => state.cars.map((car) => {
     driverName: car.driverName,
     driverId: car.driverId,
     carLength: car.carLength, // 车长
-    carType: car.carType // 车型
+    carType: car.carType, // 车型
+    assistantDriverName: car.assistantDriverName,
+    assistantDriverId: car.assistantDriverId
   }
 })
 /**

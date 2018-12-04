@@ -12,7 +12,7 @@
       </FormItem>
     </Col>
       <Col span="16">
-      <OwnDriverInputs :form="form" @on-create="switchAddView"></OwnDriverInputs>
+      <OwnDriverInputs ref="driverInputs" :form="form" @on-create="switchAddView"></OwnDriverInputs>
     </Col>
     </Row>
     <Row>
@@ -100,22 +100,11 @@ export default {
       if (car) {
         this.form.carType = car.carType
         this.form.carLength = car.carLength
-        if (car.driverName) {
-          this.form.driverName = car.driverName
-          this.form.driverPhone = car.driverPhone
-        } else {
-          this.form.driverName = ''
-          this.form.driverPhone = ''
-        }
-        if (car.assistantDriverName) {
-          this.form.assistantDriverName = car.assistantDriverName
-          this.form.assistantDriverPhone = car.assistantDriverPhone
-        } else {
-          this.form.assistantDriverName = ''
-          this.form.assistantDriverPhone = ''
-        }
+        // 同时修改主司机和副司机
+        this.$refs.driverInputs.updateDriversByCar(car)
       }
     },
+
     // 弹窗显示新增司机
     switchAddView () {
       this.$emit('on-create')

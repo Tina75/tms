@@ -37,6 +37,7 @@ export default {
     value (newValue) {
       if (newValue !== this.currentValue) {
         this.currentValue = newValue
+        this.dispatch.call(this.$parent, 'FormItem', 'on-form-change', newValue)
       }
     }
   },
@@ -52,6 +53,19 @@ export default {
       this.currentValue = value
       this.$emit('input', value)
       this.$emit('on-change', value)
+    },
+    dispatch (componentName, eventName, params) {
+      let parent = this.$parent || this.$root
+      let name = parent.$options.name
+      while (parent && (!name || name !== componentName)) {
+        parent = parent.$parent
+        if (parent) {
+          name = parent.$options.name
+        }
+      }
+      if (parent) {
+        parent.$emit.apply(parent, [eventName].concat(params))
+      }
     }
   }
 }

@@ -93,6 +93,28 @@ export default {
       }
     },
     /**
+     * 当车牌号变化的时候，同时修改主司机和副司机
+     */
+    updateDriversByCar (car) {
+      if (car.driverName) {
+        this.form.driverName = car.driverName
+        // this.form.driverPhone = car.driverPhone
+        this.changeDriver(car.driverName)
+      } else {
+        this.form.driverName = ''
+        this.form.driverPhone = ''
+        this.form.driverId = ''
+      }
+      if (car.assistantDriverName) {
+        this.form.assistantDriverName = car.assistantDriverName
+        this.changeAssitantDriver(car.assistantDriverName)
+      } else {
+        this.form.assistantDriverName = ''
+        this.form.assistantDriverPhone = ''
+        this.form.assistantDriverId = ''
+      }
+    },
+    /**
      * 弹出窗
      */
     switchAddView () {
