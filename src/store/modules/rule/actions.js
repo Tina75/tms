@@ -4,19 +4,43 @@ export default {
   /**
    * 规则列表_根据修改时间倒序
    * @param {*} paramName
-   * @param {*} partnerType 必填
+   * @param {*} partnerType 必填  1: '发货方',2: '承运商',
    * @param {*} partnerId
    */
-  getRules ({ state, commit }, data) {
+  getSenderRules ({ state, commit }) {
     return new Promise((resolve, reject) => {
       server({
         url: '/finance/charge/listRules',
         method: 'get',
-        params: data
+        params: {
+          partnerId: '',
+          partnerType: 1,
+          paramName: ''
+        }
       }).then((res) => {
-        // 计费规则列表
+        // 发货方计费规则列表
         const ruleList = res.data.data
-        commit(types.RECEIVE_RULE_LIST, ruleList)
+        commit(types.SENDER_RULE_LIST, ruleList)
+        resolve(ruleList)
+      }).catch((error) => {
+        reject(error)
+      })
+    })
+  },
+  getCarriesRules ({ state, commit }) {
+    return new Promise((resolve, reject) => {
+      server({
+        url: '/finance/charge/listRules',
+        method: 'get',
+        params: {
+          partnerId: '',
+          partnerType: 2,
+          paramName: ''
+        }
+      }).then((res) => {
+        // 承运商计费规则列表
+        const ruleList = res.data.data
+        commit(types.CARRIES_RULE_LIST, ruleList)
         resolve(ruleList)
       }).catch((error) => {
         reject(error)
