@@ -1,6 +1,21 @@
 
 export default {
   props: {
+    /**
+     * 是否校验司机绑定其他车辆
+     * 新增，修改车辆都需要加
+     */
+    isValidate: {
+      type: Boolean,
+      default: false
+    },
+    /**
+     * 需要忽略的司机编号列表，修改车辆的时候需要添加
+     */
+    filteredValidate: {
+      type: Array,
+      default: () => []
+    },
     form: {
       type: Object,
       default: () => {

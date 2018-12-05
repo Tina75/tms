@@ -1,5 +1,5 @@
 <template>
-  <Select ref="$select" :transfer="true" :value="currentValue" placeholder="请选择" not-found-text="暂无此车，请新增车辆" @on-change="handleChange">
+  <Select ref="$select" :transfer="true" :value="currentValue" placeholder="请选择" not-found-text="暂无此车，请新增车辆" clearable @on-change="handleChange">
     <Option v-for="car in ownCars" :key="car.id" :value="car.value">{{car.name}}</Option>
     <Option key="extra" value="extra" class="select-car__option" disabled>
       <span class="select-car__text" @click.prevent="handleClick">
@@ -18,8 +18,6 @@ import { mapGetters, mapActions } from 'vuex'
 import BaseComponent from '@/basic/BaseComponent'
 export default {
   name: 'car-select',
-  components: {
-  },
   mixins: [BaseComponent],
   props: {
     value: String,
@@ -40,9 +38,6 @@ export default {
       }
     }
   },
-  mounted () {
-    // this.getOwnCars()
-  },
   methods: {
     ...mapActions(['getOwnCars']),
     handleClick (e) {
@@ -52,8 +47,6 @@ export default {
     },
     handleChange (value) {
       if (value === 'extra') {
-        // this.currentValue = ''
-        // this.$emit('input', '')
         return
       }
       this.currentValue = value
@@ -67,7 +60,10 @@ export default {
       const vm = this
       this.openDialog({
         name: 'owned-vehicle/dialog/edit-car',
-        data: {},
+        data: {
+          flag: 1,
+          title: '新增车辆'
+        },
         methods: {
           ok () {
             // 查看所有车辆

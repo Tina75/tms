@@ -957,8 +957,12 @@ export default {
     // 发运
     billShipment () {
       const self = this
-      if (!self.info.carrierName) {
+      if (self.info.assignCarType === 1 && !self.info.carrierName) {
         this.$Message.warning('承运商未填写，不能发运')
+        return
+      }
+      if (self.info.assignCarType === 2 && !self.info.carNo) {
+        this.$Message.warning('自送车辆信息未填写，不能发运')
         return
       }
       if (self.detail.length <= 0) {

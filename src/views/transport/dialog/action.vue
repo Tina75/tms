@@ -31,7 +31,7 @@
         v-if="sendWay === '1'"
         ref="SendCarrierInfo"
         :carrier-info="carrierInfo"></send-carrier-info>
-      <own-send-info v-else ref="ownSendInfo"></own-send-info>
+      <own-send-info v-else ref="ownSendInfo" :form="ownInfo"></own-send-info>
       <pickup-fee
         ref="pickupFee"
         :payment="payment"
@@ -77,15 +77,27 @@ export default {
       sendWay: '1',
       // 外转赋值给子组件
       carrierInfo: {
+        assignCarType: 1, // 派车类型，1：外转，2：自送
         carrierName: '',
         driverName: '',
         driverPhone: '',
+        assistantDriverName: '',
+        assistantDriverPhone: '',
         carNo: '',
         carType: '',
         carLength: ''
       },
       // 自送赋值给子组件
-      ownInfo: {},
+      ownInfo: {
+        assignCarType: 1, // 派车类型，1：外转，2：自送
+        driverName: '',
+        driverPhone: '',
+        assistantDriverName: '',
+        assistantDriverPhone: '',
+        carNo: '',
+        carType: '',
+        carLength: ''
+      },
       payment: {
         freightFee: null,
         loadFee: null,

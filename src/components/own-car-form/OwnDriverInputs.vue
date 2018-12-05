@@ -4,7 +4,7 @@
     <FormItem  label="主司机：" prop="driverName">
       <Row>
         <Col span="20">
-        <DriverSelect v-model="form.driverName" :data="mainDrivers" @on-change="changeDriver" @on-click="switchAddView">
+        <DriverSelect v-model="form.driverName" :data="mainDrivers" :is-validate="isValidate" :filtered-validate="filteredValidate" @on-change="changeDriver" @on-click="switchAddView">
         </DriverSelect>
         </Col>
       </Row>
@@ -14,7 +14,7 @@
     <FormItem label="副司机：" prop="assistantDriverName">
       <Row>
         <Col span="20">
-        <DriverSelect v-model="form.assistantDriverName" :data="assitantDrivers" @on-change="changeAssitantDriver"  @on-click="switchAddView">
+        <DriverSelect v-model="form.assistantDriverName" :data="assitantDrivers" :is-validate="isValidate" :filtered-validate="filteredValidate" @on-change="changeAssitantDriver"  @on-click="switchAddView">
         </DriverSelect>
         </Col>
       </Row>
@@ -35,7 +35,6 @@ export default {
   },
   mixins: [BaseComponent, mixin],
   data () {
-    console.log('this.form', this.form)
     return {
     }
   },
@@ -48,21 +47,19 @@ export default {
     mainDrivers () {
       if (this.form.assistantDriverName) {
         let filterName = this.form.assistantDriverName
-        return this.ownDrivers.filter((user) => user.name !== filterName)
+        let filterPhone = this.form.assistantDriverPhone
+        return this.ownDrivers.filter((user) => user.name !== filterName && user.driverPhone !== filterPhone)
       }
       return this.ownDrivers
     },
     assitantDrivers () {
       if (this.form.driverName) {
         let filterName = this.form.driverName
-        return this.ownDrivers.filter((user) => user.name !== filterName)
+        let filterPhone = this.form.driverPhone
+        return this.ownDrivers.filter((user) => user.name !== filterName && user.driverPhone !== filterPhone)
       }
       return this.ownDrivers
     }
-  },
-  mounted () {
-    // 获取所有自有司机
-    // this.getOwnDrivers()
   },
   methods: {
     ...mapActions(['getOwnDrivers']),
@@ -130,7 +127,10 @@ export default {
       // 弹窗显示新增司机
       this.openDialog({
         name: 'dialogs/edit-driver',
-        data: {},
+        data: {
+          title: '新增司机',
+          flag: 1
+        },
         methods: {
           ok () {
             // 查询司机列表
