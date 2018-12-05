@@ -88,7 +88,6 @@ export default {
                       methods: {
                         ok () {
                           vm.getOwnDrivers()
-                          vm.getOwnCars()
                           vm.formSearchInit = {}
                         }
                       }
@@ -136,7 +135,6 @@ export default {
                             }
                           }).then(() => {
                             vm.getOwnDrivers()
-                            vm.getOwnCars()
                             vm.formSearchInit = {}
                           })
                         }
@@ -239,7 +237,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getOwnDrivers', 'getOwnCars']),
+    ...mapActions(['getOwnDrivers']),
     // 日期格式化
     formatDateTime (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
@@ -275,7 +273,6 @@ export default {
         methods: {
           ok () {
             vm.getOwnDrivers()
-            vm.getOwnCars()
             vm.formSearchInit = {}
             vm.handleLoad()
           }
