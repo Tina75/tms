@@ -749,7 +749,11 @@ export default {
       if (type === '2') {
         // 外转 切换 到 自送
         if (this.feeStatus !== 0) {
-          this.$Message.warning(this.feeStatusTip)
+          if (this.feeStatus === 2) {
+            this.$Message.warning('此单存在部分核销，不允许修改')
+          } else {
+            this.$Message.warning(this.feeStatusTip)
+          }
           this.$nextTick(() => {
             this.sendWay = '1'
           })
