@@ -10,26 +10,34 @@
         </i-col>
         <i-col span="6">
           <FormItem :label="sendWay === '1' ? '运输费：': '油费：'" prop="freightFee" class="padding-left-label">
-            <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+              <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            </Tooltip>
             <span class="unit-yuan">元</span>
             <a v-if="sendWay === '1' && source !== 'abnormal'" class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
           </FormItem>
         </i-col>
         <i-col span="6">
           <FormItem label="装货费：" prop="loadFee">
-            <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+              <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            </Tooltip>
             <span class="unit-yuan">元</span>
           </FormItem>
         </i-col>
         <i-col span="6">
           <FormItem label="卸货费：" prop="unloadFee">
-            <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+              <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            </Tooltip>
             <span class="unit-yuan">元</span>
           </FormItem>
         </i-col>
         <i-col v-if="source === 'abnormal'" span="6">
           <FormItem label="路桥费：" prop="tollFee" class="padding-left-label">
-            <TagNumberInput v-model="payment.tollFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+              <TagNumberInput v-model="payment.tollFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            </Tooltip>
             <span class="unit-yuan">元</span>
           </FormItem>
         </i-col>
@@ -37,19 +45,25 @@
       <Row class="detail-field-group">
         <i-col v-if="source !== 'abnormal'" span="6">
           <FormItem label="路桥费：" prop="tollFee" class="padding-left-label">
-            <TagNumberInput v-model="payment.tollFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+              <TagNumberInput v-model="payment.tollFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            </Tooltip>
             <span class="unit-yuan">元</span>
           </FormItem>
         </i-col>
         <i-col span="6">
           <FormItem label="保险费：" prop="insuranceFee" class="padding-left-label">
-            <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+              <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            </Tooltip>
             <span class="unit-yuan">元</span>
           </FormItem>
         </i-col>
         <i-col span="6">
           <FormItem label="其他：" prop="otherFee">
-            <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+              <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            </Tooltip>
             <span class="unit-yuan">元</span>
           </FormItem>
         </i-col>
@@ -68,12 +82,13 @@
           <span class="detail-field-title detail-field-required" style="width: 92px;">结算方式：</span>
           <div class="detail-payment-way">
             <RadioGroup v-model="settlementTypeFee">
-              <Radio label="1">按单结</Radio>
-              <Radio label="2">月结</Radio>
+              <Radio :disabled="isDisabled" label="1">按单结</Radio>
+              <Radio :disabled="isDisabled" label="2">月结</Radio>
             </RadioGroup>
             <PayInfo
               v-if="settlementTypeFee === '1'"
               ref="$payInfo"
+              :fee-status-tip="feeStatusTip"
               :total="paymentTotal"
               :data="settlementPayInfo"
               class="detail-field-payinfo"
@@ -124,6 +139,10 @@ export default {
   components: { TagNumberInput, PayInfo },
   mixins: [ BaseDialog ],
   props: {
+    feeStatusTip: {
+      type: [String],
+      default: ''
+    },
     mileage: {
       type: [String, Number]
     },
