@@ -4,7 +4,7 @@
       <div :style="source === 'detail' && 'margin-bottom: 0;border-bottom: none;'" class="part">
         <Row class="detail-field-group">
           <i-col span="8">
-            <FormItem label="承运商：" prop="carrierName">
+            <FormItem :prop="source !== 'detail' ? 'carrierName' : ''" :class="{'padding-left-label': source === 'detail'}" label="承运商：">
               <SelectInput
                 ref="carrierInput"
                 v-model="carrierInfo.carrierName"

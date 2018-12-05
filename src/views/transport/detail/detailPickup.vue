@@ -20,7 +20,7 @@
     </div>
 
     <Tabs :value="activeTab" :animated="false">
-      <TabPane label="提单详情" name="detail">
+      <TabPane label="提货单详情" name="detail">
         <section class="detail-info">
           <!-- 提货单信息 -->
           <div>
@@ -152,10 +152,10 @@
             </Row>
           </div>
 
-          <!-- 运单日志 -->
+          <!-- 提货单日志 -->
           <div>
             <div class="detail-part-title">
-              <span>运单日志</span>
+              <span>提货单日志</span>
             </div>
             <div class="detail-log">
               <div class="detail-log-icon" @click="showLog = !showLog">

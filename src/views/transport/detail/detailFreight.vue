@@ -480,7 +480,7 @@ export default {
             code: 120116,
             func: () => {
               this.inEditing = 'change'
-              this.changeStr = JSON.stringify(_.cloneDeep(this.changeParams))
+              this.changeStr = this.changeParams
               this.changeState({ id: this.id, type: 3 })
             }
           }]
@@ -498,7 +498,7 @@ export default {
             code: 120116,
             func: () => {
               this.inEditing = 'change'
-              this.changeStr = JSON.stringify(_.cloneDeep(this.changeParams))
+              this.changeStr = this.changeParams
               this.changeState({ id: this.id, type: 3 })
             }
           }]
@@ -628,23 +628,32 @@ export default {
       else return ''
     },
     changeParams () {
-      let settlementPayInfo = this.settlementPayInfo.map(item => {
-        return {
-          payType: item.payType,
-          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? item.fuelCardAmount * 100 : 0,
-          cashAmount: typeof item.cashAmount === 'number' ? item.cashAmount * 100 : 0
-        }
-      })
-      return {
-        waybill: {
-          waybillId: this.id,
-          ...this.info,
-          ...this.formatMoney(),
-          settlementType: this.settlementType,
-          settlementPayInfo: this.settlementType === '1' ? settlementPayInfo : void 0
-        },
-        cargoList: _.uniq(this.detail.map(item => item.orderId))
+      const z = this
+      let data = {
+        waybill: {},
+        cargoList: _.uniq(z.detail.map(item => item.orderId))
       }
+      z.$nextTick(() => {
+        if (z.sendWay === '1') {
+          data.waybill = Object.assign(data.waybill, z.$refs.sendFee.formatMoney(), z.$refs.SendCarrierInfo.getCarrierInfo(), {
+            settlementType: z.$refs.sendFee.getSettlementType(),
+            settlementPayInfo: z.$refs.sendFee.getSettlementPayInfo()
+          })
+        } else if (z.sendWay === '2') { // 自送
+          data.waybill = Object.assign(data.waybill, z.$refs.sendFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
+          delete data.waybill.cashBack // 自送没有返现
+        }
+        Object.assign(data.waybill, {
+          waybillId: z.id,
+          waybillNo: z.info.waybillNo,
+          start: z.info.start,
+          end: z.info.end,
+          status: z.info.status,
+          remark: z.info.remark,
+          assignCarType: z.sendWay
+        })
+      })
+      return data
     },
     financeRulesInfo () {
       return {
@@ -655,6 +664,7 @@ export default {
       }
     }
   },
+
   methods: {
     ...mapActions([
       'getWaybillLocation',
@@ -809,9 +819,9 @@ export default {
         remark: z.info.remark,
         assignCarType: z.sendWay
       })
-      console.log(data)
-      if (JSON.stringify(data) === z.changeStr) {
+      if (JSON.stringify(data) === JSON.stringify(z.changeStr)) {
         z.$Message.error('您并未做修改')
+        return
       }
       Server({
         url: '/waybill/modify',
