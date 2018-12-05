@@ -29,7 +29,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['ownCars'])
+    ...mapGetters(['ownCars', 'getOwnDrivers'])
   },
   watch: {
     value (newValue) {
@@ -68,6 +68,8 @@ export default {
           ok () {
             // 查看所有车辆
             vm.getOwnCars()
+            // 查询所有未绑定司机
+            vm.getOwnDrivers()
           }
         }
       })
