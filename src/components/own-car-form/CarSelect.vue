@@ -1,5 +1,5 @@
 <template>
-  <Select ref="$select" :value="currentValue" placeholder="请选择" not-found-text="暂无此车，请新增车辆" @on-change="handleChange">
+  <Select ref="$select" :transfer="true" :value="currentValue" placeholder="请选择" not-found-text="暂无此车，请新增车辆" @on-change="handleChange">
     <Option v-for="car in ownCars" :key="car.id" :value="car.value">{{car.name}}</Option>
     <Option key="extra" value="extra" class="select-car__option" disabled>
       <span class="select-car__text" @click.prevent="handleClick">
