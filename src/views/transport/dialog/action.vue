@@ -364,7 +364,11 @@ export default {
  .transport-action
   .ivu-modal-body
     padding 10px 40px 16px 30px
-
+  .ivu-form
+    .ivu-form-item-label
+      font-size 14px
+      font-family 'PingFangSC-Regular'
+      color #777
 </style>
 <style lang='stylus' scoped>
 .sub-title
