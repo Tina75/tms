@@ -58,8 +58,11 @@ export default {
         method: vm.methodType,
         data: vm.searchData
       }).then((res) => {
-        vm.orderLog = res.data.data.list
-        vm.orderLogCount = res.data.data.list.length
+        try {
+          vm.orderLog = res.data.data.list
+          vm.orderLogCount = res.data.data.list.length
+        } catch (error) {
+        }
       })
     }
   }

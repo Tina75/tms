@@ -7,8 +7,8 @@
           <span class="icontTitle"></span>
           <span class="iconTitleP">基础信息</span>
           <div class="btnItem">
-            <Button class="btnSty" @click="removeDriverData">删除</Button>
-            <Button type="primary" class="btnSty" @click="updateDriverData">修改</Button>
+            <Button v-if="hasPower(190103)" class="btnSty" @click="removeDriverData">删除</Button>
+            <Button v-if="hasPower(190102)" type="primary" class="btnSty" @click="updateDriverData">修改</Button>
           </div>
         </div>
         <div class="list-info">
@@ -45,24 +45,12 @@
         </div>
         <div class="list-info">
           <Row class="row">
-            <Col v-for="img in imageItems" :key="img.count" span="6">
+            <Col v-for="img in imageItems" :key="img.count" span="5">
             <div :v-if="img.src">
               <div :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(img.count)"></div>
               <p class="uploadLabel">{{img.title}}</p>
             </div>
             </Col>
-          <!-- <Col span="6">
-            <div v-if="infoData.identityFront">
-              <div :style="'height: 90px;background-image: url(' + infoData.identityFront + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(1)"></div>
-              <p class="uploadLabelID">身份证正面</p>
-            </div>
-            </Col>
-            <Col span="6">
-            <div v-if="infoData.identityBack">
-              <div :style="'height: 90px;background-image: url(' + infoData.identityBack + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(2)"></div>
-              <p class="uploadLabelID">身份证反面</p>
-            </div>
-            </Col>-->
           </Row>
         </div>
         <div class="title" style="margin-top: 40px;">
@@ -84,7 +72,7 @@
 import BasePage from '@/basic/BasePage'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
-import Server from '@/libs/js/server'
+import { CODE, deleteDriverById, queryDriverById } from './client'
 export default {
   name: 'car-details',
   components: { RecordList, prepareOpenSwipe },
@@ -97,20 +85,27 @@ export default {
   data () {
     return {
       infoData: {},
-      infoDataInit: {},
       line1: '',
       line2: '',
       imageItems: []
     }
   },
   mounted () {
-    // 数据备份，防止在详情页面对数据进行二次编辑
-    this.infoDataInit = Object.assign({}, this.$route.query.rowData)
     this.infoData = this.$route.query.rowData
-    this.initData()
-    this.openSwipe = prepareOpenSwipe(this.imageItems)
+    this.queryById()
   },
   methods: {
+    queryById () {
+      let vm = this
+      queryDriverById({ driverId: vm.infoData.id }).then(res => {
+        if (res.data.code === CODE) {
+          vm.infoData = res.data.data
+          vm.initData()
+          // 大图预览
+          vm.openSwipe = prepareOpenSwipe(vm.imageItems)
+        }
+      })
+    },
     // 日期格式化
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
@@ -121,6 +116,7 @@ export default {
     // 初始化数据格式
     initData () {
       let count = 0
+      this.imageItems = []
       for (const key in this.infoData) {
         if (key === 'driverPhoto' && this.infoData[key]) {
           this.imageItems.push({ title: '驾驶证', src: this.infoData.driverPhoto, count: count })
@@ -158,12 +154,8 @@ export default {
         data: {},
         methods: {
           ok () {
-            Server({
-              url: '/ownerCar/deleteDriver',
-              method: 'post',
-              data: { id: vm.infoDataInit.id }
-            }).then(({ data }) => {
-              if (data.code === 10000) {
+            deleteDriverById({ id: vm.infoData.id }).then(res => {
+              if (res.data.code === CODE) {
                 vm.$Message.success('删除成功！')
                 vm.ema.fire('closeTab', vm.$route)
               }
@@ -183,15 +175,7 @@ export default {
         },
         methods: {
           ok () {
-            Server({
-              url: '/ownerCar/queryDriverDetail',
-              method: 'get',
-              data: { driverId: vm.infoData.id }
-            }).then(({ data }) => {
-              if (data.code === 10000) {
-                vm.infoData = data.data
-              }
-            })
+            vm.queryById()
           }
         }
       })

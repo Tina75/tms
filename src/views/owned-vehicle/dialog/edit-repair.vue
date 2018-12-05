@@ -17,14 +17,6 @@
             <Row>
               <Col span="19">
               <span v-if="disAbleBtn">{{ validate.carNo }}</span>
-              <!-- <Select v-if="!disAbleBtn" v-model="validate.carNo" transfer placeholder="必选" class="minWidth">
-                <Option
-                  v-for="item in carNoList"
-                  :value="item.carNo"
-                  :key="item.carNo">
-                  {{ item.carNo }}
-                </Option>
-              </Select> -->
               <CarSelect v-if="!disAbleBtn" v-model="validate.carNo"></CarSelect>
               </Col>
             </Row>
@@ -219,9 +211,9 @@ export default {
     }
   },
   mounted () {
-    if (this.title === '修改维修记录') {
+    if (this.flag === 2) {
       this.configData()
-    } else if (this.carNo === undefined) {
+    } else {
       this.disAbleBtn = false
     }
   },
@@ -246,7 +238,7 @@ export default {
     },
     // 修改页面初始化
     configData () {
-      this.disAbleBtn = false
+      this.disAbleBtn = true
       this.validate.repairType = this.validate.repairType.toString()
       this.validate.repairMoney = this.validate.repairMoney / 100
       this.validate.payMoney = this.validate.payMoney / 100
@@ -293,14 +285,14 @@ export default {
       Server({
         url: '/ownerCar/repair/update',
         method: 'post',
-        data: this.validate
+        data: data
       }).then(({ data }) => {
-        if (data.data.code === CODE) {
-          this.$Message.success(data.data.msg)
+        if (data.code === CODE) {
+          this.$Message.success(data.msg)
           this.ok() // 刷新页面
           this.close()
         } else {
-          this.$Message.error(data.data.msg)
+          this.$Message.error(data.msg)
         }
       })
     }

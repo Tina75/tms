@@ -5,8 +5,8 @@
         <span class="icontTitle"></span>
         <span class="iconTitleP">维修信息</span>
         <div class="btnItem">
-          <Button class="btnSty" @click="removeRepairData">删除</Button>
-          <Button type="primary" class="btnSty" @click="updateRepairData">修改</Button>
+          <Button v-if="hasPower(190303)" class="btnSty" @click="removeRepairData">删除</Button>
+          <Button v-if="hasPower(190302)" type="primary" class="btnSty" @click="updateRepairData">修改</Button>
         </div>
       </div>
       <div class="list-info">
@@ -109,7 +109,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import RecordList from '@/components/RecordList'
-import Server from '@/libs/js/server'
+import { CODE, deleteRepairById, queryRepairById } from './client'
 export default {
   name: 'car-repair-details',
   components: { RecordList },
@@ -120,8 +120,6 @@ export default {
   data () {
     return {
       infoData: {},
-      id: '',
-      carrierId: '',
       searchLogData: {}
     }
   },
@@ -134,26 +132,29 @@ export default {
   },
   mounted () {
     this.infoData = this.$route.query.rowData
-    this.id = this.$route.query.rowData.id
-    this.carrierId = this.$route.query.carrierId
+    this.queryById()
   },
   methods: {
+    queryById () {
+      let vm = this
+      queryRepairById({ repairId: vm.infoData.id }).then(res => {
+        if (res.data.code === CODE) {
+          vm.infoData = res.data.data
+        }
+      })
+    },
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
     },
     removeRepairData () {
-      let vm = this
       this.openDialog({
         name: 'owned-vehicle/dialog/confirmDelete',
         data: {},
         methods: {
           ok () {
-            Server({
-              url: '/ownerCar/repair/del',
-              method: 'post',
-              data: { id: vm.infoData.id }
-            }).then(({ data }) => {
-              if (data.code === 10000) {
+            let vm = this
+            deleteRepairById({ id: vm.infoData.id }).then(res => {
+              if (res.data.code === CODE) {
                 vm.$Message.success('删除成功！')
                 vm.ema.fire('closeTab', vm.$route)
               }
@@ -173,15 +174,7 @@ export default {
         },
         methods: {
           ok () {
-            Server({
-              url: '/ownerCar/queryRepairDetail',
-              method: 'get',
-              data: { repairId: vm.infoData.id }
-            }).then(({ data }) => {
-              if (data.code === 10000) {
-                vm.infoData = data.data
-              }
-            })
+            vm.queryById()
           }
         }
       })

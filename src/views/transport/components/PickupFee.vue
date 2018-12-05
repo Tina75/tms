@@ -4,31 +4,31 @@
       <Row class="detail-field-group">
         <i-col span="5">
           <FormItem :label="sendWay === '1' ? '运输费：': '油费：'" prop="freightFee" class="fee-fix">
-            <TagNumberInput v-model="payment.freightFee" class="detail-payment-input"></TagNumberInput>
+            <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
             <span class="unit-yuan">元</span>
           </FormItem>
         </i-col>
         <i-col span="5">
           <FormItem label="装货费：" prop="loadFee" class="fee-fix">
-            <TagNumberInput v-model="payment.loadFee" class="detail-payment-input"></TagNumberInput>
+            <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
             <span class="unit-yuan">元</span>
           </FormItem>
         </i-col>
         <i-col span="5">
           <FormItem label="卸货费：" prop="unloadFee" class="fee-fix">
-            <TagNumberInput v-model="payment.unloadFee" class="detail-payment-input"></TagNumberInput>
+            <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
             <span class="unit-yuan">元</span>
           </FormItem>
         </i-col>
         <i-col span="5">
           <FormItem label="保险费：" prop="insuranceFee" class="fee-fix">
-            <TagNumberInput v-model="payment.insuranceFee" class="detail-payment-input"></TagNumberInput>
+            <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
             <span class="unit-yuan">元</span>
           </FormItem>
         </i-col>
         <i-col span="4">
           <FormItem label="其他：" prop="otherFee" class="other-fee-fix">
-            <TagNumberInput v-model="payment.otherFee" class="detail-payment-input"></TagNumberInput>
+            <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
             <span class="unit-yuan">元</span>
           </FormItem>
         </i-col>
@@ -41,7 +41,7 @@
       </Row>
     </div>
 
-    <div v-if="sendWay === '1'" class="part">
+    <div v-if="sendWay === '1' && source !== 'abnormal'" class="part">
       <Row class="detail-field-group">
         <i-col span="24">
           <span class="detail-field-title detail-field-required" style="width: 92px;">结算方式：</span>
@@ -58,6 +58,20 @@
               class="detail-field-payinfo"
               mode="edit" />
           </div>
+        </i-col>
+      </Row>
+    </div>
+
+    <div v-if="source === 'abnormal' && abnormalLength > 0" class="part">
+      <Row class="detail-field-group">
+        <i-col span="24">
+          <PayInfo
+            ref="$payInfo"
+            :total="paymentTotal"
+            :data="settlementPayInfo"
+            class="detail-field-payinfo"
+            style="margin: 0 0 0 82px;"
+            mode="edit" />
         </i-col>
       </Row>
     </div>
@@ -104,6 +118,19 @@ export default {
       default: () => [
         { payType: 2, fuelCardAmount: '', cashAmount: '' }
       ]
+    },
+    // 页面来源
+    source: {
+      type: String
+    },
+    // 是否禁用输入框
+    isDisabled: {
+      type: Boolean,
+      default: false
+    },
+    // 异常payInfo长度
+    abnormalLength: {
+      type: [String, Number]
     }
   },
   data () {
