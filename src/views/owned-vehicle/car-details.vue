@@ -7,8 +7,8 @@
           <span class="icontTitle"></span>
           <span class="iconTitleP">基础信息</span>
           <div class="btnItem">
-            <Button v-if="hasPower(190203)" class="btnSty"  @click="removeDriverData">删除</Button>
-            <Button v-if="hasPower(190202)" type="primary" class="btnSty" @click="updateDriverData">修改</Button>
+            <Button v-if="hasPower(190203)" class="btnSty"  @click="removeCar">删除</Button>
+            <Button v-if="hasPower(190202)" type="primary" class="btnSty" @click="updateCar">修改</Button>
           </div>
         </div>
         <div class="list-info">
@@ -119,7 +119,7 @@ import BasePage from '@/basic/BasePage'
 import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
-import Server from '@/libs/js/server'
+import { CODE, deleteCarById, queryCarById } from './client'
 export default {
   name: 'car-details',
   components: { RecordList, prepareOpenSwipe },
@@ -140,22 +140,18 @@ export default {
     }
   },
   mounted () {
-    // 数据备份，防止在详情页面对数据进行二次编辑
     this.infoData = this.$route.query.rowData
     this.queryById()
-    this.openSwipe = prepareOpenSwipe(this.imageItems)
   },
   methods: {
     queryById () {
       let vm = this
-      Server({
-        url: '/ownerCar/queryCarDetail',
-        method: 'get',
-        data: { carId: vm.infoData.id }
-      }).then(({ data }) => {
-        if (data.code === 10000) {
-          vm.infoData = data.data
+      queryCarById({ carId: vm.infoData.id }).then(res => {
+        if (res.data.code === CODE) {
+          vm.infoData = res.data.data
           vm.initData()
+          // 大图预览
+          vm.openSwipe = prepareOpenSwipe(vm.imageItems)
         }
       })
     },
@@ -198,19 +194,15 @@ export default {
       this.line1 = s1 + '—' + n1 === '—' ? '' : s1 + '—' + n1
       this.line2 = s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2
     },
-    removeDriverData () {
+    removeCar () {
       let vm = this
       this.openDialog({
         name: 'owned-vehicle/dialog/confirmDelete',
         data: {},
         methods: {
           ok () {
-            Server({
-              url: '/ownerCar/deleteCar',
-              method: 'get',
-              data: { carId: vm.infoData.id }
-            }).then(({ data }) => {
-              if (data.code === 10000) {
+            deleteCarById({ carId: vm.infoData.id }).then(res => {
+              if (res.data.code === CODE) {
                 vm.$Message.success('删除成功！')
                 vm.ema.fire('closeTab', vm.$route)
               }
@@ -219,7 +211,7 @@ export default {
         }
       })
     },
-    updateDriverData () {
+    updateCar () {
       let vm = this
       this.openDialog({
         name: 'owned-vehicle/dialog/edit-car',

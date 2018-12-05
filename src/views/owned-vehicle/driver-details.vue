@@ -72,7 +72,7 @@
 import BasePage from '@/basic/BasePage'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
-import Server from '@/libs/js/server'
+import { CODE, deleteDriverById, queryDriverById } from './client'
 export default {
   name: 'car-details',
   components: { RecordList, prepareOpenSwipe },
@@ -93,19 +93,16 @@ export default {
   mounted () {
     this.infoData = this.$route.query.rowData
     this.queryById()
-    this.openSwipe = prepareOpenSwipe(this.imageItems)
   },
   methods: {
     queryById () {
       let vm = this
-      Server({
-        url: '/ownerCar/queryDriverDetail',
-        method: 'get',
-        data: { driverId: vm.infoData.id }
-      }).then(({ data }) => {
-        if (data.code === 10000) {
-          vm.infoData = data.data
+      queryDriverById({ driverId: vm.infoData.id }).then(res => {
+        if (res.data.code === CODE) {
+          vm.infoData = res.data.data
           vm.initData()
+          // 大图预览
+          vm.openSwipe = prepareOpenSwipe(vm.imageItems)
         }
       })
     },
@@ -157,12 +154,8 @@ export default {
         data: {},
         methods: {
           ok () {
-            Server({
-              url: '/ownerCar/deleteDriver',
-              method: 'post',
-              data: { id: vm.infoData.id }
-            }).then(({ data }) => {
-              if (data.code === 10000) {
+            deleteDriverById({ id: vm.infoData.id }).then(res => {
+              if (res.data.code === CODE) {
                 vm.$Message.success('删除成功！')
                 vm.ema.fire('closeTab', vm.$route)
               }

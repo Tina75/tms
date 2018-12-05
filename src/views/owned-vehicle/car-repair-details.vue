@@ -109,7 +109,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import RecordList from '@/components/RecordList'
-import Server from '@/libs/js/server'
+import { CODE, deleteRepairById, queryRepairById } from './client'
 export default {
   name: 'car-repair-details',
   components: { RecordList },
@@ -137,13 +137,9 @@ export default {
   methods: {
     queryById () {
       let vm = this
-      Server({
-        url: '/ownerCar/queryRepairDetail',
-        method: 'get',
-        data: { repairId: vm.infoData.id }
-      }).then(({ data }) => {
-        if (data.code === 10000) {
-          vm.infoData = data.data
+      queryRepairById({ repairId: vm.infoData.id }).then(res => {
+        if (res.data.code === CODE) {
+          vm.infoData = res.data.data
         }
       })
     },
@@ -151,18 +147,14 @@ export default {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
     },
     removeRepairData () {
-      let vm = this
       this.openDialog({
         name: 'owned-vehicle/dialog/confirmDelete',
         data: {},
         methods: {
           ok () {
-            Server({
-              url: '/ownerCar/repair/del',
-              method: 'post',
-              data: { id: vm.infoData.id }
-            }).then(({ data }) => {
-              if (data.code === 10000) {
+            let vm = this
+            deleteRepairById({ id: vm.infoData.id }).then(res => {
+              if (res.data.code === CODE) {
                 vm.$Message.success('删除成功！')
                 vm.ema.fire('closeTab', vm.$route)
               }

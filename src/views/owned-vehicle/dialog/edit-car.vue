@@ -261,7 +261,7 @@ export default {
       this.validate.regularLine = JSON.stringify(this.address)
       this.$refs[name].validate((valid) => {
         if (valid) {
-          if (this.flag === 1) { // 新增
+          if (this.flag !== 2) { // 新增
             this.add()
           } else { // 2-编辑
             this.update()

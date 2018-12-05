@@ -10,9 +10,9 @@
           </Select>
         </template>
         <Input v-model="keyword"
-               :maxlength="selectStatus === '1' ? 8 : 11"
+               :maxlength="selectStatus === '1' ? 8 : 20"
                :icon="keyword? 'ios-close-circle' : ''"
-               :placeholder="selectStatus === '1' ? '请输入车牌号搜索' : '请输入手机号搜索'"
+               :placeholder="selectStatus === '1' ? '请输入车牌号搜索' : '请输入司机姓名'"
                class="search-input"
                @on-enter="searchCarList"
                @on-click="clearKeywords"/>
@@ -41,7 +41,7 @@ import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
-import Server from '@/libs/js/server'
+import { CODE, deleteCarById } from './client'
 import { mapActions } from 'vuex'
 export default {
   name: 'owned-car',
@@ -89,6 +89,7 @@ export default {
                       },
                       methods: {
                         ok () {
+                          vm.getOwnDrivers()
                           vm.getOwnCars()
                           vm.formSearchInit = {}
                         }
@@ -131,15 +132,12 @@ export default {
                       },
                       methods: {
                         ok () {
-                          Server({
-                            url: '/ownerCar/deleteCar',
-                            method: 'get',
-                            data: { carId: params.row.id }
-                          }).then(({ data }) => {
-                            if (data.code === 10000) {
+                          deleteCarById({ carId: params.row.id }).then(res => {
+                            if (res.data.code === CODE) {
                               vm.$Message.success('删除成功！')
-                              vm.formSearchInit = {}
                             }
+                          }).then(() => {
+                            vm.formSearchInit = {}
                           })
                         }
                       }
@@ -264,7 +262,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getOwnCars']),
+    ...mapActions(['getOwnDrivers', 'getOwnCars']),
     // 导出判空
     handleLoad (response) {
       try {
@@ -301,6 +299,7 @@ export default {
         },
         methods: {
           ok () {
+            vm.getOwnDrivers()
             vm.getOwnCars()
             vm.formSearchInit = {}
           }
@@ -308,6 +307,7 @@ export default {
       })
     },
     searchCarList () {
+      this.formSearchInit = {}
       if (this.selectStatus === '1') {
         this.formSearchInit.carNo = this.keyword
         this.formSearchInit.driverName = ''

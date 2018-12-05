@@ -11,7 +11,7 @@
         </template>
         <Input
           v-model="keyword"
-          :maxlength="selectStatus === '1' ? 8 : 11"
+          :maxlength="selectStatus === '1' ? 20 : 11"
           :icon="keyword ? 'ios-close-circle' : ''"
           :placeholder="selectStatus === '1' ? '请输入司机姓名' : '请输入手机号搜索'"
           class="search-input"
@@ -41,8 +41,8 @@ import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
-import Server from '@/libs/js/server'
 import { mapActions } from 'vuex'
+import { CODE, deleteDriverById } from './client'
 export default {
   name: 'owned-car',
   components: {
@@ -88,6 +88,7 @@ export default {
                       methods: {
                         ok () {
                           vm.getOwnDrivers()
+                          vm.getOwnCars()
                           vm.formSearchInit = {}
                         }
                       }
@@ -129,15 +130,12 @@ export default {
                       },
                       methods: {
                         ok () {
-                          Server({
-                            url: '/ownerCar/deleteDriver',
-                            method: 'post',
-                            data: { id: params.row.id }
-                          }).then(({ data }) => {
-                            if (data.code === 10000) {
+                          deleteDriverById({ id: params.row.id }).then(res => {
+                            if (res.data.code === CODE) {
                               vm.$Message.success('删除成功！')
-                              vm.formSearchInit = {}
                             }
+                          }).then(() => {
+                            vm.formSearchInit = {}
                           })
                         }
                       }
@@ -240,7 +238,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getOwnDrivers']),
+    ...mapActions(['getOwnDrivers', 'getOwnCars']),
     // 日期格式化
     formatDateTime (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
@@ -275,6 +273,7 @@ export default {
         methods: {
           ok () {
             vm.getOwnDrivers()
+            vm.getOwnCars()
             vm.formSearchInit = {}
           }
         }
@@ -282,6 +281,7 @@ export default {
     },
     // 搜索
     searchList () {
+      this.formSearchInit = {}
       if (this.selectStatus === '1') {
         this.formSearchInit.driverPhone = ''
         this.formSearchInit.driverName = this.keyword

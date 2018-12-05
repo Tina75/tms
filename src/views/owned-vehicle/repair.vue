@@ -49,7 +49,7 @@ import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
-import Server from '@/libs/js/server'
+import { CODE, deleteRepairById } from './client'
 export default {
   name: 'owned-car',
   components: {
@@ -136,15 +136,12 @@ export default {
                       },
                       methods: {
                         ok () {
-                          Server({
-                            url: '/ownerCar/repair/del',
-                            method: 'post',
-                            data: { id: params.row.id }
-                          }).then(({ data }) => {
-                            if (data.code === 10000) {
+                          deleteRepairById({ id: params.row.id }).then(res => {
+                            if (res.data.code === CODE) {
                               vm.$Message.success('删除成功！')
-                              vm.formSearchInit = {}
                             }
+                          }).then(() => {
+                            vm.formSearchInit = {}
                           })
                         }
                       }
@@ -287,6 +284,7 @@ export default {
       })
     },
     searchRepairList () {
+      this.formSearchInit = {}
       if (this.selectStatus === '1') {
         this.formSearchInit.carNo = this.keyword
         this.formSearchInit.repairType = ''
