@@ -178,6 +178,14 @@ export const TABLE_COLUMNS = vm => [
     }
   },
   {
+    title: '派车方式',
+    key: 'assignCarType',
+    minWidth: 120,
+    render: (h, p) => {
+      return vm.tableDataRender(h, p.row.assignCarType === 1 ? '外转' : '自送')
+    }
+  },
+  {
     title: '承运商',
     key: 'carrierName',
     minWidth: 180,
