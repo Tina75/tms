@@ -146,7 +146,7 @@ export default {
               }, '转移权限')
             ])
           } else if (params.row.type === 1 && this.userInfo.type !== 1) {
-            return h('div', '—')
+            return h('div', '-')
           } else {
             if (this.hasPower(140202) && this.hasPower(140203)) {
               return h('div', [
