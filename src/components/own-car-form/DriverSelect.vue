@@ -1,5 +1,5 @@
 <template>
-  <Select ref="$select" :value="currentValue" not-found-text="暂无此人，请新增司机" @on-change="handleChange">
+  <Select ref="$select" :transfer="true" :value="currentValue" not-found-text="暂无此人，请新增司机" @on-change="handleChange">
     <Option v-for="(opt, index) in data" :key="index" :label="opt.value" :value="opt.value">
       {{opt.name}}
       <span class="select-driver__option">{{opt.driverPhone}}</span>

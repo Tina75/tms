@@ -282,6 +282,8 @@
         </div>
         <send-fee
           ref="sendFee"
+          :fee-status-tip="feeStatusTip"
+          :is-disabled="feeStatusTip? true: false"
           :payment="payment"
           :settlement-type="settlementType"
           :settlement-pay-info="settlementPayInfo"
@@ -749,7 +751,11 @@ export default {
       if (type === '2') {
         // 外转 切换 到 自送
         if (this.feeStatus !== 0) {
-          this.$Message.warning(this.feeStatusTip)
+          if (this.feeStatus === 2) {
+            this.$Message.warning('此单存在部分核销，不允许修改')
+          } else {
+            this.$Message.warning(this.feeStatusTip)
+          }
           this.$nextTick(() => {
             this.sendWay = '1'
           })
@@ -861,56 +867,6 @@ export default {
         return true
       }
       return false
-    },
-    // 计费规则
-    showChargeRules () {
-      const self = this
-      if (!self.info.carrierName) {
-        this.$Message.error('请先选择或输入承运商')
-        return
-      }
-      if (!self.detail.length) {
-        this.$Message.error('请先添加订单')
-        return
-      }
-      const carrierItem = this.$refs.carrierInput.options.find(carrier => carrier.carrierName === self.info.carrierName)
-      if (!carrierItem) {
-        this.$Message.warning('您选择或输入的承运商没有维护的计费规则')
-        return
-      }
-      let carrierId = carrierItem.id
-      if (!carrierId) {
-        this.$Message.warning('您选择或输入的承运商没有维护的计费规则')
-        return
-      }
-      console.log(self.payment.mileage)
-      this.openDialog({
-        name: 'dialogs/financeRule',
-        data: {
-          // 以下数据必传
-          partnerId: carrierId,
-          partnerType: 2, // 计费规则分类 - 发货方1 承运商2 外转方3
-          partnerName: self.info.carrierName, // 名称
-          weight: self.orderTotal.weight, // 货物重量
-          volume: self.orderTotal.volume, // 货物体积
-          start: self.info.start, // 始发地code
-          end: self.info.end, // 目的地code
-          distance: self.payment.mileage ? self.payment.mileage * 1000 : 0
-          // distance: 100000, // 从外部传入已经计算好的距离（单位：米），如果传入则不再根据startPoint endPoint计算距离
-          // startPoint: {lat: 32.047745, lng: 118.791580}, // 始发地经纬度
-          // endPoint: {lat: 39.913385, lng: 116.402257} // 目的地经纬度
-        },
-        methods: {
-          // 确认计费规则后返回金额(元)
-          ok (charge) {
-            self.payment.freightFee = charge || 0
-          }
-          // 如果有两层对话框，在计费规则中点击去设置按钮后需要关闭第一层对话框
-          // closeParentDialog () {
-          // self.close()
-          // }
-        }
-      })
     },
 
     // 按钮操作
