@@ -15,7 +15,9 @@ export default {
       })
         .then((response) => {
           const cars = response.data.data
-          commit(types.RECEIVE_OWN_CAR_LIST, cars)
+          if (cars) {
+            commit(types.RECEIVE_OWN_CAR_LIST, cars)
+          }
           resolve(cars)
         })
         .catch((error) => {
@@ -30,13 +32,15 @@ export default {
   getOwnDrivers ({ state, commit }) {
     return new Promise((resolve, reject) => {
       server({
-        url: 'ownerCar/listDriverList',
+        url: 'ownerCar/unbindedDriver',
         method: 'post',
         data: {}
       })
         .then((response) => {
           const drivers = response.data.data
-          commit(types.RECEIVE_OWN_DRIVER_LIST, drivers)
+          if (drivers) {
+            commit(types.RECEIVE_OWN_DRIVER_LIST, drivers)
+          }
           resolve(drivers)
         })
         .catch((error) => {

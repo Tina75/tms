@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import DriverSelect from './DriverSelect.vue'
 import mixin from './mixin.js'
 import BaseComponent from '@/basic/BaseComponent'
@@ -35,7 +35,6 @@ export default {
   },
   mixins: [BaseComponent, mixin],
   data () {
-    console.log('this.form', this.form)
     return {
     }
   },
@@ -60,12 +59,7 @@ export default {
       return this.ownDrivers
     }
   },
-  mounted () {
-    // 获取所有自有司机
-    // this.getOwnDrivers()
-  },
   methods: {
-    ...mapActions(['getOwnDrivers']),
     getDriverByName (name) {
       return this.ownDrivers.find(driver => driver.name === name)
     },
