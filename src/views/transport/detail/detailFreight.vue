@@ -314,8 +314,6 @@ import TransportBase from '../mixin/transportBase'
 import DetailMixin from '../mixin/detailMixin'
 import SelectInputMixin from '../mixin/selectInputMixin'
 
-import MoneyInput from '../components/MoneyInput'
-import TagNumberInput from '@/components/TagNumberInput'
 // import validator from '@/libs/js/validate'
 import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '../components/SelectInput.vue'
@@ -336,21 +334,10 @@ import { mapActions } from 'vuex'
 export default {
   name: 'detailFeright',
   metaInfo: { title: '运单详情' },
-  components: { TagNumberInput, MoneyInput, SelectInput, CitySelect, PrintFreight, PayInfo, Exception, change, OwnSendInfo, SendCarrierInfo, SendFee },
+  components: { SelectInput, CitySelect, PrintFreight, PayInfo, Exception, change, OwnSendInfo, SendCarrierInfo, SendFee },
   mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
 
   data () {
-    // 验证运费
-    // const validateFreightFee = (rule, value, callback) => {
-    //   if (value === '' && (_this.status === '在途' || '已到货')) {
-    //     callback(new Error('费用不能为空'))
-    //   }
-    //   if ((value && validator.fee(value)) || !value) {
-    //     callback()
-    //   } else {
-    //     callback(new Error('费用整数位最多输入9位,小数2位'))
-    //   }
-    // }
     return {
       pageName: 'feright',
       status: '',
