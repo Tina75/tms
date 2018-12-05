@@ -65,7 +65,7 @@
             <!--<div >{{item.partnerName.slice(0,8)}}...</div>-->
             <!--</Tooltip>-->
             <div class="tips">
-              <span style="margin-right: 10px">应付 {{item.calcTotalFeeText}}</span>
+              <span style="margin-right: 10px">{{payType}} {{item.calcTotalFeeText}}</span>
               <span>已结 {{item.verifiedFeeText}}</span>
             </div>
           </div>
@@ -83,7 +83,7 @@
             <div class="text">
               <p class="desc_title">{{orderData[0].title}}</p>
               <p class="desc_money">
-                <span style="margin-right: 30px">应付 {{orderData[0].calcTotalFeeText}}</span>
+                <span style="margin-right: 30px">{{payType}} {{orderData[0].calcTotalFeeText}}</span>
                 <span>已结 {{orderData[0].verifiedFeeText}}</span>
               </p>
             </div>
@@ -322,6 +322,13 @@ export default {
           }
         }
       ]
+    },
+    payType () {
+      switch (this.scene) {
+        case 1: return '应收'
+        case 2: return '应付'
+        default: return ''
+      }
     }
   },
   mounted () {
