@@ -1,5 +1,5 @@
 <template>
-  <Select ref="$select" :transfer="true" :value="currentValue" not-found-text="暂无此人，请新增司机" clearable @on-change="handleChange">
+  <Select ref="$select" :transfer="true" :value="currentValue" not-found-text="暂无此人，请新增司机" remote filterable @on-change="handleChange">
     <Option v-for="(opt, index) in data" :key="index" :label="opt.value" :value="opt.value" :disabled="disabledOption(opt)">
       {{opt.name}}
       <span class="select-driver__option">{{opt.driverPhone}}</span>
@@ -109,5 +109,5 @@ export default {
     font-size 12px
   &__icon
     top: -1px;
-    position: relative;
+    position: relative
 </style>
