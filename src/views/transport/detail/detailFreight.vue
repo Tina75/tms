@@ -282,6 +282,8 @@
         </div>
         <send-fee
           ref="sendFee"
+          :fee-status-tip="feeStatusTip"
+          :is-disabled="feeStatusTip? true: false"
           :payment="payment"
           :settlement-type="settlementType"
           :settlement-pay-info="settlementPayInfo"
