@@ -63,7 +63,7 @@
           <FormItem label="车型：">
             <Row>
               <Col span="20">
-              <Select v-model="validate.carType" transfer >
+              <Select v-model="validate.carType" transfer clearable>
                 <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
               </Select>
               </Col>
@@ -74,7 +74,7 @@
           <FormItem label="车长：">
             <Row>
               <Col span="20">
-              <Select v-model="validate.carLength" transfer >
+              <Select v-model="validate.carLength" transfer clearable>
                 <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
               </Select>
               </Col>

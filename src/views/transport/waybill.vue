@@ -196,7 +196,7 @@ export default {
         extra: true,
         render: (h, p) => {
           let record = p.row
-          if (record.status === 2 && this.hasPower(120101) && record.carrierName === '' && record.assignCarType === 1) {
+          if (record.status === 2 && this.hasPower(120101) && ((record.carrierName === '' && record.assignCarType === 1) || (record.carNo === '' && record.assignCarType === 2))) {
             return h('a', {
               on: {
                 click: () => {
@@ -416,21 +416,21 @@ export default {
     // 发运
     billShipment () {
       const self = this
-      if (!this.checkTableSelection()) return
-      let tableSelection = _.cloneDeep(this.tableSelection)
+      if (!self.checkTableSelection()) return
+      let tableSelection = _.cloneDeep(self.tableSelection)
       // 运单发运前判断运单有无填写承运商
       let carrierNameList = _.remove(tableSelection, (i) => {
-        return i.carrierName === '' && i.assignCarType === 1
+        return (i.carrierName === '' && i.assignCarType === 1) || (i.carNo === '' && i.assignCarType === 2)
       })
       console.log(carrierNameList)
       if (carrierNameList.length > 0) {
-        if (this.tableSelection.length > 1) {
+        if (self.tableSelection.length > 1) {
           self.openDialog({
             name: 'transport/dialog/cashBackWarn',
             data: {
               title: '操作提醒',
               cashBack: carrierNameList,
-              message: '以下单据未派车，不能发运。',
+              message: '以下单据未派车或信息不全，不能发运。',
               type: 'waybill'
             },
             methods: {
@@ -438,7 +438,13 @@ export default {
             }
           })
         } else {
-          this.$Message.warning('承运商未填写，不能发运')
+          // this.$Message.warning('单据未派车，不能发运')
+          if (carrierNameList[0].assignCarType === 1 && !carrierNameList[0].carrierName) {
+            self.$Message.warning('承运商未填写，不能发运')
+          }
+          if (carrierNameList[0].assignCarType === 2 && !carrierNameList[0].carNo) {
+            self.$Message.warning('自送车辆信息未填写，不能发运')
+          }
         }
         return
       }
@@ -448,7 +454,7 @@ export default {
       })
       console.log(cargoList)
       if (cargoList.length > 0) {
-        if (this.tableSelection.length > 1) {
+        if (self.tableSelection.length > 1) {
           self.openDialog({
             name: 'transport/dialog/cashBackWarn',
             data: {
@@ -462,7 +468,7 @@ export default {
             }
           })
         } else {
-          this.$Message.warning('此运单里没有加入订单，不能发运')
+          self.$Message.warning('此运单里没有加入订单，不能发运')
         }
         return
       }

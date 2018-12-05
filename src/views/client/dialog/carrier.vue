@@ -45,21 +45,21 @@
       <Row>
         <Col :span="8">
         <FormItem label="车型：">
-          <Select v-model="validate.driver.carType" transfer >
+          <Select v-model="validate.driver.carType" transfer clearable>
             <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
           </Select>
         </FormItem>
         </Col>
         <Col :span="8">
         <FormItem label="车长：">
-          <Select v-model="validate.driver.carLength" transfer >
+          <Select v-model="validate.driver.carLength" transfer clearable>
             <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
           </Select>
         </FormItem>
         </Col>
         <Col :span="8">
         <FormItem label="载重：" prop="shippingWeight">
-          <Input v-model="validate.driver.shippingWeight" :maxlength="9" placeholder="必填"/>吨
+          <Input v-model="validate.driver.shippingWeight" :maxlength="9" placeholder="请输入"/>吨
         </FormItem>
         </Col>
       </Row>
@@ -328,8 +328,8 @@ export default {
         carNO: this.validate.driver.carNO,
         carType: this.validate.driver.carType,
         carLength: this.validate.driver.carLength,
-        shippingWeight: Math.floor(this.validate.driver.shippingWeight * 100) / 100,
-        shippingVolume: Math.floor(this.validate.driver.shippingVolume * 10) / 10,
+        shippingWeight: this.validate.driver.shippingWeight,
+        shippingVolume: this.validate.driver.shippingVolume,
         remark: this.validate.driver.remark,
         payType: this.validate.driver.payType,
         carBrand: this.validate.driver.carBrand,

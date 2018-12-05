@@ -310,18 +310,10 @@ export default {
           title: '车型',
           key: 'carType',
           render: (h, params) => {
-            let text = this.carTypeMap[params.row.carType] + this.carLengthMap[params.row.carLength]
+            let text = (params.row.carType ? this.carTypeMap[params.row.carType] : '') + (params.row.carLength ? this.carLengthMap[params.row.carLength] : '')
             return h('div', {}, text)
           }
         },
-        // {
-        //   title: '车长（米）',
-        //   key: 'carLength',
-        //   render: (h, params) => {
-        //     let text = params.row.carLength ? this.carLengthMap[params.row.carLength] : '-'
-        //     return h('div', {}, text.slice(0, text.length - 1))
-        //   }
-        // },
         {
           title: '载重（吨）',
           key: 'shippingWeight'

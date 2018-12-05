@@ -91,7 +91,7 @@
           <FormItem label="送修人：" prop="repairPerson">
             <Row>
               <Col span="19">
-              <Input v-model="validate.repairPerson" :maxlength="20" placeholder="必填"></Input>
+              <Input v-model="validate.repairPerson" :maxlength="15" placeholder="必填"></Input>
               </Col>
             </Row>
           </FormItem>
@@ -243,25 +243,26 @@ export default {
       this.validate.repairMoney = this.validate.repairMoney / 100
       this.validate.payMoney = this.validate.payMoney / 100
       this.validate.waitPayMoney = this.validate.waitPayMoney / 100
+      this.validate.repairMile = this.validate.repairMile / 1000
       this.carNoList.push({ carNo: this.validate.carNo })
     },
     save (name) {
-      this.validate.repairDate = new Date(this.validate.repairDate).Format('yyyy-MM-dd hh:mm:ss')
       this.$refs[name].validate((valid) => {
+        this.validate.repairDate = new Date(this.validate.repairDate).Format('yyyy-MM-dd hh:mm:ss')
+        let params = Object.assign({}, this.validate)
+        params.repairMoney = this.validate.repairMoney * 100
+        params.payMoney = this.validate.payMoney * 100
+        params.waitPayMoney = this.validate.waitPayMoney * 100
         if (valid) {
           if (this.flag === 1) { // 新增
-            this.add()
+            this.add(params)
           } else { // 2-编辑
-            this.update()
+            this.update(params)
           }
         }
       })
     },
-    add () {
-      let params = Object.assign({}, this.validate)
-      params.repairMoney = this.validate.repairMoney * 100
-      params.payMoney = this.validate.payMoney * 100
-      params.waitPayMoney = this.validate.waitPayMoney * 100
+    add (params) {
       Server({
         url: '/ownerCar/repair/add',
         method: 'post',
@@ -276,16 +277,12 @@ export default {
         }
       })
     },
-    update () {
-      let data = Object.assign({}, this.validate)
-      data.repairMoney = this.validate.repairMoney * 100
-      data.payMoney = this.validate.payMoney * 100
-      data.waitPayMoney = this.validate.waitPayMoney * 100
-      delete data.creater
+    update (params) {
+      delete params.creater
       Server({
         url: '/ownerCar/repair/update',
         method: 'post',
-        data: data
+        data: params
       }).then(({ data }) => {
         if (data.code === CODE) {
           this.$Message.success(data.msg)

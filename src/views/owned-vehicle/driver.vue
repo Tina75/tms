@@ -135,6 +135,8 @@ export default {
                               vm.$Message.success('删除成功！')
                             }
                           }).then(() => {
+                            vm.getOwnDrivers()
+                            vm.getOwnCars()
                             vm.formSearchInit = {}
                           })
                         }
@@ -246,7 +248,8 @@ export default {
     // 导出判空
     handleLoad (response) {
       try {
-        if (response.data.data.list.length < 1) this.exportFile = false
+        if (response.data.data.list.length >= 1) this.exportFile = true
+        else this.exportFile = false
       } catch (error) {
         this.exportFile = false
       }
@@ -275,6 +278,7 @@ export default {
             vm.getOwnDrivers()
             vm.getOwnCars()
             vm.formSearchInit = {}
+            vm.handleLoad()
           }
         }
       })

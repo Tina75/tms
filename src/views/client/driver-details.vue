@@ -51,13 +51,13 @@
         <Col span="6">
         <div>
           <span class="label">载重：</span>
-          {{driverList.shippingWeight}}<span>吨</span>
+          {{driverList.shippingWeight}}<span v-if="driverList.shippingWeight">吨</span>
         </div>
         </Col>
         <Col span="6">
         <div>
           <span class="label">净空：</span>
-          {{driverList.shippingVolume}}<span>方</span>
+          {{driverList.shippingVolume}}<span v-if="driverList.shippingVolume">方</span>
         </div>
         </Col>
       </Row>
