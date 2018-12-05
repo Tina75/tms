@@ -243,7 +243,6 @@ export default {
       this.validate.repairMoney = this.validate.repairMoney / 100
       this.validate.payMoney = this.validate.payMoney / 100
       this.validate.waitPayMoney = this.validate.waitPayMoney / 100
-      this.validate.repairMile = this.validate.repairMile / 1000
       this.carNoList.push({ carNo: this.validate.carNo })
     },
     save (name) {
