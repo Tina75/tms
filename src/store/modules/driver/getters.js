@@ -24,7 +24,7 @@ export const ownDrivers = (state) => state.drivers.map((driver) => {
     name: driver.driverName,
     value: driver.driverName,
     driverPhone: driver.driverPhone,
-    id: driver.driverId,
+    id: driver.id,
     type: driver.type
   }
 })
