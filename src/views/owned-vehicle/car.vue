@@ -198,7 +198,6 @@ export default {
                   placement: 'top'
                 },
                 style: {
-                  width: '100%',
                   paddingTop: '6px'
                 }
               }, [
