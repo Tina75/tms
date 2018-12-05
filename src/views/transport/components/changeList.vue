@@ -341,7 +341,8 @@ export default {
       //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
       //   }
       // }
-      return this.getList(this.data.old, 'fee', this.changeList)
+      let list = this.filterFieldsByAssignCarType(this.changeList, this.data.old.assignCarType || 1)
+      return this.getList(this.data.old, 'fee', list)
     },
     feeListNew () {
       // let list = []
@@ -351,7 +352,8 @@ export default {
       //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
       //   }
       // }
-      return this.getList(this.data.new, 'fee', this.changeList)
+      let list = this.filterFieldsByAssignCarType(this.changeList, this.data.new.assignCarType || 1)
+      return this.getList(this.data.new, 'fee', list)
     },
     settlementTypeOld () {
       return this.getSettlementType(this.data.old)
@@ -370,7 +372,7 @@ export default {
      * 2. 自送，删除承运商，添加主副司机，手机号,删除结算方式的比对
      */
     filterFieldsByAssignCarType (list, type) {
-      let newChange = _.omit(this.changeList, [])
+      let newChange = _.cloneDeep(this.changeList, [])
       if (type === 1) {
         // 外转，剔除副司机信息
         // newChange = _.omit(this.changeList, ['assistantDriverName', 'assistantDriverPhone'])
@@ -429,6 +431,7 @@ export default {
         }
       }
       list = _.sortBy(list, (item) => { return item.order })
+      changeList = null
       return list
     },
     getSettlementType (obj) {
