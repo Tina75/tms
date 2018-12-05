@@ -76,6 +76,9 @@ export default {
           this.form.driverPhone = driver.driverPhone
           this.form.driverId = driver.id
         }
+      } else {
+        this.form.driverPhone = ''
+        this.form.driverId = ''
       }
     },
     /**
@@ -88,6 +91,9 @@ export default {
           this.form.assistantDriverPhone = driver.driverPhone
           this.form.assistantDriverId = driver.id
         }
+      } else {
+        this.form.assistantDriverPhone = ''
+        this.form.assistantDriverId = ''
       }
     },
     /**

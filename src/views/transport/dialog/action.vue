@@ -30,7 +30,8 @@
       <send-carrier-info
         v-if="sendWay === '1'"
         ref="SendCarrierInfo"
-        :carrier-info="carrierInfo"></send-carrier-info>
+        :carrier-info="carrierInfo"
+        source="pickup"></send-carrier-info>
       <own-send-info v-else ref="ownSendInfo" :form="ownInfo"></own-send-info>
       <pickup-fee
         ref="pickupFee"

@@ -1,5 +1,5 @@
 <template>
-  <Select ref="$select" :transfer="true" :value="currentValue" not-found-text="暂无此人，请新增司机" remote filterable @on-change="handleChange">
+  <ExtraSelect ref="$select" :transfer="true" :value="currentValue" not-found-text="暂无此人，请新增司机" filterable clearable @on-change="handleChange">
     <Option v-for="(opt, index) in data" :key="index" :label="opt.value" :value="opt.value" :disabled="disabledOption(opt)">
       {{opt.name}}
       <span class="select-driver__option">{{opt.driverPhone}}</span>
@@ -10,15 +10,19 @@
         新增司机
       </span>
     </Option>
-  </Select>
+  </ExtraSelect>
 </template>
 
 <script>
 /**
  * 司机选择框
  */
+import ExtraSelect from './ExtraSelect.vue'
 export default {
   name: 'driver-select',
+  components: {
+    ExtraSelect
+  },
   props: {
     value: String,
     data: {

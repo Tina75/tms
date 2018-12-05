@@ -18,19 +18,19 @@
     <Row>
       <Col span="8">
       <div class="own-car__label">
-        <label>车型：</label>
+        <label v-show="form.carNo">车型：</label>
         <span>{{carTypeText}} &nbsp; {{carLengthText}}</span>
       </div>
       </Col>
       <Col span="8">
       <div class="own-car__label">
-        <label>主司机手机号：</label>
+        <label v-show="form.driverName">主司机手机号：</label>
         <span>{{form.driverPhone}}</span>
       </div>
       </Col>
       <Col span="8">
       <div class="own-car__label">
-        <label>副司机手机号：</label>
+        <label v-show="form.assistantDriverName">副司机手机号：</label>
         <span>{{form.assistantDriverPhone}}</span>
       </div>
       </Col>
@@ -93,6 +93,12 @@ export default {
      * @param {string} carNo 车牌号
      */
     handleSelect (value) {
+      if (!value) {
+        this.form.carType = ''
+        this.form.carLength = ''
+        this.$refs.driverInputs.updateDriversByCar({})
+        return
+      }
       let car = this.ownCars.find((item) => item.value === value)
       /**
        * 选中了车辆信息，就自动代入车辆相关的信息
@@ -116,6 +122,7 @@ export default {
 <style lang="stylus" scoped>
 .own-car
   &__label
+    height 18px
     label
       color #666666
     span

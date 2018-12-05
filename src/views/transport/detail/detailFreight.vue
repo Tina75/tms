@@ -238,8 +238,8 @@
           <div class="sub-title">
             <div class="send-label">派车方式：</div>
             <RadioGroup v-model="sendWay" @on-change="changeAssignCar">
-              <Radio label="2">自送</Radio>
-              <Radio label="1">外转</Radio>
+              <Radio :disabled="radioDisabled" label="2">自送</Radio>
+              <Radio :disabled="radioDisabled" label="1">外转</Radio>
               <!-- <Radio label="3">下发承运商</Radio> -->
             </RadioGroup>
           </div>
@@ -480,7 +480,7 @@ export default {
             code: 120116,
             func: () => {
               this.inEditing = 'change'
-              this.changeStr = JSON.stringify(_.cloneDeep(this.changeParams))
+              this.changeStr = this.changeParams
               this.changeState({ id: this.id, type: 3 })
             }
           }]
@@ -498,7 +498,7 @@ export default {
             code: 120116,
             func: () => {
               this.inEditing = 'change'
-              this.changeStr = JSON.stringify(_.cloneDeep(this.changeParams))
+              this.changeStr = this.changeParams
               this.changeState({ id: this.id, type: 3 })
             }
           }]
@@ -617,7 +617,8 @@ export default {
       feeStatus: 0, // 0 可以修改运费 10 已对账 20 已核销 30 存在异常记录且修改了运费未处理 2 部分修改运费
       changeStr: '',
       printData: [], // 待打印数据
-      sendWay: '1' // 派车类型 1 外转 2 自送  V1.07新增
+      sendWay: '1', // 派车类型 1 外转 2 自送  V1.07新增
+      radioDisabled: false // 控制单选按钮禁用
     }
   },
   computed: {
@@ -628,23 +629,32 @@ export default {
       else return ''
     },
     changeParams () {
-      let settlementPayInfo = this.settlementPayInfo.map(item => {
-        return {
-          payType: item.payType,
-          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? item.fuelCardAmount * 100 : 0,
-          cashAmount: typeof item.cashAmount === 'number' ? item.cashAmount * 100 : 0
-        }
-      })
-      return {
-        waybill: {
-          waybillId: this.id,
-          ...this.info,
-          ...this.formatMoney(),
-          settlementType: this.settlementType,
-          settlementPayInfo: this.settlementType === '1' ? settlementPayInfo : void 0
-        },
-        cargoList: _.uniq(this.detail.map(item => item.orderId))
+      const z = this
+      let data = {
+        waybill: {},
+        cargoList: _.uniq(z.detail.map(item => item.orderId))
       }
+      z.$nextTick(() => {
+        if (z.sendWay === '1') {
+          data.waybill = Object.assign(data.waybill, z.$refs.sendFee.formatMoney(), z.$refs.SendCarrierInfo.getCarrierInfo(), {
+            settlementType: z.$refs.sendFee.getSettlementType(),
+            settlementPayInfo: z.$refs.sendFee.getSettlementPayInfo()
+          })
+        } else if (z.sendWay === '2') { // 自送
+          data.waybill = Object.assign(data.waybill, z.$refs.sendFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
+          delete data.waybill.cashBack // 自送没有返现
+        }
+        Object.assign(data.waybill, {
+          waybillId: z.id,
+          waybillNo: z.info.waybillNo,
+          start: z.info.start,
+          end: z.info.end,
+          status: z.info.status,
+          remark: z.info.remark,
+          assignCarType: z.sendWay
+        })
+      })
+      return data
     },
     financeRulesInfo () {
       return {
@@ -655,6 +665,7 @@ export default {
       }
     }
   },
+
   methods: {
     ...mapActions([
       'getWaybillLocation',
@@ -747,6 +758,14 @@ export default {
             this.sendWay = '1'
           })
         }
+      } else {
+        // 自送 切换 到 外转
+        if (this.feeStatus !== 0) {
+          this.$Message.warning(this.feeStatusTip)
+          this.$nextTick(() => {
+            this.sendWay = '2'
+          })
+        }
       }
     },
     // 编辑
@@ -809,9 +828,9 @@ export default {
         remark: z.info.remark,
         assignCarType: z.sendWay
       })
-      console.log(data)
-      if (JSON.stringify(data) === z.changeStr) {
+      if (JSON.stringify(data) === JSON.stringify(z.changeStr)) {
         z.$Message.error('您并未做修改')
+        return
       }
       Server({
         url: '/waybill/modify',

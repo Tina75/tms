@@ -1,5 +1,5 @@
 <template>
-  <Select ref="$select" :transfer="true" :value="currentValue" placeholder="请选择" not-found-text="暂无此车，请新增车辆" clearable @on-change="handleChange">
+  <ExtraSelect ref="$select" :transfer="true" :value="currentValue" placeholder="请选择" not-found-text="暂无此车，请新增车辆" filterable clearable @on-change="handleChange">
     <Option v-for="car in ownCars" :key="car.id" :value="car.value">{{car.name}}</Option>
     <Option key="extra" value="extra" class="select-car__option" disabled>
       <span class="select-car__text" @click.prevent="handleClick">
@@ -7,7 +7,7 @@
         新增车辆
       </span>
     </Option>
-  </Select>
+  </ExtraSelect>
 </template>
 
 <script>
@@ -15,9 +15,13 @@
  * 司机选择框
  */
 import { mapGetters, mapActions } from 'vuex'
+import ExtraSelect from './ExtraSelect.vue'
 import BaseComponent from '@/basic/BaseComponent'
 export default {
   name: 'car-select',
+  components: {
+    ExtraSelect
+  },
   mixins: [BaseComponent],
   props: {
     value: String,
