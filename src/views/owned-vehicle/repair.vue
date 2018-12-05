@@ -88,7 +88,7 @@ export default {
                     this.openDialog({
                       name: 'owned-vehicle/dialog/edit-repair',
                       data: {
-                        title: '修改维修记录',
+                        title: '修改维修保养',
                         flag: 2, // 修改
                         validate: { ...params.row, repairDate: new Date(params.row.repairDate) }
                       },
@@ -242,7 +242,8 @@ export default {
     // 导出判空
     handleLoad (response) {
       try {
-        if (response.data.data.list.length < 1) this.exportFile = false
+        if (response.data.data.list.length >= 1) this.exportFile = true
+        else this.exportFile = false
       } catch (error) {
         this.exportFile = false
       }
