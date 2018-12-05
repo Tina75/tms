@@ -1,6 +1,9 @@
 <template>
   <ExtraSelect ref="$select" :transfer="true" :value="currentValue" placeholder="请选择" not-found-text="暂无此车，请新增车辆" filterable clearable @on-change="handleChange">
     <Option v-for="car in ownCars" :key="car.id" :value="car.value">{{car.name}}</Option>
+    <Option v-for="(opt, index) in extraOptions" :key="index" :label="opt.value" :value="opt.value" disabled>
+      {{opt.name}}
+    </Option>
     <Option key="extra" value="extra" class="select-car__option" disabled>
       <span class="select-car__text" @click.prevent="handleClick">
         <Icon type="ios-add" size="20" class="select-car__icon"></Icon>
@@ -25,6 +28,10 @@ export default {
   mixins: [BaseComponent],
   props: {
     value: String,
+    extraOptions: {
+      type: Array,
+      default: () => []
+    },
     onCreate: Function
   },
   data () {

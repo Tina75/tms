@@ -375,9 +375,11 @@ export default {
         // 外转，剔除副司机信息
         // newChange = _.omit(this.changeList, ['assistantDriverName', 'assistantDriverPhone'])
         newChange.driverName.description = '司机'
+        newChange.freightFee.description = '运输费用'
       } else if (type === 2) {
         // newChange = _.omit(this.changeList, ['carrierName'])
         newChange.driverName.description = '主司机'
+        newChange.freightFee.description = '油费'
         // newChange.assignCarType.span = 24
       }
       return newChange
@@ -416,9 +418,7 @@ export default {
      */
     getList (obj, type, changeList) {
       let list = []
-      if (type === 'fee' && obj.assignCarType === 2) {
-        return list
-      }
+
       for (let key in obj) {
         if (changeList[key] && changeList[key].type === type && changeList[key].settlementType !== 1) {
           list.push({
@@ -433,6 +433,9 @@ export default {
     },
     getSettlementType (obj) {
       let list = []
+      if (obj.assignCarType === 2) {
+        return list
+      }
       for (let i = 0, item = this.settlementPayInfo; i < item.length; i++) {
         let mid = {}
         for (let key in obj) {

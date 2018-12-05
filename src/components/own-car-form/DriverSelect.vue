@@ -4,6 +4,10 @@
       {{opt.name}}
       <span class="select-driver__option">{{opt.driverPhone}}</span>
     </Option>
+    <Option v-for="(opt, index) in extraOptions" :key="index" :label="opt.value" :value="opt.value" disabled>
+      {{opt.name}}
+      <span class="select-driver__option">{{opt.driverPhone}}</span>
+    </Option>
     <Option key="extra" value="extra" class="select-driver__extra-option" disabled>
       <span class="select-driver__text" @click.prevent="handleClick">
         <Icon type="ios-add" size="20" class="select-driver__icon"></Icon>
@@ -33,6 +37,11 @@ export default {
       type: Boolean,
       default: false
     },
+    // 额外的options，disabled，已删除的数据
+    extraOptions: {
+      type: Array,
+      default: () => []
+    },
     /**
      * 需要忽略的司机名列表，修改车辆的时候需要添加
      */
@@ -50,6 +59,9 @@ export default {
   },
   watch: {
     value (newValue) {
+      /**
+       * 车牌选择后，需触发验证
+       */
       if (newValue !== this.currentValue) {
         this.currentValue = newValue
         this.dispatch.call(this.$parent, 'FormItem', 'on-form-change', newValue)

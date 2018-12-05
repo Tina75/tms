@@ -285,7 +285,7 @@ import TMSUrl from '@/libs/constant/url'
 import _ from 'lodash'
 
 import Exception from './exception.vue'
-
+import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 export default {
   name: 'detailPickup',
   components: { SelectInput, PayInfo, Exception, PickupFee, OwnSendInfo, SendCarrierInfo },
@@ -322,14 +322,9 @@ export default {
       },
       // 自送赋值给子组件
       ownInfo: {
-        driverName: '',
-        driverPhone: '',
-        carNo: '',
-        carType: '',
-        carLength: '',
+        status: '',
         assignCarType: 1, // 派车类型 1 外转 2 自送 V1.07新增
-        assistantDriverName: '', // 副司机名称  V1.07新增
-        assistantDriverPhone: '' // 副司机电话  V1.07新增
+        ...defaultOwnForm
       },
       payment: {
         freightFee: null,
@@ -539,14 +534,9 @@ export default {
             vm.carrierInfo[key] = data.loadbill[key]
           }
           vm.ownInfo = {
-            driverName: '',
-            driverPhone: '',
-            carNo: '',
-            carType: '',
-            carLength: '',
-            assignCarType: 1, // 派车类型 1 外转 2 自送 V1.07新增
-            assistantDriverName: '', // 副司机名称  V1.07新增
-            assistantDriverPhone: '' // 副司机电话  V1.07新增
+            status: data.loadbill.status,
+            assignCarType: data.loadbill.assignCarType, // 派车类型 1 外转 2 自送 V1.07新增
+            ...defaultOwnForm
           }
         } else { // 自送
           for (let key in vm.ownInfo) {

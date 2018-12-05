@@ -5,7 +5,7 @@
       <FormItem label="车牌号：" prop="carNo">
         <Row>
           <Col span="20">
-          <CarSelect v-model="form.carNo" @on-change="handleSelect">
+          <CarSelect v-model="form.carNo" :extra-options="extraOptions" @on-change="handleSelect">
           </CarSelect>
           </Col>
         </Row>
@@ -58,9 +58,7 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      rule: {
-        required: true, message: '请选择车辆'
-      }
+      extraOptions: []
     }
   },
   computed: {
@@ -84,6 +82,23 @@ export default {
         str = CAR_LENGTH1[this.form.carLength]
       }
       return str
+    }
+  },
+  mounted () {
+    if (this.form.carNo) {
+      let carNo = this.form.carNo
+      let car = this.ownCars.find((item) => item.value === carNo)
+      if (!car) {
+        /**
+         *  追加一个disabled 的option
+         * 该车辆可能已被删除,或车牌修改
+         */
+        this.extraOptions.push({
+          name: carNo,
+          value: carNo,
+          ...car
+        })
+      }
     }
   },
   methods: {

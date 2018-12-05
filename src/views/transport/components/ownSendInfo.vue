@@ -14,15 +14,8 @@ import SelectInputMixin from '../mixin/selectInputMixin'
 // import Server from '@/libs/js/server'
 import { CAR } from '@/views/client/client'
 import OwnCarForm from '@/components/own-car-form'
-const defaultFormValue = {
-  driverName: '', // 主司机姓名
-  driverPhone: '', // 主司机电话
-  assistantDriverName: '', // 副司机姓名
-  assistantDriverPhone: '', // 副司机电话
-  carNo: '',
-  carType: '',
-  carLength: ''
-}
+import { defaultOwnForm as defaultFormValue } from '@/components/own-car-form/mixin.js'
+
 export default {
   name: 'OwnSendInfoComponent',
   components: { OwnCarForm },
