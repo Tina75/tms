@@ -7,8 +7,8 @@
           <span class="icontTitle"></span>
           <span class="iconTitleP">基础信息</span>
           <div class="btnItem">
-            <Button class="btnSty" @click="removeDriverData">删除</Button>
-            <Button type="primary" class="btnSty" @click="updateDriverData">修改</Button>
+            <Button v-if="hasPower(190203)" class="btnSty"  @click="removeDriverData">删除</Button>
+            <Button v-if="hasPower(190202)" type="primary" class="btnSty" @click="updateDriverData">修改</Button>
           </div>
         </div>
         <div class="list-info">

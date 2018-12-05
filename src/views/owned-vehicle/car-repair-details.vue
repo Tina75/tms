@@ -5,8 +5,8 @@
         <span class="icontTitle"></span>
         <span class="iconTitleP">维修信息</span>
         <div class="btnItem">
-          <Button class="btnSty" @click="removeRepairData">删除</Button>
-          <Button type="primary" class="btnSty" @click="updateRepairData">修改</Button>
+          <Button v-if="hasPower(190303)" class="btnSty" @click="removeRepairData">删除</Button>
+          <Button v-if="hasPower(190302)" type="primary" class="btnSty" @click="updateRepairData">修改</Button>
         </div>
       </div>
       <div class="list-info">

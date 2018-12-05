@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="add">
-      <Button type="primary" @click="editRepair">新增记录</Button>
-      <Button v-if="hasPower(130210)" @click="carExport">导出</Button>
+      <Button v-if="hasPower(190301)" type="primary" @click="editRepair">新增记录</Button>
+      <Button v-if="hasPower(190304)" @click="carExport">导出</Button>
       <div class="rightSearch">
         <template>
           <Select v-model="selectStatus" class="conditionSty" transfer @on-change="changeState">
@@ -75,7 +75,7 @@ export default {
           width: 150,
           render: (h, params) => {
             let renderBtn = []
-            if (this.hasPower(130210)) {
+            if (this.hasPower(190302)) {
               renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
@@ -121,7 +121,7 @@ export default {
                 }
               }
             }, '查看'))
-            if (this.hasPower(130210)) {
+            if (this.hasPower(190303)) {
               renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',

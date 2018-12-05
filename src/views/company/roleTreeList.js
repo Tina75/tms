@@ -351,11 +351,11 @@ export default {
       code: '190200',
       parentId: '190000',
       children: [
-        { title: '页面查看', code: '190100', parentId: '190000', disabled: true },
-        { title: '新增车辆', code: '190101', parentId: '190200', grandId: '190000', disabled: true },
-        { title: '修改车辆', code: '190102', parentId: '190200', grandId: '190000', disabled: true },
-        { title: '删除车辆', code: '190103', parentId: '190200', grandId: '190000', disabled: true },
-        { title: '导出车辆', code: '190104', parentId: '190200', grandId: '190000', disabled: true }
+        { title: '页面查看', code: '190200', parentId: '190000', disabled: true },
+        { title: '新增车辆', code: '190201', parentId: '190200', grandId: '190000', disabled: true },
+        { title: '修改车辆', code: '190202', parentId: '190200', grandId: '190000', disabled: true },
+        { title: '删除车辆', code: '190203', parentId: '190200', grandId: '190000', disabled: true },
+        { title: '导出车辆', code: '190204', parentId: '190200', grandId: '190000', disabled: true }
       ]
     },
     {
@@ -366,11 +366,11 @@ export default {
       code: '190300',
       parentId: '190000',
       children: [
-        { title: '页面查看', code: '190100', parentId: '190000', disabled: true },
-        { title: '新增维修保养记录', code: '190101', parentId: '190300', grandId: '190000', disabled: true },
-        { title: '修改维修保养记录', code: '190102', parentId: '190300', grandId: '190000', disabled: true },
-        { title: '删除维修保养记录', code: '190103', parentId: '190300', grandId: '190000', disabled: true },
-        { title: '导出维修保养记录', code: '190104', parentId: '190300', grandId: '190000', disabled: true }
+        { title: '页面查看', code: '190300', parentId: '190000', disabled: true },
+        { title: '新增维修保养记录', code: '190301', parentId: '190300', grandId: '190000', disabled: true },
+        { title: '修改维修保养记录', code: '190302', parentId: '190300', grandId: '190000', disabled: true },
+        { title: '删除维修保养记录', code: '190303', parentId: '190300', grandId: '190000', disabled: true },
+        { title: '导出维修保养记录', code: '190304', parentId: '190300', grandId: '190000', disabled: true }
       ]
     }
     ]
