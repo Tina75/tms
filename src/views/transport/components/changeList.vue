@@ -16,7 +16,7 @@
           <Col span="12">
           <div class="title">修改前运单信息:</div>
           <Row>
-            <Col v-for="item in infoListOld" :key="item.name" :span="item.span" class="labelContent">
+            <Col v-for="(item, index) in infoListOld" :key="index" :span="item.span" class="labelContent">
             <span class="label">{{item.name}}:</span>
             <span class="content">{{item.value}}</span>
               </Col>
@@ -25,7 +25,7 @@
           <Col span="12">
           <div class="title">修改后运单信息:</div>
           <Row >
-            <Col v-for="item in infoListNew" :key="item.name" :span="item.span" class="labelContent">
+            <Col v-for="(item, index) in infoListNew" :key="index" :span="item.span" class="labelContent">
             <span class="label">{{item.name}}:</span>
             <span class="content after">{{item.value}}</span>
               </Col>

@@ -84,15 +84,15 @@ export default {
       return str
     }
   },
-  mounted () {
+  beforeMount () {
+    /**
+     *  追加一个disabled 的option
+     * 该车辆可能已被删除,或车牌修改
+     */
     if (this.form.carNo) {
       let carNo = this.form.carNo
       let car = this.ownCars.find((item) => item.value === carNo)
       if (!car) {
-        /**
-         *  追加一个disabled 的option
-         * 该车辆可能已被删除,或车牌修改
-         */
         this.extraOptions.push({
           name: carNo,
           value: carNo,

@@ -76,17 +76,20 @@ export default {
       return this.ownDrivers
     }
   },
-  mounted () {
+  /**
+   * 部分司机删除或名称修改，需要额外补充追加在options里
+   */
+  beforeMount () {
     if (this.form.driverName) {
-      this.appendExtraOptions(this.form.driverName)
+      this.appendExtraOptions(this.form.driverName, this.form.driverPhone)
     }
     if (this.form.assistantDriverName) {
-      this.appendExtraOptions(this.form.assistantDriverName)
+      this.appendExtraOptions(this.form.assistantDriverName, this.form.assistantDriverPhone)
     }
   },
   methods: {
     ...mapActions(['getOwnDrivers']),
-    appendExtraOptions (name) {
+    appendExtraOptions (name, phone) {
       // let name = this.form.driverName
       let driver = this.getDriverByName(name)
       if (!driver) {
@@ -97,7 +100,7 @@ export default {
         this.extraOptions.push({
           name,
           value: name,
-          driverPhone: driver.driverPhone
+          driverPhone: phone
         })
       }
     },

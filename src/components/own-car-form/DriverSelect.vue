@@ -1,10 +1,10 @@
 <template>
   <ExtraSelect ref="$select" :transfer="true" :value="currentValue" not-found-text="暂无此人，请新增司机" filterable clearable @on-change="handleChange">
-    <Option v-for="(opt, index) in data" :key="index" :label="opt.value" :value="opt.value" :disabled="disabledOption(opt)">
+    <Option v-for="(opt, index) in data" :key="'normal-'+index" :label="opt.value" :value="opt.value" :disabled="disabledOption(opt)">
       {{opt.name}}
       <span class="select-driver__option">{{opt.driverPhone}}</span>
     </Option>
-    <Option v-for="(opt, index) in extraOptions" :key="index" :label="opt.value" :value="opt.value" disabled>
+    <Option v-for="(opt, index) in extraOptions" :key="'disabled-'+index" :label="opt.value" :value="opt.value" disabled>
       {{opt.name}}
       <span class="select-driver__option">{{opt.driverPhone}}</span>
     </Option>
