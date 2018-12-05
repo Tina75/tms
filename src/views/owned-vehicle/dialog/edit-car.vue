@@ -93,7 +93,7 @@
           </FormItem>
           </Col>
           <Col span="16">
-          <driver-Inputs :form="validate"></driver-Inputs>
+          <driver-Inputs :form="validate" :is-validate="true" :filtered-validate="filteredValidate"></driver-Inputs>
           </Col>
         </Row>
         <p class="modalTitle">常跑线路</p>
@@ -198,6 +198,18 @@ export default {
           { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
         ]
       }
+    }
+  },
+  computed: {
+    filteredValidate () {
+      let filtered = []
+      if (this.validate.driverId) {
+        filtered.push(this.validate.driverId)
+      }
+      if (this.validate.assistantDriverId) {
+        filtered.push(this.validate.assistantDriverId)
+      }
+      return filtered
     }
   },
   mounted () {

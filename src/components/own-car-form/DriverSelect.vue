@@ -1,6 +1,6 @@
 <template>
   <Select ref="$select" :transfer="true" :value="currentValue" not-found-text="暂无此人，请新增司机" clearable @on-change="handleChange">
-    <Option v-for="(opt, index) in data" :key="index" :label="opt.value" :value="opt.value">
+    <Option v-for="(opt, index) in data" :key="index" :label="opt.value" :value="opt.value" :disabled="disabledOption(opt)">
       {{opt.name}}
       <span class="select-driver__option">{{opt.driverPhone}}</span>
     </Option>
@@ -25,6 +25,17 @@ export default {
       type: Array,
       default: () => []
     },
+    isValidate: {
+      type: Boolean,
+      default: false
+    },
+    /**
+     * 需要忽略的司机名列表，修改车辆的时候需要添加
+     */
+    filteredValidate: {
+      type: Array,
+      default: () => []
+    },
     onClick: Function,
     onChange: Function
   },
@@ -42,6 +53,16 @@ export default {
     }
   },
   methods: {
+    /**
+     * 校验选项
+     * 是否可选，已经绑定其他车辆
+     */
+    disabledOption (item) {
+      if (!this.isValidate) {
+        return false
+      }
+      return item.type === 2 && !this.filteredValidate.includes(item.id)
+    },
     handleClick (e) {
       this.$emit('on-click', e)
       this.$refs.$select.hideMenu()

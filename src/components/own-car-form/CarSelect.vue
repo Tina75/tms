@@ -14,7 +14,7 @@
 /**
  * 司机选择框
  */
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import BaseComponent from '@/basic/BaseComponent'
 export default {
   name: 'car-select',
@@ -39,6 +39,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['getOwnCars']),
     handleClick (e) {
       this.$emit('on-create', e)
       this.$refs.$select.hideMenu()
@@ -59,7 +60,10 @@ export default {
       const vm = this
       this.openDialog({
         name: 'owned-vehicle/dialog/edit-car',
-        data: {},
+        data: {
+          flag: 1,
+          title: '新增车辆'
+        },
         methods: {
           ok () {
             // 查看所有车辆
