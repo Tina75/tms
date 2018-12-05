@@ -55,7 +55,7 @@
             <div class="flex-bar">
               <Row v-if="billType != 2">
                 <i-col span="8">
-                  <label class="feeLabel">运输费：</label>
+                  <label class="feeLabel">{{data.assignCarType === 1 ? '运输费：' : '油费：'}}</label>
                   <span class="colorGrey">{{data.beforeFeeInfo.freightFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
@@ -66,7 +66,7 @@
                   <label class="feeLabel">卸货费：</label>
                   <span class="colorGrey">{{data.beforeFeeInfo.unloadFee | Money}}元</span>
                 </i-col>
-                <i-col span="8">
+                <i-col v-if="billType === 3" span="8">
                   <label class="feeLabel">路桥费：</label>
                   <span class="colorGrey">{{data.beforeFeeInfo.tollFee | Money}}元</span>
                 </i-col>
@@ -88,7 +88,7 @@
                 <span class="colorGrey">{{data.beforeFeeInfo.freightFee | Money}}元</span>
               </Row>
               <Table
-                v-if="billType != 2"
+                v-if="data.assignCarType === 1"
                 :data="data.beforeFeeInfo.abnormalPayInfos"
                 :columns="columns"
                 width="350"></Table>
@@ -99,7 +99,7 @@
             <div class="flex-bar">
               <Row v-if="billType != 2">
                 <i-col span="8">
-                  <label class="feeLabel">运输费：</label>
+                  <label class="feeLabel">{{data.assignCarType === 1 ? '运输费：' : '油费：'}}</label>
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.freightFee, data.afterFeeInfo.freightFee)}" class="colorGrey">{{data.afterFeeInfo.freightFee | Money}}</span>元
                 </i-col>
                 <i-col span="8">
@@ -110,7 +110,7 @@
                   <label class="feeLabel">卸货费：</label>
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.unloadFee, data.afterFeeInfo.unloadFee)}" class="colorGrey">{{data.afterFeeInfo.unloadFee | Money}}</span>元
                 </i-col>
-                <i-col span="8">
+                <i-col v-if="billType === 3" span="8">
                   <label class="feeLabel">路桥费：</label>
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.tollFee, data.afterFeeInfo.tollFee)}" class="colorGrey">{{data.afterFeeInfo.tollFee | Money}}</span>元
                 </i-col>
@@ -132,7 +132,7 @@
                 <span :class="{'red-col': compareFee(data.beforeFeeInfo.freightFee, data.afterFeeInfo.freightFee)}" class="colorGrey">{{data.afterFeeInfo.freightFee | Money}}元</span>
               </Row>
               <Table
-                v-if="billType != 2"
+                v-if="data.assignCarType === 1"
                 :data="data.afterFeeInfo.abnormalPayInfos"
                 :columns="columnsAfter"
                 width="350"></Table>
@@ -296,6 +296,7 @@ export default {
   },
   mounted () {
     this.showImgFn = openSwipe(this.imageItems)
+    console.log(this.data)
   },
   methods: {
     // 处理对话框

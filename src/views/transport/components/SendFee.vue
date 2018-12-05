@@ -185,7 +185,8 @@ export default {
     },
     // 异常payInfo长度
     abnormalLength: {
-      type: [String, Number]
+      type: [String, Number],
+      default: 3
     }
   },
   data () {
@@ -355,7 +356,7 @@ export default {
     },
     // 派车模块数据校验
     validate () {
-      if (this.sendWay === '1' && !this.payInfoValid()) return
+      if (this.sendWay === '1' && this.abnormalLength > 0 && !this.payInfoValid()) return
       let check
       this.$refs.sendFeeForm.validate((valid) => {
         check = valid

@@ -378,12 +378,6 @@ export default {
             }
           }
         }).catch(err => console.error(err))
-      } else {
-        // 将payment 设置为初始值
-        for (let key in _this.clonePayment) {
-          _this.payment[key] = _this.clonePayment[key]
-        }
-        console.log(_this.payment)
       }
     },
 
@@ -450,12 +444,20 @@ export default {
       const _this = this
       _this.$Toast.confirm({
         title: '提示',
-        content: '<p>运费未修改，是否保存？</p>',
+        content: '<p>费用未修改，是否保存？</p>',
         okText: '是',
         cancelText: '否',
         onOk: () => {
           console.log('保存')
           _this.doSubmit()
+        },
+        onCancel: () => {
+          console.log('取消')
+          // 将payment 设置为初始值
+          for (let key in _this.clonePayment) {
+            _this.clonePayment[key] = _this.clonePayment[key] / 100
+          }
+          console.log(_this.clonePayment)
         }
       })
     },
@@ -470,15 +472,7 @@ export default {
       let tableData = []
       if (z.details.abnormalPayInfos.length > 0) {
         if (z.isChangeFee === 1) {
-          // tableData = _.cloneDeep(z.$refs.$payInfo.tableDataBack)
-          // z.$refs.$payInfo.tableDataBack.map((item, i) => {
-          //   tableData.push({
-          //     payType: item.payType,
-          //     cashAmount: item.cashAmount * 100 || 0,
-          //     fuelCardAmount: item.fuelCardAmount * 100 || 0
-          //   })
-          // })
-          tableData = z.$refs.sendFee.getSettlementPayInfo()
+          tableData = z.type === 3 ? z.$refs.sendFee.getSettlementPayInfo() : z.$refs.pickupFee.getSettlementPayInfo()
         } else {
           z.cloneSettlementPayInfo.map((item, i) => {
             tableData.push({
@@ -543,27 +537,14 @@ export default {
             fuelCardAmount: item.fuelCardAmount * 100 || void 0,
             cashAmount: item.cashAmount * 100 || void 0
           })
-          // item.cashAmount = item.cashAmount || null
-          // item.fuelCardAmount = item.fuelCardAmount || null
         })
-        // let tableDate = []
-        // z.$refs.$payInfo.tableDataBack.map((item, i) => {
-        //   tableDate.push({
-        //     payType: item.payType,
-        //     cashAmount: item.cashAmount || null,
-        //     fuelCardAmount: item.fuelCardAmount || null
-        //   })
-        // })
         if (z.type === 3) {
-          console.log(z.$refs.sendFee.formatMoney(), z.clonePayment)
-          console.log(cloneTableData, z.$refs.sendFee.getSettlementPayInfo())
           return _.isEqual(z.$refs.sendFee.formatMoney(), z.clonePayment) && _.isEqual(cloneTableData, z.$refs.sendFee.getSettlementPayInfo()) // 费用输入框和多段付
         } else {
           return _.isEqual(z.$refs.pickupFee.formatMoney(), z.clonePayment) && _.isEqual(cloneTableData, z.$refs.pickupFee.getSettlementPayInfo()) // 费用输入框和多段付
         }
       } else {
         if (z.type === 3) {
-          console.log(z.$refs.sendFee.formatMoney(), z.clonePayment)
           return _.isEqual(z.$refs.sendFee.formatMoney(), z.clonePayment)
         } else {
           return _.isEqual(z.$refs.pickupFee.formatMoney(), z.clonePayment)
@@ -618,16 +599,10 @@ export default {
  @import "../style/detail.styl"
 
   .part
-    padding 27px 0 20px 12px
-    border-bottom 1px dashed #CBCED3
 
     .ivu-form-item-label
       color #777
       font-size 14px
-
-    &:last-child
-      border-style none
-      padding-bottom 10px
 
     .detail-payment-way
       width calc(100% - 100px) !important
@@ -670,6 +645,11 @@ export default {
     display: -ms-flexbox
 </style>
 <style lang='stylus' scoped>
+  .part
+    padding 27px 0 20px 12px
+    &:last-child
+      border-style none
+      padding-bottom 10px
   .err-message
     color #EC4E4E
     font-size 14px
