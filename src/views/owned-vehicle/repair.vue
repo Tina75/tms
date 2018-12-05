@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="add">
-      <Button v-if="hasPower(190301)" type="primary" @click="editRepair">新增记录</Button>
+      <Button v-if="hasPower(190301)" type="primary" style="width: auto" @click="editRepair">新增维修保养</Button>
       <Button v-if="hasPower(190304)" @click="carExport">导出</Button>
       <div class="rightSearch">
         <template>
@@ -273,7 +273,7 @@ export default {
       this.openDialog({
         name: 'owned-vehicle/dialog/edit-repair',
         data: {
-          title: '新增车辆维修保养记录',
+          title: '新增维修保养',
           flag: 1 // 新增
         },
         methods: {

@@ -151,8 +151,7 @@ export default {
         },
         {
           title: '车牌号',
-          key: 'carNo',
-          width: 80
+          key: 'carNo'
         },
         {
           title: '车型',
