@@ -29,7 +29,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['ownCars', 'getOwnDrivers'])
+    ...mapGetters(['ownCars'])
   },
   watch: {
     value (newValue) {
@@ -39,7 +39,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getOwnCars']),
+    ...mapActions(['getOwnCars', 'getOwnDrivers']),
     handleClick (e) {
       this.$emit('on-create', e)
       this.$refs.$select.hideMenu()
