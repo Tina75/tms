@@ -848,7 +848,12 @@ export default {
       // if (!_this.validate()) return
       z.$refs['send'].validate((valid) => {
         if (valid) {
-          if (!z.checkDetailValidate()) return
+          if (!z.checkDetailValidate()) {
+            if (z.inEditing === 'change') {
+              z.$Message.warning('您有信息未填')
+            }
+            return
+          }
           if (z.inEditing === 'edit') {
             z.edit()
           } else if (z.inEditing === 'change') {
