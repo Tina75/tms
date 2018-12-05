@@ -9,7 +9,7 @@
       </RadioGroup>
     </div>
     <div v-if="sendWay === '1'">
-      <send-carrier-info ref="SendCarrierInfo"></send-carrier-info>
+      <send-carrier-info ref="SendCarrierInfo" source="pickup"></send-carrier-info>
       <pickup-fee ref="pickupFee"></pickup-fee>
     </div>
     <div v-else>

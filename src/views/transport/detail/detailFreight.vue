@@ -238,8 +238,8 @@
           <div class="sub-title">
             <div class="send-label">派车方式：</div>
             <RadioGroup v-model="sendWay" @on-change="changeAssignCar">
-              <Radio label="2">自送</Radio>
-              <Radio label="1">外转</Radio>
+              <Radio :disabled="radioDisabled" label="2">自送</Radio>
+              <Radio :disabled="radioDisabled" label="1">外转</Radio>
               <!-- <Radio label="3">下发承运商</Radio> -->
             </RadioGroup>
           </div>
@@ -617,7 +617,8 @@ export default {
       feeStatus: 0, // 0 可以修改运费 10 已对账 20 已核销 30 存在异常记录且修改了运费未处理 2 部分修改运费
       changeStr: '',
       printData: [], // 待打印数据
-      sendWay: '1' // 派车类型 1 外转 2 自送  V1.07新增
+      sendWay: '1', // 派车类型 1 外转 2 自送  V1.07新增
+      radioDisabled: false // 控制单选按钮禁用
     }
   },
   computed: {
@@ -755,6 +756,14 @@ export default {
           }
           this.$nextTick(() => {
             this.sendWay = '1'
+          })
+        }
+      } else {
+        // 自送 切换 到 外转
+        if (this.feeStatus !== 0) {
+          this.$Message.warning(this.feeStatusTip)
+          this.$nextTick(() => {
+            this.sendWay = '2'
           })
         }
       }
