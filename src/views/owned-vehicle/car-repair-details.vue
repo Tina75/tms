@@ -139,18 +139,17 @@ export default {
       let vm = this
       queryRepairById({ repairId: vm.infoData.id }).then(res => {
         vm.infoData = res.data.data
-        if (!vm.infoData.carNo) {
-          this.$Toast.warning({
-            title: '提示',
-            content: '维修记录不存在，请刷新列表',
-            onOk () {
-              vm.ema.fire('closeTab', vm.$route)
-            },
-            onCancel () {
-              vm.ema.fire('closeTab', vm.$route)
-            }
-          })
-        }
+      }).catch(() => {
+        this.$Toast.warning({
+          title: '提示',
+          content: '车辆维修信息不存在，请刷新列表',
+          onOk () {
+            vm.ema.fire('closeTab', vm.$route)
+          },
+          onCancel () {
+            vm.ema.fire('closeTab', vm.$route)
+          }
+        })
       })
     },
     formatDate (value, format) {
