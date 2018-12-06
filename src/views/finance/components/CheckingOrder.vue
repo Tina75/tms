@@ -16,7 +16,7 @@
           </Col>
           <Col span="5">
           <FormItem>
-            <Button :loading="loading" type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
+            <Button type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
             <Button type="default" @click="resetQuery">清除条件</Button>
           </FormItem>
           </Col>
@@ -46,7 +46,6 @@ export default {
   },
   data () {
     return {
-      loading: true,
       sceneMap: {
         1: '发货方',
         2: '承运商',
@@ -249,7 +248,6 @@ export default {
       this.getCheckList()
     },
     getCheckList () {
-      this.loading = true
       Server({
         url: '/finance/reconcile/list',
         method: 'get',
@@ -263,7 +261,6 @@ export default {
           pageSize: this.checkingOrderQuerySave.pageSize
         }
       }).then(res => {
-        this.loading = false
         this.orderData.totalCount = res.data.data.reconcileList.totalCount
         this.orderData.list = res.data.data.reconcileList.map(item => {
           return Object.assign({}, item, {

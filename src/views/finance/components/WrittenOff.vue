@@ -28,7 +28,7 @@
           </Col>
           <Col span="5">
           <FormItem>
-            <Button :loading="loading" type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
+            <Button type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
             <Button type="default" @click="resetQuery">清除条件</Button>
           </FormItem>
           </Col>
@@ -61,7 +61,6 @@ export default {
   },
   data () {
     return {
-      loading: true,
       noDataText: '<span><i class="icon font_family icon-ico-nodata"></i>&nbsp;暂无数据~</span>',
       sceneMap: {
         1: '发货方',
@@ -241,7 +240,6 @@ export default {
       this.getWrittenOffList()
     },
     getWrittenOffList () {
-      this.loading = true
       Server({
         url: '/finance/verify/list',
         method: 'get',
@@ -257,7 +255,6 @@ export default {
           pageSize: this.writtenOffQuerySave.pageSize
         }
       }).then(res => {
-        this.loading = false
         this.writtenOffData.totalCount = res.data.data.totalCount
         this.writtenOffData.list = res.data.data.dataList.map(item => {
           return Object.assign({}, item, {

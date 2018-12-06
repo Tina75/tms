@@ -28,7 +28,7 @@
           </Col>
           <Col  v-if="scene !== 2" span="5">
           <FormItem>
-            <Button :loading="loading" type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
+            <Button type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
             <Button type="default" @click="resetQuery">清除条件</Button>
           </FormItem>
           </Col>
@@ -41,7 +41,7 @@
           </Col>
           <Col  span="5">
           <FormItem>
-            <Button :loading="loading" type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
+            <Button type="primary" style="margin-right: 10px" @click="startQuery">搜索</Button>
             <Button type="default" @click="resetQuery">清除条件</Button>
           </FormItem>
           </Col>
@@ -117,7 +117,6 @@ export default {
     return {
       height: 0,
       companyDataActive: -1,
-      loading: true,
       sceneMap: {
         1: '发货方',
         2: '承运商',
@@ -497,7 +496,6 @@ export default {
       }
     },
     loadData () {
-      this.loading = true
       Server({
         url: '/finance/getUnverify',
         method: 'post',
@@ -511,7 +509,6 @@ export default {
           endTime: this.writingOffQuerySave.period[1] ? this.writingOffQuerySave.period[1].getTime() + 86400000 : ''
         }
       }).then(res => {
-        this.loading = false
         this.companyData = res.data.data.map((item, index) => {
           return Object.assign({}, item, {
             calcTotalFeeText: (item.calcTotalFee / 100).toFixed(2),
