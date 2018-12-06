@@ -42,7 +42,7 @@
     </div>
 
     <div slot="footer" style="text-align: center;">
-      <Button type="primary" @click="submit">确定</Button>
+      <Button :loading="btnLoading" type="primary" @click="submit">确定</Button>
       <Button type="default" @click.native="close">取消</Button>
     </div>
   </Modal>
@@ -104,7 +104,8 @@ export default {
         mileage: null // 计费里程 v1.06 新增
       },
       settlementType: '',
-      settlementPayInfo: []
+      settlementPayInfo: [],
+      btnLoading: false
     }
   },
   created () {
@@ -248,6 +249,7 @@ export default {
     doSendAction () {
       const z = this
       if (!z.checkSendValidate()) return
+      z.btnLoading = true
       let data = {
         waybillId: this.id || '',
         assignCarType: z.sendWay
@@ -267,9 +269,12 @@ export default {
         data
       }).then(res => {
         this.$Message.success('操作成功')
+        z.btnLoading = false
         this.complete()
         this.close()
-      }).catch(err => console.error(err))
+      }).catch(() => {
+        z.btnLoading = false
+      })
     },
 
     // 提货模块数据校验
@@ -291,6 +296,7 @@ export default {
     doPickAction () {
       const z = this
       if (!z.checkPickValidate()) return
+      z.btnLoading = true
       let data = {
         pickUpId: this.id || '',
         assignCarType: z.sendWay
@@ -310,9 +316,12 @@ export default {
         data
       }).then(res => {
         this.$Message.success('操作成功')
+        z.btnLoading = false
         this.complete()
         this.close()
-      }).catch(err => console.error(err))
+      }).catch(() => {
+        z.btnLoading = false
+      })
     },
 
     // 立即发运
