@@ -144,22 +144,22 @@
     "name":"自有车管理",
     "icon":"ico-truck",
     "path":"/owned-vehicle",
-    "powerCode":130000,
+    "powerCode":190000,
     "children":[
       {
         "name":"司机管理",
         "path":"/owned-vehicle/driver",
-        "powerCode":130100
+        "powerCode":190100
       },
       {
         "name":"车辆管理",
         "path":"/owned-vehicle/car",
-        "powerCode":130200
+        "powerCode":190200
       },
       {
         "name":"维修保养",
         "path":"/owned-vehicle/repair",
-        "powerCode":130200
+        "powerCode":190300
       }
     ]
   },

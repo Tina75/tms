@@ -270,7 +270,7 @@ export default {
           }
         },
         {
-          title: '合计运费',
+          title: '合计应收',
           key: 'orderTotalFee',
           width: 150,
           render: (h, params) => {
@@ -348,7 +348,7 @@ export default {
           }
         },
         {
-          title: '送货总费用',
+          title: '合计应付',
           key: 'waybillTotalFee',
           width: 150,
           render: (h, params) => {

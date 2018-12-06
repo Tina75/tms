@@ -16,16 +16,16 @@
           <Col span="12">
           <div class="title">修改前运单信息:</div>
           <Row>
-            <Col v-for="item in infoListOld" :key="item.name" :span="item.span" class="labelContent">
+            <Col v-for="(item, index) in infoListOld" :key="index" :span="item.span" class="labelContent">
             <span class="label">{{item.name}}:</span>
             <span class="content">{{item.value}}</span>
               </Col>
           </Row>
           </Col>
           <Col span="12">
-          <div class="title">修改后运费信息:</div>
+          <div class="title">修改后运单信息:</div>
           <Row >
-            <Col v-for="item in infoListNew" :key="item.name" :span="item.span" class="labelContent">
+            <Col v-for="(item, index) in infoListNew" :key="index" :span="item.span" class="labelContent">
             <span class="label">{{item.name}}:</span>
             <span class="content after">{{item.value}}</span>
               </Col>
@@ -52,7 +52,7 @@
             </Col>
           </Row>
           </Col>
-          <Col span="12">
+          <Col v-if="feeListNew.length>0" span="12">
           <div class="title">修改后运费:</div>
           <Row >
             <Col v-for="item in feeListNew" :key="item.name" :span="item.span" class="labelContent">
@@ -124,93 +124,112 @@ export default {
         'startName': {
           'type': 'info', // info 运单信息
           'description': '始发地',
-          'order': 1,
+          'order': 10,
           'span': 24
         },
         'endName': {
           'type': 'info',
           'description': '目的地',
-          'order': 2,
+          'order': 20,
           'span': 24
         },
         'carrierName': {
           'type': 'info',
           'description': '承运商',
-          'order': 3,
+          'order': 30,
           'span': 24
+        },
+        'assignCarType': {
+          'type': 'info',
+          'description': '派车类型',
+          'ways': 6,
+          'order': 31,
+          'span': 12
         },
         'carNo': {
           'type': 'info',
           'description': '车牌号',
-          'order': 4,
+          'order': 40,
           'span': 12
         },
         'carLength': {
           'type': 'info',
           'description': '车长',
           'ways': 4,
-          'order': 5,
+          'order': 50,
           'span': 12
         },
         'carType': {
           'type': 'info',
           'description': '车型',
           'ways': 5,
-          'order': 6,
+          'order': 60,
           'span': 12
         },
         'driverName': {
           'type': 'info',
           'description': '司机',
-          'order': 7,
+          'order': 70,
           'span': 12
         },
         'driverPhone': {
           'type': 'info',
           'description': '司机手机号',
-          'order': 8,
+          'order': 80,
+          'span': 12
+        },
+        'assistantDriverName': {
+          'type': 'info',
+          'description': '副司机',
+          'order': 81,
+          'span': 12
+        },
+        'assistantDriverPhone': {
+          'type': 'info',
+          'description': '司机手机号',
+          'order': 82,
           'span': 12
         },
         'freightFee': {
           'type': 'fee',
           'description': '运输费用',
           'ways': 1,
-          'order': 9,
+          'order': 90,
           'span': 12
         },
         'loadFee': {
           'type': 'fee',
           'description': '装货费',
           'ways': 1,
-          'order': 10,
+          'order': 100,
           'span': 12
         },
         'unloadFee': {
           'type': 'fee',
           'description': '卸货费',
           'ways': 1,
-          'order': 11,
+          'order': 110,
           'span': 12
         },
         'otherFee': {
           'type': 'fee',
           'description': '其他费用',
           'ways': 1,
-          'order': 12,
+          'order': 120,
           'span': 12
         },
         'totalFee': {
           'type': 'fee',
           'description': '合计费用',
           'ways': 1,
-          'order': 13,
+          'order': 130,
           'span': 12
         },
         'insuranceFee': {
           'type': 'fee',
           'description': '保险费用',
           'ways': 1,
-          'order': 14,
+          'order': 140,
           'span': 12
         },
         // 'cashBack': {
@@ -222,27 +241,27 @@ export default {
           'type': 'fee',
           'description': '路桥费',
           'ways': 1,
-          'order': 15,
+          'order': 150,
           'span': 12
         },
         'mileage': {
           'type': 'fee',
           'description': '公里数',
           'ways': 2,
-          'order': 16,
+          'order': 160,
           'span': 12
         },
         'remark': {
           'type': 'info',
           'description': '备注',
-          'order': 17,
+          'order': 170,
           'span': 24
         },
         'settlementType': {
           'type': 'fee',
           'description': '结算方式',
           'ways': 3,
-          'order': 18,
+          'order': 180,
           'span': 24
         },
         'operatorName': {
@@ -300,7 +319,8 @@ export default {
       //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
       //   }
       // }
-      return this.getList(this.data.old, 'info')
+      let list = this.filterFieldsByAssignCarType(this.changeList, this.data.old.assignCarType || 1)
+      return this.getList(this.data.old, 'info', list)
     },
     infoListNew () {
       // let list = []
@@ -310,7 +330,8 @@ export default {
       //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
       //   }
       // }
-      return this.getList(this.data.new, 'info')
+      let list = this.filterFieldsByAssignCarType(this.changeList, this.data.new.assignCarType || 1)
+      return this.getList(this.data.new, 'info', list)
     },
     feeListOld () {
       // let list = []
@@ -320,7 +341,8 @@ export default {
       //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
       //   }
       // }
-      return this.getList(this.data.old, 'fee')
+      let list = this.filterFieldsByAssignCarType(this.changeList, this.data.old.assignCarType || 1)
+      return this.getList(this.data.old, 'fee', list)
     },
     feeListNew () {
       // let list = []
@@ -330,7 +352,8 @@ export default {
       //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
       //   }
       // }
-      return this.getList(this.data.new, 'fee')
+      let list = this.filterFieldsByAssignCarType(this.changeList, this.data.new.assignCarType || 1)
+      return this.getList(this.data.new, 'fee', list)
     },
     settlementTypeOld () {
       return this.getSettlementType(this.data.old)
@@ -343,12 +366,33 @@ export default {
     // console.log(this.data)
   },
   methods: {
+    /**
+     * 派车类型忽略相关字段
+     * 1. 外转保留原承运商，司机，司机手机号
+     * 2. 自送，删除承运商，添加主副司机，手机号,删除结算方式的比对
+     */
+    filterFieldsByAssignCarType (list, type) {
+      let newChange = _.cloneDeep(this.changeList, [])
+      if (type === 1) {
+        // 外转，剔除副司机信息
+        // newChange = _.omit(this.changeList, ['assistantDriverName', 'assistantDriverPhone'])
+        newChange.driverName.description = '司机'
+        newChange.freightFee.description = '运输费用'
+      } else if (type === 2) {
+        // newChange = _.omit(this.changeList, ['carrierName'])
+        newChange.driverName.description = '主司机'
+        newChange.freightFee.description = '油费'
+        // newChange.assignCarType.span = 24
+      }
+      return newChange
+    },
     /* ways:
      1: 钱除以100
      * 2：公里数处以1000
      * 3：结算方式 1按单结 2月结
      * 4: 车长
      * 5：车型
+     * 6: 派车类型，1外转；2自送
      * */
     waysSwitch (num, value) {
       switch (num) {
@@ -362,28 +406,39 @@ export default {
         }
         case 4: return getCarLength(value)
         case 5: return getCarType(value)
+        case 6: return value === 2 ? '自送' : '外转'
         default: return ''
       }
     },
     showDetail () {
       this.hideDetail = !this.hideDetail
     },
-    getList (obj, type) {
+    /**
+     * @param {object} obj 变动的对象数据
+     * @param {string} type info 或fee区分
+     * @param {object} changelist 根据派车类型的不同，产生不同的改单清单数据
+     */
+    getList (obj, type, changeList) {
       let list = []
+
       for (let key in obj) {
-        if (this.changeList[key] && this.changeList[key].type === type && this.changeList[key].settlementType !== 1) {
+        if (changeList[key] && changeList[key].type === type && changeList[key].settlementType !== 1) {
           list.push({
-            name: this.changeList[key].description,
-            order: this.changeList[key].order,
-            span: this.changeList[key].span,
-            value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, obj[key]) : (obj[key] ? obj[key] : '-') })
+            name: changeList[key].description,
+            order: changeList[key].order,
+            span: changeList[key].span,
+            value: changeList[key].ways ? this.waysSwitch(changeList[key].ways, obj[key]) : (obj[key] ? obj[key] : '-') })
         }
       }
       list = _.sortBy(list, (item) => { return item.order })
+      changeList = null
       return list
     },
     getSettlementType (obj) {
       let list = []
+      if (obj.assignCarType === 2) {
+        return list
+      }
       for (let i = 0, item = this.settlementPayInfo; i < item.length; i++) {
         let mid = {}
         for (let key in obj) {

@@ -271,6 +271,9 @@ export default {
           title: '结算方式',
           key: 'payType',
           render: (h, params) => {
+            if (!params.row.payType) {
+              return h('div', '-')
+            }
             return h('div', {}, this.payTypeMap[params.row.payType])
           }
         },

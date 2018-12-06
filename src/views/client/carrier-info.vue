@@ -310,18 +310,13 @@ export default {
           title: '车型',
           key: 'carType',
           render: (h, params) => {
-            let text = this.carTypeMap[params.row.carType] + this.carLengthMap[params.row.carLength]
+            let text = (params.row.carType ? this.carTypeMap[params.row.carType] : '') + (params.row.carLength ? this.carLengthMap[params.row.carLength] : '')
+            if (text === '') {
+              return h('div', '-')
+            }
             return h('div', {}, text)
           }
         },
-        // {
-        //   title: '车长（米）',
-        //   key: 'carLength',
-        //   render: (h, params) => {
-        //     let text = params.row.carLength ? this.carLengthMap[params.row.carLength] : '-'
-        //     return h('div', {}, text.slice(0, text.length - 1))
-        //   }
-        // },
         {
           title: '载重（吨）',
           key: 'shippingWeight'
@@ -342,6 +337,8 @@ export default {
               n1 = JSON.parse(params.row.regularLine)[0].en === undefined ? '' : JSON.parse(params.row.regularLine)[0].en
               s2 = JSON.parse(params.row.regularLine)[1].sn === undefined ? '' : JSON.parse(params.row.regularLine)[1].sn
               n2 = JSON.parse(params.row.regularLine)[1].en === undefined ? '' : JSON.parse(params.row.regularLine)[1].en
+            } else if (s1 + s2 + n1 + n2 === '') {
+              return h('div', '-')
             }
             return h('div', [
               h('Tooltip', {
@@ -349,7 +346,6 @@ export default {
                   placement: 'top'
                 },
                 style: {
-                  width: '100%',
                   paddingTop: '6px'
                 }
               }, [

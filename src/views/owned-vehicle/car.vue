@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="add">
-      <Button type="primary" @click="editCar">新增车辆</Button>
-      <Button @click="carExport">导出</Button>
+      <Button v-if="hasPower(190201)" type="primary" @click="editCar">新增车辆</Button>
+      <Button v-if="hasPower(190204)" @click="carExport">导出</Button>
       <div class="rightSearch">
         <template>
           <Select v-model="selectStatus" class="conditionSty" transfer @on-change="changeState">
@@ -10,9 +10,9 @@
           </Select>
         </template>
         <Input v-model="keyword"
-               :maxlength="selectStatus === '1' ? 8 : 11"
+               :maxlength="selectStatus === '1' ? 8 : 20"
                :icon="keyword? 'ios-close-circle' : ''"
-               :placeholder="selectStatus === '1' ? '请输入车牌号搜索' : '请输入手机号搜索'"
+               :placeholder="selectStatus === '1' ? '请输入车牌号搜索' : '请输入司机姓名'"
                class="search-input"
                @on-enter="searchCarList"
                @on-click="clearKeywords"/>
@@ -41,7 +41,8 @@ import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
-import Server from '@/libs/js/server'
+import { CODE, deleteCarById } from './client'
+import { mapActions } from 'vuex'
 export default {
   name: 'owned-car',
   components: {
@@ -69,7 +70,7 @@ export default {
           width: 150,
           render: (h, params) => {
             let renderBtn = []
-            if (this.hasPower(130208)) {
+            if (this.hasPower(190202)) {
               renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
@@ -88,6 +89,8 @@ export default {
                       },
                       methods: {
                         ok () {
+                          vm.getOwnDrivers()
+                          vm.getOwnCars()
                           vm.formSearchInit = {}
                         }
                       }
@@ -114,7 +117,7 @@ export default {
                 }
               }
             }, '查看'))
-            if (this.hasPower(130209)) {
+            if (this.hasPower(190203)) {
               renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
@@ -129,15 +132,14 @@ export default {
                       },
                       methods: {
                         ok () {
-                          Server({
-                            url: '/ownerCar/deleteCar',
-                            method: 'get',
-                            data: { id: params.row.id }
-                          }).then(({ data }) => {
-                            if (data.code === 10000) {
+                          deleteCarById({ carId: params.row.id }).then(res => {
+                            if (res.data.code === CODE) {
                               vm.$Message.success('删除成功！')
-                              vm.formSearchInit = {}
                             }
+                          }).then(() => {
+                            vm.getOwnDrivers()
+                            vm.getOwnCars()
+                            vm.formSearchInit = {}
                           })
                         }
                       }
@@ -151,8 +153,7 @@ export default {
         },
         {
           title: '车牌号',
-          key: 'carNo',
-          width: 80
+          key: 'carNo'
         },
         {
           title: '车型',
@@ -171,6 +172,10 @@ export default {
           key: 'shippingVolume'
         },
         {
+          title: '品牌',
+          key: 'carBrand'
+        },
+        {
           title: '常跑线路',
           key: 'regularLine',
           render: (h, params) => {
@@ -186,6 +191,8 @@ export default {
               n1 = JSON.parse(params.row.regularLine)[0].en === undefined ? '' : JSON.parse(params.row.regularLine)[0].en
               s2 = JSON.parse(params.row.regularLine)[1].sn === undefined ? '' : JSON.parse(params.row.regularLine)[1].sn
               n2 = JSON.parse(params.row.regularLine)[1].en === undefined ? '' : JSON.parse(params.row.regularLine)[1].en
+            } else if (s1 + s2 + n1 + n2 === '') {
+              return h('div', '-')
             }
             return h('div', [
               h('Tooltip', {
@@ -193,7 +200,6 @@ export default {
                   placement: 'top'
                 },
                 style: {
-                  width: '100%',
                   paddingTop: '6px'
                 }
               }, [
@@ -258,10 +264,12 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['getOwnDrivers', 'getOwnCars']),
     // 导出判空
     handleLoad (response) {
       try {
-        if (response.data.data.list.length < 1) this.exportFile = false
+        if (response.data.data.list.length >= 1) this.exportFile = true
+        else this.exportFile = false
       } catch (error) {
         this.exportFile = false
       }
@@ -274,7 +282,7 @@ export default {
       }
       let params = this.formSearchInit
       Export({
-        url: '/owerCar/exportCar',
+        url: '/ownerCar/exportCar',
         method: 'post',
         data: params,
         fileName: '导出车辆列表'
@@ -285,21 +293,24 @@ export default {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     },
     editCar () {
+      let vm = this
       this.openDialog({
         name: 'owned-vehicle/dialog/edit-car',
         data: {
           title: '新增车辆',
-          flag: 1, // 新增
-          carrierId: this.carrierId // carrierId
+          flag: 1 // 新增
         },
         methods: {
           ok () {
-            this.formSearchInit = {}
+            vm.getOwnDrivers()
+            vm.getOwnCars()
+            vm.formSearchInit = {}
           }
         }
       })
     },
     searchCarList () {
+      this.formSearchInit = {}
       if (this.selectStatus === '1') {
         this.formSearchInit.carNo = this.keyword
         this.formSearchInit.driverName = ''
@@ -317,7 +328,7 @@ export default {
     },
     timeSort (column) {
       this.formSearchInit = {}
-      this.formSearchInit.order = (column.order === 'normal' ? '' : column.order)
+      this.formSearchInit.order = (column.order === 'normal' ? '' : 'create_time ' + column.order)
     }
   }
 }

@@ -7,8 +7,8 @@
           <span class="icontTitle"></span>
           <span class="iconTitleP">基础信息</span>
           <div class="btnItem">
-            <Button class="btnSty" @click="removeDriverData">删除</Button>
-            <Button type="primary" class="btnSty" @click="updateDriverData">修改</Button>
+            <Button v-if="hasPower(190203)" class="btnSty"  @click="removeCar">删除</Button>
+            <Button v-if="hasPower(190202)" type="primary" class="btnSty" @click="updateCar">修改</Button>
           </div>
         </div>
         <div class="list-info">
@@ -16,25 +16,25 @@
             <Col span="6">
             <div>
               <span class="label">车牌号：</span>
-              {{infoData.carNO}}
+              {{infoData.carNo}}
             </div>
             </Col>
             <Col span="6">
             <div>
               <span class="label">车型：</span>
-              {{infoData.carType}}
+              {{infoData.carTypeInit}}
             </div>
             </Col>
             <Col span="6">
             <div>
               <span class="label">车长：</span>
-              {{infoData.carLength}}
+              {{infoData.carLengthInit}}
             </div>
             </Col>
             <Col span="6">
             <div>
               <span class="label">载重：</span>
-              {{infoData.shippingWeight}}<span>吨</span>
+              {{infoData.shippingWeight}}<span v-if="infoData.shippingWeight">吨</span>
             </div>
             </Col>
           </Row>
@@ -42,7 +42,7 @@
             <Col span="6">
             <div>
               <span class="label">净空：</span>
-              {{infoData.shippingVolume}}<span>方</span>
+              {{infoData.shippingVolume}}<span v-if="infoData.shippingVolume">方</span>
             </div>
             </Col>
             <Col span="6">
@@ -54,13 +54,13 @@
             <Col span="6">
             <div>
               <span class="label">主司机：</span>
-              {{infoData.driverId}}
+              {{infoData.driverName}}
             </div>
             </Col>
             <Col span="6">
             <div>
               <span class="label">副司机：</span>
-              {{infoData.assistDriver}}
+              {{infoData.assistantDriverName}}
             </div>
             </Col>
           </Row>
@@ -91,11 +91,22 @@
         </div>
         <div class="list-info">
           <Row class="row">
-            <Col v-for="img in imageItems" :key="img.count" span="6">
+            <Col v-for="img in imageItems" :key="img.count" span="5">
             <div :v-if="img.src">
               <div :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(img.count)"></div>
               <p class="uploadLabel">{{img.title}}</p>
             </div>
+            </Col>
+          </Row>
+        </div>
+        <div class="title" style="margin-top: 40px;">
+          <span class="icontTitle"></span>
+          <span class="iconTitleP">备注</span>
+        </div>
+        <div class="list-info">
+          <Row class="row">
+            <Col span="20">
+            {{infoData.remark}}
             </Col>
           </Row>
         </div>
@@ -108,7 +119,7 @@ import BasePage from '@/basic/BasePage'
 import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
-import Server from '@/libs/js/server'
+import { CODE, deleteCarById, queryCarById } from './client'
 export default {
   name: 'car-details',
   components: { RecordList, prepareOpenSwipe },
@@ -119,7 +130,6 @@ export default {
   data () {
     return {
       infoData: {},
-      infoDataInit: {},
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH1,
       line1: '',
@@ -130,13 +140,21 @@ export default {
     }
   },
   mounted () {
-    // 数据备份，防止在详情页面对数据进行二次编辑
-    this.infoDataInit = Object.assign({}, this.$route.query.rowData)
     this.infoData = this.$route.query.rowData
-    this.initData()
-    this.openSwipe = prepareOpenSwipe(this.imageItems)
+    this.queryById()
   },
   methods: {
+    queryById () {
+      let vm = this
+      queryCarById({ carId: vm.infoData.id }).then(res => {
+        if (res.data.code === CODE) {
+          vm.infoData = res.data.data
+          vm.initData()
+          // 大图预览
+          vm.openSwipe = prepareOpenSwipe(vm.imageItems)
+        }
+      })
+    },
     // 日期格式化
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
@@ -146,6 +164,7 @@ export default {
     },
     // 初始化数据格式
     initData () {
+      this.imageItems = []
       let count = 0
       for (const key in this.infoData) {
         if (key === 'travelPhoto' && this.infoData[key]) {
@@ -157,8 +176,8 @@ export default {
           count++
         }
       }
-      this.infoData.carType = this.carTypeMap[this.infoData.carType]
-      this.infoData.carLength = this.carLengthMap[this.infoData.carLength]
+      this.infoData.carTypeInit = this.carTypeMap[this.infoData.carType]
+      this.infoData.carLengthInit = this.carLengthMap[this.infoData.carLength]
       let s1 = ''
       let n1 = ''
       let s2 = ''
@@ -175,19 +194,15 @@ export default {
       this.line1 = s1 + '—' + n1 === '—' ? '' : s1 + '—' + n1
       this.line2 = s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2
     },
-    removeDriverData () {
+    removeCar () {
       let vm = this
       this.openDialog({
         name: 'owned-vehicle/dialog/confirmDelete',
         data: {},
         methods: {
           ok () {
-            Server({
-              url: '/ownerCar/deleteCar',
-              method: 'get',
-              data: { id: vm.infoData.id }
-            }).then(({ data }) => {
-              if (data.code === 10000) {
+            deleteCarById({ carId: vm.infoData.id }).then(res => {
+              if (res.data.code === CODE) {
                 vm.$Message.success('删除成功！')
                 vm.ema.fire('closeTab', vm.$route)
               }
@@ -196,26 +211,18 @@ export default {
         }
       })
     },
-    updateDriverData () {
+    updateCar () {
       let vm = this
       this.openDialog({
         name: 'owned-vehicle/dialog/edit-car',
         data: {
           title: '修改车辆',
           flag: 2,
-          validate: { ...vm.infoDataInit, purchDate: new Date(vm.infoDataInit.purchDate) }
+          validate: { ...vm.infoData, purchDate: new Date(vm.infoData.purchDate) }
         },
         methods: {
           ok () {
-            Server({
-              url: '/ownerCar/queryCarDetail',
-              method: 'get',
-              data: { carId: vm.infoData.id }
-            }).then(({ data }) => {
-              if (data.code === 10000) {
-                vm.infoData = data.data
-              }
-            })
+            vm.queryById()
           }
         }
       })

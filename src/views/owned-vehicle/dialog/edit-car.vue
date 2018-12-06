@@ -93,7 +93,7 @@
           </FormItem>
           </Col>
           <Col span="16">
-          <driver-Inputs :form="validate"></driver-Inputs>
+          <OwnDriverSelects :form="validate" :is-validate="true" :filtered-validate="filteredValidate"></OwnDriverSelects>
           </Col>
         </Row>
         <p class="modalTitle">常跑线路</p>
@@ -151,7 +151,7 @@ import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/index.vue'
 import SelectInput from '@/components/SelectInput'
-import DriverInputs from '@/components/own-car-form/OwnDriverInputs'
+import OwnDriverSelects from '@/components/own-car-form/OwnDriverSelects'
 import _ from 'lodash'
 import Server from '@/libs/js/server'
 export default {
@@ -160,7 +160,7 @@ export default {
     CitySelect,
     UpLoad,
     SelectInput,
-    DriverInputs
+    OwnDriverSelects
   },
   mixins: [BaseDialog],
   data () {
@@ -197,7 +197,8 @@ export default {
         shippingVolume: [
           { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
         ]
-      }
+      },
+      filteredValidate: []
     }
   },
   mounted () {
@@ -222,6 +223,13 @@ export default {
             this.address1 = JSON.parse(this.validate.regularLine)[0]
             this.address2 = JSON.parse(this.validate.regularLine)[1]
           }
+        }
+        // 加入过滤验证，防止选择的时候disabled状态
+        if (this.validate.driverId) {
+          this.filteredValidate.push(this.validate.driverId)
+        }
+        if (this.validate.assistantDriverId) {
+          this.filteredValidate.push(this.validate.assistantDriverId)
         }
       } else {
         this.title = '新增车辆'
@@ -261,7 +269,7 @@ export default {
       this.validate.regularLine = JSON.stringify(this.address)
       this.$refs[name].validate((valid) => {
         if (valid) {
-          if (this.flag === 1) { // 新增
+          if (this.flag !== 2) { // 新增
             this.add()
           } else { // 2-编辑
             this.update()

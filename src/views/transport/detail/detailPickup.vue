@@ -20,7 +20,7 @@
     </div>
 
     <Tabs :value="activeTab" :animated="false">
-      <TabPane label="提单详情" name="detail">
+      <TabPane label="提货单详情" name="detail">
         <section class="detail-info">
           <!-- 提货单信息 -->
           <div>
@@ -152,10 +152,10 @@
             </Row>
           </div>
 
-          <!-- 运单日志 -->
+          <!-- 提货单日志 -->
           <div>
             <div class="detail-part-title">
-              <span>运单日志</span>
+              <span>提货单日志</span>
             </div>
             <div class="detail-log">
               <div class="detail-log-icon" @click="showLog = !showLog">
@@ -209,7 +209,7 @@
               <!-- <Radio label="3">下发承运商</Radio> -->
             </RadioGroup>
           </div>
-          <own-send-info v-if="sendWay === '2'" ref="ownSendInfo" :form="info" source="detail"></own-send-info>
+          <own-send-info v-if="sendWay === '2'" ref="ownSendInfo" :form="ownInfo" source="detail"></own-send-info>
           <send-carrier-info
             v-else
             ref="SendCarrierInfo"
@@ -285,7 +285,7 @@ import TMSUrl from '@/libs/constant/url'
 import _ from 'lodash'
 
 import Exception from './exception.vue'
-
+import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 export default {
   name: 'detailPickup',
   components: { SelectInput, PayInfo, Exception, PickupFee, OwnSendInfo, SendCarrierInfo },
@@ -321,7 +321,11 @@ export default {
         carLength: ''
       },
       // 自送赋值给子组件
-      ownInfo: {},
+      ownInfo: {
+        status: '',
+        assignCarType: 1, // 派车类型 1 外转 2 自送 V1.07新增
+        ...defaultOwnForm
+      },
       payment: {
         freightFee: null,
         loadFee: null,
@@ -509,6 +513,7 @@ export default {
     },
 
     fetchData () {
+      let vm = this
       this.loading = true
       Server({
         url: '/load/bill/details',
@@ -517,50 +522,63 @@ export default {
       }).then(res => {
         const data = res.data.data
 
-        for (let key in this.info) {
-          this.info[key] = data.loadbill[key]
+        for (let key in vm.info) {
+          vm.info[key] = data.loadbill[key]
         }
 
         // 派车方式
-        this.sendWay = data.loadbill.assignCarType.toString()
+        vm.sendWay = data.loadbill.assignCarType.toString()
         // 将承运商信息赋值给子组件
-        if (this.sendWay === '1') { // 外转
-          for (let key in this.carrierInfo) {
-            this.carrierInfo[key] = data.loadbill[key]
+        if (vm.sendWay === '1') { // 外转
+          for (let key in vm.carrierInfo) {
+            vm.carrierInfo[key] = data.loadbill[key]
+          }
+          vm.ownInfo = {
+            status: data.loadbill.status,
+            assignCarType: data.loadbill.assignCarType, // 派车类型 1 外转 2 自送 V1.07新增
+            ...defaultOwnForm
           }
         } else { // 自送
-          for (let key in this.ownInfo) {
-            this.ownInfo[key] = data.loadbill[key]
+          for (let key in vm.ownInfo) {
+            vm.ownInfo[key] = data.loadbill[key]
+          }
+          vm.carrierInfo = {
+            carrierName: '',
+            driverName: '',
+            driverPhone: '',
+            carNo: '',
+            carType: '',
+            carLength: ''
           }
         }
 
-        for (let key in this.payment) {
-          this.payment[key] = this.setMoneyUnit2Yuan(data.loadbill[key])
+        for (let key in vm.payment) {
+          vm.payment[key] = vm.setMoneyUnit2Yuan(data.loadbill[key])
         }
-        this.detail = data.cargoList
-        this.logList = data.loadBillLogs
+        vm.detail = data.cargoList
+        vm.logList = data.loadBillLogs
 
-        this.status = this.statusFilter(data.loadbill.status)
-        this.settlementType = data.loadbill.settlementType ? data.loadbill.settlementType.toString() : '1'
+        vm.status = vm.statusFilter(data.loadbill.status)
+        vm.settlementType = data.loadbill.settlementType ? data.loadbill.settlementType.toString() : '1'
         // 格式化计费信息金额单位为元
-        let temp = this.settlementPayInfo.map((item, i) => {
+        let temp = vm.settlementPayInfo.map((item, i) => {
           if (!data.loadbill.settlementPayInfo[i]) return item
           else {
             const temp = data.loadbill.settlementPayInfo[i]
-            temp.fuelCardAmount = this.setMoneyUnit2Yuan(temp.fuelCardAmount)
-            temp.cashAmount = this.setMoneyUnit2Yuan(temp.cashAmount)
+            temp.fuelCardAmount = vm.setMoneyUnit2Yuan(temp.fuelCardAmount)
+            temp.cashAmount = vm.setMoneyUnit2Yuan(temp.cashAmount)
             return Object.assign(item, temp)
           }
         })
-        this.settlementPayInfo = temp
+        vm.settlementPayInfo = temp
 
-        this.setBtnsWithStatus()
+        vm.setBtnsWithStatus()
         // 异常个数
-        this.exceptionCount = data.abnormalCnt
-        if (this.exceptionCount) {
-          this.$refs['exception'] && this.$refs['exception'].initData()
+        vm.exceptionCount = data.abnormalCnt
+        if (vm.exceptionCount) {
+          vm.$refs['exception'] && vm.$refs['exception'].initData()
         }
-        this.loading = false
+        vm.loading = false
       }).catch(err => console.error(err))
     },
 
@@ -605,6 +623,7 @@ export default {
         method: 'post',
         data: data
       }).then(res => {
+        this.fetchData()
         this.$Message.success('保存成功')
         this.cancelEdit()
       }).catch(err => console.error(err))

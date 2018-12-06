@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="add">
-      <Button v-if="hasPower(130207)" type="primary" @click="editDriver">新增司机</Button>
-      <Button v-if="hasPower(130210)" @click="carExport">导出</Button>
+      <Button v-if="hasPower(190101)" type="primary" @click="editDriver">新增司机</Button>
+      <Button v-if="hasPower(190104)" @click="carExport">导出</Button>
       <div class="rightSearch">
         <template>
           <Select v-model="selectStatus" class="conditionSty" transfer @on-change="changeState">
@@ -11,7 +11,7 @@
         </template>
         <Input
           v-model="keyword"
-          :maxlength="selectStatus === '1' ? 8 : 11"
+          :maxlength="selectStatus === '1' ? 20 : 11"
           :icon="keyword ? 'ios-close-circle' : ''"
           :placeholder="selectStatus === '1' ? '请输入司机姓名' : '请输入手机号搜索'"
           class="search-input"
@@ -41,7 +41,8 @@ import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
-import Server from '@/libs/js/server'
+import { mapActions } from 'vuex'
+import { CODE, deleteDriverById } from './client'
 export default {
   name: 'owned-car',
   components: {
@@ -67,7 +68,7 @@ export default {
           width: 150,
           render: (h, params) => {
             let renderBtn = []
-            if (this.hasPower(130208)) {
+            if (this.hasPower(190102)) {
               renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
@@ -86,6 +87,7 @@ export default {
                       },
                       methods: {
                         ok () {
+                          vm.getOwnDrivers()
                           vm.formSearchInit = {}
                         }
                       }
@@ -112,7 +114,7 @@ export default {
                 }
               }
             }, '查看'))
-            if (this.hasPower(130209)) {
+            if (this.hasPower(190103)) {
               renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
@@ -127,15 +129,13 @@ export default {
                       },
                       methods: {
                         ok () {
-                          Server({
-                            url: '/ownerCar/deleteDriver',
-                            method: 'post',
-                            data: { id: params.row.id }
-                          }).then(({ data }) => {
-                            if (data.code === 10000) {
+                          deleteDriverById({ id: params.row.id }).then(res => {
+                            if (res.data.code === CODE) {
                               vm.$Message.success('删除成功！')
-                              vm.formSearchInit = {}
                             }
+                          }).then(() => {
+                            vm.getOwnDrivers()
+                            vm.formSearchInit = {}
                           })
                         }
                       }
@@ -156,8 +156,69 @@ export default {
           key: 'driverPhone'
         },
         {
+          title: '常跑线路',
+          key: 'regularLine',
+          render: (h, params) => {
+            let s1 = ''
+            let n1 = ''
+            let s2 = ''
+            let n2 = ''
+            if (params.row.regularLine && JSON.parse(params.row.regularLine).length === 1) {
+              s1 = JSON.parse(params.row.regularLine)[0].sn === undefined ? '' : JSON.parse(params.row.regularLine)[0].sn
+              n1 = JSON.parse(params.row.regularLine)[0].en === undefined ? '' : JSON.parse(params.row.regularLine)[0].en
+            } else if (params.row.regularLine && JSON.parse(params.row.regularLine).length === 2) {
+              s1 = JSON.parse(params.row.regularLine)[0].sn === undefined ? '' : JSON.parse(params.row.regularLine)[0].sn
+              n1 = JSON.parse(params.row.regularLine)[0].en === undefined ? '' : JSON.parse(params.row.regularLine)[0].en
+              s2 = JSON.parse(params.row.regularLine)[1].sn === undefined ? '' : JSON.parse(params.row.regularLine)[1].sn
+              n2 = JSON.parse(params.row.regularLine)[1].en === undefined ? '' : JSON.parse(params.row.regularLine)[1].en
+            } else if (s1 + s2 + n1 + n2 === '') {
+              return h('div', '-')
+            }
+            return h('div', [
+              h('Tooltip', {
+                props: {
+                  placement: 'top'
+                },
+                style: {
+                  paddingTop: '6px'
+                }
+              }, [
+                h('span', {
+                  slot: 'content'
+                }, [h('p', {
+                  style: {
+                    whiteSpace: 'pre-wrap'
+                  }
+                }, (s1 + '—' + n1) === '—' ? '' : s1 + '—' + n1),
+                h('p', {
+                  style: {
+                    whiteSpace: 'pre-wrap'
+                  }
+                }, (s2 + '—' + n2) === '—' ? '' : s2 + '—' + n2)
+                ]),
+                h('p', {
+                  style: {
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }
+                }, s1 + '—' + n1 === '—' ? '' : s1 + '—' + n1),
+                h('p', {
+                  style: {
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }
+                }, s2 + '—' + n2 === '—' ? '' : s2 + '—' + n2)
+              ])
+            ])
+          }
+        },
+        {
           title: '创建时间',
-          key: 'driverName',
+          key: 'createTime',
           sortable: 'custom',
           render: (h, params) => {
             let text = this.formatDateTime(params.row.createTime)
@@ -178,6 +239,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['getOwnDrivers']),
     // 日期格式化
     formatDateTime (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
@@ -185,7 +247,8 @@ export default {
     // 导出判空
     handleLoad (response) {
       try {
-        if (response.data.data.list.length < 1) this.exportFile = false
+        if (response.data.data.list.length >= 1) this.exportFile = true
+        else this.exportFile = false
       } catch (error) {
         this.exportFile = false
       }
@@ -211,13 +274,16 @@ export default {
         data: {},
         methods: {
           ok () {
+            vm.getOwnDrivers()
             vm.formSearchInit = {}
+            vm.handleLoad()
           }
         }
       })
     },
     // 搜索
     searchList () {
+      this.formSearchInit = {}
       if (this.selectStatus === '1') {
         this.formSearchInit.driverPhone = ''
         this.formSearchInit.driverName = this.keyword
@@ -232,7 +298,7 @@ export default {
     },
     timeSort (column) {
       this.formSearchInit = {}
-      this.formSearchInit.order = (column.order === 'normal' ? '' : column.order)
+      this.formSearchInit.order = (column.order === 'normal' ? '' : 'create_time ' + column.order)
     },
     changeState () {
       this.keyword = ''

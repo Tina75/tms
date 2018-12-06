@@ -14,7 +14,7 @@
           <tagNumberInput v-model="writeOffForm.actualFee" placeholder="请输入"></tagNumberInput>
           <!--<Input v-model="writeOffForm.actualFee" placeholder="请输入" />-->
         </FormItem>
-        <FormItem label="付款方式：" prop="payType">
+        <FormItem :label="scene === 1 ? '收款方式：' : '付款方式：'" prop="payType">
           <p v-if="isOil">油卡</p>
           <RadioGroup v-else v-model="writeOffForm.payType">
             <Radio v-for="(value, key) in payTypeMap" :key="key" :label="key">{{value}}</Radio>

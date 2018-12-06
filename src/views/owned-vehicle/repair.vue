@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="add">
-      <Button type="primary" @click="editRepair">新增记录</Button>
-      <Button v-if="hasPower(130210)" @click="carExport">导出</Button>
+      <Button v-if="hasPower(190301)" type="primary" style="width: auto" @click="editRepair">新增维修保养</Button>
+      <Button v-if="hasPower(190304)" @click="carExport">导出</Button>
       <div class="rightSearch">
         <template>
           <Select v-model="selectStatus" class="conditionSty" transfer @on-change="changeState">
@@ -40,8 +40,7 @@
       url="/ownerCar/repair/list"
       list-field="list"
       method="post"
-      @on-load="handleLoad"
-      @on-sort-change = "timeSort">
+      @on-load="handleLoad">
     </page-table>
   </div>
 </template>
@@ -50,7 +49,7 @@ import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
-import Server from '@/libs/js/server'
+import { CODE, deleteRepairById } from './client'
 export default {
   name: 'owned-car',
   components: {
@@ -66,7 +65,7 @@ export default {
       keyword: '',
       formSearchInit: {
         carNo: '',
-        reqairType: ''
+        repairType: ''
       },
       exportFile: true,
       menuColumns: [
@@ -76,7 +75,7 @@ export default {
           width: 150,
           render: (h, params) => {
             let renderBtn = []
-            if (this.hasPower(130210)) {
+            if (this.hasPower(190302)) {
               renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
@@ -89,7 +88,7 @@ export default {
                     this.openDialog({
                       name: 'owned-vehicle/dialog/edit-repair',
                       data: {
-                        title: '修改维修记录',
+                        title: '修改维修保养',
                         flag: 2, // 修改
                         validate: { ...params.row, repairDate: new Date(params.row.repairDate) }
                       },
@@ -122,7 +121,7 @@ export default {
                 }
               }
             }, '查看'))
-            if (this.hasPower(130210)) {
+            if (this.hasPower(190303)) {
               renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
@@ -137,15 +136,12 @@ export default {
                       },
                       methods: {
                         ok () {
-                          Server({
-                            url: '/ownerCar/repair/del',
-                            method: 'post',
-                            data: { id: params.row.id }
-                          }).then(({ data }) => {
-                            if (data.code === 10000) {
+                          deleteRepairById({ id: params.row.id }).then(res => {
+                            if (res.data.code === CODE) {
                               vm.$Message.success('删除成功！')
-                              vm.formSearchInit = {}
                             }
+                          }).then(() => {
+                            vm.formSearchInit = {}
                           })
                         }
                       }
@@ -219,7 +215,6 @@ export default {
         {
           title: '添加时间',
           key: 'createTime',
-          sortable: 'custom',
           width: 150,
           render: (h, params) => {
             let text = this.formatDateTime(params.row.createTime)
@@ -247,7 +242,8 @@ export default {
     // 导出判空
     handleLoad (response) {
       try {
-        if (response.data.data.list.length < 1) this.exportFile = false
+        if (response.data.data.list.length >= 1) this.exportFile = true
+        else this.exportFile = false
       } catch (error) {
         this.exportFile = false
       }
@@ -278,7 +274,7 @@ export default {
       this.openDialog({
         name: 'owned-vehicle/dialog/edit-repair',
         data: {
-          title: '新增车辆维修保养记录',
+          title: '新增维修保养',
           flag: 1 // 新增
         },
         methods: {
@@ -289,12 +285,13 @@ export default {
       })
     },
     searchRepairList () {
+      this.formSearchInit = {}
       if (this.selectStatus === '1') {
-        this.formSearchInit.carNo = ''
-        this.formSearchInit.reqairType = this.keyword
-      } else {
-        this.formSearchInit.reqairType = ''
         this.formSearchInit.carNo = this.keyword
+        this.formSearchInit.repairType = ''
+      } else {
+        this.formSearchInit.repairType = this.keyword
+        this.formSearchInit.carNo = ''
       }
     },
     clearKeywords () {
@@ -302,11 +299,11 @@ export default {
       this.searchRepairList()
     },
     changeState () {
-      this.keyword = ''
-    },
-    timeSort (column) {
-      this.formSearchInit = {}
-      this.formSearchInit.order = (column.order === 'normal' ? '' : column.order)
+      if (this.selectStatus === '2') {
+        this.keyword = '1'
+      } else {
+        this.keyword = ''
+      }
     }
   }
 }

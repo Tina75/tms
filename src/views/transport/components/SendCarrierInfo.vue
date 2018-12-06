@@ -1,10 +1,10 @@
 <template>
   <div>
-    <Form ref="sendInfo" :label-width="82" :model="carrierInfo" :rules="rules" class="transport-detail" label-position="left">
+    <Form ref="sendInfo" :label-width="82" :model="carrierInfo" :rules="source === 'pickup' ? pickupRules : rules" class="transport-detail" label-position="left">
       <div :style="source === 'detail' && 'margin-bottom: 0;border-bottom: none;'" class="part">
         <Row class="detail-field-group">
           <i-col span="8">
-            <FormItem label="承运商：" prop="carrierName">
+            <FormItem :prop="source !== 'detail' ? 'carrierName' : ''" :class="{'padding-left-label': source === 'detail'}" label="承运商：">
               <SelectInput
                 ref="carrierInput"
                 v-model="carrierInfo.carrierName"
@@ -14,7 +14,7 @@
             </FormItem>
           </i-col>
           <i-col span="8">
-            <FormItem label="司机：">
+            <FormItem prop="driverName" label="司机：">
               <SelectInput
                 :carrier-id="carrierId"
                 v-model="carrierInfo.driverName"
@@ -36,7 +36,7 @@
 
         <Row class="detail-field-group">
           <i-col span="8">
-            <FormItem label="车牌号：" prop="carNo" class="padding-left-label">
+            <FormItem :class="{'padding-left-label': source !== 'pickup'}" prop="carNo" label="车牌号：">
               <SelectInput
                 :carrier-id="carrierId"
                 v-model="carrierInfo.carNo"
@@ -83,7 +83,7 @@ export default {
     // 引用页面来源
     source: {
       type: String,
-      default: 'dispatch' // detail: 详情页，dispatch：调度弹窗，action：提货或派车弹窗
+      default: 'dispatch' // detail: 详情页，dispatch：调度弹窗，action：提货或派车弹窗, pickup: 提货
     },
     carrierInfo: {
       type: Object,
@@ -104,14 +104,7 @@ export default {
       carType: CAR_TYPE,
       carLength: CAR_LENGTH,
 
-      // info: {
-      //   carrierName: '',
-      //   driverName: '',
-      //   driverPhone: '',
-      //   carNo: '',
-      //   carType: '',
-      //   carLength: ''
-      // },
+      // 运单校验规则
       rules: {
         carrierName: [
           { required: true, message: '请填写承运商', trigger: 'blur' },
@@ -119,6 +112,29 @@ export default {
         ],
         carNo: [
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
+        ],
+        driverName: [],
+        driverPhone: [
+          { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
+        ]
+      },
+      // 提货单校验规则
+      pickupRules: {
+        carrierName: [
+          { required: true, message: '请填写承运商', trigger: 'blur' },
+          { required: true, message: '请填写承运商', trigger: 'change' }
+        ],
+        carNo: [
+          { required: true, message: '请填写车牌号', trigger: 'blur' },
+          { required: true, message: '请填写车牌号', trigger: 'change' },
+          { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
+        ],
+        driverName: [
+          { required: true, message: '请填写司机姓名', trigger: 'blur' },
+          { required: true, message: '请填写司机姓名', trigger: 'change' }
+        ],
+        driverPhone: [
+          { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
         ]
       }
     }
@@ -132,6 +148,7 @@ export default {
 
   watch: {
     carrierName (newVal, oldVal) {
+      console.log(newVal)
       $bus.$emit('carrierNameChange', newVal)
     }
   },
@@ -179,6 +196,8 @@ export default {
    .label-width
     .ivu-form-item-label
       width 92px !important
+    .ivu-form-item-content
+      margin-left 92px !important
 </style>
 <style lang='stylus' scoped>
 </style>

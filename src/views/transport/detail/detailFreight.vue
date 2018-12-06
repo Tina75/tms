@@ -201,7 +201,7 @@
   </div>
 
   <!-- 编辑和改单状态 -->
-  <div v-else class="transport-detail">
+  <div v-else ref="editPage" class="transport-detail">
     <!-- 运单号及状态 -->
     <section :class="themeBarColor(status)" class="detail-header">
       <ul class="detail-header-list">
@@ -238,12 +238,12 @@
           <div class="sub-title">
             <div class="send-label">派车方式：</div>
             <RadioGroup v-model="sendWay" @on-change="changeAssignCar">
-              <Radio label="2">自送</Radio>
-              <Radio label="1">外转</Radio>
+              <Radio :disabled="radioDisabled" label="2">自送</Radio>
+              <Radio :disabled="radioDisabled" label="1">外转</Radio>
               <!-- <Radio label="3">下发承运商</Radio> -->
             </RadioGroup>
           </div>
-          <own-send-info v-if="sendWay === '2'" ref="ownSendInfo" :form="info" source="detail"></own-send-info>
+          <own-send-info v-if="sendWay === '2'" ref="ownSendInfo" :form="ownInfo" source="detail"></own-send-info>
           <send-carrier-info
             v-else
             ref="SendCarrierInfo"
@@ -282,11 +282,14 @@
         </div>
         <send-fee
           ref="sendFee"
+          :fee-status-tip="feeStatusTip"
+          :is-disabled="feeStatusTip? true: false"
           :payment="payment"
           :settlement-type="settlementType"
           :settlement-pay-info="settlementPayInfo"
           :finance-rules-info="financeRulesInfo"
-          :send-way="sendWay">
+          :send-way="sendWay"
+          source="detail">
         </send-fee>
       </div>
     </section>
@@ -312,8 +315,6 @@ import TransportBase from '../mixin/transportBase'
 import DetailMixin from '../mixin/detailMixin'
 import SelectInputMixin from '../mixin/selectInputMixin'
 
-import MoneyInput from '../components/MoneyInput'
-import TagNumberInput from '@/components/TagNumberInput'
 // import validator from '@/libs/js/validate'
 import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '../components/SelectInput.vue'
@@ -330,25 +331,14 @@ import Server from '@/libs/js/server'
 import TMSUrl from '@/libs/constant/url'
 import _ from 'lodash'
 import { mapActions } from 'vuex'
-
+import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 export default {
   name: 'detailFeright',
   metaInfo: { title: '运单详情' },
-  components: { TagNumberInput, MoneyInput, SelectInput, CitySelect, PrintFreight, PayInfo, Exception, change, OwnSendInfo, SendCarrierInfo, SendFee },
+  components: { SelectInput, CitySelect, PrintFreight, PayInfo, Exception, change, OwnSendInfo, SendCarrierInfo, SendFee },
   mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
 
   data () {
-    // 验证运费
-    // const validateFreightFee = (rule, value, callback) => {
-    //   if (value === '' && (_this.status === '在途' || '已到货')) {
-    //     callback(new Error('费用不能为空'))
-    //   }
-    //   if ((value && validator.fee(value)) || !value) {
-    //     callback()
-    //   } else {
-    //     callback(new Error('费用整数位最多输入9位,小数2位'))
-    //   }
-    // }
     return {
       pageName: 'feright',
       status: '',
@@ -383,7 +373,11 @@ export default {
         carLength: ''
       },
       // 自送赋值给子组件
-      ownInfo: {},
+      ownInfo: {
+        status: '',
+        assignCarType: 1,
+        ...defaultOwnForm
+      },
       payment: {
         freightFee: null,
         loadFee: null,
@@ -491,7 +485,7 @@ export default {
             code: 120116,
             func: () => {
               this.inEditing = 'change'
-              this.changeStr = JSON.stringify(_.cloneDeep(this.changeParams))
+              this.changeStr = this.changeParams
               this.changeState({ id: this.id, type: 3 })
             }
           }]
@@ -509,7 +503,7 @@ export default {
             code: 120116,
             func: () => {
               this.inEditing = 'change'
-              this.changeStr = JSON.stringify(_.cloneDeep(this.changeParams))
+              this.changeStr = this.changeParams
               this.changeState({ id: this.id, type: 3 })
             }
           }]
@@ -628,7 +622,8 @@ export default {
       feeStatus: 0, // 0 可以修改运费 10 已对账 20 已核销 30 存在异常记录且修改了运费未处理 2 部分修改运费
       changeStr: '',
       printData: [], // 待打印数据
-      sendWay: '1' // 派车类型 1 外转 2 自送  V1.07新增
+      sendWay: '1', // 派车类型 1 外转 2 自送  V1.07新增
+      radioDisabled: false // 控制单选按钮禁用
     }
   },
   computed: {
@@ -639,23 +634,32 @@ export default {
       else return ''
     },
     changeParams () {
-      let settlementPayInfo = this.settlementPayInfo.map(item => {
-        return {
-          payType: item.payType,
-          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? item.fuelCardAmount * 100 : 0,
-          cashAmount: typeof item.cashAmount === 'number' ? item.cashAmount * 100 : 0
-        }
-      })
-      return {
-        waybill: {
-          waybillId: this.id,
-          ...this.info,
-          ...this.formatMoney(),
-          settlementType: this.settlementType,
-          settlementPayInfo: this.settlementType === '1' ? settlementPayInfo : void 0
-        },
-        cargoList: _.uniq(this.detail.map(item => item.orderId))
+      const z = this
+      let data = {
+        waybill: {},
+        cargoList: _.uniq(z.detail.map(item => item.orderId))
       }
+      z.$nextTick(() => {
+        if (z.sendWay === '1') {
+          data.waybill = Object.assign(data.waybill, z.$refs.sendFee.formatMoney(), z.$refs.SendCarrierInfo.getCarrierInfo(), {
+            settlementType: z.$refs.sendFee.getSettlementType(),
+            settlementPayInfo: z.$refs.sendFee.getSettlementPayInfo()
+          })
+        } else if (z.sendWay === '2') { // 自送
+          data.waybill = Object.assign(data.waybill, z.$refs.sendFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
+          delete data.waybill.cashBack // 自送没有返现
+        }
+        Object.assign(data.waybill, {
+          waybillId: z.id,
+          waybillNo: z.info.waybillNo,
+          start: z.info.start,
+          end: z.info.end,
+          status: z.info.status,
+          remark: z.info.remark,
+          assignCarType: z.sendWay
+        })
+      })
+      return data
     },
     financeRulesInfo () {
       return {
@@ -704,9 +708,22 @@ export default {
           for (let key in this.carrierInfo) {
             this.carrierInfo[key] = data.waybill[key]
           }
+          this.ownInfo = {
+            status: data.waybill.status,
+            assignCarType: data.waybill.assignCarType,
+            ...defaultOwnForm
+          }
         } else { // 自送
           for (let key in this.ownInfo) {
             this.ownInfo[key] = data.waybill[key]
+          }
+          this.carrierInfo = {
+            carrierName: '',
+            driverName: '',
+            driverPhone: '',
+            carNo: '',
+            carType: '',
+            carLength: ''
           }
         }
         for (let key in this.payment) {
@@ -749,9 +766,21 @@ export default {
       if (type === '2') {
         // 外转 切换 到 自送
         if (this.feeStatus !== 0) {
-          this.$Message.warning(this.feeStatusTip)
+          if (this.feeStatus === 2) {
+            this.$Message.warning('此单存在部分核销，不允许修改')
+          } else {
+            this.$Message.warning(this.feeStatusTip)
+          }
           this.$nextTick(() => {
             this.sendWay = '1'
+          })
+        }
+      } else {
+        // 自送 切换 到 外转
+        if (this.feeStatus !== 0) {
+          this.$Message.warning(this.feeStatusTip)
+          this.$nextTick(() => {
+            this.sendWay = '2'
           })
         }
       }
@@ -816,9 +845,9 @@ export default {
         remark: z.info.remark,
         assignCarType: z.sendWay
       })
-      console.log(data)
-      if (JSON.stringify(data) === z.changeStr) {
+      if (JSON.stringify(data) === JSON.stringify(z.changeStr)) {
         z.$Message.error('您并未做修改')
+        return
       }
       Server({
         url: '/waybill/modify',
@@ -836,7 +865,12 @@ export default {
       // if (!_this.validate()) return
       z.$refs['send'].validate((valid) => {
         if (valid) {
-          if (!z.checkDetailValidate()) return
+          if (!z.checkDetailValidate()) {
+            if (z.inEditing === 'change') {
+              z.$Message.warning('您有信息未填')
+            }
+            return
+          }
           if (z.inEditing === 'edit') {
             z.edit()
           } else if (z.inEditing === 'change') {
@@ -861,56 +895,6 @@ export default {
         return true
       }
       return false
-    },
-    // 计费规则
-    showChargeRules () {
-      const self = this
-      if (!self.info.carrierName) {
-        this.$Message.error('请先选择或输入承运商')
-        return
-      }
-      if (!self.detail.length) {
-        this.$Message.error('请先添加订单')
-        return
-      }
-      const carrierItem = this.$refs.carrierInput.options.find(carrier => carrier.carrierName === self.info.carrierName)
-      if (!carrierItem) {
-        this.$Message.warning('您选择或输入的承运商没有维护的计费规则')
-        return
-      }
-      let carrierId = carrierItem.id
-      if (!carrierId) {
-        this.$Message.warning('您选择或输入的承运商没有维护的计费规则')
-        return
-      }
-      console.log(self.payment.mileage)
-      this.openDialog({
-        name: 'dialogs/financeRule',
-        data: {
-          // 以下数据必传
-          partnerId: carrierId,
-          partnerType: 2, // 计费规则分类 - 发货方1 承运商2 外转方3
-          partnerName: self.info.carrierName, // 名称
-          weight: self.orderTotal.weight, // 货物重量
-          volume: self.orderTotal.volume, // 货物体积
-          start: self.info.start, // 始发地code
-          end: self.info.end, // 目的地code
-          distance: self.payment.mileage ? self.payment.mileage * 1000 : 0
-          // distance: 100000, // 从外部传入已经计算好的距离（单位：米），如果传入则不再根据startPoint endPoint计算距离
-          // startPoint: {lat: 32.047745, lng: 118.791580}, // 始发地经纬度
-          // endPoint: {lat: 39.913385, lng: 116.402257} // 目的地经纬度
-        },
-        methods: {
-          // 确认计费规则后返回金额(元)
-          ok (charge) {
-            self.payment.freightFee = charge || 0
-          }
-          // 如果有两层对话框，在计费规则中点击去设置按钮后需要关闭第一层对话框
-          // closeParentDialog () {
-          // self.close()
-          // }
-        }
-      })
     },
 
     // 按钮操作
@@ -1001,8 +985,12 @@ export default {
     // 发运
     billShipment () {
       const self = this
-      if (!self.info.carrierName) {
+      if (self.info.assignCarType === 1 && !self.info.carrierName) {
         this.$Message.warning('承运商未填写，不能发运')
+        return
+      }
+      if (self.info.assignCarType === 2 && !self.info.carNo) {
+        this.$Message.warning('自送车辆信息未填写，不能发运')
         return
       }
       if (self.detail.length <= 0) {
