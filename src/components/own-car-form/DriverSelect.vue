@@ -145,3 +145,8 @@ export default {
     top: -1px;
     position: relative
 </style>
+<style lang="stylus">
+.ivu-select-item-disabled
+  .select-driver__option
+    color #c5c8ce
+</style>
