@@ -223,10 +223,10 @@ export default {
   },
   methods: {
     repairMoneyChange () {
-      this.validate.payMoney = this.validate.repairMoney
-      if (!this.validate.repairMoney) {
-        this.validate.waitPayMoney = ''
+      if (this.validate.payMoney && float.round(float.round(this.validate.repairMoney) - (float.round(this.validate.payMoney))) >= 0) {
+        this.validate.waitPayMoney = float.round(float.round(this.validate.repairMoney) - (float.round(this.validate.payMoney)) || 0)
       } else {
+        this.validate.payMoney = this.validate.repairMoney
         this.validate.waitPayMoney = 0
       }
     },

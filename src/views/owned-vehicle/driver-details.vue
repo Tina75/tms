@@ -72,7 +72,7 @@
 import BasePage from '@/basic/BasePage'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
-import { CODE, deleteDriverById, queryDriverById } from './client'
+import { deleteDriverById, queryDriverById } from './client'
 export default {
   name: 'car-details',
   components: { RecordList, prepareOpenSwipe },
@@ -98,12 +98,23 @@ export default {
     queryById () {
       let vm = this
       queryDriverById({ driverId: vm.infoData.id }).then(res => {
-        if (res.data.code === CODE) {
-          vm.infoData = res.data.data
-          vm.initData()
-          // 大图预览
-          vm.openSwipe = prepareOpenSwipe(vm.imageItems)
+        vm.infoData = res.data.data
+        if (!vm.infoData.driverPhone) {
+          this.$Toast.warning({
+            title: '提示',
+            content: '司机信息不存在，请刷新列表',
+            onOk () {
+              vm.ema.fire('closeTab', vm.$route)
+            },
+            onCancel () {
+              vm.ema.fire('closeTab', vm.$route)
+            }
+          })
+          return
         }
+        vm.initData()
+        // 大图预览
+        vm.openSwipe = prepareOpenSwipe(vm.imageItems)
       })
     },
     // 日期格式化
@@ -155,10 +166,8 @@ export default {
         methods: {
           ok () {
             deleteDriverById({ id: vm.infoData.id }).then(res => {
-              if (res.data.code === CODE) {
-                vm.$Message.success('删除成功！')
-                vm.ema.fire('closeTab', vm.$route)
-              }
+              vm.$Message.success('删除成功！')
+              vm.ema.fire('closeTab', vm.$route)
             })
           }
         }

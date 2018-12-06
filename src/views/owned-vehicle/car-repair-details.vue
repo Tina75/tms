@@ -109,7 +109,7 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import RecordList from '@/components/RecordList'
-import { CODE, deleteRepairById, queryRepairById } from './client'
+import { deleteRepairById, queryRepairById } from './client'
 export default {
   name: 'owner-carrepair-details',
   components: { RecordList },
@@ -138,8 +138,18 @@ export default {
     queryById () {
       let vm = this
       queryRepairById({ repairId: vm.infoData.id }).then(res => {
-        if (res.data.code === CODE) {
-          vm.infoData = res.data.data
+        vm.infoData = res.data.data
+        if (!vm.infoData.carNo) {
+          this.$Toast.warning({
+            title: '提示',
+            content: '维修记录不存在，请刷新列表',
+            onOk () {
+              vm.ema.fire('closeTab', vm.$route)
+            },
+            onCancel () {
+              vm.ema.fire('closeTab', vm.$route)
+            }
+          })
         }
       })
     },
@@ -154,10 +164,8 @@ export default {
         methods: {
           ok () {
             deleteRepairById({ id: vm.infoData.id }).then(res => {
-              if (res.data.code === CODE) {
-                vm.$Message.success('删除成功！')
-                vm.ema.fire('closeTab', vm.$route)
-              }
+              vm.$Message.success('删除成功！')
+              vm.ema.fire('closeTab', vm.$route)
             })
           }
         }
