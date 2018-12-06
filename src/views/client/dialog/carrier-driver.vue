@@ -169,8 +169,8 @@
         </Row>
       </Form>
       <div slot="footer" class="footerSty">
-        <Button type="primary" @click="save('validate')">确定</Button>
-        <Button style="margin-left: 8px" @click.native="close"  >取消</Button>
+        <Button :loading="loading" type="primary" @click="save('validate')">确定</Button>
+        <Button style="margin-left: 8px" @click.native="close">取消</Button>
       </div>
     </Modal>
   </div>
@@ -194,6 +194,7 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      loading: false,
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH,
       carrierId: '', // 承运商id
@@ -294,6 +295,7 @@ export default {
       this.validate.regularLine = JSON.stringify(this.address)
       this.$refs[name].validate((valid) => {
         if (valid) {
+          this.loading = true
           if (this.flag === 1) { // 新增
             this.add()
           } else { // 2-编辑
@@ -305,25 +307,23 @@ export default {
     add () {
       let data = this.validate
       carrierAddDriver(data).then(res => {
-        if (res.data.code === CODE) {
-          this.$Message.success(res.data.msg)
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(res.data.msg)
-        }
+        this.$Message.success(res.data.msg)
+        this.loading = false
+        this.ok() // 刷新页面
+        this.close()
+      }).catch(() => {
+        this.loading = false
       })
     },
     update () {
       let data = this.validate
       carrierUpdateDriver(data).then(res => {
-        if (res.data.code === CODE) {
-          this.$Message.success(res.data.msg)
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(res.data.msg)
-        }
+        this.loading = false
+        this.$Message.success(res.data.msg)
+        this.ok() // 刷新页面
+        this.close()
+      }).catch(() => {
+        this.loading = false
       })
     },
     // 输入手机号，选中某条信息自动填充以后司机信息（姓名，合作方式。。）

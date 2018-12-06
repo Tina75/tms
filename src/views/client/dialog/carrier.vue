@@ -172,18 +172,18 @@
         placeholder="请输入"/>
     </Form>
     <div v-if="validate.type.selectStatus == 1" slot="footer">
-      <Button type="primary" @click="save('validateDriver')">确定</Button>
+      <Button :loading="loading" type="primary" @click="save('validateDriver')">确定</Button>
       <Button style="margin-left: 8px" @click.native="close">取消</Button>
     </div>
     <div v-else slot="footer">
-      <Button type="primary" @click="save('validateCompany')">确定</Button>
+      <Button :loading="loading" type="primary" @click="save('validateCompany')">确定</Button>
       <Button style="margin-left: 8px" @click.native="close">取消</Button>
     </div>
   </Modal>
 </template>
 <script>
 import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
-import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, formatterCarNo, CODE, CAR } from '../client'
+import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, formatterCarNo, CAR } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput'
@@ -195,6 +195,7 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      loading: false,
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH,
       flag: 2,
@@ -348,12 +349,14 @@ export default {
             return
           }
           if (this.flag === 1) { // 新增
+            this.loading = true
             if (this.validate.type.selectStatus === '1') { // 司机
               this._carrierAddForDriver()
             } else {
               this._carrierAddForCompany()
             }
           } else { // 2-编辑
+            this.loading = true
             if (this.validate.type.selectStatus === '1') { // 司机
               this._carrierForDriverUpdate()
             } else {
@@ -366,17 +369,16 @@ export default {
     _carrierAddForDriver () {
       let data = this.initRequestParam()
       carrierAddForDriver(data).then(res => {
-        if (res.data.code === CODE) {
-          this.openTab({
-            path: '/client/carrier-info',
-            title: '承运商详情',
-            query: { id: res.data.data, carrierType: 1 }
-          })
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(res.data.msg)
-        }
+        this.openTab({
+          path: '/client/carrier-info',
+          title: '承运商详情',
+          query: { id: res.data.data, carrierType: 1 }
+        })
+        this.loading = false
+        this.ok() // 刷新页面
+        this.close()
+      }).catch(() => {
+        this.loading = false
       })
     },
     _carrierAddForCompany () {
@@ -388,28 +390,26 @@ export default {
         remark: this.validate.company.remark
       }
       carrierAddForCompany(data).then(res => {
-        if (res.data.code === CODE) {
-          this.openTab({
-            path: '/client/carrier-info',
-            title: '承运商详情',
-            query: { id: res.data.data, carrierType: 2 }
-          })
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(res.data.msg)
-        }
+        this.openTab({
+          path: '/client/carrier-info',
+          title: '承运商详情',
+          query: { id: res.data.data, carrierType: 2 }
+        })
+        this.loading = false
+        this.ok() // 刷新页面
+        this.close()
+      }).catch(() => {
+        this.loading = false
       })
     },
     _carrierForDriverUpdate () {
       let data = this.initRequestParam()
       carrierForDriverUpdate(data).then(res => {
-        if (res.data.code === CODE) {
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(res.data.msg)
-        }
+        this.loading = false
+        this.ok() // 刷新页面
+        this.close()
+      }).catch(() => {
+        this.loading = false
       })
     },
     _carrierForCompanyUpdate () {
@@ -422,12 +422,11 @@ export default {
         carrierId: this.id
       }
       carrierForCompanyUpdate(data).then(res => {
-        if (res.data.code === CODE) {
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(res.data.msg)
-        }
+        this.loading = false
+        this.ok() // 刷新页面
+        this.close()
+      }).catch(() => {
+        this.loading = false
       })
     },
     // 格式常跑路线信息

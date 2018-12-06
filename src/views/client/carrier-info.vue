@@ -486,11 +486,11 @@ export default {
       }
       this.loading = true
       carrierListCar(data).then(res => {
-        if (res.data.code === CODE) {
-          this.data1 = res.data.data.list
-          this.totalCount1 = res.data.data.totalCount
-          this.loading = false
-        }
+        this.data1 = res.data.data.list
+        this.totalCount1 = res.data.data.totalCount
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
       })
     },
     // 获取tab-number的数量值
@@ -555,11 +555,11 @@ export default {
       }
       this.loading = true
       carrierListCar(data).then(res => {
-        if (res.data.code === CODE) {
-          this.data1 = res.data.data.list
-          this.totalCount1 = res.data.data.totalCount
-          this.loading = false
-        }
+        this.data1 = res.data.data.list
+        this.totalCount1 = res.data.data.totalCount
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
       })
     },
     clearKeywords (val, flag) {

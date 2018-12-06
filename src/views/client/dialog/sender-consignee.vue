@@ -17,7 +17,7 @@
         <FormItem label="联系电话：" prop="phone">
           <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="收货地址：" prop="">
+        <FormItem label="收货地址：" prop="address">
           <Row>
             <Col span="11">
             <FormItem prop="cityCode">
@@ -40,7 +40,7 @@
         </FormItem>
       </Form>
       <div slot="footer">
-        <Button type="primary" @click="save('validate')">确定</Button>
+        <Button :loading="loading" type="primary" @click="save('validate')">确定</Button>
         <Button style="margin-left: 8px" @click.native="close"  >取消</Button>
       </div>
     </Modal>
@@ -49,7 +49,7 @@
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
-import { consignerConsigneeAdd, consignerConsigneeUpdate, CODE } from '../client'
+import { consignerConsigneeAdd, consignerConsigneeUpdate } from '../client'
 import cityUtil from '@/libs/js/city'
 import AreaInput from '@/components/AreaInput'
 import CitySelect from '@/components/SelectInputForCity'
@@ -62,6 +62,7 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      loading: false,
       consignerId: '', // 详情传过来的id
       id: '',
       validate: {
@@ -98,6 +99,7 @@ export default {
     save (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          this.loading = true
           if (this.flag === 1) { // 新增
             this.add()
           } else { // 2-编辑
@@ -110,21 +112,19 @@ export default {
     add () {
       Object.assign(this.validate, { consignerId: this.consignerId })
       consignerConsigneeAdd(this.validate).then(res => {
-        if (res.data.code === CODE) {
-          this.ok() // 刷新页面
-        } else {
-          this.$Message.error(res.data.msg)
-        }
+        this.loading = false
+        this.ok() // 刷新页面
+      }).catch(() => {
+        this.loading = false
       })
     },
     update () {
       Object.assign(this.validate, { id: this.id })
       consignerConsigneeUpdate(this.validate).then(res => {
-        if (res.data.code === CODE) {
-          this.ok() // 刷新页面
-        } else {
-          this.$Message.error(res.data.msg)
-        }
+        this.loading = false
+        this.ok() // 刷新页面
+      }).catch(() => {
+        this.loading = false
       })
     },
     latlongtChange ({ lat, lng }) {

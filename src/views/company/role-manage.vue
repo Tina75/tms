@@ -38,6 +38,7 @@
         <Button
           v-if="selectRole.type !== 1"
           :disabled="disSaveBtn"
+          :loading="loading"
           type="primary"
           style="width:80px;"
           @click="saveRole">
@@ -121,6 +122,7 @@ export default {
       }
     }
     return {
+      loading: false,
       single: true,
       menuInitName: '',
       selectRoleId: '', // 选中的角色id
@@ -247,6 +249,7 @@ export default {
       this.removeRoleModal = true
     },
     saveRole () {
+      this.loading = true
       let params = {}
       params.id = this.selectRole.id
       params.resIds = this.checkBrowsePage()
@@ -255,14 +258,15 @@ export default {
         method: 'post',
         data: params
       }).then(({ data }) => {
-        if (data.code === 10000) {
-          this.$Message.success('角色权限修改成功!')
-          // 同步更新本地相应角色下的权限数据
-          const role = this.roles.find(_r => _r.id === params.id)
-          if (role) {
-            role.codes = JSON.stringify(params.resIds)
-          }
+        this.loading = false
+        this.$Message.success('角色权限修改成功!')
+        // 同步更新本地相应角色下的权限数据
+        const role = this.roles.find(_r => _r.id === params.id)
+        if (role) {
+          role.codes = JSON.stringify(params.resIds)
         }
+      }).catch(() => {
+        this.loading = false
       })
     },
     subFormRole (name) {
@@ -286,10 +290,10 @@ export default {
               method: 'post',
               data: this.formModal
             }).then(({ data }) => {
-              if (data.code === 10000) {
-                this.$Message.success('修改成功!')
-                this.getRoleList()
-              }
+              this.$Message.success('修改成功!')
+              this.getRoleList()
+            }).catch(() => {
+              this.loading = false
             })
           }
         }

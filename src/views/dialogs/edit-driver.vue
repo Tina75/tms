@@ -71,7 +71,7 @@
         <Input v-model="validate.remark" :maxlength="100" type="textarea" placeholder="请输入"></Input>
       </Form>
       <div slot="footer" class="footerSty">
-        <Button type="primary" @click="save('validate')">确定</Button>
+        <Button :loading="loading" type="primary" @click="save('validate')">确定</Button>
         <Button style="margin-left: 8px" @click.native="close">取消</Button>
       </div>
     </Modal>
@@ -95,6 +95,7 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      loading: false,
       validate: {},
       address: [],
       address1: {},
@@ -168,6 +169,7 @@ export default {
       this.validate.regularLine = JSON.stringify(this.address)
       this.$refs[name].validate((valid) => {
         if (valid) {
+          this.loading = true
           if (this.flag !== 2) { // 新增
             this.add()
           } else { // 2-编辑
@@ -183,11 +185,12 @@ export default {
         method: 'post',
         data: vm.validate
       }).then(({ data }) => {
-        if (data.code === 10000) {
-          vm.ok()
-          vm.$Message.success(data.msg)
-          vm.close()
-        }
+        vm.loading = false
+        vm.ok()
+        vm.$Message.success(data.msg)
+        vm.close()
+      }).catch(() => {
+        vm.loading = false
       })
     },
     update () {
@@ -197,11 +200,12 @@ export default {
         method: 'post',
         data: vm.validate
       }).then(({ data }) => {
-        if (data.code === 10000) {
-          vm.ok()
-          vm.$Message.success(data.msg)
-          vm.close()
-        }
+        vm.loading = false
+        vm.ok()
+        vm.$Message.success(data.msg)
+        vm.close()
+      }).catch(() => {
+        this.loading = false
       })
     }
   }
