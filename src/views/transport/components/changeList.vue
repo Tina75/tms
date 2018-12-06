@@ -16,7 +16,7 @@
           <Col span="12">
           <div class="title">修改前运单信息:</div>
           <Row>
-            <Col v-for="item in infoListOld" :key="item.name" :span="item.span" class="labelContent">
+            <Col v-for="(item, index) in infoListOld" :key="index" :span="item.span" class="labelContent">
             <span class="label">{{item.name}}:</span>
             <span class="content">{{item.value}}</span>
               </Col>
@@ -25,7 +25,7 @@
           <Col span="12">
           <div class="title">修改后运单信息:</div>
           <Row >
-            <Col v-for="item in infoListNew" :key="item.name" :span="item.span" class="labelContent">
+            <Col v-for="(item, index) in infoListNew" :key="index" :span="item.span" class="labelContent">
             <span class="label">{{item.name}}:</span>
             <span class="content after">{{item.value}}</span>
               </Col>
@@ -341,7 +341,8 @@ export default {
       //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
       //   }
       // }
-      return this.getList(this.data.old, 'fee', this.changeList)
+      let list = this.filterFieldsByAssignCarType(this.changeList, this.data.old.assignCarType || 1)
+      return this.getList(this.data.old, 'fee', list)
     },
     feeListNew () {
       // let list = []
@@ -351,7 +352,8 @@ export default {
       //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
       //   }
       // }
-      return this.getList(this.data.new, 'fee', this.changeList)
+      let list = this.filterFieldsByAssignCarType(this.changeList, this.data.new.assignCarType || 1)
+      return this.getList(this.data.new, 'fee', list)
     },
     settlementTypeOld () {
       return this.getSettlementType(this.data.old)
@@ -370,14 +372,16 @@ export default {
      * 2. 自送，删除承运商，添加主副司机，手机号,删除结算方式的比对
      */
     filterFieldsByAssignCarType (list, type) {
-      let newChange = _.omit(this.changeList, [])
+      let newChange = _.cloneDeep(this.changeList, [])
       if (type === 1) {
         // 外转，剔除副司机信息
         // newChange = _.omit(this.changeList, ['assistantDriverName', 'assistantDriverPhone'])
         newChange.driverName.description = '司机'
+        newChange.freightFee.description = '运输费用'
       } else if (type === 2) {
         // newChange = _.omit(this.changeList, ['carrierName'])
         newChange.driverName.description = '主司机'
+        newChange.freightFee.description = '油费'
         // newChange.assignCarType.span = 24
       }
       return newChange
@@ -416,9 +420,7 @@ export default {
      */
     getList (obj, type, changeList) {
       let list = []
-      if (type === 'fee' && obj.assignCarType === 2) {
-        return list
-      }
+
       for (let key in obj) {
         if (changeList[key] && changeList[key].type === type && changeList[key].settlementType !== 1) {
           list.push({
@@ -429,10 +431,14 @@ export default {
         }
       }
       list = _.sortBy(list, (item) => { return item.order })
+      changeList = null
       return list
     },
     getSettlementType (obj) {
       let list = []
+      if (obj.assignCarType === 2) {
+        return list
+      }
       for (let i = 0, item = this.settlementPayInfo; i < item.length; i++) {
         let mid = {}
         for (let key in obj) {

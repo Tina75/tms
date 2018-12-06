@@ -201,7 +201,7 @@
   </div>
 
   <!-- 编辑和改单状态 -->
-  <div v-else class="transport-detail">
+  <div v-else ref="editPage" class="transport-detail">
     <!-- 运单号及状态 -->
     <section :class="themeBarColor(status)" class="detail-header">
       <ul class="detail-header-list">
@@ -243,7 +243,7 @@
               <!-- <Radio label="3">下发承运商</Radio> -->
             </RadioGroup>
           </div>
-          <own-send-info v-if="sendWay === '2'" ref="ownSendInfo" :form="info" source="detail"></own-send-info>
+          <own-send-info v-if="sendWay === '2'" ref="ownSendInfo" :form="ownInfo" source="detail"></own-send-info>
           <send-carrier-info
             v-else
             ref="SendCarrierInfo"
@@ -288,7 +288,8 @@
           :settlement-type="settlementType"
           :settlement-pay-info="settlementPayInfo"
           :finance-rules-info="financeRulesInfo"
-          :send-way="sendWay">
+          :send-way="sendWay"
+          source="detail">
         </send-fee>
       </div>
     </section>
@@ -330,7 +331,7 @@ import Server from '@/libs/js/server'
 import TMSUrl from '@/libs/constant/url'
 import _ from 'lodash'
 import { mapActions } from 'vuex'
-
+import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 export default {
   name: 'detailFeright',
   metaInfo: { title: '运单详情' },
@@ -372,7 +373,11 @@ export default {
         carLength: ''
       },
       // 自送赋值给子组件
-      ownInfo: {},
+      ownInfo: {
+        status: '',
+        assignCarType: 1,
+        ...defaultOwnForm
+      },
       payment: {
         freightFee: null,
         loadFee: null,
@@ -665,7 +670,6 @@ export default {
       }
     }
   },
-
   methods: {
     ...mapActions([
       'getWaybillLocation',
@@ -704,9 +708,22 @@ export default {
           for (let key in this.carrierInfo) {
             this.carrierInfo[key] = data.waybill[key]
           }
+          this.ownInfo = {
+            status: data.waybill.status,
+            assignCarType: data.waybill.assignCarType,
+            ...defaultOwnForm
+          }
         } else { // 自送
           for (let key in this.ownInfo) {
             this.ownInfo[key] = data.waybill[key]
+          }
+          this.carrierInfo = {
+            carrierName: '',
+            driverName: '',
+            driverPhone: '',
+            carNo: '',
+            carType: '',
+            carLength: ''
           }
         }
         for (let key in this.payment) {
@@ -848,7 +865,12 @@ export default {
       // if (!_this.validate()) return
       z.$refs['send'].validate((valid) => {
         if (valid) {
-          if (!z.checkDetailValidate()) return
+          if (!z.checkDetailValidate()) {
+            if (z.inEditing === 'change') {
+              z.$Message.warning('您有信息未填')
+            }
+            return
+          }
           if (z.inEditing === 'edit') {
             z.edit()
           } else if (z.inEditing === 'change') {

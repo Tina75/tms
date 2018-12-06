@@ -57,7 +57,7 @@ import SendFee from '../components/SendFee'
 import SendCarrierInfo from '../components/SendCarrierInfo'
 import OwnSendInfo from '../components/ownSendInfo'
 import PickupFee from '../components/PickupFee'
-
+import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 import Server from '@/libs/js/server'
 
 export default {
@@ -91,13 +91,7 @@ export default {
       // 自送赋值给子组件
       ownInfo: {
         assignCarType: 1, // 派车类型，1：外转，2：自送
-        driverName: '',
-        driverPhone: '',
-        assistantDriverName: '',
-        assistantDriverPhone: '',
-        carNo: '',
-        carType: '',
-        carLength: ''
+        ...defaultOwnForm
       },
       payment: {
         freightFee: null,
@@ -364,7 +358,11 @@ export default {
  .transport-action
   .ivu-modal-body
     padding 10px 40px 16px 30px
-
+  .ivu-form
+    .ivu-form-item-label
+      font-size 14px
+      font-family 'PingFangSC-Regular'
+      color #777
 </style>
 <style lang='stylus' scoped>
 .sub-title

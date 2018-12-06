@@ -1,6 +1,9 @@
 <template>
   <ExtraSelect ref="$select" :transfer="true" :value="currentValue" placeholder="请选择" not-found-text="暂无此车，请新增车辆" filterable clearable @on-change="handleChange">
     <Option v-for="car in ownCars" :key="car.id" :value="car.value">{{car.name}}</Option>
+    <Option v-for="(opt, index) in extraOptions" :key="'disabled-'+index" :label="opt.value" :value="opt.value" disabled>
+      {{opt.name}}
+    </Option>
     <Option key="extra" value="extra" class="select-car__option" disabled>
       <span class="select-car__text" @click.prevent="handleClick">
         <Icon type="ios-add" size="20" class="select-car__icon"></Icon>
@@ -12,7 +15,9 @@
 
 <script>
 /**
- * 司机选择框
+ * 车辆选择框
+ * 自有车辆的信息选择框
+ * * 特殊场景中：车辆信息的修改
  */
 import { mapGetters, mapActions } from 'vuex'
 import ExtraSelect from './ExtraSelect.vue'
@@ -25,6 +30,10 @@ export default {
   mixins: [BaseComponent],
   props: {
     value: String,
+    extraOptions: {
+      type: Array,
+      default: () => []
+    },
     onCreate: Function
   },
   data () {

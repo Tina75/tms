@@ -5,14 +5,14 @@
       <FormItem label="车牌号：" prop="carNo">
         <Row>
           <Col span="20">
-          <CarSelect v-model="form.carNo" @on-change="handleSelect">
+          <CarSelect v-model="form.carNo" :extra-options="extraOptions" @on-change="handleSelect">
           </CarSelect>
           </Col>
         </Row>
       </FormItem>
     </Col>
       <Col span="16">
-      <OwnDriverInputs ref="driverInputs" :form="form" @on-create="switchAddView"></OwnDriverInputs>
+      <OwnDriverSelects ref="driverInputs" :form="form" @on-create="switchAddView"></OwnDriverSelects>
     </Col>
     </Row>
     <Row>
@@ -42,9 +42,9 @@
 /**
  * 自有车派车车号司机输入框集合
  * 包含：车牌号，主司机，副司机
- * 司机可以新增
+ * 车辆和司机可以新增
  */
-import OwnDriverInputs from './OwnDriverInputs.vue'
+import OwnDriverSelects from './OwnDriverSelects.vue'
 import CarSelect from './CarSelect.vue'
 import { mapGetters, mapActions } from 'vuex'
 import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
@@ -53,14 +53,12 @@ export default {
   name: 'own-car-form',
   components: {
     CarSelect,
-    OwnDriverInputs
+    OwnDriverSelects
   },
   mixins: [mixin],
   data () {
     return {
-      rule: {
-        required: true, message: '请选择车辆'
-      }
+      extraOptions: []
     }
   },
   computed: {
@@ -84,6 +82,22 @@ export default {
         str = CAR_LENGTH1[this.form.carLength]
       }
       return str
+    }
+  },
+  beforeMount () {
+    /**
+     *  追加一个disabled 的option
+     * 该车辆可能已被删除,或车牌修改
+     */
+    if (this.form.carNo) {
+      let carNo = this.form.carNo
+      let car = this.ownCars.find((item) => item.value === carNo)
+      if (!car) {
+        this.extraOptions.push({
+          name: carNo,
+          value: carNo
+        })
+      }
     }
   },
   methods: {

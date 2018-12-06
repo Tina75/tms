@@ -93,7 +93,7 @@
           </FormItem>
           </Col>
           <Col span="16">
-          <driver-Inputs :form="validate" :is-validate="true" :filtered-validate="filteredValidate"></driver-Inputs>
+          <OwnDriverSelects :form="validate" :is-validate="true" :filtered-validate="filteredValidate"></OwnDriverSelects>
           </Col>
         </Row>
         <p class="modalTitle">常跑线路</p>
@@ -151,7 +151,7 @@ import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/index.vue'
 import SelectInput from '@/components/SelectInput'
-import DriverInputs from '@/components/own-car-form/OwnDriverInputs'
+import OwnDriverSelects from '@/components/own-car-form/OwnDriverSelects'
 import _ from 'lodash'
 import Server from '@/libs/js/server'
 export default {
@@ -160,7 +160,7 @@ export default {
     CitySelect,
     UpLoad,
     SelectInput,
-    DriverInputs
+    OwnDriverSelects
   },
   mixins: [BaseDialog],
   data () {

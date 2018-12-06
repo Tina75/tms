@@ -1,6 +1,10 @@
 <template>
   <ExtraSelect ref="$select" :transfer="true" :value="currentValue" not-found-text="暂无此人，请新增司机" filterable clearable @on-change="handleChange">
-    <Option v-for="(opt, index) in data" :key="index" :label="opt.value" :value="opt.value" :disabled="disabledOption(opt)">
+    <Option v-for="(opt, index) in data" :key="'normal-'+index" :label="opt.value" :value="opt.value" :disabled="disabledOption(opt)">
+      {{opt.name}}
+      <span class="select-driver__option">{{opt.driverPhone}}</span>
+    </Option>
+    <Option v-for="(opt, index) in extraOptions" :key="'disabled-'+index" :label="opt.value" :value="opt.value" disabled>
       {{opt.name}}
       <span class="select-driver__option">{{opt.driverPhone}}</span>
     </Option>
@@ -33,6 +37,11 @@ export default {
       type: Boolean,
       default: false
     },
+    // 额外的options，disabled，已删除的数据
+    extraOptions: {
+      type: Array,
+      default: () => []
+    },
     /**
      * 需要忽略的司机名列表，修改车辆的时候需要添加
      */
@@ -50,6 +59,9 @@ export default {
   },
   watch: {
     value (newValue) {
+      /**
+       * 车牌选择后，需触发验证
+       */
       if (newValue !== this.currentValue) {
         this.currentValue = newValue
         this.dispatch.call(this.$parent, 'FormItem', 'on-form-change', newValue)
