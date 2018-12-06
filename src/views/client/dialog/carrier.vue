@@ -59,14 +59,28 @@
         </Col>
         <Col :span="8">
         <FormItem label="载重：" prop="shippingWeight">
-          <Input v-model="validate.driver.shippingWeight" :maxlength="9" placeholder="请输入"/>吨
+          <Row>
+            <Col span="20">
+            <TagNumberInput :min="0" v-model="validate.driver.shippingWeight" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+              </Col>
+            <Col span="2" offset="1">
+            <span>吨</span>
+              </Col>
+          </Row>
         </FormItem>
         </Col>
       </Row>
       <Row>
         <Col :span="8">
         <FormItem label="净空：" prop="shippingVolume">
-          <Input v-model="validate.driver.shippingVolume" :maxlength="9" placeholder="请输入"/>方
+          <Row>
+            <Col span="20">
+            <TagNumberInput :min="0" v-model="validate.driver.shippingVolume" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+            </Col>
+            <Col span="2" offset="1">
+            <span>方</span>
+            </Col>
+          </Row>
         </FormItem>
         </Col>
         <Col :span="8">
@@ -188,10 +202,11 @@ import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput'
 import UpLoad from '@/components/upLoad/index.vue'
+import TagNumberInput from '@/components/TagNumberInput'
 import _ from 'lodash'
 export default {
   name: 'carrier',
-  components: { CitySelect, UpLoad, SelectInput },
+  components: { CitySelect, UpLoad, SelectInput, TagNumberInput },
   mixins: [BaseDialog],
   data () {
     return {

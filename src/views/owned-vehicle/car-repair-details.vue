@@ -111,7 +111,7 @@ import BasePage from '@/basic/BasePage'
 import RecordList from '@/components/RecordList'
 import { CODE, deleteRepairById, queryRepairById } from './client'
 export default {
-  name: 'car-repair-details',
+  name: 'owner-carrepair-details',
   components: { RecordList },
   mixins: [ BasePage ],
   metaInfo: {

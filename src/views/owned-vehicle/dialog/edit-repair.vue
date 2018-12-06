@@ -53,8 +53,8 @@
           <FormItem label="维修费用：" prop="repairMoney">
             <Row>
               <Col span="19">
-              <Input v-model="validate.repairMoney" :maxlength="9" placeholder="必填" @on-blur="repairMoneyChange"></Input>
-                </Col>
+              <TagNumberInput :min="0" v-model="validate.repairMoney" :show-chinese="false" placeholder="必填" @on-blur="repairMoneyChange"></TagNumberInput>
+              </Col>
               <Col span="4" offset="1">
               <span>元</span>
                 </Col>
@@ -65,7 +65,7 @@
           <FormItem label="已支付费用：" prop="payMoney">
             <Row>
               <Col span="19">
-              <Input v-model="validate.payMoney" :maxlength="9" placeholder="必填" @on-change="payMoneyChange"></Input>
+              <TagNumberInput :min="0" :max="validate.repairMoney" v-model="validate.payMoney" :show-chinese="false" placeholder="必填" @on-blur="payMoneyChange"></TagNumberInput>
                 </Col>
               <Col span="2" offset="1">
               <span>元</span>
@@ -77,7 +77,7 @@
           <FormItem label="未支付费用：" prop="waitPayMoney">
             <Row>
               <Col span="19">
-              <Input v-model="validate.waitPayMoney" :maxlength="9" placeholder="必填" @on-change="waitpayMoneyChange"></Input>
+              <Input v-model="validate.waitPayMoney" :maxlength="9" disabled @on-change="waitpayMoneyChange"></Input>
                 </Col>
               <Col span="2" offset="1">
               <span>元</span>
@@ -100,11 +100,12 @@
           <FormItem label="送修公里数：" prop="repairMile">
             <Row>
               <Col span="19">
-              <Input v-model="validate.repairMile" :maxlength="9" placeholder="必填"></Input>
-                </Col>
+              <TagNumberInput :min="0" v-model="validate.repairMile" :show-chinese="false" placeholder="必填"></TagNumberInput>
+              <!-- <Input v-model="validate.repairMile" :maxlength="9" placeholder="必填"></Input> -->
+              </Col>
               <Col span="4" offset="1">
               <span>公里</span>
-                </Col>
+              </Col>
             </Row>
           </FormItem>
           </Col>
@@ -154,12 +155,14 @@ import { CAR } from '../client'
 import float from '@/libs/js/float'
 import Server from '@/libs/js/server'
 import CarSelect from '@/components/own-car-form/CarSelect'
+import TagNumberInput from '@/components/TagNumberInput'
 export default {
-  name: 'carrier-vehicle',
-  components: { CarSelect },
+  name: 'owned-vehicle',
+  components: { CarSelect, TagNumberInput },
   mixins: [BaseDialog],
   data () {
     return {
+      loading: false,
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH,
       driverId: 0, // 司机id
@@ -169,7 +172,8 @@ export default {
       validate: {
         payMoney: null,
         waitPayMoney: null,
-        repairMoney: null
+        repairMoney: null,
+        repairMile: null
       },
       carNoList: [],
       disAbleBtn: true,
@@ -193,19 +197,19 @@ export default {
         ],
         repairMile: [
           { required: true, message: '送修公里数不能为空' },
-          { message: '小于等于六位整数,不能有小数', pattern: /^[0-9]{0,6}?$/ }
+          { message: '<=六位整数,不能有小数', pattern: /^[0-9]{0,6}?$/ }
         ],
         repairMoney: [
           { required: true, message: '维修费用不能为空' },
-          { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '<=六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ],
         payMoney: [
           { required: true, message: '已支付费用不能为空' },
-          { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '<=六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ],
         waitPayMoney: [
           { required: true, message: '未支付费用不能为空' },
-          { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '<=六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ]
       }
     }
@@ -227,6 +231,9 @@ export default {
       }
     },
     payMoneyChange () {
+      if ((float.round(this.validate.repairMoney) - float.round(this.validate.payMoney)) <= 0) {
+        this.validate.payMoney = float.round(this.validate.repairMoney)
+      }
       if (this.validate.repairMoney) {
         this.validate.waitPayMoney = float.round(float.round(this.validate.repairMoney) - (float.round(this.validate.payMoney)) || 0)
       }

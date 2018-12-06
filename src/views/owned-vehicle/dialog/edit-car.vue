@@ -51,7 +51,8 @@
           <FormItem label="载重：" prop="shippingWeight">
             <Row>
               <Col span="20">
-              <Input v-model="validate.shippingWeight" :maxlength="9" placeholder="请输入"></Input>
+              <TagNumberInput :min="0" v-model="validate.shippingWeight" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+              <!-- <Input v-model="validate.shippingWeight" :maxlength="9" placeholder="请输入"></Input> -->
               </Col>
               <Col span="2" offset="1">
               <span>吨</span>
@@ -63,7 +64,8 @@
           <FormItem label="净空：" prop="shippingVolume">
             <Row>
               <Col span="20">
-              <Input v-model="validate.shippingVolume" :maxlength="9" placeholder="请输入"></Input>
+              <TagNumberInput :min="0" v-model="validate.shippingVolume" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+              <!-- <Input v-model="validate.shippingVolume" :maxlength="9" placeholder="请输入"></Input> -->
               </Col>
               <Col span="2" offset="1">
               <span>方</span>
@@ -154,13 +156,15 @@ import SelectInput from '@/components/SelectInput'
 import OwnDriverSelects from '@/components/own-car-form/OwnDriverSelects'
 import _ from 'lodash'
 import Server from '@/libs/js/server'
+import TagNumberInput from '@/components/TagNumberInput'
 export default {
-  name: 'carrier-driver',
+  name: 'owned-editdriver',
   components: {
     CitySelect,
     UpLoad,
     SelectInput,
-    OwnDriverSelects
+    OwnDriverSelects,
+    TagNumberInput
   },
   mixins: [BaseDialog],
   data () {
@@ -172,7 +176,9 @@ export default {
         driverId: '',
         driverName: '',
         assistantDriverName: '',
-        assistantDriverId: ''
+        assistantDriverId: '',
+        shippingWeight: null,
+        shippingVolume: null
       },
       address: [],
       address1: {},
