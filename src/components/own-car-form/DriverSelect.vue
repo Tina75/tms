@@ -75,12 +75,12 @@ export default {
   methods: {
     /**
      * 校验选项
-     * 1.主副司机互斥
+     * 1.主副司机互斥， 修改车辆的时候信息是：{id,name} ，修改运单场景都是：{name,phone}
      * 2.是否可选，已经绑定其他车辆
      */
     disabledOption (item) {
       // 主副司机互斥
-      if (this.disabled.includes(item.driverPhone)) {
+      if (this.disabled.includes(item.name)) {
         return true
       }
       if (!this.isValidate) {

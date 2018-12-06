@@ -70,17 +70,17 @@ export default {
      */
     mainDisabled () {
       if (this.form.assistantDriverName) {
-        // let filterName = this.form.assistantDriverName
-        let filterPhone = this.form.assistantDriverPhone
-        return [filterPhone]
+        let filterName = this.form.assistantDriverName
+        // let filterPhone = this.form.assistantDriverPhone
+        return [filterName]
       }
       return []
     },
     assistantDisabled () {
       if (this.form.driverName) {
-        // let filterName = this.form.driverName
-        let filterPhone = this.form.driverPhone
-        return [filterPhone]
+        let filterName = this.form.driverName
+        // let filterPhone = this.form.driverPhone
+        return [filterName]
       }
       return []
     }
