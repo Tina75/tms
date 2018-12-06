@@ -17,6 +17,8 @@ export default {
           const cars = response.data.data
           if (cars) {
             commit(types.RECEIVE_OWN_CAR_LIST, cars)
+          } else {
+            commit(types.RECEIVE_OWN_CAR_LIST, [])
           }
           resolve(cars)
         })
@@ -40,6 +42,8 @@ export default {
           const drivers = response.data.data
           if (drivers) {
             commit(types.RECEIVE_OWN_DRIVER_LIST, drivers)
+          } else {
+            commit(types.RECEIVE_OWN_DRIVER_LIST, [])
           }
           resolve(drivers)
         })

@@ -6,9 +6,10 @@
         <Col span="20">
         <DriverSelect
           v-model="form.driverName"
-          :data="mainDrivers"
+          :data="ownDrivers"
           :is-validate="isValidate"
           :filtered-validate="filteredValidate"
+          :disabled="mainDisabled"
           :extra-options="extraOptions"
           @on-change="changeDriver"
           @on-click="switchAddView(1)">
@@ -23,9 +24,10 @@
         <Col span="20">
         <DriverSelect
           v-model="form.assistantDriverName"
-          :data="assitantDrivers"
+          :data="ownDrivers"
           :is-validate="isValidate"
           :filtered-validate="filteredValidate"
+          :disabled="assistantDisabled"
           :extra-options="extraOptions"
           @on-change="changeAssitantDriver"
           @on-click="switchAddView(2)">
@@ -66,21 +68,21 @@ export default {
      * 主副司机相互制约，
      * 选为主司机，副司机不能选改司机
      */
-    mainDrivers () {
+    mainDisabled () {
       if (this.form.assistantDriverName) {
-        let filterName = this.form.assistantDriverName
+        // let filterName = this.form.assistantDriverName
         let filterPhone = this.form.assistantDriverPhone
-        return this.ownDrivers.filter((user) => user.name !== filterName && user.driverPhone !== filterPhone)
+        return [filterPhone]
       }
-      return this.ownDrivers
+      return []
     },
-    assitantDrivers () {
+    assistantDisabled () {
       if (this.form.driverName) {
-        let filterName = this.form.driverName
+        // let filterName = this.form.driverName
         let filterPhone = this.form.driverPhone
-        return this.ownDrivers.filter((user) => user.name !== filterName && user.driverPhone !== filterPhone)
+        return [filterPhone]
       }
-      return this.ownDrivers
+      return []
     }
   },
   /**

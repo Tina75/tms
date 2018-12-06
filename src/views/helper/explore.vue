@@ -140,13 +140,13 @@ export default {
         case '190100':
           this.openTab({
             path: TMSUrl.OWNEDVEHICLE_DRIVER,
-            title: '新增司机'
+            title: '司机管理'
           })
           break
         case '190200':
           this.openTab({
             path: TMSUrl.OWNEDVEHICLE_CAR,
-            title: '新增车辆'
+            title: '车辆管理'
           })
           break
         case '130100':
