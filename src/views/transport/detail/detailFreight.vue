@@ -201,7 +201,7 @@
   </div>
 
   <!-- 编辑和改单状态 -->
-  <div v-else class="transport-detail">
+  <div v-else ref="editPage" class="transport-detail">
     <!-- 运单号及状态 -->
     <section :class="themeBarColor(status)" class="detail-header">
       <ul class="detail-header-list">
@@ -288,7 +288,8 @@
           :settlement-type="settlementType"
           :settlement-pay-info="settlementPayInfo"
           :finance-rules-info="financeRulesInfo"
-          :send-way="sendWay">
+          :send-way="sendWay"
+          source="detail">
         </send-fee>
       </div>
     </section>
@@ -669,7 +670,6 @@ export default {
       }
     }
   },
-
   methods: {
     ...mapActions([
       'getWaybillLocation',

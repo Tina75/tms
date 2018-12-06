@@ -195,7 +195,8 @@ export default {
     },
     // 页面来源
     source: {
-      type: String
+      type: String,
+      default: ''
     },
     // 是否禁用输入框
     isDisabled: {
@@ -338,7 +339,7 @@ export default {
           },
           // 前往设置时关闭当前对话框
           closeParentDialog () {
-            self.close()
+            self.source !== 'detail' && self.close()
           }
         }
       })
