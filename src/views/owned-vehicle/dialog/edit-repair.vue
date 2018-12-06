@@ -140,7 +140,7 @@
         </Row>
       </Form>
       <div slot="footer">
-        <Button type="primary" @click="save('validate')">确定</Button>
+        <Button :loading="loading" type="primary" @click="save('validate')">确定</Button>
         <Button style="margin-left: 8px" @click.native="close">取消</Button>
       </div>
     </Modal>
@@ -150,7 +150,7 @@
 <script>
 import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
-import { CODE, CAR } from '../client'
+import { CAR } from '../client'
 import float from '@/libs/js/float'
 import Server from '@/libs/js/server'
 import CarSelect from '@/components/own-car-form/CarSelect'
@@ -253,6 +253,7 @@ export default {
         params.payMoney = this.validate.payMoney * 100
         params.waitPayMoney = this.validate.waitPayMoney * 100
         if (valid) {
+          this.loading = true
           if (this.flag === 1) { // 新增
             this.add(params)
           } else { // 2-编辑
@@ -267,13 +268,12 @@ export default {
         method: 'post',
         data: params
       }).then(({ data }) => {
-        if (data.code === CODE) {
-          this.$Message.success(data.msg)
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(data.msg)
-        }
+        this.$Message.success(data.msg)
+        this.loading = false
+        this.ok() // 刷新页面
+        this.close()
+      }).catch(() => {
+        this.loading = false
       })
     },
     update (params) {
@@ -283,13 +283,12 @@ export default {
         method: 'post',
         data: params
       }).then(({ data }) => {
-        if (data.code === CODE) {
-          this.$Message.success(data.msg)
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(data.msg)
-        }
+        this.loading = false
+        this.$Message.success(data.msg)
+        this.ok() // 刷新页面
+        this.close()
+      }).catch(() => {
+        this.loading = false
       })
     }
   }

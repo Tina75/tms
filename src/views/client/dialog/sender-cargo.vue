@@ -42,7 +42,7 @@
         </FormItem>
       </Form>
       <div slot="footer">
-        <Button type="primary" @click="save('validate')">确定</Button>
+        <Button :loading="loading" type="primary" @click="save('validate')">确定</Button>
         <Button style="margin-left: 8px" @click.native="close"  >取消</Button>
       </div>
     </Modal>
@@ -52,7 +52,7 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '@/components/SelectInput.vue'
-import { consignerCargoAdd, consignerCargoUpdate, CODE } from '../client'
+import { consignerCargoAdd, consignerCargoUpdate } from '../client'
 export default {
   name: 'sender-address',
   components: {
@@ -61,6 +61,7 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      loading: false,
       consignerId: '', // 详情传过来的id
       id: '',
       validate: {
@@ -100,6 +101,7 @@ export default {
     save (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          this.loading = true
           if (this.flag === 1) { // 新增
             this.add()
           } else { // 2-编辑
@@ -121,11 +123,10 @@ export default {
         remark2: this.validate.remark2
       }
       consignerCargoAdd(data).then(res => {
-        if (res.data.code === CODE) {
-          this.ok() // 刷新页面
-        } else {
-          this.$Message.error(res.data.msg)
-        }
+        this.loading = false
+        this.ok() // 刷新页面
+      }).catch(() => {
+        this.loading = false
       })
     },
     update () {
@@ -140,11 +141,10 @@ export default {
         remark2: this.validate.remark2
       }
       consignerCargoUpdate(data).then(res => {
-        if (res.data.code === CODE) {
-          this.ok() // 刷新页面
-        } else {
-          this.$Message.error(res.data.msg)
-        }
+        this.loading = false
+        this.ok() // 刷新页面
+      }).catch(() => {
+        this.loading = false
       })
     }
   }

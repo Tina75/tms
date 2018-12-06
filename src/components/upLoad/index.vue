@@ -263,6 +263,7 @@ export default {
     // 单图上传
     async singleUpload (file) {
       if (!this.validateImageFile(file)) return
+      this.showPreview = true
       this.progress = 0
       const uploadResult = await this.uploadFile(file)
       this.uploadImg = uploadResult.res.requestUrls[0].split('?')[0]

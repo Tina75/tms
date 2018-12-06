@@ -147,12 +147,12 @@ export default {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
     },
     removeRepairData () {
+      let vm = this
       this.openDialog({
         name: 'owned-vehicle/dialog/confirmDelete',
         data: {},
         methods: {
           ok () {
-            let vm = this
             deleteRepairById({ id: vm.infoData.id }).then(res => {
               if (res.data.code === CODE) {
                 vm.$Message.success('删除成功！')

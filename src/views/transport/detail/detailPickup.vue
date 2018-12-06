@@ -111,7 +111,7 @@
             </div>
             <Row class="detail-field-group">
               <i-col span="4">
-                <span class="detail-field-title-sm">运输费：</span>
+                <span class="detail-field-title-sm">{{ info.assignCarType === 1 ? '运输费：' : '油费：' }}</span>
                 <span class="detail-field-fee">{{ payment.freightFee || 0 }}元</span>
               </i-col>
               <i-col span="4" offset="1">
