@@ -15,7 +15,9 @@
 
 <script>
 /**
- * 司机选择框
+ * 车辆选择框
+ * 自有车辆的信息选择框
+ * * 特殊场景中：车辆信息的修改
  */
 import { mapGetters, mapActions } from 'vuex'
 import ExtraSelect from './ExtraSelect.vue'

@@ -38,6 +38,13 @@
 </template>
 
 <script>
+/**
+ * 主副司机选择组件
+ * 包含主副司机的选择下拉框组件，相互排斥选择
+ * 主要使用：在相应的调度派车，改单等场景，还有新增自有车辆中
+ *
+ * * 特殊场景中的司机信息处理，比如：司机的信息被修改或删除
+ */
 import { mapGetters, mapActions } from 'vuex'
 import DriverSelect from './DriverSelect.vue'
 import mixin from './mixin.js'

@@ -12,7 +12,7 @@
       </FormItem>
     </Col>
       <Col span="16">
-      <OwnDriverInputs ref="driverInputs" :form="form" @on-create="switchAddView"></OwnDriverInputs>
+      <OwnDriverSelects ref="driverInputs" :form="form" @on-create="switchAddView"></OwnDriverSelects>
     </Col>
     </Row>
     <Row>
@@ -42,9 +42,9 @@
 /**
  * 自有车派车车号司机输入框集合
  * 包含：车牌号，主司机，副司机
- * 司机可以新增
+ * 车辆和司机可以新增
  */
-import OwnDriverInputs from './OwnDriverInputs.vue'
+import OwnDriverSelects from './OwnDriverSelects.vue'
 import CarSelect from './CarSelect.vue'
 import { mapGetters, mapActions } from 'vuex'
 import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
@@ -53,7 +53,7 @@ export default {
   name: 'own-car-form',
   components: {
     CarSelect,
-    OwnDriverInputs
+    OwnDriverSelects
   },
   mixins: [mixin],
   data () {
@@ -95,8 +95,7 @@ export default {
       if (!car) {
         this.extraOptions.push({
           name: carNo,
-          value: carNo,
-          ...car
+          value: carNo
         })
       }
     }
