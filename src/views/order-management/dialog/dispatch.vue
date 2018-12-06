@@ -16,41 +16,6 @@
         </FormItem>
         <div class="sub-title">承运订单：</div>
       </Form>
-      <!-- <Form v-else ref="pick" :model="pick" :rules="pickRules" :label-width="85" inline label-position="left">
-        <FormItem label="承运商：" prop="carrierName">
-          <SelectInput
-            v-model="pick.carrierName"
-            :maxlength="20"
-            :remote="false"
-            :local-options="carriers"
-            placeholder="请输入"
-            style="width:180px"
-            @on-focus.once="getCarriers"
-            @on-select="handleSelectCarrier">
-          </SelectInput>
-        </FormItem>
-        <FormItem label="车牌号：" prop="carNo" style="margin-left:27px;">
-          <SelectInput
-            v-model="pick.carNo"
-            :maxlength="20"
-            :remote="false"
-            :local-options="carrierCars"
-            :parser="handleCarNoToUp"
-            placeholder="请输入"
-            style="width:180px">
-          </SelectInput>
-        </FormItem>
-        <FormItem label="司机：" prop="driverName" style="margin-left:27px;">
-          <SelectInput
-            v-model="pick.driverName"
-            :maxlength="15"
-            :remote="false"
-            :local-options="carrierDrivers"
-            placeholder="请输入"
-            style="width:180px">
-          </SelectInput>
-        </FormItem>
-      </Form> -->
       <div v-else class="sub-title" style="border-top: none;padding-top: 0;">承运订单：</div>
 
       <Table :columns="tableColumns" :data="id" :height="id.length > 10 ? 520 : id.length * 48 + 40"></Table>
@@ -74,8 +39,8 @@
       </div>
 
       <div slot="footer">
-        <Button  type="primary"  @click="save">确定</Button>
-        <Button  type="default"  @click="close">取消</Button>
+        <Button :loading="btnLoading" type="primary"  @click="save">确定</Button>
+        <Button type="default"  @click="close">取消</Button>
       </div>
     </Modal>
   </div>
@@ -216,7 +181,8 @@ export default {
           tooltip: true
         }
       ],
-      mileage: null
+      mileage: null,
+      btnLoading: false
     }
   },
 
@@ -328,6 +294,7 @@ export default {
         if (valid) {
           let sendComp = z.$refs.sendCarComp
           if (z.sendCar && !sendComp.checkValidate()) return
+          z.btnLoading = true
           // 地址入参为最后一级区号
           let data = {
             start: z.send.start,
@@ -354,9 +321,12 @@ export default {
             method: 'post',
             data: data
           }).then(() => {
+            z.btnLoading = false
             z.ok()
             z.$Message.success('创建运单成功')
             z.close()
+          }).catch(() => {
+            z.btnLoading = false
           })
         }
       })
@@ -365,6 +335,7 @@ export default {
     doPickDispatch () {
       const z = this
       if (z.sendCar && !z.$refs.pickUpComp.checkValidate()) return
+      z.btnLoading = true
       let pickUpComp = z.$refs.pickUpComp
       let data = {
         orderIds: z.orderIds,
@@ -388,9 +359,12 @@ export default {
         method: 'post',
         data: data
       }).then(() => {
+        z.btnLoading = false
         z.ok()
         z.$Message.success('创建提货单成功')
         z.close()
+      }).catch(() => {
+        z.btnLoading = false
       })
     },
     // 将地址字符串8位后的替换成...
