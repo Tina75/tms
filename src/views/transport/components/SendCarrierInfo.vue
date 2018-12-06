@@ -1,7 +1,7 @@
 <template>
   <div>
     <Form ref="sendInfo" :label-width="82" :model="carrierInfo" :rules="source === 'pickup' ? pickupRules : rules" class="transport-detail" label-position="left">
-      <div :style="source === 'detail' && 'margin-bottom: 0;border-bottom: none;'" class="part">
+      <div :style="source === 'detail' ? 'margin-bottom: 0;border-bottom: none;' : 'padding-top: 7px;'" class="part">
         <Row class="detail-field-group">
           <i-col span="8">
             <FormItem :prop="source !== 'detail' ? 'carrierName' : ''" :class="{'padding-left-label': source === 'detail'}" label="承运商：">
