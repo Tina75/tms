@@ -1,7 +1,7 @@
 <template>
   <ExtraSelect ref="$select" :transfer="true" :value="currentValue" not-found-text="暂无此人，请新增司机" filterable clearable @on-change="handleChange">
-    <Option v-for="(opt, index) in data" :key="'normal-'+index" :label="opt.value" :value="opt.value" :disabled="disabledOption(opt)">
-      {{opt.name}}
+    <Option v-for="(opt, index) in data" :key="'normal-'+index" :label="opt.value" :value="opt.value" :title="opt.name" :disabled="disabledOption(opt)">
+      <span class="select-driver__option-name">{{opt.name}}</span>
       <span class="select-driver__option">{{opt.driverPhone}}</span>
     </Option>
     <Option v-for="(opt, index) in extraOptions" :key="'disabled-'+index" :label="opt.value" :value="opt.value" disabled>
@@ -30,6 +30,10 @@ export default {
   props: {
     value: String,
     data: {
+      type: Array,
+      default: () => []
+    },
+    disabled: {
       type: Array,
       default: () => []
     },
@@ -71,12 +75,18 @@ export default {
   methods: {
     /**
      * 校验选项
-     * 是否可选，已经绑定其他车辆
+     * 1.主副司机互斥
+     * 2.是否可选，已经绑定其他车辆
      */
     disabledOption (item) {
+      // 主副司机互斥
+      if (this.disabled.includes(item.driverPhone)) {
+        return true
+      }
       if (!this.isValidate) {
         return false
       }
+      // 绑定其他车辆
       return item.type === 2 && !this.filteredValidate.includes(item.id)
     },
     handleClick (e) {
@@ -113,6 +123,14 @@ export default {
   &__option
     color #999999
     margin-left 10px
+    display inline-block
+    overflow hidden
+  &__option-name
+    display inline-block
+    width 48px
+    text-overflow ellipsis
+    white-space nowrap
+    overflow hidden
   &__extra-option
     text-align center
     border-top 1px solid #f8f8f8

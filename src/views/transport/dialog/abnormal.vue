@@ -42,52 +42,6 @@
       </Row>
 
       <div v-if="details.billType === 3">
-        <!-- <Form v-if="isChangeFee === 1" ref="payment" :label-width="72" :model="payment" :rules="rules" label-position="left" class="detail-field-group row-fee">
-          <Row>
-            <i-col span="6">
-              <FormItem label="运输费：" class="require-fee" prop="freightFee">
-                <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" class="detail-payment-input-send">
-                </TagNumberInput>
-                <span class="unit-yuan">元</span>
-              </FormItem>
-            </i-col>
-            <i-col span="6">
-              <FormItem label="装货费：" prop="loadFee">
-                <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input-send">
-                </TagNumberInput>
-                <span class="unit-yuan">元</span>
-              </FormItem>
-            </i-col>
-            <i-col span="6">
-              <FormItem label="卸货费：" prop="unloadFee">
-                <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input-send">
-                </TagNumberInput>
-                <span class="unit-yuan">元</span>
-              </FormItem>
-            </i-col>
-            <i-col span="6">
-              <FormItem label="路桥费：" prop="tollFee">
-                <TagNumberInput v-model="payment.tollFee" :disabled="isDisabled" class="detail-payment-input-send">
-                </TagNumberInput>
-                <span class="unit-yuan">元</span>
-              </FormItem>
-            </i-col>
-            <i-col span="6">
-              <FormItem label="保险费：" prop="insuranceFee">
-                <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input-send">
-                </TagNumberInput>
-                <span class="unit-yuan">元</span>
-              </FormItem>
-            </i-col>
-            <i-col span="6">
-              <FormItem label="其他费：" prop="otherFee">
-                <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input-send">
-                </TagNumberInput>
-                <span class="unit-yuan">元</span>
-              </FormItem>
-            </i-col>
-          </Row>
-        </Form> -->
         <send-fee
           v-if="isChangeFee === 1"
           ref="sendFee"
@@ -100,33 +54,6 @@
         </send-fee>
       </div>
       <div v-else>
-        <!-- <Form v-if="isChangeFee === 1" ref="payment" :label-width="72" :model="payment" :rules="rules" label-position="left" class="detail-field-group row-fee">
-          <FormItem :label="details.billType === 2 ? '外转运费：' : '运输费：'" :class="details.billType === 2 ? 'waizhuan-label' : ''" class="require-fee" prop="freightFee">
-            <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" :style="details.billType === 2 && 'width: 158px;'" class="detail-payment-input">
-            </TagNumberInput>
-            <span class="unit-yuan">元</span>
-          </FormItem>
-          <FormItem v-if="details.billType !== 2" label="装货费：" prop="loadFee">
-            <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input">
-            </TagNumberInput>
-            <span class="unit-yuan">元</span>
-          </FormItem>
-          <FormItem v-if="details.billType !== 2" label="卸货费：" prop="unloadFee">
-            <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input">
-            </TagNumberInput>
-            <span class="unit-yuan">元</span>
-          </FormItem>
-          <FormItem v-if="details.billType !== 2" label="保险费：" prop="insuranceFee">
-            <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input">
-            </TagNumberInput>
-            <span class="unit-yuan">元</span>
-          </FormItem>
-          <FormItem v-if="details.billType !== 2" label="其他费用：" prop="otherFee">
-            <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input">
-            </TagNumberInput>
-            <span class="unit-yuan">元</span>
-          </FormItem>
-        </Form> -->
         <pickup-fee
           v-if="isChangeFee === 1"
           ref="pickupFee"
@@ -139,21 +66,6 @@
       </div>
 
       <div v-if="isChangeFee === 1 && canUpdateFee === 2 && (changeFeeType === 0 || changeFeeType === 2)" class="err-message">存在多个异常记录未处理，只能修改最后一次上报的异常记录的运费。</div>
-
-      <!-- <Row v-if="isChangeFee === 1" class="detail-field-group" style="margin-bottom: 10px">
-        <i-col span="24">
-          <span class="detail-field-title-sm" style="vertical-align: unset;padding-left: 8px;">费用合计：</span>
-          <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
-        </i-col>
-      </Row>
-
-      <PayInfo v-if="isChangeFee === 1 && details.abnormalPayInfos.length > 0"
-               ref="$payInfo"
-               :loading="loading"
-               :total="paymentTotal"
-               :data="settlementPayInfo"
-               style="margin: 25px 0 25px 82px;"
-               mode="edit" /> -->
 
       <Row class="detail-field-group" style="margin: 25px 0 10px;">
         <i-col span="24" class="exception-distribution">
@@ -178,7 +90,7 @@
     </div>
 
     <div slot="footer" style="text-align: center;">
-      <Button type="primary" @click="submit">确认</Button>
+      <Button :loading="btnLoading" type="primary" @click="submit">确认</Button>
       <Button type="default" @click.native="close">取消</Button>
     </div>
   </Modal>
@@ -225,7 +137,8 @@ export default {
       isDisabled: false,
       changeFeeType: 0, // 0 可以修改运费 10 已对账 11 已核销 2 部分修改运费
       canUpdateFee: 0, // 判断多条异常记录只有最后一条可以修改运费
-      sendWay: '1'
+      sendWay: '1',
+      btnLoading: false
     }
   },
 
@@ -465,6 +378,7 @@ export default {
     // 创建异常单
     doSubmit () {
       const z = this
+      z.btnLoading = true
       let fileUrls = []
       z.$refs.upLoads.uploadImgList.map((item) => {
         fileUrls.push(item.url)
@@ -508,6 +422,7 @@ export default {
         data: data
       }).then(res => {
         console.log(res)
+        z.btnLoading = false
         z.complete()
         z.close()
         if (res.data.data <= 0) {
@@ -515,7 +430,9 @@ export default {
         } else {
           z.$Message.success(z.recordId ? '编辑成功' : '创建成功')
         }
-      }).catch(err => console.error(err))
+      }).catch(() => {
+        z.btnLoading = false
+      })
     },
 
     // 如果是修改运费状态，提交时需判断有没有修改运费
