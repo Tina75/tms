@@ -170,6 +170,7 @@ export default {
   methods: {
     // 司机个人信息查询
     _carrierDetailsForDriver () {
+      let vm = this
       let data = {
         carrierId: this.carrierId
       }
@@ -179,6 +180,17 @@ export default {
           this.initData()
           this.openSwipe = prepareOpenSwipe(this.imageItems)
         }
+      }).catch(() => {
+        this.$Toast.warning({
+          title: '提示',
+          content: '承运商不存在，请刷新列表',
+          onOk () {
+            vm.ema.fire('closeTab', vm.$route)
+          },
+          onCancel () {
+            vm.ema.fire('closeTab', vm.$route)
+          }
+        })
       })
     },
     // 初始化数据格式

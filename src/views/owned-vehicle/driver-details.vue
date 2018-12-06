@@ -99,22 +99,20 @@ export default {
       let vm = this
       queryDriverById({ driverId: vm.infoData.id }).then(res => {
         vm.infoData = res.data.data
-        if (!vm.infoData.driverPhone) {
-          this.$Toast.warning({
-            title: '提示',
-            content: '司机信息不存在，请刷新列表',
-            onOk () {
-              vm.ema.fire('closeTab', vm.$route)
-            },
-            onCancel () {
-              vm.ema.fire('closeTab', vm.$route)
-            }
-          })
-          return
-        }
         vm.initData()
         // 大图预览
         vm.openSwipe = prepareOpenSwipe(vm.imageItems)
+      }).catch(() => {
+        this.$Toast.warning({
+          title: '提示',
+          content: '司机信息不存在，请刷新列表',
+          onOk () {
+            vm.ema.fire('closeTab', vm.$route)
+          },
+          onCancel () {
+            vm.ema.fire('closeTab', vm.$route)
+          }
+        })
       })
     },
     // 日期格式化
