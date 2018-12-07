@@ -1,7 +1,15 @@
 <template>
   <div>
+    <div class="tab-head">
+      <Tabs :animated="false" @on-click="clickTitleTab">
+        <TabPane label="车辆信息详情" name="car">
+        </TabPane>
+        <TabPane label="维修记录汇总" name="repair">
+        </TabPane>
+      </Tabs>
+    </div>
     <!-- 车辆信息详情 -->
-    <div class="info-detail">
+    <div v-if="showTableOne" class="info-detail">
       <div class="info">
         <div class="title">
           <span class="icontTitle"></span>
@@ -112,6 +120,20 @@
         </div>
       </div>
     </div>
+    <!-- 维修记录汇总 -->
+    <div v-if="!showTableOne">
+      <div class="addRepair">
+        <Button type="primary" @click="editRepair">新增维修保养</Button>
+      </div>
+      <page-table
+        :columns="menuColumns"
+        :keywords="repairFormatInit"
+        class="pageTable"
+        url="/ownerCar/repair/list"
+        list-field="list"
+        method="post">
+      </page-table>
+    </div>
   </div>
 </template>
 <script>
@@ -119,31 +141,197 @@ import BasePage from '@/basic/BasePage'
 import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
-import { CODE, deleteCarById, queryCarById } from './client'
+import { CODE, deleteCarById, queryCarById, deleteRepairById } from './client'
+import pageTable from '@/components/page-table'
+import TMSUrl from '@/libs/constant/url'
 export default {
   name: 'car-details',
-  components: { RecordList, prepareOpenSwipe },
+  components: { RecordList, prepareOpenSwipe, pageTable },
   mixins: [ BasePage ],
   metaInfo: {
     title: '车辆详情'
   },
   data () {
     return {
+      showTableOne: true,
       infoData: {},
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH1,
       line1: '',
       line2: '',
       searchLogData: {},
-      showTableOne: true,
-      imageItems: []
+      imageItems: [],
+      repairFormatInit: {},
+      menuColumns: [
+        {
+          title: '操作',
+          key: 'id',
+          width: 150,
+          render: (h, params) => {
+            let renderBtn = []
+            if (this.hasPower(130208)) {
+              renderBtn.push(h('span', {
+                style: {
+                  marginRight: '12px',
+                  color: '#00A4BD',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    var vm = this
+                    this.openDialog({
+                      name: 'owned-vehicle/dialog/edit-repair',
+                      data: {
+                        title: '修改维修保养',
+                        flag: 2, // 修改
+                        validate: { ...params.row, repairDate: new Date(params.row.repairDate) }
+                      },
+                      methods: {
+                        ok () {
+                          vm.searchRepairByCar()
+                        }
+                      }
+                    })
+                  }
+                }
+              }, '修改'))
+            }
+            renderBtn.push(h('span', {
+              style: {
+                marginRight: '12px',
+                color: '#00A4BD',
+                cursor: 'pointer'
+              },
+              on: {
+                click: () => {
+                  this.openTab({
+                    path: TMSUrl.OWNEDVEHICLE_REPAIRDETAILS,
+                    query: {
+                      id: '维修详情',
+                      rowData: params.row,
+                      carrierId: this.carrierId
+                    }
+                  })
+                }
+              }
+            }, '查看'))
+            if (this.hasPower(130209)) {
+              renderBtn.push(h('span', {
+                style: {
+                  color: '#00A4BD',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    let vm = this
+                    this.openDialog({
+                      name: 'owned-vehicle/dialog/confirmDelete',
+                      data: {
+                      },
+                      methods: {
+                        ok () {
+                          deleteRepairById({ id: params.row.id }).then(res => {
+                            if (res.data.code === CODE) {
+                              vm.$Message.success('删除成功！')
+                            }
+                          }).then(() => {
+                            vm.searchRepairByCar()
+                          })
+                        }
+                      }
+                    })
+                  }
+                }
+              }, '删除'))
+            }
+            return h('div', renderBtn)
+          }
+        },
+        {
+          title: '车牌号',
+          key: 'carNo'
+        },
+        {
+          title: '维修类别',
+          key: 'repairType',
+          render: (h, params) => {
+            let text = ''
+            if (params.row.repairType === 1) {
+              text = '维修'
+            } else if (params.row.repairType === 2) {
+              text = '保养'
+            }
+            return h('div', {}, text)
+          }
+        },
+        {
+          title: '送修日期',
+          key: 'repairDate',
+          width: 150,
+          render: (h, params) => {
+            let text = this.formatDate(params.row.repairDate)
+            return h('div', { props: {} }, text)
+          }
+        },
+        {
+          title: '送修人',
+          key: 'repairPerson'
+        },
+        {
+          title: '送修公里数',
+          key: 'repairMile'
+        },
+        {
+          title: '维修费用',
+          key: 'repairMoney',
+          render: (h, params) => {
+            return h('span', Number(params.row.repairMoney) / 100)
+          }
+        },
+        {
+          title: '已支付费用',
+          key: 'payMoney',
+          render: (h, params) => {
+            return h('span', Number(params.row.payMoney) / 100)
+          }
+        },
+        {
+          title: '未支付费用',
+          key: 'waitPayMoney',
+          render: (h, params) => {
+            return h('span', Number(params.row.waitPayMoney) / 100)
+          }
+        },
+        {
+          title: '添加人',
+          key: 'creater'
+        },
+        {
+          title: '添加时间',
+          key: 'createTime',
+          width: 150,
+          render: (h, params) => {
+            let text = this.formatDateTime(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
+        }
+      ]
     }
   },
   mounted () {
     this.infoData = this.$route.query.rowData
     this.queryById()
+    this.searchRepairByCar()
   },
   methods: {
+    // 切换头部tab
+    clickTitleTab (val) {
+      if (val === 'car') {
+        this.showTableOne = true
+      } else {
+        this.showTableOne = false
+      }
+    },
     queryById () {
       let vm = this
       queryCarById({ carId: vm.infoData.id }).then(res => {
@@ -240,6 +428,26 @@ export default {
     },
     handleView (index) {
       this.openSwipe(index)
+    },
+    // 新增车辆维修记录
+    editRepair () {
+      var vm = this
+      this.openDialog({
+        name: 'owned-vehicle/dialog/edit-repair',
+        data: {
+          title: '新增维修保养',
+          flag: 1, // 新增
+          carNo: vm.infoData.carNo
+        },
+        methods: {
+          ok () {
+            vm.searchRepairByCar()
+          }
+        }
+      })
+    },
+    searchRepairByCar () {
+      this.repairFormatInit = { carNo: this.infoData.carNo }
     }
   }
 }
@@ -257,4 +465,8 @@ export default {
     margin-bottom 1px
     .ivu-tabs-ink-bar
       bottom 2px
+.info-detail
+  margin-top: 80px;
+.btnItem
+  margin-top: -40px;
 </style>
