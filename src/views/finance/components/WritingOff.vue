@@ -48,10 +48,6 @@
         </Row>
       </Form>
     </div>
-    <!--<div class="btns-box">-->
-    <!--<div>{{sceneMap[scene]}}对账列表</div>-->
-    <!--<Button v-if="(hasPower(170102) && scene === 1) || (hasPower(170202) && scene === 2) || (hasPower(170302) && scene === 3)" type="primary" @click="createBill">生成对账单</Button>-->
-    <!--</div>-->
     <div  v-if="companyData.length>0" :style="{height: height - 20 +'px'}" class="list-box">
       <ul class="leftList">
         <li v-for="(item,index) in companyData" :class="{companyDataActive:companyDataActive === item.id}" :key="index" class="list" @click="showOrderData(item)">
@@ -61,9 +57,6 @@
           <div class="content">
             <div v-if="item.partnerName.length<12" class="ruleName">{{item.partnerName}}</div>
             <div v-else class="ruleName">{{item.partnerName.slice(0,12)}}...</div>
-            <!--<Tooltip v-else :content="item.partnerName" max-width="200" transfer class="ruleName" placement="top-start" style="display: list-item">-->
-            <!--<div >{{item.partnerName.slice(0,8)}}...</div>-->
-            <!--</Tooltip>-->
             <div class="tips">
               <span style="margin-right: 10px">{{payType}} {{item.calcTotalFeeText}}</span>
               <span>已结 {{item.verifiedFeeText}}</span>
