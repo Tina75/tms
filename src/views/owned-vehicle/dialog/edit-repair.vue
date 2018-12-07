@@ -217,6 +217,8 @@ export default {
   mounted () {
     if (this.flag === 2) {
       this.configData()
+    } else if (this.flag === 1 && this.carNo) {
+      this.validate.carNo = this.carNo
     } else {
       this.disAbleBtn = false
     }
