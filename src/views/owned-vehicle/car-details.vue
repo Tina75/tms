@@ -123,7 +123,8 @@
     <!-- 维修记录汇总 -->
     <div v-if="!showTableOne">
       <div class="addRepair">
-        <Button type="primary" @click="editRepair">新增维修保养</Button>
+        <Button v-if="hasPower(190301)" type="primary" @click="editRepair">新增维修保养</Button>
+        <Button v-if="hasPower(190304)" class="buttonSty" @click="carExport">导出</Button>
       </div>
       <page-table
         :columns="menuColumns"
@@ -131,7 +132,8 @@
         class="pageTable"
         url="/ownerCar/repair/list"
         list-field="list"
-        method="post">
+        method="post"
+        @on-load="handleLoad">
       </page-table>
     </div>
   </div>
@@ -144,9 +146,10 @@ import prepareOpenSwipe from '@/components/swipe/index'
 import { CODE, deleteCarById, queryCarById, deleteRepairById } from './client'
 import pageTable from '@/components/page-table'
 import TMSUrl from '@/libs/constant/url'
+import Export from '@/libs/js/export'
 export default {
   name: 'car-details',
-  components: { RecordList, prepareOpenSwipe, pageTable },
+  components: { RecordList, prepareOpenSwipe, pageTable, Export },
   mixins: [ BasePage ],
   metaInfo: {
     title: '车辆详情'
@@ -154,6 +157,7 @@ export default {
   data () {
     return {
       showTableOne: true,
+      exportFile: true,
       infoData: {},
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH1,
@@ -169,7 +173,7 @@ export default {
           width: 150,
           render: (h, params) => {
             let renderBtn = []
-            if (this.hasPower(130208)) {
+            if (this.hasPower(190302)) {
               renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
@@ -215,7 +219,7 @@ export default {
                 }
               }
             }, '查看'))
-            if (this.hasPower(130209)) {
+            if (this.hasPower(190303)) {
               renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
@@ -444,6 +448,29 @@ export default {
             vm.searchRepairByCar()
           }
         }
+      })
+    },
+    // 导出判空
+    handleLoad (response) {
+      try {
+        if (response.data.data.list.length >= 1) this.exportFile = true
+        else this.exportFile = false
+      } catch (error) {
+        this.exportFile = false
+      }
+    },
+    // 导出维修信息
+    carExport () {
+      if (!this.exportFile) {
+        this.$Message.error('导出内容为空')
+        return
+      }
+      let params = { carNo: this.infoData.carNo }
+      Export({
+        url: '/ownerCar/repair/export',
+        method: 'post',
+        data: params,
+        fileName: '导出维修列表'
       })
     },
     searchRepairByCar () {
