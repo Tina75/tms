@@ -81,6 +81,13 @@ export default {
           ok () {
             // 查看所有车辆
             vm.getOwnCars()
+              .then((cars) => {
+                // 新增车辆后，主动设置当前的车辆值
+                if (cars.length > 0) {
+                  let car = cars[0]
+                  vm.handleChange(car.carNo)
+                }
+              })
             // 查询所有未绑定司机
             vm.getOwnDrivers()
           }
