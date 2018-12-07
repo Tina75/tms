@@ -108,9 +108,14 @@ export default {
         } else {
           // 短信是否超过次数
           this.isMessageBeyond()
-          this.getOwnDrivers()
-          this.getOwnCars()
+          // 是否需要清空试用期的数据
+          // this.needClearTryData()
+          // 接受邀请合照
+          // this.receiveInvitingCooperation()
         }
+        // 查询所有的自有车辆和未绑定的司机
+        this.getOwnDrivers()
+        this.getOwnCars()
         // 探索运掌柜
         await this.isPreviewDiscover()
         // 添加GA配置属性
@@ -121,6 +126,29 @@ export default {
 
       }
     },
+    /**
+     * 接受货主发送的邀请合作请求
+     */
+    receiveInvitingCooperation () {
+      window.EMA.fire('Dialogs.push', {
+        name: 'dialogs/invite-cooperation',
+        data: {
+          title: '温馨提示'
+        },
+        methods: {
+          ok () {
+
+          }
+        }
+      })
+    },
+    /**
+     * 需要清除试用期期间的脏数据
+     */
+    needClearTryData () {
+
+    },
+
     /**
      * 超过短信上限
      */
