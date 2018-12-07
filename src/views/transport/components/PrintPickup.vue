@@ -13,9 +13,11 @@
               <td>车型：{{item.loadbill.carType|carTypeFormatter}} {{item.loadbill.carLength|carLengthFormatter}}</td>
             </tr>
             <tr>
-              <td>司机：{{item.loadbill.driverName}}</td>
-              <td>手机号码：{{item.loadbill.driverPhone}}</td>
-              <td>回单数：{{item.loadbill.backbillCnt}}</td>
+              <td v-if="item.loadbill.assignCarType === 1">司机：{{item.loadbill.driverName}}</td>
+              <td v-if="item.loadbill.assignCarType === 1">手机号码：{{item.loadbill.driverPhone}}</td>
+              <td v-if="item.loadbill.assignCarType === 2">主司机：{{getDriver(item.loadbill)}}</td>
+              <td v-if="item.loadbill.assignCarType === 2">副司机：{{getAssistantDriver(item.loadbill)}}</td>
+              <td >回单数：{{item.loadbill.backbillCnt}}</td>
             </tr>
           </tbody>
         </table>
@@ -43,7 +45,7 @@
             </tr>
             <tr>
               <td colspan="6" class="table-footer">
-                <span class="table-footer-item">运输费：{{item.loadbill.freightFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">{{item.loadbill.assignCarType === 1 ? '运输费':'油费'}}：{{item.loadbill.freightFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">装货费：{{item.loadbill.loadFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">卸货费：{{item.loadbill.unloadFee / 100 || 0}} 元</span>
                 <span class="table-footer-item">保险费：{{item.loadbill.insuranceFee / 100 || 0}} 元</span>
@@ -122,6 +124,18 @@ export default {
     this.printer = new Printd()
   },
   methods: {
+    getDriver (item) {
+      if (item.driverName) {
+        return `${item.driverName}  ${item.driverPhone}`
+      }
+      return ''
+    },
+    getAssistantDriver (item) {
+      if (item.assistantDriverName) {
+        return `${item.assistantDriverName}  ${item.assistantDriverPhone}`
+      }
+      return ''
+    },
     print () {
       this.$nextTick(() => {
         this.printer.print(this.$refs.htmlContent, this.cssText)

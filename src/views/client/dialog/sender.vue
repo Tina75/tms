@@ -69,14 +69,14 @@
       </FormItem>
     </Form>
     <div slot="footer">
-      <Button type="primary" @click="save('validate')">确定</Button>
+      <Button :loading="loading" type="primary" @click="save('validate')">确定</Button>
       <Button style="margin-left: 8px" @click.native="close"  >取消</Button>
     </div>
   </Modal>
 </template>
 
 <script>
-import { consignerAdd, consignerUpdate, CODE } from '../client'
+import { consignerAdd, consignerUpdate } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
 import pickups from '@/libs/constant/pickup.js'
 import { invoiceList } from '@/libs/constant/orderCreate.js'
@@ -96,6 +96,7 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      loading: false,
       pickups, // 提货方式
       invoiceList,
       salesmans: [],
@@ -135,6 +136,7 @@ export default {
     save (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          this.loading = true
           if (this.flag === 1) { // 新增
             this._consignerAdd()
           } else { // 2-编辑
@@ -146,28 +148,26 @@ export default {
     _consignerAdd () {
       const param = Object.assign({}, this.validate, { invoiceRate: this.validate.isInvoice === 1 ? rate.set(this.validate.invoiceRate) : null })
       consignerAdd(param).then(res => {
-        if (res.data.code === CODE) {
-          this.ok() // 刷新页面
-          this.openTab({
-            path: '/client/sender-info',
-            title: '发货方详情',
-            query: { id: res.data.data }
-          })
-          this.close()
-        } else {
-          this.$Message.error(res.data.msg)
-        }
+        this.loading = false
+        this.ok() // 刷新页面
+        this.openTab({
+          path: '/client/sender-info',
+          title: '发货方详情',
+          query: { id: res.data.data }
+        })
+        this.close()
+      }).catch(() => {
+        this.loading = false
       })
     },
     _consignerUpdate () {
       const param = Object.assign({}, this.validate, { id: this.id, invoiceRate: this.validate.isInvoice === 1 ? rate.set(this.validate.invoiceRate) : null })
       consignerUpdate(param).then(res => {
-        if (res.data.code === CODE) {
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(res.data.msg)
-        }
+        this.loading = false
+        this.ok() // 刷新页面
+        this.close()
+      }).catch(() => {
+        this.loading = false
       })
     },
     initSaleMan () {

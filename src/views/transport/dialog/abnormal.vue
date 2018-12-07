@@ -42,99 +42,30 @@
       </Row>
 
       <div v-if="details.billType === 3">
-        <Form v-if="isChangeFee === 1" ref="payment" :label-width="72" :model="payment" :rules="rules" label-position="left" class="detail-field-group row-fee">
-          <Row>
-            <i-col span="6">
-              <FormItem label="运输费：" class="require-fee" prop="freightFee">
-                <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" class="detail-payment-input-send">
-                </TagNumberInput>
-                <span class="unit-yuan">元</span>
-              </FormItem>
-            </i-col>
-            <i-col span="6">
-              <FormItem label="装货费：" prop="loadFee">
-                <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input-send">
-                </TagNumberInput>
-                <span class="unit-yuan">元</span>
-              </FormItem>
-            </i-col>
-            <i-col span="6">
-              <FormItem label="卸货费：" prop="unloadFee">
-                <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input-send">
-                </TagNumberInput>
-                <span class="unit-yuan">元</span>
-              </FormItem>
-            </i-col>
-            <i-col span="6">
-              <FormItem label="路桥费：" prop="tollFee">
-                <TagNumberInput v-model="payment.tollFee" :disabled="isDisabled" class="detail-payment-input-send">
-                </TagNumberInput>
-                <span class="unit-yuan">元</span>
-              </FormItem>
-            </i-col>
-            <i-col span="6">
-              <FormItem label="保险费：" prop="insuranceFee">
-                <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input-send">
-                </TagNumberInput>
-                <span class="unit-yuan">元</span>
-              </FormItem>
-            </i-col>
-            <i-col span="6">
-              <FormItem label="其他费：" prop="otherFee">
-                <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input-send">
-                </TagNumberInput>
-                <span class="unit-yuan">元</span>
-              </FormItem>
-            </i-col>
-          </Row>
-        </Form>
+        <send-fee
+          v-if="isChangeFee === 1"
+          ref="sendFee"
+          :payment="payment"
+          :settlement-pay-info="settlementPayInfo"
+          :send-way="sendWay"
+          :is-disabled="isDisabled"
+          :abnormal-length="details.abnormalPayInfos.length"
+          source="abnormal">
+        </send-fee>
       </div>
       <div v-else>
-        <Form v-if="isChangeFee === 1" ref="payment" :label-width="72" :model="payment" :rules="rules" label-position="left" class="detail-field-group row-fee">
-          <FormItem :label="details.billType === 2 ? '外转运费：' : '运输费：'" :class="details.billType === 2 ? 'waizhuan-label' : ''" class="require-fee" prop="freightFee">
-            <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" :style="details.billType === 2 && 'width: 158px;'" class="detail-payment-input">
-            </TagNumberInput>
-            <span class="unit-yuan">元</span>
-          </FormItem>
-          <FormItem v-if="details.billType !== 2" label="装货费：" prop="loadFee">
-            <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input">
-            </TagNumberInput>
-            <span class="unit-yuan">元</span>
-          </FormItem>
-          <FormItem v-if="details.billType !== 2" label="卸货费：" prop="unloadFee">
-            <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input">
-            </TagNumberInput>
-            <span class="unit-yuan">元</span>
-          </FormItem>
-          <FormItem v-if="details.billType !== 2" label="保险费：" prop="insuranceFee">
-            <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input">
-            </TagNumberInput>
-            <span class="unit-yuan">元</span>
-          </FormItem>
-          <FormItem v-if="details.billType !== 2" label="其他费用：" prop="otherFee">
-            <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input">
-            </TagNumberInput>
-            <span class="unit-yuan">元</span>
-          </FormItem>
-        </Form>
+        <pickup-fee
+          v-if="isChangeFee === 1"
+          ref="pickupFee"
+          :payment="payment"
+          :settlement-pay-info="settlementPayInfo"
+          :send-way="sendWay"
+          :is-disabled="isDisabled"
+          :abnormal-length="details.abnormalPayInfos.length"
+          source="abnormal"></pickup-fee>
       </div>
 
       <div v-if="isChangeFee === 1 && canUpdateFee === 2 && (changeFeeType === 0 || changeFeeType === 2)" class="err-message">存在多个异常记录未处理，只能修改最后一次上报的异常记录的运费。</div>
-
-      <Row v-if="isChangeFee === 1" class="detail-field-group" style="margin-bottom: 10px">
-        <i-col span="24">
-          <span class="detail-field-title-sm" style="vertical-align: unset;padding-left: 8px;">费用合计：</span>
-          <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
-        </i-col>
-      </Row>
-
-      <PayInfo v-if="isChangeFee === 1 && details.abnormalPayInfos.length > 0"
-               ref="$payInfo"
-               :loading="loading"
-               :total="paymentTotal"
-               :data="settlementPayInfo"
-               style="margin: 25px 0 25px 82px;"
-               mode="edit" />
 
       <Row class="detail-field-group" style="margin: 25px 0 10px;">
         <i-col span="24" class="exception-distribution">
@@ -159,7 +90,7 @@
     </div>
 
     <div slot="footer" style="text-align: center;">
-      <Button type="primary" @click="submit">确认</Button>
+      <Button :loading="btnLoading" type="primary" @click="submit">确认</Button>
       <Button type="default" @click.native="close">取消</Button>
     </div>
   </Modal>
@@ -167,27 +98,18 @@
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
-import MoneyInput from '../components/MoneyInput'
 import TagNumberInput from '@/components/TagNumberInput'
-import validator from '@/libs/js/validate'
 import Server from '@/libs/js/server'
-import PayInfo from '../components/PayInfo'
+import SendFee from '../components/SendFee'
+import PickupFee from '../components/PickupFee'
 import UpLoad from '@/components/upLoad/index.vue'
 // import { ABNORMAL_TYPE_CODES } from '../constant/abnormal.js'
 import _ from 'lodash'
 export default {
   name: 'SendCar',
-  components: { TagNumberInput, MoneyInput, PayInfo, UpLoad },
+  components: { TagNumberInput, UpLoad, PickupFee, SendFee },
   mixins: [ BaseDialog ],
   data () {
-    // 9位整数 2位小数
-    const validateFee = (rule, value, callback) => {
-      if ((value && validator.fee(value)) || !value) {
-        callback()
-      } else {
-        callback(new Error('费用整数位最多输入9位,小数2位'))
-      }
-    }
     return {
       show: true,
       loading: false,
@@ -197,37 +119,11 @@ export default {
         unloadFee: 0,
         insuranceFee: 0,
         otherFee: 0,
-        tollFee: 0
-      },
-      rules: {
-        // 运输费
-        freightFee: [
-          { required: true, type: 'number', message: '请输入运输费用' },
-          { validator: validateFee }
-        ],
-        // 装货费用
-        loadFee: [
-          { validator: validateFee }
-        ],
-        // 卸货费用
-        unloadFee: [
-          { validator: validateFee }
-        ],
-        // 保险费用
-        insuranceFee: [
-          { validator: validateFee }
-        ],
-        // 其他费用
-        otherFee: [
-          { validator: validateFee }
-        ],
-        // 路桥费用
-        tollFee: [
-          { validator: validateFee }
-        ]
+        tollFee: 0,
+        totalFee: 0
       },
       clonePayment: {}, // 复制一份费用数据，用来比较有没有修改费用
-      settlementType: '1',
+      // settlementType: '1',
       settlementPayInfo: [],
       cloneSettlementPayInfo: [], // 复制一份多段付费用数据，用来比较有没有修改多段付
       details: {}, // 详情信息
@@ -240,23 +136,12 @@ export default {
       fileUrls: [], // 图片url列表
       isDisabled: false,
       changeFeeType: 0, // 0 可以修改运费 10 已对账 11 已核销 2 部分修改运费
-      canUpdateFee: 0 // 判断多条异常记录只有最后一条可以修改运费
+      canUpdateFee: 0, // 判断多条异常记录只有最后一条可以修改运费
+      sendWay: '1',
+      btnLoading: false
     }
   },
 
-  computed: {
-    // 计算总费用
-    paymentTotal () {
-      let total
-      total = Number(this.payment.freightFee) +
-              Number(this.payment.loadFee) +
-              Number(this.payment.unloadFee) +
-              Number(this.payment.insuranceFee) +
-              Number(this.payment.otherFee)
-      if (this.type === 3) total += Number(this.payment.tollFee)
-      return parseFloat(total.toFixed(2))
-    }
-  },
   created () {
     this.settlementPayInfo = this.type === 3 ? [
       { payType: 1, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 },
@@ -287,6 +172,8 @@ export default {
       }).then(res => {
         _this.details = res.data.data
         console.log(_this.details)
+
+        this.sendWay = _this.details.assignCarType.toString()
 
         this.autoAbnormalLinks('selected', 1) // 自动带出selected=1的异常环节,和selected=1的异常类型
 
@@ -404,12 +291,6 @@ export default {
             }
           }
         }).catch(err => console.error(err))
-      } else {
-        // 将payment 设置为初始值
-        for (let key in _this.clonePayment) {
-          _this.payment[key] = _this.clonePayment[key]
-        }
-        console.log(_this.payment)
       }
     },
 
@@ -432,99 +313,72 @@ export default {
 
     // 异常环节修改后，异常类型联动
     handleChangeLinks (val) {
-      // this.abnormalTypeCode = ''
-      // this.abnormalTypeCodes = ABNORMAL_TYPE_CODES[val.toString()]
       this.autoAbnormalLinks('abnormalTiming', val)
-      /**
-       * v1.05多段付联动只跟核销走
-      if (this.changeFeeType === 1 && this.canUpdateFee === 1) {
-        console.log(val)
-        switch (val) {
-          case 1: // 装货环节： 预付、到付、回付这三段都可以修改
-            this.settlementPayInfo.map((item) => {
-              item.isDisabled = false
-            })
-            this.cloneSettlementPayInfo.map((item) => {
-              item.isDisabled = false
-            })
-            break
-          case 2: // 送货环节： 到付、回付这两段都可以修改
-            this.settlementPayInfo.map((item) => {
-              item.isDisabled = (item.payType === 1)
-            })
-            this.cloneSettlementPayInfo.map((item) => {
-              item.isDisabled = (item.payType === 1)
-            })
-            break
-          case 3: // 卸货环节： 提货只能改到付，送货只能改回付
-            this.settlementPayInfo.map((item) => {
-              if (this.type === 1) {
-                item.isDisabled = false
-              } else {
-                item.isDisabled = (item.payType === 3)
-                item.isDisabled = !item.isDisabled
-              }
-            })
-            this.cloneSettlementPayInfo.map((item) => {
-              if (this.type === 1) {
-                item.isDisabled = false
-              } else {
-                item.isDisabled = (item.payType === 3)
-                item.isDisabled = !item.isDisabled
-              }
-            })
-            break
-          default:
-            break
-        }
-      }
-      */
-    },
-
-    // 提交前数据校验
-    validate () {
-      if (!this.abnormalTiming) {
-        this.$Message.error('请选择异常环节')
-        return false
-      }
-      if (!this.abnormalTypeCode) {
-        this.$Message.error('请选择异常类型')
-        return false
-      }
-      if (this.details.abnormalPayInfos.length > 0 && this.isChangeFee === 1 && !this.$refs.$payInfo.validate()) return false
-      return true
     },
 
     // 提交
     submit () {
       const _this = this
-      if (!_this.validate()) return
+      // if (!_this.validate()) return
       if (_this.isChangeFee !== 2 && (_this.changeFeeType === 0 || _this.changeFeeType === 2) && _this.canUpdateFee === 1) {
-        this.$refs.payment.validate((valid) => {
-          if (valid) {
-            if (_this.isChangeSubmitFee()) {
-              _this.$Toast.confirm({
-                title: '提示',
-                content: '<p>运费未修改，是否保存？</p>',
-                okText: '是',
-                cancelText: '否',
-                onOk: () => {
-                  console.log('保存')
-                  _this.doSubmit()
-                }
-              })
-            } else {
-              _this.doSubmit()
-            }
-          }
-        })
+        if (this.type === 3) {
+          _this.wayBillAbnormal()
+        } else {
+          _this.pickUpAbnormal()
+        }
       } else {
         _this.doSubmit()
       }
     },
+
+    // 提货单上报异常
+    pickUpAbnormal () {
+      const _this = this
+      if (!_this.$refs.pickupFee.validate()) return
+      if (_this.isChangeSubmitFee()) {
+        _this.confirmToast()
+      } else {
+        _this.doSubmit()
+      }
+    },
+
+    // 运单上报异常
+    wayBillAbnormal () {
+      const _this = this
+      if (!_this.$refs.sendFee.validate()) return
+      if (_this.isChangeSubmitFee()) {
+        _this.confirmToast()
+      } else {
+        _this.doSubmit()
+      }
+    },
+
+    confirmToast () {
+      const _this = this
+      _this.$Toast.confirm({
+        title: '提示',
+        content: '<p>费用未修改，是否保存？</p>',
+        okText: '是',
+        cancelText: '否',
+        onOk: () => {
+          console.log('保存')
+          _this.doSubmit()
+        },
+        onCancel: () => {
+          console.log('取消')
+          // 将payment 设置为初始值
+          for (let key in _this.clonePayment) {
+            _this.clonePayment[key] = _this.clonePayment[key] / 100
+          }
+          console.log(_this.clonePayment)
+        }
+      })
+    },
+
     // 创建异常单
     doSubmit () {
       const z = this
+      z.btnLoading = true
       let fileUrls = []
       z.$refs.upLoads.uploadImgList.map((item) => {
         fileUrls.push(item.url)
@@ -532,14 +386,7 @@ export default {
       let tableData = []
       if (z.details.abnormalPayInfos.length > 0) {
         if (z.isChangeFee === 1) {
-          // tableData = _.cloneDeep(z.$refs.$payInfo.tableDataBack)
-          z.$refs.$payInfo.tableDataBack.map((item, i) => {
-            tableData.push({
-              payType: item.payType,
-              cashAmount: item.cashAmount * 100 || 0,
-              fuelCardAmount: item.fuelCardAmount * 100 || 0
-            })
-          })
+          tableData = z.type === 3 ? z.$refs.sendFee.getSettlementPayInfo() : z.$refs.pickupFee.getSettlementPayInfo()
         } else {
           z.cloneSettlementPayInfo.map((item, i) => {
             tableData.push({
@@ -554,13 +401,13 @@ export default {
       }
       let data = {
         ...z.formatMoney(),
-        totalFee: z.paymentTotal * 100,
         fileUrls: fileUrls,
         abnormalPayInfos: tableData,
         abnormalTiming: z.abnormalTiming,
         abnormalTypeCode: z.abnormalTypeCode,
         abnormalDesc: z.details.abnormalDesc,
-        updateFee: z.isChangeSubmitFee() ? 2 : 1
+        updateFee: z.isChangeSubmitFee() ? 2 : 1,
+        assignCarType: z.details.assignCarType
       }
       if (z.recordId) {
         data.recordId = this.recordId
@@ -575,6 +422,7 @@ export default {
         data: data
       }).then(res => {
         console.log(res)
+        z.btnLoading = false
         z.complete()
         z.close()
         if (res.data.data <= 0) {
@@ -582,40 +430,42 @@ export default {
         } else {
           z.$Message.success(z.recordId ? '编辑成功' : '创建成功')
         }
-      }).catch(err => console.error(err))
+      }).catch(() => {
+        z.btnLoading = false
+      })
     },
 
     // 如果是修改运费状态，提交时需判断有没有修改运费
     isChangeSubmitFee () {
       const z = this
       if (z.isChangeFee === 2) return false
+      for (let key in z.clonePayment) {
+        if (typeof z.clonePayment[key] === 'number') {
+          z.clonePayment[key] = z.clonePayment[key] * 100
+        } else {
+          z.clonePayment[key] = 0
+        }
+      }
       if (z.details.abnormalPayInfos.length > 0) {
         let cloneTableData = []
         z.cloneSettlementPayInfo.map((item, i) => {
           cloneTableData.push({
             payType: item.payType,
-            cashAmount: item.cashAmount || null,
-            fuelCardAmount: item.fuelCardAmount || null
+            fuelCardAmount: item.fuelCardAmount * 100 || void 0,
+            cashAmount: item.cashAmount * 100 || void 0
           })
-          // item.cashAmount = item.cashAmount || null
-          // item.fuelCardAmount = item.fuelCardAmount || null
         })
-        let tableDate = []
-        z.$refs.$payInfo.tableDataBack.map((item, i) => {
-          tableDate.push({
-            payType: item.payType,
-            cashAmount: item.cashAmount || null,
-            fuelCardAmount: item.fuelCardAmount || null
-          })
-          // item.cashAmount = item.cashAmount || null
-          // item.fuelCardAmount = item.fuelCardAmount || null
-          // delete item._index
-          // delete item._rowKey
-        })
-        console.log(cloneTableData, tableDate)
-        return _.isEqual(z.payment, z.clonePayment) && _.isEqual(cloneTableData, tableDate) // 费用输入框和多段付
+        if (z.type === 3) {
+          return _.isEqual(z.$refs.sendFee.formatMoney(), z.clonePayment) && _.isEqual(cloneTableData, z.$refs.sendFee.getSettlementPayInfo()) // 费用输入框和多段付
+        } else {
+          return _.isEqual(z.$refs.pickupFee.formatMoney(), z.clonePayment) && _.isEqual(cloneTableData, z.$refs.pickupFee.getSettlementPayInfo()) // 费用输入框和多段付
+        }
       } else {
-        return _.isEqual(z.payment, z.clonePayment)
+        if (z.type === 3) {
+          return _.isEqual(z.$refs.sendFee.formatMoney(), z.clonePayment)
+        } else {
+          return _.isEqual(z.$refs.pickupFee.formatMoney(), z.clonePayment)
+        }
       }
     },
 
@@ -625,12 +475,21 @@ export default {
     },
     // 格式化金额单位为分
     formatMoney () {
-      let temp = Object.assign({}, this.payment)
-      for (let key in temp) {
-        if (typeof temp[key] === 'number') {
-          temp[key] = temp[key] * 100
+      let temp
+      if (this.isChangeFee === 2) {
+        temp = Object.assign({}, this.clonePayment)
+        for (let key in temp) {
+          if (typeof temp[key] === 'number') {
+            temp[key] = temp[key] * 100
+          } else {
+            temp[key] = 0
+          }
+        }
+      } else {
+        if (this.type === 3) {
+          temp = Object.assign({}, this.$refs.sendFee.formatMoney())
         } else {
-          temp[key] = 0
+          temp = Object.assign({}, this.$refs.pickupFee.formatMoney())
         }
       }
       return temp
@@ -657,16 +516,10 @@ export default {
  @import "../style/detail.styl"
 
   .part
-    padding 27px 0 20px 12px
-    border-bottom 1px dashed #CBCED3
 
     .ivu-form-item-label
       color #777
       font-size 14px
-
-    &:last-child
-      border-style none
-      padding-bottom 10px
 
     .detail-payment-way
       width calc(100% - 100px) !important
@@ -709,6 +562,11 @@ export default {
     display: -ms-flexbox
 </style>
 <style lang='stylus' scoped>
+  .part
+    padding 27px 0 20px 12px
+    &:last-child
+      border-style none
+      padding-bottom 10px
   .err-message
     color #EC4E4E
     font-size 14px

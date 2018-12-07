@@ -44,29 +44,43 @@
       </Row>
       <Row>
         <Col :span="8">
-        <FormItem label="车型：" prop="carType">
-          <Select v-model="validate.driver.carType" transfer >
+        <FormItem label="车型：">
+          <Select v-model="validate.driver.carType" transfer clearable>
             <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
           </Select>
         </FormItem>
         </Col>
         <Col :span="8">
-        <FormItem label="车长：" prop="carLength">
-          <Select v-model="validate.driver.carLength" transfer >
+        <FormItem label="车长：">
+          <Select v-model="validate.driver.carLength" transfer clearable>
             <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
           </Select>
         </FormItem>
         </Col>
         <Col :span="8">
         <FormItem label="载重：" prop="shippingWeight">
-          <Input v-model="validate.driver.shippingWeight" :maxlength="9" placeholder="必填"/>吨
+          <Row>
+            <Col span="20">
+            <TagNumberInput :min="0" v-model="validate.driver.shippingWeight" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+              </Col>
+            <Col span="2" offset="1">
+            <span>吨</span>
+              </Col>
+          </Row>
         </FormItem>
         </Col>
       </Row>
       <Row>
         <Col :span="8">
         <FormItem label="净空：" prop="shippingVolume">
-          <Input v-model="validate.driver.shippingVolume" :maxlength="9" placeholder="请输入"/>方
+          <Row>
+            <Col span="20">
+            <TagNumberInput :min="0" v-model="validate.driver.shippingVolume" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+            </Col>
+            <Col span="2" offset="1">
+            <span>方</span>
+            </Col>
+          </Row>
         </FormItem>
         </Col>
         <Col :span="8">
@@ -172,29 +186,31 @@
         placeholder="请输入"/>
     </Form>
     <div v-if="validate.type.selectStatus == 1" slot="footer">
-      <Button type="primary" @click="save('validateDriver')">确定</Button>
+      <Button :loading="loading" type="primary" @click="save('validateDriver')">确定</Button>
       <Button style="margin-left: 8px" @click.native="close">取消</Button>
     </div>
     <div v-else slot="footer">
-      <Button type="primary" @click="save('validateCompany')">确定</Button>
+      <Button :loading="loading" type="primary" @click="save('validateCompany')">确定</Button>
       <Button style="margin-left: 8px" @click.native="close">取消</Button>
     </div>
   </Modal>
 </template>
 <script>
 import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
-import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, formatterCarNo, CODE, CAR } from '../client'
+import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, formatterCarNo, CAR } from '../client'
 import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput'
 import UpLoad from '@/components/upLoad/index.vue'
+import TagNumberInput from '@/components/TagNumberInput'
 import _ from 'lodash'
 export default {
   name: 'carrier',
-  components: { CitySelect, UpLoad, SelectInput },
+  components: { CitySelect, UpLoad, SelectInput, TagNumberInput },
   mixins: [BaseDialog],
   data () {
     return {
+      loading: false,
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH,
       flag: 2,
@@ -265,14 +281,7 @@ export default {
             { required: true, message: '车牌号不能为空', trigger: 'blur' },
             { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
           ],
-          carType: [
-            { required: true, message: '车型不能为空', trigger: 'change' }
-          ],
-          carLength: [
-            { required: true, message: '车长不能为空', trigger: 'change' }
-          ],
           shippingWeight: [
-            { required: true, message: '载重不能为空' },
             { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
           ],
           shippingVolume: [
@@ -335,8 +344,8 @@ export default {
         carNO: this.validate.driver.carNO,
         carType: this.validate.driver.carType,
         carLength: this.validate.driver.carLength,
-        shippingWeight: Math.floor(this.validate.driver.shippingWeight * 100) / 100,
-        shippingVolume: Math.floor(this.validate.driver.shippingVolume * 10) / 10,
+        shippingWeight: this.validate.driver.shippingWeight,
+        shippingVolume: this.validate.driver.shippingVolume,
         remark: this.validate.driver.remark,
         payType: this.validate.driver.payType,
         carBrand: this.validate.driver.carBrand,
@@ -355,12 +364,14 @@ export default {
             return
           }
           if (this.flag === 1) { // 新增
+            this.loading = true
             if (this.validate.type.selectStatus === '1') { // 司机
               this._carrierAddForDriver()
             } else {
               this._carrierAddForCompany()
             }
           } else { // 2-编辑
+            this.loading = true
             if (this.validate.type.selectStatus === '1') { // 司机
               this._carrierForDriverUpdate()
             } else {
@@ -373,17 +384,16 @@ export default {
     _carrierAddForDriver () {
       let data = this.initRequestParam()
       carrierAddForDriver(data).then(res => {
-        if (res.data.code === CODE) {
-          this.openTab({
-            path: '/client/carrier-info',
-            title: '承运商详情',
-            query: { id: res.data.data, carrierType: 1 }
-          })
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(res.data.msg)
-        }
+        this.openTab({
+          path: '/client/carrier-info',
+          title: '承运商详情',
+          query: { id: res.data.data, carrierType: 1 }
+        })
+        this.loading = false
+        this.ok() // 刷新页面
+        this.close()
+      }).catch(() => {
+        this.loading = false
       })
     },
     _carrierAddForCompany () {
@@ -395,28 +405,26 @@ export default {
         remark: this.validate.company.remark
       }
       carrierAddForCompany(data).then(res => {
-        if (res.data.code === CODE) {
-          this.openTab({
-            path: '/client/carrier-info',
-            title: '承运商详情',
-            query: { id: res.data.data, carrierType: 2 }
-          })
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(res.data.msg)
-        }
+        this.openTab({
+          path: '/client/carrier-info',
+          title: '承运商详情',
+          query: { id: res.data.data, carrierType: 2 }
+        })
+        this.loading = false
+        this.ok() // 刷新页面
+        this.close()
+      }).catch(() => {
+        this.loading = false
       })
     },
     _carrierForDriverUpdate () {
       let data = this.initRequestParam()
       carrierForDriverUpdate(data).then(res => {
-        if (res.data.code === CODE) {
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(res.data.msg)
-        }
+        this.loading = false
+        this.ok() // 刷新页面
+        this.close()
+      }).catch(() => {
+        this.loading = false
       })
     },
     _carrierForCompanyUpdate () {
@@ -429,12 +437,11 @@ export default {
         carrierId: this.id
       }
       carrierForCompanyUpdate(data).then(res => {
-        if (res.data.code === CODE) {
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(res.data.msg)
-        }
+        this.loading = false
+        this.ok() // 刷新页面
+        this.close()
+      }).catch(() => {
+        this.loading = false
       })
     },
     // 格式常跑路线信息

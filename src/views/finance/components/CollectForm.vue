@@ -3,12 +3,12 @@
     <Form ref="formInline" :model="formInline">
       <Row :gutter="12">
         <Col span="6">
-        <FormItem :label-width="65" label="发货方：" prop="partnerName">
+        <FormItem :label-width="60" label="发货方：" prop="partnerName">
           <Input v-model="formInline.partnerName" :maxlength="20" placeholder="请输入发货方名称"></Input>
         </FormItem>
         </Col>
         <Col span="6">
-        <FormItem  :label-width="65" label="订单号：" prop="orderNo">
+        <FormItem  :label-width="60" label="订单号：" prop="orderNo">
           <Input v-model="formInline.orderNo" :maxlength="30" placeholder="请输入订单号"></Input>
         </FormItem>
         </Col>
@@ -101,7 +101,7 @@ export default {
 
 <style lang="stylus" scoped>
 .search-form
-  padding 20px 15px
+  padding 20px 10px
   margin-bottom 20px
   background-color #f9f9f9
   .ivu-form-item

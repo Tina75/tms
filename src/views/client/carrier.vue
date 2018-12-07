@@ -34,7 +34,7 @@
 </template>
 <script>
 import PageTable from '@/components/page-table'
-import { carrierDelete, CODE, carrierDetailsForDriver, carrierDetailsForCompany } from './client'
+import { carrierDelete, carrierDetailsForDriver, carrierDetailsForCompany } from './client'
 import BasePage from '@/basic/BasePage'
 export default {
   name: 'carrier',
@@ -187,7 +187,7 @@ export default {
                           carrierDelete({
                             carrierId: params.row.carrierId
                           }).then(res => {
-                            if (res.data.code === CODE) {
+                            if (res.data.code === 10000) {
                               _this.$Message.success(res.data.msg)
                               _this.searchList() // 刷新页面
                             } else {
@@ -271,6 +271,9 @@ export default {
           title: '结算方式',
           key: 'payType',
           render: (h, params) => {
+            if (!params.row.payType) {
+              return h('div', '-')
+            }
             return h('div', {}, this.payTypeMap[params.row.payType])
           }
         },
@@ -312,28 +315,11 @@ export default {
   },
   methods: {
     searchList () {
-      // let data = {
-      //   pageNo: this.pageNo,
-      //   pageSize: this.pageSize,
-      //   type: this.selectStatus,
-      //   keyword: this.keyword,
-      //   order: this.order
-      // }
       this.queryWords = {
         type: this.selectStatus,
         keyword: this.keyword,
         order: this.order
       }
-      // this.loading = true
-      // carrierList(data).then(res => {
-      //   if (res.data.code === CODE) {
-      //     this.data1 = res.data.data.carrierList
-      //     this.totalCount = res.data.data.total
-      //     this.loading = false
-      //   } else {
-      //     this.$Message.error(res.data.msg)
-      //   }
-      // })
     },
     clearKeywords () {
       this.keyword = ''
@@ -371,7 +357,7 @@ export default {
         carrierId: carrierId
       }
       carrierDetailsForCompany(data).then(res => {
-        if (res.data.code === CODE) {
+        if (res.data.code === 10000) {
           this.company = {
             carrierName: res.data.data.carrierInfo.carrierName,
             carrierPrincipal: res.data.data.carrierInfo.carrierPrincipal,
@@ -388,7 +374,7 @@ export default {
         carrierId: carrierId
       }
       carrierDetailsForDriver(data).then(res => {
-        if (res.data.code === CODE) {
+        if (res.data.code === 10000) {
           this.driver = res.data.data
           fn()
         }

@@ -788,9 +788,15 @@ export default {
               { name: '拆单', value: 3, code: 120110, disabled: true, content: '有代收货款的订单不允许拆单' }
             )
           } else {
-            renderBtn.push(
-              { name: '拆单', value: 3, code: 120110 }
-            )
+            if (!r.volume && !r.weight) {
+              renderBtn.push(
+                { name: '拆单', value: 3, code: 120110, disabled: true, content: '体积或重量未填，无法拆单' }
+              )
+            } else {
+              renderBtn.push(
+                { name: '拆单', value: 3, code: 120110 }
+              )
+            }
           }
         }
         // 外转按钮

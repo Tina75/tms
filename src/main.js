@@ -16,13 +16,20 @@ require('./assets/css/iview/iview.css')
 require('./assets/css/tms/iconfont.css')
 require('./assets/css/quill/quill.core.css')
 
+// 处理没有被vue捕获的全局异常
+window.addEventListener('error', e => {
+  Vue.$reportError(e.error)
+})
+
 const errorHandler = (error, vm) => {
+  console.error(error)
   vm.$reportError(error)
 }
-
 Vue.config.productionTip = false
 Vue.config.errorHandler = errorHandler
-Vue.prototype.$throw = error => errorHandler(error, this)
+Vue.prototype.$throw = error => {
+  errorHandler(error, this)
+}
 
 // Meta自设置
 Vue.use(VueMeta)

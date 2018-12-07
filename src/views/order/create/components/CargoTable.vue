@@ -99,20 +99,20 @@ export default {
           title: '货物名称',
           key: 'cargoName',
           type: 'select',
-          max: 10,
+          max: 200,
           width: 180
         },
         {
-          required: true,
+          required: false,
           title: '重量（吨）',
           key: 'weight',
-          poptip: '为了方便您计算价格，重量和体积必须填写一项',
+          // poptip: '为了方便您计算价格，重量和体积必须填写一项',
           type: 'number',
           min: 0,
           point: 2
         },
         {
-          required: true,
+          required: false,
           title: '体积（方）',
           key: 'volume',
           type: 'number',
@@ -130,18 +130,18 @@ export default {
         },
         {
           required: false,
-          title: '数量',
-          key: 'quantity',
-          type: 'number',
-          min: 1,
-          point: 0
-        },
-        {
-          required: false,
           title: '包装方式',
           key: 'unit',
           type: 'text',
           max: 10
+        },
+        {
+          required: false,
+          title: '包装数量',
+          key: 'quantity',
+          type: 'number',
+          min: 1,
+          point: 0
         },
         {
           required: false,

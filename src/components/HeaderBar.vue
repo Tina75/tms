@@ -97,7 +97,7 @@ export default {
   },
   methods: {
     ...mapMutations(['setTabNavList']),
-    ...mapActions(['getMessageCount', 'getUserInfo']),
+    ...mapActions(['getMessageCount', 'getUserInfo', 'getOwnDrivers', 'getOwnCars']),
     async newUserTip () {
       try {
         await this.getUserInfo()
@@ -108,6 +108,8 @@ export default {
         } else {
           // 短信是否超过次数
           this.isMessageBeyond()
+          this.getOwnDrivers()
+          this.getOwnCars()
         }
         // 探索运掌柜
         await this.isPreviewDiscover()

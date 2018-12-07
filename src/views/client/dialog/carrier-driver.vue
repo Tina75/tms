@@ -60,10 +60,10 @@
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem label="车型：" prop="carType">
+          <FormItem label="车型：">
             <Row>
               <Col span="20">
-              <Select v-model="validate.carType" transfer >
+              <Select v-model="validate.carType" transfer clearable>
                 <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
               </Select>
               </Col>
@@ -71,10 +71,10 @@
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem label="车长：" prop="carLength">
+          <FormItem label="车长：">
             <Row>
               <Col span="20">
-              <Select v-model="validate.carLength" transfer >
+              <Select v-model="validate.carLength" transfer clearable>
                 <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
               </Select>
               </Col>
@@ -169,8 +169,8 @@
         </Row>
       </Form>
       <div slot="footer" class="footerSty">
-        <Button type="primary" @click="save('validate')">确定</Button>
-        <Button style="margin-left: 8px" @click.native="close"  >取消</Button>
+        <Button :loading="loading" type="primary" @click="save('validate')">确定</Button>
+        <Button style="margin-left: 8px" @click.native="close">取消</Button>
       </div>
     </Modal>
   </div>
@@ -194,6 +194,7 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      loading: false,
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH,
       carrierId: '', // 承运商id
@@ -222,14 +223,7 @@ export default {
           { required: true, message: '手机号不能为空', trigger: 'blur' },
           { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
         ],
-        carType: [
-          { required: true, message: '车型不能为空', trigger: 'change' }
-        ],
-        carLength: [
-          { required: true, message: '车长不能为空', trigger: 'change' }
-        ],
         shippingWeight: [
-          { required: true, message: '载重不能为空' },
           { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ],
         shippingVolume: [
@@ -301,6 +295,7 @@ export default {
       this.validate.regularLine = JSON.stringify(this.address)
       this.$refs[name].validate((valid) => {
         if (valid) {
+          this.loading = true
           if (this.flag === 1) { // 新增
             this.add()
           } else { // 2-编辑
@@ -312,25 +307,23 @@ export default {
     add () {
       let data = this.validate
       carrierAddDriver(data).then(res => {
-        if (res.data.code === CODE) {
-          this.$Message.success(res.data.msg)
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(res.data.msg)
-        }
+        this.$Message.success(res.data.msg)
+        this.loading = false
+        this.ok() // 刷新页面
+        this.close()
+      }).catch(() => {
+        this.loading = false
       })
     },
     update () {
       let data = this.validate
       carrierUpdateDriver(data).then(res => {
-        if (res.data.code === CODE) {
-          this.$Message.success(res.data.msg)
-          this.ok() // 刷新页面
-          this.close()
-        } else {
-          this.$Message.error(res.data.msg)
-        }
+        this.loading = false
+        this.$Message.success(res.data.msg)
+        this.ok() // 刷新页面
+        this.close()
+      }).catch(() => {
+        this.loading = false
       })
     },
     // 输入手机号，选中某条信息自动填充以后司机信息（姓名，合作方式。。）

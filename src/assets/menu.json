@@ -141,6 +141,29 @@
     ]
   },
   {
+    "name":"自有车管理",
+    "icon":"ico-truck",
+    "path":"/owned-vehicle",
+    "powerCode":190000,
+    "children":[
+      {
+        "name":"司机管理",
+        "path":"/owned-vehicle/driver",
+        "powerCode":190100
+      },
+      {
+        "name":"车辆管理",
+        "path":"/owned-vehicle/car",
+        "powerCode":190200
+      },
+      {
+        "name":"维修保养",
+        "path":"/owned-vehicle/repair",
+        "powerCode":190300
+      }
+    ]
+  },
+  {
     "name":"公司管理",
     "icon":"gongsiguanli",
     "path":"/company",

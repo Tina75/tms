@@ -12,11 +12,10 @@ Vue.use(VueAnalytics, {
   router,
   set: [ { field: 'hostname', value: window.location.origin } ],
   debug: {
-    sendHitTask: isProdEnv
+    sendHitTask: !isProdEnv
   },
   autoTracking: {
-    exception: true, // 对于没有被vue errorHandler捕获的异常进行上报
-    exceptionLogs: !isProdEnv, // 异常log打印
+    exception: false,
     // 优化tab切换与相同query的PV计算方式
     shouldRouterUpdate (to, from) {
       // 将当前的tabsCache备份并更新当前tabsCache
@@ -203,18 +202,15 @@ const install = (Vue) => {
 
   /**
    * 上报异常
-   * @param {Error | String} error 异常对象或错误描述
+   * @param {Error} error
    */
   Vue.prototype.$reportError = Vue.$reportError = function (error) {
-    if (!isProdEnv) console.error(error)
-    const msg = (typeof error === 'string')
-      ? error
-      : (error instanceof Error)
-        ? error.message
-        : void 0
-    if (!msg) return
+    if (!(error instanceof Error)) {
+      console.warn('上报异常请传入一个Error对象')
+      return
+    }
     const temp = getComponentNameOrRoutePath(this)
-    this.$ga.exception(`msg: ${msg} || userAgent: ${window.navigator.userAgent}${temp ? (' || ' + temp) : ''}`)
+    this.$ga.exception(`msg: ${error.message} || stack: ${error.stack.toString()} || userAgent: ${window.navigator.userAgent}${temp ? (' || ' + temp) : ''}`)
   }
 }
 

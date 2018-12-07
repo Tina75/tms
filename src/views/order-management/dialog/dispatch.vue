@@ -16,41 +16,8 @@
         </FormItem>
         <div class="sub-title">承运订单：</div>
       </Form>
-      <Form v-else ref="pick" :model="pick" :rules="pickRules" :label-width="85" inline label-position="left">
-        <FormItem label="承运商：" prop="carrierName">
-          <SelectInput
-            v-model="pick.carrierName"
-            :maxlength="20"
-            :remote="false"
-            :local-options="carriers"
-            placeholder="请输入"
-            style="width:180px"
-            @on-focus.once="getCarriers"
-            @on-select="handleSelectCarrier">
-          </SelectInput>
-        </FormItem>
-        <FormItem label="车牌号：" prop="carNo" style="margin-left:27px;">
-          <SelectInput
-            v-model="pick.carNo"
-            :maxlength="20"
-            :remote="false"
-            :local-options="carrierCars"
-            :parser="handleCarNoToUp"
-            placeholder="请输入"
-            style="width:180px">
-          </SelectInput>
-        </FormItem>
-        <FormItem label="司机：" prop="driverName" style="margin-left:27px;">
-          <SelectInput
-            v-model="pick.driverName"
-            :maxlength="15"
-            :remote="false"
-            :local-options="carrierDrivers"
-            placeholder="请输入"
-            style="width:180px">
-          </SelectInput>
-        </FormItem>
-      </Form>
+      <div v-else class="sub-title" style="border-top: none;padding-top: 0;">承运订单：</div>
+
       <Table :columns="tableColumns" :data="id" :height="id.length > 10 ? 520 : id.length * 48 + 40"></Table>
       <div class="table-footer">
         <span style="padding-right: 5px;box-sizing:border-box;margin-left:-12px;">合计</span>
@@ -58,17 +25,22 @@
         <span>总体积：{{ volumeTotal }}</span>
         <span>总重量：{{ weightTotal }}</span>
       </div>
-      <div v-if="name === '送货调度'">
+
+      <div>
         <div class="send_car">
           <span style="margin-right: 24px;">直接派车</span>
           <i-switch v-model="sendCar" size="small" />
-          <p v-if="!sendCar" class="send_car_tip">此处未派车可以在生成运单后，在运单详情里点【编辑】进行派车操作。</p>
+          <span v-if="!sendCar" class="send_car_tip">此处可以直接派车哦～</span>
         </div>
-        <send-car v-if="sendCar" ref="sendCarComp" :order-list="id" :mileage="mileage" :finance-rules-info="financeRulesInfo" :start="send.start"></send-car>
+        <div v-if="sendCar" style="margin-top: 25px;">
+          <send-car v-if="name === '送货调度'" ref="sendCarComp" :order-list="id" :mileage="mileage" :finance-rules-info="financeRulesInfo"></send-car>
+          <pick-up v-else ref="pickUpComp"></pick-up>
+        </div>
       </div>
+
       <div slot="footer">
-        <Button  type="primary"  @click="save">确定</Button>
-        <Button  type="default"  @click="close">取消</Button>
+        <Button :loading="btnLoading" type="primary"  @click="save">确定</Button>
+        <Button type="default"  @click="close">取消</Button>
       </div>
     </Modal>
   </div>
@@ -81,9 +53,8 @@ import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput.vue'
 import SendCar from '@/views/transport/components/SendCar.vue'
+import PickUp from '@/views/transport/components/PickUp.vue'
 import { mapGetters, mapActions } from 'vuex'
-import City from '@/libs/js/city'
-import { CAR } from '@/views/client/client'
 import _ from 'lodash'
 import float from '@/libs/js/float'
 export default {
@@ -93,7 +64,8 @@ export default {
     // AreaSelect,
     CitySelect,
     SelectInput,
-    SendCar
+    SendCar,
+    PickUp
   },
 
   mixins: [BaseDialog],
@@ -112,22 +84,6 @@ export default {
         ]
       },
       sendCar: false,
-      pick: { carrierName: '', carNo: '', driverName: '' },
-      pickRules: {
-        carrierName: [
-          { required: true, message: '请填写承运商', trigger: 'blur' },
-          { required: true, message: '请填写承运商', trigger: 'change' }
-        ],
-        carNo: [
-          { required: true, message: '请填写车牌号', trigger: 'blur' },
-          { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' },
-          { required: true, message: '请填写车牌号', trigger: 'change' }
-        ],
-        driverName: [
-          { required: true, message: '请填写司机姓名', trigger: 'blur' },
-          { required: true, message: '请填写司机姓名', trigger: 'change' }
-        ]
-      },
       tableColumns: [
         {
           title: '操作',
@@ -225,7 +181,8 @@ export default {
           tooltip: true
         }
       ],
-      mileage: null
+      mileage: null,
+      btnLoading: false
     }
   },
 
@@ -335,10 +292,9 @@ export default {
       const z = this
       z.$refs['send'].validate((valid) => {
         if (valid) {
-          // z.$nextTick(() => {
-          //   console.log(z.$refs.sendCarComp.validate())
-          // })
-          if (z.sendCar && !z.$refs.sendCarComp.validate()) return
+          let sendComp = z.$refs.sendCarComp
+          if (z.sendCar && !sendComp.checkValidate()) return
+          z.btnLoading = true
           // 地址入参为最后一级区号
           let data = {
             start: z.send.start,
@@ -346,61 +302,77 @@ export default {
             orderIds: z.orderIds,
             assignCar: z.sendCar ? 1 : 0
           }
+          console.log(data)
           if (z.sendCar) {
-            let sendComp = z.$refs.sendCarComp
-            data = Object.assign(data, sendComp.formatMoney(), {
-              settlementType: sendComp.settlementType,
-              settlementPayInfo: sendComp.getSettlementPayInfo()
-            })
+            data.assignCarType = sendComp.sendWay
+            if (data.assignCarType === '1') { // 外转
+              data = Object.assign(data, sendComp.getformatMoney(), sendComp.getCarrierInfo(), {
+                settlementType: sendComp.getSettlementType(),
+                settlementPayInfo: sendComp.getSettlementPayInfos()
+              })
+            } else if (data.assignCarType === '2') { // 自送
+              data = Object.assign(data, sendComp.getformatMoney(), sendComp.getOwnSend())
+              delete data.cashBack // 自送没有返现
+            }
           }
+          console.log(data)
           Server({
             url: 'waybill/create',
             method: 'post',
             data: data
           }).then(() => {
+            z.btnLoading = false
             z.ok()
             z.$Message.success('创建运单成功')
             z.close()
+          }).catch(() => {
+            z.btnLoading = false
           })
         }
       })
     },
     // 提货调度  创建提货单
     doPickDispatch () {
-      this.$refs['pick'].validate((valid) => {
-        console.log(valid)
-        console.log(this.pick)
-        if (valid) {
-          const data = Object.assign(this.pick, { orderIds: this.orderIds })
-          Server({
-            url: 'load/bill/create',
-            method: 'post',
-            data: data
-          }).then(() => {
-            this.ok()
-            this.$Message.success('创建提货单成功')
-            this.close()
+      const z = this
+      if (z.sendCar && !z.$refs.pickUpComp.checkValidate()) return
+      z.btnLoading = true
+      let pickUpComp = z.$refs.pickUpComp
+      let data = {
+        orderIds: z.orderIds,
+        assignCar: z.sendCar ? 1 : 0
+      }
+      if (z.sendCar) {
+        data.assignCarType = pickUpComp.sendWay
+        if (data.assignCarType === '1') { // 外转
+          data = Object.assign(data, pickUpComp.getformatMoney(), pickUpComp.getCarrierInfo(), {
+            settlementType: pickUpComp.getSettlementTypes(),
+            settlementPayInfo: pickUpComp.getSettlementPayInfos()
           })
+        } else if (data.assignCarType === '2') { // 自送
+          data = Object.assign(data, pickUpComp.getformatMoney(), pickUpComp.getOwnSend())
+          delete data.cashBack // 自送没有返现
         }
+      }
+      console.log(data)
+      Server({
+        url: 'load/bill/create',
+        method: 'post',
+        data: data
+      }).then(() => {
+        z.btnLoading = false
+        z.ok()
+        z.$Message.success('创建提货单成功')
+        z.close()
+      }).catch(() => {
+        z.btnLoading = false
       })
     },
     // 将地址字符串8位后的替换成...
     formatterAddress (str) {
       let dot = str.substring(8)
       return str.replace(dot, ' ...')
-    },
-    // 车牌号小写转大写
-    handleCarNoToUp (val) {
-      this.pick.carNo = val.toUpperCase()
-      return this.pick.carNo
-    },
-    // 格式化城市
-    cityFormatter (code) {
-      if (!code) return ''
-      return Array.from(new Set(City.codeToFullNameArr(code, 3))).join('')
     }
   }
-
 }
 
 </script>
@@ -428,7 +400,7 @@ export default {
   &_tip
     font-size 12px
     color #666
-    margin-top 7px
+    margin-left 25px
 .table-footer
   height 48px
   border 1px solid #dcdee2

@@ -332,19 +332,42 @@ export default {
                     ])
                   )
                 } else {
-                  renderBtn.push(
-                    h('a', {
-                      style: {
-                        marginRight: '25px',
-                        color: '#00a4bd'
-                      },
-                      on: {
-                        click: () => {
-                          this.openSeparateDialog(params)
+                  if (!r.volume && !r.weight) {
+                    renderBtn.push(
+                      h('Tooltip', {
+                        props: {
+                          maxWidth: '200',
+                          offset: -9,
+                          content: '体积或重量未填，无法拆单',
+                          placement: 'top-start',
+                          transfer: true
                         }
-                      }
-                    }, '拆单')
-                  )
+                      }, [
+                        h('a', {
+                          style: {
+                            marginRight: '25px',
+                            color: '#B6E4EC'
+                          },
+                          on: {
+                          }
+                        }, '拆单')
+                      ])
+                    )
+                  } else {
+                    renderBtn.push(
+                      h('a', {
+                        style: {
+                          marginRight: '25px',
+                          color: '#00a4bd'
+                        },
+                        on: {
+                          click: () => {
+                            this.openSeparateDialog(params)
+                          }
+                        }
+                      }, '拆单')
+                    )
+                  }
                 }
               }
               // 外转按钮
@@ -933,7 +956,7 @@ export default {
       } else {
         if (val === '待提货') {
           this.btnGroup = [
-            { name: '提货调度', value: 2, code: 120208 },
+            { name: '提货调度', value: 1, code: 120208 },
             { name: '打印', value: 5, code: 120202 },
             { name: '导出', value: 6, code: 120207 }
           ]

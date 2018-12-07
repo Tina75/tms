@@ -116,7 +116,7 @@
           <!-- 图片集合 -->
         </FormItem>
         <div v-if="isEdit" class="configBtn">
-          <Button type="primary" class="buttonSty" @click="companySubmit('formCompany')">保存</Button>
+          <Button :loading="loading" type="primary" class="buttonSty" @click="companySubmit('formCompany')">保存</Button>
           <Button class="buttonSty" @click="companyCancel">取消</Button>
         </div>
       </Form>
@@ -148,6 +148,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       isEdit: false,
       fileUrls: [],
       shareOutNo: '',
@@ -258,17 +259,19 @@ export default {
             this.$Message.info('您还未变更任何信息，无需保存')
             return
           }
+          this.loading = true
           let params = Object.assign({}, this.formCompany)
           Server({
             url: 'set/company',
             method: 'post',
             data: params
           }).then(({ data }) => {
-            if (data.code === 10000) {
-              this.$Message.success('保存成功!')
-              this.isEdit = false
-              this.getCompanyInfo()
-            }
+            this.loading = false
+            this.$Message.success('保存成功!')
+            this.isEdit = false
+            this.getCompanyInfo()
+          }).catch(() => {
+            this.loading = false
           })
         }
       })

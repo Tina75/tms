@@ -1,0 +1,3 @@
+
+export const RECEIVE_OWN_CAR_LIST = 'RECEIVE_OWN_CAR_LIST' // 自有车车辆信息
+export const RECEIVE_OWN_DRIVER_LIST = 'RECEIVE_OWN_DRIVER_LIST' // 自有车司机信息

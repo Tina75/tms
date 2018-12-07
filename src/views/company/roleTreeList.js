@@ -256,10 +256,10 @@ export default {
         { title: '修改车辆', code: '130208', parentId: '130200', grandId: '130000', disabled: true },
         { title: '删除车辆', code: '130209', parentId: '130200', grandId: '130000', disabled: true },
         { title: '导出车辆', code: '130210', parentId: '130200', grandId: '130000', disabled: true },
-        { title: '新增维修记录', code: '130211', parentId: '130200', grandId: '130000', disabled: true },
-        { title: '修改维修记录', code: '130212', parentId: '130200', grandId: '130000', disabled: true },
-        { title: '删除维修记录', code: '130213', parentId: '130200', grandId: '130000', disabled: true },
-        { title: '导出维修记录', code: '130214', parentId: '130200', grandId: '130000', disabled: true },
+        // { title: '新增维修记录', code: '130211', parentId: '130200', grandId: '130000', disabled: true },
+        // { title: '修改维修记录', code: '130212', parentId: '130200', grandId: '130000', disabled: true },
+        // { title: '删除维修记录', code: '130213', parentId: '130200', grandId: '130000', disabled: true },
+        // { title: '导出维修记录', code: '130214', parentId: '130200', grandId: '130000', disabled: true },
         { title: '新增计费规则', code: '130215', parentId: '130200', grandId: '130000', disabled: true },
         { title: '修改计费规则', code: '130216', parentId: '130200', grandId: '130000', disabled: true },
         { title: '删除计费规则', code: '130217', parentId: '130200', grandId: '130000', disabled: true }
@@ -321,6 +321,59 @@ export default {
       code: '140300',
       parentId: '140000'
     }]
+  }],
+  data10: [{
+    key: 'data10',
+    title: '自有车管理',
+    expand: true,
+    disabled: true,
+    checked: true,
+    code: '190000',
+    children: [{
+      title: '司机管理',
+      expand: true,
+      disabled: true,
+      checked: true,
+      code: '190100',
+      parentId: '190000',
+      children: [
+        { title: '页面查看', code: '190100', parentId: '190000', disabled: true },
+        { title: '新增', code: '190101', parentId: '190100', grandId: '190000', disabled: true },
+        { title: '修改', code: '190102', parentId: '190100', grandId: '190000', disabled: true },
+        { title: '删除', code: '190103', parentId: '190100', grandId: '190000', disabled: true },
+        { title: '导出', code: '190104', parentId: '190100', grandId: '190000', disabled: true }
+      ]
+    }, {
+      title: '车辆管理',
+      expand: true,
+      disabled: true,
+      checked: true,
+      code: '190200',
+      parentId: '190000',
+      children: [
+        { title: '页面查看', code: '190200', parentId: '190000', disabled: true },
+        { title: '新增', code: '190201', parentId: '190200', grandId: '190000', disabled: true },
+        { title: '修改', code: '190202', parentId: '190200', grandId: '190000', disabled: true },
+        { title: '删除', code: '190203', parentId: '190200', grandId: '190000', disabled: true },
+        { title: '导出', code: '190204', parentId: '190200', grandId: '190000', disabled: true }
+      ]
+    },
+    {
+      title: '维修保养',
+      expand: true,
+      disabled: true,
+      checked: true,
+      code: '190300',
+      parentId: '190000',
+      children: [
+        { title: '页面查看', code: '190300', parentId: '190000', disabled: true },
+        { title: '新增', code: '190301', parentId: '190300', grandId: '190000', disabled: true },
+        { title: '修改', code: '190302', parentId: '190300', grandId: '190000', disabled: true },
+        { title: '删除', code: '190303', parentId: '190300', grandId: '190000', disabled: true },
+        { title: '导出', code: '190304', parentId: '190300', grandId: '190000', disabled: true }
+      ]
+    }
+    ]
   }],
   data8: [{
     key: 'data8',

@@ -16,7 +16,7 @@
             总额 {{formatFee(activeSender ? activeSender.calcTotalFee : 0)}}
           </span>
           <span class="i-ml-20">
-            已付 {{formatFee(activeSender ? activeSender.verifiedFee : 0)}}
+            已收 {{formatFee(activeSender ? activeSender.verifiedFee : 0)}}
           </span>
         </p>
       </div>

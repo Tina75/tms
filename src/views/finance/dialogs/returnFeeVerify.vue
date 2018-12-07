@@ -13,7 +13,7 @@
           <!--<Input v-model="writeOffForm.actualFee" placeholder="请输入" />-->
           <tagNumberInput v-model="writeOffForm.actualFee" placeholder="请输入"></tagNumberInput>
         </FormItem>
-        <FormItem label="付款方式：" prop="payType">
+        <FormItem label="收款方式：" prop="payType">
           <RadioGroup v-model="writeOffForm.payType">
             <Radio v-for="(value, key) in payTypeMap" :key="key" :label="key">{{value}}</Radio>
           </RadioGroup>
