@@ -342,6 +342,11 @@ export default {
           }
         },
         {
+          title: '客户运单号',
+          key: 'customerWaybillNo',
+          width: 160
+        },
+        {
           title: '运单号',
           key: 'waybillNo',
           minWidth: 160,

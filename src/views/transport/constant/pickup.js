@@ -222,6 +222,11 @@ export const TABLE_COLUMNS = vm => [
     width: 120
   },
   {
+    title: '重量（公斤）',
+    key: 'weightKg',
+    minWidth: 120
+  },
+  {
     title: '创建时间',
     key: 'createTimeLong',
     sortable: 'custom',

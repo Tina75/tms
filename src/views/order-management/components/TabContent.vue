@@ -555,6 +555,11 @@ export default {
           }
         },
         {
+          title: '客户运单号',
+          key: 'customerWaybillNo',
+          width: 160
+        },
+        {
           title: '运单号',
           key: 'waybillNo',
           minWidth: 160,
@@ -596,10 +601,7 @@ export default {
         {
           title: '对接业务员',
           key: 'salesmanId',
-          minWidth: 180,
-          render: (h, params) => {
-            return h('span', params.row.salesmanName || '-')
-          }
+          minWidth: 180
         },
         {
           title: '始发地',
@@ -644,26 +646,22 @@ export default {
         {
           title: '计费里程（公里）',
           key: 'mileage',
-          width: 120,
-          render: (h, params) => {
-            return h('span', params.row.mileage / 1000 || '-')
-          }
+          width: 120
         },
         {
           title: '体积（方）',
           key: 'volume',
-          minWidth: 100,
-          render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
-          }
+          minWidth: 100
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          minWidth: 100,
-          render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
-          }
+          minWidth: 100
+        },
+        {
+          title: '重量（公斤）',
+          key: 'weightKg',
+          minWidth: 100
         },
         {
           title: '下单时间',
@@ -828,6 +826,26 @@ export default {
           minWidth: 180,
           render: (h, params) => {
             return h('span', float.floor(params.row.invoiceRate * 100, 2) || '-')
+          }
+        },
+        {
+          title: '备注',
+          key: 'remark',
+          width: 180,
+          ellipsis: true,
+          render: (h, params) => {
+            if (params.row.remark.length > 12) {
+              return h('Tooltip', {
+                props: {
+                  placement: 'bottom',
+                  content: params.row.remark
+                }
+              }, [
+                h('span', this.formatterAddress(params.row.remark))
+              ])
+            } else {
+              return h('span', params.row.remark)
+            }
           }
         },
         {
