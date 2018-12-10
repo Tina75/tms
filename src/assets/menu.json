@@ -120,6 +120,11 @@
         "name":"利润报表",
         "path":"/report/profit",
         "powerCode":180300
+      },
+      {
+        "name":"自有车出车统计报表",
+        "path":"/report/car",
+        "powerCode":0
       }
     ]
   },
