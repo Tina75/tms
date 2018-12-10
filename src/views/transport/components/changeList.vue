@@ -301,12 +301,23 @@ export default {
           'type': 'fee',
           'description': '回付油卡',
           'settlementType': 1
+        },
+        'tailPaidCash': {
+          'type': 'fee',
+          'description': '尾付现金',
+          'settlementType': 1
+        },
+        'tailPaidFule': {
+          'type': 'fee',
+          'description': '尾付油卡',
+          'settlementType': 1
         }
       },
       settlementPayInfo: [
         { payType: 1, fuelCardAmount: '', cashAmount: '' },
         { payType: 2, fuelCardAmount: '', cashAmount: '' },
-        { payType: 3, fuelCardAmount: '', cashAmount: '' }
+        { payType: 3, fuelCardAmount: '', cashAmount: '' },
+        { payType: 4, fuelCardAmount: '', cashAmount: '' }
       ]
     }
   },
@@ -462,6 +473,13 @@ export default {
                 payType: item[i].payType,
                 fuelCardAmount: typeof obj.receiptPaidFule === 'number' ? obj.receiptPaidFule / 100 : 0,
                 cashAmount: typeof obj.receiptPaidCash === 'number' ? obj.receiptPaidCash / 100 : 0
+              }
+            }
+            if (i === 3 && (key === 'tailPaidCash' || key === 'tailPaidFule')) {
+              mid = {
+                payType: item[i].payType,
+                fuelCardAmount: typeof obj.tailPaidFule === 'number' ? obj.tailPaidFule / 100 : 0,
+                cashAmount: typeof obj.tailPaidCash === 'number' ? obj.tailPaidCash / 100 : 0
               }
             }
           }
