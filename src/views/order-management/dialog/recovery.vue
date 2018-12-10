@@ -5,7 +5,7 @@
       <Icon type="ios-information-circle" size="24" color="#FFBB44" style="margin-top: -2px;margin-right: 5px;"></Icon>
       <span v-if="canRecovery">共选择了{{ id.length }}条订单，确定恢复吗？</span>
       <span v-else>
-        {{ id.length === 1 ? '此客户已存在相同客户单号订单，请检查订单信息' :  '选中的订单中已存在客户单号相同的订单，为避免重复，请检查订单信息' }}
+        {{ id.length === 1 ? '此客户已存在相同客户订单号订单，请检查订单信息' :  '选中的订单中已存在客户订单号相同的订单，为避免重复，请检查订单信息' }}
       </span>
     </div>
     <div slot="footer">

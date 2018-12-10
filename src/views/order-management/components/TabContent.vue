@@ -54,7 +54,7 @@
           @on-focus.once="getClients">
         </SelectInput>
         <Input v-model="keywords.orderNo" :maxlength="30" placeholder="请输入订单号" style="width: 200px" />
-        <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户单号" style="width: 200px" />
+        <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户订单单号" style="width: 200px" />
         <Input v-if="source !== 'transport'" v-model="keywords.waybillNo" :maxlength="30" placeholder="请输入运单号" style="width: 200px" />
       </div>
       <div class="complex-query">
@@ -532,7 +532,7 @@ export default {
           }
         },
         {
-          title: '客户单号',
+          title: '客户订单号',
           key: 'customerOrderNo',
           minWidth: 160,
           render: (h, p) => {
