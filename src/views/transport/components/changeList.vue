@@ -415,8 +415,8 @@ export default {
         } else {
           return '月结'
         }
-        case 4: return getCarLength(value)
-        case 5: return getCarType(value)
+        case 4: return getCarLength(value) || '-'
+        case 5: return getCarType(value) || '-'
         case 6: return value === 2 ? '自送' : '外转'
         default: return ''
       }
