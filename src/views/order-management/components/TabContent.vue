@@ -60,7 +60,7 @@
           <Input v-model="keywords.orderNo" :maxlength="30" placeholder="请输入订单号" />
           </Col>
           <Col span="6" class="i-mt-10">
-          <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户单号" />
+          <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户订单号" />
           </Col>
           <Col v-if="source === 'order'" span="6" class="i-mt-10">
           <Input v-model="keywords.waybillNo" :maxlength="30" placeholder="请输入运单号" />
@@ -547,7 +547,7 @@ export default {
           }
         },
         {
-          title: '客户单号',
+          title: '客户订单号',
           key: 'customerOrderNo',
           minWidth: 160,
           render: (h, p) => {

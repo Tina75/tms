@@ -19,7 +19,7 @@
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem label="客户单号:" prop="customerOrderNo">
+      <FormItem label="客户订单号:" prop="customerOrderNo">
         <Input v-model="orderForm.customerOrderNo" :maxlength="30" type="text"></Input>
       </FormItem>
       </Col>
@@ -418,7 +418,7 @@ export default {
         start: null,
         // 目的城市
         end: null,
-        // 客户单号
+        // 客户订单号
         customerOrderNo: '',
         salesmanId: '',
         // 发货时间

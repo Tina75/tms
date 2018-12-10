@@ -158,7 +158,7 @@ export default {
       seniorSearchFields: {
         consignerName: '', // 客户名称
         orderNo: '', // 订单号
-        customerOrderNo: '', // 客户单号
+        customerOrderNo: '', // 客户订单号
         transNo: '', // 外转单号
         transfereeName: '', // 外转方名称
         start: void 0, // 始发地
