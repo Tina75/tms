@@ -51,6 +51,14 @@
             <span class="unit-yuan">元</span>
           </FormItem>
         </i-col>
+        <i-col v-if="sendWay === '2'" span="6">
+          <FormItem label="住宿费：" prop="accommodation" class="padding-left-label">
+            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+              <TagNumberInput v-model="payment.accommodation" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            </Tooltip>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+        </i-col>
         <i-col span="6">
           <FormItem label="保险费：" prop="insuranceFee" class="padding-left-label">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
@@ -175,7 +183,8 @@ export default {
           otherFee: null,
           cashBack: null, // 返现运费
           tollFee: null, // 路桥费
-          mileage: null // 计费里程
+          mileage: null, // 计费里程
+          accommodation: null// 住宿费
         }
       }
     },
@@ -260,6 +269,10 @@ export default {
         // 计费里程
         mileage: [
           { validator: validateMile }
+        ],
+        // 住宿费用
+        accommodation: [
+          { validator: validateFee }
         ]
       },
       settlementTypeFee: '1',
@@ -279,7 +292,8 @@ export default {
               Number(this.payment.unloadFee) +
               Number(this.payment.insuranceFee) +
               Number(this.payment.otherFee) +
-              Number(this.payment.tollFee)
+              Number(this.payment.tollFee) +
+              Number(this.payment.accommodation)
       return parseFloat(total.toFixed(2))
     }
   },
@@ -295,6 +309,7 @@ export default {
     $bus.$on('carrierNameChange', carrierName => {
       this.carrierName = carrierName
     })
+    console.log(this.payment, this.paymentTotal)
   },
   methods: {
     // 计费规则
@@ -347,18 +362,20 @@ export default {
     // 格式化金额单位为分
     formatMoney () {
       let temp = Object.assign({}, this.payment)
-      temp.freightFee = temp.freightFee * 100
-      temp.loadFee = temp.loadFee * 100
-      temp.unloadFee = temp.unloadFee * 100
-      temp.insuranceFee = temp.insuranceFee * 100
-      temp.otherFee = temp.otherFee * 100
-      temp.tollFee = temp.tollFee * 100
-      temp.cashBack = temp.cashBack * 100
-      temp.mileage = temp.mileage * 1000
+      for (let key in temp) {
+        if (key === 'mileage') {
+          temp[key] *= 1000
+        } else {
+          temp[key] *= 100
+        }
+      }
       temp.totalFee = this.paymentTotal * 100
-      if (this.source === 'abnormal') {
+      if (this.source === 'abnormal') { // 异常没有计费里程和返现
         delete temp.cashBack
         delete temp.mileage
+      }
+      if (this.sendWay === '1') { // 外转去掉住宿费
+        delete temp.accommodation
       }
       return temp
     },
@@ -401,9 +418,6 @@ export default {
     .ivu-form-item-label
       padding-left 10px
 
-   .label-width
-    .ivu-form-item-label
-      width 92px !important
   .detail-payment-way
     width calc(100% - 100px) !important
 </style>

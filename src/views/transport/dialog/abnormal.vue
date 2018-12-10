@@ -120,7 +120,8 @@ export default {
         insuranceFee: 0,
         otherFee: 0,
         tollFee: 0,
-        totalFee: 0
+        totalFee: 0,
+        accommodation: 0 // 住宿费 v1.08 新增
       },
       clonePayment: {}, // 复制一份费用数据，用来比较有没有修改费用
       // settlementType: '1',
@@ -198,8 +199,8 @@ export default {
 
         if (this.type !== 3) {
           delete this.payment.tollFee // 去掉路桥费
+          delete this.payment.accommodation // 去掉住宿费
         }
-
         // this.settlementType = billInfo.settlementType ? billInfo.settlementType.toString() : '1'
         // 将收费信息中的金额单位转为元
         let temp = _this.settlementPayInfo.map((item, i) => {
@@ -456,12 +457,18 @@ export default {
           })
         })
         if (z.type === 3) {
+          if (z.sendWay === '1') {
+            delete z.clonePayment.accommodation // 外转去掉住宿费
+          }
           return _.isEqual(z.$refs.sendFee.formatMoney(), z.clonePayment) && _.isEqual(cloneTableData, z.$refs.sendFee.getSettlementPayInfo()) // 费用输入框和多段付
         } else {
           return _.isEqual(z.$refs.pickupFee.formatMoney(), z.clonePayment) && _.isEqual(cloneTableData, z.$refs.pickupFee.getSettlementPayInfo()) // 费用输入框和多段付
         }
       } else {
         if (z.type === 3) {
+          if (z.sendWay === '1') {
+            delete z.clonePayment.accommodation // // 外转去掉住宿费
+          }
           return _.isEqual(z.$refs.sendFee.formatMoney(), z.clonePayment)
         } else {
           return _.isEqual(z.$refs.pickupFee.formatMoney(), z.clonePayment)

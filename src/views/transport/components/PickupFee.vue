@@ -194,11 +194,9 @@ export default {
     // 格式化金额单位为分
     formatMoney () {
       let temp = Object.assign({}, this.payment)
-      temp.freightFee = temp.freightFee * 100
-      temp.loadFee = temp.loadFee * 100
-      temp.unloadFee = temp.unloadFee * 100
-      temp.insuranceFee = temp.insuranceFee * 100
-      temp.otherFee = temp.otherFee * 100
+      for (let key in temp) {
+        temp[key] *= 100
+      }
       temp.totalFee = this.paymentTotal * 100
       return temp
     },
@@ -254,9 +252,6 @@ export default {
     .ivu-form-item-content
       margin-left 52px !important
 
-   .label-width
-    .ivu-form-item-label
-      width 92px !important
   .detail-payment-way
     width calc(100% - 100px) !important
 </style>

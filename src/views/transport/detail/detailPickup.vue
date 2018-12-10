@@ -199,32 +199,23 @@
           <span>提货单信息</span>
         </div>
 
-        <Form ref="send" :model="info" :label-width="82" label-position="left" class="part" style="border-bottom: none;">
-
-          <div class="sub-title">
-            <div class="send-label">派车方式：</div>
-            <RadioGroup v-model="sendWay">
-              <Radio label="2">自送</Radio>
-              <Radio label="1">外转</Radio>
-              <!-- <Radio label="3">下发承运商</Radio> -->
-            </RadioGroup>
-          </div>
-          <own-send-info v-if="sendWay === '2'" ref="ownSendInfo" :form="ownInfo" source="detail"></own-send-info>
-          <send-carrier-info
-            v-else
-            ref="SendCarrierInfo"
-            :carrier-info="carrierInfo"
-            source="detail"></send-carrier-info>
-
-          <Row class="detail-field-group">
-            <i-col span="24">
-              <FormItem label="备注：" class="padding-left-label">
-                <Input v-model="info.remark" :maxlength="100" class="detail-info-input" />
-              </FormItem>
-            </i-col>
-          </Row>
-        </Form>
+        <div class="sub-title">
+          <div class="send-label">派车方式：</div>
+          <RadioGroup v-model="sendWay">
+            <Radio label="2">自送</Radio>
+            <Radio label="1">外转</Radio>
+            <!-- <Radio label="3">下发承运商</Radio> -->
+          </RadioGroup>
+        </div>
+        <own-send-info v-if="sendWay === '2'" ref="ownSendInfo" :form="ownInfo" source="detail"></own-send-info>
+        <send-carrier-info
+          v-else
+          ref="SendCarrierInfo"
+          :carrier-info="carrierInfo"
+          source="detail"
+          source-type="pickup"></send-carrier-info>
       </div>
+
       <!-- 货物明细 -->
       <div>
         <div class="detail-part-title">
@@ -318,7 +309,8 @@ export default {
         driverPhone: '',
         carNo: '',
         carType: '',
-        carLength: ''
+        carLength: '',
+        remark: ''
       },
       // 自送赋值给子组件
       ownInfo: {
@@ -548,7 +540,8 @@ export default {
             driverPhone: '',
             carNo: '',
             carType: '',
-            carLength: ''
+            carLength: '',
+            remark: ''
           }
         }
 
@@ -604,7 +597,6 @@ export default {
       let data = {
         loadbill: {
           pickUpId: z.id,
-          remark: z.info.remark,
           assignCarType: z.sendWay
         },
         cargoList: _.uniq(this.detail.map(item => item.orderId))
@@ -743,6 +735,7 @@ export default {
   .sub-title
     font-size 14px
     color #777
+    margin-bottom 10px
     .send-label
       display inline-block
       margin-right 20px

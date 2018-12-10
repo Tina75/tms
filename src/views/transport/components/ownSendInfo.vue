@@ -72,11 +72,13 @@ export default {
      */
     formClass () {
       return [
-        'detail-field-group',
-        { 'detail-none-border': this.source === 'detail' }
+        'edit-field-group',
+        { 'detail-none-border': this.source === 'detail' },
+        { 'padding-left-label': this.source === 'detail' }
       ]
     }
   },
+
   methods: {
     // 承运商info传参
     getOwnSendInfo () {
@@ -95,14 +97,21 @@ export default {
 
 </script>
 <style lang='stylus'>
+  .edit-field-group
+    .ivu-form-item-label
+      color #777
+      font-size 14px
+  .padding-left-label
+    .ivu-form-item-label
+      padding-left 10px
 </style>
 <style lang='stylus' scoped>
-  .detail-field-group
-    margin-top 12px
-    padding-bottom 24px
+  .edit-field-group
+    padding-top 17px
+    padding-bottom 8px
     margin-bottom 15px
     border-bottom 1px dashed #cbced3
   .detail-none-border
     margin-bottom: 0
-    border-bottom: none;
+    border-bottom: none
 </style>

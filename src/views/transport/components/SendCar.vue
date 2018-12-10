@@ -10,6 +10,7 @@
     </div>
     <div v-if="sendWay === '1'">
       <send-carrier-info ref="SendCarrierInfo"></send-carrier-info>
+
       <send-fee
         ref="sendFee"
         :mileage="mileage"
@@ -120,9 +121,6 @@ export default {
     .ivu-form-item-label
       padding-left 10px
 
-   .label-width
-    .ivu-form-item-label
-      width 92px !important
   .detail-payment-way
     width calc(100% - 100px) !important
 </style>
