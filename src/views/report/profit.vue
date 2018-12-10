@@ -1,5 +1,6 @@
 <template>
   <div>
+    <TabHeader ref="$tab" :tabs="tabList" :type="tabType" @on-change="tabChanged"></TabHeader>
     <div class="search">
       <div class="search-list">
         <ButtonGroup>
@@ -163,18 +164,22 @@
 </template>
 
 <script>
+import TabHeader from './components/TabHeader'
+import { TAB_LIST as tabList } from './constant/profit'
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 import { getPreMonth } from './getPerMonth'
 export default {
   name: 'profit',
   components: {
+    TabHeader
   },
   metaInfo: {
     title: '利润报表'
   },
   data: function () {
     return {
+      tabList: tabList,
       btnGroup: [
         { name: '近七天', value: 1 },
         { name: '本月', value: 2 },
@@ -359,6 +364,7 @@ export default {
     width 86px
     height 35px
   .search
+    margin-top 30px
     display flex
     display -ms-flexbox
     justify-content space-between
