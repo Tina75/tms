@@ -5,14 +5,14 @@
         <div class="row-list" style="margin-bottom:12px">
           <div class="col">
             <Input
-              v-model="keywords.billNo"
-              :maxlength="20"
-              placeholder="请输入运单号/提货单号"
+              v-model="keywords.driverName"
+              :maxlength="15"
+              placeholder="请输入司机名称"
             >
             </Input>
           </div>
           <div class="col">
-            <Input v-model="keywords.carNo" :maxlength="15"  placeholder="请输入车牌号"/>
+            <Input v-model="keywords.driverPhone" :maxlength="11"  placeholder="请输入司机号码"/>
           </div>
           <div class="col relative">
             <SelectInputForCity v-model="keywords.start" placeholder="请输入发货城市" style="width: 100%"></SelectInputForCity>
@@ -23,10 +23,7 @@
         </div>
         <div class="row-list">
           <div class="col">
-            <Input v-model="keywords.driverName" :maxlength="15"  placeholder="请输入司机名称"/>
-          </div>
-          <div class="col relative">
-            <Input v-model="keywords.driverPhone" :maxlength="11"  placeholder="请输入司机号码"/>
+            <Input v-model="keywords.carNo" :maxlength="15"  placeholder="请输入车牌号"/>
           </div>
           <div class="col">
             <Select v-model="keywords.billType">
@@ -83,7 +80,7 @@ import Export from '@/libs/js/export'
 import { getPreMonth } from './getPerMonth'
 import tableHeadType from '@/libs/constant/headtype.js'
 export default {
-  name: 'car',
+  name: 'driver',
   components: {
     SelectInput,
     PageTable,
@@ -94,9 +91,9 @@ export default {
   },
   data () {
     return {
-      url: '/report/out/car',
+      url: '/report/out/driver',
       method: 'POST',
-      headType: tableHeadType.ownerCar,
+      headType: tableHeadType.ownerDriver,
       keywords: {
         start: '',
         end: '',
@@ -105,7 +102,6 @@ export default {
         billType: '',
         startTime: '',
         endTime: '',
-        billNo: '',
         carNo: ''
       },
       keyword: {},
@@ -122,6 +118,16 @@ export default {
         3: '送货'
       },
       columns: [
+        {
+          title: '司机姓名',
+          key: 'driverName',
+          width: 150
+        },
+        {
+          title: '手机号码',
+          key: 'driverPhone',
+          width: 150
+        },
         {
           title: '车牌号',
           key: 'carNo',
@@ -175,51 +181,11 @@ export default {
           }
         },
         {
-          title: '总费用',
-          key: 'totalFee',
-          width: 150,
-          render: (h, params) => {
-            return h('span', (params.row.totalFee / 100).toFixed(2))
-          }
-        },
-        {
           title: '油费',
           width: 150,
           key: 'freightFee',
           render: (h, params) => {
             return h('span', (params.row.freightFee / 100).toFixed(2))
-          }
-        },
-        {
-          title: '装货费',
-          width: 150,
-          key: 'loadFee',
-          render: (h, params) => {
-            return h('span', (params.row.loadFee / 100).toFixed(2))
-          }
-        },
-        {
-          title: '卸货费',
-          width: 150,
-          key: 'unloadFee',
-          render: (h, params) => {
-            return h('span', (params.row.unloadFee / 100).toFixed(2))
-          }
-        },
-        {
-          title: '保险费',
-          width: 150,
-          key: 'insuranceFee',
-          render: (h, params) => {
-            return h('span', (params.row.insuranceFee / 100).toFixed(2))
-          }
-        },
-        {
-          title: '路桥费',
-          width: 150,
-          key: 'tollFee',
-          render: (h, params) => {
-            return h('span', (params.row.tollFee / 100).toFixed(2))
           }
         },
         {
@@ -236,22 +202,6 @@ export default {
           key: 'otherFee',
           render: (h, params) => {
             return h('span', (params.row.otherFee / 100).toFixed(2))
-          }
-        },
-        {
-          title: '主司机',
-          width: 250,
-          // key: 'otherFee',
-          render: (h, params) => {
-            return h('span', params.row.driverName + params.row.driverPhone)
-          }
-        },
-        {
-          title: '副司机',
-          width: 250,
-          // key: 'otherFee',
-          render: (h, params) => {
-            return h('span', params.row.assistantDriverName + params.row.assistantDriverPhone)
           }
         },
         {
@@ -272,11 +222,6 @@ export default {
         {
           title: '件数',
           key: 'cargoCnt',
-          width: 150
-        },
-        {
-          title: '订单数',
-          key: 'orderCnt',
           width: 150
         }
       ],
@@ -303,7 +248,6 @@ export default {
         billType: this.keywords.billType || null,
         startTime: this.keywords.startTime || null,
         endTime: this.keywords.endTime || null,
-        billNo: this.keywords.billNo || null,
         carNo: this.keywords.carNo || null
       }
     },
@@ -316,7 +260,6 @@ export default {
         billType: '',
         startTime: '',
         endTime: '',
-        billNo: '',
         carNo: ''
       }
       this.times = ['', '']
@@ -339,10 +282,10 @@ export default {
         carNo: this.keywords.carNo || null
       }
       Export({
-        url: '/report/out/car/export',
+        url: '/report/out/driver/export',
         method: 'post',
         data,
-        fileName: '自有车出车统计报表'
+        fileName: '自有司机出车统计报表'
       })
     },
     handleTimeChange (val) {
