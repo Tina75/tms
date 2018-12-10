@@ -43,9 +43,9 @@
       </div>
     </div>
     <div v-if="!simpleSearch" class="operate-box-common">
-      <Row :gutter="15">
+      <Row :gutter="20">
         <Col span="18">
-        <Row :gutter="15">
+        <Row :gutter="20">
           <Col span="6" class="i-mt-10">
           <SelectInput
             v-model="keywords.consignerName"
@@ -89,10 +89,10 @@
           </Col>
         </Row>
         </Col>
-        <Col span="6" class="i-mt-10">
-        <Button type="primary" @click="searchList">搜索</Button>
-        <Button type="default" @click="clearKeywords">清除条件</Button>
-        <Button type="default" style="margin-right: 0;" @click="handleSwitchSearch">简易搜索</Button>
+        <Col span="6">
+        <Button class="i-mt-10" type="primary" @click="searchList">搜索</Button>
+        <Button class="i-mt-10" type="default" @click="clearKeywords">清除条件</Button>
+        <Button class="i-mt-10" type="default" style="margin-right: 0;" @click="handleSwitchSearch">简易搜索</Button>
         </Col>
       </Row>
     </div>
@@ -1272,7 +1272,7 @@ export default {
 .input-w
   width 200px
 .ivu-btn
-  margin-right 15px
+  margin-right 8px
   width 80px
   height 32px
 .ivu-btn-default
