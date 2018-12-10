@@ -403,7 +403,8 @@ export default {
       settlementPayInfo: [
         { payType: 1, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false },
         { payType: 2, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false },
-        { payType: 3, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false }
+        { payType: 3, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false },
+        { payType: 4, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false }
       ],
 
       // 所有按钮组
@@ -1100,6 +1101,12 @@ export default {
               item.isCashDisabled = true
             }
             if (item.payType === 3 && statusDetail.receiptPaidFule === 1) {
+              item.isCardDisabled = true
+            }
+            if (item.payType === 4 && statusDetail.tailPaidCash === 1) {
+              item.isCashDisabled = true
+            }
+            if (item.payType === 4 && statusDetail.tailPaidFule === 1) {
               item.isCardDisabled = true
             }
           })
