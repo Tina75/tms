@@ -108,6 +108,7 @@ export default {
      */
     handleSelect (value) {
       if (!value) {
+        this.form.carNo = ''
         this.form.carType = ''
         this.form.carLength = ''
         this.$refs.driverInputs.updateDriversByCar({})

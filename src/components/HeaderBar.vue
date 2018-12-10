@@ -108,9 +108,9 @@ export default {
         } else {
           // 短信是否超过次数
           this.isMessageBeyond()
-          this.getOwnDrivers()
-          this.getOwnCars()
         }
+        this.getOwnDrivers()
+        this.getOwnCars()
         // 探索运掌柜
         await this.isPreviewDiscover()
         // 添加GA配置属性

@@ -131,6 +131,7 @@ export default {
           this.form.driverId = driver.id
         }
       } else {
+        this.form.driverName = ''
         this.form.driverPhone = ''
         this.form.driverId = ''
       }
@@ -147,6 +148,7 @@ export default {
           this.form.assistantDriverId = driver.id
         }
       } else {
+        this.form.assistantDriverName = ''
         this.form.assistantDriverPhone = ''
         this.form.assistantDriverId = ''
       }
@@ -161,16 +163,16 @@ export default {
         this.changeDriver(car.driverName)
       } else {
         this.form.driverName = ''
-        this.form.driverPhone = ''
-        this.form.driverId = ''
+        // this.form.driverPhone = ''
+        // this.form.driverId = ''
       }
       if (car.assistantDriverName) {
         // this.form.assistantDriverName = car.assistantDriverName
         this.changeAssitantDriver(car.assistantDriverName)
       } else {
         this.form.assistantDriverName = ''
-        this.form.assistantDriverPhone = ''
-        this.form.assistantDriverId = ''
+        // this.form.assistantDriverPhone = ''
+        // this.form.assistantDriverId = ''
       }
     },
     /**
