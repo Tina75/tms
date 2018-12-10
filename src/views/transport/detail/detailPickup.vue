@@ -277,6 +277,8 @@ import _ from 'lodash'
 
 import Exception from './exception.vue'
 import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
+import { mapActions } from 'vuex'
+
 export default {
   name: 'detailPickup',
   components: { SelectInput, PayInfo, Exception, PickupFee, OwnSendInfo, SendCarrierInfo },
@@ -345,7 +347,7 @@ export default {
             name: '提货',
             code: 120201,
             func: () => {
-              this.billPickup()
+              this.loadBillSend()
             }
           }, {
             name: '编辑',
@@ -495,6 +497,9 @@ export default {
   },
 
   methods: {
+    ...mapActions([
+      'loadbillPickup'
+    ]),
     // 将数据返回的标识映射为文字
     statusFilter (status) {
       switch (status) {
@@ -671,22 +676,38 @@ export default {
     },
 
     // 提货
-    billPickup () {
+    loadBillSend () {
       const self = this
+      if (self.info.assignCarType === 1 && !self.info.carrierName) {
+        this.$Message.warning('承运商未填写，不能提货')
+        return
+      }
+      if (self.info.assignCarType === 2 && !self.info.carNo) {
+        this.$Message.warning('自送车辆信息未填写，不能提货')
+        return
+      }
+      if (self.detail.length <= 0) {
+        this.$Message.warning('此提货单未加入订单，不能提货')
+        return
+      }
       Server({
         url: '/load/bill/check/order',
         method: 'post',
         data: { pickUpId: self.id }
       }).then(() => {
         self.openDialog({
-          name: 'transport/dialog/action',
+          name: 'transport/dialog/confirm',
           data: {
-            id: self.id,
-            type: 'pickUp'
+            title: '提货',
+            message: '提货后将不能修改提货单，是否提货？'
           },
           methods: {
-            complete () {
-              self.fetchData()
+            confirm () {
+              self.loadbillPickup([ self.id ])
+                .then(() => {
+                  self.$Message.success('操作成功')
+                  self.fetchData()
+                })
             }
           }
         })

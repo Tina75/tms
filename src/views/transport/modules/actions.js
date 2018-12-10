@@ -234,6 +234,22 @@ export default {
     })
   },
 
+  // 提货单提货
+  loadbillPickup (store, pickUpIds) {
+    return new Promise((resolve, reject) => {
+      if (!pickUpIds.length) reject(new Error('miss pickUpIds'))
+      Server({
+        url: '/load/bill/send/car',
+        method: 'post',
+        data: { pickUpIds }
+      }).then(() => {
+        resolve()
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+
   // 获取提货单列表tab count
   getPickupOrderTabCount ({ commit }) {
     Server({

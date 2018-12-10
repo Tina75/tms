@@ -1,7 +1,7 @@
 <template>
   <Modal v-model="show" :mask-closable="false" transfer class="transport-action" width="1032"  @on-visible-change="close">
     <p slot="header" style="text-align:center">
-      {{ type === 'sendCar' ? '派车' : '提货' }}
+      派车
     </p>
     <div class="sub-title">
       <div class="send-label">派车方式：</div>
@@ -244,7 +244,7 @@ export default {
       }
       return false
     },
-    // 派车
+    // 送货派车
     doSendAction () {
       const z = this
       if (!z.checkSendValidate()) return
@@ -291,7 +291,7 @@ export default {
       return false
     },
 
-    // 提货
+    // 提货派车
     doPickAction () {
       const z = this
       if (!z.checkPickValidate()) return
