@@ -50,6 +50,7 @@
           :send-way="sendWay"
           :is-disabled="isDisabled"
           :abnormal-length="details.abnormalPayInfos.length"
+          :allocation-type="allocationStrategy"
           source="abnormal">
         </send-fee>
       </div>
@@ -62,6 +63,7 @@
           :send-way="sendWay"
           :is-disabled="isDisabled"
           :abnormal-length="details.abnormalPayInfos.length"
+          :allocation-type="allocationStrategy"
           source="abnormal"></pickup-fee>
       </div>
 
@@ -103,7 +105,6 @@ import Server from '@/libs/js/server'
 import SendFee from '../components/SendFee'
 import PickupFee from '../components/PickupFee'
 import UpLoad from '@/components/upLoad/index.vue'
-// import { ABNORMAL_TYPE_CODES } from '../constant/abnormal.js'
 import _ from 'lodash'
 export default {
   name: 'SendCar',
@@ -120,7 +121,8 @@ export default {
         insuranceFee: 0,
         otherFee: 0,
         tollFee: 0,
-        totalFee: 0
+        totalFee: 0,
+        accommodation: 0 // 住宿费 v1.08 新增
       },
       clonePayment: {}, // 复制一份费用数据，用来比较有没有修改费用
       // settlementType: '1',
@@ -138,7 +140,8 @@ export default {
       changeFeeType: 0, // 0 可以修改运费 10 已对账 11 已核销 2 部分修改运费
       canUpdateFee: 0, // 判断多条异常记录只有最后一条可以修改运费
       sendWay: '1',
-      btnLoading: false
+      btnLoading: false,
+      allocationStrategy: 1 // 分摊策略 默认按订单数分摊 v1.08新增
     }
   },
 
@@ -172,7 +175,9 @@ export default {
       }).then(res => {
         _this.details = res.data.data
         console.log(_this.details)
-
+        // 分摊策略
+        this.allocationStrategy = _this.details.allocationStrategy
+        // 派车类型
         this.sendWay = _this.details.assignCarType.toString()
 
         this.autoAbnormalLinks('selected', 1) // 自动带出selected=1的异常环节,和selected=1的异常类型
@@ -198,8 +203,8 @@ export default {
 
         if (this.type !== 3) {
           delete this.payment.tollFee // 去掉路桥费
+          delete this.payment.accommodation // 去掉住宿费
         }
-
         // this.settlementType = billInfo.settlementType ? billInfo.settlementType.toString() : '1'
         // 将收费信息中的金额单位转为元
         let temp = _this.settlementPayInfo.map((item, i) => {
@@ -456,12 +461,18 @@ export default {
           })
         })
         if (z.type === 3) {
+          if (z.sendWay === '1') {
+            delete z.clonePayment.accommodation // 外转去掉住宿费
+          }
           return _.isEqual(z.$refs.sendFee.formatMoney(), z.clonePayment) && _.isEqual(cloneTableData, z.$refs.sendFee.getSettlementPayInfo()) // 费用输入框和多段付
         } else {
           return _.isEqual(z.$refs.pickupFee.formatMoney(), z.clonePayment) && _.isEqual(cloneTableData, z.$refs.pickupFee.getSettlementPayInfo()) // 费用输入框和多段付
         }
       } else {
         if (z.type === 3) {
+          if (z.sendWay === '1') {
+            delete z.clonePayment.accommodation // // 外转去掉住宿费
+          }
           return _.isEqual(z.$refs.sendFee.formatMoney(), z.clonePayment)
         } else {
           return _.isEqual(z.$refs.pickupFee.formatMoney(), z.clonePayment)
