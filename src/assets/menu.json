@@ -122,8 +122,13 @@
         "powerCode":180300
       },
       {
-        "name":"自有车出车统计报表",
+        "name":"自有车出车统计",
         "path":"/report/car",
+        "powerCode":0
+      },
+      {
+        "name":"自有司机出车统计",
+        "path":"/report/driver",
         "powerCode":0
       }
     ]

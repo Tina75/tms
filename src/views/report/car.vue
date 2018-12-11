@@ -241,7 +241,7 @@ export default {
         {
           title: '主司机',
           width: 250,
-          // key: 'otherFee',
+          key: 'driverName',
           render: (h, params) => {
             return h('span', params.row.driverName + params.row.driverPhone)
           }
@@ -249,7 +249,7 @@ export default {
         {
           title: '副司机',
           width: 250,
-          // key: 'otherFee',
+          key: 'assistantDriverName',
           render: (h, params) => {
             return h('span', params.row.assistantDriverName + params.row.assistantDriverPhone)
           }
