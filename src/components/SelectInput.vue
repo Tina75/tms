@@ -25,6 +25,7 @@
         @on-change="handleChange"
         @on-focus="handleFocus"
       >
+      <Icon v-if="prefix" slot="prefix" :type="prefix"></Icon>
       <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-input__clear-icon" @click.native.stop="handleClear"></Icon>
       <Icon v-if="!mousehover || !isClearable" slot="suffix" type="ios-arrow-down" class="select-input__input-icon"></Icon>
     </Input>
@@ -59,6 +60,8 @@ export default {
       type: Boolean,
       default: false
     },
+    // 前置图标
+    prefix: String,
     placement: {
       type: String,
       default: 'bottom-start'
@@ -209,6 +212,7 @@ export default {
     }
   },
   mounted () {
+    console.log('prefix.....', this.prefix)
     const vm = this
     // 加载默认focus
     if (this.autoFocus) {
