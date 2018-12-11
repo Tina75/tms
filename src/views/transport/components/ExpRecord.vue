@@ -209,6 +209,9 @@ export default {
               case 3:
                 txt = '回付'
                 break
+              case 4:
+                txt = '尾款'
+                break
               default:
             }
             return h('div', txt)
@@ -241,6 +244,9 @@ export default {
                 break
               case 3:
                 txt = '回付'
+                break
+              case 4:
+                txt = '尾款'
                 break
               default:
             }
