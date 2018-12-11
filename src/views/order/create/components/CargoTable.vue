@@ -233,8 +233,8 @@ export default {
         float.floor(value, col.point).toString()
       }
     },
-    float () {
-      return float.floor
+    float (value) {
+      return float.floor(value)
     }
   }
 }
