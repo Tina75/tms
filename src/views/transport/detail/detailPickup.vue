@@ -18,7 +18,6 @@
         class="detail-btn-item"
         @click="item.func">{{ item.name }}</Button>
     </div>
-
     <Tabs :value="activeTab" :animated="false">
       <TabPane label="提货单详情" name="detail">
         <section class="detail-info">
@@ -295,7 +294,6 @@ export default {
     return {
       pageName: 'pickup',
       status: '',
-      activeTab: 'detail',
       // 信息
       info: {
         pickupNo: '',
