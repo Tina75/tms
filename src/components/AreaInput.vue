@@ -9,10 +9,12 @@
       :placeholder="placeholder"
       :no-filter="true"
       :disabled="inputDisabled"
+      :show-icon="showIcon"
       @input="inputHandle"
       @on-select="selectChange"
     >
     </SelectInput>
+    <!-- <Icon v-if="showIcon" class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon> -->
   </div>
 </template>
 <script>
@@ -27,7 +29,7 @@ export default {
     value: String,
     maxlength: {
       type: Number,
-      default: 60
+      default: 100
     },
     // 城市编码
     cityCode: String | Number,
@@ -47,13 +49,13 @@ export default {
       type: Boolean,
       default: false
     },
-    disabled: {
-      type: Boolean,
-      default: false
-    },
     placeholder: {
       type: String,
       default: '请输入详细地址'
+    },
+    showIcon: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -101,16 +103,23 @@ export default {
             let arr = []
             for (let i = 0; i < results.getCurrentNumPois(); i++) {
               const item = results.getPoi(i)
-              const pro = item.province ? item.province : ''
-              const city = item.city ? item.city : ''
-              const addr = item.address ? item.address.replace(pro, '').replace(city, '') : ''
-              const names = this.filterCity ? addr + item.title : pro === city ? pro + addr + item.title : pro + city + addr + item.title
+              // 省市
+              const city = results.city === results.province ? results.province : results.province + results.city
+              /**
+               * 地址和title
+               * 去除省市信息
+               * title和name互去除重复信息
+               */
+              const addr = this.replace(item.address, results.province, results.city, item.title) +
+                this.replace(item.title, results.province, results.city, item.address)
+              const names = city + addr
               arr.push({
                 id: i,
                 name: names,
                 value: names,
                 lat: item.point.lat,
-                lng: item.point.lng
+                lng: item.point.lng,
+                city: results.city
               })
             }
             this.address = arr
@@ -119,7 +128,8 @@ export default {
               this.doSearch(val, false)
             }
           }
-        }
+        },
+        pageCapacity: 20
       }
       const local = new BMap.LocalSearch(area, options)
       local.search(val, { forceLocal })
@@ -136,16 +146,23 @@ export default {
 
       if (this.selectItem && this.selectItem.value !== value) {
         this.selectItem = null
-        this.selectChange(null, { lat: '', lng: '' })
+        this.selectChange(null, { lat: '', lng: '', city: '' })
       }
     },
     selectChange (value, item) {
-      const lat = item.lat
-      const lng = item.lng
-      const type = item.lng && item.lat ? 1 : ''
       // 经纬度改变
       this.selectItem = item
-      this.$emit('latlongt-change', { lat, lng, type })
+      const res = {
+        lat: item.lat,
+        lng: item.lng,
+        type: item.lng && item.lat ? 1 : '',
+        cityCode: item.city ? cityUtil.getCodeByName(item.city) : ''
+      }
+      this.$emit('city-select', res)
+    },
+    // v过滤省市 title或name
+    replace (v, p, c, t) {
+      return v.replace(p, '').replace(c, '').replace(t, '')
     }
   }
 }

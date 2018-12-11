@@ -98,12 +98,31 @@
       </Col>
     </Row>
     <Row :gutter="16">
-      <Col span="6">
-      <FormItem label="发货地址:" class="consig-address" prop="start">
-        <CitySelect ref="start" v-model="orderForm.start" clearable></CitySelect>
+      <Col span="8">
+      <FormItem label="发货地址:" class="consig-address" prop="consignerAddress">
+        <AreaInput
+          v-model="orderForm.consignerAddress"
+          :show-icon="!!orderForm.start"
+          :local-options="consignerAddresses"
+          placeholder="请输入地址（省市区+详细地址）"
+          @city-select="({lat, lng, cityCode}) => citySelect(1, lat, lng, cityCode)"/>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col span="3">
+      <FormItem :label-width="0">
+        <Input :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+      </FormItem>
+      </Col>
+      <Col span="1">
+      <FormItem :label-width="0">
+        <Tooltip :max-width="200" :content="`从推荐地址中选择，可获取到经纬度，自动计算运输里程`" transfer>
+          <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+        </Tooltip>
+      </FormItem>
+      </Col>
+      <!-- <FormItem label="发货地址:" class="consig-address" prop="start">
+        <CitySelect ref="start" v-model="orderForm.start" clearable></CitySelect>
+      </FormItem>
       <FormItem :label-width="0" prop="consignerAddress">
         <AreaInput
           v-model="orderForm.consignerAddress"
@@ -112,22 +131,27 @@
           :disabled="true"
           :filter-city="true"
           @latlongt-change="({lat, lng}) => latlongtChange(1, lat, lng)"/>
-      </FormItem>
-      </Col>
-      <Col span="6">
-      <FormItem prop="end" label="收货地址:" class="consig-address">
-        <CitySelect ref="end" v-model="orderForm.end" clearable></CitySelect>
-      </FormItem>
-      </Col>
-      <Col span="6">
-      <FormItem :label-width="0" prop="consigneeAddress">
+      </FormItem> -->
+      <Col span="8">
+      <FormItem label="收货地址:" class="consig-address" prop="consigneeAddress">
         <AreaInput
           v-model="orderForm.consigneeAddress"
-          :city-code="orderForm.end"
+          :show-icon="!!orderForm.end"
           :local-options="consigneeAddresses"
-          :disabled="true"
-          :filter-city="true"
-          @latlongt-change="({lat, lng}) => latlongtChange(2, lat, lng)"/>
+          placeholder="请输入地址（省市区+详细地址）"
+          @city-select="({lat, lng, cityCode}) => citySelect(2, lat, lng, cityCode)"/>
+      </FormItem>
+      </Col>
+      <Col span="3">
+      <FormItem :label-width="0">
+        <Input :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+      </FormItem>
+      </Col>
+      <Col span="1">
+      <FormItem :label-width="0">
+        <Tooltip :max-width="200" :content="`从推荐地址中选择，可获取到经纬度，自动计算运输里程`" transfer>
+          <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+        </Tooltip>
       </FormItem>
       </Col>
     </Row>
@@ -515,10 +539,10 @@ export default {
           { validator: validatePhone, trigger: 'blur' }
         ],
         consignerAddress: [
-          { required: true, message: '请输入详细地址' }
+          { required: true, message: '请输入发货地址' }
         ],
         consigneeAddress: [
-          { required: true, message: '请输入详细地址' }
+          { required: true, message: '请输入收货地址' }
         ],
         settlementType: [
           { required: true, message: '请选择付款方式' }
@@ -946,15 +970,21 @@ export default {
     getTwoNum (d) {
       return d > 9 ? d : 0 + d
     },
-    latlongtChange (type, lat, lng) {
+    citySelect (type, lat, lng, cityCode) {
       if (type === 1) {
         this.orderForm.consignerAddressLongitude = lng
         this.orderForm.consignerAddressLatitude = lat
+        this.orderForm.start = cityCode
       } else if (type === 2) {
         this.orderForm.consigneeAddressLongitude = lng
         this.orderForm.consigneeAddressLatitude = lat
+        this.orderForm.end = cityCode
       }
       this.distanceCp()
+    },
+    // 城市code设置
+    setCityCode () {
+
     },
     distanceCp () {
       const p1 = {
@@ -1174,9 +1204,6 @@ export default {
       this.openDialog({
         name: 'order/create/dialogs/unit',
         data: {
-          unitForm: {
-            unit: this.unitType
-          }
         },
         methods: {
           complete: data => {
