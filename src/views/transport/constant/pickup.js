@@ -56,6 +56,12 @@ export const BUTTON_LIST = vm => [
   {
     tab: '待提货',
     btns: [{
+      name: '提货',
+      code: 120202,
+      func: () => {
+        vm.loadBillSend()
+      }
+    }, {
       name: '打印',
       code: 120202,
       func: () => {

@@ -10,9 +10,11 @@
     </div>
     <div v-if="sendWay === '1'">
       <send-carrier-info ref="SendCarrierInfo"></send-carrier-info>
+
       <send-fee
         ref="sendFee"
         :mileage="mileage"
+        :order-count="orderList"
         :finance-rules-info="financeRulesInfo">
       </send-fee>
     </div>
@@ -20,6 +22,7 @@
       <own-send-info ref="ownSendInfo"></own-send-info>
       <send-fee
         ref="sendFee"
+        :order-count="orderList"
         send-way="2"></send-fee>
     </div>
   </div>
@@ -37,8 +40,9 @@ export default {
   components: { SendFee, SendCarrierInfo, OwnSendInfo },
   mixins: [ BaseDialog ],
   props: {
+    // 订单数量
     orderList: {
-      type: Array
+      type: Number
     },
     mileage: {
       type: [Number, String],
@@ -120,9 +124,6 @@ export default {
     .ivu-form-item-label
       padding-left 10px
 
-   .label-width
-    .ivu-form-item-label
-      width 92px !important
   .detail-payment-way
     width calc(100% - 100px) !important
 </style>

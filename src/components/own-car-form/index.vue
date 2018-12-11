@@ -35,6 +35,14 @@
       </div>
       </Col>
     </Row>
+
+    <Row>
+      <i-col span="24" style="margin-top: 28px">
+        <FormItem label="备注：" class="padding-left-label">
+          <Input v-model="form.remark" :maxlength="100" style="width: 96%;"/>
+        </FormItem>
+      </i-col>
+    </Row>
   </div>
 </template>
 
@@ -138,6 +146,8 @@ export default {
 .own-car
   &__label
     height 18px
+    padding-left 10px
+    font-size 13px
     label
       color #666666
     span
