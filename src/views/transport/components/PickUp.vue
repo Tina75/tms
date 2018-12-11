@@ -9,12 +9,12 @@
       </RadioGroup>
     </div>
     <div v-if="sendWay === '1'">
-      <send-carrier-info ref="SendCarrierInfo" source="pickup"></send-carrier-info>
-      <pickup-fee ref="pickupFee"></pickup-fee>
+      <send-carrier-info ref="SendCarrierInfo" source-type="pickup"></send-carrier-info>
+      <pickup-fee ref="pickupFee" :order-count="orderList"></pickup-fee>
     </div>
     <div v-else>
       <own-send-info ref="ownSendInfo"></own-send-info>
-      <pickup-fee ref="pickupFee" send-way="2"></pickup-fee>
+      <pickup-fee ref="pickupFee" :order-count="orderList" send-way="2"></pickup-fee>
     </div>
   </div>
 </template>
@@ -32,6 +32,10 @@ export default {
   mixins: [ BaseDialog ],
 
   props: {
+    // 订单数量
+    orderList: {
+      type: Number
+    },
     // 页面来源
     source: {
       type: String,
@@ -117,9 +121,6 @@ export default {
     .ivu-form-item-label
       padding-left 10px
 
-   .label-width
-    .ivu-form-item-label
-      width 92px !important
   .detail-payment-way
     width calc(100% - 100px) !important
 </style>
