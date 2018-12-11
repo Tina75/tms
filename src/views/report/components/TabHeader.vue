@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import _ from 'lodash'
+// import _ from 'lodash'
 
 export default {
   name: 'TabHeader',
@@ -29,14 +29,14 @@ export default {
     }
   },
 
-  created () {
-    const current = window.sessionStorage['TABHEADER_' + this.type]
-    if (current) this.current = _.findIndex(this.tabs, ['name', current]) > -1 ? current : this.tabs[0].name
-  },
+  // created () {
+  //   const current = window.sessionStorage['TABHEADER_' + this.type]
+  //   if (current) this.current = _.findIndex(this.tabs, ['name', current]) > -1 ? current : this.tabs[0].name
+  // },
 
   methods: {
     handleChangeTab (name) {
-      window.sessionStorage.setItem('TABHEADER_' + this.type, name)
+      // window.sessionStorage.setItem('TABHEADER_' + this.type, name)
       this.$emit('on-change', name)
     },
 

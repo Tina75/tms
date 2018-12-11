@@ -77,7 +77,7 @@
 import PageTable from '@/components/page-table'
 import SelectInputForCity from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput.vue'
-import City from '@/libs/js/city'
+// import City from '@/libs/js/city'
 // import { mapGetters, mapActions } from 'vuex'
 import Export from '@/libs/js/export'
 import { getPreMonth } from './getPerMonth'
@@ -143,28 +143,28 @@ export default {
         {
           title: '发车时间',
           width: 150,
-          key: 'shipmentTime'
+          key: 'shipmentTime',
+          render: (h, params) => {
+            return h('span', new Date(params.row.shipmentTime).Format('yyyy-MM-dd hh:mm'))
+          }
         },
         {
           title: '到达时间',
           width: 150,
-          key: 'arriveTime'
+          key: 'arriveTime',
+          render: (h, params) => {
+            return h('span', new Date(params.row.arriveTime).Format('yyyy-MM-dd hh:mm'))
+          }
         },
         {
           title: '发货城市',
           key: 'startName',
-          width: 250,
-          render: (h, params) => {
-            return h('span', City.codeToFullNameArr(params.row.start))
-          }
+          width: 250
         },
         {
           title: '收货城市',
           key: 'endName',
-          width: 250,
-          render: (h, params) => {
-            return h('span', City.codeToFullNameArr(params.row.end))
-          }
+          width: 250
         },
         {
           title: '里程（公里）',
