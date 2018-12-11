@@ -162,12 +162,12 @@ export default {
           /**
            * data = {id,title,content,bTime,eTime}
            */
-          if (data) {
+          if (data.data) {
             window.EMA.fire('Dialogs.push', {
               name: 'dialogs/clear-trial-data',
               data: {
                 title: '试用期数据删除',
-                ...data
+                ...data.data
               },
               methods: {
                 ok () {
