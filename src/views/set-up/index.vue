@@ -9,10 +9,14 @@
       </Menu>
       </Col>
       <Col span="21" class="contentDiv">
-      <div class="borderBottomLine">
+      <div v-if="4 != rightKey" class="borderBottomLine">
         <span class="iconRightTitle"></span>
         <span class="iconRightTitleP">{{rightTitle}}</span>
       </div>
+      <Tabs v-else :value="tabName" style="margin-top: 10px" @on-click="tabChange">
+        <TabPane label="分摊策略" name="apport"></TabPane>
+        <TabPane label="开单设置" name="order"></TabPane>
+      </Tabs>
       <!--密码设置-->
       <div v-if="'1' === this.rightKey" key="1" class="divSetContent">
         <Col span="10" class="setConf">
@@ -78,6 +82,15 @@
         <Button type="primary" class="msgSaveBtn test111" style="width:86px;" @click="msgSaveBtn">保存</Button>
         </Col>
       </div>
+      <!--系统设置-->
+      <div v-else-if="'4' === this.rightKey" key="4" class="divSetContent">
+        <div v-if="tabName != 'order'">
+          <h1>分摊策略</h1>
+        </div>
+        <div v-else>
+          <Unit />
+        </div>
+      </div>
       </Col>
     </Row>
   </div>
@@ -91,11 +104,13 @@ import { CHECK_PWD, CHECK_PWD_SAME, CHECK_NAME, CHECK_NAME_COMPANY, CHECK_PHONE 
 import _ from 'lodash'
 import { mapGetters, mapMutations } from 'vuex'
 import CitySelect from '@/components/SelectInputForCity'
+import Unit from '@/views/set-up/components/unit.vue'
 export default {
   name: 'set-up',
   components: {
     AreaInput,
-    CitySelect
+    CitySelect,
+    Unit
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -130,6 +145,10 @@ export default {
         name: '短信设置',
         id: '3',
         code: '150200'
+      }, {
+        name: '系统设置',
+        id: '4'
+        // code: '150200'
       }],
       rightTitle: '修改密码',
       rightKey: '1',
@@ -230,7 +249,8 @@ export default {
         address: [
           { required: true, message: '请输入公司地址', trigger: 'blur' }
         ]
-      }
+      },
+      tabName: ''
     }
   },
   computed: {
@@ -369,6 +389,9 @@ export default {
           this.msgCheckBoxListInit = _.cloneDeep(this.msgSlectCheckBox)
         }
       })
+    },
+    tabChange (name) {
+      this.tabName = name
     }
   }
 }

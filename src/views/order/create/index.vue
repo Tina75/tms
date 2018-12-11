@@ -1204,9 +1204,6 @@ export default {
       this.openDialog({
         name: 'order/create/dialogs/unit',
         data: {
-          unitForm: {
-            unit: this.unitType
-          }
         },
         methods: {
           complete: data => {
