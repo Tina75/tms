@@ -17,10 +17,11 @@
     </SelectInput>
     <InputNumber
       v-else-if="col.type==='number'"
-      v-model="record[col.key]"
+      :value="record[col.key]"
       :min="col.min"
       :max="col.maxLen"
       :parser="handleParse"
+      @input="v => { this.inputHandle(v, col.key) }"
       @on-change="handleChange(col.key)"
       @on-blur="handleBlur(col)"
     >
@@ -139,6 +140,16 @@ export default {
             this.record[key] = float.round(value * matchCargo[key])
           })
         }
+      }
+    },
+    inputHandle (value, key) {
+      if (key === 'weightKg') {
+        const v = float.floor(value / 1000, 5)
+        if (v !== this.record['weight']) {
+          this.record['weight'] = v
+        }
+      } else {
+        this.record[key] = value
       }
     }
   }

@@ -65,7 +65,7 @@
                      class="search-input-senior" />
 
         <Input v-model="seniorSearchFields.orderNo" :maxlength="20" placeholder="请输入订单号" class="search-input-senior" />
-        <Input v-model="seniorSearchFields.customerOrderNo" :maxlength="20" placeholder="请输入客户单号" class="search-input-senior" />
+        <Input v-model="seniorSearchFields.customerOrderNo" :maxlength="20" placeholder="请输入客户订单号" class="search-input-senior" />
         <Input v-model="seniorSearchFields.transNo" :maxlength="20" placeholder="请输入外转单号" class="search-input-senior" />
 
         <SelectInput v-model="seniorSearchFields.transfereeName"

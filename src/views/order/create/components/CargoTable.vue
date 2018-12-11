@@ -17,7 +17,7 @@
             </tr>
           </thead>
           <tbody :class="`${prefixClass}-tbody`">
-            <tr v-for="(item, no) in dataSource" :class="`${prefixClass}-row`" :key="no">
+            <tr v-for="(item, no) in dataSourceCpt" :class="`${prefixClass}-row`" :key="no">
               <td v-for="(col, index) in headers" :key="index">
                 <CargoTableRow
                   :cargoes="cargoes"
@@ -43,7 +43,7 @@
             </div>
           </td>
           <td>
-            <div class="ivu-table-cell">总重量：{{statics.weight}}吨</div>
+            <div class="ivu-table-cell">总重量：{{unitName == 'weight' ? `${statics.weight}吨` : `${float(statics.weight * 1000)}公斤`}}</div>
           </td>
           <td>
             <div class="ivu-table-cell">总体积：{{statics.volume}}方</div>
@@ -80,6 +80,7 @@ export default {
       type: Array,
       default: () => []
     },
+    unitType: Number,
     onAppend: Function,
     onRemove: Function,
     onSelect: Function
@@ -87,7 +88,7 @@ export default {
   data () {
     return {
       prefixClass: prefixClass,
-      headers: [
+      headersOption: [
         {
           required: false,
           title: '',
@@ -106,7 +107,14 @@ export default {
           required: false,
           title: '重量（吨）',
           key: 'weight',
-          // poptip: '为了方便您计算价格，重量和体积必须填写一项',
+          type: 'number',
+          min: 0,
+          point: 2
+        },
+        {
+          required: false,
+          title: '重量（公斤）',
+          key: 'weightKg',
           type: 'number',
           min: 0,
           point: 2
@@ -172,7 +180,6 @@ export default {
         `${prefixClass}-default`
       ]
     },
-
     headerColClass () {
       return `${prefixClass}-cell`
     },
@@ -191,6 +198,28 @@ export default {
         cargoCost: 0,
         quantity: 0
       })
+    },
+    // 取反
+    unitName () {
+      return this.unitType === 1 ? 'weight' : 'weightKg'
+    },
+    headers () {
+      // 取反
+      const type = this.unitType !== 1 ? 'weight' : 'weightKg'
+      const res = this.headersOption.filter(el => {
+        return el.key !== type
+      })
+      return res
+    },
+    dataSourceCpt () {
+      return this.dataSource.map(el => {
+        if (el.weight) {
+          el.weightKg = float.floor(el.weight * 1000, 2)
+        } else {
+          el.weightKg = null
+        }
+        return el
+      })
     }
   },
   methods: {
@@ -203,6 +232,9 @@ export default {
       return (value) => {
         float.floor(value, col.point).toString()
       }
+    },
+    float (value) {
+      return float.floor(value)
     }
   }
 }
