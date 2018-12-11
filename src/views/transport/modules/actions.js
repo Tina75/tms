@@ -258,6 +258,19 @@ export default {
     }).then(res => {
       commit(types.PICKUP_TAB_COUNT, setPickupTab(res.data.data))
     })
-  }
+  },
 
+  // 查询公司分摊策略
+  getAllocationStrategy (store) {
+    return new Promise((resolve, reject) => {
+      Server({
+        url: '/set/queryUserAllocationStrategy',
+        method: 'get'
+      }).then((res) => {
+        resolve(res)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  }
 }

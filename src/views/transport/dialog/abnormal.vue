@@ -50,6 +50,7 @@
           :send-way="sendWay"
           :is-disabled="isDisabled"
           :abnormal-length="details.abnormalPayInfos.length"
+          :allocation-type="allocationStrategy"
           source="abnormal">
         </send-fee>
       </div>
@@ -62,6 +63,7 @@
           :send-way="sendWay"
           :is-disabled="isDisabled"
           :abnormal-length="details.abnormalPayInfos.length"
+          :allocation-type="allocationStrategy"
           source="abnormal"></pickup-fee>
       </div>
 
@@ -103,7 +105,6 @@ import Server from '@/libs/js/server'
 import SendFee from '../components/SendFee'
 import PickupFee from '../components/PickupFee'
 import UpLoad from '@/components/upLoad/index.vue'
-// import { ABNORMAL_TYPE_CODES } from '../constant/abnormal.js'
 import _ from 'lodash'
 export default {
   name: 'SendCar',
@@ -139,7 +140,8 @@ export default {
       changeFeeType: 0, // 0 可以修改运费 10 已对账 11 已核销 2 部分修改运费
       canUpdateFee: 0, // 判断多条异常记录只有最后一条可以修改运费
       sendWay: '1',
-      btnLoading: false
+      btnLoading: false,
+      allocationStrategy: 1 // 分摊策略 默认按订单数分摊 v1.08新增
     }
   },
 
@@ -173,7 +175,9 @@ export default {
       }).then(res => {
         _this.details = res.data.data
         console.log(_this.details)
-
+        // 分摊策略
+        this.allocationStrategy = _this.details.allocationStrategy
+        // 派车类型
         this.sendWay = _this.details.assignCarType.toString()
 
         this.autoAbnormalLinks('selected', 1) // 自动带出selected=1的异常环节,和selected=1的异常类型

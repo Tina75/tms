@@ -150,6 +150,12 @@
                 </div>
               </i-col>
             </Row>
+            <Row class="detail-field-group">
+              <i-col span="24">
+                <span class="detail-field-title-sm">分摊策略：</span>
+                <span class="detail-field-fee">{{ getAllocationValToLabel(info.allocationStrategy) }}</span>
+              </i-col>
+            </Row>
           </div>
 
           <!-- 提货单日志 -->
@@ -242,7 +248,8 @@
           :payment="payment"
           :settlement-type="settlementType"
           :settlement-pay-info="settlementPayInfo"
-          :send-way="sendWay"></pickup-fee>
+          :send-way="sendWay"
+          :order-count="orderCount"></pickup-fee>
       </div>
     </section>
 
@@ -277,6 +284,7 @@ import _ from 'lodash'
 
 import Exception from './exception.vue'
 import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
+import allocationStrategy from '../constant/allocation.js'
 import { mapActions } from 'vuex'
 
 export default {
@@ -302,7 +310,8 @@ export default {
         collectionMoney: 0, // 代收货款
         assignCarType: 1, // 派车类型 1 外转 2 自送 V1.07新增
         assistantDriverName: '', // 副司机名称  V1.07新增
-        assistantDriverPhone: '' // 副司机电话  V1.07新增
+        assistantDriverPhone: '', // 副司机电话  V1.07新增
+        allocationStrategy: 1 // 分摊策略 默认按订单数分摊 v1.08新增
       },
       // 外转赋值给子组件
       carrierInfo: {
@@ -496,6 +505,12 @@ export default {
     }
   },
 
+  computed: {
+    orderCount () {
+      return this.detail.length
+    }
+  },
+
   methods: {
     ...mapActions([
       'loadbillPickup'
@@ -508,7 +523,11 @@ export default {
         case 3: return '已提货'
       }
     },
-
+    // 将分摊策略返回的标识映射为文字
+    getAllocationValToLabel (data) {
+      let list = allocationStrategy.find(item => item.value === data)
+      return list.label
+    },
     fetchData () {
       let vm = this
       this.loading = true

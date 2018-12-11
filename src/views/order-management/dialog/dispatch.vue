@@ -33,8 +33,8 @@
           <span v-if="!sendCar" class="send_car_tip">此处可以直接派车哦～</span>
         </div>
         <div v-if="sendCar" style="margin-top: 25px;">
-          <send-car v-if="name === '送货调度'" ref="sendCarComp" :order-list="id" :mileage="mileage" :finance-rules-info="financeRulesInfo"></send-car>
-          <pick-up v-else ref="pickUpComp"></pick-up>
+          <send-car v-if="name === '送货调度'" ref="sendCarComp" :order-list="orderTotal" :mileage="mileage" :finance-rules-info="financeRulesInfo"></send-car>
+          <pick-up v-else ref="pickUpComp" :order-list="orderTotal"></pick-up>
         </div>
       </div>
 

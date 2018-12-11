@@ -26,7 +26,8 @@
         :settlement-type="settlementType"
         :settlement-pay-info="settlementPayInfo"
         :finance-rules-info="financeRulesInfo"
-        :send-way="sendWay">
+        :send-way="sendWay"
+        :order-count="orderCount">
       </send-fee>
       <pickup-fee
         v-else
@@ -34,7 +35,8 @@
         :payment="payment"
         :settlement-type="settlementType"
         :settlement-pay-info="settlementPayInfo"
-        :send-way="sendWay"></pickup-fee>
+        :send-way="sendWay"
+        :order-count="orderCount"></pickup-fee>
     </div>
 
     <div slot="footer" style="text-align: center;">
@@ -46,8 +48,6 @@
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
-// import SendCar from '../components/SendCar'
-// import PickUp from '../components/PickUp'
 
 import SendFee from '../components/SendFee'
 import SendCarrierInfo from '../components/SendCarrierInfo'
@@ -102,7 +102,8 @@ export default {
       },
       settlementType: '',
       settlementPayInfo: [],
-      btnLoading: false
+      btnLoading: false,
+      orderCount: 1
     }
   },
   created () {
@@ -146,10 +147,14 @@ export default {
         data: { [this.type === 'sendCar' ? 'waybillId' : 'pickUpId']: this.id }
       }).then(res => {
         const data = res.data.data
+        // 订单数量
+        this.orderCount = data.cargoList.length
+
         const billInfo = this.type === 'sendCar' ? data.waybill : data.loadbill
 
         // 派车方式
         this.sendWay = billInfo.assignCarType.toString()
+
         // 将承运商信息赋值给子组件
         if (this.sendWay === '1') { // 外转
           for (let key in this.carrierInfo) {

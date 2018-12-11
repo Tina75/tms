@@ -14,6 +14,7 @@
       <send-fee
         ref="sendFee"
         :mileage="mileage"
+        :order-count="orderList"
         :finance-rules-info="financeRulesInfo">
       </send-fee>
     </div>
@@ -21,6 +22,7 @@
       <own-send-info ref="ownSendInfo"></own-send-info>
       <send-fee
         ref="sendFee"
+        :order-count="orderList"
         send-way="2"></send-fee>
     </div>
   </div>
@@ -38,8 +40,9 @@ export default {
   components: { SendFee, SendCarrierInfo, OwnSendInfo },
   mixins: [ BaseDialog ],
   props: {
+    // 订单数量
     orderList: {
-      type: Array
+      type: Number
     },
     mileage: {
       type: [Number, String],

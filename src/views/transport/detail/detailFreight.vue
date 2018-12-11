@@ -179,6 +179,12 @@
                 </div>
               </i-col>
             </Row>
+            <Row class="detail-field-group">
+              <i-col span="24">
+                <span class="detail-field-title-sm">分摊策略：</span>
+                <span class="detail-field-fee">{{ getAllocationValToLabel(info.allocationStrategy) }}</span>
+              </i-col>
+            </Row>
           </div>
           <!-- 运单日志 -->
           <div>
@@ -292,6 +298,7 @@
           :settlement-pay-info="settlementPayInfo"
           :finance-rules-info="financeRulesInfo"
           :send-way="sendWay"
+          :order-count="orderCount"
           source="detail">
         </send-fee>
       </div>
@@ -335,6 +342,8 @@ import TMSUrl from '@/libs/constant/url'
 import _ from 'lodash'
 import { mapActions } from 'vuex'
 import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
+import allocationStrategy from '../constant/allocation.js'
+
 export default {
   name: 'detailFeright',
   metaInfo: { title: '运单详情' },
@@ -365,7 +374,8 @@ export default {
         assignCarType: 1, // 派车类型 1 外转 2 自送 V1.07新增
         assistantDriverName: '', // 副司机名称  V1.07新增
         assistantDriverPhone: '', // 副司机电话  V1.07新增
-        carrierWaybillNo: '' // 承运商运单号 v1.08新增
+        carrierWaybillNo: '', // 承运商运单号 v1.08新增
+        allocationStrategy: 1 // 分摊策略 默认按订单数分摊 v1.08新增
       },
       // 外转赋值给子组件
       carrierInfo: {
@@ -637,6 +647,9 @@ export default {
     }
   },
   computed: {
+    orderCount () {
+      return this.detail.length
+    },
     feeStatusTip () {
       if (this.feeStatus === 10) return '此单已对账，不允许修改'
       else if (this.feeStatus === 20) return '此单已核销，不允许修改'
@@ -694,7 +707,11 @@ export default {
         case 4: return '已到货'
       }
     },
-
+    // 将分摊策略返回的标识映射为文字
+    getAllocationValToLabel (data) {
+      let list = allocationStrategy.find(item => item.value === data)
+      return list.label
+    },
     fetchData () {
       this.loading = true
       Server({
