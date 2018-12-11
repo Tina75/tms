@@ -95,7 +95,8 @@ export default {
     getMenuList () {
       Server({
         url: 'help/list',
-        method: 'get'
+        method: 'get',
+        data: { appId: '2' }
       }).then(({ data }) => {
         data.data.forEach(menu => {
           if (menu.type === 1) {
