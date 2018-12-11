@@ -320,7 +320,7 @@ export default {
             if (data.code === 10000) {
               this.initUserInfo(this.formPersonal)
               this.$Message.success('保存成功!')
-              this.formPwd = {}
+              this.formPersonal = _.cloneDeep(this.UserInfo)
             }
           })
         }
