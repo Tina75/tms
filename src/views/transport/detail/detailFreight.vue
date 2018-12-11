@@ -248,7 +248,7 @@
             v-else
             ref="SendCarrierInfo"
             :carrier-info="carrierInfo"
-            source="detail"></send-carrier-info>
+            :source="source"></send-carrier-info>
 
           <Row class="detail-field-group">
             <i-col span="24">
@@ -485,6 +485,7 @@ export default {
             name: '改单',
             code: 120116,
             func: () => {
+              this.source = 'change'
               this.inEditing = 'change'
               this.changeStr = this.changeParams
               this.changeState({ id: this.id, type: 3 })
@@ -503,6 +504,7 @@ export default {
             name: '改单',
             code: 120116,
             func: () => {
+              this.source = 'change'
               this.inEditing = 'change'
               this.changeStr = this.changeParams
               this.changeState({ id: this.id, type: 3 })
@@ -624,7 +626,8 @@ export default {
       changeStr: '',
       printData: [], // 待打印数据
       sendWay: '1', // 派车类型 1 外转 2 自送  V1.07新增
-      radioDisabled: false // 控制单选按钮禁用
+      radioDisabled: false, // 控制单选按钮禁用
+      source: 'detail' // 详情页编辑传detail不校验承运商，改单需校验承运商，不传detail
     }
   },
   computed: {
