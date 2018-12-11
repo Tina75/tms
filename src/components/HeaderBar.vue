@@ -155,18 +155,29 @@ export default {
         return
       }
       if (this.UserInfo.type === 1) {
-        window.EMA.fire('Dialogs.push', {
-          name: 'dialogs/clear-trial-data',
-          data: {
-            title: '试用期数据删除'
-          },
-          methods: {
-            ok () {
-              localStorage.setItem(LocalStorageKeys.TMS_CLEAR_TRIAL, 1)
-            },
-            cancel () {
-              localStorage.setItem(LocalStorageKeys.TMS_CLEAR_TRIAL, 1)
-            }
+        Server({
+          url: 'message/userMessage',
+          method: 'get'
+        }).then(({ data }) => {
+          /**
+           * data = {id,title,content,bTime,eTime}
+           */
+          if (data.data) {
+            window.EMA.fire('Dialogs.push', {
+              name: 'dialogs/clear-trial-data',
+              data: {
+                title: '试用期数据删除',
+                ...data.data
+              },
+              methods: {
+                ok () {
+                  localStorage.setItem(LocalStorageKeys.TMS_CLEAR_TRIAL, 1)
+                },
+                cancel () {
+                  localStorage.setItem(LocalStorageKeys.TMS_CLEAR_TRIAL, 1)
+                }
+              }
+            })
           }
         })
       }

@@ -6,20 +6,20 @@
     </div>
     <Form ref="info" :model="info" :rules="rules" class="clear-trial__form i-mt-25">
       <FormItem prop="name">
-        <CheckboxGroup v-model="info.name">
-          <Checkbox label="order" class="clear-trial__checkbox">
+        <CheckboxGroup v-model="info.types">
+          <Checkbox label="1" class="clear-trial__checkbox">
             <div class="clear-trial__checkbox-content">
               <strong>订单相关数据</strong>
               <p>订单相关的订单、运单、财务、报表等数据</p>
             </div>
           </Checkbox>
-          <Checkbox label="sender" class="clear-trial__checkbox">
+          <Checkbox label="2" class="clear-trial__checkbox">
             <div class="clear-trial__checkbox-content">
               <strong>发货方数据</strong>
               <p>客户管理中维护的发货方数据</p>
             </div>
           </Checkbox>
-          <Checkbox label="carrier" class="clear-trial__checkbox">
+          <Checkbox label="3" class="clear-trial__checkbox">
             <div class="clear-trial__checkbox-content">
               <strong>承运商数据</strong>
               <p>承运商管理中维护的承运商数据</p>
@@ -29,8 +29,8 @@
       </FormItem>
     </Form>
     <div slot="footer">
-      <Button  type="primary"  @click="onSave">确定</Button>
-      <Button  type="default"  @click.native="onCancel">取消</Button>
+      <Button :loading="loading" type="primary" @click="onSave">确定</Button>
+      <Button type="default" @click.native="onCancel">取消</Button>
     </div>
   </Modal>
 </template>
@@ -40,24 +40,47 @@
  * 清除试用期脏数据
  */
 import BaseDialog from '@/basic/BaseDialog'
+import Server from '@/libs/js/server'
 export default {
   name: 'clear-trial-data',
   mixins: [BaseDialog],
   data () {
     return {
-      info: { name: [] },
+      bTime: null,
+      eTime: null,
+      info: { types: [] },
+      loading: false,
       rules: {
-        name: { required: true, message: '请填写姓名' }
+        types: { required: true, message: '请选择需要删除的数据' }
       }
     }
   },
   methods: {
     onSave () {
+      const vm = this
       this.$refs['info'].validate((valid) => {
-        console.log(this.code)
         if (valid) {
-          this.ok()
-          this.close()
+          vm.loading = true
+          Server({
+            url: 'message/clearUserLitterInfo',
+            method: 'post',
+            data: {
+              types: vm.info.types.join(','),
+              eTime: vm.eTime,
+              bTime: vm.bTime
+            }
+          })
+            .then((resp) => {
+              if (resp.code === 10000) {
+                vm.ok()
+                vm.close()
+              }
+              vm.loading = false
+            })
+            .catch((error) => {
+              vm.loading = false
+              throw error
+            })
         }
       })
     },

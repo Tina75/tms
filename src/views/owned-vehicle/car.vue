@@ -263,6 +263,9 @@ export default {
       ]
     }
   },
+  mounted () {
+    this.getOwnCars()
+  },
   methods: {
     ...mapActions(['getOwnDrivers', 'getOwnCars']),
     // 导出判空
