@@ -5,7 +5,7 @@
     </Spin>
 
     <Row :gutter="16">
-      <Col span="6">
+      <Col span="8">
       <FormItem label="客户名称:" prop="consignerName">
         <SelectInput
           v-model="orderForm.consignerName"
@@ -18,12 +18,19 @@
         </SelectInput>
       </FormItem>
       </Col>
-      <Col span="6">
-      <FormItem label="客户单号:" prop="customerOrderNo">
+      <Col span="8">
+      <FormItem label="客户订单号:" prop="customerOrderNo">
         <Input v-model="orderForm.customerOrderNo" :maxlength="30" type="text"></Input>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col span="8">
+      <FormItem label="客户运单号:" prop="customerWaybillNo">
+        <Input v-model="orderForm.customerWaybillNo" :maxlength="30" type="text"></Input>
+      </FormItem>
+      </Col>
+    </Row>
+    <Row :gutter="16">
+      <Col span="8">
       <FormItem label="发货时间:">
         <Row>
           <Col span="13">
@@ -39,7 +46,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col span="8">
       <FormItem label="到货时间:">
         <Row>
           <Col span="13">
@@ -55,9 +62,7 @@
         </Row>
       </FormItem>
       </Col>
-    </Row>
-    <Row :gutter="16">
-      <Col span="6">
+      <Col span="8">
       <FormItem label="对接业务员:" prop="salesmanId">
         <Select v-model="orderForm.salesmanId" transfer clearable placeholder="全部">
           <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.id">{{opt.name}}</Option>
@@ -129,6 +134,7 @@
     <Title>货物信息</Title>
     <CargoTable
       ref="cargoTable"
+      :unit-type="unitType"
       :cargoes="cargoes"
       :data-source="consignerCargoes"
       :on-append="appendCargo"
@@ -293,6 +299,9 @@
       <Button v-if="hasPower(100102)" :loading="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
       <Button v-if="hasPower(100104) && !orderId" class="i-ml-10" @click="shipImmedite">立即发运</Button>
+      <span style="float: right; vertical-align:middle;" @click="setHandle">
+        <FontIcon type="shezhi" size="20" style="cursor: pointer"></FontIcon>
+      </span>
     </div>
     <OrderPrint ref="printer" :list="orderPrint" source="create">
     </OrderPrint>
@@ -418,8 +427,9 @@ export default {
         start: null,
         // 目的城市
         end: null,
-        // 客户单号
+        // 客户订单号
         customerOrderNo: '',
+        customerWaybillNo: '',
         salesmanId: '',
         // 发货时间
         deliveryTime: '',
@@ -569,7 +579,8 @@ export default {
         }
       },
       salesmanList: [],
-      highLight: false
+      highLight: false,
+      unitType: null // 货物单位
     }
   },
   computed: {
@@ -663,6 +674,7 @@ export default {
       }
     })
     this.initBusineList()
+    this.initConfig()
   },
   beforeDestroy () {
     this.resetForm()
@@ -675,6 +687,12 @@ export default {
       'clearCargoes',
       'clearClients'
     ]),
+    initConfig () {
+      this.unitType = 1
+      // Api.getOrderDefault(param).then(res => {
+      //   console.log(res)
+      // }).catch(err => console.log(err))
+    },
     initBusineList () {
       this.loading = true
       api.getBusineList().then(res => {
@@ -1150,6 +1168,24 @@ export default {
     },
     phoneLength (value) {
       return /^1/.test(value) ? 13 : 30
+    },
+    // 单位设置
+    setHandle () {
+      this.openDialog({
+        name: 'order/create/dialogs/unit',
+        data: {
+          unitForm: {
+            unit: this.unitType
+          }
+        },
+        methods: {
+          complete: data => {
+            if (this.unitType !== data.weightOption) {
+              this.unitType = data.weightOption
+            }
+          }
+        }
+      })
     }
   }
 }

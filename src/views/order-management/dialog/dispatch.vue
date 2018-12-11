@@ -115,7 +115,7 @@ export default {
           tooltip: true
         },
         {
-          title: '客户单号',
+          title: '客户订单号',
           key: 'customerOrderNo',
           minWidth: 140,
           render: (h, p) => {

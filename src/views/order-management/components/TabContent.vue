@@ -43,9 +43,9 @@
       </div>
     </div>
     <div v-if="!simpleSearch" class="operate-box-common">
-      <Row :gutter="15">
+      <Row :gutter="20">
         <Col span="18">
-        <Row :gutter="15">
+        <Row :gutter="20">
           <Col span="6" class="i-mt-10">
           <SelectInput
             v-model="keywords.consignerName"
@@ -60,7 +60,7 @@
           <Input v-model="keywords.orderNo" :maxlength="30" placeholder="请输入订单号" />
           </Col>
           <Col span="6" class="i-mt-10">
-          <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户单号" />
+          <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户订单号" />
           </Col>
           <Col v-if="source === 'order'" span="6" class="i-mt-10">
           <Input v-model="keywords.waybillNo" :maxlength="30" placeholder="请输入运单号" />
@@ -89,10 +89,10 @@
           </Col>
         </Row>
         </Col>
-        <Col span="6" class="i-mt-10">
-        <Button type="primary" @click="searchList">搜索</Button>
-        <Button type="default" @click="clearKeywords">清除条件</Button>
-        <Button type="default" style="margin-right: 0;" @click="handleSwitchSearch">简易搜索</Button>
+        <Col span="6">
+        <Button class="i-mt-10" type="primary" @click="searchList">搜索</Button>
+        <Button class="i-mt-10" type="default" @click="clearKeywords">清除条件</Button>
+        <Button class="i-mt-10" type="default" style="margin-right: 0;" @click="handleSwitchSearch">简易搜索</Button>
         </Col>
       </Row>
     </div>
@@ -547,12 +547,17 @@ export default {
           }
         },
         {
-          title: '客户单号',
+          title: '客户订单号',
           key: 'customerOrderNo',
           minWidth: 160,
           render: (h, p) => {
             return h('span', p.row.customerOrderNo ? p.row.customerOrderNo : '-')
           }
+        },
+        {
+          title: '客户运单号',
+          key: 'customerWaybillNo',
+          width: 160
         },
         {
           title: '运单号',
@@ -596,10 +601,7 @@ export default {
         {
           title: '对接业务员',
           key: 'salesmanId',
-          minWidth: 180,
-          render: (h, params) => {
-            return h('span', params.row.salesmanName || '-')
-          }
+          minWidth: 180
         },
         {
           title: '始发地',
@@ -644,26 +646,22 @@ export default {
         {
           title: '计费里程（公里）',
           key: 'mileage',
-          width: 120,
-          render: (h, params) => {
-            return h('span', params.row.mileage / 1000 || '-')
-          }
+          width: 120
         },
         {
           title: '体积（方）',
           key: 'volume',
-          minWidth: 100,
-          render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
-          }
+          minWidth: 100
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          minWidth: 100,
-          render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
-          }
+          minWidth: 100
+        },
+        {
+          title: '重量（公斤）',
+          key: 'weightKg',
+          minWidth: 100
         },
         {
           title: '下单时间',
@@ -828,6 +826,26 @@ export default {
           minWidth: 180,
           render: (h, params) => {
             return h('span', float.floor(params.row.invoiceRate * 100, 2) || '-')
+          }
+        },
+        {
+          title: '备注',
+          key: 'remark',
+          width: 180,
+          ellipsis: true,
+          render: (h, params) => {
+            if (params.row.remark.length > 12) {
+              return h('Tooltip', {
+                props: {
+                  placement: 'bottom',
+                  content: params.row.remark
+                }
+              }, [
+                h('span', this.formatterAddress(params.row.remark))
+              ])
+            } else {
+              return h('span', params.row.remark)
+            }
           }
         },
         {
@@ -1254,7 +1272,7 @@ export default {
 .input-w
   width 200px
 .ivu-btn
-  margin-right 15px
+  margin-right 8px
   width 80px
   height 32px
 .ivu-btn-default
