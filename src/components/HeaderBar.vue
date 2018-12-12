@@ -14,7 +14,7 @@
           </Tooltip>
         </span>
         <span class="header-bar-avator-dropdown-notify">
-          <Badge :count="MsgCount.all" :offset="[5,1]" type="primary">
+          <Badge :count="MsgCount.all" :offset="[8,3]" type="primary">
             <Tooltip transfer content=" 消息">
               <Icon type="ios-notifications" size="30" color="#fff" @click="openMsg(0)"></Icon>
             </Tooltip>
