@@ -1,20 +1,19 @@
 <template>
   <div class="area-input">
+    <!-- :prefix="showIcon ? 'ios-pin-outline' : ''" -->
     <SelectInput
+      ref="selectInput"
       :value="value"
-      :maxlength="maxlength"
-      :local-options="areaList"
-      :remote="false"
-      :clearable="inputDisabled ? false : true"
-      :placeholder="placeholder"
       :no-filter="true"
-      :disabled="inputDisabled"
-      :show-icon="showIcon"
+      :maxlength="maxlength"
+      :clearable="true"
+      :local-options="areaList"
+      :placeholder="placeholder"
+      :input-type="`select`"
       @input="inputHandle"
       @on-select="selectChange"
     >
     </SelectInput>
-    <!-- <Icon v-if="showIcon" class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon> -->
   </div>
 </template>
 <script>
@@ -51,7 +50,7 @@ export default {
     },
     placeholder: {
       type: String,
-      default: '请输入详细地址'
+      default: '请输入地址（省市区+详细地址）'
     },
     showIcon: {
       type: Boolean,
@@ -62,45 +61,41 @@ export default {
     return {
       address: [],
       timer: '',
-      selectItem: null
+      selectItem: null,
+      loading: false
     }
   },
   computed: {
     areaList () {
-      const obj = {}
-      const res = []
-      const arr = this.value ? this.address : this.localOptions
-      for (let i = 0; i < arr.length; i++) {
-        const item = arr[i]
-        if (!obj[item.name]) {
-          res.push(item)
-          obj[item.name] = 1
-        }
-      }
-      return res
-    },
-    areaName () {
-      const arr = cityUtil.getPathByCode(this.cityCode)
-      return arr.length ? arr[1].name : '全国'
-    },
-    inputDisabled () {
-      return false
+      // const obj = {}
+      // const res = []
+      // const arr = this.value ? this.address : this.localOptions
+      // for (let i = 0; i < arr.length; i++) {
+      //   const item = arr[i]
+      //   if (!obj[item.name]) {
+      //     res.push(item)
+      //     obj[item.name] = 1
+      //   }
+      // }
+      return this.address
     }
   },
   methods: {
     search (val) {
       clearTimeout(this.timer)
       this.timer = setTimeout(() => {
-        this.doSearch(val, this.areaName !== '全国')
+        this.doSearch(val)
       }, 200)
     },
-    doSearch (val, forceLocal) {
-      const area = forceLocal ? this.areaName : '全国'
+    doSearch (val) {
       const options = {
         onSearchComplete: results => {
           if (local.getStatus() === window.BMAP_STATUS_SUCCESS) {
             // 判断状态是否正确
             let arr = []
+            // this.$nextTick(() => {
+            //   this.$refs['selectInput'].focusIndex = 0
+            // })
             for (let i = 0; i < results.getCurrentNumPois(); i++) {
               const item = results.getPoi(i)
               // 省市
@@ -123,16 +118,12 @@ export default {
               })
             }
             this.address = arr
-          } else {
-            if (forceLocal && !this.forceCity) {
-              this.doSearch(val, false)
-            }
           }
         },
         pageCapacity: 20
       }
-      const local = new BMap.LocalSearch(area, options)
-      local.search(val, { forceLocal })
+      const local = new BMap.LocalSearch('全国', options)
+      local.search(val)
     },
     inputHandle (value, type) {
       this.address = []

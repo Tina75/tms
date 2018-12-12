@@ -19,21 +19,27 @@
         </FormItem>
         <FormItem label="收货地址：" prop="address">
           <Row>
-            <Col span="11">
-            <FormItem prop="cityCode">
-              <CitySelect v-model="validate.cityCode" clearable></CitySelect>
-            </FormItem>
+            <Col :span="23">
+            <AreaInput
+              v-model="validate.address"
+              placeholder="请输入地址（省市区+详细地址）"
+              @latlongt-change="latlongtChange"/>
             </Col>
-            <Col span="13" style="padding-left: 5px">
-            <FormItem prop="address">
-              <AreaInput
-                v-model="validate.address"
-                :city-code="city"
-                :disabled="true"
-                @latlongt-change="latlongtChange"/>
-            </FormItem>
+            <Col :span="23">
+            <Tooltip :max-width="200" content="详细地址只支持从下拉推荐地址中选择" transfer>
+              <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+            </Tooltip>
             </Col>
           </Row>
+          <!-- <CitySelect v-model="validate.cityCode" clearable></CitySelect>
+          <AreaInput
+            v-model="validate.address"
+            :city-code="city"
+            :disabled="true"
+            @latlongt-change="latlongtChange"/> -->
+        </FormItem>
+        <FormItem>
+          <Input :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
         </FormItem>
         <FormItem label="备注：" prop="remark">
           <Input v-model="validate.remark"  placeholder="请输入"/>
