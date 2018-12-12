@@ -76,8 +76,9 @@ import TMSUrl from '../libs/constant/url.js'
 import Server from '@/libs/js/server'
 
 const LocalStorageKeys = {
-  FIRST_TIME_LOGIN: 'first_time_login',
-  TMS_CLEAR_TRIAL: 'TMS_clear_trial'
+  FIRST_TIME_LOGIN: 'first_time_login', // 注册后第一次登录
+  TMS_CLEAR_TRIAL: 'TMS_clear_trial',
+  TMS_FIRST_DISCOVERY: 'TMS_first_discovery' // 探索运掌柜
 }
 export default {
   name: 'headerBar',
@@ -109,6 +110,8 @@ export default {
         if (sessionStorage.getItem('first_time_login') === 'true') {
           if (this.UserInfo.type === 1) this.renew()
           else this.changePasswordTip()
+          // 探索运掌柜
+          this.isPreviewDiscover()
           sessionStorage.removeItem('first_time_login')
         } else {
           // 短信是否超过次数
@@ -121,8 +124,7 @@ export default {
         // 查询所有的自有车辆和未绑定的司机
         this.getOwnDrivers()
         this.getOwnCars()
-        // 探索运掌柜
-        await this.isPreviewDiscover()
+
         // 添加GA配置属性
         this.$ga.set('phone', this.UserInfo.phone)
         this.$ga.set('roleName', this.UserInfo.roleName)
