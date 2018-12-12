@@ -120,18 +120,6 @@
         </Tooltip>
       </FormItem>
       </Col>
-      <!-- <FormItem label="发货地址:" class="consig-address" prop="start">
-        <CitySelect ref="start" v-model="orderForm.start" clearable></CitySelect>
-      </FormItem>
-      <FormItem :label-width="0" prop="consignerAddress">
-        <AreaInput
-          v-model="orderForm.consignerAddress"
-          :city-code="orderForm.start"
-          :local-options="consignerAddresses"
-          :disabled="true"
-          :filter-city="true"
-          @latlongt-change="({lat, lng}) => latlongtChange(1, lat, lng)"/>
-      </FormItem> -->
       <Col span="8">
       <FormItem label="收货地址:" class="consig-address" prop="consigneeAddress">
         <AreaInput
@@ -323,9 +311,6 @@
       <Button v-if="hasPower(100102)" :loading="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
       <Button v-if="hasPower(100104) && !orderId" class="i-ml-10" @click="shipImmedite">立即发运</Button>
-      <span style="float: right; vertical-align:middle;" @click="setHandle">
-        <FontIcon type="shezhi" size="20" style="cursor: pointer"></FontIcon>
-      </span>
     </div>
     <OrderPrint ref="printer" :list="orderPrint" source="create">
     </OrderPrint>
@@ -1142,12 +1127,6 @@ export default {
               consignerPhone: orderForm.consignerPhone.replace(/\s/g, ''),
               consigneePhone: orderForm.consigneePhone.replace(/\s/g, ''),
               invoiceRate: orderForm.isInvoice === 1 ? rate.set(orderForm.invoiceRate) : null
-            });
-
-            ['start', 'end'].forEach(field => {
-              form[field] = parseInt(form[field])
-              // 保存本地记录
-              vm.$refs['start'].saveCity(form[field])
             })
             // 转换成分单位
             transferFeeList.forEach((fee) => {
@@ -1198,21 +1177,6 @@ export default {
     },
     phoneLength (value) {
       return /^1/.test(value) ? 13 : 30
-    },
-    // 单位设置
-    setHandle () {
-      this.openDialog({
-        name: 'order/create/dialogs/unit',
-        data: {
-        },
-        methods: {
-          complete: data => {
-            if (this.unitType !== data.weightOption) {
-              this.unitType = data.weightOption
-            }
-          }
-        }
-      })
     }
   }
 }
