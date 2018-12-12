@@ -16,7 +16,7 @@
           :clearable="true"
           :local-options="clients"
           placeholder="请选择或输入客户名称"
-          style="width:200px"
+          class="input-w"
           @on-focus.once="getClients"
           @on-clear="clearKeywords">
         </SelectInput>
@@ -26,7 +26,7 @@
           :maxlength="30"
           :icon="keywords.orderNo ? 'ios-close-circle' : ''"
           placeholder="请输入订单号"
-          style="width: 200px"
+          class="input-w"
           @on-enter="searchList"
           @on-click="clearKeywords"/>
         <Input
@@ -35,34 +35,44 @@
           :maxlength="30"
           :icon="keywords.waybillNo ? 'ios-close-circle' : ''"
           placeholder="请输入运单号"
-          style="width: 200px"
+          class="input-w"
           @on-enter="searchList"
           @on-click="clearKeywords"/>
         <Button type="primary" icon="ios-search" style="width: 40px;margin-left:-2px;margin-right: 0;border-top-left-radius: 0;border-bottom-left-radius: 0;" @click="searchList"></Button>
         <Button type="text" class="high-search" size="small" @click="handleSwitchSearch">高级搜索</Button>
       </div>
     </div>
-    <div v-if="!simpleSearch" class="operate-box">
-      <div style="margin-bottom: 10px;">
-        <SelectInput
-          v-model="keywords.consignerName"
-          :maxlength="20"
-          :remote="false"
-          :local-options="clients"
-          placeholder="请选择或输入客户名称"
-          style="width:200px;margin-right: 20px;"
-          @on-focus.once="getClients">
-        </SelectInput>
-        <Input v-model="keywords.orderNo" :maxlength="30" placeholder="请输入订单号" style="width: 200px" />
-        <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户单号" style="width: 200px" />
-        <Input v-if="source !== 'transport'" v-model="keywords.waybillNo" :maxlength="30" placeholder="请输入运单号" style="width: 200px" />
-      </div>
-      <div class="complex-query">
-        <div>
-          <!-- <area-select v-model="cityCodes.startCodes" :deep="true" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select>
-          <area-select v-model="cityCodes.endCodes" :deep="true" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></area-select> -->
-          <city-select v-model="keywords.start" placeholder="请输入始发地" style="width:200px;display: inline-block;margin-right: 20px;"></city-select>
-          <city-select v-model="keywords.end" placeholder="请输入目的地" style="width:200px;display: inline-block;margin-right: 20px;"></city-select>
+    <div v-if="!simpleSearch" class="operate-box-common">
+      <Row :gutter="20">
+        <Col span="18">
+        <Row :gutter="20">
+          <Col span="6" class="i-mt-10">
+          <SelectInput
+            v-model="keywords.consignerName"
+            :maxlength="20"
+            :remote="false"
+            :local-options="clients"
+            placeholder="请选择或输入客户名称"
+            @on-focus.once="getClients">
+          </SelectInput>
+          </Col>
+          <Col span="6" class="i-mt-10">
+          <Input v-model="keywords.orderNo" :maxlength="30" placeholder="请输入订单号" />
+          </Col>
+          <Col span="6" class="i-mt-10">
+          <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户订单号" />
+          </Col>
+          <Col v-if="source === 'order'" span="6" class="i-mt-10">
+          <Input v-model="keywords.waybillNo" :maxlength="30" placeholder="请输入运单号" />
+          </Col>
+          <Col span="6" class="i-mt-10">
+          <city-select v-model="keywords.start" placeholder="请输入始发地" ></city-select>
+
+          </Col>
+          <Col span="6" class="i-mt-10">
+          <city-select v-model="keywords.end" placeholder="请输入目的地" ></city-select>
+          </Col>
+          <Col span="6" class="i-mt-10">
           <DatePicker
             :options="timeOption"
             v-model="times"
@@ -70,16 +80,21 @@
             type="daterange"
             format="yyyy-MM-dd"
             placeholder="开始日期-结束日期"
-            style="width: 200px;display: inline-block;"
+            style="display: block;"
             @on-change="handleTimeChange">
           </DatePicker>
-        </div>
-        <div>
-          <Button type="primary" @click="searchList">搜索</Button>
-          <Button type="default" @click="clearKeywords">清除条件</Button>
-          <Button type="default" style="margin-right: 0;" @click="handleSwitchSearch">简易搜索</Button>
-        </div>
-      </div>
+          </Col>
+          <Col span="6" class="i-mt-10">
+          <Input v-model="keywords.remark" :maxlength="100" placeholder="请输入订单备注信息"></Input>
+          </Col>
+        </Row>
+        </Col>
+        <Col span="6">
+        <Button class="i-mt-10" type="primary" @click="searchList">搜索</Button>
+        <Button class="i-mt-10" type="default" @click="clearKeywords">清除条件</Button>
+        <Button class="i-mt-10" type="default" style="margin-right: 0;" @click="handleSwitchSearch">简易搜索</Button>
+        </Col>
+      </Row>
     </div>
     <page-table
       ref="pageTable"
@@ -532,12 +547,17 @@ export default {
           }
         },
         {
-          title: '客户单号',
+          title: '客户订单号',
           key: 'customerOrderNo',
           minWidth: 160,
           render: (h, p) => {
             return h('span', p.row.customerOrderNo ? p.row.customerOrderNo : '-')
           }
+        },
+        {
+          title: '客户运单号',
+          key: 'customerWaybillNo',
+          width: 160
         },
         {
           title: '运单号',
@@ -581,10 +601,7 @@ export default {
         {
           title: '对接业务员',
           key: 'salesmanId',
-          minWidth: 180,
-          render: (h, params) => {
-            return h('span', params.row.salesmanName || '-')
-          }
+          minWidth: 180
         },
         {
           title: '始发地',
@@ -629,26 +646,22 @@ export default {
         {
           title: '计费里程（公里）',
           key: 'mileage',
-          width: 120,
-          render: (h, params) => {
-            return h('span', params.row.mileage / 1000 || '-')
-          }
+          width: 120
         },
         {
           title: '体积（方）',
           key: 'volume',
-          minWidth: 100,
-          render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
-          }
+          minWidth: 100
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          minWidth: 100,
-          render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
-          }
+          minWidth: 100
+        },
+        {
+          title: '重量（公斤）',
+          key: 'weightKg',
+          minWidth: 100
         },
         {
           title: '下单时间',
@@ -813,6 +826,26 @@ export default {
           minWidth: 180,
           render: (h, params) => {
             return h('span', float.floor(params.row.invoiceRate * 100, 2) || '-')
+          }
+        },
+        {
+          title: '备注',
+          key: 'remark',
+          width: 180,
+          ellipsis: true,
+          render: (h, params) => {
+            if (params.row.remark.length > 12) {
+              return h('Tooltip', {
+                props: {
+                  placement: 'bottom',
+                  content: params.row.remark
+                }
+              }, [
+                h('span', this.formatterAddress(params.row.remark))
+              ])
+            } else {
+              return h('span', params.row.remark)
+            }
           }
         },
         {
@@ -1236,13 +1269,10 @@ export default {
   display: -ms-flexbox
   justify-content: space-between;
   -ms-flex-pack justify
-.complex-query
-  display: flex;
-  display -ms-flexbox
-  justify-content: space-between;
-  -ms-flex-pack justify
+.input-w
+  width 200px
 .ivu-btn
-  margin-right 15px
+  margin-right 8px
   width 80px
   height 32px
 .ivu-btn-default
@@ -1256,10 +1286,10 @@ export default {
   white-space normal
   margin-right 0
   margin-left 8px
-.operate-box
+.operate-box-common
   background: rgba(249,249,249,1)
   margin: 15px 0
-  padding: 10px
+  padding: 0px 10px 10px
   .ivu-input-wrapper,.ivu-auto-complete
     margin-right 20px
 </style>

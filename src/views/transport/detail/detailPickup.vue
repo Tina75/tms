@@ -149,6 +149,12 @@
                 </div>
               </i-col>
             </Row>
+            <Row class="detail-field-group">
+              <i-col span="24">
+                <span class="detail-field-title-sm">分摊策略：</span>
+                <span class="detail-field-fee">{{ getAllocationValToLabel(info.allocationStrategy) }}</span>
+              </i-col>
+            </Row>
           </div>
 
           <!-- 提货单日志 -->
@@ -198,32 +204,23 @@
           <span>提货单信息</span>
         </div>
 
-        <Form ref="send" :model="info" :label-width="82" label-position="left" class="part" style="border-bottom: none;">
-
-          <div class="sub-title">
-            <div class="send-label">派车方式：</div>
-            <RadioGroup v-model="sendWay">
-              <Radio label="2">自送</Radio>
-              <Radio label="1">外转</Radio>
-              <!-- <Radio label="3">下发承运商</Radio> -->
-            </RadioGroup>
-          </div>
-          <own-send-info v-if="sendWay === '2'" ref="ownSendInfo" :form="ownInfo" source="detail"></own-send-info>
-          <send-carrier-info
-            v-else
-            ref="SendCarrierInfo"
-            :carrier-info="carrierInfo"
-            source="detail"></send-carrier-info>
-
-          <Row class="detail-field-group">
-            <i-col span="24">
-              <FormItem label="备注：" class="padding-left-label">
-                <Input v-model="info.remark" :maxlength="100" class="detail-info-input" />
-              </FormItem>
-            </i-col>
-          </Row>
-        </Form>
+        <div class="sub-title">
+          <div class="send-label">派车方式：</div>
+          <RadioGroup v-model="sendWay">
+            <Radio label="2">自送</Radio>
+            <Radio label="1">外转</Radio>
+            <!-- <Radio label="3">下发承运商</Radio> -->
+          </RadioGroup>
+        </div>
+        <own-send-info v-if="sendWay === '2'" ref="ownSendInfo" :form="ownInfo" source="detail"></own-send-info>
+        <send-carrier-info
+          v-else
+          ref="SendCarrierInfo"
+          :carrier-info="carrierInfo"
+          source="detail"
+          source-type="pickup"></send-carrier-info>
       </div>
+
       <!-- 货物明细 -->
       <div>
         <div class="detail-part-title">
@@ -250,7 +247,8 @@
           :payment="payment"
           :settlement-type="settlementType"
           :settlement-pay-info="settlementPayInfo"
-          :send-way="sendWay"></pickup-fee>
+          :send-way="sendWay"
+          :order-count="orderCount"></pickup-fee>
       </div>
     </section>
 
@@ -285,6 +283,9 @@ import _ from 'lodash'
 
 import Exception from './exception.vue'
 import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
+import allocationStrategy from '../constant/allocation.js'
+import { mapActions } from 'vuex'
+
 export default {
   name: 'detailPickup',
   components: { SelectInput, PayInfo, Exception, PickupFee, OwnSendInfo, SendCarrierInfo },
@@ -307,7 +308,8 @@ export default {
         collectionMoney: 0, // 代收货款
         assignCarType: 1, // 派车类型 1 外转 2 自送 V1.07新增
         assistantDriverName: '', // 副司机名称  V1.07新增
-        assistantDriverPhone: '' // 副司机电话  V1.07新增
+        assistantDriverPhone: '', // 副司机电话  V1.07新增
+        allocationStrategy: 1 // 分摊策略 默认按订单数分摊 v1.08新增
       },
       // 外转赋值给子组件
       carrierInfo: {
@@ -316,7 +318,8 @@ export default {
         driverPhone: '',
         carNo: '',
         carType: '',
-        carLength: ''
+        carLength: '',
+        remark: ''
       },
       // 自送赋值给子组件
       ownInfo: {
@@ -351,7 +354,7 @@ export default {
             name: '提货',
             code: 120201,
             func: () => {
-              this.billPickup()
+              this.loadBillSend()
             }
           }, {
             name: '编辑',
@@ -500,7 +503,16 @@ export default {
     }
   },
 
+  computed: {
+    orderCount () {
+      return this.detail.length
+    }
+  },
+
   methods: {
+    ...mapActions([
+      'loadbillPickup'
+    ]),
     // 将数据返回的标识映射为文字
     statusFilter (status) {
       switch (status) {
@@ -509,7 +521,11 @@ export default {
         case 3: return '已提货'
       }
     },
-
+    // 将分摊策略返回的标识映射为文字
+    getAllocationValToLabel (data) {
+      let list = allocationStrategy.find(item => item.value === data)
+      return list.label
+    },
     fetchData () {
       let vm = this
       this.loading = true
@@ -546,7 +562,8 @@ export default {
             driverPhone: '',
             carNo: '',
             carType: '',
-            carLength: ''
+            carLength: '',
+            remark: ''
           }
         }
 
@@ -602,7 +619,6 @@ export default {
       let data = {
         loadbill: {
           pickUpId: z.id,
-          remark: z.info.remark,
           assignCarType: z.sendWay
         },
         cargoList: _.uniq(this.detail.map(item => item.orderId))
@@ -677,22 +693,38 @@ export default {
     },
 
     // 提货
-    billPickup () {
+    loadBillSend () {
       const self = this
+      if (self.info.assignCarType === 1 && !self.info.carrierName) {
+        this.$Message.warning('承运商未填写，不能提货')
+        return
+      }
+      if (self.info.assignCarType === 2 && !self.info.carNo) {
+        this.$Message.warning('自送车辆信息未填写，不能提货')
+        return
+      }
+      if (self.detail.length <= 0) {
+        this.$Message.warning('此提货单未加入订单，不能提货')
+        return
+      }
       Server({
         url: '/load/bill/check/order',
         method: 'post',
         data: { pickUpId: self.id }
       }).then(() => {
         self.openDialog({
-          name: 'transport/dialog/action',
+          name: 'transport/dialog/confirm',
           data: {
-            id: self.id,
-            type: 'pickUp'
+            title: '提货',
+            message: '提货后将不能修改提货单，是否提货？'
           },
           methods: {
-            complete () {
-              self.fetchData()
+            confirm () {
+              self.loadbillPickup([ self.id ])
+                .then(() => {
+                  self.$Message.success('操作成功')
+                  self.fetchData()
+                })
             }
           }
         })
@@ -741,6 +773,7 @@ export default {
   .sub-title
     font-size 14px
     color #777
+    margin-bottom 10px
     .send-label
       display inline-block
       margin-right 20px

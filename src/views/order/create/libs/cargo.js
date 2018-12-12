@@ -1,4 +1,5 @@
 import validator from '@/libs/js/validate'
+import float from '@/libs/js/float'
 let uniqueIndex = 0
 export default class Cargo {
   /**
@@ -12,6 +13,7 @@ export default class Cargo {
     // inputnumber 控件不会默认设置1了
     this.cargoCost = null
     this.weight = null
+    this.weightKg = null
     this.volume = null
     this.hasError = false
     this.errorMsg = {}
@@ -20,6 +22,7 @@ export default class Cargo {
       this.cargoName = props.cargoName
       // 重量，保留2位小数
       this.weight = props.weight
+      this.weightKg = float.floor(this.weight * 1000)
       // 体积方，保留1位小数
       this.volume = props.volume
       if (!transfer) {
@@ -42,9 +45,6 @@ export default class Cargo {
     if (!this.cargoName) {
       return { success: false, message: '请输入货物名称' }
     }
-    // if (!this.weight && this.weight !== 0 && !this.volume && this.volume !== 0) {
-    //   return { success: false, message: '货物重量和体积至少填写一项' }
-    // }
     return { success: true }
   }
 
@@ -63,16 +63,6 @@ export default class Cargo {
         delete this.errorMsg[field]
       }
     }
-    // if (field === 'weight' || field === 'volume') {
-    //   if (!this.volume && this.volume !== 0 && !this.weight && this.weight !== 0) {
-    //     if (!this.errorMsg['weight']) {
-    //       this.errorMsg['weight'] = '货物重量和体积至少填写一项'
-    //     }
-    //   } else {
-    //     delete this.errorMsg['weight']
-    //     // delete this.errorMsg['volume']
-    //   }
-    // }
     this.hasError = false
     for (let name in this.errorMsg) {
       if (name) {

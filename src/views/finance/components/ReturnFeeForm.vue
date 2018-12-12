@@ -15,8 +15,8 @@
         <Col v-if="scene==='1'" span="8">
         <Row >
           <Col span="9" offset="0">
-          <FormItem prop="dayType">
-            <Select v-model="formInline.dayType" style="width:120px" transfer>
+          <FormItem prop="dayType" class="van-right">
+            <Select v-model="formInline.dayType" style="width:120px" class="van-left i-mr-10" transfer>
               <Option :value="1">下单日期</Option>
               <Option :value="2">到货日期</Option>
             </Select>

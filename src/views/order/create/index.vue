@@ -5,7 +5,7 @@
     </Spin>
 
     <Row :gutter="16">
-      <Col span="6">
+      <Col span="8">
       <FormItem label="客户名称:" prop="consignerName">
         <SelectInput
           v-model="orderForm.consignerName"
@@ -18,12 +18,19 @@
         </SelectInput>
       </FormItem>
       </Col>
-      <Col span="6">
-      <FormItem label="客户单号:" prop="customerOrderNo">
+      <Col span="8">
+      <FormItem label="客户订单号:" prop="customerOrderNo">
         <Input v-model="orderForm.customerOrderNo" :maxlength="30" type="text"></Input>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col span="8">
+      <FormItem label="客户运单号:" prop="customerWaybillNo">
+        <Input v-model="orderForm.customerWaybillNo" :maxlength="30" type="text"></Input>
+      </FormItem>
+      </Col>
+    </Row>
+    <Row :gutter="16">
+      <Col span="8">
       <FormItem label="发货时间:">
         <Row>
           <Col span="13">
@@ -39,7 +46,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col span="8">
       <FormItem label="到货时间:">
         <Row>
           <Col span="13">
@@ -55,9 +62,7 @@
         </Row>
       </FormItem>
       </Col>
-    </Row>
-    <Row :gutter="16">
-      <Col span="6">
+      <Col span="8">
       <FormItem label="对接业务员:" prop="salesmanId">
         <Select v-model="orderForm.salesmanId" transfer clearable placeholder="全部">
           <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.id">{{opt.name}}</Option>
@@ -93,12 +98,31 @@
       </Col>
     </Row>
     <Row :gutter="16">
-      <Col span="6">
-      <FormItem label="发货地址:" class="consig-address" prop="start">
-        <CitySelect ref="start" v-model="orderForm.start" clearable></CitySelect>
+      <Col span="8">
+      <FormItem label="发货地址:" class="consig-address" prop="consignerAddress">
+        <AreaInput
+          v-model="orderForm.consignerAddress"
+          :show-icon="!!orderForm.start"
+          :local-options="consignerAddresses"
+          placeholder="请输入地址（省市区+详细地址）"
+          @city-select="({lat, lng, cityCode}) => citySelect(1, lat, lng, cityCode)"/>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col span="3">
+      <FormItem :label-width="0">
+        <Input :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+      </FormItem>
+      </Col>
+      <Col span="1">
+      <FormItem :label-width="0">
+        <Tooltip :max-width="200" :content="`从推荐地址中选择，可获取到经纬度，自动计算运输里程`" transfer>
+          <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+        </Tooltip>
+      </FormItem>
+      </Col>
+      <!-- <FormItem label="发货地址:" class="consig-address" prop="start">
+        <CitySelect ref="start" v-model="orderForm.start" clearable></CitySelect>
+      </FormItem>
       <FormItem :label-width="0" prop="consignerAddress">
         <AreaInput
           v-model="orderForm.consignerAddress"
@@ -107,28 +131,34 @@
           :disabled="true"
           :filter-city="true"
           @latlongt-change="({lat, lng}) => latlongtChange(1, lat, lng)"/>
-      </FormItem>
-      </Col>
-      <Col span="6">
-      <FormItem prop="end" label="收货地址:" class="consig-address">
-        <CitySelect ref="end" v-model="orderForm.end" clearable></CitySelect>
-      </FormItem>
-      </Col>
-      <Col span="6">
-      <FormItem :label-width="0" prop="consigneeAddress">
+      </FormItem> -->
+      <Col span="8">
+      <FormItem label="收货地址:" class="consig-address" prop="consigneeAddress">
         <AreaInput
           v-model="orderForm.consigneeAddress"
-          :city-code="orderForm.end"
+          :show-icon="!!orderForm.end"
           :local-options="consigneeAddresses"
-          :disabled="true"
-          :filter-city="true"
-          @latlongt-change="({lat, lng}) => latlongtChange(2, lat, lng)"/>
+          placeholder="请输入地址（省市区+详细地址）"
+          @city-select="({lat, lng, cityCode}) => citySelect(2, lat, lng, cityCode)"/>
+      </FormItem>
+      </Col>
+      <Col span="3">
+      <FormItem :label-width="0">
+        <Input :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+      </FormItem>
+      </Col>
+      <Col span="1">
+      <FormItem :label-width="0">
+        <Tooltip :max-width="200" :content="`从推荐地址中选择，可获取到经纬度，自动计算运输里程`" transfer>
+          <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+        </Tooltip>
       </FormItem>
       </Col>
     </Row>
     <Title>货物信息</Title>
     <CargoTable
       ref="cargoTable"
+      :unit-type="unitType"
       :cargoes="cargoes"
       :data-source="consignerCargoes"
       :on-append="appendCargo"
@@ -293,6 +323,9 @@
       <Button v-if="hasPower(100102)" :loading="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
       <Button v-if="hasPower(100104) && !orderId" class="i-ml-10" @click="shipImmedite">立即发运</Button>
+      <span style="float: right; vertical-align:middle;" @click="setHandle">
+        <FontIcon type="shezhi" size="20" style="cursor: pointer"></FontIcon>
+      </span>
     </div>
     <OrderPrint ref="printer" :list="orderPrint" source="create">
     </OrderPrint>
@@ -418,8 +451,9 @@ export default {
         start: null,
         // 目的城市
         end: null,
-        // 客户单号
+        // 客户订单号
         customerOrderNo: '',
+        customerWaybillNo: '',
         salesmanId: '',
         // 发货时间
         deliveryTime: '',
@@ -505,10 +539,10 @@ export default {
           { validator: validatePhone, trigger: 'blur' }
         ],
         consignerAddress: [
-          { required: true, message: '请输入详细地址' }
+          { required: true, message: '请输入发货地址' }
         ],
         consigneeAddress: [
-          { required: true, message: '请输入详细地址' }
+          { required: true, message: '请输入收货地址' }
         ],
         settlementType: [
           { required: true, message: '请选择付款方式' }
@@ -569,7 +603,8 @@ export default {
         }
       },
       salesmanList: [],
-      highLight: false
+      highLight: false,
+      unitType: null // 货物单位
     }
   },
   computed: {
@@ -663,6 +698,7 @@ export default {
       }
     })
     this.initBusineList()
+    this.initConfig()
   },
   beforeDestroy () {
     this.resetForm()
@@ -675,6 +711,12 @@ export default {
       'clearCargoes',
       'clearClients'
     ]),
+    initConfig () {
+      this.unitType = 1
+      // Api.getOrderDefault(param).then(res => {
+      //   console.log(res)
+      // }).catch(err => console.log(err))
+    },
     initBusineList () {
       this.loading = true
       api.getBusineList().then(res => {
@@ -928,15 +970,21 @@ export default {
     getTwoNum (d) {
       return d > 9 ? d : 0 + d
     },
-    latlongtChange (type, lat, lng) {
+    citySelect (type, lat, lng, cityCode) {
       if (type === 1) {
         this.orderForm.consignerAddressLongitude = lng
         this.orderForm.consignerAddressLatitude = lat
+        this.orderForm.start = cityCode
       } else if (type === 2) {
         this.orderForm.consigneeAddressLongitude = lng
         this.orderForm.consigneeAddressLatitude = lat
+        this.orderForm.end = cityCode
       }
       this.distanceCp()
+    },
+    // 城市code设置
+    setCityCode () {
+
     },
     distanceCp () {
       const p1 = {
@@ -1150,6 +1198,21 @@ export default {
     },
     phoneLength (value) {
       return /^1/.test(value) ? 13 : 30
+    },
+    // 单位设置
+    setHandle () {
+      this.openDialog({
+        name: 'order/create/dialogs/unit',
+        data: {
+        },
+        methods: {
+          complete: data => {
+            if (this.unitType !== data.weightOption) {
+              this.unitType = data.weightOption
+            }
+          }
+        }
+      })
     }
   }
 }

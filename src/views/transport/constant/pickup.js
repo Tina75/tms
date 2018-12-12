@@ -56,6 +56,12 @@ export const BUTTON_LIST = vm => [
   {
     tab: '待提货',
     btns: [{
+      name: '提货',
+      code: 120202,
+      func: () => {
+        vm.loadBillSend()
+      }
+    }, {
       name: '打印',
       code: 120202,
       func: () => {
@@ -220,6 +226,11 @@ export const TABLE_COLUMNS = vm => [
     title: '重量（吨）',
     key: 'weight',
     width: 120
+  },
+  {
+    title: '重量（公斤）',
+    key: 'weightKg',
+    minWidth: 120
   },
   {
     title: '创建时间',

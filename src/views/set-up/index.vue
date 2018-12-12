@@ -9,10 +9,14 @@
       </Menu>
       </Col>
       <Col span="21" class="contentDiv">
-      <div class="borderBottomLine">
+      <div v-if="4 != rightKey" class="borderBottomLine">
         <span class="iconRightTitle"></span>
         <span class="iconRightTitleP">{{rightTitle}}</span>
       </div>
+      <Tabs v-else :value="tabName" style="margin-top: 10px" @on-click="tabChange">
+        <TabPane label="分摊策略" name="apport"></TabPane>
+        <TabPane label="开单设置" name="order"></TabPane>
+      </Tabs>
       <!--密码设置-->
       <div v-if="'1' === this.rightKey" key="1" class="divSetContent">
         <Col span="10" class="setConf">
@@ -78,6 +82,15 @@
         <Button type="primary" class="msgSaveBtn test111" style="width:86px;" @click="msgSaveBtn">保存</Button>
         </Col>
       </div>
+      <!--系统设置-->
+      <div v-else-if="'4' === this.rightKey" key="4" class="divSetContent">
+        <div v-if="tabName != 'order'">
+          <h1>分摊策略</h1>
+        </div>
+        <div v-else>
+          <Unit />
+        </div>
+      </div>
       </Col>
     </Row>
   </div>
@@ -89,13 +102,15 @@ import Server from '@/libs/js/server'
 import AreaInput from '@/components/AreaInput'
 import { CHECK_PWD, CHECK_PWD_SAME, CHECK_NAME, CHECK_NAME_COMPANY, CHECK_PHONE } from './validator'
 import _ from 'lodash'
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import CitySelect from '@/components/SelectInputForCity'
+import Unit from './components/unit.vue'
 export default {
   name: 'set-up',
   components: {
     AreaInput,
-    CitySelect
+    CitySelect,
+    Unit
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -130,6 +145,10 @@ export default {
         name: '短信设置',
         id: '3',
         code: '150200'
+      }, {
+        name: '系统设置',
+        id: '4'
+        // code: '150200'
       }],
       rightTitle: '修改密码',
       rightKey: '1',
@@ -141,7 +160,6 @@ export default {
       },
       // 个人
       formPersonal: {},
-      formPersonalInit: {},
       // 短信
       switchMsg: false,
       checkNum: 0,
@@ -231,11 +249,12 @@ export default {
         address: [
           { required: true, message: '请输入公司地址', trigger: 'blur' }
         ]
-      }
+      },
+      tabName: ''
     }
   },
   computed: {
-    ...mapGetters(['DocumentHeight']),
+    ...mapGetters(['DocumentHeight', 'UserInfo']),
     styleHeight () {
       return { height: this.DocumentHeight + 'px' }
     },
@@ -250,7 +269,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getUserInfo']),
+    ...mapMutations(['initUserInfo']),
     smsInfo () {
       this.messageList = _.cloneDeep(this.messageListInit)
       Server({
@@ -276,8 +295,7 @@ export default {
       this.rightKey = id
       switch (id) {
         case '2':
-          this.formPersonal = Object.assign({}, this.$store.getters.UserInfo)
-          this.formPersonalInit = Object.assign({}, this.$store.getters.UserInfo)
+          this.formPersonal = _.cloneDeep(this.UserInfo)
           break
         case '3':
           this.smsInfo()
@@ -307,7 +325,7 @@ export default {
     personalSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          if (this.formPersonal.name === this.formPersonalInit.name) {
+          if (this.formPersonal.name === this.UserInfo.name) {
             this.$Message.info('您还未变更任何信息，无需保存')
             return
           }
@@ -320,10 +338,9 @@ export default {
             data: param
           }).then(({ data }) => {
             if (data.code === 10000) {
-              this.getUserInfo()
-              this.formPersonalInit.name = this.formPersonal.name
+              this.initUserInfo(this.formPersonal)
               this.$Message.success('保存成功!')
-              this.formPwd = {}
+              this.formPersonal = _.cloneDeep(this.UserInfo)
             }
           })
         }
@@ -372,6 +389,9 @@ export default {
           this.msgCheckBoxListInit = _.cloneDeep(this.msgSlectCheckBox)
         }
       })
+    },
+    tabChange (name) {
+      this.tabName = name
     }
   }
 }

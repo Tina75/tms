@@ -14,7 +14,7 @@
           </Tooltip>
         </span>
         <span class="header-bar-avator-dropdown-notify">
-          <Badge :count="MsgCount.all" :offset="[5,1]" type="primary">
+          <Badge :count="MsgCount.all" :offset="[8,3]" type="primary">
             <Tooltip transfer content=" 消息">
               <Icon type="ios-notifications" size="30" color="#fff" @click="openMsg(0)"></Icon>
             </Tooltip>
@@ -74,6 +74,11 @@ import FontIcon from '@/components/FontIcon'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import TMSUrl from '../libs/constant/url.js'
 import Server from '@/libs/js/server'
+
+const LocalStorageKeys = {
+  FIRST_TIME_LOGIN: 'first_time_login',
+  TMS_CLEAR_TRIAL: 'TMS_clear_trial'
+}
 export default {
   name: 'headerBar',
   components: { TabNav, FontIcon },
@@ -108,7 +113,12 @@ export default {
         } else {
           // 短信是否超过次数
           this.isMessageBeyond()
+          // 是否需要清空试用期的数据
+          // this.needClearTrialData()
+          // 接受邀请合照
+          // this.receiveInvitingCooperation()
         }
+        // 查询所有的自有车辆和未绑定的司机
         this.getOwnDrivers()
         this.getOwnCars()
         // 探索运掌柜
@@ -121,6 +131,58 @@ export default {
 
       }
     },
+    /**
+     * 接受货主发送的邀请合作请求
+     */
+    receiveInvitingCooperation () {
+      window.EMA.fire('Dialogs.push', {
+        name: 'dialogs/invite-cooperation',
+        data: {
+          title: '温馨提示'
+        },
+        methods: {
+          ok () {
+
+          }
+        }
+      })
+    },
+    /**
+     * 需要清除试用期期间的脏数据
+     */
+    needClearTrialData () {
+      if (localStorage.getItem(LocalStorageKeys.TMS_CLEAR_TRIAL)) {
+        return
+      }
+      if (this.UserInfo.type === 1) {
+        Server({
+          url: 'message/userMessage',
+          method: 'get'
+        }).then(({ data }) => {
+          /**
+           * data = {id,title,content,bTime,eTime}
+           */
+          if (data.data) {
+            window.EMA.fire('Dialogs.push', {
+              name: 'dialogs/clear-trial-data',
+              data: {
+                title: '试用期数据删除',
+                ...data.data
+              },
+              methods: {
+                ok () {
+                  localStorage.setItem(LocalStorageKeys.TMS_CLEAR_TRIAL, 1)
+                },
+                cancel () {
+                  localStorage.setItem(LocalStorageKeys.TMS_CLEAR_TRIAL, 1)
+                }
+              }
+            })
+          }
+        })
+      }
+    },
+
     /**
      * 超过短信上限
      */

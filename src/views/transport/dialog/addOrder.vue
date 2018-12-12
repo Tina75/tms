@@ -58,7 +58,7 @@ export default {
           width: 180
         },
         {
-          title: '客户单号',
+          title: '客户订单号',
           key: 'customerOrderNo',
           width: 180,
           render: (h, p) => {
