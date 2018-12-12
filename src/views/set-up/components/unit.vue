@@ -1,6 +1,6 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" height="400" transfer @on-visible-change="close">
-    <div slot="header" style="text-align:center">开单设置</div>
+  <div class="unit-bar">
+    <!-- <div style="text-align:center">开单设置</div> -->
     <Form ref="unitForm" :model="unitForm" :rules="unitRules" :label-width="120" class="unitForm">
       <FormItem label="货物重量单位">
         <Select v-model="unitForm.unit" clearasble>
@@ -8,23 +8,32 @@
         </Select>
       </FormItem>
     </Form>
-    <div slot="footer">
+    <div class="footer">
       <Button type="primary" @click="reset">恢复默认</Button>
-      <Button type="default" @click="save">保存</Button>
-      <Button type="default" @click="cancel">取消</Button>
+      <Button type="default" style="margin-left: 8px" @click="save">保存</Button>
     </div>
-  </Modal>
+  </div>
 </template>
 <script>
-import BaseDialog from '@/basic/BaseDialog'
 // import Api from '../libs/api'
-import unitList from '../libs/unit'
+const unitList = [
+  {
+    value: 1,
+    name: '吨'
+  },
+  {
+    value: 2,
+    name: '公斤'
+  }
+]
 export default {
   name: 'order-unit',
-  mixins: [ BaseDialog ],
   data () {
     return {
       unitList,
+      unitForm: {
+        unit: 1
+      },
       unitRules: {
         unit: [
           { required: true, message: '货物重量单位不能为空', trigger: 'blur' }
@@ -33,6 +42,9 @@ export default {
     }
   },
   methods: {
+    init () {
+
+    },
     reset () {
       this.unitForm.unit = 1
     },
@@ -42,20 +54,20 @@ export default {
       }
       setTimeout(() => {
         this.$Message.success('保存成功')
-        this.complete(param)
-        this.close()
+        // this.complete(param)
+        console.log(param)
       }, 0)
       // Api.setOrderConfig(param).then((data) => {
       //   this.close()
       // }).catch(err => console.log(err))
-    },
-    cancel () {
-      this.close()
     }
   }
 }
 </script>
-<style lang="stylus">
-.unitForm
-  min-height 80px
+<style lang="stylus" scoped>
+.unit-bar
+  .unitForm
+    min-height 100px
+  .footer
+    text-align center
 </style>
