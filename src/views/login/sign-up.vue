@@ -52,11 +52,11 @@
             </FormItem>
             <FormItem prop="address">
               <Row>
-                <Col :span="8">
-                <CitySelect v-model="form.cityId" clearable></CitySelect>
+                <Col :span="16">
+                <AreaInput v-model="form.address" @latlongt-change="addressLocationChange"></AreaInput>
                 </Col>
-                <Col :span="16" class="areaRight">
-                <AreaInput v-model="form.address" :city-code="cityCode" :maxlength="40" placeholder="输入公司详细地址" @latlongt-change="addressLocationChange"></AreaInput>
+                <Col :span="8" class="areaRight">
+                <Input :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
                 </Col>
               </Row>
             </FormItem>
@@ -128,7 +128,8 @@ export default {
         cityId: void 0,
         latitude: void 0,
         longitude: void 0,
-        mapType: 1
+        mapType: 1,
+        companyType: 1
       },
 
       rules: {

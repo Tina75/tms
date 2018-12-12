@@ -54,11 +54,16 @@
           <Col :span="16">
           <FormItem label="公司地址：" prop="address">
             <Row v-if="isEdit">
-              <Col :span="8">
-              <CitySelect v-model="formCompany.cityId" clearable></CitySelect>
+              <Col :span="16">
+              <AreaInput v-model="formCompany.address" @latlongt-change="latlongtChange"></AreaInput>
               </Col>
-              <Col :span="16" class="areaRight">
-              <AreaInput v-model="formCompany.address" :city-code="formCityCode" :maxlength="60" placeholder="请输入公司地址" @latlongt-change="latlongtChange"></AreaInput>
+              <Col :span="7" class="areaRight">
+              <Input :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+              </Col>
+              <Col :span="1" class="areaRight">
+              <Tooltip :max-width="200" content="详细地址只支持从下拉推荐地址中选择" transfer>
+                <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+              </Tooltip>
               </Col>
             </Row>
             <Row v-if="!isEdit">
