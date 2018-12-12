@@ -153,7 +153,7 @@
             <Row class="detail-field-group">
               <i-col span="24">
                 <span class="detail-field-title-sm">分摊策略：</span>
-                <span class="detail-field-fee">{{ getAllocationValToLabel(info.allocationStrategy) }}</span>
+                <span>{{ getAllocationValToLabel(info.allocationStrategy) }}</span>
               </i-col>
             </Row>
           </div>
@@ -249,7 +249,7 @@
           :settlement-type="settlementType"
           :settlement-pay-info="settlementPayInfo"
           :send-way="sendWay"
-          :order-count="orderCount"></pickup-fee>
+          :pick-fee-orders="detail"></pickup-fee>
       </div>
     </section>
 
@@ -505,12 +505,6 @@ export default {
     }
   },
 
-  computed: {
-    orderCount () {
-      return this.detail.length
-    }
-  },
-
   methods: {
     ...mapActions([
       'loadbillPickup'
@@ -621,7 +615,8 @@ export default {
       let data = {
         loadbill: {
           pickUpId: z.id,
-          assignCarType: z.sendWay
+          assignCarType: z.sendWay,
+          allocationStrategy: z.detail.length > 1 ? z.$refs.pickupFee.getAllocationStrategy() : void 0 // 订单数大于1需要传分摊策略
         },
         cargoList: _.uniq(this.detail.map(item => item.orderId))
       }

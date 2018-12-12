@@ -84,7 +84,7 @@
       </Row>
     </div>
     <!-- 外转 -->
-    <div v-if="sendWay === '1' && source !== 'abnormal'" class="part">
+    <div v-if="sendWay === '1' && source !== 'abnormal'">
       <Row class="detail-field-group">
         <i-col span="24">
           <span class="detail-field-title detail-field-required" style="width: 92px;">结算方式：</span>
@@ -106,11 +106,11 @@
       </Row>
 
       <Row class="detail-field-group" style="margin-top: 15px;margin-left: 10px;">
-        <i-col v-if="orderCount > 1" span="8">
-          <allocation-strategy ref="allocationStrategy"></allocation-strategy>
+        <i-col v-if="sendFeeOrders.length > 1" span="8">
+          <allocation-strategy ref="allocationStrategy" :allocation-orders="sendFeeOrders"></allocation-strategy>
         </i-col>
         <i-col span="8">
-          <FormItem label="返现运费：" prop="cashBack">
+          <FormItem label="返现运费：" prop="cashBack" class="detail-form-label">
             <TagNumberInput v-model="payment.cashBack" class="detail-payment-input" style="width: 180px;"></TagNumberInput>
             <span class="unit-yuan">元</span>
             <Tooltip placement="right" transfer content="返现运费是指在实际运输过程中存在某一段运输没有执行，需要将提前支付的运费返还。" max-width="500">
@@ -121,15 +121,15 @@
       </Row>
     </div>
     <!-- 自送 -->
-    <div v-if="sendWay === '2' && source !== 'abnormal' && orderCount > 1" class="part">
-      <Row class="detail-field-group" style="margin-top: 15px;margin-left: 10px;">
+    <div v-if="sendWay === '2' && source !== 'abnormal' && sendFeeOrders.length > 1">
+      <Row class="detail-field-group" style="margin-left: 10px;">
         <i-col span="8">
-          <allocation-strategy ref="allocationStrategy"></allocation-strategy>
+          <allocation-strategy ref="allocationStrategy" :allocation-orders="sendFeeOrders"></allocation-strategy>
         </i-col>
       </Row>
     </div>
 
-    <div v-if="source === 'abnormal'" class="part">
+    <div v-if="source === 'abnormal'">
       <Row v-if="abnormalLength > 0" class="detail-field-group">
         <i-col span="24">
           <PayInfo
@@ -141,10 +141,10 @@
             mode="edit" />
         </i-col>
       </Row>
-      <Row class="detail-field-group">
+      <Row class="detail-field-group row-margin">
         <i-col span="24">
           <span class="detail-field-title-sm" style="margin-left: 10px;">分摊策略：</span>
-          <span style="margin-right: 10px;">{{ getAllocationValToLabel(allocationType) }}</span>
+          <span>{{ getAllocationValToLabel(allocationType) }}</span>
         </i-col>
       </Row>
     </div>
@@ -236,10 +236,9 @@ export default {
       type: [String, Number],
       default: 3
     },
-    // 订单数量
-    orderCount: {
-      type: Number,
-      default: 0
+    // 传入的订单list,需要校验数量、体积、重量
+    sendFeeOrders: {
+      type: Array
     },
     // 分摊类型 默认1 按订单数分摊
     allocationType: {
@@ -462,4 +461,6 @@ export default {
   .part
     padding 10px 0 20px
     border-bottom none
+  .row-margin
+    margin 20px 0 35px 0
 </style>

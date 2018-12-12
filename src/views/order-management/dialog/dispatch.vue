@@ -33,8 +33,8 @@
           <span v-if="!sendCar" class="send_car_tip">此处可以直接派车哦～</span>
         </div>
         <div v-if="sendCar" style="margin-top: 25px;">
-          <send-car v-if="name === '送货调度'" ref="sendCarComp" :order-list="orderTotal" :mileage="mileage" :finance-rules-info="financeRulesInfo"></send-car>
-          <pick-up v-else ref="pickUpComp" :order-list="orderTotal"></pick-up>
+          <send-car v-if="name === '送货调度'" ref="sendCarComp" :send-orders="id" :mileage="mileage" :finance-rules-info="financeRulesInfo"></send-car>
+          <pick-up v-else ref="pickUpComp" :pick-orders="id"></pick-up>
         </div>
       </div>
 
@@ -302,9 +302,12 @@ export default {
             orderIds: z.orderIds,
             assignCar: z.sendCar ? 1 : 0
           }
-          console.log(data)
           if (z.sendCar) {
             data.assignCarType = sendComp.sendWay
+            // 订单数大于1需要传分摊策略
+            if (this.id.length > 1) {
+              data.allocationStrategy = sendComp.getAllocationStrategy()
+            }
             if (data.assignCarType === '1') { // 外转
               data = Object.assign(data, sendComp.getformatMoney(), sendComp.getCarrierInfo(), {
                 settlementType: sendComp.getSettlementType(),
@@ -315,7 +318,6 @@ export default {
               delete data.cashBack // 自送没有返现
             }
           }
-          console.log(data)
           Server({
             url: 'waybill/create',
             method: 'post',
@@ -343,6 +345,10 @@ export default {
       }
       if (z.sendCar) {
         data.assignCarType = pickUpComp.sendWay
+        // 订单数大于1需要传分摊策略
+        if (this.id.length > 1) {
+          data.allocationStrategy = pickUpComp.getAllocationStrategy()
+        }
         if (data.assignCarType === '1') { // 外转
           data = Object.assign(data, pickUpComp.getformatMoney(), pickUpComp.getCarrierInfo(), {
             settlementType: pickUpComp.getSettlementTypes(),

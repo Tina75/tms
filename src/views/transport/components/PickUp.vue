@@ -10,11 +10,11 @@
     </div>
     <div v-if="sendWay === '1'">
       <send-carrier-info ref="SendCarrierInfo" source-type="pickup"></send-carrier-info>
-      <pickup-fee ref="pickupFee" :order-count="orderList"></pickup-fee>
+      <pickup-fee ref="pickupFee" :pick-fee-orders="pickOrders"></pickup-fee>
     </div>
     <div v-else>
       <own-send-info ref="ownSendInfo"></own-send-info>
-      <pickup-fee ref="pickupFee" :order-count="orderList" send-way="2"></pickup-fee>
+      <pickup-fee ref="pickupFee" :pick-fee-orders="pickOrders" send-way="2"></pickup-fee>
     </div>
   </div>
 </template>
@@ -32,9 +32,9 @@ export default {
   mixins: [ BaseDialog ],
 
   props: {
-    // 订单数量
-    orderList: {
-      type: Number
+    // 传入的订单list,需要校验数量、体积、重量
+    pickOrders: {
+      type: Array
     },
     // 页面来源
     source: {
@@ -69,6 +69,10 @@ export default {
     // 多段付传参
     getSettlementPayInfos () {
       return this.$refs.pickupFee.getSettlementPayInfo()
+    },
+    // 分摊策略传参
+    getAllocationStrategy () {
+      return this.$refs.pickupFee.getAllocationStrategy()
     },
     // 派车模块数据校验
     checkValidate () {
