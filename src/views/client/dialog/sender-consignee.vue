@@ -25,7 +25,7 @@
               placeholder="请输入地址（省市区+详细地址）"
               @latlongt-change="latlongtChange"/>
             </Col>
-            <Col :span="23">
+            <Col :span="1">
             <Tooltip :max-width="200" content="详细地址只支持从下拉推荐地址中选择" transfer>
               <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
             </Tooltip>
