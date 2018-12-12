@@ -238,6 +238,9 @@ export default {
       ]
     }
   },
+  mounted () {
+    this.getOwnDrivers()
+  },
   methods: {
     ...mapActions(['getOwnDrivers']),
     // 日期格式化

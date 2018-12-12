@@ -113,7 +113,8 @@ export default {
       this.settlementPayInfo = [
         { payType: 1, fuelCardAmount: '', cashAmount: '' },
         { payType: 2, fuelCardAmount: '', cashAmount: '' },
-        { payType: 3, fuelCardAmount: '', cashAmount: '' }
+        { payType: 3, fuelCardAmount: '', cashAmount: '' },
+        { payType: 4, fuelCardAmount: '', cashAmount: '' }
       ]
     } else {
       this.settlementPayInfo = [

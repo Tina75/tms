@@ -248,7 +248,7 @@
             v-else
             ref="SendCarrierInfo"
             :carrier-info="carrierInfo"
-            source="detail"></send-carrier-info>
+            :source="source"></send-carrier-info>
 
           <Row class="detail-field-group">
             <i-col span="24">
@@ -403,7 +403,8 @@ export default {
       settlementPayInfo: [
         { payType: 1, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false },
         { payType: 2, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false },
-        { payType: 3, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false }
+        { payType: 3, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false },
+        { payType: 4, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false }
       ],
 
       // 所有按钮组
@@ -484,6 +485,7 @@ export default {
             name: '改单',
             code: 120116,
             func: () => {
+              this.source = 'change'
               this.inEditing = 'change'
               this.changeStr = this.changeParams
               this.changeState({ id: this.id, type: 3 })
@@ -502,6 +504,7 @@ export default {
             name: '改单',
             code: 120116,
             func: () => {
+              this.source = 'change'
               this.inEditing = 'change'
               this.changeStr = this.changeParams
               this.changeState({ id: this.id, type: 3 })
@@ -623,7 +626,8 @@ export default {
       changeStr: '',
       printData: [], // 待打印数据
       sendWay: '1', // 派车类型 1 外转 2 自送  V1.07新增
-      radioDisabled: false // 控制单选按钮禁用
+      radioDisabled: false, // 控制单选按钮禁用
+      source: 'detail' // 详情页编辑传detail不校验承运商，改单需校验承运商，不传detail
     }
   },
   computed: {
@@ -865,12 +869,11 @@ export default {
       // if (!_this.validate()) return
       z.$refs['send'].validate((valid) => {
         if (valid) {
-          if (!z.checkDetailValidate()) {
-            if (z.inEditing === 'change') {
-              z.$Message.warning('您有信息未填')
-            }
-            return
-          }
+          if (!z.checkDetailValidate()) return
+          // if (z.inEditing === 'change') {
+          //   z.$Message.warning('您有信息未填')
+          //   return
+          // }
           if (z.inEditing === 'edit') {
             z.edit()
           } else if (z.inEditing === 'change') {
@@ -1100,6 +1103,12 @@ export default {
               item.isCashDisabled = true
             }
             if (item.payType === 3 && statusDetail.receiptPaidFule === 1) {
+              item.isCardDisabled = true
+            }
+            if (item.payType === 4 && statusDetail.tailPaidCash === 1) {
+              item.isCashDisabled = true
+            }
+            if (item.payType === 4 && statusDetail.tailPaidFule === 1) {
               item.isCardDisabled = true
             }
           })

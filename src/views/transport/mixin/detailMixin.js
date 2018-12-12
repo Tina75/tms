@@ -32,7 +32,6 @@ export default {
         totalFee: ''
       },
 
-      activeTab: 'detail',
       showLog: false,
       logList: [], // 操作日志
       exceptionCount: 0,
@@ -105,6 +104,9 @@ export default {
     },
     isAbnomal () {
       return this.$route.query.abnormal === 1
+    },
+    activeTab () {
+      return !this.isAbnomal ? 'detail' : 'exception'
     }
   },
 
@@ -112,8 +114,8 @@ export default {
     // 编辑状态且为待发运为货物列表添加操作栏
     inEditing (val) {
       if (!this.tableCanEdit) return
-      if (this.status === '在途' || this.status === '已到货' || this.status === '待提货') return
-      if (val === 'edit' && this.status === '待发运') {
+      if (this.status === '在途' || this.status === '已到货') return
+      if (val === 'edit' && (this.status === '待发运' || this.status === '待提货')) {
         this.tableColumns.unshift({
           title: '操作',
           key: 'action',
@@ -133,9 +135,6 @@ export default {
       } else {
         this.tableColumns.shift()
       }
-    },
-    isAbnomal (val) {
-      this.activeTab = val ? 'detail' : 'exception'
     }
   },
 
