@@ -16,12 +16,14 @@
           <Select v-model="easySelectMode"
                   transfer
                   style="width:120px; margin-right: 11px"
+                  @on-change="resetEasySearch"
           >
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
 
           <SelectInput
             v-if="easySelectMode === 1"
+            v-model="easySearchKeyword"
             :maxlength="20"
             :remote="false"
             :clearable="true"
@@ -29,17 +31,21 @@
             placeholder="请选择或输入客户名称"
             style="width:200px"
             @on-focus.once="getClients"
+            @on-clear="resetEasySearch"
           >
           </SelectInput>
           <Input v-if="easySelectMode === 2"
+                 v-model="easySearchKeyword"
                  :icon="easySearchKeyword ? 'ios-close-circle' : ''"
                  :maxlength="20"
-                 placeholder="请输入运单号"
+                 placeholder="请输入客户单号"
                  class="search-input"
+                 @on-click="resetEasySearch"
           />
 
           <Button icon="ios-search" type="primary"
                   class="search-btn-easy"
+                  @click="startSearch"
           ></Button>
 
           <Button class="senior-search"
@@ -52,27 +58,27 @@
 
         <div style="margin-bottom: 10px;">
           <SelectInput
-            v-if="easySelectMode === 1"
+            v-model="seniorSearchFields.shipperCompanyName"
             :maxlength="20"
             :remote="false"
-            :clearable="true"
             :local-options="clients"
             placeholder="请选择或输入客户名称"
             class="search-input-senior"
             @on-focus.once="getClients"
           >
           </SelectInput>
-          <Input mode="carrier"
+          <Input v-model="seniorSearchFields.customerOrderNo"
+                 mode="carrier"
                  placeholder="请输入客户单号"
                  class="search-input-senior"
           />
-          <SelectInputForCity  placeholder="请输入始发地" class="search-input-senior" />
-          <SelectInputForCity  placeholder="请输入目的地" class="search-input-senior" />
+          <SelectInputForCity v-model="seniorSearchFields.departureCity"  placeholder="请输入始发地" class="search-input-senior" />
+          <SelectInputForCity v-model="seniorSearchFields.destinationCity"  placeholder="请输入目的地" class="search-input-senior" />
         </div>
 
         <div class="complex-query">
           <div>
-            <DatePicker  :options="timeOption" transfer  split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
+            <DatePicker v-model="seniorSearchFields.dateRange"  :options="timeOption" type="daterange" transfer  split-panels placeholder="请选择下单的开始和结束日期" class="search-input-senior"></DatePicker>
           </div>
           <div>
             <Button type="primary"
@@ -95,107 +101,62 @@
                :show-filter="true"
                :keywords="searchFields"
                :table-head-type="waybillHeadType"
-               row-id="waybillId"
-               url="/waybill/list"
+               list-field="list"
+               row-id="shipperOrderId"
+               url="/busconnector/shipper/list"
                method="post"
-               list-field="waybillList"
                style="margin-top: 15px"
-               @on-selection-change="selectionChanged"
-               @on-sort-change="tableSort"
-               @on-change="pageChange"
-               @on-page-size-change="pageSizeChange"
-               @on-load="dataOnload" />
+    />
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import Export from '@/libs/js/export'
 import BasePage from '@/basic/BasePage'
 import PageTable from '@/components/page-table'
 import SelectInput from '@/components/SelectInput.vue'
 import SelectInputForCity from '@/components/SelectInputForCity.vue'
 import TabHeader from './components/TabHeader'
+import { TABLE_COLUMNS, TABLIST, BTNLIST, setTabList } from './constant/upstream.js'
+import Server from '@/libs/js/server'
 export default {
   name: 'upstream',
   components: { TabHeader, PageTable, SelectInput, SelectInputForCity },
   mixins: [BasePage],
+  metaInfo: { title: '上游来单' },
   data () {
     return {
       tabType: 'upstream',
-      isEasySearch: true, // 是否为简易搜索
       currentBtns: [], // 当前按钮组
       // 简易搜索类型
       selectList: [
         { value: 1, label: '客户名称' },
         { value: 2, label: '客户单号' }
       ],
+      isEasySearch: true, // 是否为简易搜索
+      inSearching: false, // 当前是否搜索中
       easySelectMode: 1, // 简易搜索当前类型
-      tabList: [
-        { name: '全部', count: '' },
-        { name: '待接收', count: '' },
-        { name: '已接收', count: '' },
-        { name: '拒绝', count: '' }
-      ],
-      btnList: [
-        {
-          tab: '全部',
-          btns: [
-            {
-              name: '导出',
-              code: 120102,
-              func: () => {
-                this.a()
-              }
-            }
-          ]
-        },
-        {
-          tab: '待接收',
-          btns: [{
-            name: '接收',
-            code: 120108,
-            func: () => {
-              this.a()
-            }
-          }, {
-            name: '拒绝',
-            code: 120108,
-            func: () => {
-              this.a()
-            }
-          }, {
-            name: '导出',
-            code: 120108,
-            func: () => {
-              this.a()
-            }
-          }]
-        },
-        {
-          tab: '已接收',
-          btns: [
-            {
-              name: '导出',
-              code: 120102,
-              func: () => {
-                this.a()
-              }
-            }
-          ]
-        },
-        {
-          tab: '拒绝',
-          btns: [
-            {
-              name: '导出',
-              code: 120102,
-              func: () => {
-                this.a()
-              }
-            }
-          ]
+      easySearchKeyword: '', // 简易搜索字段
+
+      // 高级搜索字段
+      seniorSearchFields: {
+        shipperCompanyName: '', // 客户名称
+        customerOrderNo: '', // 客户单号
+        departureCity: '', // 发货城市
+        destinationCity: '', // 收货城市
+        dateRange: ['', ''] // 日期范围
+      },
+      tabList: TABLIST,
+      btnList: BTNLIST(this),
+      tableColumns: TABLE_COLUMNS(this), // 表头
+      searchFields: {}, // 发起请求时的搜索字段
+      tableSelection: [], // 表格的选中项
+      timeOption: {
+        disabledDate (date) {
+          return date && date.valueOf() > Date.now() // 过滤当前日期之后的日期
         }
-      ]
+      }
     }
   },
   computed: {
@@ -237,23 +198,20 @@ export default {
       } else {
         this.tabStatus = this.setTabStatus(this.tabList[0].name)
         if (this.tabType === 'upstream') this.currentBtns = this.btnList[0].btns
-        // this.fetchData()
+        this.fetchData()
       }
     },
     // 设置标签状态
     setTabStatus (tab) {
       switch (tab) {
-        // case '全部':
-        //   this.triggerTableActionColumn(true)
-        //   return
         case '全部':
-          return 1
+          return
         case '待接收':
-          return 2
+          return 1
         case '已接收':
-          return 3
+          return 2
         case '拒绝':
-          return 4
+          return 3
         default:
       }
     },
@@ -269,11 +227,19 @@ export default {
       // 设置当前tab状态
       this.tabStatus = this.setTabStatus(tab)
       // 重置搜索条件
-      // this.resetEasySearch()
-      // this.resetSeniorSearch()
+      this.resetEasySearch()
+      this.resetSeniorSearch()
       // 搜索与查询
-      // if ((this.tabType === 'ABNORMAL') || (this.tabType === 'OUTER') || (this.tabType !== 'OUTER' && this.tabStatus)) this.fetchData()
-      // else this.fetchTabCount && this.fetchTabCount()
+      this.fetchTabCount && this.fetchTabCount()
+    },
+    // 查询标签页数量
+    fetchTabCount () {
+      Server({
+        url: '/busconnector/shipper/getOrderNumByStatus',
+        method: 'get'
+      }).then(res => {
+        this.tabList = setTabList(res.data.data)
+      })
     },
     // 简易与高级搜索切换
     changeSearchType () {
@@ -281,8 +247,174 @@ export default {
       this.resetEasySearch()
       this.resetSeniorSearch()
     },
-    a () {
-      console.log('111')
+    // 重置高级搜索
+    resetSeniorSearch () {
+      let needReset = false
+      for (let key in this.seniorSearchFields) {
+        if (key === 'dateRange') {
+          this.seniorSearchFields.dateRange = []
+        } else if (this.seniorSearchFields[key] !== '') {
+          this.seniorSearchFields[key] = ''
+          needReset = true
+        }
+      }
+      if (!needReset || !this.inSearching) return
+      // this.page.current = 1
+      this.inSearching = false
+      // this.resetSeniorSearch()
+      this.fetchData()
+    },
+    // 重置简易搜索
+    resetEasySearch () {
+      if (this.easySearchKeyword === '') return
+      this.easySearchKeyword = ''
+      if (!this.inSearching) return
+      // this.page.currentcurrent = 1
+      this.inSearching = false
+      this.fetchData()
+    },
+    // 设置查询参数
+    setFetchParams () {
+      let params = {
+        status: this.tabStatus
+      }
+      if (this.inSearching) {
+        if (this.isEasySearch) {
+          if (this.easySearchKeyword) {
+            if (this.easySelectMode === 1) {
+              params.shipperCompanyName = this.easySearchKeyword
+            } else if (this.easySelectMode === 2) {
+              params.customerOrderNo = this.easySearchKeyword
+            }
+          }
+        } else {
+          if (this.seniorSearchFields.dateRange[0]) {
+            this.seniorSearchFields.createTimeStart = this.seniorSearchFields.dateRange[0].Format('yyyy-MM-dd hh:mm:ss')
+          } else this.seniorSearchFields.createTimeStart = ''
+          if (this.seniorSearchFields.dateRange[1]) {
+            let endTime = this.seniorSearchFields.dateRange[1].getTime() + (24 * 60 * 60 - 1) * 1000
+            this.seniorSearchFields.createTimeEnd = (new Date(endTime)).Format('yyyy-MM-dd hh:mm:ss')
+          } else this.seniorSearchFields.createTimeEnd = ''
+
+          for (let key in this.seniorSearchFields) {
+            if (key === 'dateRange') continue
+            if (this.seniorSearchFields[key]) {
+              params[key] = this.seniorSearchFields[key]
+            }
+          }
+        }
+      }
+      return params
+    },
+    // 查询数据
+    fetchData () {
+      this.tableSelection = []
+      this.$refs.$table && this.$refs.$table.clearSelected() // 清空已选项
+      this.searchFields = this.setFetchParams() // 设置请求搜索字段，page table组件会自动查询
+      this.fetchTabCount && this.fetchTabCount() // 如果存在查询tab数量的方法则查询
+    },
+    // 状态码转名称
+    statusToName (code) {
+      let name
+      switch (code) {
+        case 10:
+          name = '待提货'
+          break
+        case 20:
+          name = '待送货'
+          break
+        case 30:
+          name = '在途'
+          break
+        case 40:
+          name = '已到货'
+          break
+        case 50:
+          name = '已回单'
+          break
+        case 99:
+          name = '已拒绝'
+          break
+        case 100:
+          name = '已删除'
+          break
+      }
+      return name
+    },
+    /**
+     * 搜索
+     * 如果是简易搜索则直接进行搜索
+     * 如果是高级搜索且存在搜索关键字则搜索
+     */
+    startSearch () {
+      if (!this.isEasySearch) {
+        let canSearch = false
+        for (let key in this.seniorSearchFields) {
+          if (this.seniorSearchFields[key] !== '') canSearch = true
+        }
+        if (!canSearch) return
+      }
+      this.inSearching = true
+      this.fetchData()
+    },
+    // 校验批量操作时是否已选择
+    checkTableSelection () {
+      if (!this.tableSelection.length) {
+        this.$Message.error('请至少选择一条信息')
+        return false
+      }
+      return true
+    },
+    // 导出
+    upstreamExport () {
+      let data = this.setFetchParams()
+      data.shipperOrderIds = this.tableSelection.map(item => item.shipperOrderId)
+      if (data.shipperOrderIds.length <= 0) {
+        data.shipperOrderIds = undefined
+      }
+      // console.log(data)
+      Export({
+        url: '/busconnector/shipper/export',
+        method: 'post',
+        data,
+        fileName: '订单明细'
+      })
+    },
+    // 接受
+    accept () {
+      if (!this.checkTableSelection()) return
+      let shipperOrderIds = this.tableSelection.map(item => item.shipperOrderId)
+      Server({
+        url: '/busconnector/shipper/accept',
+        method: 'get',
+        data: { shipperOrderIds }
+      }).then(res => {
+        self.$Message.success('接受成功')
+      })
+    },
+    // 拒绝
+    reject () {
+      const self = this
+      // if (!this.checkTableSelection()) return
+      self.openDialog({
+        name: 'upstream/dialog/confirm',
+        data: {
+          title: '提示',
+          message: '确认要拒绝选中的订单吗？拒绝后将无法恢复'
+        },
+        methods: {
+          confirm () {
+            let shipperOrderIds = self.tableSelection.map(item => item.shipperOrderId)
+            Server({
+              url: '/busconnector/shipper/reject',
+              method: 'post',
+              data: { shipperOrderIds }
+            }).then(res => {
+              self.$Message.success('拒绝完成')
+            })
+          }
+        }
+      })
     }
   }
 }
