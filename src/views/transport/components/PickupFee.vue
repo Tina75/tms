@@ -40,9 +40,9 @@
         </i-col>
       </Row>
     </div>
-
-    <div v-if="source !== 'abnormal'" class="part">
-      <Row v-if="sendWay === '1'" class="detail-field-group">
+    <!-- 外转 -->
+    <div v-if="sendWay === '1' && source !== 'abnormal'">
+      <Row class="detail-field-group">
         <i-col span="24">
           <span class="detail-field-title detail-field-required" style="width: 92px;">结算方式：</span>
           <div class="detail-payment-way">
@@ -61,14 +61,23 @@
         </i-col>
       </Row>
 
-      <Row v-if="orderCount > 1" class="detail-field-group" style="margin-top: 15px;margin-left: 10px;">
+      <Row v-if="pickFeeOrders.length > 1" class="detail-field-group" style="margin-top: 15px;margin-left: 10px;">
         <i-col span="24">
-          <allocation-strategy ref="allocationStrategy"></allocation-strategy>
+          <allocation-strategy ref="allocationStrategy" :allocation-orders="pickFeeOrders"></allocation-strategy>
         </i-col>
       </Row>
     </div>
 
-    <div v-if="source === 'abnormal'" class="part">
+    <!-- 自送 -->
+    <div v-if="sendWay === '2' && source !== 'abnormal' && pickFeeOrders.length > 1">
+      <Row class="detail-field-group" style="margin-left: 10px;">
+        <i-col span="8">
+          <allocation-strategy ref="allocationStrategy" :allocation-orders="pickFeeOrders"></allocation-strategy>
+        </i-col>
+      </Row>
+    </div>
+
+    <div v-if="source === 'abnormal'">
       <Row v-if="abnormalLength > 0" class="detail-field-group">
         <i-col span="24">
           <PayInfo
@@ -80,7 +89,7 @@
             mode="edit" />
         </i-col>
       </Row>
-      <Row class="detail-field-group">
+      <Row class="detail-field-group row-margin">
         <i-col span="24">
           <span class="detail-field-title-sm" style="margin-left: 10px;">分摊策略：</span>
           <span style="margin-right: 10px;">{{ getAllocationValToLabel(allocationType) }}</span>
@@ -147,10 +156,9 @@ export default {
       type: [String, Number],
       default: 1
     },
-    // 订单数量
-    orderCount: {
-      type: Number,
-      default: 0
+    // 传入的订单list,需要校验数量、体积、重量
+    pickFeeOrders: {
+      type: Array
     },
     // 分摊类型 默认1 按订单数分摊
     allocationType: {
@@ -292,4 +300,6 @@ export default {
   .part
     padding 10px 0 20px
     border-bottom none
+  .row-margin
+    margin 20px 0 35px 0
 </style>

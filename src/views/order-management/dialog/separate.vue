@@ -16,23 +16,42 @@
       </div>
       <div class="order-number">
         <Row>
-          <i-col>
+          <i-col span="12">
             始发地／目的地：{{ detailData.startName + ' - ' + detailData.endName }}
+          </i-col>
+          <i-col span="12">
+            费用合计：{{ detailData.totalFee / 100 }}元
           </i-col>
         </Row>
       </div>
       <div class="border-dashed margin-bottom-21"></div>
-      <div v-if="childOrderCargoList.length" class="order-number">
-        子订单1：{{ childOneNo }}
-      </div>
+      <Row v-if="childOrderCargoList.length" class="order-number">
+        <i-col span="10">
+          子订单1：{{ childOneNo }}
+        </i-col>
+        <i-col span="14">
+          费用：{{ childOneFee }}元
+        </i-col>
+      </Row>
       <Table :columns="columns1" :data="parentOrderCargoList"></Table>
     </div>
     <div v-if="childOrderCargoList.length">
       <div class="border-dashed margin-dashed-two"></div>
-      <div class="order-number">
-        子订单2：{{ childTwoNo }}
-      </div>
+      <Row class="order-number">
+        <i-col span="10">
+          子订单2：{{ childTwoNo }}
+        </i-col>
+        <i-col span="14">
+          费用：{{ childTwoFee }}元
+        </i-col>
+      </Row>
       <Table :columns="columns2" :data="childOrderCargoList"></Table>
+      <allocation-strategy
+        ref="allocationStrategy"
+        :allocation-orders="[...detailData]"
+        source="order"
+        class="separate-allocation"
+        @changeAllocationStrategy="onChangeAllocation"></allocation-strategy>
     </div>
     <div slot="footer">
       <Button
@@ -52,8 +71,11 @@ import BaseDialog from '@/basic/BaseDialog'
 import float from '@/libs/js/float'
 import { TABLE_COLUMNS_ONE, TABLE_COLUMNS_TWO } from '../constant/separate'
 import _ from 'lodash'
+import AllocationStrategy from '@/views/transport/components/AllocationStrategy.vue'
+
 export default {
   name: 'separate',
+  components: { AllocationStrategy },
   mixins: [BaseDialog],
   data () {
     return {
@@ -70,7 +92,8 @@ export default {
       weightVal: 0,
       volumeVal: 0,
       cargoCostVal: 0,
-      cloneData: [] // 复制一份货物详情数据
+      cloneData: [], // 复制一份货物详情数据
+      allocationStrategy: 1
     }
   },
 
@@ -80,6 +103,49 @@ export default {
     },
     childTwoNo () {
       return this.orderNo.indexOf('-') > -1 ? this.orderNo.substring(0, this.orderNo.indexOf('-')) + '-' + (this.subOrderNum + 1) : this.orderNo + '-2'
+    },
+    childOneFee () {
+      let fee = float.round(this.detailData.totalFee / 100)
+      if (this.allocationStrategy === 1) { // 按订单数分摊费用
+        fee /= 2
+      } else if (this.allocationStrategy === 2 && this.detailData.quantity) { // 按件数分摊费用，件数必须大于0
+        fee *= (this.parentQuantity / this.detailData.quantity)
+      } else if (this.allocationStrategy === 3 && this.detailData.weight) { // 按重量分摊费用，重量必须大于0
+        fee *= (this.parentWeight / this.detailData.weight)
+      } else if (this.allocationStrategy === 4 && this.detailData.volume) { // 按体积分摊费用，体积必须大于0
+        fee *= (this.parentVolume / this.detailData.volume)
+      } else {
+        fee = 0
+      }
+      return float.round(fee)
+    },
+    childTwoFee () {
+      let fee = float.round(this.detailData.totalFee / 100)
+      return float.round(fee - this.childOneFee)
+    },
+    // 子单1的总数量
+    parentQuantity () {
+      let quantity = 0
+      this.parentOrderCargoList.map((item) => {
+        quantity += item.quantity
+      })
+      return quantity
+    },
+    // 子单1的总重量
+    parentWeight () {
+      let weight = 0
+      this.parentOrderCargoList.map((item) => {
+        weight += item.weight
+      })
+      return weight
+    },
+    // 子单1的总体积
+    parentVolume () {
+      let volume = 0
+      this.parentOrderCargoList.map((item) => {
+        volume += item.volume
+      })
+      return volume
     }
   },
 
@@ -89,6 +155,9 @@ export default {
   },
 
   methods: {
+    onChangeAllocation (val) {
+      this.allocationStrategy = val
+    },
     save () {
       // 将参数中的重量体积四舍五入
       this.parentOrderCargoList.map((item) => {
@@ -101,7 +170,8 @@ export default {
       })
       const data = {
         id: this.id,
-        orderCargoList: [[...this.parentOrderCargoList], [...this.childOrderCargoList]]
+        orderCargoList: [[...this.parentOrderCargoList], [...this.childOrderCargoList]],
+        allocationStrategy: this.$refs.allocationStrategy.getAllocation()
       }
       Server({
         url: 'order/disassemble',
@@ -141,7 +211,7 @@ export default {
         method: 'get'
       }).then((res) => {
         console.log(res)
-        this.detailData = res.data.data
+        this.detailData = _.cloneDeep(res.data.data)
         let orderCargoList = res.data.data.orderCargoList
         // 将返回数据列表中货值、数量、重量、体积的''替换成0
         orderCargoList.map((item) => {
@@ -244,4 +314,10 @@ export default {
     padding 20px 32px
   .ivu-table-cell
     padding-left 26px
+  .separate-allocation
+    margin-top 32px
+    .ivu-form-item-label
+      color rgba(47,50,62,1) !important
+      font-size 14px
+      padding 10px 0 10px
 </style>

@@ -182,7 +182,7 @@
             <Row class="detail-field-group">
               <i-col span="24">
                 <span class="detail-field-title-sm">分摊策略：</span>
-                <span class="detail-field-fee">{{ getAllocationValToLabel(info.allocationStrategy) }}</span>
+                <span>{{ getAllocationValToLabel(info.allocationStrategy) }}</span>
               </i-col>
             </Row>
           </div>
@@ -298,7 +298,7 @@
           :settlement-pay-info="settlementPayInfo"
           :finance-rules-info="financeRulesInfo"
           :send-way="sendWay"
-          :order-count="orderCount"
+          :send-fee-orders="detail"
           source="detail">
         </send-fee>
       </div>
@@ -647,9 +647,6 @@ export default {
     }
   },
   computed: {
-    orderCount () {
-      return this.detail.length
-    },
     feeStatusTip () {
       if (this.feeStatus === 10) return '此单已对账，不允许修改'
       else if (this.feeStatus === 20) return '此单已核销，不允许修改'
@@ -678,7 +675,8 @@ export default {
           start: z.info.start,
           end: z.info.end,
           status: z.info.status,
-          assignCarType: z.sendWay
+          assignCarType: z.sendWay,
+          allocationStrategy: z.detail.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
         })
       })
       return data
@@ -835,7 +833,8 @@ export default {
         start: z.info.start,
         end: z.info.end,
         status: z.info.status,
-        assignCarType: z.sendWay
+        assignCarType: z.sendWay,
+        allocationStrategy: z.detail.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
       })
       console.log(data)
       Server({
@@ -869,7 +868,8 @@ export default {
         start: z.info.start,
         end: z.info.end,
         status: z.info.status,
-        assignCarType: z.sendWay
+        assignCarType: z.sendWay,
+        allocationStrategy: z.detail.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
       })
       if (JSON.stringify(data) === JSON.stringify(z.changeStr)) {
         z.$Message.error('您并未做修改')
