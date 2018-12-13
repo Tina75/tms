@@ -350,33 +350,33 @@ export default {
       switch (this.tabStatus) {
         case 1:
           this.searchFields = {
-            startTime: this.keywords.startTime,
-            endTime: this.keywords.endTime
+            startTime: this.keywords.startTime || undefined,
+            endTime: this.keywords.endTime || undefined
           }
           this.loadDate(this.searchFields)
           break
         case 2:
           this.searchFields = {
-            startTime: this.keywords.startTime,
-            endTime: this.keywords.endTime,
-            consignerName: this.keywords.consignerName
+            startTime: this.keywords.startTime || undefined,
+            endTime: this.keywords.endTime || undefined,
+            consignerName: this.keywords.consignerName || undefined
           }
           break
         case 3:
           this.searchFields = {
-            startTime: this.keywords.startTime,
-            endTime: this.keywords.endTime,
-            waybillNo: this.keywords.waybillNo,
-            carNo: this.keywords.carNo
+            startTime: this.keywords.startTime || undefined,
+            endTime: this.keywords.endTime || undefined,
+            waybillNo: this.keywords.waybillNo || undefined,
+            carNo: this.keywords.carNo || undefined
           }
           break
         case 4:
           this.searchFields = {
-            startTime: this.keywords.startTime,
-            endTime: this.keywords.endTime,
-            consignerName: this.keywords.consignerName,
-            customerOrderNo: this.keywords.customerOrderNo,
-            orderNo: this.keywords.orderNo
+            startTime: this.keywords.startTime || undefined,
+            endTime: this.keywords.endTime || undefined,
+            consignerName: this.keywords.consignerName || undefined,
+            customerOrderNo: this.keywords.customerOrderNo || undefined,
+            orderNo: this.keywords.orderNo || undefined
           }
           break
       }
