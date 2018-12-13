@@ -282,6 +282,7 @@ export default {
         url: 'set/smsInfo',
         method: 'get'
       }).then(({ data }) => {
+        this.switchMsg = false
         if (data.data.smsCode) {
           this.msgCheckBoxList = data.data.smsCode === '' ? [] : data.data.smsCode
           this.msgCheckBoxListInit = data.data.smsCode === '' ? [] : data.data.smsCode
