@@ -122,6 +122,7 @@ export default {
         { title: '页面查看', code: '120200', parentId: '120000', disabled: true },
         { title: '提货调度', code: '120208', parentId: '120200', grandId: '120000', disabled: true },
         // { title: '外转', code: '120209', parentId: '120200', grandId: '120000', disabled: true },
+        { title: '派车', code: '120213', parentId: '120200', grandId: '120000', disabled: true },
         { title: '提货', code: '120201', parentId: '120200', grandId: '120000', disabled: true },
         { title: '打印', code: '120202', parentId: '120200', grandId: '120000', disabled: true },
         { title: '到货', code: '120203', parentId: '120200', grandId: '120000', disabled: true },
@@ -484,6 +485,8 @@ export default {
     children: [
       { title: '运营报表', code: '180100', parentId: '180000', disabled: true },
       { title: '营业额汇总表', code: '180200', parentId: '180000', disabled: true },
+      { title: '自有车出车统计报表', code: '180400', parentId: '180000', disabled: true },
+      { title: '自有司机出车统计报表', code: '180500', parentId: '180000', disabled: true },
       { title: '利润报表', code: '180300', parentId: '180000', disabled: true }
     ]
   }],
@@ -496,7 +499,8 @@ export default {
     code: '150000',
     children: [
       // { title: '公司设置', code: '150100', parentId: '150000', disabled: true },
-      { title: '短信设置', code: '150200', parentId: '150000', disabled: true }
+      { title: '短信设置', code: '150200', parentId: '150000', disabled: true },
+      { title: '系统设置', code: '150300', parentId: '150000', disabled: true }
     ]
   }]
 }

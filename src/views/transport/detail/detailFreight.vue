@@ -81,11 +81,18 @@
                   <span v-if="info.carType">{{ info.carType|carTypeFormatter }} {{ info.carLength|carLengthFormatter }}</span>
                   <span v-else>-</span>
                 </i-col>
+                <i-col v-if="info.assignCarType === 1" span="8">
+                  <span class="detail-field-title">承运商运单号：</span>
+                  <span v-if="info.carrierWaybillNo">{{info.carrierWaybillNo}}</span>
+                  <span v-else>-</span>
+                </i-col>
                 <i-col span="8">
                   <span class="detail-field-title">代收货款：</span>
                   <span v-if="info.collectionMoney">{{info.collectionMoney / 100}}元</span>
                   <span v-else>-</span>
                 </i-col>
+              </Row>
+              <Row class="detail-field-group">
                 <i-col v-if="info.assignCarType === 1" span="8">
                   <span class="detail-field-title">返现运费：</span>
                   <span v-if="info.cashBack">{{info.cashBack / 100}}元</span>
@@ -140,6 +147,10 @@
                 <span class="detail-field-title-sm">路桥费：</span>
                 <span class="detail-field-fee">{{ payment.tollFee || 0 }}元</span>
               </i-col>
+              <i-col v-if="info.assignCarType === 2" span="6">
+                <span class="detail-field-title-sm">住宿费：</span>
+                <span class="detail-field-fee">{{ payment.accommodation || 0 }}元</span>
+              </i-col>
               <i-col span="6">
                 <span class="detail-field-title-sm">保险费：</span>
                 <span class="detail-field-fee">{{ payment.insuranceFee || 0 }}元</span>
@@ -166,6 +177,12 @@
                     :data="settlementPayInfo"
                     class="detail-field-payinfo" />
                 </div>
+              </i-col>
+            </Row>
+            <Row class="detail-field-group">
+              <i-col span="24">
+                <span class="detail-field-title-sm">分摊策略：</span>
+                <span>{{ getAllocationValToLabel(info.allocationStrategy) }}</span>
               </i-col>
             </Row>
           </div>
@@ -234,30 +251,22 @@
               </FormItem>
             </i-col>
           </Row>
-
-          <div class="sub-title">
-            <div class="send-label">派车方式：</div>
-            <RadioGroup v-model="sendWay" @on-change="changeAssignCar">
-              <Radio :disabled="radioDisabled" label="2">自送</Radio>
-              <Radio :disabled="radioDisabled" label="1">外转</Radio>
-              <!-- <Radio label="3">下发承运商</Radio> -->
-            </RadioGroup>
-          </div>
-          <own-send-info v-if="sendWay === '2'" ref="ownSendInfo" :form="ownInfo" source="detail"></own-send-info>
-          <send-carrier-info
-            v-else
-            ref="SendCarrierInfo"
-            :carrier-info="carrierInfo"
-            source="detail"></send-carrier-info>
-
-          <Row class="detail-field-group">
-            <i-col span="24">
-              <FormItem label="备注：" class="padding-left-label">
-                <Input v-model="info.remark" :maxlength="100" class="detail-info-input" />
-              </FormItem>
-            </i-col>
-          </Row>
         </Form>
+
+        <div class="sub-title">
+          <div class="send-label">派车方式：</div>
+          <RadioGroup v-model="sendWay" @on-change="changeAssignCar">
+            <Radio :disabled="radioDisabled" label="2">自送</Radio>
+            <Radio :disabled="radioDisabled" label="1">外转</Radio>
+            <!-- <Radio label="3">下发承运商</Radio> -->
+          </RadioGroup>
+        </div>
+        <own-send-info v-if="sendWay === '2'" ref="ownSendInfo" :form="ownInfo" :source="source"></own-send-info>
+        <send-carrier-info
+          v-else
+          ref="SendCarrierInfo"
+          :carrier-info="carrierInfo"
+          :source="source"></send-carrier-info>
       </div>
       <!-- 承运订单 -->
       <div>
@@ -289,6 +298,7 @@
           :settlement-pay-info="settlementPayInfo"
           :finance-rules-info="financeRulesInfo"
           :send-way="sendWay"
+          :send-fee-orders="detail"
           source="detail">
         </send-fee>
       </div>
@@ -332,6 +342,8 @@ import TMSUrl from '@/libs/constant/url'
 import _ from 'lodash'
 import { mapActions } from 'vuex'
 import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
+import allocationStrategy from '../constant/allocation.js'
+
 export default {
   name: 'detailFeright',
   metaInfo: { title: '运单详情' },
@@ -361,7 +373,9 @@ export default {
         cashBack: 0, // 返现运费
         assignCarType: 1, // 派车类型 1 外转 2 自送 V1.07新增
         assistantDriverName: '', // 副司机名称  V1.07新增
-        assistantDriverPhone: '' // 副司机电话  V1.07新增
+        assistantDriverPhone: '', // 副司机电话  V1.07新增
+        carrierWaybillNo: '', // 承运商运单号 v1.08新增
+        allocationStrategy: 1 // 分摊策略 默认按订单数分摊 v1.08新增
       },
       // 外转赋值给子组件
       carrierInfo: {
@@ -370,7 +384,9 @@ export default {
         driverPhone: '',
         carNo: '',
         carType: '',
-        carLength: ''
+        carLength: '',
+        remark: '',
+        carrierWaybillNo: '' // 承运商运单号 v1.08新增z
       },
       // 自送赋值给子组件
       ownInfo: {
@@ -386,7 +402,8 @@ export default {
         otherFee: null,
         cashBack: null,
         tollFee: null, // 路桥费
-        mileage: null // 计费里程 v1.06 新增
+        mileage: null, // 计费里程 v1.06 新增
+        accommodation: null // 住宿费 v1.08 新增
       },
       rules: {
         start: [
@@ -484,6 +501,7 @@ export default {
             name: '改单',
             code: 120116,
             func: () => {
+              this.source = 'change'
               this.inEditing = 'change'
               this.changeStr = this.changeParams
               this.changeState({ id: this.id, type: 3 })
@@ -502,6 +520,7 @@ export default {
             name: '改单',
             code: 120116,
             func: () => {
+              this.source = 'change'
               this.inEditing = 'change'
               this.changeStr = this.changeParams
               this.changeState({ id: this.id, type: 3 })
@@ -623,7 +642,8 @@ export default {
       changeStr: '',
       printData: [], // 待打印数据
       sendWay: '1', // 派车类型 1 外转 2 自送  V1.07新增
-      radioDisabled: false // 控制单选按钮禁用
+      radioDisabled: false, // 控制单选按钮禁用
+      source: 'detail' // 详情页编辑传detail不校验承运商，改单需校验承运商，不传detail
     }
   },
   computed: {
@@ -655,8 +675,8 @@ export default {
           start: z.info.start,
           end: z.info.end,
           status: z.info.status,
-          remark: z.info.remark,
-          assignCarType: z.sendWay
+          assignCarType: z.sendWay,
+          allocationStrategy: z.detail.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
         })
       })
       return data
@@ -685,7 +705,11 @@ export default {
         case 4: return '已到货'
       }
     },
-
+    // 将分摊策略返回的标识映射为文字
+    getAllocationValToLabel (data) {
+      let list = allocationStrategy.find(item => item.value === data)
+      return list.label
+    },
     fetchData () {
       this.loading = true
       Server({
@@ -723,7 +747,9 @@ export default {
             driverPhone: '',
             carNo: '',
             carType: '',
-            carLength: ''
+            carLength: '',
+            remark: '',
+            carrierWaybillNo: '' // 承运商运单号
           }
         }
         for (let key in this.payment) {
@@ -807,8 +833,8 @@ export default {
         start: z.info.start,
         end: z.info.end,
         status: z.info.status,
-        remark: z.info.remark,
-        assignCarType: z.sendWay
+        assignCarType: z.sendWay,
+        allocationStrategy: z.detail.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
       })
       console.log(data)
       Server({
@@ -842,8 +868,8 @@ export default {
         start: z.info.start,
         end: z.info.end,
         status: z.info.status,
-        remark: z.info.remark,
-        assignCarType: z.sendWay
+        assignCarType: z.sendWay,
+        allocationStrategy: z.detail.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
       })
       if (JSON.stringify(data) === JSON.stringify(z.changeStr)) {
         z.$Message.error('您并未做修改')
@@ -865,12 +891,11 @@ export default {
       // if (!_this.validate()) return
       z.$refs['send'].validate((valid) => {
         if (valid) {
-          if (!z.checkDetailValidate()) {
-            if (z.inEditing === 'change') {
-              z.$Message.warning('您有信息未填')
-            }
-            return
-          }
+          if (!z.checkDetailValidate()) return
+          // if (z.inEditing === 'change') {
+          //   z.$Message.warning('您有信息未填')
+          //   return
+          // }
           if (z.inEditing === 'edit') {
             z.edit()
           } else if (z.inEditing === 'change') {
@@ -1125,6 +1150,7 @@ export default {
   .sub-title
     font-size 14px
     color #777
+    margin-bottom 10px
     .send-label
       display inline-block
       margin-right 20px

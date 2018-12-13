@@ -10,9 +10,11 @@
     </div>
     <div v-if="sendWay === '1'">
       <send-carrier-info ref="SendCarrierInfo"></send-carrier-info>
+
       <send-fee
         ref="sendFee"
         :mileage="mileage"
+        :send-fee-orders="sendOrders"
         :finance-rules-info="financeRulesInfo">
       </send-fee>
     </div>
@@ -20,6 +22,7 @@
       <own-send-info ref="ownSendInfo"></own-send-info>
       <send-fee
         ref="sendFee"
+        :send-fee-orders="sendOrders"
         send-way="2"></send-fee>
     </div>
   </div>
@@ -37,7 +40,8 @@ export default {
   components: { SendFee, SendCarrierInfo, OwnSendInfo },
   mixins: [ BaseDialog ],
   props: {
-    orderList: {
+    // 传入的订单list,需要校验数量、体积、重量
+    sendOrders: {
       type: Array
     },
     mileage: {
@@ -81,6 +85,10 @@ export default {
     getSettlementPayInfos () {
       return this.$refs.sendFee.getSettlementPayInfo()
     },
+    // 分摊策略传参
+    getAllocationStrategy () {
+      return this.$refs.sendFee.getAllocationStrategy()
+    },
     // 派车模块数据校验
     checkValidate () {
       if (this.sendWay === '1' && this.getCheckCarrierInfo() && this.$refs.sendFee.validate()) {
@@ -120,9 +128,6 @@ export default {
     .ivu-form-item-label
       padding-left 10px
 
-   .label-width
-    .ivu-form-item-label
-      width 92px !important
   .detail-payment-way
     width calc(100% - 100px) !important
 </style>

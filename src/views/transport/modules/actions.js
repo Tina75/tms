@@ -234,6 +234,22 @@ export default {
     })
   },
 
+  // 提货单提货
+  loadbillPickup (store, pickUpIds) {
+    return new Promise((resolve, reject) => {
+      if (!pickUpIds.length) reject(new Error('miss pickUpIds'))
+      Server({
+        url: '/load/bill/send/car',
+        method: 'post',
+        data: { pickUpIds }
+      }).then(() => {
+        resolve()
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+
   // 获取提货单列表tab count
   getPickupOrderTabCount ({ commit }) {
     Server({
@@ -242,6 +258,19 @@ export default {
     }).then(res => {
       commit(types.PICKUP_TAB_COUNT, setPickupTab(res.data.data))
     })
-  }
+  },
 
+  // 查询公司分摊策略
+  getAllocationStrategy (store) {
+    return new Promise((resolve, reject) => {
+      Server({
+        url: '/set/queryUserAllocationStrategy',
+        method: 'get'
+      }).then((res) => {
+        resolve(res)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  }
 }

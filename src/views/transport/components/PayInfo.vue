@@ -49,6 +49,7 @@ export default {
             if (p.row.payType === 1) type = '预付'
             if (p.row.payType === 2) type = '到付'
             if (p.row.payType === 3) type = '回付'
+            if (p.row.payType === 4) type = '尾款'
             return h('span', { style: { fontWeight: 'bolder' } }, type)
           }
         },
@@ -173,6 +174,7 @@ export default {
         if (p.row.payType === 1) str = '预付' + p.column.title
         if (p.row.payType === 2) str = '到付' + p.column.title
         if (p.row.payType === 3) str = '回付' + p.column.title
+        if (p.row.payType === 4) str = '尾款' + p.column.title
         str += '已核销,不能修改'
       } else {
         str = this.feeStatusTip

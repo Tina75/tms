@@ -14,7 +14,7 @@
           </Tooltip>
         </span>
         <span class="header-bar-avator-dropdown-notify">
-          <Badge :count="MsgCount.all" :offset="[5,1]" type="primary">
+          <Badge :count="MsgCount.all" :offset="[8,3]" type="primary">
             <Tooltip transfer content=" 消息">
               <Icon type="ios-notifications" size="30" color="#fff" @click="openMsg(0)"></Icon>
             </Tooltip>
@@ -76,8 +76,9 @@ import TMSUrl from '../libs/constant/url.js'
 import Server from '@/libs/js/server'
 
 const LocalStorageKeys = {
-  FIRST_TIME_LOGIN: 'first_time_login',
-  TMS_CLEAR_TRIAL: 'TMS_clear_trial'
+  FIRST_TIME_LOGIN: 'first_time_login', // 注册后第一次登录
+  TMS_CLEAR_TRIAL: 'TMS_clear_trial',
+  TMS_FIRST_DISCOVERY: 'TMS_first_discovery' // 探索运掌柜
 }
 export default {
   name: 'headerBar',
@@ -109,6 +110,8 @@ export default {
         if (sessionStorage.getItem('first_time_login') === 'true') {
           if (this.UserInfo.type === 1) this.renew()
           else this.changePasswordTip()
+          // 探索运掌柜
+          this.isPreviewDiscover()
           sessionStorage.removeItem('first_time_login')
         } else {
           // 短信是否超过次数
@@ -121,8 +124,7 @@ export default {
         // 查询所有的自有车辆和未绑定的司机
         this.getOwnDrivers()
         this.getOwnCars()
-        // 探索运掌柜
-        await this.isPreviewDiscover()
+
         // 添加GA配置属性
         this.$ga.set('phone', this.UserInfo.phone)
         this.$ga.set('roleName', this.UserInfo.roleName)
@@ -135,17 +137,25 @@ export default {
      * 接受货主发送的邀请合作请求
      */
     receiveInvitingCooperation () {
-      window.EMA.fire('Dialogs.push', {
-        name: 'dialogs/invite-cooperation',
-        data: {
-          title: '温馨提示'
-        },
-        methods: {
-          ok () {
-
-          }
-        }
+      Server({
+        url: 'message/inviteMessage',
+        method: 'get'
       })
+        .then((res) => {
+          if (res.data.data) {
+            window.EMA.fire('Dialogs.push', {
+              name: 'dialogs/invite-cooperation',
+              data: {
+                title: '温馨提示'
+              },
+              methods: {
+                ok () {
+
+                }
+              }
+            })
+          }
+        })
     },
     /**
      * 需要清除试用期期间的脏数据
@@ -162,12 +172,12 @@ export default {
           /**
            * data = {id,title,content,bTime,eTime}
            */
-          if (data) {
+          if (data.data) {
             window.EMA.fire('Dialogs.push', {
               name: 'dialogs/clear-trial-data',
               data: {
                 title: '试用期数据删除',
-                ...data
+                ...data.data
               },
               methods: {
                 ok () {

@@ -171,7 +171,12 @@ export default {
           window.localStorage.setItem('tms_is_login', true)
           this.setToken(res.data.data.token)
           window.sessionStorage.setItem('first_time_login', !res.data.data.lastLoginTime)
-          window.location.href = window.location.href.replace(window.location.hash, '')
+          if (res.data.data.companyType === 2) {
+            // 跳转 货主版
+            // window.location.href = 'http://localhost:8081'
+          } else {
+            window.location.href = window.location.href.replace(window.location.hash, '')
+          }
         }).catch(err => {
           this.getCaptcha()
           console.error(err)

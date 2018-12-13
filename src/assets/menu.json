@@ -6,6 +6,12 @@
     "powerCode":0
   },
   {
+    "name":"上游来单",
+    "path":"/upstream",
+    "icon":"shouye",
+    "powerCode":0
+  },
+  {
     "name":"受理开单",
     "icon":"shoulikaidan",
     "path":"/order",
@@ -114,6 +120,16 @@
         "name":"利润报表",
         "path":"/report/profit",
         "powerCode":180300
+      },
+      {
+        "name":"自有车出车统计",
+        "path":"/report/car",
+        "powerCode":0
+      },
+      {
+        "name":"自有司机出车统计",
+        "path":"/report/driver",
+        "powerCode":0
       }
     ]
   },

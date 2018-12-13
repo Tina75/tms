@@ -1,7 +1,7 @@
 
 <template>
   <div class="sider">
-    <Sider v-model="collapsed" :collapsed-width="50" hide-trigger collapsible style="overflow:hidden">
+    <Sider v-model="collapsed" :collapsed-width="50" hide-trigger collapsible class="sider-collapse" style="overflow:hidden">
       <Menu v-show="!collapsed" ref="menu" :active-name="$route.path" :open-names="openedNames" accordion width="200" theme="dark" @on-select="handleSelect">
         <div class="title"><font-icon type="logo-zjy1" size="24" color="white"/></div>
         <template v-for="item in menuList">
@@ -146,7 +146,8 @@ export default {
 <style lang="stylus" scoped>
 .sider
   z-index 10
-  padding-bottom 50px
+  .sider-collapse
+    padding-bottom 50px
   .title
     font-size 20px
     color white

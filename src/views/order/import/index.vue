@@ -188,7 +188,7 @@ export default {
               return h(Progress, {
                 props: {
                   strokeWidth: 6,
-                  percent: params.row.progress || 0,
+                  percent: params.row.progress || 10,
                   status: 'active'
                 }
               })
@@ -350,7 +350,8 @@ export default {
     loopCheckFileProgress (importId) {
       const vm = this
       let timer = null
-      vm.queue.push(importId)
+      // 塞入初始进度值
+      vm.queue.push({ importId, percent: vm.rangeRandom(20) })
 
       function checkProgress () {
         try {
@@ -362,7 +363,7 @@ export default {
                 importId
               }
             })
-            const { status, percent } = res.data.data
+            const { status } = res.data.data
             // status,1成功；0失败；2正在处理；3excel文件标题行非法
             if (status !== 2) {
               if (timer) {
@@ -375,15 +376,15 @@ export default {
               } else {
                 vm.$Message.success(`导入成功，共导入${res.data.data.orderNum}条订单`)
               }
-              // vm.visible = false
               vm.fetch()
               // 导入成功后，删除该条记录
               vm.$nextTick(() => {
-                vm.queue = vm.queue.filter(id => id !== importId)
+                vm.queue = vm.queue.filter(item => item.importId !== importId)
               })
             } else {
-              // vm.queue[importId] = percent
-              vm.updateProgress(importId, percent)
+              let { percent } = vm.queue.find(item => item.importId === importId)
+
+              vm.updateProgress(importId, vm.rangeRandom(percent))
               checkProgress()
             }
           }, 2000)
@@ -404,9 +405,25 @@ export default {
      */
     updateProgress (id, percent) {
       const record = this.dataSource.find((item) => item.id === id)
+      // 更新记录的进度
       if (record) {
         record.progress = percent
       }
+      // 保存最新的进度
+      const processItem = this.queue.find((item) => item.importId === id)
+      if (processItem) {
+        processItem.percent = percent
+      }
+    },
+    /**
+     * 随机范围值
+     */
+    rangeRandom (baseNumber = 20) {
+      let percent = Math.floor(Math.random() * 20 + baseNumber)
+      if (percent > 90) {
+        percent = 99
+      }
+      return percent
     },
     /**
      * 文件上传后，回调

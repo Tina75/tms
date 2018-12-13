@@ -9,12 +9,12 @@
       </RadioGroup>
     </div>
     <div v-if="sendWay === '1'">
-      <send-carrier-info ref="SendCarrierInfo" source="pickup"></send-carrier-info>
-      <pickup-fee ref="pickupFee"></pickup-fee>
+      <send-carrier-info ref="SendCarrierInfo" source-type="pickup"></send-carrier-info>
+      <pickup-fee ref="pickupFee" :pick-fee-orders="pickOrders"></pickup-fee>
     </div>
     <div v-else>
       <own-send-info ref="ownSendInfo"></own-send-info>
-      <pickup-fee ref="pickupFee" send-way="2"></pickup-fee>
+      <pickup-fee ref="pickupFee" :pick-fee-orders="pickOrders" send-way="2"></pickup-fee>
     </div>
   </div>
 </template>
@@ -32,6 +32,10 @@ export default {
   mixins: [ BaseDialog ],
 
   props: {
+    // 传入的订单list,需要校验数量、体积、重量
+    pickOrders: {
+      type: Array
+    },
     // 页面来源
     source: {
       type: String,
@@ -65,6 +69,10 @@ export default {
     // 多段付传参
     getSettlementPayInfos () {
       return this.$refs.pickupFee.getSettlementPayInfo()
+    },
+    // 分摊策略传参
+    getAllocationStrategy () {
+      return this.$refs.pickupFee.getAllocationStrategy()
     },
     // 派车模块数据校验
     checkValidate () {
@@ -117,9 +125,6 @@ export default {
     .ivu-form-item-label
       padding-left 10px
 
-   .label-width
-    .ivu-form-item-label
-      width 92px !important
   .detail-payment-way
     width calc(100% - 100px) !important
 </style>
