@@ -13,7 +13,8 @@ import * as types from './mutationTypes'
 // 计费规则包括承运商和发货方
 const state = {
   carriesRule: [], // 承运商
-  senderRule: [] // 发货方
+  senderRule: [], // 发货方
+  ruleTypeMap: {} // 计费规则类型
 }
 
 const mutations = {
@@ -22,6 +23,9 @@ const mutations = {
   },
   [types.SENDER_RULE_LIST] (state, list) {
     state.senderRule = list
+  },
+  [types.RULE_TYPE_MAP] (state, list) {
+    state.ruleTypeMap = list
   }
 }
 

@@ -32,7 +32,6 @@ export default {
         totalFee: ''
       },
 
-      activeTab: 'detail',
       showLog: false,
       logList: [], // 操作日志
       exceptionCount: 0,
@@ -105,6 +104,9 @@ export default {
     },
     isAbnomal () {
       return this.$route.query.abnormal === 1
+    },
+    activeTab () {
+      return !this.isAbnomal ? 'detail' : 'exception'
     }
   },
 
@@ -133,9 +135,6 @@ export default {
       } else {
         this.tableColumns.shift()
       }
-    },
-    isAbnomal (val) {
-      this.activeTab = val ? 'detail' : 'exception'
     }
   },
 

@@ -1,5 +1,6 @@
 <template>
   <div>
+    <TabHeader ref="$tab" :tabs="tabList" :type="tabType" @on-change="tabChanged"></TabHeader>
     <div class="search">
       <div class="search-list">
         <ButtonGroup>
@@ -21,6 +22,25 @@
         <Tooltip max-width="200" style="margin-left: 18px" transfer content="利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
           <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;" />
         </Tooltip>
+        <!--客户利润 单票利润-->
+        <SelectInput
+          v-if="tabStatus===2 || tabStatus===4"
+          v-model="keywords.consignerName"
+          :maxlength="20"
+          :remote="false"
+          :clearable="true"
+          :local-options="clients"
+          class="inputItem"
+          placeholder="请选择或输入客户名称"
+          @on-focus.once="getClients"
+        >
+        </SelectInput>
+        <!--整车利润-->
+        <Input v-if="tabStatus===3" v-model="keywords.waybillNo" :maxlength="20" class="inputItem"  placeholder="请输入运单号"/>
+        <Input v-if="tabStatus===3" v-model="keywords.carNo" :maxlength="15" class="inputItem"  placeholder="请输入车牌号"/>
+        <!--单票利润-->
+        <Input v-if="tabStatus===4" v-model="keywords.customerOrderNo" :maxlength="20" class="inputItem"  placeholder="请输入客户订单号"/>
+        <Input v-if="tabStatus===4" v-model="keywords.orderNo" :maxlength="20" class="inputItem"  placeholder="请输入订单号"/>
       </div>
       <div class="search-btn">
         <Button type="primary" @click="search(true)">生成报表</Button>
@@ -30,151 +50,184 @@
     <div style="margin: 18px 0 12px 0">
       <Button type="primary" @click="ProfitsExport">导出</Button>
     </div>
-    <div class="table">
-      <Row type="flex" justify="start" class="small-height bg" style="font-size: 12px">
-        <Col span="6">方向</Col>
-        <Col span="6">来源</Col>
-        <Col span="6">费用明细</Col>
-        <Col span="6">本期发生额</Col>
-      </Row>
-      <Row type="flex" justify="start" class="big-height" style="border-top: 0">
-        <Col span="6">收入</Col>
-        <Col span="6">
-        <Row class="middle-height border-top-none border-right-none">
-          <Col>上游运费收入</Col>
+    <!--公司利润-->
+    <template v-if="tabStatus===1">
+      <div class="table">
+        <Row type="flex" justify="start" class="small-height bg" style="font-size: 12px">
+          <Col span="6">方向</Col>
+          <Col span="6">来源</Col>
+          <Col span="6">费用明细</Col>
+          <Col span="6">本期发生额</Col>
         </Row>
-        <Row class="small-height border-top-none border-right-none border-bottom-none">
-          <Col>返现运费收入</Col>
+        <Row type="flex" justify="start" class="big-height" style="border-top: 0">
+          <Col span="6">收入</Col>
+          <Col span="6">
+          <Row class="middle-height border-top-none border-right-none">
+            <Col>上游运费收入</Col>
+          </Row>
+          <Row class="small-height border-top-none border-right-none border-bottom-none">
+            <Col>返现运费收入</Col>
+          </Row>
+          </Col>
+          <Col span="12" >
+          <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
+            <Col span="12">运输费</Col>
+            <Col span="12" class="num">{{res.orderFreightFee}}</Col>
+          </Row>
+          <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
+            <Col span="12">提货费</Col>
+            <Col span="12" class="num">{{res.orderPickupFee}}</Col>
+          </Row>
+          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+            <Col span="12">装货费</Col>
+            <Col span="12" class="num">{{res.orderLoadFee}}</Col>
+          </Row>
+          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+            <Col span="12">卸货费</Col>
+            <Col span="12" class="num">{{res.orderUnloadFee}}</Col>
+          </Row>
+          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+            <Col span="12">保险费</Col>
+            <Col span="12" class="num">{{res.orderInsuranceFee}}</Col>
+          </Row>
+          <Row type="flex" justify="start" class="small-height border-top-none">
+            <Col span="12">其他费用</Col>
+            <Col span="12" class="num">{{res.orderOtherFee}}</Col>
+          </Row>
+          <Row type="flex" justify="start" class="small-height border-top-none border-bottom-none border-right-none">
+            <Col span="12">返现运费</Col>
+            <Col span="12" class="num">{{res.orderCashBack}}</Col>
+          </Row>
+          </Col>
         </Row>
-        </Col>
-        <Col span="12" >
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
-          <Col span="12">运输费</Col>
-          <Col span="12" class="num">{{res.orderFreightFee}}</Col>
+        <Row type="flex" justify="start" class="small-height bg border-top-none">
+          <Col span="24"  style="text-align: right">主营业务收入合计<span class="money">{{res.orderTotalFee}}</span></Col>
         </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
-          <Col span="12">提货费</Col>
-          <Col span="12" class="num">{{res.orderPickupFee}}</Col>
+        <Row type="flex" justify="start"  class="big-height-2 border-top-none">
+          <Col span="6">支出</Col>
+          <Col span="6">
+          <Row class="middle-height border-top-none border-right-none">
+            <Col>承运商运费支出</Col>
+          </Row>
+          <Row class="middle-height-2 border-top-none border-bottom-none border-right-none">
+            <Col>自有车运费支出</Col>
+          </Row>
+          <Row class="small-height border-right-none border-bottom-none">
+            <Col>开票税费</Col>
+          </Row>
+          </Col>
+          <Col span="12" >
+          <!-- 承运商运费支出 -->
+          <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
+            <Col span="12">运输费</Col>
+            <Col span="12" class="num">{{res.carrierFreightFee}}</Col>
+          </Row>
+          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+            <Col span="12">装货费</Col>
+            <Col span="12" class="num">{{res.carrierLoadFee}}</Col>
+          </Row>
+          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+            <Col span="12">卸货费</Col>
+            <Col span="12" class="num">{{res.carrierUnloadFee}}</Col>
+          </Row>
+          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+            <Col span="12">保险费</Col>
+            <Col span="12" class="num">{{res.carrierInsuranceFee}}</Col>
+          </Row>
+          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+            <Col span="12">路桥费</Col>
+            <Col span="12" class="num">{{res.carrierTollFee}}</Col>
+          </Row>
+          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+            <Col span="12">其他费用</Col>
+            <Col span="12" class="num">{{res.carrierOtherFee}}</Col>
+          </Row>
+          <!-- 自有车运费支出 -->
+          <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
+            <Col span="12">油费</Col>
+            <Col span="12" class="num">{{res.myFuelFee}}</Col>
+          </Row>
+          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+            <Col span="12">路桥费</Col>
+            <Col span="12" class="num">{{res.myTollFee}}</Col>
+          </Row>
+          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+            <Col span="12">装货费</Col>
+            <Col span="12" class="num">{{res.myLoadFee}}</Col>
+          </Row>
+          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+            <Col span="12">卸货费</Col>
+            <Col span="12" class="num">{{res.myUnloadFee}}</Col>
+          </Row>
+          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+            <Col span="12">保险费</Col>
+            <Col span="12" class="num">{{res.myInsuranceFee}}</Col>
+          </Row>
+          <Row type="flex" justify="start" class="small-height border-top-none border-right-none border-bottom-none">
+            <Col span="12">其他费用</Col>
+            <Col span="12" class="num">{{res.myOtherFee}}</Col>
+          </Row>
+          <!-- 开票税费 -->
+          <Row type="flex" justify="start" class="small-height  border-bottom-none border-right-none">
+            <Col span="12">开票税费</Col>
+            <Col span="12" class="num">{{res.orderInvoiceFee}}</Col>
+          </Row>
+          </Col>
         </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-          <Col span="12">装货费</Col>
-          <Col span="12" class="num">{{res.orderLoadFee}}</Col>
+        <Row type="flex" justify="start" class="small-height bg border-top-none">
+          <Col span="24"  style="text-align: right">主营业务支出合计<span class="money">{{res.carrierTotalFee}}</span></Col>
         </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-          <Col span="12">卸货费</Col>
-          <Col span="12" class="num">{{res.orderUnloadFee}}</Col>
+        <Row type="flex" justify="start" class="small-height bg border-top-none">
+          <Col span="24"  style="text-align: right">利润<span class="money">{{res.profits}}</span></Col>
         </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-          <Col span="12">保险费</Col>
-          <Col span="12" class="num">{{res.orderInsuranceFee}}</Col>
-        </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none">
-          <Col span="12">其他费用</Col>
-          <Col span="12" class="num">{{res.orderOtherFee}}</Col>
-        </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-bottom-none border-right-none">
-          <Col span="12">返现运费</Col>
-          <Col span="12" class="num">{{res.orderCashBack}}</Col>
-        </Row>
-        </Col>
-      </Row>
-      <Row type="flex" justify="start" class="small-height bg border-top-none">
-        <Col span="24"  style="text-align: right">主营业务收入合计<span class="money">{{res.orderTotalFee}}</span></Col>
-      </Row>
-      <Row type="flex" justify="start"  class="big-height-2 border-top-none">
-        <Col span="6">支出</Col>
-        <Col span="6">
-        <Row class="middle-height border-top-none border-right-none">
-          <Col>承运商运费支出</Col>
-        </Row>
-        <Row class="middle-height-2 border-top-none border-bottom-none border-right-none">
-          <Col>自有车运费支出</Col>
-        </Row>
-        <Row class="small-height border-right-none border-bottom-none">
-          <Col>开票税费</Col>
-        </Row>
-        </Col>
-        <Col span="12" >
-        <!-- 承运商运费支出 -->
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
-          <Col span="12">运输费</Col>
-          <Col span="12" class="num">{{res.carrierFreightFee}}</Col>
-        </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-          <Col span="12">装货费</Col>
-          <Col span="12" class="num">{{res.carrierLoadFee}}</Col>
-        </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-          <Col span="12">卸货费</Col>
-          <Col span="12" class="num">{{res.carrierUnloadFee}}</Col>
-        </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-          <Col span="12">保险费</Col>
-          <Col span="12" class="num">{{res.carrierInsuranceFee}}</Col>
-        </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-          <Col span="12">路桥费</Col>
-          <Col span="12" class="num">{{res.carrierTollFee}}</Col>
-        </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-          <Col span="12">其他费用</Col>
-          <Col span="12" class="num">{{res.carrierOtherFee}}</Col>
-        </Row>
-        <!-- 自有车运费支出 -->
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
-          <Col span="12">油费</Col>
-          <Col span="12" class="num">{{res.myFuelFee}}</Col>
-        </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-          <Col span="12">路桥费</Col>
-          <Col span="12" class="num">{{res.myTollFee}}</Col>
-        </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-          <Col span="12">装货费</Col>
-          <Col span="12" class="num">{{res.myLoadFee}}</Col>
-        </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-          <Col span="12">卸货费</Col>
-          <Col span="12" class="num">{{res.myUnloadFee}}</Col>
-        </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-          <Col span="12">保险费</Col>
-          <Col span="12" class="num">{{res.myInsuranceFee}}</Col>
-        </Row>
-        <Row type="flex" justify="start" class="small-height border-top-none border-right-none border-bottom-none">
-          <Col span="12">其他费用</Col>
-          <Col span="12" class="num">{{res.myOtherFee}}</Col>
-        </Row>
-        <!-- 开票税费 -->
-        <Row type="flex" justify="start" class="small-height  border-bottom-none border-right-none">
-          <Col span="12">开票税费</Col>
-          <Col span="12" class="num">{{res.orderInvoiceFee}}</Col>
-        </Row>
-        </Col>
-      </Row>
-      <Row type="flex" justify="start" class="small-height bg border-top-none">
-        <Col span="24"  style="text-align: right">主营业务支出合计<span class="money">{{res.carrierTotalFee}}</span></Col>
-      </Row>
-      <Row type="flex" justify="start" class="small-height bg border-top-none">
-        <Col span="24"  style="text-align: right">利润<span class="money">{{res.profits}}</span></Col>
-      </Row>
-    </div>
+      </div>
+    </template>
+    <!--发货方利润、整车利润、单票利润-->
+    <template v-else>
+      <PageTable ref="$table"
+                 :key="tabStatus"
+                 :columns="tableColumns[tabStatus]"
+                 :show-filter="true"
+                 :keywords="searchFields"
+                 :table-head-type="headType"
+                 :url="url[tabStatus]"
+                 autoload="false"
+                 method="post"
+                 @on-load = "onLoad"
+      />
+    </template>
   </div>
 </template>
 
 <script>
+import TabHeader from './components/TabHeader'
+import * as profit from './constant/profit'
+import { mapGetters, mapActions } from 'vuex'
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
+import PageTable from '@/components/page-table'
+import SelectInput from '@/components/SelectInput.vue'
 import { getPreMonth } from './getPerMonth'
+import tableHeadType from '@/libs/constant/headtype.js'
 export default {
   name: 'profit',
   components: {
+    TabHeader,
+    PageTable,
+    SelectInput
   },
   metaInfo: {
     title: '利润报表'
   },
   data: function () {
     return {
+      tabType: 'PROFIT',
+      tabList: profit.TAB_LIST,
+      export_url: profit.EXPORT_URL,
+      export_title: profit.EXPORT_TITLE,
+      tableColumns: profit.TABLECOLUMNS,
+      url: profit.URL,
+      tabStatus: 1, // 当前标签页
       btnGroup: [
         { name: '近七天', value: 1 },
         { name: '本月', value: 2 },
@@ -187,7 +240,11 @@ export default {
       keywords: {
         startTime: '',
         endTime: '',
-        type: 1
+        consignerName: '',
+        waybillNo: '',
+        carNo: '',
+        customerOrderNo: '',
+        orderNo: ''
       },
       res: {
         orderFreightFee: '-',
@@ -219,33 +276,54 @@ export default {
         disabledDate (date) {
           return date && date.valueOf() > Date.now()
         }
-      }
+      },
+      searchFields: {}
     }
   },
   computed: {
+    ...mapGetters([
+      'clients'
+    ]),
+    headType () {
+      switch (this.tabStatus) {
+        case 2:
+          return tableHeadType.CUSTOMER_PROFIT
+        case 3:
+          return tableHeadType.CAR_PROFIT
+        case 4:
+          return tableHeadType.SINGLEVOTE_PROFIT
+        default:
+          return ''
+      }
+    },
     perMonth () {
       return getPreMonth()
     }
   },
   methods: {
-    search (type) {
-      if (!this.keywords.startTime && !this.keywords.endTime) { // 搜索条件为空
-        if (type) {
-          this.$Message.error('请先输入搜索条件')
+    ...mapActions([
+      'getClients'
+    ]),
+    // 判断对象中字段是否有值 有值 - true
+    isEmpty () {
+      /* flag返回false，则对象中值都是空 */
+      let flag = false
+      for (let key in this.keywords) {
+        if (this.keywords[key]) {
+          flag = true
         }
-        this.keywords = {
-          type: 1
-        }
-      } else {
-        Object.assign(this.keywords, { type: null })
       }
+      return flag
+    },
+    loadDate (data) {
+      // 公司利润
       Server({
         url: '/report/for/profits',
         headers: {
           'Content-Type': 'application/json'
         },
         method: 'POST',
-        data: this.keywords
+        data: data
       }).then((res) => {
         if (res.data.code === 10000) {
           this.res = res.data.data
@@ -256,13 +334,58 @@ export default {
         }
       })
     },
+    search (type) {
+      // 1、搜索条件为空，作提示
+      if (!this.isEmpty(this.keywords)) {
+        if (type) {
+          this.$Message.error('请先输入搜索条件')
+        }
+      }
+      switch (this.tabStatus) {
+        case 1:
+          this.searchFields = {
+            startTime: this.keywords.startTime,
+            endTime: this.keywords.endTime
+          }
+          this.loadDate(this.searchFields)
+          break
+        case 2:
+          this.searchFields = {
+            startTime: this.keywords.startTime,
+            endTime: this.keywords.endTime,
+            consignerName: this.keywords.consignerName
+          }
+          break
+        case 3:
+          this.searchFields = {
+            startTime: this.keywords.startTime,
+            endTime: this.keywords.endTime,
+            waybillNo: this.keywords.waybillNo,
+            carNo: this.keywords.carNo
+          }
+          break
+        case 4:
+          this.searchFields = {
+            startTime: this.keywords.startTime,
+            endTime: this.keywords.endTime,
+            consignerName: this.keywords.consignerName,
+            customerOrderNo: this.keywords.customerOrderNo,
+            orderNo: this.keywords.orderNo
+          }
+          break
+      }
+    },
     clearKeywords () {
       this.operateValue = ''
       this.times = ['', '']
       this.keywords = {
         startTime: '',
         endTime: '',
-        type: 1
+        consignerName: '',
+        waybillNo: '',
+        carNo: '',
+        customerOrderNo: '',
+        orderNo: ''
       }
       this.search(false)
     },
@@ -335,19 +458,62 @@ export default {
         return
       }
       Export({
-        url: '/report/for/profits/export',
+        url: this.export_url[this.tabStatus],
         method: 'post',
-        data: Object.assign(this.keywords, { type: null }),
-        fileName: '利润报表'
+        data: this.searchFields,
+        fileName: this.export_title[this.tabStatus]
       })
     },
     onLoad (res) {
-      this.isExport = false
-      for (let key in res) {
-        if (res[key]) {
-          this.isExport = true
-          break
+      if (this.tabStatus === 1) {
+        this.isExport = false
+        for (let key in res) {
+          if (res[key]) {
+            this.isExport = true
+            break
+          }
         }
+      } else {
+        if (res.data.data.list && res.data.data.list.length > 0) {
+          this.isExport = true
+        } else {
+          this.isExport = false
+        }
+      }
+    },
+    // tab切换
+    tabChanged (tab) {
+      // 设置当前tab状态
+      this.tabStatus = this.setTabStatus(tab)
+      // 改为不可下载状态
+      this.isExport = false
+      // 清空搜索条件
+      this.operateValue = ''
+      this.times = ['', '']
+      this.keywords = {
+        startTime: '',
+        endTime: '',
+        consignerName: '',
+        waybillNo: '',
+        carNo: '',
+        customerOrderNo: '',
+        orderNo: ''
+      }
+
+      console.log(this.tableColumns[this.tabStatus])
+    },
+    // 设置标签状态
+    setTabStatus (tab) {
+      switch (tab) {
+        case '公司利润':
+          return 1
+        case '发货方利润':
+          return 2
+        case '整车利润':
+          return 3
+        case '单票利润':
+          return 4
+        default:
       }
     }
   }
@@ -359,12 +525,17 @@ export default {
     width 86px
     height 35px
   .search
+    margin-top 30px
     display flex
     display -ms-flexbox
     justify-content space-between
     -ms-flex-pack justify
     background #F9F9F9
     padding 13px
+    .inputItem
+      width inherit
+      display inline-block
+      margin-left 40px
     .search-list
       button
         width 80px
