@@ -9,7 +9,13 @@ export const carriesRuleSearch = (state, getters) => (data) => {
 }
 
 // 计费规则类型
-export const ruleTypeMap = state => state.ruleTypeMap
+export const ruleTypeList = state => {
+  // console.log(ruleTypeMap)
+  /* 如果返回'' 显示列默认为：重量（吨）、体积（方）、吨公里、方公里、车型 */
+  if (state.ruleTypeList === '') return ['1', '2', '3', '4', '5']
+  /* ['1', '2'] */
+  return state.ruleTypeList
+}
 
 function ruleList (state, data, type) {
   let mid = []
@@ -35,3 +41,13 @@ function ruleList (state, data, type) {
   }
   return mid
 }
+
+// let ruleTypeMapAll = {
+//   '1': '重量（吨）',
+//   '2': '体积（方）',
+//   '3': '吨公里',
+//   '4': '方公里',
+//   '5': '车型',
+//   '6': '公斤公里',
+//   '7': '重量（公斤）'
+// }

@@ -1,11 +1,13 @@
 <template>
-  <Poptip title="计费类型设置" placement="bottom" width="300" class="popTipForRule">
+  <Poptip v-model="visible"
+          title="计费类型设置" placement="bottom" width="300" class="popTipForRule"
+          @on-popper-show="initRule" @on-popper-hide="initRule">
     <Icon type="ios-settings-outline" size="16" style="line-height: 35px"/>
     <div slot="content">
-      <CheckboxGroup v-model="value">
+      <CheckboxGroup v-model="ruleTypeValue">
         <Row>
-          <Col v-for="(value, key) in ruleTypeMap" :key="key" span="12" style="margin-top: 17px">
-          <Checkbox :label="value" :value="key"></Checkbox>
+          <Col v-for="(value, key) in ruleTypeAllList" :key="key" span="12" style="margin-top: 17px">
+          <Checkbox :label="value.value">{{value.name}}</Checkbox>
           </Col>
         </Row>
       </CheckboxGroup>
@@ -14,35 +16,59 @@
         勾选表示展示，取消勾选则表示隐藏
       </div>
       <div class="btns">
-        <Button>回复默认</Button>
-        <Button type="primary">确定</Button>
-        <Button>取消</Button>
+        <Button @click="setDefault">恢复默认</Button>
+        <Button type="primary" @click="save(ruleTypeValue)">确定</Button>
+        <Button  @click="close">取消</Button>
       </div>
     </div>
   </Poptip>
 </template>
 
 <script>
+import Server from '@/libs/js/server'
+import { mapGetters, mapActions } from 'vuex'
+import { ruleTypeAllList } from '@/libs/constant/ruleType.js'
+import _ from 'lodash'
 export default {
   name: 'popTipForRule',
   props: {
   },
   data () {
     return {
-      ruleTypeMap: {
-        '1': '重量（吨）',
-        '7': '重量（公斤）',
-        '2': '体积（方）',
-        '3': '吨公里',
-        '6': '公斤公里',
-        '4': '方公里',
-        '5': '车型'
-      },
-      value: []
+      visible: false,
+      ruleTypeAllList: ruleTypeAllList,
+      ruleTypeValue: []
     }
   },
-  mounted () {
-    console.log(this.ruleTypeMap)
+  computed: {
+    ...mapGetters(['ruleTypeList'])
+  },
+  methods: {
+    ...mapActions(['getRuleTypeList']),
+    initRule () {
+      this.getRuleTypeList()
+      this.ruleTypeValue = _.cloneDeep(this.ruleTypeList)
+    },
+    close () {
+      this.visible = false
+    },
+    setDefault () {
+      // 显示列默认为：重量（吨）、体积（方）、吨公里、方公里、车型
+      this.save(['1', '2', '3', '4', '5'])
+    },
+    async save (data) {
+      await Server({
+        url: '/finance/charge/saveRuleType',
+        method: 'POST',
+        data: {
+          customRuleType: data
+        }
+      }).then((res) => {
+        this.$Message.success('保存成功')
+        // 关闭弹窗
+        this.visible = false
+      })
+    }
   }
 }
 </script>
@@ -65,6 +91,7 @@ export default {
         right 0
         left 0
       .tips
+        text-align center
         margin-top 40px
         margin-bottom 23px
         color #999
@@ -72,6 +99,10 @@ export default {
         span
           color #FF9502
       .btns
+        border-top 1px solid rgba(237,241,245,1)
+        padding-top: 30px
+        padding-bottom 20px
+        text-align center
         button
           width 70px
           margin-right 10px

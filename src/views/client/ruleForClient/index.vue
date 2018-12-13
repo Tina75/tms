@@ -159,7 +159,7 @@ import FontIcon from '@/components/FontIcon'
 import TagNumberInput from '@/components/TagNumberInput'
 import DataEmpty from '@/components/DataEmpty'
 import mixin from './mixin'
-import { mapActions } from 'vuex'
+// import { mapActions } from 'vuex'
 export default {
   name: 'rule-index',
   components: { SelectInputForCity, FontIcon, TagNumberInput, DataEmpty },
@@ -217,7 +217,7 @@ export default {
   //   console.log(this.partnerName)
   // },
   methods: {
-    ...mapActions(['getSenderRules', 'getCarriesRules']),
+    // ...mapActions(['getSenderRules', 'getCarriesRules']),
     async getRules () {
       if (this.active === '1') {
         await this.getSenderRules()

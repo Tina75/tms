@@ -14,7 +14,7 @@ import * as types from './mutationTypes'
 const state = {
   carriesRule: [], // 承运商
   senderRule: [], // 发货方
-  ruleTypeMap: {} // 计费规则类型
+  ruleTypeList: '' // 计费规则类型
 }
 
 const mutations = {
@@ -24,8 +24,8 @@ const mutations = {
   [types.SENDER_RULE_LIST] (state, list) {
     state.senderRule = list
   },
-  [types.RULE_TYPE_MAP] (state, list) {
-    state.ruleTypeMap = list
+  [types.RULE_TYPE_LIST] (state, list) {
+    state.ruleTypeList = list
   }
 }
 
