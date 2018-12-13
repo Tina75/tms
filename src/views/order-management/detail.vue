@@ -960,9 +960,9 @@ export default {
     padding-left 24px
     line-height  60px
     >ul>li
-      font-size 13px
+      font-size 16px
       font-family 'PingFangSC-Regular'
-      font-weight 400
+      font-weight bold
       color #333
       display inline-block
       margin-right 100px

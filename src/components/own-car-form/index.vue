@@ -146,7 +146,7 @@ export default {
 .own-car
   &__label
     height 18px
-    padding-left 10px
+    padding-left 27px
     font-size 13px
     label
       color #666666

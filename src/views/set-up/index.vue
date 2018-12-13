@@ -529,7 +529,6 @@ export default {
     transform translate(-50%, -50%)
     .ivu-form-item-label
       width 110px !important
-      text-align right
       font-size 14px
       font-family 'PingFangSC-Regular'
       color rgba(0,0,0,1)
