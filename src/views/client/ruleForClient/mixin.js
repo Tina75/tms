@@ -1,7 +1,38 @@
 /* 用于客户管理和财务的计费规则 */
+import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
 import Server from '@/libs/js/server'
+import { mapGetters, mapActions } from 'vuex'
+import { ruleTypeAllList } from '@/libs/constant/ruleType.js'
 export default {
   computed: {
+    ...mapGetters(['ruleTypeList']),
+    ruleTypeMap () {
+      // debugger
+      /* active 1: '发货方',
+                2: '承运商',
+                 车型只有承运商有 */
+      console.log(this.ruleTypeList)
+      let obj = {}
+      // debugger
+      for (let i = 0; i < ruleTypeAllList.length; i++) {
+        for (let j = 0; j < this.ruleTypeList.length; j++) {
+          if (ruleTypeAllList[i].value === '5' && this.active === '1') break
+          if (this.ruleTypeList[j] === ruleTypeAllList[i].value) {
+            obj[ruleTypeAllList[i].value] = ruleTypeAllList[i].name
+          }
+        }
+      }
+      return obj
+      // return {
+      //   '1': '重量',
+      //   '2': '体积',
+      //   '3': '吨公里',
+      //   '4': '方公里',
+      //   '5': '车型没有单位',
+      //   '6': '公斤公里',
+      //   '7': '公斤'
+      // }
+    },
     precision () {
       if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
         return 2
@@ -12,6 +43,7 @@ export default {
       }
     }
   },
+  watch: {},
   data () {
     const startValidate = (rule, value, callback) => {
       if (value === null) {
@@ -90,18 +122,25 @@ export default {
       }
     }
     return {
-      // companyData: [],
+      carType: CAR_TYPE,
+      carLength: CAR_LENGTH,
       unitMap: {
         1: '吨',
         2: '方',
         3: '吨',
-        4: '方'
+        4: '方',
+        // 5: '车型没有单位'
+        6: '公斤',
+        7: '公斤'
       },
       valueMap: {
         1: '吨',
         2: '方',
         3: '吨公里',
-        4: '方公里'
+        4: '方公里',
+        // 5: '车型没有单位'
+        6: '公斤公里',
+        7: '公斤'
       },
       sceneMap: {
         1: '发货方',
@@ -109,17 +148,23 @@ export default {
         // 3: '外转方',
         4: '规则'
       },
-      ruleTypeMap: {
-        '1': '重量',
-        '2': '体积',
-        '3': '吨公里',
-        '4': '方公里'
-      },
+      // ruleTypeMap: {
+      //   '1': '重量',
+      //   '2': '体积',
+      //   '3': '吨公里',
+      //   '4': '方公里',
+      //   // 5: '车型没有单位'
+      //   6: '公斤公里',
+      //   7: '公斤'
+      // },
       valueTypeMap: {
         '1': '重量',
         '2': '体积',
         '3': '重量',
-        '4': '体积'
+        '4': '体积',
+        '5': '车型',
+        '6': '重量',
+        '7': '重量'
       },
       startTypeMap: {
         1: '起步价',
@@ -161,7 +206,11 @@ export default {
       }
     }
   },
+  mounted () {
+    this.getRuleTypeList()
+  },
   methods: {
+    ...mapActions(['getRuleTypeList', 'getSenderRules', 'getCarriesRules']),
     toDetail (data) {
       this.$router.push({
         name: 'accountDetail',

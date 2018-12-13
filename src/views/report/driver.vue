@@ -153,7 +153,7 @@ export default {
           width: 150,
           key: 'shipmentTime',
           render: (h, params) => {
-            return h('span', new Date(params.row.shipmentTime).Format('yyyy-MM-dd hh:mm'))
+            return h('span', params.row.shipmentTime ? new Date(params.row.shipmentTime).Format('yyyy-MM-dd hh:mm') : '-')
           }
         },
         {
@@ -161,7 +161,7 @@ export default {
           width: 150,
           key: 'arriveTime',
           render: (h, params) => {
-            return h('span', new Date(params.row.arriveTime).Format('yyyy-MM-dd hh:mm'))
+            return h('span', params.row.arriveTime ? new Date(params.row.arriveTime).Format('yyyy-MM-dd hh:mm') : '-')
           }
         },
         {
@@ -179,7 +179,7 @@ export default {
           key: 'mileage',
           width: 150,
           render: (h, params) => {
-            return h('span', (params.row.mileage / 1000).toFixed(1))
+            return h('span', params.row.mileage !== '' ? (params.row.mileage / 1000).toFixed(1) : '-')
           }
         },
         {
@@ -187,7 +187,7 @@ export default {
           width: 150,
           key: 'freightFee',
           render: (h, params) => {
-            return h('span', (params.row.freightFee / 100).toFixed(2))
+            return h('span', params.row.freightFee !== '' ? (params.row.freightFee / 100).toFixed(2) : '-')
           }
         },
         {
@@ -195,7 +195,7 @@ export default {
           width: 150,
           key: 'accommodation',
           render: (h, params) => {
-            return h('span', (params.row.accommodation / 100).toFixed(2))
+            return h('span', params.row.accommodation !== '' ? (params.row.accommodation / 100).toFixed(2) : '-')
           }
         },
         {
@@ -203,7 +203,7 @@ export default {
           width: 150,
           key: 'otherFee',
           render: (h, params) => {
-            return h('span', (params.row.otherFee / 100).toFixed(2))
+            return h('span', params.row.otherFee !== '' ? (params.row.otherFee / 100).toFixed(2) : '-')
           }
         },
         {
@@ -243,14 +243,14 @@ export default {
   methods: {
     search () {
       this.keyword = {
-        start: this.keywords.start,
-        end: this.keywords.end,
-        driverName: this.keywords.driverName || null,
-        driverPhone: this.keywords.driverPhone || null,
-        billType: this.keywords.billType || null,
-        startTime: this.keywords.startTime || null,
-        endTime: this.keywords.endTime || null,
-        carNo: this.keywords.carNo || null
+        start: this.keywords.start || undefined,
+        end: this.keywords.end || undefined,
+        driverName: this.keywords.driverName || undefined,
+        driverPhone: this.keywords.driverPhone || undefined,
+        billType: this.keywords.billType || undefined,
+        startTime: this.keywords.startTime || undefined,
+        endTime: this.keywords.endTime || undefined,
+        carNo: this.keywords.carNo || undefined
       }
     },
     clearKeywords () {

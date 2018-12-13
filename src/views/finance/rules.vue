@@ -65,7 +65,6 @@
                 </FormItem>
                 <span>计算</span>
                 <popTipForRule></popTipForRule>
-                <!--<span><Icon type="ios-settings-outline" size="16" style="line-height: inherit"/></span>-->
               </Form>
               <div class="title">
                 <div class="ruleName">{{ruleDetail.ruleName}}</div>
@@ -94,7 +93,7 @@
                         </FormItem>
                         </Col>
                         <Col span="13" class="styleCommon">
-                        <div class="startPrice">
+                        <div v-show="ruleDetail.ruleType!=='5'" class="startPrice">
                           <FormItem prop="startType" style="width: 70px">
                             <Select v-model="item.startType" @on-change="startTypeChange(item)">
                               <Option v-for="(value, key) in startTypeMap" :key="key" :value="key">{{value}}
@@ -123,7 +122,7 @@
                           </div>
                         </div>
                         </Col>
-                        <Col span="2">
+                        <Col :offset="ruleDetail.ruleType==='5'? 13:0" span="2">
                         <span class="delete_btn" @click="removeItem(index)">删除</span>
                         </Col>
                       </Row>
@@ -159,6 +158,17 @@
                               <span>元/{{valueMap[ruleDetail.ruleType]}}</span>
                             </Form>
                           </div>
+                          <!--<Select v-model="carrierInfo.carType"-->
+                          <!--transfer-->
+                          <!--class="detail-info-input-half"-->
+                          <!--style="margin-right: 12px;">-->
+                          <!--<Option v-for="item in carType" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
+                          <!--</Select>-->
+                          <!--<Select v-model="carrierInfo.carLength"-->
+                          <!--transfer-->
+                          <!--class="detail-info-input-half">-->
+                          <!--<Option v-for="item in carLength" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
+                          <!--</Select>-->
                           <div class="add_decrease">
                             <span v-if="item.chargeRules.length > 1" style="margin-right: 12px"
                                   @click="removeEl(index, no)">删除</span>
@@ -197,7 +207,6 @@ import FontIcon from '@/components/FontIcon'
 import DataEmpty from '@/components/DataEmpty'
 import mixin from '../../views/client/ruleForClient/mixin'
 import popTipForRule from '@/views/client/ruleForClient/dialogs/popTipForRule.vue'
-import { mapActions } from 'vuex'
 export default {
   name: 'financeRules',
   metaInfo: {
@@ -230,7 +239,7 @@ export default {
     this.height = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 65
   },
   methods: {
-    ...mapActions(['getSenderRules', 'getCarriesRules']),
+    // ...mapActions(['getSenderRules', 'getCarriesRules']),
     async getRules () {
       if (this.active === '1') {
         await this.getSenderRules()
