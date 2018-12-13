@@ -58,7 +58,7 @@ export default {
         const localRememberdPW = window.localStorage.local_rememberd_pw
         localStorage.clear()
         if (localRememberdPW) window.localStorage.setItem('local_rememberd_pw', localRememberdPW)
-        Cookies.remove('token', { path: '/tms' })
+        Cookies.remove('token', { path: '' })
         window.location.reload()
       }
     }
