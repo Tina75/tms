@@ -6,13 +6,14 @@
       </div>
       <div class="invite-cooperation__content">
         <div class="invite-cooperation__content-detail">
-          【南京奋斗物流公司】的孙老板（13585112134）邀请您进行线上合作，直接从系统指派订单给贵公司运输，以便提高运作效率。
+          <!-- 【南京奋斗物流公司】的孙老板（13585112134）邀请您进行线上合作，直接从系统指派订单给贵公司运输，以便提高运作效率。 -->
+          {{content}}
         </div>
       </div>
     </div>
     <div slot="footer">
-      <Button  type="primary"  @click="save">接受</Button>
-      <Button  type="default"  @click.native="close">拒绝</Button>
+      <Button  :loading="loading" type="primary"  @click="save">接受</Button>
+      <Button  type="default"  @click.native="cancel">拒绝</Button>
     </div>
   </Modal>
 </template>
@@ -20,22 +21,53 @@
 <script>
 // import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
+import Server from '@/libs/js/server'
 export default {
   name: 'invite-cooperation',
 
   mixins: [BaseDialog],
   data () {
     return {
-
+      phone: '',
+      content: '',
+      loading: false
     }
   },
   methods: {
-    save () {
-      this.$refs['info'].validate((valid) => {
-        if (valid) {
-          this.close()
-        }
-      })
+    /**
+     * 同意邀请
+     */
+    async save () {
+      try {
+        this.loading = true
+        // status: 1:同意；2：拒绝
+        await this.handleInviteMessage({ status: 1, phone: this.phone })
+        this.loading = false
+        this.ok()
+        this.close()
+      } catch (error) {
+        this.loading = false
+        throw error
+      }
+    },
+    /**
+     * 拒绝邀请合作
+     */
+    async cancel () {
+      await this.handleInviteMessage({ status: 2, phone: this.phone })
+      this.close()
+    },
+    async handleInviteMessage (data) {
+      try {
+        const result = await Server({
+          url: 'message/inviteMessageDeal',
+          method: 'post',
+          data
+        })
+        return result
+      } catch (error) {
+        throw error
+      }
     }
   }
 

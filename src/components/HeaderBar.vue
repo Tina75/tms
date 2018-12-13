@@ -137,17 +137,25 @@ export default {
      * 接受货主发送的邀请合作请求
      */
     receiveInvitingCooperation () {
-      window.EMA.fire('Dialogs.push', {
-        name: 'dialogs/invite-cooperation',
-        data: {
-          title: '温馨提示'
-        },
-        methods: {
-          ok () {
-
-          }
-        }
+      Server({
+        url: 'message/inviteMessage',
+        method: 'get'
       })
+        .then((res) => {
+          if (res.data.data) {
+            window.EMA.fire('Dialogs.push', {
+              name: 'dialogs/invite-cooperation',
+              data: {
+                title: '温馨提示'
+              },
+              methods: {
+                ok () {
+
+                }
+              }
+            })
+          }
+        })
     },
     /**
      * 需要清除试用期期间的脏数据
