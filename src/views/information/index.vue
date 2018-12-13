@@ -514,7 +514,7 @@ export default {
   overflow: hidden;
 .msgConfigDiv
   float: right;
-  margin-top: -40px;
+  margin-top: -45px;
 .msgContentText
   white-space: nowrap;
   overflow: hidden;
