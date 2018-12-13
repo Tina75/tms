@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" transfer class="invite-cooperation" width="514" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" transfer class="invite-cooperation" width="514" @on-visible-change="onCancel">
     <div class="invite-cooperation__modal">
       <div class="invite-cooperation__title">
         接受邀请，您就可以在线承接订单啦~
@@ -12,8 +12,8 @@
       </div>
     </div>
     <div slot="footer">
-      <Button  :loading="loading" type="primary"  @click="save">接受</Button>
-      <Button  type="default"  @click.native="cancel">拒绝</Button>
+      <Button  :loading="loading" type="primary"  @click="onSave">接受</Button>
+      <Button  type="default"  @click.native="onRefuse">拒绝</Button>
     </div>
   </Modal>
 </template>
@@ -37,7 +37,7 @@ export default {
     /**
      * 同意邀请
      */
-    async save () {
+    async onSave () {
       try {
         this.loading = true
         // status: 1:同意；2：拒绝
@@ -50,11 +50,16 @@ export default {
         throw error
       }
     },
+    async onRefuse () {
+      await this.handleInviteMessage({ status: 2, phone: this.phone })
+      this.cancel()
+      this.close()
+    },
     /**
      * 拒绝邀请合作
      */
-    async cancel () {
-      await this.handleInviteMessage({ status: 2, phone: this.phone })
+    onCancel () {
+      this.cancel()
       this.close()
     },
     async handleInviteMessage (data) {

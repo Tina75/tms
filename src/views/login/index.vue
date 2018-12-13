@@ -174,7 +174,7 @@ export default {
           // 公司类型 1：承运商 2：货主
           if (res.data.data.companyType === 2) {
             // 跳转 货主版
-            window.location.href = process.env.VUE_APP_HOST
+            window.location.href = process.env.VUE_APP_SHIPPER
           } else {
             window.location.href = window.location.href.replace(window.location.hash, '')
           }

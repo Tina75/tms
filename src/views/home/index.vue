@@ -246,39 +246,6 @@ export default {
             this.notice = res.data.data
           }
         })
-
-        // 查询系统更新消息
-        server({
-          url: 'message/sysSms',
-          method: 'get'
-        }).then((res) => {
-          if (res && res.data.code === 10000) {
-            const upgradeMessage = res.data.data
-            if (!upgradeMessage.id) {
-              return
-            }
-            // 弹出更新消息窗口
-            this.openDialog({
-              name: 'home/dialogs/upgrade',
-              data: {
-                title: upgradeMessage.title,
-                content: upgradeMessage.content
-              },
-              methods: {
-                ok () {
-                  // 删除系统更新消息
-                  server({
-                    url: 'message/sysSmsDel',
-                    method: 'get',
-                    params: {
-                      id: upgradeMessage.id
-                    }
-                  })
-                }
-              }
-            })
-          }
-        })
       }
     },
     /**

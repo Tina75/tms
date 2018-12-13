@@ -120,11 +120,11 @@ export default {
           // 接受邀请合作
           // this.receiveInvitingCooperation()
           // 短信是否超过次数
-          this.messageBeyondLimit()
-          // this.popupQueue.push(this.test, this.test1, this.test)
-          // this.$nextTick(() => {
-          //   this.orderedInvoke()
-          // })
+          // this.messageBeyondLimit()
+          this.popupQueue.push(this.systemUpgradeNotice, this.clearTrialData, this.receiveInvitingCooperation, this.messageBeyondLimit)
+          this.$nextTick(() => {
+            this.orderedInvoke()
+          })
         }
         // 查询所有的自有车辆和未绑定的司机
         this.getOwnDrivers()
@@ -138,60 +138,7 @@ export default {
 
       }
     },
-    test () {
-      return new Promise((resolve, reject) => {
-        Server({
-          url: 'message/beyondLimt',
-          method: 'get'
-        }).then(({ data }) => {
-          this.$Toast.warning({
-            showIcon: false,
-            okText: '我知道了',
-            render (h) {
-              return h('p', {
-                style: {
-                  textAlign: 'left',
-                  marginLeft: '-20px'
-                }
-              }, 'test')
-            },
-            onOk () {
-              resolve()
-            },
-            onCancel () {
-              resolve()
-            }
-          })
-        })
-      })
-    },
-    test1 () {
-      return new Promise((resolve, reject) => {
-        Server({
-          url: 'message/beyondLimt',
-          method: 'get'
-        }).then(({ data }) => {
-          this.$Toast.warning({
-            showIcon: false,
-            okText: '我知道了',
-            render (h) {
-              return h('p', {
-                style: {
-                  textAlign: 'left',
-                  marginLeft: '-20px'
-                }
-              }, 'test1')
-            },
-            onOk () {
-              resolve()
-            },
-            onCancel () {
-              resolve()
-            }
-          })
-        })
-      })
-    },
+
     /**
      * 依次执行弹窗
      */
@@ -212,94 +159,212 @@ export default {
                     loop()
                   }, 1000)
                 })
+                .catch((error) => {
+                  vm.popupQueue = []
+                  throw error
+                })
             })
+          } else {
+            vm.popupQueue = []
           }
         }
         loop()
       }
     },
     /**
+     * 查询系统更新消息
+     */
+    systemUpgradeNotice () {
+      // 查询系统更新消息
+      return new Promise((resolve, reject) => {
+        Server({
+          url: 'message/sysSms',
+          method: 'get'
+        })
+          .then((res) => {
+            if (res && res.data.code === 10000) {
+              const upgradeMessage = res.data.data
+              if (!upgradeMessage.id) {
+                resolve()
+                return
+              }
+              // 弹出更新消息窗口
+              window.EMA.fire('Dialogs.push', {
+                name: 'home/dialogs/upgrade',
+                data: {
+                  title: upgradeMessage.title,
+                  content: upgradeMessage.content
+                },
+                methods: {
+                  ok () {
+                  // 删除系统更新消息
+                    Server({
+                      url: 'message/sysSmsDel',
+                      method: 'get',
+                      params: {
+                        id: upgradeMessage.id
+                      }
+                    })
+                    resolve()
+                  },
+                  cancel () {
+                    resolve()
+                  }
+                }
+              })
+            } else {
+              resolve()
+            }
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
+    /**
      * 接受货主发送的邀请合作请求
      */
     receiveInvitingCooperation () {
-      Server({
-        url: 'message/inviteMessage',
-        method: 'get'
-      })
-        .then((res) => {
-          if (res.data.data) {
-            window.EMA.fire('Dialogs.push', {
-              name: 'dialogs/invite-cooperation',
-              data: {
-                title: '温馨提示'
-              },
-              methods: {
-                ok () {
-
-                }
-              }
-            })
-          }
+      const vm = this
+      return new Promise((resolve, reject) => {
+        Server({
+          url: 'message/inviteMessage',
+          method: 'get'
         })
+          .then((res) => {
+            if (res.data.data) {
+              /**
+               * data{id,title,content,phone, inviteId}
+               * 合作邀请可能存在多个合作消息
+               * 1. 单个消息后端接口会返回inviteId,
+               * 2. 多个就不返回inviteId,phone,需要提示去消息处理
+               */
+              let { phone, inviteId } = res.data.data
+              if (inviteId) {
+                window.EMA.fire('Dialogs.push', {
+                  name: 'dialogs/invite-cooperation',
+                  data: {
+                    title: '温馨提示',
+                    phone,
+                    inviteId
+                  },
+                  methods: {
+                    ok () {
+                      resolve()
+                    },
+                    cancel () {
+                      resolve()
+                    }
+                  }
+                })
+              } else {
+                vm.$Toast.info({
+                  title: '货主合作邀请',
+                  showIcon: false,
+                  content: '<i class="ivu-icon ivu-icon-ios-information-circle" style="color:#418DF9;font-size:28px"></i>&nbsp;有多位货主邀请您进行线上合作，直接从系统指派订单给贵公司运输，以便提高运作效率。',
+                  okText: '查看消息',
+                  onOk: () => {
+                    window.EMA.fire('openTab', {
+                      path: TMSUrl.MESSAGE_CENTER,
+                      query: {
+                        title: '消息'
+                      }
+                    })
+                    resolve()
+                  },
+                  onCancel: () => {
+                    resolve()
+                  }
+                })
+              }
+            }
+            resolve()
+          })
+          .catch((error) => {
+            reject(error)
+          })
+      })
     },
     /**
      * 需要清除试用期期间的脏数据
      */
     clearTrialData () {
-      if (localStorage.getItem(LocalStorageKeys.TMS_CLEAR_TRIAL)) {
-        return
-      }
-      if (this.UserInfo.type === 1) {
-        Server({
-          url: 'message/userMessage',
-          method: 'get'
-        }).then(({ data }) => {
-          /**
+      return new Promise((resolve, reject) => {
+        if (localStorage.getItem(LocalStorageKeys.TMS_CLEAR_TRIAL)) {
+          resolve()
+        }
+        if (this.UserInfo.type === 1) {
+          Server({
+            url: 'message/userMessage',
+            method: 'get'
+          })
+            .then(({ data }) => {
+              /**
            * data = {id,title,content,bTime,eTime}
            */
-          if (data.data) {
-            window.EMA.fire('Dialogs.push', {
-              name: 'dialogs/clear-trial-data',
-              data: {
-                title: '试用期数据删除',
-                ...data.data
-              },
-              methods: {
-                ok () {
-                  localStorage.setItem(LocalStorageKeys.TMS_CLEAR_TRIAL, 1)
-                },
-                cancel () {
-                  localStorage.setItem(LocalStorageKeys.TMS_CLEAR_TRIAL, 1)
-                }
+              if (data.data) {
+                window.EMA.fire('Dialogs.push', {
+                  name: 'dialogs/clear-trial-data',
+                  data: {
+                    title: '试用期数据删除',
+                    ...data.data
+                  },
+                  methods: {
+                    ok () {
+                      localStorage.setItem(LocalStorageKeys.TMS_CLEAR_TRIAL, 1)
+                      resolve()
+                    },
+                    cancel () {
+                      localStorage.setItem(LocalStorageKeys.TMS_CLEAR_TRIAL, 1)
+                      resolve()
+                    }
+                  }
+                })
               }
             })
-          }
-        })
-      }
+            .catch((error) => {
+              reject(error)
+            })
+        }
+        resolve()
+      })
     },
 
     /**
      * 超过短信上限
      */
     messageBeyondLimit () {
-      Server({
-        url: 'message/beyondLimt',
-        method: 'get'
-      }).then(({ data }) => {
-        if (data.data) {
-          this.$Toast.warning({
-            showIcon: false,
-            okText: '我知道了',
-            render (h) {
-              return h('p', {
-                style: {
-                  textAlign: 'left',
-                  marginLeft: '-20px'
+      return new Promise((resolve, reject) => {
+        Server({
+          url: 'message/beyondLimt',
+          method: 'get'
+        })
+          .then(({ data }) => {
+            if (data.data) {
+              this.$Toast.warning({
+                showIcon: false,
+                okText: '我知道了',
+                render (h) {
+                  return h('p', {
+                    style: {
+                      textAlign: 'left',
+                      marginLeft: '-20px'
+                    }
+                  }, data.data.content)
+                },
+                onOk () {
+                  resolve()
+                },
+                onCancel () {
+                  resolve()
                 }
-              }, data.data.content)
+              })
             }
+            resolve()
           })
-        }
+          .catch((error) => {
+            reject(error)
+          })
       })
     },
     loopMessage () {

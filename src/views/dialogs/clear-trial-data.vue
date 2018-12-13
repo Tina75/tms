@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" transfer width="524" @on-visible-change="cancel">
+  <Modal v-model="visiable" :mask-closable="false" transfer width="524" @on-visible-change="onCancel">
     <p slot="header" style="text-align:center">试用期数据删除</p>
     <div class="clear-trial__declaration">
       贵公司账号的试用期为<b>{{bTime | datetime}} ~ {{eTime | datetime}}</b>，为减少试用数据的干扰，您可选择删除试用期相关数据。请谨慎选择需要删除的试用期数据，数据删除后不可恢复

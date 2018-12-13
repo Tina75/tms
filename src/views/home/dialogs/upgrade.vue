@@ -41,6 +41,8 @@ export default {
   methods: {
     save () {
       this.visible = false
+      this.ok()
+      this.close()
     },
     handleClose () {
       this.ok()
