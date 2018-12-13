@@ -93,7 +93,7 @@
                         </FormItem>
                         </Col>
                         <Col span="13" class="styleCommon">
-                        <div v-show="ruleDetail.ruleType!=='5'" class="startPrice">
+                        <div v-if="ruleDetail.ruleType!=='5'" class="startPrice">
                           <FormItem prop="startType" style="width: 70px">
                             <Select v-model="item.startType" @on-change="startTypeChange(item)">
                               <Option v-for="(value, key) in startTypeMap" :key="key" :value="key">{{value}}
@@ -133,7 +133,7 @@
                     <div slot="content">
                       <ul class="rule-detail">
                         <li v-for="(el, no) in item.chargeRules" :key="no" class="rule-detail-item">
-                          <div>
+                          <div v-if="ruleDetail.ruleType!=='5'">
                             <span>{{valueTypeMap[ruleDetail.ruleType]}}</span>
                             <span style="margin-left: 5px">≥</span>
                             <Form ref="ruleBase" :model="el" :rules="baseValidate" style="display: inline-block"
@@ -146,7 +146,7 @@
                               <span>{{unitMap[ruleDetail.ruleType]}}</span>
                             </Form>
                           </div>
-                          <div>
+                          <div v-if="ruleDetail.ruleType!=='5'">
                             <span>单价</span>
                             <span style="margin-left: 5px">=</span>
                             <Form ref="rulePrice" :model="el" :rules="priceValidate" style="display: inline-block"
@@ -158,17 +158,42 @@
                               <span>元/{{valueMap[ruleDetail.ruleType]}}</span>
                             </Form>
                           </div>
-                          <!--<Select v-model="carrierInfo.carType"-->
-                          <!--transfer-->
-                          <!--class="detail-info-input-half"-->
-                          <!--style="margin-right: 12px;">-->
-                          <!--<Option v-for="item in carType" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
-                          <!--</Select>-->
-                          <!--<Select v-model="carrierInfo.carLength"-->
-                          <!--transfer-->
-                          <!--class="detail-info-input-half">-->
-                          <!--<Option v-for="item in carLength" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
-                          <!--</Select>-->
+                          <!--车型-->
+                          <div v-if="ruleDetail.ruleType==='5'">
+                            <span>{{valueTypeMap[ruleDetail.ruleType]}}</span>
+                            <Form ref="ruleCar" :model="el" :rules="carValidate"   style="display: inline-block"
+                                  inline>
+                              <FormItem prop="carType" inline style="margin-bottom: 0">
+                                <Select v-model="el.carType"
+                                        transfer
+                                        placeholder="请选择车型"
+                                        class="detail-info-input-half"
+                                        style="margin-right: 12px;width: 120px">
+                                  <Option v-for="item in carType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                                </Select>
+                              </FormItem>
+                              <FormItem prop="carLength" inline style="margin-bottom: 0">
+                                <Select v-model="el.carLength"
+                                        transfer
+                                        placeholder="请选择车长"
+                                        class="detail-info-input-half"
+                                        style="margin-right: 12px;width: 120px">
+                                  <Option v-for="item in carLength" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                                </Select>
+                              </FormItem>
+                            </Form>
+                          </div>
+                          <div v-if="ruleDetail.ruleType==='5'">
+                            <span>包车价</span>
+                            <Form ref="rulePrice" :model="el" :rules="priceValidate" style="display: inline-block"
+                                  inline>
+                              <FormItem prop="price" inline style="margin-bottom: 0">
+                                <!--<Input v-model="el.price" />-->
+                                <TagNumberInput v-model="el.price" :show-chinese="false"></TagNumberInput>
+                              </FormItem>
+                              <span>元</span>
+                            </Form>
+                          </div>
                           <div class="add_decrease">
                             <span v-if="item.chargeRules.length > 1" style="margin-right: 12px"
                                   @click="removeEl(index, no)">删除</span>
@@ -438,11 +463,13 @@ export default {
                     -ms-flex 1
                     /deep/ .ivu-form-inline .ivu-form-item
                       vertical-align middle
+                      text-align center
                       width 128px
                       margin-left 10px
                   &:last-child
                     border-bottom none
                   .add_decrease
+                    flex 0 0 80px
                     line-height 32px
                     color #00A4BD
                     font-size 14px

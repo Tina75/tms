@@ -121,6 +121,20 @@ export default {
         }
       }
     }
+    const carTypeValidate = (rule, value, callback) => {
+      if (value !== 0) {
+        callback()
+      } else {
+        callback(new Error('请填写车型'))
+      }
+    }
+    const carLengthValidate = (rule, value, callback) => {
+      if (value !== 0) {
+        callback()
+      } else {
+        callback(new Error('请填写车长'))
+      }
+    }
     return {
       carType: CAR_TYPE,
       carLength: CAR_LENGTH,
@@ -203,6 +217,15 @@ export default {
           { required: true, message: '请填写金额', trigger: 'change', type: 'number' },
           { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/, message: '9位正数且最多两位小数', trigger: 'blur' }
         ]
+      },
+      carValidate: {
+        carType: [
+          // { required: true, message: '请选择车型', trigger: 'change' }
+          { validator: carTypeValidate, trigger: 'change' }
+        ],
+        carLength: [
+          { validator: carLengthValidate, trigger: 'change' }
+        ]
       }
     }
   },
@@ -241,7 +264,7 @@ export default {
       })
     },
     addEl (index) {
-      this.ruleDetail.details[index].chargeRules.push({ base: null, price: null, baseAndStart: '' })
+      this.ruleDetail.details[index].chargeRules.push({ base: null, price: null, baseAndStart: '', carType: 0, carLength: 0 })
     },
     removeEl (index, no) {
       this.ruleDetail.details[index].chargeRules.splice(no, 1)
@@ -284,6 +307,11 @@ export default {
         await this.formValidate(this.$refs['ruleBase'][j])
         await this.formValidate(this.$refs['rulePrice'][j])
       }
+      if (this.ruleDetail.ruleType === '5') {
+        for (let j = 0; j < this.$refs['ruleCar'].length; j++) {
+          await this.formValidate(this.$refs['ruleCar'][j])
+        }
+      }
       if (!_this.ruleDetail.details.every((item, index, array) => {
         return (item.startType === '2' || (item.startNum === null && item.startPrice === null)) || (item.startNum && item.startPrice)
       })) {
@@ -311,7 +339,9 @@ export default {
                   chargeRules: item.chargeRules.map(el => {
                     return {
                       base: parseFloat(el.base) * 100,
-                      price: parseFloat(el.price) * 100
+                      price: parseFloat(el.price) * 100,
+                      carType: el.carType,
+                      carLength: el.carLength
                     }
                   })
                 }
@@ -343,7 +373,7 @@ export default {
         startPrice: null,
         startType: '2',
         chargeRules: [
-          { base: null, price: null, baseAndStart: '' }
+          { base: null, price: null, baseAndStart: '', carType: 0, carLength: 0 }
         ]
       })
     },
@@ -375,7 +405,9 @@ export default {
               return {
                 base: el.base ? (el.base / 100) : '0',
                 price: el.price ? (el.price / 100) : '0',
-                baseAndStart: el.base + ',' + item.startNum
+                baseAndStart: el.base + ',' + item.startNum,
+                carType: el.carType,
+                carLength: el.carLength
               }
             })
           }
