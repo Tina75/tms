@@ -86,7 +86,8 @@ export default {
   mixins: [BaseComponent],
   data () {
     return {
-      processVisible: false
+      processVisible: false,
+      popupQueue: []
     }
   },
   computed: {
@@ -114,12 +115,16 @@ export default {
           this.isPreviewDiscover()
           sessionStorage.removeItem('first_time_login')
         } else {
-          // 短信是否超过次数
-          this.isMessageBeyond()
           // 是否需要清空试用期的数据
-          // this.needClearTrialData()
-          // 接受邀请合照
+          // this.clearTrialData()
+          // 接受邀请合作
           // this.receiveInvitingCooperation()
+          // 短信是否超过次数
+          this.messageBeyondLimit()
+          // this.popupQueue.push(this.test, this.test1, this.test)
+          // this.$nextTick(() => {
+          //   this.orderedInvoke()
+          // })
         }
         // 查询所有的自有车辆和未绑定的司机
         this.getOwnDrivers()
@@ -131,6 +136,86 @@ export default {
         this.$ga.set('id', this.UserInfo.id)
       } catch (error) {
 
+      }
+    },
+    test () {
+      return new Promise((resolve, reject) => {
+        Server({
+          url: 'message/beyondLimt',
+          method: 'get'
+        }).then(({ data }) => {
+          this.$Toast.warning({
+            showIcon: false,
+            okText: '我知道了',
+            render (h) {
+              return h('p', {
+                style: {
+                  textAlign: 'left',
+                  marginLeft: '-20px'
+                }
+              }, 'test')
+            },
+            onOk () {
+              resolve()
+            },
+            onCancel () {
+              resolve()
+            }
+          })
+        })
+      })
+    },
+    test1 () {
+      return new Promise((resolve, reject) => {
+        Server({
+          url: 'message/beyondLimt',
+          method: 'get'
+        }).then(({ data }) => {
+          this.$Toast.warning({
+            showIcon: false,
+            okText: '我知道了',
+            render (h) {
+              return h('p', {
+                style: {
+                  textAlign: 'left',
+                  marginLeft: '-20px'
+                }
+              }, 'test1')
+            },
+            onOk () {
+              resolve()
+            },
+            onCancel () {
+              resolve()
+            }
+          })
+        })
+      })
+    },
+    /**
+     * 依次执行弹窗
+     */
+    orderedInvoke () {
+      const vm = this
+      if (this.popupQueue.length > 0) {
+        let index = 0
+        let loop = () => {
+          let invokedFunction = vm.popupQueue[index]
+
+          if (invokedFunction && typeof invokedFunction === 'function') {
+            vm.$nextTick(() => {
+              invokedFunction.call(vm)
+                .then(result => {
+                  console.log('result', result)
+                  index++
+                  setTimeout(() => {
+                    loop()
+                  }, 1000)
+                })
+            })
+          }
+        }
+        loop()
       }
     },
     /**
@@ -160,7 +245,7 @@ export default {
     /**
      * 需要清除试用期期间的脏数据
      */
-    needClearTrialData () {
+    clearTrialData () {
       if (localStorage.getItem(LocalStorageKeys.TMS_CLEAR_TRIAL)) {
         return
       }
@@ -196,7 +281,7 @@ export default {
     /**
      * 超过短信上限
      */
-    isMessageBeyond () {
+    messageBeyondLimit () {
       Server({
         url: 'message/beyondLimt',
         method: 'get'
