@@ -1,7 +1,7 @@
 <template>
   <div>
     <Form ref="allocationForm" :label-width="82" :rules="rules" label-position="left">
-      <FormItem label="分摊策略：" class="detail-form-label" prop="allocation">
+      <FormItem :label="allocationLabel" class="detail-form-label" prop="allocation">
         <Select v-model="allocation" transfer placeholder="请选择" style="width: 180px;" @on-change="handleChange">
           <Option v-for="opt in allocationStrategy" :key="opt.value" :value="opt.value">{{opt.label}}</Option>
         </Select>
@@ -37,15 +37,17 @@ export default {
         }]
       }
     },
+    // 传入的标签
+    allocationLabel: {
+      type: String,
+      default: '分摊策略：'
+    },
     // 更新选项后向父组件传值
     changeAllocationStrategy: Function
   },
   data () {
     // 9位整数 2位小数
     const validateStrategy = (rule, value, callback) => {
-      console.log(validAllocationOrders('quantity'))
-      console.log(validAllocationOrders('weight'))
-      console.log(validAllocationOrders('volume'))
       if (this.allocation === 1) {
         callback()
       } else if (this.allocation === 2 && validAllocationOrders('quantity')) {
@@ -96,6 +98,7 @@ export default {
       let data = res.data.data
       this.allocation = this.source === 'order' ? data.orderStrategy : data.waybillStrategy
       this.handleChange(this.allocation) // 初始化传值给父组件
+      this.$refs.allocationForm.validate()
     })
   },
 
