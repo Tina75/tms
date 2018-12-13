@@ -100,12 +100,13 @@
                :columns="tableColumns"
                :show-filter="true"
                :keywords="searchFields"
-               :table-head-type="waybillHeadType"
+               :table-head-type="headType"
                list-field="list"
                row-id="shipperOrderId"
                url="/busconnector/shipper/list"
                method="post"
                style="margin-top: 15px"
+               @on-selection-change="selectionChanged"
     />
   </div>
 </template>
@@ -118,6 +119,7 @@ import PageTable from '@/components/page-table'
 import SelectInput from '@/components/SelectInput.vue'
 import SelectInputForCity from '@/components/SelectInputForCity.vue'
 import TabHeader from './components/TabHeader'
+import headType from '@/libs/constant/headtype'
 import { TABLE_COLUMNS, TABLIST, BTNLIST, setTabList } from './constant/upstream.js'
 import Server from '@/libs/js/server'
 export default {
@@ -129,6 +131,8 @@ export default {
     return {
       tabType: 'upstream',
       currentBtns: [], // 当前按钮组
+      // 表头
+      headType: headType.UPSTREAM_ORDER,
       // 简易搜索类型
       selectList: [
         { value: 1, label: '客户名称' },
@@ -207,11 +211,11 @@ export default {
         case '全部':
           return
         case '待接收':
-          return 1
+          return 0
         case '已接收':
+          return 1
+        case '已拒绝':
           return 2
-        case '拒绝':
-          return 3
         default:
       }
     },
@@ -229,6 +233,8 @@ export default {
       // 重置搜索条件
       this.resetEasySearch()
       this.resetSeniorSearch()
+      // 查询数据
+      this.fetchData()
       // 搜索与查询
       this.fetchTabCount && this.fetchTabCount()
     },
@@ -276,7 +282,7 @@ export default {
     // 设置查询参数
     setFetchParams () {
       let params = {
-        status: this.tabStatus
+        acceptStatus: this.tabStatus
       }
       if (this.inSearching) {
         if (this.isEasySearch) {
@@ -289,11 +295,13 @@ export default {
           }
         } else {
           if (this.seniorSearchFields.dateRange[0]) {
-            this.seniorSearchFields.createTimeStart = this.seniorSearchFields.dateRange[0].Format('yyyy-MM-dd hh:mm:ss')
+            // this.seniorSearchFields.createTimeStart = this.seniorSearchFields.dateRange[0].Format('yyyy-MM-dd hh:mm:ss')
+            this.seniorSearchFields.createTimeStart = this.seniorSearchFields.dateRange[0].getTime()
           } else this.seniorSearchFields.createTimeStart = ''
           if (this.seniorSearchFields.dateRange[1]) {
             let endTime = this.seniorSearchFields.dateRange[1].getTime() + (24 * 60 * 60 - 1) * 1000
-            this.seniorSearchFields.createTimeEnd = (new Date(endTime)).Format('yyyy-MM-dd hh:mm:ss')
+            // this.seniorSearchFields.createTimeEnd = (new Date(endTime)).Format('yyyy-MM-dd hh:mm:ss')
+            this.seniorSearchFields.createTimeEnd = endTime
           } else this.seniorSearchFields.createTimeEnd = ''
 
           for (let key in this.seniorSearchFields) {
@@ -317,6 +325,9 @@ export default {
     statusToName (code) {
       let name
       switch (code) {
+        case 0:
+          name = '待接收'
+          break
         case 10:
           name = '待提货'
           break
@@ -338,6 +349,7 @@ export default {
         case 100:
           name = '已删除'
           break
+        default:
       }
       return name
     },
@@ -365,6 +377,10 @@ export default {
       }
       return true
     },
+    // 选中的表格行
+    selectionChanged (selection) {
+      this.tableSelection = selection
+    },
     // 导出
     upstreamExport () {
       let data = this.setFetchParams()
@@ -386,16 +402,17 @@ export default {
       let shipperOrderIds = this.tableSelection.map(item => item.shipperOrderId)
       Server({
         url: '/busconnector/shipper/accept',
-        method: 'get',
+        method: 'post',
         data: { shipperOrderIds }
       }).then(res => {
-        self.$Message.success('接受成功')
+        this.$Message.success('接受成功')
+        this.fetchData()
       })
     },
     // 拒绝
     reject () {
       const self = this
-      // if (!this.checkTableSelection()) return
+      if (!this.checkTableSelection()) return
       self.openDialog({
         name: 'upstream/dialog/confirm',
         data: {
@@ -411,6 +428,7 @@ export default {
               data: { shipperOrderIds }
             }).then(res => {
               self.$Message.success('拒绝完成')
+              self.fetchData()
             })
           }
         }

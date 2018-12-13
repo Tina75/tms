@@ -4,30 +4,36 @@ export const TABLE_COLUMNS = vm => [
   {
     type: 'selection',
     width: 50,
-    align: 'center'
+    align: 'center',
+    fixed: 'left'
   },
   {
     title: '订单号',
-    key: 'orderNo'
-    // render: (h, p) => {
-    //   return h('a', {
-    //     style: {
-    //       color: '#418DF9'
-    //     },
-    //     on: {
-    //       click: () => {
-    //         vm.openTab({
-    //           title: p.row.billNo,
-    //           path: p.row.billType === 1 ? TMSUrl.PICKUP_ORDER_DETAIL : TMSUrl.TRANSPORT_ORDER_DETAIL,
-    //           query: {
-    //             id: p.row.billId,
-    //             abnormal: 1
-    //           }
-    //         })
-    //       }
-    //     }
-    //   }, p.row.billNo)
-    // }
+    key: 'orderNo',
+    minWidth: 150,
+    fixed: 'left',
+    render: (h, params) => {
+      return h('a', {
+        props: {
+          type: 'text'
+        },
+        style: {
+          marginRight: '5px',
+          color: '#418DF9'
+        },
+        on: {
+          click: () => {
+            vm.openTab({
+              path: '/upstream/detail/detail',
+              query: {
+                shipperOrderId: params.row.shipperOrderId,
+                id: params.row.orderNo
+              }
+            })
+          }
+        }
+      }, params.row.orderNo)
+    }
   },
   {
     title: '客户单号',
@@ -48,12 +54,14 @@ export const TABLE_COLUMNS = vm => [
   {
     title: '客户名称',
     key: 'shipperCompanyName',
-    minWidth: 180,
-    tooltip: true
+    minWidth: 200,
+    render: (h, p) => {
+      return h('span', p.row.shipperCompanyName ? p.row.shipperCompanyName : '-')
+    }
   },
   {
     title: '对接业务员',
-    key: 'salesmanId',
+    key: 'handlerUserName',
     minWidth: 180,
     render: (h, params) => {
       return h('span', params.row.handlerUserName || '-')
@@ -63,13 +71,17 @@ export const TABLE_COLUMNS = vm => [
     title: '发货城市',
     key: 'departureCityName',
     minWidth: 180,
-    ellipsis: true
+    render: (h, params) => {
+      return h('span', params.row.departureCityName || '-')
+    }
   },
   {
     title: '收货城市',
     key: 'destinationCityName',
     minWidth: 180,
-    ellipsis: true
+    render: (h, params) => {
+      return h('span', params.row.destinationCityName || '-')
+    }
   },
   {
     title: '计费里程（公里）',
@@ -99,48 +111,39 @@ export const TABLE_COLUMNS = vm => [
     title: '下单时间',
     key: 'createTime',
     minWidth: 150,
-    render: (h, p) => {
-      return h('span', p.row.createTime ? p.row.createTime : '-')
+    render: (h, params) => {
+      return h('span', params.row.createTime ? new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
     }
-    // render: (h, params) => {
-    //   return h('span', params.row.createTime ? new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
-    // }
   },
   {
     title: '发货时间',
     key: 'deliveryTime',
     minWidth: 150,
-    render: (h, p) => {
-      return h('span', p.row.deliveryTime ? p.row.deliveryTime : '-')
+    render: (h, params) => {
+      return h('span', params.row.deliveryTime ? new Date(params.row.deliveryTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
     }
-    // render: (h, params) => {
-    //   return h('span', params.row.deliveryTime ? new Date(params.row.deliveryTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
-    // }
   },
   {
     title: '到货时间',
     key: 'arriveTime',
     minWidth: 150,
-    render: (h, p) => {
-      return h('span', p.row.arriveTime ? p.row.arriveTime : '-')
+    render: (h, params) => {
+      return h('span', params.row.arriveTime ? new Date(params.row.arriveTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
     }
-    // render: (h, params) => {
-    //   return h('span', params.row.arriveTime ? new Date(params.row.arriveTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
-    // }
   },
   {
     title: '发货人',
     key: 'consignerContact',
-    minWidth: 120,
+    minWidth: 180,
     tooltip: true,
     render: (h, p) => {
       return h('span', p.row.consignerContact ? p.row.consignerContact : '-')
     }
   },
   {
-    title: '发货人手机号',
+    title: '发货人联系号码',
     key: 'consignerPhone',
-    minWidth: 130,
+    minWidth: 150,
     tooltip: true,
     render: (h, p) => {
       return h('span', p.row.consignerPhone ? p.row.consignerPhone : '-')
@@ -149,7 +152,7 @@ export const TABLE_COLUMNS = vm => [
   {
     title: '发货地址',
     key: 'consignerAddress',
-    minWidth: 180,
+    minWidth: 200,
     tooltip: true,
     render: (h, p) => {
       return h('span', p.row.consignerAddress ? p.row.consignerAddress : '-')
@@ -158,16 +161,16 @@ export const TABLE_COLUMNS = vm => [
   {
     title: '收货人',
     key: 'consigneeContact',
-    minWidth: 120,
+    minWidth: 180,
     tooltip: true,
     render: (h, p) => {
       return h('span', p.row.consigneeContact ? p.row.consigneeContact : '-')
     }
   },
   {
-    title: '收货人手机号',
+    title: '收货人联系号码',
     key: 'consigneePhone',
-    minWidth: 130,
+    minWidth: 150,
     tooltip: true,
     render: (h, p) => {
       return h('span', p.row.consigneePhone ? p.row.consigneePhone : '-')
@@ -176,7 +179,7 @@ export const TABLE_COLUMNS = vm => [
   {
     title: '收货地址',
     key: 'consigneeAddress',
-    minWidth: 180,
+    minWidth: 200,
     tooltip: true,
     render: (h, p) => {
       return h('span', p.row.consigneeAddress ? p.row.consigneeAddress : '-')
@@ -200,10 +203,10 @@ export const TABLE_COLUMNS = vm => [
   },
   {
     title: '提货费',
-    key: 'pickupFee',
+    key: 'pickFee',
     minWidth: 120,
     render: (h, params) => {
-      return h('span', params.row.pickupFee ? (params.row.pickupFee / 100).toFixed(2) : '-')
+      return h('span', params.row.pickFee ? (params.row.pickFee / 100).toFixed(2) : '-')
     }
   },
   {
@@ -232,7 +235,7 @@ export const TABLE_COLUMNS = vm => [
     }
   },
   {
-    title: '其他',
+    title: '其他费用',
     key: 'otherFee',
     minWidth: 120,
     render: (h, params) => {
@@ -292,7 +295,7 @@ export const TABLE_COLUMNS = vm => [
     key: 'orderMakerName',
     minWidth: 120,
     render: (h, p) => {
-      return h('span', p.row.creatorName ? p.row.creatorName : '-')
+      return h('span', p.row.orderMakerName ? p.row.orderMakerName : '-')
     }
   }
 ]
@@ -300,14 +303,14 @@ export const TABLIST = [
   { name: '全部', count: '' },
   { name: '待接收', count: '' },
   { name: '已接收', count: '' },
-  { name: '拒绝', count: '' }
+  { name: '已拒绝', count: '' }
 ]
 export function setTabList (data) {
   return [
     { name: '全部', count: '' },
     { name: '待接收', count: data.waitAccept || 0 },
-    { name: '已拒绝', count: data.accepted || 0 },
-    { name: '拒绝', count: data.rejected || 0 }
+    { name: '已接收', count: data.accepted || 0 },
+    { name: '已拒绝', count: data.rejected || 0 }
   ]
 }
 export const BTNLIST = vm => [
@@ -358,7 +361,7 @@ export const BTNLIST = vm => [
     ]
   },
   {
-    tab: '拒绝',
+    tab: '已拒绝',
     btns: [
       {
         name: '导出',

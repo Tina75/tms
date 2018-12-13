@@ -15,6 +15,7 @@ const headType = {
   SINGLEVOTE_PROFIT: 'singleVote_profit_head', // 单票利润
   ownerDriver: 'owner_driver_head', // 报表 - 自有司机
   WAIT_PICKUP: 'wait_pickup_head', // 提货-待调度
-  WAIT_WAYBILL: 'wait_waybill_head' // 送货管理-待调度
+  WAIT_WAYBILL: 'wait_waybill_head', // 送货管理-待调度
+  UPSTREAM_ORDER: 'upstream_order_head' // 上游来单
 }
 export default headType

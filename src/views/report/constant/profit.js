@@ -44,26 +44,26 @@ export const TABLECOLUMNS = {
     },
     {
       title: '应收总费用',
-      key: 'receivableTotalFee',
+      key: 'totalFee',
       width: 150,
       render: (h, params) => {
-        return h('span', (params.row.receivableTotalFee / 100).toFixed(2))
+        return h('span', (params.row.totalFee / 100).toFixed(2))
       }
     },
     {
       title: '提货费合计',
-      key: 'pickupFee',
+      key: 'pickupBillFee',
       width: 150,
       render: (h, params) => {
-        return h('span', (params.row.pickupFee / 100).toFixed(2))
+        return h('span', (params.row.pickupBillFee / 100).toFixed(2))
       }
     },
     {
       title: '送货费合计',
-      key: 'freightFee',
+      key: 'wayBillFee',
       width: 150,
       render: (h, params) => {
-        return h('span', (params.row.freightFee / 100).toFixed(2))
+        return h('span', (params.row.wayBillFee / 100).toFixed(2))
       }
     },
     {
@@ -76,10 +76,10 @@ export const TABLECOLUMNS = {
     },
     {
       title: '利润',
-      key: 'totalProfit',
+      key: 'profit',
       width: 150,
       render: (h, params) => {
-        return h('span', (params.row.totalProfit / 100).toFixed(2))
+        return h('span', (params.row.profit / 100).toFixed(2))
       }
     }
   ],
@@ -240,26 +240,26 @@ export const TABLECOLUMNS = {
     },
     {
       title: '应收总费用',
-      key: 'receivableTotalFee',
+      key: 'totalFee',
       width: 150,
       render: (h, params) => {
-        return h('span', (params.row.receivableTotalFee / 100).toFixed(2))
+        return h('span', (params.row.totalFee / 100).toFixed(2))
       }
     },
     {
       title: '提货费合计',
-      key: 'pickupFee',
+      key: 'pickupBillFee',
       width: 150,
       render: (h, params) => {
-        return h('span', (params.row.pickupFee / 100).toFixed(2))
+        return h('span', (params.row.pickupBillFee / 100).toFixed(2))
       }
     },
     {
       title: '送货费合计',
-      key: 'freightFee',
+      key: 'wayBillFee',
       width: 150,
       render: (h, params) => {
-        return h('span', (params.row.freightFee / 100).toFixed(2))
+        return h('span', (params.row.wayBillFee / 100).toFixed(2))
       }
     },
     {
@@ -272,10 +272,10 @@ export const TABLECOLUMNS = {
     },
     {
       title: '利润',
-      key: 'totalProfit',
+      key: 'profit',
       width: 150,
       render: (h, params) => {
-        return h('span', (params.row.totalProfit / 100).toFixed(2))
+        return h('span', (params.row.profit / 100).toFixed(2))
       }
     },
     {
