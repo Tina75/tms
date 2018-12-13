@@ -154,7 +154,7 @@ export default {
       // const exp = new Date()
       // exp.setTime(exp.getTime() + EXPIRES)
       // document.cookie = `token=${escape(token)};expires=${exp.toGMTString()}`
-      Cookies.set('token', token, { expires: 365, path: '' })
+      Cookies.set('token', token, { expires: 1, path: '/' })
     },
 
     // 登录处理
