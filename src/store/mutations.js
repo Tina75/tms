@@ -30,6 +30,14 @@ export default{
   },
   updateDocumentHeight (state, payload) {
     state.documentHeight = payload
+  },
+  /**
+   * 开单设置配置
+   * @param {*} state
+   * @param {Number} option
+   */
+  changeOrderConfiguration (state, option) {
+    state.weightOption = option
   }
 }
 
