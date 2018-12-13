@@ -1,6 +1,6 @@
 <template>
-  <Form ref="pickUpFeeForm" :label-width="62" :model="payment" :rules="rules" class="transport-detail" label-position="left">
-    <div class="part" style="padding-bottom: 5px;">
+  <Form ref="pickUpFeeForm" :label-width="62" :model="payment" :rules="rules" class="transport-detail" label-position="right">
+    <div :class="sendWay === '1' ? 'outer-fee' : 'own-fee'" class="part" style="padding-bottom: 5px;">
       <Row class="detail-field-group">
         <i-col span="5">
           <FormItem :label="sendWay === '1' ? '运输费：': '油费：'" prop="freightFee" class="fee-fix">
@@ -61,7 +61,7 @@
         </i-col>
       </Row>
 
-      <Row v-if="pickFeeOrders.length > 1" class="detail-field-group" style="margin-top: 15px;margin-left: 10px;">
+      <Row v-if="pickFeeOrders.length > 1" class="detail-field-group" style="margin-top: 15px;margin-left: -2px;">
         <i-col span="24">
           <allocation-strategy ref="allocationStrategy" :allocation-orders="pickFeeOrders"></allocation-strategy>
         </i-col>
@@ -70,7 +70,7 @@
 
     <!-- 自送 -->
     <div v-if="sendWay === '2' && source !== 'abnormal' && pickFeeOrders.length > 1">
-      <Row class="detail-field-group" style="margin-left: 10px;">
+      <Row class="detail-field-group" style="margin-left: -2px;">
         <i-col span="8">
           <allocation-strategy ref="allocationStrategy" :allocation-orders="pickFeeOrders"></allocation-strategy>
         </i-col>
@@ -89,7 +89,7 @@
             mode="edit" />
         </i-col>
       </Row>
-      <Row class="detail-field-group row-margin">
+      <Row v-if="orderCnt > 1" class="detail-field-group row-margin">
         <i-col span="24">
           <span class="detail-field-title-sm" style="margin-left: 10px;">分摊策略：</span>
           <span style="margin-right: 10px;">{{ getAllocationValToLabel(allocationType) }}</span>
@@ -162,6 +162,11 @@ export default {
     },
     // 分摊类型 默认1 按订单数分摊
     allocationType: {
+      type: Number,
+      default: 1
+    },
+    // 订单数量，异常需要判断是否显示分摊费用
+    orderCnt: {
       type: Number,
       default: 1
     }
@@ -295,6 +300,12 @@ export default {
 
   .detail-payment-way
     width calc(100% - 100px) !important
+ .outer-fee
+  .ivu-col-span-5:first-child
+    margin-left -5px
+ .own-fee
+  .ivu-col-span-5:first-child
+    margin-left -19px
 </style>
 <style lang='stylus' scoped>
   .part

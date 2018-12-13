@@ -10,3 +10,5 @@ export const MsgCount = (state) => state.messageCount
 export const TableColumns = (state) => state.customTableColumns
 /** document-body的高度 */
 export const DocumentHeight = (state) => state.documentHeight
+/** 开单设置 */
+export const WeightOption = (state) => state.order.weightOption

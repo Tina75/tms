@@ -104,7 +104,7 @@ export default {
   },
   methods: {
     ...mapMutations(['setTabNavList']),
-    ...mapActions(['getMessageCount', 'getUserInfo', 'getOwnDrivers', 'getOwnCars']),
+    ...mapActions(['getMessageCount', 'getUserInfo', 'getOwnDrivers', 'getOwnCars', 'getOrderConfiguration']),
     async newUserTip () {
       try {
         await this.getUserInfo()
@@ -129,7 +129,8 @@ export default {
         // 查询所有的自有车辆和未绑定的司机
         this.getOwnDrivers()
         this.getOwnCars()
-
+        // 获取开单全局配置
+        this.getOrderConfiguration()
         // 添加GA配置属性
         this.$ga.set('phone', this.UserInfo.phone)
         this.$ga.set('roleName', this.UserInfo.roleName)
@@ -146,17 +147,16 @@ export default {
       const vm = this
       if (this.popupQueue.length > 0) {
         let index = 0
-        let loop = () => {
+        let next = () => {
           let invokedFunction = vm.popupQueue[index]
 
           if (invokedFunction && typeof invokedFunction === 'function') {
             vm.$nextTick(() => {
               invokedFunction.call(vm)
                 .then(result => {
-                  console.log('result', result)
                   index++
                   setTimeout(() => {
-                    loop()
+                    next()
                   }, 1000)
                 })
                 .catch((error) => {
@@ -168,7 +168,7 @@ export default {
             vm.popupQueue = []
           }
         }
-        loop()
+        next()
       }
     },
     /**

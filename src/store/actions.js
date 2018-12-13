@@ -63,3 +63,16 @@ export const getTableColumns = ({ commit }) => {
 export const setDocumentHeight = ({ commit }, height) => {
   commit('updateDocumentHeight', height - 80)
 }
+/**
+ * 获取订单开单配置
+ * @param {} param0
+ */
+export const getOrderConfiguration = ({ commit }) => {
+  return Server({
+    url: 'order/config/get',
+    method: 'post',
+    data: {}
+  }).then(({ data }) => {
+    commit('changeOrderConfiguration', data.weightOption)
+  })
+}

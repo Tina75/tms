@@ -145,7 +145,7 @@ export default {
           width: 150,
           key: 'shipmentTime',
           render: (h, params) => {
-            return h('span', new Date(params.row.shipmentTime).Format('yyyy-MM-dd hh:mm'))
+            return h('span', params.row.shipmentTime ? new Date(params.row.shipmentTime).Format('yyyy-MM-dd hh:mm') : '-')
           }
         },
         {
@@ -153,7 +153,7 @@ export default {
           width: 150,
           key: 'arriveTime',
           render: (h, params) => {
-            return h('span', new Date(params.row.arriveTime).Format('yyyy-MM-dd hh:mm'))
+            return h('span', params.row.arriveTime ? new Date(params.row.arriveTime).Format('yyyy-MM-dd hh:mm') : '-')
           }
         },
         {
@@ -169,17 +169,17 @@ export default {
         {
           title: '里程（公里）',
           key: 'mileage',
-          width: 150,
+          width: 200,
           render: (h, params) => {
-            return h('span', (params.row.mileage / 1000).toFixed(1))
+            return h('span', params.row.mileage !== '' ? (params.row.mileage / 1000).toFixed(1) : '-')
           }
         },
         {
           title: '总费用',
           key: 'totalFee',
-          width: 150,
+          width: 200,
           render: (h, params) => {
-            return h('span', (params.row.totalFee / 100).toFixed(2))
+            return h('span', params.row.totalFee !== '' ? (params.row.totalFee / 100).toFixed(2) : '-')
           }
         },
         {
@@ -187,7 +187,7 @@ export default {
           width: 150,
           key: 'freightFee',
           render: (h, params) => {
-            return h('span', (params.row.freightFee / 100).toFixed(2))
+            return h('span', params.row.freightFee !== '' ? (params.row.freightFee / 100).toFixed(2) : '-')
           }
         },
         {
@@ -195,7 +195,7 @@ export default {
           width: 150,
           key: 'loadFee',
           render: (h, params) => {
-            return h('span', (params.row.loadFee / 100).toFixed(2))
+            return h('span', params.row.loadFee !== '' ? (params.row.loadFee / 100).toFixed(2) : '-')
           }
         },
         {
@@ -203,7 +203,7 @@ export default {
           width: 150,
           key: 'unloadFee',
           render: (h, params) => {
-            return h('span', (params.row.unloadFee / 100).toFixed(2))
+            return h('span', params.row.unloadFee !== '' ? (params.row.unloadFee / 100).toFixed(2) : '-')
           }
         },
         {
@@ -211,7 +211,7 @@ export default {
           width: 150,
           key: 'insuranceFee',
           render: (h, params) => {
-            return h('span', (params.row.insuranceFee / 100).toFixed(2))
+            return h('span', params.row.insuranceFee !== '' ? (params.row.insuranceFee / 100).toFixed(2) : '-')
           }
         },
         {
@@ -219,7 +219,7 @@ export default {
           width: 150,
           key: 'tollFee',
           render: (h, params) => {
-            return h('span', (params.row.tollFee / 100).toFixed(2))
+            return h('span', params.row.tollFee !== '' ? (params.row.tollFee / 100).toFixed(2) : '-')
           }
         },
         {
@@ -227,7 +227,7 @@ export default {
           width: 150,
           key: 'accommodation',
           render: (h, params) => {
-            return h('span', (params.row.accommodation / 100).toFixed(2))
+            return h('span', params.row.accommodation !== '' ? (params.row.accommodation / 100).toFixed(2) : '-')
           }
         },
         {
@@ -235,7 +235,7 @@ export default {
           width: 150,
           key: 'otherFee',
           render: (h, params) => {
-            return h('span', (params.row.otherFee / 100).toFixed(2))
+            return h('span', params.row.otherFee !== '' ? (params.row.otherFee / 100).toFixed(2) : '-')
           }
         },
         {
@@ -243,7 +243,7 @@ export default {
           width: 250,
           key: 'driverName',
           render: (h, params) => {
-            return h('span', params.row.driverName + params.row.driverPhone)
+            return h('span', (params.row.driverName || params.row.driverPhone) ? (params.row.driverName + params.row.driverPhone) : '-')
           }
         },
         {
@@ -251,7 +251,7 @@ export default {
           width: 250,
           key: 'assistantDriverName',
           render: (h, params) => {
-            return h('span', params.row.assistantDriverName + params.row.assistantDriverPhone)
+            return h('span', (params.row.assistantDriverName || params.row.assistantDriverPhone) ? (params.row.assistantDriverName + params.row.assistantDriverPhone) : '-')
           }
         },
         {
@@ -296,15 +296,15 @@ export default {
   methods: {
     search () {
       this.keyword = {
-        start: this.keywords.start,
-        end: this.keywords.end,
-        driverName: this.keywords.driverName || null,
-        driverPhone: this.keywords.driverPhone || null,
-        billType: this.keywords.billType || null,
-        startTime: this.keywords.startTime || null,
-        endTime: this.keywords.endTime || null,
-        billNo: this.keywords.billNo || null,
-        carNo: this.keywords.carNo || null
+        start: this.keywords.start || undefined,
+        end: this.keywords.end || undefined,
+        driverName: this.keywords.driverName || undefined,
+        driverPhone: this.keywords.driverPhone || undefined,
+        billType: this.keywords.billType || undefined,
+        startTime: this.keywords.startTime || undefined,
+        endTime: this.keywords.endTime || undefined,
+        billNo: this.keywords.billNo || undefined,
+        carNo: this.keywords.carNo || undefined
       }
     },
     clearKeywords () {

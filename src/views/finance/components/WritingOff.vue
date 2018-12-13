@@ -251,6 +251,10 @@ export default {
           }
         },
         {
+          title: '承运商运单号',
+          key: 'carrierWaybillNo'
+        },
+        {
           title: '始发地',
           key: 'departureName'
         },
@@ -530,6 +534,7 @@ export default {
       this.orderData = data.orderInfos.map(item => {
         console.log(item)
         return Object.assign({}, item, {
+          carrierWaybillNo: item.carrierWaybillNo ? item.carrierWaybillNo : '-',
           departureName: item.departureName ? item.departureName : '-',
           destinationName: item.destinationName ? item.destinationName : '-',
           orderNo: item.orderNo ? item.orderNo : '-',

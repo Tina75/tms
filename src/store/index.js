@@ -20,7 +20,10 @@ const state = {
   tabNavList: [], // 已展示的tab列表
   messageCount: {}, // 消息通知数量
   customTableColumns: [], // 自定义table列表信息
-  documentHeight: '' // documentBody高度
+  documentHeight: '', // documentBody高度
+  order: {
+    weightOption: 1 // 开单设置选项，1：吨；2：公斤
+  }
 }
 
 export default new Vuex.Store({

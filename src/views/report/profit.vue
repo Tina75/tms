@@ -109,7 +109,7 @@
           <Row class="middle-height border-top-none border-right-none">
             <Col>承运商运费支出</Col>
           </Row>
-          <Row class="middle-height-2 border-top-none border-bottom-none border-right-none">
+          <Row class="middle-height-3 border-top-none border-bottom-none border-right-none">
             <Col>自有车运费支出</Col>
           </Row>
           <Row class="small-height border-right-none border-bottom-none">
@@ -163,6 +163,10 @@
             <Col span="12">保险费</Col>
             <Col span="12" class="num">{{res.myInsuranceFee}}</Col>
           </Row>
+          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
+            <Col span="12">住宿费</Col>
+            <Col span="12" class="num">{{res.myAccommodation}}</Col>
+          </Row>
           <Row type="flex" justify="start" class="small-height border-top-none border-right-none border-bottom-none">
             <Col span="12">其他费用</Col>
             <Col span="12" class="num">{{res.myOtherFee}}</Col>
@@ -191,7 +195,7 @@
                  :keywords="searchFields"
                  :table-head-type="headType"
                  :url="url[tabStatus]"
-                 autoload="false"
+                 :autoload="autoload"
                  method="post"
                  @on-load = "onLoad"
       />
@@ -221,6 +225,7 @@ export default {
   },
   data: function () {
     return {
+      autoload: false,
       tabType: 'PROFIT',
       tabList: profit.TAB_LIST,
       export_url: profit.EXPORT_URL,
@@ -270,7 +275,8 @@ export default {
         profits: '-',
         carrierTollFee: '-',
         orderCashBack: '-',
-        orderInvoiceFee: '-'
+        orderInvoiceFee: '-',
+        myAccommodation: '-'
       },
       options: {
         disabledDate (date) {
@@ -344,33 +350,33 @@ export default {
       switch (this.tabStatus) {
         case 1:
           this.searchFields = {
-            startTime: this.keywords.startTime,
-            endTime: this.keywords.endTime
+            startTime: this.keywords.startTime || undefined,
+            endTime: this.keywords.endTime || undefined
           }
           this.loadDate(this.searchFields)
           break
         case 2:
           this.searchFields = {
-            startTime: this.keywords.startTime,
-            endTime: this.keywords.endTime,
-            consignerName: this.keywords.consignerName
+            startTime: this.keywords.startTime || undefined,
+            endTime: this.keywords.endTime || undefined,
+            consignerName: this.keywords.consignerName || undefined
           }
           break
         case 3:
           this.searchFields = {
-            startTime: this.keywords.startTime,
-            endTime: this.keywords.endTime,
-            waybillNo: this.keywords.waybillNo,
-            carNo: this.keywords.carNo
+            startTime: this.keywords.startTime || undefined,
+            endTime: this.keywords.endTime || undefined,
+            waybillNo: this.keywords.waybillNo || undefined,
+            carNo: this.keywords.carNo || undefined
           }
           break
         case 4:
           this.searchFields = {
-            startTime: this.keywords.startTime,
-            endTime: this.keywords.endTime,
-            consignerName: this.keywords.consignerName,
-            customerOrderNo: this.keywords.customerOrderNo,
-            orderNo: this.keywords.orderNo
+            startTime: this.keywords.startTime || undefined,
+            endTime: this.keywords.endTime || undefined,
+            consignerName: this.keywords.consignerName || undefined,
+            customerOrderNo: this.keywords.customerOrderNo || undefined,
+            orderNo: this.keywords.orderNo || undefined
           }
           break
       }
@@ -568,6 +574,10 @@ export default {
       height 270px
       line-height 270px
       border 1px solid #C9CED9
+    .middle-height-3
+      height 315px
+      line-height 315px
+      border 1px solid #C9CED9
     .small-height
       border 1px solid #C9CED9
       height 45px
@@ -578,6 +588,6 @@ export default {
       line-height 314px
     .big-height-2
       border 1px solid #C9CED9
-      height 585px
-      line-height 585px
+      height 630px
+      line-height 630px
 </style>
