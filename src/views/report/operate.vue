@@ -218,6 +218,11 @@ export default {
           width: 150
         },
         {
+          title: '客户运单号',
+          key: 'customerWaybillNo',
+          width: 150
+        },
+        {
           title: '运单号',
           key: 'waybillNo',
           width: 150
@@ -262,12 +267,22 @@ export default {
           width: 150
         },
         {
+          title: '重量（公斤）',
+          key: 'weightKg',
+          width: 150
+        },
+        {
           title: '下单时间',
           key: 'orderCreateTime',
           width: 250,
           render: (h, params) => {
             return h('span', new Date(params.row.orderCreateTime).Format('yyyy-MM-dd hh:mm'))
           }
+        },
+        {
+          title: '备注',
+          key: 'remark',
+          width: 250
         },
         {
           title: '合计应收',

@@ -8,6 +8,9 @@ export const carriesRuleSearch = (state, getters) => (data) => {
   return ruleList(state, data, 'carriesRule')
 }
 
+// 计费规则类型
+export const ruleTypeMap = state => state.ruleTypeMap
+
 function ruleList (state, data, type) {
   let mid = []
   if (data.partnerId) {

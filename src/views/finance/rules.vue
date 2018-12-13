@@ -64,6 +64,8 @@
                   </Select>
                 </FormItem>
                 <span>计算</span>
+                <popTipForRule></popTipForRule>
+                <!--<span><Icon type="ios-settings-outline" size="16" style="line-height: inherit"/></span>-->
               </Form>
               <div class="title">
                 <div class="ruleName">{{ruleDetail.ruleName}}</div>
@@ -194,13 +196,14 @@ import TagNumberInput from '@/components/TagNumberInput'
 import FontIcon from '@/components/FontIcon'
 import DataEmpty from '@/components/DataEmpty'
 import mixin from '../../views/client/ruleForClient/mixin'
+import popTipForRule from '@/views/client/ruleForClient/dialogs/popTipForRule.vue'
 import { mapActions } from 'vuex'
 export default {
   name: 'financeRules',
   metaInfo: {
     title: '计费规则'
   },
-  components: { SelectInputForCity, FontIcon, TagNumberInput, DataEmpty },
+  components: { SelectInputForCity, FontIcon, TagNumberInput, DataEmpty, popTipForRule },
   mixins: [BasePage, mixin],
   data () {
     return {

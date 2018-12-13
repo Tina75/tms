@@ -149,7 +149,8 @@ export default {
     this.settlementPayInfo = this.type === 3 ? [
       { payType: 1, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 },
       { payType: 2, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 },
-      { payType: 3, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
+      { payType: 3, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 },
+      { payType: 4, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
     ] : [
       { payType: 2, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
     ]
@@ -290,6 +291,10 @@ export default {
                 if (item.payType === 3) {
                   item.isCardDisabled = statusDetail.receiptPaidFule
                   item.isCashDisabled = statusDetail.receiptPaidCash
+                }
+                if (item.payType === 4) {
+                  item.isCardDisabled = statusDetail.tailPaidFule
+                  item.isCashDisabled = statusDetail.tailPaidCash
                 }
               })
               console.log(_this.settlementPayInfo)
