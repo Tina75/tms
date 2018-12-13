@@ -70,6 +70,10 @@
                   <label class="feeLabel">路桥费：</label>
                   <span class="colorGrey">{{data.beforeFeeInfo.tollFee | Money}}元</span>
                 </i-col>
+                <i-col v-if="billType === 3 && data.assignCarType === 2" span="8">
+                  <label class="feeLabel">住宿费：</label>
+                  <span class="colorGrey">{{data.beforeFeeInfo.accommodation | Money}}元</span>
+                </i-col>
                 <i-col span="8">
                   <label class="feeLabel">保险费：</label>
                   <span class="colorGrey">{{data.beforeFeeInfo.insuranceFee | Money}}元</span>
@@ -113,6 +117,10 @@
                 <i-col v-if="billType === 3" span="8">
                   <label class="feeLabel">路桥费：</label>
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.tollFee, data.afterFeeInfo.tollFee)}" class="colorGrey">{{data.afterFeeInfo.tollFee | Money}}</span>元
+                </i-col>
+                <i-col v-if="billType === 3 && data.assignCarType === 2" span="8">
+                  <label class="feeLabel">住宿费：</label>
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.accommodation, data.afterFeeInfo.accommodation)}" class="colorGrey">{{data.afterFeeInfo.accommodation | Money}}</span>元
                 </i-col>
                 <i-col span="8">
                   <label class="feeLabel">保险费：</label>

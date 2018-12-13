@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Form ref="ownSendInfos" :label-width="82" :model="ownForm" :rules="rules" label-position="left">
+    <Form ref="ownSendInfos" :label-width="82" :model="ownForm" :rules="rules" label-position="right">
       <div>
         <OwnCarForm :form="ownForm" :class="formClass"></OwnCarForm>
       </div>
@@ -101,6 +101,7 @@ export default {
     .ivu-form-item-label
       color #777
       font-size 14px
+      padding-right 0
   .padding-left-label
     .ivu-form-item-label
       padding-left 10px

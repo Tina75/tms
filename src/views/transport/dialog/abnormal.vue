@@ -51,6 +51,7 @@
           :is-disabled="isDisabled"
           :abnormal-length="details.abnormalPayInfos.length"
           :allocation-type="allocationStrategy"
+          :order-cnt="details.orderCnt"
           source="abnormal">
         </send-fee>
       </div>
@@ -64,6 +65,7 @@
           :is-disabled="isDisabled"
           :abnormal-length="details.abnormalPayInfos.length"
           :allocation-type="allocationStrategy"
+          :order-cnt="details.orderCnt"
           source="abnormal"></pickup-fee>
       </div>
 

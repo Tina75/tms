@@ -348,6 +348,11 @@ export const TABLE_COLUMNS = vm => [
     render: (h, params) => {
       return h('span', params.row.collectionMoney ? (params.row.collectionMoney / 100).toFixed(2) : '-')
     }
+  },
+  {
+    title: '备注',
+    key: 'remark',
+    width: 120
   }
 ]
 

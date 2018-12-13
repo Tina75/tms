@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Form ref="allocationForm" :label-width="82" :rules="rules" label-position="left">
+    <Form ref="allocationForm" :label-width="82" :rules="rules" label-position="right">
       <FormItem :label="allocationLabel" class="detail-form-label" prop="allocation">
         <Select v-model="allocation" transfer placeholder="请选择" style="width: 180px;" @on-change="handleChange">
           <Option v-for="opt in allocationStrategy" :key="opt.value" :value="opt.value">{{opt.label}}</Option>

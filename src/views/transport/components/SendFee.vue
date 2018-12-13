@@ -1,15 +1,15 @@
 <template>
-  <Form ref="sendFeeForm" :label-width="82" :model="payment" :rules="rules" class="transport-detail" label-position="left">
+  <Form ref="sendFeeForm" :label-width="82" :model="payment" :rules="rules" class="transport-detail" label-position="right">
     <div class="part" style="padding-bottom: 5px;">
       <Row class="detail-field-group">
         <i-col v-if="source !== 'abnormal'" span="6">
-          <FormItem label="计费里程：" prop="mileage" class="padding-left-label">
+          <FormItem label="计费里程：" prop="mileage">
             <TagNumberInput :show-chinese="false" :min="0" v-model="payment.mileage" :precision="1" class="detail-payment-input-send"></TagNumberInput>
             <span class="unit-yuan">公里</span>
           </FormItem>
         </i-col>
         <i-col span="6">
-          <FormItem :label="sendWay === '1' ? '运输费：': '油费：'" prop="freightFee" class="padding-left-label">
+          <FormItem :label="sendWay === '1' ? '运输费：': '油费：'" prop="freightFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>
@@ -34,7 +34,7 @@
           </FormItem>
         </i-col>
         <i-col v-if="source === 'abnormal'" span="6">
-          <FormItem label="路桥费：" prop="tollFee" class="padding-left-label">
+          <FormItem label="路桥费：" prop="tollFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.tollFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>
@@ -44,7 +44,7 @@
       </Row>
       <Row class="detail-field-group">
         <i-col v-if="source !== 'abnormal'" span="6">
-          <FormItem label="路桥费：" prop="tollFee" class="padding-left-label">
+          <FormItem label="路桥费：" prop="tollFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.tollFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>
@@ -52,7 +52,7 @@
           </FormItem>
         </i-col>
         <i-col v-if="sendWay === '2'" span="6">
-          <FormItem label="住宿费：" prop="accommodation" class="padding-left-label">
+          <FormItem label="住宿费：" prop="accommodation">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.accommodation" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>
@@ -60,7 +60,7 @@
           </FormItem>
         </i-col>
         <i-col span="6">
-          <FormItem label="保险费：" prop="insuranceFee" class="padding-left-label">
+          <FormItem label="保险费：" prop="insuranceFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>
@@ -105,7 +105,7 @@
         </i-col>
       </Row>
 
-      <Row class="detail-field-group" style="margin-top: 15px;margin-left: 10px;">
+      <Row class="detail-field-group" style="margin-top: 15px;margin-left: -2px;">
         <i-col v-if="sendFeeOrders.length > 1" span="8">
           <allocation-strategy ref="allocationStrategy" :allocation-orders="sendFeeOrders"></allocation-strategy>
         </i-col>
@@ -122,7 +122,7 @@
     </div>
     <!-- 自送 -->
     <div v-if="sendWay === '2' && source !== 'abnormal' && sendFeeOrders.length > 1">
-      <Row class="detail-field-group" style="margin-left: 10px;">
+      <Row class="detail-field-group" style="margin-left: -2px;">
         <i-col span="8">
           <allocation-strategy ref="allocationStrategy" :allocation-orders="sendFeeOrders"></allocation-strategy>
         </i-col>
@@ -141,7 +141,7 @@
             mode="edit" />
         </i-col>
       </Row>
-      <Row class="detail-field-group row-margin">
+      <Row v-if="orderCnt > 1" class="detail-field-group row-margin">
         <i-col span="24">
           <span class="detail-field-title-sm" style="margin-left: 10px;">分摊策略：</span>
           <span>{{ getAllocationValToLabel(allocationType) }}</span>
@@ -243,6 +243,11 @@ export default {
     },
     // 分摊类型 默认1 按订单数分摊
     allocationType: {
+      type: Number,
+      default: 1
+    },
+    // 订单数量，异常需要判断是否显示分摊费用
+    orderCnt: {
       type: Number,
       default: 1
     }
@@ -450,10 +455,6 @@ export default {
      color #777
      font-size 14px
      padding 10px 0 10px
-
-   .padding-left-label
-    .ivu-form-item-label
-      padding-left 10px
 
   .detail-payment-way
     width calc(100% - 100px) !important
