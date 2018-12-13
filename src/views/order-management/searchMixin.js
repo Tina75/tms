@@ -287,8 +287,7 @@ export default {
     },
     // 将地址字符串12位后的替换成...
     formatterAddress (str) {
-      let dot = str.substring(12)
-      return str.replace(dot, ' ...')
+      return str.slice(0, 12) + ' ...'
     },
     // 在途、已到货、已回单、已返厂取消操作栏
     deleteOperateCol () {

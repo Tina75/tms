@@ -375,8 +375,7 @@ export default {
     },
     // 将地址字符串8位后的替换成...
     formatterAddress (str) {
-      let dot = str.substring(8)
-      return str.replace(dot, ' ...')
+      return str.slice(0, 8) + ' ...'
     }
   }
 }

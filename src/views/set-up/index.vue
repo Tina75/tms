@@ -84,8 +84,12 @@
       </div>
       <!--系统设置-->
       <div v-else-if="'4' === this.rightKey" key="4" class="divSetContent">
-        <div v-if="tabName != 'order'">
-          <h1>分摊策略</h1>
+        <div v-if="tabName != 'order'" class="setup-allocation">
+          <allocation-strategy ref="orderAllocation" allocation-label="订单：" source="order"></allocation-strategy>
+          <div class="allocation-tips">选择以后订单拆单将默认选择此运费分摊策略</div>
+          <allocation-strategy ref="transportAllocation" allocation-label="运单&提货单：" source="transport"></allocation-strategy>
+          <div class="allocation-tips">选择以后运单和提货单将默认选择此运费分摊策略</div>
+          <Button type="primary" class="msgSaveBtn" style="width:86px;left: 22%;" @click="handleSaveAllocation">保存</Button>
         </div>
         <div v-else>
           <Unit />
@@ -105,12 +109,14 @@ import _ from 'lodash'
 import { mapGetters, mapMutations } from 'vuex'
 import CitySelect from '@/components/SelectInputForCity'
 import Unit from './components/unit.vue'
+import AllocationStrategy from '@/views/transport/components/AllocationStrategy.vue'
 export default {
   name: 'set-up',
   components: {
     AreaInput,
     CitySelect,
-    Unit
+    Unit,
+    AllocationStrategy
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -392,6 +398,18 @@ export default {
     },
     tabChange (name) {
       this.tabName = name
+    },
+    handleSaveAllocation () {
+      Server({
+        url: '/set/updateUserAllocationStrategy',
+        method: 'post',
+        data: {
+          orderStrategy: this.$refs.orderAllocation.getAllocation(),
+          waybillStrategy: this.$refs.transportAllocation.getAllocation()
+        }
+      }).then((res) => {
+        this.$Message.success('设置成功')
+      })
     }
   }
 }
@@ -495,4 +513,26 @@ export default {
   margin-top:40px;
   left: 15%;
   position: absolute;
+.allocation-tips
+  font-size 12px
+  font-family 'PingFangSC-Regular'
+  color rgba(236,78,78,1)
+  margin -20px 0 30px 110px
+</style>
+
+<style lang='stylus'>
+  .setup-allocation
+    width 500px
+    position absolute
+    top 50%
+    left 50%
+    transform translate(-50%, -50%)
+    .ivu-form-item-label
+      width 110px !important
+      text-align right
+      font-size 14px
+      font-family 'PingFangSC-Regular'
+      color rgba(0,0,0,1)
+    .ivu-select
+      width 300px !important
 </style>
