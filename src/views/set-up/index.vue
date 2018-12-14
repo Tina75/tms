@@ -153,8 +153,8 @@ export default {
         code: '150200'
       }, {
         name: '系统设置',
-        id: '4'
-        // code: '150200'
+        id: '4',
+        code: '150300'
       }],
       rightTitle: '修改密码',
       rightKey: '1',

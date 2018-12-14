@@ -9,7 +9,7 @@
     "name":"上游来单",
     "path":"/upstream",
     "icon":"shangyoulaidan",
-    "powerCode":0
+    "powerCode":110000
   },
   {
     "name":"受理开单",
