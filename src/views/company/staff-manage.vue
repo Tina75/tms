@@ -82,8 +82,10 @@
         <p slot="header" class="modalTitle">
           <span>提示</span>
         </p>
-        <P>添加员工成功，员工的登录账号为手机号</P>
-        <p>初始登录密码已发送至员工手机</p>
+        <div class="modelBody">
+          <P>添加员工成功，员工的登录账号为手机号</P>
+          <p>初始登录密码已发送至员工手机</p>
+        </div>
         <div slot="footer">
           <Button type="primary" @click="knowCancel">我知道了</Button>
         </div>
@@ -420,4 +422,6 @@ export default {
 .dialog
   p
   text-align center
+.modelBody
+  margin-left 60px
 </style>
