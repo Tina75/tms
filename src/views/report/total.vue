@@ -35,7 +35,9 @@
       :autoload="autoload"
       :method="method"
       :keywords="keyword"
+      :table-head-type= "headType"
       :columns="columns"
+      :show-filter="true"
       @on-load = "onLoad">
     </page-table>
   </div>
@@ -45,6 +47,7 @@
 import PageTable from '@/components/page-table'
 import Export from '@/libs/js/export'
 import { getPreMonth } from './getPerMonth'
+import tableHeadType from '@/libs/constant/headtype.js'
 export default {
   name: 'total',
   components: {
@@ -55,6 +58,7 @@ export default {
   },
   data: function () {
     return {
+      headType: tableHeadType.TURNOVER,
       btnGroup: [
         { name: '近七天', value: 1 },
         { name: '本月', value: 2 },
@@ -90,6 +94,12 @@ export default {
         {
           title: '重量',
           key: 'weight',
+          ellipsis: true,
+          tooltip: true
+        },
+        {
+          title: '重量（公斤）',
+          key: 'weighKg',
           ellipsis: true,
           tooltip: true
         },
