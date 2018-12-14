@@ -1,14 +1,14 @@
 <template>
   <div id="set-up-container" class="set-up-container temAll">
     <Row id="temAll" :style="styleHeight">
-      <Col span="3">
-      <Menu active-name="修改密码" class="menuList" style="width:100%">
+      <Col span="1" style="width:160px;height:100%;background-color:#f3f5f9;">
+      <Menu active-name="修改密码" class="menuList" style="width:160px">
         <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
         <p class="menuTitle">{{menu.name}}</p>
-          </MenuItem>
+        </MenuItem>
       </Menu>
       </Col>
-      <Col span="21" class="contentDiv">
+      <Col span="20" class="contentDiv">
       <div v-if="4 != rightKey" class="borderBottomLine">
         <span class="iconRightTitle"></span>
         <span class="iconRightTitleP">{{rightTitle}}</span>
@@ -20,7 +20,7 @@
       <!--密码设置-->
       <div v-if="'1' === this.rightKey" key="1" class="divSetContent">
         <Col span="10" class="setConf">
-        <Form ref="formPwd" :model="formPwd" :rules="rulePwd" :label-width="90" label-position="right">
+        <Form ref="formPwd" :model="formPwd" :rules="rulePwd" :label-width="100" label-position="right">
           <FormItem label="原始密码：" prop="oldPassword" class="labelClassSty">
             <Input v-model="formPwd.oldPassword" type="password" placeholder="请输入原始密码" class="inputClassSty"></Input>
           </FormItem>
@@ -39,7 +39,7 @@
       <!--个人设置-->
       <div v-else-if="'2' === this.rightKey" key="2" class="divSetContent">
         <Col span="10" class="setConf">
-        <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="90" label-position="right">
+        <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="100" label-position="right">
           <FormItem label="账号：" class="labelClassSty">
             <span>{{formPersonal.phone}}</span>
           </FormItem>
@@ -282,6 +282,7 @@ export default {
         url: 'set/smsInfo',
         method: 'get'
       }).then(({ data }) => {
+        this.switchMsg = false
         if (data.data.smsCode) {
           this.msgCheckBoxList = data.data.smsCode === '' ? [] : data.data.smsCode
           this.msgCheckBoxListInit = data.data.smsCode === '' ? [] : data.data.smsCode
@@ -423,10 +424,12 @@ export default {
     background: #fff;
     color: #333333;
     font-weight: bold;
+>>> .ivu-form-item-label
+>>> .ivu-form-item-content
+  font-size: 14px
+  font-weight: 400
 .temAll
-  width: 100%
-  height: 100%;
-  background:rgba(243,245,249,1);
+  background: #fff
   margin: -20px -15px;
   .setConf
     margin-top: 20px;
@@ -445,8 +448,8 @@ export default {
   height: 100%;
 .borderBottomLine
   border-bottom: 1px solid #e9e9e9;
-  padding-bottom:10px;
-  margin-top: 14px;
+  padding-bottom: 18px;
+  margin-top: 18px;
   margin-right: 20px;
   .iconRightTitle
     width: 5px;
@@ -518,6 +521,10 @@ export default {
   font-family 'PingFangSC-Regular'
   color rgba(236,78,78,1)
   margin -20px 0 30px 110px
+.menuTitle
+  font-size: 16px
+  margin-top: 5px;
+  margin-left: -10px;
 </style>
 
 <style lang='stylus'>
@@ -529,7 +536,6 @@ export default {
     transform translate(-50%, -50%)
     .ivu-form-item-label
       width 110px !important
-      text-align right
       font-size 14px
       font-family 'PingFangSC-Regular'
       color rgba(0,0,0,1)

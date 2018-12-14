@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Form ref="sendInfo" :label-width="82" :model="carrierInfo" :rules="sourceType === 'pickup' ? rules : rules" class="transport-detail" label-position="left">
+    <Form ref="sendInfo" :label-width="82" :model="carrierInfo" :rules="rules" class="transport-detail" label-position="right">
       <div :style="source === 'detail' || source === 'change' ? 'margin-bottom: 0;border-bottom: none;' : ''" class="part">
         <Row class="detail-field-group">
           <i-col span="8">
@@ -46,7 +46,7 @@
             </FormItem>
           </i-col>
           <i-col span="8">
-            <span class="detail-field-title" style="width: 82px;">车型：</span>
+            <span class="detail-field-title" style="width: 82px;text-align: right;">车型：</span>
             <Select v-model="carrierInfo.carType"
                     transfer
                     class="detail-info-input-half"

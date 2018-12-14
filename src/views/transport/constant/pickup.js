@@ -284,6 +284,11 @@ export const TABLE_COLUMNS = vm => [
     title: '订单数',
     key: 'orderCnt',
     width: 120
+  },
+  {
+    title: '备注',
+    key: 'remark',
+    width: 120
   }
 ]
 
