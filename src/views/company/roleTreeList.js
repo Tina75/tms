@@ -1,4 +1,17 @@
 export default {
+  data7: [{
+    key: 'data6',
+    title: '上游来单',
+    expand: true,
+    disabled: true,
+    checked: true,
+    code: '110000',
+    children: [
+      { title: '接收', code: '110101', parentId: '110000', disabled: true },
+      { title: '拒绝', code: '110102', parentId: '110000', disabled: true },
+      { title: '导出', code: '110103', parentId: '110000', disabled: true }
+    ]
+  }],
   data1: [{
     key: 'data1',
     title: '受理开单',
