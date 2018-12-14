@@ -1,5 +1,6 @@
 import TMSUrl from '@/libs/constant/url'
 import IconLabel from '@/components/IconLabel'
+import float from '@/libs/js/float'
 
 export const TAB_LIST = [
   // { name: '全部', count: '' },
@@ -346,7 +347,7 @@ export const TABLE_COLUMNS = vm => [
     key: 'collectionMoney',
     minWidth: 120,
     render: (h, params) => {
-      return h('span', params.row.collectionMoney ? (params.row.collectionMoney / 100).toFixed(2) : '-')
+      return h('span', params.row.collectionMoney ? float.round(params.row.collectionMoney / 100) : 0)
     }
   },
   {

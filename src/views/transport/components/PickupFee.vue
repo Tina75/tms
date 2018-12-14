@@ -106,6 +106,7 @@ import validator from '@/libs/js/validate'
 import PayInfo from './PayInfo'
 import AllocationStrategy from './AllocationStrategy.vue'
 import allocationStrategy from '../constant/allocation.js'
+import float from '@/libs/js/float'
 
 export default {
   name: 'PickupFeeComponent',
@@ -216,7 +217,7 @@ export default {
               Number(this.payment.unloadFee) +
               Number(this.payment.insuranceFee) +
               Number(this.payment.otherFee)
-      return parseFloat(total.toFixed(2))
+      return float.round(total)
     }
   },
   watch: {
