@@ -73,6 +73,11 @@ export default {
       type: Boolean,
       default: true
     },
+    // 默认既能输入又能选，某些场景，只能选，比如公司设置
+    onlySelect: {
+      type: Boolean,
+      default: false
+    },
     clearable: {
       type: Boolean,
       default: false
@@ -116,7 +121,8 @@ export default {
      * 显示时候的值，回调函数
      * 比如：手机号，银行卡号，间隔显示，但是最终的值不保留间隔
      */
-    formatter: Function
+    formatter: Function,
+    onChange: Function
   },
   data () {
     return {
@@ -212,7 +218,6 @@ export default {
     }
   },
   mounted () {
-    console.log('prefix.....', this.prefix)
     const vm = this
     // 加载默认focus
     if (this.autoFocus) {
@@ -294,6 +299,7 @@ export default {
       this.currentValue = ''
       this.focusIndex = -1
       this.$emit('input', this.currentValue)
+      // this.setCurrentValue('')
     },
     // 点击下拉框项
     handleSelect (name) {
@@ -323,8 +329,15 @@ export default {
     },
     handleBlur () {
       this.resetSelect()
-      // 设置输入框的值，不选择下拉框的选项
-      // this.$emit('input', this.currentValue)
+      // 只能选择，不能输入
+      if (this.onlySelect && this.inputValue !== this.currentValue) {
+        let value = this.currentValue
+        this.currentValue = ''
+        this.$nextTick(() => {
+          this.currentValue = value
+          this.inputValue = value
+        })
+      }
       this.$emit('on-blur', this.currentValue)
     },
     /**
@@ -338,7 +351,12 @@ export default {
       if (this.remote) {
         this.remoteCall(val)
       }
-      this.setCurrentValue(val)
+      if (!this.onlySelect) {
+        this.setCurrentValue(val)
+      } else {
+        this.inputValue = val
+        this.$emit('on-change', val)
+      }
       this.visible = true
     },
     // 远程请求
