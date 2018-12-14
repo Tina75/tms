@@ -160,22 +160,29 @@ export default {
     }
   },
 
-  computed: {
-    carrierName () {
-      return this.carrierInfo.carrierName
-    }
-  },
+  // computed: {
+  //   carrierName () {
+  //     return this.carrierInfo.carrierName
+  //   }
+  // },
 
   watch: {
-    carrierName (newVal, oldVal) {
-      console.log(newVal)
-      $bus.$emit('carrierNameChange', newVal)
+    // carrierName (newVal, oldVal) {
+    //   console.log(newVal)
+    //   $bus.$emit('carrierNameChange', newVal)
+    // },
+    carrierInfo: {
+      handler (newVal, oldVal) {
+        console.log(newVal)
+        $bus.$emit('carrierInfoChange', newVal)
+      },
+      deep: true
     }
   },
 
   created () {
     this.$nextTick(() => {
-      $bus.$emit('carrierNameChange', this.carrierInfo.carrierName)
+      $bus.$emit('carrierInfoChange', this.carrierInfo)
     })
     if (this.sourceType !== 'sendCar') {
       delete this.carrierInfo.carrierWaybillNo // 送货调度、派车、详情、编辑、改单有承运商订单号字段，其他没有
