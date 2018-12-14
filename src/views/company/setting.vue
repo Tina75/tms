@@ -243,6 +243,10 @@ export default {
       let isChanged = true
       this.$refs[name].validate((valid) => {
         if (valid) {
+          if (!this.formCompany.cityId) {
+            this.$Message.error('详细地址只支持从下拉推荐地址中选择')
+            return false
+          }
           this.formCompany.logoUrl = this.$refs.uploadLogo.uploadImg
           this.formCompany.otherInfo = JSON.stringify(this.$refs.upLoads.getImageList())
           for (const key in this.formCompanyInit) {
@@ -315,10 +319,11 @@ export default {
       }
     },
     // 省市区位置获取
-    latlongtChange ({ lat, lng }) {
+    latlongtChange ({ lat, lng, cityCode }) {
       this.formCompany.latitude = lat
       this.formCompany.longitude = lng
       this.formCompany.mapType = 1
+      this.formCompany.cityId = cityCode
     }
   }
 }

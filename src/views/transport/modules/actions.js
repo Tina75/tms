@@ -13,7 +13,7 @@ export default {
         method: 'post',
         data: { orderIds }
       }).then(res => {
-        resolve(res.data.data.cargoList)
+        resolve(res.data.data)
       }).catch(err => {
         reject(err)
       })

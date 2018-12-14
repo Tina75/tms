@@ -319,7 +319,7 @@ export const BTNLIST = vm => [
     btns: [
       {
         name: '导出',
-        code: 0,
+        code: 110103,
         func: () => {
           vm.upstreamExport()
         }
@@ -330,19 +330,19 @@ export const BTNLIST = vm => [
     tab: '待接收',
     btns: [{
       name: '接收',
-      code: 0,
+      code: 110101,
       func: () => {
         vm.accept()
       }
     }, {
       name: '拒绝',
-      code: 0,
+      code: 110102,
       func: () => {
         vm.reject()
       }
     }, {
       name: '导出',
-      code: 0,
+      code: 110103,
       func: () => {
         vm.upstreamExport()
       }
@@ -353,7 +353,7 @@ export const BTNLIST = vm => [
     btns: [
       {
         name: '导出',
-        code: 0,
+        code: 110103,
         func: () => {
           vm.upstreamExport()
         }
@@ -365,7 +365,7 @@ export const BTNLIST = vm => [
     btns: [
       {
         name: '导出',
-        code: 0,
+        code: 110103,
         func: () => {
           vm.upstreamExport()
         }

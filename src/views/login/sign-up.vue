@@ -56,7 +56,7 @@
                 <AreaInput v-model="form.address" @city-select="addressLocationChange"></AreaInput>
                 </Col>
                 <Col :span="8" class="areaRight">
-                <Input :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+                <Input v-model="form.consignerHourseNumber" :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
                 </Col>
               </Row>
             </FormItem>
@@ -123,6 +123,7 @@ export default {
         name: '', // 公司名称
         userName: '', // 联系人姓名
         address: '', // 公司地址
+        consignerHourseNumber: '',
         cityId: void 0,
         latitude: void 0,
         longitude: void 0,

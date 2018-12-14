@@ -96,10 +96,10 @@
             <Table :columns="tableColumns" :data="detail" :loading="loading" class="detail-field-table"></Table>
             <div class="table-footer">
               <span class="table-footer-title">总计</span>
-              <span>总货值：{{ orderTotal.cargoCost }}</span>
+              <span>总货值：{{ orderTotal.cargoCost }}元</span>
               <span>总数量：{{ orderTotal.quantity }}</span>
-              <span>总体积：{{ orderTotal.volume }}</span>
-              <span>总重量：{{ orderTotal.weight }}</span>
+              <span>总体积：{{ orderTotal.volume }}方</span>
+              <span>总重量：{{ WeightOption === 1 ? orderTotal.weight + '吨' : orderTotal.weightKg + '公斤' }}</span>
             </div>
           </div>
 
@@ -231,10 +231,10 @@
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
-          <span>总货值：{{ orderTotal.cargoCost }}</span>
+          <span>总货值：{{ orderTotal.cargoCost }}元</span>
           <span>总数量：{{ orderTotal.quantity }}</span>
-          <span>总体积：{{ orderTotal.volume }}</span>
-          <span>总重量：{{ orderTotal.weight }}</span>
+          <span>总体积：{{ orderTotal.volume }}方</span>
+          <span>总重量：{{ WeightOption === 1 ? orderTotal.weight + '吨' : orderTotal.weightKg + '公斤' }}</span>
         </div>
       </div>
       <!-- 应付费用 -->
@@ -248,7 +248,7 @@
           :settlement-type="settlementType"
           :settlement-pay-info="settlementPayInfo"
           :send-way="sendWay"
-          :pick-fee-orders="detail"></pickup-fee>
+          :pick-fee-orders="orderList"></pickup-fee>
       </div>
     </section>
 
@@ -285,11 +285,12 @@ import Exception from './exception.vue'
 import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 import allocationStrategy from '../constant/allocation.js'
 import { mapActions } from 'vuex'
+import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 
 export default {
   name: 'detailPickup',
   components: { SelectInput, PayInfo, Exception, PickupFee, OwnSendInfo, SendCarrierInfo },
-  mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
+  mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin, tableWeightColumnMixin ],
   metaInfo: { title: '提货单详情' },
   data () {
     return {
@@ -438,7 +439,7 @@ export default {
           key: 'quantity',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.quantity)
+            return this.tableDataRender(h, p.row.quantity ? p.row.quantity : 0)
           }
         },
         {
@@ -446,15 +447,7 @@ export default {
           key: 'cargoCost',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
-          }
-        },
-        {
-          title: '重量(吨)',
-          key: 'weight',
-          width: 120,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.weight)
+            return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },
         {
@@ -462,7 +455,7 @@ export default {
           key: 'volume',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.volume)
+            return this.tableDataRender(h, p.row.volume ? p.row.volume : 0)
           }
         },
         {
@@ -498,8 +491,16 @@ export default {
           }
         }
       ],
-
       sendWay: '1' // 派车类型 1 外转 2 自送  V1.07新增
+    }
+  },
+
+  mounted () {
+    // 判断显示吨列或公斤列
+    if (this.WeightOption === 1) {
+      this.triggerWeightColumn(this.tableColumns, this.columnWeight, 5)
+    } else {
+      this.triggerWeightColumn(this.tableColumns, this.columnWeightKg, 5)
     }
   },
 
@@ -566,6 +567,7 @@ export default {
         }
         vm.detail = data.cargoList
         vm.logList = data.loadBillLogs
+        this.orderList = data.orderList
 
         vm.status = vm.statusFilter(data.loadbill.status)
         vm.settlementType = data.loadbill.settlementType ? data.loadbill.settlementType.toString() : '1'
@@ -614,7 +616,7 @@ export default {
         loadbill: {
           pickUpId: z.id,
           assignCarType: z.sendWay,
-          allocationStrategy: z.detail.length > 1 ? z.$refs.pickupFee.getAllocationStrategy() : void 0 // 订单数大于1需要传分摊策略
+          allocationStrategy: z.orderList.length > 1 ? z.$refs.pickupFee.getAllocationStrategy() : void 0 // 订单数大于1需要传分摊策略
         },
         cargoList: _.uniq(this.detail.map(item => item.orderId))
       }

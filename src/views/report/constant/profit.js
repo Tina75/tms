@@ -1,4 +1,31 @@
-
+// 公司利润报表初始化
+export const res = {
+  orderFreightFee: '-',
+  orderLoadFee: '-',
+  orderUnloadFee: '-',
+  orderOtherFee: '-',
+  orderPickupFee: '-',
+  orderInsuranceFee: '-',
+  orderTotalFee: '-',
+  carrierFreightFee: '-', // 承运商
+  carrierLoadFee: '-',
+  carrierUnloadFee: '-',
+  carrierOtherFee: '-',
+  carrierInsuranceFee: '-',
+  carrierTotalFee: '-',
+  myFuelFee: '-', // 自有车
+  myTollFee: '-',
+  myLoadFee: '-',
+  myUnloadFee: '-',
+  myInsuranceFee: '-',
+  myOtherFee: '-',
+  // transbillTransFee: '-',
+  profits: '-',
+  carrierTollFee: '-',
+  orderCashBack: '-',
+  orderInvoiceFee: '-',
+  myAccommodation: '-'
+}
 export const TAB_LIST = [
   { name: '公司利润', count: '' },
   { name: '发货方利润', count: '' },
@@ -15,37 +42,37 @@ export const TABLECOLUMNS = {
     {
       title: '客户名称',
       key: 'consignerName',
-      width: 150
+      width: 200
     },
     {
       title: '订单数',
       key: 'orderNum',
-      width: 150
+      width: 200
     },
     {
       title: '重量（吨）',
       key: 'weight',
-      width: 150
+      width: 200
     },
     {
       title: '重量（公斤）',
       key: 'weightKg',
-      width: 150
+      width: 200
     },
     {
       title: '体积（方）',
       key: 'volume',
-      width: 150
+      width: 200
     },
     {
       title: '件数',
       key: 'quantity',
-      width: 150
+      width: 200
     },
     {
       title: '应收总费用',
       key: 'totalFee',
-      width: 150,
+      width: 200,
       render: (h, params) => {
         return h('span', (params.row.totalFee / 100).toFixed(2))
       }
@@ -53,7 +80,7 @@ export const TABLECOLUMNS = {
     {
       title: '提货费合计',
       key: 'pickupBillFee',
-      width: 150,
+      width: 200,
       render: (h, params) => {
         return h('span', (params.row.pickupBillFee / 100).toFixed(2))
       }
@@ -61,7 +88,7 @@ export const TABLECOLUMNS = {
     {
       title: '送货费合计',
       key: 'wayBillFee',
-      width: 150,
+      width: 200,
       render: (h, params) => {
         return h('span', (params.row.wayBillFee / 100).toFixed(2))
       }
@@ -69,7 +96,7 @@ export const TABLECOLUMNS = {
     {
       title: '应付总费用',
       key: 'payableTotalFee',
-      width: 150,
+      width: 200,
       render: (h, params) => {
         return h('span', (params.row.payableTotalFee / 100).toFixed(2))
       }
@@ -77,7 +104,7 @@ export const TABLECOLUMNS = {
     {
       title: '利润',
       key: 'profit',
-      width: 150,
+      width: 200,
       render: (h, params) => {
         return h('span', (params.row.profit / 100).toFixed(2))
       }
@@ -198,22 +225,22 @@ export const TABLECOLUMNS = {
     {
       title: '订单号',
       key: 'orderNo',
-      width: 150
+      width: 200
     },
     {
       title: '客户订单号',
       key: 'customerOrderNo',
-      width: 150
+      width: 200
     },
     {
       title: '客户名称',
       key: 'consignerName',
-      width: 150
+      width: 200
     },
     {
       title: '里程数（公里）',
       key: 'mileage',
-      width: 150,
+      width: 200,
       render: (h, params) => {
         return h('span', (params.row.mileage / 1000).toFixed(1))
       }
@@ -221,27 +248,27 @@ export const TABLECOLUMNS = {
     {
       title: '重量（吨）',
       key: 'weight',
-      width: 150
+      width: 200
     },
     {
       title: '重量（公斤）',
       key: 'weightKg',
-      width: 150
+      width: 200
     },
     {
       title: '体积（方）',
-      width: 150,
+      width: 200,
       key: 'volume'
     },
     {
       title: '件数',
-      width: 150,
+      width: 200,
       key: 'quantity'
     },
     {
       title: '应收总费用',
       key: 'totalFee',
-      width: 150,
+      width: 200,
       render: (h, params) => {
         return h('span', (params.row.totalFee / 100).toFixed(2))
       }
@@ -249,7 +276,7 @@ export const TABLECOLUMNS = {
     {
       title: '提货费合计',
       key: 'pickupBillFee',
-      width: 150,
+      width: 200,
       render: (h, params) => {
         return h('span', (params.row.pickupBillFee / 100).toFixed(2))
       }
@@ -257,7 +284,7 @@ export const TABLECOLUMNS = {
     {
       title: '送货费合计',
       key: 'wayBillFee',
-      width: 150,
+      width: 200,
       render: (h, params) => {
         return h('span', (params.row.wayBillFee / 100).toFixed(2))
       }
@@ -265,7 +292,7 @@ export const TABLECOLUMNS = {
     {
       title: '应付总费用',
       key: 'payableTotalFee',
-      width: 150,
+      width: 200,
       render: (h, params) => {
         return h('span', (params.row.payableTotalFee / 100).toFixed(2))
       }
@@ -273,14 +300,14 @@ export const TABLECOLUMNS = {
     {
       title: '利润',
       key: 'profit',
-      width: 150,
+      width: 200,
       render: (h, params) => {
         return h('span', (params.row.profit / 100).toFixed(2))
       }
     },
     {
       title: '创建时间',
-      width: 150,
+      width: 200,
       key: 'createTime',
       render: (h, params) => {
         return h('span', new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm'))
@@ -289,12 +316,12 @@ export const TABLECOLUMNS = {
     {
       title: '发货城市',
       key: 'startName',
-      width: 250
+      width: 300
     },
     {
       title: '收货城市',
       key: 'endName',
-      width: 250
+      width: 300
     }
   ]
 }

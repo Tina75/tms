@@ -27,7 +27,7 @@
         :settlement-pay-info="settlementPayInfo"
         :finance-rules-info="financeRulesInfo"
         :send-way="sendWay"
-        :send-fee-orders="cargoList">
+        :send-fee-orders="orderList">
       </send-fee>
       <pickup-fee
         v-else
@@ -36,7 +36,7 @@
         :settlement-type="settlementType"
         :settlement-pay-info="settlementPayInfo"
         :send-way="sendWay"
-        :pick-fee-orders="cargoList"></pickup-fee>
+        :pick-fee-orders="orderList"></pickup-fee>
     </div>
 
     <div slot="footer" style="text-align: center;">
@@ -103,7 +103,7 @@ export default {
       settlementType: '',
       settlementPayInfo: [],
       btnLoading: false,
-      cargoList: [] // 订单list
+      orderList: [] // 订单list
     }
   },
   created () {
@@ -149,7 +149,7 @@ export default {
       }).then(res => {
         const data = res.data.data
         // 订单数量
-        this.cargoList = data.cargoList
+        this.orderList = data.orderList
 
         const billInfo = this.type === 'sendCar' ? data.waybill : data.loadbill
 
@@ -260,7 +260,7 @@ export default {
         assignCarType: z.sendWay
       }
       // 订单数大于1需要传分摊策略
-      if (this.cargoList.length > 1) {
+      if (this.orderList.length > 1) {
         data.allocationStrategy = z.$refs.sendFee.getAllocationStrategy()
       }
       if (z.sendWay === '1') { // 外转
@@ -311,7 +311,7 @@ export default {
         assignCarType: z.sendWay
       }
       // 订单数大于1需要传分摊策略
-      if (this.cargoList.length > 1) {
+      if (this.orderList.length > 1) {
         data.allocationStrategy = z.$refs.pickupFee.getAllocationStrategy()
       }
       if (z.sendWay === '1') { // 外转
