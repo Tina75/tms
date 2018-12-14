@@ -310,6 +310,7 @@ export default {
           await this.formValidate(this.$refs['ruleCar'][j])
         }
       }
+      // 1、起步量 不做验证 2、起步价 起步量和起步价要么都写要么都不写
       if (!_this.ruleDetail.details.every((item, index, array) => {
         return (item.startType === '2' || (item.startNum === null && item.startPrice === null)) || (item.startNum && item.startPrice)
       })) {
