@@ -160,6 +160,7 @@ import { mapGetters } from 'vuex'
 import $bus from '@/libs/js/eventBus.js'
 import AllocationStrategy from './AllocationStrategy.vue'
 import allocationStrategy from '../constant/allocation.js'
+import float from '@/libs/js/float'
 
 export default {
   name: 'SendFeeComponent',
@@ -328,7 +329,7 @@ export default {
               Number(this.payment.otherFee) +
               Number(this.payment.tollFee) +
               Number(this.payment.accommodation)
-      return parseFloat(total.toFixed(2))
+      return float.round(total)
     }
   },
   watch: {

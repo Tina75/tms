@@ -158,6 +158,7 @@ import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
 // import City from '@/libs/js/city'
 import SearchMixin from './searchMixin'
+import float from '@/libs/js/float'
 
 // let hasTab = false
 
@@ -507,7 +508,7 @@ export default {
           key: 'totalFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.totalFee ? (params.row.totalFee / 100).toFixed(2) : '-')
+            return h('span', params.row.totalFee ? float.round(params.row.totalFee / 100) : 0)
           }
         }
       ],
