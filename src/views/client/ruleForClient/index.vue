@@ -34,7 +34,7 @@
             <Form ref="ruleBasic" :model="ruleDetail" :rules="basicValidate" class="ruleBasic" inline>
               <span>按</span>
               <FormItem prop="ruleType" style="width: 100px">
-                <Select v-model="ruleDetail.ruleType" transfer @on-change="ruleTypeChange">
+                <Select v-model="ruleDetail.ruleType" transfer>
                   <Option v-for="(value, key) in ruleTypeMap"  :key="key" :value="key">{{value}}</Option>
                 </Select>
               </FormItem>

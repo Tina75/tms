@@ -266,12 +266,21 @@ export default {
     },
     formCityCode () {
       return this.formCompany.cityId
+    },
+    // 受理开单来的参数
+    isFromOrder () {
+      return this.$route.query.tab
     }
   },
   mounted: function () {
     this.messageListInit = _.cloneDeep(this.messageList)
     if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
       document.getElementById('set-up-container').style.maxHeight = (document.body.clientHeight - 80) + 'px'
+    }
+    // 受理开单来的
+    if (this.isFromOrder) {
+      this.rightKey = '4'
+      this.tabName = 'order'
     }
   },
   methods: {

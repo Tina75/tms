@@ -1,7 +1,7 @@
 <template>
   <div class="unit-bar">
     <!-- <div style="text-align:center">开单设置</div> -->
-    <Form ref="unitForm" :model="unitForm" :rules="unitRules" :label-width="120" class="unitForm">
+    <Form ref="unitForm" :model="unitForm" :label-width="120" class="unitForm">
       <FormItem label="货物重量单位">
         <Select v-model="unitForm.unit" clearasble>
           <Option v-for="el in unitList" :value="el.value" :key="el.value">{{el.name}}</Option>
@@ -33,23 +33,18 @@ export default {
     return {
       unitList,
       unitForm: {
-        unit: this.WeightOption || 1
-      },
-      unitRules: {
-        unit: [
-          { required: true, message: '货物重量单位不能为空', trigger: 'blur' }
-        ]
+        unit: this.WeightOption
       }
     }
   },
   computed: {
     ...mapGetters(['WeightOption'])
   },
+  mounted () {
+    this.unitForm.unit = this.WeightOption
+  },
   methods: {
     ...mapMutations(['changeOrderConfiguration']),
-    init () {
-
-    },
     reset () {
       this.unitForm.unit = 1
     },

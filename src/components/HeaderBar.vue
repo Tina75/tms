@@ -232,21 +232,22 @@ export default {
           method: 'get'
         })
           .then((res) => {
-            if (res.data.data) {
+            if (res.data.data && res.data.data.length) {
               /**
                * data{id,title,content,phone, inviteId}
                * 合作邀请可能存在多个合作消息
                * 1. 单个消息后端接口会返回inviteId,
                * 2. 多个就不返回inviteId,phone,需要提示去消息处理
                */
-              let { phone, inviteId } = res.data.data
+              let { phone, inviteId, content } = res.data.data
               if (inviteId) {
                 window.EMA.fire('Dialogs.push', {
                   name: 'dialogs/invite-cooperation',
                   data: {
                     title: '温馨提示',
                     phone,
-                    inviteId
+                    inviteId,
+                    content
                   },
                   methods: {
                     ok () {
@@ -260,9 +261,16 @@ export default {
               } else {
                 vm.$Toast.info({
                   title: '货主合作邀请',
-                  showIcon: false,
-                  content: '<i class="ivu-icon ivu-icon-ios-information-circle" style="color:#418DF9;font-size:28px"></i>&nbsp;有多位货主邀请您进行线上合作，直接从系统指派订单给贵公司运输，以便提高运作效率。',
+                  showIcon: true,
+                  content: '有多位货主邀请您进行线上合作',
                   okText: '查看消息',
+                  render (h) {
+                    return h('p', {
+                      style: {
+                        textAlign: 'left'
+                      }
+                    }, '直接从系统指派订单给贵公司运输，以便提高运作效率。')
+                  },
                   onOk: () => {
                     window.EMA.fire('openTab', {
                       path: TMSUrl.MESSAGE_CENTER,
@@ -300,14 +308,14 @@ export default {
           })
             .then(({ data }) => {
               /**
-           * data = {id,title,content,bTime,eTime}
-           */
+               * data = {id,title,content,beginTime,endTime}
+               */
               if (data.data) {
                 window.EMA.fire('Dialogs.push', {
                   name: 'dialogs/clear-trial-data',
                   data: {
-                    title: '试用期数据删除',
-                    ...data.data
+                    ...data.data,
+                    title: '试用期数据删除'
                   },
                   methods: {
                     ok () {
