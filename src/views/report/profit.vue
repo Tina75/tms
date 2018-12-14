@@ -40,11 +40,13 @@
         <Input v-if="tabStatus===3" v-model="keywords.carNo" :maxlength="15" class="inputItem"  placeholder="请输入车牌号"/>
         <!--单票利润-->
         <Input v-if="tabStatus===4" v-model="keywords.customerOrderNo" :maxlength="20" class="inputItem"  placeholder="请输入客户订单号"/>
-        <Input v-if="tabStatus===4" v-model="keywords.orderNo" :maxlength="20" class="inputItem"  placeholder="请输入订单号"/>
       </div>
       <div class="search-btn">
-        <Button type="primary" @click="search(true)">生成报表</Button>
-        <Button style="margin-left: 8px" @click="clearKeywords">清除条件</Button>
+        <Input v-if="tabStatus===4" v-model="keywords.orderNo" :maxlength="20" class="inputItem"  placeholder="请输入订单号" style="margin-left: 0"/>
+        <span style="float: right">
+          <Button type="primary" @click="search(true)">生成报表</Button>
+          <Button style="margin-left: 8px" @click="clearKeywords">清除条件</Button>
+        </span>
       </div>
     </div>
     <div style="margin: 18px 0 12px 0">
@@ -251,33 +253,7 @@ export default {
         customerOrderNo: '',
         orderNo: ''
       },
-      res: {
-        orderFreightFee: '-',
-        orderLoadFee: '-',
-        orderUnloadFee: '-',
-        orderOtherFee: '-',
-        orderPickupFee: '-',
-        orderInsuranceFee: '-',
-        orderTotalFee: '-',
-        carrierFreightFee: '-', // 承运商
-        carrierLoadFee: '-',
-        carrierUnloadFee: '-',
-        carrierOtherFee: '-',
-        carrierInsuranceFee: '-',
-        carrierTotalFee: '-',
-        myFuelFee: '-', // 自有车
-        myTollFee: '-',
-        myLoadFee: '-',
-        myUnloadFee: '-',
-        myInsuranceFee: '-',
-        myOtherFee: '-',
-        // transbillTransFee: '-',
-        profits: '-',
-        carrierTollFee: '-',
-        orderCashBack: '-',
-        orderInvoiceFee: '-',
-        myAccommodation: '-'
-      },
+      res: profit.res,
       options: {
         disabledDate (date) {
           return date && date.valueOf() > Date.now()
@@ -505,8 +481,9 @@ export default {
         customerOrderNo: '',
         orderNo: ''
       }
-
-      console.log(this.tableColumns[this.tabStatus])
+      if (this.tabStatus === 1) { // 公司利润报表需要清空数据
+        this.res = profit.res
+      }
     },
     // 设置标签状态
     setTabStatus (tab) {
@@ -532,19 +509,24 @@ export default {
     height 35px
   .search
     margin-top 30px
-    display flex
-    display -ms-flexbox
-    justify-content space-between
-    -ms-flex-pack justify
+    /*display flex*/
+    /*display -ms-flexbox*/
+    /*justify-content space-between*/
+    /*-ms-flex-pack justify*/
     background #F9F9F9
     padding 13px
     .inputItem
-      width inherit
+      width 17%
       display inline-block
-      margin-left 40px
+      margin-left 30px
     .search-list
       button
         width 80px
+    .search-btn
+      overflow hidden
+      margin-top 15px
+      button
+        height 32px
   .table
     text-align center
     font-size 11px

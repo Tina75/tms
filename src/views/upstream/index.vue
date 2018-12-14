@@ -236,7 +236,7 @@ export default {
       // 查询数据
       this.fetchData()
       // 搜索与查询
-      this.fetchTabCount && this.fetchTabCount()
+      // this.fetchTabCount && this.fetchTabCount()
     },
     // 查询标签页数量
     fetchTabCount () {

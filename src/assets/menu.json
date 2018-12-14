@@ -124,12 +124,12 @@
       {
         "name":"自有车出车统计",
         "path":"/report/car",
-        "powerCode":0
+        "powerCode":180400
       },
       {
         "name":"自有司机出车统计",
         "path":"/report/driver",
-        "powerCode":0
+        "powerCode":180500
       }
     ]
   },
