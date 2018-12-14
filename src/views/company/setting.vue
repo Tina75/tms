@@ -55,7 +55,7 @@
           <FormItem label="公司地址：" prop="address">
             <Row v-if="isEdit">
               <Col :span="16">
-              <AreaInput v-model="formCompany.address" @latlongt-change="latlongtChange"></AreaInput>
+              <AreaInput v-model="formCompany.address" @city-select="latlongtChange"></AreaInput>
               </Col>
               <Col :span="7" class="areaRight">
               <Input :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
