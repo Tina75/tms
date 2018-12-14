@@ -26,7 +26,7 @@
           </Row>
         </FormItem>
         <FormItem>
-          <Input placeholder="补充地址（楼号-门牌等）"/>
+          <Input v-model="validate.consignerHourseNumber" placeholder="补充地址（楼号-门牌等）"/>
         </FormItem>
       </Form>
       <div slot="footer">
@@ -59,7 +59,8 @@ export default {
         address: '',
         longitude: '',
         latitude: '',
-        mapType: 1
+        mapType: 1,
+        consignerHourseNumber: ''
       },
       ruleValidate: {
         address: [
@@ -78,6 +79,10 @@ export default {
     save (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          if (!this.validate.city) {
+            this.$Message.error('详细地址只支持从下拉推荐地址中选择')
+            return false
+          }
           if (this.flag === 1) { // 新增
             this.add()
           } else { // 2-编辑
@@ -94,7 +99,8 @@ export default {
         longitude: this.validate.longitude,
         latitude: this.validate.latitude,
         mapType: this.validate.mapType,
-        cityCode: this.validate.city
+        cityCode: this.validate.city,
+        consignerHourseNumber: this.validate.consignerHourseNumber
       }
       consignerAddressAdd(data).then(res => {
         if (res.data.code === CODE) {
@@ -111,7 +117,8 @@ export default {
         longitude: this.validate.longitude,
         latitude: this.validate.latitude,
         mapType: this.validate.mapType,
-        cityCode: this.validate.city
+        cityCode: this.validate.city,
+        consignerHourseNumber: this.validate.consignerHourseNumber
       }
       consignerAddressUpdate(data).then(res => {
         console.log(res)
@@ -122,10 +129,11 @@ export default {
         }
       })
     },
-    latlongtChange ({ lat, lng }) {
+    latlongtChange ({ lat, lng, cityCode }) {
       this.validate.longitude = lng
       this.validate.latitude = lat
       this.validate.mapType = 1
+      this.validate.city = cityCode
     }
   }
 }
