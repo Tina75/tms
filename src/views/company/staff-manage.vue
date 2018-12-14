@@ -360,7 +360,7 @@ export default {
         if (data.code === 10000) {
           this.visibaleRemove = false
           this.$Message.success('删除成功！')
-          this.formSearchInit = {}
+          this.searchBtn()
         } else {
           this.visibaleRemove = false
         }
