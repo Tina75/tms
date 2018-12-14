@@ -7,13 +7,11 @@ export default {
   computed: {
     ...mapGetters(['ruleTypeList']),
     ruleTypeMap () {
-      // debugger
       /* active 1: '发货方',
                 2: '承运商',
                  车型只有承运商有 */
       console.log(this.ruleTypeList)
       let obj = {}
-      // debugger
       for (let i = 0; i < ruleTypeAllList.length; i++) {
         for (let j = 0; j < this.ruleTypeList.length; j++) {
           if (ruleTypeAllList[i].value === '5' && this.active === '1') break
@@ -329,16 +327,18 @@ export default {
             method: 'post',
             data: Object.assign({}, _this.ruleDetail, {
               details: _this.ruleDetail.details.map(item => {
+                console.log(_this.ruleDetail)
                 return {
                   departure: item.departure,
                   destination: item.destination,
                   startType: item.startType,
-                  startNum: item.startNum ? parseFloat(item.startNum) * 100 : '',
+                  // 选择车型时，起步价，起步量都没有
+                  startNum: _this.ruleDetail.ruleType === '5' ? null : (item.startNum ? parseFloat(item.startNum) * 100 : ''),
                   // 选择起步量的时候，startPrice的值传startNum的值
-                  startPrice: item.startType === '1' ? (item.startPrice ? parseFloat(item.startPrice) * 100 : '') : (item.startNum ? parseFloat(item.startNum) * 100 : ''),
+                  startPrice: _this.ruleDetail.ruleType === '5' ? null : (item.startType === '1' ? (item.startPrice ? parseFloat(item.startPrice) * 100 : '') : (item.startNum ? parseFloat(item.startNum) * 100 : '')),
                   chargeRules: item.chargeRules.map(el => {
                     return {
-                      base: parseFloat(el.base) * 100,
+                      base: _this.ruleDetail.ruleType === '5' ? null : (parseFloat(el.base) * 100),
                       price: parseFloat(el.price) * 100,
                       carType: el.carType,
                       carLength: el.carLength
@@ -403,8 +403,8 @@ export default {
             showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
               return {
-                base: el.base ? (el.base / 100) : '0',
-                price: el.price ? (el.price / 100) : '0',
+                base: el.base ? (el.base / 100) : null,
+                price: el.price ? (el.price / 100) : null,
                 baseAndStart: el.base + ',' + item.startNum,
                 carType: el.carType,
                 carLength: el.carLength
@@ -420,16 +420,17 @@ export default {
     startTypeChange (item) {
       console.log(item)
       item.startPrice = null
-    },
-    async ruleTypeChange () {
-      await this.formValidate(this.$refs['ruleBasic'])
-      for (let i = 0; i < this.$refs['ruleRoute'].length; i++) {
-        await this.formValidate(this.$refs['ruleRoute'][i])
-      }
-      for (let j = 0; j < this.$refs['ruleBase'].length; j++) {
-        await this.formValidate(this.$refs['ruleBase'][j])
-        await this.formValidate(this.$refs['rulePrice'][j])
-      }
     }
+    // async ruleTypeChange () {
+    // @on-change="ruleTypeChange"
+    // await this.formValidate(this.$refs['ruleBasic'])
+    // for (let i = 0; i < this.$refs['ruleRoute'].length; i++) {
+    //   await this.formValidate(this.$refs['ruleRoute'][i])
+    // }
+    // for (let j = 0; j < this.$refs['ruleBase'].length; j++) {
+    //   await this.formValidate(this.$refs['ruleBase'][j])
+    //   await this.formValidate(this.$refs['rulePrice'][j])
+    // }
+    // }
   }
 }
