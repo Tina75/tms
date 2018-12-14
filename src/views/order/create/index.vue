@@ -311,6 +311,9 @@
       <Button v-if="hasPower(100102)" :loading="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
       <Button v-if="hasPower(100104) && !orderId" class="i-ml-10" @click="shipImmedite">立即发运</Button>
+      <span style="float: right; vertical-align:middle;" @click="setHandle">
+        <FontIcon type="shezhi" size="20" style="cursor: pointer"></FontIcon>
+      </span>
     </div>
     <OrderPrint ref="printer" :list="orderPrint" source="create">
     </OrderPrint>
@@ -339,6 +342,7 @@ import CargoTable from './components/CargoTable.vue'
 import TimeInput from './components/TimeInput.vue'
 import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
+import TMSURL from '@/libs/constant/url'
 const rate = {
   set (value) {
     return value ? float.floor(value / 100, 4) : value
@@ -1177,6 +1181,15 @@ export default {
     },
     phoneLength (value) {
       return /^1/.test(value) ? 13 : 30
+    },
+    setHandle () {
+      this.openTab({
+        path: TMSURL.SETTING,
+        title: '设置',
+        query: {
+          tab: 'order'
+        }
+      })
     }
   }
 }
