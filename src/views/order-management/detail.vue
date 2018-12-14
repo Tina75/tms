@@ -51,7 +51,7 @@
           <i-col v-if="from === 'order'" span="4">
             <span>代收货款：</span>
             <span v-if="detail.collectionMoney">{{detail.collectionMoney / 100}}元</span>
-            <span v-else>-</span>
+            <span v-else>0元</span>
           </i-col>
         </Row>
         <Row>
@@ -156,8 +156,8 @@
           <!-- <span>订单总数：{{ orderTotal }}</span> -->
           <span>总货值：{{ cargoCostTotal }}</span>
           <span>总数量：{{ quantityTotal }}</span>
-          <span>总重量：{{ weightTotal }}吨</span>
-          <span>总体积：{{ volumeTotal }}方</span>
+          <span>总重量：{{ weightTotal }}</span>
+          <span>总体积：{{ volumeTotal }}</span>
         </div>
       </div>
       <div v-if="from === 'order'">
@@ -173,32 +173,32 @@
           <i-col span="4">
             <span class="fee-style">运输费：</span>
             <span v-if="detail.freightFee" style="font-weight:bold;">{{detail.freightFee | toPoint}}元</span>
-            <span v-else>-</span>
+            <span v-else style="font-weight:bold;">0元</span>
           </i-col>
           <i-col span="4">
             <span class="fee-style">提货费：</span>
             <span v-if="detail.pickupFee" style="font-weight:bold;">{{detail.pickupFee | toPoint}}元</span>
-            <span v-else>-</span>
+            <span v-else style="font-weight:bold;">0元</span>
           </i-col>
           <i-col span="4">
             <span class="fee-style">装货费：</span>
             <span v-if="detail.loadFee" style="font-weight:bold;">{{detail.loadFee | toPoint}}元</span>
-            <span v-else>-</span>
+            <span v-else style="font-weight:bold;">0元</span>
           </i-col>
           <i-col span="4">
             <span class="fee-style">卸货费：</span>
             <span v-if="detail.unloadFee" style="font-weight:bold;">{{detail.unloadFee | toPoint}}元</span>
-            <span v-else>-</span>
+            <span v-else style="font-weight:bold;">0元</span>
           </i-col>
           <i-col span="4">
             <span class="fee-style">保险费：</span>
             <span v-if="detail.insuranceFee" style="font-weight:bold;">{{detail.insuranceFee | toPoint}}元</span>
-            <span v-else>-</span>
+            <span v-else style="font-weight:bold;">0元</span>
           </i-col>
           <i-col span="4">
             <span class="fee-style">其他：</span>
             <span v-if="detail.otherFee" style="font-weight:bold;">{{detail.otherFee | toPoint}}元</span>
-            <span v-else>-</span>
+            <span v-else style="font-weight:bold;">0元</span>
           </i-col>
         </Row>
         <Row>
@@ -262,13 +262,16 @@ import OrderPrint from './components/OrderPrint'
 import openSwipe from '@/components/swipe/index'
 import _ from 'lodash'
 import float from '@/libs/js/float'
+import { mapGetters } from 'vuex'
+import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
+
 export default {
   name: 'detail',
 
   components: {
     OrderPrint
   },
-  mixins: [ BasePage ],
+  mixins: [ BasePage, tableWeightColumnMixin ],
   metaInfo: { title: '订单详情' },
   data () {
     return {
@@ -305,28 +308,21 @@ export default {
           title: '数量',
           key: 'quantity',
           render: (h, p) => {
-            return h('span', p.row.quantity ? p.row.quantity : '-')
+            return h('span', p.row.quantity ? p.row.quantity : 0)
           }
         },
         {
           title: '货值（元）',
           key: 'cargoCost',
           render: (h, params) => {
-            return h('span', params.row.cargoCost ? params.row.cargoCost / 100 : '-')
-          }
-        },
-        {
-          title: '重量（吨）',
-          key: 'weight',
-          render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
+            return h('span', params.row.cargoCost ? params.row.cargoCost / 100 : 0)
           }
         },
         {
           title: '体积（方）',
           key: 'volume',
           render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
+            return h('span', p.row.volume ? p.row.volume : 0)
           }
         },
         {
@@ -350,11 +346,28 @@ export default {
       showLog: false,
       orderLog: [],
       orderPrint: [],
-      imgViewFunc: null
+      imgViewFunc: null,
+      columnWeight: {
+        title: '重量（吨）',
+        key: 'weight',
+        render: (h, p) => {
+          return h('span', p.row.weight ? p.row.weight : 0)
+        }
+      },
+      columnWeightKg: {
+        title: '重量（公斤）',
+        key: 'weightKg',
+        render: (h, p) => {
+          return h('span', p.row.weightKg ? p.row.weightKg : 0)
+        }
+      }
     }
   },
 
   computed: {
+    ...mapGetters([
+      'WeightOption' // 重量配置 1 吨  2 公斤
+    ]),
     // 订单总数
     orderTotal () {
       return this.detail.orderCargoList.length
@@ -365,7 +378,8 @@ export default {
       this.detail.orderCargoList.map((item) => {
         total += Number(item.cargoCost)
       })
-      return (total / 100).toFixed(2)
+      total /= 100
+      return float.round(total) + '元'
     },
     // 总数量
     quantityTotal () {
@@ -381,15 +395,20 @@ export default {
       this.detail.orderCargoList.map((item) => {
         total += Number(item.volume)
       })
-      return total.toFixed(1)
+      return float.round(total, 1) + '方'
     },
     // 总重量
     weightTotal () {
       let total = 0
       this.detail.orderCargoList.map((item) => {
-        total += Number(item.weight)
+        // 区分吨或公斤
+        if (this.WeightOption === 1) {
+          total += Number(item.weight)
+        } else {
+          total += Number(item.weightKg)
+        }
       })
-      return total.toFixed(2)
+      return float.round(total) + (this.WeightOption === 1 ? '吨' : '公斤')
     },
     // 总费用
     FeeTotal () {
@@ -405,6 +424,12 @@ export default {
 
   mounted () {
     this.getDetail()
+    // 动态添加吨或公斤列
+    if (this.WeightOption === 1) {
+      this.triggerWeightColumn(this.tableColumns, this.columnWeight, 4)
+    } else {
+      this.triggerWeightColumn(this.tableColumns, this.columnWeightKg, 4)
+    }
   },
 
   methods: {

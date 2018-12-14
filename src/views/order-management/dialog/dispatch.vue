@@ -57,6 +57,8 @@ import PickUp from '@/views/transport/components/PickUp.vue'
 import { mapGetters, mapActions } from 'vuex'
 import _ from 'lodash'
 import float from '@/libs/js/float'
+import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
+
 export default {
   name: 'dispatch',
 
@@ -68,7 +70,7 @@ export default {
     PickUp
   },
 
-  mixins: [BaseDialog],
+  mixins: [BaseDialog, tableWeightColumnMixin],
 
   data () {
     return {
@@ -173,14 +175,20 @@ export default {
           key: 'volume',
           minWidth: 100,
           tooltip: true
-        },
-        {
-          title: '重量（吨）',
-          key: 'weight',
-          minWidth: 100,
-          tooltip: true
         }
       ],
+      columnWeight: {
+        title: '重量（吨）',
+        key: 'weight',
+        minWidth: 100,
+        tooltip: true
+      },
+      columnWeightKg: {
+        title: '重量（公斤）',
+        key: 'weightKg',
+        minWidth: 100,
+        tooltip: true
+      },
       mileage: null,
       btnLoading: false
     }
@@ -190,7 +198,8 @@ export default {
     ...mapGetters([
       'carriers',
       'carrierCars',
-      'carrierDrivers'
+      'carrierDrivers',
+      'WeightOption' // 重量配置 1 吨  2 公斤
     ]),
     orderTotal () {
       return this.id.length
@@ -200,14 +209,19 @@ export default {
       this.id.map((item) => {
         total += item.volume
       })
-      return float.round(total, 1)
+      return float.round(total, 1) + '方'
     },
     weightTotal () {
       let total = 0
       this.id.map((item) => {
-        total += item.weight
+        // 区分吨和公斤
+        if (this.WeightOption === 1) {
+          total += item.weight
+        } else {
+          total += item.weightKg
+        }
       })
-      return float.round(total)
+      return float.round(total) + (this.WeightOption === 1 ? '吨' : '公斤')
     },
     financeRulesInfo () {
       return {
@@ -242,6 +256,12 @@ export default {
       this.send.end = this.id[0].end
       // 计费规则
     }, 0)
+    // 动态添加吨或公斤列
+    if (this.WeightOption === 1) {
+      this.triggerWeightColumn(this.tableColumns, this.columnWeight, 7)
+    } else {
+      this.triggerWeightColumn(this.tableColumns, this.columnWeightKg, 7)
+    }
   },
 
   methods: {

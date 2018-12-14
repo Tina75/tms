@@ -736,7 +736,7 @@ export default {
           key: 'freightFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.freightFee ? (params.row.freightFee / 100).toFixed(2) : '-')
+            return h('span', params.row.freightFee ? float.round(params.row.freightFee / 100) : 0)
           }
         },
         {
@@ -744,7 +744,7 @@ export default {
           key: 'pickupFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.pickupFee ? (params.row.pickupFee / 100).toFixed(2) : '-')
+            return h('span', params.row.pickupFee ? float.round(params.row.pickupFee / 100) : 0)
           }
         },
         {
@@ -752,7 +752,7 @@ export default {
           key: 'loadFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.loadFee ? (params.row.loadFee / 100).toFixed(2) : '-')
+            return h('span', params.row.loadFee ? float.round(params.row.loadFee / 100) : 0)
           }
         },
         {
@@ -761,7 +761,7 @@ export default {
           minWidth: 120,
 
           render: (h, params) => {
-            return h('span', params.row.unloadFee ? (params.row.unloadFee / 100).toFixed(2) : '-')
+            return h('span', params.row.unloadFee ? float.round(params.row.unloadFee / 100) : 0)
           }
         },
         {
@@ -769,7 +769,7 @@ export default {
           key: 'insuranceFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.insuranceFee ? (params.row.insuranceFee / 100).toFixed(2) : '-')
+            return h('span', params.row.insuranceFee ? float.round(params.row.insuranceFee / 100) : 0)
           }
         },
         {
@@ -777,7 +777,7 @@ export default {
           key: 'otherFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.otherFee ? (params.row.otherFee / 100).toFixed(2) : '-')
+            return h('span', params.row.otherFee ? float.round(params.row.otherFee / 100) : 0)
           }
         },
         {
@@ -785,7 +785,7 @@ export default {
           key: 'totalFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.totalFee ? (params.row.totalFee / 100).toFixed(2) : '-')
+            return h('span', params.row.totalFee ? float.round(params.row.totalFee / 100) : 0)
           }
         },
         {
@@ -809,7 +809,7 @@ export default {
           key: 'collectionMoney',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.collectionMoney ? (params.row.collectionMoney / 100).toFixed(2) : '-')
+            return h('span', params.row.collectionMoney ? float.round(params.row.collectionMoney / 100) : 0)
           }
         },
         {

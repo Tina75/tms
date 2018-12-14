@@ -69,14 +69,16 @@
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 import float from '@/libs/js/float'
-import { TABLE_COLUMNS_ONE, TABLE_COLUMNS_TWO } from '../constant/separate'
+import { TABLE_COLUMNS_ONE, TABLE_COLUMNS_TWO, COLUMNS_ONE_WEIGHT, COLUMNS_ONE_WEIGHTKG, COLUMNS_TWO_WEIGHT, COLUMNS_TWO_WEIGHTKG } from '../constant/separate'
 import _ from 'lodash'
 import AllocationStrategy from '@/views/transport/components/AllocationStrategy.vue'
+import { mapGetters } from 'vuex'
+import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 
 export default {
   name: 'separate',
   components: { AllocationStrategy },
-  mixins: [BaseDialog],
+  mixins: [BaseDialog, tableWeightColumnMixin],
   data () {
     return {
       isSeparate: false,
@@ -93,11 +95,18 @@ export default {
       volumeVal: 0,
       cargoCostVal: 0,
       cloneData: [], // 复制一份货物详情数据
-      allocationStrategy: 1
+      allocationStrategy: 1,
+      columns1Weight: COLUMNS_ONE_WEIGHT(this),
+      columns1WeightKg: COLUMNS_ONE_WEIGHTKG(this),
+      columns2Weight: COLUMNS_TWO_WEIGHT(this),
+      columns2WeightKg: COLUMNS_TWO_WEIGHTKG(this)
     }
   },
 
   computed: {
+    ...mapGetters([
+      'WeightOption' // 重量配置
+    ]),
     childOneNo () {
       return this.orderNo.indexOf('-') > -1 ? this.orderNo : this.orderNo + '-1'
     },
@@ -110,8 +119,13 @@ export default {
         fee /= 2
       } else if (this.allocationStrategy === 2 && this.detailData.quantity) { // 按件数分摊费用，件数必须大于0
         fee *= (this.parentQuantity / this.detailData.quantity)
-      } else if (this.allocationStrategy === 3 && this.detailData.weight) { // 按重量分摊费用，重量必须大于0
-        fee *= (this.parentWeight / this.detailData.weight)
+      } else if (this.allocationStrategy === 3 && (this.detailData.weight || this.detailData.weightKg)) { // 按重量分摊费用，重量必须大于0
+        // 区分吨和公斤
+        if (this.WeightOption === 1) {
+          fee *= (this.parentWeight / this.detailData.weight)
+        } else {
+          fee *= (this.parentWeight / this.detailData.weightKg)
+        }
       } else if (this.allocationStrategy === 4 && this.detailData.volume) { // 按体积分摊费用，体积必须大于0
         fee *= (this.parentVolume / this.detailData.volume)
       } else {
@@ -135,7 +149,12 @@ export default {
     parentWeight () {
       let weight = 0
       this.parentOrderCargoList.map((item) => {
-        weight += item.weight
+        // 区分吨和公斤
+        if (this.WeightOption === 1) {
+          weight += item.weight
+        } else {
+          weight += item.weightKg
+        }
       })
       return weight
     },
@@ -152,6 +171,15 @@ export default {
   mounted: function () {
     this.getData()
     this.getSubOrderNum()
+    console.log(this.WeightOption, this.columns1, this.columns1WeightKg)
+    // 动态添加吨或公斤列
+    if (this.WeightOption === 1) {
+      this.triggerWeightColumn(this.columns1, this.columns1Weight, 4)
+      this.triggerWeightColumn(this.columns2, this.columns2Weight, 4)
+    } else {
+      this.triggerWeightColumn(this.columns1, this.columns1WeightKg, 4)
+      this.triggerWeightColumn(this.columns2, this.columns2WeightKg, 4)
+    }
   },
 
   methods: {
@@ -161,12 +189,26 @@ export default {
     save () {
       // 将参数中的重量体积四舍五入
       this.parentOrderCargoList.map((item) => {
-        item.weight = float.round(item.weight)
-        item.volume = float.round(item.volume)
+        // 区分吨和公斤 吨和公斤只需传一个
+        if (this.WeightOption === 1) {
+          item.weight = float.round(item.weight, 3)
+          delete item.weightKg
+        } else {
+          item.weightKg = float.round(item.weightKg)
+          delete item.weight
+        }
+        item.volume = float.round(item.volume, 1)
       })
       this.childOrderCargoList.map((item) => {
-        item.weight = float.round(item.weight)
-        item.volume = float.round(item.volume)
+        // 区分吨和公斤 吨和公斤只需传一个
+        if (this.WeightOption === 1) {
+          item.weight = float.round(item.weight, 3)
+          delete item.weightKg
+        } else {
+          item.weightKg = float.round(item.weightKg)
+          delete item.weight
+        }
+        item.volume = float.round(item.volume, 1)
       })
       const data = {
         id: this.id,
@@ -218,6 +260,7 @@ export default {
           item.cargoCost = item.cargoCost ? item.cargoCost : 0
           item.quantity = item.quantity ? item.quantity : 0
           item.weight = item.weight ? item.weight : 0
+          item.weightKg = item.weightKg ? item.weightKg : 0
           item.volume = item.volume ? item.volume : 0
         })
         this.parentOrderCargoList = orderCargoList
@@ -247,19 +290,29 @@ export default {
       // 修改原单数据
       let parentData = { ...params.row }
       let quantity = params.row.quantity
-      let weight = params.row.weight
+      let weight = (this.WeightOption === 1 ? params.row.weight : params.row.weightKg) // 区分吨和公斤
       let volume = params.row.volume
       let cargoCost = params.row.cargoCost
       parentData.quantity = this.quantityVal ? params.row.quantity - this.quantityVal : 0
-      parentData.weight = this.weightVal ? params.row.weight - this.weightVal : 0
+      // 区分吨和公斤
+      if (this.WeightOption === 1) {
+        parentData.weight = this.weightVal ? params.row.weight - this.weightVal : 0
+      } else {
+        parentData.weightKg = this.weightVal ? params.row.weightKg - this.weightVal : 0
+      }
       parentData.volume = this.volumeVal ? params.row.volume - this.volumeVal : 0
       // 货值比例关联优先级：数量-->重量-->体积
       if (params.row.quantity !== 0) {
         parentData.cargoCost = parseInt(float.round(cargoCost * parentData.quantity) / quantity)
-      } else if (params.row.weight !== 0) {
-        parentData.cargoCost = parseInt(float.round(cargoCost * parentData.weight) / weight)
+      } else if (params.row.weight !== 0 || params.row.weightKg !== 0) {
+        // 区分吨和公斤
+        if (this.WeightOption === 1) {
+          parentData.cargoCost = parseInt(float.round(cargoCost * parentData.weight, 3) / weight)
+        } else {
+          parentData.cargoCost = parseInt(float.round(cargoCost * parentData.weightKg) / weight)
+        }
       } else {
-        parentData.cargoCost = parseInt(float.round(cargoCost * parentData.volume) / volume)
+        parentData.cargoCost = parseInt(float.round(cargoCost * parentData.volume, 1) / volume)
       }
       this.$set(this.parentOrderCargoList, params.index, parentData)
       this.$set(this.cloneData, params.index, parentData)
@@ -268,7 +321,12 @@ export default {
       let childData = { ...params.row }
       childData.cargoCost = float.round(cargoCost - parentData.cargoCost)
       childData.quantity = this.quantityVal ? this.quantityVal : params.row.quantity
-      childData.weight = this.weightVal ? this.weightVal : params.row.weight
+      // 区分吨和公斤
+      if (this.WeightOption === 1) {
+        childData.weight = this.weightVal ? this.weightVal : params.row.weight
+      } else {
+        childData.weightKg = this.weightVal ? this.weightVal : params.row.weightKg
+      }
       childData.volume = this.volumeVal ? this.volumeVal : params.row.volume
       this.childOrderCargoList.unshift(childData)
     }
