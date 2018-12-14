@@ -1,8 +1,14 @@
 <template>
   <Poptip v-model="visible"
-          title="计费类型设置" placement="bottom" width="300" class="popTipForRule"
+          placement="bottom" width="300" class="popTipForRule"
           @on-popper-show="initRule" @on-popper-hide="initRule">
     <Icon type="ios-settings-outline" size="16" style="line-height: 35px"/>
+    <div slot="title">
+      <div class="title">
+        计费类型设置
+        <Icon type="ios-close" class="icon" @click="close"/>
+      </div>
+    </div>
     <div slot="content">
       <CheckboxGroup v-model="ruleTypeValue">
         <Row>
@@ -81,10 +87,17 @@ export default {
       .ivu-poptip-title
         padding-top 16px
         padding-bottom 10px
-      .ivu-poptip-title-inner
+      .title
         color #333
+        font-weight 500
+        font-size 14px
         line-height 20px
         text-align center
+        .icon
+          cursor pointer
+          float right
+          font-size 16px
+          font-weight bold
       .ivu-poptip-body
         padding 8px 30px
       .ivu-poptip-title:after
