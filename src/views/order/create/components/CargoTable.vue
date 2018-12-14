@@ -109,7 +109,7 @@ export default {
           key: 'weight',
           type: 'number',
           min: 0,
-          point: 2
+          point: 3
         },
         {
           required: false,
@@ -117,7 +117,7 @@ export default {
           key: 'weightKg',
           type: 'number',
           min: 0,
-          point: 2
+          point: 0
         },
         {
           required: false,
