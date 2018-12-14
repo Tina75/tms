@@ -146,7 +146,7 @@
     <Title>货物信息</Title>
     <CargoTable
       ref="cargoTable"
-      :unit-type="unitType"
+      :unit-type="WeightOption"
       :cargoes="cargoes"
       :data-source="consignerCargoes"
       :on-append="appendCargo"
@@ -592,8 +592,8 @@ export default {
         }
       },
       salesmanList: [],
-      highLight: false,
-      unitType: null // 货物单位
+      highLight: false
+      // unitType: this.WeightOption || 1 // 货物单位
     }
   },
   computed: {
@@ -604,7 +604,8 @@ export default {
       'consigneePhones',
       'consigneeAddresses',
       'cargoes',
-      'cargoOptions'
+      'cargoOptions',
+      'WeightOption'
     ]),
     totalFee () {
       const feeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
@@ -701,7 +702,7 @@ export default {
       'clearClients'
     ]),
     initConfig () {
-      this.unitType = 1
+      // this.unitType = 1
       // Api.getOrderDefault(param).then(res => {
       //   console.log(res)
       // }).catch(err => console.log(err))

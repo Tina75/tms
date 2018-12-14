@@ -37,7 +37,7 @@ export default{
    * @param {Number} option
    */
   changeOrderConfiguration (state, option) {
-    state.weightOption = option
+    state.order.weightOption = option
   }
 }
 
