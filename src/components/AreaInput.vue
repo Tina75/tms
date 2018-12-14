@@ -9,7 +9,7 @@
       :clearable="true"
       :local-options="areaList"
       :placeholder="placeholder"
-      :input-type="`select`"
+      :only-select="false"
       @input="inputHandle"
       @on-select="selectChange"
     >

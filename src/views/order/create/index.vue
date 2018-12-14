@@ -110,7 +110,7 @@
       </Col>
       <Col span="3">
       <FormItem :label-width="0">
-        <Input :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+        <Input v-model="orderForm.consignerHourseNumber" :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
       </FormItem>
       </Col>
       <Col span="1">
@@ -132,7 +132,7 @@
       </Col>
       <Col span="3">
       <FormItem :label-width="0">
-        <Input :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+        <Input v-model="orderForm.consigneeHourseNumber" :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
       </FormItem>
       </Col>
       <Col span="1">
@@ -455,6 +455,7 @@ export default {
         consignerPhone: '',
         // 发货地址
         consignerAddress: '',
+        consignerHourseNumber: '',
         // 经度
         consignerAddressLongitude: '',
         // 纬度
@@ -464,6 +465,7 @@ export default {
         consigneeContact: '',
         consigneePhone: '',
         consigneeAddress: '',
+        consigneeHourseNumber: '',
         // 经纬度
         consigneeAddressLongitude: '',
         consigneeAddressLatitude: '',

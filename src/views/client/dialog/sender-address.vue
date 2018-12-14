@@ -16,7 +16,7 @@
             <AreaInput
               v-model="validate.address"
               placeholder="请输入地址（省市区+详细地址）"
-              @latlongt-change="latlongtChange"/>
+              @city-select="latlongtChange"/>
             </Col>
             <Col :span="1">
             <Tooltip :max-width="200" content="详细地址只支持从下拉推荐地址中选择" transfer>
