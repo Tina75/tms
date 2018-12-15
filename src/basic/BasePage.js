@@ -91,7 +91,7 @@ export default {
     // 权限控制
     hasPower: function (power) {
       if (!power) { return true }
-      return this.$store.state.permissions.includes(power)
+      return this.$store.state.permissions.includes(power.toString())
     }
   }
 }
