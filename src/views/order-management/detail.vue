@@ -95,7 +95,9 @@
           </i-col>
           <i-col span="10">
             <span>发货地址：</span>
-            <span>{{detail.consignerAddress}}</span>
+            <span>{{detail.consignerAddress}}
+              <span v-if="detail.consignerHourseNumber">{{`,${detail.consignerHourseNumber}`}}</span>
+            </span>
           </i-col>
         </Row>
         <Row>
@@ -109,7 +111,9 @@
           </i-col>
           <i-col span="10">
             <span>收货地址：</span>
-            <span>{{detail.consigneeAddress}}</span>
+            <span>{{detail.consigneeAddress}}
+              <span v-if="detail.consigneeHourseNumber">{{`,${detail.consigneeHourseNumber}`}}</span>
+            </span>
           </i-col>
         </Row>
         <Row style="margin-top: 18px;">
