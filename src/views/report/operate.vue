@@ -280,7 +280,7 @@ export default {
           }
         },
         {
-          title: '备注',
+          title: '订单备注',
           key: 'remark',
           width: 250
         },

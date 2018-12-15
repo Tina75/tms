@@ -29,7 +29,7 @@
             <Input v-model="keywords.driverPhone" :maxlength="11"  placeholder="请输入司机号码"/>
           </div>
           <div class="col">
-            <Select v-model="keywords.billType">
+            <Select v-model="keywords.billType" clearable placeholder="请选择业务类型">
               <Option value="1">提货</Option>
               <Option value="3">送货</Option>
             </Select>
@@ -328,15 +328,15 @@ export default {
         return
       }
       let data = {
-        start: this.keywords.start,
-        end: this.keywords.end,
-        driverName: this.keywords.driverName || null,
-        driverPhone: this.keywords.driverPhone || null,
-        billType: this.keywords.billType || null,
-        startTime: this.keywords.startTime || null,
-        endTime: this.keywords.endTime || null,
-        billNo: this.keywords.billNo || null,
-        carNo: this.keywords.carNo || null
+        start: this.keywords.start || undefined,
+        end: this.keywords.end || undefined,
+        driverName: this.keywords.driverName || undefined,
+        driverPhone: this.keywords.driverPhone || undefined,
+        billType: this.keywords.billType || undefined,
+        startTime: this.keywords.startTime || undefined,
+        endTime: this.keywords.endTime || undefined,
+        billNo: this.keywords.billNo || undefined,
+        carNo: this.keywords.carNo || undefined
       }
       Export({
         url: '/report/out/car/export',

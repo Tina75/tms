@@ -140,7 +140,7 @@ export default {
                 }
               }
             }, '查看'))
-            if (this.hasPower(130103)) {
+            if (this.hasPower(130103) && !params.row.inviteCompanyId) {
               renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
@@ -183,29 +183,69 @@ export default {
             let text = ''
             if (params.row.name.length > 11) {
               text = params.row.name.slice(0, 11) + '...'
-              return h('div', [
-                h('Tooltip', {
-                  props: {
-                    placeholder: 'bottom',
-                    transfer: false
-                  }
-                }, [
-                  h('div', {
-                  }, text),
-                  h('div', {
-                    slot: 'content',
-                    style: {
-                      whiteSpace: 'normal'
+              if (params.row.inviteCompanyId) {
+                return h('div', [
+                  h('Tooltip', {
+                    props: {
+                      placeholder: 'bottom',
+                      transfer: false
                     }
+                  }, [
+                    h('div', {
+                    }, text),
+                    h('div', {
+                      slot: 'content',
+                      style: {
+                        whiteSpace: 'normal'
+                      }
+                    }, params.row.name)
+                  ]),
+                  h('span', {
+                    style: {
+                      marginLeft: '20px'
+                    }
+                  }, '已合作')
+                ])
+              } else {
+                return h('div', [
+                  h('Tooltip', {
+                    props: {
+                      placeholder: 'bottom',
+                      transfer: false
+                    }
+                  }, [
+                    h('div', {
+                    }, text),
+                    h('div', {
+                      slot: 'content',
+                      style: {
+                        whiteSpace: 'normal'
+                      }
+                    }, params.row.name)
+                  ])
+                ])
+              }
+            } else {
+              if (params.row.inviteCompanyId) {
+                return h('div', [
+                  h('div', [
+                    h('span', {
+                      title: params.row.name
+                    }, params.row.name),
+                    h('span', {
+                      style: {
+                        marginLeft: '20px'
+                      }
+                    }, '已合作')
+                  ])
+                ])
+              } else {
+                return h('div', [
+                  h('div', {
+                    title: params.row.name
                   }, params.row.name)
                 ])
-              ])
-            } else {
-              return h('div', [
-                h('div', {
-                  title: params.row.name
-                }, params.row.name)
-              ])
+              }
             }
           }
         },

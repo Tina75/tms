@@ -23,7 +23,7 @@
             <AreaInput
               v-model="validate.address"
               placeholder="请输入地址（省市区+详细地址）"
-              @latlongt-change="latlongtChange"/>
+              @city-select="latlongtChange"/>
             </Col>
             <Col :span="1">
             <Tooltip :max-width="200" content="详细地址只支持从下拉推荐地址中选择" transfer>
@@ -31,15 +31,9 @@
             </Tooltip>
             </Col>
           </Row>
-          <!-- <CitySelect v-model="validate.cityCode" clearable></CitySelect>
-          <AreaInput
-            v-model="validate.address"
-            :city-code="city"
-            :disabled="true"
-            @latlongt-change="latlongtChange"/> -->
         </FormItem>
         <FormItem>
-          <Input :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+          <Input v-model="validate.consignerHourseNumber" :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
         </FormItem>
         <FormItem label="备注：" prop="remark">
           <Input v-model="validate.remark"  placeholder="请输入"/>
@@ -79,7 +73,8 @@ export default {
         longitude: '',
         latitude: '',
         mapType: 1,
-        cityCode: ''
+        cityCode: '',
+        consignerHourseNumber: ''
       },
       ruleValidate: {
         contact: [
@@ -105,6 +100,10 @@ export default {
     save (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          if (!this.validate.cityCode) {
+            this.$Message.error('详细地址只支持从下拉推荐地址中选择')
+            return false
+          }
           this.loading = true
           if (this.flag === 1) { // 新增
             this.add()
@@ -133,10 +132,11 @@ export default {
         this.loading = false
       })
     },
-    latlongtChange ({ lat, lng }) {
+    latlongtChange ({ lat, lng, cityCode }) {
       this.validate.longitude = lng
       this.validate.latitude = lat
       this.validate.mapType = 1
+      this.validate.cityCode = cityCode
     }
   }
 }

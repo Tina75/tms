@@ -115,10 +115,10 @@
             <Table :columns="tableColumns" :data="detail" :loading="loading" class="detail-field-table"></Table>
             <div class="table-footer">
               <span class="table-footer-title">总计</span>
-              <span>总货值：{{ orderTotal.cargoCost }}</span>
+              <span>总货值：{{ orderTotal.cargoCost }}元</span>
               <span>总数量：{{ orderTotal.quantity }}</span>
-              <span>总体积：{{ orderTotal.volume }}</span>
-              <span>总重量：{{ orderTotal.weight }}</span>
+              <span>总体积：{{ orderTotal.volume }}方</span>
+              <span>总重量：{{ WeightOption === 1 ? orderTotal.weight + '吨' : orderTotal.weightKg + '公斤' }}</span>
             </div>
           </div>
           <!-- 费用明细 -->
@@ -179,7 +179,7 @@
                 </div>
               </i-col>
             </Row>
-            <Row class="detail-field-group">
+            <Row v-if="orderList.length > 1" class="detail-field-group">
               <i-col span="24">
                 <span class="detail-field-title-sm">分摊策略：</span>
                 <span>{{ getAllocationValToLabel(info.allocationStrategy) }}</span>
@@ -278,10 +278,10 @@
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
-          <span>总货值：{{ orderTotal.cargoCost }}</span>
+          <span>总货值：{{ orderTotal.cargoCost }}元</span>
           <span>总数量：{{ orderTotal.quantity }}</span>
-          <span>总体积：{{ orderTotal.volume }}</span>
-          <span>总重量：{{ orderTotal.weight }}</span>
+          <span>总体积：{{ orderTotal.volume }}方</span>
+          <span>总重量：{{ WeightOption === 1 ? orderTotal.weight + '吨' : orderTotal.weightKg + '公斤' }}</span>
         </div>
       </div>
       <!-- 费用明细 -->
@@ -298,7 +298,7 @@
           :settlement-pay-info="settlementPayInfo"
           :finance-rules-info="financeRulesInfo"
           :send-way="sendWay"
-          :send-fee-orders="detail"
+          :send-fee-orders="orderList"
           source="detail">
         </send-fee>
       </div>
@@ -343,12 +343,13 @@ import _ from 'lodash'
 import { mapActions } from 'vuex'
 import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 import allocationStrategy from '../constant/allocation.js'
+import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 
 export default {
   name: 'detailFeright',
   metaInfo: { title: '运单详情' },
   components: { SelectInput, CitySelect, PrintFreight, PayInfo, Exception, change, OwnSendInfo, SendCarrierInfo, SendFee },
-  mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
+  mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin, tableWeightColumnMixin ],
 
   data () {
     return {
@@ -593,7 +594,7 @@ export default {
           key: 'quantity',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.quantity)
+            return this.tableDataRender(h, p.row.quantity ? p.row.quantity : 0)
           }
         },
         {
@@ -601,15 +602,7 @@ export default {
           key: 'cargoCost',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
-          }
-        },
-        {
-          title: '重量(吨)',
-          key: 'weight',
-          width: 120,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.weight)
+            return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },
         {
@@ -617,7 +610,7 @@ export default {
           key: 'volume',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.volume)
+            return this.tableDataRender(h, p.row.volume ? p.row.volume : 0)
           }
         },
         {
@@ -676,7 +669,7 @@ export default {
           end: z.info.end,
           status: z.info.status,
           assignCarType: z.sendWay,
-          allocationStrategy: z.detail.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
+          allocationStrategy: z.orderList.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
         })
       })
       return data
@@ -690,6 +683,16 @@ export default {
       }
     }
   },
+
+  mounted () {
+    // 判断显示吨列或公斤列
+    if (this.WeightOption === 1) {
+      this.triggerWeightColumn(this.tableColumns, this.columnWeight, 7)
+    } else {
+      this.triggerWeightColumn(this.tableColumns, this.columnWeightKg, 7)
+    }
+  },
+
   methods: {
     ...mapActions([
       'getWaybillLocation',
@@ -760,6 +763,7 @@ export default {
         }
         this.detail = data.cargoList
         this.logList = data.operaterLog
+        this.orderList = data.orderList
 
         this.status = this.statusFilter(data.waybill.status)
         this.settlementType = data.waybill.settlementType ? data.waybill.settlementType.toString() : '1'
@@ -834,7 +838,7 @@ export default {
         end: z.info.end,
         status: z.info.status,
         assignCarType: z.sendWay,
-        allocationStrategy: z.detail.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
+        allocationStrategy: z.orderList.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
       })
       console.log(data)
       Server({
@@ -869,7 +873,7 @@ export default {
         end: z.info.end,
         status: z.info.status,
         assignCarType: z.sendWay,
-        allocationStrategy: z.detail.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
+        allocationStrategy: z.orderList.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
       })
       if (JSON.stringify(data) === JSON.stringify(z.changeStr)) {
         z.$Message.error('您并未做修改')

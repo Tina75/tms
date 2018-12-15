@@ -9,7 +9,7 @@
       :clearable="true"
       :local-options="areaList"
       :placeholder="placeholder"
-      :input-type="`select`"
+      :only-select="false"
       @input="inputHandle"
       @on-select="selectChange"
     >
@@ -93,9 +93,9 @@ export default {
           if (local.getStatus() === window.BMAP_STATUS_SUCCESS) {
             // 判断状态是否正确
             let arr = []
-            // this.$nextTick(() => {
-            //   this.$refs['selectInput'].focusIndex = 0
-            // })
+            this.$nextTick(() => {
+              this.$refs['selectInput'].focusIndex = 0
+            })
             for (let i = 0; i < results.getCurrentNumPois(); i++) {
               const item = results.getPoi(i)
               // 省市

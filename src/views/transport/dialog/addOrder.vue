@@ -37,10 +37,12 @@ import Server from '@/libs/js/server'
 import _ from 'lodash'
 import BaseDialog from '@/basic/BaseDialog'
 import TransportBase from '../mixin/transportBase'
+import { mapGetters } from 'vuex'
+import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 
 export default {
   name: 'AddOrder',
-  mixins: [ BaseDialog, TransportBase ],
+  mixins: [ BaseDialog, TransportBase, tableWeightColumnMixin ],
   data () {
     return {
       loading: false,
@@ -97,23 +99,44 @@ export default {
           render: (h, p) => {
             return this.tableDataRender(h, p.row.volume)
           }
-        },
-        {
-          title: '重量(吨)',
-          key: 'weight',
-          width: 100,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.weight)
-          }
         }
       ],
+      // 吨列
+      columnWeight: {
+        title: '重量(吨)',
+        key: 'weight',
+        width: 100,
+        render: (h, p) => {
+          return this.tableDataRender(h, p.row.weight)
+        }
+      },
+      // 公斤列
+      columnWeightKg: {
+        title: '重量(公斤)',
+        key: 'weightKg',
+        width: 100,
+        render: (h, p) => {
+          return this.tableDataRender(h, p.row.weightKg)
+        }
+      },
       data: [],
       selection: [[]], // 已经选择过的项，翻页后需要记住之前页面已选择的项
       flattenSelection: [] // 将 selection 转为一维后的数组，防止当 page size 改变后出现问题
     }
   },
+  computed: {
+    ...mapGetters([
+      'WeightOption' // 重量配置 1 吨  2 公斤
+    ])
+  },
   created () {
     this.fetchData()
+    // 判断显示吨列或公斤列
+    if (this.WeightOption === 1) {
+      this.triggerWeightColumn(this.columns, this.columnWeight, 7)
+    } else {
+      this.triggerWeightColumn(this.columns, this.columnWeightKg, 7)
+    }
   },
   methods: {
     // 查询数据

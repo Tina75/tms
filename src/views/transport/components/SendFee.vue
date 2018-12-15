@@ -160,6 +160,7 @@ import { mapGetters } from 'vuex'
 import $bus from '@/libs/js/eventBus.js'
 import AllocationStrategy from './AllocationStrategy.vue'
 import allocationStrategy from '../constant/allocation.js'
+import float from '@/libs/js/float'
 
 export default {
   name: 'SendFeeComponent',
@@ -311,7 +312,7 @@ export default {
       },
       settlementTypeFee: '1',
       // settlementPayInfo: [],
-      carrierName: ''
+      carrierInfo: {}
     }
   },
   computed: {
@@ -328,7 +329,7 @@ export default {
               Number(this.payment.otherFee) +
               Number(this.payment.tollFee) +
               Number(this.payment.accommodation)
-      return parseFloat(total.toFixed(2))
+      return float.round(total)
     }
   },
   watch: {
@@ -339,9 +340,9 @@ export default {
   created () {
     this.mileage && (this.payment.mileage = this.mileage)
     this.settlementTypeFee = this.settlementType
-    // 获取SendCarrierInfo组件传入的carrierName
-    $bus.$on('carrierNameChange', carrierName => {
-      this.carrierName = carrierName
+    // 获取SendCarrierInfo组件传入的carrierInfo
+    $bus.$on('carrierInfoChange', carrierInfo => {
+      this.carrierInfo = carrierInfo
     })
   },
   methods: {
@@ -353,7 +354,7 @@ export default {
     // 计费规则
     showChargeRules () {
       const self = this
-      console.log(this.financeRulesInfo, this.payment.mileage, this.carrierName)
+      console.log(this.financeRulesInfo, this.payment.mileage, this.carrierInfo)
       if (!self.financeRulesInfo.start) {
         self.$Message.error('请先输入始发地')
         return
@@ -362,11 +363,11 @@ export default {
         self.$Message.error('请先输入目的地')
         return
       }
-      if (!self.carrierName) {
+      if (!self.carrierInfo.carrierName) {
         self.$Message.error('请先选择或输入承运商')
         return
       }
-      const carrierItem = self.carriers.find(c => c.name === self.carrierName)
+      const carrierItem = self.carriers.find(c => c.name === self.carrierInfo.carrierName)
       if (!carrierItem) {
         self.$Message.warning('您选择或输入的承运商没有维护的计费规则')
         return
@@ -381,7 +382,9 @@ export default {
         data: {
           partnerId: carrierId,
           partnerType: 2,
-          partnerName: self.carrierName,
+          partnerName: self.carrierInfo.carrierName,
+          carType: self.carrierInfo.carType,
+          carLength: self.carrierInfo.carLength,
           distance: self.payment.mileage ? self.payment.mileage * 1000 : 0,
           ...self.financeRulesInfo
         },

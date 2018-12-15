@@ -55,10 +55,10 @@
           <FormItem label="公司地址：" prop="address">
             <Row v-if="isEdit">
               <Col :span="16">
-              <AreaInput v-model="formCompany.address" @latlongt-change="latlongtChange"></AreaInput>
+              <AreaInput v-model="formCompany.address" @city-select="latlongtChange"></AreaInput>
               </Col>
               <Col :span="7" class="areaRight">
-              <Input :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+              <Input :maxLength="50" v-model="formCompany.userAddress" placeholder="补充地址（楼号-门牌等）"></Input>
               </Col>
               <Col :span="1" class="areaRight">
               <Tooltip :max-width="200" content="详细地址只支持从下拉推荐地址中选择" transfer>
@@ -68,7 +68,7 @@
             </Row>
             <Row v-if="!isEdit">
               <Col :span="24">
-              <span>{{ formCompany.address }}</span>
+              <span>{{ formCompany.address }} {{ formCompany.userAddress }}</span>
             </Col>
             </Row>
           </FormItem>
@@ -198,13 +198,6 @@ export default {
       ]
     }
   },
-  // updated () {
-  //   // 图片样式修改，LOGO必须为正方形
-  //   setTimeout(() => {
-  //     let imageDiv = document.getElementsByClassName('demo-upload-list')[0]
-  //     if (imageDiv) imageDiv.children[0].style.height = '100px'
-  //   }, 10)
-  // },
   mounted () {
     this.getCompanyInfo()
   },
@@ -247,20 +240,21 @@ export default {
     },
     // 公司
     companySubmit (name) {
+      let isChanged = true
       this.$refs[name].validate((valid) => {
         if (valid) {
+          if (!this.formCompany.cityId) {
+            this.$Message.error('详细地址只支持从下拉推荐地址中选择')
+            return false
+          }
           this.formCompany.logoUrl = this.$refs.uploadLogo.uploadImg
           this.formCompany.otherInfo = JSON.stringify(this.$refs.upLoads.getImageList())
-          if (this.formCompany.address === this.formCompanyInit.address &&
-              this.formCompany.contact === this.formCompanyInit.contact &&
-              this.formCompany.contactPhone === this.formCompanyInit.contactPhone &&
-              this.formCompany.id === this.formCompanyInit.id &&
-              this.formCompany.logoUrl === this.formCompanyInit.logoUrl &&
-              this.formCompany.name === this.formCompanyInit.name &&
-              this.formCompany.companyProfile === this.formCompanyInit.companyProfile &&
-              this.formCompany.shortName === this.formCompanyInit.shortName &&
-              Number(this.formCompany.cityId) === Number(this.formCompanyInit.cityId) &&
-              this.formCompany.otherInfo === this.formCompanyInit.otherInfo) {
+          for (const key in this.formCompanyInit) {
+            if (this.formCompany[key] !== this.formCompanyInit[key]) {
+              isChanged = false
+            }
+          }
+          if (isChanged) {
             this.$Message.info('您还未变更任何信息，无需保存')
             return
           }
@@ -325,10 +319,11 @@ export default {
       }
     },
     // 省市区位置获取
-    latlongtChange ({ lat, lng }) {
+    latlongtChange ({ lat, lng, cityCode }) {
       this.formCompany.latitude = lat
       this.formCompany.longitude = lng
       this.formCompany.mapType = 1
+      this.formCompany.cityId = cityCode
     }
   }
 }

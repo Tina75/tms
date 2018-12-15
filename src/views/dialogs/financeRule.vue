@@ -113,7 +113,9 @@ export default {
             departure: this.start,
             destination: this.end,
             distance: this.distance,
-            input: float.round(((rule.ruleType === 1 || rule.ruleType === 3) ? this.weight : this.volume) * 100)
+            input: float.round(((rule.ruleType === 1 || rule.ruleType === 3) ? this.weight : this.volume) * 100),
+            carType: this.carType,
+            carLength: this.carLength
           }
         }).then(res => {
           this.charge = float.round(res.data.data / 100)

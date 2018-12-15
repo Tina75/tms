@@ -162,7 +162,8 @@ export default {
                           longitude: params.row.longitude,
                           latitude: params.row.latitude,
                           mapType: params.row.mapType,
-                          city: params.row.cityCode
+                          city: params.row.cityCode,
+                          consignerHourseNumber: params.row.consignerHourseNumber
                         }
                       },
                       methods: {
@@ -245,7 +246,8 @@ export default {
                           longitude: params.row.longitude,
                           latitude: params.row.latitude,
                           mapType: params.row.mapType,
-                          cityCode: params.row.cityCode
+                          cityCode: params.row.cityCode,
+                          consignerHourseNumber: params.row.consignerHourseNumber
                         }
                       },
                       methods: {
