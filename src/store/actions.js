@@ -6,7 +6,10 @@ export const getUserInfo = ({ rootState, commit, state, dispatch }, data) => {
     url: '/set/userInfo',
     method: 'get'
   }).then(({ data }) => {
-    commit('initUserInfo', data.data)
+    // 20181214 接口返回值包含权限
+    const { resours, ...userInfo } = data.data
+    commit('initUserInfo', userInfo)
+    commit('initPermissions', resours || [])
   }).catch(e => {
     console.log(e)
   })
@@ -23,7 +26,10 @@ export const getCompanyInfo = ({ rootState, commit, state, dispatch }, data) => 
     console.log(e)
   })
 }
-/** 获取用户权限 */
+/**
+ * 获取用户权限
+ * !! 废弃 20181214-合并到获取用户信息接口里
+ */
 export const getPermissons = ({ commit }, list) => {
   return Server({
     url: '/user/permission',

@@ -73,6 +73,7 @@ export default {
           })
             .then((resp) => {
               if (resp.code === 10000) {
+                this.$Message.success('数据删除成功!')
                 vm.ok()
                 vm.close()
               }

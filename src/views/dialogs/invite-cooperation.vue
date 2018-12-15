@@ -43,6 +43,7 @@ export default {
         this.loading = true
         // status: 1:同意；2：拒绝
         await this.handleInviteMessage({ status: 1, phone: this.phone, inviteId: this.inviteId })
+        this.$Message.success('您已成功接受邀请！')
         this.loading = false
         this.ok()
         this.close()
@@ -53,6 +54,7 @@ export default {
     },
     async onRefuse () {
       await this.handleInviteMessage({ status: 2, phone: this.phone, inviteId: this.inviteId })
+      this.$Message.info('您已拒绝接受邀请！')
       this.cancel()
       this.close()
     },
