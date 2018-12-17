@@ -394,7 +394,7 @@ export default {
       let month = this.formatDate(now).slice(5, 7)
       switch (value) {
         case 1:
-          start = this.formatDate(now - 7 * 24 * 60 * 60 * 1000)
+          start = this.formatDate(now - 6 * 24 * 60 * 60 * 1000)
           break
         case 2:
           start = this.formatDate(now).slice(0, -2) + '01'
@@ -420,9 +420,9 @@ export default {
           let year = this.formatDate(now).slice(0, 4)
           console.log(year)
           if (month > 6) {
-            start = year + '-0' + (month - 6) + this.formatDate(now).slice(-3)
+            start = year + '-0' + (month - 5) + '-01'
           } else {
-            start = (year - 1) + '-0' + (12 + parseInt(month) - 6) + this.formatDate(now).slice(-3)
+            start = (year - 1) + '-0' + (12 + parseInt(month) - 5) + '-01'
           }
           break
       }
@@ -446,6 +446,7 @@ export default {
         fileName: this.export_title[this.tabStatus]
       })
     },
+    // 判断是否可以导出
     onLoad (res) {
       if (this.tabStatus === 1) {
         this.isExport = false

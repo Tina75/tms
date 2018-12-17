@@ -27,7 +27,7 @@
       >
       <Icon v-if="prefix" slot="prefix" :type="prefix"></Icon>
       <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-input__clear-icon" @click.native.stop="handleClear"></Icon>
-      <Icon v-if="!mousehover || !isClearable" slot="suffix" type="ios-arrow-down" class="select-input__input-icon"></Icon>
+      <!-- <Icon v-if="!mousehover || !isClearable" slot="suffix" type="ios-arrow-down" class="select-input__input-icon"></Icon> -->
     </Input>
     </div>
     <DropdownMenu ref="dropdown" slot="list" :style="{'max-height':'150px', overflow:'auto'}">
@@ -206,15 +206,23 @@ export default {
       const optionInstance = dropdownInstance.$children.find((child) => {
         return child.$options.propsData.name === option.value
       })
+      if (optionInstance) {
+        let bottomDistance = optionInstance.$el.getBoundingClientRect().bottom - dropdownInstance.$el.getBoundingClientRect().bottom
+        let topDistance = optionInstance.$el.getBoundingClientRect().top - dropdownInstance.$el.getBoundingClientRect().top
 
-      let bottomDistance = optionInstance.$el.getBoundingClientRect().bottom - dropdownInstance.$el.getBoundingClientRect().bottom
-      let topDistance = optionInstance.$el.getBoundingClientRect().top - dropdownInstance.$el.getBoundingClientRect().top
-
-      if (bottomDistance > 0) {
-        dropdownInstance.$el.scrollTop += bottomDistance
-      } else if (topDistance < 0) {
-        dropdownInstance.$el.scrollTop += topDistance
+        if (bottomDistance > 0) {
+          dropdownInstance.$el.scrollTop += bottomDistance
+        } else if (topDistance < 0) {
+          dropdownInstance.$el.scrollTop += topDistance
+        }
       }
+    },
+    /**
+     * iview的input空间prefix属性，不是动态创建的
+     * 所以这里要手动执行下内部函数
+     */
+    prefix (newValue) {
+      this.$refs.input.showPrefix = !!newValue
     }
   },
   mounted () {
