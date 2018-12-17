@@ -1,13 +1,12 @@
 import Vue from 'vue'
 import iView from 'iview'
 import App from './app.vue'
-// import Login from './login.vue'
+import store from './store/index'
 import router from './router'
-import store from './store'
 import VueMeta from 'vue-meta'
-import './libs/js/ga.js' // GA打点统计配置与上报方法封装
 import EmaProxy from 'ema-proxy'
 import Toast from '@/components/toast/index'
+import './libs/js/ga.js' // GA打点统计配置与上报方法封装,
 
 require('intersection-observer')
 require('./libs/js/filter')
@@ -15,7 +14,7 @@ require('./libs/js/date')
 require('./assets/css/iview/iview.css')
 require('./assets/css/tms/iconfont.css')
 require('./assets/css/quill/quill.core.css')
-
+// require('./permission')
 // 处理没有被vue捕获的全局异常
 window.addEventListener('error', e => {
   Vue.$reportError(e.error)

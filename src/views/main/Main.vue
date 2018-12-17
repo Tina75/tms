@@ -18,7 +18,7 @@ import CContent from './components/Content'
 import CDialog from './components/Dialogs'
 import { mapMutations, mapActions } from 'vuex'
 export default {
-  components: { CHeader, CDialog, CSider, CContent },
+  components: { CSider, CHeader, CContent, CDialog },
   methods: {
     ...mapActions(['getTableColumns']),
     ...mapMutations(['setTabNavList', 'initTabNav'])

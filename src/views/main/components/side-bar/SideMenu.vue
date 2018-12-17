@@ -6,13 +6,13 @@
         <div class="title"><font-icon type="logo-zjy1" size="24" color="white"/></div>
         <template v-for="item in menuList">
           <template v-if="item.children">
-            <Submenu v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path">
-              <template slot="title"><font-icon :type="item.icon" :size="18" />{{item.name}}</template>
-              <menu-item v-for="child in item.children" v-if="hasPower(child.powerCode)" :name="child.path" :key="child.path" >{{child.name}}</menu-item>
+            <Submenu :name="item.path" :key="item.path">
+              <template slot="title"><font-icon :type="item.icon" :size="18" />{{item.meta.title}}</template>
+              <menu-item v-for="child in item.children" :name="child.path" :key="child.path" >{{child.meta.title}}</menu-item>
             </Submenu>
           </template>
           <template v-else>
-            <menu-item v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path"><font-icon :type="item.icon" :size="18"></font-icon>{{item.name}}</menu-item>
+            <menu-item :name="item.path" :key="item.path"><font-icon :type="item.icon" :size="18"></font-icon>{{item.meta.title}}</menu-item>
           </template>
         </template>
         <div class="footer">
@@ -30,15 +30,15 @@
         <template v-for="item in menuList" >
           <div v-if="hasPower(item.powerCode)"  :key="item.path">
             <Dropdown v-if="item.children" placement="right-start" transfer >
-              <a class="drop-menu-a"><font-icon :type="item.icon" :size="20" color="white"/></a>
+              <a class="drop-menu-a"><font-icon :type="item.meta.icon" :size="20" color="white"/></a>
               <DropdownMenu slot="list" >
                 <DropdownItem v-for="child in item.children"  :key="child.path" >
-                  <p v-if="hasPower(child.powerCode)" :name="child.path" :key="child.path"  @click="handleSelect(child)">{{child.name}}</p>
+                  <p :name="child.path" :key="child.path"  @click="handleSelect(child)">{{child.meta.title}}</p>
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
-            <Tooltip v-else :content="item.name" transfer placement="left">
-              <menu-item v-if="hasPower(item.powerCode)"  :name="item.path"><a class="drop-menu-a"  @click="handleSelect(item)"><font-icon :type="item.icon" :size="20" color="white"/></a></menu-item>
+            <Tooltip v-else :content="item.meta.title" transfer placement="left">
+              <menu-item  :name="item.path"><a class="drop-menu-a"  @click="handleSelect(item)"><font-icon :type="item.meta.icon" :size="20" color="white"/></a></menu-item>
             </Tooltip>
           </div>
         </template>

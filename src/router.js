@@ -12,7 +12,7 @@ const router = new Router({
       /** 首页 */
       'path': '',
       'component': Main,
-      'redirect': 'home',
+      'redirect': '/home',
       'children': [
         /** 首页 */
         {
@@ -413,7 +413,7 @@ const router = new Router({
     {
       'path': '/set-up',
       'component': Main,
-      'redirect': 'setting',
+      'redirect': '/set-up/index',
       'children': [
         {
           'path': 'index',
@@ -429,9 +429,9 @@ const router = new Router({
       ]
     },
     {
-      'path': '/infomation',
+      'path': '/information',
       'component': Main,
-      'redirect': 'message',
+      'redirect': '/information/message',
       'children': [
         {
           'name': 'message',
@@ -448,7 +448,7 @@ const router = new Router({
     {
       'path': '/help',
       'component': Main,
-      'redirect': 'help-center',
+      'redirect': '/help/index',
       'children': [
         {
           'name': 'help-center',

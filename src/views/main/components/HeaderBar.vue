@@ -20,35 +20,7 @@
             </Tooltip>
           </Badge>
         </span>
-        <!-- <Dropdown class="header-bar-avator-dropdown-notify">
-        <Poptip trigger="hover" title="消息中心" content="暂无系统消息" >
-          <Badge :count="MsgCount.all" type="primary">
-            <Icon type="ios-notifications" size="30" color="#fff"></Icon>
-          </Badge>
-          <div slot="content" class="msg">
-            <div class="msg-item" @click="openMsg(0)">
-              <Badge :count="MsgCount.sysNum"  class="msg-item-count">
-                <img src="../assets/icon-system-msg.png" alt="" width="34">
-              </Badge>
-              <p>系统消息</p>
-            </div>
-            <div v-if="hasPower('110000')" class="msg-item" @click="openMsg(1)">
-              <Badge :count="MsgCount.orderNum"  class="msg-item-count">
-                <img src="../assets/icon-order-msg.png" alt="" width="34">
-              </Badge>
-              <p>订单消息</p>
-            </div>
-            <div v-if="hasPower('120000')" class="msg-item" @click="openMsg(2)">
-              <Badge :count="MsgCount.carrierNum" class="msg-item-count">
-                <img src="../assets/icon-truck-msg.png" alt="" width="34">
-              </Badge>
-              <p>运输消息</p>
-            </div>
-          </div>
-        </Poptip>
-      </Dropdown> -->
 
-        <!-- <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick"> -->
         <Poptip trigger="hover" transfer placement="bottom-end" popper-class="dropdown-info" title="账号信息" width="260" style="cursor: default">
           <Avatar class="avatar"  style="border:1px solid #fff"></avatar>
           <span class="user-info">{{UserInfo.name}}</span>
@@ -385,14 +357,14 @@ export default {
     text-overflow ellipsis
     margin-bottom -6px
   .avatar
-    background-image url(../assets/default-avatar.jpg)
+    background-image url(../../../assets/default-avatar.jpg)
     background-size 30px
   &-bread-crumb
     padding-left 60px
     width 350px
     display inline-block
     float left
-    background-image url(../assets/logo.png)
+    background-image url(../../../assets/logo.png)
     background-repeat no-repeat
     background-size 26px
     background-position 24px 20px
