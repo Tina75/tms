@@ -156,8 +156,7 @@ export default {
         if (value) {
           this.search(value)
         }
-
-        if (this.selectItem && this.selectItem.value !== value) {
+        if ((this.selectItem && this.selectItem.value !== value) || this.selectItem === null) {
           this.selectItem = null
           this.selectChange(null, { lat: '', lng: '', city: '' })
         }
