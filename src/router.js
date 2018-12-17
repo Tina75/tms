@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import LoginLayout from './login.vue'
 import Main from './views/main/Main.vue'
 Vue.use(Router)
 
@@ -26,11 +27,60 @@ const router = new Router({
         }
       ]
     },
+    /** 登陆 */
+    {
+      'path': '/login',
+      'component': LoginLayout,
+      'meta': {
+        'hideInMenu': true,
+        'powerCode': 0
+      },
+      'children': [
+        {
+          'path': '',
+          'name': 'login',
+          'component': () => import(/* webpackChunkName: "sign-in" */'./views/login/index.vue')
+        }
+      ]
+    },
+    /** 注册 */
+    {
+      'path': '/register',
+      'component': LoginLayout,
+      'meta': {
+        'hideInMenu': true,
+        'powerCode': 0
+      },
+      'children': [
+        {
+          'path': '',
+          'name': 'register',
+          'component': () => import(/* webpackChunkName: "sign-up" */'./views/login/sign-up.vue')
+        }
+      ]
+    },
+    /** 找回密码 */
+    {
+      'path': '/findback',
+      'component': LoginLayout,
+      'meta': {
+        'hideInMenu': true,
+        'powerCode': 0
+      },
+      'children': [
+        {
+          'path': '',
+          'name': 'findback',
+          'component': () => import(/* webpackChunkName: "findback" */'./views/login/find-back.vue')
+        }
+      ]
+    },
     /** ************************ 受理开单 */
     {
       'component': Main,
       'path': '/order',
       'meta': {
+        'title': '受理开单',
         'icon': 'shoulikaidan',
         'powerCode': 100000
       },
@@ -49,7 +99,7 @@ const router = new Router({
           'path': 'update',
           'component': () => import(/* webpackChunkName: "order-update" */'./views/order/update/index.vue'),
           'meta': {
-            'hiddenInMenu': true,
+            'hideInMenu': true,
             'title': '修改订单',
             'powerCode': 100301
           }
@@ -276,8 +326,9 @@ const router = new Router({
     },
     /** 自有车管理 */
     {
-      'name': '自有车管理',
+      'name': 'owned',
       'path': '/owned-vehicle',
+      'component': Main,
       'meta': {
         'icon': 'ico-truck',
         'powerCode': 190000,
@@ -285,7 +336,7 @@ const router = new Router({
       },
       'children': [
         {
-          'path': '/owned-vehicle/driver',
+          'path': 'driver',
           'name': 'owned-driver',
           'component': () => import(/* webpackChunkName: "owned-driver" */'./views/owned-vehicle/driver.vue'),
           'meta': {
@@ -316,58 +367,118 @@ const router = new Router({
         }
       ]
     },
+    /** 公司管理 */
     {
-      'name': '公司管理',
-      'icon': 'gongsiguanli',
       'path': '/company',
-      'powerCode': 140000,
+      'component': Main,
+      'meta': {
+        'title': '公司管理',
+        'icon': 'gongsiguanli',
+        'powerCode': 140000
+
+      },
       'children': [
         {
-          'name': '员工管理',
-          'path': '/company/staff-manage',
-          'powerCode': 140200
+          'name': 'company-staff',
+          'path': 'staff-manage',
+          'component': () => import(/* webpackChunkName: "company-staff" */'./views/company/staff-manage.vue'),
+          'meta': {
+            'title': '员工管理',
+            'powerCode': 140200
+
+          }
         },
         {
-          'name': '角色管理',
-          'path': '/company/role-manage',
-          'powerCode': 140100
+          'name': 'company-role',
+          'path': 'role-manage',
+          'component': () => import(/* webpackChunkName: "company-role" */'./views/company/role-manage.vue'),
+          'meta': {
+            'title': '角色管理',
+            'powerCode': 140100
+
+          }
         },
         {
-          'name': '公司设置',
-          'path': '/company/setting',
-          'powerCode': 140100
+          'name': 'company-setting',
+          'path': 'setting',
+          'component': () => import(/* webpackChunkName: "company-setting" */'./views/company/setting.vue'),
+          'meta': {
+            'title': '公司设置',
+            'powerCode': 140100
+
+          }
         }
       ]
     },
     {
-      'name': '设置',
-      'path': '/set-up/index',
-      'icon': 'shezhi',
-      'powerCode': 150000
+      'path': '/set-up',
+      'component': Main,
+      'redirect': 'setting',
+      'children': [
+        {
+          'path': 'index',
+          'name': 'setting',
+          'component': () => import(/* webpackChunkName: "setting" */'./views/set-up/index.vue'),
+          'meta': {
+            'title': '设置',
+            'icon': 'shezhi',
+            'powerCode': 150000
+
+          }
+        }
+      ]
     },
     {
-      'name': '消息',
-      'path': '/information/index',
-      'icon': 'xiaoxishezhi',
-      'powerCode': 0
+      'path': '/infomation',
+      'component': Main,
+      'redirect': 'message',
+      'children': [
+        {
+          'name': 'message',
+          'path': 'index',
+          'component': () => import(/* webpackChunkName: "message" */'./views/information/index.vue'),
+          'meta': {
+            'title': '消息',
+            'powerCode': 0,
+            'icon': 'xiaoxishezhi'
+          }
+        }
+      ]
     },
     {
-      'name': '业务流程',
-      'path': '/helper/process',
-      'powerCode': -1
-    },
-    {
-      'name': '帮助',
-      'path': '/helper/index',
-      'icon': 'bangzhuzhongxin',
-      'powerCode': 0
+      'path': '/help',
+      'component': Main,
+      'redirect': 'help-center',
+      'children': [
+        {
+          'name': 'help-center',
+          'path': 'index',
+          'component': () => import(/* webpackChunkName: "help-center" */'./views/helper/index.vue'),
+          'meta': {
+            'title': '帮助',
+            'icon': 'bangzhuzhongxin',
+            'powerCode': 0
+          }
+        },
+        {
+          'path': 'process',
+          'name': 'process-center',
+          'component': () => import(/* webpackChunkName: "process-center" */'./views/helper/process.vue'),
+          'meta': {
+            'title': '业务流程',
+            'hideInMenu': true,
+            'powerCode': 0
+          }
+        }
+      ]
+
     }
   ]
 })
 
-router.beforeEach((to, from, next) => {
-  if (window.localStorage.tms_is_login || to.path === '/') next()
-  else next('/')
-})
+// router.beforeEach((to, from, next) => {
+//   if (window.localStorage.tms_is_login || to.path === '/') next()
+//   else next('/')
+// })
 
 export default router

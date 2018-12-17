@@ -12,15 +12,15 @@
 </template>
 
 <script>
-import CSider from '@/components/side-bar/SideBar'
-import CHeader from '@/components/HeaderBar'
-import CContent from '@/components/Content'
-import CDialog from '@/components/Dialogs'
+import CSider from './components/side-bar/SideBar'
+import CHeader from './components/HeaderBar'
+import CContent from './components/Content'
+import CDialog from './components/Dialogs'
 import { mapMutations, mapActions } from 'vuex'
 export default {
   components: { CHeader, CDialog, CSider, CContent },
   methods: {
-    ...mapActions(['getPermissons', 'getTableColumns']),
+    ...mapActions(['getTableColumns']),
     ...mapMutations(['setTabNavList', 'initTabNav'])
   }
 }

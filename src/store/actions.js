@@ -1,14 +1,18 @@
 import Server from '@/libs/js/server'
-
+import { removeToken } from '../libs/js/auth'
 /** 更新用户信息 */
 export const getUserInfo = ({ rootState, commit, state, dispatch }, data) => {
   return Server({
     url: '/set/userInfo',
     method: 'get'
   }).then(({ data }) => {
-    commit('initUserInfo', data.data)
+    const { resours, ...userinfo } = data.data
+    commit('initPermissions', resours)
+    commit('initUserInfo', userinfo)
+    return data.data
   }).catch(e => {
     console.log(e)
+    return Promise.reject(e)
   })
 }
 
@@ -62,4 +66,17 @@ export const getTableColumns = ({ commit }) => {
 /** 获取自定义table列表信息 */
 export const setDocumentHeight = ({ commit }, height) => {
   commit('updateDocumentHeight', height - 80)
+}
+
+export const logout = ({ commit }) => {
+  return new Promise((resolve, reject) => {
+    commit('initUserInfo', {})
+    commit('initPermissions', [])
+    // 记住密码
+    const localRememberdPW = window.localStorage.local_rememberd_pw
+    localStorage.clear()
+    if (localRememberdPW) window.localStorage.setItem('local_rememberd_pw', localRememberdPW)
+    removeToken()
+    resolve()
+  })
 }

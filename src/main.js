@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import iView from 'iview'
 import App from './app.vue'
-import Login from './login.vue'
+// import Login from './login.vue'
 import router from './router'
 import store from './store'
 import VueMeta from 'vue-meta'
@@ -39,10 +39,11 @@ Vue.use(iView)
 Vue.prototype.$Toast = Toast
 window.EMA = new EmaProxy()
 var appData = { router, store }
-var islogin = localStorage.getItem('tms_is_login')
-if (window.location.hash === '#/?mode=signup' || !islogin) {
-  appData.render = h => h(Login)
-} else {
-  appData.render = h => h(App)
-}
+appData.render = h => h(App)
+// var islogin = localStorage.getItem('tms_is_login')
+// if (window.location.hash === '#/?mode=signup' || !islogin) {
+//   appData.render = h => h(Login)
+// } else {
+//   appData.render = h => h(App)
+// }
 new Vue(appData).$mount('#app')

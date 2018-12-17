@@ -72,7 +72,7 @@ import BaseComponent from '@/basic/BaseComponent'
 import TabNav from '@/components/TabNav'
 import FontIcon from '@/components/FontIcon'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
-import TMSUrl from '../libs/constant/url.js'
+import TMSUrl from '@/libs/constant/url.js'
 import Server from '@/libs/js/server'
 export default {
   name: 'headerBar',

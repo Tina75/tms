@@ -56,8 +56,8 @@
 
 <script>
 import FontIcon from '@/components/FontIcon'
-import menuJson from '@/assets/menu.json'
-
+// import menuJson from '@/assets/menu.json'
+import { mapGetters } from 'vuex'
 export default {
   components: { FontIcon },
   props: {
@@ -66,9 +66,12 @@ export default {
   },
   data () {
     return {
-      openedNames: [],
-      menuList: menuJson
+      openedNames: []
+      // menuList: menuJson
     }
+  },
+  computed: {
+    ...mapGetters(['menuList'])
   },
   watch: {
     activeName (val) {
