@@ -9,7 +9,7 @@
       :clearable="true"
       :local-options="areaList"
       :placeholder="placeholder"
-      :prefix="showIcon ? 'ios-pin-outline' : undefined"
+      :prefix="showIcon ? 'ios-pin-outline' : ' '"
       @input="inputHandle"
       @on-select="selectChange"
     >
