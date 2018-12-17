@@ -48,6 +48,10 @@ export default {
   methods: {
     close () {
       this.$emit('on-close')
+      let nextRoute = this.tab.close()
+      this.$nextTick(() => {
+        this.router.push(nextRoute)
+      })
     },
     refresh () {
       this.$emit('on-refresh')
