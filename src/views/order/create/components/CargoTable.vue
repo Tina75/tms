@@ -187,7 +187,7 @@ export default {
       return this.dataSource.reduce((sum, cargo) => {
         // 读取临时数据
 
-        sum.weight = float.round((cargo.weight || 0) + sum.weight)
+        sum.weight = float.round((cargo.weight || 0) + sum.weight, 3)
         sum.volume = float.round((cargo.volume || 0) + sum.volume, 1)
         sum.cargoCost = float.round((cargo.cargoCost || 0) + sum.cargoCost)
         sum.quantity = (cargo.quantity || 0) + sum.quantity

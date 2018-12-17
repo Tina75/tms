@@ -144,7 +144,7 @@ export default {
     },
     inputHandle (value, key) {
       if (key === 'weightKg') {
-        const v = float.floor(value / 1000, 5)
+        const v = float.floor(value / 1000, 3)
         if (v !== this.record['weight']) {
           this.record['weight'] = v
         }
