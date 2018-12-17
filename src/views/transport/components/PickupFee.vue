@@ -63,7 +63,7 @@
 
       <Row v-if="pickFeeOrders.length > 1" class="detail-field-group" style="margin-top: 15px;margin-left: -2px;">
         <i-col span="24">
-          <allocation-strategy ref="allocationStrategy" :allocation-orders="pickFeeOrders"></allocation-strategy>
+          <allocation-strategy ref="allocationStrategy" :allocation-orders="pickFeeOrders" :pass-allocation="feePassAllocation"></allocation-strategy>
         </i-col>
       </Row>
     </div>
@@ -72,7 +72,7 @@
     <div v-if="sendWay === '2' && source !== 'abnormal' && pickFeeOrders.length > 1">
       <Row class="detail-field-group" style="margin-left: -2px;">
         <i-col span="8">
-          <allocation-strategy ref="allocationStrategy" :allocation-orders="pickFeeOrders"></allocation-strategy>
+          <allocation-strategy ref="allocationStrategy" :allocation-orders="pickFeeOrders" :pass-allocation="feePassAllocation"></allocation-strategy>
         </i-col>
       </Row>
     </div>
@@ -170,6 +170,10 @@ export default {
     orderCnt: {
       type: Number,
       default: 1
+    },
+    // 编辑的时候需要带入的分摊策略，1、按订单数  2、按件数 3、按重量 4、按体积
+    feePassAllocation: {
+      type: [String, Number]
     }
   },
   data () {

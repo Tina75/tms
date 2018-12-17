@@ -27,7 +27,8 @@
         :settlement-pay-info="settlementPayInfo"
         :finance-rules-info="financeRulesInfo"
         :send-way="sendWay"
-        :send-fee-orders="orderList">
+        :send-fee-orders="orderList"
+        :fee-pass-allocation="allocationStrategy">
       </send-fee>
       <pickup-fee
         v-else
@@ -36,7 +37,8 @@
         :settlement-type="settlementType"
         :settlement-pay-info="settlementPayInfo"
         :send-way="sendWay"
-        :pick-fee-orders="orderList"></pickup-fee>
+        :pick-fee-orders="orderList"
+        :fee-pass-allocation="allocationStrategy"></pickup-fee>
     </div>
 
     <div slot="footer" style="text-align: center;">
@@ -103,7 +105,8 @@ export default {
       settlementType: '',
       settlementPayInfo: [],
       btnLoading: false,
-      orderList: [] // 订单list
+      orderList: [], // 订单list
+      allocationStrategy: null // 编辑的时候需要带入的分摊策略，1、按订单数  2、按件数 3、按重量 4、按体积
     }
   },
   created () {
@@ -155,6 +158,8 @@ export default {
 
         // 派车方式
         this.sendWay = billInfo.assignCarType.toString()
+        // 带入已有的分摊策略
+        this.allocationStrategy = billInfo.allocationStrategy
 
         // 将承运商信息赋值给子组件
         if (this.sendWay === '1') { // 外转
