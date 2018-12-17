@@ -712,7 +712,7 @@ export default {
     },
     // 将分摊策略返回的标识映射为文字
     getAllocationValToLabel (data) {
-      let list = allocationStrategy.find(item => item.value === data)
+      let list = allocationStrategy.find(item => item.value === (data !== '' ? data : 1))
       return list.label
     },
     fetchData () {
