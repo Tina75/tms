@@ -217,7 +217,7 @@ export default {
           render: (h, params) => {
             let text = params.row.address
             if (params.row.consignerHourseNumber) {
-              text = ',' + params.row.consignerHourseNumber
+              text += ',' + params.row.consignerHourseNumber
             }
             return h('span', text)
           }
@@ -316,7 +316,7 @@ export default {
           render: (h, params) => {
             let text = params.row.address
             if (params.row.consignerHourseNumber) {
-              text = ',' + params.row.consignerHourseNumber
+              text += ',' + params.row.consignerHourseNumber
             }
             return h('span', text)
           }
