@@ -33,7 +33,7 @@
           </Row>
         </FormItem>
         <FormItem>
-          <Input v-model="validate.consignerHourseNumber" :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+          <Input v-model="validate.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
         </FormItem>
         <FormItem label="备注：" prop="remark">
           <Input v-model="validate.remark"  placeholder="请输入"/>

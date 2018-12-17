@@ -4,6 +4,7 @@
       <ul>
         <li>订单号：{{detail.orderNo}}</li>
         <li>客户订单号：{{detail.customerOrderNo || '-' }}</li>
+        <li>客户运单号：{{detail.customerWaybillNo || '-' }}</li>
         <li>运单号：{{detail.waybillNo || '-'}} &nbsp;&nbsp;&nbsp;
           <Poptip v-if="waybillNums.length > 0" placement="bottom" transfer @on-popper-show="showPoptip" @on-popper-hide="hidePoptip">
             <a>{{ show ? '收起全部' : '展开全部' }}</a>

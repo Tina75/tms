@@ -26,7 +26,7 @@
           </Row>
         </FormItem>
         <FormItem>
-          <Input v-model="validate.consignerHourseNumber" placeholder="补充地址（楼号-门牌等）"/>
+          <Input v-model="validate.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"/>
         </FormItem>
       </Form>
       <div slot="footer">

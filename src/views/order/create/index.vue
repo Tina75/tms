@@ -109,7 +109,7 @@
       </Col>
       <Col span="3">
       <FormItem :label-width="0">
-        <Input v-model="orderForm.consignerHourseNumber" :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+        <Input v-model="orderForm.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
       </FormItem>
       </Col>
       <Col span="1">
@@ -130,7 +130,7 @@
       </Col>
       <Col span="3">
       <FormItem :label-width="0">
-        <Input v-model="orderForm.consigneeHourseNumber" :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+        <Input v-model="orderForm.consigneeHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
       </FormItem>
       </Col>
       <Col span="1">
