@@ -96,7 +96,7 @@ export default {
       Server({
         url: 'help/list',
         method: 'get',
-        data: { appId: '2' }
+        data: { appId: '1' }
       }).then(({ data }) => {
         data.data.forEach(menu => {
           if (menu.type === 1) {
