@@ -53,20 +53,20 @@
           <!--<span>目的地：</span>-->
           <!--<span>{{detail.endName}}</span>-->
           <!--</i-col>-->
-          <i-col span="7">
-            <span>提货方式：</span>
-            <span v-if="detail.pickTypeDesc">{{detail.pickTypeDesc}}</span>
-            <span v-else>-</span>
-          </i-col>
+          <!--<i-col span="7">-->
+          <!--<span>提货方式：</span>-->
+          <!--<span v-if="detail.pickTypeDesc">{{detail.pickTypeDesc}}</span>-->
+          <!--<span v-else>-</span>-->
+          <!--</i-col>-->
           <i-col span="7">
             <span>回单数：</span>
             <span v-if="detail.receiptCount">{{detail.receiptCount}}</span>
             <span v-else>-</span>
           </i-col>
-          <i-col span="6">
-            <span>对接业务员：</span>
-            <span>{{detail.handlerUserName}}</span>
-          </i-col>
+          <!--<i-col span="6">-->
+          <!--<span>对接业务员：</span>-->
+          <!--<span>{{detail.handlerUserName}}</span>-->
+          <!--</i-col>-->
           <i-col span="4">
             <span>是否开票：</span>
             <span>{{detail.isInvoice === 1 ? `是（${rate(detail.invoiceRate)}%）` : '否'}}</span>
@@ -146,11 +146,11 @@
             <span v-if="detail.freightFee" style="font-weight:bold;">{{detail.freightFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
-          <i-col span="4">
-            <span class="fee-style">提货费：</span>
-            <span v-if="detail.pickFee" style="font-weight:bold;">{{detail.pickFee | toPoint}}元</span>
-            <span v-else>-</span>
-          </i-col>
+          <!--<i-col span="4">-->
+          <!--<span class="fee-style">提货费：</span>-->
+          <!--<span v-if="detail.pickFee" style="font-weight:bold;">{{detail.pickFee | toPoint}}元</span>-->
+          <!--<span v-else>-</span>-->
+          <!--</i-col>-->
           <i-col span="4">
             <span class="fee-style">装货费：</span>
             <span v-if="detail.loadFee" style="font-weight:bold;">{{detail.loadFee | toPoint}}元</span>
@@ -161,11 +161,11 @@
             <span v-if="detail.unloadFee" style="font-weight:bold;">{{detail.unloadFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
-          <i-col span="4">
-            <span class="fee-style">保险费：</span>
-            <span v-if="detail.insuranceFee" style="font-weight:bold;">{{detail.insuranceFee | toPoint}}元</span>
-            <span v-else>-</span>
-          </i-col>
+          <!--<i-col span="4">-->
+          <!--<span class="fee-style">保险费：</span>-->
+          <!--<span v-if="detail.insuranceFee" style="font-weight:bold;">{{detail.insuranceFee | toPoint}}元</span>-->
+          <!--<span v-else>-</span>-->
+          <!--</i-col>-->
           <i-col span="4">
             <span class="fee-style">其他：</span>
             <span v-if="detail.otherFee" style="font-weight:bold;">{{detail.otherFee | toPoint}}元</span>
@@ -510,19 +510,19 @@ export default {
     // 订单详情按钮过滤
     filterOrderButton () {
       /**
-       * status  10：待提货 20：待调度 30：在途 40：已到货 50：已回单
-       * 20待接收 拒绝 接受按钮
+       * status  0:待接收状态；10：待提货； 20：待送货调度； 30：在途； 40：已到货； 50：已回单；99已拒绝状态；100被删除到回收站
+       * 0待接收状态 拒绝 接受按钮
        */
       let r = this.detail
       let renderBtn = []
-      if (r.status === 20) { // 待调度状态
+      if (r.status === 0) { // 待调度状态
         // 接受按钮
         renderBtn.push(
-          { name: '接受', value: 1, code: 0 }
+          { name: '接受', value: 1, code: 110101 }
         )
         // 拒绝按钮
         renderBtn.push(
-          { name: '拒绝', value: 2, code: 0 }
+          { name: '拒绝', value: 2, code: 110102 }
         )
       }
       this.btnGroup = renderBtn
