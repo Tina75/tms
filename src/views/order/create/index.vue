@@ -104,7 +104,6 @@
           v-model="orderForm.consignerAddress"
           :show-icon="!!orderForm.start"
           :local-options="consignerAddresses"
-          placeholder="请输入地址（省市区+详细地址）"
           @city-select="({lat, lng, cityCode}) => citySelect(1, lat, lng, cityCode)"/>
       </FormItem>
       </Col>
@@ -126,7 +125,6 @@
           v-model="orderForm.consigneeAddress"
           :show-icon="!!orderForm.end"
           :local-options="consigneeAddresses"
-          placeholder="请输入地址（省市区+详细地址）"
           @city-select="({lat, lng, cityCode}) => citySelect(2, lat, lng, cityCode)"/>
       </FormItem>
       </Col>

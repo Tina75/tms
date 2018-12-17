@@ -703,7 +703,11 @@ export default {
           title: '发货地址',
           key: 'consignerAddress',
           minWidth: 180,
-          tooltip: true
+          tooltip: true,
+          render: (h, params) => {
+            const text = !params.row.consignerHourseNumber ? params.row.consignerAddress : params.row.consignerAddress + ',' + params.row.consignerHourseNumber
+            return h('span', text)
+          }
         },
         {
           title: '收货人',
@@ -721,7 +725,11 @@ export default {
           title: '收货地址',
           key: 'consigneeAddress',
           minWidth: 180,
-          tooltip: true
+          tooltip: true,
+          render: (h, params) => {
+            const text = !params.row.consigneeHourseNumber ? params.row.consigneeAddress : params.row.consigneeAddress + ',' + params.row.consigneeHourseNumber
+            return h('span', text)
+          }
         },
         {
           title: '结算方式',

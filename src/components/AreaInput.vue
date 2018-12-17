@@ -2,6 +2,7 @@
   <div class="area-input">
     <!-- :prefix="showIcon ? 'ios-pin-outline' : ''" -->
     <SelectInput
+      v-if="!onlySelect"
       ref="selectInput"
       :value="value"
       :no-filter="true"
@@ -14,6 +15,17 @@
       @on-select="selectChange"
     >
     </SelectInput>
+    <Select
+      v-else
+      v-model="selectValue"
+      :loading="loading"
+      :placeholder="placeholder"
+      :remote-method="doSearch"
+      filterable
+      remote
+      @on-change="selectChange">
+      <Option v-for="(option, index) in areaList" :value="option.name" :key="index">{{option.name}}</Option>
+    </Select>
   </div>
 </template>
 <script>
@@ -55,6 +67,10 @@ export default {
     showIcon: {
       type: Boolean,
       default: false
+    },
+    onlySelect: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -62,7 +78,8 @@ export default {
       address: [],
       timer: '',
       selectItem: null,
-      loading: false
+      loading: false,
+      selectValue: this.value
     }
   },
   computed: {
@@ -88,14 +105,18 @@ export default {
       }, 200)
     },
     doSearch (val) {
+      this.loading = true
       const options = {
         onSearchComplete: results => {
+          this.loading = false
           if (local.getStatus() === window.BMAP_STATUS_SUCCESS) {
             // 判断状态是否正确
             let arr = []
-            this.$nextTick(() => {
-              this.$refs['selectInput'].focusIndex = 0
-            })
+            if (!this.onlySelect) {
+              this.$nextTick(() => {
+                this.$refs['selectInput'].focusIndex = 0
+              })
+            }
             for (let i = 0; i < results.getCurrentNumPois(); i++) {
               const item = results.getPoi(i)
               // 省市
@@ -125,36 +146,58 @@ export default {
       const local = new BMap.LocalSearch('全国', options)
       local.search(val)
     },
-    inputHandle (value, type) {
+    inputHandle (value) {
       this.address = []
-      this.$emit('input', value)
-      if (this.selectItem && this.selectItem.value === value) {
-        return
-      }
-      if (value) {
-        this.search(value)
-      }
+      if (!this.onlySelect) {
+        this.address = []
+        this.$emit('input', value)
+        if (this.selectItem && this.selectItem.value === value) {
+          return
+        }
+        if (value) {
+          this.search(value)
+        }
 
-      if (this.selectItem && this.selectItem.value !== value) {
-        this.selectItem = null
-        this.selectChange(null, { lat: '', lng: '', city: '' })
+        if (this.selectItem && this.selectItem.value !== value) {
+          this.selectItem = null
+          this.selectChange(null, { lat: '', lng: '', city: '' })
+        }
       }
     },
     selectChange (value, item) {
-      // 经纬度改变
-      this.selectItem = item
-      const res = {
-        lat: item.lat,
-        lng: item.lng,
-        type: item.lng && item.lat ? 1 : '',
-        cityCode: item.city ? cityUtil.getCodeByName(item.city) : ''
+      if (!this.onlySelect) {
+        // 经纬度改变
+        this.selectItem = item
+        const res = {
+          lat: item.lat,
+          lng: item.lng,
+          type: item.lng && item.lat ? 1 : '',
+          cityCode: item.city ? cityUtil.getCodeByName(item.city) : ''
+        }
+        this.$emit('city-select', res)
+      } else {
+        if (value) {
+          let obj = {}
+          this.address.map(el => {
+            if (value === el.name) {
+              obj = el
+            }
+          })
+          obj.cityCode = obj.city ? cityUtil.getCodeByName(obj.city) : ''
+          this.$emit('input', value)
+          this.$emit('city-select', obj)
+        }
       }
-      this.$emit('city-select', res)
     },
     // v过滤省市 title或name
     replace (v, p, c, t) {
-      return v.replace(p, '').replace(c, '').replace(t, '')
+      return v.replace(p || '', '').replace(c || '', '').replace(t || '', '')
     }
   }
 }
 </script>
+<style lang="stylus">
+.area-input
+  .ivu-select-dropdown
+    width 100% !important
+</style>

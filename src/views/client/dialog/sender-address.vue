@@ -15,7 +15,7 @@
             <Col :span="23">
             <AreaInput
               v-model="validate.address"
-              placeholder="请输入地址（省市区+详细地址）"
+              :only-select="true"
               @city-select="latlongtChange"/>
             </Col>
             <Col :span="1">

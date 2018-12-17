@@ -213,7 +213,14 @@ export default {
         },
         {
           title: '发货地址',
-          key: 'address'
+          key: 'address',
+          render: (h, params) => {
+            let text = params.row.address
+            if (params.row.consignerHourseNumber) {
+              text = ',' + params.row.consignerHourseNumber
+            }
+            return h('span', text)
+          }
         }
       ],
       columns2: [
@@ -305,7 +312,14 @@ export default {
         },
         {
           title: '收货地址',
-          key: 'address'
+          key: 'address',
+          render: (h, params) => {
+            let text = params.row.address
+            if (params.row.consignerHourseNumber) {
+              text = ',' + params.row.consignerHourseNumber
+            }
+            return h('span', text)
+          }
         },
         {
           title: '备注',

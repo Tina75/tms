@@ -28,7 +28,7 @@ export const res = {
 }
 export const TAB_LIST = [
   { name: '公司利润', count: '' },
-  { name: '发货方利润', count: '' },
+  { name: '客户利润', count: '' },
   { name: '整车利润', count: '' },
   { name: '单票利润', count: '' }
 ]

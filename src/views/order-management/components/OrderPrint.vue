@@ -20,12 +20,16 @@
             <tr>
               <td>发货人：{{data.consignerContact}}</td>
               <td>手机号：{{data.consignerPhone}}</td>
-              <td>发货地址：{{data.consignerAddress}}</td>
+              <td>发货地址：{{data.consignerAddress}}
+                <span v-if="data.consignerHourseNumber">{{`,${data.consignerHourseNumber}`}}</span>
+              </td>
             </tr>
             <tr>
               <td>收货人：{{data.consigneeContact}}</td>
               <td>手机号：{{data.consigneePhone}}</td>
-              <td>收货地址：{{data.consigneeAddress}}</td>
+              <td>收货地址：{{data.consigneeAddress}}
+                <span v-if="data.consigneeHourseNumber">{{`,${data.consigneeHourseNumber}`}}</span>
+              </td>
             </tr>
             <tr>
               <td>回单数：{{data.receiptCount}}</td>
