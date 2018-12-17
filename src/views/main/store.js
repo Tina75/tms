@@ -5,16 +5,16 @@ export default {
 
   },
   state: {
-    tabNavList: [{ name: 'home', path: '/', meta: { title: '首页', notCache: true } }]
+    tabNavList: [{ name: 'home', path: '/', query: { title: '首页', notCache: true } }]
   },
   getters: {
     menuList: (state, getters, rootState) => {
       return getMenuByRouter(router.options.routes, rootState.permissions)
     },
-    tabNavList: (state) => state.tabNavList
+    TabNavList: (state) => state.tabNavList
   },
   mutations: {
-    SET_TABNAV_LIST (state, list) {
+    setTabNavList (state, list) {
       state.tabNavList = [...list]
     }
   }

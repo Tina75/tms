@@ -6,8 +6,8 @@ export const getUserInfo = ({ rootState, commit, state, dispatch }, data) => {
     url: '/set/userInfo',
     method: 'get'
   }).then(({ data }) => {
-    const { resours, ...userinfo } = data.data
-    commit('initPermissions', resours)
+    const { permission, ...userinfo } = data.data
+    commit('initPermissions', permission)
     commit('initUserInfo', userinfo)
     return data.data
   }).catch(e => {

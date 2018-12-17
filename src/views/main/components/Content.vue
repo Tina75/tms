@@ -1,7 +1,11 @@
 <template>
   <div class="content">
     <div id="content-main" :style="{'min-height':DocumentHeight +'px'}" class="content-main">
-      <router-view />
+      <div id="content-wrapper" class="wrapper">
+        <keep-alive>
+          <router-view />
+        </keep-alive>
+      </div>
     </div>
   </div>
 </template>
@@ -40,4 +44,9 @@ export default {
   &-main
     height: auto
     background white
+  .wrapper
+    padding 20px 15px
+    background white
+    height 100%
+    overflow: auto
 </style>

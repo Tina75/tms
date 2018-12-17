@@ -59,7 +59,7 @@ export default {
       if (this.cache[key]) {
         fn()
       } else {
-        import('../views/' + name + '').then(module => {
+        import('../../../views/' + name + '').then(module => {
           // 加载弹出框模块
           // 注入method 方法,注入初始化数据
           let tempModule = Vue.extend(module.default)

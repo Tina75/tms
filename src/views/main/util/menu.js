@@ -9,8 +9,10 @@ export const getMenuByRouter = (list, permissions) => {
       // 拥有二级菜单的菜单项
       let obj = {
         icon: (item.meta && item.meta.icon) || '',
+        title: item.meta.title,
         name: item.name,
-        meta: item.meta
+        meta: item.meta,
+        path: item.path
       }
       if (hasChild(item) && showThisMenuEle(item, permissions)) {
         obj.children = getMenuByRouter(item.children, permissions)
@@ -23,8 +25,10 @@ export const getMenuByRouter = (list, permissions) => {
       if (child && showThisMenuEle(child, permissions)) {
         res.push({
           icon: child.meta.icon,
+          title: child.meta.title,
           name: child.name,
-          meta: child.meta
+          meta: child.meta,
+          path: child.path.startsWith('/') ? child.path : (item.path || '') + '/' + child.path
         })
       }
     }

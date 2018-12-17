@@ -5,18 +5,24 @@
         <tab-nav :list="TabNavList" :value="$route" @on-close="onTabClose" @on-select="onTabSelect"/>
       </div>
       <div class="header-bar-avator-dropdown">
-        <span class="header-bar-avator-dropdown-notify" @click="openProcess">
+        <span class="header-bar-avator-dropdown-notify">
           <Tooltip v-if="processVisible" :value="processVisible" transfer  placement="bottom" content=" 业务流程" always>
-            <FontIcon type="liucheng" size="25" color="#fff"></FontIcon>
+            <router-link to="/help/process">
+              <FontIcon  type="liucheng" size="25" color="#fff" ></FontIcon>
+            </router-link>
           </Tooltip>
           <Tooltip v-else transfer content=" 业务流程">
-            <FontIcon  type="liucheng" size="25" color="#fff" ></FontIcon>
+            <router-link to="/help/process">
+              <FontIcon  type="liucheng" size="25" color="#fff" ></FontIcon>
+            </router-link>
           </Tooltip>
         </span>
         <span class="header-bar-avator-dropdown-notify">
           <Badge :count="MsgCount.all" :offset="[5,1]" type="primary">
             <Tooltip transfer content=" 消息">
-              <Icon type="ios-notifications" size="30" color="#fff" @click="openMsg(0)"></Icon>
+              <router-link to="/information/index">
+                <Icon type="ios-notifications" size="30" color="#fff"></Icon>
+              </router-link>
             </Tooltip>
           </Badge>
         </span>
@@ -69,7 +75,7 @@ export default {
   },
   methods: {
     ...mapMutations(['setTabNavList']),
-    ...mapActions(['getMessageCount', 'getUserInfo', 'getOwnDrivers', 'getOwnCars']),
+    ...mapActions(['getMessageCount', 'getUserInfo', 'getTableColumns', 'getOwnDrivers', 'getOwnCars']),
     async newUserTip () {
       try {
         await this.getUserInfo()
@@ -81,6 +87,7 @@ export default {
           // 短信是否超过次数
           this.isMessageBeyond()
         }
+        this.getTableColumns()
         this.getOwnDrivers()
         this.getOwnCars()
         // 探索运掌柜

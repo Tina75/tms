@@ -2,17 +2,24 @@
 <template>
   <div class="sider">
     <Sider v-model="collapsed" :collapsed-width="50" hide-trigger collapsible style="overflow:hidden">
-      <Menu v-show="!collapsed" ref="menu" :active-name="$route.path" :open-names="openedNames" accordion width="200" theme="dark" @on-select="handleSelect">
+      <Menu v-show="!collapsed" ref="menu" :active-name="$route.path" :open-names="openedNames" accordion width="200" theme="dark">
         <div class="title"><font-icon type="logo-zjy1" size="24" color="white"/></div>
         <template v-for="item in menuList">
           <template v-if="item.children">
             <Submenu :name="item.path" :key="item.path">
-              <template slot="title"><font-icon :type="item.icon" :size="18" />{{item.meta.title}}</template>
-              <menu-item v-for="child in item.children" :name="child.path" :key="child.path" >{{child.meta.title}}</menu-item>
+              <template slot="title"><font-icon :type="item.icon" :size="18" />{{item.title}}</template>
+              <menu-item v-for="child in item.children" :name="child.path" :key="child.path" >
+                <router-link :to="getPath(item, child)">{{child.title}}</router-link>
+              </menu-item>
             </Submenu>
           </template>
           <template v-else>
-            <menu-item :name="item.path" :key="item.path"><font-icon :type="item.icon" :size="18"></font-icon>{{item.meta.title}}</menu-item>
+            <menu-item :name="item.path" :key="item.path">
+              <font-icon :type="item.icon" :size="18"></font-icon>
+              <router-link :to="item.path">
+                {{item.meta.title}}
+              </router-link>
+            </menu-item>
           </template>
         </template>
         <div class="footer">
@@ -30,15 +37,22 @@
         <template v-for="item in menuList" >
           <div v-if="hasPower(item.powerCode)"  :key="item.path">
             <Dropdown v-if="item.children" placement="right-start" transfer >
-              <a class="drop-menu-a"><font-icon :type="item.meta.icon" :size="20" color="white"/></a>
+              <a class="drop-menu-a"><font-icon :type="item.icon" :size="20" color="white"/></a>
               <DropdownMenu slot="list" >
-                <DropdownItem v-for="child in item.children"  :key="child.path" >
-                  <p :name="child.path" :key="child.path"  @click="handleSelect(child)">{{child.meta.title}}</p>
+                <DropdownItem v-for="child in item.children" :key="child.path" >
+                  <p :name="child.path" :key="child.path" >
+                    <router-link :to="`${item.path}/${child.path}`">{{child.title}}</router-link>
+                  </p>
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
-            <Tooltip v-else :content="item.meta.title" transfer placement="left">
-              <menu-item  :name="item.path"><a class="drop-menu-a"  @click="handleSelect(item)"><font-icon :type="item.meta.icon" :size="20" color="white"/></a></menu-item>
+            <Tooltip v-else :content="item.title" transfer placement="left">
+              <menu-item :name="item.path">
+                <router-link :to="item.path" class="drop-menu-a">
+                  <font-icon :type="item.icon" :size="20" color="white"/>
+                </router-link>
+                <!-- <a class="drop-menu-a"  @click="handleSelect(item)"><font-icon :type="item.meta.icon" :size="20" color="white"/></a> -->
+              </menu-item>
             </Tooltip>
           </div>
         </template>
@@ -127,6 +141,12 @@ export default {
         }
       }
     },
+    getPath (parent, child) {
+      if (child.path.startsWith('/')) {
+        return child.path
+      }
+      return parent.path + '/' + child.path
+    },
     // 权限控制
     hasPower: function (power) {
       if (!power) { return true }
@@ -159,6 +179,18 @@ export default {
     height 50px
     padding 0
     margin 0
+  >>> .ivu-menu-vertical
+        .ivu-menu-item
+          padding 0
+          a
+            color #fff
+            cursor pointer
+            display block
+            padding 14px 8px
+            padding-left 60px
+        .ivu-menu-submenu
+          .ivu-menu-item
+            padding-left: 0 !important
 @keyframes move_in{
   0%{width: 40px;}
   80%{width: 80px;}

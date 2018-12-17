@@ -126,7 +126,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['UserInfo']),
+    ...mapGetters(['UserInfo', 'DoucmentHeight']),
     today () {
       var now = new Date()
       return now.Format('yyyy年MM月dd日') + ' ' + this.week(now.getDay())
@@ -147,7 +147,7 @@ export default {
       }
     },
     styleHeight () {
-      return { minHeight: this.$parent.$parent.$el.children[0].style.minHeight }
+      return { minHeight: this.DocumentHeight }
     },
     cardsMap () {
       const objMap = {}
