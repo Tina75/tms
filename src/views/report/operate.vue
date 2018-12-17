@@ -96,6 +96,7 @@
             </DatePicker>
           </div>
           <div class="col">
+            <Input :maxlength="100" v-model="keywords.orderRemark" placeholder="请输入订单备注信息"  />
           </div>
         </div>
       </div>
@@ -160,7 +161,8 @@ export default {
         carrierName: '',
         carNo: '',
         driverName: '',
-        driverPhone: ''
+        driverPhone: '',
+        orderRemark: ''
       },
       keyword: {
         type: 1
@@ -489,18 +491,19 @@ export default {
         return
       }
       this.keyword = {
-        consignerName: this.keywords.consignerName || null,
-        orderNo: this.keywords.orderNo || null,
-        customerOrderNo: this.keywords.customerOrderNo || null,
-        waybillNo: this.keywords.waybillNo || null,
-        start: this.keywords.start,
-        end: this.keywords.end,
-        startTime: this.keywords.startTime || null,
-        endTime: this.keywords.endTime || null,
-        carrierName: this.keywords.carrierName || null,
-        carNo: this.keywords.carNo || null,
-        driverName: this.keywords.driverName || null,
-        driverPhone: this.keywords.driverPhone || null
+        consignerName: this.keywords.consignerName || undefined,
+        orderNo: this.keywords.orderNo || undefined,
+        customerOrderNo: this.keywords.customerOrderNo || undefined,
+        waybillNo: this.keywords.waybillNo || undefined,
+        start: this.keywords.start || undefined,
+        end: this.keywords.end || undefined,
+        startTime: this.keywords.startTime || undefined,
+        endTime: this.keywords.endTime || undefined,
+        carrierName: this.keywords.carrierName || undefined,
+        carNo: this.keywords.carNo || undefined,
+        driverName: this.keywords.driverName || undefined,
+        driverPhone: this.keywords.driverPhone || undefined,
+        orderRemark: this.keywords.orderRemark || undefined
       }
     },
     // 判断搜索条件是不是都是空，为空则key = 1
@@ -527,7 +530,8 @@ export default {
         carrierName: '',
         carNo: '',
         driverName: '',
-        driverPhone: ''
+        driverPhone: '',
+        orderRemark: ''
       }
       this.times = ['', '']
       this.keyword = {
@@ -541,18 +545,19 @@ export default {
         return
       }
       let data = {
-        consignerName: this.keywords.consignerName || null,
-        orderNo: this.keywords.orderNo || null,
-        customerOrderNo: this.keywords.customerOrderNo || null,
-        waybillNo: this.keywords.waybillNo || null,
-        start: this.keywords.start,
-        end: this.keywords.end,
-        startTime: this.keywords.startTime || null,
-        endTime: this.keywords.endTime || null,
-        carrierName: this.keywords.carrierName || null,
-        carNo: this.keywords.carNo || null,
-        driverName: this.keywords.driverName || null,
-        driverPhone: this.keywords.driverPhone || null
+        consignerName: this.keywords.consignerName || undefined,
+        orderNo: this.keywords.orderNo || undefined,
+        customerOrderNo: this.keywords.customerOrderNo || undefined,
+        waybillNo: this.keywords.waybillNo || undefined,
+        start: this.keywords.start || undefined,
+        end: this.keywords.end || undefined,
+        startTime: this.keywords.startTime || undefined,
+        endTime: this.keywords.endTime || undefined,
+        carrierName: this.keywords.carrierName || undefined,
+        carNo: this.keywords.carNo || undefined,
+        driverName: this.keywords.driverName || undefined,
+        driverPhone: this.keywords.driverPhone || undefined,
+        orderRemark: this.keywords.orderRemark || undefined
       }
       Export({
         url: '/report/for/operating/export',
