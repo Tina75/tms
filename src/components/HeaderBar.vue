@@ -232,7 +232,7 @@ export default {
           method: 'get'
         })
           .then((res) => {
-            if (res.data.data && res.data.data.length) {
+            if (res.data.data) {
               /**
                * data{id,title,content,phone, inviteId}
                * 合作邀请可能存在多个合作消息
