@@ -122,7 +122,7 @@ export const TABLECOLUMNS = {
       width: 150
     },
     {
-      title: '里程数',
+      title: '里程数(公里)',
       key: 'mileage',
       width: 150,
       render: (h, params) => {

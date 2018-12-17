@@ -7,9 +7,9 @@ export const getUserInfo = ({ rootState, commit, state, dispatch }, data) => {
     method: 'get'
   }).then(({ data }) => {
     // 20181214 接口返回值包含权限
-    const { resours, ...userInfo } = data.data
+    const { permission, ...userInfo } = data.data
     commit('initUserInfo', userInfo)
-    commit('initPermissions', resours || [])
+    commit('initPermissions', permission || [])
   }).catch(e => {
     console.log(e)
   })

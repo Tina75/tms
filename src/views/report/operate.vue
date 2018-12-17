@@ -561,13 +561,9 @@ export default {
         fileName: '运单报表'
       })
     },
-    // // 筛选列表显示字段
-    // handleColumnChange (val) {
-    //   this.extraColumns = val
-    // },
     handleTimeChange (val) {
-      this.keywords.startTime = val[0]
-      this.keywords.endTime = val[1]
+      this.keywords.startTime = val[0] + ' 00:00:00'
+      this.keywords.endTime = val[1] + ' 23:59:59'
     },
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }

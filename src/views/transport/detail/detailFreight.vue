@@ -299,6 +299,7 @@
           :finance-rules-info="financeRulesInfo"
           :send-way="sendWay"
           :send-fee-orders="orderList"
+          :fee-pass-allocation="info.allocationStrategy"
           source="detail">
         </send-fee>
       </div>

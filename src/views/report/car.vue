@@ -346,8 +346,8 @@ export default {
       })
     },
     handleTimeChange (val) {
-      this.keywords.startTime = val[0]
-      this.keywords.endTime = val[1]
+      this.keywords.startTime = val[0] + ' 00:00:00'
+      this.keywords.endTime = val[1] + ' 23:59:59'
     },
     onLoad (res) {
       if (res.data.data.list && res.data.data.list.length > 0) {

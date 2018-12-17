@@ -19,7 +19,7 @@
           @on-change="handleTimeChange"
         >
         </DatePicker>
-        <Tooltip max-width="200" style="margin-left: 18px" transfer content="利润报表：按照订单、运单、提货单、外转单的下单日期提取数据。">
+        <Tooltip max-width="200" style="margin-left: 18px" transfer content="利润报表：按照订单、运单、提货单的下单日期提取数据。">
           <Icon type="ios-alert" style="font-size: 20px;color: #FFBB44;" />
         </Tooltip>
         <!--客户利润 单票利润-->
@@ -377,8 +377,8 @@ export default {
       this.date(btn.value)
     },
     handleTimeChange (val) {
-      this.keywords.startTime = val[0]
-      this.keywords.endTime = val[1]
+      this.keywords.startTime = val[0] + ' 00:00:00'
+      this.keywords.endTime = val[1] + ' 23:59:59'
       // 去掉蓝显
       this.operateValue = ''
     },
@@ -427,8 +427,8 @@ export default {
           break
       }
       this.times = [start, end]
-      this.keywords.startTime = start
-      this.keywords.endTime = end
+      this.keywords.startTime = start + ' 00:00:00'
+      this.keywords.endTime = end + ' 23:59:59'
     },
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }

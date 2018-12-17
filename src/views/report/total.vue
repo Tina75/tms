@@ -219,8 +219,8 @@ export default {
       this.date(btn.value)
     },
     handleTimeChange (val) {
-      this.keywords.startTime = val[0]
-      this.keywords.endTime = val[1]
+      this.keywords.startTime = val[0] + ' 00:00:00'
+      this.keywords.endTime = val[1] + ' 23:59:59'
       // 去掉蓝显
       this.operateValue = ''
     },
@@ -268,8 +268,8 @@ export default {
           break
       }
       this.times = [start, end]
-      this.keywords.startTime = start
-      this.keywords.endTime = end
+      this.keywords.startTime = start + ' 00:00:00'
+      this.keywords.endTime = end + ' 23:59:59'
     },
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
