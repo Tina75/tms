@@ -133,7 +133,7 @@
             <Row class="detail-field-group">
               <i-col span="24">
                 <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
-                <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
+                <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ info.totalFee / 100 }}</span>元
               </i-col>
             </Row>
             <Row v-if="info.assignCarType === 1" class="detail-field-group">
@@ -149,7 +149,7 @@
                 </div>
               </i-col>
             </Row>
-            <Row class="detail-field-group">
+            <Row v-if="orderList.length > 1" class="detail-field-group">
               <i-col span="24">
                 <span class="detail-field-title-sm">分摊策略：</span>
                 <span>{{ getAllocationValToLabel(info.allocationStrategy) }}</span>
@@ -306,6 +306,7 @@ export default {
         driverName: '',
         driverPhone: '',
         remark: '',
+        totalFee: 0,
         collectionMoney: 0, // 代收货款
         assignCarType: 1, // 派车类型 1 外转 2 自送 V1.07新增
         assistantDriverName: '', // 副司机名称  V1.07新增
@@ -634,7 +635,7 @@ export default {
         method: 'post',
         data: data
       }).then(res => {
-        this.fetchData()
+        // this.fetchData()
         this.$Message.success('保存成功')
         this.cancelEdit()
       }).catch(err => console.error(err))
