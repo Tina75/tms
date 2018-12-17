@@ -21,6 +21,10 @@ export default {
   name: 'AllocationStrategy',
 
   props: {
+    // 编辑的时候需要带入的分摊策略，1、按订单数  2、按件数 3、按重量 4、按体积
+    passAllocation: {
+      type: [String, Number]
+    },
     // 使用场景：1、order:订单拆单    2、transport：提货和送货
     source: {
       type: String,
@@ -45,6 +49,7 @@ export default {
     // 更新选项后向父组件传值
     changeAllocationStrategy: Function
   },
+
   data () {
     // 9位整数 2位小数
     const validateStrategy = (rule, value, callback) => {
@@ -88,18 +93,27 @@ export default {
         按体积分摊：按照每个订单里的体积的占比来分摊合计运费。`
     }
   },
+
   watch: {
     allocationOrders (val) {
       this.$refs.allocationForm.validate()
     }
   },
   mounted () {
-    this.getAllocationStrategy().then((res) => {
-      let data = res.data.data
-      this.allocation = this.source === 'order' ? data.orderStrategy : data.waybillStrategy
-      this.handleChange(this.allocation) // 初始化传值给父组件
-      this.$refs.allocationForm.validate()
-    })
+    console.log(this.passAllocation)
+    if (this.passAllocation) {
+      this.$nextTick(() => {
+        this.allocation = this.passAllocation
+        this.handleChange(this.allocation)
+      })
+    } else {
+      this.getAllocationStrategy().then((res) => {
+        let data = res.data.data
+        this.allocation = this.source === 'order' ? data.orderStrategy : data.waybillStrategy
+        this.handleChange(this.allocation) // 初始化传值给父组件
+        this.$refs.allocationForm.validate()
+      })
+    }
   },
 
   methods: {

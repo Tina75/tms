@@ -20,7 +20,7 @@
             始发地／目的地：{{ detailData.startName + ' - ' + detailData.endName }}
           </i-col>
           <i-col span="12">
-            费用合计：{{ detailData.totalFee / 100 }}元
+            费用合计：{{ detailData.allocationFee / 100 }}元
           </i-col>
         </Row>
       </div>
@@ -49,6 +49,7 @@
       <allocation-strategy
         ref="allocationStrategy"
         :allocation-orders="[...detailData]"
+        :pass-allocation="detailData.allocationStrategy"
         source="order"
         class="separate-allocation"
         @changeAllocationStrategy="onChangeAllocation"></allocation-strategy>
@@ -114,7 +115,7 @@ export default {
       return this.orderNo.indexOf('-') > -1 ? this.orderNo.substring(0, this.orderNo.indexOf('-')) + '-' + (this.subOrderNum + 1) : this.orderNo + '-2'
     },
     childOneFee () {
-      let fee = float.round(this.detailData.totalFee / 100)
+      let fee = float.round(this.detailData.allocationFee / 100)
       if (this.allocationStrategy === 1) { // 按订单数分摊费用
         fee /= 2
       } else if (this.allocationStrategy === 2 && this.detailData.quantity) { // 按件数分摊费用，件数必须大于0
@@ -134,7 +135,7 @@ export default {
       return float.round(fee)
     },
     childTwoFee () {
-      let fee = float.round(this.detailData.totalFee / 100)
+      let fee = float.round(this.detailData.allocationFee / 100)
       return float.round(fee - this.childOneFee)
     },
     // 子单1的总数量
