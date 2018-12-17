@@ -340,8 +340,8 @@ export default {
           break
         case 3:
           this.searchFields = {
-            startTime: this.keywords.startTime || undefined,
-            endTime: this.keywords.endTime || undefined,
+            startTime: this.keywords.startTime + ' 00:00:00' || undefined,
+            endTime: this.keywords.endTime + ' 23:59:59' || undefined,
             waybillNo: this.keywords.waybillNo || undefined,
             carNo: this.keywords.carNo || undefined
           }
