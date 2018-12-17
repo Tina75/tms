@@ -223,17 +223,17 @@ export default {
      * @description 切换tab标签
      * @param {*} route 跳转目标的path或route对象
      */
-    turnToPage (route) {
-      let { path, params, query, meta } = {}
-      if (typeof route === 'string') path = route
-      else {
-        path = route.path
-        params = route.params
-        query = route.query
-        meta = route.meta
-      }
-      this.$router.push({ path, params, query, meta })
-    },
+    // turnToPage (route) {
+    //   let { path, params, query, meta } = {}
+    //   if (typeof route === 'string') path = route
+    //   else {
+    //     path = route.path
+    //     params = route.params
+    //     query = route.query
+    //     meta = route.meta
+    //   }
+    //   this.$router.push({ path, params, query, meta })
+    // },
     getNextRoute (list, route) {
       let res = {}
       const index = list.findIndex(item => this.routeEqual(item, route))

@@ -13,8 +13,7 @@
             v-for="(item,index) in NavTabList"
             ref="tagsPageOpened"
             :key="`tag-nav-${index}`"
-            :name="item.title?item.title:'null'"
-            :checked="item.isActive"
+            :tab="item"
             @on-close="handleClose(item)"
             @on-refresh="handleRefresh(item)"
             @click.native="handleClick(item)">
@@ -36,12 +35,6 @@ export default {
   mixins: [BaseComponent],
   props: {
     value: Object
-    // list: {
-    //   type: Array,
-    //   default () {
-    //     return []
-    //   }
-    // }
   },
   data () {
     return {
@@ -69,6 +62,7 @@ export default {
   },
   mounted () {
     navTabManager.addNavTab(this.$route)
+    window.EMA.bind('openTab', (route) => { this.handleClick(route) })
   },
   methods: {
     handlescroll (e) {
@@ -94,27 +88,29 @@ export default {
         }
       }
     },
-    // handleTagsOption (type) {
-    //   if (type === 'close-all') {
-    //     // 关闭所有，除了home
-    //     let res = this.list.filter(item => item.path === '/home')
-    //     // this.$emit('on-close', res, 'all')
-    //     this.$store.commit('updateTabList', res)
-    //   } else {
-    //     // 关闭除当前页和home页的其他页
-    //     let res = this.list.filter(item => item.path === this.value.path || item.name === '/home')
-    //     // this.$emit('on-close', res, 'others')
-    //     this.$store.commit('updateTabList', res)
-    //   }
+    // handleClose (item) {
+    //   this.$emit('on-close', item)
     // },
-    handleClose (item) {
-      this.$emit('on-close', item)
-    },
-    handleRefresh (item) {
-      this.ema.fire('reloadTab', { ...item })
-    },
+    // handleRefresh (item) {
+    //   this.ema.fire('reloadTab', { ...item })
+    // },
+    /**
+     * 打开未知的tab
+     * 1. 可能已有
+     * 2. 可能没有
+     * {
+    *     path: TMSUrl.CARRIER_MANAGEMENT_CAEDETAILS,
+     *    query: {
+     *       id: '车辆详情',
+     *       rowData: params.row
+     *     }
+     *   }
+     * @param {object} item
+     */
     handleClick (item) {
-      this.$emit('on-select', item)
+      // this.$emit('on-select', item)
+      let { path, query, params = {} } = item
+      this.$router.push({ path, params, query, meta: { title: item.query.title } })
     }
   }
 }

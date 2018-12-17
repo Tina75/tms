@@ -8,7 +8,7 @@
           <template v-if="item.children">
             <Submenu :name="item.path" :key="item.path">
               <template slot="title"><font-icon :type="item.icon" :size="18" />{{item.title}}</template>
-              <menu-item v-for="child in item.children" :name="child.path" :key="child.path" >
+              <menu-item v-for="child in item.children" :name="getPath(item, child)" :key="child.path" >
                 <router-link :to="getPath(item, child)">{{child.title}}</router-link>
               </menu-item>
             </Submenu>

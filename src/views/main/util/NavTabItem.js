@@ -6,16 +6,16 @@ class NavTabItem {
     this.path = options.path
     this.title = options.meta.title
     this.meta = options.meta
-    this.query = options.query
+    this.query = options.query || {}
     // 默认选中
     this.isActive = true
     this.manager = manager
   }
   close () {
-
+    this.manager.removeNavTab(this)
   }
   refresh () {
-
+    this.manager.reloadNavTab(this)
   }
 }
 

@@ -6,8 +6,14 @@ export default {
     addNavTab ({ commit, dispatch }, navItem) {
       commit('addNavTab', navItem)
     },
+    setActiveTabClass ({ commit }, id) {
+      commit('setActiveTabClass', id)
+    },
     removeNavTab ({ commit }, navItem) {
       commit('removeNavTab', navItem)
+    },
+    removeActiveTabClass ({ commit }) {
+      commit('removeActiveTabClass')
     }
   },
   state: {
@@ -29,6 +35,16 @@ export default {
     },
     removeNavTab (state, tab) {
       state.navTabList = state.navTabList.find((item) => item.id !== tab.id)
+    },
+    removeActiveTabClass (state) {
+      let tab = state.navTabList.find((item) => item.isActive)
+      if (tab) {
+        tab.isActive = false
+      }
+    },
+    setActiveTabClass (state, id) {
+      let tab = state.navTabList.find((item) => item.id === id)
+      tab.isActive = true
     }
   }
 }

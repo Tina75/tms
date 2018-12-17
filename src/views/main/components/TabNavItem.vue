@@ -5,7 +5,7 @@
       <span style="display:inline-block;min-width:18px">
         <Icon v-show="checked" class="tab-item__icon " type="ios-refresh" size="20" @click.stop="$emit('on-refresh')"/>
       </span>
-      <span class="tab-item__name">{{name}}</span>
+      <span class="tab-item__name"><router-link :to="path">{{name}}</router-link></span>
       <span style="display:inline-block;min-width:18px">
         <Icon v-show="closeable" :style="checked?'visibility:visible':'visibility:hidden'" class="tab-item__icon close-icon" type="ios-close" size="20" @click.stop="$emit('on-close')"/>
       </span>
@@ -20,13 +20,27 @@ export default {
   name: 'TabNavItem',
   mixins: [ BaseComponent ],
   props: {
-    checked: {
-      type: Boolean,
-      default: false
-    },
-    name: String
+    tab: {
+      type: Object,
+      required: true
+    }
   },
   computed: {
+    checked () {
+      return this.tab.isActive
+    },
+    name () {
+      return this.tab.title
+    },
+    path () {
+      return {
+        path: this.tab.path,
+        query: {
+          title: this.tab.title,
+          ...this.tab.query
+        }
+      }
+    },
     closeable: function () {
       return this.name !== '首页'
     }
@@ -89,7 +103,6 @@ export default {
       transform rotate(180deg)
   &__name
     max-width 70px
-    // line-height 1
     font-size 13px
     text-align center
     vertical-align middle
@@ -98,9 +111,14 @@ export default {
     white-space nowrap
     // margin 0 4px
     text-overflow ellipsis
+    a
+      color #fff
   &__checked
     background #EFEFEF
     color #00A4BD
     border-sizing content-box
     border-bottom 1px solid #efefef
+    .tab-item__name
+      a
+        color #00a4bd
 </style>
