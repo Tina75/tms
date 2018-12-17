@@ -234,7 +234,7 @@ export default {
       }
     },
     float (value) {
-      return float.round(value)
+      return float.round(value, 3)
     }
   }
 }
