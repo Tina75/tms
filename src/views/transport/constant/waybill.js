@@ -333,6 +333,11 @@ export const TABLE_COLUMNS = vm => [
     }
   },
   {
+    title: '承运商运单号',
+    key: 'carrierWaybillNo',
+    width: 120
+  },
+  {
     title: '订单数',
     key: 'orderCnt',
     width: 120

@@ -22,8 +22,8 @@
       <div class="table-footer">
         <span style="padding-right: 5px;box-sizing:border-box;margin-left:-12px;">合计</span>
         <span>订单总数：{{ orderTotal }}</span>
-        <span>总体积：{{ volumeTotal }}</span>
-        <span>总重量：{{ weightTotal }}</span>
+        <span>总体积：{{ volumeTotal + '方' }}</span>
+        <span>总重量：{{ weightTotal + (WeightOption === 1 ? '吨' : '公斤') }}</span>
       </div>
 
       <div>
@@ -209,7 +209,7 @@ export default {
       this.id.map((item) => {
         total += item.volume
       })
-      return float.round(total, 1) + '方'
+      return float.round(total, 1)
     },
     weightTotal () {
       let total = 0
@@ -221,7 +221,7 @@ export default {
           total += item.weightKg
         }
       })
-      return float.round(total) + (this.WeightOption === 1 ? '吨' : '公斤')
+      return float.round(total)
     },
     financeRulesInfo () {
       return {
