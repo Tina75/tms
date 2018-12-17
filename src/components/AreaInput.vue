@@ -1,6 +1,5 @@
 <template>
   <div class="area-input">
-    <!-- :prefix="showIcon ? 'ios-pin-outline' : ''" -->
     <SelectInput
       v-if="!onlySelect"
       ref="selectInput"
@@ -10,7 +9,7 @@
       :clearable="true"
       :local-options="areaList"
       :placeholder="placeholder"
-      :only-select="false"
+      :prefix="showIcon ? 'ios-pin-outline' : undefined"
       @input="inputHandle"
       @on-select="selectChange"
     >
