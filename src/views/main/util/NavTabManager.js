@@ -23,13 +23,26 @@ class NavTabManager {
   reloadNavTab (nav) {
 
   }
+
+  getActiveTab () {
+    return this.queue().find((tab) => tab.isActive)
+  }
   /**
    * 删除tab
    * @param {object} nav
    */
   removeNavTab (nav) {
-    if (this.findNavTab(nav.id)) {
+    let removeTab = this.findNavTab(nav.id)
+    if (removeTab) {
+      let nextTabId = removeTab.prevId
+      let nextTab = this.findNavTab(nextTabId)
+      if (nextTab) {
+        let nextIndex = this.queue().findIndex((item) => item.id === nav.id)
+        nextTab = this.queue()[nextIndex - 1]
+      }
       store.dispatch('removeNavTag', nav)
+      // store.dispatch('setActiveTabClass', nextTabId)
+      return nextTab
     }
   }
   /**

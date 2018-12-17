@@ -3,11 +3,20 @@ import router from '@/router.js'
 
 export default {
   actions: {
-    addNavTab ({ commit, dispatch }, navItem) {
+    addNavTab ({ commit, dispatch, state }, navItem) {
+      let activeTab = state.navTabList.find(item => item.isActive)
+
       commit('addNavTab', navItem)
+      if (activeTab) {
+        commit('setRelationTab', { nextId: navItem.id, prevId: activeTab.id })
+      }
     },
-    setActiveTabClass ({ commit }, id) {
+    setActiveTabClass ({ commit, state }, id) {
+      let activeTab = state.navTabList().find(item => item.isActive)
       commit('setActiveTabClass', id)
+      if (activeTab) {
+        commit('setRelationTab', { nextId: id, prevId: activeTab.id })
+      }
     },
     removeNavTab ({ commit }, navItem) {
       commit('removeNavTab', navItem)
@@ -45,6 +54,10 @@ export default {
     setActiveTabClass (state, id) {
       let tab = state.navTabList.find((item) => item.id === id)
       tab.isActive = true
+    },
+    setRelationTab (state, { nextId, prevId }) {
+      let tab = state.navTabList.find((item) => item.id === nextId)
+      tab.prevId = prevId
     }
   }
 }

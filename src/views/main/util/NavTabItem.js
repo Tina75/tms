@@ -7,12 +7,14 @@ class NavTabItem {
     this.title = options.meta.title
     this.meta = options.meta
     this.query = options.query || {}
+
+    this.prevId = -1
     // 默认选中
     this.isActive = true
     this.manager = manager
   }
   close () {
-    this.manager.removeNavTab(this)
+    return this.manager.removeNavTab(this)
   }
   refresh () {
     this.manager.reloadNavTab(this)
