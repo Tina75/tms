@@ -351,12 +351,19 @@ export default {
             })
           }).then(res => {
             _this.$Message.success('保存成功')
+            _this.saveCitrCode(_this.ruleDetail.details)
             _this.getRules()
           }).catch(err => console.error(err))
         },
         async onCancel () {
           _this.getRules()
         }
+      })
+    },
+    saveCitrCode (arr) {
+      arr.map((item, index) => {
+        this.$refs.city1[index].saveCity(item.departure)
+        this.$refs.city2[index].saveCity(item.destination)
       })
     },
     startQuery () {
