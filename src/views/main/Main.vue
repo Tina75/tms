@@ -21,7 +21,7 @@ export default {
   components: { CSider, CHeader, CContent, CDialog },
   methods: {
     ...mapActions(['getTableColumns']),
-    ...mapMutations(['setTabNavList', 'initTabNav'])
+    ...mapMutations(['setTabNavList'])
   }
 }
 </script>

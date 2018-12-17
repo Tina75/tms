@@ -2,7 +2,7 @@
   <Header class="header-con">
     <div class="header-bar">
       <div class="tag-nav-wrapper">
-        <tab-nav :list="TabNavList" :value="$route" @on-close="onTabClose" @on-select="onTabSelect"/>
+        <tab-nav @on-close="onTabClose" @on-select="onTabSelect"/>
       </div>
       <div class="header-bar-avator-dropdown">
         <span class="header-bar-avator-dropdown-notify">
@@ -47,7 +47,7 @@
 
 <script>
 import BaseComponent from '@/basic/BaseComponent'
-import TabNav from '@/components/TabNav'
+import TabNav from './TabNav'
 import FontIcon from '@/components/FontIcon'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import TMSUrl from '@/libs/constant/url.js'
@@ -62,7 +62,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['MsgCount', 'UserInfo', 'TabNavList'])
+    ...mapGetters(['MsgCount', 'UserInfo'])
   },
   mounted () {
     window.EMA.bind('closeTab', (route) => { this.onTabClose(route) })

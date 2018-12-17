@@ -32,7 +32,7 @@ export default {
   mounted () {
     window.EMA.bind('openTab', (route) => { this.onMenuSelect(route) })
     // 默认打开首页
-    this.openHomeTab()
+    // this.openHomeTab()
   },
 
   methods: {

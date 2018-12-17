@@ -8,6 +8,7 @@ import EmaProxy from 'ema-proxy'
 import Toast from '@/components/toast/index'
 import './libs/js/ga.js' // GA打点统计配置与上报方法封装,
 
+require('./permission')
 require('intersection-observer')
 require('./libs/js/filter')
 require('./libs/js/date')

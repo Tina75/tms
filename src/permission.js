@@ -12,7 +12,7 @@ router.beforeEach((to, from, next) => {
       next({ path: '/' })
     } else {
       // 有无用户数据
-      if (store.getters.UserInfo.id && store.getters.Permissions.length > 0) {
+      if (!store.getters.UserInfo.id && store.getters.Permissions.length === 0) {
         store.dispatch('getUserInfo')
           .then((data) => {
             next({ ...to })

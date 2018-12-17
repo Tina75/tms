@@ -1,16 +1,5 @@
 <template>
   <div class="tags-nav">
-    <!-- <div class="close-con">
-      <Dropdown transfer  @on-click="handleTagsOption">
-        <i-button size="small" type="text">
-          <Icon :size="18" type="ios-close-circle-outline"/>
-        </i-button>
-        <DropdownMenu slot="list">
-          <DropdownItem name="close-all">关闭所有</DropdownItem>
-          <DropdownItem name="close-others">关闭其他</DropdownItem>
-        </DropdownMenu>
-      </Dropdown>
-    </div> -->
     <div class="btn-con left-btn">
       <i-button icon="ios-arrow-back" type="text" @click="handleScroll(240)"/>
     </div>
@@ -21,11 +10,11 @@
       <div ref="scrollBody" :style="{left: tagBodyLeft + 'px'}" class="scroll-body">
         <transition-group name="taglist-moving-animation">
           <tab-nav-item
-            v-for="(item,index) in list"
+            v-for="(item,index) in NavTabList"
             ref="tagsPageOpened"
             :key="`tag-nav-${index}`"
-            :name="item.query.title?item.query.title:'null'"
-            :checked="item.query.title === value.query.title"
+            :name="item.title?item.title:'null'"
+            :checked="item.isActive"
             @on-close="handleClose(item)"
             @on-refresh="handleRefresh(item)"
             @click.native="handleClick(item)">
@@ -38,19 +27,21 @@
 
 <script>
 import BaseComponent from '@/basic/BaseComponent'
-import TabNavItem from '@/components/TabNavItem'
+import TabNavItem from './TabNavItem'
+import { mapGetters } from 'vuex'
+import navTabManager from '../util/NavTabManager'
 export default {
   name: 'TabNav',
   components: { TabNavItem },
   mixins: [BaseComponent],
   props: {
-    value: Object,
-    list: {
-      type: Array,
-      default () {
-        return []
-      }
-    }
+    value: Object
+    // list: {
+    //   type: Array,
+    //   default () {
+    //     return []
+    //   }
+    // }
   },
   data () {
     return {
@@ -59,21 +50,11 @@ export default {
     }
   },
   computed: {
-    isTabChecked: {
-      set (item) {
-        this.currItem = item
-      },
-      get () {
-        if (this.currItem.query) {
-          return this.currItem.path === this.value.path && this.currItem.query.id === this.value.query.id
-        } else {
-          return this.currItem.path === this.value.path
-        }
-      }
-    }
+    ...mapGetters(['NavTabList'])
   },
   watch: {
-    'value.query.title' () {
+    $route (to) {
+      navTabManager.addNavTab(to)
       setTimeout(() => {
         if ((document.querySelector('.item-container.mh-10').offsetLeft + document.querySelector('.item-container.mh-10').clientWidth) < document.querySelector('.scroll-outer').clientWidth) {
           this.tagBodyLeft = 0
@@ -82,6 +63,12 @@ export default {
         }
       }, 50)
     }
+    // 'value.query.title' () {
+
+    // }
+  },
+  mounted () {
+    navTabManager.addNavTab(this.$route)
   },
   methods: {
     handlescroll (e) {
