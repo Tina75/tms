@@ -53,7 +53,7 @@
             <FormItem prop="address">
               <Row>
                 <Col :span="16">
-                <AreaInput v-model="form.address" @city-select="addressLocationChange"></AreaInput>
+                <AreaInput v-model="form.address" :first-select="false" @city-select="addressLocationChange"></AreaInput>
                 </Col>
                 <Col :span="8" class="areaRight">
                 <Input v-model="form.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>

@@ -70,6 +70,10 @@ export default {
     onlySelect: {
       type: Boolean,
       default: false
+    },
+    firstSelect: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -111,7 +115,7 @@ export default {
           if (local.getStatus() === window.BMAP_STATUS_SUCCESS) {
             // 判断状态是否正确
             let arr = []
-            if (!this.onlySelect) {
+            if (!this.onlySelect && this.firstSelect) {
               this.$nextTick(() => {
                 this.$refs['selectInput'].focusIndex = 0
               })
