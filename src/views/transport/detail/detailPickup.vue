@@ -248,7 +248,8 @@
           :settlement-type="settlementType"
           :settlement-pay-info="settlementPayInfo"
           :send-way="sendWay"
-          :pick-fee-orders="orderList"></pickup-fee>
+          :pick-fee-orders="orderList"
+          :fee-pass-allocation="info.allocationStrategy"></pickup-fee>
       </div>
     </section>
 
