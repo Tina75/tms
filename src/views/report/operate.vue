@@ -574,7 +574,7 @@ export default {
     },
     showSevenDate () {
       let now = new Date().getTime()
-      this.keywords.startTime = this.formatDate(now - 7 * 24 * 60 * 60 * 1000)
+      this.keywords.startTime = this.formatDate(now - 6 * 24 * 60 * 60 * 1000)
       this.keywords.endTime = this.formatDate(now)
       this.times = [this.keywords.startTime, this.keywords.endTime]
       this.keyword = {

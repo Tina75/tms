@@ -163,7 +163,7 @@
             <Row class="detail-field-group">
               <i-col span="24">
                 <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
-                <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
+                <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ info.totalFee / 100 }}</span>元
               </i-col>
             </Row>
             <Row v-if="info.assignCarType === 1" class="detail-field-group">
@@ -370,6 +370,7 @@ export default {
         driverName: '',
         driverPhone: '',
         remark: '',
+        totalFee: 0,
         collectionMoney: 0, // 代收货款
         cashBack: 0, // 返现运费
         assignCarType: 1, // 派车类型 1 外转 2 自送 V1.07新增
