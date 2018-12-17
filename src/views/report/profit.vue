@@ -490,7 +490,7 @@ export default {
       switch (tab) {
         case '公司利润':
           return 1
-        case '发货方利润':
+        case '客户利润':
           return 2
         case '整车利润':
           return 3

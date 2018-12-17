@@ -10,7 +10,7 @@ export const TABLE_COLUMNS = vm => [
   {
     title: '订单号',
     key: 'orderNo',
-    minWidth: 150,
+    minWidth: 180,
     fixed: 'left',
     render: (h, params) => {
       return h('a', {
