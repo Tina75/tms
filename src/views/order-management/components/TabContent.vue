@@ -812,7 +812,7 @@ export default {
           key: 'invoiceRate',
           minWidth: 180,
           render: (h, params) => {
-            return h('span', float.floor(params.row.invoiceRate * 100, 2) || '-')
+            return h('span', float.round(params.row.invoiceRate * 100, 2) || '-')
           }
         },
         {
@@ -1201,7 +1201,7 @@ export default {
         }
       }).then((res) => {
         this.orderPrint = _.cloneDeep(res.data.data)
-        this.orderPrint.invoiceRate = float.floor(this.orderPrint.invoiceRate * 100, 2)
+        this.orderPrint.invoiceRate = float.round(this.orderPrint.invoiceRate * 100, 2)
         this.$refs.printer.print()
       })
     },
