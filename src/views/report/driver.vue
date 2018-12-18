@@ -32,11 +32,6 @@
             </Select>
           </div>
           <div class="col">
-            <Select v-model="keywords.status" clearable   placeholder="请选择状态">
-              <Option v-for="(item, index) in statusMap[keywords.billType]" :key="index" :value="item.value">{{item.name}}</Option>
-            </Select>
-          </div>
-          <div class="col">
             <DatePicker
               v-model="times"
               :options="options"
@@ -49,6 +44,8 @@
               @on-change="handleTimeChange"
             >
             </DatePicker>
+          </div>
+          <div class="col">
           </div>
         </div>
       </div>
@@ -108,7 +105,7 @@ export default {
         startTime: '',
         endTime: '',
         carNo: '',
-        status: ''
+        statusList: undefined
       },
       keyword: {},
       options: {
@@ -118,25 +115,45 @@ export default {
       },
       times: ['', ''],
       isExport: false,
-      /* 状态 */
-      statusMap: {
-        1: [
-          { name: '待提货', value: 1 },
-          { name: '提货中', value: 2 },
-          { name: '已提货', value: 3 }
-        ],
-        3: [
-          { name: '待发运', value: 1 },
-          { name: '在途', value: 2 },
-          { name: '已到货', value: 3 }
-        ]
-      },
       /* 业务类型 1 提货 3 送货 */
       billTypeMap: {
         1: '提货',
         3: '送货'
       },
-      columns: [
+      carriersId: null
+    }
+  },
+  computed: {
+    perMonth () {
+      return getPreMonth()
+    },
+    statusMap () {
+      if (this.keywords.billType === '1') {
+        return [
+          { label: '待提货', value: 1 },
+          { label: '提货中', value: 2 },
+          { label: '已提货', value: 3 }
+        ]
+      } else if (this.keywords.billType === '3') {
+        return [
+          { label: '待发运', value: 4 },
+          { label: '在途', value: 5 },
+          { label: '已到货', value: 6 }
+        ]
+      } else {
+        return [
+          { label: '待提货', value: 1 },
+          { label: '提货中', value: 2 },
+          { label: '已提货', value: 3 },
+          { label: '待发运', value: 4 },
+          { label: '在途', value: 5 },
+          { label: '已到货', value: 6 }
+        ]
+      }
+    },
+    columns () {
+      let _this = this
+      return [
         {
           title: '司机姓名',
           key: 'driverName',
@@ -160,7 +177,12 @@ export default {
         {
           title: '状态',
           key: 'statusDesc',
-          width: 150
+          width: 150,
+          filters: this.statusMap,
+          filterRemote (value, row) {
+            _this.keywords.statusList = value.length > 0 ? value : undefined
+            _this.search()
+          }
         },
         {
           title: '业务类型',
@@ -248,13 +270,7 @@ export default {
           key: 'cargoCnt',
           width: 150
         }
-      ],
-      carriersId: null
-    }
-  },
-  computed: {
-    perMonth () {
-      return getPreMonth()
+      ]
     }
   },
   // mounted () {
@@ -264,17 +280,14 @@ export default {
   // },
   methods: {
     search () {
-      this.keyword = {
-        start: this.keywords.start || undefined,
-        end: this.keywords.end || undefined,
-        driverName: this.keywords.driverName || undefined,
-        driverPhone: this.keywords.driverPhone || undefined,
-        billType: this.keywords.billType || undefined,
-        startTime: this.keywords.startTime || undefined,
-        endTime: this.keywords.endTime || undefined,
-        carNo: this.keywords.carNo || undefined,
-        status: this.keywords.status || undefined
+      this.keyword = this.queryParams()
+    },
+    queryParams () {
+      let obj = {}
+      for (let key in this.keywords) {
+        this.keywords[key] ? (obj[key] = this.keywords[key]) : (obj[key] = undefined)
       }
+      return obj
     },
     clearKeywords () {
       this.keywords = {
@@ -285,8 +298,7 @@ export default {
         billType: '',
         startTime: '',
         endTime: '',
-        carNo: '',
-        status: ''
+        carNo: ''
       }
       this.times = ['', '']
     },
@@ -300,18 +312,7 @@ export default {
         this.$Message.error('导出内容为空')
         return
       }
-      let data = {
-        start: this.keywords.start || undefined,
-        end: this.keywords.end || undefined,
-        driverName: this.keywords.driverName || undefined,
-        driverPhone: this.keywords.driverPhone || undefined,
-        billType: this.keywords.billType || undefined,
-        startTime: this.keywords.startTime || undefined,
-        endTime: this.keywords.endTime || undefined,
-        billNo: this.keywords.billNo || undefined,
-        carNo: this.keywords.carNo || undefined,
-        status: this.keywords.status || undefined
-      }
+      let data = this.queryParams()
       Export({
         url: '/report/out/driver/export',
         method: 'post',
