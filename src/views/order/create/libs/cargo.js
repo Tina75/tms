@@ -1,4 +1,5 @@
 import validator from '@/libs/js/validate'
+import float from '@/libs/js/float.js'
 let uniqueIndex = 0
 export default class Cargo {
   /**
@@ -86,7 +87,7 @@ export default class Cargo {
       cargoName: this.cargoName,
       weight: this.weight,
       volume: this.volume,
-      cargoCost: parseInt(this.cargoCost * 100),
+      cargoCost: float.round(this.cargoCost * 100),
       quantity: this.quantity,
       unit: this.unit,
       remark1: this.remark1,
