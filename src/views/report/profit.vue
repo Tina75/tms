@@ -15,7 +15,6 @@
           format="yyyy-MM-dd"
           placeholder="开始日期-结束日期"
           style="display: inline-block;width: 240px;margin-left: 20px"
-          @on-clear = "clearKeywords"
           @on-change="handleTimeChange"
         >
         </DatePicker>
@@ -357,6 +356,13 @@ export default {
           break
       }
     },
+    // 清空时间
+    clearTimes () {
+      this.times = ['', '']
+      this.keywords.startTime = ''
+      this.keywords.endTime = ''
+      // this.search(false)
+    },
     clearKeywords () {
       this.operateValue = ''
       this.times = ['', '']
@@ -377,8 +383,8 @@ export default {
       this.date(btn.value)
     },
     handleTimeChange (val) {
-      this.keywords.startTime = val[0] + ' 00:00:00'
-      this.keywords.endTime = val[1] + ' 23:59:59'
+      this.keywords.startTime = val[0] ? (val[0] + ' 00:00:00') : ''
+      this.keywords.endTime = val[1] ? (val[1] + ' 23:59:59') : ''
       // 去掉蓝显
       this.operateValue = ''
     },
