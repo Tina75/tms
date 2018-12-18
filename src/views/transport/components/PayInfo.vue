@@ -160,7 +160,7 @@ export default {
       let total = 0
       console.log(this.tableDataBack)
       this.tableDataBack.forEach(item => {
-        total = total + Number(item.cashAmount) + Number(item.fuelCardAmount)
+        total = float.round(total + float.round(Number(item.cashAmount) + Number(item.fuelCardAmount)))
       })
       if (total !== Number(this.total)) {
         this.$Message.error('结算总额应与费用合计相等')
