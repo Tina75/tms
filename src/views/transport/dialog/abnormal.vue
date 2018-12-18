@@ -103,6 +103,7 @@ import Server from '@/libs/js/server'
 import SendFee from '../components/SendFee'
 import PickupFee from '../components/PickupFee'
 import UpLoad from '@/components/upLoad/index.vue'
+import float from '@/libs/js/float'
 // import { ABNORMAL_TYPE_CODES } from '../constant/abnormal.js'
 import _ from 'lodash'
 export default {
@@ -396,8 +397,8 @@ export default {
           z.cloneSettlementPayInfo.map((item, i) => {
             tableData.push({
               payType: item.payType,
-              cashAmount: item.cashAmount * 100 || 0,
-              fuelCardAmount: item.fuelCardAmount * 100 || 0
+              cashAmount: float.round(item.cashAmount * 100 || 0),
+              fuelCardAmount: float.round(item.fuelCardAmount * 100 || 0)
             })
           })
         }
@@ -446,7 +447,7 @@ export default {
       if (z.isChangeFee === 2) return false
       for (let key in z.clonePayment) {
         if (typeof z.clonePayment[key] === 'number') {
-          z.clonePayment[key] = z.clonePayment[key] * 100
+          z.clonePayment[key] = float.round(z.clonePayment[key] * 100)
         } else {
           z.clonePayment[key] = 0
         }
@@ -456,8 +457,8 @@ export default {
         z.cloneSettlementPayInfo.map((item, i) => {
           cloneTableData.push({
             payType: item.payType,
-            fuelCardAmount: item.fuelCardAmount * 100 || void 0,
-            cashAmount: item.cashAmount * 100 || void 0
+            fuelCardAmount: float.round(item.fuelCardAmount * 100) || void 0,
+            cashAmount: float.round(item.cashAmount * 100) || void 0
           })
         })
         if (z.type === 3) {
@@ -485,7 +486,7 @@ export default {
         temp = Object.assign({}, this.clonePayment)
         for (let key in temp) {
           if (typeof temp[key] === 'number') {
-            temp[key] = temp[key] * 100
+            temp[key] = float.round(temp[key] * 100)
           } else {
             temp[key] = 0
           }

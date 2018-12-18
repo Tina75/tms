@@ -83,7 +83,7 @@ import BaseDialog from '@/basic/BaseDialog'
 import TagNumberInput from '@/components/TagNumberInput'
 import validator from '@/libs/js/validate'
 import PayInfo from './PayInfo'
-
+import float from '@/libs/js/float'
 export default {
   name: 'PickupFeeComponent',
   components: { TagNumberInput, PayInfo },
@@ -194,12 +194,12 @@ export default {
     // 格式化金额单位为分
     formatMoney () {
       let temp = Object.assign({}, this.payment)
-      temp.freightFee = temp.freightFee * 100
-      temp.loadFee = temp.loadFee * 100
-      temp.unloadFee = temp.unloadFee * 100
-      temp.insuranceFee = temp.insuranceFee * 100
-      temp.otherFee = temp.otherFee * 100
-      temp.totalFee = this.paymentTotal * 100
+      temp.freightFee = float.round(temp.freightFee * 100)
+      temp.loadFee = float.round(temp.loadFee * 100)
+      temp.unloadFee = float.round(temp.unloadFee * 100)
+      temp.insuranceFee = float.round(temp.insuranceFee * 100)
+      temp.otherFee = float.round(temp.otherFee * 100)
+      temp.totalFee = float.round(this.paymentTotal * 100)
       return temp
     },
     // payInfo组件数据校验

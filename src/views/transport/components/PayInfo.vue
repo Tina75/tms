@@ -8,7 +8,7 @@
 
 <script>
 import MoneyInput from './MoneyInput'
-
+import float from '@/libs/js/float'
 export default {
   name: 'PayInfo',
   props: {
@@ -142,8 +142,8 @@ export default {
       return this.tableDataBack.map(item => {
         return {
           payType: item.payType,
-          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? item.fuelCardAmount * 100 : void 0,
-          cashAmount: typeof item.cashAmount === 'number' ? item.cashAmount * 100 : void 0
+          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? float.round(item.fuelCardAmount * 100) : void 0,
+          cashAmount: typeof item.cashAmount === 'number' ? float.round(item.cashAmount * 100) : void 0
         }
       })
     },
@@ -151,8 +151,8 @@ export default {
       return this.tableDataBack.map(item => {
         return {
           payType: item.payType,
-          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? item.fuelCardAmount * 100 : 0,
-          cashAmount: typeof item.cashAmount === 'number' ? item.cashAmount * 100 : 0
+          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? float.round(item.fuelCardAmount * 100) : 0,
+          cashAmount: typeof item.cashAmount === 'number' ? float.round(item.cashAmount * 100) : 0
         }
       })
     },

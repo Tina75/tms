@@ -193,9 +193,9 @@ export default {
         // if (typeof temp[key] === 'number') temp[key] = temp[key] * 100
         if (typeof temp[key] === 'number') {
           if (key === 'mileage') {
-            temp[key] = temp[key] * 1000
+            temp[key] = Float.round(temp[key] * 1000)
           } else {
-            temp[key] = temp[key] * 100
+            temp[key] = Float.round(temp[key] * 100)
           }
         } else {
           temp[key] = 0

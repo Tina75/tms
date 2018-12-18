@@ -133,7 +133,7 @@ import validator from '@/libs/js/validate'
 import PayInfo from './PayInfo'
 import { mapGetters } from 'vuex'
 import $bus from '@/libs/js/eventBus.js'
-
+import float from '@/libs/js/float'
 export default {
   name: 'SendFeeComponent',
   components: { TagNumberInput, PayInfo },
@@ -330,7 +330,7 @@ export default {
           partnerId: carrierId,
           partnerType: 2,
           partnerName: self.carrierName,
-          distance: self.payment.mileage ? self.payment.mileage * 1000 : 0,
+          distance: self.payment.mileage ? float.round(self.payment.mileage * 1000) : 0,
           ...self.financeRulesInfo
         },
         methods: {
@@ -348,15 +348,15 @@ export default {
     // 格式化金额单位为分
     formatMoney () {
       let temp = Object.assign({}, this.payment)
-      temp.freightFee = temp.freightFee * 100
-      temp.loadFee = temp.loadFee * 100
-      temp.unloadFee = temp.unloadFee * 100
-      temp.insuranceFee = temp.insuranceFee * 100
-      temp.otherFee = temp.otherFee * 100
-      temp.tollFee = temp.tollFee * 100
-      temp.cashBack = temp.cashBack * 100
-      temp.mileage = temp.mileage * 1000
-      temp.totalFee = this.paymentTotal * 100
+      temp.freightFee = float.round(temp.freightFee * 100)
+      temp.loadFee = float.round(temp.loadFee * 100)
+      temp.unloadFee = float.round(temp.unloadFee * 100)
+      temp.insuranceFee = float.round(temp.insuranceFee * 100)
+      temp.otherFee = float.round(temp.otherFee * 100)
+      temp.tollFee = float.round(temp.tollFee * 100)
+      temp.cashBack = float.round(temp.cashBack * 100)
+      temp.mileage = float.round(temp.mileage * 1000)
+      temp.totalFee = float.round(this.paymentTotal * 100)
       if (this.source === 'abnormal') {
         delete temp.cashBack
         delete temp.mileage
