@@ -130,7 +130,11 @@ export default {
             carLength: this.carLength
           }
         }).then(res => {
-          this.charge = float.round(res.data.data / 1000)
+          if (rule.type === 5) {
+            this.charge = float.round(res.data.data / 100)
+          } else {
+            this.charge = float.round(res.data.data / 1000)
+          }
           errorMsg = ''
           this.$refs.$form.validate()
         }).catch(err => {
