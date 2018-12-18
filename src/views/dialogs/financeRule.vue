@@ -130,7 +130,7 @@ export default {
             carLength: this.carLength
           }
         }).then(res => {
-          if (rule.type === 5) {
+          if (rule.ruleType === 5) {
             this.charge = float.round(res.data.data / 100)
           } else {
             this.charge = float.round(res.data.data / 1000)
