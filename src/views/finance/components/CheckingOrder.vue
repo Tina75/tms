@@ -34,6 +34,7 @@
 import BaseComponent from '@/basic/BaseComponent'
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
+import float from '@/libs/js/float'
 
 export default {
   name: 'checkingOrder',
@@ -174,7 +175,7 @@ export default {
           scene: this.scene,
           verifyType: 3,
           isOil: 0,
-          needPay: parseFloat(data.row.totalFeeText)
+          needPay: float.round(data.row.totalFeeText)
         },
         methods: {
           ok () {
