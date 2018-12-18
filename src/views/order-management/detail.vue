@@ -423,7 +423,7 @@ export default {
           total += Number(item.weightKg)
         }
       })
-      return float.round(total) + (this.WeightOption === 1 ? '吨' : '公斤')
+      return float.round(total, 3) + (this.WeightOption === 1 ? '吨' : '公斤')
     },
     // 总费用
     FeeTotal () {

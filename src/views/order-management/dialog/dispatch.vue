@@ -221,7 +221,7 @@ export default {
           total += item.weightKg
         }
       })
-      return float.round(total)
+      return float.round(total, 3)
     },
     financeRulesInfo () {
       return {
@@ -283,7 +283,6 @@ export default {
     },
     // 选择承运商dropdown的数据
     handleSelectCarrier (name, row) {
-      console.log(name, row)
       this.$store.dispatch('getCarrierCars', row.id).then((res) => {
         this.pick.carNo = res[0].carNO //  默认带出第一条车牌号
         this.pick.driverName = res[0].driverName //  默认带出第一条司机姓名
@@ -292,7 +291,6 @@ export default {
     },
     // 选择承运商车辆信息
     handleSelectCarrierCars (name, row) {
-      console.log(name, row)
     },
     // 过滤已维护的客户信息
     filterMethod (value, option) {
@@ -379,7 +377,6 @@ export default {
           delete data.cashBack // 自送没有返现
         }
       }
-      console.log(data)
       Server({
         url: 'load/bill/create',
         method: 'post',

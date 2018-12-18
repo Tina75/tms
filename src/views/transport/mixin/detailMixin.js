@@ -108,7 +108,7 @@ export default {
         return {
           cargoCost: Float.round(last.cargoCost + cargoCost),
           quantity: Float.round(last.quantity + item.quantity),
-          weight: Float.round(last.weight + item.weight),
+          weight: Float.round(last.weight + item.weight, 3),
           weightKg: Float.round(last.weightKg + item.weightKg),
           volume: Float.round(last.volume + item.volume)
         }
@@ -197,7 +197,6 @@ export default {
           confirm (ids) {
             // 查询货物详情
             self.getCargoDetail(ids).then(list => {
-              console.log(list)
               list.cargoList.forEach(item => {
                 self.detail.push(item)
               })
@@ -276,7 +275,6 @@ export default {
       //   id: this.id,
       //   type: type // 单据类型 1 提货单 2 外转单 3 运单
       // }
-      console.log('编辑对话', data)
       const self = this
       this.openDialog({
         name: 'transport/dialog/abnormal',
