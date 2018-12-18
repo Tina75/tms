@@ -45,9 +45,13 @@ export default {
       return this.name !== '首页'
     }
   },
+  mounted () {
+    this.ema = window.EMA.getProxy()
+  },
   methods: {
     close () {
       let nextRoute = this.tab.close()
+      this.ema.fire('closeTab', this.tab)
       if (nextRoute) {
         this.$router.push(nextRoute)
       }

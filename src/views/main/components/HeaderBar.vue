@@ -162,15 +162,6 @@ export default {
     },
 
     changePasswordTip () {
-      // this.$Modal.confirm({
-      //   title: '提示',
-      //   content: '<p>您的密码为初始密码，为确保账户安全，请及时修改密码</p>',
-      //   okText: '立即修改',
-      //   cancelText: '我知道了',
-      //   onOk: () => {
-      //     window.EMA.fire('openTab', { path: '/set-up/index', query: { title: '设置' } })
-      //   }
-      // })
       this.$Toast.confirm({
         title: '提示',
         showIcon: false,
@@ -197,47 +188,6 @@ export default {
         }, 3000)
         localStorage.removeItem('first_time_login')
       }
-    },
-    /**
-     * @description 切换tab标签
-     * @param {*} item 被选中的菜单对象
-     */
-    onTabSelect (item) {
-      this.turnToPage(item)
-    },
-    /**
-     * @description 切换tab标签
-     * @param {*} route 跳转目标的path或route对象
-     */
-    // turnToPage (route) {
-    //   let { path, params, query, meta } = {}
-    //   if (typeof route === 'string') path = route
-    //   else {
-    //     path = route.path
-    //     params = route.params
-    //     query = route.query
-    //     meta = route.meta
-    //   }
-    //   this.$router.push({ path, params, query, meta })
-    // },
-    getNextRoute (list, route) {
-      let res = {}
-      const index = list.findIndex(item => this.routeEqual(item, route))
-      if (index === list.length - 1) res = list[list.length - 2]
-      else res = list[index + 1]
-      return res
-    },
-    /**
-     * @description 根据name/params/query判断两个路由对象是否相等
-     * @param {*} route1 路由对象
-     * @param {*} route2 路由对象
-     */
-    routeEqual (route1, route2) {
-      const query1 = route1.query || {}
-      const query2 = route2.query || {}
-      // return (route1.name === route2.name) && this.objEqual(params1, params2) && this.objEqual(query1, query2)
-      return (route1.path === route2.path) && (query1.title === query2.title)
-      // return (route1.name === route2.name) && this.objEqual(meta1, meta2)
     },
 
     // 是否第一次探索运掌柜
