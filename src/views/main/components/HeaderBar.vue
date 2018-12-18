@@ -2,7 +2,7 @@
   <Header class="header-con">
     <div class="header-bar">
       <div class="tag-nav-wrapper">
-        <tab-nav @on-close="onTabClose" @on-select="onTabSelect"/>
+        <tab-nav/>
       </div>
       <div class="header-bar-avator-dropdown">
         <span class="header-bar-avator-dropdown-notify">
@@ -49,7 +49,7 @@
 import BaseComponent from '@/basic/BaseComponent'
 import TabNav from './TabNav'
 import FontIcon from '@/components/FontIcon'
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import TMSUrl from '@/libs/constant/url.js'
 import Server from '@/libs/js/server'
 export default {
@@ -66,15 +66,14 @@ export default {
   },
   mounted () {
     window.EMA.bind('closeTab', (route) => { this.onTabClose(route) })
-    window.EMA.bind('reloadTab', (route) => {
-      route.query = Object.assign({ _time: new Date().getTime() }, route.query)
-      this.turnToPage(route)
-    })
+    // window.EMA.bind('reloadTab', (route) => {
+    //   route.query = Object.assign({ _time: new Date().getTime() }, route.query)
+    //   this.turnToPage(route)
+    // })
     this.loopMessage()
     this.newUserTip()
   },
   methods: {
-    ...mapMutations(['setTabNavList']),
     ...mapActions(['getMessageCount', 'getUserInfo', 'getTableColumns', 'getOwnDrivers', 'getOwnCars']),
     async newUserTip () {
       try {
@@ -190,15 +189,6 @@ export default {
      * @param {*} route 关闭的tab对象，用于查找前一个tab并置为高亮
     */
     onTabClose (route) {
-      // 删除cache
-      window.EMA.fire('PageRouter.remove', route.path)
-
-      console.log(route, this.$route)
-      if (this.routeEqual(route, this.$route)) {
-        // 选中前一个tab
-        const nextRoute = this.getNextRoute(this.TabNavList, route)
-        this.turnToPage(nextRoute)
-      }
       // 提示流程图标提示
       if (route.path === TMSUrl.PROCESS && localStorage.getItem('first_time_login')) {
         this.processVisible = true
@@ -207,10 +197,6 @@ export default {
         }, 3000)
         localStorage.removeItem('first_time_login')
       }
-
-      // 更新store
-      let res = this.TabNavList.filter(element => element.query.title !== route.query.title)
-      this.setTabNavList(res)
     },
     /**
      * @description 切换tab标签

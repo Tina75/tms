@@ -23,6 +23,7 @@ export default {
       commit('removeNavTab', navItem)
     },
     refreshNavTab ({ commit }, navItem) {
+      commit('removeActiveTabClass')
       commit('refreshNavTab', navItem)
     },
     removeActiveTabClass ({ commit }) {
