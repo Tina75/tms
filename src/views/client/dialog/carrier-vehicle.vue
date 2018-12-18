@@ -269,9 +269,9 @@ export default {
     },
     add () {
       let data = Object.assign({}, this.validate)
-      data.repairMoney = float.round((this.validate.repairMoney * 100).toFixed(2))
-      data.payMoney = float.round((this.validate.payMoney * 100).toFixed(2))
-      data.waitPayMoney = float.round((this.validate.waitPayMoney * 100).toFixed(2))
+      data.repairMoney = float.round(this.validate.repairMoney * 100)
+      data.payMoney = float.round(this.validate.payMoney * 100)
+      data.waitPayMoney = float.round(this.validate.waitPayMoney * 100)
       carrierAddVehicle(data).then(res => {
         if (res.data.code === CODE) {
           this.$Message.success(res.data.msg)
@@ -284,9 +284,9 @@ export default {
     },
     update () {
       let data = Object.assign({}, this.validate)
-      data.repairMoney = float.round((this.validate.repairMoney * 100).toFixed(2))
-      data.payMoney = float.round((this.validate.payMoney * 100).toFixed(2))
-      data.waitPayMoney = float.round((this.validate.waitPayMoney * 100).toFixed(2))
+      data.repairMoney = float.round(this.validate.repairMoney * 100)
+      data.payMoney = float.round(this.validate.payMoney * 100)
+      data.waitPayMoney = float.round(this.validate.waitPayMoney * 100)
       delete data.creater
       carrierUpdateVehicle(data).then(res => {
         if (res.data.code === CODE) {
