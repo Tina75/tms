@@ -88,17 +88,19 @@ export default {
   },
   computed: {
     areaList () {
-      // const obj = {}
-      // const res = []
+      const obj = {}
+      let res = []
       // const arr = this.value ? this.address : this.localOptions
-      // for (let i = 0; i < arr.length; i++) {
-      //   const item = arr[i]
-      //   if (!obj[item.name]) {
-      //     res.push(item)
-      //     obj[item.name] = 1
-      //   }
-      // }
-      return this.address
+      const arr = this.address
+      // 去重
+      for (let i = 0; i < arr.length; i++) {
+        const item = arr[i]
+        if (!obj[item.name]) {
+          res.push(item)
+          obj[item.name] = 1
+        }
+      }
+      return arr
     }
   },
   methods: {
