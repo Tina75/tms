@@ -1,5 +1,6 @@
 /* 用于客户管理和财务的计费规则 */
 import Server from '@/libs/js/server'
+import float from '@/libs/js/float'
 export default {
   computed: {
     precision () {
@@ -256,13 +257,13 @@ export default {
                   departure: item.departure,
                   destination: item.destination,
                   startType: item.startType,
-                  startNum: item.startNum ? parseFloat(item.startNum) * 100 : '',
+                  startNum: item.startNum ? float.round(item.startNum * 100) : '',
                   // 选择起步量的时候，startPrice的值传startNum的值
-                  startPrice: item.startType === '1' ? (item.startPrice ? parseFloat(item.startPrice) * 100 : '') : (item.startNum ? parseFloat(item.startNum) * 100 : ''),
+                  startPrice: item.startType === '1' ? (item.startPrice ? float.round(item.startPrice * 100) : '') : (item.startNum ? float.round(item.startNum * 100) : ''),
                   chargeRules: item.chargeRules.map(el => {
                     return {
-                      base: parseFloat(el.base) * 100,
-                      price: parseFloat(el.price) * 100
+                      base: float.round(el.base * 100),
+                      price: float.round(el.price * 100)
                     }
                   })
                 }
