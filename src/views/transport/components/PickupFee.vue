@@ -163,7 +163,7 @@ export default {
     },
     // 分摊类型 默认1 按订单数分摊
     allocationType: {
-      type: Number,
+      type: [String, Number],
       default: 1
     },
     // 订单数量，异常需要判断是否显示分摊费用
@@ -235,7 +235,7 @@ export default {
   methods: {
     // 将分摊策略返回的标识映射为文字
     getAllocationValToLabel (data) {
-      let list = allocationStrategy.find(item => item.value === data)
+      let list = allocationStrategy.find(item => item.value === (data !== '' ? data : 1))
       return list.label
     },
     // 格式化金额单位为分
