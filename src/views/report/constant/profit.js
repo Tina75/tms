@@ -47,27 +47,42 @@ export const TABLECOLUMNS = {
     {
       title: '订单数',
       key: 'orderNum',
-      width: 200
+      width: 200,
+      render: (h, params) => {
+        return h('span', params.row.orderNum ? params.row.orderNum : '-')
+      }
     },
     {
       title: '重量（吨）',
       key: 'weight',
-      width: 200
+      width: 200,
+      render: (h, params) => {
+        return h('span', params.row.weight ? params.row.weight : '-')
+      }
     },
     {
       title: '重量（公斤）',
       key: 'weightKg',
-      width: 200
+      width: 200,
+      render: (h, params) => {
+        return h('span', params.row.weightKg ? params.row.weightKg : '-')
+      }
     },
     {
       title: '体积（方）',
       key: 'volume',
-      width: 200
+      width: 200,
+      render: (h, params) => {
+        return h('span', params.row.volume ? params.row.volume : '-')
+      }
     },
     {
       title: '件数',
       key: 'quantity',
-      width: 200
+      width: 200,
+      render: (h, params) => {
+        return h('span', params.row.quantity ? params.row.quantity : '-')
+      }
     },
     {
       title: '应收总费用',
@@ -248,22 +263,34 @@ export const TABLECOLUMNS = {
     {
       title: '重量（吨）',
       key: 'weight',
-      width: 200
+      width: 200,
+      render: (h, params) => {
+        return h('span', params.row.weight ? params.row.weight : '-')
+      }
     },
     {
       title: '重量（公斤）',
       key: 'weightKg',
-      width: 200
+      width: 200,
+      render: (h, params) => {
+        return h('span', params.row.weightKg ? params.row.weightKg : '-')
+      }
     },
     {
       title: '体积（方）',
       width: 200,
-      key: 'volume'
+      key: 'volume',
+      render: (h, params) => {
+        return h('span', params.row.volume ? params.row.volume : '-')
+      }
     },
     {
       title: '件数',
       width: 200,
-      key: 'quantity'
+      key: 'quantity',
+      render: (h, params) => {
+        return h('span', params.row.quantity ? params.row.quantity : '-')
+      }
     },
     {
       title: '应收总费用',
