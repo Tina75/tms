@@ -158,13 +158,12 @@ export default {
         this.data = res.data.data.list.map(item => {
           item._checked = false // 为数据项添加选择字段
           if (this.flattenSelection.indexOf(item.id) > -1) item._checked = true // 判断当前是否已选
-          if (this.billHasSelected.indexOf(item.id) > -1) item._checked = true // 判读是否已添加到运单/提货单
+          if (this.billHasSelected.indexOf(item.id) > -1) item._disabled = true // 判读是否已添加到运单/提货单
           return item
         })
         this.loading = false
-      }).catch(err => {
+      }).catch(() => {
         this.loading = false
-        console.error(err)
       })
     },
 
