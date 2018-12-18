@@ -88,7 +88,6 @@ export default {
           } else { // 2-编辑
             this.update()
           }
-          this.close()
         }
       })
     },
@@ -105,6 +104,7 @@ export default {
       consignerAddressAdd(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -121,9 +121,9 @@ export default {
         consignerHourseNumber: this.validate.consignerHourseNumber
       }
       consignerAddressUpdate(data).then(res => {
-        console.log(res)
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }

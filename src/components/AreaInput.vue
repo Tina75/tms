@@ -16,6 +16,7 @@
     </SelectInput>
     <Select
       v-else
+      ref="selectInput"
       v-model="selectValue"
       :loading="loading"
       :placeholder="placeholder"
