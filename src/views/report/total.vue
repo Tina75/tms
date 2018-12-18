@@ -219,8 +219,8 @@ export default {
       this.date(btn.value)
     },
     handleTimeChange (val) {
-      this.keywords.startTime = val[0] + ' 00:00:00'
-      this.keywords.endTime = val[1] + ' 23:59:59'
+      this.keywords.startTime = val[0] ? (val[0] + ' 00:00:00') : ''
+      this.keywords.endTime = val[1] ? (val[1] + ' 23:59:59') : ''
       // 去掉蓝显
       this.operateValue = ''
     },

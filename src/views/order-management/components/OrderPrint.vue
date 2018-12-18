@@ -20,15 +20,29 @@
             <tr>
               <td>发货人：{{data.consignerContact}}</td>
               <td>手机号：{{data.consignerPhone}}</td>
-              <td>发货地址：{{data.consignerAddress}}
-                <span v-if="data.consignerHourseNumber">{{`,${data.consignerHourseNumber}`}}</span>
+              <td v-if="data.consignerHourseNumber">
+                <div class="address">
+                  发货地址：{{data.consignerAddress + ',' + data.consignerHourseNumber}}
+                </div>
+              </td>
+              <td v-else>
+                <div class="address">
+                  发货地址：{{data.consignerAddress}}
+                </div>
               </td>
             </tr>
             <tr>
               <td>收货人：{{data.consigneeContact}}</td>
               <td>手机号：{{data.consigneePhone}}</td>
-              <td>收货地址：{{data.consigneeAddress}}
-                <span v-if="data.consigneeHourseNumber">{{`,${data.consigneeHourseNumber}`}}</span>
+              <td v-if="data.consigneeHourseNumber">
+                <div class="address">
+                  收货地址：{{data.consigneeAddress + ',' + data.consigneeHourseNumber}}
+                </div>
+              </td>
+              <td v-else>
+                <div class="address">
+                  收货地址：{{data.consigneeAddress}}
+                </div>
               </td>
             </tr>
             <tr>
@@ -132,6 +146,10 @@ export default {
         }
         .order-info td {
           vertical-align: top;
+        }
+        .address{
+          white-space: wrap;
+          word-break: break-all;
         }
         .i-mt-20 {
           margin-top: 20px;

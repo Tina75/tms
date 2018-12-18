@@ -58,14 +58,14 @@ export default {
       disabled: true,
       checked: true,
       children: [
-        { title: '页面查看', code: '100300', parentId: '110000', disabled: true },
-        { title: '编辑', code: '100301', parentId: '100300', grandId: '110000', disabled: true },
-        { title: '删除', code: '100302', parentId: '100300', grandId: '110000', disabled: true },
-        { title: '打印', code: '100303', parentId: '100300', grandId: '110000', disabled: true },
-        { title: '导出', code: '100304', parentId: '100300', grandId: '110000', disabled: true },
-        { title: '恢复', code: '100305', parentId: '100300', grandId: '110000', disabled: true },
-        { title: '彻底删除', code: '100306', parentId: '100300', grandId: '110000', disabled: true },
-        { title: '分享', code: '100307', parentId: '100300', grandId: '110000', disabled: true }
+        { title: '页面查看', code: '100300', parentId: '100000', disabled: true },
+        { title: '编辑', code: '100301', parentId: '100300', grandId: '100000', disabled: true },
+        { title: '删除', code: '100302', parentId: '100300', grandId: '100000', disabled: true },
+        { title: '打印', code: '100303', parentId: '100300', grandId: '100000', disabled: true },
+        { title: '导出', code: '100304', parentId: '100300', grandId: '100000', disabled: true },
+        { title: '恢复', code: '100305', parentId: '100300', grandId: '100000', disabled: true },
+        { title: '彻底删除', code: '100306', parentId: '100300', grandId: '100000', disabled: true },
+        { title: '分享', code: '100307', parentId: '100300', grandId: '100000', disabled: true }
       ]
     }]
   }],
@@ -214,11 +214,11 @@ export default {
       expand: true,
       children: [
         { title: '页面查看', code: '120500', parentId: '120000', disabled: true },
-        { title: '回收', code: '120501', parentId: '120500', grandId: '110000', disabled: true },
-        { title: '返厂', code: '120502', parentId: '120500', grandId: '110000', disabled: true },
-        { title: '导出', code: '120503', parentId: '120500', grandId: '110000', disabled: true },
-        { title: '上传回单照片', code: '120504', parentId: '120500', grandId: '110000', disabled: true },
-        { title: '修改回单照片', code: '120505', parentId: '120500', grandId: '110000', disabled: true }
+        { title: '回收', code: '120501', parentId: '120500', grandId: '120000', disabled: true },
+        { title: '返厂', code: '120502', parentId: '120500', grandId: '120000', disabled: true },
+        { title: '导出', code: '120503', parentId: '120500', grandId: '120000', disabled: true },
+        { title: '上传回单照片', code: '120504', parentId: '120500', grandId: '120000', disabled: true },
+        { title: '修改回单照片', code: '120505', parentId: '120500', grandId: '120000', disabled: true }
       ]
     }]
   }],
