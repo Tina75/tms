@@ -162,7 +162,7 @@ import SearchMixin from './searchMixin'
 // let hasTab = false
 
 export default {
-  name: 'receipt',
+  name: 'order-receipt',
 
   components: {
     TabHeader,

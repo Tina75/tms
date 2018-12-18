@@ -74,7 +74,7 @@ import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
 import { deleteDriverById, queryDriverById } from './client'
 export default {
-  name: 'car-details',
+  name: 'driver-details',
   components: { RecordList, prepareOpenSwipe },
   mixins: [ BasePage ],
   props: {

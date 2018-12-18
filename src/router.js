@@ -203,7 +203,7 @@ const router = new Router({
         },
         {
           'name': 'order-receipt',
-          'path': 'receipt',
+          'path': '/order-management/receipt',
           'component': () => import(/* webpackChunkName: "order-receipt" */'./views/order-management/receipt.vue'),
           'meta': {
             'powerCode': 120500,
@@ -377,6 +377,18 @@ const router = new Router({
           }
         },
         {
+          'path': 'driver-details',
+          'name': 'driver-details',
+          'component': () => import(/* webpackChunkName: "owned-driver-details" */'./views/owned-vehicle/driver-details.vue'),
+          'meta': {
+            'hideInMenu': true,
+            'title': '司机详情',
+            'powerCode': 190100,
+            'notCache': true
+
+          }
+        },
+        {
           'path': 'car',
           'name': 'owned-car',
           'component': () => import(/* webpackChunkName: "owned-car" */'./views/owned-vehicle/car.vue'),
@@ -387,6 +399,17 @@ const router = new Router({
           }
         },
         {
+          'path': 'car-details',
+          'name': 'car-details',
+          'component': () => import(/* webpackChunkName: "owned-car-details" */'./views/owned-vehicle/car-details.vue'),
+          'meta': {
+            'hideInMenu': true,
+            'title': '车辆详情',
+            'powerCode': 190200,
+            'notCache': true
+          }
+        },
+        {
           'path': 'repair',
           'name': 'owned-repair',
           'component': () => import(/* webpackChunkName: "owned-repair" */'./views/owned-vehicle/repair.vue'),
@@ -394,6 +417,17 @@ const router = new Router({
             'title': '维修保养',
             'powerCode': 190300
 
+          }
+        },
+        {
+          'path': 'car-repair-details',
+          'name': 'owner-carrepair-details',
+          'component': () => import(/* webpackChunkName: "owned-repaire-details" */'./views/owned-vehicle/car-repair-details.vue'),
+          'meta': {
+            'hideInMenu': true,
+            'title': '维修详情',
+            'powerCode': 190300,
+            'notCache': true
           }
         }
       ]
@@ -472,6 +506,17 @@ const router = new Router({
             'title': '消息',
             'powerCode': 0,
             'icon': 'xiaoxishezhi'
+          }
+        },
+        {
+          'name': 'message-info',
+          'path': 'message-info',
+          'component': () => import(/* webpackChunkName: "message" */'./views/information/message-info.vue'),
+          'meta': {
+            'title': '系统消息',
+            'powerCode': 0,
+            'hideInMenu': true,
+            'notCache': true
           }
         }
       ]
