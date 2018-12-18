@@ -88,7 +88,7 @@ export const TABLE_COLUMNS = vm => [
     key: 'mileage',
     width: 120,
     render: (h, params) => {
-      return h('span', params.row.mileage / 1000 || '-')
+      return h('span', params.row.mileage || '-')
     }
   },
   {
