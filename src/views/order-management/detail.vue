@@ -95,10 +95,15 @@
             <span>{{detail.consignerPhone}}</span>
           </i-col>
           <i-col span="10">
-            <span>发货地址：</span>
-            <span>{{detail.consignerAddress}}
-              <span v-if="detail.consignerHourseNumber">{{`,${detail.consignerHourseNumber}`}}</span>
-            </span>
+            <Row>
+              <i-col span="3">
+                <span>发货地址：</span>
+              </i-col>
+              <i-col span="21" style="padding-left: 15px;">
+                <p>{{detail.consignerAddress}}</p>
+                <p v-if="detail.consignerHourseNumber" style="line-height: 1;margin-bottom: 15px;">{{`${detail.consignerHourseNumber}`}}</p>
+              </i-col>
+            </Row>
           </i-col>
         </Row>
         <Row>
@@ -111,10 +116,15 @@
             <span>{{detail.consigneePhone}}</span>
           </i-col>
           <i-col span="10">
-            <span>收货地址：</span>
-            <span>{{detail.consigneeAddress}}
-              <span v-if="detail.consigneeHourseNumber">{{`,${detail.consigneeHourseNumber}`}}</span>
-            </span>
+            <Row>
+              <i-col span="3">
+                <span>收货地址：</span>
+              </i-col>
+              <i-col span="21" style="padding-left: 15px;">
+                <p>{{detail.consigneeAddress}}</p>
+                <p v-if="detail.consigneeHourseNumber" style="line-height: 1;">{{`${detail.consigneeHourseNumber}`}}</p>
+              </i-col>
+            </Row>
           </i-col>
         </Row>
         <Row style="margin-top: 18px;">
