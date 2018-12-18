@@ -213,7 +213,8 @@ export default {
             this.$Message.success('注册成功')
             window.localStorage.removeItem('tms_is_login')
             setTimeout(() => {
-              this.changeMode('signin')
+              // this.changeMode('signin')
+              this.$router.replace({ path: '/login' })
             }, 2000)
           }).catch(err => console.error(err))
         }

@@ -43,11 +43,10 @@
                   <Checkbox v-model="rememberPW">记住密码</Checkbox>
                 </li>
                 <li class="form-action-item" style="text-align: center;">
-                  <a @click.prevent="changeMode('signup')">立即注册</a>
+                  <router-link to="register">立即注册</router-link>
                 </li>
                 <li class="form-action-item" style="text-align: right;">
-                  <a style="color: inherit;"
-                     @click.prevent="changeMode('findback')">忘记密码？</a>
+                  <router-link style="color: inherit;" to="findback">忘记密码？</router-link>
                 </li>
               </ul>
             </FormItem>

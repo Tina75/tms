@@ -1,6 +1,10 @@
 import store from '@/store/index'
 import NavTagItem from './NavTabItem'
 class NavTabManager {
+  constructor () {
+    // 黑名单，不计入tab
+    this.blackList = ['/', '/404', '/500', '/405']
+  }
   queue () {
     return store.getters.NavTabList
   }
@@ -9,7 +13,7 @@ class NavTabManager {
    * @param {object} route
    */
   addNavTab (route) {
-    if (route.path === '/') {
+    if (this.blackList.includes(route.path)) {
       return
     }
     let findedTab = this.existTab(route)

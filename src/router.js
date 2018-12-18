@@ -39,7 +39,7 @@ const router = new Router({
       'children': [
         {
           'path': '',
-          'name': 'login',
+          'name': 'Login',
           'component': () => import(/* webpackChunkName: "sign-in" */'./views/login/index.vue')
         }
       ]
@@ -55,7 +55,7 @@ const router = new Router({
       'children': [
         {
           'path': '',
-          'name': 'register',
+          'name': 'SignUp',
           'component': () => import(/* webpackChunkName: "sign-up" */'./views/login/sign-up.vue')
         }
       ]
@@ -71,7 +71,7 @@ const router = new Router({
       'children': [
         {
           'path': '',
-          'name': 'findback',
+          'name': 'FindBack',
           'component': () => import(/* webpackChunkName: "findback" */'./views/login/find-back.vue')
         }
       ]
@@ -548,7 +548,47 @@ const router = new Router({
         }
       ]
 
-    }
+    },
+    {
+      path: '/404',
+      component: Main,
+      meta: {
+        'hideInMenu': true
+      },
+      children: [
+        {
+          'name': 'Error404',
+          'path': '',
+          'component': () => import(/* webpackChunkName: "not-found" */'./views/error-page/404.vue'),
+          'meta': {
+            'title': '未找到页面',
+            'powerCode': 0,
+            'hideInMenu': true
+          }
+        }
+      ]
+    },
+    {
+      path: '/500',
+      component: Main,
+      meta: {
+        'hideInMenu': true
+      },
+      children: [
+        {
+          'name': 'Error500',
+          'path': '',
+          'component': () => import(/* webpackChunkName: "server-error" */'./views/error-page/500.vue'),
+          'meta': {
+            'title': '服务出粗了',
+            'powerCode': 0,
+            'hideInMenu': true
+          }
+        }
+      ]
+    },
+    // 未匹配到的到404
+    { path: '*', redirect: '/404', 'meta': { hideInMenu: true, powerCode: 0 } }
   ]
 })
 
