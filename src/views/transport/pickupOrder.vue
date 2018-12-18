@@ -188,7 +188,7 @@ export default {
         fixed: 'left',
         extra: true,
         render: (h, p) => {
-          if (p.row.status === 1 && this.hasPower(120201) && ((p.row.carrierName === '' && p.row.assignCarType === 1) || (p.row.carNo === '' && p.row.assignCarType === 2))) {
+          if (p.row.status === 1 && this.hasPower(120208) && ((p.row.carrierName === '' && p.row.assignCarType === 1) || (p.row.carNo === '' && p.row.assignCarType === 2))) {
             return h('a', {
               on: {
                 click: () => {
