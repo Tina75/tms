@@ -99,7 +99,7 @@ export default {
         },
         {
           title: '重量（公斤）',
-          key: 'weighKg',
+          key: 'weightKg',
           ellipsis: true,
           tooltip: true
         },
@@ -259,7 +259,6 @@ export default {
         case 4:
           /* 当前年份 */
           let year = this.formatDate(now).slice(0, 4)
-          console.log(year)
           if (month > 6) {
             start = year + '-0' + (month - 5) + '-01'
           } else {
