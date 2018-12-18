@@ -199,7 +199,7 @@ export const TABLECOLUMNS = {
       key: 'shipmentTime',
       width: 150,
       render: (h, params) => {
-        return h('span', new Date(params.row.shipmentTime).Format('yyyy-MM-dd hh:mm'))
+        return h('span', params.row.shipmentTime ? new Date(params.row.shipmentTime).Format('yyyy-MM-dd hh:mm') : '-')
       }
     },
     {
@@ -207,7 +207,7 @@ export const TABLECOLUMNS = {
       key: 'arriveTime',
       width: 150,
       render: (h, params) => {
-        return h('span', new Date(params.row.arriveTime).Format('yyyy-MM-dd hh:mm'))
+        return h('span', params.row.arriveTime ? new Date(params.row.arriveTime).Format('yyyy-MM-dd hh:mm') : '-')
       }
     },
     {
@@ -310,7 +310,7 @@ export const TABLECOLUMNS = {
       width: 200,
       key: 'createTime',
       render: (h, params) => {
-        return h('span', new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm'))
+        return h('span', params.row.createTime ? new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm') : '-')
       }
     },
     {

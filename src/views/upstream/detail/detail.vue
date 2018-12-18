@@ -243,27 +243,6 @@ export default {
           className: 'padding-left-45'
         },
         {
-          title: '包装',
-          key: 'packageUnit',
-          render: (h, p) => {
-            return h('span', p.row.packageUnit ? p.row.packageUnit : '-')
-          }
-        },
-        {
-          title: '数量',
-          key: 'num',
-          render: (h, p) => {
-            return h('span', p.row.num ? p.row.num : '-')
-          }
-        },
-        {
-          title: '货值（元）',
-          key: 'cost',
-          render: (h, params) => {
-            return h('span', params.row.cost ? (params.row.cost / 100).toFixed(2) : '-')
-          }
-        },
-        {
           title: '重量（吨）',
           key: 'weight',
           render: (h, p) => {
@@ -275,6 +254,27 @@ export default {
           key: 'volume',
           render: (h, p) => {
             return h('span', p.row.volume ? p.row.volume : '-')
+          }
+        },
+        {
+          title: '货值（元）',
+          key: 'cost',
+          render: (h, params) => {
+            return h('span', params.row.cost ? (params.row.cost / 100).toFixed(2) : '-')
+          }
+        },
+        {
+          title: '数量',
+          key: 'num',
+          render: (h, p) => {
+            return h('span', p.row.num ? p.row.num : '-')
+          }
+        },
+        {
+          title: '包装',
+          key: 'packageUnit',
+          render: (h, p) => {
+            return h('span', p.row.packageUnit ? p.row.packageUnit : '-')
           }
         },
         {
