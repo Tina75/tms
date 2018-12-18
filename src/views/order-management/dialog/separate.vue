@@ -119,16 +119,16 @@ export default {
       if (this.allocationStrategy === 1) { // 按订单数分摊费用
         fee /= 2
       } else if (this.allocationStrategy === 2 && this.detailData.quantity) { // 按件数分摊费用，件数必须大于0
-        fee *= float.round(this.parentQuantity / this.detailData.quantity, 4)
+        fee *= float.round(this.parentQuantity / this.detailData.quantity)
       } else if (this.allocationStrategy === 3 && (this.detailData.weight || this.detailData.weightKg)) { // 按重量分摊费用，重量必须大于0
         // 区分吨和公斤
         if (this.WeightOption === 1) {
-          fee *= float.round(this.parentWeight / this.detailData.weight, 4)
+          fee *= float.round(this.parentWeight / this.detailData.weight)
         } else {
-          fee *= float.round(this.parentWeight / this.detailData.weightKg, 4)
+          fee *= float.round(this.parentWeight / this.detailData.weightKg)
         }
       } else if (this.allocationStrategy === 4 && this.detailData.volume) { // 按体积分摊费用，体积必须大于0
-        fee *= float.round(this.parentVolume / this.detailData.volume, 4)
+        fee *= float.round(this.parentVolume / this.detailData.volume)
       } else {
         fee = 0
       }

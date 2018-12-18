@@ -113,7 +113,7 @@ export default {
             departure: this.start,
             destination: this.end,
             distance: this.distance,
-            input: float.round(((rule.ruleType === 1 || rule.ruleType === 3) ? this.weight : this.volume) * 100),
+            input: float.round(((rule.ruleType === 1 || rule.ruleType === 3) ? this.weight : this.volume) * 100), // 体积 ，重量  输入在2位小数的基础上*100
             carType: this.carType,
             carLength: this.carLength
           }
