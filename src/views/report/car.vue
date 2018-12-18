@@ -35,7 +35,7 @@
             </Select>
           </div>
           <div class="col">
-            <Select v-model="keywords.status"   placeholder="请选择状态">
+            <Select v-model="keywords.status" clearable   placeholder="请选择状态">
               <Option v-for="(item, index) in statusMap[keywords.billType]" :key="index" :value="item.value">{{item.name}}</Option>
             </Select>
           </div>
