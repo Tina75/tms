@@ -949,7 +949,7 @@ export default {
       return statusClass
     },
     rate (value) {
-      return float.floor(value * 100, 2)
+      return float.round(value * 100, 2)
     }
   }
 }
