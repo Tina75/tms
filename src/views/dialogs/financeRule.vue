@@ -101,10 +101,22 @@ export default {
     async ruleChanged (index) {
       errorMsg = ''
       const rule = this.ruleOptions[index]
-      if ((rule.ruleType === 3 || rule.ruleType === 4) && this.distance === 0) errorMsg = '地址填写不够详细无法算出里程数'
-
+      if ((rule.ruleType === 3 || rule.ruleType === 4 || rule.ruleType === 7) && this.distance === 0) errorMsg = '地址填写不够详细无法算出里程数'
       this.$refs.$form.validate(valid => {
         if (!valid) return
+        /**
+         * 重量（吨）1
+         * 体积（方）2
+         * 吨公里3
+         * 方公里4
+         * v.1.08
+         * 车型5
+         * 重量（公斤） 6
+         * 公斤公里 7
+         */
+        // 公斤先乘 1000
+        const weight = float.round(rule.ruleType === 7 || rule.ruleType === 6 ? this.weight * 1000 : this.weight)
+        const input = float.round(((rule.ruleType === 1 || rule.ruleType === 3 || rule.ruleType === 6 || rule.ruleType === 7) ? weight : this.volume) * 100)
         Server({
           url: '/finance/charge/calc',
           method: 'get',
@@ -113,7 +125,7 @@ export default {
             departure: this.start,
             destination: this.end,
             distance: this.distance,
-            input: float.round(((rule.ruleType === 1 || rule.ruleType === 3) ? this.weight : this.volume) * 100), // 体积 ，重量  输入在2位小数的基础上*100
+            input,
             carType: this.carType,
             carLength: this.carLength
           }
