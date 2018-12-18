@@ -600,7 +600,7 @@ export default {
         },
         {
           title: '对接业务员',
-          key: 'salesmanId',
+          key: 'salesmanName',
           minWidth: 180
         },
         {
