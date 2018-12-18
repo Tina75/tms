@@ -57,7 +57,7 @@ export const BUTTON_LIST = vm => [
     tab: '待提货',
     btns: [{
       name: '提货',
-      code: 120202,
+      code: 120201,
       func: () => {
         vm.loadBillSend()
       }
@@ -69,7 +69,7 @@ export const BUTTON_LIST = vm => [
       }
     }, {
       name: '删除',
-      code: 120202,
+      code: 120204,
       func: () => {
         vm.billDelete()
       }
