@@ -4,22 +4,26 @@ import router from '@/router.js'
 export default {
   actions: {
     addNavTab ({ commit, dispatch, state }, navItem) {
-      let activeTab = state.navTabList.find(item => item.isActive)
-
+      let prevActiveTab = state.navTabList.find(item => item.isActive)
+      commit('removeActiveTabClass')
       commit('addNavTab', navItem)
-      if (activeTab) {
-        commit('setRelationTab', { nextId: navItem.id, prevId: activeTab.id })
+      if (prevActiveTab) {
+        commit('setRelationTab', { nextId: navItem.id, prevId: prevActiveTab.id })
       }
     },
-    setActiveTabClass ({ commit, state }, id) {
-      let activeTab = state.navTabList().find(item => item.isActive)
-      commit('setActiveTabClass', id)
-      if (activeTab) {
-        commit('setRelationTab', { nextId: id, prevId: activeTab.id })
+    setActiveTab ({ commit, state }, id) {
+      let prevActiveTab = state.navTabList.find(item => item.isActive)
+      commit('removeActiveTabClass')
+      commit('setActiveTab', id)
+      if (prevActiveTab) {
+        commit('setRelationTab', { nextId: id, prevId: prevActiveTab.id })
       }
     },
     removeNavTab ({ commit }, navItem) {
       commit('removeNavTab', navItem)
+    },
+    refreshNavTab ({ commit }, navItem) {
+      commit('refreshNavTab', navItem)
     },
     removeActiveTabClass ({ commit }) {
       commit('removeActiveTabClass')
@@ -43,7 +47,11 @@ export default {
       state.navTabList.push(tab)
     },
     removeNavTab (state, tab) {
-      state.navTabList = state.navTabList.find((item) => item.id !== tab.id)
+      state.navTabList = state.navTabList.filter((item) => item.id !== tab.id)
+    },
+    refreshNavTab (state, tab) {
+      const { index, ...navTab } = tab
+      state.navTabList.splice(index, -1, navTab)
     },
     removeActiveTabClass (state) {
       let tab = state.navTabList.find((item) => item.isActive)
@@ -51,7 +59,7 @@ export default {
         tab.isActive = false
       }
     },
-    setActiveTabClass (state, id) {
+    setActiveTab (state, id) {
       let tab = state.navTabList.find((item) => item.id === id)
       tab.isActive = true
     },

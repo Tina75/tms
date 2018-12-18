@@ -331,7 +331,7 @@ const rate = {
 }
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee', 'collectionMoney']
 export default {
-  name: 'order-crete',
+  name: 'order-create',
   metaInfo: {
     title: '手动下单'
   },

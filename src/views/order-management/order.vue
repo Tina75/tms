@@ -18,7 +18,7 @@ import TabContent from './components/TabContent'
 import SearchMixin from './searchMixin'
 import jsCookie from 'js-cookie'
 export default {
-  name: 'order',
+  name: 'order-management',
 
   components: {
     TabHeader,

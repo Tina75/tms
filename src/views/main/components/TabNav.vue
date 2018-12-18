@@ -14,9 +14,7 @@
             ref="tagsPageOpened"
             :key="`tag-nav-${index}`"
             :tab="item"
-            @on-close="handleClose(item)"
-            @on-refresh="handleRefresh(item)"
-            @click.native="handleClick(item)">
+          >
           </tab-nav-item>
         </transition-group>
       </div>

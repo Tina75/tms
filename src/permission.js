@@ -18,16 +18,21 @@ router.beforeEach((to, from, next) => {
             next({ ...to })
           })
           .catch((er) => {
-            store.dispatch('logout')
-              .then(() => {
-                next({ path: '/login' })
-              })
+            // store.dispatch('logout')
+            //   .then(() => {
+            //     next({ path: '/login' })
+            //   })
+            next({ ...to })
           })
       } else {
         next()
       }
     }
   } else {
-    next(`/login?redirect=${to.path}`)
+    if (from.path === '/') {
+      next()
+    } else {
+      next({ path: '/login' })
+    }
   }
 })

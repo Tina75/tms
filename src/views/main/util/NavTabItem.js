@@ -17,7 +17,7 @@ class NavTabItem {
     return this.manager.removeNavTab(this)
   }
   refresh () {
-    this.manager.reloadNavTab(this)
+    return this.manager.refreshNavTab(this)
   }
 }
 

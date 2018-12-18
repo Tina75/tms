@@ -22,7 +22,8 @@ const router = new Router({
           'meta': {
             'icon': 'shouye',
             'title': '首页',
-            'powerCode': 0
+            'powerCode': 0,
+            'notCache': true
           }
         }
       ]

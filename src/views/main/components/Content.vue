@@ -2,7 +2,7 @@
   <div class="content">
     <div id="content-main" :style="{'min-height':DocumentHeight +'px'}" class="content-main">
       <div id="content-wrapper" class="wrapper">
-        <keep-alive>
+        <keep-alive :include="cacheList">
           <router-view />
         </keep-alive>
       </div>
@@ -19,7 +19,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['DocumentHeight'])
+    ...mapGetters(['DocumentHeight', 'NavTabList']),
+    cacheList () {
+      return ['a', ...this.NavTabList.length ? this.NavTabList.filter(item => !(item.meta && item.meta.notCache)).map(item => item.name) : []]
+    }
   },
   mounted () {
     window.document.getElementById('content-main').style.minHeight = (document.body.clientHeight - 80) + 'px'
