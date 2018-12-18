@@ -37,7 +37,7 @@
             <p class="dropdown-line"><label for="">公司：</label>{{UserInfo.companyName}}</p>
             <p class="dropdown-line"><label for="">有效期至：</label>{{UserInfo.expirationTime | datetime('yyyy-MM-dd')}}</p>
             <p class="dropdown-line"><a @click="renew">延长账号有效期</a></p>
-            <p style="text-align:center" class="i-mt-10"><Button type="default" @click="logout">&nbsp; &nbsp;退出&nbsp; &nbsp;</Button></p>
+            <p style="text-align:center" class="i-mt-10"><Button type="default" @click="userLogout">&nbsp; &nbsp;退出&nbsp; &nbsp;</Button></p>
           </div>
         </Poptip>
       </div>
@@ -148,10 +148,14 @@ export default {
         }
       })
     },
-    logout () {
+    /**
+     * 用户退出
+     */
+    userLogout () {
       window.EMA.fire('logout')
       this.logout()
-      this.$router.push({ path: '/login' })
+      location.reload()
+      // this.$router.replace({ path: '/login' })
     },
     renew () {
       window.EMA.fire('Dialogs.push', {

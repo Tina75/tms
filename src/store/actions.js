@@ -78,7 +78,9 @@ export const logout = ({ commit }) => {
     // 记住密码
     const localRememberdPW = window.localStorage.local_rememberd_pw
     localStorage.clear()
-    if (localRememberdPW) window.localStorage.setItem('local_rememberd_pw', localRememberdPW)
+    if (localRememberdPW) {
+      window.localStorage.setItem('local_rememberd_pw', localRememberdPW)
+    }
     removeToken()
     resolve()
   })

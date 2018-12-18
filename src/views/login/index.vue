@@ -62,7 +62,7 @@
 import Server from '@/libs/js/server'
 import mixin from './mixin'
 import { VALIDATOR_PHONE } from './validator'
-
+import { setToken } from '@/libs/js/auth'
 // token与记住密码过期时长 1年
 const EXPIRES = 365 * 24 * 60 * 60 * 1000
 
@@ -150,9 +150,10 @@ export default {
 
     // 设置cookie-token
     setToken (token) {
-      const exp = new Date()
-      exp.setTime(exp.getTime() + EXPIRES)
-      document.cookie = `token=${escape(token)};expires=${exp.toGMTString()}`
+      // const exp = new Date()
+      // exp.setTime(exp.getTime() + EXPIRES)
+      // document.cookie = `token=${escape(token)};expires=${exp.toGMTString()}`
+      setToken(token)
     },
 
     // 登录处理

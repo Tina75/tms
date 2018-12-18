@@ -29,10 +29,10 @@ router.beforeEach((to, from, next) => {
       }
     }
   } else {
-    if (from.path === '/') {
+    if (to.path === '/login') {
       next()
     } else {
-      next({ path: '/login' })
+      next('/login')
     }
   }
 })

@@ -1,15 +1,16 @@
 import Cookies from 'js-cookie'
 
-const TokenKey = 'token'
+const TokenKey = 'tms_token'
 
 export function getToken () {
   return Cookies.get(TokenKey)
 }
 
 export function setToken (token) {
-  return Cookies.set(TokenKey, token, { path: '/tms' })
+  // 有效期一年
+  return Cookies.set(TokenKey, token, { expires: 365 })
 }
 
 export function removeToken () {
-  return Cookies.remove(TokenKey, { path: '/tms' })
+  return Cookies.remove(TokenKey)
 }
