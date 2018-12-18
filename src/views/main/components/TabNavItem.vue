@@ -5,7 +5,7 @@
       <span style="display:inline-block;min-width:18px">
         <Icon v-show="checked" class="tab-item__icon " type="ios-refresh" size="20" @click.stop="refresh"/>
       </span>
-      <span class="tab-item__name"><router-link :to="path" class="tab-item__link">{{name}}</router-link></span>
+      <router-link :to="path" tag="span" class="tab-item__name">{{name}}</router-link>
       <span style="display:inline-block;min-width:18px">
         <Icon v-show="closeable" :style="checked?'visibility:visible':'visibility:hidden'" class="tab-item__icon close-icon" type="ios-close" size="20" @click.stop="close"/>
       </span>
@@ -124,13 +124,9 @@ export default {
     white-space nowrap
     // margin 0 4px
     text-overflow ellipsis
-  &__link
-      color #fff
   &__checked
     background #EFEFEF
     color #00A4BD
     border-sizing content-box
     border-bottom 1px solid #efefef
-    .tab-item__link
-      color inherit
 </style>
