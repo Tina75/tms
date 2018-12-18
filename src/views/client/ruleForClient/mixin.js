@@ -1,9 +1,8 @@
 /* 用于客户管理和财务的计费规则 */
 import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
 import Server from '@/libs/js/server'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { ruleTypeAllList } from '@/libs/constant/ruleType.js'
-import float from '@/libs/js/float'
 export default {
   computed: {
     ...mapGetters(['ruleTypeList']),
@@ -22,15 +21,6 @@ export default {
         }
       }
       return obj
-      // return {
-      //   '1': '重量',
-      //   '2': '体积',
-      //   '3': '吨公里',
-      //   '4': '方公里',
-      //   '5': '车型没有单位',
-      //   '6': '公斤公里',
-      //   '7': '公斤'
-      // }
     },
     precision () {
       if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
@@ -120,20 +110,20 @@ export default {
         }
       }
     }
-    // const carTypeValidate = (rule, value, callback) => {
-    //   if (value !== 0) {
-    //     callback()
-    //   } else {
-    //     callback(new Error('请填写车型'))
-    //   }
-    // }
-    // const carLengthValidate = (rule, value, callback) => {
-    //   if (value !== 0) {
-    //     callback()
-    //   } else {
-    //     callback(new Error('请填写车长'))
-    //   }
-    // }
+    const carTypeValidate = (rule, value, callback) => {
+      if (value !== 0) {
+        callback()
+      } else {
+        callback(new Error('请填写车型'))
+      }
+    }
+    const carLengthValidate = (rule, value, callback) => {
+      if (value !== 0) {
+        callback()
+      } else {
+        callback(new Error('请填写车长'))
+      }
+    }
     return {
       carType: CAR_TYPE,
       carLength: CAR_LENGTH,
@@ -150,7 +140,10 @@ export default {
         1: '吨',
         2: '方',
         3: '吨公里',
-        4: '方公里'
+        4: '方公里',
+        // 5: '车型没有单位'
+        6: '公斤公里',
+        7: '公斤'
       },
       sceneMap: {
         1: '发货方',
@@ -158,17 +151,14 @@ export default {
         // 3: '外转方',
         4: '规则'
       },
-      ruleTypeMap: {
-        '1': '重量',
-        '2': '体积',
-        '3': '吨公里',
-        '4': '方公里'
-      },
       valueTypeMap: {
         '1': '重量',
         '2': '体积',
         '3': '重量',
-        '4': '体积'
+        '4': '体积',
+        '5': '车型',
+        '6': '重量',
+        '7': '重量'
       },
       startTypeMap: {
         1: '起步价',
@@ -205,12 +195,26 @@ export default {
       priceValidate: {
         price: [
           { required: true, message: '请填写金额', trigger: 'change', type: 'number' },
-          { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/, message: '9位正数且最多两位小数', trigger: 'blur' }
+          { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/, message: '9位正数且最多两位小数', trigger: 'change' }
+        ]
+        // /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/
+      },
+      carValidate: {
+        carType: [
+          // { required: true, message: '请选择车型', trigger: 'change' }
+          { validator: carTypeValidate, trigger: 'change' }
+        ],
+        carLength: [
+          { validator: carLengthValidate, trigger: 'change' }
         ]
       }
     }
   },
+  mounted () {
+    this.getRuleTypeList()
+  },
   methods: {
+    ...mapActions(['getRuleTypeList', 'getSenderRules', 'getCarriesRules']),
     toDetail (data) {
       this.$router.push({
         name: 'accountDetail',
@@ -241,7 +245,7 @@ export default {
       })
     },
     addEl (index) {
-      this.ruleDetail.details[index].chargeRules.push({ base: null, price: null, baseAndStart: '' })
+      this.ruleDetail.details[index].chargeRules.push({ base: null, price: null, baseAndStart: '', carType: 0, carLength: 0 })
     },
     removeEl (index, no) {
       this.ruleDetail.details[index].chargeRules.splice(no, 1)
@@ -307,18 +311,19 @@ export default {
             method: 'post',
             data: Object.assign({}, _this.ruleDetail, {
               details: _this.ruleDetail.details.map(item => {
+                console.log(_this.ruleDetail)
                 return {
                   departure: item.departure,
                   destination: item.destination,
                   startType: item.startType,
                   // 选择车型时，起步价，起步量都没有
-                  startNum: _this.ruleDetail.ruleType === '5' ? null : (item.startNum ? float.round(item.startNum * 100) : ''),
+                  startNum: _this.ruleDetail.ruleType === '5' ? null : (item.startNum ? parseFloat(item.startNum) * 100 : ''),
                   // 选择起步量的时候，startPrice的值传startNum的值
-                  startPrice: _this.ruleDetail.ruleType === '5' ? null : (item.startType === '1' ? (item.startPrice ? float.round(item.startPrice * 100) : '') : (item.startNum ? float.round(item.startNum * 100) : '')),
+                  startPrice: _this.ruleDetail.ruleType === '5' ? null : (item.startType === '1' ? (item.startPrice ? parseFloat(item.startPrice) * 100 : '') : (item.startNum ? parseFloat(item.startNum) * 100 : '')),
                   chargeRules: item.chargeRules.map(el => {
                     return {
-                      base: _this.ruleDetail.ruleType === '5' ? null : (float.round(el.base * 100)),
-                      price: float.round(el.price) * 100,
+                      base: _this.ruleDetail.ruleType === '5' ? null : (parseFloat(el.base) * 100),
+                      price: parseFloat(el.price) * 100,
                       carType: el.carType,
                       carLength: el.carLength
                     }
@@ -328,12 +333,19 @@ export default {
             })
           }).then(res => {
             _this.$Message.success('保存成功')
+            _this.saveCitrCode(_this.ruleDetail.details)
             _this.getRules()
           }).catch(err => console.error(err))
         },
         async onCancel () {
           _this.getRules()
         }
+      })
+    },
+    saveCitrCode (arr) {
+      arr.map((item, index) => {
+        this.$refs.city1[index].saveCity(item.departure)
+        this.$refs.city2[index].saveCity(item.destination)
       })
     },
     startQuery () {
@@ -352,7 +364,7 @@ export default {
         startPrice: null,
         startType: '2',
         chargeRules: [
-          { base: null, price: null, baseAndStart: '' }
+          { base: null, price: null, baseAndStart: '', carType: 0, carLength: 0 }
         ]
       })
     },
@@ -382,9 +394,11 @@ export default {
             showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
               return {
-                base: el.base ? (el.base / 100) : '0',
-                price: el.price ? (el.price / 100) : '0',
-                baseAndStart: el.base + ',' + item.startNum
+                base: el.base ? (el.base / 100) : null,
+                price: el.price ? (el.price / 100) : null,
+                baseAndStart: el.base + ',' + item.startNum,
+                carType: el.carType,
+                carLength: el.carLength
               }
             })
           }
@@ -397,16 +411,17 @@ export default {
     startTypeChange (item) {
       console.log(item)
       item.startPrice = null
-    },
-    async ruleTypeChange () {
-      await this.formValidate(this.$refs['ruleBasic'])
-      for (let i = 0; i < this.$refs['ruleRoute'].length; i++) {
-        await this.formValidate(this.$refs['ruleRoute'][i])
-      }
-      for (let j = 0; j < this.$refs['ruleBase'].length; j++) {
-        await this.formValidate(this.$refs['ruleBase'][j])
-        await this.formValidate(this.$refs['rulePrice'][j])
-      }
     }
+    // async ruleTypeChange () {
+    // @on-change="ruleTypeChange"
+    // await this.formValidate(this.$refs['ruleBasic'])
+    // for (let i = 0; i < this.$refs['ruleRoute'].length; i++) {
+    //   await this.formValidate(this.$refs['ruleRoute'][i])
+    // }
+    // for (let j = 0; j < this.$refs['ruleBase'].length; j++) {
+    //   await this.formValidate(this.$refs['ruleBase'][j])
+    //   await this.formValidate(this.$refs['rulePrice'][j])
+    // }
+    // }
   }
 }
