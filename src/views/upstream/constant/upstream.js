@@ -36,7 +36,7 @@ export const TABLE_COLUMNS = vm => [
     }
   },
   {
-    title: '客户单号',
+    title: '客户订单号',
     key: 'customerOrderNo',
     minWidth: 160,
     render: (h, p) => {

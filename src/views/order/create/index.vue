@@ -109,7 +109,7 @@
       </Col>
       <Col span="3">
       <FormItem :label-width="0">
-        <Input v-model="orderForm.consignerHourseNumber" :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+        <Input v-model="orderForm.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
       </FormItem>
       </Col>
       <Col span="1">
@@ -130,7 +130,7 @@
       </Col>
       <Col span="3">
       <FormItem :label-width="0">
-        <Input v-model="orderForm.consigneeHourseNumber" :maxLength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+        <Input v-model="orderForm.consigneeHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
       </FormItem>
       </Col>
       <Col span="1">
@@ -760,6 +760,7 @@ export default {
       _this.getConsignerDetail(row.id).then((response) => {
         const { consigneeList: consignees, addressList: addresses, cargoList, ...consigner } = response.data
         // 设置发货人信息，发货联系人，手机，发货地址
+        _this.orderForm.consignerName = response.data.name
         _this.orderForm.consignerContact = consigner.contact
         _this.orderForm.consignerPhone = consigner.phone
         if (addresses.length > 0) {

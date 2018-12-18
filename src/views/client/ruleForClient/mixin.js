@@ -213,8 +213,9 @@ export default {
       priceValidate: {
         price: [
           { required: true, message: '请填写金额', trigger: 'change', type: 'number' },
-          { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/, message: '9位正数且最多两位小数', trigger: 'blur' }
+          { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/, message: '9位正数且最多两位小数', trigger: 'change' }
         ]
+        // /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/
       },
       carValidate: {
         carType: [
@@ -350,12 +351,19 @@ export default {
             })
           }).then(res => {
             _this.$Message.success('保存成功')
+            _this.saveCitrCode(_this.ruleDetail.details)
             _this.getRules()
           }).catch(err => console.error(err))
         },
         async onCancel () {
           _this.getRules()
         }
+      })
+    },
+    saveCitrCode (arr) {
+      arr.map((item, index) => {
+        this.$refs.city1[index].saveCity(item.departure)
+        this.$refs.city2[index].saveCity(item.destination)
       })
     },
     startQuery () {

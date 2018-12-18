@@ -33,7 +33,7 @@
           <div class="rule-basic">
             <Form ref="ruleBasic" :model="ruleDetail" :rules="basicValidate" class="ruleBasic" inline>
               <span>按</span>
-              <FormItem prop="ruleType" style="width: 100px">
+              <FormItem prop="ruleType" style="width: 120px">
                 <Select v-model="ruleDetail.ruleType" transfer>
                   <Option v-for="(value, key) in ruleTypeMap"  :key="key" :value="key">{{value}}</Option>
                 </Select>
@@ -54,7 +54,7 @@
                     <Row :gutter="24">
                       <Col span="4"  class="styleCommon">
                       <FormItem prop="departure" style="text-align: left">
-                        <SelectInputForCity :code-type = "1" v-model="item.departure" placeholder="请输入始发地" class="search-input-senior"></SelectInputForCity>
+                        <SelectInputForCity ref="city1" :code-type = "1" v-model="item.departure" placeholder="请输入始发地" class="search-input-senior"></SelectInputForCity>
                       </FormItem>
                       </Col>
                       <Col span="1" class="styleCommon">
@@ -62,7 +62,7 @@
                       </Col>
                       <Col span="4" class="styleCommon">
                       <FormItem prop="destination" style="text-align: left">
-                        <SelectInputForCity :code-type = "1" v-model="item.destination" placeholder="请输入目的地" class="search-input-senior"></SelectInputForCity>
+                        <SelectInputForCity ref="city2" :code-type = "1" v-model="item.destination" placeholder="请输入目的地" class="search-input-senior"></SelectInputForCity>
                       </FormItem>
                       </Col>
                       <Col span="13" class="styleCommon">

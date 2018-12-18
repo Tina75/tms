@@ -38,7 +38,7 @@
                  v-model="easySearchKeyword"
                  :icon="easySearchKeyword ? 'ios-close-circle' : ''"
                  :maxlength="20"
-                 placeholder="请输入客户单号"
+                 placeholder="请输入客户订单号"
                  class="search-input"
                  @on-click="resetEasySearch"
           />
@@ -69,7 +69,7 @@
           </SelectInput>
           <Input v-model="seniorSearchFields.customerOrderNo"
                  mode="carrier"
-                 placeholder="请输入客户单号"
+                 placeholder="请输入客户订单号"
                  class="search-input-senior"
           />
           <SelectInputForCity v-model="seniorSearchFields.departureCity"  placeholder="请输入始发地" class="search-input-senior" />
@@ -136,7 +136,7 @@ export default {
       // 简易搜索类型
       selectList: [
         { value: 1, label: '客户名称' },
-        { value: 2, label: '客户单号' }
+        { value: 2, label: '客户订单号' }
       ],
       isEasySearch: true, // 是否为简易搜索
       inSearching: false, // 当前是否搜索中

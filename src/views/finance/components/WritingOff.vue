@@ -250,9 +250,12 @@ export default {
             }, params.row.orderNo)
           }
         },
-        {
+        this.scene === 2 ? {
           title: '承运商运单号',
           key: 'carrierWaybillNo'
+        } : {
+          title: ' ',
+          width: 1
         },
         {
           title: '始发地',

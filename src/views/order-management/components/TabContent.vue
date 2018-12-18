@@ -646,7 +646,10 @@ export default {
         {
           title: '计费里程（公里）',
           key: 'mileage',
-          width: 120
+          width: 120,
+          render: (h, params) => {
+            return h('span', params.row.mileage / 1000 ? params.row.mileage / 1000 : '-')
+          }
         },
         {
           title: '体积（方）',

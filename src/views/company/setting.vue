@@ -58,7 +58,7 @@
               <AreaInput v-model="formCompany.address" @city-select="latlongtChange"></AreaInput>
               </Col>
               <Col :span="7" class="areaRight">
-              <Input :maxLength="50" v-model="formCompany.userAddress" placeholder="补充地址（楼号-门牌等）"></Input>
+              <Input :maxlength="50" v-model="formCompany.userAddress" placeholder="补充地址（楼号-门牌等）"></Input>
               </Col>
               <Col :span="1" class="areaRight">
               <Tooltip :max-width="200" content="详细地址只支持从下拉推荐地址中选择" transfer>

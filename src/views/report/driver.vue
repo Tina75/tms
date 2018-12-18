@@ -32,6 +32,11 @@
             </Select>
           </div>
           <div class="col">
+            <Select v-model="keywords.status" clearable   placeholder="请选择状态">
+              <Option v-for="(item, index) in statusMap[keywords.billType]" :key="index" :value="item.value">{{item.name}}</Option>
+            </Select>
+          </div>
+          <div class="col">
             <DatePicker
               v-model="times"
               :options="options"
@@ -44,8 +49,6 @@
               @on-change="handleTimeChange"
             >
             </DatePicker>
-          </div>
-          <div class="col">
           </div>
         </div>
       </div>
@@ -104,7 +107,8 @@ export default {
         billType: '',
         startTime: '',
         endTime: '',
-        carNo: ''
+        carNo: '',
+        status: ''
       },
       keyword: {},
       options: {
@@ -114,6 +118,19 @@ export default {
       },
       times: ['', ''],
       isExport: false,
+      /* 状态 */
+      statusMap: {
+        1: [
+          { name: '待提货', value: 1 },
+          { name: '提货中', value: 2 },
+          { name: '已提货', value: 3 }
+        ],
+        3: [
+          { name: '待发运', value: 1 },
+          { name: '在途', value: 2 },
+          { name: '已到货', value: 3 }
+        ]
+      },
       /* 业务类型 1 提货 3 送货 */
       billTypeMap: {
         1: '提货',
@@ -138,6 +155,11 @@ export default {
         {
           title: '单据号',
           key: 'billNo',
+          width: 200
+        },
+        {
+          title: '状态',
+          key: 'statusDesc',
           width: 150
         },
         {
@@ -250,7 +272,8 @@ export default {
         billType: this.keywords.billType || undefined,
         startTime: this.keywords.startTime || undefined,
         endTime: this.keywords.endTime || undefined,
-        carNo: this.keywords.carNo || undefined
+        carNo: this.keywords.carNo || undefined,
+        status: this.keywords.status || undefined
       }
     },
     clearKeywords () {
@@ -262,9 +285,14 @@ export default {
         billType: '',
         startTime: '',
         endTime: '',
-        carNo: ''
+        carNo: '',
+        status: ''
       }
       this.times = ['', '']
+    },
+    // 重新选择业务类型，清空状态
+    statusChange () {
+      this.keywords.status = ''
     },
     // 导出
     ProfitsExport () {
@@ -281,7 +309,8 @@ export default {
         startTime: this.keywords.startTime || undefined,
         endTime: this.keywords.endTime || undefined,
         billNo: this.keywords.billNo || undefined,
-        carNo: this.keywords.carNo || undefined
+        carNo: this.keywords.carNo || undefined,
+        status: this.keywords.status || undefined
       }
       Export({
         url: '/report/out/driver/export',
