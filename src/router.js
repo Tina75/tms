@@ -122,6 +122,16 @@ const router = new Router({
             'powerCode': 100300,
             'title': '订单管理'
           }
+        },
+        {
+          'name': 'order-management-detail',
+          'path': '/order-management/detail',
+          'component': () => import(/* webpackChunkName: "order-detail" */'./views/order-management/detail.vue'),
+          'meta': {
+            'hideInMenu': true,
+            'powerCode': 100300,
+            'title': '订单详情'
+          }
         }
       ]
     },
@@ -154,10 +164,30 @@ const router = new Router({
           }
         },
         {
+          'name': 'detailPickup',
+          'path': 'detail/detailPickup',
+          'component': () => import(/* webpackChunkName: "transport-detailPickup" */'./views/transport/detail/detailPickup.vue'),
+          'meta': {
+            'hideInMenu': true,
+            'powerCode': 120200,
+            'title': '提货详情'
+          }
+        },
+        {
           'name': 'order-transport',
           'path': 'waybill',
           'component': () => import(/* webpackChunkName: "transport-waybill" */'./views/transport/waybill.vue'),
           'meta': {
+            'title': '送货管理',
+            'powerCode': 120100
+          }
+        },
+        {
+          'name': 'detailFeright',
+          'path': 'detail/detailFreight',
+          'component': () => import(/* webpackChunkName: "transport-detailFreight" */'./views/transport/detail/detailFreight.vue'),
+          'meta': {
+            'hideInMenu': true,
             'title': '送货管理',
             'powerCode': 120100
           }
@@ -212,7 +242,7 @@ const router = new Router({
           }
         },
         {
-          'name': 'finance-collectFee',
+          'name': 'finance-collect-fee',
           'path': 'collectFee',
           'component': () => import(/* webpackChunkName: "finance-collectFee" */'./views/finance/collectFee.vue'),
           'meta': {
@@ -221,7 +251,7 @@ const router = new Router({
           }
         },
         {
-          'name': 'finance-returnfee',
+          'name': 'finance-return-fee',
           'path': 'returnFee',
           'component': () => import(/* webpackChunkName: "finance-returnFee" */'./views/finance/returnFee.vue'),
           'meta': {

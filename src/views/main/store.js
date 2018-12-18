@@ -3,6 +3,14 @@ import router from '@/router.js'
 
 export default {
   actions: {
+    /**
+     * 打开新的路由地址
+     * 1. 去除之前的tab 选中状态
+     * 2. 添加标签
+     * 3. 关联上下间关系
+     * @param {*} param0
+     * @param {*} navItem
+     */
     addNavTab ({ commit, dispatch, state }, navItem) {
       let prevActiveTab = state.navTabList.find(item => item.isActive)
       commit('removeActiveTabClass')
@@ -11,6 +19,14 @@ export default {
         commit('setRelationTab', { nextId: navItem.id, prevId: prevActiveTab.id })
       }
     },
+    /**
+     * 已有tab之间切换
+     * 1. 删除之前的tab选中状态
+     * 2. 设置当前的tab选中
+     * 3. 设置上下间关系
+     * @param {*} param0
+     * @param {*} id
+     */
     setActiveTab ({ commit, state }, id) {
       let prevActiveTab = state.navTabList.find(item => item.isActive)
       commit('removeActiveTabClass')
@@ -19,9 +35,19 @@ export default {
         commit('setRelationTab', { nextId: id, prevId: prevActiveTab.id })
       }
     },
+    /**
+     * 关闭tab
+     * @param {*} param0
+     * @param {*} navItem
+     */
     removeNavTab ({ commit }, navItem) {
       commit('removeNavTab', navItem)
     },
+    /**
+     * 刷新tab
+     * @param {*} param0
+     * @param {*} navItem
+     */
     refreshNavTab ({ commit }, navItem) {
       commit('removeActiveTabClass')
       commit('refreshNavTab', navItem)

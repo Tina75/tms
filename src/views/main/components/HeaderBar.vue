@@ -74,7 +74,7 @@ export default {
     this.newUserTip()
   },
   methods: {
-    ...mapActions(['getMessageCount', 'getUserInfo', 'getTableColumns', 'getOwnDrivers', 'getOwnCars']),
+    ...mapActions(['getMessageCount', 'getUserInfo', 'getTableColumns', 'getOwnDrivers', 'getOwnCars', 'logout']),
     async newUserTip () {
       try {
         await this.getUserInfo()
@@ -150,6 +150,8 @@ export default {
     },
     logout () {
       window.EMA.fire('logout')
+      this.logout()
+      this.$router.push({ path: '/login' })
     },
     renew () {
       window.EMA.fire('Dialogs.push', {

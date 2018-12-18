@@ -27,7 +27,6 @@ class NavTabManager {
       let navtab = new NavTagItem(this, route)
       store.dispatch('addNavTab', navtab)
     }
-    // store.dispatch('removeActiveTabClass')
   }
 
   refreshNavTab (nav) {

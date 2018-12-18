@@ -263,7 +263,7 @@ import openSwipe from '@/components/swipe/index'
 import _ from 'lodash'
 import float from '@/libs/js/float'
 export default {
-  name: 'detail',
+  name: 'order-management-detail',
 
   components: {
     OrderPrint

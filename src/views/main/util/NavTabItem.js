@@ -4,7 +4,7 @@ class NavTabItem {
     this.id = uniqid++
     this.name = options.name
     this.path = options.path
-    this.title = options.meta.title
+    this.title = options.query.title || options.meta.title
     this.meta = options.meta
     this.query = options.query || {}
 

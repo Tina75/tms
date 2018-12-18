@@ -67,7 +67,10 @@ export const getTableColumns = ({ commit }) => {
 export const setDocumentHeight = ({ commit }, height) => {
   commit('updateDocumentHeight', height - 80)
 }
-
+/**
+ * 登出
+ * @param {} param0
+ */
 export const logout = ({ commit }) => {
   return new Promise((resolve, reject) => {
     commit('initUserInfo', {})
