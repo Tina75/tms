@@ -401,7 +401,7 @@ export default {
         case 6:
           this.openTab({
             path: TMSUrl.TANSPORT_ORDER, // '/transport/waybill',
-            title: '运单管理'
+            title: '送货管理'
           })
           break
         case 7:

@@ -333,7 +333,7 @@ const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'ins
 export default {
   name: 'order-create',
   metaInfo: {
-    title: '手动下单'
+    title: '手动开单'
   },
   components: {
     Title,

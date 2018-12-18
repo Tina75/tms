@@ -58,20 +58,29 @@ export default {
   mixins: [BaseComponent],
   data () {
     return {
-      processVisible: false
+      processVisible: false,
+      messageTimer: null
     }
   },
   computed: {
     ...mapGetters(['MsgCount', 'UserInfo'])
   },
   mounted () {
-    window.EMA.bind('closeTab', (route) => { this.onTabClose(route) })
+    const vm = this
+    window.EMA.bind('closeTab', vm.onTabClose)
     // window.EMA.bind('reloadTab', (route) => {
     //   route.query = Object.assign({ _time: new Date().getTime() }, route.query)
     //   this.turnToPage(route)
     // })
+    window.EMA.bind('logout', vm.userLogout)
     this.loopMessage()
     this.newUserTip()
+  },
+  beforeDestroy () {
+    if (this.messageTimer) {
+      clearInterval(this.messageTimer)
+      this.messageTimer = null
+    }
   },
   methods: {
     ...mapActions(['getMessageCount', 'getUserInfo', 'getTableColumns', 'getOwnDrivers', 'getOwnCars', 'logout']),
@@ -123,9 +132,12 @@ export default {
         }
       })
     },
+    /**
+     * 循环查询消息
+     */
     loopMessage () {
       this.getMessageCount()
-      setInterval(() => {
+      this.messageTimer = setInterval(() => {
         this.getMessageCount()
       }, 60 * 1000)
     },
@@ -150,12 +162,18 @@ export default {
     },
     /**
      * 用户退出
+     * 1. 接口发现token失效，可能有其他用户登录，会包含msg
+     * 2. 用户主动点击退出
      */
-    userLogout () {
-      window.EMA.fire('logout')
+    userLogout (msg) {
+      if (msg) {
+        this.$Message.warning({
+          content: msg,
+          duration: 3
+        })
+      }
       this.logout()
-      location.reload()
-      // this.$router.replace({ path: '/login' })
+      this.$router.replace({ path: '/login' })
     },
     renew () {
       window.EMA.fire('Dialogs.push', {

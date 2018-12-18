@@ -154,10 +154,10 @@ import _ from 'lodash'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  name: 'WaybillManager',
+  name: 'order-transport',
   components: { TabHeader, PageTable, SelectInputForCity, SelectInput, PrintFreight, OrderTabContent },
   mixins: [ BasePage, TransportBase, SelectInputMixin, TransportMixin ],
-  metaInfo: { title: '运单管理' },
+  metaInfo: { title: '送货管理' },
   data () {
     return {
       tabType: 'WAYBILL',
