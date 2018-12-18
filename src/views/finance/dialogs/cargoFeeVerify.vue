@@ -76,7 +76,7 @@ export default {
     save () {
       this.$refs['writeOffForm'].validate((valid) => {
         const data = {
-          actualFee: float.round(this.writeOffForm.actualFee) * 100,
+          actualFee: float.round(this.writeOffForm.actualFee * 100),
           payType: this.writeOffForm.payType,
           account: this.writeOffForm.account.replace(/\s+/g, ''),
           bankBranch: this.writeOffForm.bankBranch,
