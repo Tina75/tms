@@ -326,7 +326,7 @@ const rate = {
     return value ? float.floor(value / 100, 4) : value
   },
   get (value) {
-    return value ? float.floor(value * 100, 2) : value === 0 ? value : null
+    return value ? float.round(value * 100, 2) : value === 0 ? value : null
   }
 }
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee', 'collectionMoney']
@@ -827,7 +827,7 @@ export default {
           partnerType: 1, // 计算规则分类：1-发货方，2-承运商，3-外转方
           weight: statics.weight,
           volume: statics.volume,
-          distance: this.orderForm.mileage ? this.orderForm.mileage * 1000 : 0,
+          distance: this.orderForm.mileage ? parseInt(this.orderForm.mileage * 1000) : 0,
           startPoint: { lat: this.orderForm.consignerAddressLatitude, lng: this.orderForm.consignerAddressLongitude },
           endPoint: { lat: this.orderForm.consigneeAddressLatitude, lng: this.orderForm.consigneeAddressLongitude }
         },
@@ -1103,7 +1103,7 @@ export default {
             })
             // 转换成分单位
             transferFeeList.forEach((fee) => {
-              form[fee] = form[fee] ? form[fee] * 100 : 0
+              form[fee] = form[fee] ? float.round(form[fee] * 100) : 0
             })
             resolve(form)
           } else {

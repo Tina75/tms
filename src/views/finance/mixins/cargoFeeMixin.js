@@ -9,6 +9,7 @@ import _ from 'lodash'
 import server from '@/libs/js/server'
 import TMSUrl from '@/libs/constant/url'
 import { mapGetters } from 'vuex'
+import float from '@/libs/js/float'
 export default {
   data () {
     return {
@@ -131,7 +132,7 @@ export default {
           id: ids,
           title: this.verifyTitle,
           verifyType: this.verifyType,
-          needPay: parseFloat((needPay / 100).toFixed(2)),
+          needPay: float.round((needPay / 100).toFixed(2)),
           orderNum: this.selectedRows.length
         },
         methods: {
@@ -156,7 +157,7 @@ export default {
           id: data.id,
           title: this.verifyTitle,
           verifyType: this.verifyType,
-          needPay: parseFloat((data.collectionMoney / 100).toFixed(2)),
+          needPay: float.round((data.collectionMoney / 100).toFixed(2)),
           orderNum: 0
         },
         methods: {

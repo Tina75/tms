@@ -106,6 +106,7 @@ import BaseComponent from '@/basic/BaseComponent'
 import Server from '@/libs/js/server'
 import FontIcon from '@/components/FontIcon'
 import DataEmpty from '@/components/DataEmpty'
+import float from '@/libs/js/float'
 import _ from 'lodash'
 export default {
   name: 'writingOff',
@@ -437,7 +438,7 @@ export default {
             verifyType: 1,
             isOil: 0,
             scene: this.scene,
-            needPay: parseFloat(data.row.totalFeeText),
+            needPay: float.round(data.row.totalFeeText),
             settleTypeDesc: data.row.settleTypeDesc
           },
           methods: {
