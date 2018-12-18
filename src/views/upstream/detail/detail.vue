@@ -138,7 +138,7 @@
         <Row style="padding-top: 17px;">
           <i-col span="4">
             <span style="width: 72px;">计费里程：</span>
-            <span v-if="detail.mileage" style="font-weight:bold;">{{detail.mileage}}公里</span>
+            <span v-if="detail.mileage" style="font-weight:bold;">{{detail.mileage | mileage}}公里</span>
             <span v-else>-</span>
           </i-col>
           <i-col span="4">
@@ -212,9 +212,7 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import '@/libs/js/filter'
-// import OrderPrint from './components/OrderPrint'
-// import openSwipe from '@/components/swipe/index'
-// import _ from 'lodash'
+import { renderVolume, renderWeight } from '@/libs/js/util'
 import float from '@/libs/js/float'
 export default {
   name: 'detail',
@@ -246,14 +244,16 @@ export default {
           title: '重量（吨）',
           key: 'weight',
           render: (h, p) => {
-            return h('span', p.row.weight ? p.row.weight : '-')
+            // return h('span', p.row.weight ? p.row.weight : '-')
+            return renderWeight(h, p.row['weight'])
           }
         },
         {
           title: '体积（方）',
           key: 'volume',
           render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : '-')
+            // return h('span', p.row.volume ? p.row.volume : '-')
+            return renderVolume(h, p.row['volume'])
           }
         },
         {

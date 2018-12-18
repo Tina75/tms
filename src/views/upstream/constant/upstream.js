@@ -1,5 +1,6 @@
 // import TMSUrl from '@/libs/constant/url'
 import float from '@/libs/js/float'
+import { renderMileage, renderVolume, renderWeight } from '@/libs/js/util'
 export const TABLE_COLUMNS = vm => [
   {
     type: 'selection',
@@ -88,7 +89,7 @@ export const TABLE_COLUMNS = vm => [
     key: 'mileage',
     width: 120,
     render: (h, params) => {
-      return h('span', params.row.mileage || '-')
+      return renderMileage(h, params.row['mileage'])
     }
   },
   {
@@ -96,7 +97,9 @@ export const TABLE_COLUMNS = vm => [
     key: 'volume',
     minWidth: 100,
     render: (h, p) => {
-      return h('span', p.row.volume ? p.row.volume : '-')
+      // return h('span', p.row.volume ? p.row.volume : '-')
+      return renderVolume(h, p.row['volume'])
+      // renderVolume
     }
   },
   {
@@ -104,7 +107,8 @@ export const TABLE_COLUMNS = vm => [
     key: 'weight',
     minWidth: 100,
     render: (h, p) => {
-      return h('span', p.row.weight ? p.row.weight : '-')
+      // return h('span', p.row.weight ? p.row.weight : '-')
+      return renderWeight(h, p.row['weight'])
     }
   },
   {
