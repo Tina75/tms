@@ -50,7 +50,7 @@ export default {
       state.navTabList = state.navTabList.filter((item) => item.id !== tab.id)
     },
     refreshNavTab (state, tab) {
-      const { index, ...navTab } = tab
+      const { index, navTab } = tab
       state.navTabList.splice(index, -1, navTab)
     },
     removeActiveTabClass (state) {

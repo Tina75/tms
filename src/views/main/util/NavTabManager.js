@@ -18,13 +18,14 @@ class NavTabManager {
       store.dispatch('setActiveTab', findedTab.id)
     } else if (this.reload) {
       // 刷新
-      store.dispatch('refreshNavTab', { navTab: route, index: this.reloadIndex })
+      let navtab = new NavTagItem(this, route)
+      store.dispatch('refreshNavTab', { navTab: navtab, index: this.reloadIndex })
       this.reload = false
       this.reloadIndex = -1
     } else {
       // 打开新tab
-      let navtag = new NavTagItem(this, route)
-      store.dispatch('addNavTab', navtag)
+      let navtab = new NavTagItem(this, route)
+      store.dispatch('addNavTab', navtab)
     }
     // store.dispatch('removeActiveTabClass')
   }
