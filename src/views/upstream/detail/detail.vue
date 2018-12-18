@@ -138,7 +138,7 @@
         <Row style="padding-top: 17px;">
           <i-col span="4">
             <span style="width: 72px;">计费里程：</span>
-            <span v-if="detail.mileage" style="font-weight:bold;">{{detail.mileage / 1000}}公里</span>
+            <span v-if="detail.mileage" style="font-weight:bold;">{{detail.mileage}}公里</span>
             <span v-else>-</span>
           </i-col>
           <i-col span="4">
@@ -260,7 +260,7 @@ export default {
           title: '货值（元）',
           key: 'cost',
           render: (h, params) => {
-            return h('span', params.row.cost ? params.row.cost / 100 : '-')
+            return h('span', params.row.cost ? (params.row.cost / 100).toFixed(2) : '-')
           }
         },
         {
@@ -329,7 +329,7 @@ export default {
       this.detail.cargoInfos.map((item) => {
         total += Number(item.volume)
       })
-      return total.toFixed(1)
+      return total
     },
     // 总重量
     weightTotal () {
@@ -337,7 +337,7 @@ export default {
       this.detail.cargoInfos.map((item) => {
         total += Number(item.weight)
       })
-      return total.toFixed(2)
+      return total
     }
   },
 
@@ -367,10 +367,11 @@ export default {
       shipperOrderIds.push(this.shipperOrderId)
       Server({
         url: '/busconnector/shipper/accept',
-        method: 'get',
+        method: 'post',
         data: { shipperOrderIds }
       }).then(res => {
-        self.$Message.success('接受成功')
+        this.$Message.success('接受成功')
+        this.getDetail()
       })
     },
     // 拒绝
@@ -392,6 +393,7 @@ export default {
               data: { shipperOrderIds }
             }).then(res => {
               self.$Message.success('拒绝完成')
+              self.getDetail()
             })
           }
         }
