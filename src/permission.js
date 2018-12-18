@@ -1,6 +1,8 @@
 import router from './router'
 import store from './store/index'
 import { getToken, removeToken } from './libs/js/auth'
+
+const whiteList = ['/login', '/register', '/findback']
 /**
  * 路由监控
  */
@@ -25,18 +27,19 @@ router.beforeEach((to, from, next) => {
             next({ path: '/home' })
           })
           .catch((er) => {
+            // 后端异常
             // store.dispatch('logout')
             //   .then(() => {
             //     next({ path: '/login' })
             //   })
-            next({ ...to })
+            next()
           })
       } else {
         next()
       }
     }
   } else {
-    if (to.path === '/login') {
+    if (whiteList.includes(to.path)) {
       next()
     } else {
       next('/login')

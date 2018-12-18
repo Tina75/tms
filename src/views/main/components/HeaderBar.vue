@@ -166,7 +166,7 @@ export default {
      * 2. 用户主动点击退出
      */
     userLogout (msg) {
-      if (msg) {
+      if (typeof msg === 'string') {
         this.$Message.warning({
           content: msg,
           duration: 3

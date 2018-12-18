@@ -84,7 +84,7 @@
                     @click="nextStep">{{step === 2 ? '立即注册' : '下一步'}}</Button>
             <div>
               <a v-if="step" @click.prevent="step = step - 1">&lt;上一步</a>
-              <p style="float: right;">已有账号？<a @click.prevent="changeMode('signin')">请登录&gt;</a></p>
+              <p style="float: right;">已有账号？<router-link to="/login">请登录&gt;</router-link></p>
             </div>
           </FormItem>
         </Form>
