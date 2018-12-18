@@ -51,6 +51,13 @@ Vue.filter('codeToName', function (cityId) {
 Vue.filter('toPoint', function (cityId) {
   return cityId / 100
 })
+
+/**
+ * 计费里程格式化
+ */
+Vue.filter('mileage', function (mileage) {
+  return mileage ? (mileage / 1000).toFixed(1) : '-'
+})
 /**
  * 根据code获取城市全名 格式化城市
  * @param code 城市code
