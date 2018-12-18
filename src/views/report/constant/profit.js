@@ -47,27 +47,42 @@ export const TABLECOLUMNS = {
     {
       title: '订单数',
       key: 'orderNum',
-      width: 200
+      width: 200,
+      render: (h, params) => {
+        return h('span', params.row.orderNum ? params.row.orderNum : '-')
+      }
     },
     {
       title: '重量（吨）',
       key: 'weight',
-      width: 200
+      width: 200,
+      render: (h, params) => {
+        return h('span', params.row.weight ? params.row.weight : '-')
+      }
     },
     {
       title: '重量（公斤）',
       key: 'weightKg',
-      width: 200
+      width: 200,
+      render: (h, params) => {
+        return h('span', params.row.weightKg ? params.row.weightKg : '-')
+      }
     },
     {
       title: '体积（方）',
       key: 'volume',
-      width: 200
+      width: 200,
+      render: (h, params) => {
+        return h('span', params.row.volume ? params.row.volume : '-')
+      }
     },
     {
       title: '件数',
       key: 'quantity',
-      width: 200
+      width: 200,
+      render: (h, params) => {
+        return h('span', params.row.quantity ? params.row.quantity : '-')
+      }
     },
     {
       title: '应收总费用',
@@ -199,7 +214,7 @@ export const TABLECOLUMNS = {
       key: 'shipmentTime',
       width: 150,
       render: (h, params) => {
-        return h('span', new Date(params.row.shipmentTime).Format('yyyy-MM-dd hh:mm'))
+        return h('span', params.row.shipmentTime ? new Date(params.row.shipmentTime).Format('yyyy-MM-dd hh:mm') : '-')
       }
     },
     {
@@ -207,7 +222,7 @@ export const TABLECOLUMNS = {
       key: 'arriveTime',
       width: 150,
       render: (h, params) => {
-        return h('span', new Date(params.row.arriveTime).Format('yyyy-MM-dd hh:mm'))
+        return h('span', params.row.arriveTime ? new Date(params.row.arriveTime).Format('yyyy-MM-dd hh:mm') : '-')
       }
     },
     {
@@ -248,22 +263,34 @@ export const TABLECOLUMNS = {
     {
       title: '重量（吨）',
       key: 'weight',
-      width: 200
+      width: 200,
+      render: (h, params) => {
+        return h('span', params.row.weight ? params.row.weight : '-')
+      }
     },
     {
       title: '重量（公斤）',
       key: 'weightKg',
-      width: 200
+      width: 200,
+      render: (h, params) => {
+        return h('span', params.row.weightKg ? params.row.weightKg : '-')
+      }
     },
     {
       title: '体积（方）',
       width: 200,
-      key: 'volume'
+      key: 'volume',
+      render: (h, params) => {
+        return h('span', params.row.volume ? params.row.volume : '-')
+      }
     },
     {
       title: '件数',
       width: 200,
-      key: 'quantity'
+      key: 'quantity',
+      render: (h, params) => {
+        return h('span', params.row.quantity ? params.row.quantity : '-')
+      }
     },
     {
       title: '应收总费用',
@@ -310,7 +337,7 @@ export const TABLECOLUMNS = {
       width: 200,
       key: 'createTime',
       render: (h, params) => {
-        return h('span', new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm'))
+        return h('span', params.row.createTime ? new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm') : '-')
       }
     },
     {
