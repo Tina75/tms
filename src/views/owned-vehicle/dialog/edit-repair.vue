@@ -66,10 +66,10 @@
             <Row>
               <Col span="19">
               <TagNumberInput :min="0" :max="validate.repairMoney" v-model="validate.payMoney" :show-chinese="false" placeholder="必填" @on-blur="payMoneyChange"></TagNumberInput>
-                </Col>
+              </Col>
               <Col span="2" offset="1">
               <span>元</span>
-                </Col>
+              </Col>
             </Row>
           </FormItem>
           </Col>
@@ -231,6 +231,7 @@ export default {
         this.validate.payMoney = this.validate.repairMoney
         this.validate.waitPayMoney = 0
       }
+      this.$refs.validate.validateField('payMoney')
     },
     payMoneyChange () {
       if ((float.round(this.validate.repairMoney) - float.round(this.validate.payMoney)) <= 0) {
