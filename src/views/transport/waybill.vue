@@ -196,7 +196,7 @@ export default {
         extra: true,
         render: (h, p) => {
           let record = p.row
-          if (record.status === 2 && this.hasPower(120101) && ((record.carrierName === '' && record.assignCarType === 1) || (record.carNo === '' && record.assignCarType === 2))) {
+          if (record.status === 2 && this.hasPower(120109) && ((record.carrierName === '' && record.assignCarType === 1) || (record.carNo === '' && record.assignCarType === 2))) {
             return h('a', {
               on: {
                 click: () => {
