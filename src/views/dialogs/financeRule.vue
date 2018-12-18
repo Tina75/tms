@@ -36,7 +36,7 @@ import BMap from 'BMap'
 let errorMsg = ''
 
 export default {
-  name: 'FinanceRule',
+  name: 'finance-rule',
   mixins: [ BaseDialog ],
   data () {
     const chargeValidate = (rule, value, callback) => {
@@ -116,7 +116,7 @@ export default {
          */
         // 公斤先乘 1000
         const weight = float.round(rule.ruleType === 7 || rule.ruleType === 6 ? this.weight * 1000 : this.weight)
-        const input = float.round(((rule.ruleType === 1 || rule.ruleType === 3 || rule.ruleType === 6 || rule.ruleType === 7) ? weight : this.volume) * 100)
+        const input = float.round(((rule.ruleType === 1 || rule.ruleType === 3 || rule.ruleType === 6 || rule.ruleType === 7) ? weight : this.volume) * 1000)
         Server({
           url: '/finance/charge/calc',
           method: 'get',
@@ -130,7 +130,7 @@ export default {
             carLength: this.carLength
           }
         }).then(res => {
-          this.charge = float.round(res.data.data / 100)
+          this.charge = float.round(res.data.data / 1000)
           errorMsg = ''
           this.$refs.$form.validate()
         }).catch(err => {
