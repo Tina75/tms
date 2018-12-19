@@ -100,11 +100,11 @@ export default {
     }
   },
   mounted () {
-    console.log(this.passAllocation)
     if (this.passAllocation) {
       this.$nextTick(() => {
         this.allocation = this.passAllocation
-        this.handleChange(this.allocation)
+        this.handleChange(this.allocation) // 初始化传值给父组件
+        this.$refs.allocationForm.validate()
       })
     } else {
       this.getAllocationStrategy().then((res) => {

@@ -209,7 +209,7 @@ export default {
       this.id.map((item) => {
         total += item.volume
       })
-      return float.round(total, 1)
+      return float.round(total, 4)
     },
     weightTotal () {
       let total = 0
