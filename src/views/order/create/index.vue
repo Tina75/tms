@@ -635,6 +635,8 @@ export default {
   created () {
     if (!this.$route.query.id) {
       this.autoFocus = true
+    } else {
+      this.getClients()
     }
   },
   mounted () {
@@ -688,7 +690,6 @@ export default {
       }
     })
     this.initBusineList()
-    this.initConfig()
   },
   beforeDestroy () {
     this.resetForm()
@@ -701,12 +702,6 @@ export default {
       'clearCargoes',
       'clearClients'
     ]),
-    initConfig () {
-      // this.unitType = 1
-      // Api.getOrderDefault(param).then(res => {
-      //   console.log(res)
-      // }).catch(err => console.log(err))
-    },
     initBusineList () {
       this.loading = true
       api.getBusineList().then(res => {
@@ -937,9 +932,7 @@ export default {
           } else {
             this.closeTab()
           }
-        }).catch(err => {
-          console.log(err)
-        })
+        }).catch(() => {})
     },
     dateChange (type, date) {
       const refs = type === 'START_DATE' ? 'stTimeInput' : type === 'END_DATE' ? 'edTimeInput' : ''
@@ -999,8 +992,7 @@ export default {
           const num = float.floor(res / 1000, 1)
           this.orderForm.mileage = Number(num)
         }
-      }).catch(err => {
-        console.log(err)
+      }).catch(() => {
       })
     },
     // 立即发运
@@ -1096,8 +1088,7 @@ export default {
               }
             })
           }
-        }).catch(err => {
-          console.log(err)
+        }).catch(() => {
         })
     },
     validateForm () {
