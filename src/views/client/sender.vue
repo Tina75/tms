@@ -47,7 +47,7 @@ import BasePage from '@/basic/BasePage'
 import float from '@/libs/js/float'
 const rate = {
   get (value) {
-    return value ? float.floor(value * 100, 2) : value === 0 ? value : null
+    return value ? float.floor(float.round(value * 100), 2) : value === 0 ? value : null
   }
 }
 export default {

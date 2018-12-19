@@ -104,6 +104,7 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
+import float from '@/libs/js/float'
 
 export default {
   name: 'stepPay',
@@ -160,7 +161,7 @@ export default {
           scene: this.scene,
           verifyType: 2,
           isOil: item.payType === 2 || item.payType === 4 || item.payType === 6,
-          needPay: parseFloat(item.feeText),
+          needPay: float.round(item.feeText),
           settleTypeDesc: this.settleTypeDesc
         },
         methods: {
@@ -199,7 +200,7 @@ export default {
           data: {
             orderId: this.id,
             payType: item.payType,
-            fee: parseFloat(item.fee) * 100
+            fee: float.round(item.fee * 100)
           }
         }).then(res => {
           this.loadData()

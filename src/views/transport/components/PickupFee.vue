@@ -242,9 +242,9 @@ export default {
     formatMoney () {
       let temp = Object.assign({}, this.payment)
       for (let key in temp) {
-        temp[key] *= 100
+        temp[key] = float.round(temp[key] * 100)
       }
-      temp.totalFee = this.paymentTotal * 100
+      temp.totalFee = float.round(this.paymentTotal * 100)
       return temp
     },
     // 获取分摊策略
@@ -277,14 +277,13 @@ export default {
 
 </script>
 <style lang='stylus'>
- @import "../style/detail.styl"
+  @import "../style/detail.styl"
 
- .part
-
-   .ivu-form-item-label
-     color #777
-     font-size 14px
-     padding 10px 0 10px
+  .part
+    .ivu-form-item-label
+      color #777
+      font-size 14px
+      padding 10px 0 10px
 
    .padding-left-label
     .ivu-form-item-label
@@ -305,12 +304,12 @@ export default {
 
   .detail-payment-way
     width calc(100% - 100px) !important
- .outer-fee
-  .ivu-col-span-5:first-child
-    margin-left -5px
- .own-fee
-  .ivu-col-span-5:first-child
-    margin-left -19px
+  .outer-fee
+    .ivu-col-span-5:first-child
+      margin-left -5px
+  .own-fee
+    .ivu-col-span-5:first-child
+      margin-left -19px
 </style>
 <style lang='stylus' scoped>
   .part

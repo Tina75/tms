@@ -259,9 +259,9 @@ export default {
       this.$refs[name].validate((valid) => {
         this.validate.repairDate = new Date(this.validate.repairDate).Format('yyyy-MM-dd hh:mm:ss')
         let params = Object.assign({}, this.validate)
-        params.repairMoney = this.validate.repairMoney * 100
-        params.payMoney = this.validate.payMoney * 100
-        params.waitPayMoney = this.validate.waitPayMoney * 100
+        params.repairMoney = float.round(this.validate.repairMoney * 100)
+        params.payMoney = float.round(this.validate.payMoney * 100)
+        params.waitPayMoney = float.round(this.validate.waitPayMoney * 100)
         if (valid) {
           this.loading = true
           if (this.flag === 1) { // 新增

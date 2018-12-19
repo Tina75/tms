@@ -676,7 +676,7 @@ export default {
       this._consignerCargoList()
     },
     rate (value) {
-      return float.floor(value * 100, 2)
+      return float.floor(float.round(value * 100), 2)
     }
   }
 }

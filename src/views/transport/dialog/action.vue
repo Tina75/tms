@@ -57,7 +57,7 @@ import OwnSendInfo from '../components/ownSendInfo'
 import PickupFee from '../components/PickupFee'
 import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 import Server from '@/libs/js/server'
-
+import float from '@/libs/js/float'
 export default {
   name: 'SendOrPickAction',
   components: { SendFee, SendCarrierInfo, OwnSendInfo, PickupFee },
@@ -220,9 +220,9 @@ export default {
       for (let key in temp) {
         if (typeof temp[key] === 'number') {
           if (key === 'mileage') {
-            temp[key] = temp[key] * 1000
+            temp[key] = float.round(temp[key] * 1000)
           } else {
-            temp[key] = temp[key] * 100
+            temp[key] = float.round(temp[key] * 100)
           }
         }
       }
