@@ -26,9 +26,14 @@
             <Input v-model="keywords.carNo" :maxlength="15"  placeholder="请输入车牌号"/>
           </div>
           <div class="col">
-            <Select v-model="keywords.billType" clearable placeholder="请选择业务类型">
+            <Select v-model="keywords.billType" clearable placeholder="请选择业务类型" @on-change="billTypeChange">
               <Option value="1">提货</Option>
               <Option value="3">送货</Option>
+            </Select>
+          </div>
+          <div class="col points">
+            <Select v-model="keywords.statusList" multiple placeholder="请选择状态">
+              <Option v-for="item in statusMap" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
           </div>
           <div class="col">
@@ -44,8 +49,6 @@
               @on-change="handleTimeChange"
             >
             </DatePicker>
-          </div>
-          <div class="col">
           </div>
         </div>
       </div>
@@ -105,7 +108,7 @@ export default {
         startTime: '',
         endTime: '',
         carNo: '',
-        statusList: undefined
+        statusList: []
       },
       keyword: {},
       options: {
@@ -120,40 +123,8 @@ export default {
         1: '提货',
         3: '送货'
       },
-      carriersId: null
-    }
-  },
-  computed: {
-    perMonth () {
-      return getPreMonth()
-    },
-    statusMap () {
-      if (this.keywords.billType === '1') {
-        return [
-          { label: '待提货', value: 1 },
-          { label: '提货中', value: 2 },
-          { label: '已提货', value: 3 }
-        ]
-      } else if (this.keywords.billType === '3') {
-        return [
-          { label: '待发运', value: 4 },
-          { label: '在途', value: 5 },
-          { label: '已到货', value: 6 }
-        ]
-      } else {
-        return [
-          { label: '待提货', value: 1 },
-          { label: '提货中', value: 2 },
-          { label: '已提货', value: 3 },
-          { label: '待发运', value: 4 },
-          { label: '在途', value: 5 },
-          { label: '已到货', value: 6 }
-        ]
-      }
-    },
-    columns () {
-      let _this = this
-      return [
+      carriersId: null,
+      columns: [
         {
           title: '司机姓名',
           key: 'driverName',
@@ -177,12 +148,7 @@ export default {
         {
           title: '状态',
           key: 'statusDesc',
-          width: 150,
-          filters: this.statusMap,
-          filterRemote (value, row) {
-            _this.keywords.statusList = value.length > 0 ? value : undefined
-            _this.search()
-          }
+          width: 150
         },
         {
           title: '业务类型',
@@ -273,6 +239,35 @@ export default {
       ]
     }
   },
+  computed: {
+    perMonth () {
+      return getPreMonth()
+    },
+    statusMap () {
+      if (this.keywords.billType === '1') {
+        return [
+          { label: '待提货', value: 1 },
+          { label: '提货中', value: 2 },
+          { label: '已提货', value: 3 }
+        ]
+      } else if (this.keywords.billType === '3') {
+        return [
+          { label: '待发运', value: 4 },
+          { label: '在途', value: 5 },
+          { label: '已到货', value: 6 }
+        ]
+      } else {
+        return [
+          { label: '待提货', value: 1 },
+          { label: '提货中', value: 2 },
+          { label: '已提货', value: 3 },
+          { label: '待发运', value: 4 },
+          { label: '在途', value: 5 },
+          { label: '已到货', value: 6 }
+        ]
+      }
+    }
+  },
   // mounted () {
   //   if (this.$route.query.tab) { // 首页跳转来的
   //     this.showSevenDate()
@@ -298,13 +293,14 @@ export default {
         billType: '',
         startTime: '',
         endTime: '',
-        carNo: ''
+        carNo: '',
+        statusList: []
       }
       this.times = ['', '']
     },
-    // 重新选择业务类型，清空状态
-    statusChange () {
-      this.keywords.status = ''
+    // 业务类型改变 状态值清空
+    billTypeChange () {
+      this.keywords.statusList = []
     },
     // 导出
     ProfitsExport () {
@@ -358,6 +354,14 @@ export default {
           margin-right 20px
           &:last-child
             margin-right 0
+        .points
+          /deep/
+            .ivu-select-multiple .ivu-select-selection
+              height 32px
+              display -webkit-box
+              -webkit-box-orient vertical
+              -webkit-line-clamp 1
+              overflow hidden
         .relative
           position relative
     .search-btn

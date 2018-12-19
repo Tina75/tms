@@ -165,7 +165,7 @@ export default {
           weight += item.weightKg
         }
       })
-      return weight
+      return float.round(weight)
     },
     // 子单1的总体积
     parentVolume () {
@@ -173,14 +173,13 @@ export default {
       this.parentOrderCargoList.map((item) => {
         volume += item.volume
       })
-      return volume
+      return float.round(volume)
     }
   },
 
   mounted: function () {
     this.getData()
     this.getSubOrderNum()
-    console.log(this.WeightOption, this.columns1, this.columns1WeightKg)
     // 动态添加吨或公斤列
     if (this.WeightOption === 1) {
       this.triggerWeightColumn(this.columns1, this.columns1Weight, 4)
@@ -206,7 +205,7 @@ export default {
           item.weightKg = float.round(item.weightKg)
           delete item.weight
         }
-        item.volume = float.round(item.volume, 1)
+        item.volume = float.round(item.volume, 4)
       })
       this.childOrderCargoList.map((item) => {
         // 区分吨和公斤 吨和公斤只需传一个
@@ -217,7 +216,7 @@ export default {
           item.weightKg = float.round(item.weightKg)
           delete item.weight
         }
-        item.volume = float.round(item.volume, 1)
+        item.volume = float.round(item.volume, 4)
       })
       const data = {
         id: this.id,
@@ -230,10 +229,7 @@ export default {
         data: data,
         ignoreCode: true
       }).then((res) => {
-        if (res.data.code === 50012) {
-          this.close()
-          this.openSeparateHintDialog([]) // 重复拆单
-        } else {
+        if (res.data.code === 10000) {
           if (this.childOneNo + this.childTwoNo === res.data.data.orderNoList.join('')) {
             this.$Message.success('拆单成功')
             this.close()
@@ -241,8 +237,14 @@ export default {
             this.close()
             this.openSeparateHintDialog(res.data.data.orderNoList) // 拆单过后子订单号有修改
           }
+          this.ok()
+        } else if (res.data.code === 50012) {
+          this.close()
+          this.openSeparateHintDialog([]) // 重复拆单
+          this.ok()
+        } else {
+          this.$Message.error(res.data.msg)
         }
-        this.ok()
       })
     },
     // 拆单完成后的弹窗提示
@@ -261,7 +263,6 @@ export default {
         url: 'order/detail?id=' + this.id,
         method: 'get'
       }).then((res) => {
-        console.log(res)
         this.detailData = _.cloneDeep(res.data.data)
         let orderCargoList = res.data.data.orderCargoList
         // 将返回数据列表中货值、数量、重量、体积的''替换成0
@@ -305,11 +306,11 @@ export default {
       parentData.quantity = this.quantityVal ? params.row.quantity - this.quantityVal : 0
       // 区分吨和公斤
       if (this.WeightOption === 1) {
-        parentData.weight = this.weightVal ? params.row.weight - this.weightVal : 0
+        parentData.weight = float.round(this.weightVal ? params.row.weight - this.weightVal : 0, 3)
       } else {
         parentData.weightKg = this.weightVal ? params.row.weightKg - this.weightVal : 0
       }
-      parentData.volume = this.volumeVal ? params.row.volume - this.volumeVal : 0
+      parentData.volume = float.round(this.volumeVal ? params.row.volume - this.volumeVal : 0, 4)
       // 货值比例关联优先级：数量-->重量-->体积
       if (params.row.quantity !== 0) {
         parentData.cargoCost = parseInt(float.round(cargoCost * parentData.quantity) / quantity)
@@ -321,7 +322,7 @@ export default {
           parentData.cargoCost = parseInt(float.round(cargoCost * parentData.weightKg) / weight)
         }
       } else {
-        parentData.cargoCost = parseInt(float.round(cargoCost * parentData.volume, 1) / volume)
+        parentData.cargoCost = parseInt(float.round(cargoCost * parentData.volume, 4) / volume)
       }
       this.$set(this.parentOrderCargoList, params.index, parentData)
       this.$set(this.cloneData, params.index, parentData)

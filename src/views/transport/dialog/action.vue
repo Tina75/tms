@@ -206,7 +206,7 @@ export default {
         this.settlementPayInfo = temp
 
         this.loading = false
-      }).catch(err => console.error(err))
+      }).catch()
     },
 
     // 设置金额单位为元

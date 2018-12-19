@@ -410,7 +410,7 @@ export default {
       this.detail.orderCargoList.map((item) => {
         total += Number(item.volume)
       })
-      return float.round(total, 1) + '方'
+      return float.round(total, 4) + '方'
     },
     // 总重量
     weightTotal () {
@@ -828,9 +828,9 @@ export default {
               { name: '拆单', value: 3, code: 120110, disabled: true, content: '有代收货款的订单不允许拆单' }
             )
           } else {
-            if (!r.volume && !r.weight) {
+            if (!r.volume && !r.weight && !r.quantity) {
               renderBtn.push(
-                { name: '拆单', value: 3, code: 120110, disabled: true, content: '体积或重量未填，无法拆单' }
+                { name: '拆单', value: 3, code: 120110, disabled: true, content: '包装数量或体积或重量未填，无法拆单' }
               )
             } else {
               renderBtn.push(

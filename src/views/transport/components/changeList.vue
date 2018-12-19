@@ -79,6 +79,7 @@ import BasePage from '@/basic/BasePage'
 import TransportBase from '../mixin/transportBase'
 import PayInfo from '../components/PayInfo'
 import { getCarType, getCarLength } from '@/libs/constant/carInfo'
+import allocationStrategy from '../constant/allocation.js'
 import _ from 'lodash'
 
 const moneyFormate = (fee) => {
@@ -139,11 +140,17 @@ export default {
           'order': 30,
           'span': 24
         },
+        'carrierWaybillNo': {
+          'type': 'info',
+          'description': '承运商运单号',
+          'order': 31,
+          'span': 24
+        },
         'assignCarType': {
           'type': 'info',
           'description': '派车类型',
           'ways': 6,
-          'order': 31,
+          'order': 32,
           'span': 12
         },
         'carNo': {
@@ -232,6 +239,13 @@ export default {
           'order': 140,
           'span': 12
         },
+        'accommodation': {
+          'type': 'fee',
+          'description': '住宿费',
+          'ways': 1,
+          'order': 141,
+          'span': 12
+        },
         // 'cashBack': {
         //   'type': 'fee',
         //   'description': '返现费用',
@@ -249,6 +263,13 @@ export default {
           'description': '公里数',
           'ways': 2,
           'order': 160,
+          'span': 12
+        },
+        'allocationStrategy': {
+          'type': 'fee',
+          'description': '分摊策略',
+          'ways': 7, // 展示方式
+          'order': 161,
           'span': 12
         },
         'remark': {
@@ -376,6 +397,7 @@ export default {
      * 4: 车长
      * 5：车型
      * 6: 派车类型，1外转；2自送
+     * 7：分摊策略
      * */
     waysSwitch (num, value) {
       switch (num) {
@@ -390,8 +412,14 @@ export default {
         case 4: return getCarLength(value) || '-'
         case 5: return getCarType(value) || '-'
         case 6: return value === 2 ? '自送' : '外转'
+        case 7: return this.getAllocationValToLabel(value)
         default: return ''
       }
+    },
+    // 将分摊策略返回的标识映射为文字
+    getAllocationValToLabel (data) {
+      let list = allocationStrategy.find(item => item.value === (data !== '' ? data : 1))
+      return list.label
     },
     showDetail () {
       this.hideDetail = !this.hideDetail
@@ -467,7 +495,6 @@ export default {
           list.push(mid)
         }
       }
-      console.log(list)
       return list
     }
   }
@@ -535,7 +562,7 @@ export default {
       .label
         color #777
         display inline-block
-        width 80px
+        width 100px
       .after.content
         color #EC4E4E
     .labelContent.ivu-col-span-24
