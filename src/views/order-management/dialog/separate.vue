@@ -229,10 +229,7 @@ export default {
         data: data,
         ignoreCode: true
       }).then((res) => {
-        if (res.data.code === 50012) {
-          this.close()
-          this.openSeparateHintDialog([]) // 重复拆单
-        } else {
+        if (res.data.code === 10000) {
           if (this.childOneNo + this.childTwoNo === res.data.data.orderNoList.join('')) {
             this.$Message.success('拆单成功')
             this.close()
@@ -240,8 +237,14 @@ export default {
             this.close()
             this.openSeparateHintDialog(res.data.data.orderNoList) // 拆单过后子订单号有修改
           }
+          this.ok()
+        } else if (res.data.code === 50012) {
+          this.close()
+          this.openSeparateHintDialog([]) // 重复拆单
+          this.ok()
+        } else {
+          this.$Message.error(res.data.msg)
         }
-        this.ok()
       })
     },
     // 拆单完成后的弹窗提示
