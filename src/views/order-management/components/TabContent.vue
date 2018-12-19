@@ -347,13 +347,13 @@ export default {
                     ])
                   )
                 } else {
-                  if (!r.volume && !r.weight) {
+                  if (!r.volume && !r.weight && !r.quantity) {
                     renderBtn.push(
                       h('Tooltip', {
                         props: {
-                          maxWidth: '200',
+                          maxWidth: '240',
                           offset: -9,
-                          content: '体积或重量未填，无法拆单',
+                          content: '包装数量或体积或重量未填，无法拆单',
                           placement: 'top-start',
                           transfer: true
                         }
