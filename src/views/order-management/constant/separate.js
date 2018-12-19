@@ -165,7 +165,7 @@ export const TABLE_COLUMNS_ONE = vm => [
                   params.row.cargoCost = float.round(cloneData.cargoCost)
                 }
                 // 没修改过数量、重量、体积中任意一个 或 修改过数量、重量、体积跟初始值一致   部分整拆
-                if (vm.quantityVal === params.row.quantity && float.round(vm.weightVal) === float.round(vm.WeightOption === 1 ? params.row.weight : params.row.weightKg) && float.round(vm.volumeVal, 4) === float.round(params.row.volume, 4)) {
+                if (vm.quantityVal === params.row.quantity && float.round(vm.weightVal, 3) === float.round(vm.WeightOption === 1 ? params.row.weight : params.row.weightKg, 3) && float.round(vm.volumeVal, 4) === float.round(params.row.volume, 4)) {
                   vm.separateWholeList(params.index)
                 } else {
                   if (params.row.quantity !== 0) {
@@ -197,9 +197,10 @@ export const TABLE_COLUMNS_ONE = vm => [
                     }
                   }
                   if (params.row.weight !== 0 || params.row.weightKg !== 0) {
-                    if (float.round(vm.weightVal) === float.round(vm.WeightOption === 1 ? params.row.weight : params.row.weightKg)) {
+                    if (float.round(vm.weightVal, 3) === float.round(vm.WeightOption === 1 ? params.row.weight : params.row.weightKg, 3)) {
                       vm.$Message.warning('重量必须修改')
                       vm.isSeparate = true
+                      params.row.volume = vm.volumeVal
                       return
                     }
                   }
@@ -207,6 +208,7 @@ export const TABLE_COLUMNS_ONE = vm => [
                     if (float.round(vm.volumeVal, 4) === float.round(params.row.volume, 4)) {
                       vm.$Message.warning('体积必须修改')
                       vm.isSeparate = true
+                      params.row.weight = vm.weightVal
                       return
                     }
                   }

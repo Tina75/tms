@@ -635,6 +635,8 @@ export default {
   created () {
     if (!this.$route.query.id) {
       this.autoFocus = true
+    } else {
+      this.getClients()
     }
   },
   mounted () {
@@ -688,7 +690,6 @@ export default {
       }
     })
     this.initBusineList()
-    this.initConfig()
   },
   beforeDestroy () {
     this.resetForm()
@@ -701,12 +702,6 @@ export default {
       'clearCargoes',
       'clearClients'
     ]),
-    initConfig () {
-      // this.unitType = 1
-      // Api.getOrderDefault(param).then(res => {
-      //   console.log(res)
-      // }).catch(err => console.log(err))
-    },
     initBusineList () {
       this.loading = true
       api.getBusineList().then(res => {
@@ -770,6 +765,7 @@ export default {
           _this.orderForm.start = addresses[0].cityCode
           _this.orderForm.consignerAddressLatitude = addresses[0].latitude
           _this.orderForm.consignerAddressLongitude = addresses[0].longitude
+          _this.orderForm.consignerHourseNumber = addresses[0].consignerHourseNumber
         }
         if (consignees.length > 0) {
           // 设置收货人信息，收货人，手机，收货地址
@@ -781,6 +777,7 @@ export default {
           _this.orderForm.end = consignees[0].cityCode
           _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
           _this.orderForm.consigneeAddressLongitude = consignees[0].longitude
+          _this.orderForm.consigneeHourseNumber = consignees[0].consignerHourseNumber
         }
         // 计费里程
         _this.distanceCp()
@@ -814,6 +811,7 @@ export default {
       this.orderForm.consigneeAddress = row.address
       this.orderForm.consigneeAddressLatitude = row.latitude
       this.orderForm.consigneeAddressLongitude = row.longitude
+      this.orderForm.consigneeHourseNumber = row.consigneeHourseNumber
       // 计费里程
       this.distanceCp()
     },
@@ -937,9 +935,7 @@ export default {
           } else {
             this.closeTab()
           }
-        }).catch(err => {
-          console.log(err)
-        })
+        }).catch(() => {})
     },
     dateChange (type, date) {
       const refs = type === 'START_DATE' ? 'stTimeInput' : type === 'END_DATE' ? 'edTimeInput' : ''
@@ -999,8 +995,7 @@ export default {
           const num = float.floor(res / 1000, 1)
           this.orderForm.mileage = Number(num)
         }
-      }).catch(err => {
-        console.log(err)
+      }).catch(() => {
       })
     },
     // 立即发运
@@ -1096,8 +1091,7 @@ export default {
               }
             })
           }
-        }).catch(err => {
-          console.log(err)
+        }).catch(() => {
         })
     },
     validateForm () {
