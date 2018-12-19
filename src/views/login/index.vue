@@ -154,7 +154,7 @@ export default {
       // const exp = new Date()
       // exp.setTime(exp.getTime() + EXPIRES)
       // document.cookie = `token=${escape(token)};expires=${exp.toGMTString()}`
-      Cookies.set('token', token, { expires: 1, path: '/' })
+      Cookies.set('token', token, { expires: 365, path: '/' })
     },
 
     // 登录处理
@@ -180,7 +180,7 @@ export default {
           }
         }).catch(err => {
           this.getCaptcha()
-          console.error(err)
+          throw err
         })
       })
     }
