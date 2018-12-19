@@ -118,7 +118,8 @@ export default {
           if (local.getStatus() === window.BMAP_STATUS_SUCCESS) {
             // 判断状态是否正确
             let arr = []
-            if (this.firstSelect && this.$refs['selectInput'][0]) {
+            //  && this.$refs['selectInput'][0] !== undefined
+            if (this.firstSelect) {
               this.$nextTick(() => {
                 this.$refs['selectInput'].focusIndex = 0
               })
