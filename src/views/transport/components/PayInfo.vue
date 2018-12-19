@@ -57,6 +57,7 @@ export default {
           title: '现金',
           key: 'cashAmount',
           render: (h, p) => {
+            // 编辑 - 不能编辑 且 需要提示语
             if (this.mode === 'edit' && p.row.isCashDisabled && p.row.type === 'change') {
               let str = this.getTips(p)
               return h('Tooltip', {
@@ -71,7 +72,11 @@ export default {
                 }
               }, str)])
             }
+            // 展示表格 不显示 0 - 改单展示
+            if ((this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) && p.row.type === 'change') return h('span', p.row.cashAmount !== '' ? p.row.cashAmount : '')
+            // 展示表格 可以显示 0
             if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) return h('span', p.row.cashAmount || 0)
+            // 编辑状态
             return h(MoneyInput, {
               props: {
                 value: p.row.cashAmount,
@@ -107,6 +112,7 @@ export default {
                 }
               }, str)])
             }
+            if ((this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) && p.row.type === 'change') return h('span', p.row.fuelCardAmount !== '' ? p.row.fuelCardAmount : '')
             if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCardDisabled)) return h('span', p.row.fuelCardAmount || 0)
 
             return h(MoneyInput, {
