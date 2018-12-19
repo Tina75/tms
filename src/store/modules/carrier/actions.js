@@ -16,7 +16,8 @@ export default {
           // pageNo: pageNo,
           // pageSize: pageSize,
           type: 1,
-          keyword: null
+          keyword: null,
+          pageSize: 100
         }
       }).then((response) => {
         // 承运商信息

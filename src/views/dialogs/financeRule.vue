@@ -119,7 +119,7 @@ export default {
         const input = float.round(((rule.ruleType === 1 || rule.ruleType === 3 || rule.ruleType === 6 || rule.ruleType === 7) ? weight : this.volume) * 1000)
         Server({
           url: '/finance/charge/calc',
-          method: 'get',
+          method: 'post',
           data: {
             ruleId: rule.id,
             departure: this.start,

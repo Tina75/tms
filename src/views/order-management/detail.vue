@@ -410,7 +410,7 @@ export default {
       this.detail.orderCargoList.map((item) => {
         total += Number(item.volume)
       })
-      return float.round(total, 1) + '方'
+      return float.round(total, 4) + '方'
     },
     // 总重量
     weightTotal () {
