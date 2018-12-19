@@ -323,46 +323,18 @@ export default {
   },
   computed: {
     infoListOld () {
-      // let list = []
-      // let data = this.data.old
-      // for (let key in data) {
-      //   if (this.changeList[key] && this.changeList[key].type === 'info') {
-      //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
-      //   }
-      // }
       let list = this.filterFieldsByAssignCarType(this.changeList, this.data.old.assignCarType || 1)
       return this.getList(this.data.old, 'info', list)
     },
     infoListNew () {
-      // let list = []
-      // let data = this.data.new
-      // for (let key in data) {
-      //   if (this.changeList[key] && this.changeList[key].type === 'info') {
-      //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
-      //   }
-      // }
       let list = this.filterFieldsByAssignCarType(this.changeList, this.data.new.assignCarType || 1)
       return this.getList(this.data.new, 'info', list)
     },
     feeListOld () {
-      // let list = []
-      // let data = this.data.old
-      // for (let key in data) {
-      //   if (this.changeList[key] && this.changeList[key].type === 'fee') {
-      //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
-      //   }
-      // }
       let list = this.filterFieldsByAssignCarType(this.changeList, this.data.old.assignCarType || 1)
       return this.getList(this.data.old, 'fee', list)
     },
     feeListNew () {
-      // let list = []
-      // let data = this.data.new
-      // for (let key in data) {
-      //   if (this.changeList[key] && this.changeList[key].type === 'fee') {
-      //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
-      //   }
-      // }
       let list = this.filterFieldsByAssignCarType(this.changeList, this.data.new.assignCarType || 1)
       return this.getList(this.data.new, 'fee', list)
     },
@@ -457,29 +429,36 @@ export default {
             if (i === 0 && (key === 'prepaidCash' || key === 'prepaidFuel')) {
               mid = {
                 payType: item[i].payType,
-                fuelCardAmount: typeof obj.prepaidFuel === 'number' ? obj.prepaidFuel / 100 : 0,
-                cashAmount: typeof obj.prepaidCash === 'number' ? obj.prepaidCash / 100 : 0
+                fuelCardAmount: typeof obj.prepaidFuel === 'number' ? obj.prepaidFuel / 100 : '',
+                cashAmount: typeof obj.prepaidCash === 'number' ? obj.prepaidCash / 100 : '',
+                type: 'change'
               }
+              // mid.payType = item[i].payType
+              // if (typeof obj.prepaidFuel === 'number') mid.fuelCardAmount = obj.prepaidFuel / 100
+              // if (typeof obj.prepaidCash === 'number') mid.cashAmount = obj.prepaidCash / 100
             }
             if (i === 1 && (key === 'arrivePaidCash' || key === 'arrivePaidFuel')) {
               mid = {
                 payType: item[i].payType,
-                fuelCardAmount: typeof obj.arrivePaidFuel === 'number' ? obj.arrivePaidFuel / 100 : 0,
-                cashAmount: typeof obj.arrivePaidCash === 'number' ? obj.arrivePaidCash / 100 : 0
+                fuelCardAmount: typeof obj.arrivePaidFuel === 'number' ? obj.arrivePaidFuel / 100 : '',
+                cashAmount: typeof obj.arrivePaidCash === 'number' ? obj.arrivePaidCash / 100 : '',
+                type: 'change'
               }
             }
             if (i === 2 && (key === 'receiptPaidCash' || key === 'receiptPaidFule')) {
               mid = {
                 payType: item[i].payType,
-                fuelCardAmount: typeof obj.receiptPaidFule === 'number' ? obj.receiptPaidFule / 100 : 0,
-                cashAmount: typeof obj.receiptPaidCash === 'number' ? obj.receiptPaidCash / 100 : 0
+                fuelCardAmount: typeof obj.receiptPaidFule === 'number' ? obj.receiptPaidFule / 100 : '',
+                cashAmount: typeof obj.receiptPaidCash === 'number' ? obj.receiptPaidCash / 100 : '',
+                type: 'change'
               }
             }
             if (i === 3 && (key === 'tailPaidCash' || key === 'tailPaidFule')) {
               mid = {
                 payType: item[i].payType,
-                fuelCardAmount: typeof obj.tailPaidFule === 'number' ? obj.tailPaidFule / 100 : 0,
-                cashAmount: typeof obj.tailPaidCash === 'number' ? obj.tailPaidCash / 100 : 0
+                fuelCardAmount: typeof obj.tailPaidFule === 'number' ? obj.tailPaidFule / 100 : '',
+                cashAmount: typeof obj.tailPaidCash === 'number' ? obj.tailPaidCash / 100 : '',
+                type: 'change'
               }
             }
           }
@@ -488,6 +467,7 @@ export default {
           list.push(mid)
         }
       }
+      console.log(list)
       return list
     }
   }
