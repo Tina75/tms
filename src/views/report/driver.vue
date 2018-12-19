@@ -234,7 +234,10 @@ export default {
         {
           title: '件数',
           key: 'cargoCnt',
-          width: 150
+          width: 150,
+          render: (h, params) => {
+            return h('span', params.row.cargoCnt !== '' ? params.row.cargoCnt : '-')
+          }
         }
       ]
     }
