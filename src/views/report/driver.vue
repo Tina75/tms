@@ -32,7 +32,7 @@
             </Select>
           </div>
           <div class="col points">
-            <Select v-model="keywords.statusList" multiple >
+            <Select v-model="keywords.statusList" multiple placeholder="请选择状态">
               <Option v-for="item in statusMap" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
           </div>
