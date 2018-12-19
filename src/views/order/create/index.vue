@@ -765,6 +765,7 @@ export default {
           _this.orderForm.start = addresses[0].cityCode
           _this.orderForm.consignerAddressLatitude = addresses[0].latitude
           _this.orderForm.consignerAddressLongitude = addresses[0].longitude
+          _this.orderForm.consignerHourseNumber = addresses[0].longitude
         }
         if (consignees.length > 0) {
           // 设置收货人信息，收货人，手机，收货地址
@@ -776,6 +777,7 @@ export default {
           _this.orderForm.end = consignees[0].cityCode
           _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
           _this.orderForm.consigneeAddressLongitude = consignees[0].longitude
+          _this.orderForm.consigneeHourseNumber = consignees[0].consigneeHourseNumber
         }
         // 计费里程
         _this.distanceCp()
@@ -809,6 +811,7 @@ export default {
       this.orderForm.consigneeAddress = row.address
       this.orderForm.consigneeAddressLatitude = row.latitude
       this.orderForm.consigneeAddressLongitude = row.longitude
+      this.orderForm.consigneeHourseNumber = row.consigneeHourseNumber
       // 计费里程
       this.distanceCp()
     },
