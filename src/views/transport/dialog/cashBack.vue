@@ -22,6 +22,7 @@
 import BaseDialog from '@/basic/BaseDialog'
 import MoneyInput from '../components/MoneyInput'
 import Server from '@/libs/js/server'
+import float from '@/libs/js/float'
 export default {
   name: 'CashBack',
   components: { MoneyInput },
@@ -34,7 +35,7 @@ export default {
   methods: {
     ok () {
       const data = {
-        cashBack: this.cashBack * 100 || 0,
+        cashBack: float.round(this.cashBack * 100 || 0),
         confirmBack: 1
       }
       if (this.type === 'waybill') {
