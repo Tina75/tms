@@ -227,7 +227,7 @@ export default {
       return {
         start: this.send.start,
         end: this.send.end,
-        weight: this.weightTotal,
+        weight: float.round(this.WeightOption === 1 ? this.weightTotal : this.weightTotal / 1000, 3),
         volume: this.volumeTotal
       }
     },
