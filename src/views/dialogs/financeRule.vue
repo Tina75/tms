@@ -115,8 +115,8 @@ export default {
          * 公斤公里 7
          */
         // 公斤先乘 1000
-        const weight = float.round(rule.ruleType === 7 || rule.ruleType === 6 ? this.weight * 1000 : this.weight, 3)
-        const input = float.round(((rule.ruleType === 1 || rule.ruleType === 3 || rule.ruleType === 6 || rule.ruleType === 7) ? weight : this.volume) * 1000)
+        const weight = float.round(rule.ruleType === 7 || rule.ruleType === 6 ? this.weight * 100 : this.weight, 3)
+        const input = float.round(((rule.ruleType === 1 || rule.ruleType === 3 || rule.ruleType === 6 || rule.ruleType === 7) ? weight : this.volume) * 100)
         Server({
           url: '/finance/charge/calc',
           method: 'post',
@@ -130,11 +130,7 @@ export default {
             carLength: this.carLength
           }
         }).then(res => {
-          if (rule.ruleType === 5) {
-            this.charge = float.round(res.data.data / 100)
-          } else {
-            this.charge = float.round(res.data.data / 1000)
-          }
+          this.charge = float.round(res.data.data / 100)
           errorMsg = ''
           this.$refs.$form.validate()
         }).catch(err => {

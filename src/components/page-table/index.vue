@@ -282,7 +282,7 @@ export default {
         if (col.key && !col.render && !col.tooltip) {
           col.render = (h, params) => {
             let value = params.row[col.key]
-            return h('span', !_.isNull(value) && !_.isUndefined(value) && params.row[col.key] !== '' ? params.row[col.key] : '-')
+            return h('span', !value ? '-' : value)
           }
         }
         return col
