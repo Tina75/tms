@@ -85,7 +85,14 @@ export default {
                 // 新增车辆后，主动设置当前的车辆值
                 if (cars.length > 0) {
                   let car = cars[0]
-                  vm.handleChange(car.carNo)
+                  vm.$nextTick(() => {
+                    /**
+                    * 在输入关键字的同时，点击新增后，理论上会代入值，但是query依然存在，导致下拉框无法显示已有的得bug
+                    * 这里先清空query
+                    */
+                    vm.handleChange(car.carNo)
+                    vm.$refs.$select.query = ''
+                  })
                 }
               })
             // 查询所有未绑定司机

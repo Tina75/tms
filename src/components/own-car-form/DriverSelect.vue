@@ -113,6 +113,12 @@ export default {
       if (parent) {
         parent.$emit.apply(parent, [eventName].concat(params))
       }
+    },
+    /**
+     * 搜索后，在新增，导致下拉框没有选项的bug
+     */
+    clearQuery () {
+      this.$refs.$select.query = ''
     }
   }
 }
