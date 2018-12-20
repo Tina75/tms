@@ -28,31 +28,31 @@
       <Row>
         <Col :span="8">
         <FormItem label="司机姓名：" prop="driverName">
-          <Input v-model="validate.driver.driverName" :maxlength="15" placeholder="必填"/>
+          <Input v-model="validate.driver.driverName" :maxlength="15" class="formInputSty" placeholder="必填"/>
         </FormItem>
         </Col>
         <Col :span="8">
         <FormItem label="手机号：" prop="driverPhone">
-          <Input v-model="validate.driver.driverPhone" :maxlength="11" placeholder="必填"/>
+          <Input v-model="validate.driver.driverPhone" :maxlength="11" class="formInputSty" placeholder="必填"/>
         </FormItem>
         </Col>
         <Col :span="8">
         <FormItem label="车牌号：" prop="carNO">
-          <SelectInput v-model="validate.driver.carNO" :maxlength="8" :parser="formatterCarNo" placeholder="必填"></SelectInput>
+          <SelectInput v-model="validate.driver.carNO" :maxlength="8" :parser="formatterCarNo" class="formInputSty" placeholder="必填"></SelectInput>
         </FormItem>
         </Col>
       </Row>
       <Row>
         <Col :span="8">
         <FormItem label="车型：">
-          <Select v-model="validate.driver.carType" transfer clearable>
+          <Select v-model="validate.driver.carType" transfer class="formInputSty" clearable>
             <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
           </Select>
         </FormItem>
         </Col>
         <Col :span="8">
         <FormItem label="车长：">
-          <Select v-model="validate.driver.carLength" transfer clearable>
+          <Select v-model="validate.driver.carLength" transfer class="formInputSty" clearable>
             <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
           </Select>
         </FormItem>
@@ -61,7 +61,7 @@
         <FormItem label="载重：" prop="shippingWeight">
           <Row>
             <Col span="20">
-            <TagNumberInput :min="0" v-model="validate.driver.shippingWeight" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+            <TagNumberInput :min="0" v-model="validate.driver.shippingWeight" :show-chinese="false" class="formInputSty" placeholder="请输入"></TagNumberInput>
               </Col>
             <Col span="2" offset="1">
             <span>吨</span>
@@ -75,7 +75,7 @@
         <FormItem label="净空：" prop="shippingVolume">
           <Row>
             <Col span="20">
-            <TagNumberInput :min="0" v-model="validate.driver.shippingVolume" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+            <TagNumberInput :min="0" v-model="validate.driver.shippingVolume" :show-chinese="false" class="formInputSty" placeholder="请输入"></TagNumberInput>
             </Col>
             <Col span="2" offset="1">
             <span>方</span>
@@ -85,12 +85,12 @@
         </Col>
         <Col :span="8">
         <FormItem label="车辆品牌：">
-          <Input v-model="validate.driver.carBrand" :maxlength="20" placeholder="如：东风"></Input>
+          <Input v-model="validate.driver.carBrand" :maxlength="20" class="formInputSty" placeholder="如：东风"></Input>
         </FormItem>
         </Col>
         <Col :span="8">
         <FormItem label="结算方式：">
-          <Select v-model="validate.driver.payType" transfer clearable>
+          <Select v-model="validate.driver.payType" transfer class="formInputSty" clearable>
             <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
           </Select>
         </FormItem>
@@ -479,4 +479,6 @@ export default {
   border-top 1px dashed #cbced3
   padding-top 20px
   margin-top -10px
+.formInputSty
+  width 190px
 </style>
