@@ -96,7 +96,7 @@ export default {
     ]),
     getOnlineCount () {
       this.getCount()
-      setInterval(this.getCount, 1000 * 60 * 60)
+      setInterval(this.getCount(), 1000 * 60 * 60)
     },
     getopenedNames (activeName) {
       /**

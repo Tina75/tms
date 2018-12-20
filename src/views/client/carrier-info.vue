@@ -415,7 +415,7 @@ export default {
   mounted () {
     if (this.carrierType === 2) { // 类型为运输公司
       // 获取计费规则的高度
-      this.ruleHeight = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 174 - 32 - 39 - 16 - 44 + 114
+      this.ruleHeight = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 174 - 32 - 39 - 16 - 44 + 146
       // 获取车辆
       this._getCarrierNumberCount()
       // 承运商信息
