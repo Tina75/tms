@@ -10,7 +10,7 @@
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
-      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122" label-position="right">
+      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="100" label-position="right" style="margin-left: -10px">
         <FormItem label="收货联系人：" prop="contact">
           <Input v-model="validate.contact" :maxlength="15" placeholder="请输入"/>
         </FormItem>

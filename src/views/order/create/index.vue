@@ -312,8 +312,8 @@
       <Button v-if="hasPower(100102)" :loading="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
       <Button v-if="hasPower(100104) && !orderId" class="i-ml-10" @click="shipImmedite">立即发运</Button>
-      <span v-if="hasPower(150000)" style="float: right; vertical-align:middle;" @click="setHandle">
-        <FontIcon type="shezhi" size="20" style="cursor: pointer"></FontIcon>
+      <span v-if="hasPower(150000)" style="float: right; vertical-align:middle; width: 30px; height: 30px; background: #EFEFEF; border: 1px solid #ccc; border-radius: 4px" @click="setHandle">
+        <FontIcon type="shezhi" size="20" color="#999999" style="cursor: pointer"></FontIcon>
       </span>
     </div>
     <OrderPrint ref="printer" :list="orderPrint" source="create">
