@@ -2,7 +2,7 @@
   <div id="set-up-container" class="set-up-container temAll">
     <div id="temAll">
       <!--公司设置-->
-      <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="140" label-position="right">
+      <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="110" label-position="left">
         <div class="borderBottomLine">
           <span class="iconRightTitle"></span>
           <span class="iconRightTitleP">基本信息</span>
@@ -15,12 +15,12 @@
           <Col :span="8">
           <FormItem label="公司全称：" prop="name">
             <Input v-if="isEdit" v-model="formCompany.name" :maxlength="25" placeholder="请输入公司名称"></Input>
-            <span v-else>{{formCompany.name}}</span>
+            <span v-else class="formConten-p">{{formCompany.name}}</span>
           </FormItem>
           </Col>
           <Col :span="8">
-          <FormItem label="公司简称：">
-            <Row v-if="isEdit">
+          <FormItem label="公司简称：" class="blockTitle">
+            <Row v-if="isEdit" style="margin-left:-10px">
               <Col :span="18">
               <Input v-model="formCompany.shortName" :maxlength="6" placeholder="请输入公司简称，最多6个字"></Input>
               </Col>
@@ -34,13 +34,13 @@
               </Tooltip>
               </Col>
             </Row>
-            <span v-else>{{formCompany.shortName}}</span>
+            <span v-else class="formConten-p blockContent">{{formCompany.shortName}}</span>
           </FormItem>
           </Col>
           <Col :span="8">
           <FormItem label="公司联系人：" prop="contact">
             <Input v-if="isEdit" v-model="formCompany.contact" :maxlength="10" placeholder="请输入公司联系人"></Input>
-            <span v-else>{{formCompany.contact}}</span>
+            <span v-else class="formConten-p">{{formCompany.contact}}</span>
           </FormItem>
           </Col>
         </Row>
@@ -48,7 +48,7 @@
           <Col :span="8">
           <FormItem label="联系方式：" prop="contactPhone">
             <Input v-if="isEdit" v-model="formCompany.contactPhone" :maxlength="11" placeholder="请输入联系方式"></Input>
-            <span v-else>{{formCompany.contactPhone}}</span>
+            <span v-else class="formConten-p">{{formCompany.contactPhone}}</span>
           </FormItem>
           </Col>
           <Col :span="16">
@@ -62,13 +62,13 @@
               </Col>
               <Col :span="1" class="areaRight">
               <Tooltip :max-width="200" content="详细地址只支持从下拉推荐地址中选择" transfer>
-                <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+                <Icon class="vermiddle" type="ios-information-circle" size="20" color="#FFBB44"></Icon>
               </Tooltip>
               </Col>
             </Row>
             <Row v-if="!isEdit">
               <Col :span="24">
-              <span>{{ formCompany.address }} {{ formCompany.userAddress }}</span>
+              <span class="formConten-p">{{ formCompany.address }} {{ formCompany.userAddress }}</span>
             </Col>
             </Row>
           </FormItem>
@@ -334,6 +334,13 @@ export default {
 >>>.imageLogo .ivu-upload .ivu-upload-input
   width 96px
   height 90px
+>>>.ivu-form-item-label
+  font-size: 14px
+>>>.ivu-input-wrapper
+  margin-left -15px
+>>>.blockTitle .ivu-form-item-label
+  width: 90px
+  padding-left 10px
 .temAll
   margin -20px -15px
   padding 0 40px
@@ -395,6 +402,12 @@ export default {
   line-height 22px
   white-space pre-wrap
   word-wrap break-word
+  font-size: 14px
 .imageFontItem
   margin-top -25px
+.formConten-p
+  font-size 14px
+  position: absolute;
+  top: 1px;
+  left: -16px;
 </style>
