@@ -68,7 +68,7 @@ export default {
     position absolute
     left -31px
     right 0
-    top -14px
+    top -15px
     bottom 0
     z-index 0
   &__title-text
