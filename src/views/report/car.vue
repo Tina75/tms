@@ -263,7 +263,7 @@ export default {
           width: 250,
           key: 'driverName',
           render: (h, params) => {
-            return h('span', (params.row.driverName || params.row.driverPhone) ? (params.row.driverName + params.row.driverPhone) : '-')
+            return h('span', (params.row.driverName || params.row.driverPhone) ? (params.row.driverName + ' ' + params.row.driverPhone) : '-')
           }
         },
         {
@@ -271,7 +271,7 @@ export default {
           width: 250,
           key: 'assistantDriverName',
           render: (h, params) => {
-            return h('span', (params.row.assistantDriverName || params.row.assistantDriverPhone) ? (params.row.assistantDriverName + params.row.assistantDriverPhone) : '-')
+            return h('span', (params.row.assistantDriverName || params.row.assistantDriverPhone) ? (params.row.assistantDriverName + ' ' + params.row.assistantDriverPhone) : '-')
           }
         },
         {
@@ -292,10 +292,10 @@ export default {
         {
           title: '件数',
           key: 'cargoCnt',
-          width: 150,
-          render: (h, params) => {
-            return h('span', params.row.cargoCnt !== '' ? params.row.cargoCnt : '-')
-          }
+          width: 150
+          // render: (h, params) => {
+          //   return h('span', params.row.cargoCnt)
+          // }
         },
         {
           title: '订单数',
