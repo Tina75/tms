@@ -9,7 +9,7 @@
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
-      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122">
+      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="90" style="margin-left: -10px">
         <FormItem label="发货地址：" prop="address">
           <AreaInput
             v-model="validate.address"
