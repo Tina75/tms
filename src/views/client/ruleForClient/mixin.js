@@ -10,7 +10,6 @@ export default {
       /* active 1: '发货方',
                 2: '承运商',
                  车型只有承运商有 */
-      console.log(this.ruleTypeList)
       let obj = {}
       for (let i = 0; i < ruleTypeAllList.length; i++) {
         for (let j = 0; j < this.ruleTypeList.length; j++) {
@@ -142,8 +141,8 @@ export default {
         3: '吨公里',
         4: '方公里',
         // 5: '车型没有单位'
-        6: '公斤公里',
-        7: '公斤'
+        6: '公斤',
+        7: '公斤公里'
       },
       sceneMap: {
         1: '发货方',
@@ -240,7 +239,7 @@ export default {
           }).then(res => {
             _this.ruleDetail = {}
             _this.getRules()
-          }).catch(err => console.error(err))
+          })
         }
       })
     },
@@ -311,7 +310,6 @@ export default {
             method: 'post',
             data: Object.assign({}, _this.ruleDetail, {
               details: _this.ruleDetail.details.map(item => {
-                console.log(_this.ruleDetail)
                 return {
                   departure: item.departure,
                   destination: item.destination,
@@ -335,7 +333,7 @@ export default {
             _this.$Message.success('保存成功')
             _this.saveCitrCode(_this.ruleDetail.details)
             _this.getRules()
-          }).catch(err => console.error(err))
+          })
         },
         async onCancel () {
           _this.getRules()
@@ -409,7 +407,6 @@ export default {
       }
     },
     startTypeChange (item) {
-      console.log(item)
       item.startPrice = null
     }
     // async ruleTypeChange () {
