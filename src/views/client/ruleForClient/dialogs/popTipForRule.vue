@@ -2,7 +2,8 @@
   <Poptip v-model="visible"
           placement="bottom" width="300" class="popTipForRule"
           @on-popper-show="initRule" @on-popper-hide="initRule">
-    <Icon type="ios-settings-outline" size="16" style="line-height: 35px"/>
+    <!--<Icon type="ios-settings-outline" size="16" style="line-height: 35px"/>-->
+    <i class="icon font_family icon-ico-setting setPosition"></i>
     <div slot="title">
       <div class="title">
         计费类型设置
@@ -104,7 +105,7 @@ export default {
         right 0
         left 0
       .tips
-        text-align center
+        text-align left
         margin-top 40px
         margin-bottom 23px
         color #999
@@ -117,6 +118,11 @@ export default {
         padding-bottom 20px
         text-align center
         button
+          padding 0
+          height 32px
           width 70px
           margin-right 10px
+    .setPosition
+      position relative
+      top 2px
 </style>
