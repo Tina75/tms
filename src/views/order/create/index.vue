@@ -1145,6 +1145,11 @@ export default {
             transferFeeList.forEach((fee) => {
               form[fee] = form[fee] ? float.round(form[fee] * 100) : 0
             })
+            // 没有业务员 置空
+            const res = this.salesmanList.some(el => {
+              return el.id === form.salesmanId
+            })
+            if (!res) form.salesmanId = ''
             resolve(form)
           } else {
             vm.disabled = false
