@@ -384,6 +384,7 @@ export default {
     padding-left 26px
   .separate-allocation
     margin-top 32px
+    margin-left -10px
     .ivu-form-item-label
       color rgba(47,50,62,1) !important
       font-size 14px

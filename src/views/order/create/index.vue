@@ -12,6 +12,7 @@
           :auto-focus="autoFocus"
           :maxlength="20"
           :remote="false"
+          :clearable="true"
           :local-options="clients"
           @on-focus.once="getClients"
           @on-select="handleSelectConsigner">
@@ -104,6 +105,7 @@
           v-model="orderForm.consignerAddress"
           :show-icon="!!orderForm.start"
           :local-options="consignerAddresses"
+          placeholder="详细地址（省市区+地址）"
           @city-select="({lat, lng, cityCode}) => citySelect(1, lat, lng, cityCode)"/>
       </FormItem>
       </Col>
@@ -114,7 +116,7 @@
       </Col>
       <Col span="1">
       <FormItem :label-width="0">
-        <Tooltip :max-width="200" :content="`从推荐地址中选择，可获取到经纬度，自动计算运输里程`" transfer>
+        <Tooltip :max-width="200" content="详细地址从下拉推荐地址中选择，可获取到经纬度，自动计算运输里程" transfer>
           <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
         </Tooltip>
       </FormItem>
@@ -125,6 +127,7 @@
           v-model="orderForm.consigneeAddress"
           :show-icon="!!orderForm.end"
           :local-options="consigneeAddresses"
+          placeholder="详细地址（省市区+地址）"
           @city-select="({lat, lng, cityCode}) => citySelect(2, lat, lng, cityCode)"/>
       </FormItem>
       </Col>
@@ -135,7 +138,7 @@
       </Col>
       <Col span="1">
       <FormItem :label-width="0">
-        <Tooltip :max-width="200" :content="`从推荐地址中选择，可获取到经纬度，自动计算运输里程`" transfer>
+        <Tooltip :max-width="200" content="详细地址从下拉推荐地址中选择，可获取到经纬度，自动计算运输里程" transfer>
           <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
         </Tooltip>
       </FormItem>
@@ -759,7 +762,12 @@ export default {
         _this.orderForm.consignerContact = consigner.contact
         _this.orderForm.consignerPhone = consigner.phone
         if (addresses.length > 0) {
-          _this.orderForm.consignerAddress = addresses[0].address
+          if (this.hasCity(addresses[0].address, addresses[0].cityName)) {
+            _this.orderForm.consignerAddress = addresses[0].address
+          } else {
+            _this.orderForm.consignerAddress = addresses[0].cityName + addresses[0].address
+          }
+          // if (addresses[0].address.index)
           _this.orderForm.consignerAddressLongitude = addresses[0].longitude
           _this.orderForm.consignerAddressLatitude = addresses[0].latitude
           _this.orderForm.start = addresses[0].cityCode
@@ -772,6 +780,11 @@ export default {
           _this.orderForm.consigneeContact = consignees[0].contact
           _this.orderForm.consigneePhone = consignees[0].phone
           _this.orderForm.consigneeAddress = consignees[0].address
+          if (this.hasCity(consignees[0].address, consignees[0].cityName)) {
+            _this.orderForm.consigneeAddress = consignees[0].address
+          } else {
+            _this.orderForm.consigneeAddress = consignees[0].cityName + addresses[0].address
+          }
           _this.orderForm.consigneeAddressLongitude = consignees[0].longitude
           _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
           _this.orderForm.end = consignees[0].cityCode
@@ -849,7 +862,7 @@ export default {
       //   return
       // }
       this.openDialog({
-        name: 'dialogs/financeRule.vue',
+        name: 'dialogs/financeRule',
         data: {
           start: vm.orderForm.start, // 始发城市
           end: vm.orderForm.end, // 目的城市
@@ -1186,6 +1199,10 @@ export default {
           tab: 'order'
         }
       })
+    },
+    // 是否包含省市
+    hasCity (val, cityName) {
+      return val.indexOf(cityName) === 0 || val.indexOf('省') > -1 || val.indexOf('市') > -1
     }
   }
 }
