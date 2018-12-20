@@ -88,12 +88,16 @@ export default {
   },
   mounted () {
     this.openedNames = this.getopenedNames(this.activeName)
-    this.getCount()
+    this.getOnlineCount()
   },
   methods: {
     ...mapActions([
       'getCount'
     ]),
+    getOnlineCount () {
+      this.getCount()
+      setInterval(this.getCount, 1000 * 60 * 60)
+    },
     getopenedNames (activeName) {
       /**
        * 订单管理菜单分割
