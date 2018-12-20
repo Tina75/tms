@@ -92,6 +92,7 @@ export default {
                     */
                     vm.handleChange(car.carNo)
                     vm.$refs.$select.query = ''
+                    vm.dispatch.call(vm.$parent, 'FormItem', 'on-form-change', car.carNo)
                   })
                 }
               })
@@ -100,6 +101,19 @@ export default {
           }
         }
       })
+    },
+    dispatch (componentName, eventName, params) {
+      let parent = this.$parent || this.$root
+      let name = parent.$options.name
+      while (parent && (!name || name !== componentName)) {
+        parent = parent.$parent
+        if (parent) {
+          name = parent.$options.name
+        }
+      }
+      if (parent) {
+        parent.$emit.apply(parent, [eventName].concat(params))
+      }
     }
   }
 }
