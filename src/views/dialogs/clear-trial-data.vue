@@ -106,10 +106,12 @@ export default {
     font-size 14px
   &__checkbox
     display table
+    margin-bottom 25px
   &__checkbox-content
     display table-cell
     padding-left 18px
     vertical-align bottom
+    line-height 22px
     strong
       color #333333
       font-size 16px
