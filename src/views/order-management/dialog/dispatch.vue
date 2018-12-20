@@ -5,7 +5,7 @@
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>{{name}}</span>
       </p>
-      <Form v-if="name === '送货调度'" ref="send" :model="send" :rules="sendRules" :label-width="85" inline label-position="left">
+      <Form v-if="name === '送货调度'" ref="send" :model="send" :rules="sendRules" :label-width="70" inline label-position="right">
         <FormItem label="始发地：" prop="start">
           <!-- <area-select v-model="send.start" :deep="true" style="width:180px"></area-select> -->
           <city-select v-model="send.start" style="width:180px"></city-select>
@@ -443,6 +443,7 @@ export default {
     padding 22px 40px
   .ivu-form
     .ivu-form-item-label
+      padding 10px 0 10px
       font-size 14px
       font-family 'PingFangSC-Regular'
       color #777
