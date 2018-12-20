@@ -136,8 +136,11 @@ export default {
 </style>
 <style lang="stylus">
 .timeInput
+  width 100%
   .ivu-poptip-arrow
     display none
   .ivu-poptip-popper
    padding-top 5px
+  .ivu-poptip-rel
+    width 100%
 </style>
