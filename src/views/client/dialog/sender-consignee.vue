@@ -18,19 +18,13 @@
           <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
         </FormItem>
         <FormItem label="收货地址：" prop="address">
-          <Row>
-            <Col :span="23">
-            <AreaInput
-              v-model="validate.address"
-              :only-select="true"
-              @city-select="latlongtChange"/>
-            </Col>
-            <Col :span="1">
-            <Tooltip :max-width="200" content="详细地址只支持从下拉推荐地址中选择" transfer>
-              <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
-            </Tooltip>
-            </Col>
-          </Row>
+          <AreaInput
+            v-model="validate.address"
+            :only-select="true"
+            @city-select="latlongtChange"/>
+          <Tooltip :max-width="200" content="详细地址只支持从下拉推荐地址中选择" style="right: -20px; position: absolute; top: 0px;" transfer>
+            <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+          </Tooltip>
         </FormItem>
         <FormItem>
           <Input v-model="validate.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
