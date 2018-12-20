@@ -12,7 +12,7 @@
             </Submenu>
           </template>
           <template v-else>
-            <menu-item v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path"><font-icon :type="item.icon" :size="18"></font-icon>{{item.name}}<Badge v-if="item.path==='/upstream'" :count="count" class="count"></Badge></menu-item>
+            <menu-item v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path"><font-icon :type="item.icon" :size="18"></font-icon>{{item.name}}<Badge v-if="item.path==='/upstream'" :count="waitAccept" class="count"></Badge></menu-item>
           </template>
         </template>
         <div class="footer">
@@ -72,9 +72,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      count: 'waitAccept'
-    })
+    ...mapGetters(['waitAccept'])
   },
   watch: {
     activeName (val) {
@@ -88,12 +86,16 @@ export default {
   },
   mounted () {
     this.openedNames = this.getopenedNames(this.activeName)
-    this.getCount()
+    this.getOnlineCount()
   },
   methods: {
     ...mapActions([
       'getCount'
     ]),
+    getOnlineCount () {
+      this.getCount()
+      setInterval(this.getCount, 1000 * 60)
+    },
     getopenedNames (activeName) {
       /**
        * 订单管理菜单分割

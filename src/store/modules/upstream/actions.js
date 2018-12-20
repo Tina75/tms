@@ -7,7 +7,7 @@ export default {
         url: '/busconnector/shipper/getOrderNumByStatus',
         method: 'get'
       }).then(res => {
-        commit(types.WAITACCEPT, res.data.data.waitAccept)
+        commit(types.WAITACCEPT, Number(res.data.data.waitAccept))
         resolve(res.data.data)
       }).catch((error) => {
         reject(error)
