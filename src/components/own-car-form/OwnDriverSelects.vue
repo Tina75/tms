@@ -5,6 +5,7 @@
       <Row>
         <Col span="20">
         <DriverSelect
+          ref="$mainDriver"
           v-model="form.driverName"
           :data="ownDrivers"
           :is-validate="isValidate"
@@ -23,6 +24,7 @@
       <Row>
         <Col span="20">
         <DriverSelect
+          ref="$assistantDriver"
           v-model="form.assistantDriverName"
           :data="ownDrivers"
           :is-validate="isValidate"
@@ -203,9 +205,15 @@ export default {
                 if (list.length > 0) {
                   let driver = list[0]
                   if (type === 1) {
-                    vm.changeDriver(driver.driverName)
+                    vm.$nextTick(() => {
+                      vm.changeDriver(driver.driverName)
+                      vm.$refs.$mainDriver.clearQuery()
+                    })
                   } else {
-                    vm.changeAssitantDriver(driver.driverName)
+                    vm.$nextTick(() => {
+                      vm.changeAssitantDriver(driver.driverName)
+                      vm.$refs.$assistantDriver.clearQuery()
+                    })
                   }
                 }
               })
