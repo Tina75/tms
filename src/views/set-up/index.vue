@@ -540,7 +540,7 @@ export default {
   .setup-allocation
     width 500px
     position absolute
-    top 50%
+    top 24%
     left 50%
     transform translate(-50%, -50%)
     .ivu-form-item-label

@@ -141,10 +141,13 @@ export default {
     },
 
     save () {
+      const vm = this
       this.$refs.$form.validate(valid => {
         if (!valid) return
-        this.ok(this.charge)
-        this.close()
+        vm.$nextTick(() => {
+          vm.ok(vm.charge)
+          vm.close()
+        })
       })
     },
 
