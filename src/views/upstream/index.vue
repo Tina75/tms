@@ -179,7 +179,8 @@ export default {
   },
   methods: {
     ...mapActions([
-      'getClients'
+      'getClients',
+      'getCount'
     ]),
     /**
      * 将tab切换到用户设置的tab页并查询数据
@@ -240,12 +241,16 @@ export default {
     },
     // 查询标签页数量
     fetchTabCount () {
-      Server({
-        url: '/busconnector/shipper/getOrderNumByStatus',
-        method: 'get'
-      }).then(res => {
-        this.tabList = setTabList(res.data.data)
+      this.getCount().then(res => {
+        // console.log(res)
+        this.tabList = setTabList(res)
       })
+      // Server({
+      //   url: '/busconnector/shipper/getOrderNumByStatus',
+      //   method: 'get'
+      // }).then(res => {
+      //   this.tabList = setTabList(res.data.data)
+      // })
     },
     // 简易与高级搜索切换
     changeSearchType () {
