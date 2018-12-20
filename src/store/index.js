@@ -11,6 +11,7 @@ import sender from './modules/sender/store'
 import driver from './modules/driver/store'
 // import transfer from './modules/transfer/store'
 import rule from './modules/rule/store'
+import upstream from './modules/upstream/store'
 
 Vue.use(Vuex)
 
@@ -39,6 +40,7 @@ export default new Vuex.Store({
     // transfer,
     carrier,
     sender,
-    rule
+    rule,
+    upstream
   }
 })

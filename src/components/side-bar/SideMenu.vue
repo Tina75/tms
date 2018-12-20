@@ -12,7 +12,7 @@
             </Submenu>
           </template>
           <template v-else>
-            <menu-item v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path"><font-icon :type="item.icon" :size="18"></font-icon>{{item.name}}</menu-item>
+            <menu-item v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path"><font-icon :type="item.icon" :size="18"></font-icon>{{item.name}}<Badge v-if="item.path==='/upstream'" :count="count" class="count"></Badge></menu-item>
           </template>
         </template>
         <div class="footer">
@@ -57,6 +57,7 @@
 <script>
 import FontIcon from '@/components/FontIcon'
 import menuJson from '@/assets/menu.json'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: { FontIcon },
@@ -70,6 +71,11 @@ export default {
       menuList: menuJson
     }
   },
+  computed: {
+    ...mapGetters({
+      count: 'waitAccept'
+    })
+  },
   watch: {
     activeName (val) {
       this.openedNames = this.getopenedNames(val)
@@ -82,9 +88,12 @@ export default {
   },
   mounted () {
     this.openedNames = this.getopenedNames(this.activeName)
+    this.getCount()
   },
   methods: {
-
+    ...mapActions([
+      'getCount'
+    ]),
     getopenedNames (activeName) {
       /**
        * 订单管理菜单分割
@@ -146,6 +155,16 @@ export default {
 <style lang="stylus" scoped>
 .sider
   z-index 10
+  .count
+    /deep/
+      .ivu-badge-count
+        background #fff
+        color #EE2017
+        min-width 16px
+        height 16px
+        line-height 16px
+        padding: 0 3px
+        margin-left 20px
   .sider-collapse
     padding-bottom 50px
   .title
