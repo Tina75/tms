@@ -3,6 +3,7 @@ import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
 import Server from '@/libs/js/server'
 import { mapGetters, mapActions } from 'vuex'
 import { ruleTypeAllList } from '@/libs/constant/ruleType.js'
+import float from '@/libs/js/float'
 export default {
   computed: {
     ...mapGetters(['ruleTypeList']),
@@ -315,13 +316,13 @@ export default {
                   destination: item.destination,
                   startType: item.startType,
                   // 选择车型时，起步价，起步量都没有
-                  startNum: _this.ruleDetail.ruleType === '5' ? null : (item.startNum ? parseFloat(item.startNum) * 100 : ''),
+                  startNum: _this.ruleDetail.ruleType === '5' ? null : (item.startNum ? float.round(item.startNum * 100) : ''),
                   // 选择起步量的时候，startPrice的值传startNum的值
-                  startPrice: _this.ruleDetail.ruleType === '5' ? null : (item.startType === '1' ? (item.startPrice ? parseFloat(item.startPrice) * 100 : '') : (item.startNum ? parseFloat(item.startNum) * 100 : '')),
+                  startPrice: _this.ruleDetail.ruleType === '5' ? null : (item.startType === '1' ? (item.startPrice ? float.round(item.startPrice * 100) : '') : (item.startNum ? float.round(item.startNum * 100) : '')),
                   chargeRules: item.chargeRules.map(el => {
                     return {
-                      base: _this.ruleDetail.ruleType === '5' ? null : (parseFloat(el.base) * 100),
-                      price: parseFloat(el.price) * 100,
+                      base: _this.ruleDetail.ruleType === '5' ? null : (float.round(el.base * 100)),
+                      price: float.round(el.price * 100),
                       carType: el.carType,
                       carLength: el.carLength
                     }

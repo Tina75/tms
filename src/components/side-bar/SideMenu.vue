@@ -164,9 +164,9 @@ export default {
         color #EE2017
         min-width 16px
         height 16px
-        line-height 16px
+        line-height 14px
         padding: 0 3px
-        margin-left 20px
+        margin-left 42px
   .sider-collapse
     padding-bottom 50px
   .title
