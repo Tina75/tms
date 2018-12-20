@@ -12,6 +12,7 @@
           :auto-focus="autoFocus"
           :maxlength="20"
           :remote="false"
+          :clearable="true"
           :local-options="clients"
           @on-focus.once="getClients"
           @on-select="handleSelectConsigner">
@@ -104,6 +105,7 @@
           v-model="orderForm.consignerAddress"
           :show-icon="!!orderForm.start"
           :local-options="consignerAddresses"
+          placeholder="详细地址（省市区+地址）"
           @city-select="({lat, lng, cityCode}) => citySelect(1, lat, lng, cityCode)"/>
       </FormItem>
       </Col>
@@ -114,7 +116,7 @@
       </Col>
       <Col span="1">
       <FormItem :label-width="0">
-        <Tooltip :max-width="200" :content="`从推荐地址中选择，可获取到经纬度，自动计算运输里程`" transfer>
+        <Tooltip :max-width="200" content="详细地址从下拉推荐地址中选择，可获取到经纬度，自动计算运输里程" transfer>
           <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
         </Tooltip>
       </FormItem>
@@ -125,6 +127,7 @@
           v-model="orderForm.consigneeAddress"
           :show-icon="!!orderForm.end"
           :local-options="consigneeAddresses"
+          placeholder="详细地址（省市区+地址）"
           @city-select="({lat, lng, cityCode}) => citySelect(2, lat, lng, cityCode)"/>
       </FormItem>
       </Col>
@@ -135,7 +138,7 @@
       </Col>
       <Col span="1">
       <FormItem :label-width="0">
-        <Tooltip :max-width="200" :content="`从推荐地址中选择，可获取到经纬度，自动计算运输里程`" transfer>
+        <Tooltip :max-width="200" content="详细地址从下拉推荐地址中选择，可获取到经纬度，自动计算运输里程" transfer>
           <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
         </Tooltip>
       </FormItem>
@@ -1200,7 +1203,6 @@ export default {
     // 是否包含省市
     hasCity (val, cityName) {
       return val.indexOf(cityName) === 0 || val.indexOf('省') > -1 || val.indexOf('市') > -1
-      // || val.indexOf('市') > -1 ||
     }
   }
 }
