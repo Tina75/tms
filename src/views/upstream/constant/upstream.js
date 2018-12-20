@@ -1,5 +1,6 @@
 // import TMSUrl from '@/libs/constant/url'
 import float from '@/libs/js/float'
+import IconLabel from '@/components/IconLabel'
 import { renderMileage, renderVolume, renderWeight } from '@/libs/js/util'
 export const TABLE_COLUMNS = vm => [
   {
@@ -14,26 +15,40 @@ export const TABLE_COLUMNS = vm => [
     minWidth: 180,
     fixed: 'left',
     render: (h, params) => {
-      return h('a', {
-        props: {
-          type: 'text'
-        },
-        style: {
-          marginRight: '5px',
-          color: '#418DF9'
-        },
-        on: {
-          click: () => {
-            vm.openTab({
-              path: '/upstream/detail/detail',
-              query: {
-                shipperOrderId: params.row.shipperOrderId,
-                id: params.row.orderNo
-              }
-            })
+      let renderHtml = [
+        h('a', {
+          props: {
+            type: 'text'
+          },
+          style: {
+            // marginRight: '5px',
+            display: 'block',
+            color: '#418DF9'
+          },
+          on: {
+            click: () => {
+              vm.openTab({
+                path: '/upstream/detail/detail',
+                query: {
+                  shipperOrderId: params.row.shipperOrderId,
+                  id: params.row.orderNo
+                }
+              })
+            }
           }
-        }
-      }, params.row.orderNo)
+        }, params.row.orderNo)
+      ]
+      if (params.row.collectionMoney > 0) {
+        renderHtml.push(
+          h(IconLabel, {
+            props: {
+              text: '代',
+              background: '#FA8C15'
+            }
+          })
+        )
+      }
+      return h('div', renderHtml)
     }
   },
   {
