@@ -46,7 +46,6 @@ export default {
       }).then(res => {
         const data = res.data.data
         this.changeList = data
-        console.log(this.changeList)
       })
     }
   }

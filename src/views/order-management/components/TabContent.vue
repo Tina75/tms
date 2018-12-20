@@ -347,13 +347,13 @@ export default {
                     ])
                   )
                 } else {
-                  if (!r.volume && !r.weight) {
+                  if (!r.volume && !r.weight && !r.quantity) {
                     renderBtn.push(
                       h('Tooltip', {
                         props: {
-                          maxWidth: '200',
+                          maxWidth: '240',
                           offset: -9,
-                          content: '体积或重量未填，无法拆单',
+                          content: '包装数量或体积或重量未填，无法拆单',
                           placement: 'top-start',
                           transfer: true
                         }
@@ -836,7 +836,7 @@ export default {
           key: 'invoiceRate',
           minWidth: 180,
           render: (h, params) => {
-            return h('span', float.floor(params.row.invoiceRate * 100, 2) || '-')
+            return h('span', float.round(params.row.invoiceRate * 100, 2) || '-')
           }
         },
         {
@@ -1245,7 +1245,7 @@ export default {
         }
       }).then((res) => {
         this.orderPrint = _.cloneDeep(res.data.data)
-        this.orderPrint.invoiceRate = float.floor(this.orderPrint.invoiceRate * 100, 2)
+        this.orderPrint.invoiceRate = float.round(this.orderPrint.invoiceRate * 100, 2)
         this.$refs.printer.print()
       })
     },

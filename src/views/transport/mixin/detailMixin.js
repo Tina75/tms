@@ -110,7 +110,7 @@ export default {
           quantity: Float.round(last.quantity + item.quantity),
           weight: Float.round(last.weight + item.weight, 3),
           weightKg: Float.round(last.weightKg + item.weightKg),
-          volume: Float.round(last.volume + item.volume)
+          volume: Float.round(last.volume + item.volume, 4)
         }
       }, {
         cargoCost: 0,
@@ -223,9 +223,9 @@ export default {
         // if (typeof temp[key] === 'number') temp[key] = temp[key] * 100
         if (typeof temp[key] === 'number') {
           if (key === 'mileage') {
-            temp[key] = temp[key] * 1000
+            temp[key] = Float.round(temp[key] * 1000)
           } else {
-            temp[key] = temp[key] * 100
+            temp[key] = Float.round(temp[key] * 100)
           }
         } else {
           temp[key] = 0

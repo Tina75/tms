@@ -388,7 +388,7 @@ export default {
           partnerName: self.carrierInfo.carrierName,
           carType: self.carrierInfo.carType,
           carLength: self.carrierInfo.carLength,
-          distance: self.payment.mileage ? self.payment.mileage * 1000 : 0,
+          distance: self.payment.mileage ? float.round(self.payment.mileage * 1000) : 0,
           ...self.financeRulesInfo
         },
         methods: {
@@ -408,9 +408,9 @@ export default {
       let temp = Object.assign({}, this.payment)
       for (let key in temp) {
         if (key === 'mileage') {
-          temp[key] *= 1000
+          temp[key] = float.round(temp[key] * 1000)
         } else {
-          temp[key] *= 100
+          temp[key] = float.round(temp[key] * 100)
         }
       }
       temp.totalFee = this.paymentTotal * 100
@@ -453,14 +453,14 @@ export default {
 
 </script>
 <style lang='stylus'>
- @import "../style/detail.styl"
+  @import "../style/detail.styl"
 
- .part
+  .part
 
-   .ivu-form-item-label
-     color #777
-     font-size 14px
-     padding 10px 0 10px
+    .ivu-form-item-label
+      color #777
+      font-size 14px
+      padding 10px 0 10px
 
   .detail-payment-way
     width calc(100% - 100px) !important

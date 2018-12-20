@@ -44,7 +44,7 @@ export const TABLE_COLUMNS_ONE = vm => [
                 }
                 // 计算体积
                 if (cloneData.volume !== 0) {
-                  params.row.volume = float.round(cloneData.volume * percent, 1)
+                  params.row.volume = float.round(cloneData.volume * percent, 4)
                   vm.volumeVal = params.row.volume
                 }
                 // 计算货值
@@ -74,10 +74,10 @@ export const TABLE_COLUMNS_ONE = vm => [
           h('InputNumber', {
             props: {
               min: 0,
-              max: float.round(vm.parentOrderCargoList[params.index].volume, 1) + 0.04, // 1.1 + 0.1 = 1.2000000002
-              value: float.round(params.row.volume, 1),
-              step: 0.1,
-              precision: 1,
+              max: float.round(vm.parentOrderCargoList[params.index].volume, 4) + 0.00004, // 1.1 + 0.1 = 1.2000000002
+              value: float.round(params.row.volume, 4),
+              step: 0.0001,
+              precision: 4,
               activeChange: false
             },
             style: {
@@ -87,14 +87,14 @@ export const TABLE_COLUMNS_ONE = vm => [
                 if (val === null) {
                   vm.volumeVal = null
                 } else {
-                  vm.volumeVal = float.round(val, 1)
+                  vm.volumeVal = float.round(val, 4)
                 }
               }
             }
           })
         ])
       } else {
-        return h('div', float.round(params.row.volume, 1))
+        return h('div', float.round(params.row.volume, 4))
       }
     }
   },
@@ -161,11 +161,11 @@ export const TABLE_COLUMNS_ONE = vm => [
                   } else {
                     params.row.weightKg = float.round(cloneData.weightKg)
                   }
-                  params.row.volume = float.round(cloneData.volume, 1)
+                  params.row.volume = float.round(cloneData.volume, 4)
                   params.row.cargoCost = float.round(cloneData.cargoCost)
                 }
                 // 没修改过数量、重量、体积中任意一个 或 修改过数量、重量、体积跟初始值一致   部分整拆
-                if (vm.quantityVal === params.row.quantity && float.round(vm.weightVal) === float.round(vm.WeightOption === 1 ? params.row.weight : params.row.weightKg) && float.round(vm.volumeVal) === float.round(params.row.volume)) {
+                if (vm.quantityVal === params.row.quantity && float.round(vm.weightVal, 3) === float.round(vm.WeightOption === 1 ? params.row.weight : params.row.weightKg, 3) && float.round(vm.volumeVal, 4) === float.round(params.row.volume, 4)) {
                   vm.separateWholeList(params.index)
                 } else {
                   if (params.row.quantity !== 0) {
@@ -197,16 +197,18 @@ export const TABLE_COLUMNS_ONE = vm => [
                     }
                   }
                   if (params.row.weight !== 0 || params.row.weightKg !== 0) {
-                    if (float.round(vm.weightVal) === float.round(vm.WeightOption === 1 ? params.row.weight : params.row.weightKg)) {
+                    if (float.round(vm.weightVal, 3) === float.round(vm.WeightOption === 1 ? params.row.weight : params.row.weightKg, 3)) {
                       vm.$Message.warning('重量必须修改')
                       vm.isSeparate = true
+                      params.row.volume = vm.volumeVal
                       return
                     }
                   }
                   if (params.row.volume !== 0) {
-                    if (float.round(vm.volumeVal, 1) === float.round(params.row.volume, 1)) {
+                    if (float.round(vm.volumeVal, 4) === float.round(params.row.volume, 4)) {
                       vm.$Message.warning('体积必须修改')
                       vm.isSeparate = true
+                      params.row.weight = vm.weightVal
                       return
                     }
                   }
@@ -238,7 +240,7 @@ export const TABLE_COLUMNS_ONE = vm => [
           }, '取消')
         ])
       } else {
-        if (params.row.quantity === 1 || float.round(params.row.weight, 3) === 0.001 || float.round(params.row.weightKg) === 1 || float.round(params.row.volume, 1) === 0.1) {
+        if (params.row.quantity === 1 || float.round(params.row.weight, 3) === 0.001 || float.round(params.row.weightKg) === 1 || float.round(params.row.volume, 4) === 0.0001) {
           return h('div', [
             h('a', {
               style: {
@@ -246,7 +248,6 @@ export const TABLE_COLUMNS_ONE = vm => [
               },
               on: {
                 click: () => {
-                  // console.log(params)
                   vm.separateWholeList(params.index)
                 }
               }
@@ -281,7 +282,6 @@ export const TABLE_COLUMNS_ONE = vm => [
                 },
                 on: {
                   click: () => {
-                    // console.log(params)
                     vm.separateWholeList(params.index)
                   }
                 }
@@ -320,7 +320,7 @@ export const TABLE_COLUMNS_TWO = vm => [
     title: '体积（方）',
     key: 'volume',
     render: (h, params) => {
-      return h('div', float.round(params.row.volume, 1))
+      return h('div', float.round(params.row.volume, 4))
     }
   },
   {
@@ -336,7 +336,6 @@ export const TABLE_COLUMNS_TWO = vm => [
           },
           on: {
             click: () => {
-              // console.log(params)
               vm.isSeparate = false
               if (!vm.parentOrderCargoList.length) {
                 let restoreData = vm.childOrderCargoList.splice(params.index, 1)
@@ -366,14 +365,14 @@ export const TABLE_COLUMNS_TWO = vm => [
                   params.row.volume = Number(params.row.volume)
 
                   hasParentList.quantity += params.row.quantity
-                  hasParentList.cargoCost += params.row.cargoCost
+                  hasParentList.cargoCost = float.round(hasParentList.cargoCost + params.row.cargoCost)
                   // 区分吨和公斤
                   if (vm.WeightOption === 1) {
-                    hasParentList.weight += params.row.weight
+                    hasParentList.weight = float.round(hasParentList.weight + params.row.weight, 3)
                   } else {
                     hasParentList.weightKg += params.row.weightKg
                   }
-                  hasParentList.volume += params.row.volume
+                  hasParentList.volume = float.round(hasParentList.volume + params.row.volume, 4)
                   vm.childOrderCargoList.splice(params.index, 1)
                 } else {
                   let child = vm.childOrderCargoList.splice(params.index, 1)
