@@ -29,7 +29,7 @@
             <span class="checkBoxMessage">全选</span></Checkbox>
             <div v-if="this.sysMessageList.length === 0" style="flex-direction: column; -ms-flex-direction: column;" class="noneImg">
               <img src="./noneInfo.png"/>
-              <p>暂无消息</p>
+              <p class="message-p">暂无消息</p>
             </div>
             <div v-for="msg in this.sysMessageList" v-else :key="msg.id" class="megDiv">
               <CheckboxGroup v-if="!batchBtnShow" v-model="checkAllGroup" class="checkAllGroup" @on-change="checkAllGroupChange">
@@ -642,4 +642,6 @@ export default {
   text-align:center;
   font-size: 16px;
   font-weight:bold;
+.message-p
+  line-height 30px
 </style>

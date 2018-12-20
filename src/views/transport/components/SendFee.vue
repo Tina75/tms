@@ -331,8 +331,8 @@ export default {
               Number(this.payment.unloadFee) +
               Number(this.payment.insuranceFee) +
               Number(this.payment.otherFee) +
-              Number(this.payment.tollFee) +
-              Number(this.payment.accommodation)
+              Number(this.payment.tollFee)
+      if (this.sendWay === '2') total += Number(this.payment.accommodation) // 自送要算住宿费
       return float.round(total)
     }
   },

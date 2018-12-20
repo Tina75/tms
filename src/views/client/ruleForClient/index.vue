@@ -3,7 +3,7 @@
     <div class="add_btn">
       <Button v-if="(active === '1'&&hasPower(130113)) || (active === '2'&&hasPower(130215))" type="primary" @click="addRule">新增规则</Button>
     </div>
-    <div  :style="{height: height > 600 ? height+'px' : 600+'px'}" class="rule">
+    <div  :style="{height: height > 550 ? height+'px' : 550+'px'}" class="rule">
       <div v-if="companyData.length===0" class="data-total-empty">
         <div class="data-empty-img">
           <FontIcon slot="icon" type="ico-price" ></FontIcon>
@@ -432,7 +432,7 @@ export default {
           line-height: 35px
           margin-right: 10px
       .rules-list
-        height 465px
+        height 400px
         overflow: auto
         padding: 20px 0
         border-bottom: 1px solid #E4E7EC
