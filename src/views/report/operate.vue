@@ -283,7 +283,7 @@ export default {
         },
         {
           title: '订单备注',
-          key: 'remark',
+          key: 'orderRemark',
           width: 250
         },
         {
