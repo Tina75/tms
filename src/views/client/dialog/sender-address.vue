@@ -11,19 +11,13 @@
       <p slot="header" style="text-align:center">{{title}}</p>
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122">
         <FormItem label="发货地址：" prop="address">
-          <Row>
-            <Col :span="23">
-            <AreaInput
-              v-model="validate.address"
-              :only-select="true"
-              @city-select="latlongtChange"/>
-            </Col>
-            <Col :span="1">
-            <Tooltip :max-width="200" content="详细地址只支持从下拉推荐地址中选择" transfer>
-              <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
-            </Tooltip>
-            </Col>
-          </Row>
+          <AreaInput
+            v-model="validate.address"
+            :only-select="true"
+            @city-select="latlongtChange"/>
+          <Tooltip :max-width="200" content="详细地址只支持从下拉推荐地址中选择" style="right: -20px; position: absolute; top: 0px;"  transfer>
+            <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+          </Tooltip>
         </FormItem>
         <FormItem>
           <Input v-model="validate.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"/>
