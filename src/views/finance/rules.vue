@@ -56,14 +56,15 @@
             <div class="rule-basic">
               <Form ref="ruleBasic" :model="ruleDetail" :rules="basicValidate" class="ruleBasic" inline>
                 <span>按</span>
-                <FormItem prop="ruleType" style="width: 100px">
-                  <Select v-model="ruleDetail.ruleType" transfer @on-change="ruleTypeChange">
+                <FormItem prop="ruleType" style="width: 120px">
+                  <Select v-model="ruleDetail.ruleType" transfer>
                     <Option v-for="(value, key) in ruleTypeMap"
                             :key="key" :value="key">{{value}}
                     </Option>
                   </Select>
                 </FormItem>
                 <span>计算</span>
+                <popTipForRule></popTipForRule>
               </Form>
               <div class="title">
                 <div class="ruleName">{{ruleDetail.ruleName}}</div>
@@ -78,7 +79,8 @@
                       <Row :gutter="24">
                         <Col span="4" class="styleCommon">
                         <FormItem prop="departure" style="text-align: left">
-                          <SelectInputForCity :code-type="1" v-model="item.departure" placeholder="请输入始发地"
+                          <SelectInputForCity ref="city1" :code-type="1" v-model="item.departure"
+                                              placeholder="请输入始发地"
                                               class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
@@ -87,12 +89,12 @@
                         </Col>
                         <Col span="4" class="styleCommon">
                         <FormItem prop="destination" style="text-align: left">
-                          <SelectInputForCity :code-type="1" v-model="item.destination" placeholder="请输入目的地"
+                          <SelectInputForCity ref="city2"  :code-type="1" v-model="item.destination" placeholder="请输入目的地"
                                               class="search-input-senior"></SelectInputForCity>
                         </FormItem>
                         </Col>
                         <Col span="13" class="styleCommon">
-                        <div class="startPrice">
+                        <div v-if="ruleDetail.ruleType!=='5'" class="startPrice">
                           <FormItem prop="startType" style="width: 70px">
                             <Select v-model="item.startType" @on-change="startTypeChange(item)">
                               <Option v-for="(value, key) in startTypeMap" :key="key" :value="key">{{value}}
@@ -121,7 +123,7 @@
                           </div>
                         </div>
                         </Col>
-                        <Col span="2">
+                        <Col :offset="ruleDetail.ruleType==='5'? 13:0" span="2">
                         <span class="delete_btn" @click="removeItem(index)">删除</span>
                         </Col>
                       </Row>
@@ -132,7 +134,7 @@
                     <div slot="content">
                       <ul class="rule-detail">
                         <li v-for="(el, no) in item.chargeRules" :key="no" class="rule-detail-item">
-                          <div>
+                          <div v-if="ruleDetail.ruleType!=='5'">
                             <span>{{valueTypeMap[ruleDetail.ruleType]}}</span>
                             <span style="margin-left: 5px">≥</span>
                             <Form ref="ruleBase" :model="el" :rules="baseValidate" style="display: inline-block"
@@ -145,7 +147,7 @@
                               <span>{{unitMap[ruleDetail.ruleType]}}</span>
                             </Form>
                           </div>
-                          <div>
+                          <div v-if="ruleDetail.ruleType!=='5'">
                             <span>单价</span>
                             <span style="margin-left: 5px">=</span>
                             <Form ref="rulePrice" :model="el" :rules="priceValidate" style="display: inline-block"
@@ -155,6 +157,42 @@
                                 <TagNumberInput v-model="el.price" :show-chinese="false"></TagNumberInput>
                               </FormItem>
                               <span>元/{{valueMap[ruleDetail.ruleType]}}</span>
+                            </Form>
+                          </div>
+                          <!--车型-->
+                          <div v-if="ruleDetail.ruleType==='5'">
+                            <span>{{valueTypeMap[ruleDetail.ruleType]}}</span>
+                            <Form ref="ruleCar" :model="el" :rules="carValidate"   style="display: inline-block"
+                                  inline>
+                              <FormItem prop="carType" inline style="margin-bottom: 0">
+                                <Select v-model="el.carType"
+                                        transfer
+                                        placeholder="请选择车型"
+                                        class="detail-info-input-half"
+                                        style="margin-right: 12px;width: 120px">
+                                  <Option v-for="item in carType" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                                </Select>
+                              </FormItem>
+                              <FormItem prop="carLength" inline style="margin-bottom: 0">
+                                <Select v-model="el.carLength"
+                                        transfer
+                                        placeholder="请选择车长"
+                                        class="detail-info-input-half"
+                                        style="margin-right: 12px;width: 120px">
+                                  <Option v-for="item in carLength" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                                </Select>
+                              </FormItem>
+                            </Form>
+                          </div>
+                          <div v-if="ruleDetail.ruleType==='5'">
+                            <span>包车价</span>
+                            <Form ref="rulePrice" :model="el" :rules="priceValidate" style="display: inline-block"
+                                  inline>
+                              <FormItem prop="price" inline style="margin-bottom: 0">
+                                <!--<Input v-model="el.price" />-->
+                                <TagNumberInput v-model="el.price" :show-chinese="false"></TagNumberInput>
+                              </FormItem>
+                              <span>元</span>
                             </Form>
                           </div>
                           <div class="add_decrease">
@@ -194,13 +232,13 @@ import TagNumberInput from '@/components/TagNumberInput'
 import FontIcon from '@/components/FontIcon'
 import DataEmpty from '@/components/DataEmpty'
 import mixin from '../../views/client/ruleForClient/mixin'
-import { mapActions } from 'vuex'
+import popTipForRule from '@/views/client/ruleForClient/dialogs/popTipForRule.vue'
 export default {
   name: 'financeRules',
   metaInfo: {
     title: '计费规则'
   },
-  components: { SelectInputForCity, FontIcon, TagNumberInput, DataEmpty },
+  components: { SelectInputForCity, FontIcon, TagNumberInput, DataEmpty, popTipForRule },
   mixins: [BasePage, mixin],
   data () {
     return {
@@ -227,7 +265,7 @@ export default {
     this.height = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 65
   },
   methods: {
-    ...mapActions(['getSenderRules', 'getCarriesRules']),
+    // ...mapActions(['getSenderRules', 'getCarriesRules']),
     async getRules () {
       if (this.active === '1') {
         await this.getSenderRules()
@@ -426,11 +464,13 @@ export default {
                     -ms-flex 1
                     /deep/ .ivu-form-inline .ivu-form-item
                       vertical-align middle
+                      text-align center
                       width 128px
                       margin-left 10px
                   &:last-child
                     border-bottom none
                   .add_decrease
+                    flex 0 0 80px
                     line-height 32px
                     color #00A4BD
                     font-size 14px

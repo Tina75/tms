@@ -20,7 +20,7 @@
             <Input v-model="keywords.orderNo" :maxlength="20"  placeholder="请输入订单号"/>
           </div>
           <div class="col">
-            <Input v-model="keywords.customerOrderNo" :maxlength="20" placeholder="请输入客户单号"  />
+            <Input v-model="keywords.customerOrderNo" :maxlength="20" placeholder="请输入客户订单号"  />
           </div>
           <div class="col">
             <Input :maxlength="20" v-model="keywords.waybillNo" placeholder="请输入运单号"  />
@@ -96,6 +96,7 @@
             </DatePicker>
           </div>
           <div class="col">
+            <Input :maxlength="100" v-model="keywords.orderRemark" placeholder="请输入订单备注信息"  />
           </div>
         </div>
       </div>
@@ -160,7 +161,8 @@ export default {
         carrierName: '',
         carNo: '',
         driverName: '',
-        driverPhone: ''
+        driverPhone: '',
+        orderRemark: ''
       },
       keyword: {
         type: 1
@@ -213,8 +215,13 @@ export default {
           width: 150
         },
         {
-          title: '客户单号',
+          title: '客户订单号',
           key: 'customerOrderNo',
+          width: 150
+        },
+        {
+          title: '客户运单号',
+          key: 'customerWaybillNo',
           width: 150
         },
         {
@@ -262,12 +269,22 @@ export default {
           width: 150
         },
         {
+          title: '重量（公斤）',
+          key: 'weightKg',
+          width: 150
+        },
+        {
           title: '下单时间',
           key: 'orderCreateTime',
           width: 250,
           render: (h, params) => {
             return h('span', new Date(params.row.orderCreateTime).Format('yyyy-MM-dd hh:mm'))
           }
+        },
+        {
+          title: '订单备注',
+          key: 'orderRemark',
+          width: 250
         },
         {
           title: '合计应收',
@@ -474,18 +491,19 @@ export default {
         return
       }
       this.keyword = {
-        consignerName: this.keywords.consignerName || null,
-        orderNo: this.keywords.orderNo || null,
-        customerOrderNo: this.keywords.customerOrderNo || null,
-        waybillNo: this.keywords.waybillNo || null,
-        start: this.keywords.start,
-        end: this.keywords.end,
-        startTime: this.keywords.startTime || null,
-        endTime: this.keywords.endTime || null,
-        carrierName: this.keywords.carrierName || null,
-        carNo: this.keywords.carNo || null,
-        driverName: this.keywords.driverName || null,
-        driverPhone: this.keywords.driverPhone || null
+        consignerName: this.keywords.consignerName || undefined,
+        orderNo: this.keywords.orderNo || undefined,
+        customerOrderNo: this.keywords.customerOrderNo || undefined,
+        waybillNo: this.keywords.waybillNo || undefined,
+        start: this.keywords.start || undefined,
+        end: this.keywords.end || undefined,
+        startTime: this.keywords.startTime || undefined,
+        endTime: this.keywords.endTime || undefined,
+        carrierName: this.keywords.carrierName || undefined,
+        carNo: this.keywords.carNo || undefined,
+        driverName: this.keywords.driverName || undefined,
+        driverPhone: this.keywords.driverPhone || undefined,
+        orderRemark: this.keywords.orderRemark || undefined
       }
     },
     // 判断搜索条件是不是都是空，为空则key = 1
@@ -512,7 +530,8 @@ export default {
         carrierName: '',
         carNo: '',
         driverName: '',
-        driverPhone: ''
+        driverPhone: '',
+        orderRemark: ''
       }
       this.times = ['', '']
       this.keyword = {
@@ -526,18 +545,19 @@ export default {
         return
       }
       let data = {
-        consignerName: this.keywords.consignerName || null,
-        orderNo: this.keywords.orderNo || null,
-        customerOrderNo: this.keywords.customerOrderNo || null,
-        waybillNo: this.keywords.waybillNo || null,
-        start: this.keywords.start,
-        end: this.keywords.end,
-        startTime: this.keywords.startTime || null,
-        endTime: this.keywords.endTime || null,
-        carrierName: this.keywords.carrierName || null,
-        carNo: this.keywords.carNo || null,
-        driverName: this.keywords.driverName || null,
-        driverPhone: this.keywords.driverPhone || null
+        consignerName: this.keywords.consignerName || undefined,
+        orderNo: this.keywords.orderNo || undefined,
+        customerOrderNo: this.keywords.customerOrderNo || undefined,
+        waybillNo: this.keywords.waybillNo || undefined,
+        start: this.keywords.start || undefined,
+        end: this.keywords.end || undefined,
+        startTime: this.keywords.startTime || undefined,
+        endTime: this.keywords.endTime || undefined,
+        carrierName: this.keywords.carrierName || undefined,
+        carNo: this.keywords.carNo || undefined,
+        driverName: this.keywords.driverName || undefined,
+        driverPhone: this.keywords.driverPhone || undefined,
+        orderRemark: this.keywords.orderRemark || undefined
       }
       Export({
         url: '/report/for/operating/export',
@@ -546,20 +566,16 @@ export default {
         fileName: '运单报表'
       })
     },
-    // // 筛选列表显示字段
-    // handleColumnChange (val) {
-    //   this.extraColumns = val
-    // },
     handleTimeChange (val) {
-      this.keywords.startTime = val[0]
-      this.keywords.endTime = val[1]
+      this.keywords.startTime = val[0] ? (val[0] + ' 00:00:00') : val[0]
+      this.keywords.endTime = val[1] ? (val[1] + ' 23:59:59') : val[1]
     },
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
     },
     showSevenDate () {
       let now = new Date().getTime()
-      this.keywords.startTime = this.formatDate(now - 7 * 24 * 60 * 60 * 1000)
+      this.keywords.startTime = this.formatDate(now - 6 * 24 * 60 * 60 * 1000)
       this.keywords.endTime = this.formatDate(now)
       this.times = [this.keywords.startTime, this.keywords.endTime]
       this.keyword = {

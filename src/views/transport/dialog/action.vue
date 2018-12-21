@@ -1,7 +1,7 @@
 <template>
   <Modal v-model="show" :mask-closable="false" transfer class="transport-action" width="1032"  @on-visible-change="close">
     <p slot="header" style="text-align:center">
-      {{ type === 'sendCar' ? '派车' : '提货' }}
+      派车
     </p>
     <div class="sub-title">
       <div class="send-label">派车方式：</div>
@@ -11,34 +11,34 @@
         <!-- <Radio label="3">下发承运商</Radio> -->
       </RadioGroup>
     </div>
-    <div v-if="type === 'sendCar'">
+    <div>
       <send-carrier-info
         v-if="sendWay === '1'"
         ref="SendCarrierInfo"
-        :carrier-info="carrierInfo"></send-carrier-info>
-      <own-send-info v-else ref="ownSendInfo"></own-send-info>
+        :carrier-info="carrierInfo"
+        :source-type="type === 'sendCar' ?  'sendCar' : 'pickup'"></send-carrier-info>
+      <own-send-info v-else ref="ownSendInfo" :form="ownInfo"></own-send-info>
+
       <send-fee
+        v-if="type === 'sendCar'"
         ref="sendFee"
         :payment="payment"
         :settlement-type="settlementType"
         :settlement-pay-info="settlementPayInfo"
         :finance-rules-info="financeRulesInfo"
-        :send-way="sendWay">
+        :send-way="sendWay"
+        :send-fee-orders="orderList"
+        :fee-pass-allocation="allocationStrategy">
       </send-fee>
-    </div>
-    <div v-else>
-      <send-carrier-info
-        v-if="sendWay === '1'"
-        ref="SendCarrierInfo"
-        :carrier-info="carrierInfo"
-        source="pickup"></send-carrier-info>
-      <own-send-info v-else ref="ownSendInfo" :form="ownInfo"></own-send-info>
       <pickup-fee
+        v-else
         ref="pickupFee"
         :payment="payment"
         :settlement-type="settlementType"
         :settlement-pay-info="settlementPayInfo"
-        :send-way="sendWay"></pickup-fee>
+        :send-way="sendWay"
+        :pick-fee-orders="orderList"
+        :fee-pass-allocation="allocationStrategy"></pickup-fee>
     </div>
 
     <div slot="footer" style="text-align: center;">
@@ -50,8 +50,6 @@
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
-// import SendCar from '../components/SendCar'
-// import PickUp from '../components/PickUp'
 
 import SendFee from '../components/SendFee'
 import SendCarrierInfo from '../components/SendCarrierInfo'
@@ -59,7 +57,7 @@ import OwnSendInfo from '../components/ownSendInfo'
 import PickupFee from '../components/PickupFee'
 import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 import Server from '@/libs/js/server'
-
+import float from '@/libs/js/float'
 export default {
   name: 'SendOrPickAction',
   components: { SendFee, SendCarrierInfo, OwnSendInfo, PickupFee },
@@ -82,11 +80,11 @@ export default {
         carrierName: '',
         driverName: '',
         driverPhone: '',
-        assistantDriverName: '',
-        assistantDriverPhone: '',
         carNo: '',
         carType: '',
-        carLength: ''
+        carLength: '',
+        remark: '',
+        carrierWaybillNo: '' // 承运商运单号
       },
       // 自送赋值给子组件
       ownInfo: {
@@ -101,11 +99,14 @@ export default {
         otherFee: null,
         cashBack: null,
         tollFee: null, // 路桥费
-        mileage: null // 计费里程 v1.06 新增
+        mileage: null, // 计费里程 v1.06 新增
+        accommodation: null // 住宿费 v1.08 新增
       },
       settlementType: '',
       settlementPayInfo: [],
-      btnLoading: false
+      btnLoading: false,
+      orderList: [], // 订单list
+      allocationStrategy: null // 编辑的时候需要带入的分摊策略，1、按订单数  2、按件数 3、按重量 4、按体积
     }
   },
   created () {
@@ -113,7 +114,8 @@ export default {
       this.settlementPayInfo = [
         { payType: 1, fuelCardAmount: '', cashAmount: '' },
         { payType: 2, fuelCardAmount: '', cashAmount: '' },
-        { payType: 3, fuelCardAmount: '', cashAmount: '' }
+        { payType: 3, fuelCardAmount: '', cashAmount: '' },
+        { payType: 4, fuelCardAmount: '', cashAmount: '' }
       ]
     } else {
       this.settlementPayInfo = [
@@ -129,6 +131,7 @@ export default {
         delete this.payment.cashBack // 提货去掉返现运费
         delete this.payment.tollFee // 提货去掉路桥费
         delete this.payment.mileage // 提货去掉计费里程
+        delete this.payment.accommodation // 提货去掉住宿费
       } else {
         for (let key in this.financeRulesInfo) {
           this.financeRulesInfo[key] = this.orderCreate[key]
@@ -148,10 +151,16 @@ export default {
         data: { [this.type === 'sendCar' ? 'waybillId' : 'pickUpId']: this.id }
       }).then(res => {
         const data = res.data.data
+        // 订单数量
+        this.orderList = data.orderList
+
         const billInfo = this.type === 'sendCar' ? data.waybill : data.loadbill
 
         // 派车方式
         this.sendWay = billInfo.assignCarType.toString()
+        // 带入已有的分摊策略
+        this.allocationStrategy = billInfo.allocationStrategy
+
         // 将承运商信息赋值给子组件
         if (this.sendWay === '1') { // 外转
           for (let key in this.carrierInfo) {
@@ -180,6 +189,7 @@ export default {
           delete this.payment.cashBack // 提货去掉返现运费
           delete this.payment.tollFee // 提货去掉路桥费
           delete this.payment.tollFee // 提货去掉计费里程
+          delete this.payment.accommodation // 提货去掉住宿费
         }
 
         this.settlementType = billInfo.settlementType ? billInfo.settlementType.toString() : '1'
@@ -196,7 +206,7 @@ export default {
         this.settlementPayInfo = temp
 
         this.loading = false
-      }).catch(err => console.error(err))
+      }).catch()
     },
 
     // 设置金额单位为元
@@ -210,9 +220,9 @@ export default {
       for (let key in temp) {
         if (typeof temp[key] === 'number') {
           if (key === 'mileage') {
-            temp[key] = temp[key] * 1000
+            temp[key] = float.round(temp[key] * 1000)
           } else {
-            temp[key] = temp[key] * 100
+            temp[key] = float.round(temp[key] * 100)
           }
         }
       }
@@ -245,7 +255,7 @@ export default {
       }
       return false
     },
-    // 派车
+    // 送货派车
     doSendAction () {
       const z = this
       if (!z.checkSendValidate()) return
@@ -253,6 +263,10 @@ export default {
       let data = {
         waybillId: this.id || '',
         assignCarType: z.sendWay
+      }
+      // 订单数大于1需要传分摊策略
+      if (this.orderList.length > 1) {
+        data.allocationStrategy = z.$refs.sendFee.getAllocationStrategy()
       }
       if (z.sendWay === '1') { // 外转
         data = Object.assign(data, z.$refs.sendFee.formatMoney(), z.$refs.SendCarrierInfo.getCarrierInfo(), {
@@ -292,7 +306,7 @@ export default {
       return false
     },
 
-    // 提货
+    // 提货派车
     doPickAction () {
       const z = this
       if (!z.checkPickValidate()) return
@@ -300,6 +314,10 @@ export default {
       let data = {
         pickUpId: this.id || '',
         assignCarType: z.sendWay
+      }
+      // 订单数大于1需要传分摊策略
+      if (this.orderList.length > 1) {
+        data.allocationStrategy = z.$refs.pickupFee.getAllocationStrategy()
       }
       if (z.sendWay === '1') { // 外转
         data = Object.assign(data, z.$refs.pickupFee.formatMoney(), z.$refs.SendCarrierInfo.getCarrierInfo(), {
@@ -363,7 +381,6 @@ export default {
 
 </script>
 <style lang='stylus'>
-
  .transport-action
   .ivu-modal-body
     padding 10px 40px 16px 30px

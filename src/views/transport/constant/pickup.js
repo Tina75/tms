@@ -56,6 +56,12 @@ export const BUTTON_LIST = vm => [
   {
     tab: '待提货',
     btns: [{
+      name: '提货',
+      code: 120201,
+      func: () => {
+        vm.loadBillSend()
+      }
+    }, {
       name: '打印',
       code: 120202,
       func: () => {
@@ -63,7 +69,7 @@ export const BUTTON_LIST = vm => [
       }
     }, {
       name: '删除',
-      code: 120202,
+      code: 120204,
       func: () => {
         vm.billDelete()
       }
@@ -222,6 +228,11 @@ export const TABLE_COLUMNS = vm => [
     width: 120
   },
   {
+    title: '重量（公斤）',
+    key: 'weightKg',
+    minWidth: 120
+  },
+  {
     title: '创建时间',
     key: 'createTimeLong',
     sortable: 'custom',
@@ -272,6 +283,11 @@ export const TABLE_COLUMNS = vm => [
   {
     title: '订单数',
     key: 'orderCnt',
+    width: 120
+  },
+  {
+    title: '备注',
+    key: 'remark',
     width: 120
   }
 ]

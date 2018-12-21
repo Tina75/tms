@@ -6,7 +6,10 @@ export const getUserInfo = ({ rootState, commit, state, dispatch }, data) => {
     url: '/set/userInfo',
     method: 'get'
   }).then(({ data }) => {
-    commit('initUserInfo', data.data)
+    // 20181214 接口返回值包含权限
+    const { permission, ...userInfo } = data.data
+    commit('initUserInfo', userInfo)
+    commit('initPermissions', permission || [])
   }).catch(e => {
     console.log(e)
   })
@@ -23,7 +26,10 @@ export const getCompanyInfo = ({ rootState, commit, state, dispatch }, data) => 
     console.log(e)
   })
 }
-/** 获取用户权限 */
+/**
+ * 获取用户权限
+ * !! 废弃 20181214-合并到获取用户信息接口里
+ */
 export const getPermissons = ({ commit }, list) => {
   return Server({
     url: '/user/permission',
@@ -62,4 +68,17 @@ export const getTableColumns = ({ commit }) => {
 /** 获取自定义table列表信息 */
 export const setDocumentHeight = ({ commit }, height) => {
   commit('updateDocumentHeight', height - 80)
+}
+/**
+ * 获取订单开单配置
+ * @param {} param0
+ */
+export const getOrderConfiguration = ({ commit }) => {
+  return Server({
+    url: 'order/config/get',
+    method: 'post',
+    data: {}
+  }).then(({ data }) => {
+    commit('changeOrderConfiguration', data.data.weightOption)
+  })
 }

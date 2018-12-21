@@ -29,7 +29,7 @@
             <span class="checkBoxMessage">全选</span></Checkbox>
             <div v-if="this.sysMessageList.length === 0" style="flex-direction: column; -ms-flex-direction: column;" class="noneImg">
               <img src="./noneInfo.png"/>
-              <p>暂无消息</p>
+              <p class="message-p">暂无消息</p>
             </div>
             <div v-for="msg in this.sysMessageList" v-else :key="msg.id" class="megDiv">
               <CheckboxGroup v-if="!batchBtnShow" v-model="checkAllGroup" class="checkAllGroup" @on-change="checkAllGroupChange">
@@ -375,6 +375,7 @@ export default {
       this.visibaleRemove = true
     },
     clickContenInfo (msg) {
+      let transformParams
       switch (msg.type) {
         // 0系统消息4订单消息5回单消息6运单消息7提货单消息8外转单消息
         case 0:
@@ -414,6 +415,42 @@ export default {
           this.openTab({
             path: TMSUrl.OUTER_ORDER, // '/transport/outerOrder',
             title: '外转单管理'
+          })
+          break
+        case 17:
+          if (!msg.comParam) {
+            return
+          }
+          transformParams = JSON.parse(msg.comParam)
+          // 试用期数据删除
+          this.openDialog({
+            name: 'dialogs/clear-trial-data.vue',
+            data: {
+              ...transformParams
+            },
+            methods: {
+              ok () {},
+              cancel () {}
+            }
+          })
+          break
+        case 18:
+          if (!msg.comParam) {
+            return
+          }
+          transformParams = JSON.parse(msg.comParam)
+          // 邀请承运商合作
+          this.openDialog({
+            name: 'dialogs/invite-cooperation.vue',
+            data: {
+              phone: transformParams.inviterPhone,
+              inviteId: transformParams.id,
+              content: msg.content
+            },
+            methods: {
+              ok () {},
+              cancel () {}
+            }
           })
           break
       }
@@ -514,7 +551,7 @@ export default {
   overflow: hidden;
 .msgConfigDiv
   float: right;
-  margin-top: -40px;
+  margin-top: -45px;
 .msgContentText
   white-space: nowrap;
   overflow: hidden;
@@ -605,4 +642,6 @@ export default {
   text-align:center;
   font-size: 16px;
   font-weight:bold;
+.message-p
+  line-height 30px
 </style>

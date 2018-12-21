@@ -1,7 +1,7 @@
 
 <template>
   <div class="sider">
-    <Sider v-model="collapsed" :collapsed-width="50" hide-trigger collapsible style="overflow:hidden">
+    <Sider v-model="collapsed" :collapsed-width="50" hide-trigger collapsible class="sider-collapse" style="overflow:hidden">
       <Menu v-show="!collapsed" ref="menu" :active-name="$route.path" :open-names="openedNames" accordion width="200" theme="dark" @on-select="handleSelect">
         <div class="title"><font-icon type="logo-zjy1" size="24" color="white"/></div>
         <template v-for="item in menuList">
@@ -12,7 +12,7 @@
             </Submenu>
           </template>
           <template v-else>
-            <menu-item v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path"><font-icon :type="item.icon" :size="18"></font-icon>{{item.name}}</menu-item>
+            <menu-item v-if="hasPower(item.powerCode)" :name="item.path" :key="item.path"><font-icon :type="item.icon" :size="18"></font-icon>{{item.name}}<Badge v-if="item.path==='/upstream'" :count="waitAccept" class="count"></Badge></menu-item>
           </template>
         </template>
         <div class="footer">
@@ -57,6 +57,7 @@
 <script>
 import FontIcon from '@/components/FontIcon'
 import menuJson from '@/assets/menu.json'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: { FontIcon },
@@ -70,6 +71,9 @@ export default {
       menuList: menuJson
     }
   },
+  computed: {
+    ...mapGetters(['waitAccept'])
+  },
   watch: {
     activeName (val) {
       this.openedNames = this.getopenedNames(val)
@@ -82,9 +86,16 @@ export default {
   },
   mounted () {
     this.openedNames = this.getopenedNames(this.activeName)
+    this.getOnlineCount()
   },
   methods: {
-
+    ...mapActions([
+      'getCount'
+    ]),
+    getOnlineCount () {
+      this.getCount()
+      setInterval(this.getCount, 1000 * 60)
+    },
     getopenedNames (activeName) {
       /**
        * 订单管理菜单分割
@@ -127,7 +138,7 @@ export default {
     // 权限控制
     hasPower: function (power) {
       if (!power) { return true }
-      return this.$store.state.permissions.includes(power)
+      return this.$store.state.permissions.includes(power + '')
     //   var flag = false
     //   var powerArr = (power || '').split(',') || []
     //   var list = window.powerList
@@ -146,7 +157,18 @@ export default {
 <style lang="stylus" scoped>
 .sider
   z-index 10
-  padding-bottom 50px
+  .count
+    /deep/
+      .ivu-badge-count
+        background #fff
+        color #EE2017
+        min-width 16px
+        height 16px
+        line-height 14px
+        padding: 0 3px
+        margin-left 42px
+  .sider-collapse
+    padding-bottom 50px
   .title
     font-size 20px
     color white

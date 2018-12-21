@@ -12,7 +12,7 @@
             <span class="value">{{ params.orderNo }}</span>
           </i-col>
           <i-col span="12">
-            <span class="label">客户单号：</span>
+            <span class="label">客户订单号：</span>
             <span class="value">{{ params.customerOrderNo || '-' }}</span>
           </i-col>
         </Row>

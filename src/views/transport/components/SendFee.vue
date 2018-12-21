@@ -1,15 +1,15 @@
 <template>
-  <Form ref="sendFeeForm" :label-width="82" :model="payment" :rules="rules" class="transport-detail" label-position="left">
+  <Form ref="sendFeeForm" :label-width="82" :model="payment" :rules="rules" class="transport-detail" label-position="right">
     <div class="part" style="padding-bottom: 5px;">
       <Row class="detail-field-group">
         <i-col v-if="source !== 'abnormal'" span="6">
-          <FormItem label="计费里程：" prop="mileage" class="padding-left-label">
+          <FormItem label="计费里程：" prop="mileage">
             <TagNumberInput :show-chinese="false" :min="0" v-model="payment.mileage" :precision="1" class="detail-payment-input-send"></TagNumberInput>
             <span class="unit-yuan">公里</span>
           </FormItem>
         </i-col>
         <i-col span="6">
-          <FormItem :label="sendWay === '1' ? '运输费：': '油费：'" prop="freightFee" class="padding-left-label">
+          <FormItem :label="sendWay === '1' ? '运输费：': '油费：'" prop="freightFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>
@@ -34,7 +34,7 @@
           </FormItem>
         </i-col>
         <i-col v-if="source === 'abnormal'" span="6">
-          <FormItem label="路桥费：" prop="tollFee" class="padding-left-label">
+          <FormItem label="路桥费：" prop="tollFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.tollFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>
@@ -44,15 +44,23 @@
       </Row>
       <Row class="detail-field-group">
         <i-col v-if="source !== 'abnormal'" span="6">
-          <FormItem label="路桥费：" prop="tollFee" class="padding-left-label">
+          <FormItem label="路桥费：" prop="tollFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.tollFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>
             <span class="unit-yuan">元</span>
           </FormItem>
         </i-col>
+        <i-col v-if="sendWay === '2'" span="6">
+          <FormItem label="住宿费：" prop="accommodation">
+            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+              <TagNumberInput v-model="payment.accommodation" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            </Tooltip>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+        </i-col>
         <i-col span="6">
-          <FormItem label="保险费：" prop="insuranceFee" class="padding-left-label">
+          <FormItem label="保险费：" prop="insuranceFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>
@@ -75,8 +83,8 @@
         </i-col>
       </Row>
     </div>
-
-    <div v-if="sendWay === '1' && source !== 'abnormal'" class="part">
+    <!-- 外转 -->
+    <div v-if="sendWay === '1' && source !== 'abnormal'">
       <Row class="detail-field-group">
         <i-col span="24">
           <span class="detail-field-title detail-field-required" style="width: 92px;">结算方式：</span>
@@ -97,9 +105,12 @@
         </i-col>
       </Row>
 
-      <Row class="detail-field-group" style="margin-top: 15px;margin-left: 10px;">
-        <i-col span="24">
-          <FormItem label="返现运费：" prop="cashBack">
+      <Row class="detail-field-group" style="margin-top: 15px;margin-left: -2px;">
+        <i-col v-if="sendFeeOrders.length > 1" span="8">
+          <allocation-strategy ref="allocationStrategy" :allocation-orders="sendFeeOrders" :pass-allocation="feePassAllocation"></allocation-strategy>
+        </i-col>
+        <i-col span="8">
+          <FormItem label="返现运费：" prop="cashBack" class="detail-form-label">
             <TagNumberInput v-model="payment.cashBack" class="detail-payment-input" style="width: 180px;"></TagNumberInput>
             <span class="unit-yuan">元</span>
             <Tooltip placement="right" transfer content="返现运费是指在实际运输过程中存在某一段运输没有执行，需要将提前支付的运费返还。" max-width="500">
@@ -109,9 +120,17 @@
         </i-col>
       </Row>
     </div>
+    <!-- 自送 -->
+    <div v-if="sendWay === '2' && source !== 'abnormal' && sendFeeOrders.length > 1">
+      <Row class="detail-field-group" style="margin-left: -2px;">
+        <i-col span="8">
+          <allocation-strategy ref="allocationStrategy" :allocation-orders="sendFeeOrders" :pass-allocation="feePassAllocation"></allocation-strategy>
+        </i-col>
+      </Row>
+    </div>
 
-    <div v-if="source === 'abnormal' && abnormalLength > 0" class="part">
-      <Row class="detail-field-group">
+    <div v-if="source === 'abnormal'">
+      <Row v-if="abnormalLength > 0" class="detail-field-group">
         <i-col span="24">
           <PayInfo
             ref="$payInfo"
@@ -120,6 +139,12 @@
             class="detail-field-payinfo"
             style="margin: 0 0 0 82px;"
             mode="edit" />
+        </i-col>
+      </Row>
+      <Row v-if="orderCnt > 1" class="detail-field-group row-margin">
+        <i-col span="24">
+          <span class="detail-field-title-sm" style="margin-left: 10px;">分摊策略：</span>
+          <span>{{ getAllocationValToLabel(allocationType) }}</span>
         </i-col>
       </Row>
     </div>
@@ -133,10 +158,13 @@ import validator from '@/libs/js/validate'
 import PayInfo from './PayInfo'
 import { mapGetters } from 'vuex'
 import $bus from '@/libs/js/eventBus.js'
+import AllocationStrategy from './AllocationStrategy.vue'
+import allocationStrategy from '../constant/allocation.js'
+import float from '@/libs/js/float'
 
 export default {
   name: 'SendFeeComponent',
-  components: { TagNumberInput, PayInfo },
+  components: { TagNumberInput, PayInfo, AllocationStrategy },
   mixins: [ BaseDialog ],
   props: {
     feeStatusTip: {
@@ -175,7 +203,8 @@ export default {
           otherFee: null,
           cashBack: null, // 返现运费
           tollFee: null, // 路桥费
-          mileage: null // 计费里程
+          mileage: null, // 计费里程
+          accommodation: null// 住宿费
         }
       }
     },
@@ -190,7 +219,8 @@ export default {
       default: () => [
         { payType: 1, fuelCardAmount: '', cashAmount: '' },
         { payType: 2, fuelCardAmount: '', cashAmount: '' },
-        { payType: 3, fuelCardAmount: '', cashAmount: '' }
+        { payType: 3, fuelCardAmount: '', cashAmount: '' },
+        { payType: 4, fuelCardAmount: '', cashAmount: '' }
       ]
     },
     // 页面来源
@@ -207,6 +237,24 @@ export default {
     abnormalLength: {
       type: [String, Number],
       default: 3
+    },
+    // 传入的订单list,需要校验数量、体积、重量
+    sendFeeOrders: {
+      type: Array
+    },
+    // 分摊类型 默认1 按订单数分摊
+    allocationType: {
+      type: [String, Number],
+      default: 1
+    },
+    // 订单数量，异常需要判断是否显示分摊费用
+    orderCnt: {
+      type: Number,
+      default: 1
+    },
+    // 编辑的时候需要带入的分摊策略，1、按订单数  2、按件数 3、按重量 4、按体积
+    feePassAllocation: {
+      type: [String, Number]
     }
   },
   data () {
@@ -260,11 +308,15 @@ export default {
         // 计费里程
         mileage: [
           { validator: validateMile }
+        ],
+        // 住宿费用
+        accommodation: [
+          { validator: validateFee }
         ]
       },
       settlementTypeFee: '1',
       // settlementPayInfo: [],
-      carrierName: ''
+      carrierInfo: {}
     }
   },
   computed: {
@@ -280,7 +332,8 @@ export default {
               Number(this.payment.insuranceFee) +
               Number(this.payment.otherFee) +
               Number(this.payment.tollFee)
-      return parseFloat(total.toFixed(2))
+      if (this.sendWay === '2') total += Number(this.payment.accommodation) // 自送要算住宿费
+      return float.round(total)
     }
   },
   watch: {
@@ -291,16 +344,20 @@ export default {
   created () {
     this.mileage && (this.payment.mileage = this.mileage)
     this.settlementTypeFee = this.settlementType
-    // 获取SendCarrierInfo组件传入的carrierName
-    $bus.$on('carrierNameChange', carrierName => {
-      this.carrierName = carrierName
+    // 获取SendCarrierInfo组件传入的carrierInfo
+    $bus.$on('carrierInfoChange', carrierInfo => {
+      this.carrierInfo = carrierInfo
     })
   },
   methods: {
+    // 将分摊策略返回的标识映射为文字
+    getAllocationValToLabel (data) {
+      let list = allocationStrategy.find(item => item.value === (data !== '' ? data : 1))
+      return list.label
+    },
     // 计费规则
     showChargeRules () {
       const self = this
-      console.log(this.financeRulesInfo, this.payment.mileage, this.carrierName)
       if (!self.financeRulesInfo.start) {
         self.$Message.error('请先输入始发地')
         return
@@ -309,11 +366,11 @@ export default {
         self.$Message.error('请先输入目的地')
         return
       }
-      if (!self.carrierName) {
+      if (!self.carrierInfo.carrierName) {
         self.$Message.error('请先选择或输入承运商')
         return
       }
-      const carrierItem = self.carriers.find(c => c.name === self.carrierName)
+      const carrierItem = self.carriers.find(c => c.name === self.carrierInfo.carrierName)
       if (!carrierItem) {
         self.$Message.warning('您选择或输入的承运商没有维护的计费规则')
         return
@@ -328,8 +385,10 @@ export default {
         data: {
           partnerId: carrierId,
           partnerType: 2,
-          partnerName: self.carrierName,
-          distance: self.payment.mileage ? self.payment.mileage * 1000 : 0,
+          partnerName: self.carrierInfo.carrierName,
+          carType: self.carrierInfo.carType,
+          carLength: self.carrierInfo.carLength,
+          distance: self.payment.mileage ? float.round(self.payment.mileage * 1000) : 0,
           ...self.financeRulesInfo
         },
         methods: {
@@ -347,20 +406,26 @@ export default {
     // 格式化金额单位为分
     formatMoney () {
       let temp = Object.assign({}, this.payment)
-      temp.freightFee = temp.freightFee * 100
-      temp.loadFee = temp.loadFee * 100
-      temp.unloadFee = temp.unloadFee * 100
-      temp.insuranceFee = temp.insuranceFee * 100
-      temp.otherFee = temp.otherFee * 100
-      temp.tollFee = temp.tollFee * 100
-      temp.cashBack = temp.cashBack * 100
-      temp.mileage = temp.mileage * 1000
+      for (let key in temp) {
+        if (key === 'mileage') {
+          temp[key] = float.round(temp[key] * 1000)
+        } else {
+          temp[key] = float.round(temp[key] * 100)
+        }
+      }
       temp.totalFee = this.paymentTotal * 100
-      if (this.source === 'abnormal') {
+      if (this.source === 'abnormal') { // 异常没有计费里程和返现
         delete temp.cashBack
         delete temp.mileage
       }
+      if (this.sendWay === '1') { // 外转去掉住宿费
+        delete temp.accommodation
+      }
       return temp
+    },
+    // 获取分摊策略
+    getAllocationStrategy () {
+      return this.$refs.allocationStrategy.getAllocation()
     },
     // payInfo组件数据校验
     payInfoValid () {
@@ -388,22 +453,15 @@ export default {
 
 </script>
 <style lang='stylus'>
- @import "../style/detail.styl"
+  @import "../style/detail.styl"
 
- .part
+  .part
 
-   .ivu-form-item-label
-     color #777
-     font-size 14px
-     padding 10px 0 10px
-
-   .padding-left-label
     .ivu-form-item-label
-      padding-left 10px
+      color #777
+      font-size 14px
+      padding 10px 0 10px
 
-   .label-width
-    .ivu-form-item-label
-      width 92px !important
   .detail-payment-way
     width calc(100% - 100px) !important
 </style>
@@ -411,4 +469,6 @@ export default {
   .part
     padding 10px 0 20px
     border-bottom none
+  .row-margin
+    margin 20px 0 35px 0
 </style>

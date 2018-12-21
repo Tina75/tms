@@ -9,26 +9,19 @@
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
-      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122">
-        <FormItem label="发货地址：">
-          <Row>
-            <Col span="11">
-            <FormItem prop="city">
-              <CitySelect v-model="validate.city" clearable></CitySelect>
-            </FormItem>
-            </Col>
-            <Col span="13" style="padding-left: 5px">
-            <FormItem prop="address">
-              <AreaInput
-                v-model="validate.address"
-                :disabled="true"
-                :city-code="cityCode"
-                @latlongt-change="latlongtChange"/>
-            </FormItem>
-            </Col>
-          </Row>
+      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="90" style="margin-left: -10px">
+        <FormItem label="发货地址：" prop="address">
+          <AreaInput
+            v-model="validate.address"
+            :only-select="true"
+            @city-select="latlongtChange"/>
+          <Tooltip :max-width="200" content="详细地址只支持从下拉推荐地址中选择" style="right: -20px; position: absolute; top: 0px;"  transfer>
+            <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+          </Tooltip>
         </FormItem>
-
+        <FormItem>
+          <Input v-model="validate.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"/>
+        </FormItem>
       </Form>
       <div slot="footer">
         <Button type="primary" @click="save('validate')">确定</Button>
@@ -60,7 +53,8 @@ export default {
         address: '',
         longitude: '',
         latitude: '',
-        mapType: 1
+        mapType: 1,
+        consignerHourseNumber: ''
       },
       ruleValidate: {
         address: [
@@ -79,12 +73,15 @@ export default {
     save (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          if (!this.validate.city) {
+            this.$Message.error('详细地址只支持从下拉推荐地址中选择')
+            return false
+          }
           if (this.flag === 1) { // 新增
             this.add()
           } else { // 2-编辑
             this.update()
           }
-          this.close()
         }
       })
     },
@@ -95,11 +92,13 @@ export default {
         longitude: this.validate.longitude,
         latitude: this.validate.latitude,
         mapType: this.validate.mapType,
-        cityCode: this.validate.city
+        cityCode: this.validate.city,
+        consignerHourseNumber: this.validate.consignerHourseNumber
       }
       consignerAddressAdd(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -112,21 +111,23 @@ export default {
         longitude: this.validate.longitude,
         latitude: this.validate.latitude,
         mapType: this.validate.mapType,
-        cityCode: this.validate.city
+        cityCode: this.validate.city,
+        consignerHourseNumber: this.validate.consignerHourseNumber
       }
       consignerAddressUpdate(data).then(res => {
-        console.log(res)
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
       })
     },
-    latlongtChange ({ lat, lng }) {
+    latlongtChange ({ lat, lng, cityCode }) {
       this.validate.longitude = lng
       this.validate.latitude = lat
       this.validate.mapType = 1
+      this.validate.city = cityCode
     }
   }
 }

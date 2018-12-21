@@ -61,6 +61,7 @@
 <script>
 import Server from '@/libs/js/server'
 import mixin from './mixin'
+import Cookies from 'js-cookie'
 import { VALIDATOR_PHONE } from './validator'
 
 // token与记住密码过期时长 1年
@@ -150,9 +151,10 @@ export default {
 
     // 设置cookie-token
     setToken (token) {
-      const exp = new Date()
-      exp.setTime(exp.getTime() + EXPIRES)
-      document.cookie = `token=${escape(token)};expires=${exp.toGMTString()}`
+      // const exp = new Date()
+      // exp.setTime(exp.getTime() + EXPIRES)
+      // document.cookie = `token=${escape(token)};expires=${exp.toGMTString()}`
+      Cookies.set('token', token, { expires: 365, path: '/' })
     },
 
     // 登录处理
@@ -169,10 +171,16 @@ export default {
           window.localStorage.setItem('tms_is_login', true)
           this.setToken(res.data.data.token)
           window.sessionStorage.setItem('first_time_login', !res.data.data.lastLoginTime)
-          window.location.href = window.location.href.replace(window.location.hash, '')
+          // 公司类型 1：承运商 2：货主
+          if (res.data.data.companyType === 2) {
+            // 跳转 货主版
+            window.location.href = process.env.VUE_APP_SHIPPER
+          } else {
+            window.location.href = window.location.href.replace(window.location.hash, '')
+          }
         }).catch(err => {
           this.getCaptcha()
-          console.error(err)
+          throw err
         })
       })
     }

@@ -35,7 +35,7 @@
           v-model.lazy="keywords.customerOrderNo"
           :maxlength="30"
           :icon="keywords.customerOrderNo ? 'ios-close-circle' : ''"
-          placeholder="请输入客户单号"
+          placeholder="请输入客户订单号"
           style="width: 200px"
           @on-enter="searchList"
           @on-click="clearKeywords"/>
@@ -94,7 +94,7 @@
           @on-focus.once="getClients">
         </SelectInput>
         <Input v-model="keywords.orderNo" :maxlength="30" placeholder="请输入订单号" style="width: 200px" />
-        <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户单号" style="width: 200px" />
+        <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户订单号" style="width: 200px" />
         <Input v-model="keywords.waybillNo" :maxlength="30" placeholder="请输入运单号" style="width: 200px" />
       </div>
       <div class="complex-query">
@@ -158,6 +158,7 @@ import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
 // import City from '@/libs/js/city'
 import SearchMixin from './searchMixin'
+import float from '@/libs/js/float'
 
 // let hasTab = false
 
@@ -185,7 +186,7 @@ export default {
         { name: '待返厂', count: '' },
         { name: '已返厂', count: '' }
       ],
-      selectStatus: 0, // 当前搜索状态   0：客户名称   1：订单号  2：客户单号
+      selectStatus: 0, // 当前搜索状态   0：客户名称   1：订单号  2：客户订单号
       selectList: [
         {
           value: 0,
@@ -197,7 +198,7 @@ export default {
         },
         {
           value: 2,
-          label: '客户单号'
+          label: '客户订单号'
         },
         {
           value: 3,
@@ -334,12 +335,17 @@ export default {
           }
         },
         {
-          title: '客户单号',
+          title: '客户订单号',
           key: 'customerOrderNo',
           minWidth: 160,
           render: (h, p) => {
             return h('span', p.row.customerOrderNo ? p.row.customerOrderNo : '-')
           }
+        },
+        {
+          title: '客户运单号',
+          key: 'customerWaybillNo',
+          width: 160
         },
         {
           title: '运单号',
@@ -502,7 +508,7 @@ export default {
           key: 'totalFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.totalFee ? (params.row.totalFee / 100).toFixed(2) : '-')
+            return h('span', params.row.totalFee ? float.round(params.row.totalFee / 100) : 0)
           }
         }
       ],

@@ -1,5 +1,6 @@
 import TMSUrl from '@/libs/constant/url'
 import IconLabel from '@/components/IconLabel'
+import float from '@/libs/js/float'
 
 export const TAB_LIST = [
   // { name: '全部', count: '' },
@@ -269,6 +270,11 @@ export const TABLE_COLUMNS = vm => [
     width: 120
   },
   {
+    title: '重量（公斤）',
+    key: 'weightKg',
+    minWidth: 120
+  },
+  {
     title: '创建时间',
     key: 'createTimeLong',
     minWidth: 160,
@@ -327,6 +333,11 @@ export const TABLE_COLUMNS = vm => [
     }
   },
   {
+    title: '承运商运单号',
+    key: 'carrierWaybillNo',
+    width: 120
+  },
+  {
     title: '订单数',
     key: 'orderCnt',
     width: 120
@@ -341,8 +352,13 @@ export const TABLE_COLUMNS = vm => [
     key: 'collectionMoney',
     minWidth: 120,
     render: (h, params) => {
-      return h('span', params.row.collectionMoney ? (params.row.collectionMoney / 100).toFixed(2) : '-')
+      return h('span', params.row.collectionMoney ? float.round(params.row.collectionMoney / 100) : 0)
     }
+  },
+  {
+    title: '备注',
+    key: 'remark',
+    width: 120
   }
 ]
 

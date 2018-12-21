@@ -81,11 +81,39 @@ export default {
           ok () {
             // 查看所有车辆
             vm.getOwnCars()
+              .then((cars) => {
+                // 新增车辆后，主动设置当前的车辆值
+                if (cars.length > 0) {
+                  let car = cars[0]
+                  vm.$nextTick(() => {
+                    /**
+                    * 在输入关键字的同时，点击新增后，理论上会代入值，但是query依然存在，导致下拉框无法显示已有的得bug
+                    * 这里先清空query
+                    */
+                    vm.handleChange(car.carNo)
+                    vm.$refs.$select.query = ''
+                    vm.dispatch.call(vm.$parent, 'FormItem', 'on-form-change', car.carNo)
+                  })
+                }
+              })
             // 查询所有未绑定司机
             vm.getOwnDrivers()
           }
         }
       })
+    },
+    dispatch (componentName, eventName, params) {
+      let parent = this.$parent || this.$root
+      let name = parent.$options.name
+      while (parent && (!name || name !== componentName)) {
+        parent = parent.$parent
+        if (parent) {
+          name = parent.$options.name
+        }
+      }
+      if (parent) {
+        parent.$emit.apply(parent, [eventName].concat(params))
+      }
     }
   }
 }

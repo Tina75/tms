@@ -40,7 +40,11 @@ Vue.prototype.$Toast = Toast
 window.EMA = new EmaProxy()
 var appData = { router, store }
 var islogin = localStorage.getItem('tms_is_login')
-if (window.location.hash === '#/?mode=signup' || !islogin) {
+/**
+ * 1. 来源于官网【注册】按钮跳转过滤
+ * 2. 来源于货主版注册完跳转过来
+ */
+if (window.location.hash === '#/?mode=signup' || window.location.hash.indexOf('?from=shipper') >= 0 || !islogin) {
   appData.render = h => h(Login)
 } else {
   appData.render = h => h(App)

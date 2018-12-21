@@ -33,8 +33,8 @@ export default {
     this.cashBack.map((i) => {
       if (this.type === 'waybill') {
         billNoArr.push(i.waybillNo)
-      } else {
-        billNoArr.push(i.transNo)
+      } else if (this.type === 'pickUp') {
+        billNoArr.push(i.pickupNo)
       }
     })
     this.billNos = billNoArr.join('; ')

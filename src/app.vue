@@ -25,13 +25,13 @@ export default {
     this.init()
   },
   methods: {
-    ...mapActions(['getPermissons', 'getTableColumns']),
+    ...mapActions(['getTableColumns']),
     ...mapMutations(['setTabNavList', 'initTabNav']),
     async init () {
       this.$Message.config({
         duration: 3
       })
-      await this.getPermissons()
+      // await this.getPermissons()
       this.initTabNav()
       // await this.getUserInfo()
       await this.getTableColumns()
@@ -58,7 +58,7 @@ export default {
         const localRememberdPW = window.localStorage.local_rememberd_pw
         localStorage.clear()
         if (localRememberdPW) window.localStorage.setItem('local_rememberd_pw', localRememberdPW)
-        Cookies.remove('token', { path: '/tms' })
+        Cookies.remove('token', { path: '/' })
         window.location.reload()
       }
     }

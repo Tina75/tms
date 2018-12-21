@@ -8,7 +8,7 @@
         <span class="icontTitle"></span>
         <span class="iconTitleP">承运商信息</span>
       </div>
-      <div class="list-info">
+      <div :class="{'list-hide': isShow}" class="list-info">
         <Row class="row">
           <Col span="8">
           <div>
@@ -54,7 +54,7 @@
       </div>
     </div>
     <div class="tabs">
-      <Tabs :animated="false" style="position:static">
+      <Tabs :animated="false" style="position:static" @on-click="tabsClick">
         <TabPane :label="tabPaneLabel">
           <div class="add">
             <Button v-if="hasPower(130207)" type="primary" @click="_carrierAddDriver">新增车辆</Button>
@@ -108,7 +108,7 @@
             </template>
           </div>
         </TabPane>
-        <TabPane :label="tabPaneLabe3">
+        <TabPane :label="tabPaneLabe3" name="rule">
           <ruleForClient :count.sync="totalCount3" :height="ruleHeight" :active="'2'" :partner-id="companyList.carrierId" :partner-name="companyList.carrierName"></ruleForClient>
         </TabPane>
       </Tabs>
@@ -400,7 +400,8 @@ export default {
       totalCount1: 0, // 总条数
       pageNo1: 1,
       totalCount3: 0,
-      totalTabCount1: 0
+      totalTabCount1: 0,
+      isShow: false
     }
   },
   computed: {
@@ -414,7 +415,7 @@ export default {
   mounted () {
     if (this.carrierType === 2) { // 类型为运输公司
       // 获取计费规则的高度
-      this.ruleHeight = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 174 - 32 - 39 - 16 - 44
+      this.ruleHeight = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 174 - 32 - 39 - 16 - 44 + 146
       // 获取车辆
       this._getCarrierNumberCount()
       // 承运商信息
@@ -424,6 +425,13 @@ export default {
     }
   },
   methods: {
+    tabsClick (name) {
+      if (name === 'rule') {
+        this.isShow = true
+      } else {
+        this.isShow = false
+      }
+    },
     // 日期格式化
     formatDateTime (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
@@ -574,6 +582,8 @@ export default {
 
 <style scoped lang="stylus">
   @import "client.styl"
+  .list-hide
+    display none
   .tabs
     .ivu-tabs
       overflow visible
