@@ -2,53 +2,31 @@
   <Header class="header-con">
     <div class="header-bar">
       <div class="tag-nav-wrapper">
-        <tab-nav :list="TabNavList" :value="$route" @on-close="onTabClose" @on-select="onTabSelect"/>
+        <tab-nav/>
       </div>
       <div class="header-bar-avator-dropdown">
-        <span class="header-bar-avator-dropdown-notify" @click="openProcess">
+        <span class="header-bar-avator-dropdown-notify">
           <Tooltip v-if="processVisible" :value="processVisible" transfer  placement="bottom" content=" 业务流程" always>
-            <FontIcon type="liucheng" size="25" color="#fff"></FontIcon>
+            <router-link to="/help/process">
+              <FontIcon  type="liucheng" size="25" color="#fff" ></FontIcon>
+            </router-link>
           </Tooltip>
           <Tooltip v-else transfer content=" 业务流程">
-            <FontIcon  type="liucheng" size="25" color="#fff" ></FontIcon>
+            <router-link to="/help/process">
+              <FontIcon  type="liucheng" size="25" color="#fff" ></FontIcon>
+            </router-link>
           </Tooltip>
         </span>
         <span class="header-bar-avator-dropdown-notify">
           <Badge :count="MsgCount.all" :offset="[8,3]" type="primary">
             <Tooltip transfer content=" 消息">
-              <Icon type="ios-notifications" size="30" color="#fff" @click="openMsg(0)"></Icon>
+              <router-link to="/information/index">
+                <Icon type="ios-notifications" size="30" color="#fff"></Icon>
+              </router-link>
             </Tooltip>
           </Badge>
         </span>
-        <!-- <Dropdown class="header-bar-avator-dropdown-notify">
-        <Poptip trigger="hover" title="消息中心" content="暂无系统消息" >
-          <Badge :count="MsgCount.all" type="primary">
-            <Icon type="ios-notifications" size="30" color="#fff"></Icon>
-          </Badge>
-          <div slot="content" class="msg">
-            <div class="msg-item" @click="openMsg(0)">
-              <Badge :count="MsgCount.sysNum"  class="msg-item-count">
-                <img src="../assets/icon-system-msg.png" alt="" width="34">
-              </Badge>
-              <p>系统消息</p>
-            </div>
-            <div v-if="hasPower('110000')" class="msg-item" @click="openMsg(1)">
-              <Badge :count="MsgCount.orderNum"  class="msg-item-count">
-                <img src="../assets/icon-order-msg.png" alt="" width="34">
-              </Badge>
-              <p>订单消息</p>
-            </div>
-            <div v-if="hasPower('120000')" class="msg-item" @click="openMsg(2)">
-              <Badge :count="MsgCount.carrierNum" class="msg-item-count">
-                <img src="../assets/icon-truck-msg.png" alt="" width="34">
-              </Badge>
-              <p>运输消息</p>
-            </div>
-          </div>
-        </Poptip>
-      </Dropdown> -->
 
-        <!-- <Dropdown  class="header-bar-avator-dropdown" @on-click="handleClick"> -->
         <Poptip trigger="hover" transfer placement="bottom-end" popper-class="dropdown-info" title="账号信息" width="260" style="cursor: default">
           <Avatar class="avatar"  style="border:1px solid #fff"></avatar>
           <span class="user-info">{{UserInfo.name}}</span>
@@ -59,7 +37,7 @@
             <p class="dropdown-line"><label for="">公司：</label>{{UserInfo.companyName}}</p>
             <p class="dropdown-line"><label for="">有效期至：</label>{{UserInfo.expirationTime | datetime('yyyy-MM-dd')}}</p>
             <p class="dropdown-line"><a @click="renew">延长账号有效期</a></p>
-            <p style="text-align:center" class="i-mt-10"><Button type="default" @click="logout">&nbsp; &nbsp;退出&nbsp; &nbsp;</Button></p>
+            <p style="text-align:center" class="i-mt-10"><Button type="default" @click="userLogout">&nbsp; &nbsp;退出&nbsp; &nbsp;</Button></p>
           </div>
         </Poptip>
       </div>
@@ -69,10 +47,10 @@
 
 <script>
 import BaseComponent from '@/basic/BaseComponent'
-import TabNav from '@/components/TabNav'
+import TabNav from './TabNav'
 import FontIcon from '@/components/FontIcon'
-import { mapGetters, mapMutations, mapActions } from 'vuex'
-import TMSUrl from '../libs/constant/url.js'
+import { mapGetters, mapActions } from 'vuex'
+import TMSUrl from '@/libs/constant/url.js'
 import Server from '@/libs/js/server'
 
 const LocalStorageKeys = {
@@ -87,24 +65,32 @@ export default {
   data () {
     return {
       processVisible: false,
+      messageTimer: null,
       popupQueue: []
     }
   },
   computed: {
-    ...mapGetters(['MsgCount', 'UserInfo', 'TabNavList'])
+    ...mapGetters(['MsgCount', 'UserInfo'])
   },
   mounted () {
-    window.EMA.bind('closeTab', (route) => { this.onTabClose(route) })
-    window.EMA.bind('reloadTab', (route) => {
-      route.query = Object.assign({ _time: new Date().getTime() }, route.query)
-      this.turnToPage(route)
-    })
+    const vm = this
+    window.EMA.bind('closeTab', vm.onTabClose)
+    // window.EMA.bind('reloadTab', (route) => {
+    //   route.query = Object.assign({ _time: new Date().getTime() }, route.query)
+    //   this.turnToPage(route)
+    // })
+    window.EMA.bind('logout', vm.userLogout)
     this.loopMessage()
     this.newUserTip()
   },
+  beforeDestroy () {
+    if (this.messageTimer) {
+      clearInterval(this.messageTimer)
+      this.messageTimer = null
+    }
+  },
   methods: {
-    ...mapMutations(['setTabNavList']),
-    ...mapActions(['getMessageCount', 'getUserInfo', 'getOwnDrivers', 'getOwnCars', 'getOrderConfiguration']),
+    ...mapActions(['getMessageCount', 'getUserInfo', 'getTableColumns', 'getOwnDrivers', 'getOwnCars', 'logout', 'getOrderConfiguration']),
     async newUserTip () {
       try {
         await this.getUserInfo()
@@ -126,6 +112,7 @@ export default {
             this.orderedInvoke()
           })
         }
+        this.getTableColumns()
         // 查询所有的自有车辆和未绑定的司机
         this.getOwnDrivers()
         this.getOwnCars()
@@ -375,9 +362,12 @@ export default {
           })
       })
     },
+    /**
+     * 循环查询消息
+     */
     loopMessage () {
       this.getMessageCount()
-      setInterval(() => {
+      this.messageTimer = setInterval(() => {
         this.getMessageCount()
       }, 60 * 1000)
     },
@@ -400,8 +390,20 @@ export default {
         }
       })
     },
-    logout () {
-      window.EMA.fire('logout')
+    /**
+     * 用户退出
+     * 1. 接口发现token失效，可能有其他用户登录，会包含msg
+     * 2. 用户主动点击退出
+     */
+    userLogout (msg) {
+      if (typeof msg === 'string') {
+        this.$Message.warning({
+          content: msg,
+          duration: 3
+        })
+      }
+      this.logout()
+      this.$router.replace({ path: '/login' })
     },
     renew () {
       window.EMA.fire('Dialogs.push', {
@@ -414,15 +416,6 @@ export default {
     },
 
     changePasswordTip () {
-      // this.$Modal.confirm({
-      //   title: '提示',
-      //   content: '<p>您的密码为初始密码，为确保账户安全，请及时修改密码</p>',
-      //   okText: '立即修改',
-      //   cancelText: '我知道了',
-      //   onOk: () => {
-      //     window.EMA.fire('openTab', { path: '/set-up/index', query: { title: '设置' } })
-      //   }
-      // })
       this.$Toast.confirm({
         title: '提示',
         showIcon: false,
@@ -441,15 +434,6 @@ export default {
      * @param {*} route 关闭的tab对象，用于查找前一个tab并置为高亮
     */
     onTabClose (route) {
-      // 删除cache
-      window.EMA.fire('PageRouter.remove', route.path)
-
-      console.log(route, this.$route)
-      if (this.routeEqual(route, this.$route)) {
-        // 选中前一个tab
-        const nextRoute = this.getNextRoute(this.TabNavList, route)
-        this.turnToPage(nextRoute)
-      }
       // 提示流程图标提示
       if (route.path === TMSUrl.PROCESS && localStorage.getItem('first_time_login')) {
         this.processVisible = true
@@ -458,51 +442,6 @@ export default {
         }, 3000)
         localStorage.removeItem('first_time_login')
       }
-
-      // 更新store
-      let res = this.TabNavList.filter(element => element.query.title !== route.query.title)
-      this.setTabNavList(res)
-    },
-    /**
-     * @description 切换tab标签
-     * @param {*} item 被选中的菜单对象
-     */
-    onTabSelect (item) {
-      this.turnToPage(item)
-    },
-    /**
-     * @description 切换tab标签
-     * @param {*} route 跳转目标的path或route对象
-     */
-    turnToPage (route) {
-      let { path, params, query, meta } = {}
-      if (typeof route === 'string') path = route
-      else {
-        path = route.path
-        params = route.params
-        query = route.query
-        meta = route.meta
-      }
-      this.$router.push({ path, params, query, meta })
-    },
-    getNextRoute (list, route) {
-      let res = {}
-      const index = list.findIndex(item => this.routeEqual(item, route))
-      if (index === list.length - 1) res = list[list.length - 2]
-      else res = list[index + 1]
-      return res
-    },
-    /**
-     * @description 根据name/params/query判断两个路由对象是否相等
-     * @param {*} route1 路由对象
-     * @param {*} route2 路由对象
-     */
-    routeEqual (route1, route2) {
-      const query1 = route1.query || {}
-      const query2 = route2.query || {}
-      // return (route1.name === route2.name) && this.objEqual(params1, params2) && this.objEqual(query1, query2)
-      return (route1.path === route2.path) && (query1.title === query2.title)
-      // return (route1.name === route2.name) && this.objEqual(meta1, meta2)
     },
 
     // 是否第一次探索运掌柜
@@ -615,14 +554,14 @@ export default {
     text-overflow ellipsis
     margin-bottom -6px
   .avatar
-    background-image url(../assets/default-avatar.jpg)
+    background-image url(../../../assets/default-avatar.jpg)
     background-size 30px
   &-bread-crumb
     padding-left 60px
     width 350px
     display inline-block
     float left
-    background-image url(../assets/logo.png)
+    background-image url(../../../assets/logo.png)
     background-repeat no-repeat
     background-size 26px
     background-position 24px 20px

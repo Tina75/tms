@@ -1,7 +1,11 @@
 <template>
   <div class="content">
     <div id="content-main" :style="{'min-height':DocumentHeight +'px'}" class="content-main">
-      <router-view />
+      <div id="content-wrapper" class="wrapper">
+        <keep-alive :include="cacheList">
+          <router-view />
+        </keep-alive>
+      </div>
     </div>
   </div>
 </template>
@@ -15,7 +19,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['DocumentHeight'])
+    ...mapGetters(['DocumentHeight', 'NavTabList']),
+    cacheList () {
+      return ['a', ...this.NavTabList.length ? this.NavTabList.filter(item => !(item.meta && item.meta.notCache)).map(item => item.name) : []]
+    }
   },
   mounted () {
     window.document.getElementById('content-main').style.minHeight = (document.body.clientHeight - 80) + 'px'
@@ -40,4 +47,9 @@ export default {
   &-main
     height: auto
     background white
+  .wrapper
+    padding 20px 15px
+    background white
+    height 100%
+    overflow: auto
 </style>

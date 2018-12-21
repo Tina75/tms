@@ -1,16 +1,5 @@
 <template>
   <div class="tags-nav">
-    <!-- <div class="close-con">
-      <Dropdown transfer  @on-click="handleTagsOption">
-        <i-button size="small" type="text">
-          <Icon :size="18" type="ios-close-circle-outline"/>
-        </i-button>
-        <DropdownMenu slot="list">
-          <DropdownItem name="close-all">关闭所有</DropdownItem>
-          <DropdownItem name="close-others">关闭其他</DropdownItem>
-        </DropdownMenu>
-      </Dropdown>
-    </div> -->
     <div class="btn-con left-btn">
       <i-button icon="ios-arrow-back" type="text" @click="handleScroll(240)"/>
     </div>
@@ -21,14 +10,11 @@
       <div ref="scrollBody" :style="{left: tagBodyLeft + 'px'}" class="scroll-body">
         <transition-group name="taglist-moving-animation">
           <tab-nav-item
-            v-for="(item,index) in list"
+            v-for="(item,index) in NavTabList"
             ref="tagsPageOpened"
             :key="`tag-nav-${index}`"
-            :name="item.query.title?item.query.title:'null'"
-            :checked="item.query.title === value.query.title"
-            @on-close="handleClose(item)"
-            @on-refresh="handleRefresh(item)"
-            @click.native="handleClick(item)">
+            :tab="item"
+          >
           </tab-nav-item>
         </transition-group>
       </div>
@@ -38,19 +24,15 @@
 
 <script>
 import BaseComponent from '@/basic/BaseComponent'
-import TabNavItem from '@/components/TabNavItem'
+import TabNavItem from './TabNavItem'
+import { mapGetters } from 'vuex'
+import navTabManager from '../util/NavTabManager'
 export default {
   name: 'TabNav',
   components: { TabNavItem },
   mixins: [BaseComponent],
   props: {
-    value: Object,
-    list: {
-      type: Array,
-      default () {
-        return []
-      }
-    }
+    value: Object
   },
   data () {
     return {
@@ -59,21 +41,11 @@ export default {
     }
   },
   computed: {
-    isTabChecked: {
-      set (item) {
-        this.currItem = item
-      },
-      get () {
-        if (this.currItem.query) {
-          return this.currItem.path === this.value.path && this.currItem.query.id === this.value.query.id
-        } else {
-          return this.currItem.path === this.value.path
-        }
-      }
-    }
+    ...mapGetters(['NavTabList'])
   },
   watch: {
-    'value.query.title' () {
+    $route (to) {
+      navTabManager.addNavTab(to)
       setTimeout(() => {
         if ((document.querySelector('.item-container.mh-10').offsetLeft + document.querySelector('.item-container.mh-10').clientWidth) < document.querySelector('.scroll-outer').clientWidth) {
           this.tagBodyLeft = 0
@@ -82,6 +54,13 @@ export default {
         }
       }, 50)
     }
+    // 'value.query.title' () {
+
+    // }
+  },
+  mounted () {
+    navTabManager.addNavTab(this.$route)
+    window.EMA.bind('openTab', (route) => { this.handleClick(route) })
   },
   methods: {
     handlescroll (e) {
@@ -107,27 +86,29 @@ export default {
         }
       }
     },
-    // handleTagsOption (type) {
-    //   if (type === 'close-all') {
-    //     // 关闭所有，除了home
-    //     let res = this.list.filter(item => item.path === '/home')
-    //     // this.$emit('on-close', res, 'all')
-    //     this.$store.commit('updateTabList', res)
-    //   } else {
-    //     // 关闭除当前页和home页的其他页
-    //     let res = this.list.filter(item => item.path === this.value.path || item.name === '/home')
-    //     // this.$emit('on-close', res, 'others')
-    //     this.$store.commit('updateTabList', res)
-    //   }
+    // handleClose (item) {
+    //   this.$emit('on-close', item)
     // },
-    handleClose (item) {
-      this.$emit('on-close', item)
-    },
-    handleRefresh (item) {
-      this.ema.fire('reloadTab', { ...item })
-    },
+    // handleRefresh (item) {
+    //   this.ema.fire('reloadTab', { ...item })
+    // },
+    /**
+     * 打开未知的tab
+     * 1. 可能已有
+     * 2. 可能没有
+     * {
+    *     path: TMSUrl.CARRIER_MANAGEMENT_CAEDETAILS,
+     *    query: {
+     *       id: '车辆详情',
+     *       rowData: params.row
+     *     }
+     *   }
+     * @param {object} item
+     */
     handleClick (item) {
-      this.$emit('on-select', item)
+      // this.$emit('on-select', item)
+      let { path, query, params = {} } = item
+      this.$router.push({ path, params, query, meta: { title: item.query.title } })
     }
   }
 }

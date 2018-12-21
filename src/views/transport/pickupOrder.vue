@@ -150,7 +150,7 @@ import _ from 'lodash'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  name: 'ReceiveManager',
+  name: 'order-pickup',
   components: { TabHeader, PageTable, SelectInput, PrintPickup, OrderTabContent },
   mixins: [ BasePage, TransportBase, SelectInputMixin, TransportMixin ],
   metaInfo: { title: '提货管理' },

@@ -23,7 +23,7 @@ import CheckingOrder from './components/CheckingOrder'
 import WrittenOff from './components/WrittenOff'
 
 export default {
-  name: 'senderList',
+  name: 'finance-sender',
   metaInfo: {
     title: '发货方对账'
   },

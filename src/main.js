@@ -1,14 +1,14 @@
 import Vue from 'vue'
 import iView from 'iview'
 import App from './app.vue'
-import Login from './login.vue'
+import store from './store/index'
 import router from './router'
-import store from './store'
 import VueMeta from 'vue-meta'
-import './libs/js/ga.js' // GA打点统计配置与上报方法封装
 import EmaProxy from 'ema-proxy'
 import Toast from '@/components/toast/index'
+import './libs/js/ga.js' // GA打点统计配置与上报方法封装,
 
+require('./permission')
 require('intersection-observer')
 require('./libs/js/filter')
 require('./libs/js/date')
@@ -39,14 +39,10 @@ Vue.use(iView)
 Vue.prototype.$Toast = Toast
 window.EMA = new EmaProxy()
 var appData = { router, store }
-var islogin = localStorage.getItem('tms_is_login')
 /**
- * 1. 来源于官网【注册】按钮跳转过滤
- * 2. 来源于货主版注册完跳转过来
+ * 1. 来源于官网【注册】按钮跳转过滤,#/?mode=signup
+ * 2. 来源于货主版注册完跳转过来;?from=shipper
  */
-if (window.location.hash === '#/?mode=signup' || window.location.hash.indexOf('?from=shipper') >= 0 || !islogin) {
-  appData.render = h => h(Login)
-} else {
-  appData.render = h => h(App)
-}
+appData.render = h => h(App)
+
 new Vue(appData).$mount('#app')
