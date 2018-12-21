@@ -40,7 +40,7 @@
 
 <script>
 export default {
-  name: 'oilList',
+  name: 'oil-list',
   data () {
     return {
       queryParams: {}

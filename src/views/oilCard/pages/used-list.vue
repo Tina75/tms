@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'usedList'
+  name: 'used-list'
 }
 </script>
 
