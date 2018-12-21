@@ -3,11 +3,11 @@
     <i v-show="checked" class="icon font_family icon-you2 border-icon-left" style=""></i>
     <div :class="['tab-item',checked?'tab-item__checked':'']">
       <span style="display:inline-block;min-width:18px">
-        <Icon v-show="checked" class="tab-item__icon " type="ios-refresh" size="20" @click.stop="$emit('on-refresh')"/>
+        <Icon v-show="checked" class="tab-item__icon " type="ios-refresh" size="20" @click.stop="refresh"/>
       </span>
-      <span class="tab-item__name">{{name}}</span>
+      <router-link :to="path" tag="span" class="tab-item__name">{{name}}</router-link>
       <span style="display:inline-block;min-width:18px">
-        <Icon v-show="closeable" :style="checked?'visibility:visible':'visibility:hidden'" class="tab-item__icon close-icon" type="ios-close" size="20" @click.stop="$emit('on-close')"/>
+        <Icon v-show="closeable" :style="checked?'visibility:visible':'visibility:hidden'" class="tab-item__icon close-icon" type="ios-close" size="20" @click.stop="close"/>
       </span>
     </div>
     <i v-show="checked" class="icon font_family icon-you2 border-icon-right" ></i>
@@ -20,23 +20,50 @@ export default {
   name: 'TabNavItem',
   mixins: [ BaseComponent ],
   props: {
-    checked: {
-      type: Boolean,
-      default: false
-    },
-    name: String
+    tab: {
+      type: Object,
+      required: true
+    }
   },
   computed: {
+    checked () {
+      return this.tab.isActive
+    },
+    name () {
+      return this.tab.title
+    },
+    path () {
+      return {
+        path: this.tab.path,
+        query: {
+          title: this.tab.title,
+          ...this.tab.query
+        }
+      }
+    },
     closeable: function () {
       return this.name !== '首页'
     }
   },
+  mounted () {
+    this.ema = window.EMA.getProxy()
+  },
   methods: {
     close () {
-      this.$emit('on-close')
+      let nextRoute = this.tab.close()
+      this.ema.fire('closeTab', this.tab)
+      if (nextRoute) {
+        this.$router.push(nextRoute)
+      }
     },
     refresh () {
-      this.$emit('on-refresh')
+      // this.$emit('on-refresh')
+      let tab = this.tab
+      this.tab.refresh()
+      this.close()
+      this.$nextTick(() => {
+        this.$router.push(tab)
+      })
     }
   }
 }
@@ -89,7 +116,6 @@ export default {
       transform rotate(180deg)
   &__name
     max-width 70px
-    // line-height 1
     font-size 13px
     text-align center
     vertical-align middle

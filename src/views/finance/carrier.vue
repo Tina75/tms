@@ -23,7 +23,7 @@ import CheckingOrder from './components/CheckingOrder'
 import WrittenOff from './components/WrittenOff'
 
 export default {
-  name: 'carrierList',
+  name: 'finance-carrier',
   metaInfo: {
     title: '承运商对账'
   },

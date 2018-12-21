@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import { LoadingBar, Message } from 'iview'
-import Cookies from 'js-cookie'
+import { getToken } from './auth'
 
 let reportData = {}
 
@@ -10,7 +10,7 @@ let instance = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': Cookies.get('token'),
+    'Authorization': getToken(),
     'Cache-Control': 'no-cache', // 解决ie浏览器缓存
     'Pragma': 'no-cache' // 解决ie浏览器缓存
   },

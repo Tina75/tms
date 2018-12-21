@@ -281,7 +281,7 @@ import { mapGetters } from 'vuex'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 
 export default {
-  name: 'detail',
+  name: 'order-management-detail',
 
   components: {
     OrderPrint

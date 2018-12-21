@@ -10,12 +10,13 @@
 
     <div :class="{'login-bg': mode === 'signin'}"
          class="login-body">
-      <Signin v-if="mode === 'signin'"
+      <!-- <Signin v-if="mode === 'signin'"
               @on-change="modeChange" />
       <Signup v-if="mode === 'signup'"
               @on-change="modeChange" />
       <FindBack v-if="mode === 'findback'"
-                @on-change="modeChange" />
+                @on-change="modeChange" /> -->
+      <router-view></router-view>
     </div>
 
     <footer class="login-footer">
@@ -30,14 +31,14 @@
 </template>
 
 <script>
-import Dialogs from '@/components/Dialogs'
-import Signin from '@/views/login/index'
-import Signup from '@/views/login/sign-up'
-import FindBack from '@/views/login/find-back'
+import Dialogs from '@/views/main/components/Dialogs'
+// import Signin from '@/views/login/index'
+// import Signup from '@/views/login/sign-up'
+// import FindBack from '@/views/login/find-back'
 
 export default {
   name: 'Login',
-  components: { Dialogs, Signin, Signup, FindBack },
+  components: { Dialogs },
   data () {
     return {
       phone: '',
