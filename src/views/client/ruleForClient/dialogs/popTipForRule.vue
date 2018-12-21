@@ -82,6 +82,7 @@ export default {
 
 <style scoped lang="stylus">
   .popTipForRule
+    cursor pointer
     /deep/
       .ivu-poptip-arrow
         display none

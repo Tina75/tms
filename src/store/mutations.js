@@ -5,14 +5,14 @@ export default{
   initPermissions (state, payload) {
     state.permissions = payload || []
   },
-  setTabNavList (state, list) {
-    state.tabNavList = [...list]
-    localStorage.tabNavCache = JSON.stringify([...list])
-  },
-  initTabNav (state) {
-    localStorage.tabNavCache = ''
-    state.tabNavList = localStorage.tabNavCache ? JSON.parse(localStorage.tabNavCache) : [{ path: '/home', query: { title: '首页' }, param: { name: 'home' } }]
-  },
+  // setTabNavList (state, list) {
+  //   state.tabNavList = [...list]
+  //   localStorage.tabNavCache = JSON.stringify([...list])
+  // },
+  // initTabNav (state) {
+  //   localStorage.tabNavCache = ''
+  //   state.tabNavList = localStorage.tabNavCache ? JSON.parse(localStorage.tabNavCache) : [{ path: '/home', query: { title: '首页' }, param: { name: 'home' } }]
+  // },
   updateMsgCount (state, payload) {
     const msg = { ...payload }
     msg.all = msg.sysNum + msg.orderNum + msg.carrierNum

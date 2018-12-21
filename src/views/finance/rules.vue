@@ -234,7 +234,7 @@ import DataEmpty from '@/components/DataEmpty'
 import mixin from '../../views/client/ruleForClient/mixin'
 import popTipForRule from '@/views/client/ruleForClient/dialogs/popTipForRule.vue'
 export default {
-  name: 'financeRules',
+  name: 'finance-rules',
   metaInfo: {
     title: '计费规则'
   },

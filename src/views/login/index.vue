@@ -43,11 +43,10 @@
                   <Checkbox v-model="rememberPW">记住密码</Checkbox>
                 </li>
                 <li class="form-action-item" style="text-align: center;">
-                  <a @click.prevent="changeMode('signup')">立即注册</a>
+                  <router-link to="register">立即注册</router-link>
                 </li>
                 <li class="form-action-item" style="text-align: right;">
-                  <a style="color: inherit;"
-                     @click.prevent="changeMode('findback')">忘记密码？</a>
+                  <router-link style="color: inherit;" to="findback">忘记密码？</router-link>
                 </li>
               </ul>
             </FormItem>
@@ -61,9 +60,8 @@
 <script>
 import Server from '@/libs/js/server'
 import mixin from './mixin'
-import Cookies from 'js-cookie'
 import { VALIDATOR_PHONE } from './validator'
-
+import { setToken } from '@/libs/js/auth'
 // token与记住密码过期时长 1年
 const EXPIRES = 365 * 24 * 60 * 60 * 1000
 
@@ -154,7 +152,7 @@ export default {
       // const exp = new Date()
       // exp.setTime(exp.getTime() + EXPIRES)
       // document.cookie = `token=${escape(token)};expires=${exp.toGMTString()}`
-      Cookies.set('token', token, { expires: 365, path: '/' })
+      setToken(token)
     },
 
     // 登录处理

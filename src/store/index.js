@@ -11,6 +11,7 @@ import sender from './modules/sender/store'
 import driver from './modules/driver/store'
 // import transfer from './modules/transfer/store'
 import rule from './modules/rule/store'
+import main from '@/views/main/store'
 import upstream from './modules/upstream/store'
 
 Vue.use(Vuex)
@@ -18,7 +19,7 @@ Vue.use(Vuex)
 const state = {
   userInfo: {}, // 用户信息
   permissions: [], // 权限列表
-  tabNavList: [], // 已展示的tab列表
+  // tabNavList: [], // 已展示的tab列表
   messageCount: {}, // 消息通知数量
   customTableColumns: [], // 自定义table列表信息
   documentHeight: '', // documentBody高度
@@ -41,6 +42,7 @@ export default new Vuex.Store({
     carrier,
     sender,
     rule,
+    main,
     upstream
   }
 })

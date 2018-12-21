@@ -41,7 +41,7 @@
 
           <FormItem class="form-button">
             <Button type="primary" long @click="handleSubmit">确定</Button>
-            <p style="float: right; margin-top: 20px;"><a @click.prevent="changeMode('signin')">去登录&gt;</a></p>
+            <p style="float: right; margin-top: 20px;"><router-link to="login">去登录&gt;</router-link></p>
           </FormItem>
         </Form>
       </div>
@@ -109,7 +109,8 @@ export default {
         }).then(res => {
           this.$Message.success('密码设置成功')
           setTimeout(() => {
-            this.changeMode('signin')
+            // this.changeMode('signin')
+            this.$router.replace({ path: '/login' })
           }, 2000)
         }).catch(err => console.error(err))
       })

@@ -163,7 +163,7 @@ import float from '@/libs/js/float'
 // let hasTab = false
 
 export default {
-  name: 'receipt',
+  name: 'order-receipt',
 
   components: {
     TabHeader,

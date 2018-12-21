@@ -1,5 +1,5 @@
 import Server from '@/libs/js/server'
-
+import { removeToken } from '../libs/js/auth'
 /** 更新用户信息 */
 export const getUserInfo = ({ rootState, commit, state, dispatch }, data) => {
   return Server({
@@ -10,8 +10,10 @@ export const getUserInfo = ({ rootState, commit, state, dispatch }, data) => {
     const { permission, ...userInfo } = data.data
     commit('initUserInfo', userInfo)
     commit('initPermissions', permission || [])
+    return data.data
   }).catch(e => {
     console.log(e)
+    return Promise.reject(e)
   })
 }
 
@@ -80,5 +82,23 @@ export const getOrderConfiguration = ({ commit }) => {
     data: {}
   }).then(({ data }) => {
     commit('changeOrderConfiguration', data.data.weightOption)
+  })
+}
+/**
+ * 登出
+ * @param {} param0
+ */
+export const logout = ({ commit }) => {
+  return new Promise((resolve, reject) => {
+    commit('initUserInfo', {})
+    commit('initPermissions', [])
+    // 记住密码
+    const localRememberdPW = window.localStorage.local_rememberd_pw
+    localStorage.clear()
+    if (localRememberdPW) {
+      window.localStorage.setItem('local_rememberd_pw', localRememberdPW)
+    }
+    removeToken()
+    resolve()
   })
 }
