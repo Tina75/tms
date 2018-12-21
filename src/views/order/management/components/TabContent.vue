@@ -494,7 +494,7 @@ export default {
                 on: {
                   click: () => {
                     this.openTab({
-                      path: '/order-management/detail',
+                      path: '/order/management/detail',
                       query: {
                         id: params.row.orderNo,
                         orderId: params.row.id,

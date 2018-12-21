@@ -391,7 +391,7 @@ export default {
               cancelText: '取消'
             })
           }
-        }).catch(err => console.error(err))
+        }).catch()
       } else {
         this.$Message.warning('请选择2条以上的数据')
       }
@@ -471,7 +471,7 @@ export default {
       switch (data.row.orderType) {
         case 1:
           this.openTab({
-            path: '/order-management/detail',
+            path: '/order/management/detail',
             title: data.row.orderNo,
             query: {
               id: data.row.orderNo,
@@ -529,14 +529,12 @@ export default {
         } else {
           this.orderData = []
         }
-      }).catch(err => console.error(err))
+      }).catch()
     },
     showOrderData (data) {
-      console.log(data)
       this.companyDataActive = data.id
       this.currentPartner = data
       this.orderData = data.orderInfos.map(item => {
-        console.log(item)
         return Object.assign({}, item, {
           carrierWaybillNo: item.carrierWaybillNo ? item.carrierWaybillNo : '-',
           departureName: item.departureName ? item.departureName : '-',
@@ -552,7 +550,6 @@ export default {
           verifiedFeeText: data.verifiedFeeText
         })
       })
-      console.log(this.orderData)
     }
   }
 }

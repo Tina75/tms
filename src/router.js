@@ -116,8 +116,8 @@ const router = new Router({
         },
         {
           'name': 'order-management',
-          'path': '/order-management/order',
-          'component': () => import(/* webpackChunkName: "order-management" */'./views/order-management/order.vue'),
+          'path': '/management/order',
+          'component': () => import(/* webpackChunkName: "order-management" */'./views/order/management/order.vue'),
           'meta': {
             'powerCode': 100300,
             'title': '订单管理'
@@ -125,8 +125,8 @@ const router = new Router({
         },
         {
           'name': 'order-management-detail',
-          'path': '/order-management/detail',
-          'component': () => import(/* webpackChunkName: "order-detail" */'./views/order-management/detail.vue'),
+          'path': '/management/detail',
+          'component': () => import(/* webpackChunkName: "order-detail" */'./views/order/management/detail.vue'),
           'meta': {
             'hideInMenu': true,
             'powerCode': 100300,
@@ -203,8 +203,8 @@ const router = new Router({
         },
         {
           'name': 'order-receipt',
-          'path': '/order-management/receipt',
-          'component': () => import(/* webpackChunkName: "order-receipt" */'./views/order-management/receipt.vue'),
+          'path': 'receipt',
+          'component': () => import(/* webpackChunkName: "order-receipt" */'./views/transport/receipt.vue'),
           'meta': {
             'powerCode': 120500,
             'title': '回单管理'

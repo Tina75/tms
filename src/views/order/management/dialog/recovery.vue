@@ -53,7 +53,7 @@ export default {
   },
 
   mounted () {
-    console.log(this.id)
+    // console.log(this.id)
     this.isRecovery()
   },
 
@@ -65,7 +65,7 @@ export default {
         method: 'post',
         data: { orderIds: this.orderIds }
       }).then((res) => {
-        console.log(res.data.data.can)
+        // console.log(res.data.data.can)
         let can = res.data.data.can
         if (can) {
           this.canRecovery = true
@@ -79,7 +79,7 @@ export default {
     // 查看详情
     toDetail () {
       this.openTab({
-        path: '/order-management/detail',
+        path: '/order/management/detail',
         query: {
           id: this.orderNo,
           orderId: this.orderId,

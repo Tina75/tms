@@ -59,7 +59,7 @@ export default {
   },
 
   mounted () {
-    console.log(this.tab)
+    // console.log(this.tab)
     if (this.name === '删除') {
       if (this.id.length === 1) {
         if (this.id[0].status === 10 && this.id[0].pickupStatus === 1) {

@@ -110,14 +110,12 @@ export default {
   },
 
   mounted () {
-    console.log(this.id)
     this.createShare(0)
     this.createShare(1)
   },
 
   methods: {
     checkShare () {
-      console.log('分享')
       if (this.shareType) {
         window.location.href = this.encrypt.message
       } else {
@@ -126,10 +124,8 @@ export default {
     },
     handleTabChange (val) {
       this.isDisabled = false
-      console.log(this.encrypt.message)
     },
     onCopy (e) {
-      console.log('You just copied: ' + e.text)
       this.$Message.success('复制成功')
       this.isDisabled = true
       setTimeout(() => {

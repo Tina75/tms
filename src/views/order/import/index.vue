@@ -138,7 +138,7 @@ export default {
                       title: '订单管理',
                       path: TMSUrl.ORDER_MANAGEMENT
                     })
-                    // vm.$router.push({path: '/order-management/order', query: {title: '订单管理'}})
+                    // vm.$router.push({path: '/order/management/order', query: {title: '订单管理'}})
                   }
                 }
               }, '查看导入订单'))
@@ -507,7 +507,7 @@ export default {
             this.$Message.error('文件上传超时')
             // do ConnectionTimeoutError operation
           } else if (e.code === 'RequestError') {
-            console.error('请求body格式非法')
+            // console.error('请求body格式非法')
           }
           throw e
         }

@@ -141,7 +141,7 @@ import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
 import SelectInput from './components/SelectInput.vue'
 import PrintPickup from './components/PrintPickup'
-import OrderTabContent from '@/views/order-management/components/TabContent'
+import OrderTabContent from '@/views/order/management/components/TabContent'
 
 import Export from '@/libs/js/export'
 import { BUTTON_LIST, TABLE_COLUMNS } from './constant/pickup'
@@ -337,9 +337,7 @@ export default {
             },
             methods: {}
           })
-        }).catch(err => {
-          console.error(err)
-        })
+        }).catch()
     },
 
     // 删除
@@ -415,7 +413,6 @@ export default {
       let carrierNameList = _.remove(tableSelection, (i) => {
         return (i.carrierName === '' && i.assignCarType === 1) || (i.carNo === '' && i.assignCarType === 2)
       })
-      console.log(carrierNameList)
       if (carrierNameList.length > 0) {
         if (self.tableSelection.length > 1) {
           self.openDialog({
@@ -444,7 +441,6 @@ export default {
       let cargoList = _.remove(tableSelection, (i) => {
         return i.orderCnt === 0
       })
-      console.log(cargoList)
       if (cargoList.length > 0) {
         if (self.tableSelection.length > 1) {
           self.openDialog({

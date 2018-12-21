@@ -157,7 +157,7 @@ import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
 // import City from '@/libs/js/city'
-import SearchMixin from './searchMixin'
+import SearchMixin from '@/views/order/management/searchMixin.js'
 import float from '@/libs/js/float'
 
 // let hasTab = false
@@ -322,7 +322,7 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
-                    path: '/order-management/detail',
+                    path: '/order/management/detail',
                     query: {
                       id: '回单' + params.row.orderNo,
                       orderId: params.row.id,
@@ -354,7 +354,6 @@ export default {
           render: (h, p) => {
             if (p.row.waybillNo) {
               let waybillNoArr = p.row.waybillNo.split(',')
-              console.log(waybillNoArr)
               if (waybillNoArr.length > 1) {
                 return h('Tooltip', {
                   props: {
@@ -583,7 +582,6 @@ export default {
         url: 'order/getReceiptOrderNumByStatus',
         method: 'get'
       }).then((res) => {
-        console.log(res)
         let list = res.data.data
         let arr = []
         list.map((item) => {
@@ -628,7 +626,6 @@ export default {
     },
     // tab状态栏切换
     handleTabChange (val) {
-      console.log(val)
       this.curStatusName = val
       this.selectOrderList = [] // 重置当前已勾选项
       this.selectedId = [] // 重置当前已勾选id项
@@ -708,7 +705,6 @@ export default {
     },
     // 打开回收或返厂弹窗 (支持单条、多条操作))
     openReturnDialog (params, name) {
-      console.log(name, params)
       if (params && name === '回收' && params.row.status < 40) {
         this.$Message.warning('您选择的订单还未确认到货，请先确认货物已到货')
         return
@@ -731,7 +727,6 @@ export default {
             _this.getOrderNum() // 刷新tab页数量
             _this.selectOrderList = [] // 重置当前已勾选项
             _this.selectedId = [] // 重置当前已勾选id项
-            console.log(_this.$refs.pageTable)
 
             _this.$refs.pageTable.clearSelected() // 清空当前选项
           }
@@ -753,7 +748,6 @@ export default {
             _this.getOrderNum() // 刷新tab页数量
             _this.selectOrderList = [] // 重置当前已勾选项
             _this.selectedId = [] // 重置当前已勾选id项
-            console.log(_this.$refs.pageTable)
 
             _this.$refs.pageTable.clearSelected() // 清空当前选项
           }

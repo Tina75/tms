@@ -38,7 +38,7 @@ export default {
   },
 
   mounted () {
-    console.log(this.id)
+    // console.log(this.id)
   },
 
   methods: {
@@ -55,7 +55,7 @@ export default {
         // this.ok()
         this.$Message.success('删除成功')
         this.close()
-        if (this.$route.path === '/order-management/detail') {
+        if (this.$route.path === '/order/management/detail') {
           this.ema.fire('closeTab', this.$route) // 关闭tab页
         } else {
           this.ok()

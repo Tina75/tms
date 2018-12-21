@@ -147,7 +147,7 @@ export default {
           }).then(res => {
             _this.getOrderList()
             _this.ok()
-          }).catch(err => console.error(err))
+          }).catch()
         }
       })
     },
@@ -169,13 +169,13 @@ export default {
             orderTimeText: new Date(item.orderTime).Format('yyyy-MM-dd hh:mm')
           })
         })
-      }).catch(err => console.error(err))
+      }).catch()
     },
     toDetail (data) {
       switch (data.row.orderType) {
         case 1:
           this.openTab({
-            path: '/order-management/detail',
+            path: '/order/management/detail',
             title: data.row.orderNo,
             query: {
               id: data.row.orderNo,
