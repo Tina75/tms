@@ -23,13 +23,34 @@ export default[
         }
       },
       {
-        'name': 'client-carrier',
+        'name': 'sender-info',
+        'path': 'sender-info',
+        'component': () => import(/* webpackChunkName: "client-sender" */'./pages/sender-info.vue'),
+        'meta': {
+          'powerCode': 130100,
+          'hideInMenu': true,
+          'title': '发货方详情'
+
+        }
+      },
+      {
+        'name': 'carrier',
         'path': 'carrier',
         'component': () => import(/* webpackChunkName: "client-carrier" */'./pages/carrier.vue'),
         'meta': {
           'powerCode': 130200,
           'title': '承运商管理'
 
+        }
+      },
+      {
+        'name': 'carrier-info',
+        'path': 'carrier-info',
+        'component': () => import(/* webpackChunkName: "client-carrier" */'./pages/carrier-info.vue'),
+        'meta': {
+          'hideInMenu': true,
+          'powerCode': 130200,
+          'title': '承运商详情'
         }
       },
       {
