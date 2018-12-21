@@ -16,11 +16,11 @@
  * created by mys 2018-11-2
  */
 import BasePage from '@/basic/BasePage'
-import TabHeader from './components/TabHeader'
-import WaitCollect from './components/WaitCollect.vue'
-import WaitPay from './components/WaitPay.vue'
-import Paied from './components/Paied.vue'
-import { CollectTabs } from './constant/tabs.js'
+import TabHeader from '../components/TabHeader'
+import WaitCollect from '../components/WaitCollect.vue'
+import WaitPay from '../components/WaitPay.vue'
+import Paied from '../components/Paied.vue'
+import { CollectTabs } from '../constant/tabs.js'
 
 export default {
   name: 'finance-collect-fee',
