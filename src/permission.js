@@ -18,6 +18,10 @@ router.beforeEach((to, from, next) => {
       } else {
         next({ path: '/home' })
       }
+    } else if (to.path === '/register') {
+      // 注册地址可访问
+      // removeToken()
+      next()
     } else {
       // 有无用户数据
       if (!store.getters.UserInfo.id && store.getters.Permissions.length === 0) {
