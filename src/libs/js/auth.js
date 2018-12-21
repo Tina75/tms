@@ -8,7 +8,7 @@ export function getToken () {
 
 export function setToken (token) {
   // 有效期一年
-  return Cookies.set(TokenKey, token, { expires: 365 })
+  return Cookies.set(TokenKey, token, { expires: 365, path: '/' })
 }
 
 export function removeToken () {

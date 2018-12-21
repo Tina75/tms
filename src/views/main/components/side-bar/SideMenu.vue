@@ -18,6 +18,7 @@
               <font-icon :type="item.icon" :size="18"></font-icon>
               <router-link :to="item.path">
                 {{item.meta.title}}
+                <Badge v-if="item.path==='/upstream'" :count="waitAccept" class="count"></Badge>
               </router-link>
             </menu-item>
           </template>
