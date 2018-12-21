@@ -197,7 +197,8 @@ export default {
           width: 150,
           key: 'freightFee',
           render: (h, params) => {
-            return h('span', params.row.freightFee !== '' ? (params.row.freightFee / 100).toFixed(2) : '-')
+            // return h('span', params.row.freightFee !== '' ? (params.row.freightFee / 100).toFixed(2) : '-')
+            return h('span', typeof params.row.freightFee === 'number' ? (params.row.freightFee / 100).toFixed(2) : '0.00')
           }
         },
         {
@@ -205,7 +206,8 @@ export default {
           width: 150,
           key: 'accommodation',
           render: (h, params) => {
-            return h('span', params.row.accommodation !== '' ? (params.row.accommodation / 100).toFixed(2) : '-')
+            // return h('span', params.row.accommodation !== '' ? (params.row.accommodation / 100).toFixed(2) : '-')
+            return h('span', typeof params.row.accommodation === 'number' ? (params.row.accommodation / 100).toFixed(2) : '0.00')
           }
         },
         {
@@ -213,7 +215,8 @@ export default {
           width: 150,
           key: 'otherFee',
           render: (h, params) => {
-            return h('span', params.row.otherFee !== '' ? (params.row.otherFee / 100).toFixed(2) : '-')
+            // return h('span', params.row.otherFee !== '' ? (params.row.otherFee / 100).toFixed(2) : '-')
+            return h('span', typeof params.row.otherFee === 'number' ? (params.row.otherFee / 100).toFixed(2) : '0.00')
           }
         },
         {
