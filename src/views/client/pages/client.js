@@ -44,7 +44,6 @@ export function consignerUpdate (data) {
 
 // 发货方的删除
 export function consignerDelete (data) {
-  console.log(data)
   return server({
     url: '/consigner/delete',
     headers: {

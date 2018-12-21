@@ -90,7 +90,7 @@ export default {
       }).then(res => {
         this.close()
         this.ok()
-      }).catch(err => console.error(err))
+      }).catch()
     },
     addRule () {
       Server({
@@ -105,7 +105,7 @@ export default {
       }).then(res => {
         this.close()
         this.ok(parseInt(res.data.data))
-      }).catch(err => console.error(err))
+      }).catch()
     }
   }
 

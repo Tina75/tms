@@ -27,9 +27,10 @@
           <FormItem label="车型：" prop="carType">
             <Row>
               <Col span="20">
-              <Select v-model="validate.carType" transfer >
+              <!-- <Select v-model="validate.carType" transfer >
                 <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
-              </Select>
+            </Select> -->
+              <SelectCustom v-model="validate.carType" type="carType" class="formInputSty" placeholder="请选择" clearable></SelectCustom>
               </Col>
             </Row>
           </FormItem>
@@ -38,9 +39,10 @@
           <FormItem label="车长：" prop="carLength">
             <Row>
               <Col span="20">
-              <Select v-model="validate.carLength" transfer >
+              <!-- <Select v-model="validate.carLength" transfer >
                 <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
-              </Select>
+              </Select> -->
+              <SelectCustom v-model="validate.carLength" type="carLength" class="formInputSty" placeholder="请选择" clearable></SelectCustom>
               </Col>
             </Row>
           </FormItem>
@@ -52,7 +54,6 @@
             <Row>
               <Col span="20">
               <TagNumberInput :min="0" v-model="validate.shippingWeight" :show-chinese="false" placeholder="请输入"></TagNumberInput>
-              <!-- <Input v-model="validate.shippingWeight" :maxlength="9" placeholder="请输入"></Input> -->
               </Col>
               <Col span="2" offset="1">
               <span>吨</span>
@@ -65,7 +66,6 @@
             <Row>
               <Col span="20">
               <TagNumberInput :min="0" v-model="validate.shippingVolume" :show-chinese="false" placeholder="请输入"></TagNumberInput>
-              <!-- <Input v-model="validate.shippingVolume" :maxlength="9" placeholder="请输入"></Input> -->
               </Col>
               <Col span="2" offset="1">
               <span>方</span>
@@ -157,6 +157,7 @@ import OwnDriverSelects from '@/components/own-car-form/OwnDriverSelects'
 import _ from 'lodash'
 import Server from '@/libs/js/server'
 import TagNumberInput from '@/components/TagNumberInput'
+import SelectCustom from '@/components/SelectCustom'
 export default {
   name: 'owned-editdriver',
   components: {
@@ -164,7 +165,8 @@ export default {
     UpLoad,
     SelectInput,
     OwnDriverSelects,
-    TagNumberInput
+    TagNumberInput,
+    SelectCustom
   },
   mixins: [BaseDialog],
   data () {
