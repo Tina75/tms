@@ -8,9 +8,9 @@
       </Tabs>
     </div>
     <div class="data-container">
-      <writing-off v-if="active === '1'" :scene="3"></writing-off>
-      <checking-order v-if="active === '2'" :scene="3"></checking-order>
-      <Written-Off v-if="active === '3'" :scene="3"></Written-Off>
+      <writing-off v-if="active === '1'" :scene="1"></writing-off>
+      <checking-order v-if="active === '2'" :scene="1"></checking-order>
+      <Written-Off v-if="active === '3'" :scene="1"></Written-Off>
     </div>
   </div>
 </template>
@@ -18,14 +18,14 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import { mapGetters, mapActions } from 'vuex'
-import WritingOff from './components/WritingOff'
-import CheckingOrder from './components/CheckingOrder'
-import WrittenOff from './components/WrittenOff'
+import WritingOff from '../components/WritingOff'
+import CheckingOrder from '../components/CheckingOrder'
+import WrittenOff from '../components/WrittenOff'
 
 export default {
-  name: 'transferList',
+  name: 'finance-sender',
   metaInfo: {
-    title: '外转方对账'
+    title: '发货方对账'
   },
   components: { CheckingOrder, WritingOff, WrittenOff },
   mixins: [ BasePage ],

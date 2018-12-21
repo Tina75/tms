@@ -28,12 +28,12 @@
  * 到货确认以后，所有未核销的运单或外转单。
  */
 import BasePage from '@/basic/BasePage'
-import TabHeader from './components/TabHeader'
-import { ReturnTabs } from './constant/tabs.js'
-import WaitReturnFee from './components/WaitReturnFee.vue'
-import ReturnFeeForm from './components/ReturnFeeForm.vue'
+import TabHeader from '../components/TabHeader'
+import { ReturnTabs } from '../constant/tabs.js'
+import WaitReturnFee from '../components/WaitReturnFee.vue'
+import ReturnFeeForm from '../components/ReturnFeeForm.vue'
 import PageTable from '@/components/page-table/index'
-import returnFeeMixin from './mixins/returnFeeMixin.js'
+import returnFeeMixin from '../mixins/returnFeeMixin.js'
 import settlement from '@/libs/constant/settlement'
 import Export from '@/libs/js/export'
 import Server from '@/libs/js/server'

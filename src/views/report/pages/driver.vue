@@ -2,17 +2,17 @@
   <div>
     <div class="search">
       <div class="search-col" >
-        <div class="row-list">
+        <div class="row-list" style="margin-bottom:12px">
           <div class="col">
             <Input
-              v-model="keywords.billNo"
-              :maxlength="20"
-              placeholder="请输入运单号/提货单号"
+              v-model="keywords.driverName"
+              :maxlength="15"
+              placeholder="请输入司机名称"
             >
             </Input>
           </div>
           <div class="col">
-            <Input v-model="keywords.carNo" :maxlength="15"  placeholder="请输入车牌号"/>
+            <Input v-model="keywords.driverPhone" :maxlength="11"  placeholder="请输入司机号码"/>
           </div>
           <div class="col relative">
             <SelectInputForCity v-model="keywords.start" placeholder="请输入发货城市" style="width: 100%"></SelectInputForCity>
@@ -23,10 +23,7 @@
         </div>
         <div class="row-list">
           <div class="col">
-            <Input v-model="keywords.driverName" :maxlength="15"  placeholder="请输入司机名称"/>
-          </div>
-          <div class="col relative">
-            <Input v-model="keywords.driverPhone" :maxlength="11"  placeholder="请输入司机号码"/>
+            <Input v-model="keywords.carNo" :maxlength="15"  placeholder="请输入车牌号"/>
           </div>
           <div class="col">
             <Select v-model="keywords.billType" clearable placeholder="请选择业务类型" @on-change="billTypeChange">
@@ -39,8 +36,6 @@
               <Option v-for="item in statusMap" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
           </div>
-        </div>
-        <div class="row-list">
           <div class="col">
             <DatePicker
               v-model="times"
@@ -54,12 +49,6 @@
               @on-change="handleTimeChange"
             >
             </DatePicker>
-          </div>
-          <div class="col">
-          </div>
-          <div class="col">
-          </div>
-          <div class="col">
           </div>
         </div>
       </div>
@@ -93,10 +82,10 @@ import SelectInput from '@/components/SelectInput.vue'
 // import City from '@/libs/js/city'
 // import { mapGetters, mapActions } from 'vuex'
 import Export from '@/libs/js/export'
-import { getPreMonth } from './getPerMonth'
+import { getPreMonth } from '../mixins/getPerMonth'
 import tableHeadType from '@/libs/constant/headtype.js'
 export default {
-  name: 'car',
+  name: 'driver',
   components: {
     SelectInput,
     PageTable,
@@ -107,9 +96,9 @@ export default {
   },
   data () {
     return {
-      url: '/report/out/car',
+      url: '/report/out/driver',
       method: 'POST',
-      headType: tableHeadType.OWNER_CAR,
+      headType: tableHeadType.OWNER_DRIVER,
       keywords: {
         start: '',
         end: '',
@@ -118,7 +107,6 @@ export default {
         billType: '',
         startTime: '',
         endTime: '',
-        billNo: '',
         carNo: '',
         statusList: []
       },
@@ -137,6 +125,16 @@ export default {
       },
       carriersId: null,
       columns: [
+        {
+          title: '司机姓名',
+          key: 'driverName',
+          width: 150
+        },
+        {
+          title: '手机号码',
+          key: 'driverPhone',
+          width: 150
+        },
         {
           title: '车牌号',
           key: 'carNo',
@@ -189,18 +187,9 @@ export default {
         {
           title: '里程（公里）',
           key: 'mileage',
-          width: 200,
+          width: 150,
           render: (h, params) => {
             return h('span', params.row.mileage !== '' ? (params.row.mileage / 1000).toFixed(1) : '-')
-          }
-        },
-        {
-          title: '总费用',
-          key: 'totalFee',
-          width: 200,
-          render: (h, params) => {
-            // return h('span', params.row.totalFee !== '' ? (params.row.totalFee / 100).toFixed(2) : '-')
-            return h('span', typeof params.row.totalFee === 'number' ? (params.row.totalFee / 100).toFixed(2) : '0.00')
           }
         },
         {
@@ -210,42 +199,6 @@ export default {
           render: (h, params) => {
             // return h('span', params.row.freightFee !== '' ? (params.row.freightFee / 100).toFixed(2) : '-')
             return h('span', typeof params.row.freightFee === 'number' ? (params.row.freightFee / 100).toFixed(2) : '0.00')
-          }
-        },
-        {
-          title: '装货费',
-          width: 150,
-          key: 'loadFee',
-          render: (h, params) => {
-            // return h('span', params.row.loadFee !== '' ? (params.row.loadFee / 100).toFixed(2) : '-')
-            return h('span', typeof params.row.loadFee === 'number' ? (params.row.loadFee / 100).toFixed(2) : '0.00')
-          }
-        },
-        {
-          title: '卸货费',
-          width: 150,
-          key: 'unloadFee',
-          render: (h, params) => {
-            // return h('span', params.row.unloadFee !== '' ? (params.row.unloadFee / 100).toFixed(2) : '-')
-            return h('span', typeof params.row.unloadFee === 'number' ? (params.row.unloadFee / 100).toFixed(2) : '0.00')
-          }
-        },
-        {
-          title: '保险费',
-          width: 150,
-          key: 'insuranceFee',
-          render: (h, params) => {
-            // return h('span', params.row.insuranceFee !== '' ? (params.row.insuranceFee / 100).toFixed(2) : '-')
-            return h('span', typeof params.row.insuranceFee === 'number' ? (params.row.insuranceFee / 100).toFixed(2) : '0.00')
-          }
-        },
-        {
-          title: '路桥费',
-          width: 150,
-          key: 'tollFee',
-          render: (h, params) => {
-            // return h('span', params.row.tollFee !== '' ? (params.row.tollFee / 100).toFixed(2) : '-')
-            return h('span', typeof params.row.tollFee === 'number' ? (params.row.tollFee / 100).toFixed(2) : '0.00')
           }
         },
         {
@@ -264,22 +217,6 @@ export default {
           render: (h, params) => {
             // return h('span', params.row.otherFee !== '' ? (params.row.otherFee / 100).toFixed(2) : '-')
             return h('span', typeof params.row.otherFee === 'number' ? (params.row.otherFee / 100).toFixed(2) : '0.00')
-          }
-        },
-        {
-          title: '主司机',
-          width: 250,
-          key: 'driverName',
-          render: (h, params) => {
-            return h('span', (params.row.driverName || params.row.driverPhone) ? (params.row.driverName + ' ' + params.row.driverPhone) : '-')
-          }
-        },
-        {
-          title: '副司机',
-          width: 250,
-          key: 'assistantDriverName',
-          render: (h, params) => {
-            return h('span', (params.row.assistantDriverName || params.row.assistantDriverPhone) ? (params.row.assistantDriverName + ' ' + params.row.assistantDriverPhone) : '-')
           }
         },
         {
@@ -302,13 +239,8 @@ export default {
           key: 'cargoCnt',
           width: 150
           // render: (h, params) => {
-          //   return h('span', params.row.cargoCnt)
+          //   return h('span', params.row.cargoCnt !== '' ? params.row.cargoCnt : '-')
           // }
-        },
-        {
-          title: '订单数',
-          key: 'orderCnt',
-          width: 150
         }
       ]
     }
@@ -342,6 +274,11 @@ export default {
       }
     }
   },
+  // mounted () {
+  //   if (this.$route.query.tab) { // 首页跳转来的
+  //     this.showSevenDate()
+  //   }
+  // },
   methods: {
     search () {
       this.keyword = this.queryParams()
@@ -362,7 +299,6 @@ export default {
         billType: '',
         startTime: '',
         endTime: '',
-        billNo: '',
         carNo: '',
         statusList: []
       }
@@ -380,10 +316,10 @@ export default {
       }
       let data = this.queryParams()
       Export({
-        url: '/report/out/car/export',
+        url: '/report/out/driver/export',
         method: 'post',
         data,
-        fileName: '自有车出车统计报表'
+        fileName: '自有司机出车统计报表'
       })
     },
     handleTimeChange (val) {
@@ -417,10 +353,7 @@ export default {
         display flex
         display -ms-flexbox
         justify-content space-between
-        margin-bottom 12px
         -ms-flex-pack justify
-        &:last-child
-          margin-bottom 0
         .col
           flex 1
           -ms-flex 1
@@ -441,5 +374,5 @@ export default {
       flex 1
       -ms-flex 1
       text-align right
-      margin-top 84px
+      margin-top 42px
 </style>

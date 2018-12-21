@@ -18,9 +18,9 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import { mapGetters, mapActions } from 'vuex'
-import WritingOff from './components/WritingOff'
-import CheckingOrder from './components/CheckingOrder'
-import WrittenOff from './components/WrittenOff'
+import WritingOff from '../components/WritingOff'
+import CheckingOrder from '../components/CheckingOrder'
+import WrittenOff from '../components/WrittenOff'
 
 export default {
   name: 'finance-carrier',

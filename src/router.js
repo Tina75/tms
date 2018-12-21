@@ -226,7 +226,7 @@ const router = new Router({
         {
           'name': 'finance-sender',
           'path': 'sender',
-          'component': () => import(/* webpackChunkName: "finance-sender" */'./views/finance/sender.vue'),
+          'component': () => import(/* webpackChunkName: "finance-sender" */'./views/finance/pages/sender.vue'),
           'meta': {
             'powerCode': 170100,
             'title': '发货方对账'
@@ -235,7 +235,7 @@ const router = new Router({
         {
           'name': 'finance-carrier',
           'path': 'carrier',
-          'component': () => import(/* webpackChunkName: "finance-carrier" */'./views/finance/carrier.vue'),
+          'component': () => import(/* webpackChunkName: "finance-carrier" */'./views/finance/pages/carrier.vue'),
           'meta': {
             'powerCode': 170200,
             'title': '承运商对账'
@@ -244,7 +244,7 @@ const router = new Router({
         {
           'name': 'finance-collect-fee',
           'path': 'collectFee',
-          'component': () => import(/* webpackChunkName: "finance-collectFee" */'./views/finance/collectFee.vue'),
+          'component': () => import(/* webpackChunkName: "finance-collectFee" */'./views/finance/pages/collectFee.vue'),
           'meta': {
             'powerCode': 170500,
             'title': '代收货款对账'
@@ -253,7 +253,7 @@ const router = new Router({
         {
           'name': 'finance-return-fee',
           'path': 'returnFee',
-          'component': () => import(/* webpackChunkName: "finance-returnFee" */'./views/finance/returnFee.vue'),
+          'component': () => import(/* webpackChunkName: "finance-returnFee" */'./views/finance/pages/returnFee.vue'),
           'meta': {
             'powerCode': 170600,
             'title': '返现对账'
@@ -262,7 +262,7 @@ const router = new Router({
         {
           'name': 'finance-rules',
           'path': 'rules',
-          'component': () => import(/* webpackChunkName: "finance-rules" */'./views/finance/rules.vue'),
+          'component': () => import(/* webpackChunkName: "finance-rules" */'./views/finance/pages/rules.vue'),
           'meta': {
             'powerCode': 170400,
             'title': '计费规则'
@@ -284,7 +284,7 @@ const router = new Router({
         {
           'name': 'report-operate',
           'path': 'operate',
-          'component': () => import(/* webpackChunkName: "report-operate" */'./views/report/operate.vue'),
+          'component': () => import(/* webpackChunkName: "report-operate" */'./views/report/pages/operate.vue'),
           'meta': {
             'title': '运营报表',
             'powerCode': 180100
@@ -294,7 +294,7 @@ const router = new Router({
         {
           'name': 'report-total',
           'path': 'total',
-          'component': () => import(/* webpackChunkName: "report-total" */'./views/report/total.vue'),
+          'component': () => import(/* webpackChunkName: "report-total" */'./views/report/pages/total.vue'),
           'meta': {
             'title': '营业额汇总表',
             'powerCode': 180200
@@ -304,7 +304,7 @@ const router = new Router({
         {
           'name': 'report-profit',
           'path': 'profit',
-          'component': () => import(/* webpackChunkName: "report-profit" */'./views/report/profit.vue'),
+          'component': () => import(/* webpackChunkName: "report-profit" */'./views/report/pages/profit.vue'),
           'meta': {
             'title': '利润报表',
             'powerCode': 180300

@@ -21,7 +21,7 @@ const router = new Router({
         {
           'name': 'report-operate',
           'path': 'operate',
-          'component': () => import(/* webpackChunkName: "report-operate" */'./operate.vue'),
+          'component': () => import(/* webpackChunkName: "report-operate" */'./pages/operate.vue'),
           'meta': {
             'title': '运营报表',
             'powerCode': 180100
@@ -31,7 +31,7 @@ const router = new Router({
         {
           'name': 'report-total',
           'path': 'total',
-          'component': () => import(/* webpackChunkName: "report-total" */'./total.vue'),
+          'component': () => import(/* webpackChunkName: "report-total" */'./pages/total.vue'),
           'meta': {
             'title': '营业额汇总表',
             'powerCode': 180200
@@ -41,7 +41,7 @@ const router = new Router({
         {
           'name': 'report-profit',
           'path': 'profit',
-          'component': () => import(/* webpackChunkName: "report-profit" */'./profit.vue'),
+          'component': () => import(/* webpackChunkName: "report-profit" */'./pages/profit.vue'),
           'meta': {
             'title': '利润报表',
             'powerCode': 180300
