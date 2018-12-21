@@ -45,16 +45,12 @@
       <Row>
         <Col :span="8">
         <FormItem label="车型：">
-          <Select v-model="validate.driver.carType" transfer class="formInputSty" clearable>
-            <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
-          </Select>
+          <SelectCustom v-model="validate.driver.carType" type="carType" class="formInputSty" placeholder="请选择" clearable></SelectCustom>
         </FormItem>
         </Col>
         <Col :span="8">
         <FormItem label="车长：">
-          <Select v-model="validate.driver.carLength" transfer class="formInputSty" clearable>
-            <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
-          </Select>
+          <SelectCustom v-model="validate.driver.carLength" type="carLength" class="formInputSty" placeholder="请选择" clearable></SelectCustom>
         </FormItem>
         </Col>
         <Col :span="8">
@@ -203,10 +199,11 @@ import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput'
 import UpLoad from '@/components/upLoad/index.vue'
 import TagNumberInput from '@/components/TagNumberInput'
+import SelectCustom from '@/components/SelectCustom'
 import _ from 'lodash'
 export default {
   name: 'carrier',
-  components: { CitySelect, UpLoad, SelectInput, TagNumberInput },
+  components: { CitySelect, UpLoad, SelectInput, TagNumberInput, SelectCustom },
   mixins: [BaseDialog],
   data () {
     return {

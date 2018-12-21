@@ -176,6 +176,21 @@
         "name":"维修保养",
         "path":"/owned-vehicle/repair",
         "powerCode":190300
+      },
+      {
+        "name":"车辆保险",
+        "path":"/owned-vehicle/insurance",
+        "powerCode":190300
+      },
+      {
+        "name":"车辆年检",
+        "path":"/owned-vehicle/check",
+        "powerCode":190300
+      },
+      {
+        "name":"轮胎管理",
+        "path":"/owned-vehicle/tyre",
+        "powerCode":190300
       }
     ]
   },

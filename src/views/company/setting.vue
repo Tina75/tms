@@ -5,7 +5,9 @@
       <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="110" label-position="left">
         <div class="borderBottomLine">
           <span class="iconRightTitle"></span>
-          <span class="iconRightTitleP">基本信息</span>
+          <span class="iconRightTitleP">基本信息
+            <span class="content-p">完善并分享公司名片，有利于提升品牌影响力哦</span>
+          </span>
         </div>
         <span class="rightConfBtn">
           <Button v-if="!isEdit" class="buttonSty" @click="shareBtn">分享</Button>
