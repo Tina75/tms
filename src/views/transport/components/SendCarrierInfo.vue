@@ -86,7 +86,7 @@ import TagNumberInput from '@/components/TagNumberInput'
 // import Server from '@/libs/js/server'
 import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
 import $bus from '@/libs/js/eventBus.js'
-import { CAR } from '@/views/client/client'
+import { CAR } from '@/views/client/pages/client'
 
 export default {
   name: 'SendCarComponent',

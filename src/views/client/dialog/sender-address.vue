@@ -33,7 +33,7 @@
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
-import { consignerAddressAdd, consignerAddressUpdate, CODE } from '../client'
+import { consignerAddressAdd, consignerAddressUpdate, CODE } from '../pages/client'
 import cityUtil from '@/libs/js/city'
 import AreaInput from '@/components/AreaInput'
 import CitySelect from '@/components/SelectInputForCity'
@@ -134,5 +134,5 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-  @import "../client.styl"
+  @import "../pages/client.styl"
 </style>

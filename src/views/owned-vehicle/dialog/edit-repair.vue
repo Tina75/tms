@@ -151,7 +151,7 @@
 <script>
 import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
-import { CAR } from '../client'
+import { CAR } from '../pages/client'
 import float from '@/libs/js/float'
 import Server from '@/libs/js/server'
 import CarSelect from '@/components/own-car-form/CarSelect'
@@ -306,7 +306,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-  @import "../client.styl"
+  @import "../pages/client.styl"
 .ivu-col-span-7
   margin-left: 25px!important
 .formatSty

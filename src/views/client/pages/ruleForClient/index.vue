@@ -196,7 +196,7 @@ import FontIcon from '@/components/FontIcon'
 import TagNumberInput from '@/components/TagNumberInput'
 import DataEmpty from '@/components/DataEmpty'
 import mixin from './mixin'
-import popTipForRule from '@/views/client/ruleForClient/dialogs/popTipForRule.vue'
+import popTipForRule from '@/views/client/pages/ruleForClient/dialogs/popTipForRule.vue'
 // import { mapActions } from 'vuex'
 export default {
   name: 'rule-index',

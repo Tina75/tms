@@ -148,7 +148,7 @@
 </template>
 <script>
 import { CAR_TYPE1, CAR_LENGTH, DRIVER_TYPE } from '@/libs/constant/carInfo'
-import { CAR, formatterCarNo } from '../client'
+import { CAR, formatterCarNo } from '../pages/client'
 import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/index.vue'
@@ -320,7 +320,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-@import "../client.styl"
+@import "../pages/client.styl"
 .modalTitle
   font-size: 14px;
 </style>

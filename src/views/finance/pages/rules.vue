@@ -231,8 +231,8 @@ import SelectInputForCity from '@/components/SelectInputForCity'
 import TagNumberInput from '@/components/TagNumberInput'
 import FontIcon from '@/components/FontIcon'
 import DataEmpty from '@/components/DataEmpty'
-import mixin from '../../views/client/ruleForClient/mixin'
-import popTipForRule from '@/views/client/ruleForClient/dialogs/popTipForRule.vue'
+import mixin from '@/views/client/pages/ruleForClient/mixin'
+import popTipForRule from '@/views/client/pages/ruleForClient/dialogs/popTipForRule.vue'
 export default {
   name: 'finance-rules',
   metaInfo: {

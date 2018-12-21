@@ -2,11 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import LoginLayout from './login.vue'
 import Main from './views/main/Main.vue'
-import store from '@/store'
-import { sync } from 'vuex-router-sync'
 import home from '@/views/home/router'
-import orderCreate from '@/views/order/router'
-import order from '@/views/order-management/router'
+import order from '@/views/order/router'
 import waybill from '@/views/transport/router'
 import helper from '@/views/helper/router'
 import company from '@/views/company/router'
@@ -16,7 +13,7 @@ import setting from '@/views/set-up/router'
 import client from '@/views/client/router'
 import finance from '@/views/finance/router'
 import upstream from '@/views/upstream/router'
-import owned from '@/views/owned-vehicle'
+import owned from '@/views/owned-vehicle/router'
 
 Vue.use(Router)
 
@@ -74,18 +71,17 @@ const router = new Router({
       ]
     },
     ...home,
-    ...orderCreate,
-    ...waybill,
+    ...upstream,
     ...order,
+    ...waybill,
     ...finance,
     ...report,
     ...client,
+    ...owned,
     ...company,
     ...setting,
     ...information,
     ...helper,
-    ...owned,
-    ...upstream,
     {
       path: '/404',
       component: Main,
@@ -129,7 +125,6 @@ const router = new Router({
   ]
 })
 // 同步store和路由
-sync(store, router)
 // router.beforeEach((to, from, next) => {
 //   if (window.localStorage.tms_is_login || to.path === '/') next()
 //   else next('/')

@@ -1,7 +1,4 @@
-import Vue from 'vue'
-import Router from 'vue-router'
 import Main from '@/views/main/Main.vue'
-Vue.use(Router)
 
 export default[
   {
@@ -44,7 +41,7 @@ export default[
       {
         'name': 'order-management',
         'path': '/order-management/order',
-        'component': () => import(/* webpackChunkName: "order-management" */'../order-management/order.vue'),
+        'component': () => import(/* webpackChunkName: "order-management" */'./management/order.vue'),
         'meta': {
           'powerCode': 100300,
           'title': '订单管理'
@@ -53,7 +50,7 @@ export default[
       {
         'name': 'order-management-detail',
         'path': '/order-management/detail',
-        'component': () => import(/* webpackChunkName: "order-detail" */'../order-management/detail.vue'),
+        'component': () => import(/* webpackChunkName: "order-detail" */'./management/detail.vue'),
         'meta': {
           'hideInMenu': true,
           'powerCode': 100300,

@@ -10,7 +10,7 @@
  * 流程中心
  */
 import BasePage from '@/basic/BasePage'
-import ProcessCenter from './components/ProcessCenter.vue'
+import ProcessCenter from '../components/ProcessCenter.vue'
 export default {
   components: {
     ProcessCenter

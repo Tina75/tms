@@ -157,7 +157,7 @@
 <script>
 import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
-import { carrierAddVehicle, carrierUpdateVehicle, carrierQueryCarlist, CODE, CAR } from '../client'
+import { carrierAddVehicle, carrierUpdateVehicle, carrierQueryCarlist, CODE, CAR } from '../pages/client'
 import float from '@/libs/js/float'
 export default {
   name: 'carrier-vehicle',
@@ -313,7 +313,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-  @import "../client.styl"
+  @import "../pages/client.styl"
 .ivu-col-span-7
   margin-left: 25px!important
 .formatSty
