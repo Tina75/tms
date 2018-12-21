@@ -5,7 +5,7 @@
         <!-- <Icon type="ios-information-circle"></Icon> -->
         <span>{{name}}</span>
       </p>
-      <Form v-if="name === '送货调度'" ref="send" :model="send" :rules="sendRules" :label-width="85" inline label-position="left">
+      <Form v-if="name === '送货调度'" ref="send" :model="send" :rules="sendRules" :label-width="70" inline label-position="right">
         <FormItem label="始发地：" prop="start">
           <!-- <area-select v-model="send.start" :deep="true" style="width:180px"></area-select> -->
           <city-select v-model="send.start" style="width:180px"></city-select>
@@ -22,8 +22,8 @@
       <div class="table-footer">
         <span style="padding-right: 5px;box-sizing:border-box;margin-left:-12px;">合计</span>
         <span>订单总数：{{ orderTotal }}</span>
-        <span>总体积：{{ volumeTotal }}</span>
-        <span>总重量：{{ weightTotal }}</span>
+        <span>总体积：{{ volumeTotal + '方' }}</span>
+        <span>总重量：{{ weightTotal + (WeightOption === 1 ? '吨' : '公斤') }}</span>
       </div>
 
       <div>
@@ -33,8 +33,8 @@
           <span v-if="!sendCar" class="send_car_tip">此处可以直接派车哦～</span>
         </div>
         <div v-if="sendCar" style="margin-top: 25px;">
-          <send-car v-if="name === '送货调度'" ref="sendCarComp" :order-list="id" :mileage="mileage" :finance-rules-info="financeRulesInfo"></send-car>
-          <pick-up v-else ref="pickUpComp"></pick-up>
+          <send-car v-if="name === '送货调度'" ref="sendCarComp" :send-orders="id" :mileage="mileage" :finance-rules-info="financeRulesInfo"></send-car>
+          <pick-up v-else ref="pickUpComp" :pick-orders="id"></pick-up>
         </div>
       </div>
 
@@ -57,6 +57,8 @@ import PickUp from '@/views/transport/components/PickUp.vue'
 import { mapGetters, mapActions } from 'vuex'
 import _ from 'lodash'
 import float from '@/libs/js/float'
+import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
+
 export default {
   name: 'dispatch',
 
@@ -68,7 +70,7 @@ export default {
     PickUp
   },
 
-  mixins: [BaseDialog],
+  mixins: [BaseDialog, tableWeightColumnMixin],
 
   data () {
     return {
@@ -115,7 +117,7 @@ export default {
           tooltip: true
         },
         {
-          title: '客户单号',
+          title: '客户订单号',
           key: 'customerOrderNo',
           minWidth: 140,
           render: (h, p) => {
@@ -173,14 +175,20 @@ export default {
           key: 'volume',
           minWidth: 100,
           tooltip: true
-        },
-        {
-          title: '重量（吨）',
-          key: 'weight',
-          minWidth: 100,
-          tooltip: true
         }
       ],
+      columnWeight: {
+        title: '重量（吨）',
+        key: 'weight',
+        minWidth: 100,
+        tooltip: true
+      },
+      columnWeightKg: {
+        title: '重量（公斤）',
+        key: 'weightKg',
+        minWidth: 100,
+        tooltip: true
+      },
       mileage: null,
       btnLoading: false
     }
@@ -190,7 +198,8 @@ export default {
     ...mapGetters([
       'carriers',
       'carrierCars',
-      'carrierDrivers'
+      'carrierDrivers',
+      'WeightOption' // 重量配置 1 吨  2 公斤
     ]),
     orderTotal () {
       return this.id.length
@@ -200,20 +209,25 @@ export default {
       this.id.map((item) => {
         total += item.volume
       })
-      return float.round(total, 1)
+      return float.round(total, 4)
     },
     weightTotal () {
       let total = 0
       this.id.map((item) => {
-        total += item.weight
+        // 区分吨和公斤
+        if (this.WeightOption === 1) {
+          total += item.weight
+        } else {
+          total += item.weightKg
+        }
       })
-      return float.round(total)
+      return float.round(total, 3)
     },
     financeRulesInfo () {
       return {
         start: this.send.start,
         end: this.send.end,
-        weight: this.weightTotal,
+        weight: float.round(this.WeightOption === 1 ? this.weightTotal : this.weightTotal / 1000, 3),
         volume: this.volumeTotal
       }
     },
@@ -242,6 +256,12 @@ export default {
       this.send.end = this.id[0].end
       // 计费规则
     }, 0)
+    // 动态添加吨或公斤列
+    if (this.WeightOption === 1) {
+      this.triggerWeightColumn(this.tableColumns, this.columnWeight, 7)
+    } else {
+      this.triggerWeightColumn(this.tableColumns, this.columnWeightKg, 7)
+    }
   },
 
   methods: {
@@ -263,7 +283,6 @@ export default {
     },
     // 选择承运商dropdown的数据
     handleSelectCarrier (name, row) {
-      console.log(name, row)
       this.$store.dispatch('getCarrierCars', row.id).then((res) => {
         this.pick.carNo = res[0].carNO //  默认带出第一条车牌号
         this.pick.driverName = res[0].driverName //  默认带出第一条司机姓名
@@ -272,7 +291,6 @@ export default {
     },
     // 选择承运商车辆信息
     handleSelectCarrierCars (name, row) {
-      console.log(name, row)
     },
     // 过滤已维护的客户信息
     filterMethod (value, option) {
@@ -302,9 +320,12 @@ export default {
             orderIds: z.orderIds,
             assignCar: z.sendCar ? 1 : 0
           }
-          console.log(data)
           if (z.sendCar) {
             data.assignCarType = sendComp.sendWay
+            // 订单数大于1需要传分摊策略
+            if (this.id.length > 1) {
+              data.allocationStrategy = sendComp.getAllocationStrategy()
+            }
             if (data.assignCarType === '1') { // 外转
               data = Object.assign(data, sendComp.getformatMoney(), sendComp.getCarrierInfo(), {
                 settlementType: sendComp.getSettlementType(),
@@ -315,7 +336,6 @@ export default {
               delete data.cashBack // 自送没有返现
             }
           }
-          console.log(data)
           Server({
             url: 'waybill/create',
             method: 'post',
@@ -343,6 +363,10 @@ export default {
       }
       if (z.sendCar) {
         data.assignCarType = pickUpComp.sendWay
+        // 订单数大于1需要传分摊策略
+        if (this.id.length > 1) {
+          data.allocationStrategy = pickUpComp.getAllocationStrategy()
+        }
         if (data.assignCarType === '1') { // 外转
           data = Object.assign(data, pickUpComp.getformatMoney(), pickUpComp.getCarrierInfo(), {
             settlementType: pickUpComp.getSettlementTypes(),
@@ -353,7 +377,6 @@ export default {
           delete data.cashBack // 自送没有返现
         }
       }
-      console.log(data)
       Server({
         url: 'load/bill/create',
         method: 'post',
@@ -369,8 +392,7 @@ export default {
     },
     // 将地址字符串8位后的替换成...
     formatterAddress (str) {
-      let dot = str.substring(8)
-      return str.replace(dot, ' ...')
+      return str.slice(0, 8) + ' ...'
     }
   }
 }
@@ -421,6 +443,7 @@ export default {
     padding 22px 40px
   .ivu-form
     .ivu-form-item-label
+      padding 10px 0 10px
       font-size 14px
       font-family 'PingFangSC-Regular'
       color #777

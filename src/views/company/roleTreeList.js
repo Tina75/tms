@@ -1,4 +1,17 @@
 export default {
+  data7: [{
+    key: 'data7',
+    title: '上游来单',
+    expand: true,
+    disabled: true,
+    checked: true,
+    code: '110000',
+    children: [
+      { title: '接收', code: '110101', parentId: '110000', disabled: true },
+      { title: '拒绝', code: '110102', parentId: '110000', disabled: true },
+      { title: '导出', code: '110103', parentId: '110000', disabled: true }
+    ]
+  }],
   data1: [{
     key: 'data1',
     title: '受理开单',
@@ -45,14 +58,14 @@ export default {
       disabled: true,
       checked: true,
       children: [
-        { title: '页面查看', code: '100300', parentId: '110000', disabled: true },
-        { title: '编辑', code: '100301', parentId: '100300', grandId: '110000', disabled: true },
-        { title: '删除', code: '100302', parentId: '100300', grandId: '110000', disabled: true },
-        { title: '打印', code: '100303', parentId: '100300', grandId: '110000', disabled: true },
-        { title: '导出', code: '100304', parentId: '100300', grandId: '110000', disabled: true },
-        { title: '恢复', code: '100305', parentId: '100300', grandId: '110000', disabled: true },
-        { title: '彻底删除', code: '100306', parentId: '100300', grandId: '110000', disabled: true },
-        { title: '分享', code: '100307', parentId: '100300', grandId: '110000', disabled: true }
+        { title: '页面查看', code: '100300', parentId: '100000', disabled: true },
+        { title: '编辑', code: '100301', parentId: '100300', grandId: '100000', disabled: true },
+        { title: '删除', code: '100302', parentId: '100300', grandId: '100000', disabled: true },
+        { title: '打印', code: '100303', parentId: '100300', grandId: '100000', disabled: true },
+        { title: '导出', code: '100304', parentId: '100300', grandId: '100000', disabled: true },
+        { title: '恢复', code: '100305', parentId: '100300', grandId: '100000', disabled: true },
+        { title: '彻底删除', code: '100306', parentId: '100300', grandId: '100000', disabled: true },
+        { title: '分享', code: '100307', parentId: '100300', grandId: '100000', disabled: true }
       ]
     }]
   }],
@@ -122,6 +135,7 @@ export default {
         { title: '页面查看', code: '120200', parentId: '120000', disabled: true },
         { title: '提货调度', code: '120208', parentId: '120200', grandId: '120000', disabled: true },
         // { title: '外转', code: '120209', parentId: '120200', grandId: '120000', disabled: true },
+        // { title: '派车', code: '120213', parentId: '120200', grandId: '120000', disabled: true },
         { title: '提货', code: '120201', parentId: '120200', grandId: '120000', disabled: true },
         { title: '打印', code: '120202', parentId: '120200', grandId: '120000', disabled: true },
         { title: '到货', code: '120203', parentId: '120200', grandId: '120000', disabled: true },
@@ -147,7 +161,7 @@ export default {
         // { title: '外转', code: '120111', parentId: '120100', grandId: '120000', disabled: true },
         { title: '订单还原', code: '120112', parentId: '120100', grandId: '120000', disabled: true },
         { title: '发运', code: '120102', parentId: '120100', grandId: '120000', disabled: true },
-        { title: '派车', code: '120101', parentId: '120100', grandId: '120000', disabled: true },
+        // { title: '派车', code: '120101', parentId: '120100', grandId: '120000', disabled: true },
         { title: '打印', code: '120103', parentId: '120100', grandId: '120000', disabled: true },
         { title: '到货', code: '120104', parentId: '120100', grandId: '120000', disabled: true },
         { title: '删除', code: '120105', parentId: '120100', grandId: '120000', disabled: true },
@@ -200,11 +214,11 @@ export default {
       expand: true,
       children: [
         { title: '页面查看', code: '120500', parentId: '120000', disabled: true },
-        { title: '回收', code: '120501', parentId: '120500', grandId: '110000', disabled: true },
-        { title: '返厂', code: '120502', parentId: '120500', grandId: '110000', disabled: true },
-        { title: '导出', code: '120503', parentId: '120500', grandId: '110000', disabled: true },
-        { title: '上传回单照片', code: '120504', parentId: '120500', grandId: '110000', disabled: true },
-        { title: '修改回单照片', code: '120505', parentId: '120500', grandId: '110000', disabled: true }
+        { title: '回收', code: '120501', parentId: '120500', grandId: '120000', disabled: true },
+        { title: '返厂', code: '120502', parentId: '120500', grandId: '120000', disabled: true },
+        { title: '导出', code: '120503', parentId: '120500', grandId: '120000', disabled: true },
+        { title: '上传回单照片', code: '120504', parentId: '120500', grandId: '120000', disabled: true },
+        { title: '修改回单照片', code: '120505', parentId: '120500', grandId: '120000', disabled: true }
       ]
     }]
   }],
@@ -484,6 +498,8 @@ export default {
     children: [
       { title: '运营报表', code: '180100', parentId: '180000', disabled: true },
       { title: '营业额汇总表', code: '180200', parentId: '180000', disabled: true },
+      { title: '自有车出车统计报表', code: '180400', parentId: '180000', disabled: true },
+      { title: '自有司机出车统计报表', code: '180500', parentId: '180000', disabled: true },
       { title: '利润报表', code: '180300', parentId: '180000', disabled: true }
     ]
   }],
@@ -496,7 +512,8 @@ export default {
     code: '150000',
     children: [
       // { title: '公司设置', code: '150100', parentId: '150000', disabled: true },
-      { title: '短信设置', code: '150200', parentId: '150000', disabled: true }
+      { title: '短信设置', code: '150200', parentId: '150000', disabled: true },
+      { title: '系统设置', code: '150300', parentId: '150000', disabled: true }
     ]
   }]
 }

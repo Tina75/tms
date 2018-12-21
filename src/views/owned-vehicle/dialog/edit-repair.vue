@@ -66,10 +66,10 @@
             <Row>
               <Col span="19">
               <TagNumberInput :min="0" :max="validate.repairMoney" v-model="validate.payMoney" :show-chinese="false" placeholder="必填" @on-blur="payMoneyChange"></TagNumberInput>
-                </Col>
+              </Col>
               <Col span="2" offset="1">
               <span>元</span>
-                </Col>
+              </Col>
             </Row>
           </FormItem>
           </Col>
@@ -217,6 +217,8 @@ export default {
   mounted () {
     if (this.flag === 2) {
       this.configData()
+    } else if (this.flag === 1 && this.carNo) {
+      this.validate.carNo = this.carNo
     } else {
       this.disAbleBtn = false
     }
@@ -229,6 +231,7 @@ export default {
         this.validate.payMoney = this.validate.repairMoney
         this.validate.waitPayMoney = 0
       }
+      this.$refs.validate.validateField('payMoney')
     },
     payMoneyChange () {
       if ((float.round(this.validate.repairMoney) - float.round(this.validate.payMoney)) <= 0) {
@@ -256,9 +259,9 @@ export default {
       this.$refs[name].validate((valid) => {
         this.validate.repairDate = new Date(this.validate.repairDate).Format('yyyy-MM-dd hh:mm:ss')
         let params = Object.assign({}, this.validate)
-        params.repairMoney = this.validate.repairMoney * 100
-        params.payMoney = this.validate.payMoney * 100
-        params.waitPayMoney = this.validate.waitPayMoney * 100
+        params.repairMoney = float.round(this.validate.repairMoney * 100)
+        params.payMoney = float.round(this.validate.payMoney * 100)
+        params.waitPayMoney = float.round(this.validate.waitPayMoney * 100)
         if (valid) {
           this.loading = true
           if (this.flag === 1) { // 新增

@@ -5,25 +5,33 @@
     </Spin>
 
     <Row :gutter="16">
-      <Col span="6">
+      <Col span="8">
       <FormItem label="客户名称:" prop="consignerName">
         <SelectInput
           v-model="orderForm.consignerName"
           :auto-focus="autoFocus"
           :maxlength="20"
           :remote="false"
+          :clearable="true"
           :local-options="clients"
           @on-focus.once="getClients"
           @on-select="handleSelectConsigner">
         </SelectInput>
       </FormItem>
       </Col>
-      <Col span="6">
-      <FormItem label="客户单号:" prop="customerOrderNo">
+      <Col span="8">
+      <FormItem label="客户订单号:" prop="customerOrderNo">
         <Input v-model="orderForm.customerOrderNo" :maxlength="30" type="text"></Input>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col span="8">
+      <FormItem label="客户运单号:" prop="customerWaybillNo">
+        <Input v-model="orderForm.customerWaybillNo" :maxlength="30" type="text"></Input>
+      </FormItem>
+      </Col>
+    </Row>
+    <Row :gutter="16">
+      <Col span="8">
       <FormItem label="发货时间:">
         <Row>
           <Col span="13">
@@ -39,7 +47,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col span="8">
       <FormItem label="到货时间:">
         <Row>
           <Col span="13">
@@ -55,9 +63,7 @@
         </Row>
       </FormItem>
       </Col>
-    </Row>
-    <Row :gutter="16">
-      <Col span="6">
+      <Col span="8">
       <FormItem label="对接业务员:" prop="salesmanId">
         <Select v-model="orderForm.salesmanId" transfer clearable placeholder="全部">
           <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.id">{{opt.name}}</Option>
@@ -93,42 +99,55 @@
       </Col>
     </Row>
     <Row :gutter="16">
-      <Col span="6">
-      <FormItem label="发货地址:" class="consig-address" prop="start">
-        <CitySelect ref="start" v-model="orderForm.start" clearable></CitySelect>
-      </FormItem>
-      </Col>
-      <Col span="6">
-      <FormItem :label-width="0" prop="consignerAddress">
+      <Col span="8">
+      <FormItem label="发货地址:" class="consig-address" prop="consignerAddress">
         <AreaInput
           v-model="orderForm.consignerAddress"
-          :city-code="orderForm.start"
+          :show-icon="!!orderForm.start"
           :local-options="consignerAddresses"
-          :disabled="true"
-          :filter-city="true"
-          @latlongt-change="({lat, lng}) => latlongtChange(1, lat, lng)"/>
+          placeholder="详细地址（省市区+地址）"
+          @city-select="({lat, lng, cityCode}) => citySelect(1, lat, lng, cityCode)"/>
       </FormItem>
       </Col>
-      <Col span="6">
-      <FormItem prop="end" label="收货地址:" class="consig-address">
-        <CitySelect ref="end" v-model="orderForm.end" clearable></CitySelect>
+      <Col span="3">
+      <FormItem :label-width="0">
+        <Input v-model="orderForm.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
       </FormItem>
       </Col>
-      <Col span="6">
-      <FormItem :label-width="0" prop="consigneeAddress">
+      <Col span="1">
+      <FormItem :label-width="0">
+        <Tooltip :max-width="200" content="详细地址从下拉推荐地址中选择，可获取到经纬度，自动计算运输里程" transfer>
+          <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+        </Tooltip>
+      </FormItem>
+      </Col>
+      <Col span="8">
+      <FormItem label="收货地址:" class="consig-address" prop="consigneeAddress">
         <AreaInput
           v-model="orderForm.consigneeAddress"
-          :city-code="orderForm.end"
+          :show-icon="!!orderForm.end"
           :local-options="consigneeAddresses"
-          :disabled="true"
-          :filter-city="true"
-          @latlongt-change="({lat, lng}) => latlongtChange(2, lat, lng)"/>
+          placeholder="详细地址（省市区+地址）"
+          @city-select="({lat, lng, cityCode}) => citySelect(2, lat, lng, cityCode)"/>
+      </FormItem>
+      </Col>
+      <Col span="3">
+      <FormItem :label-width="0">
+        <Input v-model="orderForm.consigneeHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+      </FormItem>
+      </Col>
+      <Col span="1">
+      <FormItem :label-width="0">
+        <Tooltip :max-width="200" content="详细地址从下拉推荐地址中选择，可获取到经纬度，自动计算运输里程" transfer>
+          <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+        </Tooltip>
       </FormItem>
       </Col>
     </Row>
     <Title>货物信息</Title>
     <CargoTable
       ref="cargoTable"
+      :unit-type="WeightOption"
       :cargoes="cargoes"
       :data-source="consignerCargoes"
       :on-append="appendCargo"
@@ -293,6 +312,9 @@
       <Button v-if="hasPower(100102)" :loading="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
       <Button v-if="hasPower(100104) && !orderId" class="i-ml-10" @click="shipImmedite">立即发运</Button>
+      <span v-if="hasPower(150300)" style="float: right; vertical-align:middle; width: 30px; height: 30px; background: #EFEFEF; border: 1px solid #ccc; border-radius: 4px" @click="setHandle">
+        <FontIcon type="shezhi" size="20" color="#999999" style="cursor: pointer"></FontIcon>
+      </span>
     </div>
     <OrderPrint ref="printer" :list="orderPrint" source="create">
     </OrderPrint>
@@ -321,12 +343,13 @@ import CargoTable from './components/CargoTable.vue'
 import TimeInput from './components/TimeInput.vue'
 import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
+import TMSURL from '@/libs/constant/url'
 const rate = {
   set (value) {
     return value ? float.floor(value / 100, 4) : value
   },
   get (value) {
-    return value ? float.floor(value * 100, 2) : value === 0 ? value : null
+    return value ? float.round(value * 100, 2) : value === 0 ? value : null
   }
 }
 const transferFeeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee', 'collectionMoney']
@@ -418,8 +441,9 @@ export default {
         start: null,
         // 目的城市
         end: null,
-        // 客户单号
+        // 客户订单号
         customerOrderNo: '',
+        customerWaybillNo: '',
         salesmanId: '',
         // 发货时间
         deliveryTime: '',
@@ -432,6 +456,7 @@ export default {
         consignerPhone: '',
         // 发货地址
         consignerAddress: '',
+        consignerHourseNumber: '',
         // 经度
         consignerAddressLongitude: '',
         // 纬度
@@ -441,6 +466,7 @@ export default {
         consigneeContact: '',
         consigneePhone: '',
         consigneeAddress: '',
+        consigneeHourseNumber: '',
         // 经纬度
         consigneeAddressLongitude: '',
         consigneeAddressLatitude: '',
@@ -505,10 +531,10 @@ export default {
           { validator: validatePhone, trigger: 'blur' }
         ],
         consignerAddress: [
-          { required: true, message: '请输入详细地址' }
+          { required: true, message: '请输入发货地址' }
         ],
         consigneeAddress: [
-          { required: true, message: '请输入详细地址' }
+          { required: true, message: '请输入收货地址' }
         ],
         settlementType: [
           { required: true, message: '请选择付款方式' }
@@ -570,6 +596,7 @@ export default {
       },
       salesmanList: [],
       highLight: false
+      // unitType: this.WeightOption || 1 // 货物单位
     }
   },
   computed: {
@@ -580,7 +607,8 @@ export default {
       'consigneePhones',
       'consigneeAddresses',
       'cargoes',
-      'cargoOptions'
+      'cargoOptions',
+      'WeightOption'
     ]),
     totalFee () {
       const feeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
@@ -610,6 +638,8 @@ export default {
   created () {
     if (!this.$route.query.id) {
       this.autoFocus = true
+    } else {
+      this.getClients()
     }
   },
   mounted () {
@@ -728,26 +758,39 @@ export default {
       _this.getConsignerDetail(row.id).then((response) => {
         const { consigneeList: consignees, addressList: addresses, cargoList, ...consigner } = response.data
         // 设置发货人信息，发货联系人，手机，发货地址
+        _this.orderForm.consignerName = response.data.name
         _this.orderForm.consignerContact = consigner.contact
         _this.orderForm.consignerPhone = consigner.phone
         if (addresses.length > 0) {
-          _this.orderForm.consignerAddress = addresses[0].address
+          if (this.hasCity(addresses[0].address, addresses[0].cityName)) {
+            _this.orderForm.consignerAddress = addresses[0].address
+          } else {
+            _this.orderForm.consignerAddress = addresses[0].cityName + addresses[0].address
+          }
+          // if (addresses[0].address.index)
           _this.orderForm.consignerAddressLongitude = addresses[0].longitude
           _this.orderForm.consignerAddressLatitude = addresses[0].latitude
           _this.orderForm.start = addresses[0].cityCode
           _this.orderForm.consignerAddressLatitude = addresses[0].latitude
           _this.orderForm.consignerAddressLongitude = addresses[0].longitude
+          _this.orderForm.consignerHourseNumber = addresses[0].consignerHourseNumber
         }
         if (consignees.length > 0) {
           // 设置收货人信息，收货人，手机，收货地址
           _this.orderForm.consigneeContact = consignees[0].contact
           _this.orderForm.consigneePhone = consignees[0].phone
           _this.orderForm.consigneeAddress = consignees[0].address
+          if (this.hasCity(consignees[0].address, consignees[0].cityName)) {
+            _this.orderForm.consigneeAddress = consignees[0].address
+          } else {
+            _this.orderForm.consigneeAddress = consignees[0].cityName + addresses[0].address
+          }
           _this.orderForm.consigneeAddressLongitude = consignees[0].longitude
           _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
           _this.orderForm.end = consignees[0].cityCode
           _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
           _this.orderForm.consigneeAddressLongitude = consignees[0].longitude
+          _this.orderForm.consigneeHourseNumber = consignees[0].consignerHourseNumber
         }
         // 计费里程
         _this.distanceCp()
@@ -781,6 +824,7 @@ export default {
       this.orderForm.consigneeAddress = row.address
       this.orderForm.consigneeAddressLatitude = row.latitude
       this.orderForm.consigneeAddressLongitude = row.longitude
+      this.orderForm.consigneeHourseNumber = row.consigneeHourseNumber
       // 计费里程
       this.distanceCp()
     },
@@ -818,7 +862,7 @@ export default {
       //   return
       // }
       this.openDialog({
-        name: 'dialogs/financeRule.vue',
+        name: 'dialogs/financeRule',
         data: {
           start: vm.orderForm.start, // 始发城市
           end: vm.orderForm.end, // 目的城市
@@ -827,7 +871,7 @@ export default {
           partnerType: 1, // 计算规则分类：1-发货方，2-承运商，3-外转方
           weight: statics.weight,
           volume: statics.volume,
-          distance: this.orderForm.mileage ? this.orderForm.mileage * 1000 : 0,
+          distance: this.orderForm.mileage ? parseInt(this.orderForm.mileage * 1000) : 0,
           startPoint: { lat: this.orderForm.consignerAddressLatitude, lng: this.orderForm.consignerAddressLongitude },
           endPoint: { lat: this.orderForm.consigneeAddressLatitude, lng: this.orderForm.consigneeAddressLongitude }
         },
@@ -904,9 +948,7 @@ export default {
           } else {
             this.closeTab()
           }
-        }).catch(err => {
-          console.log(err)
-        })
+        }).catch(() => {})
     },
     dateChange (type, date) {
       const refs = type === 'START_DATE' ? 'stTimeInput' : type === 'END_DATE' ? 'edTimeInput' : ''
@@ -928,15 +970,21 @@ export default {
     getTwoNum (d) {
       return d > 9 ? d : 0 + d
     },
-    latlongtChange (type, lat, lng) {
+    citySelect (type, lat, lng, cityCode) {
       if (type === 1) {
         this.orderForm.consignerAddressLongitude = lng
         this.orderForm.consignerAddressLatitude = lat
+        this.orderForm.start = cityCode
       } else if (type === 2) {
         this.orderForm.consigneeAddressLongitude = lng
         this.orderForm.consigneeAddressLatitude = lat
+        this.orderForm.end = cityCode
       }
       this.distanceCp()
+    },
+    // 城市code设置
+    setCityCode () {
+
     },
     distanceCp () {
       const p1 = {
@@ -960,8 +1008,7 @@ export default {
           const num = float.floor(res / 1000, 1)
           this.orderForm.mileage = Number(num)
         }
-      }).catch(err => {
-        console.log(err)
+      }).catch(() => {
       })
     },
     // 立即发运
@@ -1057,8 +1104,7 @@ export default {
               }
             })
           }
-        }).catch(err => {
-          console.log(err)
+        }).catch(() => {
         })
     },
     validateForm () {
@@ -1094,17 +1140,16 @@ export default {
               consignerPhone: orderForm.consignerPhone.replace(/\s/g, ''),
               consigneePhone: orderForm.consigneePhone.replace(/\s/g, ''),
               invoiceRate: orderForm.isInvoice === 1 ? rate.set(orderForm.invoiceRate) : null
-            });
-
-            ['start', 'end'].forEach(field => {
-              form[field] = parseInt(form[field])
-              // 保存本地记录
-              vm.$refs['start'].saveCity(form[field])
             })
             // 转换成分单位
             transferFeeList.forEach((fee) => {
-              form[fee] = form[fee] ? form[fee] * 100 : 0
+              form[fee] = form[fee] ? float.round(form[fee] * 100) : 0
             })
+            // 没有业务员 置空
+            const res = this.salesmanList.some(el => {
+              return el.id === form.salesmanId
+            })
+            if (!res) form.salesmanId = ''
             resolve(form)
           } else {
             vm.disabled = false
@@ -1150,6 +1195,19 @@ export default {
     },
     phoneLength (value) {
       return /^1/.test(value) ? 13 : 30
+    },
+    setHandle () {
+      this.openTab({
+        path: TMSURL.SETTING,
+        title: '设置',
+        query: {
+          tab: 'order'
+        }
+      })
+    },
+    // 是否包含省市
+    hasCity (val, cityName) {
+      return val.indexOf(cityName) === 0 || val.indexOf('省') > -1 || val.indexOf('市') > -1
     }
   }
 }

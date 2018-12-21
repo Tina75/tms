@@ -89,7 +89,12 @@ instance.interceptors.response.use((res) => {
   if (error.response && error.response.status) {
     Message.error(error.response.statusText + ' ' + error.response.status)
   }
-  Vue.$ga.exception(`msg: ${error.message} || url: ${reportData.url}`)
+  if (error.config) {
+    Vue.$ga.exception(`msg: ${error.message} || url: ${error.config.url.replace(error.config.baseURL, '/')}`)
+    if (!error.config.ignoreReport) {
+      delete reportData[error.config.reportName]
+    }
+  }
   return Promise.reject(error)
 })
 

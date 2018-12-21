@@ -1,6 +1,6 @@
 <template>
-  <Form ref="pickUpFeeForm" :label-width="62" :model="payment" :rules="rules" class="transport-detail" label-position="left">
-    <div class="part" style="padding-bottom: 5px;">
+  <Form ref="pickUpFeeForm" :label-width="62" :model="payment" :rules="rules" class="transport-detail" label-position="right">
+    <div :class="sendWay === '1' ? 'outer-fee' : 'own-fee'" class="part" style="padding-bottom: 5px;">
       <Row class="detail-field-group">
         <i-col span="5">
           <FormItem :label="sendWay === '1' ? '运输费：': '油费：'" prop="freightFee" class="fee-fix">
@@ -40,8 +40,8 @@
         </i-col>
       </Row>
     </div>
-
-    <div v-if="sendWay === '1' && source !== 'abnormal'" class="part">
+    <!-- 外转 -->
+    <div v-if="sendWay === '1' && source !== 'abnormal'">
       <Row class="detail-field-group">
         <i-col span="24">
           <span class="detail-field-title detail-field-required" style="width: 92px;">结算方式：</span>
@@ -60,10 +60,25 @@
           </div>
         </i-col>
       </Row>
+
+      <Row v-if="pickFeeOrders.length > 1" class="detail-field-group" style="margin-top: 15px;margin-left: -2px;">
+        <i-col span="24">
+          <allocation-strategy ref="allocationStrategy" :allocation-orders="pickFeeOrders" :pass-allocation="feePassAllocation"></allocation-strategy>
+        </i-col>
+      </Row>
     </div>
 
-    <div v-if="source === 'abnormal' && abnormalLength > 0" class="part">
-      <Row class="detail-field-group">
+    <!-- 自送 -->
+    <div v-if="sendWay === '2' && source !== 'abnormal' && pickFeeOrders.length > 1">
+      <Row class="detail-field-group" style="margin-left: -2px;">
+        <i-col span="8">
+          <allocation-strategy ref="allocationStrategy" :allocation-orders="pickFeeOrders" :pass-allocation="feePassAllocation"></allocation-strategy>
+        </i-col>
+      </Row>
+    </div>
+
+    <div v-if="source === 'abnormal'">
+      <Row v-if="abnormalLength > 0" class="detail-field-group">
         <i-col span="24">
           <PayInfo
             ref="$payInfo"
@@ -72,6 +87,12 @@
             class="detail-field-payinfo"
             style="margin: 0 0 0 82px;"
             mode="edit" />
+        </i-col>
+      </Row>
+      <Row v-if="orderCnt > 1" class="detail-field-group row-margin">
+        <i-col span="24">
+          <span class="detail-field-title-sm" style="margin-left: 10px;">分摊策略：</span>
+          <span style="margin-right: 10px;">{{ getAllocationValToLabel(allocationType) }}</span>
         </i-col>
       </Row>
     </div>
@@ -83,10 +104,13 @@ import BaseDialog from '@/basic/BaseDialog'
 import TagNumberInput from '@/components/TagNumberInput'
 import validator from '@/libs/js/validate'
 import PayInfo from './PayInfo'
+import AllocationStrategy from './AllocationStrategy.vue'
+import allocationStrategy from '../constant/allocation.js'
+import float from '@/libs/js/float'
 
 export default {
   name: 'PickupFeeComponent',
-  components: { TagNumberInput, PayInfo },
+  components: { TagNumberInput, PayInfo, AllocationStrategy },
   mixins: [ BaseDialog ],
   props: {
     //  1 外转 2 自送 自送不显示多段付
@@ -132,6 +156,24 @@ export default {
     abnormalLength: {
       type: [String, Number],
       default: 1
+    },
+    // 传入的订单list,需要校验数量、体积、重量
+    pickFeeOrders: {
+      type: Array
+    },
+    // 分摊类型 默认1 按订单数分摊
+    allocationType: {
+      type: [String, Number],
+      default: 1
+    },
+    // 订单数量，异常需要判断是否显示分摊费用
+    orderCnt: {
+      type: Number,
+      default: 1
+    },
+    // 编辑的时候需要带入的分摊策略，1、按订单数  2、按件数 3、按重量 4、按体积
+    feePassAllocation: {
+      type: [String, Number]
     }
   },
   data () {
@@ -179,7 +221,7 @@ export default {
               Number(this.payment.unloadFee) +
               Number(this.payment.insuranceFee) +
               Number(this.payment.otherFee)
-      return parseFloat(total.toFixed(2))
+      return float.round(total)
     }
   },
   watch: {
@@ -191,16 +233,23 @@ export default {
     this.settlementTypeFee = this.settlementType
   },
   methods: {
+    // 将分摊策略返回的标识映射为文字
+    getAllocationValToLabel (data) {
+      let list = allocationStrategy.find(item => item.value === (data !== '' ? data : 1))
+      return list.label
+    },
     // 格式化金额单位为分
     formatMoney () {
       let temp = Object.assign({}, this.payment)
-      temp.freightFee = temp.freightFee * 100
-      temp.loadFee = temp.loadFee * 100
-      temp.unloadFee = temp.unloadFee * 100
-      temp.insuranceFee = temp.insuranceFee * 100
-      temp.otherFee = temp.otherFee * 100
-      temp.totalFee = this.paymentTotal * 100
+      for (let key in temp) {
+        temp[key] = float.round(temp[key] * 100)
+      }
+      temp.totalFee = float.round(this.paymentTotal * 100)
       return temp
+    },
+    // 获取分摊策略
+    getAllocationStrategy () {
+      return this.$refs.allocationStrategy.getAllocation()
     },
     // payInfo组件数据校验
     payInfoValid () {
@@ -228,14 +277,13 @@ export default {
 
 </script>
 <style lang='stylus'>
- @import "../style/detail.styl"
+  @import "../style/detail.styl"
 
- .part
-
-   .ivu-form-item-label
-     color #777
-     font-size 14px
-     padding 10px 0 10px
+  .part
+    .ivu-form-item-label
+      color #777
+      font-size 14px
+      padding 10px 0 10px
 
    .padding-left-label
     .ivu-form-item-label
@@ -254,14 +302,19 @@ export default {
     .ivu-form-item-content
       margin-left 52px !important
 
-   .label-width
-    .ivu-form-item-label
-      width 92px !important
   .detail-payment-way
     width calc(100% - 100px) !important
+  .outer-fee
+    .ivu-col-span-5:first-child
+      margin-left -5px
+  .own-fee
+    .ivu-col-span-5:first-child
+      margin-left -19px
 </style>
 <style lang='stylus' scoped>
   .part
     padding 10px 0 20px
     border-bottom none
+  .row-margin
+    margin 20px 0 35px 0
 </style>

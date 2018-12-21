@@ -5,7 +5,7 @@
         <span class="icontTitle"></span>
         <span class="iconTitleP">发货方信息</span>
       </div>
-      <div class="list-info">
+      <div :class="{'list-hide': isShow}" class="list-info">
         <Row class="row">
           <Col span="8">
           <div>
@@ -61,7 +61,7 @@
       </div>
     </div>
     <div class="tabs">
-      <Tabs :animated="false">
+      <Tabs :animated="false" @on-click="tabsClick">
         <TabPane :label="tabPaneLabel">
           <div class="add">
             <Button v-if="hasPower(130104)"  type="primary" @click="_consignerAddressAdd">新增</Button>
@@ -98,7 +98,7 @@
             </page-table>
           </template>
         </TabPane>
-        <TabPane :label="tabPaneLabe4">
+        <TabPane :label="tabPaneLabe4" name="rule">
           <ruleForClient :count.sync="totalCount4" :height="ruleHeight" :active="'1'" :partner-id="list.id"  :partner-name="list.name"></ruleForClient>
         </TabPane>
       </Tabs>
@@ -162,7 +162,8 @@ export default {
                           longitude: params.row.longitude,
                           latitude: params.row.latitude,
                           mapType: params.row.mapType,
-                          city: params.row.cityCode
+                          city: params.row.cityCode,
+                          consignerHourseNumber: params.row.consignerHourseNumber
                         }
                       },
                       methods: {
@@ -212,7 +213,14 @@ export default {
         },
         {
           title: '发货地址',
-          key: 'address'
+          key: 'address',
+          render: (h, params) => {
+            let text = params.row.address
+            if (params.row.consignerHourseNumber) {
+              text += ',' + params.row.consignerHourseNumber
+            }
+            return h('span', text)
+          }
         }
       ],
       columns2: [
@@ -245,7 +253,8 @@ export default {
                           longitude: params.row.longitude,
                           latitude: params.row.latitude,
                           mapType: params.row.mapType,
-                          cityCode: params.row.cityCode
+                          cityCode: params.row.cityCode,
+                          consignerHourseNumber: params.row.consignerHourseNumber
                         }
                       },
                       methods: {
@@ -303,7 +312,14 @@ export default {
         },
         {
           title: '收货地址',
-          key: 'address'
+          key: 'address',
+          render: (h, params) => {
+            let text = params.row.address
+            if (params.row.consignerHourseNumber) {
+              text += ',' + params.row.consignerHourseNumber
+            }
+            return h('span', text)
+          }
         },
         {
           title: '备注',
@@ -491,7 +507,8 @@ export default {
       pageSize3: 10,
       totalCount3: 0, // 总条数
       pageNo3: 1,
-      totalCount4: 0
+      totalCount4: 0,
+      isShow: false
     }
   },
   computed: {
@@ -510,9 +527,16 @@ export default {
   },
   mounted () {
     this._consignerDetail()
-    this.ruleHeight = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 174 - 32 - 39 - 16 - 44
+    this.ruleHeight = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 174 - 32 - 39 - 16 - 44 + 146
   },
   methods: {
+    tabsClick (name) {
+      if (name === 'rule') {
+        this.isShow = true
+      } else {
+        this.isShow = false
+      }
+    },
     _consignerDetail () {
       let data = {
         id: this.id
@@ -660,7 +684,7 @@ export default {
       this._consignerCargoList()
     },
     rate (value) {
-      return float.floor(value * 100, 2)
+      return float.floor(float.round(value * 100), 2)
     }
   }
 }
@@ -668,6 +692,8 @@ export default {
 
 <style scoped lang="stylus">
   @import "client.styl"
+  .list-hide
+    display none
   .footer
     margin-top 22px
     display flex

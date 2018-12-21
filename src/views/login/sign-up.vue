@@ -52,11 +52,11 @@
             </FormItem>
             <FormItem prop="address">
               <Row>
-                <Col :span="8">
-                <CitySelect v-model="form.cityId" clearable></CitySelect>
+                <Col :span="16">
+                <AreaInput v-model="form.address" :first-select="false" @city-select="addressLocationChange"></AreaInput>
                 </Col>
-                <Col :span="16" class="areaRight">
-                <AreaInput v-model="form.address" :city-code="cityCode" :maxlength="40" placeholder="输入公司详细地址" @latlongt-change="addressLocationChange"></AreaInput>
+                <Col :span="8" class="areaRight">
+                <Input v-model="form.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
                 </Col>
               </Row>
             </FormItem>
@@ -96,16 +96,14 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
-import City from '@/libs/js/city'
 import mixin from './mixin'
 import { VALIDATOR_PHONE, VALIDATOR_PASSWORD, VALIDATOR_CONFIRM_PASSWORD } from './validator'
 
 import AreaInput from '@/components/AreaInput'
-import CitySelect from '@/components/SelectInputForCity'
 
 export default {
   name: 'SignUp',
-  components: { AreaInput, CitySelect },
+  components: { AreaInput },
   mixins: [ BasePage, mixin ],
   metaInfo: {
     title: '注册账号'
@@ -125,10 +123,12 @@ export default {
         name: '', // 公司名称
         userName: '', // 联系人姓名
         address: '', // 公司地址
+        consignerHourseNumber: '',
         cityId: void 0,
         latitude: void 0,
         longitude: void 0,
-        mapType: 1
+        mapType: 1,
+        companyType: 1
       },
 
       rules: {
@@ -157,21 +157,12 @@ export default {
         address: [
           { required: true, message: '公司地址不能为空' },
           { type: 'string', min: 5, max: 40, message: '公司地址不能少于5个字也不能超过40个字' }
-        ],
-        cityId: [{ required: true, message: '省市区不能为空' }]
-      },
-
-      cities: []
-    }
-  },
-  computed: {
-    cityCode () {
-      return this.form.cityId
+        ]
+      }
     }
   },
   created () {
     this.getCaptcha()
-    this.cities = this.getCities()
   },
   methods: {
     showProtocol (type) {
@@ -180,9 +171,10 @@ export default {
         data: { type }
       })
     },
-    addressLocationChange ({ lat, lng }) {
+    addressLocationChange ({ lat, lng, cityCode }) {
       this.form.latitude = lat
       this.form.longitude = lng
+      this.form.cityId = cityCode
     },
     // 下一步校验
     nextStep () {
@@ -204,7 +196,6 @@ export default {
           }
 
           let data = Object.assign({}, this.form)
-
           Server({
             url: '/user/register',
             method: 'post',
@@ -219,29 +210,6 @@ export default {
           }).catch(err => console.error(err))
         }
       })
-    },
-
-    // 查询省市区列表
-    // TMS1.2 18.10.31 将城市数据修改为懒加载，初始化只加载省份，选择后再加载子城市，否则 IE & EDGE 上会出现严重卡顿
-    getCities (code) {
-      return City.getAllChild(code).map(item => {
-        let temp = {
-          value: item.code,
-          label: item.name
-        }
-        if (Number(item.hasChild)) {
-          temp.children = []
-          temp.loading = false
-        }
-        return temp
-      })
-    },
-    // 联级框加载更多
-    loadChildCities (item, cb) {
-      item.loading = true
-      item.children = this.getCities(item.value)
-      item.loading = false
-      cb()
     }
   }
 }

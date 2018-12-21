@@ -82,8 +82,10 @@
         <p slot="header" class="modalTitle">
           <span>提示</span>
         </p>
-        <P>添加员工成功，员工的登录账号为手机号</P>
-        <p>初始登录密码已发送至员工手机</p>
+        <div class="modelBody">
+          <P>添加员工成功，员工的登录账号为手机号</P>
+          <p>初始登录密码已发送至员工手机</p>
+        </div>
         <div slot="footer">
           <Button type="primary" @click="knowCancel">我知道了</Button>
         </div>
@@ -97,6 +99,7 @@ import BasePage from '@/basic/BasePage'
 import pageTable from '@/components/page-table'
 import Server from '@/libs/js/server'
 import SelectInput from '@/components/SelectInput'
+import { mapGetters } from 'vuex'
 export default {
   name: 'staff-manage',
   components: {
@@ -109,7 +112,7 @@ export default {
   },
   data () {
     return {
-      userInfo: {},
+      // userInfo: {},
       visibaleTransfer: false,
       visibaleRemove: false,
       visibaleAddStaffSuccess: false,
@@ -131,7 +134,7 @@ export default {
         key: 'do',
         width: 100,
         render: (h, params) => {
-          if (params.row.type === 1 && this.userInfo.type === 1) {
+          if (params.row.type === 1 && this.UserInfo.type === 1) {
             return h('div', [
               h('span', {
                 style: {
@@ -145,7 +148,7 @@ export default {
                 }
               }, '转移权限')
             ])
-          } else if (params.row.type === 1 && this.userInfo.type !== 1) {
+          } else if (params.row.type === 1 && this.UserInfo.type !== 1) {
             return h('div', '-')
           } else {
             if (this.hasPower(140202) && this.hasPower(140203)) {
@@ -235,20 +238,14 @@ export default {
       }
     }
   },
-  mounted: function () {
-    this.getUserInfo()
+  computed: {
+    ...mapGetters(['UserInfo'])
+  },
+  mounted () {
     this.getRoleSelectList()
     this.getStaffSelectList()
   },
   methods: {
-    getUserInfo () {
-      Server({
-        url: 'set/userInfo',
-        method: 'get'
-      }).then(({ data }) => {
-        this.userInfo = Object.assign({}, data.data)
-      })
-    },
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     },
@@ -363,7 +360,7 @@ export default {
         if (data.code === 10000) {
           this.visibaleRemove = false
           this.$Message.success('删除成功！')
-          this.formSearchInit = {}
+          this.searchBtn()
         } else {
           this.visibaleRemove = false
         }
@@ -425,4 +422,6 @@ export default {
 .dialog
   p
   text-align center
+.modelBody
+  margin-left 60px
 </style>

@@ -65,7 +65,7 @@
                      class="search-input-senior" />
 
         <Input v-model="seniorSearchFields.orderNo" :maxlength="20" placeholder="请输入订单号" class="search-input-senior" />
-        <Input v-model="seniorSearchFields.customerOrderNo" :maxlength="20" placeholder="请输入客户单号" class="search-input-senior" />
+        <Input v-model="seniorSearchFields.customerOrderNo" :maxlength="20" placeholder="请输入客户订单号" class="search-input-senior" />
         <Input v-model="seniorSearchFields.transNo" :maxlength="20" placeholder="请输入外转单号" class="search-input-senior" />
 
         <SelectInput v-model="seniorSearchFields.transfereeName"
@@ -158,7 +158,7 @@ export default {
       seniorSearchFields: {
         consignerName: '', // 客户名称
         orderNo: '', // 订单号
-        customerOrderNo: '', // 客户单号
+        customerOrderNo: '', // 客户订单号
         transNo: '', // 外转单号
         transfereeName: '', // 外转方名称
         start: void 0, // 始发地

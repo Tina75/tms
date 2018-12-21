@@ -15,7 +15,7 @@ require('./libs/js/date')
 require('./assets/css/iview/iview.css')
 require('./assets/css/tms/iconfont.css')
 require('./assets/css/quill/quill.core.css')
-// require('./permission')
+
 // 处理没有被vue捕获的全局异常
 window.addEventListener('error', e => {
   Vue.$reportError(e.error)
@@ -39,11 +39,10 @@ Vue.use(iView)
 Vue.prototype.$Toast = Toast
 window.EMA = new EmaProxy()
 var appData = { router, store }
+/**
+ * 1. 来源于官网【注册】按钮跳转过滤,#/?mode=signup
+ * 2. 来源于货主版注册完跳转过来;?from=shipper
+ */
 appData.render = h => h(App)
-// var islogin = localStorage.getItem('tms_is_login')
-// if (window.location.hash === '#/?mode=signup' || !islogin) {
-//   appData.render = h => h(Login)
-// } else {
-//   appData.render = h => h(App)
-// }
+
 new Vue(appData).$mount('#app')

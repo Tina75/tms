@@ -77,5 +77,19 @@ export default {
         resolve(response.data)
       }).catch(err => reject(err))
     })
+  },
+  setOrderConfig (data) {
+    return server({
+      method: 'post',
+      url: '/config/insertOrUpdate',
+      data
+    })
+  },
+  getOrderDefault (data) {
+    return server({
+      method: 'post',
+      url: '/order/config/get',
+      data
+    })
   }
 }

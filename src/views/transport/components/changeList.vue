@@ -79,6 +79,7 @@ import BasePage from '@/basic/BasePage'
 import TransportBase from '../mixin/transportBase'
 import PayInfo from '../components/PayInfo'
 import { getCarType, getCarLength } from '@/libs/constant/carInfo'
+import allocationStrategy from '../constant/allocation.js'
 import _ from 'lodash'
 
 const moneyFormate = (fee) => {
@@ -139,11 +140,17 @@ export default {
           'order': 30,
           'span': 24
         },
+        'carrierWaybillNo': {
+          'type': 'info',
+          'description': '承运商运单号',
+          'order': 31,
+          'span': 24
+        },
         'assignCarType': {
           'type': 'info',
           'description': '派车类型',
           'ways': 6,
-          'order': 31,
+          'order': 32,
           'span': 12
         },
         'carNo': {
@@ -232,6 +239,13 @@ export default {
           'order': 140,
           'span': 12
         },
+        'accommodation': {
+          'type': 'fee',
+          'description': '住宿费',
+          'ways': 1,
+          'order': 141,
+          'span': 12
+        },
         // 'cashBack': {
         //   'type': 'fee',
         //   'description': '返现费用',
@@ -249,6 +263,13 @@ export default {
           'description': '公里数',
           'ways': 2,
           'order': 160,
+          'span': 12
+        },
+        'allocationStrategy': {
+          'type': 'fee',
+          'description': '分摊策略',
+          'ways': 7, // 展示方式
+          'order': 161,
           'span': 12
         },
         'remark': {
@@ -323,46 +344,18 @@ export default {
   },
   computed: {
     infoListOld () {
-      // let list = []
-      // let data = this.data.old
-      // for (let key in data) {
-      //   if (this.changeList[key] && this.changeList[key].type === 'info') {
-      //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
-      //   }
-      // }
       let list = this.filterFieldsByAssignCarType(this.changeList, this.data.old.assignCarType || 1)
       return this.getList(this.data.old, 'info', list)
     },
     infoListNew () {
-      // let list = []
-      // let data = this.data.new
-      // for (let key in data) {
-      //   if (this.changeList[key] && this.changeList[key].type === 'info') {
-      //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
-      //   }
-      // }
       let list = this.filterFieldsByAssignCarType(this.changeList, this.data.new.assignCarType || 1)
       return this.getList(this.data.new, 'info', list)
     },
     feeListOld () {
-      // let list = []
-      // let data = this.data.old
-      // for (let key in data) {
-      //   if (this.changeList[key] && this.changeList[key].type === 'fee') {
-      //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
-      //   }
-      // }
       let list = this.filterFieldsByAssignCarType(this.changeList, this.data.old.assignCarType || 1)
       return this.getList(this.data.old, 'fee', list)
     },
     feeListNew () {
-      // let list = []
-      // let data = this.data.new
-      // for (let key in data) {
-      //   if (this.changeList[key] && this.changeList[key].type === 'fee') {
-      //     list.push({ name: this.changeList[key].description, value: this.changeList[key].ways ? this.waysSwitch(this.changeList[key].ways, data[key]) : (data[key] ? data[key] : '-') })
-      //   }
-      // }
       let list = this.filterFieldsByAssignCarType(this.changeList, this.data.new.assignCarType || 1)
       return this.getList(this.data.new, 'fee', list)
     },
@@ -404,6 +397,7 @@ export default {
      * 4: 车长
      * 5：车型
      * 6: 派车类型，1外转；2自送
+     * 7：分摊策略
      * */
     waysSwitch (num, value) {
       switch (num) {
@@ -418,8 +412,14 @@ export default {
         case 4: return getCarLength(value) || '-'
         case 5: return getCarType(value) || '-'
         case 6: return value === 2 ? '自送' : '外转'
+        case 7: return this.getAllocationValToLabel(value)
         default: return ''
       }
+    },
+    // 将分摊策略返回的标识映射为文字
+    getAllocationValToLabel (data) {
+      let list = allocationStrategy.find(item => item.value === (data !== '' ? data : 1))
+      return list.label
     },
     showDetail () {
       this.hideDetail = !this.hideDetail
@@ -457,29 +457,36 @@ export default {
             if (i === 0 && (key === 'prepaidCash' || key === 'prepaidFuel')) {
               mid = {
                 payType: item[i].payType,
-                fuelCardAmount: typeof obj.prepaidFuel === 'number' ? obj.prepaidFuel / 100 : 0,
-                cashAmount: typeof obj.prepaidCash === 'number' ? obj.prepaidCash / 100 : 0
+                fuelCardAmount: typeof obj.prepaidFuel === 'number' ? obj.prepaidFuel / 100 : '',
+                cashAmount: typeof obj.prepaidCash === 'number' ? obj.prepaidCash / 100 : '',
+                type: 'change'
               }
+              // mid.payType = item[i].payType
+              // if (typeof obj.prepaidFuel === 'number') mid.fuelCardAmount = obj.prepaidFuel / 100
+              // if (typeof obj.prepaidCash === 'number') mid.cashAmount = obj.prepaidCash / 100
             }
             if (i === 1 && (key === 'arrivePaidCash' || key === 'arrivePaidFuel')) {
               mid = {
                 payType: item[i].payType,
-                fuelCardAmount: typeof obj.arrivePaidFuel === 'number' ? obj.arrivePaidFuel / 100 : 0,
-                cashAmount: typeof obj.arrivePaidCash === 'number' ? obj.arrivePaidCash / 100 : 0
+                fuelCardAmount: typeof obj.arrivePaidFuel === 'number' ? obj.arrivePaidFuel / 100 : '',
+                cashAmount: typeof obj.arrivePaidCash === 'number' ? obj.arrivePaidCash / 100 : '',
+                type: 'change'
               }
             }
             if (i === 2 && (key === 'receiptPaidCash' || key === 'receiptPaidFule')) {
               mid = {
                 payType: item[i].payType,
-                fuelCardAmount: typeof obj.receiptPaidFule === 'number' ? obj.receiptPaidFule / 100 : 0,
-                cashAmount: typeof obj.receiptPaidCash === 'number' ? obj.receiptPaidCash / 100 : 0
+                fuelCardAmount: typeof obj.receiptPaidFule === 'number' ? obj.receiptPaidFule / 100 : '',
+                cashAmount: typeof obj.receiptPaidCash === 'number' ? obj.receiptPaidCash / 100 : '',
+                type: 'change'
               }
             }
             if (i === 3 && (key === 'tailPaidCash' || key === 'tailPaidFule')) {
               mid = {
                 payType: item[i].payType,
-                fuelCardAmount: typeof obj.tailPaidFule === 'number' ? obj.tailPaidFule / 100 : 0,
-                cashAmount: typeof obj.tailPaidCash === 'number' ? obj.tailPaidCash / 100 : 0
+                fuelCardAmount: typeof obj.tailPaidFule === 'number' ? obj.tailPaidFule / 100 : '',
+                cashAmount: typeof obj.tailPaidCash === 'number' ? obj.tailPaidCash / 100 : '',
+                type: 'change'
               }
             }
           }
@@ -555,7 +562,7 @@ export default {
       .label
         color #777
         display inline-block
-        width 80px
+        width 100px
       .after.content
         color #EC4E4E
     .labelContent.ivu-col-span-24

@@ -56,6 +56,7 @@ import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import verifyMixin from '../mixins/verifyMixin.js'
 import tagNumberInput from '@/components/TagNumberInput'
+import float from '@/libs/js/float'
 export default {
   name: 'writeOff',
   components: {
@@ -74,7 +75,7 @@ export default {
     save () {
       this.$refs['writeOffForm'].validate((valid) => {
         const data = {
-          actualFee: parseFloat(this.writeOffForm.actualFee) * 100,
+          actualFee: float.round(this.writeOffForm.actualFee * 100),
           payType: this.writeOffForm.payType,
           account: this.writeOffForm.account.replace(/\s+/g, ''),
           bankBranch: this.writeOffForm.bankBranch,

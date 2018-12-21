@@ -18,7 +18,7 @@
           </Tooltip>
         </span>
         <span class="header-bar-avator-dropdown-notify">
-          <Badge :count="MsgCount.all" :offset="[5,1]" type="primary">
+          <Badge :count="MsgCount.all" :offset="[8,3]" type="primary">
             <Tooltip transfer content=" 消息">
               <router-link to="/information/index">
                 <Icon type="ios-notifications" size="30" color="#fff"></Icon>
@@ -52,6 +52,12 @@ import FontIcon from '@/components/FontIcon'
 import { mapGetters, mapActions } from 'vuex'
 import TMSUrl from '@/libs/constant/url.js'
 import Server from '@/libs/js/server'
+
+const LocalStorageKeys = {
+  FIRST_TIME_LOGIN: 'first_time_login', // 注册后第一次登录
+  TMS_CLEAR_TRIAL: 'TMS_clear_trial',
+  TMS_FIRST_DISCOVERY: 'TMS_first_discovery' // 探索运掌柜
+}
 export default {
   name: 'headerBar',
   components: { TabNav, FontIcon },
@@ -59,7 +65,8 @@ export default {
   data () {
     return {
       processVisible: false,
-      messageTimer: null
+      messageTimer: null,
+      popupQueue: []
     }
   },
   computed: {
@@ -83,23 +90,34 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getMessageCount', 'getUserInfo', 'getTableColumns', 'getOwnDrivers', 'getOwnCars', 'logout']),
+    ...mapActions(['getMessageCount', 'getUserInfo', 'getTableColumns', 'getOwnDrivers', 'getOwnCars', 'logout', 'getOrderConfiguration']),
     async newUserTip () {
       try {
         await this.getUserInfo()
         if (sessionStorage.getItem('first_time_login') === 'true') {
           if (this.UserInfo.type === 1) this.renew()
           else this.changePasswordTip()
+          // 探索运掌柜
+          this.isPreviewDiscover()
           sessionStorage.removeItem('first_time_login')
         } else {
+          // 是否需要清空试用期的数据
+          // this.clearTrialData()
+          // 接受邀请合作
+          // this.receiveInvitingCooperation()
           // 短信是否超过次数
-          this.isMessageBeyond()
+          // this.messageBeyondLimit()
+          this.popupQueue.push(this.systemUpgradeNotice, this.clearTrialData, this.receiveInvitingCooperation, this.messageBeyondLimit)
+          this.$nextTick(() => {
+            this.orderedInvoke()
+          })
         }
         this.getTableColumns()
+        // 查询所有的自有车辆和未绑定的司机
         this.getOwnDrivers()
         this.getOwnCars()
-        // 探索运掌柜
-        await this.isPreviewDiscover()
+        // 获取开单全局配置
+        this.getOrderConfiguration()
         // 添加GA配置属性
         this.$ga.set('phone', this.UserInfo.phone)
         this.$ga.set('roleName', this.UserInfo.roleName)
@@ -108,28 +126,240 @@ export default {
 
       }
     },
+
+    /**
+     * 依次执行弹窗
+     */
+    orderedInvoke () {
+      const vm = this
+      if (this.popupQueue.length > 0) {
+        let index = 0
+        let next = () => {
+          let invokedFunction = vm.popupQueue[index]
+
+          if (invokedFunction && typeof invokedFunction === 'function') {
+            vm.$nextTick(() => {
+              invokedFunction.call(vm)
+                .then(result => {
+                  index++
+                  setTimeout(() => {
+                    next()
+                  }, 1000)
+                })
+                .catch((error) => {
+                  vm.popupQueue = []
+                  throw error
+                })
+            })
+          } else {
+            vm.popupQueue = []
+          }
+        }
+        next()
+      }
+    },
+    /**
+     * 查询系统更新消息
+     */
+    systemUpgradeNotice () {
+      // 查询系统更新消息
+      return new Promise((resolve, reject) => {
+        Server({
+          url: 'message/sysSms',
+          method: 'get'
+        })
+          .then((res) => {
+            if (res && res.data.code === 10000) {
+              const upgradeMessage = res.data.data
+              if (!upgradeMessage.id) {
+                resolve()
+                return
+              }
+              // 弹出更新消息窗口
+              window.EMA.fire('Dialogs.push', {
+                name: 'home/dialogs/upgrade',
+                data: {
+                  title: upgradeMessage.title,
+                  content: upgradeMessage.content
+                },
+                methods: {
+                  ok () {
+                  // 删除系统更新消息
+                    Server({
+                      url: 'message/sysSmsDel',
+                      method: 'get',
+                      params: {
+                        id: upgradeMessage.id
+                      }
+                    })
+                    resolve()
+                  },
+                  cancel () {
+                    resolve()
+                  }
+                }
+              })
+            } else {
+              resolve()
+            }
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
+    /**
+     * 接受货主发送的邀请合作请求
+     */
+    receiveInvitingCooperation () {
+      const vm = this
+      return new Promise((resolve, reject) => {
+        Server({
+          url: 'message/inviteMessage',
+          method: 'get'
+        })
+          .then((res) => {
+            if (res.data.data) {
+              /**
+               * data{id,title,content,phone, inviteId}
+               * 合作邀请可能存在多个合作消息
+               * 1. 单个消息后端接口会返回inviteId,
+               * 2. 多个就不返回inviteId,phone,需要提示去消息处理
+               */
+              let { phone, inviteId, content } = res.data.data
+              if (inviteId) {
+                window.EMA.fire('Dialogs.push', {
+                  name: 'dialogs/invite-cooperation',
+                  data: {
+                    title: '温馨提示',
+                    phone,
+                    inviteId,
+                    content
+                  },
+                  methods: {
+                    ok () {
+                      resolve()
+                    },
+                    cancel () {
+                      resolve()
+                    }
+                  }
+                })
+              } else {
+                vm.$Toast.info({
+                  title: '货主合作邀请',
+                  showIcon: true,
+                  content: '有多位货主邀请您进行线上合作',
+                  okText: '查看消息',
+                  render (h) {
+                    return h('p', {
+                      style: {
+                        textAlign: 'left'
+                      }
+                    }, '直接从系统指派订单给贵公司运输，以便提高运作效率。')
+                  },
+                  onOk: () => {
+                    window.EMA.fire('openTab', {
+                      path: TMSUrl.MESSAGE_CENTER,
+                      query: {
+                        title: '消息'
+                      }
+                    })
+                    resolve()
+                  },
+                  onCancel: () => {
+                    resolve()
+                  }
+                })
+              }
+            }
+            resolve()
+          })
+          .catch((error) => {
+            reject(error)
+          })
+      })
+    },
+    /**
+     * 需要清除试用期期间的脏数据
+     */
+    clearTrialData () {
+      return new Promise((resolve, reject) => {
+        if (localStorage.getItem(LocalStorageKeys.TMS_CLEAR_TRIAL)) {
+          resolve()
+        }
+        if (this.UserInfo.type === 1) {
+          Server({
+            url: 'message/userMessage',
+            method: 'get'
+          })
+            .then(({ data }) => {
+              /**
+               * data = {id,title,content,beginTime,endTime}
+               */
+              if (data.data) {
+                window.EMA.fire('Dialogs.push', {
+                  name: 'dialogs/clear-trial-data',
+                  data: {
+                    ...data.data,
+                    title: '试用期数据删除'
+                  },
+                  methods: {
+                    ok () {
+                      localStorage.setItem(LocalStorageKeys.TMS_CLEAR_TRIAL, 1)
+                      resolve()
+                    },
+                    cancel () {
+                      localStorage.setItem(LocalStorageKeys.TMS_CLEAR_TRIAL, 1)
+                      resolve()
+                    }
+                  }
+                })
+              }
+            })
+            .catch((error) => {
+              reject(error)
+            })
+        }
+        resolve()
+      })
+    },
+
     /**
      * 超过短信上限
      */
-    isMessageBeyond () {
-      Server({
-        url: 'message/beyondLimt',
-        method: 'get'
-      }).then(({ data }) => {
-        if (data.data) {
-          this.$Toast.warning({
-            showIcon: false,
-            okText: '我知道了',
-            render (h) {
-              return h('p', {
-                style: {
-                  textAlign: 'left',
-                  marginLeft: '-20px'
+    messageBeyondLimit () {
+      return new Promise((resolve, reject) => {
+        Server({
+          url: 'message/beyondLimt',
+          method: 'get'
+        })
+          .then(({ data }) => {
+            if (data.data) {
+              this.$Toast.warning({
+                showIcon: false,
+                okText: '我知道了',
+                render (h) {
+                  return h('p', {
+                    style: {
+                      textAlign: 'left',
+                      marginLeft: '-20px'
+                    }
+                  }, data.data.content)
+                },
+                onOk () {
+                  resolve()
+                },
+                onCancel () {
+                  resolve()
                 }
-              }, data.data.content)
+              })
             }
+            resolve()
           })
-        }
+          .catch((error) => {
+            reject(error)
+          })
       })
     },
     /**

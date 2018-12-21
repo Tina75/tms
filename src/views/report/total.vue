@@ -35,7 +35,9 @@
       :autoload="autoload"
       :method="method"
       :keywords="keyword"
+      :table-head-type= "headType"
       :columns="columns"
+      :show-filter="true"
       @on-load = "onLoad">
     </page-table>
   </div>
@@ -45,6 +47,7 @@
 import PageTable from '@/components/page-table'
 import Export from '@/libs/js/export'
 import { getPreMonth } from './getPerMonth'
+import tableHeadType from '@/libs/constant/headtype.js'
 export default {
   name: 'total',
   components: {
@@ -55,6 +58,7 @@ export default {
   },
   data: function () {
     return {
+      headType: tableHeadType.TURNOVER,
       btnGroup: [
         { name: '近七天', value: 1 },
         { name: '本月', value: 2 },
@@ -90,6 +94,12 @@ export default {
         {
           title: '重量',
           key: 'weight',
+          ellipsis: true,
+          tooltip: true
+        },
+        {
+          title: '重量（公斤）',
+          key: 'weightKg',
           ellipsis: true,
           tooltip: true
         },
@@ -209,8 +219,8 @@ export default {
       this.date(btn.value)
     },
     handleTimeChange (val) {
-      this.keywords.startTime = val[0]
-      this.keywords.endTime = val[1]
+      this.keywords.startTime = val[0] ? (val[0] + ' 00:00:00') : ''
+      this.keywords.endTime = val[1] ? (val[1] + ' 23:59:59') : ''
       // 去掉蓝显
       this.operateValue = ''
     },
@@ -225,7 +235,7 @@ export default {
       let month = this.formatDate(now).slice(5, 7)
       switch (value) {
         case 1:
-          start = this.formatDate(now - 7 * 24 * 60 * 60 * 1000)
+          start = this.formatDate(now - 6 * 24 * 60 * 60 * 1000)
           break
         case 2:
           start = this.formatDate(now).slice(0, -2) + '01'
@@ -249,17 +259,16 @@ export default {
         case 4:
           /* 当前年份 */
           let year = this.formatDate(now).slice(0, 4)
-          console.log(year)
           if (month > 6) {
-            start = year + '-0' + (month - 6) + this.formatDate(now).slice(-3)
+            start = year + '-0' + (month - 5) + '-01'
           } else {
-            start = (year - 1) + '-0' + (12 + parseInt(month) - 6) + this.formatDate(now).slice(-3)
+            start = (year - 1) + '-0' + (12 + parseInt(month) - 5) + '-01'
           }
           break
       }
       this.times = [start, end]
-      this.keywords.startTime = start
-      this.keywords.endTime = end
+      this.keywords.startTime = start + ' 00:00:00'
+      this.keywords.endTime = end + ' 23:59:59'
     },
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }

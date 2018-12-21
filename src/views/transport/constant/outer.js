@@ -235,7 +235,7 @@ export const TABLE_COLUMNS = vm => [
     }
   },
   {
-    title: '客户单号',
+    title: '客户订单号',
     key: 'customerOrderNo',
     width: 180
   },
@@ -390,7 +390,7 @@ export const EXTRA_COLUMNS = [
     visible: true
   },
   {
-    title: '客户单号',
+    title: '客户订单号',
     key: 'customerOrderNo',
     fixed: false,
     visible: false

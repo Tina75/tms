@@ -1,22 +1,26 @@
 <template>
   <div id="set-up-container" class="set-up-container temAll">
     <Row id="temAll" :style="styleHeight">
-      <Col span="3">
-      <Menu active-name="修改密码" class="menuList" style="width:100%">
+      <Col span="1" style="width:160px;height:100%;background-color:#f3f5f9;">
+      <Menu :active-name="rightKey != 4 ? '修改密码' : '系统设置'" class="menuList" style="width:160px">
         <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
         <p class="menuTitle">{{menu.name}}</p>
-          </MenuItem>
+        </MenuItem>
       </Menu>
       </Col>
-      <Col span="21" class="contentDiv">
-      <div class="borderBottomLine">
+      <Col span="20" class="contentDiv">
+      <div v-if="4 != rightKey" class="borderBottomLine">
         <span class="iconRightTitle"></span>
         <span class="iconRightTitleP">{{rightTitle}}</span>
       </div>
+      <Tabs v-else :value="tabName" style="margin-top: 10px" @on-click="tabChange">
+        <TabPane label="分摊策略" name="apport"></TabPane>
+        <TabPane label="开单设置" name="order"></TabPane>
+      </Tabs>
       <!--密码设置-->
       <div v-if="'1' === this.rightKey" key="1" class="divSetContent">
         <Col span="10" class="setConf">
-        <Form ref="formPwd" :model="formPwd" :rules="rulePwd" :label-width="90" label-position="right">
+        <Form ref="formPwd" :model="formPwd" :rules="rulePwd" :label-width="100" label-position="right">
           <FormItem label="原始密码：" prop="oldPassword" class="labelClassSty">
             <Input v-model="formPwd.oldPassword" type="password" placeholder="请输入原始密码" class="inputClassSty"></Input>
           </FormItem>
@@ -35,7 +39,7 @@
       <!--个人设置-->
       <div v-else-if="'2' === this.rightKey" key="2" class="divSetContent">
         <Col span="10" class="setConf">
-        <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="90" label-position="right">
+        <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="100" label-position="right">
           <FormItem label="账号：" class="labelClassSty">
             <span>{{formPersonal.phone}}</span>
           </FormItem>
@@ -78,6 +82,19 @@
         <Button type="primary" class="msgSaveBtn test111" style="width:86px;" @click="msgSaveBtn">保存</Button>
         </Col>
       </div>
+      <!--系统设置-->
+      <div v-else-if="'4' === this.rightKey" key="4" class="divSetContent">
+        <div v-if="tabName != 'order'" class="setup-allocation">
+          <allocation-strategy ref="orderAllocation" allocation-label="订单：" source="order"></allocation-strategy>
+          <div class="allocation-tips">选择以后订单拆单将默认选择此运费分摊策略</div>
+          <allocation-strategy ref="transportAllocation" allocation-label="运单&提货单：" source="transport"></allocation-strategy>
+          <div class="allocation-tips">选择以后运单和提货单将默认选择此运费分摊策略</div>
+          <Button type="primary" class="msgSaveBtn" style="width:86px;left: 22%;" @click="handleSaveAllocation">保存</Button>
+        </div>
+        <div v-else>
+          <Unit />
+        </div>
+      </div>
       </Col>
     </Row>
   </div>
@@ -89,13 +106,17 @@ import Server from '@/libs/js/server'
 import AreaInput from '@/components/AreaInput'
 import { CHECK_PWD, CHECK_PWD_SAME, CHECK_NAME, CHECK_NAME_COMPANY, CHECK_PHONE } from './validator'
 import _ from 'lodash'
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import CitySelect from '@/components/SelectInputForCity'
+import Unit from './components/unit.vue'
+import AllocationStrategy from '@/views/transport/components/AllocationStrategy.vue'
 export default {
   name: 'set-up',
   components: {
     AreaInput,
-    CitySelect
+    CitySelect,
+    Unit,
+    AllocationStrategy
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -130,6 +151,10 @@ export default {
         name: '短信设置',
         id: '3',
         code: '150200'
+      }, {
+        name: '系统设置',
+        id: '4',
+        code: '150300'
       }],
       rightTitle: '修改密码',
       rightKey: '1',
@@ -141,7 +166,6 @@ export default {
       },
       // 个人
       formPersonal: {},
-      formPersonalInit: {},
       // 短信
       switchMsg: false,
       checkNum: 0,
@@ -231,16 +255,21 @@ export default {
         address: [
           { required: true, message: '请输入公司地址', trigger: 'blur' }
         ]
-      }
+      },
+      tabName: ''
     }
   },
   computed: {
-    ...mapGetters(['DocumentHeight']),
+    ...mapGetters(['DocumentHeight', 'UserInfo']),
     styleHeight () {
       return { height: this.DocumentHeight + 'px' }
     },
     formCityCode () {
       return this.formCompany.cityId
+    },
+    // 受理开单来的参数
+    isFromOrder () {
+      return this.$route.query.tab
     }
   },
   mounted: function () {
@@ -248,15 +277,21 @@ export default {
     if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
       document.getElementById('set-up-container').style.maxHeight = (document.body.clientHeight - 80) + 'px'
     }
+    // 受理开单来的
+    if (this.isFromOrder) {
+      this.rightKey = '4'
+      this.tabName = 'order'
+    }
   },
   methods: {
-    ...mapActions(['getUserInfo']),
+    ...mapMutations(['initUserInfo']),
     smsInfo () {
       this.messageList = _.cloneDeep(this.messageListInit)
       Server({
         url: 'set/smsInfo',
         method: 'get'
       }).then(({ data }) => {
+        this.switchMsg = false
         if (data.data.smsCode) {
           this.msgCheckBoxList = data.data.smsCode === '' ? [] : data.data.smsCode
           this.msgCheckBoxListInit = data.data.smsCode === '' ? [] : data.data.smsCode
@@ -276,8 +311,7 @@ export default {
       this.rightKey = id
       switch (id) {
         case '2':
-          this.formPersonal = Object.assign({}, this.$store.getters.UserInfo)
-          this.formPersonalInit = Object.assign({}, this.$store.getters.UserInfo)
+          this.formPersonal = _.cloneDeep(this.UserInfo)
           break
         case '3':
           this.smsInfo()
@@ -307,7 +341,7 @@ export default {
     personalSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          if (this.formPersonal.name === this.formPersonalInit.name) {
+          if (this.formPersonal.name === this.UserInfo.name) {
             this.$Message.info('您还未变更任何信息，无需保存')
             return
           }
@@ -320,10 +354,9 @@ export default {
             data: param
           }).then(({ data }) => {
             if (data.code === 10000) {
-              this.getUserInfo()
-              this.formPersonalInit.name = this.formPersonal.name
+              this.initUserInfo(this.formPersonal)
               this.$Message.success('保存成功!')
-              this.formPwd = {}
+              this.formPersonal = _.cloneDeep(this.UserInfo)
             }
           })
         }
@@ -372,6 +405,21 @@ export default {
           this.msgCheckBoxListInit = _.cloneDeep(this.msgSlectCheckBox)
         }
       })
+    },
+    tabChange (name) {
+      this.tabName = name
+    },
+    handleSaveAllocation () {
+      Server({
+        url: '/set/updateUserAllocationStrategy',
+        method: 'post',
+        data: {
+          orderStrategy: this.$refs.orderAllocation.getAllocation(),
+          waybillStrategy: this.$refs.transportAllocation.getAllocation()
+        }
+      }).then((res) => {
+        this.$Message.success('设置成功')
+      })
     }
   }
 }
@@ -385,10 +433,12 @@ export default {
     background: #fff;
     color: #333333;
     font-weight: bold;
+>>> .ivu-form-item-label
+>>> .ivu-form-item-content
+  font-size: 14px
+  font-weight: 400
 .temAll
-  width: 100%
-  height: 100%;
-  background:rgba(243,245,249,1);
+  background: #fff
   margin: -20px -15px;
   .setConf
     margin-top: 20px;
@@ -407,8 +457,8 @@ export default {
   height: 100%;
 .borderBottomLine
   border-bottom: 1px solid #e9e9e9;
-  padding-bottom:10px;
-  margin-top: 14px;
+  padding-bottom: 18px;
+  margin-top: 18px;
   margin-right: 20px;
   .iconRightTitle
     width: 5px;
@@ -475,4 +525,29 @@ export default {
   margin-top:40px;
   left: 15%;
   position: absolute;
+.allocation-tips
+  font-size 12px
+  font-family 'PingFangSC-Regular'
+  color rgba(236,78,78,1)
+  margin -20px 0 30px 110px
+.menuTitle
+  font-size: 16px
+  margin-top: 5px;
+  margin-left: -10px;
+</style>
+
+<style lang='stylus'>
+  .setup-allocation
+    width 500px
+    position absolute
+    top 24%
+    left 50%
+    transform translate(-50%, -50%)
+    .ivu-form-item-label
+      width 110px !important
+      font-size 14px
+      font-family 'PingFangSC-Regular'
+      color rgba(0,0,0,1)
+    .ivu-select
+      width 300px !important
 </style>
