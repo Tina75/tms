@@ -1086,7 +1086,7 @@ export default {
       width 16px
       height 16px
       margin 5px
-      background url(../../assets/img-icon-expand.png) no-repeat
+      background url(../../../assets/img-icon-expand.png) no-repeat
       background-size contain
   .show-log
     transition all 0.3s linear

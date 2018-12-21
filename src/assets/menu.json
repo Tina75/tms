@@ -29,7 +29,7 @@
       },
       {
         "name": "订单管理",
-        "path": "/order-management/order",
+        "path": "/order/management/order",
         "powerCode":100300
       }
     ]
@@ -62,7 +62,7 @@
       },
       {
         "name":"回单管理",
-        "path":"/order-management/receipt",
+        "path":"/transport/receipt",
         "powerCode":120500
       }
     ]

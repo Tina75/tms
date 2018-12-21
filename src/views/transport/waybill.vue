@@ -145,7 +145,7 @@ import PageTable from '@/components/page-table'
 import SelectInputForCity from '@/components/SelectInputForCity'
 import SelectInput from './components/SelectInput.vue'
 import PrintFreight from './components/PrintFreight'
-import OrderTabContent from '@/views/order-management/components/TabContent'
+import OrderTabContent from '@/views/order/management/components/TabContent'
 
 import Export from '@/libs/js/export'
 import { BUTTON_LIST, TABLE_COLUMNS } from './constant/waybill'
@@ -360,7 +360,6 @@ export default {
       let cashBackList = _.remove(tableSelection, (i) => {
         return i.cashBack > 0
       })
-      console.log(cashBackList)
       if (this.tableSelection.length > 1 && cashBackList.length > 0) {
         self.openDialog({
           name: 'transport/dialog/cashBackWarn',
@@ -422,7 +421,6 @@ export default {
       let carrierNameList = _.remove(tableSelection, (i) => {
         return (i.carrierName === '' && i.assignCarType === 1) || (i.carNo === '' && i.assignCarType === 2)
       })
-      console.log(carrierNameList)
       if (carrierNameList.length > 0) {
         if (self.tableSelection.length > 1) {
           self.openDialog({
@@ -452,7 +450,6 @@ export default {
       let cargoList = _.remove(tableSelection, (i) => {
         return i.orderCnt === 0
       })
-      console.log(cargoList)
       if (cargoList.length > 0) {
         if (self.tableSelection.length > 1) {
           self.openDialog({

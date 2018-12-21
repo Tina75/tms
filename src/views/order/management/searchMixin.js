@@ -43,7 +43,7 @@ export default {
   },
 
   mounted () {
-    if (this.$route.path === '/order-management/receipt') { // v1.6 回单动态新增承运商搜索
+    if (this.$route.path === '/transport/receipt') { // v1.6 回单动态新增承运商搜索
       this.$set(this.keywords, 'carrierName', null)
       this.$set(this.keywords, 'driverName', null)
       this.$set(this.keywords, 'driverPhone', null)
@@ -72,7 +72,7 @@ export default {
         start: this.keywords.start || null,
         end: this.keywords.end || null
       }
-      if (this.$route.path === '/order-management/receipt') { // 回单列表搜索
+      if (this.$route.path === '/transport/receipt') { // 回单列表搜索
         key.receiptStatus = this.keywords.receiptStatus
         key.recoveryTimeStart = this.keywords.recoveryTimeStart || null
         key.recoveryTimeEnd = this.keywords.recoveryTimeEnd || null
@@ -125,7 +125,7 @@ export default {
         end: 0 // 目的地
       }
       // 订单列表状态字段status，回单列表状态字段receiptStatus, 时间搜索（不一致，根据路由判断）
-      if (this.$route.path === '/order-management/receipt') {
+      if (this.$route.path === '/transport/receipt') {
         key.receiptStatus = this.keywords.receiptStatus
         key.recoveryTimeStart = null
         key.recoveryTimeEnd = null
@@ -198,8 +198,8 @@ export default {
         ids.push(item.id)
       })
       this.selectedId = ids
-      console.log(this.selectOrderList)
-      console.log(this.selectedId)
+      // console.log(this.selectOrderList)
+      // console.log(this.selectedId)
     },
     // 表格按时间排序
     tableSort ({ order }) {

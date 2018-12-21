@@ -105,7 +105,7 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
-                    path: '/order-management/detail',
+                    path: '/order/management/detail',
                     query: {
                       id: p.row.orderNo,
                       orderId: p.row.orderId,
@@ -162,7 +162,7 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
-                    path: '/order-management/detail',
+                    path: '/order/management/detail',
                     query: {
                       id: p.row.orderNo,
                       orderId: p.row.orderId,
@@ -342,10 +342,9 @@ export default {
           return item
         })
         this.leftTableLoading = false
-      }).catch(err => {
+      }).catch(() => {
         this.leftTableLoading = false
         this.leftTableData = []
-        console.error(err)
       })
     },
 
@@ -367,8 +366,7 @@ export default {
           return item
         })
         this.leftTableExpandLoading = false
-      }).catch(err => {
-        console.error(err)
+      }).catch(() => {
         this.leftTableExpandLoading = false
         this.leftTableExpandData = []
       })
@@ -383,7 +381,7 @@ export default {
       }).then(() => {
         this.leftSelection = []
         this.fetchData()
-      }).catch(err => console.error(err))
+      }).catch()
     },
 
     // 右侧移到左侧
@@ -395,7 +393,7 @@ export default {
       }).then(() => {
         this.rightSelection = []
         this.fetchData()
-      }).catch(err => console.error(err))
+      }).catch()
     },
 
     // 格式化城市

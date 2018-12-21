@@ -33,7 +33,7 @@ export default {
   },
 
   mounted: function () {
-    console.log(this.orderNoList)
+    // console.log(this.orderNoList)
   },
 
   methods: {

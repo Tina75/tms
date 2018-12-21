@@ -157,6 +157,9 @@
             </Row>
           </div>
 
+          <!-- 车况照片 -->
+          <car-photo v-if="imageItems.length > 0" :image-list="imageItems"></car-photo>
+
           <!-- 提货单日志 -->
           <div>
             <div class="detail-part-title">
@@ -287,10 +290,11 @@ import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 import allocationStrategy from '../constant/allocation.js'
 import { mapActions } from 'vuex'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
+import CarPhoto from './components/car-photo.vue'
 
 export default {
   name: 'detailPickup',
-  components: { SelectInput, PayInfo, Exception, PickupFee, OwnSendInfo, SendCarrierInfo },
+  components: { SelectInput, PayInfo, Exception, PickupFee, OwnSendInfo, SendCarrierInfo, CarPhoto },
   mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin, tableWeightColumnMixin ],
   metaInfo: { title: '提货单详情' },
   data () {
@@ -493,7 +497,18 @@ export default {
           }
         }
       ],
-      sendWay: '1' // 派车类型 1 外转 2 自送  V1.07新增
+      sendWay: '1', // 派车类型 1 外转 2 自送  V1.07新增
+
+      imageItems: [ // 需要展示的车况照片list
+        {
+          src: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/1005859967670.9203.jpg',
+          msrc: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/1005859967670.9203.jpg'
+        },
+        {
+          src: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/853667749786.0685.jpg',
+          msrc: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/853667749786.0685.jpg'
+        }
+      ]
     }
   },
 
@@ -592,7 +607,7 @@ export default {
           vm.$refs['exception'] && vm.$refs['exception'].initData()
         }
         vm.loading = false
-      }).catch(err => console.error(err))
+      }).catch()
     },
 
     // 提货模块数据校验
@@ -630,7 +645,6 @@ export default {
       } else if (z.sendWay === '2') { // 自送
         data.loadbill = Object.assign(data.loadbill, z.$refs.pickupFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
       }
-      console.log(data)
       Server({
         url: '/load/bill/update',
         method: 'post',
@@ -639,7 +653,7 @@ export default {
         // this.fetchData()
         this.$Message.success('保存成功')
         this.cancelEdit()
-      }).catch(err => console.error(err))
+      }).catch()
     },
 
     // 按钮操作
@@ -661,7 +675,7 @@ export default {
             }).then(res => {
               self.$Message.success('删除成功')
               self.ema.fire('closeTab', self.$route)
-            }).catch(err => console.error(err))
+            }).catch()
           }
         }
       })
@@ -685,7 +699,7 @@ export default {
             }).then(res => {
               self.$Message.success('操作成功')
               self.fetchData()
-            }).catch(err => console.error(err))
+            }).catch()
           }
         }
       })

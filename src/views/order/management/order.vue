@@ -52,7 +52,6 @@ export default {
     let importId = jsCookie.get('imported_id')
     // 刷新页面停留当前tab页
     if (!importId) {
-      console.log(jsCookie.get('imported_id'))
       if (sessionStorage.getItem('ORDER_TAB_NAME')) {
         this.curStatusName = sessionStorage.getItem('ORDER_TAB_NAME')
         this.tabKey.status = this.statusToCode(this.curStatusName)
@@ -83,7 +82,6 @@ export default {
           importId: this.importId || null
         }
       }).then((res) => {
-        console.log(res)
         let list = res.data.data
         let arr = []
         list.map((item) => {
@@ -137,7 +135,6 @@ export default {
             arr.push(r)
           }
         })
-        console.log(arr)
         this.status = arr
       })
     },

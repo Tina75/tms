@@ -199,16 +199,15 @@ export default {
           })
         })
         this.verifyInfoList = res.data.data.verifyInfoList
-      }).catch(err => console.error(err))
+      }).catch()
     },
     tabChanged (tab) {
-      console.log(tab)
     },
     toDetail (data) {
       switch (data.row.orderType) {
         case 1:
           this.openTab({
-            path: '/order-management/detail',
+            path: '/order/management/detail',
             title: data.row.orderNo,
             query: {
               id: data.row.orderNo,
