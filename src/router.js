@@ -113,7 +113,7 @@ const router = new Router({
           'path': '',
           'component': () => import(/* webpackChunkName: "server-error" */'./views/error-page/500.vue'),
           'meta': {
-            'title': '服务出粗了',
+            'title': '服务出错了',
             'powerCode': 0,
             'hideInMenu': true
           }
