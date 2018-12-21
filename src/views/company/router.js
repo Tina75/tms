@@ -18,7 +18,7 @@ export default[
       {
         'name': 'company-staff',
         'path': 'staff-manage',
-        'component': () => import(/* webpackChunkName: "company-staff" */'./views/company/pages/staff-manage.vue'),
+        'component': () => import(/* webpackChunkName: "company-staff" */'./pages/staff-manage.vue'),
         'meta': {
           'title': '员工管理',
           'powerCode': 140200
@@ -28,7 +28,7 @@ export default[
       {
         'name': 'company-role',
         'path': 'role-manage',
-        'component': () => import(/* webpackChunkName: "company-role" */'./views/company/pages/role-manage.vue'),
+        'component': () => import(/* webpackChunkName: "company-role" */'./pages/role-manage.vue'),
         'meta': {
           'title': '角色管理',
           'powerCode': 140100
@@ -38,7 +38,7 @@ export default[
       {
         'name': 'company-setting',
         'path': 'setting',
-        'component': () => import(/* webpackChunkName: "company-setting" */'./views/company/pages/setting.vue'),
+        'component': () => import(/* webpackChunkName: "company-setting" */'./pages/setting.vue'),
         'meta': {
           'title': '公司设置',
           'powerCode': 140100
