@@ -11,7 +11,7 @@ export default[
     'children': [
       {
         'path': 'index',
-        'name': 'setting',
+        'name': 'set-up',
         'component': () => import(/* webpackChunkName: "setting" */'./pages/index.vue'),
         'meta': {
           'title': '设置',
