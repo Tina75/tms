@@ -21,7 +21,7 @@ const router = new Router({
         {
           'name': 'finance-sender',
           'path': 'sender',
-          'component': () => import(/* webpackChunkName: "finance-sender" */'./sender.vue'),
+          'component': () => import(/* webpackChunkName: "finance-sender" */'./pages/sender.vue'),
           'meta': {
             'powerCode': 170100,
             'title': '发货方对账'
@@ -30,7 +30,7 @@ const router = new Router({
         {
           'name': 'finance-carrier',
           'path': 'carrier',
-          'component': () => import(/* webpackChunkName: "finance-carrier" */'./carrier.vue'),
+          'component': () => import(/* webpackChunkName: "finance-carrier" */'./pages/carrier.vue'),
           'meta': {
             'powerCode': 170200,
             'title': '承运商对账'
@@ -39,7 +39,7 @@ const router = new Router({
         {
           'name': 'finance-collect-fee',
           'path': 'collectFee',
-          'component': () => import(/* webpackChunkName: "finance-collectFee" */'./collectFee.vue'),
+          'component': () => import(/* webpackChunkName: "finance-collectFee" */'./pages/collectFee.vue'),
           'meta': {
             'powerCode': 170500,
             'title': '代收货款对账'
@@ -48,7 +48,7 @@ const router = new Router({
         {
           'name': 'finance-return-fee',
           'path': 'returnFee',
-          'component': () => import(/* webpackChunkName: "finance-returnFee" */'./returnFee.vue'),
+          'component': () => import(/* webpackChunkName: "finance-returnFee" */'./pages/returnFee.vue'),
           'meta': {
             'powerCode': 170600,
             'title': '返现对账'
@@ -57,7 +57,7 @@ const router = new Router({
         {
           'name': 'finance-rules',
           'path': 'rules',
-          'component': () => import(/* webpackChunkName: "finance-rules" */'./rules.vue'),
+          'component': () => import(/* webpackChunkName: "finance-rules" */'./pages/rules.vue'),
           'meta': {
             'powerCode': 170400,
             'title': '计费规则'

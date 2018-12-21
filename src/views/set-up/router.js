@@ -12,7 +12,7 @@ export default[
       {
         'path': 'index',
         'name': 'setting',
-        'component': () => import(/* webpackChunkName: "setting" */'./views/set-up/pages/index.vue'),
+        'component': () => import(/* webpackChunkName: "setting" */'./pages/index.vue'),
         'meta': {
           'title': '设置',
           'icon': 'shezhi',

@@ -223,7 +223,7 @@ export default {
         },
         fileName: '对账单'
       }).then(res => {
-      }).catch(err => console.error(err))
+      })
     },
     toDetail (data) {
       const _this = this

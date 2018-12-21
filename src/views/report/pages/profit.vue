@@ -205,14 +205,14 @@
 </template>
 
 <script>
-import TabHeader from './components/TabHeader'
-import * as profit from './constant/profit'
+import TabHeader from '../components/TabHeader'
+import * as profit from '../constant/profit'
 import { mapGetters, mapActions } from 'vuex'
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 import PageTable from '@/components/page-table'
 import SelectInput from '@/components/SelectInput.vue'
-import { getPreMonth } from './getPerMonth'
+import { getPreMonth } from '../mixins/getPerMonth'
 import tableHeadType from '@/libs/constant/headtype.js'
 export default {
   name: 'profit',

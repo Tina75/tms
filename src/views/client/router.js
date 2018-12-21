@@ -18,7 +18,7 @@ export default[
       {
         'name': 'client-sender',
         'path': 'sender',
-        'component': () => import(/* webpackChunkName: "client-sender" */'./views/client/pages/sender.vue'),
+        'component': () => import(/* webpackChunkName: "client-sender" */'./pages/sender.vue'),
         'meta': {
           'powerCode': 130100,
           'title': '发货方管理'
@@ -28,7 +28,7 @@ export default[
       {
         'name': 'client-carrier',
         'path': 'carrier',
-        'component': () => import(/* webpackChunkName: "client-carrier" */'./views/client/pages/carrier.vue'),
+        'component': () => import(/* webpackChunkName: "client-carrier" */'./pages/carrier.vue'),
         'meta': {
           'powerCode': 130200,
           'title': '承运商管理'
@@ -38,7 +38,7 @@ export default[
       {
         'name': 'client-transfer',
         'path': 'transfer',
-        'component': () => import(/* webpackChunkName: "client-transfer" */'./views/client/pages/transfer.vue'),
+        'component': () => import(/* webpackChunkName: "client-transfer" */'./pages/transfer.vue'),
         'meta': {
           'powerCode': 130300,
           'title': '外转方管理'

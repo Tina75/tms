@@ -12,7 +12,7 @@ export default[
       {
         'name': 'help-center',
         'path': 'index',
-        'component': () => import(/* webpackChunkName: "help-center" */'./views/helper/pages/index.vue'),
+        'component': () => import(/* webpackChunkName: "help-center" */'./pages/index.vue'),
         'meta': {
           'title': '帮助',
           'icon': 'bangzhuzhongxin',
@@ -22,7 +22,7 @@ export default[
       {
         'path': 'process',
         'name': 'process-center',
-        'component': () => import(/* webpackChunkName: "process-center" */'./views/helper/pages/process.vue'),
+        'component': () => import(/* webpackChunkName: "process-center" */'./pages/process.vue'),
         'meta': {
           'title': '业务流程',
           'hideInMenu': true,
