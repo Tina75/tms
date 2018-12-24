@@ -93,9 +93,27 @@
           style="width:200px;margin-right: 20px;"
           @on-focus.once="getClients">
         </SelectInput>
-        <Input v-model="keywords.orderNo" :maxlength="30" placeholder="请输入订单号" style="width: 200px" />
-        <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户订单号" style="width: 200px" />
-        <Input v-model="keywords.waybillNo" :maxlength="30" placeholder="请输入运单号" style="width: 200px" />
+        <Input
+          v-model="keywords.orderNo"
+          :maxlength="30"
+          clearable
+          placeholder="请输入订单号"
+          style="width: 200px"
+          @on-enter="searchList" />
+        <Input
+          v-model="keywords.customerOrderNo"
+          :maxlength="30"
+          clearable
+          placeholder="请输入客户订单号"
+          style="width: 200px"
+          @on-enter="searchList" />
+        <Input
+          v-model="keywords.waybillNo"
+          :maxlength="30"
+          clearable
+          placeholder="请输入运单号"
+          style="width: 200px"
+          @on-enter="searchList" />
       </div>
       <div class="complex-query">
         <div>
