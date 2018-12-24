@@ -138,7 +138,7 @@ export default {
                       title: '订单管理',
                       path: TMSUrl.ORDER_MANAGEMENT
                     })
-                    // vm.$router.push({path: '/order/management/order', query: {title: '订单管理'}})
+                    // vm.$router.push({path: '/order-management/order', query: {title: '订单管理'}})
                   }
                 }
               }, '查看导入订单'))

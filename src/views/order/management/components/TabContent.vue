@@ -494,7 +494,7 @@ export default {
                 on: {
                   click: () => {
                     this.openTab({
-                      path: '/order/management/detail',
+                      path: '/order-management/detail',
                       query: {
                         id: params.row.orderNo,
                         orderId: params.row.id,
@@ -1094,7 +1094,7 @@ export default {
     openOuterDialog (params) {
       const _this = this
       this.openDialog({
-        name: 'order-management/dialog/outer',
+        name: 'order/management/dialog/outer',
         data: { detail: params.row },
         methods: {
           ok (node) {
@@ -1109,7 +1109,7 @@ export default {
     openSeparateDialog (params) {
       const _this = this
       this.openDialog({
-        name: 'order-management/dialog/separate',
+        name: 'order/management/dialog/separate',
         data: { id: params.row.id, orderNo: params.row.orderNo },
         methods: {
           ok (node) {
@@ -1124,7 +1124,7 @@ export default {
     openDispatchDialog (name) {
       const _this = this
       _this.openDialog({
-        name: 'order-management/dialog/dispatch',
+        name: 'order/management/dialog/dispatch',
         data: { id: this.selectOrderList, name: name },
         methods: {
           ok (node) {
@@ -1148,7 +1148,7 @@ export default {
         data.id = [params.row]
       }
       _this.openDialog({
-        name: 'order-management/dialog/restoreOrDelete',
+        name: 'order/management/dialog/restoreOrDelete',
         data: data,
         methods: {
           ok (node) {
@@ -1163,7 +1163,7 @@ export default {
     recoveryDialog () {
       const _this = this
       _this.openDialog({
-        name: 'order-management/dialog/recovery',
+        name: 'order/management/dialog/recovery',
         data: { id: this.selectOrderList },
         methods: {
           ok (node) {
@@ -1178,7 +1178,7 @@ export default {
     completelyDeleteDialog () {
       const _this = this
       _this.openDialog({
-        name: 'order-management/dialog/completelyDelete',
+        name: 'order/management/dialog/completelyDelete',
         data: { id: this.selectOrderList },
         methods: {
           ok (node) {
@@ -1197,7 +1197,7 @@ export default {
         return
       }
       _this.openDialog({
-        name: 'order-management/dialog/share',
+        name: 'order/management/dialog/share',
         data: {
           id: _this.selectOrderList,
           suffix: ''
@@ -1220,7 +1220,7 @@ export default {
     // 分享确认弹窗
     openShareConfirmDialog () {
       this.openDialog({
-        name: 'order-management/dialog/shareConfirm',
+        name: 'order/management/dialog/shareConfirm',
         data: {
           id: this.selectOrderList
         },

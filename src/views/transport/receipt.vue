@@ -322,7 +322,7 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
-                    path: '/order/management/detail',
+                    path: '/order-management/detail',
                     query: {
                       id: '回单' + params.row.orderNo,
                       orderId: params.row.id,
@@ -719,7 +719,7 @@ export default {
         data.id = [params.row]
       }
       _this.openDialog({
-        name: 'order-management/dialog/return',
+        name: 'order/management/dialog/return',
         data: data,
         methods: {
           ok (node) {
@@ -737,7 +737,7 @@ export default {
     openUploadDialog (params, name) {
       const _this = this
       _this.openDialog({
-        name: 'order-management/dialog/upload',
+        name: 'order/management/dialog/upload',
         data: {
           params,
           name
