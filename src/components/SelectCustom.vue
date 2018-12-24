@@ -50,8 +50,10 @@
 </template>
 <script>
 import { CAR_TYPE, CAR_LENGTH, PACKAGE_TYPE } from '@/libs/constant/carInfo'
+import dispatchMixin from '@/components/mixins/dispatchMixin'
 export default {
   name: 'CustomNumberInput',
+  mixins: [dispatchMixin],
   props: {
     value: '',
     placeholder: '',
@@ -132,7 +134,9 @@ export default {
     },
     setValue (val) {
       this.$nextTick(() => {
+        this.currentValue = val
         this.$emit('input', val)
+        this.dispatch.call(this.$parent, 'FormItem', 'on-form-change', val)
       })
     },
     clickItemLabel (item) {
@@ -144,9 +148,10 @@ export default {
     // 清空
     handleClear () {
       this.$emit('on-clear')
-      this.currentValue = ''
+      // this.currentValue = ''
       this.showValue = ''
-      this.$emit('input', this.currentValue)
+      // this.$emit('input', this.currentValue)
+      this.setValue('')
     }
   }
 }
