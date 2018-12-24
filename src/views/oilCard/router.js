@@ -1,7 +1,7 @@
 import Main from '@/views/main/Main.vue'
 
 export default [
-  /** ************************ 报表 */
+  /** ************************ 油卡 */
   {
     'name': 'oilCard',
     'path': '/oilCard',
@@ -19,7 +19,6 @@ export default [
         'meta': {
           'title': '油卡列表',
           'powerCode': 0
-
         }
       },
       {
@@ -29,7 +28,6 @@ export default [
         'meta': {
           'title': '油卡使用记录',
           'powerCode': 0
-
         }
       }
     ]
