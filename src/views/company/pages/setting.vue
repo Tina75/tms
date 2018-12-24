@@ -2,7 +2,10 @@
   <div id="set-up-container" class="set-up-container temAll">
     <div id="temAll">
       <!--公司设置-->
-      <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="110" label-position="left">
+      <div v-if="isEdit && contactListShow" class="addContacts" @click="addContacts">
+        <p class="addContacts-p">添加更多联系人</p>
+      </div>
+      <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="125" label-position="right">
         <div class="borderBottomLine">
           <span class="iconRightTitle"></span>
           <span class="iconRightTitleP">基本信息
@@ -21,9 +24,9 @@
           </FormItem>
           </Col>
           <Col :span="8">
-          <FormItem label="公司简称：" class="blockTitle">
+          <FormItem label="公司简称：">
             <Row v-if="isEdit" style="margin-left:-10px">
-              <Col :span="18">
+              <Col :span="19">
               <Input v-model="formCompany.shortName" :maxlength="6" placeholder="请输入公司简称，最多6个字"></Input>
               </Col>
               <Col :span="4">
@@ -39,20 +42,46 @@
             <span v-else class="formConten-p blockContent">{{formCompany.shortName}}</span>
           </FormItem>
           </Col>
+        </Row>
+        <Row>
           <Col :span="8">
           <FormItem label="公司联系人：" prop="contact">
             <Input v-if="isEdit" v-model="formCompany.contact" :maxlength="10" placeholder="请输入公司联系人"></Input>
             <span v-else class="formConten-p">{{formCompany.contact}}</span>
           </FormItem>
           </Col>
-        </Row>
-        <Row>
           <Col :span="8">
           <FormItem label="联系方式：" prop="contactPhone">
             <Input v-if="isEdit" v-model="formCompany.contactPhone" :maxlength="11" placeholder="请输入联系方式"></Input>
             <span v-else class="formConten-p">{{formCompany.contactPhone}}</span>
           </FormItem>
           </Col>
+        </Row>
+        <Row v-for="(item, index) in contactList" :key="item.index">
+          <Col :span="8">
+          <FormItem :label="'业务联系人' + (index + 1) + '：'" prop="contact">
+            <Input v-if="isEdit" v-model="item.contactPerson" :maxlength="10" placeholder="请输入公司联系人"></Input>
+            <span v-else class="formConten-p">{{item.contactPerson}}</span>
+          </FormItem>
+          </Col>
+          <Col :span="8">
+          <FormItem label="联系方式：" prop="contactPhone">
+            <Row v-if="isEdit">
+              <Col :span="20">
+              <Input v-model="item.contactPhone" :maxlength="11" placeholder="请输入联系方式"></Input>
+              </Col>
+              <Col :span="4">
+              <span @click="removeContact(index)">
+                <FontIcon v-if="contactList.length > 1" type="ico_cancel" size="18" color="#EC4E4E" class="removeContact">
+                </FontIcon>
+              </span>
+              </Col>
+            </Row>
+            <span v-else class="formConten-p">{{item.contactPhone}}</span>
+          </FormItem>
+          </Col>
+        </Row>
+        <Row>
           <Col :span="16">
           <FormItem label="公司地址：" prop="address">
             <Row v-if="isEdit">
@@ -71,10 +100,12 @@
             <Row v-if="!isEdit">
               <Col :span="24">
               <span class="formConten-p">{{ formCompany.address }} {{ formCompany.userAddress }}</span>
-            </Col>
+              </Col>
             </Row>
           </FormItem>
           </Col>
+        </Row>
+        </Col>
         </Row>
         <div class="borderBottomLine">
           <span class="iconRightTitle"></span>
@@ -98,7 +129,10 @@
             </div>
           </span>
         </FormItem>
-        <FormItem label="公司照片：">
+        <!-- 公司介绍图片集合 -->
+        <FormItem label="业务介绍：">
+          <Input v-if="isEdit" :rows="5" v-model="formCompany.busiIntroduce" :maxlength="500" type="textarea" placeholder="请输入公司介绍"></Input>
+          <pre v-else class="companyProfileSty">{{formCompany.busiIntroduce}}</pre><br/>
           <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
           <span v-if="!isEdit && infoImageList.length < 1" class="imageTips">82%的企业上传了公司照片，提高了客户的信任感</span>
         </FormItem>
@@ -120,7 +154,96 @@
             <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
           </div>
         </FormItem>
-          <!-- 图片集合 -->
+        <!-- 服务优势图片集合 -->
+        <FormItem label="服务优势：">
+          <Input v-if="isEdit" :rows="5" v-model="formCompany.busiAdvantce" :maxlength="500" type="textarea" placeholder="请输入公司介绍"></Input>
+          <pre v-else class="companyProfileSty">{{formCompany.busiAdvantce}}</pre><br/>
+          <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
+        </FormItem>
+        <FormItem class="imageFontItem">
+          <image-title
+            v-show="isEdit"
+            ref="upLoads"
+            :multiple="true"
+            max-count="10"
+            max-size="10"
+            multiple-width="style='width:100%'">
+          </image-title>
+          <div v-for="(img,index) in infoImageList" v-show="!isEdit" :key="img.key" class="infoImage">
+            <div
+              :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+              class="fileImage"
+              @click="handleView(index)">
+            </div>
+            <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
+          </div>
+        </FormItem>
+        <!-- 公司风貌图片集合 -->
+        <FormItem label="公司风貌：">
+          <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
+        </FormItem>
+        <FormItem class="imageFontItem">
+          <image-title
+            v-show="isEdit"
+            ref="upLoads"
+            :multiple="true"
+            max-count="10"
+            max-size="10"
+            multiple-width="style='width:100%'">
+          </image-title>
+          <div v-for="(img,index) in infoImageList" v-show="!isEdit" :key="img.key" class="infoImage">
+            <div
+              :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+              class="fileImage"
+              @click="handleView(index)">
+            </div>
+            <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
+          </div>
+        </FormItem>
+        <!-- 微信二维码图片集合 -->
+        <FormItem label="微信二维码：">
+          <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传2张，每张不能超过10MB</span>
+        </FormItem>
+        <FormItem class="imageFontItem">
+          <image-title
+            v-show="isEdit"
+            ref="upLoads"
+            :multiple="true"
+            max-count="10"
+            max-size="10"
+            multiple-width="style='width:100%'">
+          </image-title>
+          <div v-for="(img,index) in infoImageList" v-show="!isEdit" :key="img.key" class="infoImage">
+            <div
+              :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+              class="fileImage"
+              @click="handleView(index)">
+            </div>
+            <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
+          </div>
+        </FormItem>
+        <!-- 公司首页形象 -->
+        <FormItem label="公司首页形象图：">
+          <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传2张，每张不能超过10MB</span>
+        </FormItem>
+        <FormItem class="imageFontItem">
+          <image-title
+            v-show="isEdit"
+            ref="upLoads"
+            :multiple="true"
+            max-count="1"
+            max-size="10"
+            multiple-width="style='width:100%'">
+          </image-title>
+          <div v-for="(img,index) in infoImageList" v-show="!isEdit" :key="img.key" class="infoImage">
+            <div
+              :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+              class="fileImage"
+              @click="handleView(index)">
+            </div>
+            <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
+          </div>
+        </FormItem>
         </FormItem>
         <div v-if="isEdit" class="configBtn">
           <Button :loading="loading" type="primary" class="buttonSty" @click="companySubmit('formCompany')">保存</Button>
@@ -140,6 +263,7 @@ import UpLoad from '@/components/upLoad/index.vue'
 import ImageTitle from '@/components/upLoad/ImageTitle.vue'
 import { CHECK_NAME_COMPANY, CHECK_NAME, CHECK_PHONE } from './validator'
 import prepareOpenSwipe from '@/components/swipe/index'
+import FontIcon from '@/components/FontIcon'
 export default {
   name: 'companySetting',
   components: {
@@ -147,7 +271,8 @@ export default {
     CitySelect,
     UpLoad,
     prepareOpenSwipe,
-    ImageTitle
+    ImageTitle,
+    FontIcon
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -183,7 +308,13 @@ export default {
           { required: true, message: '请输入公司地址' }
         ]
       },
-      infoImageList: []
+      infoImageList: [],
+      contactListShow: true,
+      contactList: [{
+        label: '公司联系人1：',
+        contactPerson: '',
+        contactPhone: ''
+      }]
     }
   },
   computed: {
@@ -200,6 +331,12 @@ export default {
       ]
     }
   },
+  watch: {
+    contactList (newlist) {
+      if (newlist.length === 3) this.contactListShow = false
+      else this.contactListShow = true
+    }
+  },
   mounted () {
     this.getCompanyInfo()
   },
@@ -211,8 +348,8 @@ export default {
       this.$refs.uploadLogo.uploadImg = this.formCompany.logoUrl
       // 公司其他照片
       // 编辑状态
-      if (this.formCompany.otherInfo) {
-        let infoImageListInit = JSON.parse(this.formCompany.otherInfo)
+      if (this.formCompany.companyPhoto) {
+        let infoImageListInit = JSON.parse(this.formCompany.companyPhoto)
         this.$refs.upLoads.uploadImgList = infoImageListInit
         // 预览状态
         this.infoImageList = []
@@ -250,7 +387,7 @@ export default {
             return false
           }
           this.formCompany.logoUrl = this.$refs.uploadLogo.uploadImg
-          this.formCompany.otherInfo = JSON.stringify(this.$refs.upLoads.getImageList())
+          this.formCompany.companyPhoto = JSON.stringify(this.$refs.upLoads.getImageList())
           for (const key in this.formCompanyInit) {
             if (this.formCompany[key] !== this.formCompanyInit[key]) {
               isChanged = false
@@ -326,6 +463,18 @@ export default {
       this.formCompany.longitude = lng
       this.formCompany.mapType = 1
       this.formCompany.cityId = cityCode
+    },
+    addContacts () {
+      this.contactListShow = true
+      let label = '公司联系人' + (this.contactList.length + 1) + '：'
+      this.contactList.push({
+        label: label,
+        contactPerson: '',
+        contactPhone: ''
+      })
+    },
+    removeContact (item) {
+      this.contactList.splice(item, 1)
     }
   }
 }
@@ -340,9 +489,6 @@ export default {
   font-size: 14px
 >>>.ivu-input-wrapper
   margin-left -15px
->>>.blockTitle .ivu-form-item-label
-  width: 90px
-  padding-left 10px
 .temAll
   margin -20px -15px
   padding 0 40px
@@ -412,4 +558,27 @@ export default {
   position: absolute;
   top: 1px;
   left: -16px;
+.content-p
+  position relative
+  top -2px
+  color #333333
+  font-size 12px
+  font-weight 400
+  background-color #e6f7ff
+  padding 10px 7px 8px 7px
+  margin-left 20px
+.addContacts
+  width 100px
+  height 100px
+  background-color #F9F9F9
+  float: right;
+  position: relative;
+  right: 200px;
+  top: 60px;
+  cursor: pointer;
+  .addContacts-p
+    color #00A4BD
+    text-align center
+.removeContact
+  cursor: pointer;
 </style>
