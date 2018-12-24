@@ -70,6 +70,14 @@ export default {
 
   mounted () {
     this.getOrderNum()
+    this.openDialog({
+      name: 'order/management/dialog/edit',
+      data: {},
+      methods: {
+        ok () {
+        }
+      }
+    })
   },
 
   methods: {

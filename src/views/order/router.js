@@ -56,6 +56,18 @@ export default[
           'powerCode': 100300,
           'title': '订单详情'
         }
+      },
+      /**
+       * 权限待修改
+       */
+      {
+        'name': 'frequent-order',
+        'path': '/frequent-order/index',
+        'component': () => import(/* webpackChunkName: "order-detail" */'./frequent-order/index.vue'),
+        'meta': {
+          'hideInMenu': true,
+          'title': '常发订单'
+        }
       }
     ]
   }
