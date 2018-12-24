@@ -71,7 +71,6 @@
 
 <script>
 import FontIcon from '@/components/FontIcon'
-// import menuJson from '@/assets/menu.json'
 import { mapGetters, mapActions } from 'vuex'
 export default {
   components: { FontIcon },
@@ -81,12 +80,13 @@ export default {
   },
   data () {
     return {
-      openedNames: []
+      openedNames: [],
+      timer: null
       // menuList: menuJson
     }
   },
   computed: {
-    ...mapGetters(['menuList', 'waitAccept'])
+    ...mapGetters(['menuList', 'waitAccept', 'IsUserLogin'])
   },
   watch: {
     activeName (val) {
@@ -100,7 +100,16 @@ export default {
   },
   mounted () {
     this.openedNames = this.getopenedNames(this.activeName)
-    this.getOnlineCount()
+    if (this.IsUserLogin) {
+      this.getOnlineCount()
+    }
+  },
+
+  beforeDestory () {
+    if (this.timer) {
+      clearInterval(this.timer)
+      this.timer = null
+    }
   },
   methods: {
     ...mapActions([
@@ -108,7 +117,7 @@ export default {
     ]),
     getOnlineCount () {
       this.getCount()
-      setInterval(this.getCount, 1000 * 60)
+      this.timer = setInterval(this.getCount, 1000 * 60)
     },
     getopenedNames (activeName) {
       /**

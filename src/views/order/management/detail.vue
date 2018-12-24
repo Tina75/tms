@@ -489,7 +489,7 @@ export default {
     openOuterDialog (order) {
       const _this = this
       this.openDialog({
-        name: 'order-management/dialog/outer',
+        name: 'order/management/dialog/outer',
         data: { detail: order },
         methods: {
           ok (node) {
@@ -503,7 +503,7 @@ export default {
     openSeparateDialog (order) {
       const _this = this
       this.openDialog({
-        name: 'order-management/dialog/separate',
+        name: 'order/management/dialog/separate',
         data: { id: order.id, orderNo: order.orderNo },
         methods: {
           ok (node) {
@@ -520,7 +520,7 @@ export default {
         name: name
       }
       this.openDialog({
-        name: 'order-management/dialog/restoreOrDelete',
+        name: 'order/management/dialog/restoreOrDelete',
         data: data,
         methods: {
           ok (node) {
@@ -537,7 +537,7 @@ export default {
         name: name
       }
       this.openDialog({
-        name: 'order-management/dialog/return',
+        name: 'order/management/dialog/return',
         data: data,
         methods: {
           ok (node) {
@@ -563,7 +563,7 @@ export default {
     openRecoveryDialog (order) {
       const _this = this
       _this.openDialog({
-        name: 'order-management/dialog/recovery',
+        name: 'order/management/dialog/recovery',
         data: { id: [order] },
         methods: {
           ok (node) {
@@ -576,7 +576,7 @@ export default {
     completelyDeleteDialog (order) {
       const _this = this
       _this.openDialog({
-        name: 'order-management/dialog/completelyDelete',
+        name: 'order/management/dialog/completelyDelete',
         data: { id: [order] },
         methods: {
           ok (node) {
@@ -589,7 +589,7 @@ export default {
     openUploadDialog (order) {
       const _this = this
       _this.openDialog({
-        name: 'order-management/dialog/upload',
+        name: 'order/management/dialog/upload',
         data: {
           params: order,
           name: order.receiptOrder.receiptUrl.length > 0 ? '修改' : '上传'
@@ -605,7 +605,7 @@ export default {
     openShareDialog (order) {
       const _this = this
       _this.openDialog({
-        name: 'order-management/dialog/share',
+        name: 'order/management/dialog/share',
         data: {
           id: [order],
           suffix: ''
@@ -991,6 +991,16 @@ export default {
     rate (value) {
       return float.round(value * 100, 2)
     }
+  },
+  /**
+   * 不同订单号
+   * 打开同一该页，数据不会根据querystring刷新问题
+   */
+  beforeRouteUpdate (to, from, next) {
+    this.$nextTick(() => {
+      this.getDetail()
+    })
+    next()
   }
 }
 </script>

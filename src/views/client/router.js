@@ -19,7 +19,6 @@ export default[
         'meta': {
           'powerCode': 130100,
           'title': '发货方管理'
-
         }
       },
       {
@@ -28,6 +27,7 @@ export default[
         'component': () => import(/* webpackChunkName: "client-sender" */'./pages/sender-info.vue'),
         'meta': {
           'powerCode': 130100,
+          'notCache': true,
           'hideInMenu': true,
           'title': '发货方详情'
 
@@ -49,6 +49,7 @@ export default[
         'component': () => import(/* webpackChunkName: "client-carrier" */'./pages/carrier-info.vue'),
         'meta': {
           'hideInMenu': true,
+          'notCache': true,
           'powerCode': 130200,
           'title': '承运商详情'
         }

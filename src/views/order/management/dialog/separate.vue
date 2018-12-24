@@ -250,7 +250,7 @@ export default {
     // 拆单完成后的弹窗提示
     openSeparateHintDialog (list) {
       this.openDialog({
-        name: 'order-management/dialog/separateHint',
+        name: 'order/management/dialog/separateHint',
         data: { orderNoList: list },
         methods: {
           ok (node) {}
