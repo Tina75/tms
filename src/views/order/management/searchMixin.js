@@ -103,7 +103,12 @@ export default {
         key.importId = this.keywords.importId || null
         key.remark = this.keywords.remark || null
         // 简单搜索模式下当前搜索框值为空是默认不是搜索状态
-        if (this.simpleSearch && ((this.selectStatus === 0 && !this.keywords.consignerName) || (this.selectStatus === 1 && !this.keywords.orderNo) || (this.selectStatus === 2 && !this.keywords.waybillNo))) {
+        if (this.simpleSearch && (
+          (this.selectStatus === 0 && !this.keywords.consignerName) ||
+          (this.selectStatus === 1 && !this.keywords.orderNo) ||
+          (this.selectStatus === 2 && !this.keywords.waybillNo) ||
+          (this.selectStatus === 3 && !this.keywords.customerOrderNo)
+        )) {
           this.isSearching = false
         } else {
           this.isSearching = true
@@ -168,16 +173,19 @@ export default {
     handleTimeChange (val) {
       this.keywords.createTimeStart = val[0]
       this.keywords.createTimeEnd = val[1]
+      this.searchList()
     },
     // 修改回收开始结束时间
     handleRecoveryTimeChange (val) {
       this.keywords.recoveryTimeStart = val[0]
       this.keywords.recoveryTimeEnd = val[1]
+      this.searchList()
     },
     // 修改返厂开始结束时间
     handleReturnTimeChange (val) {
       this.keywords.returnTimeStart = val[0]
       this.keywords.returnTimeEnd = val[1]
+      this.searchList()
     },
     // 筛选列表显示字段
     handleColumnChange (columns) {

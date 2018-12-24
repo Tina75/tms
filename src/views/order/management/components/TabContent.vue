@@ -30,11 +30,20 @@
           @on-enter="searchList"
           @on-click="clearKeywords"/>
         <Input
-          v-else
+          v-else-if="selectStatus === 2"
           v-model.lazy="keywords.waybillNo"
           :maxlength="30"
           :icon="keywords.waybillNo ? 'ios-close-circle' : ''"
           placeholder="请输入运单号"
+          class="input-w"
+          @on-enter="searchList"
+          @on-click="clearKeywords"/>
+        <Input
+          v-else
+          v-model.lazy="keywords.customerOrderNo"
+          :maxlength="30"
+          :icon="keywords.customerOrderNo ? 'ios-close-circle' : ''"
+          placeholder="请输入客户订单号"
           class="input-w"
           @on-enter="searchList"
           @on-click="clearKeywords"/>
@@ -44,56 +53,75 @@
     </div>
     <div v-if="!simpleSearch" class="operate-box-common">
       <Row :gutter="20">
-        <Col span="18">
-        <Row :gutter="20">
-          <Col span="6" class="i-mt-10">
-          <SelectInput
-            v-model="keywords.consignerName"
-            :maxlength="20"
-            :remote="false"
-            :local-options="clients"
-            placeholder="请选择或输入客户名称"
-            @on-focus.once="getClients">
-          </SelectInput>
-          </Col>
-          <Col span="6" class="i-mt-10">
-          <Input v-model="keywords.orderNo" :maxlength="30" placeholder="请输入订单号" />
-          </Col>
-          <Col span="6" class="i-mt-10">
-          <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户订单号" />
-          </Col>
-          <Col v-if="source === 'order'" span="6" class="i-mt-10">
-          <Input v-model="keywords.waybillNo" :maxlength="30" placeholder="请输入运单号" />
-          </Col>
-          <Col span="6" class="i-mt-10">
-          <city-select v-model="keywords.start" placeholder="请输入始发地" ></city-select>
-
-          </Col>
-          <Col span="6" class="i-mt-10">
-          <city-select v-model="keywords.end" placeholder="请输入目的地" ></city-select>
-          </Col>
-          <Col span="6" class="i-mt-10">
-          <DatePicker
-            :options="timeOption"
-            v-model="times"
-            transfer
-            type="daterange"
-            format="yyyy-MM-dd"
-            placeholder="开始日期-结束日期"
-            style="display: block;"
-            @on-change="handleTimeChange">
-          </DatePicker>
-          </Col>
-          <Col span="6" class="i-mt-10">
-          <Input v-model="keywords.remark" :maxlength="100" placeholder="请输入订单备注信息"></Input>
-          </Col>
-        </Row>
-        </Col>
-        <Col span="6">
-        <Button class="i-mt-10" type="primary" @click="searchList">搜索</Button>
-        <Button class="i-mt-10" type="default" @click="clearKeywords">清除条件</Button>
-        <Button class="i-mt-10" type="default" style="margin-right: 0;" @click="handleSwitchSearch">简易搜索</Button>
-        </Col>
+        <i-col span="18">
+          <Row :gutter="20">
+            <i-col span="6" class="i-mt-10">
+              <SelectInput
+                v-model="keywords.consignerName"
+                :maxlength="20"
+                :remote="false"
+                :local-options="clients"
+                placeholder="请选择或输入客户名称"
+                @on-focus.once="getClients">
+              </SelectInput>
+            </i-col>
+            <i-col span="6" class="i-mt-10">
+              <Input
+                v-model.lazy="keywords.customerOrderNo"
+                :maxlength="30"
+                clearable
+                placeholder="请输入客户订单号"
+                @on-enter="searchList" />
+            </i-col>
+            <i-col span="6" class="i-mt-10">
+              <Input
+                v-model.lazy="keywords.orderNo"
+                :maxlength="30"
+                clearable
+                placeholder="请输入订单号"
+                @on-enter="searchList" />
+            </i-col>
+            <i-col v-if="source === 'order'" span="6" class="i-mt-10">
+              <Input
+                v-model="keywords.waybillNo"
+                :maxlength="30"
+                clearable
+                placeholder="请输入运单号"
+                @on-enter="searchList" />
+            </i-col>
+            <i-col span="6" class="i-mt-10">
+              <city-select v-model="keywords.start" placeholder="请输入发货城市" ></city-select>
+            </i-col>
+            <i-col span="6" class="i-mt-10">
+              <city-select v-model="keywords.end" placeholder="请输入收货城市" ></city-select>
+            </i-col>
+            <i-col span="6" class="i-mt-10">
+              <DatePicker
+                :options="timeOption"
+                v-model="times"
+                transfer
+                type="daterange"
+                format="yyyy-MM-dd"
+                placeholder="开始日期-结束日期"
+                style="display: block;"
+                @on-change="handleTimeChange">
+              </DatePicker>
+            </i-col>
+            <i-col span="6" class="i-mt-10">
+              <Input
+                v-model="keywords.remark"
+                :maxlength="100"
+                clearable
+                placeholder="请输入订单备注信息"
+                @on-enter="searchList" />
+            </i-col>
+          </Row>
+        </i-col>
+        <i-col span="6">
+          <Button class="i-mt-10" type="primary" @click="searchList">搜索</Button>
+          <Button class="i-mt-10" type="default" @click="clearKeywords">清除条件</Button>
+          <Button class="i-mt-10" type="default" style="margin-right: 0;" @click="handleSwitchSearch">简易搜索</Button>
+        </i-col>
       </Row>
     </div>
     <page-table
@@ -201,6 +229,10 @@ export default {
         {
           value: 0,
           label: '客户名称'
+        },
+        {
+          value: 3,
+          label: '客户订单号'
         },
         {
           value: 1,
@@ -514,6 +546,19 @@ export default {
                       type: 'ico-ing',
                       size: '11',
                       color: '#9DA1B0'
+                    }
+                  })
+                )
+              }
+              if (params.row.disassembleStatus) { // 已拆单显示‘拆’
+                renderHtml.push(
+                  h(IconLabel, {
+                    props: {
+                      text: '拆',
+                      background: '#FCAF3B'
+                    },
+                    style: {
+                      display: 'block'
                     }
                   })
                 )
