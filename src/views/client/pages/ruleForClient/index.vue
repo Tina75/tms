@@ -66,7 +66,7 @@
                       </FormItem>
                       </Col>
                       <Col span="13" class="styleCommon">
-                      <div v-if="ruleDetail.ruleType!=='5'" class="startPrice">
+                      <div v-if="ruleDetail.ruleType!=='5'&&ruleDetail.ruleType!=='8'" class="startPrice">
                         <FormItem prop="startType" style="width: 70px">
                           <Select v-model="item.startType" @on-change="startTypeChange(item)">
                             <Option v-for="(value, key) in startTypeMap"  :key="key" :value="key">{{value}}</Option>
@@ -93,7 +93,7 @@
                         </div>
                       </div>
                       </Col>
-                      <Col :offset="ruleDetail.ruleType==='5'? 13:0" span="2">
+                      <Col :offset="(ruleDetail.ruleType==='5' || '8')? 13:0" span="2">
                       <span class="delete_btn" @click="removeItem(index)">删除</span>
                       </Col>
                     </Row>
@@ -160,6 +160,30 @@
                               <TagNumberInput v-model="el.price" :show-chinese="false"></TagNumberInput>
                             </FormItem>
                             <span>元</span>
+                          </Form>
+                        </div>
+                        <!--件数-->
+                        <div v-if="ruleDetail.ruleType==='8'">
+                          <span>{{valueTypeMap[ruleDetail.ruleType]}}</span>
+                          <span style="margin-left: 5px"></span>
+                          <Form ref="cargoName" :model="el" :rules="cargoNameValidate" style="display: inline-block"
+                                inline>
+                            <FormItem prop="cargoName" inline style="margin-bottom: 0">
+                              <Input v-model="el.cargoName" ></Input>
+                            </FormItem>
+                            <span>{{unitMap[ruleDetail.ruleType]}}</span>
+                          </Form>
+                        </div>
+                        <div v-if="ruleDetail.ruleType==='8'">
+                          <span>单价</span>
+                          <span style="margin-left: 5px">=</span>
+                          <Form ref="rulePrice" :model="el" :rules="priceValidate" style="display: inline-block"
+                                inline>
+                            <FormItem prop="price" inline style="margin-bottom: 0">
+                              <!--<Input v-model="el.price" />-->
+                              <TagNumberInput v-model="el.price" :show-chinese="false"></TagNumberInput>
+                            </FormItem>
+                            <span>元/{{valueMap[ruleDetail.ruleType]}}</span>
                           </Form>
                         </div>
                         <div class="add_decrease">

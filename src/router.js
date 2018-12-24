@@ -14,6 +14,7 @@ import client from '@/views/client/router'
 import finance from '@/views/finance/router'
 import upstream from '@/views/upstream/router'
 import owned from '@/views/owned-vehicle/router'
+import oil from '@/views/oilCard/router'
 
 Vue.use(Router)
 
@@ -78,6 +79,7 @@ const router = new Router({
     ...report,
     ...client,
     ...owned,
+    ...oil,
     ...company,
     ...setting,
     ...information,
