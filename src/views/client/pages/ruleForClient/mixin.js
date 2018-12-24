@@ -124,6 +124,13 @@ export default {
         callback(new Error('请填写车长'))
       }
     }
+    const cargoNameValidate = (rule, value, callback) => {
+      if (value) {
+        callback()
+      } else {
+        callback(new Error('请填写货物名称'))
+      }
+    }
     return {
       carType: CAR_TYPE,
       carLength: CAR_LENGTH,
@@ -134,16 +141,18 @@ export default {
         4: '方',
         // 5: '车型没有单位'
         6: '公斤',
-        7: '公斤'
+        7: '公斤',
+        8: '' // 件数没有单位
       },
       valueMap: {
         1: '吨',
         2: '方',
         3: '吨公里',
         4: '方公里',
-        // 5: '车型没有单位'
+        5: '', // 车型没有单位
         6: '公斤',
-        7: '公斤公里'
+        7: '公斤公里',
+        8: '件'
       },
       sceneMap: {
         1: '发货方',
@@ -158,7 +167,8 @@ export default {
         '4': '体积',
         '5': '车型',
         '6': '重量',
-        '7': '重量'
+        '7': '重量',
+        '8': '货物名称'
       },
       startTypeMap: {
         1: '起步价',
@@ -206,6 +216,11 @@ export default {
         ],
         carLength: [
           { validator: carLengthValidate, trigger: 'change' }
+        ]
+      },
+      cargoNameValidate: {
+        cargoName: [
+          { validate: cargoNameValidate, trigger: 'blur' }
         ]
       }
     }
@@ -293,6 +308,11 @@ export default {
           await this.formValidate(this.$refs['ruleCar'][j])
         }
       }
+      if (this.ruleDetail.ruleType === '8') {
+        for (let j = 0; j < this.$refs['cargoName'].length; j++) {
+          await this.formValidate(this.$refs['cargoName'][j])
+        }
+      }
       // 1、起步量 不做验证 2、起步价 起步量和起步价要么都写要么都不写
       if (!_this.ruleDetail.details.every((item, index, array) => {
         return (item.startType === '2' || (item.startNum === null && item.startPrice === null)) || (item.startNum && item.startPrice)
@@ -363,7 +383,7 @@ export default {
         startPrice: null,
         startType: '2',
         chargeRules: [
-          { base: null, price: null, baseAndStart: '', carType: 0, carLength: 0 }
+          { base: null, price: null, baseAndStart: '', carType: 0, carLength: 0, cargoName: '' }
         ]
       })
     },
@@ -397,7 +417,8 @@ export default {
                 price: el.price ? (el.price / 100) : null,
                 baseAndStart: el.base + ',' + item.startNum,
                 carType: el.carType,
-                carLength: el.carLength
+                carLength: el.carLength,
+                cargoName: el.cargoName
               }
             })
           }
