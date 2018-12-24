@@ -50,8 +50,10 @@
    */
 import server from '@/libs/js/server'
 import cityUtil from '@/libs/js/city'
+import dispatchMixin from './mixins/dispatchMixin.js'
 export default {
   name: 'SelectInputForCity',
+  mixins: [dispatchMixin],
   props: {
     autoFocus: {
       type: Boolean,
@@ -179,19 +181,7 @@ export default {
     }
   },
   methods: {
-    dispatch (componentName, eventName, params) {
-      let parent = this.$parent || this.$root
-      let name = parent.$options.name
-      while (parent && (!name || name !== componentName)) {
-        parent = parent.$parent
-        if (parent) {
-          name = parent.$options.name
-        }
-      }
-      if (parent) {
-        parent.$emit.apply(parent, [eventName].concat(params))
-      }
-    },
+
     onCompositionStart () {
       this.composing = true
     },
