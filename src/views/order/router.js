@@ -52,6 +52,7 @@ export default[
         'path': '/order-management/detail',
         'component': () => import(/* webpackChunkName: "order-detail" */'./management/detail.vue'),
         'meta': {
+          'notCache': true,
           'hideInMenu': true,
           'powerCode': 100300,
           'title': '订单详情'

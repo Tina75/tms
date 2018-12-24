@@ -403,7 +403,7 @@ export default {
     openOuterDialog (order) {
       const _this = this
       this.openDialog({
-        name: 'order-management/dialog/outer',
+        name: 'order/management/dialog/outer',
         data: { detail: order },
         methods: {
           ok (node) {

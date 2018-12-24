@@ -389,7 +389,7 @@ export default {
           break
         case 4:
           this.openTab({
-            path: TMSUrl.ORDER_MANAGEMENT, // '/order/management/order',
+            path: TMSUrl.ORDER_MANAGEMENT, // '/order-management/order',
             title: '订单管理'
           })
           break
