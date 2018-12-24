@@ -253,9 +253,9 @@ export default {
     edit () {
       let vm = this
       this.openDialog({
-        name: 'owned-vehicle/dialog/edit-car',
+        name: 'owned-vehicle/dialog/edit-insurance',
         data: {
-          title: '新增车辆',
+          title: '新增保险',
           flag: 1 // 新增
         },
         methods: {
