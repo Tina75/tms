@@ -4,7 +4,15 @@
       <TabPane label="普通分享">
         <p class="share-tip">无需密码，拥有链接的客户都可以直接查看</p>
         <div class="share-info">客户名称： <span class="value">{{ id[0].consignerName + suffix }}</span></div>
-        <div class="share-info share-margin">订单数量： <span class="value">{{ id.length }}单</span></div>
+        <div class="share-info" style="margin-top: 9px;">订单数量： <span class="value">{{ id.length }}单</span></div>
+        <div class="share-info share-margin">
+          <div class="share-car-position">车辆位置：</div>
+          <RadioGroup v-model="isShareCarDisencrypt" @on-change="handleDisencryptChange">
+            <Radio label="1">分享位置</Radio>
+            <Radio label="0">不分享位置</Radio>
+            <!-- <Radio label="3">下发承运商</Radio> -->
+          </RadioGroup>
+        </div>
         <div>
           <Tooltip :transfer="true" max-width="450" placement="bottom">
             <p class="share-url common">
@@ -26,7 +34,15 @@
       <TabPane label="加密分享">
         <p class="share-tip">查看需要输入密码，更加隐私安全！</p>
         <div class="share-info">客户名称： <span class="value">{{ id[0].consignerName + suffix }}</span></div>
-        <div class="share-info share-margin">订单数量： <span class="value">{{ id.length }}单</span></div>
+        <div class="share-info" style="margin-top: 9px;">订单数量： <span class="value">{{ id.length }}单</span></div>
+        <div class="share-info share-margin">
+          <div class="share-car-position">车辆位置：</div>
+          <RadioGroup v-model="isShareCarEncrypt" @on-change="handleEncryptChange">
+            <Radio label="1">分享位置</Radio>
+            <Radio label="0">不分享位置</Radio>
+            <!-- <Radio label="3">下发承运商</Radio> -->
+          </RadioGroup>
+        </div>
         <div>
           <Tooltip :transfer="true" max-width="340" placement="bottom">
             <p class="share-url encrypt">
@@ -85,7 +101,10 @@ export default {
         message: '',
         sharecode: ''
       },
-      isDisabled: false
+      isDisabled: false,
+      isShareCarDisencrypt: '1', // （V1.0.9新增）是否分享车辆位置：1是；0否  普通分享
+      isShareCarEncrypt: '1', // （V1.0.9新增）是否分享车辆位置：1是；0否  加密分享
+      isChangeRadio: false // 是否切换过车辆位置选项
     }
   },
 
@@ -141,9 +160,11 @@ export default {
         method: 'post',
         data: {
           orderIds: this.orderIds,
-          shareType: type // 分享形式：1有查看密码；0无查看密码
+          shareType: type, // 分享形式：1有查看密码；0无查看密码
+          isShareCarLocation: type === 1 ? this.isShareCarEncrypt : this.isShareCarDisencrypt
         }
       }).then((res) => {
+        if (this.isChangeRadio) return
         if (type) {
           this.encrypt.password = res.data.data.password
           this.encrypt.sharecode = res.data.data.shareOutNo
@@ -154,6 +175,14 @@ export default {
           this.disencrypt.message = this.disencrypt.message + '?sharecode=' + this.disencrypt.sharecode
         }
       })
+    },
+    handleDisencryptChange () {
+      this.createShare(0)
+      this.isChangeRadio = true
+    },
+    handleEncryptChange () {
+      this.createShare(1)
+      this.isChangeRadio = true
     }
   }
 
@@ -177,6 +206,15 @@ export default {
       color #333
   .share-margin
     margin 9px 0 19px
+  .share-car-position
+    display inline-block
+    margin-right 5px
+    vertical-align middle
+  .ivu-radio-group-item
+      margin-right 36px
+      font-size 14px
+      font-family 'PingFangSC-Regular'
+      color #666
   .share-url
     font-size 12px
     font-family 'PingFangSC-Regular'

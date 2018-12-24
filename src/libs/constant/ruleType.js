@@ -6,5 +6,6 @@ export const ruleTypeAllList = [
   { name: '吨公里', value: '3' },
   { name: '公斤公里', value: '7' },
   { name: '方公里', value: '4' },
-  { name: '车型', value: '5' }
+  { name: '车型', value: '5' },
+  { name: '件', value: '8' }
 ]
