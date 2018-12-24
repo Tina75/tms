@@ -17,14 +17,23 @@
         <FormItem label="联系电话：" prop="phone">
           <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="收货地址：" prop="address">
-          <AreaInput
-            v-model="validate.address"
-            :only-select="true"
-            @city-select="latlongtChange"/>
-          <Tooltip :max-width="200" content="详细地址只支持从下拉推荐地址中选择" style="right: -20px; position: absolute; top: 0px;" transfer>
-            <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
-          </Tooltip>
+        <FormItem label="收货地址：">
+          <Row>
+            <Col span="11">
+            <FormItem prop="cityCode">
+              <CitySelect v-model="validate.cityCode" clearable></CitySelect>
+            </FormItem>
+            </Col>
+            <Col span="13" style="padding-left: 5px">
+            <FormItem prop="address">
+              <AreaInput
+                v-model="validate.address"
+                :city-code="validate.cityCode"
+                :filter-city="true"
+                @city-select="latlongtChange"/>
+            </FormItem>
+            </Col>
+          </Row>
         </FormItem>
         <FormItem>
           <Input v-model="validate.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
@@ -44,7 +53,6 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import { consignerConsigneeAdd, consignerConsigneeUpdate } from '../pages/client'
-import cityUtil from '@/libs/js/city'
 import AreaInput from '@/components/AreaInput'
 import CitySelect from '@/components/SelectInputForCity'
 export default {
@@ -78,26 +86,19 @@ export default {
           { required: true, message: '联系电话不能为空', trigger: 'blur' },
           { type: 'string', message: '电话号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
         ],
+        cityCode: [
+          { required: true, message: '收货城市不能为空' }
+        ],
         address: [
           { required: true, message: '收货地址不能为空', trigger: 'blur' }
         ]
       }
     }
   },
-  computed: {
-    city () {
-      const arr = cityUtil.getPathByCode(this.validate.cityCode)
-      return arr.length ? arr[1].code : ''
-    }
-  },
   methods: {
     save (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          if (!this.validate.cityCode) {
-            this.$Message.error('详细地址只支持从下拉推荐地址中选择')
-            return false
-          }
           this.loading = true
           if (this.flag === 1) { // 新增
             this.add()
@@ -130,7 +131,9 @@ export default {
       this.validate.longitude = lng
       this.validate.latitude = lat
       this.validate.mapType = 1
-      this.validate.cityCode = cityCode
+      // if (!this.validate.cityCode) {
+      //   this.validate.cityCode = cityCode
+      // }
     }
   }
 }
