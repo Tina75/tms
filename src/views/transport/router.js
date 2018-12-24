@@ -35,6 +35,7 @@ export default [
         'component': () => import(/* webpackChunkName: "transport-detailPickup" */'./detail/detailPickup.vue'),
         'meta': {
           'hideInMenu': true,
+          'notCache': true,
           'powerCode': 120200,
           'title': '提货详情'
         }
@@ -54,7 +55,8 @@ export default [
         'component': () => import(/* webpackChunkName: "transport-detailFreight" */'./detail/detailFreight.vue'),
         'meta': {
           'hideInMenu': true,
-          'title': '送货管理',
+          'notCache': true,
+          'title': '运单详情',
           'powerCode': 120100
         }
       },

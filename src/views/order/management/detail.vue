@@ -991,6 +991,16 @@ export default {
     rate (value) {
       return float.round(value * 100, 2)
     }
+  },
+  /**
+   * 不同订单号
+   * 打开同一该页，数据不会根据querystring刷新问题
+   */
+  beforeRouteUpdate (to, from, next) {
+    this.$nextTick(() => {
+      this.getDetail()
+    })
+    next()
   }
 }
 </script>

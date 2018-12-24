@@ -734,7 +734,7 @@ export default {
     },
     fetchData () {
       this.loading = true
-      Server({
+      return Server({
         url: '/waybill/details',
         method: 'post',
         data: {
@@ -806,7 +806,10 @@ export default {
         this.changeCount = data.modifyCnt || 0
         this.setBtnsWithStatus()
         this.loading = false
-      }).catch()
+        return res
+      }).catch((er) => {
+        return Promise.reject(er)
+      })
     },
     /**
      * 修改派车方式
@@ -1163,6 +1166,18 @@ export default {
         }
       }).catch()
     }
+  },
+  /**
+   * 不同订单号
+   * 打开同一该页，数据不会根据querystring刷新问题
+   */
+  beforeRouteUpdate (to, from, next) {
+    this.$nextTick(() => {
+      this.id = this.$route.query.id
+      this.no = this.$route.query.no
+      this.fetchData()
+    })
+    next()
   }
 }
 </script>
