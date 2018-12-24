@@ -28,8 +28,15 @@
         </span>
 
         <Poptip trigger="hover" transfer placement="bottom-end" popper-class="dropdown-info" title="账号信息" width="260" style="cursor: default">
-          <Avatar class="avatar"  style="border:1px solid #fff"></avatar>
-          <span class="user-info">{{UserInfo.name}}</span>
+          <Avatar :style="avatarStyle"  class="avatar"></avatar>
+          <div class="user-info">
+            <div>
+              {{UserInfo.shortName || UserInfo.companyName}}
+            </div>
+            <div>
+              {{UserInfo.name}}
+            </div>
+          </div>
           <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
           <div slot="content">
             <p class="dropdown-line"><label for="">账户名：</label><span class="content-name">{{UserInfo.name}}</span><Tag color="cyan" style="font-size:12px;cursor: default">{{UserInfo.roleName}}</Tag></p>
@@ -70,7 +77,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['MsgCount', 'UserInfo'])
+    ...mapGetters(['MsgCount', 'UserInfo', 'IsUserLogin']),
+    avatarStyle () {
+      if (this.UserInfo.logoUrl) {
+        return {
+          backgroundImage: `url(${this.UserInfo.logoUrl})`
+        }
+      }
+      return {}
+    }
   },
   mounted () {
     const vm = this
@@ -80,8 +95,11 @@ export default {
     //   this.turnToPage(route)
     // })
     window.EMA.bind('logout', vm.userLogout)
-    this.loopMessage()
-    this.newUserTip()
+    // 用户登录后，初始化配置
+    if (this.IsUserLogin) {
+      this.loopMessage()
+      this.newUserTip()
+    }
   },
   beforeDestroy () {
     if (this.messageTimer) {
@@ -93,7 +111,7 @@ export default {
     ...mapActions(['getMessageCount', 'getUserInfo', 'getTableColumns', 'getOwnDrivers', 'getOwnCars', 'logout', 'getOrderConfiguration']),
     async newUserTip () {
       try {
-        await this.getUserInfo()
+        // await this.getUserInfo()
         if (sessionStorage.getItem('first_time_login') === 'true') {
           if (this.UserInfo.type === 1) this.renew()
           else this.changePasswordTip()
@@ -531,7 +549,7 @@ export default {
     width auto
     top 4px
     left 0
-    right 250px
+    right 309px
     position absolute
     padding 0
     height 46px
@@ -554,7 +572,8 @@ export default {
     text-overflow ellipsis
     margin-bottom -6px
   .avatar
-    background-image url(../../../assets/default-avatar.jpg)
+    border 1px solid #fff
+    background-image: url('../../../assets/default-avatar.jpg')
     background-size 30px
   &-bread-crumb
     padding-left 60px
@@ -610,13 +629,16 @@ export default {
             padding-top 12px
 
   .user-info
-    width:65px;
-    padding-left 5px
+    width:132px;
+    padding-left 10px
     display:inline-block;
     color white
-    text-overflow ellipsis
-    white-space nowrap
-    overflow hidden
     line-height 1.1
     margin-bottom -4px
+    div
+      top 10px
+      position relative
+      text-overflow ellipsis
+      white-space nowrap
+      overflow hidden
 </style>

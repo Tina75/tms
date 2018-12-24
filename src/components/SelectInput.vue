@@ -53,8 +53,10 @@
  * 3. 如果外面包一层div，问题更严重，会不断触发同一页面其他selectinput组件的blur事件
  */
 import browser from '@/libs/js/browser'
+import dispatchMixin from './mixins/dispatchMixin.js'
 export default {
   name: 'SelectInput',
+  mixins: [dispatchMixin],
   props: {
     autoFocus: {
       type: Boolean,
@@ -258,19 +260,6 @@ export default {
     }
   },
   methods: {
-    dispatch (componentName, eventName, params) {
-      let parent = this.$parent || this.$root
-      let name = parent.$options.name
-      while (parent && (!name || name !== componentName)) {
-        parent = parent.$parent
-        if (parent) {
-          name = parent.$options.name
-        }
-      }
-      if (parent) {
-        parent.$emit.apply(parent, [eventName].concat(params))
-      }
-    },
     onCompositionStart () {
       this.composing = true
     },

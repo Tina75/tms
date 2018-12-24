@@ -24,7 +24,7 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       // 有无用户数据
-      if (!store.getters.UserInfo.id && store.getters.Permissions.length === 0) {
+      if (!store.getters.IsUserLogin) {
         store.dispatch('getUserInfo')
           .then((data) => {
             // 默认先跳转到首页，防止0标签
