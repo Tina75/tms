@@ -105,6 +105,14 @@ export default {
         },
         {
           required: false,
+          title: '货物编号',
+          key: 'cargoNo',
+          type: 'text',
+          max: 200,
+          width: 180
+        },
+        {
+          required: false,
           title: '重量（吨）',
           key: 'weight',
           type: 'number',
@@ -133,7 +141,6 @@ export default {
           key: 'cargoCost',
           type: 'number',
           min: 0,
-          // maxLen: 999999999.99,
           point: 2
         },
         {
@@ -205,9 +212,9 @@ export default {
     },
     headers () {
       // 取反
-      const type = this.unitType !== 1 ? 'weight' : 'weightKg'
+      // const type = this.unitType !== 1 ? 'weight' : 'weightKg'
       const res = this.headersOption.filter(el => {
-        return el.key !== type
+        return true
       })
       return res
     },

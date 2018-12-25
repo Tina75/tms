@@ -41,6 +41,12 @@ export default class Cargo {
       this.remark2 = props.remark2
     }
   }
+  // get weight () {
+
+  // }
+  // set weight (value) {
+  //   this.weightKg = value * 1000
+  // }
   validate () {
     if (!this.cargoName) {
       return { success: false, message: '请输入货物名称' }

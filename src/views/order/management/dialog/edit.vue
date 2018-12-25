@@ -1,6 +1,6 @@
 <template>
   <Modal v-model="visiable" :mask-closable="true" transfer width="1100" @on-visible-change="close">
-    <p slot="header">{{ orderId ? '修改订单' : '新增订单'}} </p>
+    <p slot="header">修改订单</p>
     <Form ref="orderForm" :label-width="80" :model="orderForm" :rules="rules" >
       <Row :gutter="16">
         <Col span="6">
@@ -148,13 +148,13 @@
         <Col span="18">
         <FormItem label="备注:" prop="remark">
           <Input v-model="orderForm.remark" :maxlength="100" type="text">
-            </Input>
+          </Input>
         </FormItem>
         </Col>
       </Row>
     </Form>
     <div slot="footer">
-      <Button type="primary" @click="save">确定</Button>
+      <Button type="primary" @click="save('orderForm')">确定</Button>
       <Button type="default" @click="close">取消</Button>
     </div>
   </Modal>
@@ -197,7 +197,48 @@ export default {
         remark: ''
       },
       rules: {
-
+        settlementType: [
+          { required: true, message: '' }
+        ],
+        mileage: [
+          { required: true, message: '' }
+        ],
+        freightFee: [
+          { required: true, message: '' }
+        ],
+        pickupFee: [
+          { required: true, message: '' }
+        ],
+        loadFee: [
+          { required: true, message: '' }
+        ],
+        unloadFee: [
+          { required: true, message: '' }
+        ],
+        insuranceFee: [
+          { required: true, message: '' }
+        ],
+        otherFee: [
+          { required: true, message: '' }
+        ],
+        pickup: [
+          { required: true, message: '' }
+        ],
+        receiptCount: [
+          { required: true, message: '' }
+        ],
+        isInvoice: [
+          { required: true, message: '' }
+        ],
+        invoiceRate: [
+          { required: true, message: '' }
+        ],
+        collectionMoney: [
+          { required: true, message: '' }
+        ],
+        remark: [
+          { required: true, message: '' }
+        ]
       }
     }
   },
@@ -213,8 +254,14 @@ export default {
   },
   methods: {
     showCounter () {},
-    save () {
-
+    save (name) {
+      this.$refs[name].validate((valid) => {
+        if (valid) {
+          this.$Message.success('Success!')
+        } else {
+          this.$Message.error('Fail!')
+        }
+      })
     }
   }
 }
