@@ -195,10 +195,10 @@ export default {
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
         ],
         carType: [
-          { required: true, message: '车型不能为空', trigger: 'change' }
+          { required: true, message: '车型不能为空' }
         ],
         carLength: [
-          { required: true, message: '车长不能为空', trigger: 'change' }
+          { required: true, message: '车长不能为空' }
         ],
         shippingWeight: [
           { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }

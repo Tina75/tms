@@ -57,18 +57,43 @@
           </FormItem>
           </Col>
         </Row>
-        <Row v-for="(item, index) in contactList" :key="item.index">
+        <!-- <Row>
+          <FormItem
+            v-for="(item, index) in (formCompany.items)"
+            v-if="item.status"
+            :key="index"
+            :label="'Item ' + item.index"
+            :prop="'items.' + index + '.value'"
+            :rules="{required: true, message: 'Item ' + item.index +' can not be empty', trigger: 'blur'}">
+            <h1>ssssssssssdsjf;lasjfd;l </h1>
+            <Row>
+              <Col span="18">
+              <Input v-model="item.value" type="text" placeholder="Enter something..."></Input>
+              </Col>
+              <Col span="4" offset="1">
+              <Button @click="handleRemove(index)">Delete</Button>
+              </Col>
+            </Row>
+          </FormItem>
+        </Row> -->
+        <Row v-for="(item, index) in (formCompany.items)" :key="index">
           <Col :span="8">
-          <FormItem :label="'业务联系人' + (index + 1) + '：'" prop="contact">
-            <Input v-if="isEdit" v-model="item.contactPerson" :maxlength="10" placeholder="请输入公司联系人"></Input>
-            <span v-else class="formConten-p">{{item.contactPerson}}</span>
+          <FormItem
+            :label="'业务联系人' + (index + 1) + '：'"
+            :rules="{required: true, message: '请输入公司联系人', trigger: 'blur'}"
+            :prop="'items.' + index + '.name'">
+            <Input v-if="isEdit" v-model="item.name" :maxlength="10" placeholder="请输入公司联系人"></Input>
+            <span v-else class="formConten-p">{{item.name}}</span>
           </FormItem>
           </Col>
           <Col :span="8">
-          <FormItem label="联系方式：" prop="contactPhone">
+          <FormItem
+            :rules="{required: true, message: '请输入联系方式', trigger: 'blur'}"
+            :prop="'items.' + index + '.phone'"
+            label="联系方式：">
             <Row v-if="isEdit">
               <Col :span="20">
-              <Input v-model="item.contactPhone" :maxlength="11" placeholder="请输入联系方式"></Input>
+              <Input v-model="item.phone" :maxlength="11" placeholder="请输入联系方式"></Input>
               </Col>
               <Col :span="4">
               <span @click="removeContact(index)">
@@ -77,7 +102,7 @@
               </span>
               </Col>
             </Row>
-            <span v-else class="formConten-p">{{item.contactPhone}}</span>
+            <span v-else class="formConten-p">{{item.phone}}</span>
           </FormItem>
           </Col>
         </Row>
@@ -312,8 +337,8 @@ export default {
       contactListShow: true,
       contactList: [{
         label: '公司联系人1：',
-        contactPerson: '',
-        contactPhone: ''
+        name: 'name1',
+        phone: ''
       }]
     }
   },
@@ -333,6 +358,7 @@ export default {
   },
   watch: {
     contactList (newlist) {
+      this.formCompany.items = newlist
       if (newlist.length === 3) this.contactListShow = false
       else this.contactListShow = true
     }
@@ -373,6 +399,11 @@ export default {
       }).then(({ data }) => {
         vm.formCompany = Object.assign({}, data.data)
         vm.formCompanyInit = Object.assign({}, data.data)
+        vm.formCompany.items = [{
+          label: '公司联系人：',
+          name: 'name1',
+          phone: ''
+        }]
       }).then(() => {
         vm.initImage()
       })
@@ -469,8 +500,8 @@ export default {
       let label = '公司联系人' + (this.contactList.length + 1) + '：'
       this.contactList.push({
         label: label,
-        contactPerson: '',
-        contactPhone: ''
+        name: '',
+        phone: ''
       })
     },
     removeContact (item) {

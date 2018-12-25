@@ -1,6 +1,6 @@
 <template>
   <div class="selectCustomSty">
-    <Dropdown :visible="visible" :trigger="isText ? 'custom' : 'click'">
+    <Dropdown :visible="visible" :trigger="isText ? 'custom' : 'click'" @on-click="handleSelect">
       <Input
         v-show="false"
         :value="formatterValue">
@@ -12,13 +12,13 @@
         :transfer="transfer"
         :maxlength="maxlength"
         @click.native="clickInput"
-        @on-blur="showSlect = true; visible = false"
+        @on-blur="showSelect = true; visible = false"
         @input.native="change"
         @mouseenter.native="mousehover = true"
         @mouseleave.native="mousehover = false">
       <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-clear-icon" @click.native.stop="handleClear"></Icon>
-      <Icon v-if="(!mousehover || !isClearable) && showSlect" slot="suffix" type="ios-arrow-down" class="select-input-icondown"></Icon>
-      <Icon v-if="(!mousehover || !isClearable) && !showSlect" slot="suffix" type="ios-arrow-up" class="select-input-iconup"></Icon>
+      <Icon v-if="(!mousehover || !isClearable) && showSelect" slot="suffix" type="ios-arrow-down" class="select-input-icondown"></Icon>
+      <Icon v-if="(!mousehover || !isClearable) && !showSelect" slot="suffix" type="ios-arrow-up" class="select-input-iconup"></Icon>
       </Input>
       <Input
         v-else
@@ -27,19 +27,20 @@
         :transfer="transfer"
         readonly unselectable="on"
         class="customSelectText"
-        @click.native="showSlect = !showSlect"
-        @on-blur="showSlect = true"
+        @click.native="showSelect = !showSelect"
+        @on-blur="showSelect = true"
         @input.native="change"
         @mouseenter.native="mousehover = true"
         @mouseleave.native="mousehover = false">
       <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-clear-icon" @click.native.stop="handleClear"></Icon>
-      <Icon v-if="(!mousehover || !isClearable) && showSlect" slot="suffix" type="ios-arrow-down" class="select-input-icondown"></Icon>
-      <Icon v-if="(!mousehover || !isClearable) && !showSlect" slot="suffix" type="ios-arrow-up" class="select-input-iconup"></Icon>
+      <Icon v-if="(!mousehover || !isClearable) && showSelect" slot="suffix" type="ios-arrow-down" class="select-input-icondown"></Icon>
+      <Icon v-if="(!mousehover || !isClearable) && !showSelect" slot="suffix" type="ios-arrow-up" class="select-input-iconup"></Icon>
       </Input>
       <DropdownMenu slot="list">
         <div class="selectListLabel">
-          <span v-for="(item, key) in listMap" :key="key" :value="key" class="labelSpan" @click="clickItemLabel(item)">
-            <DropdownItem :style="item.label === showValue ? 'color: #00a4bd' : ''">
+          <!-- <span v-for="(item, key) in listMap" :key="key" :value="key" class="labelSpan" @click="clickItemLabel(item)"> -->
+          <span v-for="(item, key) in listMap" :key="key" :value="key" class="labelSpan">
+            <DropdownItem :style="item.label === showValue ? 'color: #00a4bd' : ''" :name="item.label">
               {{item.label}}
             </DropdownItem>
           </span>
@@ -52,7 +53,7 @@
 import { CAR_TYPE, CAR_LENGTH, PACKAGE_TYPE } from '@/libs/constant/carInfo'
 import dispatchMixin from '@/components/mixins/dispatchMixin'
 export default {
-  name: 'CustomNumberInput',
+  name: 'SelectCustom',
   mixins: [dispatchMixin],
   props: {
     value: '',
@@ -70,7 +71,7 @@ export default {
   data () {
     return {
       visible: false,
-      showSlect: true,
+      showSelect: true,
       showValue: '',
       currentValue: this.value,
       listMap: [],
@@ -111,6 +112,20 @@ export default {
     if (this.currentValue) this.findItemData()
   },
   methods: {
+    // 点击下拉框项
+    handleSelect (name) {
+      const item = this.listMap.find((opt) => {
+        if (opt.label) {
+          return opt.label === name
+        }
+        return opt.value === name
+      })
+      this.showValue = name
+      this.setValue(item.value)
+      this.visible = false
+      // 选中某一项
+      this.$emit('on-select', item.value, item)
+    },
     findItemData () {
       let dataInit = this.listMap.find(item => item.value.toString() === this.currentValue.toString())
       if (!dataInit) {
@@ -121,7 +136,7 @@ export default {
       }
     },
     clickInput (event) {
-      this.showSlect = !this.showSlect
+      this.showSelect = !this.showSelect
       this.visible = !this.visible
     },
     change (event) {
@@ -141,7 +156,7 @@ export default {
     },
     clickItemLabel (item) {
       this.showValue = item.label
-      this.showSlect = true
+      this.showSelect = true
       this.visible = false
       this.setValue(item.value)
     },
