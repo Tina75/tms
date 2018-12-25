@@ -53,17 +53,19 @@ export default {
       let nextRoute = this.tab.close()
       this.ema.fire('closeTab', this.tab)
       if (nextRoute) {
+        // 跳转到已有的路由
         this.$router.push(nextRoute)
       }
     },
     refresh () {
       // this.$emit('on-refresh')
       let tab = this.tab
-      this.tab.refresh()
-      this.close()
-      this.$nextTick(() => {
-        this.$router.push(tab)
+      this.tab.refresh(() => {
+        this.$router.push({ path: '/loading' })
       })
+      setTimeout(() => {
+        this.$router.push(tab)
+      }, 50)
     }
   }
 }
