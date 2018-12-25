@@ -151,7 +151,11 @@ export default {
   },
   mixins: [ BasePage ],
   metaInfo: {
-    title: '公司设置'
+    title: '公司设置',
+    meta: [{ // set meta
+      name: 'keyWords1',
+      content: 'My Example App1'
+    }]
   },
   data () {
     return {
