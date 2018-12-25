@@ -108,7 +108,7 @@ import { CHECK_PWD, CHECK_PWD_SAME, CHECK_NAME, CHECK_NAME_COMPANY, CHECK_PHONE 
 import _ from 'lodash'
 import { mapGetters, mapMutations } from 'vuex'
 import CitySelect from '@/components/SelectInputForCity'
-import Unit from './components/unit.vue'
+import Unit from '../components/unit.vue'
 import AllocationStrategy from '@/views/transport/components/AllocationStrategy.vue'
 export default {
   name: 'set-up',

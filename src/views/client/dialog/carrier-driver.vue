@@ -179,7 +179,7 @@
 <script>
 import { CAR_TYPE1, CAR_LENGTH, DRIVER_TYPE } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
-import { carrierAddDriver, carrierUpdateDriver, carrierQueryDriverlist, formatterCarNo, CODE, CAR } from '../client'
+import { carrierAddDriver, carrierUpdateDriver, carrierQueryDriverlist, formatterCarNo, CODE, CAR } from '../pages/client'
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/index.vue'
 import SelectInput from '@/components/SelectInput'
@@ -358,7 +358,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-@import "../client.styl"
+@import "../pages/client.styl"
 .modalTitle
   font-size: 14px;
 </style>

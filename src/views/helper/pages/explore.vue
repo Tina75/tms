@@ -34,7 +34,7 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import TMSUrl from '@/libs/constant/url.js'
-import WaveProcess from './components/WaveProcess.vue'
+import WaveProcess from '../components/WaveProcess.vue'
 export default {
   name: 'explore',
   components: {

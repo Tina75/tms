@@ -112,6 +112,10 @@ import ruleForClient from './ruleForClient/index'
 import { CODE, consignerDetail, consignerAddressList, consignerAddressDelete, consignerConsigneeList, consignerConsigneeDelete, consignerCargoList, consignerCargoDelete } from './client'
 import pageTable from '@/components/page-table'
 import float from '@/libs/js/float'
+// 是否包含省市
+const hasCity = (val, cityName) => {
+  return val.indexOf(cityName) === 0 || val.indexOf('省') > -1 || val.indexOf('市') > -1
+}
 export default {
   name: 'sender-info',
   components: {
@@ -217,9 +221,9 @@ export default {
           render: (h, params) => {
             let text = params.row.address
             if (params.row.consignerHourseNumber) {
-              text += ',' + params.row.consignerHourseNumber
+              text += params.row.consignerHourseNumber
             }
-            return h('span', text)
+            return h('span', hasCity(text, params.row.cityName) ? text : params.row.cityName + text)
           }
         }
       ],
@@ -316,9 +320,10 @@ export default {
           render: (h, params) => {
             let text = params.row.address
             if (params.row.consignerHourseNumber) {
-              text += ',' + params.row.consignerHourseNumber
+              text += params.row.consignerHourseNumber
             }
-            return h('span', text)
+
+            return h('span', hasCity(text, params.row.cityName) ? text : params.row.cityName + text)
           }
         },
         {

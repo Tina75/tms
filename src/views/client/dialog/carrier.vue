@@ -193,7 +193,7 @@
 </template>
 <script>
 import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
-import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, formatterCarNo, CAR } from '../client'
+import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, formatterCarNo, CAR } from '../pages/client'
 import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput'
@@ -466,7 +466,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-@import "../client.styl"
+@import "../pages/client.styl"
 .ivu-input-wrapper,.ivu-select
   width: 86%
   margin-right 8px

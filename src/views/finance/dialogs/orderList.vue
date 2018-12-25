@@ -147,7 +147,7 @@ export default {
           }).then(res => {
             _this.getOrderList()
             _this.ok()
-          }).catch(err => console.error(err))
+          }).catch()
         }
       })
     },
@@ -169,7 +169,7 @@ export default {
             orderTimeText: new Date(item.orderTime).Format('yyyy-MM-dd hh:mm')
           })
         })
-      }).catch(err => console.error(err))
+      }).catch()
     },
     toDetail (data) {
       switch (data.row.orderType) {

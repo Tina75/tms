@@ -150,7 +150,7 @@ export default {
           this.close()
           this.ok()
         }
-      }).catch(err => console.error(err))
+      })
     },
     writeOffOk (item) {
       const _this = this
@@ -204,7 +204,7 @@ export default {
           }
         }).then(res => {
           this.loadData()
-        }).catch(err => console.error(err))
+        })
       }
     },
     addItem (index) {
@@ -227,7 +227,7 @@ export default {
           }
         }).then(res => {
           this.loadData()
-        }).catch(err => console.error(err))
+        })
       }
     }
   }

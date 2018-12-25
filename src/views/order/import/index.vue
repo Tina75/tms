@@ -507,7 +507,7 @@ export default {
             this.$Message.error('文件上传超时')
             // do ConnectionTimeoutError operation
           } else if (e.code === 'RequestError') {
-            console.error('请求body格式非法')
+            // console.error('请求body格式非法')
           }
           throw e
         }

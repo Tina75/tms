@@ -1,7 +1,4 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Main from './views/main/Main.vue'
-Vue.use(Router)
+import Main from '@/views/main/Main.vue'
 
 export default[
   {
@@ -12,7 +9,7 @@ export default[
       {
         'name': 'help-center',
         'path': 'index',
-        'component': () => import(/* webpackChunkName: "help-center" */'./views/helper/pages/index.vue'),
+        'component': () => import(/* webpackChunkName: "help-center" */'./pages/index.vue'),
         'meta': {
           'title': '帮助',
           'icon': 'bangzhuzhongxin',
@@ -22,7 +19,7 @@ export default[
       {
         'path': 'process',
         'name': 'process-center',
-        'component': () => import(/* webpackChunkName: "process-center" */'./views/helper/pages/process.vue'),
+        'component': () => import(/* webpackChunkName: "process-center" */'./pages/process.vue'),
         'meta': {
           'title': '业务流程',
           'hideInMenu': true,

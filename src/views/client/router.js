@@ -1,7 +1,4 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Main from './views/main/Main.vue'
-Vue.use(Router)
+import Main from '@/views/main/Main.vue'
 
 export default[
   /** 客户管理 */
@@ -18,17 +15,28 @@ export default[
       {
         'name': 'client-sender',
         'path': 'sender',
-        'component': () => import(/* webpackChunkName: "client-sender" */'./views/client/pages/sender.vue'),
+        'component': () => import(/* webpackChunkName: "client-sender" */'./pages/sender.vue'),
         'meta': {
           'powerCode': 130100,
           'title': '发货方管理'
+        }
+      },
+      {
+        'name': 'sender-info',
+        'path': 'sender-info',
+        'component': () => import(/* webpackChunkName: "client-sender" */'./pages/sender-info.vue'),
+        'meta': {
+          'powerCode': 130100,
+          'notCache': true,
+          'hideInMenu': true,
+          'title': '发货方详情'
 
         }
       },
       {
-        'name': 'client-carrier',
+        'name': 'carrier',
         'path': 'carrier',
-        'component': () => import(/* webpackChunkName: "client-carrier" */'./views/client/pages/carrier.vue'),
+        'component': () => import(/* webpackChunkName: "client-carrier" */'./pages/carrier.vue'),
         'meta': {
           'powerCode': 130200,
           'title': '承运商管理'
@@ -36,9 +44,20 @@ export default[
         }
       },
       {
+        'name': 'carrier-info',
+        'path': 'carrier-info',
+        'component': () => import(/* webpackChunkName: "client-carrier" */'./pages/carrier-info.vue'),
+        'meta': {
+          'hideInMenu': true,
+          'notCache': true,
+          'powerCode': 130200,
+          'title': '承运商详情'
+        }
+      },
+      {
         'name': 'client-transfer',
         'path': 'transfer',
-        'component': () => import(/* webpackChunkName: "client-transfer" */'./views/client/pages/transfer.vue'),
+        'component': () => import(/* webpackChunkName: "client-transfer" */'./pages/transfer.vue'),
         'meta': {
           'powerCode': 130300,
           'title': '外转方管理'

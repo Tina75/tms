@@ -1,7 +1,4 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Main from './views/main/Main.vue'
-Vue.use(Router)
+import Main from '@/views/main/Main.vue'
 
 export default[
   {
@@ -11,8 +8,8 @@ export default[
     'children': [
       {
         'path': 'index',
-        'name': 'setting',
-        'component': () => import(/* webpackChunkName: "setting" */'./views/set-up/pages/index.vue'),
+        'name': 'set-up',
+        'component': () => import(/* webpackChunkName: "setting" */'./pages/index.vue'),
         'meta': {
           'title': '设置',
           'icon': 'shezhi',

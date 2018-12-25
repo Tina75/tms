@@ -71,22 +71,24 @@
 
 <script>
 import FontIcon from '@/components/FontIcon'
-// import menuJson from '@/assets/menu.json'
 import { mapGetters, mapActions } from 'vuex'
+import powerMixin from '@/basic/powerMixin.js'
 export default {
   components: { FontIcon },
+  mixins: [powerMixin],
   props: {
     collapsed: Boolean,
     activeName: String
   },
   data () {
     return {
-      openedNames: []
+      openedNames: [],
+      timer: null
       // menuList: menuJson
     }
   },
   computed: {
-    ...mapGetters(['menuList', 'waitAccept'])
+    ...mapGetters(['menuList', 'waitAccept', 'IsUserLogin'])
   },
   watch: {
     activeName (val) {
@@ -100,7 +102,16 @@ export default {
   },
   mounted () {
     this.openedNames = this.getopenedNames(this.activeName)
-    this.getOnlineCount()
+    if (this.IsUserLogin) {
+      this.getOnlineCount()
+    }
+  },
+
+  beforeDestory () {
+    if (this.timer) {
+      clearInterval(this.timer)
+      this.timer = null
+    }
   },
   methods: {
     ...mapActions([
@@ -108,7 +119,7 @@ export default {
     ]),
     getOnlineCount () {
       this.getCount()
-      setInterval(this.getCount, 1000 * 60)
+      this.timer = setInterval(this.getCount, 1000 * 60)
     },
     getopenedNames (activeName) {
       /**
@@ -154,22 +165,8 @@ export default {
         return child.path
       }
       return parent.path + '/' + child.path
-    },
-    // 权限控制
-    hasPower: function (power) {
-      if (!power) { return true }
-      return this.$store.state.permissions.includes(power + '')
-    //   var flag = false
-    //   var powerArr = (power || '').split(',') || []
-    //   var list = window.powerList
-    //   list.forEach((value) => {
-    //     if (powerArr.indexOf(value.toString()) !== -1) {
-    //       flag = true
-    //       return false
-    //     }
-    //   })
-    //   return flag
     }
+
   }
 }
 </script>

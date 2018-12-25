@@ -22,12 +22,13 @@
 import { mapGetters, mapActions } from 'vuex'
 import ExtraSelect from './ExtraSelect.vue'
 import BaseComponent from '@/basic/BaseComponent'
+import dispatchMixin from '../mixins/dispatchMixin.js'
 export default {
   name: 'car-select',
   components: {
     ExtraSelect
   },
-  mixins: [BaseComponent],
+  mixins: [BaseComponent, dispatchMixin],
   props: {
     value: String,
     extraOptions: {
@@ -101,19 +102,6 @@ export default {
           }
         }
       })
-    },
-    dispatch (componentName, eventName, params) {
-      let parent = this.$parent || this.$root
-      let name = parent.$options.name
-      while (parent && (!name || name !== componentName)) {
-        parent = parent.$parent
-        if (parent) {
-          name = parent.$options.name
-        }
-      }
-      if (parent) {
-        parent.$emit.apply(parent, [eventName].concat(params))
-      }
     }
   }
 }

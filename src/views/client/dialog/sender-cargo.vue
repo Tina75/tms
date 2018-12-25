@@ -52,7 +52,7 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '@/components/SelectInput.vue'
-import { consignerCargoAdd, consignerCargoUpdate } from '../client'
+import { consignerCargoAdd, consignerCargoUpdate } from '../pages/client'
 import float from '@/libs/js/float'
 import SelectCustom from '@/components/SelectCustom'
 export default {
@@ -155,7 +155,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-  @import "../client.styl"
+  @import "../pages/client.styl"
   .ivu-input-wrapper
     width: 86%
     margin-right 8px

@@ -62,7 +62,7 @@
       },
       {
         "name":"回单管理",
-        "path":"/order-management/receipt",
+        "path":"/transport/receipt",
         "powerCode":120500
       }
     ]
@@ -191,6 +191,24 @@
         "name":"轮胎管理",
         "path":"/owned-vehicle/tyre",
         "powerCode":190300
+      }
+    ]
+  },
+  {
+    "name":"油卡管理",
+    "icon":"ico-truck",
+    "path":"/oilCard",
+    "powerCode":0,
+    "children":[
+      {
+        "name":"油卡列表",
+        "path":"/oilCard/oilList",
+        "powerCode":0
+      },
+      {
+        "name":"油卡使用记录",
+        "path":"/oilCard/usedList",
+        "powerCode":0
       }
     ]
   },

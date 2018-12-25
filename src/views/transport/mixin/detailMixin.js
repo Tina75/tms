@@ -4,7 +4,7 @@
 
 import _ from 'lodash'
 import Float from '@/libs/js/float'
-import { CAR } from '@/views/client/client'
+import { CAR } from '@/views/client/pages/client'
 import { mapActions, mapGetters } from 'vuex'
 
 export default {

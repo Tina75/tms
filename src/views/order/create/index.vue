@@ -5,7 +5,7 @@
     </Spin>
 
     <Row :gutter="16">
-      <Col span="8">
+      <Col span="6">
       <FormItem label="客户名称:" prop="consignerName">
         <SelectInput
           v-model="orderForm.consignerName"
@@ -19,19 +19,36 @@
         </SelectInput>
       </FormItem>
       </Col>
-      <Col span="8">
+      <Col span="6">
       <FormItem label="客户订单号:" prop="customerOrderNo">
         <Input v-model="orderForm.customerOrderNo" :maxlength="30" type="text"></Input>
       </FormItem>
       </Col>
-      <Col span="8">
+      <Col span="6">
       <FormItem label="客户运单号:" prop="customerWaybillNo">
         <Input v-model="orderForm.customerWaybillNo" :maxlength="30" type="text"></Input>
       </FormItem>
       </Col>
+      <Col span="6">
+      <FormItem label="对接业务员:" prop="salesmanId">
+        <Select v-model="orderForm.salesmanId" transfer clearable placeholder="全部">
+          <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.id">{{opt.name}}</Option>
+        </Select>
+      </FormItem>
+      </Col>
     </Row>
     <Row :gutter="16">
-      <Col span="8">
+      <Col span="6">
+      <FormItem label="发货城市:" prop="start">
+        <CitySelect v-model="orderForm.start" clearable></CitySelect>
+      </FormItem>
+      </Col>
+      <Col span="6">
+      <FormItem label="到货城市:" prop="end">
+        <CitySelect v-model="orderForm.end" clearable></CitySelect>
+      </FormItem>
+      </Col>
+      <Col span="6">
       <FormItem label="发货时间:">
         <Row>
           <Col span="13">
@@ -47,7 +64,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="8">
+      <Col span="6">
       <FormItem label="到货时间:">
         <Row>
           <Col span="13">
@@ -61,13 +78,6 @@
           </FormItem>
           </Col>
         </Row>
-      </FormItem>
-      </Col>
-      <Col span="8">
-      <FormItem label="对接业务员:" prop="salesmanId">
-        <Select v-model="orderForm.salesmanId" transfer clearable placeholder="全部">
-          <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.id">{{opt.name}}</Option>
-        </Select>
       </FormItem>
       </Col>
     </Row>
@@ -103,14 +113,14 @@
       <FormItem label="发货地址:" class="consig-address" prop="consignerAddress">
         <AreaInput
           v-model="orderForm.consignerAddress"
-          :show-icon="!!orderForm.start"
           :local-options="consignerAddresses"
+          :show-icon="!!orderForm.consignerAddressLongitude && !!orderForm.consignerAddressLatitude"
           placeholder="详细地址（省市区+地址）"
           @city-select="({lat, lng, cityCode}) => citySelect(1, lat, lng, cityCode)"/>
       </FormItem>
       </Col>
       <Col span="3">
-      <FormItem :label-width="0">
+      <FormItem :label-width="0" prop="consignerHourseNumber">
         <Input v-model="orderForm.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
       </FormItem>
       </Col>
@@ -125,14 +135,14 @@
       <FormItem label="收货地址:" class="consig-address" prop="consigneeAddress">
         <AreaInput
           v-model="orderForm.consigneeAddress"
-          :show-icon="!!orderForm.end"
           :local-options="consigneeAddresses"
+          :show-icon="!!orderForm.consigneeAddressLongitude && !!orderForm.consigneeAddressLatitude"
           placeholder="详细地址（省市区+地址）"
           @city-select="({lat, lng, cityCode}) => citySelect(2, lat, lng, cityCode)"/>
       </FormItem>
       </Col>
       <Col span="3">
-      <FormItem :label-width="0">
+      <FormItem :label-width="0" prop="consigneeHourseNumber">
         <Input v-model="orderForm.consigneeHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
       </FormItem>
       </Col>
@@ -337,7 +347,7 @@ import Title from './components/Title.vue'
 import SelectInput from '@/components/SelectInput.vue'
 import TagNumberInput from '@/components/TagNumberInput'
 import float from '@/libs/js/float'
-import OrderPrint from '@/views/order-management/components/OrderPrint'
+import OrderPrint from '@/views/order/management/components/OrderPrint'
 import Cargo from './libs/cargo'
 import CargoTable from './components/CargoTable.vue'
 import TimeInput from './components/TimeInput.vue'
@@ -505,10 +515,10 @@ export default {
           { required: true, message: '请输入客户名称' }
         ],
         start: [
-          { required: true, message: '请输入始发城市' }
+          { required: false, message: '请输入始发城市' }
         ],
         end: [
-          { required: true, message: '请输入目的城市' }
+          { required: false, message: '请输入目的城市' }
         ],
         deliveryTimes: [
           { validator: validateStart, trigger: 'change' }
@@ -533,8 +543,14 @@ export default {
         consignerAddress: [
           { required: true, message: '请输入发货地址' }
         ],
+        consignerHourseNumber: [
+          { required: false, message: '请输入' }
+        ],
         consigneeAddress: [
           { required: true, message: '请输入收货地址' }
+        ],
+        consigneeHourseNumber: [
+          { required: false, message: '请输入' }
         ],
         settlementType: [
           { required: true, message: '请选择付款方式' }
@@ -762,17 +778,10 @@ export default {
         _this.orderForm.consignerContact = consigner.contact
         _this.orderForm.consignerPhone = consigner.phone
         if (addresses.length > 0) {
-          if (this.hasCity(addresses[0].address, addresses[0].cityName)) {
-            _this.orderForm.consignerAddress = addresses[0].address
-          } else {
-            _this.orderForm.consignerAddress = addresses[0].cityName + addresses[0].address
-          }
-          // if (addresses[0].address.index)
-          _this.orderForm.consignerAddressLongitude = addresses[0].longitude
-          _this.orderForm.consignerAddressLatitude = addresses[0].latitude
+          _this.orderForm.consignerAddress = addresses[0].address
           _this.orderForm.start = addresses[0].cityCode
-          _this.orderForm.consignerAddressLatitude = addresses[0].latitude
           _this.orderForm.consignerAddressLongitude = addresses[0].longitude
+          _this.orderForm.consignerAddressLatitude = addresses[0].latitude
           _this.orderForm.consignerHourseNumber = addresses[0].consignerHourseNumber
         }
         if (consignees.length > 0) {
@@ -780,16 +789,9 @@ export default {
           _this.orderForm.consigneeContact = consignees[0].contact
           _this.orderForm.consigneePhone = consignees[0].phone
           _this.orderForm.consigneeAddress = consignees[0].address
-          if (this.hasCity(consignees[0].address, consignees[0].cityName)) {
-            _this.orderForm.consigneeAddress = consignees[0].address
-          } else {
-            _this.orderForm.consigneeAddress = consignees[0].cityName + addresses[0].address
-          }
-          _this.orderForm.consigneeAddressLongitude = consignees[0].longitude
-          _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
           _this.orderForm.end = consignees[0].cityCode
-          _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
           _this.orderForm.consigneeAddressLongitude = consignees[0].longitude
+          _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
           _this.orderForm.consigneeHourseNumber = consignees[0].consignerHourseNumber
         }
         // 计费里程
@@ -974,11 +976,15 @@ export default {
       if (type === 1) {
         this.orderForm.consignerAddressLongitude = lng
         this.orderForm.consignerAddressLatitude = lat
-        this.orderForm.start = cityCode
+        if (!this.orderForm.start) {
+          this.orderForm.start = cityCode
+        }
       } else if (type === 2) {
         this.orderForm.consigneeAddressLongitude = lng
         this.orderForm.consigneeAddressLatitude = lat
-        this.orderForm.end = cityCode
+        if (!this.orderForm.end) {
+          this.orderForm.end = cityCode
+        }
       }
       this.distanceCp()
     },

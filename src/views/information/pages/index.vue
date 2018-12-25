@@ -395,7 +395,7 @@ export default {
           break
         case 5:
           this.openTab({
-            path: TMSUrl.RECEIPT_ORDER_MANAGEMENT, // '/order-management/receipt',
+            path: TMSUrl.RECEIPT_ORDER_MANAGEMENT, // '/transport/receipt',
             title: '回单管理'
           })
           break

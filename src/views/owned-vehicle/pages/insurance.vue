@@ -44,12 +44,12 @@ import Export from '@/libs/js/export'
 import { CODE, deleteCarById } from './client'
 import { mapActions } from 'vuex'
 export default {
-  name: 'owned-car',
+  name: 'owned-insurance',
   components: {
     PageTable
   },
   metaInfo: {
-    title: '车辆管理'
+    title: '车辆保险'
   },
   mixins: [ BasePage ],
   data () {
@@ -253,9 +253,9 @@ export default {
     edit () {
       let vm = this
       this.openDialog({
-        name: 'owned-vehicle/dialog/edit-car',
+        name: 'owned-vehicle/dialog/edit-insurance',
         data: {
-          title: '新增车辆',
+          title: '新增保险',
           flag: 1 // 新增
         },
         methods: {

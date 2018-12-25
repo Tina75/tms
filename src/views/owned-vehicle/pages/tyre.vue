@@ -44,12 +44,12 @@ import Export from '@/libs/js/export'
 import { CODE, deleteCarById } from './client'
 import { mapActions } from 'vuex'
 export default {
-  name: 'owned-car',
+  name: 'owner-tyre',
   components: {
     PageTable
   },
   metaInfo: {
-    title: '车辆管理'
+    title: '轮胎管理'
   },
   mixins: [ BasePage ],
   data () {

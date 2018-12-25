@@ -12,7 +12,7 @@
 import BaseDialog from '@/basic/BaseDialog'
 import SelectInputMixin from '../mixin/selectInputMixin'
 // import Server from '@/libs/js/server'
-import { CAR } from '@/views/client/client'
+import { CAR } from '@/views/client/pages/client'
 import OwnCarForm from '@/components/own-car-form'
 import { defaultOwnForm as defaultFormValue } from '@/components/own-car-form/mixin.js'
 

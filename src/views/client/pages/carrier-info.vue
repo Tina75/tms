@@ -92,7 +92,7 @@
             <Table :columns="columns1" :loading="loading" :data="data1">
               <div slot="loading">
                 <Spin>
-                  <img src="../../assets/loading.gif" width="24" height="24" alt="加载中">
+                  <img src="@/assets/loading.gif" width="24" height="24" alt="加载中">
                 </Spin>
               </div>
             </Table>

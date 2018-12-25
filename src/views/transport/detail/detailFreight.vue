@@ -186,6 +186,10 @@
               </i-col>
             </Row>
           </div>
+
+          <!-- 车况照片 -->
+          <car-photo v-if="imageItems.length > 0" :image-list="imageItems"></car-photo>
+
           <!-- 运单日志 -->
           <div>
             <div class="detail-part-title">
@@ -345,11 +349,12 @@ import { mapActions } from 'vuex'
 import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 import allocationStrategy from '../constant/allocation.js'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
+import CarPhoto from './components/car-photo.vue'
 
 export default {
   name: 'detailFeright',
   metaInfo: { title: '运单详情' },
-  components: { SelectInput, CitySelect, PrintFreight, PayInfo, Exception, change, OwnSendInfo, SendCarrierInfo, SendFee },
+  components: { SelectInput, CitySelect, PrintFreight, PayInfo, Exception, change, OwnSendInfo, SendCarrierInfo, SendFee, CarPhoto },
   mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin, tableWeightColumnMixin ],
 
   data () {
@@ -639,7 +644,18 @@ export default {
       printData: [], // 待打印数据
       sendWay: '1', // 派车类型 1 外转 2 自送  V1.07新增
       radioDisabled: false, // 控制单选按钮禁用
-      source: 'detail' // 详情页编辑传detail不校验承运商，改单需校验承运商，不传detail
+      source: 'detail', // 详情页编辑传detail不校验承运商，改单需校验承运商，不传detail
+
+      imageItems: [ // 需要展示的车况照片list
+        {
+          src: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/1005859967670.9203.jpg',
+          msrc: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/1005859967670.9203.jpg'
+        },
+        {
+          src: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/853667749786.0685.jpg',
+          msrc: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/853667749786.0685.jpg'
+        }
+      ]
     }
   },
   computed: {
@@ -718,7 +734,7 @@ export default {
     },
     fetchData () {
       this.loading = true
-      Server({
+      return Server({
         url: '/waybill/details',
         method: 'post',
         data: {
@@ -790,7 +806,10 @@ export default {
         this.changeCount = data.modifyCnt || 0
         this.setBtnsWithStatus()
         this.loading = false
-      }).catch(err => console.error(err))
+        return res
+      }).catch((er) => {
+        return Promise.reject(er)
+      })
     },
     /**
      * 修改派车方式
@@ -843,7 +862,6 @@ export default {
         assignCarType: z.sendWay,
         allocationStrategy: z.orderList.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
       })
-      console.log(data)
       Server({
         url: '/waybill/update',
         method: 'post',
@@ -851,7 +869,7 @@ export default {
       }).then(res => {
         z.$Message.success('保存成功')
         z.cancelEdit()
-      }).catch(err => console.error(err))
+      }).catch()
     },
     // 改单
     changeBill () {
@@ -889,7 +907,7 @@ export default {
       }).then(res => {
         z.$Message.success(res.data.msg)
         z.cancelEdit()
-      }).catch(err => console.error(err))
+      }).catch()
     },
 
     // 保存编辑
@@ -987,9 +1005,7 @@ export default {
             },
             methods: {}
           })
-        }).catch(err => {
-          console.error(err)
-        })
+        }).catch()
     },
     // 删除
     billDelete () {
@@ -1009,7 +1025,7 @@ export default {
             }).then(res => {
               self.$Message.success('删除成功')
               self.ema.fire('closeTab', self.$route)
-            }).catch(err => console.error(err))
+            }).catch()
           }
         }
       })
@@ -1051,7 +1067,6 @@ export default {
       const self = this
       self.getWaybillPrintData([ self.id ])
         .then(res => {
-          console.log(self.$refs.$printer)
           self.printData = res
           self.$refs.$printer.print()
         })
@@ -1141,7 +1156,6 @@ export default {
               item.isCardDisabled = true
             }
           })
-          console.log(this.settlementPayInfo)
         }
         if (this.feeStatus === 10 || this.feeStatus === 20 || this.feeStatus === 30) {
           this.settlementPayInfo.map(item => {
@@ -1150,8 +1164,20 @@ export default {
             item.isCardDisabled = true
           })
         }
-      }).catch(err => console.error(err))
+      }).catch()
     }
+  },
+  /**
+   * 不同订单号
+   * 打开同一该页，数据不会根据querystring刷新问题
+   */
+  beforeRouteUpdate (to, from, next) {
+    this.$nextTick(() => {
+      this.id = this.$route.query.id
+      this.no = this.$route.query.no
+      this.fetchData()
+    })
+    next()
   }
 }
 </script>

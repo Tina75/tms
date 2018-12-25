@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { consignerAdd, consignerUpdate } from '../client'
+import { consignerAdd, consignerUpdate } from '../pages/client'
 import BaseDialog from '@/basic/BaseDialog'
 import pickups from '@/libs/constant/pickup.js'
 import { invoiceList } from '@/libs/constant/orderCreate.js'
@@ -183,5 +183,5 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-  @import "../client.styl"
+  @import "../pages/client.styl"
 </style>
