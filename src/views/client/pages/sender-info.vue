@@ -39,10 +39,19 @@
           </Col>
           <Col span="8">
           <div>
+            <span class="label">开拓渠道：</span>
+            <span v-if="list.exploiteChannel ===1">公司开拓</span>
+            <span v-else>个人开拓</span>
+          </div>
+          </Col>
+          <Col span="8">
+          <div>
             <span class="label">对接业务员：</span>
             <span v-text="list.salesName"></span>
           </div>
           </Col>
+        </Row>
+        <Row class="row">
           <Col span="8">
           <div>
             <span class="label">是否开票：</span>
@@ -327,6 +336,10 @@ export default {
           }
         },
         {
+          title: '收货人单位',
+          key: 'consigneeCompanyName'
+        },
+        {
           title: '备注',
           key: 'remark',
           render (h, params) {
@@ -425,6 +438,17 @@ export default {
           tooltip: true
         },
         {
+          title: '货物编码',
+          key: 'cargoNo'
+        },
+        {
+          title: '货值',
+          key: 'cargoCost',
+          render (h, params) {
+            return h('div', {}, (params.row.cargoCost / 100).toFixed(2))
+          }
+        },
+        {
           title: '包装方式',
           key: 'unit',
           render (h, params) {
@@ -438,11 +462,8 @@ export default {
           }
         },
         {
-          title: '货值',
-          key: 'cargoCost',
-          render (h, params) {
-            return h('div', {}, (params.row.cargoCost / 100).toFixed(2))
-          }
+          title: '包装尺寸',
+          key: 'dimension'
         },
         {
           title: '重量(吨)',
