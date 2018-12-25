@@ -15,7 +15,7 @@ import finance from '@/views/finance/router'
 import upstream from '@/views/upstream/router'
 import owned from '@/views/owned-vehicle/router'
 import oil from '@/views/oilCard/router'
-
+import loading from '@/views/main/router'
 Vue.use(Router)
 
 const router = new Router({
@@ -84,6 +84,7 @@ const router = new Router({
     ...setting,
     ...information,
     ...helper,
+    ...loading,
     {
       path: '/404',
       component: Main,
