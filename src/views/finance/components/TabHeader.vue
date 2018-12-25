@@ -59,7 +59,10 @@ export default {
       this.$emit('on-change', selectName)
     },
     getLabel (tab) {
-      return tab.label + ' ' + tab.count
+      if (tab.count) {
+        return tab.label + ' ' + tab.count
+      }
+      return tab.label
     }
   }
 }
