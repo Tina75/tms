@@ -6,7 +6,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-12-26 14:10:46
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-12-26 15:21:00
+ * @Last Modified time: 2018-12-26 17:27:18
  */
 import float from './float'
 export const PrecesionConfig = {
@@ -65,7 +65,7 @@ export const renderMileage = (h, value) => {
 }
 /**
  * 体积计算，保留6位小数
- * @param {number} 公里数
+ * @param {number} 体积
  */
 export const roundVolume = (value) => {
   return float.round(value, PrecesionConfig.volume)
@@ -81,7 +81,7 @@ export const renderVolume = (h, value) => {
 
 /**
  * 重量计算，保留3位小数
- * @param {number} 公里数
+ * @param {number} 重量吨
  */
 export const roundWeight = (value) => {
   return float.round(value, PrecesionConfig.weight)
@@ -96,7 +96,7 @@ export const renderWeight = (h, value) => {
 }
 /**
  * 重量公斤计算，保留整数
- * @param {number} 公里数
+ * @param {number} 重量公斤
  */
 export const roundWeightKg = (value) => {
   return float.round(value, PrecesionConfig.weightKg)
