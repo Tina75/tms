@@ -17,7 +17,7 @@
                class="search-input"
                @on-enter="searchCarList"
                @on-click="clearKeywords"/>
-        <DatePicker v-else v-model="keyword" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
+        <DatePicker v-else v-model="keyword" transfer format="yyyy-MM-dd" type="daterange" placeholder="请选择日期">
         </DatePicker>
         <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
@@ -60,7 +60,8 @@ export default {
         carNo: '',
         insuranceCompanyName: '',
         invoiceNo: '',
-        buyDate: ''
+        buyDateStart: '',
+        buyDateEnd: ''
       },
       exportFile: true,
       menuColumns: [
@@ -205,7 +206,6 @@ export default {
     }
   },
   mounted () {
-    this.getOwnCars()
   },
   methods: {
     ...mapActions(['insuranceDeleteById']),
@@ -254,17 +254,14 @@ export default {
     searchCarList () {
       this.formSearchInit = {}
       if (this.selectStatus === '1') {
-        this.formSearchInit = {}
         this.formSearchInit.carNo = this.keyword
       } else if (this.selectStatus === '2') {
-        this.formSearchInit = {}
         this.formSearchInit.insuranceCompanyName = this.keyword
       } else if (this.selectStatus === '3') {
-        this.formSearchInit = {}
         this.formSearchInit.invoiceNo = this.keyword
       } else if (this.selectStatus === '4') {
-        this.formSearchInit = {}
-        this.formSearchInit.buyDate = this.keyword
+        this.formSearchInit.buyDateStart = new Date(this.keyword[0])
+        this.formSearchInit.buyDateEnd = new Date(this.keyword[1])
       }
     },
     clearKeywords () {

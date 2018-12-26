@@ -80,7 +80,7 @@
               </Col>
               <Col :span="4">
               <span @click="removeContact(index)">
-                <FontIcon v-if="contactList.length > 1 && isEdit" type="ico_cancel" size="18" color="#EC4E4E" class="removeContact">
+                <FontIcon v-if="formCompany.busiContact.length > 1 && isEdit" type="ico_cancel" size="18" color="#EC4E4E" class="removeContact">
                 </FontIcon>
               </span>
               </Col>
@@ -120,7 +120,13 @@
           <span class="iconRightTitleP">公司介绍</span>
         </div>
         <FormItem label="公司简介：" class="labelClassSty">
-          <Input v-if="isEdit" :rows="5" v-model="formCompany.companyProfile" :maxlength="500" type="textarea" placeholder="请输入公司简介"></Input>
+          <TextAreaNumber
+            v-if="isEdit"
+            :rows="5"
+            v-model="formCompany.companyProfile"
+            :maxlength="500"
+            placeholder="请输入公司简介">
+          </TextAreaNumber>
           <pre v-else class="companyProfileSty">{{formCompany.companyProfile}}</pre>
         </FormItem>
         <FormItem label="公司LOGO：">
@@ -139,8 +145,8 @@
         </FormItem>
         <!-- 公司介绍图片集合 -->
         <FormItem label="业务介绍：">
-          <Input v-if="isEdit" :rows="5" v-model="formCompany.busiIntroduce" :maxlength="500" type="textarea" placeholder="请输入公司介绍"></Input>
-          <span v-if="!isEdit && busiIntroducePic.length < 1" class="imageTips">完善业务介绍，有利于客户了解贵公司业务组成</span>
+          <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiIntroduce" :maxlength="500" type="textarea" placeholder="请输入公司介绍"></TextAreaNumber>
+          <span v-if="!isEdit && formCompany.busiIntroduce && formCompany.busiIntroducePic" class="imageTips">完善业务介绍，有利于客户了解贵公司业务组成</span>
           <pre v-if="!isEdit && formCompany.busiIntroduce" class="companyProfileSty">{{formCompany.busiIntroduce}}</pre><br/>
           <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
         </FormItem>
@@ -164,9 +170,9 @@
         </FormItem>
         <!-- 服务优势图片集合 -->
         <FormItem label="服务优势：">
-          <Input v-if="isEdit" :rows="5" v-model="formCompany.busiAdvantce" :maxlength="500" type="textarea" placeholder="请输入公司介绍"></Input>
-          <span v-if="!isEdit && busiAdvantcePic.length < 1" class="imageTips">完善服务优势，有利于提升客户对贵公司的好感度</span>
-          <pre v-else class="companyProfileSty">{{formCompany.busiAdvantce}}</pre><br/>
+          <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiAdvantce" :maxlength="500" type="textarea" placeholder="请输入公司介绍"></TextAreaNumber>
+          <span v-if="!isEdit && formCompany.busiAdvantcePic && formCompany.busiAdvantce" class="imageTips">完善服务优势，有利于提升客户对贵公司的好感度</span>
+          <pre v-if="!isEdit" class="companyProfileSty">{{formCompany.busiAdvantce}}</pre><br/>
           <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
         </FormItem>
         <FormItem class="imageFontItem">
@@ -190,7 +196,7 @@
         <!-- 公司风貌图片集合 -->
         <FormItem label="公司风貌：">
           <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
-          <span v-if="!isEdit && companyPhoto.length < 1" class="imageTips">上传公司风貌照片，有利于传递给客户专业的印象</span>
+          <span v-if="!isEdit && formCompany.companyPhoto" class="imageTips">上传公司风貌照片，有利于传递给客户专业的印象</span>
         </FormItem>
         <FormItem class="imageFontItem">
           <image-title
@@ -213,7 +219,7 @@
         <!-- 微信二维码图片集合 -->
         <FormItem label="微信二维码：">
           <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传2张，每张不能超过10MB</span>
-          <span v-if="!isEdit && wxQrPic.length < 1" class="imageTips">上传微信二维码，有利于后续微信营销</span>
+          <span v-if="!isEdit && formCompany.wxQrPic" class="imageTips">上传微信二维码，有利于后续微信营销</span>
         </FormItem>
         <FormItem class="imageFontItem">
           <image-title
@@ -236,7 +242,7 @@
         <!-- 公司首页形象 -->
         <FormItem label="公司首页形象图：">
           <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且只支持上传1张，每张不能超过10MB</span>
-          <span v-if="!isEdit && homeBanner.length < 1" class="imageTips">上传公司形象图，有利于宣传公司品牌</span>
+          <span v-if="!isEdit && formCompany.homeBanner" class="imageTips">上传公司形象图，有利于宣传公司品牌</span>
         </FormItem>
         <FormItem class="imageFontItem">
           <up-load v-show="isEdit" ref="upLoadsBanner" :multiple="true" max-count="1" max-size="10"></up-load>
@@ -269,15 +275,17 @@ import ImageTitle from '@/components/upLoad/ImageTitle.vue'
 import { CHECK_NAME_COMPANY, CHECK_NAME, CHECK_PHONE } from './validator'
 import prepareOpenSwipe from '@/components/swipe/index'
 import FontIcon from '@/components/FontIcon'
+import TextAreaNumber from '@/components/TextAreaNumber'
 export default {
-  name: 'companySetting',
+  name: 'company-setting',
   components: {
     AreaInput,
     CitySelect,
     UpLoad,
     prepareOpenSwipe,
     ImageTitle,
-    FontIcon
+    FontIcon,
+    TextAreaNumber
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -319,11 +327,7 @@ export default {
       companyPhoto: [],
       wxQrPic: [],
       homeBanner: [],
-      contactListShow: true,
-      contactList: [{
-        name: '',
-        phone: ''
-      }]
+      contactListShow: true
     }
   },
   computed: {
@@ -340,13 +344,6 @@ export default {
       ]
     }
   },
-  watch: {
-    contactList (newlist) {
-      this.formCompany.busiContact = newlist
-      if (newlist.length === 3) this.contactListShow = false
-      else this.contactListShow = true
-    }
-  },
   mounted () {
     this.getCompanyInfo()
   },
@@ -357,18 +354,18 @@ export default {
       this.$refs.uploadLogo.progress = 1
       this.$refs.uploadLogo.uploadImg = this.formCompany.logoUrl
       // 公司其他照片
-      this.busiIntroduce = await this.editStatusImage(this.formCompany.busiIntroduce, 'upLoadsBusiness') // 业务
-      this.busiAdvantce = await this.editStatusImage(this.formCompany.busiAdvantcePic, 'upLoadsService') // 服务
+      this.busiIntroducePic = await this.editStatusImage(this.formCompany.busiIntroducePic, 'upLoadsBusiness') // 业务
+      this.busiAdvantcePic = await this.editStatusImage(this.formCompany.busiAdvantcePic, 'upLoadsService') // 服务
       this.companyPhoto = await this.editStatusImage(this.formCompany.companyPhoto, 'upLoadsStyle') // 风貌
       this.wxQrPic = await this.editStatusImage(this.formCompany.wxQrPic, 'upLoadsWX') // 微信
       this.homeBanner = await this.editStatusImage(this.formCompany.homeBanner, 'upLoadsBanner') // Banner
       setTimeout(() => {
         if (this.formCompany.logoUrl) this.openSwipeLogo = prepareOpenSwipe(this.imageLogo)
-        if (this.busiIntroduce.length > 0) this.openSwipeInfo = prepareOpenSwipe(this.busiIntroduce)
-        if (this.busiAdvantce.length > 0) this.openSwipeInfo = prepareOpenSwipe(this.busiAdvantce)
-        if (this.companyPhoto.length > 0) this.openSwipeInfo = prepareOpenSwipe(this.companyPhoto)
-        if (this.wxQrPic.length > 0) this.openSwipeInfo = prepareOpenSwipe(this.wxQrPic)
-        if (this.homeBanner.length > 0) this.openSwipeInfo = prepareOpenSwipe(this.homeBanner)
+        if (this.busiIntroducePic) this.openSwipeInfo = prepareOpenSwipe(this.busiIntroducePic)
+        if (this.busiAdvantcePic) this.openSwipeInfo = prepareOpenSwipe(this.busiAdvantcePic)
+        if (this.companyPhoto) this.openSwipeInfo = prepareOpenSwipe(this.companyPhoto)
+        if (this.wxQrPic) this.openSwipeInfo = prepareOpenSwipe(this.wxQrPic)
+        if (this.homeBanner) this.openSwipeInfo = prepareOpenSwipe(this.homeBanner)
       }, 10)
     },
     editStatusImage (images, upLoads) {
@@ -395,51 +392,60 @@ export default {
       }).then(({ data }) => {
         vm.formCompany = Object.assign({}, data.data)
         vm.formCompanyInit = Object.assign({}, data.data)
-        if (!vm.formCompany.busiContact) {
-          vm.formCompany.busiContact = [{
-            name: '',
-            phone: ''
-          }]
-        }
-        vm.contactList = vm.formCompany.busiContact
+        vm.formCompany.busiContact = JSON.parse(data.data.busiContact)
       }).then(() => {
         vm.initImage()
       })
+    },
+    initImageUrl () {
+      this.formCompany.logoUrl = this.$refs.uploadLogo.uploadImg // logo
+      this.formCompany.busiContact = JSON.stringify(this.formCompany.busiContact) // 格式转换
+      this.formCompany.busiIntroducePic = JSON.stringify(this.$refs.upLoadsBusiness.getImageList()) // 业务介绍
+      this.formCompany.busiAdvantcePic = JSON.stringify(this.$refs.upLoadsService.getImageList()) // 服务优势
+      this.formCompany.companyPhoto = JSON.stringify(this.$refs.upLoadsStyle.getImageList()) // 公司风貌
+      this.formCompany.wxQrPic = JSON.stringify(this.$refs.upLoadsWX.getImageList()) // 微信二维码
+      // 公司首页形象图
+      if (this.$refs.upLoadsBanner.uploadImgList.length > 0) this.formCompany.homeBanner = this.$refs.upLoadsBanner.uploadImgList[0].url
     },
     // 公司
     companySubmit (name) {
       let isChanged = true
       this.$refs[name].validate((valid) => {
         if (valid) {
-          if (!this.formCompany.cityId) {
-            this.$Message.error('详细地址只支持从下拉推荐地址中选择')
-            return false
-          }
-          this.formCompany.logoUrl = this.$refs.uploadLogo.uploadImg
-          // this.formCompany.companyPhoto = JSON.stringify(this.$refs.upLoads.getImageList())
-          for (const key in this.formCompanyInit) {
-            if (this.formCompany[key] !== this.formCompanyInit[key]) {
-              isChanged = false
+          try {
+            if (!this.formCompany.cityId) {
+              this.$Message.error('详细地址只支持从下拉推荐地址中选择')
+              return false
             }
+            this.initImageUrl()
+            for (const key in this.formCompanyInit) {
+              if (this.formCompany[key] !== this.formCompanyInit[key]) {
+                isChanged = false
+              }
+            }
+            if (isChanged) {
+              this.$Message.info('您还未变更任何信息，无需保存')
+              this.formCompany.busiContact = JSON.parse(this.formCompany.busiContact) // 格式转换
+              return
+            }
+            this.loading = true
+            let params = Object.assign({}, this.formCompany)
+            this.formCompany.busiContact = JSON.parse(this.formCompany.busiContact) // 格式转换
+            Server({
+              url: 'set/company',
+              method: 'post',
+              data: params
+            }).then(({ data }) => {
+              this.loading = false
+              this.$Message.success('保存成功!')
+              this.isEdit = false
+              this.getCompanyInfo()
+            }).catch(() => {
+              this.loading = false
+            })
+          } finally {
+            this.formCompany.busiContact = JSON.parse(this.formCompany.busiContact) // 格式转换
           }
-          if (isChanged) {
-            this.$Message.info('您还未变更任何信息，无需保存')
-            return
-          }
-          this.loading = true
-          let params = Object.assign({}, this.formCompany)
-          Server({
-            url: 'set/company',
-            method: 'post',
-            data: params
-          }).then(({ data }) => {
-            this.loading = false
-            this.$Message.success('保存成功!')
-            this.isEdit = false
-            this.getCompanyInfo()
-          }).catch(() => {
-            this.loading = false
-          })
         }
       })
     },
@@ -495,13 +501,18 @@ export default {
     },
     addContacts () {
       this.contactListShow = true
-      this.contactList.push({
+      this.formCompany.busiContact.push({
         name: '',
         phone: ''
       })
+      if (this.formCompany.busiContact.length >= 3) {
+        this.contactListShow = false
+      } else {
+        this.contactListShow = true
+      }
     },
     removeContact (item) {
-      this.contactList.splice(item, 1)
+      this.formCompany.busiContact.splice(item, 1)
     }
   }
 }

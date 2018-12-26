@@ -57,7 +57,14 @@
           <FormItem label="生效日期：" prop="effectDate">
             <Row>
               <Col span="20">
-              <DatePicker v-model="validate.effectDate" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
+              <DatePicker
+                :options="optionsStart"
+                v-model="validate.effectDate"
+                transfer
+                format="yyyy-MM-dd"
+                type="date"
+                placeholder="请选择日期"
+                @on-change="getExpireDate">
               </DatePicker>
               </Col>
             </Row>
@@ -67,7 +74,13 @@
           <FormItem label="失效日期：" prop="expireDate">
             <Row>
               <Col span="20">
-              <DatePicker v-model="validate.expireDate" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
+              <DatePicker
+                :options="optionsEnd"
+                v-model="validate.expireDate"
+                transfer
+                format="yyyy-MM-dd"
+                type="date"
+                placeholder="请选择日期">
               </DatePicker>
               </Col>
             </Row>
@@ -132,6 +145,16 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      optionsStart: {
+        disabledDate (date) {
+          return date && date.valueOf() < Date.now() - 86400000
+        }
+      },
+      optionsEnd: {
+        disabledDate (date) {
+          return date && date.valueOf() < Date.now() - 86400000
+        }
+      },
       loading: false,
       validate: {
         invoiceNo: '',
@@ -140,8 +163,8 @@ export default {
         buyDate: '',
         effectDate: '',
         expireDate: '',
-        trafficFee: '',
-        businessFee: '',
+        trafficFee: null,
+        businessFee: null,
         remark: '',
         picUrls: ''
       },
@@ -158,13 +181,13 @@ export default {
           { required: true, message: '保险公司不能为空', trigger: 'blur' }
         ],
         effectDate: [
-          { required: true, message: '生效日期不能为空', trigger: 'blur' }
+          { required: true, message: '生效日期不能为空' }
         ],
         expireDate: [
-          { required: true, message: '失效日期不能为空', trigger: 'blur' }
+          { required: true, message: '失效日期不能为空' }
         ],
         trafficFee: [
-          { required: true, message: '交强险金额不能为空', trigger: 'blur' }
+          { required: true, message: '交强险金额不能为空' }
         ]
 
       }
@@ -233,6 +256,16 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+    getExpireDate () {
+      let vm = this
+      vm.optionsEnd = {
+        disabledDate (date) {
+          return date && date.valueOf() <= (Date.parse(new Date(vm.validate.effectDate)) - (86400000 * 2) && Date.now() - 86400000)
+        }
+      }
+      let yearDate = vm.validate.effectDate.getFullYear() % 4 !== 0 ? 364 : 365 // 区分闰年
+      vm.validate.expireDate = new Date(vm.validate.effectDate.getTime() + (yearDate * 86400000))
     }
   }
 }

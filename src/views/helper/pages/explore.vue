@@ -33,7 +33,6 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
-import TMSUrl from '@/libs/constant/url.js'
 import WaveProcess from '../components/WaveProcess.vue'
 export default {
   name: 'explore',
@@ -113,71 +112,38 @@ export default {
       // 根据code打开具体tab页面
       let code = this.stepBtnList.find(b => b.id === id).code
       switch (code) {
-        case '100002':
-          this.openTab({
-            path: TMSUrl.PROCESS,
-            title: '业务流程'
-          })
+        case '100002': // 流程
+          this.$router.push({ name: 'process-center' })
           break
-        case '140100':
-          this.openTab({
-            path: TMSUrl.EMPLOYEE_MANAGEMENT,
-            title: '角色管理'
-          })
+        case '140100': // 角色
+          this.$router.push({ name: 'company-role' })
           break
-        case '140200':
-          this.openTab({
-            path: TMSUrl.STAFF_MANAGEMENT,
-            title: '员工管理'
-          })
+        case '140200': // 员工
+          this.$router.push({ name: 'company-staff' })
           break
-        case '140300':
-          this.openTab({
-            path: TMSUrl.COMPANY_SETTING,
-            title: '公司设置'
-          })
+        case '140300': // 公司设置
+          this.$router.push({ name: 'company-setting' })
           break
-        case '190100':
-          this.openTab({
-            path: TMSUrl.OWNEDVEHICLE_DRIVER,
-            title: '司机管理'
-          })
+        case '190100': // 司机管理
+          this.$router.push({ name: 'owned-driver' })
           break
-        case '190200':
-          this.openTab({
-            path: TMSUrl.OWNEDVEHICLE_CAR,
-            title: '车辆管理'
-          })
+        case '190200': // 车辆
+          this.$router.push({ name: 'owned-car' })
           break
-        case '130100':
-          this.openTab({
-            path: TMSUrl.SENDER_MANAGEMENT,
-            title: '发货方管理'
-          })
+        case '130100': // 发货方
+          this.$router.push({ name: 'client-sender' })
           break
-        case '130200':
-          this.openTab({
-            path: TMSUrl.CARRIER_MANAGEMENT,
-            title: '承运商管理'
-          })
+        case '130200': // 承运商
+          this.$router.push({ name: 'carrier' })
           break
-        case '130300':
-          this.openTab({
-            path: TMSUrl.TRANSFER_MANAGEMENT,
-            title: '外转方管理'
-          })
+        case '130300': // 外转方
+          this.$router.push({ name: 'client-transfer' })
           break
-        case '100200':
-          this.openTab({
-            path: TMSUrl.IMPORT_ORDER,
-            title: '批量导入'
-          })
+        case '100200': // 批量导入
+          this.$router.push({ name: 'order-import' })
           break
-        case '100100':
-          this.openTab({
-            path: TMSUrl.CREATE_ORDER,
-            title: '手工开单'
-          })
+        case '100100': // 手工开单
+          this.$router.push({ name: 'order-create' })
           break
       }
     },
