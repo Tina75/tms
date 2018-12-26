@@ -23,6 +23,11 @@ const state = {
   messageCount: {}, // 消息通知数量
   customTableColumns: [], // 自定义table列表信息
   documentHeight: '', // documentBody高度
+  smsSet: [], // 短信设置,
+  allocationStrategy: { // 分摊策略,1按订单数分摊,2按件数分摊,3按重量分摊,4按体积分摊
+    orderStrategy: 2,
+    waybillStrategy: 2
+  },
   orderSet: {
     // 收货人单位
     consigneeCompanyNameOption: 2,
@@ -45,6 +50,8 @@ const state = {
     // 备注
     cargoRemark1Option: 1,
     cargoRemark2Option: 1,
+    cargoRemark3Option: 2,
+    cargoRemark4Option: 2,
     // 提货费
     pickupFeeOption: 1,
     // 装货费

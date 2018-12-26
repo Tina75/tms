@@ -79,7 +79,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getMessageCount', 'getUserInfo', 'getTableColumns', 'getOwnDrivers', 'getOwnCars', 'getOrderConfiguration']),
+    ...mapActions(['getMessageCount', 'getUserInfo', 'getTableColumns', 'getOwnDrivers', 'getOwnCars', 'getConfiguration']),
     async newUserTip () {
       try {
         // await this.getUserInfo()
@@ -106,7 +106,7 @@ export default {
         this.getOwnDrivers()
         this.getOwnCars()
         // 获取开单全局配置
-        this.getOrderConfiguration()
+        this.getConfiguration()
         // 添加GA配置属性
         this.$ga.set('phone', this.UserInfo.phone)
         this.$ga.set('roleName', this.UserInfo.roleName)
