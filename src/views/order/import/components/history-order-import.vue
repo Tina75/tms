@@ -25,7 +25,7 @@
             <div>暂无历史订单导入记录，快去下载模板导入吧~</div>
           </div>
           <div class="i-mt-10">
-            <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入订单</Button>
+            <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入历史订单</Button>
           </div>
         </div>
       </div>
