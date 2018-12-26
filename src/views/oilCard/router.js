@@ -29,6 +29,17 @@ export default [
           'title': '油卡使用记录',
           'powerCode': 0
         }
+      },
+      {
+        'name': 'detail',
+        'path': 'detail/detail',
+        'component': () => import(/* webpackChunkName: "detail" */'./detail/detail.vue'),
+        'meta': {
+          'hideInMenu': true,
+          'notCache': true,
+          'title': '油卡详情',
+          'powerCode': 0
+        }
       }
     ]
   }
