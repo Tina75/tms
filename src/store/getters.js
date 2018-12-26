@@ -14,5 +14,7 @@ export const MsgCount = (state) => state.messageCount
 export const TableColumns = (state) => state.customTableColumns
 /** document-body的高度 */
 export const DocumentHeight = (state) => state.documentHeight
+// 开单设置选项，1：吨；2：公斤
+export const WeightOption = (state) => state.orderSet.weightTonOption
 /** 开单设置 */
-export const WeightOption = (state) => state.order.weightOption
+export const OrderSet = (state) => state.orderSet

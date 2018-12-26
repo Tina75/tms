@@ -38,6 +38,28 @@ export default[
           'powerCode': 100200
         }
       },
+      /**
+       * 权限待修改
+       */
+      {
+        'name': 'frequent-order',
+        'path': 'frequent-order',
+        'component': () => import(/* webpackChunkName: "order-detail" */'./frequent-order/index.vue'),
+        'meta': {
+          'powerCode': 0,
+          'title': '常发订单'
+        }
+      },
+      {
+        'name': 'frequent-order-detail',
+        'path': 'frequent-order-detail',
+        'component': () => import(/* webpackChunkName: "order-detail" */'./frequent-order/detail.vue'),
+        'meta': {
+          'powerCode': 0,
+          'hideInMenu': true,
+          'title': '常发订单详情'
+        }
+      },
       {
         'name': 'order-management',
         'path': '/order-management/order',
