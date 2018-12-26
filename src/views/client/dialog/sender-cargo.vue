@@ -20,7 +20,7 @@
           <Input v-model="validate.cargoCost"  placeholder="请输入"/>
         </FormItem>
         <FormItem label="包装方式：">
-          <SelectCustom v-model="validate.unit" type="packageType" style="width: 86%" clearable></SelectCustom>
+          <SelectPackageType v-model="validate.unit" style="width: 86%" clearable></SelectPackageType>
         </FormItem>
         <FormItem label="包装尺寸：">
           <Row>
@@ -59,12 +59,12 @@ import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '@/components/SelectInput.vue'
 import { consignerCargoAdd, consignerCargoUpdate } from '../pages/client'
 import float from '@/libs/js/float'
-import SelectCustom from '@/components/SelectCustom'
+import SelectPackageType from '@/components/SelectPackageType'
 export default {
   name: 'sender-address',
   components: {
     SelectInput,
-    SelectCustom
+    SelectPackageType
   },
   mixins: [BaseDialog],
   data () {

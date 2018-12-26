@@ -45,12 +45,12 @@
       <Row>
         <Col :span="8">
         <FormItem label="车型：">
-          <SelectCustom v-model="validate.driver.carType" type="carType" class="formInputSty" placeholder="请选择" clearable></SelectCustom>
+          <SelectCarType v-model="validate.driver.carType" class="formInputSty" placeholder="请选择" clearable></SelectCarType>
         </FormItem>
         </Col>
         <Col :span="8">
         <FormItem label="车长：">
-          <SelectCustom v-model="validate.driver.carLength" type="carLength" class="formInputSty" placeholder="请选择" clearable></SelectCustom>
+          <SelectCarLength v-model="validate.driver.carLength" class="formInputSty" placeholder="请选择" clearable></SelectCarLength>
         </FormItem>
         </Col>
         <Col :span="8">
@@ -192,24 +192,22 @@
   </Modal>
 </template>
 <script>
-import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
 import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, formatterCarNo, CAR } from '../pages/client'
 import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput'
 import UpLoad from '@/components/upLoad/index.vue'
 import TagNumberInput from '@/components/TagNumberInput'
-import SelectCustom from '@/components/SelectCustom'
+import SelectCarLength from '@/components/SelectCarLength'
+import SelectCarType from '@/components/SelectCarType'
 import _ from 'lodash'
 export default {
   name: 'carrier',
-  components: { CitySelect, UpLoad, SelectInput, TagNumberInput, SelectCustom },
+  components: { CitySelect, UpLoad, SelectInput, TagNumberInput, SelectCarLength, SelectCarType },
   mixins: [BaseDialog],
   data () {
     return {
       loading: false,
-      carTypeMap: CAR_TYPE1,
-      carLengthMap: CAR_LENGTH,
       flag: 2,
       codeType: 1,
       address: [],

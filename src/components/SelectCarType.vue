@@ -1,27 +1,11 @@
 <template>
   <div class="selectCustomSty">
-    <Dropdown :visible="visible" :trigger="isText ? 'custom' : 'click'" @on-click="handleSelect">
+    <Dropdown trigger="click" @on-click="handleSelect">
       <Input
         v-show="false"
         :value="formatterValue">
       </Input>
       <Input
-        v-if="isText"
-        v-model="showValue"
-        :placeholder="placeholder"
-        :transfer="transfer"
-        :maxlength="maxlength"
-        @click.native="clickInput"
-        @on-blur="showSelect = true; visible = false"
-        @input.native="change"
-        @mouseenter.native="mousehover = true"
-        @mouseleave.native="mousehover = false">
-      <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-clear-icon" @click.native.stop="handleClear"></Icon>
-      <Icon v-if="(!mousehover || !isClearable) && showSelect" slot="suffix" type="ios-arrow-down" class="select-input-icondown"></Icon>
-      <Icon v-if="(!mousehover || !isClearable) && !showSelect" slot="suffix" type="ios-arrow-up" class="select-input-iconup"></Icon>
-      </Input>
-      <Input
-        v-else
         v-model="showValue"
         :placeholder="placeholder"
         :transfer="transfer"
@@ -38,7 +22,6 @@
       </Input>
       <DropdownMenu slot="list">
         <div class="selectListLabel">
-          <!-- <span v-for="(item, key) in listMap" :key="key" :value="key" class="labelSpan" @click="clickItemLabel(item)"> -->
           <span v-for="(item, key) in listMap" :key="key" :value="key" class="labelSpan">
             <DropdownItem :style="item.label === showValue ? 'color: #00a4bd' : ''" :name="item.label">
               {{item.label}}
@@ -50,7 +33,7 @@
   </div>
 </template>
 <script>
-import { CAR_TYPE, CAR_LENGTH, PACKAGE_TYPE } from '@/libs/constant/carInfo'
+import { CAR_TYPE } from '@/libs/constant/carInfo'
 import dispatchMixin from '@/components/mixins/dispatchMixin'
 export default {
   name: 'SelectCustom',
@@ -94,21 +77,8 @@ export default {
       this.currentValue = val
     }
   },
-  created () {
-    if (this.listMapData) this.listMap = this.listMapData
-  },
   mounted () {
-    switch (this.type) {
-      case 'carLength':
-        this.listMap = CAR_LENGTH
-        break
-      case 'carType':
-        this.listMap = CAR_TYPE
-        break
-      case 'packageType':
-        this.listMap = PACKAGE_TYPE
-        break
-    }
+    this.listMap = CAR_TYPE
     if (this.currentValue) this.findItemData()
   },
   methods: {
