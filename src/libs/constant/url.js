@@ -45,7 +45,7 @@ const TMSUrl = {
   STAFF_MANAGEMENT: '/company/staff-manage', // 员工管理
   EMPLOYEE_MANAGEMENT: '/company/role-manage', // 角色管理
   SETTING: '/set-up/index', // 设置
-  COMPANY_SETTING: '/company/setting', // 公司设置
+  COMPANY_SETTING: '/company/pages/setting', // 公司设置
   MESSAGE_CENTER: '/information/index', // 消息中心
   MESSAGE_DETAIL: '/information/message-info', // 消息详情
   PROCESS: '/helper/process', // 业务流程

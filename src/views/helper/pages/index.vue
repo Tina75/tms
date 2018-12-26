@@ -2,7 +2,7 @@
   <div id="help-info" class="helper-info temAll">
     <Row>
       <Col :style="{'min-height':DocumentHeight +'px'}" span="4">
-      <Menu :active-name="descover" :open-names="['1']" style="width: 100%;" class="menuSty" accordion>
+      <Menu ref="menuHelp" :active-name="descover ? descover : picContent.title" :open-names="['1']" style="width: 100%;" class="menuSty" accordion>
         <MenuItem name="0" style="height:50px;line-height:50px" @click.native="clickLeftMenuExplore">
         <i class="icon font_family icon-ico-discovery"></i>
         <div class="title" style="margin-top: -4px">探索运掌柜</div>
@@ -12,8 +12,12 @@
             <i class="icon font_family icon-tupian"></i>
             <span class="title">图文介绍</span>
           </template>
-          <MenuItem v-for="menu in picMenu" :key="menu.id" :name="menu.title" class="secondTitle"
-                    @click.native="clickLeftMenuPic(menu)">
+          <MenuItem
+            v-for="menu in picMenu"
+            :key="menu.id"
+            :name="menu.title"
+            class="secondTitle"
+            @click.native="clickLeftMenuPic(menu)">
           {{menu.title}}
           </MenuItem>
         </Submenu>
@@ -61,7 +65,7 @@ import Explore from './explore'
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'help',
+  name: 'help-center',
   components: {
     FontIcon,
     Explore
@@ -83,7 +87,7 @@ export default {
   computed: {
     ...mapGetters(['DocumentHeight'])
   },
-  mounted: function () {
+  created () {
     this.descover = this.$route.query.descover
     if (this.descover) this.type = 'descover'
     this.getMenuList()
@@ -93,6 +97,7 @@ export default {
   },
   methods: {
     getMenuList () {
+      let vm = this
       Server({
         url: 'help/list',
         method: 'get',
@@ -105,12 +110,16 @@ export default {
             } else {
               menu.urlList = [menu.urlList]
             }
-            this.picMenu.push(menu)
+            vm.picMenu.push(menu)
           } else if (menu.type === 2) {
-            this.videoMenu.push(menu)
+            vm.videoMenu.push(menu)
           }
+          vm.picContent = vm.picMenu[0]
         })
-        this.picContent = this.picMenu[0]
+      }).then(() => {
+        vm.$nextTick(() => {
+          vm.$refs.menuHelp.updateActiveName()
+        })
       })
     },
     picImagList () {

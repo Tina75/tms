@@ -37,7 +37,7 @@
 import { CAR_LENGTH } from '@/libs/constant/carInfo'
 import dispatchMixin from '@/components/mixins/dispatchMixin'
 export default {
-  name: 'SelectCustom',
+  name: 'SelectCarLength',
   mixins: [dispatchMixin],
   props: {
     value: '',

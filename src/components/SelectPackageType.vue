@@ -35,7 +35,7 @@
 import { PACKAGE_TYPE } from '@/libs/constant/carInfo'
 import dispatchMixin from '@/components/mixins/dispatchMixin'
 export default {
-  name: 'SelectCustom',
+  name: 'SelectPackageType',
   mixins: [dispatchMixin],
   props: {
     value: '',
