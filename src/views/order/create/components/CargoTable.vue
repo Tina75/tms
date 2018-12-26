@@ -161,7 +161,7 @@ export default {
           required: false,
           title: '包装方式',
           key: 'unit',
-          type: 'text',
+          type: 'package',
           max: 10
         },
         {

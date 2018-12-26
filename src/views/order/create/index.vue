@@ -329,7 +329,7 @@
     <div class="van-center i-mt-20 i-mb-20">
       <!-- 权限 -->
       <span style="float: left; vertical-align:middle;">
-        <Checkbox v-model="orderForm.isSaveOrderTemplate">保存为常发货源</Checkbox>
+        <Checkbox v-model="isSaveOrderTemplate">保存为常发货源</Checkbox>
       </span>
       <Button v-if="hasPower(100101)" :loading="disabled" type="primary" @click="handleSubmit">保存</Button>
       <Button v-if="hasPower(100102)" :loading="disabled" class="i-ml-10" @click="print">保存并打印</Button>
@@ -522,7 +522,7 @@ export default {
         invoiceRate: null,
         // 备注
         remark: '',
-        isSaveOrderTemplate: false
+        isSaveOrderTemplate: 0
       },
       orderPrint: [],
       rules: {
@@ -627,7 +627,6 @@ export default {
       },
       salesmanList: [],
       highLight: false
-      // unitType: this.WeightOption || 1 // 货物单位
     }
   },
   computed: {
@@ -639,7 +638,6 @@ export default {
       'consigneeAddresses',
       'cargoes',
       'cargoOptions',
-      'WeightOption',
       'OrderSet'
     ]),
     totalFee () {
@@ -665,6 +663,14 @@ export default {
     },
     orderId () {
       return this.$route.query.id
+    },
+    isSaveOrderTemplate: {
+      set (value) {
+        this.orderForm.isSaveOrderTemplate = value === true ? 1 : 0
+      },
+      get () {
+        return this.orderForm.isSaveOrderTemplate === 1
+      }
     }
   },
   created () {

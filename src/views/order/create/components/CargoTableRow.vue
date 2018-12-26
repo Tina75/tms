@@ -42,6 +42,8 @@
       >
       </InputNumber> -->
     </div>
+    <!-- v-model="record[col.key]"  -->
+    <SelectPackageType v-else-if="col.type == 'package'" clearable/>
     <Input v-else v-model="record[col.key]" :maxlength="col.max"></Input>
     <p v-if="record.hasError && record.errorMsg[col.key] !== ''" :class="errorClass">
       {{record.errorMsg[col.key]}}
@@ -50,11 +52,13 @@
 </template>
 
 <script>
+import SelectPackageType from '@/components/SelectPackageType'
 import SelectInput from '@/components/SelectInput'
 import float from '@/libs/js/float'
 export default {
   components: {
-    SelectInput
+    SelectInput,
+    SelectPackageType
   },
   props: {
     index: Number,

@@ -23,9 +23,6 @@ const state = {
   messageCount: {}, // 消息通知数量
   customTableColumns: [], // 自定义table列表信息
   documentHeight: '', // documentBody高度
-  order: {
-    weightOption: 1 // 开单设置选项，1：吨；2：公斤
-  },
   orderSet: {
     // 收货人单位
     consigneeCompanyNameOption: 2,
@@ -48,8 +45,6 @@ const state = {
     // 备注
     cargoRemark1Option: 1,
     cargoRemark2Option: 1,
-    cargoRemark3Option: 2,
-    cargoRemark4Option: 2,
     // 提货费
     pickupFeeOption: 1,
     // 装货费

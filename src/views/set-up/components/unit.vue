@@ -15,10 +15,10 @@
       <Checkbox v-model="form.quantityOption">包装数量</Checkbox>
       </Col>
       <Col span="4">
-      <Checkbox v-model="form.weightTonOption">重量（吨）</Checkbox>
+      <Checkbox v-model="weightTonOption">重量（吨）</Checkbox>
       </Col>
       <Col span="4">
-      <Checkbox v-model="form.weightKgOption">重量（公斤）</Checkbox>
+      <Checkbox v-model="weightKgOption">重量（公斤）</Checkbox>
       </Col>
       <Col span="4">
       <Checkbox v-model="form.volumeOption">体积（方）</Checkbox>
@@ -39,12 +39,6 @@
       </Col>
       <Col span="4">
       <Checkbox v-model="form.cargoRemark2Option">备注2</Checkbox>
-      </Col>
-      <Col span="4">
-      <Checkbox v-model="form.cargoRemark3Option">备注3</Checkbox>
-      </Col>
-      <Col span="4">
-      <Checkbox v-model="form.cargoRemark4Option">备注4</Checkbox>
       </Col>
     </Row>
     <p class="order-set-title">应收费用</p>
@@ -97,8 +91,8 @@ const ORDER_SET = {
   // 备注
   cargoRemark1Option: true,
   cargoRemark2Option: true,
-  cargoRemark3Option: false,
-  cargoRemark4Option: false,
+  // cargoRemark3Option: false,
+  // cargoRemark4Option: false,
   // 提货费
   pickupFeeOption: true,
   // 装货费
@@ -120,11 +114,28 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['OrderSet'])
+    ...mapGetters(['OrderSet']),
+    weightTonOption: {
+      get () {
+        return this.form.weightTonOption
+      },
+      set (value) {
+        this.form.weightTonOption = value
+        this.form.weightKgOption = !value
+      }
+    },
+    weightKgOption: {
+      get () {
+        return this.form.weightKgOption
+      },
+      set (value) {
+        this.form.weightKgOption = value
+        this.form.weightTonOption = !value
+      }
+    }
   },
   mounted () {
-    const store = this.$store.state.orderSet
-    console.log(store)
+    const store = this.OrderSet
     for (let i in store) {
       this.form[i] = store[i] === 1
     }
