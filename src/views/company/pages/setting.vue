@@ -157,9 +157,9 @@
         <!-- 公司介绍图片集合 -->
         <FormItem label="业务介绍：">
           <Input v-if="isEdit" :rows="5" v-model="formCompany.busiIntroduce" :maxlength="500" type="textarea" placeholder="请输入公司介绍"></Input>
-          <pre v-else class="companyProfileSty">{{formCompany.busiIntroduce}}</pre><br/>
-          <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
           <span v-if="!isEdit && busiIntroducePic.length < 1" class="imageTips">完善业务介绍，有利于客户了解贵公司业务组成</span>
+          <pre v-if="!isEdit && formCompany.busiIntroduce" class="companyProfileSty">{{formCompany.busiIntroduce}}</pre><br/>
+          <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
         </FormItem>
         <FormItem class="imageFontItem">
           <image-title
@@ -182,9 +182,9 @@
         <!-- 服务优势图片集合 -->
         <FormItem label="服务优势：">
           <Input v-if="isEdit" :rows="5" v-model="formCompany.busiAdvantce" :maxlength="500" type="textarea" placeholder="请输入公司介绍"></Input>
+          <span v-if="!isEdit && busiAdvantcePic.length < 1" class="imageTips">完善服务优势，有利于提升客户对贵公司的好感度</span>
           <pre v-else class="companyProfileSty">{{formCompany.busiAdvantce}}</pre><br/>
           <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
-          <span v-if="!isEdit && busiAdvantcePic.length < 1" class="imageTips">完善服务优势，有利于提升客户对贵公司的好感度</span>
         </FormItem>
         <FormItem class="imageFontItem">
           <image-title

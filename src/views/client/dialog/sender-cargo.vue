@@ -24,11 +24,11 @@
         </FormItem>
         <FormItem label="包装尺寸：">
           <Row>
-            <Col :span="6"><InputNumber v-model="volumeLength"></InputNumber></Col>
+            <Col :span="6"><InputNumber :min="0" v-model="volumeLength"></InputNumber></Col>
             <Col :span="1"><span style="padding-left: 3px">*</span></Col>
-            <Col :span="6"><InputNumber v-model="volumeWidth"></InputNumber></Col>
+            <Col :span="6"><InputNumber :min="0" v-model="volumeWidth"></InputNumber></Col>
             <Col :span="1"><span style="padding-left: 3px">*</span></Col>
-            <Col :span="6"><InputNumber v-model="volumeHeight"></InputNumber></Col>
+            <Col :span="6"><InputNumber :min="0" v-model="volumeHeight"></InputNumber></Col>
             <Col :span="2"><span style="padding-left: 3px">毫米</span></Col>
             <!-- <Input v-model="validate.dimension" placeholder="请输入"/>毫米 -->
           </Row>
@@ -110,13 +110,13 @@ export default {
   },
   watch: {
     volumeLength (newVal) {
-      this.validate.volume = newVal * this.volumeWidth * this.volumeHeight
+      this.validate.volume = (newVal * this.volumeWidth * this.volumeHeight) / 1000000
     },
     volumeWidth (newVal) {
-      this.validate.volume = newVal * this.volumeLength * this.volumeHeight
+      this.validate.volume = (newVal * this.volumeLength * this.volumeHeight) / 1000000
     },
     volumeHeight (newVal) {
-      this.validate.volume = newVal * this.volumeWidth * this.volumeHeight
+      this.validate.volume = (newVal * this.volumeWidth * this.volumeHeight) / 1000000
     }
   },
   methods: {
@@ -142,7 +142,8 @@ export default {
         weight: parseFloat(this.validate.weight),
         volume: parseFloat(this.validate.volume),
         remark1: this.validate.remark1,
-        remark2: this.validate.remark2
+        remark2: this.validate.remark2,
+        dimension: { length: this.volumeLength, width: this.volumeWidth, height: this.volumeHeight }
       }
       consignerCargoAdd(data).then(res => {
         this.loading = false
@@ -160,7 +161,8 @@ export default {
         weight: parseFloat(this.validate.weight),
         volume: parseFloat(this.validate.volume),
         remark1: this.validate.remark1,
-        remark2: this.validate.remark2
+        remark2: this.validate.remark2,
+        dimension: { length: this.volumeLength, width: this.volumeWidth, height: this.volumeHeight }
       }
       consignerCargoUpdate(data).then(res => {
         this.loading = false
