@@ -27,7 +27,7 @@
       </Row>
       <Row :gutter="16">
         <Col span="8">
-        <FormItem label="责任业务员：">
+        <FormItem label="对接业务员：">
           {{detail.salesmanName}}
         </FormItem>
         </Col>

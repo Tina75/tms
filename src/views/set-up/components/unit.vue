@@ -6,7 +6,7 @@
       <Checkbox v-model="form.consigneeCompanyNameOption">收货人单位</Checkbox>
       </Col>
     </Row>
-    <p class="order-set-title">收货人</p>
+    <p class="order-set-title">货物信息</p>
     <Row :gutter="16" class="order-set-row">
       <Col span="4">
       <Checkbox v-model="form.cargoNoOption">货物编号</Checkbox>
@@ -120,9 +120,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['WeightOption'])
+    ...mapGetters(['OrderSet'])
   },
   mounted () {
+    const store = this.$store.state.orderSet
+    console.log(store)
+    for (let i in store) {
+      this.form[i] = store[i] === 1
+    }
   },
   methods: {
     ...mapMutations(['changeOrderConfiguration']),
@@ -138,7 +143,7 @@ export default {
         obj[i] = this.form[i] === false ? 2 : 1
       }
       Server({
-        url: 'order/config/insertOrUpdate',
+        url: 'http://192.168.1.39:3000/mock/214/order/config/insertOrUpdate',
         method: 'post',
         data: obj
       }).then((result) => {

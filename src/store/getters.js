@@ -16,3 +16,5 @@ export const TableColumns = (state) => state.customTableColumns
 export const DocumentHeight = (state) => state.documentHeight
 /** 开单设置 */
 export const WeightOption = (state) => state.order.weightOption
+
+export const OrderSet = (state) => state.orderSet

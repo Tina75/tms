@@ -10,19 +10,22 @@ export default class Cargo {
   constructor (props, transfer = false) {
     this.quantity = null
     this.editable = false
-    // inputnumber 控件不会默认设置1了
+
     this.cargoCost = null
-    this.weight = null
-    this.weightKg = null
+    this._weight = null
     this.volume = null
+    this.dimension = {
+      length: null,
+      width: null,
+      height: null
+    }
     this.hasError = false
     this.errorMsg = {}
     if (props) {
       this.id = props.id || uniqueIndex++
       this.cargoName = props.cargoName
       // 重量，保留2位小数
-      this.weight = props.weight
-      this.weightKg = float.floor(this.weight * 1000)
+      this._weight = props.weight
       // 体积方，保留1位小数
       this.volume = props.volume
       if (!transfer) {
@@ -41,12 +44,18 @@ export default class Cargo {
       this.remark2 = props.remark2
     }
   }
-  // get weight () {
-
-  // }
-  // set weight (value) {
-  //   this.weightKg = value * 1000
-  // }
+  get weight () {
+    return this._weight
+  }
+  set weight (value) {
+    this._weight = value
+  }
+  get weightKg () {
+    return this._weight === null ? null : float.round(this._weight * 1000)
+  }
+  set weightKg (value) {
+    this._weight = float.round(value / 1000, 3)
+  }
   validate () {
     if (!this.cargoName) {
       return { success: false, message: '请输入货物名称' }
@@ -81,6 +90,7 @@ export default class Cargo {
     return {
       cargoName: this.cargoName,
       weight: this.weight,
+      weightKg: this.weightKg,
       volume: this.volume,
       cargoCost: float.round(this.cargoCost * 100),
       quantity: this.quantity,

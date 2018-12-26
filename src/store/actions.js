@@ -81,7 +81,7 @@ export const getOrderConfiguration = ({ commit }) => {
     method: 'post',
     data: {}
   }).then(({ data }) => {
-    commit('changeOrderConfiguration', data.data.weightOption)
+    // commit('changeOrderConfiguration', data.data.weightOption)
   })
 }
 /**

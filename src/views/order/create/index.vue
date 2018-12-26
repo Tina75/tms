@@ -3,7 +3,6 @@
     <Spin v-if="loading" fix>
       <img src="../../../assets/loading.gif" width="24" height="24" alt="加载中">
     </Spin>
-
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="客户名称:" prop="consignerName">
@@ -154,7 +153,7 @@
       </FormItem>
       </Col>
     </Row>
-    <Row :gutter="16">
+    <Row v-if="OrderSet.consigneeCompanyNameOption == 1" :gutter="16" >
       <Col span="12" offset="12">
       <!-- 收货人公司设置 -->
       <FormItem :maxlength="50" label="收货人单位：" prop="consigneeCompanyNameOption">
@@ -165,7 +164,7 @@
     <Title>货物信息</Title>
     <CargoTable
       ref="cargoTable"
-      :unit-type="WeightOption"
+      :order-set="OrderSet"
       :cargoes="cargoes"
       :data-source="consignerCargoes"
       :on-append="appendCargo"
@@ -208,7 +207,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.pickupFeeOption == 1" span="6">
       <FormItem label="提货费用:" prop="pickupFee">
         <Row>
           <Col span="19">
@@ -220,7 +219,7 @@
       </Col>
     </Row>
     <Row :gutter="16">
-      <Col span="6">
+      <Col v-if="OrderSet.loadFeeOption == 1" span="6">
       <FormItem label="装货费用:" prop="loadFee">
         <Row>
           <Col span="19">
@@ -230,7 +229,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.unloadFeeOption == 1" span="6">
       <FormItem label="卸货费用:" prop="unloadFee">
         <Row>
           <Col span="19">
@@ -240,7 +239,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.insuranceFeeOption == 1" span="6">
       <FormItem label="保险费用:" prop="insuranceFee">
         <Row>
           <Col span="19">
@@ -250,7 +249,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.otherFeeOption == 1" span="6">
       <FormItem label="其他费用:" prop="otherFee">
         <Row>
           <Col span="19">
@@ -328,6 +327,10 @@
       </Col>
     </Row>
     <div class="van-center i-mt-20 i-mb-20">
+      <!-- 权限 -->
+      <span style="float: left; vertical-align:middle;">
+        <Checkbox v-model="orderForm.isSaveOrderTemplate">保存为常发货源</Checkbox>
+      </span>
       <Button v-if="hasPower(100101)" :loading="disabled" type="primary" @click="handleSubmit">保存</Button>
       <Button v-if="hasPower(100102)" :loading="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
@@ -518,7 +521,8 @@ export default {
         isInvoice: 0,
         invoiceRate: null,
         // 备注
-        remark: ''
+        remark: '',
+        isSaveOrderTemplate: false
       },
       orderPrint: [],
       rules: {
@@ -635,7 +639,8 @@ export default {
       'consigneeAddresses',
       'cargoes',
       'cargoOptions',
-      'WeightOption'
+      'WeightOption',
+      'OrderSet'
     ]),
     totalFee () {
       const feeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
