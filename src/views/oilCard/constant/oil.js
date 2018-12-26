@@ -35,14 +35,15 @@ export const USEDBTN = vm => [
   }
 ]
 
-const oilTableBtn = vm => [
+export const oilTableBtn = vm => [
   {
     name: '分配',
     key: 'canAssigin',
     code: 0,
-    funName: 'assigin',
+    funName: 'assign',
     func: () => {
-      vm.assigin()
+      console.log(vm)
+      vm.assign()
     }
   },
   {
@@ -51,6 +52,7 @@ const oilTableBtn = vm => [
     code: 0,
     funName: 'recharge',
     func: () => {
+      console.log(vm)
       vm.recharge()
     }
   },
@@ -121,7 +123,8 @@ export const oilTableColumns = vm => [
                 },
                 on: {
                   click: () => {
-                    vm.func()
+                    console.log(vm)
+                    item.func()
                   }
                 }
               }, item.name)
@@ -172,7 +175,7 @@ export const oilTableColumns = vm => [
         },
         on: {
           click: () => {
-            vm.toDetail()
+            vm.toDetail(params)
           }
         }
       }, params.row.number)

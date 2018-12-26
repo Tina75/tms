@@ -58,9 +58,10 @@
 <script>
 import { OILBTN, oilTableColumns } from '../constant/oil'
 import commonmixin from '../mixin/commonmixin'
+import operateBtnMixin from '../mixin/operateBtnMixin'
 export default {
   name: 'oil-list',
-  mixins: [commonmixin],
+  mixins: [commonmixin, operateBtnMixin],
   data () {
     return {
       searchFields: {}, // 发起请求时的搜索字段
@@ -114,33 +115,15 @@ export default {
     selectionChanged (selection) {
       this.tableSelection = selection
     },
-    // 分配
-    assign () {
-      console.log('assign')
-    },
-    // 充值
-    recharge () {
-      console.log('recharge')
-    },
-    // 加油
-    refuel () {
-      console.log('refuel')
-    },
-    // 转账
-    transfer () {
-      console.log('transfer')
-    },
-    // 修改
-    update () {
-      console.log('update')
-    },
-    // 回收
-    recover () {
-      console.log('recover')
-    },
     // 到详情页
-    toDetail () {
-      console.log('toDetail')
+    toDetail (p) {
+      this.openTab({
+        title: p.row.number,
+        path: '/oilCard/detail/detail',
+        query: {
+          shipperOrderId: p.row.id
+        }
+      })
     }
   }
 }
