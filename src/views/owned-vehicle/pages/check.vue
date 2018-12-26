@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="add">
-      <Button v-if="hasPower(190201)" type="primary" @click="edit">新增保险</Button>
+      <Button v-if="hasPower(190201)" type="primary" @click="edit">新增年检</Button>
       <Button v-if="hasPower(190204)" @click="Export">导出</Button>
       <div class="rightSearch">
         <template>
@@ -9,13 +9,16 @@
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
-        <Input v-model="keyword"
-               :maxlength="selectStatus === '1' ? 8 : 20"
-               :icon="keyword? 'ios-close-circle' : ''"
-               :placeholder="selectStatus === '1' ? '请输入车牌号搜索' : '请选择年检时间'"
+        <Input v-if="selectStatus === '1'"
+               v-model="keyword"
+               :maxlength="8"
+               :icon="keyword ? 'ios-close-circle' : ''"
+               placeholder="请输入车牌号搜索"
                class="search-input"
                @on-enter="searchCarList"
                @on-click="clearKeywords"/>
+        <DatePicker v-else v-model="keyword" transfer format="yyyy-MM-dd" type="date" placeholder="请选择年检时间">
+        </DatePicker>
         <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
                 style="float: right;width:41px;"
@@ -39,17 +42,15 @@
 import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
-import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
-import { CODE, deleteCarById } from './client'
 import { mapActions } from 'vuex'
 export default {
-  name: 'owned-car',
+  name: 'owner-check',
   components: {
     PageTable
   },
   metaInfo: {
-    title: '车辆管理'
+    title: '车辆年检'
   },
   mixins: [ BasePage ],
   data () {
@@ -81,9 +82,9 @@ export default {
                   click: () => {
                     let vm = this
                     this.openDialog({
-                      name: 'owned-vehicle/dialog/edit-car',
+                      name: 'owned-vehicle/dialog/edit-check',
                       data: {
-                        title: '修改车辆',
+                        title: '修改年检',
                         flag: 2, // 修改
                         validate: { ...params.row, purchDate: new Date(params.row.purchDate) }
                       },
@@ -107,13 +108,7 @@ export default {
               },
               on: {
                 click: () => {
-                  this.openTab({
-                    path: TMSUrl.OWNEDVEHICLE_CAEDETAILS,
-                    query: {
-                      id: '车辆详情',
-                      rowData: params.row
-                    }
-                  })
+                  this.$router.push({ name: 'check-details', query: { rowData: params.row } })
                 }
               }
             }, '查看'))
@@ -132,13 +127,9 @@ export default {
                       },
                       methods: {
                         ok () {
-                          deleteCarById({ carId: params.row.id }).then(res => {
-                            if (res.data.code === CODE) {
-                              vm.$Message.success('删除成功！')
-                            }
+                          this.checkDeleteById({ carId: params.row.id }).then(res => {
+                            vm.$Message.success('删除成功！')
                           }).then(() => {
-                            vm.getOwnDrivers()
-                            vm.getOwnCars()
                             vm.formSearchInit = {}
                           })
                         }
@@ -157,19 +148,24 @@ export default {
         },
         {
           title: '金额',
-          key: 'carType'
+          key: 'cost'
         },
         {
           title: '年检日期',
-          key: 'shippingWeight'
+          key: 'checkDate'
         },
         {
           title: '下次年检日期',
-          key: 'shippingVolume'
+          key: 'nextCheckDate'
         },
         {
           title: '创建时间',
-          key: 'carBrand'
+          key: 'createTime',
+          sortable: 'custom',
+          render: (h, params) => {
+            let text = this.formatDateTime(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
         }
       ],
       selectList: [
@@ -184,11 +180,8 @@ export default {
       ]
     }
   },
-  mounted () {
-    this.getOwnCars()
-  },
   methods: {
-    ...mapActions(['getOwnDrivers', 'getOwnCars']),
+    ...mapActions(['checkDeleteById']),
     // 导出判空
     handleLoad (response) {
       try {
@@ -206,10 +199,10 @@ export default {
       }
       let params = this.formSearchInit
       Export({
-        url: '/ownerCar/exportCar',
+        url: '/ownerCar/check/export',
         method: 'post',
         data: params,
-        fileName: '导出车辆列表'
+        fileName: '导出车辆年检'
       })
     },
     // 日期格式化
@@ -219,9 +212,9 @@ export default {
     edit () {
       let vm = this
       this.openDialog({
-        name: 'owned-vehicle/dialog/edit-car',
+        name: 'owned-vehicle/dialog/edit-check',
         data: {
-          title: '新增车辆',
+          title: '新增年检',
           flag: 1 // 新增
         },
         methods: {
@@ -237,9 +230,9 @@ export default {
       this.formSearchInit = {}
       if (this.selectStatus === '1') {
         this.formSearchInit.carNo = this.keyword
-        this.formSearchInit.driverName = ''
+        this.formSearchInit.checkDate = ''
       } else {
-        this.formSearchInit.driverName = this.keyword
+        this.formSearchInit.checkDate = this.keyword
         this.formSearchInit.carNo = ''
       }
     },

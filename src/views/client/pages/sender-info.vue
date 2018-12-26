@@ -39,10 +39,19 @@
           </Col>
           <Col span="8">
           <div>
+            <span class="label">开拓渠道：</span>
+            <span v-if="list.exploiteChannel ===1">公司开拓</span>
+            <span v-else>个人开拓</span>
+          </div>
+          </Col>
+          <Col span="8">
+          <div>
             <span class="label">对接业务员：</span>
             <span v-text="list.salesName"></span>
           </div>
           </Col>
+        </Row>
+        <Row class="row">
           <Col span="8">
           <div>
             <span class="label">是否开票：</span>
@@ -77,6 +86,8 @@
         <TabPane :label="tabPaneLabe2">
           <div class="add">
             <Button v-if="hasPower(130107)" type="primary"  @click="_consignerConsigneeAdd">新增</Button>
+            <!-- 权限待加 -->
+            <Button type="default"  @click="_consignerConsigneeAddAll">批量导入</Button>
           </div>
           <template>
             <page-table
@@ -112,6 +123,10 @@ import ruleForClient from './ruleForClient/index'
 import { CODE, consignerDetail, consignerAddressList, consignerAddressDelete, consignerConsigneeList, consignerConsigneeDelete, consignerCargoList, consignerCargoDelete } from './client'
 import pageTable from '@/components/page-table'
 import float from '@/libs/js/float'
+// 是否包含省市
+const hasCity = (val, cityName) => {
+  return val.indexOf(cityName) === 0 || val.indexOf('省') > -1 || val.indexOf('市') > -1
+}
 export default {
   name: 'sender-info',
   components: {
@@ -217,9 +232,9 @@ export default {
           render: (h, params) => {
             let text = params.row.address
             if (params.row.consignerHourseNumber) {
-              text += ',' + params.row.consignerHourseNumber
+              text += params.row.consignerHourseNumber
             }
-            return h('span', text)
+            return h('span', hasCity(text, params.row.cityName) ? text : params.row.cityName + text)
           }
         }
       ],
@@ -316,10 +331,15 @@ export default {
           render: (h, params) => {
             let text = params.row.address
             if (params.row.consignerHourseNumber) {
-              text += ',' + params.row.consignerHourseNumber
+              text += params.row.consignerHourseNumber
             }
-            return h('span', text)
+
+            return h('span', hasCity(text, params.row.cityName) ? text : params.row.cityName + text)
           }
+        },
+        {
+          title: '收货人单位',
+          key: 'consigneeCompanyName'
         },
         {
           title: '备注',
@@ -420,6 +440,17 @@ export default {
           tooltip: true
         },
         {
+          title: '货物编码',
+          key: 'cargoNo'
+        },
+        {
+          title: '货值',
+          key: 'cargoCost',
+          render (h, params) {
+            return h('div', {}, (params.row.cargoCost / 100).toFixed(2))
+          }
+        },
+        {
           title: '包装方式',
           key: 'unit',
           render (h, params) {
@@ -433,11 +464,8 @@ export default {
           }
         },
         {
-          title: '货值',
-          key: 'cargoCost',
-          render (h, params) {
-            return h('div', {}, (params.row.cargoCost / 100).toFixed(2))
-          }
+          title: '包装尺寸',
+          key: 'dimension'
         },
         {
           title: '重量(吨)',
@@ -508,7 +536,8 @@ export default {
       totalCount3: 0, // 总条数
       pageNo3: 1,
       totalCount4: 0,
-      isShow: false
+      isShow: false,
+      downLoadUrl: ''
     }
   },
   computed: {
@@ -563,6 +592,7 @@ export default {
           this.totalCount2 = data.consigneeList.totalCount
           this.data3 = data.cargoList.list
           this.totalCount3 = data.cargoList.totalCount
+          this.downLoadUrl = data.downLoadUrl || ''
         }
       })
     },
@@ -632,6 +662,19 @@ export default {
           ok () {
             _this._consignerConsigneeList() // 刷新页面
           }
+        }
+      })
+    },
+    // 批量导入
+    _consignerConsigneeAddAll () {
+      this.openDialog({
+        name: 'client/dialog/batch-import',
+        data: {
+          title: '批量导入',
+          downLoadUrl: this.downLoadUrl
+        },
+        methods: {
+          ok () { }
         }
       })
     },

@@ -93,9 +93,27 @@
           style="width:200px;margin-right: 20px;"
           @on-focus.once="getClients">
         </SelectInput>
-        <Input v-model="keywords.orderNo" :maxlength="30" placeholder="请输入订单号" style="width: 200px" />
-        <Input v-model="keywords.customerOrderNo" :maxlength="30" placeholder="请输入客户订单号" style="width: 200px" />
-        <Input v-model="keywords.waybillNo" :maxlength="30" placeholder="请输入运单号" style="width: 200px" />
+        <Input
+          v-model="keywords.orderNo"
+          :maxlength="30"
+          clearable
+          placeholder="请输入订单号"
+          style="width: 200px"
+          @on-enter="searchList" />
+        <Input
+          v-model="keywords.customerOrderNo"
+          :maxlength="30"
+          clearable
+          placeholder="请输入客户订单号"
+          style="width: 200px"
+          @on-enter="searchList" />
+        <Input
+          v-model="keywords.waybillNo"
+          :maxlength="30"
+          clearable
+          placeholder="请输入运单号"
+          style="width: 200px"
+          @on-enter="searchList" />
       </div>
       <div class="complex-query">
         <div>
@@ -322,7 +340,7 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
-                    path: '/order/management/detail',
+                    path: '/order-management/recept-detail',
                     query: {
                       id: '回单' + params.row.orderNo,
                       orderId: params.row.id,
@@ -719,7 +737,7 @@ export default {
         data.id = [params.row]
       }
       _this.openDialog({
-        name: 'order-management/dialog/return',
+        name: 'order/management/dialog/return',
         data: data,
         methods: {
           ok (node) {
@@ -737,7 +755,7 @@ export default {
     openUploadDialog (params, name) {
       const _this = this
       _this.openDialog({
-        name: 'order-management/dialog/upload',
+        name: 'order/management/dialog/upload',
         data: {
           params,
           name

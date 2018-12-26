@@ -5,7 +5,7 @@
       <span style="display:inline-block;min-width:18px">
         <Icon v-show="checked" class="tab-item__icon " type="ios-refresh" size="20" @click.stop="refresh"/>
       </span>
-      <router-link :to="path" tag="span" class="tab-item__name">{{name}}</router-link>
+      <router-link :to="path" :title="name" tag="span" class="tab-item__name">{{name}}</router-link>
       <span style="display:inline-block;min-width:18px">
         <Icon v-show="closeable" :style="checked?'visibility:visible':'visibility:hidden'" class="tab-item__icon close-icon" type="ios-close" size="20" @click.stop="close"/>
       </span>
@@ -53,17 +53,19 @@ export default {
       let nextRoute = this.tab.close()
       this.ema.fire('closeTab', this.tab)
       if (nextRoute) {
+        // 跳转到已有的路由
         this.$router.push(nextRoute)
       }
     },
     refresh () {
       // this.$emit('on-refresh')
       let tab = this.tab
-      this.tab.refresh()
-      this.close()
-      this.$nextTick(() => {
-        this.$router.push(tab)
+      this.tab.refresh(() => {
+        this.$router.push({ path: '/loading' })
       })
+      setTimeout(() => {
+        this.$router.push(tab)
+      }, 50)
     }
   }
 }

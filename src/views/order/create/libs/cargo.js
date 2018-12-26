@@ -10,19 +10,28 @@ export default class Cargo {
   constructor (props, transfer = false) {
     this.quantity = null
     this.editable = false
-    // inputnumber 控件不会默认设置1了
+
     this.cargoCost = null
-    this.weight = null
-    this.weightKg = null
+    this._weight = null
     this.volume = null
     this.hasError = false
     this.errorMsg = {}
+    // 1.0.9新增
+    this.dimension = {
+      length: null,
+      width: null,
+      height: null
+    }
+    this.cargoNo = null
+    this.unit = null
+
     if (props) {
       this.id = props.id || uniqueIndex++
       this.cargoName = props.cargoName
+      this.cargoNo = props.cargoName
+      this.dimension = props.dimension
       // 重量，保留2位小数
-      this.weight = props.weight
-      this.weightKg = float.floor(this.weight * 1000)
+      this._weight = props.weight
       // 体积方，保留1位小数
       this.volume = props.volume
       if (!transfer) {
@@ -40,6 +49,18 @@ export default class Cargo {
       this.remark1 = props.remark1
       this.remark2 = props.remark2
     }
+  }
+  get weight () {
+    return this._weight
+  }
+  set weight (value) {
+    this._weight = value
+  }
+  get weightKg () {
+    return this._weight === null ? null : float.round(this._weight * 1000)
+  }
+  set weightKg (value) {
+    this._weight = float.round(value / 1000, 3)
   }
   validate () {
     if (!this.cargoName) {
@@ -80,7 +101,9 @@ export default class Cargo {
       quantity: this.quantity,
       unit: this.unit,
       remark1: this.remark1,
-      remark2: this.remark2
+      remark2: this.remark2,
+      cargoNo: this.cargoNo,
+      dimension: this.dimension
     }
   }
 }

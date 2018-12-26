@@ -207,7 +207,7 @@ export default {
       switch (data.row.orderType) {
         case 1:
           this.openTab({
-            path: '/order/management/detail',
+            path: '/order-management/order-detail',
             title: data.row.orderNo,
             query: {
               id: data.row.orderNo,

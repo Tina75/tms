@@ -212,7 +212,7 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import '@/libs/js/filter'
-import { renderVolume, renderWeight } from '@/libs/js/util'
+import { renderVolume, renderWeight } from '../constant/util'
 import float from '@/libs/js/float'
 export default {
   name: 'detail',
@@ -403,7 +403,7 @@ export default {
     openOuterDialog (order) {
       const _this = this
       this.openDialog({
-        name: 'order-management/dialog/outer',
+        name: 'order/management/dialog/outer',
         data: { detail: order },
         methods: {
           ok (node) {

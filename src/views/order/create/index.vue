@@ -1,11 +1,10 @@
 <template>
-  <Form ref="orderForm" :label-width="80" :model="orderForm" :rules="rules" style="position: relative;">
+  <Form ref="orderForm" :label-width="85" :model="orderForm" :rules="rules" style="position: relative;">
     <Spin v-if="loading" fix>
       <img src="../../../assets/loading.gif" width="24" height="24" alt="加载中">
     </Spin>
-
     <Row :gutter="16">
-      <Col span="8">
+      <Col span="6">
       <FormItem label="客户名称:" prop="consignerName">
         <SelectInput
           v-model="orderForm.consignerName"
@@ -19,19 +18,36 @@
         </SelectInput>
       </FormItem>
       </Col>
-      <Col span="8">
+      <Col span="6">
       <FormItem label="客户订单号:" prop="customerOrderNo">
-        <Input v-model="orderForm.customerOrderNo" :maxlength="30" type="text"></Input>
+        <Input v-model="orderForm.customerOrderNo" :maxlength="30" clearable></Input>
       </FormItem>
       </Col>
-      <Col span="8">
+      <Col span="6">
       <FormItem label="客户运单号:" prop="customerWaybillNo">
-        <Input v-model="orderForm.customerWaybillNo" :maxlength="30" type="text"></Input>
+        <Input v-model="orderForm.customerWaybillNo" :maxlength="30" clearable></Input>
+      </FormItem>
+      </Col>
+      <Col span="6">
+      <FormItem label="对接业务员:" prop="salesmanId">
+        <Select v-model="orderForm.salesmanId" transfer clearable placeholder="全部">
+          <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.id">{{opt.name}}</Option>
+        </Select>
       </FormItem>
       </Col>
     </Row>
     <Row :gutter="16">
-      <Col span="8">
+      <Col span="6">
+      <FormItem label="发货城市:" prop="start">
+        <CitySelect v-model="orderForm.start" clearable></CitySelect>
+      </FormItem>
+      </Col>
+      <Col span="6">
+      <FormItem label="到货城市:" prop="end">
+        <CitySelect v-model="orderForm.end" clearable></CitySelect>
+      </FormItem>
+      </Col>
+      <Col span="6">
       <FormItem label="发货时间:">
         <Row>
           <Col span="13">
@@ -47,7 +63,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="8">
+      <Col span="6">
       <FormItem label="到货时间:">
         <Row>
           <Col span="13">
@@ -63,13 +79,6 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="8">
-      <FormItem label="对接业务员:" prop="salesmanId">
-        <Select v-model="orderForm.salesmanId" transfer clearable placeholder="全部">
-          <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.id">{{opt.name}}</Option>
-        </Select>
-      </FormItem>
-      </Col>
     </Row>
     <Row :gutter="16" class="i-mb-15">
       <Col span="12"><Title>发货人</Title></Col>
@@ -78,23 +87,23 @@
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="发货人:" prop="consignerContact">
-        <Input v-model="orderForm.consignerContact" :maxlength="15" type="text"></Input>
+        <Input v-model="orderForm.consignerContact" :maxlength="15" clearable></Input>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="联系号码:" prop="consignerPhone">
-        <SelectInput v-model="orderForm.consignerPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号"></SelectInput>
+        <SelectInput v-model="orderForm.consignerPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号" clearable></SelectInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="收货人:" prop="consigneeContact">
-        <SelectInput v-model="orderForm.consigneeContact" :maxlength="15" :local-options="consigneeContacts" :remote="false" @on-select="handleSelectConsignee">
+        <SelectInput v-model="orderForm.consigneeContact" :maxlength="15" :local-options="consigneeContacts" :remote="false" clearable @on-select="handleSelectConsignee">
         </SelectInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="联系号码:" prop="consigneePhone">
-        <SelectInput v-model="orderForm.consigneePhone" :formatter="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号"></SelectInput>
+        <SelectInput v-model="orderForm.consigneePhone" :formatter="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号" clearable></SelectInput>
       </FormItem>
       </Col>
     </Row>
@@ -103,14 +112,14 @@
       <FormItem label="发货地址:" class="consig-address" prop="consignerAddress">
         <AreaInput
           v-model="orderForm.consignerAddress"
-          :show-icon="!!orderForm.start"
           :local-options="consignerAddresses"
+          :show-icon="!!orderForm.consignerAddressLongitude && !!orderForm.consignerAddressLatitude"
           placeholder="详细地址（省市区+地址）"
           @city-select="({lat, lng, cityCode}) => citySelect(1, lat, lng, cityCode)"/>
       </FormItem>
       </Col>
       <Col span="3">
-      <FormItem :label-width="0">
+      <FormItem :label-width="0" prop="consignerHourseNumber">
         <Input v-model="orderForm.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
       </FormItem>
       </Col>
@@ -125,14 +134,14 @@
       <FormItem label="收货地址:" class="consig-address" prop="consigneeAddress">
         <AreaInput
           v-model="orderForm.consigneeAddress"
-          :show-icon="!!orderForm.end"
           :local-options="consigneeAddresses"
+          :show-icon="!!orderForm.consigneeAddressLongitude && !!orderForm.consigneeAddressLatitude"
           placeholder="详细地址（省市区+地址）"
           @city-select="({lat, lng, cityCode}) => citySelect(2, lat, lng, cityCode)"/>
       </FormItem>
       </Col>
       <Col span="3">
-      <FormItem :label-width="0">
+      <FormItem :label-width="0" prop="consigneeHourseNumber">
         <Input v-model="orderForm.consigneeHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
       </FormItem>
       </Col>
@@ -144,10 +153,18 @@
       </FormItem>
       </Col>
     </Row>
+    <Row v-if="OrderSet.consigneeCompanyNameOption == 1" :gutter="16" >
+      <Col span="12" offset="12">
+      <!-- 收货人公司设置 -->
+      <FormItem :maxlength="50" label="收货人单位：" prop="consigneeCompanyNameOption">
+        <Input v-model="orderForm.consigneeCompanyNameOption" :maxlength="50"></Input>
+      </FormItem>
+      </Col>
+    </Row>
     <Title>货物信息</Title>
     <CargoTable
       ref="cargoTable"
-      :unit-type="WeightOption"
+      :order-set="OrderSet"
       :cargoes="cargoes"
       :data-source="consignerCargoes"
       :on-append="appendCargo"
@@ -190,7 +207,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.pickupFeeOption == 1" span="6">
       <FormItem label="提货费用:" prop="pickupFee">
         <Row>
           <Col span="19">
@@ -202,7 +219,7 @@
       </Col>
     </Row>
     <Row :gutter="16">
-      <Col span="6">
+      <Col v-if="OrderSet.loadFeeOption == 1" span="6">
       <FormItem label="装货费用:" prop="loadFee">
         <Row>
           <Col span="19">
@@ -212,7 +229,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.unloadFeeOption == 1" span="6">
       <FormItem label="卸货费用:" prop="unloadFee">
         <Row>
           <Col span="19">
@@ -222,7 +239,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.insuranceFeeOption == 1" span="6">
       <FormItem label="保险费用:" prop="insuranceFee">
         <Row>
           <Col span="19">
@@ -232,7 +249,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.otherFeeOption == 1" span="6">
       <FormItem label="其他费用:" prop="otherFee">
         <Row>
           <Col span="19">
@@ -280,11 +297,13 @@
       <Col span="6">
       <FormItem v-if="orderForm.isInvoice === 1" label="开票税率:" prop="invoiceRate">
         <Row>
-          <Col span="20">
+          <Col span="12">
           <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :min="0" :max="100">
           </TagNumberInput>
           </Col>
-          <Col span="4" class="order-create__input-unit">%</Col>
+          <Col span="12" class="order-create__input-unit">%
+          <span>（{{ totalFee * orderForm.isInvoice / 100}}元）</span>
+          </Col>
         </Row>
       </FormItem>
       </Col>
@@ -303,11 +322,15 @@
       <Col span="18">
       <FormItem label="备注:" prop="remark">
         <Input v-model="orderForm.remark" :maxlength="100" type="text">
-          </Input>
+        </Input>
       </FormItem>
       </Col>
     </Row>
     <div class="van-center i-mt-20 i-mb-20">
+      <!-- 权限 -->
+      <span style="float: left; vertical-align:middle;">
+        <Checkbox v-model="isSaveOrderTemplate">保存为常发货源</Checkbox>
+      </span>
       <Button v-if="hasPower(100101)" :loading="disabled" type="primary" @click="handleSubmit">保存</Button>
       <Button v-if="hasPower(100102)" :loading="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
@@ -325,7 +348,7 @@
 import _ from 'lodash'
 import api from './libs/api'
 import distance from '@/libs/js/distance'
-import validator from '@/libs/js/validate'
+import validator, { validatePhone } from '@/libs/js/validate'
 import pickups from '@/libs/constant/pickup.js'
 import settlements from '@/libs/constant/settlement.js'
 import { invoiceList } from '@/libs/constant/orderCreate.js'
@@ -396,14 +419,14 @@ export default {
         callback()
       }
     }
-    const validatePhone = (rule, value, callback) => {
-      value = value.replace(/\s/g, '')
-      if (validator.phone(value) || validator.telphone(value)) {
-        callback()
-      } else {
-        callback(new Error('请输入正确的手机号或座机号'))
-      }
-    }
+    // const validatePhone = (rule, value, callback) => {
+    //   value = value.replace(/\s/g, '')
+    //   if (validator.phone(value) || validator.telphone(value)) {
+    //     callback()
+    //   } else {
+    //     callback(new Error('请输入正确的手机号或座机号'))
+    //   }
+    // }
     // 9位整数 2位小数
     const validateFee = (rule, value, callback) => {
       if ((value && validator.fee(value)) || !value) {
@@ -471,6 +494,7 @@ export default {
         consigneeAddressLongitude: '',
         consigneeAddressLatitude: '',
         consigneeAddressMapType: 1,
+        consigneeCompanyNameOption: '',
         // 货品信息
         orderCargoList: [],
         // 付款方式
@@ -497,7 +521,8 @@ export default {
         isInvoice: 0,
         invoiceRate: null,
         // 备注
-        remark: ''
+        remark: '',
+        isSaveOrderTemplate: 0
       },
       orderPrint: [],
       rules: {
@@ -505,10 +530,10 @@ export default {
           { required: true, message: '请输入客户名称' }
         ],
         start: [
-          { required: true, message: '请输入始发城市' }
+          { required: false, message: '请输入始发城市' }
         ],
         end: [
-          { required: true, message: '请输入目的城市' }
+          { required: false, message: '请输入目的城市' }
         ],
         deliveryTimes: [
           { validator: validateStart, trigger: 'change' }
@@ -533,8 +558,14 @@ export default {
         consignerAddress: [
           { required: true, message: '请输入发货地址' }
         ],
+        consignerHourseNumber: [
+          { required: false, message: '请输入' }
+        ],
         consigneeAddress: [
           { required: true, message: '请输入收货地址' }
+        ],
+        consigneeHourseNumber: [
+          { required: false, message: '请输入' }
         ],
         settlementType: [
           { required: true, message: '请选择付款方式' }
@@ -596,7 +627,6 @@ export default {
       },
       salesmanList: [],
       highLight: false
-      // unitType: this.WeightOption || 1 // 货物单位
     }
   },
   computed: {
@@ -608,7 +638,7 @@ export default {
       'consigneeAddresses',
       'cargoes',
       'cargoOptions',
-      'WeightOption'
+      'OrderSet'
     ]),
     totalFee () {
       const feeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
@@ -633,6 +663,14 @@ export default {
     },
     orderId () {
       return this.$route.query.id
+    },
+    isSaveOrderTemplate: {
+      set (value) {
+        this.orderForm.isSaveOrderTemplate = value === true ? 1 : 0
+      },
+      get () {
+        return this.orderForm.isSaveOrderTemplate === 1
+      }
     }
   },
   created () {
@@ -762,17 +800,10 @@ export default {
         _this.orderForm.consignerContact = consigner.contact
         _this.orderForm.consignerPhone = consigner.phone
         if (addresses.length > 0) {
-          if (this.hasCity(addresses[0].address, addresses[0].cityName)) {
-            _this.orderForm.consignerAddress = addresses[0].address
-          } else {
-            _this.orderForm.consignerAddress = addresses[0].cityName + addresses[0].address
-          }
-          // if (addresses[0].address.index)
-          _this.orderForm.consignerAddressLongitude = addresses[0].longitude
-          _this.orderForm.consignerAddressLatitude = addresses[0].latitude
+          _this.orderForm.consignerAddress = addresses[0].address
           _this.orderForm.start = addresses[0].cityCode
-          _this.orderForm.consignerAddressLatitude = addresses[0].latitude
           _this.orderForm.consignerAddressLongitude = addresses[0].longitude
+          _this.orderForm.consignerAddressLatitude = addresses[0].latitude
           _this.orderForm.consignerHourseNumber = addresses[0].consignerHourseNumber
         }
         if (consignees.length > 0) {
@@ -780,16 +811,9 @@ export default {
           _this.orderForm.consigneeContact = consignees[0].contact
           _this.orderForm.consigneePhone = consignees[0].phone
           _this.orderForm.consigneeAddress = consignees[0].address
-          if (this.hasCity(consignees[0].address, consignees[0].cityName)) {
-            _this.orderForm.consigneeAddress = consignees[0].address
-          } else {
-            _this.orderForm.consigneeAddress = consignees[0].cityName + addresses[0].address
-          }
-          _this.orderForm.consigneeAddressLongitude = consignees[0].longitude
-          _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
           _this.orderForm.end = consignees[0].cityCode
-          _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
           _this.orderForm.consigneeAddressLongitude = consignees[0].longitude
+          _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
           _this.orderForm.consigneeHourseNumber = consignees[0].consignerHourseNumber
         }
         // 计费里程
@@ -919,6 +943,11 @@ export default {
     // 清空重置表单
     resetForm () {
       this.highLight = false
+      this.orderForm.consignerAddressLongitude = ''
+      this.orderForm.consignerAddressLatitude = ''
+      this.orderForm.consigneeAddressLongitude = ''
+      this.orderForm.consigneeAddressLatitude = ''
+
       this.$refs.orderForm.resetFields()
       this.clearCargoes()
       this.consignerCargoes = [new Cargo()]
@@ -974,11 +1003,15 @@ export default {
       if (type === 1) {
         this.orderForm.consignerAddressLongitude = lng
         this.orderForm.consignerAddressLatitude = lat
-        this.orderForm.start = cityCode
+        if (!this.orderForm.start) {
+          this.orderForm.start = cityCode
+        }
       } else if (type === 2) {
         this.orderForm.consigneeAddressLongitude = lng
         this.orderForm.consigneeAddressLatitude = lat
-        this.orderForm.end = cityCode
+        if (!this.orderForm.end) {
+          this.orderForm.end = cityCode
+        }
       }
       this.distanceCp()
     },

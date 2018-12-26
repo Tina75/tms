@@ -1,5 +1,5 @@
 <template>
-  <span :style="'background:' + background">{{ text }}</span>
+  <span :style="'background:' + background + ';color:' + color">{{ text }}</span>
 </template>
 <script>
 export default {
@@ -9,6 +9,10 @@ export default {
     },
     background: {
       type: String
+    },
+    color: {
+      type: String,
+      default: '#fff'
     }
   }
 }

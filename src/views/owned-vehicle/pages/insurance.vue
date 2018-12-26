@@ -9,13 +9,16 @@
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
-        <Input v-model="keyword"
+        <Input v-if="selectStatus != 4"
+               v-model="keyword"
                :maxlength="selectStatus === '1' ? 8 : 20"
-               :icon="keyword? 'ios-close-circle' : ''"
+               :icon="keyword ? 'ios-close-circle' : ''"
                :placeholder="placeholderContent"
                class="search-input"
                @on-enter="searchCarList"
                @on-click="clearKeywords"/>
+        <DatePicker v-else v-model="keyword" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
+        </DatePicker>
         <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
                 style="float: right;width:41px;"
@@ -36,31 +39,28 @@
   </div>
 </template>
 <script>
-import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
-import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
-import { CODE, deleteCarById } from './client'
 import { mapActions } from 'vuex'
 export default {
-  name: 'owned-car',
+  name: 'owned-insurance',
   components: {
     PageTable
   },
   metaInfo: {
-    title: '车辆管理'
+    title: '车辆保险'
   },
   mixins: [ BasePage ],
   data () {
     return {
-      carTypeMap: CAR_TYPE1,
-      carLengthMap: CAR_LENGTH1,
       selectStatus: '1',
       keyword: '',
       formSearchInit: {
         carNo: '',
-        driverName: ''
+        insuranceCompanyName: '',
+        invoiceNo: '',
+        buyDate: ''
       },
       exportFile: true,
       menuColumns: [
@@ -81,17 +81,15 @@ export default {
                   click: () => {
                     let vm = this
                     this.openDialog({
-                      name: 'owned-vehicle/dialog/edit-car',
+                      name: 'owned-vehicle/dialog/edit-insurance',
                       data: {
-                        title: '修改车辆',
+                        title: '修改保险',
                         flag: 2, // 修改
                         validate: { ...params.row, purchDate: new Date(params.row.purchDate) }
                       },
                       methods: {
                         ok () {
-                          vm.getOwnDrivers()
-                          vm.getOwnCars()
-                          vm.formSearchInit = {}
+                          vm.searchCarList()
                         }
                       }
                     })
@@ -107,13 +105,7 @@ export default {
               },
               on: {
                 click: () => {
-                  this.openTab({
-                    path: TMSUrl.OWNEDVEHICLE_CAEDETAILS,
-                    query: {
-                      id: '车辆详情',
-                      rowData: params.row
-                    }
-                  })
+                  this.$router.push({ name: 'insurance-details', query: { rowData: params.row } })
                 }
               }
             }, '查看'))
@@ -132,14 +124,10 @@ export default {
                       },
                       methods: {
                         ok () {
-                          deleteCarById({ carId: params.row.id }).then(res => {
-                            if (res.data.code === CODE) {
-                              vm.$Message.success('删除成功！')
-                            }
+                          vm.insuranceDeleteById({ id: params.row.id }).then(res => {
+                            vm.$Message.success('删除成功！')
                           }).then(() => {
-                            vm.getOwnDrivers()
-                            vm.getOwnCars()
-                            vm.formSearchInit = {}
+                            vm.searchCarList()
                           })
                         }
                       }
@@ -153,27 +141,28 @@ export default {
         },
         {
           title: '保单号',
-          key: 'carNo'
+          key: 'invoiceNo'
         },
         {
           title: '保险公司',
-          key: 'carType',
-          render: (h, params) => {
-            let text = this.carTypeMap[params.row.carType] + this.carLengthMap[params.row.carLength]
-            return h('div', {}, text)
-          }
+          key: 'insuranceCompanyName'
         },
         {
           title: '车牌号',
-          key: 'shippingWeight'
+          key: 'carNo'
         },
         {
           title: '总金额（元）',
-          key: 'shippingVolume'
+          key: 'totalFee'
         },
         {
           title: '购买日期',
-          key: 'carBrand'
+          key: 'buyDate',
+          sortable: 'custom',
+          render: (h, params) => {
+            let text = this.formatDateTime(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
         }
       ],
       selectList: [
@@ -194,7 +183,7 @@ export default {
           label: '购买日期'
         }
       ],
-      placeholderContent: ''
+      placeholderContent: '请输入车牌号搜索'
     }
   },
   watch: {
@@ -212,9 +201,6 @@ export default {
         case '4':
           this.placeholderContent = '请选择购买日期'
           break
-        default:
-          this.placeholderContent = '请输入车牌号搜索'
-          break
       }
     }
   },
@@ -222,7 +208,7 @@ export default {
     this.getOwnCars()
   },
   methods: {
-    ...mapActions(['getOwnDrivers', 'getOwnCars']),
+    ...mapActions(['insuranceDeleteById']),
     // 导出判空
     handleLoad (response) {
       try {
@@ -240,10 +226,10 @@ export default {
       }
       let params = this.formSearchInit
       Export({
-        url: '/ownerCar/exportCar',
+        url: '/ownerCar/insurance/export',
         method: 'post',
         data: params,
-        fileName: '导出车辆列表'
+        fileName: '导出保险列表'
       })
     },
     // 日期格式化
@@ -253,15 +239,13 @@ export default {
     edit () {
       let vm = this
       this.openDialog({
-        name: 'owned-vehicle/dialog/edit-car',
+        name: 'owned-vehicle/dialog/edit-insurance',
         data: {
-          title: '新增车辆',
+          title: '新增保险',
           flag: 1 // 新增
         },
         methods: {
           ok () {
-            vm.getOwnDrivers()
-            vm.getOwnCars()
             vm.formSearchInit = {}
           }
         }
@@ -270,11 +254,17 @@ export default {
     searchCarList () {
       this.formSearchInit = {}
       if (this.selectStatus === '1') {
+        this.formSearchInit = {}
         this.formSearchInit.carNo = this.keyword
-        this.formSearchInit.driverName = ''
-      } else {
-        this.formSearchInit.driverName = this.keyword
-        this.formSearchInit.carNo = ''
+      } else if (this.selectStatus === '2') {
+        this.formSearchInit = {}
+        this.formSearchInit.insuranceCompanyName = this.keyword
+      } else if (this.selectStatus === '3') {
+        this.formSearchInit = {}
+        this.formSearchInit.invoiceNo = this.keyword
+      } else if (this.selectStatus === '4') {
+        this.formSearchInit = {}
+        this.formSearchInit.buyDate = this.keyword
       }
     },
     clearKeywords () {

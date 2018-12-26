@@ -53,6 +53,12 @@
           </Col>
         </Row>
       </FormItem>
+      <FormItem label="开拓渠道：" >
+        <Select v-model="validate.exploiteChannel" transfer placeholder="请输入">
+          <Option value="1">公司开拓</Option>
+          <Option value="2">个人开拓</Option>
+        </Select>
+      </FormItem>
       <FormItem label="">
         <label slot="label">
           <span class="vermiddle">对接业务员：</span>
@@ -110,7 +116,8 @@ export default {
         pickUp: '', // 提货方式
         isInvoice: 0, // 是否开票
         invoiceRate: null, // 开票税率
-        salesmanId: '' // 业务员
+        salesmanId: '', // 业务员
+        exploiteChannel: '1'
       },
       ruleValidate: {
         name: [

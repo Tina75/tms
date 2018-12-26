@@ -48,6 +48,7 @@ export default {
 
     return {
       loading: true,
+      cargoInfos: [], // 货物信息，1.09新增；按件计费规则适用,[{'黄金':2}],\2个黄金
       ruleForm: { ruleIndex: void 0 },
       ruleOptions: [],
       ruleEmpty: false,
@@ -127,7 +128,8 @@ export default {
             distance: this.distance,
             input,
             carType: this.carType,
-            carLength: this.carLength
+            carLength: this.carLength,
+            cargoInfos: this.cargoInfos
           }
         }).then(res => {
           this.charge = float.round(res.data.data / 100)

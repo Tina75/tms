@@ -105,7 +105,7 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
-                    path: '/order/management/detail',
+                    path: '/order-management/order-detail',
                     query: {
                       id: p.row.orderNo,
                       orderId: p.row.orderId,
@@ -162,7 +162,7 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
-                    path: '/order/management/detail',
+                    path: '/order-management/order-detail',
                     query: {
                       id: p.row.orderNo,
                       orderId: p.row.orderId,

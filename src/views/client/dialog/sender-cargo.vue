@@ -13,20 +13,25 @@
         <FormItem label="货物名称：" prop="cargoName">
           <Input v-model="validate.cargoName" :maxlength="20" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="包装方式：">
-          <SelectCustom v-model="validate.unit" type="packageType" style="width: 86%" clearable></SelectCustom>
-          <!-- <SelectInput
-            v-model="validate.unit"
-            :local-options="getUnit"
-            :maxlength="10"
-            :remote="false"
-            :clearable="true"
-            style="width: 86%"
-          >
-          </SelectInput> -->
+        <FormItem label="货物编码：">
+          <Input v-model="validate.cargoNo" :maxlength="20" placeholder="请输入"/>
         </FormItem>
         <FormItem label="货值：" prop="cargoCost">
           <Input v-model="validate.cargoCost"  placeholder="请输入"/>
+        </FormItem>
+        <FormItem label="包装方式：">
+          <SelectPackageType v-model="validate.unit" style="width: 86%" clearable></SelectPackageType>
+        </FormItem>
+        <FormItem label="包装尺寸：">
+          <Row>
+            <Col :span="6"><InputNumber :min="0" v-model="volumeLength"></InputNumber></Col>
+            <Col :span="1"><span style="padding-left: 3px">*</span></Col>
+            <Col :span="6"><InputNumber :min="0" v-model="volumeWidth"></InputNumber></Col>
+            <Col :span="1"><span style="padding-left: 3px">*</span></Col>
+            <Col :span="6"><InputNumber :min="0" v-model="volumeHeight"></InputNumber></Col>
+            <Col :span="2"><span style="padding-left: 3px">毫米</span></Col>
+            <!-- <Input v-model="validate.dimension" placeholder="请输入"/>毫米 -->
+          </Row>
         </FormItem>
         <FormItem label="重量：" prop="weight">
           <Input v-model="validate.weight" :maxlength="60" placeholder="请输入"/>吨
@@ -54,12 +59,12 @@ import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '@/components/SelectInput.vue'
 import { consignerCargoAdd, consignerCargoUpdate } from '../pages/client'
 import float from '@/libs/js/float'
-import SelectCustom from '@/components/SelectCustom'
+import SelectPackageType from '@/components/SelectPackageType'
 export default {
   name: 'sender-address',
   components: {
     SelectInput,
-    SelectCustom
+    SelectPackageType
   },
   mixins: [BaseDialog],
   data () {
@@ -76,6 +81,9 @@ export default {
         remark1: '',
         remark2: ''
       },
+      volumeLength: 0,
+      volumeWidth: 0,
+      volumeHeight: 0,
       ruleValidate: {
         cargoName: [
           { required: true, message: '货物名称不能为空', trigger: 'blur' }
@@ -87,7 +95,7 @@ export default {
           { type: 'string', message: '必须为大于等于0的数字,最多两位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/, trigger: 'blur' }
         ],
         volume: [
-          { type: 'string', message: '必须为大于等于0的数字,最多一位小数', pattern: /^(0|([1-9]\d*))([.]\d?)?$/, trigger: 'blur' }
+          { type: 'string', message: '必须为大于等于0的数字,最多六位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,6}?)?$/, trigger: 'blur' }
         ]
       },
       getUnit: [
@@ -98,6 +106,17 @@ export default {
         { name: '麻袋', value: '麻袋' },
         { name: '木架', value: '木架' }
       ]
+    }
+  },
+  watch: {
+    volumeLength (newVal) {
+      this.validate.volume = (newVal * this.volumeWidth * this.volumeHeight) / 1000000
+    },
+    volumeWidth (newVal) {
+      this.validate.volume = (newVal * this.volumeLength * this.volumeHeight) / 1000000
+    },
+    volumeHeight (newVal) {
+      this.validate.volume = (newVal * this.volumeWidth * this.volumeHeight) / 1000000
     }
   },
   methods: {
@@ -123,7 +142,8 @@ export default {
         weight: parseFloat(this.validate.weight),
         volume: parseFloat(this.validate.volume),
         remark1: this.validate.remark1,
-        remark2: this.validate.remark2
+        remark2: this.validate.remark2,
+        dimension: { length: this.volumeLength, width: this.volumeWidth, height: this.volumeHeight }
       }
       consignerCargoAdd(data).then(res => {
         this.loading = false
@@ -141,7 +161,8 @@ export default {
         weight: parseFloat(this.validate.weight),
         volume: parseFloat(this.validate.volume),
         remark1: this.validate.remark1,
-        remark2: this.validate.remark2
+        remark2: this.validate.remark2,
+        dimension: { length: this.volumeLength, width: this.volumeWidth, height: this.volumeHeight }
       }
       consignerCargoUpdate(data).then(res => {
         this.loading = false

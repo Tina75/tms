@@ -83,7 +83,7 @@
         </Col>
       </div>
       <!--系统设置-->
-      <div v-else-if="'4' === this.rightKey" key="4" class="divSetContent">
+      <div v-else-if="'4' === this.rightKey" key="4" class="system-set">
         <div v-if="tabName != 'order'" class="setup-allocation">
           <allocation-strategy ref="orderAllocation" allocation-label="订单：" source="order"></allocation-strategy>
           <div class="allocation-tips">选择以后订单拆单将默认选择此运费分摊策略</div>
@@ -525,6 +525,8 @@ export default {
   margin-top:40px;
   left: 15%;
   position: absolute;
+.system-set
+  min-height 400px
 .allocation-tips
   font-size 12px
   font-family 'PingFangSC-Regular'

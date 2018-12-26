@@ -26,20 +26,7 @@
             </Tooltip>
           </Badge>
         </span>
-
-        <Poptip trigger="hover" transfer placement="bottom-end" popper-class="dropdown-info" title="账号信息" width="260" style="cursor: default">
-          <Avatar class="avatar"  style="border:1px solid #fff"></avatar>
-          <span class="user-info">{{UserInfo.name}}</span>
-          <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
-          <div slot="content">
-            <p class="dropdown-line"><label for="">账户名：</label><span class="content-name">{{UserInfo.name}}</span><Tag color="cyan" style="font-size:12px;cursor: default">{{UserInfo.roleName}}</Tag></p>
-            <p class="dropdown-line"><label for="">手机号：</label>{{UserInfo.phone}}</p>
-            <p class="dropdown-line"><label for="">公司：</label>{{UserInfo.companyName}}</p>
-            <p class="dropdown-line"><label for="">有效期至：</label>{{UserInfo.expirationTime | datetime('yyyy-MM-dd')}}</p>
-            <p class="dropdown-line"><a @click="renew">延长账号有效期</a></p>
-            <p style="text-align:center" class="i-mt-10"><Button type="default" @click="userLogout">&nbsp; &nbsp;退出&nbsp; &nbsp;</Button></p>
-          </div>
-        </Poptip>
+        <UserInfo :renew="renew"></UserInfo>
       </div>
     </div>
   </Header>
@@ -52,7 +39,7 @@ import FontIcon from '@/components/FontIcon'
 import { mapGetters, mapActions } from 'vuex'
 import TMSUrl from '@/libs/constant/url.js'
 import Server from '@/libs/js/server'
-
+import UserInfo from './UserInfo.vue'
 const LocalStorageKeys = {
   FIRST_TIME_LOGIN: 'first_time_login', // 注册后第一次登录
   TMS_CLEAR_TRIAL: 'TMS_clear_trial',
@@ -60,7 +47,7 @@ const LocalStorageKeys = {
 }
 export default {
   name: 'headerBar',
-  components: { TabNav, FontIcon },
+  components: { TabNav, FontIcon, UserInfo },
   mixins: [BaseComponent],
   data () {
     return {
@@ -70,7 +57,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['MsgCount', 'UserInfo'])
+    ...mapGetters(['MsgCount', 'UserInfo', 'IsUserLogin'])
   },
   mounted () {
     const vm = this
@@ -79,9 +66,11 @@ export default {
     //   route.query = Object.assign({ _time: new Date().getTime() }, route.query)
     //   this.turnToPage(route)
     // })
-    window.EMA.bind('logout', vm.userLogout)
-    this.loopMessage()
-    this.newUserTip()
+    // 用户登录后，初始化配置
+    if (this.IsUserLogin) {
+      this.loopMessage()
+      this.newUserTip()
+    }
   },
   beforeDestroy () {
     if (this.messageTimer) {
@@ -90,10 +79,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getMessageCount', 'getUserInfo', 'getTableColumns', 'getOwnDrivers', 'getOwnCars', 'logout', 'getOrderConfiguration']),
+    ...mapActions(['getMessageCount', 'getUserInfo', 'getTableColumns', 'getOwnDrivers', 'getOwnCars', 'getOrderConfiguration']),
     async newUserTip () {
       try {
-        await this.getUserInfo()
+        // await this.getUserInfo()
         if (sessionStorage.getItem('first_time_login') === 'true') {
           if (this.UserInfo.type === 1) this.renew()
           else this.changePasswordTip()
@@ -390,21 +379,6 @@ export default {
         }
       })
     },
-    /**
-     * 用户退出
-     * 1. 接口发现token失效，可能有其他用户登录，会包含msg
-     * 2. 用户主动点击退出
-     */
-    userLogout (msg) {
-      if (typeof msg === 'string') {
-        this.$Message.warning({
-          content: msg,
-          duration: 3
-        })
-      }
-      this.logout()
-      this.$router.replace({ path: '/login' })
-    },
     renew () {
       window.EMA.fire('Dialogs.push', {
         name: 'dialogs/renew',
@@ -505,24 +479,6 @@ export default {
 }
 </script>
 <style lang="stylus">
-.dropdown-info
-  .dropdown-line
-    padding 5px 0px
-    color #555555
-    white-space nowrap
-    overflow hidden
-    text-overflow ellipsis
-    max-width 230px
-    .content-name
-      width 80px
-      overflow hidden
-      display inline-block
-      text-overflow ellipsis
-      margin-bottom -6px
-    label
-      min-width 60px
-      text-align left
-      display inline-block
 .header-con
   position relative
   z-index 9
@@ -531,7 +487,7 @@ export default {
     width auto
     top 4px
     left 0
-    right 250px
+    right 309px
     position absolute
     padding 0
     height 46px
@@ -547,24 +503,6 @@ export default {
   text-align left
   background #252A2F
   color #fff
-  .content-name
-    width 80px
-    overflow hidden
-    display inline-block
-    text-overflow ellipsis
-    margin-bottom -6px
-  .avatar
-    background-image url(../../../assets/default-avatar.jpg)
-    background-size 30px
-  &-bread-crumb
-    padding-left 60px
-    width 350px
-    display inline-block
-    float left
-    background-image url(../../../assets/logo.png)
-    background-repeat no-repeat
-    background-size 26px
-    background-position 24px 20px
   &-content-con
     float right
     height auto
@@ -608,15 +546,4 @@ export default {
           img
             display inline-block
             padding-top 12px
-
-  .user-info
-    width:65px;
-    padding-left 5px
-    display:inline-block;
-    color white
-    text-overflow ellipsis
-    white-space nowrap
-    overflow hidden
-    line-height 1.1
-    margin-bottom -4px
 </style>

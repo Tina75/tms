@@ -1,7 +1,6 @@
 <template>
   <div class="area-input">
     <SelectInput
-      v-if="!onlySelect"
       ref="selectInput"
       :value="value"
       :no-filter="true"
@@ -14,7 +13,7 @@
       @on-select="selectChange"
     >
     </SelectInput>
-    <Select
+    <!-- <Select
       v-else
       ref="selectInput"
       v-model="selectValue"
@@ -25,7 +24,7 @@
       remote
       @on-change="selectChange">
       <Option v-for="(option, index) in areaList" :value="option.name" :key="index">{{option.name}}</Option>
-    </Select>
+    </Select> -->
   </div>
 </template>
 <script>
@@ -82,7 +81,6 @@ export default {
       address: [],
       timer: '',
       selectItem: null,
-      loading: false,
       selectValue: this.value
     }
   },
@@ -101,24 +99,26 @@ export default {
         }
       }
       return arr
+    },
+    areaName () {
+      const arr = cityUtil.getPathByCode(this.cityCode)
+      return arr.length ? arr[1].name : '全国'
     }
   },
   methods: {
     search (val) {
       clearTimeout(this.timer)
       this.timer = setTimeout(() => {
-        this.doSearch(val)
+        this.doSearch(val, this.areaName !== '全国')
       }, 200)
     },
-    doSearch (val) {
-      this.loading = true
+    doSearch (val, forceLocal) {
+      const area = forceLocal ? this.areaName : '全国'
       const options = {
         onSearchComplete: results => {
-          this.loading = false
           if (local.getStatus() === window.BMAP_STATUS_SUCCESS) {
             // 判断状态是否正确
             let arr = []
-            //  && this.$refs['selectInput'][0] !== undefined
             if (this.firstSelect) {
               this.$nextTick(() => {
                 this.$refs['selectInput'].focusIndex = 0
@@ -135,7 +135,7 @@ export default {
                */
               const addr = this.replace(item.address, results.province, results.city, item.title) +
                 this.replace(item.title, results.province, results.city, item.address)
-              const names = city + addr
+              const names = !this.filterCity || !addr || this.areaName === '全国' ? city + addr : addr
               arr.push({
                 id: i,
                 name: names,
@@ -146,54 +146,54 @@ export default {
               })
             }
             this.address = arr
+          } else {
+            if (forceLocal && !this.forceCity) {
+              this.doSearch(val, false)
+            }
           }
         },
         pageCapacity: 20
       }
-      const local = new BMap.LocalSearch('全国', options)
-      local.search(val)
+      const local = new BMap.LocalSearch(area, options)
+      local.search(val, { forceLocal })
     },
     inputHandle (value) {
       this.address = []
-      if (!this.onlySelect) {
+      this.$emit('input', value)
+      if (this.selectItem && this.selectItem.value === value) {
+        return
+      }
+      if (value) {
+        this.search(value)
+      } else {
         this.address = []
-        this.$emit('input', value)
-        if (this.selectItem && this.selectItem.value === value) {
-          return
-        }
-        if (value) {
-          this.search(value)
-        }
-        if ((this.selectItem && this.selectItem.value !== value) || this.selectItem === null) {
-          this.selectItem = null
-          this.selectChange(null, { lat: '', lng: '', city: '' })
-        }
+      }
+      if ((this.selectItem && this.selectItem.value !== value) || this.selectItem === null) {
+        this.selectItem = null
+        this.selectChange(null, { lat: '', lng: '', city: '' })
       }
     },
     selectChange (value, item) {
-      if (!this.onlySelect) {
-        // 经纬度改变
-        this.selectItem = item
-        const res = {
-          lat: item.lat,
-          lng: item.lng,
-          type: item.lng && item.lat ? 1 : '',
-          cityCode: item.city ? cityUtil.getCodeByName(item.city) : ''
-        }
-        this.$emit('city-select', res)
-      } else {
-        if (value) {
-          let obj = {}
-          this.address.map(el => {
-            if (value === el.name) {
-              obj = el
-            }
-          })
-          obj.cityCode = obj.city ? cityUtil.getCodeByName(obj.city) : ''
-          this.$emit('input', value)
-          this.$emit('city-select', obj)
-        }
+      // 经纬度改变
+      this.selectItem = item
+      const res = {
+        lat: item.lat,
+        lng: item.lng,
+        type: item.lng && item.lat ? 1 : '',
+        cityCode: item.city ? cityUtil.getCodeByName(item.city) : ''
       }
+      this.$emit('city-select', res)
+      //   if (value) {
+      //     let obj = {}
+      //     this.address.map(el => {
+      //       if (value === el.name) {
+      //         obj = el
+      //       }
+      //     })
+      //     obj.cityCode = obj.city ? cityUtil.getCodeByName(obj.city) : ''
+      //     this.$emit('input', value)
+      //     this.$emit('city-select', obj)
+      //   }
     },
     // v过滤省市 title或name
     replace (v, p, c, t) {
