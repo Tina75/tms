@@ -11,7 +11,7 @@ const TMSUrl = {
   CREATE_ORDER: '/order/create', // 手工开单
   IMPORT_ORDER: '/order/import', // 批量导入
   ORDER_MANAGEMENT: '/order-management/order', // 订单管理
-  ORDER_DETAIL: '/order-management/detail', // 订单详情
+  ORDER_DETAIL: '/order-management/order-detail', // 订单详情
   RECEIPT_ORDER_MANAGEMENT: '/transport/receipt', // 回单管理
   DISPATCH_PANEL: '/order-management/dispatch', // 调度工作台
   TANSPORT_ORDER: '/transport/waybill', // 送货管理
