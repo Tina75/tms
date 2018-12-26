@@ -86,6 +86,8 @@
         <TabPane :label="tabPaneLabe2">
           <div class="add">
             <Button v-if="hasPower(130107)" type="primary"  @click="_consignerConsigneeAdd">新增</Button>
+            <!-- 权限待加 -->
+            <Button type="default"  @click="_consignerConsigneeAddAll">批量导入</Button>
           </div>
           <template>
             <page-table
@@ -534,7 +536,8 @@ export default {
       totalCount3: 0, // 总条数
       pageNo3: 1,
       totalCount4: 0,
-      isShow: false
+      isShow: false,
+      downLoadUrl: ''
     }
   },
   computed: {
@@ -589,6 +592,7 @@ export default {
           this.totalCount2 = data.consigneeList.totalCount
           this.data3 = data.cargoList.list
           this.totalCount3 = data.cargoList.totalCount
+          this.downLoadUrl = data.downLoadUrl || ''
         }
       })
     },
@@ -658,6 +662,19 @@ export default {
           ok () {
             _this._consignerConsigneeList() // 刷新页面
           }
+        }
+      })
+    },
+    // 批量导入
+    _consignerConsigneeAddAll () {
+      this.openDialog({
+        name: 'client/dialog/batch-import',
+        data: {
+          title: '批量导入',
+          downLoadUrl: this.downLoadUrl
+        },
+        methods: {
+          ok () { }
         }
       })
     },
