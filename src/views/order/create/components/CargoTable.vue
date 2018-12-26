@@ -75,9 +75,7 @@ const OrderMap = {
   unit: 'unitOption',
   dimension: 'dimensionOption',
   remark1: 'cargoRemark1Option',
-  remark2: 'cargoRemark2Option',
-  remark3: 'cargoRemark3Option',
-  remark4: 'cargoRemark4Option'
+  remark2: 'cargoRemark2Option'
 }
 
 export default {
@@ -208,20 +206,6 @@ export default {
           required: false,
           title: '备注2',
           key: 'remark2',
-          type: 'text',
-          max: 100
-        },
-        {
-          required: false,
-          title: '备注3',
-          key: 'remark3',
-          type: 'text',
-          max: 100
-        },
-        {
-          required: false,
-          title: '备注4',
-          key: 'remark4',
           type: 'text',
           max: 100
         }
