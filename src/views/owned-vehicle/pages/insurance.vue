@@ -205,7 +205,6 @@ export default {
     }
   },
   mounted () {
-    this.getOwnCars()
   },
   methods: {
     ...mapActions(['insuranceDeleteById']),
