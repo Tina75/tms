@@ -92,6 +92,31 @@ export const searchByNameForCasecader = function (name) {
   })
   return areas
 }
+/**
+ * 芜湖市 芜湖县
+ * 市和县同名只匹配第一个BUG
+ */
+var REVERSED
+export const getCodeByName = function (cityName) {
+  if (!cityName) return '110100'
+  cityName = String(cityName).replace(
+    /(特别行政区|自治州|自治区|省)$/,
+    ''
+  )
+  var cityId = '110100'
+  if (!REVERSED) {
+    REVERSED = Object.keys(mapCache).reverse()
+  }
+  try {
+    cityId =
+      REVERSED.find(function (city) {
+        return mapCache[city].name && mapCache[city].name.match(cityName)
+      }) || '110100'
+  } catch (e) {
+    console.error('[getCodeByName] error ', e)
+  }
+  return cityId
+}
 export const U = {
   ...cityUtil
 }
