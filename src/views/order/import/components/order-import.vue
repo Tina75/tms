@@ -10,9 +10,11 @@
         accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         @change="handleChange"
       />
-      <Badge :dot="needUpdate">
-        <a v-if="hasPower(100202)" :href="downloadUrl" download="下载模板" class="i-ml-10 ivu-btn ivu-btn-default">下载模板</a>
-      </Badge>
+      <TimerPoptip :disabled="!showPoptip" max-width="246" content="为方便您导入更多的数据，我们更新了导入模板，请下载最新的导入模板">
+        <Badge :dot="needUpdate">
+          <a v-if="hasPower(100202)" :href="downloadUrl" download="下载模板" class="i-ml-10 ivu-btn ivu-btn-default" @click="handleDownload">下载模板</a>
+        </Badge>
+      </TimerPoptip>
       <Button v-if="hasPower(100206)" class="i-ml-10" @click="clearAll">清空导入记录</Button>
     </div>
     <Table :columns="columns" :data="dataSource" no-data-text=" ">
@@ -48,17 +50,19 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import BasePage from '@/basic/BasePage'
 import jsCookie from 'js-cookie'
 import TMSUrl from '@/libs/constant/url.js'
 import { Progress } from 'iview'
 import importMixin from './importMixin.js'
-
+import TimerPoptip from './timer-poptip.vue'
 export default {
   name: 'order-import-component',
   metaInfo: {
     title: '批量导入'
+  },
+  components: {
+    TimerPoptip
   },
   mixins: [BasePage, importMixin],
   data () {
@@ -71,16 +75,7 @@ export default {
       notifyRequestUrl: 'order/template/uploadNotify', // 上传文件路径, 让后端下载执行任务
       importResultRequestUrl: 'order/getImportResult', // 导入进度查询
       importRecordsRequestUrl: 'order/template/getImportedOrderTemplateList', // 查询记录
-      // dataSource: [],
-      // pagination: {
-      //   pageNo: 1,
-      //   pageSize: 10,
-      //   totalCount: 0
-      // },
-      // ossClient: null,
-      // ossDir: '',
-      // timer: null,
-      // queue: [], // 上传进度队列
+      showPoptip: false,
       columns: [
         {
           title: '操作',
@@ -186,103 +181,24 @@ export default {
       ]
     }
   },
-  computed: {
-    ...mapGetters(['UserInfo'])
-    // queueNum () {
-    //   // 上传队列里的
-    //   return this.queue.length
-    // },
-    // canUpload () {
-    //   return MAX_UPLOAD_FILES > this.queueNum
-    // }
+
+  watch: {
+    needUpdate (value) {
+      if (value && !jsCookie.get('tms_order_template')) {
+        jsCookie.set('tms_order_template', true)
+        this.showPoptip = value
+      }
+    }
   },
-  created () {
-    // this.initOssInstance()
-    // this.getDownloadUrl()
-  },
-  mounted () {
-    // if (this.$refs.footer) {
-    //   this.$refs.footer.parentElement.style['min-height'] = '180px'
-    //   this.$refs.footer.parentElement.style['display'] = 'none'
-    // }
-    // this.fetch()
-  },
-  // beforeDestroy () {
-  //   if (this.timer) {
-  //     clearTimeout(this.timer)
-  //   }
-  // },
   methods: {
-    /**
-     * 清空导入记录了
-     */
-    // clearAll () {
-    //   const vm = this
-    //   if (this.pagination.totalCount === 0) {
-    //     this.$Message.info('当前没有可清空的导入记录')
-    //     return
-    //   }
-    //   this.$Toast.confirm({
-    //     content: '导入记录清空后将无法恢复',
-    //     description: '清空记录不会删除已导入的订单数据。',
-    //     onOk () {
-    //       server({
-    //         url: '/order/template/clearOrderTemplateImportRecord',
-    //         method: 'post',
-    //         data: {}
-    //       }).then((res) => {
-    //         vm.fetch()
-    //       })
-    //     }
-    //   })
-    // },
-    /**
-     * 单个删除记录
-     */
-    // deleteById (data) {
-    //   const vm = this
-    //   this.$Toast.confirm({
-    //     content: '导入记录删除后将无法恢复',
-    //     description: '删除记录不会删除已导入的订单数据。',
-    //     onOk () {
-    //       server({
-    //         url: 'order/template/deleteOrderTemplateImportRecord',
-    //         method: 'post',
-    //         data: {
-    //           id: data.id
-    //         }
-    //       }).then((res) => {
-    //         vm.fetch()
-    //       })
-    //     }
-    //   })
-    // },
-    /**
-     * 模板下载地址
-     */
-    // getDownloadUrl () {
-    //   // 获取导入模板下载地址
-    //   server({
-    //     method: 'get',
-    //     url: 'order/template/get'
-    //   }).then((response) => {
-    //     this.downloadUrl = response.data.data.fileUrl
-    //   })
-    // },
-    /**
-     * 下载完后回调
-     */
-    // handleLoad (response) {
-    //   if (!response.data.data || response.data.data.list.length === 0) {
-    //     this.$refs.footer.parentElement.style['display'] = 'block'
-    //   } else {
-    //     this.$refs.footer.parentElement.style['display'] = 'none'
-    //   }
-    // },
-    // 主动触发上传
-    // handleClick (e) {
-    //   this.$refs.fileInput.click()
-    // },
+    handleDownload () {
+      if (this.needUpdate) {
+        // todo 通知后端已经下载过
+        this.$emit('on-download', 1)
+        this.userDownloadTemplate(1)
+        jsCookie.remove('tms_order_template')
+      }
+    }
   }
 }
 </script>

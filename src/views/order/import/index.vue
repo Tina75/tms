@@ -2,10 +2,10 @@
   <div class="order-import-page">
     <TabHeader :list="tabs" :value="activeTab"  @on-change="handleChangeTab" />
     <div v-if="activeTab === '1'" class="i-mt-35">
-      <OrderImport :oss-client="ossClient" :oss-dir="ossDir" :need-update="true"></OrderImport>
+      <OrderImport :oss-client="ossClient" :oss-dir="ossDir" :need-update="isOrderTemplateUpdate" @on-download="handleDownloadTemplate"></OrderImport>
     </div>
     <div v-if="activeTab === '2'" class="i-mt-35">
-      <HistoryOrderImport :oss-client="ossClient" :oss-dir="ossDir" :need-update="false"></HistoryOrderImport>
+      <HistoryOrderImport :oss-client="ossClient" :oss-dir="ossDir" :need-update="isHistoryTemplateUpdate" @on-download="handleDownloadTemplate"></HistoryOrderImport>
     </div>
   </div>
 </template>
@@ -26,6 +26,8 @@ export default {
   data () {
     return {
       activeTab: '1',
+      isOrderTemplateUpdate: false, // 订单模板有更新？
+      isHistoryTemplateUpdate: false, // 历史订单模板有更新
       tabs: [
         { name: '1', label: '订单导入' },
         { name: '2', label: '导入历史订单' }
@@ -43,11 +45,37 @@ export default {
     this.initOssInstance()
   },
   mounted () {
-
+    this.checkTemplateUpdate()
   },
   methods: {
     handleChangeTab (name) {
       this.activeTab = name
+    },
+    /**
+     * 点击下载模板后，红点提示取消
+     */
+    handleDownloadTemplate (type) {
+      if (type === 1) {
+        this.isOrderTemplateUpdate = false
+      } else {
+        this.isHistoryTemplateUpdate = false
+      }
+    },
+    /**
+     * 检查模板是否更新
+     */
+    checkTemplateUpdate () {
+      const vm = this
+      server({
+        url: 'order/template/isNeedUpdate',
+        method: 'post',
+        data: {}
+      }).then((result) => {
+        if (result.data) {
+          vm.isOrderTemplateUpdate = !!result.data.isNeedUpdate.order
+          vm.isHistoryTemplateUpdate = !!result.data.isNeedUpdate.historyBill
+        }
+      })
     },
     /**
      * 初始化oss

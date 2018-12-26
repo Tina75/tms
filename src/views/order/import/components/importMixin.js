@@ -350,6 +350,19 @@ export default {
         vm.$refs.footer.parentElement.style['display'] = 'block'
         throw error
       })
+    },
+    /**
+     * 标记用户已经过下载模板
+     * @param {Number} source 1:订单；2：历史订单
+     */
+    userDownloadTemplate (source) {
+      return server({
+        url: 'order/template/recordDownload',
+        method: 'post',
+        data: {
+          source
+        }
+      })
     }
   }
 }
