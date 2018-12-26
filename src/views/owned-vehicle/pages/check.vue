@@ -17,7 +17,7 @@
                class="search-input"
                @on-enter="searchCarList"
                @on-click="clearKeywords"/>
-        <DatePicker v-else v-model="keyword" transfer format="yyyy-MM-dd" type="date" placeholder="请选择年检时间">
+        <DatePicker v-else v-model="keyword" transfer format="yyyy-MM-dd" type="daterange" placeholder="请选择年检时间">
         </DatePicker>
         <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
@@ -61,7 +61,8 @@ export default {
       keyword: '',
       formSearchInit: {
         carNo: '',
-        driverName: ''
+        buyDateStart: '',
+        buyDateEnd: ''
       },
       exportFile: true,
       menuColumns: [
@@ -230,10 +231,9 @@ export default {
       this.formSearchInit = {}
       if (this.selectStatus === '1') {
         this.formSearchInit.carNo = this.keyword
-        this.formSearchInit.checkDate = ''
       } else {
-        this.formSearchInit.checkDate = this.keyword
-        this.formSearchInit.carNo = ''
+        this.formSearchInit.buyDateStart = new Date(this.keyword[0])
+        this.formSearchInit.buyDateEnd = new Date(this.keyword[1])
       }
     },
     clearKeywords () {
