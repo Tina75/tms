@@ -79,6 +79,28 @@ export default[
           'powerCode': 100300,
           'title': '订单详情'
         }
+      },
+      {
+        'name': 'management-order-detail',
+        'path': '/order-management/order-detail',
+        'component': () => import(/* webpackChunkName: "order-detail" */'./management/order-detail.vue'),
+        'meta': {
+          'notCache': true,
+          'hideInMenu': true,
+          'powerCode': 100300,
+          'title': '订单详情'
+        }
+      },
+      {
+        'name': 'management-recept-detail',
+        'path': '/order-management/recept-detail',
+        'component': () => import(/* webpackChunkName: "recept-detail" */'./management/recept-detail.vue'),
+        'meta': {
+          'notCache': true,
+          'hideInMenu': true,
+          'powerCode': 100300,
+          'title': '回单详情'
+        }
       }
     ]
   }

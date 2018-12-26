@@ -105,20 +105,14 @@
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import float from '@/libs/js/float'
+import { payTypeMap } from '../constant/numList'
 
 export default {
   name: 'stepPay',
   mixins: [BaseDialog],
   data () {
     return {
-      payTypeMap: {
-        1: '预付现金',
-        2: '预付油卡',
-        3: '到付现金',
-        4: '到付油卡',
-        5: '回付现金',
-        6: '回付油卡'
-      },
+      payTypeMap: payTypeMap,
       payItems: []
     }
   },

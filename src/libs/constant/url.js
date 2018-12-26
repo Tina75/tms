@@ -11,7 +11,7 @@ const TMSUrl = {
   CREATE_ORDER: '/order/create', // 手工开单
   IMPORT_ORDER: '/order/import', // 批量导入
   ORDER_MANAGEMENT: '/order-management/order', // 订单管理
-  ORDER_DETAIL: '/order-management/detail', // 订单详情
+  ORDER_DETAIL: '/order-management/order-detail', // 订单详情
   RECEIPT_ORDER_MANAGEMENT: '/transport/receipt', // 回单管理
   DISPATCH_PANEL: '/order-management/dispatch', // 调度工作台
   TANSPORT_ORDER: '/transport/waybill', // 送货管理
@@ -45,7 +45,7 @@ const TMSUrl = {
   STAFF_MANAGEMENT: '/company/staff-manage', // 员工管理
   EMPLOYEE_MANAGEMENT: '/company/role-manage', // 角色管理
   SETTING: '/set-up/index', // 设置
-  COMPANY_SETTING: '/company/setting', // 公司设置
+  COMPANY_SETTING: '/company/pages/setting', // 公司设置
   MESSAGE_CENTER: '/information/index', // 消息中心
   MESSAGE_DETAIL: '/information/message-info', // 消息详情
   PROCESS: '/helper/process', // 业务流程
