@@ -244,230 +244,124 @@ export const oilTableColumns = vm => [
       return h('span', params.row.createTime ? new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
     }
   }
-  // {
-  //   title: '客户名称',
-  //   key: 'shipperCompanyName',
-  //   minWidth: 200,
-  //   render: (h, p) => {
-  //     return h('span', p.row.shipperCompanyName ? p.row.shipperCompanyName : '-')
-  //   }
-  // },
-  // {
-  //   title: '对接业务员',
-  //   key: 'handlerUserName',
-  //   minWidth: 180,
-  //   render: (h, params) => {
-  //     return h('span', params.row.handlerUserName || '-')
-  //   }
-  // },
-  // {
-  //   title: '发货城市',
-  //   key: 'departureCityName',
-  //   minWidth: 180,
-  //   render: (h, params) => {
-  //     return h('span', params.row.departureCityName || '-')
-  //   }
-  // },
-  // {
-  //   title: '收货城市',
-  //   key: 'destinationCityName',
-  //   minWidth: 180,
-  //   render: (h, params) => {
-  //     return h('span', params.row.destinationCityName || '-')
-  //   }
-  // },
-  // {
-  //   title: '下单时间',
-  //   key: 'createTime',
-  //   minWidth: 150,
-  //   render: (h, params) => {
-  //     return h('span', params.row.createTime ? new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
-  //   }
-  // },
-  // {
-  //   title: '发货时间',
-  //   key: 'deliveryTime',
-  //   minWidth: 150,
-  //   render: (h, params) => {
-  //     return h('span', params.row.deliveryTime ? new Date(params.row.deliveryTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
-  //   }
-  // },
-  // {
-  //   title: '到货时间',
-  //   key: 'arriveTime',
-  //   minWidth: 150,
-  //   render: (h, params) => {
-  //     return h('span', params.row.arriveTime ? new Date(params.row.arriveTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
-  //   }
-  // },
-  // {
-  //   title: '发货人',
-  //   key: 'consignerContact',
-  //   minWidth: 180,
-  //   tooltip: true,
-  //   render: (h, p) => {
-  //     return h('span', p.row.consignerContact ? p.row.consignerContact : '-')
-  //   }
-  // },
-  // {
-  //   title: '发货人联系号码',
-  //   key: 'consignerPhone',
-  //   minWidth: 150,
-  //   tooltip: true,
-  //   render: (h, p) => {
-  //     return h('span', p.row.consignerPhone ? p.row.consignerPhone : '-')
-  //   }
-  // },
-  // {
-  //   title: '发货地址',
-  //   key: 'consignerAddress',
-  //   minWidth: 200,
-  //   tooltip: true,
-  //   render: (h, p) => {
-  //     return h('span', p.row.consignerAddress ? p.row.consignerAddress : '-')
-  //   }
-  // },
-  // {
-  //   title: '收货人',
-  //   key: 'consigneeContact',
-  //   minWidth: 180,
-  //   tooltip: true,
-  //   render: (h, p) => {
-  //     return h('span', p.row.consigneeContact ? p.row.consigneeContact : '-')
-  //   }
-  // }
-  // {
-  //   title: '收货人联系号码',
-  //   key: 'consigneePhone',
-  //   minWidth: 150,
-  //   tooltip: true,
-  //   render: (h, p) => {
-  //     return h('span', p.row.consigneePhone ? p.row.consigneePhone : '-')
-  //   }
-  // },
-  // {
-  //   title: '收货地址',
-  //   key: 'consigneeAddress',
-  //   minWidth: 200,
-  //   tooltip: true,
-  //   render: (h, p) => {
-  //     return h('span', p.row.consigneeAddress ? p.row.consigneeAddress : '-')
-  //   }
-  // },
-  // {
-  //   title: '结算方式',
-  //   key: 'settlementTypeDesc',
-  //   minWidth: 120,
-  //   render: (h, p) => {
-  //     return h('span', p.row.settlementTypeDesc ? p.row.settlementTypeDesc : '-')
-  //   }
-  // },
-  // {
-  //   title: '运输费',
-  //   key: 'freightFee',
-  //   minWidth: 120,
-  //   render: (h, params) => {
-  //     return h('span', params.row.freightFee ? (params.row.freightFee / 100).toFixed(2) : '-')
-  //   }
-  // },
-  // {
-  //   title: '提货费',
-  //   key: 'pickFee',
-  //   minWidth: 120,
-  //   render: (h, params) => {
-  //     return h('span', params.row.pickFee ? (params.row.pickFee / 100).toFixed(2) : '-')
-  //   }
-  // },
-  // {
-  //   title: '装货费',
-  //   key: 'loadFee',
-  //   minWidth: 120,
-  //   render: (h, params) => {
-  //     return h('span', params.row.loadFee ? (params.row.loadFee / 100).toFixed(2) : '-')
-  //   }
-  // },
-  // {
-  //   title: '卸货费',
-  //   key: 'unloadFee',
-  //   minWidth: 120,
-  //
-  //   render: (h, params) => {
-  //     return h('span', params.row.unloadFee ? (params.row.unloadFee / 100).toFixed(2) : '-')
-  //   }
-  // },
-  // {
-  //   title: '保险费',
-  //   key: 'insureFee',
-  //   minWidth: 120,
-  //   render: (h, params) => {
-  //     return h('span', params.row.insuranceFee ? (params.row.insuranceFee / 100).toFixed(2) : '-')
-  //   }
-  // },
-  // {
-  //   title: '其他费用',
-  //   key: 'otherFee',
-  //   minWidth: 120,
-  //   render: (h, params) => {
-  //     return h('span', params.row.otherFee ? (params.row.otherFee / 100).toFixed(2) : '-')
-  //   }
-  // },
-  // {
-  //   title: '总费用',
-  //   key: 'totalFee',
-  //   minWidth: 120,
-  //   render: (h, params) => {
-  //     return h('span', params.row.totalFee ? (params.row.totalFee / 100).toFixed(2) : '-')
-  //   }
-  // },
-  // {
-  //   title: '提货方式',
-  //   key: 'pickTypeDesc',
-  //   minWidth: 120,
-  //   render: (h, p) => {
-  //     return h('span', p.row.pickTypeDesc ? p.row.pickTypeDesc : '-')
-  //   }
-  // },
-  // {
-  //   title: '回单数量',
-  //   key: 'receiptCount',
-  //   minWidth: 120,
-  //   render: (h, p) => {
-  //     return h('span', p.row.receiptCount ? p.row.receiptCount : '-')
-  //   }
-  // },
-  // {
-  //   title: '代收货款',
-  //   key: 'collectionMoney',
-  //   minWidth: 120,
-  //   render: (h, params) => {
-  //     return h('span', params.row.collectionMoney ? (params.row.collectionMoney / 100).toFixed(2) : '-')
-  //   }
-  // },
-  // {
-  //   title: '是否开票',
-  //   key: 'isInvoice',
-  //   minWidth: 180,
-  //   render: (h, params) => {
-  //     return h('span', params.row.isInvoice === 1 ? '是' : '否')
-  //   }
-  // },
-  // {
-  //   title: '开票税率',
-  //   key: 'invoiceRate',
-  //   minWidth: 180,
-  //   render: (h, params) => {
-  //     return h('span', float.floor(params.row.invoiceRate * 100, 2) || '-')
-  //   }
-  // },
-  // {
-  //   title: '制单人',
-  //   key: 'orderMakerName',
-  //   minWidth: 120,
-  //   render: (h, p) => {
-  //     return h('span', p.row.orderMakerName ? p.row.orderMakerName : '-')
-  //   }
-  // }
 ]
 
 // 油卡使用记录列表
-export const usedTableColumns = vm => []
+export const usedTableColumns = vm => [
+  {
+    title: '卡号',
+    key: 'number',
+    render: (h, params) => {
+      return h('a', {
+        props: {
+          type: 'text'
+        },
+        style: {
+          color: '#00A4BD',
+          cursor: 'pointer'
+        },
+        on: {
+          click: () => {
+            vm.toDetail()
+          }
+        }
+      }, params.row.number)
+    }
+  },
+  {
+    title: '主卡号',
+    key: 'primaryCardNumber'
+  },
+  {
+    title: '类型',
+    key: 'type',
+    filters: CARDTYPELIST,
+    filterMethod (value, row) {
+      return value === row.type
+    },
+    render: (h, p) => {
+      return h('span', vm.typeToName(p.row.type) ? vm.typeToName(p.row.type) : '-')
+    }
+  },
+  {
+    title: '操作',
+    key: 'type',
+    render: (h, p) => {
+      return h('span', vm.typeToName(p.row.type) ? vm.typeToName(p.row.type) : '-')
+    }
+  },
+  {
+    title: '修改前金额',
+    key: 'beforeAmount',
+    render: (h, params) => {
+      return h('span', typeof params.row.beforeAmount === 'number' ? (params.row.beforeAmount / 100).toFixed(2) : '0.00')
+    }
+  },
+  {
+    title: '修改后金额',
+    key: 'afterAmount',
+    render: (h, params) => {
+      return h('span', typeof params.row.afterAmount === 'number' ? (params.row.afterAmount / 100).toFixed(2) : '0.00')
+    }
+  },
+  {
+    title: '发卡机构',
+    key: 'issuer',
+    render: (h, p) => {
+      return h('span', vm.issuerToName(p.row.issuer) ? vm.issuerToName(p.row.issuer) : '-')
+    }
+  },
+  {
+    title: '持卡人',
+    key: 'driverName'
+  },
+  {
+    title: '绑定车辆',
+    key: 'truckNo'
+  },
+  {
+    title: '所属承运商',
+    key: 'carrierName'
+  },
+  {
+    title: '系统操作时间',
+    key: 'systemTime',
+    render: (h, params) => {
+      return h('span', params.row.systemTime ? new Date(params.row.systemTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
+    }
+  },
+  {
+    title: '实际发生时间',
+    key: 'operateDate',
+    render: (h, params) => {
+      return h('span', params.row.operateDate ? new Date(params.row.operateDate).Format('yyyy-MM-dd hh:mm:ss') : '-')
+    }
+  },
+  {
+    title: '操作人',
+    key: 'operator'
+  },
+  {
+    title: '转入卡号',
+    key: 'toCardNumber'
+  },
+  {
+    title: '转出卡号',
+    key: 'fromCardNumber'
+  },
+  {
+    title: '押金',
+    key: 'deposit',
+    render: (h, params) => {
+      return h('span', typeof params.row.deposit === 'number' ? (params.row.deposit / 100).toFixed(2) : '0.00')
+    }
+  },
+  {
+    title: '修改前卡号',
+    key: 'beforeCardNumber'
+  },
+  {
+    title: '操作备注',
+    key: 'remark'
+  }
+]

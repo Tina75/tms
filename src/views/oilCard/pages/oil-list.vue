@@ -50,7 +50,8 @@
       class="pageTable"
       row-id="id"
       method="post"
-      url="http://192.168.1.39:3000/mock/214/oilCard/queryList"></PageTable>
+      url="http://192.168.1.39:3000/mock/214/oilCard/queryList"
+      @on-selection-change="selectionChanged"></PageTable>
   </div>
 </template>
 
@@ -70,7 +71,8 @@ export default {
         carrierName: ''
       },
       currentBtns: OILBTN(this),
-      tableColumns: oilTableColumns(this)
+      tableColumns: oilTableColumns(this),
+      tableSelection: []
     }
   },
   methods: {
@@ -108,9 +110,13 @@ export default {
       }
       return statusClass
     },
+    // 选中的表格行
+    selectionChanged (selection) {
+      this.tableSelection = selection
+    },
     // 分配
-    assigin () {
-      console.log('assigin')
+    assign () {
+      console.log('assign')
     },
     // 充值
     recharge () {
