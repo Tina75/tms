@@ -26,6 +26,22 @@
       @on-blur="handleBlur(col)"
     >
     </InputNumber>
+    <div v-else-if="col.children">
+      <Input v-for="(el, index) in col.children" :key="index" v-model="record[col.key][el.key]" :maxlength="col.max" :style="`width: ${100 / col.children.length}%`"></Input>
+      <!-- <InputNumber
+        v-for="(el, index) in col.children"
+        :key="index"
+        :value="record[col.key][el.key]"
+        :min="el.min"
+        :max="el.maxLen"
+        :parser="handleParse"
+        style="width: 33%"
+        @input="childHandle()"
+        @on-change="handleChange(col.key)"
+        @on-blur="handleBlur(col)"
+      >
+      </InputNumber> -->
+    </div>
     <Input v-else v-model="record[col.key]" :maxlength="col.max"></Input>
     <p v-if="record.hasError && record.errorMsg[col.key] !== ''" :class="errorClass">
       {{record.errorMsg[col.key]}}
@@ -142,12 +158,10 @@ export default {
         }
       }
     },
-    inputHandle (value, key) {
-      if (key === 'weightKg') {
-        const v = float.floor(value / 1000, 3)
-        if (v !== this.record['weight']) {
-          this.record['weight'] = v
-        }
+    inputHandle (value, key, size) {
+      // 尺寸等属性 长宽高
+      if (size) {
+        this.record[key].size = value
       } else {
         this.record[key] = value
       }

@@ -25,6 +25,41 @@ const state = {
   documentHeight: '', // documentBody高度
   order: {
     weightOption: 1 // 开单设置选项，1：吨；2：公斤
+  },
+  orderSet: {
+    // 收货人单位
+    consigneeCompanyNameOption: 2,
+    // 货物编号
+    cargoNoOption: 1,
+    // 包装数量
+    quantityOption: 1,
+    // 重量吨
+    weightTonOption: 1,
+    // 重量公斤
+    weightKgOption: 2,
+    // 体积
+    volumeOption: 1,
+    // 货值
+    cargoCostOption: 1,
+    // 包装方式
+    unitOption: 1,
+    // 包装尺寸
+    dimensionOption: 1,
+    // 备注
+    cargoRemark1Option: 1,
+    cargoRemark2Option: 1,
+    cargoRemark3Option: 2,
+    cargoRemark4Option: 2,
+    // 提货费
+    pickupFeeOption: 1,
+    // 装货费
+    loadFeeOption: 1,
+    // 卸货费
+    unloadFeeOption: 1,
+    // 保险费
+    insuranceFeeOption: 1,
+    // 其他费用
+    otherFeeOption: 1
   }
 }
 
