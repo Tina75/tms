@@ -340,7 +340,7 @@ export default {
               on: {
                 click: () => {
                   this.openTab({
-                    path: '/order-management/detail',
+                    path: '/order-management/recept-detail',
                     query: {
                       id: '回单' + params.row.orderNo,
                       orderId: params.row.id,

@@ -102,7 +102,7 @@ export default {
           { validator: validatePhone, trigger: 'blur' }
         ],
         cityCode: [
-          { required: true, message: '收货城市不能为空' }
+          { required: false, message: '收货城市不能为空' }
         ],
         address: [
           { required: true, message: '收货地址不能为空', trigger: 'blur' }
