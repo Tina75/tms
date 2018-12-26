@@ -1,4 +1,4 @@
-<!--保险-->
+<!--年检-->
 <template>
   <div>
     <Modal
@@ -11,7 +11,7 @@
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center;font-weight: bold;">{{title}}</p>
-      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="100" label-position="right">
+      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="110" label-position="right">
         <p class="modalTitle">基础信息</p>
         <Row>
           <Col span="8">
@@ -24,62 +24,10 @@
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem label="保单号：" prop="invoiceNo">
+          <FormItem label="金额:" prop="cost">
             <Row>
               <Col span="20">
-              <SelectInput v-model="validate.invoiceNo" :maxlength="8" placeholder="必填"></SelectInput>
-              </Col>
-            </Row>
-          </FormItem>
-          </Col>
-          <Col span="8">
-          <FormItem label="保险公司：" prop="insuranceCompanyName">
-            <Row>
-              <Col span="20">
-              <SelectInput v-model="validate.insuranceCompanyName" :maxlength="8" placeholder="必填"></SelectInput>
-              </Col>
-            </Row>
-          </FormItem>
-          </Col>
-        </Row>
-        <Row>
-          <Col span="8">
-          <FormItem label="购买日期：">
-            <Row>
-              <Col span="20">
-              <DatePicker v-model="validate.buyDate" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
-              </DatePicker>
-              </Col>
-            </Row>
-          </FormItem>
-          </Col>
-          <Col span="8">
-          <FormItem label="生效日期：" prop="effectDate">
-            <Row>
-              <Col span="20">
-              <DatePicker v-model="validate.effectDate" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
-              </DatePicker>
-              </Col>
-            </Row>
-          </FormItem>
-          </Col>
-          <Col span="8">
-          <FormItem label="失效日期：" prop="expireDate">
-            <Row>
-              <Col span="20">
-              <DatePicker v-model="validate.expireDate" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
-              </DatePicker>
-              </Col>
-            </Row>
-          </FormItem>
-          </Col>
-        </Row>
-        <Row>
-          <Col span="8">
-          <FormItem label="交强险金额：" prop="trafficFee">
-            <Row>
-              <Col span="20">
-              <TagNumberInput :min="0" v-model="validate.trafficFee" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+              <TagNumberInput :min="0" v-model="validate.cost" :show-chinese="false" placeholder="请输入"></TagNumberInput>
               </Col>
               <Col span="2" offset="1">
               <span>元</span>
@@ -88,19 +36,29 @@
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem label="商业险金额：">
+          <FormItem label="年检日期：">
             <Row>
               <Col span="20">
-              <TagNumberInput :min="0" v-model="validate.businessFee" :show-chinese="false" placeholder="请输入"></TagNumberInput>
-              </Col>
-              <Col span="2" offset="1">
-              <span>元</span>
+              <DatePicker v-model="validate.checkDate" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
+              </DatePicker>
               </Col>
             </Row>
           </FormItem>
           </Col>
         </Row>
-        <p class="modalTitle">保单照片</p>
+        <Row>
+          <Col span="8">
+          <FormItem label="下次年检日期：">
+            <Row>
+              <Col span="20">
+              <DatePicker v-model="validate.nextCheckDate" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
+              </DatePicker>
+              </Col>
+            </Row>
+          </FormItem>
+          </Col>
+        </Row>
+        <p class="modalTitle">年检照片</p>
         <Row>
           <up-load ref="upLoads" :multiple="true" max-size="10"></up-load>
           <span class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
@@ -123,7 +81,7 @@ import SelectInput from '@/components/SelectInput'
 import Server from '@/libs/js/server'
 import TagNumberInput from '@/components/TagNumberInput'
 export default {
-  name: 'owned-insurance',
+  name: 'edit-check',
   components: {
     UpLoad,
     SelectInput,
@@ -134,14 +92,10 @@ export default {
     return {
       loading: false,
       validate: {
-        invoiceNo: '',
-        insuranceCompanyName: '',
         carNo: '',
-        buyDate: '',
-        effectDate: '',
-        expireDate: '',
-        trafficFee: '',
-        businessFee: '',
+        cost: '',
+        checkDate: '',
+        nextCheckDate: '',
         remark: '',
         picUrls: ''
       },
@@ -151,22 +105,9 @@ export default {
           { required: true, message: '车牌号不能为空', trigger: 'blur' },
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
         ],
-        invoiceNo: [
-          { required: true, message: '保单号不能为空', trigger: 'blur' }
-        ],
-        insuranceCompanyName: [
-          { required: true, message: '保险公司不能为空', trigger: 'blur' }
-        ],
-        effectDate: [
-          { required: true, message: '生效日期不能为空', trigger: 'blur' }
-        ],
-        expireDate: [
-          { required: true, message: '失效日期不能为空', trigger: 'blur' }
-        ],
-        trafficFee: [
-          { required: true, message: '交强险金额不能为空', trigger: 'blur' }
+        cost: [
+          { required: true, message: '总金额不能为空', trigger: 'blur' }
         ]
-
       }
     }
   },
@@ -209,7 +150,7 @@ export default {
     add () {
       let vm = this
       Server({
-        url: '/ownerCar/insurance/add',
+        url: '/ownerCar/addCar',
         method: 'post',
         data: this.validate
       }).then(({ data }) => {
@@ -223,7 +164,7 @@ export default {
     update () {
       let vm = this
       Server({
-        url: '/ownerCar/insurance/edit',
+        url: '/ownerCar/updateCar',
         method: 'post',
         data: this.validate
       }).then(({ data }) => {

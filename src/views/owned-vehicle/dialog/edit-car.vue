@@ -27,10 +27,7 @@
           <FormItem label="车型：" prop="carType">
             <Row>
               <Col span="20">
-              <!-- <Select v-model="validate.carType" transfer >
-                <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
-            </Select> -->
-              <SelectCustom v-model="validate.carType" type="carType" class="formInputSty" placeholder="请选择" clearable></SelectCustom>
+              <SelectCarType v-model="validate.carType" class="formInputSty" placeholder="请选择"></SelectCarType>
               </Col>
             </Row>
           </FormItem>
@@ -39,10 +36,7 @@
           <FormItem label="车长：" prop="carLength">
             <Row>
               <Col span="20">
-              <!-- <Select v-model="validate.carLength" transfer >
-                <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
-              </Select> -->
-              <SelectCustom v-model="validate.carLength" type="carLength" class="formInputSty" placeholder="请选择" clearable></SelectCustom>
+              <SelectCarLength v-model="validate.carLength" class="formInputSty" placeholder="请选择"></SelectCarLength>
               </Col>
             </Row>
           </FormItem>
@@ -147,7 +141,6 @@
   </div>
 </template>
 <script>
-import { CAR_TYPE1, CAR_LENGTH, DRIVER_TYPE } from '@/libs/constant/carInfo'
 import { CAR, formatterCarNo } from '../pages/client'
 import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
@@ -157,7 +150,8 @@ import OwnDriverSelects from '@/components/own-car-form/OwnDriverSelects'
 import _ from 'lodash'
 import Server from '@/libs/js/server'
 import TagNumberInput from '@/components/TagNumberInput'
-import SelectCustom from '@/components/SelectCustom'
+import SelectCarType from '@/components/SelectCarType'
+import SelectCarLength from '@/components/SelectCarLength'
 export default {
   name: 'owned-editdriver',
   components: {
@@ -166,14 +160,13 @@ export default {
     SelectInput,
     OwnDriverSelects,
     TagNumberInput,
-    SelectCustom
+    SelectCarType,
+    SelectCarLength
   },
   mixins: [BaseDialog],
   data () {
     return {
       loading: false,
-      carTypeMap: CAR_TYPE1,
-      carLengthMap: CAR_LENGTH,
       validate: {
         driverId: '',
         driverName: '',
@@ -187,7 +180,6 @@ export default {
       address2: {},
       flagAddress: true,
       codeType: 1,
-      selectList: DRIVER_TYPE,
       formatterCarNo: formatterCarNo, // 车牌号大写转换
       ruleValidate: {
         carNo: [
@@ -195,10 +187,10 @@ export default {
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
         ],
         carType: [
-          { required: true, message: '车型不能为空', trigger: 'change' }
+          { required: true, message: '车型不能为空' }
         ],
         carLength: [
-          { required: true, message: '车长不能为空', trigger: 'change' }
+          { required: true, message: '车长不能为空' }
         ],
         shippingWeight: [
           { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }

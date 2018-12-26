@@ -15,7 +15,8 @@
           <Input v-model="validate.contact" :maxlength="15" placeholder="请输入"/>
         </FormItem>
         <FormItem label="联系电话：" prop="phone">
-          <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
+          <!-- <Input v-model="validate.phone" :maxlength="11" placeholder="请输入手机号或座机号"/> -->
+          <SelectInput v-model="validate.phone" :formatter="formatePhoneNum" :maxlength="phoneLength(validate.phone)" placeholder="请输入手机号或座机号"></SelectInput>
         </FormItem>
         <FormItem label="收货地址：">
           <Row>
@@ -38,6 +39,9 @@
         <FormItem>
           <Input v-model="validate.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
         </FormItem>
+        <FormItem label="收货人单位：">
+          <Input v-model="validate.consigneeCompanyName" :maxlength="100" placeholder="请输入"/>
+        </FormItem>
         <FormItem label="备注：" prop="remark">
           <Input v-model="validate.remark"  placeholder="请输入"/>
         </FormItem>
@@ -55,14 +59,25 @@ import BaseDialog from '@/basic/BaseDialog'
 import { consignerConsigneeAdd, consignerConsigneeUpdate } from '../pages/client'
 import AreaInput from '@/components/AreaInput'
 import CitySelect from '@/components/SelectInputForCity'
+import SelectInput from '@/components/SelectInput.vue'
+import validator from '@/libs/js/validate'
 export default {
   name: 'sender-address',
   components: {
     AreaInput,
-    CitySelect
+    CitySelect,
+    SelectInput
   },
   mixins: [BaseDialog],
   data () {
+    const validatePhone = (rule, value, callback) => {
+      value = value.replace(/\s/g, '')
+      if (validator.phone(value) || validator.telphone(value)) {
+        callback()
+      } else {
+        callback(new Error('请输入正确的手机号或座机号'))
+      }
+    }
     return {
       loading: false,
       consignerId: '', // 详情传过来的id
@@ -83,8 +98,8 @@ export default {
           { required: true, message: '收货联系人不能为空', trigger: 'blur' }
         ],
         phone: [
-          { required: true, message: '联系电话不能为空', trigger: 'blur' },
-          { type: 'string', message: '电话号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
+          { required: true, message: '联系电话不能为空' },
+          { validator: validatePhone, trigger: 'blur' }
         ],
         cityCode: [
           { required: true, message: '收货城市不能为空' }
@@ -96,6 +111,20 @@ export default {
     }
   },
   methods: {
+    formatePhoneNum (temp) {
+      if (/^1/.test(temp)) {
+        let str = temp.replace(/\s/g, '')
+        if (temp.length > 3 && temp.length < 8) {
+          temp = str.substr(0, 3) + ' ' + str.substr(3, 4)
+        } else if (temp.length >= 8) {
+          temp = [str.substr(0, 3), str.substr(3, 4), str.substr(7, 4)].join(' ')
+        }
+      }
+      return temp
+    },
+    phoneLength (value) {
+      return /^1/.test(value) ? 13 : 30
+    },
     save (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {

@@ -6,10 +6,16 @@
         </TabPane>
         <TabPane label="维修记录汇总" name="repair">
         </TabPane>
+        <TabPane label="车辆保险汇总" name="insurance">
+        </TabPane>
+        <TabPane label="车辆年检汇总" name="check">
+        </TabPane>
+        <TabPane label="轮胎管理汇总" name="tyre">
+        </TabPane>
       </Tabs>
     </div>
     <!-- 车辆信息详情 -->
-    <div v-if="showTableOne" class="info-detail">
+    <div v-if="showTable === 'car'" class="info-detail">
       <div class="info">
         <div class="title">
           <span class="icontTitle"></span>
@@ -121,9 +127,57 @@
       </div>
     </div>
     <!-- 维修记录汇总 -->
-    <div v-if="!showTableOne">
+    <div v-if="showTable === 'repair'">
       <div class="addRepair">
         <Button v-if="hasPower(190301)" type="primary" @click="editRepair">新增维修保养</Button>
+        <Button v-if="hasPower(190304)" class="buttonSty" @click="carExport">导出</Button>
+      </div>
+      <page-table
+        :columns="menuColumns"
+        :keywords="repairFormatInit"
+        class="pageTable"
+        url="/ownerCar/repair/list"
+        list-field="list"
+        method="post"
+        @on-load="handleLoad">
+      </page-table>
+    </div>
+    <!-- 车辆保险汇总 -->
+    <div v-if="showTable === 'insurance'">
+      <div class="addRepair">
+        <Button v-if="hasPower(190301)" type="primary" @click="editRepair">新增车辆保险</Button>
+        <Button v-if="hasPower(190304)" class="buttonSty" @click="carExport">导出</Button>
+      </div>
+      <page-table
+        :columns="menuColumns"
+        :keywords="repairFormatInit"
+        class="pageTable"
+        url="/ownerCar/repair/list"
+        list-field="list"
+        method="post"
+        @on-load="handleLoad">
+      </page-table>
+    </div>
+    <!-- 年检 -->
+    <div v-if="showTable === 'check'">
+      <div class="addRepair">
+        <Button v-if="hasPower(190301)" type="primary" @click="editRepair">新增车辆年检</Button>
+        <Button v-if="hasPower(190304)" class="buttonSty" @click="carExport">导出</Button>
+      </div>
+      <page-table
+        :columns="menuColumns"
+        :keywords="repairFormatInit"
+        class="pageTable"
+        url="/ownerCar/repair/list"
+        list-field="list"
+        method="post"
+        @on-load="handleLoad">
+      </page-table>
+    </div>
+    <!-- 轮胎 -->
+    <div v-if="showTable === 'tyre'">
+      <div class="addRepair">
+        <Button v-if="hasPower(190301)" type="primary" @click="editRepair">新增轮胎管理</Button>
         <Button v-if="hasPower(190304)" class="buttonSty" @click="carExport">导出</Button>
       </div>
       <page-table
@@ -156,7 +210,7 @@ export default {
   },
   data () {
     return {
-      showTableOne: true,
+      showTable: 'car',
       exportFile: true,
       infoData: {},
       carTypeMap: CAR_TYPE1,
@@ -330,11 +384,7 @@ export default {
   methods: {
     // 切换头部tab
     clickTitleTab (val) {
-      if (val === 'car') {
-        this.showTableOne = true
-      } else {
-        this.showTableOne = false
-      }
+      this.showTable = val
     },
     queryById () {
       let vm = this

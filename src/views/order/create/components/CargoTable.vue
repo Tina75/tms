@@ -43,7 +43,7 @@
             </div>
           </td>
           <td>
-            <div class="ivu-table-cell">总重量：{{unitName == 'weight' ? `${statics.weight}吨` : `${float(statics.weight * 1000)}公斤`}}</div>
+            <div class="ivu-table-cell">总重量：{{statics.weight}}吨</div>
           </td>
           <td>
             <div class="ivu-table-cell">总体积：{{statics.volume}}方</div>
@@ -65,12 +65,27 @@
 import float from '@/libs/js/float'
 import CargoTableRow from './CargoTableRow.vue'
 const prefixClass = 'ivu-table'
+const OrderMap = {
+  cargoNo: 'cargoNoOption',
+  quantity: 'quantityOption',
+  weight: 'weightTonOption',
+  weightKg: 'weightKgOption',
+  volume: 'volumeOption',
+  cargoCost: 'cargoCostOption',
+  unit: 'unitOption',
+  dimension: 'dimensionOption',
+  remark1: 'cargoRemark1Option',
+  remark2: 'cargoRemark2Option',
+  remark3: 'cargoRemark3Option',
+  remark4: 'cargoRemark4Option'
+}
 
 export default {
   components: {
     CargoTableRow
   },
   props: {
+    orderSet: Object,
     dataSource: {
       required: true,
       type: Array,
@@ -105,6 +120,13 @@ export default {
         },
         {
           required: false,
+          title: '货物编号',
+          key: 'cargoNo',
+          type: 'text',
+          max: 200
+        },
+        {
+          required: false,
           title: '重量（吨）',
           key: 'weight',
           type: 'number',
@@ -133,14 +155,13 @@ export default {
           key: 'cargoCost',
           type: 'number',
           min: 0,
-          // maxLen: 999999999.99,
           point: 2
         },
         {
           required: false,
           title: '包装方式',
           key: 'unit',
-          type: 'text',
+          type: 'package',
           max: 10
         },
         {
@@ -153,6 +174,31 @@ export default {
         },
         {
           required: false,
+          title: '包装尺寸',
+          key: 'dimension',
+          children: [
+            {
+              required: false,
+              key: 'length',
+              min: 0,
+              point: 0
+            },
+            {
+              required: false,
+              key: 'width',
+              min: 0,
+              point: 0
+            },
+            {
+              required: false,
+              key: 'height',
+              min: 0,
+              point: 0
+            }
+          ]
+        },
+        {
+          required: false,
           title: '备注1',
           key: 'remark1',
           type: 'text',
@@ -162,6 +208,20 @@ export default {
           required: false,
           title: '备注2',
           key: 'remark2',
+          type: 'text',
+          max: 100
+        },
+        {
+          required: false,
+          title: '备注3',
+          key: 'remark3',
+          type: 'text',
+          max: 100
+        },
+        {
+          required: false,
+          title: '备注4',
+          key: 'remark4',
           type: 'text',
           max: 100
         }
@@ -199,25 +259,20 @@ export default {
         quantity: 0
       })
     },
-    // 取反
-    unitName () {
-      return this.unitType === 1 ? 'weight' : 'weightKg'
-    },
     headers () {
-      // 取反
-      const type = this.unitType !== 1 ? 'weight' : 'weightKg'
       const res = this.headersOption.filter(el => {
-        return el.key !== type
+        const key = OrderMap[el.key]
+        return this.orderSet[key] !== 2
       })
       return res
     },
     dataSourceCpt () {
       return this.dataSource.map(el => {
-        if (el.weight) {
-          el.weightKg = float.floor(el.weight * 1000, 2)
-        } else {
-          el.weightKg = null
-        }
+        // if (el.weight) {
+        //   el.weightKg = float.floor(el.weight * 1000, 2)
+        // } else {
+        //   el.weightKg = null
+        // }
         return el
       })
     }
@@ -239,7 +294,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

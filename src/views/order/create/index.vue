@@ -1,9 +1,8 @@
 <template>
-  <Form ref="orderForm" :label-width="80" :model="orderForm" :rules="rules" style="position: relative;">
+  <Form ref="orderForm" :label-width="85" :model="orderForm" :rules="rules" style="position: relative;">
     <Spin v-if="loading" fix>
       <img src="../../../assets/loading.gif" width="24" height="24" alt="加载中">
     </Spin>
-
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="客户名称:" prop="consignerName">
@@ -154,10 +153,18 @@
       </FormItem>
       </Col>
     </Row>
+    <Row v-if="OrderSet.consigneeCompanyNameOption == 1" :gutter="16" >
+      <Col span="12" offset="12">
+      <!-- 收货人公司设置 -->
+      <FormItem :maxlength="50" label="收货人单位：" prop="consigneeCompanyNameOption">
+        <Input v-model="orderForm.consigneeCompanyNameOption" :maxlength="50"></Input>
+      </FormItem>
+      </Col>
+    </Row>
     <Title>货物信息</Title>
     <CargoTable
       ref="cargoTable"
-      :unit-type="WeightOption"
+      :order-set="OrderSet"
       :cargoes="cargoes"
       :data-source="consignerCargoes"
       :on-append="appendCargo"
@@ -200,7 +207,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.pickupFeeOption == 1" span="6">
       <FormItem label="提货费用:" prop="pickupFee">
         <Row>
           <Col span="19">
@@ -212,7 +219,7 @@
       </Col>
     </Row>
     <Row :gutter="16">
-      <Col span="6">
+      <Col v-if="OrderSet.loadFeeOption == 1" span="6">
       <FormItem label="装货费用:" prop="loadFee">
         <Row>
           <Col span="19">
@@ -222,7 +229,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.unloadFeeOption == 1" span="6">
       <FormItem label="卸货费用:" prop="unloadFee">
         <Row>
           <Col span="19">
@@ -232,7 +239,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.insuranceFeeOption == 1" span="6">
       <FormItem label="保险费用:" prop="insuranceFee">
         <Row>
           <Col span="19">
@@ -242,7 +249,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.otherFeeOption == 1" span="6">
       <FormItem label="其他费用:" prop="otherFee">
         <Row>
           <Col span="19">
@@ -290,11 +297,13 @@
       <Col span="6">
       <FormItem v-if="orderForm.isInvoice === 1" label="开票税率:" prop="invoiceRate">
         <Row>
-          <Col span="20">
+          <Col span="12">
           <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :min="0" :max="100">
           </TagNumberInput>
           </Col>
-          <Col span="4" class="order-create__input-unit">%</Col>
+          <Col span="12" class="order-create__input-unit">%
+          <span>（{{ totalFee * orderForm.isInvoice / 100}}元）</span>
+          </Col>
         </Row>
       </FormItem>
       </Col>
@@ -313,11 +322,15 @@
       <Col span="18">
       <FormItem label="备注:" prop="remark">
         <Input v-model="orderForm.remark" :maxlength="100" type="text">
-          </Input>
+        </Input>
       </FormItem>
       </Col>
     </Row>
     <div class="van-center i-mt-20 i-mb-20">
+      <!-- 权限 -->
+      <span style="float: left; vertical-align:middle;">
+        <Checkbox v-model="isSaveOrderTemplate">保存为常发货源</Checkbox>
+      </span>
       <Button v-if="hasPower(100101)" :loading="disabled" type="primary" @click="handleSubmit">保存</Button>
       <Button v-if="hasPower(100102)" :loading="disabled" class="i-ml-10" @click="print">保存并打印</Button>
       <Button v-if="hasPower(100103)" class="i-ml-10" @click="resetForm">清空</Button>
@@ -481,6 +494,7 @@ export default {
         consigneeAddressLongitude: '',
         consigneeAddressLatitude: '',
         consigneeAddressMapType: 1,
+        consigneeCompanyNameOption: '',
         // 货品信息
         orderCargoList: [],
         // 付款方式
@@ -507,7 +521,8 @@ export default {
         isInvoice: 0,
         invoiceRate: null,
         // 备注
-        remark: ''
+        remark: '',
+        isSaveOrderTemplate: 0
       },
       orderPrint: [],
       rules: {
@@ -612,7 +627,6 @@ export default {
       },
       salesmanList: [],
       highLight: false
-      // unitType: this.WeightOption || 1 // 货物单位
     }
   },
   computed: {
@@ -624,7 +638,7 @@ export default {
       'consigneeAddresses',
       'cargoes',
       'cargoOptions',
-      'WeightOption'
+      'OrderSet'
     ]),
     totalFee () {
       const feeList = ['freightFee', 'pickupFee', 'loadFee', 'unloadFee', 'insuranceFee', 'otherFee']
@@ -649,6 +663,14 @@ export default {
     },
     orderId () {
       return this.$route.query.id
+    },
+    isSaveOrderTemplate: {
+      set (value) {
+        this.orderForm.isSaveOrderTemplate = value === true ? 1 : 0
+      },
+      get () {
+        return this.orderForm.isSaveOrderTemplate === 1
+      }
     }
   },
   created () {
