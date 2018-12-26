@@ -80,8 +80,7 @@
                 transfer
                 format="yyyy-MM-dd"
                 type="date"
-                placeholder="请选择日期"
-                @on-change="getEffectDate">
+                placeholder="请选择日期">
               </DatePicker>
               </Col>
             </Row>
@@ -265,17 +264,8 @@ export default {
           return date && date.valueOf() <= (Date.parse(new Date(vm.validate.effectDate)) - (86400000 * 2) && Date.now() - 86400000)
         }
       }
-      vm.validate.expireDate = new Date(vm.validate.effectDate.getTime() + (364 * 86400000))
-    },
-    getEffectDate () {
-      let vm = this
-      vm.optionsStart = {
-        disabledDate (date) {
-          return date && date.valueOf() <= (Date.parse(new Date(vm.validate.expireDate)) + (86400000 * 2) && Date.now() - 86400000)
-        }
-      }
-      let endDate = new Date(vm.validate.expireDate.getTime() - (365 * 86400000))
-      vm.validate.effectDate = endDate > new Date() ? endDate : new Date()
+      let yearDate = vm.validate.effectDate.getFullYear() % 4 !== 0 ? 364 : 365 // 区分闰年
+      vm.validate.expireDate = new Date(vm.validate.effectDate.getTime() + (yearDate * 86400000))
     }
   }
 }
