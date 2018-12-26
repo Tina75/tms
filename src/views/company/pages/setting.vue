@@ -3,6 +3,8 @@
     <div id="temAll">
       <!--公司设置-->
       <div v-if="isEdit && contactListShow" class="addContacts" @click="addContacts">
+        <br/>
+        <FontIcon type="lianxiren" size="30" color="#9DA1B0"></FontIcon>
         <p class="addContacts-p">添加更多联系人</p>
       </div>
       <Form ref="formCompany" :model="formCompany" :rules="ruleCompany" :label-width="125" label-position="right">
@@ -46,7 +48,7 @@
         <Row>
           <Col :span="8">
           <FormItem label="公司联系人：" prop="contact">
-            <Input v-if="isEdit" v-model="formCompany.contact" :maxlength="10" placeholder="请输入公司联系人"></Input>
+            <Input v-if="isEdit" v-model="formCompany.contact" :maxlength="20" placeholder="请输入公司联系人"></Input>
             <span v-else class="formConten-p">{{formCompany.contact}}</span>
           </FormItem>
           </Col>
@@ -57,38 +59,19 @@
           </FormItem>
           </Col>
         </Row>
-        <!-- <Row>
-          <FormItem
-            v-for="(item, index) in (formCompany.items)"
-            v-if="item.status"
-            :key="index"
-            :label="'Item ' + item.index"
-            :prop="'items.' + index + '.value'"
-            :rules="{required: true, message: 'Item ' + item.index +' can not be empty', trigger: 'blur'}">
-            <h1>ssssssssssdsjf;lasjfd;l </h1>
-            <Row>
-              <Col span="18">
-              <Input v-model="item.value" type="text" placeholder="Enter something..."></Input>
-              </Col>
-              <Col span="4" offset="1">
-              <Button @click="handleRemove(index)">Delete</Button>
-              </Col>
-            </Row>
-          </FormItem>
-        </Row> -->
         <Row v-for="(item, index) in (formCompany.busiContact)" :key="index">
           <Col :span="8">
           <FormItem
             :label="'业务联系人' + (index + 1) + '：'"
-            :rules="{required: true, message: '请输入公司联系人', trigger: 'blur'}"
+            :rules="{required: true, message: '请输入公司联系人'}"
             :prop="'busiContact.' + index + '.name'">
-            <Input v-if="isEdit" v-model="item.name" :maxlength="10" placeholder="请输入公司联系人"></Input>
+            <Input v-if="isEdit" v-model="item.name" :maxlength="20" placeholder="请输入公司联系人"></Input>
             <span v-else class="formConten-p">{{item.name}}</span>
           </FormItem>
           </Col>
           <Col :span="8">
           <FormItem
-            :rules="{required: true, message: '请输入联系方式', trigger: 'blur'}"
+            :rules="[{required: true, message: '请输入联系方式'}, {type: 'string', message: '电话号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur'}]"
             :prop="'busiContact.' + index + '.phone'"
             label="联系方式：">
             <Row v-if="isEdit">
@@ -97,7 +80,7 @@
               </Col>
               <Col :span="4">
               <span @click="removeContact(index)">
-                <FontIcon v-if="contactList.length > 1" type="ico_cancel" size="18" color="#EC4E4E" class="removeContact">
+                <FontIcon v-if="contactList.length > 1 && isEdit" type="ico_cancel" size="18" color="#EC4E4E" class="removeContact">
                 </FontIcon>
               </span>
               </Col>
@@ -164,7 +147,7 @@
         <FormItem class="imageFontItem">
           <image-title
             v-show="isEdit"
-            ref="upLoads"
+            ref="upLoadsBusiness"
             :multiple="true"
             max-count="10"
             max-size="10"
@@ -189,7 +172,7 @@
         <FormItem class="imageFontItem">
           <image-title
             v-show="isEdit"
-            ref="upLoads"
+            ref="upLoadsService"
             :multiple="true"
             max-count="10"
             max-size="10"
@@ -212,7 +195,7 @@
         <FormItem class="imageFontItem">
           <image-title
             v-show="isEdit"
-            ref="upLoads"
+            ref="upLoadsStyle"
             :multiple="true"
             max-count="10"
             max-size="10"
@@ -235,11 +218,11 @@
         <FormItem class="imageFontItem">
           <image-title
             v-show="isEdit"
-            ref="upLoads"
+            ref="upLoadsWX"
             :multiple="true"
-            max-count="10"
+            max-count="2"
             max-size="10"
-            multiple-width="style='width:100%'">
+            multiple-width="style='width:50%'">
           </image-title>
           <div v-for="(img,index) in wxQrPic" v-show="!isEdit" :key="img.key" class="infoImage">
             <div
@@ -252,18 +235,11 @@
         </FormItem>
         <!-- 公司首页形象 -->
         <FormItem label="公司首页形象图：">
-          <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传2张，每张不能超过10MB</span>
+          <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且只支持上传1张，每张不能超过10MB</span>
           <span v-if="!isEdit && homeBanner.length < 1" class="imageTips">上传公司形象图，有利于宣传公司品牌</span>
         </FormItem>
         <FormItem class="imageFontItem">
-          <image-title
-            v-show="isEdit"
-            ref="upLoads"
-            :multiple="true"
-            max-count="1"
-            max-size="10"
-            multiple-width="style='width:100%'">
-          </image-title>
+          <up-load v-show="isEdit" ref="upLoadsBanner" :multiple="true" max-count="1" max-size="10"></up-load>
           <div v-for="(img,index) in homeBanner" v-show="!isEdit" :key="img.key" class="infoImage">
             <div
               :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
@@ -366,7 +342,7 @@ export default {
   },
   watch: {
     contactList (newlist) {
-      this.formCompany.items = newlist
+      this.formCompany.busiContact = newlist
       if (newlist.length === 3) this.contactListShow = false
       else this.contactListShow = true
     }
@@ -376,26 +352,38 @@ export default {
   },
   methods: {
     // 图片初始化
-    initImage () {
+    async initImage () {
       // LOGO
       this.$refs.uploadLogo.progress = 1
       this.$refs.uploadLogo.uploadImg = this.formCompany.logoUrl
       // 公司其他照片
+      this.busiIntroduce = await this.editStatusImage(this.formCompany.busiIntroduce, 'upLoadsBusiness') // 业务
+      this.busiAdvantce = await this.editStatusImage(this.formCompany.busiAdvantcePic, 'upLoadsService') // 服务
+      this.companyPhoto = await this.editStatusImage(this.formCompany.companyPhoto, 'upLoadsStyle') // 风貌
+      this.wxQrPic = await this.editStatusImage(this.formCompany.wxQrPic, 'upLoadsWX') // 微信
+      this.homeBanner = await this.editStatusImage(this.formCompany.homeBanner, 'upLoadsBanner') // Banner
+      setTimeout(() => {
+        if (this.formCompany.logoUrl) this.openSwipeLogo = prepareOpenSwipe(this.imageLogo)
+        if (this.busiIntroduce.length > 0) this.openSwipeInfo = prepareOpenSwipe(this.busiIntroduce)
+        if (this.busiAdvantce.length > 0) this.openSwipeInfo = prepareOpenSwipe(this.busiAdvantce)
+        if (this.companyPhoto.length > 0) this.openSwipeInfo = prepareOpenSwipe(this.companyPhoto)
+        if (this.wxQrPic.length > 0) this.openSwipeInfo = prepareOpenSwipe(this.wxQrPic)
+        if (this.homeBanner.length > 0) this.openSwipeInfo = prepareOpenSwipe(this.homeBanner)
+      }, 10)
+    },
+    editStatusImage (images, upLoads) {
       // 编辑状态
-      if (this.formCompany.companyPhoto) {
-        let infoImageListInit = JSON.parse(this.formCompany.companyPhoto)
-        this.$refs.upLoads.uploadImgList = infoImageListInit
+      if (images) {
+        let imageListInit = JSON.parse(images)
+        this.$refs[upLoads].uploadImgList = imageListInit
         // 预览状态
-        this.infoImageList = []
-        for (let index = 0; index < infoImageListInit.length; index++) {
-          const element = infoImageListInit[index]
+        let imageList = []
+        for (let index = 0; index < imageListInit.length; index++) {
+          const element = imageListInit[index]
           element.src = element.url
-          this.infoImageList.push(element)
+          imageList.push(element)
         }
-        setTimeout(() => {
-          if (this.formCompany.logoUrl) this.openSwipeLogo = prepareOpenSwipe(this.imageLogo)
-          if (this.infoImageList.length > 0) this.openSwipeInfo = prepareOpenSwipe(this.infoImageList)
-        }, 10)
+        return imageList
       }
     },
     // 获取公司信息
@@ -407,11 +395,13 @@ export default {
       }).then(({ data }) => {
         vm.formCompany = Object.assign({}, data.data)
         vm.formCompanyInit = Object.assign({}, data.data)
-        vm.formCompany.busiContact = [{
-          name: '',
-          phone: ''
-        }]
-        this.formCompany.companyPhoto = ''
+        if (!vm.formCompany.busiContact) {
+          vm.formCompany.busiContact = [{
+            name: '',
+            phone: ''
+          }]
+        }
+        vm.contactList = vm.formCompany.busiContact
       }).then(() => {
         vm.initImage()
       })
@@ -426,7 +416,7 @@ export default {
             return false
           }
           this.formCompany.logoUrl = this.$refs.uploadLogo.uploadImg
-          this.formCompany.companyPhoto = JSON.stringify(this.$refs.upLoads.getImageList())
+          // this.formCompany.companyPhoto = JSON.stringify(this.$refs.upLoads.getImageList())
           for (const key in this.formCompanyInit) {
             if (this.formCompany[key] !== this.formCompanyInit[key]) {
               isChanged = false
@@ -613,9 +603,12 @@ export default {
   right: 200px;
   top: 60px;
   cursor: pointer;
+  text-align: center;
+  z-index: 100;
   .addContacts-p
     color #00A4BD
     text-align center
+    line-height 28px
 .removeContact
   cursor: pointer;
 </style>
