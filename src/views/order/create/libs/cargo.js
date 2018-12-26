@@ -14,16 +14,22 @@ export default class Cargo {
     this.cargoCost = null
     this._weight = null
     this.volume = null
+    this.hasError = false
+    this.errorMsg = {}
+    // 1.0.9新增
     this.dimension = {
       length: null,
       width: null,
       height: null
     }
-    this.hasError = false
-    this.errorMsg = {}
+    this.cargoNo = null
+    this.unit = null
+
     if (props) {
       this.id = props.id || uniqueIndex++
       this.cargoName = props.cargoName
+      this.cargoNo = props.cargoName
+      this.dimension = props.dimension
       // 重量，保留2位小数
       this._weight = props.weight
       // 体积方，保留1位小数
@@ -90,13 +96,14 @@ export default class Cargo {
     return {
       cargoName: this.cargoName,
       weight: this.weight,
-      weightKg: this.weightKg,
       volume: this.volume,
       cargoCost: float.round(this.cargoCost * 100),
       quantity: this.quantity,
       unit: this.unit,
       remark1: this.remark1,
-      remark2: this.remark2
+      remark2: this.remark2,
+      cargoNo: this.cargoNo,
+      dimension: this.dimension
     }
   }
 }

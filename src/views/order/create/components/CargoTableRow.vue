@@ -11,6 +11,7 @@
       :maxlength="col.max"
       :transfer="true"
       :remote="false"
+      clearable
       @on-blur="handleBlur(col)"
       @on-select="handleSelect"
     >
@@ -27,7 +28,7 @@
     >
     </InputNumber>
     <div v-else-if="col.children">
-      <Input v-for="(el, index) in col.children" :key="index" v-model="record[col.key][el.key]" :maxlength="col.max" :style="`width: ${100 / col.children.length}%`"></Input>
+      <Input v-for="(el, index) in col.children" :key="index" v-model="record[col.key][el.key]" :maxlength="col.max" :style="`width: ${100 / col.children.length}%`" :placeholder="el.title" clearable></Input>
       <!-- <InputNumber
         v-for="(el, index) in col.children"
         :key="index"
@@ -35,16 +36,15 @@
         :min="el.min"
         :max="el.maxLen"
         :parser="handleParse"
-        style="width: 33%"
         @input="childHandle()"
         @on-change="handleChange(col.key)"
         @on-blur="handleBlur(col)"
       >
       </InputNumber> -->
     </div>
-    <!-- v-model="record[col.key]"  -->
-    <SelectPackageType v-else-if="col.type == 'package'" clearable/>
-    <Input v-else v-model="record[col.key]" :maxlength="col.max"></Input>
+    <!--   -->
+    <SelectPackageType v-else-if="col.type == 'package'" v-model="record[col.key]" clearable/>
+    <Input v-else v-model="record[col.key]" :maxlength="col.max" clearable></Input>
     <p v-if="record.hasError && record.errorMsg[col.key] !== ''" :class="errorClass">
       {{record.errorMsg[col.key]}}
     </p>
