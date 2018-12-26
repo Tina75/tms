@@ -73,11 +73,11 @@
                   <span v-if="info.carType">{{ info.carType|carTypeFormatter }} {{ info.carLength|carLengthFormatter }}</span>
                   <span v-else>-</span>
                 </i-col>
-                <i-col span="8">
+                <!-- <i-col span="8">
                   <span class="detail-field-title">代收货款：</span>
                   <span v-if="info.collectionMoney">{{info.collectionMoney / 100}}元</span>
                   <span v-else>-</span>
-                </i-col>
+                </i-col> -->
               </Row>
             </div>
             <Row class="detail-field-group">

@@ -28,7 +28,8 @@
                  :maxlength="20"
                  placeholder="请输入运单号"
                  class="search-input"
-                 @on-click="resetEasySearch" />
+                 @on-click="resetEasySearch"
+                 @on-enter="startSearch" />
 
           <SelectInput v-if="easySelectMode === 2" v-model="easySearchKeyword"
                        mode="carrier"
@@ -60,7 +61,13 @@
       <div v-if="!isEasySearch" class="operate-box custom-style">
 
         <div style="margin-bottom: 10px;">
-          <Input v-model="seniorSearchFields.waybillNo" :maxlength="20"  placeholder="请输入运单号" class="search-input-senior" />
+          <Input
+            v-model="seniorSearchFields.waybillNo"
+            :maxlength="20"
+            clearable
+            placeholder="请输入运单号"
+            class="search-input-senior"
+            @on-enter="startSearch" />
           <SelectInput v-model="seniorSearchFields.carrierName"
                        mode="carrier"
                        placeholder="请输入承运商"
@@ -82,7 +89,15 @@
           <div>
             <SelectInputForCity v-model="seniorSearchFields.start" placeholder="请输入始发地" class="search-input-senior" />
             <SelectInputForCity v-model="seniorSearchFields.end" placeholder="请输入目的地" class="search-input-senior" />
-            <DatePicker v-model="seniorSearchFields.dateRange" :options="timeOption" transfer type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
+            <DatePicker
+              v-model="seniorSearchFields.dateRange"
+              :options="timeOption"
+              transfer
+              type="daterange"
+              split-panels
+              placeholder="开始日期-结束日期"
+              class="search-input-senior"
+              @on-change="handleTimeChange"></DatePicker>
           </div>
           <div>
             <Button type="primary"

@@ -1,6 +1,6 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="true" transfer width="1100" @on-visible-change="close">
-    <p slot="header">修改订单</p>
+  <Modal v-model="visiable" :mask-closable="true" transfer width="1100" class="order-edit" @on-visible-change="close">
+    <p slot="header" class="dialog-title">修改订单</p>
     <Form ref="orderForm" :label-width="80" :model="orderForm" :rules="rules" >
       <Row :gutter="16">
         <Col span="6">
@@ -29,9 +29,9 @@
             </Col>
             <Col span="5" class="order-create__input-unit">
             <span style="vertical-align:middle">元</span>
-            <span @click="showCounter">
+            <!-- <span @click="showCounter">
               <FontIcon type="jisuanqi" size="20" color="#00a4bd" style="vertical-align:middle"></FontIcon>
-            </span>
+            </span> -->
             </Col>
           </Row>
         </FormItem>
@@ -97,13 +97,13 @@
         </Col>
       </Row>
       <Row :gutter="16">
-        <Col span="6">
+        <!-- <Col span="6">
         <FormItem label="提货方式:" prop="pickup">
           <Select ref="pickupSelector" v-model="orderForm.pickup" transfer>
             <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
           </Select>
         </FormItem>
-        </Col>
+        </Col> -->
         <Col span="6">
         <FormItem label="回单数量:" prop="receiptCount">
           <Row>
@@ -116,7 +116,17 @@
         </FormItem>
         </Col>
         <Col span="6">
-        <FormItem label="是否开票:" prop="isInvoice">
+        <FormItem label="代收货款:" prop="collectionMoney">
+          <Row>
+            <Col span="19">
+            <TagNumberInput :min="0" v-model="orderForm.collectionMoney"></TagNumberInput>
+            </Col>
+            <Col span="5" class="order-create__input-unit">元</Col>
+          </Row>
+        </FormItem>
+        </Col>
+        <Col span="6">
+        <FormItem label="是否开票:">
           <Select v-model="orderForm.isInvoice" transfer>
             <Option v-for="opt in invoiceList" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
           </Select>
@@ -135,18 +145,8 @@
         </Col>
       </Row>
       <Row>
-        <Col span="6">
-        <FormItem label="代收货款:" prop="collectionMoney">
-          <Row>
-            <Col span="19">
-            <TagNumberInput :min="0" v-model="orderForm.collectionMoney"></TagNumberInput>
-            </Col>
-            <Col span="5" class="order-create__input-unit">元</Col>
-          </Row>
-        </FormItem>
-        </Col>
-        <Col span="18">
-        <FormItem label="备注:" prop="remark">
+        <Col>
+        <FormItem label="备注:">
           <Input v-model="orderForm.remark" :maxlength="100" type="text">
           </Input>
         </FormItem>
@@ -168,6 +168,18 @@ import settlements from '@/libs/constant/settlement.js'
 import { invoiceList } from '@/libs/constant/orderCreate.js'
 import TagNumberInput from '@/components/TagNumberInput'
 import FontIcon from '@/components/FontIcon'
+import validator from '@/libs/js/validate'
+// import float from '@/libs/js/float'
+
+// const rate = {
+//   set (value) {
+//     return value ? float.floor(value / 100, 4) : value
+//   },
+//   get (value) {
+//     return value ? float.round(value * 100, 2) : value === 0 ? value : null
+//   }
+// }
+
 export default {
   name: 'order-edit',
   components: {
@@ -176,6 +188,29 @@ export default {
   },
   mixins: [BaseDialog],
   data () {
+    // 9位整数 2位小数
+    const validateFee = (rule, value, callback) => {
+      if ((value && validator.fee(value)) || !value) {
+        callback()
+      } else {
+        callback(new Error('费用整数位最多输入9位,小数2位'))
+      }
+    }
+    // 6位整数 1位小数
+    const validateMile = (rule, value, callback) => {
+      if ((value && validator.mileage(value)) || !value) {
+        callback()
+      } else {
+        callback(new Error('距离整数位最多输入6位,小数1位'))
+      }
+    }
+    const rate = (rule, value, callback) => {
+      if ((value && validator.fee(value) && value <= 100) || !value) {
+        callback()
+      } else {
+        callback(new Error('税率在0-100之间,小数2位'))
+      }
+    }
     return {
       pickups,
       settlements,
@@ -189,7 +224,6 @@ export default {
         unloadFee: null, // 卸货
         insuranceFee: null, // 保险
         otherFee: null, // 其他费用
-        pickup: null, // 提货费
         receiptCount: 1,
         isInvoice: 0,
         invoiceRate: null,
@@ -201,43 +235,35 @@ export default {
           { required: true, message: '' }
         ],
         mileage: [
-          { required: true, message: '' }
+          { validator: validateMile }
         ],
         freightFee: [
-          { required: true, message: '' }
+          { validator: validateFee }
         ],
         pickupFee: [
-          { required: true, message: '' }
+          { validator: validateFee }
         ],
         loadFee: [
-          { required: true, message: '' }
+          { validator: validateFee }
         ],
         unloadFee: [
-          { required: true, message: '' }
+          { validator: validateFee }
         ],
         insuranceFee: [
-          { required: true, message: '' }
+          { validator: validateFee }
         ],
         otherFee: [
-          { required: true, message: '' }
-        ],
-        pickup: [
-          { required: true, message: '' }
+          { validator: validateFee }
         ],
         receiptCount: [
-          { required: true, message: '' }
-        ],
-        isInvoice: [
-          { required: true, message: '' }
+          { required: true, type: 'number', message: '请输入回单数量' }
         ],
         invoiceRate: [
-          { required: true, message: '' }
+          { required: true, message: '请填写开票税率' },
+          { validator: rate }
         ],
         collectionMoney: [
-          { required: true, message: '' }
-        ],
-        remark: [
-          { required: true, message: '' }
+          { validator: validateFee }
         ]
       }
     }
@@ -253,7 +279,6 @@ export default {
   mounted () {
   },
   methods: {
-    showCounter () {},
     save (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
@@ -266,3 +291,27 @@ export default {
   }
 }
 </script>
+<style lang='stylus'>
+  .order-edit
+    .ivu-form
+      .ivu-form-item-label
+        font-size 14px
+        font-family 'PingFangSC-Regular'
+        color #777
+        padding-right 0
+      .ivu-form-item-content
+        margin-left 90px !important
+</style>
+<style lang='stylus' scoped>
+  .dialog-title
+    text-align center
+    font-size 16px
+    font-family 'PingFangSC-Medium'
+    font-weight 700
+    color rgba(47,50,62,1)
+    letter-spacing 1px
+  .ivu-input-number-w100
+    width 95%
+  .order-create__input-w100
+    width 92%
+</style>
