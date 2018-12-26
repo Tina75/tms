@@ -126,7 +126,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['UserInfo', 'DoucmentHeight']),
+    ...mapGetters(['UserInfo', 'DoucmentHeight', 'IsUserLogin']),
     today () {
       var now = new Date()
       return now.Format('yyyy年MM月dd日') + ' ' + this.week(now.getDay())
@@ -235,7 +235,7 @@ export default {
      */
     initNotice () {
       // 用户是否登录
-      if (this.UserInfo.id) {
+      if (this.IsUserLogin) {
         // 查询跑马灯
         server({
           url: 'message/pmd',
@@ -261,22 +261,24 @@ export default {
     },
     // 获取card数组
     initCardList () {
-      server({
-        url: 'home/plugin/user',
-        method: 'get'
-      }).then(res => {
-        if (res && res.data) {
-          const data = res.data.data
-          this.cardChecksTemp = []
-          for (const i of data) {
-            if (i.valid === 1) {
-              this.cardChecksTemp.push(i.name)
+      if (this.IsUserLogin) {
+        server({
+          url: 'home/plugin/user',
+          method: 'get'
+        }).then(res => {
+          if (res && res.data) {
+            const data = res.data.data
+            this.cardChecksTemp = []
+            for (const i of data) {
+              if (i.valid === 1) {
+                this.cardChecksTemp.push(i.name)
+              }
             }
+            this.cardsList = data
+            this.cardChecks = this.cardChecksTemp
           }
-          this.cardsList = data
-          this.cardChecks = this.cardChecksTemp
-        }
-      })
+        })
+      }
     },
     // 确认请求
     confirmAction () {

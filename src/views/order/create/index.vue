@@ -348,7 +348,7 @@
 import _ from 'lodash'
 import api from './libs/api'
 import distance from '@/libs/js/distance'
-import validator from '@/libs/js/validate'
+import validator, { validatePhone } from '@/libs/js/validate'
 import pickups from '@/libs/constant/pickup.js'
 import settlements from '@/libs/constant/settlement.js'
 import { invoiceList } from '@/libs/constant/orderCreate.js'
@@ -419,14 +419,14 @@ export default {
         callback()
       }
     }
-    const validatePhone = (rule, value, callback) => {
-      value = value.replace(/\s/g, '')
-      if (validator.phone(value) || validator.telphone(value)) {
-        callback()
-      } else {
-        callback(new Error('请输入正确的手机号或座机号'))
-      }
-    }
+    // const validatePhone = (rule, value, callback) => {
+    //   value = value.replace(/\s/g, '')
+    //   if (validator.phone(value) || validator.telphone(value)) {
+    //     callback()
+    //   } else {
+    //     callback(new Error('请输入正确的手机号或座机号'))
+    //   }
+    // }
     // 9位整数 2位小数
     const validateFee = (rule, value, callback) => {
       if ((value && validator.fee(value)) || !value) {
