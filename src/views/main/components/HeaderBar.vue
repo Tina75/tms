@@ -61,15 +61,11 @@ export default {
   },
   mounted () {
     const vm = this
-    window.EMA.bind('closeTab', vm.onTabClose)
-    // window.EMA.bind('reloadTab', (route) => {
-    //   route.query = Object.assign({ _time: new Date().getTime() }, route.query)
-    //   this.turnToPage(route)
-    // })
+    window.EMA.bind('on-close', vm.onTabClose)
     // 用户登录后，初始化配置
-    if (this.IsUserLogin) {
-      this.loopMessage()
-      this.newUserTip()
+    if (vm.IsUserLogin) {
+      vm.loopMessage()
+      vm.newUserTip()
     }
   },
   beforeDestroy () {

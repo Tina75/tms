@@ -6,7 +6,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-12-26 14:10:46
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-12-27 16:04:00
+ * @Last Modified time: 2018-12-27 17:17:55
  */
 import float from './float'
 export const NumberPrecesion = {
@@ -26,7 +26,8 @@ export const FieldLength = {
   name: 15, // 人名称：20
   phone: 20, // 手机固话长度，1-20
   extraAddress: 50, // 补充地址,门派楼
-  remark: 100// 备注长度100
+  remark: 100, // 备注长度100
+  cargoNo: 200 // 货物编号，200位
 }
 /**
  * 费用计算，保留2位小数

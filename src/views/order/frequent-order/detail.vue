@@ -291,7 +291,7 @@ export default {
   methods: {
     initDetail () {
       Server({
-        url: 'http://192.168.1.39:3000/mock/214/order/template/details',
+        url: 'ordertemplate/detail',
         method: 'post',
         data: {
           templateId: this.fqOrderId
