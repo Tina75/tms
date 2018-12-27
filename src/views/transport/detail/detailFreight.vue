@@ -646,16 +646,7 @@ export default {
       radioDisabled: false, // 控制单选按钮禁用
       source: 'detail', // 详情页编辑传detail不校验承运商，改单需校验承运商，不传detail
 
-      imageItems: [ // 需要展示的车况照片list
-        {
-          src: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/1005859967670.9203.jpg',
-          msrc: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/1005859967670.9203.jpg'
-        },
-        {
-          src: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/853667749786.0685.jpg',
-          msrc: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/853667749786.0685.jpg'
-        }
-      ]
+      imageItems: [] // 需要展示的车况照片list
     }
   },
   computed: {
@@ -693,12 +684,27 @@ export default {
       })
       return data
     },
+    // 将货物信息按货物名称累加数量
+    cargoInfos () {
+      let arr = []
+      let list = _.groupBy(this.detail, 'cargoName')
+      _.forEach(list, (value, key) => {
+        let quantity = _.sumBy(value, (i) => {
+          return i.quantity
+        })
+        let cargoInfo = {}
+        cargoInfo[key] = quantity
+        arr.push(cargoInfo)
+      })
+      return arr
+    },
     financeRulesInfo () {
       return {
         start: this.info.start,
         end: this.info.end,
         weight: this.orderTotal.weight,
-        volume: this.orderTotal.volume
+        volume: this.orderTotal.volume,
+        cargoInfos: this.cargoInfos
       }
     }
   },
@@ -743,6 +749,12 @@ export default {
         }
       }).then(res => {
         const data = res.data.data
+        this.imageItems = data.carInfo.map((item) => {
+          return {
+            src: item,
+            msrc: item
+          }
+        })
         this.id = data.waybill.waybillId
         for (let key in this.info) {
           this.info[key] = data.waybill[key]

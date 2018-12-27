@@ -780,6 +780,12 @@ export default {
           }
         },
         {
+          title: '收货人单位',
+          key: 'consigneeCompanyName',
+          minWidth: 130,
+          tooltip: true
+        },
+        {
           title: '结算方式',
           key: 'settlementType',
           minWidth: 120,
@@ -879,9 +885,17 @@ export default {
         {
           title: '开票税率',
           key: 'invoiceRate',
-          minWidth: 180,
+          minWidth: 120,
           render: (h, params) => {
             return h('span', float.round(params.row.invoiceRate * 100, 2) || '-')
+          }
+        },
+        {
+          title: '开票税额',
+          key: 'invoiceAmount',
+          minWidth: 120,
+          render: (h, params) => {
+            return h('span', float.round(params.row.invoiceAmount / 100) || '-')
           }
         },
         {
@@ -1042,6 +1056,10 @@ export default {
           }
         }
         this.btnGroup.push({ name: '分享', value: 9, code: 100307 })
+        // 1.09 新增已回单下删除按钮
+        if (val === '已回单') {
+          this.btnGroup.push({ name: '删除', value: 4, code: 100302 })
+        }
       } else {
         if (val === '待提货') {
           this.btnGroup = [

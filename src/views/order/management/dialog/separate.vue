@@ -205,7 +205,7 @@ export default {
           item.weightKg = float.round(item.weightKg)
           delete item.weight
         }
-        item.volume = float.round(item.volume, 4)
+        item.volume = float.round(item.volume, 6)
       })
       this.childOrderCargoList.map((item) => {
         // 区分吨和公斤 吨和公斤只需传一个
@@ -216,7 +216,7 @@ export default {
           item.weightKg = float.round(item.weightKg)
           delete item.weight
         }
-        item.volume = float.round(item.volume, 4)
+        item.volume = float.round(item.volume, 6)
       })
       const data = {
         id: this.id,
@@ -310,7 +310,7 @@ export default {
       } else {
         parentData.weightKg = this.weightVal ? params.row.weightKg - this.weightVal : 0
       }
-      parentData.volume = float.round(this.volumeVal ? params.row.volume - this.volumeVal : 0, 4)
+      parentData.volume = float.round(this.volumeVal ? params.row.volume - this.volumeVal : 0, 6)
       // 货值比例关联优先级：数量-->重量-->体积
       if (params.row.quantity !== 0) {
         parentData.cargoCost = parseInt(float.round(cargoCost * parentData.quantity) / quantity)
@@ -322,7 +322,7 @@ export default {
           parentData.cargoCost = parseInt(float.round(cargoCost * parentData.weightKg) / weight)
         }
       } else {
-        parentData.cargoCost = parseInt(float.round(cargoCost * parentData.volume, 4) / volume)
+        parentData.cargoCost = parseInt(float.round(cargoCost * parentData.volume, 6) / volume)
       }
       this.$set(this.parentOrderCargoList, params.index, parentData)
       this.$set(this.cloneData, params.index, parentData)

@@ -1,11 +1,11 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="true" transfer width="1100" class="order-edit" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" transfer width="1100" class="order-edit" @on-visible-change="close">
     <p slot="header" class="dialog-title">修改订单</p>
     <Form ref="orderForm" :label-width="80" :model="orderForm" :rules="rules" >
       <Row :gutter="16">
         <Col span="6">
         <FormItem label="结算方式:" prop="settlementType">
-          <Select v-model="orderForm.settlementType" transfer>
+          <Select :disabled="isCanChangeFee !== 1" v-model="orderForm.settlementType" transfer>
             <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
           </Select>
         </FormItem>
@@ -25,7 +25,7 @@
         <FormItem label="运输费用:" prop="freightFee">
           <Row>
             <Col span="19">
-            <TagNumberInput :min="0" v-model="orderForm.freightFee"></TagNumberInput>
+            <TagNumberInput :min="0" :disabled="isCanChangeFee !== 1" v-model="orderForm.freightFee"></TagNumberInput>
             </Col>
             <Col span="5" class="order-create__input-unit">
             <span style="vertical-align:middle">元</span>
@@ -40,7 +40,7 @@
         <FormItem label="提货费用:" prop="pickupFee">
           <Row>
             <Col span="19">
-            <TagNumberInput :min="0" v-model="orderForm.pickupFee"></TagNumberInput>
+            <TagNumberInput :min="0" :disabled="isCanChangeFee !== 1" v-model="orderForm.pickupFee"></TagNumberInput>
             </Col>
             <Col span="5" class="order-create__input-unit">元</Col>
           </Row>
@@ -52,7 +52,7 @@
         <FormItem label="装货费用:" prop="loadFee">
           <Row>
             <Col span="19">
-            <TagNumberInput :min="0" v-model="orderForm.loadFee"></TagNumberInput>
+            <TagNumberInput :min="0" :disabled="isCanChangeFee !== 1" v-model="orderForm.loadFee"></TagNumberInput>
             </Col>
             <Col span="5" class="order-create__input-unit">元</Col>
           </Row>
@@ -62,7 +62,7 @@
         <FormItem label="卸货费用:" prop="unloadFee">
           <Row>
             <Col span="19">
-            <TagNumberInput :min="0" v-model="orderForm.unloadFee"></TagNumberInput>
+            <TagNumberInput :min="0" :disabled="isCanChangeFee !== 1" v-model="orderForm.unloadFee"></TagNumberInput>
             </Col>
             <Col span="5" class="order-create__input-unit">元</Col>
           </Row>
@@ -72,7 +72,7 @@
         <FormItem label="保险费用:" prop="insuranceFee">
           <Row>
             <Col span="19">
-            <TagNumberInput :min="0" v-model="orderForm.insuranceFee"></TagNumberInput>
+            <TagNumberInput :min="0" :disabled="isCanChangeFee !== 1" v-model="orderForm.insuranceFee"></TagNumberInput>
             </Col>
             <Col span="4" class="order-create__input-unit">元</Col>
           </Row>
@@ -82,7 +82,7 @@
         <FormItem label="其他费用:" prop="otherFee">
           <Row>
             <Col span="19">
-            <TagNumberInput :min="0" v-model="orderForm.otherFee"></TagNumberInput>
+            <TagNumberInput :min="0" :disabled="isCanChangeFee !== 1" v-model="orderForm.otherFee"></TagNumberInput>
             </Col>
             <Col span="5" class="order-create__input-unit">元</Col>
           </Row>
@@ -93,6 +93,7 @@
         <Col span="10">
         <FormItem label="费用合计:">
           <span class="order-create__font-total">{{totalFee}}</span>元
+          <span class="tips">{{ feeTips }}</span>
         </FormItem>
         </Col>
       </Row>
@@ -119,10 +120,11 @@
         <FormItem label="代收货款:" prop="collectionMoney">
           <Row>
             <Col span="19">
-            <TagNumberInput :min="0" v-model="orderForm.collectionMoney"></TagNumberInput>
+            <TagNumberInput :min="0" :disabled="isCanChangeCollectionMoney !== 1" v-model="orderForm.collectionMoney"></TagNumberInput>
             </Col>
             <Col span="5" class="order-create__input-unit">元</Col>
           </Row>
+          <span class="tips" style="position: absolute;margin-left: 0;">{{ collectTips }}</span>
         </FormItem>
         </Col>
         <Col span="6">
@@ -144,7 +146,7 @@
         </FormItem>
         </Col>
       </Row>
-      <Row>
+      <Row style="margin-top: 10px;">
         <Col>
         <FormItem label="备注:">
           <Input v-model="orderForm.remark" :maxlength="100" type="text">
@@ -161,7 +163,7 @@
 </template>
 
 <script>
-// import Server from '@/libs/js/server'
+import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 import pickups from '@/libs/constant/pickup.js'
 import settlements from '@/libs/constant/settlement.js'
@@ -169,7 +171,7 @@ import { invoiceList } from '@/libs/constant/orderCreate.js'
 import TagNumberInput from '@/components/TagNumberInput'
 import FontIcon from '@/components/FontIcon'
 import validator from '@/libs/js/validate'
-// import float from '@/libs/js/float'
+import float from '@/libs/js/float'
 
 // const rate = {
 //   set (value) {
@@ -216,6 +218,7 @@ export default {
       settlements,
       invoiceList,
       orderForm: {
+        id: null,
         settlementType: 4,
         mileage: null,
         freightFee: null,
@@ -265,26 +268,98 @@ export default {
         collectionMoney: [
           { validator: validateFee }
         ]
-      }
+      },
+      isCanChangeFee: 1, // 是否可以改结算方式、费用、开票等信息：1是，0否
+      isCanChangeCollectionMoney: 1 // 是否可以改代收货款：1是；0否
     }
   },
+
   computed: {
-    orderId () {
-      return null
+    feeTips () {
+      let tips = ''
+      if (this.isCanChangeFee === 2) {
+        tips = '已加入对账单'
+      } else if (this.isCanChangeFee === 3) {
+        tips = '已核销'
+      }
+      return tips
+    },
+    collectTips () {
+      let tips = ''
+      if (this.isCanChangeCollectionMoney === 2) {
+        tips = '已收款'
+      } else if (this.isCanChangeCollectionMoney === 3) {
+        tips = '已拆单'
+      }
+      return tips
     },
     totalFee () {
-      return 0
+      let total
+      total = Number(this.orderForm.freightFee) +
+              Number(this.orderForm.pickupFee) +
+              Number(this.orderForm.loadFee) +
+              Number(this.orderForm.unloadFee) +
+              Number(this.orderForm.insuranceFee) +
+              Number(this.orderForm.otherFee)
+      return float.round(total)
     }
   },
+
   mounted () {
+    this.getOrderChangeDetail()
   },
   methods: {
     save (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          this.$Message.success('Success!')
-        } else {
-          this.$Message.error('Fail!')
+          for (let key in this.orderForm) {
+            if (key.indexOf('Fee') > -1 || key === 'collectionMoney') {
+              float.round(this.orderForm[key] *= 100, 0)
+            } else if (key === 'mileage') {
+              float.round(this.orderForm[key] *= 1000, 0)
+            } else if (key === 'invoiceRate') {
+              float.round(this.orderForm[key] /= 100, 0)
+            }
+          }
+          Server({
+            url: '/order/change',
+            method: 'post',
+            data: {
+              ...this.orderForm
+            }
+          }).then((res) => {
+            if (res.data.code === 10000) {
+              this.$Message.success('修改成功')
+              this.ok()
+              this.close()
+            } else {
+              this.$Message.error(res.data.msg)
+            }
+          })
+        }
+      })
+    },
+    getOrderChangeDetail () {
+      Server({
+        url: '/order/getChangeDetail',
+        method: 'post',
+        data: {
+          id: this.id
+        }
+      }).then((res) => {
+        let data = res.data.data
+        this.isCanChangeFee = data.isCanChangeFee
+        this.isCanChangeCollectionMoney = data.isCanChangeCollectionMoney
+        for (let key in this.orderForm) {
+          if (key.indexOf('Fee') > -1 || key === 'collectionMoney') {
+            this.orderForm[key] = float.round(data[key] / 100) || null
+          } else if (key === 'mileage') {
+            this.orderForm[key] = float.round(data[key] / 1000, 1) || null
+          } else if (key === 'invoiceRate') {
+            this.orderForm[key] = float.round(data[key] * 100) || null
+          } else {
+            this.orderForm[key] = data[key]
+          }
         }
       })
     }
@@ -314,4 +389,19 @@ export default {
     width 95%
   .order-create__input-w100
     width 92%
+  .order-create__font-total
+    font-size 18px
+    font-family 'DINAlternate-Bold'
+    font-weight bold
+    color #00A4BD
+    margin-right 10px
+  .order-create__input-unit
+    vertical-align middle
+    font-size 12px
+    line-height 32px
+    color #30333F
+  .tips
+    margin-left 20px
+    color #ed4014
+    font-size 14px
 </style>
