@@ -104,21 +104,24 @@
                   <div slot="content">
                     <ul class="rule-detail">
                       <li v-for="(el, no) in item.chargeRules" :key="no" class="rule-detail-item">
-                        <div v-if="ruleDetail.ruleType!=='5'">
+                        <div v-if="ruleDetail.ruleType!=='5'&&ruleDetail.ruleType!=='8'">
                           <span>{{valueTypeMap[ruleDetail.ruleType]}}</span>
                           <span style="margin-left: 5px">≥</span>
-                          <Form ref="ruleBase" :model="el" :rules="baseValidate" style="display: inline-block" inline>
+                          <Form ref="ruleBase" :model="el" :rules="baseValidate" style="display: inline-block"
+                                inline>
                             <FormItem prop="baseAndStart" inline style="margin-bottom: 0">
                               <!--<Input v-model="el.base" @on-change="setElStartNum(item, el)"/>-->
-                              <TagNumberInput v-model="el.base" :precision="precision" :show-chinese="false" @on-change="setElStartNum(item, el)"></TagNumberInput>
+                              <TagNumberInput v-model="el.base" :precision="precision" :show-chinese="false"
+                                              @on-change="setElStartNum(item, el)"></TagNumberInput>
                             </FormItem>
                             <span>{{unitMap[ruleDetail.ruleType]}}</span>
                           </Form>
                         </div>
-                        <div v-if="ruleDetail.ruleType!=='5'">
+                        <div v-if="ruleDetail.ruleType!=='5'&&ruleDetail.ruleType!=='8'">
                           <span>单价</span>
                           <span style="margin-left: 5px">=</span>
-                          <Form ref="rulePrice" :model="el" :rules="priceValidate" style="display: inline-block" inline>
+                          <Form ref="rulePrice" :model="el" :rules="priceValidate" style="display: inline-block"
+                                inline>
                             <FormItem prop="price" inline style="margin-bottom: 0">
                               <!--<Input v-model="el.price" />-->
                               <TagNumberInput v-model="el.price" :show-chinese="false"></TagNumberInput>
@@ -296,7 +299,7 @@ export default {
     addRule () {
       const _this = this
       this.openDialog({
-        name: 'client/ruleForClient/dialogs/createRule',
+        name: 'client/pages/ruleForClient/dialogs/createRule',
         data: {
           scene: this.active,
           operateNum: 1,

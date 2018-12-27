@@ -68,7 +68,7 @@
       class="pageTable"
       row-id="id"
       method="post"
-      url="http://192.168.1.39:3000/mock/214/oilCard/log/queryList"></PageTable>
+      url="/oilCard/log/queryList"></PageTable>
   </div>
 </template>
 
@@ -77,9 +77,10 @@ import { USEDBTN, usedTableColumns } from '../constant/oil'
 import commonmixin from '../mixin/commonmixin'
 import headType from '@/libs/constant/headtype'
 import Export from '@/libs/js/export'
+import contantmixin from '../mixin/contantmixin'
 export default {
   name: 'used-list',
-  mixins: [commonmixin],
+  mixins: [commonmixin, contantmixin],
   data () {
     return {
       // 表头
