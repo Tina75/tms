@@ -2,7 +2,7 @@
   <div id="set-up-container" class="set-up-container temAll">
     <Row id="temAll" :style="styleHeight">
       <Col span="1" style="width:160px;height:100%;background-color:#f3f5f9;">
-      <Menu :active-name="rightKey != 4 ? '修改密码' : '系统设置'" class="menuList" style="width:160px">
+      <Menu :active-name="rightKey != 4 ? rightTitle : '系统设置'" class="menuList" style="width:160px">
         <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
         <p class="menuTitle">{{menu.name}}</p>
         </MenuItem>
@@ -260,7 +260,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['DocumentHeight', 'UserInfo']),
+    ...mapGetters(['DocumentHeight', 'UserInfo', 'SmsSet']),
     styleHeight () {
       return { height: this.DocumentHeight + 'px' }
     },
@@ -284,27 +284,37 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['initUserInfo']),
+    ...mapMutations(['initUserInfo', 'smsSetting', 'allocationStrategySetting']),
     smsInfo () {
       this.messageList = _.cloneDeep(this.messageListInit)
-      Server({
-        url: 'set/smsInfo',
-        method: 'get'
-      }).then(({ data }) => {
-        this.switchMsg = false
-        if (data.data.smsCode) {
-          this.msgCheckBoxList = data.data.smsCode === '' ? [] : data.data.smsCode
-          this.msgCheckBoxListInit = data.data.smsCode === '' ? [] : data.data.smsCode
-          for (const checkList of this.messageList) {
-            checkList.checkBox.forEach(element => {
-              if (this.msgCheckBoxList.includes(element.model)) {
-                element.model = true
-                this.switchMsg = true
-              }
-            })
+      this.msgCheckBoxList = this.SmsSet === '' ? [] : _.clone(this.SmsSet)
+      this.msgCheckBoxListInit = this.SmsSet === '' ? [] : _.clone(this.SmsSet)
+      for (const checkList of this.messageList) {
+        checkList.checkBox.forEach(element => {
+          if (this.msgCheckBoxList.includes(element.model)) {
+            element.model = true
+            this.switchMsg = true
           }
-        }
-      })
+        })
+      }
+      // Server({
+      //   url: 'set/smsInfo',
+      //   method: 'get'
+      // }).then(({ data }) => {
+      //   this.switchMsg = false
+      //   if (data.data.smsCode) {
+      //     this.msgCheckBoxList = data.data.smsCode === '' ? [] : data.data.smsCode
+      //     this.msgCheckBoxListInit = data.data.smsCode === '' ? [] : data.data.smsCode
+      //     for (const checkList of this.messageList) {
+      //       checkList.checkBox.forEach(element => {
+      //         if (this.msgCheckBoxList.includes(element.model)) {
+      //           element.model = true
+      //           this.switchMsg = true
+      //         }
+      //       })
+      //     }
+      //   }
+      // })
     },
     clickLeftMenu (id, menuName) {
       this.rightTitle = menuName
@@ -400,6 +410,7 @@ export default {
         data: params
       }).then(({ data }) => {
         if (data.code === 10000) {
+          this.smsSetting(params.smsCode)
           this.msgCheckBoxListInit = _.cloneDeep(this.msgSlectCheckBox)
           this.$Message.success('保存成功!')
           this.msgCheckBoxListInit = _.cloneDeep(this.msgSlectCheckBox)
@@ -410,14 +421,16 @@ export default {
       this.tabName = name
     },
     handleSaveAllocation () {
+      const data = {
+        orderStrategy: this.$refs.orderAllocation.getAllocation(),
+        waybillStrategy: this.$refs.transportAllocation.getAllocation()
+      }
       Server({
         url: '/set/updateUserAllocationStrategy',
         method: 'post',
-        data: {
-          orderStrategy: this.$refs.orderAllocation.getAllocation(),
-          waybillStrategy: this.$refs.transportAllocation.getAllocation()
-        }
+        data
       }).then((res) => {
+        this.allocationStrategySetting(data)
         this.$Message.success('设置成功')
       })
     }

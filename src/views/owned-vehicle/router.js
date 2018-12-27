@@ -1,4 +1,6 @@
+import modules from './store'
 import Main from '@/views/main/Main.vue'
+import store from '@/store/index.js'
 
 export default[
   /** 自有车管理 */
@@ -51,8 +53,7 @@ export default[
         'meta': {
           'hideInMenu': true,
           'title': '车辆详情',
-          'powerCode': 190200,
-          'notCache': true
+          'powerCode': 190200
         }
       },
       {
@@ -140,3 +141,4 @@ export default[
     ]
   }
 ]
+store.registerModule('company', { ...modules })

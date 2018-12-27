@@ -30,7 +30,7 @@
       :columns="menuColumns"
       :keywords="formSearchInit"
       class="pageTable"
-      url="/ownerCar/listCar"
+      url="/ownerCar/insurance/list"
       list-field="list"
       method="post"
       @on-load="handleLoad"
@@ -56,13 +56,7 @@ export default {
     return {
       selectStatus: '1',
       keyword: '',
-      formSearchInit: {
-        carNo: '',
-        insuranceCompanyName: '',
-        invoiceNo: '',
-        buyDateStart: '',
-        buyDateEnd: ''
-      },
+      formSearchInit: {},
       exportFile: true,
       menuColumns: [
         {
@@ -86,7 +80,12 @@ export default {
                       data: {
                         title: '修改保险',
                         flag: 2, // 修改
-                        validate: { ...params.row, purchDate: new Date(params.row.purchDate) }
+                        validate: {
+                          ...params.row,
+                          buyDate: new Date(params.row.buyDate),
+                          effectDate: new Date(params.row.effectDate),
+                          expireDate: new Date(params.row.expireDate)
+                        }
                       },
                       methods: {
                         ok () {
@@ -119,18 +118,15 @@ export default {
                 on: {
                   click: () => {
                     let vm = this
-                    this.openDialog({
-                      name: 'owned-vehicle/dialog/confirmDelete',
-                      data: {
-                      },
-                      methods: {
-                        ok () {
-                          vm.insuranceDeleteById({ id: params.row.id }).then(res => {
-                            vm.$Message.success('删除成功！')
-                          }).then(() => {
-                            vm.searchCarList()
-                          })
-                        }
+                    this.$Toast.confirm({
+                      title: '提示',
+                      content: '确定删除吗？',
+                      onOk () {
+                        vm.insuranceDeleteById({ id: params.row.id }).then(() => {
+                          vm.$Message.success('删除成功！')
+                        }).then(() => {
+                          vm.searchCarList()
+                        })
                       }
                     })
                   }
@@ -159,9 +155,9 @@ export default {
         {
           title: '购买日期',
           key: 'buyDate',
-          sortable: 'custom',
+          // sortable: 'custom',
           render: (h, params) => {
-            let text = this.formatDateTime(params.row.createTime)
+            let text = this.formatDate(params.row.createTime)
             return h('div', { props: {} }, text)
           }
         }
@@ -233,8 +229,8 @@ export default {
       })
     },
     // 日期格式化
-    formatDateTime (value, format) {
-      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
     },
     edit () {
       let vm = this
@@ -253,15 +249,15 @@ export default {
     },
     searchCarList () {
       this.formSearchInit = {}
-      if (this.selectStatus === '1') {
+      if (this.selectStatus === '1' && this.keyword) {
         this.formSearchInit.carNo = this.keyword
       } else if (this.selectStatus === '2') {
         this.formSearchInit.insuranceCompanyName = this.keyword
       } else if (this.selectStatus === '3') {
         this.formSearchInit.invoiceNo = this.keyword
       } else if (this.selectStatus === '4') {
-        this.formSearchInit.buyDateStart = new Date(this.keyword[0])
-        this.formSearchInit.buyDateEnd = new Date(this.keyword[1])
+        this.formSearchInit.buyDateStart = new Date(this.keyword[0]).getTime()
+        this.formSearchInit.buyDateEnd = new Date(this.keyword[1]).getTime()
       }
     },
     clearKeywords () {

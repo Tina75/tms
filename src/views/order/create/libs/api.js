@@ -20,6 +20,19 @@ export default {
         .catch((err) => reject(err))
     })
   },
+  getReCreateDeatil (id) {
+    return new Promise((resolve, reject) => {
+      server({
+        url: 'ordertemplate/detail',
+        method: 'post',
+        data: {
+          id
+        }
+      }).then((res) => {
+        resolve(res.data.data)
+      }).catch((err) => reject(err))
+    })
+  },
   // 提交表单
   submitOrder (form) {
     let url = 'order/create'

@@ -5,7 +5,7 @@
       <span style="display:inline-block;min-width:18px">
         <Icon v-show="checked" class="tab-item__icon " type="ios-refresh" size="20" @click.stop="refresh"/>
       </span>
-      <router-link :to="path" :title="name" tag="span" class="tab-item__name">{{name}}</router-link>
+      <router-link :to="path" tag="span" class="tab-item__name">{{name}}</router-link>
       <span style="display:inline-block;min-width:18px">
         <Icon v-show="closeable" :style="checked?'visibility:visible':'visibility:hidden'" class="tab-item__icon close-icon" type="ios-close" size="20" @click.stop="close"/>
       </span>
@@ -36,7 +36,8 @@ export default {
       return {
         path: this.tab.path,
         query: {
-          title: this.tab.title,
+          // 点击标签会产生新的路由，关闭2次才可以
+          // title: this.tab.title,
           ...this.tab.query
         }
       }
@@ -51,7 +52,7 @@ export default {
   methods: {
     close () {
       let nextRoute = this.tab.close()
-      this.ema.fire('closeTab', this.tab)
+      this.ema.fire('on-close', this.tab)
       if (nextRoute) {
         // 跳转到已有的路由
         this.$router.push(nextRoute)

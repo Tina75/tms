@@ -7,6 +7,10 @@ import float from '@/libs/js/float'
 Vue.filter('datetime', function (value, format) {
   if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
 })
+
+Vue.filter('date', function (value, format) {
+  if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
+})
 /**
  * 性别格式化
  */

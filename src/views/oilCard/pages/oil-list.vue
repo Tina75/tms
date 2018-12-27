@@ -39,7 +39,8 @@
     <div class="operateBtn">
       <Button v-for="(item, key) in showButtons" :key="key"
               :type="key === 0 ? 'primary' : 'default'"
-              class="actionBtn">
+              class="actionBtn"
+              @click="item.func">
         {{ item.name }}
       </Button>
     </div>
@@ -50,16 +51,24 @@
       class="pageTable"
       row-id="id"
       method="post"
-      url="http://192.168.1.39:3000/mock/214/oilCard/queryList"></PageTable>
+      url="http://192.168.1.39:3000/mock/214/oilCard/queryList"
+      @on-selection-change="selectionChanged"></PageTable>
   </div>
 </template>
 
 <script>
 import { OILBTN, oilTableColumns } from '../constant/oil'
 import commonmixin from '../mixin/commonmixin'
+import operateBtnMixin from '../mixin/operateBtnMixin'
+import contantmixin from '../mixin/contantmixin'
+import BasePage from '@/basic/BasePage'
+// import Server from '@/libs/js/server'
 export default {
   name: 'oil-list',
-  mixins: [commonmixin],
+  mixins: [BasePage, commonmixin, operateBtnMixin, contantmixin],
+  metaInfo: {
+    title: '油卡列表'
+  },
   data () {
     return {
       searchFields: {}, // 发起请求时的搜索字段
@@ -70,7 +79,8 @@ export default {
         carrierName: ''
       },
       currentBtns: OILBTN(this),
-      tableColumns: oilTableColumns(this)
+      tableColumns: oilTableColumns(this),
+      tableSelection: []
     }
   },
   methods: {
@@ -108,33 +118,94 @@ export default {
       }
       return statusClass
     },
-    // 分配
-    assigin () {
-      console.log('assigin')
+    // 选中的表格行
+    selectionChanged (selection) {
+      this.tableSelection = selection
     },
-    // 充值
-    recharge () {
-      console.log('recharge')
+    // 新增
+    add () {
+      this.openDialog({
+        name: 'oilCard/dialog/addEdit',
+        data: {
+          mode: 1,
+          title: '新增油卡'
+        },
+        methods: {
+          ok () {
+            this.fetchData()
+          }
+        }
+      })
     },
-    // 加油
-    refuel () {
-      console.log('refuel')
+    // 停用
+    stop () {
+      if (this.tableSelection.length === 0) {
+        this.$Message.warning('请先选择')
+        return
+      }
+      let _this = this
+      let idList = this.tableSelection.map(item => {
+        return item.id
+      })
+      console.log(idList)
+      this.$Modal.confirm({
+        title: '停用',
+        content: '是否确认停用所选油卡',
+        okText: '确认',
+        cancelText: '取消',
+        async onOk () {
+          _this.openDialog({
+            name: 'oilCard/dialog/operate',
+            data: {
+              title: '油卡停用',
+              operate: {
+                idList: idList,
+                type: 1 // 1停用，2启用
+              }
+            },
+            methods: {
+              ok () {
+                _this.fetchData()
+              }
+            }
+          })
+        }
+      })
     },
-    // 转账
-    transfer () {
-      console.log('transfer')
-    },
-    // 修改
-    update () {
-      console.log('update')
-    },
-    // 回收
-    recover () {
-      console.log('recover')
-    },
-    // 到详情页
-    toDetail () {
-      console.log('toDetail')
+    // 启用
+    start () {
+      if (this.tableSelection.length === 0) {
+        this.$Message.warning('请先选择')
+        return
+      }
+      let _this = this
+      let idList = this.tableSelection.map(item => {
+        return item.id
+      })
+      console.log(idList)
+      this.$Modal.confirm({
+        title: '启用',
+        content: '是否确认启用所选油卡',
+        okText: '确认',
+        cancelText: '取消',
+        async onOk () {
+          _this.openDialog({
+            name: 'oilCard/dialog/operate',
+            data: {
+              title: '油卡启用',
+              operate: {
+                idList: idList,
+                type: 2 // 1停用，2启用
+              }
+            },
+            methods: {
+              ok () {
+                _this.fetchData()
+              }
+            }
+          })
+        }
+      })
     }
   }
 }

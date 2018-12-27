@@ -9,7 +9,7 @@
         <SelectInput
           v-model="orderForm.consignerName"
           :auto-focus="autoFocus"
-          :maxlength="20"
+          :maxlength="$fieldLength.company"
           :remote="false"
           :clearable="true"
           :local-options="clients"
@@ -20,12 +20,12 @@
       </Col>
       <Col span="6">
       <FormItem label="客户订单号:" prop="customerOrderNo">
-        <Input v-model="orderForm.customerOrderNo" :maxlength="30" clearable></Input>
+        <Input v-model="orderForm.customerOrderNo" :maxlength="$fieldLength.orderNo" clearable></Input>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="客户运单号:" prop="customerWaybillNo">
-        <Input v-model="orderForm.customerWaybillNo" :maxlength="30" clearable></Input>
+        <Input v-model="orderForm.customerWaybillNo" :maxlength="$fieldLength.billNo" clearable></Input>
       </FormItem>
       </Col>
       <Col span="6">
@@ -87,23 +87,23 @@
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="发货人:" prop="consignerContact">
-        <Input v-model="orderForm.consignerContact" :maxlength="15" clearable></Input>
+        <Input v-model="orderForm.consignerContact" :maxlength="$fieldLength.name" clearable></Input>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="联系号码:" prop="consignerPhone">
-        <SelectInput v-model="orderForm.consignerPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号" clearable></SelectInput>
+        <SelectInput v-model="orderForm.consignerPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号，座机需加区号" clearable></SelectInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="收货人:" prop="consigneeContact">
-        <SelectInput v-model="orderForm.consigneeContact" :maxlength="15" :local-options="consigneeContacts" :remote="false" clearable @on-select="handleSelectConsignee">
+        <SelectInput v-model="orderForm.consigneeContact" :maxlength="$fieldLength.name" :local-options="consigneeContacts" :remote="false" clearable @on-select="handleSelectConsignee">
         </SelectInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="联系号码:" prop="consigneePhone">
-        <SelectInput v-model="orderForm.consigneePhone" :formatter="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号" clearable></SelectInput>
+        <SelectInput v-model="orderForm.consigneePhone" :formatter="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号，座机需加区号" clearable></SelectInput>
       </FormItem>
       </Col>
     </Row>
@@ -120,7 +120,7 @@
       </Col>
       <Col span="3">
       <FormItem :label-width="0" prop="consignerHourseNumber">
-        <Input v-model="orderForm.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+        <Input v-model="orderForm.consignerHourseNumber" :maxlength="$fieldLength.extraAddress" placeholder="补充地址（楼号-门牌等）"></Input>
       </FormItem>
       </Col>
       <Col span="1">
@@ -142,7 +142,7 @@
       </Col>
       <Col span="3">
       <FormItem :label-width="0" prop="consigneeHourseNumber">
-        <Input v-model="orderForm.consigneeHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+        <Input v-model="orderForm.consigneeHourseNumber" :maxlength="$fieldLength.extraAddress" placeholder="补充地址（楼号-门牌等）"></Input>
       </FormItem>
       </Col>
       <Col span="1">
@@ -157,7 +157,7 @@
       <Col span="12" offset="12">
       <!-- 收货人公司设置 -->
       <FormItem :maxlength="50" label="收货人单位：" prop="consigneeCompanyNameOption">
-        <Input v-model="orderForm.consigneeCompanyNameOption" :maxlength="50"></Input>
+        <Input v-model="orderForm.consigneeCompanyNameOption" :maxlength="$fieldLength.extraAddress"></Input>
       </FormItem>
       </Col>
     </Row>
@@ -321,14 +321,13 @@
       </Col>
       <Col span="18">
       <FormItem label="备注:" prop="remark">
-        <Input v-model="orderForm.remark" :maxlength="100" type="text">
+        <Input v-model="orderForm.remark" :maxlength="$fieldLength.remark" type="text">
         </Input>
       </FormItem>
       </Col>
     </Row>
     <div class="van-center i-mt-20 i-mb-20">
-      <!-- 权限 -->
-      <span style="float: left; vertical-align:middle;">
+      <span v-if="!orderId" style="float: left; vertical-align:middle;">
         <Checkbox v-model="isSaveOrderTemplate">保存为常发货源</Checkbox>
       </span>
       <Button v-if="hasPower(100101)" :loading="disabled" type="primary" @click="handleSubmit">保存</Button>
@@ -367,6 +366,7 @@ import TimeInput from './components/TimeInput.vue'
 import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
 import TMSURL from '@/libs/constant/url'
+import { formatePhone } from '@/libs/js/formate'
 const rate = {
   set (value) {
     return value ? float.floor(value / 100, 4) : value
@@ -664,6 +664,9 @@ export default {
     orderId () {
       return this.$route.query.id
     },
+    createId () {
+      return this.$route.query.createId
+    },
     isSaveOrderTemplate: {
       set (value) {
         this.orderForm.isSaveOrderTemplate = value === true ? 1 : 0
@@ -674,7 +677,7 @@ export default {
     }
   },
   created () {
-    if (!this.$route.query.id) {
+    if (!this.orderId || !this.createId) {
       this.autoFocus = true
     } else {
       this.getClients()
@@ -682,8 +685,42 @@ export default {
   },
   mounted () {
     const vm = this
-    const orderId = this.orderId
-    if (orderId) {
+    // 编辑订单
+    if (this.orderId) {
+      this.editDetail(this.orderId)
+    }
+    // 再来一单
+    if (this.createId) {
+      this.initCreateDetail(this.createId)
+    }
+    // focus到结算方式和提货方式等下拉框时要弹出下拉框
+    ['pickupSelector', 'settlementSelector'].forEach((selector) => {
+      vm.$refs[selector].$refs.reference.onfocus = (e) => {
+        vm.$refs[selector].toggleHeaderFocus(e)
+        vm.$nextTick(() => {
+          setTimeout(() => {
+            if (!vm.$refs[selector].visible) {
+              vm.$refs[selector].toggleMenu(e)
+            }
+          }, 200)
+        })
+      }
+    })
+    this.initBusineList()
+  },
+  beforeDestroy () {
+    this.resetForm()
+    this.clearClients()
+  },
+  methods: {
+    ...mapActions([
+      'getClients',
+      'getConsignerDetail',
+      'clearCargoes',
+      'clearClients'
+    ]),
+    editDetail (orderId) {
+      const vm = this
       vm.loading = true
       api.getOrderDetail(orderId)
         .then((orderDetail) => {
@@ -716,33 +753,35 @@ export default {
         .catch((errorInfo) => {
           vm.loading = false
         })
-    }
-    // focus到结算方式和提货方式等下拉框时要弹出下拉框
-    ['pickupSelector', 'settlementSelector'].forEach((selector) => {
-      vm.$refs[selector].$refs.reference.onfocus = (e) => {
-        vm.$refs[selector].toggleHeaderFocus(e)
-        vm.$nextTick(() => {
-          setTimeout(() => {
-            if (!vm.$refs[selector].visible) {
-              vm.$refs[selector].toggleMenu(e)
-            }
-          }, 200)
+    },
+    initCreateDetail (createId) {
+      const vm = this
+      vm.loading = true
+      api.getReCreateDeatil(createId).then(orderDetail => {
+        vm.loading = false
+        for (let key in vm.orderForm) {
+          vm.orderForm[key] = orderDetail[key] || vm.orderForm[key]
+        }
+        this.consignerCargoes = orderDetail.orderCargoTemplateList.map((item) => new Cargo(item, true))
+        // 分转换元
+        transferFeeList.forEach((fee) => {
+          vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
         })
-      }
-    })
-    this.initBusineList()
-  },
-  beforeDestroy () {
-    this.resetForm()
-    this.clearClients()
-  },
-  methods: {
-    ...mapActions([
-      'getClients',
-      'getConsignerDetail',
-      'clearCargoes',
-      'clearClients'
-    ]),
+        if (vm.orderForm.deliveryTime) {
+          const deliveryTime = new Date(vm.orderForm.deliveryTime)
+          vm.orderForm.deliveryTime = deliveryTime
+          vm.orderForm.deliveryTimes = `${deliveryTime.getHours() > 9 ? deliveryTime.getHours() : '0' + deliveryTime.getHours()}:${deliveryTime.getMinutes() > 9 ? deliveryTime.getMinutes() : '0' + deliveryTime.getMinutes()}`
+        }
+        if (vm.orderForm.arriveTime) {
+          const arriveTime = new Date(vm.orderForm.arriveTime)
+          vm.orderForm.arriveTime = arriveTime
+          vm.orderForm.arriveTimes = `${arriveTime.getHours() > 9 ? arriveTime.getHours() : '0' + arriveTime.getHours()}:${arriveTime.getMinutes() > 9 ? arriveTime.getMinutes() : '0' + arriveTime.getMinutes()}`
+        }
+        // 里程除以 1000
+        vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
+        vm.orderForm.invoiceRate = rate.get(vm.orderForm.invoiceRate)
+      })
+    },
     initBusineList () {
       this.loading = true
       api.getBusineList().then(res => {
@@ -947,6 +986,7 @@ export default {
       this.orderForm.consignerAddressLatitude = ''
       this.orderForm.consigneeAddressLongitude = ''
       this.orderForm.consigneeAddressLatitude = ''
+      this.isSaveOrderTemplate = false
 
       this.$refs.orderForm.resetFields()
       this.clearCargoes()
@@ -1216,18 +1256,10 @@ export default {
       })
     },
     formatePhoneNum (temp) {
-      if (/^1/.test(temp)) {
-        let str = temp.replace(/\s/g, '')
-        if (temp.length > 3 && temp.length < 8) {
-          temp = str.substr(0, 3) + ' ' + str.substr(3, 4)
-        } else if (temp.length >= 8) {
-          temp = [str.substr(0, 3), str.substr(3, 4), str.substr(7, 4)].join(' ')
-        }
-      }
-      return temp
+      return formatePhone(temp)
     },
     phoneLength (value) {
-      return /^1/.test(value) ? 13 : 30
+      return /^1/.test(value) ? 13 : this.$fieldLength.telephone
     },
     setHandle () {
       this.openTab({

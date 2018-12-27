@@ -35,10 +35,10 @@
       <Checkbox v-model="form.dimensionOption">包装尺寸</Checkbox>
       </Col>
       <Col span="4">
-      <Checkbox v-model="form.cargoRemark1Option">备注1</Checkbox>
+      <Checkbox v-model="form.remark1Option">备注1</Checkbox>
       </Col>
       <Col span="4">
-      <Checkbox v-model="form.cargoRemark2Option">备注2</Checkbox>
+      <Checkbox v-model="form.remark2Option">备注2</Checkbox>
       </Col>
     </Row>
     <p class="order-set-title">应收费用</p>
@@ -89,10 +89,8 @@ const ORDER_SET = {
   // 包装尺寸
   dimensionOption: true,
   // 备注
-  cargoRemark1Option: true,
-  cargoRemark2Option: true,
-  // cargoRemark3Option: false,
-  // cargoRemark4Option: false,
+  remark1Option: true,
+  remark2Option: true,
   // 提货费
   pickupFeeOption: true,
   // 装货费
@@ -154,9 +152,11 @@ export default {
         obj[i] = this.form[i] === false ? 2 : 1
       }
       Server({
-        url: 'http://192.168.1.39:3000/mock/214/order/config/insertOrUpdate',
+        url: 'set/saveCommonSettingInfo',
         method: 'post',
-        data: obj
+        data: {
+          tmsSetConfigDto: obj
+        }
       }).then((result) => {
         this.$Message.success('保存成功')
         this.changeOrderConfiguration(obj)

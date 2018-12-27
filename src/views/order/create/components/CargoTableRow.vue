@@ -27,22 +27,19 @@
       @on-blur="handleBlur(col)"
     >
     </InputNumber>
-    <div v-else-if="col.children">
-      <Input v-for="(el, index) in col.children" :key="index" v-model="record[col.key][el.key]" :maxlength="col.max" :style="`width: ${100 / col.children.length}%`" :placeholder="el.title" clearable></Input>
-      <!-- <InputNumber
+    <div v-else-if="col.type === 'multi' && col.children">
+      <!-- <Input v-for="(el, index) in col.children" :key="index" v-model="record[col.key][el.key]" :maxlength="col.max" :style="`width: ${100 / col.children.length}%`" :placeholder="el.title" clearable></Input> -->
+      <InputNumber
         v-for="(el, index) in col.children"
         :key="index"
-        :value="record[col.key][el.key]"
+        v-model="record[col.key][el.key]"
         :min="el.min"
         :max="el.maxLen"
-        :parser="handleParse"
-        @input="childHandle()"
-        @on-change="handleChange(col.key)"
-        @on-blur="handleBlur(col)"
-      >
-      </InputNumber> -->
+        :style="`width: ${100 / col.children.length}%`"
+        :placeholder="el.title"
+        clearable>
+      </InputNumber>
     </div>
-    <!--   -->
     <SelectPackageType v-else-if="col.type == 'package'" v-model="record[col.key]" clearable/>
     <Input v-else v-model="record[col.key]" :maxlength="col.max" clearable></Input>
     <p v-if="record.hasError && record.errorMsg[col.key] !== ''" :class="errorClass">

@@ -30,7 +30,7 @@
       :columns="menuColumns"
       :keywords="formSearchInit"
       class="pageTable"
-      url="/ownerCar/listCar"
+      url="/ownerCar/check/list"
       list-field="list"
       method="post"
       @on-load="handleLoad"
@@ -59,11 +59,7 @@ export default {
       carLengthMap: CAR_LENGTH1,
       selectStatus: '1',
       keyword: '',
-      formSearchInit: {
-        carNo: '',
-        buyDateStart: '',
-        buyDateEnd: ''
-      },
+      formSearchInit: {},
       exportFile: true,
       menuColumns: [
         {
@@ -87,12 +83,10 @@ export default {
                       data: {
                         title: '修改年检',
                         flag: 2, // 修改
-                        validate: { ...params.row, purchDate: new Date(params.row.purchDate) }
+                        validate: { ...params.row, checkDate: new Date(params.row.checkDate), nextCheckDate: new Date(params.row.nextCheckDate) }
                       },
                       methods: {
                         ok () {
-                          vm.getOwnDrivers()
-                          vm.getOwnCars()
                           vm.formSearchInit = {}
                         }
                       }
@@ -122,18 +116,15 @@ export default {
                 on: {
                   click: () => {
                     let vm = this
-                    this.openDialog({
-                      name: 'owned-vehicle/dialog/confirmDelete',
-                      data: {
-                      },
-                      methods: {
-                        ok () {
-                          this.checkDeleteById({ carId: params.row.id }).then(res => {
-                            vm.$Message.success('删除成功！')
-                          }).then(() => {
-                            vm.formSearchInit = {}
-                          })
-                        }
+                    this.$Toast.confirm({
+                      title: '提示',
+                      content: '确定删除吗？',
+                      onOk () {
+                        vm.checkDeleteById({ id: params.row.id }).then(res => {
+                          vm.$Message.success('删除成功！')
+                        }).then(() => {
+                          vm.searchCarList()
+                        })
                       }
                     })
                   }
@@ -153,16 +144,24 @@ export default {
         },
         {
           title: '年检日期',
-          key: 'checkDate'
+          key: 'checkDate',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.checkDate)
+            return h('div', { props: {} }, text)
+          }
         },
         {
           title: '下次年检日期',
-          key: 'nextCheckDate'
+          key: 'nextCheckDate',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.nextCheckDate)
+            return h('div', { props: {} }, text)
+          }
         },
         {
           title: '创建时间',
           key: 'createTime',
-          sortable: 'custom',
+          // sortable: 'custom',
           render: (h, params) => {
             let text = this.formatDateTime(params.row.createTime)
             return h('div', { props: {} }, text)
@@ -210,6 +209,9 @@ export default {
     formatDateTime (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     },
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
+    },
     edit () {
       let vm = this
       this.openDialog({
@@ -220,8 +222,6 @@ export default {
         },
         methods: {
           ok () {
-            vm.getOwnDrivers()
-            vm.getOwnCars()
             vm.formSearchInit = {}
           }
         }
@@ -229,11 +229,11 @@ export default {
     },
     searchCarList () {
       this.formSearchInit = {}
-      if (this.selectStatus === '1') {
+      if (this.selectStatus === '1' && this.keyword) {
         this.formSearchInit.carNo = this.keyword
       } else {
-        this.formSearchInit.buyDateStart = new Date(this.keyword[0])
-        this.formSearchInit.buyDateEnd = new Date(this.keyword[1])
+        this.formSearchInit.checkDateStart = new Date(this.keyword[0]).getTime()
+        this.formSearchInit.checkDateEnd = new Date(this.keyword[1]).getTime()
       }
     },
     clearKeywords () {

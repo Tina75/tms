@@ -32,7 +32,7 @@
       :columns="menuColumns"
       :keywords="formSearchInit"
       class="pageTable"
-      url="/ownerCar/listCar"
+      url="/ownerCar/tire/list"
       list-field="list"
       method="post"
       @on-load="handleLoad"
@@ -58,11 +58,7 @@ export default {
     return {
       selectStatus: '1',
       keyword: '',
-      formSearchInit: {
-        carNo: '',
-        buyDateStart: '',
-        buyDateEnd: ''
-      },
+      formSearchInit: {},
       exportFile: true,
       menuColumns: [
         {
@@ -86,12 +82,10 @@ export default {
                       data: {
                         title: '修改轮胎',
                         flag: 2, // 修改
-                        validate: { ...params.row, purchDate: new Date(params.row.purchDate) }
+                        validate: { ...params.row, setupDate: new Date(params.row.setupDate) }
                       },
                       methods: {
                         ok () {
-                          vm.getOwnDrivers()
-                          vm.getOwnCars()
                           vm.formSearchInit = {}
                         }
                       }
@@ -121,18 +115,15 @@ export default {
                 on: {
                   click: () => {
                     let vm = this
-                    this.openDialog({
-                      name: 'owned-vehicle/dialog/confirmDelete',
-                      data: {
-                      },
-                      methods: {
-                        ok () {
-                          this.tyreDeleteById({ carId: params.row.id }).then(res => {
-                            vm.$Message.success('删除成功！')
-                          }).then(() => {
-                            vm.formSearchInit = {}
-                          })
-                        }
+                    this.$Toast.confirm({
+                      title: '提示',
+                      content: '确定删除吗？',
+                      onOk () {
+                        vm.tyreDeleteById({ id: params.row.id }).then(res => {
+                          vm.$Message.success('删除成功！')
+                        }).then(() => {
+                          vm.searchCarList()
+                        })
                       }
                     })
                   }
@@ -168,7 +159,11 @@ export default {
         },
         {
           title: '安装日期',
-          key: 'setupDate'
+          key: 'setupDate',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.setupDate)
+            return h('div', { props: {} }, text)
+          }
         },
         {
           title: '创建日期',
@@ -211,7 +206,7 @@ export default {
       }
       let params = this.formSearchInit
       Export({
-        url: '/ownerCar/check/export',
+        url: '/ownerCar/tire/export',
         method: 'post',
         data: params,
         fileName: '导出轮胎管理'
@@ -220,6 +215,9 @@ export default {
     // 日期格式化
     formatDateTime (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
     },
     edit () {
       let vm = this
@@ -231,8 +229,6 @@ export default {
         },
         methods: {
           ok () {
-            vm.getOwnDrivers()
-            vm.getOwnCars()
             vm.formSearchInit = {}
           }
         }
@@ -240,12 +236,11 @@ export default {
     },
     searchCarList () {
       this.formSearchInit = {}
-      if (this.selectStatus === '1') {
+      if (this.selectStatus === '1' && this.keyword) {
         this.formSearchInit.carNo = this.keyword
       } else {
-        this.formSearchInit = {}
-        this.formSearchInit.buyDateStart = new Date(this.keyword[0])
-        this.formSearchInit.buyDateEnd = new Date(this.keyword[1])
+        this.formSearchInit.setupDateStart = new Date(this.keyword[0]).getTime()
+        this.formSearchInit.setupDateEnd = new Date(this.keyword[1]).getTime()
       }
     },
     clearKeywords () {

@@ -1,16 +1,17 @@
 <template>
   <div class="order-import-page">
-    <TabHeader :list="tabs" :value="activeTab"  @on-change="handleChangeTab" />
-    <div v-if="activeTab === '1'" class="i-mt-35">
-      <OrderImport :oss-client="ossClient" :oss-dir="ossDir" :need-update="isOrderTemplateUpdate" @on-download="handleDownloadTemplate"></OrderImport>
+    <TabHeader :list="filterTabs" :value="activeTab"  @on-change="handleChangeTab" />
+    <div v-if="hasPower(100207) && activeTab === '1'" class="i-mt-35">
+      <OrderImport :oss-client="ossClient" :oss-dir="ossDir" @on-download="handleDownloadTemplate"></OrderImport>
     </div>
-    <div v-if="activeTab === '2'" class="i-mt-35">
-      <HistoryOrderImport :oss-client="ossClient" :oss-dir="ossDir" :need-update="isHistoryTemplateUpdate" @on-download="handleDownloadTemplate"></HistoryOrderImport>
+    <div v-if="hasPower(100208) && activeTab === '2'" class="i-mt-35">
+      <HistoryOrderImport :oss-client="ossClient" :oss-dir="ossDir" @on-download="handleDownloadTemplate"></HistoryOrderImport>
     </div>
   </div>
 </template>
 
 <script>
+import BasePage from '@/basic/BasePage'
 import OssClient from 'ali-oss'
 import server from '@/libs/js/server'
 import TabHeader from '@/views/finance/components/TabHeader.vue'
@@ -18,34 +19,38 @@ import OrderImport from './components/order-import.vue'
 import HistoryOrderImport from './components/history-order-import.vue'
 export default {
   name: 'order-import',
+  metaInfo: {
+    title: '批量导入'
+  },
   components: {
     TabHeader,
     OrderImport,
     HistoryOrderImport
   },
+  mixins: [BasePage],
   data () {
     return {
       activeTab: '1',
       isOrderTemplateUpdate: false, // 订单模板有更新？
       isHistoryTemplateUpdate: false, // 历史订单模板有更新
       tabs: [
-        { name: '1', label: '订单导入' },
-        { name: '2', label: '导入历史订单' }
+        { name: '1', label: '订单导入', code: 100207 },
+        { name: '2', label: '导入历史订单', code: 100208 }
       ],
       ossClient: null,
       ossDir: ''
     }
   },
-  watch: {
-    activeTab (value) {
-      // console.log(value)
+  computed: {
+    filterTabs () {
+      return this.tabs.filter(tab => this.hasPower(tab.code))
     }
   },
   created () {
     this.initOssInstance()
   },
   mounted () {
-    this.checkTemplateUpdate()
+    // this.checkTemplateUpdate()
   },
   methods: {
     handleChangeTab (name) {
@@ -55,27 +60,11 @@ export default {
      * 点击下载模板后，红点提示取消
      */
     handleDownloadTemplate (type) {
-      if (type === 1) {
-        this.isOrderTemplateUpdate = false
-      } else {
-        this.isHistoryTemplateUpdate = false
-      }
-    },
-    /**
-     * 检查模板是否更新
-     */
-    checkTemplateUpdate () {
-      const vm = this
-      server({
-        url: 'order/template/isNeedUpdate',
-        method: 'post',
-        data: {}
-      }).then((result) => {
-        if (result.data) {
-          vm.isOrderTemplateUpdate = !!result.data.isNeedUpdate.order
-          vm.isHistoryTemplateUpdate = !!result.data.isNeedUpdate.historyBill
-        }
-      })
+      // if (type === 1) {
+      //   this.isOrderTemplateUpdate = false
+      // } else {
+      //   this.isHistoryTemplateUpdate = false
+      // }
     },
     /**
      * 初始化oss

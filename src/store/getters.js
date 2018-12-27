@@ -18,3 +18,7 @@ export const DocumentHeight = (state) => state.documentHeight
 export const WeightOption = (state) => state.orderSet.weightTonOption
 /** 开单设置 */
 export const OrderSet = (state) => state.orderSet
+/** 短信设置 */
+export const SmsSet = (state) => state.smsSet
+/** 分摊策略 */
+export const AllocationStrategy = (state) => state.allocationStrategy

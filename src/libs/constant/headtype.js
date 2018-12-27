@@ -4,6 +4,7 @@
 
 const headType = {
   ORDER: 'order_head', // 订单
+  ORDER_TEMP: 'order_template_head', // 常发订单
   RECEIPT: 'receipt_head', // 回单
   WAYBILL: 'waybill_head', // 运单
   PICKUP: 'pickup_head', // 提货单

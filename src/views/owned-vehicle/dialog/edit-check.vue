@@ -18,7 +18,8 @@
           <FormItem label="车牌号：" prop="carNo">
             <Row>
               <Col span="20">
-              <SelectInput v-model="validate.carNo" :maxlength="8" :parser="formatterCarNo" placeholder="必填"></SelectInput>
+              <span v-if="flag === 3">{{ validate.carNo }}</span>
+              <CarSelect v-else v-model="validate.carNo"></CarSelect>
               </Col>
             </Row>
           </FormItem>
@@ -60,7 +61,7 @@
         </Row>
         <p class="modalTitle">年检照片</p>
         <Row>
-          <up-load ref="upLoads" :multiple="true" max-size="10"></up-load>
+          <up-load ref="upLoads" :multiple="true" max-count="10" max-size="10"></up-load>
           <span class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
         </Row>
         <p class="modalTitle">备注</p>
@@ -80,12 +81,14 @@ import UpLoad from '@/components/upLoad/index.vue'
 import SelectInput from '@/components/SelectInput'
 import Server from '@/libs/js/server'
 import TagNumberInput from '@/components/TagNumberInput'
+import CarSelect from '@/components/own-car-form/CarSelect'
 export default {
   name: 'edit-check',
   components: {
     UpLoad,
     SelectInput,
-    TagNumberInput
+    TagNumberInput,
+    CarSelect
   },
   mixins: [BaseDialog],
   data () {
@@ -93,12 +96,13 @@ export default {
       loading: false,
       validate: {
         carNo: '',
-        cost: '',
+        cost: null,
         checkDate: '',
         nextCheckDate: '',
         remark: '',
-        picUrls: ''
+        picUrls: []
       },
+      imgList: [],
       formatterCarNo: formatterCarNo, // 车牌号大写转换
       ruleValidate: {
         carNo: [
@@ -106,7 +110,7 @@ export default {
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
         ],
         cost: [
-          { required: true, message: '总金额不能为空', trigger: 'blur' }
+          { required: true, message: '总金额不能为空' }
         ]
       }
     }
@@ -117,42 +121,45 @@ export default {
   methods: {
     // 修改页面初始值更改
     configData () {
-      if (this.flag === 2) {
-        this.validate.purchDate = this.validate.purchDate
-        this.validate.carType = this.validate.carType.toString()
-        this.validate.carLength = this.validate.carLength.toString()
-        this.$refs.upload1.progress = 1
-        this.$refs.upload2.progress = 1
-        this.$refs.upload1.uploadImg = this.validate.travelPhoto
-        this.$refs.upload2.uploadImg = this.validate.roadTransPhoto
+      let vm = this
+      if (vm.flag === 2) {
+        if (vm.validate.picUrls.length > 0) {
+          vm.validate.picUrls.map((item) => {
+            vm.imgList.push({
+              url: item,
+              progress: 1
+            })
+          })
+        }
+        vm.$refs.upLoads.uploadImgList = vm.imgList
       }
     },
     save (name) {
-      this.flagAddress = true
-      if (this.validate.purchDate) {
-        this.validate.purchDate = new Date(this.validate.purchDate).Format('yyyy-MM-dd hh:mm:ss')
-      }
-      if (!this.flagAddress) {
-        return
-      }
+      this.validate.picUrls = []
+      this.$refs.upLoads.uploadImgList.map((item) => {
+        this.validate.picUrls.push(item.url)
+      })
+      let params = Object.assign({}, this.validate)
+      if (params.checkDate) params.checkDate = new Date(this.validate.checkDate).getTime()
+      if (params.nextCheckDate) params.nextCheckDate = new Date(this.validate.nextCheckDate).getTime()
       this.validate.regularLine = JSON.stringify(this.address)
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.loading = true
           if (this.flag !== 2) { // 新增
-            this.add()
+            this.add(params)
           } else { // 2-编辑
-            this.update()
+            this.update(params)
           }
         }
       })
     },
-    add () {
+    add (params) {
       let vm = this
       Server({
-        url: '/ownerCar/addCar',
+        url: '/ownerCar/check/add',
         method: 'post',
-        data: this.validate
+        data: params
       }).then(({ data }) => {
         vm.ok()
         vm.$Message.success(data.msg)
@@ -161,15 +168,15 @@ export default {
         this.loading = false
       })
     },
-    update () {
+    update (params) {
       let vm = this
       Server({
-        url: '/ownerCar/updateCar',
+        url: '/ownerCar/check/edit',
         method: 'post',
-        data: this.validate
+        data: params
       }).then(({ data }) => {
         vm.ok()
-        vm.$Message.success(data.msg)
+        vm.$Message.success('修改成功')
         vm.close()
       }).catch(() => {
         this.loading = false

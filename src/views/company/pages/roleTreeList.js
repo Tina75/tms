@@ -1,6 +1,6 @@
 export default {
-  data7: [{
-    key: 'data7',
+  data1: [{
+    key: 'data1',
     title: '上游来单',
     expand: true,
     disabled: true,
@@ -12,8 +12,8 @@ export default {
       { title: '导出', code: '110103', parentId: '110000', disabled: true }
     ]
   }],
-  data1: [{
-    key: 'data1',
+  data2: [{
+    key: 'data2',
     title: '受理开单',
     code: '100000',
     expand: true,
@@ -43,12 +43,27 @@ export default {
       checked: true,
       children: [
         { title: '页面查看', code: '100200', parentId: '100000', disabled: true },
-        { title: '导入文件', code: '100201', parentId: '100200', grandId: '100000', disabled: true },
-        { title: '下载模板', code: '100202', parentId: '100200', grandId: '100000', disabled: true },
-        { title: '下载（列表上）', code: '100203', parentId: '100200', grandId: '100000', disabled: true },
-        { title: '查看订单', code: '100204', parentId: '100200', grandId: '100000', disabled: true },
-        { title: '删除记录', code: '100205', parentId: '100200', grandId: '100000', disabled: true },
-        { title: '清空记录', code: '100206', parentId: '100200', grandId: '100000', disabled: true }
+        // { title: '导入文件', code: '100201', parentId: '100200', grandId: '100000', disabled: true },
+        // { title: '下载模板', code: '100202', parentId: '100200', grandId: '100000', disabled: true },
+        // { title: '下载（列表上）', code: '100203', parentId: '100200', grandId: '100000', disabled: true },
+        // { title: '查看订单', code: '100204', parentId: '100200', grandId: '100000', disabled: true },
+        // { title: '删除记录', code: '100205', parentId: '100200', grandId: '100000', disabled: true },
+        // { title: '清空记录', code: '100206', parentId: '100200', grandId: '100000', disabled: true }
+        { title: '订单导入', code: '100207', parentId: '100200', grandId: '100000', disabled: true },
+        { title: '发货明细导入', code: '100208', parentId: '100200', grandId: '100000', disabled: true }
+      ]
+    },
+    {
+      title: '常发订单',
+      expand: true,
+      code: '100400',
+      parentId: '100000',
+      disabled: true,
+      checked: true,
+      children: [
+        { title: '页面查看', code: '100400', parentId: '100000', disabled: true },
+        { title: '再来一单', code: '100401', parentId: '100400', grandId: '100000', disabled: true },
+        { title: '删除', code: '100402', parentId: '100400', grandId: '100000', disabled: true }
       ]
     }, {
       title: '订单管理',
@@ -245,6 +260,7 @@ export default {
         { title: '修改发货地址', code: '130105', parentId: '130100', grandId: '130000', disabled: true },
         { title: '删除发货地址', code: '130106', parentId: '130100', grandId: '130000', disabled: true },
         { title: '新增收货方', code: '130107', parentId: '130100', grandId: '130000', disabled: true },
+        { title: '导入发货方', code: '130116', parentId: '130100', grandId: '130000', disabled: true },
         { title: '修改收货方', code: '130108', parentId: '130100', grandId: '130000', disabled: true },
         { title: '删除收货方', code: '130109', parentId: '130100', grandId: '130000', disabled: true },
         { title: '新增常发货物', code: '130110', parentId: '130100', grandId: '130000', disabled: true },
@@ -336,8 +352,8 @@ export default {
       parentId: '140000'
     }]
   }],
-  data10: [{
-    key: 'data10',
+  data6: [{
+    key: 'data6',
     title: '自有车管理',
     expand: true,
     disabled: true,
@@ -386,8 +402,93 @@ export default {
         { title: '删除', code: '190303', parentId: '190300', grandId: '190000', disabled: true },
         { title: '导出', code: '190304', parentId: '190300', grandId: '190000', disabled: true }
       ]
+    },
+    {
+      title: '车辆保险',
+      expand: true,
+      disabled: true,
+      checked: true,
+      code: '190400',
+      parentId: '190000',
+      children: [
+        { title: '页面查看', code: '190400', parentId: '190000', disabled: true },
+        { title: '新增', code: '190401', parentId: '190400', grandId: '190000', disabled: true },
+        { title: '修改', code: '190402', parentId: '190400', grandId: '190000', disabled: true },
+        { title: '删除', code: '190403', parentId: '190400', grandId: '190000', disabled: true },
+        { title: '导出', code: '190404', parentId: '190400', grandId: '190000', disabled: true }
+      ]
+    },
+    {
+      title: '车辆年检',
+      expand: true,
+      disabled: true,
+      checked: true,
+      code: '190500',
+      parentId: '190000',
+      children: [
+        { title: '页面查看', code: '190500', parentId: '190000', disabled: true },
+        { title: '新增', code: '190501', parentId: '190500', grandId: '190000', disabled: true },
+        { title: '修改', code: '190502', parentId: '190500', grandId: '190000', disabled: true },
+        { title: '删除', code: '190503', parentId: '190500', grandId: '190000', disabled: true },
+        { title: '导出', code: '190504', parentId: '190500', grandId: '190000', disabled: true }
+      ]
+    },
+    {
+      title: '轮胎管理',
+      expand: true,
+      disabled: true,
+      checked: true,
+      code: '190600',
+      parentId: '190000',
+      children: [
+        { title: '页面查看', code: '190600', parentId: '190000', disabled: true },
+        { title: '新增', code: '190601', parentId: '190600', grandId: '190000', disabled: true },
+        { title: '修改', code: '190602', parentId: '190600', grandId: '190000', disabled: true },
+        { title: '删除', code: '190603', parentId: '190600', grandId: '190000', disabled: true },
+        { title: '导出', code: '190604', parentId: '190600', grandId: '190000', disabled: true }
+      ]
     }
     ]
+  }],
+  data7: [{
+    key: 'data7',
+    title: '油卡管理',
+    expand: true,
+    disabled: true,
+    checked: true,
+    code: '160000',
+    children: [{
+      title: '油卡汇总信息',
+      expand: true,
+      disabled: true,
+      checked: true,
+      code: '160100',
+      parentId: '160000',
+      children: [
+        { title: '页面查看', code: '160100', parentId: '160000', disabled: true },
+        { title: '新增', code: '160101', parentId: '160100', grandId: '160000', disabled: true },
+        { title: '修改', code: '160102', parentId: '160100', grandId: '160000', disabled: true },
+        { title: '分配', code: '160103', parentId: '160100', grandId: '160000', disabled: true },
+        { title: '充值', code: '160104', parentId: '160100', grandId: '160000', disabled: true },
+        { title: '加油', code: '160105', parentId: '160100', grandId: '160000', disabled: true },
+        { title: '转账', code: '160106', parentId: '160100', grandId: '160000', disabled: true },
+        { title: '回收', code: '160107', parentId: '160100', grandId: '160000', disabled: true },
+        { title: '停用', code: '160108', parentId: '160100', grandId: '160000', disabled: true },
+        { title: '启用', code: '160109', parentId: '160100', grandId: '160000', disabled: true },
+        { title: '导出', code: '160110', parentId: '160100', grandId: '160000', disabled: true }
+      ]
+    }, {
+      title: '油卡使用记录',
+      expand: true,
+      disabled: true,
+      checked: true,
+      code: '160200',
+      parentId: '160000',
+      children: [
+        { title: '页面查看', code: '160200', parentId: '160000', disabled: true },
+        { title: '导出', code: '160201', parentId: '160100', grandId: '160000', disabled: true }
+      ]
+    }]
   }],
   data8: [{
     key: 'data8',
@@ -423,6 +524,7 @@ export default {
         { title: '页面查看', code: '170200', parentId: '170000', disabled: true },
         { title: '按单核销', code: '170201', parentId: '170200', grandId: '170000', disabled: true },
         { title: '生成对账单', code: '170202', parentId: '170200', grandId: '170000', disabled: true },
+        { title: '批量核销', code: '170207', parentId: '170200', grandId: '170000', disabled: true },
         { title: '对账单核销', code: '170203', parentId: '170200', grandId: '170000', disabled: true },
         { title: '对账单导出', code: '170204', parentId: '170200', grandId: '170000', disabled: true },
         { title: '查看核销单详情', code: '170205', parentId: '170200', grandId: '170000', disabled: true },
@@ -503,8 +605,8 @@ export default {
       { title: '利润报表', code: '180300', parentId: '180000', disabled: true }
     ]
   }],
-  data6: [{
-    key: 'data6',
+  data10: [{
+    key: 'data10',
     title: '设置',
     expand: true,
     disabled: true,

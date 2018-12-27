@@ -146,7 +146,7 @@
         <!-- 公司介绍图片集合 -->
         <FormItem label="业务介绍：">
           <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiIntroduce" :maxlength="500" type="textarea" placeholder="请输入公司介绍"></TextAreaNumber>
-          <span v-if="!isEdit && formCompany.busiIntroduce && formCompany.busiIntroducePic" class="imageTips">完善业务介绍，有利于客户了解贵公司业务组成</span>
+          <span v-if="!isEdit && !formCompany.busiIntroduce && !formCompany.busiIntroducePic" class="imageTips">完善业务介绍，有利于客户了解贵公司业务组成</span>
           <pre v-if="!isEdit && formCompany.busiIntroduce" class="companyProfileSty">{{formCompany.busiIntroduce}}</pre><br/>
           <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
         </FormItem>
@@ -171,7 +171,7 @@
         <!-- 服务优势图片集合 -->
         <FormItem label="服务优势：">
           <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiAdvantce" :maxlength="500" type="textarea" placeholder="请输入公司介绍"></TextAreaNumber>
-          <span v-if="!isEdit && formCompany.busiAdvantcePic && formCompany.busiAdvantce" class="imageTips">完善服务优势，有利于提升客户对贵公司的好感度</span>
+          <span v-if="!isEdit && !formCompany.busiAdvantcePic && !formCompany.busiAdvantce" class="imageTips">完善服务优势，有利于提升客户对贵公司的好感度</span>
           <pre v-if="!isEdit" class="companyProfileSty">{{formCompany.busiAdvantce}}</pre><br/>
           <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
         </FormItem>
@@ -196,7 +196,7 @@
         <!-- 公司风貌图片集合 -->
         <FormItem label="公司风貌：">
           <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
-          <span v-if="!isEdit && formCompany.companyPhoto" class="imageTips">上传公司风貌照片，有利于传递给客户专业的印象</span>
+          <span v-if="!isEdit && !formCompany.companyPhoto" class="imageTips">上传公司风貌照片，有利于传递给客户专业的印象</span>
         </FormItem>
         <FormItem class="imageFontItem">
           <image-title
@@ -219,7 +219,7 @@
         <!-- 微信二维码图片集合 -->
         <FormItem label="微信二维码：">
           <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传2张，每张不能超过10MB</span>
-          <span v-if="!isEdit && formCompany.wxQrPic" class="imageTips">上传微信二维码，有利于后续微信营销</span>
+          <span v-if="!isEdit && !formCompany.wxQrPic" class="imageTips">上传微信二维码，有利于后续微信营销</span>
         </FormItem>
         <FormItem class="imageFontItem">
           <image-title
@@ -242,18 +242,17 @@
         <!-- 公司首页形象 -->
         <FormItem label="公司首页形象图：">
           <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且只支持上传1张，每张不能超过10MB</span>
-          <span v-if="!isEdit && formCompany.homeBanner" class="imageTips">上传公司形象图，有利于宣传公司品牌</span>
+          <span v-if="!isEdit && !formCompany.homeBanner" class="imageTips">上传公司形象图，有利于宣传公司品牌</span>
         </FormItem>
         <FormItem class="imageFontItem">
-          <up-load v-show="isEdit" ref="upLoadsBanner" :multiple="true" max-count="1" max-size="10"></up-load>
-          <div v-for="(img,index) in homeBanner" v-show="!isEdit" :key="img.key" class="infoImage">
-            <div
-              :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
-              class="fileImage"
-              @click="handleView(index)">
+          <Row>
+            <Col span="5">
+            <up-load v-show="isEdit" ref="upLoadsBanner" :multiple="true" max-count="1" max-size="10"></up-load>
+            <div v-if="formCompany.homeBanner && !isEdit">
+              <div :style="'height: 90px;background-image: url(' + formCompany.homeBanner + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(img.count)"></div>
             </div>
-            <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
-          </div>
+            </Col>
+          </Row>
         </FormItem>
         </FormItem>
         <div v-if="isEdit" class="configBtn">
@@ -352,7 +351,9 @@ export default {
     async initImage () {
       // LOGO
       this.$refs.uploadLogo.progress = 1
+      this.$refs.upLoadsBanner.progress = 1
       this.$refs.uploadLogo.uploadImg = this.formCompany.logoUrl
+      this.$refs.upLoadsBanner.uploadImg = this.formCompany.homeBanner
       // 公司其他照片
       this.busiIntroducePic = await this.editStatusImage(this.formCompany.busiIntroducePic, 'upLoadsBusiness') // 业务
       this.busiAdvantcePic = await this.editStatusImage(this.formCompany.busiAdvantcePic, 'upLoadsService') // 服务
