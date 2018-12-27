@@ -18,8 +18,9 @@
       :url="url"
       :method="method"
       :columns="tableColumns"
+      :keywords="keyword"
       :show-filter="true"
-      table-head-type="order_head"
+      table-head-type="order_template_head"
       @on-selection-change="handleSelectionChange"
       @on-column-change="handleColumnChange">
     </page-table>
@@ -40,9 +41,13 @@ export default {
   mixins: [BasePage],
   data () {
     return {
-      tabType: 'ORDER',
+      tabType: 'ORDER_TEMP',
       method: 'post',
-      url: 'order/list',
+      url: 'ordertemplate/list',
+      keyword: {
+        consignerName: ''
+      },
+      //
       clients: [],
       consignerName: '',
       /**
@@ -55,46 +60,52 @@ export default {
           width: 180,
           render: (h, params) => {
             const btnList = []
-            btnList.push(h('a', {
-              style: {
-                marginRight: '12px'
-              },
-              on: {
-                click: () => {
-                  this.openTab({
-                    path: 'update',
-                    title: '创建订单',
-                    query: { id: params.row.id }
-                  })
+            if (this.hasPower(100401)) {
+              btnList.push(h('a', {
+                style: {
+                  marginRight: '12px'
+                },
+                on: {
+                  click: () => {
+                    this.openTab({
+                      path: 'update',
+                      title: '创建订单',
+                      query: { id: params.row.id }
+                    })
+                  }
                 }
-              }
-            }, '再来一单'))
-            btnList.push(h('a', {
-              style: {
-                marginRight: '12px'
-              },
-              on: {
-                click: () => {
-                  this.openTab({
-                    path: 'frequent-order-detail',
-                    title: '常发订单详情',
-                    query: { id: params.row.id }
-                  })
+              }, '再来一单'))
+            }
+            if (this.hasPower(100400)) {
+              btnList.push(h('a', {
+                style: {
+                  marginRight: '12px'
+                },
+                on: {
+                  click: () => {
+                    this.openTab({
+                      path: 'frequent-order-detail',
+                      title: '常发订单详情',
+                      query: { id: params.row.id }
+                    })
+                  }
                 }
-              }
-            }, '查看'))
-            btnList.push(h('a', {
-              on: {
-                click: () => {
-                  this.$Toast.confirm({
-                    content: '确认需要删除此常发订单',
-                    onOk: () => {
-                      this.deleteItem(params.row)
-                    }
-                  })
+              }, '查看'))
+            }
+            if (this.hasPower(100402)) {
+              btnList.push(h('a', {
+                on: {
+                  click: () => {
+                    this.$Toast.confirm({
+                      content: '确认需要删除此常发订单',
+                      onOk: () => {
+                        this.deleteItem(params.row)
+                      }
+                    })
+                  }
                 }
-              }
-            }, '删除'))
+              }, '删除'))
+            }
             return h('div', btnList)
           }
         },

@@ -327,7 +327,6 @@
       </Col>
     </Row>
     <div class="van-center i-mt-20 i-mb-20">
-      <!-- 权限 -->
       <span style="float: left; vertical-align:middle;">
         <Checkbox v-model="isSaveOrderTemplate">保存为常发货源</Checkbox>
       </span>
