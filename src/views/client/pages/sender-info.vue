@@ -592,7 +592,7 @@ export default {
           this.totalCount2 = data.consigneeList.totalCount
           this.data3 = data.cargoList.list
           this.totalCount3 = data.cargoList.totalCount
-          this.downLoadUrl = data.downLoadUrl || ''
+          this.downLoadUrl = data.importConsigneeTemplet
         }
       })
     },

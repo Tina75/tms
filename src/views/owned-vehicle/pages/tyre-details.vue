@@ -54,7 +54,7 @@
             <Col span="6">
             <div>
               <span class="label">安装日期：</span>
-              {{infoData.setupDate}}
+              {{infoData.setupDate | date}}
             </div>
             </Col>
           </Row>
@@ -73,8 +73,10 @@
         </div>
         <div class="list-info">
           <Row class="row">
-            <Col span="20">
-            {{infoData.remark}}
+            <Col v-for="img in imageItems" :key="img.index" span="5">
+            <div :v-if="img">
+              <div :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(img.count)"></div>
+            </div>
             </Col>
           </Row>
         </div>
@@ -83,11 +85,7 @@
           <span class="iconTitleP">操作记录</span>
         </div>
         <div class="list-info">
-          <Row class="row">
-            <Col span="20">
-            {{infoData.remark}}
-            </Col>
-          </Row>
+          <record-list v-if="dataLog.length > 1" :data-log="dataLog"></record-list>
         </div>
       </div>
     </div>
@@ -110,9 +108,8 @@ export default {
   data () {
     return {
       infoData: {},
-      line1: '',
-      line2: '',
-      imageItems: []
+      imageItems: [],
+      dataLog: []
     }
   },
   mounted () {
@@ -123,15 +120,16 @@ export default {
     ...mapActions(['tyreQueryById', 'tyreDeleteById']),
     queryById () {
       let vm = this
-      this.tyreQueryById({ id: vm.infoData.id }).then(res => {
-        vm.infoData = res.data.data
+      vm.tyreQueryById({ id: vm.infoData.id }).then(res => {
+        vm.infoData = res.data.data.info
+        vm.dataLog = res.data.data.logs
         vm.initData()
         // 大图预览
         vm.openSwipe = prepareOpenSwipe(vm.imageItems)
       }).catch(() => {
         this.$Toast.warning({
           title: '提示',
-          content: '司机信息不存在，请刷新列表',
+          content: '信息不存在，请刷新列表',
           onOk () {
             vm.ema.fire('closeTab', vm.$route)
           },
@@ -150,30 +148,34 @@ export default {
     },
     // 初始化数据格式
     initData () {
+      this.imageItems = []
+      let count = 0
+      for (const item of this.infoData.picUrls) {
+        this.imageItems.push({ src: item, count: count })
+        count++
+      }
     },
     removeDriverData () {
       let vm = this
-      this.openDialog({
-        name: 'owned-vehicle/dialog/confirmDelete',
-        data: {},
-        methods: {
-          ok () {
-            this.tyreDeleteById({ id: vm.infoData.id }).then(res => {
-              vm.$Message.success('删除成功！')
-              vm.ema.fire('closeTab', vm.$route)
-            })
-          }
+      this.$Toast.confirm({
+        title: '提示',
+        content: '确定删除吗？',
+        onOk () {
+          vm.tyreDeleteById({ id: vm.infoData.id }).then(res => {
+            vm.$Message.success('删除成功！')
+            vm.ema.fire('closeTab', vm.$route)
+          })
         }
       })
     },
     updateDriverData () {
       let vm = this
       this.openDialog({
-        name: 'dialogs/edit-driver',
+        name: 'owned-vehicle/dialog/edit-tyre',
         data: {
-          title: '修改司机',
+          title: '修改轮胎',
           flag: 2, // 修改
-          validate: vm.infoData
+          validate: { ...vm.infoData, setupDate: new Date(vm.infoData.setupDate) }
         },
         methods: {
           ok () {

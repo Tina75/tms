@@ -74,8 +74,8 @@ const OrderMap = {
   cargoCost: 'cargoCostOption',
   unit: 'unitOption',
   dimension: 'dimensionOption',
-  remark1: 'cargoRemark1Option',
-  remark2: 'cargoRemark2Option'
+  remark1: 'remark1Option',
+  remark2: 'remark2Option'
 }
 
 export default {
@@ -174,21 +174,26 @@ export default {
           required: false,
           title: '包装尺寸',
           key: 'dimension',
+          width: 180,
+          type: 'multi',
           children: [
             {
               required: false,
+              title: '长',
               key: 'length',
               min: 0,
               point: 0
             },
             {
               required: false,
+              title: '宽',
               key: 'width',
               min: 0,
               point: 0
             },
             {
               required: false,
+              title: '高',
               key: 'height',
               min: 0,
               point: 0
@@ -252,11 +257,6 @@ export default {
     },
     dataSourceCpt () {
       return this.dataSource.map(el => {
-        // if (el.weight) {
-        //   el.weightKg = float.floor(el.weight * 1000, 2)
-        // } else {
-        //   el.weightKg = null
-        // }
         return el
       })
     }

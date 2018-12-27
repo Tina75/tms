@@ -28,8 +28,10 @@ export default class Cargo {
     if (props) {
       this.id = props.id || uniqueIndex++
       this.cargoName = props.cargoName
-      this.cargoNo = props.cargoName
-      this.dimension = props.dimension
+      this.cargoNo = props.cargoNo
+      for (let i in this.dimension) {
+        this.dimension[i] = props.dimension[i] || null
+      }
       // 重量，保留2位小数
       this._weight = props.weight
       // 体积方，保留1位小数
@@ -92,6 +94,13 @@ export default class Cargo {
       }
     }
   }
+  handleDemsion () {
+    const obj = {}
+    for (let i in this.dimension) {
+      obj[i] = this.dimension[i] || null
+    }
+    return obj
+  }
   toJson () {
     return {
       cargoName: this.cargoName,
@@ -103,7 +112,7 @@ export default class Cargo {
       remark1: this.remark1,
       remark2: this.remark2,
       cargoNo: this.cargoNo,
-      dimension: this.dimension
+      dimension: this.handleDemsion()
     }
   }
 }

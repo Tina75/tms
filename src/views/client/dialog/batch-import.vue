@@ -42,7 +42,7 @@
       </div>
     </div>
     <div slot="footer">
-      <Button type="primary">下载模板</Button>
+      <a :href="downLoadUrl" class="i-ml-10 ivu-btn ivu-btn-primary">下载模板</a>
       <Button style="margin-left: 8px" @click.native="close">关闭</Button>
     </div>
   </Modal>

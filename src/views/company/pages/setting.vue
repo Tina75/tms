@@ -248,7 +248,7 @@
           <Row>
             <Col span="5">
             <up-load v-show="isEdit" ref="upLoadsBanner" :multiple="true" max-count="1" max-size="10"></up-load>
-            <div :v-if="formCompany.homeBanner">
+            <div v-if="formCompany.homeBanner && !isEdit">
               <div :style="'height: 90px;background-image: url(' + formCompany.homeBanner + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(img.count)"></div>
             </div>
             </Col>
@@ -351,7 +351,9 @@ export default {
     async initImage () {
       // LOGO
       this.$refs.uploadLogo.progress = 1
+      this.$refs.upLoadsBanner.progress = 1
       this.$refs.uploadLogo.uploadImg = this.formCompany.logoUrl
+      this.$refs.upLoadsBanner.uploadImg = this.formCompany.homeBanner
       // 公司其他照片
       this.busiIntroducePic = await this.editStatusImage(this.formCompany.busiIntroducePic, 'upLoadsBusiness') // 业务
       this.busiAdvantcePic = await this.editStatusImage(this.formCompany.busiAdvantcePic, 'upLoadsService') // 服务
