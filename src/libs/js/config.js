@@ -6,7 +6,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-12-26 14:10:46
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-12-27 17:17:55
+ * @Last Modified time: 2018-12-27 19:04:42
  */
 import float from './float'
 export const NumberPrecesion = {
@@ -20,6 +20,7 @@ export const NumberPrecesion = {
  * 全局系统添加长度控制
  */
 export const FieldLength = {
+  mileage: 6, // 公里数整数位长：6
   company: 20, // 公司名称：20
   orderNo: 30, // 订单号，30
   billNo: 30, // 运单号 30

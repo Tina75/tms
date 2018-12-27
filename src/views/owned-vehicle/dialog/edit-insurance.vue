@@ -28,7 +28,7 @@
           <FormItem label="保单号：" prop="invoiceNo">
             <Row>
               <Col span="20">
-              <SelectInput v-model="validate.invoiceNo" :maxlength="8" placeholder="必填"></SelectInput>
+              <SelectInput v-model="validate.invoiceNo" :maxlength="30" placeholder="必填"></SelectInput>
               </Col>
             </Row>
           </FormItem>
@@ -37,7 +37,7 @@
           <FormItem label="保险公司：" prop="insuranceCompanyName">
             <Row>
               <Col span="20">
-              <SelectInput v-model="validate.insuranceCompanyName" :maxlength="8" placeholder="必填"></SelectInput>
+              <SelectInput v-model="validate.insuranceCompanyName" :maxlength="15" placeholder="必填"></SelectInput>
               </Col>
             </Row>
           </FormItem>
@@ -120,7 +120,7 @@
           <span class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
         </Row>
         <p class="modalTitle">备注</p>
-        <Input v-model="validate.remark" :maxlength="100" type="textarea" placeholder="请输入"></Input>
+        <Input v-model="validate.remark" :maxlength="$fieldLength.remark" type="textarea" placeholder="请输入"></Input>
       </Form>
       <div slot="footer" class="footerSty">
         <Button :loading="loading" type="primary" @click="save('validate')">确定</Button>
