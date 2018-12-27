@@ -72,8 +72,8 @@ export default {
         data: {}
       }).then((result) => {
         if (result.data) {
-          vm.isOrderTemplateUpdate = !!result.data.isNeedUpdate.order
-          vm.isHistoryTemplateUpdate = !!result.data.isNeedUpdate.historyBill
+          vm.isOrderTemplateUpdate = !!result.data.order
+          vm.isHistoryTemplateUpdate = !!result.data.historyBill
         }
       })
     },

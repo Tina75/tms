@@ -284,7 +284,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['initUserInfo', 'smsSetting']),
+    ...mapMutations(['initUserInfo', 'smsSetting', 'allocationStrategySetting']),
     smsInfo () {
       this.messageList = _.cloneDeep(this.messageListInit)
       this.msgCheckBoxList = this.SmsSet === '' ? [] : _.clone(this.SmsSet)
@@ -421,14 +421,16 @@ export default {
       this.tabName = name
     },
     handleSaveAllocation () {
+      const data = {
+        orderStrategy: this.$refs.orderAllocation.getAllocation(),
+        waybillStrategy: this.$refs.transportAllocation.getAllocation()
+      }
       Server({
         url: '/set/updateUserAllocationStrategy',
         method: 'post',
-        data: {
-          orderStrategy: this.$refs.orderAllocation.getAllocation(),
-          waybillStrategy: this.$refs.transportAllocation.getAllocation()
-        }
+        data
       }).then((res) => {
+        this.allocationStrategySetting(data)
         this.$Message.success('设置成功')
       })
     }
