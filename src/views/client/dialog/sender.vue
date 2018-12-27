@@ -10,13 +10,13 @@
     <p slot="header" style="text-align:center">{{title}}</p>
     <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122" label-position="right">
       <FormItem label="发货方名称：" prop="name">
-        <Input v-model="validate.name" :maxlength="20" placeholder="请输入"/>
+        <Input v-model="validate.name" :maxlength="$fieldLength.company" placeholder="请输入"/>
       </FormItem>
       <FormItem label="发货方联系人：" prop="contact">
-        <Input v-model="validate.contact" :maxlength="15" placeholder="请输入"/>
+        <Input v-model="validate.contact"  :maxlength="$fieldLength.name" placeholder="请输入"/>
       </FormItem>
-      <FormItem label="联系电话：" prop="phone">
-        <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
+      <FormItem label="联系号码：" prop="phone" >
+        <SelectInput v-model="validate.phone" :formatter="formatePhoneNum"  :maxlength="$fieldLength.phone" placeholder="请输入手机号或座机号，座机需加区号"></selectInput>
       </FormItem>
       <FormItem label="提货方式：">
         <Select v-model="validate.pickUp" transfer clearable placeholder="请输入">
@@ -87,8 +87,11 @@ import BaseDialog from '@/basic/BaseDialog'
 import pickups from '@/libs/constant/pickup.js'
 import { invoiceList } from '@/libs/constant/orderCreate.js'
 import TagNumberInput from '@/components/TagNumberInput'
+import SelectInput from '@/components/SelectInput.vue'
 import server from '@/libs/js/server'
 import float from '@/libs/js/float'
+import { validatePhone } from '@/libs/js/validate'
+import { formatePhone } from '@/libs/js/formate'
 const rate = {
   set (value) {
     return value ? float.floor(value / 100, 4) : value
@@ -97,7 +100,8 @@ const rate = {
 export default {
   name: 'sender',
   components: {
-    TagNumberInput
+    TagNumberInput,
+    SelectInput
   },
   mixins: [BaseDialog],
   data () {
@@ -127,8 +131,8 @@ export default {
           { required: true, type: 'string', message: '发货方联系人不能为空', trigger: 'blur' }
         ],
         phone: [
-          { required: true, message: '联系电话不能为空', trigger: 'blur' },
-          { type: 'string', message: '电话号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
+          { required: true, message: '联系号码不能为空', trigger: 'blur' },
+          { validator: validatePhone, trigger: 'blur' }
         ],
         invoiceRate: [
           { required: true, message: '请填写开票税率' }
@@ -140,6 +144,9 @@ export default {
     this.initSaleMan()
   },
   methods: {
+    formatePhoneNum (temp) {
+      return formatePhone(temp)
+    },
     save (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
