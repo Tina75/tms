@@ -52,7 +52,7 @@ export default {
   methods: {
     close () {
       let nextRoute = this.tab.close()
-      this.ema.fire('closeTab', this.tab)
+      this.ema.fire('on-close', this.tab)
       if (nextRoute) {
         // 跳转到已有的路由
         this.$router.push(nextRoute)

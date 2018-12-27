@@ -61,6 +61,7 @@ export default {
   mounted () {
     navTabManager.addNavTab(this.$route)
     window.EMA.bind('openTab', (route) => { this.handleClick(route) })
+    window.EMA.bind('closeTab', (route) => { this.handleClose(route) })
   },
   methods: {
     handlescroll (e) {
@@ -86,9 +87,21 @@ export default {
         }
       }
     },
-    // handleClose (item) {
-    //   this.$emit('on-close', item)
-    // },
+    /**
+     * 关闭标签
+     */
+    handleClose (route) {
+      // this.$parent.onTabClose(route)
+      window.EMA.fire('on-close', route)
+
+      let tab = this.NavTabList.find((item) => item.path === route.path)
+      if (tab) {
+        let nextRoute = tab.close()
+        if (nextRoute) {
+          this.$router.push(nextRoute)
+        }
+      }
+    },
     // handleRefresh (item) {
     //   this.ema.fire('reloadTab', { ...item })
     // },
