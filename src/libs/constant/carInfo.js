@@ -8,7 +8,8 @@ export const CAR_TYPE = [
   { value: 7, label: '高低板' },
   { value: 8, label: '面包车' },
   { value: 9, label: '爬梯车' },
-  { value: 10, label: '飞翼车' }
+  { value: 10, label: '飞翼车' },
+  { value: 11, label: '罐车' }
 ]
 
 export const CAR_TYPE1 = {
@@ -21,7 +22,8 @@ export const CAR_TYPE1 = {
   7: '高低板',
   8: '面包车',
   9: '爬梯车',
-  10: '飞翼车'
+  10: '飞翼车',
+  11: '罐车'
 }
 
 export const PACKAGE_TYPE = [

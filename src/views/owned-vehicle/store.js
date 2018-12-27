@@ -1,40 +1,46 @@
 import Server from '@/libs/js/server'
 export default {
   actions: {
-    insuranceQueryById () {
+    insuranceQueryById ({ state, commit, rootState }, params) {
       return Server({
         url: '/ownerCar/insurance/detail',
-        method: 'get'
+        method: 'get',
+        data: params
       })
     },
-    insuranceDeleteById () {
+    insuranceDeleteById ({ state, commit, rootState }, params) {
       return Server({
         url: '/ownerCar/insurance/delete',
-        method: 'get'
+        method: 'get',
+        data: params
       })
     },
-    checkQueryById () {
+    checkQueryById ({ state, commit, rootState }, params) {
       return Server({
         url: '/ownerCar/check/detail',
-        method: 'get'
+        method: 'get',
+        data: params
       })
     },
-    checkDeleteById () {
+    checkDeleteById ({ state, commit, rootState }, params) {
       return Server({
         url: '/ownerCar/check/delete',
-        method: 'get'
+        method: 'get',
+        data: params
       })
     },
-    tyreQueryById () {
+    tyreQueryById ({ state, commit, rootState }, params) {
       return Server({
         url: '/ownerCar/tire/detail',
-        method: 'get'
+        method: 'get',
+        data: params
       })
     },
-    tyreDeleteById () {
+    tyreDeleteById ({ state, commit, rootState }, params) {
       return Server({
         url: '/ownerCar/tire/delete',
-        method: 'get'
+        method: 'get',
+        data: params
       })
     }
   },

@@ -33,6 +33,9 @@ export default {
     searchData: {
       type: Object,
       default: Object
+    },
+    dataLog: {
+      type: Array
     }
   },
   data () {
@@ -43,7 +46,12 @@ export default {
     }
   },
   mounted () {
-    this.queryLog()
+    if (this.dataLog) {
+      this.orderLog = this.dataLog
+      this.orderLogCount = this.dataLog.length
+    } else {
+      this.queryLog()
+    }
   },
   methods: {
     // 日志切换显示
