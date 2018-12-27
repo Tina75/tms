@@ -6,9 +6,13 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-12-26 14:10:46
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-12-27 19:04:42
+ * @Last Modified time: 2018-12-27 19:30:08
  */
 import float from './float'
+/**
+ * 全局系统精度控制
+ * 组件内可通过: this.$numberPrecesion.weight 访问重量精度
+ */
 export const NumberPrecesion = {
   weight: 3, // 重量精确3位小数
   weightKg: 0, // 重量公斤，保留整数
@@ -18,15 +22,16 @@ export const NumberPrecesion = {
 }
 /**
  * 全局系统添加长度控制
+ * 组件内可通过: this.$fieldLength.mileage 访问公里数长度限制
  */
 export const FieldLength = {
   mileage: 6, // 公里数整数位长：6
   company: 20, // 公司名称：20
   orderNo: 30, // 订单号，30
   billNo: 30, // 运单号 30
-  name: 15, // 人名称：20
+  name: 15, // 联系人人名称：20
   phone: 20, // 手机固话长度，1-20
-  extraAddress: 50, // 补充地址,门派楼
+  extraAddress: 50, // 补充地址,门派楼,收货人单位,长度：50
   remark: 100, // 备注长度100
   cargoNo: 200 // 货物编号，200位
 }
