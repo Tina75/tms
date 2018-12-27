@@ -3,15 +3,12 @@ import { clearFileInput } from '@/libs/js/util'
 const MAX_UPLOAD_FILES = 3
 export default {
   props: {
-    needUpdate: {
-      type: Boolean,
-      default: false
-    },
     ossClient: Object,
     ossDir: String
   },
   data () {
     return {
+      needUpdate: false,
       downloadUrl: '', // 模板下载地址
       dataSource: [],
       pagination: {
@@ -41,6 +38,9 @@ export default {
       this.$refs.footer.parentElement.style['min-height'] = '180px'
       this.$refs.footer.parentElement.style['display'] = 'none'
     }
+    // 检查模板是否更新
+    this.checkTemplateUpdate()
+    // 查询导入记录
     this.fetch()
   },
   beforeDestroy () {
@@ -49,6 +49,23 @@ export default {
     }
   },
   methods: {
+    /**
+     * 检查模板是否更新
+     */
+    checkTemplateUpdate () {
+      const vm = this
+      server({
+        url: 'order/template/isNeedUpdate',
+        method: 'post',
+        data: {
+          source: this.source
+        }
+      }).then((result) => {
+        if (result.data) {
+          vm.needUpdate = !!result.data.isNeed
+        }
+      })
+    },
     /**
      * 模板下载地址
      */

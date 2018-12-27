@@ -1,7 +1,7 @@
 <template>
   <div class="order-import">
     <div class="i-mb-10 ivu-upload">
-      <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入历史订单</Button>
+      <Button type="primary" @click="handleClick">导入历史订单</Button>
       <input
         ref="fileInput"
         name="file"
@@ -12,10 +12,10 @@
       />
       <TimerPoptip :disabled="!showPoptip" max-width="246" content="为方便您导入更多的数据，我们更新了导入模板，请下载最新的导入模板">
         <Badge :dot="needUpdate">
-          <a v-if="hasPower(100202)" :href="downloadUrl" download="下载模板" class="i-ml-10 ivu-btn ivu-btn-default" @click="handleDownload">下载模板</a>
+          <a :href="downloadUrl" download="下载模板" class="i-ml-10 ivu-btn ivu-btn-default" @click="handleDownload">下载模板</a>
         </Badge>
       </TimerPoptip>
-      <Button v-if="hasPower(100206)" class="i-ml-10" @click="clearAll">清空导入记录</Button>
+      <Button class="i-ml-10" @click="clearAll">清空导入记录</Button>
     </div>
     <Table :columns="columns" :data="dataSource" no-data-text=" ">
       <div ref="footer" slot="footer" class="order-import__empty-content van-center">
@@ -25,7 +25,7 @@
             <div>暂无历史订单导入记录，快去下载模板导入吧~</div>
           </div>
           <div class="i-mt-10">
-            <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入历史订单</Button>
+            <Button type="primary" @click="handleClick">导入历史订单</Button>
           </div>
         </div>
       </div>
@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import BasePage from '@/basic/BasePage'
+import BaseComponent from '@/basic/BaseComponent'
 import TMSUrl from '@/libs/constant/url.js'
 import { Progress } from 'iview'
 import importMixin from './importMixin.js'
@@ -64,11 +64,11 @@ export default {
   components: {
     TimerPoptip
   },
-  mixins: [BasePage, importMixin],
+  mixins: [BaseComponent, importMixin],
   data () {
     const vm = this
     return {
-      // downloadUrl: '',
+      source: 2,
       templateRequestUrl: 'histemplate/get', // 模板请求地址
       clearAllRequestUrl: 'histemplate/clearOrderTemplateImportRecord', // 清空所有模板记录
       deleteOrderRequestUrl: 'histemplate/deleteOrderTemplateImportRecord', // 删除记录
@@ -83,16 +83,14 @@ export default {
           width: 160,
           render: (h, params) => {
             const actions = []
-            if (this.hasPower(100203)) {
-              actions.push(h('a', {
-                attrs: {
-                  href: params.row.fileUrl,
-                  download: '下载模板'
-                }
-              }, params.row.status ? '下载' : '下载错误报告'))
-            }
+            actions.push(h('a', {
+              attrs: {
+                href: params.row.fileUrl,
+                download: '下载模板'
+              }
+            }, params.row.status ? '下载' : '下载错误报告'))
             // 导入成功可以看下载
-            if (params.row.status === 1 && this.hasPower(100204)) {
+            if (params.row.status === 1) {
               actions.push(h('a', {
                 class: 'i-ml-10',
                 attrs: {
@@ -101,21 +99,19 @@ export default {
               }, '查看导入订单'))
             }
             // 添加删除操作
-            if (this.hasPower(100205)) {
-              actions.push(
-                h('a', {
-                  class: 'i-ml-10',
-                  attrs: {
-                    href: 'javascript:;'
-                  },
-                  on: {
-                    click: () => {
-                      vm.deleteById(params.row)
-                    }
+            actions.push(
+              h('a', {
+                class: 'i-ml-10',
+                attrs: {
+                  href: 'javascript:;'
+                },
+                on: {
+                  click: () => {
+                    vm.deleteById(params.row)
                   }
-                }, '删除')
-              )
-            }
+                }
+              }, '删除')
+            )
             return h('div', actions)
           }
         },
@@ -182,8 +178,9 @@ export default {
   methods: {
     handleDownload () {
       if (this.needUpdate) {
-        this.$emit('on-download', 2)
-        this.userDownloadTemplate(2)
+        this.$emit('on-download', this.source)
+        this.userDownloadTemplate(this.source)
+        this.needUpdate = false
         jsCookie.remove('tms_history_order_template')
       }
     }
