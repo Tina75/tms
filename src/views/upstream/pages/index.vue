@@ -118,9 +118,9 @@ import BasePage from '@/basic/BasePage'
 import PageTable from '@/components/page-table'
 import SelectInput from '@/components/SelectInput.vue'
 import SelectInputForCity from '@/components/SelectInputForCity.vue'
-import TabHeader from './components/TabHeader'
+import TabHeader from '../components/TabHeader'
 import headType from '@/libs/constant/headtype'
-import { TABLE_COLUMNS, TABLIST, BTNLIST, setTabList } from './constant/upstream.js'
+import { TABLE_COLUMNS, TABLIST, BTNLIST, setTabList } from '../constant/upstream.js'
 import Server from '@/libs/js/server'
 export default {
   name: 'upstream',

@@ -29,7 +29,7 @@
 </template>
 <script>
 import BMap from 'BMap'
-import cityUtil from '@/libs/js/city'
+import { getCodeByName, U } from '@/libs/js/city'
 import SelectInput from '@/components/SelectInput.vue'
 export default {
   components: {
@@ -101,7 +101,7 @@ export default {
       return arr
     },
     areaName () {
-      const arr = cityUtil.getPathByCode(this.cityCode)
+      const arr = U.getPathByCode(this.cityCode)
       return arr.length ? arr[1].name : '全国'
     }
   },
@@ -180,7 +180,7 @@ export default {
         lat: item.lat,
         lng: item.lng,
         type: item.lng && item.lat ? 1 : '',
-        cityCode: item.city ? cityUtil.getCodeByName(item.city) : ''
+        cityCode: item.city ? getCodeByName(item.city) : ''
       }
       this.$emit('city-select', res)
       //   if (value) {

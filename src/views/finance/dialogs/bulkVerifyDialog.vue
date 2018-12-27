@@ -31,6 +31,7 @@
 import { payTypeMap } from '../constant/numList'
 import BaseDialog from '@/basic/BaseDialog'
 import float from '@/libs/js/float'
+import '@/libs/js/filter'
 // import _ from 'lodash'
 export default {
   name: 'bulkVerifyDialog',

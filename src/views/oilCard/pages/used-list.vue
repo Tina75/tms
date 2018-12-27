@@ -45,8 +45,8 @@
         </Col>
         <Col span="5">
         <div class="query-btn">
-          <Button type="primary">搜索</Button>
-          <Button>清除条件</Button>
+          <Button type="primary" @click="fetchData">搜索</Button>
+          <Button @click="clearParams">清除条件</Button>
         </div>
         </Col>
       </Row>
@@ -55,7 +55,8 @@
     <div class="operateBtn">
       <Button v-for="(item, key) in showButtons" :key="key"
               :type="key === 0 ? 'primary' : 'default'"
-              class="actionBtn">
+              class="actionBtn"
+              @click="item.func">
         {{ item.name }}
       </Button>
     </div>
@@ -63,6 +64,7 @@
     <PageTable
       :columns="tableColumns"
       :keywords="searchFields"
+      :table-head-type="headType"
       class="pageTable"
       row-id="id"
       method="post"
@@ -71,13 +73,17 @@
 </template>
 
 <script>
-import { USEDBTN } from '../constant/oil'
+import { USEDBTN, usedTableColumns } from '../constant/oil'
 import commonmixin from '../mixin/commonmixin'
+import headType from '@/libs/constant/headtype'
+import Export from '@/libs/js/export'
 export default {
   name: 'used-list',
   mixins: [commonmixin],
   data () {
     return {
+      // 表头
+      headType: headType.UPSTREAM_ORDER,
       queryParams: {
         number: '',
         operateType: '',
@@ -90,15 +96,42 @@ export default {
         systemDate: '',
         issuer: ''
       },
+      searchFields: {}, // 发起请求时的搜索字段
       dateOption: {
         disabledDate (date) {
           return date && date.valueOf() > Date.now()
         }
       },
-      currentBtns: USEDBTN(this)
+      currentBtns: USEDBTN(this),
+      tableColumns: usedTableColumns(this)
     }
   },
   methods: {
+    fetchData () {
+      this.searchFields = this.setFetchParams()
+    },
+    setFetchParams () {
+      let obj = {}
+      for (let key in this.queryParams) {
+        this.queryParams[key] ? (obj[key] = this.queryParams[key]) : (obj[key] = '')
+      }
+      return obj
+    },
+    clearParams () {
+      for (let key in this.queryParams) {
+        if (this.queryParams[key]) {
+          this.queryParams[key] = ''
+        }
+      }
+    },
+    export () {
+      Export({
+        url: '/oilCard/log/export',
+        method: 'post',
+        data: this.searchFields,
+        fileName: '油卡使用记录'
+      })
+    }
   }
 }
 </script>
