@@ -2,7 +2,7 @@
   <div id="set-up-container" class="set-up-container temAll">
     <Row id="temAll" :style="styleHeight">
       <Col span="1" style="width:160px;height:100%;background-color:#f3f5f9;">
-      <Menu :active-name="rightKey != 4 ? '修改密码' : '系统设置'" class="menuList" style="width:160px">
+      <Menu :active-name="rightKey != 4 ? rightTitle : '系统设置'" class="menuList" style="width:160px">
         <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
         <p class="menuTitle">{{menu.name}}</p>
         </MenuItem>

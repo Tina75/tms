@@ -30,7 +30,7 @@
       :columns="menuColumns"
       :keywords="formSearchInit"
       class="pageTable"
-      url="/ownerCar/listCar"
+      url="/ownerCar/insurance/list"
       list-field="list"
       method="post"
       @on-load="handleLoad"
@@ -56,13 +56,14 @@ export default {
     return {
       selectStatus: '1',
       keyword: '',
-      formSearchInit: {
-        carNo: '',
-        insuranceCompanyName: '',
-        invoiceNo: '',
-        buyDateStart: '',
-        buyDateEnd: ''
-      },
+      // formSearchInit: {
+      //   carNo: '',
+      //   insuranceCompanyName: '',
+      //   invoiceNo: '',
+      //   buyDateStart: '',
+      //   buyDateEnd: ''
+      // },
+      formSearchInit: {},
       exportFile: true,
       menuColumns: [
         {

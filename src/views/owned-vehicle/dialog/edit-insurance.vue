@@ -210,14 +210,9 @@ export default {
       }
     },
     save (name) {
-      this.flagAddress = true
-      if (this.validate.purchDate) {
-        this.validate.purchDate = new Date(this.validate.purchDate).Format('yyyy-MM-dd hh:mm:ss')
-      }
-      if (!this.flagAddress) {
-        return
-      }
-      this.validate.regularLine = JSON.stringify(this.address)
+      if (this.validate.buyDate) this.validate.buyDate = new Date(this.validate.buyDate).getTime()
+      if (this.validate.effectDate) this.validate.effectDate = new Date(this.validate.effectDate).getTime()
+      if (this.validate.expireDate) this.validate.expireDate = new Date(this.validate.expireDate).getTime()
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.loading = true
