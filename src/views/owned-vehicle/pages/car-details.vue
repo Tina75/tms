@@ -85,6 +85,12 @@
               {{formatDate(infoData.purchDate)}}
             </div>
             </Col>
+            <Col span="6">
+            <div>
+              <span class="label">挂车号：</span>
+              {{infoData.trailerNo}}
+            </div>
+            </Col>
           </Row>
         </div>
         <div class="title" style="margin-top: 40px;">
@@ -145,8 +151,8 @@
     <!-- 车辆保险汇总 -->
     <div v-if="showTable === 'insurance'">
       <div class="addRepair">
-        <Button v-if="hasPower(190301)" type="primary" @click="editInsurance">新增车辆保险</Button>
-        <Button v-if="hasPower(190304)" class="buttonSty" @click="exporteditInsurance">导出</Button>
+        <Button v-if="hasPower(190401)" type="primary" @click="editInsurance">新增车辆保险</Button>
+        <Button v-if="hasPower(190404)" class="buttonSty" @click="exporteditInsurance">导出</Button>
       </div>
       <page-table
         :columns="insuranceColumns"
@@ -161,8 +167,8 @@
     <!-- 年检 -->
     <div v-if="showTable === 'check'">
       <div class="addRepair">
-        <Button v-if="hasPower(190301)" type="primary" @click="editCheck">新增车辆年检</Button>
-        <Button v-if="hasPower(190304)" class="buttonSty" @click="exportCheck">导出</Button>
+        <Button v-if="hasPower(190501)" type="primary" @click="editCheck">新增车辆年检</Button>
+        <Button v-if="hasPower(190504)" class="buttonSty" @click="exportCheck">导出</Button>
       </div>
       <page-table
         :columns="checkColumns"
@@ -177,8 +183,8 @@
     <!-- 轮胎 -->
     <div v-if="showTable === 'tyre'">
       <div class="addRepair">
-        <Button v-if="hasPower(190301)" type="primary" @click="editTyre">新增轮胎管理</Button>
-        <Button v-if="hasPower(190304)" class="buttonSty" @click="exportTyre">导出</Button>
+        <Button v-if="hasPower(190601)" type="primary" @click="editTyre">新增轮胎管理</Button>
+        <Button v-if="hasPower(190604)" class="buttonSty" @click="exportTyre">导出</Button>
       </div>
       <page-table
         :columns="tyreColumns"
@@ -385,7 +391,7 @@ export default {
           width: 150,
           render: (h, params) => {
             let renderBtn = []
-            if (this.hasPower(190202)) {
+            if (this.hasPower(190402)) {
               renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
@@ -429,7 +435,7 @@ export default {
                 }
               }
             }, '查看'))
-            if (this.hasPower(190203)) {
+            if (this.hasPower(190403)) {
               renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
@@ -489,7 +495,7 @@ export default {
           width: 150,
           render: (h, params) => {
             let renderBtn = []
-            if (this.hasPower(190202)) {
+            if (this.hasPower(190502)) {
               renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
@@ -528,7 +534,7 @@ export default {
                 }
               }
             }, '查看'))
-            if (this.hasPower(190203)) {
+            if (this.hasPower(190503)) {
               renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
@@ -596,7 +602,7 @@ export default {
           width: 150,
           render: (h, params) => {
             let renderBtn = []
-            if (this.hasPower(190202)) {
+            if (this.hasPower(190602)) {
               renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
@@ -635,7 +641,7 @@ export default {
                 }
               }
             }, '查看'))
-            if (this.hasPower(190203)) {
+            if (this.hasPower(190603)) {
               renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',

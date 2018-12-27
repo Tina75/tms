@@ -84,7 +84,7 @@ export default[
         'component': () => import(/* webpackChunkName: "owned-insurance" */'./pages/insurance.vue'),
         'meta': {
           'title': '车辆保险',
-          'powerCode': 190300
+          'powerCode': 190400
         }
       },
       {
@@ -94,7 +94,7 @@ export default[
         'meta': {
           'hideInMenu': true,
           'title': '车辆保险',
-          'powerCode': 190300,
+          'powerCode': 190400,
           'notCache': true
         }
       },
@@ -104,7 +104,7 @@ export default[
         'component': () => import(/* webpackChunkName: "owned-check" */'./pages/check.vue'),
         'meta': {
           'title': '车辆年检',
-          'powerCode': 190300
+          'powerCode': 190500
         }
       },
       {
@@ -114,7 +114,7 @@ export default[
         'meta': {
           'hideInMenu': true,
           'title': '车辆年检',
-          'powerCode': 190300,
+          'powerCode': 190500,
           'notCache': true
         }
       },
@@ -124,7 +124,7 @@ export default[
         'component': () => import(/* webpackChunkName: "owned-tyre" */'./pages/tyre.vue'),
         'meta': {
           'title': '轮胎管理',
-          'powerCode': 190300
+          'powerCode': 190600
         }
       },
       {
@@ -134,7 +134,7 @@ export default[
         'meta': {
           'hideInMenu': true,
           'title': '轮胎管理',
-          'powerCode': 190300,
+          'powerCode': 190600,
           'notCache': true
         }
       }
