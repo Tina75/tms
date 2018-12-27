@@ -58,9 +58,6 @@ import TimerPoptip from './timer-poptip.vue'
 import jsCookie from 'js-cookie'
 export default {
   name: 'histoy-order-import',
-  metaInfo: {
-    title: '批量导入'
-  },
   components: {
     TimerPoptip
   },

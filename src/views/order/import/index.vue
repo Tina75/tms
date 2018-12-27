@@ -19,6 +19,9 @@ import OrderImport from './components/order-import.vue'
 import HistoryOrderImport from './components/history-order-import.vue'
 export default {
   name: 'order-import',
+  metaInfo: {
+    title: '批量导入'
+  },
   components: {
     TabHeader,
     OrderImport,

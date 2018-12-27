@@ -61,8 +61,8 @@ export default {
           source: this.source
         }
       }).then((result) => {
-        if (result.data) {
-          vm.needUpdate = !!result.data.isNeed
+        if (result.data.data) {
+          vm.needUpdate = !!result.data.data.isNeed
         }
       })
     },

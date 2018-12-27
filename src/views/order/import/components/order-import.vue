@@ -58,9 +58,6 @@ import importMixin from './importMixin.js'
 import TimerPoptip from './timer-poptip.vue'
 export default {
   name: 'order-import-component',
-  metaInfo: {
-    title: '批量导入'
-  },
   components: {
     TimerPoptip
   },
