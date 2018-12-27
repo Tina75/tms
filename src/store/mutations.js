@@ -29,7 +29,9 @@ export default{
    * @param {Number} option
    */
   changeOrderConfiguration (state, option) {
-    state.orderSet = option
+    for (let i in state.orderSet) {
+      state.orderSet[i] = option[i]
+    }
   },
   /**
    * 保存短信配置
