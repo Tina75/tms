@@ -61,9 +61,9 @@ export default {
                 on: {
                   click: () => {
                     this.openTab({
-                      path: 'update',
+                      path: 'create',
                       title: '创建订单',
-                      query: { id: params.row.id }
+                      query: { createId: params.row.id }
                     })
                   }
                 }

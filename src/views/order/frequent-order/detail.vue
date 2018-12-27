@@ -63,7 +63,7 @@
             {{detail.consignerPhone}}
           </FormItem>
           <FormItem label="发货地址：">
-            {{detail.consignerHourseNumber}}
+            {{detail.consignerAddress}}
           </FormItem>
         </Card>
         </Col>
@@ -77,7 +77,7 @@
             {{detail.consigneePhone}}
           </FormItem>
           <FormItem label="发货地址：">
-            {{detail.consigneeHourseNumber}}
+            {{detail.consigneeAddress}}
           </FormItem>
         </Card>
         </Col>
@@ -299,9 +299,9 @@ export default {
     },
     createOrder () {
       this.openTab({
-        path: 'update',
+        path: 'create',
         title: '创建订单',
-        query: { id: this.fqOrderId }
+        query: { createId: this.fqOrderId }
       })
     },
     deleteItem (id) {
