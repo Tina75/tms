@@ -48,10 +48,8 @@ const state = {
     // 包装尺寸
     dimensionOption: 1,
     // 备注
-    cargoRemark1Option: 1,
-    cargoRemark2Option: 1,
-    cargoRemark3Option: 2,
-    cargoRemark4Option: 2,
+    remark1Option: 1,
+    remark2Option: 1,
     // 提货费
     pickupFeeOption: 1,
     // 装货费
