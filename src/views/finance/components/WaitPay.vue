@@ -49,7 +49,7 @@ import ListSender from './list-sender/index.vue'
 import ListSenderItem from './list-sender/SenderItem.vue'
 import ReconcileLayout from './ReconcileLayout.vue'
 import cargoFeeMixin from '../mixins/cargoFeeMixin.js'
-import { renderFee } from '@/libs/js/util'
+import { renderFee } from '@/libs/js/config'
 import { ORDER_STATUS } from '@/libs/constant/order'
 export default {
   components: {

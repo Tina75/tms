@@ -20,12 +20,12 @@
       </Col>
       <Col span="6">
       <FormItem label="客户订单号:" prop="customerOrderNo">
-        <Input v-model="orderForm.customerOrderNo" :maxlength="30" type="text"></Input>
+        <Input v-model="orderForm.customerOrderNo" :maxlength="30" clearable></Input>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="客户运单号:" prop="customerWaybillNo">
-        <Input v-model="orderForm.customerWaybillNo" :maxlength="30" type="text"></Input>
+        <Input v-model="orderForm.customerWaybillNo" :maxlength="30" clearable></Input>
       </FormItem>
       </Col>
       <Col span="6">
@@ -87,23 +87,23 @@
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="发货人:" prop="consignerContact">
-        <Input v-model="orderForm.consignerContact" :maxlength="15" type="text"></Input>
+        <Input v-model="orderForm.consignerContact" :maxlength="15" clearable></Input>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="联系号码:" prop="consignerPhone">
-        <SelectInput v-model="orderForm.consignerPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号"></SelectInput>
+        <SelectInput v-model="orderForm.consignerPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号" clearable></SelectInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="收货人:" prop="consigneeContact">
-        <SelectInput v-model="orderForm.consigneeContact" :maxlength="15" :local-options="consigneeContacts" :remote="false" @on-select="handleSelectConsignee">
+        <SelectInput v-model="orderForm.consigneeContact" :maxlength="15" :local-options="consigneeContacts" :remote="false" clearable @on-select="handleSelectConsignee">
         </SelectInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="联系号码:" prop="consigneePhone">
-        <SelectInput v-model="orderForm.consigneePhone" :formatter="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号"></SelectInput>
+        <SelectInput v-model="orderForm.consigneePhone" :formatter="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号" clearable></SelectInput>
       </FormItem>
       </Col>
     </Row>
@@ -348,7 +348,7 @@
 import _ from 'lodash'
 import api from './libs/api'
 import distance from '@/libs/js/distance'
-import validator from '@/libs/js/validate'
+import validator, { validatePhone } from '@/libs/js/validate'
 import pickups from '@/libs/constant/pickup.js'
 import settlements from '@/libs/constant/settlement.js'
 import { invoiceList } from '@/libs/constant/orderCreate.js'
@@ -419,14 +419,14 @@ export default {
         callback()
       }
     }
-    const validatePhone = (rule, value, callback) => {
-      value = value.replace(/\s/g, '')
-      if (validator.phone(value) || validator.telphone(value)) {
-        callback()
-      } else {
-        callback(new Error('请输入正确的手机号或座机号'))
-      }
-    }
+    // const validatePhone = (rule, value, callback) => {
+    //   value = value.replace(/\s/g, '')
+    //   if (validator.phone(value) || validator.telphone(value)) {
+    //     callback()
+    //   } else {
+    //     callback(new Error('请输入正确的手机号或座机号'))
+    //   }
+    // }
     // 9位整数 2位小数
     const validateFee = (rule, value, callback) => {
       if ((value && validator.fee(value)) || !value) {
@@ -943,6 +943,11 @@ export default {
     // 清空重置表单
     resetForm () {
       this.highLight = false
+      this.orderForm.consignerAddressLongitude = ''
+      this.orderForm.consignerAddressLatitude = ''
+      this.orderForm.consigneeAddressLongitude = ''
+      this.orderForm.consigneeAddressLatitude = ''
+
       this.$refs.orderForm.resetFields()
       this.clearCargoes()
       this.consignerCargoes = [new Cargo()]

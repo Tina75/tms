@@ -50,16 +50,18 @@
       class="pageTable"
       row-id="id"
       method="post"
-      url="http://192.168.1.39:3000/mock/214/oilCard/queryList"></PageTable>
+      url="http://192.168.1.39:3000/mock/214/oilCard/queryList"
+      @on-selection-change="selectionChanged"></PageTable>
   </div>
 </template>
 
 <script>
 import { OILBTN, oilTableColumns } from '../constant/oil'
 import commonmixin from '../mixin/commonmixin'
+import operateBtnMixin from '../mixin/operateBtnMixin'
 export default {
   name: 'oil-list',
-  mixins: [commonmixin],
+  mixins: [commonmixin, operateBtnMixin],
   data () {
     return {
       searchFields: {}, // 发起请求时的搜索字段
@@ -70,7 +72,8 @@ export default {
         carrierName: ''
       },
       currentBtns: OILBTN(this),
-      tableColumns: oilTableColumns(this)
+      tableColumns: oilTableColumns(this),
+      tableSelection: []
     }
   },
   methods: {
@@ -108,33 +111,19 @@ export default {
       }
       return statusClass
     },
-    // 分配
-    assigin () {
-      console.log('assigin')
-    },
-    // 充值
-    recharge () {
-      console.log('recharge')
-    },
-    // 加油
-    refuel () {
-      console.log('refuel')
-    },
-    // 转账
-    transfer () {
-      console.log('transfer')
-    },
-    // 修改
-    update () {
-      console.log('update')
-    },
-    // 回收
-    recover () {
-      console.log('recover')
+    // 选中的表格行
+    selectionChanged (selection) {
+      this.tableSelection = selection
     },
     // 到详情页
-    toDetail () {
-      console.log('toDetail')
+    toDetail (p) {
+      this.openTab({
+        title: p.row.number,
+        path: '/oilCard/detail/detail',
+        query: {
+          shipperOrderId: p.row.id
+        }
+      })
     }
   }
 }

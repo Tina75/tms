@@ -46,7 +46,7 @@ import _ from 'lodash'
 import server from '@/libs/js/server'
 import returnFeeMixin from '../mixins/returnFeeMixin.js'
 import settlement from '@/libs/constant/settlement'
-import { renderFee } from '@/libs/js/util'
+import { renderFee } from '@/libs/js/config'
 import { mapGetters } from 'vuex'
 import float from '@/libs/js/float'
 export default {

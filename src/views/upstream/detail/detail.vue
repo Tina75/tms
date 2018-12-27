@@ -212,7 +212,7 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import '@/libs/js/filter'
-import { renderVolume, renderWeight } from '@/libs/js/util'
+import { renderVolume, renderWeight } from '../constant/util'
 import float from '@/libs/js/float'
 export default {
   name: 'detail',

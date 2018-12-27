@@ -10,7 +10,8 @@
         <FormItem :label="scene === 1 ? '应收金额：' : '应付金额：'">
           <p><span class="writeOffFormFee">{{needPay}}</span>元</p>
         </FormItem>
-        <FormItem :label="scene === 1 ? '实收金额：' : '实付金额：'" prop="actualFee">
+        <!--ids.length===0 代表是多段付-->
+        <FormItem v-if="ids.length===0" :label="scene === 1 ? '实收金额：' : '实付金额：'" prop="actualFee">
           <tagNumberInput v-model="writeOffForm.actualFee" placeholder="请输入"></tagNumberInput>
           <!--<Input v-model="writeOffForm.actualFee" placeholder="请输入" />-->
         </FormItem>
@@ -69,7 +70,8 @@ export default {
       scene: 0,
       settleTypeDesc: '',
       isOil: false,
-      needPay: 0
+      needPay: 0,
+      ids: [] // 批量核销传参
     }
   },
   watch: {
@@ -88,44 +90,89 @@ export default {
     save () {
       this.$refs['writeOffForm'].validate((valid) => {
         if (valid) {
-          Server({
-            url: '/finance/verify/verifyOrder',
-            method: 'post',
-            data: {
-              id: this.id,
-              actualFee: float.round(this.writeOffForm.actualFee * 100),
-              payType: this.writeOffForm.payType,
-              account: this.writeOffForm.account.replace(/\s+/g, ''),
-              bankBranch: this.writeOffForm.bankBranch,
-              remark: this.writeOffForm.remark,
-              verifyType: this.verifyType
-            }
-          }).then(res => {
-            if (res.data.data === '') {
-              this.saveAccount(this.writeOffForm.account, this.writeOffForm.bankBranch)
-              this.ok()
-              this.close()
-            } else if (res.data.data && res.data.data.operateCode === 1) {
-              // 存在异常
-              this.$Toast.warning({
-                title: '核销',
-                content: '以下单据存在异常，无法核销',
-                render: (h) => {
-                  const list = res.data.data.orderNos.length > 0 ? res.data.data.orderNos.map(item => {
-                    return h('p', item)
-                  }) : []
-                  console.log(list)
-                  return h('div', [
-                    ...list
-                  ])
-                },
-                okText: '确认',
-                cancelText: '取消'
-              })
-            }
-          }).catch(err => console.error(err))
+          if (this.ids.length === 0) { // 单个核销
+            this.verifyOrder()
+          } else { // 批量核销
+            this.batchVerifyOrder()
+          }
         }
       })
+    },
+    // 单个核销
+    verifyOrder () {
+      Server({
+        url: '/finance/verify/verifyOrder',
+        method: 'post',
+        data: {
+          id: this.id,
+          actualFee: float.round(this.writeOffForm.actualFee * 100),
+          payType: this.writeOffForm.payType,
+          account: this.writeOffForm.account.replace(/\s+/g, ''),
+          bankBranch: this.writeOffForm.bankBranch,
+          remark: this.writeOffForm.remark,
+          verifyType: this.verifyType
+        }
+      }).then(res => {
+        if (res.data.data === '') {
+          this.saveAccount(this.writeOffForm.account, this.writeOffForm.bankBranch)
+          this.ok()
+          this.close()
+        } else if (res.data.data && res.data.data.operateCode === 1) {
+          // 存在异常
+          this.$Toast.warning({
+            title: '核销',
+            content: '以下单据存在异常，无法核销',
+            render: (h) => {
+              const list = res.data.data.orderNos.length > 0 ? res.data.data.orderNos.map(item => {
+                return h('p', item)
+              }) : []
+              console.log(list)
+              return h('div', [
+                ...list
+              ])
+            },
+            okText: '确认',
+            cancelText: '取消'
+          })
+        }
+      }).catch(err => console.error(err))
+    },
+    batchVerifyOrder () {
+      Server({
+        url: '/finance/verify/batchVerifyOrder',
+        method: 'post',
+        data: {
+          ids: this.ids,
+          payType: this.writeOffForm.payType,
+          account: this.writeOffForm.account.replace(/\s+/g, ''),
+          bankBranch: this.writeOffForm.bankBranch,
+          remark: this.writeOffForm.remark,
+          verifyType: this.verifyType
+        }
+      }).then(res => {
+        if (res.data.data === '') {
+          this.saveAccount(this.writeOffForm.account, this.writeOffForm.bankBranch)
+          this.ok()
+          this.close()
+        } else if (res.data.data && res.data.data.operateCode === 1) {
+          // 存在异常
+          this.$Toast.warning({
+            title: '核销',
+            content: '以下单据存在异常，无法核销',
+            render: (h) => {
+              const list = res.data.data.orderNos.length > 0 ? res.data.data.orderNos.map(item => {
+                return h('p', item)
+              }) : []
+              console.log(list)
+              return h('div', [
+                ...list
+              ])
+            },
+            okText: '确认',
+            cancelText: '取消'
+          })
+        }
+      }).catch(err => console.error(err))
     }
   }
 

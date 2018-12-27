@@ -79,7 +79,7 @@ export default {
     // 查看详情
     toDetail () {
       this.openTab({
-        path: '/order-management/detail',
+        path: '/order-management/order-detail',
         query: {
           id: this.orderNo,
           orderId: this.orderId,
