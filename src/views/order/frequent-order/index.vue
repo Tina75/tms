@@ -18,7 +18,7 @@
       :url="url"
       :method="method"
       :columns="tableColumns"
-      :keywords="keyword"
+      :keywords="keywords"
       :show-filter="true"
       table-head-type="order_template_head">
     </page-table>
@@ -38,6 +38,9 @@ export default {
     PageTable,
     SelectInput
   },
+  metaInfo: {
+    title: '常发订单'
+  },
   mixins: [BasePage],
   data () {
     return {
@@ -45,6 +48,9 @@ export default {
       method: 'post',
       url: 'ordertemplate/list',
       keyword: {
+        consignerName: ''
+      },
+      keywords: {
         consignerName: ''
       },
       tableColumns: [
@@ -326,7 +332,7 @@ export default {
   },
   methods: {
     searchList () {
-      this.keyword = {
+      this.keywords = {
         consignerName: this.keyword.consignerName
       }
     },
