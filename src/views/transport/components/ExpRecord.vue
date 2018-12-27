@@ -39,7 +39,7 @@
           <label class="label-bar">异常描述：</label>
           <span class="flexBox colorGrey">{{data.abnormalDesc}}</span>
         </div>
-        <div class="exception-distribution">
+        <div class="exception-distribution i-mt-10">
           <label class="label-bar">图片：</label>
           <div class="flexBox">
             <span v-for="(item, index) in data.fileUrls"
