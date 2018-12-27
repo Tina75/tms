@@ -16,7 +16,7 @@
         <Input v-model="validate.contact"  :maxlength="$fieldLength.name" placeholder="请输入"/>
       </FormItem>
       <FormItem label="联系号码：" prop="phone" >
-        <SelectInput v-model="validate.phone" :formatter="formatePhoneNum"  :maxlength="$fieldLength.phone" placeholder="请输入手机号或座机号，座机需加区号"></selectInput>
+        <SelectInput v-model="validate.phone" :formatter="formatePhoneNum"  :maxlength="$fieldLength.telephone" placeholder="请输入手机号或座机号，座机需加区号"></selectInput>
       </FormItem>
       <FormItem label="提货方式：">
         <Select v-model="validate.pickUp" transfer clearable placeholder="请输入">

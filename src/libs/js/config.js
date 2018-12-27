@@ -6,7 +6,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-12-26 14:10:46
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-12-27 19:30:08
+ * @Last Modified time: 2018-12-27 19:51:13
  */
 import float from './float'
 /**
@@ -30,7 +30,8 @@ export const FieldLength = {
   orderNo: 30, // 订单号，30
   billNo: 30, // 运单号 30
   name: 15, // 联系人人名称：20
-  phone: 20, // 手机固话长度，1-20
+  phone: 11, // 手机号长度
+  telephone: 20, // 手机固话长度，1-20
   extraAddress: 50, // 补充地址,门派楼,收货人单位,长度：50
   remark: 100, // 备注长度100
   cargoNo: 200 // 货物编号，200位

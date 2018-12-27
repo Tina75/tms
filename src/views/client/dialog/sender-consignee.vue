@@ -108,7 +108,7 @@ export default {
       return formatePhone(temp)
     },
     phoneLength (value) {
-      return /^1/.test(value) ? 13 : this.$fieldLength.phone
+      return /^1/.test(value) ? 13 : this.$fieldLength.telephone
     },
     save (name) {
       this.$refs[name].validate((valid) => {
