@@ -18,7 +18,7 @@
           <FormItem label="车牌号：" prop="carNo">
             <Row>
               <Col span="20">
-              <SelectInput v-model="validate.carNo" :maxlength="8" :parser="formatterCarNo" placeholder="必填"></SelectInput>
+              <CarSelect v-model="validate.carNo"></CarSelect>
               </Col>
             </Row>
           </FormItem>
@@ -115,7 +115,7 @@
         </Row>
         <p class="modalTitle">保单照片</p>
         <Row>
-          <up-load ref="upLoads" :multiple="true" max-size="10"></up-load>
+          <up-load ref="upLoads" :multiple="true" max-count="10" max-size="10"></up-load>
           <span class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
         </Row>
         <p class="modalTitle">备注</p>
@@ -135,12 +135,14 @@ import UpLoad from '@/components/upLoad/index.vue'
 import SelectInput from '@/components/SelectInput'
 import Server from '@/libs/js/server'
 import TagNumberInput from '@/components/TagNumberInput'
+import CarSelect from '@/components/own-car-form/CarSelect'
 export default {
-  name: 'owned-insurance',
+  name: 'edit-insurance',
   components: {
     UpLoad,
     SelectInput,
-    TagNumberInput
+    TagNumberInput,
+    CarSelect
   },
   mixins: [BaseDialog],
   data () {
@@ -166,8 +168,9 @@ export default {
         trafficFee: null,
         businessFee: null,
         remark: '',
-        picUrls: ''
+        picUrls: []
       },
+      imgList: [],
       formatterCarNo: formatterCarNo, // 车牌号大写转换
       ruleValidate: {
         carNo: [
@@ -199,37 +202,45 @@ export default {
   methods: {
     // 修改页面初始值更改
     configData () {
-      if (this.flag === 2) {
-        this.validate.purchDate = this.validate.purchDate
-        this.validate.carType = this.validate.carType.toString()
-        this.validate.carLength = this.validate.carLength.toString()
-        this.$refs.upload1.progress = 1
-        this.$refs.upload2.progress = 1
-        this.$refs.upload1.uploadImg = this.validate.travelPhoto
-        this.$refs.upload2.uploadImg = this.validate.roadTransPhoto
+      let vm = this
+      if (vm.flag === 2) {
+        if (vm.validate.picUrls.length > 0) {
+          vm.validate.picUrls.map((item) => {
+            vm.imgList.push({
+              url: item,
+              progress: 1
+            })
+          })
+        }
+        vm.$refs.upLoads.uploadImgList = vm.imgList
       }
     },
     save (name) {
-      if (this.validate.buyDate) this.validate.buyDate = new Date(this.validate.buyDate).getTime()
-      if (this.validate.effectDate) this.validate.effectDate = new Date(this.validate.effectDate).getTime()
-      if (this.validate.expireDate) this.validate.expireDate = new Date(this.validate.expireDate).getTime()
+      this.validate.picUrls = []
+      this.$refs.upLoads.uploadImgList.map((item) => {
+        this.validate.picUrls.push(item.url)
+      })
+      let params = Object.assign({}, this.validate)
+      if (params.buyDate) params.buyDate = new Date(this.validate.buyDate).getTime()
+      if (params.effectDate) params.effectDate = new Date(this.validate.effectDate).getTime()
+      if (params.expireDate) params.expireDate = new Date(this.validate.expireDate).getTime()
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.loading = true
           if (this.flag !== 2) { // 新增
-            this.add()
+            this.add(params)
           } else { // 2-编辑
-            this.update()
+            this.update(params)
           }
         }
       })
     },
-    add () {
+    add (params) {
       let vm = this
       Server({
         url: '/ownerCar/insurance/add',
         method: 'post',
-        data: this.validate
+        data: params
       }).then(({ data }) => {
         vm.ok()
         vm.$Message.success(data.msg)
@@ -238,12 +249,12 @@ export default {
         this.loading = false
       })
     },
-    update () {
+    update (params) {
       let vm = this
       Server({
         url: '/ownerCar/insurance/edit',
         method: 'post',
-        data: this.validate
+        data: params
       }).then(({ data }) => {
         vm.ok()
         vm.$Message.success(data.msg)

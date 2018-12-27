@@ -1,4 +1,6 @@
+import modules from './store'
 import Main from '@/views/main/Main.vue'
+import store from '@/store/index.js'
 
 export default[
   /** 自有车管理 */
@@ -140,3 +142,4 @@ export default[
     ]
   }
 ]
+store.registerModule('company', { ...modules })
