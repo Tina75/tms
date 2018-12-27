@@ -18,7 +18,8 @@
           <FormItem label="车牌号：" prop="carNo">
             <Row>
               <Col span="20">
-              <SelectInput v-model="validate.carNo" :maxlength="8" :parser="formatterCarNo" placeholder="必填"></SelectInput>
+              <span v-if="flag === 3">{{ validate.carNo }}</span>
+              <SelectInput v-else v-model="validate.carNo" :maxlength="8" :parser="formatterCarNo" placeholder="必填"></SelectInput>
               </Col>
             </Row>
           </FormItem>

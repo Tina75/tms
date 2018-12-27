@@ -232,8 +232,8 @@ export default {
       if (this.selectStatus === '1' && this.keyword) {
         this.formSearchInit.carNo = this.keyword
       } else {
-        this.formSearchInit.buyDateStart = new Date(this.keyword[0]).getTime()
-        this.formSearchInit.buyDateEnd = new Date(this.keyword[1]).getTime()
+        this.formSearchInit.checkDateStart = new Date(this.keyword[0]).getTime()
+        this.formSearchInit.checkDateEnd = new Date(this.keyword[1]).getTime()
       }
     },
     clearKeywords () {

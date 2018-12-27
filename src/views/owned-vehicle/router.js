@@ -53,8 +53,7 @@ export default[
         'meta': {
           'hideInMenu': true,
           'title': '车辆详情',
-          'powerCode': 190200,
-          'notCache': true
+          'powerCode': 190200
         }
       },
       {
