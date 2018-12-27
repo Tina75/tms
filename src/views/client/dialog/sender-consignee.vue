@@ -12,11 +12,11 @@
       <p slot="header" style="text-align:center">{{title}}</p>
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="100" label-position="right" style="margin-left: -10px">
         <FormItem label="收货联系人：" prop="contact">
-          <Input v-model="validate.contact" :maxlength="15" placeholder="请输入"/>
+          <Input v-model="validate.contact" :maxlength="$fieldLength.name" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="联系电话：" prop="phone">
+        <FormItem label="联系号码：" prop="phone">
           <!-- <Input v-model="validate.phone" :maxlength="11" placeholder="请输入手机号或座机号"/> -->
-          <SelectInput v-model="validate.phone" :formatter="formatePhoneNum" :maxlength="phoneLength(validate.phone)" placeholder="请输入手机号或座机号"></SelectInput>
+          <SelectInput v-model="validate.phone" :formatter="formatePhoneNum" :maxlength="phoneLength(validate.phone)" placeholder="请输入手机号或座机号，座机需加区号"></SelectInput>
         </FormItem>
         <FormItem label="收货地址：">
           <Row>
@@ -37,13 +37,13 @@
           </Row>
         </FormItem>
         <FormItem>
-          <Input v-model="validate.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+          <Input v-model="validate.consignerHourseNumber" :maxlength="$fieldLength.extraAddress" placeholder="补充地址（楼号-门牌等）"></Input>
         </FormItem>
         <FormItem label="收货人单位：">
-          <Input v-model="validate.consigneeCompanyName" :maxlength="100" placeholder="请输入"/>
+          <Input v-model="validate.consigneeCompanyName" :maxlength="$fieldLength.extraAddress" placeholder="请输入"/>
         </FormItem>
         <FormItem label="备注：" prop="remark">
-          <Input v-model="validate.remark"  placeholder="请输入"/>
+          <Input v-model="validate.remark" :maxlength="$fieldLength.remark"  placeholder="请输入"/>
         </FormItem>
       </Form>
       <div slot="footer">
@@ -60,7 +60,8 @@ import { consignerConsigneeAdd, consignerConsigneeUpdate } from '../pages/client
 import AreaInput from '@/components/AreaInput'
 import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput.vue'
-import validator from '@/libs/js/validate'
+import { validatePhone } from '@/libs/js/validate'
+import { formatePhone } from '@/libs/js/formate'
 export default {
   name: 'sender-address',
   components: {
@@ -70,14 +71,6 @@ export default {
   },
   mixins: [BaseDialog],
   data () {
-    const validatePhone = (rule, value, callback) => {
-      value = value.replace(/\s/g, '')
-      if (validator.phone(value) || validator.telphone(value)) {
-        callback()
-      } else {
-        callback(new Error('请输入正确的手机号或座机号'))
-      }
-    }
     return {
       loading: false,
       consignerId: '', // 详情传过来的id
@@ -98,7 +91,7 @@ export default {
           { required: true, message: '收货联系人不能为空', trigger: 'blur' }
         ],
         phone: [
-          { required: true, message: '联系电话不能为空' },
+          { required: true, message: '联系号码不能为空', trigger: 'blur' },
           { validator: validatePhone, trigger: 'blur' }
         ],
         cityCode: [
@@ -112,18 +105,10 @@ export default {
   },
   methods: {
     formatePhoneNum (temp) {
-      if (/^1/.test(temp)) {
-        let str = temp.replace(/\s/g, '')
-        if (temp.length > 3 && temp.length < 8) {
-          temp = str.substr(0, 3) + ' ' + str.substr(3, 4)
-        } else if (temp.length >= 8) {
-          temp = [str.substr(0, 3), str.substr(3, 4), str.substr(7, 4)].join(' ')
-        }
-      }
-      return temp
+      return formatePhone(temp)
     },
     phoneLength (value) {
-      return /^1/.test(value) ? 13 : 30
+      return /^1/.test(value) ? 13 : this.$fieldLength.phone
     },
     save (name) {
       this.$refs[name].validate((valid) => {

@@ -336,6 +336,7 @@ export default {
         })
       }
       this.$emit('on-blur', this.currentValue)
+      this.dispatch.call(this.$parent, 'FormItem', 'on-form-blur', this.currentValue)
     },
     /**
      * 更改关键字，input onChange事件

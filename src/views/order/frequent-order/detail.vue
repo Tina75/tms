@@ -285,6 +285,9 @@ export default {
       return total
     }
   },
+  mounted () {
+    this.initDetail()
+  },
   methods: {
     initDetail () {
       Server({
@@ -331,13 +334,13 @@ export default {
     rate (value) {
       return float.round(value * 100, 2)
     }
-  },
-  beforeRouteUpdate (to, from, next) {
-    this.$nextTick(() => {
-      this.initDetail()
-    })
-    next()
   }
+  // beforeRouteUpdate (to, from, next) {
+  //   this.$nextTick(() => {
+  //     this.initDetail()
+  //   })
+  //   next()
+  // }
 }
 </script>
 <style lang="stylus">

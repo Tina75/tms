@@ -5,7 +5,8 @@ import router from './router'
 import store from './store/index'
 import VueMeta from 'vue-meta'
 import EmaProxy from 'ema-proxy'
-import Toast from '@/components/toast/index'
+import VueToast from '@/libs/plugins/vue-toast.js'
+import VueFieldLength from '@/libs/plugins/vue-field-length.js'
 import './libs/js/ga.js' // GA打点统计配置与上报方法封装,
 
 require('./permission')
@@ -36,7 +37,8 @@ Vue.use(VueMeta)
 // iView引入
 Vue.use(iView)
 // 全局提示框
-Vue.prototype.$Toast = Toast
+Vue.use(VueToast)
+Vue.use(VueFieldLength)
 window.EMA = new EmaProxy()
 var appData = { router, store }
 /**

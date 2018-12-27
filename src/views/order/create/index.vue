@@ -9,7 +9,7 @@
         <SelectInput
           v-model="orderForm.consignerName"
           :auto-focus="autoFocus"
-          :maxlength="20"
+          :maxlength="$fieldLength.company"
           :remote="false"
           :clearable="true"
           :local-options="clients"
@@ -20,12 +20,12 @@
       </Col>
       <Col span="6">
       <FormItem label="客户订单号:" prop="customerOrderNo">
-        <Input v-model="orderForm.customerOrderNo" :maxlength="30" clearable></Input>
+        <Input v-model="orderForm.customerOrderNo" :maxlength="$fieldLength.orderNo" clearable></Input>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="客户运单号:" prop="customerWaybillNo">
-        <Input v-model="orderForm.customerWaybillNo" :maxlength="30" clearable></Input>
+        <Input v-model="orderForm.customerWaybillNo" :maxlength="$fieldLength.billNo" clearable></Input>
       </FormItem>
       </Col>
       <Col span="6">
@@ -87,23 +87,23 @@
     <Row :gutter="16">
       <Col span="6">
       <FormItem label="发货人:" prop="consignerContact">
-        <Input v-model="orderForm.consignerContact" :maxlength="15" clearable></Input>
+        <Input v-model="orderForm.consignerContact" :maxlength="$fieldLength.name" clearable></Input>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="联系号码:" prop="consignerPhone">
-        <SelectInput v-model="orderForm.consignerPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号" clearable></SelectInput>
+        <SelectInput v-model="orderForm.consignerPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号，座机需加区号" clearable></SelectInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="收货人:" prop="consigneeContact">
-        <SelectInput v-model="orderForm.consigneeContact" :maxlength="15" :local-options="consigneeContacts" :remote="false" clearable @on-select="handleSelectConsignee">
+        <SelectInput v-model="orderForm.consigneeContact" :maxlength="$fieldLength.name" :local-options="consigneeContacts" :remote="false" clearable @on-select="handleSelectConsignee">
         </SelectInput>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="联系号码:" prop="consigneePhone">
-        <SelectInput v-model="orderForm.consigneePhone" :formatter="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号" clearable></SelectInput>
+        <SelectInput v-model="orderForm.consigneePhone" :formatter="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号，座机需加区号" clearable></SelectInput>
       </FormItem>
       </Col>
     </Row>
@@ -120,7 +120,7 @@
       </Col>
       <Col span="3">
       <FormItem :label-width="0" prop="consignerHourseNumber">
-        <Input v-model="orderForm.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+        <Input v-model="orderForm.consignerHourseNumber" :maxlength="$fieldLength.extraAddress" placeholder="补充地址（楼号-门牌等）"></Input>
       </FormItem>
       </Col>
       <Col span="1">
@@ -142,7 +142,7 @@
       </Col>
       <Col span="3">
       <FormItem :label-width="0" prop="consigneeHourseNumber">
-        <Input v-model="orderForm.consigneeHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+        <Input v-model="orderForm.consigneeHourseNumber" :maxlength="$fieldLength.extraAddress" placeholder="补充地址（楼号-门牌等）"></Input>
       </FormItem>
       </Col>
       <Col span="1">
@@ -157,7 +157,7 @@
       <Col span="12" offset="12">
       <!-- 收货人公司设置 -->
       <FormItem :maxlength="50" label="收货人单位：" prop="consigneeCompanyNameOption">
-        <Input v-model="orderForm.consigneeCompanyNameOption" :maxlength="50"></Input>
+        <Input v-model="orderForm.consigneeCompanyNameOption" :maxlength="$fieldLength.extraAddress"></Input>
       </FormItem>
       </Col>
     </Row>
@@ -321,13 +321,12 @@
       </Col>
       <Col span="18">
       <FormItem label="备注:" prop="remark">
-        <Input v-model="orderForm.remark" :maxlength="100" type="text">
+        <Input v-model="orderForm.remark" :maxlength="$fieldLength.remark" type="text">
         </Input>
       </FormItem>
       </Col>
     </Row>
     <div class="van-center i-mt-20 i-mb-20">
-      <!-- 权限 -->
       <span style="float: left; vertical-align:middle;">
         <Checkbox v-model="isSaveOrderTemplate">保存为常发货源</Checkbox>
       </span>
@@ -367,6 +366,7 @@ import TimeInput from './components/TimeInput.vue'
 import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
 import TMSURL from '@/libs/constant/url'
+import { formatePhone } from '@/libs/js/formate'
 const rate = {
   set (value) {
     return value ? float.floor(value / 100, 4) : value
@@ -1216,18 +1216,10 @@ export default {
       })
     },
     formatePhoneNum (temp) {
-      if (/^1/.test(temp)) {
-        let str = temp.replace(/\s/g, '')
-        if (temp.length > 3 && temp.length < 8) {
-          temp = str.substr(0, 3) + ' ' + str.substr(3, 4)
-        } else if (temp.length >= 8) {
-          temp = [str.substr(0, 3), str.substr(3, 4), str.substr(7, 4)].join(' ')
-        }
-      }
-      return temp
+      return formatePhone(temp)
     },
     phoneLength (value) {
-      return /^1/.test(value) ? 13 : 30
+      return /^1/.test(value) ? 13 : this.$fieldLength.phone
     },
     setHandle () {
       this.openTab({

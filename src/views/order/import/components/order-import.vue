@@ -1,7 +1,7 @@
 <template>
   <div class="order-import">
     <div class="i-mb-10 ivu-upload">
-      <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入订单</Button>
+      <Button type="primary" @click="handleClick">导入订单</Button>
       <input
         ref="fileInput"
         name="file"
@@ -12,10 +12,10 @@
       />
       <TimerPoptip :disabled="!showPoptip" max-width="246" content="为方便您导入更多的数据，我们更新了导入模板，请下载最新的导入模板">
         <Badge :dot="needUpdate">
-          <a v-if="hasPower(100202)" :href="downloadUrl" download="下载模板" class="i-ml-10 ivu-btn ivu-btn-default" @click="handleDownload">下载模板</a>
+          <a :href="downloadUrl" download="下载模板" class="i-ml-10 ivu-btn ivu-btn-default" @click="handleDownload">下载模板</a>
         </Badge>
       </TimerPoptip>
-      <Button v-if="hasPower(100206)" class="i-ml-10" @click="clearAll">清空导入记录</Button>
+      <Button class="i-ml-10" @click="clearAll">清空导入记录</Button>
     </div>
     <Table :columns="columns" :data="dataSource" no-data-text=" ">
       <div ref="footer" slot="footer" class="order-import__empty-content van-center">
@@ -25,7 +25,7 @@
             <div>您还没有导入订单，去下载模板导入订单吧！</div>
           </div>
           <div class="i-mt-10">
-            <Button v-if="hasPower(100201)" type="primary" @click="handleClick">导入订单</Button>
+            <Button type="primary" @click="handleClick">导入订单</Button>
           </div>
         </div>
       </div>
@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import BasePage from '@/basic/BasePage'
+import BaseComponent from '@/basic/BaseComponent'
 import jsCookie from 'js-cookie'
 import TMSUrl from '@/libs/constant/url.js'
 import { Progress } from 'iview'
@@ -58,17 +58,15 @@ import importMixin from './importMixin.js'
 import TimerPoptip from './timer-poptip.vue'
 export default {
   name: 'order-import-component',
-  metaInfo: {
-    title: '批量导入'
-  },
   components: {
     TimerPoptip
   },
-  mixins: [BasePage, importMixin],
+  mixins: [BaseComponent, importMixin],
   data () {
     const vm = this
     return {
       // downloadUrl: '',
+      source: 1,
       templateRequestUrl: 'order/template/get', // 模板请求地址
       clearAllRequestUrl: 'order/template/clearOrderTemplateImportRecord', // 清空所有模板记录
       deleteOrderRequestUrl: 'order/template/deleteOrderTemplateImportRecord', // 删除记录
@@ -83,16 +81,14 @@ export default {
           width: 160,
           render: (h, params) => {
             const actions = []
-            if (this.hasPower(100203)) {
-              actions.push(h('a', {
-                attrs: {
-                  href: params.row.fileUrl,
-                  download: '下载模板'
-                }
-              }, params.row.status ? '下载' : '下载错误报告'))
-            }
+            actions.push(h('a', {
+              attrs: {
+                href: params.row.fileUrl,
+                download: '下载模板'
+              }
+            }, params.row.status ? '下载' : '下载错误报告'))
             // 导入成功可以看下载
-            if (params.row.status === 1 && this.hasPower(100204)) {
+            if (params.row.status === 1) {
               actions.push(h('a', {
                 class: 'i-ml-10',
                 attrs: {
@@ -111,21 +107,19 @@ export default {
               }, '查看导入订单'))
             }
             // 添加删除操作
-            if (this.hasPower(100205)) {
-              actions.push(
-                h('a', {
-                  class: 'i-ml-10',
-                  attrs: {
-                    href: 'javascript:;'
-                  },
-                  on: {
-                    click: () => {
-                      vm.deleteById(params.row)
-                    }
+            actions.push(
+              h('a', {
+                class: 'i-ml-10',
+                attrs: {
+                  href: 'javascript:;'
+                },
+                on: {
+                  click: () => {
+                    vm.deleteById(params.row)
                   }
-                }, '删除')
-              )
-            }
+                }
+              }, '删除')
+            )
             return h('div', actions)
           }
         },
@@ -193,9 +187,9 @@ export default {
   methods: {
     handleDownload () {
       if (this.needUpdate) {
-        // todo 通知后端已经下载过
-        this.$emit('on-download', 1)
-        this.userDownloadTemplate(1)
+        this.$emit('on-download', this.source)
+        this.userDownloadTemplate(this.source)
+        this.needUpdate = false
         jsCookie.remove('tms_order_template')
       }
     }
