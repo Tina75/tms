@@ -2,8 +2,24 @@
 export default {
   methods: {
     // 分配
-    assign () {
-      console.log('assign')
+    assign (p) {
+      this.openDialog({
+        name: 'oilCard/dialog/assign',
+        data: {
+          title: '分配油卡',
+          assign: {
+            id: p.row.id,
+            number: p.row.number,
+            amount: p.row.amount,
+            remark: p.row.remark
+          }
+        },
+        methods: {
+          ok () {
+            this.fetchData()
+          }
+        }
+      })
     },
     // 充值
     recharge () {
@@ -18,8 +34,29 @@ export default {
       console.log('transfer')
     },
     // 修改
-    update () {
-      console.log('update')
+    update (p) {
+      this.openDialog({
+        name: 'oilCard/dialog/addEdit',
+        data: {
+          title: '修改油卡',
+          mode: 2,
+          addEdit: {
+            id: p.row.id,
+            number: p.row.number,
+            amount: p.row.amount,
+            remark: p.row.remark,
+            type: p.row.type,
+            issuer: p.row.issuer,
+            primaryCardId: p.row.primaryCardId,
+            primaryCardNumber: p.row.primaryCardNumber
+          }
+        },
+        methods: {
+          ok () {
+            this.fetchData()
+          }
+        }
+      })
     },
     // 回收
     recover () {

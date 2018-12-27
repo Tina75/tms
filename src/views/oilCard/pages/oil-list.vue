@@ -39,7 +39,8 @@
     <div class="operateBtn">
       <Button v-for="(item, key) in showButtons" :key="key"
               :type="key === 0 ? 'primary' : 'default'"
-              class="actionBtn">
+              class="actionBtn"
+              @click="item.func">
         {{ item.name }}
       </Button>
     </div>
@@ -59,9 +60,14 @@
 import { OILBTN, oilTableColumns } from '../constant/oil'
 import commonmixin from '../mixin/commonmixin'
 import operateBtnMixin from '../mixin/operateBtnMixin'
+import contantmixin from '../mixin/contantmixin'
+import BasePage from '@/basic/BasePage'
 export default {
   name: 'oil-list',
-  mixins: [commonmixin, operateBtnMixin],
+  mixins: [BasePage, commonmixin, operateBtnMixin, contantmixin],
+  metaInfo: {
+    title: '油卡列表'
+  },
   data () {
     return {
       searchFields: {}, // 发起请求时的搜索字段
@@ -115,13 +121,18 @@ export default {
     selectionChanged (selection) {
       this.tableSelection = selection
     },
-    // 到详情页
-    toDetail (p) {
-      this.openTab({
-        title: p.row.number,
-        path: '/oilCard/detail/detail',
-        query: {
-          shipperOrderId: p.row.id
+    // 新增
+    add () {
+      this.openDialog({
+        name: 'oilCard/dialog/addEdit',
+        data: {
+          mode: 1,
+          title: '新增油卡'
+        },
+        methods: {
+          ok () {
+            this.fetchData()
+          }
         }
       })
     }
