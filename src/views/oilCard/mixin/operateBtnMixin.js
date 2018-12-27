@@ -26,8 +26,29 @@ export default {
       console.log('recharge')
     },
     // 加油
-    refuel () {
-      console.log('refuel')
+    refuel (p) {
+      console.log(p.row)
+      this.openDialog({
+        name: 'oilCard/dialog/refuel',
+        data: {
+          title: '油卡加油',
+          refuel: {
+            id: p.row.id,
+            number: p.row.number,
+            amount: p.row.amount,
+            remark: p.row.remark,
+            type: p.row.type,
+            driverName: p.row.driverName,
+            truckNo: p.row.truckNo,
+            issuer: p.row.issuer
+          }
+        },
+        methods: {
+          ok () {
+            this.fetchData()
+          }
+        }
+      })
     },
     // 转账
     transfer () {
@@ -59,8 +80,26 @@ export default {
       })
     },
     // 回收
-    recover () {
-      console.log('recover')
+    recover (p) {
+      this.openDialog({
+        name: 'oilCard/dialog/recover',
+        data: {
+          title: '回收油卡',
+          recover: {
+            id: p.row.id,
+            number: p.row.number,
+            amount: p.row.amount,
+            remark: p.row.remark,
+            type: p.row.type,
+            issuer: p.row.issuer
+          }
+        },
+        methods: {
+          ok () {
+            this.fetchData()
+          }
+        }
+      })
     }
   }
 }

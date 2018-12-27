@@ -62,6 +62,7 @@ import commonmixin from '../mixin/commonmixin'
 import operateBtnMixin from '../mixin/operateBtnMixin'
 import contantmixin from '../mixin/contantmixin'
 import BasePage from '@/basic/BasePage'
+// import Server from '@/libs/js/server'
 export default {
   name: 'oil-list',
   mixins: [BasePage, commonmixin, operateBtnMixin, contantmixin],
@@ -133,6 +134,76 @@ export default {
           ok () {
             this.fetchData()
           }
+        }
+      })
+    },
+    // 停用
+    stop () {
+      if (this.tableSelection.length === 0) {
+        this.$Message.warning('请先选择')
+        return
+      }
+      let _this = this
+      let idList = this.tableSelection.map(item => {
+        return item.id
+      })
+      console.log(idList)
+      this.$Modal.confirm({
+        title: '停用',
+        content: '是否确认停用所选油卡',
+        okText: '确认',
+        cancelText: '取消',
+        async onOk () {
+          _this.openDialog({
+            name: 'oilCard/dialog/operate',
+            data: {
+              title: '油卡停用',
+              operate: {
+                idList: idList,
+                type: 1 // 1停用，2启用
+              }
+            },
+            methods: {
+              ok () {
+                _this.fetchData()
+              }
+            }
+          })
+        }
+      })
+    },
+    // 启用
+    start () {
+      if (this.tableSelection.length === 0) {
+        this.$Message.warning('请先选择')
+        return
+      }
+      let _this = this
+      let idList = this.tableSelection.map(item => {
+        return item.id
+      })
+      console.log(idList)
+      this.$Modal.confirm({
+        title: '启用',
+        content: '是否确认启用所选油卡',
+        okText: '确认',
+        cancelText: '取消',
+        async onOk () {
+          _this.openDialog({
+            name: 'oilCard/dialog/operate',
+            data: {
+              title: '油卡启用',
+              operate: {
+                idList: idList,
+                type: 2 // 1停用，2启用
+              }
+            },
+            methods: {
+              ok () {
+                _this.fetchData()
+              }
+            }
+          })
         }
       })
     }

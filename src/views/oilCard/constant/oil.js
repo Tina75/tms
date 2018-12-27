@@ -13,14 +13,14 @@ export const OILBTN = vm => [
     name: '停用',
     code: 0,
     func: () => {
-      vm.operate()
+      vm.stop()
     }
   },
   {
     name: '启用',
     code: 0,
     func: () => {
-      vm.operate()
+      vm.start()
     }
   }
 ]

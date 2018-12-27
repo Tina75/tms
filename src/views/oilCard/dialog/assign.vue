@@ -78,12 +78,12 @@
         </FormItem>
       </div>
       <FormItem label="备注:">
-        <Input :maxlength="100" type="textarea" placeholder="请输入"></Input>
+        <Input :maxlength="100" v-model="assign.remark" type="textarea" placeholder="请输入"></Input>
       </FormItem>
     </Form>
     <div slot="footer" class="footerSty">
-      <Button :loading="loading" type="primary">确定</Button>
-      <Button style="margin-left: 8px">取消</Button>
+      <Button :loading="loading" type="primary" @click="save()">确定</Button>
+      <Button style="margin-left: 8px" @click="close()">取消</Button>
     </div>
   </Modal>
 </template>
@@ -96,7 +96,7 @@ import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
 import { CAR } from '@/views/client/pages/client'
 export default {
-  name: 'demo-dialog1',
+  name: 'assign',
   components: {
     SelectInput
   },
@@ -204,9 +204,9 @@ export default {
               carrierName: this.assign.carrierName || '',
               driverName: this.assign.driverName || '',
               truckNo: this.assign.truckNo || '',
-              driverPhone: this.addEdit.driverPhone || '',
-              recieveDeposit: this.addEdit.recieveDeposit || '',
-              remark: this.addEdit.remark || ''
+              driverPhone: this.assign.driverPhone || '',
+              recieveDeposit: this.assign.recieveDeposit || '',
+              remark: this.assign.remark || ''
             }
           }).then(res => {
             this.loading = false
