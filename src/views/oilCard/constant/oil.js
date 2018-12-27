@@ -13,14 +13,14 @@ export const OILBTN = vm => [
     name: '停用',
     code: 0,
     func: () => {
-      vm.operate()
+      vm.stop()
     }
   },
   {
     name: '启用',
     code: 0,
     func: () => {
-      vm.operate()
+      vm.start()
     }
   }
 ]
@@ -38,12 +38,11 @@ export const USEDBTN = vm => [
 export const oilTableBtn = vm => [
   {
     name: '分配',
-    key: 'canAssigin',
+    key: 'canAssign',
     code: 0,
     funName: 'assign',
-    func: () => {
-      console.log(vm)
-      vm.assign()
+    func: (p) => {
+      vm.assign(p)
     }
   },
   {
@@ -51,9 +50,8 @@ export const oilTableBtn = vm => [
     key: 'canRecharge',
     code: 0,
     funName: 'recharge',
-    func: () => {
-      console.log(vm)
-      vm.recharge()
+    func: (p) => {
+      vm.recharge(p)
     }
   },
   {
@@ -61,8 +59,8 @@ export const oilTableBtn = vm => [
     key: 'canRefuel',
     code: 0,
     funName: 'refuel',
-    func: () => {
-      vm.refuel()
+    func: (p) => {
+      vm.refuel(p)
     }
   },
   {
@@ -70,8 +68,8 @@ export const oilTableBtn = vm => [
     key: 'canTransfer',
     code: 0,
     funName: 'transfer',
-    func: () => {
-      vm.transfer()
+    func: (p) => {
+      vm.transfer(p)
     }
   },
   {
@@ -79,8 +77,8 @@ export const oilTableBtn = vm => [
     key: 'canUpdate',
     code: 0,
     funName: 'update',
-    func: () => {
-      vm.update()
+    func: (p) => {
+      vm.update(p)
     }
   },
   {
@@ -88,8 +86,8 @@ export const oilTableBtn = vm => [
     key: 'canRecover',
     code: 0,
     funName: 'recover',
-    func: () => {
-      vm.recover()
+    func: (p) => {
+      vm.recover(p)
     }
   }
 ]
@@ -104,7 +102,7 @@ export const oilTableColumns = vm => [
   {
     title: '操作',
     key: 'orderNo',
-    // width: 180,
+    width: 170,
     // fixed: 'left',
     render: (h, params) => {
       let renderHtml = []
@@ -124,7 +122,7 @@ export const oilTableColumns = vm => [
                 on: {
                   click: () => {
                     console.log(vm)
-                    item.func()
+                    item.func(params)
                   }
                 }
               }, item.name)
@@ -146,9 +144,10 @@ export const oilTableColumns = vm => [
           'Dropdown',
           {
             props: { trigger: 'click' },
+            style: { display: 'inline-block' },
             on: {
               'on-click': (value) => {
-                vm[value]()
+                vm[value](params)
               }
             }
           },
@@ -265,7 +264,7 @@ export const usedTableColumns = vm => [
         },
         on: {
           click: () => {
-            vm.toDetail()
+            vm.toDetail(params)
           }
         }
       }, params.row.number)

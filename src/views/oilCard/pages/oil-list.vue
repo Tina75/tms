@@ -39,7 +39,8 @@
     <div class="operateBtn">
       <Button v-for="(item, key) in showButtons" :key="key"
               :type="key === 0 ? 'primary' : 'default'"
-              class="actionBtn">
+              class="actionBtn"
+              @click="item.func">
         {{ item.name }}
       </Button>
     </div>
@@ -59,9 +60,15 @@
 import { OILBTN, oilTableColumns } from '../constant/oil'
 import commonmixin from '../mixin/commonmixin'
 import operateBtnMixin from '../mixin/operateBtnMixin'
+import contantmixin from '../mixin/contantmixin'
+import BasePage from '@/basic/BasePage'
+// import Server from '@/libs/js/server'
 export default {
   name: 'oil-list',
-  mixins: [commonmixin, operateBtnMixin],
+  mixins: [BasePage, commonmixin, operateBtnMixin, contantmixin],
+  metaInfo: {
+    title: '油卡列表'
+  },
   data () {
     return {
       searchFields: {}, // 发起请求时的搜索字段
@@ -115,13 +122,88 @@ export default {
     selectionChanged (selection) {
       this.tableSelection = selection
     },
-    // 到详情页
-    toDetail (p) {
-      this.openTab({
-        title: p.row.number,
-        path: '/oilCard/detail/detail',
-        query: {
-          shipperOrderId: p.row.id
+    // 新增
+    add () {
+      this.openDialog({
+        name: 'oilCard/dialog/addEdit',
+        data: {
+          mode: 1,
+          title: '新增油卡'
+        },
+        methods: {
+          ok () {
+            this.fetchData()
+          }
+        }
+      })
+    },
+    // 停用
+    stop () {
+      if (this.tableSelection.length === 0) {
+        this.$Message.warning('请先选择')
+        return
+      }
+      let _this = this
+      let idList = this.tableSelection.map(item => {
+        return item.id
+      })
+      console.log(idList)
+      this.$Modal.confirm({
+        title: '停用',
+        content: '是否确认停用所选油卡',
+        okText: '确认',
+        cancelText: '取消',
+        async onOk () {
+          _this.openDialog({
+            name: 'oilCard/dialog/operate',
+            data: {
+              title: '油卡停用',
+              operate: {
+                idList: idList,
+                type: 1 // 1停用，2启用
+              }
+            },
+            methods: {
+              ok () {
+                _this.fetchData()
+              }
+            }
+          })
+        }
+      })
+    },
+    // 启用
+    start () {
+      if (this.tableSelection.length === 0) {
+        this.$Message.warning('请先选择')
+        return
+      }
+      let _this = this
+      let idList = this.tableSelection.map(item => {
+        return item.id
+      })
+      console.log(idList)
+      this.$Modal.confirm({
+        title: '启用',
+        content: '是否确认启用所选油卡',
+        okText: '确认',
+        cancelText: '取消',
+        async onOk () {
+          _this.openDialog({
+            name: 'oilCard/dialog/operate',
+            data: {
+              title: '油卡启用',
+              operate: {
+                idList: idList,
+                type: 2 // 1停用，2启用
+              }
+            },
+            methods: {
+              ok () {
+                _this.fetchData()
+              }
+            }
+          })
         }
       })
     }

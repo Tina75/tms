@@ -35,7 +35,7 @@ import { money2chinese } from '@/libs/js/util'
 import dispatchMixin from './mixins/dispatchMixin.js'
 const prefixCls = 'ivu-input-number'
 export default {
-  name: 'InputNumber',
+  name: 'TagNumberInput',
   mixins: [dispatchMixin],
   props: {
     max: {
@@ -55,7 +55,7 @@ export default {
       default: true
     },
     value: {
-      type: Number,
+      type: [Number, String],
       default: 1
     },
     size: {
@@ -166,7 +166,7 @@ export default {
   },
   watch: {
     value (val) {
-      this.currentValue = val
+      this.currentValue = val || null
     },
     currentValue (val) {
       this.changeVal(val)

@@ -6,7 +6,7 @@ import store from './store/index'
 import VueMeta from 'vue-meta'
 import EmaProxy from 'ema-proxy'
 import VueToast from '@/libs/plugins/vue-toast.js'
-import VueFieldLength from '@/libs/plugins/vue-field-length.js'
+import VueConfig from '@/libs/plugins/vue-config.js'
 import './libs/js/ga.js' // GA打点统计配置与上报方法封装,
 
 require('./permission')
@@ -38,7 +38,7 @@ Vue.use(VueMeta)
 Vue.use(iView)
 // 全局提示框
 Vue.use(VueToast)
-Vue.use(VueFieldLength)
+Vue.use(VueConfig)
 window.EMA = new EmaProxy()
 var appData = { router, store }
 /**

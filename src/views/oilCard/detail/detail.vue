@@ -18,31 +18,35 @@
         <Row>
           <i-col span="6">
             <span>发卡机构：</span>
-            <span>{{detail.carrierName}}</span>
+            <span>{{issuerToName(detail.issuer)}}</span>
           </i-col>
           <i-col span="6">
             <span>类型：</span>
-            <span>{{detail.carrierName}}</span>
+            <span>{{typeToName(detail.type)}}</span>
           </i-col>
-          <i-col span="7">
+          <i-col span="6">
             <span>卡号：</span>
-            <span>{{detail.carrierName}}</span>
+            <span>{{detail.number || '-'}}</span>
           </i-col>
-          <i-col  span="5">
-            <span>余额：</span>
-            <span>{{detail.amount | toPoint}}</span>
+          <i-col span="6">
+            <span>主卡号：</span>
+            <span>{{detail.primaryCardNumber || '-'}}</span>
           </i-col>
         </Row>
         <Row>
+          <i-col  span="6">
+            <span>余额：</span>
+            <span>{{detail.amount | toPoint}}</span>
+          </i-col>
           <i-col span="6">
-            <span>持卡数：</span>
-            <span>{{detail.carrierName}} </span>
+            <span>持卡人：</span>
+            <span>{{detail.driverName}} </span>
           </i-col>
           <i-col span="6">
             <span>绑定车辆：</span>
-            <span>{{detail.carrierName}}</span>
+            <span>{{detail.truckNo}}</span>
           </i-col>
-          <i-col span="7">
+          <i-col span="6">
             <span>所属承运商：</span>
             <span>{{detail.carrierName}}</span>
           </i-col>
@@ -80,6 +84,7 @@ import { oilTableBtn } from '../constant/oil'
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import operateBtnMixin from '../mixin/operateBtnMixin'
+import contantmixin from '../mixin/contantmixin'
 import '@/libs/js/filter'
 export default {
   name: 'detail',
@@ -87,7 +92,7 @@ export default {
   components: {
     // OrderPrint
   },
-  mixins: [ BasePage, operateBtnMixin ],
+  mixins: [ BasePage, operateBtnMixin, contantmixin ],
   metaInfo: { title: '订单详情' },
   data () {
     return {
@@ -105,48 +110,8 @@ export default {
     }
   },
 
-  computed: {
-    // 订单总数
-    orderTotal () {
-      return this.detail.orderCargoList.length
-    },
-    // 总货值
-    cargoCostTotal () {
-      let total = 0
-      this.detail.cargoInfos.map((item) => {
-        total += Number(item.cost)
-      })
-      return (total / 100).toFixed(2)
-    },
-    // 总数量
-    quantityTotal () {
-      let total = 0
-      this.detail.cargoInfos.map((item) => {
-        total += Number(item.num)
-      })
-      return total
-    },
-    // 总体积
-    volumeTotal () {
-      let total = 0
-      this.detail.cargoInfos.map((item) => {
-        total += Number(item.volume)
-      })
-      return total
-    },
-    // 总重量
-    weightTotal () {
-      let total = 0
-      this.detail.cargoInfos.map((item) => {
-        total += Number(item.weight)
-      })
-      return total
-    }
-  },
-
   created () {
     this.getDetail()
-    console.log(this.btnGroup)
   },
 
   methods: {
@@ -176,29 +141,6 @@ export default {
         this.orderLog = res.data.data.operateLogList // 订单日志
         this.orderLogCount = res.data.data.operateLogList.length // 订单日志数量
       })
-    },
-    // 订单详情按钮过滤
-    filterOrderButton () {
-      /**
-       * status  0:待接收状态；10：待提货； 20：待送货调度； 30：在途； 40：已到货； 50：已回单；99已拒绝状态；100被删除到回收站
-       * 0待接收状态 拒绝 接受按钮
-       */
-      let r = this.detail
-      let renderBtn = []
-      if (r.status === 0) { // 待调度状态
-        // 接受按钮
-        renderBtn.push(
-          { name: '接受', value: 1, code: 110101 }
-        )
-        // 拒绝按钮
-        renderBtn.push(
-          { name: '拒绝', value: 2, code: 110102 }
-        )
-      }
-      this.btnGroup = renderBtn
-      if (this.btnGroup.length > 0) {
-        this.operateValue = this.btnGroup[this.btnGroup.length - 1].value // 默认点亮最后一个按钮
-      }
     }
   }
 }
