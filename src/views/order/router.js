@@ -44,7 +44,8 @@ export default[
         'component': () => import(/* webpackChunkName: "order-detail" */'./frequent-order/index.vue'),
         'meta': {
           'powerCode': 100400,
-          'title': '常发订单'
+          'title': '常发订单',
+          'notCache': true
         }
       },
       {
@@ -54,6 +55,7 @@ export default[
         'meta': {
           'powerCode': 100400,
           'hideInMenu': true,
+          'notCache': true,
           'title': '常发订单详情'
         }
       },
