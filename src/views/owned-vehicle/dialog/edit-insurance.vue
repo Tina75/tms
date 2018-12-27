@@ -18,7 +18,7 @@
           <FormItem label="车牌号：" prop="carNo">
             <Row>
               <Col span="20">
-              <span v-if="flag === 3">{{ validate.carNo }}</span>
+              <span v-if="flag  > 2">{{ validate.carNo }}</span>
               <CarSelect v-else v-model="validate.carNo"></CarSelect>
               </Col>
             </Row>
@@ -93,7 +93,7 @@
           <FormItem label="交强险金额：" prop="trafficFee">
             <Row>
               <Col span="20">
-              <TagNumberInput :min="0" v-model="validate.trafficFee" placeholder="请输入"></TagNumberInput>
+              <TagNumberInput :min="0" v-model="validate.trafficFee" :show-chinese="false" placeholder="请输入"></TagNumberInput>
               </Col>
               <Col span="2" offset="1">
               <span>元</span>
@@ -105,7 +105,7 @@
           <FormItem label="商业险金额：">
             <Row>
               <Col span="20">
-              <TagNumberInput :min="0" v-model="validate.businessFee" placeholder="请输入"></TagNumberInput>
+              <TagNumberInput :min="0" v-model="validate.businessFee" :show-chinese="false" placeholder="请输入"></TagNumberInput>
               </Col>
               <Col span="2" offset="1">
               <span>元</span>
@@ -204,7 +204,7 @@ export default {
     // 修改页面初始值更改
     configData () {
       let vm = this
-      if (vm.flag === 2) {
+      if (!(vm.flag % 2)) {
         if (vm.validate.picUrls.length > 0) {
           vm.validate.picUrls.map((item) => {
             vm.imgList.push({
@@ -228,7 +228,7 @@ export default {
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.loading = true
-          if (this.flag !== 2) { // 新增
+          if (this.flag % 2) { // 新增
             this.add(params)
           } else { // 2-编辑
             this.update(params)

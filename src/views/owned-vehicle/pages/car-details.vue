@@ -399,7 +399,7 @@ export default {
                       name: 'owned-vehicle/dialog/edit-insurance',
                       data: {
                         title: '修改保险',
-                        flag: 3, // 修改
+                        flag: 4, // 修改
                         validate: {
                           ...params.row,
                           buyDate: new Date(params.row.buyDate),
@@ -503,7 +503,7 @@ export default {
                       name: 'owned-vehicle/dialog/edit-check',
                       data: {
                         title: '修改年检',
-                        flag: 3, // 修改
+                        flag: 4, // 修改
                         validate: { ...params.row, checkDate: new Date(params.row.checkDate), nextCheckDate: new Date(params.row.nextCheckDate) }
                       },
                       methods: {
@@ -610,7 +610,7 @@ export default {
                       name: 'owned-vehicle/dialog/edit-tyre',
                       data: {
                         title: '修改轮胎',
-                        flag: 3, // 修改
+                        flag: 4, // 修改
                         validate: { ...params.row, setupDate: new Date(params.row.setupDate) }
                       },
                       methods: {
