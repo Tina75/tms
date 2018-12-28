@@ -21,13 +21,17 @@
         <Row>
           <Col :span="8">
           <FormItem label="公司全称：" prop="name">
-            <Input v-if="isEdit" v-model="formCompany.name" :maxlength="25" placeholder="请输入公司名称"></Input>
+            <Row v-if="isEdit" >
+              <Col :span="19">
+              <Input v-if="isEdit" v-model="formCompany.name" :maxlength="25" placeholder="请输入公司名称"></Input>
+              </Col>
+            </Row>
             <span v-else class="formConten-p">{{formCompany.name}}</span>
           </FormItem>
           </Col>
           <Col :span="8">
           <FormItem label="公司简称：">
-            <Row v-if="isEdit" style="margin-left:-10px">
+            <Row v-if="isEdit">
               <Col :span="19">
               <Input v-model="formCompany.shortName" :maxlength="6" placeholder="请输入公司简称，最多6个字"></Input>
               </Col>
@@ -48,13 +52,21 @@
         <Row>
           <Col :span="8">
           <FormItem label="公司联系人：" prop="contact">
-            <Input v-if="isEdit" v-model="formCompany.contact" :maxlength="20" placeholder="请输入公司联系人"></Input>
+            <Row v-if="isEdit" >
+              <Col :span="19">
+              <Input v-model="formCompany.contact" :maxlength="20" placeholder="请输入公司联系人"></Input>
+              </Col>
+            </Row>
             <span v-else class="formConten-p">{{formCompany.contact}}</span>
           </FormItem>
           </Col>
           <Col :span="8">
           <FormItem label="联系方式：" prop="contactPhone">
-            <Input v-if="isEdit" v-model="formCompany.contactPhone" :maxlength="11" placeholder="请输入联系方式"></Input>
+            <Row v-if="isEdit">
+              <Col :span="19">
+              <Input v-model="formCompany.contactPhone" :maxlength="11" placeholder="请输入联系方式"></Input>
+              </Col>
+            </Row>
             <span v-else class="formConten-p">{{formCompany.contactPhone}}</span>
           </FormItem>
           </Col>
@@ -66,7 +78,11 @@
             :label="'业务联系人' + (index + 1) + '：'"
             :rules="{required: true, message: '请输入公司联系人'}"
             :prop="'busiContact.' + index + '.name'">
-            <Input v-if="isEdit" v-model="item.name" :maxlength="20" placeholder="请输入公司联系人"></Input>
+            <Row v-if="isEdit" >
+              <Col :span="19">
+              <Input v-model="item.name" :maxlength="20" placeholder="请输入公司联系人"></Input>
+              </Col>
+            </Row>
             <span v-else class="formConten-p">{{item.name}}</span>
           </FormItem>
           </Col>
@@ -77,7 +93,7 @@
             :prop="'busiContact.' + index + '.phone'"
             label="联系方式：">
             <Row v-if="isEdit">
-              <Col :span="20">
+              <Col :span="19">
               <Input v-model="item.phone" :maxlength="11" placeholder="请输入联系方式"></Input>
               </Col>
               <Col :span="4">
@@ -95,13 +111,13 @@
           <Col :span="16">
           <FormItem label="公司地址：" prop="address">
             <Row v-if="isEdit">
-              <Col :span="16">
+              <Col :span="14">
               <AreaInput v-model="formCompany.address" @city-select="latlongtChange"></AreaInput>
               </Col>
               <Col :span="7" class="areaRight">
               <Input :maxlength="50" v-model="formCompany.userAddress" placeholder="补充地址（楼号-门牌等）"></Input>
               </Col>
-              <Col :span="1" class="areaRight">
+              <Col :span="1">
               <Tooltip :max-width="200" content="详细地址只支持从下拉推荐地址中选择" transfer>
                 <Icon class="vermiddle" type="ios-information-circle" size="20" color="#FFBB44"></Icon>
               </Tooltip>
@@ -231,6 +247,7 @@
             :multiple="true"
             max-count="2"
             max-size="10"
+            class="wxImaages"
             multiple-width="style='width:50%'">
           </image-title>
           <div v-for="(img,index) in wxQrPic" v-show="!isEdit" :key="img.key" class="infoImage">
@@ -541,6 +558,11 @@ export default {
 >>>.imageLogo .ivu-upload .ivu-upload-input
   width 96px
   height 90px
+>>>.wxImaages .demo-upload-list
+  width 96px
+  height 90px
+>>>.wxImaages input.ivu-input.ivu-input-default
+  width 98px
 >>>.ivu-form-item-label
   font-size: 14px
 >>>.ivu-input-wrapper
