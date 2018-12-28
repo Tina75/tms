@@ -36,7 +36,8 @@
                      clearable
                      class="search-input"
                      @on-select="selectCarrierHandler"
-                     @on-clear="resetEasySearch" />
+                     @on-clear="resetEasySearch"
+                     @start-search="startSearch" />
 
         <SelectInput v-if="easySelectMode === 3" v-model="easySearchKeyword"
                      :carrier-id="carrierId"
@@ -44,7 +45,8 @@
                      placeholder="请输入车牌号"
                      clearable
                      class="search-input"
-                     @on-clear="resetEasySearch" />
+                     @on-clear="resetEasySearch"
+                     @start-search="startSearch" />
 
         <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
@@ -69,19 +71,25 @@
           @on-enter="startSearch" />
         <SelectInput v-model="seniorSearchFields.carrierName"
                      mode="carrier"
+                     clearable
                      placeholder="请输入承运商"
                      class="search-input-senior"
-                     @on-select="selectCarrierHandler" />
+                     @on-select="selectCarrierHandler"
+                     @start-search="startSearch" />
         <SelectInput v-model="seniorSearchFields.driverName"
                      :carrier-id="carrierId"
                      mode="driver"
+                     clearable
                      placeholder="请输入司机"
-                     class="search-input-senior" />
+                     class="search-input-senior"
+                     @start-search="startSearch" />
         <SelectInput v-model="seniorSearchFields.carNo"
                      :carrier-id="carrierId"
                      mode="carNo"
+                     clearable
                      placeholder="请输入车牌号"
-                     class="search-input-senior" />
+                     class="search-input-senior"
+                     @start-search="startSearch" />
         <Select v-model="seniorSearchFields.billType" transfer style="width:190px;" placeholder="请选择单据类型">
           <Option v-for="item in billTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>

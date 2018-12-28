@@ -167,7 +167,7 @@ export default {
 
     // 回车搜索
     handleStartSearch () {
-      this.$emit('startSearch')
+      this.$emit('start-search')
     }
 
   }
