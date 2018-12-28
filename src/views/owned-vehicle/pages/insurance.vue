@@ -65,11 +65,14 @@ export default {
       keyword: '',
       formSearchInit: {},
       exportFile: true,
+      maxlength: 8,
       menuColumns: [
         {
           title: '操作',
-          key: 'id',
+          key: 'action',
           width: 150,
+          fixed: 'left',
+          extra: true,
           render: (h, params) => {
             let renderBtn = []
             if (this.hasPower(190402)) {

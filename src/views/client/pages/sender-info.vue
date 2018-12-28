@@ -474,7 +474,18 @@ export default {
         },
         {
           title: '包装尺寸',
-          key: 'dimension'
+          key: 'dimension',
+          render (h, params) {
+            if (JSON.parse(params.row.dimension).length && JSON.parse(params.row.dimension).width && JSON.parse(params.row.dimension).height) {
+              let text = ''
+              text += JSON.parse(params.row.dimension).length + '*'
+              text += JSON.parse(params.row.dimension).width + '*'
+              text += JSON.parse(params.row.dimension).height
+              return h('span', {}, text)
+            } else {
+              return h('span', {}, '-')
+            }
+          }
         },
         {
           title: '重量(吨)',
