@@ -557,9 +557,9 @@ export default {
 >>>.imageLogo .demo-upload-list
 >>>.imageLogo .ivu-upload .ivu-upload-drag
 >>>.imageLogo .ivu-upload .ivu-upload-input
-  width 96px
-  height 90px
 >>>.wxImaages .demo-upload-list
+>>>.wxImaages .ivu-upload .ivu-upload-drag
+>>>.wxImaages .ivu-upload-input
   width 96px
   height 90px
 >>>.wxImaages input.ivu-input.ivu-input-default
