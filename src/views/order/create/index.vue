@@ -854,6 +854,7 @@ export default {
           _this.orderForm.consigneeAddressLongitude = consignees[0].longitude
           _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
           _this.orderForm.consigneeHourseNumber = consignees[0].consignerHourseNumber
+          _this.orderForm.consigneeCompanyName = consignees[0].consigneeCompanyName
         }
         // 计费里程
         _this.distanceCp()
