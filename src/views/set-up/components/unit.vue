@@ -119,7 +119,9 @@ export default {
       },
       set (value) {
         this.form.weightTonOption = value
-        this.form.weightKgOption = !value
+        if (value) {
+          this.form.weightKgOption = !value
+        }
       }
     },
     weightKgOption: {
@@ -128,7 +130,9 @@ export default {
       },
       set (value) {
         this.form.weightKgOption = value
-        this.form.weightTonOption = !value
+        if (value) {
+          this.form.weightTonOption = !value
+        }
       }
     }
   },

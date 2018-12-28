@@ -98,10 +98,10 @@
       <Table :columns="tableColumns" :data="detail.orderCargoTemplateList"></Table>
       <Row class="table-footer blod-font">
         <Col span="3">合计</Col>
-        <Col span="3">{{ weightTotal }}</Col>
-        <Col span="3">{{ volumeTotal }}</Col>
-        <Col span="3">{{ cargoCostTotal }}</Col>
-        <Col span="3">{{ quantityTotal }}</Col>
+        <Col span="3">总重量：{{ weightTotal }}</Col>
+        <Col span="3">总体积：{{ volumeTotal }}</Col>
+        <Col span="3">总货值：{{ cargoCostTotal }}</Col>
+        <Col span="3">总数量：{{ quantityTotal }}</Col>
       </Row>
       <div class="title">
         <span>应收费用</span>
@@ -177,6 +177,10 @@ export default {
           key: 'cargoName'
         },
         {
+          title: '货物编号',
+          key: 'cargoNo'
+        },
+        {
           title: '重量（吨）',
           key: 'weight',
           render: (h, p) => {
@@ -209,6 +213,13 @@ export default {
           key: 'unit',
           render: (h, p) => {
             return h('span', p.row.unit || '-')
+          }
+        },
+        {
+          title: '包装尺寸（长x宽x高 mm）',
+          key: 'dimension',
+          render: (h, p) => {
+            return h('span', (p.row.dimension.length || 0) + ' x ' + (p.row.dimension.width || 0) + ' x ' + (p.row.dimension.height || 0))
           }
         },
         {
