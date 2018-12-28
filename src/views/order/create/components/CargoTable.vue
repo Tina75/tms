@@ -25,6 +25,7 @@
                   :index="no"
                   :record="item"
                   :col="col"
+                  :length="dataSourceCpt.length"
                   :on-append="onAppend"
                   :on-remove="onRemove"
                   :on-select="onSelect"
@@ -64,19 +65,9 @@
 
 import float from '@/libs/js/float'
 import CargoTableRow from './CargoTableRow.vue'
+import { NumberPrecesion } from '@/libs/js/config'
+import OrderMap from '../libs/orderMap'
 const prefixClass = 'ivu-table'
-const OrderMap = {
-  cargoNo: 'cargoNoOption',
-  quantity: 'quantityOption',
-  weight: 'weightTonOption',
-  weightKg: 'weightKgOption',
-  volume: 'volumeOption',
-  cargoCost: 'cargoCostOption',
-  unit: 'unitOption',
-  dimension: 'dimensionOption',
-  remark1: 'remark1Option',
-  remark2: 'remark2Option'
-}
 
 export default {
   components: {
@@ -129,7 +120,7 @@ export default {
           key: 'weight',
           type: 'number',
           min: 0,
-          point: 3
+          point: NumberPrecesion.weight
         },
         {
           required: false,
@@ -137,7 +128,7 @@ export default {
           key: 'weightKg',
           type: 'number',
           min: 0,
-          point: 0
+          point: NumberPrecesion.weightKg
         },
         {
           required: false,
@@ -145,7 +136,7 @@ export default {
           key: 'volume',
           type: 'number',
           min: 0,
-          point: 4
+          point: NumberPrecesion.volume
         },
         {
           required: false,
@@ -153,7 +144,7 @@ export default {
           key: 'cargoCost',
           type: 'number',
           min: 0,
-          point: 2
+          point: NumberPrecesion.fee
         },
         {
           required: false,
@@ -235,9 +226,13 @@ export default {
     statics () {
       return this.dataSource.reduce((sum, cargo) => {
         // 读取临时数据
-
-        sum.weight = float.round((cargo.weight || 0) + sum.weight, 3)
-        sum.volume = float.round((cargo.volume || 0) + sum.volume, 4)
+        const cargoInfos = {}
+        if (cargo.cargoName) {
+          cargoInfos[cargo.cargoName] = cargo.quantity
+          sum.cargoInfos.push(cargoInfos)
+        }
+        sum.weight = float.round((cargo.weight || 0) + sum.weight, NumberPrecesion.weight)
+        sum.volume = float.round((cargo.volume || 0) + sum.volume, NumberPrecesion.volume)
         sum.cargoCost = float.round((cargo.cargoCost || 0) + sum.cargoCost)
         sum.quantity = (cargo.quantity || 0) + sum.quantity
         return sum
@@ -245,7 +240,8 @@ export default {
         weight: 0,
         volume: 0,
         cargoCost: 0,
-        quantity: 0
+        quantity: 0,
+        cargoInfos: []
       })
     },
     headers () {

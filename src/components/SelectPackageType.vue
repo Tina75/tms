@@ -72,7 +72,10 @@ export default {
   },
   watch: {
     value (val) {
-      this.currentValue = val
+      if (this.currentValue !== val) {
+        this.currentValue = val
+        this.findItemData()
+      }
     }
   },
   created () {

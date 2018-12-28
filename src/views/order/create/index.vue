@@ -419,14 +419,6 @@ export default {
         callback()
       }
     }
-    // const validatePhone = (rule, value, callback) => {
-    //   value = value.replace(/\s/g, '')
-    //   if (validator.phone(value) || validator.telphone(value)) {
-    //     callback()
-    //   } else {
-    //     callback(new Error('请输入正确的手机号或座机号'))
-    //   }
-    // }
     // 9位整数 2位小数
     const validateFee = (rule, value, callback) => {
       if ((value && validator.fee(value)) || !value) {
@@ -771,16 +763,8 @@ export default {
         transferFeeList.forEach((fee) => {
           vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
         })
-        if (vm.orderForm.deliveryTime) {
-          const deliveryTime = new Date(vm.orderForm.deliveryTime)
-          vm.orderForm.deliveryTime = deliveryTime
-          vm.orderForm.deliveryTimes = `${deliveryTime.getHours() > 9 ? deliveryTime.getHours() : '0' + deliveryTime.getHours()}:${deliveryTime.getMinutes() > 9 ? deliveryTime.getMinutes() : '0' + deliveryTime.getMinutes()}`
-        }
-        if (vm.orderForm.arriveTime) {
-          const arriveTime = new Date(vm.orderForm.arriveTime)
-          vm.orderForm.arriveTime = arriveTime
-          vm.orderForm.arriveTimes = `${arriveTime.getHours() > 9 ? arriveTime.getHours() : '0' + arriveTime.getHours()}:${arriveTime.getMinutes() > 9 ? arriveTime.getMinutes() : '0' + arriveTime.getMinutes()}`
-        }
+        vm.orderForm.deliveryTime = ''
+        vm.orderForm.arriveTime = ''
         // 里程除以 1000
         vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
         vm.orderForm.invoiceRate = rate.get(vm.orderForm.invoiceRate)
@@ -937,6 +921,7 @@ export default {
           partnerId: clientId, // 客户编号
           partnerName: vm.orderForm.consignerName, // 客户名
           partnerType: 1, // 计算规则分类：1-发货方，2-承运商，3-外转方
+          cargoInfos: statics.cargoInfos,
           weight: statics.weight,
           volume: statics.volume,
           distance: this.orderForm.mileage ? parseInt(this.orderForm.mileage * 1000) : 0,
@@ -1109,6 +1094,7 @@ export default {
                       distance: form.mileage,
                       weight: statics.weight,
                       volume: statics.volume,
+                      cargoInfos: statics.cargoInfos,
                       start: form.start,
                       end: form.end
                     }
@@ -1151,6 +1137,7 @@ export default {
                       distance: form.mileage,
                       weight: statics.weight,
                       volume: statics.volume,
+                      cargoInfos: statics.cargoInfos,
                       start: form.start,
                       end: form.end
                     }
