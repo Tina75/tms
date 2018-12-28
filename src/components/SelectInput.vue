@@ -124,7 +124,9 @@ export default {
      * 比如：手机号，银行卡号，间隔显示，但是最终的值不保留间隔
      */
     formatter: Function,
-    onChange: Function
+    onChange: Function,
+    // 输入框内回车键
+    enter: Function
   },
   data () {
     return {
@@ -396,6 +398,9 @@ export default {
               this.handleSelect(selectOption.name)
             }
           }
+          this.$nextTick(() => {
+            this.$emit('enter', this.currentValue)
+          })
         }
       }
     },
