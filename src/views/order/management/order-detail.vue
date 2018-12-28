@@ -86,6 +86,10 @@
                 <span>是否开票：</span>
                 <span>{{detail.isInvoice === 1 ? `是（${rate(detail.invoiceRate)}%）` : '否'}}</span>
               </i-col>
+              <i-col span="7">
+                <span>开票税额：</span>
+                <span>{{detail.invoiceAmount | toPoint}}元</span>
+              </i-col>
             </Row>
             <Row style="margin-top:18px">
               <i-col span="7">
@@ -96,10 +100,10 @@
                 <span>联系方式：</span>
                 <span>{{detail.consignerPhone}}</span>
               </i-col>
-              <i-col span="10">
+              <i-col span="10" style="color: #333;">
                 <Row>
                   <i-col span="3">
-                    <span>发货地址：</span>
+                    <span style="color: #777">发货地址：</span>
                   </i-col>
                   <i-col span="21" style="padding-left: 15px;">
                     <p>{{detail.consignerAddress}}</p>
@@ -117,16 +121,22 @@
                 <span>联系方式：</span>
                 <span>{{detail.consigneePhone}}</span>
               </i-col>
-              <i-col span="10">
+              <i-col span="10" style="color: #333;">
                 <Row>
                   <i-col span="3">
-                    <span>收货地址：</span>
+                    <span style="color: #777">收货地址：</span>
                   </i-col>
                   <i-col span="21" style="padding-left: 15px;">
                     <p>{{detail.consigneeAddress}}</p>
                     <p v-if="detail.consigneeHourseNumber" style="line-height: 1;">{{`${detail.consigneeHourseNumber}`}}</p>
                   </i-col>
                 </Row>
+              </i-col>
+            </Row>
+            <Row>
+              <i-col>
+                <span>收货人单位：</span>
+                <span>{{detail.consigneeCompanyName}}</span>
               </i-col>
             </Row>
             <Row style="margin-top: 18px;">
@@ -317,10 +327,17 @@ export default {
           className: 'padding-left-45'
         },
         {
-          title: '包装',
+          title: '包装方式',
           key: 'unit',
           render: (h, p) => {
             return h('span', p.row.unit ? p.row.unit : '-')
+          }
+        },
+        {
+          title: '包装尺寸（长x宽x高 mm）',
+          key: 'dimension',
+          render: (h, p) => {
+            return h('span', (p.row.dimension.length || 0) + ' x ' + (p.row.dimension.width || 0) + ' x ' + (p.row.dimension.height || 0))
           }
         },
         {
@@ -425,7 +442,7 @@ export default {
       this.detail.orderCargoList.map((item) => {
         total += Number(item.volume)
       })
-      return float.round(total, 4) + '方'
+      return float.round(total, 6) + '方'
     },
     // 总重量
     weightTotal () {
@@ -466,7 +483,7 @@ export default {
   methods: {
     getDetailChange () {
       Server({
-        url: 'order/getOrderChangeRecordNum',
+        url: '/order/getOrderChangeRecordNum',
         method: 'post',
         data: {
           id: this.$route.query.orderId
@@ -510,6 +527,8 @@ export default {
         this.openUploadDialog(this.detail)
       } else if (btn.name === '分享') {
         this.openShareDialog(this.detail)
+      } else if (btn.name === '修改订单') {
+        this.openModifyDialog(this.detail)
       }
     },
     // 外转
@@ -639,6 +658,22 @@ export default {
         },
         methods: {
           ok (node) {}
+        }
+      })
+    },
+    // 修改订单
+    openModifyDialog (order) {
+      const _this = this
+      _this.openDialog({
+        name: 'order/management/dialog/edit',
+        data: {
+          id: order.id
+        },
+        methods: {
+          ok () {
+            _this.getDetail()
+            _this.getDetailChange()
+          }
         }
       })
     },
@@ -801,6 +836,11 @@ export default {
        */
       let r = this.detail
       let renderBtn = []
+      if (r.status === 50 && !r.disassembleStatus) { // 已回单未拆单展示删除按钮
+        renderBtn.push(
+          { name: '删除', value: 1, code: 100302 }
+        )
+      }
       // 子单不展示分享按钮
       if (!r.parentId) {
         renderBtn.push({ name: '分享', value: 9, code: 100307 })
@@ -837,17 +877,24 @@ export default {
           renderBtn.push(
             { name: '编辑', value: 5, code: 100301 }
           )
+        } else {
+          // 子单没有修改订单
+          if (!r.parentId) {
+            renderBtn.push(
+              { name: '修改订单', value: 7, code: 100308 }
+            )
+          }
         }
       }
       if (r.status === 20) { // 待调度状态
+        // 打印
+        this.checkPrintCode(renderBtn)
         // 删除按钮
-        if (r.pickup !== 1 && r.transStatus === 0 && r.dispatchStatus === 0 && r.parentId === '') {
+        if (r.transStatus === 0 && r.dispatchStatus === 0 && r.parentId === '') {
           renderBtn.push(
             { name: '删除', value: 1, code: 100302 }
           )
         }
-        // 打印
-        this.checkPrintCode(renderBtn)
         // 拆单按钮
         if (r.transStatus === 0 && r.disassembleStatus !== 1 && r.dispatchStatus === 0) {
           if (r.collectionMoney > 0) {
@@ -879,16 +926,32 @@ export default {
           )
         }
         // 编辑按钮
-        if (r.pickup !== 1 && r.transStatus === 0 && r.dispatchStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
+        if (r.transStatus === 0 && r.dispatchStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
           renderBtn.push(
             { name: '编辑', value: 6, code: 100301 }
           )
+        } else {
+          // 子单没有修改订单
+          if (!r.parentId) {
+            renderBtn.push(
+              { name: '修改订单', value: 7, code: 100308 }
+            )
+          }
         }
       }
       if (r.status === 100) { // 回收站状态
+        if (!(r.historyStatus === 50 || (r.historyStatus === 20 && r.pickupStatus === 1))) {
+          renderBtn.push(
+            { name: '恢复', value: 1, code: 100305 }
+          )
+        }
         renderBtn.push(
-          { name: '恢复', value: 1, code: 100305 },
           { name: '彻底删除', value: 2, code: 100306 }
+        )
+      }
+      if (r.status !== 10 && r.status !== 20 && r.status !== 100) {
+        renderBtn.push(
+          { name: '修改订单', value: 7, code: 100308 }
         )
       }
       this.btnGroup = renderBtn

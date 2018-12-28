@@ -445,6 +445,14 @@ export default {
     } else {
       this.triggerWeightColumn(this.tableColumns, this.columnWeightKg, 4)
     }
+    this.openDialog({
+      name: 'order/management/dialog/edit',
+      data: {},
+      methods: {
+        ok () {
+        }
+      }
+    })
   },
 
   methods: {
