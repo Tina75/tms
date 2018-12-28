@@ -881,7 +881,7 @@ export default {
           // 子单没有修改订单
           if (!r.parentId) {
             renderBtn.push(
-              { name: '修改订单', value: 7, code: 100307 }
+              { name: '修改订单', value: 7, code: 100308 }
             )
           }
         }
@@ -934,7 +934,7 @@ export default {
           // 子单没有修改订单
           if (!r.parentId) {
             renderBtn.push(
-              { name: '修改订单', value: 7, code: 100307 }
+              { name: '修改订单', value: 7, code: 100308 }
             )
           }
         }
@@ -951,7 +951,7 @@ export default {
       }
       if (r.status !== 10 && r.status !== 20 && r.status !== 100) {
         renderBtn.push(
-          { name: '修改订单', value: 7, code: 100307 }
+          { name: '修改订单', value: 7, code: 100308 }
         )
       }
       this.btnGroup = renderBtn

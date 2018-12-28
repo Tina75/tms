@@ -19,7 +19,8 @@
           placeholder="请选择或输入客户名称"
           style="width:200px"
           @on-focus.once="getClients"
-          @on-clear="clearKeywords">
+          @on-clear="clearKeywords"
+          @enter="searchList">
         </SelectInput>
         <Input
           v-else-if="selectStatus === 1"
@@ -49,7 +50,8 @@
           placeholder="请选择或输入承运商名称"
           style="width:200px"
           @on-focus.once="getCarriers"
-          @on-clear="clearKeywords">
+          @on-clear="clearKeywords"
+          @enter="searchList">
         </SelectInput>
         <Input
           v-else-if="selectStatus === 4"
@@ -88,10 +90,13 @@
           v-model="keywords.consignerName"
           :maxlength="20"
           :remote="false"
+          :clearable="true"
           :local-options="clients"
           placeholder="请选择或输入客户名称"
           style="width:200px;margin-right: 20px;"
-          @on-focus.once="getClients">
+          @on-focus.once="getClients"
+          @on-clear="clearKeywords"
+          @enter="searchList">
         </SelectInput>
         <Input
           v-model="keywords.orderNo"

@@ -18,7 +18,8 @@
           placeholder="请选择或输入客户名称"
           class="input-w"
           @on-focus.once="getClients"
-          @on-clear="clearKeywords">
+          @on-clear="clearKeywords"
+          @enter="searchList">
         </SelectInput>
         <Input
           v-else-if="selectStatus === 1"
@@ -60,9 +61,12 @@
                 v-model="keywords.consignerName"
                 :maxlength="20"
                 :remote="false"
+                :clearable="true"
                 :local-options="clients"
                 placeholder="请选择或输入客户名称"
-                @on-focus.once="getClients">
+                @on-focus.once="getClients"
+                @on-clear="clearKeywords"
+                @enter="searchList">
               </SelectInput>
             </i-col>
             <i-col span="6" class="i-mt-10">

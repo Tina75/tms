@@ -8,7 +8,8 @@
     :local-options="options"
     :parser="contentFormatter"
     @on-select="selectHandler"
-    @on-clear="clearHandler" />
+    @on-clear="clearHandler"
+    @enter="handleStartSearch" />
 </template>
 
 <script>
@@ -162,6 +163,11 @@ export default {
       this.$emit('on-clear')
       this.model = ''
       this.$emit('input', this.model)
+    },
+
+    // 回车搜索
+    handleStartSearch () {
+      this.$emit('startSearch')
     }
 
   }
