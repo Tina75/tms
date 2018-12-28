@@ -113,17 +113,15 @@ export default {
           if (code === 10000) {
             vm.percent = 100
             vm.listLength = data
-          } else {
-            this.failStatue = true
-            this.errorReport = data.url
           }
           if (vm.timer) {
             clearTimeout(vm.timer)
             vm.timer = null
           }
           clearFileInput(this.$refs.fileInput)
-        }).catch(() => {
+        }).catch((err) => {
           this.failStatue = true
+          this.errorReport = err.data.data
           if (vm.timer) {
             clearTimeout(vm.timer)
             vm.timer = null
