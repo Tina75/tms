@@ -1,10 +1,10 @@
 <template>
   <!--批量核销弹窗-->
-  <Modal v-model="visiable" :mask-closable="false" transfer width="500" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" class="modal" transfer width="490" @on-visible-change="close">
     <p slot="header" style="text-align:center">{{title}}</p>
     <div class="bulk">
       <div class="bulk-header">
-        <div class="bulk-left">请选择需要批量核销的费用</div>
+        <div class="bulk-left">请选择需要批量核销的费用：</div>
         <Checkbox :value="checkAll" class="bulk-right" @on-change="handleCheckAll">全选</Checkbox>
       </div>
       <div class="bulk-content">
@@ -13,7 +13,7 @@
             <Col v-for="(item, index) in list" :key="index" span="12">
             <div class="bulk-list">
               <Checkbox :label="item.value" :disabled="item.count === 0" class="bulk-box">{{item.label}}</Checkbox>
-              <p v-show="item.count" class="tips">{{item.count}}单 应付费用合计：{{item.money | toPoint}}</p>
+              <p v-show="item.count" class="tips">{{item.count}}单 应付费用总计：{{item.money | toPoint}}</p>
             </div>
             </Col>
           </Row>
@@ -21,7 +21,7 @@
       </div>
     </div>
     <div slot="footer">
-      <Button  type="primary"  @click="writeOffAll">确定</Button>
+      <Button  type="primary"  @click="writeOffAll">核销</Button>
       <Button  type="default"  @click.native="close">取消</Button>
     </div>
   </Modal>
@@ -69,21 +69,25 @@ export default {
     },
     // 批量核销弹窗
     writeOffAll () {
-      this.close()
+      let _this = this
       let arr = []
       let needPay = 0
-      this.list.map(item => {
-        this.checkGroup.map(list => {
+      _this.list.map(item => {
+        _this.checkGroup.map(list => {
           if (item.value === list) needPay += float.floor(item.money / 100, 2)
         })
       })
-      this.checkGroup.map(item => {
+      _this.checkGroup.map(item => {
         item.split(',').map(list => {
           if (list) arr.push(parseInt(list))
         })
       })
-      let _this = this
-      this.openDialog({
+      if (arr.length === 0) {
+        _this.$Message.error('请先选择')
+        return
+      }
+      _this.close()
+      _this.openDialog({
         name: 'finance/dialogs/writeOff',
         data: {
           ids: arr,
@@ -111,7 +115,10 @@ export default {
 </script>
 
 <style scoped lang="stylus">
+.modal /deep/ .ivu-modal-body
+  padding-right 20px
 .bulk
+  /*padding 0 30px*/
   /deep/
     .ivu-checkbox
       margin-right 5px
@@ -125,6 +132,7 @@ export default {
     .bulk-right
       float right
   .bulk-list
+    font-size 12px
     margin-bottom 20px
     height 50px
     .bulk-box

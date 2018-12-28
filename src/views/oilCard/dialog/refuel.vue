@@ -73,6 +73,7 @@ import contantmixin from '../mixin/contantmixin'
 import SelectInput from '@/components/SelectInput.vue'
 import { CARDTYPELIST, ISSUERLIST } from '../constant/enum'
 import { mapGetters, mapActions } from 'vuex'
+import float from '@/libs/js/float'
 export default {
   name: 'recover',
   components: {
@@ -140,12 +141,12 @@ export default {
             url: '/oilCard/refuel',
             method: 'post',
             data: {
-              id: this.refuel.id || '',
-              truckNo: this.refuel.type || '',
-              driverName: this.refuel.driverName || '',
-              changeAmount: this.refuel.changeAmount || '',
-              operateDate: this.refuel.operateDate || '',
-              remark: this.refuel.remark || ''
+              id: this.refuel.id || undefined,
+              truckNo: this.refuel.type || undefined,
+              driverName: this.refuel.driverName || undefined,
+              changeAmount: float.round(this.refuel.changeAmount * 100) || undefined,
+              operateDate: this.refuel.operateDate || undefined,
+              remark: this.refuel.remark || undefined
             }
           }).then(res => {
             this.loading = false

@@ -10,36 +10,40 @@
         <span>{{typeToName(transfer.type)}}</span>
       </FormItem>
       <FormItem  label="卡号：">
-        <span>{{transfer.number}}</span>
+        <!--类型为主卡-->
+        <span v-if = "transfer.type === 1">{{transfer.primaryCardNumber}}</span>
+        <!--类型为副卡-->
+        <span v-if = "transfer.type === 2">{{transfer.number}}</span>
       </FormItem>
       <FormItem  label="当前余额：">
         <span class="moneyFormSpan">{{transfer.amount | toPoint}}元</span>
       </FormItem>
-      <FormItem label="实际金额：" prop="actrualAmount">
+      <!--类型为主卡-->
+      <FormItem v-if="transfer.type===1" label="转入卡号：" prop="toCardId">
+        <Select  v-model="transfer.toCardId" placeholder="请选择卡号">
+          <Option v-for="(item,index) in SecondaryCardList"
+                  :value="item.id"  :key="index">{{ item.number }}</Option>
+        </Select>
+      </FormItem>
+      <!--类型为副卡-->
+      <FormItem v-if = "transfer.type === 2" label="转入主卡：">
+        <span >{{transfer.primaryCardNumber}}</span>
+      </FormItem>
+      <FormItem label="转出金额：" prop="changeAmount">
         <Row>
           <Col span="20">
-          <TagNumberInput v-model="transfer.actrualAmount" :length="moneyLength" :show-chinese="false" :precision="precision" placeholder="请输入金额"></TagNumberInput>
+          <TagNumberInput v-model="transfer.changeAmount" :show-chinese="false" :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
           </Col>
           <Col span="2" offset="1">
           <span>元</span>
           </Col>
         </Row>
       </FormItem>
-      <FormItem label="退押金：" >
-        <Row>
-          <Col span="20">
-          <TagNumberInput v-model="transfer.returnDeposit" :show-chinese="false" :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
-          </Col>
-          <Col span="2" offset="1">
-          <span>元</span>
-          </Col>
-        </Row>
-      </FormItem>
-      <FormItem  label="回收日期：">
-        <DatePicker v-model="transfer.opearteDate" :options="dateOption" transfer format="yyyy-MM-dd" placeholder="请输入回收日期" style="width: 100%"></DatePicker>
+      <FormItem  label="转账日期：" prop="opearteDate">
+        <DatePicker v-model="transfer.opearteDate" :options="dateOption" transfer format="yyyy-MM-dd" placeholder="请输入转账日期" style="width: 100%"></DatePicker>
       </FormItem>
       <FormItem label="备注:">
-        <Input :maxlength="100" v-model="transfer.remark" type="textarea" placeholder="请输入"></Input>
+        <Input :maxlength="100" v-model="transfer.remark" type="textarea" placeholder="请输入备注"></Input>
       </FormItem>
     </Form>
     <div slot="footer" class="footerSty">
@@ -57,6 +61,7 @@ import TagNumberInput from '@/components/TagNumberInput'
 import contantmixin from '../mixin/contantmixin'
 import SelectInput from '@/components/SelectInput.vue'
 import { CARDTYPELIST, ISSUERLIST } from '../constant/enum'
+import float from '@/libs/js/float'
 export default {
   name: 'transfer',
   components: {
@@ -78,15 +83,22 @@ export default {
         type: null,
         issuer: null,
         primaryCardNumber: '',
-        remark: ''
+        remark: '',
+        toCardId: null,
+        changeAmount: null,
+        opearteDate: '',
+        primaryCardId: ''
       },
       dateOption: {
         disabledDate (date) {
           return date && date.valueOf() > Date.now()
         }
       },
+      SecondaryCardList: [], // 主卡下关联的副卡
       ruleValidate: {
-        actrualAmount: [{ required: true, message: '请输入实际金额', trigger: 'change', type: 'number' }]
+        toCardId: [{ required: true, message: '请选择主卡下面的副卡', trigger: 'change', type: 'number' }],
+        changeAmount: { required: true, message: '请输入转出金额', trigger: 'change', type: 'number' },
+        opearteDate: { required: true, message: '请输入转账日期' }
         // driverName: { required: true, message: '请选择司机', trigger: 'change' },
         // carrierName: { required: true, message: '请输入承运商', trigger: 'change' },
         // driverPhone: [
@@ -98,6 +110,9 @@ export default {
     }
   },
   mounted () {
+    if (this.transfer.type === 1) {
+      this.getSecondaryCardList()
+    }
   },
   methods: {
     save () {
@@ -108,11 +123,11 @@ export default {
             url: '/oilCard/transfer',
             method: 'post',
             data: {
-              id: this.transfer.id || '',
-              actrualAmount: this.transfer.type || '',
-              returnDeposit: this.transfer.returnDeposit || '',
-              opearteDate: this.transfer.opearteDate || '',
-              remark: this.transfer.remark || ''
+              id: this.transfer.id || undefined,
+              toCardId: (this.transfer.type === 1) ? this.transfer.toCardId : this.transfer.primaryCardId,
+              changeAmount: float.round(this.transfer.changeAmount * 100) || undefined,
+              opearteDate: this.transfer.opearteDate || undefined,
+              remark: this.transfer.remark || undefined
             }
           }).then(res => {
             this.loading = false
@@ -120,6 +135,18 @@ export default {
             this.ok()
           })
         }
+      })
+    },
+    // 获取主卡下关联的副卡
+    getSecondaryCardList () {
+      Server({
+        url: '/oilCard/getSecondaryCardList',
+        method: 'get',
+        params: {
+          id: this.transfer.id || null
+        }
+      }).then(res => {
+        this.SecondaryCardList = res.data.data.list
       })
     }
   }

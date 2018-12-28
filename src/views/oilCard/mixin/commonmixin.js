@@ -23,6 +23,20 @@ export default {
           shipperOrderId: p.row.id
         }
       })
+    },
+    setFetchParams () {
+      let obj = {}
+      for (let key in this.queryParams) {
+        this.queryParams[key] ? (obj[key] = this.queryParams[key]) : (obj[key] = undefined)
+      }
+      return obj
+    },
+    clearParams () {
+      for (let key in this.queryParams) {
+        if (this.queryParams[key]) {
+          this.queryParams[key] = ''
+        }
+      }
     }
   },
   components: { PageTable }
