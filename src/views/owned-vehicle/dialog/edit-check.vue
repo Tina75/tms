@@ -40,7 +40,7 @@
           <FormItem label="年检日期：">
             <Row>
               <Col span="20">
-              <DatePicker v-model="validate.checkDate" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
+              <DatePicker v-model="validate.checkDate" :options="optionsStart" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期" @on-change="getExpireDate" >
               </DatePicker>
               </Col>
             </Row>
@@ -52,7 +52,7 @@
           <FormItem label="下次年检日期：">
             <Row>
               <Col span="20">
-              <DatePicker v-model="validate.nextCheckDate" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
+              <DatePicker v-model="validate.nextCheckDate" :options="optionsEnd" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
               </DatePicker>
               </Col>
             </Row>
@@ -61,7 +61,7 @@
         </Row>
         <p class="modalTitle">年检照片</p>
         <Row>
-          <up-load ref="upLoads" :multiple="true" max-count="10" max-size="10"></up-load>
+          <up-load ref="upLoads" :multiple="true" max-count="6" max-size="10"></up-load>
           <span class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
         </Row>
         <p class="modalTitle">备注</p>
@@ -93,11 +93,21 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      optionsStart: {
+        disabledDate (date) {
+          return date && date.valueOf() < Date.now() - 86400000
+        }
+      },
+      optionsEnd: {
+        disabledDate (date) {
+          return date && date.valueOf() < Date.now() - 86400000
+        }
+      },
       loading: false,
       validate: {
         carNo: '',
         cost: null,
-        checkDate: '',
+        checkDate: new Date(),
         nextCheckDate: '',
         remark: '',
         picUrls: []
@@ -110,7 +120,8 @@ export default {
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
         ],
         cost: [
-          { required: true, message: '总金额不能为空' }
+          { required: true, message: '总金额不能为空' },
+          { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
         ]
       }
     }
@@ -181,6 +192,16 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+    getExpireDate () {
+      let vm = this
+      vm.optionsEnd = {
+        disabledDate (date) {
+          return date && date.valueOf() <= (Date.parse(new Date(vm.validate.checkDate)) - (86400000 * 2) && Date.now() - 86400000)
+        }
+      }
+      let yearDate = vm.validate.checkDate.getFullYear() % 4 !== 0 ? 364 : 365 // 区分闰年
+      vm.validate.nextCheckDate = new Date(vm.validate.checkDate.getTime() + (yearDate * 86400000))
     }
   }
 }

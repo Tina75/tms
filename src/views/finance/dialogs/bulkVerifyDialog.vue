@@ -55,7 +55,7 @@ export default {
     }
   },
   mounted () {
-    console.log(this.freshSheet)
+    // console.log(this.freshSheet)
   },
   methods: {
     // 全选
@@ -82,6 +82,7 @@ export default {
           if (list) arr.push(parseInt(list))
         })
       })
+      let _this = this
       this.openDialog({
         name: 'finance/dialogs/writeOff',
         data: {
@@ -91,8 +92,9 @@ export default {
         },
         methods: {
           ok () {
-            this.$Message.success('核销成功')
-            this.freshSheet() // 刷新页面
+            _this.close()
+            _this.$Message.success('核销成功')
+            _this.freshSheet() // 刷新页面
           }
         }
       })
@@ -124,6 +126,7 @@ export default {
       float right
   .bulk-list
     margin-bottom 20px
+    height 50px
     .bulk-box
       color #333
     .tips

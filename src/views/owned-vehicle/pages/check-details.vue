@@ -154,7 +154,7 @@ export default {
         name: 'owned-vehicle/dialog/edit-check',
         data: {
           title: '修改年检',
-          flag: 2, // 修改
+          flag: 4, // 修改
           validate: { ...vm.infoData, checkDate: new Date(vm.infoData.checkDate), nextCheckDate: new Date(vm.infoData.nextCheckDate) }
         },
         methods: {

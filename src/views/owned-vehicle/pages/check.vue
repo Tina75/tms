@@ -17,7 +17,7 @@
                class="search-input"
                @on-enter="searchCarList"
                @on-click="clearKeywords"/>
-        <DatePicker v-else v-model="keyword" transfer format="yyyy-MM-dd" type="daterange" placeholder="请选择年检时间">
+        <DatePicker v-else :options="options" v-model="keyword" transfer format="yyyy-MM-dd" type="daterange" placeholder="请选择日期搜索">
         </DatePicker>
         <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
@@ -55,6 +55,11 @@ export default {
   mixins: [ BasePage ],
   data () {
     return {
+      options: {
+        disabledDate (date) {
+          return date && date.valueOf() >= Date.now()
+        }
+      },
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH1,
       selectStatus: '1',

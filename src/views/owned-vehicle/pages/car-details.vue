@@ -88,7 +88,7 @@
             <Col span="6">
             <div>
               <span class="label">挂车号：</span>
-              {{infoData.trailerNo}}
+              {{infoData.trailerNo}}<span v-if="infoData.trailerNo">挂</span>
             </div>
             </Col>
           </Row>

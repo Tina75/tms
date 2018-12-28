@@ -24,7 +24,7 @@
         </FormItem>
         <FormItem label="包装尺寸：">
           <Row>
-            <Col :span="6"><InputNumber :min="0" v-model="volumeLength"></InputNumber></Col>
+            <Col :span="6"><InputNumber :min="0" v-model="volumeLength" @on-blur="validateVolume"></InputNumber></Col>
             <Col :span="1"><span style="padding-left: 3px">*</span></Col>
             <Col :span="6"><InputNumber :min="0" v-model="volumeWidth"></InputNumber></Col>
             <Col :span="1"><span style="padding-left: 3px">*</span></Col>
@@ -95,7 +95,7 @@ export default {
           { type: 'string', message: '必须为大于等于0的数字,最多两位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,2})?$/, trigger: 'blur' }
         ],
         volume: [
-          { type: 'string', message: '必须为大于等于0的数字,最多六位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,6}?)?$/, trigger: 'blur' }
+          { type: 'string', message: '必须为大于等于0的数字,最多六位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,6}?)?$/, trigger: 'change' }
         ]
       },
       getUnit: [
@@ -120,6 +120,9 @@ export default {
     }
   },
   methods: {
+    validateVolume () {
+      this.$refs.validate.validateField('volume')
+    },
     save (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
@@ -143,7 +146,7 @@ export default {
         volume: parseFloat(this.validate.volume),
         remark1: this.validate.remark1,
         remark2: this.validate.remark2,
-        dimension: { length: this.volumeLength, width: this.volumeWidth, height: this.volumeHeight }
+        dimension: JSON.stringify({ length: this.volumeLength, width: this.volumeWidth, height: this.volumeHeight })
       }
       consignerCargoAdd(data).then(res => {
         this.loading = false

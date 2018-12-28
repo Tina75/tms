@@ -17,7 +17,7 @@
                class="search-input"
                @on-enter="searchCarList"
                @on-click="clearKeywords"/>
-        <DatePicker v-else v-model="keyword" transfer format="yyyy-MM-dd" type="daterange" placeholder="请选择安装日期">
+        <DatePicker v-else :options="options" v-model="keyword" transfer format="yyyy-MM-dd" type="daterange" placeholder="请选择日期搜索">
         </DatePicker>
         <Button
           icon="ios-search"
@@ -56,6 +56,11 @@ export default {
   mixins: [ BasePage ],
   data () {
     return {
+      options: {
+        disabledDate (date) {
+          return date && date.valueOf() >= Date.now()
+        }
+      },
       selectStatus: '1',
       keyword: '',
       formSearchInit: {},
@@ -168,9 +173,9 @@ export default {
         {
           title: '创建日期',
           key: 'createTime',
-          sortable: 'custom',
+          // sortable: 'custom',
           render: (h, params) => {
-            let text = this.formatDateTime(params.row.createTime)
+            let text = this.formatDate(params.row.createTime)
             return h('div', { props: {} }, text)
           }
         }

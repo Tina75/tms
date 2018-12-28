@@ -34,7 +34,7 @@
             <Col span="6">
             <div>
               <span class="label">购买日期:</span>
-              {{infoData.buyDate}}
+              {{infoData.buyDate | date}}
             </div>
             </Col>
           </Row>
@@ -54,7 +54,7 @@
             <Col span="6">
             <div>
               <span class="label">交强险金额：</span>
-              {{infoData.trafficFee | date}}
+              {{infoData.trafficFee}}
             </div>
             </Col>
             <Col span="6">
@@ -188,7 +188,7 @@ export default {
         name: 'owned-vehicle/dialog/edit-insurance',
         data: {
           title: '修改保险',
-          flag: 2, // 修改
+          flag: 4, // 修改
           validate: {
             ...vm.infoData,
             buyDate: new Date(vm.infoData.buyDate),

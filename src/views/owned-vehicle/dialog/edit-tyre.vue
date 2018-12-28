@@ -40,7 +40,7 @@
           <FormItem label="轮胎品牌：" prop="tireBrand">
             <Row>
               <Col span="20">
-              <SelectInput v-model="validate.tireBrand" :maxlength="8" placeholder="必填"></SelectInput>
+              <SelectInput v-model="validate.tireBrand" :maxlength="15" placeholder="必填"></SelectInput>
               </Col>
             </Row>
           </FormItem>
@@ -51,7 +51,7 @@
           <FormItem label="轮胎型号：" prop="tireModel">
             <Row>
               <Col span="20">
-              <SelectInput v-model="validate.tireModel" placeholder="请输入"></SelectInput>
+              <SelectInput v-model="validate.tireModel" :maxlength="30" placeholder="请输入"></SelectInput>
               </Col>
             </Row>
           </FormItem>
@@ -67,7 +67,7 @@
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem label="换上公里数：">
+          <FormItem label="换上公里数：" prop="setupMileage">
             <Row>
               <Col span="20">
               <TagNumberInput :min="0" v-model="validate.setupMileage" :show-chinese="false" placeholder="请输入"></TagNumberInput>
@@ -81,7 +81,7 @@
         </Row>
         <Row>
           <Col span="8">
-          <FormItem label="换下公里数：">
+          <FormItem label="换下公里数：" prop="uninstallMileage">
             <Row>
               <Col span="20">
               <TagNumberInput :min="0" v-model="validate.uninstallMileage" :show-chinese="false" placeholder="请输入"></TagNumberInput>
@@ -95,7 +95,7 @@
         </Row>
         <p class="modalTitle">附件照片</p>
         <Row>
-          <up-load ref="upLoads" :multiple="true" max-count="10" max-size="10"></up-load>
+          <up-load ref="upLoads" :multiple="true" max-count="6" max-size="10"></up-load>
           <span class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
         </Row>
         <p class="modalTitle">备注</p>
@@ -147,7 +147,14 @@ export default {
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
         ],
         cost: [
-          { required: true, message: '费用不能为空' }
+          { required: true, message: '金额不能为空' },
+          { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
+        ],
+        setupMileage: [
+          { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
+        ],
+        uninstallMileage: [
+          { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
         ],
         tireBrand: [
           { required: true, message: '轮胎品牌不能为空' }
