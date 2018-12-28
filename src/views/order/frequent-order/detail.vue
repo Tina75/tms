@@ -272,12 +272,7 @@ export default {
     weightTotal () {
       let total = 0
       this.detail.orderCargoTemplateList.map((item) => {
-        // 区分吨或公斤
-        if (this.WeightOption === 1) {
-          total += Number(item.weight)
-        } else {
-          total += Number(item.weightKg)
-        }
+        total += Number(item.weight)
       })
       return float.round(total, 3) + '吨'
     }
