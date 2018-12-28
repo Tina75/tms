@@ -683,7 +683,9 @@ export default {
           downLoadUrl: this.downLoadUrl
         },
         methods: {
-          ok () { }
+          ok () {
+            this._consignerDetail()
+          }
         }
       })
     },

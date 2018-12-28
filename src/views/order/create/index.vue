@@ -302,7 +302,7 @@
           </TagNumberInput>
           </Col>
           <Col span="12" class="order-create__input-unit">%
-          <span>（{{ totalFee * orderForm.isInvoice / 100}}元）</span>
+          <span>（{{ invoiceFee }}元）</span>
           </Col>
         </Row>
       </FormItem>
@@ -674,6 +674,10 @@ export default {
       get () {
         return this.orderForm.isSaveOrderTemplate === 1
       }
+    },
+    invoiceFee () {
+      const res = this.totalFee && this.orderForm.invoiceRate ? float.round(this.totalFee * this.orderForm.invoiceRate / 100) : 0
+      return res
     }
   },
   created () {
@@ -1275,6 +1279,13 @@ export default {
     hasCity (val, cityName) {
       return val.indexOf(cityName) === 0 || val.indexOf('省') > -1 || val.indexOf('市') > -1
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      if (vm.createId) {
+        vm.initCreateDetail(vm.createId)
+      }
+    })
   }
 }
 </script>
