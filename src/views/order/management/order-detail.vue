@@ -466,7 +466,7 @@ export default {
   methods: {
     getDetailChange () {
       Server({
-        url: 'http://192.168.1.39:3000/mock/214/order/getOrderChangeRecordNum',
+        url: 'order/getOrderChangeRecordNum',
         method: 'post',
         data: {
           id: this.$route.query.id

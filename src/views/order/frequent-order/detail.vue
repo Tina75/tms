@@ -1,8 +1,8 @@
 <template>
   <div class="frequent-order-detail">
     <div class="header">
-      <Button type="default" @click="deleteBtn">删除</Button>
-      <Button type="primary" @click="createOrder">再来一单</Button>
+      <Button v-if="hasPower(100402)" type="default" @click="deleteBtn">删除</Button>
+      <Button v-if="hasPower(100401)" type="primary" @click="createOrder">再来一单</Button>
     </div>
     <Form :label-width="85" label-position="left">
       <div class="title">
@@ -63,7 +63,7 @@
             {{detail.consignerPhone}}
           </FormItem>
           <FormItem label="发货地址：">
-            {{detail.consignerHourseNumber}}
+            {{detail.consignerAddress}}
           </FormItem>
         </Card>
         </Col>
@@ -77,7 +77,7 @@
             {{detail.consigneePhone}}
           </FormItem>
           <FormItem label="发货地址：">
-            {{detail.consigneeHourseNumber}}
+            {{detail.consigneeAddress}}
           </FormItem>
         </Card>
         </Col>
@@ -85,7 +85,7 @@
       <div class="title">
         <span>货物明细</span>
       </div>
-      <Table :columns="tableColumns" :data="detail.orderCargoList"></Table>
+      <Table :columns="tableColumns" :data="detail.orderCargoTemplateList"></Table>
       <Row class="table-footer">
         <Col span="3">合计</Col>
         <Col span="3">{{ weightTotal }}</Col>
@@ -146,17 +146,17 @@
   </div>
 </template>
 <script>
+import '@/libs/js/filter'
 import Server from '@/libs/js/server'
 import BasePage from '@/basic/BasePage'
 import float from '@/libs/js/float'
-import '@/libs/js/filter'
 export default {
   name: 'frequent-order-detail',
   mixins: [ BasePage ],
   data () {
     return {
       detail: {
-        orderCargoList: []
+        orderCargoTemplateList: []
       },
       tableColumns: [
         {
@@ -233,13 +233,10 @@ export default {
         2: '大车直送客户'
       }
     },
-    orderTotal () {
-      return this.detail.orderCargoList.length
-    },
     // 总货值
     cargoCostTotal () {
       let total = 0
-      this.detail.orderCargoList.map((item) => {
+      this.detail.orderCargoTemplateList.map((item) => {
         total += Number(item.cargoCost)
       })
       total /= 100
@@ -248,7 +245,7 @@ export default {
     // 总数量
     quantityTotal () {
       let total = 0
-      this.detail.orderCargoList.map((item) => {
+      this.detail.orderCargoTemplateList.map((item) => {
         total += Number(item.quantity)
       })
       return total
@@ -256,7 +253,7 @@ export default {
     // 总体积
     volumeTotal () {
       let total = 0
-      this.detail.orderCargoList.map((item) => {
+      this.detail.orderCargoTemplateList.map((item) => {
         total += Number(item.volume)
       })
       return float.round(total, 4) + '方'
@@ -264,7 +261,7 @@ export default {
     // 总重量
     weightTotal () {
       let total = 0
-      this.detail.orderCargoList.map((item) => {
+      this.detail.orderCargoTemplateList.map((item) => {
         // 区分吨或公斤
         if (this.WeightOption === 1) {
           total += Number(item.weight)
@@ -273,16 +270,6 @@ export default {
         }
       })
       return float.round(total, 3) + '吨'
-    },
-    // 总费用
-    FeeTotal () {
-      let total = 0
-      total += this.detail.freightFee
-      total += this.detail.loadFee
-      total += this.detail.unloadFee
-      total += this.detail.insuranceFee
-      total += this.detail.otherFee
-      return total
     }
   },
   mounted () {
@@ -294,11 +281,12 @@ export default {
         url: 'ordertemplate/detail',
         method: 'post',
         data: {
-          templateId: this.fqOrderId
+          id: this.fqOrderId
         }
       }).then((res) => {
         const data = res.data.data
-        this.detail = Object.assign({}, data)
+        this.detail = data
+        // this.detail = Object.assign(this.detail, data)
       })
     },
     deleteBtn () {
@@ -311,14 +299,14 @@ export default {
     },
     createOrder () {
       this.openTab({
-        path: 'update',
+        path: 'create',
         title: '创建订单',
-        query: { id: this.fqOrderId }
+        query: { createId: this.fqOrderId }
       })
     },
     deleteItem (id) {
       Server({
-        url: 'http://192.168.1.39:3000/mock/214/order/template/delete',
+        url: 'ordertemplate/delete',
         method: 'post',
         data: {
           id
@@ -335,12 +323,6 @@ export default {
       return float.round(value * 100, 2)
     }
   }
-  // beforeRouteUpdate (to, from, next) {
-  //   this.$nextTick(() => {
-  //     this.initDetail()
-  //   })
-  //   next()
-  // }
 }
 </script>
 <style lang="stylus">

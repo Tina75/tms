@@ -30,7 +30,7 @@ export default {
   methods: {
     initData () {
       Server({
-        url: 'http://192.168.1.39:3000/mock/214/order/getOrderChangeRecordList',
+        url: 'order/getOrderChangeRecordList',
         method: 'post',
         data: {
           id: this.id

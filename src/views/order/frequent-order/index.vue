@@ -3,7 +3,7 @@
     <div class="right header">
       <span class="search-label">客户名称：</span>
       <SelectInput
-        v-model="consignerName"
+        v-model="keyword.consignerName"
         :maxlength="20"
         :clearable="true"
         :local-options="clients"
@@ -18,25 +18,28 @@
       :url="url"
       :method="method"
       :columns="tableColumns"
-      :keywords="keyword"
+      :keywords="keywords"
       :show-filter="true"
-      table-head-type="order_template_head"
-      @on-selection-change="handleSelectionChange"
-      @on-column-change="handleColumnChange">
+      table-head-type="order_template_head">
     </page-table>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Server from '@/libs/js/server'
 import BasePage from '@/basic/BasePage'
 import PageTable from '@/components/page-table/'
 import SelectInput from '@/components/SelectInput.vue'
+import float from '@/libs/js/float'
 export default {
   name: 'frequent-order',
   components: {
     PageTable,
     SelectInput
+  },
+  metaInfo: {
+    title: '常发订单'
   },
   mixins: [BasePage],
   data () {
@@ -47,13 +50,9 @@ export default {
       keyword: {
         consignerName: ''
       },
-      //
-      clients: [],
-      consignerName: '',
-      /**
-       * 字段需对应
-       * 操作按钮权限
-       */
+      keywords: {
+        consignerName: ''
+      },
       tableColumns: [
         {
           title: '操作',
@@ -68,9 +67,9 @@ export default {
                 on: {
                   click: () => {
                     this.openTab({
-                      path: 'update',
+                      path: 'create',
                       title: '创建订单',
-                      query: { id: params.row.id }
+                      query: { createId: params.row.id }
                     })
                   }
                 }
@@ -99,7 +98,7 @@ export default {
                     this.$Toast.confirm({
                       content: '确认需要删除此常发订单',
                       onOk: () => {
-                        this.deleteItem(params.row)
+                        this.deleteItem(params.row.id)
                       }
                     })
                   }
@@ -116,21 +115,64 @@ export default {
           tooltip: true
         },
         {
+          title: '对接业务员',
+          key: 'salesmanName',
+          minWidth: 180
+        },
+        {
           title: '发货城市',
           key: 'startName',
-          minWidth: 180,
-          tooltip: true
+          minWidth: 180
         },
         {
           title: '到货城市',
           key: 'endName',
-          minWidth: 180,
+          minWidth: 180
+        },
+        {
+          title: '计费里程（公里）',
+          key: 'mileage',
+          width: 120,
+          render: (h, params) => {
+            return h('span', params.row.mileage / 1000 ? params.row.mileage / 1000 : '-')
+          }
+        },
+        {
+          title: '体积（方）',
+          key: 'volume',
+          minWidth: 100
+        },
+        {
+          title: '重量（吨）',
+          key: 'weight',
+          minWidth: 100
+        },
+        {
+          title: '重量（公斤）',
+          key: 'weightKg',
+          minWidth: 100
+        },
+        {
+          title: '发货人',
+          key: 'consignerContact',
+          minWidth: 120,
           tooltip: true
         },
         {
-          title: '对接业务员',
-          key: 'salesmanName',
-          minWidth: 180
+          title: '发货人手机号',
+          key: 'consignerPhone',
+          minWidth: 130,
+          tooltip: true
+        },
+        {
+          title: '发货地址',
+          key: 'consignerAddress',
+          minWidth: 180,
+          tooltip: true,
+          render: (h, params) => {
+            const text = !params.row.consignerHourseNumber ? params.row.consignerAddress : params.row.consignerAddress + ',' + params.row.consignerHourseNumber
+            return h('span', text)
+          }
         },
         {
           title: '收货人',
@@ -143,18 +185,164 @@ export default {
           key: 'consigneePhone',
           minWidth: 130,
           tooltip: true
+        },
+        {
+          title: '收货地址',
+          key: 'consigneeAddress',
+          minWidth: 180,
+          tooltip: true,
+          render: (h, params) => {
+            const text = !params.row.consigneeHourseNumber ? params.row.consigneeAddress : params.row.consigneeAddress + ',' + params.row.consigneeHourseNumber
+            return h('span', text)
+          }
+        },
+        {
+          title: '结算方式',
+          key: 'settlementType',
+          minWidth: 120,
+          render: (h, params) => {
+            return h('span', this.settlementToName(params.row.settlementType))
+          }
+        },
+        {
+          title: '运输费',
+          key: 'freightFee',
+          minWidth: 120,
+          render: (h, params) => {
+            return h('span', params.row.freightFee ? float.round(params.row.freightFee / 100) : 0)
+          }
+        },
+        {
+          title: '提货费',
+          key: 'pickupFee',
+          minWidth: 120,
+          render: (h, params) => {
+            return h('span', params.row.pickupFee ? float.round(params.row.pickupFee / 100) : 0)
+          }
+        },
+        {
+          title: '装货费',
+          key: 'loadFee',
+          minWidth: 120,
+          render: (h, params) => {
+            return h('span', params.row.loadFee ? float.round(params.row.loadFee / 100) : 0)
+          }
+        },
+        {
+          title: '卸货费',
+          key: 'unloadFee',
+          minWidth: 120,
+          render: (h, params) => {
+            return h('span', params.row.unloadFee ? float.round(params.row.unloadFee / 100) : 0)
+          }
+        },
+        {
+          title: '保险费',
+          key: 'insuranceFee',
+          minWidth: 120,
+          render: (h, params) => {
+            return h('span', params.row.insuranceFee ? float.round(params.row.insuranceFee / 100) : 0)
+          }
+        },
+        {
+          title: '其他',
+          key: 'otherFee',
+          minWidth: 120,
+          render: (h, params) => {
+            return h('span', params.row.otherFee ? float.round(params.row.otherFee / 100) : 0)
+          }
+        },
+        {
+          title: '总费用',
+          key: 'totalFee',
+          minWidth: 120,
+          render: (h, params) => {
+            return h('span', params.row.totalFee ? float.round(params.row.totalFee / 100) : 0)
+          }
+        },
+        {
+          title: '提货方式',
+          key: 'pickup',
+          minWidth: 120,
+          render: (h, params) => {
+            return h('span', this.pickupToName(params.row.pickup))
+          }
+        },
+        {
+          title: '回单数量',
+          key: 'receiptCount',
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', p.row.receiptCount ? p.row.receiptCount : '-')
+          }
+        },
+        {
+          title: '代收货款',
+          key: 'collectionMoney',
+          minWidth: 120,
+          render: (h, params) => {
+            return h('span', params.row.collectionMoney ? float.round(params.row.collectionMoney / 100) : 0)
+          }
+        },
+        {
+          title: '是否开票',
+          key: 'isInvoice',
+          minWidth: 180,
+          render: (h, params) => {
+            return h('span', params.row.isInvoice === 1 ? '是' : '否')
+          }
+        },
+        {
+          title: '开票税率',
+          key: 'invoiceRate',
+          minWidth: 180,
+          render: (h, params) => {
+            return h('span', float.round(params.row.invoiceRate * 100, 2) || '-')
+          }
+        },
+        {
+          title: '备注',
+          key: 'remark',
+          width: 180,
+          ellipsis: true
+        },
+        {
+          title: '制单人',
+          key: 'creatorName',
+          minWidth: 120,
+          render: (h, p) => {
+            return h('span', p.row.creatorName ? p.row.creatorName : '-')
+          }
+        },
+        {
+          title: '更新时间',
+          key: 'updateTime',
+          minWidth: 150,
+          render: (h, params) => {
+            return h('span', params.row.updateTime ? new Date(params.row.updateTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
+          }
         }
       ]
     }
   },
+  computed: {
+    ...mapGetters([
+      'clients'
+    ])
+  },
   methods: {
-    searchList () {},
-    clearKeywords () {},
-    getClients () {},
+    searchList () {
+      this.keywords = {
+        consignerName: this.keyword.consignerName
+      }
+    },
+    clearKeywords () {
+      this.keyword.consignerName = ''
+    },
     // 删除
     deleteItem (id) {
       Server({
-        url: 'http://192.168.1.39:3000/mock/214/order/template/delete',
+        url: 'ordertemplate/delete',
         method: 'post',
         data: {
           id
@@ -164,11 +352,38 @@ export default {
         this.searchList()
       })
     },
-    handleColumnChange (columns) {
-      this.extraColumns = columns
-      window.sessionStorage.setItem(this.tabType + '_COLUMNS', JSON.stringify(columns))
+    // 提货状态转名称
+    pickupToName (code) {
+      let name
+      switch (code) {
+        case 1:
+          name = '小车上门自提'
+          break
+        case 2:
+          name = '大车直送客户'
+          break
+      }
+      return name
     },
-    handleSelectionChange () {}
+    // 结算方式转名称
+    settlementToName (code) {
+      let name = ''
+      switch (code) {
+        case 1:
+          name = '现付'
+          break
+        case 2:
+          name = '到付'
+          break
+        case 3:
+          name = '回付'
+          break
+        case 4:
+          name = '月结'
+          break
+      }
+      return name
+    }
   }
 }
 </script>
@@ -185,6 +400,7 @@ export default {
   display inline-block
   width 200px
   vertical-align middle
+  text-align left
 .search-btn
   width 40px
   margin-left -2px
