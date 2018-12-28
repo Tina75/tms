@@ -17,7 +17,7 @@ export default class Cargo {
     this.hasError = false
     this.errorMsg = {}
     // 1.0.9新增
-    this.dimension = {
+    this._dimension = {
       length: null,
       width: null,
       height: null
@@ -63,6 +63,13 @@ export default class Cargo {
   }
   set weightKg (value) {
     this._weight = float.round(value / 1000, 3)
+  }
+  set dimension (value) {
+    console.log(value)
+    this._dimension = value
+  }
+  get dimension () {
+    return this._dimension
   }
   validate () {
     if (!this.cargoName) {
