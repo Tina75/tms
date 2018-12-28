@@ -36,7 +36,8 @@
         </div>
         <!-- 导入失败 -->
         <div v-if="failStatue">
-          <p class="i-mb-10" style="color: red">导入失败</p>
+          <p class="i-mb-10" style="color: red">导入失败，请查看错误报告</p>
+          <a v-if="errorReport" :href="errorReport" style="margin-right: 8px">下载错误报告</a>
           <a @click="handleClick">重新导入</a>
         </div>
       </div>
@@ -67,6 +68,7 @@ export default {
       timer: null,
       percent: 0,
       failStatue: false,
+      errorReport: '',
       listLength: 0,
       fileName: ''
     }
@@ -88,6 +90,7 @@ export default {
     },
     async handleUpload (files) {
       this.failStatue = false
+      this.errorReport = ''
       if (!files || files.length === 0) {
         return false
       }
@@ -112,6 +115,7 @@ export default {
             vm.listLength = data
           } else {
             this.failStatue = true
+            this.errorReport = data.url
             vm.$Message.error('此次导入订单失败')
           }
           if (vm.timer) {
