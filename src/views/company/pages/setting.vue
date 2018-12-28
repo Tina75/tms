@@ -245,6 +245,7 @@
             v-show="isEdit"
             ref="upLoadsWX"
             :multiple="true"
+            :maxlength="6"
             max-count="2"
             max-size="10"
             class="wxImaages"
