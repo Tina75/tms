@@ -235,11 +235,11 @@
           </image-title>
           <div v-for="(img,index) in wxQrPic" v-show="!isEdit" :key="img.key" class="infoImage">
             <div
-              :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+              :style="'height: 90px;width: 96px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
               class="fileImage"
               @click="handleView(index, 'wx')">
-            </div>
-            <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
+            </div><br/>
+            <p v-show="!isEdit" class="titleInput wxTitle">{{ img.title }}</p>
           </div>
         </FormItem>
         <!-- 公司首页形象 -->
@@ -600,6 +600,11 @@ export default {
   width 160px
   display block
   line-height 36px
+.wxTitle
+  width 96px
+  display block
+  line-height 36px
+  clear both
 .companyProfileSty
   font-family PingFangSC-Regular
   margin-top 5px

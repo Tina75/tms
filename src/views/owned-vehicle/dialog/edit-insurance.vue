@@ -102,7 +102,7 @@
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem label="商业险金额：">
+          <FormItem label="商业险金额：" prop="businessFee">
             <Row>
               <Col span="20">
               <TagNumberInput :min="0" v-model="validate.businessFee" :show-chinese="false" placeholder="请输入"></TagNumberInput>
@@ -116,11 +116,11 @@
         </Row>
         <p class="modalTitle">保单照片</p>
         <Row>
-          <up-load ref="upLoads" :multiple="true" max-count="10" max-size="10"></up-load>
+          <up-load ref="upLoads" :multiple="true" max-count="6" max-size="10"></up-load>
           <span class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
         </Row>
         <p class="modalTitle">备注</p>
-        <Input v-model="validate.remark" :maxlength="$fieldLength.remark" type="textarea" placeholder="请输入"></Input>
+        <Input v-model="validate.remark" :maxlength="100" type="textarea" placeholder="请输入"></Input>
       </Form>
       <div slot="footer" class="footerSty">
         <Button :loading="loading" type="primary" @click="save('validate')">确定</Button>
@@ -191,9 +191,12 @@ export default {
           { required: true, message: '失效日期不能为空' }
         ],
         trafficFee: [
-          { required: true, message: '交强险金额不能为空' }
+          { required: true, message: '交强险金额不能为空' },
+          { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+        ],
+        businessFee: [
+          { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
         ]
-
       }
     }
   },

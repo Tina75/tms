@@ -34,7 +34,7 @@
             <Col span="6">
             <div>
               <span class="label">购买日期:</span>
-              {{infoData.buyDate}}
+              {{infoData.buyDate | date}}
             </div>
             </Col>
           </Row>
@@ -54,7 +54,7 @@
             <Col span="6">
             <div>
               <span class="label">交强险金额：</span>
-              {{infoData.trafficFee | date}}
+              {{infoData.trafficFee}}
             </div>
             </Col>
             <Col span="6">

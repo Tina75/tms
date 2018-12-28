@@ -11,13 +11,13 @@
         </template>
         <Input v-if="selectStatus != 4"
                v-model="keyword"
-               :maxlength="selectStatus === '1' ? 8 : 20"
+               :maxlength="maxlength"
                :icon="keyword ? 'ios-close-circle' : ''"
                :placeholder="placeholderContent"
                class="search-input"
                @on-enter="searchCarList"
                @on-click="clearKeywords"/>
-        <DatePicker v-else v-model="keyword" transfer format="yyyy-MM-dd" type="daterange" placeholder="请选择日期">
+        <DatePicker v-else :options="options" v-model="keyword" transfer format="yyyy-MM-dd" type="daterange" placeholder="请选择日期">
         </DatePicker>
         <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
@@ -54,6 +54,11 @@ export default {
   mixins: [ BasePage ],
   data () {
     return {
+      options: {
+        disabledDate (date) {
+          return date && date.valueOf() < Date.now() - 86400000
+        }
+      },
       selectStatus: '1',
       keyword: '',
       formSearchInit: {},
@@ -188,15 +193,18 @@ export default {
       switch (newVal) {
         case '1':
           this.placeholderContent = '请输入车牌号搜索'
+          this.maxlength = 8
           break
         case '2':
-          this.placeholderContent = '请输入保险公司'
+          this.placeholderContent = '请输入保险公司搜索'
+          this.maxlength = 15
           break
         case '3':
-          this.placeholderContent = '请输入保险单'
+          this.placeholderContent = '请输入保单号搜索'
+          this.maxlength = 30
           break
         case '4':
-          this.placeholderContent = '请选择购买日期'
+          this.placeholderContent = '请选择日期搜索'
           break
       }
     }
