@@ -2,7 +2,7 @@
   <div class="order-record">
     <div class="order-record-title wigtFont">
       <span>
-        2018-12-21 【修改人: {{data.creatorName}}】
+        {{data.createTime | timeFormatter}} 【修改人: {{data.creatorName}}】
       </span>
       <div class="detail-log-icon" @click="showDetail">
         <i :class="{'detail-log-show': !hideDetail}"></i>
@@ -15,7 +15,7 @@
         <Row>
           <Col v-for="(item, index) in ORDER_ITEM" v-if="data.changeBefore[item.value] != undefined" :key="index" span="12" class="labelContent">
           <span class="label">{{item.name}}:</span>
-          <span class="content">{{data.changeBefore[item.value]}}</span>
+          <span class="content">{{renderText(data.changeBefore[item.value], item.type)}}</span>
           </Col>
         </Row>
         </Col>
@@ -24,7 +24,7 @@
         <Row class="after">
           <Col v-for="(item, index) in ORDER_ITEM" v-if="data.changeAfter[item.value] != undefined" :key="index" span="12" class="labelContent">
           <span class="label">{{item.name}}:</span>
-          <span class="content">{{data.changeAfter[item.value]}}</span>
+          <span class="content">{{renderText(data.changeAfter[item.value], item.type)}}</span>
           </Col>
         </Row>
         </Col>
@@ -34,60 +34,9 @@
 </template>
 <script>
 import BasePage from '@/basic/BasePage'
-const ORDER_ITEM = [
-  {
-    name: '结算方式',
-    value: 'settlementType'
-  },
-  {
-    name: '计费里程',
-    value: 'mileage'
-  },
-  {
-    name: '运输费用',
-    value: 'freightFee'
-  },
-  {
-    name: '提货费用',
-    value: 'pickupFee'
-  },
-  {
-    name: '装货费用',
-    value: 'loadFee'
-  },
-  {
-    name: '卸货费用',
-    value: 'unloadFee'
-  },
-  {
-    name: '保险费用',
-    value: 'insuranceFee'
-  },
-  {
-    name: '其他费用',
-    value: 'otherFee'
-  },
-  {
-    name: '回单数量',
-    value: 'receiptCount'
-  },
-  {
-    name: '是否开票',
-    value: 'isInvoice'
-  },
-  {
-    name: '开票税率',
-    value: 'invoiceRate'
-  },
-  {
-    name: '备注',
-    value: 'remark'
-  },
-  {
-    name: '代收货款',
-    value: 'collectionMoney'
-  }
-]
+import float from '@/libs/js/float'
+import settlement from '@/libs/constant/settlement'
+import ORDER_ITEM from '../constant/orderItem'
 export default {
   name: 'order-record',
   filters: {
@@ -116,6 +65,7 @@ export default {
   },
   data () {
     return {
+      settlement,
       ORDER_ITEM,
       hideDetail: this.index > 0,
       showImgFn: null
@@ -128,11 +78,41 @@ export default {
         obj[el.value] = el.name
       })
       return obj
+    },
+    settleMap () {
+      const obj = {}
+      this.settlement.forEach(el => {
+        obj[el.value] = el.name
+      })
+      return obj
     }
   },
   methods: {
     showDetail () {
       this.hideDetail = !this.hideDetail
+    },
+    renderText (value, type) {
+      let res = ''
+      switch (type) {
+        case 'moneny':
+          res = float.round(value / 100)
+          break
+        case 'mile':
+          res = float.round(value / 1000)
+          break
+        case 'rate':
+          res = float.round(value * 100) + '%'
+          break
+        case 'boolean':
+          res = value === 1 ? '是' : '否'
+          break
+        case 'settle':
+          res = this.settleMap[value]
+          break
+        default:
+          res = value
+      }
+      return res
     }
   }
 }
