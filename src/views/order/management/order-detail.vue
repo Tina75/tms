@@ -469,7 +469,7 @@ export default {
         url: 'order/getOrderChangeRecordNum',
         method: 'post',
         data: {
-          id: this.$route.query.id
+          id: this.$route.query.orderId
         }
       }).then((res) => {
         this.changeOrderCnt = res.data.data.num
