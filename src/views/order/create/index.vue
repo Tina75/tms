@@ -156,8 +156,8 @@
     <Row v-if="OrderSet.consigneeCompanyNameOption == 1" :gutter="16" >
       <Col span="12" offset="12">
       <!-- 收货人公司设置 -->
-      <FormItem :maxlength="50" label="收货人单位：" prop="consigneeCompanyNameOption">
-        <Input v-model="orderForm.consigneeCompanyNameOption" :maxlength="$fieldLength.extraAddress"></Input>
+      <FormItem :maxlength="50" label="收货人单位：" prop="consigneeCompanyName">
+        <Input v-model="orderForm.consigneeCompanyName" :maxlength="$fieldLength.extraAddress"></Input>
       </FormItem>
       </Col>
     </Row>
@@ -494,7 +494,7 @@ export default {
         consigneeAddressLongitude: '',
         consigneeAddressLatitude: '',
         consigneeAddressMapType: 1,
-        consigneeCompanyNameOption: '',
+        consigneeCompanyName: '',
         // 货品信息
         orderCargoList: [],
         // 付款方式
