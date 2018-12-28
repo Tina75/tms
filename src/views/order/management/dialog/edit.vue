@@ -172,15 +172,7 @@ import TagNumberInput from '@/components/TagNumberInput'
 import FontIcon from '@/components/FontIcon'
 import validator from '@/libs/js/validate'
 import float from '@/libs/js/float'
-
-// const rate = {
-//   set (value) {
-//     return value ? float.floor(value / 100, 4) : value
-//   },
-//   get (value) {
-//     return value ? float.round(value * 100, 2) : value === 0 ? value : null
-//   }
-// }
+import _ from 'lodash'
 
 export default {
   name: 'order-edit',
@@ -269,8 +261,9 @@ export default {
           { validator: validateFee }
         ]
       },
-      isCanChangeFee: 1, // 是否可以改结算方式、费用、开票等信息：1是，0否
-      isCanChangeCollectionMoney: 1 // 是否可以改代收货款：1是；0否
+      isCanChangeFee: 1, // 是否可以改结算方式、费用：1可以修改；2不可以修改（已经加入对账单）；3不可以修改（已经核销）
+      isCanChangeCollectionMoney: 1, // 1可以修改；2不可以修改（已收代收货款）;3不可以修改（被拆单）
+      cloneData: {}
     }
   },
 
@@ -312,13 +305,17 @@ export default {
     save (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          if (JSON.stringify(this.cloneData) === JSON.stringify(this.orderForm)) {
+            this.$Message.warning('您未做任何修改')
+            return
+          }
           for (let key in this.orderForm) {
             if (key.indexOf('Fee') > -1 || key === 'collectionMoney') {
               float.round(this.orderForm[key] *= 100, 0)
             } else if (key === 'mileage') {
               float.round(this.orderForm[key] *= 1000, 0)
             } else if (key === 'invoiceRate') {
-              float.round(this.orderForm[key] /= 100, 0)
+              this.orderForm[key] = float.round(this.orderForm[key] / 100, 4)
             }
           }
           Server({
@@ -361,6 +358,7 @@ export default {
             this.orderForm[key] = data[key]
           }
         }
+        this.cloneData = _.cloneDeep(this.orderForm)
       })
     }
   }

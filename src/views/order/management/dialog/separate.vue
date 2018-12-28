@@ -173,7 +173,7 @@ export default {
       this.parentOrderCargoList.map((item) => {
         volume += item.volume
       })
-      return float.round(volume)
+      return float.round(volume, 6)
     }
   },
 

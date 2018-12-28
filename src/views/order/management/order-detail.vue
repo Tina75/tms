@@ -88,7 +88,7 @@
               </i-col>
               <i-col span="7">
                 <span>开票税额：</span>
-                <span>{{detail.invoiceAmount | toPoint}}</span>
+                <span>{{detail.invoiceAmount | toPoint}}元</span>
               </i-col>
             </Row>
             <Row style="margin-top:18px">
@@ -327,10 +327,17 @@ export default {
           className: 'padding-left-45'
         },
         {
-          title: '包装',
+          title: '包装方式',
           key: 'unit',
           render: (h, p) => {
             return h('span', p.row.unit ? p.row.unit : '-')
+          }
+        },
+        {
+          title: '包装尺寸（长x宽x高 mm）',
+          key: 'dimension',
+          render: (h, p) => {
+            return h('span', (p.row.dimension.length || 0) + ' x ' + (p.row.dimension.width || 0) + ' x ' + (p.row.dimension.height || 0))
           }
         },
         {
@@ -435,7 +442,7 @@ export default {
       this.detail.orderCargoList.map((item) => {
         total += Number(item.volume)
       })
-      return float.round(total, 4) + '方'
+      return float.round(total, 6) + '方'
     },
     // 总重量
     weightTotal () {
@@ -665,6 +672,7 @@ export default {
         methods: {
           ok () {
             _this.getDetail()
+            _this.getDetailChange()
           }
         }
       })

@@ -110,7 +110,7 @@ export default {
           quantity: Float.round(last.quantity + item.quantity),
           weight: Float.round(last.weight + item.weight, 3),
           weightKg: Float.round(last.weightKg + item.weightKg),
-          volume: Float.round(last.volume + item.volume, 4)
+          volume: Float.round(last.volume + item.volume, 6)
         }
       }, {
         cargoCost: 0,
