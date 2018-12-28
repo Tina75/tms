@@ -1,6 +1,6 @@
 <template>
   <div class="selectCustomSty">
-    <Dropdown trigger="click" transfer @on-click="handleSelect">
+    <Dropdown trigger="click" @on-click="handleSelect">
       <Input
         v-show="false"
         :value="formatterValue">
