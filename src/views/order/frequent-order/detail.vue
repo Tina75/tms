@@ -86,7 +86,7 @@
         <span>货物明细</span>
       </div>
       <Table :columns="tableColumns" :data="detail.orderCargoTemplateList"></Table>
-      <Row class="table-footer">
+      <Row class="table-footer blod-font">
         <Col span="3">合计</Col>
         <Col span="3">{{ weightTotal }}</Col>
         <Col span="3">{{ volumeTotal }}</Col>
@@ -138,8 +138,8 @@
       <Row :gutter="16">
         <Col span="6">
         <FormItem label="费用合计：">
-          <span class="blod-font">{{detail.totalFee | toPoint}}元</span>
-          <span class="blod-font">（{{settleMap[detail.settlementType]}}）</span>
+          <span class="blod-font totalFee">{{detail.totalFee | toPoint}}</span>
+          <span class="blod-font"> 元 （{{settleMap[detail.settlementType]}}）</span>
         </FormItem>
         </Col>
       </Row>
@@ -390,4 +390,7 @@ export default {
     font-weight 600
     font-size 14px
     color #333
+  .totalFee
+    color #00A4BD
+    font-size 20px
 </style>
