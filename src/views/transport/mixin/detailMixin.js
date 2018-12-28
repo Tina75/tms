@@ -63,7 +63,8 @@ export default {
         key: 'weight',
         width: 120,
         render: (h, p) => {
-          return this.tableDataRender(h, p.row.weight ? p.row.weight : 0)
+          return this.scopedSlotsRender(h, p, 'weight', 0)
+          // return this.tableDataRender(h, p.row.weight ? p.row.weight : 0)
         }
       },
       // 公斤列
@@ -72,7 +73,8 @@ export default {
         key: 'weightKg',
         width: 120,
         render: (h, p) => {
-          return this.tableDataRender(h, p.row.weightKg ? p.row.weightKg : 0)
+          return this.scopedSlotsRender(h, p, 'weightKg', 0)
+          // return this.tableDataRender(h, p.row.weightKg ? p.row.weightKg : 0)
         }
       }
     }
@@ -167,7 +169,17 @@ export default {
 
   methods: {
     ...mapActions([ 'getCargoDetail' ]),
-
+    /**
+     * 货物明细渲染,需要按货物单号分组
+     * @param {*} h
+     * @param {*} p
+     * @param {*} key
+     */
+    scopedSlotsRender (h, p, key, defaultString = '-') {
+      return h('div', {},
+        p.row.cargoList.map((cargo) => h('div', cargo[key] || defaultString))
+      )
+    },
     // 根据状态设置按钮
     setBtnsWithStatus () {
       for (let i = 0; i < this.btnList.length; i++) {
