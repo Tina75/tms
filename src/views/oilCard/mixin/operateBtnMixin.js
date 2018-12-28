@@ -22,8 +22,27 @@ export default {
       })
     },
     // 充值
-    recharge () {
+    recharge (p) {
       console.log('recharge')
+      this.openDialog({
+        name: 'oilCard/dialog/recharge',
+        data: {
+          title: '油卡充值',
+          recharge: {
+            id: p.row.id,
+            amount: p.row.amount,
+            remark: p.row.remark,
+            type: p.row.type,
+            issuer: p.row.issuer,
+            primaryCardNumber: p.row.primaryCardNumber
+          }
+        },
+        methods: {
+          ok () {
+            this.fetchData()
+          }
+        }
+      })
     },
     // 加油
     refuel (p) {
@@ -63,6 +82,7 @@ export default {
             remark: p.row.remark,
             type: p.row.type,
             issuer: p.row.issuer,
+            primaryCardId: p.row.primaryCardId,
             primaryCardNumber: p.row.primaryCardNumber
           }
         },

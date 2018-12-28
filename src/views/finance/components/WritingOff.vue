@@ -81,7 +81,7 @@
               </p>
             </div>
             <Button v-if="(hasPower(170102) && scene === 1) || (hasPower(170202) && scene === 2) || (hasPower(170302) && scene === 3)" class="btn" type="primary" @click="createBill">生成对账单</Button>
-            <Tooltip v-if="scene === 2" content="按单结的运单才可以批量核销" class="btn" style="margin-right: 11px">
+            <Tooltip v-if="scene === 2" placement="top" content="按单结的单据才可以批量核销" class="btn" style="margin-right: 11px">
               <Button  @click="batchCheckOrder">批量核销</Button>
             </Tooltip>
           </div>
