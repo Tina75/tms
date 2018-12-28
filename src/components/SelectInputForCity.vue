@@ -384,7 +384,7 @@ export default {
       let city = cityUtil.getPathByCode(code)
       let nameItem = {
         area: city[2] ? city[2].name : '',
-        city: city[1].name,
+        city: city[1] ? city[1].name : '',
         province: city[0].name
       }
       let name = this.cityShow(nameItem, 1)
