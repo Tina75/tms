@@ -86,7 +86,7 @@ export default {
         remark: '',
         toCardId: null,
         changeAmount: null,
-        opearteDate: '',
+        opearteDate: new Date().Format('yyyy-MM-dd'),
         primaryCardId: ''
       },
       dateOption: {
@@ -126,13 +126,16 @@ export default {
               id: this.transfer.id || undefined,
               toCardId: (this.transfer.type === 1) ? this.transfer.toCardId : this.transfer.primaryCardId,
               changeAmount: float.round(this.transfer.changeAmount * 100) || undefined,
-              opearteDate: this.transfer.opearteDate || undefined,
+              opearteDate: this.transfer.opearteDate ? this.transfer.opearteDate.Format('yyyy-MM-dd') : undefined,
               remark: this.transfer.remark || undefined
             }
           }).then(res => {
             this.loading = false
             this.close()
             this.ok()
+          }).catch(err => {
+            this.loading = false
+            console.log(err)
           })
         }
       })

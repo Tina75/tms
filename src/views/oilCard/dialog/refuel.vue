@@ -51,8 +51,8 @@
           </Col>
         </Row>
       </FormItem>
-      <FormItem  label="加油日期：">
-        <DatePicker v-model="refuel.opearteDate" :options="dateOption" transfer format="yyyy-MM-dd" placeholder="请输入加油日期" style="width: 100%"></DatePicker>
+      <FormItem  label="加油日期：" prop="operateDate">
+        <DatePicker v-model="refuel.operateDate" :options="dateOption" transfer format="yyyy-MM-dd" placeholder="请输入加油日期" style="width: 100%"></DatePicker>
       </FormItem>
       <FormItem label="备注:">
         <Input :maxlength="100" v-model="refuel.remark" type="textarea" placeholder="请输入"></Input>
@@ -97,7 +97,7 @@ export default {
         truckNo: '',
         driverName: '',
         changeAmount: null,
-        operateDate: '',
+        operateDate: new Date().Format('yyyy-MM-dd'),
         remark: ''
       },
       dateOption: {
@@ -108,7 +108,8 @@ export default {
       ruleValidate: {
         truckNo: { required: true, message: '请输入加油车辆', type: 'string', trigger: 'change' },
         driverName: { required: true, message: '请输入加油人', type: 'string', trigger: 'change' },
-        changeAmount: { required: true, message: '请输入加油金额', type: 'number', trigger: 'change' }
+        changeAmount: { required: true, message: '请输入加油金额', type: 'number', trigger: 'change' },
+        operateDate: { required: true, message: '请输入加油日期' }
         // driverName: { required: true, message: '请选择司机', trigger: 'change' },
         // carrierName: { required: true, message: '请输入承运商', trigger: 'change' },
         // driverPhone: [
@@ -145,13 +146,16 @@ export default {
               truckNo: this.refuel.type || undefined,
               driverName: this.refuel.driverName || undefined,
               changeAmount: float.round(this.refuel.changeAmount * 100) || undefined,
-              operateDate: this.refuel.operateDate || undefined,
+              operateDate: this.refuel.operateDate ? this.refuel.operateDate.Format('yyyy-MM-dd') : undefined,
               remark: this.refuel.remark || undefined
             }
           }).then(res => {
             this.loading = false
             this.close()
             this.ok()
+          }).catch(err => {
+            this.loading = false
+            console.log(err)
           })
         }
       })

@@ -7,7 +7,7 @@
         v-if="hasPower(btn.code)"
         :key="index"
         :type="index === btnGroup.length-1 ? 'primary' : 'default'"
-        @click="btn.func">{{ btn.name }}</Button>
+        @click="btn.func(rowParams)">{{ btn.name }}</Button>
         <!--</Tooltip>-->
     </div>
     <section>
@@ -26,11 +26,15 @@
           </i-col>
           <i-col span="6">
             <span>卡号：</span>
-            <span>{{detail.number || '-'}}</span>
+            <!--主卡 主卡号-->
+            <span v-if="detail.type === 1">{{cardFormat(detail.primaryCardNumber)}}</span>
+            <!--副卡 副卡号-->
+            <span v-else>{{cardFormat(detail.number)}}</span>
           </i-col>
           <i-col span="6">
             <span>主卡号：</span>
-            <span>{{detail.primaryCardNumber || '-'}}</span>
+            <!--不管是主卡还是副卡，都显示主卡号-->
+            <span>{{cardFormat(detail.primaryCardNumber)}}</span>
           </i-col>
         </Row>
         <Row>
@@ -40,21 +44,21 @@
           </i-col>
           <i-col span="6">
             <span>持卡人：</span>
-            <span>{{detail.driverName}} </span>
+            <span>{{detail.driverName || '-'}} </span>
           </i-col>
           <i-col span="6">
             <span>绑定车辆：</span>
-            <span>{{detail.truckNo}}</span>
+            <span>{{detail.truckNo  || '-'}}</span>
           </i-col>
           <i-col span="6">
             <span>所属承运商：</span>
-            <span>{{detail.carrierName}}</span>
+            <span>{{detail.carrierName  || '-'}}</span>
           </i-col>
         </Row>
         <Row style="margin-top: 18px;">
           <i-col span="24">
             <span>备注：</span>
-            <span>{{detail.remark}}</span>
+            <span>{{detail.remark  || '-'}}</span>
           </i-col>
         </Row>
       </div>
@@ -109,11 +113,17 @@ export default {
       orderLogCount: 0
     }
   },
+  computed: {
+    rowParams () {
+      return {
+        row: this.detail
+      }
+    }
+  },
 
   created () {
     this.getDetail()
   },
-
   methods: {
     showPoptip (e) {
       this.show = true
@@ -129,7 +139,7 @@ export default {
     getDetail () {
       // 订单详情
       Server({
-        url: 'http://192.168.1.39:3000/mock/214/oilCard/detail',
+        url: '/oilCard/detail',
         method: 'get',
         data: {
           id: this.$route.query.shipperOrderId
