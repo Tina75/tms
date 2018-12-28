@@ -63,7 +63,7 @@
             {{detail.consignerPhone}}
           </FormItem>
           <FormItem label="发货地址：">
-            {{detail.consignerAddress}}
+            {{detail.startName + detail.consignerAddress + detail.consignerHourseNumber}}
           </FormItem>
         </Card>
         </Col>
@@ -76,8 +76,8 @@
           <FormItem label="联系方式：">
             {{detail.consigneePhone}}
           </FormItem>
-          <FormItem label="发货地址：">
-            {{detail.consigneeAddress}}
+          <FormItem label="收货地址：">
+            {{detail.endName + detail.consigneeAddress + detail.consigneeHourseNumber}}
           </FormItem>
         </Card>
         </Col>
@@ -139,6 +139,7 @@
         <Col span="6">
         <FormItem label="费用合计：">
           <span class="blod-font">{{detail.totalFee | toPoint}}元</span>
+          <span class="blod-font">（{{settleMap[detail.settlementType]}}）</span>
         </FormItem>
         </Col>
       </Row>
@@ -150,11 +151,13 @@ import '@/libs/js/filter'
 import Server from '@/libs/js/server'
 import BasePage from '@/basic/BasePage'
 import float from '@/libs/js/float'
+import settlement from '@/libs/constant/settlement.js'
 export default {
   name: 'frequent-order-detail',
   mixins: [ BasePage ],
   data () {
     return {
+      settlement,
       detail: {
         orderCargoTemplateList: []
       },
@@ -167,17 +170,17 @@ export default {
         {
           title: '重量（吨）',
           align: 'center',
-          key: 'unit',
+          key: 'weight',
           render: (h, p) => {
-            return h('span', p.row.unit || '-')
+            return h('span', p.row.weight || '-')
           }
         },
         {
           title: '体积（方）',
-          key: 'quantity',
+          key: 'volume',
           align: 'center',
           render: (h, p) => {
-            return h('span', p.row.quantity || 0)
+            return h('span', p.row.volume || 0)
           }
         },
         {
@@ -190,18 +193,18 @@ export default {
         },
         {
           title: '包装数量',
-          key: 'volume',
+          key: 'quantity',
           align: 'center',
           render: (h, p) => {
-            return h('span', p.row.volume || 0)
+            return h('span', p.row.quantity || 0)
           }
         },
         {
           title: '包装方式',
-          key: 'volume',
+          key: 'unit',
           align: 'center',
           render: (h, p) => {
-            return h('span', p.row.volume || 0)
+            return h('span', p.row.unit || 0)
           }
         },
         {
@@ -232,6 +235,13 @@ export default {
         1: '小车上门自提',
         2: '大车直送客户'
       }
+    },
+    settleMap () {
+      const obj = {}
+      this.settlement.map(el => {
+        obj[el.value] = el.name
+      })
+      return obj
     },
     // 总货值
     cargoCostTotal () {
@@ -377,7 +387,7 @@ export default {
     border-right 1px solid #e8eaec
     border-bottom 1px solid #e8eaec
   .blod-font
-    font-weight 500
+    font-weight 600
     font-size 14px
     color #333
 </style>
