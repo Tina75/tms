@@ -137,6 +137,7 @@ import SelectInput from '@/components/SelectInput'
 import Server from '@/libs/js/server'
 import TagNumberInput from '@/components/TagNumberInput'
 import CarSelect from '@/components/own-car-form/CarSelect'
+import float from '@/libs/js/float'
 export default {
   name: 'edit-insurance',
   components: {
@@ -150,17 +151,7 @@ export default {
     return {
       options: {
         disabledDate (date) {
-          return date && date.valueOf() < Date.now() - 86400000
-        }
-      },
-      optionsStart: {
-        disabledDate (date) {
-          return date && date.valueOf() < Date.now() - 86400000
-        }
-      },
-      optionsEnd: {
-        disabledDate (date) {
-          return date && date.valueOf() < Date.now() - 86400000
+          return date && date.valueOf() > Date.now()
         }
       },
       loading: false,
@@ -168,7 +159,7 @@ export default {
         invoiceNo: '',
         insuranceCompanyName: '',
         carNo: '',
-        buyDate: new Date(),
+        buyDate: '',
         effectDate: '',
         expireDate: '',
         trafficFee: null,
@@ -222,6 +213,11 @@ export default {
           })
         }
         vm.$refs.upLoads.uploadImgList = vm.imgList
+        vm.validate.totalFee = Number(vm.validate.totalFee) / 100
+        vm.validate.trafficFee = Number(vm.validate.trafficFee) / 100
+        vm.validate.businessFee = Number(vm.validate.businessFee) / 100
+      } else {
+        vm.validate.buyDate = new Date()
       }
     },
     save (name) {
@@ -233,6 +229,8 @@ export default {
       if (params.buyDate) params.buyDate = new Date(this.validate.buyDate).getTime()
       if (params.effectDate) params.effectDate = new Date(this.validate.effectDate).getTime()
       if (params.expireDate) params.expireDate = new Date(this.validate.expireDate).getTime()
+      if (params.trafficFee) params.trafficFee = float.round(this.validate.trafficFee * 100)
+      if (params.businessFee) params.businessFee = float.round(this.validate.businessFee * 100)
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.loading = true

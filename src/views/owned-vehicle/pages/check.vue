@@ -57,7 +57,7 @@ export default {
     return {
       options: {
         disabledDate (date) {
-          return date && date.valueOf() >= Date.now()
+          return date && date.valueOf() > Date.now()
         }
       },
       carTypeMap: CAR_TYPE1,
@@ -88,7 +88,7 @@ export default {
                       data: {
                         title: '修改年检',
                         flag: 2, // 修改
-                        validate: { ...params.row, checkDate: new Date(params.row.checkDate), nextCheckDate: new Date(params.row.nextCheckDate) }
+                        validate: { ...params.row, checkDate: new Date(params.row.checkDate).Format('yyyy-MM-dd'), nextCheckDate: new Date(params.row.nextCheckDate).Format('yyyy-MM-dd') }
                       },
                       methods: {
                         ok () {
@@ -145,7 +145,10 @@ export default {
         },
         {
           title: '金额',
-          key: 'cost'
+          key: 'cost',
+          render: (h, params) => {
+            return h('div', Number(params.row.cost) / 100)
+          }
         },
         {
           title: '年检日期',
@@ -238,7 +241,7 @@ export default {
         this.formSearchInit.carNo = this.keyword
       } else {
         this.formSearchInit.checkDateStart = new Date(this.keyword[0]).getTime()
-        this.formSearchInit.checkDateEnd = new Date(this.keyword[1]).getTime()
+        this.formSearchInit.checkDateEnd = new Date(this.keyword[1]).getTime() + 86400000
       }
     },
     clearKeywords () {

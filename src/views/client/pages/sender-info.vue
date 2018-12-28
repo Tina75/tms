@@ -156,7 +156,8 @@ export default {
         payType: '',
         remark: '',
         id: null,
-        pickUp: null
+        pickUp: null,
+        exploiteChannel: null
       },
       columns1: [
         {
@@ -388,6 +389,7 @@ export default {
                         flag: 2, // 修改
                         id: params.row.id,
                         validate: {
+                          ...params.row,
                           cargoName: params.row.cargoName,
                           unit: params.row.unit,
                           cargoCost: (params.row.cargoCost / 100).toFixed(2),
@@ -395,7 +397,10 @@ export default {
                           volume: String(params.row.volume),
                           remark1: params.row.remark1,
                           remark2: params.row.remark2
-                        }
+                        },
+                        volumeLength: params.row.dimension ? JSON.parse(params.row.dimension).length : null,
+                        volumeWidth: params.row.dimension ? JSON.parse(params.row.dimension).width : null,
+                        volumeHeight: params.row.dimension ? JSON.parse(params.row.dimension).height : null
                       },
                       methods: {
                         ok () {
@@ -476,7 +481,7 @@ export default {
           title: '包装尺寸',
           key: 'dimension',
           render (h, params) {
-            if (JSON.parse(params.row.dimension).length && JSON.parse(params.row.dimension).width && JSON.parse(params.row.dimension).height) {
+            if (params.row.dimension) {
               let text = ''
               text += JSON.parse(params.row.dimension).length + '*'
               text += JSON.parse(params.row.dimension).width + '*'
@@ -604,7 +609,8 @@ export default {
             invoiceRate: data.invoiceRate,
             isInvoice: data.isInvoice,
             salesName: data.salesName,
-            pickUp: data.pickUp
+            pickUp: data.pickUp,
+            exploiteChannel: data.exploiteChannel
           }
           this.loading = false
           this.data1 = data.addressList.list

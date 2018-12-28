@@ -17,7 +17,7 @@
                class="search-input"
                @on-enter="searchCarList"
                @on-click="clearKeywords"/>
-        <DatePicker v-else :options="options" v-model="keyword" transfer format="yyyy-MM-dd" type="daterange" placeholder="请选择日期搜索">
+        <DatePicker v-else v-model="keyword" transfer format="yyyy-MM-dd" type="daterange" placeholder="请选择日期搜索">
         </DatePicker>
         <Button
           icon="ios-search"
@@ -56,11 +56,6 @@ export default {
   mixins: [ BasePage ],
   data () {
     return {
-      options: {
-        disabledDate (date) {
-          return date && date.valueOf() >= Date.now()
-        }
-      },
       selectStatus: '1',
       keyword: '',
       formSearchInit: {},
@@ -87,7 +82,7 @@ export default {
                       data: {
                         title: '修改轮胎',
                         flag: 2, // 修改
-                        validate: { ...params.row, setupDate: new Date(params.row.setupDate) }
+                        validate: { ...params.row, setupDate: new Date(params.row.setupDate).Format('yyyy-MM-dd') }
                       },
                       methods: {
                         ok () {
@@ -144,7 +139,10 @@ export default {
         },
         {
           title: '金额',
-          key: 'cost'
+          key: 'cost',
+          render: (h, params) => {
+            return h('div', Number(params.row.cost) / 100)
+          }
         },
         {
           title: '轮胎品牌',
@@ -156,11 +154,17 @@ export default {
         },
         {
           title: '换上公里数',
-          key: 'setupMileage'
+          key: 'setupMileage',
+          render: (h, params) => {
+            return h('div', Number(params.row.setupMileage) / 1000)
+          }
         },
         {
           title: '换下公里数',
-          key: 'uninstallMileage'
+          key: 'uninstallMileage',
+          render: (h, params) => {
+            return h('div', Number(params.row.uninstallMileage) / 1000)
+          }
         },
         {
           title: '安装日期',
@@ -245,7 +249,7 @@ export default {
         this.formSearchInit.carNo = this.keyword
       } else {
         this.formSearchInit.setupDateStart = new Date(this.keyword[0]).getTime()
-        this.formSearchInit.setupDateEnd = new Date(this.keyword[1]).getTime()
+        this.formSearchInit.setupDateEnd = new Date(this.keyword[1]).getTime() + 86400000
       }
     },
     clearKeywords () {

@@ -22,7 +22,7 @@
             <Col span="6">
             <div>
               <span class="label">金额：</span>
-              {{infoData.cost}}
+              {{infoData.cost / 100}}
             </div>
             </Col>
             <Col span="6">
@@ -42,13 +42,13 @@
             <Col span="6">
             <div>
               <span class="label">换上公里数：</span>
-              {{infoData.setupMileage}}
+              {{infoData.setupMileage / 1000}}
             </div>
             </Col>
             <Col span="6">
             <div>
               <span class="label">换下公里数：</span>
-              {{infoData.uninstallMileage}}
+              {{infoData.uninstallMileage / 1000}}
             </div>
             </Col>
             <Col span="6">
@@ -85,7 +85,7 @@
           <span class="iconTitleP">操作记录</span>
         </div>
         <div class="list-info">
-          <record-list v-if="dataLog.length > 1" :data-log="dataLog"></record-list>
+          <record-list v-if="dataLog.length" :data-log="dataLog"></record-list>
         </div>
       </div>
     </div>

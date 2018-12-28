@@ -14,7 +14,7 @@
           <Input v-model="validate.cargoName" :maxlength="20" placeholder="请输入"/>
         </FormItem>
         <FormItem label="货物编码：">
-          <Input v-model="validate.cargoNo" :maxlength="20" placeholder="请输入"/>
+          <Input v-model="validate.cargoNo" :maxlength="200" placeholder="请输入"/>
         </FormItem>
         <FormItem label="货值：" prop="cargoCost">
           <Input v-model="validate.cargoCost"  placeholder="请输入"/>
@@ -150,6 +150,7 @@ export default {
         volume: parseFloat(this.validate.volume),
         remark1: this.validate.remark1,
         remark2: this.validate.remark2,
+        cargoNo: this.validate.cargoNo,
         dimension: JSON.stringify({ length: this.volumeLength, width: this.volumeWidth, height: this.volumeHeight })
       }
       consignerCargoAdd(data).then(res => {
@@ -169,6 +170,7 @@ export default {
         volume: parseFloat(this.validate.volume),
         remark1: this.validate.remark1,
         remark2: this.validate.remark2,
+        cargoNo: this.validate.cargoNo,
         dimension: JSON.stringify({ length: this.volumeLength, width: this.volumeWidth, height: this.volumeHeight })
       }
       consignerCargoUpdate(data).then(res => {
