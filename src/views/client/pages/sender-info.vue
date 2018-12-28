@@ -56,7 +56,7 @@
           <div>
             <span class="label">开拓渠道：</span>
             <span v-if="list.exploiteChannel ===1">公司开拓</span>
-            <span v-else>个人开拓</span>
+            <span v-if="list.exploiteChannel ===2">个人开拓</span>
           </div>
           </Col>
           <Col span="8">
@@ -277,7 +277,8 @@ export default {
                           latitude: params.row.latitude,
                           mapType: params.row.mapType,
                           cityCode: params.row.cityCode,
-                          consignerHourseNumber: params.row.consignerHourseNumber
+                          consignerHourseNumber: params.row.consignerHourseNumber,
+                          consigneeCompanyName: params.row.consigneeCompanyName
                         }
                       },
                       methods: {

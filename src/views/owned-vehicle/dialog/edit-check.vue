@@ -121,7 +121,7 @@ export default {
         ],
         cost: [
           { required: true, message: '总金额不能为空' },
-          { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
         ]
       }
     }

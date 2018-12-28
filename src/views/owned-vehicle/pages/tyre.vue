@@ -58,7 +58,7 @@ export default {
     return {
       options: {
         disabledDate (date) {
-          return date && date.valueOf() < Date.now() - 86400000
+          return date && date.valueOf() >= Date.now()
         }
       },
       selectStatus: '1',
@@ -173,9 +173,9 @@ export default {
         {
           title: '创建日期',
           key: 'createTime',
-          sortable: 'custom',
+          // sortable: 'custom',
           render: (h, params) => {
-            let text = this.formatDateTime(params.row.createTime)
+            let text = this.formatDate(params.row.createTime)
             return h('div', { props: {} }, text)
           }
         }

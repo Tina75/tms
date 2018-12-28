@@ -56,7 +56,7 @@ export default {
     return {
       options: {
         disabledDate (date) {
-          return date && date.valueOf() < Date.now() - 86400000
+          return date && date.valueOf() >= Date.now()
         }
       },
       selectStatus: '1',
@@ -259,11 +259,11 @@ export default {
       this.formSearchInit = {}
       if (this.selectStatus === '1' && this.keyword) {
         this.formSearchInit.carNo = this.keyword
-      } else if (this.selectStatus === '2') {
+      } else if (this.selectStatus === '2' && this.keyword) {
         this.formSearchInit.insuranceCompanyName = this.keyword
-      } else if (this.selectStatus === '3') {
+      } else if (this.selectStatus === '3' && this.keyword) {
         this.formSearchInit.invoiceNo = this.keyword
-      } else if (this.selectStatus === '4') {
+      } else if (this.selectStatus === '4' && this.keyword) {
         this.formSearchInit.buyDateStart = new Date(this.keyword[0]).getTime()
         this.formSearchInit.buyDateEnd = new Date(this.keyword[1]).getTime()
       }
