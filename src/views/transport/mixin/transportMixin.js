@@ -150,6 +150,9 @@ export default {
       this.inSearching = false
       this.fetchData()
     },
+    handleTimeChange () {
+      this.startSearch()
+    },
     // 重置高级搜索
     resetSeniorSearch () {
       let needReset = false
@@ -189,7 +192,6 @@ export default {
 
     // 分页切换
     pageChange (current) {
-      console.log(current)
       this.page.current = current
     },
     // 分页size改变

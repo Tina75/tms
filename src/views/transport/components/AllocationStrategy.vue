@@ -15,7 +15,7 @@
 
 <script>
 import allocationStrategy from '../constant/allocation.js'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'AllocationStrategy',
@@ -94,12 +94,18 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters(['AllocationStrategy'])
+  },
+
   watch: {
     allocationOrders (val) {
       this.$refs.allocationForm.validate()
     }
   },
+
   mounted () {
+    console.log(this.AllocationStrategy)
     if (this.passAllocation) {
       this.$nextTick(() => {
         this.allocation = this.passAllocation
@@ -107,12 +113,17 @@ export default {
         this.$refs.allocationForm.validate()
       })
     } else {
-      this.getAllocationStrategy().then((res) => {
-        let data = res.data.data
-        this.allocation = this.source === 'order' ? data.orderStrategy : data.waybillStrategy
+      this.$nextTick(() => {
+        this.allocation = this.source === 'order' ? this.AllocationStrategy.orderStrategy : this.AllocationStrategy.waybillStrategy
         this.handleChange(this.allocation) // 初始化传值给父组件
         this.$refs.allocationForm.validate()
       })
+      // this.getAllocationStrategy().then((res) => {
+      //   let data = res.data.data
+      //   this.allocation = this.source === 'order' ? data.orderStrategy : data.waybillStrategy
+      //   this.handleChange(this.allocation) // 初始化传值给父组件
+      //   this.$refs.allocationForm.validate()
+      // })
     }
   },
 

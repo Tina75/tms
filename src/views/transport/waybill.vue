@@ -28,7 +28,8 @@
                  :maxlength="20"
                  placeholder="请输入运单号"
                  class="search-input"
-                 @on-click="resetEasySearch" />
+                 @on-click="resetEasySearch"
+                 @on-enter="startSearch" />
 
           <SelectInput v-if="easySelectMode === 2" v-model="easySearchKeyword"
                        mode="carrier"
@@ -36,7 +37,8 @@
                        clearable
                        class="search-input"
                        @on-select="selectCarrierHandler"
-                       @on-clear="resetEasySearch" />
+                       @on-clear="resetEasySearch"
+                       @start-search="startSearch" />
 
           <SelectInput v-if="easySelectMode === 3" v-model="easySearchKeyword"
                        :carrier-id="carrierId"
@@ -44,7 +46,8 @@
                        placeholder="请输入车牌号"
                        clearable
                        class="search-input"
-                       @on-clear="resetEasySearch" />
+                       @on-clear="resetEasySearch"
+                       @start-search="startSearch" />
 
           <Button icon="ios-search" type="primary"
                   class="search-btn-easy"
@@ -60,29 +63,49 @@
       <div v-if="!isEasySearch" class="operate-box custom-style">
 
         <div style="margin-bottom: 10px;">
-          <Input v-model="seniorSearchFields.waybillNo" :maxlength="20"  placeholder="请输入运单号" class="search-input-senior" />
+          <Input
+            v-model="seniorSearchFields.waybillNo"
+            :maxlength="20"
+            clearable
+            placeholder="请输入运单号"
+            class="search-input-senior"
+            @on-enter="startSearch" />
           <SelectInput v-model="seniorSearchFields.carrierName"
                        mode="carrier"
+                       clearable
                        placeholder="请输入承运商"
                        class="search-input-senior"
-                       @on-select="selectCarrierHandler" />
+                       @on-select="selectCarrierHandler"
+                       @start-search="startSearch" />
           <SelectInput v-model="seniorSearchFields.driverName"
                        :carrier-id="carrierId"
                        mode="driver"
+                       clearable
                        placeholder="请输入司机"
-                       class="search-input-senior" />
+                       class="search-input-senior"
+                       @start-search="startSearch" />
           <SelectInput v-model="seniorSearchFields.carNo"
                        :carrier-id="carrierId"
                        mode="carNo"
+                       clearable
                        placeholder="请输入车牌号"
-                       class="search-input-senior" />
+                       class="search-input-senior"
+                       @start-search="startSearch" />
         </div>
 
         <div class="complex-query">
           <div>
             <SelectInputForCity v-model="seniorSearchFields.start" placeholder="请输入始发地" class="search-input-senior" />
             <SelectInputForCity v-model="seniorSearchFields.end" placeholder="请输入目的地" class="search-input-senior" />
-            <DatePicker v-model="seniorSearchFields.dateRange" :options="timeOption" transfer type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
+            <DatePicker
+              v-model="seniorSearchFields.dateRange"
+              :options="timeOption"
+              transfer
+              type="daterange"
+              split-panels
+              placeholder="开始日期-结束日期"
+              class="search-input-senior"
+              @on-change="handleTimeChange"></DatePicker>
           </div>
           <div>
             <Button type="primary"

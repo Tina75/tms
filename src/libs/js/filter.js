@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import City from './city.js'
+import float from '@/libs/js/float'
 /**
  * 时间格式化
  */
@@ -52,8 +53,8 @@ Vue.filter('codeToName', function (cityId) {
 /**
  * 将元转为分
  */
-Vue.filter('toPoint', function (cityId) {
-  return cityId / 100
+Vue.filter('toPoint', function (money) {
+  return float.round(money / 100, 2)
 })
 
 /**
