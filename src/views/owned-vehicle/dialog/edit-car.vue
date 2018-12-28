@@ -93,6 +93,20 @@
           <OwnDriverSelects :form="validate" :is-validate="true" :filtered-validate="filteredValidate"></OwnDriverSelects>
           </Col>
         </Row>
+        <Row>
+          <Col span="8">
+          <FormItem label="挂车号：" prop="trailerNo">
+            <Row>
+              <Col span="20">
+              <SelectInput v-model="validate.trailerNo" :maxlength="8" :parser="formatterCarNo" placeholder="请输入"></SelectInput>
+              </Col>
+              <Col span="2" offset="1">
+              <span>挂</span>
+              </Col>
+            </Row>
+          </FormItem>
+          </Col>
+        </Row>
         <p class="modalTitle">常跑线路</p>
         <div class="lineDiv">
           <Row>
@@ -185,6 +199,9 @@ export default {
       ruleValidate: {
         carNo: [
           { required: true, message: '车牌号不能为空', trigger: 'blur' },
+          { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
+        ],
+        trailerNo: [
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
         ],
         carType: [
