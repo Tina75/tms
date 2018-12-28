@@ -98,7 +98,7 @@
           <FormItem label="挂车号：" prop="trailerNo">
             <Row>
               <Col span="20">
-              <SelectInput v-model="validate.trailerNo" :maxlength="8" :parser="formatterCarNo" placeholder="请输入"></SelectInput>
+              <SelectInput v-model="validate.trailerNo" :maxlength="6" :parser="formatterCarNo" placeholder="请输入"></SelectInput>
               </Col>
               <Col span="2" offset="1">
               <span>挂</span>
@@ -202,7 +202,7 @@ export default {
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
         ],
         trailerNo: [
-          { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
+          { type: 'string', message: '车牌号格式错误' }
         ],
         carType: [
           { required: true, message: '车型不能为空' }
