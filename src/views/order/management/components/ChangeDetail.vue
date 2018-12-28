@@ -13,18 +13,18 @@
         <Col span="12">
         <div class="title">修改前运单信息:</div>
         <Row>
-          <Col v-for="(item, index) in ORDER_ITEM" v-if="data.changeBefore[item.value] != undefined" :key="index" span="12" class="labelContent">
+          <Col v-for="(item, index) in ORDER_ITEM" v-if="data.map.old[item.value] != undefined" :key="index" span="12" class="labelContent">
           <span class="label">{{item.name}}:</span>
-          <span class="content">{{renderText(data.changeBefore[item.value], item.type)}}</span>
+          <span class="content">{{renderText(data.map.old[item.value], item.type)}}</span>
           </Col>
         </Row>
         </Col>
         <Col span="12">
         <div class="title">修改后运单信息:</div>
         <Row class="after">
-          <Col v-for="(item, index) in ORDER_ITEM" v-if="data.changeAfter[item.value] != undefined" :key="index" span="12" class="labelContent">
+          <Col v-for="(item, index) in ORDER_ITEM" v-if="data.map.new[item.value] != undefined" :key="index" span="12" class="labelContent">
           <span class="label">{{item.name}}:</span>
-          <span class="content">{{renderText(data.changeAfter[item.value], item.type)}}</span>
+          <span class="content">{{renderText(data.map.new[item.value], item.type)}}</span>
           </Col>
         </Row>
         </Col>
@@ -37,6 +37,7 @@ import BasePage from '@/basic/BasePage'
 import float from '@/libs/js/float'
 import settlement from '@/libs/constant/settlement'
 import ORDER_ITEM from '../constant/orderItem'
+
 export default {
   name: 'order-record',
   filters: {

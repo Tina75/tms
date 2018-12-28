@@ -28,7 +28,6 @@
     >
     </InputNumber>
     <div v-else-if="col.type === 'multi' && col.children">
-      <!-- <Input v-for="(el, index) in col.children" :key="index" v-model="record[col.key][el.key]" :maxlength="col.max" :style="`width: ${100 / col.children.length}%`" :placeholder="el.title" clearable></Input> -->
       <InputNumber
         v-for="(el, index) in col.children"
         :key="index"
@@ -40,7 +39,9 @@
         clearable>
       </InputNumber>
     </div>
-    <SelectPackageType v-else-if="col.type == 'package'" v-model="record[col.key]" clearable/>
+    <div v-else-if="col.type == 'package'">
+      <SelectPackageType v-model="record[col.key]" clearable/>
+    </div>
     <Input v-else v-model="record[col.key]" :maxlength="col.max" clearable></Input>
     <p v-if="record.hasError && record.errorMsg[col.key] !== ''" :class="errorClass">
       {{record.errorMsg[col.key]}}

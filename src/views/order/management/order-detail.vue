@@ -275,7 +275,7 @@
         </section>
       </TabPane>
       <TabPane :label="cngLabel" :disabled="changeOrderCnt == 0" name="change">
-        <OrderChange />
+        <OrderChange ref="orderChange"/>
       </TabPane>
     </Tabs>
     <OrderPrint ref="printer" :list="orderPrint"></OrderPrint>
@@ -673,6 +673,7 @@ export default {
           ok () {
             _this.getDetail()
             _this.getDetailChange()
+            _this.$refs['orderChange'].initData()
           }
         }
       })
