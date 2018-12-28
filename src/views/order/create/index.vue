@@ -327,7 +327,7 @@
       </Col>
     </Row>
     <div class="van-center i-mt-20 i-mb-20">
-      <span style="float: left; vertical-align:middle;">
+      <span v-if="!orderId" style="float: left; vertical-align:middle;">
         <Checkbox v-model="isSaveOrderTemplate">保存为常发货源</Checkbox>
       </span>
       <Button v-if="hasPower(100101)" :loading="disabled" type="primary" @click="handleSubmit">保存</Button>
@@ -664,6 +664,9 @@ export default {
     orderId () {
       return this.$route.query.id
     },
+    createId () {
+      return this.$route.query.createId
+    },
     isSaveOrderTemplate: {
       set (value) {
         this.orderForm.isSaveOrderTemplate = value === true ? 1 : 0
@@ -674,7 +677,7 @@ export default {
     }
   },
   created () {
-    if (!this.$route.query.id) {
+    if (!this.orderId || !this.createId) {
       this.autoFocus = true
     } else {
       this.getClients()
@@ -682,8 +685,42 @@ export default {
   },
   mounted () {
     const vm = this
-    const orderId = this.orderId
-    if (orderId) {
+    // 编辑订单
+    if (this.orderId) {
+      this.editDetail(this.orderId)
+    }
+    // 再来一单
+    if (this.createId) {
+      this.initCreateDetail(this.createId)
+    }
+    // focus到结算方式和提货方式等下拉框时要弹出下拉框
+    ['pickupSelector', 'settlementSelector'].forEach((selector) => {
+      vm.$refs[selector].$refs.reference.onfocus = (e) => {
+        vm.$refs[selector].toggleHeaderFocus(e)
+        vm.$nextTick(() => {
+          setTimeout(() => {
+            if (!vm.$refs[selector].visible) {
+              vm.$refs[selector].toggleMenu(e)
+            }
+          }, 200)
+        })
+      }
+    })
+    this.initBusineList()
+  },
+  beforeDestroy () {
+    this.resetForm()
+    this.clearClients()
+  },
+  methods: {
+    ...mapActions([
+      'getClients',
+      'getConsignerDetail',
+      'clearCargoes',
+      'clearClients'
+    ]),
+    editDetail (orderId) {
+      const vm = this
       vm.loading = true
       api.getOrderDetail(orderId)
         .then((orderDetail) => {
@@ -716,33 +753,35 @@ export default {
         .catch((errorInfo) => {
           vm.loading = false
         })
-    }
-    // focus到结算方式和提货方式等下拉框时要弹出下拉框
-    ['pickupSelector', 'settlementSelector'].forEach((selector) => {
-      vm.$refs[selector].$refs.reference.onfocus = (e) => {
-        vm.$refs[selector].toggleHeaderFocus(e)
-        vm.$nextTick(() => {
-          setTimeout(() => {
-            if (!vm.$refs[selector].visible) {
-              vm.$refs[selector].toggleMenu(e)
-            }
-          }, 200)
+    },
+    initCreateDetail (createId) {
+      const vm = this
+      vm.loading = true
+      api.getReCreateDeatil(createId).then(orderDetail => {
+        vm.loading = false
+        for (let key in vm.orderForm) {
+          vm.orderForm[key] = orderDetail[key] || vm.orderForm[key]
+        }
+        this.consignerCargoes = orderDetail.orderCargoTemplateList.map((item) => new Cargo(item, true))
+        // 分转换元
+        transferFeeList.forEach((fee) => {
+          vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
         })
-      }
-    })
-    this.initBusineList()
-  },
-  beforeDestroy () {
-    this.resetForm()
-    this.clearClients()
-  },
-  methods: {
-    ...mapActions([
-      'getClients',
-      'getConsignerDetail',
-      'clearCargoes',
-      'clearClients'
-    ]),
+        if (vm.orderForm.deliveryTime) {
+          const deliveryTime = new Date(vm.orderForm.deliveryTime)
+          vm.orderForm.deliveryTime = deliveryTime
+          vm.orderForm.deliveryTimes = `${deliveryTime.getHours() > 9 ? deliveryTime.getHours() : '0' + deliveryTime.getHours()}:${deliveryTime.getMinutes() > 9 ? deliveryTime.getMinutes() : '0' + deliveryTime.getMinutes()}`
+        }
+        if (vm.orderForm.arriveTime) {
+          const arriveTime = new Date(vm.orderForm.arriveTime)
+          vm.orderForm.arriveTime = arriveTime
+          vm.orderForm.arriveTimes = `${arriveTime.getHours() > 9 ? arriveTime.getHours() : '0' + arriveTime.getHours()}:${arriveTime.getMinutes() > 9 ? arriveTime.getMinutes() : '0' + arriveTime.getMinutes()}`
+        }
+        // 里程除以 1000
+        vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
+        vm.orderForm.invoiceRate = rate.get(vm.orderForm.invoiceRate)
+      })
+    },
     initBusineList () {
       this.loading = true
       api.getBusineList().then(res => {
@@ -815,6 +854,7 @@ export default {
           _this.orderForm.consigneeAddressLongitude = consignees[0].longitude
           _this.orderForm.consigneeAddressLatitude = consignees[0].latitude
           _this.orderForm.consigneeHourseNumber = consignees[0].consignerHourseNumber
+          _this.orderForm.consigneeCompanyName = consignees[0].consigneeCompanyName
         }
         // 计费里程
         _this.distanceCp()
@@ -947,6 +987,7 @@ export default {
       this.orderForm.consignerAddressLatitude = ''
       this.orderForm.consigneeAddressLongitude = ''
       this.orderForm.consigneeAddressLatitude = ''
+      this.isSaveOrderTemplate = false
 
       this.$refs.orderForm.resetFields()
       this.clearCargoes()
