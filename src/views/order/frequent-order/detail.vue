@@ -33,7 +33,7 @@
         </Col>
         <Col span="8">
         <FormItem label="代收货款：">
-          {{detail.collectionMoney | toPoint}}
+          {{detail.collectionMoney | toPoint}}元
         </FormItem>
         </Col>
         <Col span="8">

@@ -937,6 +937,7 @@ export default {
           partnerId: clientId, // 客户编号
           partnerName: vm.orderForm.consignerName, // 客户名
           partnerType: 1, // 计算规则分类：1-发货方，2-承运商，3-外转方
+          cargoInfos: statics.cargoInfos,
           weight: statics.weight,
           volume: statics.volume,
           distance: this.orderForm.mileage ? parseInt(this.orderForm.mileage * 1000) : 0,
@@ -1109,6 +1110,7 @@ export default {
                       distance: form.mileage,
                       weight: statics.weight,
                       volume: statics.volume,
+                      cargoInfos: statics.cargoInfos,
                       start: form.start,
                       end: form.end
                     }
@@ -1151,6 +1153,7 @@ export default {
                       distance: form.mileage,
                       weight: statics.weight,
                       volume: statics.volume,
+                      cargoInfos: statics.cargoInfos,
                       start: form.start,
                       end: form.end
                     }
