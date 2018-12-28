@@ -51,7 +51,7 @@
       class="pageTable"
       row-id="id"
       method="post"
-      url="http://192.168.1.39:3000/mock/214/oilCard/queryList"
+      url="/oilCard/queryList"
       @on-selection-change="selectionChanged"></PageTable>
   </div>
 </template>
@@ -88,20 +88,6 @@ export default {
       this.tableSelection = []
       this.$refs.$table && this.$refs.$table.clearSelected() // 清空已选项
       this.searchFields = this.setFetchParams()
-    },
-    setFetchParams () {
-      let obj = {}
-      for (let key in this.queryParams) {
-        this.queryParams[key] ? (obj[key] = this.queryParams[key]) : (obj[key] = '')
-      }
-      return obj
-    },
-    clearParams () {
-      for (let key in this.queryParams) {
-        if (this.queryParams[key]) {
-          this.queryParams[key] = ''
-        }
-      }
     },
     // 状态对应样式
     statusClass (value) {

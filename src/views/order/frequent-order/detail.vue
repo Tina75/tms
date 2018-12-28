@@ -33,7 +33,7 @@
         </Col>
         <Col span="8">
         <FormItem label="代收货款：">
-          {{detail.collectionMoney | toPoint}}
+          {{detail.collectionMoney | toPoint}}元
         </FormItem>
         </Col>
         <Col span="8">
@@ -86,7 +86,7 @@
         <span>货物明细</span>
       </div>
       <Table :columns="tableColumns" :data="detail.orderCargoTemplateList"></Table>
-      <Row class="table-footer">
+      <Row class="table-footer blod-font">
         <Col span="3">合计</Col>
         <Col span="3">{{ weightTotal }}</Col>
         <Col span="3">{{ volumeTotal }}</Col>
@@ -138,8 +138,8 @@
       <Row :gutter="16">
         <Col span="6">
         <FormItem label="费用合计：">
-          <span class="blod-font">{{detail.totalFee | toPoint}}元</span>
-          <span class="blod-font">（{{settleMap[detail.settlementType]}}）</span>
+          <span class="blod-font totalFee">{{detail.totalFee | toPoint}}</span>
+          <span class="blod-font"> 元 （{{settleMap[detail.settlementType]}}）</span>
         </FormItem>
         </Col>
       </Row>
@@ -180,7 +180,7 @@ export default {
           key: 'volume',
           align: 'center',
           render: (h, p) => {
-            return h('span', p.row.volume || 0)
+            return h('span', p.row.volume || '-')
           }
         },
         {
@@ -188,7 +188,7 @@ export default {
           key: 'cargoCost',
           align: 'center',
           render: (h, params) => {
-            return h('span', params.row.cargoCost / 100 || 0)
+            return h('span', params.row.cargoCost / 100 || '-')
           }
         },
         {
@@ -196,7 +196,7 @@ export default {
           key: 'quantity',
           align: 'center',
           render: (h, p) => {
-            return h('span', p.row.quantity || 0)
+            return h('span', p.row.quantity || '-')
           }
         },
         {
@@ -204,7 +204,7 @@ export default {
           key: 'unit',
           align: 'center',
           render: (h, p) => {
-            return h('span', p.row.unit || 0)
+            return h('span', p.row.unit || '-')
           }
         },
         {
@@ -272,12 +272,7 @@ export default {
     weightTotal () {
       let total = 0
       this.detail.orderCargoTemplateList.map((item) => {
-        // 区分吨或公斤
-        if (this.WeightOption === 1) {
-          total += Number(item.weight)
-        } else {
-          total += Number(item.weightKg)
-        }
+        total += Number(item.weight)
       })
       return float.round(total, 3) + '吨'
     }
@@ -390,4 +385,7 @@ export default {
     font-weight 600
     font-size 14px
     color #333
+  .totalFee
+    color #00A4BD
+    font-size 20px
 </style>

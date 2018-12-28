@@ -2,7 +2,7 @@
   <div :class="classes">
     <a v-if="col.type==='operation'" href="javascript:;">
       <Icon type="ios-add-circle" size="24" color="#7ED321" @click="handleAppend"></Icon>
-      <Icon type="ios-remove-circle" size="24" color="#EC4E4E" @click="handleRemove"></Icon>
+      <Icon :color="index == 0 && length == 1 ? 'grey' : '#EC4E4E'" type="ios-remove-circle" size="24" @click="handleRemove"></Icon>
     </a>
     <SelectInput
       v-else-if="col.type==='select'"
@@ -64,6 +64,7 @@ export default {
     headers: Array,
     record: Object,
     col: Object,
+    length: Number,
     onAppend: Function,
     onRemove: Function,
     onSelect: Function

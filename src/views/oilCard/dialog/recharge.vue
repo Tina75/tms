@@ -1,45 +1,35 @@
-<!--回收-->
+<!--油卡充值-->
 <template>
   <Modal v-model="visiable" :mask-closable="false" transfer width="560" @on-visible-change="close">
     <p slot="header" class="modalTitle">{{ title }}</p>
-    <Form ref="validate" :model="recover" :rules="ruleValidate" :label-width="90" label-position="right">
+    <Form ref="validate" :model="recharge" :rules="ruleValidate" :label-width="90" label-position="right">
       <FormItem  label="发卡机构：">
-        <span>{{issuerToName(recover.issuer)}}</span>
+        <span>{{issuerToName(recharge.issuer)}}</span>
       </FormItem>
       <FormItem  label="类型：">
-        <span>{{typeToName(recover.type)}}</span>
+        <span>{{typeToName(recharge.type)}}</span>
       </FormItem>
-      <FormItem  label="卡号：">
-        <span>{{recover.number}}</span>
+      <FormItem  label="卡主号：">
+        <span>{{recharge.primaryCardNumber}}</span>
       </FormItem>
       <FormItem  label="当前余额：">
-        <span class="moneyFormSpan">{{recover.amount | toPoint}}元</span>
+        <span class="moneyFormSpan">{{recharge.amount | toPoint}}元</span>
       </FormItem>
-      <FormItem label="实际金额：" prop="actrualAmount">
+      <FormItem label="充值金额：" prop="changeAmount">
         <Row>
           <Col span="20">
-          <TagNumberInput v-model="recover.actrualAmount" :length="moneyLength" :show-chinese="false" :precision="precision" placeholder="请输入金额"></TagNumberInput>
+          <TagNumberInput v-model="recharge.changeAmount" :show-chinese="false" :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
           </Col>
           <Col span="2" offset="1">
           <span>元</span>
           </Col>
         </Row>
       </FormItem>
-      <FormItem label="退押金：" >
-        <Row>
-          <Col span="20">
-          <TagNumberInput v-model="recover.returnDeposit" :show-chinese="false" :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
-          </Col>
-          <Col span="2" offset="1">
-          <span>元</span>
-          </Col>
-        </Row>
-      </FormItem>
-      <FormItem  label="回收日期：">
-        <DatePicker v-model="recover.opearteDate" :options="dateOption" transfer format="yyyy-MM-dd" placeholder="请输入回收日期" style="width: 100%"></DatePicker>
+      <FormItem  label="充值日期：">
+        <DatePicker v-model="recharge.opearteDate" :options="dateOption" transfer format="yyyy-MM-dd" placeholder="请输入充值日期" style="width: 100%"></DatePicker>
       </FormItem>
       <FormItem label="备注:">
-        <Input :maxlength="100" v-model="recover.remark" type="textarea" placeholder="请输入"></Input>
+        <Input :maxlength="100" v-model="recharge.remark" type="textarea" placeholder="请输入"></Input>
       </FormItem>
     </Form>
     <div slot="footer" class="footerSty">
@@ -50,7 +40,6 @@
 </template>
 
 <script>
-// import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import TagNumberInput from '@/components/TagNumberInput'
@@ -72,15 +61,16 @@ export default {
       loading: false,
       precision: 2,
       moneyLength: 9,
-      recover: {
+      recharge: {
         id: '',
         number: '',
         amount: '',
         type: null,
         issuer: null,
-        actrualAmount: null,
-        returnDeposit: null,
-        opearteDate: '',
+        truckNo: '',
+        driverName: '',
+        changeAmount: null,
+        operateDate: '',
         remark: ''
       },
       dateOption: {
@@ -89,7 +79,9 @@ export default {
         }
       },
       ruleValidate: {
-        actrualAmount: [{ required: true, message: '请输入实际金额', trigger: 'change', type: 'number' }]
+        truckNo: { required: true, message: '请输入加油车辆', type: 'string', trigger: 'change' },
+        driverName: { required: true, message: '请输入加油人', type: 'string', trigger: 'change' },
+        changeAmount: { required: true, message: '请输入加油金额', type: 'number', trigger: 'change' }
         // driverName: { required: true, message: '请选择司机', trigger: 'change' },
         // carrierName: { required: true, message: '请输入承运商', trigger: 'change' },
         // driverPhone: [
@@ -101,6 +93,7 @@ export default {
     }
   },
   mounted () {
+    console.log(this.recharge)
   },
   methods: {
     save () {
@@ -108,14 +101,13 @@ export default {
         if (valid) {
           this.loading = true
           Server({
-            url: '/oilCard/recover',
+            url: '/oilCard/recharge',
             method: 'post',
             data: {
-              id: this.recover.id || undefined,
-              actrualAmount: float.round(this.recover.actrualAmount * 100) || undefined,
-              returnDeposit: float.round(this.recover.returnDeposit * 100) || undefined,
-              opearteDate: this.recover.opearteDate || undefined,
-              remark: this.recover.remark || undefined
+              id: this.recharge.id || undefined,
+              changeAmount: float.round(this.recharge.changeAmount * 100) || undefined,
+              operateDate: this.recharge.operateDate || undefined,
+              remark: this.recharge.remark || undefined
             }
           }).then(res => {
             this.loading = false
