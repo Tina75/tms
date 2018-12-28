@@ -37,7 +37,7 @@ export default {
         }
       }).then(res => {
         const data = res.data.data
-        this.changeList = data.list
+        this.changeList = data
       })
     }
   }

@@ -13,7 +13,7 @@
         <Col span="12">
         <div class="title">修改前运单信息:</div>
         <Row>
-          <Col v-for="(item, index) in ORDER_ITEM" v-if="data.changeBefore[item.value] != undefined" :key="index" span="12" class="labelContent">
+          <Col v-for="(item, index) in ORDER_ITEM" v-if="data.changeBefore[item.value] != ''" :key="index" span="12" class="labelContent">
           <span class="label">{{item.name}}:</span>
           <span class="content">{{data.changeBefore[item.value]}}</span>
           </Col>
@@ -22,7 +22,7 @@
         <Col span="12">
         <div class="title">修改后运单信息:</div>
         <Row class="after">
-          <Col v-for="(item, index) in ORDER_ITEM" v-if="data.changeAfter[item.value] != undefined" :key="index" span="12" class="labelContent">
+          <Col v-for="(item, index) in ORDER_ITEM" v-if="data.changeAfter[item.value] != ''" :key="index" span="12" class="labelContent">
           <span class="label">{{item.name}}:</span>
           <span class="content">{{data.changeAfter[item.value]}}</span>
           </Col>
