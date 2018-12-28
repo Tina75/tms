@@ -95,6 +95,7 @@ import Server from '@/libs/js/server'
 import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
 import { CAR } from '@/views/client/pages/client'
+import float from '@/libs/js/float'
 export default {
   name: 'assign',
   components: {
@@ -206,14 +207,14 @@ export default {
             url: '/oilCard/assign',
             method: 'post',
             data: {
-              id: this.assign.id || '',
-              type: this.assign.type || '',
-              carrierName: this.assign.carrierName || '',
-              driverName: this.assign.driverName || '',
-              truckNo: this.assign.truckNo || '',
-              driverPhone: this.assign.driverPhone || '',
-              recieveDeposit: this.assign.recieveDeposit || '',
-              remark: this.assign.remark || ''
+              id: this.assign.id || undefined,
+              type: this.assign.type || undefined,
+              carrierName: this.assign.carrierName || undefined,
+              driverName: this.assign.driverName || undefined,
+              truckNo: this.assign.truckNo || undefined,
+              driverPhone: this.assign.driverPhone || undefined,
+              recieveDeposit: float.round(this.assign.recieveDeposit * 100) || undefined,
+              remark: this.assign.remark || undefined
             }
           }).then(res => {
             this.loading = false
