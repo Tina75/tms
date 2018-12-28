@@ -138,25 +138,26 @@ export default {
       }).catch(err => console.error(err))
     },
     batchVerifyOrder () {
+      let vm = this
       Server({
         url: '/finance/verify/batchVerifyOrder',
         method: 'post',
         data: {
-          ids: this.ids,
-          payType: this.writeOffForm.payType,
-          account: this.writeOffForm.account.replace(/\s+/g, ''),
-          bankBranch: this.writeOffForm.bankBranch,
-          remark: this.writeOffForm.remark,
-          verifyType: this.verifyType
+          ids: vm.ids,
+          payType: vm.writeOffForm.payType,
+          account: vm.writeOffForm.account.replace(/\s+/g, ''),
+          bankBranch: vm.writeOffForm.bankBranch,
+          remark: vm.writeOffForm.remark,
+          verifyType: vm.verifyType
         }
       }).then(res => {
         if (res.data.data === '') {
-          this.saveAccount(this.writeOffForm.account, this.writeOffForm.bankBranch)
-          this.ok()
-          this.close()
+          vm.saveAccount(vm.writeOffForm.account, vm.writeOffForm.bankBranch)
+          vm.ok()
+          vm.close()
         } else if (res.data.data && res.data.data.operateCode === 1) {
           // 存在异常
-          this.$Toast.warning({
+          vm.$Toast.warning({
             title: '核销',
             content: '以下单据存在异常，无法核销',
             render: (h) => {
