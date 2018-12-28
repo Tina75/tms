@@ -7,8 +7,8 @@
           <span class="icontTitle"></span>
           <span class="iconTitleP">基础信息</span>
           <div class="btnItem">
-            <Button v-if="hasPower(190103)" class="btnSty" @click="removeDriverData">删除</Button>
-            <Button v-if="hasPower(190102)" type="primary" class="btnSty" @click="updateDriverData">修改</Button>
+            <Button v-if="hasPower(190503)" class="btnSty" @click="removeDriverData">删除</Button>
+            <Button v-if="hasPower(190502)" type="primary" class="btnSty" @click="updateDriverData">修改</Button>
           </div>
         </div>
         <div class="list-info">
@@ -154,7 +154,7 @@ export default {
         name: 'owned-vehicle/dialog/edit-check',
         data: {
           title: '修改年检',
-          flag: 2, // 修改
+          flag: 4, // 修改
           validate: { ...vm.infoData, checkDate: new Date(vm.infoData.checkDate), nextCheckDate: new Date(vm.infoData.nextCheckDate) }
         },
         methods: {

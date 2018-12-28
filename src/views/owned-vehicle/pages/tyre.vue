@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="add">
-      <Button v-if="hasPower(190201)" type="primary" @click="edit">新增轮胎</Button>
-      <Button v-if="hasPower(190204)" @click="Export">导出</Button>
+      <Button v-if="hasPower(190601)" type="primary" @click="edit">新增轮胎</Button>
+      <Button v-if="hasPower(190604)" @click="Export">导出</Button>
       <div class="rightSearch">
         <template>
           <Select v-model="selectStatus" class="conditionSty" transfer @on-change="changeState">
@@ -17,7 +17,7 @@
                class="search-input"
                @on-enter="searchCarList"
                @on-click="clearKeywords"/>
-        <DatePicker v-else v-model="keyword" transfer format="yyyy-MM-dd" type="daterange" placeholder="请选择安装日期">
+        <DatePicker v-else :options="options" v-model="keyword" transfer format="yyyy-MM-dd" type="daterange" placeholder="请选择日期搜索">
         </DatePicker>
         <Button
           icon="ios-search"
@@ -56,6 +56,11 @@ export default {
   mixins: [ BasePage ],
   data () {
     return {
+      options: {
+        disabledDate (date) {
+          return date && date.valueOf() >= Date.now()
+        }
+      },
       selectStatus: '1',
       keyword: '',
       formSearchInit: {},
@@ -67,7 +72,7 @@ export default {
           width: 150,
           render: (h, params) => {
             let renderBtn = []
-            if (this.hasPower(190202)) {
+            if (this.hasPower(190602)) {
               renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
@@ -106,7 +111,7 @@ export default {
                 }
               }
             }, '查看'))
-            if (this.hasPower(190203)) {
+            if (this.hasPower(190603)) {
               renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
@@ -168,9 +173,9 @@ export default {
         {
           title: '创建日期',
           key: 'createTime',
-          sortable: 'custom',
+          // sortable: 'custom',
           render: (h, params) => {
-            let text = this.formatDateTime(params.row.createTime)
+            let text = this.formatDate(params.row.createTime)
             return h('div', { props: {} }, text)
           }
         }

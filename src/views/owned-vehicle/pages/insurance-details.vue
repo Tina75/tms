@@ -7,8 +7,8 @@
           <span class="icontTitle"></span>
           <span class="iconTitleP">基础信息</span>
           <div class="btnItem">
-            <Button v-if="hasPower(190103)" class="btnSty" @click="removeDriverData">删除</Button>
-            <Button v-if="hasPower(190102)" type="primary" class="btnSty" @click="updateDriverData">修改</Button>
+            <Button v-if="hasPower(190403)" class="btnSty" @click="removeDriverData">删除</Button>
+            <Button v-if="hasPower(190402)" type="primary" class="btnSty" @click="updateDriverData">修改</Button>
           </div>
         </div>
         <div class="list-info">
@@ -34,7 +34,7 @@
             <Col span="6">
             <div>
               <span class="label">购买日期:</span>
-              {{infoData.buyDate}}
+              {{infoData.buyDate | date}}
             </div>
             </Col>
           </Row>
@@ -54,7 +54,7 @@
             <Col span="6">
             <div>
               <span class="label">交强险金额：</span>
-              {{infoData.trafficFee | date}}
+              {{infoData.trafficFee}}
             </div>
             </Col>
             <Col span="6">
@@ -188,7 +188,7 @@ export default {
         name: 'owned-vehicle/dialog/edit-insurance',
         data: {
           title: '修改保险',
-          flag: 2, // 修改
+          flag: 4, // 修改
           validate: {
             ...vm.infoData,
             buyDate: new Date(vm.infoData.buyDate),

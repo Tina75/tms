@@ -1,61 +1,45 @@
-<!--油卡加油-->
+<!--转账-->
 <template>
   <Modal v-model="visiable" :mask-closable="false" transfer width="560" @on-visible-change="close">
     <p slot="header" class="modalTitle">{{ title }}</p>
-    <Form ref="validate" :model="refuel" :rules="ruleValidate" :label-width="90" label-position="right">
+    <Form ref="validate" :model="transfer" :rules="ruleValidate" :label-width="90" label-position="right">
       <FormItem  label="发卡机构：">
-        <span>{{issuerToName(refuel.issuer)}}</span>
+        <span>{{issuerToName(transfer.issuer)}}</span>
       </FormItem>
       <FormItem  label="类型：">
-        <span>{{typeToName(refuel.type)}}</span>
+        <span>{{typeToName(transfer.type)}}</span>
       </FormItem>
       <FormItem  label="卡号：">
-        <span>{{refuel.number}}</span>
+        <span>{{transfer.number}}</span>
       </FormItem>
       <FormItem  label="当前余额：">
-        <span class="moneyFormSpan">{{refuel.amount | toPoint}}元</span>
+        <span class="moneyFormSpan">{{transfer.amount | toPoint}}元</span>
       </FormItem>
-      <FormItem  label="加油车辆：" prop="truckNo">
-        <SelectInput
-          v-model="refuel.truckNo"
-          :maxlength="10"
-          :remote="false"
-          :clearable="true"
-          :local-options="ownCars"
-          placeholder="请选择车辆"
-          style="width: 100%"
-          @on-focus="getOwnCars"
-        >
-        </SelectInput>
-      </FormItem>
-      <FormItem  label="加油人：" prop="driverName">
-        <SelectInput
-          v-model="refuel.driverName"
-          :maxlength="10"
-          :remote="false"
-          :clearable="true"
-          :local-options="ownDrivers"
-          placeholder="请选择或输入司机名称"
-          style="width: 100%"
-          @on-focus="getOwnDrivers"
-        >
-        </SelectInput>
-      </FormItem>
-      <FormItem label="加油金额：" prop="changeAmount">
+      <FormItem label="实际金额：" prop="actrualAmount">
         <Row>
           <Col span="20">
-          <TagNumberInput v-model="refuel.changeAmount" :show-chinese="false" :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
+          <TagNumberInput v-model="transfer.actrualAmount" :length="moneyLength" :show-chinese="false" :precision="precision" placeholder="请输入金额"></TagNumberInput>
           </Col>
           <Col span="2" offset="1">
           <span>元</span>
           </Col>
         </Row>
       </FormItem>
-      <FormItem  label="加油日期：">
-        <DatePicker v-model="refuel.opearteDate" :options="dateOption" transfer format="yyyy-MM-dd" placeholder="请输入加油日期" style="width: 100%"></DatePicker>
+      <FormItem label="退押金：" >
+        <Row>
+          <Col span="20">
+          <TagNumberInput v-model="transfer.returnDeposit" :show-chinese="false" :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
+          </Col>
+          <Col span="2" offset="1">
+          <span>元</span>
+          </Col>
+        </Row>
+      </FormItem>
+      <FormItem  label="回收日期：">
+        <DatePicker v-model="transfer.opearteDate" :options="dateOption" transfer format="yyyy-MM-dd" placeholder="请输入回收日期" style="width: 100%"></DatePicker>
       </FormItem>
       <FormItem label="备注:">
-        <Input :maxlength="100" v-model="refuel.remark" type="textarea" placeholder="请输入"></Input>
+        <Input :maxlength="100" v-model="transfer.remark" type="textarea" placeholder="请输入"></Input>
       </FormItem>
     </Form>
     <div slot="footer" class="footerSty">
@@ -66,15 +50,15 @@
 </template>
 
 <script>
+// import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import TagNumberInput from '@/components/TagNumberInput'
 import contantmixin from '../mixin/contantmixin'
 import SelectInput from '@/components/SelectInput.vue'
 import { CARDTYPELIST, ISSUERLIST } from '../constant/enum'
-import { mapGetters, mapActions } from 'vuex'
 export default {
-  name: 'recover',
+  name: 'transfer',
   components: {
     SelectInput,
     TagNumberInput
@@ -87,16 +71,13 @@ export default {
       loading: false,
       precision: 2,
       moneyLength: 9,
-      refuel: {
+      transfer: {
         id: '',
         number: '',
         amount: '',
         type: null,
         issuer: null,
-        truckNo: '',
-        driverName: '',
-        changeAmount: null,
-        operateDate: '',
+        primaryCardNumber: '',
         remark: ''
       },
       dateOption: {
@@ -105,9 +86,7 @@ export default {
         }
       },
       ruleValidate: {
-        truckNo: { required: true, message: '请输入加油车辆', type: 'string', trigger: 'change' },
-        driverName: { required: true, message: '请输入加油人', type: 'string', trigger: 'change' },
-        changeAmount: { required: true, message: '请输入加油金额', type: 'number', trigger: 'change' }
+        actrualAmount: [{ required: true, message: '请输入实际金额', trigger: 'change', type: 'number' }]
         // driverName: { required: true, message: '请选择司机', trigger: 'change' },
         // carrierName: { required: true, message: '请输入承运商', trigger: 'change' },
         // driverPhone: [
@@ -118,34 +97,22 @@ export default {
       }
     }
   },
-  computed: {
-    ...mapGetters([
-      'ownCars',
-      'ownDrivers'
-    ])
-  },
   mounted () {
-    console.log(this.refuel)
   },
   methods: {
-    ...mapActions([
-      'getOwnCars',
-      'getOwnDrivers'
-    ]),
     save () {
       this.$refs['validate'].validate((valid) => {
         if (valid) {
           this.loading = true
           Server({
-            url: '/oilCard/refuel',
+            url: '/oilCard/transfer',
             method: 'post',
             data: {
-              id: this.refuel.id || '',
-              truckNo: this.refuel.type || '',
-              driverName: this.refuel.driverName || '',
-              changeAmount: this.refuel.changeAmount || '',
-              operateDate: this.refuel.operateDate || '',
-              remark: this.refuel.remark || ''
+              id: this.transfer.id || '',
+              actrualAmount: this.transfer.type || '',
+              returnDeposit: this.transfer.returnDeposit || '',
+              opearteDate: this.transfer.opearteDate || '',
+              remark: this.transfer.remark || ''
             }
           }).then(res => {
             this.loading = false

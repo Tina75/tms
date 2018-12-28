@@ -29,6 +29,13 @@
         <Row class="row">
           <Col span="8">
           <div>
+            <span class="label">提货方式：</span>
+            <span v-if="list.pickUp===1">小车上门提货</span>
+            <span v-else-if="list.pickUp===2">大车直送客户</span>
+          </div>
+          </Col>
+          <Col span="8">
+          <div>
             <span class="label">结算方式：</span>
             <span v-if="list.payType===1">现付</span>
             <span v-else-if="list.payType===2">到付</span>
@@ -39,23 +46,23 @@
           </Col>
           <Col span="8">
           <div>
-            <span class="label">开拓渠道：</span>
-            <span v-if="list.exploiteChannel ===1">公司开拓</span>
-            <span v-else>个人开拓</span>
-          </div>
-          </Col>
-          <Col span="8">
-          <div>
-            <span class="label">对接业务员：</span>
-            <span v-text="list.salesName"></span>
+            <span class="label">是否开票：</span>
+            <span v-text="list.isInvoice === 1 ? `是（${rate(list.invoiceRate)}%）` : '否'">现付</span>
           </div>
           </Col>
         </Row>
         <Row class="row">
           <Col span="8">
           <div>
-            <span class="label">是否开票：</span>
-            <span v-text="list.isInvoice === 1 ? `是（${rate(list.invoiceRate)}%）` : '否'">现付</span>
+            <span class="label">开拓渠道：</span>
+            <span v-if="list.exploiteChannel ===1">公司开拓</span>
+            <span v-if="list.exploiteChannel ===2">个人开拓</span>
+          </div>
+          </Col>
+          <Col span="8">
+          <div>
+            <span class="label">对接业务员：</span>
+            <span v-text="list.salesName"></span>
           </div>
           </Col>
         </Row>
@@ -148,7 +155,8 @@ export default {
         phone: '',
         payType: '',
         remark: '',
-        id: null
+        id: null,
+        pickUp: null
       },
       columns1: [
         {
@@ -269,7 +277,8 @@ export default {
                           latitude: params.row.latitude,
                           mapType: params.row.mapType,
                           cityCode: params.row.cityCode,
-                          consignerHourseNumber: params.row.consignerHourseNumber
+                          consignerHourseNumber: params.row.consignerHourseNumber,
+                          consigneeCompanyName: params.row.consigneeCompanyName
                         }
                       },
                       methods: {
@@ -583,7 +592,8 @@ export default {
             remark: data.remark,
             invoiceRate: data.invoiceRate,
             isInvoice: data.isInvoice,
-            salesName: data.salesName
+            salesName: data.salesName,
+            pickUp: data.pickUp
           }
           this.loading = false
           this.data1 = data.addressList.list

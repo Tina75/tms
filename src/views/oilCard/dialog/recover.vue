@@ -1,3 +1,4 @@
+<!--回收-->
 <template>
   <Modal v-model="visiable" :mask-closable="false" transfer width="560" @on-visible-change="close">
     <p slot="header" class="modalTitle">{{ title }}</p>
@@ -87,7 +88,7 @@ export default {
         }
       },
       ruleValidate: {
-        actrualAmount: { required: true, message: '请输入实际金额', trigger: 'blur' }
+        actrualAmount: [{ required: true, message: '请输入实际金额', trigger: 'change', type: 'number' }]
         // driverName: { required: true, message: '请选择司机', trigger: 'change' },
         // carrierName: { required: true, message: '请输入承运商', trigger: 'change' },
         // driverPhone: [

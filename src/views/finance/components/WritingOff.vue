@@ -321,7 +321,7 @@ export default {
             return row.settleTypeDesc === value
           },
           render: (h, p) => {
-            if (this.scene === 2 && typeof p.row.listMultiPay !== 'string') {
+            if (this.scene === 2 && (typeof p.row.listMultiPay !== 'string' && p.row.listMultiPay.length > 0)) {
               return h('div', [
                 h('span', p.row.settleTypeDesc + '  ' + p.row.unPayCount + '单未核'),
                 h(payTypeDialog, { props: { list: p.row.listMultiPay }, style: { display: 'inline-block', marginLeft: '5px' } })
@@ -381,7 +381,7 @@ export default {
       })
     },
     createBill () {
-      if (this.selectedIds.length > 1) {
+      if (this.selectedIds.length > 0) {
         // 统计多段付单子
         let monthList = []
         // 统计非多段付单子
@@ -427,7 +427,7 @@ export default {
           }
         })
       } else {
-        this.$Message.warning('请选择2条以上的数据')
+        this.$Message.warning('请先选择')
       }
     },
     startQuery () {
@@ -570,7 +570,7 @@ export default {
       this.currentPartner = data
       this.orderData = data.orderInfos.map(item => {
         let count = 0
-        if (item.listMultiPay) { // 按单结算才有
+        if (item.listMultiPay && item.listMultiPay.length > 0) { // 按单结算才有
           item.listMultiPay.map(paylist => {
             if (paylist.verifyStatus === 0) {
               count++
@@ -611,7 +611,7 @@ export default {
     },
     // 批量校验单子是否可以核销
     batchCheckOrder () {
-      if (this.selectedIds.length > 1) {
+      if (this.selectedIds.length > 0) {
         // 首先统计月结单子
         let monthList = []
         // 按单结单
@@ -659,11 +659,12 @@ export default {
           }
         })
       } else {
-        this.$Message.warning('请选择2条以上的数据')
+        this.$Message.warning('请先选择')
       }
     },
     // 批量可以核销
     batchVerifyOrder () {
+      let _this = this
       this.openDialog({
         name: 'finance/dialogs/bulkVerifyDialog',
         data: {
@@ -673,7 +674,7 @@ export default {
         methods: {
           freshSheet () {
             // 刷新
-            this.loadData()
+            _this.loadData()
           }
         }
       })
