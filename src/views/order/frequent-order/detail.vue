@@ -9,34 +9,44 @@
         <span>基本信息</span>
       </div>
       <Row :gutter="16">
-        <Col span="8">
+        <Col span="6">
         <FormItem label="客户名称：">
           {{detail.consignerName}}
         </FormItem>
         </Col>
-        <Col span="8">
+        <Col span="6">
+        <FormItem label="发货城市：">
+          {{detail.startName}}
+        </FormItem>
+        </Col>
+        <Col span="6">
+        <FormItem label="到货城市：">
+          {{detail.endName}}
+        </FormItem>
+        </Col>
+        <Col span="6">
         <FormItem label="提货方式：">
           {{pickupMap[detail.pickup]}}
         </FormItem>
         </Col>
-        <Col span="8">
+      </Row>
+      <Row :gutter="16">
+        <Col span="6">
         <FormItem label="回单数量：">
           {{detail.receiptCount}}
         </FormItem>
         </Col>
-      </Row>
-      <Row :gutter="16">
-        <Col span="8">
+        <Col span="6">
         <FormItem label="对接业务员：">
           {{detail.salesmanName}}
         </FormItem>
         </Col>
-        <Col span="8">
+        <Col span="6">
         <FormItem label="代收货款：">
           {{detail.collectionMoney | toPoint}}元
         </FormItem>
         </Col>
-        <Col span="8">
+        <Col span="6">
         <FormItem label="是否开票：">
           {{detail.isInvoice === 1 ? `是（${rate(detail.invoiceRate)}%）` : '否'}}
         </FormItem>
@@ -63,7 +73,7 @@
             {{detail.consignerPhone}}
           </FormItem>
           <FormItem label="发货地址：">
-            {{detail.startName + detail.consignerAddress + detail.consignerHourseNumber}}
+            {{detail.consignerAddress + detail.consignerHourseNumber}}
           </FormItem>
         </Card>
         </Col>
@@ -77,7 +87,7 @@
             {{detail.consigneePhone}}
           </FormItem>
           <FormItem label="收货地址：">
-            {{detail.endName + detail.consigneeAddress + detail.consigneeHourseNumber}}
+            {{detail.consigneeAddress + detail.consigneeHourseNumber}}
           </FormItem>
         </Card>
         </Col>
@@ -164,12 +174,10 @@ export default {
       tableColumns: [
         {
           title: '货物名称',
-          align: 'center',
           key: 'cargoName'
         },
         {
           title: '重量（吨）',
-          align: 'center',
           key: 'weight',
           render: (h, p) => {
             return h('span', p.row.weight || '-')
@@ -178,7 +186,6 @@ export default {
         {
           title: '体积（方）',
           key: 'volume',
-          align: 'center',
           render: (h, p) => {
             return h('span', p.row.volume || '-')
           }
@@ -186,7 +193,6 @@ export default {
         {
           title: '货值（元）',
           key: 'cargoCost',
-          align: 'center',
           render: (h, params) => {
             return h('span', params.row.cargoCost / 100 || '-')
           }
@@ -194,7 +200,6 @@ export default {
         {
           title: '包装数量',
           key: 'quantity',
-          align: 'center',
           render: (h, p) => {
             return h('span', p.row.quantity || '-')
           }
@@ -202,7 +207,6 @@ export default {
         {
           title: '包装方式',
           key: 'unit',
-          align: 'center',
           render: (h, p) => {
             return h('span', p.row.unit || '-')
           }
@@ -210,7 +214,6 @@ export default {
         {
           title: '备注1',
           key: 'remark1',
-          align: 'center',
           render: (h, p) => {
             return h('span', p.row.remark1 || '-')
           }
@@ -218,7 +221,6 @@ export default {
         {
           title: '备注2',
           key: 'remark2',
-          align: 'center',
           render: (h, p) => {
             return h('span', p.row.remark2 || '-')
           }
@@ -376,11 +378,12 @@ export default {
   .ivu-table-tip
     overflow-y auto
   .table-footer
-    text-align center
     line-height 44px
     border-left 1px solid #e8eaec
     border-right 1px solid #e8eaec
     border-bottom 1px solid #e8eaec
+    .ivu-col
+      padding-left 10px
   .blod-font
     font-weight 600
     font-size 14px
