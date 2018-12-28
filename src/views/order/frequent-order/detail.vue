@@ -180,7 +180,7 @@ export default {
           key: 'volume',
           align: 'center',
           render: (h, p) => {
-            return h('span', p.row.volume || 0)
+            return h('span', p.row.volume || '-')
           }
         },
         {
@@ -188,7 +188,7 @@ export default {
           key: 'cargoCost',
           align: 'center',
           render: (h, params) => {
-            return h('span', params.row.cargoCost / 100 || 0)
+            return h('span', params.row.cargoCost / 100 || '-')
           }
         },
         {
@@ -196,7 +196,7 @@ export default {
           key: 'quantity',
           align: 'center',
           render: (h, p) => {
-            return h('span', p.row.quantity || 0)
+            return h('span', p.row.quantity || '-')
           }
         },
         {
@@ -204,7 +204,7 @@ export default {
           key: 'unit',
           align: 'center',
           render: (h, p) => {
-            return h('span', p.row.unit || 0)
+            return h('span', p.row.unit || '-')
           }
         },
         {
