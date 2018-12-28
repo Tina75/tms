@@ -174,7 +174,7 @@ export default {
         name: 'owned-vehicle/dialog/edit-tyre',
         data: {
           title: '修改轮胎',
-          flag: 2, // 修改
+          flag: 4, // 修改
           validate: { ...vm.infoData, setupDate: new Date(vm.infoData.setupDate) }
         },
         methods: {

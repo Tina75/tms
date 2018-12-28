@@ -157,6 +157,8 @@
       <page-table
         :columns="insuranceColumns"
         :keywords="insuranceFormInit"
+        :show-filter="true"
+        table-head-type="car_insurance"
         class="pageTable"
         url="/ownerCar/insurance/list"
         list-field="list"
@@ -481,9 +483,40 @@ export default {
         {
           title: '购买日期',
           key: 'buyDate',
-          // sortable: 'custom',
           render: (h, params) => {
-            let text = this.formatDate(params.row.createTime)
+            let text = this.formatDate(params.row.buyDate)
+            return h('div', { props: {} }, text)
+          }
+        },
+        {
+          title: '生效日期',
+          key: 'effectDate',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.effectDate)
+            return h('div', { props: {} }, text)
+          }
+        },
+        {
+          title: '失效日期',
+          key: 'expireDate',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.expireDate)
+            return h('div', { props: {} }, text)
+          }
+        },
+        {
+          title: '交强险金额（元）',
+          key: 'trafficFee'
+        },
+        {
+          title: '商业险金额（元）',
+          key: 'businessFee'
+        },
+        {
+          title: '创建时间',
+          key: 'createTime',
+          render: (h, params) => {
+            let text = this.formatDateTime(params.row.createTime)
             return h('div', { props: {} }, text)
           }
         }

@@ -148,13 +148,13 @@ export default {
         ],
         cost: [
           { required: true, message: '金额不能为空' },
-          { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
         ],
         setupMileage: [
-          { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
         ],
         uninstallMileage: [
-          { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
         ],
         tireBrand: [
           { required: true, message: '轮胎品牌不能为空' }

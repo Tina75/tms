@@ -57,7 +57,7 @@ export default {
     return {
       options: {
         disabledDate (date) {
-          return date && date.valueOf() < Date.now() - 86400000
+          return date && date.valueOf() >= Date.now()
         }
       },
       carTypeMap: CAR_TYPE1,

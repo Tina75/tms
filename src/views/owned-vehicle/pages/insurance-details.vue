@@ -188,7 +188,7 @@ export default {
         name: 'owned-vehicle/dialog/edit-insurance',
         data: {
           title: '修改保险',
-          flag: 2, // 修改
+          flag: 4, // 修改
           validate: {
             ...vm.infoData,
             buyDate: new Date(vm.infoData.buyDate),

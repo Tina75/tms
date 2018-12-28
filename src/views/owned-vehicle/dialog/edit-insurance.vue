@@ -48,7 +48,7 @@
           <FormItem label="购买日期：">
             <Row>
               <Col span="20">
-              <DatePicker v-model="validate.buyDate" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
+              <DatePicker v-model="validate.buyDate" :options="options" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
               </DatePicker>
               </Col>
             </Row>
@@ -148,6 +148,11 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      options: {
+        disabledDate (date) {
+          return date && date.valueOf() < Date.now() - 86400000
+        }
+      },
       optionsStart: {
         disabledDate (date) {
           return date && date.valueOf() < Date.now() - 86400000
@@ -163,7 +168,7 @@ export default {
         invoiceNo: '',
         insuranceCompanyName: '',
         carNo: '',
-        buyDate: '',
+        buyDate: new Date(),
         effectDate: '',
         expireDate: '',
         trafficFee: null,
@@ -192,10 +197,10 @@ export default {
         ],
         trafficFee: [
           { required: true, message: '交强险金额不能为空' },
-          { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
         ],
         businessFee: [
-          { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
         ]
       }
     }

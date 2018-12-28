@@ -37,14 +37,14 @@
         <!-- 导入失败 -->
         <div v-if="failStatue">
           <p class="i-mb-10" style="color: red">导入失败，请查看错误报告</p>
-          <a v-if="errorReport" :href="errorReport" style="margin-right: 8px">下载错误报告</a>
+          <a :href="errorReport" style="margin-right: 8px">下载错误报告</a>
           <a @click="handleClick">重新导入</a>
         </div>
       </div>
     </div>
     <div slot="footer">
       <a :href="downLoadUrl" class="i-ml-10 ivu-btn ivu-btn-primary">下载模板</a>
-      <Button style="margin-left: 8px" @click.native="close">关闭</Button>
+      <Button style="margin-left: 8px" @click.native="closeDialog">关闭</Button>
     </div>
   </Modal>
 </template>
@@ -116,7 +116,6 @@ export default {
           } else {
             this.failStatue = true
             this.errorReport = data.url
-            vm.$Message.error('此次导入订单失败')
           }
           if (vm.timer) {
             clearTimeout(vm.timer)
@@ -228,6 +227,14 @@ export default {
         percent = 99
       }
       return percent
+    },
+    closeDialog () {
+      if (this.percent === 100) {
+        this.ok()
+        this.close()
+      } else {
+        this.close()
+      }
     }
   }
 }

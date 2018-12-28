@@ -68,7 +68,7 @@ export default {
                   click: () => {
                     this.openTab({
                       path: 'create',
-                      title: '创建订单',
+                      title: '再来一单',
                       query: { createId: params.row.id }
                     })
                   }

@@ -29,6 +29,8 @@
     <page-table
       :columns="menuColumns"
       :keywords="formSearchInit"
+      :show-filter="true"
+      table-head-type="car_insurance"
       class="pageTable"
       url="/ownerCar/insurance/list"
       list-field="list"
@@ -56,7 +58,7 @@ export default {
     return {
       options: {
         disabledDate (date) {
-          return date && date.valueOf() < Date.now() - 86400000
+          return date && date.valueOf() >= Date.now()
         }
       },
       selectStatus: '1',
@@ -160,9 +162,40 @@ export default {
         {
           title: '购买日期',
           key: 'buyDate',
-          // sortable: 'custom',
           render: (h, params) => {
-            let text = this.formatDate(params.row.createTime)
+            let text = this.formatDate(params.row.buyDate)
+            return h('div', { props: {} }, text)
+          }
+        },
+        {
+          title: '生效日期',
+          key: 'effectDate',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.effectDate)
+            return h('div', { props: {} }, text)
+          }
+        },
+        {
+          title: '失效日期',
+          key: 'expireDate',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.expireDate)
+            return h('div', { props: {} }, text)
+          }
+        },
+        {
+          title: '交强险金额（元）',
+          key: 'trafficFee'
+        },
+        {
+          title: '商业险金额（元）',
+          key: 'businessFee'
+        },
+        {
+          title: '创建时间',
+          key: 'createTime',
+          render: (h, params) => {
+            let text = this.formatDateTime(params.row.createTime)
             return h('div', { props: {} }, text)
           }
         }
@@ -240,6 +273,9 @@ export default {
     formatDate (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
     },
+    formatDateTime (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
     edit () {
       let vm = this
       this.openDialog({
@@ -259,11 +295,11 @@ export default {
       this.formSearchInit = {}
       if (this.selectStatus === '1' && this.keyword) {
         this.formSearchInit.carNo = this.keyword
-      } else if (this.selectStatus === '2') {
+      } else if (this.selectStatus === '2' && this.keyword) {
         this.formSearchInit.insuranceCompanyName = this.keyword
-      } else if (this.selectStatus === '3') {
+      } else if (this.selectStatus === '3' && this.keyword) {
         this.formSearchInit.invoiceNo = this.keyword
-      } else if (this.selectStatus === '4') {
+      } else if (this.selectStatus === '4' && this.keyword) {
         this.formSearchInit.buyDateStart = new Date(this.keyword[0]).getTime()
         this.formSearchInit.buyDateEnd = new Date(this.keyword[1]).getTime()
       }

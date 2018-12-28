@@ -80,7 +80,8 @@ export default {
         { title: '导出', code: '100304', parentId: '100300', grandId: '100000', disabled: true },
         { title: '恢复', code: '100305', parentId: '100300', grandId: '100000', disabled: true },
         { title: '彻底删除', code: '100306', parentId: '100300', grandId: '100000', disabled: true },
-        { title: '分享', code: '100307', parentId: '100300', grandId: '100000', disabled: true }
+        { title: '分享', code: '100307', parentId: '100300', grandId: '100000', disabled: true },
+        { title: '改单', code: '100308', parentId: '100300', grandId: '100000', disabled: true }
       ]
     }]
   }],
