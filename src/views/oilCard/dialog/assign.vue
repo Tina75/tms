@@ -16,7 +16,7 @@
         </RadioGroup>
       </FormItem>
       <!--自有车-->
-      <div v-show="assign.type===1">
+      <div v-if="assign.type===1">
         <FormItem label="司机：" prop="driverName">
           <Select :clearable="true" v-model="assign.driverName"  placeholder="请选择司机" @on-change="chooseDriverName">
             <Option v-for="(item, index) in ownDriversList"
@@ -31,7 +31,7 @@
         </FormItem>
       </div>
       <!--抵扣外转运费-->
-      <div v-show="assign.type===2">
+      <div v-if="assign.type===2">
         <FormItem label="承运商：" prop="carrierName">
           <SelectInput
             v-model="assign.carrierName"
@@ -61,7 +61,7 @@
           </SelectInput>
         </FormItem>
         <FormItem label="手机号：" prop="driverPhone">
-          <Input :maxlength="20" v-model="assign.driverPhone" placeholder="请输入司机号码"  />
+          <Input :maxlength="11" v-model="assign.driverPhone" placeholder="请输入司机号码"  />
         </FormItem>
         <FormItem label="车牌号：" prop="truckNo">
           <SelectInput
@@ -102,6 +102,13 @@ export default {
   },
   mixins: [BaseDialog],
   data () {
+    const driverNameVali = (rule, value, callback) => {
+      if (value) {
+        callback()
+      } else {
+        callback(new Error('请选择司机'))
+      }
+    }
     return {
       loading: false,
       typeList: [
@@ -123,7 +130,7 @@ export default {
       carriersId: null,
       ruleValidate: {
         type: { required: true },
-        driverName: { required: true, message: '请选择司机', trigger: 'change' },
+        driverName: { required: true, validator: driverNameVali, trigger: 'change' },
         carrierName: { required: true, message: '请输入承运商', trigger: 'change' },
         driverPhone: [
           { required: true, message: '请输入手机号码', trigger: 'blur' },

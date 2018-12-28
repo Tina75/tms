@@ -51,8 +51,27 @@ export default {
       })
     },
     // 转账
-    transfer () {
-      console.log('transfer')
+    transfer (p) {
+      this.openDialog({
+        name: 'oilCard/dialog/transfer',
+        data: {
+          title: '油卡转账',
+          transfer: {
+            id: p.row.id,
+            number: p.row.number,
+            amount: p.row.amount,
+            remark: p.row.remark,
+            type: p.row.type,
+            issuer: p.row.issuer,
+            primaryCardNumber: p.row.primaryCardNumber
+          }
+        },
+        methods: {
+          ok () {
+            this.fetchData()
+          }
+        }
+      })
     },
     // 修改
     update (p) {
