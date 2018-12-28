@@ -677,6 +677,7 @@ export default {
     },
     // 批量导入
     _consignerConsigneeAddAll () {
+      const self = this
       this.openDialog({
         name: 'client/dialog/batch-import',
         data: {
@@ -684,8 +685,8 @@ export default {
           downLoadUrl: this.downLoadUrl
         },
         methods: {
-          ok () {
-            this._consignerDetail()
+          ok: () => {
+            self._consignerConsigneeList()
           }
         }
       })
