@@ -24,25 +24,31 @@ export default {
     }
   },
   mounted: function () {
+    const vm = this
     this.ema = window.EMA.getProxy()
 
     // 打开一个弹出框
-    this.bindEvent('push', (data) => {
-      this.loadDialog({
+    vm.bindEvent('push', (data) => {
+      vm.loadDialog({
         name: data.name,
         data: JSON.parse(JSON.stringify(data.data)),
         methods: data.methods
       }, () => {
-        this.pushDialog(data.name.replace(/\//g, '-'))
+        vm.pushDialog(data.name.replace(/\//g, '-'))
       })
     })
     // 关闭指定弹出框
-    this.bindEvent('close', (name) => {
-      let obj = this.dialogs[this.dialogs.length - 1]
+    vm.bindEvent('close', (name) => {
+      let obj = vm.dialogs[vm.dialogs.length - 1]
       obj.visiable = false
-      this.cache[obj.name] = undefined
-      this.dialogs.splice(this.dialogs.length - 1, 1)
+      vm.cache[obj.name] = undefined
+      vm.dialogs.splice(vm.dialogs.length - 1, 1)
+      delete vm.cache[obj.name]
     })
+  },
+  beforeDestroy () {
+    this.cache = []
+    this.dialogs = []
   },
   methods: {
     pushDialog: function (name) {
@@ -54,9 +60,10 @@ export default {
       // this.dialogs.splice(0, 0, {name: name})
     },
     loadDialog: function (data, fn) {
+      const vm = this
       var name = data.name
       const key = name.replace(/\//g, '-')
-      if (this.cache[key]) {
+      if (vm.cache[key]) {
         fn()
       } else {
         import('../../../views/' + name + '').then(module => {
@@ -70,7 +77,7 @@ export default {
             methods: data.methods
           })
           Vue.component(name.replace(/\//g, '-'), tempModule)
-          this.cache[key] = tempModule
+          vm.cache[key] = tempModule
           fn()
         }).catch(() => {
           console.error('Chunk loading failed', name.replace(/\//g, '-'))
