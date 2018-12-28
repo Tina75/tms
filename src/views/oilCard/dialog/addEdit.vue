@@ -35,7 +35,7 @@
         </FormItem>
         <FormItem v-if = "addEdit.type === 2" :prop="mode ===1 ? 'primaryCardId' : 'noprimaryCardId'" label="主卡号：" >
           <!--新增-->
-          <Select v-if="mode===1" v-model="addEdit.primaryCardId" placeholder="请输入卡号">
+          <Select v-if="mode===1" v-model="addEdit.primaryCardId" placeholder="请选择卡号">
             <Option v-for="(item,index) in primaryCardList"
                     :value="item.id"  :key="index">{{ item.number }}</Option>
           </Select>
@@ -166,12 +166,12 @@ export default {
         url: '/oilCard/add',
         method: 'post',
         data: {
-          type: this.addEdit.type || '',
-          number: this.addEdit.number || '',
-          primaryCardId: this.addEdit.primaryCardId || '',
-          issuer: this.addEdit.issuer || '',
-          amount: float.round(this.addEdit.amount * 100) || '',
-          remark: this.addEdit.remark || ''
+          type: this.addEdit.type || undefined,
+          number: this.addEdit.number || undefined,
+          primaryCardId: this.addEdit.primaryCardId || undefined,
+          issuer: this.addEdit.issuer || undefined,
+          amount: float.round(this.addEdit.amount * 100) || undefined,
+          remark: this.addEdit.remark || undefined
         }
       }).then(res => {
         this.loading = false
@@ -184,13 +184,13 @@ export default {
         url: '/oilCard/update',
         method: 'post',
         data: {
-          id: this.addEdit.id,
-          type: this.addEdit.type || '',
-          number: this.addEdit.number || '',
-          primaryCardId: this.addEdit.primaryCardId || '',
-          issuer: this.addEdit.issuer || '',
-          amount: float.round(this.addEdit.amount * 100) || '',
-          remark: this.addEdit.remark || ''
+          id: this.addEdit.id || undefined,
+          type: this.addEdit.type || undefined,
+          number: this.addEdit.number || undefined,
+          primaryCardId: this.addEdit.primaryCardId || undefined,
+          issuer: this.addEdit.issuer || undefined,
+          amount: float.round(this.addEdit.amount * 100) || undefined,
+          remark: this.addEdit.remark || undefined
         }
       }).then(res => {
         this.loading = false

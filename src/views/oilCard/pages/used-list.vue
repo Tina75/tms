@@ -111,20 +111,6 @@ export default {
     fetchData () {
       this.searchFields = this.setFetchParams()
     },
-    setFetchParams () {
-      let obj = {}
-      for (let key in this.queryParams) {
-        this.queryParams[key] ? (obj[key] = this.queryParams[key]) : (obj[key] = '')
-      }
-      return obj
-    },
-    clearParams () {
-      for (let key in this.queryParams) {
-        if (this.queryParams[key]) {
-          this.queryParams[key] = ''
-        }
-      }
-    },
     export () {
       Export({
         url: '/oilCard/log/export',
