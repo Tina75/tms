@@ -103,7 +103,7 @@ export default {
   props: {
   },
   metaInfo: {
-    title: '轮胎管理'
+    title: '轮胎管理详情'
   },
   data () {
     return {

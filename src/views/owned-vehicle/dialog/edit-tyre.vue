@@ -96,7 +96,7 @@
         <p class="modalTitle">附件照片</p>
         <Row>
           <up-load ref="upLoads" :multiple="true" max-count="6" max-size="10"></up-load>
-          <span class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
+          <span class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传6张，每张不能超过10MB</span>
         </Row>
         <p class="modalTitle">备注</p>
         <Input v-model="validate.remark" :maxlength="100" type="textarea" placeholder="请输入"></Input>

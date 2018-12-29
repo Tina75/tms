@@ -83,7 +83,7 @@ export default {
   props: {
   },
   metaInfo: {
-    title: '车辆年检'
+    title: '车辆年检详情'
   },
   data () {
     return {
