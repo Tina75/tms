@@ -381,7 +381,7 @@ export default {
       })
     },
     createBill () {
-      if (this.selectedIds.length > 0) {
+      if (this.selectedList.length > 0) {
         // 统计多段付单子
         let monthList = []
         // 统计非多段付单子
@@ -401,7 +401,7 @@ export default {
           })
         }
         if (notMulList.length === 0) { // 都是多段付，不用判断异常，直接弹窗提示存在多段付单子
-          this.errDialog(errList)
+          if (errList.length > 0) this.errDialog(errList)
           return
         }
         Server({
@@ -566,6 +566,8 @@ export default {
       })
     },
     showOrderData (data) {
+      // 切换的时候要把之前选择的清空
+      this.selectedList = []
       this.companyDataActive = data.id
       this.currentPartner = data
       this.orderData = data.orderInfos.map(item => {
@@ -611,7 +613,7 @@ export default {
     },
     // 批量校验单子是否可以核销
     batchCheckOrder () {
-      if (this.selectedIds.length > 0) {
+      if (this.selectedList.length > 0) {
         // 首先统计月结单子
         let monthList = []
         // 按单结单
@@ -648,7 +650,7 @@ export default {
         }).then(res => {
           if (res.data.data && res.data.data.operateCode === 1) { // 存在异常
             errList.push({
-              title: '以下单据因为存在异常，不能批量核销',
+              title: '以下单据因为存在异常未处理，不能批量核销。单据号：',
               arr: res.data.data.orderNos
             })
           }
