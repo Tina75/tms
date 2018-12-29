@@ -135,29 +135,20 @@ export default {
       let idList = this.tableSelection.map(item => {
         return item.id
       })
-      console.log(idList)
-      this.$Modal.confirm({
-        title: '停用',
-        content: '是否确认停用所选油卡',
-        okText: '确认',
-        cancelText: '取消',
-        async onOk () {
-          let vm = _this
-          _this.openDialog({
-            name: 'oilCard/dialog/operate',
-            data: {
-              title: '油卡停用',
-              operate: {
-                idList: idList,
-                type: 1 // 1停用，2启用
-              }
-            },
-            methods: {
-              ok () {
-                vm.fetchData()
-              }
-            }
-          })
+      _this.openDialog({
+        name: 'oilCard/dialog/operate',
+        data: {
+          title: '油卡停用',
+          content: '是否确认停用所选油卡',
+          operate: {
+            idList: idList,
+            type: 1 // 1停用，2启用
+          }
+        },
+        methods: {
+          ok () {
+            _this.fetchData()
+          }
         }
       })
     },
@@ -171,29 +162,20 @@ export default {
       let idList = this.tableSelection.map(item => {
         return item.id
       })
-      console.log(idList)
-      this.$Modal.confirm({
-        title: '启用',
-        content: '是否确认启用所选油卡',
-        okText: '确认',
-        cancelText: '取消',
-        async onOk () {
-          let vm = _this
-          _this.openDialog({
-            name: 'oilCard/dialog/operate',
-            data: {
-              title: '油卡启用',
-              operate: {
-                idList: idList,
-                type: 2 // 1停用，2启用
-              }
-            },
-            methods: {
-              ok () {
-                vm.fetchData()
-              }
-            }
-          })
+      _this.openDialog({
+        name: 'oilCard/dialog/operate',
+        data: {
+          title: '油卡启用',
+          content: '是否确认启用所选油卡',
+          operate: {
+            idList: idList,
+            type: 2 // 1停用，2启用
+          }
+        },
+        methods: {
+          ok () {
+            _this.fetchData()
+          }
         }
       })
     },
@@ -210,7 +192,7 @@ export default {
     toDetail (p) {
       this.openTab({
         title: p.row.number,
-        path: '/oilCard/detail/detail',
+        path: 'oilList-detail',
         query: {
           shipperOrderId: p.row.id
         }
