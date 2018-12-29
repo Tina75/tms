@@ -7,7 +7,7 @@
         v-if="hasPower(btn.code)"
         :key="index"
         :type="index === btnGroup.length-1 ? 'primary' : 'default'"
-        @click="btn.func(rowParams)">{{ btn.name }}</Button>
+        @click="btn.func(rowParams, 1)">{{ btn.name }}</Button>
         <!--</Tooltip>-->
     </div>
     <section>
@@ -84,10 +84,9 @@
 </template>
 
 <script>
-import { oilTableBtn } from '../constant/oil'
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
-import operateBtnMixin from '../mixin/operateBtnMixin'
+// import operateBtnMixin from '../mixin/operateBtnMixin'
 import contantmixin from '../mixin/contantmixin'
 import '@/libs/js/filter'
 export default {
@@ -96,7 +95,7 @@ export default {
   components: {
     // OrderPrint
   },
-  mixins: [ BasePage, operateBtnMixin, contantmixin ],
+  mixins: [ BasePage, contantmixin ],
   metaInfo: { title: '订单详情' },
   data () {
     return {
@@ -104,7 +103,7 @@ export default {
       detail: {},
       orderStatus: '',
       show: false,
-      btnGroup: oilTableBtn(this),
+      // btnGroup: oilTableBtn(this),
       operateValue: 5,
       tableData: [],
       showLog: true,
@@ -118,6 +117,68 @@ export default {
       return {
         row: this.detail
       }
+    },
+    btnGroup () {
+      let _this = this
+      let array = [
+        {
+          name: '停用',
+          code: 160108,
+          func: (p) => {
+            _this.stop(_this.detail.id)
+          }
+        },
+        {
+          name: '启用',
+          code: 160109,
+          func: (p) => {
+            _this.start(_this.detail.id)
+          }
+        },
+        {
+          name: '分配',
+          code: 160103,
+          func: (p) => {
+            _this.assign(p)
+          }
+        },
+        {
+          name: '充值',
+          code: 160104,
+          func: (p) => {
+            _this.recharge(p)
+          }
+        },
+        {
+          name: '加油',
+          code: 160105,
+          func: (p) => {
+            _this.refuel(p)
+          }
+        },
+        {
+          name: '转账',
+          code: 160106,
+          func: (p) => {
+            _this.transfer(p)
+          }
+        },
+        {
+          name: '修改',
+          code: 160102,
+          func: (p) => {
+            _this.update(p)
+          }
+        },
+        {
+          name: '回收',
+          code: 160107,
+          func: (p) => {
+            _this.recover(p)
+          }
+        }
+      ]
+      return array
     }
   },
 
@@ -125,17 +186,212 @@ export default {
     this.getDetail()
   },
   methods: {
+    // 停用
+    stop (id) {
+      let idList = [id]
+      let _this = this
+      this.$Modal.confirm({
+        title: '停用',
+        content: '是否确认停用所选油卡',
+        okText: '确认',
+        cancelText: '取消',
+        async onOk () {
+          let vm = _this
+          _this.openDialog({
+            name: 'oilCard/dialog/operate',
+            data: {
+              title: '油卡停用',
+              operate: {
+                idList: idList,
+                type: 1 // 1停用，2启用
+              }
+            },
+            methods: {
+              ok () {
+                vm.getDetail()
+              }
+            }
+          })
+        }
+      })
+    },
+    // 启用
+    start (id) {
+      let idList = [id]
+      // idList = idList.push(id)
+      let _this = this
+      this.$Modal.confirm({
+        title: '启用',
+        content: '是否确认启用所选油卡',
+        okText: '确认',
+        cancelText: '取消',
+        async onOk () {
+          let vm = _this
+          _this.openDialog({
+            name: 'oilCard/dialog/operate',
+            data: {
+              title: '油卡启用',
+              operate: {
+                idList: idList,
+                type: 2 // 1停用，2启用
+              }
+            },
+            methods: {
+              ok () {
+                vm.getDetail()
+              }
+            }
+          })
+        }
+      })
+    },
+    // 分配
+    assign (p) {
+      let _this = this
+      this.openDialog({
+        name: 'oilCard/dialog/assign',
+        data: {
+          title: '分配油卡',
+          assign: {
+            id: p.row.id,
+            number: p.row.number,
+            amount: p.row.amount,
+            remark: p.row.remark
+          }
+        },
+        methods: {
+          ok () {
+            _this.getDetail()
+          }
+        }
+      })
+    },
+    // 充值
+    recharge (p) {
+      let _this = this
+      this.openDialog({
+        name: 'oilCard/dialog/recharge',
+        data: {
+          title: '油卡充值',
+          recharge: {
+            id: p.row.id,
+            amount: p.row.amount,
+            remark: p.row.remark,
+            type: p.row.type,
+            issuer: p.row.issuer,
+            primaryCardNumber: p.row.primaryCardNumber
+          }
+        },
+        methods: {
+          ok () {
+            _this.getDetail()
+          }
+        }
+      })
+    },
+    // 加油
+    refuel (p) {
+      let _this = this
+      this.openDialog({
+        name: 'oilCard/dialog/refuel',
+        data: {
+          title: '油卡加油',
+          refuel: {
+            id: p.row.id,
+            number: p.row.number,
+            amount: p.row.amount,
+            remark: p.row.remark,
+            type: p.row.type,
+            driverName: p.row.driverName,
+            truckNo: p.row.truckNo,
+            issuer: p.row.issuer
+          }
+        },
+        methods: {
+          ok () {
+            _this.getDetail()
+          }
+        }
+      })
+    },
+    // 转账
+    transfer (p) {
+      let _this = this
+      this.openDialog({
+        name: 'oilCard/dialog/transfer',
+        data: {
+          title: '油卡转账',
+          transfer: {
+            id: p.row.id,
+            number: p.row.number,
+            amount: p.row.amount,
+            remark: p.row.remark,
+            type: p.row.type,
+            issuer: p.row.issuer,
+            primaryCardId: p.row.primaryCardId,
+            primaryCardNumber: p.row.primaryCardNumber
+          }
+        },
+        methods: {
+          ok () {
+            _this.getDetail()
+          }
+        }
+      })
+    },
+    // 修改
+    update (p) {
+      let _this = this
+      this.openDialog({
+        name: 'oilCard/dialog/addEdit',
+        data: {
+          title: '修改油卡',
+          mode: 2,
+          addEdit: {
+            id: p.row.id,
+            number: p.row.number,
+            amount: p.row.amount,
+            remark: p.row.remark,
+            type: p.row.type,
+            issuer: p.row.issuer,
+            primaryCardId: p.row.primaryCardId,
+            primaryCardNumber: p.row.primaryCardNumber
+          }
+        },
+        methods: {
+          ok () {
+            _this.getDetail()
+          }
+        }
+      })
+    },
+    // 回收
+    recover (p) {
+      let _this = this
+      this.openDialog({
+        name: 'oilCard/dialog/recover',
+        data: {
+          title: '回收油卡',
+          recover: {
+            id: p.row.id,
+            number: p.row.number,
+            amount: p.row.amount,
+            remark: p.row.remark,
+            type: p.row.type,
+            issuer: p.row.issuer
+          }
+        },
+        methods: {
+          ok () {
+            _this.getDetail()
+          }
+        }
+      })
+    },
     showPoptip (e) {
       this.show = true
     },
-    hidePoptip (e) {
-      this.show = false
-    },
-    // 日志切换显示
-    showOrderLog () {
-      this.showLog = !this.showLog
-    },
-    // 拉取table数据
+    // 拉取詳情数据
     getDetail () {
       // 订单详情
       Server({
@@ -151,6 +407,13 @@ export default {
         this.orderLog = res.data.data.operateLogList // 订单日志
         this.orderLogCount = res.data.data.operateLogList.length // 订单日志数量
       })
+    },
+    hidePoptip (e) {
+      this.show = false
+    },
+    // 日志切换显示
+    showOrderLog () {
+      this.showLog = !this.showLog
     }
   }
 }

@@ -50,8 +50,8 @@ export default {
         _this.close()
         if (!res.data.data) {
           _this.$Message.success(res.data.msg)
-        } else {
-          if (res.data.data.invalidNumberList && res.data.data.invalidNumberList.length === 1) {
+        } else if (res.data.data.invalidNumberList) {
+          if (res.data.data.invalidNumberList.length === 1) {
             if (_this.operate.operate.type === 1) this.$Message.error('只有未分配状态的油卡才可以停用。')
             else _this.$Message.error('只有停用状态的油卡才可以启用。')
           } else if (res.data.data.invalidNumberList.length > 1) {
