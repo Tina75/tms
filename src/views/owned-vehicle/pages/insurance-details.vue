@@ -54,13 +54,13 @@
             <Col span="6">
             <div>
               <span class="label">交强险金额：</span>
-              {{infoData.trafficFee}}
+              {{infoData.trafficFee / 100}}
             </div>
             </Col>
             <Col span="6">
             <div>
               <span class="label">商业险金额:</span>
-              {{infoData.businessFee}}
+              {{infoData.businessFee / 100}}
             </div>
             </Col>
           </Row>
@@ -68,7 +68,7 @@
             <Col span="6">
             <div>
               <span class="label">总金额：</span>
-              {{infoData.totalFee}}
+              {{infoData.totalFee / 100}}
             </div>
             </Col>
           </Row>
