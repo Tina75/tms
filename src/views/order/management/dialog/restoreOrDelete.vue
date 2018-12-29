@@ -116,7 +116,7 @@ export default {
       })
       return arr
     },
-    // 判断勾选的订单是否status都为20
+    // 判断勾选的订单是否status都为20且pickupStatus为1
     isStatus20 () {
       return !this.id.some(this.checkIsStatus20)
     },
@@ -253,7 +253,7 @@ export default {
       return false
     },
     checkIsStatus20 (list) {
-      if (list.status !== 20) {
+      if (list.status !== 20 || list.pickupStatus !== 1) {
         return true
       }
       return false

@@ -89,7 +89,7 @@ export default {
       this.isQrcodeShow = true
     },
     QQShare () {
-      window.open('http://connect.qq.com/widget/shareqq/index.html?url=' + this.shareUrl)
+      window.open('http://connect.qq.com/widget/shareqq/index.html?url=' + this.shareUrl + '&title=' + this.shareTitle + '&pics=' + this.imagLogoSrc + '&summary=' + this.shareSummary + '&desc=' + this.shareSummary)
     }
   }
 }
