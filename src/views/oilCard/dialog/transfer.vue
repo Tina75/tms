@@ -22,7 +22,7 @@
       <FormItem v-if="transfer.type===1" label="转入卡号：" prop="toCardId">
         <Select  v-model="transfer.toCardId" placeholder="请选择卡号">
           <Option v-for="(item,index) in SecondaryCardList"
-                  :value="item.id"  :key="index">{{ item.number }}</Option>
+                  :value="item.id"  :key="index" :disabled="item.status === 3">{{ item.number }}</Option>
         </Select>
       </FormItem>
       <!--类型为副卡-->
