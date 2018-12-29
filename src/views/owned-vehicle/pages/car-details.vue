@@ -391,6 +391,8 @@ export default {
           title: '操作',
           key: 'id',
           width: 150,
+          fixed: 'left',
+          extra: true,
           render: (h, params) => {
             let renderBtn = []
             if (this.hasPower(190402)) {
@@ -478,7 +480,10 @@ export default {
         },
         {
           title: '总金额（元）',
-          key: 'totalFee'
+          key: 'totalFee',
+          render: (h, params) => {
+            return h('span', Number(params.row.totalFee) / 100)
+          }
         },
         {
           title: '购买日期',
@@ -506,11 +511,17 @@ export default {
         },
         {
           title: '交强险金额（元）',
-          key: 'trafficFee'
+          key: 'trafficFee',
+          render: (h, params) => {
+            return h('span', Number(params.row.trafficFee) / 100)
+          }
         },
         {
           title: '商业险金额（元）',
-          key: 'businessFee'
+          key: 'businessFee',
+          render: (h, params) => {
+            return h('span', Number(params.row.businessFee) / 100)
+          }
         },
         {
           title: '创建时间',
@@ -600,7 +611,10 @@ export default {
         },
         {
           title: '金额',
-          key: 'cost'
+          key: 'cost',
+          render: (h, params) => {
+            return h('span', Number(params.row.cost) / 100)
+          }
         },
         {
           title: '年检日期',
@@ -707,7 +721,10 @@ export default {
         },
         {
           title: '金额',
-          key: 'cost'
+          key: 'cost',
+          render: (h, params) => {
+            return h('span', Number(params.row.cost) / 100)
+          }
         },
         {
           title: '轮胎品牌',
@@ -719,11 +736,17 @@ export default {
         },
         {
           title: '换上公里数',
-          key: 'setupMileage'
+          key: 'setupMileage',
+          render: (h, params) => {
+            return h('span', Number(params.row.setupMileage) / 1000)
+          }
         },
         {
           title: '换下公里数',
-          key: 'uninstallMileage'
+          key: 'uninstallMileage',
+          render: (h, params) => {
+            return h('span', Number(params.row.uninstallMileage) / 1000)
+          }
         },
         {
           title: '安装日期',
