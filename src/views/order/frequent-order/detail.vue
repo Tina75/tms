@@ -178,7 +178,10 @@ export default {
         },
         {
           title: '货物编号',
-          key: 'cargoNo'
+          key: 'cargoNo',
+          render: (h, p) => {
+            return h('span', p.row.cargoNo || '-')
+          }
         },
         {
           title: '重量（吨）',
@@ -219,7 +222,7 @@ export default {
           title: '包装尺寸（长x宽x高 mm）',
           key: 'dimension',
           render: (h, p) => {
-            return h('span', (p.row.dimension.length || 0) + ' x ' + (p.row.dimension.width || 0) + ' x ' + (p.row.dimension.height || 0))
+            return h('span', (p.row.dimension.length || '-') + ' x ' + (p.row.dimension.width || '-') + ' x ' + (p.row.dimension.height || '-'))
           }
         },
         {
