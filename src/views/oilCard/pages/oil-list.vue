@@ -6,7 +6,7 @@
         <Row>
           <Col span="6">
           <FormItem :label-width="65" label="卡号：">
-            <Input v-model="queryParams.number" :maxlength="20" placeholder="请输入主卡号或副卡号"></Input>
+            <Input v-model="queryParams.number" :maxlength="30" placeholder="请输入主卡号或副卡号"></Input>
           </FormItem>
           </Col>
           <Col offset="3" span="6">

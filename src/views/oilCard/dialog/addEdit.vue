@@ -122,7 +122,7 @@ export default {
         number: [
           { required: true, validator: numberValidate, trigger: 'blur' }
         ],
-        primaryCardId: { required: true, message: '主卡号不能为空' },
+        primaryCardId: { required: true, message: '没有主卡可选，请先新增主卡' },
         noprimaryCardId: { required: false }
       },
       precision: 2
