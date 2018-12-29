@@ -2,26 +2,12 @@
   <div class="vertical-tabs">
     <Row type="flex">
       <Col :style="styleHeight" class="vertical-tabs__menu" span="4">
-      <Menu ref="menu" :active-name="activeKey" width="180">
+      <Menu ref="menu" :active-name="activeKey" width="180" @on-select="handleSelect">
         <template v-for="(tab, index) in tabList" >
-          <template v-if="tab.children">
-            <SubMenu :key="index" :name="tab.name">
-              <div slot="title" class="vertical-tabs__menu-item">
-                <FontIcon v-if="!!tab.icon" :key="index" v-bind.sync="tab.icon" size="19" class="vertical-tabs__menu-icon"></FontIcon>
-                {{tab.label}}
-              </div>
-              <MenuItem v-for="(child, i) in tab.children" :key="i" :name="child.name" class="vertical-tabs__menu-item">
-              <FontIcon v-if="!!child.icon" :key="index" v-bind.sync="child.icon" size="19" class="vertical-tabs__menu-icon"></FontIcon>
-              {{child.label}}
-              </MenuItem>
-            </SubMenu>
-          </template>
-          <template v-else>
-            <MenuItem :key="index" :name="tab.name" class="vertical-tabs__menu-item">
-            <FontIcon v-if="!!tab.icon" :key="index" v-bind.sync="tab.icon" size="19" class="vertical-tabs__menu-icon"></FontIcon>
-            {{tab.label}}
+          <MenuItem :key="index" :name="tab.name" class="vertical-tabs__menu-item">
+          <FontIcon v-if="!!tab.icon" :key="index" v-bind.sync="tab.icon" size="19" class="vertical-tabs__menu-icon"></FontIcon>
+          {{tab.label}}
             </MenuItem>
-          </template>
         </template>
       </Menu>
       </Col>
@@ -104,8 +90,8 @@ export default {
         }
       })
     },
-    handleSelect (item) {
-      this.activeKey = item.name
+    handleSelect (name) {
+      this.activeKey = name
     }
   }
 }
@@ -140,4 +126,6 @@ export default {
           color #333
           font-weight bold
           background-color #fff
+        &:after
+          background-color transparent
 </style>
