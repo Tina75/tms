@@ -59,7 +59,6 @@
             <Row>
               <Col span="20">
               <DatePicker
-                :options="optionsStart"
                 v-model="validate.effectDate"
                 transfer
                 format="yyyy-MM-dd"
@@ -154,6 +153,7 @@ export default {
           return date && date.valueOf() > Date.now()
         }
       },
+      optionsEnd: {},
       loading: false,
       validate: {
         invoiceNo: '',

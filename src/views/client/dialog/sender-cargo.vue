@@ -112,20 +112,18 @@ export default {
   },
   watch: {
     volumeLength (newVal) {
-      this.validate.volume = this.numberInit(newVal, this.volumeWidth, this.volumeHeight)
+      if (newVal && this.volumeWidth && this.volumeHeight) this.validate.volume = this.numberInit(newVal, this.volumeWidth, this.volumeHeight)
     },
     volumeWidth (newVal) {
-      this.validate.volume = this.numberInit(newVal, this.volumeWidth, this.volumeLength)
+      if (newVal && this.volumeHeight && this.volumeLength) this.validate.volume = this.numberInit(newVal, this.volumeHeight, this.volumeLength)
     },
     volumeHeight (newVal) {
-      this.validate.volume = this.numberInit(newVal, this.volumeWidth, this.volumeHeight)
+      if (newVal && this.volumeWidth && this.volumeLength) this.validate.volume = this.numberInit(newVal, this.volumeWidth, this.volumeLength)
     }
   },
   methods: {
     numberInit (val1, val2, val3) { // 精确六位小数
-      let number = Number(float.round(val1 * (val2 | 0) * (val3 | 0)) / 1000000000).toFixed(6)
-      if (number * 1000000000 % 1000000000 === 0) return parseInt(number)
-      else return number
+      return float.round(val1 * val2 * val3 / (1000 * 1000 * 1000), 6)
     },
     save (name) {
       this.$refs[name].validate((valid) => {
