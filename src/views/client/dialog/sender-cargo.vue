@@ -14,7 +14,7 @@
           <Input v-model="validate.cargoName" :maxlength="20" placeholder="请输入"/>
         </FormItem>
         <FormItem label="货物编码：">
-          <Input v-model="validate.cargoNo" :maxlength="20" placeholder="请输入"/>
+          <Input v-model="validate.cargoNo" :maxlength="200" placeholder="请输入"/>
         </FormItem>
         <FormItem label="货值：" prop="cargoCost">
           <Input v-model="validate.cargoCost"  placeholder="请输入"/>
@@ -24,11 +24,20 @@
         </FormItem>
         <FormItem label="包装尺寸：">
           <Row>
-            <Col :span="6"><InputNumber :min="0" v-model="volumeLength" placeholder="长"></InputNumber></Col>
+            <Col :span="6">
+            <!-- <InputNumber :min="0" v-model="volumeLength" placeholder="长"></InputNumber> -->
+            <TagNumberInput :min="0" :precision="0" v-model="volumeLength" :length="7" :show-chinese="false" placeholder="长"></TagNumberInput>
+            </Col>
             <Col :span="1"><span style="padding-left: 3px">-</span></Col>
-            <Col :span="6"><InputNumber :min="0" v-model="volumeWidth" placeholder="宽"></InputNumber></Col>
+            <Col :span="6">
+            <!-- <InputNumber :min="0" v-model="volumeWidth" placeholder="宽"></InputNumber> -->
+            <TagNumberInput :min="0" :precision="0" v-model="volumeWidth" :length="7" :show-chinese="false" placeholder="宽"></TagNumberInput>
+            </Col>
             <Col :span="1"><span style="padding-left: 3px">-</span></Col>
-            <Col :span="6"><InputNumber :min="0" v-model="volumeHeight" placeholder="高"></InputNumber></Col>
+            <Col :span="6">
+            <!-- <InputNumber :min="0" v-model="volumeHeight" placeholder="高"></InputNumber> -->
+            <TagNumberInput :min="0" :precision="0" v-model="volumeHeight" :length="7" :show-chinese="false" placeholder="高"></TagNumberInput>
+            </Col>
             <Col :span="4"><span style="padding-left: 15px">毫米</span></Col>
           </Row>
         </FormItem>
@@ -112,20 +121,18 @@ export default {
   },
   watch: {
     volumeLength (newVal) {
-      this.validate.volume = this.numberInit(newVal, this.volumeWidth, this.volumeHeight)
+      if (newVal && this.volumeWidth && this.volumeHeight) this.validate.volume = this.numberInit(newVal, this.volumeWidth, this.volumeHeight)
     },
     volumeWidth (newVal) {
-      this.validate.volume = this.numberInit(newVal, this.volumeWidth, this.volumeLength)
+      if (newVal && this.volumeHeight && this.volumeLength) this.validate.volume = this.numberInit(newVal, this.volumeHeight, this.volumeLength)
     },
     volumeHeight (newVal) {
-      this.validate.volume = this.numberInit(newVal, this.volumeWidth, this.volumeHeight)
+      if (newVal && this.volumeWidth && this.volumeLength) this.validate.volume = this.numberInit(newVal, this.volumeWidth, this.volumeLength)
     }
   },
   methods: {
     numberInit (val1, val2, val3) { // 精确六位小数
-      let number = Number(float.round(val1 * (val2 | 0) * (val3 | 0)) / 1000000000).toFixed(6)
-      if (number * 1000000000 % 1000000000 === 0) return parseInt(number)
-      else return number
+      return float.round(val1 * val2 * val3 / (1000 * 1000 * 1000), 6)
     },
     save (name) {
       this.$refs[name].validate((valid) => {
@@ -150,6 +157,7 @@ export default {
         volume: parseFloat(this.validate.volume),
         remark1: this.validate.remark1,
         remark2: this.validate.remark2,
+        cargoNo: this.validate.cargoNo,
         dimension: JSON.stringify({ length: this.volumeLength, width: this.volumeWidth, height: this.volumeHeight })
       }
       consignerCargoAdd(data).then(res => {
@@ -169,6 +177,7 @@ export default {
         volume: parseFloat(this.validate.volume),
         remark1: this.validate.remark1,
         remark2: this.validate.remark2,
+        cargoNo: this.validate.cargoNo,
         dimension: JSON.stringify({ length: this.volumeLength, width: this.volumeWidth, height: this.volumeHeight })
       }
       consignerCargoUpdate(data).then(res => {

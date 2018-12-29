@@ -116,6 +116,7 @@ import SelectInput from '@/components/SelectInput'
 import Server from '@/libs/js/server'
 import TagNumberInput from '@/components/TagNumberInput'
 import CarSelect from '@/components/own-car-form/CarSelect'
+import float from '@/libs/js/float'
 export default {
   name: 'edit-tyre',
   components: {
@@ -185,6 +186,9 @@ export default {
           })
         }
         vm.$refs.upLoads.uploadImgList = vm.imgList
+        vm.validate.cost = Number(vm.validate.cost) / 100
+        vm.validate.setupMileage = Number(vm.validate.setupMileage) / 1000
+        vm.validate.uninstallMileage = Number(vm.validate.uninstallMileage) / 1000
       }
     },
     save (name) {
@@ -194,6 +198,9 @@ export default {
       })
       let params = Object.assign({}, this.validate)
       if (params.setupDate) params.setupDate = new Date(this.validate.setupDate).getTime()
+      if (params.cost) params.cost = float.round(this.validate.cost * 100)
+      if (params.setupMileage) params.setupMileage = float.round(this.validate.setupMileage * 1000)
+      if (params.uninstallMileage) params.uninstallMileage = float.round(this.validate.uninstallMileage * 1000)
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.loading = true

@@ -58,7 +58,7 @@ export default {
     return {
       options: {
         disabledDate (date) {
-          return date && date.valueOf() >= Date.now()
+          return date && date.valueOf() > Date.now()
         }
       },
       selectStatus: '1',
@@ -92,9 +92,9 @@ export default {
                         flag: 2, // 修改
                         validate: {
                           ...params.row,
-                          buyDate: new Date(params.row.buyDate),
-                          effectDate: new Date(params.row.effectDate),
-                          expireDate: new Date(params.row.expireDate)
+                          buyDate: new Date(params.row.buyDate).Format('yyyy-MM-dd'),
+                          effectDate: new Date(params.row.effectDate).Format('yyyy-MM-dd'),
+                          expireDate: new Date(params.row.expireDate).Format('yyyy-MM-dd')
                         }
                       },
                       methods: {
@@ -160,14 +160,17 @@ export default {
         },
         {
           title: '总金额（元）',
-          key: 'totalFee'
+          key: 'totalFee',
+          render: (h, params) => {
+            return h('div', Number(params.row.totalFee) / 100)
+          }
         },
         {
           title: '购买日期',
           key: 'buyDate',
           render: (h, params) => {
             let text = this.formatDate(params.row.buyDate)
-            return h('div', { props: {} }, text)
+            return h('div', text)
           }
         },
         {
@@ -188,11 +191,17 @@ export default {
         },
         {
           title: '交强险金额（元）',
-          key: 'trafficFee'
+          key: 'trafficFee',
+          render: (h, params) => {
+            return h('div', Number(params.row.trafficFee) / 100)
+          }
         },
         {
           title: '商业险金额（元）',
-          key: 'businessFee'
+          key: 'businessFee',
+          render: (h, params) => {
+            return h('div', Number(params.row.businessFee) / 100)
+          }
         },
         {
           title: '创建时间',
@@ -269,7 +278,7 @@ export default {
         url: '/ownerCar/insurance/export',
         method: 'post',
         data: params,
-        fileName: '导出保险列表'
+        fileName: '车辆保险'
       })
     },
     // 日期格式化
@@ -304,7 +313,7 @@ export default {
         this.formSearchInit.invoiceNo = this.keyword
       } else if (this.selectStatus === '4' && this.keyword) {
         this.formSearchInit.buyDateStart = new Date(this.keyword[0]).getTime()
-        this.formSearchInit.buyDateEnd = new Date(this.keyword[1]).getTime()
+        this.formSearchInit.buyDateEnd = new Date(this.keyword[1]).getTime() + 86400000
       }
     },
     clearKeywords () {

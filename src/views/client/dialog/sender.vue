@@ -23,7 +23,7 @@
           <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
       </FormItem>
-      <FormItem label="结算方式：" >
+      <FormItem label="结算方式：">
         <Select v-model="validate.payType" transfer clearable placeholder="请输入">
           <Option value="1">现付</Option>
           <Option value="2">到付</Option>

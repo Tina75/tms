@@ -5,7 +5,7 @@
       <Form :model="queryParams"   label-position="left" inline>
         <Row>
           <Col span="6">
-          <FormItem :label-width="65" label="油卡号：">
+          <FormItem :label-width="65" label="卡号：">
             <Input v-model="queryParams.number" :maxlength="20" placeholder="请输入主卡号或副卡号"></Input>
           </FormItem>
           </Col>
@@ -62,6 +62,7 @@ import commonmixin from '../mixin/commonmixin'
 import operateBtnMixin from '../mixin/operateBtnMixin'
 import contantmixin from '../mixin/contantmixin'
 import BasePage from '@/basic/BasePage'
+import Export from '@/libs/js/export'
 // import Server from '@/libs/js/server'
 export default {
   name: 'oil-list',
@@ -110,6 +111,7 @@ export default {
     },
     // 新增
     add () {
+      let _this = this
       this.openDialog({
         name: 'oilCard/dialog/addEdit',
         data: {
@@ -118,7 +120,7 @@ export default {
         },
         methods: {
           ok () {
-            this.fetchData()
+            _this.fetchData()
           }
         }
       })
@@ -140,6 +142,7 @@ export default {
         okText: '确认',
         cancelText: '取消',
         async onOk () {
+          let vm = _this
           _this.openDialog({
             name: 'oilCard/dialog/operate',
             data: {
@@ -151,7 +154,7 @@ export default {
             },
             methods: {
               ok () {
-                _this.fetchData()
+                vm.fetchData()
               }
             }
           })
@@ -175,6 +178,7 @@ export default {
         okText: '确认',
         cancelText: '取消',
         async onOk () {
+          let vm = _this
           _this.openDialog({
             name: 'oilCard/dialog/operate',
             data: {
@@ -186,10 +190,29 @@ export default {
             },
             methods: {
               ok () {
-                _this.fetchData()
+                vm.fetchData()
               }
             }
           })
+        }
+      })
+    },
+    // 导出
+    export () {
+      Export({
+        url: '/oilCard/export',
+        method: 'post',
+        data: this.searchFields,
+        fileName: '油卡汇总信息'
+      })
+    },
+    // 到详情页
+    toDetail (p) {
+      this.openTab({
+        title: p.row.number,
+        path: '/oilCard/detail/detail',
+        query: {
+          shipperOrderId: p.row.id
         }
       })
     }

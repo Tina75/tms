@@ -52,7 +52,7 @@
           <FormItem label="下次年检日期：">
             <Row>
               <Col span="20">
-              <DatePicker v-model="validate.nextCheckDate" :options="optionsEnd" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
+              <DatePicker v-model="validate.nextCheckDate" transfer format="yyyy-MM-dd" type="date" placeholder="请选择日期">
               </DatePicker>
               </Col>
             </Row>
@@ -82,6 +82,7 @@ import SelectInput from '@/components/SelectInput'
 import Server from '@/libs/js/server'
 import TagNumberInput from '@/components/TagNumberInput'
 import CarSelect from '@/components/own-car-form/CarSelect'
+import float from '@/libs/js/float'
 export default {
   name: 'edit-check',
   components: {
@@ -95,7 +96,7 @@ export default {
     return {
       optionsStart: {
         disabledDate (date) {
-          return date && date.valueOf() < Date.now() - 86400000
+          return date && date.valueOf() > Date.now()
         }
       },
       optionsEnd: {
@@ -107,7 +108,7 @@ export default {
       validate: {
         carNo: '',
         cost: null,
-        checkDate: new Date(),
+        checkDate: '',
         nextCheckDate: '',
         remark: '',
         picUrls: []
@@ -143,6 +144,11 @@ export default {
           })
         }
         vm.$refs.upLoads.uploadImgList = vm.imgList
+        vm.validate.cost = Number(vm.validate.cost) / 100
+      }
+      if (!vm.validate.checkDate && !vm.validate.nextCheckDate) {
+        vm.validate.checkDate = new Date()
+        this.getExpireDate()
       }
     },
     save (name) {
@@ -153,7 +159,7 @@ export default {
       let params = Object.assign({}, this.validate)
       if (params.checkDate) params.checkDate = new Date(this.validate.checkDate).getTime()
       if (params.nextCheckDate) params.nextCheckDate = new Date(this.validate.nextCheckDate).getTime()
-      this.validate.regularLine = JSON.stringify(this.address)
+      if (params.cost) params.cost = float.round(this.validate.cost * 100)
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.loading = true
