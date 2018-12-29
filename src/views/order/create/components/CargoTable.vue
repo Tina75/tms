@@ -173,6 +173,7 @@ export default {
               title: '长',
               key: 'length',
               min: 0,
+              max: 9999999,
               point: 0
             },
             {
@@ -180,6 +181,7 @@ export default {
               title: '宽',
               key: 'width',
               min: 0,
+              max: 9999999,
               point: 0
             },
             {
@@ -187,6 +189,7 @@ export default {
               title: '高',
               key: 'height',
               min: 0,
+              max: 9999999,
               point: 0
             }
           ]

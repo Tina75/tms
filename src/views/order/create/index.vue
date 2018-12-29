@@ -271,7 +271,7 @@
     <Row :gutter="16" class="i-mt-15">
       <Col span="6">
       <FormItem :class="{'ivu-form-item-error': highLight}" label="提货方式:" prop="pickup">
-        <Select ref="pickupSelector" v-model="orderForm.pickup" transfer>
+        <Select ref="pickupSelector" v-model="orderForm.pickup" :disabled="orderForm.disabledPickUp" transfer>
           <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
       </FormItem>
@@ -514,7 +514,8 @@ export default {
         invoiceRate: null,
         // 备注
         remark: '',
-        isSaveOrderTemplate: 0
+        isSaveOrderTemplate: 0,
+        status: '' // 编辑时 status = 20 pickUp = 1时 不可编辑
       },
       orderPrint: [],
       rules: {
@@ -618,7 +619,8 @@ export default {
         }
       },
       salesmanList: [],
-      highLight: false
+      highLight: false,
+      disabledPickUp: false
     }
   },
   computed: {
@@ -745,6 +747,7 @@ export default {
           // 里程除以 1000
           vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
           vm.orderForm.invoiceRate = rate.get(vm.orderForm.invoiceRate)
+          vm.orderForm.disabledPickUp = !!(orderDetail.status === 20 && orderDetail.pickup === 1 && vm.orderId)
         })
         .catch((errorInfo) => {
           vm.loading = false

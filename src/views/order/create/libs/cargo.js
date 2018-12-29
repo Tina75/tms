@@ -17,10 +17,43 @@ export default class Cargo {
     this.hasError = false
     this.errorMsg = {}
     // 1.0.9新增
+    // this.dimension = {
+    //   length: null,
+    //   width: null,
+    //   height: null
+    // }
+    const self = this
     this.dimension = {
-      length: null,
-      width: null,
-      height: null
+      _length: null,
+      _width: null,
+      _height: null,
+      set length (value) {
+        this._length = value
+        if (this._length && this._height && this._width) {
+          self.volume = float.round(this._length * this._height * this._width / (1000 * 1000 * 1000), 6)
+        }
+      },
+      get length () {
+        return this._length
+      },
+      set width (value) {
+        this._width = value
+        if (this._length && this._height && this._width) {
+          self.volume = float.round(this._length * this._height * this._width / (1000 * 1000 * 1000), 6)
+        }
+      },
+      get width () {
+        return this._width
+      },
+      set height (value) {
+        this._height = value
+        if (this._length && this._height && this._width) {
+          self.volume = float.round(this._length * this._height * this._width / (1000 * 1000 * 1000), 6)
+        }
+      },
+      get height () {
+        return this._height
+      }
     }
     this.cargoNo = null
     this.unit = null
@@ -29,20 +62,19 @@ export default class Cargo {
       this.id = props.id || uniqueIndex++
       this.cargoName = props.cargoName
       this.cargoNo = props.cargoNo
-      for (let i in this.dimension) {
-        this.dimension[i] = props.dimension[i] || null
-      }
       // 重量，保留2位小数
       this._weight = props.weight
       // 体积方，保留1位小数
-      this.volume = props.volume
+      for (let i in this.dimension) {
+        this.dimension[i] = props.dimension[i] || null
+      }
       if (!transfer) {
         // 货值，整数
         this.cargoCost = props.cargoCost
       } else {
         this.cargoCost = (props.cargoCost || 0) / 100
       }
-
+      this.volume = props.volume
       // 数量
       this.quantity = props.quantity || null
       // 包装, 10个字
@@ -64,6 +96,23 @@ export default class Cargo {
   set weightKg (value) {
     this._weight = float.round(value / 1000, 3)
   }
+  // set volume (value) {
+  //   this._volume = value
+  // }
+  // get volume () {
+  //   if (!this._volume) {
+  //     return float.round(this.dimension.length * this.dimension.width * this.dimension.height / 1000 * 1000 * 1000,)
+  //   } else {
+  //     return this._volume
+  //   }
+  // }
+  // set dimension (value) {
+  //   console.log(value)
+  //   this._dimension = value
+  // }
+  // get dimension () {
+  //   return this._dimension
+  // }
   validate () {
     if (!this.cargoName) {
       return { success: false, message: '请输入货物名称' }
@@ -94,13 +143,13 @@ export default class Cargo {
       }
     }
   }
-  handleDemsion () {
-    const obj = {}
-    for (let i in this.dimension) {
-      obj[i] = this.dimension[i] || null
-    }
-    return obj
-  }
+  // handleDemsion () {
+  //   const obj = {}
+  //   for (let i in this.dimension) {
+  //     obj[i] = this.dimension[i] || null
+  //   }
+  //   return obj
+  // }
   toJson () {
     return {
       cargoName: this.cargoName,
@@ -112,7 +161,11 @@ export default class Cargo {
       remark1: this.remark1,
       remark2: this.remark2,
       cargoNo: this.cargoNo,
-      dimension: this.handleDemsion()
+      dimension: {
+        height: this.dimension.height || null,
+        width: this.dimension.width || null,
+        length: this.dimension.length || null
+      }
     }
   }
 }

@@ -33,7 +33,7 @@
         :key="index"
         v-model="record[col.key][el.key]"
         :min="el.min"
-        :max="el.maxLen"
+        :max="el.max"
         :style="`width: ${100 / col.children.length}%`"
         :placeholder="el.title"
         clearable>

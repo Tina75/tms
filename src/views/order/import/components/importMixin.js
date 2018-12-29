@@ -166,7 +166,11 @@ export default {
               } else if (status === 3) {
                 vm.$Message.error('上传文件缺少部分订单列，请重新下载模板')
               } else {
-                vm.$Message.success(`导入成功，共导入${res.data.data.orderNum}条订单`)
+                if (vm.source === 1) {
+                  vm.$Message.success(`成功导入${res.data.data.orderNum}条订单`)
+                } else {
+                  vm.$Message.success(`成功导入${res.data.data.orderNum}条历史订单`)
+                }
               }
               vm.fetch()
               // 导入成功后，删除该条记录
