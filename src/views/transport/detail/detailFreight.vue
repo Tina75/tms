@@ -885,6 +885,10 @@ export default {
         }
         // 改单个数
         this.changeCount = data.modifyCnt || 0
+        if (this.changeCount) {
+          this.$refs['change'] && this.$refs['change'].initData()
+        }
+
         this.setBtnsWithStatus()
         this.loading = false
         return res

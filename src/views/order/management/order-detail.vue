@@ -1090,6 +1090,8 @@ export default {
   beforeRouteUpdate (to, from, next) {
     this.$nextTick(() => {
       this.getDetail()
+      this.getDetailChange()
+      this.$refs['orderChange'].initData()
     })
     next()
   }

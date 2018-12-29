@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import VerticalTabs from './vertical-tabs/index'
+import VerticalTabs from './index'
 
 export default {
   name: 'vertest',

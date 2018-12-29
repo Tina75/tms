@@ -56,6 +56,16 @@ export default [
           'powerCode': 170400,
           'title': '计费规则'
         }
+      },
+      {
+        'name': 'finance-rules',
+        'path': 'writtenOffDetail',
+        'component': () => import(/* webpackChunkName: "finance-writtern-off" */'./pages/writtenOffDetail.vue'),
+        'meta': {
+          'hideInMenu': true,
+          'powerCode': 170000,
+          'title': '核销详情'
+        }
       }
     ]
   }
