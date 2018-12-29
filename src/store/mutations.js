@@ -5,14 +5,6 @@ export default{
   initPermissions (state, payload) {
     state.permissions = payload || []
   },
-  // setTabNavList (state, list) {
-  //   state.tabNavList = [...list]
-  //   localStorage.tabNavCache = JSON.stringify([...list])
-  // },
-  // initTabNav (state) {
-  //   localStorage.tabNavCache = ''
-  //   state.tabNavList = localStorage.tabNavCache ? JSON.parse(localStorage.tabNavCache) : [{ path: '/home', query: { title: '首页' }, param: { name: 'home' } }]
-  // },
   updateMsgCount (state, payload) {
     const msg = { ...payload }
     msg.all = msg.sysNum + msg.orderNum + msg.carrierNum
@@ -37,7 +29,25 @@ export default{
    * @param {Number} option
    */
   changeOrderConfiguration (state, option) {
-    state.order.weightOption = option
+    for (let i in state.orderSet) {
+      state.orderSet[i] = option[i]
+    }
+  },
+  /**
+   * 保存短信配置
+   * @param {*} state
+   * @param {*} list
+   */
+  smsSetting (state, list) {
+    state.smsSet = list
+  },
+  /**
+   * 分摊策略
+   * @param {*} state
+   * @param {*} option
+   */
+  allocationStrategySetting (state, option) {
+    state.allocationStrategy = option
   }
 }
 

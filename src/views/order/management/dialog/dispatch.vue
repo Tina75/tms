@@ -101,6 +101,8 @@ export default {
                 on: {
                   click: () => {
                     this.id.splice(params.index, 1)
+                    const temp = this.cargoInfoList.filter(item => item.orderId !== params.row.id)
+                    this.cargoInfoList = temp
                     if (this.id.length === 0) {
                       this.close()
                     }
@@ -190,7 +192,8 @@ export default {
         tooltip: true
       },
       mileage: null,
-      btnLoading: false
+      btnLoading: false,
+      cargoInfoList: [] // 订单对应的货物信息
     }
   },
 
@@ -209,7 +212,7 @@ export default {
       this.id.map((item) => {
         total += item.volume
       })
-      return float.round(total, 4)
+      return float.round(total, 6)
     },
     weightTotal () {
       let total = 0
@@ -223,12 +226,28 @@ export default {
       })
       return float.round(total, 3)
     },
+    // 将货物信息按货物名称累加数量
+    cargoInfos () {
+      let arr = []
+      let list = _.groupBy(this.cargoInfoList, 'cargoName')
+      _.forEach(list, (value, key) => {
+        let quantity = _.sumBy(value, (i) => {
+          return i.quantity
+        })
+        arr.push({
+          key: key,
+          value: quantity
+        })
+      })
+      return arr
+    },
     financeRulesInfo () {
       return {
         start: this.send.start,
         end: this.send.end,
         weight: float.round(this.WeightOption === 1 ? this.weightTotal : this.weightTotal / 1000, 3),
-        volume: this.volumeTotal
+        volume: this.volumeTotal,
+        cargoInfos: this.cargoInfos
       }
     },
     orderIds () {
@@ -262,6 +281,7 @@ export default {
     } else {
       this.triggerWeightColumn(this.tableColumns, this.columnWeightKg, 7)
     }
+    this.getOrderCargoList()
   },
 
   methods: {
@@ -393,6 +413,18 @@ export default {
     // 将地址字符串8位后的替换成...
     formatterAddress (str) {
       return str.slice(0, 8) + ' ...'
+    },
+    // 查询勾选订单对应货物信息
+    getOrderCargoList () {
+      Server({
+        url: '/order/getOrderCargoList',
+        method: 'post',
+        data: {
+          orderIds: this.orderIds
+        }
+      }).then((res) => {
+        this.cargoInfoList = res.data.data.list
+      })
     }
   }
 }

@@ -1,4 +1,6 @@
+import modules from './store'
 import Main from '@/views/main/Main.vue'
+import store from '@/store/index.js'
 
 export default[
   /** 自有车管理 */
@@ -51,8 +53,7 @@ export default[
         'meta': {
           'hideInMenu': true,
           'title': '车辆详情',
-          'powerCode': 190200,
-          'notCache': true
+          'powerCode': 190200
         }
       },
       {
@@ -83,7 +84,18 @@ export default[
         'component': () => import(/* webpackChunkName: "owned-insurance" */'./pages/insurance.vue'),
         'meta': {
           'title': '车辆保险',
-          'powerCode': 190300
+          'powerCode': 190400
+        }
+      },
+      {
+        'path': 'insurance-details',
+        'name': 'insurance-details',
+        'component': () => import(/* webpackChunkName: "insurance-details" */'./pages/insurance-details.vue'),
+        'meta': {
+          'hideInMenu': true,
+          'title': '车辆保险详情',
+          'powerCode': 190400,
+          'notCache': true
         }
       },
       {
@@ -92,7 +104,18 @@ export default[
         'component': () => import(/* webpackChunkName: "owned-check" */'./pages/check.vue'),
         'meta': {
           'title': '车辆年检',
-          'powerCode': 190300
+          'powerCode': 190500
+        }
+      },
+      {
+        'path': 'check-details',
+        'name': 'check-details',
+        'component': () => import(/* webpackChunkName: "check-details" */'./pages/check-details.vue'),
+        'meta': {
+          'hideInMenu': true,
+          'title': '车辆年检详情',
+          'powerCode': 190500,
+          'notCache': true
         }
       },
       {
@@ -101,9 +124,21 @@ export default[
         'component': () => import(/* webpackChunkName: "owned-tyre" */'./pages/tyre.vue'),
         'meta': {
           'title': '轮胎管理',
-          'powerCode': 190300
+          'powerCode': 190600
+        }
+      },
+      {
+        'path': 'tyre-details',
+        'name': 'tyre-details',
+        'component': () => import(/* webpackChunkName: "tyre-details" */'./pages/tyre-details.vue'),
+        'meta': {
+          'hideInMenu': true,
+          'title': '轮胎管理详情',
+          'powerCode': 190600,
+          'notCache': true
         }
       }
     ]
   }
 ]
+store.registerModule('company', { ...modules })

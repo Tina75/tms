@@ -1,21 +1,24 @@
 <template>
   <div>
     <div class="add">
-      <Button v-if="hasPower(190201)" type="primary" @click="edit">新增保险</Button>
-      <Button v-if="hasPower(190204)" @click="Export">导出</Button>
+      <Button v-if="hasPower(190401)" type="primary" @click="edit">新增保险</Button>
+      <Button v-if="hasPower(190404)" @click="Export">导出</Button>
       <div class="rightSearch">
         <template>
           <Select v-model="selectStatus" class="conditionSty" transfer @on-change="changeState">
             <Option v-for="item in selectList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </template>
-        <Input v-model="keyword"
-               :maxlength="selectStatus === '1' ? 8 : 20"
-               :icon="keyword? 'ios-close-circle' : ''"
+        <Input v-if="selectStatus != 4"
+               v-model="keyword"
+               :maxlength="maxlength"
+               :icon="keyword ? 'ios-close-circle' : ''"
                :placeholder="placeholderContent"
                class="search-input"
                @on-enter="searchCarList"
                @on-click="clearKeywords"/>
+        <DatePicker v-else :options="options" v-model="keyword" transfer format="yyyy-MM-dd" type="daterange" placeholder="请选择日期" @on-clear="clearKeywords">
+        </DatePicker>
         <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
                 style="float: right;width:41px;"
@@ -26,8 +29,10 @@
     <page-table
       :columns="menuColumns"
       :keywords="formSearchInit"
+      :show-filter="true"
+      table-head-type="car_insurance"
       class="pageTable"
-      url="/ownerCar/listCar"
+      url="/ownerCar/insurance/list"
       list-field="list"
       method="post"
       @on-load="handleLoad"
@@ -36,12 +41,9 @@
   </div>
 </template>
 <script>
-import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
-import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
-import { CODE, deleteCarById } from './client'
 import { mapActions } from 'vuex'
 export default {
   name: 'owned-insurance',
@@ -54,23 +56,26 @@ export default {
   mixins: [ BasePage ],
   data () {
     return {
-      carTypeMap: CAR_TYPE1,
-      carLengthMap: CAR_LENGTH1,
+      options: {
+        disabledDate (date) {
+          return date && date.valueOf() > Date.now()
+        }
+      },
       selectStatus: '1',
       keyword: '',
-      formSearchInit: {
-        carNo: '',
-        driverName: ''
-      },
+      formSearchInit: {},
       exportFile: true,
+      maxlength: 8,
       menuColumns: [
         {
           title: '操作',
-          key: 'id',
+          key: 'action',
           width: 150,
+          fixed: 'left',
+          extra: true,
           render: (h, params) => {
             let renderBtn = []
-            if (this.hasPower(190202)) {
+            if (this.hasPower(190402)) {
               renderBtn.push(h('span', {
                 style: {
                   marginRight: '12px',
@@ -81,17 +86,20 @@ export default {
                   click: () => {
                     let vm = this
                     this.openDialog({
-                      name: 'owned-vehicle/dialog/edit-car',
+                      name: 'owned-vehicle/dialog/edit-insurance',
                       data: {
-                        title: '修改车辆',
+                        title: '修改保险',
                         flag: 2, // 修改
-                        validate: { ...params.row, purchDate: new Date(params.row.purchDate) }
+                        validate: {
+                          ...params.row,
+                          buyDate: new Date(params.row.buyDate).Format('yyyy-MM-dd'),
+                          effectDate: new Date(params.row.effectDate).Format('yyyy-MM-dd'),
+                          expireDate: new Date(params.row.expireDate).Format('yyyy-MM-dd')
+                        }
                       },
                       methods: {
                         ok () {
-                          vm.getOwnDrivers()
-                          vm.getOwnCars()
-                          vm.formSearchInit = {}
+                          vm.searchCarList()
                         }
                       }
                     })
@@ -107,17 +115,11 @@ export default {
               },
               on: {
                 click: () => {
-                  this.openTab({
-                    path: TMSUrl.OWNEDVEHICLE_CAEDETAILS,
-                    query: {
-                      id: '车辆详情',
-                      rowData: params.row
-                    }
-                  })
+                  this.$router.push({ name: 'insurance-details', query: { rowData: params.row } })
                 }
               }
             }, '查看'))
-            if (this.hasPower(190203)) {
+            if (this.hasPower(190403)) {
               renderBtn.push(h('span', {
                 style: {
                   color: '#00A4BD',
@@ -126,22 +128,15 @@ export default {
                 on: {
                   click: () => {
                     let vm = this
-                    this.openDialog({
-                      name: 'owned-vehicle/dialog/confirmDelete',
-                      data: {
-                      },
-                      methods: {
-                        ok () {
-                          deleteCarById({ carId: params.row.id }).then(res => {
-                            if (res.data.code === CODE) {
-                              vm.$Message.success('删除成功！')
-                            }
-                          }).then(() => {
-                            vm.getOwnDrivers()
-                            vm.getOwnCars()
-                            vm.formSearchInit = {}
-                          })
-                        }
+                    this.$Toast.confirm({
+                      title: '提示',
+                      content: '确定删除吗？',
+                      onOk () {
+                        vm.insuranceDeleteById({ id: params.row.id }).then(() => {
+                          vm.$Message.success('删除成功！')
+                        }).then(() => {
+                          vm.searchCarList()
+                        })
                       }
                     })
                   }
@@ -153,27 +148,68 @@ export default {
         },
         {
           title: '保单号',
-          key: 'carNo'
+          key: 'invoiceNo'
         },
         {
           title: '保险公司',
-          key: 'carType',
-          render: (h, params) => {
-            let text = this.carTypeMap[params.row.carType] + this.carLengthMap[params.row.carLength]
-            return h('div', {}, text)
-          }
+          key: 'insuranceCompanyName'
         },
         {
           title: '车牌号',
-          key: 'shippingWeight'
+          key: 'carNo'
         },
         {
           title: '总金额（元）',
-          key: 'shippingVolume'
+          key: 'totalFee',
+          render: (h, params) => {
+            return h('div', Number(params.row.totalFee) / 100)
+          }
         },
         {
           title: '购买日期',
-          key: 'carBrand'
+          key: 'buyDate',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.buyDate)
+            return h('div', text)
+          }
+        },
+        {
+          title: '生效日期',
+          key: 'effectDate',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.effectDate)
+            return h('div', { props: {} }, text)
+          }
+        },
+        {
+          title: '失效日期',
+          key: 'expireDate',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.expireDate)
+            return h('div', { props: {} }, text)
+          }
+        },
+        {
+          title: '交强险金额（元）',
+          key: 'trafficFee',
+          render: (h, params) => {
+            return h('div', Number(params.row.trafficFee) / 100)
+          }
+        },
+        {
+          title: '商业险金额（元）',
+          key: 'businessFee',
+          render: (h, params) => {
+            return h('div', Number(params.row.businessFee) / 100)
+          }
+        },
+        {
+          title: '创建时间',
+          key: 'createTime',
+          render: (h, params) => {
+            let text = this.formatDateTime(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
         }
       ],
       selectList: [
@@ -194,7 +230,7 @@ export default {
           label: '购买日期'
         }
       ],
-      placeholderContent: ''
+      placeholderContent: '请输入车牌号搜索'
     }
   },
   watch: {
@@ -202,27 +238,26 @@ export default {
       switch (newVal) {
         case '1':
           this.placeholderContent = '请输入车牌号搜索'
+          this.maxlength = 8
           break
         case '2':
-          this.placeholderContent = '请输入保险公司'
+          this.placeholderContent = '请输入保险公司搜索'
+          this.maxlength = 15
           break
         case '3':
-          this.placeholderContent = '请输入保险单'
+          this.placeholderContent = '请输入保单号搜索'
+          this.maxlength = 30
           break
         case '4':
-          this.placeholderContent = '请选择购买日期'
-          break
-        default:
-          this.placeholderContent = '请输入车牌号搜索'
+          this.placeholderContent = '请选择日期搜索'
           break
       }
     }
   },
   mounted () {
-    this.getOwnCars()
   },
   methods: {
-    ...mapActions(['getOwnDrivers', 'getOwnCars']),
+    ...mapActions(['insuranceDeleteById']),
     // 导出判空
     handleLoad (response) {
       try {
@@ -240,13 +275,16 @@ export default {
       }
       let params = this.formSearchInit
       Export({
-        url: '/ownerCar/exportCar',
+        url: '/ownerCar/insurance/export',
         method: 'post',
         data: params,
-        fileName: '导出车辆列表'
+        fileName: '车辆保险'
       })
     },
     // 日期格式化
+    formatDate (value, format) {
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
+    },
     formatDateTime (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
     },
@@ -260,8 +298,6 @@ export default {
         },
         methods: {
           ok () {
-            vm.getOwnDrivers()
-            vm.getOwnCars()
             vm.formSearchInit = {}
           }
         }
@@ -269,12 +305,15 @@ export default {
     },
     searchCarList () {
       this.formSearchInit = {}
-      if (this.selectStatus === '1') {
+      if (this.selectStatus === '1' && this.keyword) {
         this.formSearchInit.carNo = this.keyword
-        this.formSearchInit.driverName = ''
-      } else {
-        this.formSearchInit.driverName = this.keyword
-        this.formSearchInit.carNo = ''
+      } else if (this.selectStatus === '2' && this.keyword) {
+        this.formSearchInit.insuranceCompanyName = this.keyword
+      } else if (this.selectStatus === '3' && this.keyword) {
+        this.formSearchInit.invoiceNo = this.keyword
+      } else if (this.selectStatus === '4' && this.keyword) {
+        this.formSearchInit.buyDateStart = new Date(this.keyword[0]).getTime()
+        this.formSearchInit.buyDateEnd = new Date(this.keyword[1]).getTime() + 86399000
       }
     },
     clearKeywords () {

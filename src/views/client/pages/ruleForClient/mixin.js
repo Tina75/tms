@@ -335,16 +335,17 @@ export default {
                   departure: item.departure,
                   destination: item.destination,
                   startType: item.startType,
-                  // 选择车型时，起步价，起步量都没有
-                  startNum: _this.ruleDetail.ruleType === '5' ? null : (item.startNum ? float.round(item.startNum * 100) : ''),
+                  // 选择车型，件时，起步价，起步量都没有
+                  startNum: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startNum ? float.round(item.startNum * 100) : ''),
                   // 选择起步量的时候，startPrice的值传startNum的值
-                  startPrice: _this.ruleDetail.ruleType === '5' ? null : (item.startType === '1' ? (item.startPrice ? float.round(item.startPrice * 100) : '') : (item.startNum ? float.round(item.startNum * 100) : '')),
+                  startPrice: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startType === '1' ? (item.startPrice ? float.round(item.startPrice * 100) : '') : (item.startNum ? float.round(item.startNum * 100) : '')),
                   chargeRules: item.chargeRules.map(el => {
                     return {
-                      base: _this.ruleDetail.ruleType === '5' ? null : (float.round(el.base * 100)),
+                      base: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (float.round(el.base * 100)),
                       price: float.round(el.price * 100),
-                      carType: el.carType,
-                      carLength: el.carLength
+                      carType: _this.ruleDetail.ruleType === '5' ? el.carType : undefined,
+                      carLength: _this.ruleDetail.ruleType === '5' ? el.carLength : undefined,
+                      cargoName: _this.ruleDetail.ruleType === '8' ? el.cargoName : undefined
                     }
                   })
                 }

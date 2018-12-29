@@ -25,6 +25,7 @@
                   :index="no"
                   :record="item"
                   :col="col"
+                  :length="dataSourceCpt.length"
                   :on-append="onAppend"
                   :on-remove="onRemove"
                   :on-select="onSelect"
@@ -43,7 +44,7 @@
             </div>
           </td>
           <td>
-            <div class="ivu-table-cell">总重量：{{unitName == 'weight' ? `${statics.weight}吨` : `${float(statics.weight * 1000)}公斤`}}</div>
+            <div class="ivu-table-cell">总重量：{{statics.weight}}吨</div>
           </td>
           <td>
             <div class="ivu-table-cell">总体积：{{statics.volume}}方</div>
@@ -64,6 +65,8 @@
 
 import float from '@/libs/js/float'
 import CargoTableRow from './CargoTableRow.vue'
+import { NumberPrecesion } from '@/libs/js/config'
+import OrderMap from '../libs/orderMap'
 const prefixClass = 'ivu-table'
 
 export default {
@@ -71,6 +74,7 @@ export default {
     CargoTableRow
   },
   props: {
+    orderSet: Object,
     dataSource: {
       required: true,
       type: Array,
@@ -105,11 +109,18 @@ export default {
         },
         {
           required: false,
+          title: '货物编号',
+          key: 'cargoNo',
+          type: 'text',
+          max: 200
+        },
+        {
+          required: false,
           title: '重量（吨）',
           key: 'weight',
           type: 'number',
           min: 0,
-          point: 3
+          point: NumberPrecesion.weight
         },
         {
           required: false,
@@ -117,7 +128,7 @@ export default {
           key: 'weightKg',
           type: 'number',
           min: 0,
-          point: 0
+          point: NumberPrecesion.weightKg
         },
         {
           required: false,
@@ -125,7 +136,7 @@ export default {
           key: 'volume',
           type: 'number',
           min: 0,
-          point: 4
+          point: NumberPrecesion.volume
         },
         {
           required: false,
@@ -133,14 +144,13 @@ export default {
           key: 'cargoCost',
           type: 'number',
           min: 0,
-          // maxLen: 999999999.99,
-          point: 2
+          point: NumberPrecesion.fee
         },
         {
           required: false,
           title: '包装方式',
           key: 'unit',
-          type: 'text',
+          type: 'package',
           max: 10
         },
         {
@@ -150,6 +160,39 @@ export default {
           type: 'number',
           min: 1,
           point: 0
+        },
+        {
+          required: false,
+          title: '包装尺寸',
+          key: 'dimension',
+          width: 180,
+          type: 'multi',
+          children: [
+            {
+              required: false,
+              title: '长',
+              key: 'length',
+              min: 0,
+              max: 9999999,
+              point: 0
+            },
+            {
+              required: false,
+              title: '宽',
+              key: 'width',
+              min: 0,
+              max: 9999999,
+              point: 0
+            },
+            {
+              required: false,
+              title: '高',
+              key: 'height',
+              min: 0,
+              max: 9999999,
+              point: 0
+            }
+          ]
         },
         {
           required: false,
@@ -186,9 +229,11 @@ export default {
     statics () {
       return this.dataSource.reduce((sum, cargo) => {
         // 读取临时数据
-
-        sum.weight = float.round((cargo.weight || 0) + sum.weight, 3)
-        sum.volume = float.round((cargo.volume || 0) + sum.volume, 4)
+        if (cargo.cargoName) {
+          sum.cargoInfos.push({ key: cargo.cargoName, value: cargo.quantity })
+        }
+        sum.weight = float.round((cargo.weight || 0) + sum.weight, NumberPrecesion.weight)
+        sum.volume = float.round((cargo.volume || 0) + sum.volume, NumberPrecesion.volume)
         sum.cargoCost = float.round((cargo.cargoCost || 0) + sum.cargoCost)
         sum.quantity = (cargo.quantity || 0) + sum.quantity
         return sum
@@ -196,28 +241,19 @@ export default {
         weight: 0,
         volume: 0,
         cargoCost: 0,
-        quantity: 0
+        quantity: 0,
+        cargoInfos: []
       })
     },
-    // 取反
-    unitName () {
-      return this.unitType === 1 ? 'weight' : 'weightKg'
-    },
     headers () {
-      // 取反
-      const type = this.unitType !== 1 ? 'weight' : 'weightKg'
       const res = this.headersOption.filter(el => {
-        return el.key !== type
+        const key = OrderMap[el.key]
+        return this.orderSet[key] !== 2
       })
       return res
     },
     dataSourceCpt () {
       return this.dataSource.map(el => {
-        if (el.weight) {
-          el.weightKg = float.floor(el.weight * 1000, 2)
-        } else {
-          el.weightKg = null
-        }
         return el
       })
     }
@@ -239,7 +275,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

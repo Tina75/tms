@@ -273,7 +273,7 @@ export default {
           key: 'cargoCnt'
         },
         {
-          title: '付款方式',
+          title: '结算方式',
           key: 'payType',
           render: (h, params) => {
             let text = ''

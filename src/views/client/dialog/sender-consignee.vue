@@ -12,10 +12,11 @@
       <p slot="header" style="text-align:center">{{title}}</p>
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="100" label-position="right" style="margin-left: -10px">
         <FormItem label="收货联系人：" prop="contact">
-          <Input v-model="validate.contact" :maxlength="15" placeholder="请输入"/>
+          <Input v-model="validate.contact" :maxlength="$fieldLength.name" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="联系电话：" prop="phone">
-          <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
+        <FormItem label="联系号码：" prop="phone">
+          <!-- <Input v-model="validate.phone" :maxlength="11" placeholder="请输入手机号或座机号"/> -->
+          <SelectInput v-model="validate.phone" :formatter="formatePhoneNum" :maxlength="phoneLength(validate.phone)" placeholder="请输入手机号或座机号，座机需加区号"></SelectInput>
         </FormItem>
         <FormItem label="收货地址：">
           <Row>
@@ -36,10 +37,13 @@
           </Row>
         </FormItem>
         <FormItem>
-          <Input v-model="validate.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"></Input>
+          <Input v-model="validate.consignerHourseNumber" :maxlength="$fieldLength.extraAddress" placeholder="补充地址（楼号-门牌等）"></Input>
+        </FormItem>
+        <FormItem label="收货人单位：">
+          <Input v-model="validate.consigneeCompanyName" :maxlength="$fieldLength.extraAddress" placeholder="请输入"/>
         </FormItem>
         <FormItem label="备注：" prop="remark">
-          <Input v-model="validate.remark"  placeholder="请输入"/>
+          <Input v-model="validate.remark" :maxlength="$fieldLength.remark"  placeholder="请输入"/>
         </FormItem>
       </Form>
       <div slot="footer">
@@ -55,11 +59,15 @@ import BaseDialog from '@/basic/BaseDialog'
 import { consignerConsigneeAdd, consignerConsigneeUpdate } from '../pages/client'
 import AreaInput from '@/components/AreaInput'
 import CitySelect from '@/components/SelectInputForCity'
+import SelectInput from '@/components/SelectInput.vue'
+import { validatePhone } from '@/libs/js/validate'
+import { formatePhone } from '@/libs/js/formate'
 export default {
   name: 'sender-address',
   components: {
     AreaInput,
-    CitySelect
+    CitySelect,
+    SelectInput
   },
   mixins: [BaseDialog],
   data () {
@@ -83,11 +91,11 @@ export default {
           { required: true, message: '收货联系人不能为空', trigger: 'blur' }
         ],
         phone: [
-          { required: true, message: '联系电话不能为空', trigger: 'blur' },
-          { type: 'string', message: '电话号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
+          { required: true, message: '联系号码不能为空', trigger: 'blur' },
+          { validator: validatePhone, trigger: 'blur' }
         ],
         cityCode: [
-          { required: true, message: '收货城市不能为空' }
+          { required: false, message: '收货城市不能为空' }
         ],
         address: [
           { required: true, message: '收货地址不能为空', trigger: 'blur' }
@@ -96,6 +104,12 @@ export default {
     }
   },
   methods: {
+    formatePhoneNum (temp) {
+      return formatePhone(temp)
+    },
+    phoneLength (value) {
+      return /^1/.test(value) ? 13 : this.$fieldLength.telephone
+    },
     save (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {

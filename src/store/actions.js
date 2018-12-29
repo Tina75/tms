@@ -73,6 +73,7 @@ export const setDocumentHeight = ({ commit }, height) => {
 }
 /**
  * 获取订单开单配置
+ * ! 废弃1.09；合并接口,关注函数：getConfiguration
  * @param {} param0
  */
 export const getOrderConfiguration = ({ commit }) => {
@@ -81,7 +82,25 @@ export const getOrderConfiguration = ({ commit }) => {
     method: 'post',
     data: {}
   }).then(({ data }) => {
-    commit('changeOrderConfiguration', data.data.weightOption)
+    // commit('changeOrderConfiguration', data.data.weightOption)
+  })
+}
+/**
+ * 查询设置配置，合并接口1.09
+ * 包含：短信配置，分摊策略，开单设置
+ * @param {*} param0
+ */
+export const getConfiguration = ({ commit }) => {
+  return Server({
+    url: 'set/commonSettingInfo',
+    method: 'get'
+  }).then((result) => {
+    if (result.data.code === 10000) {
+      const { smsSetInfo, allocationStrategyInfo, tmsSetConfigDto } = result.data.data
+      commit('smsSetting', smsSetInfo.smsCode)
+      commit('allocationStrategySetting', allocationStrategyInfo)
+      commit('changeOrderConfiguration', tmsSetConfigDto)
+    }
   })
 }
 /**

@@ -7,7 +7,8 @@ class NavTabItem {
     this.title = options.query.title || options.meta.title
     this.meta = options.meta
     this.query = options.query || {}
-
+    // 刷新
+    this.reload = false
     this.prevId = -1
     // 默认选中
     this.isActive = true
@@ -16,8 +17,8 @@ class NavTabItem {
   close () {
     return this.manager.removeNavTab(this)
   }
-  refresh () {
-    return this.manager.refreshNavTab(this)
+  refresh (callback) {
+    return this.manager.refreshNavTab(this, callback)
   }
 }
 

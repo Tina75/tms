@@ -174,7 +174,7 @@ export default {
     mileage: {
       type: [String, Number]
     },
-    // 计费规则传入start、end、weight、volume
+    // 计费规则传入start、end、weight、volume、cargoInfos
     financeRulesInfo: {
       type: Object,
       default: () => {
@@ -182,7 +182,8 @@ export default {
           start: null,
           end: null,
           weight: null,
-          volume: null
+          volume: null,
+          cargoInfos: null
         }
       }
     },

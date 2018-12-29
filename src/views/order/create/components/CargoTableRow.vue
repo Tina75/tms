@@ -2,7 +2,7 @@
   <div :class="classes">
     <a v-if="col.type==='operation'" href="javascript:;">
       <Icon type="ios-add-circle" size="24" color="#7ED321" @click="handleAppend"></Icon>
-      <Icon type="ios-remove-circle" size="24" color="#EC4E4E" @click="handleRemove"></Icon>
+      <Icon :color="index == 0 && length == 1 ? 'grey' : '#EC4E4E'" type="ios-remove-circle" size="24" @click="handleRemove"></Icon>
     </a>
     <SelectInput
       v-else-if="col.type==='select'"
@@ -11,6 +11,7 @@
       :maxlength="col.max"
       :transfer="true"
       :remote="false"
+      clearable
       @on-blur="handleBlur(col)"
       @on-select="handleSelect"
     >
@@ -21,12 +22,28 @@
       :min="col.min"
       :max="col.maxLen"
       :parser="handleParse"
+      style="width: 100%"
       @input="v => { this.inputHandle(v, col.key) }"
       @on-change="handleChange(col.key)"
       @on-blur="handleBlur(col)"
     >
     </InputNumber>
-    <Input v-else v-model="record[col.key]" :maxlength="col.max"></Input>
+    <div v-else-if="col.type === 'multi' && col.children">
+      <InputNumber
+        v-for="(el, index) in col.children"
+        :key="index"
+        v-model="record[col.key][el.key]"
+        :min="el.min"
+        :max="el.max"
+        :style="`width: ${100 / col.children.length}%`"
+        :placeholder="el.title"
+        clearable>
+      </InputNumber>
+    </div>
+    <div v-else-if="col.type == 'package'">
+      <SelectPackageType v-model="record[col.key]" clearable/>
+    </div>
+    <Input v-else v-model="record[col.key]" :maxlength="col.max" clearable></Input>
     <p v-if="record.hasError && record.errorMsg[col.key] !== ''" :class="errorClass">
       {{record.errorMsg[col.key]}}
     </p>
@@ -34,11 +51,13 @@
 </template>
 
 <script>
+import SelectPackageType from '@/components/SelectPackageType'
 import SelectInput from '@/components/SelectInput'
 import float from '@/libs/js/float'
 export default {
   components: {
-    SelectInput
+    SelectInput,
+    SelectPackageType
   },
   props: {
     index: Number,
@@ -47,6 +66,7 @@ export default {
     headers: Array,
     record: Object,
     col: Object,
+    length: Number,
     onAppend: Function,
     onRemove: Function,
     onSelect: Function
@@ -142,12 +162,10 @@ export default {
         }
       }
     },
-    inputHandle (value, key) {
-      if (key === 'weightKg') {
-        const v = float.floor(value / 1000, 3)
-        if (v !== this.record['weight']) {
-          this.record['weight'] = v
-        }
+    inputHandle (value, key, size) {
+      // 尺寸等属性 长宽高
+      if (size) {
+        this.record[key].size = value
       } else {
         this.record[key] = value
       }

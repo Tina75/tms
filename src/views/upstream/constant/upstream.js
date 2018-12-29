@@ -1,7 +1,8 @@
 // import TMSUrl from '@/libs/constant/url'
 import float from '@/libs/js/float'
 import IconLabel from '@/components/IconLabel'
-import { renderMileage, renderVolume, renderWeight } from '@/libs/js/util'
+import { renderMileage, renderVolume, renderWeight } from './util'
+
 export const TABLE_COLUMNS = vm => [
   {
     type: 'selection',

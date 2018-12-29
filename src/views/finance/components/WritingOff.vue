@@ -81,6 +81,9 @@
               </p>
             </div>
             <Button v-if="(hasPower(170102) && scene === 1) || (hasPower(170202) && scene === 2) || (hasPower(170302) && scene === 3)" class="btn" type="primary" @click="createBill">生成对账单</Button>
+            <Tooltip v-if="scene === 2" placement="top" content="按单结的单据才可以批量核销" class="btn" style="margin-right: 11px">
+              <Button  @click="batchCheckOrder">批量核销</Button>
+            </Tooltip>
           </div>
           <Table :columns="orderColumn" :data="orderData" class="tableList"  @on-selection-change="setOrderIds"></Table>
         </div>
@@ -101,11 +104,14 @@ import FontIcon from '@/components/FontIcon'
 import DataEmpty from '@/components/DataEmpty'
 import float from '@/libs/js/float'
 import _ from 'lodash'
+import payTypeDialog from '../dialogs/payTypeDialog'
+import { payTypeMap } from '../constant/numList'
 export default {
   name: 'writingOff',
   components: {
     FontIcon,
-    DataEmpty
+    DataEmpty,
+    payTypeDialog
   },
   mixins: [ BaseComponent ],
   props: {
@@ -194,7 +200,9 @@ export default {
       companyData: [],
       orderData: [],
       selectedIds: [],
-      currentPartner: {}
+      currentPartner: {},
+      selectedList: [], // 表格选中项
+      payTypeMap: payTypeMap
     }
   },
   computed: {
@@ -281,7 +289,7 @@ export default {
         },
         {
           title: '结算方式',
-          width: 80,
+          // width: 80,
           key: 'settleTypeDesc',
           filters: this.scene === 2 ? [
             {
@@ -311,6 +319,16 @@ export default {
           ],
           filterMethod (value, row) {
             return row.settleTypeDesc === value
+          },
+          render: (h, p) => {
+            if (this.scene === 2 && (typeof p.row.listMultiPay !== 'string' && p.row.listMultiPay.length > 0)) {
+              return h('div', [
+                h('span', p.row.settleTypeDesc + '  ' + p.row.unPayCount + '单未核'),
+                h(payTypeDialog, { props: { list: p.row.listMultiPay }, style: { display: 'inline-block', marginLeft: '5px' } })
+              ])
+            } else {
+              return h('div', p.row.settleTypeDesc)
+            }
           }
         },
         {
@@ -339,6 +357,7 @@ export default {
   methods: {
     setOrderIds (data) {
       this.selectedIds = data.map(item => item.id)
+      this.selectedList = data
     },
     createBillOk () {
       const _this = this
@@ -362,38 +381,53 @@ export default {
       })
     },
     createBill () {
-      if (this.selectedIds.length > 1) {
+      if (this.selectedList.length > 0) {
+        // 统计多段付单子
+        let monthList = []
+        // 统计非多段付单子
+        let notMulList = []
+        this.selectedList.map(item => {
+          if (item.isMultiPay === 1) {
+            monthList.push(item.orderNo)
+          } else if (item.isMultiPay === 0) {
+            notMulList.push(item.id)
+          }
+        })
+        let errList = []
+        if (monthList.length > 0) { // 存在多段付
+          errList.push({
+            title: '以下单据是多段付，不能生成对账单',
+            arr: monthList
+          })
+        }
+        if (notMulList.length === 0) { // 都是多段付，不用判断异常，直接弹窗提示存在多段付单子
+          if (errList.length > 0) this.errDialog(errList)
+          return
+        }
         Server({
           url: '/finance/reconcile/checkReconcile',
           method: 'post',
           data: {
-            idList: this.selectedIds,
+            idList: notMulList,
             partnerType: this.scene,
             partnerName: this.currentPartner.partnerName
           }
         }).then(res => {
-          if (res.data.data === '') {
-            this.createBillOk()
-          } else if (res.data.data && res.data.data.operateCode === 1) {
+          if (res.data.data && res.data.data.operateCode === 1) {
             // 存在异常
-            this.$Toast.warning({
-              title: '对账',
-              content: '以下单据存在异常，无法生成对账单',
-              render: (h) => {
-                const list = res.data.data.orderNos.length > 0 ? res.data.data.orderNos.map(item => {
-                  return h('p', item)
-                }) : []
-                return h('div', [
-                  ...list
-                ])
-              },
-              okText: '确认',
-              cancelText: '取消'
+            errList.push({
+              title: '以下单据存在异常，无法生成对账单',
+              arr: res.data.data.orderNos
             })
+          }
+          if (errList.length === 0) { // 不存在异常且不存在月结单，可以批量核销
+            this.createBillOk()
+          } else {
+            this.errDialog(errList)
           }
         })
       } else {
-        this.$Message.warning('请选择2条以上的数据')
+        this.$Message.warning('请先选择')
       }
     },
     startQuery () {
@@ -471,7 +505,7 @@ export default {
       switch (data.row.orderType) {
         case 1:
           this.openTab({
-            path: '/order-management/detail',
+            path: '/order-management/order-detail',
             title: data.row.orderNo,
             query: {
               id: data.row.orderNo,
@@ -532,10 +566,21 @@ export default {
       })
     },
     showOrderData (data) {
+      // 切换的时候要把之前选择的清空
+      this.selectedList = []
       this.companyDataActive = data.id
       this.currentPartner = data
       this.orderData = data.orderInfos.map(item => {
+        let count = 0
+        if (item.listMultiPay && item.listMultiPay.length > 0) { // 按单结算才有
+          item.listMultiPay.map(paylist => {
+            if (paylist.verifyStatus === 0) {
+              count++
+            }
+          })
+        }
         return Object.assign({}, item, {
+          unPayCount: count, // 未核销笔数
           carrierWaybillNo: item.carrierWaybillNo ? item.carrierWaybillNo : '-',
           departureName: item.departureName ? item.departureName : '-',
           destinationName: item.destinationName ? item.destinationName : '-',
@@ -544,12 +589,121 @@ export default {
           totalFeeText: item.totalFee !== '' ? (item.totalFee / 100).toFixed(2) : '-',
           settleTypeDesc: item.settleTypeDesc ? item.settleTypeDesc : '-',
           orderStatusDesc: item.orderStatusDesc ? item.orderStatusDesc : '-',
-          _disabled: !!item.isMultiPay,
+          // _disabled: !!item.isMultiPay,
           title: data.partnerName,
           calcTotalFeeText: data.calcTotalFeeText,
           verifiedFeeText: data.verifiedFeeText
         })
       })
+    },
+    // 批量核销异常弹框
+    errDialog (errList) {
+      this.openDialog({
+        name: 'finance/dialogs/errorDiolog',
+        data: {
+          title: '操作提示',
+          errList: errList
+        },
+        methods: {
+          ok () {
+            console.log('ok!')
+          }
+        }
+      })
+    },
+    // 批量校验单子是否可以核销
+    batchCheckOrder () {
+      if (this.selectedList.length > 0) {
+        // 首先统计月结单子
+        let monthList = []
+        // 按单结单
+        let checkList = []
+        this.selectedList.map(item => {
+          if (item.settleType === 4) {
+            monthList.push(item.orderNo)
+          } else if (item.settleType === 50) { // 按单结
+            if (item.listMultiPay) {
+              item.listMultiPay.map(list => {
+                if (list.verifyStatus === 0) checkList.push(list.id)
+              })
+            }
+          }
+        })
+        let errList = []
+        if (monthList.length > 0) { // 存在月结单
+          errList.push({
+            title: '以下单据是月结，不能批量核销',
+            arr: monthList
+          })
+        }
+        if (checkList.length === 0) { // 按单结单子没有，不用判断异常，直接弹窗提示存在月结单
+          if (errList.length > 0) this.errDialog(errList)
+          return
+        }
+        Server({
+          url: '/finance/verify/batchCheckOrder',
+          method: 'post',
+          data: {
+            ids: checkList,
+            verifyType: 2
+          }
+        }).then(res => {
+          if (res.data.data && res.data.data.operateCode === 1) { // 存在异常
+            errList.push({
+              title: '以下单据因为存在异常未处理，不能批量核销。单据号：',
+              arr: res.data.data.orderNos
+            })
+          }
+          if (errList.length === 0) { // 不存在异常且不存在月结单，可以批量核销
+            this.batchVerifyOrder()
+          } else {
+            this.errDialog(errList)
+          }
+        })
+      } else {
+        this.$Message.warning('请先选择')
+      }
+    },
+    // 批量可以核销
+    batchVerifyOrder () {
+      let _this = this
+      this.openDialog({
+        name: 'finance/dialogs/bulkVerifyDialog',
+        data: {
+          title: '批量核销',
+          list: this.batchData()
+        },
+        methods: {
+          freshSheet () {
+            // 刷新
+            _this.loadData()
+          }
+        }
+      })
+    },
+    // 批量核销凑数据
+    batchData () {
+      let arr = []
+      for (let key in this.payTypeMap) {
+        let obj = {
+          label: this.payTypeMap[key],
+          payType: parseInt(key),
+          count: 0,
+          money: 0,
+          value: ''
+        }
+        this.selectedList.map(item => {
+          item.listMultiPay.map(list => {
+            if (list.verifyStatus === 0 && obj.payType === list.payType) {
+              obj.count++
+              obj.money += list.amount
+              obj.value += list.id + ','
+            }
+          })
+        })
+        arr.push(obj)
+      }
+      return arr
     }
   }
 }

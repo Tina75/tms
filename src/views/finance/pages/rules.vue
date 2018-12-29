@@ -123,7 +123,7 @@
                           </div>
                         </div>
                         </Col>
-                        <Col :offset="(ruleDetail.ruleType==='5' || '8')? 13:0" span="2">
+                        <Col :offset="(ruleDetail.ruleType==='5' || ruleDetail.ruleType==='8')? 13:0" span="2">
                         <span class="delete_btn" @click="removeItem(index)">删除</span>
                         </Col>
                       </Row>

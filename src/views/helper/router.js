@@ -13,7 +13,8 @@ export default[
         'meta': {
           'title': '帮助',
           'icon': 'bangzhuzhongxin',
-          'powerCode': 0
+          'powerCode': 0,
+          'notCache': false
         }
       },
       {

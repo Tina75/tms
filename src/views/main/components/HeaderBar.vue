@@ -61,15 +61,11 @@ export default {
   },
   mounted () {
     const vm = this
-    window.EMA.bind('closeTab', vm.onTabClose)
-    // window.EMA.bind('reloadTab', (route) => {
-    //   route.query = Object.assign({ _time: new Date().getTime() }, route.query)
-    //   this.turnToPage(route)
-    // })
+    window.EMA.bind('on-close', vm.onTabClose)
     // 用户登录后，初始化配置
-    if (this.IsUserLogin) {
-      this.loopMessage()
-      this.newUserTip()
+    if (vm.IsUserLogin) {
+      vm.loopMessage()
+      vm.newUserTip()
     }
   },
   beforeDestroy () {
@@ -79,7 +75,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getMessageCount', 'getUserInfo', 'getTableColumns', 'getOwnDrivers', 'getOwnCars', 'getOrderConfiguration']),
+    ...mapActions(['getMessageCount', 'getUserInfo', 'getTableColumns', 'getOwnDrivers', 'getOwnCars', 'getConfiguration']),
     async newUserTip () {
       try {
         // await this.getUserInfo()
@@ -106,7 +102,7 @@ export default {
         this.getOwnDrivers()
         this.getOwnCars()
         // 获取开单全局配置
-        this.getOrderConfiguration()
+        this.getConfiguration()
         // 添加GA配置属性
         this.$ga.set('phone', this.UserInfo.phone)
         this.$ga.set('roleName', this.UserInfo.roleName)

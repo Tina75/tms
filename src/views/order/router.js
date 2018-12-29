@@ -39,6 +39,27 @@ export default[
         }
       },
       {
+        'name': 'frequent-order',
+        'path': 'frequent-order',
+        'component': () => import(/* webpackChunkName: "order-detail" */'./frequent-order/index.vue'),
+        'meta': {
+          'powerCode': 100400,
+          'title': '常发订单',
+          'notCache': true
+        }
+      },
+      {
+        'name': 'frequent-order-detail',
+        'path': 'frequent-order-detail',
+        'component': () => import(/* webpackChunkName: "order-detail" */'./frequent-order/detail.vue'),
+        'meta': {
+          'powerCode': 100400,
+          'hideInMenu': true,
+          'notCache': true,
+          'title': '常发订单详情'
+        }
+      },
+      {
         'name': 'order-management',
         'path': '/order-management/order',
         'component': () => import(/* webpackChunkName: "order-management" */'./management/order.vue'),
@@ -56,6 +77,28 @@ export default[
           'hideInMenu': true,
           'powerCode': 100300,
           'title': '订单详情'
+        }
+      },
+      {
+        'name': 'management-order-detail',
+        'path': '/order-management/order-detail',
+        'component': () => import(/* webpackChunkName: "order-detail" */'./management/order-detail.vue'),
+        'meta': {
+          'notCache': true,
+          'hideInMenu': true,
+          'powerCode': 100300,
+          'title': '订单详情'
+        }
+      },
+      {
+        'name': 'management-recept-detail',
+        'path': '/order-management/recept-detail',
+        'component': () => import(/* webpackChunkName: "recept-detail" */'./management/recept-detail.vue'),
+        'meta': {
+          'notCache': true,
+          'hideInMenu': true,
+          'powerCode': 100300,
+          'title': '回单详情'
         }
       }
     ]

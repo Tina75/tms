@@ -66,7 +66,7 @@ export default {
       },
       ruleValidate: {
         city: [
-          { required: true, message: '发货城市不能为空' }
+          { required: false, message: '发货城市不能为空' }
         ],
         address: [
           { required: true, message: '发货地址不能为空', trigger: 'blur' }

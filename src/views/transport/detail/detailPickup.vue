@@ -73,11 +73,11 @@
                   <span v-if="info.carType">{{ info.carType|carTypeFormatter }} {{ info.carLength|carLengthFormatter }}</span>
                   <span v-else>-</span>
                 </i-col>
-                <i-col span="8">
+                <!-- <i-col span="8">
                   <span class="detail-field-title">代收货款：</span>
                   <span v-if="info.collectionMoney">{{info.collectionMoney / 100}}元</span>
                   <span v-else>-</span>
-                </i-col>
+                </i-col> -->
               </Row>
             </div>
             <Row class="detail-field-group">
@@ -499,16 +499,7 @@ export default {
       ],
       sendWay: '1', // 派车类型 1 外转 2 自送  V1.07新增
 
-      imageItems: [ // 需要展示的车况照片list
-        {
-          src: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/1005859967670.9203.jpg',
-          msrc: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/1005859967670.9203.jpg'
-        },
-        {
-          src: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/853667749786.0685.jpg',
-          msrc: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/853667749786.0685.jpg'
-        }
-      ]
+      imageItems: [] // 需要展示的车况照片list
     }
   },
 
@@ -547,6 +538,13 @@ export default {
         data: { pickUpId: this.id }
       }).then(res => {
         const data = res.data.data
+
+        this.imageItems = data.carInfo.map((item) => {
+          return {
+            src: item,
+            msrc: item
+          }
+        })
 
         for (let key in vm.info) {
           vm.info[key] = data.loadbill[key]

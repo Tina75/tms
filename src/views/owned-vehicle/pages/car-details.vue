@@ -6,10 +6,16 @@
         </TabPane>
         <TabPane label="维修记录汇总" name="repair">
         </TabPane>
+        <TabPane label="车辆保险汇总" name="insurance">
+        </TabPane>
+        <TabPane label="车辆年检汇总" name="check">
+        </TabPane>
+        <TabPane label="轮胎管理汇总" name="tyre">
+        </TabPane>
       </Tabs>
     </div>
     <!-- 车辆信息详情 -->
-    <div v-if="showTableOne" class="info-detail">
+    <div v-if="showTable === 'car'" class="info-detail">
       <div class="info">
         <div class="title">
           <span class="icontTitle"></span>
@@ -79,6 +85,12 @@
               {{formatDate(infoData.purchDate)}}
             </div>
             </Col>
+            <Col span="6">
+            <div>
+              <span class="label">挂车号：</span>
+              {{infoData.trailerNo}}<span v-if="infoData.trailerNo">挂</span>
+            </div>
+            </Col>
           </Row>
         </div>
         <div class="title" style="margin-top: 40px;">
@@ -121,7 +133,7 @@
       </div>
     </div>
     <!-- 维修记录汇总 -->
-    <div v-if="!showTableOne">
+    <div v-if="showTable === 'repair'">
       <div class="addRepair">
         <Button v-if="hasPower(190301)" type="primary" @click="editRepair">新增维修保养</Button>
         <Button v-if="hasPower(190304)" class="buttonSty" @click="carExport">导出</Button>
@@ -131,6 +143,56 @@
         :keywords="repairFormatInit"
         class="pageTable"
         url="/ownerCar/repair/list"
+        list-field="list"
+        method="post"
+        @on-load="handleLoad">
+      </page-table>
+    </div>
+    <!-- 车辆保险汇总 -->
+    <div v-if="showTable === 'insurance'">
+      <div class="addRepair">
+        <Button v-if="hasPower(190401)" type="primary" @click="editInsurance">新增车辆保险</Button>
+        <Button v-if="hasPower(190404)" class="buttonSty" @click="exporteditInsurance">导出</Button>
+      </div>
+      <page-table
+        :columns="insuranceColumns"
+        :keywords="insuranceFormInit"
+        :show-filter="true"
+        table-head-type="car_insurance"
+        class="pageTable"
+        url="/ownerCar/insurance/list"
+        list-field="list"
+        method="post"
+        @on-load="handleLoad">
+      </page-table>
+    </div>
+    <!-- 年检 -->
+    <div v-if="showTable === 'check'">
+      <div class="addRepair">
+        <Button v-if="hasPower(190501)" type="primary" @click="editCheck">新增车辆年检</Button>
+        <Button v-if="hasPower(190504)" class="buttonSty" @click="exportCheck">导出</Button>
+      </div>
+      <page-table
+        :columns="checkColumns"
+        :keywords="checkFormInit"
+        class="pageTable"
+        url="/ownerCar/check/list"
+        list-field="list"
+        method="post"
+        @on-load="handleLoad">
+      </page-table>
+    </div>
+    <!-- 轮胎 -->
+    <div v-if="showTable === 'tyre'">
+      <div class="addRepair">
+        <Button v-if="hasPower(190601)" type="primary" @click="editTyre">新增轮胎管理</Button>
+        <Button v-if="hasPower(190604)" class="buttonSty" @click="exportTyre">导出</Button>
+      </div>
+      <page-table
+        :columns="tyreColumns"
+        :keywords="tyreFormInit"
+        class="pageTable"
+        url="/ownerCar/tire/list"
         list-field="list"
         method="post"
         @on-load="handleLoad">
@@ -147,6 +209,7 @@ import { CODE, deleteCarById, queryCarById, deleteRepairById } from './client'
 import pageTable from '@/components/page-table'
 import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
+import { mapActions } from 'vuex'
 export default {
   name: 'car-details',
   components: { RecordList, prepareOpenSwipe, pageTable, Export },
@@ -156,7 +219,7 @@ export default {
   },
   data () {
     return {
-      showTableOne: true,
+      showTable: 'car',
       exportFile: true,
       infoData: {},
       carTypeMap: CAR_TYPE1,
@@ -166,6 +229,9 @@ export default {
       searchLogData: {},
       imageItems: [],
       repairFormatInit: {},
+      insuranceFormInit: {},
+      checkFormInit: {},
+      tyreFormInit: {},
       menuColumns: [
         {
           title: '操作',
@@ -319,6 +385,386 @@ export default {
             return h('div', { props: {} }, text)
           }
         }
+      ],
+      insuranceColumns: [
+        {
+          title: '操作',
+          key: 'id',
+          width: 150,
+          fixed: 'left',
+          extra: true,
+          render: (h, params) => {
+            let renderBtn = []
+            if (this.hasPower(190402)) {
+              renderBtn.push(h('span', {
+                style: {
+                  marginRight: '12px',
+                  color: '#00A4BD',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    let vm = this
+                    this.openDialog({
+                      name: 'owned-vehicle/dialog/edit-insurance',
+                      data: {
+                        title: '修改保险',
+                        flag: 4, // 修改
+                        validate: {
+                          ...params.row,
+                          buyDate: new Date(params.row.buyDate),
+                          effectDate: new Date(params.row.effectDate),
+                          expireDate: new Date(params.row.expireDate)
+                        }
+                      },
+                      methods: {
+                        ok () {
+                          vm.insuranceFormInit = { carNo: vm.infoData.carNo }
+                        }
+                      }
+                    })
+                  }
+                }
+              }, '修改'))
+            }
+            renderBtn.push(h('span', {
+              style: {
+                marginRight: '12px',
+                color: '#00A4BD',
+                cursor: 'pointer'
+              },
+              on: {
+                click: () => {
+                  this.$router.push({ name: 'insurance-details', query: { rowData: params.row } })
+                }
+              }
+            }, '查看'))
+            if (this.hasPower(190403)) {
+              renderBtn.push(h('span', {
+                style: {
+                  color: '#00A4BD',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    let vm = this
+                    this.$Toast.confirm({
+                      title: '提示',
+                      content: '确定删除吗？',
+                      onOk () {
+                        vm.insuranceDeleteById({ id: params.row.id }).then(() => {
+                          vm.$Message.success('删除成功！')
+                        }).then(() => {
+                          vm.insuranceFormInit = { carNo: vm.infoData.carNo }
+                        })
+                      }
+                    })
+                  }
+                }
+              }, '删除'))
+            }
+            return h('div', renderBtn)
+          }
+        },
+        {
+          title: '保单号',
+          key: 'invoiceNo'
+        },
+        {
+          title: '保险公司',
+          key: 'insuranceCompanyName'
+        },
+        {
+          title: '车牌号',
+          key: 'carNo'
+        },
+        {
+          title: '总金额（元）',
+          key: 'totalFee',
+          render: (h, params) => {
+            return h('span', Number(params.row.totalFee) / 100)
+          }
+        },
+        {
+          title: '购买日期',
+          key: 'buyDate',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.buyDate)
+            return h('div', { props: {} }, text)
+          }
+        },
+        {
+          title: '生效日期',
+          key: 'effectDate',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.effectDate)
+            return h('div', { props: {} }, text)
+          }
+        },
+        {
+          title: '失效日期',
+          key: 'expireDate',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.expireDate)
+            return h('div', { props: {} }, text)
+          }
+        },
+        {
+          title: '交强险金额（元）',
+          key: 'trafficFee',
+          render: (h, params) => {
+            return h('span', Number(params.row.trafficFee) / 100)
+          }
+        },
+        {
+          title: '商业险金额（元）',
+          key: 'businessFee',
+          render: (h, params) => {
+            return h('span', Number(params.row.businessFee) / 100)
+          }
+        },
+        {
+          title: '创建时间',
+          key: 'createTime',
+          render: (h, params) => {
+            let text = this.formatDateTime(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
+        }
+      ],
+      checkColumns: [
+        {
+          title: '操作',
+          key: 'id',
+          width: 150,
+          render: (h, params) => {
+            let renderBtn = []
+            if (this.hasPower(190502)) {
+              renderBtn.push(h('span', {
+                style: {
+                  marginRight: '12px',
+                  color: '#00A4BD',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    let vm = this
+                    this.openDialog({
+                      name: 'owned-vehicle/dialog/edit-check',
+                      data: {
+                        title: '修改年检',
+                        flag: 4, // 修改
+                        validate: { ...params.row, checkDate: new Date(params.row.checkDate), nextCheckDate: new Date(params.row.nextCheckDate) }
+                      },
+                      methods: {
+                        ok () {
+                          vm.checkFormInit = { carNo: vm.infoData.carNo }
+                        }
+                      }
+                    })
+                  }
+                }
+              }, '修改'))
+            }
+            renderBtn.push(h('span', {
+              style: {
+                marginRight: '12px',
+                color: '#00A4BD',
+                cursor: 'pointer'
+              },
+              on: {
+                click: () => {
+                  this.$router.push({ name: 'check-details', query: { rowData: params.row } })
+                }
+              }
+            }, '查看'))
+            if (this.hasPower(190503)) {
+              renderBtn.push(h('span', {
+                style: {
+                  color: '#00A4BD',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    let vm = this
+                    this.$Toast.confirm({
+                      title: '提示',
+                      content: '确定删除吗？',
+                      onOk () {
+                        vm.checkDeleteById({ id: params.row.id }).then(res => {
+                          vm.$Message.success('删除成功！')
+                        }).then(() => {
+                          vm.checkFormInit = { carNo: vm.infoData.carNo }
+                        })
+                      }
+                    })
+                  }
+                }
+              }, '删除'))
+            }
+            return h('div', renderBtn)
+          }
+        },
+        {
+          title: '车牌号',
+          key: 'carNo'
+        },
+        {
+          title: '金额',
+          key: 'cost',
+          render: (h, params) => {
+            return h('span', Number(params.row.cost) / 100)
+          }
+        },
+        {
+          title: '年检日期',
+          key: 'checkDate',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.checkDate)
+            return h('div', { props: {} }, text)
+          }
+        },
+        {
+          title: '下次年检日期',
+          key: 'nextCheckDate',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.nextCheckDate)
+            return h('div', { props: {} }, text)
+          }
+        },
+        {
+          title: '创建时间',
+          key: 'createTime',
+          // sortable: 'custom',
+          render: (h, params) => {
+            let text = this.formatDateTime(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
+        }
+      ],
+      tyreColumns: [
+        {
+          title: '操作',
+          key: 'id',
+          width: 150,
+          render: (h, params) => {
+            let renderBtn = []
+            if (this.hasPower(190602)) {
+              renderBtn.push(h('span', {
+                style: {
+                  marginRight: '12px',
+                  color: '#00A4BD',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    let vm = this
+                    this.openDialog({
+                      name: 'owned-vehicle/dialog/edit-tyre',
+                      data: {
+                        title: '修改轮胎',
+                        flag: 4, // 修改
+                        validate: { ...params.row, setupDate: new Date(params.row.setupDate) }
+                      },
+                      methods: {
+                        ok () {
+                          vm.tyreFormInit = { carNo: vm.infoData.carNo }
+                        }
+                      }
+                    })
+                  }
+                }
+              }, '修改'))
+            }
+            renderBtn.push(h('span', {
+              style: {
+                marginRight: '12px',
+                color: '#00A4BD',
+                cursor: 'pointer'
+              },
+              on: {
+                click: () => {
+                  this.$router.push({ name: 'tyre-details', query: { rowData: params.row } })
+                }
+              }
+            }, '查看'))
+            if (this.hasPower(190603)) {
+              renderBtn.push(h('span', {
+                style: {
+                  color: '#00A4BD',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    let vm = this
+                    this.$Toast.confirm({
+                      title: '提示',
+                      content: '确定删除吗？',
+                      onOk () {
+                        vm.tyreDeleteById({ id: params.row.id }).then(res => {
+                          vm.$Message.success('删除成功！')
+                        }).then(() => {
+                          vm.tyreFormInit = { carNo: vm.infoData.carNo }
+                        })
+                      }
+                    })
+                  }
+                }
+              }, '删除'))
+            }
+            return h('div', renderBtn)
+          }
+        },
+        {
+          title: '车牌号',
+          key: 'carNo'
+        },
+        {
+          title: '金额',
+          key: 'cost',
+          render: (h, params) => {
+            return h('span', Number(params.row.cost) / 100)
+          }
+        },
+        {
+          title: '轮胎品牌',
+          key: 'tireBrand'
+        },
+        {
+          title: '轮胎型号',
+          key: 'tireModel'
+        },
+        {
+          title: '换上公里数',
+          key: 'setupMileage',
+          render: (h, params) => {
+            return h('span', Number(params.row.setupMileage) / 1000)
+          }
+        },
+        {
+          title: '换下公里数',
+          key: 'uninstallMileage',
+          render: (h, params) => {
+            return h('span', Number(params.row.uninstallMileage) / 1000)
+          }
+        },
+        {
+          title: '安装日期',
+          key: 'setupDate',
+          render: (h, params) => {
+            let text = this.formatDate(params.row.setupDate)
+            return h('div', { props: {} }, text)
+          }
+        },
+        {
+          title: '创建日期',
+          key: 'createTime',
+          sortable: 'custom',
+          render: (h, params) => {
+            let text = this.formatDateTime(params.row.createTime)
+            return h('div', { props: {} }, text)
+          }
+        }
       ]
     }
   },
@@ -328,16 +774,16 @@ export default {
     this.searchRepairByCar()
   },
   methods: {
+    ...mapActions(['insuranceDeleteById', 'checkDeleteById', 'tyreDeleteById']),
     // 切换头部tab
     clickTitleTab (val) {
-      if (val === 'car') {
-        this.showTableOne = true
-      } else {
-        this.showTableOne = false
-      }
+      this.showTable = val
     },
     queryById () {
       let vm = this
+      vm.insuranceFormInit = { carNo: vm.infoData.carNo }
+      vm.checkFormInit = { carNo: vm.infoData.carNo }
+      vm.tyreFormInit = { carNo: vm.infoData.carNo }
       queryCarById({ carId: vm.infoData.id }).then(res => {
         if (res.data.code === CODE) {
           vm.infoData = res.data.data
@@ -420,7 +866,7 @@ export default {
         name: 'owned-vehicle/dialog/edit-car',
         data: {
           title: '修改车辆',
-          flag: 2,
+          flag: 3,
           validate: { ...vm.infoData, purchDate: new Date(vm.infoData.purchDate) }
         },
         methods: {
@@ -475,6 +921,94 @@ export default {
     },
     searchRepairByCar () {
       this.repairFormatInit = { carNo: this.infoData.carNo }
+    },
+    // 保险
+    editInsurance () {
+      let vm = this
+      this.openDialog({
+        name: 'owned-vehicle/dialog/edit-insurance',
+        data: {
+          title: '新增保险',
+          flag: 3, // 新增,
+          validate: { carNo: vm.infoData.carNo }
+        },
+        methods: {
+          ok () {
+            vm.insuranceFormInit = { carNo: vm.infoData.carNo }
+          }
+        }
+      })
+    },
+    exporteditInsurance () {
+      if (!this.exportFile) {
+        this.$Message.error('导出内容为空')
+        return
+      }
+      let params = this.insuranceFormInit
+      Export({
+        url: '/ownerCar/insurance/export',
+        method: 'post',
+        data: params,
+        fileName: '导出保险列表'
+      })
+    },
+    editCheck () {
+      let vm = this
+      this.openDialog({
+        name: 'owned-vehicle/dialog/edit-check',
+        data: {
+          title: '新增年检',
+          flag: 3, // 新增
+          validate: { carNo: vm.infoData.carNo }
+        },
+        methods: {
+          ok () {
+            vm.checkFormInit = { carNo: vm.infoData.carNo }
+          }
+        }
+      })
+    },
+    exportCheck () {
+      if (!this.exportFile) {
+        this.$Message.error('导出内容为空')
+        return
+      }
+      let params = this.checkFormInit
+      Export({
+        url: '/ownerCar/check/export',
+        method: 'post',
+        data: params,
+        fileName: '导出车辆年检'
+      })
+    },
+    editTyre () {
+      let vm = this
+      this.openDialog({
+        name: 'owned-vehicle/dialog/edit-tyre',
+        data: {
+          title: '新增轮胎',
+          flag: 3, // 新增
+          validate: { carNo: vm.infoData.carNo }
+        },
+        methods: {
+          ok () {
+            vm.tyreFormInit = { carNo: vm.infoData.carNo }
+          }
+        }
+      })
+    },
+    exportTyre () {
+      if (!this.exportFile) {
+        this.$Message.error('导出内容为空')
+        return
+      }
+      let params = this.tyreFormInit
+      Export({
+        url: '/ownerCar/tire/export',
+        method: 'post',
+        data: params,
+        fileName: '导出轮胎管理'
+      })
     }
   }
 }

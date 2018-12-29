@@ -29,6 +29,13 @@
         <Row class="row">
           <Col span="8">
           <div>
+            <span class="label">提货方式：</span>
+            <span v-if="list.pickUp===1">小车上门提货</span>
+            <span v-else-if="list.pickUp===2">大车直送客户</span>
+          </div>
+          </Col>
+          <Col span="8">
+          <div>
             <span class="label">结算方式：</span>
             <span v-if="list.payType===1">现付</span>
             <span v-else-if="list.payType===2">到付</span>
@@ -39,14 +46,23 @@
           </Col>
           <Col span="8">
           <div>
-            <span class="label">对接业务员：</span>
-            <span v-text="list.salesName"></span>
+            <span class="label">是否开票：</span>
+            <span v-text="list.isInvoice === 1 ? `是（${rate(list.invoiceRate)}%）` : '否'">现付</span>
+          </div>
+          </Col>
+        </Row>
+        <Row class="row">
+          <Col span="8">
+          <div>
+            <span class="label">开拓渠道：</span>
+            <span v-if="list.exploiteChannel ===1">公司开拓</span>
+            <span v-if="list.exploiteChannel ===2">个人开拓</span>
           </div>
           </Col>
           <Col span="8">
           <div>
-            <span class="label">是否开票：</span>
-            <span v-text="list.isInvoice === 1 ? `是（${rate(list.invoiceRate)}%）` : '否'">现付</span>
+            <span class="label">对接业务员：</span>
+            <span v-text="list.salesName"></span>
           </div>
           </Col>
         </Row>
@@ -77,6 +93,8 @@
         <TabPane :label="tabPaneLabe2">
           <div class="add">
             <Button v-if="hasPower(130107)" type="primary"  @click="_consignerConsigneeAdd">新增</Button>
+            <!-- 权限待加 -->
+            <Button type="default"  @click="_consignerConsigneeAddAll">批量导入</Button>
           </div>
           <template>
             <page-table
@@ -137,7 +155,9 @@ export default {
         phone: '',
         payType: '',
         remark: '',
-        id: null
+        id: null,
+        pickUp: null,
+        exploiteChannel: null
       },
       columns1: [
         {
@@ -258,7 +278,8 @@ export default {
                           latitude: params.row.latitude,
                           mapType: params.row.mapType,
                           cityCode: params.row.cityCode,
-                          consignerHourseNumber: params.row.consignerHourseNumber
+                          consignerHourseNumber: params.row.consignerHourseNumber,
+                          consigneeCompanyName: params.row.consigneeCompanyName
                         }
                       },
                       methods: {
@@ -327,6 +348,10 @@ export default {
           }
         },
         {
+          title: '收货人单位',
+          key: 'consigneeCompanyName'
+        },
+        {
           title: '备注',
           key: 'remark',
           render (h, params) {
@@ -364,6 +389,7 @@ export default {
                         flag: 2, // 修改
                         id: params.row.id,
                         validate: {
+                          ...params.row,
                           cargoName: params.row.cargoName,
                           unit: params.row.unit,
                           cargoCost: (params.row.cargoCost / 100).toFixed(2),
@@ -371,7 +397,10 @@ export default {
                           volume: String(params.row.volume),
                           remark1: params.row.remark1,
                           remark2: params.row.remark2
-                        }
+                        },
+                        volumeLength: params.row.dimension ? params.row.dimension.length : null,
+                        volumeWidth: params.row.dimension ? params.row.dimension.width : null,
+                        volumeHeight: params.row.dimension ? params.row.dimension.height : null
                       },
                       methods: {
                         ok () {
@@ -425,6 +454,17 @@ export default {
           tooltip: true
         },
         {
+          title: '货物编码',
+          key: 'cargoNo'
+        },
+        {
+          title: '货值',
+          key: 'cargoCost',
+          render (h, params) {
+            return h('div', {}, (params.row.cargoCost / 100).toFixed(2))
+          }
+        },
+        {
           title: '包装方式',
           key: 'unit',
           render (h, params) {
@@ -438,10 +478,18 @@ export default {
           }
         },
         {
-          title: '货值',
-          key: 'cargoCost',
+          title: '包装尺寸',
+          key: 'dimension',
           render (h, params) {
-            return h('div', {}, (params.row.cargoCost / 100).toFixed(2))
+            if (params.row.dimension) {
+              let text = ''
+              text += params.row.dimension.length + '*'
+              text += params.row.dimension.width + '*'
+              text += params.row.dimension.height
+              return h('span', {}, text)
+            } else {
+              return h('span', {}, '-')
+            }
           }
         },
         {
@@ -513,7 +561,8 @@ export default {
       totalCount3: 0, // 总条数
       pageNo3: 1,
       totalCount4: 0,
-      isShow: false
+      isShow: false,
+      downLoadUrl: ''
     }
   },
   computed: {
@@ -559,7 +608,9 @@ export default {
             remark: data.remark,
             invoiceRate: data.invoiceRate,
             isInvoice: data.isInvoice,
-            salesName: data.salesName
+            salesName: data.salesName,
+            pickUp: data.pickUp,
+            exploiteChannel: data.exploiteChannel
           }
           this.loading = false
           this.data1 = data.addressList.list
@@ -568,6 +619,7 @@ export default {
           this.totalCount2 = data.consigneeList.totalCount
           this.data3 = data.cargoList.list
           this.totalCount3 = data.cargoList.totalCount
+          this.downLoadUrl = data.importConsigneeTemplet
         }
       })
     },
@@ -636,6 +688,22 @@ export default {
         methods: {
           ok () {
             _this._consignerConsigneeList() // 刷新页面
+          }
+        }
+      })
+    },
+    // 批量导入
+    _consignerConsigneeAddAll () {
+      const self = this
+      this.openDialog({
+        name: 'client/dialog/batch-import',
+        data: {
+          title: '批量导入',
+          downLoadUrl: this.downLoadUrl
+        },
+        methods: {
+          ok: () => {
+            self._consignerConsigneeList()
           }
         }
       })

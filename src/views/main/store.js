@@ -46,11 +46,11 @@ export default {
     /**
      * 刷新tab
      * @param {*} param0
-     * @param {*} navItem
+     * @param {object} {index,type} params 1:新增refresh=true，2：refresh = false
      */
-    refreshNavTab ({ commit }, navItem) {
-      commit('removeActiveTabClass')
-      commit('refreshNavTab', navItem)
+    refreshNavTab ({ commit }, params) {
+      // commit('removeActiveTabClass')
+      commit('refreshNavTab', params)
     },
     removeActiveTabClass ({ commit }) {
       commit('removeActiveTabClass')
@@ -76,9 +76,15 @@ export default {
     removeNavTab (state, tab) {
       state.navTabList = state.navTabList.filter((item) => item.id !== tab.id)
     },
-    refreshNavTab (state, tab) {
-      const { index, navTab } = tab
-      state.navTabList.splice(index, -1, navTab)
+    refreshNavTab (state, params) {
+      const { index, type } = params
+      let tab = state.navTabList[index]
+      if (type === 1) {
+        tab.reload = true
+      } else {
+        tab.reload = false
+      }
+      // state.navTabList.splice(index, -1, navTab)
     },
     removeActiveTabClass (state) {
       let tab = state.navTabList.find((item) => item.isActive)

@@ -31,7 +31,7 @@ import PageTable from '@/components/page-table/index'
 import Export from '@/libs/js/export'
 import TMSUrl from '@/libs/constant/url'
 import Server from '@/libs/js/server'
-import { renderFee } from '@/libs/js/util'
+import { renderFee } from '@/libs/js/config'
 export default {
   components: {
     CollectForm,

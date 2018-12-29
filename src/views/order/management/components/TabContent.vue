@@ -18,7 +18,8 @@
           placeholder="请选择或输入客户名称"
           class="input-w"
           @on-focus.once="getClients"
-          @on-clear="clearKeywords">
+          @on-clear="clearKeywords"
+          @enter="searchList">
         </SelectInput>
         <Input
           v-else-if="selectStatus === 1"
@@ -60,9 +61,12 @@
                 v-model="keywords.consignerName"
                 :maxlength="20"
                 :remote="false"
+                :clearable="true"
                 :local-options="clients"
                 placeholder="请选择或输入客户名称"
-                @on-focus.once="getClients">
+                @on-focus.once="getClients"
+                @on-clear="clearKeywords"
+                @enter="searchList">
               </SelectInput>
             </i-col>
             <i-col span="6" class="i-mt-10">
@@ -526,7 +530,7 @@ export default {
                 on: {
                   click: () => {
                     this.openTab({
-                      path: '/order-management/detail',
+                      path: '/order-management/order-detail',
                       query: {
                         id: params.row.orderNo,
                         orderId: params.row.id,
@@ -780,6 +784,12 @@ export default {
           }
         },
         {
+          title: '收货人单位',
+          key: 'consigneeCompanyName',
+          minWidth: 130,
+          tooltip: true
+        },
+        {
           title: '结算方式',
           key: 'settlementType',
           minWidth: 120,
@@ -879,9 +889,17 @@ export default {
         {
           title: '开票税率',
           key: 'invoiceRate',
-          minWidth: 180,
+          minWidth: 120,
           render: (h, params) => {
             return h('span', float.round(params.row.invoiceRate * 100, 2) || '-')
+          }
+        },
+        {
+          title: '开票税额',
+          key: 'invoiceAmount',
+          minWidth: 120,
+          render: (h, params) => {
+            return h('span', float.round(params.row.invoiceAmount / 100) || '-')
           }
         },
         {
@@ -1042,6 +1060,10 @@ export default {
           }
         }
         this.btnGroup.push({ name: '分享', value: 9, code: 100307 })
+        // 1.09 新增已回单下删除按钮
+        if (val === '已回单') {
+          this.btnGroup.push({ name: '删除', value: 4, code: 100302 })
+        }
       } else {
         if (val === '待提货') {
           this.btnGroup = [

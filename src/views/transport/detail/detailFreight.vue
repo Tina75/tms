@@ -112,7 +112,8 @@
             <div class="detail-part-title">
               <span>承运订单</span>
             </div>
-            <Table :columns="tableColumns" :data="detail" :loading="loading" class="detail-field-table"></Table>
+            <Table ref="cargoTable" :columns="tableColumns" :data="cargoGroupByOrderNo" :loading="loading" class="detail-field-table">
+            </Table>
             <div class="table-footer">
               <span class="table-footer-title">总计</span>
               <span>总货值：{{ orderTotal.cargoCost }}元</span>
@@ -279,7 +280,7 @@
         </div>
         <Button v-if="status === '待发运'" class="detail-field-button" type="primary"
                 @click="addOrder('freight')">添加订单</Button>
-        <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
+        <Table ref="cargoEditTable" :columns="tableColumns" :data="cargoGroupByOrderNo" :loading="loading"> </Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
           <span>总货值：{{ orderTotal.cargoCost }}元</span>
@@ -586,7 +587,8 @@ export default {
           key: 'cargoName',
           minWidth: 180,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoName)
+            return this.scopedSlotsRender(h, p, 'cargoName')
+            // return this.tableDataRender(h, p.row.cargoName)
           }
         },
         {
@@ -594,7 +596,8 @@ export default {
           key: 'unit',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.unit)
+            return this.scopedSlotsRender(h, p, 'unit')
+            // return this.tableDataRender(h, p.row.unit)
           }
         },
         {
@@ -602,7 +605,8 @@ export default {
           key: 'quantity',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.quantity ? p.row.quantity : 0)
+            return this.scopedSlotsRender(h, p, 'quantity', 0)
+            // return this.tableDataRender(h, p.row.quantity ? p.row.quantity : 0)
           }
         },
         {
@@ -610,7 +614,10 @@ export default {
           key: 'cargoCost',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoCost / 100)
+            return h('div', {},
+              p.row.cargoList.map((cargo) => h('div', cargo.cargoCost / 100 || '0.00'))
+            )
+            // return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },
         {
@@ -618,7 +625,8 @@ export default {
           key: 'volume',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.volume ? p.row.volume : 0)
+            return this.scopedSlotsRender(h, p, 'volume', 0)
+            //  return this.tableDataRender(h, p.row.volume ? p.row.volume : 0)
           }
         },
         {
@@ -626,7 +634,8 @@ export default {
           key: 'remark1',
           minWidth: 140,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.remark1)
+            return this.scopedSlotsRender(h, p, 'remark1')
+            // return this.tableDataRender(h, p.row.remark1)
           }
         },
         {
@@ -634,7 +643,8 @@ export default {
           key: 'remark2',
           minWidth: 140,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.remark2)
+            return this.scopedSlotsRender(h, p, 'remark2')
+            // return this.tableDataRender(h, p.row.remark2)
           }
         }
       ],
@@ -645,17 +655,8 @@ export default {
       sendWay: '1', // 派车类型 1 外转 2 自送  V1.07新增
       radioDisabled: false, // 控制单选按钮禁用
       source: 'detail', // 详情页编辑传detail不校验承运商，改单需校验承运商，不传detail
-
-      imageItems: [ // 需要展示的车况照片list
-        {
-          src: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/1005859967670.9203.jpg',
-          msrc: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/1005859967670.9203.jpg'
-        },
-        {
-          src: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/853667749786.0685.jpg',
-          msrc: 'https://tms5566dev.oss-cn-hangzhou.aliyuncs.com/dolphinfile/order/3bcc808f-d610-42d7-9c48-67d5ddd0ef31/853667749786.0685.jpg'
-        }
-      ]
+      detail: [],
+      imageItems: [] // 需要展示的车况照片list
     }
   },
   computed: {
@@ -693,13 +694,83 @@ export default {
       })
       return data
     },
+    // 将货物信息按货物名称累加数量
+    cargoInfos () {
+      let arr = []
+      let list = _.groupBy(this.detail, 'cargoName')
+      _.forEach(list, (value, key) => {
+        let quantity = _.sumBy(value, (i) => {
+          return i.quantity
+        })
+        arr.push({
+          key: key,
+          value: quantity
+        })
+      })
+      return arr
+    },
     financeRulesInfo () {
       return {
         start: this.info.start,
         end: this.info.end,
         weight: this.orderTotal.weight,
-        volume: this.orderTotal.volume
+        volume: this.orderTotal.volume,
+        cargoInfos: this.cargoInfos
       }
+    },
+    /**
+     * 以orderId分组货物信息，合并后的格式为：
+     * cargo = {
+     *  1: {
+     *  orderNo: '',
+     *  orderId: '',
+     *  ...
+     *  cargoList:[
+     *    {cargoName:''},
+     *    {cargoName:''}
+     *  ]
+     * },
+     * 2:{
+     * }
+     * }
+     */
+    cargoGroupByOrderNo () {
+      // 以orderNo分组后的货物明细数据
+      let _cargoMapById = {}
+
+      this.detail.forEach((cargo) => {
+        // 单独提取货物的字段
+        let {
+          cargoCost,
+          cargoName,
+          packing,
+          quantity,
+          remark1,
+          remark2,
+          unit,
+          volume,
+          weight,
+          weightKg,
+          ...rest
+        } = cargo
+        if (!_cargoMapById[cargo.orderId]) {
+          _cargoMapById[cargo.orderId] = rest
+          _cargoMapById[cargo.orderId].cargoList = []
+        }
+        _cargoMapById[cargo.orderId].cargoList.push({
+          cargoCost,
+          cargoName,
+          packing,
+          quantity,
+          remark1,
+          remark2,
+          unit,
+          volume,
+          weight,
+          weightKg
+        })
+      })
+      return Object.values(_cargoMapById)
     }
   },
 
@@ -743,6 +814,12 @@ export default {
         }
       }).then(res => {
         const data = res.data.data
+        this.imageItems = data.carInfo.map((item) => {
+          return {
+            src: item,
+            msrc: item
+          }
+        })
         this.id = data.waybill.waybillId
         for (let key in this.info) {
           this.info[key] = data.waybill[key]
@@ -780,9 +857,14 @@ export default {
             this.payment[key] = data.waybill[key] / 1000 || null
           }
         }
+
+        // 货物明细显示绑定的表格数据
+        // this.cargoGroupByOrderNo = Object.values(_cargoMapById)
         this.detail = data.cargoList
         this.logList = data.operaterLog
         this.orderList = data.orderList
+
+        // _cargoMapById = null
 
         this.status = this.statusFilter(data.waybill.status)
         this.settlementType = data.waybill.settlementType ? data.waybill.settlementType.toString() : '1'
@@ -804,6 +886,10 @@ export default {
         }
         // 改单个数
         this.changeCount = data.modifyCnt || 0
+        if (this.changeCount) {
+          this.$refs['change'] && this.$refs['change'].initData()
+        }
+
         this.setBtnsWithStatus()
         this.loading = false
         return res

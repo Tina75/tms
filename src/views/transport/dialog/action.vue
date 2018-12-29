@@ -58,6 +58,7 @@ import PickupFee from '../components/PickupFee'
 import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 import Server from '@/libs/js/server'
 import float from '@/libs/js/float'
+import _ from 'lodash'
 export default {
   name: 'SendOrPickAction',
   components: { SendFee, SendCarrierInfo, OwnSendInfo, PickupFee },
@@ -71,7 +72,8 @@ export default {
         start: null,
         end: null,
         weight: null,
-        volume: null
+        volume: null,
+        cargoInfos: null
       },
       sendWay: '1',
       // 外转赋值给子组件
@@ -176,6 +178,20 @@ export default {
           for (let key in this.financeRulesInfo) {
             this.financeRulesInfo[key] = billInfo[key]
           }
+          // 将货物信息按货物名称累加数量
+          let arr = []
+          let list = _.groupBy(data.cargoList, 'cargoName')
+          _.forEach(list, (value, key) => {
+            let quantity = _.sumBy(value, (i) => {
+              return i.quantity
+            })
+            arr.push({
+              key: key,
+              value: quantity
+            })
+          })
+          this.financeRulesInfo.cargoInfos = arr
+          // console.log(this.financeRulesInfo)
         }
 
         for (let key in this.payment) {

@@ -35,7 +35,7 @@ import { money2chinese } from '@/libs/js/util'
 import dispatchMixin from './mixins/dispatchMixin.js'
 const prefixCls = 'ivu-input-number'
 export default {
-  name: 'InputNumber',
+  name: 'TagNumberInput',
   mixins: [dispatchMixin],
   props: {
     max: {
@@ -55,7 +55,7 @@ export default {
       default: true
     },
     value: {
-      type: Number,
+      type: [Number, String],
       default: 1
     },
     size: {
@@ -66,6 +66,11 @@ export default {
       default () {
         return 'default'
       }
+    },
+    // 整数长度部分长度限制
+    length: {
+      type: [Number, String],
+      default: 9
     },
     disabled: {
       type: Boolean,
@@ -161,7 +166,7 @@ export default {
   },
   watch: {
     value (val) {
-      this.currentValue = val
+      this.currentValue = val || null
     },
     currentValue (val) {
       this.changeVal(val)
@@ -225,6 +230,19 @@ export default {
       let val = event.target.value.trim().substring(0, 20)
       if (this.parser) {
         val = this.parser(val)
+      }
+      /**
+       * 文本长度是否大于限制的长度
+       * 可能包含小数点
+       */
+      if (val.length > this.length) {
+        if (val.indexOf('.') !== -1) {
+          let vals = val.split('.')
+          let integerValue = vals[0]
+          val = integerValue.substring(0, this.length) + '.' + vals[1]
+        } else {
+          val = val.substring(0, this.length)
+        }
       }
 
       const isEmptyString = (val === null || val === '') ? true : val.length === 0

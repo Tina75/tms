@@ -33,6 +33,9 @@ export default {
     searchData: {
       type: Object,
       default: Object
+    },
+    dataLog: {
+      type: Array
     }
   },
   data () {
@@ -42,10 +45,23 @@ export default {
       orderLog: []
     }
   },
+  watch: {
+    dataLog () {
+      this.initData()
+    }
+  },
   mounted () {
-    this.queryLog()
+    this.initData()
   },
   methods: {
+    initData () {
+      if (this.dataLog) {
+        this.orderLog = this.dataLog
+        this.orderLogCount = this.dataLog.length
+      } else {
+        this.queryLog()
+      }
+    },
     // 日志切换显示
     showOperationLog () {
       this.showLog = !this.showLog
