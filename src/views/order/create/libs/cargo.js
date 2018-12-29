@@ -64,16 +64,16 @@ export default class Cargo {
       this.cargoNo = props.cargoNo
       // 重量，保留2位小数
       this._weight = props.weight
-      // 体积方，保留1位小数
-      for (let i in this.dimension) {
-        this.dimension[i] = props.dimension[i] || null
-      }
+      this.dimension._length = props.dimension.length || null
+      this.dimension._width = props.dimension.width || null
+      this.dimension._height = props.dimension.height || null
       if (!transfer) {
         // 货值，整数
         this.cargoCost = props.cargoCost
       } else {
         this.cargoCost = (props.cargoCost || 0) / 100
       }
+      // 体积方，保留1位小数
       this.volume = props.volume
       // 数量
       this.quantity = props.quantity || null

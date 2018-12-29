@@ -229,10 +229,8 @@ export default {
     statics () {
       return this.dataSource.reduce((sum, cargo) => {
         // 读取临时数据
-        const cargoInfos = {}
         if (cargo.cargoName) {
-          cargoInfos[cargo.cargoName] = cargo.quantity
-          sum.cargoInfos.push(cargoInfos)
+          sum.cargoInfos.push({ key: cargo.cargoName, value: cargo.quantity })
         }
         sum.weight = float.round((cargo.weight || 0) + sum.weight, NumberPrecesion.weight)
         sum.volume = float.round((cargo.volume || 0) + sum.volume, NumberPrecesion.volume)
