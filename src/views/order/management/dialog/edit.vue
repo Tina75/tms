@@ -309,6 +309,7 @@ export default {
             this.$Message.warning('您未做任何修改')
             return
           }
+          let previewOrderForm = _.cloneDeep(this.orderForm)
           for (let key in this.orderForm) {
             if (key.indexOf('Fee') > -1 || key === 'collectionMoney') {
               float.round(this.orderForm[key] *= 100, 0)
@@ -332,6 +333,8 @@ export default {
             } else {
               this.$Message.error(res.data.msg)
             }
+          }).catch(() => {
+            this.orderForm = previewOrderForm // 接口调用失败后还原被乘除之前的数据
           })
         }
       })
