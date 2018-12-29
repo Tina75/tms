@@ -1,13 +1,8 @@
 <template>
   <Poptip trigger="hover" class="header-user" transfer placement="bottom" popper-class="dropdown-info" title="账号信息" width="260" style="cursor: default">
-    <Avatar :style="avatarStyle"  class="avatar"></avatar>
+    <Avatar  class="avatar"></avatar>
     <div class="user-info">
-      <div>
-        {{UserInfo.shortName || UserInfo.companyName}}
-      </div>
-      <div>
-        {{UserInfo.name}}
-      </div>
+      {{UserInfo.name}}
     </div>
     <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
     <div slot="content">
@@ -63,10 +58,13 @@ export default {
     background-image: url('../../../assets/default-avatar.jpg')
     background-size 30px
   .user-info
-    width:132px;
-    padding-left 10px
+    width:65px;
+    padding-left 5px
     display:inline-block;
     color white
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     line-height 1.1
     margin-bottom -4px
     div
