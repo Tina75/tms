@@ -43,7 +43,7 @@
           <label class="label-bar">图片：</label>
           <div class="flexBox">
             <span v-for="(item, index) in data.fileUrls"
-                  :key="index" :style="`background-image: url(${item}) `"
+                  :key="index" :style="`background-image: url(${urlHandle(item)}) `"
                   style="background-position: center; background-size: 100%; background-repeat: no-repeat;"
                   class="img-bar" @click="showImg(index)">
             </span>
@@ -200,6 +200,7 @@ export default {
   data () {
     return {
       hideDetail: this.listLength > 1,
+      IMG_URL: process.env.VUE_APP_IMG_URL,
       columns: [
         {
           title: '付款方式',
@@ -299,9 +300,10 @@ export default {
   },
   computed: {
     imageItems () {
+      const self = this
       const arr = this.data.fileUrls.map(item => {
         return {
-          src: item,
+          src: self.urlHandle(item),
           msrc: item
         }
       })
@@ -355,6 +357,10 @@ export default {
       if (this.showImgFn) {
         this.showImgFn(index)
       }
+    },
+    // 客户端上传没有阿里云前缀 手动加上
+    urlHandle (item) {
+      return item.indexOf('aliyuncs') > -1 ? item : this.IMG_URL + item
     }
   }
 }
