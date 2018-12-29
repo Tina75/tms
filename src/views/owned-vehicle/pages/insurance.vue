@@ -278,7 +278,7 @@ export default {
         url: '/ownerCar/insurance/export',
         method: 'post',
         data: params,
-        fileName: '导出保险列表'
+        fileName: '车辆保险'
       })
     },
     // 日期格式化

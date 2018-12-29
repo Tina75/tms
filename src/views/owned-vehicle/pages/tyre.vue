@@ -218,7 +218,7 @@ export default {
         url: '/ownerCar/tire/export',
         method: 'post',
         data: params,
-        fileName: '导出轮胎管理'
+        fileName: '轮胎'
       })
     },
     // 日期格式化

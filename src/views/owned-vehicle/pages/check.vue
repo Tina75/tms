@@ -210,7 +210,7 @@ export default {
         url: '/ownerCar/check/export',
         method: 'post',
         data: params,
-        fileName: '导出车辆年检'
+        fileName: '车辆年检'
       })
     },
     // 日期格式化
