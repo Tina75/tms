@@ -52,10 +52,11 @@ export default {
 <style lang="stylus" scoped>
 .vertical-tab-item
   color #333
-  font-weight bold
+  font-size 14px
   position absolute
   left 20px
-  top 0px
+  top 20px
+  right 20px
   display block
   >>> .fade-enter,.fade-leave-to
         opacity 0

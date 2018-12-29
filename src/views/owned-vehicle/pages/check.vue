@@ -17,7 +17,7 @@
                class="search-input"
                @on-enter="searchCarList"
                @on-click="clearKeywords"/>
-        <DatePicker v-else :options="options" v-model="keyword" transfer format="yyyy-MM-dd" type="daterange" placeholder="请选择日期搜索">
+        <DatePicker v-else :options="options" v-model="keyword" transfer format="yyyy-MM-dd" type="daterange" placeholder="请选择日期搜索" @on-clear="clearKeywords">
         </DatePicker>
         <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
@@ -241,7 +241,7 @@ export default {
         this.formSearchInit.carNo = this.keyword
       } else {
         this.formSearchInit.checkDateStart = new Date(this.keyword[0]).getTime()
-        this.formSearchInit.checkDateEnd = new Date(this.keyword[1]).getTime() + 86400000
+        this.formSearchInit.checkDateEnd = new Date(this.keyword[1]).getTime() + 86399000
       }
     },
     clearKeywords () {

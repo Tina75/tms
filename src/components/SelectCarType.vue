@@ -1,11 +1,12 @@
 <template>
   <div class="selectCustomSty">
-    <Dropdown trigger="click" @on-click="handleSelect">
+    <Poptip v-model="visible" :width="width" placement="bottom" transfer popper-class="package-poptip">
       <Input
         v-show="false"
         :value="formatterValue">
       </Input>
       <Input
+        ref="input"
         v-model="showValue"
         :placeholder="placeholder"
         :transfer="transfer"
@@ -20,16 +21,15 @@
       <Icon v-if="(!mousehover || !isClearable) && showSelect" slot="suffix" type="ios-arrow-down" class="select-input-icondown"></Icon>
       <Icon v-if="(!mousehover || !isClearable) && !showSelect" slot="suffix" type="ios-arrow-up" class="select-input-iconup"></Icon>
       </Input>
-      <DropdownMenu slot="list">
-        <div class="selectListLabel">
-          <span v-for="(item, key) in listMap" :key="key" :value="key" class="labelSpan">
-            <DropdownItem :style="item.label === showValue ? 'color: #00a4bd' : ''" :name="item.label">
-              {{item.label}}
-            </DropdownItem>
-          </span>
-        </div>
-      </DropdownMenu>
-    </Dropdown>
+      <div slot="content" class="selectListLabel">
+        <Row type="flex">
+          <div v-for="(item, key) in listMap" :key="key" :value="key" :class="['labelSpan',item.label === showValue ? 'active':'']" @click="handleSelect(item.label)">
+            {{item.label}}
+          </div>
+        </Row>
+      </div>
+    </Poptip>
+    </Poptip>
   </div>
 </template>
 <script>
@@ -53,6 +53,7 @@ export default {
   },
   data () {
     return {
+      width: '250',
       visible: false,
       showSelect: true,
       showValue: '',
@@ -80,6 +81,12 @@ export default {
   mounted () {
     this.listMap = CAR_TYPE
     if (this.currentValue) this.findItemData()
+    this.$nextTick(() => {
+      let rect = this.$refs.input.$refs.input.getBoundingClientRect()
+      if (rect.width > 250) {
+        this.width = rect.width
+      }
+    })
   },
   methods: {
     // 点击下拉框项
@@ -144,27 +151,49 @@ export default {
 <style lang="stylus" scoped>
 >>>.customSelectText .ivu-input
   cursor pointer
->>>.ivu-dropdown
-  width 100%
+>>> .ivu-poptip
+      display block
+      .ivu-poptip-rel
+        display block
 >>>.ivu-select-dropdown
   min-width 200px
 .selectCustomSty
   width 100%
   display inline-block
 .selectListLabel
-  min-width 200px
-  padding 0 15px
   .labelSpan
-    display inline-block
     cursor pointer
-    width 55px
+    text-align center
+    float left
+    width 60px
+    border 1px solid #EEEFF1
+    margin-left 17px
+    margin-top 8px
+    border-radius 4px
   .labelSpan .ivu-dropdown-item:hover
     color #00A4BD
-    // border #00A4BD 1px solid
-    // width 55px
+  .labelSpan.active
+    color #00a4bd
+    border-color #00a4bd
+.selectListLabel:after
+  content  ''
+  clear both
+  display table
+  zoom 1
 .select-input-icondown .select-input-iconup
   transform rotate(180deg)
   -moz-transform rotate(180deg)
   -webkit-transform rotate(180deg)
   transition transform 0.2s ease-in-out
+</style>
+<style lang="stylus">
+.package-poptip
+  .ivu-poptip-content
+    margin-top -7px
+    .ivu-poptip-arrow
+      display none
+    .ivu-poptip-body
+      padding 15px 0px 23px
+    .ivu-poptip-body-content
+      overflow hidden
 </style>

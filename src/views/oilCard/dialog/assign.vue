@@ -15,8 +15,10 @@
           </Radio>
         </RadioGroup>
       </FormItem>
-      <!--自有车-->
-      <div v-if="assign.type===1">
+    </Form>
+    <!--自有车-->
+    <Form v-show="assign.type===1" ref="validate1" :model="assign" :rules="ruleValidate1" :label-width="90" label-position="right">
+      <div >
         <FormItem label="司机：" prop="driverName">
           <Select :clearable="true" v-model="assign.driverName"  placeholder="请选择司机" @on-change="chooseDriverName">
             <Option v-for="(item, index) in ownDriversList"
@@ -30,8 +32,10 @@
           </Select>
         </FormItem>
       </div>
-      <!--抵扣外转运费-->
-      <div v-if="assign.type===2">
+    </Form>
+    <!--抵扣外转运费-->
+    <Form v-show="assign.type===2" ref="validate2" :model="assign" :rules="ruleValidate2" :label-width="90" label-position="right">
+      <div >
         <FormItem label="承运商：" prop="carrierName">
           <SelectInput
             v-model="assign.carrierName"
@@ -46,7 +50,7 @@
           >
           </SelectInput>
         </FormItem>
-        <FormItem :rules="{required: true, message: '车辆不能为空', trigger: 'blur', type:'string'}"  label="司机：">
+        <FormItem prop="driverNameOther"  label="司机：">
           <SelectInput
             v-model="assign.driverNameOther"
             :maxlength="15"
@@ -138,10 +142,14 @@ export default {
       },
       carriersId: null,
       ruleValidate: {
-        type: { required: true, message: '请选择用途' },
-        driverName: { required: true, validator: driverNameVali, trigger: 'blur' },
-        driverNameOther: { required: true, validator: driverNameOtherVali, trigger: 'change' },
-        carrierName: { required: true, message: '请输入承运商', trigger: 'change' },
+        type: { required: true, message: '请选择用途' }
+      },
+      ruleValidate1: {
+        driverName: { required: true, validator: driverNameVali }
+      },
+      ruleValidate2: {
+        driverNameOther: { required: true, validator: driverNameOtherVali },
+        carrierName: { required: true, message: '请输入承运商', trigger: 'blur' },
         driverPhone: [
           { required: true, message: '请输入手机号码', trigger: 'blur' },
           { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
@@ -211,7 +219,24 @@ export default {
       this.assign.driverPhone = obj.driverPhone
       this.assign.truckNo = obj.carNO
     },
-    save () {
+    formValidate (ref) {
+      return new Promise((resolve, reject) => {
+        ref.validate((valid) => {
+          if (valid) {
+            resolve()
+          } else {
+            reject(new Error())
+          }
+        })
+      })
+    },
+    async save () {
+      await this.formValidate(this.$refs['validate'])
+      if (this.assign.type === 1) {
+        await this.formValidate(this.$refs['validate1'])
+      } else {
+        await this.formValidate(this.$refs['validate2'])
+      }
       this.$refs['validate'].validate((valid) => {
         if (valid) {
           this.loading = true

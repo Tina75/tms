@@ -2,12 +2,23 @@
   <div class="vertical-tabs">
     <Row type="flex">
       <Col :style="styleHeight" class="vertical-tabs__menu" span="4">
-      <template v-for="(tab, index) in tabList" >
-        <div :key="index" :class="itemClass(tab)" @click.prevent="handleSelect(tab)">
-          <FontIcon v-if="!!tab.icon" v-bind.sync="tab.icon" size="19" class="vertical-tabs__menu-icon"></FontIcon>
-          {{tab.label}}
-        </div>
-      </template>
+      <Menu>
+        <template v-for="(tab, index) in tabList" >
+          <template v-if="tab.children">
+
+            <div :key="index" :class="itemClass(tab)" @click.prevent="handleSelect(tab)">
+              <FontIcon v-if="!!tab.icon" v-bind.sync="tab.icon" size="19" class="vertical-tabs__menu-icon"></FontIcon>
+              {{tab.label}}
+            </div>
+          </template>
+          <template v-else>
+            <MenuItem :key="index" :class="itemClass(tab)" :name="tab.name">
+            <FontIcon v-if="!!tab.icon" :key="index" v-bind.sync="tab.icon" size="19" class="vertical-tabs__menu-icon"></FontIcon>
+            {{tab.label}}
+            </MenuItem>
+          </template>
+        </template>
+      </Menu>
       </Col>
       <Col span="20">
       <div class="vertical-tabs__content">
@@ -112,6 +123,7 @@ export default {
     z-index 1
     -webkit-transition all .2s ease-in-out
     transition all .2s ease-in-out
+    background-color #f3f5f9
     font-size 16px
   &__menu-item-active
     background-color #fff
