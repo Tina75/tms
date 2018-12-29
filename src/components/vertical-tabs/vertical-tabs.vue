@@ -2,7 +2,7 @@
   <div class="vertical-tabs">
     <Row type="flex">
       <Col :style="styleHeight" class="vertical-tabs__menu" span="4">
-      <Menu ref="menu" :active-name="activeKey">
+      <Menu ref="menu" :active-name="activeKey" width="180">
         <template v-for="(tab, index) in tabList" >
           <template v-if="tab.children">
             <SubMenu :key="index" :name="tab.name">
@@ -121,11 +121,6 @@ export default {
   &__menu-item
     padding: 14px 8px;
     text-align center
-    position relative
-    cursor pointer
-    z-index 1
-    -webkit-transition all .2s ease-in-out
-    transition all .2s ease-in-out
     background-color #f3f5f9
     font-size 16px
   &__menu-item-active
@@ -143,5 +138,6 @@ export default {
   >>> .ivu-menu-light.ivu-menu-vertical
         .ivu-menu-item-active:not(.ivu-menu-submenu)
           color #333
+          font-weight bold
           background-color #fff
 </style>
