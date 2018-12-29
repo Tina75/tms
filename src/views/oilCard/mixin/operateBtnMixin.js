@@ -11,8 +11,7 @@ export default {
           assign: {
             id: p.row.id,
             number: p.row.number,
-            amount: p.row.amount,
-            remark: p.row.remark
+            amount: p.row.amount
           }
         },
         methods: {
@@ -32,7 +31,6 @@ export default {
           recharge: {
             id: p.row.id,
             amount: p.row.amount,
-            remark: p.row.remark,
             type: p.row.type,
             issuer: p.row.issuer,
             primaryCardNumber: p.row.primaryCardNumber
@@ -56,7 +54,6 @@ export default {
             id: p.row.id,
             number: p.row.number,
             amount: p.row.amount,
-            remark: p.row.remark,
             type: p.row.type,
             driverName: p.row.driverName,
             truckNo: p.row.truckNo,
@@ -81,7 +78,6 @@ export default {
             id: p.row.id,
             number: p.row.number,
             amount: p.row.amount,
-            remark: p.row.remark,
             type: p.row.type,
             issuer: p.row.issuer,
             primaryCardId: p.row.primaryCardId,
@@ -132,7 +128,6 @@ export default {
             id: p.row.id,
             number: p.row.number,
             amount: p.row.amount,
-            remark: p.row.remark,
             type: p.row.type,
             issuer: p.row.issuer
           }
