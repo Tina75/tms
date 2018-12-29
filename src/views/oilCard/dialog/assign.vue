@@ -149,7 +149,7 @@ export default {
       },
       ruleValidate2: {
         driverNameOther: { required: true, validator: driverNameOtherVali },
-        carrierName: { required: true, message: '请输入承运商', trigger: 'blur' },
+        carrierName: { required: true, message: '请输入承运商' },
         driverPhone: [
           { required: true, message: '请输入手机号码', trigger: 'blur' },
           { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
