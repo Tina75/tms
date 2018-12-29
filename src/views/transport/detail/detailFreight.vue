@@ -692,9 +692,10 @@ export default {
         let quantity = _.sumBy(value, (i) => {
           return i.quantity
         })
-        let cargoInfo = {}
-        cargoInfo[key] = quantity
-        arr.push(cargoInfo)
+        arr.push({
+          key: key,
+          value: quantity
+        })
       })
       return arr
     },

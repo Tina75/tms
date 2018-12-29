@@ -480,12 +480,15 @@ export default {
           vm.shareOutNo = data.data.shareOutNo
         }
       }).then(() => {
+        console.log(vm.formCompany)
         vm.openDialog({
           name: 'company/dialog/share',
           data: {
             title: '获取链接成功，复制链接分享给朋友吧',
             shareOutNo: vm.shareOutNo,
-            imagLogoSrc: vm.formCompany.logoUrl
+            imagLogoSrc: vm.formCompany.logoUrl,
+            shareTitle: vm.formCompany.shortName || vm.formCompany.name,
+            shareSummary: '提供专业可靠物流运输服务，期待携手合作！'
           },
           methods: {
             ok (node) {
