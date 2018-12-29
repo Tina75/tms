@@ -109,14 +109,14 @@ export const oilTableColumns = vm => [
   {
     title: '操作',
     key: 'orderNo',
-    width: 150,
+    width: 120,
     // fixed: 'left',
     render: (h, params) => {
       let renderHtml = []
       let DropdownItem = []
       oilTableBtn(vm).forEach(item => {
         if (params.row[item.key] === true && vm.hasPower(item.code)) {
-          if (renderHtml.length < 3) {
+          if (renderHtml.length < 2) {
             renderHtml.push(
               h('a', {
                 props: {

@@ -224,7 +224,7 @@ export default {
     toDetail (data) {
       this.openTab({
         title: data.row.verifyNo,
-        path: '/finance/writtenOffDetail',
+        path: 'writtenOffDetail',
         query: {
           verifyId: data.row.verifyId,
           verifyNo: data.row.verifyNo,
