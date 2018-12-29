@@ -301,8 +301,9 @@
           <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :min="0" :max="100">
           </TagNumberInput>
           </Col>
-          <Col span="12" class="order-create__input-unit">%
-          <span>（{{ invoiceFee }}元）</span>
+          <Col span="12" class="order-create__input-unit">
+          <span style="float: left"> %</span>
+          <span>({{ invoiceFee }}元)</span>
           </Col>
         </Row>
       </FormItem>

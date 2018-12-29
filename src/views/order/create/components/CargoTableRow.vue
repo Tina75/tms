@@ -22,6 +22,7 @@
       :min="col.min"
       :max="col.maxLen"
       :parser="handleParse"
+      style="width: 100%"
       @input="v => { this.inputHandle(v, col.key) }"
       @on-change="handleChange(col.key)"
       @on-blur="handleBlur(col)"
