@@ -99,7 +99,7 @@
           <span class="iconTitleP">操作记录</span>
         </div>
         <div class="list-info">
-          <record-list v-if="dataLog.length > 1" :data-log="dataLog"></record-list>
+          <record-list v-if="dataLog.length" :data-log="dataLog"></record-list>
         </div>
       </div>
     </div>
@@ -117,7 +117,7 @@ export default {
   props: {
   },
   metaInfo: {
-    title: '车辆保险'
+    title: '车辆保险详情'
   },
   data () {
     return {

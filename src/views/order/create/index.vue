@@ -301,8 +301,9 @@
           <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :min="0" :max="100">
           </TagNumberInput>
           </Col>
-          <Col span="12" class="order-create__input-unit">%
-          <span>（{{ invoiceFee }}元）</span>
+          <Col span="12" class="order-create__input-unit">
+          <span style="float: left"> %</span>
+          <span>({{ invoiceFee }}元)</span>
           </Col>
         </Row>
       </FormItem>
@@ -861,6 +862,8 @@ export default {
           // 如果在货物信息中已经有数据了，就不覆盖了；如果没有货物信息，就默认添加已维护的货物
           const confignerCargoValid = _this.consignerCargoes[0].validate()
           if (!confignerCargoValid.success) {
+            cargoList[0].weight = Number(cargoList[0].weight)
+            cargoList[0].volume = Number(cargoList[0].volume)
             _this.consignerCargoes = [new Cargo(cargoList[0], true)]
           }
         }

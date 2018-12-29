@@ -45,15 +45,23 @@ export default {
       orderLog: []
     }
   },
-  mounted () {
-    if (this.dataLog) {
-      this.orderLog = this.dataLog
-      this.orderLogCount = this.dataLog.length
-    } else {
-      this.queryLog()
+  watch: {
+    dataLog () {
+      this.initData()
     }
   },
+  mounted () {
+    this.initData()
+  },
   methods: {
+    initData () {
+      if (this.dataLog) {
+        this.orderLog = this.dataLog
+        this.orderLogCount = this.dataLog.length
+      } else {
+        this.queryLog()
+      }
+    },
     // 日志切换显示
     showOperationLog () {
       this.showLog = !this.showLog

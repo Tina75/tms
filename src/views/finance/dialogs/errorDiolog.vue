@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" transfer width="500" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" transfer width="510" @on-visible-change="close">
     <p slot="header" style="text-align:center">{{title}}</p>
     <div class="err-content">
       <div class="err-icon">
@@ -8,7 +8,13 @@
       <div class="list">
         <div v-for="(item, index) in errList" :key="index" class="err-list">
           <p class="err-title">{{index+1}}、{{item.title}}</p>
-          <p v-for="err in item.arr" :key="err" class="err-text">{{err}}</p>
+          <!--<p v-for="err in item.arr" :key="err" class="err-text">-->
+          <Row class="err-text">
+            <Col v-for="err in item.arr" :key="err" span="12" style="margin-bottom: 10px">
+            {{err}}
+              </Col>
+          </Row>
+        <!--</p>-->
         </div>
       </div>
     </div>
@@ -51,7 +57,7 @@ export default {
   .err-content
     display flex
     .err-icon
-      flex 0 0 80px
+      flex 0 0 60px
       text-align center
       .icon
         font-size 28px
@@ -69,5 +75,5 @@ export default {
           text-align left
           margin-left 23px
           color: #515a6e
-          margin-bottom 10px
+          /*margin-bottom 10px*/
 </style>

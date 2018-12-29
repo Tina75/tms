@@ -93,7 +93,7 @@ export default[
         'component': () => import(/* webpackChunkName: "insurance-details" */'./pages/insurance-details.vue'),
         'meta': {
           'hideInMenu': true,
-          'title': '车辆保险',
+          'title': '车辆保险详情',
           'powerCode': 190400,
           'notCache': true
         }
@@ -113,7 +113,7 @@ export default[
         'component': () => import(/* webpackChunkName: "check-details" */'./pages/check-details.vue'),
         'meta': {
           'hideInMenu': true,
-          'title': '车辆年检',
+          'title': '车辆年检详情',
           'powerCode': 190500,
           'notCache': true
         }
@@ -133,7 +133,7 @@ export default[
         'component': () => import(/* webpackChunkName: "tyre-details" */'./pages/tyre-details.vue'),
         'meta': {
           'hideInMenu': true,
-          'title': '轮胎管理',
+          'title': '轮胎管理详情',
           'powerCode': 190600,
           'notCache': true
         }

@@ -100,7 +100,7 @@
           <span class="iconTitleP">操作日志</span>
         </div>
         <div class="list-info">
-          <record-list :search-data="searchLogData" methods-url="/ownerCar/carrierLog/list"></record-list>
+          <record-list ref="recordList" :search-data="searchLogData" methods-url="/ownerCar/carrierLog/list"></record-list>
         </div>
       </div>
     </div>
@@ -182,6 +182,7 @@ export default {
         methods: {
           ok () {
             vm.queryById()
+            vm.$refs.recordList.initData()
           }
         }
       })

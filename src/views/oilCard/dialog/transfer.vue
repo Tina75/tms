@@ -22,7 +22,7 @@
       <FormItem v-if="transfer.type===1" label="转入卡号：" prop="toCardId">
         <Select  v-model="transfer.toCardId" placeholder="请选择卡号">
           <Option v-for="(item,index) in SecondaryCardList"
-                  :value="item.id"  :key="index">{{ item.number }}</Option>
+                  :value="item.id"  :key="index" :disabled="item.status === 3">{{ item.number }}</Option>
         </Select>
       </FormItem>
       <!--类型为副卡-->
@@ -39,8 +39,8 @@
           </Col>
         </Row>
       </FormItem>
-      <FormItem  label="转账日期：" prop="opearteDate">
-        <DatePicker v-model="transfer.opearteDate" :options="dateOption" transfer format="yyyy-MM-dd" placeholder="请输入转账日期" style="width: 100%"></DatePicker>
+      <FormItem  label="转账日期：" prop="operateDate">
+        <DatePicker v-model="transfer.operateDate" :options="dateOption" transfer format="yyyy-MM-dd" placeholder="请输入转账日期" style="width: 100%"></DatePicker>
       </FormItem>
       <FormItem label="备注:">
         <Input :maxlength="100" v-model="transfer.remark" type="textarea" placeholder="请输入备注"></Input>
@@ -86,7 +86,7 @@ export default {
         remark: '',
         toCardId: null,
         changeAmount: null,
-        opearteDate: '',
+        operateDate: new Date().Format('yyyy-MM-dd'),
         primaryCardId: ''
       },
       dateOption: {
@@ -98,7 +98,7 @@ export default {
       ruleValidate: {
         toCardId: [{ required: true, message: '请选择主卡下面的副卡', trigger: 'change', type: 'number' }],
         changeAmount: { required: true, message: '请输入转出金额', trigger: 'change', type: 'number' },
-        opearteDate: { required: true, message: '请输入转账日期' }
+        operateDate: { required: true, message: '请输入转账日期' }
         // driverName: { required: true, message: '请选择司机', trigger: 'change' },
         // carrierName: { required: true, message: '请输入承运商', trigger: 'change' },
         // driverPhone: [
@@ -126,13 +126,16 @@ export default {
               id: this.transfer.id || undefined,
               toCardId: (this.transfer.type === 1) ? this.transfer.toCardId : this.transfer.primaryCardId,
               changeAmount: float.round(this.transfer.changeAmount * 100) || undefined,
-              opearteDate: this.transfer.opearteDate || undefined,
+              operateDate: this.transfer.operateDate ? this.transfer.operateDate.Format('yyyy-MM-dd') : undefined,
               remark: this.transfer.remark || undefined
             }
           }).then(res => {
             this.loading = false
             this.close()
             this.ok()
+          }).catch(err => {
+            this.loading = false
+            console.log(err)
           })
         }
       })

@@ -4,7 +4,7 @@
       <Icon type="ios-more" class="icon"/>
       <div slot="content" class="popTip-content">
         <Row>
-          <Col v-for="(item,index) in list" :key = "index" :class="{'payed': item.verifyStatus === 0}" class="item" span="12">
+          <Col v-for="(item,index) in listSort" :key = "index" :class="{'payed': item.verifyStatus === 0}" class="item" span="12">
           {{payTypeMap[item.payType]}}{{verifyStatusMap[item.verifyStatus]}}
           </Col>
         </Row>
@@ -15,6 +15,7 @@
 
 <script>
 import { payTypeMap, verifyStatusMap } from '../constant/numList'
+import _ from 'lodash'
 export default {
   name: 'payTypeDialog',
   props: {
@@ -26,6 +27,15 @@ export default {
     return {
       payTypeMap: payTypeMap,
       verifyStatusMap: verifyStatusMap
+    }
+  },
+  computed: {
+    listSort () {
+      let verified = this.list.filter(item => { return item.verifyStatus === 1 })
+      verified = _.sortBy(verified, (item) => { return item.payType })
+      let unVerified = this.list.filter(item => { return item.verifyStatus === 0 })
+      unVerified = _.sortBy(unVerified, (item) => { return item.payType })
+      return [].concat(unVerified, verified)
     }
   },
   mounted () {

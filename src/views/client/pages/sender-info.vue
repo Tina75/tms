@@ -398,9 +398,9 @@ export default {
                           remark1: params.row.remark1,
                           remark2: params.row.remark2
                         },
-                        volumeLength: params.row.dimension ? JSON.parse(params.row.dimension).length : null,
-                        volumeWidth: params.row.dimension ? JSON.parse(params.row.dimension).width : null,
-                        volumeHeight: params.row.dimension ? JSON.parse(params.row.dimension).height : null
+                        volumeLength: params.row.dimension ? params.row.dimension.length : null,
+                        volumeWidth: params.row.dimension ? params.row.dimension.width : null,
+                        volumeHeight: params.row.dimension ? params.row.dimension.height : null
                       },
                       methods: {
                         ok () {
@@ -483,9 +483,9 @@ export default {
           render (h, params) {
             if (params.row.dimension) {
               let text = ''
-              text += JSON.parse(params.row.dimension).length + '*'
-              text += JSON.parse(params.row.dimension).width + '*'
-              text += JSON.parse(params.row.dimension).height
+              text += params.row.dimension.length + '*'
+              text += params.row.dimension.width + '*'
+              text += params.row.dimension.height
               return h('span', {}, text)
             } else {
               return h('span', {}, '-')

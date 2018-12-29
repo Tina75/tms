@@ -14,7 +14,7 @@
       <Form ref="validate" :model="addEdit" :rules="ruleValidate" :label-width="90" label-position="right">
         <FormItem  :prop="mode ===1 ? 'issuer' : 'noissuer'" label="发卡机构：">
           <!--新增-->
-          <RadioGroup v-if = "mode ===1" v-model="addEdit.issuer">
+          <RadioGroup v-if = "mode ===1" v-model="addEdit.issuer" @on-change="getPrimaryCardList">
             <Radio v-for="(item, index) in issuerList" :key="index" :label="item.value">
               <span>{{item.label}}</span>
             </Radio>
@@ -107,9 +107,9 @@ export default {
       addEdit: {
         type: 1,
         number: '',
-        primaryCardId: undefined,
+        primaryCardId: null,
         issuer: 1,
-        amount: undefined,
+        amount: null,
         remark: '',
         primaryCardNumber: ''
       },
@@ -122,7 +122,7 @@ export default {
         number: [
           { required: true, validator: numberValidate, trigger: 'blur' }
         ],
-        primaryCardId: { required: true },
+        primaryCardId: { required: true, message: '没有主卡可选，请先新增主卡' },
         noprimaryCardId: { required: false }
       },
       precision: 2
@@ -142,6 +142,7 @@ export default {
   methods: {
     // 查询公司已存在的所有主卡信息（需指定发卡机构，如不指定，查询所有机构的）
     getPrimaryCardList () {
+      this.addEdit.primaryCardId = null
       Server({
         url: '/oilCard/getPrimaryCardList',
         method: 'get',
@@ -177,6 +178,9 @@ export default {
         this.loading = false
         this.close()
         this.ok()
+      }).catch(err => {
+        this.loading = false
+        console.log(err)
       })
     },
     edit () {
@@ -196,6 +200,9 @@ export default {
         this.loading = false
         this.close()
         this.ok()
+      }).catch(err => {
+        this.loading = false
+        console.log(err)
       })
     }
   }

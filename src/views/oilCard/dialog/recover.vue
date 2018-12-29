@@ -80,7 +80,7 @@ export default {
         issuer: null,
         actrualAmount: null,
         returnDeposit: null,
-        opearteDate: '',
+        opearteDate: new Date().Format('yyyy-MM-dd'),
         remark: ''
       },
       dateOption: {
@@ -114,13 +114,16 @@ export default {
               id: this.recover.id || undefined,
               actrualAmount: float.round(this.recover.actrualAmount * 100) || undefined,
               returnDeposit: float.round(this.recover.returnDeposit * 100) || undefined,
-              opearteDate: this.recover.opearteDate || undefined,
+              opearteDate: this.recover.opearteDate ? this.recover.opearteDate.Format('yyyy-MM-dd') : undefined,
               remark: this.recover.remark || undefined
             }
           }).then(res => {
             this.loading = false
             this.close()
             this.ok()
+          }).catch(err => {
+            this.loading = false
+            console.log(err)
           })
         }
       })

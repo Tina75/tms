@@ -17,7 +17,7 @@
                class="search-input"
                @on-enter="searchCarList"
                @on-click="clearKeywords"/>
-        <DatePicker v-else :options="options" v-model="keyword" transfer format="yyyy-MM-dd" type="daterange" placeholder="请选择日期">
+        <DatePicker v-else :options="options" v-model="keyword" transfer format="yyyy-MM-dd" type="daterange" placeholder="请选择日期" @on-clear="clearKeywords">
         </DatePicker>
         <Button icon="ios-search" type="primary"
                 class="search-btn-easy"
@@ -278,7 +278,7 @@ export default {
         url: '/ownerCar/insurance/export',
         method: 'post',
         data: params,
-        fileName: '导出保险列表'
+        fileName: '车辆保险'
       })
     },
     // 日期格式化
@@ -313,7 +313,7 @@ export default {
         this.formSearchInit.invoiceNo = this.keyword
       } else if (this.selectStatus === '4' && this.keyword) {
         this.formSearchInit.buyDateStart = new Date(this.keyword[0]).getTime()
-        this.formSearchInit.buyDateEnd = new Date(this.keyword[1]).getTime() + 86400000
+        this.formSearchInit.buyDateEnd = new Date(this.keyword[1]).getTime() + 86399000
       }
     },
     clearKeywords () {

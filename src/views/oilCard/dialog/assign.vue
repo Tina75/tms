@@ -5,18 +5,20 @@
       <FormItem  label="卡号：">
         <span>{{assign.number}}</span>
       </FormItem>
-      <FormItem  label="余额：">
+      <FormItem  label="金额：">
         <span class="moneyFormSpan">{{assign.amount | toPoint}}元</span>
       </FormItem>
       <FormItem  label="用途：" prop="type">
-        <RadioGroup v-model="assign.type">
+        <RadioGroup v-model="assign.type" @on-change="typeChange">
           <Radio  v-for="(item, index) in typeList" :key="index" :label="item.value">
             <span>{{item.name}}</span>
           </Radio>
         </RadioGroup>
       </FormItem>
-      <!--自有车-->
-      <div v-if="assign.type===1">
+    </Form>
+    <!--自有车-->
+    <Form v-show="assign.type===1" ref="validate1" :model="assign" :rules="ruleValidate1" :label-width="90" label-position="right">
+      <div >
         <FormItem label="司机：" prop="driverName">
           <Select :clearable="true" v-model="assign.driverName"  placeholder="请选择司机" @on-change="chooseDriverName">
             <Option v-for="(item, index) in ownDriversList"
@@ -30,8 +32,10 @@
           </Select>
         </FormItem>
       </div>
-      <!--抵扣外转运费-->
-      <div v-if="assign.type===2">
+    </Form>
+    <!--抵扣外转运费-->
+    <Form v-show="assign.type===2" ref="validate2" :model="assign" :rules="ruleValidate2" :label-width="90" label-position="right">
+      <div >
         <FormItem label="承运商：" prop="carrierName">
           <SelectInput
             v-model="assign.carrierName"
@@ -46,9 +50,9 @@
           >
           </SelectInput>
         </FormItem>
-        <FormItem label="司机：" prop="driverName">
+        <FormItem prop="driverNameOther"  label="司机：">
           <SelectInput
-            v-model="assign.driverName"
+            v-model="assign.driverNameOther"
             :maxlength="15"
             :remote="false"
             :clearable="true"
@@ -107,7 +111,14 @@ export default {
       if (value) {
         callback()
       } else {
-        callback(new Error('请选择司机'))
+        callback(new Error('司机不能为空'))
+      }
+    }
+    const driverNameOtherVali = (rule, value, callback) => {
+      if (value) {
+        callback()
+      } else {
+        callback(new Error('司机不能为空'))
       }
     }
     return {
@@ -123,6 +134,7 @@ export default {
         type: 1,
         carrierName: '',
         driverName: '',
+        driverNameOther: '', // 抵扣外转费用时的司机
         truckNo: '',
         driverPhone: '',
         recieveDeposit: '',
@@ -130,9 +142,14 @@ export default {
       },
       carriersId: null,
       ruleValidate: {
-        type: { required: true },
-        driverName: { required: true, validator: driverNameVali, trigger: 'change' },
-        carrierName: { required: true, message: '请输入承运商', trigger: 'change' },
+        type: { required: true, message: '请选择用途' }
+      },
+      ruleValidate1: {
+        driverName: { required: true, validator: driverNameVali }
+      },
+      ruleValidate2: {
+        driverNameOther: { required: true, validator: driverNameOtherVali },
+        carrierName: { required: true, message: '请输入承运商' },
         driverPhone: [
           { required: true, message: '请输入手机号码', trigger: 'blur' },
           { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
@@ -154,7 +171,7 @@ export default {
       arr = this.ownDrivers.map(driver => {
         return {
           name: driver.name + ' ' + driver.driverPhone,
-          value: driver.name,
+          value: driver.name + ' ' + driver.driverPhone,
           driverPhone: driver.driverPhone,
           id: driver.id,
           type: driver.type
@@ -176,6 +193,9 @@ export default {
       'getCarriers',
       'getCarrierDrivers'
     ]),
+    typeChange () {
+      this.assign.driverName = ''
+    },
     getCarriersId (name, obj) {
       this.carriersId = obj.id
     },
@@ -199,7 +219,24 @@ export default {
       this.assign.driverPhone = obj.driverPhone
       this.assign.truckNo = obj.carNO
     },
-    save () {
+    formValidate (ref) {
+      return new Promise((resolve, reject) => {
+        ref.validate((valid) => {
+          if (valid) {
+            resolve()
+          } else {
+            reject(new Error())
+          }
+        })
+      })
+    },
+    async save () {
+      await this.formValidate(this.$refs['validate'])
+      if (this.assign.type === 1) {
+        await this.formValidate(this.$refs['validate1'])
+      } else {
+        await this.formValidate(this.$refs['validate2'])
+      }
       this.$refs['validate'].validate((valid) => {
         if (valid) {
           this.loading = true
@@ -210,9 +247,9 @@ export default {
               id: this.assign.id || undefined,
               type: this.assign.type || undefined,
               carrierName: this.assign.carrierName || undefined,
-              driverName: this.assign.driverName || undefined,
+              driverName: this.assign.type === 1 ? this.assign.driverName.split(' ')[0] : (this.assign.driverNameOther || undefined),
               truckNo: this.assign.truckNo || undefined,
-              driverPhone: this.assign.driverPhone || undefined,
+              driverPhone: this.assign.type === 1 ? this.assign.driverName.split(' ')[1] : (this.assign.driverPhone || undefined),
               recieveDeposit: float.round(this.assign.recieveDeposit * 100) || undefined,
               remark: this.assign.remark || undefined
             }
@@ -220,6 +257,9 @@ export default {
             this.loading = false
             this.close()
             this.ok()
+          }).catch(err => {
+            this.loading = false
+            console.log(err)
           })
         }
       })

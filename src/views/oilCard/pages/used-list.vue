@@ -4,7 +4,7 @@
     <div class="query-box">
       <Row>
         <Col span="5">
-        <Input v-model="queryParams.number" :maxlength="20" placeholder="请输入主卡号或副卡号" />
+        <Input v-model="queryParams.number" :maxlength="30" placeholder="请输入主卡号或副卡号" />
         </Col>
         <Col offset="1" span="5">
         <Input v-model="queryParams.carrierName" :maxlength="10" placeholder="请输入承运商"></Input>
@@ -33,12 +33,12 @@
         </Select>
         </Col>
         <Col offset="1" span="5">
-        <DatePicker v-model="queryParams.systemDate" :options="dateOption" transfer format="yyyy-MM-dd" placeholder="请选择日期"></DatePicker>
+        <DatePicker v-model="queryParams.systemDate" :options="dateOption" transfer format="yyyy-MM-dd" placeholder="请选择系统操作时间"></DatePicker>
         </Col>
       </Row>
       <Row class="item-row">
         <Col span="5">
-        <DatePicker v-model="queryParams.systemDate" :options="dateOption" transfer format="yyyy-MM-dd" placeholder="请选择日期"></DatePicker>
+        <DatePicker v-model="queryParams.operateDate" :options="dateOption" transfer format="yyyy-MM-dd" placeholder="请选择实际操作时间"></DatePicker>
         </Col>
         <Col offset="1" span="5">
         <Input v-model="queryParams.driverName" :maxlength="15" placeholder="请输入持卡人"></Input>
@@ -63,6 +63,7 @@
     <!--列表展示-->
     <PageTable
       :columns="tableColumns"
+      :show-filter="true"
       :keywords="searchFields"
       :table-head-type="headType"
       class="pageTable"
@@ -84,7 +85,7 @@ export default {
   data () {
     return {
       // 表头
-      headType: headType.UPSTREAM_ORDER,
+      headType: headType.OIL_CARD_LOG,
       queryParams: {
         number: '',
         operateType: '',
