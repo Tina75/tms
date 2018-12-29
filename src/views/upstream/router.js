@@ -19,8 +19,8 @@ export default [
         }
       },
       {
-        'name': 'detail',
-        'path': 'detail/detail',
+        'name': 'upstreamDetail',
+        'path': 'upstreamDetail',
         'component': () => import(/* webpackChunkName: "upstream-detail" */'./detail/detail.vue'),
         'meta': {
           'hideInMenu': true,
