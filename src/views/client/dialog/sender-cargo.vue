@@ -24,11 +24,20 @@
         </FormItem>
         <FormItem label="包装尺寸：">
           <Row>
-            <Col :span="6"><InputNumber :min="0" v-model="volumeLength" placeholder="长"></InputNumber></Col>
+            <Col :span="6">
+            <!-- <InputNumber :min="0" v-model="volumeLength" placeholder="长"></InputNumber> -->
+            <TagNumberInput :min="0" :precision="0" v-model="volumeLength" :length="7" :show-chinese="false" placeholder="长"></TagNumberInput>
+            </Col>
             <Col :span="1"><span style="padding-left: 3px">-</span></Col>
-            <Col :span="6"><InputNumber :min="0" v-model="volumeWidth" placeholder="宽"></InputNumber></Col>
+            <Col :span="6">
+            <!-- <InputNumber :min="0" v-model="volumeWidth" placeholder="宽"></InputNumber> -->
+            <TagNumberInput :min="0" :precision="0" v-model="volumeWidth" :length="7" :show-chinese="false" placeholder="宽"></TagNumberInput>
+            </Col>
             <Col :span="1"><span style="padding-left: 3px">-</span></Col>
-            <Col :span="6"><InputNumber :min="0" v-model="volumeHeight" placeholder="高"></InputNumber></Col>
+            <Col :span="6">
+            <!-- <InputNumber :min="0" v-model="volumeHeight" placeholder="高"></InputNumber> -->
+            <TagNumberInput :min="0" :precision="0" v-model="volumeHeight" :length="7" :show-chinese="false" placeholder="高"></TagNumberInput>
+            </Col>
             <Col :span="4"><span style="padding-left: 15px">毫米</span></Col>
           </Row>
         </FormItem>
