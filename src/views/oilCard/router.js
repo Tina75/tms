@@ -9,7 +9,7 @@ export default [
     'meta': {
       'icon': 'baobiaoguanli',
       'title': '油卡管理',
-      'powerCode': 0
+      'powerCode': 160000
     },
     'children': [
       {
@@ -18,7 +18,7 @@ export default [
         'component': () => import(/* webpackChunkName: "oil-list" */'./pages/oil-list.vue'),
         'meta': {
           'title': '油卡列表',
-          'powerCode': 0
+          'powerCode': 160100
         }
       },
       {
@@ -27,7 +27,7 @@ export default [
         'component': () => import(/* webpackChunkName: "used-list" */'./pages/used-list.vue'),
         'meta': {
           'title': '油卡使用记录',
-          'powerCode': 0
+          'powerCode': 160200
         }
       },
       {

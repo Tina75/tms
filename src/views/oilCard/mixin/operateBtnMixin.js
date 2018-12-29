@@ -3,6 +3,7 @@ export default {
   methods: {
     // 分配
     assign (p) {
+      let _this = this
       this.openDialog({
         name: 'oilCard/dialog/assign',
         data: {
@@ -16,14 +17,14 @@ export default {
         },
         methods: {
           ok () {
-            this.fetchData()
+            _this.fetchData()
           }
         }
       })
     },
     // 充值
     recharge (p) {
-      console.log('recharge')
+      let _this = this
       this.openDialog({
         name: 'oilCard/dialog/recharge',
         data: {
@@ -39,14 +40,14 @@ export default {
         },
         methods: {
           ok () {
-            this.fetchData()
+            _this.fetchData()
           }
         }
       })
     },
     // 加油
     refuel (p) {
-      console.log(p.row)
+      let _this = this
       this.openDialog({
         name: 'oilCard/dialog/refuel',
         data: {
@@ -64,13 +65,14 @@ export default {
         },
         methods: {
           ok () {
-            this.fetchData()
+            _this.fetchData()
           }
         }
       })
     },
     // 转账
     transfer (p) {
+      let _this = this
       this.openDialog({
         name: 'oilCard/dialog/transfer',
         data: {
@@ -88,13 +90,14 @@ export default {
         },
         methods: {
           ok () {
-            this.fetchData()
+            _this.fetchData()
           }
         }
       })
     },
     // 修改
     update (p) {
+      let _this = this
       this.openDialog({
         name: 'oilCard/dialog/addEdit',
         data: {
@@ -113,13 +116,14 @@ export default {
         },
         methods: {
           ok () {
-            this.fetchData()
+            _this.fetchData()
           }
         }
       })
     },
     // 回收
     recover (p) {
+      let _this = this
       this.openDialog({
         name: 'oilCard/dialog/recover',
         data: {
@@ -135,7 +139,7 @@ export default {
         },
         methods: {
           ok () {
-            this.fetchData()
+            _this.fetchData()
           }
         }
       })

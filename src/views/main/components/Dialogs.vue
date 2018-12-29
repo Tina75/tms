@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-for="item in dialogs" :key="item.name">
-      <component :is="item.name" :show-dialog="item.visiable"></component>
+      <component :is="cache[item.name]" :show-dialog="item.visiable"></component>
     </div>
   </div>
 </template>
@@ -33,8 +33,8 @@ export default {
         name: data.name,
         data: JSON.parse(JSON.stringify(data.data)),
         methods: data.methods
-      }, () => {
-        vm.pushDialog(data.name.replace(/\//g, '-'))
+      }, (key) => {
+        vm.pushDialog(key)
       })
     })
     // 关闭指定弹出框
@@ -64,25 +64,32 @@ export default {
       var name = data.name
       const key = name.replace(/\//g, '-')
       if (vm.cache[key]) {
-        fn()
-      } else {
-        import('../../../views/' + name + '').then(module => {
-          // 加载弹出框模块
-          // 注入method 方法,注入初始化数据
-          let tempModule = Vue.extend(module.default)
-          tempModule = tempModule.extend({
-            data: function () {
-              return data.data
-            },
-            methods: data.methods
-          })
-          Vue.component(name.replace(/\//g, '-'), tempModule)
-          vm.cache[key] = tempModule
-          fn()
-        }).catch(() => {
-          console.error('Chunk loading failed', name.replace(/\//g, '-'))
-        })
+        // 弹出框出现2次，所以先关闭掉，再执行打开操作
+        this.ema.fire('Dialogs.close', key)
       }
+      if (!vm.cache[key]) {
+        vm.importFile(key, data, fn)
+      }
+    },
+    importFile (key, data, fn) {
+      const vm = this
+      import('../../../views/' + data.name + '').then(module => {
+        // 加载弹出框模块
+        // 注入method 方法,注入初始化数据
+        let tempModule = Vue.extend(module.default)
+        tempModule = tempModule.extend({
+          data: function () {
+            return data.data
+          },
+          methods: data.methods
+        })
+        // 全局注册暂时关闭
+        // Vue.component(key, tempModule)
+        vm.cache[key] = tempModule
+        fn(key)
+      }).catch(() => {
+        console.error('Chunk loading failed', name.replace(/\//g, '-'))
+      })
     },
     close: function () {
       this.ema.fire('Dialogs.close', this.$options.name)

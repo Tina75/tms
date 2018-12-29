@@ -14,20 +14,14 @@ export default {
     }
   },
   methods: {
-    // 到详情页
-    toDetail (p) {
-      this.openTab({
-        title: p.row.number,
-        path: '/oilCard/detail/detail',
-        query: {
-          shipperOrderId: p.row.id
-        }
-      })
-    },
     setFetchParams () {
       let obj = {}
       for (let key in this.queryParams) {
-        this.queryParams[key] ? (obj[key] = this.queryParams[key]) : (obj[key] = undefined)
+        if (key === 'systemDate' || key === 'operateDate') {
+          this.queryParams[key] ? (obj[key] = new Date(this.queryParams[key]).Format('yyyy-MM-dd')) : (obj[key] = undefined)
+        } else {
+          this.queryParams[key] ? (obj[key] = this.queryParams[key]) : (obj[key] = undefined)
+        }
       }
       return obj
     },
@@ -37,6 +31,7 @@ export default {
           this.queryParams[key] = ''
         }
       }
+      this.fetchData()
     }
   },
   components: { PageTable }
