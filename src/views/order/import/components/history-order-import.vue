@@ -151,7 +151,7 @@ export default {
         {
           title: '成功导入历史订单数',
           key: 'orderCount',
-          width: 120,
+          width: 160,
           render (h, params) {
             return h('span', {}, params.row['orderCount'] ? params.row['orderCount'] : 0)
           }
