@@ -4,7 +4,7 @@
     <div class="query-box">
       <Row>
         <Col span="5">
-        <Input v-model="queryParams.number" :maxlength="20" placeholder="请输入主卡号或副卡号" />
+        <Input v-model="queryParams.number" :maxlength="30" placeholder="请输入主卡号或副卡号" />
         </Col>
         <Col offset="1" span="5">
         <Input v-model="queryParams.carrierName" :maxlength="10" placeholder="请输入承运商"></Input>

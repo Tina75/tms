@@ -210,7 +210,10 @@ export const oilTableColumns = vm => [
   },
   {
     title: '持卡人',
-    key: 'driverName'
+    key: 'driverName',
+    render: (h, p) => {
+      return h('span', p.row.driverName ? (p.row.driverName + ' ' + p.row.driverPhone) : '-')
+    }
   },
   {
     title: '余额',

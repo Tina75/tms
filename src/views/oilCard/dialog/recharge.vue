@@ -25,7 +25,7 @@
           </Col>
         </Row>
       </FormItem>
-      <FormItem  label="充值日期：">
+      <FormItem  label="充值日期：" prop="operateDate">
         <DatePicker v-model="recharge.operateDate" :options="dateOption" transfer format="yyyy-MM-dd" placeholder="请输入充值日期" style="width: 100%"></DatePicker>
       </FormItem>
       <FormItem label="备注:">
@@ -81,7 +81,8 @@ export default {
       ruleValidate: {
         truckNo: { required: true, message: '请输入加油车辆', type: 'string', trigger: 'change' },
         driverName: { required: true, message: '请输入加油人', type: 'string', trigger: 'change' },
-        changeAmount: { required: true, message: '请输入加油金额', type: 'number', trigger: 'change' }
+        changeAmount: { required: true, message: '请输入充值金额', type: 'number', trigger: 'change' },
+        operateDate: { required: true, message: '请输入充值日期' }
         // driverName: { required: true, message: '请选择司机', trigger: 'change' },
         // carrierName: { required: true, message: '请输入承运商', trigger: 'change' },
         // driverPhone: [
