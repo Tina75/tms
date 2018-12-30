@@ -19,34 +19,38 @@
           <Button v-if="!isEdit" type="primary" class="buttonSty" @click="editCompanyInfo">编辑</Button>
         </span>
         <Row>
-          <Col :span="10">
-          <FormItem label="公司全称：" prop="name">
-            <Row v-if="isEdit" >
-              <Col :span="19">
-              <Input v-if="isEdit" v-model="formCompany.name" :maxlength="25" placeholder="请输入公司名称"></Input>
-              </Col>
-            </Row>
-            <span v-else class="formConten-p">{{formCompany.name}}</span>
-          </FormItem>
-          </Col>
-          <Col :span="10">
-          <FormItem label="公司简称：">
-            <Row v-if="isEdit">
-              <Col :span="19">
-              <Input v-model="formCompany.shortName" :maxlength="6" placeholder="请输入公司简称，最多6个字"></Input>
-              </Col>
-              <Col :span="4">
-              <Tooltip
-                class="unitSpan"
-                max-width="220"
-                transfer
-                content="简称将用于短信推广、品牌展示等">
-                <Icon type="ios-alert" class="ios-alert"/>
-              </Tooltip>
-              </Col>
-            </Row>
-            <span v-else class="formConten-p blockContent">{{formCompany.shortName}}</span>
-          </FormItem>
+          <Col :span="20">
+          <Row>
+            <Col :span="12">
+            <FormItem label="公司全称：" prop="name">
+              <Row v-if="isEdit" >
+                <Col :span="19">
+                <Input v-if="isEdit" v-model="formCompany.name" :maxlength="25" placeholder="请输入公司名称"></Input>
+                </Col>
+              </Row>
+              <span v-else class="formConten-p">{{formCompany.name}}</span>
+            </FormItem>
+            </Col>
+            <Col :span="12">
+            <FormItem label="公司简称：">
+              <Row v-if="isEdit">
+                <Col :span="19">
+                <Input v-model="formCompany.shortName" :maxlength="6" placeholder="请输入公司简称，最多6个字"></Input>
+                </Col>
+                <Col :span="4">
+                <Tooltip
+                  class="unitSpan"
+                  max-width="220"
+                  transfer
+                  content="简称将用于短信推广、品牌展示等">
+                  <Icon type="ios-alert" class="ios-alert"/>
+                </Tooltip>
+                </Col>
+              </Row>
+              <span v-else class="formConten-p blockContent">{{formCompany.shortName}}</span>
+            </FormItem>
+            </Col>
+          </Row>
           </Col>
         </Row>
         <Row>
@@ -64,7 +68,7 @@
           <FormItem label="联系方式：" prop="contactPhone">
             <Row v-if="isEdit">
               <Col :span="19">
-              <Input v-model="formCompany.contactPhone" :maxlength="11" placeholder="请输入联系方式"></Input>
+              <Input v-model="formCompany.contactPhone" :maxlength="40" placeholder="请输入联系方式"></Input>
               </Col>
             </Row>
             <span v-else class="formConten-p">{{formCompany.contactPhone}}</span>
@@ -76,12 +80,12 @@
           <FormItem
             v-show="(item.name && !isEdit) || isEdit"
             :label="'业务联系人' + (index + 1) + '：'"
-            :rules="[{required: true, message: '请输入公司联系人'},
-                     {type: 'string', message: '姓名不能小于2个字且不能多于20个字', pattern: /^.{2,20}$/, trigger: 'blur'}]"
+            :rules="[{required: true, message: '请输入业务联系人'},
+                     {type: 'string', message: '姓名不能小于2个字且不能多于20个字', pattern: /^.{2,20}$/}]"
             :prop="'busiContact.' + index + '.name'">
             <Row v-if="isEdit" >
               <Col :span="19">
-              <Input v-model="item.name" :maxlength="20" placeholder="请输入公司联系人"></Input>
+              <Input v-model="item.name" :maxlength="20" placeholder="请输入业务联系人"></Input>
               </Col>
             </Row>
             <span v-else class="formConten-p">{{item.name}}</span>
@@ -91,12 +95,14 @@
           <FormItem
             v-show="(item.phone && !isEdit) || isEdit"
             :rules="[{required: true, message: '请输入联系方式'},
-                     {type: 'string', message: '电话号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur'}]"
+                     {type: 'string',
+                      message: '请输入正确的手机号或座机号',
+                      pattern: /(^1\d{10}$)|(^[^1]((\(|（)?\d{2,4}(\)|）)?)?-?((\d+)?(\(|（)\d{1,14}(\)|）)(\d+)?|\d{1,16})$)/g}]"
             :prop="'busiContact.' + index + '.phone'"
             label="联系方式：">
             <Row v-if="isEdit">
               <Col :span="19">
-              <Input v-model="item.phone" :maxlength="11" placeholder="请输入联系方式"></Input>
+              <Input v-model="item.phone" :maxlength="40" placeholder="请输入联系方式"></Input>
               </Col>
               <Col :span="4">
               <span @click="removeContact(index)">
@@ -127,7 +133,7 @@
               </Col>
             </Row>
             <Row v-if="!isEdit">
-              <Col :span="24">
+              <Col :span="20">
               <span class="formConten-p">{{ formCompany.address }} {{ formCompany.userAddress }}</span>
               </Col>
             </Row>
@@ -140,17 +146,21 @@
           <span class="iconRightTitle"></span>
           <span class="iconRightTitleP">公司介绍</span>
         </div>
-        <FormItem label="公司简介：" class="labelClassSty">
-          <TextAreaNumber
-            v-if="isEdit"
-            :rows="5"
-            v-model="formCompany.companyProfile"
-            :maxlength="500"
-            placeholder="请输入公司简介">
-          </TextAreaNumber>
-          <span v-if="!isEdit && !formCompany.companyProfile" class="imageTips">完善公司简介，有利于客户了解贵公司业务组成</span>
-          <pre v-if="!isEdit" class="companyProfileSty">{{formCompany.companyProfile}}</pre>
-        </FormItem>
+        <Row>
+          <Col :span="20">
+          <FormItem label="公司简介：" class="labelClassSty">
+            <TextAreaNumber
+              v-if="isEdit"
+              :rows="5"
+              v-model="formCompany.companyProfile"
+              :maxlength="500"
+              placeholder="请输入公司简介">
+            </TextAreaNumber>
+            <span v-if="!isEdit && !formCompany.companyProfile" class="imageTips">完善公司简介，有利于客户了解贵公司业务组成</span>
+            <pre v-if="!isEdit" class="companyProfileSty">{{formCompany.companyProfile}}</pre>
+          </FormItem>
+          </Col>
+        </Row>
         <FormItem label="公司LOGO：">
           <span v-if="isEdit" class="imageTips">尺寸100*100像素，大小不超过10M</span>
           <span v-if="!isEdit && !formCompany.logoUrl" class="imageTips">上传公司LOGO照片，有利于宣传公司品牌哦</span>
@@ -166,119 +176,138 @@
           </span>
         </FormItem>
         <!-- 公司介绍图片集合 -->
-        <FormItem label="业务介绍：">
-          <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiIntroduce" :maxlength="500" type="textarea" placeholder="请输入业务介绍"></TextAreaNumber>
-          <span v-if="!isEdit && !formCompany.busiIntroduce && !busiIntroducePic.length" class="imageTips">完善业务介绍，有利于客户了解贵公司业务组成</span>
-          <pre v-if="!isEdit && formCompany.busiIntroduce" class="companyProfileSty">{{formCompany.busiIntroduce}}</pre><br/>
-          <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
-        </FormItem>
-        <FormItem class="imageFontItem">
-          <image-title
-            v-show="isEdit"
-            ref="upLoadsBusiness"
-            :multiple="true"
-            max-count="10"
-            max-size="10"
-            multiple-width="style='width:100%'">
-          </image-title>
-          <div v-for="(img,index) in busiIntroducePic" v-show="!isEdit" :key="img.key" class="infoImage">
-            <div
-              :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
-              class="fileImage"
-              @click="handleView(index, 'Introduce')">
+        <Row>
+          <Col :span="20">
+          <FormItem label="业务介绍：">
+            <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiIntroduce" :maxlength="500" type="textarea" placeholder="请输入业务介绍"></TextAreaNumber>
+            <span v-if="!isEdit && !formCompany.busiIntroduce && !busiIntroducePic.length" class="imageTips">完善业务介绍，有利于客户了解贵公司业务组成</span>
+            <pre v-if="!isEdit && formCompany.busiIntroduce" class="companyProfileSty">{{formCompany.busiIntroduce}}</pre><br/>
+            <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
+          </FormItem>
+          <FormItem class="imageFontItem">
+            <image-title
+              v-show="isEdit"
+              ref="upLoadsBusiness"
+              :multiple="true"
+              max-count="10"
+              max-size="10"
+              multiple-width="style='width:100%'">
+            </image-title>
+            <div v-for="(img,index) in busiIntroducePic" v-show="!isEdit" :key="img.key" class="infoImage">
+              <div
+                :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+                class="fileImage"
+                @click="handleView(index, 'Introduce')">
+              </div>
+              <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
             </div>
-            <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
-          </div>
-        </FormItem>
+          </FormItem>
+          </Col>
+        </Row>
         <!-- 服务优势图片集合 -->
-        <FormItem label="服务优势：">
-          <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiAdvantce" :maxlength="500" type="textarea" placeholder="请输入服务优势"></TextAreaNumber>
-          <span v-if="!isEdit && !busiAdvantcePic.length && !formCompany.busiAdvantce" class="imageTips">完善服务优势，有利于提升客户对贵公司的好感度</span>
-          <pre v-if="!isEdit" class="companyProfileSty">{{formCompany.busiAdvantce}}</pre>
-          <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
-        </FormItem>
-        <FormItem class="imageFontItem">
-          <image-title
-            v-show="isEdit"
-            ref="upLoadsService"
-            :multiple="true"
-            max-count="10"
-            max-size="10"
-            multiple-width="style='width:100%'">
-          </image-title>
-          <div v-for="(img,index) in busiAdvantcePic" v-show="!isEdit" :key="img.key" class="infoImage">
-            <div
-              :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
-              class="fileImage"
-              @click="handleView(index, 'Advantce')">
+        <Row>
+          <Col :span="20">
+          <FormItem label="服务优势：">
+            <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiAdvantce" :maxlength="500" type="textarea" placeholder="请输入服务优势"></TextAreaNumber>
+            <span v-if="!isEdit && !busiAdvantcePic.length && !formCompany.busiAdvantce" class="imageTips">完善服务优势，有利于提升客户对贵公司的好感度</span>
+            <pre v-if="!isEdit" class="companyProfileSty">{{formCompany.busiAdvantce}}</pre>
+            <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
+          </FormItem>
+          <FormItem class="imageFontItem">
+            <image-title
+              v-show="isEdit"
+              ref="upLoadsService"
+              :multiple="true"
+              max-count="10"
+              max-size="10"
+              multiple-width="style='width:100%'">
+            </image-title>
+            <div v-for="(img,index) in busiAdvantcePic" v-show="!isEdit" :key="img.key" class="infoImage">
+              <div
+                :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+                class="fileImage"
+                @click="handleView(index, 'Advantce')">
+              </div>
+              <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
             </div>
-            <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
-          </div>
-        </FormItem>
+          </FormItem>
+          </Col>
+        </Row>
         <!-- 公司风貌图片集合 -->
-        <FormItem label="公司风貌：">
-          <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
-          <span v-if="!isEdit && !companyPhoto.length" class="imageTips">上传公司风貌照片，有利于传递给客户专业的印象</span>
-        </FormItem>
-        <FormItem class="imageFontItem">
-          <image-title
-            v-show="isEdit"
-            ref="upLoadsStyle"
-            :multiple="true"
-            max-count="10"
-            max-size="10"
-            multiple-width="style='width:100%'">
-          </image-title>
-          <div v-for="(img,index) in companyPhoto" v-show="!isEdit" :key="img.key" class="infoImage">
-            <div
-              :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
-              class="fileImage"
-              @click="handleView(index, 'company')">
+        <Row>
+          <Col :span="20">
+          <FormItem label="公司风貌：">
+            <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
+            <span v-if="!isEdit && !companyPhoto.length" class="imageTips">上传公司风貌照片，有利于传递给客户专业的印象</span>
+          </FormItem>
+          <FormItem class="imageFontItem">
+            <image-title
+              v-show="isEdit"
+              ref="upLoadsStyle"
+              :multiple="true"
+              max-count="10"
+              max-size="10"
+              multiple-width="style='width:100%'">
+            </image-title>
+            <div v-for="(img,index) in companyPhoto" v-show="!isEdit" :key="img.key" class="infoImage">
+              <div
+                :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+                class="fileImage"
+                @click="handleView(index, 'company')">
+              </div>
+              <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
             </div>
-            <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
-          </div>
-        </FormItem>
+          </FormItem>
+          </Col>
+        </Row>
         <!-- 微信二维码图片集合 -->
-        <FormItem label="微信二维码：">
-          <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传2张，每张不能超过10MB</span>
-          <span v-if="!isEdit && !wxQrPic.length" class="imageTips">上传微信二维码，有利于后续微信营销</span>
-        </FormItem>
-        <FormItem class="imageFontItem">
-          <image-title
-            v-show="isEdit"
-            ref="upLoadsWX"
-            :multiple="true"
-            :maxlength="6"
-            max-count="2"
-            max-size="10"
-            class="wxImaages"
-            multiple-width="style='width:50%'">
-          </image-title>
-          <div v-for="(img,index) in wxQrPic" v-show="!isEdit" :key="img.key" class="infoImage">
-            <div
-              :style="'height: 90px;width: 96px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
-              class="fileImage"
-              @click="handleView(index, 'wx')">
-            </div><br/>
-            <p v-show="!isEdit" class="titleInput wxTitle">{{ img.title }}</p>
-          </div>
-        </FormItem>
-        <!-- 公司首页形象 -->
-        <FormItem label="公司首页形象图：">
-          <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且只支持上传1张，每张不能超过10MB</span>
-          <span v-if="!isEdit && !formCompany.homeBanner" class="imageTips">上传公司形象图，有利于宣传公司品牌</span>
-        </FormItem>
-        <FormItem class="imageFontItem">
-          <up-load v-show="isEdit" ref="upLoadsBanner" :multiple="true" max-count="1" max-size="10"></up-load>
-          <div v-if="formCompany.homeBanner && !isEdit" class="infoImage">
-            <div
-              :style="'height: 90px;background-image: url(' + formCompany.homeBanner + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
-              class="fileImage"
-              @click="handleView(0, 'banner')">
+        <Row>
+          <Col :span="20">
+          <FormItem label="微信二维码：">
+            <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传2张，每张不能超过10MB</span>
+            <span v-if="!isEdit && !wxQrPic.length" class="imageTips">上传微信二维码，有利于后续微信营销</span>
+          </FormItem>
+          <FormItem class="imageFontItem">
+            <image-title
+              v-show="isEdit"
+              ref="upLoadsWX"
+              :multiple="true"
+              :maxlength="6"
+              max-count="2"
+              max-size="10"
+              class="wxImaages"
+              multiple-width="style='width:50%'">
+            </image-title>
+            <div v-for="(img,index) in wxQrPic" v-show="!isEdit" :key="img.key" class="infoImage">
+              <div
+                :style="'height: 90px;width: 96px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+                class="fileImage"
+                @click="handleView(index, 'wx')">
+              </div><br/>
+              <p v-show="!isEdit" class="titleInput wxTitle">{{ img.title }}</p>
             </div>
-          </div>
-        </FormItem>
-        </FormItem>
+          </FormItem>
+          </Col>
+        </Row>
+        <!-- 公司首页形象 -->
+        <Row>
+          <Col :span="20">
+          <FormItem label="公司首页形象图：">
+            <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且只支持上传1张，每张不能超过10MB</span>
+            <span v-if="!isEdit && !formCompany.homeBanner" class="imageTips">上传公司形象图，有利于宣传公司品牌</span>
+          </FormItem>
+          <FormItem class="imageFontItem">
+            <up-load v-show="isEdit" ref="upLoadsBanner" :multiple="true" max-count="1" max-size="10"></up-load>
+            <div v-if="formCompany.homeBanner && !isEdit" class="infoImage">
+              <div
+                :style="'height: 90px;background-image: url(' + formCompany.homeBanner + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+                class="fileImage"
+                @click="handleView(0, 'banner')">
+              </div>
+            </div>
+          </FormItem>
+          </Col>
+        </Row>
         <div v-if="isEdit" class="configBtn">
           <Button :loading="loading" type="primary" class="buttonSty" @click="companySubmit('formCompany')">保存</Button>
           <Button class="buttonSty" @click="companyCancel">取消</Button>
@@ -646,7 +675,7 @@ export default {
 .formConten-p
   font-size 14px
   position: absolute;
-  top: 1px;
+  top: 2px;
   // left: -16px;
 .content-p
   position relative
@@ -663,7 +692,7 @@ export default {
   background-color #F9F9F9
   float: right;
   position: relative;
-  right: 120px;
+  left: -8%;
   top: 70px;
   cursor: pointer;
   text-align: center;
