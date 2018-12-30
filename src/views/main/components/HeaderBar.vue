@@ -65,6 +65,7 @@ export default {
     // 用户登录后，初始化配置
     if (vm.IsUserLogin) {
       vm.loopMessage()
+
       vm.newUserTip()
     }
   },
@@ -483,7 +484,7 @@ export default {
     width auto
     top 4px
     left 0
-    right 309px
+    right 250px
     position absolute
     padding 0
     height 46px

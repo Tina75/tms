@@ -2,25 +2,16 @@
   <div class="vertical-tabs">
     <Row type="flex">
       <Col :style="styleHeight" class="vertical-tabs__menu" span="4">
-      <Menu>
+      <Menu ref="menu" :active-name="activeKey" width="180" @on-select="handleSelect">
         <template v-for="(tab, index) in tabList" >
-          <template v-if="tab.children">
-
-            <div :key="index" :class="itemClass(tab)" @click.prevent="handleSelect(tab)">
-              <FontIcon v-if="!!tab.icon" v-bind.sync="tab.icon" size="19" class="vertical-tabs__menu-icon"></FontIcon>
-              {{tab.label}}
-            </div>
-          </template>
-          <template v-else>
-            <MenuItem :key="index" :class="itemClass(tab)" :name="tab.name">
-            <FontIcon v-if="!!tab.icon" :key="index" v-bind.sync="tab.icon" size="19" class="vertical-tabs__menu-icon"></FontIcon>
-            {{tab.label}}
+          <MenuItem :key="index" :name="tab.name" class="vertical-tabs__menu-item">
+          <FontIcon v-if="!!tab.icon" :key="index" v-bind.sync="tab.icon" size="19" class="vertical-tabs__menu-icon"></FontIcon>
+          {{tab.label}}
             </MenuItem>
-          </template>
         </template>
       </Menu>
       </Col>
-      <Col span="20">
+      <Col span="20" class="vertical-tabs__content-wrapper">
       <div class="vertical-tabs__content">
         <slot></slot>
       </div>
@@ -64,14 +55,11 @@ export default {
   },
   mounted () {
     this.updateVisibility(this.getTabIndex(this.activeKey))
+    this.$nextTick(() => {
+      this.$refs.menu.updateActiveName()
+    })
   },
   methods: {
-    itemClass (item) {
-      return [
-        'vertical-tabs__menu-item',
-        item.name === this.activeKey ? 'vertical-tabs__menu-item-active' : ''
-      ]
-    },
     getTabs () {
       return this.children
     },
@@ -86,10 +74,10 @@ export default {
           labelType: typeof pane.label,
           label: pane.label,
           icon: pane.icon || '',
-          name: pane.name || index // 名字或索引
+          name: pane.name || index.toString() // 名字或索引
         })
         if (index === 0) {
-          if (!this.activeKey) this.activeKey = pane.name || index
+          if (!this.activeKey) this.activeKey = pane.name || index.toString()
         }
       })
     },
@@ -102,8 +90,8 @@ export default {
         }
       })
     },
-    handleSelect (item) {
-      this.activeKey = item.name
+    handleSelect (name) {
+      this.activeKey = name
     }
   }
 }
@@ -114,15 +102,11 @@ export default {
   margin -20px -15px
   &__menu
     height auto
+    flex 0 0 180px
     background-color #f3f5f9
   &__menu-item
     padding: 14px 8px;
     text-align center
-    position relative
-    cursor pointer
-    z-index 1
-    -webkit-transition all .2s ease-in-out
-    transition all .2s ease-in-out
     background-color #f3f5f9
     font-size 16px
   &__menu-item-active
@@ -131,8 +115,17 @@ export default {
     position absolute
     left 20px
     top 12px
+  &__content-wrapper
+    flex 1
   &__content
     padding-left 20px
     background-color #fff
     position relative
+  >>> .ivu-menu-light.ivu-menu-vertical
+        .ivu-menu-item-active:not(.ivu-menu-submenu)
+          color #333
+          font-weight bold
+          background-color #fff
+        &:after
+          background-color transparent
 </style>
