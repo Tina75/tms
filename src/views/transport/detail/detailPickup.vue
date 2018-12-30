@@ -514,7 +514,8 @@ export default {
 
   methods: {
     ...mapActions([
-      'loadbillPickup'
+      'loadbillPickup',
+      'checkDriverPhone'
     ]),
     // 将数据返回的标识映射为文字
     statusFilter (status) {
@@ -640,17 +641,34 @@ export default {
           settlementType: z.$refs.pickupFee.getSettlementType(),
           settlementPayInfo: z.$refs.pickupFee.getSettlementPayInfo()
         })
+        // 填了司机手机号需要走校验
+        if (z.$refs.SendCarrierInfo.getCarrierInfo().driverPhone) {
+          z.isPhoneUsed(z.$refs.SendCarrierInfo, data)
+        } else {
+          z.callPickupInterface(data)
+        }
       } else if (z.sendWay === '2') { // 自送
         data.loadbill = Object.assign(data.loadbill, z.$refs.pickupFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
+        // 填了司机手机号需要走校验
+        if (z.$refs.ownSendInfo.getOwnSendInfo().driverPhone || z.$refs.ownSendInfo.getOwnSendInfo().assistantDriverPhone) {
+          z.isPhoneUsed(z.$refs.ownSendInfo, data)
+        } else {
+          z.callPickupInterface(data)
+        }
       }
+    },
+
+    // 调提货详情编辑接口
+    callPickupInterface (data) {
+      const z = this
       Server({
         url: '/load/bill/update',
         method: 'post',
         data: data
       }).then(res => {
         // this.fetchData()
-        this.$Message.success('保存成功')
-        this.cancelEdit()
+        z.$Message.success('保存成功')
+        z.cancelEdit()
       }).catch()
     },
 
@@ -772,6 +790,55 @@ export default {
           break
       }
       return statusClass
+    },
+    // 校验主副司机手机号有没有被更改
+    isPhoneUsed (comp, data) {
+      const z = this
+      let phoneList = []
+      if (z.sendWay === '1') { // 外转
+        comp.getCarrierInfo().driverPhone && phoneList.push(comp.getCarrierInfo().driverPhone)
+      } else {
+        comp.getOwnSendInfo().driverPhone && phoneList.push(comp.getOwnSendInfo().driverPhone)
+        comp.getOwnSendInfo().assistantDriverPhone && phoneList.push(comp.getOwnSendInfo().assistantDriverPhone)
+      }
+      z.checkDriverPhone(phoneList).then((res) => {
+        if (!_.every(res, { used: false })) { // 有变更过手机号
+          let name = ''
+          if (z.sendWay === '1') {
+            if (_.every(res, { used: true })) {
+              name = '司机'
+            }
+          } else {
+            if (res.length > 1 && _.every(res, { used: true })) {
+              name = '主司机和副司机'
+            } else {
+              let obj = _.find(res, { used: true })
+              if (obj.phone === comp.getOwnSendInfo().driverPhone) {
+                name = '主司机'
+              }
+              if (obj.phone === comp.getOwnSendInfo().assistantDriverPhone) {
+                name = '副司机'
+              }
+            }
+          }
+          z.checkPhoneDialog(name, data)
+        } else {
+          z.callPickupInterface(data)
+        }
+      })
+    },
+    // 打开司机手机号校验弹窗
+    checkPhoneDialog (name, data) {
+      const _this = this
+      _this.openDialog({
+        name: 'transport/dialog/checkDriverPhone',
+        data: { name: name },
+        methods: {
+          ok (node) {
+            _this.callPickupInterface(data)
+          }
+        }
+      })
     }
   },
   /**

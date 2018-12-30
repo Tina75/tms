@@ -193,7 +193,8 @@ export default {
       },
       mileage: null,
       btnLoading: false,
-      cargoInfoList: [] // 订单对应的货物信息
+      cargoInfoList: [], // 订单对应的货物信息
+      phoneUsed: false // 主副司机手机号是否更改
     }
   },
 
@@ -286,7 +287,8 @@ export default {
 
   methods: {
     ...mapActions([
-      'getCarriers'
+      'getCarriers',
+      'checkDriverPhone'
     ]),
     // 判断勾选项始发地和目的地经纬度是否一样
     isAllEqual (array) {
@@ -351,24 +353,42 @@ export default {
                 settlementType: sendComp.getSettlementType(),
                 settlementPayInfo: sendComp.getSettlementPayInfos()
               })
+              // 填了司机手机号需要走校验
+              if (sendComp.getCarrierInfo().driverPhone) {
+                z.isPhoneUsed(sendComp, data)
+              } else {
+                z.callSendInterface(data)
+              }
             } else if (data.assignCarType === '2') { // 自送
               data = Object.assign(data, sendComp.getformatMoney(), sendComp.getOwnSend())
               delete data.cashBack // 自送没有返现
+              // 填了司机手机号需要走校验
+              if (sendComp.getOwnSend().driverPhone || sendComp.getOwnSend().assistantDriverPhone) {
+                z.isPhoneUsed(sendComp, data)
+              } else {
+                z.callSendInterface(data)
+              }
             }
+          } else {
+            z.callSendInterface(data)
           }
-          Server({
-            url: 'waybill/create',
-            method: 'post',
-            data: data
-          }).then(() => {
-            z.btnLoading = false
-            z.ok()
-            z.$Message.success('创建运单成功')
-            z.close()
-          }).catch(() => {
-            z.btnLoading = false
-          })
         }
+      })
+    },
+    // 调送货调度接口
+    callSendInterface (data) {
+      const z = this
+      Server({
+        url: 'waybill/create',
+        method: 'post',
+        data: data
+      }).then(() => {
+        z.btnLoading = false
+        z.ok()
+        z.$Message.success('创建运单成功')
+        z.close()
+      }).catch(() => {
+        z.btnLoading = false
       })
     },
     // 提货调度  创建提货单
@@ -384,7 +404,7 @@ export default {
       if (z.sendCar) {
         data.assignCarType = pickUpComp.sendWay
         // 订单数大于1需要传分摊策略
-        if (this.id.length > 1) {
+        if (z.id.length > 1) {
           data.allocationStrategy = pickUpComp.getAllocationStrategy()
         }
         if (data.assignCarType === '1') { // 外转
@@ -392,11 +412,29 @@ export default {
             settlementType: pickUpComp.getSettlementTypes(),
             settlementPayInfo: pickUpComp.getSettlementPayInfos()
           })
+          // 填了司机手机号需要走校验
+          if (pickUpComp.getCarrierInfo().driverPhone) {
+            z.isPhoneUsed(pickUpComp, data)
+          } else {
+            z.callPickupInterface(data)
+          }
         } else if (data.assignCarType === '2') { // 自送
           data = Object.assign(data, pickUpComp.getformatMoney(), pickUpComp.getOwnSend())
           delete data.cashBack // 自送没有返现
+          // 填了司机手机号需要走校验
+          if (pickUpComp.getOwnSend().driverPhone || pickUpComp.getOwnSend().assistantDriverPhone) {
+            z.isPhoneUsed(pickUpComp, data)
+          } else {
+            z.callPickupInterface(data)
+          }
         }
+      } else {
+        z.callPickupInterface(data)
       }
+    },
+    // 调提货调度接口
+    callPickupInterface (data) {
+      const z = this
       Server({
         url: 'load/bill/create',
         method: 'post',
@@ -424,6 +462,58 @@ export default {
         }
       }).then((res) => {
         this.cargoInfoList = res.data.data.list
+      })
+    },
+    // 校验主副司机手机号有没有被更改
+    isPhoneUsed (comp, data) {
+      const z = this
+      let phoneList = []
+      // 派车方式 1、外转   2、自提或自送
+      let sendWay = comp.sendWay
+      if (sendWay === '1') { // 外转
+        comp.getCarrierInfo().driverPhone && phoneList.push(comp.getCarrierInfo().driverPhone)
+      } else {
+        comp.getOwnSend().driverPhone && phoneList.push(comp.getOwnSend().driverPhone)
+        comp.getOwnSend().assistantDriverPhone && phoneList.push(comp.getOwnSend().assistantDriverPhone)
+      }
+      z.checkDriverPhone(phoneList).then((res) => {
+        if (!_.every(res, { used: false })) { // 有变更过手机号
+          let name = ''
+          if (sendWay === '1') {
+            if (_.every(res, { used: true })) {
+              name = '司机'
+            }
+          } else {
+            if (res.length > 1 && _.every(res, { used: true })) {
+              name = '主司机和副司机'
+            } else {
+              let obj = _.find(res, { used: true })
+              if (obj.phone === comp.getOwnSend().driverPhone) {
+                name = '主司机'
+              }
+              if (obj.phone === comp.getOwnSend().assistantDriverPhone) {
+                name = '副司机'
+              }
+            }
+          }
+          z.checkPhoneDialog(name, data)
+        } else {
+          z.name === '送货调度' ? z.callSendInterface(data) : z.callPickupInterface(data)
+        }
+      })
+      z.btnLoading = false
+    },
+    // 打开司机手机号校验弹窗
+    checkPhoneDialog (name, data) {
+      const _this = this
+      _this.openDialog({
+        name: 'transport/dialog/checkDriverPhone',
+        data: { name: name },
+        methods: {
+          ok (node) {
+            this.name === '送货调度' ? _this.callSendInterface(data) : _this.callPickupInterface(data)
+          }
+        }
       })
     }
   }

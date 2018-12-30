@@ -121,3 +121,23 @@ export const logout = ({ commit }) => {
     resolve()
   })
 }
+
+/**
+ * 司机手机号校验
+ * @param Array
+ */
+export const checkDriverPhone = ({ commit }, data) => {
+  return new Promise((resolve, reject) => {
+    Server({
+      url: process.env.VUE_APP_DRIVER + 'uc/phoneused',
+      method: 'post',
+      data: {
+        phoneList: data
+      }
+    }).then(result => {
+      resolve(result.data.data.checkResult)
+    }).catch(err => {
+      reject(err)
+    })
+  })
+}
