@@ -309,20 +309,21 @@ export default {
             this.$Message.warning('您未做任何修改')
             return
           }
-          for (let key in this.orderForm) {
+          let cloneOrderForm = _.cloneDeep(this.orderForm)
+          for (let key in cloneOrderForm) {
             if (key.indexOf('Fee') > -1 || key === 'collectionMoney') {
-              float.round(this.orderForm[key] *= 100, 0)
+              float.round(cloneOrderForm[key] *= 100, 0)
             } else if (key === 'mileage') {
-              float.round(this.orderForm[key] *= 1000, 0)
+              float.round(cloneOrderForm[key] *= 1000, 0)
             } else if (key === 'invoiceRate') {
-              this.orderForm[key] = float.round(this.orderForm[key] / 100, 4)
+              cloneOrderForm[key] = float.round(cloneOrderForm[key] / 100, 4)
             }
           }
           Server({
             url: '/order/change',
             method: 'post',
             data: {
-              ...this.orderForm
+              ...cloneOrderForm
             }
           }).then((res) => {
             if (res.data.code === 10000) {

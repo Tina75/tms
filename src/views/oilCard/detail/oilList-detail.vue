@@ -4,7 +4,7 @@
       <!--<Tooltip v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :disabled="!btn.disabled" :content="btn.content" :offset="10" transfer placement="top">-->
       <Button
         v-for="(btn, index) in btnGroup"
-        v-if="hasPower(btn.code)"
+        v-if="hasPower(btn.code) && detail[btn.isShow]"
         :key="index"
         :type="index === btnGroup.length-1 ? 'primary' : 'default'"
         @click="btn.func(rowParams, 1)">{{ btn.name }}</Button>
@@ -124,6 +124,7 @@ export default {
         {
           name: '停用',
           code: 160108,
+          isShow: 'canDisable',
           func: (p) => {
             _this.stop(_this.detail.id)
           }
@@ -131,6 +132,7 @@ export default {
         {
           name: '启用',
           code: 160109,
+          isShow: 'canEnable',
           func: (p) => {
             _this.start(_this.detail.id)
           }
@@ -138,6 +140,7 @@ export default {
         {
           name: '分配',
           code: 160103,
+          isShow: 'canAssign',
           func: (p) => {
             _this.assign(p)
           }
@@ -145,12 +148,14 @@ export default {
         {
           name: '充值',
           code: 160104,
+          isShow: 'canRecharge',
           func: (p) => {
             _this.recharge(p)
           }
         },
         {
           name: '加油',
+          isShow: 'canRefuel',
           code: 160105,
           func: (p) => {
             _this.refuel(p)
@@ -158,6 +163,7 @@ export default {
         },
         {
           name: '转账',
+          isShow: 'canTransfer',
           code: 160106,
           func: (p) => {
             _this.transfer(p)
@@ -166,6 +172,7 @@ export default {
         {
           name: '修改',
           code: 160102,
+          isShow: 'canUpdate',
           func: (p) => {
             _this.update(p)
           }
@@ -173,6 +180,7 @@ export default {
         {
           name: '回收',
           code: 160107,
+          isShow: 'canRecover',
           func: (p) => {
             _this.recover(p)
           }
@@ -190,28 +198,20 @@ export default {
     stop (id) {
       let idList = [id]
       let _this = this
-      this.$Modal.confirm({
-        title: '停用',
-        content: '是否确认停用所选油卡',
-        okText: '确认',
-        cancelText: '取消',
-        async onOk () {
-          let vm = _this
-          _this.openDialog({
-            name: 'oilCard/dialog/operate',
-            data: {
-              title: '油卡停用',
-              operate: {
-                idList: idList,
-                type: 1 // 1停用，2启用
-              }
-            },
-            methods: {
-              ok () {
-                vm.getDetail()
-              }
-            }
-          })
+      _this.openDialog({
+        name: 'oilCard/dialog/operate',
+        data: {
+          title: '油卡停用',
+          content: '是否确认停用所选油卡',
+          operate: {
+            idList: idList,
+            type: 1 // 1停用，2启用
+          }
+        },
+        methods: {
+          ok () {
+            _this.getDetail()
+          }
         }
       })
     },
@@ -220,28 +220,20 @@ export default {
       let idList = [id]
       // idList = idList.push(id)
       let _this = this
-      this.$Modal.confirm({
-        title: '启用',
-        content: '是否确认启用所选油卡',
-        okText: '确认',
-        cancelText: '取消',
-        async onOk () {
-          let vm = _this
-          _this.openDialog({
-            name: 'oilCard/dialog/operate',
-            data: {
-              title: '油卡启用',
-              operate: {
-                idList: idList,
-                type: 2 // 1停用，2启用
-              }
-            },
-            methods: {
-              ok () {
-                vm.getDetail()
-              }
-            }
-          })
+      _this.openDialog({
+        name: 'oilCard/dialog/operate',
+        data: {
+          title: '油卡启用',
+          content: '是否确认启用所选油卡',
+          operate: {
+            idList: idList,
+            type: 2 // 1停用，2启用
+          }
+        },
+        methods: {
+          ok () {
+            _this.getDetail()
+          }
         }
       })
     },
@@ -255,8 +247,7 @@ export default {
           assign: {
             id: p.row.id,
             number: p.row.number,
-            amount: p.row.amount,
-            remark: p.row.remark
+            amount: p.row.amount
           }
         },
         methods: {
@@ -276,7 +267,6 @@ export default {
           recharge: {
             id: p.row.id,
             amount: p.row.amount,
-            remark: p.row.remark,
             type: p.row.type,
             issuer: p.row.issuer,
             primaryCardNumber: p.row.primaryCardNumber
@@ -300,7 +290,6 @@ export default {
             id: p.row.id,
             number: p.row.number,
             amount: p.row.amount,
-            remark: p.row.remark,
             type: p.row.type,
             driverName: p.row.driverName,
             truckNo: p.row.truckNo,
@@ -325,7 +314,6 @@ export default {
             id: p.row.id,
             number: p.row.number,
             amount: p.row.amount,
-            remark: p.row.remark,
             type: p.row.type,
             issuer: p.row.issuer,
             primaryCardId: p.row.primaryCardId,
@@ -376,7 +364,6 @@ export default {
             id: p.row.id,
             number: p.row.number,
             amount: p.row.amount,
-            remark: p.row.remark,
             type: p.row.type,
             issuer: p.row.issuer
           }
