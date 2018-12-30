@@ -19,7 +19,7 @@
           <Button v-if="!isEdit" type="primary" class="buttonSty" @click="editCompanyInfo">编辑</Button>
         </span>
         <Row>
-          <Col :span="8">
+          <Col :span="10">
           <FormItem label="公司全称：" prop="name">
             <Row v-if="isEdit" >
               <Col :span="19">
@@ -29,7 +29,7 @@
             <span v-else class="formConten-p">{{formCompany.name}}</span>
           </FormItem>
           </Col>
-          <Col :span="8">
+          <Col :span="10">
           <FormItem label="公司简称：">
             <Row v-if="isEdit">
               <Col :span="19">
@@ -50,7 +50,7 @@
           </Col>
         </Row>
         <Row>
-          <Col :span="8">
+          <Col :span="10">
           <FormItem label="公司联系人：" prop="contact">
             <Row v-if="isEdit" >
               <Col :span="19">
@@ -60,7 +60,7 @@
             <span v-else class="formConten-p">{{formCompany.contact}}</span>
           </FormItem>
           </Col>
-          <Col :span="8">
+          <Col :span="10">
           <FormItem label="联系方式：" prop="contactPhone">
             <Row v-if="isEdit">
               <Col :span="19">
@@ -72,11 +72,12 @@
           </Col>
         </Row>
         <Row v-for="(item, index) in (formCompany.busiContact)" :key="index">
-          <Col :span="8">
+          <Col :span="10">
           <FormItem
             v-show="(item.name && !isEdit) || isEdit"
             :label="'业务联系人' + (index + 1) + '：'"
-            :rules="{required: true, message: '请输入公司联系人'}"
+            :rules="[{required: true, message: '请输入公司联系人'},
+                     {type: 'string', message: '姓名不能小于2个字且不能多于20个字', pattern: /^.{2,20}$/, trigger: 'blur'}]"
             :prop="'busiContact.' + index + '.name'">
             <Row v-if="isEdit" >
               <Col :span="19">
@@ -86,10 +87,11 @@
             <span v-else class="formConten-p">{{item.name}}</span>
           </FormItem>
           </Col>
-          <Col :span="8">
+          <Col :span="10">
           <FormItem
             v-show="(item.phone && !isEdit) || isEdit"
-            :rules="[{required: true, message: '请输入联系方式'}, {type: 'string', message: '电话号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur'}]"
+            :rules="[{required: true, message: '请输入联系方式'},
+                     {type: 'string', message: '电话号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur'}]"
             :prop="'busiContact.' + index + '.phone'"
             label="联系方式：">
             <Row v-if="isEdit">
@@ -108,7 +110,7 @@
           </Col>
         </Row>
         <Row>
-          <Col :span="16">
+          <Col :span="20">
           <FormItem label="公司地址：" prop="address">
             <Row v-if="isEdit">
               <Col :span="14">
@@ -119,7 +121,8 @@
               </Col>
               <Col :span="1">
               <Tooltip :max-width="200" content="详细地址只支持从下拉推荐地址中选择" transfer>
-                <Icon class="vermiddle" type="ios-information-circle" size="20" color="#FFBB44"></Icon>
+                <Icon type="ios-alert" class="ios-alert vermiddle"/>
+                <!-- <Icon class="vermiddle" type="ios-information-circle" size="20" color="#FFBB44"></Icon> -->
               </Tooltip>
               </Col>
             </Row>
@@ -145,8 +148,8 @@
             :maxlength="500"
             placeholder="请输入公司简介">
           </TextAreaNumber>
-          <span v-if="!isEdit && !formCompany.companyProfile" class="imageTips">完善业务介绍，有利于客户了解贵公司业务组成</span>
-          <pre  v-if="!isEdit" class="companyProfileSty">{{formCompany.companyProfile}}</pre>
+          <span v-if="!isEdit && !formCompany.companyProfile" class="imageTips">完善公司简介，有利于客户了解贵公司业务组成</span>
+          <pre v-if="!isEdit" class="companyProfileSty">{{formCompany.companyProfile}}</pre>
         </FormItem>
         <FormItem label="公司LOGO：">
           <span v-if="isEdit" class="imageTips">尺寸100*100像素，大小不超过10M</span>
@@ -498,7 +501,6 @@ export default {
           vm.shareOutNo = data.data.shareOutNo
         }
       }).then(() => {
-        console.log(vm.formCompany)
         vm.openDialog({
           name: 'company/dialog/share',
           data: {
@@ -552,6 +554,7 @@ export default {
     },
     removeContact (item) {
       this.formCompany.busiContact.splice(item, 1)
+      this.contactListShow = true
     }
   }
 }
@@ -569,8 +572,8 @@ export default {
   width 98px
 >>>.ivu-form-item-label
   font-size: 14px
->>>.ivu-input-wrapper
-  margin-left -15px
+// >>>.ivu-input-wrapper
+//   margin-left -15px
 .temAll
   margin -20px -15px
   padding 0 40px
@@ -644,7 +647,7 @@ export default {
   font-size 14px
   position: absolute;
   top: 1px;
-  left: -16px;
+  // left: -16px;
 .content-p
   position relative
   top -2px
@@ -660,8 +663,8 @@ export default {
   background-color #F9F9F9
   float: right;
   position: relative;
-  right: 200px;
-  top: 60px;
+  right: 120px;
+  top: 70px;
   cursor: pointer;
   text-align: center;
   z-index: 100;
@@ -671,4 +674,7 @@ export default {
     line-height 28px
 .removeContact
   cursor: pointer;
+  padding-left 5px
+.vermiddle
+  padding-left 5px
 </style>
