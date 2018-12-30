@@ -58,7 +58,7 @@ export default {
 span.numberCount
   float: right;
   position: relative;
-  right: 30px;
+  right: 50px;
   top: -30px;
   color #333333
   font-size 12px
