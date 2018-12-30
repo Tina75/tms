@@ -666,7 +666,7 @@ export default {
   background-color #F9F9F9
   float: right;
   position: relative;
-  left: -8%;
+  left: -5%;
   top: 70px;
   cursor: pointer;
   text-align: center;
