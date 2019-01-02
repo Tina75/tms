@@ -215,7 +215,7 @@ import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
 import { mapActions } from 'vuex'
 export default {
-  name: 'car-details',
+  name: 'owned-car-details',
   components: { RecordList, prepareOpenSwipe, pageTable, Export },
   mixins: [ BasePage ],
   metaInfo: {
