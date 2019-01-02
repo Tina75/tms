@@ -1,5 +1,6 @@
 import validator from '@/libs/js/validate'
 import float from '@/libs/js/float'
+import { NumberPrecesion } from '@/libs/js/config'
 let uniqueIndex = 0
 export default class Cargo {
   /**
@@ -30,7 +31,7 @@ export default class Cargo {
       set length (value) {
         this._length = value
         if (this._length && this._height && this._width) {
-          self.volume = float.round(this._length * this._height * this._width / (1000 * 1000 * 1000), 6)
+          self.volume = float.round(this._length * this._height * this._width / (1000 * 1000 * 1000), NumberPrecesion.volume)
         }
       },
       get length () {
@@ -39,7 +40,7 @@ export default class Cargo {
       set width (value) {
         this._width = value
         if (this._length && this._height && this._width) {
-          self.volume = float.round(this._length * this._height * this._width / (1000 * 1000 * 1000), 6)
+          self.volume = float.round(this._length * this._height * this._width / (1000 * 1000 * 1000), NumberPrecesion.volume)
         }
       },
       get width () {
@@ -48,7 +49,7 @@ export default class Cargo {
       set height (value) {
         this._height = value
         if (this._length && this._height && this._width) {
-          self.volume = float.round(this._length * this._height * this._width / (1000 * 1000 * 1000), 6)
+          self.volume = float.round(this._length * this._height * this._width / (1000 * 1000 * 1000), NumberPrecesion.volume)
         }
       },
       get height () {
@@ -94,7 +95,7 @@ export default class Cargo {
     return this._weight === null ? null : float.round(this._weight * 1000)
   }
   set weightKg (value) {
-    this._weight = float.round(value / 1000, 3)
+    this._weight = float.round(value / 1000, NumberPrecesion.weight)
   }
   // set volume (value) {
   //   this._volume = value

@@ -539,14 +539,14 @@ export default {
           { required: true, message: '请输入发货人名称' }
         ],
         consignerPhone: [
-          { required: true, message: '请输入发货人联系号码' },
+          { required: true, message: '请输入正确的手机号或座机号' },
           { validator: validatePhone, trigger: 'blur' }
         ],
         consigneeContact: [
           { required: true, message: '请输入收货人名称' }
         ],
         consigneePhone: [
-          { required: true, message: '请输入收货人联系号码' },
+          { required: true, message: '请输入正确的手机号或座机号' },
           { validator: validatePhone, trigger: 'blur' }
         ],
         consignerAddress: [
