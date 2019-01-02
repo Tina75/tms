@@ -811,8 +811,8 @@ export default {
         const data = res.data.data
         this.imageItems = data.carInfo.map((item) => {
           return {
-            src: item,
-            msrc: item
+            src: this.$handleImgUrl(item),
+            msrc: this.$handleImgUrl(item)
           }
         })
         this.id = data.waybill.waybillId
