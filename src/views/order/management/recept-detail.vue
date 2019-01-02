@@ -238,7 +238,7 @@
           <div
             v-for="(item, index) in detail.receiptOrder.receiptUrl"
             :key="index"
-            :style="'cursor: pointer;display: inline-block;width: 160px;margin-right: 16px;height: 90px;background-image: url(' + item + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+            :style="'cursor: pointer;display: inline-block;width: 160px;margin-right: 16px;height: 90px;background-image: url(' + $handleImgUrl(item) + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
             @click="handleView(index)">
           </div>
         </div>
@@ -621,45 +621,46 @@ export default {
     },
     // 拉取table数据
     getDetail () {
+      const z = this
       // 订单详情  from: order   回单详情 from: receipt
-      if (this.from === 'order') {
+      if (z.from === 'order') {
         Server({
           url: 'order/detail',
           method: 'get',
           data: {
-            id: this.$route.query.orderId
+            id: z.$route.query.orderId
           }
         }).then((res) => {
-          this.detail = res.data.data
-          this.orderStatus = res.data.data.status
+          z.detail = res.data.data
+          z.orderStatus = res.data.data.status
           // 过滤订单详情页操作按钮
-          this.filterOrderButton()
-          this.orderLog = res.data.data.orderLogs // 订单日志
-          this.orderLogCount = res.data.data.orderLogs.length // 订单日志数量
-          this.waybillNums = res.data.data.waybillNoList // 运单子单
+          z.filterOrderButton()
+          z.orderLog = res.data.data.orderLogs // 订单日志
+          z.orderLogCount = res.data.data.orderLogs.length // 订单日志数量
+          z.waybillNums = res.data.data.waybillNoList // 运单子单
         })
       } else { // 回单详情
         Server({
           url: 'order/getReceiptOrderDetail',
           method: 'get',
           data: {
-            id: this.$route.query.orderId
+            id: z.$route.query.orderId
           }
         }).then((res) => {
-          this.detail = res.data.data
-          this.receiptStatus = res.data.data.receiptOrder.receiptStatus
+          z.detail = res.data.data
+          z.receiptStatus = res.data.data.receiptOrder.receiptStatus
           // 过滤回单详情页操作按钮
-          this.filterReceiptButton()
-          this.orderLog = res.data.data.receiptOrderLogs // 回单日志
-          this.orderLogCount = res.data.data.receiptOrderLogs.length // 回单日志数量
+          z.filterReceiptButton()
+          z.orderLog = res.data.data.receiptOrderLogs // 回单日志
+          z.orderLogCount = res.data.data.receiptOrderLogs.length // 回单日志数量
           let imageItems = []
-          this.detail.receiptOrder.receiptUrl.map((item) => {
+          z.detail.receiptOrder.receiptUrl.map((item) => {
             imageItems.push({
-              src: item,
-              msrc: item
+              src: z.$handleImgUrl(item),
+              msrc: z.$handleImgUrl(item)
             })
           })
-          this.imgViewFunc = openSwipe(imageItems)
+          z.imgViewFunc = openSwipe(imageItems)
         })
       }
     },
