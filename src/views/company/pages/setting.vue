@@ -123,13 +123,13 @@
         </div>
         <Row>
           <Col :span="20">
-          <FormItem label="公司简介：" class="labelClassSty">
+          <FormItem label="公司简介：" style="margin-bottom:0px">
             <TextAreaNumber
               v-if="isEdit"
               :rows="5"
               v-model="formCompany.companyProfile"
               :maxlength="500"
-              class="textArea"
+              class="basicInfo textArea"
               placeholder="请输入公司简介">
             </TextAreaNumber>
             <span v-if="!isEdit && !formCompany.companyProfile" class="imageTips">完善公司简介，有利于客户了解贵公司业务组成</span>
@@ -137,25 +137,29 @@
           </FormItem>
           </Col>
         </Row>
-        <FormItem label="公司LOGO：">
-          <span v-if="isEdit" class="imageTips">尺寸100*100像素，大小不超过10M</span>
-          <span v-if="!isEdit && !formCompany.logoUrl" class="imageTips">上传公司LOGO照片，有利于宣传公司品牌哦</span>
-        </FormItem>
-        <FormItem :class="isEdit ? 'imageFontItem' : 'imageFontItemBlock'">
-          <span class="imageLogo">
-            <up-load v-show="isEdit" ref="uploadLogo" max-size="10" crop></up-load>
-            <div
-              :style="(formCompany.logoUrl && !isEdit) ? 'height: 90px;width: 96px;background-image: url(' + formCompany.logoUrl + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position:center;cursor:pointer;' : ''"
-              class="imageLogoDiv"
-              @click="handleView(0, 'logo')">
-            </div>
-          </span>
-        </FormItem>
+        <Row>
+          <Col :span="20">
+          <FormItem label="公司LOGO：">
+            <span v-if="isEdit" class="imageTips">尺寸100*100像素，大小不超过10M</span>
+            <span v-if="!isEdit && !formCompany.logoUrl" class="imageTips">上传公司LOGO照片，有利于宣传公司品牌哦</span>
+          </FormItem>
+          <FormItem :class="isEdit ? 'imageFontItem' : 'imageFontItemBlock'">
+            <span class="imageLogo">
+              <up-load v-show="isEdit" ref="uploadLogo" max-size="10" crop></up-load>
+              <div
+                :style="(formCompany.logoUrl && !isEdit) ? 'height: 90px;width: 96px;background-image: url(' + formCompany.logoUrl + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position:center;cursor:pointer;' : ''"
+                class="imageLogoDiv"
+                @click="handleView(0, 'logo')">
+              </div>
+            </span>
+          </FormItem>
+          </Col>
+        </Row>
         <!-- 公司介绍图片集合 -->
         <Row>
           <Col :span="20">
           <FormItem label="业务介绍：">
-            <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiIntroduce" :maxlength="500" type="textarea" placeholder="请输入业务介绍" class="textArea"></TextAreaNumber>
+            <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiIntroduce" :maxlength="500" type="textarea" placeholder="请输入业务介绍" class="basicInfo textArea"></TextAreaNumber>
             <span v-if="!isEdit && !formCompany.busiIntroduce && !busiIntroducePic.length" class="imageTips">完善业务介绍，有利于客户了解贵公司业务组成</span>
             <pre v-if="!isEdit && formCompany.busiIntroduce" class="companyProfileSty">{{formCompany.busiIntroduce}}</pre><br/>
             <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
@@ -184,7 +188,7 @@
         <Row>
           <Col :span="20">
           <FormItem label="服务优势：">
-            <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiAdvantce" :maxlength="500" type="textarea" placeholder="请输入服务优势" class="textArea"></TextAreaNumber>
+            <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiAdvantce" :maxlength="500" type="textarea" placeholder="请输入服务优势" class="basicInfo textArea"></TextAreaNumber>
             <span v-if="!isEdit && !busiAdvantcePic.length && !formCompany.busiAdvantce" class="imageTips">完善服务优势，有利于提升客户对贵公司的好感度</span>
             <pre v-if="!isEdit && formCompany.busiAdvantce" class="companyProfileSty">{{formCompany.busiAdvantce}}</pre><br/>
             <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
@@ -647,13 +651,13 @@ export default {
   clear both
 .companyProfileSty
   font-family PingFangSC-Regular
-  margin-top 5px
+  margin-top 7px
   line-height 22px
   white-space pre-wrap
   word-wrap break-word
   font-size: 14px
 .imageFontItem
-  margin-top -25px
+  margin-top -18px
 .imageFontItemBlock
   margin-top -45px
 .formConten-p
@@ -692,4 +696,5 @@ export default {
   padding-left 5px
 .textArea
   margin-top 10px
+  margin-bottom -20px
 </style>
