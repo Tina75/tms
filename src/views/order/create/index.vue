@@ -92,7 +92,7 @@
       </Col>
       <Col span="6">
       <FormItem label="联系号码:" prop="consignerPhone">
-        <SelectInput v-model="orderForm.consignerPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号，座机需加区号" clearable></SelectInput>
+        <SelectInput v-model="orderForm.consignerPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号" clearable></SelectInput>
       </FormItem>
       </Col>
       <Col span="6">
@@ -103,7 +103,7 @@
       </Col>
       <Col span="6">
       <FormItem label="联系号码:" prop="consigneePhone">
-        <SelectInput v-model="orderForm.consigneePhone" :formatter="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号，座机需加区号" clearable></SelectInput>
+        <SelectInput v-model="orderForm.consigneePhone" :formatter="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号" clearable></SelectInput>
       </FormItem>
       </Col>
     </Row>
