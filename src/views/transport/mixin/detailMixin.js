@@ -176,9 +176,12 @@ export default {
      * @param {*} key
      */
     scopedSlotsRender (h, p, key, defaultString = '-') {
-      return h('div', {},
-        p.row.cargoList.map((cargo) => h('div', cargo[key] || defaultString))
-      )
+      if (p.row.cargoList) {
+        return h('div', {},
+          p.row.cargoList.map((cargo) => h('div', cargo[key] || defaultString))
+        )
+      }
+      return h('span', '-')
     },
     // 根据状态设置按钮
     setBtnsWithStatus () {
