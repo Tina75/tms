@@ -181,10 +181,15 @@ export default {
     },
     // 导出
     export () {
+      console.log(this.tableSelection)
+      let idList = []
+      this.tableSelection.map(item => {
+        idList.push(item.id)
+      })
       Export({
         url: '/oilCard/export',
         method: 'post',
-        data: this.searchFields,
+        data: idList.length > 0 ? Object.assign(this.searchFields, { idList }) : this.searchFields,
         fileName: '油卡汇总信息'
       })
     },
