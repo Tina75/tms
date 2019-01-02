@@ -18,8 +18,8 @@
         @click="item.func">{{ item.name }}
       </Button>
     </div>
-    <Tabs :value="activeTab" :animated="false">
-      <TabPane  label="运单详情" name="detail">
+    <Tabs ref="tabs" :value="activeTab" :animated="false">
+      <TabPane label="运单详情" name="detail">
         <section class="detail-info">
           <!-- 运单信息 -->
           <div>
@@ -1328,6 +1328,7 @@ export default {
     this.$nextTick(() => {
       this.id = this.$route.query.id
       this.no = this.$route.query.no
+      this.$refs['tabs'].handleChange(0)
       this.fetchData()
     })
     next()
