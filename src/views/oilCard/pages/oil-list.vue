@@ -188,7 +188,7 @@ export default {
         fileName: '油卡汇总信息'
       })
     },
-    // 到详情页
+    //   到详情页
     toDetail (p) {
       this.openTab({
         title: p.row.number,

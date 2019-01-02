@@ -312,7 +312,6 @@ export default {
   },
   mounted () {
     this.showImgFn = openSwipe(this.imageItems)
-    console.log(this.data)
   },
   methods: {
     // 处理对话框

@@ -18,8 +18,8 @@
         @click="item.func">{{ item.name }}
       </Button>
     </div>
-    <Tabs :value="activeTab" :animated="false">
-      <TabPane  label="运单详情" name="detail">
+    <Tabs ref="tabs" :value="activeTab" :animated="false">
+      <TabPane label="运单详情" name="detail">
         <section class="detail-info">
           <!-- 运单信息 -->
           <div>
@@ -511,9 +511,6 @@ export default {
             name: '改单',
             code: 120116,
             func: () => {
-              this.source = 'change'
-              this.inEditing = 'change'
-              this.changeStr = this.changeParams
               this.changeState({ id: this.id, type: 3 })
             }
           }]
@@ -530,9 +527,6 @@ export default {
             name: '改单',
             code: 120116,
             func: () => {
-              this.source = 'change'
-              this.inEditing = 'change'
-              this.changeStr = this.changeParams
               this.changeState({ id: this.id, type: 3 })
             }
           }]
@@ -1268,6 +1262,15 @@ export default {
             item.isCardDisabled = true
           })
         }
+        if (this.feeStatus === 10) {
+          this.$Message.error('此单已经全部核销，不允许改单')
+        } else if (this.feeStatus === 30) {
+          this.$Message.error('此单已经加入核销单，不允许改单。需要将核销单移出对账单后可以改单')
+        } else {
+          this.source = 'change'
+          this.inEditing = 'change'
+          this.changeStr = this.changeParams
+        }
       }).catch()
     },
     // 校验主副司机手机号有没有被更改
@@ -1328,6 +1331,7 @@ export default {
     this.$nextTick(() => {
       this.id = this.$route.query.id
       this.no = this.$route.query.no
+      this.$refs['tabs'].handleChange(0)
       this.fetchData()
     })
     next()

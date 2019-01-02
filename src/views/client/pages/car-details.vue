@@ -117,7 +117,6 @@
 </template>
 <script>
 import BasePage from '@/basic/BasePage'
-import { CAR_TYPE1, CAR_LENGTH1, DRIVER_TYPE } from '@/libs/constant/carInfo'
 import { CODE, carrierDeleteDriver, queryByIdCarrier } from './client'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
@@ -131,8 +130,6 @@ export default {
     return {
       infoData: {},
       infoDataInit: {},
-      carTypeMap: CAR_TYPE1,
-      carLengthMap: CAR_LENGTH1,
       line1: '',
       line2: '',
       carrierId: '',
@@ -180,9 +177,6 @@ export default {
           count++
         }
       }
-      this.infoData.driverType = (DRIVER_TYPE.find(e => e.id === this.infoData.driverType.toString())).name
-      this.infoData.carType = this.carTypeMap[this.infoData.carType]
-      this.infoData.carLength = this.carLengthMap[this.infoData.carLength]
       let s1 = ''
       let n1 = ''
       let s2 = ''

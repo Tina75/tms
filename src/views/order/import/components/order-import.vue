@@ -99,7 +99,8 @@ export default {
                     jsCookie.set('imported_id', params.row.id, { expires: 1 })
                     vm.openTab({
                       title: '订单管理',
-                      path: TMSUrl.ORDER_MANAGEMENT
+                      path: TMSUrl.ORDER_MANAGEMENT,
+                      query: {}
                     })
                     // vm.$router.push({path: '/order-management/order', query: {title: '订单管理'}})
                   }
