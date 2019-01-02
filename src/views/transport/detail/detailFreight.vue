@@ -1263,9 +1263,9 @@ export default {
           })
         }
         if (this.feeStatus === 10) {
-          this.$Message.error('此单已经全部核销，不允许改单')
-        } else if (this.feeStatus === 30) {
           this.$Message.error('此单已经加入核销单，不允许改单。需要将核销单移出对账单后可以改单')
+        } else if (this.feeStatus === 20) {
+          this.$Message.error('此单已经全部核销，不允许改单')
         } else {
           this.source = 'change'
           this.inEditing = 'change'
