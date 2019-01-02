@@ -231,7 +231,8 @@ export default {
       showSlotFooter: false,
       // 源数据
       dataSource: [],
-      visible: false
+      visible: false,
+      fixScrollBar: false // 不自动加载数据，拖动横向滚动条，再查下数据,导致表头错位问题
     }
   },
   computed: {
@@ -339,6 +340,9 @@ export default {
     }
     if (this.autoload) {
       this.fetch()
+    } else {
+      // 横向滚动条导致的问题
+      this.fixScrollBar = true
     }
   },
   methods: {
@@ -451,12 +455,28 @@ export default {
             vm.pagination.totalCount = data.totalCount || data.pageTotals
           }
           vm.$emit('on-load', response)
+          vm.fixHorizontalScrollBar()
         })
         .catch((errorInfo) => {
           vm.loading = false
           // vm.$Message.error(errorInfo.msg)
           vm.$emit('on-load', errorInfo)
         })
+    },
+    /**
+     * 横向滚动条在空数据的情况下，拖动，导致下次渲染数据时，表头错位
+     */
+    fixHorizontalScrollBar () {
+      const vm = this
+      if (vm.fixScrollBar) {
+        setTimeout(() => {
+          // 存在横向滚动条
+          if (vm.$refs.table.showHorizontalScrollBar) {
+            vm.$refs.table.$refs.tbody.$el.parentElement.scrollLeft = 2
+          }
+        }, 200)
+        vm.fixScrollBar = false
+      }
     },
     /**
      * 开启highlight-row后，当前 选中行变化后回调

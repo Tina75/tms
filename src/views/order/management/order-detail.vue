@@ -327,6 +327,13 @@ export default {
           className: 'padding-left-45'
         },
         {
+          title: '货物编号',
+          key: 'cargoNo',
+          render: (h, p) => {
+            return h('span', p.row.cargoNo ? p.row.cargoNo : '-')
+          }
+        },
+        {
           title: '包装方式',
           key: 'unit',
           render: (h, p) => {

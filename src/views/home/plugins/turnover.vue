@@ -1,5 +1,5 @@
 <template>
-  <div is="i-col" :span="24" class="i-mt-15 page-home__card-item">
+  <div is="i-col" :span="12" class="i-mt-15 page-home__card-item">
     <blank-card :to="linkto" title="近七日订单和营业额统计" page-title="营业额汇总表" tab="7">
       <ECharts :options="options" :auto-resize="true"></ECharts>
     </blank-card>

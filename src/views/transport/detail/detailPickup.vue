@@ -542,8 +542,8 @@ export default {
 
         this.imageItems = data.carInfo.map((item) => {
           return {
-            src: item,
-            msrc: item
+            src: this.$handleImgUrl(item),
+            msrc: this.$handleImgUrl(item)
           }
         })
 

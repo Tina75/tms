@@ -150,7 +150,7 @@ export const oilTableColumns = vm => [
         renderHtml.push(h(
           'Dropdown',
           {
-            props: { trigger: 'click' },
+            props: { trigger: 'click', transfer: true },
             style: { display: 'inline-block' },
             on: {
               'on-click': (value) => {
@@ -177,7 +177,7 @@ export const oilTableColumns = vm => [
           type: 'text'
         },
         style: {
-          color: '#00A4BD',
+          color: '#418DF9',
           cursor: 'pointer'
         },
         on: {
