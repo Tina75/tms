@@ -1,7 +1,7 @@
 <template>
   <div :class="['item-container',checked?'mh-10':'']">
     <i v-show="checked" class="icon font_family icon-you2 border-icon-left" style=""></i>
-    <div :class="['tab-item',checked?'tab-item__checked':'']">
+    <div :title="name" :class="['tab-item',checked?'tab-item__checked':'']">
       <span style="display:inline-block;min-width:18px">
         <Icon v-show="checked" class="tab-item__icon " type="ios-refresh" size="20" @click.stop="refresh"/>
       </span>
