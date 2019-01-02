@@ -64,6 +64,7 @@ export default [
         'meta': {
           'hideInMenu': true,
           'powerCode': 170000,
+          'notCache': true,
           'title': '核销详情'
         }
       }
