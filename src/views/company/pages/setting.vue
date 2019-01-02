@@ -129,6 +129,7 @@
               :rows="5"
               v-model="formCompany.companyProfile"
               :maxlength="500"
+              class="textArea"
               placeholder="请输入公司简介">
             </TextAreaNumber>
             <span v-if="!isEdit && !formCompany.companyProfile" class="imageTips">完善公司简介，有利于客户了解贵公司业务组成</span>
@@ -140,7 +141,7 @@
           <span v-if="isEdit" class="imageTips">尺寸100*100像素，大小不超过10M</span>
           <span v-if="!isEdit && !formCompany.logoUrl" class="imageTips">上传公司LOGO照片，有利于宣传公司品牌哦</span>
         </FormItem>
-        <FormItem class="imageFontItem">
+        <FormItem :class="isEdit ? 'imageFontItem' : 'imageFontItemBlock'">
           <span class="imageLogo">
             <up-load v-show="isEdit" ref="uploadLogo" max-size="10" crop></up-load>
             <div
@@ -154,12 +155,12 @@
         <Row>
           <Col :span="20">
           <FormItem label="业务介绍：">
-            <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiIntroduce" :maxlength="500" type="textarea" placeholder="请输入业务介绍"></TextAreaNumber>
+            <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiIntroduce" :maxlength="500" type="textarea" placeholder="请输入业务介绍" class="textArea"></TextAreaNumber>
             <span v-if="!isEdit && !formCompany.busiIntroduce && !busiIntroducePic.length" class="imageTips">完善业务介绍，有利于客户了解贵公司业务组成</span>
             <pre v-if="!isEdit && formCompany.busiIntroduce" class="companyProfileSty">{{formCompany.busiIntroduce}}</pre><br/>
             <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
           </FormItem>
-          <FormItem class="imageFontItem">
+          <FormItem :class="isEdit ? 'imageFontItem' : 'imageFontItemBlock'">
             <image-title
               v-show="isEdit"
               ref="upLoadsBusiness"
@@ -183,12 +184,12 @@
         <Row>
           <Col :span="20">
           <FormItem label="服务优势：">
-            <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiAdvantce" :maxlength="500" type="textarea" placeholder="请输入服务优势"></TextAreaNumber>
+            <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiAdvantce" :maxlength="500" type="textarea" placeholder="请输入服务优势" class="textArea"></TextAreaNumber>
             <span v-if="!isEdit && !busiAdvantcePic.length && !formCompany.busiAdvantce" class="imageTips">完善服务优势，有利于提升客户对贵公司的好感度</span>
-            <pre v-if="!isEdit" class="companyProfileSty">{{formCompany.busiAdvantce}}</pre>
+            <pre v-if="!isEdit && formCompany.busiAdvantce" class="companyProfileSty">{{formCompany.busiAdvantce}}</pre><br/>
             <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
           </FormItem>
-          <FormItem class="imageFontItem">
+          <FormItem :class="isEdit ? 'imageFontItem' : 'imageFontItemBlock'">
             <image-title
               v-show="isEdit"
               ref="upLoadsService"
@@ -215,7 +216,7 @@
             <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
             <span v-if="!isEdit && !companyPhoto.length" class="imageTips">上传公司风貌照片，有利于传递给客户专业的印象</span>
           </FormItem>
-          <FormItem class="imageFontItem">
+          <FormItem :class="isEdit ? 'imageFontItem' : 'imageFontItemBlock'">
             <image-title
               v-show="isEdit"
               ref="upLoadsStyle"
@@ -243,7 +244,7 @@
               <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传2张，每张不能超过10MB</span>
               <span v-if="!isEdit && !wxQrPic.length" class="imageTips">上传微信二维码，有利于后续微信营销</span>
             </FormItem>
-            <FormItem class="imageFontItem">
+            <FormItem :class="isEdit ? 'imageFontItem' : 'imageFontItemBlock'">
               <image-title
                 v-show="isEdit"
                 ref="upLoadsWX"
@@ -273,7 +274,7 @@
             <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且只支持上传1张，每张不能超过10MB</span>
             <span v-if="!isEdit && !formCompany.homeBanner" class="imageTips">上传公司形象图，有利于宣传公司品牌</span>
           </FormItem>
-          <FormItem class="imageFontItem">
+          <FormItem :class="isEdit ? 'imageFontItem' : 'imageFontItemBlock'">
             <up-load v-show="isEdit" ref="upLoadsBanner" :multiple="true" max-count="1" max-size="10"></up-load>
             <div v-if="formCompany.homeBanner && !isEdit" class="infoImage">
               <div
@@ -385,16 +386,16 @@ export default {
       // 公司banner 当前需求只有一张
       if (this.formCompany.homeBanner) this.$refs.upLoadsBanner.uploadImgList = [{ url: this.formCompany.homeBanner, progress: 1 }]
       // 公司其他照片
-      this.busiIntroducePic = await this.editStatusImage(this.formCompany.busiIntroducePic, 'upLoadsBusiness') // 业务
-      this.busiAdvantcePic = await this.editStatusImage(this.formCompany.busiAdvantcePic, 'upLoadsService') // 服务
-      this.companyPhoto = await this.editStatusImage(this.formCompany.companyPhoto, 'upLoadsStyle') // 风貌
-      this.wxQrPic = await this.editStatusImage(this.formCompany.wxQrPic, 'upLoadsWX') // 微信
+      if (this.formCompany.busiIntroducePic) this.busiIntroducePic = await this.editStatusImage(this.formCompany.busiIntroducePic, 'upLoadsBusiness') // 业务
+      if (this.formCompany.busiAdvantcePic) this.busiAdvantcePic = await this.editStatusImage(this.formCompany.busiAdvantcePic, 'upLoadsService') // 服务
+      if (this.formCompany.companyPhoto) this.companyPhoto = await this.editStatusImage(this.formCompany.companyPhoto, 'upLoadsStyle') // 风貌
+      if (this.formCompany.wxQrPic) this.wxQrPic = await this.editStatusImage(this.formCompany.wxQrPic, 'upLoadsWX') // 微信
       setTimeout(() => {
         if (this.formCompany.logoUrl) this.openSwipeLogo = prepareOpenSwipe(this.imageLogo)
-        if (this.busiIntroducePic) this.openSwipeInfoIntroduce = prepareOpenSwipe(this.busiIntroducePic)
-        if (this.busiAdvantcePic) this.openSwipeInfoAdvantce = prepareOpenSwipe(this.busiAdvantcePic)
-        if (this.companyPhoto) this.openSwipeInfoCompany = prepareOpenSwipe(this.companyPhoto)
-        if (this.wxQrPic) this.openSwipeInfoWX = prepareOpenSwipe(this.wxQrPic)
+        if (this.formCompany.busiIntroducePic) this.openSwipeInfoIntroduce = prepareOpenSwipe(this.busiIntroducePic)
+        if (this.formCompany.busiAdvantcePic) this.openSwipeInfoAdvantce = prepareOpenSwipe(this.busiAdvantcePic)
+        if (this.formCompany.companyPhoto) this.openSwipeInfoCompany = prepareOpenSwipe(this.companyPhoto)
+        if (this.formCompany.wxQrPic) this.openSwipeInfoWX = prepareOpenSwipe(this.wxQrPic)
         if (this.formCompany.homeBanner) this.openSwipeInfoBanner = prepareOpenSwipe([{ title: 'banner', src: this.formCompany.homeBanner }])
       }, 10)
     },
@@ -653,6 +654,8 @@ export default {
   font-size: 14px
 .imageFontItem
   margin-top -25px
+.imageFontItemBlock
+  margin-top -45px
 .formConten-p
   font-size 14px
   position: absolute;
@@ -687,4 +690,6 @@ export default {
   padding-left 5px
 .vermiddle
   padding-left 5px
+.textArea
+  margin-top 10px
 </style>
