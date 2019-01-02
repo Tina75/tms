@@ -339,7 +339,7 @@ export default {
           addEdit: {
             id: p.row.id,
             number: p.row.number,
-            amount: typeof p.row.amount !== 'string' ? float.round(p.row.amount, 2) : '',
+            amount: typeof p.row.amount !== 'string' ? float.round(p.row.amount / 100, 2) : '',
             remark: p.row.remark,
             type: p.row.type,
             issuer: p.row.issuer,
