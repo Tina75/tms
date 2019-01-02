@@ -454,8 +454,13 @@ export default {
             vm.pagination.pageSize = data.pageSize || 10
             vm.pagination.totalCount = data.totalCount || data.pageTotals
           }
+          // 列表返回结果为空
+          if (vm.dataSource.length === 0) {
+            vm.fixScrollBar = true
+          } else {
+            vm.fixHorizontalScrollBar()
+          }
           vm.$emit('on-load', response)
-          vm.fixHorizontalScrollBar()
         })
         .catch((errorInfo) => {
           vm.loading = false
