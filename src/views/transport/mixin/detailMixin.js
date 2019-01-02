@@ -63,8 +63,11 @@ export default {
         key: 'weight',
         width: 120,
         render: (h, p) => {
-          return this.scopedSlotsRender(h, p, 'weight', 0)
-          // return this.tableDataRender(h, p.row.weight ? p.row.weight : 0)
+          // 运单里优化了订单和货物的展示效果，多个货物换行显示，所以存在cargolist字段；提货单没有该字段
+          if (p.row.hasOwnProperty('cargoList')) {
+            return this.scopedSlotsRender(h, p, 'weight', 0)
+          }
+          return this.tableDataRender(h, p.row.weight ? p.row.weight : 0)
         }
       },
       // 公斤列
@@ -73,8 +76,10 @@ export default {
         key: 'weightKg',
         width: 120,
         render: (h, p) => {
-          return this.scopedSlotsRender(h, p, 'weightKg', 0)
-          // return this.tableDataRender(h, p.row.weightKg ? p.row.weightKg : 0)
+          if (p.row.hasOwnProperty('cargoList')) {
+            return this.scopedSlotsRender(h, p, 'weightKg', 0)
+          }
+          return this.tableDataRender(h, p.row.weightKg ? p.row.weightKg : 0)
         }
       }
     }
