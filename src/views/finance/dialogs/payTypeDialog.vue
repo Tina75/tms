@@ -1,6 +1,6 @@
 <template>
-  <div class="popTip" style="display: inline-block">
-    <Poptip>
+  <div  class="popTip" style="display: inline-block">
+    <Poptip trigger="hover">
       <Icon type="ios-more" class="icon"/>
       <div slot="content" class="popTip-content">
         <Row>
