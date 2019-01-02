@@ -55,6 +55,17 @@ export default[
         }
       },
       {
+        'name': 'car-details',
+        'path': 'car-details',
+        'component': () => import(/* webpackChunkName: "client-carrier" */'./pages/car-details.vue'),
+        'meta': {
+          'hideInMenu': true,
+          'notCache': true,
+          'powerCode': 130200,
+          'title': '车辆详情'
+        }
+      },
+      {
         'name': 'client-transfer',
         'path': 'transfer',
         'component': () => import(/* webpackChunkName: "client-transfer" */'./pages/transfer.vue'),

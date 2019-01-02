@@ -511,7 +511,7 @@ export default {
         data: { name: name },
         methods: {
           ok (node) {
-            this.name === '送货调度' ? _this.callSendInterface(data) : _this.callPickupInterface(data)
+            _this.name === '送货调度' ? _this.callSendInterface(data) : _this.callPickupInterface(data)
           }
         }
       })
