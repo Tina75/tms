@@ -132,7 +132,7 @@ export default {
             type: p.row.type,
             issuer: p.row.issuer,
             carrierName: p.row.carrierName,
-            returnDeposit: typeof p.row.recieveDeposit !== 'string' ? float.round(p.row.recieveDeposit, 2) : ''
+            returnDeposit: typeof p.row.recieveDeposit !== 'string' ? float.round(p.row.recieveDeposit / 100, 2) : ''
           }
         },
         methods: {
