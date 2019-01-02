@@ -470,6 +470,7 @@ export default {
       this.keyword = {
         importId: importId
       }
+      jsCookie.remove('imported_id')
     }
   },
   methods: {
