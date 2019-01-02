@@ -35,7 +35,7 @@ export default {
       isHistoryTemplateUpdate: false, // 历史订单模板有更新
       tabs: [
         { name: '1', label: '订单导入', code: 100207 },
-        { name: '2', label: '导入历史订单', code: 100208 }
+        { name: '2', label: '历史订单导入', code: 100208 }
       ],
       ossClient: null,
       ossDir: ''
@@ -103,5 +103,5 @@ export default {
 
 <style lang="stylus" scoped>
 .order-import-page
-  position relative
+  height 100%
 </style>
