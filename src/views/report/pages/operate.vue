@@ -133,6 +133,7 @@ import { mapGetters, mapActions } from 'vuex'
 import Export from '@/libs/js/export'
 import { getPreMonth } from '../mixins/getPerMonth'
 import tableHeadType from '@/libs/constant/headtype.js'
+import jsCookie from 'js-cookie'
 export default {
   name: 'operate',
   components: {
@@ -462,6 +463,13 @@ export default {
   mounted () {
     if (this.$route.query.tab) { // 首页跳转来的
       this.showSevenDate()
+    }
+    let importId = jsCookie.get('imported_id')
+    // 有cookie 从批量导入进来的，调用一下接口，传importId
+    if (importId) {
+      this.keyword = {
+        importId: importId
+      }
     }
   },
   methods: {

@@ -212,7 +212,8 @@ export const oilTableColumns = vm => [
     title: '持卡人',
     key: 'driverName',
     render: (h, p) => {
-      return h('span', p.row.driverName ? (p.row.driverName + ' ' + p.row.driverPhone) : '-')
+      // p.row.driverName ? (p.row.driverName + ' ' + p.row.driverPhone)
+      return h('div', p.row.driverName ? [h('p', p.row.driverName), h('p', p.row.driverPhone)] : '-')
     }
   },
   {
@@ -334,7 +335,7 @@ export const usedTableColumns = vm => [
     width: 300,
     key: 'driverName',
     render: (h, p) => {
-      return h('span', p.row.driverName ? (p.row.driverName + ' ' + p.row.driverPhone) : '-')
+      return h('div', p.row.driverName ? [h('p', p.row.driverName), h('p', p.row.driverPhone)] : '-')
     }
   },
   {

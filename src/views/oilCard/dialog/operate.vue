@@ -42,7 +42,7 @@ export default {
     }
   },
   mounted () {
-    console.log(this.ok())
+    // console.log(this.ok())
   },
   methods: {
     save () {

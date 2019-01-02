@@ -787,7 +787,8 @@ export default {
     ...mapActions([
       'getWaybillLocation',
       'waybillShipment',
-      'getWaybillPrintData'
+      'getWaybillPrintData',
+      'checkDriverPhone'
     ]),
     // 将数据返回的标识映射为文字
     statusFilter (status) {
@@ -927,7 +928,15 @@ export default {
     edit () {
       const z = this
       let data = {
-        waybill: {},
+        waybill: {
+          waybillId: z.id,
+          waybillNo: z.info.waybillNo,
+          start: z.info.start,
+          end: z.info.end,
+          status: z.info.status,
+          assignCarType: z.sendWay,
+          allocationStrategy: z.orderList.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
+        },
         cargoList: _.uniq(z.detail.map(item => item.orderId))
       }
       if (z.sendWay === '1') {
@@ -935,19 +944,27 @@ export default {
           settlementType: z.$refs.sendFee.getSettlementType(),
           settlementPayInfo: z.$refs.sendFee.getSettlementPayInfo()
         })
+        // 填了司机手机号需要走校验
+        if (z.$refs.SendCarrierInfo.getCarrierInfo().driverPhone) {
+          z.isPhoneUsed(z.$refs.SendCarrierInfo, data)
+        } else {
+          z.callSendInterface(data)
+        }
       } else if (z.sendWay === '2') { // 自送
         data.waybill = Object.assign(data.waybill, z.$refs.sendFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
         delete data.waybill.cashBack // 自送没有返现
+        // 填了司机手机号需要走校验
+        if (z.$refs.ownSendInfo.getOwnSendInfo().driverPhone || z.$refs.ownSendInfo.getOwnSendInfo().assistantDriverPhone) {
+          z.isPhoneUsed(z.$refs.ownSendInfo, data)
+        } else {
+          z.callSendInterface(data)
+        }
       }
-      Object.assign(data.waybill, {
-        waybillId: z.id,
-        waybillNo: z.info.waybillNo,
-        start: z.info.start,
-        end: z.info.end,
-        status: z.info.status,
-        assignCarType: z.sendWay,
-        allocationStrategy: z.orderList.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
-      })
+    },
+
+    // 调送货详情编辑接口
+    callSendInterface (data) {
+      const z = this
       Server({
         url: '/waybill/update',
         method: 'post',
@@ -957,6 +974,7 @@ export default {
         z.cancelEdit()
       }).catch()
     },
+
     // 改单
     changeBill () {
       const z = this
@@ -1251,6 +1269,55 @@ export default {
           })
         }
       }).catch()
+    },
+    // 校验主副司机手机号有没有被更改
+    isPhoneUsed (comp, data) {
+      const z = this
+      let phoneList = []
+      if (z.sendWay === '1') { // 外转
+        comp.getCarrierInfo().driverPhone && phoneList.push(comp.getCarrierInfo().driverPhone)
+      } else {
+        comp.getOwnSendInfo().driverPhone && phoneList.push(comp.getOwnSendInfo().driverPhone)
+        comp.getOwnSendInfo().assistantDriverPhone && phoneList.push(comp.getOwnSendInfo().assistantDriverPhone)
+      }
+      z.checkDriverPhone(phoneList).then((res) => {
+        if (!_.every(res, { used: false })) { // 有变更过手机号
+          let name = ''
+          if (z.sendWay === '1') {
+            if (_.every(res, { used: true })) {
+              name = '司机'
+            }
+          } else {
+            if (res.length > 1 && _.every(res, { used: true })) {
+              name = '主司机和副司机'
+            } else {
+              let obj = _.find(res, { used: true })
+              if (obj.phone === comp.getOwnSendInfo().driverPhone) {
+                name = '主司机'
+              }
+              if (obj.phone === comp.getOwnSendInfo().assistantDriverPhone) {
+                name = '副司机'
+              }
+            }
+          }
+          z.checkPhoneDialog(name, data)
+        } else {
+          z.callSendInterface(data)
+        }
+      })
+    },
+    // 打开司机手机号校验弹窗
+    checkPhoneDialog (name, data) {
+      const _this = this
+      _this.openDialog({
+        name: 'transport/dialog/checkDriverPhone',
+        data: { name: name },
+        methods: {
+          ok (node) {
+            _this.callSendInterface(data)
+          }
+        }
+      })
     }
   },
   /**
