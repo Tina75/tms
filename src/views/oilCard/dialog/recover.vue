@@ -25,7 +25,7 @@
           </Col>
         </Row>
       </FormItem>
-      <FormItem label="退押金：" >
+      <FormItem v-if="recover.carrierName !== '自有车队'" label="退押金：">
         <Row>
           <Col span="20">
           <TagNumberInput v-model="recover.returnDeposit" :show-chinese="false" :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
@@ -73,6 +73,7 @@ export default {
       precision: 2,
       moneyLength: 9,
       recover: {
+        carrierName: '',
         id: '',
         number: '',
         amount: '',
