@@ -1,6 +1,6 @@
 <template>
   <!--批量核销弹窗-->
-  <Modal v-model="visiable" :mask-closable="false" class="modal" transfer width="490" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" class="modal" transfer width="520" @on-visible-change="close">
     <p slot="header" style="text-align:center">{{title}}</p>
     <div class="bulk">
       <div class="bulk-header">
@@ -18,6 +18,7 @@
             </Col>
           </Row>
         </CheckboxGroup>
+        <liner class="liner"></liner>
       </div>
     </div>
     <div slot="footer">
@@ -122,6 +123,15 @@ export default {
   /deep/
     .ivu-checkbox
       margin-right 5px
+  .bulk-content
+    position relative
+  .liner
+    position absolute
+    width 1px
+    top 0
+    height 228px
+    border-right 1px solid rgba(237,241,245,1)
+    right 260px
   .bulk-header
     overflow hidden
     color #333
