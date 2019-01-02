@@ -19,7 +19,7 @@
             </Row>
           </div>
           <div v-else>
-            此订单已提货成功，订单删除将不支持还原
+            {{ id.length > 1 ? '包含已被提货订单，订单删除将不支持还原' : '此订单已提货成功，订单删除将不支持还原' }}
           </div>
         </div>
         <div v-else-if="isStatus50">
@@ -89,7 +89,7 @@
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 import FontIcon from '@/components/FontIcon'
-// import _ from 'lodash'
+import _ from 'lodash'
 export default {
   name: 'restoreOrDelete',
 
@@ -116,9 +116,9 @@ export default {
       })
       return arr
     },
-    // 判断勾选的订单是否status都为20且pickupStatus为1
+    // 判断勾选的订单是否status都为20 且 不全是大车直接送货
     isStatus20 () {
-      return !this.id.some(this.checkIsStatus20)
+      return !this.id.some(this.checkIsStatus20) && !this.isStatus20AndSend()
     },
     // 判断勾选的订单是否status都为50
     isStatus50 () {
@@ -253,10 +253,14 @@ export default {
       return false
     },
     checkIsStatus20 (list) {
-      if (list.status !== 20 || list.pickupStatus !== 1) {
+      if (list.status !== 20) {
         return true
       }
       return false
+    },
+    // 判断是否都是20状态且都是大车送货
+    isStatus20AndSend () {
+      return _.every(this.id, { status: 20, pickupStatus: 0 })
     },
     checkIsStatus50 (list) {
       if (list.status !== 50) {

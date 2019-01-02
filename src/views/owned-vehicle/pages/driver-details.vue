@@ -206,4 +206,8 @@ export default {
     margin-bottom 1px
     .ivu-tabs-ink-bar
       bottom 2px
+.info-detail
+  margin-top: 30px
+.btnItem
+  margin-top: -30px
 </style>
