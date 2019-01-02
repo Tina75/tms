@@ -48,12 +48,13 @@ export default[
       },
       {
         'path': 'car-details',
-        'name': 'car-details',
+        'name': 'owned-car-details',
         'component': () => import(/* webpackChunkName: "owned-car-details" */'./pages/car-details.vue'),
         'meta': {
           'hideInMenu': true,
           'title': '车辆详情',
-          'powerCode': 190200
+          'powerCode': 190200,
+          'notCache': true
         }
       },
       {
