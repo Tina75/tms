@@ -189,7 +189,7 @@ export default {
       Export({
         url: '/oilCard/export',
         method: 'post',
-        data: idList.length > 0 ? Object.assign(this.searchFields, { idList }) : this.searchFields,
+        data: idList.length > 0 ? Object.assign({}, this.searchFields, { idList }) : this.searchFields,
         fileName: '油卡汇总信息'
       })
     },
