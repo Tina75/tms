@@ -139,7 +139,6 @@
         <Button v-if="hasPower(190304)" class="buttonSty" @click="carExport">导出</Button>
       </div>
       <page-table
-        v-if="showTable === 'repair'"
         :columns="menuColumns"
         :keywords="repairFormatInit"
         class="pageTable"
@@ -156,7 +155,6 @@
         <Button v-if="hasPower(190404)" class="buttonSty" @click="exporteditInsurance">导出</Button>
       </div>
       <page-table
-        v-show="showTable === 'insurance'"
         :columns="insuranceColumns"
         :keywords="insuranceFormInit"
         :show-filter="true"
@@ -175,7 +173,6 @@
         <Button v-if="hasPower(190504)" class="buttonSty" @click="exportCheck">导出</Button>
       </div>
       <page-table
-        v-if="showTable === 'check'"
         :columns="checkColumns"
         :keywords="checkFormInit"
         class="pageTable"
@@ -192,7 +189,6 @@
         <Button v-if="hasPower(190604)" class="buttonSty" @click="exportTyre">导出</Button>
       </div>
       <page-table
-        v-if="showTable === 'tyre'"
         :columns="tyreColumns"
         :keywords="tyreFormInit"
         class="pageTable"
