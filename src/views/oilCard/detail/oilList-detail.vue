@@ -89,6 +89,7 @@ import Server from '@/libs/js/server'
 // import operateBtnMixin from '../mixin/operateBtnMixin'
 import contantmixin from '../mixin/contantmixin'
 import '@/libs/js/filter'
+import float from '@/libs/js/float'
 export default {
   name: 'detail',
 
@@ -338,7 +339,7 @@ export default {
           addEdit: {
             id: p.row.id,
             number: p.row.number,
-            amount: p.row.amount,
+            amount: float.round(p.row.amount / 100, 2),
             remark: p.row.remark,
             type: p.row.type,
             issuer: p.row.issuer,
