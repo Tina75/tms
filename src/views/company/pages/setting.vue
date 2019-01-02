@@ -18,105 +18,113 @@
           <Button v-if="!isEdit" class="buttonSty" @click="shareBtn">分享</Button>
           <Button v-if="!isEdit" type="primary" class="buttonSty" @click="editCompanyInfo">编辑</Button>
         </span>
-        <div class="basicInfo">
+        <Row>
+          <Col :span="20">
           <Row>
-            <Col :span="20">
-            <Row>
-              <Col :span="12">
-              <FormItem label="公司全称：" prop="name">
-                <Input v-if="isEdit" v-model="formCompany.name" :maxlength="25" placeholder="请输入公司名称"></Input>
-                <span v-else class="formConten-p">{{formCompany.name}}</span>
-              </FormItem>
-              </Col>
-              <Col :span="12">
-              <FormItem label="公司简称：">
-                <Row v-if="isEdit">
-                  <Input v-model="formCompany.shortName" :maxlength="6" placeholder="请输入公司简称，最多6个字"></Input>
-                  <Tooltip
-                    class="unitSpan"
-                    max-width="220"
-                    transfer
-                    content="简称将用于短信推广、品牌展示等">
-                    <Icon type="ios-alert" class="ios-alert"/>
-                  </Tooltip>
-                </Row>
-                <span v-else class="formConten-p blockContent">{{formCompany.shortName}}</span>
-              </FormItem>
-              </Col>
-            </Row>
-            </Col>
-          </Row>
-          <Row>
-            <Col :span="10">
-            <FormItem label="公司联系人：" prop="contact">
-              <Input v-if="isEdit" v-model="formCompany.contact" :maxlength="20" placeholder="请输入公司联系人"></Input>
-              <span v-else class="formConten-p">{{formCompany.contact}}</span>
+            <Col :span="12">
+            <FormItem label="公司全称：" prop="name">
+              <Input v-if="isEdit" v-model="formCompany.name" :maxlength="25" placeholder="请输入公司名称"></Input>
+              <span v-else class="formConten-p">{{formCompany.name}}</span>
             </FormItem>
             </Col>
-            <Col :span="10">
-            <FormItem label="联系方式：" prop="contactPhone">
-              <Input v-if="isEdit" v-model="formCompany.contactPhone" :maxlength="40" placeholder="请输入手机号或座机号"></Input>
-              <span v-else class="formConten-p">{{formCompany.contactPhone}}</span>
-            </FormItem>
-            </Col>
-          </Row>
-          <Row v-for="(item, index) in (formCompany.busiContact)" :key="index">
-            <Col :span="10">
-            <FormItem
-              v-show="(item.name && !isEdit) || isEdit"
-              :label="'业务联系人' + (index + 1) + '：'"
-              :rules="[{required: true, message: '请输入业务联系人'},
-                       {type: 'string', message: '姓名不能小于2个字且不能多于20个字', pattern: /^.{2,20}$/}]"
-              :prop="'busiContact.' + index + '.name'">
-              <Input v-if="isEdit" v-model="item.name" :maxlength="20" placeholder="请输入业务联系人"></Input>
-              <span v-else class="formConten-p">{{item.name}}</span>
-            </FormItem>
-            </Col>
-            <Col :span="10">
-            <FormItem
-              v-show="(item.phone && !isEdit) || isEdit"
-              :rules="[{required: true, message: '请输入联系方式'},
-                       {type: 'string',
-                        message: '请输入正确的手机号或座机号',
-                        pattern: /(^1\d{10}$)|(^[^1]((\(|（)?\d{2,4}(\)|）)?)?-?((\d+)?(\(|（)\d{1,14}(\)|）)(\d+)?|\d{1,16})$)/g}]"
-              :prop="'busiContact.' + index + '.phone'"
-              label="联系方式：">
-              <Input v-if="isEdit" v-model="item.phone" :maxlength="40" placeholder="请输入手机号或座机号"></Input>
-              <span v-if="isEdit" @click="removeContact(index)">
-                <FontIcon v-if="formCompany.busiContact.length > 0 && isEdit" type="ico_cancel" size="18" color="#EC4E4E" class="removeContact">
-                </FontIcon>
-              </span>
-              <span v-else class="formConten-p">{{item.phone}}</span>
-            </FormItem>
-            </Col>
-          </Row>
-          <Row>
-            <Col :span="20">
-            <FormItem label="公司地址：" prop="address">
+            <Col :span="12">
+            <FormItem label="公司简称：">
               <Row v-if="isEdit">
-                <Col :span="14">
-                <AreaInput v-model="formCompany.address" @city-select="latlongtChange"></AreaInput>
-                </Col>
-                <Col :span="7" class="areaRight">
-                <Input :maxlength="50" v-model="formCompany.userAddress" placeholder="补充地址（楼号-门牌等）"></Input>
-                </Col>
-                <Col :span="1">
-                <Tooltip :max-width="200" content="详细地址只支持从下拉推荐地址中选择" style="margin-left: -30px" transfer>
-                  <Icon type="ios-alert" class="ios-alert vermiddle"/>
-                </Tooltip>
-                </Col>
+                <Input v-model="formCompany.shortName" :maxlength="6" placeholder="请输入公司简称，最多6个字"></Input>
               </Row>
-              <Row v-if="!isEdit">
-                <Col :span="20">
-                <span class="formConten-p">{{ formCompany.address }} {{ formCompany.userAddress }}</span>
-                </Col>
-              </Row>
+              <span v-else class="formConten-p blockContent">{{formCompany.shortName}}</span>
             </FormItem>
             </Col>
           </Row>
           </Col>
-          </Row>
-        </div>
+          <Col :span="1">
+          <Tooltip
+            v-if="isEdit"
+            class="unitSpan"
+            max-width="220"
+            transfer
+            content="简称将用于短信推广、品牌展示等">
+            <Icon type="ios-alert" class="ios-alert"/>
+          </Tooltip>
+          </Col>
+        </Row>
+        <Row>
+          <Col :span="10">
+          <FormItem label="公司联系人：" prop="contact">
+            <Input v-if="isEdit" v-model="formCompany.contact" :maxlength="20" placeholder="请输入公司联系人"></Input>
+            <span v-else class="formConten-p">{{formCompany.contact}}</span>
+          </FormItem>
+          </Col>
+          <Col :span="10">
+          <FormItem label="联系方式：" prop="contactPhone">
+            <Input v-if="isEdit" v-model="formCompany.contactPhone" :maxlength="40" placeholder="请输入手机号或座机号"></Input>
+            <span v-else class="formConten-p">{{formCompany.contactPhone}}</span>
+          </FormItem>
+          </Col>
+        </Row>
+        <Row v-for="(item, index) in (formCompany.busiContact)" :key="index">
+          <Col :span="10">
+          <FormItem
+            v-show="(item.name && !isEdit) || isEdit"
+            :label="'业务联系人' + (index + 1) + '：'"
+            :rules="[{required: true, message: '请输入业务联系人'},
+                     {type: 'string', message: '姓名不能小于2个字且不能多于20个字', pattern: /^.{2,20}$/}]"
+            :prop="'busiContact.' + index + '.name'">
+            <Input v-if="isEdit" v-model="item.name" :maxlength="20" placeholder="请输入业务联系人"></Input>
+            <span v-else class="formConten-p">{{item.name}}</span>
+          </FormItem>
+          </Col>
+          <Col :span="10">
+          <FormItem
+            v-show="(item.phone && !isEdit) || isEdit"
+            :rules="[{required: true, message: '请输入联系方式'},
+                     {type: 'string',
+                      message: '请输入正确的手机号或座机号',
+                      pattern: /(^1\d{10}$)|(^[^1]((\(|（)?\d{2,4}(\)|）)?)?-?((\d+)?(\(|（)\d{1,14}(\)|）)(\d+)?|\d{1,16})$)/g}]"
+            :prop="'busiContact.' + index + '.phone'"
+            label="联系方式：">
+            <Input v-if="isEdit" v-model="item.phone" :maxlength="40" placeholder="请输入手机号或座机号"></Input>
+            <span v-if="isEdit" @click="removeContact(index)">
+            </span>
+            <span v-else class="formConten-p">{{item.phone}}</span>
+          </FormItem>
+          </Col>
+          <Col :span="1">
+          <FontIcon
+            v-if="formCompany.busiContact.length > 0 && isEdit"
+            type="ico_cancel"
+            size="18"
+            color="#EC4E4E"
+            class="removeContact">
+          </FontIcon>
+          </Col>
+        </Row>
+        <Row>
+          <Col :span="20">
+          <FormItem label="公司地址：" prop="address">
+            <Row v-if="isEdit">
+              <Col :span="15">
+              <AreaInput v-model="formCompany.address" @city-select="latlongtChange"></AreaInput>
+              </Col>
+              <Col :span="8" offset="1">
+              <Input :maxlength="50" v-model="formCompany.userAddress" placeholder="补充地址（楼号-门牌等）"></Input>
+              </Col>
+            </Row>
+            <Row v-if="!isEdit">
+              <Col :span="20">
+              <span class="formConten-p">{{ formCompany.address }} {{ formCompany.userAddress }}</span>
+              </Col>
+            </Row>
+          </FormItem>
+          </Col>
+          <Col :span="1">
+          <Tooltip v-if="isEdit" :max-width="200" content="详细地址只支持从下拉推荐地址中选择" transfer>
+            <Icon type="ios-alert" class="ios-alert vermiddle"/>
+          </Tooltip>
+          </Col>
+        </Row>
+        </Col>
+        </Row>
         <div class="borderBottomLine">
           <span class="iconRightTitle"></span>
           <span class="iconRightTitleP">公司介绍</span>
@@ -129,7 +137,7 @@
               :rows="5"
               v-model="formCompany.companyProfile"
               :maxlength="500"
-              class="basicInfo textArea"
+              class="textArea"
               placeholder="请输入公司简介">
             </TextAreaNumber>
             <span v-if="!isEdit && !formCompany.companyProfile" class="imageTips">完善公司简介，有利于客户了解贵公司业务组成</span>
@@ -159,7 +167,7 @@
         <Row>
           <Col :span="20">
           <FormItem label="业务介绍：">
-            <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiIntroduce" :maxlength="500" type="textarea" placeholder="请输入业务介绍" class="basicInfo textArea"></TextAreaNumber>
+            <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiIntroduce" :maxlength="500" type="textarea" placeholder="请输入业务介绍" class="textArea"></TextAreaNumber>
             <span v-if="!isEdit && !formCompany.busiIntroduce && !busiIntroducePic.length" class="imageTips">完善业务介绍，有利于客户了解贵公司业务组成</span>
             <pre v-if="!isEdit && formCompany.busiIntroduce" class="companyProfileSty">{{formCompany.busiIntroduce}}</pre><br/>
             <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
@@ -188,7 +196,7 @@
         <Row>
           <Col :span="20">
           <FormItem label="服务优势：">
-            <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiAdvantce" :maxlength="500" type="textarea" placeholder="请输入服务优势" class="basicInfo textArea"></TextAreaNumber>
+            <TextAreaNumber v-if="isEdit" :rows="5" v-model="formCompany.busiAdvantce" :maxlength="500" type="textarea" placeholder="请输入服务优势" class="textArea"></TextAreaNumber>
             <span v-if="!isEdit && !busiAdvantcePic.length && !formCompany.busiAdvantce" class="imageTips">完善服务优势，有利于提升客户对贵公司的好感度</span>
             <pre v-if="!isEdit && formCompany.busiAdvantce" class="companyProfileSty">{{formCompany.busiAdvantce}}</pre><br/>
             <span v-if="isEdit" class="imageTips">照片格式必须为jpeg、jpg、gif、png，且最多上传10张，每张不能超过10MB</span>
@@ -241,7 +249,7 @@
           </Col>
         </Row>
         <!-- 微信二维码图片集合 -->
-        <div class="basicInfo">
+        <div>
           <Row>
             <Col :span="20">
             <FormItem label="微信二维码：">
@@ -584,10 +592,6 @@ export default {
   width 98px
 >>>.ivu-form-item-label
   font-size: 14px
->>>.basicInfo .ivu-input-wrapper
-  width: -moz-calc(100% - 30px)
-  width: -webkit-calc(100% - 30px)
-  width: calc(100% - 30px)
 .temAll
   margin -20px -15px
   padding 0 40px
@@ -630,7 +634,7 @@ export default {
 .ios-alert
   font-size 20px
   color #FFBB44
-  margin-top -3px
+  margin-top 6px
 .fileImage
   width 160px
   height 90px
@@ -692,6 +696,7 @@ export default {
 .removeContact
   cursor: pointer;
   padding-left 5px
+  margin-top: 6px
 .vermiddle
   padding-left 5px
 .textArea
