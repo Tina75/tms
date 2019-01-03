@@ -157,7 +157,7 @@
       <Col span="12" offset="12">
       <!-- 收货人公司设置 -->
       <FormItem :maxlength="50" label="收货人单位：" prop="consigneeCompanyName">
-        <Input v-model="orderForm.consigneeCompanyName" :maxlength="$fieldLength.extraAddress"></Input>
+        <Input v-model="orderForm.consigneeCompanyName" :maxlength="$fieldLength.extraAddress" clearable></Input>
       </FormItem>
       </Col>
     </Row>
