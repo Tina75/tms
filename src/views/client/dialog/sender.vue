@@ -36,7 +36,7 @@
           <Option v-for="opt in invoiceList" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
         <Tooltip :max-width="200" :content="`开票税费将计入成本统计`" placement="top" transfer>
-          <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+          <Icon class="vermiddle paddingBlock" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
         </Tooltip>
       </FormItem>
       <FormItem v-if="validate.isInvoice === 1" prop="invoiceRate">
@@ -45,7 +45,7 @@
         </label>
         <TagNumberInput v-model="validate.invoiceRate" :show-chinese="false" :min="0" :max="100" :precision="2">
         </TagNumberInput>
-        <span>&nbsp;%</span>
+        <span class="paddingBlock">%</span>
       </FormItem>
       <FormItem label="开拓渠道：" >
         <Select v-model="validate.exploiteChannel" transfer placeholder="请输入">
@@ -61,7 +61,7 @@
           <Option v-for="(opt, index) in salesmans" :key="index" :value="opt.id">{{opt.name}}</Option>
         </Select>
         <Tooltip :max-width="200" :content="`只可选择配置了提货调度和送货调度权限的员工账号`" placement="top" transfer>
-          <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+          <Icon class="vermiddle paddingBlock" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
         </Tooltip>
       </FormItem>
       <FormItem label="备注：" >
@@ -199,4 +199,6 @@ export default {
   .ivu-input-wrapper
   .ivu-dropdown
     width 90%
+  .paddingBlock
+    padding-left 5px
 </style>
