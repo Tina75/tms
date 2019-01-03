@@ -155,6 +155,7 @@ export default {
         {
           title: '换上公里数（公里）',
           key: 'setupMileage',
+          width: 150,
           render: (h, params) => {
             return h('div', Number(params.row.setupMileage) / 1000)
           }
@@ -162,6 +163,7 @@ export default {
         {
           title: '换下公里数（公里）',
           key: 'uninstallMileage',
+          width: 150,
           render: (h, params) => {
             return h('div', Number(params.row.uninstallMileage) / 1000)
           }
