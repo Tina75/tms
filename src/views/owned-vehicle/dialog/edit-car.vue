@@ -156,7 +156,7 @@
   </div>
 </template>
 <script>
-import { CAR, formatterCarNo } from '../pages/client'
+import { CAR, CAR_GUA, formatterCarNo } from '../pages/client'
 import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/index.vue'
@@ -202,7 +202,7 @@ export default {
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
         ],
         trailerNo: [
-          { type: 'string', message: '车牌号格式错误' }
+          { type: 'string', message: '挂车号格式不正确', pattern: CAR_GUA, trigger: 'blur' }
         ],
         carType: [
           { required: true, message: '车型不能为空' }
