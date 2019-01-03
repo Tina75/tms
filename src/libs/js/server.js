@@ -3,6 +3,7 @@ import axios from 'axios'
 import { LoadingBar, Message } from 'iview'
 import { getToken } from './auth'
 
+var timeOut = null
 let reportData = {}
 
 let instance = axios.create({
@@ -71,31 +72,40 @@ instance.interceptors.response.use((res) => {
         break
       case 210014:
       case 600002:// 无权限
-        Message.error(`${res.data.msg},请刷新页面`)
+        showErrorMsg(`${res.data.msg},请刷新页面`)
         window.EMA.fire('refresh')
         break
       // case 310013:// 手机号已注册走10000流程
       //   return res
       default:
-        Message.error(res.data.msg)
+        showErrorMsg(res.data.msg)
         break
     }
     return Promise.reject(res)
   }
 }, (error) => {
-  if (error.message.indexOf('timeout') !== -1) {
-    Message.error('网络信号差，请稍后重试')
-  }
-  if (error.response && error.response.status) {
-    Message.error(error.response.statusText + ' ' + error.response.status)
-  }
   if (error.config) {
     Vue.$ga.exception(`msg: ${error.message} || url: ${error.config.url.replace(error.config.baseURL, '/')}`)
     if (!error.config.ignoreReport) {
       delete reportData[error.config.reportName]
     }
   }
+  if (error.message.indexOf('timeout') !== -1) {
+    showErrorMsg('网络信号差，请稍后重试')
+  }
+  if (error.response && error.response.status) {
+    showErrorMsg(error.response.statusText + ' ' + error.response.status)
+  }
   return Promise.reject(error)
 })
+
+const showErrorMsg = (msg) => {
+  if (!timeOut) {
+    timeOut = setTimeout(() => {
+      Message.error(msg)
+      timeOut = null
+    }, 500)
+  }
+}
 
 export default instance
