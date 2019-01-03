@@ -189,7 +189,7 @@
       <FormItem label="计费里程:" prop="mileage">
         <Row>
           <Col span="19">
-          <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.mileage" :precision="1">
+          <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.mileage" :precision="1" clearable>
           </TagNumberInput>
           </Col>
           <Col span="5" class="order-create__input-unit">公里</Col>
@@ -200,7 +200,7 @@
       <FormItem label="运输费用:" prop="freightFee">
         <Row>
           <Col span="19">
-          <TagNumberInput :min="0" v-model="orderForm.freightFee"></TagNumberInput>
+          <TagNumberInput :min="0" v-model="orderForm.freightFee" clearable></TagNumberInput>
           </Col>
           <Col span="5" class="order-create__input-unit">
           <span style="vertical-align:middle">元</span>
@@ -215,7 +215,7 @@
       <FormItem label="提货费用:" prop="pickupFee">
         <Row>
           <Col span="19">
-          <TagNumberInput :min="0" v-model="orderForm.pickupFee"></TagNumberInput>
+          <TagNumberInput :min="0" v-model="orderForm.pickupFee" clearable></TagNumberInput>
           </Col>
           <Col span="5" class="order-create__input-unit">元</Col>
         </Row>
@@ -227,7 +227,7 @@
       <FormItem label="装货费用:" prop="loadFee">
         <Row>
           <Col span="19">
-          <TagNumberInput :min="0" v-model="orderForm.loadFee"></TagNumberInput>
+          <TagNumberInput :min="0" v-model="orderForm.loadFee" clearable></TagNumberInput>
           </Col>
           <Col span="5" class="order-create__input-unit">元</Col>
         </Row>
@@ -237,7 +237,7 @@
       <FormItem label="卸货费用:" prop="unloadFee">
         <Row>
           <Col span="19">
-          <TagNumberInput :min="0" v-model="orderForm.unloadFee"></TagNumberInput>
+          <TagNumberInput :min="0" v-model="orderForm.unloadFee" clearable></TagNumberInput>
           </Col>
           <Col span="5" class="order-create__input-unit">元</Col>
         </Row>
@@ -247,7 +247,7 @@
       <FormItem label="保险费用:" prop="insuranceFee">
         <Row>
           <Col span="19">
-          <TagNumberInput :min="0" v-model="orderForm.insuranceFee"></TagNumberInput>
+          <TagNumberInput :min="0" v-model="orderForm.insuranceFee" clearable></TagNumberInput>
           </Col>
           <Col span="5" class="order-create__input-unit">元</Col>
         </Row>
@@ -257,7 +257,7 @@
       <FormItem label="其他费用:" prop="otherFee">
         <Row>
           <Col span="19">
-          <TagNumberInput :min="0" v-model="orderForm.otherFee"></TagNumberInput>
+          <TagNumberInput :min="0" v-model="orderForm.otherFee" clearable></TagNumberInput>
           </Col>
           <Col span="5" class="order-create__input-unit">元</Col>
         </Row>
@@ -310,7 +310,7 @@
       <FormItem v-if="orderForm.isInvoice === 1" label="开票税率:" prop="invoiceRate">
         <Row>
           <Col span="12">
-          <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :min="0" :max="100">
+          <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :min="0" :max="100" clearable>
           </TagNumberInput>
           </Col>
           <Col span="12" class="order-create__input-unit">
@@ -326,7 +326,7 @@
       <FormItem label="代收货款:" prop="collectionMoney">
         <Row>
           <Col span="19">
-          <TagNumberInput :min="0" v-model="orderForm.collectionMoney"></TagNumberInput>
+          <TagNumberInput :min="0" v-model="orderForm.collectionMoney" clearable></TagNumberInput>
           </Col>
           <Col span="5" class="order-create__input-unit">元</Col>
         </Row>
