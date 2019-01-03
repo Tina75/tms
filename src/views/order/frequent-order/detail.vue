@@ -103,10 +103,10 @@
       <div class="table-footer blod-font">
         <span>合计</span>
         <span></span>
-        <span>总重量：{{ weightTotal }}</span>
-        <span>总体积：{{ volumeTotal }}</span>
-        <span>总货值：{{ cargoCostTotal }}</span>
-        <span>总数量：{{ quantityTotal }}</span>
+        <span>{{ weightTotal }}</span>
+        <span>{{ volumeTotal }}</span>
+        <span>{{ cargoCostTotal }}</span>
+        <span>{{ quantityTotal }}</span>
       </div>
       <div class="title">
         <span>应收费用</span>
