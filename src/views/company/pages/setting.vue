@@ -86,19 +86,19 @@
             label="联系方式：">
             <SelectInput v-if="isEdit" v-model="item.phone" :formatter="formatePhoneNum" :maxlength="phoneLength(item.phone)" placeholder="请输入手机号或座机号"></SelectInput>
             <!-- <Input v-if="isEdit" v-model="item.phone" :maxlength="40" placeholder="请输入手机号或座机号"></Input> -->
-            <span v-if="isEdit" @click="removeContact(index)">
-            </span>
             <span v-else class="formConten-p">{{item.phone}}</span>
           </FormItem>
           </Col>
           <Col :span="1">
-          <FontIcon
-            v-if="formCompany.busiContact.length > 0 && isEdit"
-            type="ico_cancel"
-            size="18"
-            color="#EC4E4E"
-            class="removeContact">
-          </FontIcon>
+          <span v-if="isEdit" @click="removeContact(index)">
+            <FontIcon
+              v-if="formCompany.busiContact.length > 0 && isEdit"
+              type="ico_cancel"
+              size="18"
+              color="#EC4E4E"
+              class="removeContact">
+            </FontIcon>
+          </span>
           </Col>
         </Row>
         <Row>
