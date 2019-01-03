@@ -145,7 +145,7 @@ export default {
               id: this.refuel.id || undefined,
               truckNo: this.refuel.truckNo || undefined,
               driverName: this.refuel.driverName || undefined,
-              changeAmount: float.round(this.refuel.changeAmount * 100) || undefined,
+              changeAmount: typeof this.refuel.changeAmount === 'number' ? float.round(this.refuel.changeAmount * 100) : undefined,
               operateDate: this.refuel.operateDate ? this.refuel.operateDate.Format('yyyy-MM-dd') : undefined,
               remark: this.refuel.remark || undefined
             }

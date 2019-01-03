@@ -262,7 +262,7 @@ export default {
               driverName: this.assign.type === 1 ? this.assign.driverName.split(' ')[0] : (this.assign.driverNameOther || undefined),
               truckNo: this.assign.truckNo || undefined,
               driverPhone: this.assign.type === 1 ? this.assign.driverName.split(' ')[1] : (this.assign.driverPhone || undefined),
-              recieveDeposit: float.round(this.assign.recieveDeposit * 100) || undefined,
+              recieveDeposit: typeof this.assign.recieveDeposit === 'number' ? float.round(this.assign.recieveDeposit * 100) : undefined,
               remark: this.assign.remark || undefined
             }
           }).then(res => {
