@@ -38,7 +38,7 @@ export default[
         'component': () => import(/* webpackChunkName: "company-setting" */'./pages/setting.vue'),
         'meta': {
           'title': '公司设置',
-          'powerCode': 140100
+          'powerCode': 140300
 
         }
       }
