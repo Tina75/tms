@@ -138,7 +138,7 @@ export default {
           key: 'carNo'
         },
         {
-          title: '金额',
+          title: '金额（元）',
           key: 'cost',
           render: (h, params) => {
             return h('div', Number(params.row.cost) / 100)
@@ -153,14 +153,14 @@ export default {
           key: 'tireModel'
         },
         {
-          title: '换上公里数',
+          title: '换上公里数（公里）',
           key: 'setupMileage',
           render: (h, params) => {
             return h('div', Number(params.row.setupMileage) / 1000)
           }
         },
         {
-          title: '换下公里数',
+          title: '换下公里数（公里）',
           key: 'uninstallMileage',
           render: (h, params) => {
             return h('div', Number(params.row.uninstallMileage) / 1000)

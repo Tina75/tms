@@ -18,7 +18,7 @@
           <FormItem label="车牌号：" prop="carNo">
             <Row>
               <Col span="20">
-              <span v-if="flag  > 2">{{ validate.carNo }}</span>
+              <span v-if="flag  >= 2">{{ validate.carNo }}</span>
               <CarSelect v-else v-model="validate.carNo"></CarSelect>
               </Col>
             </Row>
