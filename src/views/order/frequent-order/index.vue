@@ -341,6 +341,7 @@ export default {
     },
     clearKeywords () {
       this.keyword.consignerName = ''
+      this.keywords.consignerName = ''
     },
     // 删除
     deleteItem (id) {

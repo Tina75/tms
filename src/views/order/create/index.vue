@@ -340,7 +340,7 @@
     </Row>
     <div class="van-center i-mt-20 i-mb-20">
       <span v-if="!orderId" style="float: left; vertical-align:middle;">
-        <Checkbox v-model="isSaveOrderTemplate">保存为常发货源</Checkbox>
+        <Checkbox v-model="isSaveOrderTemplate">保存为常发订单</Checkbox>
       </span>
       <Button v-if="hasPower(100101)" :loading="disabled" type="primary" @click="handleSubmit">保存</Button>
       <Button v-if="hasPower(100102)" :loading="disabled" class="i-ml-10" @click="print">保存并打印</Button>
@@ -412,8 +412,10 @@ export default {
       const stDate = _this.orderForm.deliveryTime
       const edDate = _this.orderForm.arriveTime
       const edTime = _this.orderForm.arriveTimes
-      const valids = value && stDate && edDate && edTime
-      if (valids && stDate.setHours(value.substr(0, 2), value.substr(3, 2)) > edDate.setHours(edTime.substr(0, 2), edTime.substr(3, 2))) {
+      // const valids = value && stDate && edDate && edTime
+      const start = stDate && value ? stDate.setHours(value.substr(0, 2), value.substr(3, 2)) : null
+      const end = edDate && edTime ? edDate.setHours(edTime.substr(0, 2), edTime.substr(3, 2)) : null
+      if (start && end && start > end) {
         callback(new Error('发货时间需早于发货时间'))
       } else {
         callback()
@@ -424,8 +426,9 @@ export default {
       const stDate = _this.orderForm.deliveryTime
       const stTime = _this.orderForm.deliveryTimes
       const edDate = _this.orderForm.arriveTime
-      const valids = value && stDate && edDate && stTime
-      if (valids && stDate.setHours(stTime.substr(0, 2), stTime.substr(3, 2)) > edDate.setHours(value.substr(0, 2), value.substr(3, 2))) {
+      const start = stDate && stTime ? stDate.setHours(stTime.substr(0, 2), stTime.substr(3, 2)) : null
+      const end = edDate && value ? edDate.setHours(value.substr(0, 2), value.substr(3, 2)) : null
+      if (start && end && start > end) {
         callback(new Error('到货时间需晚于发货时间'))
       } else {
         callback()

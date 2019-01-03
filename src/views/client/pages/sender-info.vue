@@ -385,7 +385,7 @@ export default {
                     this.openDialog({
                       name: 'client/dialog/sender-cargo',
                       data: {
-                        title: '修改货品资料',
+                        title: '修改常发货物',
                         flag: 2, // 修改
                         id: params.row.id,
                         validate: {
@@ -737,7 +737,7 @@ export default {
       this.openDialog({
         name: 'client/dialog/sender-cargo',
         data: {
-          title: '新增货品资料',
+          title: '新增常发货物',
           flag: 1, // 新增
           consignerId: this.id
         },

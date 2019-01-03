@@ -17,7 +17,7 @@
           <Input v-model="validate.cargoNo" :maxlength="200" placeholder="请输入"/>
         </FormItem>
         <FormItem label="货值：" prop="cargoCost">
-          <Input v-model="validate.cargoCost"  placeholder="请输入"/>
+          <Input v-model="validate.cargoCost"  placeholder="请输入"/>元
         </FormItem>
         <FormItem label="包装方式：">
           <SelectPackageType v-model="validate.unit" style="width: 86%" clearable></SelectPackageType>
@@ -25,15 +25,15 @@
         <FormItem label="包装尺寸：">
           <Row>
             <Col :span="6">
-            <TagNumberInput :min="0" :precision="0" v-model="volumeLength" :length="7" :show-chinese="false" placeholder="长"></TagNumberInput>
+            <TagNumberInput :min="0" :precision="1" v-model="volumeLength" :length="7" :show-chinese="false" placeholder="长"></TagNumberInput>
             </Col>
-            <Col :span="1"><span style="padding-left: 3px">-</span></Col>
+            <Col :span="1"><span>-</span></Col>
             <Col :span="6">
-            <TagNumberInput :min="0" :precision="0" v-model="volumeWidth" :length="7" :show-chinese="false" placeholder="宽"></TagNumberInput>
+            <TagNumberInput :min="0" :precision="1" v-model="volumeWidth" :length="7" :show-chinese="false" placeholder="宽"></TagNumberInput>
             </Col>
-            <Col :span="1"><span style="padding-left: 3px">-</span></Col>
+            <Col :span="1"><span>-</span></Col>
             <Col :span="6">
-            <TagNumberInput :min="0" :precision="0" v-model="volumeHeight" :length="7" :show-chinese="false" placeholder="高"></TagNumberInput>
+            <TagNumberInput :min="0" :precision="1" v-model="volumeHeight" :length="7" :show-chinese="false" placeholder="高"></TagNumberInput>
             </Col>
             <Col :span="4"><span style="padding-left: 15px">毫米</span></Col>
           </Row>

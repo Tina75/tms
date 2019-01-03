@@ -341,7 +341,7 @@ export default {
           }
         },
         {
-          title: '包装尺寸(mm)',
+          title: '包装尺寸（毫米）',
           key: 'dimension',
           render: (h, p) => {
             let text = ''
@@ -1112,7 +1112,7 @@ export default {
 </script>
 <style lang='stylus' scoped>
   .detail-header
-    height 60px
+    min-height 60px
     padding-left 24px
     line-height  60px
     >ul>li

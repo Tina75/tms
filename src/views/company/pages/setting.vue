@@ -133,7 +133,7 @@
         </div>
         <Row>
           <Col :span="20">
-          <FormItem label="公司简介：" style="margin-bottom:0px">
+          <FormItem label="公司简介：" style="margin-bottom:10px">
             <TextAreaNumber
               v-if="isEdit"
               :rows="5"
@@ -142,7 +142,7 @@
               class="textArea"
               placeholder="请输入公司简介">
             </TextAreaNumber>
-            <span v-if="!isEdit && !formCompany.companyProfile" class="imageTips">完善公司简介，有利于客户了解贵公司业务组成</span>
+            <span v-if="!isEdit && !formCompany.companyProfile" class="imageTips">完善公司简介，有利于客户了解贵公司情况</span>
             <pre v-if="!isEdit" class="companyProfileSty">{{formCompany.companyProfile}}</pre>
           </FormItem>
           </Col>
@@ -151,7 +151,7 @@
           <Col :span="20">
           <FormItem label="公司LOGO：">
             <span v-if="isEdit" class="imageTips">尺寸100*100像素，大小不超过10M</span>
-            <span v-if="!isEdit && !formCompany.logoUrl" class="imageTips">上传公司LOGO照片，有利于宣传公司品牌哦</span>
+            <span v-if="!isEdit && !formCompany.logoUrl" class="imageTips">上传公司LOGO照片，有利于宣传公司品牌</span>
           </FormItem>
           <FormItem :class="isEdit ? 'imageFontItem' : 'imageFontItemBlock'">
             <span class="imageLogo">
@@ -641,9 +641,9 @@ export default {
   margin-bottom 30px
 .imageTips
   color #999999
-  font-size 13px
+  font-size 14px
   position relative
-  top 2px
+  top 1px
 .unitSpan
   margin-left 5px
 .ios-alert
@@ -682,7 +682,7 @@ export default {
 .formConten-p
   font-size 14px
   position: absolute;
-  top: 2px;
+  top: 1px;
   // left: -16px;
 .content-p
   position relative

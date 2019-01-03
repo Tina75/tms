@@ -103,14 +103,14 @@ export const oilTableColumns = vm => [
   {
     type: 'selection',
     width: 50,
-    align: 'center'
-    // fixed: 'left'
+    align: 'center',
+    fixed: 'left'
   },
   {
     title: '操作',
     key: 'orderNo',
     width: 125,
-    // fixed: 'left',
+    fixed: 'left',
     render: (h, params) => {
       let renderHtml = []
       let DropdownItem = []
@@ -170,6 +170,7 @@ export const oilTableColumns = vm => [
   {
     title: '卡号',
     key: 'number',
+    fixed: 'left',
     width: 180,
     render: (h, params) => {
       return h('a', {
@@ -199,7 +200,7 @@ export const oilTableColumns = vm => [
   {
     title: '类型',
     key: 'type',
-    width: 70,
+    width: 100,
     filters: CARDTYPELIST,
     filterMethod (value, row) {
       return value === row.type
@@ -211,6 +212,7 @@ export const oilTableColumns = vm => [
   {
     title: '持卡人',
     key: 'driverName',
+    width: 200,
     render: (h, p) => {
       // p.row.driverName ? (p.row.driverName + ' ' + p.row.driverPhone)
       return h('div', p.row.driverName ? [h('p', p.row.driverName), h('p', p.row.driverPhone)] : '-')
@@ -219,6 +221,7 @@ export const oilTableColumns = vm => [
   {
     title: '余额(元)',
     key: 'amount',
+    width: 150,
     render: (h, params) => {
       return h('span', typeof params.row.amount === 'number' ? (params.row.amount / 100).toFixed(2) : '0.00')
     }
@@ -251,16 +254,17 @@ export const oilTableColumns = vm => [
   },
   {
     title: '绑定车辆',
-    maxWidth: 100,
+    width: 120,
     key: 'truckNo'
   },
   {
     title: '所属承运商',
+    width: 300,
     key: 'carrierName'
   },
   {
     title: '创建时间',
-    maxWidth: 140,
+    width: 150,
     key: 'createTime',
     render: (h, params) => {
       return h('span', params.row.createTime ? new Date(params.row.createTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
@@ -274,6 +278,7 @@ export const usedTableColumns = vm => [
     title: '卡号',
     key: 'number',
     width: 200,
+    fixed: 'left',
     render: (h, params) => {
       return h('span', vm.cardFormat(params.row.number))
     }
