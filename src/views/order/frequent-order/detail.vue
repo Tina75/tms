@@ -100,13 +100,14 @@
         <span>货物明细</span>
       </div>
       <Table :columns="tableColumns" :data="detail.orderCargoTemplateList"></Table>
-      <Row class="table-footer blod-font">
-        <Col span="3">合计</Col>
-        <Col span="3">总重量：{{ weightTotal }}</Col>
-        <Col span="3">总体积：{{ volumeTotal }}</Col>
-        <Col span="3">总货值：{{ cargoCostTotal }}</Col>
-        <Col span="3">总数量：{{ quantityTotal }}</Col>
-      </Row>
+      <div class="table-footer blod-font">
+        <span>合计</span>
+        <span></span>
+        <span>总重量：{{ weightTotal }}</span>
+        <span>总体积：{{ volumeTotal }}</span>
+        <span>总货值：{{ cargoCostTotal }}</span>
+        <span>总数量：{{ quantityTotal }}</span>
+      </div>
       <div class="title">
         <span>应收费用</span>
       </div>
@@ -406,8 +407,10 @@ export default {
     border-left 1px solid #e8eaec
     border-right 1px solid #e8eaec
     border-bottom 1px solid #e8eaec
-    .ivu-col
+    span
       padding-left 10px
+      width 10%
+      display inline-block
   .blod-font
     font-weight 600
     font-size 14px
