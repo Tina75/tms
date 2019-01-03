@@ -49,7 +49,7 @@
         <FormItem label="金额：">
           <Row>
             <Col span="20">
-            <TagNumberInput v-model="addEdit.amount" :show-chinese="false" :precision="precision" placeholder="请输入金额"></TagNumberInput>
+            <TagNumberInput v-model="addEdit.amount"  :precision="precision" :min="0" placeholder="请输入金额"></TagNumberInput>
             </Col>
             <Col span="2" offset="1">
             <span>元</span>
