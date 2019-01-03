@@ -289,7 +289,7 @@ export default {
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.loading = true
-          if (this.flag % 2) { // 新增
+          if (this.flag !== 2) { // 新增
             this.add()
           } else { // 2-编辑
             this.update()
