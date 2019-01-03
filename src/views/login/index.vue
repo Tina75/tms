@@ -148,8 +148,8 @@ export default {
     },
 
     // 设置cookie-token
-    setToken (token) {
-      if (this.$route.query.from === 'shipper') {
+    setToken (token, type) {
+      if (type === 2) {
         // 设置货主版token
         Cookies.set('token', token, { expires: 365, path: '/' })
       } else {
@@ -169,7 +169,7 @@ export default {
           if (this.rememberPW) this.localPwSave()
           else window.localStorage.removeItem('local_rememberd_pw')
           window.localStorage.setItem('tms_is_login', true)
-          this.setToken(res.data.data.token)
+          this.setToken(res.data.data.token, res.data.data.companyType)
           window.sessionStorage.setItem('first_time_login', !res.data.data.lastLoginTime)
           // 公司类型 1：承运商 2：货主
           if (res.data.data.companyType === 2) {

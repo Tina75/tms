@@ -682,7 +682,7 @@ export default {
 .formConten-p
   font-size 14px
   position: absolute;
-  top: 2px;
+  top: 1px;
   // left: -16px;
 .content-p
   position relative
