@@ -1,7 +1,7 @@
 <template>
   <div class="frequent-order">
     <div class="right header">
-      <span class="search-label">客户名称：</span>
+      <!-- <span class="search-label">客户名称：</span> -->
       <SelectInput
         v-model="keyword.consignerName"
         :maxlength="20"
@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import Server from '@/libs/js/server'
 import BasePage from '@/basic/BasePage'
 import PageTable from '@/components/page-table/'
@@ -331,6 +331,9 @@ export default {
     ])
   },
   methods: {
+    ...mapActions([
+      'getClients'
+    ]),
     searchList () {
       this.keywords = {
         consignerName: this.keyword.consignerName
