@@ -120,15 +120,15 @@ export default {
           }
           clearFileInput(this.$refs.fileInput)
         }).catch((err) => {
-          this.failStatue = true
-          this.errorReport = err.data.data
+          vm.failStatue = true
+          vm.errorReport = err.data.data
           if (vm.timer) {
             clearTimeout(vm.timer)
             vm.timer = null
           }
-          clearFileInput(this.$refs.fileInput)
+          clearFileInput(vm.$refs.fileInput)
         })
-        this.loopCheckFileProgress()
+        vm.loopCheckFileProgress()
       } catch (error) {
         if (error.code === 'InvalidAccessKeyId' || error.code === 'InvalidBucketName') {
           // token失效过期了
