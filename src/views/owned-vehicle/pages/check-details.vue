@@ -51,15 +51,17 @@
           <span class="icontTitle"></span>
           <span class="iconTitleP">年检照片</span>
         </div>
-        <div class="list-info">
-          <Row class="row">
-            <Col v-for="img in imageItems" :key="img.index" span="5">
+        <Row class="list-info">
+          <div v-for="img in imageItems" :key="img.index" class="infoImage">
             <div :v-if="img">
-              <div :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(img.count)"></div>
+              <div
+                :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+                class="fileImage"
+                @click="handleView(img.count)">
+              </div>
             </div>
-            </Col>
-          </Row>
-        </div>
+          </div>
+        </Row>
         <div class="title" style="margin-top: 40px;">
           <span class="icontTitle"></span>
           <span class="iconTitleP">操作记录</span>
