@@ -32,7 +32,7 @@
       <FormItem label="转出金额：" prop="changeAmount">
         <Row>
           <Col span="20">
-          <TagNumberInput v-model="transfer.changeAmount" :show-chinese="false" :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
+          <TagNumberInput v-model="transfer.changeAmount"  :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
           </Col>
           <Col span="2" offset="1">
           <span>元</span>
@@ -97,7 +97,10 @@ export default {
       SecondaryCardList: [], // 主卡下关联的副卡
       ruleValidate: {
         toCardId: [{ required: true, message: '请选择主卡下面的副卡', trigger: 'change', type: 'number' }],
-        changeAmount: { required: true, message: '请输入转出金额', trigger: 'change', type: 'number' },
+        changeAmount: [
+          { required: true, message: '请输入转出金额', trigger: 'change', type: 'number' },
+          { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/, type: 'string', message: '9位正数且最多两位小数', trigger: 'blur' }
+        ],
         operateDate: { required: true, message: '请输入转账日期' }
       }
     }
@@ -126,9 +129,8 @@ export default {
             this.loading = false
             this.close()
             this.ok()
-          }).catch(err => {
+          }).catch(() => {
             this.loading = false
-            console.log(err)
           })
         }
       })

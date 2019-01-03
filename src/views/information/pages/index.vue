@@ -236,7 +236,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['DocumentHeight'])
+    ...mapGetters(['DocumentHeight', 'IsUserLogin'])
   },
   watch: {
     checkAllGroup (newVal) {
@@ -267,11 +267,13 @@ export default {
     }
   },
   mounted: function () {
-    this.getMessageCount()
-    this.getMenuInfoNum()
-    this.getMenuList(this.searchData)
-    if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
-      document.getElementById('message-list-container').style.maxHeight = (document.body.clientHeight - 80) + 'px'
+    if (this.IsUserLogin) {
+      this.getMessageCount()
+      this.getMenuInfoNum()
+      this.getMenuList(this.searchData)
+      if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
+        document.getElementById('message-list-container').style.maxHeight = (document.body.clientHeight - 80) + 'px'
+      }
     }
   },
   updated () {

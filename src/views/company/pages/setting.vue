@@ -57,7 +57,8 @@
           </Col>
           <Col :span="10">
           <FormItem label="联系方式：" prop="contactPhone">
-            <Input v-if="isEdit" v-model="formCompany.contactPhone" :maxlength="40" placeholder="请输入手机号或座机号"></Input>
+            <SelectInput v-if="isEdit" v-model="formCompany.contactPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(formCompany.contactPhone)" placeholder="请输入手机号或座机号"></SelectInput>
+            <!-- <Input v-if="isEdit" v-model="formCompany.contactPhone" :maxlength="40" placeholder="请输入手机号或座机号"></Input> -->
             <span v-else class="formConten-p">{{formCompany.contactPhone}}</span>
           </FormItem>
           </Col>
@@ -83,20 +84,21 @@
                       pattern: /(^1\d{10}$)|(^[^1]((\(|（)?\d{2,4}(\)|）)?)?-?((\d+)?(\(|（)\d{1,14}(\)|）)(\d+)?|\d{1,16})$)/g}]"
             :prop="'busiContact.' + index + '.phone'"
             label="联系方式：">
-            <Input v-if="isEdit" v-model="item.phone" :maxlength="40" placeholder="请输入手机号或座机号"></Input>
-            <span v-if="isEdit" @click="removeContact(index)">
-            </span>
+            <SelectInput v-if="isEdit" v-model="item.phone" :formatter="formatePhoneNum" :maxlength="phoneLength(item.phone)" placeholder="请输入手机号或座机号"></SelectInput>
+            <!-- <Input v-if="isEdit" v-model="item.phone" :maxlength="40" placeholder="请输入手机号或座机号"></Input> -->
             <span v-else class="formConten-p">{{item.phone}}</span>
           </FormItem>
           </Col>
           <Col :span="1">
-          <FontIcon
-            v-if="formCompany.busiContact.length > 0 && isEdit"
-            type="ico_cancel"
-            size="18"
-            color="#EC4E4E"
-            class="removeContact">
-          </FontIcon>
+          <span v-if="isEdit" @click="removeContact(index)">
+            <FontIcon
+              v-if="formCompany.busiContact.length > 0 && isEdit"
+              type="ico_cancel"
+              size="18"
+              color="#EC4E4E"
+              class="removeContact">
+            </FontIcon>
+          </span>
           </Col>
         </Row>
         <Row>
@@ -318,6 +320,8 @@ import { CHECK_NAME_COMPANY, CHECK_NAME, CHECK_PHONE } from './validator'
 import prepareOpenSwipe from '@/components/swipe/index'
 import FontIcon from '@/components/FontIcon'
 import TextAreaNumber from '@/components/TextAreaNumber'
+import { formatePhone } from '@/libs/js/formate'
+import SelectInput from '@/components/SelectInput.vue'
 export default {
   name: 'company-setting',
   components: {
@@ -327,7 +331,8 @@ export default {
     prepareOpenSwipe,
     ImageTitle,
     FontIcon,
-    TextAreaNumber
+    TextAreaNumber,
+    SelectInput
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -394,6 +399,12 @@ export default {
     this.getCompanyInfo()
   },
   methods: {
+    formatePhoneNum (temp) {
+      return formatePhone(temp)
+    },
+    phoneLength (value) {
+      return /^1/.test(value) ? 13 : this.$fieldLength.telephone
+    },
     // 图片初始化
     async initImage () {
       // LOGO

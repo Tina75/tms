@@ -144,7 +144,7 @@ export default {
           key: 'carNo'
         },
         {
-          title: '金额',
+          title: '金额（元）',
           key: 'cost',
           render: (h, params) => {
             return h('div', Number(params.row.cost) / 100)

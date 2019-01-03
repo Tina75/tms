@@ -1,11 +1,12 @@
 <template>
-  <div :class="wrapClasses">
+  <div :class="wrapClasses" class="ivu-input-wrapper">
     <div :class="inputWrapClasses">
       <span v-if="showSuffix" class="ivu-input-suffix">
         <slot name="suffix">
           <i v-if="suffix" :class="['ivu-icon-' + suffix]"  class="ivu-icon"></i>
         </slot>
       </span>
+      <i v-if="clearable && formatterValue" :class="['ivu-icon-ios-close-circle', 'ivu-input-icon', 'ivu-input-icon-clear']" class="ivu-icon" @click="handleClear"></i>
       <input
         :id="elementId"
         :class="inputClasses"
@@ -117,6 +118,10 @@ export default {
     showChinese: {
       type: Boolean,
       default: true
+    },
+    clearable: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -278,6 +283,12 @@ export default {
         return money2chinese(value)
       }
       return ''
+    },
+    handleClear () {
+      const e = { target: { value: null } }
+      this.$emit('input', null)
+      this.setValue(null)
+      this.$emit('on-change', e)
     }
   }
 }

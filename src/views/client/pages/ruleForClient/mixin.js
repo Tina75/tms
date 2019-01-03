@@ -23,10 +23,12 @@ export default {
       return obj
     },
     precision () {
-      if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
-        return 2
-      } else if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') {
-        return 1
+      if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量(吨)的只有3位小数
+        return 3
+      } else if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') { // 体积保留6位
+        return 6
+      } else if (this.ruleDetail.ruleType === '6' || this.ruleDetail.ruleType === '7') { // 重量公斤没小数
+        return 0
       } else {
         return 2
       }
@@ -92,15 +94,20 @@ export default {
         callback(new Error('请填写'))
       } else {
         // 小数判断
-        if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
+        if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量吨的只有2位小数
           // /^(0|([1-9]\d*))([.]\d{1,2})?$/
-          if (!(/^(0|([1-9]\d*))([.]\d{1,2})?$/.test(String(realValue)))) {
-            callback(new Error('最多两位小数'))
+          if (!(/^(0|([1-9]\d*))([.]\d{1,3})?$/.test(String(realValue)))) {
+            callback(new Error('最多三位小数'))
           }
         }
-        if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') {
-          if (!(/^(0|([1-9]\d*))([.]\d)?$/.test(String(realValue)))) {
-            callback(new Error('最多一位小数'))
+        if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') { // 体积6未
+          if (!(/^(0|([1-9]\d*))([.]\d{1,6})?$/.test(String(realValue)))) {
+            callback(new Error('最多六位小数'))
+          }
+        }
+        if (this.ruleDetail.ruleType === '6' || this.ruleDetail.ruleType === '7') { // 重量公斤没有小数
+          if (!(/^(0|([1-9]\d*))?$/.test(String(realValue)))) {
+            callback(new Error('不能输入小数'))
           }
         }
         if (startNum > realValue) {
