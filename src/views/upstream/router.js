@@ -9,7 +9,7 @@ export default [
       /** 首页 */
       {
         'name': 'upstream',
-        'path': 'upstream',
+        'path': '',
         'component': () => import(/* webpackChunkName: "upstream" */'./pages/index.vue'),
         'meta': {
           'icon': 'shangyoulaidan',
