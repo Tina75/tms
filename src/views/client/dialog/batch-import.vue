@@ -37,7 +37,7 @@
         <!-- 导入失败 -->
         <div v-if="failStatue">
           <p class="i-mb-10" style="color: red">导入失败，请查看错误报告</p>
-          <a :href="errorReport" style="margin-right: 8px">下载错误报告</a>
+          <a style="margin-right: 8px" @click="downLoadReport">下载错误报告</a>
           <a @click="handleClick">重新导入</a>
         </div>
       </div>
@@ -232,6 +232,13 @@ export default {
         this.close()
       } else {
         this.close()
+      }
+    },
+    downLoadReport () {
+      if (this.errorReport) {
+        window.location.href = this.errorReport
+      } else {
+        this.$Message.error('导入数据为空，没有错误报告')
       }
     }
   }
