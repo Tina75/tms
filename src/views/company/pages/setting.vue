@@ -142,7 +142,7 @@
               class="textArea"
               placeholder="请输入公司简介">
             </TextAreaNumber>
-            <span v-if="!isEdit && !formCompany.companyProfile" class="imageTips">完善公司简介，有利于客户了解贵公司业务组成</span>
+            <span v-if="!isEdit && !formCompany.companyProfile" class="imageTips">完善公司简介，有利于客户了解贵公司情况</span>
             <pre v-if="!isEdit" class="companyProfileSty">{{formCompany.companyProfile}}</pre>
           </FormItem>
           </Col>
@@ -151,7 +151,7 @@
           <Col :span="20">
           <FormItem label="公司LOGO：">
             <span v-if="isEdit" class="imageTips">尺寸100*100像素，大小不超过10M</span>
-            <span v-if="!isEdit && !formCompany.logoUrl" class="imageTips">上传公司LOGO照片，有利于宣传公司品牌哦</span>
+            <span v-if="!isEdit && !formCompany.logoUrl" class="imageTips">上传公司LOGO照片，有利于宣传公司品牌</span>
           </FormItem>
           <FormItem :class="isEdit ? 'imageFontItem' : 'imageFontItemBlock'">
             <span class="imageLogo">

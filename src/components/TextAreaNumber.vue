@@ -6,6 +6,7 @@
       :placeholder="placeholder"
       :rows="rows"
       type="textarea"
+      class="textarea"
       @input.native="descInput"/>
     <span :class="remnant ? 'numberCount haveNumber' : 'numberCount noneNumber'">{{remnant}}/{{maxlength}}</span>
   </div>
@@ -22,17 +23,14 @@ export default {
     maxlength: {
       type: Number,
       default: 200
-    },
-    rows: {
-      type: Number,
-      default: 2
     }
   },
   data () {
     return {
       currentValue: this.value,
       desc: '',
-      remnant: 0
+      remnant: 0,
+      rows: 3
     }
   },
   computed: {
