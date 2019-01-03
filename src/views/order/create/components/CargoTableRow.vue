@@ -35,9 +35,10 @@
         v-model="record[col.key][el.key]"
         :min="el.min"
         :max="el.max"
-        :style="`width: ${100 / col.children.length}%`"
+        :style="`width: 31%`"
         :placeholder="el.title"
         :precision="el.point"
+        style="margin: 0 1%"
         clearable>
       </InputNumber>
     </div>
