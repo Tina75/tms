@@ -18,7 +18,7 @@
             </Col>
           </Row>
         </CheckboxGroup>
-        <liner class="liner"></liner>
+        <div class="liner"></div>
       </div>
     </div>
     <div slot="footer">
@@ -97,9 +97,9 @@ export default {
         },
         methods: {
           ok () {
-            _this.close()
             _this.$Message.success('核销成功')
             _this.freshSheet() // 刷新页面
+            // _this.close()
           }
         }
       })
