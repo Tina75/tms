@@ -99,13 +99,6 @@ export default {
         toCardId: [{ required: true, message: '请选择主卡下面的副卡', trigger: 'change', type: 'number' }],
         changeAmount: { required: true, message: '请输入转出金额', trigger: 'change', type: 'number' },
         operateDate: { required: true, message: '请输入转账日期' }
-        // driverName: { required: true, message: '请选择司机', trigger: 'change' },
-        // carrierName: { required: true, message: '请输入承运商', trigger: 'change' },
-        // driverPhone: [
-        //   { required: true, message: '请输入手机号码', trigger: 'blur' },
-        //   { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
-        // ],
-        // truckNo: { type: 'string', message: '车牌号格式错误', pattern: CAR }
       }
     }
   },
@@ -125,7 +118,7 @@ export default {
             data: {
               id: this.transfer.id || undefined,
               toCardId: (this.transfer.type === 1) ? this.transfer.toCardId : this.transfer.primaryCardId,
-              changeAmount: float.round(this.transfer.changeAmount * 100) || undefined,
+              changeAmount: typeof this.transfer.changeAmount === 'number' ? float.round(this.transfer.changeAmount * 100) : undefined,
               operateDate: this.transfer.operateDate ? this.transfer.operateDate.Format('yyyy-MM-dd') : undefined,
               remark: this.transfer.remark || undefined
             }
