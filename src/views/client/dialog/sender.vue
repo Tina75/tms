@@ -35,23 +35,17 @@
         <Select v-model="validate.isInvoice" transfer clearable placeholder="请输入">
           <Option v-for="opt in invoiceList" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
+        <Tooltip :max-width="200" :content="`开票税费将计入成本统计`" placement="top" transfer>
+          <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+        </Tooltip>
       </FormItem>
       <FormItem v-if="validate.isInvoice === 1" prop="invoiceRate">
         <label slot="label">
-          <span class="vermiddle"></span>开票税率：
-          <Tooltip :max-width="200" :content="`开票税费将计入成本统计`" placement="top" transfer>
-            <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
-          </Tooltip>
+          <span class="vermiddle">开票税率：</span>
         </label>
-        <Row>
-          <Col :span="22">
-          <TagNumberInput v-model="validate.invoiceRate" :show-chinese="false" :min="0" :max="100" :precision="2">
-          </TagNumberInput>
-          </Col>
-          <Col :span="2" >
-          <span>&nbsp;%</span>
-          </Col>
-        </Row>
+        <TagNumberInput v-model="validate.invoiceRate" :show-chinese="false" :min="0" :max="100" :precision="2">
+        </TagNumberInput>
+        <span>&nbsp;%</span>
       </FormItem>
       <FormItem label="开拓渠道：" >
         <Select v-model="validate.exploiteChannel" transfer placeholder="请输入">
@@ -62,13 +56,13 @@
       <FormItem label="">
         <label slot="label">
           <span class="vermiddle">对接业务员：</span>
-          <Tooltip :max-width="200" :content="`只可选择配置了提货调度和送货调度权限的员工账号`" placement="top" transfer>
-            <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
-          </Tooltip>
         </label>
         <Select v-model="validate.salesmanId" transfer clearable placeholder="请选择对接此客户的业务员">
           <Option v-for="(opt, index) in salesmans" :key="index" :value="opt.id">{{opt.name}}</Option>
         </Select>
+        <Tooltip :max-width="200" :content="`只可选择配置了提货调度和送货调度权限的员工账号`" placement="top" transfer>
+          <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+        </Tooltip>
       </FormItem>
       <FormItem label="备注：" >
         <Input v-model="validate.remark" :maxlength="100" :rows="2" :autosize="{minRows: 2,maxRows: 5}" type="textarea"  placeholder="请输入"/>
@@ -198,4 +192,8 @@ export default {
 
 <style scoped lang="stylus">
   @import "../pages/client.styl"
+  .ivu-select
+  .ivu-input-wrapper
+  .ivu-dropdown
+    width 90%
 </style>
