@@ -16,7 +16,7 @@
         <Input v-model="validate.contact"  :maxlength="$fieldLength.name" placeholder="请输入"/>
       </FormItem>
       <FormItem label="联系号码：" prop="phone" >
-        <SelectInput v-model="validate.phone" :formatter="formatePhoneNum"  :maxlength="$fieldLength.telephone" placeholder="请输入手机号或座机号"></selectInput>
+        <SelectInput v-model="validate.phone" :formatter="formatePhoneNum"  :maxlength="phoneLength(validate.phone)" placeholder="请输入手机号或座机号"></selectInput>
       </FormItem>
       <FormItem label="提货方式：">
         <Select v-model="validate.pickUp" transfer clearable placeholder="请输入">
@@ -146,6 +146,9 @@ export default {
   methods: {
     formatePhoneNum (temp) {
       return formatePhone(temp)
+    },
+    phoneLength (value) {
+      return /^1/.test(value) ? 13 : this.$fieldLength.telephone
     },
     save (name) {
       this.$refs[name].validate((valid) => {
