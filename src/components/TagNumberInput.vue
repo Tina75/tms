@@ -21,7 +21,6 @@
         @focus="focus"
         @blur="blur"
         @keydown.stop="keyDown"
-        @input="change"
         @mouseup="preventDefault"
         @change="change">
     </div>
@@ -31,6 +30,10 @@
   </div>
 </template>
 <script>
+/**
+ * changlog:
+ * 1. 取消了oninput事件；因为ie11下，弹出框会自动执行input事件，导致会首次验证，提示错误;
+ */
 import float from '../libs/js/float.js'
 import { money2chinese } from '@/libs/js/util'
 import dispatchMixin from './mixins/dispatchMixin.js'

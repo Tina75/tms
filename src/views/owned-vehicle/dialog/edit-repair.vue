@@ -53,7 +53,7 @@
           <FormItem label="维修费用：" prop="repairMoney">
             <Row>
               <Col span="19">
-              <TagNumberInput :min="0" v-model="validate.repairMoney" :show-chinese="false" placeholder="必填" @on-blur="repairMoneyChange"></TagNumberInput>
+              <TagNumberInput :min="0" v-model="validate.repairMoney" :precision="2" placeholder="必填" @on-blur="repairMoneyChange"></TagNumberInput>
               </Col>
               <Col span="4" offset="1">
               <span>元</span>
@@ -65,7 +65,7 @@
           <FormItem label="已支付费用：" prop="payMoney">
             <Row>
               <Col span="19">
-              <TagNumberInput :min="0" :max="validate.repairMoney" v-model="validate.payMoney" :show-chinese="false" placeholder="必填" @on-blur="payMoneyChange"></TagNumberInput>
+              <TagNumberInput :min="0" :max="validate.repairMoney" :precision="2" v-model="validate.payMoney" placeholder="必填" @on-blur="payMoneyChange"></TagNumberInput>
               </Col>
               <Col span="2" offset="1">
               <span>元</span>
@@ -77,8 +77,8 @@
           <FormItem label="未支付费用：" prop="waitPayMoney">
             <Row>
               <Col span="19">
-              <Input v-model="validate.waitPayMoney" :maxlength="9" disabled @on-change="waitpayMoneyChange"></Input>
-                </Col>
+              <TagNumberInput :min="0" v-model="validate.waitPayMoney" :precision="2" disabled></TagNumberInput>
+              </Col>
               <Col span="2" offset="1">
               <span>元</span>
                 </Col>
@@ -201,15 +201,15 @@ export default {
         ],
         repairMoney: [
           { required: true, message: '维修费用不能为空' },
-          { message: '<=六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '<=九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
         ],
         payMoney: [
           { required: true, message: '已支付费用不能为空' },
-          { message: '<=六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '<=九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
         ],
         waitPayMoney: [
           { required: true, message: '未支付费用不能为空' },
-          { message: '<=六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '<=九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
         ]
       }
     }
@@ -241,11 +241,6 @@ export default {
         this.validate.waitPayMoney = float.round(float.round(this.validate.repairMoney) - (float.round(this.validate.payMoney)) || 0)
       }
     },
-    waitpayMoneyChange () {
-      if (this.validate.repairMoney) {
-        this.validate.payMoney = float.round(float.round(this.validate.repairMoney) - (float.round(this.validate.waitPayMoney)) || 0)
-      }
-    },
     // 修改页面初始化
     configData () {
       this.disAbleBtn = true
@@ -253,6 +248,7 @@ export default {
       this.validate.repairMoney = this.validate.repairMoney / 100
       this.validate.payMoney = this.validate.payMoney / 100
       this.validate.waitPayMoney = this.validate.waitPayMoney / 100
+      this.validate.repairMile = this.validate.repairMile / 1000
       this.carNoList.push({ carNo: this.validate.carNo })
     },
     save (name) {
@@ -262,6 +258,7 @@ export default {
         params.repairMoney = float.round(this.validate.repairMoney * 100)
         params.payMoney = float.round(this.validate.payMoney * 100)
         params.waitPayMoney = float.round(this.validate.waitPayMoney * 100)
+        params.repairMile = float.round(this.validate.repairMile * 1000)
         if (valid) {
           this.loading = true
           if (this.flag === 1) { // 新增

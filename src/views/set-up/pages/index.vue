@@ -557,6 +557,7 @@ export default {
     position absolute
     top 24%
     left 50%
+    margin-top 50px
     transform translate(-50%, -50%)
     .ivu-form-item-label
       width 110px !important
