@@ -7,7 +7,7 @@ export default [
     'path': '/oilCard',
     'component': Main,
     'meta': {
-      'icon': 'baobiaoguanli',
+      'icon': 'ico-card',
       'title': '油卡管理',
       'powerCode': 160000
     },
