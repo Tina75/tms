@@ -83,7 +83,7 @@ export default {
         driverName: { required: true, message: '请输入加油人', type: 'string', trigger: 'change' },
         changeAmount: [
           { required: true, message: '请输入充值金额', type: 'number', trigger: 'change' },
-          { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/, type: 'string', message: '9位正数且最多两位小数', trigger: 'blur' }
+          { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/, message: '9位正数且最多两位小数' }
         ],
         operateDate: { required: true, message: '请输入充值日期' }
       }
