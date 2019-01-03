@@ -82,7 +82,7 @@
       <FormItem label="收押金：" prop="changeAmount">
         <Row>
           <Col span="20">
-          <TagNumberInput v-model="assign.recieveDeposit" :show-chinese="false" :length="moneyLength" :precision="precision" placeholder="请输入押金金额"></TagNumberInput>
+          <TagNumberInput v-model="assign.recieveDeposit" :min="0"  :length="moneyLength" :precision="precision" placeholder="请输入押金金额"></TagNumberInput>
           </Col>
           <Col span="2" offset="1">
           <span>元</span>

@@ -18,7 +18,7 @@
       <FormItem label="实际金额：" prop="actrualAmount">
         <Row>
           <Col span="20">
-          <TagNumberInput v-model="recover.actrualAmount" :length="moneyLength" :show-chinese="false" :precision="precision" placeholder="请输入金额"></TagNumberInput>
+          <TagNumberInput v-model="recover.actrualAmount" :min="0" :length="moneyLength"  :precision="precision" placeholder="请输入金额"></TagNumberInput>
           </Col>
           <Col span="2" offset="1">
           <span>元</span>
@@ -28,7 +28,7 @@
       <FormItem v-if="recover.carrierName !== '自有车队'" label="退押金：">
         <Row>
           <Col span="20">
-          <TagNumberInput v-model="recover.returnDeposit" :show-chinese="false" :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
+          <TagNumberInput v-model="recover.returnDeposit" :min="0"  :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
           </Col>
           <Col span="2" offset="1">
           <span>元</span>
