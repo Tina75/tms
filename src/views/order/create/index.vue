@@ -120,7 +120,7 @@
       </Col>
       <Col span="3">
       <FormItem :label-width="0" prop="consignerHourseNumber">
-        <Input v-model="orderForm.consignerHourseNumber" :maxlength="$fieldLength.extraAddress" placeholder="补充地址（楼号-门牌等）"></Input>
+        <Input v-model="orderForm.consignerHourseNumber" :maxlength="$fieldLength.extraAddress" placeholder="补充地址（楼号-门牌等）" clearable></Input>
       </FormItem>
       </Col>
       <Col span="1">
@@ -142,7 +142,7 @@
       </Col>
       <Col span="3">
       <FormItem :label-width="0" prop="consigneeHourseNumber">
-        <Input v-model="orderForm.consigneeHourseNumber" :maxlength="$fieldLength.extraAddress" placeholder="补充地址（楼号-门牌等）"></Input>
+        <Input v-model="orderForm.consigneeHourseNumber" :maxlength="$fieldLength.extraAddress" placeholder="补充地址（楼号-门牌等）" clearable></Input>
       </FormItem>
       </Col>
       <Col span="1">
@@ -334,8 +334,7 @@
       </Col>
       <Col span="18">
       <FormItem label="备注:" prop="remark">
-        <Input v-model="orderForm.remark" :maxlength="$fieldLength.remark" type="text">
-        </Input>
+        <Input v-model="orderForm.remark" :maxlength="$fieldLength.remark" clearable></Input>
       </FormItem>
       </Col>
     </Row>
