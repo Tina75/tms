@@ -174,6 +174,9 @@ export default {
   .labelSpan.active
     color #00a4bd
     border-color #00a4bd
+  .labelSpan:hover
+    color #00a4bd
+    border-color #00a4bd
 .selectListLabel:after
   content  ''
   clear both
