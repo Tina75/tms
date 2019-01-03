@@ -86,17 +86,17 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
-// import operateBtnMixin from '../mixin/operateBtnMixin'
+import operateBtnMixin from '../mixin/operateBtnMixin'
 import contantmixin from '../mixin/contantmixin'
 import '@/libs/js/filter'
-import float from '@/libs/js/float'
+// import float from '@/libs/js/float'
 export default {
   name: 'detail',
 
   components: {
     // OrderPrint
   },
-  mixins: [ BasePage, contantmixin ],
+  mixins: [ BasePage, contantmixin, operateBtnMixin ],
   metaInfo: { title: '订单详情' },
   data () {
     return {
@@ -192,7 +192,7 @@ export default {
   },
 
   created () {
-    this.getDetail()
+    this.fetchData()
   },
   methods: {
     // 停用
@@ -211,7 +211,7 @@ export default {
         },
         methods: {
           ok () {
-            _this.getDetail()
+            _this.fetchData()
           }
         }
       })
@@ -233,13 +233,13 @@ export default {
         },
         methods: {
           ok () {
-            _this.getDetail()
+            _this.fetchData()
           }
         }
       })
     },
     // 分配
-    assign (p) {
+    /* assign (p) {
       let _this = this
       this.openDialog({
         name: 'oilCard/dialog/assign',
@@ -257,9 +257,9 @@ export default {
           }
         }
       })
-    },
+    }, */
     // 充值
-    recharge (p) {
+    /* recharge (p) {
       let _this = this
       this.openDialog({
         name: 'oilCard/dialog/recharge',
@@ -279,9 +279,9 @@ export default {
           }
         }
       })
-    },
+    }, */
     // 加油
-    refuel (p) {
+    /* refuel (p) {
       let _this = this
       this.openDialog({
         name: 'oilCard/dialog/refuel',
@@ -303,9 +303,9 @@ export default {
           }
         }
       })
-    },
+    }, */
     // 转账
-    transfer (p) {
+    /* transfer (p) {
       let _this = this
       this.openDialog({
         name: 'oilCard/dialog/transfer',
@@ -327,9 +327,9 @@ export default {
           }
         }
       })
-    },
+    }, */
     // 修改
-    update (p) {
+    /* update (p) {
       let _this = this
       this.openDialog({
         name: 'oilCard/dialog/addEdit',
@@ -353,9 +353,9 @@ export default {
           }
         }
       })
-    },
+    }, */
     // 回收
-    recover (p) {
+    /* recover (p) {
       let _this = this
       this.openDialog({
         name: 'oilCard/dialog/recover',
@@ -377,12 +377,12 @@ export default {
           }
         }
       })
-    },
+    }, */
     showPoptip (e) {
       this.show = true
     },
     // 拉取詳情数据
-    getDetail () {
+    fetchData () {
       // 订单详情
       Server({
         url: '/oilCard/detail',

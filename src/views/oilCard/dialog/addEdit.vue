@@ -171,7 +171,7 @@ export default {
           number: this.addEdit.number || undefined,
           primaryCardId: this.addEdit.primaryCardId || undefined,
           issuer: this.addEdit.issuer || undefined,
-          amount: float.round(this.addEdit.amount * 100) || undefined,
+          amount: typeof this.addEdit.amount === 'number' ? float.round(this.addEdit.amount * 100) : undefined,
           remark: this.addEdit.remark || undefined
         }
       }).then(res => {
@@ -193,7 +193,7 @@ export default {
           number: this.addEdit.number || undefined,
           primaryCardId: this.addEdit.primaryCardId || undefined,
           issuer: this.addEdit.issuer || undefined,
-          amount: float.round(this.addEdit.amount * 100) || undefined,
+          amount: typeof this.addEdit.amount === 'number' ? float.round(this.addEdit.amount * 100) : undefined,
           remark: this.addEdit.remark || ''
         }
       }).then(res => {
