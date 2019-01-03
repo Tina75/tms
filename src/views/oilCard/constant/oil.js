@@ -109,7 +109,7 @@ export const oilTableColumns = vm => [
   {
     title: '操作',
     key: 'orderNo',
-    width: 120,
+    width: 125,
     // fixed: 'left',
     render: (h, params) => {
       let renderHtml = []
@@ -159,6 +159,7 @@ export const oilTableColumns = vm => [
           },
           [
             h('a', { style: { color: '#00A4BD' } }, '更多'),
+            h('Icon', { props: { type: 'ios-arrow-down' }, style: { color: '#00A4BD', marginLeft: '5px' } }),
             h('DropdownMenu', { slot: 'list' }, DropdownItem)
           ])
         )
