@@ -113,6 +113,12 @@ export default {
       orderLogCount: 0
     }
   },
+  beforeRouteUpdate (to, from, next) {
+    this.$nextTick(() => {
+      this.fetchData()
+    })
+    next()
+  },
   computed: {
     rowParams () {
       return {
