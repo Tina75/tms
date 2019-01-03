@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" transfer width="560" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" class="modal" transfer width="560" @on-visible-change="close">
     <p slot="header" class="modalTitle">{{ title }}</p>
     <Form ref="validate" :model="assign" :rules="ruleValidate" :label-width="90" label-position="right">
       <FormItem  label="卡号：">
@@ -282,6 +282,10 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
+  .modal
+    /deep/
+      .ivu-radio-wrapper
+        margin-right 40px
   .modalTitle
     text-align center
     font-weight bold

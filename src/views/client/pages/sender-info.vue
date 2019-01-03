@@ -482,10 +482,11 @@ export default {
           key: 'dimension',
           render (h, params) {
             if (params.row.dimension) {
+              if (params.row.dimension.length === '' && params.row.dimension.width === '' && params.row.dimension.height === '') return h('span', {}, '-')
               let text = ''
-              text += params.row.dimension.length + '*'
-              text += params.row.dimension.width + '*'
-              text += params.row.dimension.height
+              text += params.row.dimension.length !== '' ? (params.row.dimension.length + '*') : ''
+              text += params.row.dimension.width !== '' ? (params.row.dimension.width + '*') : ''
+              text += params.row.dimension.height !== '' ? params.row.dimension.height : ''
               return h('span', {}, text)
             } else {
               return h('span', {}, '-')

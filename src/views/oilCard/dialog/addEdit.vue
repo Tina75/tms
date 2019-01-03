@@ -211,6 +211,10 @@ export default {
 
 <style scoped lang="stylus">
   /*@import "../pages/client.styl"*/
+  .modal
+    /deep/
+      .ivu-radio-wrapper
+        margin-right 40px
   .modalTitle
     text-align center
     font-weight bold

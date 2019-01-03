@@ -153,8 +153,8 @@ export default {
       }).then(res => {
         if (res.data.data === '') {
           vm.saveAccount(vm.writeOffForm.account, vm.writeOffForm.bankBranch)
-          vm.ok()
           vm.close()
+          vm.ok()
         } else if (res.data.data && res.data.data.operateCode === 1) {
           // 存在异常
           vm.$Toast.warning({
