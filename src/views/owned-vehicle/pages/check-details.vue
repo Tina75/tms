@@ -22,7 +22,7 @@
             <Col span="6">
             <div>
               <span class="label">金额：</span>
-              {{infoData.cost / 100}}
+              {{infoData.cost / 100}}<span>元</span>
             </div>
             </Col>
             <Col span="6">

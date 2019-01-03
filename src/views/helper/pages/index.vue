@@ -85,14 +85,16 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['DocumentHeight'])
+    ...mapGetters(['DocumentHeight', 'IsUserLogin'])
   },
   created () {
-    this.descover = this.$route.query.descover
-    if (this.descover) this.type = 'descover'
-    this.getMenuList()
-    if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
-      document.getElementById('help-info').style.maxHeight = (document.body.clientHeight - 80) + 'px'
+    if (this.IsUserLogin) {
+      this.descover = this.$route.query.descover
+      if (this.descover) this.type = 'descover'
+      this.getMenuList()
+      if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
+        document.getElementById('help-info').style.maxHeight = (document.body.clientHeight - 80) + 'px'
+      }
     }
   },
   methods: {
