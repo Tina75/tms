@@ -97,7 +97,7 @@ export default {
     // OrderPrint
   },
   mixins: [ BasePage, contantmixin, operateBtnMixin ],
-  metaInfo: { title: '订单详情' },
+  metaInfo: { title: '油卡详情' },
   data () {
     return {
       shipperOrderId: this.$route.query.shipperOrderId,
