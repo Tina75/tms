@@ -44,7 +44,7 @@
       <FormItem label="加油金额：" prop="changeAmount">
         <Row>
           <Col span="20">
-          <TagNumberInput v-model="refuel.changeAmount" :show-chinese="false" :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
+          <TagNumberInput v-model="refuel.changeAmount" :min="0"  :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
           </Col>
           <Col span="2" offset="1">
           <span>元</span>
