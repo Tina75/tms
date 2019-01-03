@@ -81,6 +81,9 @@ import Export from '@/libs/js/export'
 import contantmixin from '../mixin/contantmixin'
 export default {
   name: 'used-list',
+  metaInfo: {
+    title: '油卡使用记录'
+  },
   mixins: [commonmixin, contantmixin],
   data () {
     return {
