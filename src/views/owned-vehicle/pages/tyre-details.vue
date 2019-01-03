@@ -42,14 +42,14 @@
             <Col span="6">
             <div>
               <span class="label">换上公里数：</span>
-              <span v-if="infoData.setupMileage !== ''">{{infoData.setupMileage / 1000}}<span>公里</span></span>
+              <span v-if="infoData.setupMileage">{{infoData.setupMileage / 1000}}<span>公里</span></span>
               <span v-else>-</span>
             </div>
             </Col>
             <Col span="6">
             <div>
               <span class="label">换下公里数：</span>
-              <span v-if="infoData.uninstallMileage !== ''">{{infoData.setupMileage / 1000}}<span>公里</span></span>
+              <span v-if="infoData.uninstallMileage">{{infoData.uninstallMileage / 1000}}<span>公里</span></span>
               <span v-else>-</span>
             </div>
             </Col>

@@ -8,13 +8,13 @@
           <template v-if="item.children">
             <Submenu :name="item.path" :key="item.path">
               <template slot="title"><font-icon :type="item.icon" :size="18" />{{item.title}}</template>
-              <menu-item v-for="child in item.children" :name="getPath(item, child)" :key="child.path" >
+              <menu-item v-for="child in item.children" :name="getPath(item, child)" :key="child.path" @click.native="handleClick(getPath(item, child))">
                 <router-link :to="getPath(item, child)">{{child.title}}</router-link>
               </menu-item>
             </Submenu>
           </template>
           <template v-else>
-            <menu-item :name="item.path" :key="item.path">
+            <menu-item :name="item.path" :key="item.path" @click.native="handleClick(item.path)">
               <font-icon :type="item.icon" :size="18"></font-icon>
               <router-link :to="item.path">
                 {{item.meta.title}}
@@ -73,6 +73,7 @@
 import FontIcon from '@/components/FontIcon'
 import { mapGetters, mapActions } from 'vuex'
 import powerMixin from '@/basic/powerMixin.js'
+import browser from '@/libs/js/browser'
 export default {
   components: { FontIcon },
   mixins: [powerMixin],
@@ -135,6 +136,14 @@ export default {
       }
       const matchs = activeName.split('/')
       return ['/' + matchs[1]]
+    },
+    /**
+     * ie10 hash链接不跳转
+     */
+    handleClick (path) {
+      if (browser.ie && browser.ie10Compat) {
+        this.$router.push(path)
+      }
     },
     handleSelect (route) {
       let target = ''
