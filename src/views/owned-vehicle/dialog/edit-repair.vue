@@ -248,6 +248,7 @@ export default {
       this.validate.repairMoney = this.validate.repairMoney / 100
       this.validate.payMoney = this.validate.payMoney / 100
       this.validate.waitPayMoney = this.validate.waitPayMoney / 100
+      this.validate.repairMile = this.validate.repairMile / 1000
       this.carNoList.push({ carNo: this.validate.carNo })
     },
     save (name) {
@@ -257,6 +258,7 @@ export default {
         params.repairMoney = float.round(this.validate.repairMoney * 100)
         params.payMoney = float.round(this.validate.payMoney * 100)
         params.waitPayMoney = float.round(this.validate.waitPayMoney * 100)
+        params.repairMile = float.round(this.validate.repairMile * 1000)
         if (valid) {
           this.loading = true
           if (this.flag === 1) { // 新增
