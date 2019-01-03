@@ -4,7 +4,7 @@ export const clients = (state) => state.senders.map((user) => ({ name: user.name
 // 发货联系人
 export const consigners = (state) => state.contacts
 // 发货地址
-export const consignerAddresses = (state) => state.addresses.map(item => ({ name: item.address, value: item.address, id: item.id, lat: item.latitude, lng: item.longitude }))
+export const consignerAddresses = (state) => state.addresses.map(item => ({ name: item.address, value: item.address, id: item.id, lat: item.latitude, lng: item.longitude, consignerHourseNumber: item.consignerHourseNumber }))
 // 收货方数据，下面分拆
 export const consignees = (state) => state.consignees
 // 收货方联系人列表
@@ -16,7 +16,9 @@ export const consigneeContacts = (state, getters) => getters.consignees.map((use
   address: user.address,
   cityCode: user.cityCode,
   latitude: user.latitude,
-  longitude: user.longitude
+  longitude: user.longitude,
+  consignerHourseNumber: user.consignerHourseNumber,
+  consigneeCompanyName: user.consigneeCompanyName
 }))
 // 收货方手机
 export const consigneePhones = (state, getters) => getters.consignees.map((user) => ({

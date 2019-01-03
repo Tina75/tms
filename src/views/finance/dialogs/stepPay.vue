@@ -161,6 +161,7 @@ export default {
         methods: {
           ok () {
             _this.loadData()
+            _this.ok()
           }
         }
       })
