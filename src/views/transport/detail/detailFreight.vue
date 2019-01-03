@@ -1263,7 +1263,7 @@ export default {
           })
         }
         if (this.feeStatus === 10) {
-          this.$Message.error('此单已经加入核销单，不允许改单。')
+          this.$Message.error('此单已经加入对账单，不允许改单。')
         } else if (this.feeStatus === 20) {
           this.$Message.error('此单已经全部核销，不允许改单')
         } else {
