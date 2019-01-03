@@ -35,52 +35,60 @@
     </Form>
     <!--抵扣外转运费-->
     <Form v-show="assign.type===2" ref="validate2" :model="assign" :rules="ruleValidate2" :label-width="90" label-position="right">
-      <div >
-        <FormItem label="承运商：" prop="carrierName">
-          <SelectInput
-            v-model="assign.carrierName"
-            :maxlength="20"
-            :remote="false"
-            :clearable="true"
-            :local-options="carriers"
-            placeholder="请选择或输入承运商名称"
-            style="width: 100%"
-            @on-focus.once="getCarriers"
-            @on-select = "getCarriersId"
-          >
-          </SelectInput>
-        </FormItem>
-        <FormItem prop="driverNameOther"  label="司机：">
-          <SelectInput
-            v-model="assign.driverNameOther"
-            :maxlength="15"
-            :remote="false"
-            :clearable="true"
-            :local-options="carrierDrivers"
-            placeholder="请选择或输入司机名称"
-            style="width: 100%"
-            @on-focus="getCarrierDriversList"
-            @on-select = "getCarriersPhone"
-          >
-          </SelectInput>
-        </FormItem>
-        <FormItem label="手机号：" prop="driverPhone">
-          <Input :maxlength="11" v-model="assign.driverPhone" placeholder="请输入司机号码"  />
-        </FormItem>
-        <FormItem label="车牌号：" prop="truckNo">
-          <SelectInput
-            v-model="assign.truckNo"
-            :maxlength="15"
-            :remote="false"
-            :clearable="true"
-            :local-options="carrierCars"
-            placeholder="请选择或输入车牌号"
-            style="width: 100%"
-            @on-focus="getCarrierCarsList"
-          >
-          </SelectInput>
-        </FormItem>
-      </div>
+      <FormItem label="承运商：" prop="carrierName">
+        <SelectInput
+          v-model="assign.carrierName"
+          :maxlength="20"
+          :remote="false"
+          :clearable="true"
+          :local-options="carriers"
+          placeholder="请选择或输入承运商名称"
+          style="width: 100%"
+          @on-focus.once="getCarriers"
+          @on-select = "getCarriersId"
+        >
+        </SelectInput>
+      </FormItem>
+      <FormItem prop="driverNameOther"  label="司机：">
+        <SelectInput
+          v-model="assign.driverNameOther"
+          :maxlength="15"
+          :remote="false"
+          :clearable="true"
+          :local-options="carrierDrivers"
+          placeholder="请选择或输入司机名称"
+          style="width: 100%"
+          @on-focus="getCarrierDriversList"
+          @on-select = "getCarriersPhone"
+        >
+        </SelectInput>
+      </FormItem>
+      <FormItem label="手机号：" prop="driverPhone">
+        <Input :maxlength="11" v-model="assign.driverPhone" placeholder="请输入司机号码"  />
+      </FormItem>
+      <FormItem label="车牌号：" prop="truckNo">
+        <SelectInput
+          v-model="assign.truckNo"
+          :maxlength="15"
+          :remote="false"
+          :clearable="true"
+          :local-options="carrierCars"
+          placeholder="请选择或输入车牌号"
+          style="width: 100%"
+          @on-focus="getCarrierCarsList"
+        >
+        </SelectInput>
+      </FormItem>
+      <FormItem label="收押金：" prop="changeAmount">
+        <Row>
+          <Col span="20">
+          <TagNumberInput v-model="assign.recieveDeposit" :show-chinese="false" :length="moneyLength" :precision="precision" placeholder="请输入押金金额"></TagNumberInput>
+          </Col>
+          <Col span="2" offset="1">
+          <span>元</span>
+          </Col>
+        </Row>
+      </FormItem>
       <FormItem label="备注:">
         <Input :maxlength="100" v-model="assign.remark" type="textarea" placeholder="请输入"></Input>
       </FormItem>
@@ -100,10 +108,12 @@ import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
 import { CAR } from '@/views/client/pages/client'
 import float from '@/libs/js/float'
+import TagNumberInput from '@/components/TagNumberInput'
 export default {
   name: 'assign',
   components: {
-    SelectInput
+    SelectInput,
+    TagNumberInput
   },
   mixins: [BaseDialog],
   data () {
@@ -123,6 +133,8 @@ export default {
     }
     return {
       loading: false,
+      precision: 2,
+      moneyLength: 9,
       typeList: [
         { name: '自有车加油', value: 1 },
         { name: '抵扣外转运费', value: 2 }
@@ -250,7 +262,7 @@ export default {
               driverName: this.assign.type === 1 ? this.assign.driverName.split(' ')[0] : (this.assign.driverNameOther || undefined),
               truckNo: this.assign.truckNo || undefined,
               driverPhone: this.assign.type === 1 ? this.assign.driverName.split(' ')[1] : (this.assign.driverPhone || undefined),
-              recieveDeposit: float.round(this.assign.recieveDeposit * 100) || undefined,
+              recieveDeposit: typeof this.assign.recieveDeposit === 'number' ? float.round(this.assign.recieveDeposit * 100) : undefined,
               remark: this.assign.remark || undefined
             }
           }).then(res => {

@@ -29,7 +29,7 @@ export const TABLE_COLUMNS = vm => [
           on: {
             click: () => {
               vm.openTab({
-                path: '/upstream/detail/detail',
+                path: 'upstreamDetail',
                 query: {
                   shipperOrderId: params.row.shipperOrderId,
                   id: params.row.orderNo

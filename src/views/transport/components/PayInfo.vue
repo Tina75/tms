@@ -73,7 +73,7 @@ export default {
               }, str)])
             }
             // 展示表格 不显示 0 - 改单展示
-            if ((this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) && p.row.type === 'change') return h('span', p.row.cashAmount !== '' ? p.row.cashAmount : '')
+            if ((this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) && p.row.type === 'change' && p.row.cashAmount === '') return h('span', '')
             // 展示表格 可以显示 0
             if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) return h('span', p.row.cashAmount || 0)
             // 编辑状态
@@ -112,7 +112,7 @@ export default {
                 }
               }, str)])
             }
-            if ((this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) && p.row.type === 'change') return h('span', p.row.fuelCardAmount !== '' ? p.row.fuelCardAmount : '')
+            if ((this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) && p.row.type === 'change' && p.row.fuelCardAmount === '') return h('span', '')
             if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCardDisabled)) return h('span', p.row.fuelCardAmount || 0)
 
             return h(MoneyInput, {
@@ -142,6 +142,9 @@ export default {
       this.tableData = Object.assign([], value)
       this.tableDataBack = Object.assign([], value)
     }
+  },
+  mounted () {
+    console.log(this.tableData)
   },
   methods: {
     getPayInfo () {

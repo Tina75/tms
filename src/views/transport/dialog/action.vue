@@ -59,6 +59,7 @@ import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 import Server from '@/libs/js/server'
 import float from '@/libs/js/float'
 import _ from 'lodash'
+import { mapActions } from 'vuex'
 export default {
   name: 'SendOrPickAction',
   components: { SendFee, SendCarrierInfo, OwnSendInfo, PickupFee },
@@ -143,7 +144,9 @@ export default {
     }
   },
   methods: {
-
+    ...mapActions([
+      'checkDriverPhone'
+    ]),
     // 查询数据
     fetchData () {
       this.loading = true
@@ -289,15 +292,32 @@ export default {
           settlementType: z.$refs.sendFee.getSettlementType(),
           settlementPayInfo: z.$refs.sendFee.getSettlementPayInfo()
         })
+        // 填了司机手机号需要走校验
+        if (z.$refs.SendCarrierInfo.getCarrierInfo().driverPhone) {
+          z.isPhoneUsed(z.$refs.SendCarrierInfo, data)
+        } else {
+          z.callSendInterface(data)
+        }
       } else if (z.sendWay === '2') { // 自送
         data = Object.assign(data, z.$refs.sendFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
         delete data.cashBack // 自送没有返现
+        // 填了司机手机号需要走校验
+        if (z.$refs.ownSendInfo.getOwnSendInfo().driverPhone || z.$refs.ownSendInfo.getOwnSendInfo().assistantDriverPhone) {
+          z.isPhoneUsed(z.$refs.ownSendInfo, data)
+        } else {
+          z.callSendInterface(data)
+        }
       }
+    },
+
+    // 调送货派车接口
+    callSendInterface (data) {
+      const z = this
       Server({
         url: '/waybill/assign/vehicle',
         method: 'post',
-        data
-      }).then(res => {
+        data: data
+      }).then(() => {
         this.$Message.success('操作成功')
         z.btnLoading = false
         this.complete()
@@ -340,15 +360,33 @@ export default {
           settlementType: z.$refs.pickupFee.getSettlementType(),
           settlementPayInfo: z.$refs.pickupFee.getSettlementPayInfo()
         })
+        delete data.mileage // 提货去掉里程数
+        // 填了司机手机号需要走校验
+        if (z.$refs.SendCarrierInfo.getCarrierInfo().driverPhone) {
+          z.isPhoneUsed(z.$refs.SendCarrierInfo, data)
+        } else {
+          z.callPickupInterface(data)
+        }
       } else if (z.sendWay === '2') { // 自送
         data = Object.assign(data, z.$refs.pickupFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
+        delete data.mileage // 提货去掉里程数
+        // 填了司机手机号需要走校验
+        if (z.$refs.ownSendInfo.getOwnSendInfo().driverPhone || z.$refs.ownSendInfo.getOwnSendInfo().assistantDriverPhone) {
+          z.isPhoneUsed(z.$refs.ownSendInfo, data)
+        } else {
+          z.callPickupInterface(data)
+        }
       }
-      delete data.mileage // 提货去掉里程数
+    },
+
+    // 调提货派车接口
+    callPickupInterface (data) {
+      const z = this
       Server({
         url: '/load/bill/pick/up',
         method: 'post',
-        data
-      }).then(res => {
+        data: data
+      }).then(() => {
         this.$Message.success('操作成功')
         z.btnLoading = false
         this.complete()
@@ -391,6 +429,58 @@ export default {
         this.complete(data)
         this.close()
       }
+    },
+
+    // 校验主副司机手机号有没有被更改
+    isPhoneUsed (comp, data) {
+      const z = this
+      let phoneList = []
+      if (z.sendWay === '1') { // 外转
+        comp.getCarrierInfo().driverPhone && phoneList.push(comp.getCarrierInfo().driverPhone)
+      } else {
+        comp.getOwnSendInfo().driverPhone && phoneList.push(comp.getOwnSendInfo().driverPhone)
+        comp.getOwnSendInfo().assistantDriverPhone && phoneList.push(comp.getOwnSendInfo().assistantDriverPhone)
+      }
+      z.checkDriverPhone(phoneList).then((res) => {
+        // res[0].used = true
+        if (!_.every(res, { used: false })) { // 有变更过手机号
+          let name = ''
+          if (z.sendWay === '1') {
+            if (_.every(res, { used: true })) {
+              name = '司机'
+            }
+          } else {
+            if (res.length > 1 && _.every(res, { used: true })) {
+              name = '主司机和副司机'
+            } else {
+              let obj = _.find(res, { used: true })
+              if (obj.phone === comp.getOwnSendInfo().driverPhone) {
+                name = '主司机'
+              }
+              if (obj.phone === comp.getOwnSendInfo().assistantDriverPhone) {
+                name = '副司机'
+              }
+            }
+          }
+          z.checkPhoneDialog(name, data)
+        } else {
+          z.type === 'sendCar' ? z.callSendInterface(data) : z.callPickupInterface(data)
+        }
+      })
+      this.btnLoading = false
+    },
+    // 打开司机手机号校验弹窗
+    checkPhoneDialog (name, data) {
+      const _this = this
+      _this.openDialog({
+        name: 'transport/dialog/checkDriverPhone',
+        data: { name: name },
+        methods: {
+          ok (node) {
+            _this.type === 'sendCar' ? _this.callSendInterface(data) : _this.callPickupInterface(data)
+          }
+        }
+      })
     }
   }
 }

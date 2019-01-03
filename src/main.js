@@ -31,6 +31,10 @@ Vue.config.errorHandler = errorHandler
 Vue.prototype.$throw = error => {
   errorHandler(error, this)
 }
+// 客户端上传图片不带域名，需要统一添加
+Vue.prototype.$handleImgUrl = url => {
+  return url.indexOf('aliyuncs') > -1 ? url : process.env.VUE_APP_IMG_URL + url
+}
 
 // Meta自设置
 Vue.use(VueMeta)

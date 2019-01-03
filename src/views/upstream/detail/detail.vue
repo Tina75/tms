@@ -340,6 +340,12 @@ export default {
       return total
     }
   },
+  beforeRouteUpdate (to, from, next) {
+    this.$nextTick(() => {
+      this.getDetail()
+    })
+    next()
+  },
 
   created () {
     this.getDetail()

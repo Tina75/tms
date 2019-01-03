@@ -77,7 +77,7 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: 160,
+          width: 200,
           render: (h, params) => {
             const actions = []
             actions.push(h('a', {
@@ -91,9 +91,19 @@ export default {
               actions.push(h('a', {
                 class: 'i-ml-10',
                 attrs: {
-                  href: `#${TMSUrl.OPERATE_REPORT}`
+                  href: 'javascript:;'
+                },
+                on: {
+                  click: () => {
+                    jsCookie.set('imported_id', params.row.id, { expires: 1 })
+                    vm.openTab({
+                      title: '运营报表',
+                      path: TMSUrl.OPERATE_REPORT,
+                      query: {}
+                    })
+                  }
                 }
-              }, '查看导入订单'))
+              }, '查看导入历史订单'))
             }
             // 添加删除操作
             actions.push(

@@ -4,7 +4,7 @@
       <!--<Tooltip v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :disabled="!btn.disabled" :content="btn.content" :offset="10" transfer placement="top">-->
       <Button
         v-for="(btn, index) in btnGroup"
-        v-if="hasPower(btn.code)"
+        v-if="hasPower(btn.code) && detail[btn.isShow]"
         :key="index"
         :type="index === btnGroup.length-1 ? 'primary' : 'default'"
         @click="btn.func(rowParams, 1)">{{ btn.name }}</Button>
@@ -86,16 +86,17 @@
 <script>
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
-// import operateBtnMixin from '../mixin/operateBtnMixin'
+import operateBtnMixin from '../mixin/operateBtnMixin'
 import contantmixin from '../mixin/contantmixin'
 import '@/libs/js/filter'
+// import float from '@/libs/js/float'
 export default {
   name: 'detail',
 
   components: {
     // OrderPrint
   },
-  mixins: [ BasePage, contantmixin ],
+  mixins: [ BasePage, contantmixin, operateBtnMixin ],
   metaInfo: { title: '订单详情' },
   data () {
     return {
@@ -112,6 +113,12 @@ export default {
       orderLogCount: 0
     }
   },
+  beforeRouteUpdate (to, from, next) {
+    this.$nextTick(() => {
+      this.fetchData()
+    })
+    next()
+  },
   computed: {
     rowParams () {
       return {
@@ -124,6 +131,7 @@ export default {
         {
           name: '停用',
           code: 160108,
+          isShow: 'canDisable',
           func: (p) => {
             _this.stop(_this.detail.id)
           }
@@ -131,6 +139,7 @@ export default {
         {
           name: '启用',
           code: 160109,
+          isShow: 'canEnable',
           func: (p) => {
             _this.start(_this.detail.id)
           }
@@ -138,6 +147,7 @@ export default {
         {
           name: '分配',
           code: 160103,
+          isShow: 'canAssign',
           func: (p) => {
             _this.assign(p)
           }
@@ -145,12 +155,14 @@ export default {
         {
           name: '充值',
           code: 160104,
+          isShow: 'canRecharge',
           func: (p) => {
             _this.recharge(p)
           }
         },
         {
           name: '加油',
+          isShow: 'canRefuel',
           code: 160105,
           func: (p) => {
             _this.refuel(p)
@@ -158,6 +170,7 @@ export default {
         },
         {
           name: '转账',
+          isShow: 'canTransfer',
           code: 160106,
           func: (p) => {
             _this.transfer(p)
@@ -166,6 +179,7 @@ export default {
         {
           name: '修改',
           code: 160102,
+          isShow: 'canUpdate',
           func: (p) => {
             _this.update(p)
           }
@@ -173,6 +187,7 @@ export default {
         {
           name: '回收',
           code: 160107,
+          isShow: 'canRecover',
           func: (p) => {
             _this.recover(p)
           }
@@ -183,35 +198,27 @@ export default {
   },
 
   created () {
-    this.getDetail()
+    this.fetchData()
   },
   methods: {
     // 停用
     stop (id) {
       let idList = [id]
       let _this = this
-      this.$Modal.confirm({
-        title: '停用',
-        content: '是否确认停用所选油卡',
-        okText: '确认',
-        cancelText: '取消',
-        async onOk () {
-          let vm = _this
-          _this.openDialog({
-            name: 'oilCard/dialog/operate',
-            data: {
-              title: '油卡停用',
-              operate: {
-                idList: idList,
-                type: 1 // 1停用，2启用
-              }
-            },
-            methods: {
-              ok () {
-                vm.getDetail()
-              }
-            }
-          })
+      _this.openDialog({
+        name: 'oilCard/dialog/operate',
+        data: {
+          title: '油卡停用',
+          content: '是否确认停用所选油卡',
+          operate: {
+            idList: idList,
+            type: 1 // 1停用，2启用
+          }
+        },
+        methods: {
+          ok () {
+            _this.fetchData()
+          }
         }
       })
     },
@@ -220,33 +227,25 @@ export default {
       let idList = [id]
       // idList = idList.push(id)
       let _this = this
-      this.$Modal.confirm({
-        title: '启用',
-        content: '是否确认启用所选油卡',
-        okText: '确认',
-        cancelText: '取消',
-        async onOk () {
-          let vm = _this
-          _this.openDialog({
-            name: 'oilCard/dialog/operate',
-            data: {
-              title: '油卡启用',
-              operate: {
-                idList: idList,
-                type: 2 // 1停用，2启用
-              }
-            },
-            methods: {
-              ok () {
-                vm.getDetail()
-              }
-            }
-          })
+      _this.openDialog({
+        name: 'oilCard/dialog/operate',
+        data: {
+          title: '油卡启用',
+          content: '是否确认启用所选油卡',
+          operate: {
+            idList: idList,
+            type: 2 // 1停用，2启用
+          }
+        },
+        methods: {
+          ok () {
+            _this.fetchData()
+          }
         }
       })
     },
     // 分配
-    assign (p) {
+    /* assign (p) {
       let _this = this
       this.openDialog({
         name: 'oilCard/dialog/assign',
@@ -255,8 +254,7 @@ export default {
           assign: {
             id: p.row.id,
             number: p.row.number,
-            amount: p.row.amount,
-            remark: p.row.remark
+            amount: p.row.amount
           }
         },
         methods: {
@@ -265,9 +263,9 @@ export default {
           }
         }
       })
-    },
+    }, */
     // 充值
-    recharge (p) {
+    /* recharge (p) {
       let _this = this
       this.openDialog({
         name: 'oilCard/dialog/recharge',
@@ -276,7 +274,6 @@ export default {
           recharge: {
             id: p.row.id,
             amount: p.row.amount,
-            remark: p.row.remark,
             type: p.row.type,
             issuer: p.row.issuer,
             primaryCardNumber: p.row.primaryCardNumber
@@ -288,9 +285,9 @@ export default {
           }
         }
       })
-    },
+    }, */
     // 加油
-    refuel (p) {
+    /* refuel (p) {
       let _this = this
       this.openDialog({
         name: 'oilCard/dialog/refuel',
@@ -300,7 +297,6 @@ export default {
             id: p.row.id,
             number: p.row.number,
             amount: p.row.amount,
-            remark: p.row.remark,
             type: p.row.type,
             driverName: p.row.driverName,
             truckNo: p.row.truckNo,
@@ -313,9 +309,9 @@ export default {
           }
         }
       })
-    },
+    }, */
     // 转账
-    transfer (p) {
+    /* transfer (p) {
       let _this = this
       this.openDialog({
         name: 'oilCard/dialog/transfer',
@@ -325,7 +321,6 @@ export default {
             id: p.row.id,
             number: p.row.number,
             amount: p.row.amount,
-            remark: p.row.remark,
             type: p.row.type,
             issuer: p.row.issuer,
             primaryCardId: p.row.primaryCardId,
@@ -338,9 +333,9 @@ export default {
           }
         }
       })
-    },
+    }, */
     // 修改
-    update (p) {
+    /* update (p) {
       let _this = this
       this.openDialog({
         name: 'oilCard/dialog/addEdit',
@@ -350,7 +345,7 @@ export default {
           addEdit: {
             id: p.row.id,
             number: p.row.number,
-            amount: p.row.amount,
+            amount: typeof p.row.amount !== 'string' ? float.round(p.row.amount / 100, 2) : '',
             remark: p.row.remark,
             type: p.row.type,
             issuer: p.row.issuer,
@@ -364,9 +359,9 @@ export default {
           }
         }
       })
-    },
+    }, */
     // 回收
-    recover (p) {
+    /* recover (p) {
       let _this = this
       this.openDialog({
         name: 'oilCard/dialog/recover',
@@ -376,9 +371,10 @@ export default {
             id: p.row.id,
             number: p.row.number,
             amount: p.row.amount,
-            remark: p.row.remark,
             type: p.row.type,
-            issuer: p.row.issuer
+            issuer: p.row.issuer,
+            carrierName: p.row.carrierName,
+            returnDeposit: typeof p.row.recieveDeposit !== 'string' ? float.round(p.row.recieveDeposit / 100, 2) : ''
           }
         },
         methods: {
@@ -387,12 +383,12 @@ export default {
           }
         }
       })
-    },
+    }, */
     showPoptip (e) {
       this.show = true
     },
     // 拉取詳情数据
-    getDetail () {
+    fetchData () {
       // 订单详情
       Server({
         url: '/oilCard/detail',

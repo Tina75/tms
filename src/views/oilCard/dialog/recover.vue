@@ -25,7 +25,7 @@
           </Col>
         </Row>
       </FormItem>
-      <FormItem label="退押金：" >
+      <FormItem v-if="recover.carrierName !== '自有车队'" label="退押金：">
         <Row>
           <Col span="20">
           <TagNumberInput v-model="recover.returnDeposit" :show-chinese="false" :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
@@ -73,6 +73,7 @@ export default {
       precision: 2,
       moneyLength: 9,
       recover: {
+        carrierName: '',
         id: '',
         number: '',
         amount: '',
@@ -90,13 +91,6 @@ export default {
       },
       ruleValidate: {
         actrualAmount: [{ required: true, message: '请输入实际金额', trigger: 'change', type: 'number' }]
-        // driverName: { required: true, message: '请选择司机', trigger: 'change' },
-        // carrierName: { required: true, message: '请输入承运商', trigger: 'change' },
-        // driverPhone: [
-        //   { required: true, message: '请输入手机号码', trigger: 'blur' },
-        //   { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
-        // ],
-        // truckNo: { type: 'string', message: '车牌号格式错误', pattern: CAR }
       }
     }
   },
@@ -112,8 +106,8 @@ export default {
             method: 'post',
             data: {
               id: this.recover.id || undefined,
-              actrualAmount: float.round(this.recover.actrualAmount * 100) || undefined,
-              returnDeposit: float.round(this.recover.returnDeposit * 100) || undefined,
+              actrualAmount: typeof this.recover.actrualAmount === 'number' ? float.round(this.recover.actrualAmount * 100) : undefined,
+              returnDeposit: typeof this.recover.returnDeposit === 'number' ? float.round(this.recover.returnDeposit * 100) : undefined,
               opearteDate: this.recover.opearteDate ? this.recover.opearteDate.Format('yyyy-MM-dd') : undefined,
               remark: this.recover.remark || undefined
             }

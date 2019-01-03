@@ -7,7 +7,7 @@
       :rows="rows"
       type="textarea"
       @input.native="descInput"/>
-    <span class="numberCount">{{remnant}}/{{maxlength}}</span>
+    <span :class="remnant ? 'numberCount haveNumber' : 'numberCount noneNumber'">{{remnant}}/{{maxlength}}</span>
   </div>
 </template>
 <script>
@@ -55,11 +55,14 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-span.numberCount
+.numberCount
   float: right;
   position: relative;
-  right: 30px;
+  right: 20px;
   top: -30px;
-  color #333333
   font-size 12px
+.haveNumber
+  color #333333
+.noneNumber
+  color #999999
 </style>

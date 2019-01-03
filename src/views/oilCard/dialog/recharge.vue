@@ -106,7 +106,7 @@ export default {
             method: 'post',
             data: {
               id: this.recharge.id || undefined,
-              changeAmount: float.round(this.recharge.changeAmount * 100) || undefined,
+              changeAmount: typeof this.recharge.changeAmount === 'number' ? float.round(this.recharge.changeAmount * 100) : undefined,
               operateDate: this.recharge.operateDate ? this.recharge.operateDate.Format('yyyy-MM-dd') : undefined,
               remark: this.recharge.remark || undefined
             }

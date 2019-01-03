@@ -58,12 +58,13 @@ export default [
         }
       },
       {
-        'name': 'finance-rules',
+        'name': 'writtenOffDetail',
         'path': 'writtenOffDetail',
         'component': () => import(/* webpackChunkName: "finance-writtern-off" */'./pages/writtenOffDetail.vue'),
         'meta': {
           'hideInMenu': true,
           'powerCode': 170000,
+          'notCache': true,
           'title': '核销详情'
         }
       }
