@@ -120,7 +120,9 @@ export default {
           }
           clearFileInput(this.$refs.fileInput)
         }).catch((err) => {
-          vm.failStatue = true
+          vm.$nextTick(() => {
+            vm.failStatue = true
+          })
           vm.errorReport = err.data.data
           if (vm.timer) {
             clearTimeout(vm.timer)
