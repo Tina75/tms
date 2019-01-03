@@ -37,6 +37,7 @@
         :max="el.max"
         :style="`width: ${100 / col.children.length}%`"
         :placeholder="el.title"
+        :precision="el.point"
         clearable>
       </InputNumber>
     </div>

@@ -18,7 +18,8 @@ export const NumberPrecesion = {
   weightKg: 0, // 重量公斤，保留整数
   volume: 6, // 体积精确6位小数
   mileage: 1, // 公里精确到1位小数
-  fee: 2 // 费用精确到2位小数
+  fee: 2, // 费用精确到2位小数
+  dimension: 1 // 包装尺寸1位小数
 }
 /**
  * 全局系统添加长度控制
