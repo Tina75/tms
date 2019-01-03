@@ -75,6 +75,7 @@
           <FormItem label="发货地址：">
             {{detail.consignerAddress + detail.consignerHourseNumber}}
           </FormItem>
+          <FormItem label="收货人单位：" style="visibility: hidden"></FormItem>
         </Card>
         </Col>
         <Col span="12">
@@ -88,6 +89,9 @@
           </FormItem>
           <FormItem label="收货地址：">
             {{detail.consigneeAddress + detail.consigneeHourseNumber}}
+          </FormItem>
+          <FormItem label="收货人单位：">
+            {{detail.consigneeCompanyName}}
           </FormItem>
         </Card>
         </Col>

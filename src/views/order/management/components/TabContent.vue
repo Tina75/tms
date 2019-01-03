@@ -1348,7 +1348,7 @@ export default {
   justify-content: space-between;
   -ms-flex-pack justify
 .input-w
-  width 200px
+  width 200px !important
 .ivu-btn
   margin-right 8px
   width 80px

@@ -8,6 +8,7 @@
       </span>
       <i v-if="clearable && formatterValue" :class="['ivu-icon-ios-close-circle', 'ivu-input-icon', 'ivu-input-icon-clear']" class="ivu-icon" @click="handleClear"></i>
       <input
+        ref="input"
         :id="elementId"
         :class="inputClasses"
         :disabled="disabled"
@@ -32,7 +33,7 @@
 <script>
 /**
  * changlog:
- * 1. 取消了oninput事件；因为ie11下，弹出框会自动执行input事件，导致会首次验证，提示错误;
+ * 1. 取消了oninput事件；因为ie11下，弹出框会自动执行input事件，导致会首次验证，提示错误;导致输入时没法显示中文
  */
 import float from '../libs/js/float.js'
 import { money2chinese } from '@/libs/js/util'
@@ -188,9 +189,14 @@ export default {
     }
   },
   mounted () {
-    this.changeVal(this.currentValue)
+    const vm = this
+    vm.changeVal(vm.currentValue)
 
-    this.showSuffix = this.suffix !== '' || this.$slots.suffix !== undefined
+    vm.showSuffix = vm.suffix !== '' || vm.$slots.suffix !== undefined
+
+    vm.$nextTick(() => {
+      vm.$refs.input.oninput = vm.change
+    })
   },
   methods: {
     preventDefault (e) {
