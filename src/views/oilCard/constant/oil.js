@@ -274,6 +274,7 @@ export const usedTableColumns = vm => [
     title: '卡号',
     key: 'number',
     width: 200,
+    fixed: 'left',
     render: (h, params) => {
       return h('span', vm.cardFormat(params.row.number))
     }
