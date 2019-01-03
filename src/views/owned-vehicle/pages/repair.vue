@@ -185,6 +185,7 @@ export default {
         {
           title: '送修公里数（公里）',
           key: 'repairMile',
+          width: 100,
           render: (h, params) => {
             return h('span', Number(params.row.repairMile) / 1000)
           }
