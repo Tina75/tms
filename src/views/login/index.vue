@@ -149,10 +149,14 @@ export default {
 
     // 设置cookie-token
     setToken (token) {
-      // const exp = new Date()
-      // exp.setTime(exp.getTime() + EXPIRES)
-      // document.cookie = `token=${escape(token)};expires=${exp.toGMTString()}`
-      setToken(token)
+      if (this.$route.query.from === 'shipper') {
+        // 设置货主版token
+        const exp = new Date()
+        exp.setTime(exp.getTime() + EXPIRES)
+        document.cookie = `token=${escape(token)};expires=${exp.toGMTString()}`
+      } else {
+        setToken(token)
+      }
     },
 
     // 登录处理
