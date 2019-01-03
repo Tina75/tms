@@ -133,7 +133,7 @@
         </div>
         <Row>
           <Col :span="20">
-          <FormItem label="公司简介：" style="margin-bottom:0px">
+          <FormItem label="公司简介：" style="margin-bottom:10px">
             <TextAreaNumber
               v-if="isEdit"
               :rows="5"
@@ -641,9 +641,9 @@ export default {
   margin-bottom 30px
 .imageTips
   color #999999
-  font-size 13px
+  font-size 14px
   position relative
-  top 2px
+  top 1px
 .unitSpan
   margin-left 5px
 .ios-alert

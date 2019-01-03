@@ -340,7 +340,7 @@
     </Row>
     <div class="van-center i-mt-20 i-mb-20">
       <span v-if="!orderId" style="float: left; vertical-align:middle;">
-        <Checkbox v-model="isSaveOrderTemplate">保存为常发货源</Checkbox>
+        <Checkbox v-model="isSaveOrderTemplate">保存为常发订单</Checkbox>
       </span>
       <Button v-if="hasPower(100101)" :loading="disabled" type="primary" @click="handleSubmit">保存</Button>
       <Button v-if="hasPower(100102)" :loading="disabled" class="i-ml-10" @click="print">保存并打印</Button>

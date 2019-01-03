@@ -219,7 +219,7 @@ export default {
           }
         },
         {
-          title: '包装尺寸(mm)',
+          title: '包装尺寸（毫米）',
           key: 'dimension',
           render: (h, p) => {
             let text = ''
