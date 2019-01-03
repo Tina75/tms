@@ -149,7 +149,7 @@ export default {
 
     // 设置cookie-token
     setToken (token) {
-      if (this.$route.query.from === 'shipper') {
+      if (window.location.href.indexOf('from=shipper') !== -1) {
         // 设置货主版token
         Cookies.set('token', token, { expires: 365, path: '/' })
       } else {
