@@ -33,7 +33,8 @@
         </Col>
         <Col :span="8">
         <FormItem label="手机号：" prop="driverPhone">
-          <Input v-model="validate.driver.driverPhone" :maxlength="11" class="formInputSty" placeholder="必填"/>
+          <SelectInput v-model="validate.driver.driverPhone" :maxlength="13" :formatter="formatePhoneNum" class="formInputSty" placeholder="必填"></SelectInput>
+          <!-- <Input v-model="validate.driver.driverPhone" :maxlength="11" class="formInputSty" placeholder="必填"/> -->
         </FormItem>
         </Col>
         <Col :span="8">
@@ -159,7 +160,8 @@
         </Col>
         <Col span="8">
         <FormItem label="联系电话：" prop="carrierPhone">
-          <Input v-model="validate.company.carrierPhone" :maxlength="11" placeholder="请输入"/>
+          <!-- <Input v-model="validate.company.carrierPhone" :maxlength="11" placeholder="请输入"/> -->
+          <SelectInput v-model="validate.company.carrierPhone" :maxlength="phoneLength(validate.company.carrierPhone)" :formatter="formatePhoneNum" placeholder="必填"></SelectInput>
         </FormItem>
         </Col>
       </Row>
@@ -200,6 +202,8 @@ import UpLoad from '@/components/upLoad/index.vue'
 import TagNumberInput from '@/components/TagNumberInput'
 import SelectCarLength from '@/components/SelectCarLength'
 import SelectCarType from '@/components/SelectCarType'
+import { formatePhone } from '@/libs/js/formate'
+import { validatePhone } from '@/libs/js/validate'
 import _ from 'lodash'
 export default {
   name: 'carrier',
@@ -292,7 +296,7 @@ export default {
           ],
           carrierPhone: [
             { required: true, message: '联系电话不能为空', trigger: 'blur' },
-            { type: 'string', message: '联系电话格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
+            { validator: validatePhone, trigger: 'blur' }
           ]
         }
       }
@@ -318,6 +322,12 @@ export default {
     }
   },
   methods: {
+    formatePhoneNum (temp) {
+      return formatePhone(temp)
+    },
+    phoneLength (value) {
+      return /^1/.test(value) ? 13 : this.$fieldLength.telephone
+    },
     // 图片传入赋值data
     setImageDate () {
       this.$refs.upload1.progress = 1

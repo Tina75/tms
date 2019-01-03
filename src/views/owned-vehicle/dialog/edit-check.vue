@@ -28,7 +28,7 @@
           <FormItem label="金额:" prop="cost">
             <Row>
               <Col span="20">
-              <TagNumberInput :min="0" v-model="validate.cost" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+              <TagNumberInput :min="0" v-model="validate.cost" :precision="2" placeholder="请输入"></TagNumberInput>
               </Col>
               <Col span="2" offset="1">
               <span>元</span>

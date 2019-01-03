@@ -173,7 +173,6 @@ export default {
         {
           title: '送修日期',
           key: 'repairDate',
-          width: 100,
           render: (h, params) => {
             let text = this.formatDate(params.row.repairDate)
             return h('div', { props: {} }, text)
@@ -185,7 +184,10 @@ export default {
         },
         {
           title: '送修公里数（公里）',
-          key: 'repairMile'
+          key: 'repairMile',
+          render: (h, params) => {
+            return h('span', Number(params.row.repairMile) / 1000)
+          }
         },
         {
           title: '维修费用（元）',
