@@ -1,7 +1,9 @@
 <template>
   <div  class="popTip" style="display: inline-block">
     <Poptip trigger="hover">
-      <Icon type="ios-more" class="icon"/>
+      <!--<Icon type="icon-ico-more" class="icon"/>-->
+      <!--<i class="icon icon-ico-card"></i>-->
+      <FontIcon  size="14" type="ico-more" ></FontIcon>
       <div slot="content" class="popTip-content">
         <Row>
           <Col v-for="(item,index) in listSort" :key = "index" :class="{'payed': item.verifyStatus === 0}" class="item" span="12">
@@ -15,9 +17,11 @@
 
 <script>
 import { payTypeMap, verifyStatusMap } from '../constant/numList'
+import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
 export default {
   name: 'payTypeDialog',
+  components: { FontIcon },
   props: {
     list: {
       type: Array
@@ -55,12 +59,4 @@ export default {
         margin-bottom 10px
       .payed
         color #FA8C15
-      .icon
-        display inline-block
-        width 15px
-        height 15px
-        border-radius 50%
-        line-height 15px
-        text-align center
-        border 1px solid rgb(81, 90, 110)
 </style>

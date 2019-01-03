@@ -650,7 +650,7 @@ export default {
         }).then(res => {
           if (res.data.data && res.data.data.operateCode === 1) { // 存在异常
             errList.push({
-              title: '以下单据因为存在异常未处理，不能批量核销。单据号：',
+              title: '以下单据存在异常未处理，不能批量核销。',
               arr: res.data.data.orderNos
             })
           }

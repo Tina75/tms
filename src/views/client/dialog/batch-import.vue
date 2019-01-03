@@ -27,7 +27,7 @@
         <Progress :percent="percent" class="progress"/>
         <!-- 导入中 -->
         <div v-if="percent != 100 && !failStatue">
-          <p>正在导入 我是文件名.xls</p>
+          <p>正在导入 {{fileName}}</p>
         </div>
         <!-- 导入成功 -->
         <div v-if="percent == 100">

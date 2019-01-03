@@ -176,6 +176,12 @@ export default {
       ]
     }
   },
+  beforeRouteUpdate (to, from, next) {
+    this.$nextTick(() => {
+      this.getDetail()
+    })
+    next()
+  },
   mounted () {
     // this.metaInfo.title = this.sceneMap[this.scene] + '对账'
     this.getDetail()
