@@ -1,4 +1,5 @@
 // 表格中的按钮方法
+import float from '@/libs/js/float'
 export default {
   methods: {
     // 分配
@@ -11,8 +12,7 @@ export default {
           assign: {
             id: p.row.id,
             number: p.row.number,
-            amount: p.row.amount,
-            remark: p.row.remark
+            amount: p.row.amount
           }
         },
         methods: {
@@ -32,7 +32,6 @@ export default {
           recharge: {
             id: p.row.id,
             amount: p.row.amount,
-            remark: p.row.remark,
             type: p.row.type,
             issuer: p.row.issuer,
             primaryCardNumber: p.row.primaryCardNumber
@@ -56,7 +55,6 @@ export default {
             id: p.row.id,
             number: p.row.number,
             amount: p.row.amount,
-            remark: p.row.remark,
             type: p.row.type,
             driverName: p.row.driverName,
             truckNo: p.row.truckNo,
@@ -81,7 +79,6 @@ export default {
             id: p.row.id,
             number: p.row.number,
             amount: p.row.amount,
-            remark: p.row.remark,
             type: p.row.type,
             issuer: p.row.issuer,
             primaryCardId: p.row.primaryCardId,
@@ -106,7 +103,7 @@ export default {
           addEdit: {
             id: p.row.id,
             number: p.row.number,
-            amount: p.row.amount,
+            amount: typeof p.row.amount !== 'string' ? float.round(p.row.amount / 100, 2) : '',
             remark: p.row.remark,
             type: p.row.type,
             issuer: p.row.issuer,
@@ -132,9 +129,10 @@ export default {
             id: p.row.id,
             number: p.row.number,
             amount: p.row.amount,
-            remark: p.row.remark,
             type: p.row.type,
-            issuer: p.row.issuer
+            issuer: p.row.issuer,
+            carrierName: p.row.carrierName,
+            returnDeposit: typeof p.row.recieveDeposit !== 'string' ? float.round(p.row.recieveDeposit / 100, 2) : ''
           }
         },
         methods: {

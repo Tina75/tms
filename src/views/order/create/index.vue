@@ -92,7 +92,7 @@
       </Col>
       <Col span="6">
       <FormItem label="联系号码:" prop="consignerPhone">
-        <SelectInput v-model="orderForm.consignerPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号，座机需加区号" clearable></SelectInput>
+        <SelectInput v-model="orderForm.consignerPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号" clearable></SelectInput>
       </FormItem>
       </Col>
       <Col span="6">
@@ -103,7 +103,7 @@
       </Col>
       <Col span="6">
       <FormItem label="联系号码:" prop="consigneePhone">
-        <SelectInput v-model="orderForm.consigneePhone" :formatter="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号，座机需加区号" clearable></SelectInput>
+        <SelectInput v-model="orderForm.consigneePhone" :formatter="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号" clearable></SelectInput>
       </FormItem>
       </Col>
     </Row>
@@ -176,9 +176,13 @@
     <Row :gutter="16" style="margin-bottom: 10px">
       <Col span="6">
       <FormItem label="结算方式:" prop="settlementType">
-        <Select ref="settlementSelector" v-model="orderForm.settlementType" transfer>
-          <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
-        </Select>
+        <Row>
+          <Col span="19">
+          <Select ref="settlementSelector" v-model="orderForm.settlementType" transfer>
+            <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+          </Select>
+          </Col>
+        </Row>
       </FormItem>
       </Col>
       <Col span="6">
@@ -245,7 +249,7 @@
           <Col span="19">
           <TagNumberInput :min="0" v-model="orderForm.insuranceFee"></TagNumberInput>
           </Col>
-          <Col span="4" class="order-create__input-unit">元</Col>
+          <Col span="5" class="order-create__input-unit">元</Col>
         </Row>
       </FormItem>
       </Col>
@@ -271,27 +275,35 @@
     <Row :gutter="16" class="i-mt-15">
       <Col span="6">
       <FormItem :class="{'ivu-form-item-error': highLight}" label="提货方式:" prop="pickup">
-        <Select ref="pickupSelector" v-model="orderForm.pickup" :disabled="orderForm.disabledPickUp" transfer>
-          <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
-        </Select>
+        <Row>
+          <Col span="19">
+          <Select ref="pickupSelector" v-model="orderForm.pickup" :disabled="orderForm.disabledPickUp" transfer>
+            <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+          </Select>
+          </Col>
+        </Row>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="回单数量:" prop="receiptCount">
         <Row>
-          <Col span="20">
+          <Col span="19">
           <InputNumber v-model="orderForm.receiptCount" :min="0" :parser="value => value ?  parseInt(value).toString() : value" class="order-create__input-w100">
           </InputNumber>
           </Col>
-          <Col span="4" class="order-create__input-unit">份</Col>
+          <Col span="5" class="order-create__input-unit">份</Col>
         </Row>
       </FormItem>
       </Col>
       <Col span="6">
       <FormItem label="是否开票:" prop="isInvoice">
-        <Select v-model="orderForm.isInvoice" transfer>
-          <Option v-for="opt in invoiceList" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
-        </Select>
+        <Row>
+          <Col span="19">
+          <Select v-model="orderForm.isInvoice" transfer>
+            <Option v-for="opt in invoiceList" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+          </Select>
+          </Col>
+        </Row>
       </FormItem>
       </Col>
       <Col span="6">
@@ -309,7 +321,7 @@
       </FormItem>
       </Col>
     </Row>
-    <Row>
+    <Row :gutter="16" class="i-mt-15">
       <Col span="6">
       <FormItem label="代收货款:" prop="collectionMoney">
         <Row>
@@ -539,14 +551,14 @@ export default {
           { required: true, message: '请输入发货人名称' }
         ],
         consignerPhone: [
-          { required: true, message: '请输入发货人联系号码' },
+          { required: true, message: '请输入正确的手机号或座机号' },
           { validator: validatePhone, trigger: 'blur' }
         ],
         consigneeContact: [
           { required: true, message: '请输入收货人名称' }
         ],
         consigneePhone: [
-          { required: true, message: '请输入收货人联系号码' },
+          { required: true, message: '请输入正确的手机号或座机号' },
           { validator: validatePhone, trigger: 'blur' }
         ],
         consignerAddress: [

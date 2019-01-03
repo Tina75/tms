@@ -48,7 +48,7 @@
           <FormItem label="载重：" prop="shippingWeight">
             <Row>
               <Col span="20">
-              <TagNumberInput :min="0" v-model="validate.shippingWeight" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+              <TagNumberInput :min="0" :precision="3" v-model="validate.shippingWeight" :show-chinese="false" placeholder="请输入"></TagNumberInput>
               </Col>
               <Col span="2" offset="1">
               <span>吨</span>
@@ -60,7 +60,7 @@
           <FormItem label="净空：" prop="shippingVolume">
             <Row>
               <Col span="20">
-              <TagNumberInput :min="0" v-model="validate.shippingVolume" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+              <TagNumberInput :min="0" :precision="6" v-model="validate.shippingVolume" :show-chinese="false" placeholder="请输入"></TagNumberInput>
               </Col>
               <Col span="2" offset="1">
               <span>方</span>
@@ -156,7 +156,7 @@
   </div>
 </template>
 <script>
-import { CAR, formatterCarNo } from '../pages/client'
+import { CAR, CAR_GUA, formatterCarNo } from '../pages/client'
 import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/index.vue'
@@ -202,7 +202,7 @@ export default {
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
         ],
         trailerNo: [
-          { type: 'string', message: '车牌号格式错误' }
+          { type: 'string', message: '挂车号格式不正确', pattern: CAR_GUA, trigger: 'blur' }
         ],
         carType: [
           { required: true, message: '车型不能为空' }
@@ -211,10 +211,10 @@ export default {
           { required: true, message: '车长不能为空' }
         ],
         shippingWeight: [
-          { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '小于等于六位整数,最多三位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,3})?$/ }
         ],
         shippingVolume: [
-          { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
+          { message: '小于等于六位整数,最多六位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,6})?$/ }
         ]
       },
       filteredValidate: []

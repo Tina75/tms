@@ -1,12 +1,18 @@
 <!--停用启用弹窗-->
 <template>
-  <Modal v-model="visiable" :mask-closable="false" transfer width="560" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" class="modal" transfer width="400" @on-visible-change="close">
     <p slot="header" class="modalTitle">{{ title }}</p>
-    <Form ref="validate" :model="operate" :rules="ruleValidate" :label-width="90" label-position="right">
-      <FormItem label="备注:">
-        <Input :maxlength="100" v-model="operate.remark" type="textarea" placeholder="请输入"></Input>
-      </FormItem>
-    </Form>
+    <div style="text-align: center;font-size: 14px;font-family: PingFangSC-Regular;color: #000;">
+      <Icon type="ios-help-circle" size="28" color="#FFBB44" style="margin-top: -2px;margin-right: 10px;"></Icon>
+      <span>{{content}}</span>
+      <div class="cash-back-input" style="margin-top: 30px;margin-bottom: 20px;">
+        <Form ref="validate" :model="operate" :rules="ruleValidate" :label-width="90" label-position="right">
+          <FormItem label="备注:">
+            <Input :maxlength="100" v-model="operate.remark" type="textarea" placeholder="请输入"></Input>
+          </FormItem>
+        </Form>
+      </div>
+    </div>
     <div slot="footer" class="footerSty">
       <Button :loading="loading" type="primary" @click="save()">确定</Button>
       <Button style="margin-left: 8px" @click="close()">取消</Button>
@@ -26,6 +32,7 @@ export default {
   data () {
     return {
       loading: false,
+      content: '',
       operate: {
         idList: [],
         type: null, // 1停用，2启用
@@ -35,7 +42,7 @@ export default {
     }
   },
   mounted () {
-    console.log(this.ok())
+    // console.log(this.ok())
   },
   methods: {
     save () {
@@ -94,6 +101,9 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
+  .modal /deep/
+    .ivu-modal-body
+      padding-left 0
   .modalTitle
     text-align center
     font-weight bold

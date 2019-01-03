@@ -1,13 +1,8 @@
 <template>
   <Poptip trigger="hover" class="header-user" transfer placement="bottom" popper-class="dropdown-info" title="账号信息" width="260" style="cursor: default">
-    <Avatar :style="avatarStyle"  class="avatar"></avatar>
+    <Avatar  class="avatar"></avatar>
     <div class="user-info">
-      <div>
-        {{UserInfo.shortName || UserInfo.companyName}}
-      </div>
-      <div>
-        {{UserInfo.name}}
-      </div>
+      {{UserInfo.name}}
     </div>
     <Icon type="md-arrow-dropdown" class="i-mr-10" size="14"/>
     <div slot="content">
@@ -28,12 +23,7 @@ export default {
   props: {
     renew: Function
   },
-  data () {
-    return {
-      // 是否退出，防止接口不停提示登录无效等
-      isLogout: false
-    }
-  },
+
   computed: {
     ...mapGetters(['UserInfo']),
     avatarStyle () {
@@ -46,7 +36,6 @@ export default {
     }
   },
   mounted () {
-    window.EMA.bind('logout', this.userLogout)
   },
   methods: {
     ...mapActions(['logout']),
@@ -55,19 +44,8 @@ export default {
      * 1. 接口发现token失效，可能有其他用户登录，会包含msg
      * 2. 用户主动点击退出
      */
-    userLogout (msg) {
-      if (this.isLogout) {
-        return
-      }
-      this.isLogout = true
-      if (typeof msg === 'string') {
-        this.$Message.warning({
-          content: msg,
-          duration: 3
-        })
-      }
-      this.logout()
-      this.$router.replace({ path: '/login' })
+    userLogout () {
+      window.EMA.fire('logout')
     }
   }
 }
@@ -80,10 +58,13 @@ export default {
     background-image: url('../../../assets/default-avatar.jpg')
     background-size 30px
   .user-info
-    width:132px;
-    padding-left 10px
+    width:65px;
+    padding-left 5px
     display:inline-block;
     color white
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     line-height 1.1
     margin-bottom -4px
     div

@@ -109,14 +109,14 @@ export const oilTableColumns = vm => [
   {
     title: '操作',
     key: 'orderNo',
-    width: 150,
+    width: 120,
     // fixed: 'left',
     render: (h, params) => {
       let renderHtml = []
       let DropdownItem = []
       oilTableBtn(vm).forEach(item => {
         if (params.row[item.key] === true && vm.hasPower(item.code)) {
-          if (renderHtml.length < 3) {
+          if (renderHtml.length < 2) {
             renderHtml.push(
               h('a', {
                 props: {
@@ -150,7 +150,7 @@ export const oilTableColumns = vm => [
         renderHtml.push(h(
           'Dropdown',
           {
-            props: { trigger: 'click' },
+            props: { trigger: 'click', transfer: true },
             style: { display: 'inline-block' },
             on: {
               'on-click': (value) => {
@@ -177,7 +177,7 @@ export const oilTableColumns = vm => [
           type: 'text'
         },
         style: {
-          color: '#00A4BD',
+          color: '#418DF9',
           cursor: 'pointer'
         },
         on: {
@@ -212,7 +212,8 @@ export const oilTableColumns = vm => [
     title: '持卡人',
     key: 'driverName',
     render: (h, p) => {
-      return h('span', p.row.driverName ? (p.row.driverName + ' ' + p.row.driverPhone) : '-')
+      // p.row.driverName ? (p.row.driverName + ' ' + p.row.driverPhone)
+      return h('div', p.row.driverName ? [h('p', p.row.driverName), h('p', p.row.driverPhone)] : '-')
     }
   },
   {
@@ -334,7 +335,7 @@ export const usedTableColumns = vm => [
     width: 300,
     key: 'driverName',
     render: (h, p) => {
-      return h('span', p.row.driverName ? (p.row.driverName + ' ' + p.row.driverPhone) : '-')
+      return h('div', p.row.driverName ? [h('p', p.row.driverName), h('p', p.row.driverPhone)] : '-')
     }
   },
   {

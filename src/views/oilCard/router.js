@@ -7,7 +7,7 @@ export default [
     'path': '/oilCard',
     'component': Main,
     'meta': {
-      'icon': 'baobiaoguanli',
+      'icon': 'ico-card',
       'title': '油卡管理',
       'powerCode': 160000
     },
@@ -31,14 +31,14 @@ export default [
         }
       },
       {
-        'name': 'detail',
-        'path': 'detail/detail',
-        'component': () => import(/* webpackChunkName: "detail" */'./detail/detail.vue'),
+        'name': 'oilList-detail',
+        'path': 'oilList-detail',
+        'component': () => import(/* webpackChunkName: "oilList-detail" */'./detail/oilList-detail.vue'),
         'meta': {
           'hideInMenu': true,
           'notCache': true,
           'title': '油卡详情',
-          'powerCode': 0
+          'powerCode': 160100
         }
       }
     ]

@@ -327,6 +327,13 @@ export default {
           className: 'padding-left-45'
         },
         {
+          title: '货物编号',
+          key: 'cargoNo',
+          render: (h, p) => {
+            return h('span', p.row.cargoNo ? p.row.cargoNo : '-')
+          }
+        },
+        {
           title: '包装方式',
           key: 'unit',
           render: (h, p) => {
@@ -334,10 +341,16 @@ export default {
           }
         },
         {
-          title: '包装尺寸（长x宽x高 mm）',
+          title: '包装尺寸(mm)',
           key: 'dimension',
           render: (h, p) => {
-            return h('span', (p.row.dimension.length || 0) + ' x ' + (p.row.dimension.width || 0) + ' x ' + (p.row.dimension.height || 0))
+            let text = ''
+            if (p.row.dimension.length || p.row.dimension.width || p.row.dimension.height) {
+              text = (p.row.dimension.length || '-') + ' x ' + (p.row.dimension.width || '-') + ' x ' + (p.row.dimension.height || '-')
+            } else {
+              text = '-'
+            }
+            return h('span', text)
           }
         },
         {

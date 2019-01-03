@@ -81,7 +81,7 @@
               </p>
             </div>
             <Button v-if="(hasPower(170102) && scene === 1) || (hasPower(170202) && scene === 2) || (hasPower(170302) && scene === 3)" class="btn" type="primary" @click="createBill">生成对账单</Button>
-            <Tooltip v-if="scene === 2" placement="top" content="按单结的单据才可以批量核销" class="btn" style="margin-right: 11px">
+            <Tooltip v-if="hasPower(170207) && scene === 2" placement="top" content="按单结的单据才可以批量核销" class="btn" style="margin-right: 11px">
               <Button  @click="batchCheckOrder">批量核销</Button>
             </Tooltip>
           </div>
@@ -381,7 +381,7 @@ export default {
       })
     },
     createBill () {
-      if (this.selectedList.length > 0) {
+      if (this.selectedList.length > 1) {
         // 统计多段付单子
         let monthList = []
         // 统计非多段付单子
@@ -420,14 +420,14 @@ export default {
               arr: res.data.data.orderNos
             })
           }
-          if (errList.length === 0) { // 不存在异常且不存在月结单，可以批量核销
+          if (errList.length === 0) { // 不存在异常且不存在多段付，可以批量生成对账单
             this.createBillOk()
           } else {
             this.errDialog(errList)
           }
         })
       } else {
-        this.$Message.warning('请先选择')
+        this.$Message.warning('两条以上才能生成对账单')
       }
     },
     startQuery () {
@@ -650,7 +650,7 @@ export default {
         }).then(res => {
           if (res.data.data && res.data.data.operateCode === 1) { // 存在异常
             errList.push({
-              title: '以下单据因为存在异常未处理，不能批量核销。单据号：',
+              title: '以下单据存在异常未处理，不能批量核销。',
               arr: res.data.data.orderNos
             })
           }

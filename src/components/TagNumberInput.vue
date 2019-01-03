@@ -166,7 +166,8 @@ export default {
   },
   watch: {
     value (val) {
-      this.currentValue = val || null
+      // 不能设置null，如果加上null，用户第一个输入0就出现问题
+      this.currentValue = val
     },
     currentValue (val) {
       this.changeVal(val)

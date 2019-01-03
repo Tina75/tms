@@ -149,7 +149,7 @@
       </page-table>
     </div>
     <!-- 车辆保险汇总 -->
-    <div v-if="showTable === 'insurance'">
+    <div v-show="showTable === 'insurance'">
       <div class="addRepair">
         <Button v-if="hasPower(190401)" type="primary" @click="editInsurance">新增车辆保险</Button>
         <Button v-if="hasPower(190404)" class="buttonSty" @click="exporteditInsurance">导出</Button>
@@ -211,7 +211,7 @@ import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
 import { mapActions } from 'vuex'
 export default {
-  name: 'car-details',
+  name: 'owned-car-details',
   components: { RecordList, prepareOpenSwipe, pageTable, Export },
   mixins: [ BasePage ],
   metaInfo: {
@@ -389,7 +389,7 @@ export default {
       insuranceColumns: [
         {
           title: '操作',
-          key: 'id',
+          key: 'action',
           width: 150,
           fixed: 'left',
           extra: true,
@@ -409,12 +409,12 @@ export default {
                       name: 'owned-vehicle/dialog/edit-insurance',
                       data: {
                         title: '修改保险',
-                        flag: 4, // 修改
+                        flag: 2, // 修改
                         validate: {
                           ...params.row,
-                          buyDate: new Date(params.row.buyDate),
-                          effectDate: new Date(params.row.effectDate),
-                          expireDate: new Date(params.row.expireDate)
+                          buyDate: new Date(params.row.buyDate).Format('yyyy-MM-dd'),
+                          effectDate: new Date(params.row.effectDate).Format('yyyy-MM-dd'),
+                          expireDate: new Date(params.row.expireDate).Format('yyyy-MM-dd')
                         }
                       },
                       methods: {
@@ -482,7 +482,7 @@ export default {
           title: '总金额（元）',
           key: 'totalFee',
           render: (h, params) => {
-            return h('span', Number(params.row.totalFee) / 100)
+            return h('div', Number(params.row.totalFee) / 100)
           }
         },
         {
@@ -490,7 +490,7 @@ export default {
           key: 'buyDate',
           render: (h, params) => {
             let text = this.formatDate(params.row.buyDate)
-            return h('div', { props: {} }, text)
+            return h('div', text)
           }
         },
         {
@@ -513,14 +513,14 @@ export default {
           title: '交强险金额（元）',
           key: 'trafficFee',
           render: (h, params) => {
-            return h('span', Number(params.row.trafficFee) / 100)
+            return h('div', Number(params.row.trafficFee) / 100)
           }
         },
         {
           title: '商业险金额（元）',
           key: 'businessFee',
           render: (h, params) => {
-            return h('span', Number(params.row.businessFee) / 100)
+            return h('div', Number(params.row.businessFee) / 100)
           }
         },
         {
