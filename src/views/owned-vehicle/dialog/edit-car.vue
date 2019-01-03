@@ -18,7 +18,7 @@
           <FormItem label="车牌号：" prop="carNo">
             <Row>
               <Col span="20">
-              <span v-if="flag === 3">{{ validate.carNo }}</span>
+              <span v-if="flag >= 2">{{ validate.carNo }}</span>
               <SelectInput v-else v-model="validate.carNo" :maxlength="8" :parser="formatterCarNo" placeholder="必填"></SelectInput>
               </Col>
             </Row>
@@ -289,7 +289,7 @@ export default {
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.loading = true
-          if (this.flag !== 2) { // 新增
+          if (this.flag % 2) { // 新增
             this.add()
           } else { // 2-编辑
             this.update()

@@ -352,21 +352,21 @@ export default {
           key: 'repairMile'
         },
         {
-          title: '维修费用',
+          title: '维修费用（元）',
           key: 'repairMoney',
           render: (h, params) => {
             return h('span', Number(params.row.repairMoney) / 100)
           }
         },
         {
-          title: '已支付费用',
+          title: '已支付费用（元）',
           key: 'payMoney',
           render: (h, params) => {
             return h('span', Number(params.row.payMoney) / 100)
           }
         },
         {
-          title: '未支付费用',
+          title: '未支付费用（元）',
           key: 'waitPayMoney',
           render: (h, params) => {
             return h('span', Number(params.row.waitPayMoney) / 100)
@@ -610,7 +610,7 @@ export default {
           key: 'carNo'
         },
         {
-          title: '金额',
+          title: '金额（元）',
           key: 'cost',
           render: (h, params) => {
             return h('span', Number(params.row.cost) / 100)
@@ -720,7 +720,7 @@ export default {
           key: 'carNo'
         },
         {
-          title: '金额',
+          title: '金额（元）',
           key: 'cost',
           render: (h, params) => {
             return h('span', Number(params.row.cost) / 100)
@@ -735,14 +735,14 @@ export default {
           key: 'tireModel'
         },
         {
-          title: '换上公里数',
+          title: '换上公里数（公里）',
           key: 'setupMileage',
           render: (h, params) => {
             return h('span', Number(params.row.setupMileage) / 1000)
           }
         },
         {
-          title: '换下公里数',
+          title: '换下公里数（公里）',
           key: 'uninstallMileage',
           render: (h, params) => {
             return h('span', Number(params.row.uninstallMileage) / 1000)
@@ -866,7 +866,7 @@ export default {
         name: 'owned-vehicle/dialog/edit-car',
         data: {
           title: '修改车辆',
-          flag: 3,
+          flag: 2,
           validate: { ...vm.infoData, purchDate: new Date(vm.infoData.purchDate) }
         },
         methods: {

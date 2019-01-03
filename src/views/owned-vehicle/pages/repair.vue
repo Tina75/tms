@@ -184,25 +184,25 @@ export default {
           key: 'repairPerson'
         },
         {
-          title: '送修公里数',
+          title: '送修公里数（公里）',
           key: 'repairMile'
         },
         {
-          title: '维修费用',
+          title: '维修费用（元）',
           key: 'repairMoney',
           render: (h, params) => {
             return h('span', Number(params.row.repairMoney) / 100)
           }
         },
         {
-          title: '已支付费用',
+          title: '已支付费用（元）',
           key: 'payMoney',
           render: (h, params) => {
             return h('span', Number(params.row.payMoney) / 100)
           }
         },
         {
-          title: '未支付费用',
+          title: '未支付费用（元）',
           key: 'waitPayMoney',
           render: (h, params) => {
             return h('span', Number(params.row.waitPayMoney) / 100)
