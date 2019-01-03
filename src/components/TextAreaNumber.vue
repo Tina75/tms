@@ -58,7 +58,7 @@ export default {
 .numberCount
   float: right;
   position: relative;
-  right: 60px;
+  right: 20px;
   top: -30px;
   font-size 12px
 .haveNumber
