@@ -163,7 +163,7 @@ export default {
         },
         {
           required: false,
-          title: '包装尺寸(mm)',
+          title: '包装尺寸（毫米）',
           key: 'dimension',
           width: 180,
           type: 'multi',
