@@ -17,8 +17,8 @@
         @mouseenter.native="mousehover = true"
         @mouseleave.native="mousehover = false">
       <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-clear-icon" @click.native.stop="handleClear"></Icon>
-      <Icon v-if="(!mousehover || !isClearable) && showSelect" slot="suffix" type="ios-arrow-down" class="select-input-icondown"></Icon>
-      <Icon v-if="(!mousehover || !isClearable) && !showSelect" slot="suffix" type="ios-arrow-up" class="select-input-iconup"></Icon>
+      <Icon v-if="false" slot="suffix" type="ios-arrow-down" class="select-input-icondown"></Icon>
+      <!-- <Icon v-if="(!mousehover || !isClearable) && !showSelect" slot="suffix" type="ios-arrow-up" class="select-input-iconup"></Icon> -->
       </Input>
       <div slot="content" class="selectListLabel">
         <Row type="flex">
