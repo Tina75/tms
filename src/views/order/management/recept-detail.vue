@@ -1007,7 +1007,7 @@ export default {
 </script>
 <style lang='stylus' scoped>
   .detail-header
-    height 60px
+    min-height 60px
     padding-left 24px
     line-height  60px
     >ul>li
