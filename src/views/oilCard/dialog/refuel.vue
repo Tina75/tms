@@ -44,7 +44,7 @@
       <FormItem label="加油金额：" prop="changeAmount">
         <Row>
           <Col span="20">
-          <TagNumberInput v-model="refuel.changeAmount" :min="0"  :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
+          <TagNumberInput v-model="refuel.changeAmount"   :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
           </Col>
           <Col span="2" offset="1">
           <span>元</span>
@@ -108,15 +108,11 @@ export default {
       ruleValidate: {
         truckNo: { required: true, message: '请输入加油车辆', type: 'string', trigger: 'change' },
         driverName: { required: true, message: '请输入加油人', type: 'string', trigger: 'change' },
-        changeAmount: { required: true, message: '请输入加油金额', type: 'number', trigger: 'change' },
+        changeAmount: [
+          { required: true, message: '请输入加油金额', type: 'number', trigger: 'change' },
+          { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/, type: 'string', message: '9位正数且最多两位小数', trigger: 'blur' }
+        ],
         operateDate: { required: true, message: '请输入加油日期' }
-        // driverName: { required: true, message: '请选择司机', trigger: 'change' },
-        // carrierName: { required: true, message: '请输入承运商', trigger: 'change' },
-        // driverPhone: [
-        //   { required: true, message: '请输入手机号码', trigger: 'blur' },
-        //   { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
-        // ],
-        // truckNo: { type: 'string', message: '车牌号格式错误', pattern: CAR }
       }
     }
   },
@@ -125,9 +121,6 @@ export default {
       'ownCars',
       'ownDrivers'
     ])
-  },
-  mounted () {
-    console.log(this.refuel)
   },
   methods: {
     ...mapActions([
@@ -153,9 +146,9 @@ export default {
             this.loading = false
             this.close()
             this.ok()
-          }).catch(err => {
+          }).catch(() => {
             this.loading = false
-            console.log(err)
+            // console.log(err)
           })
         }
       })

@@ -128,7 +128,6 @@ export const oilTableColumns = vm => [
                 },
                 on: {
                   click: () => {
-                    console.log(vm)
                     item.func(params)
                   }
                 }
@@ -217,7 +216,7 @@ export const oilTableColumns = vm => [
     }
   },
   {
-    title: '余额',
+    title: '余额(元)',
     key: 'amount',
     render: (h, params) => {
       return h('span', typeof params.row.amount === 'number' ? (params.row.amount / 100).toFixed(2) : '0.00')
@@ -307,7 +306,7 @@ export const usedTableColumns = vm => [
     }
   },
   {
-    title: '修改前金额',
+    title: '修改前金额(元)',
     width: 150,
     key: 'beforeAmount',
     render: (h, params) => {
@@ -315,7 +314,7 @@ export const usedTableColumns = vm => [
     }
   },
   {
-    title: '修改后金额',
+    title: '修改后金额(元)',
     width: 150,
     key: 'afterAmount',
     render: (h, params) => {
@@ -383,7 +382,7 @@ export const usedTableColumns = vm => [
     }
   },
   {
-    title: '押金',
+    title: '押金(元)',
     width: 300,
     key: 'deposit',
     render: (h, params) => {
