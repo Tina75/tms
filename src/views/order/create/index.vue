@@ -893,7 +893,8 @@ export default {
       this.orderForm.consigneeAddress = row.address
       this.orderForm.consigneeAddressLatitude = row.latitude
       this.orderForm.consigneeAddressLongitude = row.longitude
-      this.orderForm.consigneeHourseNumber = row.consigneeHourseNumber
+      this.orderForm.consigneeHourseNumber = row.consignerHourseNumber
+      this.orderForm.consigneeCompanyName = row.consigneeCompanyName
       // 计费里程
       this.distanceCp()
     },
