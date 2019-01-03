@@ -62,9 +62,9 @@ import Server from '@/libs/js/server'
 import mixin from './mixin'
 import { VALIDATOR_PHONE } from './validator'
 import { setToken } from '@/libs/js/auth'
+import Cookies from 'js-cookie'
 // token与记住密码过期时长 1年
 const EXPIRES = 365 * 24 * 60 * 60 * 1000
-
 export default {
   name: 'SignIn',
   mixins: [ mixin ],
@@ -149,10 +149,12 @@ export default {
 
     // 设置cookie-token
     setToken (token) {
-      // const exp = new Date()
-      // exp.setTime(exp.getTime() + EXPIRES)
-      // document.cookie = `token=${escape(token)};expires=${exp.toGMTString()}`
-      setToken(token)
+      if (this.$route.query.from === 'shipper') {
+        // 设置货主版token
+        Cookies.set('token', token, { expires: 365, path: '/' })
+      } else {
+        setToken(token)
+      }
     },
 
     // 登录处理
