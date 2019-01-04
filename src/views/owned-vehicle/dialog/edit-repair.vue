@@ -100,7 +100,7 @@
           <FormItem label="送修公里数：" prop="repairMile">
             <Row>
               <Col span="19">
-              <TagNumberInput :min="0" :precision="$numberPrecesion.mileage" v-model="validate.repairMile" :show-chinese="false" placeholder="必填"></TagNumberInput>
+              <TagNumberInput :min="0" :precision="$numberPrecesion.mileage" v-model="validate.repairMile" :length="6" :show-chinese="false" placeholder="必填"></TagNumberInput>
               <!-- <Input v-model="validate.repairMile" :maxlength="9" placeholder="必填"></Input> -->
               </Col>
               <Col span="4" offset="1">
