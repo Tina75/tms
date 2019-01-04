@@ -323,8 +323,8 @@ export default {
       tableColumns: [
         {
           title: '货物名称',
-          key: 'cargoName',
-          className: 'padding-left-45'
+          key: 'cargoName'
+          // className: 'padding-left-45'
         },
         {
           title: '货物编号',
