@@ -25,24 +25,24 @@
         <FormItem label="包装尺寸：">
           <Row>
             <Col :span="6">
-            <TagNumberInput :min="0" :precision="1" v-model="volumeLength" :length="7" :show-chinese="false" placeholder="长"></TagNumberInput>
+            <TagNumberInput :min="0" :precision="$numberPrecesion.dimension" v-model="volumeLength" :length="7" :show-chinese="false" placeholder="长"></TagNumberInput>
             </Col>
             <Col :span="1"><span>-</span></Col>
             <Col :span="6">
-            <TagNumberInput :min="0" :precision="1" v-model="volumeWidth" :length="7" :show-chinese="false" placeholder="宽"></TagNumberInput>
+            <TagNumberInput :min="0" :precision="$numberPrecesion.dimension" v-model="volumeWidth" :length="7" :show-chinese="false" placeholder="宽"></TagNumberInput>
             </Col>
             <Col :span="1"><span>-</span></Col>
             <Col :span="6">
-            <TagNumberInput :min="0" :precision="1" v-model="volumeHeight" :length="7" :show-chinese="false" placeholder="高"></TagNumberInput>
+            <TagNumberInput :min="0" :precision="$numberPrecesion.dimension" v-model="volumeHeight" :length="7" :show-chinese="false" placeholder="高"></TagNumberInput>
             </Col>
             <Col :span="4"><span style="padding-left: 15px">毫米</span></Col>
           </Row>
         </FormItem>
         <FormItem label="重量：" prop="weight">
-          <TagNumberInput :min="0" :precision="3" v-model="validate.weight" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>吨
+          <TagNumberInput :min="0" :precision="$numberPrecesion.weight" v-model="validate.weight" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>吨
         </FormItem>
         <FormItem label="体积：" prop="volume">
-          <TagNumberInput :min="0" :precision="6" v-model="validate.volume" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>方
+          <TagNumberInput :min="0" :precision="$numberPrecesion.volume" v-model="validate.volume" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>方
         </FormItem>
         <FormItem label="备注1：">
           <Input v-model="validate.remark1" :maxlength="100" placeholder="请输入"/>

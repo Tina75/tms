@@ -92,7 +92,7 @@
           <FormItem label="交强险金额：" prop="trafficFee">
             <Row>
               <Col span="20">
-              <TagNumberInput :min="0" v-model="validate.trafficFee" :precision="2" placeholder="请输入"></TagNumberInput>
+              <TagNumberInput :min="0" :precision="$numberPrecesion.fee" v-model="validate.trafficFee" placeholder="请输入"></TagNumberInput>
               </Col>
               <Col span="2" offset="1">
               <span>元</span>
@@ -104,7 +104,7 @@
           <FormItem label="商业险金额：" prop="businessFee">
             <Row>
               <Col span="20">
-              <TagNumberInput :min="0" v-model="validate.businessFee" :precision="2" placeholder="请输入"></TagNumberInput>
+              <TagNumberInput :min="0" :precision="$numberPrecesion.fee" v-model="validate.businessFee" placeholder="请输入"></TagNumberInput>
               </Col>
               <Col span="2" offset="1">
               <span>元</span>

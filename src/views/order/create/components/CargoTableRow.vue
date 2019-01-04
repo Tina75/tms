@@ -29,7 +29,7 @@
     >
     </InputNumber>
     <div v-else-if="col.type === 'multi' && col.children">
-      <InputNumber
+      <TagNumberInput
         v-for="(el, index) in col.children"
         :key="index"
         v-model="record[col.key][el.key]"
@@ -38,9 +38,8 @@
         :style="`width: 31%`"
         :placeholder="el.title"
         :precision="el.point"
-        style="margin: 0 1%"
-        clearable>
-      </InputNumber>
+        style="margin: 0 1%">
+      </TagNumberInput>
     </div>
     <div v-else-if="col.type == 'package'">
       <SelectPackageType v-model="record[col.key]" clearable/>
@@ -56,10 +55,12 @@
 import SelectPackageType from '@/components/SelectPackageType'
 import SelectInput from '@/components/SelectInput'
 import float from '@/libs/js/float'
+import TagNumberInput from '@/components/TagNumberInput'
 export default {
   components: {
     SelectInput,
-    SelectPackageType
+    SelectPackageType,
+    TagNumberInput
   },
   props: {
     index: Number,
