@@ -289,7 +289,7 @@
             <span v-if="!isEdit && !formCompany.homeBanner" class="imageTips">上传公司形象图，有利于宣传公司品牌</span>
           </FormItem>
           <FormItem :class="isEdit ? 'imageFontItem' : 'imageFontItemBlock'">
-            <up-load v-show="isEdit" ref="upLoadsBanner" :multiple="true" max-count="1" max-size="10"></up-load>
+            <up-load v-show="isEdit" ref="upLoadsBanner" max-count="1" max-size="10"></up-load>
             <div v-if="formCompany.homeBanner && !isEdit" class="infoImage">
               <div
                 :style="'height: 90px;background-image: url(' + formCompany.homeBanner + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
