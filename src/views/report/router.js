@@ -41,6 +41,26 @@ export default [
           'powerCode': 180300
 
         }
+      },
+      {
+        'name': 'report-car',
+        'path': 'report-car',
+        'component': () => import(/* webpackChunkName: "report-car" */'./pages/car.vue'),
+        'meta': {
+          'title': '自有车出车统计',
+          'powerCode': 180400
+
+        }
+      },
+      {
+        'name': 'report-driver',
+        'path': 'report-driver',
+        'component': () => import(/* webpackChunkName: "report-driver" */'./pages/driver.vue'),
+        'meta': {
+          'title': '自有司机出车统计',
+          'powerCode': 180500
+
+        }
       }
     ]
   }
