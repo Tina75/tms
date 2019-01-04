@@ -38,14 +38,27 @@ export default {
       return this.currentValue
     }
   },
-  watch: {
-  },
   mounted () {
     if (this.value) this.remnant = this.value.length
+    this.initTextAreaRow(this.value)
   },
   methods: {
+    initTextAreaRow (inputText) {
+      let fromIndex = 0
+      this.rows = 3
+      while (true) {
+        let index = inputText.indexOf('\n', fromIndex)
+        if (index !== -1) {
+          fromIndex = index + 1
+          this.rows++
+        } else {
+          break
+        }
+      }
+    },
     descInput (event) {
       let inputText = event.target.value
+      this.initTextAreaRow(inputText)
       this.remnant = inputText.length
       this.$emit('input', event.target.value)
     }
