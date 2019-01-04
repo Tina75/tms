@@ -179,12 +179,12 @@
             </div>
             <Table :columns="tableColumns" :data="detail.orderCargoList" style="margin-top: 30px;"></Table>
             <div class="table-footer">
-              <span style="padding-right: 5px;box-sizing:border-box;">合计</span>
-              <!-- <span>订单总数：{{ orderTotal }}</span> -->
-              <span>总货值：{{ cargoCostTotal }}</span>
-              <span>总数量：{{ quantityTotal }}</span>
-              <span>总重量：{{ weightTotal }}</span>
-              <span>总体积：{{ volumeTotal }}</span>
+              <span>合计</span>
+              <span></span>
+              <span>{{ cargoCostTotal }}</span>
+              <span>{{ volumeTotal }}</span>
+              <span>{{ weightTotal }}</span>
+              <span>{{ quantityTotal }}</span>
             </div>
           </div>
           <div v-if="from === 'order'">
@@ -334,6 +334,27 @@ export default {
           }
         },
         {
+          title: '货值（元）',
+          key: 'cargoCost',
+          render: (h, params) => {
+            return h('span', params.row.cargoCost ? params.row.cargoCost / 100 : 0)
+          }
+        },
+        {
+          title: '体积（方）',
+          key: 'volume',
+          render: (h, p) => {
+            return h('span', p.row.volume ? p.row.volume : 0)
+          }
+        },
+        {
+          title: '数量',
+          key: 'quantity',
+          render: (h, p) => {
+            return h('span', p.row.quantity ? p.row.quantity : 0)
+          }
+        },
+        {
           title: '包装方式',
           key: 'unit',
           render: (h, p) => {
@@ -351,27 +372,6 @@ export default {
               text = '-'
             }
             return h('span', text)
-          }
-        },
-        {
-          title: '数量',
-          key: 'quantity',
-          render: (h, p) => {
-            return h('span', p.row.quantity ? p.row.quantity : 0)
-          }
-        },
-        {
-          title: '货值（元）',
-          key: 'cargoCost',
-          render: (h, params) => {
-            return h('span', params.row.cargoCost ? params.row.cargoCost / 100 : 0)
-          }
-        },
-        {
-          title: '体积（方）',
-          key: 'volume',
-          render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : 0)
           }
         },
         {
@@ -1174,9 +1174,9 @@ export default {
     font-weight bold
     color #2c3e50
     span
+      padding-left 10px
+      width 10%
       display inline-block
-      min-width 140px
-      text-align center
   .order-log
     .ivu-timeline-item
       i
