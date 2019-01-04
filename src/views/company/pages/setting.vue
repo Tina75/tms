@@ -670,7 +670,7 @@ export default {
   clear both
 .companyProfileSty
   font-family PingFangSC-Regular
-  margin-top 7px
+  margin-top 5px
   line-height 22px
   white-space pre-wrap
   word-wrap break-word
@@ -715,6 +715,6 @@ export default {
 .vermiddle
   padding-left 5px
 .textArea
-  margin-top 10px
   margin-bottom -20px
+  margin-top: 1px
 </style>
