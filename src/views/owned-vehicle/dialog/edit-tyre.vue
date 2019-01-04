@@ -28,7 +28,7 @@
           <FormItem label="金额：" prop="cost">
             <Row>
               <Col span="20">
-              <TagNumberInput :min="0" v-model="validate.cost" :precision="2" placeholder="请输入"></TagNumberInput>
+              <TagNumberInput :min="0" v-model="validate.cost" :precision="$numberPrecesion.fee" placeholder="请输入"></TagNumberInput>
               </Col>
               <Col span="2" offset="1">
               <span>元</span>
@@ -70,7 +70,7 @@
           <FormItem label="换上公里数：" prop="setupMileage">
             <Row>
               <Col span="20">
-              <TagNumberInput :min="0" v-model="validate.setupMileage" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+              <TagNumberInput :min="0" :precision="$numberPrecesion.mileage" v-model="validate.setupMileage" :show-chinese="false" placeholder="请输入"></TagNumberInput>
               </Col>
               <Col span="3" offset="1">
               <span>公里</span>
@@ -84,7 +84,7 @@
           <FormItem label="换下公里数：" prop="uninstallMileage">
             <Row>
               <Col span="20">
-              <TagNumberInput :min="0" v-model="validate.uninstallMileage" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+              <TagNumberInput :min="0" :precision="$numberPrecesion.mileage" v-model="validate.uninstallMileage" :show-chinese="false" placeholder="请输入"></TagNumberInput>
               </Col>
               <Col span="3" offset="1">
               <span>公里</span>

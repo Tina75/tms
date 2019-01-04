@@ -48,7 +48,7 @@
           <FormItem label="载重：" prop="shippingWeight">
             <Row>
               <Col span="20">
-              <TagNumberInput :min="0" :precision="3" v-model="validate.shippingWeight" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+              <TagNumberInput :min="0" :precision="$numberPrecesion.weight" v-model="validate.shippingWeight" :show-chinese="false" placeholder="请输入"></TagNumberInput>
               </Col>
               <Col span="2" offset="1">
               <span>吨</span>
@@ -60,7 +60,7 @@
           <FormItem label="净空：" prop="shippingVolume">
             <Row>
               <Col span="20">
-              <TagNumberInput :min="0" :precision="6" v-model="validate.shippingVolume" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+              <TagNumberInput :min="0" :precision="$numberPrecesion.volume" v-model="validate.shippingVolume" :show-chinese="false" placeholder="请输入"></TagNumberInput>
               </Col>
               <Col span="2" offset="1">
               <span>方</span>
